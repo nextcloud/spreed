@@ -336,6 +336,114 @@ describe('Video.vue', () => {
 			})
 		})
 
+		describe('renegotiation', () => {
+			let peerMock
+
+			beforeEach(() => {
+				peerMock = new PeerMock()
+				callParticipantModel.setPeer(peerMock)
+			})
+
+			test('started after connection established', () => {
+				peerMock._setSignalingState('have-remote-offer')
+				peerMock._setSignalingState('stable')
+				peerMock._setIceConnectionState('checking')
+				peerMock._setIceConnectionState('connected')
+				peerMock._setSignalingState('have-remote-offer')
+
+				setupWrapper()
+
+				assertConnectionMessageLabel(connectionMessage.NONE)
+				assertLoadingIconIsShown(false)
+				assertNotConnected(false)
+			})
+
+			test('started after connection established and then finished', () => {
+				peerMock._setSignalingState('have-remote-offer')
+				peerMock._setSignalingState('stable')
+				peerMock._setIceConnectionState('checking')
+				peerMock._setIceConnectionState('connected')
+				peerMock._setSignalingState('have-remote-offer')
+				peerMock._setSignalingState('stable')
+
+				setupWrapper()
+
+				assertConnectionMessageLabel(connectionMessage.NONE)
+				assertLoadingIconIsShown(false)
+				assertNotConnected(false)
+			})
+
+			test('started before disconnected', () => {
+				peerMock._setSignalingState('have-remote-offer')
+				peerMock._setSignalingState('stable')
+				peerMock._setIceConnectionState('checking')
+				peerMock._setIceConnectionState('connected')
+				peerMock._setSignalingState('have-remote-offer')
+				peerMock._setIceConnectionState('disconnected')
+
+				setupWrapper()
+
+				// FIXME The message should be "PROBLEMS" rather than "LOST", as
+				// the negotiation is not caused by the disconnection itself.
+				// However it does not seem to be an easy way to do it right
+				// now.
+				assertConnectionMessageLabel(connectionMessage.LOST)
+				assertLoadingIconIsShown(true)
+				assertNotConnected(true)
+			})
+
+			test('started before disconnected and then finished', () => {
+				peerMock._setSignalingState('have-remote-offer')
+				peerMock._setSignalingState('stable')
+				peerMock._setIceConnectionState('checking')
+				peerMock._setIceConnectionState('connected')
+				peerMock._setSignalingState('have-remote-offer')
+				peerMock._setIceConnectionState('disconnected')
+				peerMock._setSignalingState('stable')
+
+				setupWrapper()
+
+				assertConnectionMessageLabel(connectionMessage.PROBLEMS)
+				assertLoadingIconIsShown(true)
+				assertNotConnected(true)
+			})
+
+			test('started after disconnected', () => {
+				peerMock._setSignalingState('have-remote-offer')
+				peerMock._setSignalingState('stable')
+				peerMock._setIceConnectionState('checking')
+				peerMock._setIceConnectionState('connected')
+				peerMock._setIceConnectionState('disconnected')
+				peerMock._setSignalingState('have-remote-offer')
+
+				setupWrapper()
+
+				// FIXME The message should be "PROBLEMS" rather than "LOST", as
+				// the negotiation is not caused by the disconnection itself.
+				// However it does not seem to be an easy way to do it right
+				// now.
+				assertConnectionMessageLabel(connectionMessage.LOST)
+				assertLoadingIconIsShown(true)
+				assertNotConnected(true)
+			})
+
+			test('started after disconnected and then finished', () => {
+				peerMock._setSignalingState('have-remote-offer')
+				peerMock._setSignalingState('stable')
+				peerMock._setIceConnectionState('checking')
+				peerMock._setIceConnectionState('connected')
+				peerMock._setIceConnectionState('disconnected')
+				peerMock._setSignalingState('have-remote-offer')
+				peerMock._setSignalingState('stable')
+
+				setupWrapper()
+
+				assertConnectionMessageLabel(connectionMessage.PROBLEMS)
+				assertLoadingIconIsShown(true)
+				assertNotConnected(true)
+			})
+		})
+
 		describe('reconnection after no original connection', () => {
 			let newPeerMock
 

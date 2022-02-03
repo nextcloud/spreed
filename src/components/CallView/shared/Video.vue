@@ -204,11 +204,15 @@ export default {
 		 * received yet). Similarly both "negotiating" and "connecting" need to
 		 * be checked, as the negotiation will start before the connection
 		 * attempt is started.
+		 *
+		 * If the negotiation is done while there is still a connection it is
+		 * not regarded as reconnecting, as in that case it is a renegotiation
+		 * to update the current connection.
 		 */
 		isReconnecting() {
 			return this.model.attributes.connectionState === ConnectionState.FAILED
 				|| (!this.model.attributes.initialConnection
-					&& (this.model.attributes.negotiating || this.model.attributes.connecting))
+					&& ((this.model.attributes.negotiating && !this.isConnected) || this.model.attributes.connecting))
 		},
 
 		isNoLongerTryingToReconnect() {
