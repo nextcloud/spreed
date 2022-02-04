@@ -22,67 +22,103 @@
 <template>
 	<!-- Message Actions -->
 	<div class="message-buttons-bar">
-		<Actions v-show="isReplyable">
-			<ActionButton icon="icon-reply"
-				@click.stop="handleReply">
-				{{ t('spreed', 'Reply') }}
-			</ActionButton>
-		</Actions>
-		<Actions :force-menu="true"
-			:container="container"
-			:boundaries-element="containerElement">
-			<ActionButton v-if="isPrivateReplyable"
-				icon="icon-user"
-				:close-after-click="true"
-				@click.stop="handlePrivateReply">
-				{{ t('spreed', 'Reply privately') }}
-			</ActionButton>
-			<ActionButton icon="icon-external"
-				:close-after-click="true"
-				@click.stop.prevent="handleCopyMessageLink">
-				{{ t('spreed', 'Copy message link') }}
-			</ActionButton>
-			<ActionButton :close-after-click="true"
-				@click.stop="handleMarkAsUnread">
+		<template v-if="page === 0">
+			<Button type="tertiary"
+				@click="page = 1">
 				<template #icon>
-					<EyeOffOutline decorative
-						title=""
-						:size="16" />
+					<EmoticonOutline :size="20" />
 				</template>
-				{{ t('spreed', 'Mark as unread') }}
-			</ActionButton>
-			<ActionLink v-if="linkToFile"
-				icon="icon-text"
-				:href="linkToFile">
-				{{ t('spreed', 'Go to file') }}
-			</ActionLink>
-			<ActionButton v-if="!isCurrentGuest && !isFileShare"
-				:close-after-click="true"
-				@click.stop="showForwarder = true">
-				<Share slot="icon"
-					:size="16"
-					decorative
-					title="" />
-				{{ t('spreed', 'Forward message') }}
-			</ActionButton>
-			<ActionSeparator v-if="messageActions.length > 0" />
-			<template v-for="action in messageActions">
-				<ActionButton :key="action.label"
-					:icon="action.icon"
-					:close-after-click="true"
-					@click="action.callback(messageAPIData)">
-					{{ action.label }}
+			</Button>
+			<Actions v-show="isReplyable">
+				<ActionButton icon="icon-reply"
+					@click.stop="handleReply">
+					{{ t('spreed', 'Reply') }}
 				</ActionButton>
-			</template>
-			<template v-if="isDeleteable">
-				<ActionSeparator />
-				<ActionButton icon="icon-delete"
+			</Actions>
+			<Actions :force-menu="true"
+				:container="container"
+				:boundaries-element="containerElement">
+				<ActionButton v-if="isPrivateReplyable"
+					icon="icon-user"
 					:close-after-click="true"
-					@click.stop="handleDelete">
-					{{ t('spreed', 'Delete') }}
+					@click.stop="handlePrivateReply">
+					{{ t('spreed', 'Reply privately') }}
 				</ActionButton>
-			</template>
-		</Actions>
+				<ActionButton icon="icon-external"
+					:close-after-click="true"
+					@click.stop.prevent="handleCopyMessageLink">
+					{{ t('spreed', 'Copy message link') }}
+				</ActionButton>
+				<ActionButton :close-after-click="true"
+					@click.stop="handleMarkAsUnread">
+					<template #icon>
+						<EyeOffOutline decorative
+							title=""
+							:size="16" />
+					</template>
+					{{ t('spreed', 'Mark as unread') }}
+				</ActionButton>
+				<ActionLink v-if="linkToFile"
+					icon="icon-text"
+					:href="linkToFile">
+					{{ t('spreed', 'Go to file') }}
+				</ActionLink>
+				<ActionButton v-if="!isCurrentGuest && !isFileShare"
+					:close-after-click="true"
+					@click.stop="showForwarder = true">
+					<Share slot="icon"
+						:size="16"
+						decorative
+						title="" />
+					{{ t('spreed', 'Forward message') }}
+				</ActionButton>
+				<ActionSeparator v-if="messageActions.length > 0" />
+				<template v-for="action in messageActions">
+					<ActionButton :key="action.label"
+						:icon="action.icon"
+						:close-after-click="true"
+						@click="action.callback(messageAPIData)">
+						{{ action.label }}
+					</ActionButton>
+				</template>
+				<template v-if="isDeleteable">
+					<ActionSeparator />
+					<ActionButton icon="icon-delete"
+						:close-after-click="true"
+						@click.stop="handleDelete">
+						{{ t('spreed', 'Delete') }}
+					</ActionButton>
+				</template>
+			</Actions>
+		</template>
+
+		<template v-if="page === 1">
+			<Button type="tertiary"
+				@click="page = 0">
+				<template #icon>
+					<ArrowLeft :size="20" />
+				</template>
+			</Button>
+			<Button type="tertiary"
+				@click="page = 0">
+				<template #icon>
+					<span>👍</span>
+				</template>
+			</Button>
+			<Button type="tertiary"
+				@click="page = 0">
+				<template #icon>
+					<span>❤️</span>
+				</template>
+			</Button>
+			<EmojiPicker @select.stop="">
+				<Button type="tertiary">
+					<template #icon>
+						<Plus :size="20" />
+					</template>
+				</Button>
+			</EmojiPicker>
+		</template>
 		<Forwarder v-if="showForwarder"
 			:message-object="messageObject"
 			@close="showForwarder = false" />
@@ -96,6 +132,9 @@ import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline'
+import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 import Share from 'vue-material-design-icons/Share'
 import moment from '@nextcloud/moment'
 import { EventBus } from '../../../../../services/EventBus'
@@ -107,6 +146,8 @@ import {
 	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
 import Forwarder from '../MessagePart/Forwarder'
+import Button from '@nextcloud/vue/dist/Components/Button'
+import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 
 export default {
 	name: 'MessageButtonsBar',
@@ -119,6 +160,11 @@ export default {
 		Share,
 		ActionSeparator,
 		Forwarder,
+		Button,
+		EmoticonOutline,
+		ArrowLeft,
+		Plus,
+		EmojiPicker,
 	},
 
 	props: {
@@ -221,6 +267,9 @@ export default {
 		return {
 			// Shows/hides the message forwarder component
 			showForwarder: false,
+
+			// The pagination of the buttons menu
+			page: 0,
 		}
 	},
 
