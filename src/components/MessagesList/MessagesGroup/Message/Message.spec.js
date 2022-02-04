@@ -74,6 +74,13 @@ describe('Message.vue', () => {
 			systemMessage: '',
 			messageType: 'comment',
 		}
+
+		// Dummy message getter so that the message component is always
+		// properly mounted.
+		testStoreConfig.modules.messagesStore.getters.message
+			= jest.fn().mockReturnValue(() => {
+				return {}
+			})
 	})
 
 	afterEach(() => {

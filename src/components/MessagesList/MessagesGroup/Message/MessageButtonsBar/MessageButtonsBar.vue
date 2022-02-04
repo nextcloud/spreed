@@ -83,6 +83,9 @@
 				</ActionButton>
 			</template>
 		</Actions>
+		<Forwarder v-if="showForwarder"
+			:message-object="messageObject"
+			@close="showForwarder = false" />
 	</div>
 </template>
 
@@ -103,6 +106,7 @@ import {
 	showWarning,
 	TOAST_DEFAULT_TIMEOUT,
 } from '@nextcloud/dialogs'
+import Forwarder from '../MessagePart/Forwarder'
 
 export default {
 	name: 'MessageButtonsBar',
@@ -114,6 +118,7 @@ export default {
 		EyeOffOutline,
 		Share,
 		ActionSeparator,
+		Forwarder,
 	},
 
 	props: {
@@ -129,6 +134,11 @@ export default {
 
 		isReplyable: {
 			type: Boolean,
+			required: true,
+		},
+
+		messageObject: {
+			type: Object,
 			required: true,
 		},
 
@@ -205,6 +215,13 @@ export default {
 			type: Object,
 			required: true,
 		},
+	},
+
+	data() {
+		return {
+			// Shows/hides the message forwarder component
+			showForwarder: false,
+		}
 	},
 
 	computed: {
