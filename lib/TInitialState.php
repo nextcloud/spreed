@@ -23,13 +23,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use OC\HintException;
 use OC\User\NoUserException;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\HintException;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IUser;
