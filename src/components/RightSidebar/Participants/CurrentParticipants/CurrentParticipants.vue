@@ -203,6 +203,14 @@ export default {
 				return moderator1 ? -1 : 1
 			}
 
+			if (p1inCall) {
+				return participant1.attendeePermissions < participant2.attendeePermissions ? 1 : -1
+			}
+
+			if (p1inCall && participant1.attendeePermissions === participant2.attendeePermissions) {
+				return participant1.inCall < participant2.inCall ? 1 : -1
+			}
+
 			const participant1Away = this.isNotAvailable(participant1)
 			const participant2Away = this.isNotAvailable(participant2)
 			if (participant1Away !== participant2Away) {
