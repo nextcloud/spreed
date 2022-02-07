@@ -62,6 +62,7 @@ use OCA\Talk\Middleware\CanUseTalkMiddleware;
 use OCA\Talk\Middleware\InjectionMiddleware;
 use OCA\Talk\Notification\Listener as NotificationListener;
 use OCA\Talk\Notification\Notifier;
+use OCA\Talk\OCP\TalkBackend;
 use OCA\Talk\Profile\TalkAction;
 use OCA\Talk\PublicShare\TemplateLoader as PublicShareTemplateLoader;
 use OCA\Talk\PublicShareAuth\Listener as PublicShareAuthListener;
@@ -139,6 +140,8 @@ class Application extends App implements IBootstrap {
 		$context->registerDashboardWidget(TalkWidget::class);
 
 		$context->registerProfileLinkAction(TalkAction::class);
+
+		$context->registerTalkBackend(TalkBackend::class);
 	}
 
 	public function boot(IBootContext $context): void {
