@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 13.0.3 – 2022-02-07
+### Fixed
+- Fix stopping a screenshare for recipients
+  [#6857](https://github.com/nextcloud/spreed/pull/6857)
+- Fix switching between screenshares
+  [#6850](https://github.com/nextcloud/spreed/pull/6850)
+- Fix mentions inside brackets
+  [#6869](https://github.com/nextcloud/spreed/pull/6869)
+- Allow using mentions with the mouse
+  [#6838](https://github.com/nextcloud/spreed/pull/6838)
+- Deduplicate round trips when a moderator ends the meeting for everyone
+  [#6841](https://github.com/nextcloud/spreed/pull/6841)
+- Fix message menu misbehaving when the message scrolls outside of the viewport
+  [#6855](https://github.com/nextcloud/spreed/pull/6855)
+
 ## 13.0.2 – 2022-01-24
 ### Changed
 - Improve the join/leave sounds to be shorter
