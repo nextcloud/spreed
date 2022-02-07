@@ -84,7 +84,7 @@
 		"jest-mock-console": "^1.2.3",
 		"jest-transform-stub": "^2.0.0",
 		"regenerator-runtime": "^0.13.9",
-		"terser-webpack-plugin": "^5.3.0",
+		"terser-webpack-plugin": "^5.3.1",
 		"wasm-check": "^2.0.3",
 		"webpack-node-externals": "^3.0.0",
 		"worker-loader": "^3.0.8"
