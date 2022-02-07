@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OC\HintException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Config;
@@ -47,6 +46,7 @@ use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\GenericEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
+use OCP\HintException;
 use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IRequest;
