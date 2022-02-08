@@ -129,20 +129,24 @@ class NotifierTest extends TestCase {
 	/**
 	 * @return Room|MockObject
 	 */
-	private function getRoom() {
+	private function getRoom($settings = []) {
 		/** @var Room|MockObject */
 		$room = $this->createMock(Room::class);
 
 		$room->expects($this->any())
 			->method('getParticipant')
-			->willReturnCallback(function (string $actorId) use ($room): Participant {
+			->willReturnCallback(function (string $actorId) use ($room, $settings): Participant {
 				if ($actorId === 'userNotInOneToOneChat') {
 					throw new ParticipantNotFoundException();
 				}
-				$attendee = Attendee::fromRow([
+				$attendeeRow = [
 					'actor_type' => 'user',
 					'actor_id' => $actorId,
-				]);
+				];
+				if (isset($settings['attendee'][$actorId])) {
+					$attendeeRow = array_merge($attendeeRow, $settings['attendee'][$actorId]);
+				}
+				$attendee = Attendee::fromRow($attendeeRow);
 				return new Participant($room, $attendee, null);
 			});
 
@@ -380,19 +384,20 @@ class NotifierTest extends TestCase {
 		$this->notificationManager->expects($this->exactly($notify))
 			->method('notify');
 
-		$room = $this->getRoom();
+		$room = $this->getRoom([
+			'attendee' => [
+				'testUser' => [
+					'notificationLevel' => $notifyType,
+				]
+			]
+		]);
 		$room->method('getType')
 			->willReturn($roomType);
 		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), 'message');
-
-		$this->config
-			->expects($this->any())
-			->method('getAppValue')
-			->with('spreed', 'default_group_notification', Participant::NOTIFY_MENTION)
-			->willReturn($notifyType);
+		$reaction = $this->newComment('108', 'users', $authorId, new \DateTime('@' . 1000000016), 'message');
 
 		$notifier = $this->getNotifier([]);
-		$notifier->notifyReacted($room, $comment, $authorId);
+		$notifier->notifyReacted($room, $comment, $reaction);
 	}
 
 	public function dataNotifyReacted(): array {
