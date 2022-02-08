@@ -130,7 +130,7 @@ class ReactionManager {
 
 	public function getCommentToReact(Room $chat, string $messageId): IComment {
 		if (!$this->commentsManager->supportReactions()) {
-			throw new NotFoundException('Reactions unsuported');
+			throw new NotFoundException('Reactions unsupported');
 		}
 		$comment = $this->commentsManager->get($messageId);
 

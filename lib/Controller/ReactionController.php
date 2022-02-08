@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
 use OCP\AppFramework\Http;
@@ -34,17 +33,13 @@ use OCP\Comments\NotFoundException;
 use OCP\IRequest;
 
 class ReactionController extends AEnvironmentAwareController {
-	/** @var ChatManager */
-	private $chatManager;
 	/** @var ReactionManager */
 	private $reactionManager;
 
 	public function __construct(string $appName,
 								IRequest $request,
-								ChatManager $chatManager,
 								ReactionManager $reactionManager) {
 		parent::__construct($appName, $request);
-		$this->chatManager = $chatManager;
 		$this->reactionManager = $reactionManager;
 	}
 
@@ -62,7 +57,7 @@ class ReactionController extends AEnvironmentAwareController {
 		try {
 			$chat = $this->getRoom();
 			$participant = $this->getParticipant();
-			$parentMessage = $this->chatManager->getComment($chat, (string) $messageId);
+			$parentMessage = $this->reactionManager->getCommentToReact($chat, (string) $messageId);
 			$this->reactionManager->addReactionMessage($chat, $participant, $parentMessage, $reaction);
 		} catch (NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -88,7 +83,7 @@ class ReactionController extends AEnvironmentAwareController {
 		$participant = $this->getParticipant();
 		try {
 			// Verify that messageId is part of the room
-			$this->chatManager->getComment($this->getRoom(), (string) $messageId);
+			$this->reactionManager->getCommentToReact($this->getRoom(), (string) $messageId);
 		} catch (NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -121,7 +116,7 @@ class ReactionController extends AEnvironmentAwareController {
 	public function getReactions(int $messageId, ?string $reaction): DataResponse {
 		try {
 			// Verify that messageId is part of the room
-			$this->chatManager->getComment($this->getRoom(), (string) $messageId);
+			$this->reactionManager->getCommentToReact($this->getRoom(), (string) $messageId);
 		} catch (NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
