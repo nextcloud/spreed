@@ -82,7 +82,7 @@ class ReactionManager {
 		$comment->setVerb('reaction');
 		$this->commentsManager->save($comment);
 
-		$this->notifier->notifyReacted($chat, $parentMessage, $participant->getAttendee()->getActorType(), $participant->getAttendee()->getActorId());
+		$this->notifier->notifyReacted($chat, $parentMessage, $comment);
 		return $comment;
 	}
 
