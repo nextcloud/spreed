@@ -233,6 +233,7 @@ class Manager {
 			'reference_id' => $row['comment_reference_id'] ?? null,
 			'creation_timestamp' => $row['comment_creation_timestamp'],
 			'latest_child_timestamp' => $row['comment_latest_child_timestamp'],
+			'reactions' => $row['comment_reactions'],
 		]);
 	}
 
@@ -1185,5 +1186,6 @@ class Manager {
 		}
 		$query->selectAlias('c.creation_timestamp', 'comment_creation_timestamp');
 		$query->selectAlias('c.latest_child_timestamp', 'comment_latest_child_timestamp');
+		$query->selectAlias('c.reactions', 'comment_reactions');
 	}
 }
