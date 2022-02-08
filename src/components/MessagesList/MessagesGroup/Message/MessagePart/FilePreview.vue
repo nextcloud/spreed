@@ -446,6 +446,19 @@ export default {
 					},
 				],
 			})
+
+			// FIXME Remove this hack once it is possible to set the parent
+			// element of the viewer.
+			// By default the viewer is a sibling of the fullscreen element, so
+			// it is not visible when in fullscreen mode. It is not possible to
+			// specify the parent nor to know when the viewer was actually
+			// opened, so for the time being it is reparented if needed shortly
+			// after calling it.
+			setTimeout(() => {
+				if (this.$store.getters.isFullscreen()) {
+					document.getElementById('content-vue').appendChild(document.getElementById('viewer'))
+				}
+			}, 1000)
 		},
 	},
 }

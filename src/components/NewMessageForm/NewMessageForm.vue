@@ -409,6 +409,19 @@ export default {
 					shareFile(path, this.token)
 					this.$refs.advancedInput.focusInput()
 				})
+
+			// FIXME Remove this hack once it is possible to set the parent
+			// element of the file picker.
+			// By default the file picker is a sibling of the fullscreen
+			// element, so it is not visible when in fullscreen mode. It is not
+			// possible to specify the parent nor to know when the file picker
+			// was actually opened, so for the time being it is reparented if
+			// needed shortly after calling it.
+			setTimeout(() => {
+				if (this.$store.getters.isFullscreen()) {
+					document.getElementById('content-vue').appendChild(document.querySelector('.oc-dialog'))
+				}
+			}, 1000)
 		},
 
 		/**
