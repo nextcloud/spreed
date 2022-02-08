@@ -27,6 +27,7 @@ import {
 	lookForNewMessages,
 	postNewMessage,
 	postRichObjectToConversation,
+	addReactionToMessage,
 } from '../services/messagesService'
 
 import SHA256 from 'crypto-js/sha256'
@@ -930,6 +931,18 @@ const actions = {
 	async forwardRichObject(context, { token, richObject }) {
 		const response = await postRichObjectToConversation(token, richObject)
 		return response
+	},
+
+	async addReactionToMessage(context, { token, messageId, selectedEmoji }) {
+		try {
+			const response = await addReactionToMessage(token, messageId, selectedEmoji)
+
+			context.commit('addReactionToMessage', { token, messageId, selectedEmoji })
+
+			return response
+		} catch (error) {
+			console.debug(error)
+		}
 	},
 }
 

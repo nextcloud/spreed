@@ -100,13 +100,13 @@
 				</template>
 			</Button>
 			<Button type="tertiary"
-				@click="page = 0">
+				@click="addReactionToMessage('👍')">
 				<template #icon>
 					<span>👍</span>
 				</template>
 			</Button>
 			<Button type="tertiary"
-				@click="page = 0">
+				@click="addReactionToMessage('❤️')">
 				<template #icon>
 					<span>❤️</span>
 				</template>
@@ -422,6 +422,15 @@ export default {
 			// reload conversation to update additional attributes that have computed values
 			await this.$store.dispatch('fetchConversation', { token: this.token })
 		},
+
+		addReactionToMessage(selectedEmoji) {
+			this.$store.dispatch('addReactionToMessage', {
+				token: this.token,
+				messageId: this.messageObject.id,
+				selectedEmoji,
+			})
+		},
+
 	},
 }
 </script>
