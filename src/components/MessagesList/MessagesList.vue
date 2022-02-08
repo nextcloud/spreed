@@ -167,7 +167,7 @@ export default {
 			const groups = []
 			let lastMessage = null
 			for (const message of this.messagesList) {
-				if (message.systemMessage === 'message_deleted') {
+				if (message.systemMessage === 'message_deleted' || message.systemMessage === 'reaction') {
 					continue
 				}
 
