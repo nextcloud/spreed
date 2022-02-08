@@ -267,18 +267,26 @@ class Notifier {
 		}
 	}
 
-	public function notifyReacted(Room $chat, IComment $comment, $authorId): void {
-		if ($comment->getActorType() !== Attendee::ACTOR_USERS || $comment->getActorId() === $authorId) {
+	public function notifyReacted(Room $chat, IComment $comment, string $authorType, string $authorId): void {
+		if ($comment->getActorType() !== Attendee::ACTOR_USERS) {
 			return;
 		}
 
-		$defaultGroupNotification = $this->getDefaultGroupNotification();
+		if ($comment->getActorType() === $authorType && $comment->getActorId() === $authorId) {
+			return;
+		}
 
-		$notifyOneToOne = $defaultGroupNotification === Participant::NOTIFY_DEFAULT
-			&& $chat->getType() === Room::TYPE_ONE_TO_ONE;
-		$notifyAlways = $defaultGroupNotification === Participant::NOTIFY_ALWAYS;
+		$participant = $chat->getParticipant($comment->getActorId(), false);
+		$notificationLevel = $participant->getAttendee()->getNotificationLevel();
+		if ($notificationLevel === Participant::NOTIFY_DEFAULT) {
+			if ($chat->getType() === Room::TYPE_ONE_TO_ONE) {
+				$notificationLevel = Participant::NOTIFY_ALWAYS;
+			} else {
+				$notificationLevel = $this->getDefaultGroupNotification();
+			}
+		}
 
-		if ($notifyOneToOne || $notifyAlways) {
+		if ($notificationLevel === Participant::NOTIFY_ALWAYS) {
 			$notification = $this->createNotification($chat, $comment, 'reaction');
 			$notification->setUser($comment->getActorId());
 			$this->notificationManager->notify($notification);
