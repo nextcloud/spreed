@@ -112,14 +112,18 @@ the main body of the message as well as a quote.
 					</div>
 				</div>
 			</div>
-			<div v-if="messageObject.reactions !== ''" class="message-body__reactions">
+			<div v-if="showMessageReactionsBar" class="message-body__reactions">
 				<button v-for="reaction in Object.keys(messageObject.reactions)"
 					:key="reaction"
-					class="reaction-button"
-					type="secondary">
+					class="reaction-button">
 					<span class="reaction-button__emoji"> {{ reaction }} </span>
 					<span> {{ messageObject.reactions[reaction] }} </span>
 				</button>
+				<EmojiPicker @select.stop="">
+					<button class="reaction-button">
+						<EmoticonOutline :size="15" />
+					</button>
+				</EmojiPicker>
 			</div>
 		</div>
 		<MessageButtonsBar v-if="hasMessageButtonsBar"
@@ -160,6 +164,8 @@ import moment from '@nextcloud/moment'
 import Location from './MessagePart/Location'
 import Contact from './MessagePart/Contact.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
+import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
+import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 
 export default {
 	name: 'Message',
@@ -177,6 +183,8 @@ export default {
 		CheckAll,
 		Reload,
 		MessageButtonsBar,
+		EmojiPicker,
+		EmoticonOutline,
 	},
 
 	mixins: [
@@ -528,6 +536,10 @@ export default {
 				metadata: this.conversation,
 				apiVersion: 'v3',
 			}
+		},
+
+		showMessageReactionsBar() {
+			return this.messageObject.reactions?.length !== 0
 		},
 	},
 
