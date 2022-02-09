@@ -78,13 +78,13 @@ the main body of the message as well as a quote.
 						@focus="showReloadButton = true"
 						@mouseleave="showReloadButton = true"
 						@blur="showReloadButton = true">
-						<button v-if="sendingErrorCanRetry && showReloadButton"
+						<Button v-if="sendingErrorCanRetry && showReloadButton"
 							class="nc-button nc-button__main--dark"
 							@click="handleRetry">
 							<Reload decorative
 								title=""
 								:size="16" />
-						</button>
+						</Button>
 						<AlertCircle v-else
 							decorative
 							title=""
@@ -111,6 +111,15 @@ the main body of the message as well as a quote.
 							:size="16" />
 					</div>
 				</div>
+			</div>
+			<div v-if="messageObject.reactions !== ''" class="message-body__reactions">
+				<button v-for="reaction in Object.keys(messageObject.reactions)"
+					:key="reaction"
+					class="reaction-button"
+					type="secondary">
+					<span class="reaction-button__emoji"> {{ reaction }} </span>
+					<span> {{ messageObject.reactions[reaction] }} </span>
+				</button>
 			</div>
 		</div>
 		<MessageButtonsBar v-if="hasMessageButtonsBar"
@@ -661,6 +670,10 @@ export default {
 			padding: 0 8px 0 8px;
 		}
 	}
+	&__reactions {
+		display: flex;
+		margin: 4px 0;
+	}
 }
 
 .date {
@@ -723,6 +736,25 @@ export default {
 
 	&.retry-option {
 		cursor: pointer;
+	}
+}
+
+.reaction-button {
+	// Clear server rules
+	min-height: 0 !important;
+	padding: 0 8px !important;
+	font-weight: normal !important;
+
+	margin: 0 2px;
+	height: 26px;
+	background-color: var(--color-main-background);
+
+	&__emoji {
+		margin: 0 4px 0 0;
+	}
+
+	&:hover {
+		background-color: var(--color-primary-element-lighter);
 	}
 }
 </style>

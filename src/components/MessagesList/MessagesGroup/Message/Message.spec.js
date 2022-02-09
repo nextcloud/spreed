@@ -79,7 +79,9 @@ describe('Message.vue', () => {
 		// properly mounted.
 		testStoreConfig.modules.messagesStore.getters.message
 			= jest.fn().mockReturnValue(() => {
-				return {}
+				return {
+					reactions: '',
+				}
 			})
 	})
 
@@ -252,6 +254,7 @@ describe('Message.vue', () => {
 				messageParameters: {},
 				token: TOKEN,
 				parentId: -1,
+				reactions: '',
 			}
 			messageProps.parent = 120
 
