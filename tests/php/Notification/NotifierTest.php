@@ -185,7 +185,7 @@ class NotifierTest extends \Test\TestCase {
 			->willReturnSelf();
 		$n->expects($this->once())
 			->method('setRichSubject')
-			->with('{user} invited you to a private conversation',[
+			->with('{user} invited you to a private conversation', [
 				'user' => [
 					'type' => 'user',
 					'id' => $uid,
@@ -301,7 +301,7 @@ class NotifierTest extends \Test\TestCase {
 			->willReturnSelf();
 		$n->expects($this->once())
 			->method('setRichSubject')
-			->with('{user} invited you to a private conversation',[
+			->with('{user} invited you to a private conversation', [
 				'user' => [
 					'type' => 'user',
 					'id' => $uid,
@@ -416,7 +416,7 @@ class NotifierTest extends \Test\TestCase {
 		if ($type === Room::TYPE_GROUP) {
 			$n->expects($this->once())
 				->method('setRichSubject')
-				->with('{user} invited you to a group conversation: {call}',[
+				->with('{user} invited you to a group conversation: {call}', [
 					'user' => [
 						'type' => 'user',
 						'id' => $uid,

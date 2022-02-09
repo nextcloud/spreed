@@ -5,6 +5,13 @@
 			"OCA\\Talk\\": "lib/"
 		}
 	},
+	"config": {
+		"optimize-autoloader": true,
+		"classmap-authoritative": true,
+		"platform": {
+			"php": "7.4"
+		}
+	},
 	"scripts": {
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
 		"cs:fix": "php-cs-fixer fix",
@@ -15,8 +22,8 @@
 		"psalm:fix": "psalm --alter --issues=InvalidReturnType,InvalidNullableReturnType,MissingParamType,InvalidFalsableReturnType"
 	},
 	"require-dev": {
-		"nextcloud/coding-standard": "^0.4.0",
-		"vimeo/psalm": "^4.10",
-		"christophwurst/nextcloud": "dev-master@dev"
+		"nextcloud/coding-standard": "^1.0",
+		"vimeo/psalm": "^4.20",
+		"christophwurst/nextcloud": "dev-master"
 	}
 }

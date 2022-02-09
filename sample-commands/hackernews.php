@@ -55,7 +55,7 @@ foreach ($stories as $storyId) {
 	$result = json_decode($content, true);
 
 	$link = " - {$result['url']}\n";
-	$remainingLength = max(strlen($result['title']),$length - strlen($link));
+	$remainingLength = max(strlen($result['title']), $length - strlen($link));
 	if ($remainingLength < strlen('* ' . $result['title'])) {
 		$response .= substr('* ' . $result['title'], 0, $remainingLength) . '…' . $link;
 	} else {

@@ -132,7 +132,7 @@ class Executor {
 			if ($command->getApp() !== '') {
 				$response = $this->execHelpSingleCommand($room, $message, $command->getApp() . ' ' . $command->getCommand());
 			} else {
-				if ($command->getCommand() === 'help' || strpos($command->getScript(),'alias:') !== false ||
+				if ($command->getCommand() === 'help' || strpos($command->getScript(), 'alias:') !== false ||
 						!$this->isCommandAvailableForParticipant($command, $participant)) {
 					continue;
 				}
