@@ -884,7 +884,7 @@ class Manager {
 			$room->setListable(Room::LISTABLE_NONE);
 
 			$user = $this->userManager->get($userId);
-			$this->participantService->addUsers($room,[[
+			$this->participantService->addUsers($room, [[
 				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $userId,
 				'displayName' => $user ? $user->getDisplayName() : $userId,
@@ -898,7 +898,7 @@ class Manager {
 			$room->getParticipant($userId, false);
 		} catch (ParticipantNotFoundException $e) {
 			$user = $this->userManager->get($userId);
-			$this->participantService->addUsers($room,[[
+			$this->participantService->addUsers($room, [[
 				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $userId,
 				'displayName' => $user ? $user->getDisplayName() : $userId,
@@ -1168,7 +1168,7 @@ class Manager {
 	}
 
 	protected function loadLastMessageInfo(IQueryBuilder $query): void {
-		$query->leftJoin('r','comments', 'c', $query->expr()->eq('r.last_message', 'c.id'));
+		$query->leftJoin('r', 'comments', 'c', $query->expr()->eq('r.last_message', 'c.id'));
 		$query->selectAlias('c.id', 'comment_id');
 		$query->selectAlias('c.parent_id', 'comment_parent_id');
 		$query->selectAlias('c.topmost_parent_id', 'comment_topmost_parent_id');

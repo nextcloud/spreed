@@ -91,11 +91,11 @@ class Listener {
 		}
 
 		try {
-			return [$this->commandService->find('',  $app), trim($cmd . ' ' . $arguments)];
+			return [$this->commandService->find('', $app), trim($cmd . ' ' . $arguments)];
 		} catch (DoesNotExistException $e) {
 		}
 
-		return [$this->commandService->find('',  'help'), trim($message)];
+		return [$this->commandService->find('', 'help'), trim($message)];
 	}
 
 	protected function matchesCommand(string $message): array {

@@ -72,7 +72,7 @@ foreach ($pages as $key => $page) {
 	}
 
 	$link = " - {$page['canonicalurl']}\n";
-	$remainingLength = max(strlen($page['title']),$length - strlen($link));
+	$remainingLength = max(strlen($page['title']), $length - strlen($link));
 	if ($remainingLength < strlen("* {$page['title']} - {$page['description']}")) {
 		$response .= substr("* {$page['title']} - {$page['description']}", 0, $remainingLength) . '…' . $link;
 	} else {

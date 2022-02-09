@@ -323,7 +323,7 @@ class Listener {
 				$notifier->participantsModified($event->getRoom(), $sessionIds);
 			}
 		});
-		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND , static function (ChatParticipantEvent $event) {
+		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND, static function (ChatParticipantEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}

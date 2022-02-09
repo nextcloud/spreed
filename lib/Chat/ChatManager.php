@@ -562,7 +562,7 @@ class ChatManager {
 	 * @param int $limit
 	 * @return IComment[]
 	 */
-	public function searchForObjects(string $search,  array $objectIds, string $verb = '', int $offset = 0, int $limit = 50): array {
+	public function searchForObjects(string $search, array $objectIds, string $verb = '', int $offset = 0, int $limit = 50): array {
 		return $this->commentsManager->searchForObjects($search, 'chat', $objectIds, $verb, $offset, $limit);
 	}
 

@@ -1493,7 +1493,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param bool $promote Shall the attendee be promoted or demoted
 	 * @return DataResponse
 	 */
-	protected function changeParticipantType(int $attendeeId,  bool $promote): DataResponse {
+	protected function changeParticipantType(int $attendeeId, bool $promote): DataResponse {
 		try {
 			$targetParticipant = $this->room->getParticipantByAttendeeId($attendeeId);
 		} catch (ParticipantNotFoundException $e) {
