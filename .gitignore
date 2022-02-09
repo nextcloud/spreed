@@ -4,7 +4,7 @@
 
 # PHP Code Sniffer
 /vendor
-/.php_cs.cache
+/.php-cs-fixer.cache
 
 # Local docs
 /site
