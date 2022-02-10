@@ -431,8 +431,11 @@ class Notifier {
 			return false;
 		}
 
-		if (\in_array($userId, $alreadyNotifiedUsers, true)) {
-			return false;
+		$actorType = $participant->getAttendee()->getActorType();
+		foreach ($alreadyNotifiedUsers as $user) {
+			if ($user['id'] === $userId && $user['type'] === $actorType) {
+				return false;
+			}
 		}
 
 		if ($participant->getSession() instanceof Session) {
