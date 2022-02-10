@@ -616,7 +616,6 @@ OC.L10N.register(
     "OK: Running version: {version}" : "ОК: Работна версия: {version}",
     "Error: Cannot connect to server" : "Грешка: Невъзможно свързване със сървъра",
     "Error: Server did not respond with proper JSON" : "Грешка: Сървърът не отговори с правилен JSON",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Грешка: Сървърът трябва да бъде актуализиран, за да бъде съвместим с тази версия на Talk",
     "Error: Server responded with: {error}" : "Грешка: Сървърът отговори с: {error}",
     "Error: Unknown error occurred" : "Грешка: Възникна неизвестна грешка",
     "High-performance backend" : "Високопроизводителен сървър",
@@ -1185,6 +1184,7 @@ OC.L10N.register(
     "Video on and off" : "Включване и изключване на видео",
     "Choose in which folder attachments should be saved." : "Избор в коя папка да се записват прикачените файлове.",
     "Exit fullscreen (f)" : "Изход от цял ​​екран (f)",
-    "Fullscreen (f)" : "Цял ​​екран (f)"
+    "Fullscreen (f)" : "Цял ​​екран (f)",
+    "Error: Server needs to be updated to be compatible with this version of Talk" : "Грешка: Сървърът трябва да бъде актуализиран, за да бъде съвместим с тази версия на Talk"
 },
 "nplurals=2; plural=(n != 1);");

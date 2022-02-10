@@ -611,7 +611,6 @@
     "OK: Running version: {version}" : "U redu: trenutna inačica: {version}",
     "Error: Cannot connect to server" : "Pogreška: povezivanje s poslužiteljem nije uspjelo",
     "Error: Server did not respond with proper JSON" : "Pogreška: poslužitelj nije vratio točan JSON",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Pogreška: potrebno je ažurirati poslužitelj kako bi bio kompatibilan s ovom inačicom aplikacije Talk",
     "Error: Server responded with: {error}" : "Pogreška: poslužitelj je vratio: {error}",
     "Error: Unknown error occurred" : "Pogreška: došlo je do nepoznate pogreške",
     "High-performance backend" : "Visokoučinkovit pozadinski sustav",
@@ -1160,6 +1159,7 @@
     "Video on and off" : "Video uključen i isključen",
     "Choose in which folder attachments should be saved." : "Odaberite mapu za spremanje privitaka.",
     "Exit fullscreen (f)" : "Zatvori prikaz preko cijelog zaslona (f)",
-    "Fullscreen (f)" : "Cijeli zaslon (f)"
+    "Fullscreen (f)" : "Cijeli zaslon (f)",
+    "Error: Server needs to be updated to be compatible with this version of Talk" : "Pogreška: potrebno je ažurirati poslužitelj kako bi bio kompatibilan s ovom inačicom aplikacije Talk"
 },"pluralForm" :"nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;"
 }
