@@ -141,7 +141,7 @@ export default {
 		MediaDevicesPreview,
 		AppSettingsDialog,
 		AppSettingsSection,
-    CheckboxRadioSwitch,
+		CheckboxRadioSwitch,
 	},
 
 	data() {
