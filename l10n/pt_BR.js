@@ -616,7 +616,6 @@ OC.L10N.register(
     "OK: Running version: {version}" : "OK: Versão rodando: {version}",
     "Error: Cannot connect to server" : "Erro: Não foi possível conectar ao servidor",
     "Error: Server did not respond with proper JSON" : "Erro: Servidor não respondeu com o JSON apropriado",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Erro: o servidor precisa ser atualizado para ser compatível com esta versão do Bate-Papo",
     "Error: Server responded with: {error}" : "Erro: Servidor respondeu com: {error}",
     "Error: Unknown error occurred" : "Erro: Ocorreu um erro desconhecido",
     "High-performance backend" : "Infra-estrutura de alto desempenho",
@@ -1190,6 +1189,7 @@ OC.L10N.register(
     "Exit fullscreen (f)" : "Sair da tela inteira (f)",
     "Fullscreen (f)" : "Tela inteira (f)",
     "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Defina o nível de notificação para a conversa atual. Isso afetará apenas as notificações que você recebe.",
+    "Error: Server needs to be updated to be compatible with this version of Talk" : "Erro: o servidor precisa ser atualizado para ser compatível com esta versão do Bate-Papo",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: \".wasm\" e \".tflite\" os arquivos foram retornados corretamente pelo servidor web"
 },
 "nplurals=2; plural=(n > 1);");

@@ -610,7 +610,6 @@ OC.L10N.register(
     "OK: Running version: {version}" : "Brez napak: zagnana različica: {version}",
     "Error: Cannot connect to server" : "Napaka: ni se mogoče povezati s strežnikom",
     "Error: Server did not respond with proper JSON" : "Napaka: odziv strežnika ni ustrezno oblikovan v zapisu JSON",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Napaka: za pravilno delovanje je treba strežnik posodobiti na različico, skladno s trenutno nameščenim programom Talk.",
     "Error: Server responded with: {error}" : "Napaka: odziv strežnika: {error}",
     "Error: Unknown error occurred" : "Napak: prišlo je do neznane napake",
     "High-performance backend" : "Visoko zmogljivi ozadnji program",
@@ -1157,6 +1156,7 @@ OC.L10N.register(
     "Video on and off" : "Preklopi prikaz videa pogovora",
     "Choose in which folder attachments should be saved." : "Izbor mape, v katero naj bodo shranjene priloge.",
     "Exit fullscreen (f)" : "Končaj celozaslonski način (f)",
-    "Fullscreen (f)" : "Celozaslonski način (f)"
+    "Fullscreen (f)" : "Celozaslonski način (f)",
+    "Error: Server needs to be updated to be compatible with this version of Talk" : "Napaka: za pravilno delovanje je treba strežnik posodobiti na različico, skladno s trenutno nameščenim programom Talk."
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

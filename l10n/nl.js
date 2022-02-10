@@ -616,7 +616,6 @@ OC.L10N.register(
     "OK: Running version: {version}" : "OK: Actuele versie: {version}",
     "Error: Cannot connect to server" : "Fout: Kan niet verbinden met de server",
     "Error: Server did not respond with proper JSON" : "Fout: Server reageerde niet met een juiste JSON",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Fout: Server moet geüpdatet worden om compatibel te zijn met deze versie van Talk",
     "Error: Server responded with: {error}" : "Fout: Server gaf foutmelding: {error}",
     "Error: Unknown error occurred" : "Fout: Onbekende fout opgetreden!",
     "High-performance backend" : "High-performance backend",
@@ -1188,6 +1187,7 @@ OC.L10N.register(
     "Video on and off" : "Video aan en uit",
     "Choose in which folder attachments should be saved." : "Kies in welke map bijlagen moeten worden opgeslagen.",
     "Exit fullscreen (f)" : "Ga uit volledig scherm (f)",
-    "Fullscreen (f)" : "Volledig scherm (f)"
+    "Fullscreen (f)" : "Volledig scherm (f)",
+    "Error: Server needs to be updated to be compatible with this version of Talk" : "Fout: Server moet geüpdatet worden om compatibel te zijn met deze versie van Talk"
 },
 "nplurals=2; plural=(n != 1);");

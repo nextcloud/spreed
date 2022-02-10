@@ -616,7 +616,6 @@ OC.L10N.register(
     "OK: Running version: {version}" : "Tamam: Çalışan sürüm: {version}",
     "Error: Cannot connect to server" : "Hata: Sunucu ile bağlantı kurulamadı",
     "Error: Server did not respond with proper JSON" : "Hata: Sunucunun JSON yanıtı geçersiz",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Hata: Bu Talk sürümüyle uyumlu olması için sunucunun güncellenmesi gerekiyor",
     "Error: Server responded with: {error}" : "Hata: Sunucu yanıtı: {error}",
     "Error: Unknown error occurred" : "Hata: Bilinmeyen bir sorun çıktı",
     "High-performance backend" : "Yüksek başarımlı yönetim",
@@ -1190,6 +1189,7 @@ OC.L10N.register(
     "Exit fullscreen (f)" : "Tam ekrandan çık (f)",
     "Fullscreen (f)" : "Tam ekran (f)",
     "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Geçerli görüşmenin bildirim düzeyini ayarlayın. Bu seçenek yalnız sizin alacağınız bildirimleri etkiler.",
+    "Error: Server needs to be updated to be compatible with this version of Talk" : "Hata: Bu Talk sürümüyle uyumlu olması için sunucunun güncellenmesi gerekiyor",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "Tamamlandı: Web sunucu tarafından \".wasm\" ve \".tflite\" dosyaları düzgün şekilde geri döndürüldü"
 },
 "nplurals=2; plural=(n > 1);");
