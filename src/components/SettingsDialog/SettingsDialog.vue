@@ -43,15 +43,15 @@
 		<AppSettingsSection v-if="!isGuest"
 			:title="t('spreed', 'Privacy')"
 			class="app-settings-section">
-			<CheckboxRadioSwitch
-				id="read_status_privacy"
+			<CheckboxRadioSwitch id="read_status_privacy"
 				:checked="readStatusPrivacyIsPublic"
 				:disabled="privacyLoading"
 				type="checkbox"
 				name="read_status_privacy"
 				class="checkbox"
-				@update="toggleReadStatusPrivacy" />
-			<label for="read_status_privacy">{{ t('spreed', 'Share my read-status and show the read-status of others') }}</label>
+				@update:checked="toggleReadStatusPrivacy">
+        {{ t('spreed', 'Share my read-status and show the read-status of others') }}
+      </CheckboxRadioSwitch>
 		</AppSettingsSection>
 		<AppSettingsSection :title="t('spreed', 'Sounds')"
 			class="app-settings-section">
