@@ -611,7 +611,6 @@
     "OK: Running version: {version}" : "OK: {version} bertsioa exekutatzen",
     "Error: Cannot connect to server" : "Errorea: Ezin da zerbitzarira konektatu",
     "Error: Server did not respond with proper JSON" : "Errorea: zerbitzariak ez du JSON egokiarekin erantzun",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Errorea: Zerbitzaria eguneratu behar da Talk bertsio honekin bateragarria izateko",
     "Error: Server responded with: {error}" : "Errorea: zerbitzariak {error} errorearekin erantzun du",
     "Error: Unknown error occurred" : "Errorea: errore ezezaguna gertatu da",
     "High-performance backend" : "Errendimendu handiko motorra",
@@ -1178,6 +1177,7 @@
     "Video on and off" : "Bideoa gaitu eta desgaitu",
     "Choose in which folder attachments should be saved." : "Aukeratu zein karpetatan gorde behar diren atxikitakoak.",
     "Exit fullscreen (f)" : "Irten pantaila osotik (f)",
-    "Fullscreen (f)" : "Pantaila osoa (f)"
+    "Fullscreen (f)" : "Pantaila osoa (f)",
+    "Error: Server needs to be updated to be compatible with this version of Talk" : "Errorea: Zerbitzaria eguneratu behar da Talk bertsio honekin bateragarria izateko"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

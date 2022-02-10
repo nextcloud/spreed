@@ -543,7 +543,6 @@ OC.L10N.register(
     "OK: Running version: {version}" : "OK : execucion de la version : {version}",
     "Error: Cannot connect to server" : "Error : connexion impossibla al servidor",
     "Error: Server did not respond with proper JSON" : "Error: lo servidor a pas respondut amb un JSON corrèct",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Error  : lo servidor requerís una actualizacion per èsser compatible amb aquesta version de Talk",
     "Error: Server responded with: {error}" : "Error : lo servidor a respondut : {error}",
     "Error: Unknown error occurred" : "Error : una error desconeguda s'es produsida",
     "Saved" : "Enregistrat",
@@ -1050,6 +1049,7 @@ OC.L10N.register(
     "Choose in which folder attachments should be saved." : "Causir dins quin dossièr las pèças juntas devon èsser enregistradas.",
     "Exit fullscreen (f)" : "Sortir del ecran complèt (f)",
     "Fullscreen (f)" : "Ecran complèt (f)",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Definir lo nivèl de notificacion per la conversacion actuala. Afectarà sonque las notificacions que recebètz."
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Definir lo nivèl de notificacion per la conversacion actuala. Afectarà sonque las notificacions que recebètz.",
+    "Error: Server needs to be updated to be compatible with this version of Talk" : "Error  : lo servidor requerís una actualizacion per èsser compatible amb aquesta version de Talk"
 },
 "nplurals=2; plural=(n > 1);");
