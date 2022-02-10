@@ -1034,7 +1034,16 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 				// one forced reconnection even if there are several peers.
 				// FIXME: despite all of the above this is a dirty and ugly hack
 				// that should be fixed with proper renegotiation.
-				forceReconnect(signaling, flags)
+				if (signaling.hasFeature('mcu') && signaling.hasFeature('update-sdp') && peer === ownPeer) {
+					// The handler for "localTrackReplaced" already updated the
+					// flags, so it is not needed to do it again (in the case of
+					// forced reconnection it is, as otherwise it will reconnect
+					// with the current flags, which may not have been updated
+					// yet after the request).
+					peer.start()
+				} else {
+					forceReconnect(signaling, flags)
+				}
 			}
 		})
 	}
@@ -1126,6 +1135,11 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			// point it is not possible to know if that will happen (getting the
 			// new track is an async operation and it could fail), so the flags
 			// are updated only with the known values.
+			//
+			// Note that, when the HPB is used, it is not possible to
+			// renegotiate the existing connection to remove the sender, as the
+			// HPB will immediately close the connection as soon as the
+			// publishing permission of an active media is revoked.
 			forceReconnect(signaling, flags)
 
 			return
@@ -1393,7 +1407,12 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		let flags = signaling.getCurrentCallFlags()
 		flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
 
-		forceReconnect(signaling, flags)
+		if (signaling.hasFeature('mcu') && signaling.hasFeature('update-sdp') && ownPeer) {
+			signaling.updateCurrentCallFlags(flags)
+			ownPeer.start()
+		} else {
+			forceReconnect(signaling, flags)
+		}
 	})
 
 	webrtc.webrtc.on('iceFailed', function(/* peer */) {
