@@ -616,7 +616,6 @@ OC.L10N.register(
     "OK: Running version: {version}" : "OK: Запущена версия: {version}",
     "Error: Cannot connect to server" : "Ошибка: Не могу подключиться к серверу",
     "Error: Server did not respond with proper JSON" : "Ошибка: Сервер вернул неверный JSON",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Ошибка: Необходимо обновить сервер для совместимости с этой версией Talk",
     "Error: Server responded with: {error}" : "Ошибка: Ответ сервера: {error}",
     "Error: Unknown error occurred" : "Ошибка: Произошла неизвестная ошибка",
     "High-performance backend" : "Высокопроизводительный механизм обработки вызовов",
@@ -1190,6 +1189,7 @@ OC.L10N.register(
     "Exit fullscreen (f)" : "Выйти из полноэкранного режима (f)",
     "Fullscreen (f)" : "Во весь экран (f)",
     "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Установите уровень уведомлений для текущего разговора. Это повлияет только на те уведомления, которые вы получаете.",
+    "Error: Server needs to be updated to be compatible with this version of Talk" : "Ошибка: Необходимо обновить сервер для совместимости с этой версией Talk",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: файлы \".wasm\" и \".tflite\" корректно возвращены веб-сервером"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

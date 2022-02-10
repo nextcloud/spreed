@@ -614,7 +614,6 @@
     "OK: Running version: {version}" : "OK: Futtatott verzió: {version}",
     "Error: Cannot connect to server" : "Hiba: Nem lehet csatlakozni a kiszolgálóhoz",
     "Error: Server did not respond with proper JSON" : "Hiba: A kiszolgáló nem megfelelő JSON üzenettel válaszolt",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Hiba: A kiszolgálót frissíteni kell, hogy kompatibilis legyen a Beszélgetés ezen verziójával",
     "Error: Server responded with: {error}" : "Hiba: A kiszolgáló válasza: {error}",
     "Error: Unknown error occurred" : "Hiba: Ismeretlen hiba történt",
     "High-performance backend" : "Nagy teljesítményű háttérrendszer",
@@ -1188,6 +1187,7 @@
     "Exit fullscreen (f)" : "Kilépés a teljes képernyős módból (f)",
     "Fullscreen (f)" : "Teljes képernyő (f)",
     "Set the notification level for the current conversation. This will affect only the notifications you receive." : "A jelenlegi beszélgetés értesítési szintjének beállítása. Ez csak az Ön által kapott értesítéseket érinti.",
+    "Error: Server needs to be updated to be compatible with this version of Talk" : "Hiba: A kiszolgálót frissíteni kell, hogy kompatibilis legyen a Beszélgetés ezen verziójával",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "Rendben: a webkiszolgáló helyesen adta vissza a „.wasm” és a „.tflite” fájlokat."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

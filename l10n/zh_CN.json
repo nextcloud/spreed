@@ -614,7 +614,6 @@
     "OK: Running version: {version}" : "OK：运行版本：{version}",
     "Error: Cannot connect to server" : "错误：无法连接到服务器 ",
     "Error: Server did not respond with proper JSON" : "错误：服务器没有回复正确的JSON",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "错误：需要更新让该服务器与这个版本的 Talk 兼容",
     "Error: Server responded with: {error}" : "错误：服务器回复：{error}",
     "Error: Unknown error occurred" : "错误：发生未知错误",
     "High-performance backend" : "高性能后端  ",
@@ -1184,6 +1183,7 @@
     "Video on and off" : "视频开和关",
     "Choose in which folder attachments should be saved." : "选择应在哪个文件夹中保存附件。",
     "Exit fullscreen (f)" : "退出全屏（f）",
-    "Fullscreen (f)" : "全屏（f）"
+    "Fullscreen (f)" : "全屏（f）",
+    "Error: Server needs to be updated to be compatible with this version of Talk" : "错误：需要更新让该服务器与这个版本的 Talk 兼容"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

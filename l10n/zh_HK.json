@@ -614,7 +614,6 @@
     "OK: Running version: {version}" : "OK：運行版本：{version}",
     "Error: Cannot connect to server" : "錯誤：無法連接到伺服器",
     "Error: Server did not respond with proper JSON" : "錯誤：伺服器未使用正確的 JSON 回應",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "錯誤：要與此版本的 Talk 兼容，伺服器需要更新",
     "Error: Server responded with: {error}" : "錯誤：伺服器回應：{error}",
     "Error: Unknown error occurred" : "錯誤：發生未知錯誤",
     "High-performance backend" : "高性能後端",
@@ -1188,6 +1187,7 @@
     "Exit fullscreen (f)" : "離開全螢幕（f）",
     "Fullscreen (f)" : "全螢幕（f）",
     "Set the notification level for the current conversation. This will affect only the notifications you receive." : "設置當前對話的通知級別。這只會影響您收到的通知。",
+    "Error: Server needs to be updated to be compatible with this version of Talk" : "錯誤：要與此版本的 Talk 兼容，伺服器需要更新",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK：Web 伺服器正確返回了 “.wasm” 和 “.tflite” 檔案"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
