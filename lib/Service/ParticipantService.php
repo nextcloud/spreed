@@ -913,14 +913,19 @@ class ParticipantService {
 
 		$participants = $this->getParticipantsInCall($room);
 		$changedSessionIds = [];
+		$changedUserIds = [];
 
 		// kick out all participants out of the call
 		foreach ($participants as $participant) {
 			$changedSessionIds[] = $participant->getSession()->getSessionId();
+			if ($participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+				$changedUserIds[] = $participant->getAttendee()->getActorId();
+			}
 			$this->changeInCall($room, $participant, Participant::FLAG_DISCONNECTED, true);
 		}
 
 		$event->setSessionIds($changedSessionIds);
+		$event->setUserIds($changedUserIds);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, $event);
 	}
