@@ -478,7 +478,7 @@ class RoomShareProvider implements IShareProvider {
 
 		$update->executeStatement();
 
-		return $this->getShareById($share->getId(), $recipient);
+		return $this->getShareById((int) $share->getId(), $recipient);
 	}
 
 	/**
