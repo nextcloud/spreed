@@ -616,7 +616,6 @@ OC.L10N.register(
     "OK: Running version: {version}" : "OK: Versión en uso: {version}",
     "Error: Cannot connect to server" : "Error: No se puede conectar con el servidor",
     "Error: Server did not respond with proper JSON" : "Error: El servidor no ha respondido con JSON correcto",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Error: El servidor necesita ser actualizado para ser compatible con esta versión de Talk",
     "Error: Server responded with: {error}" : "Error: El servidor ha respondido con: {error}",
     "Error: Unknown error occurred" : "Error: Ha sucedido un error desconocido",
     "High-performance backend" : "Motor de alto rendimiento",
@@ -1184,6 +1183,7 @@ OC.L10N.register(
     "Video on and off" : "Vídeo encendido y apagado",
     "Choose in which folder attachments should be saved." : "Escoge la carpeta en la que se guardarán los adjuntos.",
     "Exit fullscreen (f)" : "Salir de pantalla completa (f)",
-    "Fullscreen (f)" : "Pantalla completa (f)"
+    "Fullscreen (f)" : "Pantalla completa (f)",
+    "Error: Server needs to be updated to be compatible with this version of Talk" : "Error: El servidor necesita ser actualizado para ser compatible con esta versión de Talk"
 },
 "nplurals=2; plural=(n != 1);");
