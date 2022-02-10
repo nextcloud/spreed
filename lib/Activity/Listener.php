@@ -25,6 +25,7 @@ namespace OCA\Talk\Activity;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\AddParticipantsEvent;
+use OCA\Talk\Events\ModifyEveryoneEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -89,6 +90,12 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_BEFORE_END_CALL_FOR_EVERYONE, $listener);
 
 		$listener = static function (RoomEvent $event): void {
+			if ($event instanceof ModifyEveryoneEvent) {
+				// The call activity was generated already if the call is ended
+				// for everyone
+				return;
+			}
+
 			/** @var self $listener */
 			$listener = \OC::$server->get(self::class);
 			$listener->generateCallActivity($event->getRoom());
