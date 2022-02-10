@@ -27,6 +27,8 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
+use OCA\Talk\Exceptions\ReactionNotSupportedException;
+use OCA\Talk\Exceptions\ReactionOutOfContextException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Comments\NotFoundException;
@@ -63,7 +65,7 @@ class ReactionController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (ReactionAlreadyExistsException $e) {
 			return new DataResponse([], Http::STATUS_OK);
-		} catch (\Exception $e) {
+		} catch (ReactionNotSupportedException | ReactionOutOfContextException | \Exception $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 		return new DataResponse([], Http::STATUS_CREATED);
@@ -84,7 +86,7 @@ class ReactionController extends AEnvironmentAwareController {
 		try {
 			// Verify that messageId is part of the room
 			$this->reactionManager->getCommentToReact($this->getRoom(), (string) $messageId);
-		} catch (NotFoundException $e) {
+		} catch (ReactionNotSupportedException | ReactionOutOfContextException | NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -117,7 +119,7 @@ class ReactionController extends AEnvironmentAwareController {
 		try {
 			// Verify that messageId is part of the room
 			$this->reactionManager->getCommentToReact($this->getRoom(), (string) $messageId);
-		} catch (NotFoundException $e) {
+		} catch (ReactionNotSupportedException | ReactionOutOfContextException | NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 

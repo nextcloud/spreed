@@ -26,6 +26,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Chat;
 
 use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
+use OCA\Talk\Exceptions\ReactionNotSupportedException;
+use OCA\Talk\Exceptions\ReactionOutOfContextException;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -128,16 +130,24 @@ class ReactionManager {
 		return $reactions;
 	}
 
+	/**
+	 * @param Room $chat
+	 * @param string $messageId
+	 * @return IComment
+	 * @throws NotFoundException
+	 * @throws ReactionNotSupportedException
+	 * @throws ReactionOutOfContextException
+	 */
 	public function getCommentToReact(Room $chat, string $messageId): IComment {
 		if (!$this->commentsManager->supportReactions()) {
-			throw new NotFoundException('Reactions unsupported');
+			throw new ReactionNotSupportedException();
 		}
 		$comment = $this->commentsManager->get($messageId);
 
 		if ($comment->getObjectType() !== 'chat'
 			|| $comment->getObjectId() !== (string) $chat->getId()
 			|| $comment->getVerb() !== 'comment') {
-			throw new NotFoundException('Message not found in the right context');
+			throw new ReactionOutOfContextException();
 		}
 
 		return $comment;

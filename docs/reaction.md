@@ -17,7 +17,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Status code:
         + `200 OK` Reaction already exists
         + `201 Created`
-        + `400 Bad Request` In case of any other error
+        + `400 Bad Request` In case of no reaction support, message out of reactions context or any other error
         + `404 Not Found` When the conversation or message to react could not be found for the participant
         + `409 Conflict` User already did this reaction to this message
 
@@ -35,7 +35,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Status code:
         + `201 Created`
-        + `400 Bad Request` In case of any other error
+        + `400 Bad Request` In case of no reaction support, message out of reactions context or any other error
         + `404 Not Found` When the conversation or message to react or reaction could not be found for the participant
 
 ## Retrieve reactions of a message by type
@@ -52,6 +52,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Status code:
         + `200 OK`
+        + `400 Bad Request` In case of no reaction support, message out of reactions context or any other error
         + `404 Not Found` When the conversation or message to react could not be found for the participant
 
     - Data:
