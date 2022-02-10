@@ -43,7 +43,8 @@
 			:preloaded-user-status="preloadedUserStatus"
 			:name="computedName"
 			:source="participant.source || participant.actorType"
-			:offline="isOffline" />
+			:offline="isOffline"
+			:menu-container="container" />
 		<div
 			class="participant-row__user-wrapper"
 			:class="{
@@ -95,7 +96,7 @@
 		</div>
 		<Actions
 			v-if="canModerate && !isSearched"
-			container="#content-vue"
+			:container="container"
 			:aria-label="participantSettingsAriaLabel"
 			class="participant-row__actions">
 			<ActionText
@@ -200,6 +201,10 @@ export default {
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+
 		participantSettingsAriaLabel() {
 			return t('spreed', 'Settings for participant "{user}"', { user: this.computedName })
 		},

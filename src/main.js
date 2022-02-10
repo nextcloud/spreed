@@ -44,6 +44,7 @@ import { translate, translatePlural } from '@nextcloud/l10n'
 import VueObserveVisibility from 'vue-observe-visibility'
 import VueShortKey from 'vue-shortkey'
 import vOutsideEvents from 'vue-outside-events'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 
 // Styles
 import '@nextcloud/dialogs/styles/toast.scss'
@@ -70,6 +71,9 @@ Vue.use(VueClipboard)
 Vue.use(VueObserveVisibility)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
+
+Tooltip.options.defaultContainer = '#content-vue'
+store.dispatch('setMainContainerSelector', '#content-vue')
 
 const instance = new Vue({
 	el: '#content',

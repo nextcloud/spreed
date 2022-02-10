@@ -25,6 +25,7 @@
 		class="messages__avatar__icon"
 		:user="authorId"
 		:show-user-status="false"
+		:menu-container="menuContainer"
 		menu-position="left"
 		:display-name="displayName" />
 	<div v-else-if="isDeletedUser"
@@ -83,6 +84,10 @@ export default {
 		firstLetterOfGuestName() {
 			const customName = this.displayName !== t('spreed', 'Guest') ? this.displayName : '?'
 			return customName.charAt(0)
+		},
+
+		menuContainer() {
+			return this.$store.getters.getMainContainerSelector()
 		},
 	},
 }

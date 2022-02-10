@@ -1,9 +1,27 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
 import { shallowMount } from '@vue/test-utils'
 import AvatarWrapper from './AvatarWrapper'
 
+Vue.use(Vuex)
+
 describe('AvatarWrapper.vue', () => {
+	let store
+
+	beforeEach(() => {
+		// cloneDeep() fails with "Cannot convert a Symbol value to a string"
+		// when called on the real store, so a fake store with just the needed
+		// getter is used instead.
+		store = new Vuex.Store({
+			getters: {
+				getMainContainerSelector: () => () => undefined,
+			},
+		})
+	})
+
 	it('Renders user avatars properly', () => {
 		const wrapper = shallowMount(AvatarWrapper, {
+			store,
 			propsData: {
 				id: 'test-id',
 				source: 'users',
@@ -17,6 +35,7 @@ describe('AvatarWrapper.vue', () => {
 	})
 	it('Renders group icons properly', () => {
 		const wrapper = shallowMount(AvatarWrapper, {
+			store,
 			propsData: {
 				id: '',
 				source: 'groups',
@@ -29,6 +48,7 @@ describe('AvatarWrapper.vue', () => {
 	})
 	it('Renders email icons properly', () => {
 		const wrapper = shallowMount(AvatarWrapper, {
+			store,
 			propsData: {
 				id: '',
 				source: 'emails',
@@ -43,6 +63,7 @@ describe('AvatarWrapper.vue', () => {
 	})
 	it('Renders guests icons properly', () => {
 		const wrapper = shallowMount(AvatarWrapper, {
+			store,
 			propsData: {
 				id: '',
 				name: '',

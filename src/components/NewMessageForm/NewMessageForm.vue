@@ -41,7 +41,8 @@
 					v-if="canUploadFiles || canShareFiles"
 					class="new-message-form__button">
 					<Actions
-						container="#content-vue"
+						:container="container"
+						:boundaries-element="containerElement"
 						default-icon="icon-clip-add-file"
 						class="new-message-form__button"
 						:aria-label="t('spreed', 'Share files to the conversation')"
@@ -65,7 +66,9 @@
 				<div
 					v-if="!isReadOnly"
 					class="new-message-form__button">
-					<EmojiPicker @select="addEmoji">
+					<EmojiPicker
+						:container="container"
+						@select="addEmoji">
 						<button
 							type="button"
 							class="nc-button nc-button__main"
@@ -210,6 +213,14 @@ export default {
 
 		attachmentFolderFreeSpace() {
 			return this.$store.getters.getAttachmentFolderFreeSpace()
+		},
+
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+
+		containerElement() {
+			return document.querySelector(this.container)
 		},
 	},
 
@@ -364,6 +375,19 @@ export default {
 					shareFile(path, this.token)
 					this.$refs.advancedInput.focusInput()
 				})
+
+			// FIXME Remove this hack once it is possible to set the parent
+			// element of the file picker.
+			// By default the file picker is a sibling of the fullscreen
+			// element, so it is not visible when in fullscreen mode. It is not
+			// possible to specify the parent nor to know when the file picker
+			// was actually opened, so for the time being it is reparented if
+			// needed shortly after calling it.
+			setTimeout(() => {
+				if (this.$store.getters.isFullscreen()) {
+					document.getElementById('content-vue').appendChild(document.querySelector('.oc-dialog'))
+				}
+			}, 1000)
 		},
 
 		/**
