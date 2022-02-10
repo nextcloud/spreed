@@ -138,6 +138,12 @@ const addReactionToMessage = async function(token, messageId, selectedEmoji) {
 	})
 }
 
+const removeReactionFromMessage = async function(token, messageId, selectedEmoji) {
+	return axios.deletes(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), {
+		reaction: selectedEmoji,
+	})
+}
+
 export {
 	fetchMessages,
 	lookForNewMessages,
@@ -146,4 +152,5 @@ export {
 	postRichObjectToConversation,
 	updateLastReadMessage,
 	addReactionToMessage,
+	removeReactionFromMessage,
 }

@@ -28,6 +28,7 @@ import {
 	postNewMessage,
 	postRichObjectToConversation,
 	addReactionToMessage,
+	removeReactionFromMessage,
 } from '../services/messagesService'
 
 import SHA256 from 'crypto-js/sha256'
@@ -938,6 +939,18 @@ const actions = {
 			const response = await addReactionToMessage(token, messageId, selectedEmoji)
 
 			context.commit('addReactionToMessage', { token, messageId, selectedEmoji })
+
+			return response
+		} catch (error) {
+			console.debug(error)
+		}
+	},
+
+	async removeReactionToMessage(context, { token, messageId, selectedEmoji }) {
+		try {
+			const response = await removeReactionFromMessage(token, messageId, selectedEmoji)
+
+			context.commit('removeReactionFromMessage', { token, messageId, selectedEmoji })
 
 			return response
 		} catch (error) {
