@@ -108,7 +108,7 @@ class Notifier {
 			if ($this->shouldMentionedUserBeNotified($mentionedUser['id'], $comment)) {
 				$notification->setUser($mentionedUser['id']);
 				$this->notificationManager->notify($notification);
-				$alreadyNotifiedUsers[] = $mentionedUser['id'];
+				$alreadyNotifiedUsers[] = $mentionedUser;
 			}
 		}
 
@@ -144,8 +144,13 @@ class Notifier {
 	 * @psalm-return array<int, array{id: string, type: string}>
 	 */
 	private function removeAlreadyNotifiedUsers(array $usersToNotify, array $alreadyNotifiedUsers): array {
-		return array_filter($usersToNotify, static function (array $user) use ($alreadyNotifiedUsers): bool {
-			return !in_array($user['id'], $alreadyNotifiedUsers, true);
+		return array_filter($usersToNotify, static function (array $userToNotify) use ($alreadyNotifiedUsers): bool {
+			foreach ($alreadyNotifiedUsers as $alreadyNotified) {
+				if ($alreadyNotified === $userToNotify) {
+					return false;
+				}
+			}
+			return true;
 		});
 	}
 
