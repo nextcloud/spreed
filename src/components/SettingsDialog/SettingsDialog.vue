@@ -50,8 +50,8 @@
 				name="read_status_privacy"
 				class="checkbox"
 				@update:checked="toggleReadStatusPrivacy">
-        {{ t('spreed', 'Share my read-status and show the read-status of others') }}
-      </CheckboxRadioSwitch>
+				{{ t('spreed', 'Share my read-status and show the read-status of others') }}
+			</CheckboxRadioSwitch>
 		</AppSettingsSection>
 		<AppSettingsSection :title="t('spreed', 'Sounds')"
 			class="app-settings-section">
