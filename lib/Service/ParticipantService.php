@@ -998,6 +998,12 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS, $event);
 	}
 
+	/**
+	 * @param Room $room
+	 * @param string[] $userIds
+	 * @param int $messageId
+	 * @param string[] $usersDirectlyMentioned
+	 */
 	public function markUsersAsMentioned(Room $room, array $userIds, int $messageId, array $usersDirectlyMentioned): void {
 		$update = $this->connection->getQueryBuilder();
 		$update->update('talk_attendees')
