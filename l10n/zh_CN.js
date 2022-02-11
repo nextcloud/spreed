@@ -1185,7 +1185,6 @@ OC.L10N.register(
     "Video on and off" : "视频开和关",
     "Choose in which folder attachments should be saved." : "选择应在哪个文件夹中保存附件。",
     "Exit fullscreen (f)" : "退出全屏（f）",
-    "Fullscreen (f)" : "全屏（f）",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "错误：需要更新让该服务器与这个版本的 Talk 兼容"
+    "Fullscreen (f)" : "全屏（f）"
 },
 "nplurals=1; plural=0;");

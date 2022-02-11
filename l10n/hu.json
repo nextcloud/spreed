@@ -1187,7 +1187,6 @@
     "Exit fullscreen (f)" : "Kilépés a teljes képernyős módból (f)",
     "Fullscreen (f)" : "Teljes képernyő (f)",
     "Set the notification level for the current conversation. This will affect only the notifications you receive." : "A jelenlegi beszélgetés értesítési szintjének beállítása. Ez csak az Ön által kapott értesítéseket érinti.",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Hiba: A kiszolgálót frissíteni kell, hogy kompatibilis legyen a Beszélgetés ezen verziójával",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "Rendben: a webkiszolgáló helyesen adta vissza a „.wasm” és a „.tflite” fájlokat."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
