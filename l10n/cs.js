@@ -616,6 +616,8 @@ OC.L10N.register(
     "OK: Running version: {version}" : "OK: Spuštěná verze: {version}",
     "Error: Cannot connect to server" : "Chyba: K serveru se nedaří připojit",
     "Error: Server did not respond with proper JSON" : "Chyba: Odpověď ze serveru nemá platný JSON formát",
+    "Could not get version" : "Nedaří se získat verzi",
+    "Error: Running version: {version}; Server needs to be updated to be compatible with this version of Talk" : "Chyba: Provozovaná verze: {version}; Server je třeba aktualizovat, aby byl kompatibilní s touto verzí Talk",
     "Error: Server responded with: {error}" : "Chyba: Odpověď ze serveru: {error}",
     "Error: Unknown error occurred" : "Chyba: Došlo k neznámé chybě",
     "High-performance backend" : "Podpůrná vrstva pro vysoký výkon",
@@ -1189,7 +1191,6 @@ OC.L10N.register(
     "Exit fullscreen (f)" : "Opustit režim celé obrazovky (f)",
     "Fullscreen (f)" : "Celá obrazovka (f)",
     "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Nastavit úroveň upozornění pro tuto konverzaci. Toto ovlivňuje pouze upozornění, která dostáváte vy.",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Chyba: Server je třeba aktualizovat, aby byl kompatibilní s touto verzí Talk",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: server správně vrátil soubory „.wasm“ a „.tflite“"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

@@ -1049,7 +1049,6 @@ OC.L10N.register(
     "Choose in which folder attachments should be saved." : "Causir dins quin dossièr las pèças juntas devon èsser enregistradas.",
     "Exit fullscreen (f)" : "Sortir del ecran complèt (f)",
     "Fullscreen (f)" : "Ecran complèt (f)",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Definir lo nivèl de notificacion per la conversacion actuala. Afectarà sonque las notificacions que recebètz.",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Error  : lo servidor requerís una actualizacion per èsser compatible amb aquesta version de Talk"
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Definir lo nivèl de notificacion per la conversacion actuala. Afectarà sonque las notificacions que recebètz."
 },
 "nplurals=2; plural=(n > 1);");
