@@ -616,6 +616,8 @@ OC.L10N.register(
     "OK: Running version: {version}" : "OK: Laufende Version: {version}",
     "Error: Cannot connect to server" : "Fehler: Kann nicht zum Server verbinden",
     "Error: Server did not respond with proper JSON" : "Fehler: Der Server hat nicht mit korrektem JSON geantwortet",
+    "Could not get version" : "Version kann nicht abgerufen werden",
+    "Error: Running version: {version}; Server needs to be updated to be compatible with this version of Talk" : "Fehler: Aktuelle Version: {version}; Server muss aktualisiert werden, um mit dieser Version von Talk kompatibel zu sein",
     "Error: Server responded with: {error}" : "Fehler: Der Server antwortete mit: {error}",
     "Error: Unknown error occurred" : "Fehler: Ein unbekannter Fehler ist aufgetreten",
     "High-performance backend" : "Hochleistungs-Backend",
@@ -1189,7 +1191,6 @@ OC.L10N.register(
     "Exit fullscreen (f)" : "Vollbild verlassen (f)",
     "Fullscreen (f)" : "Vollbild (f)",
     "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Legen Sie die Benachrichtigungsstufe für die aktuelle Unterhaltung fest. Dies betrifft nur die Benachrichtigungen, die Sie erhalten.",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Fehler: Server muss aktualisiert werden, um mit dieser Version von Talk kompatibel zu sein",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: \".wasm\"- und \".tflite\"-Dateien wurden ordnungsgemäß vom Webserver zurückgegeben."
 },
 "nplurals=2; plural=(n != 1);");

@@ -1187,7 +1187,6 @@
     "Exit fullscreen (f)" : "Sair da tela inteira (f)",
     "Fullscreen (f)" : "Tela inteira (f)",
     "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Defina o nível de notificação para a conversa atual. Isso afetará apenas as notificações que você recebe.",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Erro: o servidor precisa ser atualizado para ser compatível com esta versão do Bate-Papo",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: \".wasm\" e \".tflite\" os arquivos foram retornados corretamente pelo servidor web"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

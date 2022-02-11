@@ -1184,7 +1184,6 @@ OC.L10N.register(
     "Video on and off" : "Включване и изключване на видео",
     "Choose in which folder attachments should be saved." : "Избор в коя папка да се записват прикачените файлове.",
     "Exit fullscreen (f)" : "Изход от цял ​​екран (f)",
-    "Fullscreen (f)" : "Цял ​​екран (f)",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Грешка: Сървърът трябва да бъде актуализиран, за да бъде съвместим с тази версия на Talk"
+    "Fullscreen (f)" : "Цял ​​екран (f)"
 },
 "nplurals=2; plural=(n != 1);");

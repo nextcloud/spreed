@@ -1183,7 +1183,6 @@ OC.L10N.register(
     "Video on and off" : "Vídeo encendido y apagado",
     "Choose in which folder attachments should be saved." : "Escoge la carpeta en la que se guardarán los adjuntos.",
     "Exit fullscreen (f)" : "Salir de pantalla completa (f)",
-    "Fullscreen (f)" : "Pantalla completa (f)",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Error: El servidor necesita ser actualizado para ser compatible con esta versión de Talk"
+    "Fullscreen (f)" : "Pantalla completa (f)"
 },
 "nplurals=2; plural=(n != 1);");

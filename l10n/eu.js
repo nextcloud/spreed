@@ -1179,7 +1179,6 @@ OC.L10N.register(
     "Video on and off" : "Bideoa gaitu eta desgaitu",
     "Choose in which folder attachments should be saved." : "Aukeratu zein karpetatan gorde behar diren atxikitakoak.",
     "Exit fullscreen (f)" : "Irten pantaila osotik (f)",
-    "Fullscreen (f)" : "Pantaila osoa (f)",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Errorea: Zerbitzaria eguneratu behar da Talk bertsio honekin bateragarria izateko"
+    "Fullscreen (f)" : "Pantaila osoa (f)"
 },
 "nplurals=2; plural=(n != 1);");
