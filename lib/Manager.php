@@ -389,7 +389,7 @@ class Manager {
 		return $rooms;
 	}
 
-	public function removeUserFromAllRooms(IUser $user) {
+	public function removeUserFromAllRooms(IUser $user): void {
 		$rooms = $this->getRoomsForUser($user->getUID());
 		foreach ($rooms as $room) {
 			if ($this->participantService->getNumberOfUsers($room) === 1) {

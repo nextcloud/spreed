@@ -31,6 +31,7 @@ use OCA\Talk\Service\HostedSignalingServerService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCP\IConfig;
+use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
 use OCP\Notification\IManager;
@@ -159,11 +160,14 @@ class CheckHostedSignalingServer extends TimedJob {
 				->setIcon($this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'app-dark.svg')))
 			;
 
-			$users = $this->groupManager->get('admin')->getUsers();
-			foreach ($users as $user) {
-				// Now add the new notification
-				$notification->setUser($user->getUID());
-				$this->notificationManager->notify($notification);
+			$adminGroup = $this->groupManager->get('admin');
+			if ($adminGroup instanceof IGroup) {
+				$users = $adminGroup->getUsers();
+				foreach ($users as $user) {
+					// Now add the new notification
+					$notification->setUser($user->getUID());
+					$this->notificationManager->notify($notification);
+				}
 			}
 		}
 	}
