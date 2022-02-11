@@ -1189,7 +1189,6 @@ OC.L10N.register(
     "Exit fullscreen (f)" : "Opustiť celú obrazovku",
     "Fullscreen (f)" : "Celá obrazovka  (f)",
     "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Nastavte úroveň upozornení pre aktuálnu konverzáciu. Ovplyvní to iba oznámenia, ktoré dostanete.",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Chyba: Server musí byť aktualizovaný pre kompatibilitu s touto verziou Talku",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: Webový server správne vrátil súbory „.wasm“ a „.tflite“."
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

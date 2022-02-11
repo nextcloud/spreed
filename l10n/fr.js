@@ -1185,7 +1185,6 @@ OC.L10N.register(
     "Video on and off" : "Activer ou désactiver la vidéo",
     "Choose in which folder attachments should be saved." : "Choisissez dans quel dossier les fichiers attachés doivent être sauvegardés.",
     "Exit fullscreen (f)" : "Quitter le plein écran (f)",
-    "Fullscreen (f)" : "Plein écran (f)",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Erreur : le serveur doit être mis à jour pour être compatible avec cette version de Talk"
+    "Fullscreen (f)" : "Plein écran (f)"
 },
 "nplurals=2; plural=(n > 1);");

@@ -1187,7 +1187,6 @@ OC.L10N.register(
     "Video on and off" : "Video aan en uit",
     "Choose in which folder attachments should be saved." : "Kies in welke map bijlagen moeten worden opgeslagen.",
     "Exit fullscreen (f)" : "Ga uit volledig scherm (f)",
-    "Fullscreen (f)" : "Volledig scherm (f)",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Fout: Server moet geüpdatet worden om compatibel te zijn met deze versie van Talk"
+    "Fullscreen (f)" : "Volledig scherm (f)"
 },
 "nplurals=2; plural=(n != 1);");
