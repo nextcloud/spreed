@@ -114,17 +114,15 @@ class ReactionManager {
 			$comments = $this->commentsManager->retrieveAllReactions($messageId);
 		}
 
-		$reactions = [];
 		foreach ($comments as $comment) {
 			$message = $this->messageParser->createMessage($chat, $participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
 
-			$reactions[] = [
+			$reactions[$comment->getMessage()][] = [
 				'actorType' => $comment->getActorType(),
 				'actorId' => $comment->getActorId(),
 				'actorDisplayName' => $message->getActorDisplayName(),
 				'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
-				'reaction' => $comment->getMessage(),
 			];
 		}
 		return $reactions;

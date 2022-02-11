@@ -447,8 +447,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				return $attendee;
 			}, $result);
 
-			usort($expected, [$this, 'sortAttendees']);
-			usort($result, [$this, 'sortAttendees']);
+			usort($expected, [self::class, 'sortAttendees']);
+			usort($result, [self::class, 'sortAttendees']);
 
 			Assert::assertEquals($expected, $result);
 		} else {
@@ -477,7 +477,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	protected function sortAttendees(array $a1, array $a2): int {
+	protected static function sortAttendees(array $a1, array $a2): int {
 		if (array_key_exists('participantType', $a1) && array_key_exists('participantType', $a2) && $a1['participantType'] !== $a2['participantType']) {
 			return $a1['participantType'] <=> $a2['participantType'];
 		}
@@ -2111,19 +2111,27 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	private function assertReactionList(TableNode $formData): void {
-		$expected = $formData->getHash();
+		$expected = [];
+		foreach ($formData->getHash() as $row) {
+			$reaction = $row['reaction'];
+			unset($row['reaction']);
+			$expected[$reaction][] = $row;
+		}
 
 		$result = $this->getDataFromResponse($this->response);
-		$result = array_map(function ($reaction) {
-			unset($reaction['timestamp']);
-			return $reaction;
-		}, $result);
+		$result = array_map(static function ($reaction, $list) use ($expected): array {
+			$list = array_map(function ($reaction) {
+				unset($reaction['timestamp']);
+				return $reaction;
+			}, $list);
+			Assert::assertCount(count($list), $expected[$reaction], 'Reaction count by type does not match');
 
-		Assert::assertCount(count($formData->getHash()), $result, 'Reaction count does not match');
-
-		usort($expected, [$this, 'sortAttendees']);
-		usort($result, [$this, 'sortAttendees']);
-		Assert::assertEquals($expected, $result);
+			usort($expected[$reaction], [self::class, 'sortAttendees']);
+			usort($list, [self::class, 'sortAttendees']);
+			Assert::assertEquals($expected[$reaction], $list, 'Reaction list by type does not match');
+			return $list;
+		}, array_keys($result), array_values($result));
+		Assert::assertCount(count($expected), $result, 'Reaction count does not match');
 	}
 
 	/*
