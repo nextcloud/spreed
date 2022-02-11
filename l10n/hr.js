@@ -1161,7 +1161,6 @@ OC.L10N.register(
     "Video on and off" : "Video uključen i isključen",
     "Choose in which folder attachments should be saved." : "Odaberite mapu za spremanje privitaka.",
     "Exit fullscreen (f)" : "Zatvori prikaz preko cijelog zaslona (f)",
-    "Fullscreen (f)" : "Cijeli zaslon (f)",
-    "Error: Server needs to be updated to be compatible with this version of Talk" : "Pogreška: potrebno je ažurirati poslužitelj kako bi bio kompatibilan s ovom inačicom aplikacije Talk"
+    "Fullscreen (f)" : "Cijeli zaslon (f)"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");
