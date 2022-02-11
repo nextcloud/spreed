@@ -43,14 +43,15 @@
 		<AppSettingsSection v-if="!isGuest"
 			:title="t('spreed', 'Privacy')"
 			class="app-settings-section">
-			<input id="read_status_privacy"
+			<CheckboxRadioSwitch id="read_status_privacy"
 				:checked="readStatusPrivacyIsPublic"
 				:disabled="privacyLoading"
 				type="checkbox"
 				name="read_status_privacy"
 				class="checkbox"
-				@change="toggleReadStatusPrivacy">
-			<label for="read_status_privacy">{{ t('spreed', 'Share my read-status and show the read-status of others') }}</label>
+				@update:checked="toggleReadStatusPrivacy">
+				{{ t('spreed', 'Share my read-status and show the read-status of others') }}
+			</CheckboxRadioSwitch>
 		</AppSettingsSection>
 		<AppSettingsSection :title="t('spreed', 'Sounds')"
 			class="app-settings-section">
@@ -131,6 +132,7 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import MediaDevicesPreview from '../MediaDevicesPreview'
 import AppSettingsDialog from '@nextcloud/vue/dist/Components/AppSettingsDialog'
 import AppSettingsSection from '@nextcloud/vue/dist/Components/AppSettingsSection'
+import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 
 export default {
 	name: 'SettingsDialog',
@@ -139,6 +141,7 @@ export default {
 		MediaDevicesPreview,
 		AppSettingsDialog,
 		AppSettingsSection,
+		CheckboxRadioSwitch,
 	},
 
 	data() {
