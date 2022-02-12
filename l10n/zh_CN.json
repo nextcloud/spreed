@@ -614,6 +614,8 @@
     "OK: Running version: {version}" : "OK：运行版本：{version}",
     "Error: Cannot connect to server" : "错误：无法连接到服务器 ",
     "Error: Server did not respond with proper JSON" : "错误：服务器没有回复正确的JSON",
+    "Could not get version" : "无法获取版本",
+    "Error: Running version: {version}; Server needs to be updated to be compatible with this version of Talk" : "错误：当前的运行版本为：{version}，服务器需要更新以与此版本的 Talk 兼容",
     "Error: Server responded with: {error}" : "错误：服务器回复：{error}",
     "Error: Unknown error occurred" : "错误：发生未知错误",
     "High-performance backend" : "高性能后端  ",
@@ -717,6 +719,7 @@
     "An error occurred while starting screensharing." : "开始屏幕共享时发生错误。",
     "Back" : "返回",
     "Access to camera was denied" : "对摄像头的访问被拒绝",
+    "Error while accessing camera: It is likely in use by another program" : "访问摄像头时出现错误：它可能正在被另一个程序使用",
     "Error while accessing camera" : "访问摄像头时出错",
     "You have been muted by a moderator" : "您已被主持人静音",
     "You" : "您",
@@ -1040,6 +1043,7 @@
     "Fullscreen the chat or call" : "将聊天或通话进行全屏",
     "Search" : "搜索",
     "Shortcuts while in a call" : "通话时的快捷方式",
+    "Camera on and off" : "摄像头开关",
     "Microphone on and off" : "麦克风开和关",
     "Space bar" : "空格键",
     "Push to talk or push to mute" : "按键通话或静音",
@@ -1183,6 +1187,8 @@
     "Video on and off" : "视频开和关",
     "Choose in which folder attachments should be saved." : "选择应在哪个文件夹中保存附件。",
     "Exit fullscreen (f)" : "退出全屏（f）",
-    "Fullscreen (f)" : "全屏（f）"
+    "Fullscreen (f)" : "全屏（f）",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "设置当前会话的通知级别。这只影响您收到的通知。",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "好的：网页服务器正确返回了 \".wasm\" 和 \".tflite\" 文件"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
