@@ -30,7 +30,6 @@ nav:
       - 'Settings': 'settings.md'
       - 'Integration by other apps': 'integration.md'
       - 'Signaling API': 'internal-signaling.md'
-      - 'External signaling API': 'standalone-signaling-api-v1.md'
   - Commands: 'commands.md'
   - 'PHP events': 'events.md'
   - 'Configuring coTURN': 'TURN.md'

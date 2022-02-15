@@ -471,7 +471,7 @@ class SignalingController extends OCSController {
 	 * servers.
 	 *
 	 * See sections "Backend validation" in
-	 * https://nextcloud-talk.readthedocs.io/en/latest/standalone-signaling-api-v1/#backend-validation
+	 * https://nextcloud-spreed-signaling.readthedocs.io/en/latest/standalone-signaling-api-v1/#backend-requests
 	 *
 	 * @PublicPage
 	 *
