@@ -178,6 +178,47 @@ Feature: System messages
       | room | users     | participant1 | participant1-displayname | listable_all         |
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
+  Scenario: Ending call for all
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "room" with 200 (v4)
+    And user "participant1" joins room "room" with 200 (v4)
+    And user "participant2" joins room "room" with 200 (v4)
+    And user "participant3" joins room "room" with 200 (v4)
+    And user "participant1" joins call "room" with 200 (v4)
+    And user "participant2" joins call "room" with 200 (v4)
+    And user "participant3" joins call "room" with 200 (v4)
+    When user "participant1" ends call "room" with 200 (v4)
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room | users     | participant1 | participant1-displayname | call_ended_everyone  |
+      | room | users     | participant3 | participant3-displayname | call_joined          |
+      | room | users     | participant2 | participant2-displayname | call_joined          |
+      | room | users     | participant1 | participant1-displayname | call_started         |
+      | room | users     | participant1 | participant1-displayname | user_added           |
+      | room | users     | participant1 | participant1-displayname | user_added           |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant2" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room | users     | participant1 | participant1-displayname | call_ended_everyone  |
+      | room | users     | participant3 | participant3-displayname | call_joined          |
+      | room | users     | participant2 | participant2-displayname | call_joined          |
+      | room | users     | participant1 | participant1-displayname | call_started         |
+      | room | users     | participant1 | participant1-displayname | user_added           |
+      | room | users     | participant1 | participant1-displayname | user_added           |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant3" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room | users     | participant1 | participant1-displayname | call_ended_everyone  |
+      | room | users     | participant3 | participant3-displayname | call_joined          |
+      | room | users     | participant2 | participant2-displayname | call_joined          |
+      | room | users     | participant1 | participant1-displayname | call_started         |
+      | room | users     | participant1 | participant1-displayname | user_added           |
+      | room | users     | participant1 | participant1-displayname | user_added           |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+
   Scenario: Participant escalation
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
