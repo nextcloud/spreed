@@ -164,6 +164,18 @@ class NotifierTest extends TestCase {
 		$room = $this->getRoom();
 		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
 		$notifier = $this->getNotifier([]);
+		$alreadyNotifiedUsers = array_map(function ($user): array {
+			return [
+				'id' => $user,
+				'type' => Attendee::ACTOR_USERS,
+			];
+		}, $alreadyNotifiedUsers);
+		$expectedReturn = array_map(function ($user): array {
+			return [
+				'id' => $user,
+				'type' => Attendee::ACTOR_USERS,
+			];
+		}, $expectedReturn);
 		$actual = $notifier->notifyMentionedUsers($room, $comment, $alreadyNotifiedUsers);
 
 		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
@@ -209,7 +221,8 @@ class NotifierTest extends TestCase {
 			[Attendee::ACTOR_GROUPS, 'test1', null, Attendee::ACTOR_USERS, 'test1', [], false],
 			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test1', [], false],
 			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test2', [], true],
-			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test2', ['test1'], false],
+			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test2', [['id' => 'test1', 'type' => Attendee::ACTOR_USERS]], false],
+			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test2', [['id' => 'test1', 'type' => Attendee::ACTOR_FEDERATED_USERS]], true],
 			[Attendee::ACTOR_USERS, 'test1', Session::SESSION_TIMEOUT - 5, Attendee::ACTOR_USERS, 'test2', [], false],
 			[Attendee::ACTOR_USERS, 'test1', Session::SESSION_TIMEOUT + 5, Attendee::ACTOR_USERS, 'test2', [], true],
 		];
