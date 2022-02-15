@@ -25,7 +25,9 @@ declare(strict_types=1);
 
 return [
 	'ocs' => [
+		/** @see \OCA\Talk\Controller\TempAvatarController::postAvatar() */
 		['name' => 'TempAvatar#postAvatar', 'url' => '/temp-user-avatar', 'verb' => 'POST'],
+		/** @see \OCA\Talk\Controller\TempAvatarController::deleteAvatar() */
 		['name' => 'TempAvatar#deleteAvatar', 'url' => '/temp-user-avatar', 'verb' => 'DELETE'],
 	],
 ];

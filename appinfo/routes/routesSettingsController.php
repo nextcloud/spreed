@@ -29,7 +29,9 @@ $requirements = [
 
 return [
 	'ocs' => [
+		/** @see \OCA\Talk\Controller\SettingsController::setSIPSettings() */
 		['name' => 'Settings#setSIPSettings', 'url' => '/api/{apiVersion}/settings/sip', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\SettingsController::setUserSetting() */
 		['name' => 'Settings#setUserSetting', 'url' => '/api/{apiVersion}/settings/user', 'verb' => 'POST', 'requirements' => $requirements],
 	],
 ];
