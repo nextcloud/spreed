@@ -357,7 +357,7 @@ Peer.prototype.offer = function(options) {
 	if (sendVideo && this.enableSimulcast && adapter.browserDetails.browser === 'firefox') {
 		console.debug('Enabling Simulcasting for Firefox (RID)')
 		const sender = this.pc.getSenders().find(function(s) {
-			return s.track.kind === 'video'
+			return s.track && s.track.kind === 'video'
 		})
 		if (sender) {
 			let parameters = sender.getParameters()
