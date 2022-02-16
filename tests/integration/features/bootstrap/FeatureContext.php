@@ -332,6 +332,93 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" has the following invitations \((v1)\)$/
+	 *
+	 * @param string $user
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userHasInvites(string $user, string $apiVersion, TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/federation/invitation');
+		$this->assertStatusCode($this->response, 200);
+
+		$invites = $this->getDataFromResponse($this->response);
+
+		if ($formData === null) {
+			Assert::assertEmpty($invites);
+			return;
+		}
+
+		$this->assertInvites($invites, $formData);
+	}
+
+	/**
+	 * @param array $invites
+	 * @param TableNode $formData
+	 */
+	private function assertInvites($invites, TableNode $formData) {
+		Assert::assertCount(count($formData->getHash()), $invites, 'Invite count does not match');
+		Assert::assertEquals($formData->getHash(), array_map(function ($room, $expectedRoom) {
+			if (!isset(self::$identifierToToken[$room['name']])) {
+				self::$identifierToToken[$room['name']] = $room['token'];
+			}
+			if (!isset(self::$tokenToIdentifier[$room['token']])) {
+				self::$tokenToIdentifier[$room['token']] = $room['name'];
+			}
+
+			$data = [];
+			if (isset($expectedRoom['id'])) {
+				$data['id'] = self::$tokenToIdentifier[$room['token']];
+			}
+			if (isset($expectedRoom['name'])) {
+				$data['name'] = $room['name'];
+			}
+			if (isset($expectedRoom['description'])) {
+				$data['description'] = $room['description'];
+			}
+			if (isset($expectedRoom['type'])) {
+				$data['type'] = (string) $room['type'];
+			}
+			if (isset($expectedRoom['hasPassword'])) {
+				$data['hasPassword'] = (string) $room['hasPassword'];
+			}
+			if (isset($expectedRoom['readOnly'])) {
+				$data['readOnly'] = (string) $room['readOnly'];
+			}
+			if (isset($expectedRoom['listable'])) {
+				$data['listable'] = (string) $room['listable'];
+			}
+			if (isset($expectedRoom['participantType'])) {
+				$data['participantType'] = (string) $room['participantType'];
+			}
+			if (isset($expectedRoom['sipEnabled'])) {
+				$data['sipEnabled'] = (string) $room['sipEnabled'];
+			}
+			if (isset($expectedRoom['callFlag'])) {
+				$data['callFlag'] = (int) $room['callFlag'];
+			}
+			if (isset($expectedRoom['attendeePin'])) {
+				$data['attendeePin'] = $room['attendeePin'] ? '**PIN**' : '';
+			}
+			if (isset($expectedRoom['lastMessage'])) {
+				$data['lastMessage'] = $room['lastMessage'] ? $room['lastMessage']['message'] : '';
+			}
+			if (isset($expectedRoom['unreadMention'])) {
+				$data['unreadMention'] = (int) $room['unreadMention'];
+			}
+			if (isset($expectedRoom['unreadMentionDirect'])) {
+				$data['unreadMentionDirect'] = (int) $room['unreadMentionDirect'];
+			}
+			if (isset($expectedRoom['participants'])) {
+				throw new \Exception('participants key needs to be checked via participants endpoint');
+			}
+
+			return $data;
+		}, $rooms, $formData->getHash()));
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" (is|is not) participant of room "([^"]*)" \((v4)\)$/
 	 *
 	 * @param string $user
