@@ -105,7 +105,7 @@ import Modal from '@nextcloud/vue/dist/Components/Modal'
 import BridgePart from './BridgePart'
 
 import Vue from 'vue'
-import { Tooltip } from '@nextcloud/vue'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 Vue.directive('tooltip', Tooltip)
 
 export default {

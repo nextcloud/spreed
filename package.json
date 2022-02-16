@@ -29,7 +29,7 @@
 		"@nextcloud/moment": "^1.1.1",
 		"@nextcloud/paths": "^2.1.0",
 		"@nextcloud/router": "^2.0.0",
-		"@nextcloud/vue": "^5.0.0-beta.0",
+		"@nextcloud/vue": "^5.0.0",
 		"@nextcloud/vue-dashboard": "^2.0.1",
 		"attachmediastream": "^2.1.0",
 		"color.js": "^1.2.0",

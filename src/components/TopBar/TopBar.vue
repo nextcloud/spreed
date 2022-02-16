@@ -168,8 +168,8 @@ import ConversationIcon from '../ConversationIcon'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor'
 import userStatus from '../../mixins/userStatus'
-import LocalMediaControls from '../CallView/shared/LocalMediaControls.vue'
-import Cog from 'vue-material-design-icons/Cog.vue'
+import LocalMediaControls from '../CallView/shared/LocalMediaControls'
+import Cog from 'vue-material-design-icons/Cog'
 import getParticipants from '../../mixins/getParticipants'
 
 export default {

@@ -122,7 +122,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 			await wrapper.findComponent(PermissionsEditor).setData({ lobbyIgnore: true })
 
 			// Click the submit button
-			await wrapper.findComponent(PermissionsEditor).find({ ref: 'submit' }).trigger('click')
+			await wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'submit' }).trigger('click')
 
 			expect(testStoreConfig.modules.participantsStore.actions.setPermissions).toHaveBeenCalledWith(
 				// The first argument is the context object
@@ -144,7 +144,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 			await wrapper.findComponent(PermissionsEditor).setData({ publishAudio: false })
 
 			// Click the submit button
-			await wrapper.findComponent(PermissionsEditor).find({ ref: 'submit' }).trigger('click')
+			await wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'submit' }).trigger('click')
 
 			expect(testStoreConfig.modules.participantsStore.actions.setPermissions).toHaveBeenCalledWith(
 				// The first argument is the context object
