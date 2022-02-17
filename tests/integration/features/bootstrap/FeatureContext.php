@@ -75,6 +75,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected $baseUrl;
 
 	/** @var string */
+	protected $baseRemoteUrl;
+
+	/** @var string */
 	protected $lastEtag;
 
 	/** @var array */
@@ -122,6 +125,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function __construct() {
 		$this->cookieJars = [];
 		$this->baseUrl = getenv('TEST_SERVER_URL');
+		$this->baseRemoteUrl = getenv('TEST_REMOTE_URL');
 		$this->guestsAppWasEnabled = null;
 	}
 
@@ -332,6 +336,59 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" has the following invitations \((v1)\)$/
+	 *
+	 * @param string $user
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userHasInvites(string $user, string $apiVersion, TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/federation/invitation');
+		$this->assertStatusCode($this->response, 200);
+
+		$invites = $this->getDataFromResponse($this->response);
+
+		if ($formData === null) {
+			Assert::assertEmpty($invites);
+			return;
+		}
+
+		$this->assertInvites($invites, $formData);
+	}
+
+	/**
+	 * @param array $invites
+	 * @param TableNode $formData
+	 */
+	private function assertInvites($invites, TableNode $formData) {
+		Assert::assertCount(count($formData->getHash()), $invites, 'Invite count does not match');
+		Assert::assertEquals($formData->getHash(), array_map(function ($invite, $expectedInvite) {
+			$data = [];
+			if (isset($expectedInvite['id'])) {
+				$data['id'] = self::$tokenToIdentifier[$invite['token']];
+			}
+			if (isset($expectedInvite['access_token'])) {
+				$data['access_token'] = (string) $invite['access_token'];
+			}
+			if (isset($expectedInvite['remote_token'])) {
+				$data['remote_token'] = self::$tokenToIdentifier[$invite['remote_token']] ?? 'unknown-token';
+			}
+			if (isset($expectedInvite['remote_server'])) {
+				if ($invite['remote_server'] === 'localhost:8080') {
+					$data['remote_server'] = 'LOCAL';
+				} elseif ($invite['remote_server'] === 'localhost:8180') {
+					$data['remote_server'] = 'REMOTE';
+				} else {
+					$data['remote_server'] = 'unknown-server';
+				}
+			}
+
+			return $data;
+		}, $invites, $formData->getHash()));
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" (is|is not) participant of room "([^"]*)" \((v4)\)$/
 	 *
 	 * @param string $user
@@ -431,7 +488,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				}
 
 				if (isset($attendee['actorId'], $attendee['actorType']) && $attendee['actorType'] === 'federated_users') {
-					$attendee['actorId'] .= '@' . rtrim($this->baseUrl, '/');
+					$attendee['actorId'] .= '@' . rtrim($this->baseRemoteUrl, '/');
 				}
 
 				if (isset($attendee['participantType'])) {
@@ -1090,7 +1147,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($user);
 
 		if ($newType === 'remote') {
-			$newId .= '@' . $this->baseUrl;
+			$newId .= '@' . $this->baseRemoteUrl;
 		}
 
 		$this->sendRequest(

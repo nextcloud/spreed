@@ -72,6 +72,7 @@ class RoomTest extends TestCase {
 			'description',
 			'passy',
 			'',
+			'',
 			0,
 			Attendee::PERMISSIONS_DEFAULT,
 			Attendee::PERMISSIONS_DEFAULT,

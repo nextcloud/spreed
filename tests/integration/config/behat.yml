@@ -7,6 +7,12 @@ default:
         - '%paths.base%/../features'
       contexts:
         - FeatureContext
+        - FederationContext:
+            baseUrl: http://localhost:8080/
+            admin:
+              - admin
+              - admin
+            regularUserPassword: 123456
         - SharingContext:
             baseUrl: http://localhost:8080/
             admin:
