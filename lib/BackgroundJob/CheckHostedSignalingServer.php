@@ -145,8 +145,6 @@ class CheckHostedSignalingServer extends TimedJob {
 			$this->config->setAppValue('spreed', 'hosted-signaling-server-account', json_encode($accountInfo));
 		}
 
-		$this->config->setAppValue('spreed', 'hosted-signaling-server-account-last-checked', $this->time->getTime());
-
 		if (!is_null($notificationSubject)) {
 			$this->logger->info('Hosted signaling server background job caused a notification: ' . $notificationSubject . ' ' . json_encode($notificationParameters));
 
