@@ -260,7 +260,7 @@ class Notifier implements INotifier {
 			}
 			return $this->parseCall($notification, $room, $l);
 		}
-		if ($subject === 'reply' || $subject === 'mention' || $subject === 'chat') {
+		if ($subject === 'reply' || $subject === 'mention' || $subject === 'chat' || $subject === 'reaction') {
 			return $this->parseChatMessage($notification, $room, $participant, $l);
 		}
 
@@ -454,6 +454,27 @@ class Notifier implements INotifier {
 					$subject = $l->t('{guest} (guest) replied to your message in conversation {call}');
 				} catch (ParticipantNotFoundException $e) {
 					$subject = $l->t('A guest replied to your message in conversation {call}');
+				}
+			}
+		} elseif ($notification->getSubject() === 'reaction') {
+			$richSubjectParameters['reaction'] = [
+				'type' => 'highlight',
+				'id' => $subjectParameters['reaction'],
+				'name' => $subjectParameters['reaction'],
+			];
+
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+				$subject = $l->t('{user} reacted with {reaction} to your private message');
+			} elseif ($richSubjectUser) {
+				$subject = $l->t('{user} reacted with {reaction} to your message in conversation {call}');
+			} elseif (!$isGuest) {
+				$subject = $l->t('A deleted user reacted with {reaction} to your message in conversation {call}');
+			} else {
+				try {
+					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+					$subject = $l->t('{guest} (guest) reacted with {reaction} to your message in conversation {call}');
+				} catch (ParticipantNotFoundException $e) {
+					$subject = $l->t('A guest reacted with {reaction} to your message in conversation {call}');
 				}
 			}
 		} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE) {

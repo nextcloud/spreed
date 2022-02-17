@@ -178,6 +178,43 @@ trigger:
 
 ---
 kind: pipeline
+name: int-sqlite-reaction
+
+steps:
+  - name: integration-reaction
+    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: master
+      GUESTS_BRANCH: master
+      DATABASEHOST: sqlite
+    commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - git clone --depth 1 -b "$GUESTS_BRANCH" https://github.com/nextcloud/guests apps/guests
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh features/reaction
+
+services:
+  - name: cache
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
 name: int-sqlite-sharing
 
 steps:
@@ -452,6 +489,53 @@ steps:
       # Run integration tests
       - cd tests/integration/
       - bash run.sh features/conversation-2
+
+services:
+  - name: cache
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  - name: mysql
+    image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
+    environment:
+      MYSQL_ROOT_PASSWORD: owncloud
+      MYSQL_USER: oc_autotest
+      MYSQL_PASSWORD: owncloud
+      MYSQL_DATABASE: oc_autotest
+    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
+    tmpfs:
+      - /var/lib/mysql
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+#    - pull_request
+    - push
+
+---
+kind: pipeline
+name: int-mysql-reaction
+
+steps:
+  - name: integration-reaction
+    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: master
+      GUESTS_BRANCH: master
+      DATABASEHOST: mysql
+    commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - git clone --depth 1 -b "$GUESTS_BRANCH" https://github.com/nextcloud/guests apps/guests
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh features/reaction
 
 services:
   - name: cache
@@ -767,6 +851,52 @@ steps:
       # Run integration tests
       - cd tests/integration/
       - bash run.sh features/conversation-2
+
+services:
+  - name: cache
+    image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  - name: pgsql
+    image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
+    environment:
+      POSTGRES_USER: oc_autotest
+      POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_PASSWORD:
+    tmpfs:
+      - /var/lib/postgresql/data
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+#    - pull_request
+    - push
+
+---
+kind: pipeline
+name: int-pgsql-reaction
+
+steps:
+  - name: integration-reaction
+    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: master
+      GUESTS_BRANCH: master
+      DATABASEHOST: pgsql
+    commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - git clone --depth 1 -b "$GUESTS_BRANCH" https://github.com/nextcloud/guests apps/guests
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh features/reaction
 
 services:
   - name: cache

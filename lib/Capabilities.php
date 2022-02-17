@@ -27,6 +27,7 @@ namespace OCA\Talk;
 
 use OCA\Talk\Chat\ChatManager;
 use OCP\Capabilities\IPublicCapability;
+use OCP\Comments\ICommentsManager;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
@@ -37,14 +38,18 @@ class Capabilities implements IPublicCapability {
 	protected $serverConfig;
 	/** @var Config */
 	protected $talkConfig;
+	/** @var ICommentsManager */
+	protected $commentsManager;
 	/** @var IUserSession */
 	protected $userSession;
 
 	public function __construct(IConfig $serverConfig,
 								Config $talkConfig,
+								ICommentsManager $commentsManager,
 								IUserSession $userSession) {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
+		$this->commentsManager = $commentsManager;
 		$this->userSession = $userSession;
 	}
 
@@ -114,6 +119,10 @@ class Capabilities implements IPublicCapability {
 				],
 			],
 		];
+
+		if ($this->commentsManager->supportReactions()) {
+			$capabilities['features'][] = 'reactions';
+		}
 
 		if ($user instanceof IUser) {
 			$capabilities['config']['attachments']['folder'] = $this->talkConfig->getAttachmentFolder($user->getUID());

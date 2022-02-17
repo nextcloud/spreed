@@ -447,8 +447,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				return $attendee;
 			}, $result);
 
-			usort($expected, [$this, 'sortAttendees']);
-			usort($result, [$this, 'sortAttendees']);
+			usort($expected, [self::class, 'sortAttendees']);
+			usort($result, [self::class, 'sortAttendees']);
 
 			Assert::assertEquals($expected, $result);
 		} else {
@@ -477,7 +477,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	protected function sortAttendees(array $a1, array $a2): int {
+	protected static function sortAttendees(array $a1, array $a2): int {
 		if (array_key_exists('participantType', $a1) && array_key_exists('participantType', $a2) && $a1['participantType'] !== $a2['participantType']) {
 			return $a1['participantType'] <=> $a2['participantType'];
 		}
@@ -1559,6 +1559,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 		$includeParents = in_array('parentMessage', $formData->getRow(0), true);
 		$includeReferenceId = in_array('referenceId', $formData->getRow(0), true);
+		$includeReactions = in_array('reactions', $formData->getRow(0), true);
 
 		$count = count($formData->getHash());
 		Assert::assertCount($count, $messages, 'Message count does not match');
@@ -1567,7 +1568,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$messages[$i]['messageParameters'] = 'IGNORE';
 			}
 		}
-		Assert::assertEquals($formData->getHash(), array_map(function ($message) use ($includeParents, $includeReferenceId) {
+		Assert::assertEquals($formData->getHash(), array_map(function ($message) use ($includeParents, $includeReferenceId, $includeReactions) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],
@@ -1583,6 +1584,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if ($includeReferenceId) {
 				$data['referenceId'] = $message['referenceId'];
+			}
+			if ($includeReactions) {
+				$data['reactions'] = json_encode($message['reactions'], JSON_UNESCAPED_UNICODE);
 			}
 			return $data;
 		}, $messages));
@@ -2077,6 +2081,57 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		]);
 		$this->assertStatusCode($this->response, 200);
 		$this->setCurrentUser($currentUser);
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" (delete react|react) with "([^"]*)" on message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function userReactWithOnMessageToRoomWith(string $user, string $action, string $reaction, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$token = self::$identifierToToken[$identifier];
+		$messageId = self::$messages[$message];
+		$this->setCurrentUser($user);
+		$verb = $action === 'react' ? 'POST' : 'DELETE';
+		$this->sendRequest($verb, '/apps/spreed/api/' . $apiVersion . '/reaction/' . $token . '/' . $messageId, [
+			'reaction' => $reaction
+		]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" retrieve reactions "([^"]*)" of message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function userRetrieveReactionsOfMessageInRoomWith(string $user, string $reaction, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $formData): void {
+		$token = self::$identifierToToken[$identifier];
+		$messageId = self::$messages[$message];
+		$this->setCurrentUser($user);
+		$reaction = $reaction !== 'all' ? '?reaction=' . $reaction : '';
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/reaction/' . $token . '/' . $messageId . $reaction);
+		$this->assertStatusCode($this->response, $statusCode);
+		$this->assertReactionList($formData);
+	}
+
+	private function assertReactionList(TableNode $formData): void {
+		$expected = [];
+		foreach ($formData->getHash() as $row) {
+			$reaction = $row['reaction'];
+			unset($row['reaction']);
+			$expected[$reaction][] = $row;
+		}
+
+		$result = $this->getDataFromResponse($this->response);
+		$result = array_map(static function ($reaction, $list) use ($expected): array {
+			$list = array_map(function ($reaction) {
+				unset($reaction['timestamp']);
+				return $reaction;
+			}, $list);
+			Assert::assertCount(count($list), $expected[$reaction], 'Reaction count by type does not match');
+
+			usort($expected[$reaction], [self::class, 'sortAttendees']);
+			usort($list, [self::class, 'sortAttendees']);
+			Assert::assertEquals($expected[$reaction], $list, 'Reaction list by type does not match');
+			return $list;
+		}, array_keys($result), array_values($result));
+		Assert::assertCount(count($expected), $result, 'Reaction count does not match');
 	}
 
 	/*

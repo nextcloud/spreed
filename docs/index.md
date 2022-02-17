@@ -16,6 +16,7 @@
 * [Participant API](participant.md)
 * [Call API](call.md)
 * [Chat API](chat.md)
+* [Reaction API](reaction.md)
 * [Webinar API](webinar.md)
 * [Internal Signaling API](internal-signaling.md)
 * [Standalone Signaling API](https://nextcloud-spreed-signaling.readthedocs.io/en/latest/)

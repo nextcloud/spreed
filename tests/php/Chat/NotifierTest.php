@@ -129,20 +129,24 @@ class NotifierTest extends TestCase {
 	/**
 	 * @return Room|MockObject
 	 */
-	private function getRoom() {
+	private function getRoom($settings = []) {
 		/** @var Room|MockObject */
 		$room = $this->createMock(Room::class);
 
 		$room->expects($this->any())
 			->method('getParticipant')
-			->willReturnCallback(function (string $actorId) use ($room): Participant {
+			->willReturnCallback(function (string $actorId) use ($room, $settings): Participant {
 				if ($actorId === 'userNotInOneToOneChat') {
 					throw new ParticipantNotFoundException();
 				}
-				$attendee = Attendee::fromRow([
+				$attendeeRow = [
 					'actor_type' => 'user',
 					'actor_id' => $actorId,
-				]);
+				];
+				if (isset($settings['attendee'][$actorId])) {
+					$attendeeRow = array_merge($attendeeRow, $settings['attendee'][$actorId]);
+				}
+				$attendee = Attendee::fromRow($attendeeRow);
 				return new Participant($room, $attendee, null);
 			});
 
@@ -370,6 +374,44 @@ class NotifierTest extends TestCase {
 					['id' => 'user2', 'type' => Attendee::ACTOR_USERS],
 				],
 			],
+		];
+	}
+
+	/**
+	 * @dataProvider dataNotifyReacted
+	 */
+	public function testNotifyReacted(int $notify, int $notifyType, int $roomType, string $authorId): void {
+		$this->notificationManager->expects($this->exactly($notify))
+			->method('notify');
+
+		$room = $this->getRoom([
+			'attendee' => [
+				'testUser' => [
+					'notificationLevel' => $notifyType,
+				]
+			]
+		]);
+		$room->method('getType')
+			->willReturn($roomType);
+		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), 'message');
+		$reaction = $this->newComment('108', 'users', $authorId, new \DateTime('@' . 1000000016), 'message');
+
+		$notifier = $this->getNotifier([]);
+		$notifier->notifyReacted($room, $comment, $reaction);
+	}
+
+	public function dataNotifyReacted(): array {
+		return [
+			'author react to own message' =>
+				[0, Participant::NOTIFY_MENTION, Room::TYPE_GROUP, 'testUser'],
+			'notify never' =>
+				[0, Participant::NOTIFY_NEVER, Room::TYPE_GROUP, 'testUser2'],
+			'notify default, not one to one' =>
+				[0, Participant::NOTIFY_DEFAULT, Room::TYPE_GROUP, 'testUser2'],
+			'notify default, one to one' =>
+				[1, Participant::NOTIFY_DEFAULT, Room::TYPE_ONE_TO_ONE, 'testUser2'],
+			'notify always' =>
+				[1, Participant::NOTIFY_ALWAYS, Room::TYPE_GROUP, 'testUser2'],
 		];
 	}
 

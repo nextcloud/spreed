@@ -200,10 +200,11 @@ class Notifier {
 	 * @param Room $chat
 	 * @param IComment $comment
 	 * @param IComment $replyTo
+	 * @param string $subject
 	 * @return array[] Actor that was replied to
 	 * @psalm-return array<int, array{id: string, type: string}>
 	 */
-	public function notifyReplyToAuthor(Room $chat, IComment $comment, IComment $replyTo): array {
+	public function notifyReplyToAuthor(Room $chat, IComment $comment, IComment $replyTo, string $subject = 'reply'): array {
 		if ($replyTo->getActorType() !== Attendee::ACTOR_USERS) {
 			// No reply notification when the replyTo-author was not a user
 			return [];
@@ -213,7 +214,7 @@ class Notifier {
 			return [];
 		}
 
-		$notification = $this->createNotification($chat, $comment, 'reply');
+		$notification = $this->createNotification($chat, $comment, $subject);
 		$notification->setUser($replyTo->getActorId());
 		$this->notificationManager->notify($notification);
 
@@ -263,6 +264,34 @@ class Notifier {
 				$notification->setUser($participant->getAttendee()->getActorId());
 				$this->notificationManager->notify($notification);
 			}
+		}
+	}
+
+	public function notifyReacted(Room $chat, IComment $comment, IComment $reaction): void {
+		if ($comment->getActorType() !== Attendee::ACTOR_USERS) {
+			return;
+		}
+
+		if ($comment->getActorType() === $reaction->getActorType() && $comment->getActorId() === $reaction->getActorId()) {
+			return;
+		}
+
+		$participant = $chat->getParticipant($comment->getActorId(), false);
+		$notificationLevel = $participant->getAttendee()->getNotificationLevel();
+		if ($notificationLevel === Participant::NOTIFY_DEFAULT) {
+			if ($chat->getType() === Room::TYPE_ONE_TO_ONE) {
+				$notificationLevel = Participant::NOTIFY_ALWAYS;
+			} else {
+				$notificationLevel = $this->getDefaultGroupNotification();
+			}
+		}
+
+		if ($notificationLevel === Participant::NOTIFY_ALWAYS) {
+			$notification = $this->createNotification($chat, $comment, 'reaction', [
+				'reaction' => $reaction->getMessage(),
+			]);
+			$notification->setUser($comment->getActorId());
+			$this->notificationManager->notify($notification);
 		}
 	}
 
@@ -363,17 +392,18 @@ class Notifier {
 	 * @param Room $chat
 	 * @param IComment $comment
 	 * @param string $subject
+	 * @param array $subjectData
 	 * @return INotification
 	 */
-	private function createNotification(Room $chat, IComment $comment, string $subject): INotification {
+	private function createNotification(Room $chat, IComment $comment, string $subject, array $subjectData = []): INotification {
+		$subjectData['userType'] = $comment->getActorType();
+		$subjectData['userId'] = $comment->getActorId();
+
 		$notification = $this->notificationManager->createNotification();
 		$notification
 			->setApp('spreed')
 			->setObject('chat', $chat->getToken())
-			->setSubject($subject, [
-				'userType' => $comment->getActorType(),
-				'userId' => $comment->getActorId(),
-			])
+			->setSubject($subject, $subjectData)
 			->setMessage($comment->getVerb(), [
 				'commentId' => $comment->getId(),
 			])
