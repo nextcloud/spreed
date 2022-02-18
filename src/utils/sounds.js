@@ -65,12 +65,14 @@ export const Sounds = {
 		this.playedWaiting = 0
 		this.backgroundInterval = setInterval(() => {
 			if (!store.getters.playSounds) {
+				this._stopWaiting()
 				return
 			}
 
 			if (this.playedWaiting >= 3) {
 				// Played 3 times, so we stop now.
 				this._stopWaiting()
+				return
 			}
 
 			console.debug('Playing waiting sound')
