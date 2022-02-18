@@ -71,6 +71,7 @@ export const Sounds = {
 			if (this.playedWaiting >= 3) {
 				// Played 3 times, so we stop now.
 				this._stopWaiting()
+				return
 			}
 
 			console.debug('Playing waiting sound')
