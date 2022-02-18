@@ -63,8 +63,7 @@
 				<SipSettings v-if="showSIPSettings"
 					:meeting-id="conversation.token"
 					:attendee-pin="conversation.attendeePin" />
-				<CollectionList
-					v-if="getUserId && conversation.token"
+				<CollectionList v-if="getUserId && conversation.token"
 					:id="conversation.token"
 					type="room"
 					:name="conversation.displayName" />
@@ -136,7 +135,7 @@ export default {
 		opened() {
 			return !!this.token && !this.isInLobby && this.show
 		},
-    showSidebarPlaceholder() {
+		showSidebarPlaceholder() {
 			if (!this.largeBox) {
 				return !!this.token && !this.isInLobby && this.show
 			} else {
