@@ -65,6 +65,7 @@ export const Sounds = {
 		this.playedWaiting = 0
 		this.backgroundInterval = setInterval(() => {
 			if (!store.getters.playSounds) {
+				this._stopWaiting()
 				return
 			}
 
