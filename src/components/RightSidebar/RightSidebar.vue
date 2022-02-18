@@ -21,61 +21,63 @@
 -->
 
 <template>
-	<AppSidebar v-show="opened"
-		id="app-sidebar"
-		:title="title"
-		:title-tooltip="title"
-		:starred="isFavorited"
-		:title-editable="canModerate && isRenamingConversation"
-		:class="'active-tab-' + activeTab"
-		@update:active="handleUpdateActive"
-		@update:starred="onFavoriteChange"
-		@update:title="handleUpdateTitle"
-		@submit-title="handleSubmitTitle"
-		@dismiss-editing="dismissEditing"
-		@closed="handleClosed"
-		@close="handleClose">
-		<template slot="description">
-			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
-		</template>
-		<AppSidebarTab v-if="showChatInSidebar"
-			id="chat"
-			:order="1"
-			:name="t('spreed', 'Chat')"
-			icon="icon-comment">
-			<ChatView :is-visible="opened" />
-		</AppSidebarTab>
-		<AppSidebarTab v-if="getUserId && !isOneToOne"
-			id="participants"
-			ref="participantsTab"
-			:order="2"
-			:name="participantsText"
-			icon="icon-contacts-dark">
-			<ParticipantsTab :is-active="activeTab === 'participants'"
-				:can-search="canSearchParticipants"
-				:can-add="canAddParticipants" />
-		</AppSidebarTab>
-		<AppSidebarTab id="details-tab"
-			:order="3"
-			:name="t('spreed', 'Details')"
-			icon="icon-details">
-			<SetGuestUsername v-if="!getUserId" />
-			<SipSettings v-if="showSIPSettings"
-				:meeting-id="conversation.token"
-				:attendee-pin="conversation.attendeePin" />
-			<CollectionList v-if="getUserId && conversation.token"
-				:id="conversation.token"
-				type="room"
-				:name="conversation.displayName" />
-			<div v-if="!getUserId" id="app-settings">
-				<div id="app-settings-header">
-					<button class="settings-button" @click="showSettings">
-						{{ t('spreed', 'Settings') }}
-					</button>
+	<div v-show="showSidebarPlaceholder" class="right-sidebar-container">
+		<AppSidebar id="app-sidebar"
+			:title="title"
+			:title-tooltip="title"
+			:starred="isFavorited"
+			:title-editable="canModerate && isRenamingConversation"
+			:class="[`active-tab-${activeTab}`, 'sidebar-default', opened ? 'sidebar-open' : 'sidebar-hide']"
+			@update:active="handleUpdateActive"
+			@update:starred="onFavoriteChange"
+			@update:title="handleUpdateTitle"
+			@submit-title="handleSubmitTitle"
+			@dismiss-editing="dismissEditing"
+			@closed="handleClosed"
+			@close="handleClose">
+			<template slot="description">
+				<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
+			</template>
+			<AppSidebarTab v-if="showChatInSidebar"
+				id="chat"
+				:order="1"
+				:name="t('spreed', 'Chat')"
+				icon="icon-comment">
+				<ChatView :is-visible="opened" />
+			</AppSidebarTab>
+			<AppSidebarTab v-if="getUserId && !isOneToOne"
+				id="participants"
+				ref="participantsTab"
+				:order="2"
+				:name="participantsText"
+				icon="icon-contacts-dark">
+				<ParticipantsTab :is-active="activeTab === 'participants'"
+					:can-search="canSearchParticipants"
+					:can-add="canAddParticipants" />
+			</AppSidebarTab>
+			<AppSidebarTab id="details-tab"
+				:order="3"
+				:name="t('spreed', 'Details')"
+				icon="icon-details">
+				<SetGuestUsername v-if="!getUserId" />
+				<SipSettings v-if="showSIPSettings"
+					:meeting-id="conversation.token"
+					:attendee-pin="conversation.attendeePin" />
+				<CollectionList
+					v-if="getUserId && conversation.token"
+					:id="conversation.token"
+					type="room"
+					:name="conversation.displayName" />
+				<div v-if="!getUserId" id="app-settings">
+					<div id="app-settings-header">
+						<button class="settings-button" @click="showSettings">
+							{{ t('spreed', 'Settings') }}
+						</button>
+					</div>
 				</div>
-			</div>
-		</AppSidebarTab>
-	</AppSidebar>
+			</AppSidebarTab>
+		</AppSidebar>
+	</div>
 </template>
 
 <script>
@@ -134,6 +136,13 @@ export default {
 		opened() {
 			return !!this.token && !this.isInLobby && this.show
 		},
+    showSidebarPlaceholder() {
+			if (!this.largeBox) {
+				return !!this.token && !this.isInLobby && this.show
+			} else {
+				return true
+			}
+		},
 		token() {
 			return this.$store.getters.getToken()
 		},
@@ -158,7 +167,7 @@ export default {
 		},
 		canSearchParticipants() {
 			return (this.conversation.type === CONVERSATION.TYPE.GROUP
-					|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== 'share:password'))
+          || (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== 'share:password'))
 		},
 		isSearching() {
 			return this.searchText !== ''
@@ -194,7 +203,7 @@ export default {
 
 		showSIPSettings() {
 			return this.conversation.sipEnabled === WEBINAR.SIP.ENABLED
-				&& this.conversation.attendeePin
+          && this.conversation.attendeePin
 		},
 
 		hasLobbyEnabled() {
@@ -225,8 +234,17 @@ export default {
 			}
 		},
 	},
-
+	mounted() {
+		this.resize()
+		window.addEventListener('resize', this.resize)
+	},
+	destroyed() {
+		window.removeEventListener('resize', this.resize)
+	},
 	methods: {
+		resize() {
+			this.largeBox = window.innerWidth > 1400
+		},
 		handleClose() {
 			this.dismissEditing()
 			this.$store.dispatch('hideSidebar')
@@ -284,17 +302,34 @@ export default {
 /* Override style set in server for "#app-sidebar" to match the style set in
  * nextcloud-vue for ".app-sidebar". */
 #app-sidebar {
-	display: flex;
+  display: flex;
 }
 
 ::v-deep .app-sidebar-header__description {
-	flex-direction: column;
+  flex-direction: column;
 }
 
 .app-sidebar-tabs__content #tab-chat {
-	/* Remove padding to maximize the space for the chat view. */
-	padding: 0;
-	height: 100%;
+  /* Remove padding to maximize the space for the chat view. */
+  padding: 0;
+  height: 100%;
 }
 
+.right-sidebar-container {
+  background: var(--color-main-background);
+  border-left: 1px solid var(--color-border);
+}
+
+.sidebar-open {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sidebar-hide {
+  opacity: 0;
+  transform: translateX(100%);
+}
+.sidebar-default {
+  transition: all 0.3s ease-in-out;
+}
 </style>
