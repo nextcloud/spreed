@@ -967,23 +967,37 @@ const actions = {
 		return response
 	},
 
+	/**
+	 * Adds a single reaction to a message for the current user.
+	 *
+	 * @param {*} context the context object
+	 * @param {*} param1 conversation token, message id and selected emoji (string)
+	 */
 	async addReactionToMessage(context, { token, messageId, selectedEmoji }) {
 		try {
-			const response = await addReactionToMessage(token, messageId, selectedEmoji)
+			await addReactionToMessage(token, messageId, selectedEmoji)
 
 			context.commit('addReactionToMessage', { token, messageId, selectedEmoji })
-
-			return response
 		} catch (error) {
 			console.debug(error)
 		}
 	},
 
+	/**
+	 * Removes a single reactin to a message for the current user.
+	 *
+	 * @param {*} context the context object
+	 * @param {*} param1 conversation token, message id and selected emoji (string)
+	 */
 	async removeReactionToMessage(context, { token, messageId, selectedEmoji }) {
 		try {
-			const response = await removeReactionFromMessage(token, messageId, selectedEmoji)
+			await removeReactionFromMessage(token, messageId, selectedEmoji)
 
 			context.commit('removeReactionFromMessage', { token, messageId, selectedEmoji })
+		} catch (error) {
+			console.debug(error)
+		}
+	},
 
 	/**
 	 * Gets the full reactions array for a given message.
