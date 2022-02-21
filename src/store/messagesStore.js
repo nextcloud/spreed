@@ -194,6 +194,34 @@ const getters = {
 		// the cancel handler only exists when a message is being sent
 		return Object.keys(state.cancelPostNewMessage).length !== 0
 	},
+
+	/**
+	 *
+	 * @param {*} state The state object
+	 * @return {object} an object with the reactions (emojis) as keys and a number
+	 * as value.
+	 */
+	simplifiedReactions: (state) => (token, messageId) => {
+		const reactions = state.messages[token][messageId].reactions
+
+		// Return an empty object if there are no reactions for the message
+		if (Object.keys(reactions).length === 0) {
+			return {}
+		}
+
+		// Check the first reaction to see if the reactions are detailed or not
+		const hasDetailedReactions = (typeof reactions[Object.keys(reactions)[0]]) === 'object'
+
+		if (!hasDetailedReactions) {
+			return reactions
+		} else {
+			const simpleReactions = {}
+			for (const reaction of Object.keys(reactions)) {
+				simpleReactions[reaction] = reactions[reaction].length
+			}
+			return simpleReactions
+		}
+	},
 }
 
 const mutations = {

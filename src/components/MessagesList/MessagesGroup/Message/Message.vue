@@ -112,14 +112,14 @@ the main body of the message as well as a quote.
 					</div>
 				</div>
 			</div>
-			<div v-if="showMessageReactionsBar" class="message-body__reactions">
-				<button v-for="reaction in Object.keys(messageObject.reactions)"
+			<div v-if="hasReactions" class="message-body__reactions">
+				<button v-for="reaction in Object.keys(simplifiedReactions)"
 					:key="reaction"
 					class="reaction-button">
 					<span class="reaction-button__emoji"> {{ reaction }} </span>
-					<span> {{ messageObject.reactions[reaction] }} </span>
+					<span> {{ simplifiedReactions[reaction] }} </span>
 				</button>
-				<EmojiPicker @select.stop="">
+				<EmojiPicker :per-line="5" @select.stop="">
 					<button class="reaction-button">
 						<EmoticonOutline :size="15" />
 					</button>
@@ -538,8 +538,16 @@ export default {
 			}
 		},
 
-		showMessageReactionsBar() {
+		hasReactions() {
 			return this.messageObject.reactions?.length !== 0
+		},
+
+		messageReactions() {
+			return this.messageObject.reactions
+		},
+
+		simplifiedReactions() {
+			return this.$store.getters.simplifiedReactions(this.token, this.messageObject.id)
 		},
 	},
 
@@ -593,6 +601,9 @@ export default {
 
 		handleMouseover() {
 			this.showMessageButtonsBar = true
+			if (this.hasReactions && !this.hasReactionsDetails) {
+				this.getReactionsDetails()
+			}
 		},
 
 		handleMouseleave() {
@@ -702,7 +713,7 @@ export default {
 	}
 	&__reactions {
 		display: flex;
-		margin: 4px 0;
+		margin: 4px 0 4px -2px;
 	}
 }
 
