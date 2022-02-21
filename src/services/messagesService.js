@@ -144,6 +144,10 @@ const removeReactionFromMessage = async function(token, messageId, selectedEmoji
 	})
 }
 
+const getReactionsDetails = async function(token, messageId) {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }))
+}
+
 export {
 	fetchMessages,
 	lookForNewMessages,
@@ -153,4 +157,5 @@ export {
 	updateLastReadMessage,
 	addReactionToMessage,
 	removeReactionFromMessage,
+	getReactionsDetails,
 }

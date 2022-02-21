@@ -600,6 +600,24 @@ export default {
 				this.showMessageButtonsBar = false
 			}
 		},
+
+		async getReactionsDetails() {
+			try {
+				/**
+				 * Get reaction details when the message is hovered for the first
+				 * time. After that we rely on system messages to update the
+				 * reactions.
+				 */
+				this.hasReactionsDetails = true
+				console.debug('getting reactions details')
+				await this.$store.dispatch('getReactionsDetails', {
+					token: this.token,
+					messageId: this.messageObject.id,
+				})
+			} catch {
+				this.hasReactionsDetails = false
+			}
+		},
 	},
 }
 </script>

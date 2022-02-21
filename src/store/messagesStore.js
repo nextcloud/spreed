@@ -29,6 +29,7 @@ import {
 	postRichObjectToConversation,
 	addReactionToMessage,
 	removeReactionFromMessage,
+	getReactionsDetails,
 } from '../services/messagesService'
 
 import SHA256 from 'crypto-js/sha256'
@@ -334,6 +335,10 @@ const mutations = {
 		if (state.messages[token]) {
 			Vue.delete(state.messages, token)
 		}
+	},
+
+	addReactionsToMessage(state, { token, messageId, reactions }) {
+		Vue.set(state.messages[token][messageId], 'reactions', reactions)
 	},
 }
 
@@ -951,6 +956,22 @@ const actions = {
 			const response = await removeReactionFromMessage(token, messageId, selectedEmoji)
 
 			context.commit('removeReactionFromMessage', { token, messageId, selectedEmoji })
+
+	/**
+	 * Gets the full reactions array for a given message.
+	 *
+	 * @param {*} context the context object
+	 * @param {*} param1 conversation token, message id
+	 */
+	async getReactionsDetails(context, { token, messageId }) {
+		try {
+			const response = await getReactionsDetails(token, messageId)
+
+			context.commit('addReactionsToMessage', {
+				token,
+				messageId,
+				reactions: response.data.ocs.data,
+			})
 
 			return response
 		} catch (error) {
