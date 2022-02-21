@@ -21,8 +21,8 @@
 
 <template>
 	<div>
-		<ParticipantsList v-if="participantsList.length"
-			:items="participantsList"
+		<ParticipantsList v-if="participants.length"
+			:items="participants"
 			:loading="!participantsInitialised" />
 		<Hint v-else :hint="t('spreed', 'No search results')" />
 	</div>
@@ -58,18 +58,21 @@ export default {
 			default: true,
 		},
 	},
-
+	data() {
+		return {
+			isCurrentuserBeAdmin: false,
+		}
+	},
 	computed: {
 		token() {
 			return this.$store.getters.getToken()
 		},
-
 		/**
 		 * Gets the participants array.
 		 *
 		 * @return {Array}
 		 */
-		participantsList() {
+		participants() {
 			let participants = this.$store.getters.participantsList(this.token)
 
 			if (this.searchText !== '') {
@@ -79,6 +82,13 @@ export default {
 						|| (participant.actorType !== 'guests'
 							&& participant.actorId.toLowerCase().indexOf(lowerSearchText) !== -1)
 				})
+			}
+
+			const currentParticipant = participants.find(x => x.actorId === this.$store.getters.getUserId())
+			if (currentParticipant) {
+				const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
+				// eslint-disable-next-line vue/no-side-effects-in-computed-properties
+				this.isCurrentuserBeAdmin = moderatorTypes.indexOf(currentParticipant.participantType) !== -1
 			}
 
 			return participants.slice().sort(this.sortParticipants)
@@ -203,14 +213,15 @@ export default {
 				return moderator1 ? -1 : 1
 			}
 
-			if (p1inCall) {
-				return participant1.attendeePermissions < participant2.attendeePermissions ? 1 : -1
-			}
+			if (this.isCurrentuserBeAdmin) {
+				if (p1inCall) {
+					return participant1.attendeePermissions < participant2.attendeePermissions ? 1 : -1
+				}
 
-			if (p1inCall && participant1.attendeePermissions === participant2.attendeePermissions) {
-				return participant1.inCall < participant2.inCall ? 1 : -1
+				if (p1inCall && participant1.attendeePermissions === participant2.attendeePermissions) {
+					return participant1.inCall < participant2.inCall ? 1 : -1
+				}
 			}
-
 			const participant1Away = this.isNotAvailable(participant1)
 			const participant2Away = this.isNotAvailable(participant2)
 			if (participant1Away !== participant2Away) {
