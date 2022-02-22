@@ -47,7 +47,7 @@
 		"mockconsole": "0.0.1",
 		"nextcloud-vue-collections": "^0.9.0",
 		"ua-parser-js": "^1.0.2",
-		"url-parse": "^1.5.4",
+		"url-parse": "^1.5.7",
 		"util": "^0.12.4",
 		"vue": "^2.6.14",
 		"vue-at": "^2.5.0-beta.2",
