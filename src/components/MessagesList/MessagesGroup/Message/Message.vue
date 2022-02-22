@@ -67,6 +67,7 @@ the main body of the message as well as a quote.
 						class="date"
 						:style="{'visibility': hasDate ? 'visible' : 'hidden'}"
 						:class="{'date--self': showSentIcon}">{{ messageTime }}</span>
+
 					<!-- Message delivery status indicators -->
 					<div v-if="sendingFailure"
 						v-tooltip.auto="sendingErrorIconTooltip"
@@ -112,13 +113,26 @@ the main body of the message as well as a quote.
 					</div>
 				</div>
 			</div>
+
+			<!-- reactions buttons and popover with details -->
 			<div v-if="hasReactions" class="message-body__reactions">
-				<button v-for="reaction in Object.keys(simplifiedReactions)"
+				<Popover v-for="reaction in Object.keys(simplifiedReactions)"
 					:key="reaction"
-					class="reaction-button">
-					<span class="reaction-button__emoji"> {{ reaction }} </span>
-					<span> {{ simplifiedReactions[reaction] }} </span>
-				</button>
+					:delay="200"
+					trigger="hover">
+					<button slot="trigger"
+						class="reaction-button">
+						<span class="reaction-button__emoji"> {{ reaction }} </span>
+						<span> {{ simplifiedReactions[reaction] }} </span>
+					</button>
+					<div v-if="hasReactionsDetails" class="reaction-details">
+						<p v-for="detailedReaction in messageReactions[reaction]" :key="Object.keys(detailedReaction)[0]">
+							{{ detailedReaction.actorDisplayName }}
+						</p>
+					</div>
+				</Popover>
+
+				<!-- More reactions picker -->
 				<EmojiPicker :per-line="5" @select.stop="">
 					<button class="reaction-button">
 						<EmoticonOutline :size="15" />
@@ -126,6 +140,8 @@ the main body of the message as well as a quote.
 				</EmojiPicker>
 			</div>
 		</div>
+
+		<!-- Message actions -->
 		<MessageButtonsBar v-if="hasMessageButtonsBar"
 			v-show="showMessageButtonsBar"
 			ref="messageButtonsBar"
@@ -166,6 +182,7 @@ import Contact from './MessagePart/Contact.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import Popover from '@nextcloud/vue/dist/Components/Popover'
 
 export default {
 	name: 'Message',
@@ -185,6 +202,7 @@ export default {
 		MessageButtonsBar,
 		EmojiPicker,
 		EmoticonOutline,
+		Popover,
 	},
 
 	mixins: [
@@ -332,6 +350,7 @@ export default {
 			// whether the message was seen, only used if this was marked as last read message
 			seen: false,
 			isActionMenuOpen: false,
+			hasReactionsDetails: false,
 		}
 	},
 
@@ -797,5 +816,9 @@ export default {
 	&:hover {
 		background-color: var(--color-primary-element-lighter);
 	}
+}
+
+.reaction-details {
+	padding: 8px;
 }
 </style>
