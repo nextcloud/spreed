@@ -195,13 +195,20 @@ const getters = {
 		return Object.keys(state.cancelPostNewMessage).length !== 0
 	},
 
+	hasReactionsDetails: (state) => (token, messageId) => {
+		const reactions = state.messages[token][messageId].reactions
+		// Check the first reaction to see if the reactions are detailed or not
+		return (typeof reactions[Object.keys(reactions)[0]]) === 'object'
+	},
+
 	/**
 	 *
 	 * @param {*} state The state object
+	 * @param getters The getters
 	 * @return {object} an object with the reactions (emojis) as keys and a number
 	 * as value.
 	 */
-	simplifiedReactions: (state) => (token, messageId) => {
+	simplifiedReactions: (state, getters) => (token, messageId) => {
 		const reactions = state.messages[token][messageId].reactions
 
 		// Return an empty object if there are no reactions for the message
@@ -209,10 +216,9 @@ const getters = {
 			return {}
 		}
 
-		// Check the first reaction to see if the reactions are detailed or not
-		const hasDetailedReactions = (typeof reactions[Object.keys(reactions)[0]]) === 'object'
+		const hasReactionsDetails = getters.hasReactionsDetails(token, messageId)
 
-		if (!hasDetailedReactions) {
+		if (!hasReactionsDetails) {
 			return reactions
 		} else {
 			const simpleReactions = {}
