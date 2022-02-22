@@ -613,6 +613,7 @@ OC.L10N.register(
     "OK: Running version: {version}" : "OK: {version} bertsioa exekutatzen",
     "Error: Cannot connect to server" : "Errorea: Ezin da zerbitzarira konektatu",
     "Error: Server did not respond with proper JSON" : "Errorea: zerbitzariak ez du JSON egokiarekin erantzun",
+    "Could not get version" : "Ezin bertsioa lortu",
     "Error: Server responded with: {error}" : "Errorea: zerbitzariak {error} errorearekin erantzun du",
     "Error: Unknown error occurred" : "Errorea: errore ezezaguna gertatu da",
     "High-performance backend" : "Errendimendu handiko motorra",
