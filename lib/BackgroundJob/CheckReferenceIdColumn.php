@@ -26,6 +26,7 @@ namespace OCA\Talk\BackgroundJob;
 use OC\DB\ConnectionAdapter;
 use OC\DB\SchemaWrapper;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\IJobList;
 use OCP\BackgroundJob\TimedJob;
 use OCP\IConfig;
@@ -53,7 +54,10 @@ class CheckReferenceIdColumn extends TimedJob {
 		$this->jobList = $jobList;
 		$this->serverConfig = $serverConfig;
 		$this->connection = $connection;
+
+		// Every hour
 		$this->setInterval(3600);
+		$this->setTimeSensitivity(IJob::TIME_INSENSITIVE);
 	}
 
 	protected function run($argument): void {

@@ -28,6 +28,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use OCP\BackgroundJob\IJob;
 use OCP\Files\Config\IUserMountCache;
 use Psr\Log\LoggerInterface;
 
@@ -61,6 +62,7 @@ class RemoveEmptyRooms extends TimedJob {
 
 		// Every 5 minutes
 		$this->setInterval(60 * 5);
+		$this->setTimeSensitivity(IJob::TIME_INSENSITIVE);
 
 		$this->manager = $manager;
 		$this->participantService = $participantService;
