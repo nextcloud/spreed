@@ -29,7 +29,6 @@ import {
 	postRichObjectToConversation,
 	addReactionToMessage,
 	removeReactionFromMessage,
-	getReactionsDetails,
 } from '../services/messagesService'
 
 import SHA256 from 'crypto-js/sha256'
@@ -371,8 +370,14 @@ const mutations = {
 		}
 	},
 
-	addReactionsToMessage(state, { token, messageId, reactions }) {
-		Vue.set(state.messages[token][messageId], 'reactions', reactions)
+	// Increases reaction count for a particular reaction on a message
+	addReactionToMessage(state, { token, messageId, reaction }) {
+		state.messages[token][messageId].reactions[reaction]++
+	},
+
+	// Decreases reaction count for a particular reaction on a message
+	removeReactionFromMessage(state, { token, messageId, reaction }) {
+		state.messages[token][messageId].reactions[reaction]--
 	},
 }
 
@@ -981,10 +986,19 @@ const actions = {
 	 */
 	async addReactionToMessage(context, { token, messageId, selectedEmoji }) {
 		try {
+			context.commit('addReactionToMessage', {
+				token,
+				messageId,
+				reaction: selectedEmoji,
+			})
 			await addReactionToMessage(token, messageId, selectedEmoji)
-
-			context.commit('addReactionToMessage', { token, messageId, selectedEmoji })
 		} catch (error) {
+			// Restore the previous state if the request fails
+			context.commit('removeReactionFromMessage', {
+				token,
+				messageId,
+				reaction: selectedEmoji,
+			})
 			console.debug(error)
 		}
 	},
@@ -995,34 +1009,21 @@ const actions = {
 	 * @param {*} context the context object
 	 * @param {*} param1 conversation token, message id and selected emoji (string)
 	 */
-	async removeReactionToMessage(context, { token, messageId, selectedEmoji }) {
+	async removeReactionFromMessage(context, { token, messageId, selectedEmoji }) {
 		try {
-			await removeReactionFromMessage(token, messageId, selectedEmoji)
-
-			context.commit('removeReactionFromMessage', { token, messageId, selectedEmoji })
-		} catch (error) {
-			console.debug(error)
-		}
-	},
-
-	/**
-	 * Gets the full reactions array for a given message.
-	 *
-	 * @param {*} context the context object
-	 * @param {*} param1 conversation token, message id
-	 */
-	async getReactionsDetails(context, { token, messageId }) {
-		try {
-			const response = await getReactionsDetails(token, messageId)
-
-			context.commit('addReactionsToMessage', {
+			context.commit('removeReactionFromMessage', {
 				token,
 				messageId,
-				reactions: response.data.ocs.data,
+				reaction: selectedEmoji,
 			})
-
-			return response
+			await removeReactionFromMessage(token, messageId, selectedEmoji)
 		} catch (error) {
+			// Restore the previous state if the request fails
+			context.commit('addReactionToMessage', {
+				token,
+				messageId,
+				reaction: selectedEmoji,
+			})
 			console.debug(error)
 		}
 	},

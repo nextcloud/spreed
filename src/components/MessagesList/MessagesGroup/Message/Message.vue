@@ -116,17 +116,19 @@ the main body of the message as well as a quote.
 
 			<!-- reactions buttons and popover with details -->
 			<div v-if="hasReactions" class="message-body__reactions">
-				<Popover v-for="reaction in Object.keys(simplifiedReactions)"
+				<Popover v-for="reaction in Object.keys(simpleReactions)"
 					:key="reaction"
 					:delay="200"
 					trigger="hover">
-					<button slot="trigger"
-						class="reaction-button">
+					<button v-if="simpleReactions[reaction]!== 0"
+						slot="trigger"
+						class="reaction-button"
+						@click="handleReactionClick(reaction)">
 						<span class="reaction-button__emoji"> {{ reaction }} </span>
-						<span> {{ simplifiedReactions[reaction] }} </span>
+						<span> {{ simpleReactions[reaction] }} </span>
 					</button>
-					<div v-if="hasReactionsDetails" class="reaction-details">
-						<p v-for="detailedReaction in messageReactions[reaction]" :key="Object.keys(detailedReaction)[0]">
+					<div v-if="detailedReactions" class="reaction-details">
+						<p v-for="detailedReaction in detailedReactions[reaction]" :key="Object.keys(detailedReaction)[0]">
 							{{ detailedReaction.actorDisplayName }}
 						</p>
 					</div>
@@ -350,7 +352,7 @@ export default {
 			// whether the message was seen, only used if this was marked as last read message
 			seen: false,
 			isActionMenuOpen: false,
-			hasReactionsDetails: false,
+			detailedReactionsRequested: false,
 		}
 	},
 
@@ -561,12 +563,12 @@ export default {
 			return this.messageObject.reactions?.length !== 0
 		},
 
-		messageReactions() {
+		simpleReactions() {
 			return this.messageObject.reactions
 		},
 
-		simplifiedReactions() {
-			return this.$store.getters.simplifiedReactions(this.token, this.messageObject.id)
+		detailedReactions() {
+			return this.$store.getters.reactions(this.token, this.messageObject.id)
 		},
 	},
 
@@ -620,8 +622,8 @@ export default {
 
 		handleMouseover() {
 			this.showMessageButtonsBar = true
-			if (this.hasReactions && !this.hasReactionsDetails) {
-				this.getReactionsDetails()
+			if (this.hasReactions && !this.detailedReactionsRequested) {
+				this.getReactions()
 			}
 		},
 
@@ -631,21 +633,45 @@ export default {
 			}
 		},
 
-		async getReactionsDetails() {
+		async getReactions() {
 			try {
 				/**
 				 * Get reaction details when the message is hovered for the first
 				 * time. After that we rely on system messages to update the
 				 * reactions.
 				 */
-				this.hasReactionsDetails = true
+				this.detailedReactionsRequested = true
 				console.debug('getting reactions details')
-				await this.$store.dispatch('getReactionsDetails', {
+				await this.$store.dispatch('getReactions', {
 					token: this.token,
 					messageId: this.messageObject.id,
 				})
 			} catch {
-				this.hasReactionsDetails = false
+				this.detailedReactionsRequested = false
+			}
+		},
+
+		async handleReactionClick(clickedEmoji) {
+			if (!this.detailedReactionsRequested) {
+				await this.getReactions()
+			}
+			// Check if current user has already added this reaction to the message
+			const currentUserHasReacted = this.detailedReactions[clickedEmoji].filter(item => {
+				return item.actorId === this.actorId
+			}).length !== 0
+
+			if (!currentUserHasReacted) {
+				this.$store.dispatch('addReactionToMessage', {
+					token: this.token,
+					messageId: this.messageObject.id,
+					selectedEmoji: clickedEmoji,
+				})
+			} else {
+				this.$store.dispatch('removeReactionFromMessage', {
+					token: this.token,
+					messageId: this.messageObject.id,
+					selectedEmoji: clickedEmoji,
+				})
 			}
 		},
 	},
