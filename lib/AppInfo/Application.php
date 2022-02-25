@@ -42,7 +42,6 @@ use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
-use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Files\Listener as FilesListener;
@@ -82,7 +81,6 @@ use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\IAppContainer;
-use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\Resources\IProviderManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudFederationProvider;
@@ -172,7 +170,6 @@ class Application extends App implements IBootstrap {
 		ShareListener::register($dispatcher);
 		StatusListener::register($dispatcher);
 
-		$this->registerRoomActivityHooks($dispatcher);
 		$this->registerChatHooks($dispatcher);
 		$context->injectFn(\Closure::fromCallable([$this, 'registerCloudFederationProviderManager']));
 	}
@@ -213,22 +210,6 @@ class Application extends App implements IBootstrap {
 				'type' => $user instanceof IUser && !$config->isDisabledForUser($user) ? 'link' : 'hidden',
 			];
 		});
-	}
-
-	protected function registerRoomActivityHooks(IEventDispatcher $dispatcher): void {
-		$listener = function (ChatEvent $event): void {
-			if ($event->shouldSkipLastActivityUpdate()) {
-				return;
-			}
-
-			$room = $event->getRoom();
-			/** @var ITimeFactory $timeFactory */
-			$timeFactory = $this->getContainer()->query(ITimeFactory::class);
-			$room->setLastActivity($timeFactory->getDateTime());
-		};
-
-		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND, $listener);
-		$dispatcher->addListener(ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND, $listener);
 	}
 
 	protected function registerChatHooks(IEventDispatcher $dispatcher): void {

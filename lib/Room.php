@@ -829,11 +829,13 @@ class Room {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('last_message', $update->createNamedParameter((int) $message->getId()))
+			->set('last_activity', $update->createNamedParameter($message->getCreationDateTime(), 'datetime'))
 			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 
 		$this->lastMessage = $message;
 		$this->lastMessageId = (int) $message->getId();
+		$this->lastActivity = $message->getCreationDateTime();
 	}
 
 	public function resetActiveSince(): bool {
