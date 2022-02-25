@@ -504,7 +504,7 @@ export default {
 	.loading {
 		display: inline-block;
 		width: 100%;
-		height: 384px;
+		height: 500px;
 	}
 
 	.loading-small {
