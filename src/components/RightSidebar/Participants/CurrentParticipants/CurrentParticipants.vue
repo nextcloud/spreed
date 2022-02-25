@@ -60,7 +60,7 @@ export default {
 	},
 	data() {
 		return {
-			isCurrentuserBeAdmin: false,
+			isCurrentUserIsModerator: false,
 		}
 	},
 	computed: {
@@ -88,7 +88,7 @@ export default {
 			if (currentParticipant) {
 				const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
 				// eslint-disable-next-line vue/no-side-effects-in-computed-properties
-				this.isCurrentuserBeAdmin = moderatorTypes.indexOf(currentParticipant.participantType) !== -1
+				this.isCurrentUserIsModerator = moderatorTypes.indexOf(currentParticipant.participantType) !== -1
 			}
 
 			return participants.slice().sort(this.sortParticipants)
@@ -213,7 +213,7 @@ export default {
 				return moderator1 ? -1 : 1
 			}
 
-			if (this.isCurrentuserBeAdmin) {
+			if (this.isCurrentUserIsModerator) {
 				if (p1inCall) {
 					return participant1.attendeePermissions < participant2.attendeePermissions ? 1 : -1
 				}
