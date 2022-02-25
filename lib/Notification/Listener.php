@@ -31,6 +31,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IDBConnection;
 use OCP\Notification\IManager;
 use OCP\IUser;
 use OCP\IUserSession;
@@ -38,6 +39,8 @@ use Psr\Log\LoggerInterface;
 
 class Listener {
 
+	/** @var IDBConnection */
+	protected $connection;
 	/** @var IManager */
 	protected $notificationManager;
 	/** @var ParticipantService */
@@ -54,12 +57,14 @@ class Listener {
 	/** @var bool */
 	protected $shouldSendCallNotification = false;
 
-	public function __construct(IManager $notificationManager,
+	public function __construct(IDBConnection $connection,
+								IManager $notificationManager,
 								ParticipantService $participantsService,
 								IEventDispatcher $dispatcher,
 								IUserSession $userSession,
 								ITimeFactory $timeFactory,
 								LoggerInterface $logger) {
+		$this->connection = $connection;
 		$this->notificationManager = $notificationManager;
 		$this->participantsService = $participantsService;
 		$this->dispatcher = $dispatcher;
@@ -248,18 +253,25 @@ class Listener {
 		}
 
 		$userIds = $this->participantsService->getParticipantUserIdsForCallNotifications($room);
-		foreach ($userIds as $userId) {
-			if ($actorId === $userId) {
-				continue;
-			}
+		$this->connection->beginTransaction();
+		try {
+			foreach ($userIds as $userId) {
+				if ($actorId === $userId) {
+					continue;
+				}
 
-			try {
-				$notification->setUser($userId);
-				$this->notificationManager->notify($notification);
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->error($e->getMessage(), ['exception' => $e]);
+				try {
+					$notification->setUser($userId);
+					$this->notificationManager->notify($notification);
+				} catch (\InvalidArgumentException $e) {
+					$this->logger->error($e->getMessage(), ['exception' => $e]);
+				}
 			}
+		} catch (\Throwable $e) {
+			$this->connection->rollBack();
+			throw $e;
 		}
+		$this->connection->commit();
 
 		if ($shouldFlush) {
 			$this->notificationManager->flush();
