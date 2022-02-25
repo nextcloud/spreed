@@ -1091,9 +1091,9 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			return
 		}
 
-		const forceReconnectOnceLocalMediaStarted = (constraints) => {
-			webrtc.off('localMediaStarted', forceReconnectOnceLocalMediaStarted)
-			webrtc.off('localMediaError', forceReconnectOnceLocalMediaError)
+		const updateCallFlagsOnceLocalMediaStarted = (constraints) => {
+			webrtc.off('localMediaStarted', updateCallFlagsOnceLocalMediaStarted)
+			webrtc.off('localMediaError', updateCallFlagsOnceLocalMediaError)
 
 			startedWithMedia = true
 
@@ -1107,21 +1107,31 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 				}
 			}
 
-			forceReconnect(signaling, flags)
+			if (signaling.hasFeature('mcu')) {
+				signaling.updateCurrentCallFlags(flags)
+
+				if (!ownPeer) {
+					checkStartPublishOwnPeer(signaling)
+				} else {
+					ownPeer.start()
+				}
+			} else if (!signaling.hasFeature('mcu')) {
+				signaling.updateCurrentCallFlags(flags)
+			}
 		}
-		const forceReconnectOnceLocalMediaError = () => {
-			webrtc.off('localMediaStarted', forceReconnectOnceLocalMediaStarted)
-			webrtc.off('localMediaError', forceReconnectOnceLocalMediaError)
+		const updateCallFlagsOnceLocalMediaError = () => {
+			webrtc.off('localMediaStarted', updateCallFlagsOnceLocalMediaStarted)
+			webrtc.off('localMediaError', updateCallFlagsOnceLocalMediaError)
 
 			startedWithMedia = false
 
 			// If the media fails to start there will be no media, so no need to
-			// reconnect. A reconnection will happen once the user selects a
-			// different device.
+			// update the call flags. The call flags will be updated once the
+			// user selects a different device.
 		}
 
-		webrtc.on('localMediaStarted', forceReconnectOnceLocalMediaStarted)
-		webrtc.on('localMediaError', forceReconnectOnceLocalMediaError)
+		webrtc.on('localMediaStarted', updateCallFlagsOnceLocalMediaStarted)
+		webrtc.on('localMediaError', updateCallFlagsOnceLocalMediaError)
 
 		startedWithMedia = undefined
 
@@ -1438,7 +1448,17 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
 		}
 
-		forceReconnect(signaling, flags)
+		if (signaling.hasFeature('mcu')) {
+			signaling.updateCurrentCallFlags(flags)
+
+			if (!ownPeer) {
+				checkStartPublishOwnPeer(signaling)
+			} else {
+				ownPeer.start()
+			}
+		} else if (!signaling.hasFeature('mcu')) {
+			signaling.updateCurrentCallFlags(flags)
+		}
 	})
 
 	webrtc.on('localMediaStarted', function(/* configuration */) {
