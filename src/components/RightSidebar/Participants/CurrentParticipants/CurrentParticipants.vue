@@ -84,7 +84,7 @@ export default {
 				})
 			}
 
-			const currentParticipant = participants.find(x => x.actorId === this.$store.getters.getUserId())
+			const currentParticipant = participants.find(x => x.actorId === this.$store.getters.getActorId() && x.actorType === this.$store.getters.getActorType())
 			if (currentParticipant) {
 				const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
 				// eslint-disable-next-line vue/no-side-effects-in-computed-properties
