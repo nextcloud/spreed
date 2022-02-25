@@ -21,8 +21,8 @@
 
 <template>
 	<div>
-		<ParticipantsList v-if="participants.length"
-			:items="participants"
+		<ParticipantsList v-if="participantsList.length"
+			:items="participantsList"
 			:loading="!participantsInitialised" />
 		<Hint v-else :hint="t('spreed', 'No search results')" />
 	</div>
@@ -58,11 +58,7 @@ export default {
 			default: true,
 		},
 	},
-	data() {
-		return {
-			isCurrentUserIsModerator: false,
-		}
-	},
+
 	computed: {
 		token() {
 			return this.$store.getters.getToken()
@@ -84,14 +80,23 @@ export default {
 				})
 			}
 
-			const currentParticipant = participants.find(x => x.actorId === this.$store.getters.getActorId() && x.actorType === this.$store.getters.getActorType())
-			if (currentParticipant) {
-				const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
-				// eslint-disable-next-line vue/no-side-effects-in-computed-properties
-				this.isCurrentUserIsModerator = moderatorTypes.indexOf(currentParticipant.participantType) !== -1
-			}
+			return participants
+		},
 
-			return participants.slice().sort(this.sortParticipants)
+		participantsList() {
+			return this.participants.slice().sort(this.sortParticipants)
+		},
+
+		currentParticipant() {
+			return this.participants.find(x => {
+				return x.actorId === this.$store.getters.getActorId()
+					&& x.actorType === this.$store.getters.getActorType()
+			})
+		},
+
+		currentParticipantIsModerator() {
+			const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
+			return this.currentParticipant && moderatorTypes.indexOf(this.currentParticipant.participantType) !== -1
 		},
 	},
 
@@ -213,7 +218,7 @@ export default {
 				return moderator1 ? -1 : 1
 			}
 
-			if (this.isCurrentUserIsModerator) {
+			if (this.currentParticipantIsModerator) {
 				if (participant1.attendeePermissions !== participant2.attendeePermissions) {
 					return participant1.attendeePermissions < participant2.attendeePermissions ? 1 : -1
 				}
