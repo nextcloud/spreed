@@ -768,6 +768,7 @@ class Room {
 	 * @return bool
 	 */
 	public function setLastActivity(\DateTime $now): bool {
+		// FIXME combine with setLastMessage and delay in case of multiple system messages
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('last_activity', $update->createNamedParameter($now, 'datetime'))
