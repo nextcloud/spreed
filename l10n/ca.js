@@ -459,7 +459,7 @@ OC.L10N.register(
     "Saved!" : "Desat!",
     "None" : "Cap",
     "User" : "Usuari",
-    "Disabled" : "Desactivat",
+    "Disabled" : "Inhabilitat",
     "Moderators" : "Moderadors",
     "Users" : "Usuaris",
     "Commands" : "Ordres",
