@@ -26,6 +26,7 @@ namespace OCA\Talk\BackgroundJob;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCA\Talk\Manager;
+use OCP\BackgroundJob\IJob;
 use OCP\ICache;
 use OCP\ICacheFactory;
 
@@ -43,6 +44,7 @@ class ResetAssignedSignalingServer extends TimedJob {
 
 		// Every 5 minutes
 		$this->setInterval(60 * 5);
+		$this->setTimeSensitivity(IJob::TIME_SENSITIVE);
 
 		$this->manager = $manager;
 		$this->cache = $cacheFactory->createDistributed('hpb_servers');

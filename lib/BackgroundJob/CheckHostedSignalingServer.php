@@ -29,6 +29,7 @@ use OCA\Talk\DataObjects\AccountId;
 use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
 use OCA\Talk\Service\HostedSignalingServerService;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
 use OCP\IConfig;
 use OCP\IGroup;
@@ -60,7 +61,11 @@ class CheckHostedSignalingServer extends TimedJob {
 								IURLGenerator $urlGenerator,
 								LoggerInterface $logger) {
 		parent::__construct($timeFactory);
+
+		// Every hour
 		$this->setInterval(3600);
+		$this->setTimeSensitivity(IJob::TIME_SENSITIVE);
+
 		$this->hostedSignalingServerService = $hostedSignalingServerService;
 		$this->config = $config;
 		$this->notificationManager = $notificationManager;
@@ -144,8 +149,6 @@ class CheckHostedSignalingServer extends TimedJob {
 		if ($oldAccountInfo !== $accountInfo) {
 			$this->config->setAppValue('spreed', 'hosted-signaling-server-account', json_encode($accountInfo));
 		}
-
-		$this->config->setAppValue('spreed', 'hosted-signaling-server-account-last-checked', $this->time->getTime());
 
 		if (!is_null($notificationSubject)) {
 			$this->logger->info('Hosted signaling server background job caused a notification: ' . $notificationSubject . ' ' . json_encode($notificationParameters));
