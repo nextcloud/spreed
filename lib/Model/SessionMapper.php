@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCA\Talk\Participant;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -88,6 +89,17 @@ class SessionMapper extends QBMapper {
 			->where($delete->expr()->in('id', $delete->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
 
 		return $delete->executeStatement();
+	}
+
+	/**
+	 * @param string[] $sessionIds
+	 */
+	public function resetInCallByIds(array $sessionIds): void {
+		$update = $this->db->getQueryBuilder();
+		$update->update($this->getTableName())
+			->set('in_call', $update->createNamedParameter(Participant::FLAG_DISCONNECTED, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->in('session_id', $update->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)));
+		$update->executeStatement();
 	}
 
 	public function createSessionFromRow(array $row): Session {
