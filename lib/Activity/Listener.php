@@ -232,6 +232,11 @@ class Listener {
 			return;
 		}
 
+		// We know the new participant is in the room,
+		// so skip loading them just to make sure they can read it.
+		// Must be overwritten later on for one-to-one chats.
+		$roomName = $room->getDisplayName($actorId);
+
 		foreach ($participants as $participant) {
 			if ($participant['actorType'] !== Attendee::ACTOR_USERS) {
 				// No user => no activity
@@ -244,7 +249,10 @@ class Listener {
 			}
 
 			try {
-				$roomName = $room->getDisplayName($participant['actorId']);
+				if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+					// Overwrite the room name with the other participant
+					$roomName = $room->getDisplayName($participant['actorId']);
+				}
 				$event
 					->setObject('room', $room->getId(), $roomName)
 					->setSubject('invitation', [
