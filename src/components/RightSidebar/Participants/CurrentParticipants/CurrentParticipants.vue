@@ -63,13 +63,12 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
-
 		/**
 		 * Gets the participants array.
 		 *
 		 * @return {Array}
 		 */
-		participantsList() {
+		participants() {
 			let participants = this.$store.getters.participantsList(this.token)
 
 			if (this.searchText !== '') {
@@ -81,7 +80,23 @@ export default {
 				})
 			}
 
-			return participants.slice().sort(this.sortParticipants)
+			return participants
+		},
+
+		participantsList() {
+			return this.participants.slice().sort(this.sortParticipants)
+		},
+
+		currentParticipant() {
+			return this.participants.find(x => {
+				return x.actorId === this.$store.getters.getActorId()
+					&& x.actorType === this.$store.getters.getActorType()
+			})
+		},
+
+		currentParticipantIsModerator() {
+			const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
+			return this.currentParticipant && moderatorTypes.indexOf(this.currentParticipant.participantType) !== -1
 		},
 	},
 
@@ -203,6 +218,11 @@ export default {
 				return moderator1 ? -1 : 1
 			}
 
+			if (this.currentParticipantIsModerator) {
+				if (participant1.attendeePermissions !== participant2.attendeePermissions) {
+					return participant1.attendeePermissions < participant2.attendeePermissions ? 1 : -1
+				}
+			}
 			const participant1Away = this.isNotAvailable(participant1)
 			const participant2Away = this.isNotAvailable(participant2)
 			if (participant1Away !== participant2Away) {
