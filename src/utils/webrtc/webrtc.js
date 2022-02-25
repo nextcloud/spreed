@@ -271,14 +271,78 @@ function userHasStreams(user) {
 
 /**
  * @param {object} signaling The signaling object
+ * @param {object} user The participant to create a peer for
+ */
+function createPeerForParticipant(signaling, user) {
+	const sessionId = user.sessionId || user.sessionid
+
+	const createPeer = function() {
+		const peer = webrtc.webrtc.createPeer({
+			id: sessionId,
+			type: 'video',
+			enableDataChannels: true,
+			enableSimulcast: signaling.hasFeature('simulcast'),
+			receiveMedia: {
+				offerToReceiveAudio: 1,
+				offerToReceiveVideo: 1,
+			},
+			sendVideoIfAvailable: signaling.getSendVideoIfAvailable(),
+		})
+		webrtc.emit('createdPeer', peer)
+		peer.start()
+	}
+
+	const currentSessionId = signaling.getSessionId()
+
+	const useMcu = signaling.hasFeature('mcu')
+
+	if (useMcu && userHasStreams(user)) {
+		// TODO(jojo): Already create peer object to avoid duplicate offers.
+		signaling.requestOffer(user, 'video')
+
+		delayedConnectionToPeer[user.sessionId] = setInterval(function() {
+			console.debug('No offer received for new peer, request offer again')
+
+			signaling.requestOffer(user, 'video')
+		}, 10000)
+	} else if (!useMcu && userHasStreams(selfInCall) && (!userHasStreams(user) || sessionId < currentSessionId)) {
+		// To avoid overloading the user joining a room (who previously called
+		// all the other participants), we decide who calls who by comparing
+		// the session ids of the users: "larger" ids call "smaller" ones.
+		console.debug('Starting call with', user)
+		createPeer()
+	} else if (!useMcu && userHasStreams(selfInCall) && userHasStreams(user) && sessionId > currentSessionId) {
+		// If the remote peer is not aware that it was disconnected
+		// from the current peer the remote peer will not send a new
+		// offer; thus, if the current peer does not receive a new
+		// offer in a reasonable time, the current peer calls the
+		// remote peer instead of waiting to be called to
+		// reestablish the connection.
+		delayedConnectionToPeer[sessionId] = setInterval(function() {
+			// New offers are periodically sent until a connection
+			// is established. As an offer can not be sent again
+			// from an existing peer it must be removed and a new
+			// one must be created from scratch.
+			webrtc.webrtc.getPeers(sessionId, 'video').forEach(function(peer) {
+				peer.end()
+			})
+
+			console.debug('No offer nor answer received, sending offer again')
+			createPeer()
+		}, 10000)
+	} else {
+		console.debug('User has no streams, not sending another offer')
+	}
+}
+
+/**
+ * @param {object} signaling The signaling object
  * @param {Array} newUsers Newly added participants
  * @param {Array} disconnectedSessionIds Remove participants
  */
 function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 	'use strict'
 	const currentSessionId = signaling.getSessionId()
-
-	const useMcu = signaling.hasFeature('mcu')
 
 	let playJoinSound = false
 	let playLeaveSound = false
@@ -347,60 +411,8 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 
 		playJoinSound = true
 
-		const createPeer = function() {
-			const peer = webrtc.webrtc.createPeer({
-				id: sessionId,
-				type: 'video',
-				enableDataChannels: true,
-				enableSimulcast: signaling.hasFeature('simulcast'),
-				receiveMedia: {
-					offerToReceiveAudio: 1,
-					offerToReceiveVideo: 1,
-				},
-				sendVideoIfAvailable: signaling.getSendVideoIfAvailable(),
-			})
-			webrtc.emit('createdPeer', peer)
-			peer.start()
-		}
-
 		if (!webrtc.webrtc.getPeers(sessionId, 'video').length) {
-			if (useMcu && userHasStreams(user)) {
-				// TODO(jojo): Already create peer object to avoid duplicate offers.
-				signaling.requestOffer(user, 'video')
-
-				delayedConnectionToPeer[user.sessionId] = setInterval(function() {
-					console.debug('No offer received for new peer, request offer again')
-
-					signaling.requestOffer(user, 'video')
-				}, 10000)
-			} else if (!useMcu && userHasStreams(selfInCall) && (!userHasStreams(user) || sessionId < currentSessionId)) {
-				// To avoid overloading the user joining a room (who previously called
-				// all the other participants), we decide who calls who by comparing
-				// the session ids of the users: "larger" ids call "smaller" ones.
-				console.debug('Starting call with', user)
-				createPeer()
-			} else if (!useMcu && userHasStreams(selfInCall) && userHasStreams(user) && sessionId > currentSessionId) {
-				// If the remote peer is not aware that it was disconnected
-				// from the current peer the remote peer will not send a new
-				// offer; thus, if the current peer does not receive a new
-				// offer in a reasonable time, the current peer calls the
-				// remote peer instead of waiting to be called to
-				// reestablish the connection.
-				delayedConnectionToPeer[sessionId] = setInterval(function() {
-					// New offers are periodically sent until a connection
-					// is established. As an offer can not be sent again
-					// from an existing peer it must be removed and a new
-					// one must be created from scratch.
-					webrtc.webrtc.getPeers(sessionId, 'video').forEach(function(peer) {
-						peer.end()
-					})
-
-					console.debug('No offer nor answer received, sending offer again')
-					createPeer()
-				}, 10000)
-			} else {
-				console.debug('User has no streams, not sending another offer')
-			}
+			createPeerForParticipant(signaling, user)
 		}
 
 		// Send shared screen to new participants
