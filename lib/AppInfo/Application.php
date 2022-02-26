@@ -217,6 +217,10 @@ class Application extends App implements IBootstrap {
 
 	protected function registerRoomActivityHooks(IEventDispatcher $dispatcher): void {
 		$listener = function (ChatEvent $event): void {
+			if ($event->shouldSkipLastActivityUpdate()) {
+				return;
+			}
+
 			$room = $event->getRoom();
 			/** @var ITimeFactory $timeFactory */
 			$timeFactory = $this->getContainer()->query(ITimeFactory::class);

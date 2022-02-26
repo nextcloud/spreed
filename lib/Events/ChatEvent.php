@@ -31,13 +31,22 @@ class ChatEvent extends RoomEvent {
 	/** @var IComment */
 	protected $comment;
 
+	/** @var bool */
+	protected $skipLastActivityUpdate;
 
-	public function __construct(Room $room, IComment $comment) {
+	public function __construct(Room $room,
+								IComment $comment,
+								bool $skipLastActivityUpdate = false) {
 		parent::__construct($room);
 		$this->comment = $comment;
+		$this->skipLastActivityUpdate = $skipLastActivityUpdate;
 	}
 
 	public function getComment(): IComment {
 		return $this->comment;
+	}
+
+	public function shouldSkipLastActivityUpdate(): bool {
+		return $this->skipLastActivityUpdate;
 	}
 }

@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use Aws\IoT1ClickDevicesService\IoT1ClickDevicesServiceClient;
 use OCA\Circles\CirclesManager;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
@@ -59,6 +60,7 @@ use OCP\Comments\IComment;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroup;
@@ -94,6 +96,8 @@ class ParticipantService {
 	private $notifications;
 	/** @var ITimeFactory */
 	private $timeFactory;
+	/** @var ICacheFactory */
+	private $cacheFactory;
 
 	public function __construct(IConfig $serverConfig,
 								Config $talkConfig,
@@ -107,7 +111,8 @@ class ParticipantService {
 								IGroupManager $groupManager,
 								MembershipService $membershipService,
 								Notifications $notifications,
-								ITimeFactory $timeFactory) {
+								ITimeFactory $timeFactory,
+								ICacheFactory $cacheFactory) {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->attendeeMapper = $attendeeMapper;
@@ -120,6 +125,7 @@ class ParticipantService {
 		$this->groupManager = $groupManager;
 		$this->membershipService = $membershipService;
 		$this->timeFactory = $timeFactory;
+		$this->cacheFactory = $cacheFactory;
 		$this->notifications = $notifications;
 	}
 
@@ -367,7 +373,7 @@ class ParticipantService {
 		if (empty($participants)) {
 			return;
 		}
-		$event = new AddParticipantsEvent($room, $participants);
+		$event = new AddParticipantsEvent($room, $participants, true);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_USERS_ADD, $event);
 
 		$lastMessage = 0;
@@ -426,7 +432,21 @@ class ParticipantService {
 			$this->dispatcher->dispatchTyped($attendeeEvent);
 
 			$this->dispatcher->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
+
+			$lastMessage = $event->getLastMessage();
+			if ($lastMessage instanceof IComment) {
+				$this->updateRoomLastMessage($room, $lastMessage);
+			}
 		}
+	}
+
+	protected function updateRoomLastMessage(Room $room, IComment $message): void {
+		$room->setLastMessage($message);
+		$room->setLastActivity($message->getCreationDateTime());
+		$lastMessageCache = $this->cacheFactory->createDistributed('talk/lastmsgid');
+		$lastMessageCache->remove($room->getToken());
+		$unreadCountCache = $this->cacheFactory->createDistributed('talk/unreadcount');
+		$unreadCountCache->clear($room->getId() . '-');
 	}
 
 	public function getHighestPermissionAttendee(Room $room): ?Attendee {

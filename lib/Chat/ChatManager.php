@@ -128,7 +128,8 @@ class ChatManager {
 		\DateTime $creationDateTime,
 		bool $sendNotifications,
 		?string $referenceId = null,
-		?int $parentId = null
+		?int $parentId = null,
+		bool $shouldSkipLastMessageUpdate = false
 	): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
@@ -152,14 +153,16 @@ class ChatManager {
 			$comment->setVerb('system');
 		}
 
-		$event = new ChatEvent($chat, $comment);
+		$event = new ChatEvent($chat, $comment, $shouldSkipLastMessageUpdate);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_SYSTEM_MESSAGE_SEND, $event);
 		try {
 			$this->commentsManager->save($comment);
 
-			// Update last_message
-			$chat->setLastMessage($comment);
-			$this->unreadCountCache->clear($chat->getId() . '-');
+			if (!$shouldSkipLastMessageUpdate) {
+				// Update last_message
+				$chat->setLastMessage($comment);
+				$this->unreadCountCache->clear($chat->getId() . '-');
+			}
 
 			if ($sendNotifications) {
 				$this->notifier->notifyOtherParticipant($chat, $comment, []);
