@@ -43,6 +43,7 @@ use OCA\Talk\Share\RoomShareProvider;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Comments\IComment;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
@@ -263,7 +264,15 @@ class Listener implements IEventListener {
 					|| $listener->getUserId() !== $participant['actorId']
 					// - has joined a listable room on their own
 					|| $participantType === Participant::USER) {
-					$listener->sendSystemMessage($room, 'user_added', ['user' => $participant['actorId']]);
+					$comment = $listener->sendSystemMessage(
+						$room,
+						'user_added',
+						['user' => $participant['actorId']],
+						null,
+						$event->shouldSkipLastMessageUpdate()
+					);
+
+					$event->setLastMessage($comment);
 				}
 			}
 		});
@@ -379,7 +388,7 @@ class Listener implements IEventListener {
 		}
 	}
 
-	protected function sendSystemMessage(Room $room, string $message, array $parameters = [], Participant $participant = null): void {
+	protected function sendSystemMessage(Room $room, string $message, array $parameters = [], Participant $participant = null, bool $shouldSkipLastMessageUpdate = false): IComment {
 		if ($participant instanceof Participant) {
 			$actorType = $participant->getAttendee()->getActorType();
 			$actorId = $participant->getAttendee()->getActorId();
@@ -408,11 +417,13 @@ class Listener implements IEventListener {
 			$referenceId = (string) $referenceId;
 		}
 
-		$this->chatManager->addSystemMessage(
+		return $this->chatManager->addSystemMessage(
 			$room, $actorType, $actorId,
 			json_encode(['message' => $message, 'parameters' => $parameters]),
 			$this->timeFactory->getDateTime(), $message === 'file_shared',
-			$referenceId
+			$referenceId,
+			null,
+			$shouldSkipLastMessageUpdate
 		);
 	}
 

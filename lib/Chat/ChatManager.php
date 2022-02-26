@@ -118,6 +118,11 @@ class ChatManager {
 	 * @param bool $sendNotifications
 	 * @param string|null $referenceId
 	 * @param int|null $parentId
+	 * @param bool $shouldSkipLastMessageUpdate If multiple messages will be posted
+	 *             (e.g. when adding multiple users to a room) we can skip the last
+	 *             message and last activity update until the last entry was created
+	 *             and then update with those values.
+	 *             This will replace O(n) with 1 database update.
 	 * @return IComment
 	 */
 	public function addSystemMessage(
@@ -128,7 +133,8 @@ class ChatManager {
 		\DateTime $creationDateTime,
 		bool $sendNotifications,
 		?string $referenceId = null,
-		?int $parentId = null
+		?int $parentId = null,
+		bool $shouldSkipLastMessageUpdate = false
 	): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
@@ -152,14 +158,16 @@ class ChatManager {
 			$comment->setVerb('system');
 		}
 
-		$event = new ChatEvent($chat, $comment);
+		$event = new ChatEvent($chat, $comment, $shouldSkipLastMessageUpdate);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_SYSTEM_MESSAGE_SEND, $event);
 		try {
 			$this->commentsManager->save($comment);
 
-			// Update last_message
-			$chat->setLastMessage($comment);
-			$this->unreadCountCache->clear($chat->getId() . '-');
+			if (!$shouldSkipLastMessageUpdate) {
+				// Update last_message
+				$chat->setLastMessage($comment);
+				$this->unreadCountCache->clear($chat->getId() . '-');
+			}
 
 			if ($sendNotifications) {
 				$this->notifier->notifyOtherParticipant($chat, $comment, []);
