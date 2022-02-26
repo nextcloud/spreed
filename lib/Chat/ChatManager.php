@@ -248,6 +248,8 @@ class ChatManager {
 			if ($comment->getActorType() !== 'bots' || $comment->getActorId() === 'changelog') {
 				$chat->setLastMessage($comment);
 				$this->unreadCountCache->clear($chat->getId() . '-');
+			} else {
+				$chat->setLastActivity($comment->getCreationDateTime());
 			}
 
 			$alreadyNotifiedUsers = [];

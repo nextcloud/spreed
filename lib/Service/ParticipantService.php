@@ -442,7 +442,6 @@ class ParticipantService {
 
 	protected function updateRoomLastMessage(Room $room, IComment $message): void {
 		$room->setLastMessage($message);
-		$room->setLastActivity($message->getCreationDateTime());
 		$lastMessageCache = $this->cacheFactory->createDistributed('talk/lastmsgid');
 		$lastMessageCache->remove($room->getToken());
 		$unreadCountCache = $this->cacheFactory->createDistributed('talk/unreadcount');
