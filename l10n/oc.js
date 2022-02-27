@@ -571,6 +571,8 @@ OC.L10N.register(
     "Copy link" : "Copiar lo ligam",
     "Connecting …" : "Connexion…",
     "Waiting for others to join the call …" : "En espèra que d’autres arriben…",
+    "You can invite others in the participant tab of the sidebar" : "Podètz convidar d’autre monde amb l’onglet dels participants de la barra laterala",
+    "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Podètz convidar d’autre monde amb l’onglet dels participants de la barra laterala o partejar aqueste ligam per los convidar !",
     "Share this link to invite others!" : "Partejatz aqueste ligam per convidar mai de monde !",
     "Conversation link copied to clipboard." : "Ligam de conversacion copiat al quichapapièrs.",
     "The link could not be copied." : "Impossible de copiar lo ligam.",
