@@ -30,6 +30,8 @@ class EndCallForEveryoneEvent extends ModifyRoomEvent {
 
 	/** @var string[] */
 	protected $sessionIds;
+	/** @var string[] */
+	protected $userIds;
 
 	public function __construct(Room $room,
 								?Participant $actor = null) {
@@ -50,5 +52,21 @@ class EndCallForEveryoneEvent extends ModifyRoomEvent {
 	 */
 	public function getSessionIds(): array {
 		return $this->sessionIds;
+	}
+
+	/**
+	 * @param string[] $userIds
+	 * @return void
+	 */
+	public function setUserIds(array $userIds): void {
+		$this->userIds = $userIds;
+	}
+
+	/**
+	 * Only available in the after-event
+	 * @return string[]
+	 */
+	public function getUserIds(): array {
+		return $this->userIds;
 	}
 }
