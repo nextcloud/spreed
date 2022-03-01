@@ -21,8 +21,9 @@
 
 <template>
 	<div class="wrapper">
-		<button slot="trigger"
+		<Button slot="trigger"
 			v-tooltip.bottom="t('spreed', 'Create a new group conversation')"
+			type="default"
 			class="toggle"
 			icon=""
 			:aria-label="t('spreed', 'Create a new group conversation')"
@@ -30,7 +31,7 @@
 			<Plus decorative
 				title=""
 				:size="20" />
-		</button>
+		</Button>
 		<!-- New group form -->
 		<Modal v-if="modal"
 			:container="container"
@@ -77,35 +78,40 @@
 				placement are rendered depending on the current page -->
 				<div class="navigation">
 					<!-- First page -->
-					<button v-if="page===0 && isPublic"
-						class="navigation__button navigation__button-left "
+					<Button v-if="page===0 && isPublic"
+						class="navigation__button navigation__button-left"
 						:disabled="disabled"
+						type="default"
 						@click="handleCreateConversation">
 						{{ t('spreed', 'Create conversation') }}
-					</button>
-					<button v-if="page===0"
-						class="navigation__button navigation__button-right primary"
+					</Button>
+					<Button v-if="page===0"
+						class="navigation__button navigation__button-right"
+						type="primary"
 						:disabled="disabled"
 						@click="handleSetConversationName">
 						{{ t('spreed', 'Add participants') }}
-					</button>
+					</Button>
 					<!-- Second page -->
-					<button v-if="page===1"
+					<Button v-if="page===1"
 						class="navigation__button navigation__button-left"
+						type="default"
 						@click="handleClickBack">
 						{{ t('spreed', 'Back') }}
-					</button>
-					<button v-if="page===1"
+					</Button>
+					<Button v-if="page===1"
 						class="navigation__button navigation__button-right primary"
+						type="primary"
 						@click="handleCreateConversation">
 						{{ t('spreed', 'Create conversation') }}
-					</button>
+					</Button>
 					<!-- Third page -->
-					<button v-if="page===2 && (error || isPublic)"
+					<Button v-if="page===2 && (error || isPublic)"
+						type="primary"
 						class="navigation__button navigation__button-right primary"
 						@click="closeModal">
 						{{ t('spreed', 'Close') }}
-					</button>
+					</Button>
 				</div>
 			</div>
 		</modal>
@@ -121,6 +127,7 @@ import SetContacts from './SetContacts/SetContacts'
 import SetConversationName from './SetConversationName/SetConversationName'
 import SetConversationType from './SetConversationType/SetConversationType'
 import Confirmation from './Confirmation/Confirmation'
+import Button from '@nextcloud/vue/dist/Components/Button'
 import { addParticipant } from '../../../services/participantsService'
 import {
 	createPublicConversation,
@@ -148,6 +155,7 @@ export default {
 		SetContacts,
 		SetConversationName,
 		SetConversationType,
+		Button,
 		Confirmation,
 		PasswordProtect,
 		ListableSettings,
@@ -363,7 +371,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+@import '../../../assets/buttons';
 .toggle {
 	height: 44px;
 	width: 44px;
