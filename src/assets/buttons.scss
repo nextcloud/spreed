@@ -22,6 +22,11 @@
 
 @import 'variables';
 
+.button-vue--vue-default {
+	background-color: var(--color-background-dark);
+	color: var(--color-main-text);
+}
+
 .nc-button {
 	width: $clickable-area;
 	height: $clickable-area;
