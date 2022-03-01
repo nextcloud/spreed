@@ -351,60 +351,70 @@ class BackendNotifier {
 	 * @param Room $room
 	 * @param int $flags
 	 * @param string[] $sessionIds
+	 * @param bool $changeAll
 	 * @throws \Exception
 	 */
-	public function roomInCallChanged(Room $room, int $flags, array $sessionIds): void {
-		$changed = [];
-		$users = [];
+	public function roomInCallChanged(Room $room, int $flags, array $sessionIds, bool $changeAll = false): void {
+		if ($changeAll) {
+			$data = [
+				'incall' => $flags,
+				'all' => true
+			];
+		} else {
+			$changed = [];
+			$users = [];
 
-		$participants = $this->participantService->getParticipantsForAllSessions($room);
-		foreach ($participants as $participant) {
-			$session = $participant->getSession();
-			if (!$session instanceof Session) {
-				continue;
-			}
+			$participants = $this->participantService->getParticipantsForAllSessions($room);
+			foreach ($participants as $participant) {
+				$session = $participant->getSession();
+				if (!$session instanceof Session) {
+					continue;
+				}
 
-			$attendee = $participant->getAttendee();
-			if ($attendee->getActorType() !== Attendee::ACTOR_USERS
-				&& $attendee->getActorType() !== Attendee::ACTOR_GUESTS) {
-				continue;
+				$attendee = $participant->getAttendee();
+				if ($attendee->getActorType() !== Attendee::ACTOR_USERS
+					&& $attendee->getActorType() !== Attendee::ACTOR_GUESTS) {
+					continue;
+				}
+
+				$data = [
+					'inCall' => $session->getInCall(),
+					'lastPing' => $session->getLastPing(),
+					'sessionId' => $session->getSessionId(),
+					'nextcloudSessionId' => $session->getSessionId(),
+					'participantType' => $attendee->getParticipantType(),
+					'participantPermissions' => $participant->getPermissions(),
+				];
+				if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
+					$data['userId'] = $attendee->getActorId();
+				}
+
+				if ($session->getInCall() !== Participant::FLAG_DISCONNECTED) {
+					$users[] = $data;
+				}
+
+				if (\in_array($session->getSessionId(), $sessionIds, true)) {
+					$changed[] = $data;
+				}
 			}
 
 			$data = [
-				'inCall' => $session->getInCall(),
-				'lastPing' => $session->getLastPing(),
-				'sessionId' => $session->getSessionId(),
-				'nextcloudSessionId' => $session->getSessionId(),
-				'participantType' => $attendee->getParticipantType(),
-				'participantPermissions' => $participant->getPermissions(),
+				'incall' => $flags,
+				'changed' => $changed,
+				'users' => $users,
 			];
-			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
-				$data['userId'] = $attendee->getActorId();
-			}
-
-			if ($session->getInCall() !== Participant::FLAG_DISCONNECTED) {
-				$users[] = $data;
-			}
-
-			if (\in_array($session->getSessionId(), $sessionIds, true)) {
-				$changed[] = $data;
-			}
 		}
 
 		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'incall',
-			'incall' => [
-				'incall' => $flags,
-				'changed' => $changed,
-				'users' => $users
-			],
+			'incall' => $data,
 		]);
 		$duration = microtime(true) - $start;
 		$this->logger->debug('Room in-call status changed: {token} {flags} {users} ({duration})', [
 			'token' => $room->getToken(),
 			'flags' => $flags,
-			'users' => print_r($sessionIds, true),
+			'users' => $changeAll ? 'all' : print_r($sessionIds, true),
 			'duration' => sprintf('%.2f', $duration),
 			'app' => 'spreed-hpb',
 		]);
