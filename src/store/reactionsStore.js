@@ -40,14 +40,25 @@ const getters = {
 			return undefined
 		}
 	},
+
+	// Checks if a user has already reacted to a message with a particular reaction
+	userHasReacted: (state) => (actorId, token, messageId, reaction) => {
+		if (!state?.reactions?.[token]?.[messageId]?.[reaction]) {
+			return false
+		}
+		return state?.reactions?.[token]?.[messageId]?.[reaction].filter(item => {
+			return item.actorId === actorId
+		}).length !== 0
+	},
 }
 
 const mutations = {
 	addReactions(state, { token, messageId, reactions }) {
 		if (!state.reactions[token]) {
-			Vue.set(state.reactions, [token], [messageId])
+			Vue.set(state.reactions, token, {})
+
 		}
-		state.reactions[token][messageId] = reactions
+		Vue.set(state.reactions[token], messageId, reactions)
 	},
 }
 
@@ -59,7 +70,7 @@ const actions = {
 	 * @param {*} param1 conversation token, message id
 	 */
 	async getReactions(context, { token, messageId }) {
-
+		console.debug('getting reactions details')
 		try {
 			const response = await getReactionsDetails(token, messageId)
 			context.commit('addReactions', {

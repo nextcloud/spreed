@@ -83,6 +83,11 @@ describe('Message.vue', () => {
 					reactions: '',
 				}
 			})
+
+		// Dummy hasReactions getter so that the message component is always
+		// properly mounted.
+		testStoreConfig.modules.messagesStore.getters.hasReactions
+			= jest.fn().mockReturnValue(() => false)
 	})
 
 	afterEach(() => {

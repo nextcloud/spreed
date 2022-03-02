@@ -194,38 +194,9 @@ const getters = {
 		return Object.keys(state.cancelPostNewMessage).length !== 0
 	},
 
-	hasReactionsDetails: (state) => (token, messageId) => {
-		const reactions = state.messages[token][messageId].reactions
-		// Check the first reaction to see if the reactions are detailed or not
-		return (typeof reactions[Object.keys(reactions)[0]]) === 'object'
-	},
-
-	/**
-	 *
-	 * @param {*} state The state object
-	 * @param getters The getters
-	 * @return {object} an object with the reactions (emojis) as keys and a number
-	 * as value.
-	 */
-	simplifiedReactions: (state, getters) => (token, messageId) => {
-		const reactions = state.messages[token][messageId].reactions
-
-		// Return an empty object if there are no reactions for the message
-		if (Object.keys(reactions).length === 0) {
-			return {}
-		}
-
-		const hasReactionsDetails = getters.hasReactionsDetails(token, messageId)
-
-		if (!hasReactionsDetails) {
-			return reactions
-		} else {
-			const simpleReactions = {}
-			for (const reaction of Object.keys(reactions)) {
-				simpleReactions[reaction] = reactions[reaction].length
-			}
-			return simpleReactions
-		}
+	// Returns true if the message has reactions
+	hasReactions: (state) => (token, messageId) => {
+		return Object.keys(state.messages[token][messageId].reactions).length !== 0
 	},
 }
 
@@ -372,12 +343,20 @@ const mutations = {
 
 	// Increases reaction count for a particular reaction on a message
 	addReactionToMessage(state, { token, messageId, reaction }) {
-		state.messages[token][messageId].reactions[reaction]++
+		if (!state.messages[token][messageId].reactions[reaction]) {
+			Vue.set(state.messages[token][messageId].reactions, reaction, 0)
+		}
+		const reactionCount = state.messages[token][messageId].reactions[reaction] + 1
+		Vue.set(state.messages[token][messageId].reactions, reaction, reactionCount)
 	},
 
 	// Decreases reaction count for a particular reaction on a message
 	removeReactionFromMessage(state, { token, messageId, reaction }) {
-		state.messages[token][messageId].reactions[reaction]--
+		const reactionCount = state.messages[token][messageId].reactions[reaction] - 1
+		Vue.set(state.messages[token][messageId].reactions, reaction, reactionCount)
+		if (state.messages[token][messageId].reactions[reaction] <= 0) {
+			Vue.delete(state.messages[token][messageId].reactions, reaction)
+		}
 	},
 }
 
@@ -488,6 +467,7 @@ const actions = {
 			token,
 			isReplyable: false,
 			sendingFailure: '',
+			reactions: {},
 			referenceId: Hex.stringify(SHA256(tempId)),
 		})
 
@@ -992,6 +972,11 @@ const actions = {
 				reaction: selectedEmoji,
 			})
 			await addReactionToMessage(token, messageId, selectedEmoji)
+			try {
+				context.dispatch('getReactions', { token, messageId })
+			} catch (error) {
+				console.debug(error)
+			}
 		} catch (error) {
 			// Restore the previous state if the request fails
 			context.commit('removeReactionFromMessage', {
@@ -1004,7 +989,7 @@ const actions = {
 	},
 
 	/**
-	 * Removes a single reactin to a message for the current user.
+	 * Removes a single reaction from a message for the current user.
 	 *
 	 * @param {*} context the context object
 	 * @param {*} param1 conversation token, message id and selected emoji (string)
@@ -1017,6 +1002,11 @@ const actions = {
 				reaction: selectedEmoji,
 			})
 			await removeReactionFromMessage(token, messageId, selectedEmoji)
+			try {
+				context.dispatch('getReactions', { token, messageId })
+			} catch (error) {
+				console.debug(error)
+			}
 		} catch (error) {
 			// Restore the previous state if the request fails
 			context.commit('addReactionToMessage', {
