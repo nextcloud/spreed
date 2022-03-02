@@ -323,39 +323,31 @@ class Listener {
 				$notifier->participantsModified($event->getRoom(), $sessionIds);
 			}
 		});
-		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND, static function (ChatParticipantEvent $event) {
-			if (self::isUsingInternalSignaling()) {
-				return;
-			}
 
-			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->get(BackendNotifier::class);
+		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND, [self::class, 'chatListener']);
+		$dispatcher->addListener(ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND, [self::class, 'chatListener']);
+		$dispatcher->addListener(ChatManager::EVENT_AFTER_MULTIPLE_SYSTEM_MESSAGE_SEND, [self::class, 'chatListener']);
+	}
 
-			$room = $event->getRoom();
-			$message = [
-				'type' => 'chat',
-				'chat' => [
-					'refresh' => true,
-				],
-			];
-			$notifier->sendRoomMessage($room, $message);
-		});
-		$dispatcher->addListener(ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND, static function (ChatEvent $event) {
-			if (self::isUsingInternalSignaling()) {
-				return;
-			}
+	public static function chatListener(ChatEvent $event): void {
+		if (self::isUsingInternalSignaling()) {
+			return;
+		}
 
-			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->get(BackendNotifier::class);
+		if ($event->shouldSkipLastActivityUpdate()) {
+			return;
+		}
 
-			$room = $event->getRoom();
-			$message = [
-				'type' => 'chat',
-				'chat' => [
-					'refresh' => true,
-				],
-			];
-			$notifier->sendRoomMessage($room, $message);
-		});
+		/** @var BackendNotifier $notifier */
+		$notifier = \OC::$server->get(BackendNotifier::class);
+
+		$room = $event->getRoom();
+		$message = [
+			'type' => 'chat',
+			'chat' => [
+				'refresh' => true,
+			],
+		];
+		$notifier->sendRoomMessage($room, $message);
 	}
 }
