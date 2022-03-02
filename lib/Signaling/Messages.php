@@ -32,7 +32,6 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class Messages {
-
 	use TTransactional;
 
 	/** @var IDBConnection */
