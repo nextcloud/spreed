@@ -234,7 +234,7 @@ OC.L10N.register(
     "The hosted signaling server is now configured and will be used." : "Nyní je nastavený hostovaný signalizační server a bude použit.",
     "The hosted signaling server was removed and will not be used anymore." : "Hostovaný signální server byl odebrán a už nebude používán.",
     "The hosted signaling server account has changed the status from \"{oldstatus}\" to \"{newstatus}\"." : "Stav účtu na hostovaném signalizačním serveru se změnil z „{oldstatus}“ na „{newstatus}“.",
-    "Contact via Talk" : "Kontaktovat prostřednictvím Talk",
+    "Contact via Talk" : "Kontakt přes Talk",
     "Open Talk" : "Otevřít Talk",
     "Conversations" : "Konverzace",
     "Messages" : "Zprávy",
