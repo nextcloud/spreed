@@ -57,6 +57,7 @@ use OCP\Notification\IManager as INotificationManager;
 class ChatManager {
 	public const EVENT_BEFORE_SYSTEM_MESSAGE_SEND = self::class . '::preSendSystemMessage';
 	public const EVENT_AFTER_SYSTEM_MESSAGE_SEND = self::class . '::postSendSystemMessage';
+	public const EVENT_AFTER_MULTIPLE_SYSTEM_MESSAGE_SEND = self::class . '::postSendMultipleSystemMessage';
 	public const EVENT_BEFORE_MESSAGE_SEND = self::class . '::preSendMessage';
 	public const EVENT_AFTER_MESSAGE_SEND = self::class . '::postSendMessage';
 

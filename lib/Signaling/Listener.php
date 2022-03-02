@@ -27,7 +27,6 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\ChatEvent;
-use OCA\Talk\Events\ChatParticipantEvent;
 use OCA\Talk\Events\EndCallForEveryoneEvent;
 use OCA\Talk\Events\ModifyEveryoneEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
@@ -36,7 +35,6 @@ use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\GuestManager;
-use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -323,39 +321,31 @@ class Listener {
 				$notifier->participantsModified($event->getRoom(), $sessionIds);
 			}
 		});
-		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND, static function (ChatParticipantEvent $event) {
-			if (self::isUsingInternalSignaling()) {
-				return;
-			}
 
-			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->get(BackendNotifier::class);
+		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND, [self::class, 'notifyUsersViaExternalSignalingToRefreshTheChat']);
+		$dispatcher->addListener(ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND, [self::class, 'notifyUsersViaExternalSignalingToRefreshTheChat']);
+		$dispatcher->addListener(ChatManager::EVENT_AFTER_MULTIPLE_SYSTEM_MESSAGE_SEND, [self::class, 'notifyUsersViaExternalSignalingToRefreshTheChat']);
+	}
 
-			$room = $event->getRoom();
-			$message = [
-				'type' => 'chat',
-				'chat' => [
-					'refresh' => true,
-				],
-			];
-			$notifier->sendRoomMessage($room, $message);
-		});
-		$dispatcher->addListener(ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND, static function (ChatEvent $event) {
-			if (self::isUsingInternalSignaling()) {
-				return;
-			}
+	public static function notifyUsersViaExternalSignalingToRefreshTheChat(ChatEvent $event): void {
+		if (self::isUsingInternalSignaling()) {
+			return;
+		}
 
-			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->get(BackendNotifier::class);
+		if ($event->shouldSkipLastActivityUpdate()) {
+			return;
+		}
 
-			$room = $event->getRoom();
-			$message = [
-				'type' => 'chat',
-				'chat' => [
-					'refresh' => true,
-				],
-			];
-			$notifier->sendRoomMessage($room, $message);
-		});
+		/** @var BackendNotifier $notifier */
+		$notifier = \OC::$server->get(BackendNotifier::class);
+
+		$room = $event->getRoom();
+		$message = [
+			'type' => 'chat',
+			'chat' => [
+				'refresh' => true,
+			],
+		];
+		$notifier->sendRoomMessage($room, $message);
 	}
 }

@@ -26,10 +26,12 @@ namespace OCA\Talk\Service;
 use OCA\Circles\CirclesManager;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\EndCallForEveryoneEvent;
 use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
@@ -445,6 +447,9 @@ class ParticipantService {
 		$lastMessageCache->remove($room->getToken());
 		$unreadCountCache = $this->cacheFactory->createDistributed('talk/unreadcount');
 		$unreadCountCache->clear($room->getId() . '-');
+
+		$event = new ChatEvent($room, $message);
+		$this->dispatcher->dispatch(ChatManager::EVENT_AFTER_MULTIPLE_SYSTEM_MESSAGE_SEND, $event);
 	}
 
 	public function getHighestPermissionAttendee(Room $room): ?Attendee {
