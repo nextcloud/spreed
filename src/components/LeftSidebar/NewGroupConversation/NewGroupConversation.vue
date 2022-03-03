@@ -23,7 +23,7 @@
 	<div class="wrapper">
 		<Button slot="trigger"
 			v-tooltip.bottom="t('spreed', 'Create a new group conversation')"
-			type="default"
+			type="tertiary"
 			class="toggle"
 			icon=""
 			:aria-label="t('spreed', 'Create a new group conversation')"
@@ -79,14 +79,12 @@
 				<div class="navigation">
 					<!-- First page -->
 					<Button v-if="page===0 && isPublic"
-						class="navigation__button navigation__button-left"
 						:disabled="disabled"
-						type="default"
+						type="tertiary"
 						@click="handleCreateConversation">
 						{{ t('spreed', 'Create conversation') }}
 					</Button>
 					<Button v-if="page===0"
-						class="navigation__button navigation__button-right"
 						type="primary"
 						:disabled="disabled"
 						@click="handleSetConversationName">
@@ -94,13 +92,11 @@
 					</Button>
 					<!-- Second page -->
 					<Button v-if="page===1"
-						class="navigation__button navigation__button-left"
-						type="default"
+						type="tertiary"
 						@click="handleClickBack">
 						{{ t('spreed', 'Back') }}
 					</Button>
 					<Button v-if="page===1"
-						class="navigation__button navigation__button-right primary"
 						type="primary"
 						@click="handleCreateConversation">
 						{{ t('spreed', 'Create conversation') }}
@@ -108,7 +104,6 @@
 					<!-- Third page -->
 					<Button v-if="page===2 && (error || isPublic)"
 						type="primary"
-						class="navigation__button navigation__button-right primary"
 						@click="closeModal">
 						{{ t('spreed', 'Close') }}
 					</Button>
@@ -371,7 +366,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/buttons';
 .toggle {
 	height: 44px;
 	width: 44px;
@@ -406,18 +400,12 @@ it back */
 
 .navigation {
 	display: flex;
+	justify-content: space-between;
 	flex: 0 0 40px;
 	height: 50px;
 	box-shadow: 0 -10px 5px var(--color-main-background);
 	z-index: 1;
 	width: 100%;
-	&__button {
-		height: 44px;
-		padding: 0 16px;
-	}
-	&__button-right {
-		margin-left:auto;
-	}
 }
 
 .wrapper {
