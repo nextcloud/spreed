@@ -66,8 +66,7 @@
 							:container="container"
 							:close-on-select="false"
 							@select="addEmoji">
-							<Button class="emoji-picker-button"
-								:disabled="disabled"
+							<Button :disabled="disabled"
 								:aria-label="t('spreed', 'Add emoji')"
 								type="tertiary"
 								:aria-haspopup="true">
@@ -79,8 +78,7 @@
 						<!-- Disabled emoji picker placeholder button -->
 						<Button v-else
 							type="tertiary"
-							:disabled="true"
-							class="emoji-picker-button">
+							:disabled="true">
 							<EmoticonOutline :size="16"
 								decorative
 								title="" />
@@ -113,7 +111,6 @@
 					type="tertiary"
 					native-type="submit"
 					:aria-label="t('spreed', 'Send message')"
-					class="new-message-form__send-button"
 					@click.prevent="handleSubmit">
 					<Send title=""
 						:size="16"
@@ -556,15 +553,6 @@ export default {
 			left: 5px;
 			bottom: 1px;
 			z-index: 1;
-			.emoji-picker-button {
-				opacity: .7;
-				&:hover,
-				&:active,
-				&:focus {
-					opacity: 1;
-					background-color: transparent;
-				}
-			}
 		}
 
 		&__input {
