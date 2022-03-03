@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ebfa9183dfe115f1856d80f98e0484c",
+    "content-hash": "c527ca6019fa02da2798fb95203caa5d",
     "packages": [],
     "packages-dev": [
         {
@@ -175,16 +175,16 @@
         },
         {
             "name": "christophwurst/nextcloud",
-            "version": "dev-master",
+            "version": "dev-stable23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "9b0f84c976df7e9548037762dabc628b4372fe9d"
+                "reference": "35a9fd3850885765a670b95f9bfa18c55245e7ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/9b0f84c976df7e9548037762dabc628b4372fe9d",
-                "reference": "9b0f84c976df7e9548037762dabc628b4372fe9d",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/35a9fd3850885765a670b95f9bfa18c55245e7ac",
+                "reference": "35a9fd3850885765a670b95f9bfa18c55245e7ac",
                 "shasum": ""
             },
             "require": {
@@ -193,7 +193,6 @@
                 "psr/event-dispatcher": "^1.0",
                 "psr/log": "^1.1"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -213,9 +212,9 @@
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
             "support": {
                 "issues": "https://github.com/ChristophWurst/nextcloud_composer/issues",
-                "source": "https://github.com/ChristophWurst/nextcloud_composer/tree/master"
+                "source": "https://github.com/ChristophWurst/nextcloud_composer/tree/stable23"
             },
-            "time": "2021-10-29T01:05:06+00:00"
+            "time": "2022-02-22T09:38:33+00:00"
         },
         {
             "name": "composer/package-versions-deprecated",
