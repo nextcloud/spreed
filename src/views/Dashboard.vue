@@ -46,7 +46,7 @@
 				<template #desc>
 					{{ t('spreed', 'Say hi to your friends and colleagues!') }}
 					<Button class="button-start-conversation"
-						type="default"
+						type="secondary"
 						@click="clickStartNew">
 						{{ t('spreed', 'Start a conversation') }}
 					</Button>
