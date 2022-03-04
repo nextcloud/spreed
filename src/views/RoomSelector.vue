@@ -55,12 +55,12 @@
 					</div>
 				</div>
 				<div id="modal-buttons">
-					<button v-if="!loading && availableRooms.length > 0"
-						class="primary"
+					<Button v-if="!loading && availableRooms.length > 0"
+						type="primary"
 						:disabled="!selectedRoom"
 						@click="select">
 						{{ t('spreed', 'Select conversation') }}
-					</button>
+					</Button>
 				</div>
 			</div>
 		</div>
@@ -73,12 +73,14 @@ import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { CONVERSATION } from '../constants'
 import ConversationIcon from '../components/ConversationIcon'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'RoomSelector',
 	components: {
 		ConversationIcon,
 		Modal,
+		Button,
 	},
 	props: {
 		container: {
@@ -165,9 +167,10 @@ export default {
 
 <style lang="scss" scoped>
 #modal-inner {
-	width: 90vw;
-	max-width: 400px;
-	height: 55vh;
+	width: 100%;
+	height: 100%;
+	padding: 20px;
+	margin: 0 auto;
 	position: relative;
 	display: flex;
 	align-items: center;
@@ -220,6 +223,7 @@ li {
 #modal-buttons {
 	overflow: hidden;
 	flex-shrink: 0;
+	margin: 0 auto;
 	button {
 		height: 44px;
 		margin: 0;
