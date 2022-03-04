@@ -260,7 +260,7 @@ export default {
 		},
 
 		blurButtonTooltip() {
-			return this.videoOn ? t('spreed', 'Disable background blur') : t('spreed', 'Blur background')
+			return this.blurOn ? t('spreed', 'Disable background blur') : t('spreed', 'Blur background')
 		},
 	},
 
