@@ -206,7 +206,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-	@import '../assets/buttons';
 	::v-deep .item-list__entry {
 		position: relative;
 	}
@@ -220,6 +219,7 @@ export default {
 			margin-bottom: 2vh;
 		}
 	}
+
 	.button-start-conversation {
 		margin: 0 auto;
 		margin-top: 3px;
