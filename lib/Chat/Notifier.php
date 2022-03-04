@@ -25,7 +25,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Chat;
 
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Files\Util;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -104,8 +103,9 @@ class Notifier {
 		}
 		$notification = $this->createNotification($chat, $comment, 'mention');
 		$shouldFlush = $this->notificationManager->defer();
+
 		foreach ($usersToNotify as $mentionedUser) {
-			if ($this->shouldMentionedUserBeNotified($mentionedUser['id'], $comment)) {
+			if ($this->shouldMentionedUserBeNotified($mentionedUser['id'], $comment, $chat)) {
 				$notification->setUser($mentionedUser['id']);
 				$this->notificationManager->notify($notification);
 				$alreadyNotifiedUsers[] = $mentionedUser;
@@ -210,7 +210,7 @@ class Notifier {
 			return [];
 		}
 
-		if (!$this->shouldMentionedUserBeNotified($replyTo->getActorId(), $comment)) {
+		if (!$this->shouldMentionedUserBeNotified($replyTo->getActorId(), $comment, $chat)) {
 			return [];
 		}
 
@@ -426,21 +426,16 @@ class Notifier {
 	 *
 	 * @param string $userId
 	 * @param IComment $comment
+	 * @param Room $room
 	 * @return bool
 	 */
-	protected function shouldMentionedUserBeNotified(string $userId, IComment $comment): bool {
+	protected function shouldMentionedUserBeNotified(string $userId, IComment $comment, Room $room): bool {
 		if ($comment->getActorType() === Attendee::ACTOR_USERS && $userId === $comment->getActorId()) {
 			// Do not notify the user if they mentioned themselves
 			return false;
 		}
 
 		if (!$this->userManager->userExists($userId)) {
-			return false;
-		}
-
-		try {
-			$room = $this->manager->getRoomById((int) $comment->getObjectId());
-		} catch (RoomNotFoundException $e) {
 			return false;
 		}
 
