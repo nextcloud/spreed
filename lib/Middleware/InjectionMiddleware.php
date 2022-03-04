@@ -151,26 +151,32 @@ class InjectionMiddleware extends Middleware {
 	 * @throws ParticipantNotFoundException
 	 */
 	protected function getLoggedInOrGuest(AEnvironmentAwareController $controller, bool $moderatorRequired): void {
-		$token = $this->request->getParam('token');
-		$sessionId = $this->talkSession->getSessionForRoom($token);
-		$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
-		$controller->setRoom($room);
-		$participant = null;
+		$room = $controller->getRoom();
+		if (!$room instanceof Room) {
+			$token = $this->request->getParam('token');
+			$sessionId = $this->talkSession->getSessionForRoom($token);
+			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
+			$controller->setRoom($room);
+		}
 
-		if ($sessionId !== null) {
-			try {
-				$participant = $room->getParticipantBySession($sessionId);
-			} catch (ParticipantNotFoundException $e) {
-				// ignore and fall back in case a concurrent request might have
-				// invalidated the session
+		$participant = $controller->getParticipant();
+		if (!$participant instanceof Participant) {
+			$participant = null;
+			if ($sessionId !== null) {
+				try {
+					$participant = $room->getParticipantBySession($sessionId);
+				} catch (ParticipantNotFoundException $e) {
+					// ignore and fall back in case a concurrent request might have
+					// invalidated the session
+				}
 			}
-		}
 
-		if ($participant === null) {
-			$participant = $room->getParticipant($this->userId);
-		}
+			if ($participant === null) {
+				$participant = $room->getParticipant($this->userId);
+			}
 
-		$controller->setParticipant($participant);
+			$controller->setParticipant($participant);
+		}
 
 		if ($moderatorRequired && !$participant->hasModeratorPermissions()) {
 			throw new NotAModeratorException();
