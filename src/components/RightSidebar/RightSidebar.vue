@@ -69,9 +69,9 @@
 				:name="conversation.displayName" />
 			<div v-if="!getUserId" id="app-settings">
 				<div id="app-settings-header">
-					<button class="settings-button" @click="showSettings">
+					<Button type="tertiary" class="settings-button" @click="showSettings">
 						{{ t('spreed', 'Settings') }}
-					</button>
+					</Button>
 				</div>
 			</div>
 		</AppSidebarTab>
@@ -91,6 +91,7 @@ import isInLobby from '../../mixins/isInLobby'
 import SetGuestUsername from '../SetGuestUsername'
 import SipSettings from './SipSettings'
 import LobbyStatus from './LobbyStatus'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'RightSidebar',
@@ -103,6 +104,7 @@ export default {
 		SetGuestUsername,
 		SipSettings,
 		LobbyStatus,
+		Button,
 	},
 
 	mixins: [
