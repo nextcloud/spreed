@@ -106,7 +106,7 @@ class Notifier {
 		$shouldFlush = $this->notificationManager->defer();
 
 		foreach ($usersToNotify as $mentionedUser) {
-			if ($this->shouldMentionedUserBeNotified($mentionedUser['id'], $comment, $chat)) {
+			if ($this->shouldMentionedUserBeNotified($mentionedUser['id'], $comment, $chat, $mentionedUser['attendee'] ?? null)) {
 				$notification->setUser($mentionedUser['id']);
 				$this->notificationManager->notify($notification);
 				$alreadyNotifiedUsers[] = $mentionedUser;
@@ -171,18 +171,19 @@ class Notifier {
 			return $usersToNotify;
 		}
 
-		$chatParticipants = $this->participantService->getActorsByType($chat, Attendee::ACTOR_USERS);
-		foreach ($chatParticipants as $participant) {
-			$alreadyAddedToNotify = array_filter($list, static function ($user) use ($participant): bool {
-				return $user['id'] === $participant->getActorId();
+		$attendees = $this->participantService->getActorsByType($chat, Attendee::ACTOR_USERS);
+		foreach ($attendees as $attendee) {
+			$alreadyAddedToNotify = array_filter($list, static function ($user) use ($attendee): bool {
+				return $user['id'] === $attendee->getActorId();
 			});
 			if (!empty($alreadyAddedToNotify)) {
 				continue;
 			}
 
 			$usersToNotify[] = [
-				'id' => $participant->getActorId(),
-				'type' => $participant->getActorType()
+				'id' => $attendee->getActorId(),
+				'type' => $attendee->getActorType(),
+				'attendee' => $attendee,
 			];
 		}
 
@@ -428,21 +429,26 @@ class Notifier {
 	 * @param string $userId
 	 * @param IComment $comment
 	 * @param Room $room
+	 * @param Attendee|null $attendee
 	 * @return bool
 	 */
-	protected function shouldMentionedUserBeNotified(string $userId, IComment $comment, Room $room): bool {
+	protected function shouldMentionedUserBeNotified(string $userId, IComment $comment, Room $room, ?Attendee $attendee = null): bool {
 		if ($comment->getActorType() === Attendee::ACTOR_USERS && $userId === $comment->getActorId()) {
 			// Do not notify the user if they mentioned themselves
 			return false;
 		}
 
-		if (!$this->userManager->userExists($userId)) {
-			return false;
-		}
-
 		try {
-			$participant = $room->getParticipant($userId, false);
-			$notificationLevel = $participant->getAttendee()->getNotificationLevel();
+			if (!$attendee instanceof Attendee) {
+				if (!$this->userManager->userExists($userId)) {
+					return false;
+				}
+
+				$participant = $room->getParticipant($userId, false);
+				$attendee = $participant->getAttendee();
+			}
+
+			$notificationLevel = $attendee->getNotificationLevel();
 			if ($notificationLevel === Participant::NOTIFY_DEFAULT) {
 				if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 					$notificationLevel = Participant::NOTIFY_ALWAYS;
