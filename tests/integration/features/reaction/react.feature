@@ -51,6 +51,8 @@ Feature: reaction/react
       | roomName | room |
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     And user "participant1" sends message "Message 1" to room "room" with 201
+    Then user "participant1" retrieve reactions "👍" of message "Message 1" in room "room" with 200
+      | actorType | actorId      | actorDisplayName         | reaction |
     And user "participant1" react with "👍" on message "Message 1" to room "room" with 201
     And user "participant2" react with "👍" on message "Message 1" to room "room" with 201
     Then user "participant1" retrieve reactions "👍" of message "Message 1" in room "room" with 200
