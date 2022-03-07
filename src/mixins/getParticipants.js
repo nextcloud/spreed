@@ -59,6 +59,9 @@ const getParticipants = {
 			EventBus.$on('route-change', this.onRouteChange)
 			EventBus.$on('joined-conversation', this.onJoinedConversation)
 
+			EventBus.$on('conversation-permissions-changed', this.debounceUpdateParticipants)
+			EventBus.$on('call-permissions-changed', this.debounceUpdateParticipants)
+
 			// FIXME this works only temporary until signaling is fixed to be only on the calls
 			// Then we have to search for another solution. Maybe the room list which we update
 			// periodically gets a hash of all online sessions?
@@ -68,6 +71,8 @@ const getParticipants = {
 		stopGetParticipantsMixin() {
 			EventBus.$off('route-change', this.onRouteChange)
 			EventBus.$off('joined-conversation', this.onJoinedConversation)
+			EventBus.$off('conversation-permissions-changed', this.debounceUpdateParticipants)
+			EventBus.$off('call-permissions-changed', this.debounceUpdateParticipants)
 			EventBus.$off('signaling-participant-list-changed', this.debounceUpdateParticipants)
 		},
 
