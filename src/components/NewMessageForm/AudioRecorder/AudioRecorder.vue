@@ -21,46 +21,49 @@
 
 <template>
 	<div class="audio-recorder">
-		<button v-if="!isRecording"
+		<Button v-if="!isRecording"
 			v-tooltip.auto="{
 				content: startRecordingTooltip,
 				delay: tooltipDelay,
 			}"
+			type="tertiary"
 			:disabled="!canStartRecording"
-			class="audio-recorder__trigger nc-button nc-button__main"
-			:class="{'audio-recorder__trigger--disabled': !canStartRecording}"
 			@click="start">
 			<Microphone :size="16"
 				title=""
 				decorative />
-		</button>
+		</Button>
 		<div v-else class="wrapper">
-			<button v-tooltip.auto="{
+			<Button v-tooltip.auto="{
 					content: abortRecordingTooltip,
 					delay: tooltipDelay,
 				}"
-				class="audio-recorder__stop nc-button nc-button__main"
+				type="error"
 				@click="abortRecording">
-				<Close :size="16"
-					title=""
-					decorative />
-			</button>
+				<template #icon>
+					<Close :size="16"
+						title=""
+						decorative />
+				</template>
+			</Button>
 			<div class="audio-recorder__info">
 				<div class="recording-indicator fadeOutIn" />
 				<span class="time">
 					{{ parsedRecordTime }}</span>
 			</div>
-			<button v-tooltip.auto="{
+			<Button v-tooltip.auto="{
 					content: stopRecordingTooltip,
 					delay: tooltipDelay,
 				}"
-				class="audio-recorder__trigger nc-button nc-button__main"
+				type="success"
 				:class="{'audio-recorder__trigger--recording': isRecording}"
 				@click="stop">
-				<Check :size="16"
-					title=""
-					decorative />
-			</button>
+				<template #icon>
+					<Check :size="16"
+						title=""
+						decorative />
+				</template>
+			</Button>
 		</div>
 	</div>
 </template>
@@ -73,6 +76,7 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { mediaDevicesManager } from '../../../utils/webrtc/index'
 import { showError } from '@nextcloud/dialogs'
 import { MediaRecorder } from 'extendable-media-recorder'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'AudioRecorder',
@@ -81,6 +85,7 @@ export default {
 		Microphone,
 		Close,
 		Check,
+		Button,
 	},
 
 	directives: {
@@ -331,40 +336,6 @@ export default {
 .audio-recorder {
 	display: flex;
 	// Audio record button
-	&__trigger {
-		&--recording {
-			background-color: var(--color-success) !important;
-			opacity: .8;
-			color: white;
-			&:hover,
-			&:focus {
-				opacity: 1;
-			}
-		}
-		&--disabled {
-			opacity: .5;
-			cursor: default;
-			&:hover,
-			&:focus {
-				background-color: transparent !important;
-			}
-		}
-
-		&--disabled * {
-			cursor: default;
-		}
-	}
-
-	&__stop {
-		margin-left: 4px;
-		background-color: var(--color-error) !important;
-		color: white;
-		opacity: .8;
-		&:hover,
-		&:focus {
-			opacity: 1;
-		}
-	}
 
 	&__info {
 		width: 86px;

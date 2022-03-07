@@ -66,25 +66,23 @@
 							:container="container"
 							:close-on-select="false"
 							@select="addEmoji">
-							<button type="button"
-								:disabled="disabled"
-								class="nc-button nc-button__main emoji-picker-button"
+							<Button :disabled="disabled"
 								:aria-label="t('spreed', 'Add emoji')"
+								type="tertiary"
 								:aria-haspopup="true">
 								<EmoticonOutline :size="16"
 									decorative
 									title="" />
-							</button>
+							</Button>
 						</EmojiPicker>
 						<!-- Disabled emoji picker placeholder button -->
-						<button v-else
-							type="button"
-							:disabled="true"
-							class="nc-button nc-button__main emoji-picker-button">
+						<Button v-else
+							type="tertiary"
+							:disabled="true">
 							<EmoticonOutline :size="16"
 								decorative
 								title="" />
-						</button>
+						</Button>
 					</div>
 					<div v-if="messageToBeReplied" class="new-message-form__quote">
 						<Quote :is-new-message-form-quote="true"
@@ -108,16 +106,16 @@
 					@recording="handleRecording"
 					@audio-file="handleAudioFile" />
 
-				<button v-else
+				<Button v-else
 					:disabled="disabled"
-					type="submit"
+					type="tertiary"
+					native-type="submit"
 					:aria-label="t('spreed', 'Send message')"
-					class="nc-button nc-button__main new-message-form__send-button"
 					@click.prevent="handleSubmit">
 					<Send title=""
 						:size="16"
 						decorative />
-				</button>
+				</Button>
 			</form>
 		</div>
 	</div>
@@ -128,6 +126,7 @@ import AdvancedInput from './AdvancedInput/AdvancedInput'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { getCapabilities } from '@nextcloud/capabilities'
 import Quote from '../Quote'
+import Button from '@nextcloud/vue/dist/Components/Button'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
@@ -153,6 +152,7 @@ export default {
 		Quote,
 		Actions,
 		ActionButton,
+		Button,
 		Paperclip,
 		EmojiPicker,
 		EmoticonOutline,
@@ -553,15 +553,6 @@ export default {
 			left: 5px;
 			bottom: 1px;
 			z-index: 1;
-			.emoji-picker-button {
-				opacity: .7;
-				&:hover,
-				&:active,
-				&:focus {
-					opacity: 1;
-					background-color: transparent;
-				}
-			}
 		}
 
 		&__input {
