@@ -69,7 +69,7 @@
 				:name="conversation.displayName" />
 			<div v-if="!getUserId" id="app-settings">
 				<div id="app-settings-header">
-					<Button type="tertiary" class="settings-button" @click="showSettings">
+					<Button type="tertiary" @click="showSettings">
 						{{ t('spreed', 'Settings') }}
 					</Button>
 				</div>
