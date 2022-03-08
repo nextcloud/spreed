@@ -87,6 +87,7 @@ OC.L10N.register(
     "{user} invited you to a group conversation: {call}" : "{user} شما را به یک گفتگو گروهی دعوت کرد: {call}",
     "Open settings" : "تنظیمات را باز کنید",
     "Messages" : "پیام ها",
+    "There is no such account registered." : "این حساب کاربری ثبت نام نشده است.",
     "United Arab Emirates" : "امارات متحده عربی",
     "Afghanistan" : "افغانستان",
     "Albania" : "آلبانی",
