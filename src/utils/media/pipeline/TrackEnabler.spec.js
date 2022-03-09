@@ -120,15 +120,14 @@ describe('TrackToStream', () => {
 		test('sets disabled input track as its output track enabling it when node is enabled', () => {
 			const inputTrack = newMediaStreamTrackMock('input')
 
-			expectedTrackEnabledStateInOutputTrackSetEvent = false
+			expectedTrackEnabledStateInOutputTrackSetEvent = true
 
 			inputTrack.enabled = false
 			trackEnabler._setInputTrack('default', inputTrack)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(trackEnabler, 'default', inputTrack)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledWith(trackEnabler, 'default', true)
+			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 			expect(inputTrack.enabled).toBe(true)
 		})
 
@@ -137,15 +136,14 @@ describe('TrackToStream', () => {
 
 			trackEnabler.setEnabled(false)
 
-			expectedTrackEnabledStateInOutputTrackSetEvent = true
+			expectedTrackEnabledStateInOutputTrackSetEvent = false
 
 			inputTrack.enabled = true
 			trackEnabler._setInputTrack('default', inputTrack)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(trackEnabler, 'default', inputTrack)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledWith(trackEnabler, 'default', false)
+			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 			expect(inputTrack.enabled).toBe(false)
 		})
 	})
@@ -324,15 +322,14 @@ describe('TrackToStream', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			expectedTrackEnabledStateInOutputTrackSetEvent = false
+			expectedTrackEnabledStateInOutputTrackSetEvent = true
 
 			inputTrack.enabled = false
 			trackEnabler._setInputTrack('default', inputTrack)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(trackEnabler, 'default', inputTrack)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledWith(trackEnabler, 'default', true)
+			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 			expect(inputTrack.enabled).toBe(true)
 		})
 
@@ -347,15 +344,14 @@ describe('TrackToStream', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			expectedTrackEnabledStateInOutputTrackSetEvent = true
+			expectedTrackEnabledStateInOutputTrackSetEvent = false
 
 			inputTrack.enabled = true
 			trackEnabler._setInputTrack('default', inputTrack)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(trackEnabler, 'default', inputTrack)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledWith(trackEnabler, 'default', false)
+			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 			expect(inputTrack.enabled).toBe(false)
 		})
 
@@ -410,15 +406,14 @@ describe('TrackToStream', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			expectedTrackEnabledStateInOutputTrackSetEvent = false
+			expectedTrackEnabledStateInOutputTrackSetEvent = true
 
 			inputTrack2.enabled = false
 			trackEnabler._setInputTrack('default', inputTrack2)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(trackEnabler, 'default', inputTrack2)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledWith(trackEnabler, 'default', true)
+			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 			expect(inputTrack.enabled).toBe(true)
 		})
 
@@ -434,15 +429,14 @@ describe('TrackToStream', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			expectedTrackEnabledStateInOutputTrackSetEvent = true
+			expectedTrackEnabledStateInOutputTrackSetEvent = false
 
 			inputTrack2.enabled = true
 			trackEnabler._setInputTrack('default', inputTrack2)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(trackEnabler, 'default', inputTrack2)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(1)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledWith(trackEnabler, 'default', false)
+			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 			expect(inputTrack.enabled).toBe(false)
 		})
 	})
