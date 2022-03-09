@@ -65,11 +65,15 @@ export default class TrackEnabler extends TrackSinkSource {
 	}
 
 	_handleInputTrack(trackId, track) {
-		this._setOutputTrack('default', track)
-
+		// Ignore the enabled state of the input and force the desired state by
+		// the node. The state must be forced before setting the output track to
+		// ensure that it will have the desired state from the start (and thus
+		// "_setOutputTrackEnabled" can not be used).
 		if (track && track.enabled !== this._enabled) {
-			this._setOutputTrackEnabled('default', this._enabled)
+			track.enabled = this._enabled
 		}
+
+		this._setOutputTrack('default', track)
 	}
 
 	_handleInputTrackEnabled(trackId, enabled) {
