@@ -56,6 +56,8 @@ export default class TrackToStream extends TrackSink {
 		this._superEmitterMixin()
 
 		this._stream = null
+
+		this._trackEnabledStates = {}
 	}
 
 	addInputTrackSlot(trackId) {
@@ -69,6 +71,13 @@ export default class TrackToStream extends TrackSink {
 	_handleInputTrack(trackId, newTrack, oldTrack) {
 		// Only constraints changed, nothing to do
 		if (newTrack === oldTrack) {
+			// But trigger "trackEnabled" if the state changed
+			if (newTrack && this._trackEnabledStates[trackId] !== newTrack.enabled) {
+				this._trackEnabledStates[trackId] = newTrack.enabled
+
+				this._trigger('trackEnabled', [newTrack, newTrack.enabled])
+			}
+
 			return
 		}
 
@@ -86,6 +95,8 @@ export default class TrackToStream extends TrackSink {
 			this._stream.addTrack(newTrack)
 		}
 
+		this._trackEnabledStates[trackId] = newTrack?.enabled
+
 		this._trigger('trackReplaced', [newTrack, oldTrack])
 
 		if (this._stream && this._stream.getTracks().length === 0) {
@@ -98,6 +109,8 @@ export default class TrackToStream extends TrackSink {
 	}
 
 	_handleInputTrackEnabled(trackId, enabled) {
+		this._trackEnabledStates[trackId] = enabled
+
 		this._trigger('trackEnabled', [this.getInputTrack(trackId), enabled])
 	}
 

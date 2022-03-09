@@ -277,6 +277,55 @@ describe('TrackToStream', () => {
 			expect(trackEnabledHandler).toHaveBeenCalledTimes(0)
 		})
 
+		test('triggers event when setting same now disabled input track again', () => {
+			const audioTrack = newMediaStreamTrackMock('audio')
+
+			trackToStream._setInputTrack('audio', audioTrack)
+
+			const stream = trackToStream.getStream()
+
+			streamSetHandler.mockClear()
+			trackReplacedHandler.mockClear()
+			trackEnabledHandler.mockClear()
+
+			audioTrack.enabled = false
+			trackToStream._setInputTrack('audio', audioTrack)
+
+			expect(trackToStream.getStream()).not.toBe(null)
+			expect(trackToStream.getStream()).toBe(stream)
+			expect(trackToStream.getStream().getTracks().length).toBe(1)
+			expect(trackToStream.getStream().getTracks()).toContain(audioTrack)
+			expect(streamSetHandler).toHaveBeenCalledTimes(0)
+			expect(trackReplacedHandler).toHaveBeenCalledTimes(0)
+			expect(trackEnabledHandler).toHaveBeenCalledTimes(1)
+			expect(trackEnabledHandler).toHaveBeenCalledWith(trackToStream, audioTrack, false)
+		})
+
+		test('triggers event when setting same now enabled input track again', () => {
+			const audioTrack = newMediaStreamTrackMock('audio')
+
+			audioTrack.enabled = false
+			trackToStream._setInputTrack('audio', audioTrack)
+
+			const stream = trackToStream.getStream()
+
+			streamSetHandler.mockClear()
+			trackReplacedHandler.mockClear()
+			trackEnabledHandler.mockClear()
+
+			audioTrack.enabled = true
+			trackToStream._setInputTrack('audio', audioTrack)
+
+			expect(trackToStream.getStream()).not.toBe(null)
+			expect(trackToStream.getStream()).toBe(stream)
+			expect(trackToStream.getStream().getTracks().length).toBe(1)
+			expect(trackToStream.getStream().getTracks()).toContain(audioTrack)
+			expect(streamSetHandler).toHaveBeenCalledTimes(0)
+			expect(trackReplacedHandler).toHaveBeenCalledTimes(0)
+			expect(trackEnabledHandler).toHaveBeenCalledTimes(1)
+			expect(trackEnabledHandler).toHaveBeenCalledWith(trackToStream, audioTrack, true)
+		})
+
 		test('replaces track in existing stream when setting another input track', () => {
 			const audioTrack = newMediaStreamTrackMock('audio')
 			const audioTrack2 = newMediaStreamTrackMock('audio2')
