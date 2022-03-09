@@ -60,12 +60,12 @@
 			-->
 			<div class="device-checker__call-preferences">
 				<!-- Audio toggle -->
-				<button v-tooltip="audioButtonTooltip"
-					class="device-toggle"
+				<Button v-tooltip="audioButtonTooltip"
+					type="tertiary"
 					:aria-label="audioButtonTooltip"
 					:disabled="!audioPreviewAvailable"
 					@click="toggleAudio">
-					<span class="device-toggle__icon">
+					<template #icon>
 						<Microphone v-if="audioOn"
 							title=""
 							decorative
@@ -74,8 +74,8 @@
 							title=""
 							decorative
 							:size="20" />
-					</span>
-				</button>
+					</template>
+				</Button>
 				<VolumeIndicator class="indicator"
 					:audio-preview-available="audioPreviewAvailable"
 					:current-volume="currentVolume"
@@ -83,12 +83,12 @@
 					:disabled="!audioOn" />
 
 				<!-- Video toggle -->
-				<button v-tooltip="videoButtonTooltip"
-					class="device-toggle"
+				<Button v-tooltip="videoButtonTooltip"
+					type="tertiary"
 					:aria-label="videoButtonTooltip"
 					:disabled="!videoPreviewAvailable"
 					@click="toggleVideo">
-					<span class="device-toggle__icon">
+					<template #icon>
 						<Video v-if="videoOn"
 							title=""
 							decorative
@@ -97,17 +97,17 @@
 							title=""
 							decorative
 							:size="20" />
-					</span>
-				</button>
+					</template>
+				</Button>
 
 				<!-- Blur toggle -->
-				<button v-if="videoPreviewAvailable && blurPreviewAvailable"
+				<Button v-if="videoPreviewAvailable && blurPreviewAvailable"
 					v-tooltip="blurButtonTooltip"
-					class="device-toggle"
+					type="tertiary"
 					:aria-label="blurButtonTooltip"
 					:disabled="!blurPreviewAvailable"
 					@click="toggleBlur">
-					<span class="device-toggle__icon">
+					<template #icon>
 						<Blur v-if="blurOn"
 							slot="icon"
 							:size="20"
@@ -118,22 +118,23 @@
 							:size="20"
 							decorative
 							title="" />
-					</span>
-				</button>
+					</template>
+				</Button>
 			</div>
 
 			<!-- Device selection -->
 			<div class="device-checker__device-selection">
-				<button v-if="!showDeviceSelection"
+				<Button v-if="!showDeviceSelection"
+					type="tertiary"
 					class="select-devices"
 					@click="showDeviceSelection = true">
-					<span class="select-devices__icon">
+					<template #icon>
 						<Cog title=""
 							decorative
 							:size="20" />
-					</span>
+					</template>
 					<span> {{ t('spreed', 'Choose devices') }}</span>
-				</button>
+				</Button>
 				<template v-if="showDeviceSelection">
 					<MediaDevicesSelector kind="audioinput"
 						:devices="devices"
@@ -176,7 +177,7 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import BrowserStorage from '../../services/BrowserStorage'
 import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
-
+import Button from '@nextcloud/vue/dist/Components/Button'
 export default {
 	name: 'DeviceChecker',
 
@@ -195,6 +196,7 @@ export default {
 		CallButton,
 		CheckboxRadioSwitch,
 		VolumeIndicator,
+		Button,
 	},
 
 	mixins: [devices],
@@ -426,11 +428,6 @@ export default {
 	&:focus {
 		opacity: 1;
 	}
-}
-
-.device-toggle {
-	background: none;
-	border: none;
 }
 
 .call-button {
