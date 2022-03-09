@@ -109,12 +109,10 @@
 					@click="toggleBlur">
 					<template #icon>
 						<Blur v-if="blurOn"
-							slot="icon"
 							:size="20"
 							decorative
 							title="" />
 						<BlurOff v-else
-							slot="icon"
 							:size="20"
 							decorative
 							title="" />
