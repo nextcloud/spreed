@@ -133,7 +133,7 @@
 							decorative
 							:size="20" />
 					</template>
-					<span> {{ t('spreed', 'Choose devices') }}</span>
+					{{ t('spreed', 'Choose devices') }}
 				</Button>
 				<template v-if="showDeviceSelection">
 					<MediaDevicesSelector kind="audioinput"
@@ -416,18 +416,7 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: none;
-	border: none;
-	padding: 0;
 	margin: auto;
-	&__icon {
-		margin-right: 4px;
-	}
-	opacity: 0.8;
-	&:hover,
-	&:focus {
-		opacity: 1;
-	}
 }
 
 .call-button {
