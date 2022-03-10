@@ -37,6 +37,8 @@ use OCP\Comments\NotFoundException;
 use OCP\IL10N;
 
 class ReactionManager {
+	/** @var ChatManager */
+	private $chatManager;
 	/** @var ICommentsManager|CommentsManager */
 	private $commentsManager;
 	/** @var IL10N */
@@ -48,11 +50,13 @@ class ReactionManager {
 	/** @var ITimeFactory */
 	protected $timeFactory;
 
-	public function __construct(CommentsManager $commentsManager,
+	public function __construct(ChatManager $chatManager,
+								CommentsManager $commentsManager,
 								IL10N $l,
 								MessageParser $messageParser,
 								Notifier $notifier,
 								ITimeFactory $timeFactory) {
+		$this->chatManager = $chatManager;
 		$this->commentsManager = $commentsManager;
 		$this->l = $l;
 		$this->messageParser = $messageParser;
@@ -133,6 +137,18 @@ class ReactionManager {
 		);
 		$comment->setVerb('reaction_deleted');
 		$this->commentsManager->save($comment);
+
+		$this->chatManager->addSystemMessage(
+			$chat,
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId(),
+			json_encode(['message' => 'reaction_deleted', 'parameters' => ['message' => (int) $comment->getId()]]),
+			$this->timeFactory->getDateTime(),
+			false,
+			null,
+			$messageId
+		);
+
 		return $comment;
 	}
 
