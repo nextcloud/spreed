@@ -473,6 +473,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($expectedKeys['permissions'])) {
 					$data['permissions'] = (string) $attendee['permissions'];
 				}
+				if (isset($expectedKeys['attendeePermissions'])) {
+					$data['attendeePermissions'] = (string) $attendee['attendeePermissions'];
+				}
 
 				if (!isset(self::$userToAttendeeId[$attendee['actorType']])) {
 					self::$userToAttendeeId[$attendee['actorType']] = [];
@@ -500,6 +503,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$result = array_map(function ($attendee) {
 				if (isset($attendee['permissions'])) {
 					$attendee['permissions'] = $this->mapPermissionsAPIOutput($attendee['permissions']);
+				}
+				if (isset($attendee['attendeePermissions'])) {
+					$attendee['attendeePermissions'] = $this->mapPermissionsAPIOutput($attendee['attendeePermissions']);
 				}
 				return $attendee;
 			}, $result);
@@ -584,7 +590,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	private function mapPermissionsAPIOutput($permissions): string {
 		$permissions = (int) $permissions;
 
-		$permissionsString = '';
+		$permissionsString = !$permissions ? 'D' : '';
 		foreach (self::$permissionsMap as $char => $int) {
 			if ($permissions & $int) {
 				$permissionsString .= $char;

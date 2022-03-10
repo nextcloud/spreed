@@ -22,7 +22,7 @@
 <template>
 	<div class="wrapper">
 		<PermissionEditor :display-name="displayName"
-			:permissions="attendeePermissions"
+			:permissions="permissions"
 			v-on="$listeners"
 			@submit="handleSubmitPermissions" />
 	</div>
@@ -86,11 +86,11 @@ export default {
 		},
 
 		/**
-		 * Permisssions of the current participant, from the participants
-		 * store.
+		 * Combined final permissions of the current participant, from the
+		 * participants store.
 		 */
-		attendeePermissions() {
-			return this.participant.attendeePermissions
+		permissions() {
+			return this.participant.permissions
 		},
 	},
 
