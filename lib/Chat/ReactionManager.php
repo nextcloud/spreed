@@ -81,7 +81,7 @@ class ReactionManager {
 		$parentMessage = $this->getCommentToReact($chat, (string) $messageId);
 		try {
 			// Check if the user already reacted with the same reaction
-			$comment = $this->commentsManager->getReactionComment(
+			$this->commentsManager->getReactionComment(
 				(int) $parentMessage->getId(),
 				$participant->getAttendee()->getActorType(),
 				$participant->getAttendee()->getActorId(),
@@ -97,7 +97,7 @@ class ReactionManager {
 			'chat',
 			(string) $chat->getId()
 		);
-		$comment->setParentId((string) $parentMessage->getId());
+		$comment->setParentId($parentMessage->getId());
 		$comment->setMessage($reaction);
 		$comment->setVerb('reaction');
 		$this->commentsManager->save($comment);

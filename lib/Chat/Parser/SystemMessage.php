@@ -436,6 +436,11 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You deleted a message');
 			}
+		} elseif ($message === 'reaction_deleted') {
+			$parsedMessage = $this->l->t('{actor} deleted a reaction');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You deleted a reaction');
+			}
 		} elseif ($message === 'history_cleared') {
 			$parsedMessage = $this->l->t('{actor} cleared the history of the conversation');
 			if ($currentUserIsActor) {
