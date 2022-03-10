@@ -107,7 +107,7 @@ class ReactionManager {
 		return $comment;
 	}
 
-	public function retrieveReactionMessages(Room $chat, Participant $participant, int $messageId, ?string $reaction): array {
+	public function retrieveReactionMessages(Room $chat, Participant $participant, int $messageId, ?string $reaction = null): array {
 		if ($reaction) {
 			$comments = $this->commentsManager->retrieveAllReactionsWithSpecificReaction($messageId, $reaction);
 		} else {

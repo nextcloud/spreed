@@ -61,14 +61,16 @@ class ReactionController extends AEnvironmentAwareController {
 			$participant = $this->getParticipant();
 			$parentMessage = $this->reactionManager->getCommentToReact($chat, (string) $messageId);
 			$this->reactionManager->addReactionMessage($chat, $participant, $parentMessage, $reaction);
+			$status = Http::STATUS_CREATED;
 		} catch (NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (ReactionAlreadyExistsException $e) {
-			return new DataResponse([], Http::STATUS_OK);
 		} catch (ReactionNotSupportedException | ReactionOutOfContextException | \Exception $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		} catch (ReactionAlreadyExistsException $e) {
+			$status = Http::STATUS_OK;
 		}
-		return new DataResponse([], Http::STATUS_CREATED);
+		$reactions = $this->reactionManager->retrieveReactionMessages($chat, $participant, $messageId);
+		return new DataResponse($reactions, $status);
 	}
 
 	/**
@@ -96,13 +98,14 @@ class ReactionController extends AEnvironmentAwareController {
 				$messageId,
 				$reaction
 			);
+			$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $participant, $messageId);
 		} catch (NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (\Exception $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse([], Http::STATUS_OK);
+		return new DataResponse($reactions, Http::STATUS_OK);
 	}
 
 	/**
