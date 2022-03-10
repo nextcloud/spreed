@@ -57,19 +57,21 @@ class ReactionController extends AEnvironmentAwareController {
 	 */
 	public function react(int $messageId, string $reaction): DataResponse {
 		try {
-			$chat = $this->getRoom();
-			$participant = $this->getParticipant();
-			$parentMessage = $this->reactionManager->getCommentToReact($chat, (string) $messageId);
-			$this->reactionManager->addReactionMessage($chat, $participant, $parentMessage, $reaction);
+			$this->reactionManager->addReactionMessage(
+				$this->getRoom(),
+				$this->getParticipant(),
+				$messageId,
+				$reaction
+			);
 			$status = Http::STATUS_CREATED;
 		} catch (NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (ReactionNotSupportedException | ReactionOutOfContextException | \Exception $e) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		} catch (ReactionAlreadyExistsException $e) {
 			$status = Http::STATUS_OK;
+		} catch (ReactionNotSupportedException | ReactionOutOfContextException | \Exception $e) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
-		$reactions = $this->reactionManager->retrieveReactionMessages($chat, $participant, $messageId);
+		$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId);
 		return new DataResponse($reactions, $status);
 	}
 
@@ -84,22 +86,15 @@ class ReactionController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function delete(int $messageId, string $reaction): DataResponse {
-		$participant = $this->getParticipant();
-		try {
-			// Verify that messageId is part of the room
-			$this->reactionManager->getCommentToReact($this->getRoom(), (string) $messageId);
-		} catch (ReactionNotSupportedException | ReactionOutOfContextException | NotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
 		try {
 			$this->reactionManager->deleteReactionMessage(
-				$participant,
+				$this->getRoom(),
+				$this->getParticipant(),
 				$messageId,
 				$reaction
 			);
-			$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $participant, $messageId);
-		} catch (NotFoundException $e) {
+			$reactions = $this->reactionManager->retrieveReactionMessages($this->getRoom(), $this->getParticipant(), $messageId);
+		} catch (ReactionNotSupportedException | ReactionOutOfContextException | NotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (\Exception $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);

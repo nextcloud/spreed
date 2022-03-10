@@ -60,7 +60,21 @@ class ReactionManager {
 		$this->timeFactory = $timeFactory;
 	}
 
-	public function addReactionMessage(Room $chat, Participant $participant, IComment $parentMessage, string $reaction): IComment {
+	/**
+	 * Add reaction
+	 *
+	 * @param Room $chat
+	 * @param Participant $participant
+	 * @param integer $messageId
+	 * @param string $reaction
+	 * @return IComment
+	 * @throws NotFoundException
+	 * @throws ReactionAlreadyExistsException
+	 * @throws ReactionNotSupportedException
+	 * @throws ReactionOutOfContextException
+	 */
+	public function addReactionMessage(Room $chat, Participant $participant, int $messageId, string $reaction): IComment {
+		$parentMessage = $this->getCommentToReact($chat, (string) $messageId);
 		try {
 			// Check if the user already reacted with the same reaction
 			$comment = $this->commentsManager->getReactionComment(
@@ -88,7 +102,22 @@ class ReactionManager {
 		return $comment;
 	}
 
-	public function deleteReactionMessage(Participant $participant, int $messageId, string $reaction): IComment {
+	/**
+	 * Delete reaction
+	 *
+	 * @param Room $chat
+	 * @param Participant $participant
+	 * @param integer $messageId
+	 * @param string $reaction
+	 * @return IComment
+	 * @throws NotFoundException
+	 * @throws ReactionNotSupportedException
+	 * @throws ReactionOutOfContextException
+	 */
+	public function deleteReactionMessage(Room $chat, Participant $participant, int $messageId, string $reaction): IComment {
+		// Just to verify that messageId is part of the room and throw error if not.
+		$this->getCommentToReact($chat, (string) $messageId);
+
 		$comment = $this->commentsManager->getReactionComment(
 			$messageId,
 			$participant->getAttendee()->getActorType(),
