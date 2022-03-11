@@ -24,7 +24,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 			actorId: 'alice-actor-id',
 			actorType: ATTENDEE.ACTOR_TYPE.USERS,
 			participantType: PARTICIPANT.TYPE.USER,
-			attendeePermissions: PARTICIPANT.PERMISSIONS.CALL_START
+			permissions: PARTICIPANT.PERMISSIONS.CALL_START
 				| PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
 				| PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO
 				| PARTICIPANT.PERMISSIONS.CUSTOM,
@@ -98,7 +98,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 		})
 
 		test('Properly renders the checkboxes with default permissions', async () => {
-			participant.attendeePermissions = PARTICIPANT.PERMISSIONS.DEFAULT
+			participant.permissions = PARTICIPANT.PERMISSIONS.DEFAULT
 			const wrapper = await mountParticipantPermissionsEditor(participant)
 			const callStartCheckbox = wrapper.findComponent(PermissionsEditor).findComponent({ ref: 'callStart' })
 			expect(callStartCheckbox.vm.$options.propsData.checked).toBe(true)

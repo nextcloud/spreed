@@ -43,6 +43,7 @@ import {
 } from '../services/conversationsService'
 import { getCurrentUser } from '@nextcloud/auth'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../constants'
+import { EventBus } from '../services/EventBus'
 
 const DUMMY_CONVERSATION = {
 	token: '',
@@ -491,11 +492,15 @@ const actions = {
 	async setConversationPermissions(context, { token, permissions }) {
 		await setConversationPermissions(token, permissions)
 		context.commit('setConversationPermissions', { token, permissions })
+
+		EventBus.$emit('conversation-permissions-changed')
 	},
 
 	async setCallPermissions(context, { token, permissions }) {
 		await setCallPermissions(token, permissions)
 		context.commit('setCallPermissions', { token, permissions })
+
+		EventBus.$emit('call-permissions-changed')
 	},
 }
 

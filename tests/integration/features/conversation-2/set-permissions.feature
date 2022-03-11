@@ -86,3 +86,53 @@ Feature: set-publishing-permissions
       | actorType  | actorId      | permissions |
       | users      | owner        | SJLAVP      |
       | users      | invited user | SJAVP       |
+
+
+
+  Scenario: setting call permissions resets participant permissions
+    Given user "owner" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "owner" adds user "invited user" to room "group room" with 200 (v4)
+    And user "owner" sets permissions for "invited user" in room "group room" to "V" with 200 (v4)
+    And user "owner" sees the following attendees in room "group room" with 200 (v4)
+      | actorType  | actorId      | permissions | attendeePermissions |
+      | users      | owner        | SJLAVP      | D                   |
+      | users      | invited user | CV          | CV                  |
+    When user "owner" sets call permissions for room "group room" to "A" with 200 (v4)
+    Then user "owner" sees the following attendees in room "group room" with 200 (v4)
+      | actorType  | actorId      | permissions | attendeePermissions |
+      | users      | owner        | SJLAVP      | D                   |
+      | users      | invited user | CA          | D                   |
+
+  Scenario: setting default permissions resets participant permissions
+    Given user "owner" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "owner" adds user "invited user" to room "group room" with 200 (v4)
+    And user "owner" sets permissions for "invited user" in room "group room" to "V" with 200 (v4)
+    And user "owner" sees the following attendees in room "group room" with 200 (v4)
+      | actorType  | actorId      | permissions | attendeePermissions |
+      | users      | owner        | SJLAVP      | D                   |
+      | users      | invited user | CV          | CV                  |
+    When user "owner" sets default permissions for room "group room" to "A" with 200 (v4)
+    Then user "owner" sees the following attendees in room "group room" with 200 (v4)
+      | actorType  | actorId      | permissions | attendeePermissions |
+      | users      | owner        | SJLAVP      | D                   |
+      | users      | invited user | CA          | D                   |
+
+  Scenario: setting default permissions does not reset call permissions
+    Given user "owner" creates room "group room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "owner" adds user "invited user" to room "group room" with 200 (v4)
+    And user "owner" sets call permissions for room "group room" to "V" with 200 (v4)
+    And user "owner" sees the following attendees in room "group room" with 200 (v4)
+      | actorType  | actorId      | permissions | attendeePermissions |
+      | users      | owner        | SJLAVP      | D                   |
+      | users      | invited user | CV          | D                   |
+    When user "owner" sets default permissions for room "group room" to "A" with 200 (v4)
+    Then user "owner" sees the following attendees in room "group room" with 200 (v4)
+      | actorType  | actorId      | permissions | attendeePermissions |
+      | users      | owner        | SJLAVP      | D                   |
+      | users      | invited user | CV          | D                   |
