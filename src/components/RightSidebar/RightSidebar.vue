@@ -70,6 +70,11 @@
 			<div v-if="!getUserId" id="app-settings">
 				<div id="app-settings-header">
 					<Button type="tertiary" @click="showSettings">
+						<template #icon>
+							<CogIcon decorative
+								title=""
+								:size="20" />
+						</template>
 						{{ t('spreed', 'Settings') }}
 					</Button>
 				</div>
@@ -92,6 +97,7 @@ import SetGuestUsername from '../SetGuestUsername'
 import SipSettings from './SipSettings'
 import LobbyStatus from './LobbyStatus'
 import Button from '@nextcloud/vue/dist/Components/Button'
+import CogIcon from 'vue-material-design-icons/Cog'
 
 export default {
 	name: 'RightSidebar',
@@ -105,6 +111,7 @@ export default {
 		SipSettings,
 		LobbyStatus,
 		Button,
+		CogIcon,
 	},
 
 	mixins: [
