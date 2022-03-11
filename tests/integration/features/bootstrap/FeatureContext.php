@@ -1673,6 +1673,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return $message['systemMessage'] !== '';
 		});
 
+		// Fix index gaps after the array_filter above
+		$messages = array_values($messages);
+
 		foreach ($messages as $systemMessage) {
 			// Include the received system messages in the list of messages used
 			// for replies.

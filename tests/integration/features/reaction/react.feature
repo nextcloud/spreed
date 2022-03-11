@@ -12,6 +12,11 @@ Feature: reaction/react
     And user "participant2" react with "👍" on message "Message 1" to room "room" with 201
       | actorType | actorId      | actorDisplayName         | reaction |
       | users     | participant2 | participant2-displayname | 👍       |
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant2 | participant2-displayname | reaction |
+      | room | users     | participant1 | participant1-displayname | user_added |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions |
       | room | users     | participant1 | participant1-displayname | Message 1 | []                | {"👍":1}  |
@@ -22,6 +27,12 @@ Feature: reaction/react
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions |
       | room | users     | participant1 | participant1-displayname | Message 1 | []                | {"👍":2}  |
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant1 | participant1-displayname | reaction |
+      | room | users     | participant2 | participant2-displayname | reaction |
+      | room | users     | participant1 | participant1-displayname | user_added |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: React two times to same message with the same reaction
     Given user "participant1" creates room "room" (v4)
@@ -38,6 +49,11 @@ Feature: reaction/react
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions |
       | room | users     | participant1 | participant1-displayname | Message 1 | []                | {"👍":1}  |
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant2 | participant2-displayname | reaction |
+      | room | users     | participant1 | participant1-displayname | user_added |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Delete reaction to message with success
     Given user "participant1" creates room "room" (v4)
@@ -56,6 +72,12 @@ Feature: reaction/react
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions |
       | room | users     | participant1 | participant1-displayname | Message 1 | []                | []        |
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant2 | participant2-displayname | reaction_revoked |
+      | room | users     | participant2 | participant2-displayname | reaction_deleted |
+      | room | users     | participant1 | participant1-displayname | user_added |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Retrieve reactions of a message
     Given user "participant1" creates room "room" (v4)
