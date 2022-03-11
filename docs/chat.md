@@ -325,4 +325,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `matterbridge_config_removed` - {actor} removed the Matterbridge configuration
 * `matterbridge_config_enabled` - {actor} started Matterbridge
 * `matterbridge_config_disabled` - {actor} stopped Matterbridge
+* `reaction` - {reaction}
+* `reaction_deleted` - Reaction deleted by author (replacement of `reaction` after the action has been performed)
+* `reaction_revoked` - {actor} deleted a reaction (the action that will replace `reaction` with a `reaction_deleted` message)
 
