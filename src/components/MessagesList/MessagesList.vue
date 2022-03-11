@@ -54,9 +54,11 @@ get the messagesList array and loop through the list to generate the messages.
 				:aria-label="scrollToBottomAriaLabel"
 				class="scroll-to-bottom"
 				@click="smoothScrollToBottom">
-				<ChevronDown decorative
-					title=""
-					:size="20" />
+				<template #icon>
+					<ChevronDown decorative
+						title=""
+						:size="20" />
+				</template>
 			</Button>
 		</transition>
 	</div>
@@ -913,16 +915,9 @@ export default {
 
 .scroll-to-bottom {
 	position: absolute;
-	width: 44px;
-	height: 44px;
 	bottom: 76px;
 	right: 24px;
 	z-index: 2;
-	padding: 0;
-	margin: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 }
 
 </style>
