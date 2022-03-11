@@ -52,14 +52,15 @@
 			v-tooltip="previewTooltip"
 			class="preview loading" />
 		<Button v-if="isUploadEditor"
+			class="remove-file"
 			tabindex="1"
 			type="primary"
 			:aria-label="removeAriaLabel"
-			class="remove-file">
-			<Close class="remove-file__icon"
-				decorative
-				title=""
-				@click="$emit('remove-file', id)" />
+			@click="$emit('remove-file', id)">
+			<template #icon>
+				<Close decorative
+					title="" />
+			</template>
 		</Button>
 		<ProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
 		<div class="name-container">
@@ -595,14 +596,6 @@ export default {
 	position: absolute;
 	top: 8px;
 	right: 8px;
-	box-shadow: 0 0 4px var(--color-box-shadow);
-	width: $clickable-area;
-	height: $clickable-area;
-	padding: 0;
-	margin: 0;
-	&__icon {
-		color: var(--color-primary-text);
-	}
 }
 
 </style>
