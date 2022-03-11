@@ -31,13 +31,33 @@ class ChatEvent extends RoomEvent {
 	/** @var IComment */
 	protected $comment;
 
+	/** @var bool */
+	protected $skipLastActivityUpdate;
 
-	public function __construct(Room $room, IComment $comment) {
+	public function __construct(Room $room,
+								IComment $comment,
+								bool $skipLastActivityUpdate = false) {
 		parent::__construct($room);
 		$this->comment = $comment;
+		$this->skipLastActivityUpdate = $skipLastActivityUpdate;
 	}
 
 	public function getComment(): IComment {
 		return $this->comment;
+	}
+
+	/**
+	 * If multiple messages will be posted (e.g. when adding multiple users to a room)
+	 * we can skip the last message and last activity update until the last entry
+	 * was created and then update with those values.
+	 * This will replace O(n) with 1 database update.
+	 *
+	 * A ChatManager::EVENT_AFTER_MULTIPLE_SYSTEM_MESSAGE_SEND will be triggered
+	 * as a final event when all messages have been created.
+	 *
+	 * @return bool
+	 */
+	public function shouldSkipLastActivityUpdate(): bool {
+		return $this->skipLastActivityUpdate;
 	}
 }

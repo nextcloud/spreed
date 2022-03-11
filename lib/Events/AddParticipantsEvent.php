@@ -24,17 +24,25 @@ declare(strict_types=1);
 namespace OCA\Talk\Events;
 
 use OCA\Talk\Room;
+use OCP\Comments\IComment;
 
 class AddParticipantsEvent extends RoomEvent {
 
 	/** @var array */
 	protected $participants;
 
+	/** @var bool */
+	protected $skipLastMessageUpdate;
+
+	/** @var IComment|null */
+	protected $lastMessage;
 
 	public function __construct(Room $room,
-								array $participants) {
+								array $participants,
+								bool $skipLastMessageUpdate = false) {
 		parent::__construct($room);
 		$this->participants = $participants;
+		$this->skipLastMessageUpdate = $skipLastMessageUpdate;
 	}
 
 	/**
@@ -42,5 +50,17 @@ class AddParticipantsEvent extends RoomEvent {
 	 */
 	public function getParticipants(): array {
 		return $this->participants;
+	}
+
+	public function shouldSkipLastMessageUpdate(): bool {
+		return $this->skipLastMessageUpdate;
+	}
+
+	public function setLastMessage(IComment $lastMessage): void {
+		$this->lastMessage = $lastMessage;
+	}
+
+	public function getLastMessage(): ?IComment {
+		return $this->lastMessage;
 	}
 }
