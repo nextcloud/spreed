@@ -172,7 +172,7 @@ LocalMediaModel.prototype = {
 
 		this.set('token', store.getters.getToken())
 
-		this._setInitialMediaState(configuration)
+		this._setInitialMediaState(localStream)
 	},
 
 	_handleLocalStreamRequestFailedRetryNoVideo(constraints, error) {
@@ -186,11 +186,11 @@ LocalMediaModel.prototype = {
 	_handleLocalStreamRequestFailed() {
 		this.set('localStream', null)
 
-		this._setInitialMediaState({ audio: false, video: false })
+		this._setInitialMediaState(null)
 	},
 
-	_setInitialMediaState(configuration) {
-		if (configuration.audio !== false) {
+	_setInitialMediaState(localStream) {
+		if (localStream && localStream.getAudioTracks().length > 0) {
 			this.set('audioAvailable', true)
 			if (this.get('audioEnabled')) {
 				this.enableAudio()
@@ -202,7 +202,7 @@ LocalMediaModel.prototype = {
 			this.set('audioAvailable', false)
 		}
 
-		if (configuration.video !== false) {
+		if (localStream && localStream.getVideoTracks().length > 0) {
 			this.set('videoAvailable', true)
 			if (this.get('videoEnabled')) {
 				this.enableVideo()
