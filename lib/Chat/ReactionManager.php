@@ -142,7 +142,7 @@ class ReactionManager {
 			$chat,
 			$participant->getAttendee()->getActorType(),
 			$participant->getAttendee()->getActorId(),
-			json_encode(['message' => 'reaction_deleted', 'parameters' => ['message' => (int) $comment->getId()]]),
+			json_encode(['message' => 'reaction_revoked', 'parameters' => ['message' => (int) $comment->getId()]]),
 			$this->timeFactory->getDateTime(),
 			false,
 			null,

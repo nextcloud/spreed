@@ -436,7 +436,7 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You deleted a message');
 			}
-		} elseif ($message === 'reaction_deleted') {
+		} elseif ($message === 'reaction_revoked') {
 			$parsedMessage = $this->l->t('{actor} deleted a reaction');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You deleted a reaction');
