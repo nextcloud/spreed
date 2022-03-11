@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<Button type="secondary" @click="disableLobby">
+	<Button type="primary" @click="disableLobby">
 		{{ t('spreed', 'Disable lobby' ) }}
 	</Button>
 </template>
