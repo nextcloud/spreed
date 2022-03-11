@@ -140,7 +140,14 @@ const getters = {
 	 */
 	messagesList: (state) => (token) => {
 		if (state.messages[token]) {
-			return Object.values(state.messages[token])
+			return Object.values(state.messages[token]).filter(message => {
+				// Filter out reaction messages
+				if (message.systemMessage === 'reaction' || message.systemMessage === 'reaction_deleted' || message.systemMessage === 'reaction_revoked') {
+					return false
+				} else {
+					return true
+				}
+			})
 		}
 		return []
 	},
