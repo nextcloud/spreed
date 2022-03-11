@@ -115,7 +115,9 @@ the main body of the message as well as a quote.
 			</div>
 
 			<!-- reactions buttons and popover with details -->
-			<div v-if="hasReactions" class="message-body__reactions">
+			<div v-if="hasReactions"
+				class="message-body__reactions"
+				@mouseover="handleReactionsMouseOver">
 				<Popover v-for="reaction in Object.keys(simpleReactions)"
 					:key="reaction"
 					:delay="200"
@@ -622,6 +624,10 @@ export default {
 
 		handleMouseover() {
 			this.showMessageButtonsBar = true
+
+		},
+
+		handleReactionsMouseOver() {
 			if (this.hasReactions && !this.detailedReactionsRequested) {
 				this.getReactions()
 			}
