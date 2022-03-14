@@ -5,7 +5,7 @@ import storeConfig from '../../../../../store/storeConfig'
 import { imagePath, generateRemoteUrl } from '@nextcloud/router'
 import { loadState } from '@nextcloud/initial-state'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline'
-
+import Button from '@nextcloud/vue/dist/Components/Button'
 import FilePreview from './FilePreview'
 
 jest.mock('@nextcloud/initial-state', () => ({
@@ -517,8 +517,7 @@ describe('FilePreview.vue', () => {
 			await imageMock.onload()
 
 			expect(wrapper.element.tagName).toBe('DIV')
-			await wrapper.find('button').trigger('click')
-
+			await wrapper.findComponent(Button).trigger('click')
 			expect(wrapper.emitted()['remove-file']).toStrictEqual([['123']])
 		})
 	})
