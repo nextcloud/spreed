@@ -68,6 +68,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_UPDATE_CALL_FLAGS, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_PERMISSIONS_SET, $listener);
 		$dispatcher->addListener(GuestManager::EVENT_AFTER_NAME_UPDATE, $listener);
 
 		$listener = static function (ParticipantEvent $event): void {
