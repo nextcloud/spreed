@@ -44,7 +44,7 @@ class ReactionParser {
 		$message->setMessageType('system');
 		if ($comment->getVerb() === 'reaction_deleted') {
 			// This message is necessary to make compatible with old clients
-			$message->setMessage($this->l->t('Message deleted by author'), [], $comment->getVerb());
+			$message->setMessage($this->l->t('Reaction deleted by author'), [], $comment->getVerb());
 		} else {
 			$message->setMessage($message->getMessage(), [], $comment->getVerb());
 		}
