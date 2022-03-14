@@ -81,6 +81,9 @@ export default {
 			type: String,
 			required: true,
 		},
+		/**
+		 * The display name of the sender of the message.
+		 */
 		actorDisplayName: {
 			type: String,
 			required: true,

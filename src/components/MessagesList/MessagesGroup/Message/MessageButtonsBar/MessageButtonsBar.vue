@@ -231,6 +231,14 @@ export default {
 		},
 
 		/**
+		 * The parent message's id.
+		 */
+		parent: {
+			type: Number,
+			default: 0,
+		},
+
+		/**
 		 * The message or quote text.
 		 */
 		message: {
