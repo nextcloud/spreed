@@ -978,12 +978,15 @@ const actions = {
 				messageId,
 				reaction: selectedEmoji,
 			})
-			await addReactionToMessage(token, messageId, selectedEmoji)
-			try {
-				context.dispatch('getReactions', { token, messageId })
-			} catch (error) {
-				console.debug(error)
-			}
+			// The response return an array with the reaction details for this message
+			const response = await addReactionToMessage(token, messageId, selectedEmoji)
+			// We replace the reaction details in the reactions store and wipe the old
+			// values
+			context.dispatch('updateReactions', {
+				token,
+				messageId,
+				reactionsDetails: response.data.ocs.data,
+			})
 		} catch (error) {
 			// Restore the previous state if the request fails
 			context.commit('removeReactionFromMessage', {
@@ -1008,12 +1011,15 @@ const actions = {
 				messageId,
 				reaction: selectedEmoji,
 			})
-			await removeReactionFromMessage(token, messageId, selectedEmoji)
-			try {
-				context.dispatch('getReactions', { token, messageId })
-			} catch (error) {
-				console.debug(error)
-			}
+			// The response return an array with the reaction details for this message
+			const response = await removeReactionFromMessage(token, messageId, selectedEmoji)
+			// We replace the reaction details in the reactions store and wipe the old
+			// values
+			context.dispatch('updateReactions', {
+				token,
+				messageId,
+				reactionsDetails: response.data.ocs.data,
+			})
 		} catch (error) {
 			// Restore the previous state if the request fails
 			context.commit('addReactionToMessage', {

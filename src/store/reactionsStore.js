@@ -64,6 +64,20 @@ const mutations = {
 
 const actions = {
 	/**
+	 * Updates reactions for a given message.
+	 *
+	 * @param {*} context The context object
+	 * @param {*} param1 conversation token, message id
+	 */
+	async updateReactions(context, { token, messageId, reactionsDetails }) {
+		context.commit('addReactions', {
+			token,
+			messageId,
+			reactions: reactionsDetails,
+		})
+	},
+
+	/**
 	 * Gets the full reactions array for a given message.
 	 *
 	 * @param {*} context the context object
