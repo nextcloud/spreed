@@ -383,6 +383,7 @@ class BackendNotifier {
 				'sessionId' => $session->getSessionId(),
 				'nextcloudSessionId' => $session->getSessionId(),
 				'participantType' => $attendee->getParticipantType(),
+				'participantPermissions' => $participant->getPermissions(),
 			];
 			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 				$data['userId'] = $attendee->getActorId();
