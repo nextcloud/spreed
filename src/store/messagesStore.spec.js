@@ -313,6 +313,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				isReplyable: false,
 				sendingFailure: '',
+				reactions: {},
 				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 			})
 		})
@@ -345,6 +346,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				isReplyable: false,
 				sendingFailure: '',
+				reactions: {},
 				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 				parent: 123,
 			})
@@ -389,6 +391,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				isReplyable: false,
 				sendingFailure: '',
+				reactions: {},
 				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 			})
 		})
@@ -418,6 +421,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				isReplyable: false,
 				sendingFailure: '',
+				reactions: {},
 				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 			}])
 
@@ -440,6 +444,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				isReplyable: false,
 				sendingFailure: '',
+				reactions: {},
 				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 			}])
 		})
@@ -473,6 +478,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				isReplyable: false,
 				sendingFailure: 'failure-reason',
+				reactions: {},
 				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 			}])
 		})
@@ -518,6 +524,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				isReplyable: false,
 				sendingFailure: '',
+				reactions: {},
 				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
 			}])
 		})
