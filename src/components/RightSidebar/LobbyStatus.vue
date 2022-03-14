@@ -20,17 +20,20 @@
 -->
 
 <template>
-	<button @click="disableLobby">
+	<Button type="primary" @click="disableLobby">
 		{{ t('spreed', 'Disable lobby' ) }}
-	</button>
+	</Button>
 </template>
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'LobbyStatus',
-
+	components: {
+		Button,
+	},
 	props: {
 		token: {
 			type: String,
