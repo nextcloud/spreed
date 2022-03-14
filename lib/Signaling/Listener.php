@@ -158,6 +158,40 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET, $listener);
 
+		$dispatcher->addListener(Room::EVENT_AFTER_PERMISSIONS_SET, static function (RoomEvent $event) {
+			if (self::isUsingInternalSignaling()) {
+				return;
+			}
+
+			/** @var BackendNotifier $notifier */
+			$notifier = \OC::$server->get(BackendNotifier::class);
+
+			$sessionIds = [];
+
+			// Setting the room permissions resets the permissions of all
+			// participants, even those with custom attendee permissions.
+
+			// FIXME This approach does not scale, as the update message for all
+			// the sessions in a conversation can exceed the allowed size of the
+			// request in conversations with a large number of participants.
+			// However, note that a single message with the general permissions
+			// to be set on all participants can not be sent either, as the
+			// general permissions could be overriden by custom attendee
+			// permissions in specific participants.
+
+			/** @var ParticipantService $participantService */
+			$participantService = \OC::$server->get(ParticipantService::class);
+			$participants = $participantService->getSessionsAndParticipantsForRoom($event->getRoom());
+			foreach ($participants as $participant) {
+				$session = $participant->getSession();
+				if ($session) {
+					$sessionIds[] = $session->getSessionId();
+				}
+			}
+
+			$notifier->participantsModified($event->getRoom(), $sessionIds);
+		});
+
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DELETE, static function (RoomEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
