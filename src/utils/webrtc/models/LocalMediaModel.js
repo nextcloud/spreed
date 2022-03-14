@@ -185,6 +185,7 @@ LocalMediaModel.prototype = {
 			this.set('audioAvailable', true)
 			this.set('audioEnabled', localStream.getAudioTracks()[0].enabled)
 		} else {
+			this.disableAudio()
 			this.set('audioEnabled', false)
 			this.set('audioAvailable', false)
 		}
@@ -193,6 +194,7 @@ LocalMediaModel.prototype = {
 			this.set('videoAvailable', true)
 			this.set('videoEnabled', localStream.getVideoTracks()[0].enabled)
 		} else {
+			this.disableVideo()
 			this.set('videoEnabled', false)
 			this.set('videoAvailable', false)
 		}
@@ -325,9 +327,6 @@ LocalMediaModel.prototype = {
 		}
 
 		localStorage.removeItem('audioDisabled_' + this.get('token'))
-		if (!this.get('audioAvailable')) {
-			return
-		}
 
 		this._webRtc.unmute()
 	},
@@ -338,9 +337,6 @@ LocalMediaModel.prototype = {
 		}
 
 		localStorage.setItem('audioDisabled_' + this.get('token'), 'true')
-		if (!this.get('audioAvailable')) {
-			return
-		}
 
 		this._webRtc.mute()
 	},
@@ -351,9 +347,6 @@ LocalMediaModel.prototype = {
 		}
 
 		localStorage.removeItem('videoDisabled_' + this.get('token'))
-		if (!this.get('videoAvailable')) {
-			return
-		}
 
 		this._webRtc.resumeVideo()
 	},
@@ -364,9 +357,6 @@ LocalMediaModel.prototype = {
 		}
 
 		localStorage.setItem('videoDisabled_' + this.get('token'), 'true')
-		if (!this.get('videoAvailable')) {
-			return
-		}
 
 		this._webRtc.pauseVideo()
 	},
