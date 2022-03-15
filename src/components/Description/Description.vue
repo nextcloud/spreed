@@ -42,7 +42,7 @@
 					<template #icon>
 						<Close decorative
 							title=""
-							:size="16" />
+							:size="20" />
 					</template>
 				</Button>
 				<Button class="description__action"
@@ -53,7 +53,7 @@
 					<template #icon>
 						<Check decorative
 							title=""
-							:size="16" />
+							:size="20" />
 					</template>
 				</Button>
 				<div v-if="showCountDown"
@@ -70,7 +70,7 @@
 				@click="handleEditDescription">
 				<Pencil decorative
 					title=""
-					:size="16" />
+					:size="20" />
 			</Button>
 		</template>
 		<div v-if="loading" class="icon-loading-small spinner" />
