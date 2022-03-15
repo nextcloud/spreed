@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 return [
 	'ocs' => [
+		/** @see \OCA\Talk\Controller\GuestController::setDisplayName() */
 		['name' => 'Guest#setDisplayName', 'url' => '/api/{apiVersion}/guest/{token}/name', 'verb' => 'POST', 'requirements' => [
 			'apiVersion' => 'v1',
 			'token' => '^[a-z0-9]{4,30}$',

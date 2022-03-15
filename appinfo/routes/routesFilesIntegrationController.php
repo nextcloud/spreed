@@ -25,10 +25,12 @@ declare(strict_types=1);
 
 return [
 	'ocs' => [
+		/** @see \OCA\Talk\Controller\FilesIntegrationController::getRoomByFileId() */
 		['name' => 'FilesIntegration#getRoomByFileId', 'url' => '/api/{apiVersion}/file/{fileId}', 'verb' => 'GET', 'requirements' => [
 			'apiVersion' => 'v1',
 			'fileId' => '.+'
 		]],
+		/** @see \OCA\Talk\Controller\FilesIntegrationController::getRoomByShareToken() */
 		['name' => 'FilesIntegration#getRoomByShareToken', 'url' => '/api/{apiVersion}/publicshare/{shareToken}', 'verb' => 'GET', 'requirements' => [
 			'apiVersion' => 'v1',
 			'shareToken' => '.+',

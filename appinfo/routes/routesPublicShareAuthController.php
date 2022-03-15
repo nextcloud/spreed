@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 return [
 	'ocs' => [
+		/** @see \OCA\Talk\Controller\PublicShareAuthController::createRoom() */
 		['name' => 'PublicShareAuth#createRoom', 'url' => '/api/{apiVersion}/publicshareauth', 'verb' => 'POST', 'requirements' => ['apiVersion' => 'v1'],],
 	],
 ];

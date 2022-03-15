@@ -29,7 +29,9 @@ $requirements = [
 
 return [
 	'ocs' => [
+		/** @see \OCA\Talk\Controller\MatterbridgeSettingsController::stopAllBridges() */
 		['name' => 'MatterbridgeSettings#stopAllBridges', 'url' => '/api/{apiVersion}/bridge', 'verb' => 'DELETE', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\MatterbridgeSettingsController::getMatterbridgeVersion() */
 		['name' => 'MatterbridgeSettings#getMatterbridgeVersion', 'url' => '/api/{apiVersion}/bridge/version', 'verb' => 'GET', 'requirements' => $requirements],
 	],
 ];

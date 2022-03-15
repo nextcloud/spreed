@@ -36,13 +36,21 @@ $requirementsWithMessageId = [
 
 return [
 	'ocs' => [
+		/** @see \OCA\Talk\Controller\ChatController::receiveMessages() */
 		['name' => 'Chat#receiveMessages', 'url' => '/api/{apiVersion}/chat/{token}', 'verb' => 'GET', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\ChatController::sendMessage() */
 		['name' => 'Chat#sendMessage', 'url' => '/api/{apiVersion}/chat/{token}', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\ChatController::clearHistory() */
 		['name' => 'Chat#clearHistory', 'url' => '/api/{apiVersion}/chat/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\ChatController::deleteMessage() */
 		['name' => 'Chat#deleteMessage', 'url' => '/api/{apiVersion}/chat/{token}/{messageId}', 'verb' => 'DELETE', 'requirements' => $requirementsWithMessageId],
+		/** @see \OCA\Talk\Controller\ChatController::setReadMarker() */
 		['name' => 'Chat#setReadMarker', 'url' => '/api/{apiVersion}/chat/{token}/read', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\ChatController::markUnread() */
 		['name' => 'Chat#markUnread', 'url' => '/api/{apiVersion}/chat/{token}/read', 'verb' => 'DELETE', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\ChatController::mentions() */
 		['name' => 'Chat#mentions', 'url' => '/api/{apiVersion}/chat/{token}/mentions', 'verb' => 'GET', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\ChatController::shareObjectToChat() */
 		['name' => 'Chat#shareObjectToChat', 'url' => '/api/{apiVersion}/chat/{token}/share', 'verb' => 'POST', 'requirements' => $requirements],
 	],
 ];
