@@ -36,18 +36,20 @@
 		message has been forwarded -->
 		<Modal v-else
 			@close="handleClose">
-			<EmptyContent icon="icon-checkmark" class="forwarded-confirmation__emptycontent">
-				<template #desc>
-					{{ t('spreed', 'The message has been forwarded to {selectedConversationName}', { selectedConversationName }) }}
-				</template>
-			</EmptyContent>
-			<div class="forwarded-confirmation__navigation">
-				<button @click="handleClose">
-					{{ t('spreed', 'Dismiss') }}
-				</button>
-				<button class="primary" @click="openConversation">
-					{{ t('spreed', 'Go to conversation') }}
-				</button>
+			<div class="forwarder">
+				<EmptyContent icon="icon-checkmark" class="forwarded-confirmation__emptycontent">
+					<template #desc>
+						{{ t('spreed', 'The message has been forwarded to {selectedConversationName}', { selectedConversationName }) }}
+					</template>
+				</EmptyContent>
+				<div class="forwarded-confirmation__navigation">
+					<Button type="tertiary" @click="handleClose">
+						{{ t('spreed', 'Dismiss') }}
+					</Button>
+					<Button type="primary" @click="openConversation">
+						{{ t('spreed', 'Go to conversation') }}
+					</Button>
+				</div>
 			</div>
 		</Modal>
 	</div>
@@ -59,6 +61,7 @@ import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import { showError } from '@nextcloud/dialogs'
 import cloneDeep from 'lodash/cloneDeep'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'Forwarder',
@@ -67,6 +70,7 @@ export default {
 		RoomSelector,
 		EmptyContent,
 		Modal,
+		Button,
 	},
 
 	props: {
@@ -188,12 +192,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .forwarded-confirmation {
 	&__emptycontent {
-		width: 280px;
+		width: 100%;
 		text-align: center;
-		margin: 20px !important;
+		margin-top: 15vh !important;
 	}
 	&__navigation {
 		display: flex;
@@ -203,6 +206,10 @@ export default {
 			height: 44px;
 		}
 	}
+}
+
+.forwarder {
+	padding: 20px;
 }
 
 </style>
