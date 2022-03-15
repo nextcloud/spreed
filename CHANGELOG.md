@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 12.2.4 – 2022-03-17
+### Fixed
+- Fix several modals, dialogs and popovers in fullscreen mode
+  [#6884](https://github.com/nextcloud/spreed/pull/6884)
+- Fix mentions inside brackets
+  [#6870](https://github.com/nextcloud/spreed/pull/6870)
+- Fix call flags update when track is disabled
+  [#7015](https://github.com/nextcloud/spreed/pull/7015)
+
+## 11.3.6 – 2022-03-17
+### Fixed
+- Fix several modals, dialogs and popovers in fullscreen mode
+  [#6886](https://github.com/nextcloud/spreed/pull/6886)
+- Fix mentions inside brackets
+  [#6871](https://github.com/nextcloud/spreed/pull/6871)
+
 ## 12.2.3 – 2022-01-24
 ### Fixed
 - Allow joining open conversations which are also shared as link with a password
