@@ -341,7 +341,15 @@ class NotifierTest extends TestCase {
 			->willReturn($participants);
 
 		$actual = $this->invokePrivate($this->getNotifier(), 'addMentionAllToList', [$room, $usersToNotify]);
-		$this->assertEqualsCanonicalizing($return, $actual);
+		$this->assertCount(count($return), $actual);
+		foreach ($actual as $key => $value) {
+			$this->assertIsArray($value);
+			if (key_exists('attendee', $value)) {
+				$this->assertInstanceOf(Attendee::class, $value['attendee']);
+				unset($value['attendee']);
+			}
+			$this->assertEqualsCanonicalizing($return[$key], $value);
+		}
 	}
 
 	public function dataAddMentionAllToList(): array {
