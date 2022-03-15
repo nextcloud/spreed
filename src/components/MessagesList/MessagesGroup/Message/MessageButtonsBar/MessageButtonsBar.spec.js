@@ -51,6 +51,13 @@ describe('MessageButtonsBar.vue', () => {
 			token: TOKEN,
 			systemMessage: '',
 			messageType: 'comment',
+			previousMessageId: 100,
+			messageObject: {},
+			participant: {
+				actorId: 'user-id-1',
+				actorType: ATTENDEE.ACTOR_TYPE.USERS,
+				participantType: PARTICIPANT.TYPE.USER,
+			},
 		}
 	})
 
@@ -95,6 +102,7 @@ describe('MessageButtonsBar.vue', () => {
 					systemMessage: '',
 					timestamp: new Date('2020-05-07 09:23:00').getTime() / 1000,
 					token: TOKEN,
+					previousMessageId: 12,
 				})
 			})
 
@@ -265,11 +273,7 @@ describe('MessageButtonsBar.vue', () => {
 				jest.spyOn(global.Date, 'now')
 					.mockImplementation(() => mockDate)
 
-				messageProps.participant = {
-					actorId: 'user-id-1',
-					actorType: ATTENDEE.ACTOR_TYPE.USERS,
-					participantType,
-				}
+				messageProps.participant.participantType = participantType
 
 				const wrapper = shallowMount(MessageButtonsBar, {
 					localVue,
@@ -342,6 +346,11 @@ describe('MessageButtonsBar.vue', () => {
 			// appears even with more restrictive conditions
 			conversationProps.readOnly = CONVERSATION.STATE.READ_ONLY
 			messageProps.actorId = 'another-user'
+			messageProps.participant = {
+				actorId: 'guest-id-1',
+				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
+				participantType: PARTICIPANT.TYPE.GUEST,
+			}
 
 			const wrapper = shallowMount(MessageButtonsBar, {
 				localVue,
@@ -349,17 +358,7 @@ describe('MessageButtonsBar.vue', () => {
 				stubs: {
 					ActionButton,
 				},
-				mixins: [{
-					computed: {
-						participant: () => {
-							return {
-								actorId: 'guest-id-1',
-								actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
-								participantType: PARTICIPANT.TYPE.GUEST,
-							}
-						},
-					},
-				}],
+
 				propsData: messageProps,
 			})
 
@@ -388,6 +387,11 @@ describe('MessageButtonsBar.vue', () => {
 			// appears even with more restrictive conditions
 			conversationProps.readOnly = CONVERSATION.STATE.READ_ONLY
 			messageProps.actorId = 'another-user'
+			messageProps.participant = {
+				actorId: 'guest-id-1',
+				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
+				participantType: PARTICIPANT.TYPE.GUEST,
+			}
 
 			const wrapper = shallowMount(MessageButtonsBar, {
 				localVue,
@@ -398,17 +402,7 @@ describe('MessageButtonsBar.vue', () => {
 				stubs: {
 					ActionButton,
 				},
-				mixins: [{
-					computed: {
-						participant: () => {
-							return {
-								actorId: 'guest-id-1',
-								actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
-								participantType: PARTICIPANT.TYPE.GUEST,
-							}
-						},
-					},
-				}],
+
 				propsData: messageProps,
 			})
 
