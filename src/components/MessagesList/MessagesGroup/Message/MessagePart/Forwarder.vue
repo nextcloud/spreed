@@ -196,7 +196,7 @@ export default {
 	&__emptycontent {
 		width: 100%;
 		text-align: center;
-		padding-top: 20px !important;
+		margin-top: 15vh !important;
 	}
 	&__navigation {
 		display: flex;
