@@ -30,7 +30,7 @@
 				<p class="danger-zone__hint">
 					{{ t('spreed', 'Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time.') }}
 				</p>
-				<Button type="secondary" @click.prevent.exact="leaveConversation">
+				<Button type="warning" @click.prevent.exact="leaveConversation">
 					{{ t('spreed', 'Leave conversation') }}
 				</Button>
 			</template>
