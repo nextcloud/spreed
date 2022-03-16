@@ -25,10 +25,15 @@ declare(strict_types=1);
 
 return [
 	'routes' => [
+		/** @see \OCA\Talk\Controller\PageController::index() */
 		['name' => 'Page#index', 'url' => '/', 'verb' => 'GET'],
+		/** @see \OCA\Talk\Controller\PageController::notFound() */
 		['name' => 'Page#notFound', 'url' => '/not-found', 'verb' => 'GET'],
+		/** @see \OCA\Talk\Controller\PageController::duplicateSession() */
 		['name' => 'Page#duplicateSession', 'url' => '/duplicate-session', 'verb' => 'GET'],
+		/** @see \OCA\Talk\Controller\PageController::showCall() */
 		['name' => 'Page#showCall', 'url' => '/call/{token}', 'root' => '', 'verb' => 'GET'],
+		/** @see \OCA\Talk\Controller\PageController::authenticatePassword() */
 		['name' => 'Page#authenticatePassword', 'url' => '/call/{token}', 'root' => '', 'verb' => 'POST'],
 	],
 ];
