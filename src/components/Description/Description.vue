@@ -68,9 +68,11 @@
 				type="tertiary"
 				:aria-label="t('spreed', 'Edit conversation description')"
 				@click="handleEditDescription">
-				<Pencil decorative
-					title=""
-					:size="20" />
+				<template #icon>
+					<Pencil decorative
+						title=""
+						:size="20" />
+				</template>
 			</Button>
 		</template>
 		<div v-if="loading" class="icon-loading-small spinner" />
