@@ -36,7 +36,6 @@
 		<template v-if="!loading">
 			<template v-if="editing">
 				<Button type="tertiary"
-					class="description__action"
 					:aria-label="t('spreed', 'Cancel editing description')"
 					@click="handleCancelEditing">
 					<template #icon>
@@ -45,8 +44,7 @@
 							:size="20" />
 					</template>
 				</Button>
-				<Button class="description__action"
-					type="primary"
+				<Button type="primary"
 					:aria-label="t('spreed', 'Submit conversation description')"
 					:disabled="!canSubmit"
 					@click="handleSubmitDescription">
