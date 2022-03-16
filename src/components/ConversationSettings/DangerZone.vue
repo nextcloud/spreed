@@ -30,9 +30,9 @@
 				<p class="danger-zone__hint">
 					{{ t('spreed', 'Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time.') }}
 				</p>
-				<button @click.prevent.exact="leaveConversation">
+				<Button type="warning" @click.prevent.exact="leaveConversation">
 					{{ t('spreed', 'Leave conversation') }}
-				</button>
+				</Button>
 			</template>
 			<template v-if="canDeleteConversation">
 				<br>
@@ -40,10 +40,10 @@
 				<p class="danger-zone__hint">
 					{{ t('spreed', 'Permanently delete this conversation.') }}
 				</p>
-				<button class="critical error"
+				<Button type="error"
 					@click.prevent.exact="deleteConversation">
 					{{ t('spreed', 'Delete conversation') }}
-				</button>
+				</Button>
 			</template>
 			<template v-if="canDeleteConversation">
 				<br>
@@ -51,10 +51,10 @@
 				<p class="danger-zone__hint">
 					{{ t('spreed', 'Permanently delete all the messages in this conversation.') }}
 				</p>
-				<button class="critical error"
+				<Button type="error"
 					@click.prevent.exact="clearChatHistory">
 					{{ t('spreed', 'Delete chat messages') }}
-				</button>
+				</Button>
 			</template>
 			<div />
 		</div>
@@ -64,10 +64,13 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'DangerZone',
-
+	components: {
+		Button,
+	},
 	props: {
 		conversation: {
 			type: Object,
