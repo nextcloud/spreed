@@ -130,7 +130,7 @@ the main body of the message as well as a quote.
 						<span> {{ simpleReactions[reaction] }} </span>
 					</button>
 					<div v-if="detailedReactions" class="reaction-details">
-						<p v-for="detailedReaction in detailedReactions[reaction]" :key="Object.keys(detailedReaction)[0]">
+						<p v-for="detailedReaction in detailedReactions[reaction]" :key="detailedReaction.actorDisplayName">
 							{{ detailedReaction.actorDisplayName }}
 						</p>
 					</div>
