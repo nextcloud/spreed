@@ -161,7 +161,7 @@ LocalMediaModel.prototype = {
 		// local stream will be active at the same time.
 		this.set('localStream', localStream)
 
-		this._setInitialMediaState(localStream)
+		this._setInitialState(localStream)
 	},
 
 	_handleLocalStreamRequestFailedRetryNoVideo(constraints, error) {
@@ -175,10 +175,10 @@ LocalMediaModel.prototype = {
 	_handleLocalStreamRequestFailed() {
 		this.set('localStream', null)
 
-		this._setInitialMediaState(null)
+		this._setInitialState(null)
 	},
 
-	_setInitialMediaState(localStream) {
+	_setInitialState(localStream) {
 		this.set('token', store.getters.getToken())
 
 		if (localStream && localStream.getAudioTracks().length > 0) {
