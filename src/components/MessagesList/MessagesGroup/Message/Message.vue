@@ -153,7 +153,8 @@ the main body of the message as well as a quote.
 			:message-object="messageObject"
 			v-bind="$props"
 			:previous-message-id="previousMessageId"
-			:participant="participant" />
+			:participant="participant"
+			@delete="handleDelete" />
 		<div v-if="isLastReadMessage"
 			v-observe-visibility="lastReadMessageVisibilityChanged">
 			<div class="new-message-marker">
@@ -180,7 +181,6 @@ import isInCall from '../../../../mixins/isInCall'
 import participant from '../../../../mixins/participant'
 import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
-import { CONVERSATION } from '../../../../constants'
 import moment from '@nextcloud/moment'
 import Location from './MessagePart/Location'
 import Contact from './MessagePart/Contact.vue'
@@ -188,6 +188,7 @@ import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
+import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 
 export default {
 	name: 'Message',
@@ -672,6 +673,40 @@ export default {
 					actorId: this.actorId,
 				})
 			}
+		},
+
+		async handleDelete() {
+			this.isDeleting = true
+			try {
+				const statusCode = await this.$store.dispatch('deleteMessage', {
+					message: {
+						token: this.token,
+						id: this.id,
+					},
+					placeholder: t('spreed', 'Deleting message'),
+				})
+
+				if (statusCode === 202) {
+					showWarning(t('spreed', 'Message deleted successfully, but Matterbridge is configured and the message might already be distributed to other services'), {
+						timeout: TOAST_DEFAULT_TIMEOUT * 2,
+					})
+				} else if (statusCode === 200) {
+					showSuccess(t('spreed', 'Message deleted successfully'))
+				}
+			} catch (e) {
+				if (e?.response?.status === 400) {
+					showError(t('spreed', 'Message could not be deleted because it is too old'))
+				} else if (e?.response?.status === 405) {
+					showError(t('spreed', 'Only normal chat messages can be deleted'))
+				} else {
+					showError(t('spreed', 'An error occurred while deleting the message'))
+					console.error(e)
+				}
+				this.isDeleting = false
+				return
+			}
+
+			this.isDeleting = false
 		},
 	},
 }
