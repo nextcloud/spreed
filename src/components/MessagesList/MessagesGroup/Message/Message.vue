@@ -376,10 +376,6 @@ export default {
 			return this.$store.getters.message(this.token, this.id)
 		},
 
-		isConversationReadOnly() {
-			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
-		},
-
 		isSystemMessage() {
 			return this.systemMessage !== ''
 		},
@@ -543,11 +539,6 @@ export default {
 				return t('spreed', 'You are not allowed to share files')
 			}
 			return t('spreed', 'You cannot send messages to this conversation at the moment')
-		},
-
-		isMyMsg() {
-			return this.actorId === this.$store.getters.getActorId()
-				&& this.actorType === this.$store.getters.getActorType()
 		},
 
 		messageActions() {
