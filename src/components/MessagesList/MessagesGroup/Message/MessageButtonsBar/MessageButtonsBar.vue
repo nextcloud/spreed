@@ -355,6 +355,7 @@ export default {
 				message: this.message,
 				messageParameters: this.messageParameters,
 				token: this.token,
+				previousMessageId: this.previousMessageId,
 			})
 			EventBus.$emit('focus-chat-input')
 		},
