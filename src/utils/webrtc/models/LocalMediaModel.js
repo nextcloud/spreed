@@ -161,8 +161,6 @@ LocalMediaModel.prototype = {
 		// local stream will be active at the same time.
 		this.set('localStream', localStream)
 
-		this.set('token', store.getters.getToken())
-
 		this._setInitialMediaState(localStream)
 	},
 
@@ -181,6 +179,8 @@ LocalMediaModel.prototype = {
 	},
 
 	_setInitialMediaState(localStream) {
+		this.set('token', store.getters.getToken())
+
 		if (localStream && localStream.getAudioTracks().length > 0) {
 			this.set('audioAvailable', true)
 			this.set('audioEnabled', localStream.getAudioTracks()[0].enabled)
