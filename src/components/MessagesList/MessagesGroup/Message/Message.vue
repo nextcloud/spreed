@@ -137,7 +137,7 @@ the main body of the message as well as a quote.
 				</Popover>
 
 				<!-- More reactions picker -->
-				<EmojiPicker :per-line="5">
+				<EmojiPicker :per-line="5" @select="addReactionToMessage">
 					<button class="reaction-button">
 						<EmoticonOutline :size="15" />
 					</button>
@@ -707,6 +707,21 @@ export default {
 			}
 
 			this.isDeleting = false
+		},
+
+		addReactionToMessage(selectedEmoji) {
+			// Add reaction only if user hasn't reacted yet
+			if (!this.$store.getters.userHasReacted(this.actorId, this.token, this.messageObject.id, selectedEmoji)) {
+				this.$store.dispatch('addReactionToMessage', {
+					token: this.token,
+					messageId: this.messageObject.id,
+					selectedEmoji,
+					actorId: this.actorId,
+				})
+			} else {
+				console.debug('Current user has already reacted')
+			}
+
 		},
 	},
 }
