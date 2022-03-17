@@ -2083,28 +2083,25 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $group
 	 */
 	public function assureGroupExists($group) {
-		$response = $this->groupExists($group);
-		if ($response->getStatusCode() !== 200) {
-			$this->createGroup($group);
-			$response = $this->groupExists($group);
-			$this->assertStatusCode($response, 200);
-		}
-	}
-
-	private function groupExists($group) {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
-		$this->sendRequest('GET', '/cloud/groups/' . $group);
-		$this->setCurrentUser($currentUser);
-		return $this->response;
-	}
-
-	private function createGroup($group) {
 		$currentUser = $this->currentUser;
 		$this->setCurrentUser('admin');
 		$this->sendRequest('POST', '/cloud/groups', [
 			'groupid' => $group,
 		]);
+
+		$jsonBody = json_decode($this->response->getBody()->getContents(), true);
+		if (isset($jsonBody['ocs']['meta'])) {
+			// 102 = group exists
+			// 200 = created with success
+			Assert::assertContains(
+				$jsonBody['ocs']['meta']['statuscode'],
+				[102, 200],
+				$jsonBody['ocs']['meta']['message']
+			);
+		} else {
+			throw new \Exception('Invalid response when create group');
+		}
+
 		$this->setCurrentUser($currentUser);
 
 		$this->createdGroups[] = $group;
