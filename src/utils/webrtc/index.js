@@ -193,25 +193,25 @@ async function signalingJoinCall(token, flags) {
 			const enableVideo = !localStorage.getItem('videoDisabled_' + token)
 			const enableVirtualBackground = !!localStorage.getItem('virtualBackgroundEnabled_' + token)
 
+			if (enableAudio) {
+				localMediaModel.enableAudio()
+			} else {
+				localMediaModel.disableAudio()
+			}
+			if (enableVideo) {
+				localMediaModel.enableVideo()
+			} else {
+				localMediaModel.disableVideo()
+			}
+			if (enableVirtualBackground) {
+				localMediaModel.enableVirtualBackground()
+			} else {
+				localMediaModel.disableVirtualBackground()
+			}
+
 			const startCallOnceLocalMediaStarted = (configuration) => {
 				webRtc.off('localMediaStarted', startCallOnceLocalMediaStarted)
 				webRtc.off('localMediaError', startCallOnceLocalMediaError)
-
-				if (enableAudio) {
-					localMediaModel.enableAudio()
-				} else {
-					localMediaModel.disableAudio()
-				}
-				if (enableVideo) {
-					localMediaModel.enableVideo()
-				} else {
-					localMediaModel.disableVideo()
-				}
-				if (enableVirtualBackground) {
-					localMediaModel.enableVirtualBackground()
-				} else {
-					localMediaModel.disableVirtualBackground()
-				}
 
 				startCall(_signaling, configuration)
 			}
