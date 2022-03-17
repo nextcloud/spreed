@@ -181,23 +181,7 @@ LocalMediaModel.prototype = {
 	_setInitialState(localStream) {
 		this.set('token', store.getters.getToken())
 
-		if (localStream && localStream.getAudioTracks().length > 0) {
-			this.set('audioAvailable', true)
-			this.set('audioEnabled', localStream.getAudioTracks()[0].enabled)
-		} else {
-			this.disableAudio()
-			this.set('audioEnabled', false)
-			this.set('audioAvailable', false)
-		}
-
-		if (localStream && localStream.getVideoTracks().length > 0) {
-			this.set('videoAvailable', true)
-			this.set('videoEnabled', localStream.getVideoTracks()[0].enabled)
-		} else {
-			this.disableVideo()
-			this.set('videoEnabled', false)
-			this.set('videoAvailable', false)
-		}
+		this._updateMediaAvailability(localStream)
 
 		this.set('raisedHand', { state: false, timestamp: Date.now() })
 	},
