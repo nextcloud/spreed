@@ -77,7 +77,7 @@
 					<ActionButton :key="action.label"
 						:icon="action.icon"
 						:close-after-click="true"
-						@click="action.callback(messageAPIData)">
+						@click="action.callback(messageApiData)">
 						{{ action.label }}
 					</ActionButton>
 				</template>
@@ -126,7 +126,7 @@
 </template>
 
 <script>
-import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants'
+import { PARTICIPANT, CONVERSATION } from '../../../../../constants'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
@@ -266,6 +266,11 @@ export default {
 		 * The participant object.
 		 */
 		participant: {
+			type: Object,
+			required: true,
+		},
+
+		messageApiData: {
 			type: Object,
 			required: true,
 		},

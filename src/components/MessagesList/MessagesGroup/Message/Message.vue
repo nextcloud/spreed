@@ -149,6 +149,7 @@ the main body of the message as well as a quote.
 		<MessageButtonsBar v-if="hasMessageButtonsBar"
 			v-show="showMessageButtonsBar"
 			ref="messageButtonsBar"
+			:message-api-data="messageApiData"
 			:message-object="messageObject"
 			v-bind="$props"
 			:previous-message-id="previousMessageId"
@@ -553,7 +554,7 @@ export default {
 			return this.$store.getters.messageActions
 		},
 
-		messageAPIData() {
+		messageApiData() {
 			return {
 				message: this.messageObject,
 				metadata: this.conversation,

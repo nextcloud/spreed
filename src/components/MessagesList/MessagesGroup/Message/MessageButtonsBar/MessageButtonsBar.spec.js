@@ -53,6 +53,9 @@ describe('MessageButtonsBar.vue', () => {
 			messageType: 'comment',
 			previousMessageId: 100,
 			messageObject: {},
+			messageApiData: {
+				apiDummyData: 1,
+			},
 			participant: {
 				actorId: 'user-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -443,19 +446,15 @@ describe('MessageButtonsBar.vue', () => {
 			await actionButton.find('button').trigger('click')
 
 			expect(handler).toHaveBeenCalledWith({
-				apiVersion: 'v3',
-				message: messageProps,
-				metadata: conversationProps,
-			})
+				apiDummyData: 1,
+			},)
 
 			const actionButton2 = findActionButton(wrapper, 'second action')
 			expect(actionButton2.exists()).toBe(true)
 			await actionButton2.find('button').trigger('click')
 
 			expect(handler2).toHaveBeenCalledWith({
-				apiVersion: 'v3',
-				message: messageProps,
-				metadata: conversationProps,
+				apiDummyData: 1,
 			})
 		})
 	})
