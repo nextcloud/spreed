@@ -935,8 +935,8 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			if (peer.pc.iceConnectionState !== 'new' && peer.pc.iceConnectionState !== 'checking') {
 				// Update the media flags if needed, as the renegotiation could
 				// have been caused by tracks being added or removed.
-				const audioSender = peer.pc.getSenders().find((sender) => sender.track && sender.track.kind === 'audio')
-				const videoSender = peer.pc.getSenders().find((sender) => sender.track && sender.track.kind === 'video')
+				const audioSender = peer.pc.getSenders().find((sender) => (sender.track && sender.track.kind === 'audio') || (sender.trackDisabled && sender.trackDisabled.kind === 'audio'))
+				const videoSender = peer.pc.getSenders().find((sender) => (sender.track && sender.track.kind === 'video') || (sender.trackDisabled && sender.trackDisabled.kind === 'video'))
 
 				let flags = signaling.getCurrentCallFlags()
 				if (audioSender) {
