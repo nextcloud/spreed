@@ -214,17 +214,11 @@ describe('MessageButtonsBar.vue', () => {
 		})
 
 		describe('delete action', () => {
-			test('deletes message', async () => {
-				let resolveDeleteMessage
-				const deleteMessage = jest.fn().mockReturnValue(new Promise((resolve, reject) => { resolveDeleteMessage = resolve }))
-				testStoreConfig.modules.messagesStore.actions.deleteMessage = deleteMessage
-				store = new Vuex.Store(testStoreConfig)
-
+			test('emits delete event', async () => {
 				// need to mock the date to be within 6h
 				const mockDate = new Date('2020-05-07 10:00:00')
 				jest.spyOn(global.Date, 'now')
 					.mockImplementation(() => mockDate)
-
 				const wrapper = shallowMount(MessageButtonsBar, {
 					localVue,
 					store,
@@ -239,25 +233,7 @@ describe('MessageButtonsBar.vue', () => {
 
 				await actionButton.find('button').trigger('click')
 
-				expect(deleteMessage).toHaveBeenCalledWith(expect.anything(), {
-					message: {
-						token: TOKEN,
-						id: 123,
-					},
-					placeholder: expect.anything(),
-				})
-
-				await wrapper.vm.$nextTick()
-				expect(wrapper.vm.isDeleting).toBe(true)
-				expect(wrapper.find('.icon-loading-small').exists()).toBe(true)
-
-				resolveDeleteMessage(200)
-				// needs two updates...
-				await wrapper.vm.$nextTick()
-				await wrapper.vm.$nextTick()
-
-				expect(wrapper.vm.isDeleting).toBe(false)
-				expect(wrapper.find('.icon-loading-small').exists()).toBe(false)
+				expect(wrapper.emitted().delete).toBeTruthy()
 			})
 
 			/**

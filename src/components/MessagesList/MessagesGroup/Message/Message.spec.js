@@ -15,6 +15,7 @@ import DefaultParameter from './MessagePart/DefaultParameter'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 
 import Message from './Message'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 
 // needed because of https://github.com/vuejs/vue-test-utils/issues/1507
 const RichTextStub = {
@@ -588,6 +589,52 @@ describe('Message.vue', () => {
 			// actions are always present and rendered
 			const actions = wrapper.findAllComponents({ name: 'Actions' })
 			expect(actions.length).toBe(2)
+		})
+	})
+
+	describe('delete action', () => {
+		test('deletes message', async () => {
+			let resolveDeleteMessage
+			const deleteMessage = jest.fn().mockReturnValue(new Promise((resolve, reject) => { resolveDeleteMessage = resolve }))
+			testStoreConfig.modules.messagesStore.actions.deleteMessage = deleteMessage
+			store = new Vuex.Store(testStoreConfig)
+
+			// need to mock the date to be within 6h
+			const mockDate = new Date('2020-05-07 10:00:00')
+			jest.spyOn(global.Date, 'now')
+				.mockImplementation(() => mockDate)
+
+			const wrapper = mount(Message, {
+				localVue,
+				store,
+				stubs: {
+					ActionButton,
+					MessageButtonsBar,
+				},
+				propsData: messageProps,
+			})
+
+			wrapper.find(MessageButtonsBar).vm.$emit('delete')
+
+			expect(deleteMessage).toHaveBeenCalledWith(expect.anything(), {
+				message: {
+					token: TOKEN,
+					id: 123,
+				},
+				placeholder: expect.anything(),
+			})
+
+			await wrapper.vm.$nextTick()
+			expect(wrapper.vm.isDeleting).toBe(true)
+			expect(wrapper.find('.icon-loading-small').exists()).toBe(true)
+
+			resolveDeleteMessage(200)
+			// needs two updates...
+			await wrapper.vm.$nextTick()
+			await wrapper.vm.$nextTick()
+
+			expect(wrapper.vm.isDeleting).toBe(false)
+			expect(wrapper.find('.icon-loading-small').exists()).toBe(false)
 		})
 	})
 
