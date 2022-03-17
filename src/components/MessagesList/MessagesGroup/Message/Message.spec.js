@@ -1,4 +1,4 @@
-import Vuex from 'vuex'
+import Vuex, { Store } from 'vuex'
 import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { EventBus } from '../../../../services/EventBus'
@@ -97,7 +97,7 @@ describe('Message.vue', () => {
 
 	describe('message rendering', () => {
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = new Store(testStoreConfig)
 		})
 
 		test('renders rich text message', async () => {
@@ -140,7 +140,7 @@ describe('Message.vue', () => {
 						message: 'message two',
 					}]
 				})
-				store = new Vuex.Store(testStoreConfig)
+				store = new Store(testStoreConfig)
 			})
 
 			test('shows join call button on last message when a call is in progress', () => {
@@ -266,7 +266,7 @@ describe('Message.vue', () => {
 
 			const messageGetterMock = jest.fn().mockReturnValue(parentMessage)
 			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => messageGetterMock)
-			store = new Vuex.Store(testStoreConfig)
+			store = new Store(testStoreConfig)
 
 			const wrapper = shallowMount(Message, {
 				localVue,
@@ -497,7 +497,7 @@ describe('Message.vue', () => {
 	describe('author rendering', () => {
 		const AUTHOR_SELECTOR = '.message-body__author'
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = new Store(testStoreConfig)
 		})
 
 		test('renders author if first message', async () => {
@@ -528,7 +528,7 @@ describe('Message.vue', () => {
 	describe('actions', () => {
 
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = new Store(testStoreConfig)
 		})
 
 		test('does not render actions for system messages are available', async () => {
@@ -597,7 +597,7 @@ describe('Message.vue', () => {
 			let resolveDeleteMessage
 			const deleteMessage = jest.fn().mockReturnValue(new Promise((resolve, reject) => { resolveDeleteMessage = resolve }))
 			testStoreConfig.modules.messagesStore.actions.deleteMessage = deleteMessage
-			store = new Vuex.Store(testStoreConfig)
+			store = new Store(testStoreConfig)
 
 			// need to mock the date to be within 6h
 			const mockDate = new Date('2020-05-07 10:00:00')
@@ -640,7 +640,7 @@ describe('Message.vue', () => {
 
 	describe('status', () => {
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = new Store(testStoreConfig)
 		})
 
 		test('lets user retry sending a timed out message', async () => {

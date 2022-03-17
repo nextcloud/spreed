@@ -1,4 +1,4 @@
-import Vuex from 'vuex'
+import Vuex, { Store } from 'vuex'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import storeConfig from '../../../../../store/storeConfig'
@@ -71,14 +71,14 @@ describe('MessageButtonsBar.vue', () => {
 	describe('actions', () => {
 
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = new Store(testStoreConfig)
 		})
 
 		describe('reply action', () => {
 			test('replies to message', async () => {
 				const replyAction = jest.fn()
 				testStoreConfig.modules.quoteReplyStore.actions.addMessageToBeReplied = replyAction
-				store = new Vuex.Store(testStoreConfig)
+				store = new Store(testStoreConfig)
 
 				const wrapper = shallowMount(MessageButtonsBar, {
 					localVue,
@@ -111,7 +111,7 @@ describe('MessageButtonsBar.vue', () => {
 
 			test('hides reply button when not replyable', async () => {
 				messageProps.isReplyable = false
-				store = new Vuex.Store(testStoreConfig)
+				store = new Store(testStoreConfig)
 
 				const wrapper = shallowMount(MessageButtonsBar, {
 					localVue,
@@ -132,7 +132,7 @@ describe('MessageButtonsBar.vue', () => {
 				const routerPushMock = jest.fn().mockResolvedValue()
 				const createOneToOneConversation = jest.fn()
 				testStoreConfig.modules.conversationsStore.actions.createOneToOneConversation = createOneToOneConversation
-				store = new Vuex.Store(testStoreConfig)
+				store = new Store(testStoreConfig)
 
 				messageProps.actorId = 'another-user'
 
@@ -173,7 +173,7 @@ describe('MessageButtonsBar.vue', () => {
 			 * @param {boolean} visible Whether or not the reply-private action is visible
 			 */
 			function testPrivateReplyActionVisible(visible) {
-				store = new Vuex.Store(testStoreConfig)
+				store = new Store(testStoreConfig)
 
 				const wrapper = shallowMount(MessageButtonsBar, {
 					localVue,
@@ -242,7 +242,7 @@ describe('MessageButtonsBar.vue', () => {
 			 * @param {number} participantType The participant type of the user
 			 */
 			function testDeleteMessageVisible(visible, mockDate, participantType = PARTICIPANT.TYPE.USER) {
-				store = new Vuex.Store(testStoreConfig)
+				store = new Store(testStoreConfig)
 
 				// need to mock the date to be within 6h
 				if (!mockDate) {
@@ -318,7 +318,7 @@ describe('MessageButtonsBar.vue', () => {
 			const fetchConversationAction = jest.fn().mockResolvedValueOnce()
 			testStoreConfig.modules.conversationsStore.actions.updateLastReadMessage = updateLastReadMessageAction
 			testStoreConfig.modules.conversationsStore.actions.fetchConversation = fetchConversationAction
-			store = new Vuex.Store(testStoreConfig)
+			store = new Store(testStoreConfig)
 
 			messageProps.previousMessageId = 100
 
@@ -407,7 +407,7 @@ describe('MessageButtonsBar.vue', () => {
 			}])
 			testStoreConfig.modules.messageActionsStore.getters.messageActions = actionsGetterMock
 			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => () => messageProps)
-			store = new Vuex.Store(testStoreConfig)
+			store = new Store(testStoreConfig)
 			const wrapper = shallowMount(MessageButtonsBar, {
 				localVue,
 				store,
