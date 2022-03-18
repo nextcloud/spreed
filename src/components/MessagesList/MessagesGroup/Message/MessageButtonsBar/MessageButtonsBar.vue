@@ -102,19 +102,19 @@
 				</template>
 			</Button>
 			<Button type="tertiary"
-				@click="addReactionToMessage('👍')">
+				@click="handleReactionClick('👍')">
 				<template #icon>
 					<span>👍</span>
 				</template>
 			</Button>
 			<Button type="tertiary"
-				@click="addReactionToMessage('❤️')">
+				@click="handleReactionClick('❤️')">
 				<template #icon>
 					<span>❤️</span>
 				</template>
 			</Button>
 			<EmojiPicker :container="`#message_${id}`"
-				@select="addReactionToMessage">
+				@select="handleReactionClick">
 				<Button type="tertiary">
 					<template #icon>
 						<Plus :size="20" />
@@ -400,7 +400,7 @@ export default {
 			await this.$store.dispatch('fetchConversation', { token: this.token })
 		},
 
-		addReactionToMessage(selectedEmoji) {
+		handleReactionClick(selectedEmoji) {
 			// Add reaction only if user hasn't reacted yet
 			if (!this.$store.getters.userHasReacted(this.actorId, this.token, this.messageObject.id, selectedEmoji)) {
 				this.$store.dispatch('addReactionToMessage', {
@@ -410,7 +410,13 @@ export default {
 					actorId: this.actorId,
 				})
 			} else {
-				console.debug('Current user has already reacted')
+				console.debug('user has already reacted, removing reaction')
+				this.$store.dispatch('removeReactionFromMessage', {
+					token: this.token,
+					messageId: this.id,
+					selectedEmoji,
+					actorId: this.actorId,
+				})
 			}
 
 		},
