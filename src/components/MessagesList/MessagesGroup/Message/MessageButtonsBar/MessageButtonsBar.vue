@@ -36,8 +36,10 @@
 				</ActionButton>
 			</Actions>
 			<Actions :force-menu="true"
-				:container="container"
-				:boundaries-element="containerElement">
+				:container="`#message_${id}`"
+				:boundaries-element="containerElement"
+				@open="onMenuOpen"
+				@close="onMenuClose">
 				<ActionButton v-if="isPrivateReplyable"
 					icon="icon-user"
 					:close-after-click="true"
@@ -111,7 +113,8 @@
 					<span>❤️</span>
 				</template>
 			</Button>
-			<EmojiPicker @select="addReactionToMessage">
+			<EmojiPicker :container="`#message_${id}`"
+				@select="addReactionToMessage">
 				<Button type="tertiary">
 					<template #icon>
 						<Plus :size="20" />
@@ -289,10 +292,6 @@ export default {
 			return this.$store.getters.conversation(this.token)
 		},
 
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		containerElement() {
 			return document.querySelector(this.container)
 		},
@@ -372,15 +371,6 @@ export default {
 			EventBus.$emit('focus-chat-input')
 		},
 
-		handleActionMenuUpdate(type) {
-			if (type === 'open') {
-				this.isActionMenuOpen = true
-			} else if (type === 'close') {
-				this.isActionMenuOpen = false
-				this.showActions = false
-			}
-		},
-
 		async handlePrivateReply() {
 			// open the 1:1 conversation
 			const conversation = await this.$store.dispatch('createOneToOneConversation', this.actorId)
@@ -427,6 +417,14 @@ export default {
 
 		handleDelete() {
 			this.$emit('delete')
+		},
+
+		onMenuOpen() {
+			this.$emit('update:isActionMenuOpen', true)
+		},
+
+		onMenuClose() {
+			this.$emit('update:isActionMenuOpen', false)
 		},
 	},
 }

@@ -31,11 +31,12 @@ the main body of the message as well as a quote.
 		:data-seen="seen"
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
-		class="message">
+		class="message"
+		tabindex="0"
+		@mouseover="handleMouseover"
+		@mouseleave="handleMouseleave">
 		<div :class="{'normal-message-body': !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
-			class="message-body"
-			@mouseover="handleMouseover"
-			@mouseleave="handleMouseleave">
+			class="message-body">
 			<div v-if="isFirstMessage && showAuthor"
 				class="message-body__author"
 				role="heading"
@@ -137,7 +138,7 @@ the main body of the message as well as a quote.
 				</Popover>
 
 				<!-- More reactions picker -->
-				<EmojiPicker :per-line="5" @select="addReactionToMessage">
+				<EmojiPicker :per-line="5" :container="`#message_${id}`" @select="addReactionToMessage">
 					<button class="reaction-button">
 						<EmoticonOutline :size="15" />
 					</button>
@@ -147,8 +148,9 @@ the main body of the message as well as a quote.
 
 		<!-- Message actions -->
 		<MessageButtonsBar v-if="hasMessageButtonsBar"
-			v-show="showMessageButtonsBar"
+			v-show="showMessageButtonsBar || isActionMenuOpen"
 			ref="messageButtonsBar"
+			:is-action-menu-open.sync="isActionMenuOpen"
 			:message-api-data="messageApiData"
 			:message-object="messageObject"
 			v-bind="$props"
@@ -616,8 +618,9 @@ export default {
 		},
 
 		handleMouseover() {
-			this.showMessageButtonsBar = true
-
+			if (!this.showMessageButtonsBar) {
+				this.showMessageButtonsBar = true
+			}
 		},
 
 		handleReactionsMouseOver() {
@@ -627,7 +630,8 @@ export default {
 		},
 
 		handleMouseleave() {
-			if (!this.isActionMenuOpen) {
+			// We leave the buttonsbar visible if the actions menu is open
+			if (this.showMessageButtonsBar) {
 				this.showMessageButtonsBar = false
 			}
 		},
@@ -731,11 +735,9 @@ export default {
 @import '../../../../assets/variables';
 @import '../../../../assets/buttons';
 
-.normal-message-body {
-	&:hover {
-		border-radius: 8px;
-		background-color: var(--color-background-hover);
-	}
+.message:hover .normal-message-body {
+	border-radius: 8px;
+	background-color: var(--color-background-hover);
 }
 
 .message {
@@ -824,16 +826,9 @@ export default {
 	padding: 4px 4px 4px 8px;
 }
 
-.hover, .highlight-animation {
-	border-radius: 8px;
-}
-
-.hover {
-	background-color: var(--color-background-hover);
-}
-
 .highlight-animation {
 	animation: highlight-animation 5s 1;
+	border-radius: 8px;
 }
 
 @keyframes highlight-animation {

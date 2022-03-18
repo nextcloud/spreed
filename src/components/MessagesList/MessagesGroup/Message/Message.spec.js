@@ -563,7 +563,7 @@ describe('Message.vue', () => {
 			expect(messageButtonsBar.exists()).toBe(false)
 		})
 
-		test('actions become visible on mouse over', async () => {
+		test('Buttons bar becomes visible on mouse over', async () => {
 			messageProps.sendingFailure = 'timeout'
 			const wrapper = mount(Message, {
 				localVue,
@@ -578,12 +578,12 @@ describe('Message.vue', () => {
 			expect(wrapper.vm.showMessageButtonsBar).toBe(false)
 			expect(messageButtonsBar.isVisible()).toBe(false)
 
-			await wrapper.find('.message-body').trigger('mouseover')
+			await wrapper.find('.message').trigger('mouseover')
 
 			expect(wrapper.vm.showMessageButtonsBar).toBe(true)
 			expect(messageButtonsBar.isVisible()).toBe(true)
 
-			await wrapper.find('.message-body').trigger('mouseleave')
+			await wrapper.find('.message').trigger('mouseleave')
 
 			expect(wrapper.vm.showMessageButtonsBar).toBe(false)
 			expect(messageButtonsBar.isVisible()).toBe(false)
