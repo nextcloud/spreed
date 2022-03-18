@@ -1,6 +1,40 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 13.0.4 – 2022-03-17
+### Fixed
+- Fix several modals, dialogs and popovers in fullscreen mode
+  [#6885](https://github.com/nextcloud/spreed/pull/6885)
+- Fix issues when permissions of a participant or conversation are changed right before joining a call
+  [#6996](https://github.com/nextcloud/spreed/pull/6996)
+  [#7018](https://github.com/nextcloud/spreed/pull/7018)
+- Fix media automatically enabled after selecting a device during a call
+  [#7017](https://github.com/nextcloud/spreed/pull/7017)
+- Fix call flags update when track is disabled
+  [#7016](https://github.com/nextcloud/spreed/pull/7016)
+- Show the version number also when the HPB backend is not older
+  [#6890](https://github.com/nextcloud/spreed/pull/6890)
+- Correctly stop waiting sound when someone joins the call
+  [#6919](https://github.com/nextcloud/spreed/pull/6919)
+- Improve performance when starting a call in a conversation with many participants
+  [#6933](https://github.com/nextcloud/spreed/pull/6933)
+
+## 12.2.4 – 2022-03-17
+### Fixed
+- Fix several modals, dialogs and popovers in fullscreen mode
+  [#6884](https://github.com/nextcloud/spreed/pull/6884)
+- Fix mentions inside brackets
+  [#6870](https://github.com/nextcloud/spreed/pull/6870)
+- Fix call flags update when track is disabled
+  [#7015](https://github.com/nextcloud/spreed/pull/7015)
+
+## 11.3.6 – 2022-03-17
+### Fixed
+- Fix several modals, dialogs and popovers in fullscreen mode
+  [#6886](https://github.com/nextcloud/spreed/pull/6886)
+- Fix mentions inside brackets
+  [#6871](https://github.com/nextcloud/spreed/pull/6871)
+
 ## 13.0.3 – 2022-02-07
 ### Fixed
 - Fix stopping a screenshare for recipients
