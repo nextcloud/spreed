@@ -809,6 +809,7 @@ export default {
 	}
 	&__reactions {
 		display: flex;
+		flex-wrap: wrap;
 		margin: 4px 0 4px -2px;
 	}
 }
@@ -875,7 +876,7 @@ export default {
 	padding: 0 8px !important;
 	font-weight: normal !important;
 
-	margin: 0 2px;
+	margin: 2px;
 	height: 26px;
 	background-color: var(--color-main-background);
 
