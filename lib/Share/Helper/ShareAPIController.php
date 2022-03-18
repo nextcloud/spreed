@@ -87,16 +87,17 @@ class ShareAPIController {
 		$result['share_with_displayname'] = $room->getDisplayName($this->userId);
 		try {
 			$room->getParticipant($this->userId, false);
+			$result['share_with_link'] = $this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]);
 		} catch (ParticipantNotFoundException $e) {
 			// Removing the conversation token from the leaked data if not a participant.
 			// Adding some unique but reproducable part to the share_with here
 			// so the avatars for conversations are distinguishable
 			$result['share_with'] = 'private_conversation_' . substr(sha1($room->getName() . $room->getId()), 0, 6);
+			$result['share_with_link'] = '';
 		}
 		if ($room->getType() === Room::TYPE_PUBLIC) {
 			$result['token'] = $share->getToken();
 		}
-		$result['share_with_link'] = $this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]);
 
 		return $result;
 	}
