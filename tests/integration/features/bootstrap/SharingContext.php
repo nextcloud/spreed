@@ -596,7 +596,8 @@ class SharingContext implements Context {
 			'item_source' => 'A_NUMBER',
 			'file_source' => 'A_NUMBER',
 			'file_parent' => 'A_NUMBER',
-			'mail_send' => '0'
+			'mail_send' => '0',
+			'share_with_link' => 'URL',
 		];
 		$expectedFields = array_merge($defaultExpectedFields, $body->getRowsHash());
 
@@ -614,9 +615,14 @@ class SharingContext implements Context {
 				array_key_exists('share_with', $expectedFields)) {
 			if ($expectedFields['share_with'] === 'private_conversation') {
 				$expectedFields['share_with'] = 'REGEXP /^private_conversation_[0-9a-f]{6}$/';
+				$expectedFields['share_with_link'] = '';
 			} else {
 				$expectedFields['share_with'] = FeatureContext::getTokenForIdentifier($expectedFields['share_with']);
 			}
+		}
+
+		if ($expectedFields['share_with_link'] === 'URL') {
+			$expectedFields['share_with_link'] = $this->baseUrl . 'index.php/call/' . $expectedFields['share_with'];
 		}
 
 		foreach ($expectedFields as $field => $value) {
