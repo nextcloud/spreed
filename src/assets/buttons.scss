@@ -54,5 +54,16 @@
 			background-color: var(--color-background-darker);
 		}
 	}
+}
 
+.button-vue--vue-secondary {
+	color: var(--color-main-text);
+	background-color: var(--color-background-dark);
+	border: 1px solid var(--color-border-dark);
+
+	&:hover {
+		color: var(--color-main-text);
+		background-color: var(--color-background-dark);
+		border-color: var(--color-primary-element);
+	}
 }

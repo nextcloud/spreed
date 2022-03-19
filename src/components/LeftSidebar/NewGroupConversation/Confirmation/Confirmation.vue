@@ -121,6 +121,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../../assets/buttons';
 .confirmation {
 	display: flex;
 	flex-direction: column;

@@ -206,6 +206,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+	@import '../assets/buttons';
+
 	::v-deep .item-list__entry {
 		position: relative;
 	}
