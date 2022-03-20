@@ -87,6 +87,7 @@
 					<Button v-if="page===0"
 						type="primary"
 						:disabled="disabled"
+						class="navigation__button-right"
 						@click="handleSetConversationName">
 						{{ t('spreed', 'Add participants') }}
 					</Button>
@@ -98,12 +99,14 @@
 					</Button>
 					<Button v-if="page===1"
 						type="primary"
+						class="navigation__button-right"
 						@click="handleCreateConversation">
 						{{ t('spreed', 'Create conversation') }}
 					</Button>
 					<!-- Third page -->
 					<Button v-if="page===2 && (error || isPublic)"
 						type="primary"
+						class="navigation__button-right"
 						@click="closeModal">
 						{{ t('spreed', 'Close') }}
 					</Button>
@@ -406,6 +409,10 @@ it back */
 	box-shadow: 0 -10px 5px var(--color-main-background);
 	z-index: 1;
 	width: 100%;
+
+	&__button-right {
+		margin-left:auto;
+	}
 }
 
 .wrapper {
