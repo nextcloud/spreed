@@ -23,7 +23,8 @@
 	<!-- Message Actions -->
 	<div class="message-buttons-bar">
 		<template v-if="page === 0">
-			<Button type="tertiary"
+			<Button v-if="acceptsReactions"
+				type="tertiary"
 				@click="page = 1">
 				<template #icon>
 					<EmoticonOutline :size="20" />
@@ -324,6 +325,10 @@ export default {
 				&& !this.isMyMsg
 				&& this.actorType === ATTENDEE.ACTOR_TYPE.USERS
 				&& this.$store.getters.getActorType() === ATTENDEE.ACTOR_TYPE.USERS
+		},
+
+		acceptsReactions() {
+			return !this.isConversationReadOnly
 		},
 
 		messageActions() {
