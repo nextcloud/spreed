@@ -172,7 +172,7 @@ describe('Participant.vue', () => {
 		test('renders avatar from search result', () => {
 			participant.label = 'Name from label'
 			participant.source = 'source-from-search'
-			participant.attendeeId = 'id-from-search'
+			participant.id = 'id-from-search'
 			const wrapper = mountParticipant(participant, true)
 			const avatarEl = wrapper.findComponent(AvatarWrapper)
 			expect(avatarEl.exists()).toBe(true)
