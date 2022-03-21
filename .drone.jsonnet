@@ -41,7 +41,7 @@ local Pipeline(test_set, database, services) = {
 			"stable*"
 		],
 		event: (
-			if database == "sqlite" then ["pull_request", "push"] else ["push"]
+			if database == "mysql" then ["pull_request", "push"] else ["push"]
 		)
 	}
 };

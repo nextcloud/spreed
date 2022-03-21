@@ -26,7 +26,6 @@ trigger:
   - master
   - stable*
   event:
-  - pull_request
   - push
 ---
 kind: pipeline
@@ -56,7 +55,6 @@ trigger:
   - master
   - stable*
   event:
-  - pull_request
   - push
 ---
 kind: pipeline
@@ -86,7 +84,6 @@ trigger:
   - master
   - stable*
   event:
-  - pull_request
   - push
 ---
 kind: pipeline
@@ -117,7 +114,6 @@ trigger:
   - master
   - stable*
   event:
-  - pull_request
   - push
 ---
 kind: pipeline
@@ -148,7 +144,6 @@ trigger:
   - master
   - stable*
   event:
-  - pull_request
   - push
 ---
 kind: pipeline
@@ -178,7 +173,6 @@ trigger:
   - master
   - stable*
   event:
-  - pull_request
   - push
 ---
 kind: pipeline
@@ -208,7 +202,6 @@ trigger:
   - master
   - stable*
   event:
-  - pull_request
   - push
 ---
 kind: pipeline
@@ -238,7 +231,6 @@ trigger:
   - master
   - stable*
   event:
-  - pull_request
   - push
 ---
 kind: pipeline
@@ -268,7 +260,6 @@ trigger:
   - master
   - stable*
   event:
-  - pull_request
   - push
 ---
 kind: pipeline
@@ -311,6 +302,7 @@ trigger:
   - master
   - stable*
   event:
+  - pull_request
   - push
 ---
 kind: pipeline
@@ -353,6 +345,7 @@ trigger:
   - master
   - stable*
   event:
+  - pull_request
   - push
 ---
 kind: pipeline
@@ -395,6 +388,7 @@ trigger:
   - master
   - stable*
   event:
+  - pull_request
   - push
 ---
 kind: pipeline
@@ -438,6 +432,7 @@ trigger:
   - master
   - stable*
   event:
+  - pull_request
   - push
 ---
 kind: pipeline
@@ -481,6 +476,7 @@ trigger:
   - master
   - stable*
   event:
+  - pull_request
   - push
 ---
 kind: pipeline
@@ -523,6 +519,7 @@ trigger:
   - master
   - stable*
   event:
+  - pull_request
   - push
 ---
 kind: pipeline
@@ -565,6 +562,7 @@ trigger:
   - master
   - stable*
   event:
+  - pull_request
   - push
 ---
 kind: pipeline
@@ -607,6 +605,7 @@ trigger:
   - master
   - stable*
   event:
+  - pull_request
   - push
 ---
 kind: pipeline
@@ -649,6 +648,7 @@ trigger:
   - master
   - stable*
   event:
+  - pull_request
   - push
 ---
 kind: pipeline
