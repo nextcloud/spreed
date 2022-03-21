@@ -516,7 +516,7 @@ class Notifier implements INotifier {
 	 * @throws ParticipantNotFoundException
 	 */
 	protected function getGuestParameter(Room $room, string $actorId): array {
-		$participant = $room->getParticipantByActor(Attendee::ACTOR_GUESTS, $actorId, false);
+		$participant = $room->getParticipantByActor(Attendee::ACTOR_GUESTS, $actorId);
 		$name = $participant->getAttendee()->getDisplayName();
 		if (trim($name) === '') {
 			throw new ParticipantNotFoundException('Empty name');
