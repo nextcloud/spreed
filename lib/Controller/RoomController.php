@@ -1508,15 +1508,8 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		// Prevent users/moderators modifying themselves
-		if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
-			if ($attendee->getActorId() === $this->userId) {
-				return new DataResponse([], Http::STATUS_FORBIDDEN);
-			}
-		} elseif ($attendee->getActorType() === Attendee::ACTOR_GUESTS) {
-			$session = $targetParticipant->getSession();
-			$currentSessionId = $this->session->getSessionForRoom($this->room->getToken());
-
-			if ($session instanceof Session && $currentSessionId === $session->getSessionId()) {
+		if ($attendee->getActorType() === $this->participant->getAttendee()->getActorType()) {
+			if ($attendee->getActorId() === $this->participant->getAttendee()->getActorId()) {
 				return new DataResponse([], Http::STATUS_FORBIDDEN);
 			}
 		} elseif ($attendee->getActorType() === Attendee::ACTOR_GROUPS) {
