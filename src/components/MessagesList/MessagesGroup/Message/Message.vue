@@ -148,9 +148,10 @@ the main body of the message as well as a quote.
 
 		<!-- Message actions -->
 		<MessageButtonsBar v-if="hasMessageButtonsBar"
-			v-show="showMessageButtonsBar || isActionMenuOpen"
+			v-show="showMessageButtonsBar || isActionMenuOpen || isEmojiPickerOpen"
 			ref="messageButtonsBar"
 			:is-action-menu-open.sync="isActionMenuOpen"
+			:is-emoji-picker-open.sync="isEmojiPickerOpen"
 			:message-api-data="messageApiData"
 			:message-object="messageObject"
 			v-bind="$props"
@@ -358,6 +359,7 @@ export default {
 			// whether the message was seen, only used if this was marked as last read message
 			seen: false,
 			isActionMenuOpen: false,
+			isEmojiPickerOpen: false,
 			detailedReactionsRequested: false,
 		}
 	},

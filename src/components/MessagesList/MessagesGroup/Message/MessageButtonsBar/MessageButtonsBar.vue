@@ -114,7 +114,9 @@
 				</template>
 			</Button>
 			<EmojiPicker :container="`#message_${id}`"
-				@select="handleReactionClick">
+				@select="handleReactionClick"
+				@after-show="onEmojiPickerOpen"
+				@after-hide="onEmojiPickerClose">
 				<Button type="tertiary">
 					<template #icon>
 						<Plus :size="20" />
@@ -431,6 +433,14 @@ export default {
 
 		onMenuClose() {
 			this.$emit('update:isActionMenuOpen', false)
+		},
+
+		onEmojiPickerOpen() {
+			this.$emit('update:isEmojiPickerOpen', true)
+		},
+
+		onEmojiPickerClose() {
+			this.$emit('update:isEmojiPickerOpen', false)
 		},
 	},
 }
