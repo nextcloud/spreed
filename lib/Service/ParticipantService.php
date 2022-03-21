@@ -988,7 +988,7 @@ class ParticipantService {
 
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);
-		$helper->selectSessionsTableMax($query);
+		$helper->selectSessionsTable($query);
 		$query->from('talk_attendees', 'a')
 			// Currently we only care if the user has a session at all, so we can select any: #ThisIsFine
 			->leftJoin(
@@ -996,10 +996,16 @@ class ParticipantService {
 				$query->expr()->eq('s.attendee_id', 'a.id')
 			)
 			->where($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('a.notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT)))
-			->groupBy('a.id');
+			->andWhere($query->expr()->eq('a.notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT)));
 
-		return $this->getParticipantsFromQuery($query, $room);
+		$participants = $this->getParticipantsFromQuery($query, $room);
+
+		$uniqueAttendees = [];
+		foreach ($participants as $participant) {
+			$uniqueAttendees[$participant->getAttendee()->getId()] = $participant;
+		}
+
+		return array_values($uniqueAttendees);
 	}
 
 	/**
