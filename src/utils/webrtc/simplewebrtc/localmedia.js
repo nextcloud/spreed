@@ -119,7 +119,7 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 	// devices). It is just a special case in which starting succeeds with a
 	// null stream.
 	if (!constraints.audio && !constraints.video) {
-		self.emit('localStream', constraints, null)
+		self.emit('localStream', null)
 
 		if (cb) {
 			return cb(null, null, constraints)
@@ -139,16 +139,16 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		return
 	}
 
-	this.emit('localStreamRequested', constraints, context)
+	this.emit('localStreamRequested', context)
 
-	const retryNoVideoCallback = (constraints, error) => {
-		self.emit('localStreamRequestFailedRetryNoVideo', constraints, error)
+	const retryNoVideoCallback = (error) => {
+		self.emit('localStreamRequestFailedRetryNoVideo', error)
 	}
 
 	this._mediaDevicesSource.start(constraints, retryNoVideoCallback).then(() => {
 		self.localStreams.push(self._trackToStream.getStream())
 
-		self.emit('localStream', constraints, self._trackToStream.getStream())
+		self.emit('localStream', self._trackToStream.getStream())
 
 		self._trackToStream.on('streamSet', self._handleStreamSetBound)
 		self._trackToStream.on('trackReplaced', self._handleTrackReplacedBound)
@@ -160,7 +160,7 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 			return cb(null, self._trackToStream.getStream(), constraints)
 		}
 	}).catch(err => {
-		self.emit('localStreamRequestFailed', constraints)
+		self.emit('localStreamRequestFailed')
 
 		self._trackToStream.on('streamSet', self._handleStreamSetBound)
 		self._trackToStream.on('trackReplaced', self._handleTrackReplacedBound)

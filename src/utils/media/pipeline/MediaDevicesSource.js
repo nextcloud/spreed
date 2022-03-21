@@ -75,7 +75,7 @@ export default class MediaDevicesSource extends TrackSource {
 		// Fallback for users without a camera or with a camera that can not be
 		// accessed, but only if audio is meant to be used.
 		if (error && constraints.audio !== false && constraints.video !== false) {
-			retryNoVideoCallback(constraints, error);
+			retryNoVideoCallback(error);
 
 			[stream, error] = await this._startAudioOnly(constraints)
 		}
