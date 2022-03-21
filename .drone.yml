@@ -1,1464 +1,996 @@
+---
 kind: pipeline
 name: int-sqlite-callapi
-
-steps:
-  - name: integration-callapi
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: sqlite
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/callapi
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/callapi
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: sqlite
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-callapi
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-    - pull_request
-    - push
-
+  - pull_request
+  - push
 ---
 kind: pipeline
 name: int-sqlite-chat
-
-steps:
-  - name: integration-chat
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: sqlite
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/chat
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/chat
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: sqlite
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-chat
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-    - pull_request
-    - push
-
+  - pull_request
+  - push
 ---
 kind: pipeline
 name: int-sqlite-command
-
-steps:
-  - name: integration-command
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: sqlite
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/command
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/command
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: sqlite
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-command
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-    - pull_request
-    - push
-
+  - pull_request
+  - push
 ---
 kind: pipeline
 name: int-sqlite-conversation
-
-steps:
-  - name: integration-conversation
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      GUESTS_BRANCH: master
-      DATABASEHOST: sqlite
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - git clone --depth 1 -b "$GUESTS_BRANCH" https://github.com/nextcloud/guests apps/guests
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/conversation
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/conversation
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: sqlite
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-conversation
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-    - pull_request
-    - push
-
+  - pull_request
+  - push
 ---
 kind: pipeline
 name: int-sqlite-conversation-2
-
-steps:
-  - name: integration-conversation-2
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      GUESTS_BRANCH: master
-      DATABASEHOST: sqlite
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - git clone --depth 1 -b "$GUESTS_BRANCH" https://github.com/nextcloud/guests apps/guests
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/conversation-2
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/conversation-2
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: sqlite
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-conversation-2
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-    - pull_request
-    - push
-
----
-kind: pipeline
-name: int-sqlite-reaction
-
-steps:
-  - name: integration-reaction
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      GUESTS_BRANCH: master
-      DATABASEHOST: sqlite
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - git clone --depth 1 -b "$GUESTS_BRANCH" https://github.com/nextcloud/guests apps/guests
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/reaction
-
-services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-
-trigger:
-  branch:
-    - master
-    - stable*
-  event:
-    - pull_request
-    - push
-
+  - pull_request
+  - push
 ---
 kind: pipeline
 name: int-sqlite-federation
-
-steps:
-  - name: integration-federation
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: sqlite
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/federation
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/federation
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: sqlite
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-federation
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-    - pull_request
-    - push
-
+  - pull_request
+  - push
+---
+kind: pipeline
+name: int-sqlite-reaction
+services:
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/reaction
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: sqlite
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-reaction
+trigger:
+  branch:
+  - master
+  - stable*
+  event:
+  - pull_request
+  - push
 ---
 kind: pipeline
 name: int-sqlite-sharing
-
-steps:
-  - name: integration-sharing
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: sqlite
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/sharing
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/sharing
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: sqlite
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-sharing
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-    - pull_request
-    - push
-
+  - pull_request
+  - push
 ---
 kind: pipeline
 name: int-sqlite-sharing-2
-
-steps:
-  - name: integration-sharing-2
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: sqlite
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/sharing-2
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/sharing-2
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: sqlite
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-sharing-2
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-    - pull_request
-    - push
-
+  - pull_request
+  - push
 ---
 kind: pipeline
 name: int-mysql-callapi
-
-steps:
-  - name: integration-callapi
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: mysql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/callapi
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: mysql
-    image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
-    environment:
-      MYSQL_ROOT_PASSWORD: owncloud
-      MYSQL_USER: oc_autotest
-      MYSQL_PASSWORD: owncloud
-      MYSQL_DATABASE: oc_autotest
-    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
-    tmpfs:
-      - /var/lib/mysql
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- command:
+  - --innodb_large_prefix=true
+  - --innodb_file_format=barracuda
+  - --innodb_file_per_table=true
+  environment:
+    MYSQL_DATABASE: oc_autotest
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
+  name: mysql
+  tmpfs:
+  - /var/lib/mysql
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/callapi
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: mysql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-callapi
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-#    - pull_request
-    - push
-
+  - push
 ---
 kind: pipeline
 name: int-mysql-chat
-
-steps:
-  - name: integration-chat
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: mysql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/chat
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: mysql
-    image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
-    environment:
-      MYSQL_ROOT_PASSWORD: owncloud
-      MYSQL_USER: oc_autotest
-      MYSQL_PASSWORD: owncloud
-      MYSQL_DATABASE: oc_autotest
-    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
-    tmpfs:
-      - /var/lib/mysql
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- command:
+  - --innodb_large_prefix=true
+  - --innodb_file_format=barracuda
+  - --innodb_file_per_table=true
+  environment:
+    MYSQL_DATABASE: oc_autotest
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
+  name: mysql
+  tmpfs:
+  - /var/lib/mysql
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/chat
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: mysql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-chat
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-#    - pull_request
-    - push
-
+  - push
 ---
 kind: pipeline
 name: int-mysql-command
-
-steps:
-  - name: integration-command
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: mysql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/command
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: mysql
-    image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
-    environment:
-      MYSQL_ROOT_PASSWORD: owncloud
-      MYSQL_USER: oc_autotest
-      MYSQL_PASSWORD: owncloud
-      MYSQL_DATABASE: oc_autotest
-    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
-    tmpfs:
-      - /var/lib/mysql
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- command:
+  - --innodb_large_prefix=true
+  - --innodb_file_format=barracuda
+  - --innodb_file_per_table=true
+  environment:
+    MYSQL_DATABASE: oc_autotest
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
+  name: mysql
+  tmpfs:
+  - /var/lib/mysql
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/command
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: mysql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-command
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-#    - pull_request
-    - push
-
+  - push
 ---
 kind: pipeline
 name: int-mysql-conversation
-
-steps:
-  - name: integration-conversation
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      GUESTS_BRANCH: master
-      DATABASEHOST: mysql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - git clone --depth 1 -b "$GUESTS_BRANCH" https://github.com/nextcloud/guests apps/guests
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/conversation
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: mysql
-    image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
-    environment:
-      MYSQL_ROOT_PASSWORD: owncloud
-      MYSQL_USER: oc_autotest
-      MYSQL_PASSWORD: owncloud
-      MYSQL_DATABASE: oc_autotest
-    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
-    tmpfs:
-      - /var/lib/mysql
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- command:
+  - --innodb_large_prefix=true
+  - --innodb_file_format=barracuda
+  - --innodb_file_per_table=true
+  environment:
+    MYSQL_DATABASE: oc_autotest
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
+  name: mysql
+  tmpfs:
+  - /var/lib/mysql
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/conversation
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: mysql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-conversation
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-#    - pull_request
-    - push
-
+  - push
 ---
 kind: pipeline
 name: int-mysql-conversation-2
-
-steps:
-  - name: integration-conversation-2
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      GUESTS_BRANCH: master
-      DATABASEHOST: mysql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - git clone --depth 1 -b "$GUESTS_BRANCH" https://github.com/nextcloud/guests apps/guests
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/conversation-2
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: mysql
-    image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
-    environment:
-      MYSQL_ROOT_PASSWORD: owncloud
-      MYSQL_USER: oc_autotest
-      MYSQL_PASSWORD: owncloud
-      MYSQL_DATABASE: oc_autotest
-    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
-    tmpfs:
-      - /var/lib/mysql
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- command:
+  - --innodb_large_prefix=true
+  - --innodb_file_format=barracuda
+  - --innodb_file_per_table=true
+  environment:
+    MYSQL_DATABASE: oc_autotest
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
+  name: mysql
+  tmpfs:
+  - /var/lib/mysql
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/conversation-2
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: mysql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-conversation-2
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-#    - pull_request
-    - push
-
----
-kind: pipeline
-name: int-mysql-reaction
-
-steps:
-  - name: integration-reaction
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      GUESTS_BRANCH: master
-      DATABASEHOST: mysql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - git clone --depth 1 -b "$GUESTS_BRANCH" https://github.com/nextcloud/guests apps/guests
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/reaction
-
-services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: mysql
-    image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
-    environment:
-      MYSQL_ROOT_PASSWORD: owncloud
-      MYSQL_USER: oc_autotest
-      MYSQL_PASSWORD: owncloud
-      MYSQL_DATABASE: oc_autotest
-    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
-    tmpfs:
-      - /var/lib/mysql
-
-trigger:
-  branch:
-    - master
-    - stable*
-  event:
-#    - pull_request
-    - push
-
+  - push
 ---
 kind: pipeline
 name: int-mysql-federation
-
-steps:
-  - name: integration-federation
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: mysql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/federation
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: mysql
-    image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
-    environment:
-      MYSQL_ROOT_PASSWORD: owncloud
-      MYSQL_USER: oc_autotest
-      MYSQL_PASSWORD: owncloud
-      MYSQL_DATABASE: oc_autotest
-    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
-    tmpfs:
-      - /var/lib/mysql
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- command:
+  - --innodb_large_prefix=true
+  - --innodb_file_format=barracuda
+  - --innodb_file_per_table=true
+  environment:
+    MYSQL_DATABASE: oc_autotest
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
+  name: mysql
+  tmpfs:
+  - /var/lib/mysql
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/federation
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: mysql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-federation
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-    #    - pull_request
-    - push
-
+  - push
+---
+kind: pipeline
+name: int-mysql-reaction
+services:
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- command:
+  - --innodb_large_prefix=true
+  - --innodb_file_format=barracuda
+  - --innodb_file_per_table=true
+  environment:
+    MYSQL_DATABASE: oc_autotest
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
+  name: mysql
+  tmpfs:
+  - /var/lib/mysql
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/reaction
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: mysql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-reaction
+trigger:
+  branch:
+  - master
+  - stable*
+  event:
+  - push
 ---
 kind: pipeline
 name: int-mysql-sharing
-
-steps:
-  - name: integration-sharing
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: mysql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/sharing
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: mysql
-    image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
-    environment:
-      MYSQL_ROOT_PASSWORD: owncloud
-      MYSQL_USER: oc_autotest
-      MYSQL_PASSWORD: owncloud
-      MYSQL_DATABASE: oc_autotest
-    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
-    tmpfs:
-      - /var/lib/mysql
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- command:
+  - --innodb_large_prefix=true
+  - --innodb_file_format=barracuda
+  - --innodb_file_per_table=true
+  environment:
+    MYSQL_DATABASE: oc_autotest
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
+  name: mysql
+  tmpfs:
+  - /var/lib/mysql
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/sharing
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: mysql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-sharing
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-#    - pull_request
-    - push
-
+  - push
 ---
 kind: pipeline
 name: int-mysql-sharing-2
-
-steps:
-  - name: integration-sharing-2
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: mysql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/sharing-2
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: mysql
-    image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
-    environment:
-      MYSQL_ROOT_PASSWORD: owncloud
-      MYSQL_USER: oc_autotest
-      MYSQL_PASSWORD: owncloud
-      MYSQL_DATABASE: oc_autotest
-    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
-    tmpfs:
-      - /var/lib/mysql
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- command:
+  - --innodb_large_prefix=true
+  - --innodb_file_format=barracuda
+  - --innodb_file_per_table=true
+  environment:
+    MYSQL_DATABASE: oc_autotest
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
+  name: mysql
+  tmpfs:
+  - /var/lib/mysql
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/sharing-2
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: mysql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-sharing-2
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-#    - pull_request
-    - push
-
+  - push
 ---
 kind: pipeline
 name: int-pgsql-callapi
-
-steps:
-  - name: integration-callapi
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: pgsql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/callapi
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: pgsql
-    image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
-    environment:
-      POSTGRES_USER: oc_autotest
-      POSTGRES_DB: oc_autotest_dummy
-      POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_PASSWORD:
-    tmpfs:
-      - /var/lib/postgresql/data
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- environment:
+    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_HOST_AUTH_METHOD: trust
+    POSTGRES_PASSWORD: ""
+    POSTGRES_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
+  name: pgsql
+  tmpfs:
+  - /var/lib/postgresql/data
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/callapi
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: pgsql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-callapi
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-#    - pull_request
-    - push
-
+  - push
 ---
 kind: pipeline
 name: int-pgsql-chat
-
-steps:
-  - name: integration-chat
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: pgsql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/chat
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: pgsql
-    image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
-    environment:
-      POSTGRES_USER: oc_autotest
-      POSTGRES_DB: oc_autotest_dummy
-      POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_PASSWORD:
-    tmpfs:
-      - /var/lib/postgresql/data
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- environment:
+    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_HOST_AUTH_METHOD: trust
+    POSTGRES_PASSWORD: ""
+    POSTGRES_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
+  name: pgsql
+  tmpfs:
+  - /var/lib/postgresql/data
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/chat
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: pgsql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-chat
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-#    - pull_request
-    - push
-
+  - push
 ---
 kind: pipeline
 name: int-pgsql-command
-
-steps:
-  - name: integration-command
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: pgsql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/command
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: pgsql
-    image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
-    environment:
-      POSTGRES_USER: oc_autotest
-      POSTGRES_DB: oc_autotest_dummy
-      POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_PASSWORD:
-    tmpfs:
-      - /var/lib/postgresql/data
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- environment:
+    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_HOST_AUTH_METHOD: trust
+    POSTGRES_PASSWORD: ""
+    POSTGRES_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
+  name: pgsql
+  tmpfs:
+  - /var/lib/postgresql/data
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/command
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: pgsql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-command
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-#    - pull_request
-    - push
-
+  - push
 ---
 kind: pipeline
 name: int-pgsql-conversation
-
-steps:
-  - name: integration-conversation
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      GUESTS_BRANCH: master
-      DATABASEHOST: pgsql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - git clone --depth 1 -b "$GUESTS_BRANCH" https://github.com/nextcloud/guests apps/guests
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/conversation
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: pgsql
-    image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
-    environment:
-      POSTGRES_USER: oc_autotest
-      POSTGRES_DB: oc_autotest_dummy
-      POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_PASSWORD:
-    tmpfs:
-      - /var/lib/postgresql/data
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- environment:
+    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_HOST_AUTH_METHOD: trust
+    POSTGRES_PASSWORD: ""
+    POSTGRES_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
+  name: pgsql
+  tmpfs:
+  - /var/lib/postgresql/data
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/conversation
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: pgsql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-conversation
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-#    - pull_request
-    - push
-
+  - push
 ---
 kind: pipeline
 name: int-pgsql-conversation-2
-
-steps:
-  - name: integration-conversation-2
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      GUESTS_BRANCH: master
-      DATABASEHOST: pgsql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - git clone --depth 1 -b "$GUESTS_BRANCH" https://github.com/nextcloud/guests apps/guests
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/conversation-2
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: pgsql
-    image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
-    environment:
-      POSTGRES_USER: oc_autotest
-      POSTGRES_DB: oc_autotest_dummy
-      POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_PASSWORD:
-    tmpfs:
-      - /var/lib/postgresql/data
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- environment:
+    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_HOST_AUTH_METHOD: trust
+    POSTGRES_PASSWORD: ""
+    POSTGRES_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
+  name: pgsql
+  tmpfs:
+  - /var/lib/postgresql/data
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/conversation-2
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: pgsql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-conversation-2
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-#    - pull_request
-    - push
-
----
-kind: pipeline
-name: int-pgsql-reaction
-
-steps:
-  - name: integration-reaction
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      GUESTS_BRANCH: master
-      DATABASEHOST: pgsql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - git clone --depth 1 -b "$GUESTS_BRANCH" https://github.com/nextcloud/guests apps/guests
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/reaction
-
-services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: pgsql
-    image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
-    environment:
-      POSTGRES_USER: oc_autotest
-      POSTGRES_DB: oc_autotest_dummy
-      POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_PASSWORD:
-    tmpfs:
-      - /var/lib/postgresql/data
-
-trigger:
-  branch:
-    - master
-    - stable*
-  event:
-#    - pull_request
-    - push
-
+  - push
 ---
 kind: pipeline
 name: int-pgsql-federation
-
-steps:
-  - name: integration-federation
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: pgsql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/federation
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: pgsql
-    image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
-    environment:
-      POSTGRES_USER: oc_autotest
-      POSTGRES_DB: oc_autotest_dummy
-      POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_PASSWORD:
-    tmpfs:
-      - /var/lib/postgresql/data
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- environment:
+    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_HOST_AUTH_METHOD: trust
+    POSTGRES_PASSWORD: ""
+    POSTGRES_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
+  name: pgsql
+  tmpfs:
+  - /var/lib/postgresql/data
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/federation
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: pgsql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-federation
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-    #    - pull_request
-    - push
-
+  - push
+---
+kind: pipeline
+name: int-pgsql-reaction
+services:
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- environment:
+    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_HOST_AUTH_METHOD: trust
+    POSTGRES_PASSWORD: ""
+    POSTGRES_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
+  name: pgsql
+  tmpfs:
+  - /var/lib/postgresql/data
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/reaction
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: pgsql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-reaction
+trigger:
+  branch:
+  - master
+  - stable*
+  event:
+  - push
 ---
 kind: pipeline
 name: int-pgsql-sharing
-
-steps:
-  - name: integration-sharing
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: pgsql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/sharing
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: pgsql
-    image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
-    environment:
-      POSTGRES_USER: oc_autotest
-      POSTGRES_DB: oc_autotest_dummy
-      POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_PASSWORD:
-    tmpfs:
-      - /var/lib/postgresql/data
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- environment:
+    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_HOST_AUTH_METHOD: trust
+    POSTGRES_PASSWORD: ""
+    POSTGRES_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
+  name: pgsql
+  tmpfs:
+  - /var/lib/postgresql/data
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/sharing
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: pgsql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-sharing
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-#    - pull_request
-    - push
-
+  - push
 ---
 kind: pipeline
 name: int-pgsql-sharing-2
-
-steps:
-  - name: integration-sharing-2
-    image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: pgsql
-    commands:
-      - bash tests/drone-run-integration-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run integration tests
-      - cd tests/integration/
-      - bash run.sh features/sharing-2
-
 services:
-  - name: cache
-    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-  - name: pgsql
-    image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
-    environment:
-      POSTGRES_USER: oc_autotest
-      POSTGRES_DB: oc_autotest_dummy
-      POSTGRES_HOST_AUTH_METHOD: trust
-      POSTGRES_PASSWORD:
-    tmpfs:
-      - /var/lib/postgresql/data
-
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- environment:
+    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_HOST_AUTH_METHOD: trust
+    POSTGRES_PASSWORD: ""
+    POSTGRES_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
+  name: pgsql
+  tmpfs:
+  - /var/lib/postgresql/data
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - cd apps/$APP_NAME
+  - cd tests/integration/
+  - bash run.sh features/sharing-2
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: pgsql
+    GUESTS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-sharing-2
 trigger:
   branch:
-    - master
-    - stable*
+  - master
+  - stable*
   event:
-#    - pull_request
-    - push
-
-#---
-#kind: pipeline
-#name: acc-sqlite-app-files
-#
-#steps:
-#  - name: acceptance-app-files
-#    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
-#    environment:
-#      APP_NAME: spreed
-#      CORE_BRANCH: master
-#      SELENIUM_HOST: selenium
-#      TESTS_ACCEPTANCE: app-files
-#    commands:
-#      - bash tests/drone-run-acceptance-tests.sh || exit 0
-#      # Pre-setup steps
-#      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
-#      - cp -R . ../server/apps/$APP_NAME
-#      - cd ../server
-#      - git submodule update --init
-#      - ln --symbolic `pwd` /var/www/html
-#
-#      # Run acceptance tests
-#      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-$TESTS_ACCEPTANCE --selenium-server $SELENIUM_HOST:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
-#
-#services:
-#  - name: selenium
-#    image: selenium/standalone-firefox:2.53.1-beryllium
-#    environment:
-#      # Reduce default log level for Selenium server (INFO) as it is too
-#      # verbose.
-#      JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
-#
-#trigger:
-#  branch:
-#    - master
-#    - stable*
-#  event:
-#    - pull_request
-#    - push
-#
-#---
-#kind: pipeline
-#name: acc-sqlite-chat
-#
-#steps:
-#  - name: acceptance-chat
-#    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
-#    environment:
-#      APP_NAME: spreed
-#      CORE_BRANCH: master
-#      SELENIUM_HOST: selenium
-#      TESTS_ACCEPTANCE: chat
-#    commands:
-#      - bash tests/drone-run-acceptance-tests.sh || exit 0
-#      # Pre-setup steps
-#      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
-#      - cp -R . ../server/apps/$APP_NAME
-#      - cd ../server
-#      - git submodule update --init
-#      - ln --symbolic `pwd` /var/www/html
-#
-#      # Run acceptance tests
-#      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-$TESTS_ACCEPTANCE --selenium-server $SELENIUM_HOST:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
-#
-#services:
-#  - name: cache
-#    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-#  - name: selenium
-#    image: selenium/standalone-firefox:2.53.1-beryllium
-#    environment:
-#      # Reduce default log level for Selenium server (INFO) as it is too
-#      # verbose.
-#      JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
-#
-#trigger:
-#  branch:
-#    - master
-#    - stable*
-#  event:
-#    - pull_request
-#    - push
-#
-#---
-#kind: pipeline
-#name: acc-sqlite-conversation
-#
-#steps:
-#  - name: acceptance-conversation
-#    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
-#    environment:
-#      APP_NAME: spreed
-#      CORE_BRANCH: master
-#      SELENIUM_HOST: selenium
-#      TESTS_ACCEPTANCE: conversation
-#    commands:
-#      - bash tests/drone-run-acceptance-tests.sh || exit 0
-#      # Pre-setup steps
-#      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
-#      - cp -R . ../server/apps/$APP_NAME
-#      - cd ../server
-#      - git submodule update --init
-#      - ln --symbolic `pwd` /var/www/html
-#
-#      # Run acceptance tests
-#      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-$TESTS_ACCEPTANCE --selenium-server $SELENIUM_HOST:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
-#
-#services:
-#  - name: cache
-#    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-#  - name: selenium
-#    image: selenium/standalone-firefox:2.53.1-beryllium
-#    environment:
-#      # Reduce default log level for Selenium server (INFO) as it is too
-#      # verbose.
-#      JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
-#
-#trigger:
-#  branch:
-#    - master
-#    - stable*
-#  event:
-#    - pull_request
-#    - push
-#
-#---
-#kind: pipeline
-#name: acc-sqlite-conversation-public
-#
-#steps:
-#  - name: acceptance-conversation-public
-#    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
-#    environment:
-#      APP_NAME: spreed
-#      CORE_BRANCH: master
-#      SELENIUM_HOST: selenium
-#      TESTS_ACCEPTANCE: conversation-public
-#    commands:
-#      - bash tests/drone-run-acceptance-tests.sh || exit 0
-#      # Pre-setup steps
-#      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
-#      - cp -R . ../server/apps/$APP_NAME
-#      - cd ../server
-#      - git submodule update --init
-#      - ln --symbolic `pwd` /var/www/html
-#
-#      # Run acceptance tests
-#      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-$TESTS_ACCEPTANCE --selenium-server $SELENIUM_HOST:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
-#
-#services:
-#  - name: cache
-#    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-#  - name: selenium
-#    image: selenium/standalone-firefox:2.53.1-beryllium
-#    environment:
-#      # Reduce default log level for Selenium server (INFO) as it is too
-#      # verbose.
-#      JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
-#
-#trigger:
-#  branch:
-#    - master
-#    - stable*
-#  event:
-#    - pull_request
-#    - push
-#
-#---
-#kind: pipeline
-#name: acc-sqlite-lobby
-#
-#steps:
-#  - name: acceptance-lobby
-#    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
-#    environment:
-#      APP_NAME: spreed
-#      CORE_BRANCH: master
-#      SELENIUM_HOST: selenium
-#      TESTS_ACCEPTANCE: lobby
-#    commands:
-#      - bash tests/drone-run-acceptance-tests.sh || exit 0
-#      # Pre-setup steps
-#      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
-#      - cp -R . ../server/apps/$APP_NAME
-#      - cd ../server
-#      - git submodule update --init
-#      - ln --symbolic `pwd` /var/www/html
-#
-#      # Run acceptance tests
-#      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-$TESTS_ACCEPTANCE --selenium-server $SELENIUM_HOST:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
-#
-#services:
-#  - name: selenium
-#    image: selenium/standalone-firefox:2.53.1-beryllium
-#    environment:
-#      # Reduce default log level for Selenium server (INFO) as it is too
-#      # verbose.
-#      JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
-#
-#trigger:
-#  branch:
-#    - master
-#    - stable*
-#  event:
-#    - pull_request
-#    - push
-#
-#---
-#kind: pipeline
-#name: acc-sqlite-public-share
-#
-#steps:
-#  - name: acceptance-public-share
-#    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
-#    environment:
-#      APP_NAME: spreed
-#      CORE_BRANCH: master
-#      SELENIUM_HOST: selenium
-#      TESTS_ACCEPTANCE: public-share
-#    commands:
-#      - bash tests/drone-run-acceptance-tests.sh || exit 0
-#      # Pre-setup steps
-#      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
-#      - cp -R . ../server/apps/$APP_NAME
-#      - cd ../server
-#      - git submodule update --init
-#      - ln --symbolic `pwd` /var/www/html
-#
-#      # Run acceptance tests
-#      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-$TESTS_ACCEPTANCE --selenium-server $SELENIUM_HOST:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
-#
-#services:
-#  - name: cache
-#    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-#  - name: selenium
-#    image: selenium/standalone-firefox:2.53.1-beryllium
-#    environment:
-#      # Reduce default log level for Selenium server (INFO) as it is too
-#      # verbose.
-#      JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
-#
-#trigger:
-#  branch:
-#    - master
-#    - stable*
-#  event:
-#    - pull_request
-#    - push
-#
-#---
-#kind: pipeline
-#name: acc-sqlite-public-share-auth
-#
-#steps:
-#  - name: acceptance-public-share-auth
-#    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
-#    environment:
-#      APP_NAME: spreed
-#      CORE_BRANCH: master
-#      SELENIUM_HOST: selenium
-#      TESTS_ACCEPTANCE: public-share-auth
-#    commands:
-#      - bash tests/drone-run-acceptance-tests.sh || exit 0
-#      # Pre-setup steps
-#      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
-#      - cp -R . ../server/apps/$APP_NAME
-#      - cd ../server
-#      - git submodule update --init
-#      - ln --symbolic `pwd` /var/www/html
-#
-#      # Run acceptance tests
-#      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-$TESTS_ACCEPTANCE --selenium-server $SELENIUM_HOST:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
-#
-#services:
-#  - name: cache
-#    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-#  - name: selenium
-#    image: selenium/standalone-firefox:2.53.1-beryllium
-#    environment:
-#      # Reduce default log level for Selenium server (INFO) as it is too
-#      # verbose.
-#      JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
-#
-#trigger:
-#  branch:
-#    - master
-#    - stable*
-#  event:
-#    - pull_request
-#    - push
-#
-#---
-#kind: pipeline
-#name: acc-sqlite-room-shares
-#
-#steps:
-#  - name: acceptance-room-shares
-#    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
-#    environment:
-#      APP_NAME: spreed
-#      CORE_BRANCH: master
-#      SELENIUM_HOST: selenium
-#      TESTS_ACCEPTANCE: room-shares
-#    commands:
-#      - bash tests/drone-run-acceptance-tests.sh || exit 0
-#      # Pre-setup steps
-#      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
-#      - cp -R . ../server/apps/$APP_NAME
-#      - cd ../server
-#      - git submodule update --init
-#      - ln --symbolic `pwd` /var/www/html
-#
-#      # Run acceptance tests
-#      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-$TESTS_ACCEPTANCE --selenium-server $SELENIUM_HOST:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
-#
-#services:
-#  - name: cache
-#    image: ghcr.io/nextcloud/continuous-integration-redis:latest
-#  - name: selenium
-#    image: selenium/standalone-firefox:2.53.1-beryllium
-#    environment:
-#      # Reduce default log level for Selenium server (INFO) as it is too
-#      # verbose.
-#      JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
-#
-#trigger:
-#  branch:
-#    - master
-#    - stable*
-#  event:
-#    - pull_request
-#    - push
+  - push
