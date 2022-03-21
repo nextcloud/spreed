@@ -659,7 +659,7 @@ services:
 - environment:
     POSTGRES_DB: oc_autotest_dummy
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: owncloud
+    POSTGRES_PASSWORD: ""
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -697,7 +697,7 @@ services:
 - environment:
     POSTGRES_DB: oc_autotest_dummy
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: owncloud
+    POSTGRES_PASSWORD: ""
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -735,7 +735,7 @@ services:
 - environment:
     POSTGRES_DB: oc_autotest_dummy
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: owncloud
+    POSTGRES_PASSWORD: ""
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -773,7 +773,7 @@ services:
 - environment:
     POSTGRES_DB: oc_autotest_dummy
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: owncloud
+    POSTGRES_PASSWORD: ""
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -812,7 +812,7 @@ services:
 - environment:
     POSTGRES_DB: oc_autotest_dummy
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: owncloud
+    POSTGRES_PASSWORD: ""
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -851,7 +851,7 @@ services:
 - environment:
     POSTGRES_DB: oc_autotest_dummy
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: owncloud
+    POSTGRES_PASSWORD: ""
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -889,7 +889,7 @@ services:
 - environment:
     POSTGRES_DB: oc_autotest_dummy
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: owncloud
+    POSTGRES_PASSWORD: ""
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -927,7 +927,7 @@ services:
 - environment:
     POSTGRES_DB: oc_autotest_dummy
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: owncloud
+    POSTGRES_PASSWORD: ""
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -965,7 +965,7 @@ services:
 - environment:
     POSTGRES_DB: oc_autotest_dummy
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: owncloud
+    POSTGRES_PASSWORD: ""
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql

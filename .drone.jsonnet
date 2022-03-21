@@ -101,7 +101,7 @@ local PipelinePostgreSQL(test_set) = Pipeline(
 				POSTGRES_USER: "oc_autotest",
 				POSTGRES_DB: "oc_autotest_dummy",
 				POSTGRES_HOST_AUTH_METHOD: "trust",
-				POSTGRES_PASSWORD: "owncloud"
+				POSTGRES_PASSWORD: ""
 			},
 			tmpfs: [
 				"/var/lib/postgresql/data"
