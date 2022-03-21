@@ -35,21 +35,25 @@
 			@keydown.esc="handleCancelEditing" />
 		<template v-if="!loading">
 			<template v-if="editing">
-				<button class="nc-button nc-button__main description__action"
+				<Button type="tertiary"
 					:aria-label="t('spreed', 'Cancel editing description')"
 					@click="handleCancelEditing">
-					<Close decorative
-						title=""
-						:size="16" />
-				</button>
-				<button class="nc-button nc-button__main primary description__action"
+					<template #icon>
+						<Close decorative
+							title=""
+							:size="20" />
+					</template>
+				</Button>
+				<Button type="primary"
 					:aria-label="t('spreed', 'Submit conversation description')"
 					:disabled="!canSubmit"
 					@click="handleSubmitDescription">
-					<Check decorative
-						title=""
-						:size="16" />
-				</button>
+					<template #icon>
+						<Check decorative
+							title=""
+							:size="20" />
+					</template>
+				</Button>
 				<div v-if="showCountDown"
 					v-tooltip.auto="countDownWarningText"
 					class="counter"
@@ -58,14 +62,16 @@
 					<span>{{ charactersCountDown }}</span>
 				</div>
 			</template>
-			<button v-if="!editing && editable"
-				class="nc-button nc-button__main"
+			<Button v-if="!editing && editable"
+				type="tertiary"
 				:aria-label="t('spreed', 'Edit conversation description')"
 				@click="handleEditDescription">
-				<Pencil decorative
-					title=""
-					:size="16" />
-			</button>
+				<template #icon>
+					<Pencil decorative
+						title=""
+						:size="20" />
+				</template>
+			</Button>
 		</template>
 		<div v-if="loading" class="icon-loading-small spinner" />
 	</div>
@@ -77,6 +83,7 @@ import Check from 'vue-material-design-icons/Check'
 import Close from 'vue-material-design-icons/Close'
 import RichContentEditable from '@nextcloud/vue/dist/Components/RichContenteditable'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'Description',
@@ -85,6 +92,7 @@ export default {
 		Check,
 		Close,
 		RichContentEditable,
+		Button,
 	},
 
 	directives: {
@@ -281,7 +289,6 @@ export default {
 
 	&__action {
 		margin: 0 0 4px 4px;
-
 	}
 }
 
