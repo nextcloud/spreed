@@ -142,13 +142,13 @@ LocalMediaModel.prototype = {
 		this._webRtc.webrtc.on('localScreenStopped', this._handleLocalScreenStoppedBound)
 	},
 
-	_handleLocalStreamRequested(constraints, context) {
+	_handleLocalStreamRequested(context) {
 		if (context !== 'retry-no-video') {
 			this.set('localStreamRequestVideoError', null)
 		}
 	},
 
-	_handleLocalStream(configuration, localStream) {
+	_handleLocalStream(localStream) {
 		// Although there could be several local streams active at the same
 		// time (if the local media is started again before stopping it
 		// first) the methods to control them ("mute", "unmute",
@@ -164,7 +164,7 @@ LocalMediaModel.prototype = {
 		this._setInitialState(localStream)
 	},
 
-	_handleLocalStreamRequestFailedRetryNoVideo(constraints, error) {
+	_handleLocalStreamRequestFailedRetryNoVideo(error) {
 		if (!error || error.name === 'NotFoundError') {
 			return
 		}
