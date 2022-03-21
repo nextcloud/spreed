@@ -1,21 +1,21 @@
-import Vuex from 'vuex'
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import Vuex, { Store } from 'vuex'
+import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { EventBus } from '../../../../services/EventBus'
 import storeConfig from '../../../../store/storeConfig'
-import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../constants'
+import { CONVERSATION, ATTENDEE } from '../../../../constants'
 import Check from 'vue-material-design-icons/Check'
 import CheckAll from 'vue-material-design-icons/CheckAll'
 import Quote from '../../../Quote'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Mention from './MessagePart/Mention'
 import FilePreview from './MessagePart/FilePreview'
 import DeckCard from './MessagePart/DeckCard'
 import Location from './MessagePart/Location'
 import DefaultParameter from './MessagePart/DefaultParameter'
-import { findActionButton } from '../../../../test-helpers'
+import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 
 import Message from './Message'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 
 // needed because of https://github.com/vuejs/vue-test-utils/issues/1507
 const RichTextStub = {
@@ -75,6 +75,20 @@ describe('Message.vue', () => {
 			systemMessage: '',
 			messageType: 'comment',
 		}
+
+		// Dummy message getter so that the message component is always
+		// properly mounted.
+		testStoreConfig.modules.messagesStore.getters.message
+			= jest.fn().mockReturnValue(() => {
+				return {
+					reactions: '',
+				}
+			})
+
+		// Dummy hasReactions getter so that the message component is always
+		// properly mounted.
+		testStoreConfig.modules.messagesStore.getters.hasReactions
+			= jest.fn().mockReturnValue(() => false)
 	})
 
 	afterEach(() => {
@@ -83,7 +97,7 @@ describe('Message.vue', () => {
 
 	describe('message rendering', () => {
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = new Store(testStoreConfig)
 		})
 
 		test('renders rich text message', async () => {
@@ -126,7 +140,7 @@ describe('Message.vue', () => {
 						message: 'message two',
 					}]
 				})
-				store = new Vuex.Store(testStoreConfig)
+				store = new Store(testStoreConfig)
 			})
 
 			test('shows join call button on last message when a call is in progress', () => {
@@ -246,12 +260,13 @@ describe('Message.vue', () => {
 				messageParameters: {},
 				token: TOKEN,
 				parentId: -1,
+				reactions: '',
 			}
 			messageProps.parent = 120
 
 			const messageGetterMock = jest.fn().mockReturnValue(parentMessage)
 			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => messageGetterMock)
-			store = new Vuex.Store(testStoreConfig)
+			store = new Store(testStoreConfig)
 
 			const wrapper = shallowMount(Message, {
 				localVue,
@@ -482,7 +497,7 @@ describe('Message.vue', () => {
 	describe('author rendering', () => {
 		const AUTHOR_SELECTOR = '.message-body__author'
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = new Store(testStoreConfig)
 		})
 
 		test('renders author if first message', async () => {
@@ -511,10 +526,9 @@ describe('Message.vue', () => {
 	})
 
 	describe('actions', () => {
-		const ACTIONS_SELECTOR = '.message__buttons-bar'
 
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = new Store(testStoreConfig)
 		})
 
 		test('does not render actions for system messages are available', async () => {
@@ -528,8 +542,8 @@ describe('Message.vue', () => {
 
 			await wrapper.vm.$nextTick()
 
-			const actionsEl = wrapper.find(ACTIONS_SELECTOR)
-			expect(actionsEl.exists()).toBe(false)
+			const messageButtonsBar = wrapper.findComponent(MessageButtonsBar)
+			expect(messageButtonsBar.exists()).toBe(false)
 		})
 
 		test('does not render actions for temporary messages', async () => {
@@ -543,13 +557,13 @@ describe('Message.vue', () => {
 
 			await wrapper.vm.$nextTick()
 
-			const actionsEl = wrapper.find(ACTIONS_SELECTOR)
-			expect(actionsEl.exists()).toBe(false)
+			const messageButtonsBar = wrapper.findComponent(MessageButtonsBar)
+			expect(messageButtonsBar.exists()).toBe(false)
 		})
 
 		test('actions become visible on mouse over', async () => {
 			messageProps.sendingFailure = 'timeout'
-			const wrapper = shallowMount(Message, {
+			const wrapper = mount(Message, {
 				localVue,
 				store,
 				propsData: messageProps,
@@ -557,437 +571,76 @@ describe('Message.vue', () => {
 
 			await wrapper.vm.$nextTick()
 
-			const actionsEl = wrapper.find(ACTIONS_SELECTOR)
+			const messageButtonsBar = wrapper.findComponent(MessageButtonsBar)
 
-			expect(wrapper.vm.showActions).toBe(false)
-			expect(actionsEl.isVisible()).toBe(false)
+			expect(wrapper.vm.showMessageButtonsBar).toBe(false)
+			expect(messageButtonsBar.isVisible()).toBe(false)
 
 			await wrapper.find('.message-body').trigger('mouseover')
 
-			expect(wrapper.vm.showActions).toBe(true)
-			expect(actionsEl.isVisible()).toBe(true)
+			expect(wrapper.vm.showMessageButtonsBar).toBe(true)
+			expect(messageButtonsBar.isVisible()).toBe(true)
 
 			await wrapper.find('.message-body').trigger('mouseleave')
 
-			expect(wrapper.vm.showActions).toBe(false)
-			expect(actionsEl.isVisible()).toBe(false)
+			expect(wrapper.vm.showMessageButtonsBar).toBe(false)
+			expect(messageButtonsBar.isVisible()).toBe(false)
 
 			// actions are always present and rendered
 			const actions = wrapper.findAllComponents({ name: 'Actions' })
 			expect(actions.length).toBe(2)
 		})
+	})
 
-		describe('reply action', () => {
-			test('replies to message', async () => {
-				const replyAction = jest.fn()
-				testStoreConfig.modules.quoteReplyStore.actions.addMessageToBeReplied = replyAction
-				store = new Vuex.Store(testStoreConfig)
+	describe('delete action', () => {
+		test('deletes message', async () => {
+			let resolveDeleteMessage
+			const deleteMessage = jest.fn().mockReturnValue(new Promise((resolve, reject) => { resolveDeleteMessage = resolve }))
+			testStoreConfig.modules.messagesStore.actions.deleteMessage = deleteMessage
+			store = new Store(testStoreConfig)
 
-				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						ActionButton,
-					},
-					propsData: messageProps,
-				})
+			// need to mock the date to be within 6h
+			const mockDate = new Date('2020-05-07 10:00:00')
+			jest.spyOn(global.Date, 'now')
+				.mockImplementation(() => mockDate)
 
-				await wrapper.find('.message-body').trigger('mouseover')
-				const actionButton = findActionButton(wrapper, 'Reply')
-				expect(actionButton.exists()).toBe(true)
-				expect(actionButton.isVisible()).toBe(true)
-				await actionButton.find('button').trigger('click')
-
-				expect(replyAction).toHaveBeenCalledWith(expect.anything(), {
-					id: 123,
-					actorId: 'user-id-1',
-					actorType: 'users',
-					actorDisplayName: 'user-display-name-1',
-					message: 'test message',
-					messageParameters: {},
-					messageType: 'comment',
-					systemMessage: '',
-					timestamp: new Date('2020-05-07 09:23:00').getTime() / 1000,
-					token: TOKEN,
-				})
-			})
-
-			test('hides reply button when not replyable', async () => {
-				messageProps.isReplyable = false
-				store = new Vuex.Store(testStoreConfig)
-
-				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						ActionButton,
-					},
-					propsData: messageProps,
-				})
-
-				const actionButton = findActionButton(wrapper, 'Reply')
-				expect(actionButton.isVisible()).toBe(false)
-			})
-		})
-
-		describe('private reply action', () => {
-			test('creates a new conversation when replying to message privately', async () => {
-				const routerPushMock = jest.fn().mockResolvedValue()
-				const createOneToOneConversation = jest.fn()
-				testStoreConfig.modules.conversationsStore.actions.createOneToOneConversation = createOneToOneConversation
-				store = new Vuex.Store(testStoreConfig)
-
-				messageProps.actorId = 'another-user'
-
-				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					mocks: {
-						$router: {
-							push: routerPushMock,
-						},
-					},
-					stubs: {
-						ActionButton,
-					},
-					propsData: messageProps,
-				})
-
-				const actionButton = findActionButton(wrapper, 'Reply privately')
-				expect(actionButton.exists()).toBe(true)
-
-				createOneToOneConversation.mockResolvedValueOnce({
-					token: 'new-token',
-				})
-
-				await actionButton.find('button').trigger('click')
-
-				expect(createOneToOneConversation).toHaveBeenCalledWith(expect.anything(), 'another-user')
-
-				expect(routerPushMock).toHaveBeenCalledWith({
-					name: 'conversation',
-					params: {
-						token: 'new-token',
-					},
-				})
-			})
-
-			/**
-			 * @param {boolean} visible Whether or not the reply-private action is visible
-			 */
-			function testPrivateReplyActionVisible(visible) {
-				store = new Vuex.Store(testStoreConfig)
-
-				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						ActionButton,
-					},
-					propsData: messageProps,
-				})
-
-				const actionButton = findActionButton(wrapper, 'Reply privately')
-				expect(actionButton.exists()).toBe(visible)
-			}
-
-			test('hides private reply action for own messages', async () => {
-				// using default message props which have the
-				// actor id set to the current user
-				testPrivateReplyActionVisible(false)
-			})
-
-			test('hides private reply action for one to one conversation type', async () => {
-				messageProps.actorId = 'another-user'
-				conversationProps.type = CONVERSATION.TYPE.ONE_TO_ONE
-				testPrivateReplyActionVisible(false)
-			})
-
-			test('hides private reply action for guest messages', async () => {
-				messageProps.actorId = 'guest-user'
-				messageProps.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
-				testPrivateReplyActionVisible(false)
-			})
-
-			test('hides private reply action when current user is a guest', async () => {
-				messageProps.actorId = 'another-user'
-				getActorTypeMock.mockClear().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.GUESTS)
-				testPrivateReplyActionVisible(false)
-			})
-		})
-
-		describe('delete action', () => {
-			test('deletes message', async () => {
-				let resolveDeleteMessage
-				const deleteMessage = jest.fn().mockReturnValue(new Promise((resolve, reject) => { resolveDeleteMessage = resolve }))
-				testStoreConfig.modules.messagesStore.actions.deleteMessage = deleteMessage
-				store = new Vuex.Store(testStoreConfig)
-
-				// need to mock the date to be within 6h
-				const mockDate = new Date('2020-05-07 10:00:00')
-				jest.spyOn(global.Date, 'now')
-					.mockImplementation(() => mockDate)
-
-				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						ActionButton,
-					},
-					propsData: messageProps,
-				})
-
-				const actionButton = findActionButton(wrapper, 'Delete')
-				expect(actionButton.exists()).toBe(true)
-
-				await actionButton.find('button').trigger('click')
-
-				expect(deleteMessage).toHaveBeenCalledWith(expect.anything(), {
-					message: {
-						token: TOKEN,
-						id: 123,
-					},
-					placeholder: expect.anything(),
-				})
-
-				await wrapper.vm.$nextTick()
-				expect(wrapper.vm.isDeleting).toBe(true)
-				expect(wrapper.find('.icon-loading-small').exists()).toBe(true)
-
-				resolveDeleteMessage(200)
-				// needs two updates...
-				await wrapper.vm.$nextTick()
-				await wrapper.vm.$nextTick()
-
-				expect(wrapper.vm.isDeleting).toBe(false)
-				expect(wrapper.find('.icon-loading-small').exists()).toBe(false)
-			})
-
-			/**
-			 * @param {boolean} visible Whether or not the delete action is visible
-			 * @param {Date} mockDate The message date (deletion only works within 6h)
-			 * @param {number} participantType The participant type of the user
-			 */
-			function testDeleteMessageVisible(visible, mockDate, participantType = PARTICIPANT.TYPE.USER) {
-				store = new Vuex.Store(testStoreConfig)
-
-				// need to mock the date to be within 6h
-				if (!mockDate) {
-					mockDate = new Date('2020-05-07 10:00:00')
-				}
-
-				jest.spyOn(global.Date, 'now')
-					.mockImplementation(() => mockDate)
-
-				const wrapper = shallowMount(Message, {
-					localVue,
-					store,
-					stubs: {
-						ActionButton,
-					},
-					mixins: [{
-						computed: {
-							participant: () => {
-								return {
-									actorId: 'user-id-1',
-									actorType: ATTENDEE.ACTOR_TYPE.USERS,
-									participantType,
-								}
-							},
-						},
-					}],
-					propsData: messageProps,
-				})
-
-				const actionButton = findActionButton(wrapper, 'Delete')
-				expect(actionButton.exists()).toBe(visible)
-			}
-
-			test('hides delete action when message is older than 6 hours', () => {
-				testDeleteMessageVisible(false, new Date('2020-05-07 15:24:00'))
-			})
-
-			test('hides delete action when the conversation is read-only', () => {
-				conversationProps.readOnly = CONVERSATION.STATE.READ_ONLY
-				testDeleteMessageVisible(false)
-			})
-
-			test('hides delete action for file messages', () => {
-				messageProps.message = '{file}'
-				messageProps.messageParameters.file = {}
-				testDeleteMessageVisible(false)
-			})
-
-			test('hides delete action on other people messages for non-moderators', () => {
-				messageProps.actorId = 'another-user'
-				conversationProps.type = CONVERSATION.TYPE.GROUP
-				testDeleteMessageVisible(false)
-			})
-
-			test('shows delete action on other people messages for moderators', () => {
-				messageProps.actorId = 'another-user'
-				conversationProps.type = CONVERSATION.TYPE.GROUP
-				testDeleteMessageVisible(true, null, PARTICIPANT.TYPE.MODERATOR)
-			})
-
-			test('shows delete action on other people messages for owner', () => {
-				messageProps.actorId = 'another-user'
-				conversationProps.type = CONVERSATION.TYPE.PUBLIC
-				testDeleteMessageVisible(true, null, PARTICIPANT.TYPE.OWNER)
-			})
-
-			test('does not show delete action even for guest moderators', () => {
-				messageProps.actorId = 'another-user'
-				conversationProps.type = CONVERSATION.TYPE.PUBLIC
-				testDeleteMessageVisible(false, null, PARTICIPANT.TYPE.GUEST_MODERATOR)
-			})
-
-			test('does not show delete action on other people messages in one to one conversations', () => {
-				messageProps.actorId = 'another-user'
-				conversationProps.type = CONVERSATION.TYPE.ONE_TO_ONE
-				testDeleteMessageVisible(false)
-			})
-		})
-
-		test('marks message as unread', async () => {
-			const updateLastReadMessageAction = jest.fn().mockResolvedValueOnce()
-			const fetchConversationAction = jest.fn().mockResolvedValueOnce()
-			testStoreConfig.modules.conversationsStore.actions.updateLastReadMessage = updateLastReadMessageAction
-			testStoreConfig.modules.conversationsStore.actions.fetchConversation = fetchConversationAction
-			store = new Vuex.Store(testStoreConfig)
-
-			messageProps.previousMessageId = 100
-
-			// appears even with more restrictive conditions
-			conversationProps.readOnly = CONVERSATION.STATE.READ_ONLY
-			messageProps.actorId = 'another-user'
-
-			const wrapper = shallowMount(Message, {
+			const wrapper = mount(Message, {
 				localVue,
 				store,
 				stubs: {
 					ActionButton,
+					MessageButtonsBar,
 				},
-				mixins: [{
-					computed: {
-						participant: () => {
-							return {
-								actorId: 'guest-id-1',
-								actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
-								participantType: PARTICIPANT.TYPE.GUEST,
-							}
-						},
-					},
-				}],
 				propsData: messageProps,
 			})
 
-			const actionButton = findActionButton(wrapper, 'Mark as unread')
-			expect(actionButton.exists()).toBe(true)
+			wrapper.find(MessageButtonsBar).vm.$emit('delete')
 
-			await actionButton.find('button').trigger('click')
+			expect(deleteMessage).toHaveBeenCalledWith(expect.anything(), {
+				message: {
+					token: TOKEN,
+					id: 123,
+				},
+				placeholder: expect.anything(),
+			})
+
+			await wrapper.vm.$nextTick()
+			expect(wrapper.vm.isDeleting).toBe(true)
+			expect(wrapper.find('.icon-loading-small').exists()).toBe(true)
+
+			resolveDeleteMessage(200)
 			// needs two updates...
 			await wrapper.vm.$nextTick()
 			await wrapper.vm.$nextTick()
 
-			expect(updateLastReadMessageAction).toHaveBeenCalledWith(expect.anything(), {
-				token: TOKEN,
-				id: 100,
-				updateVisually: true,
-			})
-
-			expect(fetchConversationAction).toHaveBeenCalledWith(expect.anything(), {
-				token: TOKEN,
-			})
-		})
-
-		test('copies message link', async () => {
-			const copyTextMock = jest.fn()
-
-			// appears even with more restrictive conditions
-			conversationProps.readOnly = CONVERSATION.STATE.READ_ONLY
-			messageProps.actorId = 'another-user'
-
-			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				mocks: {
-					$copyText: copyTextMock,
-				},
-				stubs: {
-					ActionButton,
-				},
-				mixins: [{
-					computed: {
-						participant: () => {
-							return {
-								actorId: 'guest-id-1',
-								actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
-								participantType: PARTICIPANT.TYPE.GUEST,
-							}
-						},
-					},
-				}],
-				propsData: messageProps,
-			})
-
-			const actionButton = findActionButton(wrapper, 'Copy message link')
-			expect(actionButton.exists()).toBe(true)
-
-			await actionButton.find('button').trigger('click')
-
-			expect(copyTextMock).toHaveBeenCalledWith('http://localhost/nc-webroot/call/XXTOKENXX#message_123')
-		})
-
-		test('renders clickable custom actions', async () => {
-			const handler = jest.fn()
-			const handler2 = jest.fn()
-			const actionsGetterMock = jest.fn().mockReturnValue([{
-				label: 'first action',
-				icon: 'some-icon',
-				callback: handler,
-			}, {
-				label: 'second action',
-				icon: 'some-icon2',
-				callback: handler2,
-			}])
-			testStoreConfig.modules.messageActionsStore.getters.messageActions = actionsGetterMock
-			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => () => messageProps)
-			store = new Vuex.Store(testStoreConfig)
-			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				stubs: {
-					ActionButton,
-				},
-				propsData: messageProps,
-			})
-
-			const actionButton = findActionButton(wrapper, 'first action')
-			expect(actionButton.exists()).toBe(true)
-			await actionButton.find('button').trigger('click')
-
-			expect(handler).toHaveBeenCalledWith({
-				apiVersion: 'v3',
-				message: messageProps,
-				metadata: conversationProps,
-			})
-
-			const actionButton2 = findActionButton(wrapper, 'second action')
-			expect(actionButton2.exists()).toBe(true)
-			await actionButton2.find('button').trigger('click')
-
-			expect(handler2).toHaveBeenCalledWith({
-				apiVersion: 'v3',
-				message: messageProps,
-				metadata: conversationProps,
-			})
+			expect(wrapper.vm.isDeleting).toBe(false)
+			expect(wrapper.find('.icon-loading-small').exists()).toBe(false)
 		})
 	})
 
 	describe('status', () => {
 		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+			store = new Store(testStoreConfig)
 		})
 
 		test('lets user retry sending a timed out message', async () => {

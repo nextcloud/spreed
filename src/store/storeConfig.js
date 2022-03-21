@@ -38,6 +38,7 @@ import tokenStore from './tokenStore'
 import uiModeStore from './uiModeStore'
 import windowVisibilityStore from './windowVisibilityStore'
 import messageActionsStore from './messageActionsStore'
+import reactionsStore from './reactionsStore'
 
 export default {
 	modules: {
@@ -59,6 +60,7 @@ export default {
 		uiModeStore,
 		windowVisibilityStore,
 		messageActionsStore,
+		reactionsStore,
 	},
 
 	mutations: {},

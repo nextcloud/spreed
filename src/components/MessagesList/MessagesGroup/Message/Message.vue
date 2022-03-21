@@ -67,6 +67,7 @@ the main body of the message as well as a quote.
 						class="date"
 						:style="{'visibility': hasDate ? 'visible' : 'hidden'}"
 						:class="{'date--self': showSentIcon}">{{ messageTime }}</span>
+
 					<!-- Message delivery status indicators -->
 					<div v-if="sendingFailure"
 						v-tooltip.auto="sendingErrorIconTooltip"
@@ -78,13 +79,13 @@ the main body of the message as well as a quote.
 						@focus="showReloadButton = true"
 						@mouseleave="showReloadButton = true"
 						@blur="showReloadButton = true">
-						<button v-if="sendingErrorCanRetry && showReloadButton"
+						<Button v-if="sendingErrorCanRetry && showReloadButton"
 							class="nc-button nc-button__main--dark"
 							@click="handleRetry">
 							<Reload decorative
 								title=""
 								:size="16" />
-						</button>
+						</Button>
 						<AlertCircle v-else
 							decorative
 							title=""
@@ -112,90 +113,58 @@ the main body of the message as well as a quote.
 					</div>
 				</div>
 			</div>
-			<!-- Message Actions -->
-			<div v-if="hasActions"
-				v-show="showActions"
-				class="message__buttons-bar">
-				<Actions v-show="isReplyable">
-					<ActionButton icon="icon-reply"
-						@click.stop="handleReply">
-						{{ t('spreed', 'Reply') }}
-					</ActionButton>
-				</Actions>
-				<Actions :force-menu="true"
-					:container="container"
-					:boundaries-element="containerElement">
-					<ActionButton v-if="isPrivateReplyable"
-						icon="icon-user"
-						:close-after-click="true"
-						@click.stop="handlePrivateReply">
-						{{ t('spreed', 'Reply privately') }}
-					</ActionButton>
-					<ActionButton icon="icon-external"
-						:close-after-click="true"
-						@click.stop.prevent="handleCopyMessageLink">
-						{{ t('spreed', 'Copy message link') }}
-					</ActionButton>
-					<ActionButton :close-after-click="true"
-						@click.stop="handleMarkAsUnread">
-						<template #icon>
-							<EyeOffOutline decorative
-								title=""
-								:size="16" />
-						</template>
-						{{ t('spreed', 'Mark as unread') }}
-					</ActionButton>
-					<ActionLink v-if="linkToFile"
-						icon="icon-text"
-						:href="linkToFile">
-						{{ t('spreed', 'Go to file') }}
-					</ActionLink>
-					<ActionButton v-if="!isCurrentGuest && !isFileShare"
-						:close-after-click="true"
-						@click.stop="showForwarder = true">
-						<Share slot="icon"
-							:size="16"
-							decorative
-							title="" />
-						{{ t('spreed', 'Forward message') }}
-					</ActionButton>
-					<ActionSeparator v-if="messageActions.length > 0" />
-					<template v-for="action in messageActions">
-						<ActionButton :key="action.label"
-							:icon="action.icon"
-							:close-after-click="true"
-							@click="action.callback(messageAPIData)">
-							{{ action.label }}
-						</ActionButton>
-					</template>
-					<template v-if="isDeleteable">
-						<ActionSeparator />
-						<ActionButton icon="icon-delete"
-							:close-after-click="true"
-							@click.stop="handleDelete">
-							{{ t('spreed', 'Delete') }}
-						</ActionButton>
-					</template>
-				</Actions>
+
+			<!-- reactions buttons and popover with details -->
+			<div v-if="hasReactions"
+				class="message-body__reactions"
+				@mouseover="handleReactionsMouseOver">
+				<Popover v-for="reaction in Object.keys(simpleReactions)"
+					:key="reaction"
+					:delay="200"
+					trigger="hover">
+					<button v-if="simpleReactions[reaction]!== 0"
+						slot="trigger"
+						class="reaction-button"
+						@click="handleReactionClick(reaction)">
+						<span class="reaction-button__emoji"> {{ reaction }} </span>
+						<span> {{ simpleReactions[reaction] }} </span>
+					</button>
+					<div v-if="detailedReactions" class="reaction-details">
+						<p v-for="detailedReaction in detailedReactions[reaction]" :key="detailedReaction.actorDisplayName">
+							{{ detailedReaction.actorDisplayName }}
+						</p>
+					</div>
+				</Popover>
+
+				<!-- More reactions picker -->
+				<EmojiPicker :per-line="5" @select="addReactionToMessage">
+					<button class="reaction-button">
+						<EmoticonOutline :size="15" />
+					</button>
+				</EmojiPicker>
 			</div>
 		</div>
+
+		<!-- Message actions -->
+		<MessageButtonsBar v-if="hasMessageButtonsBar"
+			v-show="showMessageButtonsBar"
+			ref="messageButtonsBar"
+			:message-api-data="messageApiData"
+			:message-object="messageObject"
+			v-bind="$props"
+			:previous-message-id="previousMessageId"
+			:participant="participant"
+			@delete="handleDelete" />
 		<div v-if="isLastReadMessage"
 			v-observe-visibility="lastReadMessageVisibilityChanged">
 			<div class="new-message-marker">
 				<span>{{ t('spreed', 'Unread messages') }}</span>
 			</div>
 		</div>
-		<Forwarder v-if="showForwarder"
-			:message-object="messageObject"
-			@close="showForwarder = false" />
 	</li>
 </template>
 
 <script>
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
-import Actions from '@nextcloud/vue/dist/Components/Actions'
-import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import CallButton from '../../../TopBar/CallButton'
 import DeckCard from './MessagePart/DeckCard'
@@ -206,26 +175,20 @@ import RichText from '@juliushaertl/vue-richtext'
 import AlertCircle from 'vue-material-design-icons/AlertCircle'
 import Check from 'vue-material-design-icons/Check'
 import CheckAll from 'vue-material-design-icons/CheckAll'
-import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline'
 import Reload from 'vue-material-design-icons/Reload'
-import Share from 'vue-material-design-icons/Share'
 import Quote from '../../../Quote'
 import isInCall from '../../../../mixins/isInCall'
 import participant from '../../../../mixins/participant'
 import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
-import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../constants'
 import moment from '@nextcloud/moment'
-import {
-	showError,
-	showSuccess,
-	showWarning,
-	TOAST_DEFAULT_TIMEOUT,
-} from '@nextcloud/dialogs'
-import { generateUrl } from '@nextcloud/router'
 import Location from './MessagePart/Location'
 import Contact from './MessagePart/Contact.vue'
-import Forwarder from './MessagePart/Forwarder'
+import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
+import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
+import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import Popover from '@nextcloud/vue/dist/Components/Popover'
+import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 
 export default {
 	name: 'Message',
@@ -235,20 +198,17 @@ export default {
 	},
 
 	components: {
-		Actions,
-		ActionButton,
-		ActionLink,
 		CallButton,
 		Quote,
 		RichText,
 		AlertCircle,
 		Check,
 		CheckAll,
-		EyeOffOutline,
 		Reload,
-		Share,
-		ActionSeparator,
-		Forwarder,
+		MessageButtonsBar,
+		EmojiPicker,
+		EmoticonOutline,
+		Popover,
 	},
 
 	mixins: [
@@ -388,16 +348,15 @@ export default {
 
 	data() {
 		return {
-			showActions: false,
+			showMessageButtonsBar: false,
 			// Is tall enough for both actions and date upon hovering
 			isTallEnough: false,
 			showReloadButton: false,
 			isDeleting: false,
 			// whether the message was seen, only used if this was marked as last read message
 			seen: false,
-			// Shows/hides the message forwarder component
-			showForwarder: false,
 			isActionMenuOpen: false,
+			detailedReactionsRequested: false,
 		}
 	},
 
@@ -416,10 +375,6 @@ export default {
 
 		messageObject() {
 			return this.$store.getters.message(this.token, this.id)
-		},
-
-		isConversationReadOnly() {
-			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
 		},
 
 		isSystemMessage() {
@@ -547,19 +502,11 @@ export default {
 				return false
 			}
 
-			return this.isSystemMessage || !this.showActions || this.isTallEnough
+			return this.isSystemMessage || !this.showMessageButtonsBar || this.isTallEnough
 		},
 
-		hasActions() {
+		hasMessageButtonsBar() {
 			return !this.isSystemMessage && !this.isTemporary
-		},
-
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
-		containerElement() {
-			return document.querySelector(this.container)
 		},
 
 		isTemporaryUpload() {
@@ -595,55 +542,11 @@ export default {
 			return t('spreed', 'You cannot send messages to this conversation at the moment')
 		},
 
-		isMyMsg() {
-			return this.actorId === this.$store.getters.getActorId()
-				&& this.actorType === this.$store.getters.getActorType()
-		},
-
-		isFileShare() {
-			return this.message === '{file}' && this.messageParameters?.file
-		},
-
-		linkToFile() {
-			if (this.isFileShare) {
-				return this.messageParameters?.file?.link
-			}
-			return ''
-		},
-
-		isDeleteable() {
-			if (this.isConversationReadOnly) {
-				return false
-			}
-
-			const isObjectShare = this.message === '{object}'
-				&& this.messageParameters?.object
-
-			return (moment(this.timestamp * 1000).add(6, 'h')) > moment()
-				&& this.messageType === 'comment'
-				&& !this.isDeleting
-				&& !this.isFileShare
-				&& !isObjectShare
-				&& (this.isMyMsg
-					|| (this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
-						&& (this.participant.participantType === PARTICIPANT.TYPE.OWNER
-							|| this.participant.participantType === PARTICIPANT.TYPE.MODERATOR)))
-		},
-
-		isPrivateReplyable() {
-			return this.isReplyable
-				&& (this.conversation.type === CONVERSATION.TYPE.PUBLIC
-					|| this.conversation.type === CONVERSATION.TYPE.GROUP)
-				&& !this.isMyMsg
-				&& this.actorType === ATTENDEE.ACTOR_TYPE.USERS
-				&& this.$store.getters.getActorType() === ATTENDEE.ACTOR_TYPE.USERS
-		},
-
 		messageActions() {
 			return this.$store.getters.messageActions
 		},
 
-		messageAPIData() {
+		messageApiData() {
 			return {
 				message: this.messageObject,
 				metadata: this.conversation,
@@ -651,8 +554,16 @@ export default {
 			}
 		},
 
-		isCurrentGuest() {
-			return this.$store.getters.getActorType() === 'guests'
+		hasReactions() {
+			return this.$store.getters.hasReactions(this.token, this.id)
+		},
+
+		simpleReactions() {
+			return this.messageObject.reactions
+		},
+
+		detailedReactions() {
+			return this.$store.getters.reactions(this.token, this.id)
 		},
 	},
 
@@ -696,27 +607,74 @@ export default {
 			// again another time
 			this.$refs.message.classList.remove('highlight-animation')
 		},
+
 		handleRetry() {
 			if (this.sendingErrorCanRetry) {
 				EventBus.$emit('retry-message', this.id)
 				EventBus.$emit('focus-chat-input')
 			}
 		},
-		handleReply() {
-			this.$store.dispatch('addMessageToBeReplied', {
-				id: this.id,
-				actorId: this.actorId,
-				actorType: this.actorType,
-				actorDisplayName: this.actorDisplayName,
-				timestamp: this.timestamp,
-				systemMessage: this.systemMessage,
-				messageType: this.messageType,
-				message: this.message,
-				messageParameters: this.messageParameters,
-				token: this.token,
-			})
-			EventBus.$emit('focus-chat-input')
+
+		handleMouseover() {
+			this.showMessageButtonsBar = true
+
 		},
+
+		handleReactionsMouseOver() {
+			if (this.hasReactions && !this.detailedReactionsRequested) {
+				this.getReactions()
+			}
+		},
+
+		handleMouseleave() {
+			if (!this.isActionMenuOpen) {
+				this.showMessageButtonsBar = false
+			}
+		},
+
+		async getReactions() {
+			try {
+				/**
+				 * Get reaction details when the message is hovered for the first
+				 * time. After that we rely on system messages to update the
+				 * reactions.
+				 */
+				this.detailedReactionsRequested = true
+				await this.$store.dispatch('getReactions', {
+					token: this.token,
+					messageId: this.id,
+				})
+			} catch {
+				this.detailedReactionsRequested = false
+			}
+		},
+
+		async handleReactionClick(clickedEmoji) {
+			if (!this.detailedReactionsRequested) {
+				await this.getReactions()
+			}
+			// Check if current user has already added this reaction to the message
+			const currentUserHasReacted = this.$store.getters.userHasReacted(this.actorId, this.token, this.id, clickedEmoji)
+
+			if (!currentUserHasReacted) {
+				console.debug('adding reaction')
+				this.$store.dispatch('addReactionToMessage', {
+					token: this.token,
+					messageId: this.id,
+					selectedEmoji: clickedEmoji,
+					actorId: this.actorId,
+				})
+			} else {
+				console.debug('user has already reacted, removing reaction')
+				this.$store.dispatch('removeReactionFromMessage', {
+					token: this.token,
+					messageId: this.id,
+					selectedEmoji: clickedEmoji,
+					actorId: this.actorId,
+				})
+			}
+		},
+
 		async handleDelete() {
 			this.isDeleting = true
 			try {
@@ -751,50 +709,19 @@ export default {
 			this.isDeleting = false
 		},
 
-		handleMouseover() {
-			this.showActions = true
-		},
-
-		handleMouseleave() {
-			if (!this.isActionMenuOpen) {
-				this.showActions = false
+		addReactionToMessage(selectedEmoji) {
+			// Add reaction only if user hasn't reacted yet
+			if (!this.$store.getters.userHasReacted(this.actorId, this.token, this.messageObject.id, selectedEmoji)) {
+				this.$store.dispatch('addReactionToMessage', {
+					token: this.token,
+					messageId: this.messageObject.id,
+					selectedEmoji,
+					actorId: this.actorId,
+				})
+			} else {
+				console.debug('Current user has already reacted')
 			}
-		},
-		handleActionMenuUpdate(type) {
-			if (type === 'open') {
-				this.isActionMenuOpen = true
-			} else if (type === 'close') {
-				this.isActionMenuOpen = false
-				this.showActions = false
-			}
-		},
-		async handlePrivateReply() {
-			// open the 1:1 conversation
-			const conversation = await this.$store.dispatch('createOneToOneConversation', this.actorId)
-			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
-		},
 
-		async handleCopyMessageLink() {
-			try {
-				const link = window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token) + '#message_' + this.id
-				await this.$copyText(link)
-				showSuccess(t('spreed', 'Message link copied to clipboard.'))
-			} catch (error) {
-				console.error('Error copying link: ', error)
-				showError(t('spreed', 'The link could not be copied.'))
-			}
-		},
-
-		async handleMarkAsUnread() {
-			// update in backend + visually
-			await this.$store.dispatch('updateLastReadMessage', {
-				token: this.token,
-				id: this.previousMessageId,
-				updateVisually: true,
-			})
-
-			// reload conversation to update additional attributes that have computed values
-			await this.$store.dispatch('fetchConversation', { token: this.token })
 		},
 	},
 }
@@ -809,6 +736,10 @@ export default {
 		border-radius: 8px;
 		background-color: var(--color-background-hover);
 	}
+}
+
+.message {
+	position: relative;
 }
 
 .message-body {
@@ -873,6 +804,10 @@ export default {
 			flex: 1 0 auto;
 			padding: 0 8px 0 8px;
 		}
+	}
+	&__reactions {
+		display: flex;
+		margin: 4px 0 4px -2px;
 	}
 }
 
@@ -939,18 +874,26 @@ export default {
 	}
 }
 
-.message__buttons-bar {
-	display: flex;
-	right: 14px;
-	bottom: -4px;
-	position: absolute;
-	z-index: 100000;
-	background-color: var(--color-main-background);
-	border-radius: calc($clickable-area / 2);
-	box-shadow: 0 0 4px 0px var(--color-box-shadow);
+.reaction-button {
+	// Clear server rules
+	min-height: 0 !important;
+	padding: 0 8px !important;
+	font-weight: normal !important;
 
-	& h6 {
-		margin-left: auto;
+	margin: 0 2px;
+	height: 26px;
+	background-color: var(--color-main-background);
+
+	&__emoji {
+		margin: 0 4px 0 0;
 	}
+
+	&:hover {
+		background-color: var(--color-primary-element-lighter);
+	}
+}
+
+.reaction-details {
+	padding: 8px;
 }
 </style>

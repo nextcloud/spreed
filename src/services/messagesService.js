@@ -132,6 +132,24 @@ const updateLastReadMessage = async function(token, lastReadMessage) {
 	})
 }
 
+const addReactionToMessage = async function(token, messageId, selectedEmoji) {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), {
+		reaction: selectedEmoji,
+	})
+}
+
+const removeReactionFromMessage = async function(token, messageId, selectedEmoji) {
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }), {
+		params: {
+			reaction: selectedEmoji,
+		},
+	})
+}
+
+const getReactionsDetails = async function(token, messageId) {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }))
+}
+
 export {
 	fetchMessages,
 	lookForNewMessages,
@@ -139,4 +157,7 @@ export {
 	deleteMessage,
 	postRichObjectToConversation,
 	updateLastReadMessage,
+	addReactionToMessage,
+	removeReactionFromMessage,
+	getReactionsDetails,
 }

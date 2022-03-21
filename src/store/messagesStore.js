@@ -27,6 +27,8 @@ import {
 	lookForNewMessages,
 	postNewMessage,
 	postRichObjectToConversation,
+	addReactionToMessage,
+	removeReactionFromMessage,
 } from '../services/messagesService'
 
 import SHA256 from 'crypto-js/sha256'
@@ -138,7 +140,14 @@ const getters = {
 	 */
 	messagesList: (state) => (token) => {
 		if (state.messages[token]) {
-			return Object.values(state.messages[token])
+			return Object.values(state.messages[token]).filter(message => {
+				// Filter out reaction messages
+				if (message.systemMessage === 'reaction' || message.systemMessage === 'reaction_deleted' || message.systemMessage === 'reaction_revoked') {
+					return false
+				} else {
+					return true
+				}
+			})
 		}
 		return []
 	},
@@ -190,6 +199,11 @@ const getters = {
 	isSendingMessages: (state) => {
 		// the cancel handler only exists when a message is being sent
 		return Object.keys(state.cancelPostNewMessage).length !== 0
+	},
+
+	// Returns true if the message has reactions
+	hasReactions: (state) => (token, messageId) => {
+		return Object.keys(state.messages[token][messageId].reactions).length !== 0
 	},
 }
 
@@ -333,6 +347,24 @@ const mutations = {
 			Vue.delete(state.messages, token)
 		}
 	},
+
+	// Increases reaction count for a particular reaction on a message
+	addReactionToMessage(state, { token, messageId, reaction }) {
+		if (!state.messages[token][messageId].reactions[reaction]) {
+			Vue.set(state.messages[token][messageId].reactions, reaction, 0)
+		}
+		const reactionCount = state.messages[token][messageId].reactions[reaction] + 1
+		Vue.set(state.messages[token][messageId].reactions, reaction, reactionCount)
+	},
+
+	// Decreases reaction count for a particular reaction on a message
+	removeReactionFromMessage(state, { token, messageId, reaction }) {
+		const reactionCount = state.messages[token][messageId].reactions[reaction] - 1
+		Vue.set(state.messages[token][messageId].reactions, reaction, reactionCount)
+		if (state.messages[token][messageId].reactions[reaction] <= 0) {
+			Vue.delete(state.messages[token][messageId].reactions, reaction)
+		}
+	},
 }
 
 const actions = {
@@ -442,6 +474,7 @@ const actions = {
 			token,
 			isReplyable: false,
 			sendingFailure: '',
+			reactions: {},
 			referenceId: Hex.stringify(SHA256(tempId)),
 		})
 
@@ -930,6 +963,72 @@ const actions = {
 	async forwardRichObject(context, { token, richObject }) {
 		const response = await postRichObjectToConversation(token, richObject)
 		return response
+	},
+
+	/**
+	 * Adds a single reaction to a message for the current user.
+	 *
+	 * @param {*} context the context object
+	 * @param {*} param1 conversation token, message id and selected emoji (string)
+	 */
+	async addReactionToMessage(context, { token, messageId, selectedEmoji }) {
+		try {
+			context.commit('addReactionToMessage', {
+				token,
+				messageId,
+				reaction: selectedEmoji,
+			})
+			// The response return an array with the reaction details for this message
+			const response = await addReactionToMessage(token, messageId, selectedEmoji)
+			// We replace the reaction details in the reactions store and wipe the old
+			// values
+			context.dispatch('updateReactions', {
+				token,
+				messageId,
+				reactionsDetails: response.data.ocs.data,
+			})
+		} catch (error) {
+			// Restore the previous state if the request fails
+			context.commit('removeReactionFromMessage', {
+				token,
+				messageId,
+				reaction: selectedEmoji,
+			})
+			console.debug(error)
+		}
+	},
+
+	/**
+	 * Removes a single reaction from a message for the current user.
+	 *
+	 * @param {*} context the context object
+	 * @param {*} param1 conversation token, message id and selected emoji (string)
+	 */
+	async removeReactionFromMessage(context, { token, messageId, selectedEmoji }) {
+		try {
+			context.commit('removeReactionFromMessage', {
+				token,
+				messageId,
+				reaction: selectedEmoji,
+			})
+			// The response return an array with the reaction details for this message
+			const response = await removeReactionFromMessage(token, messageId, selectedEmoji)
+			// We replace the reaction details in the reactions store and wipe the old
+			// values
+			context.dispatch('updateReactions', {
+				token,
+				messageId,
+				reactionsDetails: response.data.ocs.data,
+			})
+		} catch (error) {
+			// Restore the previous state if the request fails
+			context.commit('addReactionToMessage', {
+				token,
+				messageId,
+				reaction: selectedEmoji,
+			})
+			console.debug(error)
+		}
 	},
 }
 
