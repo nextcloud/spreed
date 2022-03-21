@@ -103,6 +103,7 @@ class CapabilitiesTest extends TestCase {
 			'direct-mention-flag',
 			'notification-calls',
 			'conversation-permissions',
+			'rich-object-list-media',
 			'reactions',
 		];
 	}
