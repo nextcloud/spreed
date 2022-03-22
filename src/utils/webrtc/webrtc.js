@@ -543,6 +543,11 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		})
 		usersInCallChanged(signaling, usersInCallMapping)
 	})
+	signaling.on('allUsersChangedInCallToDisconnected', function() {
+		// "End meeting for all" was used, we don't have a user list but everyone disconnects from the call
+		usersInCallMapping = {}
+		usersInCallChanged(signaling, usersInCallMapping)
+	})
 	signaling.on('participantFlagsChanged', function(event) {
 		/**
 		 * event {
