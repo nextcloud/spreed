@@ -94,7 +94,6 @@ function newMediaStreamMock(id) {
 
 describe('MediaDevicesSource', () => {
 	let mediaDevicesSource
-	let constraints
 	let retryNoVideoCallback
 	let getUserMediaAudioTrack
 	let getUserMediaVideoTrack
@@ -110,11 +109,6 @@ describe('MediaDevicesSource', () => {
 
 	beforeEach(() => {
 		mediaDevicesSource = new MediaDevicesSource()
-
-		constraints = {
-			audio: true,
-			video: true,
-		}
 
 		retryNoVideoCallback = jest.fn()
 
@@ -189,7 +183,7 @@ describe('MediaDevicesSource', () => {
 				expectedAudioTrack = getUserMediaAudioTrack
 				expectedVideoTrack = getUserMediaVideoTrack
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).then(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).then(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -207,7 +201,7 @@ describe('MediaDevicesSource', () => {
 
 				expectedAudioTrack = getUserMediaAudioTrack
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).then(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).then(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(2)
@@ -229,7 +223,7 @@ describe('MediaDevicesSource', () => {
 
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(2)
@@ -243,7 +237,7 @@ describe('MediaDevicesSource', () => {
 
 				expectedAudioTrack = getUserMediaAudioTrack
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).then(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).then(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -262,7 +256,7 @@ describe('MediaDevicesSource', () => {
 
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -275,7 +269,7 @@ describe('MediaDevicesSource', () => {
 
 				expectedVideoTrack = getUserMediaVideoTrack
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).then(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).then(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -294,7 +288,7 @@ describe('MediaDevicesSource', () => {
 
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -305,7 +299,7 @@ describe('MediaDevicesSource', () => {
 			test('when there are no audio nor video devices', () => {
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -316,10 +310,7 @@ describe('MediaDevicesSource', () => {
 
 		describe('with audio', () => {
 			beforeEach(() => {
-				constraints = {
-					audio: true,
-					video: false,
-				}
+				mediaDevicesSource.setVideoAllowed(false)
 			})
 
 			test('when there are audio and video devices', () => {
@@ -328,7 +319,7 @@ describe('MediaDevicesSource', () => {
 
 				expectedAudioTrack = getUserMediaAudioTrack
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).then(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).then(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -346,7 +337,7 @@ describe('MediaDevicesSource', () => {
 
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -359,7 +350,7 @@ describe('MediaDevicesSource', () => {
 
 				expectedAudioTrack = getUserMediaAudioTrack
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).then(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).then(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -376,7 +367,7 @@ describe('MediaDevicesSource', () => {
 
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -389,7 +380,7 @@ describe('MediaDevicesSource', () => {
 
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -400,7 +391,7 @@ describe('MediaDevicesSource', () => {
 			test('when there are no audio nor video devices', () => {
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -411,10 +402,7 @@ describe('MediaDevicesSource', () => {
 
 		describe('with video', () => {
 			beforeEach(() => {
-				constraints = {
-					audio: false,
-					video: true,
-				}
+				mediaDevicesSource.setAudioAllowed(false)
 			})
 
 			test('when there are audio and video devices', () => {
@@ -423,7 +411,7 @@ describe('MediaDevicesSource', () => {
 
 				expectedVideoTrack = getUserMediaVideoTrack
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).then(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).then(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -441,7 +429,7 @@ describe('MediaDevicesSource', () => {
 
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -454,7 +442,7 @@ describe('MediaDevicesSource', () => {
 
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -467,7 +455,7 @@ describe('MediaDevicesSource', () => {
 
 				expectedVideoTrack = getUserMediaVideoTrack
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).then(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).then(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -484,7 +472,7 @@ describe('MediaDevicesSource', () => {
 
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -495,7 +483,7 @@ describe('MediaDevicesSource', () => {
 			test('when there are no audio nor video devices', () => {
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -506,10 +494,8 @@ describe('MediaDevicesSource', () => {
 
 		describe('with no audio nor video', () => {
 			beforeEach(() => {
-				constraints = {
-					audio: false,
-					video: false,
-				}
+				mediaDevicesSource.setAudioAllowed(false)
+				mediaDevicesSource.setVideoAllowed(false)
 			})
 
 			test('when there are audio and video devices', () => {
@@ -518,7 +504,7 @@ describe('MediaDevicesSource', () => {
 
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -531,7 +517,7 @@ describe('MediaDevicesSource', () => {
 
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -544,7 +530,7 @@ describe('MediaDevicesSource', () => {
 
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -555,7 +541,7 @@ describe('MediaDevicesSource', () => {
 			test('when there are no audio nor video devices', () => {
 				expect.hasAssertions()
 
-				return mediaDevicesSource.start(constraints, retryNoVideoCallback).catch(() => {
+				return mediaDevicesSource.start(retryNoVideoCallback).catch(() => {
 					assertStateAfterStart()
 
 					expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
@@ -572,7 +558,7 @@ describe('MediaDevicesSource', () => {
 		})
 
 		test('to same device', async () => {
-			await mediaDevicesSource.start(constraints, retryNoVideoCallback)
+			await mediaDevicesSource.start(retryNoVideoCallback)
 
 			mediaDevicesManager.set('audioInputId', 'audio-device')
 
@@ -582,7 +568,7 @@ describe('MediaDevicesSource', () => {
 		})
 
 		test('from a device to no device', async () => {
-			await mediaDevicesSource.start(constraints, retryNoVideoCallback)
+			await mediaDevicesSource.start(retryNoVideoCallback)
 
 			mediaDevicesManager.set('audioInputId', null)
 
@@ -592,7 +578,7 @@ describe('MediaDevicesSource', () => {
 		})
 
 		test('from a device to another device', async () => {
-			await mediaDevicesSource.start(constraints, retryNoVideoCallback)
+			await mediaDevicesSource.start(retryNoVideoCallback)
 
 			const originalGetUserMediaAudioTrack = getUserMediaAudioTrack
 
@@ -611,7 +597,7 @@ describe('MediaDevicesSource', () => {
 		})
 
 		test('from a device to another device but track could not be got', async () => {
-			await mediaDevicesSource.start(constraints, retryNoVideoCallback)
+			await mediaDevicesSource.start(retryNoVideoCallback)
 
 			jest.spyOn(mediaDevicesManager, 'getUserMedia').mockImplementationOnce(async (constraints) => {
 				throw new Error('Audio could not be got')
@@ -628,12 +614,25 @@ describe('MediaDevicesSource', () => {
 			expect(getUserMediaAudioTrack.stop).toHaveBeenCalledTimes(1)
 		})
 
+		test('from a device to another device when not allowed', async () => {
+			mediaDevicesSource.setAudioAllowed(false)
+
+			await mediaDevicesSource.start(retryNoVideoCallback)
+
+			getUserMediaAudioTrack = newMediaStreamTrackMock('audio-2', 'audio', 'audio-device-2')
+
+			mediaDevicesManager.set('audioInputId', 'audio-device-2')
+
+			expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
+			expect(mediaDevicesSource.getOutputTrack('audio')).toBe(null)
+		})
+
 		test('from no device to a device', async () => {
 			getUserMediaAudioTrack = null
 			getUserMediaVideoTrack = null
 
 			try {
-				await mediaDevicesSource.start(constraints, retryNoVideoCallback)
+				await mediaDevicesSource.start(retryNoVideoCallback)
 			} catch (exception) {
 			}
 
@@ -655,7 +654,7 @@ describe('MediaDevicesSource', () => {
 			getUserMediaVideoTrack = null
 
 			try {
-				await mediaDevicesSource.start(constraints, retryNoVideoCallback)
+				await mediaDevicesSource.start(retryNoVideoCallback)
 			} catch (exception) {
 			}
 
@@ -673,8 +672,27 @@ describe('MediaDevicesSource', () => {
 			expect(mediaDevicesSource.getOutputTrack('audio')).toBe(null)
 		})
 
+		test('from no device to a device when not allowed', async () => {
+			getUserMediaAudioTrack = null
+			getUserMediaVideoTrack = null
+
+			try {
+				await mediaDevicesSource.start(retryNoVideoCallback)
+			} catch (exception) {
+			}
+
+			mediaDevicesSource.setAudioAllowed(false)
+
+			getUserMediaAudioTrack = newMediaStreamTrackMock('audio', 'audio', 'audio-device')
+
+			mediaDevicesManager.set('audioInputId', 'audio-device')
+
+			expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
+			expect(mediaDevicesSource.getOutputTrack('audio')).toBe(null)
+		})
+
 		test('several times in a row before the track for the first one was got', async () => {
-			await mediaDevicesSource.start(constraints, retryNoVideoCallback)
+			await mediaDevicesSource.start(retryNoVideoCallback)
 
 			const originalGetUserMediaAudioTrack = getUserMediaAudioTrack
 
@@ -712,7 +730,7 @@ describe('MediaDevicesSource', () => {
 		})
 
 		test('several times in a row before the track for the first one was got finally setting again the first one', async () => {
-			await mediaDevicesSource.start(constraints, retryNoVideoCallback)
+			await mediaDevicesSource.start(retryNoVideoCallback)
 
 			const originalGetUserMediaAudioTrack = getUserMediaAudioTrack
 
@@ -752,7 +770,7 @@ describe('MediaDevicesSource', () => {
 			getUserMediaAudioTrack = newMediaStreamTrackMock('audio', 'audio')
 			getUserMediaVideoTrack = newMediaStreamTrackMock('video', 'video')
 
-			await mediaDevicesSource.start(constraints, retryNoVideoCallback)
+			await mediaDevicesSource.start(retryNoVideoCallback)
 
 			mediaDevicesSource.stop()
 
@@ -768,7 +786,7 @@ describe('MediaDevicesSource', () => {
 		test('with audio track', async () => {
 			getUserMediaAudioTrack = newMediaStreamTrackMock('audio', 'audio')
 
-			await mediaDevicesSource.start(constraints, retryNoVideoCallback)
+			await mediaDevicesSource.start(retryNoVideoCallback)
 
 			mediaDevicesSource.stop()
 
@@ -782,7 +800,7 @@ describe('MediaDevicesSource', () => {
 		test('with video track', async () => {
 			getUserMediaVideoTrack = newMediaStreamTrackMock('video', 'video')
 
-			await mediaDevicesSource.start(constraints, retryNoVideoCallback)
+			await mediaDevicesSource.start(retryNoVideoCallback)
 
 			mediaDevicesSource.stop()
 
@@ -795,7 +813,7 @@ describe('MediaDevicesSource', () => {
 
 		test('with no tracks', async () => {
 			try {
-				await mediaDevicesSource.start(constraints, retryNoVideoCallback)
+				await mediaDevicesSource.start(retryNoVideoCallback)
 			} catch (exception) {
 			}
 

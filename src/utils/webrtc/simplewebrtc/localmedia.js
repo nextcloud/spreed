@@ -114,6 +114,9 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 	const self = this
 	const constraints = mediaConstraints || { audio: true, video: true }
 
+	this._mediaDevicesSource.setAudioAllowed(!!constraints.audio)
+	this._mediaDevicesSource.setVideoAllowed(!!constraints.video)
+
 	// If local media is started with neither audio nor video the local media
 	// will not be active (it will not react to changes in the selected media
 	// devices). It is just a special case in which starting succeeds with a
@@ -145,7 +148,7 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		self.emit('localStreamRequestFailedRetryNoVideo', error)
 	}
 
-	this._mediaDevicesSource.start(constraints, retryNoVideoCallback).then(() => {
+	this._mediaDevicesSource.start(retryNoVideoCallback).then(() => {
 		self.localStreams.push(self._trackToStream.getStream())
 
 		self.emit('localStream', self._trackToStream.getStream())
