@@ -765,6 +765,114 @@ describe('MediaDevicesSource', () => {
 		})
 	})
 
+	describe('allow and disallow audio and video', () => {
+		beforeEach(() => {
+			getUserMediaAudioTrack = newMediaStreamTrackMock('audio', 'audio')
+			getUserMediaVideoTrack = newMediaStreamTrackMock('video', 'video')
+		})
+
+		test('disallow and allow again before starting', async () => {
+			mediaDevicesManager.set('audioInputId', 'audio-device')
+
+			mediaDevicesSource.setAudioAllowed(false)
+			mediaDevicesSource.setAudioAllowed(true)
+
+			expect(mediaDevicesManager.getUserMedia).not.toHaveBeenCalled()
+		})
+
+		test('disallow and allow again after stopping', async () => {
+			mediaDevicesManager.set('audioInputId', 'audio-device')
+
+			await mediaDevicesSource.start(retryNoVideoCallback)
+
+			mediaDevicesSource.stop()
+
+			mediaDevicesSource.setAudioAllowed(false)
+			mediaDevicesSource.setAudioAllowed(true)
+
+			expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
+		})
+
+		test('allow while active with a device', async () => {
+			mediaDevicesManager.set('audioInputId', 'audio-device')
+
+			mediaDevicesSource.setAudioAllowed(false)
+
+			await mediaDevicesSource.start(retryNoVideoCallback)
+
+			mediaDevicesSource.setAudioAllowed(true)
+
+			// Wait until getUserMedia(), internally called by
+			// MediaDevicesSource when allowing the media, finishes.
+			await new Promise(process.nextTick)
+
+			expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(2)
+			expect(mediaDevicesSource.getOutputTrack('audio')).toBe(getUserMediaAudioTrack)
+			expect(getUserMediaAudioTrack.stop).not.toHaveBeenCalled()
+		})
+
+		test('allow while active with no device', async () => {
+			mediaDevicesManager.set('audioInputId', null)
+
+			mediaDevicesSource.setAudioAllowed(false)
+
+			await mediaDevicesSource.start(retryNoVideoCallback)
+
+			mediaDevicesSource.setAudioAllowed(true)
+
+			expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
+			expect(mediaDevicesSource.getOutputTrack('audio')).toBe(null)
+		})
+
+		test('allow again while active', async () => {
+			mediaDevicesManager.set('audioInputId', 'audio-device')
+
+			await mediaDevicesSource.start(retryNoVideoCallback)
+
+			mediaDevicesSource.setAudioAllowed(true)
+
+			expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
+			expect(mediaDevicesSource.getOutputTrack('audio')).toBe(getUserMediaAudioTrack)
+			expect(getUserMediaAudioTrack.stop).not.toHaveBeenCalled()
+		})
+
+		test('disallow while active with a device', async () => {
+			mediaDevicesManager.set('audioInputId', 'audio-device')
+
+			await mediaDevicesSource.start(retryNoVideoCallback)
+
+			mediaDevicesSource.setAudioAllowed(false)
+
+			expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
+			expect(mediaDevicesSource.getOutputTrack('audio')).toBe(null)
+			expect(getUserMediaAudioTrack.stop).toHaveBeenCalledTimes(1)
+		})
+
+		test('disallow while active with no device', async () => {
+			mediaDevicesManager.set('audioInputId', null)
+
+			await mediaDevicesSource.start(retryNoVideoCallback)
+
+			mediaDevicesSource.setAudioAllowed(false)
+
+			expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
+			expect(mediaDevicesSource.getOutputTrack('audio')).toBe(null)
+		})
+
+		test('disallow again while active', async () => {
+			mediaDevicesManager.set('audioInputId', 'audio-device')
+
+			await mediaDevicesSource.start(retryNoVideoCallback)
+
+			mediaDevicesSource.setAudioAllowed(false)
+			mediaDevicesSource.setAudioAllowed(false)
+
+			expect(mediaDevicesManager.getUserMedia).toHaveBeenCalledTimes(1)
+			expect(mediaDevicesSource.getOutputTrack('audio')).toBe(null)
+			expect(getUserMediaAudioTrack.stop).toHaveBeenCalledTimes(1)
+		})
+	})
+
 	describe('stop', () => {
 		test('with audio and video tracks', async () => {
 			getUserMediaAudioTrack = newMediaStreamTrackMock('audio', 'audio')

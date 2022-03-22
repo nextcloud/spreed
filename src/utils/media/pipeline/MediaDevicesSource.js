@@ -38,7 +38,8 @@ import TrackSource from './TrackSource'
  *
  * The allowed media can be set with "setAudioAllowed(bool)" and
  * "setVideoAllowed(bool)". If the audioInputId or videoInputId changed but that
- * media is currently not allowed the change will be ignored.
+ * media is currently not allowed the change will be ignored. Allowing or
+ * disallowing media will automatically start or stop the tracks as needed.
  *
  * Once the source is started "stop()" needs to be called to stop listening to
  * changes in the devices. Stopping the source also stops any track currently
@@ -63,17 +64,59 @@ export default class MediaDevicesSource extends TrackSource {
 
 		this._audioAllowed = true
 		this._videoAllowed = true
+
+		this._active = false
 	}
 
 	setAudioAllowed(audioAllowed) {
+		if (this._audioAllowed === audioAllowed) {
+			return
+		}
+
 		this._audioAllowed = audioAllowed
+
+		if (!this._active) {
+			return
+		}
+
+		if (audioAllowed) {
+			this._handleAudioInputIdChangedBound(mediaDevicesManager, mediaDevicesManager.get('audioInputId'))
+
+			return
+		}
+
+		if (this.getOutputTrack('audio')) {
+			this.getOutputTrack('audio').stop()
+		}
+		this._setOutputTrack('audio', null)
 	}
 
 	setVideoAllowed(videoAllowed) {
+		if (this._videoAllowed === videoAllowed) {
+			return
+		}
+
 		this._videoAllowed = videoAllowed
+
+		if (!this._active) {
+			return
+		}
+
+		if (videoAllowed) {
+			this._handleVideoInputIdChangedBound(mediaDevicesManager, mediaDevicesManager.get('videoInputId'))
+
+			return
+		}
+
+		if (this.getOutputTrack('video')) {
+			this.getOutputTrack('video').stop()
+		}
+		this._setOutputTrack('video', null)
 	}
 
 	async start(retryNoVideoCallback) {
+		this._active = true
+
 		// Try to get the devices list before getting user media.
 		mediaDevicesManager.enableDeviceEvents()
 		mediaDevicesManager.disableDeviceEvents()
@@ -176,6 +219,8 @@ export default class MediaDevicesSource extends TrackSource {
 
 		mediaDevicesManager.off('change:audioInputId', this._handleAudioInputIdChangedBound)
 		mediaDevicesManager.off('change:videoInputId', this._handleVideoInputIdChangedBound)
+
+		this._active = false
 	}
 
 	/**
