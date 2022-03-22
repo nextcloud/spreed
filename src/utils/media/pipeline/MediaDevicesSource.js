@@ -30,11 +30,15 @@ import TrackSource from './TrackSource'
  *
  * Two output tracks with "audio" and "video" as ids are provided.
  *
- * The source is started by calling "start(constraints)". Whether the audio
- * track, video track or both start depends on the given constraints and the
+ * The source is started by calling "start(retryNoVideoCallback)". Whether the
+ * audio track, video track or both start depends on the allowed media and the
  * current devices. Even if no track is started at first the node will listen to
  * changes in the audioInputId and videoInputId attributes from the
  * MediaDevicesManager and start, stop and replace the tracks are needed.
+ *
+ * The allowed media can be set with "setAudioAllowed(bool)" and
+ * "setVideoAllowed(bool)". If the audioInputId or videoInputId changed but that
+ * media is currently not allowed the change will be ignored.
  *
  * Once the source is started "stop()" needs to be called to stop listening to
  * changes in the devices. Stopping the source also stops any track currently
@@ -56,9 +60,20 @@ export default class MediaDevicesSource extends TrackSource {
 
 		this._handleAudioInputIdChangedBound = this._handleAudioInputIdChanged.bind(this)
 		this._handleVideoInputIdChangedBound = this._handleVideoInputIdChanged.bind(this)
+
+		this._audioAllowed = true
+		this._videoAllowed = true
 	}
 
-	async start(constraints, retryNoVideoCallback) {
+	setAudioAllowed(audioAllowed) {
+		this._audioAllowed = audioAllowed
+	}
+
+	setVideoAllowed(videoAllowed) {
+		this._videoAllowed = videoAllowed
+	}
+
+	async start(retryNoVideoCallback) {
 		// Try to get the devices list before getting user media.
 		mediaDevicesManager.enableDeviceEvents()
 		mediaDevicesManager.disableDeviceEvents()
@@ -66,6 +81,11 @@ export default class MediaDevicesSource extends TrackSource {
 		// The handlers for "change:audioInputId" and "change:videoInputId"
 		// events expect the initial "getUserMedia" call to have been completed
 		// before being used, so they must be set once the media has started.
+
+		const constraints = {
+			audio: this._audioAllowed,
+			video: this._videoAllowed,
+		}
 
 		let stream
 		let error
@@ -204,6 +224,10 @@ export default class MediaDevicesSource extends TrackSource {
 	}
 
 	_handleAudioInputIdChanged(mediaDevicesManager, audioInputId) {
+		if (!this._audioAllowed) {
+			return
+		}
+
 		if (this._pendingAudioInputIdChangedCount) {
 			this._pendingAudioInputIdChangedCount++
 
@@ -267,6 +291,10 @@ export default class MediaDevicesSource extends TrackSource {
 	}
 
 	_handleVideoInputIdChanged(mediaDevicesManager, videoInputId) {
+		if (!this._videoAllowed) {
+			return
+		}
+
 		if (this._pendingVideoInputIdChangedCount) {
 			this._pendingVideoInputIdChangedCount++
 
