@@ -157,7 +157,12 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		self._localMediaActive = true
 
 		if (cb) {
-			return cb(null, self._trackToStream.getStream(), constraints)
+			const actualConstraints = {
+				audio: self._trackToStream.getStream().getAudioTracks().length > 0,
+				video: self._trackToStream.getStream().getVideoTracks().length > 0,
+			}
+
+			return cb(null, self._trackToStream.getStream(), actualConstraints)
 		}
 	}).catch(err => {
 		self.emit('localStreamRequestFailed')
