@@ -41,7 +41,7 @@ local Pipeline(test_set, database, services) = {
 			"stable*"
 		],
 		event: (
-			if database == "sqlite" then ["pull_request", "push"] else ["push"]
+			if database == "mysql" then ["pull_request", "push"] else ["push"]
 		)
 	}
 };
@@ -77,7 +77,8 @@ local PipelineMySQL(test_set) = Pipeline(
 			command: [
 				"--innodb_large_prefix=true",
 				"--innodb_file_format=barracuda",
-				"--innodb_file_per_table=true"
+				"--innodb_file_per_table=true",
+				"--sql-mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
 			],
 			tmpfs: [
 				"/var/lib/mysql"
