@@ -601,14 +601,14 @@ class SignalingController extends OCSController {
 						// If the user joins the session might not be known to the server yet.
 						// In this case we load by actor information and use the session id as new session.
 						try {
-							$participant = $room->getParticipantByActor($actorType, $actorId, false);
+							$participant = $room->getParticipantByActor($actorType, $actorId);
 						} catch (ParticipantNotFoundException $e) {
 						}
 					}
 				}
 			} else {
 				try {
-					$participant = $room->getParticipantByActor($actorType, $actorId, false);
+					$participant = $room->getParticipantByActor($actorType, $actorId);
 				} catch (ParticipantNotFoundException $e) {
 				}
 			}
