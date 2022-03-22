@@ -436,7 +436,7 @@ export default {
 			if (!this.isSearched) {
 				return this.participant.actorId
 			}
-			return this.attendeeId
+			return this.participant.id
 		},
 
 		attendeeId() {
