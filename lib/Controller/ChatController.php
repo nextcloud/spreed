@@ -706,15 +706,15 @@ class ChatController extends AEnvironmentAwareController {
 	 * @RequireReadWriteConversation
 	 * @RequireModeratorOrNoLobby
 	 *
-	 * @param int $offset
+	 * @param int $lastKnownMessageId
 	 * @param int $limit
 	 * @return DataResponse
 	 */
-	public function getObjectsSharedInRoom(int $offset = 0, int $limit = 50): DataResponse {
-		$offset = max(0, $offset);
+	public function getObjectsSharedInRoom(int $lastKnownMessageId = 0, int $limit = 100): DataResponse {
+		$offset = max(0, $lastKnownMessageId);
 		$limit = min(200, $limit);
 
-		$comments = $this->chatManager->searchForObjects('', [$this->room->getId()], 'object_shared', $offset, $limit);
+		$comments = $this->chatManager->getSharedObjectMessages($this->room, $offset, $limit);
 
 		$messages = [];
 		foreach ($comments as $comment) {
@@ -728,7 +728,14 @@ class ChatController extends AEnvironmentAwareController {
 			$messages[] = $message->toArray();
 		}
 
-		return new DataResponse($messages);
+		$response = new DataResponse($messages, Http::STATUS_OK);
+
+		$newLastKnown = end($comments);
+		if ($newLastKnown instanceof IComment) {
+			$response->addHeader('X-Chat-Last-Given', $newLastKnown->getId());
+		}
+
+		return $response;
 	}
 
 	/**

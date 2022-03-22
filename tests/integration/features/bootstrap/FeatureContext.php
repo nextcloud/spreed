@@ -1561,7 +1561,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userSeesTheFollowingSharedMediaInRoom($user, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userSeesTheFollowingSharedMediaInRoom($user, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/share');
 		$this->assertStatusCode($this->response, $statusCode);

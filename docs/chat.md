@@ -163,7 +163,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 
   field | type | Description
   ---|---|---
-  `offset` | int | Offset parameter to get another chunk of chat messages
+  `lastKnownMessageId` | int | Serves as an offset for the query. The lastKnownMessageId for the next page is available in the `X-Chat-Last-Given` header.
   `limit` | int | Number of chat messages with shares you want to get
 
 * Response:
@@ -172,6 +172,12 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
         + `200 OK`
         + `404 Not Found` When the conversation could not be found for the participant
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator
+
+    - Header:
+
+      field | type | Description
+      ---|---|---
+      `X-Chat-Last-Given` | int | Offset (lastKnownMessageId) for the next page.
 
     - Data:
       Array of messages as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)

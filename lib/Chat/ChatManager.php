@@ -567,6 +567,25 @@ class ChatManager {
 	/**
 	 * Search for comments with a given content
 	 *
+	 * @param Room $chat
+	 * @param int $offset
+	 * @param int $limit
+	 * @return IComment[]
+	 */
+	public function getSharedObjectMessages(Room $chat, int $offset, int $limit): array {
+		return $this->commentsManager->getCommentsWithVerbForObjectSinceComment(
+			'chat',
+			(string) $chat->getId(),
+			['object_shared'],
+			$offset,
+			'desc',
+			$limit
+		);
+	}
+
+	/**
+	 * Search for comments with a given content
+	 *
 	 * @param string $search content to search for
 	 * @param array $objectIds Limit the search by object ids
 	 * @param string $verb Limit the verb of the comment
