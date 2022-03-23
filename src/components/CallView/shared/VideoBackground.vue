@@ -29,33 +29,7 @@
 </template>
 
 <script>
-import { average } from 'color.js'
-import axios from '@nextcloud/axios'
 import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor'
-import { generateUrl } from '@nextcloud/router'
-import { getBuilder } from '@nextcloud/browser-storage'
-
-const browserStorage = getBuilder('nextcloud').persist().build()
-
-// note: this info is shared with the Avatar component
-/**
- * @param {string} userId ID of the user
- */
-function getUserHasAvatar(userId) {
-	const flag = browserStorage.getItem('user-has-avatar.' + userId)
-	if (typeof flag === 'string') {
-		return Boolean(flag)
-	}
-	return null
-}
-
-/**
- * @param {string} userId ID of the user
- * @param {string} flag The boolean flag as string
- */
-function setUserHasAvatar(userId, flag) {
-	browserStorage.setItem('user-has-avatar.' + userId, flag)
-}
 
 export default {
 	name: 'VideoBackground',
@@ -71,25 +45,8 @@ export default {
 		},
 	},
 
-	data() {
-		return {
-			hasPicture: false,
-		}
-	},
-
 	computed: {
-		backgroundImageAverageColor() {
-			if (!this.backgroundImageUrl) {
-				return ''
-			}
-
-			return this.$store.getters.getCachedBackgroundImageAverageColor(this.backgroundImageUrl)
-		},
 		backgroundColor() {
-			if (this.hasPicture) {
-				return this.backgroundImageAverageColor
-			}
-
 			// If the prop is empty. We're not checking for the default value
 			// because the user's displayName might be '?'
 			if (!this.displayName) {
@@ -99,58 +56,6 @@ export default {
 				return `rgb(${color.r}, ${color.g}, ${color.b})`
 			}
 		},
-		backgroundImageUrl() {
-			if (!this.user) {
-				return null
-			}
-
-			return generateUrl(`avatar/${this.user}/64`)
-		},
-	},
-
-	watch: {
-		backgroundImageUrl: {
-			immediate: true,
-			handler() {
-				if (!this.backgroundImageUrl) {
-					return
-				}
-
-				if (this.backgroundImageAverageColor) {
-					// Already calculated, no need to do it again.
-					return
-				}
-
-				average(this.backgroundImageUrl, { format: 'hex' }).then(color => {
-					this.$store.dispatch('setCachedBackgroundImageAverageColor', {
-						videoBackgroundId: this.backgroundImageUrl,
-						backgroundImageAverageColor: color,
-					})
-				})
-			},
-		},
-	},
-
-	async beforeMount() {
-		if (!this.user) {
-			return
-		}
-
-		// check if hasAvatar info is already known
-		const userHasAvatar = getUserHasAvatar(this.user)
-		if (typeof userHasAvatar === 'boolean') {
-			this.hasPicture = userHasAvatar
-			return
-		}
-
-		try {
-			await axios.get(generateUrl(`avatar/${this.user}/64`))
-
-			this.hasPicture = true
-			setUserHasAvatar(this.user, true)
-		} catch (exception) {
-			console.debug(exception)
-		}
 	},
 }
 </script>
