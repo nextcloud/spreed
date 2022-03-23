@@ -596,9 +596,15 @@ class SharingContext implements Context {
 			'item_source' => 'A_NUMBER',
 			'file_source' => 'A_NUMBER',
 			'file_parent' => 'A_NUMBER',
-			'mail_send' => '0'
+			'mail_send' => '0',
 		];
-		$expectedFields = array_merge($defaultExpectedFields, $body->getRowsHash());
+
+		$fields = $body->getRowsHash();
+		if (isset($fields['share_type']) && ($fields['share_type'] === '10' || $fields['share_type'] === '11')) {
+			$defaultExpectedFields['share_with_link'] = 'URL';
+		}
+
+		$expectedFields = array_merge($defaultExpectedFields, $fields);
 
 		if (!array_key_exists('uid_file_owner', $expectedFields) &&
 				array_key_exists('uid_owner', $expectedFields)) {
@@ -614,8 +620,18 @@ class SharingContext implements Context {
 				array_key_exists('share_with', $expectedFields)) {
 			if ($expectedFields['share_with'] === 'private_conversation') {
 				$expectedFields['share_with'] = 'REGEXP /^private_conversation_[0-9a-f]{6}$/';
+				$expectedFields['share_with_link'] = '';
 			} else {
 				$expectedFields['share_with'] = FeatureContext::getTokenForIdentifier($expectedFields['share_with']);
+			}
+		}
+
+		if (array_key_exists('share_with_link', $expectedFields) &&
+			$expectedFields['share_with_link'] === 'URL') {
+			if (array_key_exists('share_with', $expectedFields)) {
+				$expectedFields['share_with_link'] = $this->baseUrl . 'index.php/call/' . $expectedFields['share_with'];
+			} else {
+				$expectedFields['share_with_link'] = 'REGEXP ' . '/\/call\//';
 			}
 		}
 
