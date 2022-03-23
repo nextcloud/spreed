@@ -49,7 +49,8 @@ class Manager {
 		$featureHeader = $response->getHeader(self::FEATURE_HEADER);
 		$features = explode(',', $featureHeader);
 		$features = array_map('trim', $features);
-		return in_array('audio-video-permissions', $features, true);
+		return in_array('audio-video-permissions', $features, true)
+			&& in_array('incall-all', $features, true);
 	}
 
 	public function getSignalingServerLinkForConversation(?Room $room): string {
