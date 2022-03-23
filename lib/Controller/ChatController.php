@@ -706,6 +706,44 @@ class ChatController extends AEnvironmentAwareController {
 	 * @RequireReadWriteConversation
 	 * @RequireModeratorOrNoLobby
 	 *
+	 * @param int $lastKnownMessageId
+	 * @param int $limit
+	 * @return DataResponse
+	 */
+	public function getObjectsSharedInRoom(int $lastKnownMessageId = 0, int $limit = 100): DataResponse {
+		$offset = max(0, $lastKnownMessageId);
+		$limit = min(200, $limit);
+
+		$comments = $this->chatManager->getSharedObjectMessages($this->room, $offset, $limit);
+
+		$messages = [];
+		foreach ($comments as $comment) {
+			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
+			$this->messageParser->parseMessage($message);
+
+			if (!$message->getVisibility()) {
+				continue;
+			}
+
+			$messages[] = $message->toArray();
+		}
+
+		$response = new DataResponse($messages, Http::STATUS_OK);
+
+		$newLastKnown = end($comments);
+		if ($newLastKnown instanceof IComment) {
+			$response->addHeader('X-Chat-Last-Given', $newLastKnown->getId());
+		}
+
+		return $response;
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireParticipant
+	 * @RequireReadWriteConversation
+	 * @RequireModeratorOrNoLobby
+	 *
 	 * @param string $search
 	 * @param int $limit
 	 * @param bool $includeStatus

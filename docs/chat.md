@@ -154,6 +154,34 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 
 * Response: [See official OCS Share API docs](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-share-api.html?highlight=sharing#create-a-new-share)
 
+## List media shared in a chat
+
+* Required capability: `rich-object-list-media`
+* Method: `GET`
+* Endpoint: `/chat/{token}/share`
+* Data:
+
+  field | type | Description
+  ---|---|---
+  `lastKnownMessageId` | int | Serves as an offset for the query. The lastKnownMessageId for the next page is available in the `X-Chat-Last-Given` header.
+  `limit` | int | Number of chat messages with shares you want to get
+
+* Response:
+    - Note: if a file was shared multiple times it will be returned multiple times
+    - Status code:
+        + `200 OK`
+        + `404 Not Found` When the conversation could not be found for the participant
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
+
+    - Header:
+
+      field | type | Description
+      ---|---|---
+      `X-Chat-Last-Given` | int | Offset (lastKnownMessageId) for the next page.
+
+    - Data:
+      Array of messages as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)
+
 ## Clear chat history
 
 * Required capability: `clear-history`

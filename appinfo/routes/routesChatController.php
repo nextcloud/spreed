@@ -52,5 +52,7 @@ return [
 		['name' => 'Chat#mentions', 'url' => '/api/{apiVersion}/chat/{token}/mentions', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\ChatController::shareObjectToChat() */
 		['name' => 'Chat#shareObjectToChat', 'url' => '/api/{apiVersion}/chat/{token}/share', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\ChatController::getObjectsSharedInRoom() */
+		['name' => 'Chat#getObjectsSharedInRoom', 'url' => '/api/{apiVersion}/chat/{token}/share', 'verb' => 'GET', 'requirements' => $requirements],
 	],
 ];

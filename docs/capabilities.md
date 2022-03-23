@@ -90,3 +90,4 @@ title: Capabilities
 ## 14
 * `chat-unread` - Whether the API to mark a conversation as unread is available
 * `reactions` - Api reactions to chat message
+* `rich-object-list-media` - When the API to get the chat messages for shared media is available
