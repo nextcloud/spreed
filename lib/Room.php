@@ -516,13 +516,10 @@ class Room {
 
 	/**
 	 * @param int $attendeeId
-	 * @param string|null|false $sessionId Set to false if you don't want to load a session (and save resources),
-	 *                                     string to try loading a specific session
-	 *                                     null to try loading "any"
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the pin is not valid (has no participant assigned)
 	 */
-	public function getParticipantByAttendeeId(int $attendeeId, $sessionId = null): Participant {
+	public function getParticipantByAttendeeId(int $attendeeId): Participant {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectAttendeesTable($query);
@@ -530,20 +527,6 @@ class Room {
 			->where($query->expr()->eq('a.id', $query->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
 			->setMaxResults(1);
-
-		if ($sessionId !== false) {
-			if ($sessionId !== null) {
-				$helper->selectSessionsTable($query);
-				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
-					$query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)),
-					$query->expr()->eq('a.id', 's.attendee_id')
-				));
-			} else {
-				$helper->selectSessionsTableMax($query);
-				$query->groupBy('a.id');
-				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'));
-			}
-		}
 
 		$result = $query->execute();
 		$row = $result->fetch();
@@ -559,15 +542,12 @@ class Room {
 	/**
 	 * @param string $actorType
 	 * @param string $actorId
-	 * @param string|null|false $sessionId Set to false if you don't want to load a session (and save resources),
-	 *                                     string to try loading a specific session
-	 *                                     null to try loading "any"
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the pin is not valid (has no participant assigned)
 	 */
-	public function getParticipantByActor(string $actorType, string $actorId, $sessionId = null): Participant {
+	public function getParticipantByActor(string $actorType, string $actorId): Participant {
 		if ($actorType === Attendee::ACTOR_USERS) {
-			return $this->getParticipant($actorId, $sessionId);
+			return $this->getParticipant($actorId, false);
 		}
 
 		$query = $this->db->getQueryBuilder();
@@ -578,20 +558,6 @@ class Room {
 			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)))
 			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($this->getId())))
 			->setMaxResults(1);
-
-		if ($sessionId !== false) {
-			if ($sessionId !== null) {
-				$helper->selectSessionsTable($query);
-				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
-					$query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)),
-					$query->expr()->eq('a.id', 's.attendee_id')
-				));
-			} else {
-				$helper->selectSessionsTableMax($query);
-				$query->groupBy('a.id');
-				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'));
-			}
-		}
 
 		$result = $query->execute();
 		$row = $result->fetch();
