@@ -23,9 +23,7 @@
 	<!-- Guest username setting form -->
 	<form class="username-form"
 		@submit.prevent="handleChooseUserName">
-		<h3>
-			{{ t('spreed', 'Display name: ') }} <strong>{{ actorDisplayName ? actorDisplayName : t('spreed', 'Guest') }}</strong>
-		</h3>
+		<h3 v-html="displayNameLabel" />
 		<Button @click.prevent="handleEditUsername">
 			{{ t('spreed', 'Edit') }}
 			<template #icon>
@@ -80,6 +78,11 @@ export default {
 	computed: {
 		actorDisplayName() {
 			return this.$store.getters.getDisplayName()
+		},
+		displayNameLabel() {
+			return t('spreed', 'Display name: <strong>{name}</strong>', {
+				name: this.actorDisplayName ? this.actorDisplayName : t('spreed', 'Guest'),
+			})
 		},
 		actorId() {
 			return this.$store.getters.getActorId()
