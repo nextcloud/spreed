@@ -695,7 +695,7 @@ class SystemMessage {
 
 	protected function getGuestName(Room $room, string $actorId): string {
 		try {
-			$participant = $room->getParticipantByActor(Attendee::ACTOR_GUESTS, $actorId, false);
+			$participant = $room->getParticipantByActor(Attendee::ACTOR_GUESTS, $actorId);
 			$name = $participant->getAttendee()->getDisplayName();
 			if ($name === '') {
 				return $this->l->t('Guest');
