@@ -319,7 +319,9 @@ export default {
 		border: 1px solid var(--color-success) !important;
 	}
 }
-
+#call_button {
+	margin: 0 auto;
+}
 /** Required to make the text on the Video Verification page white */
 #call_button.success,
 #call_button.error {
