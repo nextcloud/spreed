@@ -147,8 +147,7 @@ the main body of the message as well as a quote.
 		</div>
 
 		<!-- Message actions -->
-		<MessageButtonsBar v-if="hasMessageButtonsBar"
-			v-show="showMessageButtonsBar || isActionMenuOpen || isEmojiPickerOpen"
+		<MessageButtonsBar v-if="showMessageButtonsBar"
 			ref="messageButtonsBar"
 			:is-action-menu-open.sync="isActionMenuOpen"
 			:is-emoji-picker-open.sync="isEmojiPickerOpen"
@@ -351,7 +350,7 @@ export default {
 
 	data() {
 		return {
-			showMessageButtonsBar: false,
+			isHovered: false,
 			// Is tall enough for both actions and date upon hovering
 			isTallEnough: false,
 			showReloadButton: false,
@@ -506,11 +505,11 @@ export default {
 				return false
 			}
 
-			return this.isSystemMessage || !this.showMessageButtonsBar || this.isTallEnough
+			return this.isSystemMessage || !this.isHovered || this.isTallEnough
 		},
 
-		hasMessageButtonsBar() {
-			return !this.isSystemMessage && !this.isTemporary
+		showMessageButtonsBar() {
+			return !this.isSystemMessage && !this.isTemporary && (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen)
 		},
 
 		isTemporaryUpload() {
@@ -620,8 +619,8 @@ export default {
 		},
 
 		handleMouseover() {
-			if (!this.showMessageButtonsBar) {
-				this.showMessageButtonsBar = true
+			if (!this.isHovered) {
+				this.isHovered = true
 			}
 		},
 
@@ -632,9 +631,8 @@ export default {
 		},
 
 		handleMouseleave() {
-			// We leave the buttonsbar visible if the actions menu is open
-			if (this.showMessageButtonsBar) {
-				this.showMessageButtonsBar = false
+			if (this.isHovered) {
+				this.isHovered = false
 			}
 		},
 

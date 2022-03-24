@@ -563,7 +563,7 @@ describe('Message.vue', () => {
 			expect(messageButtonsBar.exists()).toBe(false)
 		})
 
-		test('Buttons bar becomes visible on mouse over', async () => {
+		test('Buttons bar is rendered on mouse over', async () => {
 			messageProps.sendingFailure = 'timeout'
 			const wrapper = mount(Message, {
 				localVue,
@@ -571,26 +571,23 @@ describe('Message.vue', () => {
 				propsData: messageProps,
 			})
 
-			await wrapper.vm.$nextTick()
-
-			const messageButtonsBar = wrapper.findComponent(MessageButtonsBar)
-
+			// Initial state
 			expect(wrapper.vm.showMessageButtonsBar).toBe(false)
-			expect(messageButtonsBar.isVisible()).toBe(false)
+			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
 
+			// Mouseover
 			await wrapper.find('.message').trigger('mouseover')
-
 			expect(wrapper.vm.showMessageButtonsBar).toBe(true)
-			expect(messageButtonsBar.isVisible()).toBe(true)
+			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(true)
 
-			await wrapper.find('.message').trigger('mouseleave')
-
-			expect(wrapper.vm.showMessageButtonsBar).toBe(false)
-			expect(messageButtonsBar.isVisible()).toBe(false)
-
-			// actions are always present and rendered
+			// actions are present and rendered when the buttonsBar is renderend
 			const actions = wrapper.findAllComponents({ name: 'Actions' })
 			expect(actions.length).toBe(2)
+
+			// Mouseleave
+			await wrapper.find('.message').trigger('mouseleave')
+			expect(wrapper.vm.showMessageButtonsBar).toBe(false)
+			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
 		})
 	})
 
@@ -616,6 +613,9 @@ describe('Message.vue', () => {
 				propsData: messageProps,
 			})
 
+			// Hover the messages in order to render the MessageButtonsBar
+			// component
+			await wrapper.find('.message').trigger('mouseover')
 			wrapper.find(MessageButtonsBar).vm.$emit('delete')
 
 			expect(deleteMessage).toHaveBeenCalledWith(expect.anything(), {
