@@ -661,7 +661,6 @@ export default {
 			const currentUserHasReacted = this.$store.getters.userHasReacted(this.actorId, this.token, this.id, clickedEmoji)
 
 			if (!currentUserHasReacted) {
-				console.debug('adding reaction')
 				this.$store.dispatch('addReactionToMessage', {
 					token: this.token,
 					messageId: this.id,
@@ -669,7 +668,6 @@ export default {
 					actorId: this.actorId,
 				})
 			} else {
-				console.debug('user has already reacted, removing reaction')
 				this.$store.dispatch('removeReactionFromMessage', {
 					token: this.token,
 					messageId: this.id,
