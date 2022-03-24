@@ -229,6 +229,14 @@ export default {
 				return participant1Away ? 1 : -1
 			}
 
+			const p1IsGuest = participant1.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
+			const p2IsGuest = participant2.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
+
+			if (p1IsGuest !== p2IsGuest) {
+				// Guests below participants
+				return p2IsGuest ? -1 : 1
+			}
+
 			return participant1.displayName.localeCompare(participant2.displayName)
 		},
 	},
