@@ -616,7 +616,7 @@ describe('Message.vue', () => {
 			// Hover the messages in order to render the MessageButtonsBar
 			// component
 			await wrapper.find('.message').trigger('mouseover')
-			wrapper.find(MessageButtonsBar).vm.$emit('delete')
+			wrapper.findComponent(MessageButtonsBar).vm.$emit('delete')
 
 			expect(deleteMessage).toHaveBeenCalledWith(expect.anything(), {
 				message: {
