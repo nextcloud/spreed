@@ -276,10 +276,10 @@ describe('MessageButtonsBar.vue', () => {
 				testDeleteMessageVisible(false)
 			})
 
-			test('hides delete action for file messages', () => {
+			test('show delete action for file messages', () => {
 				messageProps.message = '{file}'
 				messageProps.messageParameters.file = {}
-				testDeleteMessageVisible(false)
+				testDeleteMessageVisible(true)
 			})
 
 			test('hides delete action on other people messages for non-moderators', () => {

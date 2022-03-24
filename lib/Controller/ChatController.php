@@ -53,6 +53,7 @@ use OCP\IUserManager;
 use OCP\RichObjectStrings\InvalidObjectExeption;
 use OCP\RichObjectStrings\IValidator;
 use OCP\Security\ITrustedDomainHelper;
+use OCP\Share\Exceptions\ShareNotFound;
 use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
@@ -581,8 +582,8 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		if ($message->getVerb() !== 'comment') {
-			// System message or file share (since the message is not parsed, it has type "system")
+		if ($message->getVerb() !== 'comment' && $message->getVerb() !== 'object_shared') {
+			// System message (since the message is not parsed, it has type "system")
 			return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
 		}
 
@@ -593,13 +594,16 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$systemMessageComment = $this->chatManager->deleteMessage(
-			$this->room,
-			$messageId,
-			$attendee->getActorType(),
-			$attendee->getActorId(),
-			$this->timeFactory->getDateTime()
-		);
+		try {
+			$systemMessageComment = $this->chatManager->deleteMessage(
+				$this->room,
+				$message,
+				$this->participant,
+				$this->timeFactory->getDateTime()
+			);
+		} catch (ShareNotFound $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
 
 		$systemMessage = $this->messageParser->createMessage($this->room, $this->participant, $systemMessageComment, $this->l);
 		$this->messageParser->parseMessage($systemMessage);

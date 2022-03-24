@@ -208,7 +208,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 
 ## Deleting a chat message
 
-* Required capability: `delete-messages`
+* Required capability: `delete-messages` - `rich-object-delete` indicates if shared objects can be deleted from the chat
 * Method: `DELETE`
 * Endpoint: `/chat/{token}/{messageId}`
 

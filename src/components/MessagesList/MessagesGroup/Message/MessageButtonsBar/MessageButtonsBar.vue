@@ -304,14 +304,9 @@ export default {
 				return false
 			}
 
-			const isObjectShare = this.message === '{object}'
-				&& this.messageParameters?.object
-
 			return (moment(this.timestamp * 1000).add(6, 'h')) > moment()
-				&& this.messageType === 'comment'
+				&& (this.messageType === 'comment' || this.messageType === 'voice-message')
 				&& !this.isDeleting
-				&& !this.isFileShare
-				&& !isObjectShare
 				&& (this.isMyMsg
 					|| (this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
 						&& (this.participant.participantType === PARTICIPANT.TYPE.OWNER
