@@ -23,7 +23,8 @@
 	<!-- Message Actions -->
 	<div class="message-buttons-bar">
 		<template v-if="page === 0">
-			<Button type="tertiary"
+			<Button v-if="acceptsReactions"
+				type="tertiary"
 				@click="page = 1">
 				<template #icon>
 					<EmoticonOutline :size="20" />
@@ -36,8 +37,10 @@
 				</ActionButton>
 			</Actions>
 			<Actions :force-menu="true"
-				:container="container"
-				:boundaries-element="containerElement">
+				:container="`#message_${id}`"
+				:boundaries-element="containerElement"
+				@open="onMenuOpen"
+				@close="onMenuClose">
 				<ActionButton v-if="isPrivateReplyable"
 					icon="icon-user"
 					:close-after-click="true"
@@ -100,18 +103,21 @@
 				</template>
 			</Button>
 			<Button type="tertiary"
-				@click="addReactionToMessage('👍')">
+				@click="handleReactionClick('👍')">
 				<template #icon>
 					<span>👍</span>
 				</template>
 			</Button>
 			<Button type="tertiary"
-				@click="addReactionToMessage('❤️')">
+				@click="handleReactionClick('❤️')">
 				<template #icon>
 					<span>❤️</span>
 				</template>
 			</Button>
-			<EmojiPicker @select="addReactionToMessage">
+			<EmojiPicker :container="`#message_${id}`"
+				@select="handleReactionClick"
+				@after-show="onEmojiPickerOpen"
+				@after-hide="onEmojiPickerClose">
 				<Button type="tertiary">
 					<template #icon>
 						<Plus :size="20" />
@@ -289,10 +295,6 @@ export default {
 			return this.$store.getters.conversation(this.token)
 		},
 
-		container() {
-			return this.$store.getters.getMainContainerSelector()
-		},
-
 		containerElement() {
 			return document.querySelector(this.container)
 		},
@@ -323,6 +325,10 @@ export default {
 				&& !this.isMyMsg
 				&& this.actorType === ATTENDEE.ACTOR_TYPE.USERS
 				&& this.$store.getters.getActorType() === ATTENDEE.ACTOR_TYPE.USERS
+		},
+
+		acceptsReactions() {
+			return !this.isConversationReadOnly && !this.isFileShare
 		},
 
 		messageActions() {
@@ -372,15 +378,6 @@ export default {
 			EventBus.$emit('focus-chat-input')
 		},
 
-		handleActionMenuUpdate(type) {
-			if (type === 'open') {
-				this.isActionMenuOpen = true
-			} else if (type === 'close') {
-				this.isActionMenuOpen = false
-				this.showActions = false
-			}
-		},
-
 		async handlePrivateReply() {
 			// open the 1:1 conversation
 			const conversation = await this.$store.dispatch('createOneToOneConversation', this.actorId)
@@ -410,7 +407,7 @@ export default {
 			await this.$store.dispatch('fetchConversation', { token: this.token })
 		},
 
-		addReactionToMessage(selectedEmoji) {
+		handleReactionClick(selectedEmoji) {
 			// Add reaction only if user hasn't reacted yet
 			if (!this.$store.getters.userHasReacted(this.actorId, this.token, this.messageObject.id, selectedEmoji)) {
 				this.$store.dispatch('addReactionToMessage', {
@@ -420,13 +417,35 @@ export default {
 					actorId: this.actorId,
 				})
 			} else {
-				console.debug('Current user has already reacted')
+				console.debug('user has already reacted, removing reaction')
+				this.$store.dispatch('removeReactionFromMessage', {
+					token: this.token,
+					messageId: this.id,
+					selectedEmoji,
+					actorId: this.actorId,
+				})
 			}
 
 		},
 
 		handleDelete() {
 			this.$emit('delete')
+		},
+
+		onMenuOpen() {
+			this.$emit('update:isActionMenuOpen', true)
+		},
+
+		onMenuClose() {
+			this.$emit('update:isActionMenuOpen', false)
+		},
+
+		onEmojiPickerOpen() {
+			this.$emit('update:isEmojiPickerOpen', true)
+		},
+
+		onEmojiPickerClose() {
+			this.$emit('update:isEmojiPickerOpen', false)
 		},
 	},
 }

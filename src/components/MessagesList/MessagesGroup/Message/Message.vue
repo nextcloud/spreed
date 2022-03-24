@@ -31,11 +31,12 @@ the main body of the message as well as a quote.
 		:data-seen="seen"
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
-		class="message">
+		class="message"
+		tabindex="0"
+		@mouseover="handleMouseover"
+		@mouseleave="handleMouseleave">
 		<div :class="{'normal-message-body': !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
-			class="message-body"
-			@mouseover="handleMouseover"
-			@mouseleave="handleMouseleave">
+			class="message-body">
 			<div v-if="isFirstMessage && showAuthor"
 				class="message-body__author"
 				role="heading"
@@ -137,7 +138,7 @@ the main body of the message as well as a quote.
 				</Popover>
 
 				<!-- More reactions picker -->
-				<EmojiPicker :per-line="5" @select="addReactionToMessage">
+				<EmojiPicker :per-line="5" :container="`#message_${id}`" @select="handleReactionClick">
 					<button class="reaction-button">
 						<EmoticonOutline :size="15" />
 					</button>
@@ -146,9 +147,10 @@ the main body of the message as well as a quote.
 		</div>
 
 		<!-- Message actions -->
-		<MessageButtonsBar v-if="hasMessageButtonsBar"
-			v-show="showMessageButtonsBar"
+		<MessageButtonsBar v-if="showMessageButtonsBar"
 			ref="messageButtonsBar"
+			:is-action-menu-open.sync="isActionMenuOpen"
+			:is-emoji-picker-open.sync="isEmojiPickerOpen"
 			:message-api-data="messageApiData"
 			:message-object="messageObject"
 			v-bind="$props"
@@ -348,7 +350,7 @@ export default {
 
 	data() {
 		return {
-			showMessageButtonsBar: false,
+			isHovered: false,
 			// Is tall enough for both actions and date upon hovering
 			isTallEnough: false,
 			showReloadButton: false,
@@ -356,6 +358,7 @@ export default {
 			// whether the message was seen, only used if this was marked as last read message
 			seen: false,
 			isActionMenuOpen: false,
+			isEmojiPickerOpen: false,
 			detailedReactionsRequested: false,
 		}
 	},
@@ -502,11 +505,11 @@ export default {
 				return false
 			}
 
-			return this.isSystemMessage || !this.showMessageButtonsBar || this.isTallEnough
+			return this.isSystemMessage || !this.isHovered || this.isTallEnough
 		},
 
-		hasMessageButtonsBar() {
-			return !this.isSystemMessage && !this.isTemporary
+		showMessageButtonsBar() {
+			return !this.isSystemMessage && !this.isTemporary && (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen)
 		},
 
 		isTemporaryUpload() {
@@ -616,8 +619,9 @@ export default {
 		},
 
 		handleMouseover() {
-			this.showMessageButtonsBar = true
-
+			if (!this.isHovered) {
+				this.isHovered = true
+			}
 		},
 
 		handleReactionsMouseOver() {
@@ -627,8 +631,8 @@ export default {
 		},
 
 		handleMouseleave() {
-			if (!this.isActionMenuOpen) {
-				this.showMessageButtonsBar = false
+			if (this.isHovered) {
+				this.isHovered = false
 			}
 		},
 
@@ -657,7 +661,6 @@ export default {
 			const currentUserHasReacted = this.$store.getters.userHasReacted(this.actorId, this.token, this.id, clickedEmoji)
 
 			if (!currentUserHasReacted) {
-				console.debug('adding reaction')
 				this.$store.dispatch('addReactionToMessage', {
 					token: this.token,
 					messageId: this.id,
@@ -665,7 +668,6 @@ export default {
 					actorId: this.actorId,
 				})
 			} else {
-				console.debug('user has already reacted, removing reaction')
 				this.$store.dispatch('removeReactionFromMessage', {
 					token: this.token,
 					messageId: this.id,
@@ -708,21 +710,6 @@ export default {
 
 			this.isDeleting = false
 		},
-
-		addReactionToMessage(selectedEmoji) {
-			// Add reaction only if user hasn't reacted yet
-			if (!this.$store.getters.userHasReacted(this.actorId, this.token, this.messageObject.id, selectedEmoji)) {
-				this.$store.dispatch('addReactionToMessage', {
-					token: this.token,
-					messageId: this.messageObject.id,
-					selectedEmoji,
-					actorId: this.actorId,
-				})
-			} else {
-				console.debug('Current user has already reacted')
-			}
-
-		},
 	},
 }
 </script>
@@ -731,11 +718,9 @@ export default {
 @import '../../../../assets/variables';
 @import '../../../../assets/buttons';
 
-.normal-message-body {
-	&:hover {
-		border-radius: 8px;
-		background-color: var(--color-background-hover);
-	}
+.message:hover .normal-message-body {
+	border-radius: 8px;
+	background-color: var(--color-background-hover);
 }
 
 .message {
@@ -807,6 +792,7 @@ export default {
 	}
 	&__reactions {
 		display: flex;
+		flex-wrap: wrap;
 		margin: 4px 0 4px -2px;
 	}
 }
@@ -824,16 +810,9 @@ export default {
 	padding: 4px 4px 4px 8px;
 }
 
-.hover, .highlight-animation {
-	border-radius: 8px;
-}
-
-.hover {
-	background-color: var(--color-background-hover);
-}
-
 .highlight-animation {
 	animation: highlight-animation 5s 1;
+	border-radius: 8px;
 }
 
 @keyframes highlight-animation {
@@ -880,7 +859,7 @@ export default {
 	padding: 0 8px !important;
 	font-weight: normal !important;
 
-	margin: 0 2px;
+	margin: 2px;
 	height: 26px;
 	background-color: var(--color-main-background);
 

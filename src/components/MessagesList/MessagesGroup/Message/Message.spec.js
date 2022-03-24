@@ -4,6 +4,8 @@ import { cloneDeep } from 'lodash'
 import { EventBus } from '../../../../services/EventBus'
 import storeConfig from '../../../../store/storeConfig'
 import { CONVERSATION, ATTENDEE } from '../../../../constants'
+
+// Components
 import Check from 'vue-material-design-icons/Check'
 import CheckAll from 'vue-material-design-icons/CheckAll'
 import Quote from '../../../Quote'
@@ -13,9 +15,9 @@ import DeckCard from './MessagePart/DeckCard'
 import Location from './MessagePart/Location'
 import DefaultParameter from './MessagePart/DefaultParameter'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
-
 import Message from './Message'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 
 // needed because of https://github.com/vuejs/vue-test-utils/issues/1507
 const RichTextStub = {
@@ -561,7 +563,7 @@ describe('Message.vue', () => {
 			expect(messageButtonsBar.exists()).toBe(false)
 		})
 
-		test('actions become visible on mouse over', async () => {
+		test('Buttons bar is rendered on mouse over', async () => {
 			messageProps.sendingFailure = 'timeout'
 			const wrapper = mount(Message, {
 				localVue,
@@ -569,26 +571,23 @@ describe('Message.vue', () => {
 				propsData: messageProps,
 			})
 
-			await wrapper.vm.$nextTick()
-
-			const messageButtonsBar = wrapper.findComponent(MessageButtonsBar)
-
+			// Initial state
 			expect(wrapper.vm.showMessageButtonsBar).toBe(false)
-			expect(messageButtonsBar.isVisible()).toBe(false)
+			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
 
-			await wrapper.find('.message-body').trigger('mouseover')
-
+			// Mouseover
+			await wrapper.find('.message').trigger('mouseover')
 			expect(wrapper.vm.showMessageButtonsBar).toBe(true)
-			expect(messageButtonsBar.isVisible()).toBe(true)
+			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(true)
 
-			await wrapper.find('.message-body').trigger('mouseleave')
-
-			expect(wrapper.vm.showMessageButtonsBar).toBe(false)
-			expect(messageButtonsBar.isVisible()).toBe(false)
-
-			// actions are always present and rendered
+			// actions are present and rendered when the buttonsBar is renderend
 			const actions = wrapper.findAllComponents({ name: 'Actions' })
 			expect(actions.length).toBe(2)
+
+			// Mouseleave
+			await wrapper.find('.message').trigger('mouseleave')
+			expect(wrapper.vm.showMessageButtonsBar).toBe(false)
+			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
 		})
 	})
 
@@ -614,7 +613,10 @@ describe('Message.vue', () => {
 				propsData: messageProps,
 			})
 
-			wrapper.find(MessageButtonsBar).vm.$emit('delete')
+			// Hover the messages in order to render the MessageButtonsBar
+			// component
+			await wrapper.find('.message').trigger('mouseover')
+			wrapper.findComponent(MessageButtonsBar).vm.$emit('delete')
 
 			expect(deleteMessage).toHaveBeenCalledWith(expect.anything(), {
 				message: {
@@ -749,6 +751,128 @@ describe('Message.vue', () => {
 
 			expect(wrapper.findComponent(Check).exists()).toBe(false)
 			expect(wrapper.findComponent(CheckAll).exists()).toBe(false)
+		})
+	})
+
+	describe('reactions', () => {
+		beforeEach(() => {
+			testStoreConfig.modules.messagesStore.getters.message
+				= jest.fn().mockReturnValue(() => {
+					return {
+						reactions: {
+							'❤️': 1,
+							'👍': 7,
+						},
+						id: messageProps.id,
+					}
+				})
+			testStoreConfig.modules.messagesStore.getters.hasReactions
+				= jest.fn().mockReturnValue(() => {
+					return true
+				})
+			store = new Store(testStoreConfig)
+		})
+
+		test('properly shows reactions', () => {
+			const wrapper = shallowMount(Message, {
+				localVue,
+				store,
+				propsData: messageProps,
+			})
+
+			const reactionsBar = wrapper.find('.message-body__reactions')
+			expect(reactionsBar.isVisible()).toBe(true)
+
+		})
+
+		test('shows reaction buttons with the right emoji count', () => {
+			const wrapper = shallowMount(Message, {
+				localVue,
+				store,
+				propsData: messageProps,
+			})
+
+			const reactionsBar = wrapper.find('.message-body__reactions')
+
+			// Array of buttons
+			const reactionButtons = reactionsBar.findAll('.reaction-button')
+
+			// Number of buttons, 2 passed into the getter and 1 is the emoji
+			// picker
+			expect(reactionButtons.length).toBe(3)
+
+			// Text of the buttons
+			expect(reactionButtons.wrappers[0].text()).toBe('❤️   1')
+			expect(reactionButtons.wrappers[1].text()).toBe('👍   7')
+		})
+
+		test('dispatches store action upon picking an emoji from the emojipicker', () => {
+			const addReactionToMessageAction = jest.fn()
+			const userHasReactedGetter = jest.fn().mockReturnValue(() => false)
+			testStoreConfig.modules.quoteReplyStore.actions.addReactionToMessage = addReactionToMessageAction
+			testStoreConfig.modules.messagesStore.getters.userHasReacted = userHasReactedGetter
+
+			store = new Store(testStoreConfig)
+
+			const wrapper = shallowMount(Message, {
+				localVue,
+				store,
+				propsData: messageProps,
+				stubs: {
+					EmojiPicker,
+				},
+				data() {
+					return {
+						detailedReactionsRequested: true,
+					}
+				},
+			})
+
+			const emojiPicker = wrapper.findComponent(EmojiPicker)
+
+			emojiPicker.vm.$emit('select', '❤️')
+
+			expect(addReactionToMessageAction).toHaveBeenCalledWith(expect.anything(), {
+				token: messageProps.token,
+				messageId: messageProps.id,
+				selectedEmoji: '❤️',
+				actorId: messageProps.actorId,
+			})
+
+		})
+
+		test('dispatches store action to remove an emoji upon clicking reaction button', async () => {
+			const removeReactionFromMessageAction = jest.fn()
+			const userHasReactedGetter = jest.fn().mockReturnValue(() => true)
+			testStoreConfig.modules.quoteReplyStore.actions.removeReactionFromMessage = removeReactionFromMessageAction
+			testStoreConfig.modules.messagesStore.getters.userHasReacted = userHasReactedGetter
+
+			store = new Store(testStoreConfig)
+
+			const wrapper = shallowMount(Message, {
+				localVue,
+				store,
+				propsData: messageProps,
+				data() {
+					return {
+						detailedReactionsRequested: true,
+					}
+				},
+			})
+
+			// Click reaction button upon having already reacted
+			await wrapper.find('.reaction-button').trigger('click')
+
+			await wrapper.vm.$nextTick()
+			await wrapper.vm.$nextTick()
+
+			expect(removeReactionFromMessageAction).toHaveBeenCalledWith(expect.anything(), {
+				token: messageProps.token,
+				messageId: messageProps.id,
+				selectedEmoji: '❤️',
+				actorId: messageProps.actorId,
+			})
+
 		})
 	})
 })
