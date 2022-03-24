@@ -566,13 +566,13 @@ function Standalone(settings, urls) {
 	// TODO(jojo): Try other server if connection fails.
 	let url = urls[idx]
 	// Make sure we are using websocket urls.
-	if (url.indexOf('https://') === 0) {
-		url = 'wss://' + url.substr(8)
-	} else if (url.indexOf('http://') === 0) {
-		url = 'ws://' + url.substr(7)
+	if (url.startsWith('https://')) {
+		url = 'wss://' + url.slice(8)
+	} else if (url.startsWith('http://')) {
+		url = 'ws://' + url.slice(7)
 	}
-	if (url[url.length - 1] === '/') {
-		url = url.substr(0, url.length - 1)
+	if (url.endsWith('/')) {
+		url = url.slice(0, -1)
 	}
 	this.url = url + '/spreed'
 	this.initialReconnectIntervalMs = 1000

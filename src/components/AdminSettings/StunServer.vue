@@ -73,9 +73,9 @@ export default {
 
 			// Remove HTTP or HTTPS protocol, if provided
 			if (server.startsWith('https://')) {
-				server = server.substr(8)
+				server = server.slice(8)
 			} else if (server.startsWith('http://')) {
-				server = server.substr(7)
+				server = server.slice(7)
 			}
 
 			const parts = server.split(':')
