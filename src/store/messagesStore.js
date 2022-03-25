@@ -994,7 +994,8 @@ const actions = {
 				messageId,
 				reaction: selectedEmoji,
 			})
-			console.debug(error)
+			console.error(error)
+			showError(t('spreed', 'Failed to add reaction'))
 		}
 	},
 
@@ -1027,7 +1028,8 @@ const actions = {
 				messageId,
 				reaction: selectedEmoji,
 			})
-			console.debug(error)
+			console.error(error)
+			showError(t('spreed', 'Failed to remove reaction'))
 		}
 	},
 }

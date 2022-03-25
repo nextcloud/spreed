@@ -190,7 +190,10 @@ class ReactionManager {
 
 		if ($comment->getObjectType() !== 'chat'
 			|| $comment->getObjectId() !== (string) $chat->getId()
-			|| $comment->getVerb() !== 'comment') {
+			|| !in_array($comment->getVerb(), [
+				'comment',
+				'object_shared',
+			], true)) {
 			throw new ReactionOutOfContextException();
 		}
 

@@ -323,7 +323,7 @@ export default {
 		},
 
 		acceptsReactions() {
-			return !this.isConversationReadOnly && !this.isFileShare
+			return !this.isConversationReadOnly
 		},
 
 		messageActions() {
