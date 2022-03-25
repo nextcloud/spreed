@@ -149,6 +149,7 @@ the main body of the message as well as a quote.
 			ref="messageButtonsBar"
 			:is-action-menu-open.sync="isActionMenuOpen"
 			:is-emoji-picker-open.sync="isEmojiPickerOpen"
+			:is-reactions-menu-open.sync="isReactionsMenuOpen"
 			:message-api-data="messageApiData"
 			:message-object="messageObject"
 			v-bind="$props"
@@ -357,6 +358,7 @@ export default {
 			seen: false,
 			isActionMenuOpen: false,
 			isEmojiPickerOpen: false,
+			isReactionsMenuOpen: false,
 			detailedReactionsRequested: false,
 		}
 	},
@@ -507,7 +509,7 @@ export default {
 		},
 
 		showMessageButtonsBar() {
-			return !this.isSystemMessage && !this.isTemporary && (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen)
+			return !this.isSystemMessage && !this.isTemporary && (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isReactionsMenuOpen)
 		},
 
 		isTemporaryUpload() {

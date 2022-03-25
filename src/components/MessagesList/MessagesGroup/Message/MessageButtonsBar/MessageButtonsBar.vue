@@ -21,11 +21,12 @@
 
 <template>
 	<!-- Message Actions -->
-	<div class="message-buttons-bar">
-		<template v-if="page === 0">
+	<div v-click-outside="handleClickOutside"
+		class="message-buttons-bar">
+		<template v-if="!isReactionsMenuOpen">
 			<Button v-if="acceptsReactions"
 				type="tertiary"
-				@click="page = 1">
+				@click="openReactionsMenu">
 				<template #icon>
 					<EmoticonOutline :size="20" />
 				</template>
@@ -95,9 +96,9 @@
 			</Actions>
 		</template>
 
-		<template v-if="page === 1">
+		<template v-if="isReactionsMenuOpen">
 			<Button type="tertiary"
-				@click="page = 0">
+				@click="closeReactionsMenu">
 				<template #icon>
 					<ArrowLeft :size="20" />
 				</template>
@@ -278,15 +279,17 @@ export default {
 			type: Object,
 			required: true,
 		},
+
+		isReactionsMenuOpen: {
+			type: Boolean,
+			required: true,
+		},
 	},
 
 	data() {
 		return {
 			// Shows/hides the message forwarder component
 			showForwarder: false,
-
-			// The pagination of the buttons menu
-			page: 0,
 		}
 	},
 
@@ -441,6 +444,22 @@ export default {
 
 		onEmojiPickerClose() {
 			this.$emit('update:isEmojiPickerOpen', false)
+		},
+
+		openReactionsMenu() {
+			this.$emit('update:isReactionsMenuOpen', true)
+		},
+
+		handleClickOutside(event) {
+			// Making sure that the click is outside the MessageButtonsBar
+			if (event.path.indexOf(this.$el) !== -1) {
+				return
+			}
+			this.closeReactionsMenu()
+		},
+
+		closeReactionsMenu() {
+			this.$emit('update:isReactionsMenuOpen', false)
 		},
 	},
 }
