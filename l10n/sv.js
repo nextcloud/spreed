@@ -611,7 +611,6 @@ OC.L10N.register(
     "Search or add participants" : "Sök eller lägg till deltagare",
     "Chat" : "Chat",
     "Settings" : "Inställningar",
-    "Display name: " : "Visningsnamn:",
     "Keyboard shortcuts" : "Tangentbordsgenvägar",
     "Search" : "Sök",
     "Error while setting attachment folder" : "Fel vid inställning av mapp för bilagor",
@@ -683,6 +682,7 @@ OC.L10N.register(
     "Camera" : "Kamera",
     "Remove" : "Ta bort",
     "[Unknown username]" : "[Okänt användarnamn]",
+    "Display name: " : "Visningsnamn:",
     "Exit fullscreen (f)" : "Avsluta fullskärmsläge (f)",
     "Fullscreen (f)" : "Fullskärm (f)"
 },

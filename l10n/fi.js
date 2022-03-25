@@ -407,7 +407,6 @@ OC.L10N.register(
     "Search or add participants" : "Etsi tai lisää osallistujia",
     "Chat" : "Keskustelu",
     "Settings" : "Asetukset",
-    "Display name: " : "Näyttönimi:",
     "Attachments folder" : "Liitteiden kansio",
     "Privacy" : "Yksityisyys",
     "Keyboard shortcuts" : "Pikanäppäimet",
@@ -480,6 +479,7 @@ OC.L10N.register(
     "Microphone" : "Mikrofoni",
     "Camera" : "Kamera",
     "Remove" : "Poista",
+    "Display name: " : "Näyttönimi:",
     "Exit fullscreen (f)" : "Poistu koko näytön tilasta (f)",
     "Fullscreen (f)" : "Koko näytön tila (f)"
 },
