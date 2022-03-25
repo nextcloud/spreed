@@ -663,7 +663,6 @@ OC.L10N.register(
     "Participants" : "Tud",
     "Chat" : "Chat",
     "Settings" : "Arventennoù",
-    "Display name: " : "Anv tra :",
     "Attachments folder" : "Teuliad stag",
     "Search" : "Klask",
     "Select location for attachments" : "Choazit ul lec'h evit stagañ",
@@ -753,6 +752,7 @@ OC.L10N.register(
     "Camera" : "Kamera",
     "Remove" : "Lemel",
     "[Unknown username]" : "[Anv implijer dianv]",
+    "Display name: " : "Anv tra :",
     "Exit fullscreen (f)" : "Kuitaat ar skramm a bez (f)",
     "Fullscreen (f)" : "Skramm a bez (f)"
 },
