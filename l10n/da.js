@@ -379,7 +379,6 @@ OC.L10N.register(
     "Participants" : "Deltagere",
     "Chat" : "Chat",
     "Settings" : "Indstillinger",
-    "Display name: " : "Vist navn:",
     "Keyboard shortcuts" : "Tastaturgenveje",
     "Search" : "Søg",
     "Error while setting attachment folder" : "Fejl under indstilling af mappe til vedhæftninger",
@@ -434,6 +433,7 @@ OC.L10N.register(
     "Camera" : "Kamera",
     "Remove" : "Fjern",
     "[Unknown username]" : "[Ukendt brugernavn]",
+    "Display name: " : "Vist navn:",
     "Exit fullscreen (f)" : "Forlad fuldskærmsvisning (f)",
     "Fullscreen (f)" : "Vis i fuldskærm (f)"
 },
