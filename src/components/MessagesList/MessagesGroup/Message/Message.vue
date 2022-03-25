@@ -656,7 +656,7 @@ export default {
 				await this.getReactions()
 			}
 			// Check if current user has already added this reaction to the message
-			const currentUserHasReacted = this.$store.getters.userHasReacted(this.actorId, this.token, this.id, clickedEmoji)
+			const currentUserHasReacted = this.$store.getters.userHasReacted(this.$store.getters.getActorType(), this.$store.getters.getActorId(), this.token, this.id, clickedEmoji)
 
 			if (!currentUserHasReacted) {
 				this.$store.dispatch('addReactionToMessage', {
