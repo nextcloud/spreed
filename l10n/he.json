@@ -504,7 +504,6 @@
     "Participants" : "משתתפים",
     "Chat" : "צ׳אט",
     "Settings" : "הגדרות",
-    "Display name: " : "שם תצוגה:",
     "Attachments folder" : "תיקיית הקבצים המצורפים",
     "Keyboard shortcuts" : "קיצורי מקלדת",
     "Search" : "חיפוש",
@@ -554,6 +553,7 @@
     "Camera" : "מצלמה",
     "Remove" : "הסרה",
     "[Unknown username]" : "[שם משתמש לא ידוע]",
+    "Display name: " : "שם תצוגה:",
     "Exit fullscreen (f)" : "יציאה ממסך מלא (f)",
     "Fullscreen (f)" : "מסך מלא (f)"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;"

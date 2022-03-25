@@ -506,7 +506,6 @@ OC.L10N.register(
     "Participants" : "משתתפים",
     "Chat" : "צ׳אט",
     "Settings" : "הגדרות",
-    "Display name: " : "שם תצוגה:",
     "Attachments folder" : "תיקיית הקבצים המצורפים",
     "Keyboard shortcuts" : "קיצורי מקלדת",
     "Search" : "חיפוש",
@@ -556,6 +555,7 @@ OC.L10N.register(
     "Camera" : "מצלמה",
     "Remove" : "הסרה",
     "[Unknown username]" : "[שם משתמש לא ידוע]",
+    "Display name: " : "שם תצוגה:",
     "Exit fullscreen (f)" : "יציאה ממסך מלא (f)",
     "Fullscreen (f)" : "מסך מלא (f)"
 },

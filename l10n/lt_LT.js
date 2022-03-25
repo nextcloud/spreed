@@ -622,7 +622,6 @@ OC.L10N.register(
     "Settings" : "Nustatymai",
     "Meeting ID: {meetingId}" : "Susitikimo ID: {meetingId}",
     "Your PIN: {attendeePin}" : "Jūsų PIN kodas: {attendeePin}",
-    "Display name: " : "Rodomas vardas: ",
     "Attachments folder" : "Priedų aplankas",
     "Privacy" : "Privatumas",
     "Sounds" : "Garsai",
@@ -721,6 +720,7 @@ OC.L10N.register(
     "Remove" : "Šalinti",
     "[Unknown username]" : "[Nežinomas naudotojo vardas]",
     "Add a description for this conversation" : "Pridėkite šio pokalbio aprašą",
+    "Display name: " : "Rodomas vardas: ",
     "Choose in which folder attachments should be saved." : "Pasirinkite į kurį aplanką turėtų būti įrašomi priedai.",
     "Exit fullscreen (f)" : "Išeiti iš viso ekrano (f)",
     "Fullscreen (f)" : "Visas ekranas (f)"
