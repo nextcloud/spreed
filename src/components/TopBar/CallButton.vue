@@ -323,11 +323,6 @@ export default {
 #call_button {
 	margin: 0 auto;
 }
-/** Required to make the text on the Video Verification page white */
-#call_button.success,
-#call_button.error {
-	color: white !important;
-}
 
 /* HACK: to override the default action button styles to make it look like a regular button */
 ::v-deep .trigger > button {
