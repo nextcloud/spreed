@@ -319,6 +319,7 @@ export default {
 		border: 1px solid var(--color-success) !important;
 	}
 }
+
 #call_button {
 	margin: 0 auto;
 }

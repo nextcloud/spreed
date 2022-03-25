@@ -23,6 +23,7 @@
 	<!-- Guest username setting form -->
 	<form class="username-form"
 		@submit.prevent="handleChooseUserName">
+		<!-- eslint-disable-next-line vue/no-v-html -->
 		<h3 v-html="displayNameLabel" />
 		<Button @click.prevent="handleEditUsername">
 			{{ t('spreed', 'Edit') }}
