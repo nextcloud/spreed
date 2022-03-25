@@ -377,7 +377,6 @@
     "Participants" : "Deltagere",
     "Chat" : "Chat",
     "Settings" : "Indstillinger",
-    "Display name: " : "Vist navn:",
     "Keyboard shortcuts" : "Tastaturgenveje",
     "Search" : "Søg",
     "Error while setting attachment folder" : "Fejl under indstilling af mappe til vedhæftninger",
@@ -432,6 +431,7 @@
     "Camera" : "Kamera",
     "Remove" : "Fjern",
     "[Unknown username]" : "[Ukendt brugernavn]",
+    "Display name: " : "Vist navn:",
     "Exit fullscreen (f)" : "Forlad fuldskærmsvisning (f)",
     "Fullscreen (f)" : "Vis i fuldskærm (f)"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
