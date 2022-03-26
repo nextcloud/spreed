@@ -1039,6 +1039,7 @@ OC.L10N.register(
     "Participants ({count})" : "Uczestnicy ({count})",
     "Meeting ID: {meetingId}" : "ID spotkania: {meetingId}",
     "Your PIN: {attendeePin}" : "Twój kod PIN: {attendeePin}",
+    "Display name: <strong>{name}</strong>" : "Wyświetlana nazwa: <strong>{name}</strong>",
     "Attachments folder" : "Katalog z załącznikami",
     "Privacy" : "Prywatność",
     "Share my read-status and show the read-status of others" : "Udostępnij mój status odczytu i pokaż innym",
