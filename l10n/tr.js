@@ -1039,6 +1039,7 @@ OC.L10N.register(
     "Participants ({count})" : "Katılımcılar ({count})",
     "Meeting ID: {meetingId}" : "Toplantı kodu: {meetingId}",
     "Your PIN: {attendeePin}" : "PIN kodunuz: {attendeePin}",
+    "Display name: <strong>{name}</strong>" : "Görüntülenecek ad: <strong>{name}</strong>",
     "Attachments folder" : "Ek dosya klasörü",
     "Privacy" : "Gizlilik",
     "Share my read-status and show the read-status of others" : "Okundu durumumu paylaş ve diğerlerinin okundu durumunu görüntüle",

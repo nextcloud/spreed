@@ -1039,6 +1039,7 @@ OC.L10N.register(
     "Participants ({count})" : "Účastníků ({count})",
     "Meeting ID: {meetingId}" : "Identif. schůzky: {meetingId}",
     "Your PIN: {attendeePin}" : "Váš PIN: {attendeePin}",
+    "Display name: <strong>{name}</strong>" : "Zobrazované jméno: <strong>{name}</strong>",
     "Attachments folder" : "Složka s přílohami",
     "Privacy" : "Soukromí",
     "Share my read-status and show the read-status of others" : "Sdílet mé oznámení o přečtení a zobrazit oznámení o přečtení ostatních",
