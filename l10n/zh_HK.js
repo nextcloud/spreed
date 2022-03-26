@@ -1039,6 +1039,7 @@ OC.L10N.register(
     "Participants ({count})" : "參與者 ({count})",
     "Meeting ID: {meetingId}" : "會議 ID：{meetingId}",
     "Your PIN: {attendeePin}" : "您的PIN：{attendeePin}",
+    "Display name: <strong>{name}</strong>" : "顯示名稱：<strong>{name}</strong>",
     "Attachments folder" : "附件資料夾",
     "Privacy" : "私隱",
     "Share my read-status and show the read-status of others" : "分享我的閱讀狀態並顯示其他人的閱讀狀態",
