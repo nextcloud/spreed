@@ -802,8 +802,8 @@ describe('Message.vue', () => {
 			expect(reactionButtons.length).toBe(3)
 
 			// Text of the buttons
-			expect(reactionButtons.wrappers[0].text()).toBe('❤️   1')
-			expect(reactionButtons.wrappers[1].text()).toBe('👍   7')
+			expect(reactionButtons.wrappers[0].text()).toBe('❤️  1')
+			expect(reactionButtons.wrappers[1].text()).toBe('👍  7')
 		})
 
 		test('dispatches store action upon picking an emoji from the emojipicker', () => {

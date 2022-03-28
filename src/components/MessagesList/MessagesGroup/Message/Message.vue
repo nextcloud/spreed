@@ -128,7 +128,7 @@ the main body of the message as well as a quote.
 						class="reaction-button"
 						@click="handleReactionClick(reaction)">
 						<span class="reaction-button__emoji">{{ reaction }}</span>
-						<span>{{ simpleReactions[reaction] }}</span>
+						<span> {{ simpleReactions[reaction] }}</span>
 					</button>
 					<div v-if="detailedReactions" class="reaction-details">
 						<span>{{ getReactionSummary(reaction) }}</span>
