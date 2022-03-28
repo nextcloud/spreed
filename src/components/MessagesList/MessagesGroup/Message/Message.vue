@@ -127,13 +127,11 @@ the main body of the message as well as a quote.
 						slot="trigger"
 						class="reaction-button"
 						@click="handleReactionClick(reaction)">
-						<span class="reaction-button__emoji"> {{ reaction }} </span>
-						<span> {{ simpleReactions[reaction] }} </span>
+						<span class="reaction-button__emoji">{{ reaction }}</span>
+						<span> {{ simpleReactions[reaction] }}</span>
 					</button>
 					<div v-if="detailedReactions" class="reaction-details">
-						<p v-for="detailedReaction in detailedReactions[reaction]" :key="detailedReaction.actorDisplayName">
-							{{ detailedReaction.actorDisplayName }}
-						</p>
+						<span>{{ getReactionSummary(reaction) }}</span>
 					</div>
 				</Popover>
 
@@ -709,6 +707,22 @@ export default {
 			}
 
 			this.isDeleting = false
+		},
+
+		getReactionSummary(reaction) {
+			const list = this.detailedReactions[reaction]
+			const summary = []
+
+			for (const item in list) {
+				if (list[item].actorType === this.$store.getters.getActorType()
+					&& list[item].actorId === this.$store.getters.getActorId()) {
+					summary.unshift(t('spreed', 'You'))
+				} else {
+					summary.push(list[item].actorDisplayName)
+				}
+			}
+
+			return summary.join(', ')
 		},
 	},
 }
