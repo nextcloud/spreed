@@ -10,6 +10,7 @@
     "_%n other_::_%n others_" : ["외 %n명"],
     "{actor} invited you to {call}" : "{actor} 님이 {call}에 초대함",
     "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "당신은 <strong>대화</strong>에 초대되었거나 <strong>통화</strong>를 했습니다",
+    "Other activities" : "다른 활동",
     "Talk" : "토크",
     "Guest" : "손님",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "환영합니다!\n이것으로 Nextcloud Talk에서 가능한 것들을 알게될 것입니다.",
