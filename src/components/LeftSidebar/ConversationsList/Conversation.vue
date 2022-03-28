@@ -300,7 +300,7 @@ export default {
 		},
 
 		to() {
-			return !this.isSearchResult ? { name: 'conversation', params: { token: this.item.token } } : ''
+			return this.item?.token ? { name: 'conversation', params: { token: this.item.token } } : ''
 		},
 
 		isActive() {
