@@ -189,6 +189,16 @@
 				@click="resendInvitation">
 				{{ t('spreed', 'Resend invitation') }}
 			</ActionButton>
+			<ActionButton v-if="canSendCallNotification"
+				:close-after-click="true"
+				@click="sendCallNotification">
+				<template #icon>
+					<Bell :size="20"
+						title=""
+						decorative />
+				</template>
+				{{ t('spreed', 'Send call notification') }}
+			</ActionButton>
 			<ActionSeparator v-if="attendeePin || canBePromoted || canBeDemoted || isEmailActor" />
 			<ActionButton icon="icon-delete"
 				:close-after-click="true"
@@ -228,6 +238,7 @@ import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper'
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
 
 // Material design icons
+import Bell from 'vue-material-design-icons/Bell'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal'
 import Microphone from 'vue-material-design-icons/Microphone'
 import Phone from 'vue-material-design-icons/Phone'
@@ -253,6 +264,7 @@ export default {
 		ParticipantPermissionsEditor,
 
 		// Material design icons
+		Bell,
 		DotsHorizontal,
 		Microphone,
 		Phone,
@@ -388,6 +400,19 @@ export default {
 			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS
 		},
 
+		isUserActor() {
+			return this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
+		},
+
+		canSendCallNotification() {
+			return this.isUserActor
+				&& !this.isSelf
+				&& (this.currentParticipant.permissions & PARTICIPANT.PERMISSIONS.CALL_START) !== 0
+				// Can also be undefined, so have to check > than disconnect
+				&& this.currentParticipant.participantFlags > PARTICIPANT.CALL_FLAG.DISCONNECTED
+				&& this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
+		},
+
 		computedName() {
 			if (!this.isSearched) {
 				const displayName = this.participant.displayName.trim()
@@ -483,6 +508,7 @@ export default {
 		currentParticipant() {
 			return this.$store.getters.conversation(this.token) || {
 				sessionId: '0',
+				participantFlags: 0,
 				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
 			}
 		},
@@ -646,6 +672,19 @@ export default {
 				showSuccess(t('spreed', 'Invitation was sent to {actorId}.', { actorId: this.participant.actorId }))
 			} catch (error) {
 				showError(t('spreed', 'Could not send invitation to {actorId}', { actorId: this.participant.actorId }))
+			}
+		},
+
+		async sendCallNotification() {
+			try {
+				await this.$store.dispatch('sendCallNotification', {
+					token: this.token,
+					attendeeId: this.attendeeId,
+				})
+				showSuccess(t('spreed', 'Notification was sent to {displayName}.', { displayName: this.participant.displayName }))
+			} catch (error) {
+				console.error(error)
+				showError(t('spreed', 'Could not send notification to {displayName}', { displayName: this.participant.displayName }))
 			}
 		},
 

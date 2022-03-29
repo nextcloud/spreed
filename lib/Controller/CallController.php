@@ -137,6 +137,30 @@ class CallController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireCallEnabled
 	 * @RequireParticipant
+	 * @RequirePermissions(permissions=call-start)
+	 *
+	 * @param int $attendeeId
+	 * @return DataResponse
+	 */
+	public function ringAttendee(int $attendeeId): DataResponse {
+		if ($this->room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($this->participant->getSession() && $this->participant->getSession()->getInCall() === Participant::FLAG_DISCONNECTED) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		if (!$this->participantService->sendCallNotificationForAttendee($this->room, $this->participant, $attendeeId)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireParticipant
 	 *
 	 * @param int flags
 	 * @return DataResponse

@@ -209,6 +209,9 @@ class InjectionMiddleware extends Middleware {
 			if ($textPermission === 'chat' && !($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
 				throw new PermissionsException();
 			}
+			if ($textPermission === 'call-start' && !($participant->getPermissions() & Attendee::PERMISSIONS_CALL_START)) {
+				throw new PermissionsException();
+			}
 		}
 	}
 

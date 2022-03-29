@@ -42,6 +42,7 @@ use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Events\SendCallNotificationEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -988,6 +989,28 @@ class ParticipantService {
 		} else {
 			$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $event);
 		}
+	}
+
+	public function sendCallNotificationForAttendee(Room $room, Participant $currentParticipant, int $targetAttendeeId): bool {
+		$attendee = $this->attendeeMapper->getById($targetAttendeeId);
+		if ($attendee->getActorType() !== Attendee::ACTOR_USERS) {
+			return false;
+		}
+
+		$sessions = $this->sessionMapper->findByAttendeeId($targetAttendeeId);
+		foreach ($sessions as $session) {
+			if ($session->getInCall() !== Participant::FLAG_DISCONNECTED) {
+				return false;
+			}
+		}
+
+		$this->dispatcher->dispatchTyped(new SendCallNotificationEvent(
+			$room,
+			$currentParticipant,
+			new Participant($room, $attendee, null)
+		));
+
+		return true;
 	}
 
 	public function updateCallFlags(Room $room, Participant $participant, int $flags): void {
