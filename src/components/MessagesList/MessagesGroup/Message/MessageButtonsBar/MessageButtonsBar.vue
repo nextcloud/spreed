@@ -423,7 +423,7 @@ export default {
 					actorId: this.actorId,
 				})
 			}
-
+			this.closeReactionsMenu()
 		},
 
 		handleDelete() {
