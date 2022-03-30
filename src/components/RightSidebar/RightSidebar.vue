@@ -80,6 +80,17 @@
 				</div>
 			</div>
 		</AppSidebarTab>
+		<AppSidebarTab v-if="getUserId"
+			id="shared-items"
+			ref="sharedItemsTab"
+			:order="4"
+			:name="t('spreed', 'Shared Items')">
+			<template #icon>
+				<FolderMultipleImage :size="20"
+					decorative
+					title="" />
+			</template>
+		</AppSidebarTab>
 	</AppSidebar>
 </template>
 
@@ -87,6 +98,7 @@
 import { emit } from '@nextcloud/event-bus'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
+import SharedItemsTab from './SharedItems/SharedItemsTab'
 import ChatView from '../ChatView'
 import { CollectionList } from 'nextcloud-vue-collections'
 import BrowserStorage from '../../services/BrowserStorage'
@@ -98,12 +110,14 @@ import SipSettings from './SipSettings'
 import LobbyStatus from './LobbyStatus'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import CogIcon from 'vue-material-design-icons/Cog'
+import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 
 export default {
 	name: 'RightSidebar',
 	components: {
 		AppSidebar,
 		AppSidebarTab,
+		SharedItemsTab,
 		ChatView,
 		CollectionList,
 		ParticipantsTab,
@@ -112,6 +126,7 @@ export default {
 		LobbyStatus,
 		Button,
 		CogIcon,
+		FolderMultipleImage,
 	},
 
 	mixins: [
