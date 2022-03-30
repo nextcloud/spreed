@@ -21,18 +21,34 @@
 
 <template>
 	<div>
-		Some content
+		<CollectionList v-if="getUserId && conversation.token"
+			:id="conversation.token"
+			type="room"
+			:name="conversation.displayName" />
 	</div>
 </template>
 
 <script>
+import { CollectionList } from 'nextcloud-vue-collections'
 
 export default {
 	name: 'SharedItemsTab',
 
-	props: {
+	components: {
+		CollectionList,
 	},
+
+	props: {
+		conversation: {
+			type: Object,
+			required: true,
+		},
+	},
+
 	computed: {
+		getUserId() {
+			return this.$store.getters.getUserId()
+		},
 	},
 }
 </script>

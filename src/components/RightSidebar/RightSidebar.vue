@@ -63,10 +63,6 @@
 			<SipSettings v-if="showSIPSettings"
 				:meeting-id="conversation.token"
 				:attendee-pin="conversation.attendeePin" />
-			<CollectionList v-if="getUserId && conversation.token"
-				:id="conversation.token"
-				type="room"
-				:name="conversation.displayName" />
 			<div v-if="!getUserId" id="app-settings">
 				<div id="app-settings-header">
 					<Button type="tertiary" @click="showSettings">
@@ -91,6 +87,7 @@
 					decorative
 					title="" />
 			</template>
+			<SharedItemsTab :conversation="conversation" />
 		</AppSidebarTab>
 	</AppSidebar>
 </template>
@@ -101,7 +98,6 @@ import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 import SharedItemsTab from './SharedItems/SharedItemsTab'
 import ChatView from '../ChatView'
-import { CollectionList } from 'nextcloud-vue-collections'
 import BrowserStorage from '../../services/BrowserStorage'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
 import ParticipantsTab from './Participants/ParticipantsTab'
@@ -120,7 +116,6 @@ export default {
 		AppSidebarTab,
 		SharedItemsTab,
 		ChatView,
-		CollectionList,
 		ParticipantsTab,
 		SetGuestUsername,
 		SipSettings,
