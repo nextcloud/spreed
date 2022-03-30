@@ -30,10 +30,12 @@
 		<SharedItems title="Deck cards">
 			some content
 		</SharedItems>
-		<CollectionList v-if="getUserId && conversation.token"
-			:id="conversation.token"
-			type="room"
-			:name="conversation.displayName" />
+		<SharedItems title="Projects">
+			<CollectionList v-if="getUserId && conversation.token"
+				:id="conversation.token"
+				type="room"
+				:name="conversation.displayName" />
+		</SharedItems>
 	</div>
 </template>
 
