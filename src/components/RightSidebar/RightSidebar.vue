@@ -84,6 +84,7 @@
 			id="shared-items"
 			ref="sharedItemsTab"
 			:order="4"
+			icon="icon-details"
 			:name="t('spreed', 'Shared Items')">
 			<template #icon>
 				<FolderMultipleImage :size="20"
