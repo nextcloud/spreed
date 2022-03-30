@@ -114,8 +114,16 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 	const self = this
 	const constraints = mediaConstraints || { audio: true, video: true }
 
-	this._mediaDevicesSource.setAudioAllowed(!!constraints.audio)
-	this._mediaDevicesSource.setVideoAllowed(!!constraints.video)
+	if (constraints.audio) {
+		this.allowAudio()
+	} else {
+		this.disallowAudio()
+	}
+	if (constraints.video) {
+		this.allowVideo()
+	} else {
+		this.disallowVideo()
+	}
 
 	// If local media is started with neither audio nor video the local media
 	// will not be active (it will not react to changes in the selected media
@@ -280,6 +288,16 @@ LocalMedia.prototype.stopScreenShare = function() {
 }
 
 // Audio controls
+LocalMedia.prototype.disallowAudio = function() {
+	this._mediaDevicesSource.setAudioAllowed(false)
+	this.emit('audioDisallowed')
+}
+
+LocalMedia.prototype.allowAudio = function() {
+	this._mediaDevicesSource.setAudioAllowed(true)
+	this.emit('audioAllowed')
+}
+
 LocalMedia.prototype.mute = function() {
 	this._setAudioEnabled(false)
 	this.emit('audioOff')
@@ -291,6 +309,16 @@ LocalMedia.prototype.unmute = function() {
 }
 
 // Video controls
+LocalMedia.prototype.disallowVideo = function() {
+	this._mediaDevicesSource.setVideoAllowed(false)
+	this.emit('videoDisallowed')
+}
+
+LocalMedia.prototype.allowVideo = function() {
+	this._mediaDevicesSource.setVideoAllowed(true)
+	this.emit('videoAllowed')
+}
+
 LocalMedia.prototype.pauseVideo = function() {
 	this._setVideoEnabled(false)
 	this.emit('videoOff')
