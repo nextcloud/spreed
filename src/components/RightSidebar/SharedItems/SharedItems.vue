@@ -21,17 +21,24 @@
 
 <template>
 	<div class="shared-items">
-		<button class="shared-items__caption" @click="handleCaptionClick">
+		<Button type="tertiary"
+			:wide="true"
+			@click="handleCaptionClick">
 			{{ title }}
-		</button>
+		</Button>
 		<slot />
 	</div>
 </template>
 
 <script>
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'SharedItems',
+
+	components: {
+		Button,
+	},
 
 	props: {
 		title: {
@@ -50,16 +57,12 @@ export default {
 
 <style lang="scss" scoped>
 .shared-items {
-	&__caption{
-		text-align: left;
-		font-size: 16px;
-		background: none;
-		border: none;
-		width: 100%;
-		height: 44px;
-		padding: 0;
-		margin: 0 0 0 0 !important;
-		font-weight: bold;
-	}
+	margin-bottom: 8px;
+}
+
+::v-deep .button-vue--vue-tertiary {
+	justify-content: flex-start;
+	border-radius: var(--border-radius-large);
+	opacity: 1;
 }
 </style>
