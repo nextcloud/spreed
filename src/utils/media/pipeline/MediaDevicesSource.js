@@ -68,6 +68,14 @@ export default class MediaDevicesSource extends TrackSource {
 		this._active = false
 	}
 
+	isAudioAllowed() {
+		return this._audioAllowed
+	}
+
+	isVideoAllowed() {
+		return this._videoAllowed
+	}
+
 	setAudioAllowed(audioAllowed) {
 		if (this._audioAllowed === audioAllowed) {
 			return

@@ -288,6 +288,10 @@ LocalMedia.prototype.stopScreenShare = function() {
 }
 
 // Audio controls
+LocalMedia.prototype.isAudioAllowed = function() {
+	return this._mediaDevicesSource.isAudioAllowed()
+}
+
 LocalMedia.prototype.disallowAudio = function() {
 	this._mediaDevicesSource.setAudioAllowed(false)
 	this.emit('audioDisallowed')
@@ -309,6 +313,10 @@ LocalMedia.prototype.unmute = function() {
 }
 
 // Video controls
+LocalMedia.prototype.isVideoAllowed = function() {
+	return this._mediaDevicesSource.isVideoAllowed()
+}
+
 LocalMedia.prototype.disallowVideo = function() {
 	this._mediaDevicesSource.setVideoAllowed(false)
 	this.emit('videoDisallowed')

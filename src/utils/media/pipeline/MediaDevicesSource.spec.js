@@ -161,6 +161,27 @@ describe('MediaDevicesSource', () => {
 		jest.restoreAllMocks()
 	})
 
+	describe('get allowed state', () => {
+		test('audio and video are allowed by default', () => {
+			expect(mediaDevicesSource.isAudioAllowed()).toBe(true)
+			expect(mediaDevicesSource.isVideoAllowed()).toBe(true)
+		})
+
+		test('after modifying the audio state', () => {
+			mediaDevicesSource.setAudioAllowed(false)
+
+			expect(mediaDevicesSource.isAudioAllowed()).toBe(false)
+			expect(mediaDevicesSource.isVideoAllowed()).toBe(true)
+		})
+
+		test('after modifying the video state', () => {
+			mediaDevicesSource.setVideoAllowed(false)
+
+			expect(mediaDevicesSource.isAudioAllowed()).toBe(true)
+			expect(mediaDevicesSource.isVideoAllowed()).toBe(false)
+		})
+	})
+
 	describe('start', () => {
 
 		/**
