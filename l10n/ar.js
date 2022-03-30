@@ -940,6 +940,7 @@ OC.L10N.register(
     "Mute others" : "كتم صوت الآخرين",
     "Exit fullscreen (F)" : "الخروج من ملء الشاشة (F)",
     "Fullscreen (F)" : "ملء الشاشة (F)",
+    "You have been mentioned in the chat." : "أشار إليك أحدهم في الدردشة",
     "Send" : "أرسل",
     "Add more files" : "اضافة المزيد من الملفات",
     "No unread mentions" : "لا يوجد منشن جديد",
