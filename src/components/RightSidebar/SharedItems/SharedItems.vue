@@ -20,49 +20,46 @@
 -->
 
 <template>
-	<div>
-		<SharedItems title="Media">
-			some content
-		</SharedItems>
-		<SharedItems title="Files">
-			some content
-		</SharedItems>
-		<SharedItems title="Deck cards">
-			some content
-		</SharedItems>
-		<CollectionList v-if="getUserId && conversation.token"
-			:id="conversation.token"
-			type="room"
-			:name="conversation.displayName" />
+	<div class="shared-items">
+		<button class="shared-items__caption" @click="handleCaptionClick">
+			{{ title }}
+		</button>
+		<slot />
 	</div>
 </template>
 
 <script>
-import { CollectionList } from 'nextcloud-vue-collections'
-import SharedItems from './SharedItems'
 
 export default {
-	name: 'SharedItemsTab',
-
-	components: {
-		SharedItems,
-		CollectionList,
-	},
+	name: 'SharedItems',
 
 	props: {
-		conversation: {
-			type: Object,
+		title: {
+			type: String,
 			required: true,
 		},
 	},
 
-	computed: {
-		getUserId() {
-			return this.$store.getters.getUserId()
+	methods: {
+		handleCaptionClick() {
+			console.debug('Show more')
 		},
 	},
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+.shared-items {
+	&__caption{
+		text-align: left;
+		font-size: 16px;
+		background: none;
+		border: none;
+		width: 100%;
+		height: 44px;
+		padding: 0;
+		margin: 0 0 0 0 !important;
+		font-weight: bold;
+	}
+}
 </style>
