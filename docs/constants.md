@@ -82,6 +82,17 @@ title: Constants
 * `bots` - Used by commands (actor-id is the used `/command`) and the changelog conversation (actor-id is `changelog`)
 * `bridged` - Users whose messages are bridged in by the [Matterbridge integration](matterbridge.md)
 
+## Chat
+
+### Shared item types
+* `audio` - Shared audio file
+* `deckcard` - Shared deck card
+* `file` - Shared files not falling into any other category
+* `location` - Shared geo location
+* `media` - Shared files with mimetype starting with image or video
+* `other` - Shared objects not falling into any other category
+* `voice` - Voice messages
+
 ## Signaling modes
 * `internal` - No external signaling server is used
 * `external` - A single external signaling server is used

@@ -40,8 +40,10 @@ Feature: chat/public
       | roomType | 3 |
       | roomName | room |
     When user "participant1" shares rich-object "call" "R4nd0mT0k3n" '{"name":"Another room","call-type":"group"}' to room "public room" with 201 (v1)
-    And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
-    Then user "participant1" sees the following shared media in room "public room" with 200
+    Then user "participant1" sees the following shared other in room "public room" with 200
+      | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
+      | public room | users     | participant1 | participant1-displayname | {object} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"object":{"name":"Another room","call-type":"group","type":"call","id":"R4nd0mT0k3n"}} |
+    When user "participant1" shares "welcome.txt" with room "public room" with OCS 100
+    Then user "participant1" sees the following shared file in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
       | public room | users     | participant1 | participant1-displayname | {file}   | "IGNORE" |
-      | public room | users     | participant1 | participant1-displayname | {object} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"object":{"name":"Another room","call-type":"group","type":"call","id":"R4nd0mT0k3n"}} |

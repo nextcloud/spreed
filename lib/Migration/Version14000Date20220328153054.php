@@ -39,7 +39,7 @@ class Version14000Date20220328153054 extends SimpleMigrationStep {
 	 * @return null|ISchemaWrapper
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
-		/** @var ISchemaWrapper */
+		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
 		$table = $schema->getTable('talk_attendees');

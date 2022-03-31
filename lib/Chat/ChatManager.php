@@ -31,6 +31,7 @@ use OCA\Talk\Events\ChatParticipantEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -91,6 +92,7 @@ class ChatManager {
 	protected $cache;
 	/** @var ICache */
 	protected $unreadCountCache;
+	protected AttachmentService $attachmentService;
 
 	public function __construct(CommentsManager $commentsManager,
 								IEventDispatcher $dispatcher,
@@ -101,7 +103,8 @@ class ChatManager {
 								ParticipantService $participantService,
 								Notifier $notifier,
 								ICacheFactory $cacheFactory,
-								ITimeFactory $timeFactory) {
+								ITimeFactory $timeFactory,
+								AttachmentService $attachmentService) {
 		$this->commentsManager = $commentsManager;
 		$this->dispatcher = $dispatcher;
 		$this->connection = $connection;
@@ -113,6 +116,7 @@ class ChatManager {
 		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
 		$this->unreadCountCache = $cacheFactory->createDistributed('talk/unreadcount');
 		$this->timeFactory = $timeFactory;
+		$this->attachmentService = $attachmentService;
 	}
 
 	/**
@@ -185,6 +189,10 @@ class ChatManager {
 		} catch (NotFoundException $e) {
 		}
 		$this->cache->remove($chat->getToken());
+
+		if ($messageType === 'object_shared' || $messageType === 'file_shared') {
+			$this->attachmentService->createAttachmentEntry($chat, $comment, $messageType, $messageDecoded['parameters'] ?? []);
+		}
 
 		return $comment;
 	}
@@ -347,6 +355,8 @@ class ChatManager {
 		);
 		$comment->setVerb('comment_deleted');
 		$this->commentsManager->save($comment);
+
+		$this->attachmentService->deleteAttachmentByMessageId((int) $comment->getId());
 
 		return $this->addSystemMessage(
 			$chat,
@@ -611,25 +621,26 @@ class ChatManager {
 		$this->shareProvider->deleteInRoom($chat->getToken());
 
 		$this->notifier->removePendingNotificationsForRoom($chat);
+
+		$this->attachmentService->deleteAttachmentsForRoom($chat);
 	}
 
 	/**
 	 * Search for comments with a given content
 	 *
 	 * @param Room $chat
-	 * @param int $offset
-	 * @param int $limit
+	 * @param int[] $commentIds
 	 * @return IComment[]
 	 */
-	public function getSharedObjectMessages(Room $chat, int $offset, int $limit): array {
-		return $this->commentsManager->getCommentsWithVerbForObjectSinceComment(
-			'chat',
-			(string) $chat->getId(),
-			['object_shared'],
-			$offset,
-			'desc',
-			$limit
-		);
+	public function getMessagesById(Room $chat, array $commentIds): array {
+		$comments = $this->commentsManager->getCommentsById($commentIds);
+
+		$comments = array_filter($comments, static function (IComment $comment) use ($chat) {
+			return $comment->getObjectType() === 'chat'
+				&& (int)$comment->getObjectId() === $chat->getId();
+		});
+
+		return $comments;
 	}
 
 	/**
