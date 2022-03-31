@@ -1115,6 +1115,8 @@ OC.L10N.register(
     "Error while uploading file \"{fileName}\"" : "\"{fileName}\" dosyası yüklenirken sorun çıktı",
     "An error happened when trying to share your file" : "Dosyanız paylaşılmaya çalışılırken bir sorun çıktı",
     "Could not post message: {errorMessage}" : "İleti gönderilemedi: {errorMessage}",
+    "Failed to add reaction" : "Tepki eklenemedi",
+    "Failed to remove reaction" : "Tepki silinemedi",
     "Failed to join the conversation. Try to reload the page." : "Görüşmeye katılınamadı. Sayfayı yeniden yüklemeyi deneyin.",
     "You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?" : "Başka bir pencereden ya da aygıttan da katıldığınız görüşmeye yeniden katılmaya çalışıyorsunuz. Nextcloud Talk henüz bu özelliği desteklemiyor. Ne yapmak istersiniz?",
     "Join here" : "Buradan katılmak",

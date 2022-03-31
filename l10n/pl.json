@@ -1113,6 +1113,8 @@
     "Error while uploading file \"{fileName}\"" : "Błąd podczas wysyłania pliku \"{fileName}\"",
     "An error happened when trying to share your file" : "Wystąpił błąd podczas udostępnienia tego pliku",
     "Could not post message: {errorMessage}" : "Nie można wysłać wiadomości: {errorMessage}",
+    "Failed to add reaction" : "Nie udało się dodać reakcji",
+    "Failed to remove reaction" : "Nie udało się usunąć reakcji",
     "Failed to join the conversation. Try to reload the page." : "Nie udało się dołączyć do rozmowy. Spróbuj ponownie załadować stronę.",
     "You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?" : "Próbujesz dołączyć do rozmowy, mając aktywną sesję w innym oknie lub urządzeniu. Obecnie ta sesja nie jest jeszcze obsługiwana przez Nextcloud Talk. Co chcesz zrobić?",
     "Join here" : "Dołącz tutaj",
