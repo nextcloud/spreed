@@ -219,8 +219,8 @@ export default {
 			}
 
 			if (this.currentParticipantIsModerator) {
-				if (participant1.attendeePermissions !== participant2.attendeePermissions) {
-					return participant1.attendeePermissions < participant2.attendeePermissions ? 1 : -1
+				if (participant1.permissions !== participant2.permissions) {
+					return participant1.permissions < participant2.permissions ? 1 : -1
 				}
 			}
 			const participant1Away = this.isNotAvailable(participant1)
