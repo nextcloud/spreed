@@ -356,6 +356,8 @@ class ChatManager {
 		$comment->setVerb('comment_deleted');
 		$this->commentsManager->save($comment);
 
+		$this->attachmentService->deleteAttachmentByMessageId((int) $comment->getId());
+
 		return $this->addSystemMessage(
 			$chat,
 			$participant->getAttendee()->getActorType(),
@@ -619,6 +621,8 @@ class ChatManager {
 		$this->shareProvider->deleteInRoom($chat->getToken());
 
 		$this->notifier->removePendingNotificationsForRoom($chat);
+
+		$this->attachmentService->deleteAttachmentsForRoom($chat);
 	}
 
 	/**

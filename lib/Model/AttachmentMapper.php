@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Model;
 
 use OCP\AppFramework\Db\QBMapper;
+use OCP\AppFramework\Db\TTransactional;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
@@ -33,6 +34,7 @@ use OCP\IDBConnection;
  * @method Attachment[] findEntities(IQueryBuilder $query)
  */
 class AttachmentMapper extends QBMapper {
+	use TTransactional;
 
 	/**
 	 * @param IDBConnection $db
@@ -75,5 +77,23 @@ class AttachmentMapper extends QBMapper {
 		}
 
 		return $this->findEntities($query);
+	}
+
+	public function deleteByMessageId(int $messageId): void {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('message_id', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT)));
+
+		$query->executeStatement();
+	}
+
+	public function deleteByRoomId(int $roomId): void {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
+
+		$this->atomic(static function () use ($query) {
+			$query->executeStatement();
+		}, $this->db);
 	}
 }

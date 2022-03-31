@@ -59,4 +59,12 @@ class AttachmentService {
 	public function getAttachmentsByType(Room $room, string $objectType, int $offset, int $limit): array {
 		return $this->attachmentMapper->getAttachmentsByType($room->getId(), $objectType, $offset, $limit);
 	}
+
+	public function deleteAttachmentByMessageId(int $messageId): void {
+		$this->attachmentMapper->deleteByMessageId($messageId);
+	}
+
+	public function deleteAttachmentsForRoom(Room $room): void {
+		$this->attachmentMapper->deleteByRoomId($room->getId());
+	}
 }
