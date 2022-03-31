@@ -11,6 +11,7 @@ OC.L10N.register(
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Osallistuit puheluun käyttäjien {user1}, {user2}, {user3}, {user4} ja {user5} kanssa",
     "_%n other_::_%n others_" : ["%n muu","%n muuta"],
     "{actor} invited you to {call}" : "{actor} kutsui sinut puheluun {call}",
+    "Other activities" : "Muut tapahtumat",
     "Talk" : "Puhe",
     "Guest" : "Vieras",
     "The command does not exist" : "Komentoa ei ole olemassa",
