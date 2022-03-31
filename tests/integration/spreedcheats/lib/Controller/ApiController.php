@@ -51,6 +51,9 @@ class ApiController extends OCSController {
 	 */
 	public function resetSpreed(): DataResponse {
 		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_attachments')->executeStatement();
+
+		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_attendees')->executeStatement();
 
 		$delete = $this->db->getQueryBuilder();
