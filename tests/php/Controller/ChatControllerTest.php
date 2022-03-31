@@ -33,6 +33,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
 use OCP\App\IAppManager;
@@ -68,6 +69,8 @@ class ChatControllerTest extends TestCase {
 	protected $participantService;
 	/** @var SessionService|MockObject */
 	protected $sessionService;
+	/** @var AttachmentService|MockObject */
+	protected $attachmentService;
 	/** @var GuestManager|MockObject */
 	protected $guestManager;
 	/** @var MessageParser|MockObject */
@@ -111,6 +114,7 @@ class ChatControllerTest extends TestCase {
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->sessionService = $this->createMock(SessionService::class);
+		$this->attachmentService = $this->createMock(AttachmentService::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->autoCompleteManager = $this->createMock(IManager::class);
@@ -146,6 +150,7 @@ class ChatControllerTest extends TestCase {
 			$this->chatManager,
 			$this->participantService,
 			$this->sessionService,
+			$this->attachmentService,
 			$this->guestManager,
 			$this->messageParser,
 			$this->autoCompleteManager,

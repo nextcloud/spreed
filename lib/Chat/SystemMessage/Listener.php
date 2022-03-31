@@ -350,6 +350,7 @@ class Listener implements IEventListener {
 					unset($metaData['messageType']);
 				}
 			}
+			$metaData['mimeType'] = $share->getNode()->getMimeType();
 
 			$listener->sendSystemMessage($room, 'file_shared', ['share' => $share->getId(), 'metaData' => $metaData]);
 		};

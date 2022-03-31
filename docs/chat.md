@@ -154,7 +154,29 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 
 * Response: [See official OCS Share API docs](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-share-api.html?highlight=sharing#create-a-new-share)
 
-## List media shared in a chat
+## List overview of items shared into a chat
+
+* Required capability: `rich-object-list-media`
+* Method: `GET`
+* Endpoint: `/chat/{token}/share/overview`
+* Data:
+
+  field | type | Description
+  ---|---|---
+  `limit` | int  | Number of chat messages with shares you want to get
+
+* Response:
+    - Note: if a file was shared multiple times it will be returned multiple times
+    - Status code:
+        + `200 OK`
+        + `404 Not Found` When the conversation could not be found for the participant
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
+
+    - Data:
+        + An array per item type
+            - Array of messages as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)
+
+## List items of type shared in a chat
 
 * Required capability: `rich-object-list-media`
 * Method: `GET`
@@ -163,8 +185,9 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 
   field | type | Description
   ---|---|---
-  `lastKnownMessageId` | int | Serves as an offset for the query. The lastKnownMessageId for the next page is available in the `X-Chat-Last-Given` header.
-  `limit` | int | Number of chat messages with shares you want to get
+  `objectType` | string | One of the [Constants - Shared item types](constants.md#shared-item-types)
+  `lastKnownMessageId` | int  | Serves as an offset for the query. The lastKnownMessageId for the next page is available in the `X-Chat-Last-Given` header.
+  `limit` | int  | Number of chat messages with shares you want to get
 
 * Response:
     - Note: if a file was shared multiple times it will be returned multiple times

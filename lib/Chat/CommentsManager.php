@@ -26,6 +26,7 @@ namespace OCA\Talk\Chat;
 use OC\Comments\Comment;
 use OC\Comments\Manager;
 use OCP\Comments\IComment;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 
 class CommentsManager extends Manager {
 	/**
@@ -38,5 +39,28 @@ class CommentsManager extends Manager {
 		$comment = new Comment($this->normalizeDatabaseData($data));
 		$comment->setMessage($message, ChatManager::MAX_CHAT_LENGTH);
 		return $comment;
+	}
+
+	/**
+	 * @param string[] $ids
+	 * @return IComment[]
+	 * @throws \OCP\DB\Exception
+	 */
+	public function getCommentsById(array $ids): array {
+		$commentIds = array_map('intval', $ids);
+
+		$query = $this->dbConn->getQueryBuilder();
+		$query->select('*')
+			->from('comments')
+			->where($query->expr()->in('id', $query->createNamedParameter($commentIds, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		$comments = [];
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$comments[(int) $row['id']] = $this->getCommentFromData($row);
+		}
+		$result->closeCursor();
+
+		return $comments;
 	}
 }

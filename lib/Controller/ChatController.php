@@ -30,11 +30,13 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\GuestManager;
 use OCA\Talk\MatterbridgeManager;
+use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
 use OCP\App\IAppManager;
@@ -77,6 +79,8 @@ class ChatController extends AEnvironmentAwareController {
 
 	/** @var SessionService */
 	private $sessionService;
+
+	protected AttachmentService $attachmentService;
 
 	/** @var GuestManager */
 	private $guestManager;
@@ -125,6 +129,7 @@ class ChatController extends AEnvironmentAwareController {
 								ChatManager $chatManager,
 								ParticipantService $participantService,
 								SessionService $sessionService,
+								AttachmentService $attachmentService,
 								GuestManager $guestManager,
 								MessageParser $messageParser,
 								IManager $autoCompleteManager,
@@ -145,6 +150,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->chatManager = $chatManager;
 		$this->participantService = $participantService;
 		$this->sessionService = $sessionService;
+		$this->attachmentService = $attachmentService;
 		$this->guestManager = $guestManager;
 		$this->messageParser = $messageParser;
 		$this->autoCompleteManager = $autoCompleteManager;
@@ -710,17 +716,30 @@ class ChatController extends AEnvironmentAwareController {
 	 * @RequireReadWriteConversation
 	 * @RequireModeratorOrNoLobby
 	 *
-	 * @param int $lastKnownMessageId
 	 * @param int $limit
 	 * @return DataResponse
 	 */
-	public function getObjectsSharedInRoom(int $lastKnownMessageId = 0, int $limit = 100): DataResponse {
-		$offset = max(0, $lastKnownMessageId);
-		$limit = min(200, $limit);
+	public function getObjectsSharedInRoomOverview(int $limit = 7): DataResponse {
+		$limit = min(20, $limit);
 
-		$comments = $this->chatManager->getSharedObjectMessages($this->room, $offset, $limit);
+		$objectTypes = [
+			Attachment::TYPE_AUDIO,
+			Attachment::TYPE_DECK_CARD,
+			Attachment::TYPE_FILE,
+			Attachment::TYPE_LOCATION,
+			Attachment::TYPE_MEDIA,
+			Attachment::TYPE_OTHER,
+			Attachment::TYPE_VOICE,
+		];
 
 		$messages = [];
+		$messageIdsByType = [];
+		foreach ($objectTypes as $objectType) {
+			$attachments = $this->attachmentService->getAttachmentsByType($this->room, $objectType, 0, $limit);
+			$messageIdsByType[$objectType] = array_map(static fn (Attachment $attachment): int => $attachment->getMessageId(), $attachments);
+		}
+		$comments = $this->chatManager->getMessagesById($this->room, array_merge(...$messageIdsByType));
+
 		foreach ($comments as $comment) {
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
@@ -729,17 +748,67 @@ class ChatController extends AEnvironmentAwareController {
 				continue;
 			}
 
-			$messages[] = $message->toArray();
+			$messages[(int) $comment->getId()] = $message->toArray();
 		}
+
+		$messagesByType = [];
+		foreach ($objectTypes as $objectType) {
+			$messagesByType[$objectType] = [];
+
+			foreach ($messageIdsByType[$objectType] as $messageId) {
+				$messagesByType[$objectType][] = $messages[$messageId];
+			}
+		}
+
+		return new DataResponse($messagesByType, Http::STATUS_OK);
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireParticipant
+	 * @RequireReadWriteConversation
+	 * @RequireModeratorOrNoLobby
+	 *
+	 * @param string $objectType
+	 * @param int $lastKnownMessageId
+	 * @param int $limit
+	 * @return DataResponse
+	 */
+	public function getObjectsSharedInRoom(string $objectType, int $lastKnownMessageId = 0, int $limit = 100): DataResponse {
+		$offset = max(0, $lastKnownMessageId);
+		$limit = min(200, $limit);
+
+		$attachments = $this->attachmentService->getAttachmentsByType($this->room, $objectType, $offset, $limit);
+		$messageIds = array_map(static fn (Attachment $attachment): int => $attachment->getMessageId(), $attachments);
+
+		$messages = $this->getMessagesForRoom($this->room, $messageIds);
 
 		$response = new DataResponse($messages, Http::STATUS_OK);
 
-		$newLastKnown = end($comments);
-		if ($newLastKnown instanceof IComment) {
-			$response->addHeader('X-Chat-Last-Given', $newLastKnown->getId());
+		if (!empty($messages)) {
+			$newLastKnown = min(array_keys($messages));
+			$response->addHeader('X-Chat-Last-Given', $newLastKnown);
 		}
 
 		return $response;
+	}
+
+	protected function getMessagesForRoom(Room $room, array $messageIds): array {
+		$comments = $this->chatManager->getMessagesById($room, $messageIds);
+
+		$messages = [];
+		foreach ($comments as $comment) {
+			$message = $this->messageParser->createMessage($room, $this->participant, $comment, $this->l);
+			$this->messageParser->parseMessage($message);
+
+			if (!$message->getVisibility()) {
+				continue;
+			}
+
+			$messages[(int) $comment->getId()] = $message->toArray();
+		}
+
+		return $messages;
 	}
 
 	/**
