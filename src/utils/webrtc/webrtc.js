@@ -1381,6 +1381,47 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		}
 	})
 
+	/**
+	 * Return the appropriate call flags for the current local tracks.
+	 *
+	 * @return {number} a bitwise combination of call flags.
+	 */
+	function getCallFlagsFromLocalMedia() {
+		let callFlags = PARTICIPANT.CALL_FLAG.IN_CALL
+
+		if (webrtc.webrtc.hasAudioTrack()) {
+			callFlags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
+		}
+		if (webrtc.webrtc.hasVideoTrack()) {
+			callFlags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
+		}
+
+		return callFlags
+	}
+
+	signaling.on('joinCall', function(token) {
+		const expectedCallFlags = getCallFlagsFromLocalMedia()
+
+		// If the current call flags do not match the expected ones (for
+		// example, if a new track is added during a forced reconnection the
+		// update would fail, and once joining the call finishes the flags for
+		// that new track would not be set) they need to be updated.
+		if (signaling.getCurrentCallFlags() === expectedCallFlags) {
+			return
+		}
+
+		// The other participants may not establish a connection if the original
+		// flags were just IN_CALL, so a forced reconnection needs to be
+		// triggered in that case.
+		if (signaling.getCurrentCallFlags() === PARTICIPANT.CALL_FLAG.IN_CALL) {
+			forceReconnect(signaling, expectedCallFlags)
+
+			return
+		}
+
+		signaling.updateCurrentCallFlags(expectedCallFlags)
+	})
+
 	webrtc.on('localTrackReplaced', function(newTrack, oldTrack/*, stream */) {
 		// Device disabled, just update the call flags.
 		if (!newTrack) {
