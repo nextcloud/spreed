@@ -27,11 +27,20 @@ namespace OCA\Talk\Migration;
 
 use Closure;
 use Doctrine\DBAL\Types\Types;
+use OCA\Talk\Model\Attachment;
 use OCP\DB\ISchemaWrapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 class Version14000Date20220330141646 extends SimpleMigrationStep {
+	protected IDBConnection $connection;
+
+	public function __construct(IDBConnection $connection) {
+		$this->connection = $connection;
+	}
+
 	/**
 	 * @param IOutput $output
 	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
@@ -89,5 +98,101 @@ class Version14000Date20220330141646 extends SimpleMigrationStep {
 	 */
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
 		// FIXME need to loop over all chat messages :(
+
+		$insert = $this->connection->getQueryBuilder();
+		$insert->insert('talk_attachments')
+			->setValue('room_id', $insert->createParameter('room_id'))
+			->setValue('message_id', $insert->createParameter('message_id'))
+			->setValue('message_time', $insert->createParameter('message_time'))
+			->setValue('object_type', $insert->createParameter('object_type'))
+			->setValue('actor_type', $insert->createParameter('actor_type'))
+			->setValue('actor_id', $insert->createParameter('actor_id'));
+
+		$offset = -1;
+		$select = $this->connection->getQueryBuilder();
+		$select->select('id', 'creation_timestamp', 'object_id', 'actor_type', 'actor_id', 'message')
+			->from('comments')
+			->where($select->expr()->eq('object_type', $select->createParameter('object_type')))
+			->andWhere($select->expr()->eq('verb', $select->createParameter('verb')))
+			->andWhere($select->expr()->gt('id', $select->createParameter('offset')))
+			->orderBy('id', 'ASC')
+			->setMaxResults(1000);
+
+		$select->setParameter('object_type', 'chat')
+			->setParameter('verb', 'object_shared');
+
+		while ($offset !== 0) {
+			$offset = $this->chunkedWriting($insert, $select, max($offset, 0));
+		}
+	}
+
+	protected function chunkedWriting(IQueryBuilder $insert, IQueryBuilder $select, int $offset): int {
+		$select->setParameter('offset', $offset);
+
+		$attachments = [];
+		$result = $select->executeQuery();
+		while ($row = $result->fetch()) {
+			$attachment = [
+				'room_id' => (int) $row['object_id'],
+				'message_id' => (int) $row['id'],
+				'actor_type' => $row['actor_type'],
+				'actor_id' => $row['actor_id'],
+			];
+
+			$datetime = new \DateTime($row['creation_timestamp']);
+			$attachment['message_time'] = $datetime->getTimestamp();
+
+			$message = json_decode($row['message'], true);
+			$messageType = $message['message'] ?? '';
+			$parameters = $message['parameters'] ?? [];
+
+			if ($messageType === 'object_shared') {
+				$objectType = $parameters['objectType'] ?? '';
+				if ($objectType === 'geo-location') {
+					$attachment['object_type'] = Attachment::TYPE_LOCATION;
+				} elseif ($objectType === 'deck-card') {
+					$attachment['object_type'] = Attachment::TYPE_DECK_CARD;
+				} else {
+					$attachment['object_type'] = Attachment::TYPE_OTHER;
+				}
+			} else {
+				$messageType = $parameters['metaData']['messageType'] ?? '';
+				$mimetype = $parameters['metaData']['mimeType'] ?? '';
+
+				if ($messageType === 'voice-message') {
+					$attachment['object_type'] = Attachment::TYPE_VOICE;
+				} elseif (str_starts_with($mimetype, 'audio/')) {
+					$attachment['object_type'] = Attachment::TYPE_AUDIO;
+				} elseif (str_starts_with($mimetype, 'image/') || str_starts_with($mimetype, 'video/')) {
+					$attachment['object_type'] = Attachment::TYPE_MEDIA;
+				} else {
+					$attachment['object_type'] = Attachment::TYPE_FILE;
+				}
+			}
+
+			$attachments[] = $attachment;
+		}
+		$result->closeCursor();
+
+		if (empty($attachments)) {
+			return 0;
+		}
+
+		$this->connection->beginTransaction();
+		foreach ($attachments as $attachment) {
+			$insert
+				->setParameter('room_id', $attachment['room_id'], IQueryBuilder::PARAM_INT)
+				->setParameter('message_id', $attachment['message_id'], IQueryBuilder::PARAM_INT)
+				->setParameter('message_time', $attachment['message_time'], IQueryBuilder::PARAM_INT)
+				->setParameter('actor_type', $attachment['actor_type'])
+				->setParameter('actor_id', $attachment['actor_id'])
+				->setParameter('object_type', $attachment['object_type'])
+			;
+
+			$insert->executeStatement();
+		}
+		$this->connection->commit();
+
+		return end($attachments)['message_id'];
 	}
 }
