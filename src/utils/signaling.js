@@ -398,8 +398,9 @@ Signaling.Internal.prototype.forceReconnect = function(newSession, flags) {
 
 	// FIXME Naive reconnection routine; as the same session is kept peers
 	// must be explicitly ended before the reconnection is forced.
-	this.leaveCall(this.currentCallToken, true)
-	this.joinCall(this.currentCallToken, this.currentCallFlags)
+	this.leaveCall(this.currentCallToken, true).then(() => {
+		this.joinCall(this.currentCallToken, this.currentCallFlags)
+	})
 }
 
 Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
