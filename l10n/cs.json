@@ -1113,6 +1113,8 @@
     "Error while uploading file \"{fileName}\"" : "Chyba při nahrávání „{fileName}“",
     "An error happened when trying to share your file" : "Při pokusu o sdílení vašeho souboru došlo k chybě",
     "Could not post message: {errorMessage}" : "Zprávu se nedaří odeslat: {errorMessage}",
+    "Failed to add reaction" : "Nepodařilo se přidat reakci",
+    "Failed to remove reaction" : "Nepodařilo se odebrat reakci",
     "Failed to join the conversation. Try to reload the page." : "Ke konverzaci se nepodařilo připojit. Zkuste stránku znovu načíst.",
     "You are trying to join a conversation while having an active session in another window or device. This is currently not supported by Nextcloud Talk. What do you want to do?" : "Pokoušíte se připojit ke konverzaci zatímco máte aktivní relaci v ní v jiném okně nebo zařízení. Toto Nextcloud Talk zatím nepodporuje. Co chcete udělat?",
     "Join here" : "Přidat se zde",
