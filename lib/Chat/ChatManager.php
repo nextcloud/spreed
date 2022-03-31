@@ -625,7 +625,7 @@ class ChatManager {
 	 * Search for comments with a given content
 	 *
 	 * @param Room $chat
-	 * @param int[]$commentIds
+	 * @param int[] $commentIds
 	 * @return IComment[]
 	 */
 	public function getMessagesById(Room $chat, array $commentIds): array {
@@ -633,7 +633,7 @@ class ChatManager {
 
 		$comments = array_filter($comments, static function (IComment $comment) use ($chat) {
 			return $comment->getObjectType() === 'chat'
-				&& $comment->getObjectId() === $chat->getId();
+				&& (int)$comment->getObjectId() === $chat->getId();
 		});
 
 		return $comments;
