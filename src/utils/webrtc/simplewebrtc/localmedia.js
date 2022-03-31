@@ -110,6 +110,14 @@ LocalMedia.prototype.isLocalMediaActive = function() {
 	return this._localMediaActive
 }
 
+LocalMedia.prototype.hasAudioTrack = function() {
+	return this._trackToStream.getStream() && this._trackToStream.getStream().getAudioTracks().length > 0
+}
+
+LocalMedia.prototype.hasVideoTrack = function() {
+	return this._trackToStream.getStream() && this._trackToStream.getStream().getVideoTracks().length > 0
+}
+
 LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 	const self = this
 	const constraints = mediaConstraints || { audio: true, video: true }
