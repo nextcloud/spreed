@@ -59,7 +59,6 @@ let callParticipantCollection = null
 let localCallParticipantModel = null
 let showedTURNWarning = false
 let sendCurrentStateWithRepetitionTimeout = null
-let startedWithMedia
 
 /**
  * @param {Array} a Source object
@@ -678,8 +677,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	})
 
 	webrtc.startMedia = function(token, flags) {
-		startedWithMedia = undefined
-
 		// If no flags are provided try to enable both audio and video.
 		// Otherwise, try to enable only that allowed by the flags.
 		const mediaConstraints = {
@@ -1019,8 +1016,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		if (webrtc.webrtc.isLocalMediaActive()
 			&& !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
 			&& !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)) {
-			startedWithMedia = undefined
-
 			webrtc.stopLocalVideo()
 
 			// If the MCU is used and there is no sending peer there is no need
@@ -1077,8 +1072,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			webrtc.off('localMediaStarted', forceReconnectOnceLocalMediaStarted)
 			webrtc.off('localMediaError', forceReconnectOnceLocalMediaError)
 
-			startedWithMedia = true
-
 			let flags = PARTICIPANT.CALL_FLAG.IN_CALL
 			if (constraints) {
 				if (constraints.audio) {
@@ -1095,8 +1088,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			webrtc.off('localMediaStarted', forceReconnectOnceLocalMediaStarted)
 			webrtc.off('localMediaError', forceReconnectOnceLocalMediaError)
 
-			startedWithMedia = false
-
 			// If the media fails to start there will be no media, so no need to
 			// reconnect. A reconnection will happen once the user selects a
 			// different device.
@@ -1104,8 +1095,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 
 		webrtc.on('localMediaStarted', forceReconnectOnceLocalMediaStarted)
 		webrtc.on('localMediaError', forceReconnectOnceLocalMediaError)
-
-		startedWithMedia = undefined
 
 		const constraints = {
 			audio: currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO,
@@ -1315,8 +1304,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		// reconnection is forced to start sending it.
 		signaling.setSendVideoIfAvailable(true)
 
-		startedWithMedia = true
-
 		let flags = signaling.getCurrentCallFlags()
 		flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
 
@@ -1465,8 +1452,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	webrtc.on('localMediaStarted', function(/* configuration */) {
 		console.info('localMediaStarted')
 
-		startedWithMedia = true
-
 		clearLocalStreamRequestedTimeoutAndHideNotification()
 
 		if (signaling.hasFeature('mcu')) {
@@ -1476,8 +1461,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 
 	webrtc.on('localMediaError', function(error) {
 		console.warn('Access to microphone & camera failed', error)
-
-		startedWithMedia = false
 
 		clearLocalStreamRequestedTimeoutAndHideNotification()
 
