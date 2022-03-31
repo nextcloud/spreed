@@ -1423,49 +1423,43 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		signaling.updateCurrentCallFlags(expectedCallFlags)
 	})
 
+	/**
+	 * Return whether there are sender peers, either already created or about to
+	 * be created (if there is a pending connection).
+	 *
+	 * If the MCU is used then there will be a single sender peer (the own
+	 * peer). Otherwise every peer is both a sender and a receiver peer.
+	 *
+	 * @return {boolean} true if there are sender peers, false otherwise.
+	 */
+	function hasSenderPeers() {
+		if (signaling.hasFeature('mcu')) {
+			return !!ownPeer
+		}
+
+		return webrtc.webrtc.getPeers(null, 'video').length > 0 || Object.keys(delayedConnectionToPeer).length > 0
+	}
+
 	webrtc.on('localTrackReplaced', function(newTrack, oldTrack/*, stream */) {
-		// Device disabled, just update the call flags.
-		if (!newTrack) {
-			if (oldTrack && oldTrack.kind === 'audio') {
-				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() & ~PARTICIPANT.CALL_FLAG.WITH_AUDIO)
-			} else if (oldTrack && oldTrack.kind === 'video') {
-				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() & ~PARTICIPANT.CALL_FLAG.WITH_VIDEO)
-			}
+		const callFlags = getCallFlagsFromLocalMedia()
+
+		// A reconnection is not needed if a device is disabled or if there are
+		// no other participants in the call. Even if there are other
+		// participants a reconnection is not needed if there are already sender
+		// peers (as "negotiationneeded" will be automatically triggered by them
+		// if needed, which will cause the reconnection). Only if there are no
+		// sender peers or there are, but the previous call flags were just "in
+		// call", a reconnection is needed to ensure that the other participants
+		// will try to connect with the local one.
+		if (newTrack && previousUsersInRoom.length > 0 && (!hasSenderPeers() || signaling.getCurrentCallFlags() === PARTICIPANT.CALL_FLAG.IN_CALL)) {
+			forceReconnect(signaling, callFlags)
 
 			return
 		}
 
-		// If the call was started with media the connections will be already
-		// established. The flags need to be updated if a device was enabled
-		// (but not if it was switched to another one).
-		if (startedWithMedia) {
-			if (newTrack.kind === 'audio' && !oldTrack) {
-				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() | PARTICIPANT.CALL_FLAG.WITH_AUDIO)
-			} else if (newTrack.kind === 'video' && !oldTrack) {
-				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() | PARTICIPANT.CALL_FLAG.WITH_VIDEO)
-			}
-
-			return
+		if (signaling.getCurrentCallFlags() !== callFlags) {
+			signaling.updateCurrentCallFlags(callFlags)
 		}
-
-		// If the call has not started with media yet the connections will be
-		// established once started, as well as the flags.
-		if (startedWithMedia === undefined) {
-			return
-		}
-
-		// If the call was originally started without media the participant
-		// needs to reconnect to establish the sender connections.
-		startedWithMedia = true
-
-		let flags = signaling.getCurrentCallFlags()
-		if (newTrack.kind === 'audio') {
-			flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
-		} else if (newTrack.kind === 'video') {
-			flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
-		}
-
-		forceReconnect(signaling, flags)
 	})
 
 	webrtc.on('localMediaStarted', function(/* configuration */) {
