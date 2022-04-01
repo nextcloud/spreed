@@ -360,6 +360,8 @@ function Internal(settings) {
 	this.sendInterval = window.setInterval(function() {
 		this.sendPendingMessages()
 	}.bind(this), 500)
+
+	this._joinCallAgainOnceDisconnected = false
 }
 
 Internal.prototype = new Signaling.Base()
@@ -399,7 +401,7 @@ Signaling.Internal.prototype.forceReconnect = function(newSession, flags) {
 	// FIXME Naive reconnection routine; as the same session is kept peers
 	// must be explicitly ended before the reconnection is forced.
 	this.leaveCall(this.currentCallToken, true).then(() => {
-		this.joinCall(this.currentCallToken, this.currentCallFlags)
+		this._joinCallAgainOnceDisconnected = true
 	})
 }
 
@@ -425,11 +427,14 @@ Signaling.Internal.prototype._sendMessages = function(messages) {
 }
 
 Signaling.Internal.prototype._joinRoomSuccess = function(token, sessionId) {
+	this._joinCallAgainOnceDisconnected = false
+
 	this.sessionId = sessionId
 	this._startPullingMessages()
 }
 
 Signaling.Internal.prototype._doLeaveRoom = function(token) {
+	this._joinCallAgainOnceDisconnected = false
 }
 
 Signaling.Internal.prototype.sendCallMessage = function(data) {
@@ -471,11 +476,20 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 			}
 
 			result.data.ocs.data.forEach(message => {
+				let localParticipant
+
 				this._trigger('onBeforeReceiveMessage', [message])
 				switch (message.type) {
 				case 'usersInRoom':
 					this._trigger('usersInRoom', [message.data])
 					this._trigger('participantListChanged')
+
+					localParticipant = message.data.find(participant => participant.sessionId === this.sessionId)
+					if (this._joinCallAgainOnceDisconnected && !localParticipant.inCall) {
+						this._joinCallAgainOnceDisconnected = false
+						this.joinCall(this.currentCallToken, this.currentCallFlags)
+					}
+
 					break
 				case 'message':
 					if (typeof (message.data) === 'string') {
