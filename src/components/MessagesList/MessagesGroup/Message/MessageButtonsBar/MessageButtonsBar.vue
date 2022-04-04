@@ -450,9 +450,9 @@ export default {
 			this.$emit('update:isReactionsMenuOpen', true)
 		},
 
+		// Making sure that the click is outside the MessageButtonsBar
 		handleClickOutside(event) {
-			// Making sure that the click is outside the MessageButtonsBar
-			if (event.path.indexOf(this.$el) !== -1) {
+			if (event.composedPath().indexOf(this.$el) !== -1) {
 				return
 			}
 			this.closeReactionsMenu()
