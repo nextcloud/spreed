@@ -59,7 +59,6 @@ let callParticipantCollection = null
 let localCallParticipantModel = null
 let showedTURNWarning = false
 let sendCurrentStateWithRepetitionTimeout = null
-let startedWithMedia
 
 /**
  * @param {Array} a Source object
@@ -677,8 +676,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	})
 
 	webrtc.startMedia = function(token, flags) {
-		startedWithMedia = undefined
-
 		// If no flags are provided try to enable both audio and video.
 		// Otherwise, try to enable only that allowed by the flags.
 		const mediaConstraints = {
@@ -982,23 +979,42 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			return
 		}
 
-		if ((currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
-			&& (currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)
-			&& webrtc.webrtc.isLocalMediaActive()) {
+		if (webrtc.webrtc.isAudioAllowed() === !!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
+			&& webrtc.webrtc.isVideoAllowed() === !!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)) {
 			return
 		}
 
-		if (!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
-			&& !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)
-			&& !webrtc.webrtc.isLocalMediaActive()) {
-			return
+		let hasAudioSenders = false
+		let hasVideoSenders = false
+
+		webrtc.webrtc.getPeers(null, 'video').forEach(peer => {
+			// Look for any sender of each kind, even if the sender no longer
+			// has a track attached to it.
+			const audioSender = peer.pc.getSenders().find((sender) => sender.kind === 'audio' || (sender.track && sender.track.kind === 'audio') || (sender.trackDisabled && sender.trackDisabled.kind === 'audio'))
+			const videoSender = peer.pc.getSenders().find((sender) => sender.kind === 'video' || (sender.track && sender.track.kind === 'video') || (sender.trackDisabled && sender.trackDisabled.kind === 'video'))
+
+			hasAudioSenders ||= !!audioSender
+			hasVideoSenders ||= !!videoSender
+		})
+
+		const removeSender = (hasAudioSenders && !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO))
+							|| (hasVideoSenders && !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO))
+
+		if (currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
+			webrtc.webrtc.allowAudio()
+		} else {
+			webrtc.webrtc.disallowAudio()
 		}
 
-		// FIXME handle case where only one of the permissions is given
-		if (!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
+		if (currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO) {
+			webrtc.webrtc.allowVideo()
+		} else {
+			webrtc.webrtc.disallowVideo()
+		}
+
+		if (webrtc.webrtc.isLocalMediaActive()
+			&& !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
 			&& !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)) {
-			startedWithMedia = undefined
-
 			webrtc.stopLocalVideo()
 
 			// If the MCU is used and there is no sending peer there is no need
@@ -1011,11 +1027,49 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			return
 		}
 
+		// If a sender kind is no longer allowed a forced reconnection needs to
+		// be explicitly triggered. Otherwise "removing" the no longer allowed
+		// track will just set it to null in the sender, which does not trigger
+		// a "negotiationneeded" event and thus an automatic forced
+		// reconnection.
+		if (webrtc.webrtc.isLocalMediaActive() && removeSender) {
+			let flags = signaling.getCurrentCallFlags()
+			if (!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)) {
+				flags &= ~PARTICIPANT.CALL_FLAG.WITH_AUDIO
+			}
+			if (!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)) {
+				flags &= ~PARTICIPANT.CALL_FLAG.WITH_VIDEO
+			}
+
+			// The flags may be updated later if, besides removing a sender, a
+			// track is also added (for example, when there are both a
+			// microphone and a camera and audio permissions are removed at the
+			// same time that video permissions are added). However, at this
+			// point it is not possible to know if that will happen (getting the
+			// new track is an async operation and it could fail), so the flags
+			// are updated only with the known values.
+			forceReconnect(signaling, flags)
+
+			return
+		}
+
+		// If media is already active and a track is added "negotiationneeded"
+		// will be triggered, which in turn will automatically force a
+		// reconnection.
+		if (webrtc.webrtc.isLocalMediaActive()) {
+			return
+		}
+
+		// If media is not active but the participant does not have publishing
+		// permissions there is no need to start the media nor reconnect.
+		if (!(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO)
+			&& !(currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO)) {
+			return
+		}
+
 		const forceReconnectOnceLocalMediaStarted = (constraints) => {
 			webrtc.off('localMediaStarted', forceReconnectOnceLocalMediaStarted)
 			webrtc.off('localMediaError', forceReconnectOnceLocalMediaError)
-
-			startedWithMedia = true
 
 			let flags = PARTICIPANT.CALL_FLAG.IN_CALL
 			if (constraints) {
@@ -1033,8 +1087,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			webrtc.off('localMediaStarted', forceReconnectOnceLocalMediaStarted)
 			webrtc.off('localMediaError', forceReconnectOnceLocalMediaError)
 
-			startedWithMedia = false
-
 			// If the media fails to start there will be no media, so no need to
 			// reconnect. A reconnection will happen once the user selects a
 			// different device.
@@ -1043,9 +1095,11 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		webrtc.on('localMediaStarted', forceReconnectOnceLocalMediaStarted)
 		webrtc.on('localMediaError', forceReconnectOnceLocalMediaError)
 
-		startedWithMedia = undefined
-
-		webrtc.startLocalVideo()
+		const constraints = {
+			audio: currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO,
+			video: currentParticipant.participantPermissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO,
+		}
+		webrtc.startLocalVideo(constraints)
 	}
 
 	signaling.on('usersInRoom', function(users) {
@@ -1249,8 +1303,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		// reconnection is forced to start sending it.
 		signaling.setSendVideoIfAvailable(true)
 
-		startedWithMedia = true
-
 		let flags = signaling.getCurrentCallFlags()
 		flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
 
@@ -1316,55 +1368,88 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		}
 	})
 
+	/**
+	 * Return the appropriate call flags for the current local tracks.
+	 *
+	 * @return {number} a bitwise combination of call flags.
+	 */
+	function getCallFlagsFromLocalMedia() {
+		let callFlags = PARTICIPANT.CALL_FLAG.IN_CALL
+
+		if (webrtc.webrtc.hasAudioTrack()) {
+			callFlags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
+		}
+		if (webrtc.webrtc.hasVideoTrack()) {
+			callFlags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
+		}
+
+		return callFlags
+	}
+
+	signaling.on('joinCall', function(token) {
+		const expectedCallFlags = getCallFlagsFromLocalMedia()
+
+		// If the current call flags do not match the expected ones (for
+		// example, if a new track is added during a forced reconnection the
+		// update would fail, and once joining the call finishes the flags for
+		// that new track would not be set) they need to be updated.
+		if (signaling.getCurrentCallFlags() === expectedCallFlags) {
+			return
+		}
+
+		// The other participants may not establish a connection if the original
+		// flags were just IN_CALL, so a forced reconnection needs to be
+		// triggered in that case.
+		if (signaling.getCurrentCallFlags() === PARTICIPANT.CALL_FLAG.IN_CALL) {
+			forceReconnect(signaling, expectedCallFlags)
+
+			return
+		}
+
+		signaling.updateCurrentCallFlags(expectedCallFlags)
+	})
+
+	/**
+	 * Return whether there are sender peers, either already created or about to
+	 * be created (if there is a pending connection).
+	 *
+	 * If the MCU is used then there will be a single sender peer (the own
+	 * peer). Otherwise every peer is both a sender and a receiver peer.
+	 *
+	 * @return {boolean} true if there are sender peers, false otherwise.
+	 */
+	function hasSenderPeers() {
+		if (signaling.hasFeature('mcu')) {
+			return !!ownPeer
+		}
+
+		return webrtc.webrtc.getPeers(null, 'video').length > 0 || Object.keys(delayedConnectionToPeer).length > 0
+	}
+
 	webrtc.on('localTrackReplaced', function(newTrack, oldTrack/*, stream */) {
-		// Device disabled, just update the call flags.
-		if (!newTrack) {
-			if (oldTrack && oldTrack.kind === 'audio') {
-				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() & ~PARTICIPANT.CALL_FLAG.WITH_AUDIO)
-			} else if (oldTrack && oldTrack.kind === 'video') {
-				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() & ~PARTICIPANT.CALL_FLAG.WITH_VIDEO)
-			}
+		const callFlags = getCallFlagsFromLocalMedia()
+
+		// A reconnection is not needed if a device is disabled or if there are
+		// no other participants in the call. Even if there are other
+		// participants a reconnection is not needed if there are already sender
+		// peers (as "negotiationneeded" will be automatically triggered by them
+		// if needed, which will cause the reconnection). Only if there are no
+		// sender peers or there are, but the previous call flags were just "in
+		// call", a reconnection is needed to ensure that the other participants
+		// will try to connect with the local one.
+		if (newTrack && previousUsersInRoom.length > 0 && (!hasSenderPeers() || signaling.getCurrentCallFlags() === PARTICIPANT.CALL_FLAG.IN_CALL)) {
+			forceReconnect(signaling, callFlags)
 
 			return
 		}
 
-		// If the call was started with media the connections will be already
-		// established. The flags need to be updated if a device was enabled
-		// (but not if it was switched to another one).
-		if (startedWithMedia) {
-			if (newTrack.kind === 'audio' && !oldTrack) {
-				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() | PARTICIPANT.CALL_FLAG.WITH_AUDIO)
-			} else if (newTrack.kind === 'video' && !oldTrack) {
-				signaling.updateCurrentCallFlags(signaling.getCurrentCallFlags() | PARTICIPANT.CALL_FLAG.WITH_VIDEO)
-			}
-
-			return
+		if (signaling.getCurrentCallFlags() !== callFlags) {
+			signaling.updateCurrentCallFlags(callFlags)
 		}
-
-		// If the call has not started with media yet the connections will be
-		// established once started, as well as the flags.
-		if (startedWithMedia === undefined) {
-			return
-		}
-
-		// If the call was originally started without media the participant
-		// needs to reconnect to establish the sender connections.
-		startedWithMedia = true
-
-		let flags = signaling.getCurrentCallFlags()
-		if (newTrack.kind === 'audio') {
-			flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
-		} else if (newTrack.kind === 'video') {
-			flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
-		}
-
-		forceReconnect(signaling, flags)
 	})
 
 	webrtc.on('localMediaStarted', function(/* configuration */) {
 		console.info('localMediaStarted')
-
-		startedWithMedia = true
 
 		clearLocalStreamRequestedTimeoutAndHideNotification()
 
@@ -1375,8 +1460,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 
 	webrtc.on('localMediaError', function(error) {
 		console.warn('Access to microphone & camera failed', error)
-
-		startedWithMedia = false
 
 		clearLocalStreamRequestedTimeoutAndHideNotification()
 
