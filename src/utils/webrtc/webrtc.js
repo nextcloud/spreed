@@ -72,6 +72,17 @@ function arrayDiff(a, b) {
 }
 
 /**
+ * @param {Array} a First array
+ * @param {Array} b Second array
+ * @return {Array} Array with the common elements
+ */
+function arrayCommon(a, b) {
+	return a.filter(function(i) {
+		return b.includes(i)
+	})
+}
+
+/**
  * @param {object} signaling The signaling object
  * @param {string} sessionId The user's sessionId
  */
@@ -270,15 +281,101 @@ function userHasStreams(user) {
 }
 
 /**
- * @param {object} signaling The signaling object
- * @param {Array} newUsers Newly added participants
- * @param {Array} disconnectedSessionIds Remove participants
+ * @param {object} user The user to check
+ * @return {boolean} True if the user has a Peer object (not closed), or will
+ *         have a Peer object due to a delayed connection
  */
-function usersChanged(signaling, newUsers, disconnectedSessionIds) {
-	'use strict'
+function userHasPeer(user) {
+	const sessionId = user.sessionId || user.sessionid
+	const callParticipantModel = callParticipantCollection.get(sessionId)
+
+	return delayedConnectionToPeer[sessionId]
+		|| (callParticipantModel.get('peer') && !callParticipantModel.get('peer').closed)
+}
+
+/**
+ * @param {object} signaling The signaling object
+ * @param {object} user The participant to create a peer for
+ */
+function createPeerForParticipant(signaling, user) {
+	const sessionId = user.sessionId || user.sessionid
+
+	const createPeer = function() {
+		const peer = webrtc.webrtc.createPeer({
+			id: sessionId,
+			type: 'video',
+			enableDataChannels: true,
+			enableSimulcast: signaling.hasFeature('simulcast'),
+			receiveMedia: {
+				offerToReceiveAudio: 1,
+				offerToReceiveVideo: 1,
+			},
+			sendVideoIfAvailable: signaling.getSendVideoIfAvailable(),
+		})
+		webrtc.emit('createdPeer', peer)
+		peer.start()
+	}
+
 	const currentSessionId = signaling.getSessionId()
 
 	const useMcu = signaling.hasFeature('mcu')
+
+	if (useMcu && userHasStreams(user)) {
+		// TODO(jojo): Already create peer object to avoid duplicate offers.
+		signaling.requestOffer(user, 'video')
+
+		delayedConnectionToPeer[user.sessionId] = setInterval(function() {
+			console.debug('No offer received for new peer, request offer again')
+
+			signaling.requestOffer(user, 'video')
+		}, 10000)
+	} else if (!useMcu && userHasStreams(selfInCall) && (!userHasStreams(user) || sessionId < currentSessionId)) {
+		// To avoid overloading the user joining a room (who previously called
+		// all the other participants), we decide who calls who by comparing
+		// the session ids of the users: "larger" ids call "smaller" ones.
+		console.debug('Starting call with', user)
+		createPeer()
+	} else if (!useMcu && userHasStreams(selfInCall) && userHasStreams(user) && sessionId > currentSessionId) {
+		// If the remote peer is not aware that it was disconnected
+		// from the current peer the remote peer will not send a new
+		// offer; thus, if the current peer does not receive a new
+		// offer in a reasonable time, the current peer calls the
+		// remote peer instead of waiting to be called to
+		// reestablish the connection.
+		delayedConnectionToPeer[sessionId] = setInterval(function() {
+			// New offers are periodically sent until a connection
+			// is established. As an offer can not be sent again
+			// from an existing peer it must be removed and a new
+			// one must be created from scratch.
+			webrtc.webrtc.getPeers(sessionId, 'video').forEach(function(peer) {
+				peer.end()
+			})
+
+			console.debug('No offer nor answer received, sending offer again')
+			createPeer()
+		}, 10000)
+	} else {
+		console.debug('User has no streams, not sending another offer')
+	}
+}
+
+/**
+ * @param {object} signaling The signaling object
+ * @param {Array} newUsers Newly added participants
+ * @param {Array} disconnectedSessionIds Remove participants
+ * @param {Array} changedPublishers Participants that were already in the call
+ *        and started or stopped publishing
+ */
+function usersChanged(signaling, newUsers, disconnectedSessionIds, changedPublishers) {
+	'use strict'
+
+	// The parameter can not be initialised to a default value in strict
+	// functions, so it needs to be done here.
+	if (!changedPublishers) {
+		changedPublishers = []
+	}
+
+	const currentSessionId = signaling.getSessionId()
 
 	let playJoinSound = false
 	let playLeaveSound = false
@@ -347,65 +444,38 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 
 		playJoinSound = true
 
-		const createPeer = function() {
-			const peer = webrtc.webrtc.createPeer({
-				id: sessionId,
-				type: 'video',
-				enableDataChannels: true,
-				enableSimulcast: signaling.hasFeature('simulcast'),
-				receiveMedia: {
-					offerToReceiveAudio: 1,
-					offerToReceiveVideo: 1,
-				},
-				sendVideoIfAvailable: signaling.getSendVideoIfAvailable(),
-			})
-			webrtc.emit('createdPeer', peer)
-			peer.start()
-		}
-
 		if (!webrtc.webrtc.getPeers(sessionId, 'video').length) {
-			if (useMcu && userHasStreams(user)) {
-				// TODO(jojo): Already create peer object to avoid duplicate offers.
-				signaling.requestOffer(user, 'video')
-
-				delayedConnectionToPeer[user.sessionId] = setInterval(function() {
-					console.debug('No offer received for new peer, request offer again')
-
-					signaling.requestOffer(user, 'video')
-				}, 10000)
-			} else if (!useMcu && userHasStreams(selfInCall) && (!userHasStreams(user) || sessionId < currentSessionId)) {
-				// To avoid overloading the user joining a room (who previously called
-				// all the other participants), we decide who calls who by comparing
-				// the session ids of the users: "larger" ids call "smaller" ones.
-				console.debug('Starting call with', user)
-				createPeer()
-			} else if (!useMcu && userHasStreams(selfInCall) && userHasStreams(user) && sessionId > currentSessionId) {
-				// If the remote peer is not aware that it was disconnected
-				// from the current peer the remote peer will not send a new
-				// offer; thus, if the current peer does not receive a new
-				// offer in a reasonable time, the current peer calls the
-				// remote peer instead of waiting to be called to
-				// reestablish the connection.
-				delayedConnectionToPeer[sessionId] = setInterval(function() {
-					// New offers are periodically sent until a connection
-					// is established. As an offer can not be sent again
-					// from an existing peer it must be removed and a new
-					// one must be created from scratch.
-					webrtc.webrtc.getPeers(sessionId, 'video').forEach(function(peer) {
-						peer.end()
-					})
-
-					console.debug('No offer nor answer received, sending offer again')
-					createPeer()
-				}, 10000)
-			} else {
-				console.debug('User has no streams, not sending another offer')
-			}
+			createPeerForParticipant(signaling, user)
 		}
 
 		// Send shared screen to new participants
 		if (webrtc.getLocalScreen()) {
 			createScreensharingPeer(signaling, sessionId)
+		}
+	})
+
+	changedPublishers.forEach(function(changedPublisher) {
+		// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
+		const sessionId = changedPublisher.sessionId || changedPublisher.sessionid
+		if (!sessionId || sessionId === currentSessionId) {
+			return
+		}
+
+		if (userHasStreams(changedPublisher) && userHasPeer(changedPublisher)) {
+			return
+		}
+
+		if (userHasStreams(changedPublisher)) {
+			createPeerForParticipant(signaling, changedPublisher)
+
+			return
+		}
+
+		webrtc.removePeers(sessionId)
+
+		if (delayedConnectionToPeer[sessionId]) {
+			clearInterval(delayedConnectionToPeer[sessionId])
+			delete delayedConnectionToPeer[sessionId]
 		}
 	})
 
@@ -509,12 +579,22 @@ function usersInCallChanged(signaling, users) {
 
 	const newSessionIds = arrayDiff(currentUsersInRoom, previousUsersInRoom)
 	const disconnectedSessionIds = arrayDiff(previousUsersInRoom, currentUsersInRoom)
+	const unchangedSessionIds = arrayCommon(currentUsersInRoom, previousUsersInRoom)
 	const newUsers = []
 	newSessionIds.forEach(function(sessionId) {
 		newUsers.push(userMapping[sessionId])
 	})
-	if (newUsers.length || disconnectedSessionIds.length) {
-		usersChanged(signaling, newUsers, disconnectedSessionIds)
+	const changedPublishers = []
+	unchangedSessionIds.forEach(function(sessionId) {
+		const user = userMapping[sessionId]
+
+		if ((userHasStreams(user) && !userHasPeer(user))
+			|| (!userHasStreams(user) && userHasPeer(user))) {
+			changedPublishers.push(user)
+		}
+	})
+	if (newUsers.length || disconnectedSessionIds.length || changedPublishers.length) {
+		usersChanged(signaling, newUsers, disconnectedSessionIds, changedPublishers)
 	}
 }
 
@@ -1011,9 +1091,9 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			return
 		}
 
-		const forceReconnectOnceLocalMediaStarted = (constraints) => {
-			webrtc.off('localMediaStarted', forceReconnectOnceLocalMediaStarted)
-			webrtc.off('localMediaError', forceReconnectOnceLocalMediaError)
+		const updateCallFlagsOnceLocalMediaStarted = (constraints) => {
+			webrtc.off('localMediaStarted', updateCallFlagsOnceLocalMediaStarted)
+			webrtc.off('localMediaError', updateCallFlagsOnceLocalMediaError)
 
 			startedWithMedia = true
 
@@ -1027,21 +1107,31 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 				}
 			}
 
-			forceReconnect(signaling, flags)
+			if (signaling.hasFeature('mcu')) {
+				signaling.updateCurrentCallFlags(flags)
+
+				if (!ownPeer) {
+					checkStartPublishOwnPeer(signaling)
+				} else {
+					ownPeer.start()
+				}
+			} else if (!signaling.hasFeature('mcu')) {
+				signaling.updateCurrentCallFlags(flags)
+			}
 		}
-		const forceReconnectOnceLocalMediaError = () => {
-			webrtc.off('localMediaStarted', forceReconnectOnceLocalMediaStarted)
-			webrtc.off('localMediaError', forceReconnectOnceLocalMediaError)
+		const updateCallFlagsOnceLocalMediaError = () => {
+			webrtc.off('localMediaStarted', updateCallFlagsOnceLocalMediaStarted)
+			webrtc.off('localMediaError', updateCallFlagsOnceLocalMediaError)
 
 			startedWithMedia = false
 
 			// If the media fails to start there will be no media, so no need to
-			// reconnect. A reconnection will happen once the user selects a
-			// different device.
+			// update the call flags. The call flags will be updated once the
+			// user selects a different device.
 		}
 
-		webrtc.on('localMediaStarted', forceReconnectOnceLocalMediaStarted)
-		webrtc.on('localMediaError', forceReconnectOnceLocalMediaError)
+		webrtc.on('localMediaStarted', updateCallFlagsOnceLocalMediaStarted)
+		webrtc.on('localMediaError', updateCallFlagsOnceLocalMediaError)
 
 		startedWithMedia = undefined
 
@@ -1358,7 +1448,17 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
 		}
 
-		forceReconnect(signaling, flags)
+		if (signaling.hasFeature('mcu')) {
+			signaling.updateCurrentCallFlags(flags)
+
+			if (!ownPeer) {
+				checkStartPublishOwnPeer(signaling)
+			} else {
+				ownPeer.start()
+			}
+		} else if (!signaling.hasFeature('mcu')) {
+			signaling.updateCurrentCallFlags(flags)
+		}
 	})
 
 	webrtc.on('localMediaStarted', function(/* configuration */) {
