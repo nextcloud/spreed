@@ -87,7 +87,7 @@ jobs:
       # do not stop on another job's failure
       fail-fast: false
       matrix:
-        php-versions: ['7.4', '8.0']
+        php-versions: ['7.4', '8.0', "8.1"]
         databases: ['mysql']
         server-versions: ['master']
 
