@@ -11,6 +11,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/callapi
@@ -19,6 +21,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-callapi
 trigger:
@@ -40,6 +43,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/chat
@@ -48,6 +53,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-chat
 trigger:
@@ -69,6 +75,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/command
@@ -77,6 +85,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-command
 trigger:
@@ -98,6 +107,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
   - cd tests/integration/
@@ -107,6 +118,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-conversation
 trigger:
@@ -128,6 +140,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
   - cd tests/integration/
@@ -137,6 +151,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-conversation-2
 trigger:
@@ -158,6 +173,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/federation
@@ -166,6 +183,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-federation
 trigger:
@@ -187,6 +205,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/reaction
@@ -195,6 +215,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-reaction
 trigger:
@@ -216,6 +237,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/sharing
@@ -224,6 +247,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-sharing
 trigger:
@@ -245,6 +269,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/sharing-2
@@ -253,6 +279,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-sharing-2
 trigger:
@@ -288,6 +315,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/callapi
@@ -296,6 +325,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-callapi
 trigger:
@@ -332,6 +362,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/chat
@@ -340,6 +372,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-chat
 trigger:
@@ -376,6 +409,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/command
@@ -384,6 +419,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-command
 trigger:
@@ -420,6 +456,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
   - cd tests/integration/
@@ -429,6 +467,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-conversation
 trigger:
@@ -465,6 +504,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
   - cd tests/integration/
@@ -474,6 +515,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-conversation-2
 trigger:
@@ -510,6 +552,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/federation
@@ -518,6 +562,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-federation
 trigger:
@@ -554,6 +599,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/reaction
@@ -562,6 +609,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-reaction
 trigger:
@@ -598,6 +646,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/sharing
@@ -606,6 +656,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-sharing
 trigger:
@@ -642,6 +693,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/sharing-2
@@ -650,6 +703,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-sharing-2
 trigger:
@@ -681,6 +735,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/callapi
@@ -689,6 +745,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-callapi
 trigger:
@@ -719,6 +776,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/chat
@@ -727,6 +786,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-chat
 trigger:
@@ -757,6 +817,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/command
@@ -765,6 +827,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-command
 trigger:
@@ -795,6 +858,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
   - cd tests/integration/
@@ -804,6 +869,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-conversation
 trigger:
@@ -834,6 +900,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
   - cd tests/integration/
@@ -843,6 +911,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-conversation-2
 trigger:
@@ -873,6 +942,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/federation
@@ -881,6 +952,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-federation
 trigger:
@@ -911,6 +983,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/reaction
@@ -919,6 +993,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-reaction
 trigger:
@@ -949,6 +1024,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/sharing
@@ -957,6 +1034,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-sharing
 trigger:
@@ -987,6 +1065,8 @@ steps:
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
   - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/sharing-2
@@ -995,6 +1075,7 @@ steps:
     CORE_BRANCH: master
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-sharing-2
 trigger:
