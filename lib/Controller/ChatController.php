@@ -60,7 +60,7 @@ use OCP\UserStatus\IUserStatus;
 
 class ChatController extends AEnvironmentAwareController {
 
-	/** @var string */
+	/** @var null|string */
 	private $userId;
 
 	/** @var IUserManager */

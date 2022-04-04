@@ -43,6 +43,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
@@ -53,28 +54,28 @@ class FederationTest extends TestCase {
 	/** @var Notifications */
 	protected $notifications;
 
-	/** @var ICloudFederationProviderManager */
+	/** @var ICloudFederationProviderManager|MockObject */
 	protected $cloudFederationProviderManager;
 
-	/** @var ICloudFederationFactory */
+	/** @var ICloudFederationFactory|MockObject */
 	protected $cloudFederationFactory;
 
-	/** @var Config */
+	/** @var Config|MockObject */
 	protected $config;
 
-	/** @var AddressHandler */
+	/** @var AddressHandler|MockObject */
 	protected $addressHandler;
 
 	/** @var CloudFederationProviderTalk */
 	protected $cloudFederationProvider;
 
-	/** @var IUserManager */
+	/** @var IUserManager|MockObject */
 	protected $userManager;
 
-	/** @var INotificationManager */
+	/** @var INotificationManager|MockObject */
 	protected $notificationManager;
 
-	/** @var AttendeeMapper */
+	/** @var AttendeeMapper|MockObject */
 	protected $attendeeMapper;
 
 	public function setUp(): void {

@@ -392,6 +392,7 @@ class SignalingControllerTest extends \Test\TestCase {
 
 		$attendee = Attendee::fromRow([
 			'permissions' => Attendee::PERMISSIONS_DEFAULT,
+			'actor_type' => Attendee::ACTOR_USERS,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
@@ -452,6 +453,7 @@ class SignalingControllerTest extends \Test\TestCase {
 
 		$attendee = Attendee::fromRow([
 			'permissions' => Attendee::PERMISSIONS_DEFAULT,
+			'actor_type' => Attendee::ACTOR_USERS,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
@@ -512,6 +514,7 @@ class SignalingControllerTest extends \Test\TestCase {
 
 		$attendee = Attendee::fromRow([
 			'permissions' => Attendee::PERMISSIONS_DEFAULT,
+			'actor_type' => Attendee::ACTOR_USERS,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
@@ -578,6 +581,7 @@ class SignalingControllerTest extends \Test\TestCase {
 
 		$attendee = Attendee::fromRow([
 			'permissions' => Attendee::PERMISSIONS_DEFAULT,
+			'actor_type' => Attendee::ACTOR_USERS,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
@@ -639,6 +643,7 @@ class SignalingControllerTest extends \Test\TestCase {
 
 		$attendee = Attendee::fromRow([
 			'permissions' => Attendee::PERMISSIONS_DEFAULT,
+			'actor_type' => Attendee::ACTOR_USERS,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
@@ -718,6 +723,7 @@ class SignalingControllerTest extends \Test\TestCase {
 
 		$attendee = Attendee::fromRow([
 			'permissions' => $permissions,
+			'actor_type' => Attendee::ACTOR_USERS,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
@@ -812,6 +818,7 @@ class SignalingControllerTest extends \Test\TestCase {
 
 		$attendee = Attendee::fromRow([
 			'permissions' => Attendee::PERMISSIONS_DEFAULT,
+			'actor_type' => Attendee::ACTOR_USERS,
 		]);
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->any())
