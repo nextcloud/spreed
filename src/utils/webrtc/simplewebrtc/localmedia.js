@@ -110,16 +110,35 @@ LocalMedia.prototype.isLocalMediaActive = function() {
 	return this._localMediaActive
 }
 
+LocalMedia.prototype.hasAudioTrack = function() {
+	return this._trackToStream.getStream() && this._trackToStream.getStream().getAudioTracks().length > 0
+}
+
+LocalMedia.prototype.hasVideoTrack = function() {
+	return this._trackToStream.getStream() && this._trackToStream.getStream().getVideoTracks().length > 0
+}
+
 LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 	const self = this
 	const constraints = mediaConstraints || { audio: true, video: true }
+
+	if (constraints.audio) {
+		this.allowAudio()
+	} else {
+		this.disallowAudio()
+	}
+	if (constraints.video) {
+		this.allowVideo()
+	} else {
+		this.disallowVideo()
+	}
 
 	// If local media is started with neither audio nor video the local media
 	// will not be active (it will not react to changes in the selected media
 	// devices). It is just a special case in which starting succeeds with a
 	// null stream.
 	if (!constraints.audio && !constraints.video) {
-		self.emit('localStream', constraints, null)
+		self.emit('localStream', null)
 
 		if (cb) {
 			return cb(null, null, constraints)
@@ -139,16 +158,16 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		return
 	}
 
-	this.emit('localStreamRequested', constraints, context)
+	this.emit('localStreamRequested', context)
 
-	const retryNoVideoCallback = (constraints, error) => {
-		self.emit('localStreamRequestFailedRetryNoVideo', constraints, error)
+	const retryNoVideoCallback = (error) => {
+		self.emit('localStreamRequestFailedRetryNoVideo', error)
 	}
 
-	this._mediaDevicesSource.start(constraints, retryNoVideoCallback).then(() => {
+	this._mediaDevicesSource.start(retryNoVideoCallback).then(() => {
 		self.localStreams.push(self._trackToStream.getStream())
 
-		self.emit('localStream', constraints, self._trackToStream.getStream())
+		self.emit('localStream', self._trackToStream.getStream())
 
 		self._trackToStream.on('streamSet', self._handleStreamSetBound)
 		self._trackToStream.on('trackReplaced', self._handleTrackReplacedBound)
@@ -157,10 +176,15 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		self._localMediaActive = true
 
 		if (cb) {
-			return cb(null, self._trackToStream.getStream(), constraints)
+			const actualConstraints = {
+				audio: self._trackToStream.getStream().getAudioTracks().length > 0,
+				video: self._trackToStream.getStream().getVideoTracks().length > 0,
+			}
+
+			return cb(null, self._trackToStream.getStream(), actualConstraints)
 		}
 	}).catch(err => {
-		self.emit('localStreamRequestFailed', constraints)
+		self.emit('localStreamRequestFailed')
 
 		self._trackToStream.on('streamSet', self._handleStreamSetBound)
 		self._trackToStream.on('trackReplaced', self._handleTrackReplacedBound)
@@ -272,6 +296,20 @@ LocalMedia.prototype.stopScreenShare = function() {
 }
 
 // Audio controls
+LocalMedia.prototype.isAudioAllowed = function() {
+	return this._mediaDevicesSource.isAudioAllowed()
+}
+
+LocalMedia.prototype.disallowAudio = function() {
+	this._mediaDevicesSource.setAudioAllowed(false)
+	this.emit('audioDisallowed')
+}
+
+LocalMedia.prototype.allowAudio = function() {
+	this._mediaDevicesSource.setAudioAllowed(true)
+	this.emit('audioAllowed')
+}
+
 LocalMedia.prototype.mute = function() {
 	this._setAudioEnabled(false)
 	this.emit('audioOff')
@@ -283,6 +321,20 @@ LocalMedia.prototype.unmute = function() {
 }
 
 // Video controls
+LocalMedia.prototype.isVideoAllowed = function() {
+	return this._mediaDevicesSource.isVideoAllowed()
+}
+
+LocalMedia.prototype.disallowVideo = function() {
+	this._mediaDevicesSource.setVideoAllowed(false)
+	this.emit('videoDisallowed')
+}
+
+LocalMedia.prototype.allowVideo = function() {
+	this._mediaDevicesSource.setVideoAllowed(true)
+	this.emit('videoAllowed')
+}
+
 LocalMedia.prototype.pauseVideo = function() {
 	this._setVideoEnabled(false)
 	this.emit('videoOff')

@@ -54,11 +54,13 @@ export default function LocalMediaModel() {
 	this._handleLocalStreamChangedBound = this._handleLocalStreamChanged.bind(this)
 	this._handleLocalTrackEnabledChangedBound = this._handleLocalTrackEnabledChanged.bind(this)
 	this._handleLocalStreamStoppedBound = this._handleLocalStreamStopped.bind(this)
+	this._handleAudioDisallowedBound = this._handleAudioDisallowed.bind(this)
 	this._handleVolumeChangeBound = this._handleVolumeChange.bind(this)
 	this._handleSpeakingBound = this._handleSpeaking.bind(this)
 	this._handleStoppedSpeakingBound = this._handleStoppedSpeaking.bind(this)
 	this._handleSpeakingWhileMutedBound = this._handleSpeakingWhileMuted.bind(this)
 	this._handleStoppedSpeakingWhileMutedBound = this._handleStoppedSpeakingWhileMuted.bind(this)
+	this._handleVideoDisallowedBound = this._handleVideoDisallowed.bind(this)
 	this._handleVirtualBackgroundLoadFailedBound = this._handleVirtualBackgroundLoadFailed.bind(this)
 	this._handleVirtualBackgroundOnBound = this._handleVirtualBackgroundOn.bind(this)
 	this._handleVirtualBackgroundOffBound = this._handleVirtualBackgroundOff.bind(this)
@@ -96,11 +98,13 @@ LocalMediaModel.prototype = {
 			this._webRtc.webrtc.off('localStreamChanged', this._handleLocalStreamChangedBound)
 			this._webRtc.webrtc.off('localTrackEnabledChanged', this._handleLocalTrackEnabledChangedBound)
 			this._webRtc.webrtc.off('localStreamStopped', this._handleLocalStreamStoppedBound)
+			this._webRtc.webrtc.off('audioDisallowed', this._handleAudioDisallowedBound)
 			this._webRtc.webrtc.off('volumeChange', this._handleVolumeChangeBound)
 			this._webRtc.webrtc.off('speaking', this._handleSpeakingBound)
 			this._webRtc.webrtc.off('stoppedSpeaking', this._handleStoppedSpeakingBound)
 			this._webRtc.webrtc.off('speakingWhileMuted', this._handleSpeakingWhileMutedBound)
 			this._webRtc.webrtc.off('stoppedSpeakingWhileMuted', this._handleStoppedSpeakingWhileMutedBound)
+			this._webRtc.webrtc.off('videoDisallowed', this._handleVideoDisallowedBound)
 			this._webRtc.webrtc.off('virtualBackgroundLoadFailed', this._handleVirtualBackgroundLoadFailedBound)
 			this._webRtc.webrtc.off('virtualBackgroundOn', this._handleVirtualBackgroundOnBound)
 			this._webRtc.webrtc.off('virtualBackgroundOff', this._handleVirtualBackgroundOffBound)
@@ -130,11 +134,13 @@ LocalMediaModel.prototype = {
 		this._webRtc.webrtc.on('localStreamChanged', this._handleLocalStreamChangedBound)
 		this._webRtc.webrtc.on('localTrackEnabledChanged', this._handleLocalTrackEnabledChangedBound)
 		this._webRtc.webrtc.on('localStreamStopped', this._handleLocalStreamStoppedBound)
+		this._webRtc.webrtc.on('audioDisallowed', this._handleAudioDisallowedBound)
 		this._webRtc.webrtc.on('volumeChange', this._handleVolumeChangeBound)
 		this._webRtc.webrtc.on('speaking', this._handleSpeakingBound)
 		this._webRtc.webrtc.on('stoppedSpeaking', this._handleStoppedSpeakingBound)
 		this._webRtc.webrtc.on('speakingWhileMuted', this._handleSpeakingWhileMutedBound)
 		this._webRtc.webrtc.on('stoppedSpeakingWhileMuted', this._handleStoppedSpeakingWhileMutedBound)
+		this._webRtc.webrtc.on('videoDisallowed', this._handleVideoDisallowedBound)
 		this._webRtc.webrtc.on('virtualBackgroundLoadFailed', this._handleVirtualBackgroundLoadFailedBound)
 		this._webRtc.webrtc.on('virtualBackgroundOn', this._handleVirtualBackgroundOnBound)
 		this._webRtc.webrtc.on('virtualBackgroundOff', this._handleVirtualBackgroundOffBound)
@@ -142,13 +148,13 @@ LocalMediaModel.prototype = {
 		this._webRtc.webrtc.on('localScreenStopped', this._handleLocalScreenStoppedBound)
 	},
 
-	_handleLocalStreamRequested(constraints, context) {
+	_handleLocalStreamRequested(context) {
 		if (context !== 'retry-no-video') {
 			this.set('localStreamRequestVideoError', null)
 		}
 	},
 
-	_handleLocalStream(configuration, localStream) {
+	_handleLocalStream(localStream) {
 		// Although there could be several local streams active at the same
 		// time (if the local media is started again before stopping it
 		// first) the methods to control them ("mute", "unmute",
@@ -164,7 +170,7 @@ LocalMediaModel.prototype = {
 		this._setInitialState(localStream)
 	},
 
-	_handleLocalStreamRequestFailedRetryNoVideo(constraints, error) {
+	_handleLocalStreamRequestFailedRetryNoVideo(error) {
 		if (!error || error.name === 'NotFoundError') {
 			return
 		}
@@ -244,6 +250,10 @@ LocalMediaModel.prototype = {
 		this.set('videoAvailable', false)
 	},
 
+	_handleAudioDisallowed() {
+		this.disableAudio()
+	},
+
 	_handleVolumeChange(currentVolume, volumeThreshold) {
 		if (!this.get('audioAvailable')) {
 			return
@@ -283,6 +293,10 @@ LocalMediaModel.prototype = {
 		}
 
 		this.set('speakingWhileMuted', false)
+	},
+
+	_handleVideoDisallowed() {
+		this.disableVideo()
 	},
 
 	_handleVirtualBackgroundLoadFailed() {
