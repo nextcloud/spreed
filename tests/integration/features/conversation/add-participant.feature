@@ -15,6 +15,9 @@ Feature: public
     And user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id | subject                                                            |
+      | spreed | room        | room      | participant1-displayname invited you to a group conversation: room |
     And user "participant3" is not participant of room "room" (v4)
     And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
@@ -34,6 +37,8 @@ Feature: public
       | room | 3    | 3               |
     And user "participant3" is not participant of room "room" (v4)
     When user "participant2" adds user "participant3" to room "room" with 403 (v4)
+    Then user "participant3" has the following notifications
+      | app | object_type | object_id | subject |
     And user "participant3" is not participant of room "room" (v4)
     And user "participant1" sees the following attendees in room "room" with 200 (v4)
       | actorType  | actorId      | participantType |
@@ -54,6 +59,9 @@ Feature: public
       | room | 3    | 2               |
     And user "participant3" is not participant of room "room" (v4)
     When user "participant2" adds user "participant3" to room "room" with 200 (v4)
+    Then user "participant3" has the following notifications
+      | app    | object_type | object_id | subject                                                            |
+      | spreed | room        | room      | participant2-displayname invited you to a group conversation: room |
     Then user "participant1" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 1               |
@@ -79,6 +87,8 @@ Feature: public
       | users      | participant1 | 1               |
       | users      | participant2 | 5               |
     When user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    Then user "participant2" has the following notifications
+      | app | object_type | object_id | subject |
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |
@@ -98,6 +108,8 @@ Feature: public
     # participant3 already present, so it will be skipped
     And user "participant1" adds user "participant3" to room "room" with 200 (v4)
     When user "participant1" adds group "group1" to room "room" with 200 (v4)
+    Then user "participant2" has the following notifications
+      | app | object_type | object_id | subject |
     Then user "participant2" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |
