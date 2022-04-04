@@ -49,14 +49,17 @@ get the messagesList array and loop through the list to generate the messages.
 				:count="15" />
 		</template>
 		<transition name="fade">
-			<button v-show="!isChatScrolledToBottom"
+			<Button v-show="!isChatScrolledToBottom"
+				type="secondary"
 				:aria-label="scrollToBottomAriaLabel"
 				class="scroll-to-bottom"
 				@click="smoothScrollToBottom">
-				<ChevronDown decorative
-					title=""
-					:size="20" />
-			</button>
+				<template #icon>
+					<ChevronDown decorative
+						title=""
+						:size="20" />
+				</template>
+			</Button>
 		</transition>
 	</div>
 </template>
@@ -73,6 +76,7 @@ import { EventBus } from '../../services/EventBus'
 import LoadingPlaceholder from '../LoadingPlaceholder'
 import ChevronDown from 'vue-material-design-icons/ChevronDown'
 import uniqueId from 'lodash/uniqueId'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'MessagesList',
@@ -80,6 +84,7 @@ export default {
 		LoadingPlaceholder,
 		MessagesGroup,
 		ChevronDown,
+		Button,
 	},
 
 	mixins: [
@@ -897,7 +902,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/variables';
-
 .scroller {
 	flex: 1 0;
 	overflow-y: auto;
@@ -911,16 +915,9 @@ export default {
 
 .scroll-to-bottom {
 	position: absolute;
-	width: 44px;
-	height: 44px;
 	bottom: 76px;
 	right: 24px;
 	z-index: 2;
-	padding: 0;
-	margin: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 }
 
 </style>
