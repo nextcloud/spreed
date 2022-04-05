@@ -21,7 +21,8 @@
   -->
 
 <template>
-	<Modal :container="container"
+	<Modal size="small"
+		:container="container"
 		@close="close">
 		<div id="modal-inner" class="talk-modal" :class="{ 'icon-loading': loading }">
 			<div id="modal-content">
@@ -166,10 +167,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.talk-modal {
+	height: 80vh;
+}
+
 #modal-inner {
 	width: 100%;
-	height: 100%;
-	padding: 12px;
+	padding: 16px;
 	margin: 0 auto;
 	position: relative;
 	display: flex;
@@ -186,7 +191,6 @@ export default {
 	height: calc(100% - 40px);
 	display: flex;
 	flex-direction: column;
-	padding: 20px;
 }
 
 #room-list {
@@ -223,15 +227,7 @@ li {
 #modal-buttons {
 	overflow: hidden;
 	flex-shrink: 0;
-	margin: 0 auto;
-	button {
-		height: 44px;
-		margin: 0;
-	}
-
-	.primary {
-		float: right;
-	}
+	margin-left: auto;
 }
 
 .subtitle {
