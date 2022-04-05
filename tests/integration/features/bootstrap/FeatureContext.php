@@ -1892,6 +1892,49 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
+	/**
+	 * @Then user :user has the following notifications
+	 *
+	 * @param string $user
+	 * @param TableNode|null $body
+	 */
+	public function userNotifications(string $user, TableNode $body = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'GET', '/apps/notifications/api/v2/notifications'
+		);
+
+		$data = $this->getDataFromResponse($this->response);
+
+		if ($body === null) {
+			Assert::assertCount(0, $data);
+			return;
+		}
+
+		$this->assertNotifications($data, $body);
+	}
+
+	private function assertNotifications($notifications, TableNode $formData) {
+		Assert::assertCount(count($formData->getHash()), $notifications, 'Notifications count does not match');
+		Assert::assertEquals($formData->getHash(), array_map(function ($notification, $expectedNotification) {
+			$data = [];
+			if (isset($expectedNotification['object_id'])) {
+				[$roomToken,] = explode('/', $notification['object_id']);
+				$data['object_id'] = self::$tokenToIdentifier[$roomToken];
+			}
+			if (isset($expectedNotification['subject'])) {
+				$data['subject'] = (string) $notification['subject'];
+			}
+			if (isset($expectedNotification['object_type'])) {
+				$data['object_type'] = (string) $notification['object_type'];
+			}
+			if (isset($expectedNotification['app'])) {
+				$data['app'] = (string) $notification['app'];
+			}
+
+			return $data;
+		}, $notifications, $formData->getHash()));
+	}
 
 	/**
 	 * @Given /^guest accounts can be created$/
