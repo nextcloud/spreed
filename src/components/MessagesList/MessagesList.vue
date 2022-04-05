@@ -398,7 +398,7 @@ export default {
 			let focussed = null
 			if (this.$route?.hash?.startsWith('#message_')) {
 				// scroll to message in URL anchor
-				focussed = this.focusMessage(this.$route.hash.substr(9), false)
+				focussed = this.focusMessage(this.$route.hash.slice(9), false)
 			}
 
 			if (!focussed && this.visualLastReadMessageId) {
@@ -878,7 +878,7 @@ export default {
 					// the hash
 					window.setTimeout(() => {
 						// scroll to message in URL anchor
-						this.focusMessage(to.hash.substr(9), true)
+						this.focusMessage(to.hash.slice(9), true)
 					}, 2)
 				}
 			}

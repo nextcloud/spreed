@@ -125,9 +125,9 @@ export default {
 				}
 
 				if (data.server.startsWith('https://')) {
-					data.server = data.server.substr(8)
+					data.server = data.server.slice(8)
 				} else if (data.server.startsWith('http://')) {
-					data.server = data.server.substr(7)
+					data.server = data.server.slice(7)
 				}
 
 				if (data.secret === '') {

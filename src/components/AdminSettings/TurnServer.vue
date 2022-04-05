@@ -277,7 +277,7 @@ export default {
 		parseCandidate(text) {
 			const candidateStr = 'candidate:'
 			const pos = text.indexOf(candidateStr) + candidateStr.length
-			const parts = text.substr(pos).split(' ')
+			const parts = text.slice(pos).split(' ')
 
 			return {
 				component: parts[1],
