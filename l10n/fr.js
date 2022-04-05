@@ -1202,4 +1202,4 @@ OC.L10N.register(
     "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Définir le niveau de notification pour la conversation courante. Cela n'affectera que les notifications que vous recevrez.",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK : les fichiers \".wasm\" and \".tflite\" ont bien été retournés par le serveur web"
 },
-"nplurals=2; plural=(n > 1);");
+"nplurals=3; plural=(n==0 || n==1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
