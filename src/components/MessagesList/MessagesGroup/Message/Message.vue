@@ -359,7 +359,7 @@ export default {
 			isActionMenuOpen: false,
 			isEmojiPickerOpen: false,
 			isReactionsMenuOpen: false,
-			detailedReactionsRequested: false,
+			detailedReactionsLoading: false,
 		}
 	},
 
@@ -568,6 +568,10 @@ export default {
 		detailedReactions() {
 			return this.$store.getters.reactions(this.token, this.id)
 		},
+
+		detailedReactionsLoaded() {
+			return this.$store.getters.reactionsLoaded(this.token, this.id)
+		},
 	},
 
 	watch: {
@@ -625,7 +629,7 @@ export default {
 		},
 
 		handleReactionsMouseOver() {
-			if (this.hasReactions && !this.detailedReactionsRequested) {
+			if (this.hasReactions && !this.detailedReactionsLoaded) {
 				this.getReactions()
 			}
 		},
@@ -637,24 +641,29 @@ export default {
 		},
 
 		async getReactions() {
+			if (this.detailedReactionsLoading) {
+				// FIXME not sure how to await the other execution
+			}
+
 			try {
 				/**
 				 * Get reaction details when the message is hovered for the first
 				 * time. After that we rely on system messages to update the
 				 * reactions.
 				 */
-				this.detailedReactionsRequested = true
+				this.detailedReactionsLoading = true
 				await this.$store.dispatch('getReactions', {
 					token: this.token,
 					messageId: this.id,
 				})
+				this.detailedReactionsLoading = false
 			} catch {
-				this.detailedReactionsRequested = false
+				this.detailedReactionsLoading = false
 			}
 		},
 
 		async handleReactionClick(clickedEmoji) {
-			if (!this.detailedReactionsRequested) {
+			if (!this.detailedReactionsLoaded) {
 				await this.getReactions()
 			}
 			// Check if current user has already added this reaction to the message

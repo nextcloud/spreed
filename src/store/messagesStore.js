@@ -391,6 +391,13 @@ const actions = {
 			})
 		}
 
+		if (message.systemMessage === 'reaction' || message.systemMessage === 'reaction_revoked') {
+			context.commit('resetReactions', {
+				token: message.token,
+				messageId: message.parent,
+			})
+		}
+
 		context.commit('addMessage', message)
 	},
 

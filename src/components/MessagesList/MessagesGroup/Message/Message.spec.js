@@ -809,8 +809,10 @@ describe('Message.vue', () => {
 		test('dispatches store action upon picking an emoji from the emojipicker', () => {
 			const addReactionToMessageAction = jest.fn()
 			const userHasReactedGetter = jest.fn().mockReturnValue(() => false)
+			const reactionsLoadedGetter = jest.fn().mockReturnValue(() => true)
 			testStoreConfig.modules.quoteReplyStore.actions.addReactionToMessage = addReactionToMessageAction
 			testStoreConfig.modules.messagesStore.getters.userHasReacted = userHasReactedGetter
+			testStoreConfig.modules.messagesStore.getters.reactionsLoaded = reactionsLoadedGetter
 
 			store = new Store(testStoreConfig)
 
@@ -820,11 +822,6 @@ describe('Message.vue', () => {
 				propsData: messageProps,
 				stubs: {
 					EmojiPicker,
-				},
-				data() {
-					return {
-						detailedReactionsRequested: true,
-					}
 				},
 			})
 
@@ -844,8 +841,10 @@ describe('Message.vue', () => {
 		test('dispatches store action to remove an emoji upon clicking reaction button', async () => {
 			const removeReactionFromMessageAction = jest.fn()
 			const userHasReactedGetter = jest.fn().mockReturnValue(() => true)
+			const reactionsLoadedGetter = jest.fn().mockReturnValue(() => true)
 			testStoreConfig.modules.quoteReplyStore.actions.removeReactionFromMessage = removeReactionFromMessageAction
 			testStoreConfig.modules.messagesStore.getters.userHasReacted = userHasReactedGetter
+			testStoreConfig.modules.messagesStore.getters.reactionsLoaded = reactionsLoadedGetter
 
 			store = new Store(testStoreConfig)
 
@@ -853,11 +852,6 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
-				data() {
-					return {
-						detailedReactionsRequested: true,
-					}
-				},
 			})
 
 			// Click reaction button upon having already reacted

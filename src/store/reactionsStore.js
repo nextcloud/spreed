@@ -41,6 +41,14 @@ const getters = {
 		}
 	},
 
+	reactionsLoaded: (state) => (token, messageId) => {
+		if (state.reactions?.[token]?.[messageId]) {
+			return true
+		} else {
+			return false
+		}
+	},
+
 	// Checks if a user has already reacted to a message with a particular reaction
 	userHasReacted: (state) => (actorType, actorId, token, messageId, reaction) => {
 		if (!state?.reactions?.[token]?.[messageId]?.[reaction]) {
@@ -59,6 +67,13 @@ const mutations = {
 
 		}
 		Vue.set(state.reactions[token], messageId, reactions)
+	},
+
+	resetReactions(state, { token, messageId }) {
+		if (!state.reactions[token]) {
+			Vue.set(state.reactions, token, {})
+		}
+		Vue.delete(state.reactions[token], messageId)
 	},
 }
 
