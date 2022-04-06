@@ -111,3 +111,20 @@ Feature: reaction/react
       | users     | participant1 | participant1-displayname | 👍       |
       | users     | participant2 | participant2-displayname | 👎       |
       | users     | participant2 | participant2-displayname | 👍       |
+
+  Scenario: Delete message that was reacted to
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    And user "participant2" react with "👍" on message "Message 1" to room "room" with 201
+      | actorType | actorId      | actorDisplayName         | reaction |
+      | users     | participant2 | participant2-displayname | 👍       |
+    And user "participant1" sees the following messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions |
+      | room | users     | participant1 | participant1-displayname | Message 1 | []                | {"👍":1}  |
+    Then user "participant1" deletes message "Message 1" from room "room" with 200 (v1)
+    And user "participant1" sees the following messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message                | messageParameters                                                               | reactions |
+      | room | users     | participant1 | participant1-displayname | Message deleted by you | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} | []        |
