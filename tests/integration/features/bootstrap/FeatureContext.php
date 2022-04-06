@@ -49,6 +49,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static $userToAttendeeId;
 	/** @var array[] */
 	protected static $messages;
+	protected static $textToMessageId;
+	/** @var array[] */
+	protected static $messageIdToText;
 
 
 	protected static $permissionsMap = [
@@ -138,7 +141,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$sessionIdToUser = [];
 		self::$userToSessionId = [];
 		self::$userToAttendeeId = [];
-		self::$messages = [];
+		self::$textToMessageId = [];
+		self::$messageIdToText = [];
 
 		$this->createdUsers = [];
 		$this->createdGroups = [];
@@ -862,6 +866,36 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" sets notifications to (default|disabled|mention|all) for room "([^"]*)" \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $level
+	 * @param string $identifier
+	 * @param string $apiVersion
+	 */
+	public function userSetsNotificationLevelForRoom(string $user, string $level, string $identifier, string $apiVersion): void {
+		$this->setCurrentUser($user);
+
+		$intLevel = 0; // default
+		if ($level === 'disabled') {
+			$intLevel = 3;
+		} elseif ($level === 'mention') {
+			$intLevel = 2;
+		} elseif ($level === 'all') {
+			$intLevel = 1;
+		}
+
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/notify',
+			new TableNode([
+				['level', $intLevel],
+			])
+		);
+
+		$this->assertStatusCode($this->response, 200);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" leaves room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
@@ -1381,7 +1415,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
-			self::$messages[$message] = $response['id'];
+			self::$textToMessageId[$message] = $response['id'];
+			self::$messageIdToText[$response['id']] = $message;
 		}
 	}
 
@@ -1411,7 +1446,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
-			self::$messages['shared::' . $type . '::' . $id] = $response['id'];
+			self::$textToMessageId['shared::' . $type . '::' . $id] = $response['id'];
 		}
 	}
 
@@ -1427,7 +1462,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userDeletesMessageFromRoom($user, $message, $identifier, $statusCode, $apiVersion = 'v1') {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
-			'DELETE', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/' . self::$messages[$message],
+			'DELETE', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/' . self::$textToMessageId[$message],
 			new TableNode([['message', $message]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
@@ -1462,7 +1497,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/read',
-			new TableNode([['lastReadMessage', self::$messages[$message]]])
+			new TableNode([['lastReadMessage', self::$textToMessageId[$message]]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
@@ -1504,7 +1539,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
-			self::$messages[$message] = $response['id'];
+			self::$textToMessageId[$message] = $response['id'];
 		}
 
 		Assert::assertStringStartsWith($response['referenceId'], $referenceId);
@@ -1521,7 +1556,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 */
 	public function userSendsReplyToRoom($user, $reply, $message, $identifier, $statusCode, $apiVersion = 'v1') {
-		$replyTo = self::$messages[$message];
+		$replyTo = self::$textToMessageId[$message];
 
 		$this->setCurrentUser($user);
 		$this->sendRequest(
@@ -1533,7 +1568,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
-			self::$messages[$reply] = $response['id'];
+			self::$textToMessageId[$reply] = $response['id'];
 		}
 	}
 
@@ -1587,7 +1622,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		foreach ($actual as $m) {
 			if ($m['systemMessage'] === 'message_deleted') {
-				if (isset($m['parent']['id']) && $m['parent']['id'] === self::$messages[$message]) {
+				if (isset($m['parent']['id']) && $m['parent']['id'] === self::$textToMessageId[$message]) {
 					return;
 				}
 			}
@@ -1607,7 +1642,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userAwaitsTheFollowingMessagesInRoom($user, $identifier, $knownMessage, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=1&includeLastKnown=1&lastKnownMessageId=' . self::$messages[$knownMessage]);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=1&includeLastKnown=1&lastKnownMessageId=' . self::$textToMessageId[$knownMessage]);
 		$this->assertStatusCode($this->response, $statusCode);
 
 		$this->compareDataResponse($formData);
@@ -1630,9 +1665,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// Include the received messages in the list of messages used for
 			// replies; this is needed to get special messages not explicitly
 			// sent like those for shared files.
-			self::$messages[$message['message']] = $message['id'];
+			self::$textToMessageId[$message['message']] = $message['id'];
 			if ($message['message'] === '{file}' && isset($message['messageParameters']['file']['name'])) {
-				self::$messages['shared::file::' . $message['messageParameters']['file']['name']] = $message['id'];
+				self::$textToMessageId['shared::file::' . $message['messageParameters']['file']['name']] = $message['id'];
 			}
 		}
 
@@ -1699,7 +1734,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		foreach ($messages as $systemMessage) {
 			// Include the received system messages in the list of messages used
 			// for replies.
-			self::$messages[$systemMessage['systemMessage']] = $systemMessage['id'];
+			self::$textToMessageId[$systemMessage['systemMessage']] = $systemMessage['id'];
 		}
 
 		if ($formData === null) {
@@ -1803,10 +1838,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function hasChatLastCommonReadHeader($setOrLower, $message) {
 		Assert::assertArrayHasKey('X-Chat-Last-Common-Read', $this->response->getHeaders());
 		if ($setOrLower === 'set to') {
-			Assert::assertEquals(self::$messages[$message], $this->response->getHeader('X-Chat-Last-Common-Read')[0]);
+			Assert::assertEquals(self::$textToMessageId[$message], $this->response->getHeader('X-Chat-Last-Common-Read')[0]);
 		} else {
 			// Less than might be required for the first message, because the last read message before is the join/room creation message and we don't know that ID
-			Assert::assertLessThan(self::$messages[$message], $this->response->getHeader('X-Chat-Last-Common-Read')[0]);
+			Assert::assertLessThan(self::$textToMessageId[$message], $this->response->getHeader('X-Chat-Last-Common-Read')[0]);
 		}
 	}
 
@@ -1892,6 +1927,54 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
+	/**
+	 * @Then user :user has the following notifications
+	 *
+	 * @param string $user
+	 * @param TableNode|null $body
+	 */
+	public function userNotifications(string $user, TableNode $body = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'GET', '/apps/notifications/api/v2/notifications'
+		);
+
+		$data = $this->getDataFromResponse($this->response);
+
+		if ($body === null) {
+			Assert::assertCount(0, $data);
+			return;
+		}
+
+		$this->assertNotifications($data, $body);
+	}
+
+	private function assertNotifications($notifications, TableNode $formData) {
+		Assert::assertCount(count($formData->getHash()), $notifications, 'Notifications count does not match');
+		Assert::assertEquals($formData->getHash(), array_map(function ($notification, $expectedNotification) {
+			$data = [];
+			if (isset($expectedNotification['object_id'])) {
+				if (strpos($notification['object_id'], '/') !== false) {
+					[$roomToken, $message] = explode('/', $notification['object_id']);
+					$data['object_id'] = self::$tokenToIdentifier[$roomToken] . '/' . self::$messageIdToText[$message] ?? 'UNKNOWN_MESSAGE';
+				} else {
+					[$roomToken,] = explode('/', $notification['object_id']);
+					$data['object_id'] = self::$tokenToIdentifier[$roomToken];
+				}
+			}
+			if (isset($expectedNotification['subject'])) {
+				$data['subject'] = (string) $notification['subject'];
+			}
+			if (isset($expectedNotification['object_type'])) {
+				$data['object_type'] = (string) $notification['object_type'];
+			}
+			if (isset($expectedNotification['app'])) {
+				$data['app'] = (string) $notification['app'];
+			}
+
+			return $data;
+		}, $notifications, $formData->getHash()));
+	}
 
 	/**
 	 * @Given /^guest accounts can be created$/
@@ -2171,7 +2254,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userReactWithOnMessageToRoomWith(string $user, string $action, string $reaction, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
 		$token = self::$identifierToToken[$identifier];
-		$messageId = self::$messages[$message];
+		$messageId = self::$textToMessageId[$message];
 		$this->setCurrentUser($user);
 		$verb = $action === 'react' ? 'POST' : 'DELETE';
 		$this->sendRequest($verb, '/apps/spreed/api/' . $apiVersion . '/reaction/' . $token . '/' . $messageId, [
@@ -2186,7 +2269,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userRetrieveReactionsOfMessageInRoomWith(string $user, string $reaction, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $formData): void {
 		$token = self::$identifierToToken[$identifier];
-		$messageId = self::$messages[$message];
+		$messageId = self::$textToMessageId[$message];
 		$this->setCurrentUser($user);
 		$reaction = $reaction !== 'all' ? '?reaction=' . $reaction : '';
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/reaction/' . $token . '/' . $messageId . $reaction);

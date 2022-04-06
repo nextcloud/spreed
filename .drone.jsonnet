@@ -16,6 +16,7 @@ local Pipeline(test_set, database, services) = {
 				APP_NAME: "spreed",
 				CORE_BRANCH: "master",
 				GUESTS_BRANCH: "master",
+				NOTIFICATIONS_BRANCH: "master",
 				DATABASEHOST: database
 			},
 			commands: [
@@ -24,6 +25,8 @@ local Pipeline(test_set, database, services) = {
 				"bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST",
 				"cd ../server",
 				"./occ app:enable $APP_NAME",
+				"git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications apps/notifications",
+				"./occ app:enable notifications"
 			] + (
 				if test_set == "conversation" || test_set == "conversation-2" then [
 					"git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests"

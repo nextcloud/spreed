@@ -85,6 +85,15 @@ class ApiController extends OCSController {
 			))
 			->executeStatement();
 
+		try {
+			$delete = $this->db->getQueryBuilder();
+			$delete->delete('notifications')
+				->where($delete->expr()->eq('app', $delete->createNamedParameter('spreed')))
+				->executeStatement();
+		} catch (\Throwable $e) {
+			// Ignore
+		}
+
 		return new DataResponse();
 	}
 }
