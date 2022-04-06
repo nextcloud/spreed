@@ -58,7 +58,7 @@ class AdminSettings implements ISettings {
 	private $groupManager;
 	/** @var MatterbridgeManager */
 	private $bridgeManager;
-	/** @var IUser */
+	/** @var null|IUser */
 	private $currentUser;
 	/** @var IL10N */
 	private $l10n;
