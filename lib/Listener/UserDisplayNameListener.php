@@ -30,9 +30,7 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\User\Events\UserChangedEvent;
 
 class UserDisplayNameListener implements IEventListener {
-
-	/** @var ParticipantService */
-	private $participantService;
+	private ParticipantService $participantService;
 
 	public function __construct(ParticipantService $participantService) {
 		$this->participantService = $participantService;

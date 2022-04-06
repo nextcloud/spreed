@@ -27,9 +27,7 @@ use OCP\Activity\ActivitySettings;
 use OCP\IL10N;
 
 class Setting extends ActivitySettings {
-
-	/** @var IL10N */
-	protected $l;
+	protected IL10N $l;
 
 	public function __construct(IL10N $l) {
 		$this->l = $l;

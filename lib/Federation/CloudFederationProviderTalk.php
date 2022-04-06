@@ -51,33 +51,24 @@ use OCP\Notification\IManager as INotificationManager;
 use OCP\Share\Exceptions\ShareNotFound;
 
 class CloudFederationProviderTalk implements ICloudFederationProvider {
-
-	/** @var IUserManager */
-	private $userManager;
+	private IUserManager $userManager;
 
 	/** @var AddressHandler */
 	private $addressHandler;
 
-	/** @var FederationManager */
-	private $federationManager;
+	private FederationManager $federationManager;
 
-	/** @var Config */
-	private $config;
+	private Config $config;
 
-	/** @var INotificationManager */
-	private $notificationManager;
+	private INotificationManager $notificationManager;
 
-	/** @var IURLGenerator */
-	private $urlGenerator;
+	private IURLGenerator $urlGenerator;
 
-	/** @var ParticipantService  */
-	private $participantService;
+	private ParticipantService $participantService;
 
-	/** @var AttendeeMapper  */
-	private $attendeeMapper;
+	private AttendeeMapper $attendeeMapper;
 
-	/** @var Manager  */
-	private $manager;
+	private Manager $manager;
 
 	public function __construct(
 		IUserManager $userManager,

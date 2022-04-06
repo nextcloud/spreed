@@ -38,15 +38,10 @@ use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IShare;
 
 class PublicShareAuthController extends OCSController {
-
-	/** @var IUserManager */
-	private $userManager;
-	/** @var IShareManager */
-	private $shareManager;
-	/** @var IUserSession */
-	private $userSession;
-	/** @var RoomService */
-	private $roomService;
+	private IUserManager $userManager;
+	private IShareManager $shareManager;
+	private IUserSession $userSession;
+	private RoomService $roomService;
 
 	public function __construct(
 			string $appName,

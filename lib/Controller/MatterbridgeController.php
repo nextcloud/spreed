@@ -33,12 +33,9 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
 class MatterbridgeController extends AEnvironmentAwareController {
-	/** @var string|null */
-	protected $userId;
-	/** @var Manager */
-	protected $manager;
-	/** @var MatterbridgeManager */
-	protected $bridgeManager;
+	protected ?string $userId;
+	protected Manager $manager;
+	protected MatterbridgeManager $bridgeManager;
 
 	public function __construct(string $appName,
 								?string $UserId,

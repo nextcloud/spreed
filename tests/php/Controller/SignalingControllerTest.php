@@ -22,6 +22,8 @@
 
 namespace OCA\Talk\Tests\php\Controller;
 
+use Test\TestCase;
+use OCP\IRequest;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Controller\SignalingController;
@@ -67,10 +69,8 @@ class CustomInputSignalingController extends SignalingController {
 /**
  * @group DB
  */
-class SignalingControllerTest extends \Test\TestCase {
-
-	/** @var Config */
-	private $config;
+class SignalingControllerTest extends TestCase {
+	private ?Config $config = null;
 	/** @var TalkSession|MockObject */
 	private $session;
 	/** @var \OCA\Talk\Signaling\Manager|MockObject */
@@ -91,17 +91,13 @@ class SignalingControllerTest extends \Test\TestCase {
 	protected $timeFactory;
 	/** @var IClientService|MockObject */
 	protected $clientService;
-	/** @var string */
-	private $userId;
-	/** @var ISecureRandom */
-	private $secureRandom;
-	/** @var IEventDispatcher */
-	private $dispatcher;
+	private ?string $userId = null;
+	private ?ISecureRandom $secureRandom = null;
+	private ?IEventDispatcher $dispatcher = null;
 	/** @var LoggerInterface|MockObject */
 	private $logger;
 
-	/** @var CustomInputSignalingController */
-	private $controller;
+	private ?\OCA\Talk\Tests\php\Controller\CustomInputSignalingController $controller = null;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -135,7 +131,7 @@ class SignalingControllerTest extends \Test\TestCase {
 	private function recreateSignalingController() {
 		$this->controller = new CustomInputSignalingController(
 			'spreed',
-			$this->createMock(\OCP\IRequest::class),
+			$this->createMock(IRequest::class),
 			$this->config,
 			$this->signalingManager,
 			$this->session,

@@ -33,10 +33,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Remove extends Base {
-	/** @var IUserManager */
-	private $userManager;
-	/** @var Manager */
-	private $manager;
+	private IUserManager $userManager;
+	private Manager $manager;
 
 	public function __construct(IUserManager $userManager,
 								Manager $manager) {

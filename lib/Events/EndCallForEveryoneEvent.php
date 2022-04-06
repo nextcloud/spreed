@@ -29,9 +29,9 @@ use OCA\Talk\Room;
 class EndCallForEveryoneEvent extends ModifyRoomEvent {
 
 	/** @var string[] */
-	protected $sessionIds;
+	protected ?array $sessionIds = null;
 	/** @var string[] */
-	protected $userIds;
+	protected ?array $userIds = null;
 
 	public function __construct(Room $room,
 								?Participant $actor = null) {

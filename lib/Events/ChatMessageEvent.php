@@ -26,9 +26,7 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Model\Message;
 
 class ChatMessageEvent extends ChatEvent {
-
-	/** @var Message */
-	protected $message;
+	protected Message $message;
 
 
 	public function __construct(Message $message) {

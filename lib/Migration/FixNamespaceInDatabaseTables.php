@@ -28,9 +28,7 @@ use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 
 class FixNamespaceInDatabaseTables implements IRepairStep {
-
-	/** @var IDBConnection */
-	protected $connection;
+	protected IDBConnection $connection;
 
 	public function __construct(IDBConnection $connection) {
 		$this->connection = $connection;

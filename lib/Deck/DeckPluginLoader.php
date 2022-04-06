@@ -30,8 +30,7 @@ use OCP\IRequest;
 use OCP\Util;
 
 class DeckPluginLoader implements IEventListener {
-	/** @var IRequest */
-	private $request;
+	private IRequest $request;
 
 	public function __construct(IRequest $request) {
 		$this->request = $request;

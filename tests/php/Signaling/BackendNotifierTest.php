@@ -22,6 +22,7 @@
 
 namespace OCA\Talk\Tests\php\Signaling;
 
+use Test\TestCase;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
@@ -51,7 +52,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
 class CustomBackendNotifier extends BackendNotifier {
-	private $requests = [];
+	private array $requests = [];
 
 	public function getRequests(): array {
 		return $this->requests;
@@ -72,12 +73,9 @@ class CustomBackendNotifier extends BackendNotifier {
 /**
  * @group DB
  */
-class BackendNotifierTest extends \Test\TestCase {
-
-	/** @var Config */
-	private $config;
-	/** @var ISecureRandom */
-	private $secureRandom;
+class BackendNotifierTest extends TestCase {
+	private ?Config $config = null;
+	private ?ISecureRandom $secureRandom = null;
 	/** @var ITimeFactory|MockObject */
 	private $timeFactory;
 	/** @var ParticipantService|MockObject */
@@ -86,25 +84,17 @@ class BackendNotifierTest extends \Test\TestCase {
 	private $signalingManager;
 	/** @var IURLGenerator|MockObject */
 	private $urlGenerator;
-	/** @var CustomBackendNotifier */
-	private $controller;
+	private ?\OCA\Talk\Tests\php\Signaling\CustomBackendNotifier $controller = null;
 
-	/** @var Manager */
-	private $manager;
+	private ?Manager $manager = null;
 
-	/** @var string */
-	private $userId;
-	/** @var string */
-	private $signalingSecret;
-	/** @var string */
-	private $baseUrl;
+	private ?string $userId = null;
+	private ?string $signalingSecret = null;
+	private ?string $baseUrl = null;
 
-	/** @var Application */
-	protected $app;
-	/** @var BackendNotifier */
-	protected $originalBackendNotifier;
-	/** @var IEventDispatcher */
-	private $dispatcher;
+	protected Application $app;
+	protected BackendNotifier $originalBackendNotifier;
+	private ?IEventDispatcher $dispatcher = null;
 
 	public function setUp(): void {
 		parent::setUp();

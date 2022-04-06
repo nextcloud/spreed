@@ -23,19 +23,19 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Settings\Admin;
 
+use Test\TestCase;
 use OCA\Talk\Settings\Admin\Section;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
 
-class SectionTest extends \Test\TestCase {
+class SectionTest extends TestCase {
 
 	/** @var IURLGenerator|MockObject */
 	protected $url;
 	/** @var IL10N|MockObject */
 	protected $l;
-	/** @var Section */
-	protected $admin;
+	protected ?Section $admin = null;
 
 	public function setUp(): void {
 		parent::setUp();

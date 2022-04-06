@@ -26,11 +26,8 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Room;
 
 class ModifyLobbyEvent extends ModifyRoomEvent {
-
-	/** @var \DateTime|null */
-	protected $lobbyTimer;
-	/** @var bool */
-	protected $timerReached;
+	protected ?\DateTime $lobbyTimer;
+	protected bool $timerReached;
 
 	public function __construct(Room $room,
 								string $parameter,

@@ -37,18 +37,13 @@ use OCP\Comments\NotFoundException;
 use OCP\IL10N;
 
 class ReactionManager {
-	/** @var ChatManager */
-	private $chatManager;
+	private ChatManager $chatManager;
 	/** @var ICommentsManager|CommentsManager */
 	private $commentsManager;
-	/** @var IL10N */
-	private $l;
-	/** @var MessageParser */
-	private $messageParser;
-	/** @var Notifier */
-	private $notifier;
-	/** @var ITimeFactory */
-	protected $timeFactory;
+	private IL10N $l;
+	private MessageParser $messageParser;
+	private Notifier $notifier;
+	protected ITimeFactory $timeFactory;
 
 	public function __construct(ChatManager $chatManager,
 								CommentsManager $commentsManager,

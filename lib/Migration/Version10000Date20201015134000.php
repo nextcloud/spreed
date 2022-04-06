@@ -43,10 +43,8 @@ use OCP\Migration\SimpleMigrationStep;
  * email addresses, etc the sessions had to be decoupled from the participants
  */
 class Version10000Date20201015134000 extends SimpleMigrationStep {
-	/** @var IDBConnection */
-	protected $connection;
-	/** @var ITimeFactory */
-	protected $timeFactory;
+	protected IDBConnection $connection;
+	protected ITimeFactory $timeFactory;
 
 	public function __construct(IDBConnection $connection,
 								ITimeFactory $timeFactory) {

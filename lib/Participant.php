@@ -54,12 +54,9 @@ class Participant {
 	public const PRIVACY_PUBLIC = 0;
 	public const PRIVACY_PRIVATE = 1;
 
-	/** @var Room */
-	protected $room;
-	/** @var Attendee */
-	protected $attendee;
-	/** @var Session|null */
-	protected $session;
+	protected Room $room;
+	protected Attendee $attendee;
+	protected ?Session $session;
 
 	public function __construct(Room $room,
 								Attendee $attendee,

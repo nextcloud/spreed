@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\AppInfo;
 
+use OCP\Util;
 use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleDestroyedEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
@@ -184,7 +185,7 @@ class Application extends App implements IBootstrap {
 		$resourceManager = $server->get(IProviderManager::class);
 		$resourceManager->registerResourceProvider(ConversationProvider::class);
 		$server->getEventDispatcher()->addListener('\OCP\Collaboration\Resources::loadAdditionalScripts', function () {
-			\OCP\Util::addScript(self::APP_ID, 'talk-collections');
+			Util::addScript(self::APP_ID, 'talk-collections');
 		});
 	}
 

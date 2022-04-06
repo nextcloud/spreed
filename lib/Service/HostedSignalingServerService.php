@@ -38,19 +38,13 @@ use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
 class HostedSignalingServerService {
-
-	/** @var IConfig */
-	private $config;
+	private IConfig $config;
 	/** @var mixed */
 	private $apiServerUrl;
-	/** @var IClientService */
-	private $clientService;
-	/** @var LoggerInterface */
-	private $logger;
-	/** @var IL10N */
-	private $l10n;
-	/** @var ISecureRandom */
-	private $secureRandom;
+	private IClientService $clientService;
+	private LoggerInterface $logger;
+	private IL10N $l10n;
+	private ISecureRandom $secureRandom;
 
 	public function __construct(IConfig $config,
 								IClientService $clientService,

@@ -31,9 +31,7 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
 class GuestController extends AEnvironmentAwareController {
-
-	/** @var GuestManager */
-	private $guestManager;
+	private GuestManager $guestManager;
 
 	public function __construct(string $appName,
 								IRequest $request,

@@ -40,17 +40,11 @@ use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
 class HostedSignalingServerController extends OCSController {
-
-	/** @var IClientService */
-	protected $clientService;
-	/** @var IL10N */
-	protected $l10n;
-	/** @var IConfig */
-	protected $config;
-	/** @var LoggerInterface */
-	protected $logger;
-	/** @var HostedSignalingServerService */
-	private $hostedSignalingServerService;
+	protected IClientService $clientService;
+	protected IL10N $l10n;
+	protected IConfig $config;
+	protected LoggerInterface $logger;
+	private HostedSignalingServerService $hostedSignalingServerService;
 
 	public function __construct(string $appName,
 								IRequest $request,

@@ -31,12 +31,9 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 
 class RestrictStartingCalls {
+	protected IConfig $config;
 
-	/** @var IConfig */
-	protected $config;
-
-	/** @var ParticipantService */
-	protected $participantService;
+	protected ParticipantService $participantService;
 
 	public function __construct(IConfig $config,
 								ParticipantService $participantService) {

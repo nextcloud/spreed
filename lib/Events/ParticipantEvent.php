@@ -27,9 +27,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
 class ParticipantEvent extends RoomEvent {
-
-	/** @var Participant */
-	protected $participant;
+	protected Participant $participant;
 
 
 	public function __construct(Room $room,

@@ -73,24 +73,15 @@ class RoomShareProvider implements IShareProvider {
 	public const TALK_FOLDER = '/Talk';
 	public const TALK_FOLDER_PLACEHOLDER = '/{TALK_PLACEHOLDER}';
 
-	/** @var IDBConnection */
-	private $dbConnection;
-	/** @var ISecureRandom */
-	private $secureRandom;
-	/** @var IShareManager */
-	private $shareManager;
-	/** @var EventDispatcherInterface */
-	private $dispatcher;
-	/** @var Manager */
-	private $manager;
-	/** @var ParticipantService */
-	private $participantService;
-	/** @var ITimeFactory */
-	protected $timeFactory;
-	/** @var IL10N */
-	private $l;
-	/** @var IMimeTypeLoader */
-	private $mimeTypeLoader;
+	private IDBConnection $dbConnection;
+	private ISecureRandom $secureRandom;
+	private IShareManager $shareManager;
+	private EventDispatcherInterface $dispatcher;
+	private Manager $manager;
+	private ParticipantService $participantService;
+	protected ITimeFactory $timeFactory;
+	private IL10N $l;
+	private IMimeTypeLoader $mimeTypeLoader;
 
 	public function __construct(
 			IDBConnection $connection,
@@ -192,7 +183,7 @@ class RoomShareProvider implements IShareProvider {
 		$share->setToken(
 			$this->secureRandom->generate(
 				15, // \OC\Share\Constants::TOKEN_LENGTH
-				\OCP\Security\ISecureRandom::CHAR_HUMAN_READABLE
+				ISecureRandom::CHAR_HUMAN_READABLE
 			)
 		);
 

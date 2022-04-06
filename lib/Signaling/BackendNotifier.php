@@ -37,18 +37,12 @@ use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
 class BackendNotifier {
-	/** @var Config */
-	private $config;
-	/** @var LoggerInterface */
-	private $logger;
-	/** @var IClientService */
-	private $clientService;
-	/** @var ISecureRandom */
-	private $secureRandom;
-	/** @var Manager */
-	private $signalingManager;
-	/** @var ParticipantService */
-	private $participantService;
+	private Config $config;
+	private LoggerInterface $logger;
+	private IClientService $clientService;
+	private ISecureRandom $secureRandom;
+	private Manager $signalingManager;
+	private ParticipantService $participantService;
 	/** @var IUrlGenerator */
 	private $urlGenerator;
 

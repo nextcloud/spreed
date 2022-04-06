@@ -32,13 +32,9 @@ use OCA\Talk\Room;
 use OCP\AppFramework\OCSController;
 
 abstract class AEnvironmentAwareController extends OCSController {
-
-	/** @var int */
-	protected $apiVersion = 1;
-	/** @var Room */
-	protected $room;
-	/** @var Participant */
-	protected $participant;
+	protected int $apiVersion = 1;
+	protected ?Room $room = null;
+	protected ?Participant $participant = null;
 
 	public function setAPIVersion(int $apiVersion): void {
 		$this->apiVersion = $apiVersion;

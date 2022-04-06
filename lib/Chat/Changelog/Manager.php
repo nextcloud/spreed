@@ -31,19 +31,12 @@ use OCP\IDBConnection;
 use OCP\IL10N;
 
 class Manager {
-
-	/** @var IConfig */
-	protected $config;
-	/** @var IDBConnection */
-	protected $connection;
-	/** @var RoomManager */
-	protected $roomManager;
-	/** @var ChatManager */
-	protected $chatManager;
-	/** @var ITimeFactory */
-	protected $timeFactory;
-	/** @var IL10N */
-	protected $l;
+	protected IConfig $config;
+	protected IDBConnection $connection;
+	protected RoomManager $roomManager;
+	protected ChatManager $chatManager;
+	protected ITimeFactory $timeFactory;
+	protected IL10N $l;
 
 	public function __construct(IConfig $config,
 								IDBConnection $connection,

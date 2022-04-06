@@ -45,11 +45,10 @@ use OCP\ILogger;
  * @package OCA\Talk\BackgroundJob
  */
 class RetryJob extends Job {
-	/** @var Notifications */
-	private $notifications;
+	private Notifications $notifications;
 
 	/** @var int max number of attempts to send the request */
-	private $maxTry = 20;
+	private int $maxTry = 20;
 
 
 	public function __construct(Notifications $notifications,

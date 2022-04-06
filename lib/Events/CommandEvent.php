@@ -28,13 +28,9 @@ use OCA\Talk\Room;
 use OCP\Comments\IComment;
 
 class CommandEvent extends ChatEvent {
-
-	/** @var Command */
-	protected $command;
-	/** @var string */
-	protected $arguments;
-	/** @var string */
-	protected $output;
+	protected Command $command;
+	protected string $arguments;
+	protected ?string $output = null;
 
 
 	public function __construct(Room $room, IComment $message, Command $command, string $arguments) {

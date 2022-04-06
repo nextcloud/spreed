@@ -44,20 +44,15 @@ class Executor {
 	public const PLACEHOLDER_ARGUMENTS = '{ARGUMENTS}';
 	public const PLACEHOLDER_ARGUMENTS_DOUBLEQUOTE_ESCAPED = '{ARGUMENTS_DOUBLEQUOTE_ESCAPED}';
 
-	/** @var IEventDispatcher */
-	protected $dispatcher;
+	protected IEventDispatcher $dispatcher;
 
-	/** @var ShellExecutor */
-	protected $shellExecutor;
+	protected ShellExecutor $shellExecutor;
 
-	/** @var CommandService */
-	protected $commandService;
+	protected CommandService $commandService;
 
-	/** @var LoggerInterface */
-	protected $logger;
+	protected LoggerInterface $logger;
 
-	/** @var IL10N */
-	protected $l;
+	protected IL10N $l;
 
 	public function __construct(IEventDispatcher $dispatcher,
 								ShellExecutor $shellExecutor,

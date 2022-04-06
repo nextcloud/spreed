@@ -38,11 +38,8 @@ use OCP\IDBConnection;
  * @package OCA\Talk\BackgroundJob
  */
 class CheckReferenceIdColumn extends TimedJob {
-
-	/** @var IJobList */
-	protected $jobList;
-	/** @var IConfig */
-	protected $serverConfig;
+	protected IJobList $jobList;
+	protected IConfig $serverConfig;
 	/** @var IDBConnection|ConnectionAdapter */
 	protected $connection;
 

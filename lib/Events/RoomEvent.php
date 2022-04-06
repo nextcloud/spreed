@@ -27,9 +27,7 @@ use OCA\Talk\Room;
 use OCP\EventDispatcher\Event;
 
 class RoomEvent extends Event {
-
-	/** @var Room */
-	protected $room;
+	protected Room $room;
 
 
 	public function __construct(Room $room) {

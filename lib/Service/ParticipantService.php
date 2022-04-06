@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\Manager;
 use OCA\Circles\CirclesManager;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
@@ -71,34 +72,20 @@ use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 
 class ParticipantService {
-	/** @var IConfig */
-	protected $serverConfig;
-	/** @var Config */
-	protected $talkConfig;
-	/** @var AttendeeMapper */
-	protected $attendeeMapper;
-	/** @var SessionMapper */
-	protected $sessionMapper;
-	/** @var SessionService */
-	protected $sessionService;
-	/** @var ISecureRandom */
-	private $secureRandom;
-	/** @var IDBConnection */
-	protected $connection;
-	/** @var IEventDispatcher */
-	private $dispatcher;
-	/** @var IUserManager */
-	private $userManager;
-	/** @var IGroupManager */
-	private $groupManager;
-	/** @var MembershipService */
-	private $membershipService;
-	/** @var Notifications */
-	private $notifications;
-	/** @var ITimeFactory */
-	private $timeFactory;
-	/** @var ICacheFactory */
-	private $cacheFactory;
+	protected IConfig $serverConfig;
+	protected Config $talkConfig;
+	protected AttendeeMapper $attendeeMapper;
+	protected SessionMapper $sessionMapper;
+	protected SessionService $sessionService;
+	private ISecureRandom $secureRandom;
+	protected IDBConnection $connection;
+	private IEventDispatcher $dispatcher;
+	private IUserManager $userManager;
+	private IGroupManager $groupManager;
+	private MembershipService $membershipService;
+	private Notifications $notifications;
+	private ITimeFactory $timeFactory;
+	private ICacheFactory $cacheFactory;
 
 	public function __construct(IConfig $serverConfig,
 								Config $talkConfig,
@@ -268,7 +255,7 @@ class ParticipantService {
 			$attendee = $this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_USERS, $user->getUID());
 		} catch (DoesNotExistException $e) {
 			// queried here to avoid loop deps
-			$manager = \OC::$server->get(\OCA\Talk\Manager::class);
+			$manager = \OC::$server->get(Manager::class);
 			$isListableByUser = $manager->isRoomListableByUser($room, $user->getUID());
 
 			if (!$isListableByUser && !$event->getPassedPasswordProtection() && !$room->verifyPassword($password)['result']) {

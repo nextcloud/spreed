@@ -28,12 +28,10 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
 class RemoveParticipantEvent extends ParticipantEvent {
-
-	/** @var string */
-	protected $reason;
+	protected string $reason;
 
 	/** @var Session[] */
-	protected $sessions;
+	protected array $sessions;
 
 	public function __construct(Room $room,
 								Participant $participant,

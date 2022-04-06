@@ -46,17 +46,11 @@ use OCP\AppFramework\Utility\IControllerMethodReflector;
 use OCP\IRequest;
 
 class InjectionMiddleware extends Middleware {
-
-	/** @var IRequest */
-	private $request;
-	/** @var IControllerMethodReflector */
-	private $reflector;
-	/** @var TalkSession */
-	private $talkSession;
-	/** @var Manager */
-	private $manager;
-	/** @var ?string */
-	private $userId;
+	private IRequest $request;
+	private IControllerMethodReflector $reflector;
+	private TalkSession $talkSession;
+	private Manager $manager;
+	private ?string $userId;
 
 	public function __construct(IRequest $request,
 								IControllerMethodReflector $reflector,

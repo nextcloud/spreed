@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat;
 
+use OCP\DB\Exception;
 use OC\Comments\Comment;
 use OC\Comments\Manager;
 use OCP\Comments\IComment;
@@ -44,7 +45,7 @@ class CommentsManager extends Manager {
 	/**
 	 * @param string[] $ids
 	 * @return IComment[]
-	 * @throws \OCP\DB\Exception
+	 * @throws Exception
 	 */
 	public function getCommentsById(array $ids): array {
 		$commentIds = array_map('intval', $ids);

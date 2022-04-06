@@ -43,14 +43,11 @@ use OCP\IUserManager;
 class MessageParser {
 	public const EVENT_MESSAGE_PARSE = self::class . '::parseMessage';
 
-	/** @var IEventDispatcher */
-	private $dispatcher;
+	private IEventDispatcher $dispatcher;
 
-	/** @var IUserManager */
-	private $userManager;
+	private IUserManager $userManager;
 
-	/** @var array */
-	protected $guestNames = [];
+	protected array $guestNames = [];
 
 	public function __construct(IEventDispatcher $dispatcher,
 								IUserManager $userManager) {

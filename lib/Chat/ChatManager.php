@@ -72,26 +72,16 @@ class ChatManager {
 	/** @var ICommentsManager|CommentsManager
 	 */
 	private $commentsManager;
-	/** @var IEventDispatcher */
-	private $dispatcher;
-	/** @var IDBConnection */
-	private $connection;
-	/** @var INotificationManager */
-	private $notificationManager;
-	/** @var IManager */
-	private $shareManager;
-	/** @var RoomShareProvider */
-	private $shareProvider;
-	/** @var ParticipantService */
-	private $participantService;
-	/** @var Notifier */
-	private $notifier;
-	/** @var ITimeFactory */
-	protected $timeFactory;
-	/** @var ICache */
-	protected $cache;
-	/** @var ICache */
-	protected $unreadCountCache;
+	private IEventDispatcher $dispatcher;
+	private IDBConnection $connection;
+	private INotificationManager $notificationManager;
+	private \OCP\Share\IManager $shareManager;
+	private RoomShareProvider $shareProvider;
+	private ParticipantService $participantService;
+	private Notifier $notifier;
+	protected ITimeFactory $timeFactory;
+	protected ICache $cache;
+	protected ICache $unreadCountCache;
 	protected AttachmentService $attachmentService;
 
 	public function __construct(CommentsManager $commentsManager,

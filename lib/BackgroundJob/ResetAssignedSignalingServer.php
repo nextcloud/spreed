@@ -31,11 +31,8 @@ use OCP\ICache;
 use OCP\ICacheFactory;
 
 class ResetAssignedSignalingServer extends TimedJob {
-
-	/** @var Manager */
-	protected $manager;
-	/** @var ICache */
-	protected $cache;
+	protected Manager $manager;
+	protected ICache $cache;
 
 	public function __construct(ITimeFactory $time,
 								Manager $manager,

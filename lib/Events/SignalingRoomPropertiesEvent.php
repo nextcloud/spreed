@@ -26,11 +26,8 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Room;
 
 class SignalingRoomPropertiesEvent extends RoomEvent {
-
-	/** @var string|null */
-	protected $userId;
-	/** @var array */
-	protected $properties;
+	protected ?string $userId;
+	protected array $properties;
 
 	public function __construct(Room $room, ?string $userId, array $properties) {
 		parent::__construct($room);

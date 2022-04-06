@@ -56,9 +56,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class ChatControllerTest extends TestCase {
-
-	/** @var string */
-	private $userId;
+	private ?string $userId = null;
 	/** @var IUserManager|MockObject */
 	protected $userManager;
 	/** @var IAppManager|MockObject */
@@ -99,8 +97,7 @@ class ChatControllerTest extends TestCase {
 	/** @var Room|MockObject */
 	protected $room;
 
-	/** @var ChatController */
-	private $controller;
+	private ?ChatController $controller = null;
 
 	/** @var Callback */
 	private $newMessageDateTimeConstraint;

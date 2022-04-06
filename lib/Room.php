@@ -149,70 +149,39 @@ class Room {
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
-	/** @var Manager */
-	private $manager;
-	/** @var IDBConnection */
-	private $db;
-	/** @var IEventDispatcher */
-	private $dispatcher;
-	/** @var ITimeFactory */
-	private $timeFactory;
-	/** @var IHasher */
-	private $hasher;
+	private Manager $manager;
+	private IDBConnection $db;
+	private IEventDispatcher $dispatcher;
+	private ITimeFactory $timeFactory;
+	private IHasher $hasher;
 
-	/** @var int */
-	private $id;
-	/** @var int */
-	private $type;
-	/** @var int */
-	private $readOnly;
-	/** @var int */
-	private $listable;
-	/** @var int */
-	private $lobbyState;
-	/** @var int */
-	private $sipEnabled;
-	/** @var int|null */
-	private $assignedSignalingServer;
-	/** @var \DateTime|null */
-	private $lobbyTimer;
-	/** @var string */
-	private $token;
-	/** @var string */
-	private $name;
-	/** @var string */
-	private $description;
-	/** @var string */
-	private $password;
-	/** @var string */
-	private $remoteServer;
-	/** @var string */
-	private $remoteToken;
-	/** @var int */
-	private $activeGuests;
-	/** @var int */
-	private $defaultPermissions;
-	/** @var int */
-	private $callPermissions;
-	/** @var int */
-	private $callFlag;
-	/** @var \DateTime|null */
-	private $activeSince;
-	/** @var \DateTime|null */
-	private $lastActivity;
-	/** @var int */
-	private $lastMessageId;
-	/** @var IComment|null */
-	private $lastMessage;
-	/** @var string */
-	private $objectType;
-	/** @var string */
-	private $objectId;
+	private int $id;
+	private int $type;
+	private int $readOnly;
+	private int $listable;
+	private int $lobbyState;
+	private int $sipEnabled;
+	private ?int $assignedSignalingServer;
+	private ?\DateTime $lobbyTimer;
+	private string $token;
+	private string $name;
+	private string $description;
+	private string $password;
+	private string $remoteServer;
+	private string $remoteToken;
+	private int $activeGuests;
+	private int $defaultPermissions;
+	private int $callPermissions;
+	private int $callFlag;
+	private ?\DateTime $activeSince;
+	private ?\DateTime $lastActivity;
+	private int $lastMessageId;
+	private ?IComment $lastMessage;
+	private string $objectType;
+	private string $objectId;
 
-	/** @var string */
-	protected $currentUser;
-	/** @var Participant|null */
-	protected $participant;
+	protected ?string $currentUser = null;
+	protected ?Participant $participant = null;
 
 	public function __construct(Manager $manager,
 								IDBConnection $db,

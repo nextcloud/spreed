@@ -26,13 +26,9 @@ namespace OCA\Talk\Events;
 use OCP\EventDispatcher\Event;
 
 class CreateRoomTokenEvent extends Event {
-
-	/** @var int */
-	protected $entropy;
-	/** @var string */
-	protected $chars;
-	/** @var string */
-	protected $token;
+	protected int $entropy;
+	protected string $chars;
+	protected string $token;
 
 
 	public function __construct(int $entropy,

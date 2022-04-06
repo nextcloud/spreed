@@ -35,12 +35,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 class AddSamples extends Base {
 	use TRenderCommand;
 
-	/** @var CommandService */
-	private $service;
-	/** @var IAppManager */
-	protected $appManager;
+	private CommandService $service;
+	protected IAppManager $appManager;
 
-	protected $commands = [];
+	protected array $commands = [];
 
 	public function __construct(CommandService $service, IAppManager $appManager) {
 		parent::__construct();

@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Settings\Admin;
 
+use Test\TestCase;
 use OCA\Talk\Config;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Service\CommandService;
@@ -36,7 +37,7 @@ use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 
-class AdminSettingsTest extends \Test\TestCase {
+class AdminSettingsTest extends TestCase {
 
 	/** @var Config|MockObject */
 	protected $talkConfig;
@@ -58,8 +59,7 @@ class AdminSettingsTest extends \Test\TestCase {
 	protected $l10n;
 	/** @var IFactory|MockObject  */
 	protected $l10nFactory;
-	/** @var AdminSettings */
-	protected $admin;
+	protected ?AdminSettings $admin = null;
 
 	public function setUp(): void {
 		parent::setUp();

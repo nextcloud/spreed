@@ -44,8 +44,7 @@ use Test\TestCase;
 class ListenerTest extends TestCase {
 	public const DUMMY_REFERENCE_ID = 'DUMMY_REFERENCE_ID';
 
-	/** @var Listener */
-	protected $listener;
+	protected ?Listener $listener = null;
 
 	/** @var IRequest|MockObject */
 	protected $request;
@@ -61,10 +60,8 @@ class ListenerTest extends TestCase {
 	protected $timeFactory;
 	/** @var IEventDispatcher|MockObject */
 	protected $eventDispatcher;
-	/** @var array */
-	protected $handlers;
-	/** @var \DateTime */
-	protected $dummyTime;
+	protected ?array $handlers = null;
+	protected ?\DateTime $dummyTime = null;
 
 	public function setUp(): void {
 		parent::setUp();

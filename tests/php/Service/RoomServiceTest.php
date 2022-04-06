@@ -46,8 +46,7 @@ class RoomServiceTest extends TestCase {
 	protected $shareManager;
 	/** @var IEventDispatcher|MockObject */
 	protected $dispatcher;
-	/** @var RoomService */
-	private $service;
+	private ?RoomService $service = null;
 
 
 	public function setUp(): void {

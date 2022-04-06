@@ -51,8 +51,7 @@ class Listener {
 		$listener->overwriteMountPoint($event);
 	}
 
-	/** @var Config */
-	protected $config;
+	protected Config $config;
 
 	public function __construct(Config $config) {
 		$this->config = $config;

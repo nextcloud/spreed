@@ -26,9 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\DataObjects;
 
 class AccountId {
-
-	/** @var string */
-	private $accountId;
+	private string $accountId;
 
 	public function __construct(string $accountId) {
 		$this->accountId = $accountId;

@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Collaboration\Collaborators;
 
+use Test\TestCase;
 use OCA\Talk\Collaboration\Collaborators\RoomPlugin;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
@@ -34,22 +35,16 @@ use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Share\IShare;
 
-class RoomPluginTest extends \Test\TestCase {
+class RoomPluginTest extends TestCase {
+	protected ?Manager $manager = null;
 
-	/** @var Manager */
-	protected $manager;
+	protected ?IUserSession $userSession = null;
 
-	/** @var IUserSession */
-	protected $userSession;
+	protected ?IUser $user = null;
 
-	/** @var IUser */
-	protected $user;
+	protected ?ISearchResult $searchResult = null;
 
-	/** @var ISearchResult */
-	protected $searchResult;
-
-	/** @var RoomPlugin */
-	protected $plugin;
+	protected ?RoomPlugin $plugin = null;
 
 	public function setUp(): void {
 		parent::setUp();

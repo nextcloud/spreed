@@ -35,8 +35,7 @@ class TalkSessionTest extends TestCase {
 	/** @var ISession|MockObject */
 	protected $session;
 
-	/** @var TalkSession */
-	protected $talkSession;
+	protected ?TalkSession $talkSession = null;
 
 	public function setUp(): void {
 		parent::setUp();

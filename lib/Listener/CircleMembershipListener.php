@@ -39,10 +39,8 @@ use OCP\IUser;
 use OCP\IUserManager;
 
 class CircleMembershipListener extends AMembershipListener {
-	/** @var ISession */
-	private $session;
-	/** @var IUserManager */
-	private $userManager;
+	private ISession $session;
+	private IUserManager $userManager;
 
 	public function __construct(Manager $manager,
 								IAppManager $appManager,

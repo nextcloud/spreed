@@ -52,15 +52,10 @@ use OCP\IUserManager;
  * events.
  */
 class Listener {
-
-	/** @var Util */
-	protected $util;
-	/** @var ParticipantService */
-	protected $participantService;
-	/** @var IUserManager */
-	protected $userManager;
-	/** @var TalkSession */
-	protected $talkSession;
+	protected Util $util;
+	protected ParticipantService $participantService;
+	protected IUserManager $userManager;
+	protected TalkSession $talkSession;
 
 	public function __construct(Util $util,
 								ParticipantService $participantService,

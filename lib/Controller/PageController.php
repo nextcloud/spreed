@@ -59,28 +59,17 @@ use Psr\Log\LoggerInterface;
 class PageController extends Controller {
 	use TInitialState;
 
-	/** @var string|null */
-	private $userId;
-	/** @var IEventDispatcher */
-	private $eventDispatcher;
-	/** @var RoomController */
-	private $api;
-	/** @var TalkSession */
-	private $talkSession;
-	/** @var IUserSession */
-	private $userSession;
-	/** @var LoggerInterface */
-	private $logger;
-	/** @var Manager */
-	private $manager;
-	/** @var IURLGenerator */
-	private $url;
-	/** @var INotificationManager */
-	private $notificationManager;
-	/** @var IAppManager */
-	private $appManager;
-	/** @var IRootFolder */
-	private $rootFolder;
+	private ?string $userId;
+	private IEventDispatcher $eventDispatcher;
+	private RoomController $api;
+	private TalkSession $talkSession;
+	private IUserSession $userSession;
+	private LoggerInterface $logger;
+	private Manager $manager;
+	private IURLGenerator $url;
+	private INotificationManager $notificationManager;
+	private IAppManager $appManager;
+	private IRootFolder $rootFolder;
 
 	public function __construct(string $appName,
 								IRequest $request,

@@ -36,8 +36,7 @@ use OCP\UserStatus\IManager;
 use OCP\UserStatus\IUserStatus;
 
 class Listener {
-	/** @var IManager $statusManager */
-	public $statusManager;
+	public IManager $statusManager;
 
 	public function __construct(IManager $statusManager) {
 		$this->statusManager = $statusManager;

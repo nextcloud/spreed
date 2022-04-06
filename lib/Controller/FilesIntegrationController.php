@@ -47,25 +47,15 @@ use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 
 class FilesIntegrationController extends OCSController {
-
-	/** @var Manager */
-	private $manager;
-	/** @var RoomService */
-	private $roomService;
-	/** @var IShareManager */
-	private $shareManager;
-	/** @var ISession */
-	private $session;
-	/** @var IUserSession */
-	private $userSession;
-	/** @var TalkSession */
-	private $talkSession;
-	/** @var Util */
-	private $util;
-	/** @var IConfig */
-	private $config;
-	/** @var IL10N */
-	private $l;
+	private Manager $manager;
+	private RoomService $roomService;
+	private IShareManager $shareManager;
+	private ISession $session;
+	private IUserSession $userSession;
+	private TalkSession $talkSession;
+	private Util $util;
+	private IConfig $config;
+	private IL10N $l;
 
 	public function __construct(
 			string $appName,

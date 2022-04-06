@@ -61,65 +61,46 @@ use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
 
 class ChatController extends AEnvironmentAwareController {
+	private ?string $userId;
 
-	/** @var null|string */
-	private $userId;
+	private IUserManager $userManager;
 
-	/** @var IUserManager */
-	private $userManager;
+	private IAppManager $appManager;
 
-	/** @var IAppManager */
-	private $appManager;
+	private ChatManager $chatManager;
 
-	/** @var ChatManager */
-	private $chatManager;
+	private ParticipantService $participantService;
 
-	/** @var ParticipantService */
-	private $participantService;
-
-	/** @var SessionService */
-	private $sessionService;
+	private SessionService $sessionService;
 
 	protected AttachmentService $attachmentService;
 
-	/** @var GuestManager */
-	private $guestManager;
+	private GuestManager $guestManager;
 
 	/** @var string[] */
-	protected $guestNames;
+	protected array $guestNames;
 
-	/** @var MessageParser */
-	private $messageParser;
+	private MessageParser $messageParser;
 
-	/** @var IManager */
-	private $autoCompleteManager;
+	private \OCP\Collaboration\AutoComplete\IManager $autoCompleteManager;
 
-	/** @var IUserStatusManager */
-	private $statusManager;
+	private IUserStatusManager $statusManager;
 
-	/** @var MatterbridgeManager */
-	protected $matterbridgeManager;
+	protected MatterbridgeManager $matterbridgeManager;
 
-	/** @var SearchPlugin */
-	private $searchPlugin;
+	private SearchPlugin $searchPlugin;
 
-	/** @var ISearchResult */
-	private $searchResult;
+	private ISearchResult $searchResult;
 
-	/** @var ITimeFactory */
-	protected $timeFactory;
+	protected ITimeFactory $timeFactory;
 
-	/** @var IEventDispatcher */
-	protected $eventDispatcher;
+	protected IEventDispatcher $eventDispatcher;
 
-	/** @var IValidator */
-	protected $richObjectValidator;
+	protected IValidator $richObjectValidator;
 
-	/** @var ITrustedDomainHelper */
-	protected $trustedDomainHelper;
+	protected ITrustedDomainHelper $trustedDomainHelper;
 
-	/** @var IL10N */
-	private $l;
+	private IL10N $l;
 
 	public function __construct(string $appName,
 								?string $UserId,

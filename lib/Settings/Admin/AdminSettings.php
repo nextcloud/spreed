@@ -43,27 +43,16 @@ use OCP\L10N\IFactory;
 use OCP\Settings\ISettings;
 
 class AdminSettings implements ISettings {
-
-	/** @var Config */
-	private $talkConfig;
-	/** @var IConfig */
-	private $serverConfig;
-	/** @var CommandService */
-	private $commandService;
-	/** @var IInitialState */
-	private $initialState;
-	/** @var ICacheFactory */
-	private $memcacheFactory;
-	/** @var IGroupManager */
-	private $groupManager;
-	/** @var MatterbridgeManager */
-	private $bridgeManager;
-	/** @var null|IUser */
-	private $currentUser;
-	/** @var IL10N */
-	private $l10n;
-	/** @var IFactory */
-	private $l10nFactory;
+	private Config $talkConfig;
+	private IConfig $serverConfig;
+	private CommandService $commandService;
+	private IInitialState $initialState;
+	private ICacheFactory $memcacheFactory;
+	private IGroupManager $groupManager;
+	private MatterbridgeManager $bridgeManager;
+	private ?IUser $currentUser = null;
+	private IL10N $l10n;
+	private IFactory $l10nFactory;
 
 	public function __construct(Config $talkConfig,
 								IConfig $serverConfig,

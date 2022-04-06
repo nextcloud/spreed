@@ -33,15 +33,10 @@ use OCP\IUser;
 use OCP\IUserSession;
 
 class Capabilities implements IPublicCapability {
-
-	/** @var IConfig */
-	protected $serverConfig;
-	/** @var Config */
-	protected $talkConfig;
-	/** @var ICommentsManager */
-	protected $commentsManager;
-	/** @var IUserSession */
-	protected $userSession;
+	protected IConfig $serverConfig;
+	protected Config $talkConfig;
+	protected ICommentsManager $commentsManager;
+	protected IUserSession $userSession;
 
 	public function __construct(IConfig $serverConfig,
 								Config $talkConfig,

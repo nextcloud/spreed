@@ -33,9 +33,7 @@ use Test\TestCase;
  * @group DB
  */
 class AttendeeMapperTest extends TestCase {
-
-	/** @var AttendeeMapper */
-	protected $attendeeMapper;
+	protected ?AttendeeMapper $attendeeMapper = null;
 
 
 	public function setUp(): void {

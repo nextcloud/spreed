@@ -27,9 +27,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
 class ModifyParticipantEvent extends ParticipantEvent {
-
-	/** @var string */
-	protected $parameter;
+	protected string $parameter;
 	/** @var int|string|bool */
 	protected $newValue;
 	/** @var int|string|bool|null */

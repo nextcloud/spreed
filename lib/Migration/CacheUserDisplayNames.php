@@ -31,11 +31,8 @@ use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 
 class CacheUserDisplayNames implements IRepairStep {
-
-	/** @var IDBConnection */
-	protected $connection;
-	/** @var IUserManager */
-	protected $userManager;
+	protected IDBConnection $connection;
+	protected IUserManager $userManager;
 
 	public function __construct(IDBConnection $connection,
 								IUserManager $userManager) {

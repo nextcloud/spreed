@@ -39,19 +39,12 @@ use OCP\Notification\IManager;
 use Psr\Log\LoggerInterface;
 
 class CheckHostedSignalingServer extends TimedJob {
-
-	/** @var HostedSignalingServerService */
-	private $hostedSignalingServerService;
-	/** @var IConfig */
-	private $config;
-	/** @var IManager */
-	private $notificationManager;
-	/** @var IGroupManager */
-	private $groupManager;
-	/** @var IURLGenerator */
-	private $urlGenerator;
-	/** @var LoggerInterface */
-	private $logger;
+	private HostedSignalingServerService $hostedSignalingServerService;
+	private IConfig $config;
+	private IManager $notificationManager;
+	private IGroupManager $groupManager;
+	private IURLGenerator $urlGenerator;
+	private LoggerInterface $logger;
 
 	public function __construct(ITimeFactory $timeFactory,
 								HostedSignalingServerService $hostedSignalingServerService,

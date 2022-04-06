@@ -31,11 +31,8 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\EventDispatcher\IEventDispatcher;
 
 class Listener {
-
-	/** @var CommandService */
-	protected $commandService;
-	/** @var Executor */
-	protected $executor;
+	protected CommandService $commandService;
+	protected Executor $executor;
 
 	public function __construct(CommandService $commandService,
 								Executor $executor) {

@@ -36,15 +36,10 @@ use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
 class TempAvatarController extends OCSController {
-
-	/** @var IAvatarManager */
-	private $avatarManager;
-	/** @var IL10N */
-	private $l;
-	/** @var LoggerInterface */
-	private $logger;
-	/** @var string */
-	private $userId;
+	private IAvatarManager $avatarManager;
+	private IL10N $l;
+	private LoggerInterface $logger;
+	private string $userId;
 
 	public function __construct(
 		string $appName,

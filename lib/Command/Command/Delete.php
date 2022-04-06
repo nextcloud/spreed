@@ -31,9 +31,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Delete extends Base {
-
-	/** @var CommandService */
-	private $service;
+	private CommandService $service;
 
 	public function __construct(CommandService $service) {
 		parent::__construct();

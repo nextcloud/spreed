@@ -43,16 +43,11 @@ class UserMention {
 	 * Do NOT inject OCA\Talk\Chat\CommentsManager here
 	 * otherwise the display name resolvers are lost
 	 * and mentions are not replaced anymore.
-	 *
-	 * @var ICommentsManager
 	 */
-	private $commentsManager;
-	/** @var IUserManager */
-	private $userManager;
-	/** @var GuestManager */
-	private $guestManager;
-	/** @var IL10N */
-	private $l;
+	private ICommentsManager $commentsManager;
+	private IUserManager $userManager;
+	private GuestManager $guestManager;
+	private IL10N $l;
 
 	public function __construct(ICommentsManager $commentsManager,
 								IUserManager $userManager,

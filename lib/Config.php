@@ -36,19 +36,13 @@ class Config {
 	public const SIGNALING_EXTERNAL = 'external';
 	public const SIGNALING_CLUSTER_CONVERSATION = 'conversation_cluster';
 
-	/** @var IConfig */
-	protected $config;
-	/** @var ITimeFactory */
-	protected $timeFactory;
-	/** @var IGroupManager */
-	private $groupManager;
-	/** @var ISecureRandom */
-	private $secureRandom;
-	/** @var IEventDispatcher */
-	private $dispatcher;
+	protected IConfig $config;
+	protected ITimeFactory $timeFactory;
+	private IGroupManager $groupManager;
+	private ISecureRandom $secureRandom;
+	private IEventDispatcher $dispatcher;
 
-	/** @var array */
-	protected $canEnableSIP = [];
+	protected array $canEnableSIP = [];
 
 	public function __construct(IConfig $config,
 								ISecureRandom $secureRandom,

@@ -46,12 +46,9 @@ use OCP\Util;
 class TemplateLoader implements IEventListener {
 	use TInitialState;
 
-	/** @var IAppManager */
-	private $appManager;
-	/** @var IRootFolder */
-	private $rootFolder;
-	/** @var IUserSession */
-	private $userSession;
+	private IAppManager $appManager;
+	private IRootFolder $rootFolder;
+	private IUserSession $userSession;
 
 	public function __construct(IInitialState $initialState,
 								ICacheFactory $memcacheFactory,

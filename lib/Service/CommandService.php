@@ -29,12 +29,9 @@ use OCA\Talk\Model\CommandMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 
 class CommandService {
+	protected CommandMapper $mapper;
 
-	/** @var CommandMapper */
-	protected $mapper;
-
-	/** @var ShellExecutor */
-	protected $shellExecutor;
+	protected ShellExecutor $shellExecutor;
 
 	public function __construct(CommandMapper $mapper, ShellExecutor $shellExecutor) {
 		$this->mapper = $mapper;

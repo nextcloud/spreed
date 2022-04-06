@@ -32,9 +32,7 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 
 class CSPListener implements IEventListener {
-
-	/** @var Config */
-	private $config;
+	private Config $config;
 
 	public function __construct(Config $config) {
 		$this->config = $config;

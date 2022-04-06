@@ -27,15 +27,12 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
 class ModifyRoomEvent extends RoomEvent {
-
-	/** @var string */
-	protected $parameter;
+	protected string $parameter;
 	/** @var int|string|bool */
 	protected $newValue;
 	/** @var int|string|bool|null */
 	protected $oldValue;
-	/** @var Participant|null */
-	protected $actor;
+	protected ?Participant $actor;
 
 
 	public function __construct(Room $room,

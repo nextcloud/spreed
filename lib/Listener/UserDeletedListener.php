@@ -29,9 +29,7 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\User\Events\UserDeletedEvent;
 
 class UserDeletedListener implements IEventListener {
-
-	/** @var Manager */
-	private $manager;
+	private Manager $manager;
 
 	public function __construct(Manager $manager) {
 		$this->manager = $manager;

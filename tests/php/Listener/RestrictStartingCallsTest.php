@@ -41,8 +41,7 @@ class RestrictStartingCallsTest extends TestCase {
 	protected $serverConfig;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
-	/** @var RestrictStartingCalls */
-	protected $listener;
+	protected ?RestrictStartingCalls $listener = null;
 
 	public function setUp(): void {
 		parent::setUp();

@@ -29,9 +29,7 @@ use OCP\Util;
 use OCP\WorkflowEngine\Events\RegisterOperationsEvent;
 
 class RegisterOperationsListener implements IEventListener {
-
-	/** @var Operation */
-	private $operation;
+	private Operation $operation;
 
 	public function __construct(Operation $operation) {
 		$this->operation = $operation;

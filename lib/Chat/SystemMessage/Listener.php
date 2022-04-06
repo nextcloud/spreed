@@ -55,19 +55,12 @@ use OCP\Share\IShare;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Listener implements IEventListener {
-
-	/** @var IRequest */
-	protected $request;
-	/** @var ChatManager */
-	protected $chatManager;
-	/** @var TalkSession */
-	protected $talkSession;
-	/** @var ISession */
-	protected $session;
-	/** @var IUserSession */
-	protected $userSession;
-	/** @var ITimeFactory */
-	protected $timeFactory;
+	protected IRequest $request;
+	protected ChatManager $chatManager;
+	protected TalkSession $talkSession;
+	protected ISession $session;
+	protected IUserSession $userSession;
+	protected ITimeFactory $timeFactory;
 
 	public function __construct(IRequest $request,
 								ChatManager $chatManager,

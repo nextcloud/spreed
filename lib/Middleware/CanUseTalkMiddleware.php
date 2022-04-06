@@ -37,11 +37,8 @@ use OCP\IUser;
 use OCP\IUserSession;
 
 class CanUseTalkMiddleware extends Middleware {
-
-	/** @var IUserSession */
-	private $userSession;
-	/** @var Config */
-	private $config;
+	private IUserSession $userSession;
+	private Config $config;
 
 	public function __construct(IUserSession $userSession,
 								Config $config) {
