@@ -243,7 +243,7 @@ class HostedSignalingServerService {
 	 *
 	 * @return (\ArrayAccess|array|mixed)[]|\ArrayAccess
 	 *
-	 * @psalm-return list<created: mixed, owner: <array>, status: mixed, signaling: <array>>
+	 * @psalm-return \ArrayAccess|array{created: mixed, owner: \ArrayAccess|array, status: mixed, signaling?: \ArrayAccess|array}
 	 */
 	public function fetchAccountInfo(AccountId $accountId) {
 		try {

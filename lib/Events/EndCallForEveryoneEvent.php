@@ -48,9 +48,8 @@ class EndCallForEveryoneEvent extends ModifyRoomEvent {
 
 	/**
 	 * Only available in the after-event
-	 * @return string[]
 	 */
-	public function getSessionIds(): array {
+	public function getSessionIds(): ?array {
 		return $this->sessionIds;
 	}
 
@@ -64,9 +63,8 @@ class EndCallForEveryoneEvent extends ModifyRoomEvent {
 
 	/**
 	 * Only available in the after-event
-	 * @return string[]
 	 */
-	public function getUserIds(): array {
+	public function getUserIds(): ?array {
 		return $this->userIds;
 	}
 }

@@ -51,7 +51,7 @@ class CommandEvent extends ChatEvent {
 		$this->output = $output;
 	}
 
-	public function getOutput(): string {
+	public function getOutput(): ?string {
 		return $this->output;
 	}
 }

@@ -115,7 +115,7 @@ class Executor {
 		$message->setVerb('command');
 	}
 
-	protected function execHelp(Room $room, IComment $message, string $arguments, Participant $participant): string {
+	protected function execHelp(Room $room, IComment $message, string $arguments, Participant $participant): ?string {
 		if ($arguments !== '' && $arguments !== 'help') {
 			return $this->execHelpSingleCommand($room, $message, $arguments);
 		}
@@ -160,7 +160,7 @@ class Executor {
 		return implode("\n", $helps);
 	}
 
-	protected function execHelpSingleCommand(Room $room, IComment $message, string $arguments): string {
+	protected function execHelpSingleCommand(Room $room, IComment $message, string $arguments): ?string {
 		try {
 			$input = explode(' ', $arguments, 2);
 			if (count($input) === 1) {
@@ -186,7 +186,7 @@ class Executor {
 		}
 	}
 
-	protected function execApp(Room $room, IComment $message, Command $command, string $arguments): string {
+	protected function execApp(Room $room, IComment $message, Command $command, string $arguments): ?string {
 		$event = $this->createEvent($room, $message, $command, $arguments);
 		$this->dispatcher->dispatch(self::EVENT_APP_EXECUTE, $event);
 		return $event->getOutput();
