@@ -155,7 +155,8 @@ const connectionWarningTimeout = 5000
 // To run the script the current page in the browser must be a page of the
 // target Nextcloud instance, as cross-doman requests are not allowed, so the
 // host is directly got from the current location.
-const talkOcsApiUrl = 'https://' + window.location.host + '/ocs/v2.php/apps/spreed/api/'
+const host = 'https://' + window.location.host
+const talkOcsApiUrl = host + '/ocs/v2.php/apps/spreed/api/'
 const signalingSettingsUrl = talkOcsApiUrl + 'v' + signalingApiVersion + '/signaling/settings'
 const signalingBackendUrl = talkOcsApiUrl + 'v' + signalingApiVersion + '/signaling/backend'
 const joinRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
