@@ -214,3 +214,18 @@ Feature: chat/notifications
     When user "participant1" sends message "Hi @all bye" to room "room" with 201
     Then user "participant2" has the following notifications
       | app | object_type | object_id | subject |
+
+  Scenario: Delete notification when the message is deleted
+    When user "participant1" creates room "one-to-one room" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "one-to-one room" with 200 (v4)
+    And user "participant2" leaves room "one-to-one room" with 200 (v4)
+    And user "participant1" sends message "Message 1" to room "one-to-one room" with 201
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id                 | subject                                             |
+      | spreed | chat        | one-to-one room/Message 1 | participant1-displayname sent you a private message |
+    When user "participant1" deletes message "Message 1" from room "one-to-one room" with 200 (v1)
+    Then user "participant2" has the following notifications
+      | app | object_type | object_id | subject |
