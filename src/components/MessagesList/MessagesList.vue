@@ -902,6 +902,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/variables';
+
 .scroller {
 	flex: 1 0;
 	overflow-y: auto;
