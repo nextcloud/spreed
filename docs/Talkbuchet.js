@@ -129,9 +129,6 @@
 const user = ''
 const appToken = ''
 
-const signalingApiVersion = 2 // FIXME get from capabilities endpoint
-const conversationApiVersion = 3 // FIXME get from capabilities endpoint
-
 // The conversation token is only strictly needed for guests or if HPB
 // clustering is enabled.
 const token = ''
@@ -156,6 +153,45 @@ const connectionWarningTimeout = 5000
 // target Nextcloud instance, as cross-doman requests are not allowed, so the
 // host is directly got from the current location.
 const host = 'https://' + window.location.host
+
+const capabitiliesUrl = host + '/ocs/v1.php/cloud/capabilities'
+
+async function getCapabilities() {
+	const fetchOptions = {
+		headers: {
+			'OCS-ApiRequest': true,
+			'Accept': 'json',
+		},
+	}
+
+	const capabilitiesResponse = await fetch(capabitiliesUrl, fetchOptions)
+	const capabilities = await capabilitiesResponse.json()
+
+	return capabilities.ocs.data
+}
+
+const capabilities = await getCapabilities()
+
+function extractFeatureVersion(feature) {
+	const talkFeatures = capabilities?.capabilities?.spreed?.features
+	if (!talkFeatures) {
+		console.error('Talk features not found', capabilities)
+		throw new Error()
+	}
+
+	for (const talkFeature of talkFeatures) {
+		if (talkFeature.startsWith(feature + '-v')) {
+			return talkFeature.substring(feature.length + 2)
+		}
+	}
+
+	console.error('Failed to get feature version for ' + feature, talkFeatures)
+	throw new Error()
+}
+
+const signalingApiVersion = extractFeatureVersion('signaling')
+const conversationApiVersion = extractFeatureVersion('conversation')
+
 const talkOcsApiUrl = host + '/ocs/v2.php/apps/spreed/api/'
 const signalingSettingsUrl = talkOcsApiUrl + 'v' + signalingApiVersion + '/signaling/settings'
 const signalingBackendUrl = talkOcsApiUrl + 'v' + signalingApiVersion + '/signaling/backend'
