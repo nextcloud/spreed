@@ -32,6 +32,12 @@
 			<NewGroupConversation v-if="canStartConversations" />
 		</div>
 		<template #list>
+			<Button v-if="!preventFindingUnread && unreadTop > 0"
+				class="unread-mention-button unread-mention-button__top"
+				type="primary"
+				@click="scrollTopUnread">
+				{{ unreadTop }} more mentions
+			</Button>
 			<div ref="scroller"
 				class="left-sidebar__list"
 				@scroll="debounceHandleScroll">
@@ -91,14 +97,20 @@
 					<Hint v-else :hint="t('spreed', 'No search results')" />
 				</template>
 			</div>
+			<Button v-if="!preventFindingUnread && unreadBottom > 0"
+				class="unread-mention-button unread-mention-button__bottom"
+				type="primary"
+				@click="scrollBottomUnread">
+				{{ unreadBottom }} more mentions
+			</Button>
 		</template>
 
 		<template #footer>
 			<div id="app-settings">
 				<div id="app-settings-header">
-					<button class="settings-button" @click="showSettings">
+					<Button class="settings-button" @click="showSettings">
 						{{ t('spreed', 'Talk settings') }}
-					</button>
+					</Button>
 				</div>
 			</div>
 		</template>
@@ -113,6 +125,7 @@ import ConversationsList from './ConversationsList/ConversationsList'
 import Conversation from './ConversationsList/Conversation'
 import ConversationsOptionsList from '../ConversationsOptionsList'
 import Hint from '../Hint'
+import Button from '@nextcloud/vue/dist/Components/Button'
 import SearchBox from './SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
@@ -135,6 +148,7 @@ export default {
 		AppNavigation,
 		AppNavigationCaption,
 		ConversationsList,
+		Button,
 		ConversationsOptionsList,
 		Hint,
 		SearchBox,
@@ -164,6 +178,11 @@ export default {
 			// Keeps track of whether the conversation list is scrolled to the top or not
 			isScrolledToTop: true,
 			refreshTimer: null,
+			unreadTop: 0,
+			unreadBottom: 0,
+			firstUnreadPos: 0,
+			lastUnreadPos: 0,
+			preventFindingUnread: false,
 		}
 	},
 
@@ -276,7 +295,28 @@ export default {
 		isFocused() {
 			return this.isSearching
 		},
-
+		scrollTopUnread() {
+			this.preventFindingUnread = true
+			this.$refs.scroller.scrollTo({
+				top: this.firstUnreadPos - 100,
+				behavior: 'smooth',
+			})
+			setTimeout(() => {
+				this.handleUnreadMention()
+				this.preventFindingUnread = false
+			}, 500)
+		},
+		scrollBottomUnread() {
+			this.preventFindingUnread = true
+			this.$refs.scroller.scrollTo({
+				top: this.lastUnreadPos - this.$refs.scroller.clientHeight + 150,
+				behavior: 'smooth',
+			})
+			setTimeout(() => {
+				this.handleUnreadMention()
+				this.preventFindingUnread = false
+			}, 500)
+		},
 		debounceFetchSearchResults: debounce(function() {
 			if (this.isSearching) {
 				this.fetchSearchResults()
@@ -448,8 +488,40 @@ export default {
 		handleScroll() {
 			this.isScrolledToTop = this.$refs.scroller.scrollTop === 0
 		},
+		ensureInView(container, element) {
+			const cTop = container.scrollTop
+			const cBottom = cTop + container.clientHeight
+
+			const eTop = element.offsetTop
+			const eBottom = eTop + element.clientHeight
+			if (eBottom < cTop) {
+				return 'outside-top'
+			} else if (eTop > cBottom) {
+				return 'outside-bottom'
+			} else {
+				return 'inside'
+			}
+		},
+		handleUnreadMention() {
+			this.unreadTop = 0
+			this.unreadBottom = 0
+			const unreadMentions = document.getElementsByClassName('unread-mention-conversation')
+			unreadMentions.forEach(x => {
+				const pos = this.ensureInView(this.$refs.scroller, x)
+				if (pos === 'outside-top') {
+					if (this.unreadTop === 0) {
+						this.firstUnreadPos = x.offsetTop
+					}
+					this.unreadTop += 1
+				} else if (pos === 'outside-bottom') {
+					this.unreadBottom += 1
+					this.lastUnreadPos = x.offsetTop
+				}
+			})
+		},
 		debounceHandleScroll: debounce(function() {
 			this.handleScroll()
+			this.handleUnreadMention()
 		}, 50),
 	},
 }
@@ -476,4 +548,16 @@ export default {
 	padding: 0 4px;
 }
 
+.unread-mention-button {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 100;
+	&__top {
+		top: 10px;
+	}
+	&__bottom {
+		bottom: 10px;
+	}
+}
 </style>
