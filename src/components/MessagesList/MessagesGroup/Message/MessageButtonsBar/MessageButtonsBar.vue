@@ -67,7 +67,7 @@
 					:href="linkToFile">
 					{{ t('spreed', 'Go to file') }}
 				</ActionLink>
-				<ActionButton v-if="!isCurrentGuest && !isFileShare"
+				<ActionButton v-if="!isCurrentGuest && !isFileShare && !isDeletedMessage"
 					:close-after-click="true"
 					@click.stop="showForwarder = true">
 					<Share slot="icon"
@@ -326,7 +326,7 @@ export default {
 		},
 
 		acceptsReactions() {
-			return !this.isConversationReadOnly
+			return !this.isConversationReadOnly && !this.isDeletedMessage
 		},
 
 		messageActions() {
@@ -355,6 +355,10 @@ export default {
 
 		isConversationReadOnly() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
+		},
+
+		isDeletedMessage() {
+			return this.messageType === 'comment_deleted'
 		},
 	},
 
