@@ -2,6 +2,7 @@
 <phpunit bootstrap="bootstrap.php"
 		 verbose="true"
 		 convertDeprecationsToExceptions="true"
+		 convertDeprecationsToExceptions="true"
 		 timeoutForSmallTests="900"
 		 timeoutForMediumTests="900"
 		 timeoutForLargeTests="900"
