@@ -16,7 +16,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Status code:
         + `200 OK` Reaction already exists
-        + `201 Created`
+        + `201 Created` User reacted with a new reaction
         + `400 Bad Request` In case of no reaction support, message out of reactions context or any other error
         + `404 Not Found` When the conversation or message to react could not be found for the participant
 
