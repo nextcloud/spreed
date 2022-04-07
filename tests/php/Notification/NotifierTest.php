@@ -21,7 +21,6 @@
 
 namespace OCA\Talk\Tests\php\Notifications;
 
-use Test\TestCase;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\MessageParser;
@@ -48,6 +47,7 @@ use OCP\Notification\INotification;
 use OCP\RichObjectStrings\Definitions;
 use OCP\Share\IManager as IShareManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use Test\TestCase;
 
 class NotifierTest extends TestCase {
 

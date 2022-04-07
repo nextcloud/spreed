@@ -29,9 +29,9 @@ use OCA\Talk\Room;
 class EndCallForEveryoneEvent extends ModifyRoomEvent {
 
 	/** @var string[] */
-	protected ?array $sessionIds = null;
+	protected array $sessionIds = [];
 	/** @var string[] */
-	protected ?array $userIds = null;
+	protected array $userIds = [];
 
 	public function __construct(Room $room,
 								?Participant $actor = null) {
@@ -49,7 +49,7 @@ class EndCallForEveryoneEvent extends ModifyRoomEvent {
 	/**
 	 * Only available in the after-event
 	 */
-	public function getSessionIds(): ?array {
+	public function getSessionIds(): array {
 		return $this->sessionIds;
 	}
 
@@ -64,7 +64,7 @@ class EndCallForEveryoneEvent extends ModifyRoomEvent {
 	/**
 	 * Only available in the after-event
 	 */
-	public function getUserIds(): ?array {
+	public function getUserIds(): array {
 		return $this->userIds;
 	}
 }

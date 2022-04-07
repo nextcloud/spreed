@@ -22,8 +22,6 @@
 
 namespace OCA\Talk\Tests\php\Controller;
 
-use Test\TestCase;
-use OCP\IRequest;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Controller\SignalingController;
@@ -47,12 +45,14 @@ use OCP\Http\Client\IClientService;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
+use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
+use Test\TestCase;
 
 class CustomInputSignalingController extends SignalingController {
 	private $inputStream;
@@ -97,7 +97,7 @@ class SignalingControllerTest extends TestCase {
 	/** @var LoggerInterface|MockObject */
 	private $logger;
 
-	private ?\OCA\Talk\Tests\php\Controller\CustomInputSignalingController $controller = null;
+	private ?CustomInputSignalingController $controller = null;
 
 	public function setUp(): void {
 		parent::setUp();

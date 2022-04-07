@@ -54,8 +54,7 @@ class SystemMessage {
 	protected GuestManager $guestManager;
 	protected IPreviewManager $previewManager;
 	protected RoomShareProvider $shareProvider;
-	/** @var PhotoCache */
-	protected $photoCache;
+	protected PhotoCache $photoCache;
 	protected IRootFolder $rootFolder;
 	protected IURLGenerator $url;
 	protected ?IL10N $l = null;

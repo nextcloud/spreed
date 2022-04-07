@@ -82,7 +82,7 @@ class ChatController extends AEnvironmentAwareController {
 
 	private MessageParser $messageParser;
 
-	private \OCP\Collaboration\AutoComplete\IManager $autoCompleteManager;
+	private IManager $autoCompleteManager;
 
 	private IUserStatusManager $statusManager;
 

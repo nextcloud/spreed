@@ -22,7 +22,6 @@
 
 namespace OCA\Talk\Tests\php\Signaling;
 
-use Test\TestCase;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
@@ -50,6 +49,7 @@ use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
+use Test\TestCase;
 
 class CustomBackendNotifier extends BackendNotifier {
 	private array $requests = [];

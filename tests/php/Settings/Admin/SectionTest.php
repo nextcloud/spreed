@@ -23,11 +23,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Settings\Admin;
 
-use Test\TestCase;
 use OCA\Talk\Settings\Admin\Section;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
+use Test\TestCase;
 
 class SectionTest extends TestCase {
 

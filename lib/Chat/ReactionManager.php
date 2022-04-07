@@ -39,7 +39,7 @@ use OCP\IL10N;
 class ReactionManager {
 	private ChatManager $chatManager;
 	/** @var ICommentsManager|CommentsManager */
-	private $commentsManager;
+	private ICommentsManager $commentsManager;
 	private IL10N $l;
 	private MessageParser $messageParser;
 	private Notifier $notifier;

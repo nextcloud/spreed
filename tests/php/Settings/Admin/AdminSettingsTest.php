@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Settings\Admin;
 
-use Test\TestCase;
 use OCA\Talk\Config;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Service\CommandService;
@@ -36,6 +35,7 @@ use OCP\IL10N;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use PHPUnit\Framework\MockObject\MockObject;
+use Test\TestCase;
 
 class AdminSettingsTest extends TestCase {
 

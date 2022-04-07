@@ -21,7 +21,6 @@
 
 namespace OCA\Talk\Tests\php\Chat\AutoComplete;
 
-use Test\TestCase;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Files\Util;
 use OCA\Talk\GuestManager;
@@ -36,6 +35,7 @@ use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use Test\TestCase;
 
 class SearchPluginTest extends TestCase {
 

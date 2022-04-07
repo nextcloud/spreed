@@ -53,8 +53,7 @@ use OCP\Share\Exceptions\ShareNotFound;
 class CloudFederationProviderTalk implements ICloudFederationProvider {
 	private IUserManager $userManager;
 
-	/** @var AddressHandler */
-	private $addressHandler;
+	private AddressHandler $addressHandler;
 
 	private FederationManager $federationManager;
 

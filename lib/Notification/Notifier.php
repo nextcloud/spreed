@@ -66,8 +66,7 @@ class Notifier implements INotifier {
 	protected ICommentsManager $commentManager;
 	protected MessageParser $messageParser;
 	protected Definitions $definitions;
-	/** @var AddressHandler */
-	protected $addressHandler;
+	protected AddressHandler $addressHandler;
 
 	/** @var Room[] */
 	protected array $rooms = [];

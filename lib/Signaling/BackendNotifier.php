@@ -43,8 +43,7 @@ class BackendNotifier {
 	private ISecureRandom $secureRandom;
 	private Manager $signalingManager;
 	private ParticipantService $participantService;
-	/** @var IUrlGenerator */
-	private $urlGenerator;
+	private IURLGenerator $urlGenerator;
 
 	public function __construct(Config $config,
 								LoggerInterface $logger,
