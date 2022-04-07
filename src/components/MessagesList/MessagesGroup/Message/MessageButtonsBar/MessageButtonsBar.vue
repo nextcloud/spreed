@@ -67,7 +67,7 @@
 					:href="linkToFile">
 					{{ t('spreed', 'Go to file') }}
 				</ActionLink>
-				<ActionButton v-if="!isCurrentGuest && !isFileShare"
+				<ActionButton v-if="!isCurrentGuest && !isFileShare && !isDeletedMessage"
 					:close-after-click="true"
 					@click.stop="showForwarder = true">
 					<Share slot="icon"
