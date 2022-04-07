@@ -970,12 +970,12 @@ class RoomShareProvider implements IShareProvider {
 
 				$userList = $this->participantService->getParticipantUserIds($room);
 				foreach ($userList as $uid) {
-					$users[$uid] = $users[$uid] ?? [];
+					$users[$uid] ??= [];
 					$users[$uid][$row['id']] = $row;
 				}
 			} elseif ($type === self::SHARE_TYPE_USERROOM && $currentAccess === true) {
 				$uid = $row['share_with'];
-				$users[$uid] = $users[$uid] ?? [];
+				$users[$uid] ??= [];
 				$users[$uid][$row['id']] = $row;
 			}
 		}
