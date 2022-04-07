@@ -75,7 +75,7 @@ class ChatManager {
 	private IEventDispatcher $dispatcher;
 	private IDBConnection $connection;
 	private INotificationManager $notificationManager;
-	private \OCP\Share\IManager $shareManager;
+	private IManager $shareManager;
 	private RoomShareProvider $shareProvider;
 	private ParticipantService $participantService;
 	private Notifier $notifier;

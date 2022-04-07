@@ -24,16 +24,13 @@ declare(strict_types=1);
 namespace OCA\Talk\Command;
 
 use OC\Core\Command\Base;
-use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCP\IDBConnection;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ActiveCalls extends Base {
-	public IDBConnection $connection;
-
-	public Manager $manager;
+	protected IDBConnection $connection;
 
 	public function __construct(IDBConnection $connection) {
 		parent::__construct();

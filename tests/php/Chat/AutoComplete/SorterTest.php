@@ -23,10 +23,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Chat;
 
-use Test\TestCase;
 use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\CommentsManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use Test\TestCase;
 
 class SorterTest extends TestCase {
 
