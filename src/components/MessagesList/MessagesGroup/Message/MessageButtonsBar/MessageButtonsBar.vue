@@ -326,7 +326,7 @@ export default {
 		},
 
 		acceptsReactions() {
-			return !this.isConversationReadOnly
+			return !this.isConversationReadOnly && !this.isDeletedMessage
 		},
 
 		messageActions() {
@@ -355,6 +355,10 @@ export default {
 
 		isConversationReadOnly() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
+		},
+
+		isDeletedMessage() {
+			return this.messageType === 'comment_deleted'
 		},
 	},
 
