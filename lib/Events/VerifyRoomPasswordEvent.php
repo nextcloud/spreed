@@ -26,13 +26,9 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Room;
 
 class VerifyRoomPasswordEvent extends RoomEvent {
-
-	/** @var string */
-	protected $password;
-	/** @var bool|null */
-	protected $isPasswordValid;
-	/** @var string */
-	protected $redirectUrl = '';
+	protected string $password;
+	protected ?bool $isPasswordValid = null;
+	protected string $redirectUrl = '';
 
 
 	public function __construct(Room $room,

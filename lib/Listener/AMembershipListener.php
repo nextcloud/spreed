@@ -38,15 +38,10 @@ use OCP\IUser;
 use Psr\Log\LoggerInterface;
 
 abstract class AMembershipListener implements IEventListener {
-
-	/** @var Manager */
-	protected $manager;
-	/** @var IAppManager */
-	protected $appManager;
-	/** @var IGroupManager */
-	protected $groupManager;
-	/** @var ParticipantService */
-	protected $participantService;
+	protected Manager $manager;
+	protected IAppManager $appManager;
+	protected IGroupManager $groupManager;
+	protected ParticipantService $participantService;
 
 	public function __construct(Manager $manager,
 								IAppManager $appManager,

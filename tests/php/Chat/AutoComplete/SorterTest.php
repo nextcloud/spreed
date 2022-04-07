@@ -23,22 +23,21 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Chat;
 
+use Test\TestCase;
 use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\CommentsManager;
 use PHPUnit\Framework\MockObject\MockObject;
 
-class SorterTest extends \Test\TestCase {
+class SorterTest extends TestCase {
 
 	/** @var CommentsManager|MockObject */
 	protected $commentsManager;
 
-	/** @var string */
-	protected $userId;
+	protected string $userId;
 
-	/** @var Sorter */
-	protected $sorter;
+	protected ?Sorter $sorter = null;
 
-	protected $user1 = [
+	protected array $user1 = [
 		'label' => 'Seattle',
 		'value' => [
 			'shareType' => 'user',
@@ -46,7 +45,7 @@ class SorterTest extends \Test\TestCase {
 		],
 	];
 
-	protected $user2 = [
+	protected array $user2 = [
 		'label' => 'New York',
 		'value' => [
 			'shareType' => 'user',
@@ -54,7 +53,7 @@ class SorterTest extends \Test\TestCase {
 		],
 	];
 
-	protected $user3 = [
+	protected array $user3 = [
 		'label' => 'ttle Sea',
 		'value' => [
 			'shareType' => 'user',

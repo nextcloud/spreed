@@ -26,9 +26,7 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Room;
 
 class AddEmailEvent extends RoomEvent {
-
-	/** @var string */
-	protected $email;
+	protected string $email;
 
 
 	public function __construct(Room $room,

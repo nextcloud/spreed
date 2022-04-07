@@ -33,8 +33,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Update extends Base {
 	use TRenderCommand;
 
-	/** @var CommandService */
-	private $service;
+	private CommandService $service;
 
 	public function __construct(CommandService $service) {
 		parent::__construct();

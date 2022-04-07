@@ -38,20 +38,15 @@ use Psr\Log\LoggerInterface;
  * @package OCA\Talk\BackgroundJob
  */
 class RemoveEmptyRooms extends TimedJob {
+	protected Manager $manager;
 
-	/** @var Manager */
-	protected $manager;
+	protected ParticipantService $participantService;
 
-	/** @var ParticipantService */
-	protected $participantService;
+	protected LoggerInterface $logger;
 
-	/** @var LoggerInterface */
-	protected $logger;
+	protected IUserMountCache $userMountCache;
 
-	/** @var IUserMountCache */
-	protected $userMountCache;
-
-	protected $numDeletedRooms = 0;
+	protected int $numDeletedRooms = 0;
 
 	public function __construct(ITimeFactory $timeFactory,
 								Manager $manager,

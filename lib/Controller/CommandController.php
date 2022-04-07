@@ -30,9 +30,7 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
 class CommandController extends OCSController {
-
-	/** @var CommandService */
-	protected $commandService;
+	protected CommandService $commandService;
 
 	/**
 	 * @param string $appName

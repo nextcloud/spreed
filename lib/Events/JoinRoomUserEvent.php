@@ -27,15 +27,10 @@ use OCA\Talk\Room;
 use OCP\IUser;
 
 class JoinRoomUserEvent extends RoomEvent {
-
-	/** @var IUser */
-	protected $user;
-	/** @var bool */
-	protected $cancelJoin;
-	/** @var string */
-	protected $password;
-	/** @var bool */
-	protected $passedPasswordProtection;
+	protected IUser $user;
+	protected bool $cancelJoin;
+	protected string $password;
+	protected bool $passedPasswordProtection;
 
 
 	public function __construct(Room $room,

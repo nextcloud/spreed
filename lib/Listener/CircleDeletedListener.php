@@ -32,11 +32,8 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 
 class CircleDeletedListener implements IEventListener {
-
-	/** @var Manager */
-	private $manager;
-	/** @var ParticipantService */
-	private $participantService;
+	private Manager $manager;
+	private ParticipantService $participantService;
 
 	public function __construct(Manager $manager,
 								ParticipantService $participantService) {

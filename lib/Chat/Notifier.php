@@ -47,21 +47,13 @@ use OCP\Notification\INotification;
  * prepares the notifications for display.
  */
 class Notifier {
-
-	/** @var INotificationManager */
-	private $notificationManager;
-	/** @var IUserManager */
-	private $userManager;
-	/** @var ParticipantService */
-	private $participantService;
-	/** @var Manager */
-	private $manager;
-	/** @var IConfig */
-	private $config;
-	/** @var ITimeFactory */
-	private $timeFactory;
-	/** @var Util */
-	private $util;
+	private INotificationManager $notificationManager;
+	private IUserManager $userManager;
+	private ParticipantService $participantService;
+	private Manager $manager;
+	private IConfig $config;
+	private ITimeFactory $timeFactory;
+	private Util $util;
 
 	public function __construct(INotificationManager $notificationManager,
 								IUserManager $userManager,

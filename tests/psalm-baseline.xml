@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.10.0@916b098b008f6de4543892b1e0651c1c3b92cbfa">
+<files psalm-version="4.22.0@fc2c6ab4d5fa5d644d8617089f012f3bb84b8703">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass occurrences="2">
       <code>BeforeTemplateRenderedEvent</code>
@@ -8,7 +8,6 @@
     <UndefinedInterfaceMethod occurrences="1">
       <code>getSettingsManager</code>
     </UndefinedInterfaceMethod>
-    <InvalidArgument occurrences="16"/>
   </file>
   <file src="lib/BackgroundJob/CheckReferenceIdColumn.php">
     <UndefinedClass occurrences="1">
@@ -26,11 +25,10 @@
     </UndefinedVariable>
   </file>
   <file src="lib/Chat/Parser/SystemMessage.php">
-    <MissingDependency occurrences="4">
+    <MissingDependency occurrences="3">
       <code>$this-&gt;rootFolder</code>
       <code>IRootFolder</code>
       <code>IRootFolder</code>
-      <code>ShareNotFound</code>
     </MissingDependency>
     <UndefinedClass occurrences="1">
       <code>\OC_Util</code>
@@ -164,38 +162,16 @@
     <NullArgument occurrences="1">
       <code>null</code>
     </NullArgument>
-    <ParadoxicalCondition occurrences="1">
-      <code>\in_array($mode, $validModes, true)</code>
-    </ParadoxicalCondition>
   </file>
   <file src="lib/Controller/ChatController.php">
     <InvalidArrayOffset occurrences="1">
       <code>$commentIdToIndex[$parentId]</code>
     </InvalidArrayOffset>
   </file>
-  <file src="lib/Controller/FilesIntegrationController.php">
-    <InvalidCatch occurrences="1"/>
-    <MissingDependency occurrences="2">
-      <code>ShareNotFound</code>
-      <code>ShareNotFound</code>
-    </MissingDependency>
-  </file>
   <file src="lib/Controller/PageController.php">
     <MissingDependency occurrences="2">
       <code>IRootFolder</code>
       <code>IRootFolder</code>
-    </MissingDependency>
-    <UndefinedDocblockClass occurrences="4">
-      <code>HintException</code>
-      <code>HintException</code>
-      <code>HintException</code>
-      <code>HintException</code>
-    </UndefinedDocblockClass>
-  </file>
-  <file src="lib/Controller/PublicShareAuthController.php">
-    <InvalidCatch occurrences="1"/>
-    <MissingDependency occurrences="1">
-      <code>ShareNotFound</code>
     </MissingDependency>
   </file>
   <file src="lib/Controller/SettingsController.php">
@@ -209,20 +185,12 @@
     </InvalidArgument>
   </file>
   <file src="lib/Controller/SignalingController.php">
-    <UndefinedClass occurrences="1">
-      <code>\GuzzleHttp\Exception\ConnectException</code>
-    </UndefinedClass>
+    <UndefinedClass occurrences="1"/>
   </file>
   <file src="lib/Controller/TempAvatarController.php">
     <UndefinedClass occurrences="1">
       <code>Filesystem</code>
     </UndefinedClass>
-  </file>
-  <file src="lib/Federation/CloudFederationProviderTalk.php">
-    <MissingDependency occurrences="19">
-      <code>ShareNotFound</code>
-      <code>AuthenticationFailedException</code>
-    </MissingDependency>
   </file>
   <file src="lib/Files/TemplateLoader.php">
     <MissingDependency occurrences="2">
@@ -235,32 +203,22 @@
     </UndefinedClass>
   </file>
   <file src="lib/Files/Util.php">
-    <InvalidCatch occurrences="1"/>
-    <MissingDependency occurrences="7">
+    <MissingDependency occurrences="5">
       <code>$this-&gt;rootFolder</code>
       <code>$this-&gt;rootFolder</code>
       <code>$this-&gt;rootFolder</code>
       <code>IRootFolder</code>
       <code>IRootFolder</code>
-      <code>ShareNotFound</code>
-      <code>ShareNotFound</code>
     </MissingDependency>
     <InvalidArgument occurrences="1">
       <code>SharedStorage::class</code>
     </InvalidArgument>
   </file>
   <file src="lib/MatterbridgeManager.php">
-    <UndefinedClass occurrences="3">
+    <UndefinedClass occurrences="7">
       <code>IAuthTokenProvider</code>
-      <code>IToken</code>
       <code>IToken</code>
     </UndefinedClass>
-    <UndefinedDocblockClass occurrences="4">
-      <code>$this-&gt;tokenProvider</code>
-      <code>$this-&gt;tokenProvider</code>
-      <code>$this-&gt;tokenProvider</code>
-      <code>IAuthTokenProvider</code>
-    </UndefinedDocblockClass>
   </file>
   <file src="lib/Migration/Version2001Date20170707115443.php">
     <InvalidArrayAccess occurrences="1">
@@ -273,10 +231,6 @@
       <code>$this-&gt;rooms</code>
       <code>$this-&gt;rooms</code>
     </InvalidPropertyAssignmentValue>
-    <MissingDependency occurrences="1">
-      <code>ShareNotFound</code>
-    </MissingDependency>
-    <InvalidCatch occurrences="1"/>
   </file>
   <file src="lib/PublicShare/TemplateLoader.php">
     <UndefinedClass occurrences="1">
@@ -287,19 +241,6 @@
     <UndefinedClass occurrences="1">
       <code>BeforeTemplateRenderedEvent</code>
     </UndefinedClass>
-  </file>
-  <file src="lib/Service/HostedSignalingServerService.php">
-    <InvalidReturnStatement occurrences="1">
-      <code>$data</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>array</code>
-    </InvalidReturnType>
-  </file>
-  <file src="lib/Settings/Admin/AdminSettings.php">
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>getLanguages</code>
-    </UndefinedInterfaceMethod>
   </file>
   <file src="lib/Share/Listener.php">
     <InvalidArgument occurrences="1">
@@ -320,23 +261,6 @@
       <code>new GenericEvent($existingShare)</code>
       <code>self::class . '::' . 'share_file_again'</code>
     </InvalidArgument>
-    <MissingDependency occurrences="15">
-      <code>GenericShareException</code>
-      <code>GenericShareException</code>
-      <code>GenericShareException</code>
-      <code>GenericShareException</code>
-      <code>GenericShareException</code>
-      <code>GenericShareException</code>
-      <code>ShareNotFound</code>
-      <code>ShareNotFound</code>
-      <code>ShareNotFound</code>
-      <code>ShareNotFound</code>
-      <code>ShareNotFound</code>
-      <code>ShareNotFound</code>
-      <code>ShareNotFound</code>
-      <code>ShareNotFound</code>
-      <code>ShareNotFound</code>
-    </MissingDependency>
     <UndefinedClass occurrences="1">
       <code>Cache</code>
     </UndefinedClass>
@@ -345,8 +269,5 @@
     <MissingDependency occurrences="1">
       <code>IRootFolder</code>
     </MissingDependency>
-    <UndefinedClass occurrences="1">
-      <code>HintException</code>
-    </UndefinedClass>
   </file>
 </files>

@@ -53,20 +53,15 @@ class FederationManager {
 	public const TALK_PROTOCOL_NAME = 'nctalk';
 	public const TOKEN_LENGTH = 15;
 
-	/** @var IConfig */
-	private $config;
+	private IConfig $config;
 
-	/** @var Manager */
-	private $manager;
+	private Manager $manager;
 
-	/** @var ParticipantService */
-	private $participantService;
+	private ParticipantService $participantService;
 
-	/** @var InvitationMapper */
-	private $invitationMapper;
+	private InvitationMapper $invitationMapper;
 
-	/** @var Notifications */
-	private $notifications;
+	private Notifications $notifications;
 
 	public function __construct(
 		IConfig $config,

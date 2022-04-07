@@ -21,6 +21,7 @@
 
 namespace OCA\Talk\Tests\php\Chat\AutoComplete;
 
+use Test\TestCase;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Files\Util;
 use OCA\Talk\GuestManager;
@@ -36,7 +37,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use PHPUnit\Framework\MockObject\MockObject;
 
-class SearchPluginTest extends \Test\TestCase {
+class SearchPluginTest extends TestCase {
 
 	/** @var IUserManager|MockObject */
 	protected $userManager;
@@ -50,10 +51,8 @@ class SearchPluginTest extends \Test\TestCase {
 	protected $util;
 	/** @var IL10N|MockObject */
 	protected $l;
-	/** @var string */
-	protected $userId;
-	/** @var SearchPlugin */
-	protected $plugin;
+	protected ?string $userId = null;
+	protected SearchPlugin $plugin;
 
 	public function setUp(): void {
 		parent::setUp();

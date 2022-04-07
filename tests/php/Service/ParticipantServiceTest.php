@@ -54,10 +54,8 @@ class ParticipantServiceTest extends TestCase {
 	protected $serverConfig;
 	/** @var Config|MockObject */
 	protected $talkConfig;
-	/** @var AttendeeMapper */
-	protected $attendeeMapper;
-	/** @var SessionMapper */
-	protected $sessionMapper;
+	protected ?AttendeeMapper $attendeeMapper = null;
+	protected ?SessionMapper $sessionMapper = null;
 	/** @var SessionService|MockObject */
 	protected $sessionService;
 	/** @var ISecureRandom|MockObject */
@@ -76,8 +74,7 @@ class ParticipantServiceTest extends TestCase {
 	protected $time;
 	/** @var ICacheFactory|MockObject */
 	protected $cacheFactory;
-	/** @var ParticipantService */
-	private $service;
+	private ?ParticipantService $service = null;
 
 
 	public function setUp(): void {

@@ -54,38 +54,25 @@ use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
 
 class Notifier implements INotifier {
-
-	/** @var IFactory */
-	protected $lFactory;
-	/** @var IURLGenerator */
-	protected $url;
-	/** @var Config */
-	protected $config;
-	/** @var IUserManager */
-	protected $userManager;
-	/** @var GuestManager */
-	protected $guestManager;
-	/** @var IShareManager */
-	private $shareManager;
-	/** @var Manager */
-	protected $manager;
-	/** @var ParticipantService */
-	protected $participantService;
-	/** @var INotificationManager */
-	protected $notificationManager;
-	/** @var ICommentsManager */
-	protected $commentManager;
-	/** @var MessageParser */
-	protected $messageParser;
-	/** @var Definitions */
-	protected $definitions;
+	protected IFactory $lFactory;
+	protected IURLGenerator $url;
+	protected Config $config;
+	protected IUserManager $userManager;
+	protected GuestManager $guestManager;
+	private IShareManager $shareManager;
+	protected Manager $manager;
+	protected ParticipantService $participantService;
+	protected INotificationManager $notificationManager;
+	protected ICommentsManager $commentManager;
+	protected MessageParser $messageParser;
+	protected Definitions $definitions;
 	/** @var AddressHandler */
 	protected $addressHandler;
 
 	/** @var Room[] */
-	protected $rooms = [];
+	protected array $rooms = [];
 	/** @var Participant[][] */
-	protected $participants = [];
+	protected array $participants = [];
 
 	public function __construct(IFactory $lFactory,
 								IURLGenerator $url,

@@ -28,9 +28,7 @@ use OCA\Talk\Room;
 use OCP\Comments\IComment;
 
 class ChatParticipantEvent extends ChatEvent {
-
-	/** @var Participant */
-	protected $participant;
+	protected Participant $participant;
 
 
 	public function __construct(Room $room, IComment $message, Participant $participant) {

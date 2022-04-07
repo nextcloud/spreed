@@ -36,13 +36,9 @@ use OCP\IUser;
 use OCP\IUserSession;
 
 class ConversationProvider implements IProvider {
-
-	/** @var Manager */
-	protected $manager;
-	/** @var IUserSession */
-	protected $userSession;
-	/** @var IURLGenerator */
-	protected $urlGenerator;
+	protected Manager $manager;
+	protected IUserSession $userSession;
+	protected IURLGenerator $urlGenerator;
 
 	public function __construct(Manager $manager,
 								IUserSession $userSession,

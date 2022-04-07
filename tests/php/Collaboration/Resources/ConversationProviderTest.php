@@ -46,8 +46,7 @@ class ConversationProviderTest extends TestCase {
 	protected $userSession;
 	/** @var IURLGenerator|MockObject */
 	protected $urlGenerator;
-	/** @var ConversationProvider */
-	protected $provider;
+	protected ?ConversationProvider $provider = null;
 
 	public function setUp(): void {
 		parent::setUp();

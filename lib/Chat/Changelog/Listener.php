@@ -38,8 +38,7 @@ class Listener {
 		}, -100);
 	}
 
-	/** @var Manager */
-	protected $manager;
+	protected Manager $manager;
 
 	public function __construct(Manager $manager) {
 		$this->manager = $manager;

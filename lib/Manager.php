@@ -53,38 +53,22 @@ use OCP\Security\ISecureRandom;
 class Manager {
 	public const EVENT_TOKEN_GENERATE = self::class . '::generateNewToken';
 
-	/** @var IDBConnection */
-	private $db;
-	/** @var IConfig */
-	private $config;
-	/** @var Config */
-	private $talkConfig;
-	/** @var IAppManager */
-	private $appManager;
-	/** @var AttendeeMapper */
-	private $attendeeMapper;
-	/** @var SessionMapper */
-	private $sessionMapper;
-	/** @var ParticipantService */
-	private $participantService;
-	/** @var ISecureRandom */
-	private $secureRandom;
-	/** @var IUserManager */
-	private $userManager;
-	/** @var IGroupManager */
-	private $groupManager;
-	/** @var ICommentsManager */
-	private $commentsManager;
-	/** @var TalkSession */
-	private $talkSession;
-	/** @var IEventDispatcher */
-	private $dispatcher;
-	/** @var ITimeFactory */
-	protected $timeFactory;
-	/** @var IHasher */
-	private $hasher;
-	/** @var IL10N */
-	private $l;
+	private IDBConnection $db;
+	private IConfig $config;
+	private Config $talkConfig;
+	private IAppManager $appManager;
+	private AttendeeMapper $attendeeMapper;
+	private SessionMapper $sessionMapper;
+	private ParticipantService $participantService;
+	private ISecureRandom $secureRandom;
+	private IUserManager $userManager;
+	private IGroupManager $groupManager;
+	private ICommentsManager $commentsManager;
+	private TalkSession $talkSession;
+	private IEventDispatcher $dispatcher;
+	protected ITimeFactory $timeFactory;
+	private IHasher $hasher;
+	private IL10N $l;
 
 	public function __construct(IDBConnection $db,
 								IConfig $config,

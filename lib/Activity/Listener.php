@@ -41,24 +41,17 @@ use OCP\IUserSession;
 use Psr\Log\LoggerInterface;
 
 class Listener {
+	protected IManager $activityManager;
 
-	/** @var IManager */
-	protected $activityManager;
+	protected IUserSession $userSession;
 
-	/** @var IUserSession */
-	protected $userSession;
+	protected ChatManager $chatManager;
 
-	/** @var ChatManager */
-	protected $chatManager;
+	protected ParticipantService $participantService;
 
-	/** @var ParticipantService */
-	protected $participantService;
+	protected LoggerInterface $logger;
 
-	/** @var LoggerInterface */
-	protected $logger;
-
-	/** @var ITimeFactory */
-	protected $timeFactory;
+	protected ITimeFactory $timeFactory;
 
 	public function __construct(IManager $activityManager,
 								IUserSession $userSession,

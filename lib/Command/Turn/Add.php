@@ -33,9 +33,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Add extends Base {
-
-	/** @var IConfig */
-	private $config;
+	private IConfig $config;
 
 	public function __construct(IConfig $config) {
 		parent::__construct();

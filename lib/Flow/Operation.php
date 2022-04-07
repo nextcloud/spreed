@@ -53,16 +53,11 @@ class Operation implements IOperation {
 		'ROOM_MENTION' => 3,
 	];
 
-	/** @var IL10N */
-	private $l;
-	/** @var IURLGenerator */
-	private $urlGenerator;
-	/** @var TalkManager */
-	private $talkManager;
-	/** @var IUserSession */
-	private $session;
-	/** @var ChatManager */
-	private $chatManager;
+	private IL10N $l;
+	private IURLGenerator $urlGenerator;
+	private TalkManager $talkManager;
+	private IUserSession $session;
+	private ChatManager $chatManager;
 
 	public function __construct(
 		IL10N $l,

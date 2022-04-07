@@ -46,30 +46,18 @@ use Psr\Log\LoggerInterface;
 class MatterbridgeManager {
 	public const BRIDGE_BOT_USERID = 'bridge-bot';
 
-	/** @var IDBConnection */
-	private $db;
-	/** @var IConfig */
-	private $config;
-	/** @var IURLGenerator */
-	private $urlGenerator;
-	/** @var IUserManager */
-	private $userManager;
-	/** @var Manager */
-	private $manager;
-	/** @var ParticipantService */
-	private $participantService;
-	/** @var ChatManager */
-	private $chatManager;
-	/** @var IAuthTokenProvider */
-	private $tokenProvider;
-	/** @var ISecureRandom */
-	private $random;
-	/** @var IAvatarManager */
-	private $avatarManager;
-	/** @var LoggerInterface */
-	private $logger;
-	/** @var ITimeFactory */
-	private $timeFactory;
+	private IDBConnection $db;
+	private IConfig $config;
+	private IURLGenerator $urlGenerator;
+	private IUserManager $userManager;
+	private Manager $manager;
+	private ParticipantService $participantService;
+	private ChatManager $chatManager;
+	private IAuthTokenProvider $tokenProvider;
+	private ISecureRandom $random;
+	private IAvatarManager $avatarManager;
+	private LoggerInterface $logger;
+	private ITimeFactory $timeFactory;
 
 	public function __construct(IDBConnection $db,
 								IConfig $config,

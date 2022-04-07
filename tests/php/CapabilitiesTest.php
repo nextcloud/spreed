@@ -46,8 +46,7 @@ class CapabilitiesTest extends TestCase {
 	protected $commentsManager;
 	/** @var IUserSession|MockObject */
 	protected $userSession;
-	/** @var array */
-	protected $baseFeatures;
+	protected ?array $baseFeatures = null;
 
 	public function setUp(): void {
 		parent::setUp();

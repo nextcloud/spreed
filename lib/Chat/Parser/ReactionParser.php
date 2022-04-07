@@ -29,8 +29,7 @@ use OCA\Talk\Model\Message;
 use OCP\IL10N;
 
 class ReactionParser {
-	/** @var IL10N|null */
-	private $l;
+	private ?IL10N $l = null;
 	/**
 	 * @param Message $message
 	 * @throws \OutOfBoundsException

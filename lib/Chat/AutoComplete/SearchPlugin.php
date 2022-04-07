@@ -37,24 +37,15 @@ use OCP\IUser;
 use OCP\IUserManager;
 
 class SearchPlugin implements ISearchPlugin {
+	protected IUserManager $userManager;
+	protected GuestManager $guestManager;
+	protected TalkSession $talkSession;
+	protected ParticipantService $participantService;
+	protected Util $util;
+	protected ?string $userId;
+	protected IL10N $l;
 
-	/** @var IUserManager */
-	protected $userManager;
-	/** @var GuestManager */
-	protected $guestManager;
-	/** @var TalkSession */
-	protected $talkSession;
-	/** @var ParticipantService */
-	protected $participantService;
-	/** @var Util */
-	protected $util;
-	/** @var string|null */
-	protected $userId;
-	/** @var IL10N */
-	protected $l;
-
-	/** @var Room */
-	protected $room;
+	protected ?Room $room = null;
 
 	public function __construct(IUserManager $userManager,
 								GuestManager $guestManager,

@@ -35,19 +35,14 @@ use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 
 class Util {
-
-	/** @var IRootFolder */
-	private $rootFolder;
-	/** @var ISession */
-	private $session;
-	/** @var IShareManager */
-	private $shareManager;
-	/** @var IUserMountCache */
-	private $userMountCache;
+	private IRootFolder $rootFolder;
+	private ISession $session;
+	private IShareManager $shareManager;
+	private IUserMountCache $userMountCache;
 	/** @var array[] */
-	private $accessLists = [];
+	private array $accessLists = [];
 	/** @var bool[] */
-	private $publicAccessLists = [];
+	private array $publicAccessLists = [];
 
 	public function __construct(IRootFolder $rootFolder,
 			ISession $session,

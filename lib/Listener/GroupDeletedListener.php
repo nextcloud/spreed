@@ -33,13 +33,9 @@ use OCP\Group\Events\GroupDeletedEvent;
 use OCP\IConfig;
 
 class GroupDeletedListener implements IEventListener {
-
-	/** @var IConfig */
-	private $config;
-	/** @var Manager */
-	private $manager;
-	/** @var ParticipantService */
-	private $participantService;
+	private IConfig $config;
+	private Manager $manager;
+	private ParticipantService $participantService;
 
 	public function __construct(IConfig $config,
 								Manager $manager,

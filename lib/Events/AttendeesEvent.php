@@ -28,7 +28,7 @@ use OCA\Talk\Room;
 
 class AttendeesEvent extends RoomEvent {
 	/** @var Attendee[] */
-	protected $attendees;
+	protected array $attendees;
 
 	public function __construct(Room $room,
 								array $attendees) {

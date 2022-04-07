@@ -48,11 +48,9 @@ use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class FederationTest extends TestCase {
-	/** @var FederationManager */
-	protected $federationManager;
+	protected ?FederationManager $federationManager = null;
 
-	/** @var Notifications */
-	protected $notifications;
+	protected ?Notifications $notifications = null;
 
 	/** @var ICloudFederationProviderManager|MockObject */
 	protected $cloudFederationProviderManager;
@@ -66,8 +64,7 @@ class FederationTest extends TestCase {
 	/** @var AddressHandler|MockObject */
 	protected $addressHandler;
 
-	/** @var CloudFederationProviderTalk */
-	protected $cloudFederationProvider;
+	protected ?CloudFederationProviderTalk $cloudFederationProvider = null;
 
 	/** @var IUserManager|MockObject */
 	protected $userManager;

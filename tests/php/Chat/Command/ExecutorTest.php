@@ -53,8 +53,7 @@ class ExecutorTest extends TestCase {
 	/** @var IL10N|MockObject */
 	protected $l10n;
 
-	/** @var Executor */
-	protected $executor;
+	protected ?Executor $executor = null;
 
 	public function setUp(): void {
 		parent::setUp();

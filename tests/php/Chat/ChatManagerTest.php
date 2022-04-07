@@ -70,8 +70,7 @@ class ChatManagerTest extends TestCase {
 	protected $timeFactory;
 	/** @var AttachmentService|MockObject */
 	protected $attachmentService;
-	/** @var ChatManager */
-	protected $chatManager;
+	protected ?ChatManager $chatManager = null;
 
 	public function setUp(): void {
 		parent::setUp();

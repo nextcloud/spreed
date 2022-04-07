@@ -34,9 +34,7 @@ use OCP\BackgroundJob\IJob;
  * @package OCA\Talk\BackgroundJob
  */
 class ExpireSignalingMessage extends TimedJob {
-
-	/** @var Messages */
-	protected $messages;
+	protected Messages $messages;
 
 	public function __construct(ITimeFactory $timeFactory,
 								Messages $messages) {

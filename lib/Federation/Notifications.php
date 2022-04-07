@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Federation;
 
+use OCP\DB\Exception;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\BackgroundJob\RetryJob;
@@ -41,20 +42,15 @@ use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 
 class Notifications {
-	/** @var ICloudFederationFactory */
-	private $cloudFederationFactory;
+	private ICloudFederationFactory $cloudFederationFactory;
 
-	/** @var LoggerInterface */
-	private $logger;
+	private LoggerInterface $logger;
 
-	/** @var ICloudFederationProviderManager */
-	private $federationProviderManager;
+	private ICloudFederationProviderManager $federationProviderManager;
 
-	/** @var IJobList */
-	private $jobList;
+	private IJobList $jobList;
 
-	/** @var IUserManager */
-	private $userManager;
+	private IUserManager $userManager;
 
 	/** @var AddressHandler */
 	private $addressHandler;
@@ -78,7 +74,7 @@ class Notifications {
 	/**
 	 * @throws HintException
 	 * @throws RoomHasNoModeratorException
-	 * @throws \OCP\DB\Exception
+	 * @throws Exception
 	 */
 	public function sendRemoteShare(string $providerId, string $token, string $shareWith, string $sharedBy,
 									string $sharedByFederatedId, string $shareType, Room $room, Attendee $roomOwnerAttendee): bool {

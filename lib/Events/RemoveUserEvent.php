@@ -28,9 +28,7 @@ use OCA\Talk\Room;
 use OCP\IUser;
 
 class RemoveUserEvent extends RemoveParticipantEvent {
-
-	/** @var IUser */
-	protected $user;
+	protected IUser $user;
 
 	public function __construct(Room $room,
 								Participant $participant,

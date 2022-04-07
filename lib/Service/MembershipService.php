@@ -35,13 +35,9 @@ use OCP\IUser;
 use Psr\Log\LoggerInterface;
 
 class MembershipService {
-
-	/** @var IAppManager */
-	protected $appManager;
-	/** @var IGroupManager */
-	protected $groupManager;
-	/** @var AttendeeMapper */
-	protected $attendeeMapper;
+	protected IAppManager $appManager;
+	protected IGroupManager $groupManager;
+	protected AttendeeMapper $attendeeMapper;
 
 	public function __construct(IAppManager $appManager,
 								IGroupManager $groupManager,

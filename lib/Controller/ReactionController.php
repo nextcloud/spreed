@@ -35,8 +35,7 @@ use OCP\Comments\NotFoundException;
 use OCP\IRequest;
 
 class ReactionController extends AEnvironmentAwareController {
-	/** @var ReactionManager */
-	private $reactionManager;
+	private ReactionManager $reactionManager;
 
 	public function __construct(string $appName,
 								IRequest $request,

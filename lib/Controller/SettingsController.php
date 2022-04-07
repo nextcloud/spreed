@@ -43,19 +43,12 @@ use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
 class SettingsController extends OCSController {
-
-	/** @var IRootFolder */
-	protected $rootFolder;
-	/** @var IConfig */
-	protected $config;
-	/** @var IGroupManager */
-	protected $groupManager;
-	/** @var ParticipantService */
-	protected $participantService;
-	/** @var LoggerInterface */
-	protected $logger;
-	/** @var string|null */
-	protected $userId;
+	protected IRootFolder $rootFolder;
+	protected IConfig $config;
+	protected IGroupManager $groupManager;
+	protected ParticipantService $participantService;
+	protected LoggerInterface $logger;
+	protected ?string $userId;
 
 	public function __construct(string $appName,
 								IRequest $request,

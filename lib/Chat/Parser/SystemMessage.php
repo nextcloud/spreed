@@ -49,38 +49,29 @@ use OCP\Share\Exceptions\ShareNotFound;
 use Sabre\VObject\Reader;
 
 class SystemMessage {
-
-	/** @var IUserManager */
-	protected $userManager;
-	/** @var IGroupManager */
-	protected $groupManager;
-	/** @var GuestManager */
-	protected $guestManager;
-	/** @var IPreviewManager */
-	protected $previewManager;
-	/** @var RoomShareProvider */
-	protected $shareProvider;
+	protected IUserManager $userManager;
+	protected IGroupManager $groupManager;
+	protected GuestManager $guestManager;
+	protected IPreviewManager $previewManager;
+	protected RoomShareProvider $shareProvider;
 	/** @var PhotoCache */
 	protected $photoCache;
-	/** @var IRootFolder */
-	protected $rootFolder;
-	/** @var IURLGenerator */
-	protected $url;
-	/** @var IL10N */
-	protected $l;
+	protected IRootFolder $rootFolder;
+	protected IURLGenerator $url;
+	protected ?IL10N $l = null;
 
 	/**
 	 * @psalm-var array<array-key, null|string>
 	 */
-	protected $displayNames = [];
+	protected array $displayNames = [];
 	/** @var string[] */
-	protected $groupNames = [];
+	protected array $groupNames = [];
 	/** @var string[] */
-	protected $circleNames = [];
+	protected array $circleNames = [];
 	/** @var string[] */
-	protected $circleLinks = [];
+	protected array $circleLinks = [];
 	/** @var string[] */
-	protected $guestNames = [];
+	protected array $guestNames = [];
 
 	public function __construct(IUserManager $userManager,
 								IGroupManager $groupManager,

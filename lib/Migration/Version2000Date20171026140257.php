@@ -32,18 +32,14 @@ use OCP\Migration\IOutput;
 use OCP\Security\ISecureRandom;
 
 class Version2000Date20171026140257 extends SimpleMigrationStep {
+	protected IDBConnection $connection;
 
-	/** @var IDBConnection */
-	protected $connection;
+	protected IConfig $config;
 
-	/** @var IConfig */
-	protected $config;
-
-	/** @var ISecureRandom */
-	protected $secureRandom;
+	protected ISecureRandom $secureRandom;
 
 	/** @var string[] */
-	protected $tokens;
+	protected array $tokens;
 
 	public function __construct(IDBConnection $connection,
 								IConfig $config,

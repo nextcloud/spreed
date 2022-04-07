@@ -38,24 +38,15 @@ use OCP\IUserSession;
 use Psr\Log\LoggerInterface;
 
 class Listener {
+	protected IDBConnection $connection;
+	protected IManager $notificationManager;
+	protected ParticipantService $participantsService;
+	protected IEventDispatcher $dispatcher;
+	protected IUserSession $userSession;
+	protected ITimeFactory $timeFactory;
+	protected LoggerInterface $logger;
 
-	/** @var IDBConnection */
-	protected $connection;
-	/** @var IManager */
-	protected $notificationManager;
-	/** @var ParticipantService */
-	protected $participantsService;
-	/** @var IEventDispatcher */
-	protected $dispatcher;
-	/** @var IUserSession */
-	protected $userSession;
-	/** @var ITimeFactory */
-	protected $timeFactory;
-	/** @var LoggerInterface */
-	protected $logger;
-
-	/** @var bool */
-	protected $shouldSendCallNotification = false;
+	protected bool $shouldSendCallNotification = false;
 
 	public function __construct(IDBConnection $connection,
 								IManager $notificationManager,

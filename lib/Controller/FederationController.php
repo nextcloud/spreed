@@ -40,14 +40,11 @@ use OCP\IUser;
 use OCP\IUserSession;
 
 class FederationController extends OCSController {
-	/** @var FederationManager */
-	private $federationManager;
+	private FederationManager $federationManager;
 
-	/** @var Manager */
-	private $talkManager;
+	private Manager $talkManager;
 
-	/** @var IUserSession */
-	private $userSession;
+	private IUserSession $userSession;
 
 	public function __construct(IRequest $request,
 								FederationManager $federationManager,

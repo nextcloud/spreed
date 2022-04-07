@@ -33,12 +33,9 @@ use OCP\IConfig;
 class Manager {
 	public const FEATURE_HEADER = 'X-Spreed-Signaling-Features';
 
-	/** @var IConfig */
-	protected $serverConfig;
-	/** @var Config */
-	protected $talkConfig;
-	/** @var ICache */
-	private $cache;
+	protected IConfig $serverConfig;
+	protected Config $talkConfig;
+	private ICache $cache;
 
 	public function __construct(IConfig $serverConfig,
 								Config $talkConfig,

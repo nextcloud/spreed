@@ -32,9 +32,7 @@ use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 
 class Version3003Date20180718112436 extends SimpleMigrationStep {
-
-	/** @var IDBConnection */
-	protected $connection;
+	protected IDBConnection $connection;
 
 	public function __construct(IDBConnection $connection) {
 		$this->connection = $connection;

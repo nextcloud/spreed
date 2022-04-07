@@ -34,12 +34,9 @@ use OCP\Migration\IRepairStep;
 class ClearResourceAccessCache implements IRepairStep {
 	protected const INVALIDATIONS = 1;
 
-	/** @var IConfig */
-	protected $config;
-	/** @var IManager */
-	protected $manager;
-	/** @var ConversationProvider */
-	protected $provider;
+	protected IConfig $config;
+	protected IManager $manager;
+	protected ConversationProvider $provider;
 
 	public function __construct(IConfig $config,
 								IManager $manager,

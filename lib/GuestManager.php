@@ -41,29 +41,21 @@ class GuestManager {
 	public const EVENT_AFTER_EMAIL_INVITE = self::class . '::postInviteByEmail';
 	public const EVENT_AFTER_NAME_UPDATE = self::class . '::updateName';
 
-	/** @var Config */
-	protected $talkConfig;
+	protected Config $talkConfig;
 
-	/** @var IMailer */
-	protected $mailer;
+	protected IMailer $mailer;
 
-	/** @var Defaults */
-	protected $defaults;
+	protected Defaults $defaults;
 
-	/** @var IUserSession */
-	protected $userSession;
+	protected IUserSession $userSession;
 
-	/** @var ParticipantService */
-	private $participantService;
+	private ParticipantService $participantService;
 
-	/** @var IURLGenerator */
-	protected $url;
+	protected IURLGenerator $url;
 
-	/** @var IL10N */
-	protected $l;
+	protected IL10N $l;
 
-	/** @var IEventDispatcher */
-	protected $dispatcher;
+	protected IEventDispatcher $dispatcher;
 
 	public function __construct(Config $talkConfig,
 								IMailer $mailer,

@@ -59,8 +59,7 @@ class NotifierTest extends TestCase {
 	/** @var Util|MockObject */
 	protected $util;
 
-	/** @var Notifier */
-	protected $notifier;
+	protected Notifier $notifier;
 
 	public function setUp(): void {
 		parent::setUp();

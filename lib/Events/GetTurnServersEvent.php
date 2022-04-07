@@ -26,9 +26,7 @@ namespace OCA\Talk\Events;
 use OCP\EventDispatcher\Event;
 
 class GetTurnServersEvent extends Event {
-
-	/** @var array */
-	protected $servers;
+	protected array $servers;
 
 	public function __construct(array $servers) {
 		parent::__construct();

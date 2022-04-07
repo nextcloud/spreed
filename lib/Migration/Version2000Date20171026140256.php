@@ -32,15 +32,11 @@ use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 
 class Version2000Date20171026140256 extends SimpleMigrationStep {
+	protected IDBConnection $connection;
 
-	/** @var IDBConnection */
-	protected $connection;
+	protected IConfig $config;
 
-	/** @var IConfig */
-	protected $config;
-
-	/** @var IGroupManager */
-	protected $groupManager;
+	protected IGroupManager $groupManager;
 
 	public function __construct(IDBConnection $connection,
 								IConfig $config,

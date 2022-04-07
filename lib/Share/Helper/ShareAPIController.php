@@ -41,17 +41,11 @@ use OCP\Share\IShare;
  * actions or checks specific to room shares.
  */
 class ShareAPIController {
-
-	/** @var string */
-	private $userId;
-	/** @var Manager */
-	private $manager;
-	/** @var ITimeFactory */
-	protected $timeFactory;
-	/** @var IL10N */
-	private $l;
-	/** @var IURLGenerator */
-	private $urlGenerator;
+	private string $userId;
+	private Manager $manager;
+	protected ITimeFactory $timeFactory;
+	private IL10N $l;
+	private IURLGenerator $urlGenerator;
 
 	public function __construct(
 			string $UserId,

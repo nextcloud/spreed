@@ -31,12 +31,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ActiveCalls extends Base {
+	public IDBConnection $connection;
 
-	/** @var IDBConnection */
-	public $connection;
-
-	/** @var Manager */
-	public $manager;
+	public Manager $manager;
 
 	public function __construct(IDBConnection $connection) {
 		parent::__construct();

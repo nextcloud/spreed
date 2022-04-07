@@ -39,13 +39,9 @@ use OCP\IUser;
 use OCP\IUserManager;
 
 class CallController extends AEnvironmentAwareController {
-
-	/** @var ParticipantService */
-	private $participantService;
-	/** @var IUserManager */
-	private $userManager;
-	/** @var ITimeFactory */
-	private $timeFactory;
+	private ParticipantService $participantService;
+	private IUserManager $userManager;
+	private ITimeFactory $timeFactory;
 
 	public function __construct(string $appName,
 								IRequest $request,

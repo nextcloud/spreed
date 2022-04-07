@@ -35,21 +35,16 @@ use OCP\IUserSession;
 use OCP\Profile\ILinkAction;
 
 class TalkAction implements ILinkAction {
+	private ?IUser $targetUser = null;
 
-	/** @var IUser */
-	private $targetUser;
+	private Config $config;
 
-	/** @var Config */
-	private $config;
-
-	/** @var IL10N */
-	private $l;
+	private IL10N $l;
 
 	/** @var IUrlGenerator */
 	private $urlGenerator;
 
-	/** @var IUserSession */
-	private $userSession;
+	private IUserSession $userSession;
 
 	public function __construct(
 		Config $config,

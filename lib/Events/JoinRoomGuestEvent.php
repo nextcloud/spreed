@@ -26,13 +26,9 @@ namespace OCA\Talk\Events;
 use OCA\Talk\Room;
 
 class JoinRoomGuestEvent extends RoomEvent {
-
-	/** @var bool */
-	protected $cancelJoin;
-	/** @var string */
-	protected $password;
-	/** @var bool */
-	protected $passedPasswordProtection;
+	protected bool $cancelJoin;
+	protected string $password;
+	protected bool $passedPasswordProtection;
 
 
 	public function __construct(Room $room,

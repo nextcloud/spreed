@@ -26,9 +26,7 @@ namespace OCA\Talk\Events;
 use OCP\EventDispatcher\Event;
 
 class UserEvent extends Event {
-
-	/** @var string */
-	protected $userId;
+	protected string $userId;
 
 
 	public function __construct(string $userId) {

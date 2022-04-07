@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Chat\Parser;
 
+use Test\TestCase;
 use OCA\Talk\Chat\Parser\UserMention;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
@@ -38,7 +39,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use PHPUnit\Framework\MockObject\MockObject;
 
-class UserMentionTest extends \Test\TestCase {
+class UserMentionTest extends TestCase {
 
 	/** @var ICommentsManager|MockObject */
 	protected $commentsManager;
@@ -49,8 +50,7 @@ class UserMentionTest extends \Test\TestCase {
 	/** @var IL10N|MockObject */
 	protected $l;
 
-	/** @var UserMention */
-	protected $parser;
+	protected ?UserMention $parser = null;
 
 	public function setUp(): void {
 		parent::setUp();

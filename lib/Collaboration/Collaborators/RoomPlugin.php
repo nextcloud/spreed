@@ -33,12 +33,9 @@ use OCP\IUserSession;
 use OCP\Share\IShare;
 
 class RoomPlugin implements ISearchPlugin {
+	private Manager $manager;
 
-	/** @var Manager */
-	private $manager;
-
-	/** @var IUserSession */
-	private $userSession;
+	private IUserSession $userSession;
 
 	public function __construct(Manager $manager,
 								IUserSession $userSession) {

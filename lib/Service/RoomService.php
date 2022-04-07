@@ -35,15 +35,10 @@ use OCP\IUser;
 use OCP\Share\IManager as IShareManager;
 
 class RoomService {
-
-	/** @var Manager */
-	protected $manager;
-	/** @var ParticipantService */
-	protected $participantService;
-	/** @var IShareManager */
-	protected $shareManager;
-	/** @var IEventDispatcher */
-	private $dispatcher;
+	protected Manager $manager;
+	protected ParticipantService $participantService;
+	protected IShareManager $shareManager;
+	private IEventDispatcher $dispatcher;
 
 	public function __construct(Manager $manager,
 								ParticipantService $participantService,

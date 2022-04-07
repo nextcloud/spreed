@@ -36,15 +36,11 @@ use Psr\Log\LoggerInterface;
  * @package OCA\Talk\BackgroundJob
  */
 class CheckMatterbridges extends TimedJob {
+	protected IConfig $serverConfig;
 
-	/** @var IConfig */
-	protected $serverConfig;
+	protected MatterbridgeManager $bridgeManager;
 
-	/** @var MatterbridgeManager */
-	protected $bridgeManager;
-
-	/** @var LoggerInterface */
-	protected $logger;
+	protected LoggerInterface $logger;
 
 	public function __construct(ITimeFactory $time,
 								IConfig $serverConfig,

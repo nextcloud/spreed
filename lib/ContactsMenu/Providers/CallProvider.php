@@ -36,17 +36,11 @@ use OCP\IUser;
 use OCP\IUserManager;
 
 class CallProvider implements IProvider {
-
-	/** @var IActionFactory */
-	private $actionFactory;
-	/** @var IURLGenerator */
-	private $urlGenerator;
-	/** @var IUserManager */
-	private $userManager;
-	/** @var IL10N */
-	private $l10n;
-	/** @var Config */
-	private $config;
+	private IActionFactory $actionFactory;
+	private IURLGenerator $urlGenerator;
+	private IUserManager $userManager;
+	private IL10N $l10n;
+	private Config $config;
 
 	public function __construct(IActionFactory $actionFactory,
 								IURLGenerator $urlGenerator,

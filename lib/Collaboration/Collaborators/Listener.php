@@ -38,19 +38,13 @@ use OCP\IUser;
 use OCP\IUserManager;
 
 class Listener {
-
-	/** @var Manager */
-	protected $manager;
-	/** @var IUserManager */
-	protected $userManager;
-	/** @var Config */
-	protected $config;
+	protected Manager $manager;
+	protected IUserManager $userManager;
+	protected Config $config;
 	/** @var string[] */
-	protected $allowedGroupIds = [];
-	/** @var string */
-	protected $roomToken;
-	/** @var Room */
-	protected $room;
+	protected array $allowedGroupIds = [];
+	protected string $roomToken;
+	protected ?Room $room = null;
 
 	public function __construct(Manager $manager,
 								IUserManager $userManager,

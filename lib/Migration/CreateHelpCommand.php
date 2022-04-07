@@ -30,9 +30,7 @@ use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;
 
 class CreateHelpCommand implements IRepairStep {
-
-	/** @var CommandService */
-	protected $service;
+	protected CommandService $service;
 
 	public function __construct(CommandService $service) {
 		$this->service = $service;
