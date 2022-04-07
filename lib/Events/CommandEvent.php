@@ -30,7 +30,7 @@ use OCP\Comments\IComment;
 class CommandEvent extends ChatEvent {
 	protected Command $command;
 	protected string $arguments;
-	protected ?string $output = null;
+	protected string $output = '';
 
 
 	public function __construct(Room $room, IComment $message, Command $command, string $arguments) {
@@ -51,7 +51,7 @@ class CommandEvent extends ChatEvent {
 		$this->output = $output;
 	}
 
-	public function getOutput(): ?string {
+	public function getOutput(): string {
 		return $this->output;
 	}
 }
