@@ -94,7 +94,7 @@ class ReactionManager {
 		);
 		$comment->setParentId($parentMessage->getId());
 		$comment->setMessage($reaction);
-		$comment->setVerb('reaction');
+		$comment->setVerb(ChatManager::VERB_REACTION);
 		$this->commentsManager->save($comment);
 
 		$this->notifier->notifyReacted($chat, $parentMessage, $comment);
@@ -130,7 +130,7 @@ class ReactionManager {
 				'deleted_on' => $this->timeFactory->getDateTime()->getTimestamp(),
 			])
 		);
-		$comment->setVerb('reaction_deleted');
+		$comment->setVerb(ChatManager::VERB_REACTION_DELETED);
 		$this->commentsManager->save($comment);
 
 		$this->chatManager->addSystemMessage(
@@ -186,8 +186,8 @@ class ReactionManager {
 		if ($comment->getObjectType() !== 'chat'
 			|| $comment->getObjectId() !== (string) $chat->getId()
 			|| !in_array($comment->getVerb(), [
-				'comment',
-				'object_shared',
+				ChatManager::VERB_MESSAGE,
+				ChatManager::VERB_OBJECT_SHARED,
 			], true)) {
 			throw new ReactionOutOfContextException();
 		}

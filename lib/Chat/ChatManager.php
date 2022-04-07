@@ -68,6 +68,13 @@ class ChatManager {
 	public const MAX_CHAT_LENGTH = 32000;
 
 	public const GEO_LOCATION_VALIDATOR = '/^geo:-?\d{1,2}(\.\d+)?,-?\d{1,3}(\.\d+)?(,-?\d+(\.\d+)?)?(;crs=wgs84)?(;u=\d+(\.\d+)?)?$/i';
+	public const VERB_MESSAGE = 'comment';
+	public const VERB_SYSTEM = 'system';
+	public const VERB_OBJECT_SHARED = 'object_shared';
+	public const VERB_COMMAND = 'command';
+	public const VERB_MESSAGE_DELETED = 'comment_deleted';
+	public const VERB_REACTION = 'reaction';
+	public const VERB_REACTION_DELETED = 'reaction_deleted';
 
 	/** @var ICommentsManager|CommentsManager
 	 */
@@ -155,9 +162,9 @@ class ChatManager {
 		$messageType = $messageDecoded['message'] ?? '';
 
 		if ($messageType === 'object_shared' || $messageType === 'file_shared') {
-			$comment->setVerb('object_shared');
+			$comment->setVerb(self::VERB_OBJECT_SHARED);
 		} else {
-			$comment->setVerb('system');
+			$comment->setVerb(self::VERB_SYSTEM);
 		}
 
 		$event = new ChatEvent($chat, $comment, $shouldSkipLastMessageUpdate);
@@ -199,7 +206,7 @@ class ChatManager {
 
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($this->timeFactory->getDateTime());
-		$comment->setVerb('comment'); // Has to be comment, so it counts as unread message
+		$comment->setVerb(self::VERB_MESSAGE); // Has to be comment, so it counts as unread message
 
 		$event = new ChatEvent($chat, $comment);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_SYSTEM_MESSAGE_SEND, $event);
@@ -237,7 +244,7 @@ class ChatManager {
 		$comment->setCreationDateTime($creationDateTime);
 		// A verb ('comment', 'like'...) must be provided to be able to save a
 		// comment
-		$comment->setVerb('comment');
+		$comment->setVerb(self::VERB_MESSAGE);
 
 		if ($replyTo instanceof IComment) {
 			$comment->setParentId($replyTo->getId());
@@ -331,7 +338,7 @@ class ChatManager {
 	 * @throws ShareNotFound
 	 */
 	public function deleteMessage(Room $chat, IComment $comment, Participant $participant, \DateTime $deletionTime): IComment {
-		if ($comment->getVerb() === 'object_shared') {
+		if ($comment->getVerb() === self::VERB_OBJECT_SHARED) {
 			$messageData = json_decode($comment->getMessage(), true);
 			$this->unshareFileOnMessageDelete($chat, $participant, $messageData);
 		}
@@ -343,7 +350,7 @@ class ChatManager {
 				'deleted_on' => $deletionTime->getTimestamp(),
 			])
 		);
-		$comment->setVerb('comment_deleted');
+		$comment->setVerb(self::VERB_MESSAGE_DELETED);
 		$this->commentsManager->save($comment);
 
 		$this->attachmentService->deleteAttachmentByMessageId((int) $comment->getId());
@@ -417,7 +424,7 @@ class ChatManager {
 			return 0;
 		}
 
-		return $this->commentsManager->getLastCommentBeforeDate('chat', (string) $chat->getId(), $marker, 'comment');
+		return $this->commentsManager->getLastCommentBeforeDate('chat', (string) $chat->getId(), $marker, self::VERB_MESSAGE);
 	}
 
 	public function getUnreadCount(Room $chat, int $lastReadMessage): int {
@@ -429,7 +436,7 @@ class ChatManager {
 		$key = $chat->getId() . '-' . $lastReadMessage;
 		$unreadCount = $this->unreadCountCache->get($key);
 		if ($unreadCount === null) {
-			$unreadCount = $this->commentsManager->getNumberOfCommentsWithVerbsForObjectSinceComment('chat', (string) $chat->getId(), $lastReadMessage, ['comment', 'object_shared']);
+			$unreadCount = $this->commentsManager->getNumberOfCommentsWithVerbsForObjectSinceComment('chat', (string) $chat->getId(), $lastReadMessage, [self::VERB_MESSAGE, 'object_shared']);
 			$this->unreadCountCache->set($key, $unreadCount, 1800);
 		}
 		return $unreadCount;

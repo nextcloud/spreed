@@ -63,8 +63,8 @@ class MessageParser {
 		$message->setMessage($message->getComment()->getMessage(), []);
 
 		$verb = $message->getComment()->getVerb();
-		if ($verb === 'object_shared') {
-			$verb = 'system';
+		if ($verb === ChatManager::VERB_OBJECT_SHARED) {
+			$verb = ChatManager::VERB_SYSTEM;
 		}
 		$message->setMessageType($verb);
 		$this->setActor($message);
