@@ -487,6 +487,9 @@ class SystemMessage {
 			throw new \OutOfBoundsException('Unknown subject');
 		}
 
+		// Overwrite reactions of deleted messages as you can not react to them anymore either
+		$chatMessage->getComment()->setReactions([]);
+
 		$chatMessage->setMessage($parsedMessage, $parsedParameters, $message);
 	}
 
