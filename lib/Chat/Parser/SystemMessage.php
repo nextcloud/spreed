@@ -376,7 +376,7 @@ class SystemMessage {
 				if (isset($metaData['messageType']) && $metaData['messageType'] === 'voice-message') {
 					$chatMessage->setMessageType('voice-message');
 				} else {
-					$chatMessage->setMessageType('comment');
+					$chatMessage->setMessageType(ChatManager::VERB_MESSAGE);
 				}
 			} catch (\Exception $e) {
 				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
@@ -395,7 +395,7 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('The shared location is malformed');
 			}
 
-			$chatMessage->setMessageType('comment');
+			$chatMessage->setMessageType(ChatManager::VERB_MESSAGE);
 		} elseif ($message === 'matterbridge_config_added') {
 			$parsedMessage = $this->l->t('{actor} set up Matterbridge to synchronize this conversation with other chats');
 			if ($currentUserIsActor) {
@@ -473,7 +473,7 @@ class SystemMessage {
 				$currentActorId === $parsedParameters['actor']['id'];
 		}
 
-		if ($chatMessage->getMessageType() === 'comment_deleted') {
+		if ($chatMessage->getMessageType() === ChatManager::VERB_MESSAGE_DELETED) {
 			$message = 'message_deleted';
 			$parsedMessage = $this->l->t('Message deleted by author');
 

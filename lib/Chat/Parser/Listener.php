@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\Parser;
 
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\Parser\Command as CommandParser;
 use OCA\Talk\Events\ChatMessageEvent;
@@ -33,7 +34,7 @@ class Listener {
 		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
 			$message = $event->getMessage();
 
-			if ($message->getMessageType() !== 'comment') {
+			if ($message->getMessageType() !== ChatManager::VERB_MESSAGE) {
 				return;
 			}
 
@@ -45,7 +46,7 @@ class Listener {
 		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
 			$message = $event->getMessage();
 
-			if ($message->getMessageType() !== 'comment') {
+			if ($message->getMessageType() !== ChatManager::VERB_MESSAGE) {
 				return;
 			}
 
@@ -62,7 +63,7 @@ class Listener {
 		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
 			$message = $event->getMessage();
 
-			if ($message->getMessageType() !== 'system') {
+			if ($message->getMessageType() !== ChatManager::VERB_SYSTEM) {
 				return;
 			}
 
@@ -80,7 +81,7 @@ class Listener {
 		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
 			$chatMessage = $event->getMessage();
 
-			if ($chatMessage->getMessageType() !== 'command') {
+			if ($chatMessage->getMessageType() !== ChatManager::VERB_COMMAND) {
 				return;
 			}
 
@@ -100,7 +101,7 @@ class Listener {
 		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
 			$chatMessage = $event->getMessage();
 
-			if ($chatMessage->getMessageType() !== 'reaction' && $chatMessage->getMessageType() !== 'reaction_deleted') {
+			if ($chatMessage->getMessageType() !== ChatManager::VERB_REACTION && $chatMessage->getMessageType() !== ChatManager::VERB_REACTION_DELETED) {
 				return;
 			}
 
@@ -112,7 +113,7 @@ class Listener {
 		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
 			$chatMessage = $event->getMessage();
 
-			if ($chatMessage->getMessageType() !== 'comment_deleted') {
+			if ($chatMessage->getMessageType() !== ChatManager::VERB_MESSAGE_DELETED) {
 				return;
 			}
 

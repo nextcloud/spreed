@@ -41,7 +41,7 @@ class ReactionParser {
 			throw new \OutOfBoundsException('Not a reaction');
 		}
 		$this->l = $message->getL10n();
-		$message->setMessageType('system');
+		$message->setMessageType(ChatManager::VERB_SYSTEM);
 		if ($comment->getVerb() === ChatManager::VERB_REACTION_DELETED) {
 			// This message is necessary to make compatible with old clients
 			$message->setMessage($this->l->t('Reaction deleted by author'), [], $comment->getVerb());
