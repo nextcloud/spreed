@@ -42,8 +42,10 @@
 <script>
 import { CollectionList } from 'nextcloud-vue-collections'
 import SharedItems from './SharedItems'
+import { EventBus } from '../../../services/EventBus'
 
 export default {
+
 	name: 'SharedItemsTab',
 
 	components: {
@@ -61,6 +63,32 @@ export default {
 	computed: {
 		getUserId() {
 			return this.$store.getters.getUserId()
+		},
+
+		token() {
+			return this.conversation.token
+		},
+	},
+
+	beforeMount() {
+		EventBus.$on('route-change', this.getSharedItemsOverview)
+	},
+
+	/**
+	 * mounted() {
+		if (this.token) {
+			this.getSharedItemsOverview()
+		}
+	},
+	 */
+
+	beforeDestroy() {
+		EventBus.$off('route-change', this.getSharedItemsOverview)
+	},
+
+	methods: {
+		getSharedItemsOverview() {
+			this.$store.dispatch('getSharedItemsOverview', { token: this.token })
 		},
 	},
 }
