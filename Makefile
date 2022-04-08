@@ -63,6 +63,7 @@ appstore:
 	--exclude=composer.json \
 	--exclude=composer.lock \
 	--exclude=docs \
+	--exclude=.drone.jsonnet \
 	--exclude=.drone.yml \
 	--exclude=.eslintignore \
 	--exclude=.eslintrc.js \
@@ -77,8 +78,10 @@ appstore:
 	--exclude=node_modules \
 	--exclude=package.json \
 	--exclude=package-lock.json \
-	--exclude=.php_cs.dist \
+	--exclude=.php-cs-fixer.cache \
+	--exclude=.php-cs-fixer.dist.php \
 	--exclude=.php_cs.cache \
+	--exclude=.php_cs.dist \
 	--exclude=psalm.xml \
 	--exclude=README.md \
 	--exclude=src \
