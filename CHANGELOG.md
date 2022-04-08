@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.0.0-beta.1 – 2022-04-08
+### Added
+- Reactions for chat messages
+- Implement `OCP\Talk\IBroker` to allow apps to create conversations
+- Sharing a browser tab in Chrome-based browsers can now also share the audio of that tab
+  [#6810](https://github.com/nextcloud/spreed/pull/6810)
+
+### Still in progress
+- Media tab showing all shared items of the conversation
+
+### Changed
+- Messages of shared objects and files can now be deleted (shares will be removed, files persist)
+  [#7047](https://github.com/nextcloud/spreed/pull/7047)
+- Actions like calling and chatting in big rooms should now be much smoother
+- Compatibility with Nextcloud 24
+
 ## 13.0.5 – 2022-04-08
 ### Fixed
 - Fix reconnection when media permissions change
