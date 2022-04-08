@@ -93,7 +93,7 @@ class Executor {
 				'output' => $e->getMessage(),
 			]), ChatManager::MAX_CHAT_LENGTH);
 			$message->setActor('bots', $command->getName());
-			$message->setVerb('command');
+			$message->setVerb(ChatManager::VERB_COMMAND);
 			return;
 		}
 
@@ -112,7 +112,7 @@ class Executor {
 			'output' => $output,
 		]), ChatManager::MAX_CHAT_LENGTH);
 		$message->setActor('bots', $command->getName());
-		$message->setVerb('command');
+		$message->setVerb(ChatManager::VERB_COMMAND);
 	}
 
 	protected function execHelp(Room $room, IComment $message, string $arguments, Participant $participant): string {

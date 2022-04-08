@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Notification;
 
 use OCA\FederatedFileSharing\AddressHandler;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
@@ -364,7 +365,7 @@ class Notifier implements INotifier {
 			throw new AlreadyProcessedException();
 		}
 
-		if ($message->getMessageType() === 'comment_deleted') {
+		if ($message->getMessageType() === ChatManager::VERB_MESSAGE_DELETED) {
 			throw new AlreadyProcessedException();
 		}
 

@@ -22,6 +22,7 @@
 namespace OCA\Talk\Tests\php\Chat\Parser;
 
 use OCA\DAV\CardDAV\PhotoCache;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\Parser\SystemMessage;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
@@ -528,7 +529,7 @@ class SystemMessageTest extends TestCase {
 		$this->assertSame($expectedParameters, $chatMessage->getMessageParameters());
 
 		if ($message === 'file_shared' && !is_subclass_of($parameters['share'], \Exception::class)) {
-			$this->assertSame('comment', $chatMessage->getMessageType());
+			$this->assertSame(ChatManager::VERB_MESSAGE, $chatMessage->getMessageType());
 		}
 	}
 

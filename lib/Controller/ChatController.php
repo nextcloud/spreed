@@ -569,7 +569,7 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		if ($message->getVerb() !== 'comment' && $message->getVerb() !== 'object_shared') {
+		if ($message->getVerb() !== ChatManager::VERB_MESSAGE && $message->getVerb() !== ChatManager::VERB_OBJECT_SHARED) {
 			// System message (since the message is not parsed, it has type "system")
 			return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
 		}
@@ -679,7 +679,7 @@ class ChatController extends AEnvironmentAwareController {
 					$this->room,
 					(int)$message->getId(),
 					['comment'],
-					$message->getVerb() === 'comment'
+					$message->getVerb() === ChatManager::VERB_MESSAGE
 				);
 				$unreadId = (int) $previousMessage->getId();
 			} catch (NotFoundException $e) {
