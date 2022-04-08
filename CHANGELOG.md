@@ -1,6 +1,30 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 13.0.5 – 2022-04-08
+### Fixed
+- Fix reconnection when media permissions change
+  [#7092](https://github.com/nextcloud/spreed/pull/7092)
+- Fix forced reconnection without the High-performance backend
+  [#7095](https://github.com/nextcloud/spreed/pull/7095)
+- Compatibility with LDAP user backends and more than 64 characters display names
+  [#7073](https://github.com/nextcloud/spreed/pull/7073)
+- Compatibility with Oracle and MySQL ONLY_FULL_GROUP_BY
+  [#7036](https://github.com/nextcloud/spreed/pull/7036)
+- Fix broken avatars when search for users to add to a conversation
+  [#7037](https://github.com/nextcloud/spreed/pull/7037)
+- Fix sort order of guests and logged-in users
+  [#7053](https://github.com/nextcloud/spreed/pull/7053)
+- Allow copying links of open conversations without joining
+  [#7070](https://github.com/nextcloud/spreed/pull/7070)
+
+## 12.2.5 – 2022-04-08
+### Fixed
+- Compatibility with LDAP user backends and more than 64 characters display names
+  [#7074](https://github.com/nextcloud/spreed/pull/7074)
+- Compatibility with Oracle and MySQL ONLY_FULL_GROUP_BY
+  [#7040](https://github.com/nextcloud/spreed/pull/7040)
+
 ## 13.0.4 – 2022-03-17
 ### Fixed
 - Fix several modals, dialogs and popovers in fullscreen mode
