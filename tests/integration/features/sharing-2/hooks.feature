@@ -57,9 +57,9 @@ Feature: hooks
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant1" removes "participant2" from room "group room" with 200 (v4)
     Then user "participant1" gets last share
-    And the OCS status code should be "404"
+    And the OCS status code should be "100"
     And user "participant2" gets last share
-    And the OCS status code should be "404"
+    And the OCS status code should be "100"
 
   Scenario: remove herself from group room after sharing a file
     Given user "participant1" creates room "group room" (v4)
@@ -69,9 +69,9 @@ Feature: hooks
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant2" removes themselves from room "group room" with 200 (v4)
     Then user "participant1" gets last share
-    And the OCS status code should be "404"
+    And the OCS status code should be "100"
     And user "participant2" gets last share
-    And the OCS status code should be "404"
+    And the OCS status code should be "100"
 
   Scenario: leave group room after sharing a file
     Given user "participant1" creates room "group room" (v4)
@@ -145,9 +145,9 @@ Feature: hooks
     And user "participant2" shares "welcome.txt" with room "public room" with OCS 100
     When user "participant2" leaves room "public room" with 200 (v4)
     Then user "participant1" gets last share
-    And the OCS status code should be "404"
+    And the OCS status code should be "100"
     And user "participant2" gets last share
-    And the OCS status code should be "404"
+    And the OCS status code should be "100"
 
   Scenario: remove sharer from group room with other shares after sharing a file
     Given user "participant1" creates room "group room" (v4)
@@ -160,9 +160,9 @@ Feature: hooks
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant1" removes "participant2" from room "group room" with 200 (v4)
     Then user "participant1" gets last share
-    And the OCS status code should be "404"
+    And the OCS status code should be "100"
     And user "participant2" gets last share
-    And the OCS status code should be "404"
+    And the OCS status code should be "100"
     And user "participant1" gets all shares
     And the list of returned shares has 1 shares
     And share 0 is returned with
@@ -191,9 +191,9 @@ Feature: hooks
     And user "participant3" accepts last share
     When user "participant1" removes "participant2" from room "group room" with 200 (v4)
     Then user "participant1" gets last share
-    And the OCS status code should be "404"
+    And the OCS status code should be "100"
     And user "participant1" gets all shares
-    And the list of returned shares has 0 shares
+    And the list of returned shares has 1 shares
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -209,7 +209,7 @@ Feature: hooks
       | share_with_displayname | participant3-displayname |
       | share_type             | 0 |
     And user "participant2" gets all shares
-    And the list of returned shares has 0 shares
+    And the list of returned shares has 1 shares
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -455,9 +455,9 @@ Feature: hooks
     And user "participant2" removes "participant1" from room "group room" with 200 (v4)
     When user "participant2" adds user "participant1" to room "group room" with 200 (v4)
     Then user "participant1" gets all shares
-    And the list of returned shares has 0 shares
+    And the list of returned shares has 1 shares
     And user "participant2" gets all received shares
-    And the list of returned shares has 0 shares
+    And the list of returned shares has 1 shares
 
   Scenario: add sharer again to group room after sharing a file and the sharer removed herself from the room
     Given user "participant2" creates room "group room" (v4)
@@ -468,9 +468,9 @@ Feature: hooks
     And user "participant1" removes themselves from room "group room" with 200 (v4)
     When user "participant2" adds user "participant1" to room "group room" with 200 (v4)
     Then user "participant1" gets all shares
-    And the list of returned shares has 0 shares
+    And the list of returned shares has 1 shares
     And user "participant2" gets all received shares
-    And the list of returned shares has 0 shares
+    And the list of returned shares has 1 shares
 
   Scenario: join public room again after sharing a file and the sharer left the room
     Given user "participant2" creates room "public room" (v4)
@@ -481,9 +481,9 @@ Feature: hooks
     And user "participant1" leaves room "public room" with 200 (v4)
     When user "participant1" joins room "public room" with 200 (v4)
     Then user "participant1" gets all shares
-    And the list of returned shares has 0 shares
+    And the list of returned shares has 1 shares
     And user "participant2" gets all received shares
-    And the list of returned shares has 0 shares
+    And the list of returned shares has 1 shares
 
 
 
@@ -498,9 +498,9 @@ Feature: hooks
     And user "participant1" removes "participant2" from room "group room" with 200 (v4)
     When user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     Then user "participant1" gets last share
-    And the OCS status code should be "404"
+    And the OCS status code should be "100"
     And user "participant1" gets all shares
-    And the list of returned shares has 0 shares
+    And the list of returned shares has 1 shares
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -516,7 +516,7 @@ Feature: hooks
       | share_with_displayname | participant3-displayname |
       | share_type             | 0 |
     And user "participant2" gets all shares
-    And the list of returned shares has 0 shares
+    And the list of returned shares has 1 shares
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
