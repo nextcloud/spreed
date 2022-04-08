@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div>
+	<div v-if="!loading && active">
 		<SharedItems title="Media">
 			some content
 		</SharedItems>
@@ -31,8 +31,8 @@
 			some content
 		</SharedItems>
 		<SharedItems title="Projects">
-			<CollectionList v-if="getUserId && conversation.token"
-				:id="conversation.token"
+			<CollectionList v-if="getUserId && token"
+				:id="token"
 				type="room"
 				:name="conversation.displayName" />
 		</SharedItems>
@@ -42,7 +42,6 @@
 <script>
 import { CollectionList } from 'nextcloud-vue-collections'
 import SharedItems from './SharedItems'
-import { EventBus } from '../../../services/EventBus'
 
 export default {
 
@@ -54,8 +53,9 @@ export default {
 	},
 
 	props: {
-		conversation: {
-			type: Object,
+
+		active: {
+			type: Boolean,
 			required: true,
 		},
 	},
@@ -66,24 +66,28 @@ export default {
 		},
 
 		token() {
-			return this.conversation.token
+			return this.$store.getters.getToken()
+		},
+
+		conversation() {
+			return this.$store.getters.conversation(this.token)
+		},
+
+		loading() {
+			return !this.sharedItems
+		},
+
+		sharedItems() {
+			return this.$store.getters.sharedItems(this.token)
 		},
 	},
 
-	beforeMount() {
-		EventBus.$on('route-change', this.getSharedItemsOverview)
-	},
-
-	/**
-	 * mounted() {
-		if (this.token) {
-			this.getSharedItemsOverview()
-		}
-	},
-	 */
-
-	beforeDestroy() {
-		EventBus.$off('route-change', this.getSharedItemsOverview)
+	watch: {
+		active(newValue) {
+			if (newValue) {
+				this.getSharedItemsOverview()
+			}
+		},
 	},
 
 	methods: {

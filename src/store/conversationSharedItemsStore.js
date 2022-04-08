@@ -38,17 +38,35 @@ const state = () => ({
 })
 
 const getters = {
-	getterSharedItems: (state, token) => {
-		return state[token]
+	sharedItems: state => token => {
+		const sharedItems = {}
+		if (!state[token]) {
+			return {}
+		}
+		for (const type of Object.keys(state[token])) {
+			if (Object.keys(state[token][type]).length !== 0) {
+				sharedItems[type] = state[token][type]
+			}
+		}
+		return sharedItems
 	},
 }
 
 export const mutations = {
-	addSharedItem: (state, { token, type, response }) => {
+	addSharedItemsOverview: (state, { token, data }) => {
 		if (!state[token]) {
 			Vue.set(state, token, {})
 		}
-		Vue.set(state[token], type, response)
+		for (const type of Object.keys(data)) {
+			if (!state[token][type]) {
+				Vue.set(state[token], type, {})
+				for (const message of data[type]) {
+					if (!state[token][type]?.[message.id]) {
+						Vue.set(state[token][type], message.id, message)
+					}
+				}
+			}
+		}
 	},
 }
 
@@ -69,6 +87,10 @@ const actions = {
 	async getSharedItemsOverview({ commit }, { token }) {
 		try {
 			const response = await getSharedItemsOverview(token, 10)
+			commit('addSharedItemsOverview', {
+				token,
+				data: response.data.ocs.data,
+			})
 		} catch (error) {
 			console.debug(error)
 		}

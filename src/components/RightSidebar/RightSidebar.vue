@@ -81,13 +81,14 @@
 			ref="sharedItemsTab"
 			:order="4"
 			icon="icon-details"
-			:name="t('spreed', 'Shared Items')">
+			:name="t('spreed', 'Shared Items')"
+			@update:active="handleUpdateActive">
 			<template #icon>
 				<FolderMultipleImage :size="20"
 					decorative
 					title="" />
 			</template>
-			<SharedItemsTab :conversation="conversation" />
+			<SharedItemsTab :active="activeTab === 'shared-items'" />
 		</AppSidebarTab>
 	</AppSidebar>
 </template>
