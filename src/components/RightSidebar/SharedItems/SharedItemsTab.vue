@@ -21,21 +21,14 @@
 
 <template>
 	<div v-if="!loading && active">
-		<SharedItems title="Media">
-			some content
-		</SharedItems>
-		<SharedItems title="Files">
-			some content
-		</SharedItems>
-		<SharedItems title="Deck cards">
-			some content
-		</SharedItems>
-		<SharedItems title="Projects">
-			<CollectionList v-if="getUserId && token"
-				:id="token"
-				type="room"
-				:name="conversation.displayName" />
-		</SharedItems>
+		<SharedItems v-for="type in Object.keys(sharedItems)"
+			:key="type"
+			:type="type"
+			:items="sharedItems[type]" />
+		<CollectionList v-if="getUserId && token"
+			:id="token"
+			type="room"
+			:name="conversation.displayName" />
 	</div>
 </template>
 

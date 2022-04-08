@@ -26,24 +26,59 @@
 			@click="handleCaptionClick">
 			{{ title }}
 		</Button>
-		<slot />
+		<div class="files">
+			<template v-for="item in items">
+				<FilePreview :key="item.id"
+					v-bind="item.messageParameters.file" />
+			</template>
+		</div>
 	</div>
 </template>
 
 <script>
 import Button from '@nextcloud/vue/dist/Components/Button'
+import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 
 export default {
 	name: 'SharedItems',
 
 	components: {
 		Button,
+		FilePreview,
 	},
 
 	props: {
-		title: {
+		type: {
 			type: String,
 			required: true,
+		},
+
+		items: {
+			type: Object,
+			required: true,
+		},
+	},
+
+	computed: {
+		title() {
+			switch (this.type) {
+			case 'media':
+				return t('spreed', 'Media')
+			case 'file':
+				return t('spreed', 'Files')
+			case 'deck-card':
+				return t('spreed', 'Deck cards')
+			case 'voice':
+				return t('spreed', 'Voice messages')
+			case 'location':
+				return t('spreed', 'Locations')
+			case 'audio':
+				return t('spreed', 'Music')
+			case 'other':
+				return t('spreed', 'Other')
+			default:
+				return ''
+			}
 		},
 	},
 
