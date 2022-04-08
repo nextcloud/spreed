@@ -20,11 +20,27 @@
  */
 
 /**
- * HOW TO SETUP:
+ * Talkbuchet is the helper tool for load/stress testing of Nextcloud Talk.
+ *
+ * Talkbuchet is a JavaScript script (Talkbuchet.js), and it is run using a web
+ * browser. A Python script (Talkbuchet-cli.py) is provided to launch a web
+ * browser, load Talkbuchet and control it from a command line interface (which
+ * requires Selenium and certain Python packages to be available in the system).
+ *
+ * Please refer to the documentation in Talkbuchet-cli.py for information on how
+ * to control Talkbuchet.
+ *
+ * A High Performance Backend (HPB) server must be configured in Nextcloud Talk
+ * to use Talkbuchet.
+ *
+ * HOW TO SETUP (without using the CLI):
  * -----------------------------------------------------------------------------
  * - In the browser, log in the Nextcloud server (with the same user as in this
  *   script).
  * - Copy and paste the full script in the console of the browser.
+ *
+ * HOW TO RUN:
+ * -----------------------------------------------------------------------------
  * - Set the user and appToken (a user must be used; guests do not work;
  *   generate an apptoken at index.php/settings/user/security) by calling
  *   "setCredentials(user, appToken)" in the console.
@@ -36,9 +52,6 @@
  *   regular call with N participants you would have N publishers and N-1
  *   subscribers) by calling "setPublishersAndSubscribersCount(publishersCount,
  *   subscribersPerPublisherCount)" in the console.
- *
- * HOW TO RUN:
- * -----------------------------------------------------------------------------
  * - Once all the needed parameters are set execute "siege()" in the console.
  * - To run it again execute "siege()" again in the console; if any parameter
  *   needs to be changed it is recommended to first stop the previous siege by
