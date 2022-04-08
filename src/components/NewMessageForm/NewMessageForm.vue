@@ -68,7 +68,7 @@
 							@select="addEmoji">
 							<Button :disabled="disabled"
 								:aria-label="t('spreed', 'Add emoji')"
-								type="tertiary"
+								type="tertiary-no-background"
 								:aria-haspopup="true">
 								<EmoticonOutline :size="16"
 									decorative
