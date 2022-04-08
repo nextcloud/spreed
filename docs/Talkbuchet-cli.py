@@ -24,10 +24,13 @@ tool for load/stress testing of Nextcloud Talk.
 Talkbuchet is a JavaScript script (Talkbuchet.js), and it is run using a web
 browser. A Python script (Talkbuchet-cli.py) is provided to launch a web
 browser, load Talkbuchet and control it from a command line interface (which
-requires Selenium and certain Python packages to be available in the system).
+requires Selenium and certain Python packages to be available in the system). A
+Bash script (Talkbuchet-run.sh) is provided to set up a Docker container with
+Selenium, a web browser and all the needed Python dependencies for
+Talkbuchet-cli.py.
 
-Please refer to the documentation in Talkbuchet.js for information on
-Talkbuchet.
+Please refer to the documentation in Talkbuchet.js and Talkbuchet-run.sh for
+information on Talkbuchet and on how to easily run it.
 
 Talkbuchet-cli.py provides a wrapper class to start and interact with
 Talkbuchet.js instances. Creating an object of the wrapper class launches a new

@@ -26,9 +26,12 @@
  * browser. A Python script (Talkbuchet-cli.py) is provided to launch a web
  * browser, load Talkbuchet and control it from a command line interface (which
  * requires Selenium and certain Python packages to be available in the system).
+ * A Bash script (Talkbuchet-run.sh) is provided to set up a Docker container
+ * with Selenium, a web browser and all the needed Python dependencies for
+ * Talkbuchet-cli.py.
  *
- * Please refer to the documentation in Talkbuchet-cli.py for information on how
- * to control Talkbuchet.
+ * Please refer to the documentation in Talkbuchet-cli.py and Talkbuchet-run.sh
+ * for information on how to control Talkbuchet and easily run it.
  *
  * A High Performance Backend (HPB) server must be configured in Nextcloud Talk
  * to use Talkbuchet.
