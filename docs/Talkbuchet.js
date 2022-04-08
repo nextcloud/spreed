@@ -22,22 +22,27 @@
 /**
  * HOW TO SETUP:
  * -----------------------------------------------------------------------------
- * - Set the right values in "user" and "appToken" (a user must be used; guests
- *   do not work; generate an apptoken at index.php/settings/user/security ).
- * - If HPB clustering is enabled, set the token of a conversation in "token"
- *   (otherwise leave empty).
- * - Set whether to use audio, video or both in "mediaConstraints".
- * - Set the desired numbers in "publishersCount" and
- *   "subscribersPerPublisherCount" (in a regular call with N participants you
- *   would have N publishers and N-1 subscribers).
+ * - In the browser, log in the Nextcloud server (with the same user as in this
+ *   script).
+ * - Copy and paste the full script in the console of the browser.
+ * - Set the user and appToken (a user must be used; guests do not work;
+ *   generate an apptoken at index.php/settings/user/security) by calling
+ *   "setCredentials(user, appToken)" in the console.
+ * - If HPB clustering is enabled, set the token of a conversation (otherwise
+ *   leave empty) by calling "setToken(token)" in the console.
+ * - If media other than just audio should be used, start it by calling
+ *   "startMedia(audio, video)" in the console.
+ * - Set the desired numbers of publishers and subscribers per publisher (in a
+ *   regular call with N participants you would have N publishers and N-1
+ *   subscribers) by calling "setPublishersAndSubscribersCount(publishersCount,
+ *   subscribersPerPublisherCount)" in the console.
  *
  * HOW TO RUN:
  * -----------------------------------------------------------------------------
- * - In the browser, log in the Nextcloud server (with the same user as in this
- *   script).
- * - Copy and paste the full script in the console of the browser to run it.
- * - To run it again execute "closeConnections()" in the console; then you must
- *   reload the page and copy and paste the script again.
+ * - Once all the needed parameters are set execute "siege()" in the console.
+ * - To run it again execute "siege()" again in the console; if any parameter
+ *   needs to be changed it is recommended to first stop the previous siege by
+ *   calling "closeConnections()" in the console before changing the parameters.
  *
  * HOW TO ENABLE AND DISABLE THE MEDIA DURING A TEST:
  * -----------------------------------------------------------------------------
@@ -126,27 +131,24 @@
 // a second time causes the first guest to be unregistered.
 // Regular users do not need to join the conversation, so the same user can be
 // connected several times to the HPB.
-const user = ''
-const appToken = ''
-
-const signalingApiVersion = 2 // FIXME get from capabilities endpoint
-const conversationApiVersion = 3 // FIXME get from capabilities endpoint
+let user = ''
+let appToken = ''
 
 // The conversation token is only strictly needed for guests or if HPB
 // clustering is enabled.
-const token = ''
+let token = ''
 
 // Number of streams to send
-const publishersCount = 5
+let publishersCount = 5
 // Number of streams to receive
-const subscribersPerPublisherCount = 40
+let subscribersPerPublisherCount = 40
 
 const mediaConstraints = {
 	audio: true,
 	video: false,
 }
 
-const connectionWarningTimeout = 5000
+let connectionWarningTimeout = 5000
 
 /*
  * End of configuration section
@@ -155,15 +157,55 @@ const connectionWarningTimeout = 5000
 // To run the script the current page in the browser must be a page of the
 // target Nextcloud instance, as cross-doman requests are not allowed, so the
 // host is directly got from the current location.
-const talkOcsApiUrl = 'https://' + window.location.host + '/ocs/v2.php/apps/spreed/api/'
+const host = 'https://' + window.location.host
+
+const capabitiliesUrl = host + '/ocs/v1.php/cloud/capabilities'
+
+async function getCapabilities() {
+	const fetchOptions = {
+		headers: {
+			'OCS-ApiRequest': true,
+			'Accept': 'json',
+		},
+	}
+
+	const capabilitiesResponse = await fetch(capabitiliesUrl, fetchOptions)
+	const capabilities = await capabilitiesResponse.json()
+
+	return capabilities.ocs.data
+}
+
+const capabilities = await getCapabilities()
+
+function extractFeatureVersion(feature) {
+	const talkFeatures = capabilities?.capabilities?.spreed?.features
+	if (!talkFeatures) {
+		console.error('Talk features not found', capabilities)
+		throw new Error()
+	}
+
+	for (const talkFeature of talkFeatures) {
+		if (talkFeature.startsWith(feature + '-v')) {
+			return talkFeature.substring(feature.length + 2)
+		}
+	}
+
+	console.error('Failed to get feature version for ' + feature, talkFeatures)
+	throw new Error()
+}
+
+const signalingApiVersion = extractFeatureVersion('signaling')
+const conversationApiVersion = extractFeatureVersion('conversation')
+
+const talkOcsApiUrl = host + '/ocs/v2.php/apps/spreed/api/'
 const signalingSettingsUrl = talkOcsApiUrl + 'v' + signalingApiVersion + '/signaling/settings'
 const signalingBackendUrl = talkOcsApiUrl + 'v' + signalingApiVersion + '/signaling/backend'
-const joinRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
+let joinRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
 
 const publishers = []
 const subscribers = []
 
-const stream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
+let stream
 
 async function getSignalingSettings(user, appToken, token) {
 	const fetchOptions = {
@@ -608,14 +650,21 @@ const closeConnections = function() {
 	subscribers.forEach(subscriber => {
 		subscriber.peerConnection.close()
 	})
+	subscribers.splice(0)
 
 	Object.values(publishers).forEach(publisher => {
 		publisher.peerConnection.close()
 	})
-
-	stream.getTracks().forEach(track => {
-		track.stop()
+	Object.keys(publishers).forEach(publisherSessionId => {
+		delete publishers[publisherSessionId]
 	})
+
+	if (stream) {
+		stream.getTracks().forEach(track => {
+			track.stop()
+		})
+		stream = null
+	}
 }
 
 const setAudioEnabled = function(enabled) {
@@ -723,7 +772,58 @@ const checkSubscribersConnections = function() {
 	console.info('  - Failed: ' + (iceConnectionStateCount['failed'] ?? 0))
 }
 
-console.info('Preparing to siege')
+const setCredentials = function(userToSet, appTokenToSet) {
+	user = userToSet
+	appToken = appTokenToSet
+}
 
-await initPublishers()
-await initSubscribers()
+const setToken = function(tokenToSet) {
+	token = tokenToSet
+
+	joinRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
+}
+
+const setPublishersAndSubscribersCount = function(publishersCountToSet, subscribersPerPublisherCountToSet) {
+	publishersCount = publishersCountToSet
+	subscribersPerPublisherCount = subscribersPerPublisherCountToSet
+}
+
+const startMedia = async function(audio, video) {
+	if (stream) {
+		stream.getTracks().forEach(track => {
+			track.stop()
+		})
+	}
+
+	if (audio !== undefined) {
+		mediaConstraints.audio = audio
+	}
+	if (video !== undefined) {
+		mediaConstraints.video = video
+	}
+
+	stream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
+}
+
+const setConnectionWarningTimeout = function(connectionWarningTimeoutToSet) {
+	connectionWarningTimeout = connectionWarningTimeoutToSet
+}
+
+const siege = async function() {
+	if (!user || !appToken) {
+		console.error('Credentials (user and appToken) are not set')
+
+		return
+	}
+
+	closeConnections()
+
+	if (!stream) {
+		await startMedia()
+	}
+
+	console.info('Preparing to siege')
+
+	await initPublishers()
+	await initSubscribers()
+}
