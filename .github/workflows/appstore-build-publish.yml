@@ -23,16 +23,16 @@ jobs:
       - name: Check actor permission
         uses: skjnldsv/check-actor-permission@v2
         with:
-          require: admin
+          require: write
 
       - name: Set app env
         run: |
-          # Split and keep last
+          # Split and keep last 
           echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
           echo "APP_VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: ${{ env.APP_NAME }}
 
@@ -41,22 +41,22 @@ jobs:
         uses: skjnldsv/xpath-action@master
         with:
           filename: ${{ env.APP_NAME }}/appinfo/info.xml
-          expression: '//info//dependencies//nextcloud/@min-version'
+          expression: "//info//dependencies//nextcloud/@min-version"
 
       - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@v1.1
+        uses: skjnldsv/read-package-engines-version-actions@v1.2
         id: versions
         # Continue if no package.json
         continue-on-error: true
         with:
           path: ${{ env.APP_NAME }}
-          fallbackNode: '^12'
-          fallbackNpm: '^6'
+          fallbackNode: "^12"
+          fallbackNpm: "^6"
 
       - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
         # Skip if no package.json
         if: ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
 
@@ -91,11 +91,29 @@ jobs:
           npm ci
           npm run build
 
-      - name: Package ${{ env.APP_NAME }} ${{ env.APP_VERSION }}
-        # Try krankerl, fallback to makefile
+      - name: Check Krankerl config
+        id: krankerl
+        uses: andstor/file-existence-action@v1
+        with:
+          files: ${{ env.APP_NAME }}/krankerl.toml
+
+      - name: Install Krankerl
+        if: steps.krankerl.outputs.files_exists == 'true'
+        run: |
+          wget https://github.com/ChristophWurst/krankerl/releases/download/v0.13.0/krankerl_0.13.0_amd64.deb
+          sudo dpkg -i krankerl_0.13.0_amd64.deb
+
+      - name: Package ${{ env.APP_NAME }} ${{ env.APP_VERSION }} with krankerl
+        if: steps.krankerl.outputs.files_exists == 'true'
         run: |
           cd ${{ env.APP_NAME }}
-          krankerl package || make appstore
+          krankerl package
+
+      - name: Package ${{ env.APP_NAME }} ${{ env.APP_VERSION }} with makefile
+        if: steps.krankerl.outputs.files_exists != 'true'
+        run: |
+          cd ${{ env.APP_NAME }}
+          make appstore
 
       - name: Checkout server ${{ fromJSON(steps.appinfo.outputs.result).nextcloud.min-version }}
         continue-on-error: true
@@ -106,7 +124,7 @@ jobs:
           unzip latest-$NCVERSION.zip
 
       - name: Checkout server master fallback
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         if: ${{ steps.server-checkout.outcome != 'success' }}
         with:
           repository: nextcloud/server
