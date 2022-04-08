@@ -32,12 +32,6 @@
 			<NewGroupConversation v-if="canStartConversations" />
 		</div>
 		<template #list>
-			<Button v-if="!preventFindingUnread && unreadTop > 0"
-				class="unread-mention-button unread-mention-button__top"
-				type="primary"
-				@click="scrollTopUnread">
-				{{ unreadTop }} more mentions
-			</Button>
 			<div ref="scroller"
 				class="left-sidebar__list"
 				@scroll="debounceHandleScroll">
@@ -101,7 +95,7 @@
 				class="unread-mention-button unread-mention-button__bottom"
 				type="primary"
 				@click="scrollBottomUnread">
-				{{ unreadBottom }} more mentions
+				{{ t('spreed', 'Unread mentions') }}
 			</Button>
 		</template>
 
@@ -178,9 +172,7 @@ export default {
 			// Keeps track of whether the conversation list is scrolled to the top or not
 			isScrolledToTop: true,
 			refreshTimer: null,
-			unreadTop: 0,
 			unreadBottom: 0,
-			firstUnreadPos: 0,
 			lastUnreadPos: 0,
 			preventFindingUnread: false,
 		}
@@ -295,21 +287,10 @@ export default {
 		isFocused() {
 			return this.isSearching
 		},
-		scrollTopUnread() {
-			this.preventFindingUnread = true
-			this.$refs.scroller.scrollTo({
-				top: this.firstUnreadPos - 100,
-				behavior: 'smooth',
-			})
-			setTimeout(() => {
-				this.handleUnreadMention()
-				this.preventFindingUnread = false
-			}, 500)
-		},
 		scrollBottomUnread() {
 			this.preventFindingUnread = true
 			this.$refs.scroller.scrollTo({
-				top: this.lastUnreadPos - this.$refs.scroller.clientHeight + 150,
+				top: this.lastUnreadPos - 150,
 				behavior: 'smooth',
 			})
 			setTimeout(() => {
@@ -477,6 +458,10 @@ export default {
 					singleConversation: false,
 				})
 				this.isFetchingConversations = false
+				this.handleUnreadMention()
+				if (!this.$route.params.token) {
+					this.scrollBottomUnread()
+				}
 			} catch (error) {
 				console.debug('Error while fetching conversations: ', error)
 				this.isFetchingConversations = false
@@ -493,27 +478,18 @@ export default {
 			const cBottom = cTop + container.clientHeight
 
 			const eTop = element.offsetTop
-			const eBottom = eTop + element.clientHeight
-			if (eBottom < cTop) {
-				return 'outside-top'
-			} else if (eTop > cBottom) {
-				return 'outside-bottom'
+			if (eTop > cBottom) {
+				return 'outside'
 			} else {
 				return 'inside'
 			}
 		},
 		handleUnreadMention() {
-			this.unreadTop = 0
 			this.unreadBottom = 0
 			const unreadMentions = document.getElementsByClassName('unread-mention-conversation')
 			unreadMentions.forEach(x => {
 				const pos = this.ensureInView(this.$refs.scroller, x)
-				if (pos === 'outside-top') {
-					if (this.unreadTop === 0) {
-						this.firstUnreadPos = x.offsetTop
-					}
-					this.unreadTop += 1
-				} else if (pos === 'outside-bottom') {
+				if (pos === 'outside') {
 					this.unreadBottom += 1
 					this.lastUnreadPos = x.offsetTop
 				}
