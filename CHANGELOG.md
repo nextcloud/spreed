@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 12.2.5 – 2022-04-08
+### Fixed
+- Compatibility with LDAP user backends and more than 64 characters display names
+  [#7074](https://github.com/nextcloud/spreed/pull/7074)
+- Compatibility with Oracle and MySQL ONLY_FULL_GROUP_BY
+  [#7040](https://github.com/nextcloud/spreed/pull/7040)
+
 ## 12.2.4 – 2022-03-17
 ### Fixed
 - Fix several modals, dialogs and popovers in fullscreen mode
