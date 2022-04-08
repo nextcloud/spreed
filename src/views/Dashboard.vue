@@ -31,8 +31,7 @@
 			<DashboardWidgetItem :target-url="getItemTargetUrl(item)"
 				:main-text="getMainText(item)"
 				:sub-text="getSubText(item)"
-				:item="item"
-				v-on="handlers">
+				:item="item">
 				<template #avatar>
 					<ConversationIcon :item="item"
 						:hide-favorite="true"
