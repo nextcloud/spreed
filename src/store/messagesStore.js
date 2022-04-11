@@ -355,6 +355,12 @@ const mutations = {
 		}
 		const reactionCount = state.messages[token][messageId].reactions[reaction] + 1
 		Vue.set(state.messages[token][messageId].reactions, reaction, reactionCount)
+
+		if (!state.messages[token][messageId].reactions.self) {
+			Vue.set(state.messages[token][messageId].reactions, 'self', [reaction])
+		} else {
+			state.messages[token][messageId].reactions.self.push(reaction)
+		}
 	},
 
 	// Decreases reaction count for a particular reaction on a message
@@ -363,6 +369,13 @@ const mutations = {
 		Vue.set(state.messages[token][messageId].reactions, reaction, reactionCount)
 		if (state.messages[token][messageId].reactions[reaction] <= 0) {
 			Vue.delete(state.messages[token][messageId].reactions, reaction)
+		}
+
+		if (state.messages[token][messageId].reactions.self) {
+			const i = state.messages[token][messageId].reactions.self.indexOf(reaction)
+			if (i !== -1) {
+				Vue.delete(state.messages[token][messageId].reactions, 'self', i)
+			}
 		}
 	},
 }

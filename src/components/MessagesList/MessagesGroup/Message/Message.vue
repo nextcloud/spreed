@@ -126,6 +126,7 @@ the main body of the message as well as a quote.
 					<button v-if="simpleReactions[reaction]!== 0"
 						slot="trigger"
 						class="reaction-button"
+						:class="{'reaction-button__has-reacted': userHasReacted(reaction)}"
 						@click="handleReactionClick(reaction)">
 						<span class="reaction-button__emoji">{{ reaction }}</span>
 						<span> {{ simpleReactions[reaction] }}</span>
@@ -345,6 +346,11 @@ export default {
 			type: [String, Number],
 			default: 0,
 		},
+
+		reactions: {
+			type: [Array, Object],
+			default: () => { return {} },
+		},
 	},
 
 	data() {
@@ -562,7 +568,12 @@ export default {
 		},
 
 		simpleReactions() {
-			return this.messageObject.reactions
+			const reactions = Object.assign({}, this.messageObject.reactions)
+			if (reactions?.self) {
+				// Remove the self entry for the rendering
+				delete reactions.self
+			}
+			return reactions
 		},
 
 		detailedReactions() {
@@ -599,6 +610,10 @@ export default {
 	},
 
 	methods: {
+		userHasReacted(reaction) {
+			return this.reactions?.self && this.reactions.self.indexOf(reaction) !== -1
+		},
+
 		lastReadMessageVisibilityChanged(isVisible) {
 			if (isVisible) {
 				this.seen = true
@@ -663,13 +678,8 @@ export default {
 		},
 
 		async handleReactionClick(clickedEmoji) {
-			if (!this.detailedReactionsLoaded) {
-				await this.getReactions()
-			}
 			// Check if current user has already added this reaction to the message
-			const currentUserHasReacted = this.$store.getters.userHasReacted(this.$store.getters.getActorType(), this.$store.getters.getActorId(), this.token, this.id, clickedEmoji)
-
-			if (!currentUserHasReacted) {
+			if (!this.userHasReacted(clickedEmoji)) {
 				this.$store.dispatch('addReactionToMessage', {
 					token: this.token,
 					messageId: this.id,
@@ -892,7 +902,9 @@ export default {
 		margin: 0 4px 0 0;
 	}
 
+	&__has-reacted,
 	&:hover {
+		border-color: var(--color-primary-element);
 		background-color: var(--color-primary-element-lighter);
 	}
 }
