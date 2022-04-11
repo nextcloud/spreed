@@ -175,7 +175,7 @@ class ReactionManager {
 	 * @return array[]
 	 * @psalm-return array<int, string[]>
 	 */
-	public function getReactionsForMessages(Participant $participant, array $messageIds): array {
+	public function getReactionsByActorForMessages(Participant $participant, array $messageIds): array {
 		return $this->commentsManager->retrieveReactionsByActor(
 			$participant->getAttendee()->getActorType(),
 			$participant->getAttendee()->getActorId(),
