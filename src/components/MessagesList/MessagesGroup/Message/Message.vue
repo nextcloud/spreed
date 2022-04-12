@@ -39,7 +39,6 @@ the main body of the message as well as a quote.
 			class="message-body">
 			<div v-if="isFirstMessage && showAuthor"
 				class="message-body__author"
-				role="heading"
 				aria-level="4">
 				{{ actorDisplayName }}
 			</div>
