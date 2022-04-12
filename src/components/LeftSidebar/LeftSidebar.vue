@@ -91,8 +91,8 @@
 					<Hint v-else :hint="t('spreed', 'No search results')" />
 				</template>
 			</div>
-			<Button v-if="!preventFindingUnread && unreadBottom > 0"
-				class="unread-mention-button unread-mention-button__bottom"
+			<Button v-if="!preventFindingUnread && unreadNum > 0"
+				class="unread-mention-button"
 				type="primary"
 				@click="scrollBottomUnread">
 				{{ t('spreed', 'Unread mentions') }}
@@ -172,8 +172,8 @@ export default {
 			// Keeps track of whether the conversation list is scrolled to the top or not
 			isScrolledToTop: true,
 			refreshTimer: null,
-			unreadBottom: 0,
-			lastUnreadPos: 0,
+			unreadNum: 0,
+			firstUnreadPos: 0,
 			preventFindingUnread: false,
 		}
 	},
@@ -290,7 +290,7 @@ export default {
 		scrollBottomUnread() {
 			this.preventFindingUnread = true
 			this.$refs.scroller.scrollTo({
-				top: this.lastUnreadPos - 150,
+				top: this.firstUnreadPos - 150,
 				behavior: 'smooth',
 			})
 			setTimeout(() => {
@@ -458,10 +458,6 @@ export default {
 					singleConversation: false,
 				})
 				this.isFetchingConversations = false
-				this.handleUnreadMention()
-				if (!this.$route.params.token) {
-					this.scrollBottomUnread()
-				}
 			} catch (error) {
 				console.debug('Error while fetching conversations: ', error)
 				this.isFetchingConversations = false
@@ -485,13 +481,15 @@ export default {
 			}
 		},
 		handleUnreadMention() {
-			this.unreadBottom = 0
+			this.unreadNum = 0
 			const unreadMentions = document.getElementsByClassName('unread-mention-conversation')
 			unreadMentions.forEach(x => {
 				const pos = this.ensureInView(this.$refs.scroller, x)
 				if (pos === 'outside') {
-					this.unreadBottom += 1
-					this.lastUnreadPos = x.offsetTop
+					if (this.unreadNum === 0) {
+						this.firstUnreadPos = x.offsetTop
+					}
+					this.unreadNum += 1
 				}
 			})
 		},
@@ -529,11 +527,6 @@ export default {
 	left: 50%;
 	transform: translateX(-50%);
 	z-index: 100;
-	&__top {
-		top: 10px;
-	}
-	&__bottom {
-		bottom: 10px;
-	}
+	bottom: 10px;
 }
 </style>
