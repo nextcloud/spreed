@@ -2267,7 +2267,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @Given /^user "([^"]*)" retrieve reactions "([^"]*)" of message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
-	public function userRetrieveReactionsOfMessageInRoomWith(string $user, string $reaction, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $formData): void {
+	public function userRetrieveReactionsOfMessageInRoomWith(string $user, string $reaction, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
 		$token = self::$identifierToToken[$identifier];
 		$messageId = self::$textToMessageId[$message];
 		$this->setCurrentUser($user);

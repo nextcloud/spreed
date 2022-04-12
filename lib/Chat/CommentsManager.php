@@ -64,4 +64,32 @@ class CommentsManager extends Manager {
 
 		return $comments;
 	}
+
+	/**
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @param string[] $messageIds
+	 * @return array
+	 * @psalm-return array<int, string[]>
+	 */
+	public function retrieveReactionsByActor(string $actorType, string $actorId, array $messageIds): array {
+		$commentIds = array_map('intval', $messageIds);
+
+		$query = $this->dbConn->getQueryBuilder();
+		$query->select('*')
+			->from('reactions')
+			->where($query->expr()->eq('actor_type', $query->createNamedParameter($actorType)))
+			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId)))
+			->andWhere($query->expr()->in('parent_id', $query->createNamedParameter($commentIds, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		$reactions = [];
+		$result = $query->executeQuery();
+		while ($row = $result->fetch()) {
+			$reactions[(int) $row['parent_id']] ??= [];
+			$reactions[(int) $row['parent_id']][] = $row['reaction'];
+		}
+		$result->closeCursor();
+
+		return $reactions;
+	}
 }

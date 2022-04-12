@@ -170,6 +170,20 @@ class ReactionManager {
 	}
 
 	/**
+	 * @param Participant $participant
+	 * @param array $messageIds
+	 * @return array[]
+	 * @psalm-return array<int, string[]>
+	 */
+	public function getReactionsByActorForMessages(Participant $participant, array $messageIds): array {
+		return $this->commentsManager->retrieveReactionsByActor(
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId(),
+			$messageIds
+		);
+	}
+
+	/**
 	 * @param Room $chat
 	 * @param string $messageId
 	 * @return IComment

@@ -28,6 +28,7 @@ use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\GuestManager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attachment;
@@ -62,44 +63,26 @@ use OCP\UserStatus\IUserStatus;
 
 class ChatController extends AEnvironmentAwareController {
 	private ?string $userId;
-
 	private IUserManager $userManager;
-
 	private IAppManager $appManager;
-
 	private ChatManager $chatManager;
-
+	private ReactionManager $reactionManager;
 	private ParticipantService $participantService;
-
 	private SessionService $sessionService;
-
 	protected AttachmentService $attachmentService;
-
 	private GuestManager $guestManager;
-
 	/** @var string[] */
 	protected array $guestNames;
-
 	private MessageParser $messageParser;
-
 	private IManager $autoCompleteManager;
-
 	private IUserStatusManager $statusManager;
-
 	protected MatterbridgeManager $matterbridgeManager;
-
 	private SearchPlugin $searchPlugin;
-
 	private ISearchResult $searchResult;
-
 	protected ITimeFactory $timeFactory;
-
 	protected IEventDispatcher $eventDispatcher;
-
 	protected IValidator $richObjectValidator;
-
 	protected ITrustedDomainHelper $trustedDomainHelper;
-
 	private IL10N $l;
 
 	public function __construct(string $appName,
@@ -108,6 +91,7 @@ class ChatController extends AEnvironmentAwareController {
 								IUserManager $userManager,
 								IAppManager $appManager,
 								ChatManager $chatManager,
+								ReactionManager $reactionManager,
 								ParticipantService $participantService,
 								SessionService $sessionService,
 								AttachmentService $attachmentService,
@@ -129,6 +113,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->userManager = $userManager;
 		$this->appManager = $appManager;
 		$this->chatManager = $chatManager;
+		$this->reactionManager = $reactionManager;
 		$this->participantService = $participantService;
 		$this->sessionService = $sessionService;
 		$this->attachmentService = $attachmentService;
@@ -516,6 +501,8 @@ class ChatController extends AEnvironmentAwareController {
 			];
 		}
 
+		$messages = $this->loadSelfReactions($messages, $commentIdToIndex);
+
 		$response = new DataResponse($messages, Http::STATUS_OK);
 
 		$newLastKnown = end($comments);
@@ -538,6 +525,50 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		return $response;
+	}
+
+	protected function loadSelfReactions(array $messages, array $commentIdToIndex): array {
+		// Get message ids with reactions
+		$messageIdsWithReactions = array_map(
+			static fn (array $message) => $message['id'],
+			array_filter($messages, static fn (array $message) => !empty($message['reactions']))
+		);
+
+		// Get parents with reactions
+		$parentsWithReactions = array_map(
+			static fn (array $message) => ['parent' => $message['parent']['id'], 'message' => $message['id']],
+			array_filter($messages, static fn (array $message) => !empty($message['parent']['reactions']))
+		);
+
+		// Create a map, so we can translate the parent's $messageId to the correct child entries
+		$parentMap = $parentIdsWithReactions = [];
+		foreach ($parentsWithReactions as $entry) {
+			$parentMap[(int) $entry['parent']] ??= [];
+			$parentMap[(int) $entry['parent']][] = (int) $entry['message'];
+			$parentIdsWithReactions[] = (int) $entry['parent'];
+		}
+
+		// Unique list for the query
+		$idsWithReactions = array_unique(array_merge($messageIdsWithReactions, $parentIdsWithReactions));
+		$reactionsById = $this->reactionManager->getReactionsByActorForMessages($this->participant, $idsWithReactions);
+
+		// Inject the reactions self into the $messages array
+		foreach ($reactionsById as $messageId => $reactions) {
+			if (isset($messages[$commentIdToIndex[$messageId]])) {
+				$messages[$commentIdToIndex[$messageId]]['reactions']['self'] = $reactions;
+			}
+
+			// Add the self part also to potential parent elements
+			if (isset($parentMap[$messageId])) {
+				foreach ($parentMap[$messageId] as $mid) {
+					if (isset($messages[$commentIdToIndex[$mid]])) {
+						$messages[$commentIdToIndex[$mid]]['parent']['reactions']['self'] = $reactions;
+					}
+				}
+			}
+		}
+
+		return $messages;
 	}
 
 	/**
