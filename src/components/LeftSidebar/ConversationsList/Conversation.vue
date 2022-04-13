@@ -21,6 +21,7 @@
 
 <template>
 	<ListItem :title="item.displayName"
+		:class="{'unread-mention-conversation': item.unreadMention}"
 		:anchor-id="`conversation_${item.token}`"
 		:active="isActive"
 		:to="to"
