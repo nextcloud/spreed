@@ -81,7 +81,8 @@ export default {
 
 		// Defines the order of the sections
 		sharedItemsOrder() {
-			return ['media', 'file', 'voice', 'audio', 'location', 'deckcard', 'other']
+			// FIXME restore when non files work return ['media', 'file', 'voice', 'audio', 'location', 'deckcard', 'other']
+			return ['media', 'file', 'voice', 'audio']
 		},
 	},
 
