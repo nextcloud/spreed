@@ -51,6 +51,7 @@ import Button from '@nextcloud/vue/dist/Components/Button'
 import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
+import { showMessage } from '@nextcloud/dialogs'
 
 export default {
 	name: 'SharedItems',
@@ -139,6 +140,7 @@ export default {
 
 	methods: {
 		handleCaptionClick() {
+			showMessage('Screenshot feature only. Implementation of the real feature will come soon! 😎')
 			console.debug('Show more')
 		},
 	},
