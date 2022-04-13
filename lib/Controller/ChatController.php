@@ -750,7 +750,7 @@ class ChatController extends AEnvironmentAwareController {
 			$attachments = $this->attachmentService->getAttachmentsByType($this->room, $objectType, 0, $limit);
 			$messageIdsByType[$objectType] = array_map(static fn (Attachment $attachment): int => $attachment->getMessageId(), $attachments);
 		}
-		$comments = $this->chatManager->getMessagesById($this->room, array_merge(...$messageIdsByType));
+		$comments = $this->chatManager->getMessagesById($this->room, array_merge(...array_values($messageIdsByType)));
 
 		foreach ($comments as $comment) {
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);

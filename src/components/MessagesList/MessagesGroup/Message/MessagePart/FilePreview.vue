@@ -25,7 +25,10 @@
 	<file-preview v-bind="filePreview"
 		:tabindex="wrapperTabIndex"
 		class="file-preview"
-		:class="{ 'file-preview--viewer-available': isViewerAvailable, 'file-preview--upload-editor': isUploadEditor }"
+		:class="{ 'file-preview--viewer-available': isViewerAvailable,
+			'file-preview--upload-editor': isUploadEditor,
+			'file-preview--shared-items-grid': isSharedItemsTab && !rowLayout,
+			'file-preview--row-layout': rowLayout }"
 		@click.exact="handleClick"
 		@keydown.enter="handleClick">
 		<div v-if="!isLoading"
@@ -63,8 +66,8 @@
 			</template>
 		</Button>
 		<ProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
-		<div class="name-container">
-			<strong v-if="shouldShowFileDetail">{{ fileDetail }}</strong>
+		<div v-if="shouldShowFileDetail" class="name-container">
+			{{ fileDetail }}
 		</div>
 	</file-preview>
 </template>
@@ -203,6 +206,16 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		rowLayout: {
+			type: Boolean,
+			default: false,
+		},
+
+		isSharedItemsTab: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	data() {
 		return {
@@ -212,6 +225,9 @@ export default {
 	},
 	computed: {
 		shouldShowFileDetail() {
+			if (this.isSharedItemsTab && !this.rowLayout) {
+				return false
+			}
 			// display the file detail below the preview if the preview
 			// is not easily recognizable, when:
 			return (
@@ -473,6 +489,7 @@ export default {
 
 .file-preview {
 	position: relative;
+	min-width: 0;
 	width: 100%;
 	/* The file preview can not be a block; otherwise it would fill the whole
 	width of the container and the loading icon would not be centered on the
@@ -522,8 +539,8 @@ export default {
 	}
 
 	.image-container {
-		display: inline-block;
-		position: relative;
+		display: flex;
+		height: 100%;
 
 		&.playable {
 			.preview {
@@ -554,19 +571,11 @@ export default {
 	}
 
 	.name-container {
-		/* Ellipsis with 100% width */
-		display: table;
-		table-layout: fixed;
+		font-weight: bold;
 		width: 100%;
-
-		strong {
-			/* As the file preview is an inline block the name is set as a block to
-			force it to be on its own line below the preview. */
-			display: block;
-			overflow: hidden;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-		}
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 
 	&:not(.file-preview--viewer-available) {
@@ -586,6 +595,29 @@ export default {
 			height: 128px;
 		}
 		.loading {
+			width: 100%;
+		}
+	}
+
+	&--row-layout {
+		display: flex;
+		align-items: center;
+		height: 36px;
+		border-radius: var(--border-radius);
+		padding: 2px 4px;
+
+		.image-container {
+			height: 100%;
+		}
+
+		.name-container {
+			padding: 0 4px;
+		}
+	}
+
+	&--shared-items-grid {
+		aspect-ratio: 1;
+		.preview {
 			width: 100%;
 		}
 	}

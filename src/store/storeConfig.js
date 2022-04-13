@@ -39,6 +39,7 @@ import uiModeStore from './uiModeStore'
 import windowVisibilityStore from './windowVisibilityStore'
 import messageActionsStore from './messageActionsStore'
 import reactionsStore from './reactionsStore'
+import conversationSharedItemStore from './conversationSharedItemsStore'
 
 export default {
 	modules: {
@@ -61,6 +62,7 @@ export default {
 		windowVisibilityStore,
 		messageActionsStore,
 		reactionsStore,
+		conversationSharedItemStore,
 	},
 
 	mutations: {},

@@ -26,6 +26,7 @@
 		:title="title"
 		:title-tooltip="title"
 		:starred="isFavorited"
+		:active="activeTab"
 		:title-editable="canModerate && isRenamingConversation"
 		:class="'active-tab-' + activeTab"
 		@update:active="handleUpdateActive"
@@ -55,7 +56,8 @@
 				:can-search="canSearchParticipants"
 				:can-add="canAddParticipants" />
 		</AppSidebarTab>
-		<AppSidebarTab id="details-tab"
+		<AppSidebarTab v-if="!getUserId || showSIPSettings"
+			id="details-tab"
 			:order="3"
 			:name="t('spreed', 'Details')"
 			icon="icon-details">
@@ -63,10 +65,6 @@
 			<SipSettings v-if="showSIPSettings"
 				:meeting-id="conversation.token"
 				:attendee-pin="conversation.attendeePin" />
-			<CollectionList v-if="getUserId && conversation.token"
-				:id="conversation.token"
-				type="room"
-				:name="conversation.displayName" />
 			<div v-if="!getUserId" id="app-settings">
 				<div id="app-settings-header">
 					<Button type="tertiary" @click="showSettings">
@@ -80,6 +78,14 @@
 				</div>
 			</div>
 		</AppSidebarTab>
+		<AppSidebarTab v-if="getUserId"
+			id="shared-items"
+			ref="sharedItemsTab"
+			:order="4"
+			icon="icon-folder-multiple-image"
+			:name="t('spreed', 'Shared items')">
+			<SharedItemsTab :active="activeTab === 'shared-items'" />
+		</AppSidebarTab>
 	</AppSidebar>
 </template>
 
@@ -87,8 +93,8 @@
 import { emit } from '@nextcloud/event-bus'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
+import SharedItemsTab from './SharedItems/SharedItemsTab'
 import ChatView from '../ChatView'
-import { CollectionList } from 'nextcloud-vue-collections'
 import BrowserStorage from '../../services/BrowserStorage'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
 import ParticipantsTab from './Participants/ParticipantsTab'
@@ -104,8 +110,8 @@ export default {
 	components: {
 		AppSidebar,
 		AppSidebarTab,
+		SharedItemsTab,
 		ChatView,
-		CollectionList,
 		ParticipantsTab,
 		SetGuestUsername,
 		SipSettings,
@@ -225,6 +231,12 @@ export default {
 		conversation() {
 			if (!this.isRenamingConversation) {
 				this.conversationName = this.conversation.displayName
+			}
+
+			if (this.isOneToOne) {
+				this.activeTab = 'shared-items'
+			} else {
+				this.activeTab = 'participants'
 			}
 		},
 
