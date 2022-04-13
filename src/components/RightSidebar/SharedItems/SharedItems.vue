@@ -31,7 +31,8 @@
 					v-bind="file.messageParameters.file" />
 			</template>
 		</div>
-		<Button type="tertiary"
+		<Button v-if="hasMore"
+			type="tertiary"
 			class="shared-items__more"
 			:wide="true"
 			@click="handleCaptionClick">
@@ -40,7 +41,7 @@
 					decorative
 					title="" />
 			</template>
-			Show all {{ title }}
+			{{ buttonTitle }}
 		</Button>
 	</div>
 </template>
@@ -75,7 +76,7 @@ export default {
 
 	computed: {
 		filesToDisplay() {
-			return Object.values(this.items).slice(0, 5)
+			return Object.values(this.items).slice(0, 6)
 		},
 
 		title() {
@@ -99,19 +100,40 @@ export default {
 			}
 		},
 
+		buttonTitle() {
+			switch (this.type) {
+			case 'media':
+				return t('spreed', 'Show all media')
+			case 'file':
+				return t('spreed', 'Show all files')
+			case 'deck-card':
+				return t('spreed', 'Show all deck cards')
+			case 'voice':
+				return t('spreed', 'Show all voice messages')
+			case 'location':
+				return t('spreed', 'Show all locations')
+			case 'audio':
+				return t('spreed', 'Show all audio')
+			case 'other':
+				return t('spreed', 'Show all other')
+			default:
+				return ''
+			}
+		},
+
 		isList() {
 			switch (this.type) {
-			case 'file':
-				return true
-			case 'voice':
-				return true
-			case 'audio':
-				return true
-			case 'other':
-				return true
-			default:
+			case 'media':
 				return false
+			case 'locations':
+				return false
+			default:
+				return true
 			}
+		},
+
+		hasMore() {
+			return Object.values(this.items).length > 6
 		},
 	},
 
@@ -127,16 +149,19 @@ export default {
 .files {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-rows: 1fr 1fr;
+	grid-gap: 4px;
 	&__list {
 		display: flex;
 		flex-direction: column;
 	}
+
 }
 
 .shared-items {
 	margin-bottom: 16px;
 	&__more {
-		margin-top: 4px;
+		margin-top: 8px;
 	}
 }
 </style>

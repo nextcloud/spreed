@@ -25,7 +25,10 @@
 	<file-preview v-bind="filePreview"
 		:tabindex="wrapperTabIndex"
 		class="file-preview"
-		:class="{ 'file-preview--viewer-available': isViewerAvailable, 'file-preview--upload-editor': isUploadEditor, 'file-preview--row-layout': rowLayout}"
+		:class="{ 'file-preview--viewer-available': isViewerAvailable,
+			'file-preview--upload-editor': isUploadEditor,
+			'file-preview--shared-items-grid': isSharedItemsTab && !rowLayout,
+			'file-preview--row-layout': rowLayout }"
 		@click.exact="handleClick"
 		@keydown.enter="handleClick">
 		<div v-if="!isLoading"
@@ -537,6 +540,7 @@ export default {
 
 	.image-container {
 		display: flex;
+		height: 100%;
 
 		&.playable {
 			.preview {
@@ -602,8 +606,19 @@ export default {
 		border-radius: var(--border-radius);
 		padding: 2px 4px;
 
+		.image-container {
+			height: 100%;
+		}
+
 		.name-container {
 			padding: 0 4px;
+		}
+	}
+
+	&--shared-items-grid {
+		aspect-ratio: 1;
+		.preview {
+			width: 100%;
 		}
 	}
 }
