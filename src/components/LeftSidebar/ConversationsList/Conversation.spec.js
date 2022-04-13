@@ -130,20 +130,17 @@ describe('Conversation.vue', () => {
 		describe('author name', () => {
 			test('displays last chat message with shortened author name', () => {
 				testConversationLabel(item, 'Alice: hello')
-				expect(messagesMock).toHaveBeenCalledWith(TOKEN)
 			})
 
 			test('displays last chat message with author name if no space in name', () => {
 				item.lastMessage.actorDisplayName = 'Bob'
 				testConversationLabel(item, 'Bob: hello')
-				expect(messagesMock).toHaveBeenCalledWith(TOKEN)
 			})
 
 			test('displays own last chat message with "You" as author', () => {
 				item.lastMessage.actorId = 'user-id-self'
 
 				testConversationLabel(item, 'You: hello')
-				expect(messagesMock).toHaveBeenCalledWith(TOKEN)
 			})
 
 			test('displays last system message without author', () => {
@@ -151,13 +148,11 @@ describe('Conversation.vue', () => {
 				item.lastMessage.systemMessage = 'call_joined'
 
 				testConversationLabel(item, 'Alice has joined the call')
-				expect(messagesMock).toHaveBeenCalledWith(TOKEN)
 			})
 
 			test('displays last message without author in one to one conversations', () => {
 				item.type = CONVERSATION.TYPE.ONE_TO_ONE
 				testConversationLabel(item, 'hello')
-				expect(messagesMock).toHaveBeenCalledWith(TOKEN)
 			})
 
 			test('displays own last message with "You" author in one to one conversations', () => {
@@ -165,7 +160,6 @@ describe('Conversation.vue', () => {
 				item.lastMessage.actorId = 'user-id-self'
 
 				testConversationLabel(item, 'You: hello')
-				expect(messagesMock).toHaveBeenCalledWith(TOKEN)
 			})
 
 			test('displays last guest message with default author when none set', () => {
@@ -174,14 +168,12 @@ describe('Conversation.vue', () => {
 				item.lastMessage.actorType = ATTENDEE.ACTOR_TYPE.GUESTS
 
 				testConversationLabel(item, 'Guest: hello')
-				expect(messagesMock).toHaveBeenCalledWith(TOKEN)
 			})
 
 			test('displays last message for search results', () => {
 				// search results have no actor id
 				item.actorId = null
 				testConversationLabel(item, 'Alice: hello', true)
-				expect(messagesMock).toHaveBeenCalledWith(TOKEN)
 			})
 		})
 
@@ -194,80 +186,6 @@ describe('Conversation.vue', () => {
 			}
 
 			testConversationLabel(item, 'Alice: filename.jpg')
-			expect(messagesMock).toHaveBeenCalledWith(TOKEN)
-		})
-
-		describe('last message from messages store', () => {
-			// see Conversation.lastChatMessage() description for the reasoning
-			let displayedLastStoreMessage
-			let lastMessageFromConversation
-
-			beforeEach(() => {
-				displayedLastStoreMessage = {
-					id: 100,
-					actorId: 'user-id-alice',
-					actorDisplayName: 'Alice Wonderland',
-					actorType: ATTENDEE.ACTOR_TYPE.USERS,
-					message: 'hello from store',
-					messageParameters: {},
-					systemMessage: '',
-					timestamp: 100,
-				}
-
-				lastMessageFromConversation = {
-					id: 110,
-					actorId: 'user-id-alice',
-					actorDisplayName: 'Alice Wonderland',
-					actorType: ATTENDEE.ACTOR_TYPE.USERS,
-					message: 'hello from conversation',
-					messageParameters: {},
-					systemMessage: '',
-					timestamp: 100,
-				}
-
-				item.lastMessage = lastMessageFromConversation
-
-				messagesMock.mockClear().mockReturnValue({
-					100: displayedLastStoreMessage,
-				})
-			})
-
-			test('displays store message when more recent', () => {
-				displayedLastStoreMessage.timestamp = 2000
-
-				testConversationLabel(item, 'Alice: hello from store')
-				expect(messagesMock).toHaveBeenCalledWith(TOKEN)
-			})
-
-			test('displays conversation message when last one is a temporary command message', () => {
-				messagesMock.mockClear().mockReturnValue({
-					'temp-100': displayedLastStoreMessage,
-				})
-
-				displayedLastStoreMessage.timestamp = 2000
-				displayedLastStoreMessage.id = 'temp-100'
-				displayedLastStoreMessage.message = '/me doing things'
-
-				testConversationLabel(item, 'Alice: hello from conversation')
-				expect(messagesMock).toHaveBeenCalledWith(TOKEN)
-			})
-
-			test('displays conversation message when last one is a bot message', () => {
-				displayedLastStoreMessage.timestamp = 2000
-				displayedLastStoreMessage.actorType = ATTENDEE.ACTOR_TYPE.BOTS
-
-				testConversationLabel(item, 'Alice: hello from conversation')
-				expect(messagesMock).toHaveBeenCalledWith(TOKEN)
-			})
-
-			test('displays store message when last one is a changelog bot message', () => {
-				displayedLastStoreMessage.timestamp = 2000
-				displayedLastStoreMessage.actorType = ATTENDEE.ACTOR_TYPE.BOTS
-				displayedLastStoreMessage.actorId = ATTENDEE.CHANGELOG_BOT_ID
-
-				testConversationLabel(item, 'Alice: hello from store')
-				expect(messagesMock).toHaveBeenCalledWith(TOKEN)
-			})
 		})
 	})
 

@@ -419,8 +419,9 @@ const actions = {
 			&& lastMessage.systemMessage !== 'reaction_deleted'
 			&& lastMessage.systemMessage !== 'reaction_revoked'
 			&& lastMessage.systemMessage !== 'message_deleted'
-			&& ((typeof lastMessage.id.startsWith === 'function' && !lastMessage.id.startsWith('temp-'))
-				|| !lastMessage.message.startsWith('/'))) {
+			&& !(typeof lastMessage.id.startsWith === 'function'
+				&& lastMessage.id.startsWith('temp-')
+				&& lastMessage.message.startsWith('/'))) {
 			commit('updateConversationLastMessage', { token, lastMessage })
 		}
 	},
