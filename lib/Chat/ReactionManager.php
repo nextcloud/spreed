@@ -141,7 +141,8 @@ class ReactionManager {
 			$this->timeFactory->getDateTime(),
 			false,
 			null,
-			$messageId
+			$messageId,
+			true
 		);
 
 		return $comment;
