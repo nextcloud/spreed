@@ -26,6 +26,7 @@
 		:title="title"
 		:title-tooltip="title"
 		:starred="isFavorited"
+		:active="activeTab"
 		:title-editable="canModerate && isRenamingConversation"
 		:class="'active-tab-' + activeTab"
 		@update:active="handleUpdateActive"
@@ -102,6 +103,7 @@ import SipSettings from './SipSettings'
 import LobbyStatus from './LobbyStatus'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import CogIcon from 'vue-material-design-icons/Cog'
+import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'RightSidebar',
@@ -239,6 +241,14 @@ export default {
 		},
 	},
 
+	mounted() {
+		EventBus.$on('route-change', this.onRouteChange)
+	},
+
+	beforeDestroy() {
+		EventBus.$off('route-change', this.onRouteChange)
+	},
+
 	methods: {
 		handleClose() {
 			this.dismissEditing()
@@ -287,6 +297,10 @@ export default {
 
 		handleClosed() {
 			emit('files:sidebar:closed')
+		},
+
+		onRouteChange() {
+			this.activeTab = 'participants'
 		},
 	},
 }
