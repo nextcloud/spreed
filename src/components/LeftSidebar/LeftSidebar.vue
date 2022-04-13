@@ -258,12 +258,14 @@ export default {
 		}, 30000)
 
 		EventBus.$on('should-refresh-conversations', this.debounceFetchConversations)
+		EventBus.$once('conversations-received', this.handleUnreadMention)
 
 		this.mountArrowNavigation()
 	},
 
 	beforeDestroy() {
 		EventBus.$off('should-refresh-conversations', this.debounceFetchConversations)
+		EventBus.$off('conversations-received', this.handleUnreadMention)
 
 		this.cancelSearchPossibleConversations()
 		this.cancelSearchPossibleConversations = null
