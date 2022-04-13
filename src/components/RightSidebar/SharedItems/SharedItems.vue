@@ -77,7 +77,7 @@ export default {
 
 	computed: {
 		filesToDisplay() {
-			return Object.values(this.items).slice(0, 6)
+			return Object.values(this.items).reverse().slice(0, 6)
 		},
 
 		title() {
