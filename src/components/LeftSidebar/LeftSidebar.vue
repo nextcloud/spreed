@@ -469,23 +469,14 @@ export default {
 		handleScroll() {
 			this.isScrolledToTop = this.$refs.scroller.scrollTop === 0
 		},
-		ensureInView(container, element) {
-			const cTop = container.scrollTop
-			const cBottom = cTop + container.clientHeight
-
-			const eTop = element.offsetTop
-			if (eTop > cBottom) {
-				return 'outside'
-			} else {
-				return 'inside'
-			}
+		elementIsBelowViewpoint(container, element) {
+			return element.offsetTop > container.scrollTop + container.clientHeight
 		},
 		handleUnreadMention() {
 			this.unreadNum = 0
 			const unreadMentions = document.getElementsByClassName('unread-mention-conversation')
 			unreadMentions.forEach(x => {
-				const pos = this.ensureInView(this.$refs.scroller, x)
-				if (pos === 'outside') {
+				if (this.elementIsBelowViewpoint(this.$refs.scroller, x)) {
 					if (this.unreadNum === 0) {
 						this.firstUnreadPos = x.offsetTop
 					}
