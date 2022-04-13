@@ -228,15 +228,17 @@ export default {
 	},
 
 	watch: {
-		conversation() {
+		conversation(newConversation, oldConversation) {
 			if (!this.isRenamingConversation) {
 				this.conversationName = this.conversation.displayName
 			}
 
-			if (this.isOneToOne) {
-				this.activeTab = 'shared-items'
-			} else {
-				this.activeTab = 'participants'
+			if (newConversation.token !== oldConversation.token) {
+				if (newConversation.type === CONVERSATION.TYPE.ONE_TO_ONE) {
+					this.activeTab = 'shared-items'
+				} else {
+					this.activeTab = 'participants'
+				}
 			}
 		},
 
