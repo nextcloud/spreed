@@ -219,39 +219,12 @@ export default {
 			})
 		},
 
-		// The messages array for this conversation
-		messages() {
-			return this.$store.getters.messages(this.item.token)
-		},
-
 		// Get the last message for this conversation from the message store instead
 		// of the conversations store. The message store is updated immediately,
 		// while the conversations store is refreshed every 30 seconds. This allows
 		// to display message previews in this component as soon as new messages are
 		// received by the server.
 		lastChatMessage() {
-			const lastMessageTimestamp = this.item.lastMessage ? this.item.lastMessage.timestamp : 0
-
-			if (Object.keys(this.messages).length > 0) {
-				// FIXME: risky way to get last message that assumes that keys are always sorted
-				// should use this.$store.getters.messagesList instead ?
-				const messagesKeys = Object.keys(this.messages)
-				const lastMessageId = messagesKeys[messagesKeys.length - 1]
-
-				/**
-				 * Only use the last message as lastmessage when:
-				 * 1. It's newer than the conversations last message
-				 * 2. It's not a command reply
-				 * 3. It's not a temporary message starting with "/" which is a user posting a command
-				 */
-				if (this.messages[lastMessageId].timestamp > lastMessageTimestamp
-					&& (this.messages[lastMessageId].actorType !== ATTENDEE.ACTOR_TYPE.BOTS
-						|| this.messages[lastMessageId].actorId === ATTENDEE.CHANGELOG_BOT_ID)
-					&& (!lastMessageId.startsWith('temp-')
-						|| !this.messages[lastMessageId].message.startsWith('/'))) {
-					return this.messages[lastMessageId]
-				}
-			}
 			return this.item.lastMessage
 		},
 
