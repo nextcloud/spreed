@@ -23,7 +23,32 @@
 import Vue from 'vue'
 import { getSharedItemsOverview, getSharedItems } from '../services/conversationSharedItemsService'
 
-// Store structure
+const getItemTypeFromMessage = function(message) {
+	if (message.message === '{object}') {
+		if (message.messageParameters.object.type === 'geo-location') {
+			return 'location'
+		} else if (message.messageParameters.object.type === 'deck-card') {
+			return 'deckcard'
+		} else {
+			return 'other'
+		}
+	} else {
+		const messageType = message.messageType || ''
+		const mimetype = message.messageParameters.file?.mimetype || ''
+
+		if (messageType === 'voice-message') {
+			return 'voice'
+		} else if (mimetype.startsWith('audio/')) {
+			return 'audio'
+		} else if (mimetype.startsWith('image/') || mimetype.startsWith('video/')) {
+			return 'media'
+		} else {
+			return 'file'
+		}
+	}
+}
+
+// sharedItemsByConversationAndType structure
 // token: {
 //    media: {},
 //    file: {},
@@ -32,20 +57,22 @@ import { getSharedItemsOverview, getSharedItems } from '../services/conversation
 //    location: {}
 //    deckcard: {},
 //    other: {},
+// },
 
-const state = () => ({
-	state: {},
-})
+const state = {
+	sharedItemsByConversationAndType: {},
+	overviewLoaded: {},
+}
 
 const getters = {
 	sharedItems: state => token => {
 		const sharedItems = {}
-		if (!state[token]) {
+		if (!state.sharedItemsByConversationAndType[token]) {
 			return {}
 		}
-		for (const type of Object.keys(state[token])) {
-			if (Object.keys(state[token][type]).length !== 0) {
-				sharedItems[type] = state[token][type]
+		for (const type of Object.keys(state.sharedItemsByConversationAndType[token])) {
+			if (Object.keys(state.sharedItemsByConversationAndType[token][type]).length !== 0) {
+				sharedItems[type] = state.sharedItemsByConversationAndType[token][type]
 			}
 		}
 		return sharedItems
@@ -54,18 +81,32 @@ const getters = {
 
 export const mutations = {
 	addSharedItemsOverview: (state, { token, data }) => {
-		if (!state[token]) {
-			Vue.set(state, token, {})
+		Vue.set(state.overviewLoaded, token, true)
+
+		if (!state.sharedItemsByConversationAndType[token]) {
+			Vue.set(state.sharedItemsByConversationAndType, token, {})
 		}
+
 		for (const type of Object.keys(data)) {
-			if (!state[token][type]) {
-				Vue.set(state[token], type, {})
-				for (const message of data[type]) {
-					if (!state[token][type]?.[message.id]) {
-						Vue.set(state[token][type], message.id, message)
-					}
-				}
+			if (!state.sharedItemsByConversationAndType[token][type]) {
+				Vue.set(state.sharedItemsByConversationAndType[token], type, {})
 			}
+
+			for (const message of data[type]) {
+				Vue.set(state.sharedItemsByConversationAndType[token][type], message.id, message)
+			}
+		}
+	},
+
+	addSharedItemMessage: (state, { token, type, message }) => {
+		if (!state.sharedItemsByConversationAndType[token]) {
+			Vue.set(state.sharedItemsByConversationAndType, token, {})
+		}
+		if (!state.sharedItemsByConversationAndType[token][type]) {
+			Vue.set(state.sharedItemsByConversationAndType[token], type, {})
+		}
+		if (!state.sharedItemsByConversationAndType[token][type]?.[message.id]) {
+			Vue.set(state.sharedItemsByConversationAndType[token][type], message.id, message)
 		}
 	},
 }
@@ -84,7 +125,11 @@ const actions = {
 		}
 	},
 
-	async getSharedItemsOverview({ commit }, { token }) {
+	async getSharedItemsOverview({ commit, state }, { token }) {
+		if (state.overviewLoaded[token]) {
+			return
+		}
+
 		try {
 			const response = await getSharedItemsOverview(token, 10)
 			commit('addSharedItemsOverview', {
@@ -94,6 +139,14 @@ const actions = {
 		} catch (error) {
 			console.debug(error)
 		}
+	},
+
+	async addSharedItemMessage({ commit }, { message }) {
+		commit('addSharedItemMessage', {
+			token: message.token,
+			type: getItemTypeFromMessage(message),
+			message,
+		})
 	},
 }
 
