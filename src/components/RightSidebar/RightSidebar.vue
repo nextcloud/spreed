@@ -80,14 +80,8 @@
 			id="shared-items"
 			ref="sharedItemsTab"
 			:order="4"
-			icon="icon-details"
-			:name="t('spreed', 'Shared items')"
-			@update:active="handleUpdateActive">
-			<template #icon>
-				<FolderMultipleImage :size="20"
-					decorative
-					title="" />
-			</template>
+			icon="icon-folder-multiple-image"
+			:name="t('spreed', 'Shared items')">
 			<SharedItemsTab :active="activeTab === 'shared-items'" />
 		</AppSidebarTab>
 	</AppSidebar>
@@ -108,7 +102,6 @@ import SipSettings from './SipSettings'
 import LobbyStatus from './LobbyStatus'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import CogIcon from 'vue-material-design-icons/Cog'
-import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 
 export default {
 	name: 'RightSidebar',
@@ -123,7 +116,6 @@ export default {
 		LobbyStatus,
 		Button,
 		CogIcon,
-		FolderMultipleImage,
 	},
 
 	mixins: [
