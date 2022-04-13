@@ -115,7 +115,7 @@
 					<span>❤️</span>
 				</template>
 			</Button>
-			<EmojiPicker :container="`#message_${id}`"
+			<EmojiPicker :container="`#message_${id} .message-buttons-bar`"
 				@select="handleReactionClick"
 				@after-show="onEmojiPickerOpen"
 				@after-hide="onEmojiPickerClose">
