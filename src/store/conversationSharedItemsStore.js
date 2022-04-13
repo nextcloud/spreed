@@ -22,28 +22,29 @@
 
 import Vue from 'vue'
 import { getSharedItemsOverview, getSharedItems } from '../services/conversationSharedItemsService'
+import { SHARED_ITEM } from '../constants'
 
 const getItemTypeFromMessage = function(message) {
 	if (message.message === '{object}') {
 		if (message.messageParameters.object.type === 'geo-location') {
-			return 'location'
+			return SHARED_ITEM.TYPES.LOCATION
 		} else if (message.messageParameters.object.type === 'deck-card') {
-			return 'deckcard'
+			return SHARED_ITEM.TYPES.DECK_CARD
 		} else {
-			return 'other'
+			return SHARED_ITEM.TYPES.OTHER
 		}
 	} else {
 		const messageType = message.messageType || ''
 		const mimetype = message.messageParameters.file?.mimetype || ''
 
 		if (messageType === 'voice-message') {
-			return 'voice'
+			return SHARED_ITEM.TYPES.VOICE
 		} else if (mimetype.startsWith('audio/')) {
-			return 'audio'
+			return SHARED_ITEM.TYPES.AUDIO
 		} else if (mimetype.startsWith('image/') || mimetype.startsWith('video/')) {
-			return 'media'
+			return SHARED_ITEM.TYPES.MEDIA
 		} else {
-			return 'file'
+			return SHARED_ITEM.TYPES.FILE
 		}
 	}
 }
