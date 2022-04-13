@@ -104,7 +104,6 @@ import SipSettings from './SipSettings'
 import LobbyStatus from './LobbyStatus'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import CogIcon from 'vue-material-design-icons/Cog'
-import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'RightSidebar',
@@ -233,6 +232,12 @@ export default {
 			if (!this.isRenamingConversation) {
 				this.conversationName = this.conversation.displayName
 			}
+
+			if (this.isOneToOne) {
+				this.activeTab = 'shared-items'
+			} else {
+				this.activeTab = 'participants'
+			}
 		},
 
 		token() {
@@ -240,14 +245,6 @@ export default {
 				this.$refs.participantsTab.$el.scrollTop = 0
 			}
 		},
-	},
-
-	mounted() {
-		EventBus.$on('route-change', this.onRouteChange)
-	},
-
-	beforeDestroy() {
-		EventBus.$off('route-change', this.onRouteChange)
 	},
 
 	methods: {
@@ -298,10 +295,6 @@ export default {
 
 		handleClosed() {
 			emit('files:sidebar:closed')
-		},
-
-		onRouteChange() {
-			this.activeTab = 'participants'
 		},
 	},
 }
