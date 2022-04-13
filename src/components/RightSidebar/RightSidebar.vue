@@ -56,7 +56,8 @@
 				:can-search="canSearchParticipants"
 				:can-add="canAddParticipants" />
 		</AppSidebarTab>
-		<AppSidebarTab id="details-tab"
+		<AppSidebarTab v-if="!getUserId || showSIPSettings"
+			id="details-tab"
 			:order="3"
 			:name="t('spreed', 'Details')"
 			icon="icon-details">
