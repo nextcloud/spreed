@@ -1,9 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 14.0.0-beta.1 – 2022-04-08
+## 14.0.0-rc.1 – 2022-04-13
 ### Added
 - Reactions for chat messages
+- Media tab in the sidebar to show all the shared items
 - Implement `OCP\Talk\IBroker` to allow apps to create conversations
 - Sharing a browser tab in Chrome-based browsers can now also share the audio of that tab
   [#6810](https://github.com/nextcloud/spreed/pull/6810)
