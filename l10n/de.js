@@ -1039,6 +1039,7 @@ OC.L10N.register(
     "Participants ({count})" : "Teilnehmer ({count})",
     "Meeting ID: {meetingId}" : "Meeting-ID: {meetingId}",
     "Your PIN: {attendeePin}" : "Deine PIN: {attendeePin}",
+    "Display name: <strong>{name}</strong>" : "Anzeigename: <strong>{name}</strong>",
     "Attachments folder" : "Ordner für Anhänge",
     "Privacy" : "Datenschutz",
     "Share my read-status and show the read-status of others" : "Meinen Lesestatus teilen und den Lesestatus von anderen anzeigen",
