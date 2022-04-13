@@ -21,23 +21,35 @@
 
 <template>
 	<div class="shared-items">
-		<Button type="tertiary"
-			:wide="true"
-			@click="handleCaptionClick">
-			{{ title }}
-		</Button>
-		<div class="files">
-			<template v-for="item in items">
-				<FilePreview :key="item.id"
-					v-bind="item.messageParameters.file" />
+		<AppNavigationCaption :title="title" />
+		<div class="files" :class="{'files__list' : isList}">
+			<template v-for="file in filesToDisplay">
+				<FilePreview :key="file.id"
+					:small-preview="isList"
+					:row-layout="isList"
+					:is-shared-items-tab="true"
+					v-bind="file.messageParameters.file" />
 			</template>
 		</div>
+		<Button type="tertiary"
+			class="shared-items__more"
+			:wide="true"
+			@click="handleCaptionClick">
+			<template #icon>
+				<DotsHorizontal :size="20"
+					decorative
+					title="" />
+			</template>
+			Show all {{ title }}
+		</Button>
 	</div>
 </template>
 
 <script>
 import Button from '@nextcloud/vue/dist/Components/Button'
 import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
 
 export default {
 	name: 'SharedItems',
@@ -45,6 +57,8 @@ export default {
 	components: {
 		Button,
 		FilePreview,
+		DotsHorizontal,
+		AppNavigationCaption,
 	},
 
 	props: {
@@ -60,6 +74,10 @@ export default {
 	},
 
 	computed: {
+		filesToDisplay() {
+			return Object.values(this.items).slice(0, 5)
+		},
+
 		title() {
 			switch (this.type) {
 			case 'media':
@@ -73,11 +91,26 @@ export default {
 			case 'location':
 				return t('spreed', 'Locations')
 			case 'audio':
-				return t('spreed', 'Music')
+				return t('spreed', 'Audio')
 			case 'other':
 				return t('spreed', 'Other')
 			default:
 				return ''
+			}
+		},
+
+		isList() {
+			switch (this.type) {
+			case 'file':
+				return true
+			case 'voice':
+				return true
+			case 'audio':
+				return true
+			case 'other':
+				return true
+			default:
+				return false
 			}
 		},
 	},
@@ -91,13 +124,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.shared-items {
-	margin-bottom: 8px;
+.files {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	&__list {
+		display: flex;
+		flex-direction: column;
+	}
 }
 
-::v-deep .button-vue--vue-tertiary {
-	justify-content: flex-start;
-	border-radius: var(--border-radius-large);
-	opacity: 1;
+.shared-items {
+	margin-bottom: 16px;
+	&__more {
+		margin-top: 4px;
+	}
 }
 </style>

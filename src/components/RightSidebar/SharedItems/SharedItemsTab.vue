@@ -21,10 +21,13 @@
 
 <template>
 	<div v-if="!loading && active">
-		<SharedItems v-for="type in Object.keys(sharedItems)"
-			:key="type"
-			:type="type"
-			:items="sharedItems[type]" />
+		<template v-for="type in sharedItemsOrder">
+			<SharedItems v-if="sharedItems[type]"
+				:key="type"
+				:type="type"
+				:items="sharedItems[type]" />
+		</template>
+		<AppNavigationCaption :title="t('spreed', 'Projects')" />
 		<CollectionList v-if="getUserId && token"
 			:id="token"
 			type="room"
@@ -35,6 +38,7 @@
 <script>
 import { CollectionList } from 'nextcloud-vue-collections'
 import SharedItems from './SharedItems'
+import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
 
 export default {
 
@@ -43,6 +47,7 @@ export default {
 	components: {
 		SharedItems,
 		CollectionList,
+		AppNavigationCaption,
 	},
 
 	props: {
@@ -72,6 +77,11 @@ export default {
 
 		sharedItems() {
 			return this.$store.getters.sharedItems(this.token)
+		},
+
+		// Defines the order of the sections
+		sharedItemsOrder() {
+			return ['media', 'file', 'voice', 'audio', 'location', 'deckcard', 'other']
 		},
 	},
 

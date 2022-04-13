@@ -28,9 +28,9 @@ import { getSharedItemsOverview, getSharedItems } from '../services/conversation
 //    media: {},
 //    file: {},
 //    voice: {},
+//    audio: {},
 //    location: {}
 //    deckcard: {},
-//    audio: {},
 //    other: {},
 
 const state = () => ({
