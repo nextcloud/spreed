@@ -16,7 +16,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>14.0.0-rc.1</version>
+	<version>15.0.0-dev.1</version>
 	<licence>agpl</licence>
 
 	<author>Aleksandra Lazarević</author>
@@ -52,7 +52,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/video-verfication.png</screenshot>
 
 	<dependencies>
-		<nextcloud min-version="24" max-version="24" />
+		<nextcloud min-version="25" max-version="25" />
 	</dependencies>
 
 	<background-jobs>
