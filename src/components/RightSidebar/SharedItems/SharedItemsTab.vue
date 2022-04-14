@@ -32,6 +32,7 @@
 			:id="token"
 			type="room"
 			:name="conversation.displayName" />
+		<SharedItemsBrowser :shared-items="sharedItems" :shared-items-order="sharedItemsOrder" />
 	</div>
 </template>
 
@@ -40,6 +41,7 @@ import { CollectionList } from 'nextcloud-vue-collections'
 import SharedItems from './SharedItems'
 import { SHARED_ITEM } from '../../../constants'
 import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
+import SharedItemsBrowser from './SharedItemsBrowser/SharedItemsBrowser.vue'
 
 export default {
 
@@ -49,6 +51,7 @@ export default {
 		SharedItems,
 		CollectionList,
 		AppNavigationCaption,
+		SharedItemsBrowser,
 	},
 
 	props: {
