@@ -38,6 +38,7 @@
 <script>
 import { CollectionList } from 'nextcloud-vue-collections'
 import SharedItems from './SharedItems'
+import { SHARED_ITEM } from '../../../constants'
 import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
 
 export default {
@@ -81,8 +82,8 @@ export default {
 
 		// Defines the order of the sections
 		sharedItemsOrder() {
-			// FIXME restore when non files work return ['media', 'file', 'voice', 'audio', 'location', 'deckcard', 'other']
-			return ['media', 'file', 'voice', 'audio']
+			// FIXME restore when non files work return [SHARED_ITEM.TYPES.MEDIA, SHARED_ITEM.TYPES.FILE, SHARED_ITEM.TYPES.VOICE, SHARED_ITEM.TYPES.AUDIO, SHARED_ITEM.TYPES.LOCATION, SHARED_ITEM.TYPES.DECK_CARD, SHARED_ITEM.TYPES.OTHER]
+			return [SHARED_ITEM.TYPES.MEDIA, SHARED_ITEM.TYPES.FILE, SHARED_ITEM.TYPES.VOICE, SHARED_ITEM.TYPES.AUDIO]
 		},
 	},
 

@@ -23,7 +23,7 @@
 	<div class="shared-items">
 		<AppNavigationCaption :title="title" />
 		<div class="files" :class="{'files__list' : isList}">
-			<template v-for="file in filesToDisplay">
+			<template v-for="file in itemsToDisplay">
 				<FilePreview :key="file.id"
 					:small-preview="isList"
 					:row-layout="isList"
@@ -52,6 +52,7 @@ import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/Fi
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
 import { showMessage } from '@nextcloud/dialogs'
+import { SHARED_ITEM } from '../../../constants'
 
 export default {
 	name: 'SharedItems',
@@ -76,57 +77,55 @@ export default {
 	},
 
 	computed: {
-		filesToDisplay() {
+		itemsToDisplay() {
 			return Object.values(this.items).reverse().slice(0, 6)
 		},
 
 		title() {
 			switch (this.type) {
-			case 'media':
+			case SHARED_ITEM.TYPES.MEDIA:
 				return t('spreed', 'Media')
-			case 'file':
+			case SHARED_ITEM.TYPES.FILE:
 				return t('spreed', 'Files')
-			case 'deck-card':
+			case SHARED_ITEM.TYPES.DECK_CARD:
 				return t('spreed', 'Deck cards')
-			case 'voice':
+			case SHARED_ITEM.TYPES.VOICE:
 				return t('spreed', 'Voice messages')
-			case 'location':
+			case SHARED_ITEM.TYPES.LOCATION:
 				return t('spreed', 'Locations')
-			case 'audio':
+			case SHARED_ITEM.TYPES.AUDIO:
 				return t('spreed', 'Audio')
-			case 'other':
-				return t('spreed', 'Other')
+			case SHARED_ITEM.TYPES.OTHER:
 			default:
-				return ''
+				return t('spreed', 'Other')
 			}
 		},
 
 		buttonTitle() {
 			switch (this.type) {
-			case 'media':
+			case SHARED_ITEM.TYPES.MEDIA:
 				return t('spreed', 'Show all media')
-			case 'file':
+			case SHARED_ITEM.TYPES.FILE:
 				return t('spreed', 'Show all files')
-			case 'deck-card':
+			case SHARED_ITEM.TYPES.DECK_CARD:
 				return t('spreed', 'Show all deck cards')
-			case 'voice':
+			case SHARED_ITEM.TYPES.VOICE:
 				return t('spreed', 'Show all voice messages')
-			case 'location':
+			case SHARED_ITEM.TYPES.LOCATION:
 				return t('spreed', 'Show all locations')
-			case 'audio':
+			case SHARED_ITEM.TYPES.AUDIO:
 				return t('spreed', 'Show all audio')
-			case 'other':
-				return t('spreed', 'Show all other')
+			case SHARED_ITEM.TYPES.OTHER:
 			default:
-				return ''
+				return t('spreed', 'Show all other')
 			}
 		},
 
 		isList() {
 			switch (this.type) {
-			case 'media':
+			case SHARED_ITEM.TYPES.MEDIA:
 				return false
-			case 'locations':
+			case SHARED_ITEM.TYPES.LOCATION:
 				return false
 			default:
 				return true

@@ -104,6 +104,17 @@ export const PARTICIPANT = {
 		MAX_CUSTOM: 127,
 	},
 }
+export const SHARED_ITEM = {
+	TYPES: {
+		AUDIO: 'audio',
+		DECK_CARD: 'deckcard',
+		FILE: 'file',
+		LOCATION: 'location',
+		MEDIA: 'media',
+		OTHER: 'other',
+		VOICE: 'voice',
+	},
+}
 export const WEBINAR = {
 	LOBBY: {
 		NONE: 0,
