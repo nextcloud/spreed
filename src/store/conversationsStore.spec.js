@@ -50,6 +50,13 @@ jest.mock('../services/conversationsService', () => ({
 
 describe('conversationsStore', () => {
 	const testToken = 'XXTOKENXX'
+	const previousLastMessage = {
+		actorType: 'users',
+		actorId: 'admin',
+		systemMessage: '',
+		id: 31,
+		message: 'Message 1',
+	}
 	let testStoreConfig = null
 	let testConversation
 	let localVue = null
@@ -589,6 +596,232 @@ describe('conversationsStore', () => {
 
 			const changedConversation = store.getters.conversation(testToken)
 			expect(changedConversation.lastActivity).toBe(mockDate.getTime() / 1000)
+		})
+	})
+
+	describe('update last message', () => {
+		beforeEach(() => {
+			store = new Vuex.Store(testStoreConfig)
+		})
+
+		test('successful update from user', () => {
+			const testLastMessage = {
+				actorType: 'users',
+				actorId: 'admin',
+				systemMessage: '',
+				id: 42,
+				message: 'Message 2',
+			}
+
+			testConversation.lastMessage = previousLastMessage
+
+			store.dispatch('addConversation', testConversation)
+
+			store.dispatch('updateConversationLastMessage', {
+				token: testToken,
+				lastMessage: testLastMessage,
+			})
+
+			const changedConversation = store.getters.conversation(testToken)
+			expect(changedConversation.lastMessage).toBe(testLastMessage)
+		})
+
+		test('ignore update from bot', () => {
+			const testLastMessage = {
+				actorType: 'bots',
+				actorId: 'selfmade',
+				systemMessage: '',
+				id: 42,
+				message: 'Message 2',
+			}
+
+			testConversation.lastMessage = previousLastMessage
+
+			store.dispatch('addConversation', testConversation)
+
+			store.dispatch('updateConversationLastMessage', {
+				token: testToken,
+				lastMessage: testLastMessage,
+			})
+
+			const changedConversation = store.getters.conversation(testToken)
+			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+		})
+
+		test('ignore update from bot but not from changelog', () => {
+			const testLastMessage = {
+				actorType: 'bots',
+				actorId: 'changelog',
+				systemMessage: '',
+				id: 42,
+				message: 'Message 2',
+			}
+
+			testConversation.lastMessage = previousLastMessage
+
+			store.dispatch('addConversation', testConversation)
+
+			store.dispatch('updateConversationLastMessage', {
+				token: testToken,
+				lastMessage: testLastMessage,
+			})
+
+			const changedConversation = store.getters.conversation(testToken)
+			expect(changedConversation.lastMessage).toBe(testLastMessage)
+		})
+
+		test('ignore update reactions', () => {
+			const testLastMessage = {
+				actorType: 'users',
+				actorId: 'admin',
+				systemMessage: 'reaction',
+				id: 42,
+				message: '👍',
+			}
+
+			testConversation.lastMessage = previousLastMessage
+
+			store.dispatch('addConversation', testConversation)
+
+			store.dispatch('updateConversationLastMessage', {
+				token: testToken,
+				lastMessage: testLastMessage,
+			})
+
+			const changedConversation = store.getters.conversation(testToken)
+			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+		})
+
+		test('ignore update from the action of deleting reactions', () => {
+			const testLastMessage = {
+				actorType: 'users',
+				actorId: 'admin',
+				systemMessage: 'reaction_revoked',
+				id: 42,
+				message: 'Admin deleted a reaction',
+			}
+
+			testConversation.lastMessage = previousLastMessage
+
+			store.dispatch('addConversation', testConversation)
+
+			store.dispatch('updateConversationLastMessage', {
+				token: testToken,
+				lastMessage: testLastMessage,
+			})
+
+			const changedConversation = store.getters.conversation(testToken)
+			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+		})
+
+		test('ignore update deleted reactions (only theory as the action of deleting would come after it anyway)', () => {
+			const testLastMessage = {
+				actorType: 'users',
+				actorId: 'admin',
+				systemMessage: 'reaction_deleted',
+				id: 42,
+				message: 'Reaction deleted by author',
+			}
+
+			testConversation.lastMessage = previousLastMessage
+
+			store.dispatch('addConversation', testConversation)
+
+			store.dispatch('updateConversationLastMessage', {
+				token: testToken,
+				lastMessage: testLastMessage,
+			})
+
+			const changedConversation = store.getters.conversation(testToken)
+			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+		})
+
+		test('ignore update from deleting a message', () => {
+			const testLastMessage = {
+				actorType: 'users',
+				actorId: 'admin',
+				systemMessage: 'message_deleted',
+				id: 42,
+				message: 'Admin deleted a message',
+			}
+
+			testConversation.lastMessage = previousLastMessage
+
+			store.dispatch('addConversation', testConversation)
+
+			store.dispatch('updateConversationLastMessage', {
+				token: testToken,
+				lastMessage: testLastMessage,
+			})
+
+			const changedConversation = store.getters.conversation(testToken)
+			expect(changedConversation.lastMessage).toBe(previousLastMessage)
+		})
+
+		test('successfully update temporary messages', () => {
+			const testLastMessage = {
+				actorType: 'users',
+				actorId: 'admin',
+				systemMessage: '',
+				id: 'temp-42',
+				message: 'quit',
+			}
+
+			testConversation.lastMessage = previousLastMessage
+
+			store.dispatch('addConversation', testConversation)
+
+			store.dispatch('updateConversationLastMessage', {
+				token: testToken,
+				lastMessage: testLastMessage,
+			})
+
+			const changedConversation = store.getters.conversation(testToken)
+			expect(changedConversation.lastMessage).toBe(testLastMessage)
+		})
+
+		test('successfully update also posted messages which start with a slash', () => {
+			const testLastMessage = {
+				actorType: 'users',
+				actorId: 'admin',
+				systemMessage: '',
+				id: 42,
+				message: '/quit',
+			}
+
+			testConversation.lastMessage = previousLastMessage
+
+			store.dispatch('addConversation', testConversation)
+
+			store.dispatch('updateConversationLastMessage', {
+				token: testToken,
+				lastMessage: testLastMessage,
+			})
+
+			const changedConversation = store.getters.conversation(testToken)
+			expect(changedConversation.lastMessage).toBe(testLastMessage)
+		})
+
+		test('ignore update from temporary if posting a command', () => {
+			const testLastMessage = {
+				actorType: 'users',
+				actorId: 'admin',
+				systemMessage: '',
+				id: 'temp-42',
+				message: '/quit',
+			}
+
+			testConversation.lastMessage = previousLastMessage
+
+			store.dispatch('addConversation', testConversation)
+
+			store.dispatch('updateConversationLastMessage', {
+				token: testToken,
+				lastMessage: testLastMessage,
+			})
+
+			const changedConversation = store.getters.conversation(testToken)
+			expect(changedConversation.lastMessage).toBe(previousLastMessage)
 		})
 	})
 

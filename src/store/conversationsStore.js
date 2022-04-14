@@ -410,11 +410,18 @@ const actions = {
 		 * Only use the last message as lastmessage when:
 		 * 1. It's not a command reply
 		 * 2. It's not a temporary message starting with "/" which is a user posting a command
+		 * 3. It's not a reaction or deletion of a reaction
+		 * 3. It's not a deletion of a message
 		 */
 		if ((lastMessage.actorType !== 'bots'
 				|| lastMessage.actorId === 'changelog')
-			&& ((typeof lastMessage.id.startsWith === 'function' && !lastMessage.id.startsWith('temp-'))
-				|| !lastMessage.message.startsWith('/'))) {
+			&& lastMessage.systemMessage !== 'reaction'
+			&& lastMessage.systemMessage !== 'reaction_deleted'
+			&& lastMessage.systemMessage !== 'reaction_revoked'
+			&& lastMessage.systemMessage !== 'message_deleted'
+			&& !(typeof lastMessage.id.startsWith === 'function'
+				&& lastMessage.id.startsWith('temp-')
+				&& lastMessage.message.startsWith('/'))) {
 			commit('updateConversationLastMessage', { token, lastMessage })
 		}
 	},
