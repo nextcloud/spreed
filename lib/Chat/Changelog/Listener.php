@@ -29,19 +29,21 @@ use OCP\EventDispatcher\IEventDispatcher;
 
 class Listener {
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(RoomController::EVENT_BEFORE_ROOMS_GET, static function (UserEvent $event) {
-			$userId = $event->getUserId();
-
-			/** @var Listener $listener */
-			$listener = \OC::$server->get(self::class);
-			$listener->preGetRooms($userId);
-		}, -100);
+		$dispatcher->addListener(RoomController::EVENT_BEFORE_ROOMS_GET, [self::class, 'updateChangelog'], -100);
 	}
 
 	protected Manager $manager;
 
 	public function __construct(Manager $manager) {
 		$this->manager = $manager;
+	}
+
+	public static function updateChangelog(UserEvent $event): void {
+		$userId = $event->getUserId();
+
+		/** @var Listener $listener */
+		$listener = \OC::$server->get(self::class);
+		$listener->preGetRooms($userId);
 	}
 
 	public function preGetRooms(string $userId): void {
