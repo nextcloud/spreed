@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.0.0-rc.2 – 2022-04-19
+### Fixed
+- Remove event to delete shares when user leave of room
+  [#7168](https://github.com/nextcloud/spreed/pull/7168)
+- Add item shares from chat messages directly to the store
+  [#7149](https://github.com/nextcloud/spreed/pull/7149)
+- Only switch to the participant tab when the token changes not any other detail
+  [#7146](https://github.com/nextcloud/spreed/pull/7146)
+- Don't update last message of conversation with invisible message
+  [#7142](https://github.com/nextcloud/spreed/pull/7142)
+
+### Still in progress
+- Media tab showing all shared items of the conversation
+
 ## 14.0.0-rc.1 – 2022-04-13
 ### Added
 - Reactions for chat messages
