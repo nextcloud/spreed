@@ -28,19 +28,25 @@ import { generateOcsUrl } from '@nextcloud/router'
 const getSharedItemsOverview = async function(token, limit) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/share/overview', {
 		token,
-		limit,
-	}))
+	}), {
+		params: {
+			limit,
+		},
+	})
 }
 
 // Returns the last 200 (or limit) shared items, given a conversation and the type
 // of shared item
-const getSharedItems = async function(token, objectType, lastKnownMessageId, limit,) {
+const getSharedItems = async function(token, objectType, lastKnownMessageId, limit) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/share', {
 		token,
-		objectType,
-		lastKnownMessageId,
-		limit,
-	}))
+	}), {
+		params: {
+			limit,
+			objectType,
+			lastKnownMessageId,
+		},
+	})
 }
 
 export {
