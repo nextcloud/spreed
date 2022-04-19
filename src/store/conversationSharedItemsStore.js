@@ -113,16 +113,32 @@ export const mutations = {
 }
 
 const actions = {
-	async getSharedItems({ commit }, { token, type, lastKnownMessageId, limit }) {
+	async getSharedItems({ commit, state }, { token, type }) {
+		if (!state.sharedItemsByConversationAndType[token]
+			|| !state.sharedItemsByConversationAndType[token][type]) {
+			console.error('Missing overview for shared items in ', token)
+			return false
+		}
+
+		const limit = 100
+		const lastKnownMessageId = Math.min.apply(Math, Object.keys(state.sharedItemsByConversationAndType[token][type]))
 		try {
 			const response = await getSharedItems(token, type, lastKnownMessageId, limit)
-			// loop over the response elements and add them to the store
-			for (const sharedItem in response) {
-				commit('addSharedItem', sharedItem)
-			}
+			const messages = response.data.ocs.data
+			const hasMore = messages.length >= limit
 
+			// loop over the response elements and add them to the store
+			for (const message in messages) {
+				commit('addSharedItemMessage', {
+					token,
+					type,
+					message,
+				})
+			}
+			return hasMore
 		} catch (error) {
-			console.debug(error)
+			console.error(error)
+			return false
 		}
 	},
 
@@ -132,13 +148,13 @@ const actions = {
 		}
 
 		try {
-			const response = await getSharedItemsOverview(token, 10)
+			const response = await getSharedItemsOverview(token, 7)
 			commit('addSharedItemsOverview', {
 				token,
 				data: response.data.ocs.data,
 			})
 		} catch (error) {
-			console.debug(error)
+			console.error(error)
 		}
 	},
 
