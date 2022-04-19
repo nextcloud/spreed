@@ -351,10 +351,10 @@ export default {
 			default: () => { return {} },
 		},
 
-		myReactions: {
-			type: [String, Array],
-			default: [],
-		}
+		reactionsSelf: {
+			type: Array,
+			default: () => { return [] },
+		},
 	},
 
 	data() {
@@ -572,8 +572,7 @@ export default {
 		},
 
 		simpleReactions() {
-			const reactions = Object.assign({}, this.messageObject.reactions)
-			return reactions
+			return this.messageObject.reactions
 		},
 
 		detailedReactions() {
@@ -611,7 +610,7 @@ export default {
 
 	methods: {
 		userHasReacted(reaction) {
-			return this.myReactions && this.myReactions.indexOf(reaction) !== -1
+			return this.reactionsSelf && this.reactionsSelf.indexOf(reaction) !== -1
 		},
 
 		lastReadMessageVisibilityChanged(isVisible) {

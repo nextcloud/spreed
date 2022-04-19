@@ -356,10 +356,10 @@ const mutations = {
 		const reactionCount = state.messages[token][messageId].reactions[reaction] + 1
 		Vue.set(state.messages[token][messageId].reactions, reaction, reactionCount)
 
-		if (!state.messages[token][messageId].myReactions) {
-			Vue.set(state.messages[token][messageId], 'myReactions', [reaction])
+		if (!state.messages[token][messageId].reactionsSelf) {
+			Vue.set(state.messages[token][messageId], 'reactionsSelf', [reaction])
 		} else {
-			state.messages[token][messageId].myReactions.push(reaction)
+			state.messages[token][messageId].reactionsSelf.push(reaction)
 		}
 	},
 
@@ -371,10 +371,10 @@ const mutations = {
 			Vue.delete(state.messages[token][messageId].reactions, reaction)
 		}
 
-		if (state.messages[token][messageId].myReactions) {
-			const i = state.messages[token][messageId].myReactions.indexOf(reaction)
+		if (state.messages[token][messageId].reactionsSelf) {
+			const i = state.messages[token][messageId].reactionsSelf.indexOf(reaction)
 			if (i !== -1) {
-				Vue.delete(state.messages[token][messageId], 'myReactions', i)
+				Vue.delete(state.messages[token][messageId], 'reactionsSelf', i)
 			}
 		}
 	},

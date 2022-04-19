@@ -817,8 +817,8 @@ describe('Message.vue', () => {
 			store = new Store(testStoreConfig)
 
 			const messagePropsWithReactions = Object.assign({}, messageProps)
-			messagePropsWithReactions.reactions = {'👍': 1}
-			messagePropsWithReactions.myReactions = ['👍']
+			messagePropsWithReactions.reactions = { '👍': 1 }
+			messagePropsWithReactions.reactionsSelf = ['👍']
 
 			const wrapper = shallowMount(Message, {
 				localVue,
@@ -853,8 +853,8 @@ describe('Message.vue', () => {
 			store = new Store(testStoreConfig)
 
 			const messagePropsWithReactions = Object.assign({}, messageProps)
-			messagePropsWithReactions.reactions = {'❤️': 1}
-			messagePropsWithReactions.reactions = ['❤️']
+			messagePropsWithReactions.reactions = { '❤️': 1 }
+			messagePropsWithReactions.reactionsSelf = ['❤️']
 
 			const wrapper = shallowMount(Message, {
 				localVue,
