@@ -1705,6 +1705,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if ($includeReactions) {
 				$data['reactions'] = json_encode($message['reactions'], JSON_UNESCAPED_UNICODE);
+				if (isset($message['myReactions'])) {
+					$data['myReactions'] = json_encode($message['myReactions'], JSON_UNESCAPED_UNICODE);
+				} else {
+					$data['myReactions'] = null;
+				}
 			}
 			return $data;
 		}, $messages));
