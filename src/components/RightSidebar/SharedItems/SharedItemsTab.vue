@@ -22,17 +22,34 @@
 <template>
 	<div v-if="!loading && active">
 		<template v-for="type in sharedItemsOrder">
-			<SharedItems v-if="sharedItems[type]"
-				:key="type"
-				:type="type"
-				:items="sharedItems[type]" />
+			<div v-if="sharedItems[type]" :key="type">
+				<AppNavigationCaption :title="getTitle(type)" />
+				<SharedItems :type="type"
+					:items="sharedItems[type]" />
+				<Button v-if="hasMore(sharedItems[type])"
+					type="tertiary-no-background"
+					class="more"
+					:wide="true"
+					@click="handleCaptionClick">
+					<template #icon>
+						<DotsHorizontal :size="20"
+							decorative
+							title="" />
+					</template>
+					{{ getButtonTitle(type) }}
+				</Button>
+			</div>
 		</template>
 		<AppNavigationCaption :title="t('spreed', 'Projects')" />
 		<CollectionList v-if="getUserId && token"
 			:id="token"
 			type="room"
 			:name="conversation.displayName" />
-		<SharedItemsBrowser :shared-items="sharedItems" :shared-items-order="sharedItemsOrder" />
+		<SharedItemsBrowser v-if="showSharedItemsBrowser"
+			:shared-items="sharedItems"
+			:active-tab.sync="browserActiveTab"
+			:shared-items-order="sharedItemsOrder"
+			@close="showSharedItemsBrowser = false" />
 	</div>
 </template>
 
@@ -42,6 +59,10 @@ import SharedItems from './SharedItems'
 import { SHARED_ITEM } from '../../../constants'
 import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
 import SharedItemsBrowser from './SharedItemsBrowser/SharedItemsBrowser.vue'
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import Button from '@nextcloud/vue/dist/Components/Button'
+import sharedItems from '../../../mixins/sharedItems'
+import { showMessage } from '@nextcloud/dialogs'
 
 export default {
 
@@ -52,7 +73,11 @@ export default {
 		CollectionList,
 		AppNavigationCaption,
 		SharedItemsBrowser,
+		DotsHorizontal,
+		Button,
 	},
+
+	mixins: [sharedItems],
 
 	props: {
 
@@ -60,6 +85,13 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+	},
+
+	data() {
+		return {
+			showSharedItemsBrowser: false,
+			browserActiveTab: '',
+		}
 	},
 
 	computed: {
@@ -82,12 +114,6 @@ export default {
 		sharedItems() {
 			return this.$store.getters.sharedItems(this.token)
 		},
-
-		// Defines the order of the sections
-		sharedItemsOrder() {
-			// FIXME restore when non files work return [SHARED_ITEM.TYPES.MEDIA, SHARED_ITEM.TYPES.FILE, SHARED_ITEM.TYPES.VOICE, SHARED_ITEM.TYPES.AUDIO, SHARED_ITEM.TYPES.LOCATION, SHARED_ITEM.TYPES.DECK_CARD, SHARED_ITEM.TYPES.OTHER]
-			return [SHARED_ITEM.TYPES.MEDIA, SHARED_ITEM.TYPES.FILE, SHARED_ITEM.TYPES.VOICE, SHARED_ITEM.TYPES.AUDIO]
-		},
 	},
 
 	watch: {
@@ -102,6 +128,44 @@ export default {
 		getSharedItemsOverview() {
 			this.$store.dispatch('getSharedItemsOverview', { token: this.token })
 		},
+
+		hasMore(items) {
+			return Object.values(items).length > 6
+		},
+
+		handleCaptionClick() {
+			showMessage('Screenshot feature only. Implementation of the real feature will come soon! 😎')
+			console.debug('Show more')
+			this.showSharedItemsBrowser = true
+		},
+
+		getButtonTitle(type) {
+			switch (type) {
+			case SHARED_ITEM.TYPES.MEDIA:
+				return t('spreed', 'Show all media')
+			case SHARED_ITEM.TYPES.FILE:
+				return t('spreed', 'Show all files')
+			case SHARED_ITEM.TYPES.DECK_CARD:
+				return t('spreed', 'Show all deck cards')
+			case SHARED_ITEM.TYPES.VOICE:
+				return t('spreed', 'Show all voice messages')
+			case SHARED_ITEM.TYPES.LOCATION:
+				return t('spreed', 'Show all locations')
+			case SHARED_ITEM.TYPES.AUDIO:
+				return t('spreed', 'Show all audio')
+			case SHARED_ITEM.TYPES.OTHER:
+			default:
+				return t('spreed', 'Show all other')
+			}
+		},
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+
+.more {
+	margin-top: 8px;
+}
+
+</style>

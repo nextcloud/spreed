@@ -20,48 +20,26 @@
 -->
 
 <template>
-	<div class="shared-items">
-		<AppNavigationCaption :title="title" />
-		<div class="files" :class="{'files__list' : isList}">
-			<template v-for="file in itemsToDisplay">
-				<FilePreview :key="file.id"
-					:small-preview="isList"
-					:row-layout="isList"
-					:is-shared-items-tab="true"
-					v-bind="file.messageParameters.file" />
-			</template>
-		</div>
-		<Button v-if="hasMore"
-			type="tertiary"
-			class="shared-items__more"
-			:wide="true"
-			@click="handleCaptionClick">
-			<template #icon>
-				<DotsHorizontal :size="20"
-					decorative
-					title="" />
-			</template>
-			{{ buttonTitle }}
-		</Button>
+	<div class="shared-items" :class="{'files__list' : isList}">
+		<template v-for="file in itemsToDisplay">
+			<FilePreview :key="file.id"
+				:small-preview="isList"
+				:row-layout="isList"
+				:is-shared-items-tab="true"
+				v-bind="file.messageParameters.file" />
+		</template>
 	</div>
 </template>
 
 <script>
-import Button from '@nextcloud/vue/dist/Components/Button'
 import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
-import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
-import { showMessage } from '@nextcloud/dialogs'
 import { SHARED_ITEM } from '../../../constants'
 
 export default {
 	name: 'SharedItems',
 
 	components: {
-		Button,
 		FilePreview,
-		DotsHorizontal,
-		AppNavigationCaption,
 	},
 
 	props: {
@@ -81,46 +59,6 @@ export default {
 			return Object.values(this.items).reverse().slice(0, 6)
 		},
 
-		title() {
-			switch (this.type) {
-			case SHARED_ITEM.TYPES.MEDIA:
-				return t('spreed', 'Media')
-			case SHARED_ITEM.TYPES.FILE:
-				return t('spreed', 'Files')
-			case SHARED_ITEM.TYPES.DECK_CARD:
-				return t('spreed', 'Deck cards')
-			case SHARED_ITEM.TYPES.VOICE:
-				return t('spreed', 'Voice messages')
-			case SHARED_ITEM.TYPES.LOCATION:
-				return t('spreed', 'Locations')
-			case SHARED_ITEM.TYPES.AUDIO:
-				return t('spreed', 'Audio')
-			case SHARED_ITEM.TYPES.OTHER:
-			default:
-				return t('spreed', 'Other')
-			}
-		},
-
-		buttonTitle() {
-			switch (this.type) {
-			case SHARED_ITEM.TYPES.MEDIA:
-				return t('spreed', 'Show all media')
-			case SHARED_ITEM.TYPES.FILE:
-				return t('spreed', 'Show all files')
-			case SHARED_ITEM.TYPES.DECK_CARD:
-				return t('spreed', 'Show all deck cards')
-			case SHARED_ITEM.TYPES.VOICE:
-				return t('spreed', 'Show all voice messages')
-			case SHARED_ITEM.TYPES.LOCATION:
-				return t('spreed', 'Show all locations')
-			case SHARED_ITEM.TYPES.AUDIO:
-				return t('spreed', 'Show all audio')
-			case SHARED_ITEM.TYPES.OTHER:
-			default:
-				return t('spreed', 'Show all other')
-			}
-		},
-
 		isList() {
 			switch (this.type) {
 			case SHARED_ITEM.TYPES.MEDIA:
@@ -131,17 +69,6 @@ export default {
 				return true
 			}
 		},
-
-		hasMore() {
-			return Object.values(this.items).length > 6
-		},
-	},
-
-	methods: {
-		handleCaptionClick() {
-			showMessage('Screenshot feature only. Implementation of the real feature will come soon! 😎')
-			console.debug('Show more')
-		},
 	},
 }
 </script>
@@ -151,18 +78,12 @@ export default {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-template-rows: 1fr 1fr;
+	margin-bottom: 16px;
 	grid-gap: 4px;
 	&__list {
 		display: flex;
 		flex-direction: column;
 	}
 
-}
-
-.shared-items {
-	margin-bottom: 16px;
-	&__more {
-		margin-top: 8px;
-	}
 }
 </style>
