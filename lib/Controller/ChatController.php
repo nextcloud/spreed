@@ -555,14 +555,14 @@ class ChatController extends AEnvironmentAwareController {
 		// Inject the reactions self into the $messages array
 		foreach ($reactionsById as $messageId => $reactions) {
 			if (isset($messages[$commentIdToIndex[$messageId]])) {
-				$messages[$commentIdToIndex[$messageId]]['reactions']['self'] = $reactions;
+				$messages[$commentIdToIndex[$messageId]]['myReactions'] = $reactions;
 			}
 
 			// Add the self part also to potential parent elements
 			if (isset($parentMap[$messageId])) {
 				foreach ($parentMap[$messageId] as $mid) {
 					if (isset($messages[$commentIdToIndex[$mid]])) {
-						$messages[$commentIdToIndex[$mid]]['parent']['reactions']['self'] = $reactions;
+						$messages[$commentIdToIndex[$mid]]['parent']['myReactions'] = $reactions;
 					}
 				}
 			}
