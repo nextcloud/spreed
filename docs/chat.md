@@ -51,7 +51,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `messageParameters` | array | Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
         `parent` | array | **Optional:** See `Parent data` below
         `reactions` | array | **Optional:** An array map with relation between reaction emoji and total count of reactions with this emoji
-        `reactions`.`self` | array | **Optional:** When the user reacted the reactions array will have an entry `self` with the list of emojis the user reacted with
+        `reactionsSelf` | array | **Optional:** When the user reacted this is the list of emojis the user reacted with
 
 #### Parent data
 
