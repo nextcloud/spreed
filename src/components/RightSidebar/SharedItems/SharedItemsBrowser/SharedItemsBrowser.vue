@@ -20,16 +20,21 @@
 -->
 
 <template>
-	<Modal size="large">
+	<Modal size="large" v-on="$listeners">
 		<div class="shared-items-browser__navigation">
 			<template v-for="type in sharedItemsOrder">
 				<Button v-if="sharedItems[type]"
 					:key="type"
+					:class="{'active' : activeTab === type}"
 					type="tertiary"
-					@click="handleTabClick">
+					@click="handleTabClick(type)">
 					{{ type }}
 				</Button>
 			</template>
+		</div>
+		<div class="shared-items-browser__content">
+			<SharedItems :type="activeTab"
+				:items="sharedItems[activeTab]" />
 		</div>
 	</Modal>
 </template>
@@ -37,6 +42,7 @@
 <script>
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import Button from '@nextcloud/vue/dist/Components/Button'
+import SharedItems from '../SharedItems.vue'
 
 export default {
 	name: 'SharedItemsBrowser',
@@ -44,6 +50,7 @@ export default {
 	components: {
 		Modal,
 		Button,
+		SharedItems,
 	},
 
 	props: {
@@ -57,33 +64,38 @@ export default {
 			required: true,
 		},
 
-		// The tab that is open upon opening the modal
-		initialTab: {
+		activeTab: {
 			type: String,
-			default: 'media',
+			required: true,
 		},
 	},
 
-	data() {
-		return {
-			activeTab: this.initialTab,
-		}
-	},
-
 	methods: {
-		handleTabClick() {
-			console.debug('Tab click')
+		handleTabClick(type) {
+			this.$emit('update:active-tab', type)
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-.shared-items-browser__navigation {
-	display: flex;
-	gap: 8px;
-	padding: 16px;
-	flex-wrap: wrap;
-	justify-content: center;
+.shared-items-browser {
+	&__navigation {
+		display: flex;
+		gap: 8px;
+		padding: 16px;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+	&__content {
+		overflow: auto;
+	}
+}
+
+::v-deep .button-vue {
+	border-radius: var(--border-radius-large);
+	&.active {
+		background-color: var(--color-primary-light-hover);
+	}
 }
 </style>
