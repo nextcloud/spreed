@@ -29,8 +29,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Share;
 
 use OC\Files\Cache\Cache;
-use OCA\Talk\Events\ParticipantEvent;
-use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -106,26 +104,6 @@ class RoomShareProvider implements IShareProvider {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function (ParticipantEvent $event): void {
-			$room = $event->getRoom();
-
-			if ($event->getParticipant()->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
-				/** @var self $roomShareProvider */
-				$roomShareProvider = \OC::$server->get(self::class);
-				$roomShareProvider->deleteInRoom($room->getToken(), $event->getParticipant()->getAttendee()->getActorId());
-			}
-		};
-		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener);
-
-		$listener = static function (RemoveUserEvent $event): void {
-			$room = $event->getRoom();
-
-			/** @var self $roomShareProvider */
-			$roomShareProvider = \OC::$server->get(self::class);
-			$roomShareProvider->deleteInRoom($room->getToken(), $event->getUser()->getUID());
-		};
-		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
-
 		$listener = static function (RoomEvent $event): void {
 			$room = $event->getRoom();
 
