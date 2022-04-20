@@ -1678,6 +1678,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$includeParents = in_array('parentMessage', $formData->getRow(0), true);
 		$includeReferenceId = in_array('referenceId', $formData->getRow(0), true);
 		$includeReactions = in_array('reactions', $formData->getRow(0), true);
+		$includeReactionsSelf = in_array('reactionsSelf', $formData->getRow(0), true);
 
 		$count = count($formData->getHash());
 		Assert::assertCount($count, $messages, 'Message count does not match');
@@ -1686,7 +1687,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$messages[$i]['messageParameters'] = 'IGNORE';
 			}
 		}
-		Assert::assertEquals($formData->getHash(), array_map(function ($message) use ($includeParents, $includeReferenceId, $includeReactions) {
+		Assert::assertEquals($formData->getHash(), array_map(function ($message) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],
@@ -1705,6 +1706,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if ($includeReactions) {
 				$data['reactions'] = json_encode($message['reactions'], JSON_UNESCAPED_UNICODE);
+			}
+			if ($includeReactionsSelf) {
+				if (isset($message['reactionsSelf'])) {
+					$data['reactionsSelf'] = json_encode($message['reactionsSelf'], JSON_UNESCAPED_UNICODE);
+				} else {
+					$data['reactionsSelf'] = null;
+				}
 			}
 			return $data;
 		}, $messages));
