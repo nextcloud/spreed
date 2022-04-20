@@ -55,21 +55,23 @@ class Listener {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(IManager::class . '::filterResults', static function (AutoCompleteEvent $event) {
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
+		$dispatcher->addListener(IManager::class . '::filterResults', [self::class, 'filterNonListableMesssages']);
+	}
 
-			if ($event->getItemType() !== 'call') {
-				return;
-			}
+	public static function filterNonListableMesssages(AutoCompleteEvent $event): void {
+		/** @var self $listener */
+		$listener = \OC::$server->get(self::class);
 
-			$event->setResults($listener->filterUsersAndGroupsWithoutTalk($event->getResults()));
+		if ($event->getItemType() !== 'call') {
+			return;
+		}
 
-			$event->setResults($listener->filterBridgeBot($event->getResults()));
-			if ($event->getItemId() !== 'new') {
-				$event->setResults($listener->filterExistingParticipants($event->getItemId(), $event->getResults()));
-			}
-		});
+		$event->setResults($listener->filterUsersAndGroupsWithoutTalk($event->getResults()));
+
+		$event->setResults($listener->filterBridgeBot($event->getResults()));
+		if ($event->getItemId() !== 'new') {
+			$event->setResults($listener->filterExistingParticipants($event->getItemId(), $event->getResults()));
+		}
 	}
 
 	protected function filterUsersAndGroupsWithoutTalk(array $results): array {
