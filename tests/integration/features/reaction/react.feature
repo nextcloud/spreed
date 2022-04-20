@@ -18,16 +18,16 @@ Feature: reaction/react
       | room | users     | participant1 | participant1-displayname | user_added |
       | room | users     | participant1 | participant1-displayname | conversation_created |
     Then user "participant1" sees the following messages in room "room" with 200
-      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions |
-      | room | users     | participant1 | participant1-displayname | Message 1 | []                | {"👍":1}  |
+      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions | reactionsSelf |
+      | room | users     | participant1 | participant1-displayname | Message 1 | []                | {"👍":1}  |               |
     And user "participant1" react with "👍" on message "Message 1" to room "room" with 201
       | actorType | actorId      | actorDisplayName         | reaction |
       | users     | participant1 | participant1-displayname | 👍       |
       | users     | participant2 | participant2-displayname | 👍       |
     And user "participant1" react with "🚀" on message "Message 1" to room "room" with 201
     Then user "participant1" sees the following messages in room "room" with 200
-      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions |
-      | room | users     | participant1 | participant1-displayname | Message 1 | []                | {"👍":2,"🚀":1,"self":["👍","🚀"]} |
+      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions       | reactionsSelf |
+      | room | users     | participant1 | participant1-displayname | Message 1 | []                | {"👍":2,"🚀":1} | ["👍","🚀"]   |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
       | room | users     | participant1 | participant1-displayname | reaction |
