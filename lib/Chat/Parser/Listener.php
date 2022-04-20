@@ -4,6 +4,9 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
+ * @author Joas Schilling <coding@schilljs.com>
+ * @author Vitor Mattos <vitor@php.rio>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,103 +34,115 @@ use OCP\EventDispatcher\IEventDispatcher;
 
 class Listener {
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
-			$message = $event->getMessage();
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, [self::class, 'parseMention'], -100);
 
-			if ($message->getMessageType() !== ChatManager::VERB_MESSAGE) {
-				return;
-			}
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, [self::class, 'parseChangelog'], -75);
 
-			/** @var UserMention $parser */
-			$parser = \OC::$server->get(UserMention::class);
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, [self::class, 'parseSystemMessage']);
+
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, [self::class, 'parseCommand']);
+
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, [self::class, 'parseReaction']);
+
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, [self::class, 'parseDeletedMessage'], 9999);
+	}
+
+	public static function parseMention(ChatMessageEvent $event): void {
+		$message = $event->getMessage();
+
+		if ($message->getMessageType() !== ChatManager::VERB_MESSAGE) {
+			return;
+		}
+
+		/** @var UserMention $parser */
+		$parser = \OC::$server->get(UserMention::class);
+		$parser->parseMessage($message);
+	}
+
+	public static function parseChangelog(ChatMessageEvent $event): void {
+		$message = $event->getMessage();
+
+		if ($message->getMessageType() !== ChatManager::VERB_MESSAGE) {
+			return;
+		}
+
+		/** @var Changelog $parser */
+		$parser = \OC::$server->get(Changelog::class);
+		try {
 			$parser->parseMessage($message);
-		}, -100);
+			$event->stopPropagation();
+		} catch (\OutOfBoundsException $e) {
+			// Unknown message, ignore
+		}
+	}
 
-		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
-			$message = $event->getMessage();
+	public static function parseSystemMessage(ChatMessageEvent $event): void {
+		$message = $event->getMessage();
 
-			if ($message->getMessageType() !== ChatManager::VERB_MESSAGE) {
-				return;
-			}
+		if ($message->getMessageType() !== ChatManager::VERB_SYSTEM) {
+			return;
+		}
 
-			/** @var Changelog $parser */
-			$parser = \OC::$server->get(Changelog::class);
-			try {
-				$parser->parseMessage($message);
-				$event->stopPropagation();
-			} catch (\OutOfBoundsException $e) {
-				// Unknown message, ignore
-			}
-		}, -75);
+		/** @var SystemMessage $parser */
+		$parser = \OC::$server->get(SystemMessage::class);
 
-		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
-			$message = $event->getMessage();
+		try {
+			$parser->parseMessage($message);
+			$event->stopPropagation();
+		} catch (\OutOfBoundsException $e) {
+			// Unknown message, ignore
+		}
+	}
 
-			if ($message->getMessageType() !== ChatManager::VERB_SYSTEM) {
-				return;
-			}
+	public static function parseCommand(ChatMessageEvent $event): void {
+		$chatMessage = $event->getMessage();
 
-			/** @var SystemMessage $parser */
-			$parser = \OC::$server->get(SystemMessage::class);
+		if ($chatMessage->getMessageType() !== ChatManager::VERB_COMMAND) {
+			return;
+		}
 
-			try {
-				$parser->parseMessage($message);
-				$event->stopPropagation();
-			} catch (\OutOfBoundsException $e) {
-				// Unknown message, ignore
-			}
-		});
+		/** @var CommandParser $parser */
+		$parser = \OC::$server->get(CommandParser::class);
 
-		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
-			$chatMessage = $event->getMessage();
-
-			if ($chatMessage->getMessageType() !== ChatManager::VERB_COMMAND) {
-				return;
-			}
-
-			/** @var CommandParser $parser */
-			$parser = \OC::$server->get(CommandParser::class);
-
-			try {
-				$parser->parseMessage($chatMessage);
-				$event->stopPropagation();
-			} catch (\OutOfBoundsException $e) {
-				// Unknown message, ignore
-			} catch (\RuntimeException $e) {
-				$event->stopPropagation();
-			}
-		});
-
-		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
-			$chatMessage = $event->getMessage();
-
-			if ($chatMessage->getMessageType() !== ChatManager::VERB_REACTION && $chatMessage->getMessageType() !== ChatManager::VERB_REACTION_DELETED) {
-				return;
-			}
-
-			/** @var ReactionParser $parser */
-			$parser = \OC::$server->get(ReactionParser::class);
+		try {
 			$parser->parseMessage($chatMessage);
-		});
+			$event->stopPropagation();
+		} catch (\OutOfBoundsException $e) {
+			// Unknown message, ignore
+		} catch (\RuntimeException $e) {
+			$event->stopPropagation();
+		}
+	}
 
-		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function (ChatMessageEvent $event) {
-			$chatMessage = $event->getMessage();
+	public static function parseReaction(ChatMessageEvent $event): void {
+		$chatMessage = $event->getMessage();
 
-			if ($chatMessage->getMessageType() !== ChatManager::VERB_MESSAGE_DELETED) {
-				return;
-			}
+		if ($chatMessage->getMessageType() !== ChatManager::VERB_REACTION && $chatMessage->getMessageType() !== ChatManager::VERB_REACTION_DELETED) {
+			return;
+		}
 
-			/** @var SystemMessage $parser */
-			$parser = \OC::$server->get(SystemMessage::class);
+		/** @var ReactionParser $parser */
+		$parser = \OC::$server->get(ReactionParser::class);
+		$parser->parseMessage($chatMessage);
+	}
 
-			try {
-				$parser->parseDeletedMessage($chatMessage);
-				$event->stopPropagation();
-			} catch (\OutOfBoundsException $e) {
-				// Unknown message, ignore
-			} catch (\RuntimeException $e) {
-				$event->stopPropagation();
-			}
-		}, 9999);// First things first
+	public static function parseDeletedMessage(ChatMessageEvent $event): void {
+		$chatMessage = $event->getMessage();
+
+		if ($chatMessage->getMessageType() !== ChatManager::VERB_MESSAGE_DELETED) {
+			return;
+		}
+
+		/** @var SystemMessage $parser */
+		$parser = \OC::$server->get(SystemMessage::class);
+
+		try {
+			$parser->parseDeletedMessage($chatMessage);
+			$event->stopPropagation();
+		} catch (\OutOfBoundsException $e) {
+			// Unknown message, ignore
+		} catch (\RuntimeException $e) {
+			$event->stopPropagation();
+		}
 	}
 }
