@@ -405,7 +405,6 @@ export default {
 
 		callParticipantCollection.on('remove', this._lowerHandWhenParticipantLeaves)
 
-		subscribe('talk:video:toggled', this.handleToggleVideo)
 		subscribe('switch-screen-to-id', this._switchScreenToId)
 	},
 	beforeDestroy() {
@@ -413,7 +412,6 @@ export default {
 
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
 
-		unsubscribe('talk:video:toggled', this.handleToggleVideo)
 		unsubscribe('switch-screen-to-id', this._switchScreenToId)
 	},
 	methods: {
@@ -646,11 +644,6 @@ export default {
 				console.error(exception)
 			}
 		}, 1500),
-
-		// Toggles videos on and off
-		handleToggleVideo({ peerId, value }) {
-			this.sharedDatas[peerId].remoteVideoBlocker.setVideoEnabled(value)
-		},
 
 		adjustSimulcastQuality() {
 			this.callParticipantModels.forEach(callParticipantModel => {
