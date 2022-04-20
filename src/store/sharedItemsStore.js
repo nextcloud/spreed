@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import { getSharedItemsOverview, getSharedItems } from '../services/conversationSharedItemsService'
+import { getSharedItemsOverview, getSharedItems } from '../services/sharedItemsService'
 import { SHARED_ITEM } from '../constants'
 
 const getItemTypeFromMessage = function(message) {
