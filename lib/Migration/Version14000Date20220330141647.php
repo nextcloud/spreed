@@ -34,7 +34,7 @@ use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
-class Version14000Date20220330141646 extends SimpleMigrationStep {
+class Version14000Date20220330141647 extends SimpleMigrationStep {
 	protected IDBConnection $connection;
 
 	public function __construct(IDBConnection $connection) {
@@ -97,6 +97,10 @@ class Version14000Date20220330141646 extends SimpleMigrationStep {
 	 * @param array $options
 	 */
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
+		$sql = $this->connection->getDatabasePlatform()
+			->getTruncateTableSQL('`*PREFIX*talk_attachments`');
+		$this->connection->executeQuery($sql);
+
 		$insert = $this->connection->getQueryBuilder();
 		$insert->insert('talk_attachments')
 			->setValue('room_id', $insert->createParameter('room_id'))
