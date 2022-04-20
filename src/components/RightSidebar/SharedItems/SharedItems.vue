@@ -52,11 +52,17 @@ export default {
 			type: Object,
 			required: true,
 		},
+
+		// Limits the amount of items displayed
+		limit: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	computed: {
 		itemsToDisplay() {
-			return Object.values(this.items).reverse().slice(0, 6)
+			return this.limit ? Object.values(this.items).reverse().slice(0, 6) : Object.values(this.items).reverse()
 		},
 
 		isList() {

@@ -33,7 +33,7 @@
 					</Button>
 				</template>
 			</div>
-			<div class="shared-items-browser__content">
+			<div ref="scroller" class="shared-items-browser__content" @scroll="debounceHandleScroll">
 				<SharedItems :type="activeTab"
 					:items="sharedItems[activeTab]" />
 			</div>
@@ -46,6 +46,7 @@ import Modal from '@nextcloud/vue/dist/Components/Modal'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import SharedItems from '../SharedItems.vue'
 import sharedItems from '../../../../mixins/sharedItems'
+import debounce from 'debounce'
 
 export default {
 	name: 'SharedItemsBrowser',
@@ -70,9 +71,49 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			firstItemsLoaded: {},
+			isRequestingMoreItems: {},
+		}
+	},
+
+	computed: {
+		scroller() {
+			return this.$refs.scroller
+		},
+
+		token() {
+			return this.$store.getters.getToken()
+		},
+	},
+
+	watch: {
+		activeTab(newType) {
+			if (this.firstItemsLoaded?.[newType]) {
+				this.$store.dispatch('getSharedItems', this.token, newType)
+				this.firstItemsLoaded[newType] = true
+			}
+		},
+	},
+
 	methods: {
 		handleTabClick(type) {
 			this.$emit('update:active-tab', type)
+		},
+
+		debounceHandleScroll: debounce(function() {
+			this.handleScroll()
+		}, 50),
+
+		async handleScroll() {
+			const scrollHeight = this.scroller.scrollHeight
+			const scrollTop = this.scroller.scrollTop
+			if (scrollTop / scrollHeight > 0.8 && !this.isRequestingMoreItems?.[this.activeTab]) {
+				this.isRequestingMoreItems[this.activeTab] = true
+				this.$store.dispatch('getSharedItems', this.token, this.activeTab)
+				this.isRequestingMoreItems[this.activeTab] = false
+			}
 		},
 	},
 }

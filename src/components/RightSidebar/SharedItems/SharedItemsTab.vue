@@ -25,6 +25,7 @@
 			<div v-if="sharedItems[type]" :key="type">
 				<AppNavigationCaption :title="getTitle(type)" />
 				<SharedItems :type="type"
+					:limit="true"
 					:items="sharedItems[type]" />
 				<Button v-if="hasMore(sharedItems[type])"
 					type="tertiary-no-background"
