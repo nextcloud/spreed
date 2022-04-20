@@ -41,33 +41,35 @@ class Listener {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(ChatManager::EVENT_BEFORE_MESSAGE_SEND, static function (ChatParticipantEvent $event) {
-			$message = $event->getComment();
-			$participant = $event->getParticipant();
+		$dispatcher->addListener(ChatManager::EVENT_BEFORE_MESSAGE_SEND, [self::class, 'executeCommand']);
+	}
 
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
+	public static function executeCommand(ChatParticipantEvent $event): void {
+		$message = $event->getComment();
+		$participant = $event->getParticipant();
 
-			if (strpos($message->getMessage(), '//') === 0) {
-				return;
-			}
+		/** @var self $listener */
+		$listener = \OC::$server->get(self::class);
 
-			try {
-				/** @var Command $command */
-				/** @var string $arguments */
-				[$command, $arguments] = $listener->getCommand($message->getMessage());
-				$command = $listener->commandService->resolveAlias($command);
-			} catch (DoesNotExistException $e) {
-				return;
-			}
+		if (strpos($message->getMessage(), '//') === 0) {
+			return;
+		}
 
-			if (!$listener->executor->isCommandAvailableForParticipant($command, $participant)) {
-				$command = $listener->commandService->find('', 'help');
-				$arguments = trim($message->getMessage());
-			}
+		try {
+			/** @var Command $command */
+			/** @var string $arguments */
+			[$command, $arguments] = $listener->getCommand($message->getMessage());
+			$command = $listener->commandService->resolveAlias($command);
+		} catch (DoesNotExistException $e) {
+			return;
+		}
 
-			$listener->executor->exec($event->getRoom(), $message, $command, $arguments, $participant);
-		});
+		if (!$listener->executor->isCommandAvailableForParticipant($command, $participant)) {
+			$command = $listener->commandService->find('', 'help');
+			$arguments = trim($message->getMessage());
+		}
+
+		$listener->executor->exec($event->getRoom(), $message, $command, $arguments, $participant);
 	}
 
 	/**
