@@ -275,7 +275,7 @@ export default {
 		color: var(--color-primary);
 		font-weight: bold;
 		font-size: var(--default-font-size);
-		line-height: var(----default-line-height);
+		line-height: var(--default-line-height);
 	}
 
 	&__contenteditable {
