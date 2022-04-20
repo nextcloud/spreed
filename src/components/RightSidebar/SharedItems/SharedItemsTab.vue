@@ -30,7 +30,7 @@
 					type="tertiary-no-background"
 					class="more"
 					:wide="true"
-					@click="handleCaptionClick">
+					@click="showMore(type)">
 					<template #icon>
 						<DotsHorizontal :size="20"
 							decorative
@@ -48,7 +48,6 @@
 		<SharedItemsBrowser v-if="showSharedItemsBrowser"
 			:shared-items="sharedItems"
 			:active-tab.sync="browserActiveTab"
-			:shared-items-order="sharedItemsOrder"
 			@close="showSharedItemsBrowser = false" />
 	</div>
 </template>
@@ -62,7 +61,6 @@ import SharedItemsBrowser from './SharedItemsBrowser/SharedItemsBrowser.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import sharedItems from '../../../mixins/sharedItems'
-import { showMessage } from '@nextcloud/dialogs'
 
 export default {
 
@@ -133,9 +131,8 @@ export default {
 			return Object.values(items).length > 6
 		},
 
-		handleCaptionClick() {
-			showMessage('Screenshot feature only. Implementation of the real feature will come soon! 😎')
-			console.debug('Show more')
+		showMore(type) {
+			this.browserActiveTab = type
 			this.showSharedItemsBrowser = true
 		},
 

@@ -21,20 +21,22 @@
 
 <template>
 	<Modal size="large" v-on="$listeners">
-		<div class="shared-items-browser__navigation">
-			<template v-for="type in sharedItemsOrder">
-				<Button v-if="sharedItems[type]"
-					:key="type"
-					:class="{'active' : activeTab === type}"
-					type="tertiary"
-					@click="handleTabClick(type)">
-					{{ type }}
-				</Button>
-			</template>
-		</div>
-		<div class="shared-items-browser__content">
-			<SharedItems :type="activeTab"
-				:items="sharedItems[activeTab]" />
+		<div class="shared-items-browser">
+			<div class="shared-items-browser__navigation">
+				<template v-for="type in sharedItemsOrder">
+					<Button v-if="sharedItems[type]"
+						:key="type"
+						:class="{'active' : activeTab === type}"
+						type="tertiary"
+						@click="handleTabClick(type)">
+						{{ getTitle(type) }}
+					</Button>
+				</template>
+			</div>
+			<div class="shared-items-browser__content">
+				<SharedItems :type="activeTab"
+					:items="sharedItems[activeTab]" />
+			</div>
 		</div>
 	</Modal>
 </template>
@@ -43,6 +45,7 @@
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import SharedItems from '../SharedItems.vue'
+import sharedItems from '../../../../mixins/sharedItems'
 
 export default {
 	name: 'SharedItemsBrowser',
@@ -53,14 +56,11 @@ export default {
 		SharedItems,
 	},
 
+	mixins: [sharedItems],
+
 	props: {
 		sharedItems: {
 			type: Object,
-			required: true,
-		},
-
-		sharedItemsOrder: {
-			type: Array,
 			required: true,
 		},
 
@@ -80,6 +80,11 @@ export default {
 
 <style lang="scss" scoped>
 .shared-items-browser {
+	width: 100%;
+	height: 100%;
+	position:relative;
+	display: flex;
+	flex-direction: column;
 	&__navigation {
 		display: flex;
 		gap: 8px;
@@ -88,7 +93,9 @@ export default {
 		justify-content: center;
 	}
 	&__content {
-		overflow: auto;
+		overflow-y: auto;
+		overflow-x: hidden;
+		margin: 0 12px;
 	}
 }
 

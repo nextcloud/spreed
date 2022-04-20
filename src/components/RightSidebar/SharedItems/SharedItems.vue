@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div class="shared-items" :class="{'files__list' : isList}">
+	<div class="shared-items" :class="{'shared-items__list' : isList}">
 		<template v-for="file in itemsToDisplay">
 			<FilePreview :key="file.id"
 				:small-preview="isList"
@@ -74,7 +74,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.files {
+.shared-items {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-template-rows: 1fr 1fr;
