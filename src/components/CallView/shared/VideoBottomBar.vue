@@ -255,10 +255,7 @@ export default {
 		},
 
 		toggleVideo() {
-			emit('talk:video:toggled', {
-				peerId: this.model.attributes.peerId,
-				value: !this.sharedData.remoteVideoBlocker.isVideoEnabled(),
-			})
+			this.sharedData.remoteVideoBlocker.setVideoEnabled(!this.sharedData.remoteVideoBlocker.isVideoEnabled())
 		},
 
 		switchToScreen() {
