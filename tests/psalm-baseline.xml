@@ -251,10 +251,6 @@
     </UndefinedClass>
   </file>
   <file src="lib/Share/RoomShareProvider.php">
-    <InvalidArgument occurrences="2">
-      <code>new GenericEvent($existingShare)</code>
-      <code>self::EVENT_SHARE_FILE_AGAIN</code>
-    </InvalidArgument>
     <UndefinedClass occurrences="1">
       <code>Cache</code>
     </UndefinedClass>

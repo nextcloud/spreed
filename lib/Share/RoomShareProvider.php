@@ -155,7 +155,7 @@ class RoomShareProvider implements IShareProvider {
 		foreach ($existingShares as $existingShare) {
 			if ($existingShare->getSharedWith() === $share->getSharedWith()) {
 				// FIXME Should be moved away from GenericEvent as soon as OCP\Share20\IManager did move too
-				$this->dispatcher->dispatch(self::EVENT_SHARE_FILE_AGAIN, new GenericEvent($existingShare));
+				$this->dispatcher->dispatch(new GenericEvent($existingShare), self::EVENT_SHARE_FILE_AGAIN);
 				throw new GenericShareException('Already shared', $this->l->t('Path is already shared with this room'), 403);
 			}
 		}
