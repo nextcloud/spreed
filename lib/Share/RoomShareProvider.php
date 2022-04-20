@@ -71,6 +71,8 @@ class RoomShareProvider implements IShareProvider {
 	public const TALK_FOLDER = '/Talk';
 	public const TALK_FOLDER_PLACEHOLDER = '/{TALK_PLACEHOLDER}';
 
+	public const EVENT_SHARE_FILE_AGAIN = self::class . '::shareFileAgain';
+
 	private IDBConnection $dbConnection;
 	private ISecureRandom $secureRandom;
 	private IShareManager $shareManager;
@@ -153,7 +155,7 @@ class RoomShareProvider implements IShareProvider {
 		foreach ($existingShares as $existingShare) {
 			if ($existingShare->getSharedWith() === $share->getSharedWith()) {
 				// FIXME Should be moved away from GenericEvent as soon as OCP\Share20\IManager did move too
-				$this->dispatcher->dispatch(self::class . '::' . 'share_file_again', new GenericEvent($existingShare));
+				$this->dispatcher->dispatch(self::EVENT_SHARE_FILE_AGAIN, new GenericEvent($existingShare));
 				throw new GenericShareException('Already shared', $this->l->t('Path is already shared with this room'), 403);
 			}
 		}
