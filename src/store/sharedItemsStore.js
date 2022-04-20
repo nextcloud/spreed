@@ -120,7 +120,7 @@ const actions = {
 			return false
 		}
 
-		const limit = 100
+		const limit = 50
 		const lastKnownMessageId = Math.min.apply(Math, Object.keys(state.sharedItemsByConversationAndType[token][type]))
 		try {
 			const response = await getSharedItems(token, type, lastKnownMessageId, limit)
