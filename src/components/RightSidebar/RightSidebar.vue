@@ -242,6 +242,18 @@ export default {
 			}
 		},
 
+		showChatInSidebar(chatInSidebar) {
+			if (chatInSidebar) {
+				this.activeTab = 'chat'
+			} else if (this.activeTab === 'chat') {
+				if (this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE) {
+					this.activeTab = 'shared-items'
+				} else {
+					this.activeTab = 'participants'
+				}
+			}
+		},
+
 		token() {
 			if (this.$refs.participantsTab) {
 				this.$refs.participantsTab.$el.scrollTop = 0
