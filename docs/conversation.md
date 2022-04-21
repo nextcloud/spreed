@@ -73,7 +73,7 @@
         `unreadMentionDirect` | bool | v4 | | Flag if the user was mentioned directly (ignoring @all mentions) since their last visit (only available with `direct-mention-flag` capability)
         `lastReadMessage` | int | v1 | | ID of the last read message in a room (only available with `chat-read-marker` capability)
         `lastCommonReadMessage` | int | v3 | | ID of the last message read by every user that has read privacy set to public in a room. When the user themself has it set to private the value is `0` (only available with `chat-read-status` capability)
-        `lastMessage` | message | v1 | | Last message in a conversation if available, otherwise empty
+        `lastMessage` | message | v1 | | Last message in a conversation if available, otherwise empty. **Note:** Even when given the message will not contain the `parent` or `reactionsSelf` attribute due to performance reasons
         `objectType` | string | v1 | | The type of object that the conversation is associated with; "share:password" if the conversation is used to request a password for a share, otherwise empty
         `objectId` | string | v1 | | Share token if "objectType" is "share:password", otherwise empty
         `status` | string | v4 | | Optional: Only available for one-to-one conversations and when  `includeStatus=true` is set
