@@ -34,7 +34,7 @@ use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
-class Version14000Date20220330141646 extends SimpleMigrationStep {
+class Version14000Date20220330141647 extends SimpleMigrationStep {
 	protected IDBConnection $connection;
 
 	public function __construct(IDBConnection $connection) {
@@ -97,7 +97,9 @@ class Version14000Date20220330141646 extends SimpleMigrationStep {
 	 * @param array $options
 	 */
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
-		// FIXME need to loop over all chat messages :(
+		$sql = $this->connection->getDatabasePlatform()
+			->getTruncateTableSQL('`*PREFIX*talk_attachments`');
+		$this->connection->executeQuery($sql);
 
 		$insert = $this->connection->getQueryBuilder();
 		$insert->insert('talk_attachments')
@@ -129,7 +131,7 @@ class Version14000Date20220330141646 extends SimpleMigrationStep {
 	protected function chunkedWriting(IQueryBuilder $insert, IQueryBuilder $select, int $offset): int {
 		$select->setParameter('offset', $offset);
 
-		$attachments = [];
+		$attachments = $sharesWithoutMimetype = [];
 		$result = $select->executeQuery();
 		while ($row = $result->fetch()) {
 			$attachment = [
@@ -166,16 +168,32 @@ class Version14000Date20220330141646 extends SimpleMigrationStep {
 				} elseif (str_starts_with($mimetype, 'image/') || str_starts_with($mimetype, 'video/')) {
 					$attachment['object_type'] = Attachment::TYPE_MEDIA;
 				} else {
+					if ($mimetype === '' && isset($parameters['share'])) {
+						$sharesWithoutMimetype[(int) $parameters['share']] = (int) $row['id'];
+					}
 					$attachment['object_type'] = Attachment::TYPE_FILE;
 				}
 			}
 
-			$attachments[] = $attachment;
+			$attachments[(int) $row['id']] = $attachment;
 		}
 		$result->closeCursor();
 
 		if (empty($attachments)) {
 			return 0;
+		}
+
+		$mimetypes = $this->getMimetypeFromFileCache(array_keys($sharesWithoutMimetype));
+		foreach ($mimetypes as $shareId => $mimetype) {
+			if (!isset($attachments[$sharesWithoutMimetype[$shareId]])) {
+				continue;
+			}
+
+			if (str_starts_with($mimetype, 'audio/')) {
+				$attachments[$sharesWithoutMimetype[$shareId]]['object_type'] = Attachment::TYPE_AUDIO;
+			} elseif (str_starts_with($mimetype, 'image/') || str_starts_with($mimetype, 'video/')) {
+				$attachments[$sharesWithoutMimetype[$shareId]]['object_type'] = Attachment::TYPE_MEDIA;
+			}
 		}
 
 		$this->connection->beginTransaction();
@@ -194,5 +212,23 @@ class Version14000Date20220330141646 extends SimpleMigrationStep {
 		$this->connection->commit();
 
 		return end($attachments)['message_id'];
+	}
+
+	protected function getMimetypeFromFileCache(array $shareIds): array {
+		$mimetype = [];
+
+		$query = $this->connection->getQueryBuilder();
+		$query->select('s.id', 'm.mimetype')
+			->from('share', 's')
+			->leftJoin('s', 'filecache', 'f', $query->expr()->eq('s.item_source', 'f.fileid'))
+			->leftJoin('f', 'mimetypes', 'm', $query->expr()->eq('f.mimetype', 'm.id'))
+			->where($query->expr()->in('s.id', $query->createNamedParameter($shareIds, IQueryBuilder::PARAM_INT_ARRAY)));
+		$result = $query->executeQuery();
+		while ($row = $result->fetch()) {
+			$mimetype[$row['id']] = $row['mimetype'];
+		}
+		$result->closeCursor();
+
+		return $mimetype;
 	}
 }
