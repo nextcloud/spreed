@@ -282,7 +282,7 @@ class Notifier {
 		if ($notificationLevel === Participant::NOTIFY_ALWAYS) {
 			$notification = $this->createNotification($chat, $comment, 'reaction', [
 				'reaction' => $reaction->getMessage(),
-			]);
+			], $reaction);
 			$notification->setUser($comment->getActorId());
 			$this->notificationManager->notify($notification);
 		}
@@ -388,9 +388,9 @@ class Notifier {
 	 * @param array $subjectData
 	 * @return INotification
 	 */
-	private function createNotification(Room $chat, IComment $comment, string $subject, array $subjectData = []): INotification {
-		$subjectData['userType'] = $comment->getActorType();
-		$subjectData['userId'] = $comment->getActorId();
+	private function createNotification(Room $chat, IComment $comment, string $subject, array $subjectData = [], ?IComment $reaction = null): INotification {
+		$subjectData['userType'] = $reaction ? $reaction->getActorType() : $comment->getActorType();
+		$subjectData['userId'] = $reaction ? $reaction->getActorId() : $comment->getActorId();
 
 		$notification = $this->notificationManager->createNotification();
 		$notification
@@ -400,7 +400,7 @@ class Notifier {
 			->setMessage($comment->getVerb(), [
 				'commentId' => $comment->getId(),
 			])
-			->setDateTime($comment->getCreationDateTime());
+			->setDateTime($reaction ? $reaction->getCreationDateTime() : $comment->getCreationDateTime());
 
 		return $notification;
 	}
