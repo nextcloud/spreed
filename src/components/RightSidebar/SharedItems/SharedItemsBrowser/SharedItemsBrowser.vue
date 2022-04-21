@@ -75,6 +75,7 @@ export default {
 		return {
 			firstItemsLoaded: {},
 			isRequestingMoreItems: {},
+			hasFetchedAllItems: {},
 		}
 	},
 
@@ -90,16 +91,36 @@ export default {
 
 	watch: {
 		activeTab(newType) {
-			if (this.firstItemsLoaded?.[newType]) {
-				this.$store.dispatch('getSharedItems', this.token, newType)
-				this.firstItemsLoaded[newType] = true
-			}
+			this.firstFetchItems(newType)
 		},
+	},
+
+	mounted() {
+		this.firstFetchItems(this.activeTab)
 	},
 
 	methods: {
 		handleTabClick(type) {
 			this.$emit('update:active-tab', type)
+		},
+
+		firstFetchItems(type) {
+			if (!this.firstItemsLoaded?.[type]) {
+				this.fetchItems(type)
+				this.firstItemsLoaded[type] = true
+			}
+		},
+
+		fetchItems(type) {
+			this.isRequestingMoreItems[this.activeTab] = true
+			const hasMoreItems = this.$store.dispatch('getSharedItems', {
+				token: this.token,
+				type,
+			})
+			if (hasMoreItems === false) {
+				this.hasFetchedAllItems[this.activeTab] = true
+			}
+			this.isRequestingMoreItems[this.activeTab] = false
 		},
 
 		debounceHandleScroll: debounce(function() {
@@ -109,10 +130,8 @@ export default {
 		async handleScroll() {
 			const scrollHeight = this.scroller.scrollHeight
 			const scrollTop = this.scroller.scrollTop
-			if (scrollTop / scrollHeight > 0.8 && !this.isRequestingMoreItems?.[this.activeTab]) {
-				this.isRequestingMoreItems[this.activeTab] = true
-				this.$store.dispatch('getSharedItems', this.token, this.activeTab)
-				this.isRequestingMoreItems[this.activeTab] = false
+			if ((scrollTop / scrollHeight > 0.8) && !this.isRequestingMoreItems?.[this.activeTab] && !this.hasFetchedAllItems?.[this.activeTab]) {
+				this.fetchItems(this.activeTab)
 			}
 		},
 	},
