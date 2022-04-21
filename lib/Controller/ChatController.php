@@ -423,8 +423,8 @@ class ChatController extends AEnvironmentAwareController {
 					// As per "section 10.3.5 of RFC 2616" entity headers shall be
 					// stripped out on 304: https://stackoverflow.com/a/17822709
 					$response->setStatus(Http::STATUS_OK);
+					$response->addHeader('X-Chat-Last-Common-Read', $newLastCommonRead);
 				}
-				$response->addHeader('X-Chat-Last-Common-Read', $newLastCommonRead);
 			}
 			return $response;
 		}
