@@ -114,13 +114,14 @@ export const mutations = {
 
 const actions = {
 	async getSharedItems({ commit, state }, { token, type }) {
+		console.debug('requesting more shared items', token, type)
 		if (!state.sharedItemsByConversationAndType[token]
 			|| !state.sharedItemsByConversationAndType[token][type]) {
 			console.error('Missing overview for shared items in ', token)
 			return false
 		}
 
-		const limit = 50
+		const limit = 20
 		const lastKnownMessageId = Math.min.apply(Math, Object.keys(state.sharedItemsByConversationAndType[token][type]))
 		try {
 			const response = await getSharedItems(token, type, lastKnownMessageId, limit)
