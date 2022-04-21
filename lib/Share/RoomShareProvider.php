@@ -29,11 +29,11 @@ declare(strict_types=1);
 namespace OCA\Talk\Share;
 
 use OC\Files\Cache\Cache;
+use OCA\Talk\Events\AlreadySharedEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
-use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -50,8 +50,6 @@ use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
 use OCP\Share\IShareProvider;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Share provider for room shares.
@@ -76,7 +74,7 @@ class RoomShareProvider implements IShareProvider {
 	private IDBConnection $dbConnection;
 	private ISecureRandom $secureRandom;
 	private IShareManager $shareManager;
-	private EventDispatcherInterface $dispatcher;
+	private IEventDispatcher $dispatcher;
 	private Manager $manager;
 	private ParticipantService $participantService;
 	protected ITimeFactory $timeFactory;
@@ -87,7 +85,7 @@ class RoomShareProvider implements IShareProvider {
 			IDBConnection $connection,
 			ISecureRandom $secureRandom,
 			IShareManager $shareManager,
-			EventDispatcherInterface $dispatcher,
+			IEventDispatcher $dispatcher,
 			Manager $manager,
 			ParticipantService $participantService,
 			ITimeFactory $timeFactory,
@@ -155,7 +153,7 @@ class RoomShareProvider implements IShareProvider {
 		foreach ($existingShares as $existingShare) {
 			if ($existingShare->getSharedWith() === $share->getSharedWith()) {
 				// FIXME Should be moved away from GenericEvent as soon as OCP\Share20\IManager did move too
-				$this->dispatcher->dispatch(new GenericEvent($existingShare), self::EVENT_SHARE_FILE_AGAIN);
+				$this->dispatcher->dispatch(self::EVENT_SHARE_FILE_AGAIN, new AlreadySharedEvent($existingShare));
 				throw new GenericShareException('Already shared', $this->l->t('Path is already shared with this room'), 403);
 			}
 		}

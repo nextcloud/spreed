@@ -346,7 +346,11 @@ class Listener implements IEventListener {
 		}
 	}
 
-	public static function fixMimeTypeOfVoiceMessage(GenericEvent $event): void {
+	/**
+	 * @param GenericEvent|Event $event
+	 * @return void
+	 */
+	public static function fixMimeTypeOfVoiceMessage($event): void {
 		/** @var IShare $share */
 		$share = $event->getSubject();
 
