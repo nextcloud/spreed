@@ -220,7 +220,7 @@ class Version14000Date20220330141647 extends SimpleMigrationStep {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('s.id', 'm.mimetype')
 			->from('share', 's')
-			->leftJoin('s', 'filecache', 'f', $query->expr()->eq('s.item_source', 'f.fileid'))
+			->leftJoin('s', 'filecache', 'f', $query->expr()->eq('s.file_source', 'f.fileid'))
 			->leftJoin('f', 'mimetypes', 'm', $query->expr()->eq('f.mimetype', 'm.id'))
 			->where($query->expr()->in('s.id', $query->createNamedParameter($shareIds, IQueryBuilder::PARAM_INT_ARRAY)));
 		$result = $query->executeQuery();
