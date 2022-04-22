@@ -45,7 +45,7 @@ class ReactionController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
 	 * @RequireParticipant
 	 * @RequireReadWriteConversation
 	 * @RequireModeratorOrNoLobby
@@ -75,7 +75,7 @@ class ReactionController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
 	 * @RequireParticipant
 	 * @RequireReadWriteConversation
 	 * @RequireModeratorOrNoLobby
@@ -103,7 +103,7 @@ class ReactionController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
 	 * @RequireParticipant
 	 * @RequireReadWriteConversation
 	 * @RequireModeratorOrNoLobby
