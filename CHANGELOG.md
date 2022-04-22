@@ -1,6 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.0.0-rc.3 – 2022-04-22
+### Fixed
+- Move message.reactions.self to message.reactionsSelf to not merge different data structures
+  [7182](https://github.com/nextcloud/spreed/pull/7182)
+- Use actor and time information from the reaction not the message author
+  [7190](https://github.com/nextcloud/spreed/pull/7190)
+- Fix migration of attachment types for media
+  [7196](https://github.com/nextcloud/spreed/pull/7196)
+- Open chat tab by default in sidebar while in a call
+  [7201](https://github.com/nextcloud/spreed/pull/7201)
+- Fix access to undefined key
+  [7195](https://github.com/nextcloud/spreed/pull/7195)
+- Only set header when the value changed and the status is not 304
+  [7200](https://github.com/nextcloud/spreed/pull/7200)
+
+### Still in progress
+- Media tab showing all shared items of the conversation
+
 ## 14.0.0-rc.2 – 2022-04-19
 ### Fixed
 - Remove event to delete shares when user leave of room
