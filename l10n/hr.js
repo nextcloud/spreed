@@ -638,6 +638,7 @@ OC.L10N.register(
     "Test this server" : "Ispitaj ovaj poslužitelj",
     "TURN servers" : "Poslužitelji TURN",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants cannot connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Poslužitelj TURN upotrebljava se za usmjeravanje prometa sudionika iza vatrozida. Ako se pojedini sudionici ne mogu povezati s drugim sudionicima, vjerojatno je potreban poslužitelj TURN. Upute za postavljanje poslužitelja možete pronaći u {linkstart}ovoj dokumentaciji{linkend}.",
+    "OK" : "U redu",
     "{nickName} raised their hand." : "{nickName} je podigao ruku.",
     "A participant raised their hand." : "Sudionik je podigao ruku.",
     "Previous page of videos" : "Prethodna stranica s videozapisima",
@@ -870,6 +871,7 @@ OC.L10N.register(
     "No search results" : "Nema rezultata pretraživanja",
     "Groups" : "Grupe",
     "Circles" : "Krugovi",
+    "Unread mentions" : "Nepročitana spominjanja",
     "Talk settings" : "Postavke razgovora",
     "Users, groups and circles" : "Korisnici, grupe i krugovi",
     "Users and groups" : "Korisnici i grupe",
@@ -1002,6 +1004,13 @@ OC.L10N.register(
     "Details" : "Pojedinosti",
     "Settings" : "Postavke",
     "Participants ({count})" : "Sudionici ({count})",
+    "Media" : "Medij",
+    "Files" : "Datoteke",
+    "Locations" : "Lokacije",
+    "Audio" : "Audio",
+    "Other" : "Drugo",
+    "Show all files" : "Prikaži sve datoteke",
+    "Projects" : "Projekti",
     "Meeting ID: {meetingId}" : "ID sastanka: {meetingId}",
     "Your PIN: {attendeePin}" : "Vaš PIN: {attendeePin}",
     "Attachments folder" : "Mapa s privicima",
@@ -1161,6 +1170,7 @@ OC.L10N.register(
     "Video on and off" : "Video uključen i isključen",
     "Choose in which folder attachments should be saved." : "Odaberite mapu za spremanje privitaka.",
     "Exit fullscreen (f)" : "Zatvori prikaz preko cijelog zaslona (f)",
-    "Fullscreen (f)" : "Cijeli zaslon (f)"
+    "Fullscreen (f)" : "Cijeli zaslon (f)",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Postavite razinu obavijesti za trenutni razgovor. To će utjecati samo na obavijesti koje primate."
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

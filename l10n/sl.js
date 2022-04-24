@@ -870,6 +870,7 @@ OC.L10N.register(
     "No search results" : "Ni zadetkov iskanja",
     "Groups" : "Skupine",
     "Circles" : "Krogi",
+    "Unread mentions" : "Neprebrane omembe",
     "Talk settings" : "Nastavitve Talk",
     "Users, groups and circles" : "Uporabniki, skupine in krogi",
     "Users and groups" : "Uporabniki in skupine",
@@ -997,6 +998,13 @@ OC.L10N.register(
     "Details" : "Podrobnosti",
     "Settings" : "Nastavitve",
     "Participants ({count})" : "Udeleženci ({count})",
+    "Media" : "Predstavna vsebina",
+    "Files" : "Datoteke",
+    "Locations" : "Mesta",
+    "Audio" : "Zvok",
+    "Other" : "Drugo",
+    "Show all files" : "Pokaži vse datoteke",
+    "Projects" : "Projekti",
     "Meeting ID: {meetingId}" : "ID Sestanka: {meetingId}",
     "Your PIN: {attendeePin}" : "Koda PIN: {attendeePin}",
     "Attachments folder" : "Mapa prilog",
@@ -1156,6 +1164,7 @@ OC.L10N.register(
     "Video on and off" : "Preklopi prikaz videa pogovora",
     "Choose in which folder attachments should be saved." : "Izbor mape, v katero naj bodo shranjene priloge.",
     "Exit fullscreen (f)" : "Končaj celozaslonski način (f)",
-    "Fullscreen (f)" : "Celozaslonski način (f)"
+    "Fullscreen (f)" : "Celozaslonski način (f)",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Nastavi raven obveščanja za trenutni pogovor. To vpliva le na prejemanje obvestil."
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

@@ -889,6 +889,7 @@ OC.L10N.register(
     "No search results" : "No hay resultados de búsqueda",
     "Groups" : "Grupos",
     "Circles" : "Círculos",
+    "Unread mentions" : "Menciones sin leer",
     "Talk settings" : "Configuración de Talk",
     "Users, groups and circles" : "Contactos, grupos y círculos",
     "Users and groups" : "Usuarios y grupos",
@@ -1024,6 +1025,13 @@ OC.L10N.register(
     "Details" : "Detalles",
     "Settings" : "Ajustes",
     "Participants ({count})" : "Participantes ({count})",
+    "Media" : "Multimedia",
+    "Files" : "Archivos",
+    "Locations" : "Ubicaciones",
+    "Audio" : "Audio",
+    "Other" : "Otro",
+    "Show all files" : "Mostrar todos los archivos",
+    "Projects" : "Proyectos",
     "Meeting ID: {meetingId}" : "ID de reunión: {meetingId}",
     "Your PIN: {attendeePin}" : "Tu PIN: {attendeePin}",
     "Attachments folder" : "Carpeta de adjuntos",
@@ -1183,6 +1191,8 @@ OC.L10N.register(
     "Video on and off" : "Vídeo encendido y apagado",
     "Choose in which folder attachments should be saved." : "Escoge la carpeta en la que se guardarán los adjuntos.",
     "Exit fullscreen (f)" : "Salir de pantalla completa (f)",
-    "Fullscreen (f)" : "Pantalla completa (f)"
+    "Fullscreen (f)" : "Pantalla completa (f)",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Establecer el nivel de notificación para la conversación actual. Esto afectará sólo a las notificaciones que reciba.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: los archivos \".wasm\" y \".tflite\" han sido devueltos correctamente por el servidor web"
 },
 "nplurals=2; plural=(n != 1);");

@@ -631,6 +631,7 @@ OC.L10N.register(
     "TURN servers" : "TURNサーバー",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants cannot connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "TURNサーバーは、ファイアウォールの内側で参加者からのトラフィックをプロキシするために使用されます。個々の参加者が他の参加者に接続できない場合は、TURNサーバーが必要になる可能性があります。セットアップ手順については、{linkstart}このドキュメント{linkend}を参照してください。",
     "OK" : "OK",
+    "Checking …" : "チェック中…",
     "{nickName} raised their hand." : "{nickName} が挙手しました",
     "A participant raised their hand." : "参加者が挙手しました",
     "Collapse stripe" : "スレッドを折りたたむ",
@@ -712,6 +713,7 @@ OC.L10N.register(
     "Call in progress" : "呼び出し中",
     "Favorite" : "お気に入り",
     "All permissions" : "すべての権限",
+    "Restricted" : "制限付き",
     "Edit permissions" : "権限を編集",
     "Conversation settings" : "会話設定",
     "Description" : "詳細",
@@ -983,6 +985,13 @@ OC.L10N.register(
     "Chat" : "チャット",
     "Details" : "詳細",
     "Settings" : "設定",
+    "Media" : "メディア",
+    "Files" : "ファイル",
+    "Locations" : "場所",
+    "Audio" : "オーディオ",
+    "Other" : "その他",
+    "Show all files" : "すべてのファイルを表示",
+    "Projects" : "プロジェクト",
     "Meeting ID: {meetingId}" : "ミーティングID: {meetingId}",
     "Your PIN: {attendeePin}" : "PIN: {attendeePin}",
     "Attachments folder" : "添付ファイルフォルダー",
@@ -1140,6 +1149,7 @@ OC.L10N.register(
     "Video on and off" : "ビデオのオンとオフ",
     "Choose in which folder attachments should be saved." : "添付ファイルを保存するフォルダーを選択します。",
     "Exit fullscreen (f)" : "全画面終了 (f)",
-    "Fullscreen (f)" : "全画面 (f)"
+    "Fullscreen (f)" : "全画面 (f)",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "現在の会話の通知レベルを設定します。これから受信する通知にのみ有効です。"
 },
 "nplurals=1; plural=0;");
