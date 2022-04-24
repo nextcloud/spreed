@@ -885,6 +885,7 @@ OC.L10N.register(
     "No search results" : "Ez dago bilaketaren emaitzarik",
     "Groups" : "Taldeak",
     "Circles" : "Zirkuluak",
+    "Unread mentions" : "Irakurri gabeko aipamenak",
     "Talk settings" : "Talk ezarpenak",
     "Users, groups and circles" : "Erabiltzaileak, taldeak eta zirkuluak",
     "Users and groups" : "Erabiltzaileak eta taldeak",
@@ -1020,6 +1021,13 @@ OC.L10N.register(
     "Details" : "Xehetasunak",
     "Settings" : "Ezarpenak",
     "Participants ({count})" : "Parte-hartzaileak ({count})",
+    "Media" : "Media",
+    "Files" : "Fitxategiak",
+    "Locations" : "Kokapenak",
+    "Audio" : "Audioa",
+    "Other" : "Bestelakoa",
+    "Show all files" : "Erakustsi fitxategi guztiak",
+    "Projects" : "Proiektuak",
     "Meeting ID: {meetingId}" : "Bileraren ID: {meetingId}",
     "Your PIN: {attendeePin}" : "Zure PINa: {attendeePin}",
     "Attachments folder" : "Eranskinen karpeta",
@@ -1180,6 +1188,7 @@ OC.L10N.register(
     "Video on and off" : "Bideoa gaitu eta desgaitu",
     "Choose in which folder attachments should be saved." : "Aukeratu zein karpetatan gorde behar diren atxikitakoak.",
     "Exit fullscreen (f)" : "Irten pantaila osotik (f)",
-    "Fullscreen (f)" : "Pantaila osoa (f)"
+    "Fullscreen (f)" : "Pantaila osoa (f)",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Konfiguratu jakinarazpen maila uneko elkarrizketarentzat. Honek zuk jasotzen dituzun jakinarazpenei bakarrik eragingo die."
 },
 "nplurals=2; plural=(n != 1);");
