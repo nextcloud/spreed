@@ -890,6 +890,7 @@ OC.L10N.register(
     "No search results" : "Няма резултати от търсенето",
     "Groups" : "Групи",
     "Circles" : "Обкръжения",
+    "Unread mentions" : "Непрочетени споменавания",
     "Talk settings" : "Настройки на Talk ",
     "Users, groups and circles" : "Потребители, групи и кръгове",
     "Users and groups" : "Потребители и групи",
@@ -1025,6 +1026,13 @@ OC.L10N.register(
     "Details" : "Подробности",
     "Settings" : "Настройки",
     "Participants ({count})" : "Участници ({count})",
+    "Media" : "Медия",
+    "Files" : "Файлове",
+    "Locations" : "Местоположения",
+    "Audio" : "Аудио",
+    "Other" : "Други",
+    "Show all files" : "Показване на всички файлове",
+    "Projects" : "Проекти",
     "Meeting ID: {meetingId}" : "Идентификатор на срещата: {meetingId}",
     "Your PIN: {attendeePin}" : "Вашият ПИН: {attendeePin}",
     "Attachments folder" : "Папка с прикачени файлове",
@@ -1184,6 +1192,8 @@ OC.L10N.register(
     "Video on and off" : "Включване и изключване на видео",
     "Choose in which folder attachments should be saved." : "Избор в коя папка да се записват прикачените файлове.",
     "Exit fullscreen (f)" : "Изход от цял ​​екран (f)",
-    "Fullscreen (f)" : "Цял ​​екран (f)"
+    "Fullscreen (f)" : "Цял ​​екран (f)",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Задаване на ниво на известяване за текущия разговор. Това ще засегне само вашите известия.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: Файловете „wasm“ и „.tflite“ са върнати правилно от уеб сървъра"
 },
 "nplurals=2; plural=(n != 1);");

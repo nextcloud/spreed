@@ -892,6 +892,7 @@ OC.L10N.register(
     "No search results" : "Geen zoekresultaten",
     "Groups" : "Groepen",
     "Circles" : "Kringen",
+    "Unread mentions" : "Ongelezen vermeldingen",
     "Talk settings" : "Talk instellingen",
     "Users, groups and circles" : "Gebruikers, groepen en kringen",
     "Users and groups" : "Gebruikers en groepen",
@@ -1027,6 +1028,13 @@ OC.L10N.register(
     "Details" : "Details",
     "Settings" : "Instellingen",
     "Participants ({count})" : "Deelnemers ({count})",
+    "Media" : "Media",
+    "Files" : "Bestanden",
+    "Locations" : "Locaties",
+    "Audio" : "Geluid",
+    "Other" : "Andere",
+    "Show all files" : "Toon alle bestanden",
+    "Projects" : "Projecten",
     "Meeting ID: {meetingId}" : "Meeting ID: {meetingId}",
     "Your PIN: {attendeePin}" : "Je PIN: {attendeePin}",
     "Attachments folder" : "Bijlagemap",
@@ -1187,6 +1195,8 @@ OC.L10N.register(
     "Video on and off" : "Video aan en uit",
     "Choose in which folder attachments should be saved." : "Kies in welke map bijlagen moeten worden opgeslagen.",
     "Exit fullscreen (f)" : "Ga uit volledig scherm (f)",
-    "Fullscreen (f)" : "Volledig scherm (f)"
+    "Fullscreen (f)" : "Volledig scherm (f)",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Stel het meldingsniveau in voor het huidige gesprek. Dit heef alleen invloed op de meldingen die u ontvangt.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: \".wasm\" en \".tflite\" bestanden werden juist geretourneerd door de webserver"
 },
 "nplurals=2; plural=(n != 1);");

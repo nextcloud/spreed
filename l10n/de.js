@@ -1044,6 +1044,7 @@ OC.L10N.register(
     "Voice messages" : "Sprachnachrichten",
     "Locations" : "Orte",
     "Audio" : "Audio",
+    "Other" : "Sonstiges",
     "Show all media" : "Alle Medien anzeigen",
     "Show all files" : "Alle Dateien anzeigen",
     "Show all deck cards" : "Alle Deck-Karten anzeigen",
