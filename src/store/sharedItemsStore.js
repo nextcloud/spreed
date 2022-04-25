@@ -127,13 +127,13 @@ const actions = {
 			const response = await getSharedItems(token, type, lastKnownMessageId, limit)
 			const messages = response.data.ocs.data
 			const hasMore = messages.length >= limit
-
 			// loop over the response elements and add them to the store
 			for (const message in messages) {
+
 				commit('addSharedItemMessage', {
 					token,
 					type,
-					message,
+					message: messages[message],
 				})
 			}
 			return hasMore
