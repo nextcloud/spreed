@@ -295,7 +295,7 @@ export default {
 				classes += 'preview '
 			}
 
-			if (this.failed || this.previewType === PREVIEW_TYPE.MIME_ICON) {
+			if (this.failed || this.previewType === PREVIEW_TYPE.MIME_ICON || this.rowLayout) {
 				classes += 'mimeicon'
 			}
 			return classes
@@ -323,7 +323,7 @@ export default {
 			if (this.previewType === PREVIEW_TYPE.TEMPORARY) {
 				return this.localUrl
 			}
-			if (this.previewType === PREVIEW_TYPE.MIME_ICON) {
+			if (this.previewType === PREVIEW_TYPE.MIME_ICON || this.rowLayout) {
 				return OC.MimeType.getIconUrl(this.mimetype)
 			}
 			// whether to embed/render the file directly
