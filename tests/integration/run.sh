@@ -45,9 +45,9 @@ ${ROOT_DIR}/occ app:getpath notifications || (cd ../../../ && git clone --depth 
 ${ROOT_DIR}/occ app:getpath guests || (cd ../../../ && git clone --depth 1 --branch ${GUESTS_BRANCH} https://github.com/nextcloud/guests)
 
 ${ROOT_DIR}/occ app:enable spreed || exit 1
-${ROOT_DIR}/occ app:enable spreedcheats || exit 1
-${ROOT_DIR}/occ app:enable notifications || exit 1
-${ROOT_DIR}/occ app:enable guests || exit 1
+${ROOT_DIR}/occ app:enable --force spreedcheats || exit 1
+${ROOT_DIR}/occ app:enable --force notifications || exit 1
+${ROOT_DIR}/occ app:enable --force guests || exit 1
 
 ${ROOT_DIR}/occ app:list | grep spreed
 ${ROOT_DIR}/occ app:list | grep notifications

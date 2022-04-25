@@ -13,7 +13,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/callapi
@@ -46,7 +45,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/chat
@@ -79,7 +77,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/command
@@ -112,7 +109,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
   - cd tests/integration/
@@ -146,7 +142,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
   - cd tests/integration/
@@ -180,7 +175,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/federation
@@ -213,7 +207,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/reaction
@@ -246,7 +239,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/sharing
@@ -279,7 +271,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/sharing-2
@@ -326,7 +317,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/callapi
@@ -374,7 +364,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/chat
@@ -422,7 +411,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/command
@@ -470,7 +458,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
   - cd tests/integration/
@@ -519,7 +506,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
   - cd tests/integration/
@@ -568,7 +554,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/federation
@@ -616,7 +601,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/reaction
@@ -664,7 +648,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/sharing
@@ -712,7 +695,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/sharing-2
@@ -755,7 +737,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/callapi
@@ -797,7 +778,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/chat
@@ -839,7 +819,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/command
@@ -881,7 +860,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
   - cd tests/integration/
@@ -924,7 +902,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
   - cd tests/integration/
@@ -967,7 +944,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/federation
@@ -1009,7 +985,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/reaction
@@ -1051,7 +1026,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/sharing
@@ -1093,7 +1067,6 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
   - bash run.sh features/sharing-2
