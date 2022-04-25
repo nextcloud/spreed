@@ -25,11 +25,14 @@ Feature: reaction/react
       | users     | participant1 | participant1-displayname | 👍       |
       | users     | participant2 | participant2-displayname | 👍       |
     And user "participant1" react with "🚀" on message "Message 1" to room "room" with 201
+    Then user "guest" joins room "room" with 200 (v4)
+    And user "guest" react with "👤" on message "Message 1" to room "room" with 201
     Then user "participant1" sees the following messages in room "room" with 200
-      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions       | reactionsSelf |
-      | room | users     | participant1 | participant1-displayname | Message 1 | []                | {"👍":2,"🚀":1} | ["👍","🚀"]   |
+      | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions              | reactionsSelf |
+      | room | users     | participant1 | participant1-displayname | Message 1 | []                | {"👍":2,"👤":1,"🚀":1} | ["👍","🚀"]   |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | guests    | guest        |                          | reaction |
       | room | users     | participant1 | participant1-displayname | reaction |
       | room | users     | participant1 | participant1-displayname | reaction |
       | room | users     | participant2 | participant2-displayname | reaction |
@@ -66,17 +69,24 @@ Feature: reaction/react
     And user "participant2" react with "👍" on message "Message 1" to room "room" with 201
       | actorType | actorId      | actorDisplayName         | reaction |
       | users     | participant2 | participant2-displayname | 👍       |
+    Then user "guest" joins room "room" with 200 (v4)
+    And user "guest" react with "👤" on message "Message 1" to room "room" with 201
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions |
-      | room | users     | participant1 | participant1-displayname | Message 1 | []                | {"👍":1}  |
+      | room | users     | participant1 | participant1-displayname | Message 1 | []                | {"👤":1,"👍":1}  |
     And user "participant2" delete react with "👍" on message "Message 1" to room "room" with 200
+      | actorType | actorId      | actorDisplayName         | reaction |
+      | guests    | guest        |                          | 👤       |
+    And user "guest" delete react with "👤" on message "Message 1" to room "room" with 200
       | actorType | actorId      | actorDisplayName         | reaction |
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions |
       | room | users     | participant1 | participant1-displayname | Message 1 | []                | []        |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | guests    | guest        |                          | reaction_revoked |
       | room | users     | participant2 | participant2-displayname | reaction_revoked |
+      | room | guests    | guest        |                          | reaction_deleted |
       | room | users     | participant2 | participant2-displayname | reaction_deleted |
       | room | users     | participant1 | participant1-displayname | user_added |
       | room | users     | participant1 | participant1-displayname | conversation_created |
