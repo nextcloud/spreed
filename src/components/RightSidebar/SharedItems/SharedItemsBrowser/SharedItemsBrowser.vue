@@ -130,7 +130,8 @@ export default {
 		async handleScroll() {
 			const scrollHeight = this.scroller.scrollHeight
 			const scrollTop = this.scroller.scrollTop
-			if ((scrollTop / scrollHeight > 0.8) && !this.isRequestingMoreItems?.[this.activeTab] && !this.hasFetchedAllItems?.[this.activeTab]) {
+			const containerHeight = this.scroller.clientHeight
+			if ((scrollHeight - scrollTop - containerHeight < 300) && !this.isRequestingMoreItems?.[this.activeTab] && !this.hasFetchedAllItems?.[this.activeTab]) {
 				this.fetchItems(this.activeTab)
 			}
 		},
