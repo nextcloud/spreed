@@ -39,6 +39,14 @@ const getters = {
 		}
 		return t('spreed', 'Guest')
 	},
+
+	getGuestNameWithGuestSuffix: (state, getters) => (token, actorId) => {
+		const displayName = getters.getGuestName(token, actorId)
+		if (displayName === t('spreed', 'Guest')) {
+			return displayName
+		}
+		return t('spreed', '{guest} (guest)', { guest: displayName })
+	},
 }
 
 const mutations = {

@@ -2300,6 +2300,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$result = array_map(static function ($reaction, $list) use ($expected): array {
 			$list = array_map(function ($reaction) {
 				unset($reaction['timestamp']);
+				$reaction['actorId'] = ($reaction['actorType'] === 'guests') ? self::$sessionIdToUser[$reaction['actorId']] : (string) $reaction['actorId'];
 				return $reaction;
 			}, $list);
 			Assert::assertArrayHasKey($reaction, $expected, 'Not expected reaction: ' . $reaction);
