@@ -190,6 +190,7 @@ import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
+import { ATTENDEE } from '../../../../constants'
 
 export default {
 	name: 'Message',
@@ -738,11 +739,25 @@ export default {
 					&& list[item].actorId === this.$store.getters.getActorId()) {
 					summary.unshift(t('spreed', 'You'))
 				} else {
-					summary.push(list[item].actorDisplayName)
+					summary.push(this.getDisplayNameForReaction(list[item]))
 				}
 			}
 
 			return summary.join(', ')
+		},
+
+		getDisplayNameForReaction(reaction) {
+			const displayName = reaction.actorDisplayName.trim()
+
+			if (reaction.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+				return this.$store.getters.getGuestNameWithGuestSuffix(this.token, reaction.actorId)
+			}
+
+			if (displayName === '') {
+				return t('spreed', 'Deleted user')
+			}
+
+			return displayName
 		},
 	},
 }
