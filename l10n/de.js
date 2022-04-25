@@ -1037,6 +1037,7 @@ OC.L10N.register(
     "Chat" : "Chat",
     "Details" : "Details",
     "Settings" : "Einstellungen",
+    "Shared items" : "Freigegebene Elemente",
     "Participants ({count})" : "Teilnehmer ({count})",
     "Media" : "Medien",
     "Files" : "Dateien",
