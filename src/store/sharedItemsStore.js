@@ -114,7 +114,6 @@ export const mutations = {
 
 const actions = {
 	async getSharedItems({ commit, state }, { token, type }) {
-		console.debug('requesting more shared items', token, type)
 		if (!state.sharedItemsByConversationAndType[token]
 			|| !state.sharedItemsByConversationAndType[token][type]) {
 			console.error('Missing overview for shared items in ', token)
