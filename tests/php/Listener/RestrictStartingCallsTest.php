@@ -97,7 +97,9 @@ class RestrictStartingCallsTest extends TestCase {
 			$this->expectException(ForbiddenException::class);
 		}
 
+		$this->overwriteService(RestrictStartingCalls::class, $this->listener);
 		$this->listener->checkStartCallPermissions($event);
+		$this->restoreService(RestrictStartingCalls::class);
 
 		if (!$throws) {
 			self::assertTrue(true);
