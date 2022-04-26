@@ -37,12 +37,6 @@
       <code>getById</code>
     </UndefinedInterfaceMethod>
   </file>
-  <file src="lib/Chat/SystemMessage/Listener.php">
-    <InvalidArgument occurrences="2">
-      <code>$listener</code>
-      <code>$listener</code>
-    </InvalidArgument>
-  </file>
   <file src="lib/Command/ActiveCalls.php">
     <UndefinedClass occurrences="1">
       <code>Base</code>
@@ -257,10 +251,6 @@
     </UndefinedClass>
   </file>
   <file src="lib/Share/RoomShareProvider.php">
-    <InvalidArgument occurrences="2">
-      <code>new GenericEvent($existingShare)</code>
-      <code>self::class . '::' . 'share_file_again'</code>
-    </InvalidArgument>
     <UndefinedClass occurrences="1">
       <code>Cache</code>
     </UndefinedClass>
