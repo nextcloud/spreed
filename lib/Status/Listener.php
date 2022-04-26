@@ -43,32 +43,24 @@ class Listener {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, static function (ModifyParticipantEvent $event) {
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
-			$listener->setUserStatus($event);
-		});
+		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, [self::class, 'setUserStatus']);
 
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, static function (ModifyParticipantEvent $event) {
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
-			$listener->revertUserStatus($event);
-		});
+		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, [self::class, 'revertUserStatus']);
 
-		$dispatcher->addListener(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, static function (EndCallForEveryoneEvent $event) {
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
-			$listener->revertUserStatusOnEndCallForEveryone($event);
-		});
+		$dispatcher->addListener(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, [self::class, 'revertUserStatusOnEndCallForEveryone']);
 	}
 
-	public function setUserStatus(ModifyParticipantEvent $event): void {
+	public static function setUserStatus(ModifyParticipantEvent $event): void {
+		/** @var self $listener */
+		$listener = \OC::$server->get(self::class);
 		if ($event->getParticipant()->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
-			$this->statusManager->setUserStatus($event->getParticipant()->getAttendee()->getActorId(), 'call', IUserStatus::AWAY, true);
+			$listener->statusManager->setUserStatus($event->getParticipant()->getAttendee()->getActorId(), 'call', IUserStatus::AWAY, true);
 		}
 	}
 
-	public function revertUserStatus(ModifyParticipantEvent $event): void {
+	public static function revertUserStatus(ModifyParticipantEvent $event): void {
+		/** @var self $listener */
+		$listener = \OC::$server->get(self::class);
 		if ($event instanceof ModifyEveryoneEvent) {
 			// Do not revert the status with 3 queries per user.
 			// We will update it in one go at the end.
@@ -76,14 +68,16 @@ class Listener {
 		}
 
 		if ($event->getParticipant()->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
-			$this->statusManager->revertUserStatus($event->getParticipant()->getAttendee()->getActorId(), 'call', IUserStatus::AWAY);
+			$listener->statusManager->revertUserStatus($event->getParticipant()->getAttendee()->getActorId(), 'call', IUserStatus::AWAY);
 		}
 	}
 
-	public function revertUserStatusOnEndCallForEveryone(EndCallForEveryoneEvent $event): void {
+	public static function revertUserStatusOnEndCallForEveryone(EndCallForEveryoneEvent $event): void {
+		/** @var self $listener */
+		$listener = \OC::$server->get(self::class);
 		$userIds = $event->getUserIds();
 		if (!empty($userIds)) {
-			$this->statusManager->revertMultipleUserStatus($userIds, 'call', IUserStatus::AWAY);
+			$listener->statusManager->revertMultipleUserStatus($userIds, 'call', IUserStatus::AWAY);
 		}
 	}
 }
