@@ -42,18 +42,16 @@ class RestrictStartingCalls {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, static function (ModifyParticipantEvent $event) {
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
-			$listener->checkStartCallPermissions($event);
-		}, 1000);
+		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, [self::class, 'checkStartCallPermissions'], 1000);
 	}
 
 	/**
 	 * @param ModifyParticipantEvent $event
 	 * @throws ForbiddenException
 	 */
-	public function checkStartCallPermissions(ModifyParticipantEvent $event): void {
+	public static function checkStartCallPermissions(ModifyParticipantEvent $event): void {
+		/** @var self $listener */
+		$listener = \OC::$server->get(self::class);
 		$room = $event->getRoom();
 		$participant = $event->getParticipant();
 
@@ -63,7 +61,7 @@ class RestrictStartingCalls {
 			return;
 		}
 
-		if (!$participant->canStartCall($this->config) && !$this->participantService->hasActiveSessionsInCall($room)) {
+		if (!$participant->canStartCall($listener->config) && !$listener->participantService->hasActiveSessionsInCall($room)) {
 			throw new ForbiddenException('Can not start a call');
 		}
 	}
