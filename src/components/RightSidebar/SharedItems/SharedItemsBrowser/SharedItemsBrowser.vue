@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<Modal size="large" v-on="$listeners">
+	<Modal size="large" :container="container" v-on="$listeners">
 		<div class="shared-items-browser">
 			<div class="shared-items-browser__navigation">
 				<template v-for="type in sharedItemsOrder">
@@ -86,6 +86,10 @@ export default {
 
 		token() {
 			return this.$store.getters.getToken()
+		},
+
+		container() {
+			return this.$store.getters.getMainContainerSelector()
 		},
 	},
 
