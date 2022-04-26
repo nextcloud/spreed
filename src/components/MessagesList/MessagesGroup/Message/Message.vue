@@ -657,7 +657,8 @@ export default {
 
 		async getReactions() {
 			if (this.detailedReactionsLoading) {
-				// FIXME not sure how to await the other execution
+				// A parallel request is already doing this
+				return
 			}
 
 			try {
