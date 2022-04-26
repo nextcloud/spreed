@@ -39,9 +39,11 @@ class ActiveCalls extends Base {
 	}
 
 	protected function configure(): void {
+		parent::configure();
+
 		$this
 			->setName('talk:active-calls')
-			->setDescription('Allows you to check if calls are currently in process');
+			->setDescription('Allows you to check if calls are currently in process')	;
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
@@ -56,7 +58,12 @@ class ActiveCalls extends Base {
 		$result->closeCursor();
 
 		if ($numCalls === 0) {
-			$output->writeln('<info>No calls in progress</info>');
+			if ($input->getOption('output') === 'plain') {
+				$output->writeln('<info>No calls in progress</info>');
+			} else {
+				$data = ['calls' => 0, 'participants' => 0];
+				$this->writeArrayInOutputFormat($input, $output, $data);
+			}
 			return 0;
 		}
 
@@ -70,7 +77,13 @@ class ActiveCalls extends Base {
 		$numParticipants = (int) $result->fetchColumn();
 		$result->closeCursor();
 
-		$output->writeln(sprintf('<error>There are currently %1$d calls in progress with %2$d participants</error>', $numCalls, $numParticipants));
+
+		if ($input->getOption('output') === 'plain') {
+			$output->writeln(sprintf('<error>There are currently %1$d calls in progress with %2$d participants</error>', $numCalls, $numParticipants));
+		} else {
+			$data = ['calls' => $numCalls, 'participants' => $numParticipants];
+			$this->writeArrayInOutputFormat($input, $output, $data);
+		}
 		return 1;
 	}
 }
