@@ -163,7 +163,7 @@ export default {
 ::v-deep .button-vue {
 	border-radius: var(--border-radius-large);
 	&.active {
-		background-color: var(--color-primary-light-hover);
+		background-color: var(--color-primary-element-hover);
 	}
 }
 </style>
