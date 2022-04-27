@@ -326,7 +326,7 @@ export default {
 		},
 
 		acceptsReactions() {
-			return !this.isConversationReadOnly && !this.isDeletedMessage
+			return !this.isConversationReadOnly && !this.isDeletedMessage && (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
 		},
 
 		messageActions() {

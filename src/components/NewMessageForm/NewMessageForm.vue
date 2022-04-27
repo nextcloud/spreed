@@ -132,7 +132,7 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 import { EventBus } from '../../services/EventBus'
 import { shareFile } from '../../services/filesSharingServices'
-import { CONVERSATION } from '../../constants'
+import { CONVERSATION, PARTICIPANT } from '../../constants'
 import Paperclip from 'vue-material-design-icons/Paperclip'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline'
 import Send from 'vue-material-design-icons/Send'
@@ -197,13 +197,19 @@ export default {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_ONLY
 		},
 
+		noChatPermission() {
+			return (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) === 0
+		},
+
 		disabled() {
-			return this.isReadOnly || !this.currentConversationIsJoined || this.isRecordingAudio
+			return this.isReadOnly || this.noChatPermission || this.isReadOnly || !this.currentConversationIsJoined || this.isRecordingAudio
 		},
 
 		placeholderText() {
 			if (this.isReadOnly) {
 				return t('spreed', 'This conversation has been locked')
+			} else if (this.noChatPermission) {
+				return t('spreed', 'No permission to post messages in this conversation')
 			} else if (!this.currentConversationIsJoined) {
 				return t('spreed', 'Joining conversation …')
 			} else {

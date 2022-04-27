@@ -3,7 +3,7 @@ import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { EventBus } from '../../../../services/EventBus'
 import storeConfig from '../../../../store/storeConfig'
-import { CONVERSATION, ATTENDEE } from '../../../../constants'
+import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../constants'
 
 // Components
 import Check from 'vue-material-design-icons/Check'
@@ -50,6 +50,7 @@ describe('Message.vue', () => {
 			lastCommonReadMessage: 0,
 			type: CONVERSATION.TYPE.GROUP,
 			readOnly: CONVERSATION.STATE.READ_WRITE,
+			permissions: PARTICIPANT.PERMISSIONS.MAX_DEFAULT,
 		}
 
 		testStoreConfig = cloneDeep(storeConfig)
@@ -800,6 +801,38 @@ describe('Message.vue', () => {
 			// Number of buttons, 2 passed into the getter and 1 is the emoji
 			// picker
 			expect(reactionButtons.length).toBe(3)
+
+			// Text of the buttons
+			expect(reactionButtons.wrappers[0].text()).toBe('❤️  1')
+			expect(reactionButtons.wrappers[1].text()).toBe('👍  7')
+		})
+
+		test('shows reaction buttons with the right emoji count but without emoji placeholder when no chat permission', () => {
+			const conversationProps = {
+				token: TOKEN,
+				lastCommonReadMessage: 0,
+				type: CONVERSATION.TYPE.GROUP,
+				readOnly: CONVERSATION.STATE.READ_WRITE,
+				permissions: PARTICIPANT.PERMISSIONS.MAX_DEFAULT - PARTICIPANT.PERMISSIONS.CHAT,
+			}
+			testStoreConfig.modules.conversationsStore.getters.conversation
+				= jest.fn().mockReturnValue((token) => conversationProps)
+			store = new Store(testStoreConfig)
+
+			const wrapper = shallowMount(Message, {
+				localVue,
+				store,
+				propsData: messageProps,
+			})
+
+			const reactionsBar = wrapper.find('.message-body__reactions')
+
+			// Array of buttons
+			const reactionButtons = reactionsBar.findAll('.reaction-button')
+
+			// Number of buttons, 2 passed into the getter and 1 is the emoji
+			// picker
+			expect(reactionButtons.length).toBe(2)
 
 			// Text of the buttons
 			expect(reactionButtons.wrappers[0].text()).toBe('❤️  1')
