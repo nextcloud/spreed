@@ -105,7 +105,6 @@ class ReactionController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireParticipant
-	 * @RequireReadWriteConversation
 	 * @RequireModeratorOrNoLobby
 	 *
 	 * @param int $messageId for reaction
