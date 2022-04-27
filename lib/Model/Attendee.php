@@ -78,6 +78,7 @@ class Attendee extends Entity {
 	public const PERMISSIONS_PUBLISH_AUDIO = 16;
 	public const PERMISSIONS_PUBLISH_VIDEO = 32;
 	public const PERMISSIONS_PUBLISH_SCREEN = 64;
+	public const PERMISSIONS_CHAT = 128;
 	public const PERMISSIONS_MAX_DEFAULT = // Max int (when all permissions are granted as default)
 		self::PERMISSIONS_CALL_START
 		| self::PERMISSIONS_CALL_JOIN
@@ -85,6 +86,7 @@ class Attendee extends Entity {
 		| self::PERMISSIONS_PUBLISH_AUDIO
 		| self::PERMISSIONS_PUBLISH_VIDEO
 		| self::PERMISSIONS_PUBLISH_SCREEN
+		| self::PERMISSIONS_CHAT
 	;
 	public const PERMISSIONS_MAX_CUSTOM = self::PERMISSIONS_MAX_DEFAULT | self::PERMISSIONS_CUSTOM; // Max int (when all permissions are granted as custom)
 

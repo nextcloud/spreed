@@ -24,6 +24,18 @@ Feature: chat/group
       | room       | actorType | actorId      | actorDisplayName         | message   | messageParameters |
       | group room | users     | participant2 | participant2-displayname | Message 1 | []                |
 
+  Scenario: invited user can not send without chat permissions
+    Given user "participant1" creates room "group room" (v4)
+      | roomType | 2 |
+      | invite   | attendees1 |
+    # Removing chat permission only
+    Then user "participant1" sets permissions for "participant2" in room "group room" to "CSJLAVP" with 200 (v4)
+    When user "participant2" sends message "Message 1" to room "group room" with 403
+    When user "participant1" sends message "Message 2" to room "group room" with 201
+    Then user "participant2" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | group room | users     | participant1 | participant1-displayname | Message 2 | []                |
+
   Scenario: not invited user can not send nor receive chat messages to nor from group room
     Given user "participant1" creates room "group room" (v4)
       | roomType | 2 |

@@ -48,6 +48,7 @@ class ReactionController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireParticipant
 	 * @RequireReadWriteConversation
+	 * @RequirePermissions(permissions=chat)
 	 * @RequireModeratorOrNoLobby
 	 *
 	 * @param int $messageId for reaction
@@ -78,6 +79,7 @@ class ReactionController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireParticipant
 	 * @RequireReadWriteConversation
+	 * @RequirePermissions(permissions=chat)
 	 * @RequireModeratorOrNoLobby
 	 *
 	 * @param int $messageId for reaction

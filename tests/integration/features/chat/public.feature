@@ -23,6 +23,19 @@ Feature: chat/public
       | room        | actorType | actorId      | actorDisplayName         | message   | messageParameters |
       | public room | users     | participant2 | participant2-displayname | Message 1 | []                |
 
+  Scenario: invited user can not send without chat permissions
+    Given user "participant1" creates room "public room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "public room" with 200 (v4)
+    # Removing chat permission only
+    Then user "participant1" sets permissions for "participant2" in room "public room" to "CSJLAVP" with 200 (v4)
+    When user "participant2" sends message "Message 1" to room "public room" with 403
+    When user "participant1" sends message "Message 2" to room "public room" with 201
+    Then user "participant2" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | public room | users     | participant1 | participant1-displayname | Message 2 | []                |
+
   Scenario: not invited but joined user can send and receive chat messages to and from public room
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
