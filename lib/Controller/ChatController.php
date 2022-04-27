@@ -725,7 +725,6 @@ class ChatController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireParticipant
-	 * @RequireReadWriteConversation
 	 * @RequireModeratorOrNoLobby
 	 *
 	 * @param int $limit
@@ -778,7 +777,6 @@ class ChatController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireParticipant
-	 * @RequireReadWriteConversation
 	 * @RequireModeratorOrNoLobby
 	 *
 	 * @param string $objectType
