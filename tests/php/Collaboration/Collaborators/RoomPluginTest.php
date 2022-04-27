@@ -27,6 +27,8 @@ namespace OCA\Talk\Tests\php\Collaboration\Collaborators;
 
 use OCA\Talk\Collaboration\Collaborators\RoomPlugin;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
@@ -65,8 +67,9 @@ class RoomPluginTest extends TestCase {
 		$this->plugin = new RoomPlugin($this->manager, $this->userSession);
 	}
 
-	private function newRoom(int $type, string $token, string $name): Room {
+	private function newRoom(int $type, string $token, string $name, int $permissions = Attendee::PERMISSIONS_MAX_DEFAULT): Room {
 		$room = $this->createMock(Room::class);
+		$participant = $this->createMock(Participant::class);
 
 		$room->expects($this->any())
 			->method('getType')
@@ -79,6 +82,14 @@ class RoomPluginTest extends TestCase {
 		$room->expects($this->any())
 			->method('getDisplayName')
 			->willReturn($name);
+
+		$room->expects($this->any())
+			->method('getParticipant')
+			->willReturn($participant);
+
+		$participant->expects($this->any())
+			->method('getPermissions')
+			->willReturn($permissions);
 
 		return $room;
 	}
@@ -115,6 +126,11 @@ class RoomPluginTest extends TestCase {
 			], [], [
 				$this->newResult('Room name', 'roomToken')
 			], false],
+
+			// Chats without chat permission are not returned
+			['room', 2, 0, [
+				$this->newRoom(Room::TYPE_GROUP, 'roomToken', 'Room name', Attendee::PERMISSIONS_MAX_DEFAULT ^ Attendee::PERMISSIONS_CHAT),
+			], [], [], false],
 
 			// Search term with single exact match
 			['room name', 2, 0, [
