@@ -141,6 +141,7 @@ import { loadState } from '@nextcloud/initial-state'
 import Grid from './Grid/Grid'
 import { SIMULCAST } from '../../constants'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
+import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker'
 import { fetchPeers } from '../../services/callsService'
 import { showMessage } from '@nextcloud/dialogs'
 import EmptyCallView from './shared/EmptyCallView'
@@ -212,7 +213,7 @@ export default {
 		callParticipantModelsWithVideo() {
 			return this.callParticipantModels.filter(callParticipantModel => {
 				return callParticipantModel.attributes.videoAvailable
-					&& this.sharedDatas[callParticipantModel.attributes.peerId].videoEnabled
+					&& this.sharedDatas[callParticipantModel.attributes.peerId].remoteVideoBlocker.isVideoEnabled()
 					&& (typeof callParticipantModel.attributes.stream === 'object')
 			})
 		},
@@ -404,7 +405,6 @@ export default {
 
 		callParticipantCollection.on('remove', this._lowerHandWhenParticipantLeaves)
 
-		subscribe('talk:video:toggled', this.handleToggleVideo)
 		subscribe('switch-screen-to-id', this._switchScreenToId)
 	},
 	beforeDestroy() {
@@ -412,7 +412,6 @@ export default {
 
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
 
-		unsubscribe('talk:video:toggled', this.handleToggleVideo)
 		unsubscribe('switch-screen-to-id', this._switchScreenToId)
 	},
 	methods: {
@@ -454,7 +453,7 @@ export default {
 			addedModels.forEach(addedModel => {
 				const sharedData = {
 					promoted: false,
-					videoEnabled: true,
+					remoteVideoBlocker: new RemoteVideoBlocker(addedModel),
 					screenVisible: false,
 				}
 
@@ -645,11 +644,6 @@ export default {
 				console.error(exception)
 			}
 		}, 1500),
-
-		// Toggles videos on and off
-		handleToggleVideo({ peerId, value }) {
-			this.sharedDatas[peerId].videoEnabled = value
-		},
 
 		adjustSimulcastQuality() {
 			this.callParticipantModels.forEach(callParticipantModel => {

@@ -584,7 +584,11 @@ export default {
 
 		placeholderSharedData() {
 			return {
-				videoEnabled: true,
+				videoEnabled: {
+					isVideoEnabled() {
+						return true
+					},
+				},
 				screenVisible: false,
 			}
 		},

@@ -200,11 +200,11 @@ export default {
 		},
 
 		showVideoButton() {
-			return this.sharedData.videoEnabled
+			return this.sharedData.remoteVideoBlocker.isVideoEnabled()
 		},
 
 		videoButtonTooltip() {
-			if (this.sharedData.videoEnabled) {
+			if (this.sharedData.remoteVideoBlocker.isVideoEnabled()) {
 				return t('spreed', 'Disable video')
 			}
 
@@ -220,7 +220,7 @@ export default {
 		},
 
 		showNameIndicator() {
-			return !this.model.attributes.videoAvailable || !this.sharedData.videoEnabled || this.showVideoOverlay || this.isSelected || this.isPromoted || this.isSpeaking
+			return !this.model.attributes.videoAvailable || !this.sharedData.remoteVideoBlocker.isVideoEnabled() || this.showVideoOverlay || this.isSelected || this.isPromoted || this.isSpeaking
 		},
 
 		boldenNameIndicator() {
@@ -255,10 +255,7 @@ export default {
 		},
 
 		toggleVideo() {
-			emit('talk:video:toggled', {
-				peerId: this.model.attributes.peerId,
-				value: !this.sharedData.videoEnabled,
-			})
+			this.sharedData.remoteVideoBlocker.setVideoEnabled(!this.sharedData.remoteVideoBlocker.isVideoEnabled())
 		},
 
 		switchToScreen() {
