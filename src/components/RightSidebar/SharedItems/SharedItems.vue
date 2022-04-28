@@ -21,12 +21,18 @@
 
 <template>
 	<div class="shared-items" :class="{'shared-items__list' : isList}">
-		<template v-for="file in itemsToDisplay">
-			<FilePreview :key="file.id"
+		<template v-for="item in itemsToDisplay">
+			<Location v-if="type === 'location'"
+				:key="item.id"
+				:latitude="item.messageParameters.object.latitude"
+				:longitude="item.messageParameters.object.longitude"
+				:title="item.messageParameters.object.title" />
+			<FilePreview v-else
+				:key="item.id"
 				:small-preview="isList"
 				:row-layout="isList"
 				:is-shared-items-tab="true"
-				v-bind="file.messageParameters.file" />
+				v-bind="item.messageParameters.file" />
 		</template>
 	</div>
 </template>
@@ -34,12 +40,16 @@
 <script>
 import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import { SHARED_ITEM } from '../../../constants'
+import Location from '../../MessagesList/MessagesGroup/Message/MessagePart/Location'
+import DeckCard from '../../MessagesList/MessagesGroup/Message/MessagePart/DeckCard'
 
 export default {
 	name: 'SharedItems',
 
 	components: {
 		FilePreview,
+		Location,
+		DeckCard,
 	},
 
 	props: {
