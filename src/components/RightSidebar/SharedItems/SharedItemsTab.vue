@@ -25,7 +25,7 @@
 			<div v-if="sharedItems[type]" :key="type">
 				<AppNavigationCaption :title="getTitle(type)" />
 				<SharedItems :type="type"
-					:limit="true"
+					:limit="limit(type)"
 					:items="sharedItems[type]" />
 				<Button v-if="hasMore(sharedItems[type])"
 					type="tertiary-no-background"
@@ -135,6 +135,14 @@ export default {
 		showMore(type) {
 			this.browserActiveTab = type
 			this.showSharedItemsBrowser = true
+		},
+
+		limit(type) {
+			if (type === SHARED_ITEM.TYPES.DECK_CARD || type === SHARED_ITEM.TYPES.LOCATION) {
+				return 2
+			} else {
+				return 6
+			}
 		},
 
 		getButtonTitle(type) {

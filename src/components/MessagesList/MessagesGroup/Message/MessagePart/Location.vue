@@ -133,8 +133,7 @@ export default {
 	white-space: initial;
 	overflow: hidden;
 	border-radius: var(--border-radius-large);
-	height: 300px;
-	max-height: 30vh;
-	margin: 4px;
+	width: 100%;
+	height: 100%;
 }
 </style>
