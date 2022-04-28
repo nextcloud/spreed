@@ -22,11 +22,18 @@
 <template>
 	<div class="shared-items" :class="{'shared-items__list' : isList}">
 		<template v-for="item in itemsToDisplay">
-			<Location v-if="type === 'location'"
+			<div v-if="type === 'location'"
 				:key="item.id"
-				:latitude="item.messageParameters.object.latitude"
-				:longitude="item.messageParameters.object.longitude"
-				:title="item.messageParameters.object.title" />
+				class="shared-items__location"
+				:class="{ 'shared-items__location--nolimit': limit === 0 }">
+				<Location v-bind="item.messageParameters.object" />
+			</div>
+			<div v-else-if="type === 'deckcard'"
+				:key="item.id"
+				class="shared-items__deckcard"
+				:class="{ 'shared-items__location--nolimit': limit === 0 }">
+				<DeckCard v-bind="item.messageParameters.object" />
+			</div>
 			<FilePreview v-else
 				:key="item.id"
 				:small-preview="isList"
@@ -65,23 +72,24 @@ export default {
 
 		// Limits the amount of items displayed
 		limit: {
-			type: Boolean,
-			default: false,
+			type: Number,
+			default: 0,
 		},
 	},
 
 	computed: {
 		itemsToDisplay() {
-			return this.limit ? Object.values(this.items).reverse().slice(0, 6) : Object.values(this.items).reverse()
+			if (this.limit === 0) {
+				return Object.values(this.items).reverse()
+			} else {
+				return Object.values(this.items).reverse().slice(0, this.limit)
+			}
 		},
 
 		isList() {
-			switch (this.type) {
-			case SHARED_ITEM.TYPES.MEDIA:
+			if (this.type === SHARED_ITEM.TYPES.MEDIA) {
 				return false
-			case SHARED_ITEM.TYPES.LOCATION:
-				return false
-			default:
+			} else {
 				return true
 			}
 		},
@@ -96,10 +104,21 @@ export default {
 	grid-template-rows: 1fr 1fr;
 	margin-bottom: 16px;
 	grid-gap: 4px;
+	margin: auto;
 	&__list {
 		display: flex;
-		flex-direction: column;
+		flex-wrap: wrap;
 	}
+	&__location {
+		width: 100%;
+		height: 150px;
 
+		&--nolimit {
+			width: 33%;
+		}
+	}
+	&__deckcard {
+		width: 100%;
+	}
 }
 </style>
