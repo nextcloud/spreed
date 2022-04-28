@@ -1054,6 +1054,7 @@
     "Sounds" : "聲音 ",
     "Play sounds when participants join or leave a call" : "參與者加入或離開通話時播放聲音",
     "Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer." : "由於製造商的技術限制，當前無法在 Safari 瀏覽器以及 iPad 和 iPhone 裝置中播放聲音。",
+    "Sounds for chat and call notifications can be adjusted in the personal settings." : "可以在個人設置中調整聊天和通話通告的聲音。",
     "Keyboard shortcuts" : "鍵盤快捷鍵",
     "Speed up your Talk experience with these quick shortcuts." : "這些快速捷徑可加快您的 Talk 體驗。",
     "Focus the chat input" : "關注聊天輸入字段",
