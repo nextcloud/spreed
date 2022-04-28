@@ -10,6 +10,7 @@ OC.L10N.register(
     "An error occurred. Please contact your admin." : "Det oppstod ein feil. Ver venleg og kontakt systemadministrator.",
     "Open settings" : "Opne instillingar",
     "Messages" : "Meldingar",
+    "Everyone" : "Alle",
     "None" : "Ingen",
     "User" : "Bruker",
     "Users" : "Brukarare",
