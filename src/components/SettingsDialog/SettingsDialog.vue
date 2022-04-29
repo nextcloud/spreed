@@ -63,15 +63,12 @@
 			<label for="play_sounds">{{ t('spreed', 'Play sounds when participants join or leave a call') }}</label>
 			<em>{{ t('spreed', 'Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
 
-			<Button type="tertiary"
-				@click="goToPersonalSettings">
-				<template #icon>
-					<OpenInNew :size="20"
-						decorative
-						title="" />
-				</template>
-				{{ t('spreed', 'Sounds for chat and call notifications can be adjusted in the personal settings.') }}
-			</Button>
+			<a :href="settingsUrl"
+				target="_blank"
+				rel="noreferrer nofollow"
+				class="external">
+				{{ t('spreed', 'Sounds for chat and call notifications can be adjusted in the personal settings.') }} ↗
+			</a>
 		</AppSettingsSection>
 		<AppSettingsSection :title="t('spreed', 'Keyboard shortcuts')">
 			<em>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</em>
@@ -142,9 +139,7 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import MediaDevicesPreview from '../MediaDevicesPreview'
 import AppSettingsDialog from '@nextcloud/vue/dist/Components/AppSettingsDialog'
 import AppSettingsSection from '@nextcloud/vue/dist/Components/AppSettingsSection'
-import Button from '@nextcloud/vue/dist/Components/Button'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
-import OpenInNew from 'vue-material-design-icons/OpenInNew'
 
 export default {
 	name: 'SettingsDialog',
@@ -153,9 +148,7 @@ export default {
 		MediaDevicesPreview,
 		AppSettingsDialog,
 		AppSettingsSection,
-		Button,
 		CheckboxRadioSwitch,
-		OpenInNew,
 	},
 
 	data() {
@@ -194,6 +187,10 @@ export default {
 
 		readStatusPrivacy() {
 			return this.$store.getters.getReadStatusPrivacy()
+		},
+
+		settingsUrl() {
+			return generateUrl('/settings/user/notifications')
 		},
 	},
 
@@ -265,10 +262,6 @@ export default {
 
 		beforeDestroy() {
 			unsubscribe('show-settings', this.handleShowSettings)
-		},
-
-		goToPersonalSettings() {
-			window.location = generateUrl('/settings/user/notifications')
 		},
 	},
 }
