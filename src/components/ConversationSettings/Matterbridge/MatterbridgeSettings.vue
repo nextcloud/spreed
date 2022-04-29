@@ -630,11 +630,7 @@ export default {
 	width: 16px !important;
 	height: 16px !important;
 	margin-right: 10px;
-}
-
-body.theme--dark .icon-multiselect-service {
-	-webkit-filter: invert(1);
-	filter: invert(1);
+	filter: var(--background-invert-if-dark);
 }
 
 .matterbridge-settings {
