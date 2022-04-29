@@ -886,6 +886,19 @@ Peer.prototype.setRemoteVideoBlocked = function(remoteVideoBlocked) {
 		return
 	}
 
+	// If the HPB is used the remote video can be blocked through a standard
+	// WebRTC renegotiation or by toggling the video directly in Janus. The last
+	// one is preferred, as it requires less signaling messages to be exchanged
+	// and, besides that, the browser starts to decode the video faster once
+	// enabled again.
+	if (this.receiverOnly && this.parent.config.connection.hasFeature('update-sdp')) {
+		this.send('selectStream', {
+			video: !remoteVideoBlocked,
+		})
+
+		return
+	}
+
 	this._remoteVideoShouldBeBlocked = remoteVideoBlocked
 
 	// The "negotiationneeded" event is emitted if needed based on the direction
