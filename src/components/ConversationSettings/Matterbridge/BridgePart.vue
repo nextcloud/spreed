@@ -204,12 +204,8 @@ h3 {
 		margin: 14px 10px 0 14px;
 		width: 16px;
 		height: 16px;
+		filter: var(--background-invert-if-dark);
 	}
-}
-
-body.theme--dark .icon-service {
-	-webkit-filter: invert(1);
-	filter: invert(1);
 }
 
 input {

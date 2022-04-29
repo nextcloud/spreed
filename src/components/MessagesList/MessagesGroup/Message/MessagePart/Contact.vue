@@ -100,6 +100,7 @@ export default {
 	.contact {
 		display: flex;
 		transition: box-shadow 0.1s ease-in-out;
+		border: 1px solid var(--color-border);
 		box-shadow: 0 0 2px 0 var(--color-box-shadow);
 		border-radius: var(--border-radius-large);
 		font-size: 100%;
@@ -136,11 +137,6 @@ export default {
 			.title {
 				margin-left: 12px;
 			}
-		}
-
-		// Dark theme
-		body.dark &, body.theme--dark & {
-			border: 2px solid var(--color-border);
 		}
 	}
 

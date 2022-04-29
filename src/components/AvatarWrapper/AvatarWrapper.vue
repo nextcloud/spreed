@@ -139,17 +139,10 @@ export default {
 }
 
 .offline .avatar-wrapper .avatardiv {
-	background: rgba(255, 255, 255, .4) !important;
+	background: rgba(var(--color-main-background-rgb), .4) !important;
 
 	::v-deep > img {
 		opacity: .4 !important;
-	}
-}
-
-body.theme--dark {
-	.offline .avatar-wrapper .avatardiv {
-		background: rgba(0, 0, 0, .4) !important;
-		margin-top: -4px;
 	}
 }
 
