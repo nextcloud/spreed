@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import { getSharedItemsOverview, getSharedItems } from '../services/conversationSharedItemsService'
+import { getSharedItemsOverview, getSharedItems } from '../services/sharedItemsService'
 import { SHARED_ITEM } from '../constants'
 
 const getItemTypeFromMessage = function(message) {
@@ -120,19 +120,19 @@ const actions = {
 			return false
 		}
 
-		const limit = 100
+		const limit = 20
 		const lastKnownMessageId = Math.min.apply(Math, Object.keys(state.sharedItemsByConversationAndType[token][type]))
 		try {
 			const response = await getSharedItems(token, type, lastKnownMessageId, limit)
 			const messages = response.data.ocs.data
 			const hasMore = messages.length >= limit
-
 			// loop over the response elements and add them to the store
 			for (const message in messages) {
+
 				commit('addSharedItemMessage', {
 					token,
 					type,
-					message,
+					message: messages[message],
 				})
 			}
 			return hasMore
