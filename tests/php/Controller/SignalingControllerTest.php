@@ -35,6 +35,7 @@ use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
@@ -1059,9 +1060,12 @@ class SignalingControllerTest extends TestCase {
 			->willReturn($this->userId);
 
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
+		$roomService = $this->createMock(RoomService::class);
+		$roomService->method('verifyPassword')
+			->willReturn(['result' => true, 'url' => '']);
 
 		// The user joined the room.
-		$oldParticipant = $participantService->joinRoom($room, $testUser, '');
+		$oldParticipant = $participantService->joinRoom($roomService, $room, $testUser, '');
 		$oldSessionId = $oldParticipant->getSession()->getSessionId();
 		$this->performBackendRequest([
 			'type' => 'room',
@@ -1077,7 +1081,7 @@ class SignalingControllerTest extends TestCase {
 
 		// The user is reloading the browser which will join him with another
 		// session id.
-		$newParticipant = $participantService->joinRoom($room, $testUser, '');
+		$newParticipant = $participantService->joinRoom($roomService, $room, $testUser, '');
 		$newSessionId = $newParticipant->getSession()->getSessionId();
 		$this->performBackendRequest([
 			'type' => 'room',

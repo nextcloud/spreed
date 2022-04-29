@@ -234,6 +234,7 @@ class ParticipantService {
 	}
 
 	/**
+	 * @param RoomService $roomService
 	 * @param Room $room
 	 * @param IUser $user
 	 * @param string $password
@@ -242,7 +243,7 @@ class ParticipantService {
 	 * @throws InvalidPasswordException
 	 * @throws UnauthorizedException
 	 */
-	public function joinRoom(Room $room, IUser $user, string $password, bool $passedPasswordProtection = false): Participant {
+	public function joinRoom(RoomService $roomService, Room $room, IUser $user, string $password, bool $passedPasswordProtection = false): Participant {
 		$event = new JoinRoomUserEvent($room, $user, $password, $passedPasswordProtection);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_CONNECT, $event);
 
@@ -258,7 +259,7 @@ class ParticipantService {
 			$manager = \OC::$server->get(Manager::class);
 			$isListableByUser = $manager->isRoomListableByUser($room, $user->getUID());
 
-			if (!$isListableByUser && !$event->getPassedPasswordProtection() && !$room->verifyPassword($password)['result']) {
+			if (!$isListableByUser && !$event->getPassedPasswordProtection() && !$roomService->verifyPassword($room, $password)['result']) {
 				throw new InvalidPasswordException('Provided password is invalid');
 			}
 
@@ -295,6 +296,7 @@ class ParticipantService {
 	}
 
 	/**
+	 * @param RoomService $roomService
 	 * @param Room $room
 	 * @param string $password
 	 * @param bool $passedPasswordProtection
@@ -303,7 +305,7 @@ class ParticipantService {
 	 * @throws InvalidPasswordException
 	 * @throws UnauthorizedException
 	 */
-	public function joinRoomAsNewGuest(Room $room, string $password, bool $passedPasswordProtection = false, ?Participant $previousParticipant = null): Participant {
+	public function joinRoomAsNewGuest(RoomService $roomService, Room $room, string $password, bool $passedPasswordProtection = false, ?Participant $previousParticipant = null): Participant {
 		$event = new JoinRoomGuestEvent($room, $password, $passedPasswordProtection);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_GUEST_CONNECT, $event);
 
@@ -311,7 +313,7 @@ class ParticipantService {
 			throw new UnauthorizedException('Participant is not allowed to join');
 		}
 
-		if (!$event->getPassedPasswordProtection() && !$room->verifyPassword($password)['result']) {
+		if (!$event->getPassedPasswordProtection() && !$roomService->verifyPassword($room, $password)['result']) {
 			throw new InvalidPasswordException();
 		}
 

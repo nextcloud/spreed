@@ -33,6 +33,7 @@ use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\Signaling\BackendNotifier;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
@@ -312,12 +313,16 @@ class BackendNotifierTest extends TestCase {
 			->method('getUID')
 			->willReturn($this->userId);
 
+		$roomService = $this->createMock(RoomService::class);
+		$roomService->method('verifyPassword')
+			->willReturn(['result' => true, 'url' => '']);
+
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$this->participantService->addUsers($room, [[
 			'actorType' => 'users',
 			'actorId' => $this->userId,
 		]]);
-		$participant = $this->participantService->joinRoom($room, $testUser, '');
+		$participant = $this->participantService->joinRoom($roomService, $room, $testUser, '');
 		$this->controller->clearRequests();
 		$this->participantService->leaveRoomAsSession($room, $participant);
 
@@ -331,8 +336,12 @@ class BackendNotifierTest extends TestCase {
 			->method('getUID')
 			->willReturn($this->userId);
 
+		$roomService = $this->createMock(RoomService::class);
+		$roomService->method('verifyPassword')
+			->willReturn(['result' => true, 'url' => '']);
+
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
-		$participant = $this->participantService->joinRoom($room, $testUser, '');
+		$participant = $this->participantService->joinRoom($roomService, $room, $testUser, '');
 		$this->controller->clearRequests();
 		$this->participantService->leaveRoomAsSession($room, $participant);
 
@@ -360,8 +369,12 @@ class BackendNotifierTest extends TestCase {
 	}
 
 	public function testRoomDisinviteOnLeaveOfGuest() {
+		$roomService = $this->createMock(RoomService::class);
+		$roomService->method('verifyPassword')
+			->willReturn(['result' => true, 'url' => '']);
+
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
-		$participant = $this->participantService->joinRoomAsNewGuest($room, '');
+		$participant = $this->participantService->joinRoomAsNewGuest($roomService, $room, '');
 		$this->controller->clearRequests();
 		$this->participantService->leaveRoomAsSession($room, $participant);
 
@@ -587,7 +600,11 @@ class BackendNotifierTest extends TestCase {
 			->method('getUID')
 			->willReturn($this->userId);
 
-		$participant = $this->participantService->joinRoom($room, $testUser, '');
+		$roomService = $this->createMock(RoomService::class);
+		$roomService->method('verifyPassword')
+			->willReturn(['result' => true, 'url' => '']);
+
+		$participant = $this->participantService->joinRoom($roomService, $room, $testUser, '');
 		$userSession = $participant->getSession()->getSessionId();
 		$participant = $room->getParticipantBySession($userSession);
 
@@ -624,7 +641,7 @@ class BackendNotifierTest extends TestCase {
 
 		$this->controller->clearRequests();
 
-		$guestParticipant = $this->participantService->joinRoomAsNewGuest($room, '');
+		$guestParticipant = $this->participantService->joinRoomAsNewGuest($roomService, $room, '');
 		$guestSession = $guestParticipant->getSession()->getSessionId();
 		$guestParticipant = $room->getParticipantBySession($guestSession);
 		$this->participantService->changeInCall($room, $guestParticipant, Participant::FLAG_IN_CALL);
@@ -745,7 +762,11 @@ class BackendNotifierTest extends TestCase {
 			->method('getUID')
 			->willReturn($this->userId);
 
-		$participant = $this->participantService->joinRoom($room, $testUser, '');
+		$roomService = $this->createMock(RoomService::class);
+		$roomService->method('verifyPassword')
+			->willReturn(['result' => true, 'url' => '']);
+
+		$participant = $this->participantService->joinRoom($roomService, $room, $testUser, '');
 		$userSession = $participant->getSession()->getSessionId();
 		$participant = $room->getParticipantBySession($userSession);
 
@@ -780,7 +801,7 @@ class BackendNotifierTest extends TestCase {
 
 		$this->controller->clearRequests();
 
-		$guestParticipant = $this->participantService->joinRoomAsNewGuest($room, '');
+		$guestParticipant = $this->participantService->joinRoomAsNewGuest($roomService, $room, '');
 		$guestSession = $guestParticipant->getSession()->getSessionId();
 		$guestParticipant = $room->getParticipantBySession($guestSession);
 

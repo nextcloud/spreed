@@ -24,16 +24,24 @@ declare(strict_types=1);
 namespace OCA\Talk\Tests\php\Service;
 
 use InvalidArgumentException;
+use OC\EventDispatcher\EventDispatcher;
+use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Webinary;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IDBConnection;
 use OCP\IUser;
+use OCP\Security\IHasher;
 use OCP\Share\IManager as IShareManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class RoomServiceTest extends TestCase {
@@ -44,6 +52,8 @@ class RoomServiceTest extends TestCase {
 	protected $participantService;
 	/** @var IShareManager|MockObject */
 	protected $shareManager;
+	/** @var IHasher|MockObject */
+	protected $hasher;
 	/** @var IEventDispatcher|MockObject */
 	protected $dispatcher;
 	private ?RoomService $service = null;
@@ -55,11 +65,13 @@ class RoomServiceTest extends TestCase {
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->shareManager = $this->createMock(IShareManager::class);
+		$this->hasher = $this->createMock(IHasher::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->service = new RoomService(
 			$this->manager,
 			$this->participantService,
 			$this->shareManager,
+			$this->hasher,
 			$this->dispatcher
 		);
 	}
@@ -294,5 +306,70 @@ class RoomServiceTest extends TestCase {
 	 */
 	public function testPrepareConversationName(string $input, string $expected): void {
 		$this->assertSame($expected, $this->service->prepareConversationName($input));
+	}
+
+	public function testVerifyPassword(): void {
+		$dispatcher = new EventDispatcher(
+			new \Symfony\Component\EventDispatcher\EventDispatcher(),
+			\OC::$server,
+			$this->createMock(LoggerInterface::class)
+		);
+		$dispatcher->addListener(Room::EVENT_PASSWORD_VERIFY, static function (VerifyRoomPasswordEvent $event) {
+			$password = $event->getPassword();
+
+			if ($password === '1234') {
+				$event->setIsPasswordValid(true);
+				$event->setRedirectUrl('');
+			} else {
+				$event->setIsPasswordValid(false);
+				$event->setRedirectUrl('https://test');
+			}
+		});
+
+		$service = new RoomService(
+			$this->manager,
+			$this->participantService,
+			$this->shareManager,
+			$this->hasher,
+			$dispatcher
+		);
+
+		$room = new Room(
+			$this->createMock(Manager::class),
+			$this->createMock(IDBConnection::class),
+			$dispatcher,
+			$this->createMock(ITimeFactory::class),
+			$this->createMock(IHasher::class),
+			1,
+			Room::TYPE_PUBLIC,
+			Room::READ_WRITE,
+			Room::LISTABLE_NONE,
+			Webinary::LOBBY_NONE,
+			0,
+			null,
+			'foobar',
+			'Test',
+			'description',
+			'passy',
+			'',
+			'',
+			0,
+			Attendee::PERMISSIONS_DEFAULT,
+			Attendee::PERMISSIONS_DEFAULT,
+			Participant::FLAG_DISCONNECTED,
+			null,
+			null,
+			0,
+			null,
+			null,
+			'',
+			''
+		);
+
+		$verificationResult = $service->verifyPassword($room, '1234');
+		$this->assertSame($verificationResult, ['result' => true, 'url' => '']);
+		$verificationResult = $service->verifyPassword($room, '4321');
+		$this->assertSame($verificationResult, ['result' => false, 'url' => 'https://test']);
+		$this->assertSame('passy', $room->getPassword());
 	}
 }

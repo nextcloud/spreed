@@ -31,7 +31,6 @@ use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
-use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\SelectHelper;
@@ -1017,26 +1016,5 @@ class Room {
 		}
 
 		return true;
-	}
-
-	/**
-	 * @param string $password
-	 * @return array
-	 */
-	public function verifyPassword(string $password): array {
-		$event = new VerifyRoomPasswordEvent($this, $password);
-		$this->dispatcher->dispatch(self::EVENT_PASSWORD_VERIFY, $event);
-
-		if ($event->isPasswordValid() !== null) {
-			return [
-				'result' => $event->isPasswordValid(),
-				'url' => $event->getRedirectUrl(),
-			];
-		}
-
-		return [
-			'result' => !$this->hasPassword() || $this->hasher->verify($password, $this->password),
-			'url' => '',
-		];
 	}
 }
