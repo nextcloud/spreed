@@ -112,6 +112,7 @@ export default {
 	&__location {
 		width: 100%;
 		height: 150px;
+		margin: 4px 0;
 
 		&--nolimit {
 			width: 33%;
