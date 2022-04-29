@@ -1422,6 +1422,30 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
+	 * @RequireRoom
+	 *
+	 * @return DataResponse
+	 */
+	public function createGuestByDialIn(): DataResponse {
+		try {
+			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
+				return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			}
+		} catch (UnauthorizedException $e) {
+			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+		}
+
+		if ($this->room->getSIPEnabled() !== Webinary::SIP_ENABLED_NO_PIN) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $this->room, '', true);
+
+		return new DataResponse($this->formatRoom($this->room, $participant));
+	}
+
+	/**
+	 * @PublicPage
 	 * @UseSession
 	 *
 	 * @param string $token
