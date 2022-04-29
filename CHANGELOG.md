@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.0.0-rc.4 – 2022-04-29
+### Added
+- Add a modal to show more shared items
+
+### Fixed
+- Make reactions work for guests and handle guests without name in the summary
+  [7217](https://github.com/nextcloud/spreed/pull/7217)
+- Add a link to notification sound settings from talk settings
+  [7224](https://github.com/nextcloud/spreed/pull/7224)
+- Fix migration with Postgres and Oracle
+  [7211](https://github.com/nextcloud/spreed/pull/7211)
+- Add programmatic output options to talk:active-calls command
+  [7227](https://github.com/nextcloud/spreed/pull/7227)
+- Fix media tab and reactions summary in read-only rooms
+  [7236](https://github.com/nextcloud/spreed/pull/7236)
+
 ## 14.0.0-rc.3 – 2022-04-22
 ### Fixed
 - Move message.reactions.self to message.reactionsSelf to not merge different data structures
