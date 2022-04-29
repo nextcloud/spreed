@@ -1054,6 +1054,7 @@
     "Sounds" : "Hangok",
     "Play sounds when participants join or leave a call" : "Hangjelzések lejátszása, amikor a résztvevők csatlakoznak, vagy elhagyják a hívást",
     "Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer." : "A hangokat a gyártó műszaki korlátozásai miatt jelenleg nem lehet lejátszani Safari böngészőben, valamint iPad és iPhone eszközökön.",
+    "Sounds for chat and call notifications can be adjusted in the personal settings." : "A csevegési és hívásértesítések hangja a személyes beállításokban módosítható. ",
     "Keyboard shortcuts" : "Gyorsbillentyűk",
     "Speed up your Talk experience with these quick shortcuts." : "Ezekkel a billentyűparancsokkal felpörgetheti a Beszélgetés élményét.",
     "Focus the chat input" : "Fókusz a csevegés beviteli mezőjére",
