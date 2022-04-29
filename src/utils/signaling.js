@@ -1292,7 +1292,7 @@ Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
 	}
 }
 
-Signaling.Standalone.prototype.requestOffer = function(sessionid, roomType) {
+Signaling.Standalone.prototype.requestOffer = function(sessionid, roomType, sid = undefined) {
 	if (!this.hasFeature('mcu')) {
 		console.warn("Can't request an offer without a MCU.")
 		return
@@ -1302,7 +1302,7 @@ Signaling.Standalone.prototype.requestOffer = function(sessionid, roomType) {
 		// Got a user object.
 		sessionid = sessionid.sessionId || sessionid.sessionid
 	}
-	console.debug('Request offer from', sessionid)
+	console.debug('Request offer from', sessionid, sid)
 	this.doSend({
 		type: 'message',
 		message: {
@@ -1313,6 +1313,7 @@ Signaling.Standalone.prototype.requestOffer = function(sessionid, roomType) {
 			data: {
 				type: 'requestoffer',
 				roomType,
+				sid,
 			},
 		},
 	})

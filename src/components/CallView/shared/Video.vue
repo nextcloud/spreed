@@ -180,12 +180,12 @@ export default {
 			return this.model.attributes.connectedAtLeastOnce
 		},
 
-		isNotConnected() {
-			return this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED
+		isConnected() {
+			return this.model.attributes.connectionState === ConnectionState.CONNECTED || this.model.attributes.connectionState === ConnectionState.COMPLETED
 		},
 
 		isLoading() {
-			return this.isNotConnected && this.model.attributes.connectionState !== ConnectionState.FAILED_NO_RESTART
+			return !this.isConnected && this.model.attributes.connectionState !== ConnectionState.FAILED_NO_RESTART
 		},
 
 		isDisconnected() {
@@ -204,11 +204,15 @@ export default {
 		 * received yet). Similarly both "negotiating" and "connecting" need to
 		 * be checked, as the negotiation will start before the connection
 		 * attempt is started.
+		 *
+		 * If the negotiation is done while there is still a connection it is
+		 * not regarded as reconnecting, as in that case it is a renegotiation
+		 * to update the current connection.
 		 */
 		isReconnecting() {
 			return this.model.attributes.connectionState === ConnectionState.FAILED
 				|| (!this.model.attributes.initialConnection
-					&& (this.model.attributes.negotiating || this.model.attributes.connecting))
+					&& ((this.model.attributes.negotiating && !this.isConnected) || this.model.attributes.connecting))
 		},
 
 		isNoLongerTryingToReconnect() {
@@ -242,7 +246,7 @@ export default {
 		containerClass() {
 			return {
 				'videoContainer-dummy': this.placeholderForPromoted,
-				'not-connected': !this.placeholderForPromoted && this.isNotConnected,
+				'not-connected': !this.placeholderForPromoted && !this.isConnected,
 				speaking: !this.placeholderForPromoted && this.model.attributes.speaking,
 				promoted: !this.placeholderForPromoted && this.sharedData.promoted && !this.isGrid,
 				'video-container-grid': this.isGrid,
@@ -371,7 +375,7 @@ export default {
 		},
 
 		hasVideo() {
-			return this.model.attributes.videoAvailable && this.sharedData.videoEnabled && (typeof this.model.attributes.stream === 'object')
+			return !this.model.attributes.videoBlocked && this.model.attributes.videoAvailable && this.sharedData.remoteVideoBlocker.isVideoEnabled() && (typeof this.model.attributes.stream === 'object')
 		},
 
 		hasSelectedVideo() {
@@ -469,8 +473,14 @@ export default {
 	},
 
 	mounted() {
+		this.sharedData.remoteVideoBlocker.increaseVisibleCounter()
+
 		// Set initial state
 		this._setStream(this.model.attributes.stream)
+	},
+
+	destroyed() {
+		this.sharedData.remoteVideoBlocker.decreaseVisibleCounter()
 	},
 
 	methods: {
