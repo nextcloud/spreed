@@ -32,7 +32,8 @@
 				:key="item.id"
 				class="shared-items__deckcard"
 				:class="{ 'shared-items__location--nolimit': limit === 0 }">
-				<DeckCard v-bind="item.messageParameters.object" />
+				<DeckCard :wide="true"
+					v-bind="item.messageParameters.object" />
 			</div>
 			<FilePreview v-else
 				:key="item.id"
@@ -102,7 +103,6 @@ export default {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-template-rows: 1fr 1fr;
-	margin-bottom: 16px;
 	grid-gap: 4px;
 	margin: auto;
 	&__list {

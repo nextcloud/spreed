@@ -619,6 +619,7 @@ export default {
 		aspect-ratio: 1;
 		.preview {
 			width: 100%;
+			min-height: unset;
 		}
 	}
 }

@@ -21,6 +21,7 @@
 
 <template>
 	<a class="deck-card"
+		:class="{ 'wide': wide}"
 		:href="link"
 		:aria-label="deckCardAriaLabel"
 		target="_blank">
@@ -73,6 +74,11 @@ export default {
 			type: String,
 			required: true,
 		},
+
+		wide: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	computed: {
@@ -98,7 +104,7 @@ export default {
 	border-radius: var(--border-radius-large);
 	font-size: 100%;
 	background-color: var(--color-main-background);
-	margin: 12px 0;
+	margin: 4px 0;
 	max-width: 300px;
 	padding: 8px 16px;
 	flex-direction: column;
@@ -131,6 +137,11 @@ export default {
 
 .icon-deck {
 	opacity: .8;
+}
+
+.wide {
+	max-width: 400px;
+	margin: 4px auto;
 }
 
 </style>
