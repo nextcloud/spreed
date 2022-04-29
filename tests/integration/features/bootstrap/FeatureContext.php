@@ -63,6 +63,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		'A' => 16, // PERMISSIONS_PUBLISH_AUDIO
 		'V' => 32, // PERMISSIONS_PUBLISH_VIDEO
 		'P' => 64, // PERMISSIONS_PUBLISH_SCREEN
+		'M' => 128, // PERMISSIONS_CHAT
 	];
 
 	/** @var string */

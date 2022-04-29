@@ -70,6 +70,7 @@ title: Constants
 * `16` Can publish audio stream
 * `32` Can publish video stream
 * `64` Can publish screen sharing stream
+* `128` Can post chat message, share items and do reactions
 
 ### Attendee permission modifications
 * `set` - Setting this permission set.

@@ -169,17 +169,19 @@
     </MissingDependency>
   </file>
   <file src="lib/Controller/SettingsController.php">
+    <InvalidArgument occurrences="1">
+      <code>SharedStorage::class</code>
+    </InvalidArgument>
     <MissingDependency occurrences="3">
       <code>$this-&gt;rootFolder</code>
       <code>IRootFolder</code>
       <code>IRootFolder</code>
     </MissingDependency>
-    <InvalidArgument occurrences="1">
-      <code>SharedStorage::class</code>
-    </InvalidArgument>
   </file>
   <file src="lib/Controller/SignalingController.php">
-    <UndefinedClass occurrences="1"/>
+    <UndefinedClass occurrences="1">
+      <code>ConnectException</code>
+    </UndefinedClass>
   </file>
   <file src="lib/Controller/TempAvatarController.php">
     <UndefinedClass occurrences="1">
@@ -197,6 +199,9 @@
     </UndefinedClass>
   </file>
   <file src="lib/Files/Util.php">
+    <InvalidArgument occurrences="1">
+      <code>SharedStorage::class</code>
+    </InvalidArgument>
     <MissingDependency occurrences="5">
       <code>$this-&gt;rootFolder</code>
       <code>$this-&gt;rootFolder</code>
@@ -204,15 +209,22 @@
       <code>IRootFolder</code>
       <code>IRootFolder</code>
     </MissingDependency>
-    <InvalidArgument occurrences="1">
-      <code>SharedStorage::class</code>
-    </InvalidArgument>
   </file>
   <file src="lib/MatterbridgeManager.php">
     <UndefinedClass occurrences="7">
+      <code>$this-&gt;tokenProvider</code>
+      <code>$this-&gt;tokenProvider</code>
+      <code>$this-&gt;tokenProvider</code>
+      <code>IAuthTokenProvider</code>
       <code>IAuthTokenProvider</code>
       <code>IToken</code>
+      <code>IToken</code>
     </UndefinedClass>
+  </file>
+  <file src="lib/Middleware/InjectionMiddleware.php">
+    <UndefinedInterfaceMethod occurrences="1">
+      <code>getAnnotationParameter</code>
+    </UndefinedInterfaceMethod>
   </file>
   <file src="lib/Migration/Version2001Date20170707115443.php">
     <InvalidArrayAccess occurrences="1">

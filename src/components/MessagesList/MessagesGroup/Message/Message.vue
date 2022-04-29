@@ -136,7 +136,10 @@ the main body of the message as well as a quote.
 				</Popover>
 
 				<!-- More reactions picker -->
-				<EmojiPicker :per-line="5" :container="`#message_${id}`" @select="handleReactionClick">
+				<EmojiPicker v-if="canReact"
+					:per-line="5"
+					:container="`#message_${id}`"
+					@select="handleReactionClick">
 					<button class="reaction-button">
 						<EmoticonOutline :size="15" />
 					</button>
@@ -190,7 +193,7 @@ import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
-import { ATTENDEE } from '../../../../constants'
+import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants'
 
 export default {
 	name: 'Message',
@@ -572,6 +575,10 @@ export default {
 			return this.$store.getters.hasReactions(this.token, this.id)
 		},
 
+		canReact() {
+			return this.conversation.readOnly !== CONVERSATION.STATE.READ_ONLY && (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
+		},
+
 		simpleReactions() {
 			return this.messageObject.reactions
 		},
@@ -679,6 +686,11 @@ export default {
 		},
 
 		async handleReactionClick(clickedEmoji) {
+			if (!this.canReact) {
+				showError(t('spreed', 'No permission to post reactions in this conversation'))
+				return
+			}
+
 			// Check if current user has already added this reaction to the message
 			if (!this.userHasReacted(clickedEmoji)) {
 				this.$store.dispatch('addReactionToMessage', {

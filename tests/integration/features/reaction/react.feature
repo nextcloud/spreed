@@ -39,6 +39,30 @@ Feature: reaction/react
       | room | users     | participant1 | participant1-displayname | user_added |
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
+  Scenario: React to message fails without chat permission
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    And user "participant2" react with "👍" on message "Message 1" to room "room" with 201
+      | actorType | actorId      | actorDisplayName         | reaction |
+      | users     | participant2 | participant2-displayname | 👍       |
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant2 | participant2-displayname | reaction |
+      | room | users     | participant1 | participant1-displayname | user_added |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+    # Removing chat permission only
+    Then user "participant1" sets permissions for "participant2" in room "room" to "CSJLAVP" with 200 (v4)
+    When user "participant2" delete react with "👍" on message "Message 1" to room "room" with 403
+    And user "participant2" react with "💙" on message "Message 1" to room "room" with 403
+    And user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant2 | participant2-displayname | reaction |
+      | room | users     | participant1 | participant1-displayname | user_added |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+
   Scenario: React two times to same message with the same reaction
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |

@@ -180,6 +180,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireParticipant
 	 * @RequireReadWriteConversation
+	 * @RequirePermissions(permissions=chat)
 	 * @RequireModeratorOrNoLobby
 	 *
 	 * Sends a new chat message to the given room.
@@ -235,6 +236,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireParticipant
 	 * @RequireReadWriteConversation
+	 * @RequirePermissions(permissions=chat)
 	 * @RequireModeratorOrNoLobby
 	 *
 	 * Sends a rich-object to the given room.
@@ -575,6 +577,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @NoAdminRequired
 	 * @RequireParticipant
 	 * @RequireReadWriteConversation
+	 * @RequirePermissions(permissions=chat)
 	 * @RequireModeratorOrNoLobby
 	 *
 	 * @param int $messageId
@@ -825,6 +828,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireParticipant
 	 * @RequireReadWriteConversation
+	 * @RequirePermissions(permissions=chat)
 	 * @RequireModeratorOrNoLobby
 	 *
 	 * @param string $search

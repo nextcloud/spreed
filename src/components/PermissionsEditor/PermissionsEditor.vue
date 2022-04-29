@@ -37,6 +37,11 @@
 						class="checkbox">
 						{{ t('spreed', 'Skip the lobby') }}
 					</CheckboxRadioSwitch>
+					<CheckboxRadioSwitch ref="chatMessagesAndReactions"
+						:checked.sync="chatMessagesAndReactions"
+						class="checkbox">
+						{{ t('spreed', 'Can post messages and reactions') }}
+					</CheckboxRadioSwitch>
 					<CheckboxRadioSwitch ref="publishAudio"
 						:checked.sync="publishAudio"
 						class="checkbox">
@@ -125,6 +130,8 @@ export default {
 			callStart: false,
 			// Permission to bypass the lobby
 			lobbyIgnore: false,
+			// Permission to post messages and reactions
+			chatMessagesAndReactions: false,
 			// Permission to enable the microphone
 			publishAudio: false,
 			// Permission to enable the camera
@@ -164,6 +171,7 @@ export default {
 		formPermissions() {
 			return (this.callStart ? PERMISSIONS.CALL_START : 0)
 			| (this.lobbyIgnore ? PERMISSIONS.LOBBY_IGNORE : 0)
+			| (this.chatMessagesAndReactions ? PERMISSIONS.CHAT : 0)
 			| (this.publishAudio ? PERMISSIONS.PUBLISH_AUDIO : 0)
 			| (this.publishVideo ? PERMISSIONS.PUBLISH_VIDEO : 0)
 			| (this.publishScreen ? PERMISSIONS.PUBLISH_SCREEN : 0)
@@ -177,6 +185,7 @@ export default {
 		submitButtonDisabled() {
 			return (!!(this.permissionsWithDefault & PERMISSIONS.CALL_START)) === this.callStart
 				&& !!(this.permissionsWithDefault & PERMISSIONS.LOBBY_IGNORE) === this.lobbyIgnore
+				&& !!(this.permissionsWithDefault & PERMISSIONS.CHAT) === this.chatMessagesAndReactions
 				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_AUDIO) === this.publishAudio
 				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_VIDEO) === this.publishVideo
 				&& !!(this.permissionsWithDefault & PERMISSIONS.PUBLISH_SCREEN) === this.publishScreen
@@ -197,6 +206,7 @@ export default {
 		writePermissionsToComponent(permissions) {
 			permissions & PERMISSIONS.CALL_START ? this.callStart = true : this.callStart = false
 			permissions & PERMISSIONS.LOBBY_IGNORE ? this.lobbyIgnore = true : this.lobbyIgnore = false
+			permissions & PERMISSIONS.CHAT ? this.chatMessagesAndReactions = true : this.chatMessagesAndReactions = false
 			permissions & PERMISSIONS.PUBLISH_AUDIO ? this.publishAudio = true : this.publishAudio = false
 			permissions & PERMISSIONS.PUBLISH_VIDEO ? this.publishVideo = true : this.publishVideo = false
 			permissions & PERMISSIONS.PUBLISH_SCREEN ? this.publishScreen = true : this.publishScreen = false

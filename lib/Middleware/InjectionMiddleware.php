@@ -25,6 +25,7 @@ namespace OCA\Talk\Middleware;
 
 use OCA\Talk\Controller\AEnvironmentAwareController;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\PermissionsException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Exceptions\LobbyException;
@@ -108,6 +109,11 @@ class InjectionMiddleware extends Middleware {
 		if ($this->reflector->hasAnnotation('RequireModeratorOrNoLobby')) {
 			$this->checkLobbyState($controller);
 		}
+
+		$requiredPermissions = $this->reflector->getAnnotationParameter('RequirePermissions', 'permissions');
+		if ($requiredPermissions) {
+			$this->checkPermissions($controller, $requiredPermissions);
+		}
 	}
 
 	/**
@@ -190,6 +196,24 @@ class InjectionMiddleware extends Middleware {
 
 	/**
 	 * @param AEnvironmentAwareController $controller
+	 * @throws PermissionsException
+	 */
+	protected function checkPermissions(AEnvironmentAwareController $controller, string $permissions): void {
+		$textPermissions = explode(',', $permissions);
+		$participant = $controller->getParticipant();
+		if (!$participant instanceof Participant) {
+			throw new PermissionsException();
+		}
+
+		foreach ($textPermissions as $textPermission) {
+			if ($textPermission === 'chat' && !($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
+				throw new PermissionsException();
+			}
+		}
+	}
+
+	/**
+	 * @param AEnvironmentAwareController $controller
 	 * @throws LobbyException
 	 */
 	protected function checkLobbyState(AEnvironmentAwareController $controller): void {
@@ -238,7 +262,8 @@ class InjectionMiddleware extends Middleware {
 		}
 
 		if ($exception instanceof NotAModeratorException ||
-			$exception instanceof ReadOnlyException) {
+			$exception instanceof ReadOnlyException ||
+			$exception instanceof PermissionsException) {
 			if ($controller instanceof OCSController) {
 				throw new OCSException('', Http::STATUS_FORBIDDEN);
 			}

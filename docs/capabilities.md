@@ -92,3 +92,6 @@ title: Capabilities
 * `reactions` - Api reactions to chat message
 * `rich-object-list-media` - When the API to get the chat messages for shared media is available
 * `rich-object-delete` - When the API allows to delete chat messages which are file or rich object shares
+
+## 15
+* `chat-permission` - When permission 128 is required to post chat messages, reaction or share items to the conversation

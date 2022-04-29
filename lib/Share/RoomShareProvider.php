@@ -34,6 +34,7 @@ use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -142,10 +143,15 @@ class RoomShareProvider implements IShareProvider {
 		}
 
 		try {
-			$room->getParticipant($share->getSharedBy(), false);
+			$participant = $room->getParticipant($share->getSharedBy(), false);
 		} catch (ParticipantNotFoundException $e) {
 			// If the sharer is not a participant of the room even if the room
 			// exists the error is still "Room not found".
+			throw new GenericShareException('Room not found', $this->l->t('Conversation not found'), 404);
+		}
+
+		if (!($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
+			// No chat permissions is like read-only
 			throw new GenericShareException('Room not found', $this->l->t('Conversation not found'), 404);
 		}
 

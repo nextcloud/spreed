@@ -13,26 +13,26 @@ Feature: set-publishing-permissions
     And user "owner" adds user "invited user" to room "group room" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVP      |
-      | users      | moderator    | SJLAVP      |
-      | users      | invited user | SJAVP       |
+      | users      | owner        | SJLAVPM     |
+      | users      | moderator    | SJLAVPM     |
+      | users      | invited user | SJAVPM      |
     When user "owner" sets default permissions for room "group room" to "S" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVP      |
-      | users      | moderator    | SJLAVP      |
+      | users      | owner        | SJLAVPM     |
+      | users      | moderator    | SJLAVPM     |
       | users      | invited user | CS          |
     When user "moderator" sets default permissions for room "group room" to "AV" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVP      |
-      | users      | moderator    | SJLAVP      |
+      | users      | owner        | SJLAVPM     |
+      | users      | moderator    | SJLAVPM     |
       | users      | invited user | CAV         |
     When user "invited user" sets default permissions for room "group room" to "D" with 403 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVP      |
-      | users      | moderator    | SJLAVP      |
+      | users      | owner        | SJLAVPM     |
+      | users      | moderator    | SJLAVPM     |
       | users      | invited user | CAV         |
 
   Scenario: Owner and moderators can set call permissions users can not
@@ -47,8 +47,8 @@ Feature: set-publishing-permissions
     When user "invited user" sets call permissions for room "group room" to "D" with 403 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVP      |
-      | users      | moderator    | SJLAVP      |
+      | users      | owner        | SJLAVPM     |
+      | users      | moderator    | SJLAVPM     |
       | users      | invited user | CAV         |
 
   Scenario: User setting over call setting over conversation setting over default
@@ -59,33 +59,33 @@ Feature: set-publishing-permissions
     When user "owner" sets default permissions for room "group room" to "S" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVP      |
+      | users      | owner        | SJLAVPM     |
       | users      | invited user | CS          |
     When user "owner" sets call permissions for room "group room" to "A" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVP      |
+      | users      | owner        | SJLAVPM     |
       | users      | invited user | CA          |
     And user "owner" sets permissions for "invited user" in room "group room" to "V" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVP      |
+      | users      | owner        | SJLAVPM     |
       | users      | invited user | CV          |
     And user "owner" sets permissions for "invited user" in room "group room" to "D" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVP      |
+      | users      | owner        | SJLAVPM     |
       | users      | invited user | CA          |
     When user "owner" sets call permissions for room "group room" to "D" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVP      |
+      | users      | owner        | SJLAVPM     |
       | users      | invited user | CS          |
     When user "owner" sets default permissions for room "group room" to "D" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions |
-      | users      | owner        | SJLAVP      |
-      | users      | invited user | SJAVP       |
+      | users      | owner        | SJLAVPM     |
+      | users      | invited user | SJAVPM      |
 
 
 
@@ -97,12 +97,12 @@ Feature: set-publishing-permissions
     And user "owner" sets permissions for "invited user" in room "group room" to "V" with 200 (v4)
     And user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions | attendeePermissions |
-      | users      | owner        | SJLAVP      | D                   |
+      | users      | owner        | SJLAVPM     | D                   |
       | users      | invited user | CV          | CV                  |
     When user "owner" sets call permissions for room "group room" to "A" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions | attendeePermissions |
-      | users      | owner        | SJLAVP      | D                   |
+      | users      | owner        | SJLAVPM     | D                   |
       | users      | invited user | CA          | D                   |
 
   Scenario: setting default permissions resets participant permissions
@@ -113,12 +113,12 @@ Feature: set-publishing-permissions
     And user "owner" sets permissions for "invited user" in room "group room" to "V" with 200 (v4)
     And user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions | attendeePermissions |
-      | users      | owner        | SJLAVP      | D                   |
+      | users      | owner        | SJLAVPM     | D                   |
       | users      | invited user | CV          | CV                  |
     When user "owner" sets default permissions for room "group room" to "A" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions | attendeePermissions |
-      | users      | owner        | SJLAVP      | D                   |
+      | users      | owner        | SJLAVPM     | D                   |
       | users      | invited user | CA          | D                   |
 
   Scenario: setting default permissions does not reset call permissions
@@ -129,10 +129,10 @@ Feature: set-publishing-permissions
     And user "owner" sets call permissions for room "group room" to "V" with 200 (v4)
     And user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions | attendeePermissions |
-      | users      | owner        | SJLAVP      | D                   |
+      | users      | owner        | SJLAVPM     | D                   |
       | users      | invited user | CV          | D                   |
     When user "owner" sets default permissions for room "group room" to "A" with 200 (v4)
     Then user "owner" sees the following attendees in room "group room" with 200 (v4)
       | actorType  | actorId      | permissions | attendeePermissions |
-      | users      | owner        | SJLAVP      | D                   |
+      | users      | owner        | SJLAVPM     | D                   |
       | users      | invited user | CV          | D                   |
