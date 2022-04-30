@@ -31,6 +31,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\TInitialState;
 use OCA\Viewer\Event\LoadViewer;
@@ -66,6 +67,7 @@ class PageController extends Controller {
 	private IUserSession $userSession;
 	private LoggerInterface $logger;
 	private Manager $manager;
+	private RoomService $roomService;
 	private IURLGenerator $url;
 	private INotificationManager $notificationManager;
 	private IAppManager $appManager;
@@ -80,6 +82,7 @@ class PageController extends Controller {
 								?string $UserId,
 								LoggerInterface $logger,
 								Manager $manager,
+								RoomService $roomService,
 								IURLGenerator $url,
 								INotificationManager $notificationManager,
 								IAppManager $appManager,
@@ -96,6 +99,7 @@ class PageController extends Controller {
 		$this->userId = $UserId;
 		$this->logger = $logger;
 		$this->manager = $manager;
+		$this->roomService = $roomService;
 		$this->url = $url;
 		$this->notificationManager = $notificationManager;
 		$this->appManager = $appManager;
@@ -214,7 +218,7 @@ class PageController extends Controller {
 				if ($requirePassword) {
 					$password = $password !== '' ? $password : (string) $this->talkSession->getPasswordForRoom($token);
 
-					$passwordVerification = $room->verifyPassword($password);
+					$passwordVerification = $this->roomService->verifyPassword($room, $password);
 
 					if ($passwordVerification['result']) {
 						$this->talkSession->renewSessionId();
@@ -289,7 +293,7 @@ class PageController extends Controller {
 		if ($room->hasPassword()) {
 			$password = $password !== '' ? $password : (string) $this->talkSession->getPasswordForRoom($token);
 
-			$passwordVerification = $room->verifyPassword($password);
+			$passwordVerification = $this->roomService->verifyPassword($room, $password);
 			if ($passwordVerification['result']) {
 				$this->talkSession->renewSessionId();
 				$this->talkSession->setPasswordForRoom($token, $password);

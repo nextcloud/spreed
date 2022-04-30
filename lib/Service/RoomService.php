@@ -25,6 +25,7 @@ namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
 use OCA\Talk\Events\ModifyRoomEvent;
+use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -32,21 +33,25 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
+use OCP\Security\IHasher;
 use OCP\Share\IManager as IShareManager;
 
 class RoomService {
 	protected Manager $manager;
 	protected ParticipantService $participantService;
 	protected IShareManager $shareManager;
-	private IEventDispatcher $dispatcher;
+	protected IHasher $hasher;
+	protected IEventDispatcher $dispatcher;
 
 	public function __construct(Manager $manager,
 								ParticipantService $participantService,
 								IShareManager $shareManager,
+								IHasher $hasher,
 								IEventDispatcher $dispatcher) {
 		$this->manager = $manager;
 		$this->participantService = $participantService;
 		$this->shareManager = $shareManager;
+		$this->hasher = $hasher;
 		$this->dispatcher = $dispatcher;
 	}
 
@@ -194,5 +199,22 @@ class RoomService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PERMISSIONS_SET, $event);
 
 		return true;
+	}
+
+	public function verifyPassword(Room $room, string $password): array {
+		$event = new VerifyRoomPasswordEvent($room, $password);
+		$this->dispatcher->dispatch(Room::EVENT_PASSWORD_VERIFY, $event);
+
+		if ($event->isPasswordValid() !== null) {
+			return [
+				'result' => $event->isPasswordValid(),
+				'url' => $event->getRedirectUrl(),
+			];
+		}
+
+		return [
+			'result' => !$room->hasPassword() || $this->hasher->verify($password, $room->getPassword()),
+			'url' => '',
+		];
 	}
 }

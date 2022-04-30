@@ -175,7 +175,7 @@ trait TRoomCommand {
 	 * @throws InvalidArgumentException
 	 */
 	protected function setRoomPassword(Room $room, string $password): void {
-		if ($room->hasPassword() ? $room->verifyPassword($password)['result'] : ($password === '')) {
+		if ($room->hasPassword() ? $this->roomService->verifyPassword($room, $password)['result'] : ($password === '')) {
 			return;
 		}
 

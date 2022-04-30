@@ -63,7 +63,7 @@ class ListenerTest extends TestCase {
 	protected ?array $handlers = null;
 	protected ?\DateTime $dummyTime = null;
 
-	public function setUp(): void {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->request = $this->createMock(IRequest::class);
