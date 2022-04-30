@@ -73,7 +73,7 @@ Feature: reaction/react
     And user "guest" react with "👤" on message "Message 1" to room "room" with 201
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters | reactions |
-      | room | users     | participant1 | participant1-displayname | Message 1 | []                | {"👤":1,"👍":1}  |
+      | room | users     | participant1 | participant1-displayname | Message 1 | []                | {"👍":1,"👤":1}  |
     And user "participant2" delete react with "👍" on message "Message 1" to room "room" with 200
       | actorType | actorId      | actorDisplayName         | reaction |
       | guests    | guest        |                          | 👤       |
