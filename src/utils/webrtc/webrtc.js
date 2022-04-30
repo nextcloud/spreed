@@ -693,8 +693,11 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	const sendDataChannelToAll = function(channel, message, payload) {
 		// If running with MCU, the message must be sent through the
 		// publishing peer and will be distributed by the MCU to subscribers.
-		if (ownPeer && signaling.hasFeature && signaling.hasFeature('mcu')) {
-			ownPeer.sendDirectly(channel, message, payload)
+		if (signaling.hasFeature && signaling.hasFeature('mcu')) {
+			if (ownPeer) {
+				ownPeer.sendDirectly(channel, message, payload)
+			}
+
 			return
 		}
 		webrtc.sendDirectlyToAll(channel, message, payload)
