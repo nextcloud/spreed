@@ -475,7 +475,8 @@ export default {
 .message-buttons-bar {
 	display: flex;
 	right: 14px;
-	top: -16px;
+	top: 0px;
+	transform: translateY(-35%);
 	position: absolute;
 	background-color: var(--color-main-background);
 	border-radius: calc($clickable-area / 2);
