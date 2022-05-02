@@ -41,6 +41,8 @@
     "- A preview of your audio and video is shown before joining a call" : "- 在加入通話之前顯示您的音頻和視頻預覽",
     "- You can now blur your background in the newly designed call view" : "- 您現在可以在新設計的通話視圖中模糊背景",
     "- Moderators can now assign general and individual permissions to participants" : "- 版主現在可以為參與者分配一般和個人權限",
+    "- You can now react to chat message" : "- 您現在可以對聊天訊息做出反應",
+    "- In the sidebar you can now find an overview of the latest shared items" : "- 現在您可以在側邊欄中找到最新共享項目的概覽",
     "There are currently no commands available." : "當前沒有可用的指令。",
     "The command does not exist" : "該指令不存在",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "運行指令時發生錯誤。請要求管理員檢查日誌。",
