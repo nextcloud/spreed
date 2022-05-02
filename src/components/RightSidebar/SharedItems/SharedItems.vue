@@ -21,12 +21,26 @@
 
 <template>
 	<div class="shared-items" :class="{'shared-items__list' : isList}">
-		<template v-for="file in itemsToDisplay">
-			<FilePreview :key="file.id"
+		<template v-for="item in itemsToDisplay">
+			<div v-if="type === 'location'"
+				:key="item.id"
+				class="shared-items__location"
+				:class="{ 'shared-items__location--nolimit': limit === 0 }">
+				<Location v-bind="item.messageParameters.object" />
+			</div>
+			<div v-else-if="type === 'deckcard'"
+				:key="item.id"
+				class="shared-items__deckcard"
+				:class="{ 'shared-items__location--nolimit': limit === 0 }">
+				<DeckCard :wide="true"
+					v-bind="item.messageParameters.object" />
+			</div>
+			<FilePreview v-else
+				:key="item.id"
 				:small-preview="isList"
 				:row-layout="isList"
 				:is-shared-items-tab="true"
-				v-bind="file.messageParameters.file" />
+				v-bind="item.messageParameters.file" />
 		</template>
 	</div>
 </template>
@@ -34,12 +48,16 @@
 <script>
 import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import { SHARED_ITEM } from '../../../constants'
+import Location from '../../MessagesList/MessagesGroup/Message/MessagePart/Location'
+import DeckCard from '../../MessagesList/MessagesGroup/Message/MessagePart/DeckCard'
 
 export default {
 	name: 'SharedItems',
 
 	components: {
 		FilePreview,
+		Location,
+		DeckCard,
 	},
 
 	props: {
@@ -55,23 +73,24 @@ export default {
 
 		// Limits the amount of items displayed
 		limit: {
-			type: Boolean,
-			default: false,
+			type: Number,
+			default: 0,
 		},
 	},
 
 	computed: {
 		itemsToDisplay() {
-			return this.limit ? Object.values(this.items).reverse().slice(0, 6) : Object.values(this.items).reverse()
+			if (this.limit === 0) {
+				return Object.values(this.items).reverse()
+			} else {
+				return Object.values(this.items).reverse().slice(0, this.limit)
+			}
 		},
 
 		isList() {
-			switch (this.type) {
-			case SHARED_ITEM.TYPES.MEDIA:
+			if (this.type === SHARED_ITEM.TYPES.MEDIA) {
 				return false
-			case SHARED_ITEM.TYPES.LOCATION:
-				return false
-			default:
+			} else {
 				return true
 			}
 		},
@@ -84,12 +103,23 @@ export default {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-template-rows: 1fr 1fr;
-	margin-bottom: 16px;
 	grid-gap: 4px;
+	margin: auto;
 	&__list {
 		display: flex;
-		flex-direction: column;
+		flex-wrap: wrap;
 	}
+	&__location {
+		width: 100%;
+		height: 150px;
+		margin: 4px 0;
 
+		&--nolimit {
+			width: 33%;
+		}
+	}
+	&__deckcard {
+		width: 100%;
+	}
 }
 </style>

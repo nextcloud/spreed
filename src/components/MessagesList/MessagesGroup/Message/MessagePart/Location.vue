@@ -74,7 +74,7 @@ export default {
 		 * The latitude of the location
 		 */
 		latitude: {
-			type: String,
+			type: Number,
 			required: true,
 		},
 
@@ -82,7 +82,7 @@ export default {
 		 * The longitude of the location
 		 */
 		longitude: {
-			type: String,
+			type: Number,
 			required: true,
 		},
 
@@ -133,8 +133,7 @@ export default {
 	white-space: initial;
 	overflow: hidden;
 	border-radius: var(--border-radius-large);
-	height: 300px;
-	max-height: 30vh;
-	margin: 4px;
+	width: 100%;
+	height: 100%;
 }
 </style>
