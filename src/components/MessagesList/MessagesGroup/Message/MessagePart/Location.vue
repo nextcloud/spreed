@@ -74,7 +74,7 @@ export default {
 		 * The latitude of the location
 		 */
 		latitude: {
-			type: String,
+			type: Number,
 			required: true,
 		},
 
@@ -82,7 +82,7 @@ export default {
 		 * The longitude of the location
 		 */
 		longitude: {
-			type: String,
+			type: Number,
 			required: true,
 		},
 
