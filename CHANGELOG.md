@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.0.0 – 2022-05-02
+### Added
+- Reactions for chat messages
+- Media tab in the sidebar to show all the shared items
+- Implement `OCP\Talk\IBroker` to allow apps to create conversations
+- Sharing a browser tab in Chrome-based browsers can now also share the audio of that tab
+
+### Changed
+- Messages of shared objects and files can now be deleted (shares will be removed, files persist)
+- Actions like calling and chatting in big rooms are now much smoother
+- Compatibility with Nextcloud 24
+
 ## 14.0.0-rc.4 – 2022-04-29
 ### Added
 - Add a modal to show more shared items
