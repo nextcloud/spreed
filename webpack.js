@@ -17,6 +17,7 @@ webpackConfig.entry = {
 	flow: path.join(__dirname, 'src', 'flow.js'),
 	dashboard: path.join(__dirname, 'src', 'dashboard.js'),
 	deck: path.join(__dirname, 'src', 'deck.js'),
+	maps: path.join(__dirname, 'src', 'maps.js'),
 }
 
 webpackConfig.output.assetModuleFilename = '[name][ext]?v=[contenthash]'
