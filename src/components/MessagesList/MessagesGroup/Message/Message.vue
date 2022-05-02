@@ -855,7 +855,7 @@ export default {
 	&__reactions {
 		display: flex;
 		flex-wrap: wrap;
-		margin: 4px 0 4px -2px;
+		margin: 4px 175px 4px -2px;
 	}
 }
 
