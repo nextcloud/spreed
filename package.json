@@ -45,7 +45,7 @@
 		"leaflet-defaulticon-compatibility": "^0.1.1",
 		"lodash": "^4.17.21",
 		"mockconsole": "0.0.1",
-		"nextcloud-vue-collections": "^0.9.0",
+		"nextcloud-vue-collections": "^0.10.0",
 		"ua-parser-js": "^1.0.2",
 		"url-parse": "^1.5.10",
 		"util": "^0.12.4",
