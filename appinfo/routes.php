@@ -35,6 +35,7 @@ return array_merge_recursive(
 	include(__DIR__ . '/routes/routesMatterbridgeController.php'),
 	include(__DIR__ . '/routes/routesMatterbridgeSettingsController.php'),
 	include(__DIR__ . '/routes/routesPageController.php'),
+	include(__DIR__ . '/routes/routesPollController.php'),
 	include(__DIR__ . '/routes/routesPublicShareAuthController.php'),
 	include(__DIR__ . '/routes/routesReactionController.php'),
 	include(__DIR__ . '/routes/routesRoomController.php'),

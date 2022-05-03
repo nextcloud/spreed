@@ -56,6 +56,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static $remoteToInviteId;
 	/** @var string[] */
 	protected static $inviteIdToRemote;
+	/** @var int[] */
+	protected static $questionToPollId;
 
 
 	protected static $permissionsMap = [
@@ -148,6 +150,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$userToAttendeeId = [];
 		self::$textToMessageId = [];
 		self::$messageIdToText = [];
+		self::$questionToPollId = [];
 
 		$this->createdUsers = [];
 		$this->createdGroups = [];
@@ -1512,6 +1515,41 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" creates a poll in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function createPoll(string $user, string $identifier, string $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+		$data = $formData->getRowsHash();
+		$data['options'] = json_decode($data['options'], true);
+		if ($data['resultMode'] === 'public') {
+			$data['resultMode'] = 0;
+		} else if ($data['resultMode'] === 'hidden') {
+			$data['resultMode'] = 1;
+		} else {
+			throw new \Exception('Invalid result mode');
+		}
+		if ($data['maxVotes'] === 'unlimited') {
+			$data['resultMode'] = 0;
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier],
+			$data
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$response = $this->getDataFromResponse($this->response);
+		if (isset($response['id'])) {
+			self::$questionToPollId[$data['question']] = $response['id'];
+		}
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" deletes message "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
@@ -1741,14 +1779,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$includeReactions = in_array('reactions', $formData->getRow(0), true);
 		$includeReactionsSelf = in_array('reactionsSelf', $formData->getRow(0), true);
 
-		$count = count($formData->getHash());
+		$expected = $formData->getHash();
+		$count = count($expected);
 		Assert::assertCount($count, $messages, 'Message count does not match');
 		for ($i = 0; $i < $count; $i++) {
-			if ($formData->getHash()[$i]['messageParameters'] === '"IGNORE"') {
+			if ($expected[$i]['messageParameters'] === '"IGNORE"') {
 				$messages[$i]['messageParameters'] = 'IGNORE';
 			}
+
+			$result = preg_match('/POLL_ID\(([^)]+)\)/', $expected[$i]['messageParameters'], $matches);
+			if ($result) {
+				$expected[$i]['messageParameters'] = str_replace($matches[0], self::$questionToPollId[$matches[1]], $expected[$i]['messageParameters']);
+			}
 		}
-		Assert::assertEquals($formData->getHash(), array_map(function ($message) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf) {
+
+		Assert::assertEquals($expected, array_map(function ($message) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],

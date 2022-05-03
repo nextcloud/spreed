@@ -75,6 +75,12 @@ class ApiController extends OCSController {
 		$delete->delete('talk_rooms')->executeStatement();
 
 		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_polls')->executeStatement();
+
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('talk_polls')->executeStatement();
+
+		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_sessions')->executeStatement();
 
 		$delete = $this->db->getQueryBuilder();
