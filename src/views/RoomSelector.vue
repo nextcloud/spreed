@@ -181,6 +181,7 @@ export default {
 	align-items: center;
 	justify-content: center;
 	height: 100%;
+	box-sizing: border-box;
 	h2 {
 		margin-bottom: 4px;
 	}
