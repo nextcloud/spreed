@@ -36,6 +36,9 @@ describe('Video.vue', () => {
 
 	let callParticipantModel
 
+	/**
+	 * Constructor
+	 */
 	function PeerMock() {
 		this._superEmitterMixin()
 
@@ -104,11 +107,13 @@ describe('Video.vue', () => {
 
 		let wrapper
 
-		// "setupWrapper()" needs to be called right before checking the wrapper
-		// to ensure that the component state is updated. If the wrapper is
-		// created at the beginning of each test "await Vue.nextTick()" would
-		// need to be called instead (and for that the tests would need to be
-		// async).
+		/**
+		 * "setupWrapper()" needs to be called right before checking the wrapper
+		 * to ensure that the component state is updated. If the wrapper is
+		 * created at the beginning of each test "await Vue.nextTick()" would
+		 * need to be called instead (and for that the tests would need to be
+		 * async).
+		 */
 		function setupWrapper() {
 			wrapper = shallowMount(Video, {
 				localVue,
@@ -126,6 +131,9 @@ describe('Video.vue', () => {
 			})
 		}
 
+		/**
+		 * @param {string} expectedText Expected connection label
+		 */
 		function assertConnectionMessageLabel(expectedText) {
 			const connectionMessageLabel = wrapper.find('.connection-message')
 			if (expectedText) {
@@ -136,11 +144,17 @@ describe('Video.vue', () => {
 			}
 		}
 
+		/**
+		 * @param {boolean} expected Whether the loading icon is shown
+		 */
 		function assertLoadingIconIsShown(expected) {
 			const loadingIcon = wrapper.find('.icon-loading')
 			expect(loadingIcon.exists()).toBe(expected)
 		}
 
+		/**
+		 * @param {boolean} expected Whether the connection is not connected
+		 */
 		function assertNotConnected(expected) {
 			const notConnected = wrapper.find('.not-connected')
 			expect(notConnected.exists()).toBe(expected)

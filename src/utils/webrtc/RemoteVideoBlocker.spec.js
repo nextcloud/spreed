@@ -29,7 +29,7 @@ describe('RemoteVideoBlocker', () => {
 		jest.useFakeTimers()
 
 		callParticipantModel = {
-			setVideoBlocked: jest.fn()
+			setVideoBlocked: jest.fn(),
 		}
 
 		remoteVideoBlocker = new RemoteVideoBlocker(callParticipantModel)
