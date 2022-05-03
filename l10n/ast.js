@@ -102,7 +102,6 @@ OC.L10N.register(
     "TURN server" : "Sirvidor TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El sirvidor TURN úsase pa unviar al proxy el tráficu de los participantes darrera de tornafueos.",
     "Android app" : "Aplicación p'Android",
-    "iOS app" : "Aplicación pa iOS",
-    "Remove" : "Desaniciar"
+    "iOS app" : "Aplicación pa iOS"
 },
 "nplurals=2; plural=(n != 1);");

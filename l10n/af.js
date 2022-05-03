@@ -314,7 +314,6 @@ OC.L10N.register(
     "Android app" : "Android-toep",
     "iOS app" : "iOS-toep",
     "Microphone" : "Mikrofoon",
-    "Camera" : "Kamera",
-    "Remove" : "Verwyder"
+    "Camera" : "Kamera"
 },
 "nplurals=2; plural=(n != 1);");

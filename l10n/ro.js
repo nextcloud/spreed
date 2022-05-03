@@ -316,7 +316,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Parola este incorectă. Încercaţi din nou.",
     "Android app" : "Aplicație Android",
     "iOS app" : "Aplicație iOS",
-    "Camera" : "Cameră",
-    "Remove" : "Șterge"
+    "Camera" : "Cameră"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

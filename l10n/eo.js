@@ -316,7 +316,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
-    "Camera" : "Fotilo",
-    "Remove" : "Forigi"
+    "Camera" : "Fotilo"
 },
 "nplurals=2; plural=(n != 1);");

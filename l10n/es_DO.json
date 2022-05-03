@@ -135,13 +135,6 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. ",
     "Android app" : "Aplicación Android",
-    "iOS app" : "Aplicación iOS",
-    "Mute audio (m)" : "Silenciar audio (m)",
-    "Unmute audio (m)" : "Habilitar audio (m)",
-    "Disable video (v)" : "Deshabilitar video (v)",
-    "Enable video (v)" : "Habilitar video (v)",
-    "Remove" : "Eliminar",
-    "Exit fullscreen (f)" : "Salir de pantalla completa (f)",
-    "Fullscreen (f)" : "Pantalla completa (f)"
+    "iOS app" : "Aplicación iOS"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

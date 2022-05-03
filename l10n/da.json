@@ -447,23 +447,10 @@
     "Join conversations at any time, anywhere, on any device." : "Deltag i samtaler når som helst, hvor som helst og på en hvilken som helst enhed.",
     "Android app" : "Android app",
     "iOS app" : "iOS app",
-    "- One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- En-til-en-samtaler er nu vedvarende og kan ikke laves til gruppesamtaler ved en fejl længere. Derudover bliver samtaler ikke længere slettet automatisk når en af deltagerne forlader den. Samtalen slettes kun fra serveren hvis begge deltagere har forladt den",
-    "Users that can not use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept." : "Brugere som ikke længere kan bruge Talk vil stadig fremgå som deltagere i tidligere samtaler de har deltaget i, og deres chat-beskeder vil blive gemt.",
-    "Share whole screen" : "Del hele skærmen",
-    "Share a single window" : "Del et vindue",
-    "Mute audio (m)" : "Slå lyden fra (m)",
-    "Unmute audio (m)" : "Slå lyden til (m)",
-    "Disable video (v)" : "Slå video fra (v)",
-    "Enable video (v)" : "Slå video til (v)",
-    "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Aktiver video (v) - Forbindelsen forsvinder et øjeblik første gang du slår video til",
     "Chat notifications" : "Chat-notifikationer",
-    "Allow guests to join via link " : "Tillad gæster at deltage via link",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Du venter nu i lobbyen. Dette møde er planlagt til {startTime}",
     "Camera" : "Kamera",
-    "Remove" : "Fjern",
     "[Unknown username]" : "[Ukendt brugernavn]",
-    "Display name: " : "Vist navn:",
-    "Exit fullscreen (f)" : "Forlad fuldskærmsvisning (f)",
-    "Fullscreen (f)" : "Vis i fuldskærm (f)"
+    "Display name: " : "Vist navn:"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
