@@ -72,7 +72,6 @@ OC.L10N.register(
     "Default" : "Bawaan",
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
-    "iOS app" : "Aplikasi iOS",
-    "Remove" : "Buang"
+    "iOS app" : "Aplikasi iOS"
 },
 "nplurals=1; plural=0;");

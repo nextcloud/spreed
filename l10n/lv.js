@@ -236,18 +236,6 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Ārējo signalizēšanas serveri var pēc izvēles izmantot lielākām instalācijām. Atstājiet tukšu, lai izmantotu iekšējo signalizēšanas serveri.",
     "%s Talk on your mobile devices" : "%s Sarunas mobilajās ierīcēs",
     "Android app" : "Android lietotne",
-    "iOS app" : "iOS lietotne",
-    "Chat, video & audio-conferencing using WebRTC\n\n* 💬 **Chat integration!** Nextcloud Talk comes with a simple text chat. Allowing you to share files from your Nextcloud and mentioning other participants.\n* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.\n* 💻 **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 52 (or newer), latest Edge or Chrome 49 (or newer) with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).\n* 🚀 **Integration with other Nextcloud apps** like Files, Contacts and Deck. More to come.\n\nAnd in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds" : "Tērzēšana, video un audio konferences, izmantojot WebRTC\n\n* 💬 ** Tērzēšanas integrācija! ** Nextcloud Talk piedāvā vienkāršu teksta tērzēšanu. Ļaujot koplietot datnes no Nextcloud un minot citus dalībniekus.\n* 👥 ** Privāti, grupas, publiski un ar paroli aizsargāti zvani! ** Vienkārši uzaicināt kādu personu, veselu grupu vai nosūtīt publisku saiti, lai aicinātu uz zvanu.\n* 💻 ** Ekrāna koplietošana. ** Kopīgojiet savu ekrānu ar sarunas dalībniekiem. Jums tikai jāizmanto Firefox 52 versija (vai jaunāka versija), jaunākā Edge vai Chrome 49 (vai jaunāka versija) ar šo [Chrome paplašinājumu] (https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).\n* 🚀 ** Integrācija ar citām Nextcloud lietojumprogrammām **, piemēram, ar failiem, kontaktpersonām un datu bāzi. Vēl kaut kas.\n\nUn[nākamās versijas] (https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), aicināt cilvēkus uz citām Nextclouds",
-    "Users that can not use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept." : "Lietotāji, kas vairs nevar izmantot līdzekli Talk, joprojām tiks uzskaitīti kā to iepriekšējo sarunu dalībnieki, kā arī tiks paturēti viņu tērzēšanas ziņojumi.",
-    "Share whole screen" : "Koplietot visu ekrānu",
-    "Share a single window" : "Viena loga koplietošana",
-    "Mute audio (m)" : "Izslēgt audio skaņu (m)",
-    "Unmute audio (m)" : "Ieslēgt audio skaņu (m)",
-    "Disable video (v)" : "Atspējot video (v)",
-    "Enable video (v)" : "Iespējot video (v)",
-    "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Iespējot video (v) — jūsu savienojums tiks uz īsu brīdi pārtraukts, pirmoreiz iespējojot video",
-    "Remove" : "Noņemt",
-    "Exit fullscreen (f)" : "Iziet no pilnekrāna (f)",
-    "Fullscreen (f)" : "Pilnekrāns (f)"
+    "iOS app" : "iOS lietotne"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

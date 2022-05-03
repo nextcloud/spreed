@@ -397,11 +397,6 @@
     "The password is wrong. Try again." : "密碼錯誤，請重試",
     "Android app" : "安卓應用",
     "iOS app" : "蘋果應用",
-    "Mute audio (m)" : "靜音 (m)",
-    "Allow guests to join via link " : "允許訪客透過連結加入",
-    "Camera" : "相機",
-    "Remove" : "移除",
-    "Exit fullscreen (f)" : "離開全螢幕 (f)",
-    "Fullscreen (f)" : "全螢幕 (f)"
+    "Camera" : "相機"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

@@ -217,14 +217,6 @@
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. ",
     "%s Talk on your mobile devices" : "%s Habla en tus dispositivos móviles",
     "Android app" : "Aplicación Android",
-    "iOS app" : "Aplicación iOS",
-    "- One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- Coversaciones uno-a-uno ahora son persistentes y ya no pueden ser convertidas en conversaciones de grupo por accidente. Además cuando uno de los participantes abandona la conversación, la conversación ya no es eliminada automáticamente. Solo si ambos participantes abandonan la conversación, la conversación es eliminada del servidor.",
-    "Mute audio (m)" : "Silenciar audio (m)",
-    "Unmute audio (m)" : "Habilitar audio (m)",
-    "Disable video (v)" : "Deshabilitar video (v)",
-    "Enable video (v)" : "Habilitar video (v)",
-    "Remove" : "Eliminar",
-    "Exit fullscreen (f)" : "Salir de pantalla completa (f)",
-    "Fullscreen (f)" : "Pantalla completa (f)"
+    "iOS app" : "Aplicación iOS"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

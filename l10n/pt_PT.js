@@ -320,7 +320,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "A palavra-passe está errada. Por favor, tente de novo.",
     "Android app" : "Aplicação Android",
     "iOS app" : "Aplicação iOS",
-    "Camera" : "Câmera",
-    "Remove" : "Remover"
+    "Camera" : "Câmera"
 },
 "nplurals=2; plural=(n != 1);");

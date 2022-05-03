@@ -78,7 +78,6 @@ OC.L10N.register(
     "Android app" : "แอพฯ แอนดรอยด์",
     "iOS app" : "แอพฯ IOS",
     "Camera" : "กล้อง",
-    "Remove" : "ลบออก",
     "[Unknown username]" : "[ไม่รู้จักชื่อผู้ใช้]"
 },
 "nplurals=1; plural=0;");
