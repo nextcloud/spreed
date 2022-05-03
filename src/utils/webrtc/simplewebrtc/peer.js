@@ -427,6 +427,24 @@ Peer.prototype.handleOffer = function(offer) {
 	})
 }
 
+Peer.prototype._getTransceiverKind = function(transceiver) {
+	// Transceivers for HPB subscribers have the transceiver kind in its mid.
+	if (transceiver.mid === 'audio' || transceiver.mid === 'video') {
+		return transceiver.mid
+	}
+
+	// In general, the transceiver kind can be got from the receiver track, as
+	// it will always be there, even if the transceiver is inactive or the
+	// remote sender never had a track.
+	if (transceiver.receiver && transceiver.receiver.track) {
+		return transceiver.receiver.track.kind
+	}
+
+	console.debug('Transceiver kind could not be determined: ', transceiver)
+
+	return null
+}
+
 /**
  * Blocks remote video based on "_remoteVideoShouldBeBlocked".
  *
@@ -777,7 +795,7 @@ Peer.prototype._replaceTrack = async function(newTrack, oldTrack, stream) {
 		} else if (!sender.kind) {
 			this.pc.getTransceivers().forEach(transceiver => {
 				if (transceiver.sender === sender) {
-					sender.kind = transceiver.mid
+					sender.kind = this._getTransceiverKind(transceiver)
 				}
 			})
 		}
