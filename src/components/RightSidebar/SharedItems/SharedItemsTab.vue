@@ -45,7 +45,8 @@
 		<CollectionList v-if="getUserId && token"
 			:id="token"
 			type="room"
-			:name="conversation.displayName" />
+			:name="conversation.displayName"
+			:is-active="active" />
 		<SharedItemsBrowser v-if="showSharedItemsBrowser"
 			:shared-items="sharedItems"
 			:active-tab.sync="browserActiveTab"
