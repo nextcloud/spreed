@@ -579,19 +579,10 @@ OC.L10N.register(
     "Signaling servers" : "שרתי איתות",
     "Android app" : "יישומון ל־Android",
     "iOS app" : "יישומון ל־iOS",
-    "Mute audio (m)" : "השתקת שמע (m)",
-    "Unmute audio (m)" : "ביטול השקת שמע (m)",
-    "Disable video (v)" : "השבתת וידאו (v)",
-    "Enable video (v)" : "הפעלת וידאו (v)",
-    "User name or e-mail address" : "שם משתמש או כתובת דוא״ל",
-    "Allow guests to join via link " : "לאפשר לאורחים להצטרף דרך קישור",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "בנך בהמתנה בלובי. פגישה זו זומנה ל־{startTime}",
     "Microphone" : "מיקרופון",
     "Camera" : "מצלמה",
-    "Remove" : "הסרה",
     "[Unknown username]" : "[שם משתמש לא ידוע]",
-    "Display name: " : "שם תצוגה:",
-    "Exit fullscreen (f)" : "יציאה ממסך מלא (f)",
-    "Fullscreen (f)" : "מסך מלא (f)"
+    "Display name: " : "שם תצוגה:"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

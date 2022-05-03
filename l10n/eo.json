@@ -314,7 +314,6 @@
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
-    "Camera" : "Fotilo",
-    "Remove" : "Forigi"
+    "Camera" : "Fotilo"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

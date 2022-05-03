@@ -177,15 +177,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Пароль неправильний. Спробуйте ще раз.",
     "Android app" : "Застосунок для Android",
     "iOS app" : "Застосунок для iOS",
-    "Mute audio (m)" : "Вимкнути мікрофон (m)",
-    "Unmute audio (m)" : "Увімкнути мікрофон (m)",
-    "Disable video (v)" : "Вимкнути відео (v)",
-    "Enable video (v)" : "Увімкнути відео (v)",
     "Chat notifications" : "Сповіщення чату",
-    "Allow guests to join via link " : "Дозволити гостям приєднуватися через посилання",
-    "Camera" : "Камера",
-    "Remove" : "Вилучити",
-    "Exit fullscreen (f)" : "Вийти з повного екрану (f)",
-    "Fullscreen (f)" : "На весь екран (f)"
+    "Camera" : "Камера"
 },
 "nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);");

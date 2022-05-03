@@ -79,7 +79,6 @@ OC.L10N.register(
     "Other" : "Anna",
     "Away" : "Borte",
     "Default" : "Standard",
-    "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
-    "Remove" : "Fjern"
+    "The password is wrong. Try again." : "Passordet er gale. Prøv igjen."
 },
 "nplurals=2; plural=(n != 1);");

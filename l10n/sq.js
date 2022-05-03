@@ -246,7 +246,6 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Serveri TURN përdoret për të përcjellë trafikun nga pjesëmarrësit pas një firewalli.",
     "Android app" : "Aplikacion Android",
     "iOS app" : "Aplikacion iOS",
-    "Camera" : "Kamera",
-    "Remove" : "Hiq"
+    "Camera" : "Kamera"
 },
 "nplurals=2; plural=(n != 1);");

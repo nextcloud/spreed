@@ -130,7 +130,6 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN სერვერი გამოიყენება ფაირვოლს უკან მყოფი მონაწილეების ტრეფიკის რწმუნებულებების გადასაცემად.",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "დიდი ინსტალაციებისთვის შესაძლებელია გარე სასიგნალო სერვერის გამოყენება. შიდა სიგნალის სერვერის გამოსაყენებლად დატოვეთ ცარიელი.",
     "Android app" : "Android აპლიკაცია",
-    "iOS app" : "iOS აპლიკაცია",
-    "Remove" : "წაშლა"
+    "iOS app" : "iOS აპლიკაცია"
 },
 "nplurals=2; plural=(n!=1);");
