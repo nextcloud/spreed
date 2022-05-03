@@ -609,6 +609,7 @@ OC.L10N.register(
     "Test this server" : "جرّب هذا الخادم",
     "TURN servers" : "خوادم TURN",
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants cannot connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "يتم استخدام خادم TURN لتوكيل مرور المشاركين خلف جدار الحماية. إذا لم يتمكن المشاركون الأفراد من الاتصال بالآخرين، فمن المرجح أن يكون خادم TURN مطلوبًا. راجع {linkstart} هذه الوثائق {linkend} للحصول على إرشادات الإعداد.",
+    "OK" : "موافق",
     "{nickName} raised their hand." : "{nickName} رفع يده ",
     "A participant raised their hand." : "رفع مشارك يده. ",
     "Previous page of videos" : "الصفحة السابقة للفيديوهات ",
@@ -680,9 +681,11 @@ OC.L10N.register(
     "Drop your files to upload" : "افلت الملفات لرفعها",
     "Call in progress" : "محادثة جارية",
     "Favorite" : "المفضلة",
+    "Restricted" : "مقيدة",
     "Conversation settings" : "اعدادات المحادثة",
     "Description" : "الوصف",
     "Enter a description for this conversation" : "ادخل وصفًا لهذه المحادثة ",
+    "Notifications" : "التنبيهات",
     "Guests access" : "الوصول للضيوف ",
     "Meeting settings" : "إعدادات الإجتماع ",
     "Matterbridge" : "Matterbridge",
@@ -784,6 +787,7 @@ OC.L10N.register(
     "not running, check Matterbridge log" : "لا يعمل، تحقق من سجل Matterbridge",
     "not running" : "غير فعال",
     "Bridge saved" : "تم الحفظ ",
+    "Calls" : "مكالمات",
     "Allow participants to join from a phone." : "السماح للمشاركين بالانضمام عبر الجوال ",
     "Enable SIP dial-in" : "تفعيل الاتصال عبر SIP",
     "SIP dial-in is now enabled" : "تم تمكين اتصال SIP الآن",
@@ -808,6 +812,7 @@ OC.L10N.register(
     "No search results" : "لا توجد نتائج",
     "Groups" : "المجموعات",
     "Circles" : "جماعة",
+    "Unread mentions" : "إشارات غير مقروءة",
     "Talk settings" : "إعدادات التحدث",
     "Users, groups and circles" : "الاعضاء، المجموعات و الجماعات",
     "Users and groups" : "الاعضاء والمجموعات",
@@ -830,6 +835,7 @@ OC.L10N.register(
     "Allow guests to join via link" : "السماح بالضيوف بالانضمام عن طريق الرابط",
     "Search conversations or users" : "البحث عن المحادثات او الاعضاء",
     "You are currently waiting in the lobby" : "أنت حاليا في انتظار الاستقبال",
+    "The meeting will start soon" : "هذا الاجتماع سيبدأ قريباً",
     "No microphone available" : "لا يوجد مايكرفون متاح",
     "Select microphone" : "اختر مايك",
     "No camera available" : "لا توجد كاميرا متاحة",
@@ -854,12 +860,14 @@ OC.L10N.register(
     "Mark as unread" : "تحديد كغير مقروء ",
     "Go to file" : "الذهاب إلى ملف",
     "Message link copied to clipboard." : "تم نسخ الرسالة إلى الحافظة ",
+    "Contact" : "التواصل",
     "{stack} in {board}" : "{stack} في  {board}",
     "Deck Card" : "بطاقة Deck",
     "Scroll to bottom" : "انتقل للاسفل",
     "Today" : "اليوم",
     "Yesterday" : "امس",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
+    "Record voice message" : "تسجيل رسالة صوتية",
     "Share files to the conversation" : "مشاركة ملفات في المحادثة",
     "Upload new files" : "رفع ملفات جديدة",
     "Share from Files" : "مشاركة من الملفات",
@@ -867,6 +875,7 @@ OC.L10N.register(
     "Send message" : "أرسل رسالة",
     "File to share" : "ملف للمشاركة",
     "This conversation has been locked" : "هذه المحادثة مغلقة",
+    "No permission to post messages in this conversation" : "ليس لديك صلاحية لنشر رسائل في هذه المحادثة",
     "Write message, @ to mention someone …" : "اكتب رسالة، منشن احدهم باستخدام @ …",
     "Invalid path selected" : "تم تحديد مسار غير صحيح",
     "Disable lobby" : "تعطيل ساحة الإنتظار",
@@ -906,6 +915,8 @@ OC.L10N.register(
     "Chat" : "الدردشة",
     "Details" : "التفاصيل",
     "Settings" : "الإعدادات",
+    "Projects" : "المشاريع",
+    "Show all files" : "أظهر جميع الملفات",
     "Meeting ID: {meetingId}" : "معرف الاجتماع: {meetingId}",
     "Your PIN: {attendeePin}" : "رقمك السري: {attendeePin}",
     "Attachments folder" : "مجلد المرفقات",
@@ -958,7 +969,6 @@ OC.L10N.register(
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "انضممت لمحادثة آخرى في نافذة او جهاز آخر. هذه الخاصية غير مدعومة سيتم اغلاق هذه الجلسة من قبل نكست كلاود التحدث.",
     "Join a conversation or start a new one" : "انضم لمحادثة او ابدء محادثة جديدة",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "نُشرت بطاقة Deck إلى المحادثة المحددة <a href=\"{link}\">محادثة </a>.",
-    "No permission to post messages in this conversation" : "ليس لديك صلاحية لنشر رسائل في هذه المحادثة",
     "An error occurred while posting deck card to conversation." : "حدث خطأ أثناء نشر بطاقة deck للمحادثة",
     "Post to a conversation" : "انشر في محادثة ",
     "Post to conversation" : "انشر في محادثة ",
@@ -969,6 +979,11 @@ OC.L10N.register(
     "Error while accessing microphone" : "حدث خطأ اثناء الوصول إلى المايكرفون",
     "Access to camera is only possible with HTTPS" : "الوصول للكاميرا مسموح فقط في HTTPS",
     "An error occurred while fetching the participants" : "حدث خطأ اثناء اضافة مشاركيين",
+    "Media" : "وسائط",
+    "Files" : "الملفات",
+    "Locations" : "المواقع",
+    "Audio" : "الصوت",
+    "Other" : "آخر",
     "Nextcloud Talk was updated, please reload the page" : "تم تحديث نكست كلاود التحدث، يرجى تحديث الصفحة.",
     "Do not disturb" : "عدم الازعاج",
     "Away" : "بالخارج",
@@ -1012,53 +1027,16 @@ OC.L10N.register(
     "Join conversations at any time, anywhere, on any device." : "انضم إلى المحادثات في أي وقت و من أي مكان و عبر أي جهاز",
     "Android app" : "تطبيق الأندرويد",
     "iOS app" : "تطبيق آي أواس",
-    "- One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server" : "- أصبحت المحادثات الفردية مستمرة الآن ولا يمكن تحويلها إلى محادثات جماعية عن طريق الصدفة بعد الآن. أيضًا عندما يغادر أحد المشاركين المحادثة ، لا يتم حذف المحادثة تلقائيًا بعد الآن. فقط إذا غادر كلا المشاركين ، يتم حذف المحادثة من الخادم",
-    "{actor} set the description to \"%1$s\"" : "{actor} قام بتعيين الوصف لـ \"%1$s\"",
-    "You set the description to \"%1$s\"" : "قمت بتعيين الوصف لـ \"%1$s\"",
-    "An administrator set the description to \"%1$s\"" : "قام المسؤول بتعيين الوصف لـ \"%1$s\"",
-    "{actor} set up Matterbridge to synchronize this conversation with other chats." : "قام {actor} بإعداد Matterbridge لمزامنة هذه المحادثة مع الدردشات الأخرى.",
-    "You set up Matterbridge to synchronize this conversation with other chats." : "قمت بإعداد Matterbridge لمزامنة هذه المحادثة مع الدردشات الأخرى.",
-    "{actor} updated the Matterbridge configuration." : "قام {actor} بتحديث تكوين Matterbridge .",
-    "You updated the Matterbridge configuration." : "لقد قمت بتحديث تكوين Matterbridge .",
-    "{actor} removed the Matterbridge configuration." : "قام {actor} بإزالة تكوين Matterbridge .",
-    "You removed the Matterbridge configuration." : "لقد قمت بإزالة تكوين Matterbridge .",
-    "{actor} started Matterbridge." : " {actor} بدأ Matterbridge .",
-    "You started Matterbridge." : "لقد بدأت Matterbridge .",
-    "{actor} stopped Matterbridge." : "قام {actor} بإيقاف Matterbridge .",
-    "You stopped Matterbridge." : "قمت بإيقاف Matterbridge .",
-    "Chat, video & audio-conferencing using WebRTC\n\n* 💬 **Chat integration!** Nextcloud Talk comes with a simple text chat. Allowing you to share files from your Nextcloud and mentioning other participants.\n* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.\n* 💻 **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 52 (or newer), latest Edge or Chrome 49 (or newer) with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).\n* 🚀 **Integration with other Nextcloud apps** like Files, Contacts and Deck. More to come.\n\nAnd in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds" : "الدردشة والفيديو والمؤتمرات الصوتية باستخدام WebRTC * 💬 ** تكامل الدردشة! ** يأتي Nextcloud Talk مع دردشة نصية بسيطة. حيث يسمح لك بمشاركة الملفات من نكست كلاود الخاص بك ومنشن للمشاركين الآخرين. * 👥 ** مكالمات خاصة، جماعية، عامة ومكالمات محمية بكلمة مرور! ** فقط قم بدعوة شخص ما، أو  مجموعة كاملة أو أرسل رابطًا عامًا للدعوة إلى المكالمة. 💻 ** مشاركة الشاشة! ** شارك شاشتك مع المشاركين في مكالمتك. ما عليك سوى استخدام Firefox الإصدار 52 (أو أحدث) ، أو Edge أو Chrome 49 (أو أحدث) مع [امتداد Chrome] هذا (https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol ) . * 🚀 ** التكامل مع تطبيقات نكست كلاود الأخرى ** مثل الملفات وجهات الاتصال و Deck، والمزيد مستقبلًا. وفي أعمال [الإصدارات القادمة] (https://github.com/nextcloud/spreed/milestones/): * ✋ [المكالمات الموحدة](https://github.com/nextcloud/spreed/issues/21)، لمكالمة الناس على نكست كلاود الأخرى",
-    "Users that can not use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept." : "المستخدمين لا يمكنهم استخدام التحدث بعد الآن سيتم ظهورهم كـ مشاركين في قائمة المحادثات السابقة وايضا سيتم حفظ رسائل محادثاتهم.",
-    "E-mail of the user" : "البريد الالكتروني للمستخدم ",
-    "Error: Can not connect to server" : "خطأ: لا يمكن الاتصال بالخادم السحابي",
-    "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants can not connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "يتم استخدام خادم TURN لتوكيل مرور المشاركين خلف جدار الحماية. إذا لم يتمكن المشاركون الأفراد من الاتصال بالآخرين، فمن المرجح أن يكون خادم TURN مطلوبًا. راجع {linkstart} هذه الوثائق {linkend} للحصول على إرشادات الإعداد.",
-    "Share whole screen" : "مشاركة الشاشة كاملة",
-    "Share a single window" : "مشاركة نافذة",
-    "Lower hand" : "خفض اليد ",
-    "Raise hand" : "رفع اليد",
-    "Mute audio (m)" : "كتم الصوت (m)",
-    "Unmute audio (m)" : "تشغيل الصوت (m)",
-    "Disable video (v)" : "تعطيل بالفيديو (v)",
-    "Enable video (v)" : "تفعيل الفيديو (v)",
-    "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "تفعيل الفيديو (v) - سيتم قطع اتصالك للحظات عند تشغيل الفيديو للمره الاولى",
     "Your internet connection or computer are busy and other participants might be unable to see you. To improve the situation try to disable your video while doing a screenshare." : "اتصالك بالانترنت او جهازك الخاص قد يؤثر ذلك على عدم ظهورك للآخرين. لتحسين ذلك جرب تعطيل الفيديو في حال مشاركة الشاشة.",
     "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "اتصالك بالانترنت او جهازك الخاص قد يؤثر ذلك على فهم المشاركين وعدم ظهور شاشتك للآخرين. لتحسين ذلك جرب تعطيل الفيديو في حال مشاركة الشاشة.",
     "Error while accessing camera: it is likely in use by another program" : "لا يمكن الوصول للكاميرا: من الممكن انك تستخدمها في برنامج آخر.",
-    "User name or e-mail address" : "اسم المستخدم او البريد الالكتروني",
-    "Conversation \"{conversationName}\"" : "محادثة \"{اسم المحادثة}\"",
-    "Settings for conversation \"{conversationName}\"" : "إعدادات المحادثة \"{اسم المحادثة}\"",
     "Chat notifications" : "تنبيه المحادثة",
-    "Allow guests to join via link " : "السماح بالضيوف بالانضمام عن طريق الرابط",
+    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "قم بتعيين مستوى الإشعارات للمحادثة الحالية. سيؤثر هذا فقط على الإشعارات التي تتلقاها.",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "أنت حاليا في انتظار الاستقبال. الاجتماع مجدول في {startTime}",
     "Microphone" : "مايك",
     "Camera" : "الكاميرا",
-    "You can not send messages to this conversation at the moment" : "لا يمكنك إرسال الرسائل لهذه المحادثة حاليًا ",
-    "Remove" : "حذف",
     "[Unknown username]" : "[اسم مستخدم غير معروف]",
-    "Add a description for this conversation" : "إضافة وصف لهذه المحادثة ",
     "Display name: " : "اسم العرض:",
-    "Video on and off" : "تفعيل او تعطيل الفيديو",
-    "Choose in which folder attachments should be saved." : "اختر مجلد ليتم حفظ المرفقات.",
-    "Exit fullscreen (f)" : "الخروج من ملء الشاشة (f)",
-    "Fullscreen (f)" : "ملء الشاشة (f)"
+    "Video on and off" : "تفعيل او تعطيل الفيديو"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");
