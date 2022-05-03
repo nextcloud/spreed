@@ -579,6 +579,9 @@ Peer.prototype.sendDirectly = function(channel, messageType, payload) {
 	}
 	this.logger.log('sending via datachannel', channel, messageType, message)
 	const dc = this.getDataChannel(channel)
+	if (!dc) {
+		return false
+	}
 	if (dc.readyState !== 'open') {
 		if (!Object.prototype.hasOwnProperty.call(this.pendingDCMessages, channel)) {
 			this.pendingDCMessages[channel] = []
@@ -615,6 +618,9 @@ Peer.prototype._observeDataChannel = function(channel) {
 Peer.prototype.getDataChannel = function(name, opts) {
 	if (!webrtcSupport.supportDataChannel) {
 		return this.emit('error', new Error('createDataChannel not supported'))
+	}
+	if (!this.enableDataChannels) {
+		return null
 	}
 	let channel = this.channels[name]
 	opts || (opts = {})
@@ -653,9 +659,7 @@ Peer.prototype.start = function() {
 	// a) create a datachannel a priori
 	// b) do a renegotiation later to add the SCTP m-line
 	// Let's do (a) first...
-	if (this.enableDataChannels) {
-		this.getDataChannel('simplewebrtc')
-	}
+	this.getDataChannel('simplewebrtc')
 
 	this.offer(this.receiveMedia)
 }

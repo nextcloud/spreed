@@ -693,8 +693,11 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	const sendDataChannelToAll = function(channel, message, payload) {
 		// If running with MCU, the message must be sent through the
 		// publishing peer and will be distributed by the MCU to subscribers.
-		if (ownPeer && signaling.hasFeature && signaling.hasFeature('mcu')) {
-			ownPeer.sendDirectly(channel, message, payload)
+		if (signaling.hasFeature && signaling.hasFeature('mcu')) {
+			if (ownPeer) {
+				ownPeer.sendDirectly(channel, message, payload)
+			}
+
 			return
 		}
 		webrtc.sendDirectlyToAll(channel, message, payload)
@@ -1169,6 +1172,15 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			} else {
 				callParticipantModel.setScreenPeer(peer)
 			}
+
+			// The SIP bridge publisher does not have data channels, so they
+			// need to be explicitly disabled in the subscriber. Otherwise it
+			// would try to open them, which would cause an endless loop of
+			// renegotiations, as after a negotiation the data channels will
+			// still not be opened, which will trigger a negotiation again.
+			if (callParticipantModel.get('internal')) {
+				peer.enableDataChannels = false
+			}
 		}
 
 		if (peer.type === 'video') {
@@ -1182,10 +1194,10 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 
 			setHandlerForNegotiationNeeded(peer)
 
-			// Make sure required data channels exist for all peers. This
-			// is required for peers that get created by SimpleWebRTC from
-			// received "Offer" messages. Otherwise the "channelMessage"
-			// will not be called.
+			// Make sure required data channels exist for all peers (that have
+			// not disabled them). This is required for peers that get created
+			// by SimpleWebRTC from received "Offer" messages. Otherwise the
+			// "channelMessage" will not be called.
 			peer.getDataChannel('status')
 		}
 	})
