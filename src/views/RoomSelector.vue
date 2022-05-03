@@ -21,7 +21,7 @@
   -->
 
 <template>
-	<Modal size="small"
+	<Modal size="normal"
 		:container="container"
 		@close="close">
 		<div id="modal-inner" class="talk-modal" :class="{ 'icon-loading': loading }">
@@ -180,6 +180,7 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	height: 100%;
 	h2 {
 		margin-bottom: 4px;
 	}
