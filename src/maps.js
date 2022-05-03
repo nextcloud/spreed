@@ -29,6 +29,11 @@ import { postRichObjectToConversation } from './services/messagesService'
 import RoomSelector from './views/RoomSelector'
 
 (function(OC, OCA, t, n) {
+	/**
+	 * @param {object} location Geo location object
+	 * @param {string} token Conversation token to be posted to
+	 * @return {Promise<void>}
+	 */
 	async function postLocationToRoom(location, token) {
 		try {
 			const response = await postRichObjectToConversation(token, {
@@ -53,6 +58,9 @@ import RoomSelector from './views/RoomSelector'
 		}
 	}
 
+	/**
+	 * Initialise the maps action
+	 */
 	function init() {
 		if (!OCA.Maps?.registerMapsAction) {
 			return
