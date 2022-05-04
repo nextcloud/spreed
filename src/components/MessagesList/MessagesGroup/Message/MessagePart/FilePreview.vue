@@ -613,6 +613,11 @@ export default {
 		.name-container {
 			padding: 0 4px;
 		}
+
+		.loading {
+			width: 36px;
+			height: 36px;
+		}
 	}
 
 	&--shared-items-grid {
@@ -620,6 +625,7 @@ export default {
 		.preview {
 			width: 100%;
 			min-height: unset;
+			height: 100%;
 		}
 	}
 }
