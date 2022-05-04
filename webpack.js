@@ -2,7 +2,6 @@ const path = require('path')
 const webpackConfig = require('@nextcloud/webpack-vue-config')
 const webpackRules = require('@nextcloud/webpack-vue-config/rules')
 const BabelLoaderExcludeNodeModulesExcept = require('babel-loader-exclude-node-modules-except')
-const TerserPlugin = require('terser-webpack-plugin')
 
 webpackConfig.entry = {
 	'admin-settings': path.join(__dirname, 'src', 'mainAdminSettings.js'),
