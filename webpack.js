@@ -79,4 +79,14 @@ webpackConfig.module.rules.push({
 	use: { loader: 'worker-loader' },
 })
 
+// Add typescript rule
+webpackConfig.module.rules.push({
+	test: /\.tsx?$/,
+	use: ['babel-loader', 'ts-loader'],
+	exclude: /node_modules/,
+})
+
+// Add typescript extension resolver
+webpackConfig.resolve.extensions.push('.tsx')
+
 module.exports = webpackConfig
