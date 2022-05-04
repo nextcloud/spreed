@@ -92,6 +92,8 @@ return [
 		['name' => 'Room#getParticipantByDialInPin', 'url' => '/api/{apiVersion}/room/{token}/pin/{pin}', 'verb' => 'GET', 'requirements' => array_merge($requirementsWithToken, [
 			'pin' => '^\d{7,32}$',
 		])],
+		/** @see \OCA\Talk\Controller\RoomController::createGuestByDialIn() */
+		['name' => 'Room#createGuestByDialIn', 'url' => '/api/{apiVersion}/room/{token}/open-dial-in', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::setNotificationLevel() */
 		['name' => 'Room#setNotificationLevel', 'url' => '/api/{apiVersion}/room/{token}/notify', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::setNotificationCalls() */

@@ -1096,6 +1096,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$SIPState = 0;
 		} elseif ($SIPStateString === 'enabled') {
 			$SIPState = 1;
+		} elseif ($SIPStateString === 'no pin') {
+			$SIPState = 2;
 		} else {
 			Assert::fail('Invalid SIP state');
 		}

@@ -88,6 +88,7 @@ class CapabilitiesTest extends TestCase {
 			'circles-support',
 			'force-mute',
 			'sip-support',
+			'sip-support-nopin',
 			'chat-read-status',
 			'phonebook-search',
 			'raise-hand',

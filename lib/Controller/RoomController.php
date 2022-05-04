@@ -476,7 +476,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		if ($this->talkConfig->isSIPConfigured()) {
 			$roomData['sipEnabled'] = $room->getSIPEnabled();
-			if ($room->getSIPEnabled() === Webinary::SIP_ENABLED) {
+			if ($room->getSIPEnabled() !== Webinary::SIP_DISABLED) {
 				// Generate a PIN if the attendee is a user and doesn't have one.
 				$this->participantService->generatePinForParticipant($room, $currentParticipant);
 
@@ -973,7 +973,7 @@ class RoomController extends AEnvironmentAwareController {
 				'attendeePin' => '',
 			];
 			if ($this->talkConfig->isSIPConfigured()
-				&& $this->room->getSIPEnabled() === Webinary::SIP_ENABLED
+				&& $this->room->getSIPEnabled() !== Webinary::SIP_DISABLED
 				&& ($this->participant->hasModeratorPermissions(false)
 					|| $this->participant->getAttendee()->getId() === $participant->getAttendee()->getId())) {
 				// Generate a PIN if the attendee is a user and doesn't have one.
@@ -1416,6 +1416,30 @@ class RoomController extends AEnvironmentAwareController {
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
+
+		return new DataResponse($this->formatRoom($this->room, $participant));
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireRoom
+	 *
+	 * @return DataResponse
+	 */
+	public function createGuestByDialIn(): DataResponse {
+		try {
+			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
+				return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			}
+		} catch (UnauthorizedException $e) {
+			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+		}
+
+		if ($this->room->getSIPEnabled() !== Webinary::SIP_ENABLED_NO_PIN) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $this->room, '', true);
 
 		return new DataResponse($this->formatRoom($this->room, $participant));
 	}
