@@ -362,6 +362,7 @@ export default {
 @include avatar-mixin(128px);
 
 .device-checker {
+	width: 100%;
 	padding: 20px;
 	background-color: var(--color-main-background);
 	overflow-y: auto;
@@ -437,5 +438,6 @@ export default {
 
 ::v-deep .modal-container {
 	display: flex !important;
+	width: 750px !important;
 }
 </style>
