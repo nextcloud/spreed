@@ -839,6 +839,23 @@ describe('Message.vue', () => {
 			expect(reactionButtons.wrappers[1].text()).toBe('👍  7')
 		})
 
+		test('no emoji picker is mounted when the bottom bar is not shown', () => {
+			store = new Store(testStoreConfig)
+
+			const wrapper = shallowMount(Message, {
+				localVue,
+				store,
+				propsData: messageProps,
+				stubs: {
+					EmojiPicker,
+				},
+			})
+
+			const emojiPicker = wrapper.findComponent(EmojiPicker)
+
+			expect(emojiPicker.vm).toBeUndefined()
+		})
+
 		test('dispatches store action upon picking an emoji from the emojipicker', () => {
 			const addReactionToMessageAction = jest.fn()
 			const userHasReactedGetter = jest.fn().mockReturnValue(() => false)
@@ -856,10 +873,17 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
-				propsData: messageProps,
+				propsData: messagePropsWithReactions,
 				stubs: {
 					EmojiPicker,
 				},
+				mixins: [{
+					computed: {
+						showMessageButtonsBar: () => {
+							return true
+						},
+					},
+				}],
 			})
 
 			const emojiPicker = wrapper.findComponent(EmojiPicker)
