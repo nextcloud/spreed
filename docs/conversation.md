@@ -51,6 +51,7 @@
         `participantFlags` | int | v1 | | "In call" flags of the user's session making the request (only available with `in-call-flags` capability)
         `readOnly` | int | v1 | | Read-only state for the current user (only available with `read-only-rooms` capability)
         `listable` | int | v3 | | Listable scope for the room (only available with `listable-rooms` capability)
+        `timeToLive` | int | v4 | | The time to live of messages in this chat. Zero if disabled. (only available with `time-to-live` capability)
         `count` | int | v1 | v2 | **Removed:** Count the users on the [Get list of participants in a conversation](participant.md#get-list-of-participants-in-a-conversation) endpoint
         `numGuests` | int | v1 | v2 | **Removed:** Count the guests on the [Get list of participants in a conversation](participant.md#get-list-of-participants-in-a-conversation) endpoin
         `lastPing` | int | v1 | | Timestamp of the user's session making the request
@@ -334,6 +335,24 @@
         + `200 OK`
         + `400 Bad Request` When the given level is invalid
         + `401 Unauthorized` When the participant is a guest
+        + `404 Not Found` When the conversation could not be found for the participant
+
+## Set time to live for messages in a conversation
+
+* Required capability: `time-to-live`
+* Method: `POST`
+* Endpoint: `/room/{token}/ttl`
+* Data:
+
+    field | type | Description
+    ---|---|---
+    `ttl` | int | The time to live for messages in seconds. If is zero, messages will not be deleted automatically.
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` Invalid value
+        + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
         + `404 Not Found` When the conversation could not be found for the participant
 
 ## Open a conversation
