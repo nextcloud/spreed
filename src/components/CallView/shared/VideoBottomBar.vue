@@ -220,7 +220,7 @@ export default {
 		},
 
 		showNameIndicator() {
-			return !this.model.attributes.videoAvailable || !this.sharedData.remoteVideoBlocker.isVideoEnabled() || this.showVideoOverlay || this.isSelected || this.isPromoted || this.isSpeaking
+			return !this.model.attributes.videoAvailable || (this.sharedData.remoteVideoBlocker && !this.sharedData.remoteVideoBlocker.isVideoEnabled()) || this.showVideoOverlay || this.isSelected || this.isPromoted || this.isSpeaking
 		},
 
 		boldenNameIndicator() {
