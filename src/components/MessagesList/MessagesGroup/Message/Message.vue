@@ -136,11 +136,18 @@ the main body of the message as well as a quote.
 				</Popover>
 
 				<!-- More reactions picker -->
-				<EmojiPicker :per-line="5" :container="`#message_${id}`" @select="handleReactionClick">
+				<EmojiPicker v-if="canReact && showMessageButtonsBar"
+					:per-line="5"
+					:container="`#message_${id}`"
+					@select="handleReactionClick">
 					<button class="reaction-button">
 						<EmoticonOutline :size="15" />
 					</button>
 				</EmojiPicker>
+				<button v-else-if="canReact"
+					class="reaction-button">
+					<EmoticonOutline :size="15" />
+				</button>
 			</div>
 		</div>
 
@@ -190,7 +197,7 @@ import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
-import { ATTENDEE } from '../../../../constants'
+import { ATTENDEE, CONVERSATION } from '../../../../constants'
 
 export default {
 	name: 'Message',
@@ -566,6 +573,10 @@ export default {
 				metadata: this.conversation,
 				apiVersion: 'v3',
 			}
+		},
+
+		canReact() {
+			return this.conversation.readOnly !== CONVERSATION.STATE.READ_ONLY
 		},
 
 		hasReactions() {

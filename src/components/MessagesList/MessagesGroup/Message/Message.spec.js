@@ -823,10 +823,17 @@ describe('Message.vue', () => {
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
-				propsData: messageProps,
+				propsData: messagePropsWithReactions,
 				stubs: {
 					EmojiPicker,
 				},
+				mixins: [{
+					computed: {
+						showMessageButtonsBar: () => {
+							return true
+						},
+					},
+				}],
 			})
 
 			const emojiPicker = wrapper.findComponent(EmojiPicker)
