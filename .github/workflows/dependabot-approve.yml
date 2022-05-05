@@ -1,8 +1,13 @@
 name: Dependabot auto approve
 on: pull_request_target
 
+permissions:
+  contents: read
+
 jobs:
   auto-merge:
+    permissions:
+      pull-requests: write  # for hmarr/auto-approve-action to approve PRs
     runs-on: ubuntu-latest
     steps:
       # Default github action approve

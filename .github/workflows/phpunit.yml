@@ -17,6 +17,9 @@ on:
 env:
   APP_NAME: spreed
 
+permissions:
+  contents: read
+
 jobs:
   php:
     runs-on: ubuntu-latest
