@@ -330,8 +330,16 @@ class Room {
 		return $this->defaultPermissions;
 	}
 
+	public function setDefaultPermissions(int $defaultPermissions): void {
+		$this->defaultPermissions = $defaultPermissions;
+	}
+
 	public function getCallPermissions(): int {
 		return $this->callPermissions;
+	}
+
+	public function setCallPermissions(int $callPermissions): void {
+		$this->callPermissions = $callPermissions;
 	}
 
 	public function getCallFlag(): int {
@@ -994,26 +1002,6 @@ class Room {
 		$this->sipEnabled = $newSipEnabled;
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_SIP_ENABLED_SET, $event);
-
-		return true;
-	}
-
-	public function setPermissions(string $level, int $newPermissions): bool {
-		if ($level !== 'default' && $level !== 'call') {
-			return false;
-		}
-
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set($level . '_permissions', $update->createNamedParameter($newPermissions, IQueryBuilder::PARAM_INT))
-			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$update->executeStatement();
-
-		if ($level === 'default') {
-			$this->defaultPermissions = $newPermissions;
-		} else {
-			$this->callPermissions = $newPermissions;
-		}
 
 		return true;
 	}
