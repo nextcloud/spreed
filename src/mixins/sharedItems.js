@@ -45,7 +45,6 @@ const sharedItems = {
 				return t('spreed', 'Locations')
 			case SHARED_ITEM.TYPES.AUDIO:
 				return t('spreed', 'Audio')
-			case SHARED_ITEM.TYPES.OTHER:
 			default:
 				return t('spreed', 'Other')
 			}
