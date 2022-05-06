@@ -79,6 +79,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `actorDisplayName` | string | Guest display name (ignored for logged in users)
     `replyTo` | int | The message ID this message is a reply to (only allowed for messages from the same conversation and when the message type is not `system` or `command`)
     `referenceId` | string | A reference string to be able to identify the message again in a "get messages" request, should be a random sha256 (only available with `chat-reference-id` capability)
+    `slient` | bool | If sent silent the message will not create chat notifications even for mentions (only available with `silent-send` capability)
 
 * Response:
     - Status code:

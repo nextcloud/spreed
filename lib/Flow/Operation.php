@@ -126,7 +126,8 @@ class Operation implements IOperation {
 					$this->prepareMention($mode, $participant) . $message,
 					new \DateTime(),
 					null,
-					''
+					'',
+					false
 				);
 			} catch (UnexpectedValueException $e) {
 				continue;

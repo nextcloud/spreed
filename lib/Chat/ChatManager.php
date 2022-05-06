@@ -179,7 +179,7 @@ class ChatManager {
 			}
 
 			if ($sendNotifications) {
-				$this->notifier->notifyOtherParticipant($chat, $comment, []);
+				$this->notifier->notifyOtherParticipant($chat, $comment, [], false);
 			}
 
 			$this->dispatcher->dispatch(self::EVENT_AFTER_SYSTEM_MESSAGE_SEND, $event);
@@ -238,7 +238,7 @@ class ChatManager {
 	 * @param string $referenceId
 	 * @return IComment
 	 */
-	public function sendMessage(Room $chat, Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, ?IComment $replyTo, string $referenceId): IComment {
+	public function sendMessage(Room $chat, Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, ?IComment $replyTo, string $referenceId, bool $silent): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
@@ -255,7 +255,7 @@ class ChatManager {
 			$comment->setReferenceId($referenceId);
 		}
 
-		$event = new ChatParticipantEvent($chat, $comment, $participant);
+		$event = new ChatParticipantEvent($chat, $comment, $participant, $silent);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_MESSAGE_SEND, $event);
 
 		$shouldFlush = $this->notificationManager->defer();
@@ -273,20 +273,20 @@ class ChatManager {
 			$alreadyNotifiedUsers = [];
 			$usersDirectlyMentioned = $this->notifier->getMentionedUserIds($comment);
 			if ($replyTo instanceof IComment) {
-				$alreadyNotifiedUsers = $this->notifier->notifyReplyToAuthor($chat, $comment, $replyTo);
+				$alreadyNotifiedUsers = $this->notifier->notifyReplyToAuthor($chat, $comment, $replyTo, $silent);
 				if ($replyTo->getActorType() === Attendee::ACTOR_USERS) {
 					$usersDirectlyMentioned[] = $replyTo->getActorId();
 				}
 			}
 
-			$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $alreadyNotifiedUsers);
+			$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $alreadyNotifiedUsers, $silent);
 			if (!empty($alreadyNotifiedUsers)) {
 				$userIds = array_column($alreadyNotifiedUsers, 'id');
 				$this->participantService->markUsersAsMentioned($chat, $userIds, (int) $comment->getId(), $usersDirectlyMentioned);
 			}
 
 			// User was not mentioned, send a normal notification
-			$this->notifier->notifyOtherParticipant($chat, $comment, $alreadyNotifiedUsers);
+			$this->notifier->notifyOtherParticipant($chat, $comment, $alreadyNotifiedUsers, $silent);
 
 			$this->dispatcher->dispatch(self::EVENT_AFTER_MESSAGE_SEND, $event);
 		} catch (NotFoundException $e) {

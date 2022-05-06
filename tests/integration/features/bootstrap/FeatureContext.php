@@ -1399,19 +1399,26 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sends message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 * @Then /^user "([^"]*)" (silent sends|sends) message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
+	 * @param string $sendingMode
 	 * @param string $message
 	 * @param string $identifier
 	 * @param string $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userSendsMessageToRoom($user, $message, $identifier, $statusCode, $apiVersion = 'v1') {
+	public function userSendsMessageToRoom(string $user, string $sendingMode, string $message, string $identifier, string $statusCode, string $apiVersion = 'v1') {
+		if ($sendingMode === 'silent sends') {
+			$body = new TableNode([['message', $message], ['silent', true]]);
+		} else {
+			$body = new TableNode([['message', $message]]);
+		}
+
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier],
-			new TableNode([['message', $message]])
+			$body
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 		sleep(1); // make sure Postgres manages the order of the messages

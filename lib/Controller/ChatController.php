@@ -192,11 +192,12 @@ class ChatController extends AEnvironmentAwareController {
 	 * @param string $actorDisplayName for guests
 	 * @param string $referenceId for the message to be able to later identify it again
 	 * @param int $replyTo Parent id which this message is a reply to
+	 * @param bool $silent If sent silent the chat message will not create any notifications
 	 * @return DataResponse the status code is "201 Created" if successful, and
 	 *         "404 Not found" if the room or session for a guest user was not
 	 *         found".
 	 */
-	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0): DataResponse {
+	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
 		[$actorType, $actorId] = $this->getActorInfo($actorDisplayName);
 		if (!$actorId) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -222,7 +223,7 @@ class ChatController extends AEnvironmentAwareController {
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
-			$comment = $this->chatManager->sendMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId);
+			$comment = $this->chatManager->sendMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, $parent, $referenceId, $silent);
 		} catch (MessageTooLongException $e) {
 			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception $e) {

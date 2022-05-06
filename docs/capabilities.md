@@ -95,5 +95,6 @@ title: Capabilities
 
 ## 15
 * `chat-permission` - When permission 128 is required to post chat messages, reaction or share items to the conversation
+* `silent-send` - Whether the chat API allows to send chat messages without triggering notifications
 * `sip-support-nopin` - Whether SIP can be configured to not require a custom attendee PIN
 * `config => call => enabled` - Whether calling is enabled on the instance or not
