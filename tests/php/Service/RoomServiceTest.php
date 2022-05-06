@@ -44,6 +44,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
+/**
+ * @group DB
+ */
 class RoomServiceTest extends TestCase {
 
 	/** @var Manager|MockObject */
@@ -70,6 +73,7 @@ class RoomServiceTest extends TestCase {
 		$this->service = new RoomService(
 			$this->manager,
 			$this->participantService,
+			\OC::$server->get(IDBConnection::class),
 			$this->shareManager,
 			$this->hasher,
 			$this->dispatcher
@@ -329,6 +333,7 @@ class RoomServiceTest extends TestCase {
 		$service = new RoomService(
 			$this->manager,
 			$this->participantService,
+			\OC::$server->get(IDBConnection::class),
 			$this->shareManager,
 			$this->hasher,
 			$dispatcher

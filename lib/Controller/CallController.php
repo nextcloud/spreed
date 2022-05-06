@@ -31,6 +31,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -40,16 +41,19 @@ use OCP\IUserManager;
 
 class CallController extends AEnvironmentAwareController {
 	private ParticipantService $participantService;
+	private RoomService $roomService;
 	private IUserManager $userManager;
 	private ITimeFactory $timeFactory;
 
 	public function __construct(string $appName,
 								IRequest $request,
 								ParticipantService $participantService,
+								RoomService $roomService,
 								IUserManager $userManager,
 								ITimeFactory $timeFactory) {
 		parent::__construct($appName, $request);
 		$this->participantService = $participantService;
+		$this->roomService = $roomService;
 		$this->userManager = $userManager;
 		$this->timeFactory = $timeFactory;
 	}
@@ -119,7 +123,7 @@ class CallController extends AEnvironmentAwareController {
 		}
 
 		if ($forcePermissions !== null && $this->participant->hasModeratorPermissions()) {
-			$this->room->setPermissions('call', $forcePermissions);
+			$this->roomService->setPermissions($this->room, 'call', Attendee::PERMISSIONS_MODIFY_SET, $forcePermissions, true);
 		}
 
 		$this->participantService->changeInCall($this->room, $this->participant, $flags);

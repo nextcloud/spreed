@@ -31,7 +31,9 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\Security\IHasher;
 use OCP\Share\IManager as IShareManager;
@@ -39,17 +41,20 @@ use OCP\Share\IManager as IShareManager;
 class RoomService {
 	protected Manager $manager;
 	protected ParticipantService $participantService;
+	protected IDBConnection $db;
 	protected IShareManager $shareManager;
 	protected IHasher $hasher;
 	protected IEventDispatcher $dispatcher;
 
 	public function __construct(Manager $manager,
 								ParticipantService $participantService,
+								IDBConnection $db,
 								IShareManager $shareManager,
 								IHasher $hasher,
 								IEventDispatcher $dispatcher) {
 		$this->manager = $manager;
 		$this->participantService = $participantService;
+		$this->db = $db;
 		$this->shareManager = $shareManager;
 		$this->hasher = $hasher;
 		$this->dispatcher = $dispatcher;
@@ -194,7 +199,17 @@ class RoomService {
 			$this->participantService->updateAllPermissions($room, $method, $permissions);
 		}
 
-		$room->setPermissions($level, $newPermissions);
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set($level . '_permissions', $update->createNamedParameter($newPermissions, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		if ($level === 'default') {
+			$room->setDefaultPermissions($newPermissions);
+		} else {
+			$room->setCallPermissions($newPermissions);
+		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PERMISSIONS_SET, $event);
 
