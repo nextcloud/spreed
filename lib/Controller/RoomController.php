@@ -1706,4 +1706,8 @@ class RoomController extends AEnvironmentAwareController {
 		}
 		return new DataResponse();
 	}
+
+	public function setTimeToLive(int $ttl): DataResponse {
+		return new DataResponse();
+	}
 }
