@@ -880,6 +880,7 @@ OC.L10N.register(
     "Notify about calls in this conversation" : "Über Anrufe in dieser Unterhaltung benachrichtigen",
     "Allow participants to join from a phone." : "Ermöglichen Sie den Teilnehmern, über ein Telefon teilzunehmen.",
     "Enable SIP dial-in" : "SIP-Einwahl aktivieren",
+    "Allow to dial-in without a pin" : "Einwahl ohne PIN erlauben",
     "SIP dial-in is now enabled" : "Die SIP-Einwahl ist jetzt aktiviert",
     "SIP dial-in is now disabled" : "Die SIP-Einwahl ist jetzt deaktiviert",
     "Error occurred when enabling SIP dial-in" : "Beim Aktivieren der SIP-Einwahl ist ein Fehler aufgetreten",
