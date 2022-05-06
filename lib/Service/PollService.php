@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2022 Joas Schilling <coding@schilljs.com>
  *
+ * @author Joas Schilling <coding@schilljs.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,9 +25,16 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\Model\Poll;
 use OCA\Talk\Model\PollMapper;
 use OCA\Talk\Model\VoteMapper;
+use OCA\Talk\Participant;
+use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Db\IMapperException;
+use OCP\DB\Exception;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IDBConnection;
 
 class PollService {
 	protected PollMapper $pollMapper;
@@ -50,5 +59,38 @@ class PollService {
 		$this->pollMapper->insert($poll);
 
 		return $poll;
+	}
+
+	/**
+	 * @param int $roomId
+	 * @param int $pollId
+	 * @return Poll
+	 * @throws IMapperException
+	 */
+	public function getPoll(int $roomId, int $pollId): Poll {
+		$poll = $this->pollMapper->getByPollId($pollId);
+
+		if ($poll->getRoomId() !== $roomId) {
+			throw new DoesNotExistException('Room id mismatch');
+		}
+
+		return $poll;
+	}
+
+	/**
+	 * @param Participant $participant
+	 * @param Poll $poll
+	 * @throws WrongPermissionsException
+	 * @throws Exception
+	 */
+	public function updatePoll(Participant $participant, Poll $poll): void {
+		if (!$participant->hasModeratorPermissions()
+		 && ($poll->getActorType() !== $participant->getAttendee()->getActorType()
+		 || $poll->getActorId() !== $participant->getAttendee()->getActorId())) {
+			// Only moderators and the author of the poll can close it
+			throw new WrongPermissionsException();
+		}
+
+		$this->pollMapper->update($poll);
 	}
 }

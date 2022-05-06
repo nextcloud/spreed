@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
+ * @copyright Copyright (c) 2022 Joas Schilling <coding@schilljs.com>
  *
- * @author Lukas Reschke <lukas@statuscode.ch>
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -38,5 +38,9 @@ return [
 	'ocs' => [
 		/** @see \OCA\Talk\Controller\PollController::createPoll() */
 		['name' => 'Poll#createPoll', 'url' => '/api/{apiVersion}/poll/{token}', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\PollController::showPoll() */
+		['name' => 'Poll#showPoll', 'url' => '/api/{apiVersion}/poll/{token}/{pollId}', 'verb' => 'GET', 'requirements' => $requirementsWithPollId],
+		/** @see \OCA\Talk\Controller\PollController::closePoll() */
+		['name' => 'Poll#closePoll', 'url' => '/api/{apiVersion}/poll/{token}/{pollId}', 'verb' => 'DELETE', 'requirements' => $requirementsWithPollId],
 	],
 ];

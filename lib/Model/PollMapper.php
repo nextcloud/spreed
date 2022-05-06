@@ -26,7 +26,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
+use OCP\DB\Exception;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class PollMapper extends QBMapper {
@@ -36,5 +40,22 @@ class PollMapper extends QBMapper {
 	 */
 	public function __construct(IDBConnection $db) {
 		parent::__construct($db, 'talk_polls', Poll::class);
+	}
+
+	/**
+	 * @param int $pollId
+	 * @return Poll
+	 * @throws DoesNotExistException
+	 * @throws MultipleObjectsReturnedException
+	 * @throws Exception
+	 */
+	public function getByPollId(int $pollId): Poll {
+		$query = $this->db->getQueryBuilder();
+
+		$query->select('*')
+			->from('talk_polls')
+			->where($query->expr()->eq('id', $query->createNamedParameter($pollId, IQueryBuilder::PARAM_INT)));
+
+		return $this->findEntity($query);
 	}
 }

@@ -1527,13 +1527,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$data['options'] = json_decode($data['options'], true);
 		if ($data['resultMode'] === 'public') {
 			$data['resultMode'] = 0;
-		} else if ($data['resultMode'] === 'hidden') {
+		} elseif ($data['resultMode'] === 'hidden') {
 			$data['resultMode'] = 1;
 		} else {
 			throw new \Exception('Invalid result mode');
 		}
 		if ($data['maxVotes'] === 'unlimited') {
-			$data['resultMode'] = 0;
+			$data['maxVotes'] = 0;
 		}
 
 		$this->setCurrentUser($user);
@@ -1547,6 +1547,69 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if (isset($response['id'])) {
 			self::$questionToPollId[$data['question']] = $response['id'];
 		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sees poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $question
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSeesPollInRoom($user, $question, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData) {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$expected = $this->preparePollExpectedData($formData->getRowsHash());
+		$response = $this->getDataFromResponse($this->response);
+
+		Assert::assertEquals($expected, $response);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" closes poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $question
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userClosesPollInRoom($user, $question, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData) {
+		$this->setCurrentUser($user);
+		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$expected = $this->preparePollExpectedData($formData->getRowsHash());
+		$response = $this->getDataFromResponse($this->response);
+
+		Assert::assertEquals($expected, $response);
+	}
+
+	protected function preparePollExpectedData(array $expected): array {
+		if ($expected['resultMode'] === 'public') {
+			$expected['resultMode'] = 0;
+		} elseif ($expected['resultMode'] === 'hidden') {
+			$expected['resultMode'] = 1;
+		}
+		if ($expected['maxVotes'] === 'unlimited') {
+			$expected['maxVotes'] = 0;
+		}
+		if ($expected['status'] === 'open') {
+			$expected['status'] = 0;
+		} elseif ($expected['status'] === 'closed') {
+			$expected['status'] = 1;
+		}
+
+		$result = preg_match('/POLL_ID\(([^)]+)\)/', $expected['id'], $matches);
+		if ($result) {
+			$expected['id'] = self::$questionToPollId[$matches[1]];
+		}
+
+		return $expected;
 	}
 
 	/**

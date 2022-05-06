@@ -1,11 +1,10 @@
 <?php
 
 declare(strict_types=1);
+
 /**
- * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
- * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2022 Joas Schilling <coding@schilljs.com>
  *
- * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -28,11 +27,13 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Exceptions\WrongPermissionsException;
+use OCA\Talk\Model\Poll;
 use OCA\Talk\Service\PollService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\Comments\MessageTooLongException;
+use OCP\DB\Exception;
 use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
@@ -101,6 +102,53 @@ class PollController extends AEnvironmentAwareController {
 			$this->chatManager->addSystemMessage($this->room, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true);
 		} catch (\Exception $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
+		}
+
+		return new DataResponse($poll->asArray());
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireParticipant
+	 * @RequireModeratorOrNoLobby
+	 *
+	 * @param int $pollId
+	 * @return DataResponse
+	 */
+	public function showPoll(int $pollId): DataResponse {
+		try {
+			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
+		} catch (\Exception $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		return new DataResponse($poll->asArray());
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireParticipant
+	 * @RequireModeratorOrNoLobby
+	 *
+	 * @param int $pollId
+	 * @return DataResponse
+	 */
+	public function closePoll(int $pollId): DataResponse {
+		try {
+			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
+		} catch (\Exception $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$poll->setStatus(Poll::STATUS_CLOSED);
+
+		try {
+			$this->pollService->updatePoll($this->participant, $poll);
+		} catch (WrongPermissionsException $e) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		} catch (Exception $e) {
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
+			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
 		return new DataResponse($poll->asArray());

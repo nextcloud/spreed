@@ -79,7 +79,7 @@ class Poll extends Entity {
 	public function asArray(): array {
 		return [
 			'id' => $this->getId(),
-			'roomId' => $this->getRoomId(),
+			// 'roomId' => $this->getRoomId(),
 			'question' => $this->getQuestion(),
 			'options' => $this->getOptions(),
 			'actorType' => $this->getActorType(),
