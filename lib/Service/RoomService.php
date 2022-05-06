@@ -31,6 +31,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Webinary;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
@@ -212,6 +213,41 @@ class RoomService {
 		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PERMISSIONS_SET, $event);
+
+		return true;
+	}
+
+	public function setSIPEnabled(Room $room, int $newSipEnabled): bool {
+		$oldSipEnabled = $room->getSIPEnabled();
+
+		if ($newSipEnabled === $oldSipEnabled) {
+			return false;
+		}
+
+		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
+			return false;
+		}
+
+		if (!in_array($newSipEnabled, [Webinary::SIP_ENABLED_NO_PIN, Webinary::SIP_ENABLED, Webinary::SIP_DISABLED], true)) {
+			return false;
+		}
+
+		if (preg_match(Room::SIP_INCOMPATIBLE_REGEX, $room->getToken())) {
+			return false;
+		}
+
+		$event = new ModifyRoomEvent($room, 'sipEnabled', $newSipEnabled, $oldSipEnabled);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SIP_ENABLED_SET, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('sip_enabled', $update->createNamedParameter($newSipEnabled, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setSIPEnabled($newSipEnabled);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_SIP_ENABLED_SET, $event);
 
 		return true;
 	}

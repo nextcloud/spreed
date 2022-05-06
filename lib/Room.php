@@ -267,6 +267,10 @@ class Room {
 		return $this->sipEnabled;
 	}
 
+	public function setSIPEnabled(int $sipEnabled): void {
+		$this->sipEnabled = $sipEnabled;
+	}
+
 	public function getLobbyTimer(): ?\DateTime {
 		$this->validateTimer();
 		return $this->lobbyTimer;
@@ -967,41 +971,6 @@ class Room {
 		$this->lobbyState = $newState;
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_LOBBY_STATE_SET, $event);
-
-		return true;
-	}
-
-	public function setSIPEnabled(int $newSipEnabled): bool {
-		$oldSipEnabled = $this->sipEnabled;
-
-		if ($newSipEnabled === $oldSipEnabled) {
-			return false;
-		}
-
-		if (!in_array($this->getType(), [self::TYPE_GROUP, self::TYPE_PUBLIC], true)) {
-			return false;
-		}
-
-		if (!in_array($newSipEnabled, [Webinary::SIP_ENABLED_NO_PIN, Webinary::SIP_ENABLED, Webinary::SIP_DISABLED], true)) {
-			return false;
-		}
-
-		if (preg_match(self::SIP_INCOMPATIBLE_REGEX, $this->token)) {
-			return false;
-		}
-
-		$event = new ModifyRoomEvent($this, 'sipEnabled', $newSipEnabled, $oldSipEnabled);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_SIP_ENABLED_SET, $event);
-
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('sip_enabled', $update->createNamedParameter($newSipEnabled, IQueryBuilder::PARAM_INT))
-			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$update->executeStatement();
-
-		$this->sipEnabled = $newSipEnabled;
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_SIP_ENABLED_SET, $event);
 
 		return true;
 	}
