@@ -1038,6 +1038,7 @@ OC.L10N.register(
     "Chat" : "Správy",
     "Details" : "Podrobnosti",
     "Settings" : "Nastavenia",
+    "Shared items" : "Zdieľané položky",
     "Participants ({count})" : "({count}) účastníkov",
     "Projects" : "Projekty",
     "Show all files" : "Zobraziť všetky súbory",
