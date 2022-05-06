@@ -95,3 +95,4 @@ title: Capabilities
 
 ### 14.0.3
 * `unified-search` - When the extended attributes of unified search results are there
+* `config => signaling => session-ping-limit` - Number of sessions the HPB is allowed to ping in the same request
