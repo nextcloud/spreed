@@ -136,7 +136,7 @@ the main body of the message as well as a quote.
 				</Popover>
 
 				<!-- More reactions picker -->
-				<EmojiPicker v-if="canReact"
+				<EmojiPicker v-if="canReact && showMessageButtonsBar"
 					:per-line="5"
 					:container="`#message_${id}`"
 					@select="handleReactionClick">
@@ -144,6 +144,10 @@ the main body of the message as well as a quote.
 						<EmoticonOutline :size="15" />
 					</button>
 				</EmojiPicker>
+				<button v-else-if="canReact"
+					class="reaction-button">
+					<EmoticonOutline :size="15" />
+				</button>
 			</div>
 		</div>
 
