@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.0.1 – 2022-05-07
+### Fixed
+- Fix memory consumption with emoji picker in conversations with a lot of chat messages with reactions
+  [7328](https://github.com/nextcloud/spreed/pull/7328)
+- Fix endless offer loop with SIP participants
+  [7288](https://github.com/nextcloud/spreed/pull/7288)
+- Fix room selector in deck and maps integration
+  [7290](https://github.com/nextcloud/spreed/pull/7290)
+  [7294](https://github.com/nextcloud/spreed/pull/7294)
+- Fix transceiver kind for participants without the HPB
+  [7263](https://github.com/nextcloud/spreed/pull/7263)
+- Fix error on console when initiating a screenshare
+  [7330](https://github.com/nextcloud/spreed/pull/7330)
+- Add missing translations of 24 branch
+  [7330](https://github.com/nextcloud/spreed/pull/7330)
+
 ## 14.0.0 – 2022-05-02
 ### Added
 - Reactions for chat messages
