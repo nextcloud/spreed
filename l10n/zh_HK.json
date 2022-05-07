@@ -879,6 +879,7 @@
     "Allow participants to join from a phone." : "允許參與者通過電話加入。",
     "Enable SIP dial-in" : "啟用 SIP 撥入",
     "Allow to dial-in without a pin" : "允許在沒有密碼的情況下撥入",
+    "SIP dial-in is now possible without pin requirement" : "SIP 撥入現在無需密碼",
     "SIP dial-in is now enabled" : "現在啟用了 SIP 撥入",
     "SIP dial-in is now disabled" : "已停用 SIP 撥入功能",
     "Error occurred when enabling SIP dial-in" : "啟用SIP撥入時發生錯誤",
