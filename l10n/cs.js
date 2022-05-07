@@ -881,6 +881,7 @@ OC.L10N.register(
     "Allow participants to join from a phone." : "Umožnit účastníkům připojit se z telefonu.",
     "Enable SIP dial-in" : "Zapnout SIP volání sem",
     "Allow to dial-in without a pin" : "Umožnit zavolání do hovoru bez zadávání pin kódu",
+    "SIP dial-in is now possible without pin requirement" : "Zavolat do hovoru prostřednictvím SIP je nyní možné i bez požadavku na PIN kód",
     "SIP dial-in is now enabled" : "SIP vytáčení je povoleno",
     "SIP dial-in is now disabled" : "SIP vytáčení je zakázáno",
     "Error occurred when enabling SIP dial-in" : "Při zapínání SIP vytáčení došlo k chybě",
