@@ -881,6 +881,7 @@ OC.L10N.register(
     "Allow participants to join from a phone." : "Engedélyezés, hogy a résztvevők telefonon is csatlakozhassanak.",
     "Enable SIP dial-in" : "A SIP-es betárcsázás engedélyezése",
     "Allow to dial-in without a pin" : "PIN-kód nélküli behívás engedélyezése",
+    "SIP dial-in is now possible without pin requirement" : "A SIP-es behíváshoz már nem szükséges PIN-kód",
     "SIP dial-in is now enabled" : "A SIP-es betárcsázás engedélyezett",
     "SIP dial-in is now disabled" : "A SIP-es betárcsázás nem engedélyezett",
     "Error occurred when enabling SIP dial-in" : "Hiba történt az SIP-es betárcsázás engedélyezése során",
