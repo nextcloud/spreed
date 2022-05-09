@@ -1660,7 +1660,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
-		if (!$this->room->setSIPEnabled($state)) {
+		if (!$this->roomService->setSIPEnabled($this->room, $state)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
