@@ -48,6 +48,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
+use OCP\Share\IManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -88,6 +89,7 @@ class BackendNotifierTest extends TestCase {
 	private ?\OCA\Talk\Tests\php\Signaling\CustomBackendNotifier $controller = null;
 
 	private ?Manager $manager = null;
+	private ?RoomService $roomService = null;
 
 	private ?string $userId = null;
 	private ?string $signalingSecret = null;
@@ -147,6 +149,15 @@ class BackendNotifierTest extends TestCase {
 			$this->timeFactory,
 			$this->createMock(IHasher::class),
 			$this->createMock(IL10N::class)
+		);
+
+		$this->roomService = new RoomService(
+			$this->manager,
+			$this->participantService,
+			$dbConnection,
+			$this->createMock(IManager::class),
+			$this->createMock(IHasher::class),
+			$this->dispatcher
 		);
 	}
 
@@ -523,7 +534,7 @@ class BackendNotifierTest extends TestCase {
 
 	public function testRoomListableChanged() {
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
-		$room->setListable(Room::LISTABLE_ALL);
+		$this->roomService->setListable($room, Room::LISTABLE_ALL);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'update',

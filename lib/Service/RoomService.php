@@ -252,6 +252,47 @@ class RoomService {
 		return true;
 	}
 
+	/**
+	 * @param Room $room
+	 * @param int $newState New listable scope from self::LISTABLE_*
+	 * 						Also it's only allowed on rooms of type
+	 * 						`Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
+	 * @return bool True when the change was valid, false otherwise
+	 */
+	public function setListable(Room $room, int $newState): bool {
+		$oldState = $room->getListable();
+		if ($newState === $oldState) {
+			return true;
+		}
+
+		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
+			return false;
+		}
+
+		if (!in_array($newState, [
+			Room::LISTABLE_NONE,
+			Room::LISTABLE_USERS,
+			Room::LISTABLE_ALL,
+		], true)) {
+			return false;
+		}
+
+		$event = new ModifyRoomEvent($room, 'listable', $newState, $oldState);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_LISTABLE_SET, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('listable', $update->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setListable($newState);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_LISTABLE_SET, $event);
+
+		return true;
+	}
+
 	public function verifyPassword(Room $room, string $password): array {
 		$event = new VerifyRoomPasswordEvent($room, $password);
 		$this->dispatcher->dispatch(Room::EVENT_PASSWORD_VERIFY, $event);

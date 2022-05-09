@@ -163,7 +163,7 @@ trait TRoomCommand {
 			return;
 		}
 
-		if (!$room->setListable($listable)) {
+		if (!$this->roomService->setListable($room, $listable)) {
 			throw new InvalidArgumentException('Unable to change room state.');
 		}
 	}
