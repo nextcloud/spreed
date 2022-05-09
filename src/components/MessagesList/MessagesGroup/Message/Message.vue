@@ -159,6 +159,7 @@ the main body of the message as well as a quote.
 			:is-reactions-menu-open.sync="isReactionsMenuOpen"
 			:message-api-data="messageApiData"
 			:message-object="messageObject"
+			:can-react="canReact"
 			v-bind="$props"
 			:previous-message-id="previousMessageId"
 			:participant="participant"
@@ -580,7 +581,10 @@ export default {
 		},
 
 		canReact() {
-			return this.conversation.readOnly !== CONVERSATION.STATE.READ_ONLY && (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
+			return this.conversation.readOnly !== CONVERSATION.STATE.READ_ONLY
+				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
+				&& this.messageObject.messageType !== 'command'
+				&& this.messageObject.messageType !== 'comment_deleted'
 		},
 
 		simpleReactions() {

@@ -1,4 +1,5 @@
 import Vuex, { Store } from 'vuex'
+import vOutsideEvents from 'vue-outside-events'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import storeConfig from '../../../../../store/storeConfig'
@@ -18,6 +19,7 @@ describe('MessageButtonsBar.vue', () => {
 
 	beforeEach(() => {
 		localVue = createLocalVue()
+		localVue.use(vOutsideEvents)
 		localVue.use(Vuex)
 
 		conversationProps = {
@@ -47,6 +49,8 @@ describe('MessageButtonsBar.vue', () => {
 			isTemporary: false,
 			isFirstMessage: true,
 			isReplyable: true,
+			canReact: true,
+			isReactionsMenuOpen: false,
 			timestamp: new Date('2020-05-07 09:23:00').getTime() / 1000,
 			token: TOKEN,
 			systemMessage: '',
