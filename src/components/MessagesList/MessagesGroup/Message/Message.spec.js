@@ -1,4 +1,5 @@
 import Vuex, { Store } from 'vuex'
+import vOutsideEvents from 'vue-outside-events'
 import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import { EventBus } from '../../../../services/EventBus'
@@ -43,6 +44,7 @@ describe('Message.vue', () => {
 
 	beforeEach(() => {
 		localVue = createLocalVue()
+		localVue.use(vOutsideEvents)
 		localVue.use(Vuex)
 
 		conversationProps = {

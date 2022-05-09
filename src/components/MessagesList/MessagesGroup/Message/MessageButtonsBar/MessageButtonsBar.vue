@@ -24,7 +24,7 @@
 	<div v-click-outside="handleClickOutside"
 		class="message-buttons-bar">
 		<template v-if="!isReactionsMenuOpen">
-			<Button v-if="acceptsReactions"
+			<Button v-if="canReact"
 				type="tertiary"
 				@click="openReactionsMenu">
 				<template #icon>
@@ -284,6 +284,11 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+
+		canReact: {
+			type: Boolean,
+			required: true,
+		},
 	},
 
 	data() {
@@ -323,10 +328,6 @@ export default {
 				&& !this.isMyMsg
 				&& this.actorType === ATTENDEE.ACTOR_TYPE.USERS
 				&& this.$store.getters.getActorType() === ATTENDEE.ACTOR_TYPE.USERS
-		},
-
-		acceptsReactions() {
-			return !this.isConversationReadOnly && !this.isDeletedMessage && (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
 		},
 
 		messageActions() {
