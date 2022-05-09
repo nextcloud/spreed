@@ -131,6 +131,10 @@ export default {
 			// Overwrite the selected conversation token
 			messageToBeForwarded.token = token
 
+			if (messageToBeForwarded.parent) {
+				delete messageToBeForwarded.parent
+			}
+
 			if (messageToBeForwarded.message === '{object}' && messageToBeForwarded.messageParameters.object) {
 				const richObject = messageToBeForwarded.messageParameters.object
 				try {
