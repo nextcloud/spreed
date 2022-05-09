@@ -44,7 +44,7 @@
 				:checked="noPinRequired"
 				:disabled="isSipLoading || !hasSIPEnabled"
 				@change="toggleSetting('nopin')">
-			<label for="sip_nopin_checkbox">{{ t('spreed', 'Allow to dial-in without a pin') }}</label>
+			<label for="sip_nopin_checkbox">{{ t('spreed', 'Allow to dial-in without a PIN') }}</label>
 		</div>
 	</div>
 </template>
@@ -95,7 +95,7 @@ export default {
 					state,
 				})
 				if (this.conversation.sipEnabled === WEBINAR.SIP.ENABLED_NO_PIN) {
-					showSuccess(t('spreed', 'SIP dial-in is now possible without pin requirement'))
+					showSuccess(t('spreed', 'SIP dial-in is now possible without PIN requirement'))
 				} else if (this.conversation.sipEnabled === WEBINAR.SIP.ENABLED) {
 					showSuccess(t('spreed', 'SIP dial-in is now enabled'))
 				} else {
