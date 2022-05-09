@@ -147,6 +147,8 @@ class Room {
 	public const EVENT_BEFORE_SESSION_LEAVE_CALL = self::class . '::preSessionLeaveCall';
 	public const EVENT_AFTER_SESSION_LEAVE_CALL = self::class . '::postSessionLeaveCall';
 	public const EVENT_BEFORE_SIGNALING_PROPERTIES = self::class . '::beforeSignalingProperties';
+	public const EVENT_BEFORE_SET_TIME_TO_LIVE = self::class . '::beforeSetTimeToLive';
+	public const EVENT_AFTER_SET_TIME_TO_LIVE = self::class . '::afterSetTimeToLive';
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
@@ -194,6 +196,7 @@ class Room {
 								int $type,
 								int $readOnly,
 								int $listable,
+								int $timeToLive,
 								int $lobbyState,
 								int $sipEnabled,
 								?int $assignedSignalingServer,
@@ -223,6 +226,7 @@ class Room {
 		$this->type = $type;
 		$this->readOnly = $readOnly;
 		$this->listable = $listable;
+		$this->timeToLive = $timeToLive;
 		$this->lobbyState = $lobbyState;
 		$this->sipEnabled = $sipEnabled;
 		$this->assignedSignalingServer = $assignedSignalingServer;

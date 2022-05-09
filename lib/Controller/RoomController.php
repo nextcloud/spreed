@@ -1709,7 +1709,15 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
+	/**
+	 * @PublicPage
+	 * @RequireModeratorParticipant
+	 */
 	public function setTimeToLive(int $ttl): DataResponse {
+		if ($ttl < 0) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+		$this->roomService->setTimeToLive($this->room, $ttl);
 		return new DataResponse();
 	}
 }

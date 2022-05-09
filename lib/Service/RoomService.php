@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OCA\Talk\Events\ChangeTtlEvent;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
@@ -523,5 +524,16 @@ class RoomService {
 			'result' => !$room->hasPassword() || $this->hasher->verify($password, $room->getPassword()),
 			'url' => '',
 		];
+	}
+
+	public function setTimeToLive(Room $room, int $ttl): void {
+		$event = new ChangeTtlEvent($room, $ttl);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_TIME_TO_LIVE, $event);
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('time_to_live', $update->createNamedParameter($ttl, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_TIME_TO_LIVE, $event);
 	}
 }
