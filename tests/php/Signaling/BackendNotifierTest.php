@@ -510,7 +510,7 @@ class BackendNotifierTest extends TestCase {
 
 	public function testRoomReadOnlyChanged() {
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
-		$room->setReadOnly(Room::READ_ONLY);
+		$this->roomService->setReadOnly($room, Room::READ_ONLY);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'update',

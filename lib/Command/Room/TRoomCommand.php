@@ -147,7 +147,7 @@ trait TRoomCommand {
 			return;
 		}
 
-		if (!$room->setReadOnly($readOnly ? Room::READ_ONLY : Room::READ_WRITE)) {
+		if (!$this->roomService->setReadOnly($room, $readOnly ? Room::READ_ONLY : Room::READ_WRITE)) {
 			throw new InvalidArgumentException('Unable to change room state.');
 		}
 	}
