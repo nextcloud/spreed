@@ -35,6 +35,19 @@
 				<DeckCard :wide="true"
 					v-bind="item.messageParameters.object" />
 			</div>
+			<template v-else-if="type === 'other'">
+				<div :key="item.id"
+					class="shared-items__other">
+					<a v-if="item.messageParameters.object.link"
+						:href="item.messageParameters.object.link"
+						target="_blank">
+						{{ item.messageParameters.object.name }}
+					</a>
+					<p v-else>
+						{{ item.messageParameters.object.name }}
+					</p>
+				</div>
+			</template>
 			<FilePreview v-else
 				:key="item.id"
 				:small-preview="isList"
@@ -120,6 +133,19 @@ export default {
 	}
 	&__deckcard {
 		width: 100%;
+	}
+
+	&__other {
+
+		width: 100%;
+		margin-left: 8px;
+		a {
+			text-decoration: underline;
+			&:after {
+			content: " ↗";
+		}
+		}
+
 	}
 }
 </style>
