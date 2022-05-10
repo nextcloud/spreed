@@ -870,7 +870,6 @@ class Manager {
 		if ($row === false) {
 			$room = $this->createRoom(Room::TYPE_CHANGELOG, $userId);
 			$room->setReadOnly(Room::READ_ONLY);
-			$room->setListable(Room::LISTABLE_NONE);
 
 			$user = $this->userManager->get($userId);
 			$this->participantService->addUsers($room, [[

@@ -258,6 +258,15 @@ class Room {
 		return $this->listable;
 	}
 
+	/**
+	 * @param int $newState New listable scope from self::LISTABLE_*
+	 * 						Also it's only allowed on rooms of type
+	 * 						`self::TYPE_GROUP` and `self::TYPE_PUBLIC`
+	 */
+	public function setListable(int $newState): void {
+		$this->listable = $newState;
+	}
+
 	public function getLobbyState(): int {
 		$this->validateTimer();
 		return $this->lobbyState;
@@ -890,46 +899,6 @@ class Room {
 		$this->readOnly = $newState;
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_READONLY_SET, $event);
-
-		return true;
-	}
-
-	/**
-	 * @param int $newState New listable scope from self::LISTABLE_*
-	 * 						Also it's only allowed on rooms of type
-	 * 						`self::TYPE_GROUP` and `self::TYPE_PUBLIC`
-	 * @return bool True when the change was valid, false otherwise
-	 */
-	public function setListable(int $newState): bool {
-		$oldState = $this->getListable();
-		if ($newState === $oldState) {
-			return true;
-		}
-
-		if (!in_array($this->getType(), [self::TYPE_GROUP, self::TYPE_PUBLIC], true)) {
-			return false;
-		}
-
-		if (!in_array($newState, [
-			Room::LISTABLE_NONE,
-			Room::LISTABLE_USERS,
-			Room::LISTABLE_ALL,
-		], true)) {
-			return false;
-		}
-
-		$event = new ModifyRoomEvent($this, 'listable', $newState, $oldState);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_LISTABLE_SET, $event);
-
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('listable', $update->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
-			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$update->executeStatement();
-
-		$this->listable = $newState;
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_LISTABLE_SET, $event);
 
 		return true;
 	}

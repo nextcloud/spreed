@@ -1295,7 +1295,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setListable(int $scope): DataResponse {
-		if (!$this->room->setListable($scope)) {
+		if (!$this->roomService->setListable($this->room, $scope)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
