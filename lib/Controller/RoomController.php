@@ -1621,7 +1621,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
-		if (!$this->room->setLobby($state, $timerDateTime)) {
+		if (!$this->roomService->setLobby($this->room, $state, $timerDateTime)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
