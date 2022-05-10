@@ -27,7 +27,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
@@ -36,6 +35,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\SelectHelper;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -272,12 +272,8 @@ class Room {
 		return $this->lobbyState;
 	}
 
-	public function getSIPEnabled(): int {
-		return $this->sipEnabled;
-	}
-
-	public function setSIPEnabled(int $sipEnabled): void {
-		$this->sipEnabled = $sipEnabled;
+	public function setLobbyState(int $lobbyState): void {
+		$this->lobbyState = $lobbyState;
 	}
 
 	public function getLobbyTimer(): ?\DateTime {
@@ -285,10 +281,23 @@ class Room {
 		return $this->lobbyTimer;
 	}
 
+	public function setLobbyTimer(?\DateTime $lobbyTimer): void {
+		$this->lobbyTimer = $lobbyTimer;
+	}
+
 	protected function validateTimer(): void {
 		if ($this->lobbyTimer !== null && $this->lobbyTimer < $this->timeFactory->getDateTime()) {
-			$this->setLobby(Webinary::LOBBY_NONE, null, true);
+			// FIXME move to \OCP\Server::get() once merged: https://github.com/nextcloud/server/pull/31900
+			\OC::$server->get(RoomService::class)->setLobby($this, Webinary::LOBBY_NONE, null, true);
 		}
+	}
+
+	public function getSIPEnabled(): int {
+		return $this->sipEnabled;
+	}
+
+	public function setSIPEnabled(int $sipEnabled): void {
+		$this->sipEnabled = $sipEnabled;
 	}
 
 	public function getAssignedSignalingServer(): ?int {
@@ -899,47 +908,6 @@ class Room {
 		$this->readOnly = $newState;
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_READONLY_SET, $event);
-
-		return true;
-	}
-
-	/**
-	 * @param int $newState Currently it is only allowed to change between
-	 * 						`Webinary::LOBBY_NON_MODERATORS` and `Webinary::LOBBY_NONE`
-	 * 						Also it's not allowed in one-to-one conversations,
-	 * 						file conversations and password request conversations.
-	 * @param \DateTime|null $dateTime
-	 * @param bool $timerReached
-	 * @return bool True when the change was valid, false otherwise
-	 */
-	public function setLobby(int $newState, ?\DateTime $dateTime, bool $timerReached = false): bool {
-		$oldState = $this->lobbyState;
-
-		if (!in_array($this->getType(), [self::TYPE_GROUP, self::TYPE_PUBLIC], true)) {
-			return false;
-		}
-
-		if ($this->getObjectType() !== '') {
-			return false;
-		}
-
-		if (!in_array($newState, [Webinary::LOBBY_NON_MODERATORS, Webinary::LOBBY_NONE], true)) {
-			return false;
-		}
-
-		$event = new ModifyLobbyEvent($this, 'lobby', $newState, $oldState, $dateTime, $timerReached);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_LOBBY_STATE_SET, $event);
-
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('lobby_state', $update->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
-			->set('lobby_timer', $update->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATE))
-			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$update->executeStatement();
-
-		$this->lobbyState = $newState;
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_LOBBY_STATE_SET, $event);
 
 		return true;
 	}

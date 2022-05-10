@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -248,6 +249,49 @@ class RoomService {
 		$room->setSIPEnabled($newSipEnabled);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SIP_ENABLED_SET, $event);
+
+		return true;
+	}
+
+	/**
+	 * @param Room $room
+	 * @param int $newState Currently it is only allowed to change between
+	 * 						`Webinary::LOBBY_NON_MODERATORS` and `Webinary::LOBBY_NONE`
+	 * 						Also it's not allowed in one-to-one conversations,
+	 * 						file conversations and password request conversations.
+	 * @param \DateTime|null $dateTime
+	 * @param bool $timerReached
+	 * @return bool True when the change was valid, false otherwise
+	 */
+	public function setLobby(Room $room, int $newState, ?\DateTime $dateTime, bool $timerReached = false): bool {
+		$oldState = $room->getLobbyState();
+
+		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
+			return false;
+		}
+
+		if ($room->getObjectType() !== '') {
+			return false;
+		}
+
+		if (!in_array($newState, [Webinary::LOBBY_NON_MODERATORS, Webinary::LOBBY_NONE], true)) {
+			return false;
+		}
+
+		$event = new ModifyLobbyEvent($room, 'lobby', $newState, $oldState, $dateTime, $timerReached);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_LOBBY_STATE_SET, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('lobby_state', $update->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
+			->set('lobby_timer', $update->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATE))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setLobbyState($newState);
+		$room->setLobbyTimer($dateTime);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_LOBBY_STATE_SET, $event);
 
 		return true;
 	}

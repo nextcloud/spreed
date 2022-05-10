@@ -558,7 +558,7 @@ class BackendNotifierTest extends TestCase {
 
 	public function testRoomLobbyStateChanged() {
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
-		$room->setLobby(Webinary::LOBBY_NON_MODERATORS, null);
+		$this->roomService->setLobby($room, Webinary::LOBBY_NON_MODERATORS, null);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'update',
