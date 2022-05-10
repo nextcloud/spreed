@@ -880,8 +880,6 @@ OC.L10N.register(
     "Notify about calls in this conversation" : "Powiadamiaj o połączeniach w tej rozmowie",
     "Allow participants to join from a phone." : "Zezwól uczestnikom na dołączanie z telefonu.",
     "Enable SIP dial-in" : "Włącz połączenie telefoniczne SIP",
-    "Allow to dial-in without a pin" : "Zezwól na połączenie telefoniczne bez kodu PIN",
-    "SIP dial-in is now possible without pin requirement" : "Połączenie telefoniczne SIP jest teraz możliwe bez konieczności podawania kodu PIN",
     "SIP dial-in is now enabled" : "Połączenie telefoniczne SIP jest teraz włączone",
     "SIP dial-in is now disabled" : "Połączenie telefoniczne SIP jest teraz wyłączone",
     "Error occurred when enabling SIP dial-in" : "Wystąpił błąd podczas włączania połączenia telefonicznego SIP",
