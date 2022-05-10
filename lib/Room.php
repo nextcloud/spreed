@@ -254,6 +254,16 @@ class Room {
 		return $this->readOnly;
 	}
 
+	/**
+	 * @param int $readOnly Currently it is only allowed to change between
+	 * 						`self::READ_ONLY` and `self::READ_WRITE`
+	 * 						Also it's only allowed on rooms of type
+	 * 						`self::TYPE_GROUP` and `self::TYPE_PUBLIC`
+	 */
+	public function setReadOnly(int $readOnly): void {
+		$this->readOnly = $readOnly;
+	}
+
 	public function getListable(): int {
 		return $this->listable;
 	}
@@ -871,43 +881,6 @@ class Room {
 		}
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_TYPE_SET, $event);
-
-		return true;
-	}
-
-	/**
-	 * @param int $newState Currently it is only allowed to change between
-	 * 						`self::READ_ONLY` and `self::READ_WRITE`
-	 * 						Also it's only allowed on rooms of type
-	 * 						`self::TYPE_GROUP` and `self::TYPE_PUBLIC`
-	 * @return bool True when the change was valid, false otherwise
-	 */
-	public function setReadOnly(int $newState): bool {
-		$oldState = $this->getReadOnly();
-		if ($newState === $oldState) {
-			return true;
-		}
-
-		if (!in_array($this->getType(), [self::TYPE_GROUP, self::TYPE_PUBLIC, self::TYPE_CHANGELOG], true)) {
-			return false;
-		}
-
-		if (!in_array($newState, [self::READ_ONLY, self::READ_WRITE], true)) {
-			return false;
-		}
-
-		$event = new ModifyRoomEvent($this, 'readOnly', $newState, $oldState);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_READONLY_SET, $event);
-
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('read_only', $update->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
-			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$update->executeStatement();
-
-		$this->readOnly = $newState;
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_READONLY_SET, $event);
 
 		return true;
 	}

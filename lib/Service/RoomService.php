@@ -298,6 +298,44 @@ class RoomService {
 
 	/**
 	 * @param Room $room
+	 * @param int $newState Currently it is only allowed to change between
+	 * 						`Room::READ_ONLY` and `Room::READ_WRITE`
+	 * 						Also it's only allowed on rooms of type
+	 * 						`Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
+	 * @return bool True when the change was valid, false otherwise
+	 */
+	public function setReadOnly(Room $room, int $newState): bool {
+		$oldState = $room->getReadOnly();
+		if ($newState === $oldState) {
+			return true;
+		}
+
+		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC, Room::TYPE_CHANGELOG], true)) {
+			return false;
+		}
+
+		if (!in_array($newState, [Room::READ_ONLY, Room::READ_WRITE], true)) {
+			return false;
+		}
+
+		$event = new ModifyRoomEvent($room, 'readOnly', $newState, $oldState);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_READONLY_SET, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('read_only', $update->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setReadOnly($newState);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_READONLY_SET, $event);
+
+		return true;
+	}
+
+	/**
+	 * @param Room $room
 	 * @param int $newState New listable scope from self::LISTABLE_*
 	 * 						Also it's only allowed on rooms of type
 	 * 						`Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`

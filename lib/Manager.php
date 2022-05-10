@@ -32,6 +32,7 @@ use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\SelectHelper;
 use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -869,7 +870,8 @@ class Manager {
 
 		if ($row === false) {
 			$room = $this->createRoom(Room::TYPE_CHANGELOG, $userId);
-			$room->setReadOnly(Room::READ_ONLY);
+			// FIXME move to \OCP\Server::get() once merged: https://github.com/nextcloud/server/pull/31900
+			\OC::$server->get(RoomService::class)->setReadOnly($room, Room::READ_ONLY);
 
 			$user = $this->userManager->get($userId);
 			$this->participantService->addUsers($room, [[

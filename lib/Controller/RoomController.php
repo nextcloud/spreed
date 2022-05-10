@@ -1271,7 +1271,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setReadOnly(int $state): DataResponse {
-		if (!$this->room->setReadOnly($state)) {
+		if (!$this->roomService->setReadOnly($this->room, $state)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
