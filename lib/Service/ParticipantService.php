@@ -823,6 +823,7 @@ class ParticipantService {
 			$users[] = $this->userManager->get($member->getUserId());
 		}
 
+		$users = array_filter($users);
 
 		if (empty($users)) {
 			return;
