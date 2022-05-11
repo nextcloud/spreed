@@ -38,6 +38,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 class Listener {
@@ -69,15 +70,13 @@ class Listener {
 
 	public static function register(IEventDispatcher $dispatcher): void {
 		$listener = static function (ModifyParticipantEvent $event): void {
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
+			$listener = Server::get(self::class);
 			$listener->setActive($event->getRoom(), $event->getParticipant());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 
 		$listener = static function (ModifyRoomEvent $event): void {
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
+			$listener = Server::get(self::class);
 			$listener->generateCallActivity($event->getRoom(), true, $event->getActor());
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_END_CALL_FOR_EVERYONE, $listener);
@@ -89,8 +88,7 @@ class Listener {
 				return;
 			}
 
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
+			$listener = Server::get(self::class);
 			$listener->generateCallActivity($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
@@ -99,8 +97,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener, -100);
 
 		$listener = static function (AddParticipantsEvent $event): void {
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
+			$listener = Server::get(self::class);
 			$listener->generateInvitationActivity($event->getRoom(), $event->getParticipants());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, $listener);

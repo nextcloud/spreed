@@ -35,6 +35,7 @@ use OCP\IDBConnection;
 use OCP\Notification\IManager;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 class Listener {
@@ -72,36 +73,31 @@ class Listener {
 				return;
 			}
 
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
+			$listener = Server::get(self::class);
 			$listener->generateInvitation($room, $event->getParticipants());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, $listener);
 
 		$listener = static function (JoinRoomUserEvent $event): void {
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
+			$listener = Server::get(self::class);
 			$listener->markInvitationRead($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_CONNECT, $listener);
 
 		$listener = static function (RoomEvent $event): void {
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
+			$listener = Server::get(self::class);
 			$listener->checkCallNotifications($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, $listener);
 
 		$listener = static function (RoomEvent $event): void {
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
+			$listener = Server::get(self::class);
 			$listener->sendCallNotifications($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 
 		$listener = static function (RoomEvent $event): void {
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
+			$listener = Server::get(self::class);
 			$listener->markCallNotificationsRead($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);

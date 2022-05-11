@@ -29,6 +29,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
+use OCP\Server;
 
 class RestrictStartingCalls {
 	protected IConfig $config;
@@ -50,8 +51,7 @@ class RestrictStartingCalls {
 	 * @throws ForbiddenException
 	 */
 	public static function checkStartCallPermissions(ModifyParticipantEvent $event): void {
-		/** @var self $listener */
-		$listener = \OC::$server->get(self::class);
+		$listener = Server::get(self::class);
 		$room = $event->getRoom();
 		$participant = $event->getParticipant();
 

@@ -32,6 +32,7 @@ use OCA\Talk\Room;
 use OCP\App\IAppManager;
 use OCP\IGroupManager;
 use OCP\IUser;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 class MembershipService {
@@ -91,7 +92,7 @@ class MembershipService {
 		}
 		$anyUser = reset($users);
 		if (!$this->appManager->isEnabledForUser('circles', $anyUser)) {
-			\OC::$server->get(LoggerInterface::class)->debug('Circles not enabled', ['app' => 'spreed']);
+			Server::get(LoggerInterface::class)->debug('Circles not enabled', ['app' => 'spreed']);
 			return $users;
 		}
 
@@ -104,7 +105,7 @@ class MembershipService {
 			return $users;
 		}
 
-		$circlesManager = \OC::$server->get(CirclesManager::class);
+		$circlesManager = Server::get(CirclesManager::class);
 		return array_filter($users, static function (IUser $user) use ($circlesManager, $circleIds) {
 			// Only delete users when the user is not member via another circle
 			$federatedUser = $circlesManager->getFederatedUser($user->getUID(), Member::TYPE_USER);

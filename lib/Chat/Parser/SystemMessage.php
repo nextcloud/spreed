@@ -45,6 +45,7 @@ use OCP\IPreview as IPreviewManager;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Server;
 use OCP\Share\Exceptions\ShareNotFound;
 use Sabre\VObject\Reader;
 
@@ -667,7 +668,7 @@ class SystemMessage {
 
 	protected function loadCircleDetails(string $circleId): void {
 		try {
-			$circlesManager = \OC::$server->get(CirclesManager::class);
+			$circlesManager = Server::get(CirclesManager::class);
 			$circlesManager->startSuperSession();
 			$circle = $circlesManager->getCircle($circleId);
 			$circlesManager->stopSession();

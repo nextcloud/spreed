@@ -26,6 +26,7 @@ namespace OCA\Talk\Chat\Changelog;
 use OCA\Talk\Controller\RoomController;
 use OCA\Talk\Events\UserEvent;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Server;
 
 class Listener {
 	public static function register(IEventDispatcher $dispatcher): void {
@@ -40,9 +41,7 @@ class Listener {
 
 	public static function updateChangelog(UserEvent $event): void {
 		$userId = $event->getUserId();
-
-		/** @var Listener $listener */
-		$listener = \OC::$server->get(self::class);
+		$listener = Server::get(self::class);
 		$listener->preGetRooms($userId);
 	}
 

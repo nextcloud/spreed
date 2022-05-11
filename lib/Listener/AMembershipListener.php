@@ -35,6 +35,7 @@ use OCP\App\IAppManager;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IGroupManager;
 use OCP\IUser;
+use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 abstract class AMembershipListener implements IEventListener {
@@ -88,12 +89,12 @@ abstract class AMembershipListener implements IEventListener {
 
 	protected function filterRoomsWithOtherCircleMemberships(array $rooms, IUser $user): array {
 		if (!$this->appManager->isEnabledForUser('circles', $user)) {
-			\OC::$server->get(LoggerInterface::class)->debug('Circles not enabled', ['app' => 'spreed']);
+			Server::get(LoggerInterface::class)->debug('Circles not enabled', ['app' => 'spreed']);
 			return $rooms;
 		}
 
 		try {
-			$circlesManager = \OC::$server->get(CirclesManager::class);
+			$circlesManager = Server::get(CirclesManager::class);
 			$federatedUser = $circlesManager->getFederatedUser($user->getUID(), Member::TYPE_USER);
 			$memberships = $federatedUser->getMemberships();
 		} catch (\Exception $e) {

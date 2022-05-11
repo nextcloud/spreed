@@ -34,6 +34,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUserManager;
+use OCP\Server;
 
 /**
  * Custom behaviour for rooms for files.
@@ -69,8 +70,7 @@ class Listener {
 
 	public static function register(IEventDispatcher $dispatcher): void {
 		$listener = static function (JoinRoomUserEvent $event): void {
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
+			$listener = Server::get(self::class);
 
 			try {
 				$listener->preventUsersWithoutAccessToTheFileFromJoining($event->getRoom(), $event->getUser()->getUID());
@@ -82,8 +82,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_CONNECT, $listener);
 
 		$listener = static function (JoinRoomGuestEvent $event): void {
-			/** @var self $listener */
-			$listener = \OC::$server->get(self::class);
+			$listener = Server::get(self::class);
 
 			try {
 				$listener->preventGuestsFromJoiningIfNotPubliclyAccessible($event->getRoom());

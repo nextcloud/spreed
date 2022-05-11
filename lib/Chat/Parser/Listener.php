@@ -31,6 +31,7 @@ use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\Parser\Command as CommandParser;
 use OCA\Talk\Events\ChatMessageEvent;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Server;
 
 class Listener {
 	public static function register(IEventDispatcher $dispatcher): void {
@@ -54,8 +55,7 @@ class Listener {
 			return;
 		}
 
-		/** @var UserMention $parser */
-		$parser = \OC::$server->get(UserMention::class);
+		$parser = Server::get(UserMention::class);
 		$parser->parseMessage($message);
 	}
 
@@ -66,8 +66,7 @@ class Listener {
 			return;
 		}
 
-		/** @var Changelog $parser */
-		$parser = \OC::$server->get(Changelog::class);
+		$parser = Server::get(Changelog::class);
 		try {
 			$parser->parseMessage($message);
 			$event->stopPropagation();
@@ -83,8 +82,7 @@ class Listener {
 			return;
 		}
 
-		/** @var SystemMessage $parser */
-		$parser = \OC::$server->get(SystemMessage::class);
+		$parser = Server::get(SystemMessage::class);
 
 		try {
 			$parser->parseMessage($message);
@@ -101,8 +99,7 @@ class Listener {
 			return;
 		}
 
-		/** @var CommandParser $parser */
-		$parser = \OC::$server->get(CommandParser::class);
+		$parser = Server::get(CommandParser::class);
 
 		try {
 			$parser->parseMessage($chatMessage);
@@ -121,8 +118,7 @@ class Listener {
 			return;
 		}
 
-		/** @var ReactionParser $parser */
-		$parser = \OC::$server->get(ReactionParser::class);
+		$parser = Server::get(ReactionParser::class);
 		$parser->parseMessage($chatMessage);
 	}
 
@@ -133,8 +129,7 @@ class Listener {
 			return;
 		}
 
-		/** @var SystemMessage $parser */
-		$parser = \OC::$server->get(SystemMessage::class);
+		$parser = Server::get(SystemMessage::class);
 
 		try {
 			$parser->parseDeletedMessage($chatMessage);

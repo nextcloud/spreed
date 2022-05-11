@@ -36,6 +36,7 @@ use OCP\Collaboration\AutoComplete\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Server;
 
 class Listener {
 	protected Manager $manager;
@@ -59,8 +60,7 @@ class Listener {
 	}
 
 	public static function filterNonListableMesssages(AutoCompleteEvent $event): void {
-		/** @var self $listener */
-		$listener = \OC::$server->get(self::class);
+		$listener = Server::get(self::class);
 
 		if ($event->getItemType() !== 'call') {
 			return;

@@ -29,6 +29,7 @@ use OCA\Talk\Model\Command;
 use OCA\Talk\Service\CommandService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Server;
 
 class Listener {
 	protected CommandService $commandService;
@@ -48,8 +49,7 @@ class Listener {
 		$message = $event->getComment();
 		$participant = $event->getParticipant();
 
-		/** @var self $listener */
-		$listener = \OC::$server->get(self::class);
+		$listener = Server::get(self::class);
 
 		if (strpos($message->getMessage(), '//') === 0) {
 			return;
