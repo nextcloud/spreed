@@ -878,6 +878,8 @@
     "Notify about calls in this conversation" : "Notificar sobre chamadas nesta conversa ",
     "Allow participants to join from a phone." : "Permite que participantes entrem a partir de um telefone.",
     "Enable SIP dial-in" : "Ativar discagem SIP",
+    "Allow to dial-in without a PIN" : "Permitir discar sem um PIN",
+    "SIP dial-in is now possible without PIN requirement" : "A discagem SIP agora é possível sem exigência de PIN",
     "SIP dial-in is now enabled" : "A discagem SIP agora está ativada",
     "SIP dial-in is now disabled" : "A discagem SIP agora está desativada",
     "Error occurred when enabling SIP dial-in" : "Ocorreu um erro ao ativar a discagem SIP",
