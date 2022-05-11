@@ -23,6 +23,17 @@ Feature: chat/poll
       | actorType  | users |
       | actorId    | participant1 |
       | status     | open |
+      | voted      | not voted |
+    Then user "participant1" votes for options "[1]" on poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant1 |
+      | status     | open |
+      | voted      | [1] |
     Then user "participant1" closes poll "What is the question?" in room "room" with 200
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
@@ -32,3 +43,4 @@ Feature: chat/poll
       | actorType  | users |
       | actorId    | participant1 |
       | status     | closed |
+      | voted      | [1] |

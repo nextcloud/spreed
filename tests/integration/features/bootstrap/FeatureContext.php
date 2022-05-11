@@ -1557,8 +1557,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $identifier
 	 * @param string $statusCode
 	 * @param string $apiVersion
+	 * @param ?TableNode $formData
 	 */
-	public function userSeesPollInRoom($user, $question, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData) {
+	public function userSeesPollInRoom($user, $question, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
 		$this->assertStatusCode($this->response, $statusCode);
@@ -1577,10 +1578,40 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $identifier
 	 * @param string $statusCode
 	 * @param string $apiVersion
+	 * @param ?TableNode $formData
 	 */
-	public function userClosesPollInRoom($user, $question, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData) {
+	public function userClosesPollInRoom($user, $question, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$expected = $this->preparePollExpectedData($formData->getRowsHash());
+		$response = $this->getDataFromResponse($this->response);
+
+		Assert::assertEquals($expected, $response);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" votes for options "([^"]*)" on poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $options
+	 * @param string $question
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 * @param ?TableNode $formData
+	 */
+	public function userVotesPollInRoom($user, $options, $question, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+		$data = [
+			'optionIds' => json_decode($options, true),
+		];
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question],
+			$data
+		);
 		$this->assertStatusCode($this->response, $statusCode);
 
 		$expected = $this->preparePollExpectedData($formData->getRowsHash());
@@ -1602,6 +1633,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$expected['status'] = 0;
 		} elseif ($expected['status'] === 'closed') {
 			$expected['status'] = 1;
+		}
+
+		if ($expected['voted'] === 'not voted') {
+			$expected['voted'] = [];
+		} else {
+			$expected['voted'] = json_decode($expected['voted'], true);
 		}
 
 		$result = preg_match('/POLL_ID\(([^)]+)\)/', $expected['id'], $matches);

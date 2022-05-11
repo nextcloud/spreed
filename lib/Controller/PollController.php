@@ -29,6 +29,7 @@ namespace OCA\Talk\Controller;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\Model\Poll;
+use OCA\Talk\Model\Vote;
 use OCA\Talk\Service\PollService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -104,7 +105,7 @@ class PollController extends AEnvironmentAwareController {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 		}
 
-		return new DataResponse($poll->asArray());
+		return new DataResponse($this->renderPoll($poll, []));
 	}
 
 	/**
@@ -122,7 +123,30 @@ class PollController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		return new DataResponse($poll->asArray());
+		$votes = $this->pollService->getVotesForActor($this->participant, $poll);
+
+		return new DataResponse($this->renderPoll($poll, $votes));
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireParticipant
+	 * @RequireModeratorOrNoLobby
+	 *
+	 * @param int $pollId
+	 * @param int[] $optionIds
+	 * @return DataResponse
+	 */
+	public function votePoll(int $pollId, array $optionIds): DataResponse {
+		try {
+			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
+		} catch (\Exception $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$votes = $this->pollService->votePoll($this->participant, $poll, $optionIds);
+
+		return new DataResponse($this->renderPoll($poll, $votes));
 	}
 
 	/**
@@ -151,6 +175,17 @@ class PollController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
-		return new DataResponse($poll->asArray());
+		$votes = $this->pollService->getVotesForActor($this->participant, $poll);
+
+		return new DataResponse($this->renderPoll($poll, $votes));
+	}
+
+	protected function renderPoll(Poll $poll, array $votes = []): array {
+		$data = $poll->asArray();
+		unset($data['roomId']);
+
+		$data['voted'] = array_map(static fn (Vote $vote) => $vote->getOptionId(), $votes);
+
+		return $data;
 	}
 }

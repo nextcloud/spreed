@@ -41,11 +41,11 @@ use OCP\AppFramework\Db\Entity;
  * @method int getOptionId()
  */
 class Vote extends Entity {
-	protected int $pollId;
-	protected int $roomId;
-	protected string $actorType;
-	protected string $actorId;
-	protected int $optionId;
+	protected int $pollId = 0;
+	protected int $roomId = 0;
+	protected string $actorType = '';
+	protected string $actorId = '';
+	protected int $optionId = 0;
 
 	public function __construct() {
 		$this->addType('pollId', 'int');

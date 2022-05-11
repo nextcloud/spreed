@@ -28,6 +28,7 @@ namespace OCA\Talk\Service;
 use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\Model\Poll;
 use OCA\Talk\Model\PollMapper;
+use OCA\Talk\Model\Vote;
 use OCA\Talk\Model\VoteMapper;
 use OCA\Talk\Participant;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -37,11 +38,14 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class PollService {
+	protected IDBConnection $connection;
 	protected PollMapper $pollMapper;
 	protected VoteMapper $voteMapper;
 
-	public function __construct(PollMapper $pollMapper,
+	public function __construct(IDBConnection $connection,
+								PollMapper $pollMapper,
 								VoteMapper $voteMapper) {
+		$this->connection = $connection;
 		$this->pollMapper = $pollMapper;
 		$this->voteMapper = $voteMapper;
 	}
@@ -92,6 +96,56 @@ class PollService {
 		}
 
 		$this->pollMapper->update($poll);
+	}
+
+	/**
+	 * @param Participant $participant
+	 * @param Poll $poll
+	 * @return Vote[]
+	 */
+	public function getVotesForActor(Participant $participant, Poll $poll): array {
+		return $this->voteMapper->findByPollIdForActor(
+			$poll->getId(),
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId()
+		);
+	}
+
+	/**
+	 * @param Participant $participant
+	 * @param Poll $poll
+	 * @param int[] $optionIds Options the user voted for
+	 * @return Vote[]
+	 */
+	public function votePoll(Participant $participant, Poll $poll, array $optionIds): array {
+		$votes = [];
+
+		$this->connection->beginTransaction();
+		try {
+			$this->voteMapper->deleteVotesByActor(
+				$poll->getId(),
+				$participant->getAttendee()->getActorType(),
+				$participant->getAttendee()->getActorId()
+			);
+
+			foreach ($optionIds as $optionId) {
+				$vote = new Vote();
+				$vote->setPollId($poll->getId());
+				$vote->setRoomId($poll->getRoomId());
+				$vote->setActorType($participant->getAttendee()->getActorType());
+				$vote->setActorId($participant->getAttendee()->getActorId());
+				$vote->setOptionId($optionId);
+				$this->voteMapper->insert($vote);
+
+				$votes[] = $vote;
+			}
+		} catch (\Exception $e) {
+			$this->connection->rollBack();
+			throw $e;
+		}
+		$this->connection->commit();
+
+		return $votes;
 	}
 
 	public function deleteByRoomId(int $roomId): void {
