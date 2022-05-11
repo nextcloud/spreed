@@ -34,13 +34,13 @@ use OCP\Collaboration\Resources\IManager;
 use OCP\Collaboration\Resources\ResourceException;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUserManager;
+use OCP\Server;
 
 class Listener {
 	public static function register(IEventDispatcher $dispatcher): void {
 		$listener = static function (RoomEvent $event): void {
 			$room = $event->getRoom();
-			/** @var IManager $manager */
-			$resourceManager = \OC::$server->get(IManager::class);
+			$resourceManager = Server::get(IManager::class);
 
 			try {
 				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
@@ -53,10 +53,8 @@ class Listener {
 
 		$listener = static function (AddParticipantsEvent $event): void {
 			$room = $event->getRoom();
-			/** @var IManager $manager */
-			$resourceManager = \OC::$server->get(IManager::class);
-			/** @var IUserManager $userManager */
-			$userManager = \OC::$server->getUserManager();
+			$resourceManager = Server::get(IManager::class);
+			$userManager = Server::get(IUserManager::class);
 			try {
 				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
 			} catch (ResourceException $e) {
@@ -77,8 +75,7 @@ class Listener {
 
 		$listener = static function (RemoveUserEvent $event): void {
 			$room = $event->getRoom();
-			/** @var IManager $manager */
-			$resourceManager = \OC::$server->get(IManager::class);
+			$resourceManager = Server::get(IManager::class);
 			try {
 				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
 			} catch (ResourceException $e) {
@@ -91,10 +88,8 @@ class Listener {
 
 		$listener = static function (RemoveParticipantEvent $event): void {
 			$room = $event->getRoom();
-			/** @var IManager $manager */
-			$resourceManager = \OC::$server->get(IManager::class);
-			/** @var IUserManager $userManager */
-			$userManager = \OC::$server->getUserManager();
+			$resourceManager = Server::get(IManager::class);
+			$userManager = Server::get(IUserManager::class);
 			try {
 				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
 			} catch (ResourceException $e) {
@@ -112,8 +107,7 @@ class Listener {
 
 		$listener = static function (RoomEvent $event): void {
 			$room = $event->getRoom();
-			/** @var IManager $manager */
-			$resourceManager = \OC::$server->get(IManager::class);
+			$resourceManager = Server::get(IManager::class);
 
 			try {
 				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);

@@ -70,6 +70,7 @@ use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
+use OCP\Server;
 
 class ParticipantService {
 	protected IConfig $serverConfig;
@@ -256,7 +257,7 @@ class ParticipantService {
 			$attendee = $this->attendeeMapper->findByActor($room->getId(), Attendee::ACTOR_USERS, $user->getUID());
 		} catch (DoesNotExistException $e) {
 			// queried here to avoid loop deps
-			$manager = \OC::$server->get(Manager::class);
+			$manager = Server::get(Manager::class);
 			$isListableByUser = $manager->isRoomListableByUser($room, $user->getUID());
 
 			if (!$isListableByUser && !$event->getPassedPasswordProtection() && !$roomService->verifyPassword($room, $password)['result']) {
@@ -531,7 +532,7 @@ class ParticipantService {
 	 */
 	public function getCircle(string $circleId, string $userId): Circle {
 		try {
-			$circlesManager = \OC::$server->get(CirclesManager::class);
+			$circlesManager = Server::get(CirclesManager::class);
 			$federatedUser = $circlesManager->getFederatedUser($userId, Member::TYPE_USER);
 			$federatedUser->getLink($circleId);
 		} catch (\Exception $e) {
@@ -787,7 +788,7 @@ class ParticipantService {
 
 	public function removeCircleMembers(Room $room, Participant $removedCircleParticipant, string $reason): void {
 		try {
-			$circlesManager = \OC::$server->get(CirclesManager::class);
+			$circlesManager = Server::get(CirclesManager::class);
 			$circlesManager->startSuperSession();
 			$circle = $circlesManager->getCircle($removedCircleParticipant->getAttendee()->getActorId());
 			$circlesManager->stopSession();

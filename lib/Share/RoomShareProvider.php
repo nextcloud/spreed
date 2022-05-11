@@ -46,6 +46,7 @@ use OCP\Files\Node;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\Security\ISecureRandom;
+use OCP\Server;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
@@ -108,8 +109,7 @@ class RoomShareProvider implements IShareProvider {
 		$listener = static function (RoomEvent $event): void {
 			$room = $event->getRoom();
 
-			/** @var self $roomShareProvider */
-			$roomShareProvider = \OC::$server->get(self::class);
+			$roomShareProvider = Server::get(self::class);
 			$roomShareProvider->deleteInRoom($room->getToken());
 		};
 		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DELETE, $listener);

@@ -26,6 +26,7 @@ namespace OCA\Talk\Share;
 use OC\Files\Filesystem;
 use OCA\Talk\Config;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Server;
 use OCP\Share\Events\VerifyMountPointEvent;
 use OCP\Share\IShare;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -40,14 +41,12 @@ class Listener {
 	}
 
 	public static function listenPreShare(GenericEvent $event): void {
-		/** @var self $listener */
-		$listener = \OC::$server->get(self::class);
+		$listener = Server::get(self::class);
 		$listener->overwriteShareTarget($event);
 	}
 
 	public static function listenVerifyMountPointEvent(VerifyMountPointEvent $event): void {
-		/** @var self $listener */
-		$listener = \OC::$server->get(self::class);
+		$listener = Server::get(self::class);
 		$listener->overwriteMountPoint($event);
 	}
 

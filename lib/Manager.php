@@ -50,6 +50,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
+use OCP\Server;
 
 class Manager {
 	public const EVENT_TOKEN_GENERATE = self::class . '::generateNewToken';
@@ -870,8 +871,7 @@ class Manager {
 
 		if ($row === false) {
 			$room = $this->createRoom(Room::TYPE_CHANGELOG, $userId);
-			// FIXME move to \OCP\Server::get() once merged: https://github.com/nextcloud/server/pull/31900
-			\OC::$server->get(RoomService::class)->setReadOnly($room, Room::READ_ONLY);
+			Server::get(RoomService::class)->setReadOnly($room, Room::READ_ONLY);
 
 			$user = $this->userManager->get($userId);
 			$this->participantService->addUsers($room, [[

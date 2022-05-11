@@ -34,6 +34,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Server;
 
 /**
  * Custom behaviour for rooms to request the password for a share.
@@ -97,7 +98,7 @@ class Listener {
 		} catch (ParticipantNotFoundException $e) {
 		}
 
-		$participantService = \OC::$server->get(ParticipantService::class);
+		$participantService = Server::get(ParticipantService::class);
 		if ($participantService->getNumberOfActors($room) > 1) {
 			throw new RoomNotFoundException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}
@@ -117,7 +118,7 @@ class Listener {
 			return;
 		}
 
-		$participantService = \OC::$server->get(ParticipantService::class);
+		$participantService = Server::get(ParticipantService::class);
 		if ($participantService->getNumberOfActors($room) > 1) {
 			throw new RoomNotFoundException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}

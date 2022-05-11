@@ -43,6 +43,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
 use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\IHasher;
+use OCP\Server;
 
 class Room {
 
@@ -297,8 +298,7 @@ class Room {
 
 	protected function validateTimer(): void {
 		if ($this->lobbyTimer !== null && $this->lobbyTimer < $this->timeFactory->getDateTime()) {
-			// FIXME move to \OCP\Server::get() once merged: https://github.com/nextcloud/server/pull/31900
-			\OC::$server->get(RoomService::class)->setLobby($this, Webinary::LOBBY_NONE, null, true);
+			Server::get(RoomService::class)->setLobby($this, Webinary::LOBBY_NONE, null, true);
 		}
 	}
 
@@ -322,14 +322,14 @@ class Room {
 		if ($this->type === self::TYPE_ONE_TO_ONE) {
 			if ($this->name === '') {
 				// TODO use DI
-				$participantService = \OC::$server->get(ParticipantService::class);
+				$participantService = Server::get(ParticipantService::class);
 				// Fill the room name with the participants for 1-to-1 conversations
 				$users = $participantService->getParticipantUserIds($this);
 				sort($users);
 				$this->setName(json_encode($users), '');
 			} elseif (strpos($this->name, '["') !== 0) {
 				// TODO use DI
-				$participantService = \OC::$server->get(ParticipantService::class);
+				$participantService = Server::get(ParticipantService::class);
 				// Not the json array, but the old fallback when someone left
 				$users = $participantService->getParticipantUserIds($this);
 				if (count($users) !== 2) {

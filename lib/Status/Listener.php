@@ -32,6 +32,7 @@ use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Server;
 use OCP\UserStatus\IManager;
 use OCP\UserStatus\IUserStatus;
 
@@ -51,16 +52,14 @@ class Listener {
 	}
 
 	public static function setUserStatus(ModifyParticipantEvent $event): void {
-		/** @var self $listener */
-		$listener = \OC::$server->get(self::class);
+		$listener = Server::get(self::class);
 		if ($event->getParticipant()->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 			$listener->statusManager->setUserStatus($event->getParticipant()->getAttendee()->getActorId(), 'call', IUserStatus::AWAY, true);
 		}
 	}
 
 	public static function revertUserStatus(ModifyParticipantEvent $event): void {
-		/** @var self $listener */
-		$listener = \OC::$server->get(self::class);
+		$listener = Server::get(self::class);
 		if ($event instanceof ModifyEveryoneEvent) {
 			// Do not revert the status with 3 queries per user.
 			// We will update it in one go at the end.
@@ -73,8 +72,7 @@ class Listener {
 	}
 
 	public static function revertUserStatusOnEndCallForEveryone(EndCallForEveryoneEvent $event): void {
-		/** @var self $listener */
-		$listener = \OC::$server->get(self::class);
+		$listener = Server::get(self::class);
 		$userIds = $event->getUserIds();
 		if (!empty($userIds)) {
 			$listener->statusManager->revertMultipleUserStatus($userIds, 'call', IUserStatus::AWAY);
