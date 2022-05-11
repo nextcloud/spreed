@@ -93,4 +93,9 @@ class PollService {
 
 		$this->pollMapper->update($poll);
 	}
+
+	public function deleteByRoomId(int $roomId): void {
+		$this->voteMapper->deleteByRoomId($roomId);
+		$this->pollMapper->deleteByRoomId($roomId);
+	}
 }

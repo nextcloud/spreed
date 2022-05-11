@@ -33,6 +33,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\PollService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -85,6 +86,7 @@ class ChatManager {
 	private IManager $shareManager;
 	private RoomShareProvider $shareProvider;
 	private ParticipantService $participantService;
+	private PollService $pollService;
 	private Notifier $notifier;
 	protected ITimeFactory $timeFactory;
 	protected ICache $cache;
@@ -98,6 +100,7 @@ class ChatManager {
 								IManager $shareManager,
 								RoomShareProvider $shareProvider,
 								ParticipantService $participantService,
+								PollService $pollService,
 								Notifier $notifier,
 								ICacheFactory $cacheFactory,
 								ITimeFactory $timeFactory,
@@ -109,6 +112,7 @@ class ChatManager {
 		$this->shareManager = $shareManager;
 		$this->shareProvider = $shareProvider;
 		$this->participantService = $participantService;
+		$this->pollService = $pollService;
 		$this->notifier = $notifier;
 		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
 		$this->unreadCountCache = $cacheFactory->createDistributed('talk/unreadcount');
@@ -621,6 +625,8 @@ class ChatManager {
 		$this->notifier->removePendingNotificationsForRoom($chat);
 
 		$this->attachmentService->deleteAttachmentsForRoom($chat);
+
+		$this->pollService->deleteByRoomId($chat->getId());
 	}
 
 	/**

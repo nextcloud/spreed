@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Model;
 
 use OCP\AppFramework\Db\QBMapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class VoteMapper extends QBMapper {
@@ -66,5 +67,14 @@ class VoteMapper extends QBMapper {
 			->andWhere($query->expr()->eq('actor_id', $query->createNamedParameter($actorId)));
 
 		return $this->findEntities($query);
+	}
+
+	public function deleteByRoomId(int $roomId): void {
+		$query = $this->db->getQueryBuilder();
+
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
+
+		$query->executeStatement();
 	}
 }

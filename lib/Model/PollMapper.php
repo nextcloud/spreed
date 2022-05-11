@@ -53,9 +53,18 @@ class PollMapper extends QBMapper {
 		$query = $this->db->getQueryBuilder();
 
 		$query->select('*')
-			->from('talk_polls')
+			->from($this->getTableName())
 			->where($query->expr()->eq('id', $query->createNamedParameter($pollId, IQueryBuilder::PARAM_INT)));
 
 		return $this->findEntity($query);
+	}
+
+	public function deleteByRoomId(int $roomId): void {
+		$query = $this->db->getQueryBuilder();
+
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
+
+		$query->executeStatement();
 	}
 }
