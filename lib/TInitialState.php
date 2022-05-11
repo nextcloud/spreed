@@ -60,6 +60,11 @@ trait TInitialState {
 		}
 
 		$this->initialState->provideInitialState(
+			'call_enabled',
+			((int) $this->serverConfig->getAppValue('spreed', 'start_calls')) !== Room::START_CALL_NOONE
+		);
+
+		$this->initialState->provideInitialState(
 			'signaling_mode',
 			$this->talkConfig->getSignalingMode()
 		);

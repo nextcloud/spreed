@@ -93,6 +93,7 @@ class Room {
 	public const START_CALL_EVERYONE = 0;
 	public const START_CALL_USERS = 1;
 	public const START_CALL_MODERATORS = 2;
+	public const START_CALL_NOONE = 3;
 
 	public const PARTICIPANT_REMOVED = 'remove';
 	public const PARTICIPANT_LEFT = 'leave';

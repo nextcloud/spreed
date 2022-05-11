@@ -108,6 +108,9 @@ class Capabilities implements IPublicCapability {
 				'attachments' => [
 					'allowed' => $user instanceof IUser,
 				],
+				'call' => [
+					'enabled' => ((int) $this->serverConfig->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE)) !== Room::START_CALL_NOONE,
+				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
 					'read-privacy' => Participant::PRIVACY_PUBLIC,
