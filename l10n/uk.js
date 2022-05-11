@@ -33,6 +33,7 @@ OC.L10N.register(
     "View chat" : "Перегляд чату",
     "Join call" : "Приєднатися",
     "Answer call" : "Відповісти на виклик",
+    "Conversations" : "Розмови",
     "Conversation not found" : "Розмову не знайдено",
     "Leave call" : "Вийти",
     "Stay in call" : "Залишатися",

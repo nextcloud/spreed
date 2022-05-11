@@ -880,6 +880,8 @@ OC.L10N.register(
     "Notify about calls in this conversation" : "Bu görüşmedeki çağrılar bildirilsin",
     "Allow participants to join from a phone." : "Katılımcılar telefondan katılabilsin.",
     "Enable SIP dial-in" : "SIP çevirme kullanılsın",
+    "Allow to dial-in without a PIN" : "Pin kodu olmadan numara aranabilsin",
+    "SIP dial-in is now possible without PIN requirement" : "Artık PIN kodu gerekmeden SIP araması yapılabilir",
     "SIP dial-in is now enabled" : "SIP çevirmeli arama etkinleştirildi",
     "SIP dial-in is now disabled" : "SIP çevirmeli arama devre dışı bırakıldı",
     "Error occurred when enabling SIP dial-in" : "SIP çevirmeli arama etkinleştirilirken sorun çıktı",
