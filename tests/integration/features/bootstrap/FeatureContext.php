@@ -1543,6 +1543,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 
+		if ($statusCode !== '201') {
+			return;
+		}
+
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
 			self::$questionToPollId[$data['question']] = $response['id'];
@@ -1585,6 +1589,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
 		$this->assertStatusCode($this->response, $statusCode);
 
+		if ($statusCode !== '200') {
+			return;
+		}
+
 		$expected = $this->preparePollExpectedData($formData->getRowsHash());
 		$response = $this->getDataFromResponse($this->response);
 
@@ -1613,6 +1621,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$data
 		);
 		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== '200' && $statusCode !== '201') {
+			return;
+		}
 
 		$expected = $this->preparePollExpectedData($formData->getRowsHash());
 		$response = $this->getDataFromResponse($this->response);
