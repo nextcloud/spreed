@@ -39,8 +39,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         ---|---|---
         `id` | int | ID of the comment
         `token` | string | Conversation token
-        `actorType` | string | `guests` or `users`
-        `actorId` | string | User id of the message author
+        `actorType` | string | See [Constants - Actor types of chat messages](constants.md#actor-types-of-chat-messages)
+        `actorId` | string | Actor id of the message author
         `actorDisplayName` | string | Display name of the message author
         `timestamp` | int | Timestamp in seconds and UTC time zone
         `systemMessage` | string | empty for normal chat message or the type of the system message (untranslated)
