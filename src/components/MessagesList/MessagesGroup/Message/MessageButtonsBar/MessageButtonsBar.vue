@@ -474,6 +474,7 @@ export default {
 @import '../../../../../assets/variables';
 
 .message-buttons-bar {
+	z-index: 1;
 	display: flex;
 	right: 14px;
 	bottom: -4px;
