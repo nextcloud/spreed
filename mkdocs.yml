@@ -27,6 +27,7 @@ nav:
       - 'Call management': 'call.md'
       - 'Chat management': 'chat.md'
       - 'Reaction management': 'reaction.md'
+      - 'Poll management': 'poll.md'
       - 'Webinar management': 'webinar.md'
       - 'Settings': 'settings.md'
       - 'Integration by other apps': 'integration.md'
