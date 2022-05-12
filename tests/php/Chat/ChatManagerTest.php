@@ -33,6 +33,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\PollService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -64,6 +65,8 @@ class ChatManagerTest extends TestCase {
 	protected $shareProvider;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
+	/** @var PollService|MockObject */
+	protected $pollService;
 	/** @var Notifier|MockObject */
 	protected $notifier;
 	/** @var ITimeFactory|MockObject */
@@ -81,6 +84,7 @@ class ChatManagerTest extends TestCase {
 		$this->shareManager = $this->createMock(IManager::class);
 		$this->shareProvider = $this->createMock(RoomShareProvider::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
+		$this->pollService = $this->createMock(PollService::class);
 		$this->notifier = $this->createMock(Notifier::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->attachmentService = $this->createMock(AttachmentService::class);
@@ -94,6 +98,7 @@ class ChatManagerTest extends TestCase {
 			$this->shareManager,
 			$this->shareProvider,
 			$this->participantService,
+			$this->pollService,
 			$this->notifier,
 			$cacheFactory,
 			$this->timeFactory,
@@ -118,6 +123,7 @@ class ChatManagerTest extends TestCase {
 					$this->shareManager,
 					$this->shareProvider,
 					$this->participantService,
+					$this->pollService,
 					$this->notifier,
 					$cacheFactory,
 					$this->timeFactory,
@@ -135,6 +141,7 @@ class ChatManagerTest extends TestCase {
 			$this->shareManager,
 			$this->shareProvider,
 			$this->participantService,
+			$this->pollService,
 			$this->notifier,
 			$cacheFactory,
 			$this->timeFactory,
