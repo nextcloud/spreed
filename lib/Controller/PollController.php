@@ -89,10 +89,10 @@ class PollController extends AEnvironmentAwareController {
 		$message = json_encode([
 			'message' => 'object_shared',
 			'parameters' => [
-				'objectType' => 'highlight', // FIXME 'talk-poll',
+				'objectType' => 'talk-poll',
 				'objectId' => $poll->getId(),
 				'metaData' => [
-					'type' => 'highlight', // FIXME 'talk-poll',
+					'type' => 'talk-poll',
 					'id' => $poll->getId(),
 					'name' => $question,
 				]
@@ -105,7 +105,7 @@ class PollController extends AEnvironmentAwareController {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 		}
 
-		return new DataResponse($this->renderPoll($poll, []));
+		return new DataResponse($this->renderPoll($poll, []), Http::STATUS_CREATED);
 	}
 
 	/**
@@ -142,6 +142,18 @@ class PollController extends AEnvironmentAwareController {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
 		} catch (\Exception $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($poll->getMaxVotes() !== Poll::MAX_VOTES_UNLIMITED
+			&& $poll->getMaxVotes() < count($optionIds)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$maxOptionId = max(array_keys(json_decode($poll->getOptions(), true, 512, JSON_THROW_ON_ERROR)));
+		$maxVotedId = max($optionIds);
+		$minVotedId = min($optionIds);
+		if ($minVotedId < 0 || $maxVotedId > $maxOptionId) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		$votes = $this->pollService->votePoll($this->participant, $poll, $optionIds);

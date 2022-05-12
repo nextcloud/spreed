@@ -6,7 +6,7 @@ Feature: chat/poll
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
-    When user "participant1" creates a poll in room "room" with 200
+    When user "participant1" creates a poll in room "room" with 201
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | resultMode | public |
