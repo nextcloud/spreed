@@ -549,6 +549,7 @@ OC.L10N.register(
     "Everyone" : "Herkes",
     "Users and moderators" : "Kullanıcılar ve sorumlular",
     "Moderators only" : "Yalnızca sorumlular",
+    "Disable calls" : "Çağrıları devre dışı bırak",
     "Save changes" : "Değişiklikleri Kaydet",
     "Saving …" : "Kaydediliyor …",
     "Saved!" : "Kaydedildi!",
