@@ -64,7 +64,7 @@ class CustomBackendNotifier extends BackendNotifier {
 		$this->requests = [];
 	}
 
-	protected function doRequest(string $url, array $params): void {
+	protected function doRequest(string $url, array $params, int $retries = 3): void {
 		$this->requests[] = [
 			'url' => $url,
 			'params' => $params,
