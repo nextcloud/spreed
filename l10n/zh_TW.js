@@ -361,6 +361,7 @@ OC.L10N.register(
     "Record voice message" : "錄製語音訊息",
     "Upload new files" : "上傳新檔案",
     "Share from Files" : "從「檔案」分享",
+    "Add emoji" : "新增表情符號",
     "Send message" : "傳送訊息",
     "File to share" : "要分享的檔案",
     "Invalid path selected" : "所選的路徑無效",
