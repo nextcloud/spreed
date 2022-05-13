@@ -549,6 +549,7 @@ OC.L10N.register(
     "Everyone" : "所有人",
     "Users and moderators" : "用戶和主持人",
     "Moderators only" : "僅限主持人",
+    "Disable calls" : "停用通話",
     "Save changes" : "儲存變更",
     "Saving …" : "儲存中 ...",
     "Saved!" : "已儲存!",

@@ -986,6 +986,8 @@ OC.L10N.register(
     "Chat" : "チャット",
     "Details" : "詳細",
     "Settings" : "設定",
+    "Shared items" : "共有済みアイテム",
+    "Participants ({count})" : "参加者 ({count})",
     "Projects" : "プロジェクト",
     "Show all files" : "すべてのファイルを表示",
     "Meeting ID: {meetingId}" : "ミーティングID: {meetingId}",

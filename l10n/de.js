@@ -44,6 +44,7 @@ OC.L10N.register(
     "- You can now blur your background in the newly designed call view" : "- In der neu gestalteten Anrufansicht kannst Du jetzt den Hintergrund unscharf anzeigen",
     "- Moderators can now assign general and individual permissions to participants" : "- Moderatoren können nun allgemeine und individuelle Berechtigungen an Teilnehmer vergeben",
     "- You can now react to chat message" : "- Du kannst jetzt auf Chatnachrichten reagieren",
+    "- In the sidebar you can now find an overview of the latest shared items" : "- In der Seitenleiste findest Du jetzt eine Übersicht über die zuletzt geteilten Elemente",
     "There are currently no commands available." : "Aktuell stehen keine Befehle zur Verfügung.",
     "The command does not exist" : "Der Befehl existiert nicht",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Es ist ein Fehler beim Ausführen des Befehls aufgetreten. Bitte einen Administrator, die Protokolle zu überprüfen.",

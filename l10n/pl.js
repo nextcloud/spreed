@@ -549,6 +549,7 @@ OC.L10N.register(
     "Everyone" : "Wszyscy",
     "Users and moderators" : "Użytkownicy i moderatorzy",
     "Moderators only" : "Tylko moderatorzy",
+    "Disable calls" : "Wyłącz połączenia",
     "Save changes" : "Zapisz zmiany",
     "Saving …" : "Zapisywanie…",
     "Saved!" : "Zapisano!",
