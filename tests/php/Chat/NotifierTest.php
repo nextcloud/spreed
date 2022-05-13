@@ -177,7 +177,7 @@ class NotifierTest extends TestCase {
 				'type' => Attendee::ACTOR_USERS,
 			];
 		}, $expectedReturn);
-		$actual = $notifier->notifyMentionedUsers($room, $comment, $alreadyNotifiedUsers);
+		$actual = $notifier->notifyMentionedUsers($room, $comment, $alreadyNotifiedUsers, false);
 
 		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
 	}
@@ -341,7 +341,7 @@ class NotifierTest extends TestCase {
 		$this->assertCount(count($return), $actual);
 		foreach ($actual as $key => $value) {
 			$this->assertIsArray($value);
-			if (key_exists('attendee', $value)) {
+			if (array_key_exists('attendee', $value)) {
 				$this->assertInstanceOf(Attendee::class, $value['attendee']);
 				unset($value['attendee']);
 			}

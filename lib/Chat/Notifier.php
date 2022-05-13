@@ -87,19 +87,25 @@ class Notifier {
 	 * @return string[] Users that were mentioned
 	 * @psalm-return array<int, array{id: string, type: string, ?attendee: Attendee}>
 	 */
-	public function notifyMentionedUsers(Room $chat, IComment $comment, array $alreadyNotifiedUsers): array {
+	public function notifyMentionedUsers(Room $chat, IComment $comment, array $alreadyNotifiedUsers, bool $silent): array {
 		$usersToNotify = $this->getUsersToNotify($chat, $comment, $alreadyNotifiedUsers);
 
 		if (!$usersToNotify) {
 			return $alreadyNotifiedUsers;
 		}
-		$notification = $this->createNotification($chat, $comment, 'mention');
-		$shouldFlush = $this->notificationManager->defer();
+
+		$shouldFlush = false;
+		if (!$silent) {
+			$notification = $this->createNotification($chat, $comment, 'mention');
+			$shouldFlush = $this->notificationManager->defer();
+		}
 
 		foreach ($usersToNotify as $mentionedUser) {
 			if ($this->shouldMentionedUserBeNotified($mentionedUser['id'], $comment, $chat, $mentionedUser['attendee'] ?? null)) {
-				$notification->setUser($mentionedUser['id']);
-				$this->notificationManager->notify($notification);
+				if (!$silent) {
+					$notification->setUser($mentionedUser['id']);
+					$this->notificationManager->notify($notification);
+				}
 				$alreadyNotifiedUsers[] = $mentionedUser;
 			}
 		}
@@ -193,11 +199,11 @@ class Notifier {
 	 * @param Room $chat
 	 * @param IComment $comment
 	 * @param IComment $replyTo
-	 * @param string $subject
+	 * @param bool $silent
 	 * @return array[] Actor that was replied to
 	 * @psalm-return array<int, array{id: string, type: string}>
 	 */
-	public function notifyReplyToAuthor(Room $chat, IComment $comment, IComment $replyTo, string $subject = 'reply'): array {
+	public function notifyReplyToAuthor(Room $chat, IComment $comment, IComment $replyTo, bool $silent): array {
 		if ($replyTo->getActorType() !== Attendee::ACTOR_USERS) {
 			// No reply notification when the replyTo-author was not a user
 			return [];
@@ -207,9 +213,11 @@ class Notifier {
 			return [];
 		}
 
-		$notification = $this->createNotification($chat, $comment, $subject);
-		$notification->setUser($replyTo->getActorId());
-		$this->notificationManager->notify($notification);
+		if (!$silent) {
+			$notification = $this->createNotification($chat, $comment, 'reply');
+			$notification->setUser($replyTo->getActorId());
+			$this->notificationManager->notify($notification);
+		}
 
 		return [
 			[
@@ -231,9 +239,14 @@ class Notifier {
 	 * @param Room $chat
 	 * @param IComment $comment
 	 * @param array[] $alreadyNotifiedUsers
+	 * @param bool $silent
 	 * @psalm-param array<int, array{id: string, type: string, ?attendee: Attendee}> $alreadyNotifiedUsers
 	 */
-	public function notifyOtherParticipant(Room $chat, IComment $comment, array $alreadyNotifiedUsers): void {
+	public function notifyOtherParticipant(Room $chat, IComment $comment, array $alreadyNotifiedUsers, bool $silent): void {
+		if ($silent) {
+			return;
+		}
+
 		$participants = $this->participantService->getParticipantsByNotificationLevel($chat, Participant::NOTIFY_ALWAYS);
 
 		$notification = $this->createNotification($chat, $comment, 'chat');
