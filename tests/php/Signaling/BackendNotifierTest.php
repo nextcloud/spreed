@@ -155,6 +155,7 @@ class BackendNotifierTest extends TestCase {
 			$this->manager,
 			$this->participantService,
 			$dbConnection,
+			$this->timeFactory,
 			$this->createMock(IManager::class),
 			$this->createMock(IHasher::class),
 			$this->dispatcher

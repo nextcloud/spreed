@@ -27,6 +27,7 @@ namespace OCA\SpreedCheats\Controller;
 
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Http\JSONResponse;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\Share\IShare;
@@ -101,5 +102,42 @@ class ApiController extends OCSController {
 		}
 
 		return new DataResponse();
+	}
+
+	/**
+	 * @NoCSRFRequired
+	 *
+	 * @return JSONResponse
+	 */
+	public function getTtlJob($token): JSONResponse {
+		$class = 'OCA\Talk\BackgroundJob\ApplyTtl';
+		$roomId = $this->getRoomIdByToken($token);
+		if (!$roomId) {
+			return new JSONResponse();
+		}
+		$query = $this->db->getQueryBuilder();
+		$query->select('id')
+			->from('jobs')
+			->where(
+				$query->expr()->andX(
+					$query->expr()->eq('class', $query->createNamedParameter($class)),
+					$query->expr()->eq('argument', $query->createNamedParameter(json_encode(['room_id' => (int) $roomId])))
+				)
+			);
+		$result = $query->executeQuery();
+		$job = $result->fetchOne();
+		if ($job) {
+			return new JSONResponse(['id' => (int) $job]);
+		}
+		return new JSONResponse();
+	}
+
+	private function getRoomIdByToken(string $token): ?string {
+		$query = $this->db->getQueryBuilder();
+		$query->select('id')
+			->from('talk_rooms')
+			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
+		$result = $query->executeQuery();
+		return $result->fetchOne();
 	}
 }

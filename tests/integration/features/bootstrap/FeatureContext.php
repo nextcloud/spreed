@@ -2581,18 +2581,35 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @Given user :user check if ttl of room :identifier is :ttl (:apiVersion)
 	 */
-	public function theTtlOfRoomIsV(string $user, string $identifier, int $ttl, string $apiVersion = 'v4') {
+	public function userCheckIfTtlOfRoomIsX(string $user, string $identifier, int $ttl, string $apiVersion = 'v4') {
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room');
-		$rooms = $this->getDataFromResponse($this->response);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
+		$room = $this->getDataFromResponse($this->response);
 
-		$rooms = array_filter($rooms, function ($room) {
-			return $room['type'] !== 4;
-		});
-		Assert::assertEquals($ttl, $rooms[0]['timeToLive']);
+		Assert::assertEquals($ttl, $room['timeToLive']);
 	}
 
+	/**
+	 * @When wait for :seconds seconds
+	 */
+	public function waitForXSeconds($seconds): void {
+		sleep($seconds);
+	}
 
+	/**
+	 * @When apply ttl job to room :identifier
+	 */
+	public function applyTtlJobToRoom($identifier): void {
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('GET', '/apps/spreedcheats/get_ttl_job/' . self::$identifierToToken[$identifier]);
+		$response = $this->response->getBody()->getContents();
+		$response = json_decode($response, true);
+		Assert::assertIsArray($response, 'Room ' . $identifier . 'not found');
+		Assert::assertArrayHasKey('id', $response);
+		$this->runOcc(['background-job:execute', $response['id']]);
+		$this->setCurrentUser($currentUser);
+	}
 
 	/*
 	 * Requests

@@ -23,7 +23,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use DateInterval;
 use InvalidArgumentException;
+use OCA\Talk\BackgroundJob\ApplyTtl;
 use OCA\Talk\Events\ChangeTtlEvent;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
@@ -34,6 +36,8 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJobList;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\HintException;
@@ -41,12 +45,14 @@ use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\Security\Events\ValidatePasswordPolicyEvent;
 use OCP\Security\IHasher;
+use OCP\Server;
 use OCP\Share\IManager as IShareManager;
 
 class RoomService {
 	protected Manager $manager;
 	protected ParticipantService $participantService;
 	protected IDBConnection $db;
+	protected ITimeFactory $timeFactory;
 	protected IShareManager $shareManager;
 	protected IHasher $hasher;
 	protected IEventDispatcher $dispatcher;
@@ -54,12 +60,14 @@ class RoomService {
 	public function __construct(Manager $manager,
 								ParticipantService $participantService,
 								IDBConnection $db,
+								ITimeFactory $timeFactory,
 								IShareManager $shareManager,
 								IHasher $hasher,
 								IEventDispatcher $dispatcher) {
 		$this->manager = $manager;
 		$this->participantService = $participantService;
 		$this->db = $db;
+		$this->timeFactory = $timeFactory;
 		$this->shareManager = $shareManager;
 		$this->hasher = $hasher;
 		$this->dispatcher = $dispatcher;
@@ -529,11 +537,60 @@ class RoomService {
 	public function setTimeToLive(Room $room, int $ttl): void {
 		$event = new ChangeTtlEvent($room, $ttl);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_TIME_TO_LIVE, $event);
+
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('time_to_live', $update->createNamedParameter($ttl, IQueryBuilder::PARAM_INT))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
+		$jobList = Server::get(IJobList::class);
+		if ($ttl > 0) {
+			$jobList->add(ApplyTtl::class, ['room_id' => $room->getId()]);
+		} else {
+			$jobList->remove(ApplyTtl::class, ['room_id' => $room->getId()]);
+		}
+
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_TIME_TO_LIVE, $event);
+	}
+
+	public function deleteExpiredTtl(int $roomId, int $jobId): void {
+		$room = $this->manager->getRoomById($roomId);
+
+		$max = $this->getMaxDateTtl($room->getTimeToLive());
+		$min = $this->getMinDateTtl($jobId);
+
+		$this->deleteMessagesByRoomIdInDateInterval($roomId, $min, $max);
+	}
+
+	private function getMaxDateTtl(int $ttl): \DateTime {
+		$max = $this->timeFactory->getDateTime();
+		return $max->sub(new DateInterval('PT' . $ttl . 'S'));
+	}
+
+	private function getMinDateTtl(int $jobId): \DateTime {
+		$query = $this->db->getQueryBuilder();
+		$query->select('last_checked')
+			->from('jobs')
+			->where(
+				$query->expr()->eq('id', $query->createNamedParameter($jobId, IQueryBuilder::PARAM_INT))
+			);
+		$result = $query->executeQuery();
+		$lastCheckedEpoch = $result->fetchOne();
+		$lastChechedDateTime = $this->timeFactory->getDateTime('@' . $lastCheckedEpoch);
+		return $lastChechedDateTime;
+	}
+
+	private function deleteMessagesByRoomIdInDateInterval(int $roomId, \DateTime $min, \DateTime $max): void {
+		$delete = $this->db->getQueryBuilder();
+		$delete->delete('comments')
+			->where(
+				$delete->expr()->andX(
+					$delete->expr()->eq('object_id', $delete->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)),
+					$delete->expr()->eq('object_type', $delete->createNamedParameter('chat')),
+					$delete->expr()->gte('creation_timestamp', $delete->createNamedParameter($min, IQueryBuilder::PARAM_DATE)),
+					$delete->expr()->lte('creation_timestamp', $delete->createNamedParameter($max, IQueryBuilder::PARAM_DATE))
+				)
+			);
+		$delete->executeStatement();
 	}
 }

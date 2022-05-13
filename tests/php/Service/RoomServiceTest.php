@@ -67,6 +67,7 @@ class RoomServiceTest extends TestCase {
 
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->shareManager = $this->createMock(IShareManager::class);
 		$this->hasher = $this->createMock(IHasher::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
@@ -74,6 +75,7 @@ class RoomServiceTest extends TestCase {
 			$this->manager,
 			$this->participantService,
 			\OC::$server->get(IDBConnection::class),
+			$this->timeFactory,
 			$this->shareManager,
 			$this->hasher,
 			$this->dispatcher
@@ -337,6 +339,7 @@ class RoomServiceTest extends TestCase {
 			$this->manager,
 			$this->participantService,
 			\OC::$server->get(IDBConnection::class),
+			$this->timeFactory,
 			$this->shareManager,
 			$this->hasher,
 			$dispatcher
