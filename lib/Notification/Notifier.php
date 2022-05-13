@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Notification;
 
 use OCA\FederatedFileSharing\AddressHandler;
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\MessageParser;
@@ -119,7 +120,7 @@ class Notifier implements INotifier {
 	 * @since 17.0.0
 	 */
 	public function getName(): string {
-		return $this->lFactory->get('spreed')->t('Talk');
+		return $this->lFactory->get(Application::APP_ID)->t('Talk');
 	}
 
 	/**
@@ -196,7 +197,7 @@ class Notifier implements INotifier {
 	 * @since 9.0.0
 	 */
 	public function prepare(INotification $notification, string $languageCode): INotification {
-		if ($notification->getApp() !== 'spreed') {
+		if ($notification->getApp() !== Application::APP_ID) {
 			throw new \InvalidArgumentException('Incorrect app');
 		}
 
@@ -206,7 +207,7 @@ class Notifier implements INotifier {
 			throw new AlreadyProcessedException();
 		}
 
-		$l = $this->lFactory->get('spreed', $languageCode);
+		$l = $this->lFactory->get(Application::APP_ID, $languageCode);
 
 		if ($notification->getObjectType() === 'hosted-signaling-server') {
 			return $this->parseHostedSignalingServer($notification, $l);
@@ -234,7 +235,7 @@ class Notifier implements INotifier {
 		}
 
 		$notification
-			->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.svg')))
+			->setIcon($this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'app-dark.svg')))
 			->setLink($this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]));
 
 		$subject = $notification->getSubject();

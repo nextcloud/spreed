@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Notification;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -123,7 +124,7 @@ class Listener implements IEventListener {
 		$shouldFlush = $this->notificationManager->defer();
 		$dateTime = $this->timeFactory->getDateTime();
 		try {
-			$notification->setApp('spreed')
+			$notification->setApp(Application::APP_ID)
 				->setDateTime($dateTime)
 				->setObject('room', $room->getToken())
 				->setSubject('invitation', [
@@ -174,7 +175,7 @@ class Listener implements IEventListener {
 
 		$notification = $this->notificationManager->createNotification();
 		try {
-			$notification->setApp('spreed')
+			$notification->setApp(Application::APP_ID)
 				->setUser($currentUser->getUID())
 				->setObject('room', $room->getToken())
 				->setSubject('invitation');
@@ -223,7 +224,7 @@ class Listener implements IEventListener {
 		$dateTime = $this->timeFactory->getDateTime();
 		try {
 			// Remove all old notifications for this room
-			$notification->setApp('spreed')
+			$notification->setApp(Application::APP_ID)
 				->setObject('room', $room->getToken());
 			$this->notificationManager->markProcessed($notification);
 
@@ -281,7 +282,7 @@ class Listener implements IEventListener {
 
 		$notification = $this->notificationManager->createNotification();
 		try {
-			$notification->setApp('spreed')
+			$notification->setApp(Application::APP_ID)
 				->setUser($currentUser->getUID())
 				->setObject('call', $room->getToken())
 				->setSubject('call');
@@ -302,7 +303,7 @@ class Listener implements IEventListener {
 		try {
 			// Remove previous call notifications
 			$notification = $this->notificationManager->createNotification();
-			$notification->setApp('spreed')
+			$notification->setApp(Application::APP_ID)
 				->setObject('call', $room->getToken())
 				->setUser($target->getActorId());
 			$this->notificationManager->markProcessed($notification);
