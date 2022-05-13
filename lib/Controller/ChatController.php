@@ -712,7 +712,7 @@ class ChatController extends AEnvironmentAwareController {
 				$previousMessage = $this->chatManager->getPreviousMessageWithVerb(
 					$this->room,
 					(int)$message->getId(),
-					['comment'],
+					[ChatManager::VERB_MESSAGE],
 					$message->getVerb() === ChatManager::VERB_MESSAGE
 				);
 				$unreadId = (int) $previousMessage->getId();

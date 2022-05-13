@@ -134,7 +134,7 @@ class MessageSearch implements IProvider {
 		$comments = $this->chatManager->searchForObjects(
 			$query->getTerm(),
 			array_keys($roomMap),
-			'comment',
+			ChatManager::VERB_MESSAGE,
 			$offset,
 			$query->getLimit()
 		);
