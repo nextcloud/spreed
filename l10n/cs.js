@@ -549,6 +549,7 @@ OC.L10N.register(
     "Everyone" : "Všichni",
     "Users and moderators" : "Uživatelé a moderátoři",
     "Moderators only" : "Pouze moderátoři",
+    "Disable calls" : "Neumožnit hovory",
     "Save changes" : "Uložit změny",
     "Saving …" : "Ukládání…",
     "Saved!" : "Uloženo",
