@@ -252,7 +252,7 @@ describe('Message.vue', () => {
 
 			const date = wrapper.find('.date')
 			expect(date.exists()).toBe(true)
-			expect(date.text()).toBe('09:23')
+			expect(date.text()).toBe('9:23 AM')
 		})
 
 		test('renders quote block', () => {

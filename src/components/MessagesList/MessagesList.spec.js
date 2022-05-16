@@ -218,19 +218,19 @@ describe('MessagesList.vue', () => {
 			// using attributes to access v-bind props
 			expect(group.attributes('actorid')).toBe('alice')
 			expect(group.attributes('actortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
-			expect(group.attributes('dateseparator')).toBe('2 days ago, 9 May 2020')
+			expect(group.attributes('dateseparator')).toBe('2 days ago, May 9, 2020')
 
 			group = groups.at(1)
 			expect(group.props('messages')).toStrictEqual([messages[1]])
 			expect(group.attributes('actorid')).toBe('alice')
 			expect(group.attributes('actortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
-			expect(group.attributes('dateseparator')).toBe('Yesterday, 10 May 2020')
+			expect(group.attributes('dateseparator')).toBe('Yesterday, May 10, 2020')
 
 			group = groups.at(2)
 			expect(group.props('messages')).toStrictEqual([messages[2]])
 			expect(group.attributes('actorid')).toBe('alice')
 			expect(group.attributes('actortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
-			expect(group.attributes('dateseparator')).toBe('Today, 11 May 2020')
+			expect(group.attributes('dateseparator')).toBe('Today, May 11, 2020')
 
 			expect(messagesListMock).toHaveBeenCalledWith(TOKEN)
 		})
