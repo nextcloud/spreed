@@ -1647,11 +1647,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$expected['status'] = 1;
 		}
 
-		if ($expected['voted'] === 'not voted') {
-			$expected['voted'] = [];
+		if ($expected['votedSelf'] === 'not voted') {
+			$expected['votedSelf'] = [];
 		} else {
-			$expected['voted'] = json_decode($expected['voted'], true);
+			$expected['votedSelf'] = json_decode($expected['votedSelf'], true);
 		}
+
+		$expected['votes'] = isset($expected['votes']) ? json_decode($expected['votes'], true) : [];
+		$expected['options'] = json_decode($expected['options'], true);
 
 		$result = preg_match('/POLL_ID\(([^)]+)\)/', $expected['id'], $matches);
 		if ($result) {

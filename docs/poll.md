@@ -88,15 +88,16 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ## Poll data
 
-| field              | type     | Description                                                                                   |
-|--------------------|----------|-----------------------------------------------------------------------------------------------|
-| `id`               | int      | ID of the poll                                                                                |
-| `question`         | string   | The question of the poll                                                                      |
-| `options`          | string[] | The options participants can vote for                                                         |
-| `actorType`        | string   | Actor type of the poll author (see [Constants - Attendee types](constants.md#attendee-types)) |
-| `actorId`          | string   | Actor ID identifying the poll author                                                          |
-| `actorDisplayName` | string   | Display name of the poll author                                                               |
-| `status`           | int      | Status of the poll (see [Constants - Poll status](constants.md#poll-status))                  |
-| `resultMode`       | int      | Result mode of the poll (see [Constants - Poll mode](constants.md#poll-mode))                 |
-| `maxVotes`         | int      | Maximum amount of options a user can vote for, `0` means unlimited                            |
-| `voted`            | int[]    | Array of option ids the participant voted for                                                 |
+| field              | type     | Description                                                                                     |
+|--------------------|----------|-------------------------------------------------------------------------------------------------|
+| `id`               | int      | ID of the poll                                                                                  |
+| `question`         | string   | The question of the poll                                                                        |
+| `options`          | string[] | The options participants can vote for                                                           |
+| `votes`            | int[]    | Map with optionId => number of votes (empty if the resultMode is hidden and the statue is open) |
+| `actorType`        | string   | Actor type of the poll author (see [Constants - Attendee types](constants.md#attendee-types))   |
+| `actorId`          | string   | Actor ID identifying the poll author                                                            |
+| `actorDisplayName` | string   | Display name of the poll author                                                                 |
+| `status`           | int      | Status of the poll (see [Constants - Poll status](constants.md#poll-status))                    |
+| `resultMode`       | int      | Result mode of the poll (see [Constants - Poll mode](constants.md#poll-mode))                   |
+| `maxVotes`         | int      | Maximum amount of options a user can vote for, `0` means unlimited                              |
+| `votedSelf`        | int[]    | Array of option ids the participant voted for                                                   |

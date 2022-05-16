@@ -19,35 +19,38 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | []   |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant1 |
       | actorDisplayName    | participant1-displayname |
       | status     | open |
-      | voted      | not voted |
+      | votedSelf  | not voted |
     Then user "participant1" votes for options "[1]" on poll "What is the question?" in room "room" with 200
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"1":1}   |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant1 |
       | actorDisplayName    | participant1-displayname |
       | status     | open |
-      | voted      | [1] |
+      | votedSelf  | [1] |
     Then user "participant1" closes poll "What is the question?" in room "room" with 200
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"1":1}   |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant1 |
       | actorDisplayName    | participant1-displayname |
       | status     | closed |
-      | voted      | [1] |
+      | votedSelf  | [1] |
 
   Scenario: Participants can update their votes
     Given user "participant1" creates room "room" (v4)
@@ -58,28 +61,30 @@ Feature: chat/poll
       | options    | ["Where are you?","How much is the fish?"] |
       | resultMode | public |
       | maxVotes   | unlimited |
-    Then user "participant1" votes for options "[1]" on poll "What is the question?" in room "room" with 200
-      | id         | POLL_ID(What is the question?) |
-      | question   | What is the question? |
-      | options    | ["Where are you?","How much is the fish?"] |
-      | resultMode | public |
-      | maxVotes   | unlimited |
-      | actorType  | users |
-      | actorId    | participant1 |
-      | actorDisplayName    | participant1-displayname |
-      | status     | open |
-      | voted      | [1] |
     Then user "participant1" votes for options "[0]" on poll "What is the question?" in room "room" with 200
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"0":1}   |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant1 |
       | actorDisplayName    | participant1-displayname |
       | status     | open |
-      | voted      | [0] |
+      | votedSelf  | [0] |
+    Then user "participant1" votes for options "[1]" on poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"1":1}   |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
+      | status     | open |
+      | votedSelf  | [1] |
 
   Scenario: Participants can only vote for valid options
     Given user "participant1" creates room "room" (v4)
@@ -117,13 +122,14 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"0":1,"1":1} |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant1 |
       | actorDisplayName    | participant1-displayname |
       | status     | open |
-      | voted      | [0,1] |
+      | votedSelf  | [0,1] |
 
   Scenario: Non-moderators can also create polls and close it themselves
     Given user "participant1" creates room "room" (v4)
@@ -142,13 +148,14 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | [] |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant2 |
       | actorDisplayName    | participant2-displayname |
       | status     | closed |
-      | voted      | not voted |
+      | votedSelf  | not voted |
 
   Scenario: Non-moderators can note create polls without chat permission
     Given user "participant1" creates room "room" (v4)
@@ -177,13 +184,14 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | [] |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant2 |
       | actorDisplayName    | participant2-displayname |
       | status     | closed |
-      | voted      | not voted |
+      | votedSelf  | not voted |
 
   Scenario: Non-moderators can not close polls of others
     Given user "participant1" creates room "room" (v4)

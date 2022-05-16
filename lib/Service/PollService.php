@@ -33,6 +33,7 @@ use OCA\Talk\Model\VoteMapper;
 use OCA\Talk\Participant;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\Exception;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class PollService {
@@ -56,6 +57,7 @@ class PollService {
 		$poll->setDisplayName($displayName);
 		$poll->setQuestion($question);
 		$poll->setOptions(json_encode($options));
+		$poll->setVotes(json_encode([]));
 		$poll->setResultMode($resultMode);
 		$poll->setMaxVotes($maxVotes);
 
@@ -118,6 +120,18 @@ class PollService {
 	 */
 	public function votePoll(Participant $participant, Poll $poll, array $optionIds): array {
 		$votes = [];
+		$result = json_decode($poll->getVotes(), true);
+
+		$previousVotes = $this->voteMapper->findByPollIdForActor(
+			$poll->getId(),
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId()
+		);
+
+		foreach ($previousVotes as $vote) {
+			$result[$vote->getOptionId()] ??= 1;
+			$result[$vote->getOptionId()] -= 1;
+		}
 
 		$this->connection->beginTransaction();
 		try {
@@ -137,6 +151,8 @@ class PollService {
 				$vote->setOptionId($optionId);
 				$this->voteMapper->insert($vote);
 
+				$result[$optionId] ??= 0;
+				$result[$optionId] += 1;
 				$votes[] = $vote;
 			}
 		} catch (\Exception $e) {
@@ -145,7 +161,46 @@ class PollService {
 		}
 		$this->connection->commit();
 
+		$this->updateResultCache($poll->getId());
+		$result = array_filter($result);
+		$poll->setVotes(json_encode($result));
+
 		return $votes;
+	}
+
+	public function updateResultCache(int $pollId): void {
+		$resultQuery = $this->connection->getQueryBuilder();
+		$resultQuery->selectAlias(
+			$resultQuery->func()->concat(
+				$resultQuery->expr()->literal('"'),
+					'option_id',
+				$resultQuery->expr()->literal('":'),
+				$resultQuery->func()->count('id')
+				),
+				'colonseparatedvalue'
+			)
+			->from('talk_poll_votes')
+			->where($resultQuery->expr()->eq('poll_id', $resultQuery->createNamedParameter($pollId)))
+			->groupBy('option_id')
+			->orderBy('option_id', 'ASC');
+
+		$jsonQuery = $this->connection->getQueryBuilder();
+		$jsonQuery
+			->selectAlias(
+				$jsonQuery->func()->concat(
+					$jsonQuery->expr()->literal('{'),
+					$jsonQuery->func()->groupConcat('colonseparatedvalue'),
+					$jsonQuery->expr()->literal('}')
+				),
+				'json'
+			)
+			->from($jsonQuery->createFunction('(' . $resultQuery->getSQL() . ')'), 'json');
+
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_polls')
+			->set('votes', $jsonQuery->createFunction('(' . $jsonQuery->getSQL() . ')'))
+			->where($update->expr()->eq('id', $update->createNamedParameter($pollId, IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 	}
 
 	public function deleteByRoomId(int $roomId): void {

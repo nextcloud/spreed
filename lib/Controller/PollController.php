@@ -199,7 +199,11 @@ class PollController extends AEnvironmentAwareController {
 		$data = $poll->asArray();
 		unset($data['roomId']);
 
-		$data['voted'] = array_map(static fn (Vote $vote) => $vote->getOptionId(), $votes);
+		if ($poll->getResultMode() === Poll::MODE_HIDDEN && $poll->getStatus() === Poll::STATUS_OPEN) {
+			$data['votes'] = [];
+		}
+
+		$data['votedSelf'] = array_map(static fn (Vote $vote) => $vote->getOptionId(), $votes);
 
 		return $data;
 	}
