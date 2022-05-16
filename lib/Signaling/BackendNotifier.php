@@ -25,6 +25,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Signaling;
 
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\ServerException;
 use OCA\Talk\Config;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
@@ -67,9 +69,10 @@ class BackendNotifier {
 	 *
 	 * @param string $url
 	 * @param array $params
+	 * @param int $retries
 	 * @throws \Exception
 	 */
-	protected function doRequest(string $url, array $params): void {
+	protected function doRequest(string $url, array $params, int $retries = 3): void {
 		if (defined('PHPUNIT_RUN')) {
 			// Don't perform network requests when running tests.
 			return;
@@ -81,6 +84,13 @@ class BackendNotifier {
 
 			if (!$this->signalingManager->isCompatibleSignalingServer($response)) {
 				throw new \RuntimeException('Signaling server needs to be updated to be compatible with this version of Talk');
+			}
+		} catch (ServerException | ConnectException $e) {
+			if ($retries > 1) {
+				$this->logger->error('Failed to send message to signaling server, ' . $retries . ' retries left!', ['exception' => $e]);
+				$this->doRequest($url, $params, $retries - 1);
+			} else {
+				$this->logger->error('Failed to send message to signaling server, giving up!', ['exception' => $e]);
 			}
 		} catch (\Exception $e) {
 			$this->logger->error('Failed to send message to signaling server', ['exception' => $e]);
