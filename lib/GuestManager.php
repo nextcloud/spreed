@@ -27,6 +27,7 @@ use OCA\Talk\Events\AddEmailEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\PollService;
 use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
@@ -42,19 +43,13 @@ class GuestManager {
 	public const EVENT_AFTER_NAME_UPDATE = self::class . '::updateName';
 
 	protected Config $talkConfig;
-
 	protected IMailer $mailer;
-
 	protected Defaults $defaults;
-
 	protected IUserSession $userSession;
-
-	private ParticipantService $participantService;
-
+	protected ParticipantService $participantService;
+	protected PollService $pollService;
 	protected IURLGenerator $url;
-
 	protected IL10N $l;
-
 	protected IEventDispatcher $dispatcher;
 
 	public function __construct(Config $talkConfig,
@@ -62,6 +57,7 @@ class GuestManager {
 								Defaults $defaults,
 								IUserSession $userSession,
 								ParticipantService $participantService,
+								PollService $pollService,
 								IURLGenerator $url,
 								IL10N $l,
 								IEventDispatcher $dispatcher) {
@@ -70,6 +66,7 @@ class GuestManager {
 		$this->defaults = $defaults;
 		$this->userSession = $userSession;
 		$this->participantService = $participantService;
+		$this->pollService = $pollService;
 		$this->url = $url;
 		$this->l = $l;
 		$this->dispatcher = $dispatcher;
@@ -84,6 +81,12 @@ class GuestManager {
 		$attendee = $participant->getAttendee();
 		if ($attendee->getDisplayName() !== $displayName) {
 			$this->participantService->updateDisplayNameForActor(
+				$attendee->getActorType(),
+				$attendee->getActorId(),
+				$displayName
+			);
+
+			$this->pollService->updateDisplayNameForActor(
 				$attendee->getActorType(),
 				$attendee->getActorId(),
 				$displayName

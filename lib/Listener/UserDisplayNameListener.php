@@ -25,15 +25,19 @@ namespace OCA\Talk\Listener;
 
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\PollService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\User\Events\UserChangedEvent;
 
 class UserDisplayNameListener implements IEventListener {
 	private ParticipantService $participantService;
+	private PollService $pollService;
 
-	public function __construct(ParticipantService $participantService) {
+	public function __construct(ParticipantService $participantService,
+								PollService $pollService) {
 		$this->participantService = $participantService;
+		$this->pollService = $pollService;
 	}
 
 	public function handle(Event $event): void {
@@ -48,6 +52,12 @@ class UserDisplayNameListener implements IEventListener {
 		}
 
 		$this->participantService->updateDisplayNameForActor(
+			Attendee::ACTOR_USERS,
+			$event->getUser()->getUID(),
+			(string) $event->getValue()
+		);
+
+		$this->pollService->updateDisplayNameForActor(
 			Attendee::ACTOR_USERS,
 			$event->getUser()->getUID(),
 			(string) $event->getValue()

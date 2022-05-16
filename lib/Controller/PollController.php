@@ -31,6 +31,7 @@ use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\Model\Poll;
 use OCA\Talk\Model\Vote;
 use OCA\Talk\Service\PollService;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -77,12 +78,14 @@ class PollController extends AEnvironmentAwareController {
 				$this->room->getId(),
 				$attendee->getActorType(),
 				$attendee->getActorId(),
+				$attendee->getDisplayName(),
 				$question,
 				$options,
 				$resultMode,
 				$maxVotes
 			);
 		} catch (\Exception $e) {
+			$this->logger->error('Error creating poll', ['exception' => $e]);
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -119,7 +122,7 @@ class PollController extends AEnvironmentAwareController {
 	public function showPoll(int $pollId): DataResponse {
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
-		} catch (\Exception $e) {
+		} catch (DoesNotExistException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 

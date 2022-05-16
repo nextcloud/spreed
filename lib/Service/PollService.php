@@ -32,9 +32,7 @@ use OCA\Talk\Model\Vote;
 use OCA\Talk\Model\VoteMapper;
 use OCA\Talk\Participant;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Db\IMapperException;
 use OCP\DB\Exception;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class PollService {
@@ -50,11 +48,12 @@ class PollService {
 		$this->voteMapper = $voteMapper;
 	}
 
-	public function createPoll(int $roomId, string $actorType, string $actorId, string $question, array $options, int $resultMode, int $maxVotes): Poll {
+	public function createPoll(int $roomId, string $actorType, string $actorId, string $displayName, string $question, array $options, int $resultMode, int $maxVotes): Poll {
 		$poll = new Poll();
 		$poll->setRoomId($roomId);
 		$poll->setActorType($actorType);
 		$poll->setActorId($actorId);
+		$poll->setDisplayName($displayName);
 		$poll->setQuestion($question);
 		$poll->setOptions(json_encode($options));
 		$poll->setResultMode($resultMode);
@@ -69,7 +68,7 @@ class PollService {
 	 * @param int $roomId
 	 * @param int $pollId
 	 * @return Poll
-	 * @throws IMapperException
+	 * @throws DoesNotExistException
 	 */
 	public function getPoll(int $roomId, int $pollId): Poll {
 		$poll = $this->pollMapper->getByPollId($pollId);
@@ -134,6 +133,7 @@ class PollService {
 				$vote->setRoomId($poll->getRoomId());
 				$vote->setActorType($participant->getAttendee()->getActorType());
 				$vote->setActorId($participant->getAttendee()->getActorId());
+				$vote->setDisplayName($participant->getAttendee()->getDisplayName());
 				$vote->setOptionId($optionId);
 				$this->voteMapper->insert($vote);
 
@@ -151,5 +151,21 @@ class PollService {
 	public function deleteByRoomId(int $roomId): void {
 		$this->voteMapper->deleteByRoomId($roomId);
 		$this->pollMapper->deleteByRoomId($roomId);
+	}
+
+	public function updateDisplayNameForActor(string $actorType, string $actorId, string $displayName): void {
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_polls')
+			->set('display_name', $update->createNamedParameter($displayName))
+			->where($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
+			->andWhere($update->expr()->eq('actor_id', $update->createNamedParameter($actorId)));
+		$update->executeStatement();
+
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_poll_votes')
+			->set('display_name', $update->createNamedParameter($displayName))
+			->where($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
+			->andWhere($update->expr()->eq('actor_id', $update->createNamedParameter($actorId)));
+		$update->executeStatement();
 	}
 }

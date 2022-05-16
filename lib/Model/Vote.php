@@ -37,6 +37,8 @@ use OCP\AppFramework\Db\Entity;
  * @method string getActorType()
  * @method void setActorId(string $actorId)
  * @method string getActorId()
+ * @method void setDisplayName(string $displayName)
+ * @method string getDisplayName()
  * @method void setOptionId(int $optionId)
  * @method int getOptionId()
  */
@@ -45,6 +47,7 @@ class Vote extends Entity {
 	protected int $roomId = 0;
 	protected string $actorType = '';
 	protected string $actorId = '';
+	protected ?string $displayName = null;
 	protected int $optionId = 0;
 
 	public function __construct() {
@@ -52,6 +55,7 @@ class Vote extends Entity {
 		$this->addType('roomId', 'int');
 		$this->addType('actorType', 'string');
 		$this->addType('actorId', 'string');
+		$this->addType('displayName', 'string');
 		$this->addType('optionId', 'int');
 	}
 
@@ -65,6 +69,7 @@ class Vote extends Entity {
 			// 'roomId' => $this->getRoomId(),
 			'actorType' => $this->getActorType(),
 			'actorId' => $this->getActorId(),
+			'actorDisplayName' => $this->getDisplayName(),
 			'optionId' => $this->getOptionId(),
 		];
 	}

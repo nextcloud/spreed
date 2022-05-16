@@ -71,6 +71,10 @@ class Version15000Date20220503121308 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 64,
 			]);
+			$table->addColumn('display_name', Types::STRING, [
+				'notnull' => false,
+				'length' => 255,
+			]);
 			$table->addColumn('status', Types::SMALLINT, [
 				'notnull' => false,
 				'default' => 0,
@@ -111,6 +115,10 @@ class Version15000Date20220503121308 extends SimpleMigrationStep {
 			$table->addColumn('actor_id', Types::STRING, [
 				'notnull' => true,
 				'length' => 64,
+			]);
+			$table->addColumn('display_name', Types::STRING, [
+				'notnull' => false,
+				'length' => 255,
 			]);
 			$table->addColumn('option_id', Types::INTEGER, [
 				'notnull' => true,

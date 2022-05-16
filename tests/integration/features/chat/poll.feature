@@ -23,6 +23,7 @@ Feature: chat/poll
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
       | status     | open |
       | voted      | not voted |
     Then user "participant1" votes for options "[1]" on poll "What is the question?" in room "room" with 200
@@ -33,6 +34,7 @@ Feature: chat/poll
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
       | status     | open |
       | voted      | [1] |
     Then user "participant1" closes poll "What is the question?" in room "room" with 200
@@ -43,6 +45,7 @@ Feature: chat/poll
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
       | status     | closed |
       | voted      | [1] |
 
@@ -63,6 +66,7 @@ Feature: chat/poll
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
       | status     | open |
       | voted      | [1] |
     Then user "participant1" votes for options "[0]" on poll "What is the question?" in room "room" with 200
@@ -73,6 +77,7 @@ Feature: chat/poll
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
       | status     | open |
       | voted      | [0] |
 
@@ -116,6 +121,7 @@ Feature: chat/poll
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
       | status     | open |
       | voted      | [0,1] |
 
@@ -140,6 +146,7 @@ Feature: chat/poll
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant2 |
+      | actorDisplayName    | participant2-displayname |
       | status     | closed |
       | voted      | not voted |
 
@@ -174,6 +181,7 @@ Feature: chat/poll
       | maxVotes   | unlimited |
       | actorType  | users |
       | actorId    | participant2 |
+      | actorDisplayName    | participant2-displayname |
       | status     | closed |
       | voted      | not voted |
 

@@ -39,6 +39,8 @@ use OCP\AppFramework\Db\Entity;
  * @method string getActorType()
  * @method void setActorId(string $actorId)
  * @method string getActorId()
+ * @method void setDisplayName(string $displayName)
+ * @method string getDisplayName()
  * @method void setStatus(int $status)
  * @method int getStatus()
  * @method void setResultMode(int $resultMode)
@@ -58,6 +60,7 @@ class Poll extends Entity {
 	protected string $options = '';
 	protected string $actorType = '';
 	protected string $actorId = '';
+	protected ?string $displayName = null;
 	protected int $status = self::STATUS_OPEN;
 	protected int $resultMode = self::MODE_PUBLIC;
 	protected int $maxVotes = self::MAX_VOTES_UNLIMITED;
@@ -68,6 +71,7 @@ class Poll extends Entity {
 		$this->addType('options', 'string');
 		$this->addType('actorType', 'string');
 		$this->addType('actorId', 'string');
+		$this->addType('displayName', 'string');
 		$this->addType('status', 'int');
 		$this->addType('resultMode', 'int');
 		$this->addType('maxVotes', 'int');
@@ -84,6 +88,7 @@ class Poll extends Entity {
 			'options' => $this->getOptions(),
 			'actorType' => $this->getActorType(),
 			'actorId' => $this->getActorId(),
+			'actorDisplayName' => $this->getDisplayName(),
 			'status' => $this->getStatus(),
 			'resultMode' => $this->getResultMode(),
 			'maxVotes' => $this->getMaxVotes(),
