@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\AutoComplete;
 
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
 use OCP\Collaboration\AutoComplete\ISorter;
 use OCP\Comments\ICommentsManager;
@@ -59,7 +60,7 @@ class Sorter implements ISorter {
 			$lastComments = $this->commentsManager->getLastCommentDateByActor(
 				$context['itemType'],
 				$context['itemId'],
-				'comment',
+				ChatManager::VERB_MESSAGE,
 				$type,
 				array_map(function (array $suggestion) {
 					return $suggestion['value']['shareWith'];

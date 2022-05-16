@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Search;
 
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
@@ -91,7 +92,7 @@ class CurrentMessageSearch extends MessageSearch {
 		$comments = $this->chatManager->searchForObjects(
 			$query->getTerm(),
 			[(string) $room->getId()],
-			'comment',
+			ChatManager::VERB_MESSAGE,
 			$offset,
 			$query->getLimit()
 		);
