@@ -151,6 +151,7 @@ class RoomService {
 			$this->participantService->addUsers($room, [[
 				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $owner->getUID(),
+				'displayName' => $owner->getDisplayName(),
 				'participantType' => Participant::OWNER,
 			]], null);
 		}
