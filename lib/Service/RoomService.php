@@ -26,6 +26,7 @@ namespace OCA\Talk\Service;
 use DateInterval;
 use InvalidArgumentException;
 use OCA\Talk\BackgroundJob\ApplyTtl;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\ChangeTtlEvent;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
@@ -50,6 +51,7 @@ use OCP\Share\IManager as IShareManager;
 
 class RoomService {
 	protected Manager $manager;
+	protected ChatManager $chatManager;
 	protected ParticipantService $participantService;
 	protected IDBConnection $db;
 	protected ITimeFactory $timeFactory;
@@ -58,6 +60,7 @@ class RoomService {
 	protected IEventDispatcher $dispatcher;
 
 	public function __construct(Manager $manager,
+								ChatManager $chatManager,
 								ParticipantService $participantService,
 								IDBConnection $db,
 								ITimeFactory $timeFactory,
@@ -65,6 +68,7 @@ class RoomService {
 								IHasher $hasher,
 								IEventDispatcher $dispatcher) {
 		$this->manager = $manager;
+		$this->chatManager = $chatManager;
 		$this->participantService = $participantService;
 		$this->db = $db;
 		$this->timeFactory = $timeFactory;
@@ -534,7 +538,7 @@ class RoomService {
 		];
 	}
 
-	public function setTimeToLive(Room $room, int $ttl): void {
+	public function setTimeToLive(Room $room, string $userId, int $ttl): void {
 		$event = new ChangeTtlEvent($room, $ttl);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_TIME_TO_LIVE, $event);
 
@@ -545,21 +549,43 @@ class RoomService {
 		$update->executeStatement();
 		$jobList = Server::get(IJobList::class);
 		if ($ttl > 0) {
+			$this->ttlSystemMessage($room, $userId, $ttl, 'ttl_enabled');
 			$jobList->add(ApplyTtl::class, ['room_id' => $room->getId()]);
 		} else {
+			$this->ttlSystemMessage($room, $userId, $ttl, 'ttl_disabled');
 			$jobList->remove(ApplyTtl::class, ['room_id' => $room->getId()]);
 		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_TIME_TO_LIVE, $event);
 	}
 
-	public function deleteExpiredTtl(int $roomId, int $jobId): void {
+	private function ttlSystemMessage(Room $room, string $userId, int $ttl, string $message): void {
+		$this->chatManager->addSystemMessage(
+			$room,
+			$room->getParticipant($userId)->getAttendee()->getActorType(),
+			$room->getParticipant($userId)->getAttendee()->getActorId(),
+			json_encode([
+				'message' => $message,
+				'parameters' => ['ttl' => $ttl]
+			]),
+			$this->timeFactory->getDateTime(),
+			false
+		);
+	}
+
+
+	public function deleteExpiredTtl(int $roomId, int $jobId): array {
 		$room = $this->manager->getRoomById($roomId);
 
 		$max = $this->getMaxDateTtl($room->getTimeToLive());
 		$min = $this->getMinDateTtl($jobId);
 
-		$this->deleteMessagesByRoomIdInDateInterval($roomId, $min, $max);
+		$ids = $this->getMessageIdsByRoomIdInDateInterval($roomId, $min, $max);
+		if (count($ids)) {
+			$this->reportDeletedMessagesIds($room, $ids);
+			$this->deleteMessagesByIds($ids);
+		}
+		return $ids;
 	}
 
 	private function getMaxDateTtl(int $ttl): \DateTime {
@@ -580,17 +606,52 @@ class RoomService {
 		return $lastChechedDateTime;
 	}
 
-	private function deleteMessagesByRoomIdInDateInterval(int $roomId, \DateTime $min, \DateTime $max): void {
+	private function getMessageIdsByRoomIdInDateInterval(int $roomId, \DateTime $min, \DateTime $max): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('id')
+			->from('comments')
+			->where(
+				$query->expr()->andX(
+					$query->expr()->eq('object_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)),
+					$query->expr()->eq('object_type', $query->createNamedParameter('chat')),
+					$query->expr()->gte('creation_timestamp', $query->createNamedParameter($min, IQueryBuilder::PARAM_DATE)),
+					$query->expr()->lte('creation_timestamp', $query->createNamedParameter($max, IQueryBuilder::PARAM_DATE))
+				)
+			);
+		$result = $query->executeQuery();
+		$ids = [];
+		while ($row = $result->fetch()) {
+			$ids[] = (int) $row['id'];
+		}
+		return $ids;
+	}
+
+	private function deleteMessagesByIds(array $ids): void {
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('comments')
 			->where(
-				$delete->expr()->andX(
-					$delete->expr()->eq('object_id', $delete->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)),
-					$delete->expr()->eq('object_type', $delete->createNamedParameter('chat')),
-					$delete->expr()->gte('creation_timestamp', $delete->createNamedParameter($min, IQueryBuilder::PARAM_DATE)),
-					$delete->expr()->lte('creation_timestamp', $delete->createNamedParameter($max, IQueryBuilder::PARAM_DATE))
+				$delete->expr()->orX(
+					$delete->expr()->in('id', $delete->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)),
+					$delete->expr()->in('parent_id', $delete->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)),
+					$delete->expr()->in('topmost_parent_id', $delete->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY))
 				)
 			);
 		$delete->executeStatement();
+	}
+
+	private function reportDeletedMessagesIds(Room $chat, array $ids): void {
+		foreach ($ids as $id) {
+			$this->chatManager->addSystemMessage(
+				$chat,
+				'ttl_expired',
+				'ttl_expired',
+				json_encode(['message' => 'message_deleted', 'parameters' => ['message' => $id]]),
+				$this->timeFactory->getDateTime(),
+				false,
+				null,
+				$id,
+				true
+			);
+		}
 	}
 }
