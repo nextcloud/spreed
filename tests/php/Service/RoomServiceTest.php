@@ -224,12 +224,15 @@ class RoomServiceTest extends TestCase {
 			$owner = $this->createMock(IUser::class);
 			$owner->method('getUID')
 				->willReturn($ownerId);
+			$owner->method('getDisplayName')
+				->willReturn($ownerId . '-display');
 
 			$this->participantService->expects($this->once())
 				->method('addUsers')
 				->with($room, [[
 					'actorType' => 'users',
 					'actorId' => $ownerId,
+					'displayName' => $ownerId . '-display',
 					'participantType' => Participant::OWNER,
 				]]);
 		} else {
