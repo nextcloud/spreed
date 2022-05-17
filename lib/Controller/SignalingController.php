@@ -746,9 +746,9 @@ class SignalingController extends OCSController {
 				'version' => '1.0',
 			],
 		];
-		$this->logger->debug('Pinged {numSessions} sessions in room {token}', [
+		$this->logger->debug('Pinged {numSessions} sessions {token}', [
 			'numSessions' => count($pingSessionIds),
-			'token' => $request['roomid'] ?? 'N/A',
+			'token' => !empty($request['roomid']) ? ('in room ' . $request['roomid']) : '',
 			'app' => 'spreed-hpb',
 		]);
 		return new DataResponse($response);
