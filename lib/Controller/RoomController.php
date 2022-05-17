@@ -1717,7 +1717,7 @@ class RoomController extends AEnvironmentAwareController {
 		if ($ttl < 0) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
-		$this->roomService->setTimeToLive($this->room, $this->userId, $ttl);
+		$this->roomService->setTimeToLive($this->room, $this->getParticipant(), $ttl);
 		return new DataResponse();
 	}
 }

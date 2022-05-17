@@ -25,6 +25,8 @@ namespace OCA\Talk\Tests\php\Service;
 
 use InvalidArgumentException;
 use OC\EventDispatcher\EventDispatcher;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -66,6 +68,8 @@ class RoomServiceTest extends TestCase {
 		parent::setUp();
 
 		$this->manager = $this->createMock(Manager::class);
+		$this->chatManager = $this->createMock(ChatManager::class);
+		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->shareManager = $this->createMock(IShareManager::class);
@@ -73,6 +77,8 @@ class RoomServiceTest extends TestCase {
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->service = new RoomService(
 			$this->manager,
+			$this->chatManager,
+			$this->commentsManager,
 			$this->participantService,
 			\OC::$server->get(IDBConnection::class),
 			$this->timeFactory,
@@ -337,6 +343,8 @@ class RoomServiceTest extends TestCase {
 
 		$service = new RoomService(
 			$this->manager,
+			$this->chatManager,
+			$this->commentsManager,
 			$this->participantService,
 			\OC::$server->get(IDBConnection::class),
 			$this->timeFactory,
