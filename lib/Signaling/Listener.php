@@ -281,12 +281,8 @@ class Listener {
 			$notifier = \OC::$server->get(BackendNotifier::class);
 
 			$sessionIds = [];
-
-			/** @var SessionService $sessionService */
-			$sessionService = \OC::$server->get(SessionService::class);
-			$sessions = $sessionService->getAllSessionsForAttendee($event->getParticipant()->getAttendee());
-			foreach ($sessions as $session) {
-				$sessionIds[] = $session->getSessionId();
+			if ($event->getParticipant()->getSession()) {
+				$sessionIds[] = $event->getParticipant()->getSession()->getSessionId();
 			}
 
 			if (!empty($sessionIds)) {
