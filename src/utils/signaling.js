@@ -977,7 +977,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 		}
 	}
 
-	if (!this.hasFeature('audio-video-permissions')) {
+	if (!this.hasFeature('audio-video-permissions') || !this.hasFeature('incall-all')) {
 		showError(
 			t('spreed', 'The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator.'),
 			{
@@ -1280,7 +1280,17 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
 	switch (data.event.type) {
 	case 'update':
-		this._trigger('usersChanged', [data.event.update.users || []])
+		if (data.event.update.all) {
+			// With `"all": true`
+			if (data.event.update.incall === 0) {
+				this._trigger('allUsersChangedInCallToDisconnected')
+			} else {
+				console.error('Unknown room participant event', data)
+			}
+		} else {
+			// With updated user list
+			this._trigger('usersChanged', [data.event.update.users || []])
+		}
 		this._trigger('participantListChanged')
 		break
 	case 'flags':
