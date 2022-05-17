@@ -113,6 +113,14 @@ class PollService {
 	}
 
 	/**
+	 * @param Poll $poll
+	 * @return Vote[]
+	 */
+	public function getVotes(Poll $poll): array {
+		return $this->voteMapper->findByPollId($poll->getId());
+	}
+
+	/**
 	 * @param Participant $participant
 	 * @param Poll $poll
 	 * @param int[] $optionIds Options the user voted for

@@ -65,7 +65,7 @@ class Vote extends Entity {
 	public function asArray(): array {
 		return [
 			'id' => $this->getId(),
-			'pollId' => $this->getPollId(),
+			// 'pollId' => $this->getPollId(),
 			// 'roomId' => $this->getRoomId(),
 			'actorType' => $this->getActorType(),
 			'actorId' => $this->getActorId(),

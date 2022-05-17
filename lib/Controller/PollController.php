@@ -117,18 +117,23 @@ class PollController extends AEnvironmentAwareController {
 	 * @RequireModeratorOrNoLobby
 	 *
 	 * @param int $pollId
+	 * @param bool $details
 	 * @return DataResponse
 	 */
-	public function showPoll(int $pollId): DataResponse {
+	public function showPoll(int $pollId, bool $details = false): DataResponse {
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
 		} catch (DoesNotExistException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$votes = $this->pollService->getVotesForActor($this->participant, $poll);
+		$votedSelf = $this->pollService->getVotesForActor($this->participant, $poll);
+		$detailedVotes = [];
+		if ($details && ($poll->getResultMode() === Poll::MODE_PUBLIC || $poll->getStatus() === Poll::STATUS_CLOSED)) {
+			$detailedVotes = $this->pollService->getVotes($poll);
+		}
 
-		return new DataResponse($this->renderPoll($poll, $votes));
+		return new DataResponse($this->renderPoll($poll, $votedSelf, $detailedVotes));
 	}
 
 	/**
@@ -159,9 +164,9 @@ class PollController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$votes = $this->pollService->votePoll($this->participant, $poll, $optionIds);
+		$votedSelf = $this->pollService->votePoll($this->participant, $poll, $optionIds);
 
-		return new DataResponse($this->renderPoll($poll, $votes));
+		return new DataResponse($this->renderPoll($poll, $votedSelf));
 	}
 
 	/**
@@ -190,20 +195,22 @@ class PollController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
-		$votes = $this->pollService->getVotesForActor($this->participant, $poll);
+		$votedSelf = $this->pollService->getVotesForActor($this->participant, $poll);
 
-		return new DataResponse($this->renderPoll($poll, $votes));
+		return new DataResponse($this->renderPoll($poll, $votedSelf));
 	}
 
-	protected function renderPoll(Poll $poll, array $votes = []): array {
+	protected function renderPoll(Poll $poll, array $votedSelf = [], array $detailedVotes = []): array {
 		$data = $poll->asArray();
 		unset($data['roomId']);
 
 		if ($poll->getResultMode() === Poll::MODE_HIDDEN && $poll->getStatus() === Poll::STATUS_OPEN) {
 			$data['votes'] = [];
+		} elseif (!empty($detailedVotes)) {
+			$data['details'] = array_map(static fn (Vote $vote) => $vote->asArray(), $detailedVotes);
 		}
 
-		$data['votedSelf'] = array_map(static fn (Vote $vote) => $vote->getOptionId(), $votes);
+		$data['votedSelf'] = array_map(static fn (Vote $vote) => $vote->getOptionId(), $votedSelf);
 
 		return $data;
 	}

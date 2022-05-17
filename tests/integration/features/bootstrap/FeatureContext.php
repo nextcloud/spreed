@@ -1554,24 +1554,27 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sees poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 * @Then /^user "([^"]*)" sees (poll details|poll) "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
+	 * @param string $details
 	 * @param string $question
 	 * @param string $identifier
 	 * @param string $statusCode
 	 * @param string $apiVersion
 	 * @param ?TableNode $formData
 	 */
-	public function userSeesPollInRoom($user, $question, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userSeesPollInRoom($user, $details, $question, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
+
+		$query = $details === 'poll details' ? '?details=1' : '';
+
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question] . $query);
 		$this->assertStatusCode($this->response, $statusCode);
 
 		$expected = $this->preparePollExpectedData($formData->getRowsHash());
 		$response = $this->getDataFromResponse($this->response);
-
-		Assert::assertEquals($expected, $response);
+		$this->assertPollEquals($expected, $response);
 	}
 
 	/**
@@ -1595,8 +1598,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$expected = $this->preparePollExpectedData($formData->getRowsHash());
 		$response = $this->getDataFromResponse($this->response);
-
-		Assert::assertEquals($expected, $response);
+		$this->assertPollEquals($expected, $response);
 	}
 
 	/**
@@ -1628,6 +1630,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$expected = $this->preparePollExpectedData($formData->getRowsHash());
 		$response = $this->getDataFromResponse($this->response);
+		$this->assertPollEquals($expected, $response);
+	}
+
+	protected function assertPollEquals(array $expected, array $response): void {
+		if (isset($expected['details'])) {
+			$response['details'] = array_map(static function (array $detail): array {
+				unset($detail['id']);
+				return $detail;
+			}, $response['details']);
+		}
 
 		Assert::assertEquals($expected, $response);
 	}
@@ -1653,7 +1665,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$expected['votedSelf'] = json_decode($expected['votedSelf'], true);
 		}
 
-		$expected['votes'] = isset($expected['votes']) ? json_decode($expected['votes'], true) : [];
+		if (isset($expected['votes'])) {
+			$expected['votes'] = json_decode($expected['votes'], true);
+		}
+		if (isset($expected['details'])) {
+			$expected['details'] = json_decode($expected['details'], true);
+		}
 		$expected['options'] = json_decode($expected['options'], true);
 
 		$result = preg_match('/POLL_ID\(([^)]+)\)/', $expected['id'], $matches);
