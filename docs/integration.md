@@ -1,6 +1,6 @@
 # Integration
 
-Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
+Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 15
 
 ## Get conversation for an internal file
 

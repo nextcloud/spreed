@@ -1,8 +1,8 @@
 # Signaling API
 
-* Base endpoint for API v1 is: 🏁 Removed with API v3
-* Base endpoint for API v2 is: 🏁 Removed with API v3
-* Base endpoint for API v3 is: `/ocs/v2.php/apps/spreed/api/v3`
+* Base endpoint for API v1 is: 🏁 Removed with API v3: Nextcloud 13 - 21
+* Base endpoint for API v2 is: 🏁 Removed with API v3: Nextcloud 21 only
+* Base endpoint for API v3 is: `/ocs/v2.php/apps/spreed/api/v3`: since Nextcloud 22
 
 ## Get signaling settings
 

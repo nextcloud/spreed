@@ -8,10 +8,10 @@ Group and public conversations can be used to host webinars. Those online meetin
 
 ## Base endpoint
 
-* API v1: 🏁 Removed with API v4
-* API v2: 🏁 Removed with API v4
-* API v3: 🏁 Removed with API v4
-* API v4: Base endpoint `/ocs/v2.php/apps/spreed/api/v4`
+* API v1: 🏁 Removed with API v4: Nextcloud 17 - 21
+* API v2: 🏁 Removed with API v4: Nextcloud 19 - 21
+* API v3: 🏁 Removed with API v4: Nextcloud 21 only
+* API v4: Base endpoint `/ocs/v2.php/apps/spreed/api/v4`: since Nextcloud 22
 
 ## Set lobby for a conversation
 

@@ -1,6 +1,6 @@
 # Chat API
 
-Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
+Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 13
 
 ## Receive chat messages of a conversation
 
