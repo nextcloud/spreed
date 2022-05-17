@@ -47,6 +47,28 @@
         + `404 Not Found` When the user did not join the conversation before
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator
 
+## Send call notification
+
+* Required capability: `send-call-notification`
+* Method: `POST`
+* Endpoint: `/call/{token}/ring/{attendeeId}`
+* Data:
+
+    field | type | Description
+    ---|---|---
+    `attendeeId` | int | The participant to notify
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the target participant is not a user (Guest, group, etc.)
+        + `400 Bad Request` When the target participant is already in the call
+        + `400 Bad Request` When the room has no call in process
+        + `400 Bad Request` When the actor is not in the call
+        + `403 Forbidden` When the current user is not a moderator
+        + `404 Not Found` When the conversation could not be found for the participant
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
+
 ## Update call flags
 
 * Method: `PUT`

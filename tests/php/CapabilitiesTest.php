@@ -108,6 +108,7 @@ class CapabilitiesTest extends TestCase {
 			'rich-object-delete',
 			'chat-permission',
 			'silent-send',
+			'send-call-notification',
 			'reactions',
 		];
 	}

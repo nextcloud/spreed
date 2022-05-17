@@ -164,6 +164,16 @@ const resendInvitations = async (token, { attendeeId = null }) => {
 }
 
 /**
+ * Sends call notification for the given attendee in the conversation.
+ *
+ * @param {string} token conversation token
+ * @param {number} attendeeId attendee id to target
+ */
+const sendCallNotification = async (token, { attendeeId }) => {
+	await axios.post(generateOcsUrl('apps/spreed/api/v4/call/{token}/ring/{attendeeId}', { token, attendeeId }))
+}
+
+/**
  * Grants all permissions to an attendee in a given conversation
  *
  * @param {string} token conversation token
@@ -222,6 +232,7 @@ export {
 	fetchParticipants,
 	setGuestUserName,
 	resendInvitations,
+	sendCallNotification,
 	grantAllPermissionsToParticipant,
 	removeAllPermissionsFromParticipant,
 	setPermissions,

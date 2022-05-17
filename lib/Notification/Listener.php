@@ -23,14 +23,18 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Notification;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Events\SendCallNotificationEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\EventDispatcher\IEventListener;
 use OCP\IDBConnection;
 use OCP\Notification\IManager;
 use OCP\IUser;
@@ -38,7 +42,7 @@ use OCP\IUserSession;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
 
-class Listener {
+class Listener implements IEventListener {
 	protected IDBConnection $connection;
 	protected IManager $notificationManager;
 	protected ParticipantService $participantsService;
@@ -120,7 +124,7 @@ class Listener {
 		$shouldFlush = $this->notificationManager->defer();
 		$dateTime = $this->timeFactory->getDateTime();
 		try {
-			$notification->setApp('spreed')
+			$notification->setApp(Application::APP_ID)
 				->setDateTime($dateTime)
 				->setObject('room', $room->getToken())
 				->setSubject('invitation', [
@@ -171,7 +175,7 @@ class Listener {
 
 		$notification = $this->notificationManager->createNotification();
 		try {
-			$notification->setApp('spreed')
+			$notification->setApp(Application::APP_ID)
 				->setUser($currentUser->getUID())
 				->setObject('room', $room->getToken())
 				->setSubject('invitation');
@@ -220,7 +224,7 @@ class Listener {
 		$dateTime = $this->timeFactory->getDateTime();
 		try {
 			// Remove all old notifications for this room
-			$notification->setApp('spreed')
+			$notification->setApp(Application::APP_ID)
 				->setObject('room', $room->getToken());
 			$this->notificationManager->markProcessed($notification);
 
@@ -278,7 +282,7 @@ class Listener {
 
 		$notification = $this->notificationManager->createNotification();
 		try {
-			$notification->setApp('spreed')
+			$notification->setApp(Application::APP_ID)
 				->setUser($currentUser->getUID())
 				->setObject('call', $room->getToken())
 				->setSubject('call');
@@ -286,6 +290,32 @@ class Listener {
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 			return;
+		}
+	}
+
+	public function handle(Event $event): void {
+		if ($event instanceof SendCallNotificationEvent) {
+			$this->sendCallNotification($event->getRoom(), $event->getActor()->getAttendee(), $event->getTarget()->getAttendee());
+		}
+	}
+
+	public function sendCallNotification(Room $room, Attendee $actor, Attendee $target): void {
+		try {
+			// Remove previous call notifications
+			$notification = $this->notificationManager->createNotification();
+			$notification->setApp(Application::APP_ID)
+				->setObject('call', $room->getToken())
+				->setUser($target->getActorId());
+			$this->notificationManager->markProcessed($notification);
+
+			$dateTime = $this->timeFactory->getDateTime();
+			$notification->setSubject('call', [
+				'callee' => $actor->getActorId(),
+			])
+				->setDateTime($dateTime);
+			$this->notificationManager->notify($notification);
+		} catch (\InvalidArgumentException $e) {
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
 		}
 	}
 }

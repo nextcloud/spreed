@@ -44,6 +44,7 @@ use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Events\SendCallNotificationEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
@@ -129,6 +130,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(RegisterOperationsEvent::class, RegisterOperationsListener::class);
 		$context->registerEventListener(AttendeesAddedEvent::class, SystemMessageListener::class);
 		$context->registerEventListener(AttendeesRemovedEvent::class, SystemMessageListener::class);
+		$context->registerEventListener(SendCallNotificationEvent::class, NotificationListener::class);
 
 		$context->registerEventListener(CircleDestroyedEvent::class, CircleDeletedListener::class);
 		$context->registerEventListener(AddingCircleMemberEvent::class, CircleMembershipListener::class);
