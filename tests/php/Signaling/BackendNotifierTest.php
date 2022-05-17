@@ -486,7 +486,7 @@ class BackendNotifierTest extends TestCase {
 
 	public function testRoomTypeChanged() {
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
-		$room->setType(Room::TYPE_GROUP);
+		$this->roomService->setType($room, Room::TYPE_GROUP);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'update',

@@ -299,6 +299,52 @@ class RoomService {
 
 	/**
 	 * @param Room $room
+	 * @param int $newType Currently it is only allowed to change between `Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
+	 * @param bool $allowSwitchingOneToOne
+	 * @return bool True when the change was valid, false otherwise
+	 */
+	public function setType(Room $room, int $newType, bool $allowSwitchingOneToOne = false): bool {
+		if ($newType === $room->getType()) {
+			return true;
+		}
+
+		if (!$allowSwitchingOneToOne && $room->getType() === Room::TYPE_ONE_TO_ONE) {
+			return false;
+		}
+
+		if (!in_array($newType, [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
+			return false;
+		}
+
+		$oldType = $room->getType();
+
+		$event = new ModifyRoomEvent($room, 'type', $newType, $oldType);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_TYPE_SET, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('type', $update->createNamedParameter($newType, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setType($newType);
+
+		if ($oldType === Room::TYPE_PUBLIC) {
+			// Kick all guests and users that were not invited
+			$delete = $this->db->getQueryBuilder();
+			$delete->delete('talk_attendees')
+				->where($delete->expr()->eq('room_id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+				->andWhere($delete->expr()->in('participant_type', $delete->createNamedParameter([Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], IQueryBuilder::PARAM_INT_ARRAY)));
+			$delete->executeStatement();
+		}
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_TYPE_SET, $event);
+
+		return true;
+	}
+
+	/**
+	 * @param Room $room
 	 * @param int $newState Currently it is only allowed to change between
 	 * 						`Room::READ_ONLY` and `Room::READ_WRITE`
 	 * 						Also it's only allowed on rooms of type
