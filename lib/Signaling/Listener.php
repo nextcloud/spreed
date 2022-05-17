@@ -318,7 +318,8 @@ class Listener {
 			$notifier->roomInCallChanged(
 				$event->getRoom(),
 				$event->getNewValue(),
-				$sessionIds
+				[],
+				true
 			);
 		});
 
