@@ -33,10 +33,9 @@
 			:disabled="startCallButtonDisabled || loading || blockCalls"
 			:type="startCallButtonType"
 			@click="handleClick">
-			<template #icon>
-				<span class="icon"
-					:class="startCallIcon" />
-			</template>
+			<Video slot="icon"
+				:size="20"
+				decorative />
 			{{ startCallLabel }}
 		</Button>
 		<Button v-else-if="showLeaveCallButton && !canEndForAll"
@@ -44,10 +43,9 @@
 			type="error"
 			:disabled="loading"
 			@click="leaveCall(false)">
-			<template #icon>
-				<span class="icon"
-					:class="leaveCallIcon" />
-			</template>
+			<VideoOff slot="icon"
+				   :size="20"
+				   decorative />
 			{{ leaveCallLabel }}
 		</Button>
 		<Actions v-else-if="showLeaveCallButton && canEndForAll"
@@ -87,6 +85,7 @@ import { loadState } from '@nextcloud/initial-state'
 import BrowserStorage from '../../services/BrowserStorage'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import MenuDown from 'vue-material-design-icons/MenuDown'
 import Button from '@nextcloud/vue/dist/Components/Button'
@@ -101,6 +100,7 @@ export default {
 	components: {
 		Actions,
 		ActionButton,
+		Video,
 		VideoOff,
 		MenuDown,
 		Button,
