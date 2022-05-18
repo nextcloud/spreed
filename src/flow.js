@@ -20,7 +20,7 @@
  *
  */
 
-import FlowPostToConversation from './views/FlowPostToConversation'
+import FlowPostToConversation from './views/FlowPostToConversation.vue'
 
 window.OCA.WorkflowEngine.registerOperator({
 	id: 'OCA\\Talk\\Flow\\Operation',

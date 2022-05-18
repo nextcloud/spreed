@@ -22,7 +22,7 @@
 import Vue from 'vue'
 import {
 	getReactionsDetails,
-} from '../services/messagesService'
+} from '../services/messagesService.js'
 
 const state = {
 	/**

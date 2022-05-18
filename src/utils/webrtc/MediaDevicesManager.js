@@ -19,8 +19,8 @@
  *
  */
 
-import BrowserStorage from '../../services/BrowserStorage'
-import EmitterMixin from '../EmitterMixin'
+import BrowserStorage from '../../services/BrowserStorage.js'
+import EmitterMixin from '../EmitterMixin.js'
 
 /**
  * Special string to set null device ids in local storage (as only strings are

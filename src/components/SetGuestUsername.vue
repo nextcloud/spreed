@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { setGuestUserName } from '../services/participantsService'
+import { setGuestUserName } from '../services/participantsService.js'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import Pencil from 'vue-material-design-icons/Pencil'
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'

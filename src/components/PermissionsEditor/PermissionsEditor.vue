@@ -76,7 +76,7 @@
 
 <script>
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
-import { PARTICIPANT } from '../../constants'
+import { PARTICIPANT } from '../../constants.js'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import Button from '@nextcloud/vue/dist/Components/Button'
 

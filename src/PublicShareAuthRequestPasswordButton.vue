@@ -38,8 +38,8 @@
 </template>
 
 <script>
-import { getPublicShareAuthConversationToken } from './services/publicShareAuthService'
-import browserCheck from './mixins/browserCheck'
+import { getPublicShareAuthConversationToken } from './services/publicShareAuthService.js'
+import browserCheck from './mixins/browserCheck.js'
 import '@nextcloud/dialogs/styles/toast.scss'
 
 export default {

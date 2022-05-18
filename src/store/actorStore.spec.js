@@ -1,8 +1,8 @@
 import { createLocalVue } from '@vue/test-utils'
-import actorStore from './actorStore'
+import actorStore from './actorStore.js'
 import Vuex from 'vuex'
 import { cloneDeep } from 'lodash'
-import { PARTICIPANT } from '../constants'
+import { PARTICIPANT } from '../constants.js'
 
 describe('actorStore', () => {
 	let localVue = null
@@ -11,6 +11,7 @@ describe('actorStore', () => {
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
+		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(cloneDeep(actorStore))
 	})
 

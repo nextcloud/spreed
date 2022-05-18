@@ -40,18 +40,18 @@
 </template>
 
 <script>
-import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
-import SearchBox from '../../LeftSidebar/SearchBox/SearchBox'
+import CurrentParticipants from './CurrentParticipants/CurrentParticipants.vue'
+import SearchBox from '../../LeftSidebar/SearchBox/SearchBox.vue'
 import debounce from 'debounce'
-import { EventBus } from '../../../services/EventBus'
-import { searchPossibleConversations } from '../../../services/conversationsService'
-import { addParticipant } from '../../../services/participantsService'
+import { EventBus } from '../../../services/EventBus.js'
+import { searchPossibleConversations } from '../../../services/conversationsService.js'
+import { addParticipant } from '../../../services/participantsService.js'
 import { loadState } from '@nextcloud/initial-state'
-import CancelableRequest from '../../../utils/cancelableRequest'
+import CancelableRequest from '../../../utils/cancelableRequest.js'
 import { showError } from '@nextcloud/dialogs'
 import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
-import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults'
-import getParticipants from '../../../mixins/getParticipants'
+import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults.vue'
+import getParticipants from '../../../mixins/getParticipants.js'
 
 export default {
 	name: 'ParticipantsTab',

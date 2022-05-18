@@ -50,7 +50,7 @@
 <script>
 import moment from '@nextcloud/moment'
 import RichText from '@juliushaertl/vue-richtext'
-import SetGuestUsername from './SetGuestUsername'
+import SetGuestUsername from './SetGuestUsername.vue'
 
 export default {
 

@@ -20,9 +20,9 @@
  *
  */
 
-import TrackToStream from '../utils/media/pipeline/TrackToStream'
-import VirtualBackground from '../utils/media/pipeline/VirtualBackground'
-import { mediaDevicesManager } from '../utils/webrtc/index'
+import TrackToStream from '../utils/media/pipeline/TrackToStream.js'
+import VirtualBackground from '../utils/media/pipeline/VirtualBackground.js'
+import { mediaDevicesManager } from '../utils/webrtc/index.js'
 import attachMediaStream from 'attachmediastream'
 import hark from 'hark'
 

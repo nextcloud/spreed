@@ -25,7 +25,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 import {
 	signalingJoinCall,
 	signalingLeaveCall,
-} from '../utils/webrtc/index'
+} from '../utils/webrtc/index.js'
 
 /**
  * Join a call as participant

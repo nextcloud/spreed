@@ -19,7 +19,7 @@
  *
  */
 
-import { PARTICIPANT, WEBINAR } from '../constants'
+import { PARTICIPANT, WEBINAR } from '../constants.js'
 
 /**
  * Mixin to check whether the current participant is waiting in the lobby or

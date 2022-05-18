@@ -19,7 +19,7 @@
  *
  */
 
-import TrackSinkSource from './TrackSinkSource'
+import TrackSinkSource from './TrackSinkSource.js'
 
 /**
  * Processor node to enable or disable its track.

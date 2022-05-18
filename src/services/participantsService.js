@@ -27,8 +27,8 @@ import {
 import {
 	signalingJoinConversation,
 	signalingLeaveConversation,
-} from '../utils/webrtc/index'
-import { PARTICIPANT } from '../constants'
+} from '../utils/webrtc/index.js'
+import { PARTICIPANT } from '../constants.js'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS
 

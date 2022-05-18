@@ -1,5 +1,6 @@
+/* eslint-disable import/no-named-as-default-member */
 import { createLocalVue } from '@vue/test-utils'
-import storeConfig from './storeConfig'
+import storeConfig from './storeConfig.js'
 import Vuex from 'vuex'
 import { cloneDeep } from 'lodash'
 import {
@@ -7,7 +8,7 @@ import {
 	WEBINAR,
 	PARTICIPANT,
 	ATTENDEE,
-} from '../constants'
+} from '../constants.js'
 import {
 	makePublic,
 	makePrivate,
@@ -26,7 +27,7 @@ import {
 	deleteConversation,
 	setConversationPermissions,
 	setCallPermissions,
-} from '../services/conversationsService'
+} from '../services/conversationsService.js'
 
 jest.mock('../services/conversationsService', () => ({
 	makePublic: jest.fn(),

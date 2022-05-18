@@ -22,7 +22,7 @@
 import {
 	QUALITY,
 	VideoConstrainer,
-} from './VideoConstrainer'
+} from './VideoConstrainer.js'
 
 /**
  * Helper to adjust the quality of the sent video based on the current call

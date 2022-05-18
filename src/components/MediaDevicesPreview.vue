@@ -89,8 +89,8 @@ import AlertCircle from 'vue-material-design-icons/AlertCircle'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import VideoOff from 'vue-material-design-icons/VideoOff'
-import MediaDevicesSelector from './MediaDevicesSelector'
-import { devices } from '../mixins/devices'
+import MediaDevicesSelector from './MediaDevicesSelector.vue'
+import { devices } from '../mixins/devices.js'
 
 export default {
 

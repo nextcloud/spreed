@@ -19,9 +19,9 @@
  *
  */
 
-import EmitterMixin from '../../EmitterMixin'
+import EmitterMixin from '../../EmitterMixin.js'
 
-import CallParticipantModel from './CallParticipantModel'
+import CallParticipantModel from './CallParticipantModel.js'
 
 /**
  *

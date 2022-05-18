@@ -58,9 +58,9 @@ components.
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import RichText from '@juliushaertl/vue-richtext'
-import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview'
-import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter'
-import { EventBus } from '../services/EventBus'
+import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
+import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter.vue'
+import { EventBus } from '../services/EventBus.js'
 
 export default {
 	name: 'Quote',

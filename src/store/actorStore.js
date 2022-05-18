@@ -27,7 +27,7 @@
  * If an as no userId, they are a guest and identified by actorType + sessionId.
  */
 
-import { PARTICIPANT } from '../constants'
+import { PARTICIPANT } from '../constants.js'
 
 const state = {
 	userId: null,

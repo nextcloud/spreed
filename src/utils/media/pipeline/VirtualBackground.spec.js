@@ -19,7 +19,7 @@
  *
  */
 
-import VirtualBackground from './VirtualBackground'
+import VirtualBackground from './VirtualBackground.js'
 
 /**
  * Helper function to create MediaStreamTrack mocks with just the attributes and

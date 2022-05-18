@@ -41,7 +41,7 @@ import Vue from 'vue'
 				container.id = 'spreed-room-select'
 				const body = document.getElementById('body-user')
 				body.appendChild(container)
-				const RoomSelector = () => import('./views/RoomSelector')
+				const RoomSelector = () => import('./views/RoomSelector.vue')
 				const ComponentVM = new Vue({
 					render: h => h(RoomSelector, {
 						props: {

@@ -25,8 +25,8 @@ import { generateFilePath, generateUrl } from '@nextcloud/router'
 import { getRequestToken } from '@nextcloud/auth'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import { postRichObjectToConversation } from './services/messagesService'
-import RoomSelector from './views/RoomSelector'
+import { postRichObjectToConversation } from './services/messagesService.js'
+import RoomSelector from './views/RoomSelector.vue'
 
 (function(OC, OCA, t, n) {
 	/**

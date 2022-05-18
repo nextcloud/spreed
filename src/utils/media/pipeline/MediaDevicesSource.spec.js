@@ -19,9 +19,9 @@
  *
  */
 
-import { mediaDevicesManager } from '../../webrtc/index'
+import { mediaDevicesManager } from '../../webrtc/index.js'
 
-import MediaDevicesSource from './MediaDevicesSource'
+import MediaDevicesSource from './MediaDevicesSource.js'
 
 /**
  * Helper function to create MediaStreamTrack mocks with just the attributes and

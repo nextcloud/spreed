@@ -2,7 +2,7 @@ import Vuex from 'vuex'
 import { cloneDeep } from 'lodash'
 import { createLocalVue } from '@vue/test-utils'
 
-import guestNameStore from './guestNameStore'
+import guestNameStore from './guestNameStore.js'
 
 describe('guestNameStore', () => {
 	let localVue = null
@@ -12,6 +12,7 @@ describe('guestNameStore', () => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 
+		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(cloneDeep(guestNameStore))
 	})
 

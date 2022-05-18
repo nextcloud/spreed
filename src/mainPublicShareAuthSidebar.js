@@ -20,13 +20,13 @@
 
 import Vue from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
-import PublicShareAuthRequestPasswordButton from './PublicShareAuthRequestPasswordButton'
-import PublicShareAuthSidebar from './PublicShareAuthSidebar'
-import './init'
+import PublicShareAuthRequestPasswordButton from './PublicShareAuthRequestPasswordButton.vue'
+import PublicShareAuthSidebar from './PublicShareAuthSidebar.vue'
+import './init.js'
 
 // Store
 import Vuex from 'vuex'
-import store from './store'
+import store from './store/index.js'
 
 // Utils
 import { generateFilePath } from '@nextcloud/router'

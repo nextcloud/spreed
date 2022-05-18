@@ -21,14 +21,14 @@
  */
 
 import Vue from 'vue'
-import client from '../services/DavClient'
+import client from '../services/DavClient.js'
 import { showError } from '@nextcloud/dialogs'
-import fromStateOr from './helper'
-import { findUniquePath, getFileExtension } from '../utils/fileUpload'
+import fromStateOr from './helper.js'
+import { findUniquePath, getFileExtension } from '../utils/fileUpload.js'
 import moment from '@nextcloud/moment'
-import { EventBus } from '../services/EventBus'
-import { shareFile } from '../services/filesSharingServices'
-import { setAttachmentFolder } from '../services/settingsService'
+import { EventBus } from '../services/EventBus.js'
+import { shareFile } from '../services/filesSharingServices.js'
+import { setAttachmentFolder } from '../services/settingsService.js'
 
 const state = {
 	attachmentFolder: fromStateOr('spreed', 'attachment_folder', ''),

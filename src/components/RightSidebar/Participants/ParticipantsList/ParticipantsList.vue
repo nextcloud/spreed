@@ -38,8 +38,8 @@
 
 <script>
 
-import Participant from './Participant/Participant'
-import LoadingParticipant from './Participant/LoadingParticipant'
+import Participant from './Participant/Participant.vue'
+import LoadingParticipant from './Participant/LoadingParticipant.vue'
 
 export default {
 	name: 'ParticipantsList',

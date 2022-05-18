@@ -93,13 +93,13 @@
 
 <script>
 import At from 'vue-at'
-import UserStatus from '../../../mixins/userStatus'
-import VueAtReparenter from '../../../mixins/vueAtReparenter'
-import { EventBus } from '../../../services/EventBus'
-import { searchPossibleMentions } from '../../../services/mentionsService'
-import { fetchClipboardContent } from '../../../utils/clipboard'
+import UserStatus from '../../../mixins/userStatus.js'
+import VueAtReparenter from '../../../mixins/vueAtReparenter.js'
+import { EventBus } from '../../../services/EventBus.js'
+import { searchPossibleMentions } from '../../../services/mentionsService.js'
+import { fetchClipboardContent } from '../../../utils/clipboard.js'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import Mention from '../../MessagesList/MessagesGroup/Message/MessagePart/Mention'
+import Mention from '../../MessagesList/MessagesGroup/Message/MessagePart/Mention.vue'
 import escapeHtml from 'escape-html'
 import debounce from 'debounce'
 

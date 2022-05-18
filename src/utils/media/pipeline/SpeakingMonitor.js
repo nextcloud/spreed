@@ -20,8 +20,8 @@
  */
 
 import hark from 'hark'
-import EmitterMixin from '../../EmitterMixin'
-import TrackSink from './TrackSink'
+import EmitterMixin from '../../EmitterMixin.js'
+import TrackSink from './TrackSink.js'
 
 /**
  * Sink node to detect sound in its input track and emit "speaking" events.

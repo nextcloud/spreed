@@ -33,13 +33,13 @@
 </template>
 
 <script>
-import CallView from './components/CallView/CallView'
-import TopBar from './components/TopBar/TopBar'
+import CallView from './components/CallView/CallView.vue'
+import TopBar from './components/TopBar/TopBar.vue'
 import PreventUnload from 'vue-prevent-unload'
-import sessionIssueHandler from './mixins/sessionIssueHandler'
-import isInCall from './mixins/isInCall'
-import participant from './mixins/participant'
-import talkHashCheck from './mixins/talkHashCheck'
+import sessionIssueHandler from './mixins/sessionIssueHandler.js'
+import isInCall from './mixins/isInCall.js'
+import participant from './mixins/participant.js'
+import talkHashCheck from './mixins/talkHashCheck.js'
 import '@nextcloud/dialogs/styles/toast.scss'
 
 export default {

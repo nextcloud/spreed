@@ -122,21 +122,21 @@
 </template>
 
 <script>
-import AdvancedInput from './AdvancedInput/AdvancedInput'
+import AdvancedInput from './AdvancedInput/AdvancedInput.vue'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { getCapabilities } from '@nextcloud/capabilities'
-import Quote from '../Quote'
+import Quote from '../Quote.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
-import { EventBus } from '../../services/EventBus'
-import { shareFile } from '../../services/filesSharingServices'
-import { CONVERSATION, PARTICIPANT } from '../../constants'
+import { EventBus } from '../../services/EventBus.js'
+import { shareFile } from '../../services/filesSharingServices.js'
+import { CONVERSATION, PARTICIPANT } from '../../constants.js'
 import Paperclip from 'vue-material-design-icons/Paperclip'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline'
 import Send from 'vue-material-design-icons/Send'
-import AudioRecorder from './AudioRecorder/AudioRecorder'
+import AudioRecorder from './AudioRecorder/AudioRecorder.vue'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)

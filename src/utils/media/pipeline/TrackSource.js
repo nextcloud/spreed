@@ -19,8 +19,8 @@
  *
  */
 
-import EmitterMixin from '../../EmitterMixin'
-import TrackSourceMixin from './TrackSourceMixin'
+import EmitterMixin from '../../EmitterMixin.js'
+import TrackSourceMixin from './TrackSourceMixin.js'
 
 /**
  * Base class for source nodes of tracks.

@@ -51,9 +51,9 @@
 </template>
 
 <script>
-import MessagesList from './MessagesList/MessagesList'
-import NewMessageForm from './NewMessageForm/NewMessageForm'
-import { CONVERSATION } from '../constants'
+import MessagesList from './MessagesList/MessagesList.vue'
+import NewMessageForm from './NewMessageForm/NewMessageForm.vue'
+import { CONVERSATION } from '../constants.js'
 
 export default {
 

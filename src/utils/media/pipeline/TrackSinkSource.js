@@ -19,9 +19,9 @@
  *
  */
 
-import EmitterMixin from '../../EmitterMixin'
-import TrackSinkMixin from './TrackSinkMixin'
-import TrackSourceMixin from './TrackSourceMixin'
+import EmitterMixin from '../../EmitterMixin.js'
+import TrackSinkMixin from './TrackSinkMixin.js'
+import TrackSourceMixin from './TrackSourceMixin.js'
 
 /**
  * Base class for nodes that act both as a sink and as a source (a processing

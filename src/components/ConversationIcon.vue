@@ -50,7 +50,7 @@
 
 <script>
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import { CONVERSATION } from '../constants'
+import { CONVERSATION } from '../constants.js'
 
 export default {
 	name: 'ConversationIcon',

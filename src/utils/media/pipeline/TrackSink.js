@@ -19,7 +19,7 @@
  *
  */
 
-import TrackSinkMixin from './TrackSinkMixin'
+import TrackSinkMixin from './TrackSinkMixin.js'
 
 /**
  * Base class for sink nodes of tracks.

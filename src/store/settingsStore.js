@@ -18,9 +18,9 @@
  *
  */
 
-import fromStateOr from './helper'
-import { setReadStatusPrivacy } from '../services/settingsService'
-import { PRIVACY } from '../constants'
+import fromStateOr from './helper.js'
+import { setReadStatusPrivacy } from '../services/settingsService.js'
+import { PRIVACY } from '../constants.js'
 
 const state = {
 	readStatusPrivacy: fromStateOr('spreed', 'read_status_privacy', PRIVACY.PRIVATE),

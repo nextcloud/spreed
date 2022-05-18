@@ -21,9 +21,9 @@
 
 import UAParser from 'ua-parser-js'
 
-import { mediaDevicesManager } from '../../webrtc/index'
+import { mediaDevicesManager } from '../../webrtc/index.js'
 
-import TrackSource from './TrackSource'
+import TrackSource from './TrackSource.js'
 
 /**
  * Source node to get audio and video tracks from MediaDevicesManager.

@@ -1,11 +1,11 @@
 import Vuex from 'vuex'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../../../../../store/storeConfig'
-import { PARTICIPANT, ATTENDEE } from '../../../../../../constants'
+import storeConfig from '../../../../../../store/storeConfig.js'
+import { PARTICIPANT, ATTENDEE } from '../../../../../../constants.js'
 
 import PermissionsEditor from '../../../../../PermissionsEditor/PermissionsEditor.vue'
-import ParticipantPermissionsEditor from './ParticipantPermissionsEditor'
+import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
 
 describe('ParticipantPermissionsEditor.vue', () => {
 	let conversation
@@ -44,6 +44,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 		testStoreConfig.modules.conversationsStore.getters.conversation = () => conversationGetterMock
 		// Add a mock function for the action and see if its called and with which arguments
 		testStoreConfig.modules.participantsStore.actions.setPermissions = jest.fn()
+		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(testStoreConfig)
 
 	})

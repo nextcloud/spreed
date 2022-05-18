@@ -40,8 +40,9 @@ import {
 	setNotificationCalls,
 	setConversationPermissions,
 	setCallPermissions,
-} from '../services/conversationsService'
+} from '../services/conversationsService.js'
 import { getCurrentUser } from '@nextcloud/auth'
+// eslint-disable-next-line import/extensions
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../constants'
 
 const DUMMY_CONVERSATION = {
