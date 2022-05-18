@@ -42,7 +42,7 @@ import RoomSelector from './views/RoomSelector'
 			})
 			const messageId = response.data.ocs.data.id
 			const targetUrl = generateUrl('/call/{token}#message_{messageId}', { token, messageId })
-			showSuccess(t('spreed', 'Deck card has been posted to the selected <a href="{link}">conversation</a>.', {
+			showSuccess(t('spreed', 'Deck card has been posted to the selected <a href="{link}">conversation</a>', {
 				link: targetUrl,
 			}), {
 				isHTML: true,
@@ -52,7 +52,7 @@ import RoomSelector from './views/RoomSelector'
 			if (exception.response?.status === 403) {
 				showError(t('spreed', 'No permission to post messages in this conversation'))
 			} else {
-				showError(t('spreed', 'An error occurred while posting deck card to conversation.'))
+				showError(t('spreed', 'An error occurred while posting deck card to conversation'))
 			}
 		}
 	}
