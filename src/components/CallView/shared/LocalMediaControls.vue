@@ -208,6 +208,12 @@
 						title="" />
 					{{ toggleVirtualBackgroundButtonLabel }}
 				</ActionButton>
+				<ActionButton icon="icon-settings"
+					:close-after-click="true"
+					@click="showSettings">
+					{{ t('spreed', 'Devices settings') }}
+				</ActionButton>
+				<ActionSeparator />
 				<!-- Call layout switcher -->
 				<ActionButton v-if="isInCall"
 					:icon="changeViewIconClass"
@@ -215,11 +221,49 @@
 					@click="changeView">
 					{{ changeViewText }}
 				</ActionButton>
+				<!-- sidebar toggle -->
+				<ActionButton :icon="iconFullscreen"
+					:aria-label="t('spreed', 'Toggle fullscreen')"
+					:close-after-click="true"
+					@click="toggleFullscreen">
+					{{ labelFullscreen }}
+				</ActionButton>
+				<ActionSeparator v-if="showModerationOptions" />
+				<ActionLink v-if="isFileConversation"
+					icon="icon-text"
+					:href="linkToFile">
+					{{ t('spreed', 'Go to file') }}
+				</ActionLink>
+				<template v-if="showModerationOptions">
+					<ActionButton :close-after-click="true"
+						icon="icon-rename"
+						@click="handleRenameConversation">
+						{{ t('spreed', 'Rename conversation') }}
+					</ActionButton>
+				</template>
 				<ActionSeparator />
+				<ActionButton v-if="!isOneToOneConversation"
+					icon="icon-clippy"
+					:close-after-click="true"
+					@click="handleCopyLink">
+					{{ t('spreed', 'Copy link') }}
+				</ActionButton>
+				<template v-if="showModerationOptions && canFullModerate && isInCall">
+					<ActionSeparator />
+					<ActionButton :close-after-click="true"
+						@click="forceMuteOthers">
+						<MicrophoneOff slot="icon"
+							:size="20"
+							decorative
+							title="" />
+						{{ t('spreed', 'Mute others') }}
+					</ActionButton>
+				</template>
+				<ActionSeparator v-if="showModerationOptions" />
 				<ActionButton icon="icon-settings"
 					:close-after-click="true"
-					@click="showSettings">
-					{{ t('spreed', 'Devices settings') }}
+					@click="openConversationSettings">
+					{{ t('spreed', 'Conversation settings') }}
 				</ActionButton>
 			</Actions>
 		</div>
@@ -227,9 +271,9 @@
 </template>
 
 <script>
+import { showError, showSuccess, showMessage } from '@nextcloud/dialogs'
 import escapeHtml from 'escape-html'
 import { emit } from '@nextcloud/event-bus'
-import { showMessage } from '@nextcloud/dialogs'
 import CancelPresentation from '../../missingMaterialDesignIcons/CancelPresentation'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
 import Microphone from 'vue-material-design-icons/Microphone'
@@ -242,15 +286,17 @@ import Blur from 'vue-material-design-icons/Blur'
 import BlurOff from 'vue-material-design-icons/BlurOff'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import { PARTICIPANT } from '../../../constants'
+import { CONVERSATION, PARTICIPANT } from '../../../constants'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner'
 import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import { callAnalyzer } from '../../../utils/webrtc/index'
+import { callAnalyzer, callParticipantCollection } from '../../../utils/webrtc/index'
 import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer'
 import isInCall from '../../../mixins/isInCall'
+import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
+import { generateUrl } from '@nextcloud/router'
 
 export default {
 
@@ -261,6 +307,7 @@ export default {
 	},
 	components: {
 		NetworkStrength2Alert,
+		ActionLink,
 		Popover,
 		Actions,
 		ActionSeparator,
@@ -327,6 +374,52 @@ export default {
 	},
 
 	computed: {
+		canFullModerate() {
+			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
+		},
+
+		canModerate() {
+			return this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
+		},
+
+		linkToFile() {
+			if (this.isFileConversation) {
+				return window.location.protocol + '//' + window.location.host + generateUrl('/f/' + this.conversation.objectId)
+			} else {
+				return ''
+			}
+		},
+
+		isOneToOneConversation() {
+			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+		},
+
+		isFileConversation() {
+			return this.conversation.objectType === 'file' && this.conversation.objectId
+		},
+
+		showModerationOptions() {
+			return !this.isOneToOneConversation && this.canModerate
+		},
+
+		isFullscreen() {
+			return this.$store.getters.isFullscreen()
+		},
+
+		iconFullscreen() {
+			if (this.isInCall) {
+				return 'forced-white icon-fullscreen'
+			}
+			return 'icon-fullscreen'
+		},
+
+		labelFullscreen() {
+			if (this.isFullscreen) {
+				return t('spreed', 'Exit fullscreen (F)')
+			}
+			return t('spreed', 'Fullscreen (F)')
+		},
+
 		raiseHandButtonLabel() {
 			if (!this.model.attributes.raisedHand.state) {
 				return t('spreed', 'Raise hand (R)')
@@ -681,6 +774,71 @@ export default {
 	},
 
 	methods: {
+		openConversationSettings() {
+			emit('show-conversation-settings', { token: this.token })
+		},
+
+		forceMuteOthers() {
+			callParticipantCollection.callParticipantModels.forEach(callParticipantModel => {
+				callParticipantModel.forceMute()
+			})
+		},
+
+		handleRenameConversation() {
+			this.$store.dispatch('isRenamingConversation', true)
+			this.$store.dispatch('showSidebar')
+		},
+
+		async handleCopyLink() {
+			try {
+				await this.$copyText(this.linkToConversation)
+				showSuccess(t('spreed', 'Conversation link copied to clipboard.'))
+			} catch (error) {
+				showError(t('spreed', 'The link could not be copied.'))
+			}
+		},
+
+		toggleFullscreen() {
+			if (this.isFullscreen) {
+				this.disableFullscreen()
+				this.$store.dispatch('setIsFullscreen', false)
+			} else {
+				this.enableFullscreen()
+				this.$store.dispatch('setIsFullscreen', true)
+			}
+		},
+		fullScreenChanged() {
+			this.$store.dispatch(
+				'setIsFullscreen',
+				document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement
+			)
+		},
+
+		enableFullscreen() {
+			const fullscreenElem = document.getElementById('content-vue')
+
+			if (fullscreenElem.requestFullscreen) {
+				fullscreenElem.requestFullscreen()
+			} else if (fullscreenElem.webkitRequestFullscreen) {
+				fullscreenElem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
+			} else if (fullscreenElem.mozRequestFullScreen) {
+				fullscreenElem.mozRequestFullScreen()
+			} else if (fullscreenElem.msRequestFullscreen) {
+				fullscreenElem.msRequestFullscreen()
+			}
+		},
+
+		disableFullscreen() {
+			if (document.exitFullscreen) {
+				document.exitFullscreen()
+			} else if (document.webkitExitFullscreen) {
+				document.webkitExitFullscreen()
+			} else if (document.mozCancelFullScreen) {
+				document.mozCancelFullScreen()
+			} else if (document.msExitFullscreen) {
+				document.msExitFullscreen()
+			}
+		},
 		updateVolumeMeter() {
 			if (!this.mounted) {
 				return

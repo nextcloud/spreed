@@ -64,64 +64,9 @@
 			<CallButton class="top-bar__button" />
 
 			<!-- Vertical line -->
-			<div v-if="!isSidebar && isInCall"
+			<div v-if="showOpenSidebarButton && !isSidebar && isInCall"
 				class="top-bar__separator" />
 
-			<!-- sidebar toggle -->
-			<Actions v-if="!isSidebar"
-				v-shortkey.once="['f']"
-				class="top-bar__button"
-				menu-align="right"
-				:aria-label="t('spreed', 'Conversation actions')"
-				:container="container"
-				@shortkey.native="toggleFullscreen">
-				<Cog slot="icon"
-					:size="20"
-					decorative
-					title="" />
-				<ActionButton :icon="iconFullscreen"
-					:aria-label="t('spreed', 'Toggle fullscreen')"
-					:close-after-click="true"
-					@click="toggleFullscreen">
-					{{ labelFullscreen }}
-				</ActionButton>
-				<ActionSeparator v-if="showModerationOptions" />
-				<ActionLink v-if="isFileConversation"
-					icon="icon-text"
-					:href="linkToFile">
-					{{ t('spreed', 'Go to file') }}
-				</ActionLink>
-				<template v-if="showModerationOptions">
-					<ActionButton :close-after-click="true"
-						icon="icon-rename"
-						@click="handleRenameConversation">
-						{{ t('spreed', 'Rename conversation') }}
-					</ActionButton>
-				</template>
-				<ActionButton v-if="!isOneToOneConversation"
-					icon="icon-clippy"
-					:close-after-click="true"
-					@click="handleCopyLink">
-					{{ t('spreed', 'Copy link') }}
-				</ActionButton>
-				<template v-if="showModerationOptions && canFullModerate && isInCall">
-					<ActionSeparator />
-					<ActionButton :close-after-click="true"
-						@click="forceMuteOthers">
-						<MicrophoneOff slot="icon"
-							:size="20"
-							decorative
-							title="" />
-						{{ t('spreed', 'Mute others') }}
-					</ActionButton>
-				</template>
-				<ActionSeparator v-if="showModerationOptions" />
-				<ActionButton icon="icon-settings"
-					:close-after-click="true"
-					@click="openConversationSettings">
-					{{ t('spreed', 'Conversation settings') }}
-				</ActionButton>
-			</Actions>
 			<Actions v-if="showOpenSidebarButton"
 				class="top-bar__button"
 				close-after-click="true"
@@ -150,26 +95,22 @@
 </template>
 
 <script>
-import { showError, showSuccess, showMessage } from '@nextcloud/dialogs'
+import { showMessage } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble'
 import CallButton from './CallButton'
 import BrowserStorage from '../../services/BrowserStorage'
-import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
-import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import MessageText from 'vue-material-design-icons/MessageText'
-import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
-import { CONVERSATION, PARTICIPANT } from '../../constants'
+import { CONVERSATION } from '../../constants'
 import { generateUrl } from '@nextcloud/router'
-import { callParticipantCollection, localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index'
+import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index'
 import { emit } from '@nextcloud/event-bus'
 import ConversationIcon from '../ConversationIcon'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor'
 import userStatus from '../../mixins/userStatus'
 import LocalMediaControls from '../CallView/shared/LocalMediaControls'
-import Cog from 'vue-material-design-icons/Cog'
 import getParticipants from '../../mixins/getParticipants'
 
 export default {
@@ -182,15 +123,11 @@ export default {
 	components: {
 		ActionButton,
 		Actions,
-		ActionLink,
 		CounterBubble,
 		CallButton,
-		ActionSeparator,
 		MessageText,
-		MicrophoneOff,
 		ConversationIcon,
 		LocalMediaControls,
-		Cog,
 	},
 
 	mixins: [
@@ -228,24 +165,6 @@ export default {
 			return this.$store.getters.getMainContainerSelector()
 		},
 
-		isFullscreen() {
-			return this.$store.getters.isFullscreen()
-		},
-
-		iconFullscreen() {
-			if (this.isInCall) {
-				return 'forced-white icon-fullscreen'
-			}
-			return 'icon-fullscreen'
-		},
-
-		labelFullscreen() {
-			if (this.isFullscreen) {
-				return t('spreed', 'Exit fullscreen (F)')
-			}
-			return t('spreed', 'Fullscreen (F)')
-		},
-
 		iconMenuPeople() {
 			if (this.isInCall) {
 				return 'forced-white icon-menu-people'
@@ -257,36 +176,12 @@ export default {
 			return !this.$store.getters.getSidebarStatus
 		},
 
-		isFileConversation() {
-			return this.conversation.objectType === 'file' && this.conversation.objectId
-		},
-
 		isOneToOneConversation() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
 
-		linkToFile() {
-			if (this.isFileConversation) {
-				return window.location.protocol + '//' + window.location.host + generateUrl('/f/' + this.conversation.objectId)
-			} else {
-				return ''
-			}
-		},
-
 		participantType() {
 			return this.conversation.participantType
-		},
-
-		canFullModerate() {
-			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
-		},
-
-		canModerate() {
-			return this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
-		},
-
-		showModerationOptions() {
-			return !this.isOneToOneConversation && this.canModerate
 		},
 
 		token() {
@@ -437,60 +332,6 @@ export default {
 				'setIsFullscreen',
 				document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement
 			)
-		},
-
-		toggleFullscreen() {
-			if (this.isFullscreen) {
-				this.disableFullscreen()
-				this.$store.dispatch('setIsFullscreen', false)
-			} else {
-				this.enableFullscreen()
-				this.$store.dispatch('setIsFullscreen', true)
-			}
-		},
-
-		enableFullscreen() {
-			const fullscreenElem = document.getElementById('content-vue')
-
-			if (fullscreenElem.requestFullscreen) {
-				fullscreenElem.requestFullscreen()
-			} else if (fullscreenElem.webkitRequestFullscreen) {
-				fullscreenElem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
-			} else if (fullscreenElem.mozRequestFullScreen) {
-				fullscreenElem.mozRequestFullScreen()
-			} else if (fullscreenElem.msRequestFullscreen) {
-				fullscreenElem.msRequestFullscreen()
-			}
-		},
-
-		disableFullscreen() {
-			if (document.exitFullscreen) {
-				document.exitFullscreen()
-			} else if (document.webkitExitFullscreen) {
-				document.webkitExitFullscreen()
-			} else if (document.mozCancelFullScreen) {
-				document.mozCancelFullScreen()
-			} else if (document.msExitFullscreen) {
-				document.msExitFullscreen()
-			}
-		},
-
-		async handleCopyLink() {
-			try {
-				await this.$copyText(this.linkToConversation)
-				showSuccess(t('spreed', 'Conversation link copied to clipboard.'))
-			} catch (error) {
-				showError(t('spreed', 'The link could not be copied.'))
-			}
-		},
-		handleRenameConversation() {
-			this.$store.dispatch('isRenamingConversation', true)
-			this.$store.dispatch('showSidebar')
-		},
-		forceMuteOthers() {
-			callParticipantCollection.callParticipantModels.forEach(callParticipantModel => {
-				callParticipantModel.forceMute()
-			})
 		},
 
 		openConversationSettings() {
