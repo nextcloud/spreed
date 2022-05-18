@@ -32,15 +32,15 @@ import {
 	grantAllPermissionsToParticipant,
 	removeAllPermissionsFromParticipant,
 	setPermissions,
-} from '../services/participantsService'
+} from '../services/participantsService.js'
 import { generateUrl } from '@nextcloud/router'
 import {
 	joinCall,
 	leaveCall,
-} from '../services/callsService'
-import SessionStorage from '../services/SessionStorage'
-import { PARTICIPANT } from '../constants'
-import { EventBus } from '../services/EventBus'
+} from '../services/callsService.js'
+import SessionStorage from '../services/SessionStorage.js'
+import { PARTICIPANT } from '../constants.js'
+import { EventBus } from '../services/EventBus.js'
 import { showError } from '@nextcloud/dialogs'
 
 const state = {

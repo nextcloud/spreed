@@ -80,9 +80,9 @@
 </template>
 
 <script>
-import ParticipantsList from '../ParticipantsList/ParticipantsList'
+import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
 import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
-import Hint from '../../../Hint'
+import Hint from '../../../Hint.vue'
 
 export default {
 	name: 'ParticipantsSearchResults',

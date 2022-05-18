@@ -1,6 +1,6 @@
 /* global module */
 
-const WebRTC = require('./webrtc')
+const WebRTC = require('./webrtc.js')
 const WildEmitter = require('wildemitter')
 const webrtcSupport = require('webrtcsupport')
 const mockconsole = require('mockconsole')

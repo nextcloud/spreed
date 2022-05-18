@@ -1,10 +1,10 @@
 import { createLocalVue } from '@vue/test-utils'
-import storeConfig from './storeConfig'
+import storeConfig from './storeConfig.js'
 import Vuex from 'vuex'
 import { cloneDeep } from 'lodash'
 import {
 	CONVERSATION,
-} from '../constants'
+} from '../constants.js'
 
 describe('callViewStore', () => {
 	let localVue = null
@@ -19,6 +19,7 @@ describe('callViewStore', () => {
 		// remove participant store to avoid participant interaction
 		testStoreConfig.modules.participantsStore = {}
 
+		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(testStoreConfig)
 
 		// to fully reset the state between tests, clear the storage

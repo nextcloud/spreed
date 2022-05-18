@@ -20,8 +20,8 @@
  *
  */
 
-import FilesSidebarCallView from './views/FilesSidebarCallView'
-import './init'
+import FilesSidebarCallView from './views/FilesSidebarCallView.js'
+import './init.js'
 
 const isEnabled = function(fileInfo) {
 	if (fileInfo && !fileInfo.isDirectory()) {

@@ -20,7 +20,7 @@
  *
  */
 
-import { SHARED_ITEM } from '../constants'
+import { SHARED_ITEM } from '../constants.js'
 
 const sharedItems = {
 	computed: {

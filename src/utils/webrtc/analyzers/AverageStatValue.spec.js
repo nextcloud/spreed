@@ -1,4 +1,4 @@
-import { AverageStatValue, STAT_VALUE_TYPE } from './AverageStatValue'
+import { AverageStatValue, STAT_VALUE_TYPE } from './AverageStatValue.js'
 
 describe('AverageStatValue', () => {
 	beforeEach(() => {

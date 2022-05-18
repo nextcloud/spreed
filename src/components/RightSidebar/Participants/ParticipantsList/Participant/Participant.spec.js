@@ -1,18 +1,19 @@
+/* eslint-disable import/no-named-as-default-member */
 import Vuex from 'vuex'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../../../../store/storeConfig'
-import { ATTENDEE, PARTICIPANT } from '../../../../../constants'
-import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper'
+import storeConfig from '../../../../../store/storeConfig.js'
+import { ATTENDEE, PARTICIPANT } from '../../../../../constants.js'
+import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import Microphone from 'vue-material-design-icons/Microphone'
 import Phone from 'vue-material-design-icons/Phone'
 import Video from 'vue-material-design-icons/Video'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText'
-import { findActionButton } from '../../../../../test-helpers'
+import { findActionButton } from '../../../../../test-helpers.js'
 
-import Participant from './Participant'
+import Participant from './Participant.vue'
 
 describe('Participant.vue', () => {
 	let conversation

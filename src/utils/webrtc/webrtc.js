@@ -32,7 +32,7 @@
  *
  */
 
-import SimpleWebRTC from './simplewebrtc/simplewebrtc'
+import SimpleWebRTC from './simplewebrtc/simplewebrtc.js'
 import { PARTICIPANT } from '../../constants.js'
 import store from '../../store/index.js'
 import {

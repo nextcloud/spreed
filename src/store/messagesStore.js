@@ -29,15 +29,15 @@ import {
 	postRichObjectToConversation,
 	addReactionToMessage,
 	removeReactionFromMessage,
-} from '../services/messagesService'
+} from '../services/messagesService.js'
 
 import SHA256 from 'crypto-js/sha256'
 import Hex from 'crypto-js/enc-hex'
-import CancelableRequest from '../utils/cancelableRequest'
+import CancelableRequest from '../utils/cancelableRequest.js'
 import { showError } from '@nextcloud/dialogs'
 import {
 	ATTENDEE,
-} from '../constants'
+} from '../constants.js'
 
 /**
  * Returns whether the given message contains a mention to self, directly

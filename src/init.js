@@ -23,8 +23,8 @@
 // The purpose of this file is to wrap the logic shared by the different talk
 // entry points
 
-import store from './store'
-import { EventBus } from './services/EventBus'
+import store from './store/index.js'
+import { EventBus } from './services/EventBus.js'
 
 if (!window.OCA.Talk) {
 	window.OCA.Talk = {}

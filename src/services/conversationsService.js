@@ -23,7 +23,7 @@
 import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import { generateOcsUrl } from '@nextcloud/router'
-import { CONVERSATION, SHARE } from '../constants'
+import { CONVERSATION, SHARE } from '../constants.js'
 
 /**
  * Fetches the conversations from the server.

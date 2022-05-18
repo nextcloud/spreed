@@ -19,7 +19,7 @@
  *
  */
 
-import EmitterMixin from '../../EmitterMixin'
+import EmitterMixin from '../../EmitterMixin.js'
 import store from '../../../store/index.js'
 
 /**

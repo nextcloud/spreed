@@ -19,7 +19,7 @@
  *
  */
 
-import TrackToStream from './TrackToStream'
+import TrackToStream from './TrackToStream.js'
 
 /**
  * Helper function to create MediaStreamTrack mocks with just the attributes

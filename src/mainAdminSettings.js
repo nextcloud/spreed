@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import AdminSettings from './views/AdminSettings'
+import AdminSettings from './views/AdminSettings.vue'
 
 // Styles
 import '@nextcloud/dialogs/styles/toast.scss'

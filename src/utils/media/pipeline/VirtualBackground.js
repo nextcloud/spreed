@@ -21,9 +21,9 @@
  *
  */
 
-import TrackSinkSource from './TrackSinkSource'
-import { VIRTUAL_BACKGROUND_TYPE } from '../effects/virtual-background/constants'
-import JitsiStreamBackgroundEffect from '../effects/virtual-background/JitsiStreamBackgroundEffect'
+import TrackSinkSource from './TrackSinkSource.js'
+import { VIRTUAL_BACKGROUND_TYPE } from '../effects/virtual-background/constants.js'
+import JitsiStreamBackgroundEffect from '../effects/virtual-background/JitsiStreamBackgroundEffect.js'
 
 /**
  * Processor node to set a virtual background on a video track.

@@ -1,7 +1,7 @@
 /* global module */
 
 const util = require('util')
-const getScreenMedia = require('./getscreenmedia')
+const getScreenMedia = require('./getscreenmedia.js')
 const WildEmitter = require('wildemitter')
 const mockconsole = require('mockconsole')
 // Only mediaDevicesManager is used, but it can not be assigned here due to not

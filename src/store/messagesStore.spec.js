@@ -1,19 +1,20 @@
+/* eslint-disable import/no-named-as-default-member */
 import mockConsole from 'jest-mock-console'
 import { createLocalVue } from '@vue/test-utils'
-import messagesStore from './messagesStore'
+import messagesStore from './messagesStore.js'
 import Vuex from 'vuex'
 import { cloneDeep } from 'lodash'
 import {
 	ATTENDEE,
-} from '../constants'
+} from '../constants.js'
 import {
 	deleteMessage,
 	updateLastReadMessage,
 	fetchMessages,
 	lookForNewMessages,
 	postNewMessage,
-} from '../services/messagesService'
-import CancelableRequest from '../utils/cancelableRequest'
+} from '../services/messagesService.js'
+import CancelableRequest from '../utils/cancelableRequest.js'
 import { showError } from '@nextcloud/dialogs'
 
 jest.mock('../services/messagesService', () => ({

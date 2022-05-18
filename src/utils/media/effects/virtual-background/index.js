@@ -1,8 +1,8 @@
 // @flow
 
-import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect'
-import createTFLiteModule from './vendor/tflite/tflite'
-import createTFLiteSIMDModule from './vendor/tflite/tflite-simd'
+import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect.js'
+import createTFLiteModule from './vendor/tflite/tflite.js'
+import createTFLiteSIMDModule from './vendor/tflite/tflite-simd.js'
 const models = {
 	modelLandscape: 'libs/selfie_segmentation_landscape.tflite',
 }

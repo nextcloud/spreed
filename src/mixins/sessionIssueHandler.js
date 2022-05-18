@@ -21,8 +21,8 @@
  */
 
 import { generateUrl } from '@nextcloud/router'
-import { EventBus } from '../services/EventBus'
-import SessionStorage from '../services/SessionStorage'
+import { EventBus } from '../services/EventBus.js'
+import SessionStorage from '../services/SessionStorage.js'
 
 const sessionIssueHandler = {
 	data() {

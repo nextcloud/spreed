@@ -19,7 +19,7 @@
  */
 
 import { generateFilePath } from '@nextcloud/router'
-import store from '../store'
+import store from '../store/index.js'
 
 export const Sounds = {
 	BLOCK_SOUND_TIMEOUT: 3000,

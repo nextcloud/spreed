@@ -40,16 +40,16 @@
 <script>
 import { getCurrentUser } from '@nextcloud/auth'
 import { loadState } from '@nextcloud/initial-state'
-import CallView from './components/CallView/CallView'
-import ChatView from './components/ChatView'
-import TopBar from './components/TopBar/TopBar'
-import { EventBus } from './services/EventBus'
+import CallView from './components/CallView/CallView.vue'
+import ChatView from './components/ChatView.vue'
+import TopBar from './components/TopBar/TopBar.vue'
+import { EventBus } from './services/EventBus.js'
 import {
 	leaveConversationSync,
-} from './services/participantsService'
-import { signalingKill } from './utils/webrtc/index'
-import sessionIssueHandler from './mixins/sessionIssueHandler'
-import talkHashCheck from './mixins/talkHashCheck'
+} from './services/participantsService.js'
+import { signalingKill } from './utils/webrtc/index.js'
+import sessionIssueHandler from './mixins/sessionIssueHandler.js'
+import talkHashCheck from './mixins/talkHashCheck.js'
 
 export default {
 

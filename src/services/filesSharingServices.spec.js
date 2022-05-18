@@ -1,6 +1,6 @@
-import mockAxios from '../__mocks__/axios'
+import mockAxios from '../__mocks__/axios.js'
 import { generateOcsUrl } from '@nextcloud/router'
-import { shareFile } from './filesSharingServices'
+import { shareFile } from './filesSharingServices.js'
 
 describe('filesSharingServices', () => {
 	afterEach(() => {

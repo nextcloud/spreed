@@ -30,7 +30,7 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { PARTICIPANT } from '../../../../../../constants'
+import { PARTICIPANT } from '../../../../../../constants.js'
 import PermissionEditor from '../../../../../PermissionsEditor/PermissionsEditor.vue'
 
 export default {

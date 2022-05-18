@@ -1,8 +1,8 @@
-import mockAxios from '../__mocks__/axios'
+import mockAxios from '../__mocks__/axios.js'
 import { generateOcsUrl } from '@nextcloud/router'
 import { loadState } from '@nextcloud/initial-state'
-import { searchPossibleConversations } from './conversationsService'
-import { SHARE } from '../constants'
+import { searchPossibleConversations } from './conversationsService.js'
+import { SHARE } from '../constants.js'
 
 jest.mock('@nextcloud/initial-state', () => ({
 	loadState: jest.fn(),

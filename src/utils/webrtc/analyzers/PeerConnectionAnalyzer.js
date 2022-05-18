@@ -19,12 +19,12 @@
  *
  */
 
-import EmitterMixin from '../../EmitterMixin'
+import EmitterMixin from '../../EmitterMixin.js'
 
 import {
 	STAT_VALUE_TYPE,
 	AverageStatValue,
-} from './AverageStatValue'
+} from './AverageStatValue.js'
 
 const CONNECTION_QUALITY = {
 	UNKNOWN: 0,

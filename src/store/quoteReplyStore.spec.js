@@ -2,7 +2,7 @@ import Vuex from 'vuex'
 import { cloneDeep } from 'lodash'
 import { createLocalVue } from '@vue/test-utils'
 
-import quoteReplyStore from './quoteReplyStore'
+import quoteReplyStore from './quoteReplyStore.js'
 
 describe('quoteReplyStore', () => {
 	let localVue = null
@@ -12,6 +12,7 @@ describe('quoteReplyStore', () => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
 
+		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(cloneDeep(quoteReplyStore))
 	})
 

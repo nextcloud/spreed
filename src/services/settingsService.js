@@ -22,7 +22,7 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import BrowserStorage from './BrowserStorage'
+import BrowserStorage from './BrowserStorage.js'
 
 /**
  * Sets the attachment folder setting for the user

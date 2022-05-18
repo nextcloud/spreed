@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import readableNumber from '../../mixins/readableNumber'
+import readableNumber from '../../mixins/readableNumber.js'
 import { loadState } from '@nextcloud/initial-state'
 
 export default {

@@ -18,7 +18,7 @@
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import { FLOW, CONVERSATION } from '../constants'
+import { FLOW, CONVERSATION } from '../constants.js'
 
 export default {
 	name: 'FlowPostToConversation',

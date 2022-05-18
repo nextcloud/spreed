@@ -19,20 +19,20 @@
  *
  */
 
-import './shims/MediaStream'
-import './shims/MediaStreamTrack'
+import './shims/MediaStream.js'
+import './shims/MediaStreamTrack.js'
 import Axios from '@nextcloud/axios'
-import CancelableRequest from '../cancelableRequest'
-import Signaling from '../signaling'
-import initWebRtc from './webrtc'
-import CallAnalyzer from './analyzers/CallAnalyzer'
-import CallParticipantCollection from './models/CallParticipantCollection'
-import LocalCallParticipantModel from './models/LocalCallParticipantModel'
-import LocalMediaModel from './models/LocalMediaModel'
-import MediaDevicesManager from './MediaDevicesManager'
-import SentVideoQualityThrottler from './SentVideoQualityThrottler'
-import { PARTICIPANT } from '../../constants'
-import { fetchSignalingSettings } from '../../services/signalingService'
+import CancelableRequest from '../cancelableRequest.js'
+import Signaling from '../signaling.js'
+import initWebRtc from './webrtc.js'
+import CallAnalyzer from './analyzers/CallAnalyzer.js'
+import CallParticipantCollection from './models/CallParticipantCollection.js'
+import LocalCallParticipantModel from './models/LocalCallParticipantModel.js'
+import LocalMediaModel from './models/LocalMediaModel.js'
+import MediaDevicesManager from './MediaDevicesManager.js'
+import SentVideoQualityThrottler from './SentVideoQualityThrottler.js'
+import { PARTICIPANT } from '../../constants.js'
+import { fetchSignalingSettings } from '../../services/signalingService.js'
 
 let webRtc = null
 const callParticipantCollection = new CallParticipantCollection()

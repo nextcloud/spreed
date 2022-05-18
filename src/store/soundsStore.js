@@ -20,9 +20,9 @@
  *
  */
 
-import fromStateOr from './helper'
-import BrowserStorage from '../services/BrowserStorage'
-import { setPlaySounds } from '../services/settingsService'
+import fromStateOr from './helper.js'
+import BrowserStorage from '../services/BrowserStorage.js'
+import { setPlaySounds } from '../services/settingsService.js'
 
 const state = {
 	userId: undefined,

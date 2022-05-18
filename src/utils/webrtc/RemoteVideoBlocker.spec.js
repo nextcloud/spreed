@@ -19,7 +19,7 @@
  *
  */
 
-import RemoteVideoBlocker from './RemoteVideoBlocker'
+import RemoteVideoBlocker from './RemoteVideoBlocker.js'
 
 describe('RemoteVideoBlocker', () => {
 	let callParticipantModel

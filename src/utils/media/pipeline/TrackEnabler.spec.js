@@ -19,7 +19,7 @@
  *
  */
 
-import TrackEnabler from './TrackEnabler'
+import TrackEnabler from './TrackEnabler.js'
 
 /**
  * Helper function to create MediaStreamTrack mocks with just the attributes and

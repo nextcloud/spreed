@@ -19,7 +19,7 @@
  *
  */
 
-import { PARTICIPANT } from '../constants'
+import { PARTICIPANT } from '../constants.js'
 
 /**
  * A mixin to check retrieve the current participant object

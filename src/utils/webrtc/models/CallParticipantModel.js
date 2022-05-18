@@ -21,7 +21,7 @@
 
 import attachMediaStream from 'attachmediastream'
 
-import EmitterMixin from '../../EmitterMixin'
+import EmitterMixin from '../../EmitterMixin.js'
 
 export const ConnectionState = {
 	NEW: 'new',

@@ -45,7 +45,7 @@
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import SharedItems from '../SharedItems.vue'
-import sharedItems from '../../../../mixins/sharedItems'
+import sharedItems from '../../../../mixins/sharedItems.js'
 import debounce from 'debounce'
 
 export default {

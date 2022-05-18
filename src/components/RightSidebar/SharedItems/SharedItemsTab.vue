@@ -56,13 +56,13 @@
 
 <script>
 import { CollectionList } from 'nextcloud-vue-collections'
-import SharedItems from './SharedItems'
-import { SHARED_ITEM } from '../../../constants'
+import SharedItems from './SharedItems.vue'
+import { SHARED_ITEM } from '../../../constants.js'
 import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
 import SharedItemsBrowser from './SharedItemsBrowser/SharedItemsBrowser.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
-import sharedItems from '../../../mixins/sharedItems'
+import sharedItems from '../../../mixins/sharedItems.js'
 
 export default {
 

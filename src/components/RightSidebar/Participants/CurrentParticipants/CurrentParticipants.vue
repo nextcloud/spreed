@@ -30,10 +30,10 @@
 
 <script>
 
-import ParticipantsList from '../ParticipantsList/ParticipantsList'
-import { ATTENDEE, PARTICIPANT } from '../../../../constants'
-import UserStatus from '../../../../mixins/userStatus'
-import Hint from '../../../Hint'
+import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
+import { ATTENDEE, PARTICIPANT } from '../../../../constants.js'
+import UserStatus from '../../../../mixins/userStatus.js'
+import Hint from '../../../Hint.vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 export default {

@@ -20,12 +20,12 @@
 
 import Vue from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
-import PublicShareSidebar from './PublicShareSidebar'
-import './init'
+import PublicShareSidebar from './PublicShareSidebar.vue'
+import './init.js'
 
 // Store
 import Vuex from 'vuex'
-import store from './store'
+import store from './store/index.js'
 
 // Utils
 import { generateFilePath } from '@nextcloud/router'

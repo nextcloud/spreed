@@ -1,8 +1,9 @@
+/* eslint-disable import/no-named-as-default-member */
 import mockConsole from 'jest-mock-console'
 import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import { cloneDeep } from 'lodash'
-import { PARTICIPANT } from '../constants'
+import { PARTICIPANT } from '../constants.js'
 import {
 	promoteToModerator,
 	demoteFromModerator,
@@ -13,14 +14,14 @@ import {
 	removeCurrentUserFromConversation,
 	grantAllPermissionsToParticipant,
 	removeAllPermissionsFromParticipant,
-} from '../services/participantsService'
+} from '../services/participantsService.js'
 import {
 	joinCall,
 	leaveCall,
-} from '../services/callsService'
-import { EventBus } from '../services/EventBus'
+} from '../services/callsService.js'
+import { EventBus } from '../services/EventBus.js'
 
-import participantsStore from './participantsStore'
+import participantsStore from './participantsStore.js'
 
 jest.mock('../services/participantsService', () => ({
 	promoteToModerator: jest.fn(),

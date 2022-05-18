@@ -32,10 +32,10 @@
  *
  */
 
-import { pullSignalingMessages } from '../services/signalingService'
-import { rejoinConversation } from '../services/participantsService'
-import CancelableRequest from './cancelableRequest'
-import { EventBus } from '../services/EventBus'
+import { pullSignalingMessages } from '../services/signalingService.js'
+import { rejoinConversation } from '../services/participantsService.js'
+import CancelableRequest from './cancelableRequest.js'
+import { EventBus } from '../services/EventBus.js'
 import axios from '@nextcloud/axios'
 import {
 	generateOcsUrl,

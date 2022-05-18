@@ -3,8 +3,8 @@
 const util = require('util')
 const webrtcSupport = require('webrtcsupport')
 const mockconsole = require('mockconsole')
-const localMedia = require('./localmedia')
-const Peer = require('./peer')
+const localMedia = require('./localmedia.js')
+const Peer = require('./peer.js')
 
 /**
  * @param {object} opts the options object.

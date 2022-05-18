@@ -1,3 +1,4 @@
+/* eslint-disable import/no-named-as-default-member */
 import mockConsole from 'jest-mock-console'
 import Vuex from 'vuex'
 import { cloneDeep } from 'lodash'

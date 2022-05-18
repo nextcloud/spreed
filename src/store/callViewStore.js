@@ -21,10 +21,10 @@
  */
 
 import Vue from 'vue'
-import BrowserStorage from '../services/BrowserStorage'
+import BrowserStorage from '../services/BrowserStorage.js'
 import {
 	CONVERSATION,
-} from '../constants'
+} from '../constants.js'
 
 const state = {
 	isGrid: false,

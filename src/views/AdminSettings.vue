@@ -36,16 +36,16 @@
 </template>
 
 <script>
-import AllowedGroups from '../components/AdminSettings/AllowedGroups'
-import Commands from '../components/AdminSettings/Commands'
-import GeneralSettings from '../components/AdminSettings/GeneralSettings'
-import HostedSignalingServer from '../components/AdminSettings/HostedSignalingServer'
-import MatterbridgeIntegration from '../components/AdminSettings/MatterbridgeIntegration'
-import SignalingServers from '../components/AdminSettings/SignalingServers'
-import SIPBridge from '../components/AdminSettings/SIPBridge'
-import StunServers from '../components/AdminSettings/StunServers'
-import TurnServers from '../components/AdminSettings/TurnServers'
-import WebServerSetupChecks from '../components/AdminSettings/WebServerSetupChecks'
+import AllowedGroups from '../components/AdminSettings/AllowedGroups.vue'
+import Commands from '../components/AdminSettings/Commands.vue'
+import GeneralSettings from '../components/AdminSettings/GeneralSettings.vue'
+import HostedSignalingServer from '../components/AdminSettings/HostedSignalingServer.vue'
+import MatterbridgeIntegration from '../components/AdminSettings/MatterbridgeIntegration.vue'
+import SignalingServers from '../components/AdminSettings/SignalingServers.vue'
+import SIPBridge from '../components/AdminSettings/SIPBridge.vue'
+import StunServers from '../components/AdminSettings/StunServers.vue'
+import TurnServers from '../components/AdminSettings/TurnServers.vue'
+import WebServerSetupChecks from '../components/AdminSettings/WebServerSetupChecks.vue'
 
 export default {
 	name: 'AdminSettings',

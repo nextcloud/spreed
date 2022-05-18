@@ -60,9 +60,9 @@
 
 <script>
 import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
-import { SHARED_ITEM } from '../../../constants'
-import Location from '../../MessagesList/MessagesGroup/Message/MessagePart/Location'
-import DeckCard from '../../MessagesList/MessagesGroup/Message/MessagePart/DeckCard'
+import { SHARED_ITEM } from '../../../constants.js'
+import Location from '../../MessagesList/MessagesGroup/Message/MessagePart/Location.vue'
+import DeckCard from '../../MessagesList/MessagesGroup/Message/MessagePart/DeckCard.vue'
 
 export default {
 	name: 'SharedItems',
