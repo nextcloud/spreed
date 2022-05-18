@@ -102,10 +102,10 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { CONVERSATION } from '../../constants'
+import { CONVERSATION } from '../../constants.js'
 import {
 	setConversationPassword,
-} from '../../services/conversationsService'
+} from '../../services/conversationsService.js'
 import { generateUrl } from '@nextcloud/router'
 import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline'
 import Email from 'vue-material-design-icons/Email'

@@ -47,7 +47,7 @@
 
 <script>
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import { ATTENDEE } from '../../../constants'
+import { ATTENDEE } from '../../../constants.js'
 
 export default {
 	name: 'AuthorAvatar',

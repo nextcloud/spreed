@@ -90,7 +90,7 @@ import axios from '@nextcloud/axios'
 import debounce from 'debounce'
 import { generateOcsUrl } from '@nextcloud/router'
 import { loadState } from '@nextcloud/initial-state'
-import { setSIPSettings } from '../../services/settingsService'
+import { setSIPSettings } from '../../services/settingsService.js'
 
 export default {
 	name: 'SIPBridge',

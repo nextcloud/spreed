@@ -38,7 +38,7 @@
 import attachMediaStream from 'attachmediastream'
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
-import VideoBottomBar from './VideoBottomBar'
+import VideoBottomBar from './VideoBottomBar.vue'
 
 export default {
 

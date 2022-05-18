@@ -14,13 +14,13 @@
 </template>
 
 <script>
-import CallView from '../components/CallView/CallView'
-import ChatView from '../components/ChatView'
-import LobbyScreen from '../components/LobbyScreen'
-import TopBar from '../components/TopBar/TopBar'
-import isInLobby from '../mixins/isInLobby'
-import isInCall from '../mixins/isInCall'
-import participant from '../mixins/participant'
+import CallView from '../components/CallView/CallView.vue'
+import ChatView from '../components/ChatView.vue'
+import LobbyScreen from '../components/LobbyScreen.vue'
+import TopBar from '../components/TopBar/TopBar.vue'
+import isInLobby from '../mixins/isInLobby.js'
+import isInCall from '../mixins/isInCall.js'
+import participant from '../mixins/participant.js'
 
 export default {
 	name: 'MainView',

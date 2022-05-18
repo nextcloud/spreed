@@ -133,7 +133,7 @@
 </template>
 
 <script>
-import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants'
+import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
@@ -144,13 +144,13 @@ import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Share from 'vue-material-design-icons/Share'
 import moment from '@nextcloud/moment'
-import { EventBus } from '../../../../../services/EventBus'
+import { EventBus } from '../../../../../services/EventBus.js'
 import { generateUrl } from '@nextcloud/router'
 import {
 	showError,
 	showSuccess,
 } from '@nextcloud/dialogs'
-import Forwarder from '../MessagePart/Forwarder'
+import Forwarder from '../MessagePart/Forwarder.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 

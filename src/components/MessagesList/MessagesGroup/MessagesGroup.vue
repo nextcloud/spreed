@@ -53,9 +53,9 @@
 </template>
 
 <script>
-import AuthorAvatar from './AuthorAvatar'
-import Message from './Message/Message'
-import { ATTENDEE } from '../../../constants'
+import AuthorAvatar from './AuthorAvatar.vue'
+import Message from './Message/Message.vue'
+import { ATTENDEE } from '../../../constants.js'
 
 export default {
 	name: 'MessagesGroup',

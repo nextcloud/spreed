@@ -112,25 +112,25 @@
 </template>
 
 <script>
-import CancelableRequest from '../../utils/cancelableRequest'
+import CancelableRequest from '../../utils/cancelableRequest.js'
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
 import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
-import ConversationsList from './ConversationsList/ConversationsList'
-import Conversation from './ConversationsList/Conversation'
-import ConversationsOptionsList from '../ConversationsOptionsList'
-import Hint from '../Hint'
+import ConversationsList from './ConversationsList/ConversationsList.vue'
+import Conversation from './ConversationsList/Conversation.vue'
+import ConversationsOptionsList from '../ConversationsOptionsList.vue'
+import Hint from '../Hint.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
-import SearchBox from './SearchBox/SearchBox'
+import SearchBox from './SearchBox/SearchBox.vue'
 import debounce from 'debounce'
-import { EventBus } from '../../services/EventBus'
+import { EventBus } from '../../services/EventBus.js'
 import {
 	searchPossibleConversations,
 	searchListedConversations,
-} from '../../services/conversationsService'
-import { CONVERSATION } from '../../constants'
+} from '../../services/conversationsService.js'
+import { CONVERSATION } from '../../constants.js'
 import { loadState } from '@nextcloud/initial-state'
-import NewGroupConversation from './NewGroupConversation/NewGroupConversation'
-import arrowNavigation from '../../mixins/arrowNavigation'
+import NewGroupConversation from './NewGroupConversation/NewGroupConversation.vue'
+import arrowNavigation from '../../mixins/arrowNavigation.js'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 

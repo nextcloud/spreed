@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { PARTICIPANT } from '../../constants'
+import { PARTICIPANT } from '../../constants.js'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import VolumeHigh from 'vue-material-design-icons/VolumeHigh'
 import Account from 'vue-material-design-icons/Account'

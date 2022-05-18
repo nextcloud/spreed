@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import Command from '../../components/AdminSettings/Command'
+import Command from '../../components/AdminSettings/Command.vue'
 import { loadState } from '@nextcloud/initial-state'
 
 export default {

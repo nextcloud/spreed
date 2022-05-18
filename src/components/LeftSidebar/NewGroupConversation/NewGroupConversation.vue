@@ -118,27 +118,27 @@
 
 <script>
 
-import { CONVERSATION } from '../../../constants'
+import { CONVERSATION } from '../../../constants.js'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import Plus from 'vue-material-design-icons/Plus'
-import SetContacts from './SetContacts/SetContacts'
-import SetConversationName from './SetConversationName/SetConversationName'
-import SetConversationType from './SetConversationType/SetConversationType'
-import Confirmation from './Confirmation/Confirmation'
+import SetContacts from './SetContacts/SetContacts.vue'
+import SetConversationName from './SetConversationName/SetConversationName.vue'
+import SetConversationType from './SetConversationType/SetConversationType.vue'
+import Confirmation from './Confirmation/Confirmation.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
-import { addParticipant } from '../../../services/participantsService'
+import { addParticipant } from '../../../services/participantsService.js'
 import {
 	createPublicConversation,
 	createPrivateConversation,
 	setConversationPassword,
-} from '../../../services/conversationsService'
+} from '../../../services/conversationsService.js'
 import { generateUrl } from '@nextcloud/router'
-import PasswordProtect from './PasswordProtect/PasswordProtect'
-import ListableSettings from '../../ConversationSettings/ListableSettings'
-import isInCall from '../../../mixins/isInCall'
-import participant from '../../../mixins/participant'
+import PasswordProtect from './PasswordProtect/PasswordProtect.vue'
+import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
+import isInCall from '../../../mixins/isInCall.js'
+import participant from '../../../mixins/participant.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import { EventBus } from '../../../services/EventBus'
+import { EventBus } from '../../../services/EventBus.js'
 
 export default {
 

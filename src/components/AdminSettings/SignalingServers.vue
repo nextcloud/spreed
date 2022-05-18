@@ -83,11 +83,11 @@
 </template>
 
 <script>
-import SignalingServer from '../../components/AdminSettings/SignalingServer'
+import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { loadState } from '@nextcloud/initial-state'
 import debounce from 'debounce'
-import { SIGNALING } from '../../constants'
+import { SIGNALING } from '../../constants.js'
 
 export default {
 	name: 'SignalingServers',

@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { EventBus } from '../../../services/EventBus'
+import { EventBus } from '../../../services/EventBus.js'
 
 export default {
 	name: 'SearchBox',

@@ -75,8 +75,8 @@ import {
 	TOAST_PERMANENT_TIMEOUT,
 } from '@nextcloud/dialogs'
 import video from '../../../mixins/video.js'
-import VideoBackground from './VideoBackground'
-import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel'
+import VideoBackground from './VideoBackground.vue'
+import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 export default {
 

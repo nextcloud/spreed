@@ -1,10 +1,10 @@
 import Vuex from 'vuex'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../store/storeConfig'
-import { ATTENDEE } from '../../constants'
+import storeConfig from '../../store/storeConfig.js'
+import { ATTENDEE } from '../../constants.js'
 
-import MessagesList from './MessagesList'
+import MessagesList from './MessagesList.vue'
 
 describe('MessagesList.vue', () => {
 	const TOKEN = 'XXTOKENXX'
@@ -23,6 +23,7 @@ describe('MessagesList.vue', () => {
 			= jest.fn().mockReturnValue(messagesListMock)
 		testStoreConfig.modules.messagesStore.getters.getVisualLastReadMessageId
 			= jest.fn().mockReturnValue(getVisualLastReadMessageIdMock)
+		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(testStoreConfig)
 
 		// hack to catch date separators

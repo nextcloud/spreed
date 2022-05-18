@@ -158,7 +158,7 @@
 
 <script>
 import Modal from '@nextcloud/vue/dist/Components/Modal'
-import { devices } from '../../mixins/devices'
+import { devices } from '../../mixins/devices.js'
 import MediaDevicesSelector from '../MediaDevicesSelector.vue'
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
@@ -169,11 +169,11 @@ import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import Blur from 'vue-material-design-icons/Blur'
 import BlurOff from 'vue-material-design-icons/BlurOff'
-import { localMediaModel } from '../../utils/webrtc/index'
+import { localMediaModel } from '../../utils/webrtc/index.js'
 import CallButton from '../TopBar/CallButton.vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
-import BrowserStorage from '../../services/BrowserStorage'
+import BrowserStorage from '../../services/BrowserStorage.js'
 import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
 export default {

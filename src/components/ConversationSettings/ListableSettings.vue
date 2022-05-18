@@ -52,7 +52,7 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { CONVERSATION } from '../../constants'
+import { CONVERSATION } from '../../constants.js'
 import { loadState } from '@nextcloud/initial-state'
 
 export default {

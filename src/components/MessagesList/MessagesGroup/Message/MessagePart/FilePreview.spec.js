@@ -1,12 +1,13 @@
+/* eslint-disable import/no-named-as-default-member */
 import Vuex from 'vuex'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../../../../store/storeConfig'
+import storeConfig from '../../../../../store/storeConfig.js'
 import { imagePath, generateRemoteUrl } from '@nextcloud/router'
 import { loadState } from '@nextcloud/initial-state'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline'
 import Button from '@nextcloud/vue/dist/Components/Button'
-import FilePreview from './FilePreview'
+import FilePreview from './FilePreview.vue'
 
 jest.mock('@nextcloud/initial-state', () => ({
 	loadState: jest.fn(),

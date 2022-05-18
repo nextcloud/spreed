@@ -50,12 +50,12 @@
 </template>
 
 <script>
-import CancelableRequest from '../../../../utils/cancelableRequest'
+import CancelableRequest from '../../../../utils/cancelableRequest.js'
 import debounce from 'debounce'
 import { showError } from '@nextcloud/dialogs'
-import { searchPossibleConversations } from '../../../../services/conversationsService'
-import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults'
-import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble'
+import { searchPossibleConversations } from '../../../../services/conversationsService.js'
+import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
+import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble.vue'
 
 export default {
 	name: 'SetContacts',

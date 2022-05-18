@@ -69,7 +69,7 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { WEBINAR } from '../../constants'
+import { WEBINAR } from '../../constants.js'
 import DatetimePicker from '@nextcloud/vue/dist/Components/DatetimePicker'
 
 export default {

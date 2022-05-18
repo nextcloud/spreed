@@ -72,8 +72,8 @@
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import { CONVERSATION } from '../constants'
-import ConversationIcon from '../components/ConversationIcon'
+import { CONVERSATION } from '../constants.js'
+import ConversationIcon from '../components/ConversationIcon.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {

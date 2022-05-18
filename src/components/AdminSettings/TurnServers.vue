@@ -59,7 +59,7 @@
 
 <script>
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import TurnServer from '../../components/AdminSettings/TurnServer'
+import TurnServer from '../../components/AdminSettings/TurnServer.vue'
 import { loadState } from '@nextcloud/initial-state'
 import debounce from 'debounce'
 

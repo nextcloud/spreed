@@ -154,12 +154,12 @@
 
 <script>
 import debounce from 'debounce'
-import Video from '../shared/Video'
-import LocalVideo from '../shared/LocalVideo'
+import Video from '../shared/Video.vue'
+import LocalVideo from '../shared/LocalVideo.vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateFilePath } from '@nextcloud/router'
-import EmptyCallView from '../shared/EmptyCallView'
-import VideoBottomBar from '../shared/VideoBottomBar'
+import EmptyCallView from '../shared/EmptyCallView.vue'
+import VideoBottomBar from '../shared/VideoBottomBar.vue'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import ChevronRight from 'vue-material-design-icons/ChevronRight'
 import ChevronLeft from 'vue-material-design-icons/ChevronLeft'

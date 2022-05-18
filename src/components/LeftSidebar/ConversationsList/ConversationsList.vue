@@ -34,10 +34,10 @@
 </template>
 
 <script>
-import Conversation from './Conversation'
-import Hint from '../../Hint'
-import LoadingPlaceholder from '../../LoadingPlaceholder'
-import { EventBus } from '../../../services/EventBus'
+import Conversation from './Conversation.vue'
+import Hint from '../../Hint.vue'
+import LoadingPlaceholder from '../../LoadingPlaceholder.vue'
+import { EventBus } from '../../../services/EventBus.js'
 
 export default {
 	name: 'ConversationsList',

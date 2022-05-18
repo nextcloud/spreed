@@ -38,7 +38,7 @@
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
-import { CONVERSATION, PARTICIPANT } from '../../../constants'
+import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 
 export default {
 

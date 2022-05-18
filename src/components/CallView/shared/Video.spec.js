@@ -22,12 +22,12 @@
 import Vuex from 'vuex'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../../store/storeConfig'
+import storeConfig from '../../../store/storeConfig.js'
 
-import EmitterMixin from '../../../utils/EmitterMixin'
-import CallParticipantModel from '../../../utils/webrtc/models/CallParticipantModel'
+import EmitterMixin from '../../../utils/EmitterMixin.js'
+import CallParticipantModel from '../../../utils/webrtc/models/CallParticipantModel.js'
 
-import Video from './Video'
+import Video from './Video.vue'
 
 describe('Video.vue', () => {
 	let localVue
@@ -83,6 +83,7 @@ describe('Video.vue', () => {
 		localVue.use(Vuex)
 
 		testStoreConfig = cloneDeep(storeConfig)
+		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(testStoreConfig)
 
 		const webRtcMock = {

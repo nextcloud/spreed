@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import AvatarWrapperSmall from '../../../../AvatarWrapper/AvatarWrapperSmall'
+import AvatarWrapperSmall from '../../../../AvatarWrapper/AvatarWrapperSmall.vue'
 export default {
 	name: 'ContactSelectionBubble',
 

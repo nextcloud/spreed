@@ -2,10 +2,10 @@ import Vuex, { Store } from 'vuex'
 import vOutsideEvents from 'vue-outside-events'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../../../../store/storeConfig'
-import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants'
+import storeConfig from '../../../../../store/storeConfig.js'
+import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import { findActionButton } from '../../../../../test-helpers'
+import { findActionButton } from '../../../../../test-helpers.js'
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
 
 describe('MessageButtonsBar.vue', () => {

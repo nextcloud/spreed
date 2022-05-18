@@ -80,7 +80,7 @@ import Close from 'vue-material-design-icons/Close'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { encodePath } from '@nextcloud/paths'
-import AudioPlayer from './AudioPlayer'
+import AudioPlayer from './AudioPlayer.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
 
 const PREVIEW_TYPE = {
