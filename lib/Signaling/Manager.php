@@ -25,6 +25,7 @@ namespace OCA\Talk\Signaling;
 
 use OCA\Talk\Config;
 use OCA\Talk\Room;
+use OCA\Talk\Service\RoomService;
 use OCP\Http\Client\IResponse;
 use OCP\ICache;
 use OCP\ICacheFactory;
@@ -35,13 +36,16 @@ class Manager {
 
 	protected IConfig $serverConfig;
 	protected Config $talkConfig;
-	private ICache $cache;
+	protected RoomService $roomService;
+	protected ICache $cache;
 
 	public function __construct(IConfig $serverConfig,
 								Config $talkConfig,
+								RoomService $roomService,
 								ICacheFactory $cacheFactory) {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
+		$this->roomService = $roomService;
 		$this->cache = $cacheFactory->createDistributed('hpb_servers');
 	}
 
@@ -111,7 +115,7 @@ class Manager {
 		if ($serverId === null) {
 			$this->cache->set($room->getToken(), $serverIdToAssign);
 			$serverId = $serverIdToAssign;
-			$room->setAssignedSignalingServer($serverId);
+			$this->roomService->setAssignedSignalingServer($room, $serverId);
 		}
 
 		return $servers[$serverId];

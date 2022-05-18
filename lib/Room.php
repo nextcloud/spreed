@@ -319,6 +319,10 @@ class Room {
 		return $this->assignedSignalingServer;
 	}
 
+	public function setAssignedSignalingServer(?int $assignedSignalingServer): void {
+		$this->assignedSignalingServer = $assignedSignalingServer;
+	}
+
 	public function getToken(): string {
 		return $this->token;
 	}
@@ -829,19 +833,6 @@ class Room {
 
 		$this->activeGuests = 0;
 		$this->activeSince = null;
-
-		return (bool) $update->executeStatement();
-	}
-
-	public function setAssignedSignalingServer(?int $signalingServer): bool {
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('assigned_hpb', $update->createNamedParameter($signalingServer))
-			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-
-		if ($signalingServer !== null) {
-			$update->andWhere($update->expr()->isNull('assigned_hpb'));
-		}
 
 		return (bool) $update->executeStatement();
 	}
