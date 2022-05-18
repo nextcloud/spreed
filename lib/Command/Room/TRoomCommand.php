@@ -131,7 +131,7 @@ trait TRoomCommand {
 			return;
 		}
 
-		if (!$room->setType($public ? Room::TYPE_PUBLIC : Room::TYPE_GROUP)) {
+		if (!$this->roomService->setType($room, $public ? Room::TYPE_PUBLIC : Room::TYPE_GROUP)) {
 			throw new InvalidArgumentException('Unable to change room type.');
 		}
 	}

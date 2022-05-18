@@ -1102,7 +1102,7 @@ class RoomController extends AEnvironmentAwareController {
 			$this->participantService->addCircle($this->room, $circle, $participants);
 		} elseif ($source === 'emails') {
 			$data = [];
-			if ($this->room->setType(Room::TYPE_PUBLIC)) {
+			if ($this->roomService->setType($this->room, Room::TYPE_PUBLIC)) {
 				$data = ['type' => $this->room->getType()];
 			}
 
@@ -1243,7 +1243,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function makePublic(): DataResponse {
-		if (!$this->room->setType(Room::TYPE_PUBLIC)) {
+		if (!$this->roomService->setType($this->room, Room::TYPE_PUBLIC)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1257,7 +1257,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function makePrivate(): DataResponse {
-		if (!$this->room->setType(Room::TYPE_GROUP)) {
+		if (!$this->roomService->setType($this->room, Room::TYPE_GROUP)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 

@@ -252,6 +252,10 @@ class Room {
 		return $this->type;
 	}
 
+	public function setType(int $type): void {
+		$this->type = $type;
+	}
+
 	public function getReadOnly(): int {
 		return $this->readOnly;
 	}
@@ -840,49 +844,5 @@ class Room {
 		}
 
 		return (bool) $update->executeStatement();
-	}
-
-	/**
-	 * @param int $newType Currently it is only allowed to change between `self::TYPE_GROUP` and `self::TYPE_PUBLIC`
-	 * @return bool True when the change was valid, false otherwise
-	 */
-	public function setType(int $newType, bool $allowSwitchingOneToOne = false): bool {
-		if ($newType === $this->getType()) {
-			return true;
-		}
-
-		if (!$allowSwitchingOneToOne && $this->getType() === self::TYPE_ONE_TO_ONE) {
-			return false;
-		}
-
-		if (!in_array($newType, [self::TYPE_GROUP, self::TYPE_PUBLIC], true)) {
-			return false;
-		}
-
-		$oldType = $this->getType();
-
-		$event = new ModifyRoomEvent($this, 'type', $newType, $oldType);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_TYPE_SET, $event);
-
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('type', $update->createNamedParameter($newType, IQueryBuilder::PARAM_INT))
-			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$update->executeStatement();
-
-		$this->type = $newType;
-
-		if ($oldType === self::TYPE_PUBLIC) {
-			// Kick all guests and users that were not invited
-			$delete = $this->db->getQueryBuilder();
-			$delete->delete('talk_attendees')
-				->where($delete->expr()->eq('room_id', $delete->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-				->andWhere($delete->expr()->in('participant_type', $delete->createNamedParameter([Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], IQueryBuilder::PARAM_INT_ARRAY)));
-			$delete->executeStatement();
-		}
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_TYPE_SET, $event);
-
-		return true;
 	}
 }
