@@ -154,9 +154,9 @@ export default {
 		async copyLinkToConversation() {
 			try {
 				await this.$copyText(this.linkToConversation)
-				showSuccess(t('spreed', 'Conversation link copied to clipboard.'))
+				showSuccess(t('spreed', 'Conversation link copied to clipboard'))
 			} catch (error) {
-				showError(t('spreed', 'The link could not be copied.'))
+				showError(t('spreed', 'The link could not be copied'))
 			}
 		},
 	},
