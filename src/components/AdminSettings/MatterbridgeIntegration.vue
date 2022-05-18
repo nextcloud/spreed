@@ -101,7 +101,7 @@ export default {
 			})
 		},
 		description() {
-			return t('spreed', 'You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}App Store{linkend}.')
+			return t('spreed', 'You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}Nextcloud App Store{linkend}.')
 				.replace('{linkstart1}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://github.com/42wim/matterbridge/wiki">')
 				.replace('{linkstart2}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://apps.nextcloud.com/apps/talk_matterbridge">')
 				.replace(/{linkend}/g, ' ↗</a>')
