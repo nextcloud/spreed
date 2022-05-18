@@ -2,7 +2,6 @@ const path = require('path')
 const webpackConfig = require('@nextcloud/webpack-vue-config')
 const webpackRules = require('@nextcloud/webpack-vue-config/rules')
 const BabelLoaderExcludeNodeModulesExcept = require('babel-loader-exclude-node-modules-except')
-const TerserPlugin = require('terser-webpack-plugin')
 
 webpackConfig.entry = {
 	'admin-settings': path.join(__dirname, 'src', 'mainAdminSettings.js'),
@@ -78,5 +77,15 @@ webpackConfig.module.rules.push({
 	test: /\.worker\.js$/,
 	use: { loader: 'worker-loader' },
 })
+
+// Add typescript rule
+webpackConfig.module.rules.push({
+	test: /\.tsx?$/,
+	use: ['babel-loader', 'ts-loader'],
+	exclude: /node_modules/,
+})
+
+// Add typescript extension resolver
+webpackConfig.resolve.extensions.push('.tsx')
 
 module.exports = webpackConfig
