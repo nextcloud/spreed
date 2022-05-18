@@ -88,7 +88,7 @@
 import PermissionEditor from '../PermissionsEditor/PermissionsEditor.vue'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
-import { PARTICIPANT } from '../../constants'
+import { PARTICIPANT } from '../../constants.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS

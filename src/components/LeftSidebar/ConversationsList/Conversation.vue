@@ -88,10 +88,10 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import EyeOutline from 'vue-material-design-icons/EyeOutline'
-import ConversationIcon from './../../ConversationIcon'
+import ConversationIcon from './../../ConversationIcon.vue'
 import { generateUrl } from '@nextcloud/router'
 import { emit } from '@nextcloud/event-bus'
-import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants'
+import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
 import ListItem from '@nextcloud/vue/dist/Components/ListItem'
 
 export default {

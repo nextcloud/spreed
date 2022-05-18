@@ -51,7 +51,7 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { WEBINAR } from '../../constants'
+import { WEBINAR } from '../../constants.js'
 
 export default {
 	name: 'SipSettings',

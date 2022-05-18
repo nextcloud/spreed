@@ -92,16 +92,16 @@
 <script>
 import attachMediaStream from 'attachmediastream'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel'
+import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 import SHA1 from 'crypto-js/sha1'
 import Hex from 'crypto-js/enc-hex'
 import video from '../../../mixins/video.js'
-import VideoBackground from './VideoBackground'
+import VideoBackground from './VideoBackground.vue'
 import AccountCircle from 'vue-material-design-icons/AccountCircle'
-import VideoBottomBar from './VideoBottomBar'
-import Screen from './Screen'
-import { EventBus } from '../../../services/EventBus'
-import { ATTENDEE } from '../../../constants'
+import VideoBottomBar from './VideoBottomBar.vue'
+import Screen from './Screen.vue'
+import { EventBus } from '../../../services/EventBus.js'
+import { ATTENDEE } from '../../../constants.js'
 
 export default {
 

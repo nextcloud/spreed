@@ -25,16 +25,16 @@
  */
 
 import Vue from 'vue'
-import App from './App'
-import './init'
+import App from './App.vue'
+import './init.js'
 
 // Store
 import Vuex from 'vuex'
-import store from './store'
+import store from './store/index.js'
 
 // Router
 import VueRouter from 'vue-router'
-import router from './router/router'
+import router from './router/router.js'
 
 // Utils
 import { generateFilePath } from '@nextcloud/router'

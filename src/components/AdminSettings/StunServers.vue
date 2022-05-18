@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import StunServer from '../../components/AdminSettings/StunServer'
+import StunServer from '../../components/AdminSettings/StunServer.vue'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import debounce from 'debounce'
 import { loadState } from '@nextcloud/initial-state'

@@ -3,13 +3,13 @@ import Vuex from 'vuex'
 import { cloneDeep } from 'lodash'
 import { createLocalVue } from '@vue/test-utils'
 
-import client from '../services/DavClient'
-import { findUniquePath, getFileExtension } from '../utils/fileUpload'
-import { shareFile } from '../services/filesSharingServices'
-import { setAttachmentFolder } from '../services/settingsService'
+import client from '../services/DavClient.js'
+import { findUniquePath, getFileExtension } from '../utils/fileUpload.js'
+import { shareFile } from '../services/filesSharingServices.js'
+import { setAttachmentFolder } from '../services/settingsService.js'
 import { showError } from '@nextcloud/dialogs'
 
-import fileUploadStore from './fileUploadStore'
+import fileUploadStore from './fileUploadStore.js'
 
 jest.mock('../services/DavClient')
 jest.mock('./helper')

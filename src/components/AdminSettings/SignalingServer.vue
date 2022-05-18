@@ -49,7 +49,7 @@
 
 <script>
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import { getWelcomeMessage } from '../../services/signalingService'
+import { getWelcomeMessage } from '../../services/signalingService.js'
 
 export default {
 	name: 'SignalingServer',

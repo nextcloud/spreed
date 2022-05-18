@@ -52,9 +52,9 @@
 <script>
 import { generateFilePath } from '@nextcloud/router'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import { VIRTUAL_BACKGROUND_TYPE } from '../../utils/media/effects/virtual-background/constants'
-import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect'
-import VirtualBackground from '../../utils/media/pipeline/VirtualBackground'
+import { VIRTUAL_BACKGROUND_TYPE } from '../../utils/media/effects/virtual-background/constants.js'
+import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
+import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
 
 export default {
 	name: 'WebServerSetupChecks',

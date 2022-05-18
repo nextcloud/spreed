@@ -109,7 +109,7 @@
 </template>
 
 <script>
-import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel'
+import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import AlertCircle from 'vue-material-design-icons/AlertCircle'
 import Microphone from 'vue-material-design-icons/Microphone'
@@ -117,7 +117,7 @@ import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import Monitor from 'vue-material-design-icons/Monitor'
 import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
-import { PARTICIPANT } from '../../../constants'
+import { PARTICIPANT } from '../../../constants.js'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
 import { emit } from '@nextcloud/event-bus'
 

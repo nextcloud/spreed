@@ -1,12 +1,13 @@
+/* eslint-disable import/no-named-as-default-member */
 import Vuex from 'vuex'
 import { createLocalVue, shallowMount, mount, RouterLinkStub } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../../store/storeConfig'
-import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants'
+import storeConfig from '../../../store/storeConfig.js'
+import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 
-import Conversation from './Conversation'
+import Conversation from './Conversation.vue'
 
 jest.mock('@nextcloud/dialogs', () => ({
 	showSuccess: jest.fn(),

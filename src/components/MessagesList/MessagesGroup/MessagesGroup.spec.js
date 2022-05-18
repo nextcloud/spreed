@@ -1,10 +1,10 @@
 import Vuex from 'vuex'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
-import { ATTENDEE } from '../../../constants'
+import { ATTENDEE } from '../../../constants.js'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../../store/storeConfig'
+import storeConfig from '../../../store/storeConfig.js'
 
-import MessagesGroup from './MessagesGroup'
+import MessagesGroup from './MessagesGroup.vue'
 
 describe('MessagesGroup.vue', () => {
 	const TOKEN = 'XXTOKENXX'
@@ -20,6 +20,7 @@ describe('MessagesGroup.vue', () => {
 		testStoreConfig = cloneDeep(storeConfig)
 		getGuestNameMock = jest.fn()
 		testStoreConfig.modules.guestNameStore.getters.getGuestName = () => getGuestNameMock
+		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(testStoreConfig)
 	})
 

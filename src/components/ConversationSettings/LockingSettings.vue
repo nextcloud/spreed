@@ -43,7 +43,7 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { CONVERSATION } from '../../constants'
+import { CONVERSATION } from '../../constants.js'
 
 export default {
 	name: 'LockingSettings',

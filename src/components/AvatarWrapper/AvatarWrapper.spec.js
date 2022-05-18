@@ -1,8 +1,8 @@
 import Vuex from 'vuex'
 import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../store/storeConfig'
-import AvatarWrapper from './AvatarWrapper'
+import storeConfig from '../../store/storeConfig.js'
+import AvatarWrapper from './AvatarWrapper.vue'
 
 describe('AvatarWrapper.vue', () => {
 	let testStoreConfig
@@ -10,6 +10,7 @@ describe('AvatarWrapper.vue', () => {
 
 	beforeEach(() => {
 		testStoreConfig = cloneDeep(storeConfig)
+		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(testStoreConfig)
 	})
 

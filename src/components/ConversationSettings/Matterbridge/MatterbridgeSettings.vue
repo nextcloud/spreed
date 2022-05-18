@@ -97,12 +97,12 @@ import {
 	editBridge,
 	getBridge,
 	getBridgeProcessState,
-} from '../../../services/matterbridgeService'
+} from '../../../services/matterbridgeService.js'
 import { showSuccess } from '@nextcloud/dialogs'
 import { imagePath } from '@nextcloud/router'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
-import BridgePart from './BridgePart'
+import BridgePart from './BridgePart.vue'
 
 import Vue from 'vue'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'

@@ -74,15 +74,15 @@
 </template>
 
 <script>
-import { CONVERSATION, PARTICIPANT } from '../../constants'
-import browserCheck from '../../mixins/browserCheck'
-import isInCall from '../../mixins/isInCall'
-import isInLobby from '../../mixins/isInLobby'
-import participant from '../../mixins/participant'
+import { CONVERSATION, PARTICIPANT } from '../../constants.js'
+import browserCheck from '../../mixins/browserCheck.js'
+import isInCall from '../../mixins/isInCall.js'
+import isInLobby from '../../mixins/isInLobby.js'
+import participant from '../../mixins/participant.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
-import BrowserStorage from '../../services/BrowserStorage'
+import BrowserStorage from '../../services/BrowserStorage.js'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Video from 'vue-material-design-icons/Video'

@@ -138,18 +138,18 @@
 
 <script>
 import { loadState } from '@nextcloud/initial-state'
-import Grid from './Grid/Grid'
-import { SIMULCAST } from '../../constants'
-import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
-import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker'
-import { fetchPeers } from '../../services/callsService'
+import Grid from './Grid/Grid.vue'
+import { SIMULCAST } from '../../constants.js'
+import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
+import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
+import { fetchPeers } from '../../services/callsService.js'
 import { showMessage } from '@nextcloud/dialogs'
-import EmptyCallView from './shared/EmptyCallView'
-import Video from './shared/Video'
-import LocalVideo from './shared/LocalVideo'
-import Screen from './shared/Screen'
+import EmptyCallView from './shared/EmptyCallView.vue'
+import Video from './shared/Video.vue'
+import LocalVideo from './shared/LocalVideo.vue'
+import Screen from './shared/Screen.vue'
 import debounce from 'debounce'
-import { EventBus } from '../../services/EventBus'
+import { EventBus } from '../../services/EventBus.js'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 export default {

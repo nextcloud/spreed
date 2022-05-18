@@ -1,9 +1,9 @@
-import mockAxios from '../__mocks__/axios'
+import mockAxios from '../__mocks__/axios.js'
 import { generateOcsUrl } from '@nextcloud/router'
 import { shallowMount } from '@vue/test-utils'
-import { CONVERSATION } from '../constants'
+import { CONVERSATION } from '../constants.js'
 import Button from '@nextcloud/vue/dist/Components/Button'
-import RoomSelector from './RoomSelector'
+import RoomSelector from './RoomSelector.vue'
 
 describe('RoomSelector.vue', () => {
 	let conversations
