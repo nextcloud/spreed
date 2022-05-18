@@ -669,7 +669,7 @@ export default {
 					token: this.token,
 					attendeeId: this.attendeeId,
 				})
-				showSuccess(t('spreed', 'Invitation was sent to {actorId}.', { actorId: this.participant.actorId }))
+				showSuccess(t('spreed', 'Invitation was sent to {actorId}', { actorId: this.participant.actorId }))
 			} catch (error) {
 				showError(t('spreed', 'Could not send invitation to {actorId}', { actorId: this.participant.actorId }))
 			}
@@ -681,7 +681,7 @@ export default {
 					token: this.token,
 					attendeeId: this.attendeeId,
 				})
-				showSuccess(t('spreed', 'Notification was sent to {displayName}.', { displayName: this.participant.displayName }))
+				showSuccess(t('spreed', 'Notification was sent to {displayName}', { displayName: this.participant.displayName }))
 			} catch (error) {
 				console.error(error)
 				showError(t('spreed', 'Could not send notification to {displayName}', { displayName: this.participant.displayName }))

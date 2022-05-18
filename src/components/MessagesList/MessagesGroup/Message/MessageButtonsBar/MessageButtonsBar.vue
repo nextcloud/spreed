@@ -391,10 +391,10 @@ export default {
 			try {
 				const link = window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token) + '#message_' + this.id
 				await this.$copyText(link)
-				showSuccess(t('spreed', 'Message link copied to clipboard.'))
+				showSuccess(t('spreed', 'Message link copied to clipboard'))
 			} catch (error) {
 				console.error('Error copying link: ', error)
-				showError(t('spreed', 'The link could not be copied.'))
+				showError(t('spreed', 'The link could not be copied'))
 			}
 		},
 
