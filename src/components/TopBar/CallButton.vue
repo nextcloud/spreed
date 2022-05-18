@@ -44,8 +44,8 @@
 			:disabled="loading"
 			@click="leaveCall(false)">
 			<VideoOff slot="icon"
-				   :size="20"
-				   decorative />
+				:size="20"
+				decorative />
 			{{ leaveCallLabel }}
 		</Button>
 		<Actions v-else-if="showLeaveCallButton && canEndForAll"
