@@ -73,7 +73,7 @@ jobs:
 
       - name: PHPUnit
         working-directory: apps/${{ env.APP_NAME }}/tests/php
-        run: phpunit -c phpunit.xml
+        run: ../../vendor/phpunit/phpunit/phpunit -c phpunit.xml
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}
@@ -148,7 +148,7 @@ jobs:
 
       - name: PHPUnit
         working-directory: apps/${{ env.APP_NAME }}/tests/php
-        run: phpunit -c phpunit.xml
+        run: ../../vendor/phpunit/phpunit/phpunit -c phpunit.xml
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}
@@ -220,7 +220,7 @@ jobs:
 
       - name: PHPUnit
         working-directory: apps/${{ env.APP_NAME }}/tests/php
-        run: phpunit -c phpunit.xml
+        run: ../../vendor/phpunit/phpunit/phpunit -c phpunit.xml
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}
@@ -285,7 +285,7 @@ jobs:
 
       - name: PHPUnit
         working-directory: apps/${{ env.APP_NAME }}/tests/php
-        run: phpunit -c phpunit.xml
+        run: ../../vendor/phpunit/phpunit/phpunit -c phpunit.xml
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}
