@@ -81,7 +81,15 @@ webpackConfig.module.rules.push({
 // Add typescript rule
 webpackConfig.module.rules.push({
 	test: /\.tsx?$/,
-	use: ['babel-loader', 'ts-loader'],
+	use: [
+		{
+			loader: 'babel-loader',
+		},
+		{
+			loader: 'ts-loader',
+			options: { appendTsSuffixTo: [/\.vue$/] },
+		},
+	],
 	exclude: /node_modules/,
 })
 
