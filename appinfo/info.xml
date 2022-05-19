@@ -62,7 +62,6 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<job>OCA\Talk\BackgroundJob\CheckReferenceIdColumn</job>
 		<job>OCA\Talk\BackgroundJob\CheckHostedSignalingServer</job>
 		<job>OCA\Talk\BackgroundJob\CheckMatterbridges</job>
-		<job>OCA\Talk\BackgroundJob\ApplyTtl</job>
 	</background-jobs>
 
 	<repair-steps>
