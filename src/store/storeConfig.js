@@ -37,7 +37,7 @@ import talkHashStore from './talkHashStore.js'
 import tokenStore from './tokenStore.js'
 import uiModeStore from './uiModeStore.js'
 import windowVisibilityStore from './windowVisibilityStore.js'
-import messageActionsStore from './messageActionsStore.js'
+import integrationsStore from './integrationsStore.js'
 import reactionsStore from './reactionsStore.js'
 import sharedItemStore from './sharedItemsStore.js'
 
@@ -60,7 +60,7 @@ export default {
 		tokenStore,
 		uiModeStore,
 		windowVisibilityStore,
-		messageActionsStore,
+		integrationsStore,
 		reactionsStore,
 		sharedItemStore,
 	},
