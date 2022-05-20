@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <psalm
-	totallyTyped="true"
 	errorLevel="5"
 	resolveFromConfigFile="true"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -23,6 +22,7 @@
 				<referencedClass name="Doctrine\DBAL\Exception\UniqueConstraintViolationException" />
 				<referencedClass name="Doctrine\DBAL\Platforms\PostgreSQL94Platform" />
 				<referencedClass name="Doctrine\DBAL\Types\Types" />
+				<referencedClass name="GuzzleHttp\Exception\ClientException" />
 				<referencedClass name="OC" />
 				<referencedClass name="OC\Security\TrustedDomainHelper" />
 				<referencedClass name="OCA\Circles\Api\v1\Circles" />
@@ -57,6 +57,11 @@
 				<referencedClass name="Doctrine\DBAL\Exception\UniqueConstraintViolationException" />
 			</errorLevel>
 		</InvalidThrow>
+		<UnimplementedInterfaceMethod>
+			<errorLevel type="suppress">
+				<file name="lib/Chat/CommentsManager.php" />
+			</errorLevel>
+		</UnimplementedInterfaceMethod>
 	</issueHandlers>
 	<stubs>
 		<file name="tests/stubs/oc_comments_manager.php" />

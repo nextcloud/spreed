@@ -48,7 +48,6 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, sqlite, pdo_sqlite
-          tools: phpunit:8.5.2
           coverage: none
 
       - name: Set up PHPUnit
@@ -67,7 +66,7 @@ jobs:
 
       - name: PHPUnit
         working-directory: apps/${{ env.APP_NAME }}/tests/php
-        run: phpunit -c phpunit.xml
+        run: ../../vendor/phpunit/phpunit/phpunit -c phpunit.xml
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}
@@ -124,7 +123,6 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, mysql, pdo_mysql, gd, zip
-          tools: phpunit:8.5.2
           coverage: none
 
       - name: Set up PHPUnit
@@ -143,7 +141,7 @@ jobs:
 
       - name: PHPUnit
         working-directory: apps/${{ env.APP_NAME }}/tests/php
-        run: phpunit -c phpunit.xml
+        run: ../../vendor/phpunit/phpunit/phpunit -c phpunit.xml
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}
@@ -197,7 +195,6 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, pgsql, pdo_pgsql
-          tools: phpunit:8.5.2
           coverage: none
 
       - name: Set up PHPUnit
@@ -216,7 +213,7 @@ jobs:
 
       - name: PHPUnit
         working-directory: apps/${{ env.APP_NAME }}/tests/php
-        run: phpunit -c phpunit.xml
+        run: ../../vendor/phpunit/phpunit/phpunit -c phpunit.xml
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}
@@ -265,7 +262,6 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, oci8
-          tools: phpunit:8.5.2
           coverage: none
 
       - name: Set up PHPUnit
@@ -282,7 +278,7 @@ jobs:
 
       - name: PHPUnit
         working-directory: apps/${{ env.APP_NAME }}/tests/php
-        run: phpunit -c phpunit.xml
+        run: ../../vendor/phpunit/phpunit/phpunit -c phpunit.xml
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}

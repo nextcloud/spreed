@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.3.2@57b53ff26237074fdf5cbcb034f7da5172be4524">
+<files psalm-version="4.23.0@f1fe6ff483bf325c803df9f510d09a03fd796f88">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass occurrences="2">
       <code>BeforeTemplateRenderedEvent</code>
@@ -158,9 +158,6 @@
     <NullArgument occurrences="1">
       <code>null</code>
     </NullArgument>
-    <ParadoxicalCondition occurrences="1">
-      <code>\in_array($mode, $validModes, true)</code>
-    </ParadoxicalCondition>
   </file>
   <file src="lib/Controller/ChatController.php">
     <InvalidArrayOffset occurrences="1">
@@ -168,6 +165,7 @@
     </InvalidArrayOffset>
   </file>
   <file src="lib/Controller/FilesIntegrationController.php">
+    <InvalidCatch occurrences="1"/>
     <MissingDependency occurrences="2">
       <code>ShareNotFound</code>
       <code>ShareNotFound</code>
@@ -186,18 +184,15 @@
     </UndefinedDocblockClass>
   </file>
   <file src="lib/Controller/PublicShareAuthController.php">
+    <InvalidCatch occurrences="1"/>
     <MissingDependency occurrences="1">
       <code>ShareNotFound</code>
     </MissingDependency>
   </file>
-  <file src="lib/Controller/RoomController.php">
-    <UndefinedClass occurrences="2">
-      <code>Circles</code>
-      <code>Circles</code>
-    </UndefinedClass>
-    <UndefinedDocblockClass occurrences="2"/>
-  </file>
   <file src="lib/Controller/SettingsController.php">
+    <InvalidArgument occurrences="1">
+      <code>SharedStorage::class</code>
+    </InvalidArgument>
     <MissingDependency occurrences="3">
       <code>$this-&gt;rootFolder</code>
       <code>IRootFolder</code>
@@ -225,6 +220,10 @@
     </UndefinedClass>
   </file>
   <file src="lib/Files/Util.php">
+    <InvalidArgument occurrences="1">
+      <code>SharedStorage::class</code>
+    </InvalidArgument>
+    <InvalidCatch occurrences="1"/>
     <MissingDependency occurrences="7">
       <code>$this-&gt;rootFolder</code>
       <code>$this-&gt;rootFolder</code>
@@ -234,9 +233,6 @@
       <code>ShareNotFound</code>
       <code>ShareNotFound</code>
     </MissingDependency>
-  </file>
-  <file src="lib/Flow/Operation.php">
-    <InvalidArgument occurrences="1"/>
   </file>
   <file src="lib/MatterbridgeManager.php">
     <UndefinedClass occurrences="3">
@@ -257,6 +253,7 @@
     </InvalidArrayAccess>
   </file>
   <file src="lib/Notification/Notifier.php">
+    <InvalidCatch occurrences="1"/>
     <InvalidPropertyAssignmentValue occurrences="3">
       <code>$this-&gt;participants</code>
       <code>$this-&gt;rooms</code>
@@ -277,11 +274,12 @@
     </UndefinedClass>
   </file>
   <file src="lib/Service/HostedSignalingServerService.php">
-    <UndefinedClass occurrences="3">
-      <code>ClientException</code>
-      <code>ClientException</code>
-      <code>ClientException</code>
-    </UndefinedClass>
+    <InvalidReturnStatement occurrences="1">
+      <code>$data</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>array</code>
+    </InvalidReturnType>
   </file>
   <file src="lib/Settings/Admin/AdminSettings.php">
     <UndefinedInterfaceMethod occurrences="1">
@@ -307,6 +305,9 @@
       <code>new GenericEvent($existingShare)</code>
       <code>self::class . '::' . 'share_file_again'</code>
     </InvalidArgument>
+    <InvalidThrow occurrences="1">
+      <code>throw new GenericShareException('Already shared', $this-&gt;l-&gt;t('Path is already shared with this room'), 403);</code>
+    </InvalidThrow>
     <MissingDependency occurrences="15">
       <code>GenericShareException</code>
       <code>GenericShareException</code>
