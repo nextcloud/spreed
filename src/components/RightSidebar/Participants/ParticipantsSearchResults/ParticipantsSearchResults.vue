@@ -46,6 +46,18 @@
 				@click="handleClickParticipant" />
 		</template>
 
+		<template v-if="integrations.length !== 0">
+			<AppNavigationCaption :title="t('spreed', 'Integrations')" />
+
+			<ul>
+				<li v-for="(integration, index) in integrations"
+					:key="'integration' + index"
+					@click="runIntegration(integration)">
+					{{ integration.label }}
+				</li>
+			</ul>
+		</template>
+
 		<template v-if="addableRemotes.length !== 0">
 			<AppNavigationCaption :title="t('spreed', 'Add federated users')" />
 			<ParticipantsList :items="addableRemotes"
@@ -135,6 +147,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		searchText: {
+			type: String,
+			default: '',
+		},
 	},
 
 	computed: {
@@ -142,6 +159,10 @@ export default {
 			return !this.addableUsers.length
 				|| !this.addableGroups.length
 				|| (this.isCirclesEnabled && !this.addableCircles.length)
+		},
+
+		integrations() {
+			return this.$store.getters.participantSearchActions.filter((integration) => integration.show(this.searchText))
 		},
 
 		sourcesWithoutResultsList() {
@@ -236,6 +257,12 @@ export default {
 		},
 		handleClickHint() {
 			this.$emit('click-search-hint')
+		},
+
+		runIntegration(integration) {
+			integration.callback(this.searchText).then((participant) => {
+				this.$emit('click', participant)
+			})
 		},
 	},
 }
