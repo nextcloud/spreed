@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Config;
@@ -251,7 +252,9 @@ class PageController extends Controller {
 		}
 
 		$this->eventDispatcher->dispatch('\OCP\Collaboration\Resources::loadAdditionalScripts', new GenericEvent());
-		$response = new TemplateResponse($this->appName, 'index');
+		$response = new TemplateResponse($this->appName, 'index', [
+			'app' => Application::APP_ID,
+		]);
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
