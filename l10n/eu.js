@@ -40,6 +40,7 @@ OC.L10N.register(
     "- Join the same conversation and call from multiple devices" : "- Batu elkarrizketa berera eta deitu gailu anitzetik",
     "- Send voice messages, share your location or contact details" : "- Bidali ahots-mezuak, partekatu zure kokalekua edo kontaktu-xehetasunak",
     "- Add groups to a conversation and new group members will automatically be added as participants" : "- Gehitu taldeak elkarrizketa batera eta talde berriaren kideak partehartzaile bezala gehituko dira automatikoki",
+    "- A preview of your audio and video is shown before joining a call" : "- Zure audio eta bideoaren aurrebista erakutsiko da deira sartu baino lehen",
     "There are currently no commands available." : "Une honetan ez dago komandorik erabilgarri.",
     "The command does not exist" : "Komandoa ez da existitzen",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Errore bat gertatu da komandoa exekutatzean. Eskatu administratzaile bati egunkariak egiaztatzeko",
