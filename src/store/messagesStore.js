@@ -856,6 +856,9 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} temporaryMessage temporary message, must already have been added to messages list.
+	 * @param {object} data Passed in parameters
+	 * @param {object} data.temporaryMessage temporary message, must already have been added to messages list.
+	 * @param {object} data.options post request options.
 	 */
 	async postNewMessage(context, temporaryMessage) {
 		const { request, cancel } = CancelableRequest(postNewMessage)

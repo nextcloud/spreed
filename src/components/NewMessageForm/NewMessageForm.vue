@@ -105,17 +105,29 @@
 					:disabled="disabled"
 					@recording="handleRecording"
 					@audio-file="handleAudioFile" />
-
-				<Button v-else
-					:disabled="disabled"
-					type="tertiary"
-					native-type="submit"
-					:aria-label="t('spreed', 'Send message')"
-					@click.prevent="handleSubmit">
-					<Send title=""
-						:size="16"
-						decorative />
-				</Button>
+				<template v-else>
+					<Actions :force-menu="true">
+						<ActionButton :close-after-click="true"
+							icon="icon-upload"
+							:title="t('spreed', 'Send silently')"
+							@click.prevent="handleSubmit({ silent: true })">
+							{{ silentSendInfo }}
+							<BellOff slot="icon"
+								:size="16"
+								decorative
+								title="" />
+						</ActionButton>
+					</Actions>
+					<Button :disabled="disabled"
+						type="tertiary"
+						native-type="submit"
+						:aria-label="t('spreed', 'Send message')"
+						@click.prevent="handleSubmit">
+						<Send title=""
+							:size="16"
+							decorative />
+					</Button>
+				</template>
 			</form>
 		</div>
 	</div>
@@ -133,9 +145,10 @@ import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { CONVERSATION, PARTICIPANT } from '../../constants.js'
-import Paperclip from 'vue-material-design-icons/Paperclip'
-import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline'
-import Send from 'vue-material-design-icons/Send'
+import Paperclip from 'vue-material-design-icons/Paperclip.vue'
+import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import Send from 'vue-material-design-icons/Send.vue'
+import BellOff from 'vue-material-design-icons/BellOff.vue'
 import AudioRecorder from './AudioRecorder/AudioRecorder.vue'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
@@ -158,6 +171,7 @@ export default {
 		EmoticonOutline,
 		Send,
 		AudioRecorder,
+		BellOff,
 	},
 
 	props: {
@@ -254,6 +268,19 @@ export default {
 
 		containerElement() {
 			return document.querySelector(this.container)
+		},
+
+		isOneToOne() {
+			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+		},
+
+		silentSendInfo() {
+			if (this.isOneToOne) {
+				return t('spreed', 'The participant won\'t be notified about this message')
+			} else {
+				return t('spreed', 'The participants won\'t be notified about this message')
+			}
+
 		},
 	},
 
