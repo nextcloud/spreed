@@ -2603,8 +2603,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$currentUser = $this->currentUser;
 		$this->setCurrentUser('admin');
 		$this->sendRequest('GET', '/apps/spreedcheats/get_message_expire_job/' . self::$identifierToToken[$identifier]);
-		$response = $this->response->getBody()->getContents();
-		$response = json_decode($response, true);
+		$response = $this->getDataFromResponse($this->response);
 		Assert::assertIsArray($response, 'Room ' . $identifier . 'not found');
 		Assert::assertArrayHasKey('id', $response);
 		$this->runOcc(['background-job:execute', $response['id']]);
