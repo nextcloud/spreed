@@ -87,6 +87,7 @@ class ChatManager {
 	private IDBConnection $connection;
 	private INotificationManager $notificationManager;
 	private IManager $shareManager;
+	private Manager $manager;
 	private RoomShareProvider $shareProvider;
 	private ParticipantService $participantService;
 	private PollService $pollService;
