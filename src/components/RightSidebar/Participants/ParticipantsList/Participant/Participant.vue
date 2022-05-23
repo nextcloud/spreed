@@ -576,13 +576,14 @@ export default {
 		canBeDemoted() {
 			return this.canBeModerated
 				&& [PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
-				&& !this.isGroup
 		},
 
 		canBePromoted() {
 			return this.canBeModerated
 				&& !this.isModerator
-				&& !this.isGroup
+				&& (this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
+					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
+					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS)
 		},
 
 		preloadedUserStatus() {
