@@ -706,7 +706,7 @@ class ChatManager {
 		$min = $this->getMinMessageExpireSeconds($jobId);
 
 		$ids = $this->commentsManager->getMessageIdsByRoomIdInDateInterval($roomId, $min, $max);
-		if (count($ids)) {
+		if (!empty($ids)) {
 			$this->reportDeletedMessagesIds($room, $ids);
 			$this->deleteMessagesByIds($ids);
 		}
