@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\SpreedCheats\Controller;
 
+use OCA\Talk\BackgroundJob\ApplyMessageExpire;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\JSONResponse;
@@ -110,7 +111,6 @@ class ApiController extends OCSController {
 	 * @return JSONResponse
 	 */
 	public function getMessageExpireJob($token): JSONResponse {
-		$class = 'OCA\Talk\BackgroundJob\ApplyMessageExpire';
 		$roomId = $this->getRoomIdByToken($token);
 		if (!$roomId) {
 			return new JSONResponse();
@@ -120,7 +120,7 @@ class ApiController extends OCSController {
 			->from('jobs')
 			->where(
 				$query->expr()->andX(
-					$query->expr()->eq('class', $query->createNamedParameter($class)),
+					$query->expr()->eq('class', $query->createNamedParameter(ApplyMessageExpire::class)),
 					$query->expr()->eq('argument', $query->createNamedParameter(json_encode(['room_id' => (int) $roomId])))
 				)
 			);
