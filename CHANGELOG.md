@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 13.0.6 – 2022-05-26
+### Fixed
+- Ensure display name of conversation owner is stored correctly
+  [#7377](https://github.com/nextcloud/spreed/pull/7377)
+- Don't show promotion options for circles and groups
+  [#7409](https://github.com/nextcloud/spreed/pull/7409)
+- Don't show permissions options for circles and groups
+  [#7405](https://github.com/nextcloud/spreed/pull/7405)
+
+## 12.2.6 – 2022-05-26
+### Fixed
+- Ensure display name of conversation owner is stored correctly
+  [#7378](https://github.com/nextcloud/spreed/pull/7378)
+- Don't show promotion options for circles and groups
+  [#7406](https://github.com/nextcloud/spreed/pull/7406)
+
 ## 13.0.5 – 2022-04-08
 ### Fixed
 - Fix reconnection when media permissions change
