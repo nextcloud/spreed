@@ -82,6 +82,32 @@ Feature: chat/notifications
     Then user "participant2" has the following notifications
       | app | object_type | object_id | subject |
 
+  Scenario: Reaction in the one-to-one
+    When user "participant1" creates room "one-to-one room" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "one-to-one room" with 200 (v4)
+    Given user "participant2" leaves room "one-to-one room" with 200 (v4)
+    When user "participant2" sends message "Message 1" to room "one-to-one room" with 201
+    And user "participant1" react with "🚀" on message "Message 1" to room "one-to-one room" with 201
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id                 | subject                                                          |
+      | spreed | chat        | one-to-one room/Message 1 | participant1-displayname reacted with 🚀 to your private message |
+
+  Scenario: Reaction when recipient disabled notifications in the one-to-one
+    When user "participant1" creates room "one-to-one room" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "one-to-one room" with 200 (v4)
+    Given user "participant2" leaves room "one-to-one room" with 200 (v4)
+    When user "participant2" sends message "Message 1" to room "one-to-one room" with 201
+    And user "participant2" sets notifications to disabled for room "one-to-one room" (v4)
+    And user "participant1" react with "🚀" on message "Message 1" to room "one-to-one room" with 201
+    Then user "participant2" has the following notifications
+      | app | object_type | object_id | subject |
+
   Scenario: At-all when recipient is online in the one-to-one
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
@@ -262,5 +288,33 @@ Feature: chat/notifications
       | app    | object_type | object_id                 | subject                                             |
       | spreed | chat        | one-to-one room/Message 1 | participant1-displayname sent you a private message |
     When user "participant1" deletes message "Message 1" from room "one-to-one room" with 200 (v1)
+    Then user "participant2" has the following notifications
+      | app | object_type | object_id | subject |
+
+  Scenario: Reaction when recipient full enables notifications in the group room
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "room" with 200 (v4)
+    Given user "participant2" leaves room "room" with 200 (v4)
+    When user "participant2" sends message "Message 1" to room "room" with 201
+    And user "participant2" sets notifications to all for room "room" (v4)
+    And user "participant1" react with "🚀" on message "Message 1" to room "room" with 201
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id                 | subject                                                            |
+      | spreed | chat        | room/Message 1 | participant1-displayname reacted with 🚀 to your message in conversation room |
+
+  Scenario: Reaction when recipient has default notifications (disabled) in the group room
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "room" with 200 (v4)
+    Given user "participant2" leaves room "room" with 200 (v4)
+    When user "participant2" sends message "Message 1" to room "room" with 201
+    And user "participant1" react with "🚀" on message "Message 1" to room "room" with 201
     Then user "participant2" has the following notifications
       | app | object_type | object_id | subject |
