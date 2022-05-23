@@ -123,7 +123,7 @@ local PipelinePostgreSQL(test_set) = Pipeline(
 	PipelineSQLite("conversation-2"),
 	PipelineSQLite("federation"),
 	PipelineSQLite("reaction"),
-	PipelineSQLite("ttl"),
+	PipelineSQLite("message_expire"),
 	PipelineSQLite("sharing"),
 	PipelineSQLite("sharing-2"),
 
@@ -134,7 +134,7 @@ local PipelinePostgreSQL(test_set) = Pipeline(
 	PipelineMySQL("conversation-2"),
 	PipelineMySQL("federation"),
 	PipelineMySQL("reaction"),
-	PipelineMySQL("ttl"),
+	PipelineMySQL("message_expire"),
 	PipelineMySQL("sharing"),
 	PipelineMySQL("sharing-2"),
 
@@ -145,7 +145,7 @@ local PipelinePostgreSQL(test_set) = Pipeline(
 	PipelinePostgreSQL("conversation-2"),
 	PipelinePostgreSQL("federation"),
 	PipelinePostgreSQL("reaction"),
-	PipelinePostgreSQL("ttl"),
+	PipelinePostgreSQL("message_expire"),
 	PipelinePostgreSQL("sharing"),
 	PipelinePostgreSQL("sharing-2"),
 ]

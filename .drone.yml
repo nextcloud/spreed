@@ -233,7 +233,7 @@ trigger:
   - push
 ---
 kind: pipeline
-name: int-sqlite-ttl
+name: int-sqlite-message_expire
 services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
@@ -249,7 +249,7 @@ steps:
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
-  - bash run.sh features/ttl
+  - bash run.sh features/message_expire
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
@@ -257,7 +257,7 @@ steps:
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-  name: integration-ttl
+  name: integration-message_expire
 trigger:
   branch:
   - master
@@ -670,7 +670,7 @@ trigger:
   - push
 ---
 kind: pipeline
-name: int-mysql-ttl
+name: int-mysql-message_expire
 services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
@@ -700,7 +700,7 @@ steps:
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
-  - bash run.sh features/ttl
+  - bash run.sh features/message_expire
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
@@ -708,7 +708,7 @@ steps:
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-  name: integration-ttl
+  name: integration-message_expire
 trigger:
   branch:
   - master
@@ -1110,7 +1110,7 @@ trigger:
   - push
 ---
 kind: pipeline
-name: int-pgsql-ttl
+name: int-pgsql-message_expire
 services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
@@ -1135,7 +1135,7 @@ steps:
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
   - cd tests/integration/
-  - bash run.sh features/ttl
+  - bash run.sh features/message_expire
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
@@ -1143,7 +1143,7 @@ steps:
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-  name: integration-ttl
+  name: integration-message_expire
 trigger:
   branch:
   - master

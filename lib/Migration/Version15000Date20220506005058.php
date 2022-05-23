@@ -45,8 +45,8 @@ class Version15000Date20220506005058 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		$table = $schema->getTable('talk_rooms');
-		if (!$table->hasColumn('time_to_live')) {
-			$table->addColumn('time_to_live', Types::INTEGER, [
+		if (!$table->hasColumn('message_expire')) {
+			$table->addColumn('message_expire', Types::INTEGER, [
 				'default' => 0,
 			]);
 			return $schema;

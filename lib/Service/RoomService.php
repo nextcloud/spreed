@@ -25,10 +25,10 @@ namespace OCA\Talk\Service;
 
 use DateInterval;
 use InvalidArgumentException;
-use OCA\Talk\BackgroundJob\ApplyTtl;
+use OCA\Talk\BackgroundJob\ApplyMessageExpire;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
-use OCA\Talk\Events\ChangeTtlEvent;
+use OCA\Talk\Events\ChangeMessageExpireEvent;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
@@ -542,35 +542,35 @@ class RoomService {
 		];
 	}
 
-	public function setTimeToLive(Room $room, Participant $participant, int $ttl): void {
-		$event = new ChangeTtlEvent($room, $ttl);
-		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_TIME_TO_LIVE, $event);
+	public function setMessageExpire(Room $room, Participant $participant, int $seconds): void {
+		$event = new ChangeMessageExpireEvent($room, $seconds);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_MESSAGE_EXPIRE, $event);
 
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
-			->set('time_to_live', $update->createNamedParameter($ttl, IQueryBuilder::PARAM_INT))
+			->set('message_expire', $update->createNamedParameter($seconds, IQueryBuilder::PARAM_INT))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 		$jobList = Server::get(IJobList::class);
-		if ($ttl > 0) {
-			$this->ttlSystemMessage($room, $participant, $ttl, 'ttl_enabled');
-			$jobList->add(ApplyTtl::class, ['room_id' => $room->getId()]);
+		if ($seconds > 0) {
+			$this->messageExpireSystemMessage($room, $participant, $seconds, 'message_expire_enabled');
+			$jobList->add(ApplyMessageExpire::class, ['room_id' => $room->getId()]);
 		} else {
-			$this->ttlSystemMessage($room, $participant, $ttl, 'ttl_disabled');
-			$jobList->remove(ApplyTtl::class, ['room_id' => $room->getId()]);
+			$this->messageExpireSystemMessage($room, $participant, $seconds, 'message_expire_disabled');
+			$jobList->remove(ApplyMessageExpire::class, ['room_id' => $room->getId()]);
 		}
 
-		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_TIME_TO_LIVE, $event);
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_MESSAGE_EXPIRE, $event);
 	}
 
-	private function ttlSystemMessage(Room $room, Participant $participant, int $ttl, string $message): void {
+	private function messageExpireSystemMessage(Room $room, Participant $participant, int $seconds, string $message): void {
 		$this->chatManager->addSystemMessage(
 			$room,
 			$participant->getAttendee()->getActorType(),
 			$participant->getAttendee()->getActorId(),
 			json_encode([
 				'message' => $message,
-				'parameters' => ['ttl' => $ttl]
+				'parameters' => ['seconds' => $seconds]
 			]),
 			$this->timeFactory->getDateTime(),
 			false
@@ -578,11 +578,11 @@ class RoomService {
 	}
 
 
-	public function deleteExpiredTtl(int $roomId, int $jobId): array {
+	public function deleteExpiredMessages(int $roomId, int $jobId): array {
 		$room = $this->manager->getRoomById($roomId);
 
-		$max = $this->getMaxDateTtl($room->getTimeToLive());
-		$min = $this->getMinDateTtl($jobId);
+		$max = $this->getMaxMessageExpireSeconds($room->getTimeToLive());
+		$min = $this->getMinMessageExpireSeconds($jobId);
 
 		$ids = $this->commentsManager->getMessageIdsByRoomIdInDateInterval($roomId, $min, $max);
 		if (count($ids)) {
@@ -592,12 +592,12 @@ class RoomService {
 		return $ids;
 	}
 
-	private function getMaxDateTtl(int $ttl): \DateTime {
+	private function getMaxMessageExpireSeconds(int $seconds): \DateTime {
 		$max = $this->timeFactory->getDateTime();
-		return $max->sub(new DateInterval('PT' . $ttl . 'S'));
+		return $max->sub(new DateInterval('PT' . $seconds . 'S'));
 	}
 
-	private function getMinDateTtl(int $jobId): \DateTime {
+	private function getMinMessageExpireSeconds(int $jobId): \DateTime {
 		$query = $this->db->getQueryBuilder();
 		$query->select('last_checked')
 			->from('jobs')
@@ -627,8 +627,8 @@ class RoomService {
 		foreach ($ids as $id) {
 			$this->chatManager->addSystemMessage(
 				$chat,
-				'ttl_expired',
-				'ttl_expired',
+				'message_expire_expired',
+				'message_expire_expired',
 				json_encode(['message' => 'message_deleted', 'parameters' => ['message' => $id]]),
 				$this->timeFactory->getDateTime(),
 				false,

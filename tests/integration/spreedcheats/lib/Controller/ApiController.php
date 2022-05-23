@@ -109,8 +109,8 @@ class ApiController extends OCSController {
 	 *
 	 * @return JSONResponse
 	 */
-	public function getTtlJob($token): JSONResponse {
-		$class = 'OCA\Talk\BackgroundJob\ApplyTtl';
+	public function getMessageExpireJob($token): JSONResponse {
+		$class = 'OCA\Talk\BackgroundJob\ApplyMessageExpire';
 		$roomId = $this->getRoomIdByToken($token);
 		if (!$roomId) {
 			return new JSONResponse();

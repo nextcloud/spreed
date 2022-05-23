@@ -2568,25 +2568,25 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Given user :user set the ttl to :ttl of room :identifier with :statusCode (:apiVersion)
+	 * @Given user :user set the message expire to :messageExpire of room :identifier with :statusCode (:apiVersion)
 	 */
-	public function userSetTheTtlToWith(string $user, int $ttl, string $identifier, int $statusCode, string $apiVersion = 'v4'): void {
+	public function userSetTheMessageExpireToWith(string $user, int $messageExpire, string $identifier, int $statusCode, string $apiVersion = 'v4'): void {
 		$this->setCurrentUser($user);
-		$this->sendRequest('POST', '/apps/spreed/api/' .  $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/ttl', [
-			'ttl' => $ttl
+		$this->sendRequest('POST', '/apps/spreed/api/' .  $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/message-expire', [
+			'seconds' => $messageExpire
 		]);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/**
-	 * @Given user :user check if ttl of room :identifier is :ttl (:apiVersion)
+	 * @Given user :user check if message expire of room :identifier is :messageExpire (:apiVersion)
 	 */
-	public function userCheckIfTtlOfRoomIsX(string $user, string $identifier, int $ttl, string $apiVersion = 'v4') {
+	public function userCheckIfMessageExpireOfRoomIsX(string $user, string $identifier, int $messageExpire, string $apiVersion = 'v4') {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
 		$room = $this->getDataFromResponse($this->response);
 
-		Assert::assertEquals($ttl, $room['timeToLive']);
+		Assert::assertEquals($messageExpire, $room['timeToLive']);
 	}
 
 	/**
@@ -2597,12 +2597,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When apply ttl job to room :identifier
+	 * @When apply message expire job to room :identifier
 	 */
-	public function applyTtlJobToRoom($identifier): void {
+	public function applyMessageExpireJobToRoom($identifier): void {
 		$currentUser = $this->currentUser;
 		$this->setCurrentUser('admin');
-		$this->sendRequest('GET', '/apps/spreedcheats/get_ttl_job/' . self::$identifierToToken[$identifier]);
+		$this->sendRequest('GET', '/apps/spreedcheats/get_message_expire_job/' . self::$identifierToToken[$identifier]);
 		$response = $this->response->getBody()->getContents();
 		$response = json_decode($response, true);
 		Assert::assertIsArray($response, 'Room ' . $identifier . 'not found');

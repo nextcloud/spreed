@@ -337,7 +337,7 @@
         + `401 Unauthorized` When the participant is a guest
         + `404 Not Found` When the conversation could not be found for the participant
 
-## Set time to live for messages in a conversation
+## Set message expire for messages in a conversation
 
 * Required capability: `time-to-live`
 * Method: `POST`

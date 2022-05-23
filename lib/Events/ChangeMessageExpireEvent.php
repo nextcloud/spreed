@@ -25,16 +25,16 @@ namespace OCA\Talk\Events;
 
 use OCA\Talk\Room;
 
-class ChangeTtlEvent extends RoomEvent {
-	private int $ttl;
+class ChangeMessageExpireEvent extends RoomEvent {
+	private int $seconds;
 	public function __construct(Room $room,
-								int $ttl
+								int $seconds
 	) {
 		parent::__construct($room);
-		$this->ttl = $ttl;
+		$this->seconds = $seconds;
 	}
 
-	public function getTtl(): int {
-		return $this->ttl;
+	public function getMessageExpireSeconds(): int {
+		return $this->seconds;
 	}
 }

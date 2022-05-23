@@ -1713,11 +1713,11 @@ class RoomController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireModeratorParticipant
 	 */
-	public function setTimeToLive(int $ttl): DataResponse {
-		if ($ttl < 0) {
+	public function setMessageExpire(int $seconds): DataResponse {
+		if ($seconds < 0) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
-		$this->roomService->setTimeToLive($this->room, $this->getParticipant(), $ttl);
+		$this->roomService->setMessageExpire($this->room, $this->getParticipant(), $seconds);
 		return new DataResponse();
 	}
 }

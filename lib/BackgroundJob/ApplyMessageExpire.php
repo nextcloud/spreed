@@ -30,7 +30,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
 
-class ApplyTtl extends TimedJob {
+class ApplyMessageExpire extends TimedJob {
 	private RoomService $roomService;
 
 	public function __construct(ITimeFactory $timeFactory,
@@ -47,6 +47,6 @@ class ApplyTtl extends TimedJob {
 	 * @param array $argument
 	 */
 	protected function run($argument): void {
-		$this->roomService->deleteExpiredTtl($argument['room_id'], $this->getId());
+		$this->roomService->deleteExpiredMessages($argument['room_id'], $this->getId());
 	}
 }
