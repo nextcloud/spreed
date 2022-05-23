@@ -159,7 +159,7 @@
 			</ActionButton>
 
 			<!-- Permissions -->
-			<template v-if="selfIsModerator && !isModerator">
+			<template v-if="showPermissionsOptions">
 				<ActionSeparator />
 				<ActionButton
 					v-if="hasNonDefaultPermissions"
@@ -552,6 +552,14 @@ export default {
 
 		isModerator() {
 			return this.participantTypeIsModerator(this.participantType)
+		},
+
+		showPermissionsOptions() {
+			return this.selfIsModerator
+				&& !this.isModerator
+				&& (this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
+					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
+					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.EMAILS)
 		},
 
 		showModeratorLabel() {
