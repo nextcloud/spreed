@@ -422,6 +422,24 @@ class RoomService {
 		return true;
 	}
 
+	public function setAssignedSignalingServer(Room $room, ?int $signalingServer): bool {
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('assigned_hpb', $update->createNamedParameter($signalingServer))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+
+		if ($signalingServer !== null) {
+			$update->andWhere($update->expr()->isNull('assigned_hpb'));
+		}
+
+		$updated = (bool) $update->executeStatement();
+		if ($updated) {
+			$room->setAssignedSignalingServer($signalingServer);
+		}
+
+		return $updated;
+	}
+
 	public function verifyPassword(Room $room, string $password): array {
 		$event = new VerifyRoomPasswordEvent($room, $password);
 		$this->dispatcher->dispatch(Room::EVENT_PASSWORD_VERIFY, $event);
