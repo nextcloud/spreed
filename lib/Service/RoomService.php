@@ -552,11 +552,11 @@ class RoomService {
 		$update->executeStatement();
 		$jobList = Server::get(IJobList::class);
 		if ($seconds > 0) {
-			$this->messageExpireSystemMessage($room, $participant, $seconds, 'message_expire_enabled');
 			$jobList->add(ApplyMessageExpire::class, ['room_id' => $room->getId()]);
+			$this->messageExpireSystemMessage($room, $participant, $seconds, 'message_expire_enabled');
 		} else {
-			$this->messageExpireSystemMessage($room, $participant, $seconds, 'message_expire_disabled');
 			$jobList->remove(ApplyMessageExpire::class, ['room_id' => $room->getId()]);
+			$this->messageExpireSystemMessage($room, $participant, $seconds, 'message_expire_disabled');
 		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_MESSAGE_EXPIRE, $event);
