@@ -25,18 +25,18 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
-use OCA\Talk\Service\RoomService;
+use OCA\Talk\Chat\ChatManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
 
 class ApplyMessageExpire extends TimedJob {
-	private RoomService $roomService;
+	private ChatManager $chatManager;
 
 	public function __construct(ITimeFactory $timeFactory,
-								RoomService $roomService) {
+								ChatManager $chatManager) {
 		parent::__construct($timeFactory);
-		$this->roomService = $roomService;
+		$this->chatManager = $chatManager;
 
 		// Every 5 minutes
 		$this->setInterval(5 * 60);
@@ -47,6 +47,6 @@ class ApplyMessageExpire extends TimedJob {
 	 * @param array $argument
 	 */
 	protected function run($argument): void {
-		$this->roomService->deleteExpiredMessages($argument['room_id'], $this->getId());
+		$this->chatManager->deleteExpiredMessages($argument['room_id'], $this->getId());
 	}
 }

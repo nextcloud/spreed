@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
-use DateInterval;
 use InvalidArgumentException;
 use OCA\Talk\BackgroundJob\ApplyMessageExpire;
 use OCA\Talk\Chat\ChatManager;
@@ -575,67 +574,5 @@ class RoomService {
 			$this->timeFactory->getDateTime(),
 			false
 		);
-	}
-
-
-	public function deleteExpiredMessages(int $roomId, int $jobId): array {
-		$room = $this->manager->getRoomById($roomId);
-
-		$max = $this->getMaxMessageExpireSeconds($room->getTimeToLive());
-		$min = $this->getMinMessageExpireSeconds($jobId);
-
-		$ids = $this->commentsManager->getMessageIdsByRoomIdInDateInterval($roomId, $min, $max);
-		if (count($ids)) {
-			$this->reportDeletedMessagesIds($room, $ids);
-			$this->deleteMessagesByIds($ids);
-		}
-		return $ids;
-	}
-
-	private function getMaxMessageExpireSeconds(int $seconds): \DateTime {
-		$max = $this->timeFactory->getDateTime();
-		return $max->sub(new DateInterval('PT' . $seconds . 'S'));
-	}
-
-	private function getMinMessageExpireSeconds(int $jobId): \DateTime {
-		$query = $this->db->getQueryBuilder();
-		$query->select('last_checked')
-			->from('jobs')
-			->where(
-				$query->expr()->eq('id', $query->createNamedParameter($jobId, IQueryBuilder::PARAM_INT))
-			);
-		$result = $query->executeQuery();
-		$lastCheckedEpoch = $result->fetchOne();
-		$lastChechedDateTime = $this->timeFactory->getDateTime('@' . $lastCheckedEpoch);
-		return $lastChechedDateTime;
-	}
-
-	private function deleteMessagesByIds(array $ids): void {
-		$delete = $this->db->getQueryBuilder();
-		$delete->delete('comments')
-			->where(
-				$delete->expr()->orX(
-					$delete->expr()->in('id', $delete->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)),
-					$delete->expr()->in('parent_id', $delete->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)),
-					$delete->expr()->in('topmost_parent_id', $delete->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY))
-				)
-			);
-		$delete->executeStatement();
-	}
-
-	private function reportDeletedMessagesIds(Room $chat, array $ids): void {
-		foreach ($ids as $id) {
-			$this->chatManager->addSystemMessage(
-				$chat,
-				'message_expire_expired',
-				'message_expire_expired',
-				json_encode(['message' => 'message_deleted', 'parameters' => ['message' => $id]]),
-				$this->timeFactory->getDateTime(),
-				false,
-				null,
-				$id,
-				true
-			);
-		}
 	}
 }
