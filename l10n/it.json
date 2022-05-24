@@ -2,12 +2,12 @@
     "a conversation" : "una conversazione",
     "(Duration %s)" : "(Durata %s)",
     "You attended a call with {user1}" : "Hai partecipato a una chiamata con {user1}",
-    "_%n guest_::_%n guests_" : ["%n ospite","%n ospiti"],
+    "_%n guest_::_%n guests_" : ["%n ospite","%n ospiti","%n ospiti"],
     "You attended a call with {user1} and {user2}" : "Hai partecipato a una chiamata con {user1} e {user2}",
     "You attended a call with {user1}, {user2} and {user3}" : "Hai partecipato a una chiamata con {user1}, {user2} e {user3}",
     "You attended a call with {user1}, {user2}, {user3} and {user4}" : "Hai partecipato a una chiamata con {user1}, {user2}, {user3} e {user4}",
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Hai partecipato a una chiamata con {user1}, {user2}, {user3}, {user4} e {user5}",
-    "_%n other_::_%n others_" : ["%n altro","%n altri"],
+    "_%n other_::_%n others_" : ["%n altro","%n altri","%n altri"],
     "{actor} invited you to {call}" : "{actor} ti ha invitato a {call}",
     "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "Sei stato invitato a una <strong>conversazione</strong> o hai ricevuto una <strong>chiamata</strong>",
     "Other activities" : "Altre attività",
@@ -155,8 +155,8 @@
     "%s (guest)" : "%s (ospite)",
     "You missed a call from {user}" : "Hai perso una chiamata da {user}",
     "You tried to call {user}" : "Hai provato a chiamare {user}",
-    "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Chiamata con %n ospite (Durata {duration})","Chiamata con %n ospiti (Durata {duration})"],
-    "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor} ha terminato la chiamata con %n ospite (Durata {duration})","{actor} ha terminato la chiamata con %n ospiti (Durata {duration})"],
+    "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Chiamata con %n ospite (Durata {duration})","Chiamata con %n ospiti (Durata {duration})","Chiamata con %n ospiti (Durata {duration})"],
+    "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor} ha terminato la chiamata con %n ospite (Durata {duration})","{actor} ha terminato la chiamata con %n ospiti (Durata {duration})","{actor} ha terminato la chiamata con %n ospiti (Durata {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Chiamata con {user1} e {user2} (Durata {duration})",
     "{actor} ended the call with {user1} (Duration {duration})" : "{actor} ha terminato la chiamata con {user1} ospite (Durata {duration})",
     "{actor} ended the call with {user1} and {user2} (Duration {duration})" : "{actor} ha terminato la chiamata con {user1} e {user2} (Durata {duration})",
@@ -591,7 +591,7 @@
     "Expired" : "Scaduto",
     "The trial could not be requested. Please try again later." : "La prova non può essere richiesta. Riprova più tardi.",
     "The account could not be deleted. Please try again later." : "Non è stato possibile eliminare l'account. Riprova più tardi.",
-    "_%n user_::_%n users_" : ["%n utente","%n utenti"],
+    "_%n user_::_%n users_" : ["%n utente","%n utenti","%n utenti"],
     "Matterbridge integration" : "Integrazione con Matterbridge",
     "Enable Matterbridge integration" : "Attiva l'integrazione con Matterbridge",
     "Downloading …" : "Scaricamento…",
@@ -1165,5 +1165,5 @@
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "La scheda di Deck è stata pubblicata nella <a href=\"{link}\">conversazione</a> selezionata.",
     "An error occurred while posting deck card to conversation." : "Si è verificato un errore nel tentativo di pubblicare una scheda nella conversazione",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: i file \".wasm\" e \".tflite\" sono stati correttamente restituiti dal server web"
-},"pluralForm" :"nplurals=2; plural=(n != 1);"
+},"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
