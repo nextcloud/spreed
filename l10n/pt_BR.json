@@ -2,12 +2,12 @@
     "a conversation" : "uma conversa",
     "(Duration %s)" : "(Duração %s)",
     "You attended a call with {user1}" : "Você atendeu uma chamada com {user1}",
-    "_%n guest_::_%n guests_" : ["%n convidado","%n convidados"],
+    "_%n guest_::_%n guests_" : ["%n convidado","%n convidados","%n convidados"],
     "You attended a call with {user1} and {user2}" : "Você atendeu uma chamada com {user1} e {user2}",
     "You attended a call with {user1}, {user2} and {user3}" : "Você atendeu uma chamada com {user1}, {user2} e {user3}",
     "You attended a call with {user1}, {user2}, {user3} and {user4}" : "Você atendeu uma chamada com {user1}, {user2}, {user3} e {user4}",
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Você atendeu uma chamada com {user1}, {user2}, {user3}, {user4} e {user5}",
-    "_%n other_::_%n others_" : ["%n outro","%n outros"],
+    "_%n other_::_%n others_" : ["%n outro","%n outros","%n outros"],
     "{actor} invited you to {call}" : "{actor} convidou você para {call}",
     "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "Você foi convidado para uma <strong>conversa</strong> ou recebeu uma <strong>chamada</strong>",
     "Other activities" : "Outras atividades",
@@ -160,8 +160,8 @@
     "%s (guest)" : "%s (convidado)",
     "You missed a call from {user}" : "Você perdeu uma ligação de {user}",
     "You tried to call {user}" : "Você tentou ligar para {user} ",
-    "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Chamada com %n convidado (Duração {duration})","Chamada com %n convidados (Duração {duration})"],
-    "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor} terminou as chamadas com 1%n convidados (Duração {duration})%n","{actor} terminou a chamada com %n convidados (Duração {duration})"],
+    "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Chamada com %n convidado (Duração {duration})","Chamada com %n convidados (Duração {duration})","Chamada com %n convidados (Duração {duration})"],
+    "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor} terminou as chamadas com 1%n convidados (Duração {duration})%n","{actor} terminou a chamada com %n convidados (Duração {duration})","{actor} terminou a chamada com %n convidados (Duração {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Chamada com {user1} e {user2} (Duração {duration})",
     "{actor} ended the call with {user1} (Duration {duration})" : "{actor} terminou a chamada com {user1} (Duração {duration})",
     "{actor} ended the call with {user1} and {user2} (Duration {duration})" : "{actor} terminou a chamada com {user1} e {user2} (Duração {duration})",
@@ -596,7 +596,7 @@
     "Expired" : "Expirado",
     "The trial could not be requested. Please try again later." : "A avaliação não pôde ser solicitada. Tente novamente mais tarde.",
     "The account could not be deleted. Please try again later." : "Não foi possível excluir a conta. Tente novamente mais tarde.",
-    "_%n user_::_%n users_" : ["%n usuário","%n usuários"],
+    "_%n user_::_%n users_" : ["%n usuário","%n usuários","%n usuários"],
     "Matterbridge integration" : "Integração Matterbridge",
     "Enable Matterbridge integration" : "Ativar a integração Matterbridge",
     "Downloading …" : "Baixando…",
@@ -1192,5 +1192,5 @@
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Cartão do Deck enviado para a <a href=\"{link}\">conversation</a> selecionada.",
     "An error occurred while posting deck card to conversation." : "Ocorreu um erro ao enviar um cartão do Deck para a conversa.",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: \".wasm\" e \".tflite\" os arquivos foram retornados corretamente pelo servidor web"
-},"pluralForm" :"nplurals=2; plural=(n > 1);"
+},"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

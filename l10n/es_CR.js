@@ -3,12 +3,12 @@ OC.L10N.register(
     {
     "(Duration %s)" : "(Duración %s)",
     "You attended a call with {user1}" : "Tomaste una llamda con {user1}",
-    "_%n guest_::_%n guests_" : ["%n inivitado","%n inivitados"],
+    "_%n guest_::_%n guests_" : ["%n inivitado","%n inivitados","%n inivitados"],
     "You attended a call with {user1} and {user2}" : "Tuviste una llamada con {user1} y {user2}",
     "You attended a call with {user1}, {user2} and {user3}" : "Tuviste una llamada con {user1}, {user2} y {user3}",
     "You attended a call with {user1}, {user2}, {user3} and {user4}" : "Tuviste una llamada con {user1}, {user2}, {user3} y {user4}",
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Tuviste una llamada con {user1}, {user2}, {user3}, {user4} y {user5}",
-    "_%n other_::_%n others_" : ["%n otro","otros %n"],
+    "_%n other_::_%n others_" : ["%n otro","otros %n","otros %n"],
     "{actor} invited you to {call}" : "{actor} te ha invitado a {call}",
     "Talk" : "Hablar",
     "Guest" : "Invitado",
@@ -138,4 +138,4 @@ OC.L10N.register(
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS"
 },
-"nplurals=2; plural=(n != 1);");
+"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

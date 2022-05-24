@@ -1,7 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
-    "_%n guest_::_%n guests_" : ["%n inivitado","%n inivitados"],
+    "_%n guest_::_%n guests_" : ["%n inivitado","%n inivitados","%n inivitados"],
     "Guest" : "Invitado",
     "File is too big" : "El archivo es demasiado grande.",
     "Invalid file provided" : "Archivo proporcionado inválido",
@@ -111,4 +111,4 @@ OC.L10N.register(
     "iOS app" : "Aplicación iOS",
     "Camera" : "Cámara"
 },
-"nplurals=2; plural=(n != 1);");
+"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
