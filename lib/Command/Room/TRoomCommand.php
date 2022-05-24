@@ -114,7 +114,7 @@ trait TRoomCommand {
 	 */
 	protected function setRoomDescription(Room $room, string $description): void {
 		try {
-			$room->setDescription($description);
+			$this->roomService->setDescription($room, $description);
 		} catch (\LengthException $e) {
 			throw new InvalidArgumentException('Invalid room description.');
 		}

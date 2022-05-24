@@ -359,6 +359,10 @@ class Room {
 		return $this->description;
 	}
 
+	public function setDescription(string $description): void {
+		$this->description = $description;
+	}
+
 	/**
 	 * @deprecated Use ParticipantService::getGuestCount() instead
 	 * @return int
@@ -684,38 +688,6 @@ class Room {
 		$this->name = $newName;
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_NAME_SET, $event);
-
-		return true;
-	}
-
-	/**
-	 * @param string $description
-	 * @return bool True when the change was valid, false otherwise
-	 * @throws \LengthException when the given description is too long
-	 */
-	public function setDescription(string $description): bool {
-		$description = trim($description);
-
-		if (mb_strlen($description) > self::DESCRIPTION_MAXIMUM_LENGTH) {
-			throw new \LengthException('Conversation description is limited to ' . self::DESCRIPTION_MAXIMUM_LENGTH . ' characters');
-		}
-
-		$oldDescription = $this->getDescription();
-		if ($description === $oldDescription) {
-			return false;
-		}
-
-		$event = new ModifyRoomEvent($this, 'description', $description, $oldDescription);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_DESCRIPTION_SET, $event);
-
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('description', $update->createNamedParameter($description))
-			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$update->executeStatement();
-		$this->description = $description;
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_DESCRIPTION_SET, $event);
 
 		return true;
 	}

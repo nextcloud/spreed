@@ -876,7 +876,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		try {
-			$this->room->setDescription($description);
+			$this->roomService->setDescription($this->room, $description);
 		} catch (\LengthException $exception) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
