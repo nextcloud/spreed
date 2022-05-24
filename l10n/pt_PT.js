@@ -4,12 +4,12 @@ OC.L10N.register(
     "a conversation" : "uma conversa",
     "(Duration %s)" : "(Duração %s)",
     "You attended a call with {user1}" : "Esteve numa chamada com {user1}",
-    "_%n guest_::_%n guests_" : ["%n convidado","%n convidados"],
+    "_%n guest_::_%n guests_" : ["%n convidado","%n convidados","%n convidados"],
     "You attended a call with {user1} and {user2}" : "Esteve numa chamada com {user1} e {user2}",
     "You attended a call with {user1}, {user2} and {user3}" : "Esteve numa chamada com {user1}, {user2} e {user3}",
     "You attended a call with {user1}, {user2}, {user3} and {user4}" : "Esteve numa chamada com {user1}, {user2}, {user3} e {user4}",
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Esteve numa chamada com {user1}, {user2}, {user3}, {user4} e {user5}",
-    "_%n other_::_%n others_" : ["%n outro","%n outros"],
+    "_%n other_::_%n others_" : ["%n outro","%n outros","%n outros"],
     "{actor} invited you to {call}" : "{actor} convidou-o para {call}",
     "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "Foi convidado para uma <strong>conversa</strong> ou teve uma <strong>chamada</strong>",
     "Other activities" : "Outras atividades",
@@ -322,4 +322,4 @@ OC.L10N.register(
     "iOS app" : "Aplicação iOS",
     "Camera" : "Câmera"
 },
-"nplurals=2; plural=(n != 1);");
+"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

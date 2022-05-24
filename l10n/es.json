@@ -2,12 +2,12 @@
     "a conversation" : "una conversación",
     "(Duration %s)" : "(Duración %s)",
     "You attended a call with {user1}" : "Has participado en una llamada con {user1}",
-    "_%n guest_::_%n guests_" : ["%n invitado","%n invitados"],
+    "_%n guest_::_%n guests_" : ["%n invitado","%n invitados","%n invitados"],
     "You attended a call with {user1} and {user2}" : "Has participado en una llamada con {user1} y {user2}",
     "You attended a call with {user1}, {user2} and {user3}" : "Has participado en una llamada con {user1}, {user2} y {user3}",
     "You attended a call with {user1}, {user2}, {user3} and {user4}" : "Has participado en una llamada con {user1}, {user2}, {user3} y {user4}",
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Has participado en una llamada con {user1}, {user2}, {user3}, {user4} y {user5}",
-    "_%n other_::_%n others_" : ["%n otro","%n otros"],
+    "_%n other_::_%n others_" : ["%n otro","%n otros","%n otros"],
     "{actor} invited you to {call}" : "{actor} te ha invitado a {call}",
     "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "Fuiste invitado a una <strong>conversación</strong> o tuviste una <strong>llamada</strong>",
     "Other activities" : "Otras actividades",
@@ -155,8 +155,8 @@
     "%s (guest)" : "%s (invitado)",
     "You missed a call from {user}" : "Tienes una llamada perdida de {user}",
     "You tried to call {user}" : "Ha intentado llamar a {user}",
-    "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Llamada con %n invitado (Duración {duration})","Llamada con %n invitados (Duración {duration})"],
-    "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor} ha terminado la llamada con %n invitado (Duración {duration})","{actor} ha terminado la llamada con %n invitados (Duración {duration})"],
+    "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Llamada con %n invitado (Duración {duration})","Llamada con %n invitados (Duración {duration})","Llamada con %n invitados (Duración {duration})"],
+    "_{actor} ended the call with %n guest (Duration {duration})_::_{actor} ended the call with %n guests (Duration {duration})_" : ["{actor} ha terminado la llamada con %n invitado (Duración {duration})","{actor} ha terminado la llamada con %n invitados (Duración {duration})","{actor} ha terminado la llamada con %n invitados (Duración {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Llamada con {user1} y {user2} (Duración {duration})",
     "{actor} ended the call with {user1} (Duration {duration})" : "{actor} ha terminado la llamada con {user1} (Duración {duration})",
     "{actor} ended the call with {user1} and {user2} (Duration {duration})" : "{actor} ha terminado la llamada con {user1} y {user2} (Duración {duration})",
@@ -586,7 +586,7 @@
     "Expired" : "Terminada",
     "The trial could not be requested. Please try again later." : "No se ha podido solicitar la prueba. Inténtalo de nuevo más adelante.",
     "The account could not be deleted. Please try again later." : "No se ha podido eliminar la cuenta. Inténtalo de nuevo más adelante.",
-    "_%n user_::_%n users_" : ["%n usuario","%n usuarios"],
+    "_%n user_::_%n users_" : ["%n usuario","%n usuarios","%n usuarios"],
     "Matterbridge integration" : "Integración con Matterbridge",
     "Enable Matterbridge integration" : "Activar integración con Matterbridge",
     "Downloading …" : "Descargando …",
@@ -1154,5 +1154,5 @@
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "La tarjeta de Deck se ha publicado en la <a href=\"{link}\">conversación</a> seleccionada",
     "An error occurred while posting deck card to conversation." : "Se ha producido un error al publicar la tarjeta de Deck en la conversación.",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: los archivos \".wasm\" y \".tflite\" han sido devueltos correctamente por el servidor web"
-},"pluralForm" :"nplurals=2; plural=(n != 1);"
+},"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
