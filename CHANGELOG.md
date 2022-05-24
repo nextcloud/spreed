@@ -1,21 +1,56 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.0.2 – 2022-05-26
+### Changed
+- Add "Others" section to shared items tab to list unknown items
+  [#7350](https://github.com/nextcloud/spreed/pull/7350)
+
+### Fixed
+- Only declare changed sessions as such instead of all sessions of that participant
+  [#7382](https://github.com/nextcloud/spreed/pull/7382)
+- Ensure display name of conversation owner is stored correctly
+  [#7376](https://github.com/nextcloud/spreed/pull/7376)
+- Don't show promotion options for circles and groups
+  [#7404](https://github.com/nextcloud/spreed/pull/7404)
+- Don't show permissions options for circles and groups
+  [#7360](https://github.com/nextcloud/spreed/pull/7360)
+- Don't show reactions option for command messages
+  [#7345](https://github.com/nextcloud/spreed/pull/7345)
+- Fix forwarding replies
+  [#7343](https://github.com/nextcloud/spreed/pull/7343)
+
+## 13.0.6 – 2022-05-26
+### Fixed
+- Ensure display name of conversation owner is stored correctly
+  [#7377](https://github.com/nextcloud/spreed/pull/7377)
+- Don't show promotion options for circles and groups
+  [#7409](https://github.com/nextcloud/spreed/pull/7409)
+- Don't show permissions options for circles and groups
+  [#7405](https://github.com/nextcloud/spreed/pull/7405)
+
+## 12.2.6 – 2022-05-26
+### Fixed
+- Ensure display name of conversation owner is stored correctly
+  [#7378](https://github.com/nextcloud/spreed/pull/7378)
+- Don't show promotion options for circles and groups
+  [#7406](https://github.com/nextcloud/spreed/pull/7406)
+
 ## 14.0.1 – 2022-05-07
 ### Fixed
 - Fix memory consumption with emoji picker in conversations with a lot of chat messages with reactions
-  [7328](https://github.com/nextcloud/spreed/pull/7328)
+  [#7328](https://github.com/nextcloud/spreed/pull/7328)
 - Fix endless offer loop with SIP participants
-  [7288](https://github.com/nextcloud/spreed/pull/7288)
+  [#7288](https://github.com/nextcloud/spreed/pull/7288)
 - Fix room selector in deck and maps integration
-  [7290](https://github.com/nextcloud/spreed/pull/7290)
-  [7294](https://github.com/nextcloud/spreed/pull/7294)
+  [#7290](https://github.com/nextcloud/spreed/pull/7290)
+  [#7294](https://github.com/nextcloud/spreed/pull/7294)
 - Fix transceiver kind for participants without the HPB
-  [7263](https://github.com/nextcloud/spreed/pull/7263)
+  [#7263](https://github.com/nextcloud/spreed/pull/7263)
 - Fix error on console when initiating a screenshare
-  [7330](https://github.com/nextcloud/spreed/pull/7330)
+  [#7330](https://github.com/nextcloud/spreed/pull/7330)
 - Add missing translations of 24 branch
-  [7330](https://github.com/nextcloud/spreed/pull/7330)
+  [#7330](https://github.com/nextcloud/spreed/pull/7330)
 
 ## 14.0.0 – 2022-05-02
 ### Added
@@ -35,30 +70,30 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Make reactions work for guests and handle guests without name in the summary
-  [7217](https://github.com/nextcloud/spreed/pull/7217)
+  [#7217](https://github.com/nextcloud/spreed/pull/7217)
 - Add a link to notification sound settings from talk settings
-  [7224](https://github.com/nextcloud/spreed/pull/7224)
+  [#7224](https://github.com/nextcloud/spreed/pull/7224)
 - Fix migration with Postgres and Oracle
-  [7211](https://github.com/nextcloud/spreed/pull/7211)
+  [#7211](https://github.com/nextcloud/spreed/pull/7211)
 - Add programmatic output options to talk:active-calls command
-  [7227](https://github.com/nextcloud/spreed/pull/7227)
+  [#7227](https://github.com/nextcloud/spreed/pull/7227)
 - Fix media tab and reactions summary in read-only rooms
-  [7236](https://github.com/nextcloud/spreed/pull/7236)
+  [#7236](https://github.com/nextcloud/spreed/pull/7236)
 
 ## 14.0.0-rc.3 – 2022-04-22
 ### Fixed
 - Move message.reactions.self to message.reactionsSelf to not merge different data structures
-  [7182](https://github.com/nextcloud/spreed/pull/7182)
+  [#7182](https://github.com/nextcloud/spreed/pull/7182)
 - Use actor and time information from the reaction not the message author
-  [7190](https://github.com/nextcloud/spreed/pull/7190)
+  [#7190](https://github.com/nextcloud/spreed/pull/7190)
 - Fix migration of attachment types for media
-  [7196](https://github.com/nextcloud/spreed/pull/7196)
+  [#7196](https://github.com/nextcloud/spreed/pull/7196)
 - Open chat tab by default in sidebar while in a call
-  [7201](https://github.com/nextcloud/spreed/pull/7201)
+  [#7201](https://github.com/nextcloud/spreed/pull/7201)
 - Fix access to undefined key
-  [7195](https://github.com/nextcloud/spreed/pull/7195)
+  [#7195](https://github.com/nextcloud/spreed/pull/7195)
 - Only set header when the value changed and the status is not 304
-  [7200](https://github.com/nextcloud/spreed/pull/7200)
+  [#7200](https://github.com/nextcloud/spreed/pull/7200)
 
 ### Still in progress
 - Media tab showing all shared items of the conversation
