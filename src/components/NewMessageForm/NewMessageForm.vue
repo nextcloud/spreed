@@ -121,7 +121,7 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import AdvancedInput from './AdvancedInput/AdvancedInput.vue'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { getCapabilities } from '@nextcloud/capabilities'
@@ -258,11 +258,11 @@ export default {
 	},
 
 	watch: {
-		currentConversationIsJoined(newValue) {
+		currentConversationIsJoined() {
 			this.$refs.advancedInput.focusInput()
 		},
 
-		disabled(newValue) {
+		disabled(newValue: boolean) {
 			// the menu is not always available
 			if (!this.$refs.uploadMenu) {
 				return
@@ -270,11 +270,11 @@ export default {
 			this.$refs.uploadMenu.$refs.menuButton.disabled = newValue
 		},
 
-		text(newValue) {
+		text(newValue: string) {
 			this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: newValue })
 		},
 
-		token(token) {
+		token(token: string) {
 			if (token) {
 				this.text = this.$store.getters.currentMessageInput(token) || ''
 			} else {
@@ -302,9 +302,9 @@ export default {
 			this.$refs.advancedInput.focusInput()
 		},
 
-		contentEditableToParsed(contentEditable) {
+		contentEditableToParsed(contentEditable: HTMLElement) {
 			const mentions = contentEditable.querySelectorAll('span[data-at-embedded]')
-			mentions.forEach(mention => {
+			mentions.forEach((mention: any) => {
 				// FIXME Adding a space after the mention should be improved to
 				// do it or not based on the next element instead of always
 				// adding it.
@@ -327,7 +327,7 @@ export default {
 		 * @param {string} text the raw text
 		 * @return {string} the parsed text
 		 */
-		rawToParsed(text) {
+		rawToParsed(text: string) {
 			text = text.replace(/<br>/g, '\n')
 			text = text.replace(/<div>/g, '\n')
 			text = text.replace(/<\/div>/g, '')
@@ -353,7 +353,7 @@ export default {
 		 * Sends the new message
 		 */
 		async handleSubmit() {
-			if (OC.debug && this.parsedText.startsWith('/spam ')) {
+			if ((<Window>window).OC.debug && this.parsedText.startsWith('/spam ')) {
 				const pattern = /^\/spam (\d+) messages$/i
 				const match = pattern.exec(this.parsedText)
 				// Escape HTML
@@ -377,10 +377,10 @@ export default {
 			}
 		},
 
-		async handleSubmitSpam(numberOfMessages) {
+		async handleSubmitSpam(numberOfMessages: number) {
 			console.debug('Sending ' + numberOfMessages + ' lorem ipsum messages')
 			for (let i = 0; i < numberOfMessages; i++) {
-				const randomNumber = parseInt(Math.random() * 500, 10)
+				const randomNumber = parseInt((Math.random() * 500).toString(), 10)
 				console.debug('[' + i + '/' + numberOfMessages + '] Sleeping ' + randomNumber + 'ms')
 				await this.sleep(randomNumber)
 
@@ -390,11 +390,11 @@ export default {
 			}
 		},
 
-		sleep(ms) {
+		sleep(ms: number) {
 			return new Promise(resolve => setTimeout(resolve, ms))
 		},
 
-		handleRetryMessage(temporaryMessageId) {
+		handleRetryMessage(temporaryMessageId: string) {
 			if (this.parsedText === '') {
 				const temporaryMessage = this.$store.getters.message(this.token, temporaryMessageId)
 				if (temporaryMessage) {
@@ -412,7 +412,7 @@ export default {
 					if (!path.startsWith('/')) {
 						throw new Error(t('files', 'Invalid path selected'))
 					}
-					shareFile(path, this.token)
+					shareFile(path, this.token, undefined, undefined)
 					this.$refs.advancedInput.focusInput()
 				})
 
@@ -438,7 +438,7 @@ export default {
 			this.$refs.fileUploadInput.click()
 		},
 
-		handleFileInput(event) {
+		handleFileInput(event: InputFileEvent) {
 			const files = Object.values(event.target.files)
 
 			this.handleFiles(files)
@@ -453,7 +453,7 @@ export default {
 		 *
 		 * @param {File[] | FileList} files pasted files list
 		 */
-		async handlePastedFiles(files) {
+		async handlePastedFiles(files: Array<Object>) {
 			this.handleFiles(files, true)
 		},
 
@@ -464,7 +464,7 @@ export default {
 		 * @param {boolean} rename whether to rename the files
 		 * @param {boolean} isVoiceMessage indicates whether the file is a vooicemessage
 		 */
-		async handleFiles(files, rename = false, isVoiceMessage) {
+		async handleFiles(files: Array<Object>, rename = false, isVoiceMessage: boolean) {
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files
@@ -481,7 +481,7 @@ export default {
 		 *
 		 * @param {string} emoji Emoji object
 		 */
-		addEmoji(emoji) {
+		addEmoji(emoji: string) {
 			const selection = document.getSelection()
 
 			const contentEditable = this.$refs.advancedInput.$refs.contentEditable
@@ -519,11 +519,11 @@ export default {
 			range.setStartAfter(emojiTextNode)
 		},
 
-		handleAudioFile(payload) {
+		handleAudioFile(payload: object) {
 			this.handleFiles([payload], false, true)
 		},
 
-		handleRecording(payload) {
+		handleRecording(payload: object) {
 			this.isRecordingAudio = payload
 		},
 	},
