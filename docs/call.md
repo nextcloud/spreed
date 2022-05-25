@@ -38,6 +38,7 @@
     field | type | Description
     ---|---|---
     `flags` | int | Flags what streams are provided by the participant (see [Constants - Participant in-call flag](constants.md#participant-in-call-flag))
+	`silent` | bool | Disable start call notifications for group/public calls
 
 * Response:
     - Status code:

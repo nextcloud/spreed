@@ -43,6 +43,7 @@ use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SendCallNotificationEvent;
+use OCA\Talk\Events\SilentModifyParticipantEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -947,7 +948,7 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, $event);
 	}
 
-	public function changeInCall(Room $room, Participant $participant, int $flags, bool $endCallForEveryone = false): void {
+	public function changeInCall(Room $room, Participant $participant, int $flags, bool $endCallForEveryone = false, bool $silent = false): void {
 		$session = $participant->getSession();
 		if (!$session instanceof Session) {
 			return;
@@ -962,7 +963,11 @@ class ParticipantService {
 		}
 
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
-			$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
+			if ($silent) {
+				$event = new SilentModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall(), $silent);
+			} else {
+				$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall(), $silent);
+			}
 			$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_JOIN_CALL, $event);
 		} else {
 			if ($endCallForEveryone) {

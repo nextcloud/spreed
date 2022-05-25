@@ -28,6 +28,7 @@ use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SendCallNotificationEvent;
+use OCA\Talk\Events\SilentModifyParticipantEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -90,7 +91,8 @@ class Listener implements IEventListener {
 
 		$listener = static function (RoomEvent $event): void {
 			$listener = Server::get(self::class);
-			$listener->checkCallNotifications($event->getRoom());
+			$silent = $event instanceof SilentModifyParticipantEvent;
+			$listener->checkCallNotifications($event->getRoom(), $silent);
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, $listener);
 
@@ -188,10 +190,12 @@ class Listener implements IEventListener {
 
 	/**
 	 * Call notification: "{user} wants to talk with you"
-	 *
-	 * @param Room $room
 	 */
-	public function checkCallNotifications(Room $room): void {
+	public function checkCallNotifications(Room $room, bool $silent = false): void {
+		if ($silent) {
+			$this->shouldSendCallNotification = false;
+			return;
+		}
 		if ($room->getActiveSince() instanceof \DateTime) {
 			// Call already active => No new notifications
 			$this->shouldSendCallNotification = false;

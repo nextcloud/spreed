@@ -111,7 +111,7 @@ class CallController extends AEnvironmentAwareController {
 	 * @param int|null $forcePermissions
 	 * @return DataResponse
 	 */
-	public function joinCall(?int $flags = null, ?int $forcePermissions = null): DataResponse {
+	public function joinCall(?int $flags = null, ?int $forcePermissions = null, bool $silent = false): DataResponse {
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
 
 		$session = $this->participant->getSession();
@@ -128,7 +128,7 @@ class CallController extends AEnvironmentAwareController {
 			$this->roomService->setPermissions($this->room, 'call', Attendee::PERMISSIONS_MODIFY_SET, $forcePermissions, true);
 		}
 
-		$this->participantService->changeInCall($this->room, $this->participant, $flags);
+		$this->participantService->changeInCall($this->room, $this->participant, $flags, false, $silent);
 
 		return new DataResponse();
 	}
