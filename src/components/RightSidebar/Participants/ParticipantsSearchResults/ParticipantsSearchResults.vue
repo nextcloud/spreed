@@ -46,15 +46,21 @@
 				@click="handleClickParticipant" />
 		</template>
 
+		<!-- integrations -->
 		<template v-if="integrations.length !== 0">
 			<AppNavigationCaption :title="t('spreed', 'Integrations')" />
-
 			<ul>
-				<li v-for="(integration, index) in integrations"
+				<Button v-for="(integration, index) in integrations"
 					:key="'integration' + index"
+					type="tertiary-no-background"
 					@click="runIntegration(integration)">
+					<!-- FIXME: dinamically change the material design icon -->
+					<AccountPlus slot="icon"
+						decorative
+						title=""
+						:size="20" />
 					{{ integration.label }}
-				</li>
+				</Button>
 			</ul>
 		</template>
 
@@ -95,6 +101,8 @@
 import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
 import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
 import Hint from '../../../Hint.vue'
+import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'ParticipantsSearchResults',
@@ -103,6 +111,8 @@ export default {
 		ParticipantsList,
 		AppNavigationCaption,
 		Hint,
+		AccountPlus,
+		Button,
 	},
 
 	props: {
