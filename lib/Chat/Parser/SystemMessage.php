@@ -646,6 +646,21 @@ class SystemMessage {
 			];
 		}
 
+		if ($room->getType() !== Room::ONE_TO_ONE_CALL) {
+			// Can happen if a user was remove from a one-to-one room.
+			return [
+				$this->l->t('You tried to call {user}'),
+				[
+					'user' => [
+						'type' => 'highlight',
+						'id' => 'deleted_user',
+						'name' => $room->getName(),
+					],
+				],
+				'call_tried',
+			];
+		}
+
 		$participants = json_decode($room->getName(), true);
 		$other = '';
 		foreach ($participants as $participant) {
@@ -653,6 +668,7 @@ class SystemMessage {
 				$other = $participant;
 			}
 		}
+
 		return [
 			$this->l->t('You tried to call {user}'),
 			[
