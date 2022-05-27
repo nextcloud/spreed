@@ -1,6 +1,7 @@
 module.exports = {
 	extends: [
 		'@nextcloud',
+		'plugin:@typescript-eslint/recommended',
 	],
 	overrides: [
 		{
