@@ -142,7 +142,7 @@ export default {
 		a {
 			text-decoration: underline;
 			&:after {
-				content: " ↗";
+				content: ' ↗';
 			}
 		}
 	}
