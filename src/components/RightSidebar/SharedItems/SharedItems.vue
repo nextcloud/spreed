@@ -136,16 +136,15 @@ export default {
 	}
 
 	&__other {
-
 		width: 100%;
 		margin-left: 8px;
+
 		a {
 			text-decoration: underline;
 			&:after {
-			content: " ↗";
+				content: ' ↗';
+			}
 		}
-		}
-
 	}
 }
 </style>
