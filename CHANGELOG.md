@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 12.2.6 – 2022-05-26
+### Fixed
+- Ensure display name of conversation owner is stored correctly
+  [#7378](https://github.com/nextcloud/spreed/pull/7378)
+- Don't show promotion options for circles and groups
+  [#7406](https://github.com/nextcloud/spreed/pull/7406)
+
 ## 12.2.5 – 2022-04-08
 ### Fixed
 - Compatibility with LDAP user backends and more than 64 characters display names
