@@ -22,6 +22,7 @@ OC.L10N.register(
     "Language" : "ภาษา",
     "Country" : "ประเทศ",
     "Status" : "สถานะ",
+    "Created at" : "สร้างเมื่อ",
     "Pending" : "อยู่ระหว่างดำเนินการ",
     "Error" : "ข้อผิดพลาด",
     "Saved" : "บันทึกแล้ว",
