@@ -1586,16 +1586,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 
-		Assert::assertCount(count($formData->getHash()), $messages, 'Message count does not match');
-		Assert::assertEquals($formData->getHash(), array_map(function ($message) {
-			return [
+		$expected = $formData->getHash();
+
+		Assert::assertCount(count($expected), $messages, 'Message count does not match');
+		Assert::assertEquals($expected, array_map(function ($message, $expected) {
+			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => (string) $message['actorType'],
-				'actorId' => ($message['actorType'] === 'guests')? self::$sessionIdToUser[$message['actorId']]: (string) $message['actorId'],
-				'actorDisplayName' => (string) $message['actorDisplayName'],
+				'actorId' => ($message['actorType'] === 'guests') ? self::$sessionIdToUser[$message['actorId']]: (string) $message['actorId'],
 				'systemMessage' => (string) $message['systemMessage'],
 			];
-		}, $messages));
+
+			if (isset($expected['actorDisplayName'])) {
+				$data['actorDisplayName'] = $message['actorDisplayName'];
+			}
+
+			if (isset($expected['message'])) {
+				$data['message'] = $message['message'];
+			}
+
+			if (isset($expected['messageParameters'])) {
+				$data['messageParameters'] = json_encode($message['messageParameters']);
+			}
+
+			return $data;
+		}, $messages, $expected));
 	}
 
 	/**
