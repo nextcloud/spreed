@@ -46,6 +46,24 @@
 				@click="handleClickParticipant" />
 		</template>
 
+		<!-- integrations -->
+		<template v-if="integrations.length !== 0">
+			<AppNavigationCaption :title="t('spreed', 'Integrations')" />
+			<ul>
+				<Button v-for="(integration, index) in integrations"
+					:key="'integration' + index"
+					type="tertiary-no-background"
+					@click="runIntegration(integration)">
+					<!-- FIXME: dinamically change the material design icon -->
+					<AccountPlus slot="icon"
+						decorative
+						title=""
+						:size="20" />
+					{{ integration.label }}
+				</Button>
+			</ul>
+		</template>
+
 		<template v-if="addableRemotes.length !== 0">
 			<AppNavigationCaption :title="t('spreed', 'Add federated users')" />
 			<ParticipantsList :items="addableRemotes"
@@ -83,6 +101,8 @@
 import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
 import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
 import Hint from '../../../Hint.vue'
+import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'ParticipantsSearchResults',
@@ -91,6 +111,8 @@ export default {
 		ParticipantsList,
 		AppNavigationCaption,
 		Hint,
+		AccountPlus,
+		Button,
 	},
 
 	props: {
@@ -135,6 +157,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		searchText: {
+			type: String,
+			default: '',
+		},
 	},
 
 	computed: {
@@ -142,6 +169,10 @@ export default {
 			return !this.addableUsers.length
 				|| !this.addableGroups.length
 				|| (this.isCirclesEnabled && !this.addableCircles.length)
+		},
+
+		integrations() {
+			return this.$store.getters.participantSearchActions.filter((integration) => integration.show(this.searchText))
 		},
 
 		sourcesWithoutResultsList() {
@@ -236,6 +267,12 @@ export default {
 		},
 		handleClickHint() {
 			this.$emit('click-search-hint')
+		},
+
+		runIntegration(integration) {
+			integration.callback(this.searchText).then((participant) => {
+				this.$emit('click', participant)
+			})
 		},
 	},
 }

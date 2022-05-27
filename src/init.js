@@ -49,6 +49,16 @@ window.OCA.Talk.registerMessageAction = ({ label, callback, icon }) => {
 	store.dispatch('addMessageAction', messageAction)
 }
 
+window.OCA.Talk.registerParticipantSearchAction = ({ label, callback, show, icon }) => {
+	const participantSearchAction = {
+		label,
+		callback,
+		show,
+		icon,
+	}
+	store.dispatch('addParticipantSearchAction', participantSearchAction)
+}
+
 EventBus.$on('signaling-join-room', (payload) => {
 	const token = payload[0]
 	store.dispatch('updateLastJoinedConversationToken', token)

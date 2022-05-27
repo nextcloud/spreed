@@ -409,7 +409,7 @@ describe('MessageButtonsBar.vue', () => {
 				icon: 'some-icon2',
 				callback: handler2,
 			}])
-			testStoreConfig.modules.messageActionsStore.getters.messageActions = actionsGetterMock
+			testStoreConfig.modules.integrationsStore.getters.messageActions = actionsGetterMock
 			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => () => messageProps)
 			store = new Store(testStoreConfig)
 			const wrapper = shallowMount(MessageButtonsBar, {

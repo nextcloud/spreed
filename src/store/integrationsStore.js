@@ -21,11 +21,15 @@
  */
 const state = {
 	messageActions: [],
+	participantSearchActions: [],
 }
 
 const getters = {
 	messageActions: (state) => {
 		return state.messageActions
+	},
+	participantSearchActions: (state) => {
+		return state.participantSearchActions
 	},
 }
 
@@ -33,11 +37,17 @@ const mutations = {
 	addMessageAction(state, messageAction) {
 		state.messageActions.push(messageAction)
 	},
+	addParticipantSearchAction(state, participantSearchAction) {
+		state.participantSearchActions.push(participantSearchAction)
+	},
 }
 
 const actions = {
 	addMessageAction({ commit }, messageAction) {
 		commit('addMessageAction', messageAction)
+	},
+	addParticipantSearchAction({ commit }, participantSearchAction) {
+		commit('addParticipantSearchAction', participantSearchAction)
 	},
 }
 

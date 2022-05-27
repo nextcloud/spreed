@@ -35,6 +35,7 @@
 			:search-results="searchResults"
 			:contacts-loading="contactsLoading"
 			:no-results="noResults"
+			:search-text="searchText"
 			@click="addParticipants" />
 	</div>
 </template>
