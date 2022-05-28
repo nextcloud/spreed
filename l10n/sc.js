@@ -933,6 +933,7 @@ OC.L10N.register(
     "Add groups" : "Agiunghe grupos",
     "Add emails" : "Agiunghe email",
     "Add circles" : "Agiunghe giros",
+    "Integrations" : "Integratziones",
     "Searching …" : "Chirchende …",
     "No results" : "Perunu resurtadu",
     "Search for more users" : "Chirca àteras utèntzias",

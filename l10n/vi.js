@@ -635,6 +635,7 @@ OC.L10N.register(
     "Add groups" : "Thêm nhóm",
     "Add emails" : "Thêm email",
     "Add circles" : "Thêm vòng kết nối",
+    "Integrations" : "Các bộ tích hợp",
     "Searching …" : "Đang tìm kiếm ...",
     "No results" : "Không có kết quả",
     "Search for more users" : "Tìm kiếm thêm người dùng",

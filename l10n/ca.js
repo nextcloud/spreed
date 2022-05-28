@@ -734,6 +734,7 @@ OC.L10N.register(
     "Add groups" : "Afegeix grups",
     "Add emails" : "Afegir correus electrònics",
     "Add circles" : "Afegeix cercles",
+    "Integrations" : "Integracions",
     "Searching …" : "Cercant …",
     "No results" : "No hi ha resultats",
     "Search for more users" : "Cercar més usuaris",

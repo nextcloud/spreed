@@ -1035,6 +1035,7 @@ OC.L10N.register(
     "Add groups" : "新增群組",
     "Add emails" : "新增電郵",
     "Add circles" : "新增圈子",
+    "Integrations" : "整合",
     "Add federated users" : "添加 federated 用戶",
     "Searching …" : "正在搜尋……",
     "No results" : "沒有符合搜尋的項目",

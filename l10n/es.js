@@ -1007,6 +1007,7 @@ OC.L10N.register(
     "Add groups" : "Añadir grupos",
     "Add emails" : "Añade correos electrónicos",
     "Add circles" : "Añadir círculos",
+    "Integrations" : "Integraciones",
     "Add federated users" : "Añadir usuarios federados",
     "Searching …" : "Buscando  …",
     "No results" : "Sin resultados",
