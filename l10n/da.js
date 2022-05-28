@@ -391,6 +391,7 @@ OC.L10N.register(
     "Add groups" : "Tilføj grupper",
     "Add emails" : "Tilføj emails",
     "Add circles" : "Tilføj cirkler",
+    "Integrations" : "Integrationer",
     "Searching …" : "Søger ...",
     "No results" : "Ingen resultater",
     "Add users or groups" : "Add users or groups",

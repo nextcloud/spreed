@@ -1035,6 +1035,7 @@ OC.L10N.register(
     "Add groups" : "Csoportok hozzáadása",
     "Add emails" : "E-mailek hozzáadása",
     "Add circles" : "Körök hozzáadása",
+    "Integrations" : "Integrációk",
     "Add federated users" : "Föderált felhasználók hozzáadása",
     "Searching …" : "Keresés…",
     "No results" : "Nincs találat",

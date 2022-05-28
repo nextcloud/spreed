@@ -859,6 +859,7 @@ OC.L10N.register(
     "Add groups" : "Προσθήκη ομάδων",
     "Add emails" : "Προσθήκη emails",
     "Add circles" : "Προσθήκη κύκλων",
+    "Integrations" : "Ενσωματώσεις",
     "Searching …" : "Αναζήτηση ...",
     "No results" : "Κανένα αποτέλεσμα",
     "Search for more users" : "Αναζήτηση περισσότερων χρηστών",

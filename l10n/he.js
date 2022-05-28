@@ -523,6 +523,7 @@ OC.L10N.register(
     "Add groups" : "הוספת קבוצות",
     "Add emails" : "הוספת כתובות דוא״ל",
     "Add circles" : "הוספת מעגלים",
+    "Integrations" : "שילובים",
     "Searching …" : "מתבצע חיפוש…",
     "No results" : "אין תוצאות",
     "Add users or groups" : "הוספת משתמשים או קבוצות",

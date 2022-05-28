@@ -1010,6 +1010,7 @@ OC.L10N.register(
     "Add groups" : "Добавить группы",
     "Add emails" : "Добавить по адресам эл. почты",
     "Add circles" : "Добавить круги",
+    "Integrations" : "Интеграции",
     "Add federated users" : "Добавить федеративных пользователей",
     "Searching …" : "Поиск…",
     "No results" : "Нет результатов",

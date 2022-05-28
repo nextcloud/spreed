@@ -969,6 +969,7 @@ OC.L10N.register(
     "Add groups" : "グループを追加",
     "Add emails" : "メールを追加",
     "Add circles" : "サークルを追加",
+    "Integrations" : "インテグレーション",
     "Searching …" : "検索しています…",
     "No results" : "該当なし",
     "Search for more users" : "さらにユーザーを探す",
