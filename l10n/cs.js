@@ -1035,6 +1035,7 @@ OC.L10N.register(
     "Add groups" : "Přidat skupiny",
     "Add emails" : "Přidat e-maily",
     "Add circles" : "Přidat okruhy",
+    "Integrations" : "Napojení",
     "Add federated users" : "Přidat federované uživatele",
     "Searching …" : "Hledání…",
     "No results" : "Žádné výsledky",

@@ -1012,6 +1012,7 @@ OC.L10N.register(
     "Add groups" : "添加分组",
     "Add emails" : "添加电子邮件",
     "Add circles" : "添加圈子",
+    "Integrations" : "集成",
     "Add federated users" : "添加 federated 用户",
     "Searching …" : "正在搜索 ...",
     "No results" : "没有结果",

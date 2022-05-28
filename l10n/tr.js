@@ -1035,6 +1035,7 @@ OC.L10N.register(
     "Add groups" : "Grup ekle",
     "Add emails" : "E-posta adreslerini ekle",
     "Add circles" : "Çevre ekle",
+    "Integrations" : "Bütünleştirmeler",
     "Add federated users" : "Birleştirilmiş kullanıcılar ekle",
     "Searching …" : "Aranıyor …",
     "No results" : "Herhangi bir sonuç bulunamadı",

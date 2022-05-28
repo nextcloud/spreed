@@ -1020,6 +1020,7 @@ OC.L10N.register(
     "Add groups" : "Pridať skupiny",
     "Add emails" : "Pridať e-maily",
     "Add circles" : "Pridať okruhy",
+    "Integrations" : "Integrácie",
     "Add federated users" : "Pridajte federatívnych užívateľov",
     "Searching …" : "Hľadá sa …",
     "No results" : "Žiadne výsledky",
