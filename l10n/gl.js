@@ -862,6 +862,7 @@ OC.L10N.register(
     "Add groups" : "Engadir grupos",
     "Add emails" : "Engadir correos",
     "Add circles" : "Engadir círculos",
+    "Integrations" : "Integracións",
     "Searching …" : "Buscando…",
     "No results" : "Sen resultados",
     "Search for more users" : "Buscar máis usuarios",

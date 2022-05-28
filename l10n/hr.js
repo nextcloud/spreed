@@ -987,6 +987,7 @@ OC.L10N.register(
     "Add groups" : "Dodaj grupe",
     "Add emails" : "Dodaj adrese e-pošte",
     "Add circles" : "Dodaj krugove",
+    "Integrations" : "Integracije",
     "Searching …" : "Traženje…",
     "No results" : "Nema rezultata",
     "Search for more users" : "Potraži još korisnika",

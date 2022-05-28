@@ -1004,6 +1004,7 @@ OC.L10N.register(
     "Add groups" : "Gehitu taldeak",
     "Add emails" : "Gehitu helbide elektronikoa",
     "Add circles" : "Gehitu zirkuluak",
+    "Integrations" : "Integrazioak",
     "Add federated users" : "Gehitu erabiltzaile federatuak",
     "Searching …" : "Bilatzen …",
     "No results" : "Emaitzarik ez",
