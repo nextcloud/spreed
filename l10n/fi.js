@@ -751,6 +751,7 @@ OC.L10N.register(
     "Add groups" : "Lisää ryhmiä",
     "Add emails" : "Lisää sähköpostiosoitteita",
     "Add circles" : "Lisää piirejä",
+    "Integrations" : "Integraatiot",
     "Add federated users" : "Lisää federoituja käyttäjiä",
     "Searching …" : "Haetaan…",
     "No results" : "Ei tuloksia",
