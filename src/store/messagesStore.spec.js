@@ -1427,7 +1427,7 @@ describe('messagesStore', () => {
 				resolvePromise = resolve
 			}))
 
-			const returnedPromise = store.dispatch('postNewMessage', temporaryMessage).catch(() => {})
+			const returnedPromise = store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } }).catch(() => {})
 			expect(store.getters.isSendingMessages).toBe(true)
 
 			resolvePromise(response)
@@ -1438,7 +1438,7 @@ describe('messagesStore', () => {
 
 			expect(receivedResponse).toBe(response)
 
-			expect(postNewMessage).toHaveBeenCalledWith(temporaryMessage)
+			expect(postNewMessage).toHaveBeenCalledWith(temporaryMessage, { silent: false })
 
 			expect(updateLastCommonReadMessageAction).toHaveBeenCalledWith(
 				expect.anything(),
@@ -1471,8 +1471,8 @@ describe('messagesStore', () => {
 				sendingFailure: '',
 			}
 
-			store.dispatch('postNewMessage', temporaryMessage).catch(() => {})
-			store.dispatch('postNewMessage', temporaryMessage2).catch(() => {})
+			store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } }).catch(() => {})
+			store.dispatch('postNewMessage', { temporaryMessage: temporaryMessage2, options: { silent: false } }).catch(() => {})
 
 			expect(cancelFunctionMocks[0]).not.toHaveBeenCalled()
 			expect(cancelFunctionMocks[1]).not.toHaveBeenCalled()
@@ -1513,7 +1513,7 @@ describe('messagesStore', () => {
 
 			postNewMessage.mockRejectedValueOnce({ isAxiosError: true, response })
 			await expect(
-				store.dispatch('postNewMessage', temporaryMessage)
+				store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } })
 			).rejects.toMatchObject({ response })
 
 			expect(store.getters.isSendingMessages).toBe(false)
@@ -1553,7 +1553,7 @@ describe('messagesStore', () => {
 			}
 
 			store.dispatch('addTemporaryMessage', temporaryMessage)
-			store.dispatch('postNewMessage', temporaryMessage).catch(() => {})
+			store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } }).catch(() => {})
 
 			jest.advanceTimersByTime(60000)
 
@@ -1594,7 +1594,7 @@ describe('messagesStore', () => {
 			postNewMessage.mockResolvedValueOnce(response)
 
 			store.dispatch('addTemporaryMessage', temporaryMessage)
-			await store.dispatch('postNewMessage', temporaryMessage)
+			await store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } })
 
 			jest.advanceTimersByTime(60000)
 
