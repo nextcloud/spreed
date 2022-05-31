@@ -98,6 +98,7 @@ class Capabilities implements IPublicCapability {
 				'direct-mention-flag',
 				'notification-calls',
 				'conversation-permissions',
+				'unified-search',
 			],
 			'config' => [
 				'attachments' => [
