@@ -126,7 +126,7 @@ class BackendNotifier {
 		$hash = hash_hmac('sha256', $random . $body, $this->config->getSignalingSecret());
 		$headers['Spreed-Signaling-Random'] = $random;
 		$headers['Spreed-Signaling-Checksum'] = $hash;
-		$headers['Spreed-Signaling-Backend'] = $this->urlGenerator->getBaseUrl();
+		$headers['Spreed-Signaling-Backend'] = $this->urlGenerator->getAbsoluteURL('');
 
 		$params = [
 			'headers' => $headers,
