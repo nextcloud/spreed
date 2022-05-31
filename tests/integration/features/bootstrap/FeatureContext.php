@@ -1554,22 +1554,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sees (poll details|poll) "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 * @Then /^user "([^"]*)" sees poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
-	 * @param string $details
 	 * @param string $question
 	 * @param string $identifier
 	 * @param string $statusCode
 	 * @param string $apiVersion
 	 * @param ?TableNode $formData
 	 */
-	public function userSeesPollInRoom($user, $details, $question, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userSeesPollInRoom($user, $question, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
 		$this->setCurrentUser($user);
 
-		$query = $details === 'poll details' ? '?details=1' : '';
-
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question] . $query);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
 		$this->assertStatusCode($this->response, $statusCode);
 
 		$expected = $this->preparePollExpectedData($formData->getRowsHash());
@@ -1671,6 +1668,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if (isset($expected['details'])) {
 			$expected['details'] = json_decode($expected['details'], true);
 		}
+		$expected['numVoters'] = (int) $expected['numVoters'];
 		$expected['options'] = json_decode($expected['options'], true);
 
 		$result = preg_match('/POLL_ID\(([^)]+)\)/', $expected['id'], $matches);

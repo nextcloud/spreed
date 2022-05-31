@@ -117,10 +117,9 @@ class PollController extends AEnvironmentAwareController {
 	 * @RequireModeratorOrNoLobby
 	 *
 	 * @param int $pollId
-	 * @param bool $details
 	 * @return DataResponse
 	 */
-	public function showPoll(int $pollId, bool $details = false): DataResponse {
+	public function showPoll(int $pollId): DataResponse {
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
 		} catch (DoesNotExistException $e) {
@@ -129,7 +128,7 @@ class PollController extends AEnvironmentAwareController {
 
 		$votedSelf = $this->pollService->getVotesForActor($this->participant, $poll);
 		$detailedVotes = [];
-		if ($details && ($poll->getResultMode() === Poll::MODE_PUBLIC || $poll->getStatus() === Poll::STATUS_CLOSED)) {
+		if ($poll->getResultMode() === Poll::MODE_PUBLIC && $poll->getStatus() === Poll::STATUS_CLOSED) {
 			$detailedVotes = $this->pollService->getVotes($poll);
 		}
 
@@ -187,19 +186,26 @@ class PollController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 
+		$detailedVotes = [];
+		if ($poll->getResultMode() === Poll::MODE_PUBLIC) {
+			$detailedVotes = $this->pollService->getVotes($poll);
+		}
+
 		$votedSelf = $this->pollService->getVotesForActor($this->participant, $poll);
 
-		return new DataResponse($this->renderPoll($poll, $votedSelf));
+		return new DataResponse($this->renderPoll($poll, $votedSelf, $detailedVotes));
 	}
 
 	protected function renderPoll(Poll $poll, array $votedSelf = [], array $detailedVotes = []): array {
 		$data = $poll->asArray();
 		unset($data['roomId']);
 
-		if ($poll->getResultMode() === Poll::MODE_HIDDEN && $poll->getStatus() === Poll::STATUS_OPEN) {
+		$canSeeSummary = !empty($votedSelf) && $poll->getResultMode() === Poll::MODE_PUBLIC;
+
+		if (!$canSeeSummary && $poll->getStatus() === Poll::STATUS_OPEN) {
 			$data['votes'] = [];
 			$data['numVoters'] = 0;
-		} elseif (!empty($detailedVotes)) {
+		} elseif ($poll->getResultMode() === Poll::MODE_PUBLIC && $poll->getStatus() === Poll::STATUS_CLOSED) {
 			$data['details'] = array_map(static fn (Vote $vote) => $vote->asArray(), $detailedVotes);
 		}
 

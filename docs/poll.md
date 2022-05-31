@@ -88,16 +88,27 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ## Poll data
 
-| field              | type     | Description                                                                                     |
-|--------------------|----------|-------------------------------------------------------------------------------------------------|
-| `id`               | int      | ID of the poll                                                                                  |
-| `question`         | string   | The question of the poll                                                                        |
-| `options`          | string[] | The options participants can vote for                                                           |
-| `votes`            | int[]    | Map with optionId => number of votes (empty if the resultMode is hidden and the statue is open) |
-| `actorType`        | string   | Actor type of the poll author (see [Constants - Attendee types](constants.md#attendee-types))   |
-| `actorId`          | string   | Actor ID identifying the poll author                                                            |
-| `actorDisplayName` | string   | Display name of the poll author                                                                 |
-| `status`           | int      | Status of the poll (see [Constants - Poll status](constants.md#poll-status))                    |
-| `resultMode`       | int      | Result mode of the poll (see [Constants - Poll mode](constants.md#poll-mode))                   |
-| `maxVotes`         | int      | Maximum amount of options a user can vote for, `0` means unlimited                              |
-| `votedSelf`        | int[]    | Array of option ids the participant voted for                                                   |
+| field              | type     | Description                                                                                                      |
+|--------------------|----------|------------------------------------------------------------------------------------------------------------------|
+| `id`               | int      | ID of the poll                                                                                                   |
+| `question`         | string   | The question of the poll                                                                                         |
+| `options`          | string[] | The options participants can vote for                                                                            |
+| `votes`            | int[]    | Map with optionId => number of votes (only available for when the actor voted on public poll or the poll is closed) |
+| `actorType`        | string   | Actor type of the poll author (see [Constants - Attendee types](constants.md#attendee-types))                    |
+| `actorId`          | string   | Actor ID identifying the poll author                                                                             |
+| `actorDisplayName` | string   | Display name of the poll author                                                                                  |
+| `status`           | int      | Status of the poll (see [Constants - Poll status](constants.md#poll-status))                                     |
+| `resultMode`       | int      | Result mode of the poll (see [Constants - Poll mode](constants.md#poll-mode))                                    |
+| `maxVotes`         | int      | Maximum amount of options a user can vote for, `0` means unlimited                                               |
+| `votedSelf`        | int[]    | Array of option ids the participant voted for                                                                    |
+| `numVoters`        | int      | The number of unique voters that (only available for when the actor voted on public poll or the poll is closed)  |
+| `details`          | array[]  | Detailed list who voted for which option (only available for public closed polls), see [Details](#details) below |
+
+### Details
+
+| field            | type   | Description                                                                                                  |
+|------------------|--------|--------------------------------------------------------------------------------------------------------------|
+| actorType        | string | The actor type of the participant that voted (see [Constants - Attendee types](constants.md#attendee-types)) |
+| actorId          | string | The actor id of the participant that voted                                                                   |
+| actorDisplayName | string | The display name of the participant that voted                                                               |
+| optionId         | int    | The option that was voted for                                                                                |

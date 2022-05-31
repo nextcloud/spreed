@@ -34,7 +34,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | {"1":1}   |
-      | numVoters  | 1    |
+      | numVoters  | 1 |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
@@ -42,13 +42,25 @@ Feature: chat/poll
       | actorDisplayName    | participant1-displayname |
       | status     | open |
       | votedSelf  | [1] |
-    Then user "participant2" sees poll details "What is the question?" in room "room" with 200
+    Then user "participant1" sees poll "What is the question?" in room "room" with 200
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | {"1":1}   |
-      | numVoters  | 1    |
-      | details    | [{"actorType":"users","actorId":"participant1","actorDisplayName":"participant1-displayname","optionId":1}]   |
+      | numVoters  | 1 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
+      | status     | open |
+      | votedSelf  | [1] |
+    Then user "participant2" sees poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | [] |
+      | numVoters  | 0 |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
@@ -69,6 +81,21 @@ Feature: chat/poll
       | actorDisplayName    | participant1-displayname |
       | status     | closed |
       | votedSelf  | [1] |
+      | details    | [{"actorType":"users","actorId":"participant1","actorDisplayName":"participant1-displayname","optionId":1}] |
+    Then user "participant2" sees poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"1":1}   |
+      | numVoters  | 1 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
+      | status     | closed |
+      | votedSelf  | not voted |
+      | details    | [{"actorType":"users","actorId":"participant1","actorDisplayName":"participant1-displayname","optionId":1}] |
 
   Scenario: Participants can update their votes
     Given user "participant1" creates room "room" (v4)
@@ -189,6 +216,7 @@ Feature: chat/poll
       | actorDisplayName    | participant2-displayname |
       | status     | closed |
       | votedSelf  | not voted |
+      | details    | {} |
 
   Scenario: Non-moderators can note create polls without chat permission
     Given user "participant1" creates room "room" (v4)
@@ -226,6 +254,7 @@ Feature: chat/poll
       | actorDisplayName    | participant2-displayname |
       | status     | closed |
       | votedSelf  | not voted |
+      | details    | {} |
 
   Scenario: Non-moderators can not close polls of others
     Given user "participant1" creates room "room" (v4)
@@ -278,7 +307,7 @@ Feature: chat/poll
       | actorDisplayName    | participant1-displayname |
       | status     | open |
       | votedSelf  | not voted |
-    Then user "participant1" sees poll details "What is the question?" in room "room" with 200
+    Then user "participant2" sees poll "What is the question?" in room "room" with 200
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
@@ -290,7 +319,7 @@ Feature: chat/poll
       | actorId    | participant1 |
       | actorDisplayName    | participant1-displayname |
       | status     | open |
-      | votedSelf  | not voted |
+      | votedSelf  | [1] |
     Then user "participant1" closes poll "What is the question?" in room "room" with 200
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
