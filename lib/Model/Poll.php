@@ -37,6 +37,8 @@ use OCP\AppFramework\Db\Entity;
  * @method string getOptions()
  * @method void setVotes(string $votes)
  * @method string getVotes()
+ * @method void setNumVoters(int $numVoters)
+ * @method int getNumVoters()
  * @method void setActorType(string $actorType)
  * @method string getActorType()
  * @method void setActorId(string $actorId)
@@ -61,6 +63,7 @@ class Poll extends Entity {
 	protected string $question = '';
 	protected string $options = '';
 	protected string $votes = '';
+	protected int $numVoters = 0;
 	protected string $actorType = '';
 	protected string $actorId = '';
 	protected ?string $displayName = null;
@@ -73,6 +76,7 @@ class Poll extends Entity {
 		$this->addType('question', 'string');
 		$this->addType('options', 'string');
 		$this->addType('votes', 'string');
+		$this->addType('numVoters', 'int');
 		$this->addType('actorType', 'string');
 		$this->addType('actorId', 'string');
 		$this->addType('displayName', 'string');
@@ -91,6 +95,7 @@ class Poll extends Entity {
 			'question' => $this->getQuestion(),
 			'options' => json_decode($this->getOptions(), true, 512, JSON_THROW_ON_ERROR),
 			'votes' => json_decode($this->getVotes(), true, 512, JSON_THROW_ON_ERROR),
+			'numVoters' => $this->getNumVoters(),
 			'actorType' => $this->getActorType(),
 			'actorId' => $this->getActorId(),
 			'actorDisplayName' => $this->getDisplayName(),

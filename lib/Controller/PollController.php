@@ -198,6 +198,7 @@ class PollController extends AEnvironmentAwareController {
 
 		if ($poll->getResultMode() === Poll::MODE_HIDDEN && $poll->getStatus() === Poll::STATUS_OPEN) {
 			$data['votes'] = [];
+			$data['numVoters'] = 0;
 		} elseif (!empty($detailedVotes)) {
 			$data['details'] = array_map(static fn (Vote $vote) => $vote->asArray(), $detailedVotes);
 		}

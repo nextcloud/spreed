@@ -67,6 +67,11 @@ class Version15000Date20220503121308 extends SimpleMigrationStep {
 				'notnull' => false,
 				'length' => null,
 			]);
+			$table->addColumn('num_voters', Types::BIGINT, [
+				'notnull' => false,
+				'length' => 20,
+				'default' => 0,
+			]);
 			$table->addColumn('actor_type', Types::STRING, [
 				'notnull' => true,
 				'length' => 64,

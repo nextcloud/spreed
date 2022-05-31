@@ -154,6 +154,11 @@ class PollService {
 			$participant->getAttendee()->getActorId()
 		);
 
+		$numVoters = $poll->getNumVoters();
+		if ($previousVotes && $numVoters > 0) {
+			$numVoters--;
+		}
+
 		foreach ($previousVotes as $vote) {
 			$result[$vote->getOptionId()] ??= 1;
 			$result[$vote->getOptionId()] -= 1;
@@ -166,6 +171,10 @@ class PollService {
 				$participant->getAttendee()->getActorType(),
 				$participant->getAttendee()->getActorId()
 			);
+
+			if (!empty($optionIds)) {
+				$numVoters++;
+			}
 
 			foreach ($optionIds as $optionId) {
 				$vote = new Vote();
@@ -190,6 +199,7 @@ class PollService {
 		$this->updateResultCache($poll->getId());
 		$result = array_filter($result);
 		$poll->setVotes(json_encode($result));
+		$poll->setNumVoters($numVoters);
 
 		return $votes;
 	}
@@ -222,11 +232,29 @@ class PollService {
 			)
 			->from($jsonQuery->createFunction('(' . $resultQuery->getSQL() . ')'), 'json');
 
+		$subQuery = $this->connection->getQueryBuilder();
+		$subQuery->select('actor_type', 'actor_id')
+			->from('talk_poll_votes')
+			->groupBy('actor_type', 'actor_id');
+
+		$votersQuery = $this->connection->getQueryBuilder();
+		$votersQuery->select($votersQuery->func()->count('*'))
+			->from($votersQuery->createFunction('(' . $subQuery->getSQL() . ')'), 'voters');
+
 		$update = $this->connection->getQueryBuilder();
 		$update->update('talk_polls')
 			->set('votes', $jsonQuery->createFunction('(' . $jsonQuery->getSQL() . ')'))
+			->set('num_voters', $jsonQuery->createFunction('(' . $votersQuery->getSQL() . ')'))
 			->where($update->expr()->eq('id', $update->createNamedParameter($pollId, IQueryBuilder::PARAM_INT)));
-		$update->executeStatement();
+
+		$this->connection->beginTransaction();
+		try {
+			$update->executeStatement();
+		} catch (\Exception $e) {
+			$this->connection->rollBack();
+			throw $e;
+		}
+		$this->connection->commit();
 	}
 
 	public function deleteByRoomId(int $roomId): void {

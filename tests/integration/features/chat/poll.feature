@@ -21,6 +21,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | []   |
+      | numVoters  | 0    |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
@@ -33,6 +34,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | {"1":1}   |
+      | numVoters  | 1    |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
@@ -45,6 +47,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | {"1":1}   |
+      | numVoters  | 1    |
       | details    | [{"actorType":"users","actorId":"participant1","actorDisplayName":"participant1-displayname","optionId":1}]   |
       | resultMode | public |
       | maxVotes   | unlimited |
@@ -58,6 +61,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | {"1":1}   |
+      | numVoters  | 1    |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
@@ -80,6 +84,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | {"0":1}   |
+      | numVoters  | 1    |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
@@ -92,6 +97,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | {"1":1}   |
+      | numVoters  | 1    |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
@@ -137,6 +143,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | {"0":1,"1":1} |
+      | numVoters  | 1    |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
@@ -174,6 +181,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | [] |
+      | numVoters  | 0 |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
@@ -210,6 +218,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | [] |
+      | numVoters  | 0 |
       | resultMode | public |
       | maxVotes   | unlimited |
       | actorType  | users |
@@ -248,6 +257,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | []   |
+      | numVoters  | 0 |
       | resultMode | hidden |
       | maxVotes   | unlimited |
       | actorType  | users |
@@ -260,6 +270,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | []   |
+      | numVoters  | 0 |
       | resultMode | hidden |
       | maxVotes   | unlimited |
       | actorType  | users |
@@ -272,6 +283,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | []   |
+      | numVoters  | 0 |
       | resultMode | hidden |
       | maxVotes   | unlimited |
       | actorType  | users |
@@ -284,6 +296,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | {"1":1}   |
+      | numVoters  | 1 |
       | resultMode | hidden |
       | maxVotes   | unlimited |
       | actorType  | users |
