@@ -94,6 +94,7 @@ title: Capabilities
 * `rich-object-delete` - When the API allows to delete chat messages which are file or rich object shares
 
 ## 15
+* `unified-search` - When the extended attributes of unified search results are there
 * `chat-permission` - When permission 128 is required to post chat messages, reaction or share items to the conversation
 * `silent-send` - Whether the chat API allows to send chat messages without triggering notifications
 * `sip-support-nopin` - Whether SIP can be configured to not require a custom attendee PIN

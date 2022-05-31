@@ -106,6 +106,7 @@ class CapabilitiesTest extends TestCase {
 			'conversation-permissions',
 			'rich-object-list-media',
 			'rich-object-delete',
+			'unified-search',
 			'chat-permission',
 			'silent-send',
 			'send-call-notification',
