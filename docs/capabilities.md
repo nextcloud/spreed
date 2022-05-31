@@ -92,3 +92,6 @@ title: Capabilities
 * `reactions` - Api reactions to chat message
 * `rich-object-list-media` - When the API to get the chat messages for shared media is available
 * `rich-object-delete` - When the API allows to delete chat messages which are file or rich object shares
+
+### 14.0.3
+* `unified-search` - When the extended attributes of unified search results are there

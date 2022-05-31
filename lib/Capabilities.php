@@ -101,6 +101,7 @@ class Capabilities implements IPublicCapability {
 				'conversation-permissions',
 				'rich-object-list-media',
 				'rich-object-delete',
+				'unified-search',
 			],
 			'config' => [
 				'attachments' => [
