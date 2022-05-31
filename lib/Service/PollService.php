@@ -125,8 +125,26 @@ class PollService {
 	 * @param Poll $poll
 	 * @param int[] $optionIds Options the user voted for
 	 * @return Vote[]
+	 * @throws \RuntimeException
 	 */
 	public function votePoll(Participant $participant, Poll $poll, array $optionIds): array {
+		$numVotes = count($optionIds);
+		if ($numVotes !== count(array_unique($optionIds))) {
+			throw new \UnexpectedValueException();
+		}
+
+		if ($poll->getMaxVotes() !== Poll::MAX_VOTES_UNLIMITED
+			&& $poll->getMaxVotes() < $numVotes) {
+			throw new \OverflowException();
+		}
+
+		$maxOptionId = max(array_keys(json_decode($poll->getOptions(), true, 512, JSON_THROW_ON_ERROR)));
+		$maxVotedId = max($optionIds);
+		$minVotedId = min($optionIds);
+		if ($minVotedId < 0 || $maxVotedId > $maxOptionId) {
+			throw new \RangeException();
+		}
+
 		$votes = [];
 		$result = json_decode($poll->getVotes(), true);
 

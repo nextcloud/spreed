@@ -145,6 +145,17 @@ Feature: chat/poll
       | status     | open |
       | votedSelf  | [0,1] |
 
+  Scenario: Participants can not vote for the same option multiple times
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    When user "participant1" creates a poll in room "room" with 201
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+    Then user "participant1" votes for options "[1,1]" on poll "What is the question?" in room "room" with 400
+
   Scenario: Non-moderators can also create polls and close it themselves
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |

@@ -152,19 +152,11 @@ class PollController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($poll->getMaxVotes() !== Poll::MAX_VOTES_UNLIMITED
-			&& $poll->getMaxVotes() < count($optionIds)) {
+		try {
+			$votedSelf = $this->pollService->votePoll($this->participant, $poll, $optionIds);
+		} catch (\RuntimeException $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
-
-		$maxOptionId = max(array_keys(json_decode($poll->getOptions(), true, 512, JSON_THROW_ON_ERROR)));
-		$maxVotedId = max($optionIds);
-		$minVotedId = min($optionIds);
-		if ($minVotedId < 0 || $maxVotedId > $maxOptionId) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
-		$votedSelf = $this->pollService->votePoll($this->participant, $poll, $optionIds);
 
 		return new DataResponse($this->renderPoll($poll, $votedSelf));
 	}
