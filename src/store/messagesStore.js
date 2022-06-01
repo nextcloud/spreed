@@ -585,7 +585,7 @@ const actions = {
 	 * Deletes all messages of a conversation from the store only.
 	 *
 	 * @param {object} context default store context;
-	 * @param {object} token the token of the conversation to be deleted;
+	 * @param {string} token the token of the conversation to be deleted;
 	 */
 	deleteMessages(context, token) {
 		context.commit('deleteMessages', token)
@@ -855,9 +855,11 @@ const actions = {
 	 * Sends the given temporary message to the server.
 	 *
 	 * @param {object} context default store context;
-	 * @param {object} temporaryMessage temporary message, must already have been added to messages list.
+	 * @param {object} data Passed in parameters
+	 * @param {object} data.temporaryMessage temporary message, must already have been added to messages list.
+	 * @param {object} data.options post request options.
 	 */
-	async postNewMessage(context, temporaryMessage) {
+	async postNewMessage(context, { temporaryMessage, options }) {
 		const { request, cancel } = CancelableRequest(postNewMessage)
 		context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: cancel })
 
@@ -870,7 +872,7 @@ const actions = {
 		}, 30000)
 
 		try {
-			const response = await request(temporaryMessage)
+			const response = await request(temporaryMessage, options)
 			clearTimeout(timeout)
 			context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: null })
 
