@@ -157,7 +157,7 @@
 							icon="icon-upload"
 							:title="t('spreed', 'Silent call')"
 							@click="silentCall= true">
-							{{ t('spreed', 'The conversation participants won\'t be notifyed about this call starting') }}
+							{{ t('spreed', 'The conversation participants will not be notified about this call') }}
 							<BellOff slot="icon"
 								:size="16"
 								decorative
@@ -169,7 +169,7 @@
 							icon="icon-upload"
 							:title="t('spreed', 'Normal call')"
 							@click="silentCall= false">
-							{{ t('spreed', 'The conversation participants will be notifyed about this call starting') }}
+							{{ t('spreed', 'The conversation participants will be notified about this call') }}
 							<Bell slot="icon"
 								:size="16"
 								decorative
