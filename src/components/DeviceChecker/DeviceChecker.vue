@@ -149,9 +149,39 @@
 				{{ t('spreed', 'Always show this dialog before joining a call in this conversation.') }}
 			</CheckboxRadioSwitch>
 
-			<!-- Join call -->
-			<CallButton class="call-button"
-				:force-join-call="true" />
+			<div class="device-checker__call-buttons">
+				<!-- Silent call -->
+				<Actions :force-menu="true">
+					<template v-if="!silentCall">
+						<ActionButton :close-after-click="true"
+							icon="icon-upload"
+							:title="t('spreed', 'Silent call')"
+							@click="silentCall= true">
+							{{ t('spreed', 'The conversation participants won\'t be notifyed about this call starting') }}
+							<BellOff slot="icon"
+								:size="16"
+								decorative
+								title="" />
+						</ActionButton>
+					</template>
+					<template v-else>
+						<ActionButton :close-after-click="true"
+							icon="icon-upload"
+							:title="t('spreed', 'Normal call')"
+							@click="silentCall= false">
+							{{ t('spreed', 'The conversation participants will be notifyed about this call starting') }}
+							<Bell slot="icon"
+								:size="16"
+								decorative
+								title="" />
+						</ActionButton>
+					</template>
+				</Actions>
+				<!-- Join call -->
+				<CallButton class="call-button"
+					:force-join-call="true"
+					:silent-call="silentCall" />
+			</div>
 		</div>
 	</Modal>
 </template>
@@ -169,6 +199,8 @@ import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import Blur from 'vue-material-design-icons/Blur'
 import BlurOff from 'vue-material-design-icons/BlurOff'
+import BellOff from 'vue-material-design-icons/BellOff'
+import Bell from 'vue-material-design-icons/Bell.vue'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 import CallButton from '../TopBar/CallButton.vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -176,6 +208,9 @@ import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwi
 import BrowserStorage from '../../services/BrowserStorage.js'
 import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
+import Actions from '@nextcloud/vue/dist/Components/Actions'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+
 export default {
 	name: 'DeviceChecker',
 
@@ -195,6 +230,10 @@ export default {
 		CheckboxRadioSwitch,
 		VolumeIndicator,
 		Button,
+		ActionButton,
+		Actions,
+		BellOff,
+		Bell,
 	},
 
 	mixins: [devices],
@@ -208,6 +247,7 @@ export default {
 			videoOn: undefined,
 			blurOn: undefined,
 			showDeviceChecker: true,
+			silentCall: false,
 
 		}
 	},
@@ -392,6 +432,13 @@ export default {
 		justify-content: center;
 		align-items: center;
 	}
+
+	&__call-buttons {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 4px;
+	}
 }
 
 .preview {
@@ -421,8 +468,6 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	min-width: 150px;
-	margin: auto;
 }
 
 .checkbox {
