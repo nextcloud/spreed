@@ -553,6 +553,7 @@ class RoomService {
 			->set('message_expire', $update->createNamedParameter($seconds, IQueryBuilder::PARAM_INT))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
+		$room->setMessageExpire($seconds);
 		if ($seconds > 0) {
 			$this->jobList->add(ApplyMessageExpire::class, ['room_id' => $room->getId()]);
 			$this->messageExpireSystemMessage($room, $participant, $seconds, 'message_expire_enabled');
