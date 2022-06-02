@@ -59,6 +59,7 @@ class RoomService {
 	protected IShareManager $shareManager;
 	protected IHasher $hasher;
 	protected IEventDispatcher $dispatcher;
+	protected IJobList $jobList;
 
 	public function __construct(Manager $manager,
 								ChatManager $chatManager,
@@ -68,7 +69,8 @@ class RoomService {
 								ITimeFactory $timeFactory,
 								IShareManager $shareManager,
 								IHasher $hasher,
-								IEventDispatcher $dispatcher) {
+								IEventDispatcher $dispatcher,
+								IJobList $jobList) {
 		$this->manager = $manager;
 		$this->chatManager = $chatManager;
 		$this->commentsManager = $commentsManager;
@@ -78,6 +80,7 @@ class RoomService {
 		$this->shareManager = $shareManager;
 		$this->hasher = $hasher;
 		$this->dispatcher = $dispatcher;
+		$this->jobList = $jobList;
 	}
 
 	/**
@@ -550,12 +553,11 @@ class RoomService {
 			->set('message_expire', $update->createNamedParameter($seconds, IQueryBuilder::PARAM_INT))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
-		$jobList = Server::get(IJobList::class);
 		if ($seconds > 0) {
-			$jobList->add(ApplyMessageExpire::class, ['room_id' => $room->getId()]);
+			$this->jobList->add(ApplyMessageExpire::class, ['room_id' => $room->getId()]);
 			$this->messageExpireSystemMessage($room, $participant, $seconds, 'message_expire_enabled');
 		} else {
-			$jobList->remove(ApplyMessageExpire::class, ['room_id' => $room->getId()]);
+			$this->jobList->remove(ApplyMessageExpire::class, ['room_id' => $room->getId()]);
 			$this->messageExpireSystemMessage($room, $participant, $seconds, 'message_expire_disabled');
 		}
 
