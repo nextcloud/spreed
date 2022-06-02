@@ -86,3 +86,6 @@ title: Capabilities
 * `direct-mention-flag` - The conversation list populates the boolean `unreadMentionDirect` when the user was mentioned directly (ignoring @all mentions) since their last visit
 * `notification-calls` - Whether the API to opt out of call notifications is available
 * `conversation-permissions` - Whether the default and custom permissions can be set for attendees.
+
+### 13.0.7
+* `unified-search` - When the extended attributes of unified search results are there

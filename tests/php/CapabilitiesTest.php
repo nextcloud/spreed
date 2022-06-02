@@ -95,6 +95,7 @@ class CapabilitiesTest extends TestCase {
 			'direct-mention-flag',
 			'notification-calls',
 			'conversation-permissions',
+			'unified-search',
 		];
 	}
 
