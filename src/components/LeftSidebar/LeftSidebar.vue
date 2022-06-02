@@ -28,6 +28,7 @@
 				:is-searching="isSearching"
 				@input="debounceFetchSearchResults"
 				@submit="onInputEnter"
+				@keydown.enter.native="handleEnter"
 				@abort-search="abortSearch" />
 			<NewGroupConversation v-if="canStartConversations" />
 		</div>
@@ -490,6 +491,14 @@ export default {
 			this.handleScroll()
 			this.handleUnreadMention()
 		}, 50),
+
+		// Route to the first search result
+		handleEnter() {
+			if (this?.conversationsList[0]?.token) {
+				this.$router.push({ name: 'conversation', params: { token: this.conversationsList[0].token } })
+			}
+			this.handleClickSearchResult()
+		},
 	},
 }
 </script>
