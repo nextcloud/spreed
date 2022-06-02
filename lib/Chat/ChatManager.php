@@ -36,6 +36,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -48,6 +49,7 @@ use OCP\ICacheFactory;
 use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\Notification\IManager as INotificationManager;
+use OCP\Server;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
@@ -703,7 +705,7 @@ class ChatManager {
 	public function deleteExpiredMessages(int $roomId, int $jobId): array {
 		$room = $this->manager->getRoomById($roomId);
 
-		$max = $this->getMaxMessageExpireSeconds($room->getTimeToLive());
+		$max = $this->getMaxMessageExpireSeconds(Server::get(RoomService::class)->getMessageExpire($room));
 		$min = $this->getMinMessageExpireSeconds($jobId);
 
 		$ids = $this->commentsManager->getMessageIdsByRoomIdInDateInterval($roomId, $min, $max);

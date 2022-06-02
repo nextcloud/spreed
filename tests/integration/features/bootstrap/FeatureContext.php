@@ -2586,7 +2586,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
 		$room = $this->getDataFromResponse($this->response);
 
-		Assert::assertEquals($messageExpire, $room['timeToLive']);
+		Assert::assertEquals($messageExpire, $room['messageExpire']);
 	}
 
 	/**

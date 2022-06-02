@@ -162,7 +162,7 @@ class Room {
 	private int $type;
 	private int $readOnly;
 	private int $listable;
-	private int $timeToLive;
+	private int $messageExpire;
 	private int $lobbyState;
 	private int $sipEnabled;
 	private ?int $assignedSignalingServer;
@@ -196,7 +196,7 @@ class Room {
 								int $type,
 								int $readOnly,
 								int $listable,
-								int $timeToLive,
+								int $messageExpire,
 								int $lobbyState,
 								int $sipEnabled,
 								?int $assignedSignalingServer,
@@ -226,7 +226,7 @@ class Room {
 		$this->type = $type;
 		$this->readOnly = $readOnly;
 		$this->listable = $listable;
-		$this->timeToLive = $timeToLive;
+		$this->messageExpire = $messageExpire;
 		$this->lobbyState = $lobbyState;
 		$this->sipEnabled = $sipEnabled;
 		$this->assignedSignalingServer = $assignedSignalingServer;
@@ -286,10 +286,6 @@ class Room {
 	 */
 	public function setListable(int $newState): void {
 		$this->listable = $newState;
-	}
-
-	public function getTimeToLive(): int {
-		return $this->timeToLive;
 	}
 
 	public function getLobbyState(): int {
