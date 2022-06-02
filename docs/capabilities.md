@@ -99,5 +99,6 @@ title: Capabilities
 * `silent-send` - Whether the chat API allows to send chat messages without triggering notifications
 * `sip-support-nopin` - Whether SIP can be configured to not require a custom attendee PIN
 * `send-call-notification` - When the API allows to resend call notifications for individual users that did not join yet
+* `silent-call` - Allow to start calls without sending notification
 * `config => call => enabled` - Whether calling is enabled on the instance or not
 * `config => signaling => session-ping-limit` - Number of sessions the HPB is allowed to ping in the same request

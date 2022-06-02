@@ -109,6 +109,7 @@ class CapabilitiesTest extends TestCase {
 			'unified-search',
 			'chat-permission',
 			'silent-send',
+			'silent-call',
 			'send-call-notification',
 			'reactions',
 		];

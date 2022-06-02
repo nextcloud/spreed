@@ -105,6 +105,7 @@ class Capabilities implements IPublicCapability {
 				'unified-search',
 				'chat-permission',
 				'silent-send',
+				'silent-call',
 				'send-call-notification',
 			],
 			'config' => [
