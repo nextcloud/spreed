@@ -51,7 +51,7 @@
         `participantFlags` | int | v1 | | "In call" flags of the user's session making the request (only available with `in-call-flags` capability)
         `readOnly` | int | v1 | | Read-only state for the current user (only available with `read-only-rooms` capability)
         `listable` | int | v3 | | Listable scope for the room (only available with `listable-rooms` capability)
-        `messageExpire` | int | v4 | | The message expire time in seconds in this chat. Zero if disabled. (only available with `time-to-live` capability)
+        `messageExpire` | int | v4 | | The message expire time in seconds in this chat. Zero if disabled. (only available with `message-expire` capability)
         `count` | int | v1 | v2 | **Removed:** Count the users on the [Get list of participants in a conversation](participant.md#get-list-of-participants-in-a-conversation) endpoint
         `numGuests` | int | v1 | v2 | **Removed:** Count the guests on the [Get list of participants in a conversation](participant.md#get-list-of-participants-in-a-conversation) endpoin
         `lastPing` | int | v1 | | Timestamp of the user's session making the request
@@ -339,14 +339,14 @@
 
 ## Set message expire for messages in a conversation
 
-* Required capability: `time-to-live`
+* Required capability: `message-expire`
 * Method: `POST`
-* Endpoint: `/room/{token}/ttl`
+* Endpoint: `/room/{token}/message-expire`
 * Data:
 
     field | type | Description
     ---|---|---
-    `ttl` | int | The time to live for messages in seconds. If is zero, messages will not be deleted automatically.
+    `seconds` | int | The messages expire time in seconds. If is zero, messages will not be deleted automatically.
 
 * Response:
     - Status code:

@@ -97,6 +97,7 @@ title: Capabilities
 * `unified-search` - When the extended attributes of unified search results are there
 * `chat-permission` - When permission 128 is required to post chat messages, reaction or share items to the conversation
 * `silent-send` - Whether the chat API allows to send chat messages without triggering notifications
+* `message-expire` - Message expiration time for a conversation
 * `sip-support-nopin` - Whether SIP can be configured to not require a custom attendee PIN
 * `send-call-notification` - When the API allows to resend call notifications for individual users that did not join yet
 * `silent-call` - Allow to start calls without sending notification

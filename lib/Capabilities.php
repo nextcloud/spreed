@@ -135,7 +135,7 @@ class Capabilities implements IPublicCapability {
 		];
 
 		if ($this->serverConfig->getAppValue('core', 'backgroundjobs_mode', 'ajax') === 'cron') {
-			$capabilities['features'][] = 'time-to-live';
+			$capabilities['features'][] = 'message-expire';
 		}
 
 		if ($this->commentsManager->supportReactions()) {
