@@ -279,9 +279,9 @@ export default {
 
 		silentSendInfo() {
 			if (this.isOneToOne) {
-				return t('spreed', 'The participant won\'t be notified about this message')
+				return t('spreed', 'The participant will not be notified about this message')
 			} else {
-				return t('spreed', 'The participants won\'t be notified about this message')
+				return t('spreed', 'The participants will not be notified about this message')
 			}
 
 		},
