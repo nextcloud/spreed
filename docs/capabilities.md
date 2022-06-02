@@ -81,3 +81,6 @@ title: Capabilities
 
 ## 12.1
 * `clear-history` - Whether chat API has the endpoint so moderators can clear the complete history of a chat
+
+### 12.2.7
+* `unified-search` - When the extended attributes of unified search results are there

@@ -92,6 +92,7 @@ class CapabilitiesTest extends TestCase {
 			'signaling-v3',
 			'publishing-permissions',
 			'clear-history',
+			'unified-search',
 		];
 	}
 
