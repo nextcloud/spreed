@@ -440,6 +440,39 @@ class RoomService {
 		return $updated;
 	}
 
+	/**
+	 * @param string $description
+	 * @return bool True when the change was valid, false otherwise
+	 * @throws \LengthException when the given description is too long
+	 */
+	public function setDescription(Room $room, string $description): bool {
+		$description = trim($description);
+
+		if (mb_strlen($description) > Room::DESCRIPTION_MAXIMUM_LENGTH) {
+			throw new \LengthException('Conversation description is limited to ' . Room::DESCRIPTION_MAXIMUM_LENGTH . ' characters');
+		}
+
+		$oldDescription = $room->getDescription();
+		if ($description === $oldDescription) {
+			return false;
+		}
+
+		$event = new ModifyRoomEvent($room, 'description', $description, $oldDescription);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_DESCRIPTION_SET, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('description', $update->createNamedParameter($description))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setDescription($description);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_DESCRIPTION_SET, $event);
+
+		return true;
+	}
+
 	public function verifyPassword(Room $room, string $password): array {
 		$event = new VerifyRoomPasswordEvent($room, $password);
 		$this->dispatcher->dispatch(Room::EVENT_PASSWORD_VERIFY, $event);

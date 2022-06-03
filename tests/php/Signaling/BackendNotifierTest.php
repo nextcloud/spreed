@@ -438,7 +438,7 @@ class BackendNotifierTest extends TestCase {
 
 	public function testRoomDescriptionChanged() {
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
-		$room->setDescription('The description');
+		$this->roomService->setDescription($room, 'The description');
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'update',
