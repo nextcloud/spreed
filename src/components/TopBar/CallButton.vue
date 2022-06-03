@@ -285,7 +285,7 @@ export default {
 				token: this.token,
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
 				flags,
-				silent: this.silentCall,
+				silent: this.hasCall ? true : this.silentCall,
 			})
 			this.loading = false
 		},
