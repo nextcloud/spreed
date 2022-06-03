@@ -155,7 +155,7 @@
 					<template v-if="!silentCall">
 						<ActionButton :close-after-click="true"
 							icon="icon-upload"
-							:title="t('spreed', 'Silent call')"
+							:title="t('spreed', 'Call without notification')"
 							@click="silentCall= true">
 							{{ t('spreed', 'The conversation participants will not be notified about this call') }}
 							<BellOff slot="icon"
