@@ -156,6 +156,7 @@ export default {
 			await this.$store.dispatch('joinCall', {
 				token: this.token,
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+				silent: false,
 			})
 		},
 

@@ -40,11 +40,13 @@ import {
  *
  * @param {string} token The token of the call to be joined.
  * @param {number} flags The available PARTICIPANT.CALL_FLAG for this participants
+ * @param {boolean} silent Whether the call should trigger a notifications and
+ * sound for other participants or not
  * @return {number} The actual flags based on the available media
  */
-const joinCall = async function(token, flags) {
+const joinCall = async function(token, flags, silent) {
 	try {
-		return await signalingJoinCall(token, flags)
+		return await signalingJoinCall(token, flags, silent)
 	} catch (error) {
 		console.debug('Error while joining call: ', error)
 	}

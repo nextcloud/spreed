@@ -391,9 +391,10 @@ describe('participantsStore', () => {
 					sessionId: 'session-id-1',
 				},
 				flags,
+				silent: false,
 			})
 
-			expect(joinCall).toHaveBeenCalledWith(TOKEN, flags)
+			expect(joinCall).toHaveBeenCalledWith(TOKEN, flags, false)
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
 			expect(store.getters.participantsList(TOKEN)).toStrictEqual([
 				{
@@ -440,9 +441,10 @@ describe('participantsStore', () => {
 				sessionId: 'session-id-1',
 			},
 			flags,
+			silent: false,
 		})
 
-		expect(joinCall).toHaveBeenCalledWith(TOKEN, flags)
+		expect(joinCall).toHaveBeenCalledWith(TOKEN, flags, false)
 		expect(store.getters.isInCall(TOKEN)).toBe(true)
 		expect(store.getters.participantsList(TOKEN)).toStrictEqual([
 			{

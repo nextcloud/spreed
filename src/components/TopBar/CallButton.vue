@@ -122,6 +122,15 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		/**
+		 * Whether the call should trigger a notifications and sound
+		 * for other participants or not
+		 */
+		silentCall: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	data() {
@@ -187,7 +196,7 @@ export default {
 				return t('spreed', 'Join call')
 			}
 
-			return t('spreed', 'Start call')
+			return this.silentCall ? t('spreed', 'Start call silently') : t('spreed', 'Start call')
 		},
 
 		startCallToolTip() {
@@ -254,6 +263,9 @@ export default {
 			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1
 		},
 
+		/**
+		 * Starts or joins a call
+		 */
 		async joinCall() {
 			let flags = PARTICIPANT.CALL_FLAG.IN_CALL
 			if (this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
@@ -273,6 +285,7 @@ export default {
 				token: this.token,
 				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
 				flags,
+				silent: this.hasCall ? true : this.silentCall,
 			})
 			this.loading = false
 		},
