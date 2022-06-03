@@ -159,7 +159,6 @@ the main body of the message as well as a quote.
 			:is-reactions-menu-open.sync="isReactionsMenuOpen"
 			:message-api-data="messageApiData"
 			:message-object="messageObject"
-			:is-last-read="isLastReadMessage"
 			:can-react="canReact"
 			v-bind="$props"
 			:previous-message-id="previousMessageId"
