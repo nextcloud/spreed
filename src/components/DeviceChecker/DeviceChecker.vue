@@ -151,7 +151,7 @@
 
 			<div class="device-checker__call-buttons">
 				<!-- Silent call -->
-				<Actions :force-menu="true">
+				<Actions v-if="showSilentCallOption" :force-menu="true">
 					<template v-if="!silentCall">
 						<ActionButton :close-after-click="true"
 							icon="icon-upload"
@@ -210,6 +210,7 @@ import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import isInLobby from '../../mixins/isInLobby.js'
 
 export default {
 	name: 'DeviceChecker',
@@ -236,7 +237,7 @@ export default {
 		Bell,
 	},
 
-	mixins: [devices],
+	mixins: [devices, isInLobby],
 
 	data() {
 		return {
@@ -301,6 +302,18 @@ export default {
 
 		blurButtonTooltip() {
 			return this.blurOn ? t('spreed', 'Disable background blur') : t('spreed', 'Blur background')
+		},
+
+		conversation() {
+			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
+		hasCall() {
+			return this.conversation.hasCall || this.conversation.hasCallOverwrittenByChat
+		},
+
+		showSilentCallOption() {
+			return !(this.hasCall && !this.isInLobby)
 		},
 	},
 
