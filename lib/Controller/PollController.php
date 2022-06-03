@@ -30,6 +30,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\Model\Poll;
 use OCA\Talk\Model\Vote;
+use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\PollService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
@@ -42,6 +43,7 @@ use Psr\Log\LoggerInterface;
 class PollController extends AEnvironmentAwareController {
 	protected ChatManager $chatManager;
 	protected PollService $pollService;
+	protected AttachmentService $attachmentService;
 	protected ITimeFactory $timeFactory;
 	protected LoggerInterface $logger;
 
@@ -49,10 +51,12 @@ class PollController extends AEnvironmentAwareController {
 								IRequest $request,
 								ChatManager $chatManager,
 								PollService $pollService,
+								AttachmentService $attachmentService,
 								ITimeFactory $timeFactory,
 								LoggerInterface $logger) {
 		parent::__construct($appName, $request);
 		$this->pollService = $pollService;
+		$this->attachmentService = $attachmentService;
 		$this->chatManager = $chatManager;
 		$this->timeFactory = $timeFactory;
 		$this->logger = $logger;
@@ -157,6 +161,25 @@ class PollController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
+		if ($poll->getResultMode() === Poll::MODE_PUBLIC) {
+			$attendee = $this->participant->getAttendee();
+			try {
+				$message = json_encode([
+					'message' => 'poll_voted',
+					'parameters' => [
+						'poll' => [
+							'type' => 'talk-poll',
+							'id' => $poll->getId(),
+							'name' => $poll->getQuestion(),
+						],
+					],
+				], JSON_THROW_ON_ERROR);
+				$this->chatManager->addSystemMessage($this->room, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true);
+			} catch (\Exception $e) {
+				$this->logger->error($e->getMessage(), ['exception' => $e]);
+			}
+		}
+
 		return new DataResponse($this->renderPoll($poll, $votedSelf));
 	}
 
@@ -184,6 +207,23 @@ class PollController extends AEnvironmentAwareController {
 		} catch (Exception $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
+
+		$attendee = $this->participant->getAttendee();
+		try {
+			$message = json_encode([
+				'message' => 'poll_closed',
+				'parameters' => [
+					'poll' => [
+						'type' => 'talk-poll',
+						'id' => $poll->getId(),
+						'name' => $poll->getQuestion(),
+					],
+				],
+			], JSON_THROW_ON_ERROR);
+			$this->chatManager->addSystemMessage($this->room, $attendee->getActorType(), $attendee->getActorId(), $message, $this->timeFactory->getDateTime(), true);
+		} catch (\Exception $e) {
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
 		}
 
 		$detailedVotes = [];
