@@ -985,6 +985,7 @@ OC.L10N.register(
     "Upload new files" : "Wyślij nowe pliki",
     "Share from Files" : "Udostępnij z Plików",
     "Add emoji" : "Dodaj emoji",
+    "Send silently" : "Wyślij po cichu",
     "Send message" : "Wyślij wiadomość",
     "File to share" : "Plik do udostępnienia",
     "This conversation has been locked" : "Ta rozmowa została zablokowana",
