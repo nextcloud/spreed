@@ -896,6 +896,7 @@ OC.L10N.register(
     "Camera and microphone check" : "Comprobación de cámara y micrófono",
     "Choose devices" : "Escoger dispositivos",
     "Always show this dialog before joining a call in this conversation." : "Muéstrame siempre este diálogo antes de unirme a una llamada en esta conversación.",
+    "Call without notification" : "Llamar sin avisar",
     "Mark as read" : "Marcar como leído",
     "Remove from favorites" : "Eliminar de favoritos",
     "Add to favorites" : "Añadir a favoritos",
