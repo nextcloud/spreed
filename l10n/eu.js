@@ -878,6 +878,7 @@ OC.L10N.register(
     "Camera and microphone check" : "Kamera eta mikrofono egiaztapena",
     "Choose devices" : "Aukeratu gailuak",
     "Always show this dialog before joining a call in this conversation." : "Erakutsi elkarrizketa hau beti dei batera sartu baino lehen elkarrizketa honetan.",
+    "Call without notification" : "Deitu jakinarazpenik gabe",
     "Mark as read" : "Markatu irakurri gisa",
     "Remove from favorites" : "Kendu gogokoetatik",
     "Add to favorites" : "Gehitu gogokoetara",
