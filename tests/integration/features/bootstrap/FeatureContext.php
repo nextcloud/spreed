@@ -52,6 +52,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static $textToMessageId;
 	/** @var array[] */
 	protected static $messageIdToText;
+	/** @var int[] */
+	protected static $remoteToInviteId;
 
 
 	protected static $permissionsMap = [
@@ -360,6 +362,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		$this->assertInvites($invites, $formData);
+
+		foreach ($invites as $data) {
+			self::$remoteToInviteId[$this->translateRemoteServer($data['remote_server']) . '#' . $data['remote_token']] = $data['id'];
+		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" (accepts|declines) invite to room "([^"]*)" of server "([^"]*)" \((v1)\)$/
+	 *
+	 * @param string $user
+	 * @param string $roomName
+	 * @param string $server
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userAcceptsDeclinesRemoteInvite(string $user, string $acceptsDeclines, string $roomName, string $server, string $apiVersion, TableNode $formData = null): void {
+		$inviteId = self::$remoteToInviteId[$server . '#' . self::$identifierToToken[$roomName]];
+
+		$verb = $acceptsDeclines === 'accepts' ? 'POST' : 'DELETE';
+
+		$this->setCurrentUser($user);
+		if ($server === 'LOCAL') {
+			$this->sendRemoteRequest($verb, '/apps/spreed/api/' . $apiVersion . '/federation/invitation/' . $inviteId);
+		}
+		$this->assertStatusCode($this->response, 200);
 	}
 
 	/**
@@ -380,17 +407,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$data['remote_token'] = self::$tokenToIdentifier[$invite['remote_token']] ?? 'unknown-token';
 			}
 			if (isset($expectedInvite['remote_server'])) {
-				if ($invite['remote_server'] === 'localhost:8080') {
-					$data['remote_server'] = 'LOCAL';
-				} elseif ($invite['remote_server'] === 'localhost:8180') {
-					$data['remote_server'] = 'REMOTE';
-				} else {
-					$data['remote_server'] = 'unknown-server';
-				}
+				$data['remote_server'] = $this->translateRemoteServer($invite['remote_server']);
 			}
 
 			return $data;
 		}, $invites, $formData->getHash()));
+	}
+
+	protected function translateRemoteServer(string $server): string {
+		if ($server === 'localhost:8080') {
+			return 'LOCAL';
+		}
+		if ($server === 'localhost:8180') {
+			return 'REMOTE';
+		}
+		return 'unknown-server';
 	}
 
 	/**
@@ -2414,6 +2445,27 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function sendRequest($verb, $url, $body = null, array $headers = []) {
 		$fullUrl = $this->baseUrl . 'ocs/v2.php' . $url;
+		$this->sendRequestFullUrl($verb, $fullUrl, $body, $headers);
+	}
+
+	/**
+	 * @param string $verb
+	 * @param string $url
+	 * @param TableNode|array|null $body
+	 * @param array $headers
+	 */
+	public function sendRemoteRequest($verb, $url, $body = null, array $headers = []) {
+		$fullUrl = $this->baseRemoteUrl . 'ocs/v2.php' . $url;
+		$this->sendRequestFullUrl($verb, $fullUrl, $body, $headers);
+	}
+
+	/**
+	 * @param string $verb
+	 * @param string $fullUrl
+	 * @param TableNode|array|null $body
+	 * @param array $headers
+	 */
+	public function sendRequestFullUrl($verb, $fullUrl, $body = null, array $headers = []) {
 		$client = new Client();
 		$options = ['cookies' => $this->getUserCookieJar($this->currentUser)];
 		if ($this->currentUser === 'admin') {
