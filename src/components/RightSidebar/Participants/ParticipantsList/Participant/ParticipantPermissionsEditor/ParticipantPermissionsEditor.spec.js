@@ -114,7 +114,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 		})
 	})
 
-	describe('Dispatches the action to set the right permissions', async () => {
+	describe('Dispatches the action to set the right permissions', () => {
 
 		test('Dispatches setPermissions with the correct permissions value when a permission is added', async () => {
 			const wrapper = await mountParticipantPermissionsEditor(participant)
