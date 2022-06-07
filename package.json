@@ -87,7 +87,7 @@
 		"regenerator-runtime": "^0.13.9",
 		"terser-webpack-plugin": "^5.3.3",
 		"ts-loader": "^9.3.0",
-		"typescript": "^4.7.2",
+		"typescript": "^4.7.3",
 		"wasm-check": "^2.0.4",
 		"webpack-node-externals": "^3.0.0",
 		"worker-loader": "^3.0.8"
