@@ -49,6 +49,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Share\Exceptions\ShareNotFound;
+use Psr\Log\LoggerInterface;
 
 class CloudFederationProviderTalk implements ICloudFederationProvider {
 	private IUserManager $userManager;
@@ -68,6 +69,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	private AttendeeMapper $attendeeMapper;
 
 	private Manager $manager;
+	private LoggerInterface $logger;
 
 	public function __construct(
 		IUserManager $userManager,
@@ -78,7 +80,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		IURLGenerator $urlGenerator,
 		ParticipantService $participantService,
 		AttendeeMapper $attendeeMapper,
-		Manager $manager
+		Manager $manager,
+		LoggerInterface $logger
 	) {
 		$this->userManager = $userManager;
 		$this->addressHandler = $addressHandler;
@@ -89,6 +92,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$this->participantService = $participantService;
 		$this->attendeeMapper = $attendeeMapper;
 		$this->manager = $manager;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -105,15 +109,18 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	 */
 	public function shareReceived(ICloudFederationShare $share): string {
 		if (!$this->config->isFederationEnabled()) {
+			$this->logger->debug('Received a federation invite but federation is disabled');
 			throw new ProviderCouldNotAddShareException('Server does not support talk federation', '', Http::STATUS_SERVICE_UNAVAILABLE);
 		}
 		if (!in_array($share->getShareType(), $this->getSupportedShareTypes(), true)) {
+			$this->logger->debug('Received a federation invite for invalid share type');
 			throw new ProviderCouldNotAddShareException('Support for sharing with non-users not implemented yet', '', Http::STATUS_NOT_IMPLEMENTED);
 			// TODO: Implement group shares
 		}
 
 		$roomType = $share->getProtocol()['roomType'];
 		if (!is_numeric($roomType) || !in_array((int) $roomType, $this->validSharedRoomTypes(), true)) {
+			$this->logger->debug('Received a federation invite for invalid room type');
 			throw new ProviderCouldNotAddShareException('roomType is not a valid number', '', Http::STATUS_BAD_REQUEST);
 		}
 
@@ -139,6 +146,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		if ($remote && $shareSecret && $shareWith && $roomToken && $remoteId && is_string($roomName) && $roomName && $owner) {
 			$shareWith = $this->userManager->get($shareWith);
 			if ($shareWith === null) {
+				$this->logger->debug('Received a federation invite for user that could not be found');
 				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
 			}
 
@@ -147,6 +155,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			$this->notifyAboutNewShare($shareWith, $shareId, $sharedByFederatedId, $sharedBy, $roomName, $roomToken, $remote);
 			return $shareId;
 		}
+
+		$this->logger->debug('Received a federation invite with missing request data');
 		throw new ProviderCouldNotAddShareException('required request data not found', '', Http::STATUS_BAD_REQUEST);
 	}
 

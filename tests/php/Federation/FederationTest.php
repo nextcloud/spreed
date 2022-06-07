@@ -84,11 +84,12 @@ class FederationTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->attendeeMapper = $this->createMock(AttendeeMapper::class);
 		$this->config = $this->createMock(Config::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 
 		$this->notifications = new Notifications(
 			$this->cloudFederationFactory,
 			$this->addressHandler,
-			$this->createMock(LoggerInterface::class),
+			$this->logger,
 			$this->cloudFederationProviderManager,
 			$this->createMock(IJobList::class),
 			$this->userManager,
@@ -106,7 +107,8 @@ class FederationTest extends TestCase {
 			$this->createMock(IURLGenerator::class),
 			$this->createMock(ParticipantService::class),
 			$this->attendeeMapper,
-			$this->createMock(Manager::class)
+			$this->createMock(Manager::class),
+			$this->logger
 		);
 	}
 
