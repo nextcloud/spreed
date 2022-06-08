@@ -110,18 +110,20 @@ export default {
 
 	methods: {
 		userStatusUpdated(state) {
-			this.$store.dispatch('updateUser', {
-				token: this.token,
-				participantIdentifier: {
-					actorType: 'users',
-					actorId: state.userId,
-				},
-				updatedData: {
-					status: state.status,
-					statusIcon: state.icon,
-					statusMessage: state.message,
-				},
-			})
+			if (this.token) {
+				this.$store.dispatch('updateUser', {
+					token: this.token,
+					participantIdentifier: {
+						actorType: 'users',
+						actorId: state.userId,
+					},
+					updatedData: {
+						status: state.status,
+						statusIcon: state.icon,
+						statusMessage: state.message,
+					},
+				})
+			}
 		},
 
 		/**
