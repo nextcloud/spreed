@@ -370,6 +370,8 @@ class Listener implements IEventListener {
 				$this->sendSystemMessage($event->getRoom(), 'group_added', ['group' => $attendee->getActorId()]);
 			} elseif ($attendee->getActorType() === Attendee::ACTOR_CIRCLES) {
 				$this->sendSystemMessage($event->getRoom(), 'circle_added', ['circle' => $attendee->getActorId()]);
+			} elseif ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+				$this->sendSystemMessage($event->getRoom(), 'federated_user_added', ['federated_user' => $attendee->getActorId()]);
 			}
 		}
 	}
@@ -380,6 +382,8 @@ class Listener implements IEventListener {
 				$this->sendSystemMessage($event->getRoom(), 'group_removed', ['group' => $attendee->getActorId()]);
 			} elseif ($attendee->getActorType() === Attendee::ACTOR_CIRCLES) {
 				$this->sendSystemMessage($event->getRoom(), 'circle_removed', ['circle' => $attendee->getActorId()]);
+			} elseif ($attendee->getActorType() === Attendee::ACTOR_FEDERATED_USERS) {
+				$this->sendSystemMessage($event->getRoom(), 'federated_user_removed', ['federated_user' => $attendee->getActorId()]);
 			}
 		}
 	}
@@ -399,6 +403,9 @@ class Listener implements IEventListener {
 			} elseif ($this->session->exists('talk-overwrite-actor')) {
 				$actorType = Attendee::ACTOR_USERS;
 				$actorId = $this->session->get('talk-overwrite-actor');
+			} elseif ($this->session->exists('talk-overwrite-actor-type')) {
+				$actorType = $this->session->get('talk-overwrite-actor-type');
+				$actorId = $this->session->get('talk-overwrite-actor-id');
 			} else {
 				$actorType = Attendee::ACTOR_GUESTS;
 				$sessionId = $this->talkSession->getSessionForRoom($room->getToken());

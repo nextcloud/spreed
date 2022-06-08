@@ -33,6 +33,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
+use OCP\Federation\ICloudIdManager;
 use OCP\Files\Folder;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
@@ -71,6 +72,8 @@ class SystemMessageTest extends TestCase {
 	protected $rootFolder;
 	/** @var IURLGenerator|MockObject */
 	protected $url;
+	/** @var ICloudIdManager|MockObject */
+	protected $cloudIdManager;
 	/** @var IL10N|MockObject */
 	protected $l;
 
@@ -85,6 +88,7 @@ class SystemMessageTest extends TestCase {
 		$this->photoCache = $this->createMock(PhotoCache::class);
 		$this->rootFolder = $this->createMock(IRootFolder::class);
 		$this->url = $this->createMock(IURLGenerator::class);
+		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->l = $this->createMock(IL10N::class);
 		$this->l->expects($this->any())
 			->method('t')
@@ -114,6 +118,7 @@ class SystemMessageTest extends TestCase {
 					$this->shareProvider,
 					$this->photoCache,
 					$this->rootFolder,
+					$this->cloudIdManager,
 					$this->url,
 				])
 				->onlyMethods($methods)
@@ -129,6 +134,7 @@ class SystemMessageTest extends TestCase {
 			$this->shareProvider,
 			$this->photoCache,
 			$this->rootFolder,
+			$this->cloudIdManager,
 			$this->url
 		);
 	}

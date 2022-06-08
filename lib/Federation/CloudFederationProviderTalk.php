@@ -29,6 +29,7 @@ use Exception;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
+use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
@@ -37,6 +38,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http;
 use OCP\DB\Exception as DBException;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\Exceptions\ActionNotSupportedException;
 use OCP\Federation\Exceptions\AuthenticationFailedException;
 use OCP\Federation\Exceptions\BadRequestException;
@@ -44,6 +46,7 @@ use OCP\Federation\Exceptions\ProviderCouldNotAddShareException;
 use OCP\Federation\ICloudFederationProvider;
 use OCP\Federation\ICloudFederationShare;
 use OCP\HintException;
+use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -69,6 +72,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	private AttendeeMapper $attendeeMapper;
 
 	private Manager $manager;
+	private ISession $session;
+	private IEventDispatcher $dispatcher;
 	private LoggerInterface $logger;
 
 	public function __construct(
@@ -81,6 +86,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		ParticipantService $participantService,
 		AttendeeMapper $attendeeMapper,
 		Manager $manager,
+		ISession $session,
+		IEventDispatcher $dispatcher,
 		LoggerInterface $logger
 	) {
 		$this->userManager = $userManager;
@@ -92,6 +99,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$this->participantService = $participantService;
 		$this->attendeeMapper = $attendeeMapper;
 		$this->manager = $manager;
+		$this->session = $session;
+		$this->dispatcher = $dispatcher;
 		$this->logger = $logger;
 	}
 
@@ -193,7 +202,15 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	private function shareAccepted(int $id, array $notification): array {
 		$attendee = $this->getAttendeeAndValidate($id, $notification['sharedSecret']);
 
-		// TODO: Add activity for share accepted
+		$this->session->set('talk-overwrite-actor-type', $attendee->getActorType());
+		$this->session->set('talk-overwrite-actor-id', $attendee->getActorId());
+
+		$room = $this->manager->getRoomById($attendee->getRoomId());
+		$event = new AttendeesAddedEvent($room, [$attendee]);
+		$this->dispatcher->dispatchTyped($event);
+
+		$this->session->remove('talk-overwrite-actor-type');
+		$this->session->remove('talk-overwrite-actor-id');
 
 		return [];
 	}
@@ -206,9 +223,15 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	private function shareDeclined(int $id, array $notification): array {
 		$attendee = $this->getAttendeeAndValidate($id, $notification['sharedSecret']);
 
+		$this->session->set('talk-overwrite-actor-type', $attendee->getActorType());
+		$this->session->set('talk-overwrite-actor-id', $attendee->getActorId());
+
 		$room = $this->manager->getRoomById($attendee->getRoomId());
 		$participant = new Participant($room, $attendee, null);
 		$this->participantService->removeAttendee($room, $participant, Room::PARTICIPANT_LEFT);
+
+		$this->session->remove('talk-overwrite-actor-type');
+		$this->session->remove('talk-overwrite-actor-id');
 		return [];
 	}
 

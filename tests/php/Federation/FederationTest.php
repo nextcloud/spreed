@@ -34,10 +34,12 @@ use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\BackgroundJob\IJobList;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudFederationFactory;
 use OCP\Federation\ICloudFederationNotification;
 use OCP\Federation\ICloudFederationProviderManager;
 use OCP\Federation\ICloudFederationShare;
+use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -108,6 +110,8 @@ class FederationTest extends TestCase {
 			$this->createMock(ParticipantService::class),
 			$this->attendeeMapper,
 			$this->createMock(Manager::class),
+			$this->createMock(ISession::class),
+			$this->createMock(IEventDispatcher::class),
 			$this->logger
 		);
 	}
