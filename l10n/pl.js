@@ -251,7 +251,7 @@ OC.L10N.register(
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "Wystąpił problem z uwierzytelnieniem tej instancji. Może nie jest dostępny z zewnątrz, aby zweryfikować jego adres URL.",
     "Something unexpected happened." : "Wydarzyło się coś nieoczekiwanego.",
     "The URL is invalid." : "Adres URL jest nieprawidłowy.",
-    "An HTTPS URL is required." : "Wymagany jest adres URL HTTPS.",
+    "An HTTPS URL is required." : "Adres URL HTTPS jest wymagany.",
     "The email address is invalid." : "Adres e-mail jest nieprawidłowy.",
     "The language is invalid." : "Język jest nieprawidłowy.",
     "The country is invalid." : "Kraj jest nieprawidłowy.",
