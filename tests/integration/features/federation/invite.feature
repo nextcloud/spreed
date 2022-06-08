@@ -28,9 +28,9 @@ Feature: federation/invite
     And user "participant2" has the following invitations (v1)
       | remote_server | remote_token |
       | LOCAL         | room         |
-#    Then user "participant2" has the following notifications
-#      | app    | object_type | object_id | subject                     |
-#      | spreed | room        | room      | Should have a remote invite |
-    And user "participant2" accepts invite to room "room" of server "LOCAL" (v1)
-    And user "participant2" has the following invitations (v1)
-      | remote_server | remote_token |
+    Then user "participant2" has the following notifications
+      | app    | object_type       | object_id              | subject                                                               |
+      | spreed | remote_talk_share | INVITE_ID(LOCAL::room) | @participant1-displayname shared room room on localhost:8080 with you |
+#    And user "participant2" accepts invite to room "room" of server "LOCAL" (v1)
+#    And user "participant2" has the following invitations (v1)
+#      | remote_server | remote_token |

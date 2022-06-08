@@ -54,6 +54,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static $messageIdToText;
 	/** @var int[] */
 	protected static $remoteToInviteId;
+	/** @var string[] */
+	protected static $inviteIdToRemote;
 
 
 	protected static $permissionsMap = [
@@ -364,7 +366,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertInvites($invites, $formData);
 
 		foreach ($invites as $data) {
-			self::$remoteToInviteId[$this->translateRemoteServer($data['remote_server']) . '#' . $data['remote_token']] = $data['id'];
+			self::$remoteToInviteId[$this->translateRemoteServer($data['remote_server']) . '::' . self::$tokenToIdentifier[$data['remote_token']]] = $data['id'];
+			self::$inviteIdToRemote[$data['id']] = $this->translateRemoteServer($data['remote_server']) . '::' . self::$tokenToIdentifier[$data['remote_token']];
 		}
 	}
 
@@ -378,7 +381,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param TableNode|null $formData
 	 */
 	public function userAcceptsDeclinesRemoteInvite(string $user, string $acceptsDeclines, string $roomName, string $server, string $apiVersion, TableNode $formData = null): void {
-		$inviteId = self::$remoteToInviteId[$server . '#' . self::$identifierToToken[$roomName]];
+		$inviteId = self::$remoteToInviteId[$server . '::' . $roomName];
 
 		$verb = $acceptsDeclines === 'accepts' ? 'POST' : 'DELETE';
 
@@ -2037,6 +2040,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (strpos($notification['object_id'], '/') !== false) {
 					[$roomToken, $message] = explode('/', $notification['object_id']);
 					$data['object_id'] = self::$tokenToIdentifier[$roomToken] . '/' . self::$messageIdToText[$message] ?? 'UNKNOWN_MESSAGE';
+				} elseif (strpos($expectedNotification['object_id'], 'INVITE_ID') !== false) {
+					$data['object_id'] = 'INVITE_ID(' . self::$inviteIdToRemote[$notification['object_id']] . ')';
 				} else {
 					[$roomToken,] = explode('/', $notification['object_id']);
 					$data['object_id'] = self::$tokenToIdentifier[$roomToken];

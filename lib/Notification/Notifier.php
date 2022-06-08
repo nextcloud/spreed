@@ -213,6 +213,10 @@ class Notifier implements INotifier {
 			return $this->parseHostedSignalingServer($notification, $l);
 		}
 
+		if ($notification->getObjectType() === 'remote_talk_share') {
+			return $this->parseRemoteInvitationMessage($notification, $l);
+		}
+
 		try {
 			$room = $this->getRoom($notification->getObjectId(), $userId);
 		} catch (RoomNotFoundException $e) {
@@ -250,10 +254,6 @@ class Notifier implements INotifier {
 		}
 		if ($subject === 'reply' || $subject === 'mention' || $subject === 'chat' || $subject === 'reaction') {
 			return $this->parseChatMessage($notification, $room, $participant, $l);
-		}
-
-		if ($subject === 'remote_talk_share') {
-			return $this->parseRemoteInvitationMessage($notification, $l);
 		}
 
 		$this->notificationManager->markProcessed($notification);
@@ -300,11 +300,15 @@ class Notifier implements INotifier {
 		$placeholders = $replacements = [];
 		foreach ($rosParameters as $placeholder => $parameter) {
 			$placeholders[] = '{' . $placeholder .'}';
-			$replacements[] = $parameter['name'];
+			if ($parameter['type'] === 'user') {
+				$replacements[] = '@' . $parameter['name'];
+			} else {
+				$replacements[] = $parameter['name'];
+			}
 		}
 
-		$notification->setParsedMessage(str_replace($placeholders, $replacements, $message));
-		$notification->setRichMessage($message, $rosParameters);
+		$notification->setParsedSubject(str_replace($placeholders, $replacements, $message));
+		$notification->setRichSubject($message, $rosParameters);
 
 		return $notification;
 	}
