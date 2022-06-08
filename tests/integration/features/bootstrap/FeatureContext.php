@@ -418,6 +418,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	protected function translateRemoteServer(string $server): string {
+		$server = str_replace('http://', '', $server);
 		if ($server === 'localhost:8080') {
 			return 'LOCAL';
 		}
