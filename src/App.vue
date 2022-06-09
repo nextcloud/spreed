@@ -209,7 +209,7 @@ export default {
 
 		token() {
 			// Collapse the sidebar if it's a 1to1 conversation
-			if (this.isOneToOne || BrowserStorage.getItem('sidebarOpen') === 'false') {
+			if (this.isOneToOne || BrowserStorage.getItem('sidebarOpen') === 'false' || window.screen.width < (getComputedStyle(document.documentElement).getPropertyValue('--breakpoint-mobile') / 2)) {
 				this.$store.dispatch('hideSidebar')
 			} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
 				this.$store.dispatch('showSidebar')
