@@ -46,7 +46,6 @@ use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\Security\Events\ValidatePasswordPolicyEvent;
 use OCP\Security\IHasher;
-use OCP\Server;
 use OCP\Share\IManager as IShareManager;
 
 class RoomService {
