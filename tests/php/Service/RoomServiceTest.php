@@ -37,6 +37,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJobList;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
 use OCP\IUser;
@@ -62,7 +63,8 @@ class RoomServiceTest extends TestCase {
 	/** @var IEventDispatcher|MockObject */
 	protected $dispatcher;
 	private ?RoomService $service = null;
-
+	/** @var IJobList|MockObject */
+	private IJobList $jobList;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -75,6 +77,7 @@ class RoomServiceTest extends TestCase {
 		$this->shareManager = $this->createMock(IShareManager::class);
 		$this->hasher = $this->createMock(IHasher::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
+		$this->jobList = $this->createMock(IJobList::class);
 		$this->service = new RoomService(
 			$this->manager,
 			$this->chatManager,
@@ -84,7 +87,8 @@ class RoomServiceTest extends TestCase {
 			$this->timeFactory,
 			$this->shareManager,
 			$this->hasher,
-			$this->dispatcher
+			$this->dispatcher,
+			$this->jobList
 		);
 	}
 
@@ -350,7 +354,8 @@ class RoomServiceTest extends TestCase {
 			$this->timeFactory,
 			$this->shareManager,
 			$this->hasher,
-			$dispatcher
+			$dispatcher,
+			$this->jobList
 		);
 
 		$room = new Room(

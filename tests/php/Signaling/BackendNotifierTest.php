@@ -40,6 +40,7 @@ use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJobList;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
 use OCP\IGroupManager;
@@ -103,6 +104,8 @@ class BackendNotifierTest extends TestCase {
 	protected Application $app;
 	protected BackendNotifier $originalBackendNotifier;
 	private ?IEventDispatcher $dispatcher = null;
+	/** @var IJobList|MockObject */
+	private IJobList $jobList;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -157,6 +160,7 @@ class BackendNotifierTest extends TestCase {
 		);
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->commentsManager = $this->createMock(CommentsManager::class);
+		$this->jobList = $this->createMock(IJobList::class);
 
 		$this->roomService = new RoomService(
 			$this->manager,
@@ -167,7 +171,8 @@ class BackendNotifierTest extends TestCase {
 			$this->timeFactory,
 			$this->createMock(IManager::class),
 			$this->createMock(IHasher::class),
-			$this->dispatcher
+			$this->dispatcher,
+			$this->jobList
 		);
 	}
 
