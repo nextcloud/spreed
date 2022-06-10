@@ -101,6 +101,12 @@ async function connectSignaling(token) {
 
 	if (!signaling) {
 		signaling = Signaling.createConnection(settings)
+		signaling.on('updateSettings', async function() {
+			const settings = await getSignalingSettings(token)
+			console.debug('Received updated settings', settings)
+			signaling.settings = settings
+		})
+
 	}
 
 	tokensInSignaling[token] = true

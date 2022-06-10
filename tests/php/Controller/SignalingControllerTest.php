@@ -43,10 +43,12 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
+use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
+use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IHasher;
@@ -71,6 +73,7 @@ class CustomInputSignalingController extends SignalingController {
  * @group DB
  */
 class SignalingControllerTest extends TestCase {
+	private IConfig $serverConfig;
 	private ?Config $config = null;
 	/** @var TalkSession|MockObject */
 	private $session;
@@ -107,14 +110,16 @@ class SignalingControllerTest extends TestCase {
 		$this->secureRandom = \OC::$server->getSecureRandom();
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$groupManager = $this->createMock(IGroupManager::class);
-		$config = \OC::$server->getConfig();
-		$config->setAppValue('spreed', 'signaling_servers', json_encode([
+		$this->serverConfig = \OC::$server->getConfig();
+		$this->serverConfig->setAppValue('spreed', 'signaling_servers', json_encode([
 			'secret' => 'MySecretValue',
 		]));
-		$config->setAppValue('spreed', 'signaling_ticket_secret', 'the-app-ticket-secret');
-		$config->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
+		$this->serverConfig->setAppValue('spreed', 'signaling_ticket_secret', 'the-app-ticket-secret');
+		$this->serverConfig->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
+		$this->userManager = $this->createMock(IUserManager::class);
 		$this->dispatcher = \OC::$server->get(IEventDispatcher::class);
-		$this->config = new Config($config, $this->secureRandom, $groupManager, $timeFactory, $this->dispatcher);
+		$urlGenerator = $this->createMock(IURLGenerator::class);
+		$this->config = new Config($this->serverConfig, $this->secureRandom, $groupManager, $this->userManager, $urlGenerator, $timeFactory, $this->dispatcher);
 		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OC::$server->getDatabaseConnection();
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
@@ -122,7 +127,6 @@ class SignalingControllerTest extends TestCase {
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->sessionService = $this->createMock(SessionService::class);
 		$this->messages = $this->createMock(Messages::class);
-		$this->userManager = $this->createMock(IUserManager::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->clientService = $this->createMock(IClientService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
@@ -133,6 +137,7 @@ class SignalingControllerTest extends TestCase {
 		$this->controller = new CustomInputSignalingController(
 			'spreed',
 			$this->createMock(IRequest::class),
+			$this->serverConfig,
 			$this->config,
 			$this->signalingManager,
 			$this->session,
@@ -273,7 +278,7 @@ class SignalingControllerTest extends TestCase {
 			'auth' => [
 				'params' => [
 					'userid' => 'invalid-userid',
-					'ticket' => $this->config->getSignalingTicket($this->userId),
+					'ticket' => $this->config->getSignalingTicket(Config::SIGNALING_TICKET_V1, $this->userId),
 				],
 			],
 		]);
@@ -291,7 +296,7 @@ class SignalingControllerTest extends TestCase {
 			'auth' => [
 				'params' => [
 					'userid' => 'unknown-userid',
-					'ticket' => $this->config->getSignalingTicket('unknown-userid'),
+					'ticket' => $this->config->getSignalingTicket(Config::SIGNALING_TICKET_V1, 'unknown-userid'),
 				],
 			],
 		]);
@@ -320,7 +325,7 @@ class SignalingControllerTest extends TestCase {
 			'auth' => [
 				'params' => [
 					'userid' => $this->userId,
-					'ticket' => $this->config->getSignalingTicket($this->userId),
+					'ticket' => $this->config->getSignalingTicket(Config::SIGNALING_TICKET_V1, $this->userId),
 				],
 			],
 		]);
@@ -341,7 +346,7 @@ class SignalingControllerTest extends TestCase {
 			'auth' => [
 				'params' => [
 					'userid' => '',
-					'ticket' => $this->config->getSignalingTicket(''),
+					'ticket' => $this->config->getSignalingTicket(Config::SIGNALING_TICKET_V1, ''),
 				],
 			],
 		]);

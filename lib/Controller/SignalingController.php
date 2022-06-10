@@ -46,6 +46,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
+use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
@@ -59,6 +60,7 @@ class SignalingController extends OCSController {
 
 	public const EVENT_BACKEND_SIGNALING_ROOMS = self::class . '::signalingBackendRoom';
 
+	private IConfig $serverConfig;
 	private Config $talkConfig;
 	private \OCA\Talk\Signaling\Manager $signalingManager;
 	private TalkSession $session;
@@ -76,6 +78,7 @@ class SignalingController extends OCSController {
 
 	public function __construct(string $appName,
 								IRequest $request,
+								IConfig $serverConfig,
 								Config $talkConfig,
 								\OCA\Talk\Signaling\Manager $signalingManager,
 								TalkSession $session,
@@ -91,6 +94,7 @@ class SignalingController extends OCSController {
 								LoggerInterface $logger,
 								?string $UserId) {
 		parent::__construct($appName, $request);
+		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->signalingManager = $signalingManager;
 		$this->session = $session;
@@ -157,12 +161,26 @@ class SignalingController extends OCSController {
 		$signalingMode = $this->talkConfig->getSignalingMode();
 		$signaling = $this->signalingManager->getSignalingServerLinkForConversation($room);
 
+		// TODO: Autodetect and use if signaling server has feature flag "hello-v2".
+		if ($this->serverConfig->getAppValue('spreed', 'use-hello-v2')) {
+			$helloVersion = '2.0';
+			$helloAuthParams = [
+				'token' => $this->talkConfig->getSignalingTicket(Config::SIGNALING_TICKET_V2, $this->userId),
+			];
+		} else {
+			$helloVersion = '1.0';
+			$helloAuthParams = [
+				'userid' => $this->userId,
+				'ticket' => $this->talkConfig->getSignalingTicket(Config::SIGNALING_TICKET_V1, $this->userId),
+			];
+		}
 		$data = [
 			'signalingMode' => $signalingMode,
 			'userId' => $this->userId,
 			'hideWarning' => $signaling !== '' || $this->talkConfig->getHideSignalingWarning(),
 			'server' => $signaling,
-			'ticket' => $this->talkConfig->getSignalingTicket($this->userId),
+			'helloVersion' => $helloVersion,
+			'helloAuthParams' => $helloAuthParams,
 			'stunservers' => $stun,
 			'turnservers' => $turn,
 			'sipDialinInfo' => $this->talkConfig->isSIPConfigured() ? $this->talkConfig->getDialInInfo() : '',
@@ -540,9 +558,7 @@ class SignalingController extends OCSController {
 		];
 		if (!empty($userId)) {
 			$response['auth']['userid'] = $user->getUID();
-			$response['auth']['user'] = [
-				'displayname' => $user->getDisplayName(),
-			];
+			$response['auth']['user'] = $this->talkConfig->getSignalingUserData($user);
 		}
 		$this->logger->debug('Validated signaling ticket for {user}', [
 			'user' => !empty($userId) ? $userId : '(guests)',

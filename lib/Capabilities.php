@@ -149,6 +149,11 @@ class Capabilities implements IPublicCapability {
 
 		$capabilities['config']['conversations']['can-create'] = $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user);
 
+		$pubKey = $this->talkConfig->getSignalingTokenPublicKey();
+		if ($pubKey) {
+			$capabilities['config']['signaling']['hello-v2-token-key'] = $pubKey;
+		}
+
 		if ($this->serverConfig->getAppValue('spreed', 'has_reference_id', 'no') === 'yes') {
 			$capabilities['features'][] = 'chat-reference-id';
 		}

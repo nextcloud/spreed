@@ -744,10 +744,17 @@ Signaling.Standalone.prototype.connect = function() {
 			this._trigger('message', [message])
 			break
 		case 'error':
-			if (data.error.code === 'processing_failed') {
+			switch (data.error.code) {
+			case 'processing_failed':
 				console.error('An error occurred processing the signaling message, please ask your server administrator to check the log file')
-			} else {
+				break
+			case 'token_expired':
+				console.info('The signaling token is expired, need to update settings')
+				this._trigger('updateSettings')
+				break
+			default:
 				console.error('Ignore unknown error', data)
+				break
 			}
 			break
 		default:
@@ -904,13 +911,10 @@ Signaling.Standalone.prototype.sendHello = function() {
 		msg = {
 			type: 'hello',
 			hello: {
-				version: '1.0',
+				version: this.settings.helloVersion,
 				auth: {
 					url,
-					params: {
-						userid: this.settings.userId,
-						ticket: this.settings.ticket,
-					},
+					params: this.settings.helloAuthParams,
 				},
 			},
 		}
