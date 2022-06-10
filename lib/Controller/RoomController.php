@@ -56,6 +56,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
+use OCP\HintException;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
@@ -1315,7 +1316,14 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$this->room->setPassword($password);
+		try {
+			$this->roomService->setPassword($this->room, $password);
+		} catch (HintException $e) {
+			return new DataResponse([
+				'message' => $e->getHint(),
+			], Http::STATUS_BAD_REQUEST);
+		}
+
 		return new DataResponse();
 	}
 

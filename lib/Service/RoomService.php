@@ -35,8 +35,10 @@ use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\HintException;
 use OCP\IDBConnection;
 use OCP\IUser;
+use OCP\Security\Events\ValidatePasswordPolicyEvent;
 use OCP\Security\IHasher;
 use OCP\Share\IManager as IShareManager;
 
@@ -469,6 +471,37 @@ class RoomService {
 		$room->setDescription($description);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_DESCRIPTION_SET, $event);
+
+		return true;
+	}
+
+	/**
+	 * @param string $password Currently it is only allowed to have a password for Room::TYPE_PUBLIC
+	 * @return bool True when the change was valid, false otherwise
+	 * @throws HintException
+	 */
+	public function setPassword(Room $room, string $password): bool {
+		if ($room->getType() !== Room::TYPE_PUBLIC) {
+			return false;
+		}
+
+		$event = new ValidatePasswordPolicyEvent($password);
+		$this->dispatcher->dispatchTyped($event);
+
+		$hash = $password !== '' ? $this->hasher->hash($password) : '';
+
+		$event = new ModifyRoomEvent($room, 'password', $password);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PASSWORD_SET, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('password', $update->createNamedParameter($hash))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setPassword($hash);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_PASSWORD_SET, $event);
 
 		return true;
 	}

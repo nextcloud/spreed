@@ -163,9 +163,13 @@ export default {
 				} else {
 					showSuccess(t('spreed', 'Conversation password has been removed'))
 				}
-			} catch (e) {
-				console.error('Error saving conversation password', e)
-				showError(t('spreed', 'Error occurred while saving conversation password'))
+			} catch (error) {
+				console.error('Error saving conversation password', error)
+				if (error?.response?.data?.ocs?.data?.message) {
+					showError(error.response.data.ocs.data.message)
+				} else {
+					showError(t('spreed', 'Error occurred while saving conversation password'))
+				}
 			}
 			this.isSaving = false
 		},

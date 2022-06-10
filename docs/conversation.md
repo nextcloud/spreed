@@ -247,9 +247,15 @@
 * Response:
     - Status code:
         + `200 OK`
+        + `400 Bad Request` When the password does not match the password policy. Show `ocs.data.message` to the user in this case
         + `403 Forbidden` When the current user is not a moderator or owner
         + `403 Forbidden` When the conversation is not a public conversation
         + `404 Not Found` When the conversation could not be found for the participant
+
+    - Data:
+        field | type | Description
+        ---|---|---
+        `message` | string | Only available on `400 Bad Request`, translated error with the violated password policy rules
 
 ## Set default or call permissions for a conversation
 

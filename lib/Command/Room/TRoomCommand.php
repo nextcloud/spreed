@@ -35,6 +35,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCP\HintException;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IUser;
@@ -183,8 +184,12 @@ trait TRoomCommand {
 			throw new InvalidArgumentException('Unable to add password protection to private room.');
 		}
 
-		if (!$room->setPassword($password)) {
-			throw new InvalidArgumentException('Unable to change room password.');
+		try {
+			if (!$this->roomService->setPassword($room, $password)) {
+				throw new InvalidArgumentException('Unable to change room password.');
+			}
+		} catch (HintException $e) {
+			throw new InvalidArgumentException($e->getHint());
 		}
 	}
 

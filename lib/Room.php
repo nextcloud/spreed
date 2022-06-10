@@ -426,6 +426,10 @@ class Room {
 		return $this->password;
 	}
 
+	public function setPassword(string $password): void {
+		$this->password = $password;
+	}
+
 	public function getRemoteServer(): string {
 		return $this->remoteServer;
 	}
@@ -688,32 +692,6 @@ class Room {
 		$this->name = $newName;
 
 		$this->dispatcher->dispatch(self::EVENT_AFTER_NAME_SET, $event);
-
-		return true;
-	}
-
-	/**
-	 * @param string $password Currently it is only allowed to have a password for Room::TYPE_PUBLIC
-	 * @return bool True when the change was valid, false otherwise
-	 */
-	public function setPassword(string $password): bool {
-		if ($this->getType() !== self::TYPE_PUBLIC) {
-			return false;
-		}
-
-		$hash = $password !== '' ? $this->hasher->hash($password) : '';
-
-		$event = new ModifyRoomEvent($this, 'password', $password);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_PASSWORD_SET, $event);
-
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('password', $update->createNamedParameter($hash))
-			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$update->executeStatement();
-		$this->password = $hash;
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_PASSWORD_SET, $event);
 
 		return true;
 	}
