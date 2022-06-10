@@ -456,6 +456,17 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You deleted a reaction');
 			}
+		} elseif ($message === 'message_expire_enabled') {
+			$parsedMessage = $this->l->t('{actor} set the self-destruction timer to {seconds} seconds');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You set the self-destruction timer to {seconds} seconds');
+			}
+			$parsedParameters['seconds'] = $parameters['seconds'];
+		} elseif ($message === 'message_expire_disabled') {
+			$parsedMessage = $this->l->t('{actor} disabled the self-destruction timer');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You disabled the self-destruction timer');
+			}
 		} elseif ($message === 'history_cleared') {
 			$parsedMessage = $this->l->t('{actor} cleared the history of the conversation');
 			if ($currentUserIsActor) {
