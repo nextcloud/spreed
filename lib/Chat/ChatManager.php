@@ -36,20 +36,17 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
-use OCA\Talk\Service\RoomService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ICache;
 use OCP\ICacheFactory;
 use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\Notification\IManager as INotificationManager;
-use OCP\Server;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
 use OCP\Share\IShare;
@@ -266,6 +263,7 @@ class ChatManager {
 		if ($referenceId !== '') {
 			$comment->setReferenceId($referenceId);
 		}
+		$this->setMessageExpire($chat, $comment);
 
 		$event = new ChatParticipantEvent($chat, $comment, $participant, $silent);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_MESSAGE_SEND, $event);
@@ -309,6 +307,17 @@ class ChatManager {
 		}
 
 		return $comment;
+	}
+
+	private function setMessageExpire(Room $room, IComment $comment): void {
+		$expireInterval = $room->getMessageExpire();
+		if (!$expireInterval) {
+			return;
+		}
+
+		$dateTime = $this->timeFactory->getDateTime();
+		$dateTime->add(DateInterval::createFromDateString($expireInterval . ' seconds'));
+		$comment->setMessageExpire($dateTime);
 	}
 
 	/**
@@ -702,47 +711,7 @@ class ChatManager {
 		return false;
 	}
 
-	public function deleteExpiredMessages(int $roomId, int $jobId): array {
-		$room = $this->manager->getRoomById($roomId);
-
-		$max = $this->getMaxMessageExpireSeconds(Server::get(RoomService::class)->getMessageExpire($room));
-		$min = $this->getMinMessageExpireSeconds($jobId);
-
-		$ids = $this->commentsManager->getMessageIdsByRoomIdInDateInterval($roomId, $min, $max);
-		if (!empty($ids)) {
-			$this->deleteMessagesByIds($ids);
-		}
-		return $ids;
-	}
-
-	private function getMaxMessageExpireSeconds(int $seconds): \DateTime {
-		$max = $this->timeFactory->getDateTime();
-		return $max->sub(new DateInterval('PT' . $seconds . 'S'));
-	}
-
-	private function getMinMessageExpireSeconds(int $jobId): \DateTime {
-		$query = $this->connection->getQueryBuilder();
-		$query->select('last_checked')
-			->from('jobs')
-			->where(
-				$query->expr()->eq('id', $query->createNamedParameter($jobId, IQueryBuilder::PARAM_INT))
-			);
-		$result = $query->executeQuery();
-		$lastCheckedEpoch = $result->fetchOne();
-		$lastChechedDateTime = $this->timeFactory->getDateTime('@' . $lastCheckedEpoch);
-		return $lastChechedDateTime;
-	}
-
-	private function deleteMessagesByIds(array $ids): void {
-		$delete = $this->connection->getQueryBuilder();
-		$delete->delete('comments')
-			->where(
-				$delete->expr()->orX(
-					$delete->expr()->in('id', $delete->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)),
-					$delete->expr()->in('parent_id', $delete->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)),
-					$delete->expr()->in('topmost_parent_id', $delete->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY))
-				)
-			);
-		$delete->executeStatement();
+	public function deleteExpiredMessages(int $roomId): void {
+		$this->commentsManager->deleteMessageExpiredAtObject('chat', (string) $roomId);
 	}
 }

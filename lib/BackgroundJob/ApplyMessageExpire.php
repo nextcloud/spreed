@@ -47,6 +47,6 @@ class ApplyMessageExpire extends TimedJob {
 	 * @param array $argument
 	 */
 	protected function run($argument): void {
-		$this->chatManager->deleteExpiredMessages($argument['room_id'], $this->getId());
+		$this->chatManager->deleteExpiredMessages($argument['room_id']);
 	}
 }
