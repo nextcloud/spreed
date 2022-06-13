@@ -135,6 +135,7 @@ class PageController extends Controller {
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 * @UseSession
+	 * @BruteForceProtection(action=talkRoomPassword)
 	 *
 	 * @param string $token
 	 * @param string $password
@@ -183,6 +184,7 @@ class PageController extends Controller {
 			return $this->guestEnterRoom($token, $password);
 		}
 
+		$throttle = false;
 		if ($token !== '') {
 			$room = null;
 			try {
@@ -211,6 +213,7 @@ class PageController extends Controller {
 			} catch (RoomNotFoundException $e) {
 				// Room not found, redirect to main page
 				$token = '';
+				$throttle = true;
 			}
 
 			if ($room instanceof Room && $room->hasPassword()) {
@@ -233,12 +236,15 @@ class PageController extends Controller {
 					} else {
 						$this->talkSession->removePasswordForRoom($token);
 						if ($passwordVerification['url'] === '') {
-							return new TemplateResponse($this->appName, 'authenticate', [
+							$response = new TemplateResponse($this->appName, 'authenticate', [
 								'wrongpw' => $password !== '',
 							], 'guest');
+						} else {
+							$response = new RedirectResponse($passwordVerification['url']);
 						}
 
-						return new RedirectResponse($passwordVerification['url']);
+						$response->throttle();
+						return $response;
 					}
 				}
 			}
@@ -272,6 +278,10 @@ class PageController extends Controller {
 		$csp->addAllowedConnectDomain("'self'");
 		$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
 		$response->setContentSecurityPolicy($csp);
+		if ($throttle) {
+			// Logged-in user tried to access a chat they can not access
+			$response->throttle();
+		}
 		return $response;
 	}
 
@@ -292,9 +302,11 @@ class PageController extends Controller {
 			if ($token) {
 				$redirectUrl = $this->url->linkToRoute('spreed.Page.showCall', ['token' => $token]);
 			}
-			return new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
+			$response = new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
 				'redirect_url' => $redirectUrl,
 			]));
+			$response->throttle();
+			return $response;
 		}
 
 		if ($room->hasPassword()) {
@@ -307,12 +319,14 @@ class PageController extends Controller {
 			} else {
 				$this->talkSession->removePasswordForRoom($token);
 				if ($passwordVerification['url'] === '') {
-					return new TemplateResponse($this->appName, 'authenticate', [
+					$response = new TemplateResponse($this->appName, 'authenticate', [
 						'wrongpw' => $password !== '',
 					], 'guest');
+				} else {
+					$response = new RedirectResponse($passwordVerification['url']);
 				}
-
-				return new RedirectResponse($passwordVerification['url']);
+				$response->throttle();
+				return $response;
 			}
 		}
 
