@@ -1563,7 +1563,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param ?TableNode $formData
 	 */
-	public function userSeesPollInRoom($user, $question, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userSeesPollInRoom(string $user, string $question, string $identifier, string $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
@@ -1584,7 +1584,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param ?TableNode $formData
 	 */
-	public function userClosesPollInRoom($user, $question, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userClosesPollInRoom(string $user, string $question, string $identifier, string $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
 		$this->assertStatusCode($this->response, $statusCode);
@@ -1609,7 +1609,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 * @param ?TableNode $formData
 	 */
-	public function userVotesPollInRoom($user, $options, $question, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function userVotesPollInRoom(string $user, string $options, string $question, string $identifier, string $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
 		$data = [
 			'optionIds' => json_decode($options, true),
 		];
