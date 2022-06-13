@@ -147,8 +147,8 @@ class Room {
 	public const EVENT_BEFORE_SESSION_LEAVE_CALL = self::class . '::preSessionLeaveCall';
 	public const EVENT_AFTER_SESSION_LEAVE_CALL = self::class . '::postSessionLeaveCall';
 	public const EVENT_BEFORE_SIGNALING_PROPERTIES = self::class . '::beforeSignalingProperties';
-	public const EVENT_BEFORE_SET_MESSAGE_EXPIRE = self::class . '::beforeSetMessageExpire';
-	public const EVENT_AFTER_SET_MESSAGE_EXPIRE = self::class . '::afterSetMessageExpire';
+	public const EVENT_BEFORE_SET_EXPIRE_DATE = self::class . '::beforeSetExpireInterval';
+	public const EVENT_AFTER_SET_EXPIRE_DATE = self::class . '::afterSetExpireInterval';
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
@@ -162,7 +162,7 @@ class Room {
 	private int $type;
 	private int $readOnly;
 	private int $listable;
-	private int $messageExpire;
+	private int $expireInterval;
 	private int $lobbyState;
 	private int $sipEnabled;
 	private ?int $assignedSignalingServer;
@@ -196,7 +196,7 @@ class Room {
 								int $type,
 								int $readOnly,
 								int $listable,
-								int $messageExpire,
+								int $expireInterval,
 								int $lobbyState,
 								int $sipEnabled,
 								?int $assignedSignalingServer,
@@ -226,7 +226,7 @@ class Room {
 		$this->type = $type;
 		$this->readOnly = $readOnly;
 		$this->listable = $listable;
-		$this->messageExpire = $messageExpire;
+		$this->expireInterval = $expireInterval;
 		$this->lobbyState = $lobbyState;
 		$this->sipEnabled = $sipEnabled;
 		$this->assignedSignalingServer = $assignedSignalingServer;
@@ -286,6 +286,14 @@ class Room {
 	 */
 	public function setListable(int $newState): void {
 		$this->listable = $newState;
+	}
+
+	public function getExpireInterval(): int {
+		return $this->expireInterval;
+	}
+
+	public function setExpireInterval(int $expireInterval): void {
+		$this->expireInterval = $expireInterval;
 	}
 
 	public function getLobbyState(): int {

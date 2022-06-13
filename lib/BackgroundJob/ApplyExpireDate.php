@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2020 Morris Jobke <hey@morrisjobke.de>
+ * @copyright Copyright (c) 2020 Vitor Mattos <vitor@php.rio>
  *
- * @author Morris Jobke <hey@morrisjobke.de>
+ * @author Vitor Mattos <vitor@php.rio>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -30,7 +30,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
 
-class ApplyMessageExpire extends TimedJob {
+class ApplyExpireDate extends TimedJob {
 	private ChatManager $chatManager;
 
 	public function __construct(ITimeFactory $timeFactory,

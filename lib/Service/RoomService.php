@@ -24,10 +24,10 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
-use OCA\Talk\BackgroundJob\ApplyMessageExpire;
+use OCA\Talk\BackgroundJob\ApplyExpireDate;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
-use OCA\Talk\Events\ChangeMessageExpireEvent;
+use OCA\Talk\Events\ChangeExpireDateEvent;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
@@ -543,28 +543,28 @@ class RoomService {
 		];
 	}
 
-	public function setMessageExpire(Room $room, Participant $participant, int $seconds): void {
-		$event = new ChangeMessageExpireEvent($room, $seconds);
-		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_MESSAGE_EXPIRE, $event);
+	public function setExpireInterval(Room $room, Participant $participant, int $seconds): void {
+		$event = new ChangeExpireDateEvent($room, $seconds);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_EXPIRE_DATE, $event);
 
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('message_expire', $update->createNamedParameter($seconds, IQueryBuilder::PARAM_INT))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
-		$room->setMessageExpire($seconds);
+		$room->setExpireInterval($seconds);
 		if ($seconds > 0) {
-			$this->jobList->add(ApplyMessageExpire::class, ['room_id' => $room->getId()]);
-			$this->messageExpireSystemMessage($room, $participant, $seconds, 'message_expire_enabled');
+			$this->jobList->add(ApplyExpireDate::class, ['room_id' => $room->getId()]);
+			$this->expireDateSystemMessage($room, $participant, $seconds, 'message_expire_enabled');
 		} else {
-			$this->jobList->remove(ApplyMessageExpire::class, ['room_id' => $room->getId()]);
-			$this->messageExpireSystemMessage($room, $participant, $seconds, 'message_expire_disabled');
+			$this->jobList->remove(ApplyExpireDate::class, ['room_id' => $room->getId()]);
+			$this->expireDateSystemMessage($room, $participant, $seconds, 'message_expire_disabled');
 		}
 
-		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_MESSAGE_EXPIRE, $event);
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_EXPIRE_DATE, $event);
 	}
 
-	private function messageExpireSystemMessage(Room $room, Participant $participant, int $seconds, string $message): void {
+	private function expireDateSystemMessage(Room $room, Participant $participant, int $seconds, string $message): void {
 		$this->chatManager->addSystemMessage(
 			$room,
 			$participant->getAttendee()->getActorType(),
@@ -578,7 +578,7 @@ class RoomService {
 		);
 	}
 
-	public function getMessageExpire(Room $room): int {
-		return $room->getMessageExpire();
+	public function getExpireInterval(Room $room): int {
+		return $room->getExpireInterval();
 	}
 }

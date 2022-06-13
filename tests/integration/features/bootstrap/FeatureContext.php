@@ -2568,25 +2568,25 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Given user :user set the message expire to :messageExpire of room :identifier with :statusCode (:apiVersion)
+	 * @Given user :user set the expire interval to :expireInterval of room :identifier with :statusCode (:apiVersion)
 	 */
-	public function userSetTheMessageExpireToWith(string $user, int $messageExpire, string $identifier, int $statusCode, string $apiVersion = 'v4'): void {
+	public function userSetTheExpireIntervalToWith(string $user, int $expireInterval, string $identifier, int $statusCode, string $apiVersion = 'v4'): void {
 		$this->setCurrentUser($user);
-		$this->sendRequest('POST', '/apps/spreed/api/' .  $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/message-expire', [
-			'seconds' => $messageExpire
+		$this->sendRequest('POST', '/apps/spreed/api/' .  $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/message-expire-interval', [
+			'seconds' => $expireInterval
 		]);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/**
-	 * @Given user :user check if message expire of room :identifier is :messageExpire (:apiVersion)
+	 * @Given user :user check if expire interval of room :identifier is :expireInterval (:apiVersion)
 	 */
-	public function userCheckIfMessageExpireOfRoomIsX(string $user, string $identifier, int $messageExpire, string $apiVersion = 'v4') {
+	public function userCheckIfExpireIntervalOfRoomIsX(string $user, string $identifier, int $expireInterval, string $apiVersion = 'v4') {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
 		$room = $this->getDataFromResponse($this->response);
 
-		Assert::assertEquals($messageExpire, $room['messageExpire']);
+		Assert::assertEquals($expireInterval, $room['expireInterval']);
 	}
 
 	/**
@@ -2597,9 +2597,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When apply message expire job to room :identifier
+	 * @When apply expire date job to room :identifier
 	 */
-	public function applyMessageExpireJobToRoom($identifier): void {
+	public function applyExpireDateJobToRoom($identifier): void {
 		$currentUser = $this->currentUser;
 		$this->setCurrentUser('admin');
 		$this->sendRequest('GET', '/apps/spreedcheats/get_message_expire_job/' . self::$identifierToToken[$identifier]);

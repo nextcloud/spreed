@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2022 Vitor Mattos <vitor@php.rio>
  *
+ * @author Vitor Mattos <vitor@php.rio>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,7 +27,7 @@ namespace OCA\Talk\Events;
 
 use OCA\Talk\Room;
 
-class ChangeMessageExpireEvent extends RoomEvent {
+class ChangeExpireDateEvent extends RoomEvent {
 	private int $seconds;
 	public function __construct(Room $room,
 								int $seconds
@@ -34,7 +36,7 @@ class ChangeMessageExpireEvent extends RoomEvent {
 		$this->seconds = $seconds;
 	}
 
-	public function getMessageExpireSeconds(): int {
+	public function getExpireDateSeconds(): int {
 		return $this->seconds;
 	}
 }

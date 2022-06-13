@@ -1,23 +1,23 @@
-Feature: room/message_expire
+Feature: room/expire_date
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
     Given user "participant3" exists
 
-  Scenario: Enable message expire and check after expire
+  Scenario: Enable expire date and check after expire
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |
       | roomName | room |
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
     And user "participant1" sends message "Message 1" to room "room" with 201
-    And user "participant1" set the message expire to -1 of room "room" with 400 (v4)
-    And user "participant2" set the message expire to 3 of room "room" with 403 (v4)
-    And user "participant3" set the message expire to 3 of room "room" with 404 (v4)
-    And user "participant1" set the message expire to 3 of room "room" with 200 (v4)
+    And user "participant1" set the expire interval to -1 of room "room" with 400 (v4)
+    And user "participant2" set the expire interval to 3 of room "room" with 403 (v4)
+    And user "participant3" set the expire interval to 3 of room "room" with 404 (v4)
+    And user "participant1" set the expire interval to 3 of room "room" with 200 (v4)
     And user "participant1" sends message "Message 2" to room "room" with 201
-    And user "participant1" check if message expire of room "room" is 3 (v4)
+    And user "participant1" check if expire interval of room "room" is 3 (v4)
     And wait for 3 seconds
-    And apply message expire job to room "room"
+    And apply expire date job to room "room"
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
       | room | users     | participant1 | participant1-displayname | Message 1   | []                |               |

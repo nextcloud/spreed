@@ -103,4 +103,3 @@ title: Capabilities
 * `silent-call` - Allow to start calls without sending notification
 * `config => call => enabled` - Whether calling is enabled on the instance or not
 * `config => signaling => session-ping-limit` - Number of sessions the HPB is allowed to ping in the same request
-* `time-to-live` - Time to live of messages for a conversation
