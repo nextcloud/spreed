@@ -92,7 +92,7 @@ class PollService {
 		if (!$participant->hasModeratorPermissions()
 		 && ($poll->getActorType() !== $participant->getAttendee()->getActorType()
 		 || $poll->getActorId() !== $participant->getAttendee()->getActorId())) {
-			// Only moderators and the author of the poll can close it
+			// Only moderators and the author of the poll can update it
 			throw new WrongPermissionsException();
 		}
 
