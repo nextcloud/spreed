@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OC\HintException;
+use OC\Security\Bruteforce\Throttler;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Config;
@@ -81,6 +82,8 @@ class PageController extends Controller {
 	private $appManager;
 	/** @var IRootFolder */
 	private $rootFolder;
+	/** @var Throttler */
+	private $throttler;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -97,6 +100,7 @@ class PageController extends Controller {
 								IInitialState $initialState,
 								ICacheFactory $memcacheFactory,
 								IRootFolder $rootFolder,
+								Throttler $throttler,
 								Config $talkConfig,
 								IConfig $serverConfig) {
 		parent::__construct($appName, $request);
@@ -113,6 +117,7 @@ class PageController extends Controller {
 		$this->initialState = $initialState;
 		$this->memcacheFactory = $memcacheFactory;
 		$this->rootFolder = $rootFolder;
+		$this->throttler = $throttler;
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
 	}
@@ -235,9 +240,12 @@ class PageController extends Controller {
 						$this->talkSession->setPasswordForRoom($token, $password);
 					} else {
 						$this->talkSession->removePasswordForRoom($token);
+						$showBruteForceWarning = $this->throttler->getDelay($this->request->getRemoteAddress(), 'talkRoomPassword') > 5000;
+
 						if ($passwordVerification['url'] === '') {
 							$response = new TemplateResponse($this->appName, 'authenticate', [
 								'wrongpw' => $password !== '',
+								'showBruteForceWarning' => $showBruteForceWarning,
 							], 'guest');
 						} else {
 							$response = new RedirectResponse($passwordVerification['url']);
@@ -318,9 +326,12 @@ class PageController extends Controller {
 				$this->talkSession->setPasswordForRoom($token, $password);
 			} else {
 				$this->talkSession->removePasswordForRoom($token);
+				$showBruteForceWarning = $this->throttler->getDelay($this->request->getRemoteAddress(), 'talkRoomPassword') > 5000;
+
 				if ($passwordVerification['url'] === '') {
 					$response = new TemplateResponse($this->appName, 'authenticate', [
 						'wrongpw' => $password !== '',
+						'showBruteForceWarning' => $showBruteForceWarning,
 					], 'guest');
 				} else {
 					$response = new RedirectResponse($passwordVerification['url']);
