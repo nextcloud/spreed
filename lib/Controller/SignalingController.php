@@ -461,19 +461,22 @@ class SignalingController extends OCSController {
 	 * https://nextcloud-spreed-signaling.readthedocs.io/en/latest/standalone-signaling-api-v1/#backend-requests
 	 *
 	 * @PublicPage
+	 * @BruteForceProtection(action=signalingSecret)
 	 *
 	 * @return DataResponse
 	 */
 	public function backend(): DataResponse {
 		$json = $this->getInputStream();
 		if (!$this->validateBackendRequest($json)) {
-			return new DataResponse([
+			$response = new DataResponse([
 				'type' => 'error',
 				'error' => [
 					'code' => 'invalid_request',
 					'message' => 'The request could not be authenticated.',
 				],
 			]);
+			$response->throttle();
+			return $response;
 		}
 
 		$message = json_decode($json, true);
