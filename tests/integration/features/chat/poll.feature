@@ -97,7 +97,7 @@ Feature: chat/poll
       | votedSelf  | not voted |
       | details    | [{"actorType":"users","actorId":"participant1","actorDisplayName":"participant1-displayname","optionId":1}] |
 
-  Scenario: Participants can update their votes
+  Scenario: Participants can update their votes but only while open
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -132,6 +132,21 @@ Feature: chat/poll
       | actorDisplayName    | participant1-displayname |
       | status     | open |
       | votedSelf  | [1] |
+    Then user "participant1" closes poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"1":1}   |
+      | numVoters  | 1    |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
+      | status     | closed |
+      | votedSelf  | [1] |
+      | details    | [{"actorType":"users","actorId":"participant1","actorDisplayName":"participant1-displayname","optionId":1}] |
+    Then user "participant1" votes for options "[0]" on poll "What is the question?" in room "room" with 400
 
   Scenario: Participants can only vote for valid options
     Given user "participant1" creates room "room" (v4)
