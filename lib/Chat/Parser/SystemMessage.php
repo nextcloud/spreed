@@ -34,6 +34,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
+use OCP\Federation\ICloudIdManager;
 use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
@@ -57,6 +58,7 @@ class SystemMessage {
 	protected RoomShareProvider $shareProvider;
 	protected PhotoCache $photoCache;
 	protected IRootFolder $rootFolder;
+	protected ICloudIdManager $cloudIdManager;
 	protected IURLGenerator $url;
 	protected ?IL10N $l = null;
 
@@ -80,6 +82,7 @@ class SystemMessage {
 								RoomShareProvider $shareProvider,
 								PhotoCache $photoCache,
 								IRootFolder $rootFolder,
+								ICloudIdManager $cloudIdManager,
 								IURLGenerator $url) {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
@@ -88,6 +91,7 @@ class SystemMessage {
 		$this->shareProvider = $shareProvider;
 		$this->photoCache = $photoCache;
 		$this->rootFolder = $rootFolder;
+		$this->cloudIdManager = $cloudIdManager;
 		$this->url = $url;
 	}
 
@@ -284,6 +288,26 @@ class SystemMessage {
 				} elseif ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator removed {user}');
 				}
+			}
+		} elseif ($message === 'federated_user_added') {
+			$parsedParameters['federated_user'] = $this->getRemoteUser($parameters['federated_user']);
+			$parsedMessage = $this->l->t('{actor} invited {user}');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You invited {user}');
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator invited {user}');
+			} elseif ($parsedParameters['federated_user']['id'] === $parsedParameters['actor']['id']) {
+				$parsedMessage = $this->l->t('{federated_user} accepted the invitation');
+			}
+		} elseif ($message === 'federated_user_removed') {
+			$parsedParameters['federated_user'] = $this->getRemoteUser($parameters['federated_user']);
+			$parsedMessage = $this->l->t('{actor} removed {federated_user}');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You removed {federated_user}');
+			} elseif ($cliIsActor) {
+				$parsedMessage = $this->l->t('An administrator removed {federated_user}');
+			} elseif ($parsedParameters['federated_user']['id'] === $parsedParameters['actor']['id']) {
+				$parsedMessage = $this->l->t('{federated_user} declined the invitation');
 			}
 		} elseif ($message === 'group_added') {
 			$parsedParameters['group'] = $this->getGroup($parameters['group']);
@@ -588,6 +612,9 @@ class SystemMessage {
 		if ($actorType === Attendee::ACTOR_GUESTS) {
 			return $this->getGuest($room, $actorId);
 		}
+		if ($actorType === Attendee::ACTOR_FEDERATED_USERS) {
+			return $this->getRemoteUser($actorId);
+		}
 
 		return $this->getUser($actorId);
 	}
@@ -613,6 +640,17 @@ class SystemMessage {
 			'type' => 'user',
 			'id' => $uid,
 			'name' => $this->displayNames[$uid],
+		];
+	}
+
+	protected function getRemoteUser(string $federationId): array {
+		$cloudId = $this->cloudIdManager->resolveCloudId($federationId);
+
+		return [
+			'type' => 'user',
+			'id' => $cloudId->getUser(),
+			'name' => $cloudId->getDisplayId(),
+			'server' => $cloudId->getRemote(),
 		];
 	}
 

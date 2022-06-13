@@ -29,6 +29,7 @@ use Exception;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
+use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
@@ -37,6 +38,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http;
 use OCP\DB\Exception as DBException;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\Exceptions\ActionNotSupportedException;
 use OCP\Federation\Exceptions\AuthenticationFailedException;
 use OCP\Federation\Exceptions\BadRequestException;
@@ -44,11 +46,13 @@ use OCP\Federation\Exceptions\ProviderCouldNotAddShareException;
 use OCP\Federation\ICloudFederationProvider;
 use OCP\Federation\ICloudFederationShare;
 use OCP\HintException;
+use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Share\Exceptions\ShareNotFound;
+use Psr\Log\LoggerInterface;
 
 class CloudFederationProviderTalk implements ICloudFederationProvider {
 	private IUserManager $userManager;
@@ -68,6 +72,9 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	private AttendeeMapper $attendeeMapper;
 
 	private Manager $manager;
+	private ISession $session;
+	private IEventDispatcher $dispatcher;
+	private LoggerInterface $logger;
 
 	public function __construct(
 		IUserManager $userManager,
@@ -78,7 +85,10 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		IURLGenerator $urlGenerator,
 		ParticipantService $participantService,
 		AttendeeMapper $attendeeMapper,
-		Manager $manager
+		Manager $manager,
+		ISession $session,
+		IEventDispatcher $dispatcher,
+		LoggerInterface $logger
 	) {
 		$this->userManager = $userManager;
 		$this->addressHandler = $addressHandler;
@@ -89,6 +99,9 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		$this->participantService = $participantService;
 		$this->attendeeMapper = $attendeeMapper;
 		$this->manager = $manager;
+		$this->session = $session;
+		$this->dispatcher = $dispatcher;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -105,15 +118,18 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	 */
 	public function shareReceived(ICloudFederationShare $share): string {
 		if (!$this->config->isFederationEnabled()) {
+			$this->logger->debug('Received a federation invite but federation is disabled');
 			throw new ProviderCouldNotAddShareException('Server does not support talk federation', '', Http::STATUS_SERVICE_UNAVAILABLE);
 		}
 		if (!in_array($share->getShareType(), $this->getSupportedShareTypes(), true)) {
+			$this->logger->debug('Received a federation invite for invalid share type');
 			throw new ProviderCouldNotAddShareException('Support for sharing with non-users not implemented yet', '', Http::STATUS_NOT_IMPLEMENTED);
 			// TODO: Implement group shares
 		}
 
 		$roomType = $share->getProtocol()['roomType'];
 		if (!is_numeric($roomType) || !in_array((int) $roomType, $this->validSharedRoomTypes(), true)) {
+			$this->logger->debug('Received a federation invite for invalid room type');
 			throw new ProviderCouldNotAddShareException('roomType is not a valid number', '', Http::STATUS_BAD_REQUEST);
 		}
 
@@ -139,6 +155,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		if ($remote && $shareSecret && $shareWith && $roomToken && $remoteId && is_string($roomName) && $roomName && $owner) {
 			$shareWith = $this->userManager->get($shareWith);
 			if ($shareWith === null) {
+				$this->logger->debug('Received a federation invite for user that could not be found');
 				throw new ProviderCouldNotAddShareException('User does not exist', '', Http::STATUS_BAD_REQUEST);
 			}
 
@@ -147,6 +164,8 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 			$this->notifyAboutNewShare($shareWith, $shareId, $sharedByFederatedId, $sharedBy, $roomName, $roomToken, $remote);
 			return $shareId;
 		}
+
+		$this->logger->debug('Received a federation invite with missing request data');
 		throw new ProviderCouldNotAddShareException('required request data not found', '', Http::STATUS_BAD_REQUEST);
 	}
 
@@ -183,7 +202,15 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	private function shareAccepted(int $id, array $notification): array {
 		$attendee = $this->getAttendeeAndValidate($id, $notification['sharedSecret']);
 
-		// TODO: Add activity for share accepted
+		$this->session->set('talk-overwrite-actor-type', $attendee->getActorType());
+		$this->session->set('talk-overwrite-actor-id', $attendee->getActorId());
+
+		$room = $this->manager->getRoomById($attendee->getRoomId());
+		$event = new AttendeesAddedEvent($room, [$attendee]);
+		$this->dispatcher->dispatchTyped($event);
+
+		$this->session->remove('talk-overwrite-actor-type');
+		$this->session->remove('talk-overwrite-actor-id');
 
 		return [];
 	}
@@ -196,9 +223,15 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 	private function shareDeclined(int $id, array $notification): array {
 		$attendee = $this->getAttendeeAndValidate($id, $notification['sharedSecret']);
 
+		$this->session->set('talk-overwrite-actor-type', $attendee->getActorType());
+		$this->session->set('talk-overwrite-actor-id', $attendee->getActorId());
+
 		$room = $this->manager->getRoomById($attendee->getRoomId());
 		$participant = new Participant($room, $attendee, null);
 		$this->participantService->removeAttendee($room, $participant, Room::PARTICIPANT_LEFT);
+
+		$this->session->remove('talk-overwrite-actor-type');
+		$this->session->remove('talk-overwrite-actor-id');
 		return [];
 	}
 
@@ -287,12 +320,12 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 		$declineAction = $notification->createAction();
 		$declineAction->setLabel('decline')
-			->setLink($this->urlGenerator->linkToOCSRouteAbsolute('spreed.Federation.rejectShare', ['id' => $shareId]), 'DELETE');
+			->setLink($this->urlGenerator->linkToOCSRouteAbsolute('spreed.Federation.rejectShare', ['apiVersion' => 'v1', 'id' => $shareId]), 'DELETE');
 		$notification->addAction($declineAction);
 
 		$acceptAction = $notification->createAction();
 		$acceptAction->setLabel('accept')
-			->setLink($this->urlGenerator->linkToOCSRouteAbsolute('spreed.Federation.acceptShare', ['id' => $shareId]), 'POST');
+			->setLink($this->urlGenerator->linkToOCSRouteAbsolute('spreed.Federation.acceptShare', ['apiVersion' => 'v1', 'id' => $shareId]), 'POST');
 		$notification->addAction($acceptAction);
 
 		$this->notificationManager->notify($notification);

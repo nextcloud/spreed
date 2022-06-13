@@ -212,8 +212,7 @@ class NotifierTest extends TestCase {
 		$n->expects($this->once())
 			->method('getSubjectParameters')
 			->willReturn([$uid]);
-		$n->expects($this->exactly(2))
-			->method('getObjectType')
+		$n->method('getObjectType')
 			->willReturn('room');
 		$n->method('getObjectId')
 			->willReturn('roomToken');
@@ -329,8 +328,7 @@ class NotifierTest extends TestCase {
 		$n->expects($this->once())
 			->method('getSubjectParameters')
 			->willReturn([$uid]);
-		$n->expects($this->exactly(2))
-			->method('getObjectType')
+		$n->method('getObjectType')
 			->willReturn('room');
 		$n->method('getObjectId')
 			->willReturn('roomToken');
@@ -461,8 +459,7 @@ class NotifierTest extends TestCase {
 		$n->expects($this->once())
 			->method('getSubjectParameters')
 			->willReturn([$uid]);
-		$n->expects($this->exactly(2))
-			->method('getObjectType')
+		$n->method('getObjectType')
 			->willReturn('room');
 		$n->method('getObjectId')
 			->willReturn('roomToken');
@@ -1022,8 +1019,7 @@ class NotifierTest extends TestCase {
 		$notification->expects($this->once())
 			->method('getSubjectParameters')
 			->willReturn($subjectParameters);
-		$notification->expects($this->exactly(2))
-			->method('getObjectType')
+		$notification->method('getObjectType')
 			->willReturn('chat');
 		$notification->method('getObjectId')
 			->willReturn('roomToken');
@@ -1144,11 +1140,10 @@ class NotifierTest extends TestCase {
 			$n->expects($this->never())
 				->method('getObjectType');
 		} elseif ($objectType === null && $app === 'spreed') {
-			$n->expects($this->once())
-				->method('getObjectType')
+			$n->method('getObjectType')
 				->willReturn('');
 		} else {
-			$n->expects($this->exactly(2))
+			$n->expects($this->any())
 				->method('getObjectType')
 				->willReturn($objectType);
 		}
