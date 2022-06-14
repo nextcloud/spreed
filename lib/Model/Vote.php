@@ -64,7 +64,8 @@ class Vote extends Entity {
 	 */
 	public function asArray(): array {
 		return [
-			'id' => $this->getId(),
+			// The ids are not needed on the API level but only internally for optimising database queries
+			// 'id' => $this->getId(),
 			// 'pollId' => $this->getPollId(),
 			// 'roomId' => $this->getRoomId(),
 			'actorType' => $this->getActorType(),

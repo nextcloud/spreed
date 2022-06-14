@@ -91,6 +91,7 @@ class Poll extends Entity {
 	public function asArray(): array {
 		return [
 			'id' => $this->getId(),
+			// The room id is not needed on the API level but only internally for optimising database queries
 			// 'roomId' => $this->getRoomId(),
 			'question' => $this->getQuestion(),
 			'options' => json_decode($this->getOptions(), true, 512, JSON_THROW_ON_ERROR),
