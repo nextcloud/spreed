@@ -32,12 +32,77 @@ Talkbuchet-cli.py.
 Please refer to the documentation in Talkbuchet.js and Talkbuchet-run.sh for
 information on Talkbuchet and on how to easily run it.
 
+Documentation on the control functions provided by Talkbuchet-cli.py can be
+printed while Talkbuchet-cli.py is running by calling "help(XXX)" (where XXX is
+the function to get help about).
+
 Talkbuchet-cli.py provides a wrapper class to start and interact with
 Talkbuchet.js instances. Creating an object of the wrapper class launches a new
 browser instance, opens the given Nextcloud URL and loads Talkbuchet.js on it.
 After that the methods in the object call their counterpart in the wrapped
 Talkbuchet.js instance; the wrapper objects provide full control of their
 wrapped Talkbuchet.js instance.
+
+Besides the helper classes Talkbuchet-cli.py also provides a set of global
+functions to easily create several wrapper objects with common settings. Some
+control functions are also provided, for example, to check the status of
+connections during a siege, but in general the global functions only cover
+creating and deleting the wrappers, and once created any specific action should
+be executed on the wrapper objects themselves.
+
+The values set using the global functions are not taken into account if a
+Talkbuchet wrapper is manually created; they only affect the wrappers created
+using the global functions. Moreover, existing Talkbuchet wrappers
+already created by the global helper functions are not affected either, only
+those created after the value was changed.
+
+By default the browser instances will be launched in the local Selenium server.
+A remote server can be used instead with:
+>>>> setRemoteSeleniumUrl(THE-SELENIUM-SERVER-URL)
+
+Independently of the server used, by default the browser will be launched in
+headless mode. If the browser needs to be interacted with this can be disabled
+with:
+>>>> setHeadless(False)
+
+A siege can be started in the following way:
+>>>> setTarget('https://THE-NEXTCLOUD-DOMAIN')
+>>>> setCredentials('THE-USER-ID', 'THE-APP-TOKEN')
+>>>> setPublishersAndSubscribersCount(XXX, YYY)
+>>>> startSiege()
+
+Note that a conversation token does not need to be set, except if the server is
+configured in conversation clustering mode.
+
+Setting the publishers and subscribers count is not mandatory, but it is
+recommended to adjust it based on the maximum number supported by the client
+machine running the browser, as well as the values that need to be tested on the
+server.
+
+In any case, it is recommended to initially set a low number, for example
+"setPublishersAndSubscribersCount(1, 2)", start a siege to verify that
+everything works as expected, and then perform the real test.
+
+Note that starting a new siege does not stop the previous one. That should be
+explicitly done by calling "endSiege()". Starting several sieges instead of a
+single siege with a higher number of publishers and subscribers could be needed
+in powerful client machines that can handle more connections than what a single
+browser is able to (for example, Chromium has a hardcoded limit on the maximum
+number of concurrent connections).
+
+Sieges are done with audio only connections by default. If a different media
+needs to be used (either video but not audio, or both audio and video) this
+needs to be specified (before starting the siege) with:
+>>>> setMedia(CONNECT-WITH-AUDIO, CONNECT-WITH-VIDEO)
+
+When a siege is active it is possible to check the state of the publisher
+connections with "checkPublishersConnections()" and the state of the
+subscriber connections with "checkSubscribersConnections()".
+
+Global functions for additional actions, like enabling or disabling media
+during the siege, are not provided. They must be directly called on the
+Talkbuchet wrapper objects in the "sieges" list. For example:
+>>>> sieges[0].setAudioEnabled(False)
 """
 
 import atexit
@@ -357,3 +422,267 @@ class Talkbuchet:
         self.seleniumHelper.execute('await siege()')
 
         self.seleniumHelper.driver.set_script_timeout(savedScriptTimeout)
+
+
+_nextcloudUrl = ''
+_remoteSeleniumUrl = ''
+_headless = True
+
+_user = ''
+_appToken = ''
+
+_token = ''
+
+_audio = False
+_video = False
+
+def setTarget(nextcloudUrl):
+    """
+    Sets the Nextcloud URL to use.
+
+    This is used only for the global helper functions and is not taken into
+    account if a Talkbuchet wrapper is manually created.
+
+    :param nextcloudUrl: the URL of the Nextcloud instance to test against
+        (for example, "https://cloud.mydomain.com").
+    """
+
+    global _nextcloudUrl
+    _nextcloudUrl = nextcloudUrl
+
+def setHeadless(headless):
+    """
+    Sets whether the browsers will be started in headless mode or not.
+
+    By default browsers are started in headless mode, as each instance uses a
+    little less memory.
+
+    This is used only for the global helper functions and is not taken into
+    account if a Talkbuchet wrapper is manually created.
+
+    :param headless: True for headless mode, False otherwise.
+    """
+
+    global _headless
+    _headless = headless
+
+def setRemoteSeleniumUrl(remoteSeleniumUrl):
+    """
+    Sets the URL of the remote Selenium server to use.
+
+    By default the local Selenium server is used.
+
+    When a remote Selenium server is used its session timeout (which is
+    independent from the timeouts set in the driver) must be kept in mind, as it
+    can cause the browser to "unexpectedly" close. Also note that each
+    Talkbuchet wrapper will use its own browser instance, so the remote Selenium
+    server should have enough available sessions for all the instances running
+    at the same time.
+
+    This is used only for the global helper functions and is not taken into
+    account if a Talkbuchet wrapper is manually created.
+
+    :param remoteSeleniumUrl: the URL of the remote Selenium server, or None to
+        use the local one.
+    """
+
+    global _remoteSeleniumUrl
+    _remoteSeleniumUrl = remoteSeleniumUrl
+
+def setCredentials(user, appToken):
+    """
+    Sets the credentials to use.
+
+    An app token/password can be generated in the Security section of the
+    personal settings (index.php/settings/user/security).
+
+    This is used only for the global helper functions and is not taken into
+    account if a Talkbuchet wrapper is manually created.
+
+    :param user: the user ID.
+    :param appToken: the app token for the user.
+    """
+
+    global _user, _appToken
+    _user = user
+    _appToken = appToken
+
+def setToken(token):
+    """
+    Sets the conversation token to use.
+
+    This is used only for the global helper functions and is not taken into
+    account if a Talkbuchet wrapper is manually created.
+
+    :param token: the conversation token.
+    """
+
+    global _token
+    _token = token
+
+def setMedia(audio, video):
+    """
+    Sets the media to be started in the Talkbuchet wrappers.
+
+    By default audio will be used. Note that audio will be used too even if both
+    audio and video are disabled, as some media needs to be published.
+
+    This is used only for the global helper functions and is not taken into
+    account if a Talkbuchet wrapper is manually created.
+
+    :param audio: True to start audio, False otherwise
+    :param video: True to start video, False otherwise
+    """
+
+    global _audio, _video
+    _audio = audio
+    _video = video
+
+
+_publishersCount = None
+_subscribersPerPublisherCount = None
+
+sieges = []
+
+def _isValidConfiguration():
+    if not _nextcloudUrl:
+        print("Set target Nextcloud URL first")
+        return False
+
+    if not _user or not _appToken:
+        print("Set credentials (user and app token) first")
+        return False
+
+    return True
+
+def setPublishersAndSubscribersCount(publishersCount, subscribersPerPublisherCount):
+    """
+    Sets the number of publishers and subscribers per publisher to use.
+
+    By the default the number from Talkbuchet.js is used, which is 5 publishers
+    and 40 subscribers per publisher.
+
+    This is used only for the global helper functions and is not taken into
+    account if a Talkbuchet wrapper is manually created.
+
+    :param publishersCount: the number of publishers.
+    :param subscribersPerPublisherCount: the number of subscribers for each
+        publisher.
+    """
+
+    global _publishersCount, _subscribersPerPublisherCount
+    _publishersCount = publishersCount
+    _subscribersPerPublisherCount = subscribersPerPublisherCount
+
+def startSiege():
+    """
+    Starts a siege.
+
+    The global target Nextcloud URL and credentials need to be set first.
+
+    If global token, media or publishers and subscribers count were set they
+    will be applied to the siege.
+
+    Note that changing any of those values later will have no effect on a
+    running siege, the updated value will be used only on sieges started after
+    they were changed.
+
+    If there is already a running siege it will not be ended when a new one is
+    started; the new one will run along the previous one.
+    """
+
+    if not _isValidConfiguration():
+        return
+
+    siege = Siege(_getBrowser(), _nextcloudUrl, _headless, _remoteSeleniumUrl)
+
+    sieges.append(siege)
+
+    siege.setCredentials(_user, _appToken)
+
+    if _token:
+        siege.setToken(_token)
+
+    if _audio or _video:
+        siege.startMedia(_audio, _video)
+
+    if _publishersCount != None and _subscribersPerPublisherCount != None:
+        siege.setPublishersAndSubscribersCount(_publishersCount, _subscribersPerPublisherCount)
+
+    siege.siege()
+
+def _getSiegeIndex(index = None):
+    if not sieges:
+        return -1
+
+    if index == None and len(sieges) > 1:
+        print("Index needs to be specified")
+        return -1
+
+    if index == None and len(sieges) == 1:
+        index = 0
+
+    if index < 0 or index >= len(sieges):
+        print("Index out of range")
+        return -1
+
+    return index
+
+def checkPublishersConnections(index = None):
+    """
+    Checks the publisher connections of the siege with the given index.
+
+    If a single siege is active the index does not need to be specified.
+
+    :param index: the index in :py:data:`sieges` of the siege to check its
+        publisher connections.
+    """
+
+    index = _getSiegeIndex(index)
+    if index < 0:
+        return
+
+    sieges[index].checkPublishersConnections()
+
+def checkSubscribersConnections(index = None):
+    """
+    Checks the subscriber connections of the siege with the given index.
+
+    If a single siege is active the index does not need to be specified.
+
+    :param index: the index in :py:data:`sieges` of the siege to check its
+        subscriber connections.
+    """
+
+    index = _getSiegeIndex(index)
+    if index < 0:
+        return
+
+    sieges[index].checkSubscribersConnections()
+
+def endSiege(index = None):
+    """
+    Ends the siege with the given index.
+
+    If a single siege is active the index does not need to be specified.
+
+    :param index: the index in :py:data:`sieges` of the siege to remove.
+    """
+
+    index = _getSiegeIndex(index)
+    if index < 0:
+        return
+
+    sieges[index].closeConnections()
+    del sieges[index]
+
+
+def _deleteTalkbuchetInstancesOnExit():
+    while sieges:
+        del sieges[0]
+
+# Talkbuchet instances should be explicitly deleted before exiting, as if they
+# are implicitly deleted while exiting the Selenium driver may not cleanly quit.
+atexit.register(_deleteTalkbuchetInstancesOnExit)
+
+print('Full documentation can be shown by calling help(__name__)')
