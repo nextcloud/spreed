@@ -468,3 +468,58 @@ Feature: chat/poll
       | actorDisplayName    | participant1-displayname |
       | status     | closed |
       | votedSelf  | not voted |
+
+  Scenario: Number of voters and votes are restricted to the very same poll
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    When user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    When user "participant1" creates a poll in room "room" with 201
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+    Then user "participant1" votes for options "[0]" on poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"0":1} |
+      | numVoters  | 1 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
+      | status     | open |
+      | votedSelf  | [0] |
+    When user "participant2" creates a poll in room "room" with 201
+      | question   | Another one ... |
+      | options    | ["... bites the dust!","... bites de_dust!"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+    Then user "participant2" votes for options "[1]" on poll "Another one ..." in room "room" with 200
+      | id         | POLL_ID(Another one ...) |
+      | question   | Another one ... |
+      | options    | ["... bites the dust!","... bites de_dust!"] |
+      | votes      | {"1":1} |
+      | numVoters  | 1 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant2 |
+      | actorDisplayName    | participant2-displayname |
+      | status     | open |
+      | votedSelf  | [1] |
+    Then user "participant2" sees poll "Another one ..." in room "room" with 200
+      | id         | POLL_ID(Another one ...) |
+      | question   | Another one ... |
+      | options    | ["... bites the dust!","... bites de_dust!"] |
+      | votes      | {"1":1} |
+      | numVoters  | 1 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant2 |
+      | actorDisplayName    | participant2-displayname |
+      | status     | open |
+      | votedSelf  | [1] |

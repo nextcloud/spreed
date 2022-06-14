@@ -235,6 +235,7 @@ class PollService {
 		$subQuery = $this->connection->getQueryBuilder();
 		$subQuery->select('actor_type', 'actor_id')
 			->from('talk_poll_votes')
+			->where($subQuery->expr()->eq('poll_id', $subQuery->createNamedParameter($pollId)))
 			->groupBy('actor_type', 'actor_id');
 
 		$votersQuery = $this->connection->getQueryBuilder();
