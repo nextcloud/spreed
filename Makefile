@@ -11,13 +11,21 @@ package_name=$(app_name)
 cert_dir=$(HOME)/.nextcloud/certificates
 version+=master
 
-all: dev-setup build-js-production
+all: dev-setup build-production
 
-dev-setup: clean-dev npm-init
-
-dependabot: dev-setup npm-update build-js-production
+dev-setup: clean-dev composer-install-dev npm-init
 
 release: appstore create-tag
+
+build-dev: composer-install-dev build-js
+
+build-production: composer-install-production build-js-production
+
+composer-install-dev:
+	composer install
+
+composer-install-production:
+	composer install --no-dev
 
 build-js:
 	npm run dev
@@ -49,6 +57,7 @@ clean:
 
 clean-dev: clean
 	rm -rf node_modules
+	rm -rf vendor
 
 create-tag:
 	git tag -a v$(version) -m "Tagging the $(version) release."
@@ -89,7 +98,6 @@ appstore:
 	--exclude=stylelint.config.js \
 	--exclude=.tx \
 	--exclude=tests \
-	--exclude=vendor \
 	--exclude=webpack.js \
 	$(project_dir)/  $(sign_dir)/$(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \

@@ -26,5 +26,8 @@
 		"vimeo/psalm": "^4.22",
 		"christophwurst/nextcloud": "dev-master",
 		"phpunit/phpunit": "^9.5"
+	},
+	"require": {
+		"firebase/php-jwt": "^6.2"
 	}
 }
