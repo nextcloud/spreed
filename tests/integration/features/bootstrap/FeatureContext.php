@@ -56,6 +56,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static $remoteToInviteId;
 	/** @var string[] */
 	protected static $inviteIdToRemote;
+	/** @var int[] */
+	protected static $questionToPollId;
 
 
 	protected static $permissionsMap = [
@@ -148,6 +150,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$userToAttendeeId = [];
 		self::$textToMessageId = [];
 		self::$messageIdToText = [];
+		self::$questionToPollId = [];
 
 		$this->createdUsers = [];
 		$this->createdGroups = [];
@@ -1512,6 +1515,171 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" creates a poll in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function createPoll(string $user, string $identifier, string $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+		$data = $formData->getRowsHash();
+		$data['options'] = json_decode($data['options'], true);
+		if ($data['resultMode'] === 'public') {
+			$data['resultMode'] = 0;
+		} elseif ($data['resultMode'] === 'hidden') {
+			$data['resultMode'] = 1;
+		} else {
+			throw new \Exception('Invalid result mode');
+		}
+		if ($data['maxVotes'] === 'unlimited') {
+			$data['maxVotes'] = 0;
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier],
+			$data
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== '201') {
+			return;
+		}
+
+		$response = $this->getDataFromResponse($this->response);
+		if (isset($response['id'])) {
+			self::$questionToPollId[$data['question']] = $response['id'];
+		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sees poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $question
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 * @param ?TableNode $formData
+	 */
+	public function userSeesPollInRoom(string $user, string $question, string $identifier, string $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$expected = $this->preparePollExpectedData($formData->getRowsHash());
+		$response = $this->getDataFromResponse($this->response);
+		$this->assertPollEquals($expected, $response);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" closes poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $question
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 * @param ?TableNode $formData
+	 */
+	public function userClosesPollInRoom(string $user, string $question, string $identifier, string $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== '200') {
+			return;
+		}
+
+		$expected = $this->preparePollExpectedData($formData->getRowsHash());
+		$response = $this->getDataFromResponse($this->response);
+		$this->assertPollEquals($expected, $response);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" votes for options "([^"]*)" on poll "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $options
+	 * @param string $question
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 * @param ?TableNode $formData
+	 */
+	public function userVotesPollInRoom(string $user, string $options, string $question, string $identifier, string $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+		$data = [
+			'optionIds' => json_decode($options, true),
+		];
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question],
+			$data
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== '200' && $statusCode !== '201') {
+			return;
+		}
+
+		$expected = $this->preparePollExpectedData($formData->getRowsHash());
+		$response = $this->getDataFromResponse($this->response);
+		$this->assertPollEquals($expected, $response);
+	}
+
+	protected function assertPollEquals(array $expected, array $response): void {
+		if (isset($expected['details'])) {
+			$response['details'] = array_map(static function (array $detail): array {
+				unset($detail['id']);
+				return $detail;
+			}, $response['details']);
+		}
+
+		Assert::assertEquals($expected, $response);
+	}
+
+	protected function preparePollExpectedData(array $expected): array {
+		if ($expected['resultMode'] === 'public') {
+			$expected['resultMode'] = 0;
+		} elseif ($expected['resultMode'] === 'hidden') {
+			$expected['resultMode'] = 1;
+		}
+		if ($expected['maxVotes'] === 'unlimited') {
+			$expected['maxVotes'] = 0;
+		}
+		if ($expected['status'] === 'open') {
+			$expected['status'] = 0;
+		} elseif ($expected['status'] === 'closed') {
+			$expected['status'] = 1;
+		}
+
+		if ($expected['votedSelf'] === 'not voted') {
+			$expected['votedSelf'] = [];
+		} else {
+			$expected['votedSelf'] = json_decode($expected['votedSelf'], true);
+		}
+
+		if (isset($expected['votes'])) {
+			$expected['votes'] = json_decode($expected['votes'], true);
+		}
+		if (isset($expected['details'])) {
+			$expected['details'] = json_decode($expected['details'], true);
+		}
+		$expected['numVoters'] = (int) $expected['numVoters'];
+		$expected['options'] = json_decode($expected['options'], true);
+
+		$result = preg_match('/POLL_ID\(([^)]+)\)/', $expected['id'], $matches);
+		if ($result) {
+			$expected['id'] = self::$questionToPollId[$matches[1]];
+		}
+
+		return $expected;
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" deletes message "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
@@ -1741,14 +1909,21 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$includeReactions = in_array('reactions', $formData->getRow(0), true);
 		$includeReactionsSelf = in_array('reactionsSelf', $formData->getRow(0), true);
 
-		$count = count($formData->getHash());
+		$expected = $formData->getHash();
+		$count = count($expected);
 		Assert::assertCount($count, $messages, 'Message count does not match');
 		for ($i = 0; $i < $count; $i++) {
-			if ($formData->getHash()[$i]['messageParameters'] === '"IGNORE"') {
+			if ($expected[$i]['messageParameters'] === '"IGNORE"') {
 				$messages[$i]['messageParameters'] = 'IGNORE';
 			}
+
+			$result = preg_match('/POLL_ID\(([^)]+)\)/', $expected[$i]['messageParameters'], $matches);
+			if ($result) {
+				$expected[$i]['messageParameters'] = str_replace($matches[0], self::$questionToPollId[$matches[1]], $expected[$i]['messageParameters']);
+			}
 		}
-		Assert::assertEquals($formData->getHash(), array_map(function ($message) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf) {
+
+		Assert::assertEquals($expected, array_map(function ($message) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],

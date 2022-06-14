@@ -461,6 +461,18 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You cleared the history of the conversation');
 			}
+		} elseif ($message === 'poll_closed') {
+			$parsedParameters['poll'] = $parameters['poll'];
+			$parsedMessage = $this->l->t('{actor} closed the poll {poll}');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You closed the poll {poll}');
+			}
+		} elseif ($message === 'poll_voted') {
+			$parsedParameters['poll'] = $parameters['poll'];
+			$parsedMessage = $this->l->t('{actor} voted on the poll {poll}');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You voted on the poll {poll}');
+			}
 		} else {
 			throw new \OutOfBoundsException('Unknown subject');
 		}
