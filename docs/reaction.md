@@ -2,6 +2,8 @@
 
 Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 24
 
+All calls to OCS endpoints require the `OCS-APIRequest` header to be set to `true`.
+
 ## React to a message
 
 * Required capability: `reactions`

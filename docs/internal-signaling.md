@@ -4,6 +4,8 @@
 * Base endpoint for API v2 is: 🏁 Removed with API v3: Nextcloud 21 only
 * Base endpoint for API v3 is: `/ocs/v2.php/apps/spreed/api/v3`: since Nextcloud 22
 
+All calls to OCS endpoints require the `OCS-APIRequest` header to be set to `true`.
+
 ## Get signaling settings
 
 * Method: `GET`
@@ -28,13 +30,13 @@
     `sipDialinInfo` | string | v2 | Generic SIP dial-in information for this conversation (admin free text containing the phone number etc)
 
     - STUN server
-    
+
        field | type | Description
        ------|------|------------
        `urls` | array | Each element is a STUN server URL as a string
 
     - TURN server
-    
+
        field | type | Description
        ------|------|------------
        `urls` | array | Each element is a TURN server URL as a string

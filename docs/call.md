@@ -5,6 +5,8 @@
 * API v3: 🏁 Removed with API v4: Nextcloud 21 only
 * API v4: Base endpoint `/ocs/v2.php/apps/spreed/api/v4`: since Nextcloud 22
 
+All calls to OCS endpoints require the `OCS-APIRequest` header to be set to `true`.
+
 ## Get list of connected participants
 
 * Method: `GET`
