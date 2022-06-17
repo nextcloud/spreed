@@ -2,6 +2,8 @@
 
 Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
+All calls to OCS endpoints require the `OCS-APIRequest` header to be set to `true`.
+
 ## Create a poll in a conversation
 
 * Method: `POST`

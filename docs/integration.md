@@ -2,6 +2,8 @@
 
 Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 15
 
+All calls to OCS endpoints require the `OCS-APIRequest` header to be set to `true`.
+
 ## Get conversation for an internal file
 
 * Method: `GET`

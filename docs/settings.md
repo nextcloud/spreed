@@ -2,6 +2,8 @@
 
 * Base endpoint: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 19
 
+All calls to OCS endpoints require the `OCS-APIRequest` header to be set to `true`.
+
 ## Set user´s settings
 
 * Method: `POST`

@@ -13,6 +13,8 @@ Group and public conversations can be used to host webinars. Those online meetin
 * API v3: 🏁 Removed with API v4: Nextcloud 21 only
 * API v4: Base endpoint `/ocs/v2.php/apps/spreed/api/v4`: since Nextcloud 22
 
+All calls to OCS endpoints require the `OCS-APIRequest` header to be set to `true`.
+
 ## Set lobby for a conversation
 
 * Required capability: `webinary-lobby`
