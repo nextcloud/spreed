@@ -135,9 +135,15 @@ Options (all options can be omitted, but when present they must appear in the
 following order):
 --help prints this help and exits.
 --container CONTAINER_NAME the name to assign to the container. Defaults to
-  talkbuchet-selenium.
---selenium-image SELENIUM_IMAGE the name of the Selenium image to use. If not
-  given a Chrome image will be used by default.
+  talkbuchet-selenium, talkbuchet-selenium-chrome or talkbuchet-selenium-firefox
+  depending on the image options.
+--selenium-image SELENIUM_IMAGE or --chrome or --firefox:
+  --selenium-image SELENIUM_IMAGE the name of the Selenium image to use. No
+    matter the image, the default container name will be talkbuchet-selenium. If
+    no specific image is given a Firefox image will be used by default (and
+    talkbuchet-selenium-firefox will be used as the default container name).
+  --chrome use a Selenium image with Chrome.
+  --firefox use a Selenium image with Firefox.
 --vnc-port PORT_NUMBER the port used to map the VNC server in the host. Defaults
   to 5900.
 --web-vnc-port PORT_NUMBER the port used to map the web VNC server in the host.
@@ -150,21 +156,43 @@ if [ "$1" = "--help" ]; then
 	exit 0
 fi
 
-CONTAINER="talkbuchet-selenium"
+CUSTOM_CONTAINER_NAME=false
+CONTAINER="talkbuchet-selenium-firefox"
 if [ "$1" = "--container" ]; then
 	CONTAINER="$2"
+	CUSTOM_CONTAINER_NAME=true
 
 	shift 2
 fi
 
 CUSTOM_CONTAINER_OPTIONS=false
 
-SELENIUM_IMAGE="selenium/standalone-chrome:101.0-20220427"
+SELENIUM_IMAGE="selenium/standalone-firefox:99.0-20220427"
 if [ "$1" = "--selenium-image" ]; then
 	SELENIUM_IMAGE="$2"
 	CUSTOM_CONTAINER_OPTIONS=true
 
+	if ! $CUSTOM_CONTAINER_NAME; then
+		CONTAINER="talkbuchet-selenium"
+	fi
+
 	shift 2
+elif [ "$1" = "--chrome" ]; then
+	SELENIUM_IMAGE="selenium/standalone-chrome:101.0-20220427"
+
+	if $CUSTOM_CONTAINER_NAME; then
+		CUSTOM_CONTAINER_OPTIONS=true
+	else
+		CONTAINER="talkbuchet-selenium-chrome"
+	fi
+
+	shift 1
+elif [ "$1" = "--firefox" ]; then
+	if $CUSTOM_CONTAINER_NAME; then
+		CUSTOM_CONTAINER_OPTIONS=true
+	fi
+
+	shift 1
 fi
 
 VNC_PORT="5900"
