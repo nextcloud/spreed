@@ -65,6 +65,11 @@ headless mode. If the browser needs to be interacted with this can be disabled
 with:
 >>>> setHeadless(False)
 
+Talkbuchet-cli.py supports launching Chrome and Firefox instances. Nevertheless,
+note that the browser to be used also needs to be supported by the Selenium
+server. The browser to be used needs to be explicitly set with:
+>>>> setBrowser(THE-BROWSER-NAME)
+
 A siege can be started in the following way:
 >>>> setTarget('https://THE-NEXTCLOUD-DOMAIN')
 >>>> setCredentials('THE-USER-ID', 'THE-APP-TOKEN')
@@ -328,6 +333,48 @@ class SeleniumHelper:
                 options=options
             )
 
+    def startFirefox(self, headless = True, remoteSeleniumUrl = None):
+        """
+        Starts a Firefox instance.
+
+        :param headless: whether the browser will be started in headless mode or
+            not; headless mode is used by default.
+        :param remoteSeleniumUrl: the URL of the Selenium server to connect to;
+            the local server is used by default.
+        """
+
+        options = webdriver.FirefoxOptions()
+
+        # "webSocketUrl" is needed for BiDi; this should be set already by
+        # default, but just in case.
+        options.set_capability('webSocketUrl', True)
+        # In Firefox < 101 BiDi protocol was not enabled by default, although it
+        # works fine for getting the logs with Firefox 99, so it is explicitly
+        # enabled.
+        # https://bugzilla.mozilla.org/show_bug.cgi?id=1753997
+        options.set_preference('remote.active-protocols', 3)
+
+        options.set_preference('media.navigator.permission.disabled', True)
+        options.set_preference('media.navigator.streams.fake', True)
+
+        # Headless mode uses a little less memory on each instance.
+        options.headless = headless
+
+        if remoteSeleniumUrl:
+            self.driver = webdriver.Remote(
+                command_executor=remoteSeleniumUrl,
+                options=options
+            )
+        else:
+            if disk_usage('/tmp').free < 134217728:
+                print('Warning: less than 128 MiB available in "/tmp", strange failures may occur')
+
+            self.driver = webdriver.Firefox(
+                options=options
+            )
+
+        self.bidiLogsHelper = BiDiLogsHelper(self.driver)
+
     def clearLogs(self):
         """
         Clears browser logs not printed yet.
@@ -365,9 +412,9 @@ class SeleniumHelper:
         instead to properly wait until the asynchronous code finished before
         returning.
 
-        Technically Chrome works as expected with something like
-        "execute('await someFunctionCall(); await anotherFunctionCall()'", but
-        "executeAsync" has to be used instead for something like
+        Technically Chrome (unlike Firefox) works as expected with something
+        like "execute('await someFunctionCall(); await anotherFunctionCall()'",
+        but "executeAsync" has to be used instead for something like
         "someFunctionReturningAPromise().then(() => { more code })").
 
         If realtime logs are available logs are printed as soon as they are
@@ -421,6 +468,10 @@ class SeleniumHelper:
         if script.find('{RETURN}') == -1:
             script += '{RETURN}'
 
+        # await is not valid in the root context in Firefox, so the script to be
+        # executed needs to be wrapped in an async function.
+        script = '(async() => { ' + script  + ' })().catch(error => { console.error(error) {RETURN} })'
+
         # Asynchronous scripts need to explicitly signal that they are finished
         # by invoking the callback injected as the last argument.
         # https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute_async
@@ -446,10 +497,11 @@ class Talkbuchet:
     methods to call the different Talkbuchet functions in the browser.
     """
 
-    def __init__(self, nextcloudUrl, headless = True, remoteSeleniumUrl = None):
+    def __init__(self, browser, nextcloudUrl, headless = True, remoteSeleniumUrl = None):
         """
-        Loads Talkbuchet on the given Nextcloud URL.
+        Loads Talkbuchet on the given Nextcloud URL using the given browser.
 
+        :param browser: "firefox" or "chrome".
         :param nextcloudUrl: the URL of the Nextcloud instance to load
             Talkbuchet on.
         :param headless: whether the browser will be started in headless mode or
@@ -465,7 +517,12 @@ class Talkbuchet:
 
         self.seleniumHelper = SeleniumHelper()
 
-        self.seleniumHelper.startChrome(headless, remoteSeleniumUrl)
+        if browser == 'chrome':
+            self.seleniumHelper.startChrome(headless, remoteSeleniumUrl)
+        elif browser == 'firefox':
+            self.seleniumHelper.startFirefox(headless, remoteSeleniumUrl)
+        else:
+            raise Exception('Invalid browser: ' + browser)
 
         self.seleniumHelper.driver.get(nextcloudUrl)
 
@@ -652,6 +709,8 @@ class Talkbuchet:
         self.seleniumHelper.driver.set_script_timeout(savedScriptTimeout)
 
 
+_browser = ''
+
 _nextcloudUrl = ''
 _remoteSeleniumUrl = ''
 _headless = True
@@ -663,6 +722,26 @@ _token = ''
 
 _audio = False
 _video = False
+
+def setBrowser(browser):
+    """
+    Sets the browser to use.
+
+    Supported browsers are "chrome" and "firefox"; the browser needs to be
+    available in the Selenium server.
+
+    This is used only for the global helper functions and is not taken into
+    account if a Talkbuchet wrapper is manually created.
+
+    :param browser: "chrome" or "firefox".
+    """
+
+    if browser != 'chrome' and browser != 'firefox':
+        print('Browser value not valid. Allowed values: "chrome" or "firefox"')
+        return
+
+    global _browser
+    _browser = browser
 
 def setTarget(nextcloudUrl):
     """
@@ -773,6 +852,10 @@ _subscribersPerPublisherCount = None
 sieges = []
 
 def _isValidConfiguration():
+    if not _browser:
+        print("Set browser first")
+        return False
+
     if not _nextcloudUrl:
         print("Set target Nextcloud URL first")
         return False
@@ -822,7 +905,7 @@ def startSiege():
     if not _isValidConfiguration():
         return
 
-    siege = Siege(_getBrowser(), _nextcloudUrl, _headless, _remoteSeleniumUrl)
+    siege = Siege(_browser, _nextcloudUrl, _headless, _remoteSeleniumUrl)
 
     sieges.append(siege)
 
