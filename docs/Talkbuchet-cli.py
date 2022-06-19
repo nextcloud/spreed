@@ -106,10 +106,155 @@ Talkbuchet wrapper objects in the "sieges" list. For example:
 """
 
 import atexit
+import json
+import threading
+import websocket
 
+from datetime import datetime
 from pathlib import Path
 from selenium import webdriver
 from shutil import disk_usage
+from time import sleep
+
+
+class BiDiLogsHelper:
+    """
+    Helper class to get browser logs using the BiDi protocol.
+
+    A new thread is started by each object to receive the logs, so they can be
+    printed in real time even if the main thread is waiting for some script to
+    finish.
+    """
+
+    def __init__(self, driver):
+        if not 'webSocketUrl' in driver.capabilities:
+            raise Exception('webSocketUrl not found in capabilities')
+
+        self.realtimeLogsEnabled = False
+        self.pendingLogs = []
+        self.logsLock = threading.Lock()
+
+        # Web socket connection is rejected by Firefox with "Bad request" if
+        # "Origin" header is present; logs show:
+        # "The handshake request has incorrect Origin header".
+        self.websocket = websocket.create_connection(driver.capabilities['webSocketUrl'], suppress_origin=True)
+
+        self.websocket.send(json.dumps({
+            'id': 1,
+            'method': 'session.subscribe',
+            'params': {
+                'events': ['log.entryAdded'],
+            },
+        }))
+
+        self.initialLogsLock = threading.Lock()
+        self.initialLogsLock.acquire()
+
+        self.loggingThread = threading.Thread(target=self.__processLogEvents, daemon=True)
+        self.loggingThread.start()
+
+        # Do not return until the existing logs were fetched, except if it is
+        # taking too long.
+        self.initialLogsLock.acquire(timeout=10)
+
+    def __del__(self):
+        if self.websocket:
+            self.websocket.close()
+
+        if self.loggingThread:
+            self.loggingThread.join()
+
+    def __messageFromEvent(self, event):
+            if not 'params' in event:
+                return '???'
+
+            method = ''
+            if 'method' in event['params']:
+                method = event['params']['method']
+            elif 'level' in event['params']:
+                method = event['params']['level'] if event['params']['level'] != 'warning' else 'warn'
+
+            text = ''
+            if 'text' in event['params']:
+                text = event['params']['text']
+
+            time = '??:??:??'
+            if 'timestamp' in event['params']:
+                timestamp = event['params']['timestamp']
+
+                # JavaScript timestamps are millisecond based, Python timestamps
+                # are second based.
+                time = datetime.fromtimestamp(timestamp / 1000).strftime('%H:%M:%S')
+
+            methodShort = '?'
+            if method == 'error':
+                methodShort = 'E'
+            elif method == 'warn':
+                methodShort = 'W'
+            elif method == 'log':
+                methodShort = 'L'
+            elif method == 'info':
+                methodShort = 'I'
+            elif method == 'debug':
+                methodShort = 'D'
+
+            return time + ' ' + methodShort + ' ' + text
+
+    def __processLogEvents(self):
+        while True:
+            try:
+                event = json.loads(self.websocket.recv())
+            except:
+                print('BiDi WebSocket closed')
+                return
+
+            if 'id' in event and event['id'] == 1:
+                self.initialLogsLock.release()
+                continue
+
+            if not 'method' in event or event['method'] != 'log.entryAdded':
+                continue
+
+            message = self.__messageFromEvent(event)
+
+            with self.logsLock:
+                if self.realtimeLogsEnabled:
+                    print(message)
+                else:
+                    self.pendingLogs.append(message)
+
+    def clearLogs(self):
+        """
+        Clears, without printing, the logs received while realtime logs were not
+        enabled.
+        """
+
+        with self.logsLock:
+            self.pendingLogs = []
+
+    def printLogs(self):
+        """
+        Prints the logs received while realtime logs were not enabled.
+
+        The logs are cleared after printing them.
+        """
+
+        with self.logsLock:
+            for log in self.pendingLogs:
+                print(log)
+
+            self.pendingLogs = []
+
+    def setRealtimeLogsEnabled(self, realtimeLogsEnabled):
+        """
+        Enable or disable realtime logs.
+
+        If logs are received while realtime logs are not enabled they can be
+        printed using "printLogs()".
+        """
+
+        with self.logsLock:
+            self.realtimeLogsEnabled = realtimeLogsEnabled
 
 
 class SeleniumHelper:
@@ -131,6 +276,7 @@ class SeleniumHelper:
 
     def __init__(self):
         self.driver = None
+        self.bidiLogsHelper = None
 
     def __del__(self):
         if self.driver:
@@ -190,12 +336,23 @@ class SeleniumHelper:
         received by the SeleniumHelper.
         """
 
+        if self.bidiLogsHelper:
+            self.bidiLogsHelper.clearLogs()
+            return
+
         self.driver.get_log('browser')
 
     def printLogs(self):
         """
         Prints browser logs received since last print.
+
+        These logs do not include realtime logs, as they are printed as soon as
+        they are received.
         """
+
+        if self.bidiLogsHelper:
+            self.bidiLogsHelper.printLogs()
+            return
 
         for log in self.driver.get_log('browser'):
             print(log['message'])
@@ -212,9 +369,24 @@ class SeleniumHelper:
         "execute('await someFunctionCall(); await anotherFunctionCall()'", but
         "executeAsync" has to be used instead for something like
         "someFunctionReturningAPromise().then(() => { more code })").
+
+        If realtime logs are available logs are printed as soon as they are
+        received. Otherwise they will be printed once the script has finished.
         """
 
+        # Real time logs are enabled while the command is being executed.
+        if self.bidiLogsHelper:
+            self.printLogs()
+            self.bidiLogsHelper.setRealtimeLogsEnabled(True)
+
         self.driver.execute_script(script)
+
+        if self.bidiLogsHelper:
+            # Give it some time to receive the last real time logs before
+            # disabling them again.
+            sleep(0.5)
+
+            self.bidiLogsHelper.setRealtimeLogsEnabled(False)
 
         self.printLogs()
 
@@ -234,7 +406,15 @@ class SeleniumHelper:
         "someFunctionReturningAPromise().then(() => { more code })"; in that
         case the script should be written as
         "someFunctionReturningAPromise().then(() => { more code {RETURN} })").
+
+        If realtime logs are available logs are printed as soon as they are
+        received. Otherwise they will be printed once the script has finished.
         """
+
+        # Real time logs are enabled while the command is being executed.
+        if self.bidiLogsHelper:
+            self.printLogs()
+            self.bidiLogsHelper.setRealtimeLogsEnabled(True)
 
         # Add an explicit return point at the end of the script if none is
         # given.
@@ -247,6 +427,13 @@ class SeleniumHelper:
         script = script.replace('{RETURN}', '; arguments[arguments.length - 1]()')
 
         self.driver.execute_async_script(script)
+
+        if self.bidiLogsHelper:
+            # Give it some time to receive the last real time logs before
+            # disabling them again.
+            sleep(0.5)
+
+            self.bidiLogsHelper.setRealtimeLogsEnabled(False)
 
         self.printLogs()
 
