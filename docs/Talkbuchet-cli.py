@@ -203,9 +203,50 @@ class SeleniumHelper:
     def execute(self, script):
         """
         Executes the given script.
+
+        If the script contains asynchronous code "executeAsync()" should be used
+        instead to properly wait until the asynchronous code finished before
+        returning.
+
+        Technically Chrome works as expected with something like
+        "execute('await someFunctionCall(); await anotherFunctionCall()'", but
+        "executeAsync" has to be used instead for something like
+        "someFunctionReturningAPromise().then(() => { more code })").
         """
 
         self.driver.execute_script(script)
+
+        self.printLogs()
+
+    def executeAsync(self, script):
+        """
+        Executes the given script asynchronously.
+
+        This function should be used to execute JavaScript code that needs to
+        wait for a promise to be fulfilled, either explicitly or through "await"
+        calls.
+
+        The script needs to explicitly signal that the execution has finished by
+        including the special text "{RETURN}" (without quotes). If "{RETURN}" is
+        not included the function will automatically return once all the root
+        statements of the script were executed (which works as expected if using
+        "await" calls, but not if the script includes something like
+        "someFunctionReturningAPromise().then(() => { more code })"; in that
+        case the script should be written as
+        "someFunctionReturningAPromise().then(() => { more code {RETURN} })").
+        """
+
+        # Add an explicit return point at the end of the script if none is
+        # given.
+        if script.find('{RETURN}') == -1:
+            script += '{RETURN}'
+
+        # Asynchronous scripts need to explicitly signal that they are finished
+        # by invoking the callback injected as the last argument.
+        # https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute_async
+        script = script.replace('{RETURN}', '; arguments[arguments.length - 1]()')
+
+        self.driver.execute_async_script(script)
 
         self.printLogs()
 
@@ -267,7 +308,7 @@ class Talkbuchet:
         # Clear previous logs
         self.seleniumHelper.clearLogs()
 
-        self.seleniumHelper.execute(talkbuchet)
+        self.seleniumHelper.executeAsync(talkbuchet)
 
     def setAudioEnabled(self, audioEnabled):
         """
@@ -348,7 +389,7 @@ class Talkbuchet:
         :param video: True to start video, False otherwise
         """
 
-        self.seleniumHelper.execute('await startMedia(' + ('true' if audio else 'false') + ', ' + ('true' if video else 'false') + ')')
+        self.seleniumHelper.executeAsync('await startMedia(' + ('true' if audio else 'false') + ', ' + ('true' if video else 'false') + ')')
 
     def closeConnections(self):
         """
@@ -419,7 +460,7 @@ class Talkbuchet:
         if scriptTimeout > savedScriptTimeout:
             self.seleniumHelper.driver.set_script_timeout(scriptTimeout)
 
-        self.seleniumHelper.execute('await siege()')
+        self.seleniumHelper.executeAsync('await siege()')
 
         self.seleniumHelper.driver.set_script_timeout(savedScriptTimeout)
 
