@@ -67,7 +67,10 @@ with:
 
 Talkbuchet-cli.py supports launching Chrome and Firefox instances. Nevertheless,
 note that the browser to be used also needs to be supported by the Selenium
-server. The browser to be used needs to be explicitly set with:
+server. When Talkbuchet-cli.py was started through Talkbuchet-run.sh and a
+remote Selenium server is not set the available browser in the container will be
+automatically used. Otherwise the browser to be used needs to be explicitly set
+with:
 >>>> setBrowser(THE-BROWSER-NAME)
 
 A siege can be started in the following way:
@@ -710,6 +713,7 @@ class Talkbuchet:
 
 
 _browser = ''
+_browserDefault = ''
 
 _nextcloudUrl = ''
 _remoteSeleniumUrl = ''
@@ -723,6 +727,41 @@ _token = ''
 _audio = False
 _video = False
 
+def _isValidBrowser():
+    if not _browser:
+        print("Set browser first")
+        return False
+
+    if _remoteSeleniumUrl and _browser == 'default':
+        print("Set an explicit browser name to be used in the remote Selenium instance")
+        return False
+
+    if _browser == 'default' and not _browserDefault:
+        print("Set an explicit browser name, no default browser found")
+        return False
+
+    return True
+
+def _findDefaultBrowser():
+    global _browserDefault
+
+    # Try to get the browser from the Selenium Docker image.
+    try:
+        _browserDefault = Path('/opt/selenium/browser_name').read_text().strip()
+    except:
+        pass
+
+    if _browserDefault:
+        setBrowser('default')
+    else:
+        print('No default browser found, please set the browser to use with setBrowser("chrome") or setBrowser("firefox")')
+
+def _getBrowser():
+    if _browser == 'chrome' or (_browser == 'default' and _browserDefault == 'chrome'):
+        return 'chrome'
+
+    return 'firefox'
+
 def setBrowser(browser):
     """
     Sets the browser to use.
@@ -730,14 +769,18 @@ def setBrowser(browser):
     Supported browsers are "chrome" and "firefox"; the browser needs to be
     available in the Selenium server.
 
+    The special value "default" (which is the default value) can be set to try
+    to find which is the default browser in the Selenium server and use it
+    without having to specify it.
+
     This is used only for the global helper functions and is not taken into
     account if a Talkbuchet wrapper is manually created.
 
-    :param browser: "chrome" or "firefox".
+    :param browser: "default", "chrome" or "firefox".
     """
 
-    if browser != 'chrome' and browser != 'firefox':
-        print('Browser value not valid. Allowed values: "chrome" or "firefox"')
+    if browser != 'default' and browser != 'chrome' and browser != 'firefox':
+        print('Browser value not valid. Allowed values: "default", "chrome" or "firefox"')
         return
 
     global _browser
@@ -852,8 +895,7 @@ _subscribersPerPublisherCount = None
 sieges = []
 
 def _isValidConfiguration():
-    if not _browser:
-        print("Set browser first")
+    if not _isValidBrowser():
         return False
 
     if not _nextcloudUrl:
@@ -905,7 +947,7 @@ def startSiege():
     if not _isValidConfiguration():
         return
 
-    siege = Siege(_browser, _nextcloudUrl, _headless, _remoteSeleniumUrl)
+    siege = Siege(_getBrowser(), _nextcloudUrl, _headless, _remoteSeleniumUrl)
 
     sieges.append(siege)
 
@@ -995,5 +1037,7 @@ def _deleteTalkbuchetInstancesOnExit():
 # Talkbuchet instances should be explicitly deleted before exiting, as if they
 # are implicitly deleted while exiting the Selenium driver may not cleanly quit.
 atexit.register(_deleteTalkbuchetInstancesOnExit)
+
+_findDefaultBrowser()
 
 print('Full documentation can be shown by calling help(__name__)')
