@@ -920,7 +920,7 @@ OC.L10N.register(
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "No matches" : "Keine Übereinstimmungen",
     "Conversation list" : "Unterhaltungsliste",
-    "Open conversations" : "Unterhaltungen öffnen",
+    "Open conversations" : "Offene Unterhaltungen",
     "Loading" : "Lade",
     "No search results" : "Keine Suchergebnisse",
     "Groups" : "Gruppen",
