@@ -757,8 +757,10 @@ const setSentVideoStreamEnabled = function(enabled) {
 const checkPublishersConnections = function() {
 	const iceConnectionStateCount = {}
 
-	Object.values(publishers).forEach(publisher => {
-		console.info(publisher.peerConnection.iceConnectionState)
+	Object.keys(publishers).forEach(publisherSessionId => {
+		publisher = publishers[publisherSessionId]
+
+		console.info(publisherSessionId + ': ' + publisher.peerConnection.iceConnectionState)
 
 		if (iceConnectionStateCount[publisher.peerConnection.iceConnectionState] === undefined) {
 			iceConnectionStateCount[publisher.peerConnection.iceConnectionState] = 1
@@ -777,8 +779,11 @@ const checkPublishersConnections = function() {
 const checkSubscribersConnections = function() {
 	const iceConnectionStateCount = {}
 
+	i = 0
+
 	subscribers.forEach(subscriber => {
-		console.info(subscriber.peerConnection.iceConnectionState)
+		console.info(i + ': ' + subscriber.peerConnection.iceConnectionState)
+		i++
 
 		if (iceConnectionStateCount[subscriber.peerConnection.iceConnectionState] === undefined) {
 			iceConnectionStateCount[subscriber.peerConnection.iceConnectionState] = 1
