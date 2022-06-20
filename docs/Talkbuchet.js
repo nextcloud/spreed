@@ -447,13 +447,11 @@ class Peer {
 			}
 		})
 
-		const connectionTimeout = 5
-
 		setTimeout(() => {
 			if (!this.connected) {
-				this.connectedPromiseReject('Peer has not connected in ' + connectionTimeout + ' seconds')
+				this.connectedPromiseReject('Peer has not connected in ' + connectionWarningTimeout + ' seconds')
 			}
-		}, connectionTimeout * 1000)
+		}, connectionWarningTimeout)
 
 		return this.connectedPromise
 	}
