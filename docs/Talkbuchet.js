@@ -216,7 +216,8 @@ const conversationApiVersion = extractFeatureVersion('conversation')
 const talkOcsApiUrl = host + '/ocs/v2.php/apps/spreed/api/'
 const signalingSettingsUrl = talkOcsApiUrl + 'v' + signalingApiVersion + '/signaling/settings'
 const signalingBackendUrl = talkOcsApiUrl + 'v' + signalingApiVersion + '/signaling/backend'
-let joinRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
+let joinLeaveRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
+let joinLeaveCallUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/call/' + token
 
 const publishers = []
 const subscribers = []
@@ -399,7 +400,7 @@ class Signaling extends EventTarget {
 			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
 		}
 
-		const joinRoomResponse = await fetch(joinRoomUrl, fetchOptions)
+		const joinRoomResponse = await fetch(joinLeaveRoomUrl, fetchOptions)
 		const joinRoomResult = await joinRoomResponse.json()
 		const nextcloudSessionId = joinRoomResult.ocs.data.sessionId
 
@@ -408,6 +409,64 @@ class Signaling extends EventTarget {
 			'room': {
 				'roomid': token,
 				'sessionid': nextcloudSessionId,
+			},
+		})
+	}
+
+	async joinCall(flags) {
+		const fetchOptions = {
+			headers: {
+				'OCS-ApiRequest': true,
+				'Accept': 'json',
+			},
+			method: 'POST',
+			body: new URLSearchParams({
+				flags,
+			}),
+		}
+
+		if (user) {
+			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
+		}
+
+		await fetch(joinLeaveCallUrl, fetchOptions)
+	}
+
+	async leaveCall() {
+		const fetchOptions = {
+			headers: {
+				'OCS-ApiRequest': true,
+				'Accept': 'json',
+			},
+			method: 'DELETE',
+		}
+
+		if (user) {
+			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
+		}
+
+		await fetch(joinLeaveCallUrl, fetchOptions)
+	}
+
+	async leaveRoom() {
+		const fetchOptions = {
+			headers: {
+				'OCS-ApiRequest': true,
+				'Accept': 'json',
+			},
+			method: 'DELETE',
+		}
+
+		if (user) {
+			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
+		}
+
+		await fetch(joinLeaveRoomUrl, fetchOptions)
+
+        this.send({
+			'type': 'room',
+			'room': {
+				'roomid': '',
 			},
 		})
 	}
@@ -861,7 +920,8 @@ const setCredentials = function(userToSet, appTokenToSet) {
 const setToken = function(tokenToSet) {
 	token = tokenToSet
 
-	joinRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
+	joinLeaveRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
+	joinLeaveCallUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/call/' + token
 }
 
 const setPublishersAndSubscribersCount = function(publishersCountToSet, subscribersPerPublisherCountToSet) {
