@@ -544,6 +544,8 @@ class Talkbuchet:
         window.setSentVideoStreamEnabled = setSentVideoStreamEnabled
         window.checkPublishersConnections = checkPublishersConnections
         window.checkSubscribersConnections = checkSubscribersConnections
+        window.printPublisherStats = printPublisherStats
+        window.printSubscriberStats = printSubscriberStats
         window.setCredentials = setCredentials
         window.setToken = setToken
         window.setPublishersAndSubscribersCount = setPublishersAndSubscribersCount
@@ -660,6 +662,24 @@ class Talkbuchet:
         """
 
         self.seleniumHelper.execute('checkSubscribersConnections()')
+
+    def printPublisherStats(self, publisherSessionId):
+        """
+        Prints the stats of the given publisher connection.
+
+        :param publisherSessionId: the session ID of the publisher.
+        """
+
+        self.seleniumHelper.executeAsync('await printPublisherStats(\'' + publisherSessionId + '\', true)')
+
+    def printSubscriberStats(self, index):
+        """
+        Prints the stats of the given subscriber connection.
+
+        :param index: the index of the subscriber in the list of subscribers.
+        """
+
+        self.seleniumHelper.executeAsync('await printSubscriberStats(' + str(index) + ', true)')
 
     def setPublishersAndSubscribersCount(self, publishersCount, subscribersPerPublisherCount):
         """

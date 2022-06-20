@@ -799,6 +799,42 @@ const checkSubscribersConnections = function() {
 	console.info('  - Failed: ' + (iceConnectionStateCount['failed'] ?? 0))
 }
 
+const printPublisherStats = async function(publisherSessionId, stringify = false) {
+	if (!(publisherSessionId in publishers)) {
+		console.error('Invalid publisher session ID')
+
+		return
+	}
+
+	stats = await publishers[publisherSessionId].peerConnection.getStats()
+
+	for (stat of stats.values()) {
+		if (stringify) {
+			console.info(JSON.stringify(stat))
+		} else {
+			console.info(stat)
+		}
+	}
+}
+
+const printSubscriberStats = async function(index, stringify = false) {
+	if (!(index in subscribers)) {
+		console.error('Index out of range')
+
+		return
+	}
+
+	stats = await subscribers[index].peerConnection.getStats()
+
+	for (stat of stats.values()) {
+		if (stringify) {
+			console.info(JSON.stringify(stat))
+		} else {
+			console.info(stat)
+		}
+	}
+}
+
 const setCredentials = function(userToSet, appTokenToSet) {
 	user = userToSet
 	appToken = appTokenToSet
