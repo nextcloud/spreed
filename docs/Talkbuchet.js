@@ -588,6 +588,10 @@ async function initPublishers() {
 
 		try {
 			await publisher.connect()
+
+			if ((i + 1) % 5 === 0 && (i + 1) < publishersCount) {
+				console.info('Publisher started (' + (i + 1) + '/' + publishersCount + ')')
+			}
 		} catch (exception) {
 			console.warn('Publisher ' + i + ' error: ' + exception)
 		}
@@ -650,6 +654,10 @@ async function initSubscribers() {
 	for (let i = 0; i < subscribers.length; i++) {
 		try {
 			await subscribers[i].connect()
+
+			if ((i + 1) % 5 === 0 && (i + 1) < subscribers.length) {
+				console.info('Subscriber started (' + (i + 1) + '/' + subscribers.length + ')')
+			}
 		} catch (exception) {
 			console.warn('Subscriber ' + i + ' error: ' + exception)
 		}
