@@ -262,6 +262,9 @@ class Signaling extends EventTarget {
 			resolveSessionId = resolve
 		})
 
+		this.messageId = 1
+		this.resolveMessageId = []
+
 		const signalingUrl = this.sanitizeSignalingUrl(signalingSettings.server)
 
 		this.socket = new WebSocket(signalingUrl)
@@ -270,6 +273,11 @@ class Signaling extends EventTarget {
 		}
 		this.socket.onmessage = event => {
 			const data = JSON.parse(event.data)
+
+			if (data.id && this.resolveMessageId[data.id]) {
+				this.resolveMessageId[data.id]()
+				delete this.resolveMessageId[data.id]
+			}
 
 			this.dispatchEvent(new CustomEvent(data.type, { detail: data[data.type] }))
 		}
@@ -322,6 +330,15 @@ class Signaling extends EventTarget {
 
 	send(message) {
 		this.socket.send(JSON.stringify(message))
+	}
+
+	async sendAndWaitForResponse(message) {
+		return new Promise((resolve, reject) => {
+			message.id = String(this.messageId++)
+			this.resolveMessageId[message.id] = resolve
+
+			this.send(message)
+		})
 	}
 
 	sendHello() {
@@ -382,7 +399,7 @@ class Signaling extends EventTarget {
 		const joinRoomResult = await joinRoomResponse.json()
 		const nextcloudSessionId = joinRoomResult.ocs.data.sessionId
 
-        this.send({
+        await this.sendAndWaitForResponse({
 			'type': 'room',
 			'room': {
 				'roomid': token,
