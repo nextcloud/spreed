@@ -807,6 +807,8 @@ const startMedia = async function(audio, video) {
 		stream.getTracks().forEach(track => {
 			track.stop()
 		})
+
+		stream = null
 	}
 
 	if (audio !== undefined) {
