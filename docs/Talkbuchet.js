@@ -296,6 +296,10 @@ class Signaling extends EventTarget {
 			const error = event.detail
 
 			console.warn(error)
+
+			if (error.code === 'not_allowed') {
+				console.info('Is "allowsubscribeany = true" set in the signaling server configuration?')
+			}
 		})
 	}
 
