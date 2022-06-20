@@ -395,6 +395,10 @@ class Signaling extends EventTarget {
 			method: 'POST',
 		}
 
+		if (user) {
+			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
+		}
+
 		const joinRoomResponse = await fetch(joinRoomUrl, fetchOptions)
 		const joinRoomResult = await joinRoomResponse.json()
 		const nextcloudSessionId = joinRoomResult.ocs.data.sessionId
