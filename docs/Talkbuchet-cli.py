@@ -102,6 +102,17 @@ in the system running the browser when receiving video, although more when
 sending it; Firefox sends a changing colour animation for video (640x480x30FPS,
 ~40 kBps), while Chrome sends an animation with the time since the video started
 and a one second "clock" (640x480x20FPS, ~64 kBps).
+
+Besides the siege and virtual participant modes Talkbuchet-cli.py provides an
+additional mode, real participant, that is not part of Talkbuchet itself. This
+mode can be used to open browser instances and join the conversation and/or the
+call, exactly as it would be done by a real participant. However, please note
+that this mode is meant only for developing purposes; load/stress testing should
+be done with the other two modes, as the number of participants that can be
+simulated with them in the system running the test is much higher.
+
+Unlike the other modes, the real participant mode does not require an HPB server
+to be configured in Nextcloud Talk.
 """
 
 import atexit
@@ -112,6 +123,8 @@ import websocket
 from datetime import datetime
 from pathlib import Path
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
 from shutil import disk_usage
 from time import sleep
 
@@ -817,6 +830,99 @@ class VirtualParticipant(TalkbuchetCommon):
         self.seleniumHelper.execute('sendNickThroughDataChannel(\'' + nick + '\')')
 
 
+class RealParticipant():
+    """
+    Wrapper for Talkbuchet in real participant mode.
+
+    This wrapper exposes functions to use a real participant in a browser.
+    """
+
+    def __init__(self, browser, nextcloudUrl, headless = True, remoteSeleniumUrl = None):
+        """
+        Starts a real participant in the given Nextcloud URL using the given
+        browser.
+
+        :param browser: "firefox" or "chrome".
+        :param nextcloudUrl: the URL of the Nextcloud instance to start the real
+            participant in.
+        :param headless: whether the browser will be started in headless mode or
+            not; headless mode is used by default.
+        :param remoteSeleniumUrl: the URL of the Selenium server to connect to;
+            the local server is used by default.
+        """
+
+        self.nextcloudUrl = nextcloudUrl
+
+        self.seleniumHelper = SeleniumHelper()
+
+        if browser == 'chrome':
+            self.seleniumHelper.startChrome(headless, remoteSeleniumUrl)
+        elif browser == 'firefox':
+            self.seleniumHelper.startFirefox(headless, remoteSeleniumUrl)
+        else:
+            raise Exception('Invalid browser: ' + browser)
+
+        self.seleniumHelper.driver.get(nextcloudUrl)
+
+    def login(self, user, appToken):
+        """
+        Logs in Nextcloud as the given user with the given app token.
+
+        :param user: the ID of the user to log as.
+        :param appToken: an app token of the user.
+        """
+
+        # Fetching a Nextcloud URL in the browser console with a user and an app
+        # token implicitly does a login with that user. Visiting any page in the
+        # Nextcloud server will be done as a logged in user after that.
+        self.seleniumHelper.executeAsync('''
+            const fetchOptions = {
+                headers: {
+                    'Authorization': 'Basic ' + btoa(\'''' + user + ':' + appToken + '''\'),
+                },
+            }
+
+            await fetch(\'''' + self.nextcloudUrl + '''\', fetchOptions)
+        ''')
+
+    def joinRoom(self, token):
+        """
+        Joins the room with the given token.
+
+        If no login was done before the participant will join as a guest.
+
+        :param token: the token of the room to join.
+        """
+
+        self.seleniumHelper.driver.get(self.nextcloudUrl + '/call/' + token)
+
+    def joinCall(self):
+        """
+        Joins (or starts) the call in the current room.
+
+        A room must have been joined before joining the call.
+        """
+
+        self.seleniumHelper.driver.find_element(By.CSS_SELECTOR, '.top-bar #call_button').click()
+
+        try:
+            # If the device selector is shown click on the "Join call" button
+            # in the dialog to actually join the call.
+            WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.device-checker #call_button'))
+            self.seleniumHelper.driver.find_element(By.CSS_SELECTOR, '.device-checker #call_button').click()
+        except:
+            pass
+
+    def leaveCall(self):
+        """
+        Leaves the current call.
+
+        The call must have been joined first.
+        """
+
+        self.seleniumHelper.driver.find_element(By.CSS_SELECTOR, '.top-bar #call_button').click()
+
+
 _talkbuchetMode = ''
 
 _browser = ''
@@ -1195,6 +1301,15 @@ def switchToSiegeMode():
         del globals()['removeVirtualParticipant']
         del globals()['removeVirtualParticipants']
 
+    if globals()['_talkbuchetMode'] == 'realParticipant':
+        if removeRealParticipants:
+            removeRealParticipants()
+
+        del globals()['addRealParticipant']
+        del globals()['addRealParticipants']
+        del globals()['removeRealParticipant']
+        del globals()['removeRealParticipants']
+
     globals()['setPublishersAndSubscribersCount'] = setPublishersAndSubscribersCount
     globals()['startSiege'] = startSiege
     globals()['checkPublishersConnections'] = checkPublishersConnections
@@ -1347,6 +1462,15 @@ def switchToVirtualParticipantMode():
         del globals()['checkSubscribersConnections']
         del globals()['endSiege']
 
+    if globals()['_talkbuchetMode'] == 'realParticipant':
+        if removeRealParticipants:
+            removeRealParticipants()
+
+        del globals()['addRealParticipant']
+        del globals()['addRealParticipants']
+        del globals()['removeRealParticipant']
+        del globals()['removeRealParticipants']
+
     globals()['addVirtualParticipant'] = addVirtualParticipant
     globals()['addVirtualParticipants'] = addVirtualParticipants
     globals()['removeVirtualParticipant'] = removeVirtualParticipant
@@ -1355,12 +1479,156 @@ def switchToVirtualParticipantMode():
     globals()['_talkbuchetMode'] = 'virtualParticipant'
 
 
+realParticipants = []
+
+def switchToRealParticipantMode():
+    """
+    Sets the real participant mode as the active one.
+
+    This adjusts the global helper functions to those relevant for this mode
+    (so, for example, there will be no function to start a siege).
+
+    Real participants can be added to a conversation in the following way:
+    >>>> setTarget('https://THE-NEXTCLOUD-DOMAIN')
+    >>>> setToken('THE-CONVERSATION-TOKEN')
+    >>>> addRealParticipants(NUMBER-OF-REAL-PARTICIPANTS)
+
+    If no credentials are set the added participants will be guests. To add a
+    registered user (note that the same user can be added several times) set the
+    credentials first before adding the real participants:
+    >>>> setCredentials('THE-USER-ID', 'THE-APP-TOKEN')
+
+    Note that adding a new participant does not remove the previous ones. That
+    should be explicitly done by calling "removeRealParticipants()" (or
+    "removeRealParticipant(INDEX)" to remove just a specific participant).
+    Therefore, it is possible to add several participants with different
+    parameters (like several guests and then several users) by setting the
+    parameters, calling "addRealParticipants(NUMBER)", setting the new
+    parameters and calling "addRealParticipants(NUMBER)" again.
+
+    Global functions provided for real participants only cover joining and
+    leaving the conversation. Joining the call must be directly done on the
+    Talkbuchet wrapper objects in the "realParticipants" list with:
+    >>>> realParticipants[INDEX].joinCall()
+    """
+
+    def _isValidConfiguration():
+        if not _isValidBrowser():
+            return False
+
+        if not _nextcloudUrl:
+            print("Set target Nextcloud URL first")
+            return False
+
+        if not _token:
+            print("Set conversation token first")
+            return False
+
+        return True
+
+    def addRealParticipant():
+        """
+        Adds a single real participant.
+
+        The global target Nextcloud URL and conversation token need to be set
+        first.
+
+        If global credentials were set the user will be logged in with them.
+
+        Note that changing any of those values later will have no effect on an
+        existing real participant, the updated value will be used only by real
+        participants added after they were changed.
+        """
+
+        if not _isValidConfiguration():
+            return
+
+        realParticipant = RealParticipant(_getBrowser(), _nextcloudUrl, _headless, _remoteSeleniumUrl)
+
+        realParticipants.append(realParticipant)
+
+        if _user or _appToken:
+            realParticipant.login(_user, _appToken)
+
+        realParticipant.joinRoom(_token)
+
+    def addRealParticipants(count):
+        """
+        Adds as many real participants as the given count.
+
+        See :py:func:`addRealParticipant`.
+
+        :param count: the number of real participants to add.
+        """
+
+        if not _isValidConfiguration():
+            return
+
+        for i in range(count):
+            addRealParticipant()
+
+            print('.', end='', flush=True)
+
+        print("")
+
+    def removeRealParticipant(index):
+        """
+        Removes the real participant with the given index.
+
+        :param index: the index in :py:data:`realParticipants` of the real
+            participant to remove.
+        """
+
+        if index < 0 or index >= len(realParticipants):
+            print("Index out of range")
+            return
+
+        del realParticipants[index]
+
+    def removeRealParticipants():
+        """
+        Removes all the real participants previously added.
+        """
+
+        while realParticipants:
+            removeRealParticipant(0)
+
+    if globals()['_talkbuchetMode'] == 'siege':
+        if endSiege:
+            endSiege()
+
+        del globals()['setPublishersAndSubscribersCount']
+        del globals()['startSiege']
+        del globals()['checkPublishersConnections']
+        del globals()['checkSubscribersConnections']
+        del globals()['endSiege']
+
+    if globals()['_talkbuchetMode'] == 'virtualParticipant':
+        if removeVirtualParticipants:
+            removeVirtualParticipants()
+
+        del globals()['addVirtualParticipant']
+        del globals()['addVirtualParticipants']
+        del globals()['removeVirtualParticipant']
+        del globals()['removeVirtualParticipants']
+
+    globals()['addRealParticipant'] = addRealParticipant
+    globals()['addRealParticipants'] = addRealParticipants
+    globals()['removeRealParticipant'] = removeRealParticipant
+    globals()['removeRealParticipants'] = removeRealParticipants
+
+    globals()['_talkbuchetMode'] = 'realParticipant'
+
+
 def _deleteTalkbuchetInstancesOnExit():
     while sieges:
         del sieges[0]
 
     while virtualParticipants:
         del virtualParticipants[0]
+
+    while realParticipants:
+        del realParticipants[0]
 
 # Talkbuchet instances should be explicitly deleted before exiting, as if they
 # are implicitly deleted while exiting the Selenium driver may not cleanly quit.
