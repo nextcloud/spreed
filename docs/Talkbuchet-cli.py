@@ -525,6 +525,8 @@ class TalkbuchetCommon:
         # Explicitly assign all the needed functions defined in Talkbuchet.js to
         # the Window object to be able to access them at a later point.
         talkbuchet = talkbuchet + '''
+        window.getPublishers = getPublishers
+        window.getSubscribers = getSubscribers
         window.closeConnections = closeConnections
         window.setAudioEnabled = setAudioEnabled
         window.setVideoEnabled = setVideoEnabled
@@ -540,6 +542,7 @@ class TalkbuchetCommon:
         window.startMedia = startMedia
         window.setConnectionWarningTimeout = setConnectionWarningTimeout
         window.siege = siege
+        window.getVirtualParticipant = getVirtualParticipant
         window.startVirtualParticipant = startVirtualParticipant
         window.stopVirtualParticipant = stopVirtualParticipant
         window.sendMediaEnabledStateThroughDataChannel = sendMediaEnabledStateThroughDataChannel

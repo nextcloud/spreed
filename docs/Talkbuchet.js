@@ -865,6 +865,16 @@ async function initSubscribers() {
 	listenToSubscriberConnectionChanges()
 }
 
+// Expose publishers to CLI.
+const getPublishers = function() {
+	return publishers
+}
+
+// Expose subscribers to CLI.
+const getSubscribers = function() {
+	return subscribers
+}
+
 const closeConnections = function() {
 	subscribers.forEach(subscriber => {
 		subscriber.peerConnection.close()
@@ -1089,6 +1099,11 @@ const siege = async function() {
 
 	await initPublishers()
 	await initSubscribers()
+}
+
+// Expose virtual participant to CLI.
+const getVirtualParticipant = function() {
+	return virtualParticipant
 }
 
 const startVirtualParticipant = async function() {
