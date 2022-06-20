@@ -42,6 +42,36 @@
  *   script).
  * - Copy and paste the full script in the console of the browser.
  *
+ *
+ *
+ * -----------------------------------------------------------------------------
+ * SIEGE MODE
+ * -----------------------------------------------------------------------------
+ *
+ * Siege mode is used for load testing of the Janus gateway running in the HPB
+ * server. In siege mode Talkbuchet creates M publishers and N subscribers for
+ * each publisher for a total of M+M*N connections with the Janus gateway.
+ * Therefore, it can be used to verify that the server will be able to withstand
+ * certain number of media connections (audio, video or both audio and video).
+ *
+ * In a real call every participant will subscribe to the publishers of the
+ * other participants. That is, for X participants, Y of them publishers, there
+ * will be (X-1)*Y subscribers. However, note that some participants may not be
+ * publishers, for example, if the do not have publishing permissions, or if
+ * they never had a microphone nor a camera selected (although they will be
+ * publishers if the microphone and camera are selected but disabled, or if the
+ * microphone or camera is no longer selected but was selected at some point
+ * during the call).
+ *
+ * For example, in a normal call between 10 participants there will be 10
+ * publishers and (10-1)*10=90 subscribers for a total of 100 connections.
+ * However, if only two participants have publishing permissions then there will
+ * be 2 publishers and (10-1)*2=18 subscribers for a total of 20 connections.
+ *
+ * To use the siege mode the signaling server of the HPB must be configured to
+ * allow subscribing any stream:
+ * https://github.com/strukturag/nextcloud-spreed-signaling/blob/a663dd43f90b0876630250012bb716136920fcd3/server.conf.in#L32-L35
+ *
  * HOW TO RUN:
  * -----------------------------------------------------------------------------
  * - Set the user and appToken (a user must be used; guests do not work;
@@ -140,11 +170,94 @@
  * connections each in order to simulate a 30 participants call you could run
  * the script with 3 publishers and 29 subscribers per publisher on 10 clients
  * at the same time.
+ *
+ *
+ *
+ * -----------------------------------------------------------------------------
+ * VIRTUAL PARTICIPANT MODE
+ * -----------------------------------------------------------------------------
+ *
+ * Virtual participant mode is used for load testing of clients. From the point
+ * of view of the clients in a call the virtual participants are real
+ * participants (they can be just listeners, but they can publish audio and/or
+ * video), so several virtual participants can be added to a call to verify if
+ * a client running on a specific system will be able to withstand certain
+ * number of participants in a call.
+ *
+ * The reason to use virtual participants instead of real participants is that
+ * virtual participants are either just in the call or publishing media, but
+ * they will not subscribe to any other participant (which does not affect the
+ * other clients, only the HPB server). Due to this they need much less
+ * resources than real participants and therefore the system launching the test
+ * would be able to add a much higher number of virtual participants than of
+ * real participants.
+ *
+ * HOW TO RUN:
+ * -----------------------------------------------------------------------------
+ * - Set the user and appToken (generate an apptoken at
+ *   index.php/settings/user/security) by calling
+ *   "setCredentials(user, appToken)" in the console. If credentials are not set
+ *   a guest user will be used instead.
+ * - Set the token of the conversation by calling "setToken(token)" in the
+ *   console.
+ * - Start the desired media by calling "startMedia(audio, video)" in the
+ *   console. If not called (or both parameters are false) no media will be
+ *   used.
+ * - Once all the needed parameters are set execute "startVirtualParticipant()"
+ *   in the console.
+ * - To run it again execute "stopVirtualParticipant()" and then
+ *   "startVirtualParticipant()" again in the console; if any parameter
+ *   needs to be changed do it before starting the virtual participant again.
+ *
+ * TRIGGERING ACTIONS BY THE VIRTUAL PARTICIPANT:
+ * -----------------------------------------------------------------------------
+ * In general, for load testing of clients it is enough to start the virtual
+ * participant and that is it. However, for development purposes it can be
+ * useful to simulate certain actions by the virtual participant.
+ *
+ * Currently all the actions are simulated through data channel messages; the
+ * equivalent signaling messages are not sent.
+ *
+ * The nick of the virtual participant can be set with:
+ * sendNickThroughDataChannel(NICK)
+ *
+ * Note that sending the nick is not limited to guests; even if the virtual
+ * participant is a registered user a nick can be sent. Moreover, clients may
+ * not show any name at all for the virtual participant of a registered user
+ * until a nick is sent, even if the user name is known by the client.
+ *
+ * If the virtual participant is a publisher the media can be enabled and
+ * disabled as described in the siege mode. However, that does not notify other
+ * participants in the call that the media state has changed. That can be done
+ * instead with:
+ * sendMediaEnabledStateThroughDataChannel(AUDIO_OR_VIDEO, TRUE_OR_FALSE)
+ *
+ * Similarly, when audio is enabled the message to notify other participants
+ * when the virtual participant started or stopped speaking can be sent with:
+ * sendSpeakingStateThroughDataChannel(TRUE_OR_FALSE)
+ *
+ * Note that the message is independent of the actual audio being sent; a
+ * "speaking" event can be sent when audio is silent, and a "stoppedSpeaking"
+ * event can be sent when audio is at full volume.
+ *
+ * DISCLAIMER:
+ * -----------------------------------------------------------------------------
+ * Like in siege mode, virtual participants mode does not take into account the
+ * optimizations performed by Talk during calls, like reducing the video
+ * quality based on the number of participants. This script is not meant to
+ * accurately simulate Talk behaviour, but to provide a tool to perform rough
+ * performance tests of specific call scenarios.
+ *
+ * Therefore, it should be kept in mind that in a real call with several video
+ * participants the performance is very likely to be better than with several
+ * virtual participants with video, as in that case the video quality will not
+ * be adjusted based on the number of participants. Nevertheless, this script
+ * could still be used to simulate a worst case scenario.
  */
 
-// Guest users do not currently work, as they must join the conversation to not
-// be kicked out from the signaling server. However, joining the conversation
-// a second time causes the first guest to be unregistered.
+// Sieges with guest users do not currently work, as they must join the
+// conversation to not be kicked out from the signaling server. However, joining
+// the conversation a second time causes the first guest to be unregistered.
 // Regular users do not need to join the conversation, so the same user can be
 // connected several times to the HPB.
 let user = ''
@@ -221,6 +334,8 @@ let joinLeaveCallUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/call/' +
 
 const publishers = []
 const subscribers = []
+
+let virtualParticipant
 
 let stream
 
@@ -969,4 +1084,155 @@ const siege = async function() {
 
 	await initPublishers()
 	await initSubscribers()
+}
+
+const startVirtualParticipant = async function() {
+	if (!token) {
+		console.error('Conversation token is not set')
+
+		return
+	}
+
+	const signalingSettings = await getSignalingSettings(user, appToken, token)
+	let signaling = null
+	try {
+		signaling = new Signaling(user, signalingSettings)
+	} catch (exception) {
+		console.error('Virtual participant init error: ' + exception)
+		return
+	}
+
+	let flags = 1
+
+	let publisherSessionId
+	let publisher
+
+	if (stream) {
+		[publisherSessionId, publisher] = await newPublisher(signalingSettings, signaling, stream)
+
+		if (stream.getAudioTracks().length > 0) {
+			flags |= 2
+		}
+
+		if (stream.getVideoTracks().length > 0) {
+			flags |= 4
+		}
+	} else {
+		await signaling.getSessionId()
+	}
+
+	await signaling.joinRoom()
+	await signaling.joinCall(flags)
+
+	virtualParticipant = {
+		signaling
+	}
+
+	if (stream) {
+		try {
+			// Data channels are expected to be available for call participants.
+			virtualParticipant.dataChannel = publisher.peerConnection.createDataChannel('status')
+
+			await publisher.connect()
+
+			publishers[publisherSessionId] = publisher
+			virtualParticipant.publisherSessionId = publisherSessionId
+		} catch (exception) {
+			console.warn('Virtual participant publisher error: ' + exception)
+		}
+	}
+}
+
+const stopVirtualParticipant = async function() {
+	if (!virtualParticipant) {
+		return
+	}
+
+	if (virtualParticipant.publisherSessionId) {
+		publishers[virtualParticipant.publisherSessionId].peerConnection.close()
+		delete publishers[virtualParticipant.publisherSessionId]
+	}
+
+	await virtualParticipant.signaling.leaveCall()
+	virtualParticipant.signaling.leaveRoom()
+
+	virtualParticipant = null
+}
+
+function isVirtualParticipantAndDataChannelAvailable() {
+	if (!virtualParticipant) {
+		console.error('Virtual participant not started')
+
+		return false
+	}
+
+	if (!virtualParticipant.dataChannel) {
+		console.error('Data channel not open for virtual participant (was media enabled when virtual participant was started?)')
+
+		return false
+	}
+
+	return true
+}
+
+const sendMediaEnabledStateThroughDataChannel = function(mediaType, enabled) {
+	if (!isVirtualParticipantAndDataChannelAvailable()) {
+		return
+	}
+
+	let messageType
+	if (mediaType === 'audio' && enabled) {
+		messageType = 'audioOn'
+	} else if (mediaType === 'audio' && !enabled) {
+		messageType = 'audioOff'
+	} else if (mediaType === 'video' && enabled) {
+		messageType = 'videoOn'
+	} else if (mediaType === 'video' && !enabled) {
+		messageType = 'videoOff'
+	} else {
+		console.error('Wrong parameters, expected "audio" or "video" and a boolean: ', mediaType, enabled)
+
+		return
+	}
+
+	virtualParticipant.dataChannel.send(JSON.stringify({
+		type: messageType
+	}))
+}
+
+const sendSpeakingStateThroughDataChannel = function(speaking) {
+	if (!isVirtualParticipantAndDataChannelAvailable()) {
+		return
+	}
+
+	let messageType
+	if (speaking) {
+		messageType = 'speaking'
+	} else {
+		messageType = 'stoppedSpeaking'
+	}
+
+	virtualParticipant.dataChannel.send(JSON.stringify({
+		type: messageType
+	}))
+}
+
+const sendNickThroughDataChannel = function(nick) {
+	if (!isVirtualParticipantAndDataChannelAvailable()) {
+		return
+	}
+
+	if (!virtualParticipant.signaling.user) {
+		payload = nick
+	} else {
+		payload = {
+			name: nick,
+			userid: virtualParticipant.signaling.user,
+		}
+	}
+
+	virtualParticipant.dataChannel.send(JSON.stringify({
+		type: 'nickChanged',
+		payload,
+	}))
 }
