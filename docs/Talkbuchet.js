@@ -682,7 +682,7 @@ const closeConnections = function() {
 }
 
 const setAudioEnabled = function(enabled) {
-	if (!stream.getAudioTracks().length) {
+	if (!stream || !stream.getAudioTracks().length) {
 		console.error('Audio was not initialized')
 
 		return
@@ -693,7 +693,7 @@ const setAudioEnabled = function(enabled) {
 }
 
 const setVideoEnabled = function(enabled) {
-	if (!stream.getVideoTracks().length) {
+	if (!stream || !stream.getVideoTracks().length) {
 		console.error('Video was not initialized')
 
 		return
@@ -704,7 +704,7 @@ const setVideoEnabled = function(enabled) {
 }
 
 const setSentAudioStreamEnabled = function(enabled) {
-	if (!stream.getAudioTracks().length) {
+	if (!stream || !stream.getAudioTracks().length) {
 		console.error('Audio was not initialized')
 
 		return
@@ -723,7 +723,7 @@ const setSentAudioStreamEnabled = function(enabled) {
 }
 
 const setSentVideoStreamEnabled = function(enabled) {
-	if (!stream.getVideoTracks().length) {
+	if (!stream || !stream.getVideoTracks().length) {
 		console.error('Video was not initialized')
 
 		return
