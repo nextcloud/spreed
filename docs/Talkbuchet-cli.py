@@ -36,8 +36,8 @@ Documentation on the control functions provided by Talkbuchet-cli.py can be
 printed while Talkbuchet-cli.py is running by calling "help(XXX)" (where XXX is
 the function to get help about).
 
-Talkbuchet-cli.py provides a wrapper class to start and interact with
-Talkbuchet.js instances. Creating an object of the wrapper class launches a new
+Talkbuchet-cli.py provides wrapper classes to start and interact with
+Talkbuchet.js instances. Creating an object of a wrapper class launches a new
 browser instance, opens the given Nextcloud URL and loads Talkbuchet.js on it.
 After that the methods in the object call their counterpart in the wrapped
 Talkbuchet.js instance; the wrapper objects provide full control of their
@@ -73,44 +73,35 @@ automatically used. Otherwise the browser to be used needs to be explicitly set
 with:
 >>>> setBrowser(THE-BROWSER-NAME)
 
-A siege can be started in the following way:
->>>> setTarget('https://THE-NEXTCLOUD-DOMAIN')
->>>> setCredentials('THE-USER-ID', 'THE-APP-TOKEN')
->>>> setPublishersAndSubscribersCount(XXX, YYY)
->>>> startSiege()
+Talkbuchet-cli.py supports both the siege and virtual participant modes of
+Talkbuchet. Although there are a few common functions each mode has its own set
+of specific functions, so there are separate wrapper classes and global
+functions for each mode. Switching between the two modes can be done by calling
+"switchToSiegeMode()" and "switchToVirtualParticipantMode()". By default
+Talkbuchet-cli.py starts in siege mode.
 
-Note that a conversation token does not need to be set, except if the server is
-configured in conversation clustering mode.
+The documentation for each specific mode can be shown with
+"help(switchToSiegeMode)" and "help(switchToVirtualParticipantMode)". Note that
+there are some slight differences in the behaviour between Firefox and Chrome.
+Chrome has a hardcoded limit in the number of connections that can be created,
+and it does not properly clean them once closed, so it could be less suitable
+for sieges where a high number of connections are typically required.
+Nevertheless, this could be overcomed by creating several smaller sieges at the
+same time rather than a single, larger one. On the other hand, Firefox requires
+more resources for each browser instance than Chrome, so it could be less
+suitable for virtual participants where a high number of browser instances are
+typically required. But of course this might not be a problem if the system
+running the browser has enough resources.
 
-Setting the publishers and subscribers count is not mandatory, but it is
-recommended to adjust it based on the maximum number supported by the client
-machine running the browser, as well as the values that need to be tested on the
-server.
-
-In any case, it is recommended to initially set a low number, for example
-"setPublishersAndSubscribersCount(1, 2)", start a siege to verify that
-everything works as expected, and then perform the real test.
-
-Note that starting a new siege does not stop the previous one. That should be
-explicitly done by calling "endSiege()". Starting several sieges instead of a
-single siege with a higher number of publishers and subscribers could be needed
-in powerful client machines that can handle more connections than what a single
-browser is able to (for example, Chromium has a hardcoded limit on the maximum
-number of concurrent connections).
-
-Sieges are done with audio only connections by default. If a different media
-needs to be used (either video but not audio, or both audio and video) this
-needs to be specified (before starting the siege) with:
->>>> setMedia(CONNECT-WITH-AUDIO, CONNECT-WITH-VIDEO)
-
-When a siege is active it is possible to check the state of the publisher
-connections with "checkPublishersConnections()" and the state of the
-subscriber connections with "checkSubscribersConnections()".
-
-Global functions for additional actions, like enabling or disabling media
-during the siege, are not provided. They must be directly called on the
-Talkbuchet wrapper objects in the "sieges" list. For example:
->>>> sieges[0].setAudioEnabled(False)
+Regarding the sent media, Firefox sends a continuous beep for audio, while
+Chrome sends a short beep every ~500ms. Firefox sends more audio data (~11 kBps)
+than Chrome (~4 kBps), and also uses more CPU in the system running the browser
+when sending and receiving audio (specially on large sieges with a high number
+of connections). On the other hand, Firefox uses slightly less CPU than Chrome
+in the system running the browser when receiving video, although more when
+sending it; Firefox sends a changing colour animation for video (640x480x30FPS,
+~40 kBps), while Chrome sends an animation with the time since the video started
+and a one second "clock" (640x480x20FPS, ~64 kBps).
 """
 
 import atexit
@@ -307,7 +298,8 @@ class SeleniumHelper:
         options.add_argument('--use-fake-device-for-media-stream')
         options.add_argument('--use-fake-ui-for-media-stream')
 
-        # Headless mode uses a little less memory on each instance.
+        # Headless mode uses a little less memory on each instance, so it is
+        # specially useful when there are several virtual participants.
         if headless:
             options.add_argument('--headless')
 
@@ -360,7 +352,8 @@ class SeleniumHelper:
         options.set_preference('media.navigator.permission.disabled', True)
         options.set_preference('media.navigator.streams.fake', True)
 
-        # Headless mode uses a little less memory on each instance.
+        # Headless mode uses a little less memory on each instance, so it is
+        # specially useful when there are several virtual participants.
         options.headless = headless
 
         if remoteSeleniumUrl:
@@ -547,6 +540,11 @@ class TalkbuchetCommon:
         window.startMedia = startMedia
         window.setConnectionWarningTimeout = setConnectionWarningTimeout
         window.siege = siege
+        window.startVirtualParticipant = startVirtualParticipant
+        window.stopVirtualParticipant = stopVirtualParticipant
+        window.sendMediaEnabledStateThroughDataChannel = sendMediaEnabledStateThroughDataChannel
+        window.sendSpeakingStateThroughDataChannel = sendSpeakingStateThroughDataChannel
+        window.sendNickThroughDataChannel = sendNickThroughDataChannel
         '''
 
         # Clear previous logs
@@ -599,7 +597,10 @@ class TalkbuchetCommon:
         An app token/password can be generated in the Security section of the
         personal settings (index.php/settings/user/security).
 
-        The credentials always need to be set.
+        In siege mode the credentials always need to be set.
+
+        In virtual participant mode the participant will be a guest if the
+        credentials are not set.
 
         :param user: the user ID.
         :param appToken: the app token for the user.
@@ -611,8 +612,10 @@ class TalkbuchetCommon:
         """
         Sets the conversation token to use.
 
-        This should be set only when conversation clustering is enabled in the
-        server.
+        In siege mode this should be set only when conversation clustering is
+        enabled in the server.
+
+        In virtual participant mode the token always needs to be set.
 
         :param token: the conversation token.
         """
@@ -621,13 +624,18 @@ class TalkbuchetCommon:
 
     def startMedia(self, audio, video):
         """
-        Starts the media stream to be used by publishers.
+        Starts the media stream to be used by publishers (including virtual
+        participants).
 
-        By default audio will be used.
+        By default in siege mode audio will be used, and in virtual participant
+        mode neither audio nor video will be used.
 
         Only one media stream can be active at the same time, so any previous
         stream is stopped when starting a new one. This should be done only when
-        the siege is not active.
+        the siege or the virtual participant is not active.
+
+        If both audio and video are False then there will be no media. This is
+        only allowed in virtual participant mode, but not in siege mode.
 
         :param audio: True to start audio, False otherwise
         :param video: True to start video, False otherwise
@@ -748,6 +756,66 @@ class Siege(TalkbuchetCommon):
         self.seleniumHelper.driver.set_script_timeout(savedScriptTimeout)
 
 
+class VirtualParticipant(TalkbuchetCommon):
+    """
+    Wrapper for Talkbuchet in virtual participant mode.
+
+    Besides the common functions this wrapper exposes only the Talkbuchet
+    functions for virtual participant mode.
+    """
+
+    def __init__(self, browser, nextcloudUrl, headless = True, remoteSeleniumUrl = None):
+        """
+        See :py:meth:`TalkbuchetCommon.__init__`.
+        """
+
+        super().__init__(browser, nextcloudUrl, headless, remoteSeleniumUrl)
+
+    def startVirtualParticipant(self):
+        """
+        Starts the virtual participant.
+        """
+
+        self.seleniumHelper.executeAsync('await startVirtualParticipant()')
+
+    def stopVirtualParticipant(self):
+        """
+        Stops the virtual participant.
+        """
+
+        self.seleniumHelper.executeAsync('await stopVirtualParticipant()')
+
+    def sendMediaEnabledStateThroughDataChannel(self, mediaType, enabled):
+        """
+        Sends the enabled state of the media using a data channel message.
+
+        :param mediaType: "audio" or "video".
+        :param enabled: True or False.
+        """
+
+        self.seleniumHelper.execute('sendMediaEnabledStateThroughDataChannel(\'' + mediaType + '\', ' + ('true' if enabled else 'false') + ')')
+
+    def sendSpeakingStateThroughDataChannel(self, speaking):
+        """
+        Sends the speaking state using a data channel message.
+
+        :param speaking: True for speaking, False for not speaking.
+        """
+
+        self.seleniumHelper.execute('sendSpeakingStateThroughDataChannel(' + ('true' if speaking else 'false') + ')')
+
+    def sendNickThroughDataChannel(self, nick):
+        """
+        Sends the nick of the participant using a data channel message.
+
+        :param nick: the nick to send.
+        """
+
+        self.seleniumHelper.execute('sendNickThroughDataChannel(\'' + nick + '\')')
+
+
+_talkbuchetMode = ''
+
 _browser = ''
 _browserDefault = ''
 
@@ -863,7 +931,7 @@ def setRemoteSeleniumUrl(remoteSeleniumUrl):
     can cause the browser to "unexpectedly" close. Also note that each
     Talkbuchet wrapper will use its own browser instance, so the remote Selenium
     server should have enough available sessions for all the instances running
-    at the same time.
+    at the same time (for example, if several virtual participants are used).
 
     This is used only for the global helper functions and is not taken into
     account if a Talkbuchet wrapper is manually created.
@@ -910,8 +978,11 @@ def setMedia(audio, video):
     """
     Sets the media to be started in the Talkbuchet wrappers.
 
-    By default audio will be used. Note that audio will be used too even if both
-    audio and video are disabled, as some media needs to be published.
+    By default in siege mode audio will be used, and in virtual participant
+    mode neither audio nor video will be used.
+
+    Note that audio will be used too in siege mode even if both audio and video
+    are disabled, as some media needs to be published.
 
     This is used only for the global helper functions and is not taken into
     account if a Talkbuchet wrapper is manually created.
@@ -934,7 +1005,47 @@ def switchToSiegeMode():
     """
     Sets the siege mode as the active one.
 
-    This adjusts the global helper functions to those relevant for this mode.
+    This adjusts the global helper functions to those relevant for this mode
+    (so, for example, there will be no function to add a virtual participant).
+
+    A siege can be started in the following way:
+    >>>> setTarget('https://THE-NEXTCLOUD-DOMAIN')
+    >>>> setCredentials('THE-USER-ID', 'THE-APP-TOKEN')
+    >>>> setPublishersAndSubscribersCount(XXX, YYY)
+    >>>> startSiege()
+
+    Note that a conversation token does not need to be set, except if the server
+    is configured in conversation clustering mode.
+
+    Setting the publishers and subscribers count is not mandatory, but it is
+    recommended to adjust it based on the maximum number supported by the
+    client machine running the browser, as well as the values that need to be
+    tested on the server.
+
+    In any case, it is recommended to initially set a low number, for example
+    "setPublishersAndSubscribersCount(1, 2)", start a siege to verify that
+    everything works as expected, and then perform the real test.
+
+    Note that starting a new siege does not stop the previous one. That should
+    be explicitly done by calling "endSiege()". Starting several sieges instead
+    of a single siege with a higher number of publishers and subscribers could
+    be needed in powerful client machines that can handle more connections than
+    what a single browser is able to (for example, Chromium has a hardcoded
+    limit on the maximum number of concurrent connections).
+
+    Sieges are done with audio only connections by default. If a different media
+    needs to be used (either video but not audio, or both audio and video) this
+    needs to be specified (before starting the siege) with:
+    >>>> setMedia(CONNECT-WITH-AUDIO, CONNECT-WITH-VIDEO)
+
+    When a siege is active it is possible to check the state of the publisher
+    connections with "checkPublishersConnections()" and the state of the
+    subscriber connections with "checkSubscribersConnections()".
+
+    Global functions for additional actions, like enabling or disabling media
+    during the siege, are not provided. They must be directly called on the
+    Talkbuchet wrapper objects in the "sieges" list. For example:
+    >>>> sieges[0].setAudioEnabled(False)
     """
 
     def _isValidConfiguration():
@@ -1072,16 +1183,181 @@ def switchToSiegeMode():
         sieges[index].closeConnections()
         del sieges[index]
 
+    if globals()['_talkbuchetMode'] == 'virtualParticipant':
+        if removeVirtualParticipants:
+            removeVirtualParticipants()
+
+        del globals()['addVirtualParticipant']
+        del globals()['addVirtualParticipants']
+        del globals()['removeVirtualParticipant']
+        del globals()['removeVirtualParticipants']
+
     globals()['setPublishersAndSubscribersCount'] = setPublishersAndSubscribersCount
     globals()['startSiege'] = startSiege
     globals()['checkPublishersConnections'] = checkPublishersConnections
     globals()['checkSubscribersConnections'] = checkSubscribersConnections
     globals()['endSiege'] = endSiege
 
+    globals()['_talkbuchetMode'] = 'siege'
+
+
+virtualParticipants = []
+
+def switchToVirtualParticipantMode():
+    """
+    Sets the virtual participant mode as the active one.
+
+    This adjusts the global helper functions to those relevant for this mode
+    (so, for example, there will be no function to start a siege).
+
+    Virtual participants can be added to a call in the following way:
+    >>>> setTarget('https://THE-NEXTCLOUD-DOMAIN')
+    >>>> setToken('THE-CONVERSATION-TOKEN')
+    >>>> addVirtualParticipants(NUMBER-OF-VIRTUAL-PARTICIPANTS)
+
+    If no credentials are set the added participants will be guests. To add a
+    registered user (note that the same user can be added several times) set the
+    credentials first before adding the virtual participants:
+    >>>> setCredentials('THE-USER-ID', 'THE-APP-TOKEN')
+
+    If no media is explicitly set virtual participants will join without media.
+    To join with specific media set the desired type first before adding the
+    virtual participants:
+    >>>> setMedia(JOIN-WITH-AUDIO, JOIN-WITH-VIDEO)
+
+    Note that adding a new participant does not remove the previous ones. That
+    should be explicitly done by calling "removeVirtualParticipants()" (or
+    "removeVirtualParticipant(INDEX)" to remove just a specific participant).
+    Therefore, it is possible to add several participants with different
+    parameters (like several guests and then several users, or participants with
+    and without media) by setting the parameters, calling
+    "addVirtualParticipants(NUMBER)", setting the new parameters and calling
+    "addVirtualParticipants(NUMBER)" again.
+
+    Global functions provided for virtual participants only cover adding and
+    removing them. Any specific action, like enabling or disabling media of a
+    virtual participant, must be directly called on the Talkbuchet wrapper
+    objects in the "virtualParticipants" list. For example:
+    >>>> virtualParticipants[0].setAudioEnabled(False)
+
+    Note that clients may not show any nick for the virtual participants unless
+    explicitly given, even if the virtual participant is a registered user. The
+    nick for a specific virtual participant can be set with:
+    >>>> virtualParticipants[INDEX].sendNickThroughDataChannel(NICK)
+    """
+
+    def _isValidConfiguration():
+        if not _isValidBrowser():
+            return False
+
+        if not _nextcloudUrl:
+            print("Set target Nextcloud URL first")
+            return False
+
+        if not _token:
+            print("Set conversation token first")
+            return False
+
+        return True
+
+    def addVirtualParticipant():
+        """
+        Adds a single virtual participant.
+
+        The global target Nextcloud URL and conversation token need to be set
+        first.
+
+        If global credentials or media were set they will be applied to the
+        virtual participant.
+
+        Note that changing any of those values later will have no effect on an
+        existing virtual participant, the updated value will be used only by
+        virtual participants added after they were changed.
+        """
+
+        if not _isValidConfiguration():
+            return
+
+        virtualParticipant = VirtualParticipant(_getBrowser(), _nextcloudUrl, _headless, _remoteSeleniumUrl)
+
+        virtualParticipants.append(virtualParticipant)
+
+        virtualParticipant.setToken(_token)
+
+        if _user or _appToken:
+            virtualParticipant.setCredentials(_user, _appToken)
+
+        if _audio or _video:
+            virtualParticipant.startMedia(_audio, _video)
+
+        virtualParticipant.startVirtualParticipant()
+
+    def addVirtualParticipants(count):
+        """
+        Adds as many virtual participants as the given count.
+
+        See :py:func:`addVirtualParticipant`.
+
+        :param count: the number of virtual participants to add.
+        """
+
+        if not _isValidConfiguration():
+            return
+
+        for i in range(count):
+            addVirtualParticipant()
+
+            print('.', end='', flush=True)
+
+        print("")
+
+    def removeVirtualParticipant(index):
+        """
+        Removes the virtual participant with the given index.
+
+        :param index: the index in :py:data:`virtualParticipants` of the virtual
+            participant to remove.
+        """
+
+        if index < 0 or index >= len(virtualParticipants):
+            print("Index out of range")
+            return
+
+        virtualParticipants[index].stopVirtualParticipant()
+        del virtualParticipants[index]
+
+    def removeVirtualParticipants():
+        """
+        Removes all the virtual participants previously added.
+        """
+
+        while virtualParticipants:
+            removeVirtualParticipant(0)
+
+    if globals()['_talkbuchetMode'] == 'siege':
+        if endSiege:
+            endSiege()
+
+        del globals()['setPublishersAndSubscribersCount']
+        del globals()['startSiege']
+        del globals()['checkPublishersConnections']
+        del globals()['checkSubscribersConnections']
+        del globals()['endSiege']
+
+    globals()['addVirtualParticipant'] = addVirtualParticipant
+    globals()['addVirtualParticipants'] = addVirtualParticipants
+    globals()['removeVirtualParticipant'] = removeVirtualParticipant
+    globals()['removeVirtualParticipants'] = removeVirtualParticipants
+
+    globals()['_talkbuchetMode'] = 'virtualParticipant'
+
 
 def _deleteTalkbuchetInstancesOnExit():
     while sieges:
         del sieges[0]
+
+    while virtualParticipants:
+        del virtualParticipants[0]
 
 # Talkbuchet instances should be explicitly deleted before exiting, as if they
 # are implicitly deleted while exiting the Selenium driver may not cleanly quit.

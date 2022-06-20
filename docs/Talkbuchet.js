@@ -192,6 +192,11 @@
  * would be able to add a much higher number of virtual participants than of
  * real participants.
  *
+ * However, note that each web browser session can execute a single virtual
+ * participant. Due to this it is recommended to use Talkbuchet CLI instead to
+ * easily start several web browser sessions, each one with its own virtual
+ * participant, and control the virtual participants from the CLI.
+ *
  * HOW TO RUN:
  * -----------------------------------------------------------------------------
  * - Set the user and appToken (generate an apptoken at
