@@ -492,9 +492,9 @@ class SeleniumHelper:
         self.printLogs()
 
 
-class Talkbuchet:
+class TalkbuchetCommon:
     """
-    Wrapper for Talkbuchet.
+    Base class for Talkbuchet wrappers.
 
     Talkbuchet wrappers load Talkbuchet on a given Nextcloud URL and provide
     methods to call the different Talkbuchet functions in the browser.
@@ -512,11 +512,6 @@ class Talkbuchet:
         :param remoteSeleniumUrl: the URL of the Selenium server to connect to;
             the local server is used by default.
         """
-
-        # Set default values from Talkbuchet.js.
-        self.publishersCount = 5
-        self.subscribersPerPublisherCount = 40
-        self.connectionWarningTimeout = 5000
 
         self.seleniumHelper = SeleniumHelper()
 
@@ -639,6 +634,27 @@ class Talkbuchet:
         """
 
         self.seleniumHelper.executeAsync('await startMedia(' + ('true' if audio else 'false') + ', ' + ('true' if video else 'false') + ')')
+
+
+class Siege(TalkbuchetCommon):
+    """
+    Wrapper for Talkbuchet in siege mode.
+
+    Besides the common functions this wrapper exposes only the Talkbuchet
+    functions for siege mode.
+    """
+
+    def __init__(self, browser, nextcloudUrl, headless = True, remoteSeleniumUrl = None):
+        """
+        See :py:meth:`TalkbuchetCommon.__init__`.
+        """
+
+        super().__init__(browser, nextcloudUrl, headless, remoteSeleniumUrl)
+
+        # Set default values from Talkbuchet.js.
+        self.publishersCount = 5
+        self.subscribersPerPublisherCount = 40
+        self.connectionWarningTimeout = 5000
 
     def closeConnections(self):
         """
@@ -914,140 +930,153 @@ _subscribersPerPublisherCount = None
 
 sieges = []
 
-def _isValidConfiguration():
-    if not _isValidBrowser():
-        return False
-
-    if not _nextcloudUrl:
-        print("Set target Nextcloud URL first")
-        return False
-
-    if not _user or not _appToken:
-        print("Set credentials (user and app token) first")
-        return False
-
-    return True
-
-def setPublishersAndSubscribersCount(publishersCount, subscribersPerPublisherCount):
+def switchToSiegeMode():
     """
-    Sets the number of publishers and subscribers per publisher to use.
+    Sets the siege mode as the active one.
 
-    By the default the number from Talkbuchet.js is used, which is 5 publishers
-    and 40 subscribers per publisher.
-
-    This is used only for the global helper functions and is not taken into
-    account if a Talkbuchet wrapper is manually created.
-
-    :param publishersCount: the number of publishers.
-    :param subscribersPerPublisherCount: the number of subscribers for each
-        publisher.
+    This adjusts the global helper functions to those relevant for this mode.
     """
 
-    global _publishersCount, _subscribersPerPublisherCount
-    _publishersCount = publishersCount
-    _subscribersPerPublisherCount = subscribersPerPublisherCount
+    def _isValidConfiguration():
+        if not _isValidBrowser():
+            return False
 
-def startSiege():
-    """
-    Starts a siege.
+        if not _nextcloudUrl:
+            print("Set target Nextcloud URL first")
+            return False
 
-    The global target Nextcloud URL and credentials need to be set first.
+        if not _user or not _appToken:
+            print("Set credentials (user and app token) first")
+            return False
 
-    If global token, media or publishers and subscribers count were set they
-    will be applied to the siege.
+        return True
 
-    Note that changing any of those values later will have no effect on a
-    running siege, the updated value will be used only on sieges started after
-    they were changed.
+    def setPublishersAndSubscribersCount(publishersCount, subscribersPerPublisherCount):
+        """
+        Sets the number of publishers and subscribers per publisher to use.
 
-    If there is already a running siege it will not be ended when a new one is
-    started; the new one will run along the previous one.
-    """
+        By the default the number from Talkbuchet.js is used, which is 5
+        publishers and 40 subscribers per publisher.
 
-    if not _isValidConfiguration():
-        return
+        This is used only for the global helper functions and is not taken into
+        account if a Talkbuchet wrapper is manually created.
 
-    siege = Siege(_getBrowser(), _nextcloudUrl, _headless, _remoteSeleniumUrl)
+        :param publishersCount: the number of publishers.
+        :param subscribersPerPublisherCount: the number of subscribers for each
+            publisher.
+        """
 
-    sieges.append(siege)
+        global _publishersCount, _subscribersPerPublisherCount
+        _publishersCount = publishersCount
+        _subscribersPerPublisherCount = subscribersPerPublisherCount
 
-    siege.setCredentials(_user, _appToken)
+    def startSiege():
+        """
+        Starts a siege.
 
-    if _token:
-        siege.setToken(_token)
+        The global target Nextcloud URL and credentials need to be set first.
 
-    if _audio or _video:
-        siege.startMedia(_audio, _video)
+        If global token, media or publishers and subscribers count were set they
+        will be applied to the siege.
 
-    if _publishersCount != None and _subscribersPerPublisherCount != None:
-        siege.setPublishersAndSubscribersCount(_publishersCount, _subscribersPerPublisherCount)
+        Note that changing any of those values later will have no effect on a
+        running siege, the updated value will be used only on sieges started
+        after they were changed.
 
-    siege.siege()
+        If there is already a running siege it will not be ended when a new one
+        is started; the new one will run along the previous one.
+        """
 
-def _getSiegeIndex(index = None):
-    if not sieges:
-        return -1
+        if not _isValidConfiguration():
+            return
 
-    if index == None and len(sieges) > 1:
-        print("Index needs to be specified")
-        return -1
+        siege = Siege(_getBrowser(), _nextcloudUrl, _headless, _remoteSeleniumUrl)
 
-    if index == None and len(sieges) == 1:
-        index = 0
+        sieges.append(siege)
 
-    if index < 0 or index >= len(sieges):
-        print("Index out of range")
-        return -1
+        siege.setCredentials(_user, _appToken)
 
-    return index
+        if _token:
+            siege.setToken(_token)
 
-def checkPublishersConnections(index = None):
-    """
-    Checks the publisher connections of the siege with the given index.
+        if _audio or _video:
+            siege.startMedia(_audio, _video)
 
-    If a single siege is active the index does not need to be specified.
+        if _publishersCount != None and _subscribersPerPublisherCount != None:
+            siege.setPublishersAndSubscribersCount(_publishersCount, _subscribersPerPublisherCount)
 
-    :param index: the index in :py:data:`sieges` of the siege to check its
-        publisher connections.
-    """
+        siege.siege()
 
-    index = _getSiegeIndex(index)
-    if index < 0:
-        return
+    def _getSiegeIndex(index = None):
+        if not sieges:
+            return -1
 
-    sieges[index].checkPublishersConnections()
+        if index == None and len(sieges) > 1:
+            print("Index needs to be specified")
+            return -1
 
-def checkSubscribersConnections(index = None):
-    """
-    Checks the subscriber connections of the siege with the given index.
+        if index == None and len(sieges) == 1:
+            index = 0
 
-    If a single siege is active the index does not need to be specified.
+        if index < 0 or index >= len(sieges):
+            print("Index out of range")
+            return -1
 
-    :param index: the index in :py:data:`sieges` of the siege to check its
-        subscriber connections.
-    """
+        return index
 
-    index = _getSiegeIndex(index)
-    if index < 0:
-        return
+    def checkPublishersConnections(index = None):
+        """
+        Checks the publisher connections of the siege with the given index.
 
-    sieges[index].checkSubscribersConnections()
+        If a single siege is active the index does not need to be specified.
 
-def endSiege(index = None):
-    """
-    Ends the siege with the given index.
+        :param index: the index in :py:data:`sieges` of the siege to check its
+            publisher connections.
+        """
 
-    If a single siege is active the index does not need to be specified.
+        index = _getSiegeIndex(index)
+        if index < 0:
+            return
 
-    :param index: the index in :py:data:`sieges` of the siege to remove.
-    """
+        sieges[index].checkPublishersConnections()
 
-    index = _getSiegeIndex(index)
-    if index < 0:
-        return
+    def checkSubscribersConnections(index = None):
+        """
+        Checks the subscriber connections of the siege with the given index.
 
-    sieges[index].closeConnections()
-    del sieges[index]
+        If a single siege is active the index does not need to be specified.
+
+        :param index: the index in :py:data:`sieges` of the siege to check its
+            subscriber connections.
+        """
+
+        index = _getSiegeIndex(index)
+        if index < 0:
+            return
+
+        sieges[index].checkSubscribersConnections()
+
+    def endSiege(index = None):
+        """
+        Ends the siege with the given index.
+
+        If a single siege is active the index does not need to be specified.
+
+        :param index: the index in :py:data:`sieges` of the siege to remove.
+        """
+
+        index = _getSiegeIndex(index)
+        if index < 0:
+            return
+
+        sieges[index].closeConnections()
+        del sieges[index]
+
+    globals()['setPublishersAndSubscribersCount'] = setPublishersAndSubscribersCount
+    globals()['startSiege'] = startSiege
+    globals()['checkPublishersConnections'] = checkPublishersConnections
+    globals()['checkSubscribersConnections'] = checkSubscribersConnections
+    globals()['endSiege'] = endSiege
 
 
 def _deleteTalkbuchetInstancesOnExit():
@@ -1061,3 +1090,5 @@ atexit.register(_deleteTalkbuchetInstancesOnExit)
 _findDefaultBrowser()
 
 print('Full documentation can be shown by calling help(__name__)')
+
+switchToSiegeMode()
