@@ -283,13 +283,6 @@ class Signaling extends EventTarget {
 
 			this.sessionId = sessionId
 			resolveSessionId(sessionId)
-
-			if (!user) {
-				// If the current user is a guest the room needs to be joined,
-				// as guests are kicked out if they just open a session in the
-				// signaling server.
-				this.joinRoom()
-			}
 		})
 
 		this.addEventListener('error', event => {
