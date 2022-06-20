@@ -33,7 +33,7 @@
 
 			<!-- Poll options -->
 			<p class="simple-polls-editor__caption">
-				{{ t('spreed', 'Answer') }}
+				{{ t('spreed', 'Answers') }}
 			</p>
 			<PollOption v-for="option, index in pollOptions"
 				:key="index"
