@@ -127,13 +127,17 @@ export default {
 
 		async createPoll() {
 			try {
-				await postNewPoll(
+				const response = await postNewPoll(
 					this.token,
 					this.pollQuestion,
 					this.pollOptions,
 					this.isPrivate ? 1 : 0,
 					this.isMultipleAnswer ? 0 : 1)
-
+				// Add the poll immediately to the store
+				this.$store.dispatch('addPoll', {
+					token: this.token,
+					poll: response.data.ocs.data,
+				})
 				this.dismissEditor()
 			} catch (error) {
 				console.debug(error)

@@ -23,17 +23,81 @@
 	<div>
 		Poll
 		<p>{{ pollName }}</p>
+		<CheckboxRadioSwitch v-for="answer, index in answers"
+			:key="index"
+			:checked.sync="sharingPermission"
+			value="r"
+			name="answerType"
+			type="radio" />
 	</div>
 </template>
 
 <script>
+import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
+
 export default {
 	name: 'Poll',
+
+	components: {
+		CheckboxRadioSwitch,
+	},
 
 	props: {
 		pollName: {
 			type: String,
 			required: true,
+		},
+
+		id: {
+			type: Number,
+			required: true,
+		},
+
+		token: {
+			type: String,
+			required: true,
+		},
+	},
+
+	computed: {
+		poll() {
+			return this.$store.getters.poll(this.token, this.id)
+		},
+
+		maxVotes() {
+			return this.poll.maxVotes
+		},
+
+		votersNumber() {
+			return this.poll.numVoters
+		},
+
+		question() {
+			return this.poll.question
+		},
+
+		answers() {
+			return this.poll.options
+		},
+
+		pollVotes() {
+			return this.polls.votes
+		},
+
+		selfHasVoted() {
+			return this.poll.votedSelf
+		},
+
+		resultMode() {
+			return this.poll.resultMode
+		},
+
+		status() {
+			return this.poll.status
+		},
+
+		isMultipleAnswers() {
+			return this.poll.maxVotes === 0
 		},
 	},
 }
