@@ -31,21 +31,25 @@ use OCP\Comments\ICommentsManager;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\App\IAppManager;
 
 class Capabilities implements IPublicCapability {
 	protected IConfig $serverConfig;
 	protected Config $talkConfig;
 	protected ICommentsManager $commentsManager;
 	protected IUserSession $userSession;
+	private IAppManager $appManager;
 
 	public function __construct(IConfig $serverConfig,
 								Config $talkConfig,
 								ICommentsManager $commentsManager,
-								IUserSession $userSession) {
+								IUserSession $userSession,
+								IAppManager $appManager) {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->commentsManager = $commentsManager;
 		$this->userSession = $userSession;
+		$this->appManager = $appManager;
 	}
 
 	public function getCapabilities(): array {
@@ -127,6 +131,7 @@ class Capabilities implements IPublicCapability {
 					'session-ping-limit' => max(0, (int)$this->serverConfig->getAppValue('spreed', 'session-ping-limit', '200')),
 				],
 			],
+			'version' => $this->appManager->getAppVersion('spreed'),
 		];
 
 		if ($this->commentsManager->supportReactions()) {
