@@ -172,7 +172,7 @@ class PollController extends AEnvironmentAwareController {
 					'message' => 'poll_voted',
 					'parameters' => [
 						'poll' => [
-							'type' => 'talk-poll',
+							'type' => 'talk-poll-voted',
 							'id' => $poll->getId(),
 							'name' => $poll->getQuestion(),
 						],
