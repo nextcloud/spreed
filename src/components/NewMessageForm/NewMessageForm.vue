@@ -49,13 +49,13 @@
 							:close-after-click="true"
 							icon="icon-upload"
 							@click.prevent="clickImportInput">
-							{{ t('spreed', 'Upload new files') }}
+							{{ t('spreed', 'Upload from device') }}
 						</NcActionButton>
 						<NcActionButton v-if="canShareFiles"
 							:close-after-click="true"
 							icon="icon-folder"
 							@click.prevent="handleFileShare">
-							{{ t('spreed', 'Share from Files') }}
+							{{ t('spreed', 'Share from Nextcloud FIXME') }}
 						</NcActionButton>
 						<NcActionButton v-if="canCreatePoll"
 							:close-after-click="true"
