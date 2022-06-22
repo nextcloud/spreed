@@ -55,6 +55,25 @@ const shareFile = async function(path, token, referenceId, metadata) {
 	}
 }
 
+/**
+ * Share a text file to a conversation
+ *
+ * @param { string } filePath the file path
+ * @return { object } the file object
+ */
+const createTextFile = async function(filePath) {
+	try {
+		return axios.post(
+			generateOcsUrl('apps/files/api/v1/templates/create'),
+			{
+				filePath,
+			})
+	} catch (error) {
+		console.debug(error)
+	}
+}
+
 export {
 	shareFile,
+	createTextFile,
 }

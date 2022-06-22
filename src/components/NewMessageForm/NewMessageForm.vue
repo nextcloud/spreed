@@ -59,7 +59,7 @@
 						</NcActionButton>
 						<NcActionButton v-if="canShareFiles"
 							:close-after-click="true"
-							@click.prevent="createTextFile">
+							@click.prevent="handleCreateTextFile">
 							<TextBox slot="icon" :size="20" />
 							{{ t('spreed', 'Create text file') }}
 						</NcActionButton>
@@ -163,7 +163,7 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import { EventBus } from '../../services/EventBus.js'
-import { shareFile } from '../../services/filesSharingServices.js'
+import { shareFile, createTextFile } from '../../services/filesSharingServices.js'
 import { CONVERSATION, PARTICIPANT } from '../../constants.js'
 import Paperclip from 'vue-material-design-icons/Paperclip.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
@@ -584,8 +584,11 @@ export default {
 			this.showSimplePollsEditor = value
 		},
 
-		createTextFile() {
-			console.log('asdfsadfsd')
+		// Create text file and share it to a conversation
+		async handleCreateTextFile() {
+			const filePath = 'somesdsaddfsalkjnaasdasdme.md'
+			await createTextFile(filePath)
+			shareFile(filePath, this.token)
 		},
 	},
 }
