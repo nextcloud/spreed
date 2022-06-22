@@ -57,6 +57,12 @@
 							@click.prevent="handleFileShare">
 							{{ t('spreed', 'Share from Nextcloud FIXME') }}
 						</NcActionButton>
+						<NcActionButton v-if="canShareFiles"
+							:close-after-click="true"
+							@click.prevent="createTextFile">
+							<TextBox slot="icon" :size="20" />
+							{{ t('spreed', 'Create text file') }}
+						</NcActionButton>
 						<NcActionButton v-if="canCreatePoll"
 							:close-after-click="true"
 							@click.prevent="toggleSimplePollsEditor(true)">
@@ -166,6 +172,7 @@ import BellOff from 'vue-material-design-icons/BellOff.vue'
 import AudioRecorder from './AudioRecorder/AudioRecorder.vue'
 import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
 import Poll from 'vue-material-design-icons/Poll.vue'
+import TextBox from 'vue-material-design-icons/TextBox.vue'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -190,6 +197,7 @@ export default {
 		BellOff,
 		SimplePollsEditor,
 		Poll,
+		TextBox,
 	},
 
 	props: {
@@ -574,6 +582,10 @@ export default {
 
 		toggleSimplePollsEditor(value) {
 			this.showSimplePollsEditor = value
+		},
+
+		createTextFile() {
+			console.log('asdfsadfsd')
 		},
 	},
 }
