@@ -59,7 +59,7 @@
 						</NcActionButton>
 						<NcActionButton v-if="canShareFiles"
 							:close-after-click="true"
-							@click.prevent="handleCreateTextFile">
+							@click.prevent="showTextFileDialog = true">
 							<TextBox slot="icon" :size="20" />
 							{{ t('spreed', 'Create text file') }}
 						</NcActionButton>
@@ -147,9 +147,35 @@
 				</template>
 			</form>
 		</div>
+
 		<SimplePollsEditor v-if="showSimplePollsEditor"
 			:token="token"
 			@close="toggleSimplePollsEditor(false)" />
+
+		<!-- Text file creation dialog -->
+		<NcModal v-if="showTextFileDialog"
+			size="small"
+			@close="dismissTextFileCreation">
+			<div class="new-text-file">
+				<h2>
+					{{ t('spreed', 'Create and share a text file') }}
+				</h2>
+				<form class="new-text-file__form"
+					@submit.prevent="handleCreateTextFile">
+					<InputVue ref="textFileTitleInput" :value.sync="textFileTitle" />
+				</form>
+				<div class="new-text-file__buttons">
+					<NcButton type="tertiary"
+						@click="dismissTextFileCreation">
+						{{ t('spreed', 'close') }}
+					</NcButton>
+					<NcButton type="primary"
+						@click="handleCreateTextFile">
+						{{ t('spreed', 'Create text file') }}
+					</NcButton>
+				</div>
+			</div>
+		</NcModal>
 	</div>
 </template>
 
@@ -173,6 +199,8 @@ import AudioRecorder from './AudioRecorder/AudioRecorder.vue'
 import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
 import Poll from 'vue-material-design-icons/Poll.vue'
 import TextBox from 'vue-material-design-icons/TextBox.vue'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import InputVue from '../InputVue.vue'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -182,7 +210,9 @@ const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.build()
 
 export default {
+
 	name: 'NewMessageForm',
+
 	components: {
 		AdvancedInput,
 		Quote,
@@ -198,6 +228,8 @@ export default {
 		SimplePollsEditor,
 		Poll,
 		TextBox,
+		NcModal,
+		InputVue,
 	},
 
 	props: {
@@ -215,6 +247,8 @@ export default {
 			// True when the audiorecorder component is recording
 			isRecordingAudio: false,
 			showSimplePollsEditor: false,
+			showTextFileDialog: false,
+			textFileTitle: t('spreed', 'New text file'),
 		}
 	},
 
@@ -330,6 +364,14 @@ export default {
 				this.text = this.$store.getters.currentMessageInput(token) || ''
 			} else {
 				this.text = ''
+			}
+		},
+
+		showTextFileDialog(newValue) {
+			if (newValue) {
+				this.$nextTick(() => {
+					this.focusTextDialogInput()
+				})
 			}
 		},
 	},
@@ -586,9 +628,22 @@ export default {
 
 		// Create text file and share it to a conversation
 		async handleCreateTextFile() {
-			const filePath = 'somesdsaddfsalkjnaasdasdme.md'
+			const filePath = this.textFileTitle + '.md'
 			await createTextFile(filePath)
-			shareFile(filePath, this.token)
+			await shareFile(filePath, this.token)
+			this.dismissTextFileCreation()
+		},
+
+		dismissTextFileCreation() {
+			this.showTextFileDialog = false
+			this.textFileTitle = t('spreed', 'New text file')
+		},
+
+		// Focus and select the text within the input field
+		focusTextDialogInput() {
+			// this.$refs.textFileTitleInput.$el.focus()
+			this.$refs.textFileTitleInput.$el.select()
+
 		},
 	},
 }
@@ -661,6 +716,23 @@ export default {
 	}
 	&:disabled {
 		opacity: .5 !important;
+	}
+}
+
+.new-text-file {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	gap: 28px;
+	padding: 20px;
+	&__buttons {
+		display: flex;
+		gap: 4px;
+	}
+
+	&__form {
+		width: 100%;
 	}
 }
 </style>
