@@ -209,6 +209,18 @@ const getters = {
 	hasReactions: (state) => (token, messageId) => {
 		return Object.keys(state.messages[token][messageId].reactions).length !== 0
 	},
+
+	getSharedFileLink: (state) => (token, fileId) => {
+		// Reverse the messages array, the message containing the file we want
+		// is going to be one of the last ones
+		const reversedMessages = Object.values(state.messages[token]).reverse()
+		for (const message of reversedMessages) {
+			if (message.messageParameters?.file?.id === fileId) {
+				return message.messageParameters.file.link
+			}
+		}
+		return undefined
+	},
 }
 
 const mutations = {

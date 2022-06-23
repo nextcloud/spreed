@@ -630,7 +630,11 @@ export default {
 		async handleCreateTextFile() {
 			const filePath = this.textFileTitle + '.md'
 			await createTextFile(filePath)
-			await shareFile(filePath, this.token)
+			const response = await shareFile(filePath, this.token)
+			// TODO: before getting the link from the system message we need
+			// to wait till the message itself is received
+			const link = this.$store.getters.getSharedFileLink(this.token, response.data.ocs.data.file_source)
+			window.open(link, '_self')
 			this.dismissTextFileCreation()
 		},
 
