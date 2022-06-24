@@ -926,7 +926,7 @@
     "Not enough free space to upload file" : "Onvoldoende vrije ruimte voor opslaan bestand",
     "You are not allowed to share files" : "Je bent niet geautoriseerd om bestanden te delen",
     "You cannot send messages to this conversation at the moment" : "Je kunt nu geen berichten versturen binnen dit gesprek",
-    "Deleting message" : "Verwijderen bericht",
+    "Deleting message" : "Bericht aan het verwijderen",
     "Message deleted successfully, but Matterbridge is configured and the message might already be distributed to other services" : "Het bericht is succesvol verwijderd, maar Matterbridge is ingesteld en het bericht is mogelijk al gedistribueerd naar andere services",
     "Message deleted successfully" : "Bericht succesvol verwijderd",
     "Message could not be deleted because it is too old" : "Bericht kon niet worden verwijderd omdat het te oud is",
