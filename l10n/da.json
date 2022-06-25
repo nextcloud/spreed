@@ -13,6 +13,7 @@
     "Talk" : "Snak",
     "Guest" : "Gæst",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Velkommen til Nextcloud Talk!\nI denne samtale finder du information om nye features tilgængelige i Nextcloud Talk.",
+    "New in Talk %s" : "Nyt i Snak %s",
     "- Microsoft Edge and Safari can now be used to participate in audio and video calls" : "- Microsoft Edge og Safari kan nu benyttes til at deltage i lyd- og videosamtaler",
     "- You can now notify all participants by posting \"@all\" into the chat" : "- Nu kan nu sende en notifikation til alle deltagere ved at skrive \"@all\" i chatten",
     "- With the \"arrow-up\" key you can repost your last message" : "- Ved at trykke på \"pil op\" kan du sende din sidste besked igen",
