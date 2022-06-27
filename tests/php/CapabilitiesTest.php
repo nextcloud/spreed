@@ -34,6 +34,7 @@ use OCP\Capabilities\IPublicCapability;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\App\IAppManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -47,6 +48,8 @@ class CapabilitiesTest extends TestCase {
 	protected $commentsManager;
 	/** @var IUserSession|MockObject */
 	protected $userSession;
+	/** @var IAppManager|MockObject */
+	protected $appManager;
 	protected ?array $baseFeatures = null;
 
 	public function setUp(): void {
@@ -55,9 +58,16 @@ class CapabilitiesTest extends TestCase {
 		$this->talkConfig = $this->createMock(Config::class);
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->userSession = $this->createMock(IUserSession::class);
+		$this->appManager = $this->createMock(IAppManager::class);
+		
 		$this->commentsManager->expects($this->any())
 			->method('supportReactions')
 			->willReturn(true);
+
+		$this->appManager->expects($this->any())
+			->method('getAppVersion')
+			->with('spreed')
+			->willReturn('1.2.3');
 
 		$this->baseFeatures = [
 			'audio',
@@ -120,7 +130,8 @@ class CapabilitiesTest extends TestCase {
 			$this->serverConfig,
 			$this->talkConfig,
 			$this->commentsManager,
-			$this->userSession
+			$this->userSession,
+			$this->appManager
 		);
 
 		$this->userSession->expects($this->once())
@@ -164,6 +175,7 @@ class CapabilitiesTest extends TestCase {
 						'session-ping-limit' => 200,
 					],
 				],
+				'version' => '1.2.3',
 			],
 		], $capabilities->getCapabilities());
 	}
@@ -186,7 +198,8 @@ class CapabilitiesTest extends TestCase {
 			$this->serverConfig,
 			$this->talkConfig,
 			$this->commentsManager,
-			$this->userSession
+			$this->userSession,
+			$this->appManager
 		);
 
 		$user = $this->createMock(IUser::class);
@@ -257,6 +270,7 @@ class CapabilitiesTest extends TestCase {
 						'session-ping-limit' => 50,
 					],
 				],
+				'version' => '1.2.3',
 			],
 		], $data);
 
@@ -281,7 +295,8 @@ class CapabilitiesTest extends TestCase {
 			$this->serverConfig,
 			$this->talkConfig,
 			$this->commentsManager,
-			$this->userSession
+			$this->userSession,
+			$this->appManager
 		);
 
 		$user = $this->createMock(IUser::class);
