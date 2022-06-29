@@ -44,6 +44,10 @@ class Delete extends Base {
 			->setName('talk:turn:delete')
 			->setDescription('Remove an existing TURN server.')
 			->addArgument(
+				'schemes',
+				InputArgument::REQUIRED,
+				'Schemes, can be turn or turns or turn,turns'
+			)->addArgument(
 				'server',
 				InputArgument::REQUIRED,
 				'A domain name, ex. turn.nextcloud.com'
@@ -55,6 +59,7 @@ class Delete extends Base {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+		$schemes = $input->getArgument('schemes');
 		$server = $input->getArgument('server');
 		$protocols = $input->getArgument('protocols');
 
@@ -66,9 +71,9 @@ class Delete extends Base {
 		}
 
 		$count = count($servers);
-		// remove all occurrences which math $server and $protocols
-		$servers = array_filter($servers, function ($s) use ($server, $protocols) {
-			return $s['server'] !== $server || $s['protocols'] !== $protocols;
+		// remove all occurrences which match $schemes, $server and $protocols
+		$servers = array_filter($servers, function ($s) use ($schemes, $server, $protocols) {
+			return $s['schemes'] !== $schemes || $s['server'] !== $server || $s['protocols'] !== $protocols;
 		});
 		$servers = array_values($servers); // reindex
 

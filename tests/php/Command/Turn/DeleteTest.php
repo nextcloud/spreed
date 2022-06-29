@@ -56,7 +56,9 @@ class DeleteTest extends TestCase {
 	public function testDeleteIfEmpty() {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
-				if ($arg === 'server') {
+				if ($arg === 'schemes') {
+					return 'turn,turns';
+				} elseif ($arg === 'server') {
 					return 'turn.example.com';
 				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
@@ -84,7 +86,9 @@ class DeleteTest extends TestCase {
 	public function testDelete() {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
-				if ($arg === 'server') {
+				if ($arg === 'schemes') {
+					return 'turn,turns';
+				} elseif ($arg === 'server') {
 					return 'turn2.example.com';
 				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
@@ -96,6 +100,7 @@ class DeleteTest extends TestCase {
 			->with('spreed', 'turn_servers')
 			->willReturn(json_encode([
 				[
+					'schemes' => 'turn,turns',
 					'server' => 'turn1.example.com',
 					'secret' => 'my-test-secret-1',
 					'protocols' => 'udp,tcp'
@@ -108,6 +113,7 @@ class DeleteTest extends TestCase {
 				$this->equalTo('turn_servers'),
 				$this->equalTo(json_encode([
 					[
+						'schemes' => 'turn,turns',
 						'server' => 'turn1.example.com',
 						'secret' => 'my-test-secret-1',
 						'protocols' => 'udp,tcp'
@@ -124,7 +130,9 @@ class DeleteTest extends TestCase {
 	public function testNothingToDelete() {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
-				if ($arg === 'server') {
+				if ($arg === 'schemes') {
+					return 'turn,turns';
+				} elseif ($arg === 'server') {
 					return 'turn4.example.com';
 				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
@@ -136,16 +144,19 @@ class DeleteTest extends TestCase {
 			->with('spreed', 'turn_servers')
 			->willReturn(json_encode([
 				[
+					'schemes' => 'turn,turns',
 					'server' => 'turn1.example.com',
 					'secret' => 'my-test-secret-1',
 					'protocols' => 'udp,tcp'
 				],
 				[
+					'schemes' => 'turn,turns',
 					'server' => 'turn2.example.com',
 					'secret' => 'my-test-secret-2',
 					'protocols' => 'udp,tcp'
 				],
 				[
+					'schemes' => 'turn,turns',
 					'server' => 'turn3.example.com',
 					'secret' => 'my-test-secret-3',
 					'protocols' => 'udp,tcp'
@@ -158,16 +169,19 @@ class DeleteTest extends TestCase {
 				$this->equalTo('turn_servers'),
 				$this->equalTo(json_encode([
 					[
+						'schemes' => 'turn,turns',
 						'server' => 'turn1.example.com',
 						'secret' => 'my-test-secret-1',
 						'protocols' => 'udp,tcp'
 					],
 					[
+						'schemes' => 'turn,turns',
 						'server' => 'turn2.example.com',
 						'secret' => 'my-test-secret-2',
 						'protocols' => 'udp,tcp'
 					],
 					[
+						'schemes' => 'turn,turns',
 						'server' => 'turn3.example.com',
 						'secret' => 'my-test-secret-3',
 						'protocols' => 'udp,tcp'
@@ -177,6 +191,56 @@ class DeleteTest extends TestCase {
 		$this->output->expects($this->once())
 			->method('writeln')
 			->with($this->equalTo('<info>There is nothing to delete.</info>'));
+
+		$this->invokePrivate($this->command, 'execute', [$this->input, $this->output]);
+	}
+
+	public function testDeleteMatchingSchemes() {
+		$this->input->method('getArgument')
+			->willReturnCallback(function ($arg) {
+				if ($arg === 'schemes') {
+					return 'turn,turns';
+				} elseif ($arg === 'server') {
+					return 'turn.example.com';
+				} elseif ($arg === 'protocols') {
+					return 'udp,tcp';
+				}
+				throw new \Exception();
+			});
+		$this->config->expects($this->once())
+			->method('getAppValue')
+			->with('spreed', 'turn_servers')
+			->willReturn(json_encode([
+				[
+					'schemes' => 'turn,turns',
+					'server' => 'turn.example.com',
+					'secret' => 'my-test-secret-1',
+					'protocols' => 'udp,tcp'
+				],
+				[
+					'schemes' => 'turn',
+					'server' => 'turn.example.com',
+					'secret' => 'my-test-secret-1',
+					'protocols' => 'udp,tcp'
+				]
+			]));
+		$this->config->expects($this->once())
+			->method('setAppValue')
+			->with(
+				$this->equalTo('spreed'),
+				$this->equalTo('turn_servers'),
+				$this->equalTo(json_encode([
+					[
+						'schemes' => 'turn',
+						'server' => 'turn.example.com',
+						'secret' => 'my-test-secret-1',
+						'protocols' => 'udp,tcp'
+					]
+				]))
+			);
+		$this->output->expects($this->once())
+			->method('writeln')
+			->with($this->equalTo('<info>Deleted turn.example.com.</info>'));
 
 		$this->invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
