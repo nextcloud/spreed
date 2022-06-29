@@ -89,13 +89,23 @@ class Poll extends Entity {
 	 * @return array
 	 */
 	public function asArray(): array {
+		$votes = json_decode($this->getVotes(), true, 512, JSON_THROW_ON_ERROR);
+
+		// Because PHP is turning arrays with sequent numeric keys "{"0":x,"1":y,"2":z}" into "[x,y,z]"
+		// when json_encode() is used we have to prefix the keys with a string,
+		// to prevent breaking in the mobile apps.
+		$prefixedVotes = [];
+		foreach ($votes as $option => $count) {
+			$prefixedVotes['option-' . $option] = $count;
+		}
+
 		return [
 			'id' => $this->getId(),
 			// The room id is not needed on the API level but only internally for optimising database queries
 			// 'roomId' => $this->getRoomId(),
 			'question' => $this->getQuestion(),
 			'options' => json_decode($this->getOptions(), true, 512, JSON_THROW_ON_ERROR),
-			'votes' => json_decode($this->getVotes(), true, 512, JSON_THROW_ON_ERROR),
+			'votes' => $prefixedVotes,
 			'numVoters' => $this->getNumVoters(),
 			'actorType' => $this->getActorType(),
 			'actorId' => $this->getActorId(),
