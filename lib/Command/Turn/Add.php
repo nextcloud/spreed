@@ -45,6 +45,10 @@ class Add extends Base {
 			->setName('talk:turn:add')
 			->setDescription('Add a TURN server.')
 			->addArgument(
+				'schemes',
+				InputArgument::REQUIRED,
+				'Schemes, can be turn or turns or turn,turns.'
+			)->addArgument(
 				'server',
 				InputArgument::REQUIRED,
 				'A domain name, ex. turn.nextcloud.com'
@@ -66,11 +70,16 @@ class Add extends Base {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+		$schemes = $input->getArgument('schemes');
 		$server = $input->getArgument('server');
 		$protocols = $input->getArgument('protocols');
 		$secret = $input->getOption('secret');
 		$generate = $input->getOption('generate-secret');
 
+		if (!in_array($schemes, ['turn', 'turns', 'turn,turns'])) {
+			$output->writeln('<error>Not allowed schemes, must be turn or turns or turn,turns.</error>');
+			return 1;
+		}
 		if (!in_array($protocols, ['tcp', 'udp', 'udp,tcp'])) {
 			$output->writeln('<error>Not allowed protocols, must be udp or tcp or udp,tcp.</error>');
 			return 1;
@@ -107,6 +116,7 @@ class Add extends Base {
 		}
 
 		$servers[] = [
+			'schemes' => $schemes,
 			'server' => $server,
 			'secret' => $secret, // @todo: check the order
 			'protocols' => $protocols,

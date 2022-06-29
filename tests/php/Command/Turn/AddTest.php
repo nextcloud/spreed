@@ -56,7 +56,9 @@ class AddTest extends TestCase {
 	public function testServerEmptyString() {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
-				if ($arg === 'server') {
+				if ($arg === 'schemes') {
+					return 'turn,turns';
+				} elseif ($arg === 'server') {
 					return '';
 				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
@@ -84,7 +86,9 @@ class AddTest extends TestCase {
 	public function testSecretEmpty() {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
-				if ($arg === 'server') {
+				if ($arg === 'schemes') {
+					return 'turn,turns';
+				} elseif ($arg === 'server') {
 					return 'turn.test.com';
 				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
@@ -112,7 +116,9 @@ class AddTest extends TestCase {
 	public function testGenerateSecret() {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
-				if ($arg === 'server') {
+				if ($arg === 'schemes') {
+					return 'turn,turns';
+				} elseif ($arg === 'server') {
 					return 'turn.test.com';
 				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
@@ -146,6 +152,7 @@ class AddTest extends TestCase {
 				$this->equalTo('turn_servers'),
 				$this->equalTo(json_encode([
 					[
+						'schemes' => 'turn,turns',
 						'server' => 'turn.test.com',
 						'secret' => 'my-generaeted-test-secret',
 						'protocols' => 'udp,tcp'
@@ -162,7 +169,9 @@ class AddTest extends TestCase {
 	public function testSecretAndGenerateSecretOptions() {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
-				if ($arg === 'server') {
+				if ($arg === 'schemes') {
+					return 'turn,turns';
+				} elseif ($arg === 'server') {
 					return 'turn.test.com';
 				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
@@ -187,10 +196,42 @@ class AddTest extends TestCase {
 		$this->invokePrivate($this->command, 'execute', [$this->input, $this->output]);
 	}
 
+	public function testInvalidSchemesString() {
+		$this->input->method('getArgument')
+			->willReturnCallback(function ($arg) {
+				if ($arg === 'schemes') {
+					return 'invalid-scheme';
+				} elseif ($arg === 'server') {
+					return 'turn.test.com';
+				} elseif ($arg === 'protocols') {
+					return 'udp,tcp';
+				}
+				throw new \Exception();
+			});
+		$this->input->method('getOption')
+			->willReturnCallback(function ($arg) {
+				if ($arg === 'secret') {
+					return 'my-test-secret';
+				} elseif ($arg === 'generate-secret') {
+					return false;
+				}
+				throw new \Exception();
+			});
+		$this->output->expects($this->once())
+			->method('writeln')
+			->with($this->equalTo('<error>Not allowed schemes, must be turn or turns or turn,turns.</error>'));
+		$this->config->expects($this->never())
+			->method('setAppValue');
+
+		$this->invokePrivate($this->command, 'execute', [$this->input, $this->output]);
+	}
+
 	public function testInvalidProtocolsString() {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
-				if ($arg === 'server') {
+				if ($arg === 'schemes') {
+					return 'turn,turns';
+				} elseif ($arg === 'server') {
 					return 'turn.test.com';
 				} elseif ($arg === 'protocols') {
 					return 'invalid-protocol';
@@ -218,7 +259,9 @@ class AddTest extends TestCase {
 	public function testAddServerToEmptyList() {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
-				if ($arg === 'server') {
+				if ($arg === 'schemes') {
+					return 'turn,turns';
+				} elseif ($arg === 'server') {
 					return 'turn.test.com';
 				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
@@ -244,6 +287,7 @@ class AddTest extends TestCase {
 				$this->equalTo('turn_servers'),
 				$this->equalTo(json_encode([
 					[
+						'schemes' => 'turn,turns',
 						'server' => 'turn.test.com',
 						'secret' => 'my-test-secret',
 						'protocols' => 'udp,tcp'
@@ -260,7 +304,9 @@ class AddTest extends TestCase {
 	public function testAddServerToNonEmptyList() {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
-				if ($arg === 'server') {
+				if ($arg === 'schemes') {
+					return 'turn,turns';
+				} elseif ($arg === 'server') {
 					return 'turn2.test.com';
 				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
@@ -297,6 +343,7 @@ class AddTest extends TestCase {
 						'protocols' => 'udp,tcp'
 					],
 					[
+						'schemes' => 'turn,turns',
 						'server' => 'turn2.test.com',
 						'secret' => 'my-test-secret-2',
 						'protocols' => 'udp,tcp'
@@ -313,7 +360,9 @@ class AddTest extends TestCase {
 	public function testServerSanitization() {
 		$this->input->method('getArgument')
 			->willReturnCallback(function ($arg) {
-				if ($arg === 'server') {
+				if ($arg === 'schemes') {
+					return 'turn,turns';
+				} elseif ($arg === 'server') {
 					return 'https://turn.test.com';
 				} elseif ($arg === 'protocols') {
 					return 'udp,tcp';
@@ -339,6 +388,7 @@ class AddTest extends TestCase {
 				$this->equalTo('turn_servers'),
 				$this->equalTo(json_encode([
 					[
+						'schemes' => 'turn,turns',
 						'server' => 'turn.test.com',
 						'secret' => 'my-test-secret',
 						'protocols' => 'udp,tcp'
