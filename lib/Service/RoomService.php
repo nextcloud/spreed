@@ -485,8 +485,10 @@ class RoomService {
 			return false;
 		}
 
-		$event = new ValidatePasswordPolicyEvent($password);
-		$this->dispatcher->dispatchTyped($event);
+		if ($password !== '') {
+			$event = new ValidatePasswordPolicyEvent($password);
+			$this->dispatcher->dispatchTyped($event);
+		}
 
 		$hash = $password !== '' ? $this->hasher->hash($password) : '';
 
