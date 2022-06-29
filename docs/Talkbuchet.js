@@ -20,11 +20,60 @@
  */
 
 /**
- * HOW TO SETUP:
+ * Talkbuchet is the helper tool for load/stress testing of Nextcloud Talk.
+ *
+ * Talkbuchet is a JavaScript script (Talkbuchet.js), and it is run using a web
+ * browser. A Python script (Talkbuchet-cli.py) is provided to launch a web
+ * browser, load Talkbuchet and control it from a command line interface (which
+ * requires Selenium and certain Python packages to be available in the system).
+ * A Bash script (Talkbuchet-run.sh) is provided to set up a Docker container
+ * with Selenium, a web browser and all the needed Python dependencies for
+ * Talkbuchet-cli.py.
+ *
+ * Please refer to the documentation in Talkbuchet-cli.py and Talkbuchet-run.sh
+ * for information on how to control Talkbuchet and easily run it.
+ *
+ * A High Performance Backend (HPB) server must be configured in Nextcloud Talk
+ * to use Talkbuchet.
+ *
+ * HOW TO SETUP (without using the CLI):
  * -----------------------------------------------------------------------------
  * - In the browser, log in the Nextcloud server (with the same user as in this
  *   script).
  * - Copy and paste the full script in the console of the browser.
+ *
+ *
+ *
+ * -----------------------------------------------------------------------------
+ * SIEGE MODE
+ * -----------------------------------------------------------------------------
+ *
+ * Siege mode is used for load testing of the Janus gateway running in the HPB
+ * server. In siege mode Talkbuchet creates M publishers and N subscribers for
+ * each publisher for a total of M+M*N connections with the Janus gateway.
+ * Therefore, it can be used to verify that the server will be able to withstand
+ * certain number of media connections (audio, video or both audio and video).
+ *
+ * In a real call every participant will subscribe to the publishers of the
+ * other participants. That is, for X participants, Y of them publishers, there
+ * will be (X-1)*Y subscribers. However, note that some participants may not be
+ * publishers, for example, if the do not have publishing permissions, or if
+ * they never had a microphone nor a camera selected (although they will be
+ * publishers if the microphone and camera are selected but disabled, or if the
+ * microphone or camera is no longer selected but was selected at some point
+ * during the call).
+ *
+ * For example, in a normal call between 10 participants there will be 10
+ * publishers and (10-1)*10=90 subscribers for a total of 100 connections.
+ * However, if only two participants have publishing permissions then there will
+ * be 2 publishers and (10-1)*2=18 subscribers for a total of 20 connections.
+ *
+ * To use the siege mode the signaling server of the HPB must be configured to
+ * allow subscribing any stream:
+ * https://github.com/strukturag/nextcloud-spreed-signaling/blob/a663dd43f90b0876630250012bb716136920fcd3/server.conf.in#L32-L35
+ *
+ * HOW TO RUN:
+ * -----------------------------------------------------------------------------
  * - Set the user and appToken (a user must be used; guests do not work;
  *   generate an apptoken at index.php/settings/user/security) by calling
  *   "setCredentials(user, appToken)" in the console.
@@ -36,9 +85,6 @@
  *   regular call with N participants you would have N publishers and N-1
  *   subscribers) by calling "setPublishersAndSubscribersCount(publishersCount,
  *   subscribersPerPublisherCount)" in the console.
- *
- * HOW TO RUN:
- * -----------------------------------------------------------------------------
  * - Once all the needed parameters are set execute "siege()" in the console.
  * - To run it again execute "siege()" again in the console; if any parameter
  *   needs to be changed it is recommended to first stop the previous siege by
@@ -124,11 +170,99 @@
  * connections each in order to simulate a 30 participants call you could run
  * the script with 3 publishers and 29 subscribers per publisher on 10 clients
  * at the same time.
+ *
+ *
+ *
+ * -----------------------------------------------------------------------------
+ * VIRTUAL PARTICIPANT MODE
+ * -----------------------------------------------------------------------------
+ *
+ * Virtual participant mode is used for load testing of clients. From the point
+ * of view of the clients in a call the virtual participants are real
+ * participants (they can be just listeners, but they can publish audio and/or
+ * video), so several virtual participants can be added to a call to verify if
+ * a client running on a specific system will be able to withstand certain
+ * number of participants in a call.
+ *
+ * The reason to use virtual participants instead of real participants is that
+ * virtual participants are either just in the call or publishing media, but
+ * they will not subscribe to any other participant (which does not affect the
+ * other clients, only the HPB server). Due to this they need much less
+ * resources than real participants and therefore the system launching the test
+ * would be able to add a much higher number of virtual participants than of
+ * real participants.
+ *
+ * However, note that each web browser session can execute a single virtual
+ * participant. Due to this it is recommended to use Talkbuchet CLI instead to
+ * easily start several web browser sessions, each one with its own virtual
+ * participant, and control the virtual participants from the CLI.
+ *
+ * HOW TO RUN:
+ * -----------------------------------------------------------------------------
+ * - Set the user and appToken (generate an apptoken at
+ *   index.php/settings/user/security) by calling
+ *   "setCredentials(user, appToken)" in the console. If credentials are not set
+ *   a guest user will be used instead.
+ * - Set the token of the conversation by calling "setToken(token)" in the
+ *   console.
+ * - Start the desired media by calling "startMedia(audio, video)" in the
+ *   console. If not called (or both parameters are false) no media will be
+ *   used.
+ * - Once all the needed parameters are set execute "startVirtualParticipant()"
+ *   in the console.
+ * - To run it again execute "stopVirtualParticipant()" and then
+ *   "startVirtualParticipant()" again in the console; if any parameter
+ *   needs to be changed do it before starting the virtual participant again.
+ *
+ * TRIGGERING ACTIONS BY THE VIRTUAL PARTICIPANT:
+ * -----------------------------------------------------------------------------
+ * In general, for load testing of clients it is enough to start the virtual
+ * participant and that is it. However, for development purposes it can be
+ * useful to simulate certain actions by the virtual participant.
+ *
+ * Currently all the actions are simulated through data channel messages; the
+ * equivalent signaling messages are not sent.
+ *
+ * The nick of the virtual participant can be set with:
+ * sendNickThroughDataChannel(NICK)
+ *
+ * Note that sending the nick is not limited to guests; even if the virtual
+ * participant is a registered user a nick can be sent. Moreover, clients may
+ * not show any name at all for the virtual participant of a registered user
+ * until a nick is sent, even if the user name is known by the client.
+ *
+ * If the virtual participant is a publisher the media can be enabled and
+ * disabled as described in the siege mode. However, that does not notify other
+ * participants in the call that the media state has changed. That can be done
+ * instead with:
+ * sendMediaEnabledStateThroughDataChannel(AUDIO_OR_VIDEO, TRUE_OR_FALSE)
+ *
+ * Similarly, when audio is enabled the message to notify other participants
+ * when the virtual participant started or stopped speaking can be sent with:
+ * sendSpeakingStateThroughDataChannel(TRUE_OR_FALSE)
+ *
+ * Note that the message is independent of the actual audio being sent; a
+ * "speaking" event can be sent when audio is silent, and a "stoppedSpeaking"
+ * event can be sent when audio is at full volume.
+ *
+ * DISCLAIMER:
+ * -----------------------------------------------------------------------------
+ * Like in siege mode, virtual participants mode does not take into account the
+ * optimizations performed by Talk during calls, like reducing the video
+ * quality based on the number of participants. This script is not meant to
+ * accurately simulate Talk behaviour, but to provide a tool to perform rough
+ * performance tests of specific call scenarios.
+ *
+ * Therefore, it should be kept in mind that in a real call with several video
+ * participants the performance is very likely to be better than with several
+ * virtual participants with video, as in that case the video quality will not
+ * be adjusted based on the number of participants. Nevertheless, this script
+ * could still be used to simulate a worst case scenario.
  */
 
-// Guest users do not currently work, as they must join the conversation to not
-// be kicked out from the signaling server. However, joining the conversation
-// a second time causes the first guest to be unregistered.
+// Sieges with guest users do not currently work, as they must join the
+// conversation to not be kicked out from the signaling server. However, joining
+// the conversation a second time causes the first guest to be unregistered.
 // Regular users do not need to join the conversation, so the same user can be
 // connected several times to the HPB.
 let user = ''
@@ -200,10 +334,13 @@ const conversationApiVersion = extractFeatureVersion('conversation')
 const talkOcsApiUrl = host + '/ocs/v2.php/apps/spreed/api/'
 const signalingSettingsUrl = talkOcsApiUrl + 'v' + signalingApiVersion + '/signaling/settings'
 const signalingBackendUrl = talkOcsApiUrl + 'v' + signalingApiVersion + '/signaling/backend'
-let joinRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
+let joinLeaveRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
+let joinLeaveCallUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/call/' + token
 
 const publishers = []
 const subscribers = []
+
+let virtualParticipant
 
 let stream
 
@@ -246,6 +383,9 @@ class Signaling extends EventTarget {
 			resolveSessionId = resolve
 		})
 
+		this.messageId = 1
+		this.resolveMessageId = []
+
 		const signalingUrl = this.sanitizeSignalingUrl(signalingSettings.server)
 
 		this.socket = new WebSocket(signalingUrl)
@@ -254,6 +394,11 @@ class Signaling extends EventTarget {
 		}
 		this.socket.onmessage = event => {
 			const data = JSON.parse(event.data)
+
+			if (data.id && this.resolveMessageId[data.id]) {
+				this.resolveMessageId[data.id]()
+				delete this.resolveMessageId[data.id]
+			}
 
 			this.dispatchEvent(new CustomEvent(data.type, { detail: data[data.type] }))
 		}
@@ -267,19 +412,16 @@ class Signaling extends EventTarget {
 
 			this.sessionId = sessionId
 			resolveSessionId(sessionId)
-
-			if (!user) {
-				// If the current user is a guest the room needs to be joined,
-				// as guests are kicked out if they just open a session in the
-				// signaling server.
-				this.joinRoom()
-			}
 		})
 
 		this.addEventListener('error', event => {
 			const error = event.detail
 
 			console.warn(error)
+
+			if (error.code === 'not_allowed') {
+				console.info('Is "allowsubscribeany = true" set in the signaling server configuration?')
+			}
 		})
 	}
 
@@ -309,6 +451,15 @@ class Signaling extends EventTarget {
 
 	send(message) {
 		this.socket.send(JSON.stringify(message))
+	}
+
+	async sendAndWaitForResponse(message) {
+		return new Promise((resolve, reject) => {
+			message.id = String(this.messageId++)
+			this.resolveMessageId[message.id] = resolve
+
+			this.send(message)
+		})
 	}
 
 	sendHello() {
@@ -365,15 +516,77 @@ class Signaling extends EventTarget {
 			method: 'POST',
 		}
 
-		const joinRoomResponse = await fetch(joinRoomUrl, fetchOptions)
+		if (user) {
+			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
+		}
+
+		const joinRoomResponse = await fetch(joinLeaveRoomUrl, fetchOptions)
 		const joinRoomResult = await joinRoomResponse.json()
 		const nextcloudSessionId = joinRoomResult.ocs.data.sessionId
 
-        this.send({
+        await this.sendAndWaitForResponse({
 			'type': 'room',
 			'room': {
 				'roomid': token,
 				'sessionid': nextcloudSessionId,
+			},
+		})
+	}
+
+	async joinCall(flags) {
+		const fetchOptions = {
+			headers: {
+				'OCS-ApiRequest': true,
+				'Accept': 'json',
+			},
+			method: 'POST',
+			body: new URLSearchParams({
+				flags,
+			}),
+		}
+
+		if (user) {
+			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
+		}
+
+		await fetch(joinLeaveCallUrl, fetchOptions)
+	}
+
+	async leaveCall() {
+		const fetchOptions = {
+			headers: {
+				'OCS-ApiRequest': true,
+				'Accept': 'json',
+			},
+			method: 'DELETE',
+		}
+
+		if (user) {
+			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
+		}
+
+		await fetch(joinLeaveCallUrl, fetchOptions)
+	}
+
+	async leaveRoom() {
+		const fetchOptions = {
+			headers: {
+				'OCS-ApiRequest': true,
+				'Accept': 'json',
+			},
+			method: 'DELETE',
+		}
+
+		if (user) {
+			fetchOptions.headers['Authorization'] = 'Basic ' + btoa(user + ':' + appToken)
+		}
+
+		await fetch(joinLeaveRoomUrl, fetchOptions)
+
+        this.send({
+			'type': 'room',
+			'room': {
+				'roomid': '',
 			},
 		})
 	}
@@ -431,13 +644,11 @@ class Peer {
 			}
 		})
 
-		const connectionTimeout = 5
-
 		setTimeout(() => {
 			if (!this.connected) {
-				this.connectedPromiseReject('Peer has not connected in ' + connectionTimeout + ' seconds')
+				this.connectedPromiseReject('Peer has not connected in ' + connectionWarningTimeout + ' seconds')
 			}
-		}, connectionTimeout * 1000)
+		}, connectionWarningTimeout)
 
 		return this.connectedPromise
 	}
@@ -574,6 +785,10 @@ async function initPublishers() {
 
 		try {
 			await publisher.connect()
+
+			if ((i + 1) % 5 === 0 && (i + 1) < publishersCount) {
+				console.info('Publisher started (' + (i + 1) + '/' + publishersCount + ')')
+			}
 		} catch (exception) {
 			console.warn('Publisher ' + i + ' error: ' + exception)
 		}
@@ -636,6 +851,10 @@ async function initSubscribers() {
 	for (let i = 0; i < subscribers.length; i++) {
 		try {
 			await subscribers[i].connect()
+
+			if ((i + 1) % 5 === 0 && (i + 1) < subscribers.length) {
+				console.info('Subscriber started (' + (i + 1) + '/' + subscribers.length + ')')
+			}
 		} catch (exception) {
 			console.warn('Subscriber ' + i + ' error: ' + exception)
 		}
@@ -644,6 +863,16 @@ async function initSubscribers() {
 	console.info('Subscribers started the siege')
 
 	listenToSubscriberConnectionChanges()
+}
+
+// Expose publishers to CLI.
+const getPublishers = function() {
+	return publishers
+}
+
+// Expose subscribers to CLI.
+const getSubscribers = function() {
+	return subscribers
 }
 
 const closeConnections = function() {
@@ -668,7 +897,7 @@ const closeConnections = function() {
 }
 
 const setAudioEnabled = function(enabled) {
-	if (!stream.getAudioTracks().length) {
+	if (!stream || !stream.getAudioTracks().length) {
 		console.error('Audio was not initialized')
 
 		return
@@ -679,7 +908,7 @@ const setAudioEnabled = function(enabled) {
 }
 
 const setVideoEnabled = function(enabled) {
-	if (!stream.getVideoTracks().length) {
+	if (!stream || !stream.getVideoTracks().length) {
 		console.error('Video was not initialized')
 
 		return
@@ -690,7 +919,7 @@ const setVideoEnabled = function(enabled) {
 }
 
 const setSentAudioStreamEnabled = function(enabled) {
-	if (!stream.getAudioTracks().length) {
+	if (!stream || !stream.getAudioTracks().length) {
 		console.error('Audio was not initialized')
 
 		return
@@ -709,7 +938,7 @@ const setSentAudioStreamEnabled = function(enabled) {
 }
 
 const setSentVideoStreamEnabled = function(enabled) {
-	if (!stream.getVideoTracks().length) {
+	if (!stream || !stream.getVideoTracks().length) {
 		console.error('Video was not initialized')
 
 		return
@@ -735,8 +964,10 @@ const setSentVideoStreamEnabled = function(enabled) {
 const checkPublishersConnections = function() {
 	const iceConnectionStateCount = {}
 
-	Object.values(publishers).forEach(publisher => {
-		console.info(publisher.peerConnection.iceConnectionState)
+	Object.keys(publishers).forEach(publisherSessionId => {
+		publisher = publishers[publisherSessionId]
+
+		console.info(publisherSessionId + ': ' + publisher.peerConnection.iceConnectionState)
 
 		if (iceConnectionStateCount[publisher.peerConnection.iceConnectionState] === undefined) {
 			iceConnectionStateCount[publisher.peerConnection.iceConnectionState] = 1
@@ -755,8 +986,11 @@ const checkPublishersConnections = function() {
 const checkSubscribersConnections = function() {
 	const iceConnectionStateCount = {}
 
+	i = 0
+
 	subscribers.forEach(subscriber => {
-		console.info(subscriber.peerConnection.iceConnectionState)
+		console.info(i + ': ' + subscriber.peerConnection.iceConnectionState)
+		i++
 
 		if (iceConnectionStateCount[subscriber.peerConnection.iceConnectionState] === undefined) {
 			iceConnectionStateCount[subscriber.peerConnection.iceConnectionState] = 1
@@ -772,6 +1006,42 @@ const checkSubscribersConnections = function() {
 	console.info('  - Failed: ' + (iceConnectionStateCount['failed'] ?? 0))
 }
 
+const printPublisherStats = async function(publisherSessionId, stringify = false) {
+	if (!(publisherSessionId in publishers)) {
+		console.error('Invalid publisher session ID')
+
+		return
+	}
+
+	stats = await publishers[publisherSessionId].peerConnection.getStats()
+
+	for (stat of stats.values()) {
+		if (stringify) {
+			console.info(JSON.stringify(stat))
+		} else {
+			console.info(stat)
+		}
+	}
+}
+
+const printSubscriberStats = async function(index, stringify = false) {
+	if (!(index in subscribers)) {
+		console.error('Index out of range')
+
+		return
+	}
+
+	stats = await subscribers[index].peerConnection.getStats()
+
+	for (stat of stats.values()) {
+		if (stringify) {
+			console.info(JSON.stringify(stat))
+		} else {
+			console.info(stat)
+		}
+	}
+}
+
 const setCredentials = function(userToSet, appTokenToSet) {
 	user = userToSet
 	appToken = appTokenToSet
@@ -780,7 +1050,8 @@ const setCredentials = function(userToSet, appTokenToSet) {
 const setToken = function(tokenToSet) {
 	token = tokenToSet
 
-	joinRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
+	joinLeaveRoomUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/room/' + token + '/participants/active'
+	joinLeaveCallUrl = talkOcsApiUrl + 'v' + conversationApiVersion + '/call/' + token
 }
 
 const setPublishersAndSubscribersCount = function(publishersCountToSet, subscribersPerPublisherCountToSet) {
@@ -793,6 +1064,8 @@ const startMedia = async function(audio, video) {
 		stream.getTracks().forEach(track => {
 			track.stop()
 		})
+
+		stream = null
 	}
 
 	if (audio !== undefined) {
@@ -826,4 +1099,160 @@ const siege = async function() {
 
 	await initPublishers()
 	await initSubscribers()
+}
+
+// Expose virtual participant to CLI.
+const getVirtualParticipant = function() {
+	return virtualParticipant
+}
+
+const startVirtualParticipant = async function() {
+	if (!token) {
+		console.error('Conversation token is not set')
+
+		return
+	}
+
+	const signalingSettings = await getSignalingSettings(user, appToken, token)
+	let signaling = null
+	try {
+		signaling = new Signaling(user, signalingSettings)
+	} catch (exception) {
+		console.error('Virtual participant init error: ' + exception)
+		return
+	}
+
+	let flags = 1
+
+	let publisherSessionId
+	let publisher
+
+	if (stream) {
+		[publisherSessionId, publisher] = await newPublisher(signalingSettings, signaling, stream)
+
+		if (stream.getAudioTracks().length > 0) {
+			flags |= 2
+		}
+
+		if (stream.getVideoTracks().length > 0) {
+			flags |= 4
+		}
+	} else {
+		await signaling.getSessionId()
+	}
+
+	await signaling.joinRoom()
+	await signaling.joinCall(flags)
+
+	virtualParticipant = {
+		signaling
+	}
+
+	if (stream) {
+		try {
+			// Data channels are expected to be available for call participants.
+			virtualParticipant.dataChannel = publisher.peerConnection.createDataChannel('status')
+
+			await publisher.connect()
+
+			publishers[publisherSessionId] = publisher
+			virtualParticipant.publisherSessionId = publisherSessionId
+		} catch (exception) {
+			console.warn('Virtual participant publisher error: ' + exception)
+		}
+	}
+}
+
+const stopVirtualParticipant = async function() {
+	if (!virtualParticipant) {
+		return
+	}
+
+	if (virtualParticipant.publisherSessionId) {
+		publishers[virtualParticipant.publisherSessionId].peerConnection.close()
+		delete publishers[virtualParticipant.publisherSessionId]
+	}
+
+	await virtualParticipant.signaling.leaveCall()
+	virtualParticipant.signaling.leaveRoom()
+
+	virtualParticipant = null
+}
+
+function isVirtualParticipantAndDataChannelAvailable() {
+	if (!virtualParticipant) {
+		console.error('Virtual participant not started')
+
+		return false
+	}
+
+	if (!virtualParticipant.dataChannel) {
+		console.error('Data channel not open for virtual participant (was media enabled when virtual participant was started?)')
+
+		return false
+	}
+
+	return true
+}
+
+const sendMediaEnabledStateThroughDataChannel = function(mediaType, enabled) {
+	if (!isVirtualParticipantAndDataChannelAvailable()) {
+		return
+	}
+
+	let messageType
+	if (mediaType === 'audio' && enabled) {
+		messageType = 'audioOn'
+	} else if (mediaType === 'audio' && !enabled) {
+		messageType = 'audioOff'
+	} else if (mediaType === 'video' && enabled) {
+		messageType = 'videoOn'
+	} else if (mediaType === 'video' && !enabled) {
+		messageType = 'videoOff'
+	} else {
+		console.error('Wrong parameters, expected "audio" or "video" and a boolean: ', mediaType, enabled)
+
+		return
+	}
+
+	virtualParticipant.dataChannel.send(JSON.stringify({
+		type: messageType
+	}))
+}
+
+const sendSpeakingStateThroughDataChannel = function(speaking) {
+	if (!isVirtualParticipantAndDataChannelAvailable()) {
+		return
+	}
+
+	let messageType
+	if (speaking) {
+		messageType = 'speaking'
+	} else {
+		messageType = 'stoppedSpeaking'
+	}
+
+	virtualParticipant.dataChannel.send(JSON.stringify({
+		type: messageType
+	}))
+}
+
+const sendNickThroughDataChannel = function(nick) {
+	if (!isVirtualParticipantAndDataChannelAvailable()) {
+		return
+	}
+
+	if (!virtualParticipant.signaling.user) {
+		payload = nick
+	} else {
+		payload = {
+			name: nick,
+			userid: virtualParticipant.signaling.user,
+		}
+	}
+
+	virtualParticipant.dataChannel.send(JSON.stringify({
+		type: 'nickChanged',
+		payload,
+	}))
 }
