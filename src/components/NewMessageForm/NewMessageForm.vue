@@ -111,7 +111,7 @@
 						<!-- Silent send -->
 						<ActionButton :close-after-click="true"
 							icon="icon-upload"
-							:title="t('spreed', 'Send silently')"
+							:title="t('spreed', 'Send without notification')"
 							@click.prevent="handleSubmit({ silent: true })">
 							{{ silentSendInfo }}
 							<BellOff slot="icon"
@@ -124,6 +124,7 @@
 					<Button :disabled="disabled"
 						type="tertiary"
 						native-type="submit"
+						:title="t('spreed', 'Send message')"
 						:aria-label="t('spreed', 'Send message')"
 						@click.prevent="handleSubmit({ silent: false })">
 						<Send title=""
