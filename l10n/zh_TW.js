@@ -401,6 +401,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "密碼錯誤，請重試",
     "Android app" : "安卓應用",
     "iOS app" : "蘋果應用",
+    "Microphone" : "麥克風",
     "Camera" : "相機"
 },
 "nplurals=1; plural=0;");
