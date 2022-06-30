@@ -976,6 +976,7 @@ OC.L10N.register(
     "Upload new files" : "Nahrať nové súbory",
     "Share from Files" : "Zdieľať zo Súborov",
     "Add emoji" : "Pridať emodži",
+    "Send without notification" : "Poslať bez upozornenia",
     "Send message" : "Odoslať správu",
     "File to share" : "Súbor na zdieľanie",
     "This conversation has been locked" : "Rozhovor bol zamknutý",

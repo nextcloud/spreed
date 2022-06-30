@@ -977,7 +977,7 @@ OC.L10N.register(
     "Upload new files" : "Отправить файлы",
     "Share from Files" : "Опубликовать из приложения Файлы",
     "Add emoji" : "Добавить эмодзи",
-    "Send silently" : "Отправить без звука",
+    "Send without notification" : "Отправить без уведомления",
     "Send message" : "Отправить сообщение",
     "File to share" : "Поделиться файлом",
     "This conversation has been locked" : "Это обсуждение заблокировано",
