@@ -1406,11 +1406,11 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		} catch (InvalidPasswordException $e) {
 			$response = new DataResponse([], Http::STATUS_FORBIDDEN);
-			$response->throttle();
+			$response->throttle(['token' => $token]);
 			return $response;
 		} catch (UnauthorizedException $e) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
-			$response->throttle();
+			$response->throttle(['token' => $token]);
 			return $response;
 		}
 
