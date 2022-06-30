@@ -1001,7 +1001,7 @@ OC.L10N.register(
     "Upload new files" : "Neue Dateien hochladen",
     "Share from Files" : "Aus Dateien heraus teilen",
     "Add emoji" : "Emoji hinzufügen",
-    "Send silently" : "Stumm senden",
+    "Send without notification" : "Benötigt keine Übersetzung. Für Android wird nur die formelle Übersetzung verwendet (de_DE).",
     "Send message" : "Nachricht senden",
     "File to share" : "Zu teilende Datei",
     "This conversation has been locked" : "Diese Unterhaltung wurde gesperrt",

@@ -1001,7 +1001,7 @@ OC.L10N.register(
     "Upload new files" : "Kargatu fitxategi berriak",
     "Share from Files" : "Partekatu Fitxategiak-etik",
     "Add emoji" : "Gehitu emojia",
-    "Send silently" : "Isilik bidali",
+    "Send without notification" : "Bidali jakinarazpenik gabe",
     "Send message" : "Bidali mezua",
     "File to share" : "Partekatuko den fitxategia",
     "This conversation has been locked" : "Elkarrizketa hau blokeatu da",

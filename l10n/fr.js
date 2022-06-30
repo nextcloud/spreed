@@ -989,7 +989,7 @@ OC.L10N.register(
     "Upload new files" : "Envoyer de nouveaux fichiers",
     "Share from Files" : "Partager vos fichiers déjà stockés",
     "Add emoji" : "Ajouter un emoji",
-    "Send silently" : "Envoyer en silence",
+    "Send without notification" : "Envoyer sans notification",
     "Send message" : "Envoyer un message",
     "File to share" : "Fichier à partager",
     "This conversation has been locked" : "Cette conversation a été verrouillée",

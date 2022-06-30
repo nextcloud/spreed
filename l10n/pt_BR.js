@@ -1001,7 +1001,7 @@ OC.L10N.register(
     "Upload new files" : "Enviar novos arquivos",
     "Share from Files" : "Compartilhar de Arquivos",
     "Add emoji" : "Adicionar emoji",
-    "Send silently" : "Enviar silenciosamente",
+    "Send without notification" : "Enviar sem notificação",
     "Send message" : "Enviar mensagem",
     "File to share" : "Arquivo a compartilhar",
     "This conversation has been locked" : "Esta conversa está bloqueada",
