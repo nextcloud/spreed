@@ -462,7 +462,7 @@ class BackendNotifierTest extends TestCase {
 
 	public function testRoomPasswordChanged() {
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
-		$room->setPassword('password');
+		$this->roomService->setPassword($room, 'password');
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'update',

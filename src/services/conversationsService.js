@@ -390,6 +390,12 @@ const setCallPermissions = async (token, permissions) => {
 		})
 }
 
+const validatePassword = async (password) => {
+	return await axios.post(generateOcsUrl('apps/password_policy/api/v1/validate'), {
+		password,
+	})
+}
+
 export {
 	fetchConversations,
 	fetchConversation,
@@ -416,4 +422,5 @@ export {
 	clearConversationHistory,
 	setConversationPermissions,
 	setCallPermissions,
+	validatePassword,
 }
