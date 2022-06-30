@@ -997,7 +997,7 @@ OC.L10N.register(
     "Upload new files" : "新規ファイルをアップロード",
     "Share from Files" : "ファイルから共有",
     "Add emoji" : "絵文字を追加する",
-    "Send silently" : "サイレント送信",
+    "Send without notification" : "通知なしで送信",
     "Send message" : "メッセージを送信",
     "File to share" : "共有するファイル",
     "This conversation has been locked" : "会話はロックされています",

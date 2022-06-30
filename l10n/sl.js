@@ -948,7 +948,6 @@ OC.L10N.register(
     "Upload new files" : "Pošlji nove datoteke",
     "Share from Files" : "Poveži iz oblaka",
     "Add emoji" : "Vstavi izrazno ikono",
-    "Send silently" : "Tiho pošiljanje",
     "Send message" : "Pošlji sporočilo",
     "File to share" : "Datoteka za souporabo",
     "This conversation has been locked" : "Ta pogovor je zaklenjen",

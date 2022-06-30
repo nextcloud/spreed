@@ -769,6 +769,7 @@ OC.L10N.register(
     "Share files to the conversation" : "Jaa tiedostoja keskusteluun",
     "Upload new files" : "Lähetä uusia tiedostoja",
     "Add emoji" : "Lisää emoji",
+    "Send without notification" : "Lähetä ilman ilmoitusta",
     "Send message" : "Lähetä viesti",
     "File to share" : "Jaettava tiedosto",
     "This conversation has been locked" : "Tämä keskustelu on lukittu",
