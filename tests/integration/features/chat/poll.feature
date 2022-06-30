@@ -33,7 +33,7 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
-      | votes      | {"1":1}   |
+      | votes      | {"option-1":1}   |
       | numVoters  | 1 |
       | resultMode | public |
       | maxVotes   | unlimited |
@@ -46,7 +46,7 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
-      | votes      | {"1":1}   |
+      | votes      | {"option-1":1}   |
       | numVoters  | 1 |
       | resultMode | public |
       | maxVotes   | unlimited |
@@ -72,7 +72,7 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
-      | votes      | {"1":1}   |
+      | votes      | {"option-1":1}   |
       | numVoters  | 1    |
       | resultMode | public |
       | maxVotes   | unlimited |
@@ -86,7 +86,7 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
-      | votes      | {"1":1}   |
+      | votes      | {"option-1":1}   |
       | numVoters  | 1 |
       | resultMode | public |
       | maxVotes   | unlimited |
@@ -110,7 +110,7 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
-      | votes      | {"0":1}   |
+      | votes      | {"option-0":1}   |
       | numVoters  | 1    |
       | resultMode | public |
       | maxVotes   | unlimited |
@@ -123,7 +123,7 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
-      | votes      | {"1":1}   |
+      | votes      | {"option-1":1}   |
       | numVoters  | 1    |
       | resultMode | public |
       | maxVotes   | unlimited |
@@ -136,7 +136,7 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
-      | votes      | {"1":1}   |
+      | votes      | {"option-1":1}   |
       | numVoters  | 1    |
       | resultMode | public |
       | maxVotes   | unlimited |
@@ -184,7 +184,7 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
-      | votes      | {"0":1,"1":1} |
+      | votes      | {"option-0":1,"option-1":1} |
       | numVoters  | 1    |
       | resultMode | public |
       | maxVotes   | unlimited |
@@ -285,7 +285,7 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
-      | votes      | {"0":1} |
+      | votes      | {"option-0":1} |
       | numVoters  | 1 |
       | resultMode | public |
       | maxVotes   | unlimited |
@@ -298,7 +298,7 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
-      | votes      | {"0":1,"1":1} |
+      | votes      | {"option-0":1,"option-1":1} |
       | numVoters  | 2 |
       | resultMode | public |
       | maxVotes   | unlimited |
@@ -311,7 +311,7 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
-      | votes      | {"0":1,"1":1} |
+      | votes      | {"option-0":1,"option-1":1} |
       | numVoters  | 2 |
       | resultMode | public |
       | maxVotes   | unlimited |
@@ -373,7 +373,7 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
-      | votes      | {"0":1,"1":1} |
+      | votes      | {"option-0":1,"option-1":1} |
       | numVoters  | 2 |
       | resultMode | hidden |
       | maxVotes   | unlimited |
@@ -459,7 +459,7 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
-      | votes      | {"1":1}   |
+      | votes      | {"option-1":1}   |
       | numVoters  | 1 |
       | resultMode | hidden |
       | maxVotes   | unlimited |
@@ -483,7 +483,7 @@ Feature: chat/poll
       | id         | POLL_ID(What is the question?) |
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
-      | votes      | {"0":1} |
+      | votes      | {"option-0":1} |
       | numVoters  | 1 |
       | resultMode | public |
       | maxVotes   | unlimited |
@@ -501,7 +501,7 @@ Feature: chat/poll
       | id         | POLL_ID(Another one ...) |
       | question   | Another one ... |
       | options    | ["... bites the dust!","... bites de_dust!"] |
-      | votes      | {"1":1} |
+      | votes      | {"option-1":1} |
       | numVoters  | 1 |
       | resultMode | public |
       | maxVotes   | unlimited |
@@ -514,7 +514,7 @@ Feature: chat/poll
       | id         | POLL_ID(Another one ...) |
       | question   | Another one ... |
       | options    | ["... bites the dust!","... bites de_dust!"] |
-      | votes      | {"1":1} |
+      | votes      | {"option-1":1} |
       | numVoters  | 1 |
       | resultMode | public |
       | maxVotes   | unlimited |
