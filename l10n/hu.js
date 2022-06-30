@@ -1001,7 +1001,7 @@ OC.L10N.register(
     "Upload new files" : "Új fájlok feltöltése",
     "Share from Files" : "Megosztás a Fájlokból",
     "Add emoji" : "Emodzsi hozzáadása",
-    "Send silently" : "Küldés némán",
+    "Send without notification" : "Küldés értesítés nélkül",
     "Send message" : "Üzenet küldése",
     "File to share" : "Fájl megosztása",
     "This conversation has been locked" : "A beszélgetés zárolva van",
