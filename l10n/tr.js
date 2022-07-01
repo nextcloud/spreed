@@ -1001,7 +1001,7 @@ OC.L10N.register(
     "Upload new files" : "Yeni dosyaları yükle",
     "Share from Files" : "Dosyalardan paylaş",
     "Add emoji" : "Emoji ekle",
-    "Send without notification" : "Bildirim olmadan gönderildi",
+    "Send without notification" : "Bildirim olmadan gönder",
     "Send message" : "İleti gönder",
     "File to share" : "Paylaşılacak dosya",
     "This conversation has been locked" : "Bu görüşme kilitlenmiş",
