@@ -26,16 +26,25 @@ declare(strict_types=1);
 namespace OCA\Talk\BackgroundJob;
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Manager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
+use OCP\BackgroundJob\IJobList;
 use OCP\BackgroundJob\TimedJob;
 
 class ExpireChatMessages extends TimedJob {
+	private IJobList $jobList;
+	private Manager $roomManager;
 	private ChatManager $chatManager;
 
 	public function __construct(ITimeFactory $timeFactory,
+								IJobList $jobList,
+								Manager $roomManager,
 								ChatManager $chatManager) {
 		parent::__construct($timeFactory);
+		$this->jobList = $jobList;
+		$this->roomManager = $roomManager;
 		$this->chatManager = $chatManager;
 
 		// Every 5 minutes
@@ -48,5 +57,15 @@ class ExpireChatMessages extends TimedJob {
 	 */
 	protected function run($argument): void {
 		$this->chatManager->deleteExpiredMessages($argument['room_id']);
+
+		try {
+			$room = $this->roomManager->getRoomById($argument['room_id']);
+			if ($room->getMessageExpiration() === 0) {
+				// FIXME check if there are still messages to expire in the database
+				$this->jobList->remove(ExpireChatMessages::class, $argument);
+			}
+		} catch (RoomNotFoundException $e) {
+			$this->jobList->remove(ExpireChatMessages::class, $argument);
+		}
 	}
 }
