@@ -467,7 +467,7 @@ class RoomController extends AEnvironmentAwareController {
 			'defaultPermissions' => $room->getDefaultPermissions(),
 			'description' => $room->getDescription(),
 			'listable' => $room->getListable(),
-			'messageExpiration' => $this->roomService->getMessageExpiration($room),
+			'messageExpiration' => $room->getMessageExpiration(),
 		]);
 
 		if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {

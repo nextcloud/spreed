@@ -571,8 +571,4 @@ class RoomService {
 			false
 		);
 	}
-
-	public function getMessageExpiration(Room $room): int {
-		return $room->getMessageExpiration();
-	}
 }
