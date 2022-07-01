@@ -164,6 +164,7 @@ class PageController extends Controller {
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 * @UseSession
+	 * @BruteForceProtection(action=talkRoom)
 	 *
 	 * @param string $token
 	 * @param string $callUser
