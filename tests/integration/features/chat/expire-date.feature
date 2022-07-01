@@ -1,4 +1,4 @@
-Feature: room/expire_date
+Feature: room/expire-date
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
