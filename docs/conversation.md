@@ -7,6 +7,12 @@
 
 ## Get user´s conversations
 
+!!! note
+
+    Due to the structure of the `lastMessage.reactions` array the response is not valid in XML.
+    It is therefor recommended to use `format=json` or send the `Content-Type: application/json` header,
+    to receive a JSON response.
+
 * Method: `GET`
 * Endpoint: `/room`
 * Data:
