@@ -25,6 +25,7 @@ namespace OCA\Talk\Tests\php\Service;
 
 use InvalidArgumentException;
 use OC\EventDispatcher\EventDispatcher;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -35,6 +36,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJobList;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
 use OCP\IUser;
@@ -60,23 +62,30 @@ class RoomServiceTest extends TestCase {
 	/** @var IEventDispatcher|MockObject */
 	protected $dispatcher;
 	private ?RoomService $service = null;
-
+	/** @var IJobList|MockObject */
+	private IJobList $jobList;
 
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->manager = $this->createMock(Manager::class);
+		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->shareManager = $this->createMock(IShareManager::class);
 		$this->hasher = $this->createMock(IHasher::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
+		$this->jobList = $this->createMock(IJobList::class);
 		$this->service = new RoomService(
 			$this->manager,
+			$this->chatManager,
 			$this->participantService,
 			\OC::$server->get(IDBConnection::class),
+			$this->timeFactory,
 			$this->shareManager,
 			$this->hasher,
-			$this->dispatcher
+			$this->dispatcher,
+			$this->jobList
 		);
 	}
 
@@ -335,11 +344,14 @@ class RoomServiceTest extends TestCase {
 
 		$service = new RoomService(
 			$this->manager,
+			$this->chatManager,
 			$this->participantService,
 			\OC::$server->get(IDBConnection::class),
+			$this->timeFactory,
 			$this->shareManager,
 			$this->hasher,
-			$dispatcher
+			$dispatcher,
+			$this->jobList
 		);
 
 		$room = new Room(
@@ -352,6 +364,7 @@ class RoomServiceTest extends TestCase {
 			Room::TYPE_PUBLIC,
 			Room::READ_WRITE,
 			Room::LISTABLE_NONE,
+			0,
 			Webinary::LOBBY_NONE,
 			0,
 			null,

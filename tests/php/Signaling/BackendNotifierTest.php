@@ -23,6 +23,7 @@
 namespace OCA\Talk\Tests\php\Signaling;
 
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
@@ -39,6 +40,7 @@ use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJobList;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
 use OCP\IGroupManager;
@@ -87,6 +89,8 @@ class BackendNotifierTest extends TestCase {
 	/** @var IURLGenerator|MockObject */
 	private $urlGenerator;
 	private ?\OCA\Talk\Tests\php\Signaling\CustomBackendNotifier $controller = null;
+	/** @var null|ChatManager|MockObject */
+	private ?ChatManager $chatManager = null;
 
 	private ?Manager $manager = null;
 	private ?RoomService $roomService = null;
@@ -98,6 +102,8 @@ class BackendNotifierTest extends TestCase {
 	protected Application $app;
 	protected BackendNotifier $originalBackendNotifier;
 	private ?IEventDispatcher $dispatcher = null;
+	/** @var IJobList|MockObject */
+	private IJobList $jobList;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -150,14 +156,19 @@ class BackendNotifierTest extends TestCase {
 			$this->createMock(IHasher::class),
 			$this->createMock(IL10N::class)
 		);
+		$this->chatManager = $this->createMock(ChatManager::class);
+		$this->jobList = $this->createMock(IJobList::class);
 
 		$this->roomService = new RoomService(
 			$this->manager,
+			$this->chatManager,
 			$this->participantService,
 			$dbConnection,
+			$this->timeFactory,
 			$this->createMock(IManager::class),
 			$this->createMock(IHasher::class),
-			$this->dispatcher
+			$this->dispatcher,
+			$this->jobList
 		);
 	}
 

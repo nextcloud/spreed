@@ -339,6 +339,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['unreadMentionDirect'])) {
 				$data['unreadMentionDirect'] = (int) $room['unreadMentionDirect'];
 			}
+			if (isset($expectedRoom['messageExpiration'])) {
+				$data['messageExpiration'] = (int) $room['messageExpiration'];
+			}
 			if (isset($expectedRoom['participants'])) {
 				throw new \Exception('participants key needs to be checked via participants endpoint');
 			}
@@ -2565,6 +2568,38 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return $list;
 		}, array_keys($result), array_values($result));
 		Assert::assertCount(count($expected), $result, 'Reaction count does not match');
+	}
+
+	/**
+	 * @Given user :user set the message expiration to :messageExpiration of room :identifier with :statusCode (:apiVersion)
+	 */
+	public function userSetTheMessageExpirationToXWithStatusCode(string $user, int $messageExpiration, string $identifier, int $statusCode, string $apiVersion = 'v4'): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/' .  $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/message-expiration', [
+			'seconds' => $messageExpiration,
+		]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When wait for :seconds seconds
+	 */
+	public function waitForXSeconds($seconds): void {
+		sleep($seconds);
+	}
+
+	/**
+	 * @When apply message expiration job to room :identifier
+	 */
+	public function applyMessageExpirationJobToRoom($identifier): void {
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('GET', '/apps/spreedcheats/get_message_expiration_job/' . self::$identifierToToken[$identifier]);
+		$response = $this->getDataFromResponse($this->response);
+		Assert::assertIsArray($response, 'Room ' . $identifier . 'not found');
+		Assert::assertArrayHasKey('id', $response, 'Job not found by identifier "' . $identifier . '"');
+		$this->runOcc(['background-job:execute', $response['id']]);
+		$this->setCurrentUser($currentUser);
 	}
 
 	/*

@@ -134,6 +134,10 @@ class Capabilities implements IPublicCapability {
 			'version' => $this->appManager->getAppVersion('spreed'),
 		];
 
+		if ($this->serverConfig->getAppValue('core', 'backgroundjobs_mode', 'ajax') === 'cron') {
+			$capabilities['features'][] = 'message-expiration';
+		}
+
 		if ($this->commentsManager->supportReactions()) {
 			$capabilities['features'][] = 'reactions';
 		}

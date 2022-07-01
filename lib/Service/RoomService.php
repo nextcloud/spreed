@@ -24,6 +24,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OCA\Talk\BackgroundJob\ExpireChatMessages;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
@@ -33,6 +35,8 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJobList;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\HintException;
@@ -44,24 +48,33 @@ use OCP\Share\IManager as IShareManager;
 
 class RoomService {
 	protected Manager $manager;
+	protected ChatManager $chatManager;
 	protected ParticipantService $participantService;
 	protected IDBConnection $db;
+	protected ITimeFactory $timeFactory;
 	protected IShareManager $shareManager;
 	protected IHasher $hasher;
 	protected IEventDispatcher $dispatcher;
+	protected IJobList $jobList;
 
 	public function __construct(Manager $manager,
+								ChatManager $chatManager,
 								ParticipantService $participantService,
 								IDBConnection $db,
+								ITimeFactory $timeFactory,
 								IShareManager $shareManager,
 								IHasher $hasher,
-								IEventDispatcher $dispatcher) {
+								IEventDispatcher $dispatcher,
+								IJobList $jobList) {
 		$this->manager = $manager;
+		$this->chatManager = $chatManager;
 		$this->participantService = $participantService;
 		$this->db = $db;
+		$this->timeFactory = $timeFactory;
 		$this->shareManager = $shareManager;
 		$this->hasher = $hasher;
 		$this->dispatcher = $dispatcher;
+		$this->jobList = $jobList;
 	}
 
 	/**
@@ -523,5 +536,39 @@ class RoomService {
 			'result' => !$room->hasPassword() || $this->hasher->verify($password, $room->getPassword()),
 			'url' => '',
 		];
+	}
+
+	public function setMessageExpiration(Room $room, Participant $participant, int $seconds): void {
+		$event = new ModifyRoomEvent($room, 'messageExpiration', $seconds, null, $participant);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_MESSAGE_EXPIRATION, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('message_expiration', $update->createNamedParameter($seconds, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+		$room->setMessageExpiration($seconds);
+		if ($seconds > 0) {
+			$this->jobList->add(ExpireChatMessages::class, ['room_id' => $room->getId()]);
+			$this->addMessageExpirationSystemMessage($room, $participant, $seconds, 'message_expiration_enabled');
+		} else {
+			$this->addMessageExpirationSystemMessage($room, $participant, $seconds, 'message_expiration_disabled');
+		}
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, $event);
+	}
+
+	private function addMessageExpirationSystemMessage(Room $room, Participant $participant, int $seconds, string $message): void {
+		$this->chatManager->addSystemMessage(
+			$room,
+			$participant->getAttendee()->getActorType(),
+			$participant->getAttendee()->getActorId(),
+			json_encode([
+				'message' => $message,
+				'parameters' => ['seconds' => $seconds]
+			]),
+			$this->timeFactory->getDateTime(),
+			false
+		);
 	}
 }

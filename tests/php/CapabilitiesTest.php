@@ -59,7 +59,7 @@ class CapabilitiesTest extends TestCase {
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->appManager = $this->createMock(IAppManager::class);
-		
+
 		$this->commentsManager->expects($this->any())
 			->method('supportReactions')
 			->willReturn(true);
@@ -121,6 +121,7 @@ class CapabilitiesTest extends TestCase {
 			'silent-send',
 			'silent-call',
 			'send-call-notification',
+			'message-expiration',
 			'reactions',
 		];
 	}
@@ -148,6 +149,7 @@ class CapabilitiesTest extends TestCase {
 				['spreed', 'max-gif-size', '3145728', '200000'],
 				['spreed', 'start_calls', Room::START_CALL_EVERYONE, Room::START_CALL_EVERYONE],
 				['spreed', 'session-ping-limit', '200', '200'],
+				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
@@ -237,6 +239,7 @@ class CapabilitiesTest extends TestCase {
 				['spreed', 'max-gif-size', '3145728', '200000'],
 				['spreed', 'start_calls', Room::START_CALL_EVERYONE, Room::START_CALL_NOONE],
 				['spreed', 'session-ping-limit', '200', '50'],
+				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
 			]);
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);

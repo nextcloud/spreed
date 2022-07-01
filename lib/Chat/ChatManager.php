@@ -24,10 +24,12 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat;
 
+use DateInterval;
 use OC\Memcache\ArrayCache;
 use OC\Memcache\NullCache;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
+use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -84,6 +86,7 @@ class ChatManager {
 	private IDBConnection $connection;
 	private INotificationManager $notificationManager;
 	private IManager $shareManager;
+	private Manager $manager;
 	private RoomShareProvider $shareProvider;
 	private ParticipantService $participantService;
 	private PollService $pollService;
@@ -98,6 +101,7 @@ class ChatManager {
 								IDBConnection $connection,
 								INotificationManager $notificationManager,
 								IManager $shareManager,
+								Manager $manager,
 								RoomShareProvider $shareProvider,
 								ParticipantService $participantService,
 								PollService $pollService,
@@ -110,6 +114,7 @@ class ChatManager {
 		$this->connection = $connection;
 		$this->notificationManager = $notificationManager;
 		$this->shareManager = $shareManager;
+		$this->manager = $manager;
 		$this->shareProvider = $shareProvider;
 		$this->participantService = $participantService;
 		$this->pollService = $pollService;
@@ -258,6 +263,7 @@ class ChatManager {
 		if ($referenceId !== '') {
 			$comment->setReferenceId($referenceId);
 		}
+		$this->setMessageExpiration($chat, $comment);
 
 		$event = new ChatParticipantEvent($chat, $comment, $participant, $silent);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_MESSAGE_SEND, $event);
@@ -301,6 +307,17 @@ class ChatManager {
 		}
 
 		return $comment;
+	}
+
+	private function setMessageExpiration(Room $room, IComment $comment): void {
+		$messageExpiration = $room->getMessageExpiration();
+		if (!$messageExpiration) {
+			return;
+		}
+
+		$dateTime = $this->timeFactory->getDateTime();
+		$dateTime->add(DateInterval::createFromDateString($messageExpiration . ' seconds'));
+		$comment->setExpireDate($dateTime);
 	}
 
 	/**
@@ -692,5 +709,9 @@ class ChatManager {
 			return true;
 		}
 		return false;
+	}
+
+	public function deleteExpiredMessages(int $roomId): void {
+		$this->commentsManager->deleteMessageExpiredAtObject('chat', (string) $roomId);
 	}
 }
