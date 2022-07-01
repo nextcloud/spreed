@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OC\Security\Bruteforce\Throttler;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -57,6 +56,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Notification\IManager as INotificationManager;
+use OCP\Security\Bruteforce\IThrottler;
 use Psr\Log\LoggerInterface;
 
 class PageController extends Controller {
@@ -74,7 +74,7 @@ class PageController extends Controller {
 	private INotificationManager $notificationManager;
 	private IAppManager $appManager;
 	private IRootFolder $rootFolder;
-	private Throttler $throttler;
+	private IThrottler $throttler;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -92,7 +92,7 @@ class PageController extends Controller {
 								IInitialState $initialState,
 								ICacheFactory $memcacheFactory,
 								IRootFolder $rootFolder,
-								Throttler $throttler,
+								IThrottler $throttler,
 								Config $talkConfig,
 								IConfig $serverConfig) {
 		parent::__construct($appName, $request);
