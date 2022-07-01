@@ -102,7 +102,7 @@ return [
 		['name' => 'Room#setLobby', 'url' => '/api/{apiVersion}/room/{token}/webinar/lobby', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::setSIPEnabled() */
 		['name' => 'Room#setSIPEnabled', 'url' => '/api/{apiVersion}/room/{token}/webinar/sip', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
-		/** @see \OCA\Talk\Controller\RoomController::setExpireInterval() */
-		['name' => 'Room#setExpireInterval', 'url' => '/api/{apiVersion}/room/{token}/message-expire-interval', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\RoomController::setMessageExpiration() */
+		['name' => 'Room#setMessageExpiration', 'url' => '/api/{apiVersion}/room/{token}/message-expiration', 'verb' => 'POST', 'requirements' => $requirements],
 	],
 ];

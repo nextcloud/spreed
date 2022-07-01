@@ -339,6 +339,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['unreadMentionDirect'])) {
 				$data['unreadMentionDirect'] = (int) $room['unreadMentionDirect'];
 			}
+			if (isset($expectedRoom['messageExpiration'])) {
+				$data['messageExpiration'] = (int) $room['messageExpiration'];
+			}
 			if (isset($expectedRoom['participants'])) {
 				throw new \Exception('participants key needs to be checked via participants endpoint');
 			}
@@ -2568,25 +2571,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Given user :user set the expire interval to :expireInterval of room :identifier with :statusCode (:apiVersion)
+	 * @Given user :user set the message expiration to :messageExpiration of room :identifier with :statusCode (:apiVersion)
 	 */
-	public function userSetTheExpireIntervalToWith(string $user, int $expireInterval, string $identifier, int $statusCode, string $apiVersion = 'v4'): void {
+	public function userSetTheMessageExpirationToXWithStatusCode(string $user, int $messageExpiration, string $identifier, int $statusCode, string $apiVersion = 'v4'): void {
 		$this->setCurrentUser($user);
-		$this->sendRequest('POST', '/apps/spreed/api/' .  $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/message-expire-interval', [
-			'seconds' => $expireInterval
+		$this->sendRequest('POST', '/apps/spreed/api/' .  $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/message-expiration', [
+			'seconds' => $messageExpiration,
 		]);
 		$this->assertStatusCode($this->response, $statusCode);
-	}
-
-	/**
-	 * @Given user :user check if expire interval of room :identifier is :expireInterval (:apiVersion)
-	 */
-	public function userCheckIfExpireIntervalOfRoomIsX(string $user, string $identifier, int $expireInterval, string $apiVersion = 'v4') {
-		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
-		$room = $this->getDataFromResponse($this->response);
-
-		Assert::assertEquals($expireInterval, $room['expireInterval']);
 	}
 
 	/**
@@ -2597,12 +2589,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When apply expire date job to room :identifier
+	 * @When apply message expiration job to room :identifier
 	 */
-	public function applyExpireDateJobToRoom($identifier): void {
+	public function applyMessageExpirationJobToRoom($identifier): void {
 		$currentUser = $this->currentUser;
 		$this->setCurrentUser('admin');
-		$this->sendRequest('GET', '/apps/spreedcheats/get_message_expire_job/' . self::$identifierToToken[$identifier]);
+		$this->sendRequest('GET', '/apps/spreedcheats/get_message_expiration_job/' . self::$identifierToToken[$identifier]);
 		$response = $this->getDataFromResponse($this->response);
 		Assert::assertIsArray($response, 'Room ' . $identifier . 'not found');
 		Assert::assertArrayHasKey('id', $response, 'Job not found by identifier "' . $identifier . '"');

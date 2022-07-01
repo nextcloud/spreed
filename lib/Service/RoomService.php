@@ -24,10 +24,9 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
-use OCA\Talk\BackgroundJob\ApplyExpireDate;
+use OCA\Talk\BackgroundJob\ExpireChatMessages;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
-use OCA\Talk\Events\ChangeExpireDateEvent;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
@@ -543,21 +542,21 @@ class RoomService {
 		];
 	}
 
-	public function setExpireInterval(Room $room, Participant $participant, int $seconds): void {
-		$event = new ChangeExpireDateEvent($room, $seconds);
+	public function setMessageExpiration(Room $room, Participant $participant, int $seconds): void {
+		$event = new ModifyRoomEvent($room, 'messageExpiration', $seconds, null, $participant);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_EXPIRE_DATE, $event);
 
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
-			->set('message_expire', $update->createNamedParameter($seconds, IQueryBuilder::PARAM_INT))
+			->set('message_expiration', $update->createNamedParameter($seconds, IQueryBuilder::PARAM_INT))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
-		$room->setExpireInterval($seconds);
+		$room->setMessageExpiration($seconds);
 		if ($seconds > 0) {
-			$this->jobList->add(ApplyExpireDate::class, ['room_id' => $room->getId()]);
+			$this->jobList->add(ExpireChatMessages::class, ['room_id' => $room->getId()]);
 			$this->expireDateSystemMessage($room, $participant, $seconds, 'message_expire_enabled');
 		} else {
-			$this->jobList->remove(ApplyExpireDate::class, ['room_id' => $room->getId()]);
+			$this->jobList->remove(ExpireChatMessages::class, ['room_id' => $room->getId()]);
 			$this->expireDateSystemMessage($room, $participant, $seconds, 'message_expire_disabled');
 		}
 
@@ -578,7 +577,7 @@ class RoomService {
 		);
 	}
 
-	public function getExpireInterval(Room $room): int {
-		return $room->getExpireInterval();
+	public function getMessageExpiration(Room $room): int {
+		return $room->getMessageExpiration();
 	}
 }

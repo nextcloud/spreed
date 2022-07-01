@@ -30,7 +30,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
 
-class ApplyExpireDate extends TimedJob {
+class ExpireChatMessages extends TimedJob {
 	private ChatManager $chatManager;
 
 	public function __construct(ITimeFactory $timeFactory,

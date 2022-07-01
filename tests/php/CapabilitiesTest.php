@@ -59,7 +59,7 @@ class CapabilitiesTest extends TestCase {
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->appManager = $this->createMock(IAppManager::class);
-		
+
 		$this->commentsManager->expects($this->any())
 			->method('supportReactions')
 			->willReturn(true);
@@ -121,7 +121,7 @@ class CapabilitiesTest extends TestCase {
 			'silent-send',
 			'silent-call',
 			'send-call-notification',
-			'message-expire',
+			'message-expiration',
 			'reactions',
 		];
 	}

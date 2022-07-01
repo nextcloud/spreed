@@ -147,8 +147,8 @@ class Room {
 	public const EVENT_BEFORE_SESSION_LEAVE_CALL = self::class . '::preSessionLeaveCall';
 	public const EVENT_AFTER_SESSION_LEAVE_CALL = self::class . '::postSessionLeaveCall';
 	public const EVENT_BEFORE_SIGNALING_PROPERTIES = self::class . '::beforeSignalingProperties';
-	public const EVENT_BEFORE_SET_EXPIRE_DATE = self::class . '::beforeSetExpireInterval';
-	public const EVENT_AFTER_SET_EXPIRE_DATE = self::class . '::afterSetExpireInterval';
+	public const EVENT_BEFORE_SET_EXPIRE_DATE = self::class . '::beforeSetMessageExpiration';
+	public const EVENT_AFTER_SET_EXPIRE_DATE = self::class . '::afterSetMessageExpiration';
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
@@ -162,7 +162,7 @@ class Room {
 	private int $type;
 	private int $readOnly;
 	private int $listable;
-	private int $expireInterval;
+	private int $messageExpiration;
 	private int $lobbyState;
 	private int $sipEnabled;
 	private ?int $assignedSignalingServer;
@@ -196,7 +196,7 @@ class Room {
 								int $type,
 								int $readOnly,
 								int $listable,
-								int $expireInterval,
+								int $messageExpiration,
 								int $lobbyState,
 								int $sipEnabled,
 								?int $assignedSignalingServer,
@@ -226,7 +226,7 @@ class Room {
 		$this->type = $type;
 		$this->readOnly = $readOnly;
 		$this->listable = $listable;
-		$this->expireInterval = $expireInterval;
+		$this->messageExpiration = $messageExpiration;
 		$this->lobbyState = $lobbyState;
 		$this->sipEnabled = $sipEnabled;
 		$this->assignedSignalingServer = $assignedSignalingServer;
@@ -288,12 +288,12 @@ class Room {
 		$this->listable = $newState;
 	}
 
-	public function getExpireInterval(): int {
-		return $this->expireInterval;
+	public function getMessageExpiration(): int {
+		return $this->messageExpiration;
 	}
 
-	public function setExpireInterval(int $expireInterval): void {
-		$this->expireInterval = $expireInterval;
+	public function setMessageExpiration(int $messageExpiration): void {
+		$this->messageExpiration = $messageExpiration;
 	}
 
 	public function getLobbyState(): int {

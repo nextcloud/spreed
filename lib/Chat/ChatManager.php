@@ -263,7 +263,7 @@ class ChatManager {
 		if ($referenceId !== '') {
 			$comment->setReferenceId($referenceId);
 		}
-		$this->setExpireDate($chat, $comment);
+		$this->setMessageExpiration($chat, $comment);
 
 		$event = new ChatParticipantEvent($chat, $comment, $participant, $silent);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_MESSAGE_SEND, $event);
@@ -309,14 +309,14 @@ class ChatManager {
 		return $comment;
 	}
 
-	private function setExpireDate(Room $room, IComment $comment): void {
-		$expireInterval = $room->getExpireInterval();
-		if (!$expireInterval) {
+	private function setMessageExpiration(Room $room, IComment $comment): void {
+		$messageExpiration = $room->getMessageExpiration();
+		if (!$messageExpiration) {
 			return;
 		}
 
 		$dateTime = $this->timeFactory->getDateTime();
-		$dateTime->add(DateInterval::createFromDateString($expireInterval . ' seconds'));
+		$dateTime->add(DateInterval::createFromDateString($messageExpiration . ' seconds'));
 		$comment->setExpireDate($dateTime);
 	}
 

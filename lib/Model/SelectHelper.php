@@ -51,7 +51,7 @@ class SelectHelper {
 			->addSelect($alias . 'object_type')
 			->addSelect($alias . 'object_id')
 			->addSelect($alias . 'listable')
-			->addSelect($alias . 'message_expire')
+			->addSelect($alias . 'message_expiration')
 			->addSelect($alias . 'remote_server')
 			->addSelect($alias . 'remote_token')
 			->selectAlias($alias . 'id', 'r_id');

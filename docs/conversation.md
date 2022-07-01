@@ -51,7 +51,7 @@
         `participantFlags` | int | v1 | | "In call" flags of the user's session making the request (only available with `in-call-flags` capability)
         `readOnly` | int | v1 | | Read-only state for the current user (only available with `read-only-rooms` capability)
         `listable` | int | v3 | | Listable scope for the room (only available with `listable-rooms` capability)
-        `expireDate` | int | v4 | | The expire date time in seconds in this chat. Zero if disabled. (only available with `message-expire` capability)
+        `messageExpiration` | int | v4 | | The message expiration time in seconds in this chat. Zero if disabled. (only available with `message-expiration` capability)
         `count` | int | v1 | v2 | **Removed:** Count the users on the [Get list of participants in a conversation](participant.md#get-list-of-participants-in-a-conversation) endpoint
         `numGuests` | int | v1 | v2 | **Removed:** Count the guests on the [Get list of participants in a conversation](participant.md#get-list-of-participants-in-a-conversation) endpoin
         `lastPing` | int | v1 | | Timestamp of the user's session making the request
@@ -337,16 +337,16 @@
         + `401 Unauthorized` When the participant is a guest
         + `404 Not Found` When the conversation could not be found for the participant
 
-## Set expire date for messages in a conversation
+## Set message expiration
 
-* Required capability: `message-expire`
+* Required capability: `message-expiration`
 * Method: `POST`
-* Endpoint: `/room/{token}/message-expire`
+* Endpoint: `/room/{token}/message-expiration`
 * Data:
 
     field | type | Description
     ---|---|---
-    `seconds` | int | The messages expire time in seconds. If is zero, messages will not be deleted automatically.
+    `seconds` | int | The messages expiration in seconds. If is zero, messages will not be deleted automatically.
 
 * Response:
     - Status code:
