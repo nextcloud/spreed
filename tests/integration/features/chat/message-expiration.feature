@@ -1,4 +1,4 @@
-Feature: room/expire-date
+Feature: room/message-expiration
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
