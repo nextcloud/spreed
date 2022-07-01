@@ -92,30 +92,4 @@ class CommentsManager extends Manager {
 
 		return $reactions;
 	}
-
-	/**
-	 * @param integer $roomId
-	 * @param \DateTime $min
-	 * @param \DateTime $max
-	 * @return int[]
-	 */
-	public function getMessageIdsByRoomIdInDateInterval(int $roomId, \DateTime $min, \DateTime $max): array {
-		$query = $this->dbConn->getQueryBuilder();
-		$query->select('id')
-			->from('comments')
-			->where(
-				$query->expr()->andX(
-					$query->expr()->eq('object_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)),
-					$query->expr()->eq('object_type', $query->createNamedParameter('chat')),
-					$query->expr()->gte('creation_timestamp', $query->createNamedParameter($min, IQueryBuilder::PARAM_DATE)),
-					$query->expr()->lte('creation_timestamp', $query->createNamedParameter($max, IQueryBuilder::PARAM_DATE))
-				)
-			);
-		$result = $query->executeQuery();
-		$ids = [];
-		while ($row = $result->fetch()) {
-			$ids[] = (int) $row['id'];
-		}
-		return $ids;
-	}
 }
