@@ -102,7 +102,7 @@ class ShareAPIController {
 	 * @param IShare $share
 	 * @param string $shareWith
 	 * @param int $permissions
-	 * @param string $messageExpiration
+	 * @param string $expireDate
 	 * @throws OCSNotFoundException
 	 */
 	public function createShare(IShare $share, string $shareWith, int $permissions, string $expireDate): void {
