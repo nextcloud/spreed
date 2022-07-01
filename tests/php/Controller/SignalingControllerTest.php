@@ -868,45 +868,8 @@ class SignalingControllerTest extends TestCase {
 		], $result->getData());
 	}
 
-	public function testBackendPingUnknownRoom() {
-		$roomToken = 'the-room';
-		$room = $this->createMock(Room::class);
-		$this->manager->expects($this->once())
-			->method('getRoomByToken')
-			->with($roomToken)
-			->willThrowException(new RoomNotFoundException());
-
-		$result = $this->performBackendRequest([
-			'type' => 'ping',
-			'ping' => [
-				'roomid' => $roomToken,
-				'entries' => [
-					[
-						'userid' => $this->userId,
-					],
-				],
-			],
-		]);
-		$this->assertSame([
-			'type' => 'error',
-			'error' => [
-				'code' => 'no_such_room',
-				'message' => 'No such room.',
-			],
-		], $result->getData());
-	}
-
 	public function testBackendPingUser() {
-		$roomToken = 'the-room';
 		$sessionId = 'the-session';
-		$room = $this->createMock(Room::class);
-		$this->manager->expects($this->once())
-			->method('getRoomByToken')
-			->with($roomToken)
-			->willReturn($room);
-		$room->expects($this->once())
-			->method('getToken')
-			->willReturn($roomToken);
 
 		$this->timeFactory->method('getTime')
 			->willReturn(123456);
@@ -917,7 +880,6 @@ class SignalingControllerTest extends TestCase {
 		$result = $this->performBackendRequest([
 			'type' => 'ping',
 			'ping' => [
-				'roomid' => $roomToken,
 				'entries' => [
 					[
 						'userid' => $this->userId,
@@ -930,22 +892,12 @@ class SignalingControllerTest extends TestCase {
 			'type' => 'room',
 			'room' => [
 				'version' => '1.0',
-				'roomid' => $roomToken,
 			],
 		], $result->getData());
 	}
 
 	public function testBackendPingAnonymous() {
-		$roomToken = 'the-room';
 		$sessionId = 'the-session';
-		$room = $this->createMock(Room::class);
-		$this->manager->expects($this->once())
-			->method('getRoomByToken')
-			->with($roomToken)
-			->willReturn($room);
-		$room->expects($this->once())
-			->method('getToken')
-			->willReturn($roomToken);
 
 		$this->timeFactory->method('getTime')
 			->willReturn(1234567);
@@ -956,7 +908,6 @@ class SignalingControllerTest extends TestCase {
 		$result = $this->performBackendRequest([
 			'type' => 'ping',
 			'ping' => [
-				'roomid' => $roomToken,
 				'entries' => [
 					[
 						'userid' => '',
@@ -969,22 +920,12 @@ class SignalingControllerTest extends TestCase {
 			'type' => 'room',
 			'room' => [
 				'version' => '1.0',
-				'roomid' => $roomToken,
 			],
 		], $result->getData());
 	}
 
 	public function testBackendPingMixedAndInactive() {
-		$roomToken = 'the-room';
 		$sessionId = 'the-session';
-		$room = $this->createMock(Room::class);
-		$this->manager->expects($this->once())
-			->method('getRoomByToken')
-			->with($roomToken)
-			->willReturn($room);
-		$room->expects($this->once())
-			->method('getToken')
-			->willReturn($roomToken);
 
 		$this->timeFactory->method('getTime')
 			->willReturn(234567);
@@ -995,7 +936,6 @@ class SignalingControllerTest extends TestCase {
 		$result = $this->performBackendRequest([
 			'type' => 'ping',
 			'ping' => [
-				'roomid' => $roomToken,
 				'entries' => [
 					[
 						'userid' => '',
@@ -1016,7 +956,6 @@ class SignalingControllerTest extends TestCase {
 			'type' => 'room',
 			'room' => [
 				'version' => '1.0',
-				'roomid' => $roomToken,
 			],
 		], $result->getData());
 	}

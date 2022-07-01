@@ -729,22 +729,6 @@ class SignalingController extends OCSController {
 	}
 
 	private function backendPing(array $request): DataResponse {
-		try {
-			$room = $this->manager->getRoomByToken($request['roomid']);
-		} catch (RoomNotFoundException $e) {
-			$this->logger->debug('Tried to ping non existing room {token}', [
-				'token' => $request['roomid'],
-				'app' => 'spreed-hpb',
-			]);
-			return new DataResponse([
-				'type' => 'error',
-				'error' => [
-					'code' => 'no_such_room',
-					'message' => 'No such room.',
-				],
-			]);
-		}
-
 		$pingSessionIds = [];
 		$now = $this->timeFactory->getTime();
 		foreach ($request['entries'] as $entry) {
@@ -760,12 +744,11 @@ class SignalingController extends OCSController {
 			'type' => 'room',
 			'room' => [
 				'version' => '1.0',
-				'roomid' => $room->getToken(),
 			],
 		];
-		$this->logger->debug('Pinged {numSessions} sessions in room {token}', [
+		$this->logger->debug('Pinged {numSessions} sessions {token}', [
 			'numSessions' => count($pingSessionIds),
-			'token' => $request['roomid'],
+			'token' => !empty($request['roomid']) ? ('in room ' . $request['roomid']) : '',
 			'app' => 'spreed-hpb',
 		]);
 		return new DataResponse($response);

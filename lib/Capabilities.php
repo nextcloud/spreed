@@ -113,7 +113,10 @@ class Capabilities implements IPublicCapability {
 				],
 				'conversations' => [],
 				'previews' => [
-					'max-gif-size' => (int)$this->serverConfig->getAppValue('spreed', 'max-gif-size', '3145728')
+					'max-gif-size' => (int)$this->serverConfig->getAppValue('spreed', 'max-gif-size', '3145728'),
+				],
+				'signaling' => [
+					'session-ping-limit' => max(0, (int)$this->serverConfig->getAppValue('spreed', 'session-ping-limit', '200')),
 				],
 			],
 		];
