@@ -6,15 +6,11 @@ script('core', 'publicshareauth');
 ?>
 <form method="post">
 	<fieldset class="warning">
-		<?php if (!$_['wrongpw']) { ?>
-			<div class="warning-info">
-				<?php p($l->t('This conversation is password-protected.')); ?>
-				<?php if ($_['showBruteForceWarning']) { ?>
-					<?php p($l->t('We have detected multiple invalid password attempts from your IP. Therefore your next attempt is throttled up to 30 seconds.')); ?>
-				<?php } ?>
-			</div>
-		<?php } elseif ($_['showBruteForceWarning']) { ?>
+		<?php if ($_['showBruteForceWarning']) { ?>
 			<div class="warning-info"><?php p($l->t('We have detected multiple invalid password attempts from your IP. Therefore your next attempt is throttled up to 30 seconds.')); ?></div>
+		<?php } ?>
+		<?php if (!$_['wrongpw']) { ?>
+			<div class="warning-info"><?php p($l->t('This conversation is password-protected.')); ?></div>
 		<?php } else { ?>
 			<div class="warning"><?php p($l->t('The password is wrong. Try again.')); ?></div>
 		<?php } ?>
