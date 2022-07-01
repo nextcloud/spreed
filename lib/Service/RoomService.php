@@ -554,16 +554,16 @@ class RoomService {
 		$room->setMessageExpiration($seconds);
 		if ($seconds > 0) {
 			$this->jobList->add(ExpireChatMessages::class, ['room_id' => $room->getId()]);
-			$this->expireDateSystemMessage($room, $participant, $seconds, 'message_expire_enabled');
+			$this->addMessageExpirationSystemMessage($room, $participant, $seconds, 'message_expiration_enabled');
 		} else {
 			$this->jobList->remove(ExpireChatMessages::class, ['room_id' => $room->getId()]);
-			$this->expireDateSystemMessage($room, $participant, $seconds, 'message_expire_disabled');
+			$this->addMessageExpirationSystemMessage($room, $participant, $seconds, 'message_expiration_disabled');
 		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_EXPIRE_DATE, $event);
 	}
 
-	private function expireDateSystemMessage(Room $room, Participant $participant, int $seconds, string $message): void {
+	private function addMessageExpirationSystemMessage(Room $room, Participant $participant, int $seconds, string $message): void {
 		$this->chatManager->addSystemMessage(
 			$room,
 			$participant->getAttendee()->getActorType(),

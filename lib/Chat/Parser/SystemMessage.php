@@ -456,16 +456,33 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You deleted a reaction');
 			}
-		} elseif ($message === 'message_expire_enabled') {
-			$parsedMessage = $this->l->t('{actor} set the self-destruction timer to {seconds} seconds');
-			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You set the self-destruction timer to {seconds} seconds');
-			}
+		} elseif ($message === 'message_expiration_enabled') {
+			$weeks = $parameters['seconds'] > (86400 * 7) ? (int) round($parameters['seconds'] / (86400 * 7)) : 0;
+			$days = $parameters['seconds'] > 86400 ? (int) round($parameters['seconds'] / 86400) : 0;
+			$hours = $parameters['seconds']  ? (int) round($parameters['seconds'] / 3600) : 0;
+
 			$parsedParameters['seconds'] = $parameters['seconds'];
-		} elseif ($message === 'message_expire_disabled') {
-			$parsedMessage = $this->l->t('{actor} disabled the self-destruction timer');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You disabled the self-destruction timer');
+				if ($weeks > 0) {
+					$parsedMessage = $this->l->n('You set the message expiration to %n week', 'You set the message expiration to %n weeks', $weeks);
+				} elseif ($days > 0) {
+					$parsedMessage = $this->l->n('You set the message expiration to %n day', 'You set the message expiration to %n days', $days);
+				} else {
+					$parsedMessage = $this->l->n('You set the message expiration to %n hour', 'You set the message expiration to %n hours', $hours);
+				}
+			} else {
+				if ($weeks > 0) {
+					$parsedMessage = $this->l->n('{actor} set the message expiration to %n week', '{actor} set the message expiration to %n weeks', $weeks);
+				} elseif ($days > 0) {
+					$parsedMessage = $this->l->n('{actor} set the message expiration to %n day', '{actor} set the message expiration to %n days', $days);
+				} else {
+					$parsedMessage = $this->l->n('{actor} set the message expiration to %n hour', '{actor} set the message expiration to %n hours', $hours);
+				}
+			}
+		} elseif ($message === 'message_expiration_disabled') {
+			$parsedMessage = $this->l->t('{actor} disabled message expiration');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You disabled message expiration');
 			}
 		} elseif ($message === 'history_cleared') {
 			$parsedMessage = $this->l->t('{actor} cleared the history of the conversation');
