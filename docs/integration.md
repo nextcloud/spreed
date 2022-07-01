@@ -8,9 +8,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 15
 * Endpoint: `/file/{fileId}`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `fileId` | int | File id for which the conversation should be given
+| field    | type | Description                                        |
+|----------|------|----------------------------------------------------|
+| `fileId` | int  | File id for which the conversation should be given |
 
 * Response:
     - Status code:
@@ -22,9 +22,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 15
 
     - Data:
 
-        field | type | Description
-        ---|---|---
-        `token` | string | The token of the conversation for this file
+| field   | type   | Description                                 |
+|---------|--------|---------------------------------------------|
+| `token` | string | The token of the conversation for this file |
 
 ## Get conversation for a public share
 
@@ -32,9 +32,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 15
 * Endpoint: `/publicshare/{shareToken}`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `shareToken` | string | Share token for which the conversation should be given
+| field        | type   | Description                                            |
+|--------------|--------|--------------------------------------------------------|
+| `shareToken` | string | Share token for which the conversation should be given |
 
 * Response:
     - Status code:
@@ -45,9 +45,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 15
 
     - Data:
 
-        field | type | Description
-        ---|---|---
-        `token` | string | The token of the conversation for this file
+| field   | type   | Description                                 |
+|---------|--------|---------------------------------------------|
+| `token` | string | The token of the conversation for this file |
 
 ## Create a conversation to request the password for a public share
 
@@ -55,9 +55,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 15
 * Endpoint: `/publicshareauth`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `shareToken` | string | Share token for which the conversation should be given
+| field        | type   | Description                                            |
+|--------------|--------|--------------------------------------------------------|
+| `shareToken` | string | Share token for which the conversation should be given |
 
 * Response:
     - Status code:
@@ -67,8 +67,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 15
 
     - Data:
 
-        field | type | Description
-        ---|---|---
-        `token` | string | The token of the conversation for this file
-        `name` | string | A technical name for the conversation
-        `displayName` | string | The visual name of the conversation
+| field         | type   | Description                                 |
+|---------------|--------|---------------------------------------------|
+| `token`       | string | The token of the conversation for this file |
+| `name`        | string | A technical name for the conversation       |
+| `displayName` | string | The visual name of the conversation         |

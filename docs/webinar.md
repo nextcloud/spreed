@@ -20,10 +20,10 @@ Group and public conversations can be used to host webinars. Those online meetin
 * Endpoint: `/room/{token}/webinar/lobby`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `state` | int | New state for the conversation
-    `timer` | int/null | Timestamp when the lobby state is reset to no lobby
+| field   | type     | Description                                         |
+|---------|----------|-----------------------------------------------------|
+| `state` | int      | New state for the conversation                      |
+| `timer` | int/null | Timestamp when the lobby state is reset to no lobby |
 
 * Response:
     - Status code:
@@ -42,9 +42,9 @@ Group and public conversations can be used to host webinars. Those online meetin
 * Endpoint: `/room/{token}/webinar/sip`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `state` | int | New SIP state for the conversation (0 = disabled, 1 = enabled)
+| field   | type | Description                                                    |
+|---------|------|----------------------------------------------------------------|
+| `state` | int  | New SIP state for the conversation (0 = disabled, 1 = enabled) |
 
 * Response:
     - Status code:
