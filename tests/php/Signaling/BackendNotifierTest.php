@@ -91,8 +91,6 @@ class BackendNotifierTest extends TestCase {
 	private ?\OCA\Talk\Tests\php\Signaling\CustomBackendNotifier $controller = null;
 	/** @var null|ChatManager|MockObject */
 	private ?ChatManager $chatManager = null;
-	/** @var null|CommentsManager|MockObject */
-	private ?CommentsManager $commentsManager = null;
 
 	private ?Manager $manager = null;
 	private ?RoomService $roomService = null;
@@ -159,13 +157,11 @@ class BackendNotifierTest extends TestCase {
 			$this->createMock(IL10N::class)
 		);
 		$this->chatManager = $this->createMock(ChatManager::class);
-		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->jobList = $this->createMock(IJobList::class);
 
 		$this->roomService = new RoomService(
 			$this->manager,
 			$this->chatManager,
-			$this->commentsManager,
 			$this->participantService,
 			$dbConnection,
 			$this->timeFactory,
