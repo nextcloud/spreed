@@ -10,34 +10,33 @@ If a participant enabled their microphone and starts speaking the video quality 
 
 ### Number of video streams
 
-Streams | Quality
----|---
-< 4 | High
-4-7 | Medium
-8-10 | Low
-11-14 | Very low
-> 14 | Thumbnail
-
+| Streams | Quality   |
+|---------|-----------|
+| < 4     | High      |
+| 4-7     | Medium    |
+| 8-10    | Low       |
+| 11-14   | Very low  |
+| > 14    | Thumbnail |
 
 ### Number of audio streams
 
-Streams | Quality
----|---
-< 10 | High
-10-19 | Medium
-20-29 | Low
-30-39 | Very low
-> 40 | Thumbnail
+| Streams | Quality   |
+|---------|-----------|
+| < 10    | High      |
+| 10-19   | Medium    |
+| 20-29   | Low       |
+| 30-39   | Very low  |
+| > 40    | Thumbnail |
 
 ### Video qualities
 
-Quality | Max width | Ideal width | Max height | Ideal height | Max frames | Ideal frames
----|---|---|---|---|---|---
-High | - | 720 | - | 540 | - | 30
-Medium | 640 | 560 | 480 | 420 | 24 | 24
-Low | 480 | 360 | 320 | 270 | 15 | 15
-Very low | 320 | - | 240 | - | 8 | -
-Thumbnail | 320 | - | 240 | - | 1 | -
+| Quality   | Max width | Ideal width | Max height | Ideal height | Max frames | Ideal frames |
+|-----------|-----------|-------------|------------|--------------|------------|--------------|
+| High      | -         | 720         | -          | 540          | -          | 30           |
+| Medium    | 640       | 560         | 480        | 420          | 24         | 24           |
+| Low       | 480       | 360         | 320        | 270          | 15         | 15           |
+| Very low  | 320       | -           | 240        | -            | 8          | -            |
+| Thumbnail | 320       | -           | 240        | -            | 1          | -            |
 
 ## Judging the connection quality
 

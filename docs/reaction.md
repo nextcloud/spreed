@@ -9,9 +9,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 24
 * Endpoint: `/reaction/{token}/{messageId}`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `reaction` | string | the reaction emoji
+| field      | type   | Description        |
+|------------|--------|--------------------|
+| `reaction` | string | the reaction emoji |
 
 * Response:
     - Status code:
@@ -23,12 +23,12 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 24
     - Data:
         Array with data of reactions:
 
-        field | type | Description
-        ---|---|---
-        `actorType` | string | `guests` or `users`
-        `actorId` | string | Actor id of the reacting participant
-        `actorDisplayName` | string | Display name of the reaction author
-        `timestamp` | int | Timestamp in seconds and UTC time zone
+| field              | type   | Description                            |
+|--------------------|--------|----------------------------------------|
+| `actorType`        | string | `guests` or `users`                    |
+| `actorId`          | string | Actor id of the reacting participant   |
+| `actorDisplayName` | string | Display name of the reaction author    |
+| `timestamp`        | int    | Timestamp in seconds and UTC time zone |
 
 ## Delete a reaction
 
@@ -37,9 +37,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 24
 * Endpoint: `/reaction/{token}/{messageId}`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `reaction` | string | the reaction emoji
+| field      | type   | Description        |
+|------------|--------|--------------------|
+| `reaction` | string | the reaction emoji |
 
 * Response:
     - Status code:
@@ -50,12 +50,12 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 24
     - Data:
         Array with data of reactions:
 
-        field | type | Description
-        ---|---|---
-        `actorType` | string | `guests` or `users`
-        `actorId` | string | Actor id of the reacting participant
-        `actorDisplayName` | string | Display name of the reaction author
-        `timestamp` | int | Timestamp in seconds and UTC time zone
+| field              | type   | Description                            |
+|--------------------|--------|----------------------------------------|
+| `actorType`        | string | `guests` or `users`                    |
+| `actorId`          | string | Actor id of the reacting participant   |
+| `actorDisplayName` | string | Display name of the reaction author    |
+| `timestamp`        | int    | Timestamp in seconds and UTC time zone |
 
 ## Retrieve reactions of a message by type
 
@@ -64,9 +64,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 24
 * Endpoint: `/reaction/{token}/{messageId}`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `reaction` | string | **Optional:** the reaction emoji
+| field      | type   | Description                      |
+|------------|--------|----------------------------------|
+| `reaction` | string | **Optional:** the reaction emoji |
 
 * Response:
     - Status code:
@@ -77,9 +77,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 24
     - Data:
         Array with data of reactions:
 
-        field | type | Description
-        ---|---|---
-        `actorType` | string | `guests` or `users`
-        `actorId` | string | Actor id of the reacting participant
-        `actorDisplayName` | string | Display name of the reaction author
-        `timestamp` | int | Timestamp in seconds and UTC time zone
+| field              | type   | Description                            |
+|--------------------|--------|----------------------------------------|
+| `actorType`        | string | `guests` or `users`                    |
+| `actorId`          | string | Actor id of the reacting participant   |
+| `actorDisplayName` | string | Display name of the reaction author    |
+| `timestamp`        | int    | Timestamp in seconds and UTC time zone |

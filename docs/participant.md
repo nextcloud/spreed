@@ -11,9 +11,9 @@
 * Endpoint: `/room/{token}/participants`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `includeStatus` | bool | Whether the user status information also needs to be loaded
+| field           | type | Description                                                 |
+|-----------------|------|-------------------------------------------------------------|
+| `includeStatus` | bool | Whether the user status information also needs to be loaded |
 
 * Response:
     - Status code:
@@ -25,22 +25,22 @@
     - Data:
         Array of participants, each participant has at least:
 
-        field | type | Added | Removed | Description
-        ---|---|---|---|---
-        `attendeeId` | int | v3 | | Unique attendee id
-        `actorType` | string | v3 | | Currently known `users|guests|emails|groups|circles`
-        `actorId` | string | v3 | | The unique identifier for the given actor type
-        `displayName` | string | v1 | | Can be empty for guests
-        `participantType` | int | v1 | | Permissions level of the participant (see [constants list](constants.md#participant-types))
-        `lastPing` | int | v1 | | Timestamp of the last ping of the user (should be used for sorting)
-        `inCall` | int | v1 | | Call flags the user joined with (see [constants list](constants.md#participant-in-call-flag))
-        `permissions` | int | v4 | | Combined final permissions for the participant, permissions are picked in order of attendee then call then default and the first which is `Custom` will apply (see [constants list](constants.md#attendee-permissions))
-        `attendeePermissions` | int | v4 | | Dedicated permissions for the current participant, if not `Custom` this are not the resulting permissions (see [constants list](constants.md#attendee-permissions))
-        `sessionId` | string | v1 | v4 | `'0'` if not connected, otherwise a 512 character long string
-        `sessionIds` | array | v4 | | array of session ids, each are 512 character long strings, or empty if no session
-        `status` | string | v2 | | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation
-        `statusIcon` | string | v2 | | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation
-        `statusMessage` | string | v2 | | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation
+| field                 | type   | Added | Removed | Description                                                                                                                                                                                                             |
+|-----------------------|--------|-------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `attendeeId`          | int    | v3    |         | Unique attendee id                                                                                                                                                                                                      |
+| `actorType`           | string | v3    |         | Currently known `users                                                                                                                                                                                                  |guests|emails|groups|circles`
+| `actorId`             | string | v3    |         | The unique identifier for the given actor type                                                                                                                                                                          |
+| `displayName`         | string | v1    |         | Can be empty for guests                                                                                                                                                                                                 |
+| `participantType`     | int    | v1    |         | Permissions level of the participant (see [constants list](constants.md#participant-types))                                                                                                                             |
+| `lastPing`            | int    | v1    |         | Timestamp of the last ping of the user (should be used for sorting)                                                                                                                                                     |
+| `inCall`              | int    | v1    |         | Call flags the user joined with (see [constants list](constants.md#participant-in-call-flag))                                                                                                                           |
+| `permissions`         | int    | v4    |         | Combined final permissions for the participant, permissions are picked in order of attendee then call then default and the first which is `Custom` will apply (see [constants list](constants.md#attendee-permissions)) |
+| `attendeePermissions` | int    | v4    |         | Dedicated permissions for the current participant, if not `Custom` this are not the resulting permissions (see [constants list](constants.md#attendee-permissions))                                                     |
+| `sessionId`           | string | v1    | v4      | `'0'` if not connected, otherwise a 512 character long string                                                                                                                                                           |
+| `sessionIds`          | array  | v4    |         | array of session ids, each are 512 character long strings, or empty if no session                                                                                                                                       |
+| `status`              | string | v2    |         | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation                                                                       |
+| `statusIcon`          | string | v2    |         | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation                                                                       |
+| `statusMessage`       | string | v2    |         | Optional: Only available with `includeStatus=true`, for users with a set status and when there are less than 100 participants in the conversation                                                                       |
 
 ## Add a participant to a conversation
 
@@ -48,10 +48,10 @@
 * Endpoint: `/room/{token}/participants`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `newParticipant` | string | User, group, email or circle to add
-    `source` | string | Source of the participant(s) as returned by the autocomplete suggestion endpoint (default is `users`)
+| field            | type   | Description                                                                                           |
+|------------------|--------|-------------------------------------------------------------------------------------------------------|
+| `newParticipant` | string | User, group, email or circle to add                                                                   |
+| `source`         | string | Source of the participant(s) as returned by the autocomplete suggestion endpoint (default is `users`) |
 
 * Response:
     - Status code:
@@ -64,9 +64,9 @@
 
     - Data:
 
-        field | type | Description
-        ---|---|---
-        `type` | int | In case the conversation type changed, the new value is returned
+| field  | type | Description                                                      |
+|--------|------|------------------------------------------------------------------|
+| `type` | int  | In case the conversation type changed, the new value is returned |
 
 ## Delete an attendee by id from a conversation
 
@@ -74,9 +74,9 @@
 * Endpoint: `/room/{token}/attendees`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `attendeeId` | int | The participant to delete
+| field        | type | Description               |
+|--------------|------|---------------------------|
+| `attendeeId` | int  | The participant to delete |
 
 * Response:
     - Status code:
@@ -105,10 +105,10 @@
 * Endpoint: `/room/{token}/participants/active`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `password` | string | Optional: Password is only required for users which are self joined or guests and only when the conversation has `hasPassword` set to true.
-    `force` | bool | If set to `false` and the user has an active session already a `409 Conflict` will be returned (Default: true - to keep the old behaviour)
+| field      | type   | Description                                                                                                                                 |
+|------------|--------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| `password` | string | Optional: Password is only required for users which are self joined or guests and only when the conversation has `hasPassword` set to true. |
+| `force`    | bool   | If set to `false` and the user has an active session already a `409 Conflict` will be returned (Default: true - to keep the old behaviour)  |
 
 * Response:
     - Status code:
@@ -121,11 +121,11 @@
 
     - Data in case of `409 Conflict`:
 
-        field | type | Description
-        ---|---|---
-        `sessionId` | string | 512 character long string
-        `inCall` | int | Flags whether the conflicting session is in a potential call
-        `lastPing` | int | Timestamp of the last ping of the conflicting session
+| field       | type   | Description                                                  |
+|-------------|--------|--------------------------------------------------------------|
+| `sessionId` | string | 512 character long string                                    |
+| `inCall`    | int    | Flags whether the conflicting session is in a potential call |
+| `lastPing`  | int    | Timestamp of the last ping of the conflicting session        |
 
 ## Resend participant emails
 
@@ -134,9 +134,9 @@
 * Endpoint: `/room/{token}/participants/resend-invitations`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `attendeeId` | int or null | Attendee id can be used for guests and users, not setting it will resend all invitations
+| field        | type        | Description                                                                              |
+|--------------|-------------|------------------------------------------------------------------------------------------|
+| `attendeeId` | int or null | Attendee id can be used for guests and users, not setting it will resend all invitations |
 
 * Response:
     - Status code:
@@ -160,9 +160,9 @@
 * Endpoint: `/room/{token}/moderators`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `attendeeId` | int | Attendee id can be used for guests and users
+| field        | type | Description                                  |
+|--------------|------|----------------------------------------------|
+| `attendeeId` | int  | Attendee id can be used for guests and users |
 
 * Response:
     - Status code:
@@ -179,9 +179,9 @@
 * Endpoint: `/room/{token}/moderators`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `attendeeId` | int | Attendee id can be used for guests and users
+| field        | type | Description                                  |
+|--------------|------|----------------------------------------------|
+| `attendeeId` | int  | Attendee id can be used for guests and users |
 
 * Response:
     - Status code:
@@ -198,11 +198,11 @@
 * Endpoint: `/room/{token}/attendees/permissions`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `attendeeId` | int | Attendee id can be used for guests and users
-    `mode` | string | Mode of how permissions should be manipulated [constants list](constants.md#attendee-permission-modifications). If the permissions were `0` (default) and the modification is `add` or `remove`, they will be initialised with the call or default conversation permissions before, falling back to `126` for moderators and `118` for normal participants.
-    `permissions` | int | New permissions for the attendee, see [constants list](constants.md#attendee-permissions). If permissions are not `0` (default), the `1` (custom) permission will always be added.
+| field         | type   | Description                                                                                                                                                                                                                                                                                                                                                 |
+|---------------|--------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `attendeeId`  | int    | Attendee id can be used for guests and users                                                                                                                                                                                                                                                                                                                |
+| `mode`        | string | Mode of how permissions should be manipulated [constants list](constants.md#attendee-permission-modifications). If the permissions were `0` (default) and the modification is `add` or `remove`, they will be initialised with the call or default conversation permissions before, falling back to `126` for moderators and `118` for normal participants. |
+| `permissions` | int    | New permissions for the attendee, see [constants list](constants.md#attendee-permissions). If permissions are not `0` (default), the `1` (custom) permission will always be added.                                                                                                                                                                          |
 
 * Response:
     - Status code:
@@ -220,10 +220,10 @@
 * Endpoint: `/room/{token}/attendees/permissions/all`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `mode` | string | Mode of how permissions should be manipulated [constants list](constants.md#attendee-permission-modifications). If the permissions were `0` (default) and the modification is `add` or `remove`, they will be initialised with the call or default conversation permissions before, falling back to `126` for moderators and `118` for normal participants.
-    `permissions` | int | New permissions for the attendees, see [constants list](constants.md#attendee-permissions). If permissions are not `0` (default), the `1` (custom) permission will always be added.
+| field         | type   | Description                                                                                                                                                                                                                                                                                                                                                 |
+|---------------|--------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `mode`        | string | Mode of how permissions should be manipulated [constants list](constants.md#attendee-permission-modifications). If the permissions were `0` (default) and the modification is `add` or `remove`, they will be initialised with the call or default conversation permissions before, falling back to `126` for moderators and `118` for normal participants. |
+| `permissions` | int    | New permissions for the attendees, see [constants list](constants.md#attendee-permissions). If permissions are not `0` (default), the `1` (custom) permission will always be added.                                                                                                                                                                         |
 
 * Response:
     - Status code:
@@ -256,9 +256,9 @@ Note: This is only allowed with validate SIP bridge requests
 * Endpoint: `/guest/{token}/name`
 * Data:
 
-    field | type | Description
-    ---|---|---
-    `displayName` | string | The new display name
+| field         | type   | Description          |
+|---------------|--------|----------------------|
+| `displayName` | string | The new display name |
 
 * Response:
     - Status code:

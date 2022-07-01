@@ -11,21 +11,21 @@
 
 ## "Add command" arguments
 
-Argument | Allowed chars | Description
----|---|---
-`cmd` | [a-z0-9] | The keyword the user has to type to run this command (min. 1, max. 64 characters)
-`name` | * | The author name of the response that is posted by the command (min. 1, max. 64 characters)
-`script` | * | Actual command that is being ran. The script must be executable by the user of your webserver and has to use absolute paths only! See the parameter table below for options. The script is invoked with `--help` as argument on set up, to check if it can be executed correctly.
-`response` | 0-2 | Who should see the response: 0 - No one, 1 - User who executed the command, 2 - Everyone
-`enabled` | 0-3 |  Who can use the command: 0 - No one, 1 - Moderators of the room, 2 - Logged in users, 3 - Everyone
+| Argument   | Allowed chars | Description                                                                                                                                                                                                                                                                       |
+|------------|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `cmd`      | [a-z0-9]      | The keyword the user has to type to run this command (min. 1, max. 64 characters)                                                                                                                                                                                                 |
+| `name`     | *             | The author name of the response that is posted by the command (min. 1, max. 64 characters)                                                                                                                                                                                        |
+| `script`   | *             | Actual command that is being ran. The script must be executable by the user of your webserver and has to use absolute paths only! See the parameter table below for options. The script is invoked with `--help` as argument on set up, to check if it can be executed correctly. |
+| `response` | 0-2           | Who should see the response: 0 - No one, 1 - User who executed the command, 2 - Everyone                                                                                                                                                                                          |
+| `enabled`  | 0-3           | Who can use the command: 0 - No one, 1 - Moderators of the room, 2 - Logged in users, 3 - Everyone                                                                                                                                                                                |
 
 ## Script parameter
 
-Parameter | Description
----|---
-`{ROOM}` | The token of the room the command was used in
-`{USER}` | ID of the user that called the command
-`{ARGUMENTS}` | Everything the user write after the actual command
+| Parameter     | Description                                        |
+|---------------|----------------------------------------------------|
+| `{ROOM}`      | The token of the room the command was used in      |
+| `{USER}`      | ID of the user that called the command             |
+| `{ARGUMENTS}` | Everything the user write after the actual command |
 
 ## Example
 
