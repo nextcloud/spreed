@@ -544,7 +544,7 @@ class RoomService {
 
 	public function setMessageExpiration(Room $room, Participant $participant, int $seconds): void {
 		$event = new ModifyRoomEvent($room, 'messageExpiration', $seconds, null, $participant);
-		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_EXPIRE_DATE, $event);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_MESSAGE_EXPIRATION, $event);
 
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
@@ -560,7 +560,7 @@ class RoomService {
 			$this->addMessageExpirationSystemMessage($room, $participant, $seconds, 'message_expiration_disabled');
 		}
 
-		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_EXPIRE_DATE, $event);
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, $event);
 	}
 
 	private function addMessageExpirationSystemMessage(Room $room, Participant $participant, int $seconds, string $message): void {

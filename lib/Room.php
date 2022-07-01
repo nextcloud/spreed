@@ -147,8 +147,8 @@ class Room {
 	public const EVENT_BEFORE_SESSION_LEAVE_CALL = self::class . '::preSessionLeaveCall';
 	public const EVENT_AFTER_SESSION_LEAVE_CALL = self::class . '::postSessionLeaveCall';
 	public const EVENT_BEFORE_SIGNALING_PROPERTIES = self::class . '::beforeSignalingProperties';
-	public const EVENT_BEFORE_SET_EXPIRE_DATE = self::class . '::beforeSetMessageExpiration';
-	public const EVENT_AFTER_SET_EXPIRE_DATE = self::class . '::afterSetMessageExpiration';
+	public const EVENT_BEFORE_SET_MESSAGE_EXPIRATION = self::class . '::beforeSetMessageExpiration';
+	public const EVENT_AFTER_SET_MESSAGE_EXPIRATION = self::class . '::afterSetMessageExpiration';
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
