@@ -384,4 +384,4 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * Creating a poll is an `object_shared` with a poll object
 * `poll_voted` - {actor} voted on the poll {poll}
 * `poll_closed` - {actor} closed the poll {poll}
-
+* `message_expire_enabled` - {actor} set the self-destruction timer to {seconds} sec
