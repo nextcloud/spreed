@@ -55,4 +55,4 @@ A TURN server running on **port 443** (or 80) is required in almost all scenario
 # Mobile apps
 
 * Android: 5 or later
-* iOS: 10 or later
+* iOS: 12 or later
