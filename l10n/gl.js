@@ -118,6 +118,7 @@ OC.L10N.register(
     "Message deleted by author" : "Mensaxe eliminada polo autor",
     "Message deleted by {actor}" : "Mensaxe eliminada por {actor}",
     "Message deleted by you" : "Mensaxe eliminada por vostede",
+    "Deleted user" : "Usuario eliminado",
     "%s (guest)" : "%s (convidado)",
     "You missed a call from {user}" : "Perdeu unha chamada de {user}",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Chamada con %n convidado (Duración {duration})","Chamada con %n convidados (Duración {duration})"],
