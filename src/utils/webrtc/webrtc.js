@@ -186,7 +186,7 @@ function checkStartPublishOwnPeer(signaling) {
 		}
 
 		if (currentSessionId !== signaling.getSessionId()) {
-			console.debug('No answer received for own peer but current session id changed, not sending offer again')
+			console.debug('No answer received for own peer but current session id changed, not sending offer again', currentSessionId, signaling.getSessionId())
 
 			clearInterval(delayedConnectionToPeer[currentSessionId])
 			delete delayedConnectionToPeer[currentSessionId]
@@ -194,7 +194,7 @@ function checkStartPublishOwnPeer(signaling) {
 			return
 		}
 
-		console.debug('No answer received for own peer, sending offer again')
+		console.debug('No answer received for own peer, sending offer again', currentSessionId)
 		createPeer()
 	}, 10000)
 }
@@ -372,7 +372,7 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 				clearInterval(delayedConnectionToPeer[user.sessionId])
 
 				delayedConnectionToPeer[user.sessionId] = setInterval(function() {
-					console.debug('No offer received for new peer, request offer again')
+					console.debug('No offer received for new peer, request offer again', sessionId)
 
 					signaling.requestOffer(user, 'video')
 				}, 10000)
@@ -380,7 +380,7 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 				// To avoid overloading the user joining a room (who previously called
 				// all the other participants), we decide who calls who by comparing
 				// the session ids of the users: "larger" ids call "smaller" ones.
-				console.debug('Starting call with', user)
+				console.debug('Starting call with', user, sessionId)
 				createPeer()
 			} else if (!useMcu && userHasStreams(selfInCall) && userHasStreams(user) && sessionId > currentSessionId) {
 				// If the remote peer is not aware that it was disconnected
@@ -398,11 +398,11 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 						peer.end()
 					})
 
-					console.debug('No offer nor answer received, sending offer again')
+					console.debug('No offer nor answer received, sending offer again', sessionId)
 					createPeer()
 				}, 10000)
 			} else {
-				console.debug('User has no streams, not sending another offer')
+				console.debug('User has no streams, not sending another offer', sessionId)
 			}
 		}
 
@@ -1570,10 +1570,10 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 			} else if (data.type === 'speaking' || data.type === 'stoppedSpeaking') {
 				// Valid known messages, but handled elsewhere
 			} else {
-				console.debug('Unknown message type %s from %s datachannel', data.type, label, data)
+				console.debug('Unknown message type %s from %s datachannel', data.type, label, data, peer.id, peer)
 			}
 		} else {
-			console.debug('Unknown message from %s datachannel', label, data)
+			console.debug('Unknown message from %s datachannel', label, data, peer.id, peer)
 		}
 	})
 
