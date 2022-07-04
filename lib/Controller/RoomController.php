@@ -260,7 +260,7 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @BruteForceProtection(action=sipBridgeSecret)
+	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @param string $token
 	 * @return DataResponse
@@ -293,7 +293,9 @@ class RoomController extends AEnvironmentAwareController {
 
 			return new DataResponse($this->formatRoom($room, $participant, [], $isSIPBridgeRequest), Http::STATUS_OK, $this->getTalkHashHeader());
 		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response->throttle();
+			return $response;
 		}
 	}
 
@@ -1415,7 +1417,7 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireRoom
-	 * @BruteForceProtection(action=sipBridgeSecret)
+	 * @BruteForceProtection(action=talkSipBridgeSecret)
 	 *
 	 * @param string $pin
 	 * @return DataResponse
@@ -1445,16 +1447,21 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireRoom
+	 * @BruteForceProtection(action=talkSipBridgeSecret)
 	 *
 	 * @return DataResponse
 	 */
 	public function createGuestByDialIn(): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
-				return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response->throttle();
+				return $response;
 			}
 		} catch (UnauthorizedException $e) {
-			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response->throttle();
+			return $response;
 		}
 
 		if ($this->room->getSIPEnabled() !== Webinary::SIP_ENABLED_NO_PIN) {
