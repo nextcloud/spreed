@@ -268,7 +268,7 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @BruteForceProtection(action=sipBridgeSecret)
+	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @param string $token
 	 * @return DataResponse
@@ -301,7 +301,9 @@ class RoomController extends AEnvironmentAwareController {
 
 			return new DataResponse($this->formatRoom($room, $participant, [], $isSIPBridgeRequest), Http::STATUS_OK, $this->getTalkHashHeader());
 		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response->throttle();
+			return $response;
 		}
 	}
 
@@ -1351,7 +1353,7 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireRoom
-	 * @BruteForceProtection(action=sipBridgeSecret)
+	 * @BruteForceProtection(action=talkSipBridgeSecret)
 	 *
 	 * @param string $pin
 	 * @return DataResponse
