@@ -159,6 +159,7 @@ class FilesIntegrationController extends OCSController {
 	/**
 	 * @PublicPage
 	 * @UseSession
+	 * @BruteForceProtection(action=shareinfo)
 	 *
 	 * Returns the token of the room associated to the file id of the given
 	 * share token.
@@ -203,7 +204,9 @@ class FilesIntegrationController extends OCSController {
 				}
 			}
 		} catch (ShareNotFound $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response->throttle(['token' => $shareToken]);
+			return $response;
 		}
 
 		try {
