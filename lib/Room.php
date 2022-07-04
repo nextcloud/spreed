@@ -467,6 +467,7 @@ class Room {
 	}
 
 	public function setParticipant(?string $userId, Participant $participant): void {
+		// FIXME Also used with cloudId, need actorType checking?
 		$this->currentUser = $userId;
 		$this->participant = $participant;
 	}

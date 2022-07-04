@@ -54,16 +54,20 @@ use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
+use OCP\Federation\ICloudIdManager;
 use OCP\IRequest;
 use OCP\Security\Bruteforce\IThrottler;
 
 class InjectionMiddleware extends Middleware {
+	protected bool $isTalkFederation = false;
+	protected ?string $federationCloudId = null;
 
 	public function __construct(
 		protected IRequest $request,
 		protected ParticipantService $participantService,
 		protected TalkSession $talkSession,
 		protected Manager $manager,
+		protected ICloudIdManager $cloudIdManager,
 		protected IThrottler $throttler,
 		protected ?string $userId,
 	) {
@@ -82,6 +86,11 @@ class InjectionMiddleware extends Middleware {
 	public function beforeController(Controller $controller, string $methodName): void {
 		if (!$controller instanceof AEnvironmentAwareController) {
 			return;
+		}
+
+		$this->isTalkFederation = (bool) $this->request->getHeader('X-Nextcloud-Federation');
+		if ($this->isTalkFederation) {
+			$controller->setRemoteAccess($this->getRemoteAccessActorId(), $this->getRemoteAccessToken());
 		}
 
 		$reflectionMethod = new \ReflectionMethod($controller, $methodName);
@@ -171,7 +180,15 @@ class InjectionMiddleware extends Middleware {
 		if (!$room instanceof Room) {
 			$token = $this->request->getParam('token');
 			$sessionId = $this->talkSession->getSessionForRoom($token);
-			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
+			if (!$this->isTalkFederation) {
+				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
+			} else {
+				$room = $this->manager->getRoomByRemoteAccess($token, Attendee::ACTOR_FEDERATED_USERS, $this->getRemoteAccessActorId(), $this->getRemoteAccessToken());
+
+				// Get and set the participant already so we don't retry public access
+				$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_FEDERATED_USERS, $this->getRemoteAccessActorId());
+				$controller->setParticipant($participant);
+			}
 			$controller->setRoom($room);
 		}
 
@@ -199,6 +216,27 @@ class InjectionMiddleware extends Middleware {
 		if ($moderatorRequired && !$participant->hasModeratorPermissions()) {
 			throw new NotAModeratorException();
 		}
+	}
+
+	protected function getRemoteAccessActorId(): string {
+		if ($this->federationCloudId !== null) {
+			return $this->federationCloudId;
+		}
+		$authUser = $this->request->server['PHP_AUTH_USER'] ?? '';
+		$authUser = urldecode($authUser);
+
+		try {
+			$cloudId = $this->cloudIdManager->resolveCloudId($authUser);
+			$this->federationCloudId = $cloudId->getId();
+		} catch (\InvalidArgumentException) {
+			$this->federationCloudId = '';
+		}
+
+		return $this->federationCloudId;
+	}
+
+	protected function getRemoteAccessToken(): string {
+		return $this->request->server['PHP_AUTH_PW'] ?? '';
 	}
 
 	/**

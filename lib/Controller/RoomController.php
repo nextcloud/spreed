@@ -306,6 +306,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * 404: Room not found
 	 */
 	#[PublicPage]
+	#[BruteForceProtection(action: 'talkFederationAccess')]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	public function getSingleRoom(string $token): DataResponse {
@@ -325,18 +326,38 @@ class RoomController extends AEnvironmentAwareController {
 		$includeLastMessage = !$isSIPBridgeRequest;
 
 		try {
-			$sessionId = $this->session->getSessionForRoom($token);
-			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId, $includeLastMessage, $isSIPBridgeRequest);
-
+			$action = 'talkRoomToken';
 			$participant = null;
-			try {
-				$participant = $this->participantService->getParticipant($room, $this->userId, $sessionId);
-			} catch (ParticipantNotFoundException $e) {
+
+			$isTalkFederation = $this->request->getHeader('X-Nextcloud-Federation');
+
+			if (!$isTalkFederation) {
+				$sessionId = $this->session->getSessionForRoom($token);
+				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId, $includeLastMessage, $isSIPBridgeRequest);
+
 				try {
-					$participant = $this->participantService->getParticipantBySession($room, $sessionId);
+					$participant = $this->participantService->getParticipant($room, $this->userId, $sessionId);
 				} catch (ParticipantNotFoundException $e) {
+					try {
+						$participant = $this->participantService->getParticipantBySession($room, $sessionId);
+					} catch (ParticipantNotFoundException $e) {
+					}
 				}
+			} else {
+				$action = 'talkFederationAccess';
+				$room = $this->manager->getRoomByRemoteAccess(
+					$token,
+					Attendee::ACTOR_FEDERATED_USERS,
+					$this->getRemoteAccessCloudId(),
+					$this->getRemoteAccessToken(),
+				);
+				$participant = $this->participantService->getParticipantByActor(
+					$room,
+					Attendee::ACTOR_FEDERATED_USERS,
+					$this->getRemoteAccessCloudId(),
+				);
 			}
+
 			$statuses = [];
 			if ($this->userId !== null
 				&& $this->appManager->isEnabledForUser('user_status')) {
@@ -362,7 +383,7 @@ class RoomController extends AEnvironmentAwareController {
 			 * @var DataResponse<Http::STATUS_NOT_FOUND, null, array{}> $response
 			 */
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
-			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
+			$response->throttle(['token' => $token, 'action' => $action]);
 			return $response;
 		}
 	}
@@ -1341,15 +1362,30 @@ class RoomController extends AEnvironmentAwareController {
 	 * 409: Session already exists
 	 */
 	#[PublicPage]
+	#[BruteForceProtection(action: 'talkFederationAccess')]
 	#[BruteForceProtection(action: 'talkRoomPassword')]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
 		$sessionId = $this->session->getSessionForRoom($token);
+		$isTalkFederation = $this->request->getHeader('X-Nextcloud-Federation');
 		try {
 			// The participant is just joining, so enforce to not load any session
-			$room = $this->manager->getRoomForUserByToken($token, $this->userId, null);
+			if (!$isTalkFederation) {
+				$action = 'talkRoomToken';
+				$room = $this->manager->getRoomForUserByToken($token, $this->userId, null);
+			} else {
+				$action = 'talkFederationAccess';
+				$room = $this->manager->getRoomByRemoteAccess(
+					$token,
+					Attendee::ACTOR_FEDERATED_USERS,
+					$this->getRemoteAccessCloudId(),
+					$this->getRemoteAccessToken(),
+				);
+			}
 		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response->throttle(['token' => $token, 'action' => $action]);
+			return $response;
 		}
 
 		/** @var Participant|null $previousSession */
@@ -1392,6 +1428,8 @@ class RoomController extends AEnvironmentAwareController {
 			if ($user instanceof IUser) {
 				$participant = $this->participantService->joinRoom($this->roomService, $room, $user, $password, $result['result']);
 				$this->participantService->generatePinForParticipant($room, $participant);
+			} elseif ($isTalkFederation) {
+				$participant = $this->participantService->joinRoomAsFederatedUser($room, Attendee::ACTOR_FEDERATED_USERS, $this->getRemoteAccessCloudId());
 			} else {
 				$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, $password, $result['result'], $previousParticipant);
 			}
@@ -1403,7 +1441,7 @@ class RoomController extends AEnvironmentAwareController {
 			return $response;
 		} catch (UnauthorizedException $e) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
-			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
+			$response->throttle(['token' => $token, 'action' => $action]);
 			return $response;
 		}
 
@@ -1523,8 +1561,24 @@ class RoomController extends AEnvironmentAwareController {
 		$this->session->removeSessionForRoom($token);
 
 		try {
-			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
-			$participant = $this->participantService->getParticipantBySession($room, $sessionId);
+			$isTalkFederation = $this->request->getHeader('X-Nextcloud-Federation');
+			// The participant is just joining, so enforce to not load any session
+			if (!$isTalkFederation) {
+				$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
+				$participant = $this->participantService->getParticipantBySession($room, $sessionId);
+			} else {
+				$room = $this->manager->getRoomByRemoteAccess(
+					$token,
+					Attendee::ACTOR_FEDERATED_USERS,
+					$this->getRemoteAccessCloudId(),
+					$this->getRemoteAccessToken(),
+				);
+				$participant = $this->participantService->getParticipantByActor(
+					$room,
+					Attendee::ACTOR_FEDERATED_USERS,
+					$this->getRemoteAccessCloudId(),
+				);
+			}
 			$this->participantService->leaveRoomAsSession($room, $participant);
 		} catch (RoomNotFoundException $e) {
 		} catch (ParticipantNotFoundException $e) {

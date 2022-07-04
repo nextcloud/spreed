@@ -635,7 +635,6 @@ class Manager {
 			}
 
 			// never joined before but found in listing
-			$listable = (int)$row['listable'];
 			if ($this->isRoomListableByUser($room, $userId)) {
 				return $room;
 			}
@@ -727,6 +726,61 @@ class Manager {
 			$participant = $this->createParticipantObject($room, $row);
 			$this->participantService->cacheParticipant($room, $participant);
 			$room->setParticipant($row['actor_id'], $participant);
+		}
+
+		return $room;
+	}
+
+	/**
+	 * @param string $token
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @param string $remoteAccess
+	 * @param ?string $sessionId
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	public function getRoomByRemoteAccess(string $token, string $actorType, string $actorId, string $remoteAccess, ?string $sessionId = null): Room {
+		$query = $this->db->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectRoomsTable($query);
+		$helper->selectAttendeesTable($query);
+		$query->from('talk_rooms', 'r')
+			->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
+				$query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)),
+				$query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)),
+				$query->expr()->eq('a.access_token', $query->createNamedParameter($remoteAccess)),
+				$query->expr()->eq('a.room_id', 'r.id')
+			))
+			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)));
+
+		if ($sessionId !== null) {
+			$helper->selectSessionsTable($query);
+			$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+				$query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)),
+				$query->expr()->eq('a.id', 's.attendee_id')
+			));
+		}
+
+		$result = $query->executeQuery();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
+			throw new RoomNotFoundException();
+		}
+
+		$room = $this->createRoomObject($row);
+		if (isset($row['actor_id'])) {
+			$participant = $this->createParticipantObject($room, $row);
+			$this->participantService->cacheParticipant($room, $participant);
+		} else {
+			throw new RoomNotFoundException();
 		}
 
 		return $room;
