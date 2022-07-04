@@ -513,7 +513,7 @@ Peer.prototype.selectSimulcastStream = function(substream, temporal) {
 		return
 	}
 
-	console.debug('Changing simulcast stream', this, substream, temporal)
+	console.debug('Changing simulcast stream', this.id, this, substream, temporal)
 	this.send('selectStream', {
 		substream,
 		temporal,
