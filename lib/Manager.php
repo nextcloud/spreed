@@ -222,6 +222,7 @@ class Manager {
 			'creation_timestamp' => $row['comment_creation_timestamp'],
 			'latest_child_timestamp' => $row['comment_latest_child_timestamp'],
 			'reactions' => $row['comment_reactions'],
+			'expire_date' => $row['expire_date'],
 		]);
 	}
 
