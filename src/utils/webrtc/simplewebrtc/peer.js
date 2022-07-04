@@ -510,7 +510,6 @@ Peer.prototype.handleAnswer = function(answer) {
 
 Peer.prototype.selectSimulcastStream = function(substream, temporal) {
 	if (this.substream === substream && this.temporal === temporal) {
-		console.debug('Simulcast stream not changed', this, substream, temporal)
 		return
 	}
 
