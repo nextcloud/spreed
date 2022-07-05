@@ -28,6 +28,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
+use OC\Security\Bruteforce\Throttler;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
@@ -91,6 +92,7 @@ class RoomController extends AEnvironmentAwareController {
 	protected IL10N $l10n;
 	protected IConfig $config;
 	protected Config $talkConfig;
+	protected Throttler $throttler;
 	protected LoggerInterface $logger;
 
 	protected array $commonReadMessages = [];
@@ -116,6 +118,7 @@ class RoomController extends AEnvironmentAwareController {
 								IConfig $config,
 								Config $talkConfig,
 								ICloudIdManager $cloudIdManager,
+								Throttler $throttler,
 								LoggerInterface $logger) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
@@ -137,6 +140,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->config = $config;
 		$this->talkConfig = $talkConfig;
 		$this->cloudIdManager = $cloudIdManager;
+		$this->throttler = $throttler;
 		$this->logger = $logger;
 	}
 
@@ -269,9 +273,11 @@ class RoomController extends AEnvironmentAwareController {
 		try {
 			$isSIPBridgeRequest = $this->validateSIPBridgeRequest($token);
 		} catch (UnauthorizedException $e) {
-			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
-			$response->throttle();
-			return $response;
+			$ip = $this->request->getRemoteAddress();
+			$action = 'talkSipBridgeSecret';
+			$this->throttler->sleepDelay($ip, $action);
+			$this->throttler->registerAttempt($action, $ip);
+			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
 		}
 
 		// The SIP bridge only needs room details (public, sip enabled, lobby state, etc)
