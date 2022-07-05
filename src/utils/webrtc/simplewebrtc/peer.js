@@ -510,11 +510,10 @@ Peer.prototype.handleAnswer = function(answer) {
 
 Peer.prototype.selectSimulcastStream = function(substream, temporal) {
 	if (this.substream === substream && this.temporal === temporal) {
-		console.debug('Simulcast stream not changed', this, substream, temporal)
 		return
 	}
 
-	console.debug('Changing simulcast stream', this, substream, temporal)
+	console.debug('Changing simulcast stream', this.id, this, substream, temporal)
 	this.send('selectStream', {
 		substream,
 		temporal,
