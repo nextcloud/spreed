@@ -222,7 +222,7 @@ class Manager {
 			'creation_timestamp' => $row['comment_creation_timestamp'],
 			'latest_child_timestamp' => $row['comment_latest_child_timestamp'],
 			'reactions' => $row['comment_reactions'],
-			'expire_date' => $row['expire_date'],
+			'expire_date' => $row['comment_expire_date'],
 		]);
 	}
 
@@ -1181,5 +1181,6 @@ class Manager {
 		$query->selectAlias('c.creation_timestamp', 'comment_creation_timestamp');
 		$query->selectAlias('c.latest_child_timestamp', 'comment_latest_child_timestamp');
 		$query->selectAlias('c.reactions', 'comment_reactions');
+		$query->selectAlias('c.expire_date', 'comment_expire_date');
 	}
 }
