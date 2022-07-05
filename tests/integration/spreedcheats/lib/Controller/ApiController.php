@@ -121,7 +121,7 @@ class ApiController extends OCSController {
 			->where(
 				$query->expr()->andX(
 					$query->expr()->eq('class', $query->createNamedParameter(ExpireChatMessages::class)),
-					$query->expr()->eq('argument', $query->createNamedParameter(json_encode(['room_id' => (int) $roomId])))
+					$query->expr()->eq('argument', $query->createNamedParameter(json_encode(['room_id' => $roomId])))
 				)
 			);
 		$result = $query->executeQuery();
@@ -132,12 +132,16 @@ class ApiController extends OCSController {
 		return new DataResponse([], Http::STATUS_NOT_FOUND);
 	}
 
-	private function getRoomIdByToken(string $token): ?string {
+	private function getRoomIdByToken(string $token): ?int {
 		$query = $this->db->getQueryBuilder();
 		$query->select('id')
 			->from('talk_rooms')
 			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
+
 		$result = $query->executeQuery();
-		return $result->fetchOne();
+		$roomId = (int) $result->fetchOne();
+		$result->closeCursor();
+
+		return $roomId;
 	}
 }
