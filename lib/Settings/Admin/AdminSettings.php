@@ -97,6 +97,7 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState('default_group_notification', (int) $this->serverConfig->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_MENTION));
 		$this->initialState->provideInitialState('conversations_files', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files', '1'));
 		$this->initialState->provideInitialState('conversations_files_public_shares', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files_public_shares', '1'));
+		$this->initialState->provideInitialState('valid_apache_php_configuration', (int) $this->validApachePHPConfiguration());
 	}
 
 	protected function initAllowedGroups(): void {
@@ -495,6 +496,26 @@ class AdminSettings implements ISettings {
 		}
 
 		return $groups;
+	}
+
+	protected function validApachePHPConfiguration(): bool {
+		$output = [];
+		@exec('apachectl -M | grep mpm', $output, $returnCode);
+
+		if ($returnCode > 0) {
+			return true;
+		}
+
+		$apacheModule = implode("\n", $output);
+		$usingFPM = ini_get('fpm.config') !== false;
+
+		if ($usingFPM) {
+			// Needs to use mpm_event
+			return strpos($apacheModule, 'mpm_event') !== false;
+		}
+
+		// Needs to use mpm_prefork
+		return strpos($apacheModule, 'mpm_prefork') !== false;
 	}
 
 	/**

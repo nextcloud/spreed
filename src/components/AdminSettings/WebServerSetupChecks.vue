@@ -24,6 +24,11 @@
 			{{ t('spreed', 'Web server setup checks') }}
 		</h2>
 
+		<p v-if="!validApachePHPConfiguration"
+			class="settings-hint warning">
+			{{ apacheWarning }}
+		</p>
+
 		<ul class="web-server-setup-checks">
 			<li class="background-blur">
 				{{ t('spreed', 'Files required for background blur can be loaded') }}
@@ -55,6 +60,7 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { VIRTUAL_BACKGROUND_TYPE } from '../../utils/media/effects/virtual-background/constants.js'
 import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
 import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
+import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'WebServerSetupChecks',
@@ -66,6 +72,7 @@ export default {
 	data() {
 		return {
 			backgroundBlurLoaded: undefined,
+			validApachePHPConfiguration: true,
 		}
 	},
 
@@ -109,6 +116,14 @@ export default {
 
 			return t('spreed', 'Checking …')
 		},
+
+		apacheWarning() {
+			return t('spreed', 'It seems that the PHP and Apache configuration is not compatible. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module.')
+		},
+	},
+
+	mounted() {
+		this.validApachePHPConfiguration = parseInt(loadState('spreed', 'valid_apache_php_configuration')) === 1
 	},
 
 	beforeMount() {
