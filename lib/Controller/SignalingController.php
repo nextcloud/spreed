@@ -161,25 +161,20 @@ class SignalingController extends OCSController {
 		$signalingMode = $this->talkConfig->getSignalingMode();
 		$signaling = $this->signalingManager->getSignalingServerLinkForConversation($room);
 
-		// TODO: Autodetect and use if signaling server has feature flag "hello-v2".
-		if ($this->serverConfig->getAppValue('spreed', 'use-hello-v2')) {
-			$helloVersion = '2.0';
-			$helloAuthParams = [
-				'token' => $this->talkConfig->getSignalingTicket(Config::SIGNALING_TICKET_V2, $this->userId),
-			];
-		} else {
-			$helloVersion = '1.0';
-			$helloAuthParams = [
+		$helloAuthParams = [
+			'1.0' => [
 				'userid' => $this->userId,
 				'ticket' => $this->talkConfig->getSignalingTicket(Config::SIGNALING_TICKET_V1, $this->userId),
-			];
-		}
+			],
+			'2.0' => [
+				'token' => $this->talkConfig->getSignalingTicket(Config::SIGNALING_TICKET_V2, $this->userId),
+			],
+		];
 		$data = [
 			'signalingMode' => $signalingMode,
 			'userId' => $this->userId,
 			'hideWarning' => $signaling !== '' || $this->talkConfig->getHideSignalingWarning(),
 			'server' => $signaling,
-			'helloVersion' => $helloVersion,
 			'helloAuthParams' => $helloAuthParams,
 			'stunservers' => $stun,
 			'turnservers' => $turn,

@@ -590,6 +590,7 @@ function Standalone(settings, urls) {
 		url = url.slice(0, -1)
 	}
 	this.url = url + '/spreed'
+	this.welcomeTimeoutMs = 3000
 	this.initialReconnectIntervalMs = 1000
 	this.maxReconnectIntervalMs = 16000
 	this.reconnectIntervalMs = this.initialReconnectIntervalMs
@@ -658,7 +659,11 @@ Signaling.Standalone.prototype.connect = function() {
 			this.signalingConnectionWarning = null
 		}
 		this.reconnectIntervalMs = this.initialReconnectIntervalMs
-		this.sendHello()
+		if (this.settings.helloAuthParams['2.0']) {
+			this.waitForWelcomeTimeout = setTimeout(this.welcomeTimeout.bind(this), this.welcomeTimeoutMs)
+		} else {
+			this.sendHello()
+		}
 	}.bind(this)
 	this.socket.onerror = function(event) {
 		console.error('Error', event)
@@ -713,6 +718,9 @@ Signaling.Standalone.prototype.connect = function() {
 		this._trigger('onBeforeReceiveMessage', [data])
 		const message = {}
 		switch (data.type) {
+		case 'welcome':
+			this.welcomeReceived(data)
+			break
 		case 'hello':
 			if (!id) {
 				// Only process if not received as result of our "hello".
@@ -765,6 +773,30 @@ Signaling.Standalone.prototype.connect = function() {
 		}
 		this._trigger('onAfterReceiveMessage', [data])
 	}.bind(this)
+}
+
+Signaling.Standalone.prototype.welcomeReceived = function(data) {
+	console.debug('Welcome received', data)
+	if (this.waitForWelcomeTimeout !== null) {
+		clearTimeout(this.waitForWelcomeTimeout)
+		this.waitForWelcomeTimeout = null
+	}
+
+	this.features = {}
+	let i
+	if (data.welcome && data.welcome.features) {
+		const features = data.welcome.features
+		for (i = 0; i < features.length; i++) {
+			this.features[features[i]] = true
+		}
+	}
+
+	this.sendHello()
+}
+
+Signaling.Standalone.prototype.welcomeTimeout = function() {
+	console.warn('No welcome received, assuming old-style signaling server')
+	this.sendHello()
 }
 
 Signaling.Standalone.prototype.sendBye = function() {
@@ -908,13 +940,19 @@ Signaling.Standalone.prototype.sendHello = function() {
 		// Already reconnected with a new session.
 		this._forceReconnect = false
 		const url = generateOcsUrl('apps/spreed/api/v3/signaling/backend')
+		let helloVersion
+		if (this.hasFeature('hello-v2') && this.settings.helloAuthParams['2.0']) {
+			helloVersion = '2.0'
+		} else {
+			helloVersion = '1.0'
+		}
 		msg = {
 			type: 'hello',
 			hello: {
-				version: this.settings.helloVersion,
+				version: helloVersion,
 				auth: {
 					url,
-					params: this.settings.helloAuthParams,
+					params: this.settings.helloAuthParams[helloVersion],
 				},
 			},
 		}
