@@ -24,6 +24,7 @@
 				<referencedClass name="Doctrine\DBAL\Types\Types" />
 				<referencedClass name="GuzzleHttp\Exception\ClientException" />
 				<referencedClass name="OC" />
+				<referencedClass name="OC\Security\Bruteforce\Throttler" />
 				<referencedClass name="OCA\Circles\Api\v1\Circles" />
 				<referencedClass name="OCA\Circles\Events\AddingCircleMemberEvent" />
 				<referencedClass name="OCA\Circles\Events\CircleDestroyedEvent" />
@@ -45,6 +46,7 @@
 				<referencedClass name="Doctrine\DBAL\Schema\SchemaException" />
 				<referencedClass name="Doctrine\DBAL\Schema\Table" />
 				<referencedClass name="OC\DB\ConnectionAdapter" />
+				<referencedClass name="OC\Security\Bruteforce\Throttler" />
 				<referencedClass name="OCA\Circles\Model\Member" />
 				<referencedClass name="OCA\DAV\CardDAV\PhotoCache" />
 				<referencedClass name="OCA\FederatedFileSharing\AddressHandler" />
