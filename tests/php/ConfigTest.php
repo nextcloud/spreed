@@ -20,6 +20,9 @@
  */
 namespace OCA\Talk\Tests\php;
 
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
 use OCA\Talk\Config;
 use OCA\Talk\Events\GetTurnServersEvent;
 use OCA\Talk\Tests\php\Mocks\GetTurnServerListener;
@@ -28,6 +31,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
+use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -329,5 +333,127 @@ class ConfigTest extends TestCase {
 			$expectedWebSocketDomain,
 			self::invokePrivate($helper, 'getWebSocketDomainForSignalingServer', [$url])
 		);
+	}
+
+	public function dataTicketV2Algorithm() {
+		return [
+			['ES384'],
+			['ES256'],
+			['RS256'],
+			['RS384'],
+			['RS512'],
+			['EdDSA'],
+		];
+	}
+
+	/**
+	 * @dataProvider dataTicketV2Algorithm
+	 * @param string $algo
+	 */
+	public function testSignalingTicketV2User(string $algo): void {
+		/** @var IConfig $config */
+		$config = \OC::$server->getConfig();
+		/** @var MockObject|ITimeFactory $timeFactory */
+		$timeFactory = $this->createMock(ITimeFactory::class);
+		/** @var MockObject|ISecureRandom $secureRandom */
+		$secureRandom = $this->createMock(ISecureRandom::class);
+		/** @var MockObject|IGroupManager $groupManager */
+		$groupManager = $this->createMock(IGroupManager::class);
+		/** @var MockObject|IUserManager $userManager */
+		$userManager = $this->createMock(IUserManager::class);
+		/** @var MockObject|IURLGenerator $urlGenerator */
+		$urlGenerator = $this->createMock(IURLGenerator::class);
+		/** @var MockObject|IEventDispatcher $dispatcher */
+		$dispatcher = $this->createMock(IEventDispatcher::class);
+		/** @var MockObject|IUser $user */
+		$user = $this->createMock(IUser::class);
+
+		$now = time();
+		$timeFactory
+			->expects($this->once())
+			->method('getTime')
+			->willReturn($now);
+		$urlGenerator
+			->expects($this->once())
+			->method('getAbsoluteURL')
+			->with('')
+			->willReturn('https://domain.invalid/nextcloud');
+		$userManager
+			->expects($this->once())
+			->method('get')
+			->with('user1')
+			->willReturn($user);
+		$user
+			->expects($this->once())
+			->method('getUID')
+			->willReturn('user1');
+		$user
+			->expects($this->once())
+			->method('getDisplayName')
+			->willReturn('Jane Doe');
+
+		$helper = new Config($config, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+
+		$config->setAppValue('spreed', 'signaling_token_alg', $algo);
+		// Make sure new keys are generated.
+		$config->deleteAppValue('spreed', 'signaling_token_privkey_' . strtolower($algo));
+		$config->deleteAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo));
+		$ticket = $helper->getSignalingTicket(Config::SIGNALING_TICKET_V2, 'user1');
+		$this->assertNotNull($ticket);
+
+		$key = new Key($config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo)), $algo);
+		$decoded = JWT::decode($ticket, $key);
+
+		$this->assertEquals($now, $decoded->iat);
+		$this->assertEquals('https://domain.invalid/nextcloud', $decoded->iss);
+		$this->assertEquals('user1', $decoded->sub);
+		$this->assertSame(['displayname' => 'Jane Doe'], (array) $decoded->userdata);
+	}
+
+	/**
+	 * @dataProvider dataTicketV2Algorithm
+	 * @param string $algo
+	 */
+	public function testSignalingTicketV2Anonymous(string $algo): void {
+		/** @var IConfig $config */
+		$config = \OC::$server->getConfig();
+		/** @var MockObject|ITimeFactory $timeFactory */
+		$timeFactory = $this->createMock(ITimeFactory::class);
+		/** @var MockObject|ISecureRandom $secureRandom */
+		$secureRandom = $this->createMock(ISecureRandom::class);
+		/** @var MockObject|IGroupManager $groupManager */
+		$groupManager = $this->createMock(IGroupManager::class);
+		/** @var MockObject|IUserManager $userManager */
+		$userManager = $this->createMock(IUserManager::class);
+		/** @var MockObject|IURLGenerator $urlGenerator */
+		$urlGenerator = $this->createMock(IURLGenerator::class);
+		/** @var MockObject|IEventDispatcher $dispatcher */
+		$dispatcher = $this->createMock(IEventDispatcher::class);
+
+		$now = time();
+		$timeFactory
+			->expects($this->once())
+			->method('getTime')
+			->willReturn($now);
+		$urlGenerator
+			->expects($this->once())
+			->method('getAbsoluteURL')
+			->with('')
+			->willReturn('https://domain.invalid/nextcloud');
+
+		$helper = new Config($config, $secureRandom, $groupManager, $userManager, $urlGenerator, $timeFactory, $dispatcher);
+
+		$config->setAppValue('spreed', 'signaling_token_alg', $algo);
+		// Make sure new keys are generated.
+		$config->deleteAppValue('spreed', 'signaling_token_privkey_' . strtolower($algo));
+		$config->deleteAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo));
+		$ticket = $helper->getSignalingTicket(Config::SIGNALING_TICKET_V2, null);
+		$this->assertNotNull($ticket);
+
+		$key = new Key($config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($algo)), $algo);
+		$decoded = JWT::decode($ticket, $key);
+
+		$this->assertEquals($now, $decoded->iat);
+		$this->assertEquals('https://domain.invalid/nextcloud', $decoded->iss);
 	}
 }

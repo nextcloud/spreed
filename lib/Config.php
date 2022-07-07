@@ -404,24 +404,32 @@ class Config {
 			return;
 		}
 
-		if (substr($alg, 0, 2) === 'EC') {
+		if (substr($alg, 0, 2) === 'ES') {
 			$privKey = openssl_pkey_new([
 				'curve_name' => 'prime256v1',
 				'private_key_type' => OPENSSL_KEYTYPE_EC,
 			]);
+			$pubKey = openssl_pkey_get_details($privKey);
+			$public = $pubKey['key'];
+			if (!openssl_pkey_export($privKey, $secret)) {
+				throw new \Exception('Could not export private key');
+			}
 		} elseif (substr($alg, 0, 2) === 'RS') {
 			$privKey = openssl_pkey_new([
 				'private_key_bits' => 2048,
 				'private_key_type' => OPENSSL_KEYTYPE_RSA,
 			]);
+			$pubKey = openssl_pkey_get_details($privKey);
+			$public = $pubKey['key'];
+			if (!openssl_pkey_export($privKey, $secret)) {
+				throw new \Exception('Could not export private key');
+			}
+		} elseif ($alg === 'EdDSA') {
+			$privKey = sodium_crypto_sign_keypair();
+			$public = base64_encode(sodium_crypto_sign_publickey($privKey));
+			$secret = base64_encode(sodium_crypto_sign_secretkey($privKey));
 		} else {
 			throw new \Exception('Unsupported algorithm ' . $alg);
-		}
-		$pubKey = openssl_pkey_get_details($privKey);
-		$public = $pubKey['key'];
-
-		if (!openssl_pkey_export($privKey, $secret)) {
-			throw new \Exception('Could not export private key');
 		}
 
 		$this->config->setAppValue('spreed', 'signaling_token_privkey_' . strtolower($alg), $secret);
