@@ -33,6 +33,7 @@ local Pipeline(test_set, database, services) = {
 				] else []
 			) + [
 				"cd apps/$APP_NAME",
+				"composer install --no-dev",
 				"cd tests/integration/",
 				"bash run.sh features/"+test_set
 			]

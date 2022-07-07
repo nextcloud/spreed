@@ -15,6 +15,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/callapi
   environment:
@@ -48,6 +49,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/chat
   environment:
@@ -81,6 +83,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/command
   environment:
@@ -115,6 +118,7 @@ steps:
   - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/conversation
   environment:
@@ -149,6 +153,7 @@ steps:
   - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/conversation-2
   environment:
@@ -182,6 +187,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/federation
   environment:
@@ -215,6 +221,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/reaction
   environment:
@@ -248,6 +255,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/sharing
   environment:
@@ -281,6 +289,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/sharing-2
   environment:
@@ -328,6 +337,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/callapi
   environment:
@@ -376,6 +386,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/chat
   environment:
@@ -424,6 +435,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/command
   environment:
@@ -473,6 +485,7 @@ steps:
   - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/conversation
   environment:
@@ -522,6 +535,7 @@ steps:
   - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/conversation-2
   environment:
@@ -570,6 +584,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/federation
   environment:
@@ -618,6 +633,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/reaction
   environment:
@@ -666,6 +682,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/sharing
   environment:
@@ -714,6 +731,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/sharing-2
   environment:
@@ -757,6 +775,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/callapi
   environment:
@@ -799,6 +818,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/chat
   environment:
@@ -841,6 +861,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/command
   environment:
@@ -884,6 +905,7 @@ steps:
   - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/conversation
   environment:
@@ -927,6 +949,7 @@ steps:
   - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/conversation-2
   environment:
@@ -969,6 +992,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/federation
   environment:
@@ -1011,6 +1035,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/reaction
   environment:
@@ -1053,6 +1078,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/sharing
   environment:
@@ -1095,6 +1121,7 @@ steps:
     apps/notifications
   - ./occ app:enable notifications
   - cd apps/$APP_NAME
+  - composer install --no-dev
   - cd tests/integration/
   - bash run.sh features/sharing-2
   environment:
