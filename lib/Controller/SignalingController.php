@@ -122,6 +122,7 @@ class SignalingController extends OCSController {
 
 	/**
 	 * @PublicPage
+	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @param string $token
 	 * @return DataResponse
@@ -135,7 +136,9 @@ class SignalingController extends OCSController {
 				$room = null;
 			}
 		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
+			$response->throttle(['token' => $token]);
+			return $response;
 		}
 
 		$stun = [];
@@ -458,19 +461,22 @@ class SignalingController extends OCSController {
 	 * https://nextcloud-talk.readthedocs.io/en/latest/standalone-signaling-api-v1.html#backend-validation
 	 *
 	 * @PublicPage
+	 * @BruteForceProtection(action=talkSignalingSecret)
 	 *
 	 * @return DataResponse
 	 */
 	public function backend(): DataResponse {
 		$json = $this->getInputStream();
 		if (!$this->validateBackendRequest($json)) {
-			return new DataResponse([
+			$response = new DataResponse([
 				'type' => 'error',
 				'error' => [
 					'code' => 'invalid_request',
 					'message' => 'The request could not be authenticated.',
 				],
 			]);
+			$response->throttle();
+			return $response;
 		}
 
 		$message = json_decode($json, true);

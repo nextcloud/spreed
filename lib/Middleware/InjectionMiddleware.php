@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Middleware;
 
+use OC\Security\Bruteforce\Throttler;
 use OCA\Talk\Controller\AEnvironmentAwareController;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -53,6 +54,8 @@ class InjectionMiddleware extends Middleware {
 	private $talkSession;
 	/** @var Manager */
 	private $manager;
+	/** @var Throttler */
+	private $throttler;
 	/** @var ?string */
 	private $userId;
 
@@ -60,11 +63,13 @@ class InjectionMiddleware extends Middleware {
 								IControllerMethodReflector $reflector,
 								TalkSession $talkSession,
 								Manager $manager,
+								Throttler $throttler,
 								?string $userId) {
 		$this->request = $request;
 		$this->reflector = $reflector;
 		$this->talkSession = $talkSession;
 		$this->manager = $manager;
+		$this->throttler = $throttler;
 		$this->userId = $userId;
 	}
 
@@ -215,6 +220,13 @@ class InjectionMiddleware extends Middleware {
 		if ($exception instanceof RoomNotFoundException ||
 			$exception instanceof ParticipantNotFoundException) {
 			if ($controller instanceof OCSController) {
+				$isBruteForceProtected = $this->reflector->hasAnnotation('BruteForceProtection');
+				if ($isBruteForceProtected) {
+					$ip = $this->request->getRemoteAddress();
+					$action = 'talkRoomToken';
+					$this->throttler->sleepDelay($ip, $action);
+					$this->throttler->registerAttempt($action, $ip);
+				}
 				throw new OCSException('', Http::STATUS_NOT_FOUND);
 			}
 
