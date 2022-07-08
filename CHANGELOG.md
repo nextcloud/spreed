@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 12.2.7 – 2022-07-08
+### Added
+- Add brute force protection for conversation tokens and passwords
+  [#7537](https://github.com/nextcloud/spreed/pull/7537)
+- Add a capability for unified search to enable the feature on the clients
+  [#7450](https://github.com/nextcloud/spreed/pull/7450)
+
+### Fixed
+- Fix backend URL in request to HPB from command line
+  [#7442](https://github.com/nextcloud/spreed/pull/7442)
+- Fix error when setting user status while not being in any conversation
+  [#7468](https://github.com/nextcloud/spreed/pull/7468)
+
 ## 12.2.6 – 2022-05-26
 ### Fixed
 - Ensure display name of conversation owner is stored correctly
