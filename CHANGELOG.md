@@ -1,6 +1,47 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.0.3 – 2022-07-08
+### Added
+- Add brute force protection for conversation tokens and passwords
+  [#7535](https://github.com/nextcloud/spreed/pull/7535)
+- Allow the HPB to group session pinging across multiple conversations
+  [#7444](https://github.com/nextcloud/spreed/pull/7444)
+- Add a capability for unified search to enable the feature on the clients
+  [#7448](https://github.com/nextcloud/spreed/pull/7448)
+
+### Fixed
+- Fix backend URL in request to HPB from command line
+  [#7440](https://github.com/nextcloud/spreed/pull/7440)
+- Fix error when setting user status while not being in any conversation
+  [#7466](https://github.com/nextcloud/spreed/pull/7466)
+
+## 13.0.7 – 2022-07-08
+### Added
+- Add brute force protection for conversation tokens and passwords
+  [#7536](https://github.com/nextcloud/spreed/pull/7536)
+- Add a capability for unified search to enable the feature on the clients
+  [#7449](https://github.com/nextcloud/spreed/pull/7449)
+
+### Fixed
+- Fix backend URL in request to HPB from command line
+  [#7441](https://github.com/nextcloud/spreed/pull/7441)
+- Fix error when setting user status while not being in any conversation
+  [#7467](https://github.com/nextcloud/spreed/pull/7467)
+
+## 12.2.7 – 2022-07-08
+### Added
+- Add brute force protection for conversation tokens and passwords
+  [#7537](https://github.com/nextcloud/spreed/pull/7537)
+- Add a capability for unified search to enable the feature on the clients
+  [#7450](https://github.com/nextcloud/spreed/pull/7450)
+
+### Fixed
+- Fix backend URL in request to HPB from command line
+  [#7442](https://github.com/nextcloud/spreed/pull/7442)
+- Fix error when setting user status while not being in any conversation
+  [#7468](https://github.com/nextcloud/spreed/pull/7468)
+
 ## 14.0.2 – 2022-05-26
 ### Changed
 - Add "Others" section to shared items tab to list unknown items
