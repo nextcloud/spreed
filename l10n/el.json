@@ -958,7 +958,6 @@
     "WebRTC is not supported in your browser" : "Το WebRTC δεν υποστηρίζεται από τον φυλλομετρητή σας",
     "Please use a different browser like Firefox or Chrome" : "Παρακαλούμε χρησιμοποιήστε διαφορετικό φυλλομετρητή όπως ο Firefox ή Chrome",
     "Error while accessing microphone & camera" : "Σφάλμα κατά την πρόσβαση στο μικρόφωνο & την κάμερα",
-    "This conversation is password-protected" : "Η συνομιλία έχει κωδικό πρόσβασης",
     "The password is wrong. Try again." : "Το συνθηματικό είναι λανθασμένο. Δοκιμάστε ξανά.",
     "Specify commands the users can use in chats" : "Καθορίστε τις εντολές που μπορούν να χρησιμοποιήσουν οι χρήστες στις συνομιλίες",
     "TURN server" : "Διακομιστής TURN",

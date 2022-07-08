@@ -818,7 +818,6 @@
     "WebRTC is not supported in your browser" : "WebRTC no és compatible amb el vostre navegador",
     "Please use a different browser like Firefox or Chrome" : "Si us plau, utilitzeu un navegador diferent, com Firefox o Chrome",
     "Error while accessing microphone & camera" : "S'ha produït un error en accedir al micròfon i a la càmera",
-    "This conversation is password-protected" : "Aquesta conversa està protegida amb contrasenya",
     "The password is wrong. Try again." : "La contrasenya no és correcta. Proveu-ho un altre cop.",
     "Specify commands the users can use in chats" : "Especifiqueu les ordres que els usuaris poden fer servir als xats",
     "TURN server" : "Servidor TURN",

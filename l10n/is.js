@@ -509,7 +509,6 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "WebRTC er ekki stutt í vafranum þínum",
     "Please use a different browser like Firefox or Chrome" : "Veldu einhvern annan vafra eins og Firefox eða Chrome",
     "Error while accessing microphone & camera" : "Villa kom upp þegar reynt var að opna hljóðnema og myndavél",
-    "This conversation is password-protected" : "Þetta samtal er er varið með lykilorði",
     "The password is wrong. Try again." : "Lykilorðið er rangt. Reyndu aftur.",
     "Specify commands the users can use in chats" : "Tilgreindu hvaða skipanir notendur geta notað í spjalli",
     "TURN server" : "TURN-þjónn",

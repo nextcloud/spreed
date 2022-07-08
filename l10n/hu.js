@@ -1206,7 +1206,6 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "A böngészője nem támogatja a WebRTC-t",
     "Please use a different browser like Firefox or Chrome" : "Használjon másik böngészőt, például Firefoxot vagy Chrome-ot",
     "Error while accessing microphone & camera" : "Hiba a kamera és a mikrofon hozzáférésekor",
-    "This conversation is password-protected" : "Ez a beszélgetés jelszóval védett",
     "The password is wrong. Try again." : "Hibás jelszó. Próbálja újra.",
     "Specify commands the users can use in chats" : "Adja meg a felhasználók által a csevegésekben használható parancsokat",
     "TURN server" : "TURN kiszolgáló",

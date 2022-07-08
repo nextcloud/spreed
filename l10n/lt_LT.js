@@ -688,7 +688,6 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "Jūsų naršyklėje WebRTC nėra palaikoma",
     "Please use a different browser like Firefox or Chrome" : "Naudokite kitą naršyklę, tokią kaip Firefox ar Chrome",
     "Error while accessing microphone & camera" : "Klaida gaunant prieigą prie mikrofono ir kameros",
-    "This conversation is password-protected" : "Šis pokalbis yra apsaugotas slaptažodžiu",
     "The password is wrong. Try again." : "Slaptažodis neteisingas. Bandykite dar kartą.",
     "TURN server" : "TURN serveris",
     "Signaling servers" : "Signaliniai serveriai",

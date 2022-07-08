@@ -1108,7 +1108,6 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "Vaš preglednik ne podržava WebRTC",
     "Please use a different browser like Firefox or Chrome" : "Koristite se drugim preglednikom kao što je Firefox ili Chrome",
     "Error while accessing microphone & camera" : "Došlo je do pogreške pri pristupanju mikrofonu i kameri",
-    "This conversation is password-protected" : "Ovaj je razgovor zaštićen zaporkom",
     "The password is wrong. Try again." : "Pogrešna zaporka. Pokušajte ponovno.",
     "Specify commands the users can use in chats" : "Navedite naredbe koje korisnici mogu koristiti pri razmjeni poruka",
     "TURN server" : "Poslužitelj TURN",

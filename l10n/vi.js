@@ -743,7 +743,6 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "WebRTC không được hỗ trợ trong trình duyệt của bạn",
     "Please use a different browser like Firefox or Chrome" : "Vui lòng sử dụng một trình duyệt khác như Firefox hoặc Chrome",
     "Error while accessing microphone & camera" : "Lỗi khi truy cập micrô và máy ảnh",
-    "This conversation is password-protected" : "Cuộc trò chuyện này được bảo vệ bằng mật khẩu",
     "The password is wrong. Try again." : "Sai mật khẩu. Thử lại.",
     "Specify commands the users can use in chats" : "Chỉ định các lệnh mà người dùng có thể sử dụng trong các cuộc trò chuyện",
     "TURN server" : "Máy chủ TURN",
