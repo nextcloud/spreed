@@ -767,7 +767,6 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "Вашиот прелистувач не поддржува WebRTC",
     "Please use a different browser like Firefox or Chrome" : "Користете друг прелистувач како Firefox или Chrome",
     "Error while accessing microphone & camera" : "Грешка при пристап до микрофон и камера",
-    "This conversation is password-protected" : "Овој разговор е заштитен со лозинка",
     "The password is wrong. Try again." : "Лозинката е погрешна. Обидите се повторно.",
     "TURN server" : "TURN сервер",
     "%s Talk on your mobile devices" : "%s Разговор на вашиоте мобилни уреди",

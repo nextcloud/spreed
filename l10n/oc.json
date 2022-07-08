@@ -1030,7 +1030,6 @@
     "WebRTC is not supported in your browser" : "Vòstre navegador pren pas en carga lo WebRTC",
     "Please use a different browser like Firefox or Chrome" : "Volgatz utilizar un navegador diferent coma Firefox o Chrome",
     "Error while accessing microphone & camera" : "Error pendent l’accès al microfòn e a la camèra",
-    "This conversation is password-protected" : "Aquesta conversacion es protegida per senhal",
     "The password is wrong. Try again." : "Lo senhal es incorrècte. Ensajatz tornamai.",
     "Specify commands the users can use in chats" : "Indicar las comandas que los utilizaires pòdon utilizar als chats",
     "TURN server" : "Servidor TURN",

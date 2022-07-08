@@ -737,7 +737,6 @@
     "WebRTC is not supported in your browser" : "N'eo ket douget WebRTC gant ho furcher",
     "Please use a different browser like Firefox or Chrome" : "Implijit furcherienn disheñvel evel Firefox pe Chrome",
     "Error while accessing microphone & camera" : "Ur fazi a zo bet en ur klask tizout ar mikro hag ar c'hamera",
-    "This conversation is password-protected" : "Gwarezet eo ar gaozeadenn gant ur ger-tremen",
     "The password is wrong. Try again." : "Direizh eo ar ger-tremen. Klaskit en-dro.",
     "Specify commands the users can use in chats" : "Lakait peseurt urzhioù eo posupl d'an implijer implij er chat",
     "TURN server" : "Servijour TRUN",

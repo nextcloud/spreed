@@ -1192,7 +1192,6 @@
     "WebRTC is not supported in your browser" : "お使いのブラウザーはWebRTCに対応していません",
     "Please use a different browser like Firefox or Chrome" : "別のブラウザー（Firefox または Chrome 等）を使用してください",
     "Error while accessing microphone & camera" : "マイクとカメラのアクセス中にエラーが発生しました",
-    "This conversation is password-protected" : "この会話はパスワードで保護されています",
     "The password is wrong. Try again." : "パスワードが違います。再入力してください",
     "Specify commands the users can use in chats" : "ユーザーがチャットで使用できるコマンドを指定します",
     "TURN server" : "TURNサーバー",

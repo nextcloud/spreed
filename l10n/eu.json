@@ -1196,7 +1196,6 @@
     "WebRTC is not supported in your browser" : "Zure nabigatzaileak ez du WebRTC onartzen",
     "Please use a different browser like Firefox or Chrome" : "Beste nabigatzaile bat erabil ezazu: Firefox edo Chrome.",
     "Error while accessing microphone & camera" : "Errorea mikrofonoa eta kamara atzitzean",
-    "This conversation is password-protected" : "Elkarrizketa hau pasahitz bidez babestua dago",
     "The password is wrong. Try again." : "Pasahitza okerra da. Saiatu berriro.",
     "Specify commands the users can use in chats" : "Zehaztu erabiltzaileek txatetan erabil ditzaketen komandoak",
     "TURN server" : "TURN zerbitzaria",
