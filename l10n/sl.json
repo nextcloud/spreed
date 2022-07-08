@@ -1117,7 +1117,6 @@
     "WebRTC is not supported in your browser" : "Uporabljen brskalnik ne podpira protokola WebRTC",
     "Please use a different browser like Firefox or Chrome" : "Priporočljivo je uporabiti drug brskalnik, kot sta Firefox in Chrome",
     "Error while accessing microphone & camera" : "Napaka med dostopom do mikrofona in kamere",
-    "This conversation is password-protected" : "Ta pogovor je zaščiten z geslom",
     "The password is wrong. Try again." : "Geslo je napačno. Poskusite znova.",
     "Specify commands the users can use in chats" : "Določitev ukazov, ki jih uporabnik lahko uporabi v klepetalnem oknu",
     "TURN server" : "Strežnik TURN",

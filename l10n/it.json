@@ -1138,7 +1138,6 @@
     "WebRTC is not supported in your browser" : "WebRTC non è supportato dal tuo browser",
     "Please use a different browser like Firefox or Chrome" : "Utilizza un browser diverso come Firefox o Chrome",
     "Error while accessing microphone & camera" : "Errore durante l'accesso a microfono e fotocamera",
-    "This conversation is password-protected" : "Questa conversazione è protetta da password",
     "The password is wrong. Try again." : "La password è errata. Prova ancora.",
     "Specify commands the users can use in chats" : "Specifica i comandi che gli utenti possono usare in chat",
     "TURN server" : "Server TURN",

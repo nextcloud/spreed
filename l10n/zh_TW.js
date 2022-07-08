@@ -355,6 +355,7 @@ OC.L10N.register(
     "Conversation name" : "對話名稱",
     "Message sent" : "已傳送郵件",
     "Reply" : "回覆",
+    "Mark as unread" : "標為未讀",
     "Contact" : "聯絡人",
     "Today" : "今天",
     "Yesterday" : "昨天",
