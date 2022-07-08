@@ -448,7 +448,6 @@
     "WebRTC is not supported in your browser" : "WebRTC er ikke undertøttet i din browser",
     "Please use a different browser like Firefox or Chrome" : "Benyt venligst en anden browser f.eks. Firefox eller Chrome",
     "Error while accessing microphone & camera" : "Der opstod en fejl da vi prøvede at få adgang til din mikrofon og kamera",
-    "This conversation is password-protected" : "Denne samtale er beskyttet af adgangskode",
     "The password is wrong. Try again." : "Passwordet er forkert. Prøv igen.",
     "Specify commands the users can use in chats" : "Definer kommandoer brugerne kan bruge i chats",
     "TURN server" : "TURN server",

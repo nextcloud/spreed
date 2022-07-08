@@ -921,7 +921,6 @@
     "WebRTC is not supported in your browser" : "WebRTC ei ole tuettuna selaimessasi",
     "Please use a different browser like Firefox or Chrome" : "Käytä jotain toista selainta, kuten Firefoxia tai Chromea",
     "Error while accessing microphone & camera" : "Virhe yhdistettäessä mikrofoniin ja kameraan",
-    "This conversation is password-protected" : "Tämä keskustelu on salasanasuojattu",
     "The password is wrong. Try again." : "Salasana on väärin. Yritä uudelleen.",
     "TURN server" : "TURN-palvelin",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-palvelinta käytetään liikenteen välittämisessä palomuurin takana oleville osallistujille.",

@@ -966,7 +966,6 @@
     "WebRTC is not supported in your browser" : "O seu navegador non admite WebRTC",
     "Please use a different browser like Firefox or Chrome" : "Use un navegador diferente como Firefox ou Chrome",
     "Error while accessing microphone & camera" : "Produciuse un erro ao acceder ao micrófono e á cámara",
-    "This conversation is password-protected" : "Esta conversa está protexida con contrasinal ",
     "The password is wrong. Try again." : "O contrasinal é incorrecto. Ténteo de novo.",
     "Specify commands the users can use in chats" : "Especifique as ordes que poderán empregar os usuarios nas conversas",
     "TURN server" : "Servidor TURN",

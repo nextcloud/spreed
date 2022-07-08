@@ -1204,7 +1204,6 @@
     "WebRTC is not supported in your browser" : "WebRTC web tarayıcınız tarafından desteklenmiyor",
     "Please use a different browser like Firefox or Chrome" : "Lütfen Firefox ya da Chrome gibi farklı bir tarayıcı kullanın",
     "Error while accessing microphone & camera" : "Mikrofon ve kameraya erişilirken sorun çıktı",
-    "This conversation is password-protected" : "Bu görüşme parola korumalı",
     "The password is wrong. Try again." : "Parola yanlış. Yeniden deneyin.",
     "Specify commands the users can use in chats" : "Kullanıcıların sohbetlerde kullanabileceği komutları belirtin",
     "TURN server" : "TURN Sunucusu",

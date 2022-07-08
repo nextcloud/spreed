@@ -1144,7 +1144,6 @@
     "WebRTC is not supported in your browser" : "WebRTC nie je podporované vaším prehliadačom",
     "Please use a different browser like Firefox or Chrome" : "Použite prosím iný prehliadač, napríklad Firefox alebo Chrome",
     "Error while accessing microphone & camera" : "Nastala chyba pri prístupe ku mikrofónu a kamere",
-    "This conversation is password-protected" : "Táto konverzácia je chránená heslom",
     "The password is wrong. Try again." : "Heslo je nesprávne. Skúste znova.",
     "Specify commands the users can use in chats" : "Zadajte príkazy, ktoré používatelia môžu používať v čete",
     "TURN server" : "TURN server",

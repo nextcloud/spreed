@@ -227,7 +227,6 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "WebRTC netiek atbalstīta jūsu pārlūkprogrammā",
     "Please use a different browser like Firefox or Chrome" : "Lūdzu, izmantojiet citu pārlūkprogrammu, piemēram Firefox vai Chrome",
     "Error while accessing microphone & camera" : "Kļūda, piekļūstot mikrofonam un kamerai",
-    "This conversation is password-protected" : "Šī saruna ir aizsargāta ar paroli",
     "The password is wrong. Try again." : "Nepareiza parole. Mēģiniet vēlreiz.",
     "Specify commands the users can use in chats" : "Komandu norādīšana, kuras lietotāji var izmantot tērzēšanā",
     "TURN server" : "TURN serveris",

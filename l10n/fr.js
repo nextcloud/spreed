@@ -1186,7 +1186,6 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "WebRTC n'est pas pris en charge par votre navigateur",
     "Please use a different browser like Firefox or Chrome" : "Veuillez utiliser un autre navigateur comme Firefox ou Chrome",
     "Error while accessing microphone & camera" : "Erreur lors de l'accès au microphone et à la caméra",
-    "This conversation is password-protected" : "Cette conversation est protégée par mot de passe",
     "The password is wrong. Try again." : "Le mot de passe est incorrect. Veuillez réessayer.",
     "Specify commands the users can use in chats" : "Précise les commandes que les utilisateurs peuvent utiliser dans les discussions",
     "TURN server" : "Serveur TURN",
