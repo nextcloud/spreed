@@ -1205,6 +1205,8 @@
     "WebRTC is not supported in your browser" : "WebRTC wird von Ihrem Browser nicht unterstützt",
     "Please use a different browser like Firefox or Chrome" : "Bitte benutzen Sie einen anderen Browser, wie z.B. Firefox oder Chrome",
     "Error while accessing microphone & camera" : "Fehler beim Zugriff auf Mikrofon & Kamera",
+    "We have detected multiple invalid password attempts from your IP. Therefore your next attempt is throttled up to 30 seconds." : "Es wurden mehrere ungültige Passworteingaben von Ihrer IP-Adresse festgestellt. Daher wird die nächste Anmeldung um 30 Sekunden verzögert.",
+    "This conversation is password-protected." : "Diese Unterhaltung ist passwortgeschützt.",
     "The password is wrong. Try again." : "Das Passwort ist falsch. Bitte versuchen Sie es erneut.",
     "Specify commands the users can use in chats" : "Spezifizieren Sie Befehle, die Benutzer in Chats anwenden können",
     "TURN server" : "TURN-Server",

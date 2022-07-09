@@ -1205,6 +1205,8 @@
     "WebRTC is not supported in your browser" : "Vámi používaný prohlížeč nepodporuje WebRTC",
     "Please use a different browser like Firefox or Chrome" : "Použijte jiný prohlížeč, jako třeba Firefox nebo Chrome",
     "Error while accessing microphone & camera" : "Chyba při přístupu k mikrofonu a kameře",
+    "We have detected multiple invalid password attempts from your IP. Therefore your next attempt is throttled up to 30 seconds." : "Bylo rozpoznáno několik neplatných pokusů o zadání hesla z vaší IP adresy. Další pokus bude proto možný až za 30 sekund.",
+    "This conversation is password-protected." : "Tato konverzace je chráněna heslem.",
     "The password is wrong. Try again." : "Heslo není správné. Zkuste to znovu.",
     "Specify commands the users can use in chats" : "Určete příkazy, které uživatelé mohou používat v chatech",
     "TURN server" : "Server TURN",
