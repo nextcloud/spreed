@@ -1207,6 +1207,8 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "WebRTC não é suportado pelo seu navegador",
     "Please use a different browser like Firefox or Chrome" : "Utilize um navegador diferente como o Firefox ou Chrome",
     "Error while accessing microphone & camera" : "Erro ao acessar microfone & câmera",
+    "We have detected multiple invalid password attempts from your IP. Therefore your next attempt is throttled up to 30 seconds." : "Detectamos várias tentativas de senha inválida do seu IP. Portanto, sua próxima tentativa deverá ser seita em até 30 segundos.",
+    "This conversation is password-protected." : "Esta conversa é protegida por senha.",
     "The password is wrong. Try again." : "Senha incorreta. Tente novamente.",
     "Specify commands the users can use in chats" : "Especifique os comandos que usuários podem usar em bate-papos",
     "TURN server" : "Servidor STUN",
