@@ -348,7 +348,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | [] |
-      | numVoters  | 0 |
+      | numVoters  | 1 |
       | resultMode | hidden |
       | maxVotes   | unlimited |
       | actorType  | users |
@@ -434,7 +434,7 @@ Feature: chat/poll
       | question   | What is the question? |
       | options    | ["Where are you?","How much is the fish?"] |
       | votes      | []   |
-      | numVoters  | 0 |
+      | numVoters  | 1 |
       | resultMode | hidden |
       | maxVotes   | unlimited |
       | actorType  | users |
