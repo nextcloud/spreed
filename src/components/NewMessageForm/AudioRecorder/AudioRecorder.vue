@@ -26,6 +26,7 @@
 				content: startRecordingTooltip,
 				delay: tooltipDelay,
 			}"
+			:aria-label="startRecordingTooltip"
 			type="tertiary"
 			:disabled="!canStartRecording"
 			@click="start">
@@ -39,6 +40,7 @@
 					delay: tooltipDelay,
 				}"
 				type="error"
+				:aria-label="abortRecordingTooltip"
 				@click="abortRecording">
 				<template #icon>
 					<Close :size="16"
@@ -56,6 +58,7 @@
 					delay: tooltipDelay,
 				}"
 				type="success"
+				:aria-label="stopRecordingTooltip"
 				:class="{'audio-recorder__trigger--recording': isRecording}"
 				@click="stop">
 				<template #icon>
