@@ -40,7 +40,7 @@
 					v-clipboard:error="onError"
 					type="secondary"
 					class="confirmation__copy-link">
-					<label for="copy-link">{{ t('spreed', 'Copy conversation link') }}</label>
+					{{ t('spreed', 'Copy conversation link') }}
 				</Button>
 				<p class="confirmation__warning">
 					{{ confirmationText }}
