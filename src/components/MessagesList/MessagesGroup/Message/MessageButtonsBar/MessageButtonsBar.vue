@@ -123,8 +123,8 @@
 				@select="handleReactionClick"
 				@after-show="onEmojiPickerOpen"
 				@after-hide="onEmojiPickerClose">
-				<Button type="tertiary">
-					:aria-label="t('spreed', 'React with another emoji')"
+				<Button type="tertiary"
+					:aria-label="t('spreed', 'React with another emoji')">
 					<template #icon>
 						<Plus :size="20" />
 					</template>
