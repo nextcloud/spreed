@@ -45,18 +45,22 @@ components.
 			</blockquote>
 		</div>
 		<div v-if="isNewMessageFormQuote" class="quote__main__right">
-			<Actions class="quote__main__right__actions">
-				<ActionButton icon="icon-close"
-					:close-after-click="true"
-					@click.stop="handleAbortReply" />
-			</Actions>
+			<Button type="tertiary"
+				:aria-label="cancelQuoteLabel"
+				@click="handleAbortReply">
+				<template #icon>
+					<Close decorative
+						title=""
+						:size="20" />
+				</template>
+			</Button>
 		</div>
 	</a>
 </template>
 
 <script>
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import Actions from '@nextcloud/vue/dist/Components/Actions'
+import Button from '@nextcloud/vue/dist/Components/Button'
+import Close from 'vue-material-design-icons/Close.vue'
 import RichText from '@juliushaertl/vue-richtext'
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter.vue'
@@ -65,8 +69,8 @@ import { EventBus } from '../services/EventBus.js'
 export default {
 	name: 'Quote',
 	components: {
-		Actions,
-		ActionButton,
+		Button,
+		Close,
 		RichText,
 	},
 	props: {
@@ -215,6 +219,10 @@ export default {
 			} else {
 				return this.simpleQuotedMessage
 			}
+		},
+
+		cancelQuoteLabel() {
+			return t('spreed', 'Cancel quote')
 		},
 	},
 	methods: {
