@@ -78,6 +78,7 @@
 						<!-- Disabled emoji picker placeholder button -->
 						<Button v-else
 							type="tertiary"
+							:aria-label="t('spreed', 'Add emoji')"
 							:disabled="true">
 							<EmoticonOutline :size="16"
 								decorative
