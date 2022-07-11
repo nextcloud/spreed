@@ -121,7 +121,7 @@ class ConversationSearch implements IProvider {
 					if ($participantId !== $user->getUID()) {
 						$icon = $this->url->linkToRouteAbsolute('core.avatar.getAvatar', [
 							'userId' => $participantId,
-							'size' => 128,
+							'size' => 512,
 						]);
 					}
 				}

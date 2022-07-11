@@ -191,7 +191,7 @@ class MessageSearch implements IProvider {
 		if ($message->getActorType() === Attendee::ACTOR_USERS) {
 			$iconUrl = $this->url->linkToRouteAbsolute('core.avatar.getAvatar', [
 				'userId' => $message->getActorId(),
-				'size' => 64,
+				'size' => 512,
 			]);
 		}
 
