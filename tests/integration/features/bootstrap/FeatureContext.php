@@ -2602,6 +2602,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 	}
 
+	/**
+	 * @When message expiration job don't exists
+	 */
+	public function messageExpirationJobDontExists(): void {
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('GET', '/apps/spreedcheats/get_message_expiration_job');
+		$response = $this->getDataFromResponse($this->response);
+		Assert::assertEmpty($response, 'Job found');
+		$this->setCurrentUser($currentUser);
+	}
+
 	/*
 	 * Requests
 	 */

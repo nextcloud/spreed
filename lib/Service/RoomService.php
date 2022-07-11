@@ -547,20 +547,45 @@ class RoomService {
 			->set('message_expiration', $update->createNamedParameter($seconds, IQueryBuilder::PARAM_INT))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
+
 		$room->setMessageExpiration($seconds);
-		if ($seconds > 0) {
-			if (!$this->jobList->has(ExpireChatMessages::class, null)) {
-				$this->jobList->add(ExpireChatMessages::class, null);
-			}
-			$this->addMessageExpirationSystemMessage($room, $participant, $seconds, 'message_expiration_enabled');
-		} else {
-			$this->addMessageExpirationSystemMessage($room, $participant, $seconds, 'message_expiration_disabled');
-		}
+
+		$this->toggleJobExpireMesssageIfNecessary($seconds);
+		$this->addMessageExpirationSystemMessage($room, $participant, $seconds);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, $event);
 	}
 
-	private function addMessageExpirationSystemMessage(Room $room, Participant $participant, int $seconds, string $message): void {
+	private function toggleJobExpireMesssageIfNecessary(int $seconds): void {
+		if ($seconds > 0) {
+			if (!$this->jobList->has(ExpireChatMessages::class, null)) {
+				$this->jobList->add(ExpireChatMessages::class, null);
+			}
+			return;
+		}
+		$this->disableExpireMessageJobIfNecesary();
+	}
+
+	private function disableExpireMessageJobIfNecesary(): void {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select($qb->func()->count('*', 'total'))
+			->from('talk_rooms')
+			->where($qb->expr()->gt('message_expiration', $qb->createNamedParameter(0)));
+		$result = $qb->executeQuery();
+		$count = (int) $result->fetchOne();
+		$result->closeCursor();
+
+		if (!$count) {
+			$this->jobList->remove(ExpireChatMessages::class, null);
+		}
+	}
+
+	private function addMessageExpirationSystemMessage(Room $room, Participant $participant, int $seconds): void {
+		if ($seconds > 0) {
+			$message = 'message_expiration_enabled';
+		} else {
+			$message = 'message_expiration_disabled';
+		}
 		$this->chatManager->addSystemMessage(
 			$room,
 			$participant->getAttendee()->getActorType(),
