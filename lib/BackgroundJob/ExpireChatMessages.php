@@ -26,25 +26,16 @@ declare(strict_types=1);
 namespace OCA\Talk\BackgroundJob;
 
 use OCA\Talk\Chat\ChatManager;
-use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Manager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
-use OCP\BackgroundJob\IJobList;
 use OCP\BackgroundJob\TimedJob;
 
 class ExpireChatMessages extends TimedJob {
-	private IJobList $jobList;
-	private Manager $roomManager;
 	private ChatManager $chatManager;
 
 	public function __construct(ITimeFactory $timeFactory,
-								IJobList $jobList,
-								Manager $roomManager,
 								ChatManager $chatManager) {
 		parent::__construct($timeFactory);
-		$this->jobList = $jobList;
-		$this->roomManager = $roomManager;
 		$this->chatManager = $chatManager;
 
 		// Every 5 minutes
