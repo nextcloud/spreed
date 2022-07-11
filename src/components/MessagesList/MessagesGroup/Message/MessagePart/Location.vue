@@ -24,6 +24,7 @@
 		target="_blank"
 		rel="noopener noreferrer"
 		class="location"
+		:class="{ 'wide': wide}"
 		:aria-label="linkAriaLabel">
 		<LMap :zoom="previewZoom"
 			:center="center"
@@ -93,6 +94,11 @@ export default {
 			type: String,
 			default: '',
 		},
+
+		wide: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	data() {
@@ -133,7 +139,14 @@ export default {
 	white-space: initial;
 	overflow: hidden;
 	border-radius: var(--border-radius-large);
-	width: 100%;
-	height: 100%;
+	height: 300px;
+	max-height: 30vh;
+	margin: 4px;
+
+	&.wide {
+		width: 100%;
+		height: 100%;
+		margin: 0;
+	}
 }
 </style>

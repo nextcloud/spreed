@@ -26,7 +26,8 @@
 				:key="item.id"
 				class="shared-items__location"
 				:class="{ 'shared-items__location--nolimit': limit === 0 }">
-				<Location v-bind="item.messageParameters.object" />
+				<Location :wide="true"
+					v-bind="item.messageParameters.object" />
 			</div>
 			<div v-else-if="type === 'deckcard'"
 				:key="item.id"
