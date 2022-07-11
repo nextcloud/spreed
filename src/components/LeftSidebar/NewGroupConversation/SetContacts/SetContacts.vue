@@ -30,6 +30,17 @@
 			type="text"
 			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">
+		<Button v-if="isSearching"
+			class="abort-search"
+			type="tertiary-no-background"
+			:aria-label="cancelSearchLabel"
+			@click="abortSearch">
+			<template #icon>
+				<Close decorative
+					title=""
+					:size="20" />
+			</template>
+		</Button>
 		<transition-group v-if="hasSelectedParticipants"
 			name="zoom"
 			tag="div"
@@ -50,6 +61,8 @@
 </template>
 
 <script>
+import Button from '@nextcloud/vue/dist/Components/Button'
+import Close from 'vue-material-design-icons/Close.vue'
 import CancelableRequest from '../../../../utils/cancelableRequest.js'
 import debounce from 'debounce'
 import { showError } from '@nextcloud/dialogs'
@@ -60,6 +73,8 @@ import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBub
 export default {
 	name: 'SetContacts',
 	components: {
+		Button,
+		Close,
 		ParticipantSearchResults,
 		ContactSelectionBubble,
 	},
@@ -99,6 +114,14 @@ export default {
 		displaySearchHint() {
 			return !this.contactsLoading && this.searchText === ''
 		},
+
+		isSearching() {
+			return this.searchText !== ''
+		},
+
+		cancelSearchLabel() {
+			return t('spreed', 'Cancel search')
+		},
 	},
 
 	async mounted() {
@@ -121,6 +144,14 @@ export default {
 			this.contactsLoading = true
 			this.searchResults = []
 			this.debounceFetchSearchResults()
+		},
+
+		abortSearch() {
+			this.noResults = false
+			this.contactsLoading = false
+			this.searchResults = []
+			this.searchText = ''
+			this.focusInput()
 		},
 
 		debounceFetchSearchResults: debounce(function() {
@@ -182,6 +213,12 @@ export default {
 	&__hint {
 		margin-top: 20px;
 		text-align: center;
+	}
+	.abort-search {
+		position: absolute;
+		right: 0;
+		top: -2px;
+		z-index: 2;
 	}
 }
 
