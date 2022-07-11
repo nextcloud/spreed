@@ -53,19 +53,9 @@ class ExpireChatMessages extends TimedJob {
 	}
 
 	/**
-	 * @param array $argument
+	 * @inheritDoc
 	 */
 	protected function run($argument): void {
-		$this->chatManager->deleteExpiredMessages($argument['room_id']);
-
-		try {
-			$room = $this->roomManager->getRoomById($argument['room_id']);
-			if ($room->getMessageExpiration() === 0) {
-				// FIXME check if there are still messages to expire in the database
-				$this->jobList->remove(ExpireChatMessages::class, $argument);
-			}
-		} catch (RoomNotFoundException $e) {
-			$this->jobList->remove(ExpireChatMessages::class, $argument);
-		}
+		$this->chatManager->deleteExpiredMessages();
 	}
 }

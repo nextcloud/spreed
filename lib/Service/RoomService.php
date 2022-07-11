@@ -549,7 +549,9 @@ class RoomService {
 		$update->executeStatement();
 		$room->setMessageExpiration($seconds);
 		if ($seconds > 0) {
-			$this->jobList->add(ExpireChatMessages::class, ['room_id' => $room->getId()]);
+			if (!$this->jobList->has(ExpireChatMessages::class, null)) {
+				$this->jobList->add(ExpireChatMessages::class, null);
+			}
 			$this->addMessageExpirationSystemMessage($room, $participant, $seconds, 'message_expiration_enabled');
 		} else {
 			$this->addMessageExpirationSystemMessage($room, $participant, $seconds, 'message_expiration_disabled');

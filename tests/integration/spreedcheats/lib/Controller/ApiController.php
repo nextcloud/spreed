@@ -110,19 +110,12 @@ class ApiController extends OCSController {
 	 *
 	 * @return DataResponse
 	 */
-	public function getMessageExpirationJob($token): DataResponse {
-		$roomId = $this->getRoomIdByToken($token);
-		if (!$roomId) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
+	public function getMessageExpirationJob(): DataResponse {
 		$query = $this->db->getQueryBuilder();
 		$query->select('id')
 			->from('jobs')
 			->where(
-				$query->expr()->andX(
-					$query->expr()->eq('class', $query->createNamedParameter(ExpireChatMessages::class)),
-					$query->expr()->eq('argument', $query->createNamedParameter(json_encode(['room_id' => $roomId])))
-				)
+				$query->expr()->eq('class', $query->createNamedParameter(ExpireChatMessages::class))
 			);
 		$result = $query->executeQuery();
 		$job = $result->fetchOne();
@@ -130,18 +123,5 @@ class ApiController extends OCSController {
 			return new DataResponse(['id' => (int) $job]);
 		}
 		return new DataResponse([], Http::STATUS_NOT_FOUND);
-	}
-
-	private function getRoomIdByToken(string $token): ?int {
-		$query = $this->db->getQueryBuilder();
-		$query->select('id')
-			->from('talk_rooms')
-			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
-
-		$result = $query->executeQuery();
-		$roomId = (int) $result->fetchOne();
-		$result->closeCursor();
-
-		return $roomId;
 	}
 }

@@ -2589,15 +2589,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When apply message expiration job to room :identifier
+	 * @When apply message expiration job
 	 */
-	public function applyMessageExpirationJobToRoom($identifier): void {
+	public function applyMessageExpirationJob(): void {
 		$currentUser = $this->currentUser;
 		$this->setCurrentUser('admin');
-		$this->sendRequest('GET', '/apps/spreedcheats/get_message_expiration_job/' . self::$identifierToToken[$identifier]);
+		$this->sendRequest('GET', '/apps/spreedcheats/get_message_expiration_job');
 		$response = $this->getDataFromResponse($this->response);
-		Assert::assertIsArray($response, 'Room ' . $identifier . 'not found');
-		Assert::assertArrayHasKey('id', $response, 'Job not found by identifier "' . $identifier . '"');
+		Assert::assertIsArray($response, 'Job not found');
+		Assert::assertArrayHasKey('id', $response, 'Job not found');
 		$this->runOcc(['background-job:execute', $response['id']]);
 		$this->setCurrentUser($currentUser);
 	}

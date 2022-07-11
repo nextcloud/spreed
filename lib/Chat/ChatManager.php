@@ -711,7 +711,7 @@ class ChatManager {
 		return false;
 	}
 
-	public function deleteExpiredMessages(int $roomId): void {
+	public function deleteExpiredMessages(?int $roomId = null): void {
 		$this->commentsManager->deleteCommentsExpiredAtObject('chat', (string) $roomId);
 	}
 }
