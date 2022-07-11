@@ -26,6 +26,7 @@
 		<template v-if="!isReactionsMenuOpen">
 			<Button v-if="canReact"
 				type="tertiary"
+				:aria-label="t('spreed', 'Add a reaction to this message')"
 				@click="openReactionsMenu">
 				<template #icon>
 					<EmoticonOutline :size="20" />
@@ -98,18 +99,21 @@
 
 		<template v-if="isReactionsMenuOpen">
 			<Button type="tertiary"
+				:aria-label="t('spreed', 'Close reactions menu')"
 				@click="closeReactionsMenu">
 				<template #icon>
 					<ArrowLeft :size="20" />
 				</template>
 			</Button>
 			<Button type="tertiary"
+				:aria-label="t('spreed', 'React with {emoji}', { emoji: '👍' })"
 				@click="handleReactionClick('👍')">
 				<template #icon>
 					<span>👍</span>
 				</template>
 			</Button>
 			<Button type="tertiary"
+				:aria-label="t('spreed', 'React with {emoji}', { emoji: '❤' })"
 				@click="handleReactionClick('❤️')">
 				<template #icon>
 					<span>❤️</span>
@@ -119,7 +123,8 @@
 				@select="handleReactionClick"
 				@after-show="onEmojiPickerOpen"
 				@after-hide="onEmojiPickerClose">
-				<Button type="tertiary">
+				<Button type="tertiary"
+					:aria-label="t('spreed', 'React with another emoji')">
 					<template #icon>
 						<Plus :size="20" />
 					</template>

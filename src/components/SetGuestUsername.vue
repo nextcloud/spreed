@@ -44,6 +44,7 @@
 				@keydown.esc="isEditingUsername = !isEditingUsername">
 			<Button class="username-form__button"
 				native-type="submit"
+				:aria-label="t('spreed', 'Save name')"
 				type="tertiary">
 				<ArrowRight :size="20"
 					title=""
