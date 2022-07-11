@@ -232,6 +232,7 @@ export default {
 		 */
 		handleAbortReply() {
 			this.$store.dispatch('removeMessageToBeReplied', this.token)
+			EventBus.$emit('focus-chat-input')
 		},
 
 		handleQuoteClick() {
