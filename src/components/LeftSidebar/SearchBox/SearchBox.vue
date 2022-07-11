@@ -28,17 +28,31 @@
 			type="text"
 			:placeHolder="placeholderText"
 			@keypress.enter.prevent="handleSubmit">
-		<button v-if="isSearching"
-			class="abort-search icon-close"
-			@click.prevent="abortSearch" />
+		<Button v-if="isSearching"
+			class="abort-search"
+			type="tertiary-no-background"
+			:aria-label="cancelSearchLabel"
+			@click="abortSearch">
+			<template #icon>
+				<Close decorative
+					title=""
+					:size="20" />
+			</template>
+		</Button>
 	</form>
 </template>
 
 <script>
+import Button from '@nextcloud/vue/dist/Components/Button'
+import Close from 'vue-material-design-icons/Close.vue'
 import { EventBus } from '../../../services/EventBus.js'
 
 export default {
 	name: 'SearchBox',
+	components: {
+		Button,
+		Close,
+	},
 	props: {
 		/**
 		 * The placeholder for the input field
@@ -67,6 +81,11 @@ export default {
 		return {
 			localValue: '',
 		}
+	},
+	computed: {
+		cancelSearchLabel() {
+			return t('spreed', 'Cancel search')
+		},
 	},
 	watch: {
 		localValue(localValue) {
@@ -136,10 +155,7 @@ export default {
 }
 
 .abort-search {
-	margin-left: -34px;
-	z-index: 1;
-	border: none;
-	background-color: transparent
+	margin-left: -44px;
 }
 
 </style>
