@@ -2,6 +2,7 @@
 .avatar-class-icon.icon-group-forced-white {
 	background-image: url(../img/icon-contacts-white.svg);
 }
+
 .avatar-class-icon.icon-user-forced-white {
 	background-image: url(../img/icon-contacts-white.svg);
 }
@@ -35,6 +36,7 @@
 .talkChatTab .icon-password {
 	background-image: url(../img/icon-password-white.svg);
 }
+
 .app-talk .icon-file,
 .talk-modal .icon-file,
 .sidebar-callview .icon-file,
