@@ -139,8 +139,12 @@
 				</ActionButton>
 				<ActionButton v-else
 					key="openSideBarButtonMenuPeople"
-					:icon="iconMenuPeople"
-					@click="openSidebar" />
+					@click="openSidebar">
+					<MenuPeople slot="icon"
+						:size="20"
+						title=""
+						decorative />
+				</ActionButton>
 			</Actions>
 		</div>
 		<CounterBubble v-if="!isSidebar && showOpenSidebarButton && isInCall && unreadMessagesCounter > 0"
@@ -160,6 +164,7 @@ import CallButton from './CallButton.vue'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
+import MenuPeople from '../missingMaterialDesignIcons/MenuPeople.vue'
 import MessageText from 'vue-material-design-icons/MessageText'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import { CONVERSATION, PARTICIPANT } from '../../constants.js'
@@ -188,6 +193,7 @@ export default {
 		CounterBubble,
 		CallButton,
 		ActionSeparator,
+		MenuPeople,
 		MessageText,
 		MicrophoneOff,
 		ConversationIcon,
@@ -246,13 +252,6 @@ export default {
 				return t('spreed', 'Exit fullscreen (F)')
 			}
 			return t('spreed', 'Fullscreen (F)')
-		},
-
-		iconMenuPeople() {
-			if (this.isInCall) {
-				return 'forced-white icon-menu-people'
-			}
-			return 'icon-menu-people'
 		},
 
 		showOpenSidebarButton() {

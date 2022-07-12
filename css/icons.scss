@@ -1,5 +1,4 @@
 @include icon-black-white('clip-add-file', 'spreed', 1);
-@include icon-black-white('menu-people', 'spreed', 1);
 @include icon-black-white('no-password', 'spreed', 1);
 @include icon-black-white('share-window', 'spreed', 1);
 @include icon-black-white('clip-add-file', 'spreed', 1);
@@ -49,9 +48,6 @@
 	.forced-white {
 		filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 
-		&.icon-menu-people {
-			background-image: url(icon-color-path('menu-people', 'spreed', 'fff', 1));
-		}
 		&.icon-promoted-view {
 			background-image: url(icon-color-path('promoted-view', 'spreed', 'fff', 1));
 		}
