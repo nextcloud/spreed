@@ -11,10 +11,22 @@
 			:width="props.size"
 			:height="props.size"
 			viewBox="0 0 16 16">
-			<rect x="1" y="1" width="13" height="9" />
-			<rect x="1" y="12" width="3" height="3" />
-			<rect x="6" y="12" width="3" height="3" />
-			<rect x="11" y="12" width="3" height="3" />
+			<rect x="1"
+				y="1"
+				width="13"
+				height="9" />
+			<rect x="1"
+				y="12"
+				width="3"
+				height="3" />
+			<rect x="6"
+				y="12"
+				width="3"
+				height="3" />
+			<rect x="11"
+				y="12"
+				width="3"
+				height="3" />
 		</svg>
 	</span>
 </template>

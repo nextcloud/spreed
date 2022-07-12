@@ -228,8 +228,7 @@
 					{{ changeViewText }}
 				</ActionButton>
 				<ActionSeparator />
-				<ActionButton
-					:close-after-click="true"
+				<ActionButton :close-after-click="true"
 					@click="showSettings">
 					<Cog slot="icon"
 						decorative

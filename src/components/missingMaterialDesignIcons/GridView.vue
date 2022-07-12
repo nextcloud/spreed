@@ -13,9 +13,19 @@
 			viewBox="0 0 16 16">
 			<g>
 				<rect width="7" height="7" rx="2" />
-				<rect y="9" width="7" height="7" rx="2" />
-				<rect x="9" width="7" height="7" rx="2" />
-				<rect x="9" y="9" width="7" height="7" rx="2" />
+				<rect y="9"
+					width="7"
+					height="7"
+					rx="2" />
+				<rect x="9"
+					width="7"
+					height="7"
+					rx="2" />
+				<rect x="9"
+					y="9"
+					width="7"
+					height="7"
+					rx="2" />
 			</g>
 		</svg>
 	</span>
