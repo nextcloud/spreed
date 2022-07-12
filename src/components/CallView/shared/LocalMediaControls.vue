@@ -215,9 +215,16 @@
 				</ActionButton>
 				<!-- Call layout switcher -->
 				<ActionButton v-if="isInCall"
-					:icon="changeViewIconClass"
 					:close-after-click="true"
 					@click="changeView">
+					<GridView v-if="isGrid"
+						slot="icon"
+						:size="20"
+						decorative />
+					<PromotedView v-else
+						slot="icon"
+						:size="20"
+						decorative />
 					{{ changeViewText }}
 				</ActionButton>
 				<ActionSeparator />
@@ -237,11 +244,13 @@ import { emit } from '@nextcloud/event-bus'
 import { showMessage } from '@nextcloud/dialogs'
 import CancelPresentation from '../../missingMaterialDesignIcons/CancelPresentation.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal'
+import GridView from '../../missingMaterialDesignIcons/GridView.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import Monitor from 'vue-material-design-icons/Monitor'
 import PresentToAll from '../../missingMaterialDesignIcons/PresentToAll.vue'
+import PromotedView from '../../missingMaterialDesignIcons/PromotedView.vue'
 import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import Blur from 'vue-material-design-icons/Blur'
@@ -273,10 +282,12 @@ export default {
 		ActionButton,
 		CancelPresentation,
 		DotsHorizontal,
+		GridView,
 		HandBackLeft,
 		Microphone,
 		MicrophoneOff,
 		PresentToAll,
+		PromotedView,
 		VideoIcon: Video,
 		VideoOff,
 		Monitor,
@@ -636,14 +647,6 @@ export default {
 				return t('spreed', 'Speaker view')
 			} else {
 				return t('spreed', 'Grid view')
-			}
-		},
-
-		changeViewIconClass() {
-			if (this.isGrid) {
-				return 'icon-promoted-view'
-			} else {
-				return 'icon-grid-view'
 			}
 		},
 

@@ -6,8 +6,6 @@
 @include icon-black-white('emoji-smile', 'spreed', 1);
 @include icon-black-white('lobby', 'spreed', 1);
 @include icon-black-white('text', 'filetypes', 1, true);
-@include icon-black-white('promoted-view', 'spreed', 1);
-@include icon-black-white('grid-view', 'spreed', 1);
 @include icon-black-white('folder-multiple-image', 'spreed', 1);
 
 // Mention bubbles in the chat input and messages
@@ -43,17 +41,6 @@
 	}
 	.icon-changelog {
 		background-image: url('../img/changelog.svg');
-	}
-
-	.forced-white {
-		filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
-
-		&.icon-promoted-view {
-			background-image: url(icon-color-path('promoted-view', 'spreed', 'fff', 1));
-		}
-		&.icon-grid-view {
-			background-image: url(icon-color-path('toggle-pictures', 'actions', 'fff', 1, true));
-		}
 	}
 }
 
