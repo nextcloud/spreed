@@ -11,6 +11,14 @@
 @include icon-black-white('grid-view', 'spreed', 1);
 @include icon-black-white('folder-multiple-image', 'spreed', 1);
 
+// Mention bubbles in the chat input and messages
+.avatar-class-icon.icon-group-forced-white {
+	background-image: url(../img/icon-contacts-white.svg);
+}
+.avatar-class-icon.icon-user-forced-white {
+	background-image: url(../img/icon-contacts-white.svg);
+}
+
 .app-talk,
 .talk-modal,
 .talk-sidebar-callview,
@@ -36,15 +44,6 @@
 	}
 	.icon-changelog {
 		background-image: url('../img/changelog.svg');
-	}
-
-	// "forced-white" needs to be included in the class name as the UserBubble
-	// does not accept several classes.
-	.icon-group-forced-white {
-		background-image: url(icon-color-path('group', 'actions', 'fff', 1, true));
-	}
-	.icon-user-forced-white {
-		background-image: url(icon-color-path('user', 'actions', 'fff', 1, true));
 	}
 
 	&.in-call {
