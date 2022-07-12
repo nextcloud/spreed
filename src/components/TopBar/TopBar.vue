@@ -75,10 +75,12 @@
 				:aria-label="t('spreed', 'Conversation actions')"
 				:container="container"
 				@shortkey.native="toggleFullscreen">
-				<Cog slot="icon"
-					:size="20"
-					decorative
-					title="" />
+				<span slot="icon"
+					:class="{'top-bar__button__force-white': isInCall}">
+					<Cog :size="20"
+						decorative
+						title="" />
+				</span>
 				<ActionButton :icon="iconFullscreen"
 					:aria-label="t('spreed', 'Toggle fullscreen')"
 					:close-after-click="true"
@@ -541,6 +543,10 @@ export default {
 		white-space: nowrap;
 		.icon {
 			margin-right: 4px !important;
+		}
+
+		&__force-white {
+			color: white;
 		}
 	}
 
