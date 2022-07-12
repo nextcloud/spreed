@@ -1,4 +1,4 @@
-// Mention bubbles in the chat input and messages
+/* Mention bubbles in the chat input and messages */
 .avatar-class-icon.icon-group-forced-white {
 	background-image: url(../img/icon-contacts-white.svg);
 }
@@ -67,15 +67,15 @@
 	background-image: url(../img/changelog.svg);
 }
 
-// The atwho panel is a direct child of the body, so it is not affected by
-// .app-Talk rules above.
-// "forced-white" needs to be included in the class name as the Avatar does
-// not accept several classes.
+/* The atwho panel is a direct child of the body, so it is not affected by
+ * .app-Talk rules above.
+ * "forced-white" needs to be included in the class name as the Avatar does
+ * not accept several classes. */
 .talk.candidate-mentions.atwho-panel .icon-group-forced-white {
 	background-image: url(../img/icon-contacts-white.svg);
 }
 
-// Needed to use white color also in dark mode.
+/* Needed to use white color also in dark mode. */
 .app-files .app-sidebar__close.forced-white {
 	color: #ffffff;
 }
