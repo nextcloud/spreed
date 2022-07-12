@@ -65,11 +65,6 @@
 		/* Show red camera icon for ongoing calls. */
 		@include icon-color('video', 'actions', 'E9322D', 1, true);
 	}
-
-	// Patch material design icons' span wrong height
-	.material-design-icon {
-		display: contents;
-	}
 }
 
 // The atwho panel is a direct child of the body, so it is not affected by
