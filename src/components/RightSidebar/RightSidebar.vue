@@ -42,16 +42,24 @@
 		<AppSidebarTab v-if="showChatInSidebar"
 			id="chat"
 			:order="1"
-			:name="t('spreed', 'Chat')"
-			icon="icon-comment">
+			:name="t('spreed', 'Chat')">
+			<template slot="icon">
+				<Message decorative
+					:size="20"
+					title="" />
+			</template>
 			<ChatView :is-visible="opened" />
 		</AppSidebarTab>
 		<AppSidebarTab v-if="getUserId && !isOneToOne"
 			id="participants"
 			ref="participantsTab"
 			:order="2"
-			:name="participantsText"
-			icon="icon-contacts-dark">
+			:name="participantsText">
+			<template slot="icon">
+				<AccountMultiple decorative
+					:size="20"
+					title="" />
+			</template>
 			<ParticipantsTab :is-active="activeTab === 'participants'"
 				:can-search="canSearchParticipants"
 				:can-add="canAddParticipants" />
@@ -59,8 +67,12 @@
 		<AppSidebarTab v-if="!getUserId || showSIPSettings"
 			id="details-tab"
 			:order="3"
-			:name="t('spreed', 'Details')"
-			icon="icon-details">
+			:name="t('spreed', 'Details')">
+			<template slot="icon">
+				<InformationOutline decorative
+					:size="20"
+					title="" />
+			</template>
 			<SetGuestUsername v-if="!getUserId" />
 			<SipSettings v-if="showSIPSettings"
 				:meeting-id="conversation.token"
@@ -82,8 +94,12 @@
 			id="shared-items"
 			ref="sharedItemsTab"
 			:order="4"
-			icon="icon-folder-multiple-image"
 			:name="t('spreed', 'Shared items')">
+			<template slot="icon">
+				<FolderMultipleImage decorative
+					:size="20"
+					title="" />
+			</template>
 			<SharedItemsTab :active="activeTab === 'shared-items'" />
 		</AppSidebarTab>
 	</AppSidebar>
@@ -103,7 +119,11 @@ import SetGuestUsername from '../SetGuestUsername.vue'
 import SipSettings from './SipSettings.vue'
 import LobbyStatus from './LobbyStatus.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
+import AccountMultiple from 'vue-material-design-icons/AccountMultiple'
 import CogIcon from 'vue-material-design-icons/Cog'
+import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage'
+import InformationOutline from 'vue-material-design-icons/InformationOutline'
+import Message from 'vue-material-design-icons/Message'
 
 export default {
 	name: 'RightSidebar',
@@ -117,7 +137,11 @@ export default {
 		SipSettings,
 		LobbyStatus,
 		Button,
+		AccountMultiple,
 		CogIcon,
+		FolderMultipleImage,
+		InformationOutline,
+		Message,
 	},
 
 	mixins: [

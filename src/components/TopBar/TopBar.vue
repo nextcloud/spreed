@@ -75,10 +75,12 @@
 				:aria-label="t('spreed', 'Conversation actions')"
 				:container="container"
 				@shortkey.native="toggleFullscreen">
-				<Cog slot="icon"
-					:size="20"
-					decorative
-					title="" />
+				<span slot="icon"
+					:class="{'top-bar__button__force-white': isInCall}">
+					<Cog :size="20"
+						decorative
+						title="" />
+				</span>
 				<ActionButton :icon="iconFullscreen"
 					:aria-label="t('spreed', 'Toggle fullscreen')"
 					:close-after-click="true"
@@ -87,8 +89,11 @@
 				</ActionButton>
 				<ActionSeparator v-if="showModerationOptions" />
 				<ActionLink v-if="isFileConversation"
-					icon="icon-text"
 					:href="linkToFile">
+					<File slot="icon"
+						:size="20"
+						title=""
+						decorative />
 					{{ t('spreed', 'Go to file') }}
 				</ActionLink>
 				<template v-if="showModerationOptions">
@@ -137,8 +142,12 @@
 				</ActionButton>
 				<ActionButton v-else
 					key="openSideBarButtonMenuPeople"
-					:icon="iconMenuPeople"
-					@click="openSidebar" />
+					@click="openSidebar">
+					<MenuPeople slot="icon"
+						:size="20"
+						title=""
+						decorative />
+				</ActionButton>
 			</Actions>
 		</div>
 		<CounterBubble v-if="!isSidebar && showOpenSidebarButton && isInCall && unreadMessagesCounter > 0"
@@ -158,6 +167,8 @@ import CallButton from './CallButton.vue'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
+import File from 'vue-material-design-icons/File'
+import MenuPeople from '../missingMaterialDesignIcons/MenuPeople.vue'
 import MessageText from 'vue-material-design-icons/MessageText'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
 import { CONVERSATION, PARTICIPANT } from '../../constants.js'
@@ -186,6 +197,8 @@ export default {
 		CounterBubble,
 		CallButton,
 		ActionSeparator,
+		File,
+		MenuPeople,
 		MessageText,
 		MicrophoneOff,
 		ConversationIcon,
@@ -244,13 +257,6 @@ export default {
 				return t('spreed', 'Exit fullscreen (F)')
 			}
 			return t('spreed', 'Fullscreen (F)')
-		},
-
-		iconMenuPeople() {
-			if (this.isInCall) {
-				return 'forced-white icon-menu-people'
-			}
-			return 'icon-menu-people'
 		},
 
 		showOpenSidebarButton() {
@@ -541,6 +547,10 @@ export default {
 		white-space: nowrap;
 		.icon {
 			margin-right: 4px !important;
+		}
+
+		&__force-white {
+			color: white;
 		}
 	}
 

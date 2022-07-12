@@ -45,8 +45,18 @@
 		</template>
 		<template v-if="!isSearchResult" slot="actions">
 			<ActionButton v-if="canFavorite"
-				:icon="iconFavorite"
 				@click.prevent.exact="toggleFavoriteConversation">
+				<Star v-if="item.isFavorite"
+					slot="icon"
+					decorative
+					:size="20"
+					title="" />
+				<Star v-else
+					slot="icon"
+					decorative
+					:size="20"
+					:fill-color="'#FFCC00'"
+					title="" />
 				{{ labelFavorite }}
 			</ActionButton>
 			<ActionButton icon="icon-clippy"
@@ -62,9 +72,12 @@
 				</template>
 				{{ t('spreed', 'Mark as read') }}
 			</ActionButton>
-			<ActionButton icon="icon-settings"
-				:close-after-click="true"
+			<ActionButton :close-after-click="true"
 				@click.prevent.exact="showConversationSettings">
+				<Cog slot="icon"
+					decorative
+					:size="20"
+					title="" />
 				{{ t('spreed', 'Conversation settings') }}
 			</ActionButton>
 			<ActionButton v-if="canLeaveConversation"
@@ -75,9 +88,13 @@
 			</ActionButton>
 			<ActionButton v-if="canDeleteConversation"
 				:close-after-click="true"
-				icon="icon-delete-critical"
 				class="critical"
 				@click.prevent.exact="deleteConversation">
+				<template #icon>
+					<Delete decorative
+						title=""
+						:size="16" />
+				</template>
 				{{ t('spreed', 'Delete conversation') }}
 			</ActionButton>
 		</template>
@@ -87,7 +104,10 @@
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import Cog from 'vue-material-design-icons/Cog'
+import Delete from 'vue-material-design-icons/Delete'
 import EyeOutline from 'vue-material-design-icons/EyeOutline'
+import Star from 'vue-material-design-icons/Star'
 import ConversationIcon from './../../ConversationIcon.vue'
 import { generateUrl } from '@nextcloud/router'
 import { emit } from '@nextcloud/event-bus'
@@ -100,7 +120,10 @@ export default {
 		ActionButton,
 		ListItem,
 		ConversationIcon,
+		Cog,
+		Delete,
 		EyeOutline,
+		Star,
 	},
 	props: {
 		isSearchResult: {
@@ -371,7 +394,7 @@ export default {
 }
 
 .critical {
-	::v-deep .action-button__text {
+	::v-deep .action-button {
 		color: var(--color-error) !important;
 	}
 }

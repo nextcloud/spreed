@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\PublicShareAuth;
 
 use OCA\Files_Sharing\Event\BeforeTemplateRenderedEvent;
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Config;
 use OCA\Talk\TInitialState;
 use OCP\AppFramework\Services\IInitialState;
@@ -73,8 +74,10 @@ class TemplateLoader implements IEventListener {
 			return;
 		}
 
-		Util::addStyle('spreed', 'merged-share-auth');
-		Util::addScript('spreed', 'talk-public-share-auth-sidebar');
+		Util::addStyle(Application::APP_ID, 'At');
+		Util::addStyle(Application::APP_ID, 'icons');
+		Util::addStyle(Application::APP_ID, 'publicshareauth');
+		Util::addScript(Application::APP_ID, 'talk-public-share-auth-sidebar');
 
 		$this->publishInitialStateForGuest();
 	}

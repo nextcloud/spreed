@@ -126,15 +126,15 @@ class ConversationSearch implements IProvider {
 					}
 				}
 			} elseif ($room->getObjectType() === 'file') {
-				$iconClass = 'conversation-icon icon-file';
+				$iconClass = 'conversation-icon icon-file-white';
 			} elseif ($room->getObjectType() === 'share:password') {
-				$iconClass = 'conversation-icon icon-password';
+				$iconClass = 'conversation-icon icon-password-white';
 			} elseif ($room->getObjectType() === 'emails') {
-				$iconClass = 'conversation-icon icon-mail';
+				$iconClass = 'conversation-icon icon-mail-white';
 			} elseif ($room->getType() === Room::TYPE_PUBLIC) {
-				$iconClass = 'conversation-icon icon-public';
+				$iconClass = 'conversation-icon icon-public-white';
 			} else {
-				$iconClass = 'conversation-icon icon-contacts';
+				$iconClass = 'conversation-icon icon-contacts-white';
 			}
 
 			$entry = new SearchResultEntry(

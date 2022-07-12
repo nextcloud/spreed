@@ -33,8 +33,12 @@
 				</template>
 			</Button>
 			<Actions v-show="isReplyable">
-				<ActionButton icon="icon-reply"
-					@click.stop="handleReply">
+				<ActionButton @click.stop="handleReply">
+					<template #icon>
+						<Reply decorative
+							title=""
+							:size="16" />
+					</template>
 					{{ t('spreed', 'Reply') }}
 				</ActionButton>
 			</Actions>
@@ -64,8 +68,11 @@
 					{{ t('spreed', 'Mark as unread') }}
 				</ActionButton>
 				<ActionLink v-if="linkToFile"
-					icon="icon-text"
 					:href="linkToFile">
+					<File slot="icon"
+						:size="20"
+						title=""
+						decorative />
 					{{ t('spreed', 'Go to file') }}
 				</ActionLink>
 				<ActionButton v-if="!isCurrentGuest && !isFileShare && !isDeletedMessage"
@@ -145,9 +152,11 @@ import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import File from 'vue-material-design-icons/File'
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
-import Share from 'vue-material-design-icons/Share'
+import Reply from 'vue-material-design-icons/Reply.vue'
+import Share from 'vue-material-design-icons/Share.vue'
 import moment from '@nextcloud/moment'
 import { EventBus } from '../../../../../services/EventBus.js'
 import { generateUrl } from '@nextcloud/router'
@@ -167,6 +176,7 @@ export default {
 		ActionButton,
 		ActionLink,
 		EyeOffOutline,
+		File,
 		Share,
 		ActionSeparator,
 		Forwarder,
@@ -174,6 +184,7 @@ export default {
 		EmoticonOutline,
 		ArrowLeft,
 		Plus,
+		Reply,
 		EmojiPicker,
 	},
 

@@ -21,7 +21,9 @@
 <template>
 	<div class="lobby">
 		<div class="lobby emptycontent">
-			<div class="icon icon-lobby" />
+			<Lobby decorative
+				:size="64"
+				title="" />
 			<h2>{{ currentConversationName }}</h2>
 
 			<p class="lobby__timer">
@@ -51,6 +53,7 @@
 import moment from '@nextcloud/moment'
 import RichText from '@juliushaertl/vue-richtext'
 import SetGuestUsername from './SetGuestUsername.vue'
+import Lobby from './missingMaterialDesignIcons/Lobby.vue'
 
 export default {
 
@@ -59,6 +62,7 @@ export default {
 	components: {
 		SetGuestUsername,
 		RichText,
+		Lobby,
 	},
 
 	computed: {

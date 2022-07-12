@@ -1,0 +1,81 @@
+/* Mention bubbles in the chat input and messages */
+.avatar-class-icon.icon-group-forced-white {
+	background-image: url(../img/icon-contacts-white.svg);
+}
+
+.avatar-class-icon.icon-user-forced-white {
+	background-image: url(../img/icon-contacts-white.svg);
+}
+
+.app-talk .icon-public,
+.talk-modal .icon-public,
+.sidebar-callview .icon-public,
+#talk-panel .icon-public,
+#talk-sidebar .icon-public,
+#call-container .icon-public,
+.talkChatTab .icon-public {
+	background-image: url(../img/icon-public-white.svg);
+}
+
+.app-talk .icon-contacts,
+.talk-modal .icon-contacts,
+.sidebar-callview .icon-contacts,
+#talk-panel .icon-contacts,
+#talk-sidebar .icon-contacts,
+#call-container .icon-contacts,
+.talkChatTab .icon-contacts {
+	background-image: url(../img/icon-contacts-white.svg);
+}
+
+.app-talk .icon-password,
+.talk-modal .icon-password,
+.sidebar-callview .icon-password,
+#talk-panel .icon-password,
+#talk-sidebar .icon-password,
+#call-container .icon-password,
+.talkChatTab .icon-password {
+	background-image: url(../img/icon-password-white.svg);
+}
+
+.app-talk .icon-file,
+.talk-modal .icon-file,
+.sidebar-callview .icon-file,
+#talk-panel .icon-file,
+#talk-sidebar .icon-file,
+#call-container .icon-file,
+.talkChatTab .icon-file {
+	background-image: url(../img/icon-text-white.svg);
+}
+
+.app-talk .icon-mail,
+.talk-modal .icon-mail,
+.sidebar-callview .icon-mail,
+#talk-panel .icon-mail,
+#talk-sidebar .icon-mail,
+#call-container .icon-mail,
+.talkChatTab .icon-mail {
+	background-image: url(../img/icon-mail-white.svg);
+}
+
+.app-talk .icon-changelog,
+.talk-modal .icon-changelog,
+.sidebar-callview .icon-changelog,
+#talk-panel .icon-changelog,
+#talk-sidebar .icon-changelog,
+#call-container .icon-changelog,
+.talkChatTab .icon-changelog {
+	background-image: url(../img/changelog.svg);
+}
+
+/* The atwho panel is a direct child of the body, so it is not affected by
+ * .app-Talk rules above.
+ * "forced-white" needs to be included in the class name as the Avatar does
+ * not accept several classes. */
+.talk.candidate-mentions.atwho-panel .icon-group-forced-white {
+	background-image: url(../img/icon-contacts-white.svg);
+}
+
+/* Needed to use white color also in dark mode. */
+.app-files .app-sidebar__close.forced-white {
+	color: #ffffff;
+}
