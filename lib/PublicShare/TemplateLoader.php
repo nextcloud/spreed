@@ -79,10 +79,10 @@ class TemplateLoader implements IEventListener {
 			return;
 		}
 
-		Util::addStyle('spreed', 'merged-public-share');
 		Util::addStyle(Application::APP_ID, 'At');
+		Util::addStyle(Application::APP_ID, 'icons');
 		Util::addStyle(Application::APP_ID, 'publicshare');
-		Util::addScript('spreed', 'talk-public-share-sidebar');
+		Util::addScript(Application::APP_ID, 'talk-public-share-sidebar');
 
 		$this->publishInitialStateForGuest();
 	}
