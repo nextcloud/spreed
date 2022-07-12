@@ -228,9 +228,13 @@
 					{{ changeViewText }}
 				</ActionButton>
 				<ActionSeparator />
-				<ActionButton icon="icon-settings"
+				<ActionButton
 					:close-after-click="true"
 					@click="showSettings">
+					<Cog slot="icon"
+						decorative
+						:size="20"
+						title="" />
 					{{ t('spreed', 'Devices settings') }}
 				</ActionButton>
 			</Actions>
@@ -243,6 +247,7 @@ import escapeHtml from 'escape-html'
 import { emit } from '@nextcloud/event-bus'
 import { showMessage } from '@nextcloud/dialogs'
 import CancelPresentation from '../../missingMaterialDesignIcons/CancelPresentation.vue'
+import Cog from 'vue-material-design-icons/Cog'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal'
 import GridView from '../../missingMaterialDesignIcons/GridView.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
@@ -281,6 +286,7 @@ export default {
 		ActionSeparator,
 		ActionButton,
 		CancelPresentation,
+		Cog,
 		DotsHorizontal,
 		GridView,
 		HandBackLeft,
