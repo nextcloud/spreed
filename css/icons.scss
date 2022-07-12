@@ -116,17 +116,13 @@
 
 // The atwho panel is a direct child of the body, so it is not affected by
 // .app-Talk rules above.
-.talk.candidate-mentions.atwho-panel {
-	// "forced-white" needs to be included in the class name as the Avatar does
-	// not accept several classes.
-	.icon-group-forced-white {
-		background-image: url(icon-color-path('group', 'actions', 'fff', 1, true));
-	}
+// "forced-white" needs to be included in the class name as the Avatar does
+// not accept several classes.
+.talk.candidate-mentions.atwho-panel .icon-group-forced-white {
+	background-image: url(../img/icon-contacts-white.svg);
 }
 
-.app-files {
-	// Needed to use white color also in dark mode.
-	.app-sidebar__close.forced-white {
-		color: #ffffff;
-	}
+// Needed to use white color also in dark mode.
+.app-files .app-sidebar__close.forced-white {
+	color: #ffffff;
 }
