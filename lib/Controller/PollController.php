@@ -248,7 +248,14 @@ class PollController extends AEnvironmentAwareController {
 
 		if (!$canSeeSummary && $poll->getStatus() === Poll::STATUS_OPEN) {
 			$data['votes'] = [];
-			$data['numVoters'] = 0;
+			if ($this->participant->hasModeratorPermissions(false)
+				|| ($poll->getActorType() === $this->participant->getAttendee()->getActorType()
+					&& $poll->getActorId() === $this->participant->getAttendee()->getActorId())) {
+				// Allow moderators and the author to see the number of voters,
+				// So they know when to close the poll.
+			} else {
+				$data['numVoters'] = 0;
+			}
 		} elseif ($poll->getResultMode() === Poll::MODE_PUBLIC && $poll->getStatus() === Poll::STATUS_CLOSED) {
 			$data['details'] = array_map(static fn (Vote $vote) => $vote->asArray(), $detailedVotes);
 		}

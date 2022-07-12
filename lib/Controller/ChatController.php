@@ -744,6 +744,7 @@ class ChatController extends AEnvironmentAwareController {
 			Attachment::TYPE_LOCATION,
 			Attachment::TYPE_MEDIA,
 			Attachment::TYPE_OTHER,
+			Attachment::TYPE_POLL,
 			Attachment::TYPE_VOICE,
 		];
 

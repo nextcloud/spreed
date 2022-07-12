@@ -121,6 +121,7 @@ class CapabilitiesTest extends TestCase {
 			'silent-send',
 			'silent-call',
 			'send-call-notification',
+			'talk-polls',
 			'message-expiration',
 			'reactions',
 		];

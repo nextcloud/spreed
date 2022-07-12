@@ -101,5 +101,6 @@ title: Capabilities
 * `sip-support-nopin` - Whether SIP can be configured to not require a custom attendee PIN
 * `send-call-notification` - When the API allows to resend call notifications for individual users that did not join yet
 * `silent-call` - Allow to start calls without sending notification
+* `talk-polls` - Polls feature is available to use in the chat
 * `config => call => enabled` - Whether calling is enabled on the instance or not
 * `config => signaling => session-ping-limit` - Number of sessions the HPB is allowed to ping in the same request

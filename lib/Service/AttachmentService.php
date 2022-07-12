@@ -28,6 +28,8 @@ class AttachmentService {
 				$attachment->setObjectType(Attachment::TYPE_LOCATION);
 			} elseif ($objectType === 'deck-card') {
 				$attachment->setObjectType(Attachment::TYPE_DECK_CARD);
+			} elseif ($objectType === 'talk-poll') {
+				$attachment->setObjectType(Attachment::TYPE_POLL);
 			} else {
 				$attachment->setObjectType(Attachment::TYPE_OTHER);
 			}
