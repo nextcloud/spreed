@@ -72,9 +72,12 @@
 				</template>
 				{{ t('spreed', 'Mark as read') }}
 			</ActionButton>
-			<ActionButton icon="icon-settings"
-				:close-after-click="true"
+			<ActionButton :close-after-click="true"
 				@click.prevent.exact="showConversationSettings">
+				<Cog slot="icon"
+					decorative
+					:size="20"
+					title="" />
 				{{ t('spreed', 'Conversation settings') }}
 			</ActionButton>
 			<ActionButton v-if="canLeaveConversation"
@@ -101,6 +104,7 @@
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import Cog from 'vue-material-design-icons/Cog'
 import Delete from 'vue-material-design-icons/Delete'
 import EyeOutline from 'vue-material-design-icons/EyeOutline'
 import Star from 'vue-material-design-icons/Star'
@@ -116,6 +120,7 @@ export default {
 		ActionButton,
 		ListItem,
 		ConversationIcon,
+		Cog,
 		Delete,
 		EyeOutline,
 		Star,
