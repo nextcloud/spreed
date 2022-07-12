@@ -85,18 +85,6 @@
 		@include icon-color('video', 'actions', 'E9322D', 1, true);
 	}
 
-	.icon-start-call {
-		background-image: url(icon-color-path('video', 'actions', $color-primary-text, 1, true));
-	}
-
-	.icon-incoming-call {
-		background-image: url(icon-color-path('video', 'actions', 'fff', 1, true));
-	}
-
-	.icon-leave-call {
-		background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
-	}
-
 	// Patch material design icons' span wrong height
 	.material-design-icon {
 		display: contents;

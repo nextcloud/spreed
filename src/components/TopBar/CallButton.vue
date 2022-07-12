@@ -183,14 +183,6 @@ export default {
 			return t('spreed', 'Leave call')
 		},
 
-		leaveCallIcon() {
-			if (this.loading) {
-				return 'icon-loading-small'
-			}
-
-			return 'icon-leave-call'
-		},
-
 		startCallLabel() {
 			if (this.hasCall && !this.isInLobby) {
 				return t('spreed', 'Join call')
@@ -213,18 +205,6 @@ export default {
 			}
 
 			return ''
-		},
-
-		startCallIcon() {
-			if (this.loading) {
-				return 'icon-loading-small'
-			}
-
-			if (this.hasCall && !this.isInLobby) {
-				return 'icon-incoming-call'
-			}
-
-			return 'icon-start-call'
 		},
 
 		startCallButtonType() {
