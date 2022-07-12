@@ -14,12 +14,13 @@
 	position: static;
 }
 
+#content,
+#content.full-height {
+	/* Always full height without header. */
+	height: calc(100% - 50px);
+}
+
 #content {
-	&,
-	&.full-height {
-		/* Always full height without header. */
-		height: calc(100% - 50px);
-	}
 	display: flex;
 	flex-direction: row;
 	overflow: hidden;
@@ -77,10 +78,10 @@
 	border-color: transparent;
 
 	opacity: 0.6;
+}
 
-	&:hover,
-	&:focus,
-	&:active {
-		opacity: 1;
-	}
+#talk-sidebar-trigger:hover,
+#talk-sidebar-trigger:focus,
+#talk-sidebar-trigger:active {
+	opacity: 1;
 }

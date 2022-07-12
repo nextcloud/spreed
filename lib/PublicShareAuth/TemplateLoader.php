@@ -76,6 +76,7 @@ class TemplateLoader implements IEventListener {
 
 		Util::addStyle('spreed', 'merged-share-auth');
 		Util::addStyle(Application::APP_ID, 'At');
+		Util::addStyle(Application::APP_ID, 'publicshareauth');
 		Util::addScript('spreed', 'talk-public-share-auth-sidebar');
 
 		$this->publishInitialStateForGuest();
