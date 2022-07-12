@@ -7,15 +7,19 @@
 .unified-search .conversation-icon.icon-public-white {
 	background-image: url(../img/icon-public-white.svg);
 }
+
 .unified-search .conversation-icon.icon-contacts-white {
 	background-image: url(../img/icon-contacts-white.svg);
 }
+
 .unified-search .conversation-icon.icon-password-white {
 	background-image: url(../img/icon-password-white.svg);
 }
+
 .unified-search .conversation-icon.icon-text-white {
 	background-image: url(../img/icon-text-white.svg);
 }
+
 .unified-search .conversation-icon.icon-mail-white {
 	background-image: url(../img/icon-mail-white.svg);
 }
