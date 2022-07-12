@@ -529,9 +529,13 @@ body {
 			}
 		}
 
-		::v-deep .app-navigation-toggle:before {
+		::v-deep .app-navigation-toggle {
 			/* Force white handle when inside a call */
-			color: #FFFFFF;
+			color: #D8D8D8;
+
+			&:active {
+				color: #FFFFFF;
+			}
 		}
 	}
 

@@ -46,14 +46,6 @@
 		background-image: url('../img/changelog.svg');
 	}
 
-	&.in-call {
-		.app-navigation-toggle,
-		.app-content .action-item__menutoggle {
-			color: #ffffff;
-			filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
-		}
-	}
-
 	.forced-white {
 		filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 
