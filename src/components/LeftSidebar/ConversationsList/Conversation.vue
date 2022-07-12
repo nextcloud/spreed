@@ -45,8 +45,18 @@
 		</template>
 		<template v-if="!isSearchResult" slot="actions">
 			<ActionButton v-if="canFavorite"
-				:icon="iconFavorite"
 				@click.prevent.exact="toggleFavoriteConversation">
+				<Star v-if="item.isFavorite"
+					slot="icon"
+					decorative
+					:size="20"
+					title="" />
+				<Star v-else
+					slot="icon"
+					decorative
+					:size="20"
+					:fill-color="'#FFCC00'"
+					title="" />
 				{{ labelFavorite }}
 			</ActionButton>
 			<ActionButton icon="icon-clippy"
@@ -93,6 +103,7 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Delete from 'vue-material-design-icons/Delete'
 import EyeOutline from 'vue-material-design-icons/EyeOutline'
+import Star from 'vue-material-design-icons/Star'
 import ConversationIcon from './../../ConversationIcon.vue'
 import { generateUrl } from '@nextcloud/router'
 import { emit } from '@nextcloud/event-bus'
@@ -107,6 +118,7 @@ export default {
 		ConversationIcon,
 		Delete,
 		EyeOutline,
+		Star,
 	},
 	props: {
 		isSearchResult: {

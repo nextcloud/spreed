@@ -37,12 +37,18 @@
 			class="conversation-icon__avatar" />
 		<div v-if="showCall"
 			class="overlap-icon">
-			<span class="icon icon-active-call" />
+			<Video decorative
+				:size="20"
+				:fill-color="'#E9322D'"
+				title="" />
 			<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
 		</div>
 		<div v-else-if="showFavorite"
 			class="overlap-icon">
-			<span class="icon icon-favorite" />
+			<Star decorative
+				:size="20"
+				:fill-color="'#FFCC00'"
+				title="" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
 		</div>
 	</div>
@@ -50,12 +56,16 @@
 
 <script>
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
+import Star from 'vue-material-design-icons/Star'
+import Video from 'vue-material-design-icons/Video'
 import { CONVERSATION } from '../constants.js'
 
 export default {
 	name: 'ConversationIcon',
 	components: {
 		Avatar,
+		Star,
+		Video,
 	},
 	props: {
 		/**
@@ -175,18 +185,8 @@ $icon-size: 44px;
 		top: 0;
 		left: calc(#{$icon-size} - 12px);
 		line-height: 100%;
-
-		.icon-favorite {
-			display: inline-block;
-			vertical-align: middle;
-			background-image: var(--icon-star-dark-FC0);
-		}
-
-		.icon-active-call {
-			display: inline-block;
-			vertical-align: middle;
-			background-image: var(--icon-video-E9322D);
-		}
+		display: inline-block;
+		vertical-align: middle;
 	}
 }
 

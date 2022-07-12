@@ -55,16 +55,6 @@
 			background-image: url(icon-color-path('toggle-pictures', 'actions', 'fff', 1, true));
 		}
 	}
-
-	.icon-favorite {
-		/* Show favorite icon in yellow instead of default black. */
-		@include icon-color('star-dark', 'actions', 'FC0', 1, true);
-	}
-
-	.icon-active-call {
-		/* Show red camera icon for ongoing calls. */
-		@include icon-color('video', 'actions', 'E9322D', 1, true);
-	}
 }
 
 // The atwho panel is a direct child of the body, so it is not affected by
