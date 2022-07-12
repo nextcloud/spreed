@@ -2588,32 +2588,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		sleep($seconds);
 	}
 
-	/**
-	 * @When apply message expiration job
-	 */
-	public function applyMessageExpirationJob(): void {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
-		$this->sendRequest('GET', '/apps/spreedcheats/get_message_expiration_job');
-		$response = $this->getDataFromResponse($this->response);
-		Assert::assertIsArray($response, 'Job not found');
-		Assert::assertArrayHasKey('id', $response, 'Job not found');
-		$this->runOcc(['background-job:execute', $response['id']]);
-		$this->setCurrentUser($currentUser);
-	}
-
-	/**
-	 * @When message expiration job don't exists
-	 */
-	public function messageExpirationJobDontExists(): void {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
-		$this->sendRequest('GET', '/apps/spreedcheats/get_message_expiration_job');
-		$response = $this->getDataFromResponse($this->response);
-		Assert::assertEmpty($response, 'Job found');
-		$this->setCurrentUser($currentUser);
-	}
-
 	/*
 	 * Requests
 	 */

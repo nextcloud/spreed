@@ -24,7 +24,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
-use OCA\Talk\BackgroundJob\ExpireChatMessages;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
@@ -550,34 +549,9 @@ class RoomService {
 
 		$room->setMessageExpiration($seconds);
 
-		$this->toggleJobExpireMesssageIfNecessary($seconds);
 		$this->addMessageExpirationSystemMessage($room, $participant, $seconds);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, $event);
-	}
-
-	private function toggleJobExpireMesssageIfNecessary(int $seconds): void {
-		if ($seconds > 0) {
-			if (!$this->jobList->has(ExpireChatMessages::class, null)) {
-				$this->jobList->add(ExpireChatMessages::class, null);
-			}
-			return;
-		}
-		$this->disableExpireMessageJobIfNecesary();
-	}
-
-	private function disableExpireMessageJobIfNecesary(): void {
-		$qb = $this->db->getQueryBuilder();
-		$qb->select($qb->func()->count('*', 'total'))
-			->from('talk_rooms')
-			->where($qb->expr()->gt('message_expiration', $qb->createNamedParameter(0)));
-		$result = $qb->executeQuery();
-		$count = (int) $result->fetchOne();
-		$result->closeCursor();
-
-		if (!$count) {
-			$this->jobList->remove(ExpireChatMessages::class, null);
-		}
 	}
 
 	private function addMessageExpirationSystemMessage(Room $room, Participant $participant, int $seconds): void {
