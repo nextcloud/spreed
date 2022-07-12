@@ -26,7 +26,6 @@
 			{{ t('spreed', 'Matterbridge integration') }}
 			<small>
 				{{ t('spreed', 'Beta') }}
-				<span class="icon icon-beta-feature" />
 			</small>
 		</h2>
 
@@ -184,12 +183,6 @@ h2 {
 		border: 1px solid var(--color-warning);
 		border-radius: 16px;
 		padding: 0 9px;
-
-		.icon {
-			width: 16px;
-			height: 16px;
-			margin-bottom: 4px;
-		}
 	}
 }
 

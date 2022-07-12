@@ -164,5 +164,10 @@ export default {
 	height: 44px;
 	display: flex;
 	align-items: center;
+
+	label {
+		margin: 0 20px;
+		display: inline-block;
+	}
 }
 </style>

@@ -180,3 +180,14 @@ export default {
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+.signaling-warning label {
+	margin: 0;
+}
+
+.signaling-warning,
+.signaling-secret {
+	margin-top: 20px;
+}
+</style>
