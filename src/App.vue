@@ -493,10 +493,20 @@ export default {
 </script>
 
 <style lang="scss">
-/** override toastify position due to top bar */
-body.has-topbar .toastify-top {
-	margin-top: 105px;
+body {
+	overflow: hidden;
+
+	/** override toastify position due to top bar */
+	&.has-topbar .toastify-top {
+		margin-top: 105px;
+	}
 }
+
+/* FIXME: remove after https://github.com/nextcloud/nextcloud-vue/issues/2097 is solved */
+.mx-datepicker-main.mx-datepicker-popup {
+	z-index: 10001 !important;
+}
+
 </style>
 
 <style lang="scss" scoped>
