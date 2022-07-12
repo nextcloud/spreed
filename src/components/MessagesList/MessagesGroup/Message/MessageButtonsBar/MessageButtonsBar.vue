@@ -33,8 +33,12 @@
 				</template>
 			</Button>
 			<Actions v-show="isReplyable">
-				<ActionButton icon="icon-reply"
-					@click.stop="handleReply">
+				<ActionButton @click.stop="handleReply">
+					<template #icon>
+						<Reply decorative
+							title=""
+							:size="16" />
+					</template>
 					{{ t('spreed', 'Reply') }}
 				</ActionButton>
 			</Actions>
@@ -147,7 +151,8 @@ import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
-import Share from 'vue-material-design-icons/Share'
+import Reply from 'vue-material-design-icons/Reply.vue'
+import Share from 'vue-material-design-icons/Share.vue'
 import moment from '@nextcloud/moment'
 import { EventBus } from '../../../../../services/EventBus.js'
 import { generateUrl } from '@nextcloud/router'
@@ -174,6 +179,7 @@ export default {
 		EmoticonOutline,
 		ArrowLeft,
 		Plus,
+		Reply,
 		EmojiPicker,
 	},
 
