@@ -75,9 +75,13 @@
 			</ActionButton>
 			<ActionButton v-if="canDeleteConversation"
 				:close-after-click="true"
-				icon="icon-delete-critical"
 				class="critical"
 				@click.prevent.exact="deleteConversation">
+				<template #icon>
+					<Delete decorative
+						title=""
+						:size="16" />
+				</template>
 				{{ t('spreed', 'Delete conversation') }}
 			</ActionButton>
 		</template>
@@ -87,6 +91,7 @@
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import Delete from 'vue-material-design-icons/Delete'
 import EyeOutline from 'vue-material-design-icons/EyeOutline'
 import ConversationIcon from './../../ConversationIcon.vue'
 import { generateUrl } from '@nextcloud/router'
@@ -100,6 +105,7 @@ export default {
 		ActionButton,
 		ListItem,
 		ConversationIcon,
+		Delete,
 		EyeOutline,
 	},
 	props: {
@@ -371,7 +377,7 @@ export default {
 }
 
 .critical {
-	::v-deep .action-button__text {
+	::v-deep .action-button {
 		color: var(--color-error) !important;
 	}
 }

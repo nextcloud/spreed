@@ -104,16 +104,6 @@
 	}
 }
 
-.popover.vue-popover-theme.open {
-	.icon-delete-critical {
-		@include icon-color('delete', 'actions', $color-error, 1, true);
-		&:hover,
-		&:focus {
-			filter: initial;
-		}
-	}
-}
-
 // The atwho panel is a direct child of the body, so it is not affected by
 // .app-Talk rules above.
 // "forced-white" needs to be included in the class name as the Avatar does
