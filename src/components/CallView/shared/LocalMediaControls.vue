@@ -183,6 +183,11 @@
 				v-tooltip="t('spreed', 'More actions')"
 				:container="container"
 				:aria-label="t('spreed', 'More actions')">
+				<DotsHorizontal slot="icon"
+					:size="20"
+					decorative
+					fill-color="#ffffff" />
+
 				<ActionButton :close-after-click="true"
 					@click="toggleHandRaised">
 					<!-- The following icon is much bigger than all the others
@@ -231,6 +236,7 @@ import escapeHtml from 'escape-html'
 import { emit } from '@nextcloud/event-bus'
 import { showMessage } from '@nextcloud/dialogs'
 import CancelPresentation from '../../missingMaterialDesignIcons/CancelPresentation.vue'
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
 import Microphone from 'vue-material-design-icons/Microphone'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
@@ -266,6 +272,7 @@ export default {
 		ActionSeparator,
 		ActionButton,
 		CancelPresentation,
+		DotsHorizontal,
 		HandBackLeft,
 		Microphone,
 		MicrophoneOff,
