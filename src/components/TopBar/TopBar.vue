@@ -89,8 +89,11 @@
 				</ActionButton>
 				<ActionSeparator v-if="showModerationOptions" />
 				<ActionLink v-if="isFileConversation"
-					icon="icon-text"
 					:href="linkToFile">
+					<File slot="icon"
+						:size="20"
+						title=""
+						decorative />
 					{{ t('spreed', 'Go to file') }}
 				</ActionLink>
 				<template v-if="showModerationOptions">
@@ -164,6 +167,7 @@ import CallButton from './CallButton.vue'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
+import File from 'vue-material-design-icons/File'
 import MenuPeople from '../missingMaterialDesignIcons/MenuPeople.vue'
 import MessageText from 'vue-material-design-icons/MessageText'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
@@ -193,6 +197,7 @@ export default {
 		CounterBubble,
 		CallButton,
 		ActionSeparator,
+		File,
 		MenuPeople,
 		MessageText,
 		MicrophoneOff,
