@@ -31,9 +31,7 @@
 			:disabled="!canStartRecording"
 			@click="start">
 			<template #icon>
-				<Microphone :size="16"
-					title=""
-					decorative />
+				<Microphone :size="16" />
 			</template>
 		</Button>
 		<div v-else class="wrapper">
@@ -45,9 +43,7 @@
 				:aria-label="abortRecordingTooltip"
 				@click="abortRecording">
 				<template #icon>
-					<Close :size="16"
-						title=""
-						decorative />
+					<Close :size="16" />
 				</template>
 			</Button>
 			<div class="audio-recorder__info">

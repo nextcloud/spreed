@@ -29,17 +29,13 @@
 				:aria-label="t('spreed', 'Add a reaction to this message')"
 				@click="openReactionsMenu">
 				<template #icon>
-					<EmoticonOutline decorative
-						:size="20"
-						title="" />
+					<EmoticonOutline :size="20" />
 				</template>
 			</Button>
 			<Actions v-show="isReplyable">
 				<ActionButton @click.stop="handleReply">
 					<template #icon>
-						<Reply decorative
-							title=""
-							:size="16" />
+						<Reply :size="16" />
 					</template>
 					{{ t('spreed', 'Reply') }}
 				</ActionButton>
@@ -63,27 +59,21 @@
 				<ActionButton :close-after-click="true"
 					@click.stop="handleMarkAsUnread">
 					<template #icon>
-						<EyeOffOutline decorative
-							title=""
-							:size="16" />
+						<EyeOffOutline :size="16" />
 					</template>
 					{{ t('spreed', 'Mark as unread') }}
 				</ActionButton>
 				<ActionLink v-if="linkToFile"
 					:href="linkToFile">
 					<File slot="icon"
-						:size="20"
-						title=""
-						decorative />
+						:size="20" />
 					{{ t('spreed', 'Go to file') }}
 				</ActionLink>
 				<ActionButton v-if="!isCurrentGuest && !isFileShare && !isDeletedMessage"
 					:close-after-click="true"
 					@click.stop="showForwarder = true">
 					<Share slot="icon"
-						:size="16"
-						decorative
-						title="" />
+						:size="16" />
 					{{ t('spreed', 'Forward message') }}
 				</ActionButton>
 				<ActionSeparator v-if="messageActions.length > 0" />
@@ -111,9 +101,7 @@
 				:aria-label="t('spreed', 'Close reactions menu')"
 				@click="closeReactionsMenu">
 				<template #icon>
-					<ArrowLeft decorative
-						:size="20"
-						title="" />
+					<ArrowLeft :size="20" />
 				</template>
 			</Button>
 			<Button type="tertiary"
@@ -137,9 +125,7 @@
 				<Button type="tertiary"
 					:aria-label="t('spreed', 'React with another emoji')">
 					<template #icon>
-						<Plus decorative
-							:size="20"
-							title="" />
+						<Plus :size="20" />
 					</template>
 				</Button>
 			</EmojiPicker>

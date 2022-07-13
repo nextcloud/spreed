@@ -67,12 +67,8 @@
 					@click="toggleAudio">
 					<template #icon>
 						<Microphone v-if="audioOn"
-							title=""
-							decorative
 							:size="20" />
 						<MicrophoneOff v-else
-							title=""
-							decorative
 							:size="20" />
 					</template>
 				</Button>
@@ -90,12 +86,8 @@
 					@click="toggleVideo">
 					<template #icon>
 						<Video v-if="videoOn"
-							title=""
-							decorative
 							:size="20" />
 						<VideoOff v-else
-							title=""
-							decorative
 							:size="20" />
 					</template>
 				</Button>
@@ -109,13 +101,9 @@
 					@click="toggleBlur">
 					<template #icon>
 						<Blur v-if="blurOn"
-							:size="20"
-							decorative
-							title="" />
+							:size="20" />
 						<BlurOff v-else
-							:size="20"
-							decorative
-							title="" />
+							:size="20" />
 					</template>
 				</Button>
 			</div>
@@ -127,9 +115,7 @@
 					class="select-devices"
 					@click="showDeviceSelection = true">
 					<template #icon>
-						<Cog title=""
-							decorative
-							:size="20" />
+						<Cog :size="20" />
 					</template>
 					{{ t('spreed', 'Choose devices') }}
 				</Button>

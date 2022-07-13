@@ -30,9 +30,7 @@
 					:open="showQualityWarningTooltip">
 					<button slot="trigger"
 						class="trigger">
-						<NetworkStrength2Alert decorative
-							fill-color="#e9322d"
-							title=""
+						<NetworkStrength2Alert fill-color="#e9322d"
 							:size="20"
 							@mouseover="mouseover = true"
 							@mouseleave="mouseover = false" />
@@ -64,14 +62,10 @@
 					@click.stop="toggleAudio">
 					<Microphone v-if="showMicrophoneOn"
 						:size="20"
-						title=""
-						fill-color="#ffffff"
-						decorative />
+						fill-color="#ffffff" />
 					<MicrophoneOff v-else
 						:size="20"
-						title=""
-						fill-color="#ffffff"
-						decorative />
+						fill-color="#ffffff" />
 				</button>
 				<span v-show="model.attributes.audioAvailable"
 					ref="volumeIndicator"
@@ -87,14 +81,10 @@
 				@click.stop="toggleVideo">
 				<VideoIcon v-if="showVideoOn"
 					:size="20"
-					title=""
-					fill-color="#ffffff"
-					decorative />
+					fill-color="#ffffff" />
 				<VideoOff v-else
 					:size="20"
-					title=""
-					fill-color="#ffffff"
-					decorative />
+					fill-color="#ffffff" />
 			</button>
 			<button v-if="isVirtualBackgroundAvailable && !showActions"
 				v-tooltip="toggleVirtualBackgroundButtonLabel"
@@ -103,14 +93,10 @@
 				@click.stop="toggleVirtualBackground">
 				<Blur v-if="isVirtualBackgroundEnabled"
 					:size="20"
-					title=""
-					fill-color="#ffffff"
-					decorative />
+					fill-color="#ffffff" />
 				<BlurOff v-else
 					:size="20"
-					title=""
-					fill-color="#ffffff"
-					decorative />
+					fill-color="#ffffff" />
 			</button>
 			<Actions v-if="!screenSharingButtonHidden"
 				id="screensharing-button"
@@ -127,40 +113,30 @@
 				<CancelPresentation v-if="model.attributes.localScreen"
 					slot="icon"
 					:size="20"
-					title=""
-					fill-color="#ffffff"
-					decorative />
+					fill-color="#ffffff" />
 				<PresentToAll v-else
 					slot="icon"
 					:size="20"
-					title=""
-					fill-color="#ffffff"
-					decorative />
+					fill-color="#ffffff" />
 				<!-- /Actions button icon -->
 				<!-- Actions -->
 				<ActionButton v-if="!screenSharingMenuOpen"
 					@click.stop="toggleScreenSharingMenu">
 					<PresentToAll slot="icon"
 						:size="20"
-						title=""
-						fill-color="#ffffff"
-						decorative />
+						fill-color="#ffffff" />
 					{{ screenSharingButtonTooltip }}
 				</ActionButton>
 				<ActionButton v-if="model.attributes.localScreen"
 					@click="showScreen">
 					<Monitor slot="icon"
-						:size="20"
-						title=""
-						decorative />
+						:size="20" />
 					{{ t('spreed', 'Show your screen') }}
 				</ActionButton>
 				<ActionButton v-if="model.attributes.localScreen"
 					@click="stopScreen">
 					<CancelPresentation slot="icon"
-						:size="20"
-						title=""
-						decorative />
+						:size="20" />
 					{{ t('spreed', 'Stop screensharing') }}
 				</ActionButton>
 			</Actions>
@@ -174,9 +150,7 @@
 				@click.stop="toggleHandRaised">
 				<!-- The following icon is much bigger than all the others
 						so we reduce its size -->
-				<HandBackLeft decorative
-					title=""
-					:size="18"
+				<HandBackLeft :size="18"
 					fill-color="#ffffff" />
 			</button>
 			<Actions v-if="showActions"
@@ -185,7 +159,6 @@
 				:aria-label="t('spreed', 'More actions')">
 				<DotsHorizontal slot="icon"
 					:size="20"
-					decorative
 					fill-color="#ffffff" />
 
 				<ActionButton :close-after-click="true"
@@ -193,8 +166,6 @@
 					<!-- The following icon is much bigger than all the others
 						so we reduce its size -->
 					<HandBackLeft slot="icon"
-						decorative
-						title=""
 						:size="18" />
 					{{ raiseHandButtonLabel }}
 				</ActionButton>
@@ -203,14 +174,10 @@
 					@click="toggleVirtualBackground">
 					<BlurOff v-if="isVirtualBackgroundEnabled"
 						slot="icon"
-						:size="20"
-						decorative
-						title="" />
+						:size="20" />
 					<Blur v-else
 						slot="icon"
-						:size="20"
-						decorative
-						title="" />
+						:size="20" />
 					{{ toggleVirtualBackgroundButtonLabel }}
 				</ActionButton>
 				<!-- Call layout switcher -->
@@ -219,21 +186,17 @@
 					@click="changeView">
 					<GridView v-if="isGrid"
 						slot="icon"
-						:size="20"
-						decorative />
+						:size="20" />
 					<PromotedView v-else
 						slot="icon"
-						:size="20"
-						decorative />
+						:size="20" />
 					{{ changeViewText }}
 				</ActionButton>
 				<ActionSeparator />
 				<ActionButton :close-after-click="true"
 					@click="showSettings">
 					<Cog slot="icon"
-						decorative
-						:size="20"
-						title="" />
+						:size="20" />
 					{{ t('spreed', 'Devices settings') }}
 				</ActionButton>
 			</Actions>

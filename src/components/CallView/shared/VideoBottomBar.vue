@@ -26,8 +26,6 @@
 			<div v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand.state"
 				class="bottom-bar__statusIndicator">
 				<HandBackLeft class="handIndicator"
-					decorative
-					title=""
 					size="18px"
 					fill-color="#ffffff" />
 			</div>
@@ -54,14 +52,10 @@
 						@click.stop="forceMute">
 						<Microphone v-if="showMicrophone"
 							:size="20"
-							title=""
-							fill-color="#ffffff"
-							decorative />
+							fill-color="#ffffff" />
 						<MicrophoneOff v-if="showMicrophoneOff"
 							:size="20"
-							title=""
-							fill-color="#ffffff"
-							decorative />
+							fill-color="#ffffff" />
 					</button>
 					<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
 						v-tooltip="videoButtonTooltip"
@@ -69,14 +63,10 @@
 						@click.stop="toggleVideo">
 						<VideoIcon v-if="showVideoButton"
 							:size="20"
-							title=""
-							fill-color="#ffffff"
-							decorative />
+							fill-color="#ffffff" />
 						<VideoOff v-if="!showVideoButton"
 							:size="20"
-							title=""
-							fill-color="#ffffff"
-							decorative />
+							fill-color="#ffffff" />
 					</button>
 					<button v-show="!connectionStateFailedNoRestart"
 						v-tooltip="t('spreed', 'Show screen')"
@@ -84,18 +74,14 @@
 						:class="screenSharingButtonClass"
 						@click.stop="switchToScreen">
 						<Monitor :size="20"
-							title=""
-							fill-color="#ffffff"
-							decorative />
+							fill-color="#ffffff" />
 					</button>
 					<button v-show="connectionStateFailedNoRestart"
 						class="iceFailedIndicator"
 						:class="{ 'not-failed': !connectionStateFailedNoRestart }"
 						disabled="true">
 						<AlertCircle :size="20"
-							title=""
-							fill-color="#ffffff"
-							decorative />
+							fill-color="#ffffff" />
 					</button>
 				</div>
 			</transition>

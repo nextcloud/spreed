@@ -56,9 +56,7 @@
 					@click="runIntegration(integration)">
 					<!-- FIXME: dynamically change the material design icon -->
 					<template #icon>
-						<AccountPlus decorative
-							title=""
-							:size="20" />
+						<AccountPlus :size="20" />
 					</template>
 					{{ integration.label }}
 				</Button>

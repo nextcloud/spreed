@@ -33,9 +33,7 @@
 					:wide="true"
 					@click="showMore(type)">
 					<template #icon>
-						<DotsHorizontal :size="20"
-							decorative
-							title="" />
+						<DotsHorizontal :size="20" />
 					</template>
 					{{ getButtonTitle(type) }}
 				</Button>

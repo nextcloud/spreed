@@ -27,13 +27,9 @@
 			@click="handleClickStripeCollapse">
 			<ChevronDown v-if="stripeOpen"
 				fill-color="#ffffff"
-				decorative
-				title=""
 				:size="20" />
 			<ChevronUp v-else
 				fill-color="#ffffff"
-				decorative
-				title=""
 				:size="20" />
 		</button>
 		<transition :name="isStripe ? 'slide-down' : ''">
@@ -44,9 +40,7 @@
 						class="grid-navigation grid-navigation__previous"
 						:aria-label="t('spreed', 'Previous page of videos')"
 						@click="handleClickPrevious">
-						<ChevronLeft decorative
-							fill-color="#ffffff"
-							title=""
+						<ChevronLeft fill-color="#ffffff"
 							:size="20" />
 					</button>
 					<div ref="grid"
@@ -110,9 +104,7 @@
 						:class="{'stripe': isStripe}"
 						:aria-label="t('spreed', 'Next page of videos')"
 						@click="handleClickNext">
-						<ChevronRight decorative
-							fill-color="#ffffff"
-							title=""
+						<ChevronRight fill-color="#ffffff"
 							:size="20" />
 					</button>
 				</div>
