@@ -168,6 +168,10 @@ export default {
 
 <style lang="scss" scoped>
 
+::v-deep .modal-container {
+	height: 700px;
+}
+
 .talk-modal {
 	height: 80vh;
 }

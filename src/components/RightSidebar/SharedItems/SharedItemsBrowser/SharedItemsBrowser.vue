@@ -164,6 +164,10 @@ export default {
 	}
 }
 
+::v-deep .modal-container {
+	height: 700px;
+}
+
 ::v-deep .button-vue {
 	border-radius: var(--border-radius-large);
 	&.active {
