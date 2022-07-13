@@ -16,7 +16,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>15.0.0-dev.5</version>
+	<version>15.0.0-dev.6</version>
 	<licence>agpl</licence>
 
 	<author>Aleksandra Lazarević</author>
@@ -62,6 +62,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<job>OCA\Talk\BackgroundJob\CheckReferenceIdColumn</job>
 		<job>OCA\Talk\BackgroundJob\CheckHostedSignalingServer</job>
 		<job>OCA\Talk\BackgroundJob\CheckMatterbridges</job>
+		<job>OCA\Talk\BackgroundJob\ExpireChatMessages</job>
 	</background-jobs>
 
 	<repair-steps>

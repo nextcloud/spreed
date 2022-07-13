@@ -19,7 +19,7 @@ Feature: room/message-expiration
       | id   | type | messageExpiration |
       | room | 3    | 3                 |
     And wait for 3 seconds
-    And apply message expiration job to room "room"
+    And apply message expiration job manually
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
       | room | users     | participant1 | participant1-displayname | Message 1   | []                |               |

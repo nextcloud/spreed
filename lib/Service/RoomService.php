@@ -24,7 +24,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
-use OCA\Talk\BackgroundJob\ExpireChatMessages;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
@@ -547,18 +546,20 @@ class RoomService {
 			->set('message_expiration', $update->createNamedParameter($seconds, IQueryBuilder::PARAM_INT))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
+
 		$room->setMessageExpiration($seconds);
-		if ($seconds > 0) {
-			$this->jobList->add(ExpireChatMessages::class, ['room_id' => $room->getId()]);
-			$this->addMessageExpirationSystemMessage($room, $participant, $seconds, 'message_expiration_enabled');
-		} else {
-			$this->addMessageExpirationSystemMessage($room, $participant, $seconds, 'message_expiration_disabled');
-		}
+
+		$this->addMessageExpirationSystemMessage($room, $participant, $seconds);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, $event);
 	}
 
-	private function addMessageExpirationSystemMessage(Room $room, Participant $participant, int $seconds, string $message): void {
+	private function addMessageExpirationSystemMessage(Room $room, Participant $participant, int $seconds): void {
+		if ($seconds > 0) {
+			$message = 'message_expiration_enabled';
+		} else {
+			$message = 'message_expiration_disabled';
+		}
 		$this->chatManager->addSystemMessage(
 			$room,
 			$participant->getAttendee()->getActorType(),
