@@ -64,3 +64,35 @@ export default {
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+::v-deep {
+	input {
+		width: 300px;
+		vertical-align: middle;
+	}
+
+	select {
+		vertical-align: middle;
+	}
+
+	.icon-delete,
+	.icon-checkmark-color,
+	.icon-category-monitoring,
+	.icon-checkmark,
+	.icon-error {
+		display: inline-block;
+		width: 44px;
+		height: 44px;
+		vertical-align: middle;
+	}
+
+	.icon-checkmark-color.hidden {
+		display: none;
+	}
+
+	.error {
+		border-color: var(--color-error);
+	}
+}
+</style>
