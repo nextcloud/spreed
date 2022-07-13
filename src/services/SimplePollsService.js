@@ -42,6 +42,17 @@ const postNewPoll = async function(token, question, options, resultMode, maxVote
 	})
 }
 
+/**
+ *
+ * @param {string} token The conversation token
+ * @param {number} pollId ID of the poll
+ * @return {object} The poll object
+ */
+const getPollData = async function(token, pollId) {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/poll/{token}/{pollId}', { token, pollId }))
+}
+
 export {
 	postNewPoll,
+	getPollData,
 }
