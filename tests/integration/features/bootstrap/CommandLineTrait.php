@@ -78,6 +78,9 @@ trait CommandLineTrait {
 	 * @Given /^invoking occ with "([^"]*)"$/
 	 */
 	public function invokingTheCommand($cmd) {
+		if (preg_match('/room-name:(?P<token>\w+)/', $cmd, $matches)) {
+			$cmd = preg_replace('/room-name:(\w+)/', self::$identifierToToken[$matches['token']], $cmd);
+		}
 		$args = explode(' ', $cmd);
 		$this->runOcc($args);
 	}

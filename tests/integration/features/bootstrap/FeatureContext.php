@@ -2598,7 +2598,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$response = $this->getDataFromResponse($this->response);
 		Assert::assertIsArray($response, 'Job not found');
 		Assert::assertArrayHasKey('id', $response, 'Job not found');
-		$this->runOcc(['background-job:execute', $response['id']]);
+		$this->runOcc(['background-job:execute', $response['id'], '--force-execute']);
 		$this->setCurrentUser($currentUser);
 	}
 
