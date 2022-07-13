@@ -30,9 +30,11 @@
 			type="tertiary"
 			:disabled="!canStartRecording"
 			@click="start">
-			<Microphone :size="16"
-				title=""
-				decorative />
+			<template #icon>
+				<Microphone :size="16"
+					title=""
+					decorative />
+			</template>
 		</Button>
 		<div v-else class="wrapper">
 			<Button v-tooltip.auto="{

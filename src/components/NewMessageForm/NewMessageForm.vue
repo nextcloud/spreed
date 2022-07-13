@@ -70,9 +70,11 @@
 								:aria-label="t('spreed', 'Add emoji')"
 								type="tertiary-no-background"
 								:aria-haspopup="true">
-								<EmoticonOutline :size="16"
-									decorative
-									title="" />
+								<template #icon>
+									<EmoticonOutline :size="16"
+										decorative
+										title="" />
+								</template>
 							</Button>
 						</EmojiPicker>
 						<!-- Disabled emoji picker placeholder button -->
@@ -80,9 +82,11 @@
 							type="tertiary"
 							:aria-label="t('spreed', 'Add emoji')"
 							:disabled="true">
-							<EmoticonOutline :size="16"
-								decorative
-								title="" />
+							<template #icon>
+								<EmoticonOutline :size="16"
+									decorative
+									title="" />
+							</template>
 						</Button>
 					</div>
 					<div v-if="messageToBeReplied" class="new-message-form__quote">
@@ -113,9 +117,11 @@
 					native-type="submit"
 					:aria-label="t('spreed', 'Send message')"
 					@click.prevent="handleSubmit">
-					<Send title=""
-						:size="16"
-						decorative />
+					<template #icon>
+						<Send title=""
+							:size="16"
+							decorative />
+					</template>
 				</Button>
 			</form>
 		</div>

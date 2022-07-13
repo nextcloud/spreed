@@ -34,8 +34,9 @@
 			:type="startCallButtonType"
 			@click="handleClick">
 			<template #icon>
-				<span class="icon"
-					:class="startCallIcon" />
+				<Video title=""
+					:size="20"
+					decorative />
 			</template>
 			{{ startCallLabel }}
 		</Button>
@@ -45,30 +46,37 @@
 			:disabled="loading"
 			@click="leaveCall(false)">
 			<template #icon>
-				<span class="icon"
-					:class="leaveCallIcon" />
+				<VideoOff title=""
+					:size="20"
+					decorative />
 			</template>
 			{{ leaveCallLabel }}
 		</Button>
 		<Actions v-else-if="showLeaveCallButton && canEndForAll"
 			:disabled="loading">
-			<template slot="icon">
+			<template #icon>
 				<VideoOff :size="16"
+					title=""
 					decorative />
 				<span class="label">{{ leaveCallLabel }}</span>
 				<MenuDown :size="16"
+					title=""
 					decorative />
 			</template>
 			<ActionButton @click="leaveCall(false)">
-				<VideoOff slot="icon"
-					:size="20"
-					decorative />
+				<template #icon>
+					<VideoOff title=""
+						:size="20"
+						decorative />
+				</template>
 				{{ leaveCallLabel }}
 			</ActionButton>
 			<ActionButton @click="leaveCall(true)">
-				<VideoOff slot="icon"
-					:size="20"
-					decorative />
+				<template #icon>
+					<VideoOff title=""
+						:size="20"
+						decorative />
+				</template>
 				{{ t('spreed', 'End meeting for all') }}
 			</ActionButton>
 		</Actions>
@@ -86,6 +94,7 @@ import { emit } from '@nextcloud/event-bus'
 import BrowserStorage from '../../services/BrowserStorage'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import MenuDown from 'vue-material-design-icons/MenuDown'
 import Button from '@nextcloud/vue/dist/Components/Button'
@@ -99,6 +108,7 @@ export default {
 	components: {
 		Actions,
 		ActionButton,
+		Video,
 		VideoOff,
 		MenuDown,
 		Button,
