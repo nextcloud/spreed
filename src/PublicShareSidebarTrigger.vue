@@ -1,0 +1,73 @@
+<!--
+  - @copyright Copyright (c) 2022 Daniel Calviño Sánchez <danxuliu@gmail.com>
+  -
+  - @license GNU AGPL version 3 or any later version
+  -
+  - This program is free software: you can redistribute it and/or modify
+  - it under the terms of the GNU Affero General Public License as
+  - published by the Free Software Foundation, either version 3 of the
+  - License, or (at your option) any later version.
+  -
+  - This program is distributed in the hope that it will be useful,
+  - but WITHOUT ANY WARRANTY; without even the implied warranty of
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  - GNU Affero General Public License for more details.
+  -
+  - You should have received a copy of the GNU Affero General Public License
+  - along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -
+  -->
+
+<template>
+	<div class="button-holder">
+		<Button type="tertiary-on-primary"
+			:aria-label="ariaLabel"
+			@click="$emit('click')">
+			<template #icon>
+				<MenuPeople :size="20" />
+			</template>
+		</Button>
+	</div>
+</template>
+
+<script>
+import Button from '@nextcloud/vue/dist/Components/Button'
+import MenuPeople from './components/missingMaterialDesignIcons/MenuPeople.vue'
+
+export default {
+
+	name: 'PublicShareSidebarTrigger',
+
+	components: {
+		Button,
+		MenuPeople,
+	},
+
+	props: {
+		sidebarState: {
+			type: Object,
+			required: true,
+		},
+	},
+
+	computed: {
+		ariaLabel() {
+			if (this.sidebarState.isOpen) {
+				return t('spreed', 'Close Talk sidebar')
+			}
+
+			return t('spreed', 'Open Talk sidebar')
+		},
+	},
+
+}
+</script>
+
+<style scoped>
+.button-holder {
+	margin: 2px 5px 2px 2px;
+	display: flex;
+	justify-content: center;
+	height: 44px !important;
+}
+</style>

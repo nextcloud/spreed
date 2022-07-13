@@ -21,6 +21,7 @@
 import Vue from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
 import PublicShareSidebar from './PublicShareSidebar.vue'
+import PublicShareSidebarTrigger from './PublicShareSidebarTrigger.vue'
 import './init.js'
 
 // Store
@@ -98,10 +99,6 @@ if (window.innerWidth > 1111) {
 function addTalkSidebarTrigger() {
 	const talkSidebarTriggerElement = document.createElement('button')
 	talkSidebarTriggerElement.setAttribute('id', 'talk-sidebar-trigger')
-	talkSidebarTriggerElement.setAttribute('class', 'icon-menu-people-white')
-	talkSidebarTriggerElement.addEventListener('click', () => {
-		sidebarState.isOpen = !sidebarState.isOpen
-	})
 
 	// The ".header-right" element may not exist in the public share page if
 	// there are no header actions.
@@ -112,6 +109,17 @@ function addTalkSidebarTrigger() {
 	}
 
 	document.querySelector('.header-right').appendChild(talkSidebarTriggerElement)
+
+	const talkSidebarTriggerVm = new Vue({
+		propsData: {
+			sidebarState,
+		},
+		...PublicShareSidebarTrigger,
+	})
+	talkSidebarTriggerVm.$on('click', () => {
+		sidebarState.isOpen = !sidebarState.isOpen
+	})
+	talkSidebarTriggerVm.$mount('#talk-sidebar-trigger')
 }
 
 addTalkSidebarTrigger()
