@@ -93,6 +93,7 @@ class Listener implements IEventListener {
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, self::class . '::sendSystemMessageAboutPromoteOrDemoteModerator');
 		$dispatcher->addListener('OCP\Share::postShare', self::class . '::fixMimeTypeOfVoiceMessage');
 		$dispatcher->addListener(RoomShareProvider::EVENT_SHARE_FILE_AGAIN, self::class . '::fixMimeTypeOfVoiceMessage');
+		$dispatcher->addListener(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, self::class . '::afterSetMessageExpiration');
 	}
 
 	public static function sendSystemMessageAboutBeginOfCall(ModifyParticipantEvent $event): void {
@@ -433,5 +434,27 @@ class Listener implements IEventListener {
 	protected function getUserId(): ?string {
 		$user = $this->userSession->getUser();
 		return $user instanceof IUser ? $user->getUID() : null;
+	}
+
+	public static function afterSetMessageExpiration(ModifyRoomEvent $event): void {
+		$seconds = $event->getNewValue();
+		if ($seconds === $event->getOldValue()) {
+			return;
+		}
+
+		if ($seconds > 0) {
+			$message = 'message_expiration_enabled';
+		} else {
+			$message = 'message_expiration_disabled';
+		}
+
+		$listener = Server::get(self::class);
+		$listener->sendSystemMessage(
+			$event->getRoom(),
+			$message,
+			[
+				'seconds' => $seconds,
+			]
+		);
 	}
 }

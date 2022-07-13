@@ -537,8 +537,10 @@ class RoomService {
 		];
 	}
 
-	public function setMessageExpiration(Room $room, Participant $participant, int $seconds): void {
-		$event = new ModifyRoomEvent($room, 'messageExpiration', $seconds, null, $participant);
+	public function setMessageExpiration(Room $room, int $seconds): void {
+		$oldValue = $room->getMessageExpiration();
+		$room->setMessageExpiration($seconds);
+		$event = new ModifyRoomEvent($room, 'messageExpiration', $seconds, $oldValue);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_MESSAGE_EXPIRATION, $event);
 
 		$update = $this->db->getQueryBuilder();
@@ -547,29 +549,6 @@ class RoomService {
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 
-		$room->setMessageExpiration($seconds);
-
-		$this->addMessageExpirationSystemMessage($room, $participant, $seconds);
-
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, $event);
-	}
-
-	private function addMessageExpirationSystemMessage(Room $room, Participant $participant, int $seconds): void {
-		if ($seconds > 0) {
-			$message = 'message_expiration_enabled';
-		} else {
-			$message = 'message_expiration_disabled';
-		}
-		$this->chatManager->addSystemMessage(
-			$room,
-			$participant->getAttendee()->getActorType(),
-			$participant->getAttendee()->getActorId(),
-			json_encode([
-				'message' => $message,
-				'parameters' => ['seconds' => $seconds]
-			]),
-			$this->timeFactory->getDateTime(),
-			false
-		);
 	}
 }
