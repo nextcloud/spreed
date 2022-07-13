@@ -29,7 +29,9 @@
 				:aria-label="t('spreed', 'Add a reaction to this message')"
 				@click="openReactionsMenu">
 				<template #icon>
-					<EmoticonOutline :size="20" />
+					<EmoticonOutline decorative
+						:size="20"
+						title="" />
 				</template>
 			</Button>
 			<Actions v-show="isReplyable">
@@ -109,7 +111,9 @@
 				:aria-label="t('spreed', 'Close reactions menu')"
 				@click="closeReactionsMenu">
 				<template #icon>
-					<ArrowLeft :size="20" />
+					<ArrowLeft decorative
+						:size="20"
+						title="" />
 				</template>
 			</Button>
 			<Button type="tertiary"
@@ -133,7 +137,9 @@
 				<Button type="tertiary"
 					:aria-label="t('spreed', 'React with another emoji')">
 					<template #icon>
-						<Plus :size="20" />
+						<Plus decorative
+							:size="20"
+							title="" />
 					</template>
 				</Button>
 			</EmojiPicker>

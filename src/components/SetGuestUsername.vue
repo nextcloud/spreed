@@ -46,9 +46,11 @@
 				native-type="submit"
 				:aria-label="t('spreed', 'Save name')"
 				type="tertiary">
-				<ArrowRight :size="20"
-					title=""
-					decorative />
+				<template #icon>
+					<ArrowRight :size="20"
+						title=""
+						decorative />
+				</template>
 			</Button>
 		</div>
 	</form>
