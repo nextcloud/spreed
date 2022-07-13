@@ -200,11 +200,20 @@ class MessageSearch implements IProvider {
 			$subline = '{user}';
 		}
 
+		$displayName = $message->getActorDisplayName();
+		if ($message->getActorType() === Attendee::ACTOR_GUESTS) {
+			if ($displayName === '') {
+				$displayName = $this->l->t('Guest');
+			} else {
+				$displayName = $this->l->t('%s (guest)', $displayName);
+			}
+		}
+
 		$entry = new SearchResultEntry(
 			$iconUrl,
 			str_replace(
 				['{user}', '{conversation}'],
-				[$message->getActorDisplayName(), $room->getDisplayName($user->getUID())],
+				[$displayName, $room->getDisplayName($user->getUID())],
 				$subline
 			),
 			$messageStr,
