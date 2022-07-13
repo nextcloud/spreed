@@ -424,4 +424,8 @@ trait TRoomCommand {
 			return stripos($userId, $context->getCurrentWord()) !== false;
 		});
 	}
+
+	protected function setMessageExpiration(Room $room, int $seconds): void {
+		$this->roomService->setMessageExpiration($room, $seconds);
+	}
 }
