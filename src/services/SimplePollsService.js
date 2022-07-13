@@ -22,6 +22,17 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
+// For API documentation see https://nextcloud-talk.readthedocs.io/en/latest/poll/
+
+/**
+ *
+ * @param {string} token The conversation token
+ * @param {string} question The question of the polln
+ * @param {Array} options The options participants can vote for
+ * @param {number} resultMode Result mode of the poll
+ * @param {number} maxVotes Maximum amount of options a user can vote for, 0 means unlimited
+ * @return {object} The poll object
+ */
 const postNewPoll = async function(token, question, options, resultMode, maxVotes) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/poll/{token}', { token }), {
 		question,
