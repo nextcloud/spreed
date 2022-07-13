@@ -221,6 +221,9 @@ class MessageSearch implements IProvider {
 
 		$entry->addAttribute('conversation', $room->getToken());
 		$entry->addAttribute('messageId', $comment->getId());
+		$entry->addAttribute('actorType', $comment->getActorType());
+		$entry->addAttribute('actorId', $comment->getActorId());
+		$entry->addAttribute('timestamp', '' . $comment->getCreationDateTime()->getTimestamp());
 
 		return $entry;
 	}
