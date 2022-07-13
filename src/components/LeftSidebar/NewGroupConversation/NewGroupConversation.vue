@@ -28,9 +28,11 @@
 			icon=""
 			:aria-label="t('spreed', 'Create a new group conversation')"
 			@click="showModal">
-			<Plus decorative
-				title=""
-				:size="20" />
+			<template #icon>
+				<Plus decorative
+					title=""
+					:size="20" />
+			</template>
 		</Button>
 		<!-- New group form -->
 		<Modal v-if="modal"
@@ -399,6 +401,7 @@ export default {
 it back */
 ::v-deep .modal-container {
 	border-radius: var(--border-radius-large) !important;
+	height: 700px;
 }
 
 .navigation {

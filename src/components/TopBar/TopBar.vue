@@ -121,9 +121,13 @@
 					</ActionButton>
 				</template>
 				<ActionSeparator v-if="showModerationOptions" />
-				<ActionButton icon="icon-settings"
-					:close-after-click="true"
+				<ActionButton :close-after-click="true"
 					@click="openConversationSettings">
+					<template #icon>
+						<Cog :size="20"
+							decorative
+							title="" />
+					</template>
 					{{ t('spreed', 'Conversation settings') }}
 				</ActionButton>
 			</Actions>

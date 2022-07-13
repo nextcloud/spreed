@@ -54,11 +54,12 @@
 					:key="'integration' + index"
 					type="tertiary-no-background"
 					@click="runIntegration(integration)">
-					<!-- FIXME: dinamically change the material design icon -->
-					<AccountPlus slot="icon"
-						decorative
-						title=""
-						:size="20" />
+					<!-- FIXME: dynamically change the material design icon -->
+					<template #icon>
+						<AccountPlus decorative
+							title=""
+							:size="20" />
+					</template>
 					{{ integration.label }}
 				</Button>
 			</ul>

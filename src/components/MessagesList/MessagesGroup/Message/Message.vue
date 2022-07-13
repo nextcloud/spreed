@@ -83,9 +83,11 @@ the main body of the message as well as a quote.
 							class="nc-button nc-button__main--dark"
 							:aria-label="sendingErrorIconTooltip"
 							@click="handleRetry">
-							<Reload decorative
-								title=""
-								:size="16" />
+							<template #icon>
+								<Reload decorative
+									title=""
+									:size="16" />
+							</template>
 						</Button>
 						<AlertCircle v-else
 							decorative
