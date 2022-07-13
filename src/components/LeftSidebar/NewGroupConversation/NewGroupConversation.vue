@@ -401,6 +401,7 @@ export default {
 it back */
 ::v-deep .modal-container {
 	border-radius: var(--border-radius-large) !important;
+	height: 700px;
 }
 
 .navigation {

@@ -633,6 +633,10 @@ export default {
 	filter: var(--background-invert-if-dark);
 }
 
+::v-deep .modal-container {
+	height: 700px;
+}
+
 .matterbridge-settings {
 	.loading {
 		margin-top: 30px;
