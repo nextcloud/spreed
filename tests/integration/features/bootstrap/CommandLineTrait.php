@@ -79,7 +79,9 @@ trait CommandLineTrait {
 	 */
 	public function invokingTheCommand($cmd) {
 		if (preg_match('/room-name:(?P<token>\w+)/', $cmd, $matches)) {
-			$cmd = preg_replace('/room-name:(\w+)/', self::$identifierToToken[$matches['token']], $cmd);
+			if (array_key_exists($matches['token'], self::$identifierToToken)) {
+				$cmd = preg_replace('/room-name:(\w+)/', self::$identifierToToken[$matches['token']], $cmd);
+			}
 		}
 		$args = explode(' ', $cmd);
 		$this->runOcc($args);

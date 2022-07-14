@@ -87,11 +87,6 @@
       <code>Base</code>
     </UndefinedClass>
   </file>
-  <file src="lib/Command/Room/MessageExpiration.php">
-    <UndefinedClass occurrences="1">
-      <code>Base</code>
-    </UndefinedClass>
-  </file>
   <file src="lib/Command/Room/Promote.php">
     <UndefinedClass occurrences="1">
       <code>Base</code>

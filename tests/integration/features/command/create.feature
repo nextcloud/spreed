@@ -99,3 +99,13 @@ Feature: create
     When invoking occ with "talk:room:create room1 --user participant1 --owner participant1 --public --description ०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८९०१२३४५६७८च०"
     Then the command failed with exit code 1
     And the command output contains the text "Invalid room description"
+
+  Scenario: Create a public room with message expiration time
+    Given invoking occ with "talk:room:create room1 --user participant1 --owner participant1 --public --message-expiration=3"
+    And user "participant1" get token of room "room1" (v4)
+    And the command output contains the text "Room successfully created"
+    And the command was successful
+    And user "participant1" sends message "Message 1" to room "room1" with 201
+    And wait for 3 seconds
+    And apply message expiration job manually
+    Then user "participant1" sees the following messages in room "room1" with 200
