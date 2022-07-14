@@ -1,15 +1,14 @@
-<template functional>
-	<span :aria-hidden="props.decorative"
-		:aria-label="props.title"
-		:class="[data.class, data.staticClass]"
-		class="material-design-icon present-to-all-icon"
+<template>
+	<span :aria-hidden="!title"
+		:aria-label="title"
+		class="material-design-icon promoted-view-icon"
 		role="img"
-		v-bind="data.attrs"
-		v-on="listeners">
-		<svg :fill="props.fillColor"
+		v-bind="$attrs"
+		@click="$emit('click', $event)">
+		<svg :fill="fillColor"
 			class="material-design-icon__svg"
-			:width="props.size"
-			:height="props.size"
+			:width="size"
+			:height="size"
 			viewBox="0 0 16 16">
 			<rect x="1"
 				y="1"
@@ -27,6 +26,7 @@
 				y="12"
 				width="3"
 				height="3" />
+			<title v-if="title">{{ title }}</title>
 		</svg>
 	</span>
 </template>
@@ -37,11 +37,7 @@ export default {
 	props: {
 		title: {
 			type: String,
-			default: 'Promoted View icon',
-		},
-		decorative: {
-			type: Boolean,
-			default: false,
+			default: '',
 		},
 		fillColor: {
 			type: String,

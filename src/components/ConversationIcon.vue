@@ -37,18 +37,14 @@
 			class="conversation-icon__avatar" />
 		<div v-if="showCall"
 			class="overlap-icon">
-			<Video decorative
-				:size="20"
-				:fill-color="'#E9322D'"
-				title="" />
+			<Video :size="20"
+				:fill-color="'#E9322D'" />
 			<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
 		</div>
 		<div v-else-if="showFavorite"
 			class="overlap-icon">
-			<Star decorative
-				:size="20"
-				:fill-color="'#FFCC00'"
-				title="" />
+			<Star :size="20"
+				:fill-color="'#FFCC00'" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
 		</div>
 	</div>

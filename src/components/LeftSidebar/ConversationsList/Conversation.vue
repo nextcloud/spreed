@@ -48,15 +48,11 @@
 				@click.prevent.exact="toggleFavoriteConversation">
 				<Star v-if="item.isFavorite"
 					slot="icon"
-					decorative
-					:size="20"
-					title="" />
+					:size="20" />
 				<Star v-else
 					slot="icon"
-					decorative
 					:size="20"
-					:fill-color="'#FFCC00'"
-					title="" />
+					:fill-color="'#FFCC00'" />
 				{{ labelFavorite }}
 			</ActionButton>
 			<ActionButton icon="icon-clippy"
@@ -66,18 +62,14 @@
 			<ActionButton :close-after-click="true"
 				@click.prevent.exact="markConversationAsRead">
 				<template #icon>
-					<EyeOutline decorative
-						title=""
-						:size="16" />
+					<EyeOutline :size="16" />
 				</template>
 				{{ t('spreed', 'Mark as read') }}
 			</ActionButton>
 			<ActionButton :close-after-click="true"
 				@click.prevent.exact="showConversationSettings">
 				<Cog slot="icon"
-					decorative
-					:size="20"
-					title="" />
+					:size="20" />
 				{{ t('spreed', 'Conversation settings') }}
 			</ActionButton>
 			<ActionButton v-if="canLeaveConversation"
@@ -91,9 +83,7 @@
 				class="critical"
 				@click.prevent.exact="deleteConversation">
 				<template #icon>
-					<Delete decorative
-						title=""
-						:size="16" />
+					<Delete :size="16" />
 				</template>
 				{{ t('spreed', 'Delete conversation') }}
 			</ActionButton>

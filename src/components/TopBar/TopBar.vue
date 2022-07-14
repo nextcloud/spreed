@@ -77,9 +77,7 @@
 				@shortkey.native="toggleFullscreen">
 				<span slot="icon"
 					:class="{'top-bar__button__force-white': isInCall}">
-					<Cog :size="20"
-						decorative
-						title="" />
+					<Cog :size="20" />
 				</span>
 				<ActionButton :icon="iconFullscreen"
 					:aria-label="t('spreed', 'Toggle fullscreen')"
@@ -91,9 +89,7 @@
 				<ActionLink v-if="isFileConversation"
 					:href="linkToFile">
 					<File slot="icon"
-						:size="20"
-						title=""
-						decorative />
+						:size="20" />
 					{{ t('spreed', 'Go to file') }}
 				</ActionLink>
 				<template v-if="showModerationOptions">
@@ -114,9 +110,7 @@
 					<ActionButton :close-after-click="true"
 						@click="forceMuteOthers">
 						<MicrophoneOff slot="icon"
-							:size="20"
-							decorative
-							title="" />
+							:size="20" />
 						{{ t('spreed', 'Mute others') }}
 					</ActionButton>
 				</template>
@@ -124,9 +118,7 @@
 				<ActionButton :close-after-click="true"
 					@click="openConversationSettings">
 					<template #icon>
-						<Cog :size="20"
-							decorative
-							title="" />
+						<Cog :size="20" />
 					</template>
 					{{ t('spreed', 'Conversation settings') }}
 				</ActionButton>
@@ -140,17 +132,13 @@
 					@click="openSidebar">
 					<MessageText slot="icon"
 						:size="20"
-						title=""
-						fill-color="#ffffff"
-						decorative />
+						fill-color="#ffffff" />
 				</ActionButton>
 				<ActionButton v-else
 					key="openSideBarButtonMenuPeople"
 					@click="openSidebar">
 					<MenuPeople slot="icon"
-						:size="20"
-						title=""
-						decorative />
+						:size="20" />
 				</ActionButton>
 			</Actions>
 		</div>

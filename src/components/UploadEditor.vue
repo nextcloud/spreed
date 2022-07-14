@@ -50,9 +50,7 @@
 							class="add-more__button"
 							@click="clickImportInput">
 							<template #icon>
-								<Plus decorative
-									title=""
-									:size="48" />
+								<Plus :size="48" />
 							</template>
 						</Button>
 					</div>

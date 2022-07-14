@@ -36,9 +36,7 @@
 			:aria-label="cancelSearchLabel"
 			@click="abortSearch">
 			<template #icon>
-				<Close decorative
-					title=""
-					:size="20" />
+				<Close :size="20" />
 			</template>
 		</Button>
 		<transition-group v-if="hasSelectedParticipants"

@@ -34,9 +34,7 @@
 			:type="startCallButtonType"
 			@click="handleClick">
 			<template #icon>
-				<Video title=""
-					:size="20"
-					decorative />
+				<Video :size="20" />
 			</template>
 			{{ startCallLabel }}
 		</Button>
@@ -46,36 +44,26 @@
 			:disabled="loading"
 			@click="leaveCall(false)">
 			<template #icon>
-				<VideoOff title=""
-					:size="20"
-					decorative />
+				<VideoOff :size="20" />
 			</template>
 			{{ leaveCallLabel }}
 		</Button>
 		<Actions v-else-if="showLeaveCallButton && canEndForAll"
 			:disabled="loading">
 			<template #icon>
-				<VideoOff :size="16"
-					title=""
-					decorative />
+				<VideoOff :size="16" />
 				<span class="label">{{ leaveCallLabel }}</span>
-				<MenuDown :size="16"
-					title=""
-					decorative />
+				<MenuDown :size="16" />
 			</template>
 			<ActionButton @click="leaveCall(false)">
 				<template #icon>
-					<VideoOff title=""
-						:size="20"
-						decorative />
+					<VideoOff :size="20" />
 				</template>
 				{{ leaveCallLabel }}
 			</ActionButton>
 			<ActionButton @click="leaveCall(true)">
 				<template #icon>
-					<VideoOff title=""
-						:size="20"
-						decorative />
+					<VideoOff :size="20" />
 				</template>
 				{{ t('spreed', 'End meeting for all') }}
 			</ActionButton>

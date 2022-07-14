@@ -21,9 +21,7 @@
 <template>
 	<div class="lobby">
 		<div class="lobby emptycontent">
-			<Lobby decorative
-				:size="64"
-				title="" />
+			<Lobby :size="64" />
 			<h2>{{ currentConversationName }}</h2>
 
 			<p class="lobby__timer">

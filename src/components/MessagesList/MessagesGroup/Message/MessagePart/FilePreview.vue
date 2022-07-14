@@ -36,9 +36,7 @@
 			:class="{'playable': isPlayable}">
 			<span v-if="isPlayable && !smallPreview" class="play-video-button">
 				<PlayCircleOutline :size="48"
-					decorative
-					fill-color="#ffffff"
-					title="" />
+					fill-color="#ffffff" />
 			</span>
 			<img v-if="!failed"
 				v-tooltip="previewTooltip"
@@ -61,8 +59,7 @@
 			:aria-label="removeAriaLabel"
 			@click="$emit('remove-file', id)">
 			<template #icon>
-				<Close decorative
-					title="" />
+				<Close />
 			</template>
 		</Button>
 		<ProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />

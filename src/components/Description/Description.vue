@@ -39,9 +39,7 @@
 					:aria-label="t('spreed', 'Cancel editing description')"
 					@click="handleCancelEditing">
 					<template #icon>
-						<Close decorative
-							title=""
-							:size="20" />
+						<Close :size="20" />
 					</template>
 				</Button>
 				<Button type="primary"
@@ -49,9 +47,7 @@
 					:disabled="!canSubmit"
 					@click="handleSubmitDescription">
 					<template #icon>
-						<Check decorative
-							title=""
-							:size="20" />
+						<Check :size="20" />
 					</template>
 				</Button>
 				<div v-if="showCountDown"
@@ -67,9 +63,7 @@
 				:aria-label="t('spreed', 'Edit conversation description')"
 				@click="handleEditDescription">
 				<template #icon>
-					<Pencil decorative
-						title=""
-						:size="20" />
+					<Pencil :size="20" />
 				</template>
 			</Button>
 		</template>

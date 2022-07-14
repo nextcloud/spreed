@@ -28,9 +28,7 @@
 		<Button @click.prevent="handleEditUsername">
 			{{ t('spreed', 'Edit') }}
 			<template #icon>
-				<Pencil :size="20"
-					title=""
-					decorative />
+				<Pencil :size="20" />
 			</template>
 		</Button>
 		<div v-if="isEditingUsername"
@@ -47,9 +45,7 @@
 				:aria-label="t('spreed', 'Save name')"
 				type="tertiary">
 				<template #icon>
-					<ArrowRight :size="20"
-						title=""
-						decorative />
+					<ArrowRight :size="20" />
 				</template>
 			</Button>
 		</div>

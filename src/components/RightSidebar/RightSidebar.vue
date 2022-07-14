@@ -44,9 +44,7 @@
 			:order="1"
 			:name="t('spreed', 'Chat')">
 			<template slot="icon">
-				<Message decorative
-					:size="20"
-					title="" />
+				<Message :size="20" />
 			</template>
 			<ChatView :is-visible="opened" />
 		</AppSidebarTab>
@@ -56,9 +54,7 @@
 			:order="2"
 			:name="participantsText">
 			<template slot="icon">
-				<AccountMultiple decorative
-					:size="20"
-					title="" />
+				<AccountMultiple :size="20" />
 			</template>
 			<ParticipantsTab :is-active="activeTab === 'participants'"
 				:can-search="canSearchParticipants"
@@ -69,9 +65,7 @@
 			:order="3"
 			:name="t('spreed', 'Details')">
 			<template slot="icon">
-				<InformationOutline decorative
-					:size="20"
-					title="" />
+				<InformationOutline :size="20" />
 			</template>
 			<SetGuestUsername v-if="!getUserId" />
 			<SipSettings v-if="showSIPSettings"
@@ -81,9 +75,7 @@
 				<div id="app-settings-header">
 					<Button type="tertiary" @click="showSettings">
 						<template #icon>
-							<CogIcon decorative
-								title=""
-								:size="20" />
+							<CogIcon :size="20" />
 						</template>
 						{{ t('spreed', 'Settings') }}
 					</Button>
@@ -96,9 +88,7 @@
 			:order="4"
 			:name="t('spreed', 'Shared items')">
 			<template slot="icon">
-				<FolderMultipleImage decorative
-					:size="20"
-					title="" />
+				<FolderMultipleImage :size="20" />
 			</template>
 			<SharedItemsTab :active="activeTab === 'shared-items'" />
 		</AppSidebarTab>

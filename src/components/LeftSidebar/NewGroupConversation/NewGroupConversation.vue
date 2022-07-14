@@ -29,9 +29,7 @@
 			:aria-label="t('spreed', 'Create a new group conversation')"
 			@click="showModal">
 			<template #icon>
-				<Plus decorative
-					title=""
-					:size="20" />
+				<Plus :size="20" />
 			</template>
 		</Button>
 		<!-- New group form -->

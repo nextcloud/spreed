@@ -43,9 +43,7 @@
 						:aria-label="t('spreed', 'Share files to the conversation')"
 						:aria-haspopup="true">
 						<Paperclip slot="icon"
-							:size="16"
-							decorative
-							title="" />
+							:size="16" />
 						<ActionButton v-if="canUploadFiles"
 							:close-after-click="true"
 							icon="icon-upload"
@@ -71,9 +69,7 @@
 								type="tertiary-no-background"
 								:aria-haspopup="true">
 								<template #icon>
-									<EmoticonOutline :size="16"
-										decorative
-										title="" />
+									<EmoticonOutline :size="16" />
 								</template>
 							</Button>
 						</EmojiPicker>
@@ -83,9 +79,7 @@
 							:aria-label="t('spreed', 'Add emoji')"
 							:disabled="true">
 							<template #icon>
-								<EmoticonOutline :size="16"
-									decorative
-									title="" />
+								<EmoticonOutline :size="16" />
 							</template>
 						</Button>
 					</div>

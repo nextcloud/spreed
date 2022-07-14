@@ -77,22 +77,14 @@
 			class="participant-row__callstate-icon">
 			<span class="hidden-visually">{{ callIconTooltip }}</span>
 			<Microphone v-if="callIcon === 'audio'"
-				:size="20"
-				title=""
-				decorative />
+				:size="20" />
 			<Phone v-if="callIcon === 'phone'"
-				:size="20"
-				title=""
-				decorative />
+				:size="20" />
 			<Video v-if="callIcon === 'video'"
-				:size="20"
-				title=""
-				decorative />
+				:size="20" />
 			<!-- The following icon is much bigger than all the others
 						so we reduce its size -->
 			<HandBackLeft v-if="callIcon === 'hand'"
-				decorative
-				title=""
 				:size="18" />
 		</div>
 
@@ -104,17 +96,13 @@
 			class="participant-row__actions">
 			<template #icon>
 				<LockOpenVariant v-if="actionIcon === 'LockOpenVariant'"
-					:size="20"
-					decorative />
+					:size="20" />
 				<Lock v-else-if="actionIcon === 'Lock'"
-					:size="20"
-					decorative />
+					:size="20" />
 				<Tune v-else-if="actionIcon === 'Tune'"
-					:size="20"
-					decorative />
+					:size="20" />
 				<DotsHorizontal v-else
-					:size="20"
-					decorative />
+					:size="20" />
 			</template>
 			<ActionText v-if="attendeePin"
 				:title="t('spreed', 'Dial-in PIN')"
@@ -125,9 +113,7 @@
 				:close-after-click="true"
 				@click="demoteFromModerator">
 				<template #icon>
-					<Account :size="20"
-						title=""
-						decorative />
+					<Account :size="20" />
 					{{ t('spreed', 'Demote from moderator') }}
 				</template>
 			</ActionButton>
@@ -135,9 +121,7 @@
 				:close-after-click="true"
 				@click="promoteToModerator">
 				<template #icon>
-					<Crown :size="20"
-						title=""
-						decorative />
+					<Crown :size="20" />
 				</template>
 				{{ t('spreed', 'Promote to moderator') }}
 			</ActionButton>
