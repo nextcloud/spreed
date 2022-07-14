@@ -505,6 +505,8 @@ export default {
 					}
 				} else if (type === 'talk-poll') {
 					const props = Object.assign({}, this.messageParameters[p])
+					// Add the token to the component props
+					props.token = this.token
 					// The word 'name' is reserved in for the component name in
 					// vue instances so we cannot pass that into the component
 					// as a prop. Therefore we rename it into pollName

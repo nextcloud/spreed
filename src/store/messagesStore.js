@@ -404,6 +404,10 @@ const actions = {
 			})
 		}
 
+		if (message.type === 'talk-poll') {
+			console.log(message)
+		}
+
 		if (message.systemMessage === 'reaction' || message.systemMessage === 'reaction_revoked') {
 			context.commit('resetReactions', {
 				token: message.token,

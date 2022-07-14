@@ -20,15 +20,17 @@
 -->
 
 <template>
-	<div>
+	<div v-observe-visibility="getPollData">
 		Poll
 		<p>{{ pollName }}</p>
-		<CheckboxRadioSwitch v-for="answer, index in answers"
-			:key="index"
-			:checked.sync="sharingPermission"
-			value="r"
-			name="answerType"
-			type="radio" />
+		<template v-if="pollLoaded">
+			<CheckboxRadioSwitch v-for="answer, index in answers"
+				:key="index"
+				:checked.sync="sharingPermission"
+				:value="answer"
+				name="answerType"
+				type="radio" />
+		</template>
 	</div>
 </template>
 
@@ -61,7 +63,11 @@ export default {
 
 	computed: {
 		poll() {
-			return this.$store.getters.poll(this.token, this.id)
+			return this.$store.getters.getPoll(this.token, this.id)
+		},
+
+		pollLoaded() {
+			return !!this.poll
 		},
 
 		maxVotes() {
@@ -98,6 +104,21 @@ export default {
 
 		isMultipleAnswers() {
 			return this.poll.maxVotes === 0
+		},
+	},
+
+	methods: {
+		// When the poll system message becomes visible, we get the poll data.
+		// Once we have a virtual scroller we can change this and get the
+		// data when the poll is approaching the viewport.
+		getPollData() {
+			if (!this.pollLoaded) {
+				this.$store.dispatch('getPollData', {
+					token: this.token,
+					pollId: this.id,
+				})
+			}
+
 		},
 	},
 }

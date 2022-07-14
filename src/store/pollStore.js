@@ -20,6 +20,7 @@
  *
  */
 import Vue from 'vue'
+import { getPollData } from '../services/SimplePollsService.js'
 
 const state = {
 	polls: {},
@@ -27,7 +28,7 @@ const state = {
 
 const getters = {
 	getPoll: (state) => (token, id) => {
-		return state.polls[token][id]
+		return state.polls?.[token]?.[id]
 	},
 }
 
@@ -37,13 +38,24 @@ const mutations = {
 			Vue.set(state.polls, token, {})
 		}
 		Vue.set(state.polls[token], poll.id, poll)
-		console.log(state.polls)
 	},
 }
 
 const actions = {
 	addPoll(context, { token, poll }) {
 		context.commit('addPoll', { token, poll })
+	},
+
+	async getPollData(context, { token, pollId }) {
+		console.debug('Getting poll data')
+		try {
+			const response = await getPollData(token, pollId)
+			const poll = response.data.ocs.data
+			context.dispatch('addPoll', { token, poll })
+			console.debug('polldata', response)
+		} catch (error) {
+			console.debug(error)
+		}
 	},
 }
 
