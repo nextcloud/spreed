@@ -538,9 +538,7 @@ class RoomService {
 	}
 
 	public function setMessageExpiration(Room $room, int $seconds): void {
-		$oldValue = $room->getMessageExpiration();
-		$room->setMessageExpiration($seconds);
-		$event = new ModifyRoomEvent($room, 'messageExpiration', $seconds, $oldValue);
+		$event = new ModifyRoomEvent($room, 'messageExpiration', $seconds);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_MESSAGE_EXPIRATION, $event);
 
 		$update = $this->db->getQueryBuilder();

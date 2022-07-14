@@ -438,9 +438,6 @@ class Listener implements IEventListener {
 
 	public static function afterSetMessageExpiration(ModifyRoomEvent $event): void {
 		$seconds = $event->getNewValue();
-		if ($seconds === $event->getOldValue()) {
-			return;
-		}
 
 		if ($seconds > 0) {
 			$message = 'message_expiration_enabled';
