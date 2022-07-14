@@ -680,6 +680,7 @@ OC.L10N.register(
     "No permission to post messages in this conversation" : "Немате дозвола да испратите порака во овој разговор",
     "Write message, @ to mention someone …" : "Напиши порака, @ за да спомнете некој ...",
     "Invalid path selected" : "Избрана невалидна патека",
+    "Start a call" : "Повик",
     "moderator" : "модератор",
     "guest" : "гостин",
     "Demote from moderator" : "Деградирај од модератор",
