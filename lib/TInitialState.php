@@ -47,8 +47,11 @@ trait TInitialState {
 	protected $memcacheFactory;
 
 	protected function publishInitialStateShared(): void {
-		// Needed to enable the screensharing extension in Chromium < 72.
-		Util::addHeader('meta', ['id' => 'app', 'class' => 'nc-enable-screensharing-extension']);
+		// Needed to enable the screensharing extension in Chromium < 72
+		// https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol/related
+		// The extension finds the element by ID and then checks if the class matches.
+		// Name and content have only been added for HTML validation
+		Util::addHeader('meta', ['id' => 'app', 'class' => 'nc-enable-screensharing-extension', 'name' => 'nextcloud-talk-enable-screensharing-extension', 'content' => 'true']);
 
 		$signalingMode = $this->talkConfig->getSignalingMode();
 		if ($signalingMode === Config::SIGNALING_CLUSTER_CONVERSATION
