@@ -1,5 +1,5 @@
 <!--
-  - @copyright Copyright (c) 2021 Marco Ambrosini <marcoambrosini@pm.me>
+  - @copyright Copyright (c) 2022 Marco Ambrosini <marcoambrosini@pm.me>
   -
   - @author Marco Ambrosini <marcoambrosini@pm.me>
   -
@@ -23,13 +23,27 @@
 	<div v-observe-visibility="getPollData">
 		Poll
 		<p>{{ pollName }}</p>
-		<template v-if="pollLoaded">
-			<CheckboxRadioSwitch v-for="answer, index in answers"
-				:key="index"
-				:checked.sync="sharingPermission"
-				:value="answer"
-				name="answerType"
-				type="radio" />
+		<template v-if="vote !== undefined">
+			<template v-if="checkboxRadioSwitchType === 'radio'">
+				<CheckboxRadioSwitch v-for="option, index in options"
+					:key="'radio' + index"
+					:checked.sync="vote"
+					:value="option"
+					:type="checkboxRadioSwitchType"
+					name="answerType">
+					{{ option }}
+				</CheckboxRadioSwitch>
+			</template>
+			<template v-else>
+				<CheckboxRadioSwitch v-for="option, index in options"
+					:key="'checkbox' + index"
+					:checked.sync="vote"
+					:value="option"
+					:type="checkboxRadioSwitchType"
+					name="answerType">
+					{{ option }}
+				</CheckboxRadioSwitch>
+			</template>
 		</template>
 	</div>
 </template>
@@ -61,6 +75,12 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			vote: undefined,
+		}
+	},
+
 	computed: {
 		poll() {
 			return this.$store.getters.getPoll(this.token, this.id)
@@ -70,47 +90,46 @@ export default {
 			return !!this.poll
 		},
 
-		maxVotes() {
-			return this.poll.maxVotes
-		},
-
 		votersNumber() {
-			return this.poll.numVoters
+			return this.pollLoaded ? this.poll.numVoters : undefined
 		},
 
 		question() {
-			return this.poll.question
+			return this.pollLoaded ? this.poll.question : undefined
 		},
 
-		answers() {
-			return this.poll.options
+		options() {
+			return this.pollLoaded ? this.poll.options : undefined
 		},
 
 		pollVotes() {
-			return this.polls.votes
+			return this.pollLoaded ? this.poll.votes : undefined
 		},
 
 		selfHasVoted() {
-			return this.poll.votedSelf
+			return this.pollLoaded ? this.poll.votedSelf : undefined
 		},
 
 		resultMode() {
-			return this.poll.resultMode
+			return this.pollLoaded ? this.poll.resultMode : undefined
 		},
 
 		status() {
-			return this.poll.status
+			return this.pollLoaded ? this.poll.status : undefined
 		},
 
-		isMultipleAnswers() {
-			return this.poll.maxVotes === 0
+		checkboxRadioSwitchType() {
+			return this.poll.maxVotes === 0 ? 'checkbox' : 'radio'
+		},
+	},
+
+	watch: {
+		pollLoaded() {
+			this.setComponentData()
 		},
 	},
 
 	methods: {
-		// When the poll system message becomes visible, we get the poll data.
-		// Once we have a virtual scroller we can change this and get the
-		// data when the poll is approaching the viewport.
 		getPollData() {
 			if (!this.pollLoaded) {
 				this.$store.dispatch('getPollData', {
@@ -119,6 +138,14 @@ export default {
 				})
 			}
 
+		},
+
+		setComponentData() {
+			if (this.checkboxRadioSwitchType === 'radio') {
+				this.vote = ''
+			} else {
+				this.vote = []
+			}
 		},
 	},
 }
