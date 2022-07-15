@@ -1,4 +1,4 @@
-Feature: update
+Feature: command/update
 
   Background:
     Given user "participant1" exists
