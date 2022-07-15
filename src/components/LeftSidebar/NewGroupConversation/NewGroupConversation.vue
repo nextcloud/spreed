@@ -25,7 +25,6 @@
 			v-tooltip.bottom="t('spreed', 'Create a new group conversation')"
 			type="tertiary"
 			class="toggle"
-			icon=""
 			:aria-label="t('spreed', 'Create a new group conversation')"
 			@click="showModal">
 			<template #icon>
