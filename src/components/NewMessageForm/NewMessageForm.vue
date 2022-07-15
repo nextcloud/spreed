@@ -114,9 +114,7 @@
 							@click.prevent="handleSubmit({ silent: true })">
 							{{ silentSendInfo }}
 							<BellOff slot="icon"
-								:size="16"
-								decorative
-								title="" />
+								:size="16" />
 						</ActionButton>
 					</Actions>
 					<!-- Send -->
@@ -127,9 +125,7 @@
 						:aria-label="t('spreed', 'Send message')"
 						@click.prevent="handleSubmit({ silent: false })">
 						<template #icon>
-							<Send title=""
-								:size="16"
-								decorative />
+							<Send :size="16" />
 						</template>
 					</Button>
 				</template>

@@ -133,36 +133,28 @@
 					:close-after-click="true"
 					@click="applyDefaultPermissions">
 					<template #icon>
-						<LockReset :size="20"
-							title=""
-							decorative />
+						<LockReset :size="20" />
 					</template>
 					{{ t('spreed', 'Reset custom permissions') }}
 				</ActionButton>
 				<ActionButton :close-after-click="true"
 					@click="grantAllPermissions">
 					<template #icon>
-						<LockOpenVariant :size="20"
-							title=""
-							decorative />
+						<LockOpenVariant :size="20" />
 					</template>
 					{{ t('spreed', 'Grant all permissions') }}
 				</ActionButton>
 				<ActionButton :close-after-click="true"
 					@click="removeAllPermissions">
 					<template #icon>
-						<Lock :size="20"
-							title=""
-							decorative />
+						<Lock :size="20" />
 					</template>
 					{{ t('spreed', 'Remove all permissions') }}
 				</ActionButton>
 				<ActionButton :close-after-click="true"
 					@click="showPermissionsEditor">
 					<template #icon>
-						<Pencil :size="20"
-							title=""
-							decorative />
+						<Pencil :size="20" />
 					</template>
 					{{ t('spreed', 'Edit permissions') }}
 				</ActionButton>
@@ -177,9 +169,7 @@
 				:close-after-click="true"
 				@click="sendCallNotification">
 				<template #icon>
-					<Bell :size="20"
-						title=""
-						decorative />
+					<Bell :size="20" />
 				</template>
 				{{ t('spreed', 'Send call notification') }}
 			</ActionButton>

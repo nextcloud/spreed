@@ -70,9 +70,7 @@
 				:aria-label="t('spreed', 'Edit permissions')"
 				class="nc-button nc-button__main"
 				@click="showPermissionsEditor = true">
-				<Pencil :size="20"
-					decorative
-					title="" />
+				<Pencil :size="20" />
 			</button>
 		</div>
 		<PermissionEditor v-if="showPermissionsEditor"

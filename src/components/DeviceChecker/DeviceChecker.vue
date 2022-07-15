@@ -145,9 +145,7 @@
 							@click="silentCall= true">
 							{{ t('spreed', 'The conversation participants will not be notified about this call') }}
 							<BellOff slot="icon"
-								:size="16"
-								decorative
-								title="" />
+								:size="16" />
 						</ActionButton>
 					</template>
 					<template v-else>
@@ -157,9 +155,7 @@
 							@click="silentCall= false">
 							{{ t('spreed', 'The conversation participants will be notified about this call') }}
 							<Bell slot="icon"
-								:size="16"
-								decorative
-								title="" />
+								:size="16" />
 						</ActionButton>
 					</template>
 				</Actions>
