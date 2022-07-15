@@ -81,18 +81,14 @@
 		<div class="app-settings-subsection">
 			<button ref="copyLinkButton"
 				@click.prevent="handleCopyLink">
-				<ClipboardTextOutline :size="16"
-					decorative
-					title="" />
+				<ClipboardTextOutline :size="16" />
 				{{ t('spreed', 'Copy conversation link') }}
 			</button>
 		</div>
 		<div v-if="isSharedPublicly" class="app-settings-subsection">
 			<button :disabled="isSendingInvitations"
 				@click.prevent="handleResendInvitations">
-				<Email :size="16"
-					decorative
-					title="" />
+				<Email :size="16" />
 				{{ t('spreed', 'Resend invitations') }}
 			</button>
 			<span v-if="isSendingInvitations" class="icon-loading-small spinner" />

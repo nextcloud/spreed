@@ -55,9 +55,7 @@ get the messagesList array and loop through the list to generate the messages.
 				class="scroll-to-bottom"
 				@click="smoothScrollToBottom">
 				<template #icon>
-					<ChevronDown decorative
-						title=""
-						:size="20" />
+					<ChevronDown :size="20" />
 				</template>
 			</Button>
 		</transition>

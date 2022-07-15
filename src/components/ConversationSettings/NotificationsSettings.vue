@@ -26,51 +26,39 @@
 			class="radio-element"
 			:class="{'radio-element--active': isNotifyAlways}"
 			@click.prevent.exact="setNotificationLevel(1)">
-			<VolumeHigh decorative
-				title=""
-				:size="20"
+			<VolumeHigh :size="20"
 				class="radio-element__icon" />
 			<label class="radio-element__label">
 				{{ t('spreed', 'All messages') }}
 			</label>
 			<Check v-if="isNotifyAlways"
 				class="check"
-				decorative
-				title=""
 				:size="20" />
 		</a>
 		<a href="#"
 			class="radio-element"
 			:class="{'radio-element--active': isNotifyMention}"
 			@click.prevent.exact="setNotificationLevel(2)">
-			<Account decorative
-				title=""
-				:size="20"
+			<Account :size="20"
 				class="radio-element__icon" />
 			<label class="radio-element__label">
 				{{ t('spreed', '@-mentions only') }}
 			</label>
 			<Check v-if="isNotifyMention"
 				class="check"
-				decorative
-				title=""
 				:size="20" />
 		</a>
 		<a href="#"
 			class="radio-element"
 			:class="{'radio-element--active': isNotifyNever}"
 			@click.prevent.exact="setNotificationLevel(3)">
-			<VolumeOff decorative
-				title=""
-				:size="20"
+			<VolumeOff :size="20"
 				class="radio-element__icon" />
 			<label class="radio-element__label">
 				{{ t('spreed', 'Off') }}
 			</label>
 			<Check v-if="isNotifyNever"
 				class="check"
-				decorative
-				title=""
 				:size="20" />
 		</a>
 

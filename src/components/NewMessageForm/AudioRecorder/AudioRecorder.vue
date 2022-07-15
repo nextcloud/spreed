@@ -60,9 +60,7 @@
 				:class="{'audio-recorder__trigger--recording': isRecording}"
 				@click="stop">
 				<template #icon>
-					<Check :size="16"
-						title=""
-						decorative />
+					<Check :size="16" />
 				</template>
 			</Button>
 		</div>

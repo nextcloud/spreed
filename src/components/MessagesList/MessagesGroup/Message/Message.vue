@@ -84,14 +84,10 @@ the main body of the message as well as a quote.
 							:aria-label="sendingErrorIconTooltip"
 							@click="handleRetry">
 							<template #icon>
-								<Reload decorative
-									title=""
-									:size="16" />
+								<Reload :size="16" />
 							</template>
 						</Button>
 						<AlertCircle v-else
-							decorative
-							title=""
 							:size="16" />
 					</div>
 					<div v-else-if="isTemporary && !isTemporaryUpload || isDeleting"
@@ -102,17 +98,13 @@ the main body of the message as well as a quote.
 						v-tooltip.auto="commonReadIconTooltip"
 						class="message-status"
 						:aria-label="commonReadIconTooltip">
-						<CheckAll decorative
-							title=""
-							:size="16" />
+						<CheckAll :size="16" />
 					</div>
 					<div v-else-if="showSentIcon"
 						v-tooltip.auto="sentIconTooltip"
 						class="message-status"
 						:aria-label="sentIconTooltip">
-						<Check decorative
-							title=""
-							:size="16" />
+						<Check :size="16" />
 					</div>
 				</div>
 			</div>
