@@ -159,6 +159,7 @@
     "You deleted a message" : "Mezu bat ezabatu duzu",
     "{actor} deleted a reaction" : "{actor}-(e)k erreakzio bat ezabatu du",
     "You deleted a reaction" : "Erreakzio bat ezabatu duzu",
+    "_You set the message expiration to %n week_::_You set the message expiration to %n weeks_" : ["Mezuaren iraungitzea aste %nera aldatu duzu","Mezuaren iraungitzea %n astetara aldatu duzu"],
     "{actor} disabled message expiration" : "{actor}-(e)k mezuaren iraungitzea desgaitu du",
     "You disabled message expiration" : "Mezuaren iraungitzea desgaitu duzu",
     "{actor} cleared the history of the conversation" : "{actor} elkarrizketaren historia ezabatu du",
