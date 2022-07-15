@@ -254,22 +254,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" get token of room "([^"]*)" \((v4)\)$/
-	 */
-	public function storeTokenOfRoom(string $user, string $room, string $apiVersion) {
-		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room');
-		$response = $this->getDataFromResponse($this->response);
-		$result = array_filter($response, fn ($p) => $p['name'] === $room);
-		if (!count($result)) {
-			throw new \Exception('User ' . $user . ' is not participant of room ' . $room);
-		}
-		$result = current($result);
-		self::$identifierToToken[$room] = $result['token'];
-		self::$tokenToIdentifier[$result['token']] = $room;
-	}
-
-	/**
 	 * @Then /^user "([^"]*)" is participant of the following rooms \((v4)\)$/
 	 *
 	 * @param string $user
