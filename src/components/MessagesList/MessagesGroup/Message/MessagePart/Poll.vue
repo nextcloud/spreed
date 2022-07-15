@@ -20,42 +20,68 @@
 -->
 
 <template>
-	<div v-observe-visibility="getPollData">
+	<Button v-observe-visibility="getPollData"
+		:aria-label="t('spreed', 'poll')"
+		class="poll"
+		@click="showModal = true">
 		Poll
 		<p>{{ pollName }}</p>
 		<template v-if="vote !== undefined">
-			<template v-if="checkboxRadioSwitchType === 'radio'">
-				<CheckboxRadioSwitch v-for="option, index in options"
-					:key="'radio' + index"
-					:checked.sync="vote"
-					:value="option"
-					:type="checkboxRadioSwitchType"
-					name="answerType">
-					{{ option }}
-				</CheckboxRadioSwitch>
-			</template>
-			<template v-else>
-				<CheckboxRadioSwitch v-for="option, index in options"
-					:key="'checkbox' + index"
-					:checked.sync="vote"
-					:value="option"
-					:type="checkboxRadioSwitchType"
-					name="answerType">
-					{{ option }}
-				</CheckboxRadioSwitch>
-			</template>
+			<!-- voting dialog -->
+			<Modal v-if="showModal" size="small" @close="showModal = false">
+				<div class="poll__modal">
+					<h2 class="poll__modal-title">
+						{{ pollName }}
+					</h2>
+					<!-- options -->
+					<template v-if="checkboxRadioSwitchType === 'radio'">
+						<CheckboxRadioSwitch v-for="option, index in options"
+							:key="'radio' + index"
+							:checked.sync="vote"
+							class="poll__option"
+							:value="option"
+							:type="checkboxRadioSwitchType"
+							name="answerType">
+							{{ option }}
+						</CheckboxRadioSwitch>
+					</template>
+					<template v-else>
+						<CheckboxRadioSwitch v-for="option, index in options"
+							:key="'checkbox' + index"
+							:checked.sync="vote"
+							:value="option"
+							:type="checkboxRadioSwitchType"
+							name="answerType">
+							{{ option }}
+						</CheckboxRadioSwitch>
+					</template>
+					<div class="poll__modal-actions">
+						<Button type="tertiary" @click="dismissModal">
+							{{ t('spreed', 'Dismiss') }}
+						</Button>
+						<!-- create poll button-->
+						<Button type="primary" @click="submit">
+							{{ t('spreed', 'Submit') }}
+						</Button>
+					</div>
+				</div>
+			</modal>
 		</template>
-	</div>
+	</Button>
 </template>
 
 <script>
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
+import Modal from '@nextcloud/vue/dist/Components/Modal'
+import Button from '@nextcloud/vue/dist/Components/Button'
 
 export default {
 	name: 'Poll',
 
 	components: {
 		CheckboxRadioSwitch,
+		Modal,
+		Button,
 	},
 
 	props: {
@@ -78,6 +104,7 @@ export default {
 	data() {
 		return {
 			vote: undefined,
+			showModal: false,
 		}
 	},
 
@@ -137,7 +164,6 @@ export default {
 					pollId: this.id,
 				})
 			}
-
 		},
 
 		setComponentData() {
@@ -147,10 +173,49 @@ export default {
 				this.vote = []
 			}
 		},
+
+		dismissModal() {
+			this.showModal = false
+			// Reset the data
+			typeof this.vote === 'string' ? this.vote = '' : this.vote = []
+		},
+
+		submit() {
+			console('submit')
+		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
+.poll {
+	display: flex;
+	flex-direction: column;
+	background: var(--color-main-background);
+	width: 200px;
+	height: 100px;
+	border-radius: var(--border-radius-large);
 
+	&__modal {
+		padding: 20px;
+	}
+
+	&__modal-title {
+		font-size: 18px;
+		font-weight: bold;
+		text-align: center;
+		margin-bottom: 8px;
+	}
+
+	&__modal-actions {
+		display: flex;
+		justify-content: center;
+		gap: 4px;
+		margin-top: 8px;
+	}
+
+	&__option {
+		margin: 4px;
+	}
+}
 </style>
