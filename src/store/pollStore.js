@@ -34,7 +34,7 @@ const getters = {
 
 const mutations = {
 	addPoll(state, { token, poll }) {
-		if (!state[token]) {
+		if (!state.polls[token]) {
 			Vue.set(state.polls, token, {})
 		}
 		Vue.set(state.polls[token], poll.id, poll)
