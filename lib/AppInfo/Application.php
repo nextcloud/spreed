@@ -3,6 +3,7 @@
 declare(strict_types=1);
 /**
  * @author Joachim Bauch <mail@joachim-bauch.de>
+ * @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -174,7 +175,10 @@ class Application extends App implements IBootstrap {
 		CommandListener::register($dispatcher);
 		CollaboratorsListener::register($dispatcher);
 		ResourceListener::register($dispatcher);
-		ChangelogListener::register($dispatcher);
+		// Register only when Talk Updates are not disabled
+		if ($server->getConfig()->getAppValue('spreed', 'changelog', 'yes') === 'yes') {
+			ChangelogListener::register($dispatcher);
+		}
 		ShareListener::register($dispatcher);
 		StatusListener::register($dispatcher);
 
