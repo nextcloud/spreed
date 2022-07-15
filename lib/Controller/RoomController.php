@@ -1743,7 +1743,7 @@ class RoomController extends AEnvironmentAwareController {
 		if ($seconds < 0) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
-		$this->roomService->setMessageExpiration($this->room, $this->getParticipant(), $seconds);
+		$this->roomService->setMessageExpiration($this->room, $seconds);
 		return new DataResponse();
 	}
 }
