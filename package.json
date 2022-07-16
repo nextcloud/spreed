@@ -49,7 +49,7 @@
 		"ua-parser-js": "^1.0.2",
 		"url-parse": "^1.5.10",
 		"util": "^0.12.4",
-		"vue": "^2.7.4",
+		"vue": "^2.7.6",
 		"vue-at": "^2.5.0-beta.2",
 		"vue-clipboard2": "^0.3.3",
 		"vue-fragment": "^1.6.0",
