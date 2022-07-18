@@ -20,57 +20,59 @@
 -->
 
 <template>
-	<Button v-observe-visibility="getPollData"
-		:aria-label="t('spreed', 'poll')"
-		class="poll"
-		@click="showModal = true">
-		Poll
-		<p>{{ pollName }}</p>
-		<template v-if="vote !== undefined">
-			<!-- voting dialog -->
-			<Modal v-if="showModal" size="small" @close="showModal = false">
-				<div class="poll__modal">
-					<h2 class="poll__modal-title">
-						{{ pollName }}
-					</h2>
-					<!-- options -->
-					<div class="poll__modal-options">
-						<template v-if="checkboxRadioSwitchType === 'radio'">
-							<CheckboxRadioSwitch v-for="option, index in options"
-								:key="'radio' + index"
-								:checked.sync="vote"
-								class="poll__option"
-								:value="option"
-								:type="checkboxRadioSwitchType"
-								name="answerType">
-								{{ option }}
-							</CheckboxRadioSwitch>
-						</template>
-						<template v-else>
-							<CheckboxRadioSwitch v-for="option, index in options"
-								:key="'checkbox' + index"
-								:checked.sync="vote"
-								:value="option"
-								:type="checkboxRadioSwitchType"
-								name="answerType">
-								{{ option }}
-							</CheckboxRadioSwitch>
-						</template>
-					</div>
-
-					<div class="poll__modal-actions">
-						<Button type="tertiary" @click="dismissModal">
-							{{ t('spreed', 'Dismiss') }}
-						</Button>
-						<!-- create poll button-->
-						<Button type="primary" @click="submit">
-							{{ t('spreed', 'Submit') }}
-						</Button>
-					</div>
+	<div class="wrapper">
+		<Button v-observe-visibility="getPollData"
+			:aria-label="t('spreed', 'poll')"
+			class="poll"
+			@click="showModal = true">
+			Poll
+			<p>{{ pollName }}</p>
+		</Button>
+		<!-- voting dialog -->
+		<Modal v-if="vote !== undefined && showModal"
+			size="small"
+			@close="showModal = false">
+			<div class="poll__modal">
+				<h2 class="poll__modal-title">
+					{{ pollName }}
+				</h2>
+				<!-- options -->
+				<div class="poll__modal-options">
+					<template v-if="checkboxRadioSwitchType === 'radio'">
+						<CheckboxRadioSwitch v-for="option, index in options"
+							:key="'radio' + index"
+							:checked.sync="vote"
+							class="poll__option"
+							:value="option"
+							:type="checkboxRadioSwitchType"
+							name="answerType">
+							{{ option }}
+						</CheckboxRadioSwitch>
+					</template>
+					<template v-else>
+						<CheckboxRadioSwitch v-for="option, index in options"
+							:key="'checkbox' + index"
+							:checked.sync="vote"
+							:value="option"
+							:type="checkboxRadioSwitchType"
+							name="answerType">
+							{{ option }}
+						</CheckboxRadioSwitch>
+					</template>
 				</div>
-			</modal>
-		</template>
-	</Button>
+
+				<div class="poll__modal-actions">
+					<Button type="tertiary" @click="dismissModal">
+						{{ t('spreed', 'Dismiss') }}
+					</Button>
+					<!-- create poll button-->
+					<Button type="primary" @click="submit">
+						{{ t('spreed', 'Submit') }}
+					</Button>
+				</div>
+			</div>
+		</modal>
+	</div>
 </template>
 
 <script>
