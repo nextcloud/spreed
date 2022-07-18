@@ -212,23 +212,20 @@ export default {
 	border-radius: var(--border-radius-large);
 
 	&__modal {
-		height: 100%;
-		display: flex;
-		flex: 1 0 0px;
-		flex-direction: column;
+		position: relative;
 	}
 
 	&__modal-title {
+		position: sticky;
+		top: 0;
 		font-size: 18px;
 		font-weight: bold;
 		text-align: center;
-		margin: 20px 0 8px 0;
+		padding: 20px 0 8px 0;
+		background-color: var(--color-main-background)
 	}
 
 	&__modal-options {
-		display: flex;
-		flex-direction: column;
-		overflow-y: scroll;
 		padding: 0 8px;
 	}
 
@@ -237,16 +234,15 @@ export default {
 	}
 
 	&__modal-actions {
+		position: sticky;
+		bottom: 0;
 		display: flex;
 		justify-content: center;
 		gap: 4px;
-		margin: 12px 0 16px 0;
+		padding: 12px 0 16px 0;
+		background-color: var(--color-main-background)
 	}
 
-}
-::v-deep .modal-container {
-	height: 100%;
-	overflow: hidden !important;
 }
 
 // Upstream
