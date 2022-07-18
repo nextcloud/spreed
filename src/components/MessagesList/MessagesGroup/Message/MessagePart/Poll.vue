@@ -34,27 +34,30 @@
 						{{ pollName }}
 					</h2>
 					<!-- options -->
-					<template v-if="checkboxRadioSwitchType === 'radio'">
-						<CheckboxRadioSwitch v-for="option, index in options"
-							:key="'radio' + index"
-							:checked.sync="vote"
-							class="poll__option"
-							:value="option"
-							:type="checkboxRadioSwitchType"
-							name="answerType">
-							{{ option }}
-						</CheckboxRadioSwitch>
-					</template>
-					<template v-else>
-						<CheckboxRadioSwitch v-for="option, index in options"
-							:key="'checkbox' + index"
-							:checked.sync="vote"
-							:value="option"
-							:type="checkboxRadioSwitchType"
-							name="answerType">
-							{{ option }}
-						</CheckboxRadioSwitch>
-					</template>
+					<div class="poll__modal-options">
+						<template v-if="checkboxRadioSwitchType === 'radio'">
+							<CheckboxRadioSwitch v-for="option, index in options"
+								:key="'radio' + index"
+								:checked.sync="vote"
+								class="poll__option"
+								:value="option"
+								:type="checkboxRadioSwitchType"
+								name="answerType">
+								{{ option }}
+							</CheckboxRadioSwitch>
+						</template>
+						<template v-else>
+							<CheckboxRadioSwitch v-for="option, index in options"
+								:key="'checkbox' + index"
+								:checked.sync="vote"
+								:value="option"
+								:type="checkboxRadioSwitchType"
+								name="answerType">
+								{{ option }}
+							</CheckboxRadioSwitch>
+						</template>
+					</div>
+
 					<div class="poll__modal-actions">
 						<Button type="tertiary" @click="dismissModal">
 							{{ t('spreed', 'Dismiss') }}
@@ -197,27 +200,43 @@ export default {
 	border-radius: var(--border-radius-large);
 
 	&__modal {
-		padding: 20px;
+		height: 100%;
+		display: flex;
+		flex: 1 0 0px;
+		flex-direction: column;
 	}
 
 	&__modal-title {
 		font-size: 18px;
 		font-weight: bold;
 		text-align: center;
-		margin-bottom: 8px;
+		margin: 20px 0 8px 0;
+	}
+
+	&__modal-options {
+		display: flex;
+		flex-direction: column;
+		overflow-y: scroll;
+		padding: 0 8px;
+	}
+
+	&__option {
+		margin: 4px 20px 4px 20px;
 	}
 
 	&__modal-actions {
 		display: flex;
 		justify-content: center;
 		gap: 4px;
-		margin-top: 8px;
+		margin: 12px 0 16px 0;
 	}
 
-	&__option {
-		margin: 4px;
-	}
 }
+::v-deep .modal-container {
+	height: 100%;
+	overflow: hidden !important;
+}
+
 // Upstream
 
 ::v-deep .checkbox-radio-switch {
