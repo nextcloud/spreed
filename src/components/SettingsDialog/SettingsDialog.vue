@@ -46,7 +46,7 @@
 			<CheckboxRadioSwitch id="read_status_privacy"
 				:checked="readStatusPrivacyIsPublic"
 				:disabled="privacyLoading"
-				type="checkbox"
+				type="switch"
 				class="checkbox"
 				@update:checked="toggleReadStatusPrivacy">
 				{{ t('spreed', 'Share my read-status and show the read-status of others') }}
@@ -54,13 +54,14 @@
 		</AppSettingsSection>
 		<AppSettingsSection :title="t('spreed', 'Sounds')"
 			class="app-settings-section">
-			<input id="play_sounds"
+			<CheckboxRadioSwitch id="play_sounds"
 				:checked="playSounds"
 				:disabled="playSoundsLoading"
-				type="checkbox"
+				type="switch"
 				class="checkbox"
-				@change="togglePlaySounds">
-			<label for="play_sounds">{{ t('spreed', 'Play sounds when participants join or leave a call') }}</label>
+				@update:checked="togglePlaySounds">
+				{{ t('spreed', 'Play sounds when participants join or leave a call') }}
+			</CheckboxRadioSwitch>
 			<em>{{ t('spreed', 'Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
 
 			<a :href="settingsUrl"
