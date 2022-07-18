@@ -107,7 +107,6 @@ Feature: create
       | room1 |
     And the command output contains the text "Room successfully created"
     And the command was successful
-    And user "participant1" sends message "Message 1" to room "room1" with 201
-    And wait for 3 seconds
-    And apply message expiration job manually
-    Then user "participant1" sees the following messages in room "room1" with 200
+    And user "participant1" is participant of the following rooms (v4)
+      | name  | messageExpiration |
+      | room1 | 3                 |
