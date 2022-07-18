@@ -24,11 +24,13 @@
 		:show-navigation="true"
 		first-selected-section="keyboard shortcuts"
 		:container="container">
-		<AppSettingsSection :title="t('spreed', 'Choose devices')"
+		<AppSettingsSection id="devices"
+			:title="t('spreed', 'Choose devices')"
 			class="app-settings-section">
 			<MediaDevicesPreview />
 		</AppSettingsSection>
 		<AppSettingsSection v-if="!isGuest"
+			id="attachments"
 			:title="t('spreed', 'Attachments folder')"
 			class="app-settings-section">
 			<h3 class="app-settings-section__hint">
@@ -41,6 +43,7 @@
 				@click="selectAttachmentFolder">
 		</AppSettingsSection>
 		<AppSettingsSection v-if="!isGuest"
+			id="privacy"
 			:title="t('spreed', 'Privacy')"
 			class="app-settings-section">
 			<CheckboxRadioSwitch id="read_status_privacy"
@@ -52,7 +55,8 @@
 				{{ t('spreed', 'Share my read-status and show the read-status of others') }}
 			</CheckboxRadioSwitch>
 		</AppSettingsSection>
-		<AppSettingsSection :title="t('spreed', 'Sounds')"
+		<AppSettingsSection id="sounds"
+			:title="t('spreed', 'Sounds')"
 			class="app-settings-section">
 			<input id="play_sounds"
 				:checked="playSounds"
@@ -70,7 +74,8 @@
 				{{ t('spreed', 'Sounds for chat and call notifications can be adjusted in the personal settings.') }} ↗
 			</a>
 		</AppSettingsSection>
-		<AppSettingsSection :title="t('spreed', 'Keyboard shortcuts')">
+		<AppSettingsSection id="shortcuts"
+			:title="t('spreed', 'Keyboard shortcuts')">
 			<em>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</em>
 
 			<dl>
