@@ -21,13 +21,18 @@
 
 <template>
 	<div class="wrapper">
-		<Button v-observe-visibility="getPollData"
+		<button v-observe-visibility="getPollData"
 			:aria-label="t('spreed', 'poll')"
 			class="poll"
 			@click="showModal = true">
-			Poll
-			<p>{{ pollName }}</p>
-		</Button>
+			<div class="poll__preview">
+				<PollIcon :size="20"
+					poll />
+				<p>
+					{{ pollName }}
+				</p>
+			</div>
+		</button>
 		<!-- voting dialog -->
 		<Modal v-if="vote !== undefined && showModal"
 			size="small"
@@ -62,13 +67,13 @@
 				</div>
 
 				<div class="poll__modal-actions">
-					<Button type="tertiary" @click="dismissModal">
+					<ButtonVue type="tertiary" @click="dismissModal">
 						{{ t('spreed', 'Dismiss') }}
-					</Button>
+					</ButtonVue>
 					<!-- create poll button-->
-					<Button type="primary" @click="submit">
+					<ButtonVue type="primary" @click="submit">
 						{{ t('spreed', 'Submit') }}
-					</Button>
+					</ButtonVue>
 				</div>
 			</div>
 		</modal>
@@ -78,7 +83,8 @@
 <script>
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/Button'
+import PollIcon from 'vue-material-design-icons/Poll.vue'
 
 export default {
 	name: 'Poll',
@@ -86,7 +92,8 @@ export default {
 	components: {
 		CheckboxRadioSwitch,
 		Modal,
-		Button,
+		ButtonVue,
+		PollIcon,
 	},
 
 	props: {
@@ -193,6 +200,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.wrapper {
+	display: contents;
+}
 .poll {
 	display: flex;
 	flex-direction: column;
