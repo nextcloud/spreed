@@ -270,7 +270,10 @@ class PageController extends Controller {
 		$this->eventDispatcher->dispatch('\OCP\Collaboration\Resources::loadAdditionalScripts', new GenericEvent());
 		$response = new TemplateResponse($this->appName, 'index', [
 			'app' => Application::APP_ID,
+			'id-app-content' => '#app-content-vue',
+			'id-app-navigation' => '#app-navigation-vue',
 		]);
+
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
@@ -342,7 +345,11 @@ class PageController extends Controller {
 
 		$this->publishInitialStateForGuest();
 
-		$response = new PublicTemplateResponse($this->appName, 'index');
+		$response = new PublicTemplateResponse($this->appName, 'index', [
+			'id-app-content' => '#app-content-vue',
+			'id-app-navigation' => null,
+		]);
+
 		$response->setFooterVisible(false);
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
