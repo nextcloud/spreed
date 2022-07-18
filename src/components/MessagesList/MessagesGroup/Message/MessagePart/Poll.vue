@@ -218,4 +218,19 @@ export default {
 		margin: 4px;
 	}
 }
+// Upstream
+
+::v-deep .checkbox-radio-switch {
+	&__label {
+		align-items: unset;
+		height: unset;
+		margin: 4px 0;
+		padding: 8px;
+		border-radius: var(--border-radius-large);
+		span {
+			align-self: flex-start;
+		}
+	}
+
+}
 </style>
