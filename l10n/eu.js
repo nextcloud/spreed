@@ -162,6 +162,7 @@ OC.L10N.register(
     "{actor} deleted a reaction" : "{actor}-(e)k erreakzio bat ezabatu du",
     "You deleted a reaction" : "Erreakzio bat ezabatu duzu",
     "_You set the message expiration to %n week_::_You set the message expiration to %n weeks_" : ["Mezuaren iraungitzea aste %nera aldatu duzu","Mezuaren iraungitzea %n astetara aldatu duzu"],
+    "_You set the message expiration to %n day_::_You set the message expiration to %n days_" : ["Mezuaren iraungitzea egun%nera aldatu duzu","Mezuaren iraungitzea %n egunetara aldatu duzu"],
     "{actor} disabled message expiration" : "{actor}-(e)k mezuaren iraungitzea desgaitu du",
     "You disabled message expiration" : "Mezuaren iraungitzea desgaitu duzu",
     "{actor} cleared the history of the conversation" : "{actor} elkarrizketaren historia ezabatu du",
