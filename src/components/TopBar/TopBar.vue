@@ -30,6 +30,7 @@
 			:hide-call="false" />
 		<!-- conversation header -->
 		<a v-if="!isInCall"
+			role="button"
 			class="conversation-header"
 			@click="openConversationSettings">
 			<div class="conversation-header__text"
