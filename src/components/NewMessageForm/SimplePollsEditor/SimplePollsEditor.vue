@@ -81,7 +81,7 @@ import Button from '@nextcloud/vue/dist/Components/Button'
 import PollOption from './PollOption.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import InputVue from './InputVue.vue'
-import { postNewPoll } from '../../../services/SimplePollsService.js'
+import pollService from '../../../services/pollService.js'
 
 export default {
 	name: 'SimplePollsEditor',
@@ -127,7 +127,7 @@ export default {
 
 		async createPoll() {
 			try {
-				const response = await postNewPoll(
+				const response = await pollService.postNewPoll(
 					this.token,
 					this.pollQuestion,
 					this.pollOptions,
