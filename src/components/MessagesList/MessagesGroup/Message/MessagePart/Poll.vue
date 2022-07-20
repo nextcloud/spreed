@@ -21,26 +21,33 @@
 
 <template>
 	<div class="wrapper">
-		<button v-observe-visibility="getPollData"
+		<a v-observe-visibility="getPollData"
 			:aria-label="t('spreed', 'poll')"
 			class="poll"
+			role="button"
 			@click="showModal = true">
-			<div class="poll__preview">
+			<div class="poll__header">
 				<PollIcon :size="20"
 					poll />
 				<p>
 					{{ pollName }}
 				</p>
 			</div>
-		</button>
+			<div class="poll__footer">
+				{{ t('spreed', 'Poll ・ Click to vote') }}
+			</div>
+		</a>
+
 		<!-- voting dialog -->
 		<Modal v-if="vote !== undefined && showModal"
 			size="small"
 			@close="showModal = false">
 			<div class="poll__modal">
+				<!-- Title -->
 				<h2 class="poll__modal-title">
 					{{ pollName }}
 				</h2>
+
 				<!-- options -->
 				<div class="poll__modal-options">
 					<template v-if="checkboxRadioSwitchType === 'radio'">
@@ -205,11 +212,31 @@ export default {
 }
 .poll {
 	display: flex;
+	transition: box-shadow 0.1s ease-in-out;
+	border: 1px solid var(--color-border);
+	box-shadow: 0 0 2px 0 var(--color-box-shadow);
+	margin: 4px 0;
+	max-width: 300px;
+	padding: 16px;
 	flex-direction: column;
 	background: var(--color-main-background);
-	width: 200px;
-	height: 100px;
 	border-radius: var(--border-radius-large);
+	justify-content: space-between;
+
+	&__header {
+		display: flex;
+		font-weight: bold;
+		gap: 8px;
+		white-space: normal;
+		align-items: flex-start;
+		span {
+			margin-bottom: auto;
+		}
+
+	}
+	&__footer {
+		color: var(--color-text-lighter);
+	}
 
 	&__modal {
 		position: relative;
@@ -220,17 +247,12 @@ export default {
 		top: 0;
 		font-size: 18px;
 		font-weight: bold;
-		text-align: center;
-		padding: 20px 0 8px 0;
+		padding: 20px 20px 8px 20px;
 		background-color: var(--color-main-background)
 	}
 
 	&__modal-options {
-		padding: 0 8px;
-	}
-
-	&__option {
-		margin: 4px 20px 4px 20px;
+		padding: 0 20px;
 	}
 
 	&__modal-actions {
@@ -253,6 +275,7 @@ export default {
 		height: unset;
 		margin: 4px 0;
 		padding: 8px;
+		width: 100%;
 		border-radius: var(--border-radius-large);
 		span {
 			align-self: flex-start;
