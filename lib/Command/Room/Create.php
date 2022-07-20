@@ -90,6 +90,11 @@ class Create extends Base {
 				null,
 				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
 				'Promotes the given users to moderators'
+			)->addOption(
+				'message-expiration',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Seconds to expire a message after sent. If zero will disable the expire message duration.'
 			);
 	}
 
@@ -104,6 +109,7 @@ class Create extends Base {
 		$password = $input->getOption('password');
 		$owner = $input->getOption('owner');
 		$moderators = $input->getOption('moderator');
+		$messageExpiration = $input->getOption('message-expiration');
 
 		if (!in_array($listable, [
 			null,
@@ -144,6 +150,10 @@ class Create extends Base {
 
 			if ($owner !== null) {
 				$this->setRoomOwner($room, $owner);
+			}
+
+			if ($messageExpiration !== null) {
+				$this->setMessageExpiration($room, (int) $messageExpiration);
 			}
 		} catch (InvalidArgumentException $e) {
 			$room->deleteRoom();

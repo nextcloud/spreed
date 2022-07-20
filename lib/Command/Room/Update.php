@@ -81,6 +81,11 @@ class Update extends Base {
 				null,
 				InputOption::VALUE_REQUIRED,
 				'Sets the given user as owner of the room; pass an empty value to remove the owner'
+			)->addOption(
+				'message-expiration',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Seconds to expire a message after sent. If zero will disable the expire message duration.'
 			);
 	}
 
@@ -93,6 +98,7 @@ class Update extends Base {
 		$listable = $input->getOption('listable');
 		$password = $input->getOption('password');
 		$owner = $input->getOption('owner');
+		$messageExpiration = $input->getOption('message-expiration');
 
 		if (!in_array($public, [null, '0', '1'], true)) {
 			$output->writeln('<error>Invalid value for option "--public" given.</error>');
@@ -157,6 +163,10 @@ class Update extends Base {
 				} else {
 					$this->unsetRoomOwner($room);
 				}
+			}
+
+			if ($messageExpiration !== null) {
+				$this->setMessageExpiration($room, (int) $messageExpiration);
 			}
 		} catch (InvalidArgumentException $e) {
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
