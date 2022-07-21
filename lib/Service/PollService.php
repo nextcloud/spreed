@@ -138,11 +138,13 @@ class PollService {
 			throw new \OverflowException();
 		}
 
-		$maxOptionId = max(array_keys(json_decode($poll->getOptions(), true, 512, JSON_THROW_ON_ERROR)));
-		$maxVotedId = max($optionIds);
-		$minVotedId = min($optionIds);
-		if ($minVotedId < 0 || $maxVotedId > $maxOptionId) {
-			throw new \RangeException();
+		if (!empty($optionIds)) {
+			$maxOptionId = max(array_keys(json_decode($poll->getOptions(), true, 512, JSON_THROW_ON_ERROR)));
+			$maxVotedId = max($optionIds);
+			$minVotedId = min($optionIds);
+			if ($minVotedId < 0 || $maxVotedId > $maxOptionId) {
+				throw new \RangeException();
+			}
 		}
 
 		$votes = [];

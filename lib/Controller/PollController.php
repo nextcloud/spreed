@@ -148,7 +148,7 @@ class PollController extends AEnvironmentAwareController {
 	 * @param int[] $optionIds
 	 * @return DataResponse
 	 */
-	public function votePoll(int $pollId, array $optionIds): DataResponse {
+	public function votePoll(int $pollId, array $optionIds = []): DataResponse {
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
 		} catch (\Exception $e) {
