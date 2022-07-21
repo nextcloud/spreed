@@ -138,11 +138,13 @@ class PollService {
 			throw new \OverflowException();
 		}
 
-		$maxOptionId = max(array_keys(json_decode($poll->getOptions(), true, 512, JSON_THROW_ON_ERROR)));
-		$maxVotedId = max($optionIds);
-		$minVotedId = min($optionIds);
-		if ($minVotedId < 0 || $maxVotedId > $maxOptionId) {
-			throw new \RangeException();
+		if (!empty($optionIds)) {
+			$maxOptionId = max(array_keys(json_decode($poll->getOptions(), true, 512, JSON_THROW_ON_ERROR)));
+			$maxVotedId = max($optionIds);
+			$minVotedId = min($optionIds);
+			if ($minVotedId < 0 || $maxVotedId > $maxOptionId) {
+				throw new \RangeException();
+			}
 		}
 
 		$votes = [];
@@ -251,6 +253,15 @@ class PollService {
 		$this->connection->beginTransaction();
 		try {
 			$update->executeStatement();
+
+			// Fix `null` being stored if the only voter revokes their vote
+			$updateFixNull = $this->connection->getQueryBuilder();
+			$updateFixNull->update('talk_polls')
+				->set('votes', $updateFixNull->createNamedParameter('{}'))
+				->where($updateFixNull->expr()->eq('id', $updateFixNull->createNamedParameter($pollId, IQueryBuilder::PARAM_INT)))
+				->andWhere($updateFixNull->expr()->isNull('votes'));
+
+			$updateFixNull->executeStatement();
 		} catch (\Exception $e) {
 			$this->connection->rollBack();
 			throw $e;

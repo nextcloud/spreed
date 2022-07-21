@@ -523,3 +523,53 @@ Feature: chat/poll
       | actorDisplayName    | participant2-displayname |
       | status     | open |
       | votedSelf  | [1] |
+
+  Scenario: Remove all votes
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    When user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    When user "participant1" creates a poll in room "room" with 201
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+    Then user "participant1" votes for options "[0]" on poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"option-0":1} |
+      | numVoters  | 1 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
+      | status     | open |
+      | votedSelf  | [0] |
+    Then user "participant1" votes for options "{}" on poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | [] |
+      | numVoters  | 0 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
+      | status     | open |
+      | votedSelf  | [] |
+    Then user "participant1" sees poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | [] |
+      | numVoters  | 0 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant1 |
+      | actorDisplayName    | participant1-displayname |
+      | status     | open |
+      | votedSelf  | [] |
