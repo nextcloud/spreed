@@ -253,6 +253,15 @@ class PollService {
 		$this->connection->beginTransaction();
 		try {
 			$update->executeStatement();
+
+			// Fix `null` being stored if the only voter revokes their vote
+			$updateFixNull = $this->connection->getQueryBuilder();
+			$updateFixNull->update('talk_polls')
+				->set('votes', $updateFixNull->createNamedParameter('{}'))
+				->where($updateFixNull->expr()->eq('id', $updateFixNull->createNamedParameter($pollId, IQueryBuilder::PARAM_INT)))
+				->andWhere($updateFixNull->expr()->isNull('votes'));
+
+			$updateFixNull->executeStatement();
 		} catch (\Exception $e) {
 			$this->connection->rollBack();
 			throw $e;
