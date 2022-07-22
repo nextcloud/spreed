@@ -497,10 +497,8 @@ class SystemMessage {
 			}
 		} elseif ($message === 'poll_voted') {
 			$parsedParameters['poll'] = $parameters['poll'];
-			$parsedMessage = $this->l->t('{actor} voted on the poll {poll}');
-			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You voted on the poll {poll}');
-			}
+			$parsedMessage = $this->l->t('Someone voted on the poll {poll}');
+			unset($parsedParameters['actor']);
 		} else {
 			throw new \OutOfBoundsException('Unknown subject');
 		}

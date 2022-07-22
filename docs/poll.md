@@ -18,7 +18,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Status code:
         + `201 Created`
-        + `400 Bad Request` When the question or the options were too long
+        + `400 Bad Request` When the question or the options were too long or invalid (not strings)
         + `403 Forbidden` When the conversation is read-only
         + `403 Forbidden` When the actor does not have chat permissions
         + `404 Not Found` When the conversation could not be found for the participant
@@ -94,21 +94,21 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     It is therefor recommended to use `format=json` or send the `Content-Type: application/json` header,
     to receive a JSON response.
 
-| field              | type     | Description                                                                                                                       |
-|--------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------|
-| `id`               | int      | ID of the poll                                                                                                                    |
-| `question`         | string   | The question of the poll                                                                                                          |
-| `options`          | string[] | The options participants can vote for                                                                                             |
-| `votes`            | int[]    | Map with `'option-' + optionId` => number of votes (only available for when the actor voted on public poll or the poll is closed) |
-| `actorType`        | string   | Actor type of the poll author (see [Constants - Attendee types](constants.md#attendee-types))                                     |
-| `actorId`          | string   | Actor ID identifying the poll author                                                                                              |
-| `actorDisplayName` | string   | Display name of the poll author                                                                                                   |
-| `status`           | int      | Status of the poll (see [Constants - Poll status](constants.md#poll-status))                                                      |
-| `resultMode`       | int      | Result mode of the poll (see [Constants - Poll mode](constants.md#poll-mode))                                                     |
-| `maxVotes`         | int      | Maximum amount of options a user can vote for, `0` means unlimited                                                                |
-| `votedSelf`        | int[]    | Array of option ids the participant voted for                                                                                     |
-| `numVoters`        | int      | The number of unique voters that (only available for when the actor voted on public poll or the poll is closed)                   |
-| `details`          | array[]  | Detailed list who voted for which option (only available for public closed polls), see [Details](#details) below                  |
+| field              | type     | Description                                                                                                                                             |
+|--------------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `id`               | int      | ID of the poll                                                                                                                                          |
+| `question`         | string   | The question of the poll                                                                                                                                |
+| `options`          | string[] | The options participants can vote for                                                                                                                   |
+| `votes`            | int[]    | Map with `'option-' + optionId` => number of votes (only available for when the actor voted on public poll or the poll is closed)                       |
+| `actorType`        | string   | Actor type of the poll author (see [Constants - Attendee types](constants.md#attendee-types))                                                           |
+| `actorId`          | string   | Actor ID identifying the poll author                                                                                                                    |
+| `actorDisplayName` | string   | Display name of the poll author                                                                                                                         |
+| `status`           | int      | Status of the poll (see [Constants - Poll status](constants.md#poll-status))                                                                            |
+| `resultMode`       | int      | Result mode of the poll (see [Constants - Poll mode](constants.md#poll-mode))                                                                           |
+| `maxVotes`         | int      | Maximum amount of options a user can vote for, `0` means unlimited                                                                                      |
+| `votedSelf`        | int[]    | Array of option ids the participant voted for                                                                                                           |
+| `numVoters`        | int      | The number of unique voters that voted (only available when the actor voted on public poll or the poll is closed unless for the creator and moderators) |
+| `details`          | array[]  | Detailed list who voted for which option (only available for public closed polls), see [Details](#details) below                                        |
 
 ### Details
 

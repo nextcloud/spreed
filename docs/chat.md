@@ -386,7 +386,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `reaction_deleted` - Reaction deleted by author (replacement of `reaction` after the action has been performed)
 * `reaction_revoked` - {actor} deleted a reaction (the action that will replace `reaction` with a `reaction_deleted` message)
 * Creating a poll is an `object_shared` with a poll object
-* `poll_voted` - {actor} voted on the poll {poll}
+* `poll_voted` - Someone voted on the poll {poll}
 * `poll_closed` - {actor} closed the poll {poll}
 * `message_expiration_enabled` - {actor} set the message expiration to 3 hours
 * `message_expiration_disabled` - {actor} disabled message expiration
