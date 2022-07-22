@@ -1,7 +1,7 @@
 /**
- * @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
+ * @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@icloud.com>
  *
- * @author Marco Ambrosini <marcoambrosini@pm.me>
+ * @author Marco Ambrosini <marcoambrosini@icloud.com>
  *
  * @author John Molakvoæ <skjnldsv@protonmail.com>
  *
