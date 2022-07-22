@@ -50,13 +50,37 @@ class PollService {
 	}
 
 	public function createPoll(int $roomId, string $actorType, string $actorId, string $displayName, string $question, array $options, int $resultMode, int $maxVotes): Poll {
+		if (strlen($question) > 32_000) {
+			throw new \UnexpectedValueException();
+		}
+
+		try {
+			$jsonOptions = json_encode($options, JSON_THROW_ON_ERROR, 1);
+		} catch (\Exception $e) {
+			throw new \RuntimeException();
+		}
+
+		foreach ($options as $option) {
+			if (!is_string($option)) {
+				throw new \RuntimeException();
+			}
+		}
+
+		if (count($options) < 2) {
+			throw new \RuntimeException();
+		}
+
+		if (strlen($jsonOptions) > 60_000) {
+			throw new \UnexpectedValueException();
+		}
+
 		$poll = new Poll();
 		$poll->setRoomId($roomId);
 		$poll->setActorType($actorType);
 		$poll->setActorId($actorId);
 		$poll->setDisplayName($displayName);
 		$poll->setQuestion($question);
-		$poll->setOptions(json_encode($options));
+		$poll->setOptions($jsonOptions);
 		$poll->setVotes(json_encode([]));
 		$poll->setResultMode($resultMode);
 		$poll->setMaxVotes($maxVotes);
@@ -139,6 +163,12 @@ class PollService {
 		}
 
 		if (!empty($optionIds)) {
+			foreach ($optionIds as $optionId) {
+				if (!is_numeric($optionId)) {
+					throw new \RangeException();
+				}
+			}
+
 			$maxOptionId = max(array_keys(json_decode($poll->getOptions(), true, 512, JSON_THROW_ON_ERROR)));
 			$maxVotedId = max($optionIds);
 			$minVotedId = min($optionIds);
