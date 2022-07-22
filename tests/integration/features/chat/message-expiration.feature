@@ -23,3 +23,19 @@ Feature: room/message-expiration
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
       | room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+
+  Scenario: Expire shared file
+    Given user "participant1" creates room "room2" (v4)
+      | roomType | 3     |
+      | roomName | room2 |
+    And user "participant1" set the message expiration to 3 of room "room2" with 200 (v4)
+    When user "participant1" shares "welcome.txt" with room "room2"
+    And user "participant1" sees the following messages in room "room2" with 200
+      | room  | actorType | actorId      | actorDisplayName         | message  | messageParameters |
+      | room2 | users     | participant1 | participant1-displayname | {file}   | "IGNORE"          |
+    And wait for 3 seconds
+    And apply message expiration job manually
+    Then user "participant1" sees the following messages in room "room2" with 200
+      | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
+    And user "participant1" gets last share
+    And the OCS status code should be 404
