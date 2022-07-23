@@ -1,7 +1,7 @@
 /**
- * @copyright Copyright (c) 2021 Marco Ambrosini <marcoambrosini@pm.me>
+ * @copyright Copyright (c) 2021 Marco Ambrosini <marcoambrosini@icloud.com>
  *
- * @author Marco Ambrosini <marcoambrosini@pm.me>
+ * @author Marco Ambrosini <marcoambrosini@icloud.com>
  *
  * @license AGPL-3.0-or-later
  *
