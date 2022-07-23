@@ -173,8 +173,6 @@ OC.L10N.register(
     "You cleared the history of the conversation" : "Você limpou o histórico da conversa ",
     "{actor} closed the poll {poll}" : "{actor} fechou a enquete {poll}",
     "You closed the poll {poll}" : "Você fechou a enquete {poll}",
-    "{actor} voted on the poll {poll}" : "{actor} votou na enquete {poll}",
-    "You voted on the poll {poll}" : "Você votou na enquete {poll}",
     "Message deleted by author" : "Mensagem excluída pelo autor",
     "Message deleted by {actor}" : "Mensagem excluída por {actor}",
     "Message deleted by you" : "Mensagem excluída por você",
