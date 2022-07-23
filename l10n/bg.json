@@ -171,8 +171,6 @@
     "You cleared the history of the conversation" : "Изчистихте историята на разговора",
     "{actor} closed the poll {poll}" : "{actor} затвори анкетата {poll}",
     "You closed the poll {poll}" : "Затворихте анкетата {poll}",
-    "{actor} voted on the poll {poll}" : "{actor} гласува в анкетата {poll}",
-    "You voted on the poll {poll}" : "Вие гласувахте в анкетата {poll}",
     "Message deleted by author" : "Съобщението е изтрито от автора",
     "Message deleted by {actor}" : "Съобщението е изтрито от {actor}",
     "Message deleted by you" : "Съобщение, изтрито от вас",
