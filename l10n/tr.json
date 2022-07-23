@@ -171,8 +171,6 @@
     "You cleared the history of the conversation" : "Görüşme geçmişini sildiniz",
     "{actor} closed the poll {poll}" : "{actor}, {poll} anketini bitirdi.",
     "You closed the poll {poll}" : "{poll} anketini bitirdiniz",
-    "{actor} voted on the poll {poll}" : "{actor}, {poll} anketinde oy verdi",
-    "You voted on the poll {poll}" : "{poll} anketinde oy verdiniz",
     "Message deleted by author" : "İleti yazarı tarafından silindi",
     "Message deleted by {actor}" : "İleti {actor} tarafından silindi",
     "Message deleted by you" : "İleti sizin tarafınızdan silindi",

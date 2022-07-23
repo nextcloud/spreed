@@ -171,8 +171,6 @@
     "You cleared the history of the conversation" : "Du hast den Gesprächsverlauf gelöscht",
     "{actor} closed the poll {poll}" : "{actor} hat die Umfrage {poll} beendet",
     "You closed the poll {poll}" : "Du hast die Umfrage {poll} beendet",
-    "{actor} voted on the poll {poll}" : "{actor} hat in der Umfrage {poll} abgestimmt",
-    "You voted on the poll {poll}" : "Du hast in der Umfrage {poll} abgestimmt",
     "Message deleted by author" : "Nachricht vom Autor gelöscht",
     "Message deleted by {actor}" : "Nachricht von {actor} gelöscht",
     "Message deleted by you" : "Nachricht von Dir gelöscht",

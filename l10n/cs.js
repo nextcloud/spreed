@@ -173,8 +173,6 @@ OC.L10N.register(
     "You cleared the history of the conversation" : "Vyčistili jste historii konverzace",
     "{actor} closed the poll {poll}" : "{actor} uzavřel(a) anketu {poll}",
     "You closed the poll {poll}" : "Uzavřeli jste anketu {poll}",
-    "{actor} voted on the poll {poll}" : "{actor} hlasoval(a) v anketě {poll}",
-    "You voted on the poll {poll}" : "Hlasovali jste v anketě {poll}",
     "Message deleted by author" : "Autor zprávu smazal",
     "Message deleted by {actor}" : "Zpráva byla smazána uživatelem {actor}",
     "Message deleted by you" : "Zpráva smazána vámi",
