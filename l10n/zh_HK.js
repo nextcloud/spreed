@@ -173,6 +173,7 @@ OC.L10N.register(
     "You cleared the history of the conversation" : "你清除了對話的歷史記錄",
     "{actor} closed the poll {poll}" : "{actor} 結束投票 {poll}",
     "You closed the poll {poll}" : "您結束投票 {poll}",
+    "Someone voted on the poll {poll}" : "有人在民意調查 {poll} 中投票",
     "Message deleted by author" : "訊息被作者刪除",
     "Message deleted by {actor}" : "訊息被 {actor} 刪除",
     "Message deleted by you" : "訊息被您刪除",
