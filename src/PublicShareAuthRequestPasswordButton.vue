@@ -23,13 +23,14 @@
 		<!-- "submit-wrapper" is used to mimic the login button and thus get
 			automatic colouring of the confirm icon by the Theming app. -->
 		<div id="submit-wrapper" class="request-password-wrapper">
-			<input id="request-password-button"
-				class="primary button-vue"
-				type="button"
-				:value="t('spreed', 'Request password')"
+			<Button id="request-password-button"
+				type="primary"
+				:wide="true"
 				:disabled="isRequestInProgress"
-				@click="requestPassword">
-			<div class="icon" :class="iconClass" />
+				@click="requestPassword"
+				@keydown.enter="requestPassword">
+				{{ t('spreed', 'Request password') }}
+			</Button>
 		</div>
 		<p v-if="hasRequestFailed" class="warning error-message">
 			{{ t('spreed', 'Error requesting the password.') }}
@@ -38,6 +39,7 @@
 </template>
 
 <script>
+import Button from '@nextcloud/vue/dist/Components/Button'
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService.js'
 import browserCheck from './mixins/browserCheck.js'
 import '@nextcloud/dialogs/styles/toast.scss'
@@ -45,6 +47,10 @@ import '@nextcloud/dialogs/styles/toast.scss'
 export default {
 
 	name: 'PublicShareAuthRequestPasswordButton',
+
+	components: {
+		Button,
+	},
 
 	mixins: [
 		browserCheck,
@@ -102,27 +108,3 @@ export default {
 	},
 }
 </script>
-
-<style lang="scss" scoped>
-/* Request password button has the appearance of the log in button */
-.request-password-wrapper {
-	position: relative;
-	width: 280px;
-	margin: 16px auto;
-}
-
-.request-password-wrapper .icon {
-	position: absolute;
-	right: 23px;
-	pointer-events: none;
-}
-
-input#request-password-button {
-	width: 269px;
-	padding: 10px 10px;
-}
-
-input#request-password-button:disabled ~ .icon {
-	opacity: 0.5;
-}
-</style>
