@@ -99,7 +99,7 @@ export default {
 		},
 
 		menuContainer: {
-			type: Object,
+			type: String,
 			default: undefined,
 		},
 	},
