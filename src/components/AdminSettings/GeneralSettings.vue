@@ -40,31 +40,24 @@
 
 		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
 
-		<p>
-			<input id="conversations_files"
-				v-model="conversationsFiles"
-				type="checkbox"
-				name="conversations_files"
-				class="checkbox"
-				:disabled="loading || loadingConversationsFiles"
-				@change="saveConversationsFiles">
-			<label for="conversations_files">{{ t('spreed', 'Allow conversations on files') }}</label>
-		</p>
+		<CheckboxRadioSwitch :checked.sync="conversationsFiles"
+			name="conversations_files"
+			:disabled="loading || loadingConversationsFiles"
+			@change="saveConversationsFiles">
+			{{ t('spreed', 'Allow conversations on files') }}
+		</CheckboxRadioSwitch>
 
-		<p>
-			<input id="conversations_files_public_shares"
-				v-model="conversationsFilesPublicShares"
-				type="checkbox"
-				name="conversations_files_public_shares"
-				class="checkbox"
-				:disabled="loading || loadingConversationsFiles || !conversationsFiles"
-				@change="saveConversationsFilesPublicShares">
-			<label for="conversations_files_public_shares">{{ t('spreed', 'Allow conversations on public shares for files') }}</label>
-		</p>
+		<CheckboxRadioSwitch :checked.sync="conversationsFilesPublicShares"
+			name="conversations_files_public_shares"
+			:disabled="loading || loadingConversationsFiles || !conversationsFiles"
+			@change="saveConversationsFilesPublicShares">
+			{{ t('spreed', 'Allow conversations on public shares for files') }}
+		</CheckboxRadioSwitch>
 	</div>
 </template>
 
 <script>
+import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import { loadState } from '@nextcloud/initial-state'
 
@@ -77,6 +70,7 @@ export default {
 	name: 'GeneralSettings',
 
 	components: {
+		CheckboxRadioSwitch,
 		Multiselect,
 	},
 
