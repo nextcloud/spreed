@@ -70,39 +70,50 @@
 						name="link_share_settings_link_password"
 						:placeholder="t('spreed', 'Enter a password')"
 						:disabled="isSaving">
-					<button id="link_share_settings_link_password_submit"
+					<Button id="link_share_settings_link_password_submit"
 						:aria-label="t('spreed', 'Save password')"
 						:disabled="isSaving"
-						type="submit"
-						class="icon icon-confirm-fade" />
+						:native-type="submit">
+						<template #icon>
+							<ArrowRight />
+						</template>
+					</Button>
 				</form>
 			</div>
 		</div>
 		<div class="app-settings-subsection">
-			<button ref="copyLinkButton"
-				@click.prevent="handleCopyLink">
-				<ClipboardTextOutline :size="16" />
+			<Button ref="copyLinkButton"
+				@click.prevent="handleCopyLink"
+				@keydown.enter="handleCopyLink">
+				<template #icon>
+					<ClipboardTextOutline />
+				</template>
 				{{ t('spreed', 'Copy conversation link') }}
-			</button>
+			</Button>
 		</div>
 		<div v-if="isSharedPublicly" class="app-settings-subsection">
-			<button :disabled="isSendingInvitations"
-				@click.prevent="handleResendInvitations">
-				<Email :size="16" />
+			<Button :disabled="isSendingInvitations"
+				@click.prevent="handleResendInvitations"
+				@keydown.enter="handleResendInvitations">
+				<template #icon>
+					<Email />
+				</template>
 				{{ t('spreed', 'Resend invitations') }}
-			</button>
+			</Button>
 			<span v-if="isSendingInvitations" class="icon-loading-small spinner" />
 		</div>
 	</div>
 </template>
 
 <script>
+import Button from '@nextcloud/vue/dist/Components/Button'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants.js'
 import {
 	setConversationPassword,
 } from '../../services/conversationsService.js'
 import { generateUrl } from '@nextcloud/router'
+import ArrowRight from 'vue-material-design-icons/ArrowRight'
 import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline'
 import Email from 'vue-material-design-icons/Email'
 
@@ -110,6 +121,8 @@ export default {
 	name: 'LinkShareSettings',
 
 	components: {
+		Button,
+		ArrowRight,
 		ClipboardTextOutline,
 		Email,
 	},
@@ -198,8 +211,11 @@ export default {
 		async togglePassword() {
 			if (this.$refs.togglePassword.checked) {
 				this.showPasswordField = true
-				this.$refs.passwordField.focus()
 				await this.handlePasswordEnable()
+				this.$nextTick(() => {
+					console.error(this.$refs.passwordField)
+					this.$refs.passwordField.focus()
+				})
 			} else {
 				this.showPasswordField = false
 				await this.handlePasswordDisable()
