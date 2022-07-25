@@ -7,7 +7,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 13
 !!! note
 
     Due to the structure of the `lastMessage.reactions` array the response is not valid in XML.
-    It is therefor recommended to use `format=json` or send the `Content-Type: application/json` header,
+    It is therefor recommended to use `format=json` or send the `Accept: application/json` header,
     to receive a JSON response.
 
 * Method: `GET`
