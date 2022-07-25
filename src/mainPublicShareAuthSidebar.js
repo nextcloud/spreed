@@ -106,7 +106,7 @@ function adjustLayout() {
 
 	const requestPasswordElement = document.createElement('div')
 	requestPasswordElement.setAttribute('id', 'request-password')
-	document.querySelector('main').appendChild(requestPasswordElement)
+	document.querySelector('.guest-box').appendChild(requestPasswordElement)
 
 	const talkSidebarElement = document.createElement('div')
 	talkSidebarElement.setAttribute('id', 'talk-sidebar')
