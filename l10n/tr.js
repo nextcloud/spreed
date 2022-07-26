@@ -173,6 +173,7 @@ OC.L10N.register(
     "You cleared the history of the conversation" : "Görüşme geçmişini sildiniz",
     "{actor} closed the poll {poll}" : "{actor}, {poll} anketini bitirdi.",
     "You closed the poll {poll}" : "{poll} anketini bitirdiniz",
+    "Someone voted on the poll {poll}" : "Birisi {poll} anketinde oy verdi",
     "Message deleted by author" : "İleti yazarı tarafından silindi",
     "Message deleted by {actor}" : "İleti {actor} tarafından silindi",
     "Message deleted by you" : "İleti sizin tarafınızdan silindi",
