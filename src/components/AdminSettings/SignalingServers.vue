@@ -21,17 +21,19 @@
  -->
 
 <template>
-	<div id="signaling_server" class="videocalls section">
+	<div id="signaling_server" class="videocalls section signaling-server">
 		<h2>
 			{{ t('spreed', 'High-performance backend') }}
-			<span v-if="saved" class="icon icon-checkmark-color" :title="t('spreed', 'Saved')" />
-			<a v-else-if="!loading && showAddServerButton"
-				v-tooltip.auto="t('spreed', 'Add a new server')"
-				class="icon icon-add"
+
+			<Button v-if="!loading && showAddServerButton"
+				class="signaling-server__add-icon"
+				type="tertiary-no-background"
+				:aria-label="t('spreed', 'Add a new high-performance backend server')"
 				@click="newServer">
-				<span class="hidden-visually">{{ t('spreed', 'Add a new server') }}</span>
-			</a>
-			<span v-else-if="loading" class="icon icon-loading-small" />
+				<template #icon>
+					<Plus :size="20" />
+				</template>
+			</Button>
 		</h2>
 
 		<p class="settings-hint">
@@ -84,7 +86,10 @@
 
 <script>
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
+import Button from '@nextcloud/vue/dist/Components/Button'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import Plus from 'vue-material-design-icons/Plus'
+import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import debounce from 'debounce'
 import { SIGNALING } from '../../constants.js'
@@ -97,7 +102,9 @@ export default {
 	},
 
 	components: {
+		Button,
 		SignalingServer,
+		Plus,
 	},
 
 	data() {
@@ -144,6 +151,7 @@ export default {
 
 			OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', this.hideWarning ? 'yes' : 'no', {
 				success() {
+					showSuccess(t('spreed', 'Missing high-performance backend warning hidden'))
 					self.loading = false
 					self.toggleSave()
 				},
@@ -165,6 +173,7 @@ export default {
 				secret: this.secret,
 			}), {
 				success() {
+					showSuccess(t('spreed', 'High-performance backend settings saved'))
 					self.loading = false
 					self.toggleSave()
 				},
@@ -183,6 +192,21 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/variables';
+
+.signaling-server {
+	h2 {
+		height: 44px;
+		display: flex;
+		align-items: center;
+	}
+
+	&__add-icon {
+		display: inline-block;
+		width: 44px;
+		height: 44px;
+		vertical-align: middle;
+	}
+}
 
 .signaling-warning label {
 	margin: 0;
