@@ -40,6 +40,7 @@
 				placeholder="https://cloud.example.org/"
 				:disabled="loading"
 				:aria-label="t('spreed', 'URL of this Nextcloud instance')">
+
 			<h4>{{ t('spreed', 'Full name of the user requesting the trial') }}</h4>
 			<input v-model="hostedHPBFullName"
 				type="text"
@@ -47,6 +48,7 @@
 				placeholder="Jane Doe"
 				:disabled="loading"
 				:aria-label="t('spreed', 'Name of the user requesting the trial')">
+
 			<h4>{{ t('spreed', 'Email of the user') }}</h4>
 			<input v-model="hostedHPBEmail"
 				type="text"
@@ -54,6 +56,7 @@
 				placeholder="jane@example.org"
 				:disabled="loading"
 				:aria-label="t('spreed', 'Email of the user')">
+
 			<h4>{{ t('spreed', 'Language') }}</h4>
 			<select v-model="hostedHPBLanguage"
 				name="hosted_hpb_language"
@@ -68,6 +71,7 @@
 					{{ l.name }}
 				</option>
 			</select>
+
 			<h4>{{ t('spreed', 'Country') }}</h4>
 			<select v-model="hostedHPBCountry"
 				name="hosted_hpb_country"
@@ -78,12 +82,13 @@
 					{{ c.name }}
 				</option>
 			</select>
-			<br>
-			<button class="button primary"
+
+			<Button type="primary"
 				:disabled="!hostedHPBFilled || loading"
 				@click="requestHPBTrial">
 				{{ t('spreed', 'Request signaling server trial') }}
-			</button>
+			</Button>
+
 			<p v-if="requestError !== ''"
 				class="warning">
 				{{ requestError }}
@@ -118,16 +123,18 @@
 				class="warning">
 				{{ requestError }}
 			</p>
-			<button class="button delete"
+
+			<Button type="error"
 				:disabled="loading"
 				@click="deleteAccount">
 				{{ t('spreed', 'Delete the signaling server account') }}
-			</button>
+			</Button>
 		</div>
 	</div>
 </template>
 
 <script>
+import Button from '@nextcloud/vue/dist/Components/Button'
 import { loadState } from '@nextcloud/initial-state'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
@@ -135,6 +142,10 @@ import moment from '@nextcloud/moment'
 
 export default {
 	name: 'HostedSignalingServer',
+
+	components: {
+		Button,
+	},
 
 	data() {
 		return {
@@ -238,7 +249,7 @@ export default {
 
 				this.trialAccount = []
 			} catch (err) {
-				this.deleteError = err?.response?.data?.ocs?.data?.message || t('spreed', 'The account could not be deleted. Please try again later.')
+				this.requestError = err?.response?.data?.ocs?.data?.message || t('spreed', 'The account could not be deleted. Please try again later.')
 			} finally {
 				this.loading = false
 			}
@@ -263,19 +274,6 @@ tr:last-child td {
 
 tr :first-child {
 	opacity: .5;
-}
-
-.delete {
-	background: var(--color-main-background);
-	border-color: var(--color-error);
-	color: var(--color-error);
-}
-
-.delete:hover,
-.delete:active {
-	background: var(--color-error);
-	border-color: var(--color-error) !important;
-	color: var(--color-main-background);
 }
 
 </style>
