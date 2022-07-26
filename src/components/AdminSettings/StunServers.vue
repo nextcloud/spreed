@@ -21,17 +21,19 @@
  -->
 
 <template>
-	<div id="stun_server" class="videocalls section">
+	<div id="stun_server" class="videocalls section stun-server">
 		<h2>
 			{{ t('spreed', 'STUN servers') }}
-			<span v-if="saved" class="icon icon-checkmark-color" :title="t('spreed', 'Saved')" />
-			<a v-else-if="!loading"
-				v-tooltip.auto="t('spreed', 'Add a new server')"
-				class="icon icon-add"
+
+			<Button v-if="!loading"
+				class="stun-server__add-icon"
+				type="tertiary-no-background"
+				:aria-label="t('spreed', 'Add a new STUN server')"
 				@click="newServer">
-				<span class="hidden-visually">{{ t('spreed', 'Add a new server') }}</span>
-			</a>
-			<span v-else class="icon icon-loading-small" />
+				<template #icon>
+					<Plus />
+				</template>
+			</Button>
 		</h2>
 
 		<p class="settings-hint">
@@ -54,9 +56,12 @@
 
 <script>
 import StunServer from '../../components/AdminSettings/StunServer.vue'
+import Button from '@nextcloud/vue/dist/Components/Button'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import Plus from 'vue-material-design-icons/Plus'
 import debounce from 'debounce'
 import { loadState } from '@nextcloud/initial-state'
+import { showSuccess } from '@nextcloud/dialogs'
 
 export default {
 	name: 'StunServers',
@@ -66,7 +71,9 @@ export default {
 	},
 
 	components: {
+		Button,
 		StunServer,
+		Plus,
 	},
 
 	data() {
@@ -126,6 +133,7 @@ export default {
 
 			OCP.AppConfig.setValue('spreed', 'stun_servers', JSON.stringify(servers), {
 				success() {
+					showSuccess(t('spreed', 'STUN settings saved'))
 					self.loading = false
 					self.toggleSave()
 				},
@@ -143,16 +151,19 @@ export default {
 </script>
 
 <style lang="scss">
-.turn-server {
-	height: 44px;
-	display: flex;
-	align-items: center;
+.stun-server {
+	h2 {
+		height: 44px;
+		display: flex;
+		align-items: center;
+	}
+
+	&__add-icon {
+		display: inline-block;
+		width: 44px;
+		height: 44px;
+		vertical-align: middle;
+	}
 }
 
-.icon {
-	display: inline-block;
-	width: 44px;
-	height: 44px;
-	vertical-align: middle;
-}
 </style>

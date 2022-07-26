@@ -32,22 +32,41 @@
 			:disabled="loading"
 			:aria-label="t('spreed', 'STUN server URL')"
 			@input="update">
-		<span v-show="!isValidServer" class="icon icon-error" />
-		<a v-show="!loading"
-			v-tooltip.auto="t('spreed', 'Delete this server')"
-			class="icon icon-delete"
-			@click="removeServer" />
+		<Button v-show="!isValidServer"
+			type="tertiary-no-background"
+			:aria-label="t('spreed', 'The server address is invalid')">
+			<template #icon>
+				<AlertCircle />
+			</template>
+		</Button>
+		<Button v-show="!loading"
+			type="tertiary-no-background"
+			:aria-label="t('spreed', 'Delete this server')"
+			@click="removeServer">
+			<template #icon>
+				<Delete />
+			</template>
+		</Button>
 	</div>
 </template>
 
 <script>
+import Button from '@nextcloud/vue/dist/Components/Button'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import AlertCircle from 'vue-material-design-icons/AlertCircle'
+import Delete from 'vue-material-design-icons/Delete'
 
 export default {
 	name: 'StunServer',
 
 	directives: {
 		tooltip: Tooltip,
+	},
+
+	components: {
+		Button,
+		AlertCircle,
+		Delete,
 	},
 
 	props: {
