@@ -73,29 +73,52 @@
 			</option>
 		</select>
 
-		<a v-show="!loading"
-			v-tooltip.auto="testResult"
-			class="icon"
-			:class="testIconClasses"
-			@click="testServer" />
-		<a v-show="!loading"
-			v-tooltip.auto="t('spreed', 'Delete this server')"
-			class="icon icon-delete"
-			@click="removeServer" />
+		<Button v-show="!loading"
+			type="tertiary-no-background"
+			:aria-label="testResult"
+			@click="testServer">
+			<template #icon>
+				<span v-if="testing" class="icon icon-loading-small" />
+				<AlertCircle v-else-if="testingError" />
+				<Check v-else-if="testingSuccess" />
+				<CategoryMonitoring v-else />
+			</template>
+		</Button>
+		<Button v-show="!loading"
+			type="tertiary-no-background"
+			:aria-label="t('spreed', 'Delete this server')"
+			@click="removeServer">
+			<template #icon>
+				<Delete />
+			</template>
+		</Button>
 	</div>
 </template>
 
 <script>
+import Button from '@nextcloud/vue/dist/Components/Button'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import AlertCircle from 'vue-material-design-icons/AlertCircle'
+import Check from 'vue-material-design-icons/Check'
+import Delete from 'vue-material-design-icons/Delete'
 import hmacSHA1 from 'crypto-js/hmac-sha1'
 import Base64 from 'crypto-js/enc-base64'
 import debounce from 'debounce'
+import CategoryMonitoring from '../missingMaterialDesignIcons/CategoryMonitoring.vue'
 
 export default {
 	name: 'TurnServer',
 
 	directives: {
 		tooltip: Tooltip,
+	},
+
+	components: {
+		Button,
+		AlertCircle,
+		CategoryMonitoring,
+		Check,
+		Delete,
 	},
 
 	props: {
