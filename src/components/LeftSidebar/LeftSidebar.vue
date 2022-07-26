@@ -35,6 +35,7 @@
 		<template #list>
 			<li class="left-sidebar__list">
 				<ul ref="scroller"
+					class="scroller"
 					@scroll="debounceHandleScroll">
 					<AppNavigationCaption v-if="isSearching"
 						:title="t('spreed', 'Conversations')" />
@@ -507,6 +508,9 @@ export default {
 <style lang="scss" scoped>
 
 @import '../../assets/variables';
+.scroller {
+	padding: 0 4px 0 6px;
+}
 
 .new-conversation {
 	display: flex;
