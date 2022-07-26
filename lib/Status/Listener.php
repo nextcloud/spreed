@@ -46,20 +46,44 @@ class Listener {
 	public static function register(IEventDispatcher $dispatcher): void {
 		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, [self::class, 'setUserStatus']);
 
-		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, [self::class, 'revertUserStatus']);
+		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, [self::class, 'revertUserStatusOnLeaveCall']);
 
 		$dispatcher->addListener(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, [self::class, 'revertUserStatusOnEndCallForEveryone']);
 	}
 
 	public static function setUserStatus(ModifyParticipantEvent $event): void {
-		$listener = Server::get(self::class);
 		if ($event->getParticipant()->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
-			$listener->statusManager->setUserStatus($event->getParticipant()->getAttendee()->getActorId(), 'call', IUserStatus::AWAY, true);
+			$status = IUserStatus::AWAY;
+
+			$userId = $event->getParticipant()->getAttendee()->getActorId();
+
+			/** @var self $listener */
+			$listener = Server::get(self::class);
+			$statuses = $listener->statusManager->getUserStatuses([$userId]);
+
+			if (isset($statuses[$userId])) {
+				if ($statuses[$userId]->getStatus() === IUserStatus::INVISIBLE) {
+					// If the user is invisible we do not overwrite the status
+					// with "in a call" which would be visible to any user on the
+					// instance opposed to users in the conversation the call is happening
+					return;
+				}
+
+				if ($statuses[$userId]->getStatus() === IUserStatus::DND) {
+					$status = IUserStatus::DND;
+				}
+			}
+
+			$listener->statusManager->setUserStatus(
+				$userId,
+				'call',
+				$status,
+				true
+			);
 		}
 	}
 
-	public static function revertUserStatus(ModifyParticipantEvent $event): void {
-		$listener = Server::get(self::class);
+	public static function revertUserStatusOnLeaveCall(ModifyParticipantEvent $event): void {
 		if ($event instanceof ModifyEveryoneEvent) {
 			// Do not revert the status with 3 queries per user.
 			// We will update it in one go at the end.
@@ -67,14 +91,17 @@ class Listener {
 		}
 
 		if ($event->getParticipant()->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+			/** @var self $listener */
+			$listener = Server::get(self::class);
 			$listener->statusManager->revertUserStatus($event->getParticipant()->getAttendee()->getActorId(), 'call', IUserStatus::AWAY);
 		}
 	}
 
 	public static function revertUserStatusOnEndCallForEveryone(EndCallForEveryoneEvent $event): void {
-		$listener = Server::get(self::class);
 		$userIds = $event->getUserIds();
 		if (!empty($userIds)) {
+			/** @var self $listener */
+			$listener = Server::get(self::class);
 			$listener->statusManager->revertMultipleUserStatus($userIds, 'call', IUserStatus::AWAY);
 		}
 	}
