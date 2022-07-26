@@ -520,10 +520,11 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $userId
 	 * @param Folder $node
 	 * @param bool $reshares Also get the shares where $user is the owner instead of just the shares where $user is the initiator
+	 * @param bool $shallow Whether the method should stop at the first level, or look into sub-folders.
 	 * @return IShare[][]
 	 * @psalm-return array<array-key, non-empty-list<IShare>>
 	 */
-	public function getSharesInFolder($userId, Folder $node, $reshares): array {
+	public function getSharesInFolder($userId, Folder $node, $reshares, $shallow = true): array {
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('*')
 			->from('share', 's')
@@ -550,7 +551,11 @@ class RoomShareProvider implements IShareProvider {
 		}
 
 		$qb->innerJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'));
-		$qb->andWhere($qb->expr()->eq('f.parent', $qb->createNamedParameter($node->getId())));
+		if ($shallow) {
+			$qb->andWhere($qb->expr()->eq('f.parent', $qb->createNamedParameter($node->getId())));
+		} else {
+			$qb->andWhere($qb->expr()->like('f.path', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($node->getInternalPath()) . '/%')));
+		}
 
 		$qb->orderBy('s.id');
 
