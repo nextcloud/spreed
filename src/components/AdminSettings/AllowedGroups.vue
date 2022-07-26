@@ -33,8 +33,9 @@
 			{{ t('spreed', 'Users that cannot use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept.') }}
 		</p>
 
-		<p class="allowed-groups-settings-content">
+		<div class="allowed-groups-settings-content">
 			<Multiselect v-model="allowedGroups"
+				name="allow_groups_use_talk"
 				class="allowed-groups-select"
 				:options="groups"
 				:placeholder="t('spreed', 'Limit using Talk')"
@@ -54,11 +55,12 @@
 				@click="saveAllowedGroups">
 				{{ saveLabelAllowedGroups }}
 			</Button>
-		</p>
+		</div>
 
 		<h3>{{ t('spreed', 'Limit creating a public and group conversation') }}</h3>
-		<p class="allowed-groups-settings-content">
+		<div class="allowed-groups-settings-content">
 			<Multiselect v-model="canStartConversations"
+				name="allow_groups_start_conversation"
 				class="allowed-groups-select"
 				:options="groups"
 				:placeholder="t('spreed', 'Limit creating conversations')"
@@ -78,19 +80,20 @@
 				@click="saveStartConversationsGroups">
 				{{ saveLabelStartConversations }}
 			</Button>
-		</p>
+		</div>
 
 		<h3>{{ t('spreed', 'Limit starting a call') }}</h3>
-		<p>
+		<div class="allowed-groups-settings-content">
 			<Multiselect id="start_calls"
 				v-model="startCalls"
+				name="allow_groups_start_calls"
 				:options="startCallOptions"
 				:placeholder="t('spreed', 'Limit starting calls')"
 				label="label"
 				track-by="value"
 				:disabled="loading || loadingStartCalls"
 				@input="saveStartCalls" />
-		</p>
+		</div>
 		<p>
 			<em>{{ t('spreed', 'When a call has started, everyone with access to the conversation can join the call.') }}</em>
 		</p>
