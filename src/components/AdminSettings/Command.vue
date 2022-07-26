@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { Fragment } from 'vue-fragment'
+import { Fragment } from 'vue-frag'
 
 export default {
 	name: 'Command',

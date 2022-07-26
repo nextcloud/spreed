@@ -60,7 +60,6 @@
 			<h4>{{ t('spreed', 'Language') }}</h4>
 			<select v-model="hostedHPBLanguage"
 				name="hosted_hpb_language"
-				:placeholder="t('spreed', 'Language')"
 				:disabled="loading"
 				:aria-label="t('spreed', 'Language')">
 				<option v-for="l in languages.commonLanguages" :key="l.code" :value="l.code">
@@ -75,7 +74,6 @@
 			<h4>{{ t('spreed', 'Country') }}</h4>
 			<select v-model="hostedHPBCountry"
 				name="hosted_hpb_country"
-				:placeholder="t('spreed', 'Country')"
 				:disabled="loading"
 				:aria-label="t('spreed', 'Country')">
 				<option v-for="c in countries" :key="c.code" :value="c.code">

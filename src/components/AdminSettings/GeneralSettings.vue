@@ -26,17 +26,18 @@
 
 		<h3>{{ t('spreed', 'Default notification settings') }}</h3>
 
-		<p>
+		<div class="paragraph">
 			<label for="default_group_notification">{{ t('spreed', 'Default group notification') }}</label>
 			<Multiselect id="default_group_notification"
 				v-model="defaultGroupNotification"
+				name="default_group_notification"
 				:options="defaultGroupNotificationOptions"
 				:placeholder="t('spreed', 'Default group notification for new groups')"
 				label="label"
 				track-by="value"
 				:disabled="loading || loadingDefaultGroupNotification"
 				@input="saveDefaultGroupNotification" />
-		</p>
+		</div>
 
 		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
 
@@ -143,7 +144,7 @@ h3 {
 	margin-top: 24px;
 }
 
-p {
+div.paragraph {
 	display: flex;
 	align-items: center;
 
