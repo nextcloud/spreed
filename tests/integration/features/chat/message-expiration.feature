@@ -29,7 +29,7 @@ Feature: room/message-expiration
       | roomType | 3     |
       | roomName | room2 |
     And user "participant1" set the message expiration to 3 of room "room2" with 200 (v4)
-    When user "participant1" shares "welcome.txt" with room "room2"
+    When user "participant1" shares "welcome.txt" with room "room2" with OCS 100
     And user "participant1" sees the following messages in room "room2" with 200
       | room  | actorType | actorId      | actorDisplayName         | message  | messageParameters |
       | room2 | users     | participant1 | participant1-displayname | {file}   | "IGNORE"          |
