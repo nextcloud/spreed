@@ -73,29 +73,30 @@
 				:disabled="loading"
 				:placeholder="t('spreed', 'Phone number (Country)')" />
 
-			<p>
-				<button class="button primary"
-					:disabled="loading"
-					@click="saveSIPSettings">
-					{{ saveLabel }}
-				</button>
-			</p>
+			<Button type="primary"
+				:disabled="loading"
+				@click="saveSIPSettings">
+				{{ t('spreed', 'Save changes') }}
+			</Button>
 		</template>
 	</div>
 </template>
 
 <script>
+import Button from '@nextcloud/vue/dist/Components/Button'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import axios from '@nextcloud/axios'
 import debounce from 'debounce'
 import { generateOcsUrl } from '@nextcloud/router'
 import { loadState } from '@nextcloud/initial-state'
+import { showSuccess } from '@nextcloud/dialogs'
 import { setSIPSettings } from '../../services/settingsService.js'
 
 export default {
 	name: 'SIPBridge',
 
 	components: {
+		Button,
 		Multiselect,
 	},
 
@@ -106,7 +107,6 @@ export default {
 			showForm: true,
 			groups: [],
 			sipGroups: [],
-			saveLabel: t('spreed', 'Save changes'),
 			dialInInfo: '',
 			sharedSecret: '',
 		}
@@ -157,16 +157,14 @@ export default {
 			await setSIPSettings(groups, this.sharedSecret, this.dialInInfo)
 
 			this.loading = false
-			this.saveLabel = t('spreed', 'Saved!')
-			setTimeout(() => {
-				this.saveLabel = t('spreed', 'Save changes')
-			}, 5000)
+			showSuccess(t('spreed', 'SIP configuration saved!'))
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
+
 .sip-bridge {
 	&__sip-groups-select,
 	&__shared-secret,
