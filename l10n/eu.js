@@ -173,6 +173,7 @@ OC.L10N.register(
     "You cleared the history of the conversation" : "Elkarrizketaren historia ezabatu duzu",
     "{actor} closed the poll {poll}" : "{actor}-(e)k {poll} galdeketa itxi du",
     "You closed the poll {poll}" : "{poll} galdeketa itxi duzu",
+    "Someone voted on the poll {poll}" : "Norbaitek {poll} galdeketan bozkatu du.",
     "Message deleted by author" : "Egileak mezua ezabatu du",
     "Message deleted by {actor}" : "{actor} erabiltzaileak mezua ezabatu du",
     "Message deleted by you" : "Mezua ezabatu duzu",
