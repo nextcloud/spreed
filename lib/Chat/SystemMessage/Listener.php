@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat\SystemMessage;
 
+use DateInterval;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
@@ -91,6 +92,7 @@ class Listener implements IEventListener {
 		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, self::class . '::addSystemMessageUserAdded');
 		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, self::class . '::sendSystemMessageUserRemoved');
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, self::class . '::sendSystemMessageAboutPromoteOrDemoteModerator');
+		$dispatcher->addListener('OCP\Share::preShare', self::class . '::setShareExpiration');
 		$dispatcher->addListener('OCP\Share::postShare', self::class . '::fixMimeTypeOfVoiceMessage');
 		$dispatcher->addListener(RoomShareProvider::EVENT_SHARE_FILE_AGAIN, self::class . '::fixMimeTypeOfVoiceMessage');
 		$dispatcher->addListener(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, self::class . '::afterSetMessageExpiration');
@@ -324,6 +326,33 @@ class Listener implements IEventListener {
 			$listener = Server::get(self::class);
 			$listener->sendSystemMessage($room, 'guest_moderator_demoted', ['session' => $attendee->getActorId()]);
 		}
+	}
+
+	/**
+	 * @param GenericEvent|Event $event
+	 * @return void
+	 */
+	public static function setShareExpiration($event): void {
+		/** @var IShare $share */
+		$share = $event->getSubject();
+
+		if ($share->getShareType() !== IShare::TYPE_ROOM) {
+			return;
+		}
+
+		$listener = Server::get(self::class);
+		$manager = Server::get(Manager::class);
+
+		$room = $manager->getRoomByToken($share->getSharedWith());
+
+		$messageExpiration = $room->getMessageExpiration();
+		if (!$messageExpiration) {
+			return;
+		}
+
+		$dateTime = $listener->timeFactory->getDateTime();
+		$dateTime->add(DateInterval::createFromDateString($messageExpiration . ' seconds'));
+		$share->setExpirationDate($dateTime);
 	}
 
 	/**

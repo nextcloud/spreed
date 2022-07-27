@@ -176,6 +176,8 @@ class ChatManager {
 			$comment->setVerb(self::VERB_SYSTEM);
 		}
 
+		$this->setMessageExpiration($chat, $comment);
+
 		$event = new ChatEvent($chat, $comment, $shouldSkipLastMessageUpdate);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_SYSTEM_MESSAGE_SEND, $event);
 		try {
