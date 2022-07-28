@@ -289,7 +289,6 @@ export default {
 		})
 
 		const beforeRouteChangeListener = (to, from, next) => {
-
 			if (this.isNextcloudTalkHashDirty) {
 				// Nextcloud Talk configuration changed, reload the page when changing configuration
 				window.location = generateUrl('call/' + to.params.token)
@@ -300,16 +299,10 @@ export default {
 			 * This runs whenever the new route is a conversation.
 			 */
 			if (to.name === 'conversation') {
-				// Page title
-				const nextConversationName = this.getConversationName(to.params.token)
-				this.setPageTitle(nextConversationName)
 				// Update current token in the token store
 				this.$store.dispatch('updateToken', to.params.token)
 			}
 
-			if (to.name === 'notfound') {
-				this.setPageTitle('')
-			}
 			/**
 			 * Fires a global event that tells the whole app that the route has changed. The event
 			 * carries the from and to objects as payload
@@ -346,7 +339,21 @@ export default {
 			} else {
 				beforeRouteChangeListener(to, from, next)
 			}
+		})
 
+		Router.afterEach((to, from, next) => {
+			/**
+			 * Change the page title only after the route was changed
+			 */
+			if (to.name === 'conversation') {
+				// Page title
+				const nextConversationName = this.getConversationName(to.params.token)
+				this.setPageTitle(nextConversationName)
+			} else if (to.name === 'notfound') {
+				this.setPageTitle('')
+			}
+
+			next()
 		})
 
 		if (getCurrentUser()) {
