@@ -7,6 +7,7 @@ const mockconsole = require('mockconsole')
 // Only mediaDevicesManager is used, but it can not be assigned here due to not
 // being initialized yet.
 const webrtcIndex = require('../index.js')
+const BlackVideoEnforcer = require('../../media/pipeline/BlackVideoEnforcer.js').default
 const MediaDevicesSource = require('../../media/pipeline/MediaDevicesSource.js').default
 const SpeakingMonitor = require('../../media/pipeline/SpeakingMonitor.js').default
 const TrackConstrainer = require('../../media/pipeline/TrackConstrainer.js').default
@@ -58,6 +59,8 @@ function LocalMedia(opts) {
 		this.emit('virtualBackgroundLoadFailed')
 	})
 
+	this._blackVideoEnforcer = new BlackVideoEnforcer()
+
 	this._speakingMonitor = new SpeakingMonitor()
 	this._speakingMonitor.on('speaking', () => {
 		this.emit('speaking')
@@ -99,7 +102,9 @@ function LocalMedia(opts) {
 	this._videoTrackConstrainer.connectTrackSink('default', this._virtualBackground)
 
 	this._virtualBackground.connectTrackSink('default', this._trackToStream, 'video')
-	this._virtualBackground.connectTrackSink('default', this._trackToSentStream, 'video')
+	this._virtualBackground.connectTrackSink('default', this._blackVideoEnforcer, 'default')
+
+	this._blackVideoEnforcer.connectTrackSink('default', this._trackToSentStream, 'video')
 }
 
 util.inherits(LocalMedia, WildEmitter)
