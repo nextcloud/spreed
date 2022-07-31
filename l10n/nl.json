@@ -207,6 +207,7 @@
     "A deleted user replied to your message in conversation {call}" : "Een verwijderde gebruiker heeft op jouw bericht gereageerd in gesprek {call}",
     "{guest} (guest) replied to your message in conversation {call}" : "{guest} (gast) heeft op jouw bericht gereageerd in gesprek {call}",
     "A guest replied to your message in conversation {call}" : "Een gast heeft op jouw bericht gereageerd in gesprek {call}",
+    "{user} reacted with {reaction} to your private message" : "{user} heeft op jouw privébericht geantwoord met {reaction}",
     "{user} mentioned you in a private conversation" : "{user} heeft jou in een privégesprek vermeld",
     "{user} mentioned you in conversation {call}" : "{user} heeft jou in vermeld in gesprek {call}",
     "A deleted user mentioned you in conversation {call}" : "Een verwijderde gebruiker heeft jou vermeld in gesprek {call}",
