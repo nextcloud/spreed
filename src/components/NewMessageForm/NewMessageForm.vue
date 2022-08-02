@@ -43,33 +43,48 @@
 						:disabled="disabled"
 						:aria-label="t('spreed', 'Share files to the conversation')"
 						:aria-haspopup="true">
-						<Paperclip slot="icon"
-							:size="16" />
+						<template #icon>
+							<Paperclip :size="16" />
+						</template>
+
 						<NcActionButton v-if="canUploadFiles"
 							:close-after-click="true"
-							icon="icon-upload"
 							@click.prevent="clickImportInput">
+							<template #icon>
+								<Upload :size="20" />
+							</template>
 							{{ t('spreed', 'Upload from device') }}
 						</NcActionButton>
 						<NcActionButton v-if="canShareFiles"
 							:close-after-click="true"
-							icon="icon-folder"
 							@click.prevent="handleFileShare">
+							<template #icon>
+								<Folder :size="20" />
+							</template>
 							{{ t('spreed', 'Share from Nextcloud FIXME') }}
 						</NcActionButton>
 						<NcActionButton v-if="canShareFiles"
 							:close-after-click="true"
 							@click.prevent="showTextFileDialog = true">
-							<TextBox slot="icon" :size="20" />
+							<template #icon>
+								<Folder :size="20" />
+							</template>
+							{{ t('spreed', 'Share from Nextcloud') }}
+						</NcActionButton>
+						<NcActionButton v-if="canShareFiles"
+							:close-after-click="true"
+							@click.prevent="showTextFileDialog = true">
+							<template #icon>
+								<TextBox :size="20" />
+							</template>
 							{{ t('spreed', 'Create text file') }}
 						</NcActionButton>
 						<NcActionButton v-if="canCreatePoll"
 							:close-after-click="true"
 							@click.prevent="toggleSimplePollsEditor(true)">
-							<Poll slot="icon"
-								:size="20"
-								decorative
-								title="" />
+							<template #icon>
+								<Poll :size="20" />
+							</template>
 							{{ t('spreed', 'Create new poll') }}
 						</NcActionButton>
 					</NcActions>
@@ -200,6 +215,8 @@ import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
 import Poll from 'vue-material-design-icons/Poll.vue'
 import TextBox from 'vue-material-design-icons/TextBox.vue'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import Folder from 'vue-material-design-icons/Folder.vue'
+import Upload from 'vue-material-design-icons/Upload.vue'
 import InputVue from '../InputVue.vue'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
@@ -229,6 +246,8 @@ export default {
 		Poll,
 		TextBox,
 		NcModal,
+		Folder,
+		Upload,
 		InputVue,
 	},
 
