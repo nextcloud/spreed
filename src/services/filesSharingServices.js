@@ -34,7 +34,7 @@ import { showError } from '@nextcloud/dialogs'
  */
 const shareFile = async function(path, token, referenceId, metadata) {
 	try {
-		return axios.post(
+		return await axios.post(
 			generateOcsUrl('apps/files_sharing/api/v1/shares'),
 			{
 				shareType: 10, // OC.Share.SHARE_TYPE_ROOM,
@@ -63,13 +63,20 @@ const shareFile = async function(path, token, referenceId, metadata) {
  */
 const createTextFile = async function(filePath) {
 	try {
-		return axios.post(
+		return await axios.post(
 			generateOcsUrl('apps/files/api/v1/templates/create'),
 			{
 				filePath,
 			})
 	} catch (error) {
-		console.debug(error)
+		// FIXME: errors should be handled by called instead
+		if (error?.response?.data?.ocs?.meta?.message) {
+			console.error('Error while creating file: ' + error.response.data.ocs.meta.message)
+			showError(error.response.data.ocs.meta.message)
+		} else {
+			console.error('Error while creating file: Unknown error')
+			showError(t('spreed', 'Error while creating file'))
+		}
 	}
 }
 

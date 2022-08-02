@@ -644,6 +644,7 @@ export default {
 		async handleCreateTextFile() {
 			const filePath = this.textFileTitle + '.md'
 			await createTextFile(filePath)
+			// FIXME If creation failed we should not share, as it could be an old/other file with the same name.
 			const response = await shareFile(filePath, this.token)
 			// TODO: before getting the link from the system message we need
 			// to wait till the message itself is received
