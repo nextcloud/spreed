@@ -22,7 +22,7 @@
 -->
 
 <template>
-	<file-preview v-bind="filePreview"
+	<div v-bind="filePreview"
 		:tabindex="wrapperTabIndex"
 		class="file-preview"
 		:class="{ 'file-preview--viewer-available': isViewerAvailable,
@@ -66,7 +66,7 @@
 		<div v-if="shouldShowFileDetail" class="name-container">
 			{{ fileDetail }}
 		</div>
-	</file-preview>
+	</div>
 </template>
 
 <script>
@@ -261,7 +261,6 @@ export default {
 			if (this.isUploadEditor || this.isTemporaryUpload) {
 				return {
 					is: 'div',
-					tag: 'div',
 				}
 			} else if (this.isVoiceMessage) {
 				return {
@@ -273,7 +272,6 @@ export default {
 			}
 			return {
 				is: 'a',
-				tag: 'a',
 				href: this.link,
 				target: '_blank',
 				rel: 'noopener noreferrer',
@@ -409,7 +407,7 @@ export default {
 		},
 
 		wrapperTabIndex() {
-			return this.isUploadEditor ? '0' : ''
+			return this.isUploadEditor ? '0' : undefined
 		},
 
 		removeAriaLabel() {
