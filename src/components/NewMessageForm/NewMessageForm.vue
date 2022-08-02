@@ -61,15 +61,7 @@
 							<template #icon>
 								<Folder :size="20" />
 							</template>
-							{{ t('spreed', 'Share from Nextcloud FIXME') }}
-						</NcActionButton>
-						<NcActionButton v-if="canShareFiles"
-							:close-after-click="true"
-							@click.prevent="showTextFileDialog = true">
-							<template #icon>
-								<Folder :size="20" />
-							</template>
-							{{ t('spreed', 'Share from Nextcloud') }}
+							{{ shareFromNextcloudLabel }}
 						</NcActionButton>
 						<NcActionButton v-if="canShareFiles"
 							:close-after-click="true"
@@ -182,7 +174,7 @@
 				<div class="new-text-file__buttons">
 					<NcButton type="tertiary"
 						@click="dismissTextFileCreation">
-						{{ t('spreed', 'close') }}
+						{{ t('spreed', 'Close') }}
 					</NcButton>
 					<NcButton type="primary"
 						@click="handleCreateTextFile">
@@ -365,7 +357,10 @@ export default {
 			} else {
 				return t('spreed', 'The participants will not be notified about this message')
 			}
+		},
 
+		shareFromNextcloudLabel() {
+			return t('spreed', 'Share from {nextcloud}', { nextcloud: window.oc_defaults.productName })
 		},
 	},
 
