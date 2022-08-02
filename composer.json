@@ -28,10 +28,11 @@
 		"psalm:fix": "psalm --alter --issues=InvalidReturnType,InvalidNullableReturnType,MissingParamType,InvalidFalsableReturnType"
 	},
 	"require-dev": {
-		"nextcloud/coding-standard": "^1.0",
-		"vimeo/psalm": "^4.22",
 		"christophwurst/nextcloud": "dev-master",
-		"phpunit/phpunit": "^9.5"
+		"nextcloud/coding-standard": "^1.0",
+		"phpunit/phpunit": "^9.5",
+		"roave/security-advisories": "dev-latest",
+		"vimeo/psalm": "^4.22"
 	},
 	"require": {
 		"firebase/php-jwt": "^6.2"
