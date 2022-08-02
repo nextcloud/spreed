@@ -1,13 +1,19 @@
 {
-	"autoload-dev": {
+	"autoload": {
 		"psr-4": {
-			"OCP\\": "vendor/christophwurst/nextcloud/OCP",
 			"OCA\\Talk\\": "lib/"
 		}
 	},
+	"autoload-dev": {
+		"psr-4": {
+			"OCP\\": "vendor/christophwurst/nextcloud/OCP"
+		}
+	},
 	"config": {
+		"autoloader-suffix": "Talk",
 		"optimize-autoloader": true,
 		"classmap-authoritative": true,
+		"sort-packages": true,
 		"platform": {
 			"php": "7.4"
 		}
