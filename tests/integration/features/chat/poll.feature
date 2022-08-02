@@ -573,3 +573,18 @@ Feature: chat/poll
       | actorDisplayName    | participant1-displayname |
       | status     | open |
       | votedSelf  | [] |
+
+  Scenario: Empty question and options
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    When user "participant1" creates a poll in room "room" with 400
+      | question   | Also we need at least 2 non empty options |
+      | options    | ["\t"," ","a"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+    When user "participant1" creates a poll in room "room" with 400
+      | question   |  |
+      | options    | ["Empty question is not","allowed either"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
