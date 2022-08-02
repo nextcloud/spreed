@@ -50,23 +50,37 @@ class PollService {
 	}
 
 	public function createPoll(int $roomId, string $actorType, string $actorId, string $displayName, string $question, array $options, int $resultMode, int $maxVotes): Poll {
-		if (strlen($question) > 32_000) {
+		$question = trim($question);
+
+		if ($question === '' || strlen($question) > 32_000) {
 			throw new \UnexpectedValueException();
 		}
 
 		try {
-			$jsonOptions = json_encode($options, JSON_THROW_ON_ERROR, 1);
+			json_encode($options, JSON_THROW_ON_ERROR, 1);
 		} catch (\Exception $e) {
 			throw new \RuntimeException();
 		}
 
+		$validOptions = [];
 		foreach ($options as $option) {
 			if (!is_string($option)) {
 				throw new \RuntimeException();
 			}
+
+			$option = trim($option);
+			if ($option !== '') {
+				$validOptions[] = $option;
+			}
 		}
 
-		if (count($options) < 2) {
+		if (count($validOptions) < 2) {
+			throw new \RuntimeException();
+		}
+
+		try {
+			$jsonOptions = json_encode($validOptions, JSON_THROW_ON_ERROR, 1);
+		} catch (\Exception $e) {
 			throw new \RuntimeException();
 		}
 
