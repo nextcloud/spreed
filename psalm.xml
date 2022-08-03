@@ -26,7 +26,6 @@
 				<referencedClass name="GuzzleHttp\Exception\ServerException" />
 				<referencedClass name="GuzzleHttp\Exception\ConnectException" />
 				<referencedClass name="OC" />
-				<referencedClass name="OC\Security\Bruteforce\Throttler" />
 				<referencedClass name="OCA\Circles\Api\v1\Circles" />
 				<referencedClass name="OCA\Circles\CirclesManager" />
 				<referencedClass name="OCA\Circles\Events\AddingCircleMemberEvent" />

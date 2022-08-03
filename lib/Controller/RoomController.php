@@ -28,7 +28,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
-use OC\Security\Bruteforce\Throttler;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
@@ -65,6 +64,7 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Security\Bruteforce\IThrottler;
 use OCP\User\Events\UserLiveStatusEvent;
 use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
@@ -92,7 +92,7 @@ class RoomController extends AEnvironmentAwareController {
 	protected IL10N $l10n;
 	protected IConfig $config;
 	protected Config $talkConfig;
-	protected Throttler $throttler;
+	protected IThrottler $throttler;
 	protected LoggerInterface $logger;
 
 	protected array $commonReadMessages = [];
@@ -118,7 +118,7 @@ class RoomController extends AEnvironmentAwareController {
 								IConfig $config,
 								Config $talkConfig,
 								ICloudIdManager $cloudIdManager,
-								Throttler $throttler,
+								IThrottler $throttler,
 								LoggerInterface $logger) {
 		parent::__construct($appName, $request);
 		$this->session = $session;

@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Middleware;
 
-use OC\Security\Bruteforce\Throttler;
 use OCA\Talk\Controller\AEnvironmentAwareController;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\PermissionsException;
@@ -46,20 +45,21 @@ use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Utility\IControllerMethodReflector;
 use OCP\IRequest;
+use OCP\Security\Bruteforce\IThrottler;
 
 class InjectionMiddleware extends Middleware {
 	private IRequest $request;
 	private IControllerMethodReflector $reflector;
 	private TalkSession $talkSession;
 	private Manager $manager;
-	private Throttler $throttler;
+	private IThrottler $throttler;
 	private ?string $userId;
 
 	public function __construct(IRequest $request,
 								IControllerMethodReflector $reflector,
 								TalkSession $talkSession,
 								Manager $manager,
-								Throttler $throttler,
+								IThrottler $throttler,
 								?string $userId) {
 		$this->request = $request;
 		$this->reflector = $reflector;
