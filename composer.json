@@ -1,13 +1,19 @@
 {
-	"autoload-dev": {
+	"autoload": {
 		"psr-4": {
-			"OCP\\": "vendor/christophwurst/nextcloud/OCP",
 			"OCA\\Talk\\": "lib/"
 		}
 	},
+	"autoload-dev": {
+		"psr-4": {
+			"OCP\\": "vendor/christophwurst/nextcloud/OCP"
+		}
+	},
 	"config": {
+		"autoloader-suffix": "Talk",
 		"optimize-autoloader": true,
 		"classmap-authoritative": true,
+		"sort-packages": true,
 		"platform": {
 			"php": "7.4"
 		}
@@ -22,10 +28,11 @@
 		"psalm:fix": "psalm --alter --issues=InvalidReturnType,InvalidNullableReturnType,MissingParamType,InvalidFalsableReturnType"
 	},
 	"require-dev": {
+		"christophwurst/nextcloud": "dev-master@dev",
 		"nextcloud/coding-standard": "^1.0",
-		"vimeo/psalm": "^4.22",
-		"christophwurst/nextcloud": "dev-master",
-		"phpunit/phpunit": "^9.5"
+		"phpunit/phpunit": "^9.5",
+		"roave/security-advisories": "dev-latest",
+		"vimeo/psalm": "^4.22"
 	},
 	"require": {
 		"firebase/php-jwt": "^6.2"

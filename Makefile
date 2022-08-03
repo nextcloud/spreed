@@ -13,7 +13,7 @@ version+=master
 
 all: dev-setup build-production
 
-dev-setup: clean-dev composer-install-dev npm-init
+dev-setup: clean-dev composer-install-production npm-init
 
 release: appstore create-tag
 
