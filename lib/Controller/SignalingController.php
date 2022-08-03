@@ -175,6 +175,7 @@ class SignalingController extends OCSController {
 			'userId' => $this->userId,
 			'hideWarning' => $signaling !== '' || $this->talkConfig->getHideSignalingWarning(),
 			'server' => $signaling,
+			'ticket' => $helloAuthParams['1.0']['ticket'],
 			'helloAuthParams' => $helloAuthParams,
 			'stunservers' => $stun,
 			'turnservers' => $turn,
