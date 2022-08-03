@@ -1,0 +1,60 @@
+name: Update ChristophWurst/nextcloud
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "5 4 * * 1-5"
+
+jobs:
+  update-christophwurst-nextcloud:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        branches: ["master", "stable24", "stable23", "stable22"]
+
+    name: update-christophwurst-nextcloud-${{ matrix.branches }}
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ matrix.branches }}
+          submodules: true
+
+      - name: Set up php7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          extensions: ctype,curl,dom,fileinfo,gd,intl,json,mbstring,openssl,pdo_sqlite,posix,sqlite,xml,zip
+          coverage: none
+
+      - name: Composer install
+        run: composer install
+
+      - name: Composer update christophwurst/nextcloud
+        run: composer require --dev christophwurst/nextcloud:dev-${{ matrix.branches }}
+        continue-on-error: true
+
+      - name: Reset checkout dirs
+        run: |
+          git clean -f 3rdparty
+          git clean -f vendor
+          git checkout 3rdparty vendor
+        continue-on-error: true
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.COMMAND_BOT_PAT }}
+          commit-message: Update psalm baseline
+          committer: GitHub <noreply@github.com>
+          author: nextcloud-command <nextcloud-command@users.noreply.github.com>
+          signoff: true
+          branch: automated/noid/${{ matrix.branches }}-update-christophwurst-nextcloud
+          title: "[${{ matrix.branches }}] Update christophwurst/nextcloud dependency"
+          body: |
+            Auto-generated update of christophwurst/nextcloud dependency
+          labels: |
+            dependencies
+            3. to review
