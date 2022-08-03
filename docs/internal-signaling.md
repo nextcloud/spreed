@@ -26,6 +26,7 @@
 | `stunservers`   | array  | v3    | STUN servers                                                                                            |
 | `turnservers`   | array  | v3    | TURN servers                                                                                            |
 | `sipDialinInfo` | string | v2    | Generic SIP dial-in information for this conversation (admin free text containing the phone number etc) |
+| `helloAuthParams` | array  | v3    | Parameters of the different `hello` versions for the external signaling server.                       |
 
     - STUN server
 
