@@ -295,6 +295,7 @@ OC.L10N.register(
     "Users" : "使用者",
     "Beta" : "Beta 測試版",
     "Name" : "名稱",
+    "Command" : "指令",
     "General settings" : "一般設定",
     "All messages" : "所有訊息",
     "Off" : "關閉",
