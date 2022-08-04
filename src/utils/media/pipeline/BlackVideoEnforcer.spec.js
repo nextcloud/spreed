@@ -504,7 +504,7 @@ describe('BlackVideoEnforcer', () => {
 			assertBlackVideoTrack(1, 320, 180)
 		})
 
-		test('removes output track when removing disabled input track', () => {
+		test('sets black video track as its output track and later removes output track when removing disabled input track', () => {
 			const inputTrack = newMediaStreamTrackMock('input')
 
 			inputTrack.enabled = false
@@ -515,17 +515,96 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
+			expectedTrackEnabledStateInOutputTrackSetEvent = true
+
 			blackVideoEnforcer._setInputTrack('default', null)
 
-			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
+			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
+			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', blackVideoTracks[1])
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
-			expect(blackVideoTrackCount).toBe(1)
-			assertBlackVideoTrack(0, 720, 540)
+			expect(blackVideoTrackCount).toBe(2)
+			assertBlackVideoTrack(0, 720, 540, STOPPED)
+			assertBlackVideoTrack(1, 720, 540)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2 - 1)
+			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+
+			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
+			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
+			expect(blackVideoTracks[1].stop).toHaveBeenCalledTimes(0)
+
+			expectedTrackEnabledStateInOutputTrackSetEvent = undefined
+
+			jest.advanceTimersByTime(1)
+
+			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
+			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', null)
+			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
+			expect(blackVideoTrackCount).toBe(2)
+			assertBlackVideoTrack(0, 720, 540, STOPPED)
+			assertBlackVideoTrack(1, 720, 540, STOPPED)
+		})
+
+		test('sets black video track as its output track and later removes output track when later removing disabled input track', () => {
+			const inputTrack = newMediaStreamTrackMock('input')
+
+			inputTrack.enabled = false
+			blackVideoEnforcer._setInputTrack('default', inputTrack)
+
+			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
+
+			outputTrackSetHandler.mockClear()
+			outputTrackEnabledHandler.mockClear()
+
+			expectedTrackEnabledStateInOutputTrackSetEvent = true
+
+			blackVideoEnforcer._setInputTrack('default', null)
+
+			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
+			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', blackVideoTracks[1])
+			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
+			expect(blackVideoTrackCount).toBe(2)
+			assertBlackVideoTrack(0, 720, 540, STOPPED)
+			assertBlackVideoTrack(1, 720, 540)
+
+			outputTrackSetHandler.mockClear()
+			outputTrackEnabledHandler.mockClear()
+
+			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
+
+			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
+			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
+			expect(blackVideoTracks[1].stop).toHaveBeenCalledTimes(0)
+
+			expectedTrackEnabledStateInOutputTrackSetEvent = undefined
+
+			jest.advanceTimersByTime(1)
+
+			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
+			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', null)
+			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
+			expect(blackVideoTrackCount).toBe(2)
+			assertBlackVideoTrack(0, 720, 540, STOPPED)
+			assertBlackVideoTrack(1, 720, 540, STOPPED)
+		})
+
+		test('sets black video track as its output track and later removes output track when removing null track', () => {
+			expectedTrackEnabledStateInOutputTrackSetEvent = true
+
+			blackVideoEnforcer._setInputTrack('default', null)
+
+			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
+			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', blackVideoTracks[0])
+			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
+			expect(blackVideoTrackCount).toBe(1)
+			assertBlackVideoTrack(0, 640, 480)
+
+			outputTrackSetHandler.mockClear()
+			outputTrackEnabledHandler.mockClear()
+
+			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
@@ -539,44 +618,10 @@ describe('BlackVideoEnforcer', () => {
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', null)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
 			expect(blackVideoTrackCount).toBe(1)
-			assertBlackVideoTrack(0, 720, 540, STOPPED)
+			assertBlackVideoTrack(0, 640, 480, STOPPED)
 		})
 
-		test('removes output track when later removing disabled input track', () => {
-			const inputTrack = newMediaStreamTrackMock('input')
-
-			inputTrack.enabled = false
-			blackVideoEnforcer._setInputTrack('default', inputTrack)
-
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
-
-			outputTrackSetHandler.mockClear()
-			outputTrackEnabledHandler.mockClear()
-
-			blackVideoEnforcer._setInputTrack('default', null)
-
-			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
-			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', null)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
-			expect(blackVideoTrackCount).toBe(1)
-			assertBlackVideoTrack(0, 720, 540, STOPPED)
-		})
-
-		test('does nothing when removing null track', () => {
-			blackVideoEnforcer._setInputTrack('default', null)
-
-			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
-			expect(blackVideoTrackCount).toBe(0)
-
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT * 5)
-
-			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
-			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
-			expect(blackVideoTrackCount).toBe(0)
-		})
-
-		test('does nothing when removing null track again after removing enabled input track', () => {
+		test('sets black video track as its output track and later removes output track when removing null track again after removing enabled input track', () => {
 			const inputTrack = newMediaStreamTrackMock('input')
 
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
@@ -592,19 +637,21 @@ describe('BlackVideoEnforcer', () => {
 
 			blackVideoEnforcer._setInputTrack('default', null)
 
-			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
+			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
+			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', blackVideoTracks[1])
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
-			expect(blackVideoTrackCount).toBe(1)
-			assertBlackVideoTrack(0, 720, 540)
+			expect(blackVideoTrackCount).toBe(2)
+			assertBlackVideoTrack(0, 720, 540, STOPPED)
+			assertBlackVideoTrack(1, 640, 480)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2 - 1)
+			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
-			expect(blackVideoTracks[0].stop).toHaveBeenCalledTimes(0)
+			expect(blackVideoTracks[1].stop).toHaveBeenCalledTimes(0)
 
 			expectedTrackEnabledStateInOutputTrackSetEvent = undefined
 
@@ -613,8 +660,9 @@ describe('BlackVideoEnforcer', () => {
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', null)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
-			expect(blackVideoTrackCount).toBe(1)
+			expect(blackVideoTrackCount).toBe(2)
 			assertBlackVideoTrack(0, 720, 540, STOPPED)
+			assertBlackVideoTrack(1, 640, 480, STOPPED)
 		})
 	})
 
@@ -773,7 +821,7 @@ describe('BlackVideoEnforcer', () => {
 			assertBlackVideoTrack(0, 720, 540)
 		})
 
-		test('removes output track when stopping enabled input track and then removing it', () => {
+		test('sets black video track as its output track and later removes output track when stopping enabled input track and then removing it', () => {
 			const inputTrack = newMediaStreamTrackMock('input')
 
 			blackVideoEnforcer._setInputTrack('default', inputTrack)
@@ -785,21 +833,25 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
+			expectedTrackEnabledStateInOutputTrackSetEvent = true
+
 			blackVideoEnforcer._setInputTrack('default', null)
 
-			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
+			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
+			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', blackVideoTracks[1])
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
-			expect(blackVideoTrackCount).toBe(1)
-			assertBlackVideoTrack(0, 720, 540)
+			expect(blackVideoTrackCount).toBe(2)
+			assertBlackVideoTrack(0, 720, 540, STOPPED)
+			assertBlackVideoTrack(1, 720, 540)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2 - 1)
+			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
-			expect(blackVideoTracks[0].stop).toHaveBeenCalledTimes(0)
+			expect(blackVideoTracks[1].stop).toHaveBeenCalledTimes(0)
 
 			expectedTrackEnabledStateInOutputTrackSetEvent = undefined
 
@@ -808,11 +860,12 @@ describe('BlackVideoEnforcer', () => {
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', null)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
-			expect(blackVideoTrackCount).toBe(1)
+			expect(blackVideoTrackCount).toBe(2)
 			assertBlackVideoTrack(0, 720, 540, STOPPED)
+			assertBlackVideoTrack(1, 720, 540, STOPPED)
 		})
 
-		test('removes output track when stopping disabled input track and then removing it', () => {
+		test('sets black video track as its output track and later removes output track when stopping disabled input track and then removing it', () => {
 			const inputTrack = newMediaStreamTrackMock('input')
 
 			inputTrack.enabled = false
@@ -825,21 +878,25 @@ describe('BlackVideoEnforcer', () => {
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
+			expectedTrackEnabledStateInOutputTrackSetEvent = true
+
 			blackVideoEnforcer._setInputTrack('default', null)
 
-			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
+			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
+			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', blackVideoTracks[1])
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
-			expect(blackVideoTrackCount).toBe(1)
-			assertBlackVideoTrack(0, 720, 540)
+			expect(blackVideoTrackCount).toBe(2)
+			assertBlackVideoTrack(0, 720, 540, STOPPED)
+			assertBlackVideoTrack(1, 720, 540)
 
 			outputTrackSetHandler.mockClear()
 			outputTrackEnabledHandler.mockClear()
 
-			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT / 2 - 1)
+			jest.advanceTimersByTime(DISABLE_OR_REMOVE_TIMEOUT - 1)
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
-			expect(blackVideoTracks[0].stop).toHaveBeenCalledTimes(0)
+			expect(blackVideoTracks[1].stop).toHaveBeenCalledTimes(0)
 
 			expectedTrackEnabledStateInOutputTrackSetEvent = undefined
 
@@ -848,8 +905,9 @@ describe('BlackVideoEnforcer', () => {
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(1)
 			expect(outputTrackSetHandler).toHaveBeenCalledWith(blackVideoEnforcer, 'default', null)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
-			expect(blackVideoTrackCount).toBe(1)
+			expect(blackVideoTrackCount).toBe(2)
 			assertBlackVideoTrack(0, 720, 540, STOPPED)
+			assertBlackVideoTrack(1, 720, 540, STOPPED)
 		})
 
 		test('sets input track as its output track when stopping enabled input track and then replacing it with another enabled input track', () => {
@@ -1053,8 +1111,9 @@ describe('BlackVideoEnforcer', () => {
 
 			expect(outputTrackSetHandler).toHaveBeenCalledTimes(0)
 			expect(outputTrackEnabledHandler).toHaveBeenCalledTimes(0)
-			expect(blackVideoTrackCount).toBe(1)
+			expect(blackVideoTrackCount).toBe(2)
 			assertBlackVideoTrack(0, 720, 540, STOPPED)
+			assertBlackVideoTrack(1, 720, 540, STOPPED)
 		})
 
 		test('does nothing when stopping a previously replaced enabled input track', () => {

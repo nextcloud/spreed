@@ -37,9 +37,6 @@ import TrackSinkSource from './TrackSinkSource.js'
  * be set (a previous black video track is not reused, a new one is always
  * generated). If the input track is removed the black video will be initially
  * set as the output too, but then it will be also removed instead of disabled.
- * If the input track is removed when the output is already a black video track
- * a new black video track will not be set, the current one will be removed as
- * soon as it would have been disabled.
  *
  *        --------------------
  *       |                    |
@@ -57,24 +54,9 @@ export default class BlackVideoEnforcer extends TrackSinkSource {
 	}
 
 	_handleInputTrack(trackId, newTrack, oldTrack) {
-		if (!newTrack && !oldTrack) {
-			return
-		}
-
 		if (oldTrack && this._startBlackVideoWhenTrackEndedHandler) {
 			oldTrack.removeEventListener('ended', this._startBlackVideoWhenTrackEndedHandler)
 			this._startBlackVideoWhenTrackEndedHandler = null
-		}
-
-		if (!newTrack && this._disableOrRemoveOutputTrackTimeout) {
-			return
-		}
-
-		if (!newTrack && this._outputStream) {
-			this._stopBlackVideo()
-			this._setOutputTrack('default', null)
-
-			return
 		}
 
 		if (newTrack) {
