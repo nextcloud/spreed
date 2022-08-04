@@ -135,13 +135,14 @@ describe('BlackVideoEnforcer', () => {
 
 	afterEach(() => {
 		clearTimeout(blackVideoEnforcer._disableOrRemoveOutputTrackTimeout)
+		clearInterval(blackVideoEnforcer._renderInterval)
 	})
 
 	afterAll(() => {
 		jest.restoreAllMocks()
 	})
 
-	const DISABLE_OR_REMOVE_TIMEOUT = 1000
+	const DISABLE_OR_REMOVE_TIMEOUT = 5000
 
 	const STOPPED = true
 
