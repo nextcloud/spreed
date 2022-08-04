@@ -28,7 +28,7 @@
 		"psalm:fix": "psalm --alter --issues=InvalidReturnType,InvalidNullableReturnType,MissingParamType,InvalidFalsableReturnType"
 	},
 	"require-dev": {
-		"christophwurst/nextcloud": "dev-master@dev",
+		"christophwurst/nextcloud": "dev-master",
 		"nextcloud/coding-standard": "^1.0",
 		"phpunit/phpunit": "^9.5",
 		"roave/security-advisories": "dev-latest",
