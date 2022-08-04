@@ -1,9 +1,14 @@
-name: Update ChristophWurst/nextcloud
+# This workflow is provided via the organization template repository
+#
+# https://github.com/nextcloud/.github
+# https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
+
+name: Update christophwurst/nextcloud
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "5 4 * * 1-5"
+    - cron: "5 4 * * 0"
 
 jobs:
   update-christophwurst-nextcloud:
@@ -17,7 +22,7 @@ jobs:
     name: update-christophwurst-nextcloud-${{ matrix.branches }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ matrix.branches }}
           submodules: true
@@ -54,7 +59,7 @@ jobs:
           branch: automated/noid/${{ matrix.branches }}-update-christophwurst-nextcloud
           title: "[${{ matrix.branches }}] Update christophwurst/nextcloud dependency"
           body: |
-            Auto-generated update of christophwurst/nextcloud dependency
+            Auto-generated update of [christophwurst/nextcloud](https://github.com/ChristophWurst/nextcloud_composer/) dependency
           labels: |
             dependencies
             3. to review
