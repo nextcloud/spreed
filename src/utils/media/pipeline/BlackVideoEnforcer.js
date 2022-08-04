@@ -121,11 +121,21 @@ export default class BlackVideoEnforcer extends TrackSinkSource {
 		outputCanvasContext.fillStyle = 'black'
 		outputCanvasContext.fillRect(0, 0, outputCanvasElement.width, outputCanvasElement.height)
 
+		// Sometimes Chromium does not render one or more frames to the stream
+		// captured from a canvas, so repeat the drawing several times for
+		// several seconds to work around that.
+		this._renderInterval = setInterval(() => {
+			outputCanvasContext.fillRect(0, 0, outputCanvasElement.width, outputCanvasElement.height)
+		}, 100)
+
 		this._setOutputTrack('default', this._outputStream.getVideoTracks()[0])
 
 		this._disableOrRemoveOutputTrackTimeout = setTimeout(() => {
 			clearTimeout(this._disableOrRemoveOutputTrackTimeout)
 			this._disableOrRemoveOutputTrackTimeout = null
+
+			clearInterval(this._renderInterval)
+			this._renderInterval = null
 
 			if (this.getInputTrack()) {
 				this._setOutputTrackEnabled('default', false)
@@ -133,7 +143,7 @@ export default class BlackVideoEnforcer extends TrackSinkSource {
 				this._stopBlackVideo()
 				this._setOutputTrack('default', null)
 			}
-		}, 1000)
+		}, 5000)
 	}
 
 	_stopBlackVideo() {
@@ -143,6 +153,9 @@ export default class BlackVideoEnforcer extends TrackSinkSource {
 
 		clearTimeout(this._disableOrRemoveOutputTrackTimeout)
 		this._disableOrRemoveOutputTrackTimeout = null
+
+		clearInterval(this._renderInterval)
+		this._renderInterval = null
 
 		this._outputStream.getTracks().forEach(track => {
 			this._disableRemoveTrackWhenEnded(track)
