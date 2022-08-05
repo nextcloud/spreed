@@ -341,7 +341,7 @@ export default {
 			}
 		})
 
-		Router.afterEach((to, from, next) => {
+		Router.afterEach((to) => {
 			/**
 			 * Change the page title only after the route was changed
 			 */
@@ -352,8 +352,6 @@ export default {
 			} else if (to.name === 'notfound') {
 				this.setPageTitle('')
 			}
-
-			next()
 		})
 
 		if (getCurrentUser()) {
