@@ -28,76 +28,89 @@
 					trigger="hover"
 					:auto-hide="false"
 					:open="showQualityWarningTooltip">
-					<button slot="trigger"
-						class="trigger">
-						<NetworkStrength2Alert fill-color="#e9322d"
-							:size="20"
-							@mouseover="mouseover = true"
-							@mouseleave="mouseover = false" />
-					</button>
+					<template #trigger>
+						<Button id="quality_warning_button"
+							type="tertiary-no-background"
+							class="trigger"
+							@click="mouseover = !mouseover">
+							<template #icon>
+								<NetworkStrength2Alert fill-color="#e9322d"
+									:size="20" />
+							</template>
+						</Button>
+					</template>
 					<div class="hint">
 						<span>{{ qualityWarningTooltip.content }}</span>
 						<div class="hint__actions">
-							<button v-if="qualityWarningTooltip.action"
-								class="primary hint__button"
+							<Button v-if="qualityWarningTooltip.action"
+								type="primary"
+								class="hint__button"
 								@click="executeQualityWarningTooltipAction">
 								{{ qualityWarningTooltip.actionLabel }}
-							</button>
-							<button v-if="!isQualityWarningTooltipDismissed"
+							</Button>
+							<Button v-if="!isQualityWarningTooltipDismissed"
+								type="tertiary"
 								class="hint__button"
 								@click="dismissQualityWarningTooltip">
 								{{ t('spreed', 'Dismiss') }}
-							</button>
+							</Button>
 						</div>
 					</div>
 				</Popover>
 			</div>
 			<div id="muteWrapper">
-				<button id="mute"
-					v-shortkey.once="['m']"
+				<Button v-shortkey.once="['m']"
 					v-tooltip="audioButtonTooltip"
+					type="tertiary-no-background"
 					:aria-label="audioButtonAriaLabel"
 					:class="audioButtonClass"
 					@shortkey="toggleAudio"
 					@click.stop="toggleAudio">
-					<Microphone v-if="showMicrophoneOn"
-						:size="20"
-						fill-color="#ffffff" />
-					<MicrophoneOff v-else
-						:size="20"
-						fill-color="#ffffff" />
-				</button>
+					<template #icon>
+						<Microphone v-if="showMicrophoneOn"
+							:size="20"
+							fill-color="#ffffff" />
+						<MicrophoneOff v-else
+							:size="20"
+							fill-color="#ffffff" />
+					</template>
+				</Button>
 				<span v-show="model.attributes.audioAvailable"
 					ref="volumeIndicator"
 					class="volume-indicator"
 					:class="{'microphone-off': !showMicrophoneOn}" />
 			</div>
-			<button id="hideVideo"
-				v-shortkey.once="['v']"
+			<Button v-shortkey.once="['v']"
 				v-tooltip="videoButtonTooltip"
+				type="tertiary-no-background"
 				:aria-label="videoButtonAriaLabel"
 				:class="videoButtonClass"
 				@shortkey="toggleVideo"
 				@click.stop="toggleVideo">
-				<VideoIcon v-if="showVideoOn"
-					:size="20"
-					fill-color="#ffffff" />
-				<VideoOff v-else
-					:size="20"
-					fill-color="#ffffff" />
-			</button>
-			<button v-if="isVirtualBackgroundAvailable && !showActions"
+				<template #icon>
+					<VideoIcon v-if="showVideoOn"
+						:size="20"
+						fill-color="#ffffff" />
+					<VideoOff v-else
+						:size="20"
+						fill-color="#ffffff" />
+				</template>
+			</Button>
+			<Button v-if="isVirtualBackgroundAvailable && !showActions"
 				v-tooltip="toggleVirtualBackgroundButtonLabel"
+				type="tertiary-no-background"
 				:aria-label="toggleVirtualBackgroundButtonLabel"
 				:class="blurButtonClass"
 				@click.stop="toggleVirtualBackground">
-				<Blur v-if="isVirtualBackgroundEnabled"
-					:size="20"
-					fill-color="#ffffff" />
-				<BlurOff v-else
-					:size="20"
-					fill-color="#ffffff" />
-			</button>
+				<template #icon>
+					<Blur v-if="isVirtualBackgroundEnabled"
+						:size="20"
+						fill-color="#ffffff" />
+					<BlurOff v-else
+						:size="20"
+						fill-color="#ffffff" />
+				</template>
+			</Button>
 			<Actions v-if="!screenSharingButtonHidden"
 				id="screensharing-button"
 				v-tooltip="screenSharingButtonTooltip"
@@ -110,93 +123,102 @@
 				@update:open="screenSharingMenuOpen = true"
 				@update:close="screenSharingMenuOpen = false">
 				<!-- Actions button icon -->
-				<CancelPresentation v-if="model.attributes.localScreen"
-					slot="icon"
-					:size="20"
-					fill-color="#ffffff" />
-				<PresentToAll v-else
-					slot="icon"
-					:size="20"
-					fill-color="#ffffff" />
+				<template #icon>
+					<CancelPresentation v-if="model.attributes.localScreen"
+						:size="20"
+						fill-color="#ffffff" />
+					<PresentToAll v-else
+						:size="20"
+						fill-color="#ffffff" />
+				</template>
 				<!-- /Actions button icon -->
 				<!-- Actions -->
 				<ActionButton v-if="!screenSharingMenuOpen"
 					@click.stop="toggleScreenSharingMenu">
-					<PresentToAll slot="icon"
-						:size="20"
-						fill-color="#ffffff" />
+					<template #icon>
+						<PresentToAll :size="20"
+							fill-color="#ffffff" />
+					</template>
 					{{ screenSharingButtonTooltip }}
 				</ActionButton>
 				<ActionButton v-if="model.attributes.localScreen"
 					@click="showScreen">
-					<Monitor slot="icon"
-						:size="20" />
+					<template #icon>
+						<Monitor :size="20" />
+					</template>
 					{{ t('spreed', 'Show your screen') }}
 				</ActionButton>
 				<ActionButton v-if="model.attributes.localScreen"
 					@click="stopScreen">
-					<CancelPresentation slot="icon"
-						:size="20" />
+					<template #icon>
+						<CancelPresentation :size="20" />
+					</template>
 					{{ t('spreed', 'Stop screensharing') }}
 				</ActionButton>
 			</Actions>
-			<button v-shortkey.once="['r']"
+			<Button v-shortkey.once="['r']"
 				v-tooltip="t('spreed', 'Lower hand (R)')"
+				type="tertiary-no-background"
 				class="lower-hand"
 				:class="model.attributes.raisedHand.state ? '' : 'hidden-visually'"
 				:tabindex="model.attributes.raisedHand.state ? 0 : -1"
 				:aria-label="t('spreed', 'Lower hand (R)')"
 				@shortkey="toggleHandRaised"
 				@click.stop="toggleHandRaised">
-				<!-- The following icon is much bigger than all the others
-						so we reduce its size -->
-				<HandBackLeft :size="18"
-					fill-color="#ffffff" />
-			</button>
+				<template #icon>
+					<!-- The following icon is much bigger than all the others
+							so we reduce its size -->
+					<HandBackLeft :size="18"
+						fill-color="#ffffff" />
+				</template>
+			</Button>
 			<Actions v-if="showActions"
 				v-tooltip="t('spreed', 'More actions')"
 				:container="container"
 				:aria-label="t('spreed', 'More actions')">
-				<DotsHorizontal slot="icon"
-					:size="20"
-					fill-color="#ffffff" />
+				<template #icon>
+					<DotsHorizontal :size="20"
+						fill-color="#ffffff" />
+				</template>
 
 				<ActionButton :close-after-click="true"
 					@click="toggleHandRaised">
 					<!-- The following icon is much bigger than all the others
 						so we reduce its size -->
-					<HandBackLeft slot="icon"
-						:size="18" />
+					<template #icon>
+						<HandBackLeft :size="18" />
+					</template>
 					{{ raiseHandButtonLabel }}
 				</ActionButton>
 				<ActionButton v-if="isVirtualBackgroundAvailable"
 					:close-after-click="true"
 					@click="toggleVirtualBackground">
-					<BlurOff v-if="isVirtualBackgroundEnabled"
-						slot="icon"
-						:size="20" />
-					<Blur v-else
-						slot="icon"
-						:size="20" />
+					<template #icon>
+						<BlurOff v-if="isVirtualBackgroundEnabled"
+							:size="20" />
+						<Blur v-else
+							:size="20" />
+					</template>
 					{{ toggleVirtualBackgroundButtonLabel }}
 				</ActionButton>
 				<!-- Call layout switcher -->
 				<ActionButton v-if="isInCall"
 					:close-after-click="true"
 					@click="changeView">
-					<GridView v-if="isGrid"
-						slot="icon"
-						:size="20" />
-					<PromotedView v-else
-						slot="icon"
-						:size="20" />
+					<template #icon>
+						<GridView v-if="!isGrid"
+							:size="20" />
+						<PromotedView v-else
+							:size="20" />
+					</template>
 					{{ changeViewText }}
 				</ActionButton>
 				<ActionSeparator />
 				<ActionButton :close-after-click="true"
 					@click="showSettings">
-					<Cog slot="icon"
-						:size="20" />
+					<template #icon>
+						<Cog :size="20" />
+					</template>
 					{{ t('spreed', 'Devices settings') }}
 				</ActionButton>
 			</Actions>
@@ -223,6 +245,7 @@ import VideoOff from 'vue-material-design-icons/VideoOff'
 import Blur from 'vue-material-design-icons/Blur'
 import BlurOff from 'vue-material-design-icons/BlurOff'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
+import Button from '@nextcloud/vue/dist/Components/Button'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { PARTICIPANT } from '../../../constants.js'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
@@ -247,6 +270,7 @@ export default {
 		Actions,
 		ActionSeparator,
 		ActionButton,
+		Button,
 		CancelPresentation,
 		Cog,
 		DotsHorizontal,
@@ -353,7 +377,7 @@ export default {
 
 		audioButtonClass() {
 			return {
-				'audio-disabled': this.isAudioAllowed && this.model.attributes.audioAvailable && !this.model.attributes.audioEnabled,
+				'audio-enabled': this.isAudioAllowed && this.model.attributes.audioAvailable && this.model.attributes.audioEnabled,
 				'no-audio-available': !this.isAudioAllowed || !this.model.attributes.audioAvailable,
 			}
 		},
@@ -414,7 +438,7 @@ export default {
 
 		videoButtonClass() {
 			return {
-				'video-disabled': this.isVideoAllowed && this.model.attributes.videoAvailable && !this.model.attributes.videoEnabled,
+				'video-enabled': this.isVideoAllowed && this.model.attributes.videoAvailable && this.model.attributes.videoEnabled,
 				'no-video-available': !this.isVideoAllowed || !this.model.attributes.videoAvailable,
 			}
 		},
@@ -467,7 +491,7 @@ export default {
 
 		screenSharingButtonClass() {
 			return {
-				'screensharing-disabled': this.isScreensharingAllowed && !this.model.attributes.localScreen,
+				'screensharing-enabled': this.isScreensharingAllowed && this.model.attributes.localScreen,
 				'no-screensharing-available': !this.isScreensharingAllowed,
 			}
 		},
@@ -865,21 +889,15 @@ export default {
 .buttons-bar {
 	display: flex;
 	align-items: center;
-	button, .action-item {
-		vertical-align: middle;
-	}
 }
 
-.buttons-bar button, .buttons-bar button:active {
-	background-color: transparent;
-	border: none;
-	margin: 0;
-	padding: 0 12px;
-	width: $clickable-area;
-	height: $clickable-area;
-	&:active {
-		background: transparent;
-	}
+.buttons-bar button.lower-hand.hidden-visually {
+	position: absolute;
+	left: -10000px;
+	top: -10000px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
 }
 
 .buttons-bar #screensharing-menu button {
@@ -887,21 +905,11 @@ export default {
 	height: auto;
 }
 
-.buttons-bar button.audio-disabled,
-.buttons-bar button.video-disabled,
-.buttons-bar button.screensharing-disabled,
-.buttons-bar button.lower-hand {
-	opacity: .7;
-}
-
-.buttons-bar button.audio-disabled:not(.no-audio-available),
-.buttons-bar button.video-disabled:not(.no-video-available),
-.buttons-bar button.screensharing-disabled:not(.no-screensharing-available),
-.buttons-bar button.lower-hand {
-	&:hover,
-	&:focus {
-		opacity: 1;
-	}
+/* Highlight the media buttons when enabled */
+.buttons-bar button.audio-enabled,
+.buttons-bar button.video-enabled,
+.buttons-bar button.screensharing-enabled {
+	opacity: 1;
 }
 
 .buttons-bar button.no-audio-available,
@@ -911,12 +919,6 @@ export default {
 		opacity: .7;
 		cursor: not-allowed;
 	}
-}
-
-.buttons-bar button.no-audio-available:active,
-.buttons-bar button.no-video-available:active,
-.buttons-bar button.no-screensharing-available:active {
-	background-color: transparent;
 }
 
 #muteWrapper {
@@ -960,16 +962,6 @@ export default {
 	}
 	&__button {
 		height: $clickable-area;
-	}
-}
-
-::v-deep button.action-item,
-::v-deep .action-item__menutoggle {
-	// Fix screensharing icon width
-	&:hover,
-	&:focus,
-	&:active {
-		background-color: transparent;
 	}
 }
 
