@@ -566,6 +566,7 @@ OC.L10N.register(
     "Other" : "Annet",
     "Do not disturb" : "Ikke forstyrr",
     "Away" : "Borte",
+    "Error while sharing file" : "Feil under deling av fil",
     "Default" : "Standard",
     "Access to microphone & camera is only possible with HTTPS" : "Tilgang til mikrofon og kamera er kun mulig via HTTPS",
     "Please move your setup to HTTPS" : "Flytt oppsettet ditt til HTTPS",
