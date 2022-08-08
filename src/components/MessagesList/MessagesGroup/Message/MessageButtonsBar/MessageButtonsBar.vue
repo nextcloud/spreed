@@ -156,7 +156,7 @@ import {
 	showError,
 	showSuccess,
 } from '@nextcloud/dialogs'
-import Forwarder from '../MessagePart/Forwarder.vue'
+import Forwarder from './Forwarder.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 
