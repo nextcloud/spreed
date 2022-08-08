@@ -29,7 +29,7 @@
 			<p class="simple-polls-editor__caption">
 				{{ t('spreed', 'Question') }}
 			</p>
-			<InputVue :value.sync="pollQuestion" :placeholder="t('spreed', 'Ask a question ')" v-on="$listeners" />
+			<TextField :value.sync="pollQuestion" :placeholder="t('spreed', 'Ask a question ')" v-on="$listeners" />
 
 			<!-- Poll options -->
 			<p class="simple-polls-editor__caption">
@@ -80,7 +80,7 @@ import CheckBoxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwi
 import Button from '@nextcloud/vue/dist/Components/Button'
 import PollOption from './PollOption.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
-import InputVue from './InputVue.vue'
+import TextField from '@nextcloud/vue/dist/Components/TextField'
 import pollService from '../../../services/pollService.js'
 
 export default {
@@ -92,7 +92,7 @@ export default {
 		Button,
 		PollOption,
 		Plus,
-		InputVue,
+		TextField,
 	},
 
 	props: {
