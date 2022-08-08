@@ -8,6 +8,9 @@ on:
       - 'lib/**'
       - 'templates/**'
       - 'tests/**'
+      - '.php-cs-fixer.dist.php'
+      - 'composer.json'
+      - 'composer.lock'
 
   push:
     branches:
