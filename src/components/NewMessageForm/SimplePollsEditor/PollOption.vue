@@ -21,8 +21,8 @@
   -->
 
 <template>
-	<div class="poll-option">
-		<InputVue v-bind="$attrs" v-on="$listeners" />
+	<form class="poll-option">
+		<TextField v-bind="$attrs" v-on="$listeners" />
 		<Button v-if="canDelete"
 			type="tertiary-no-background"
 			@click="deleteOption">
@@ -31,11 +31,11 @@
 				title=""
 				:size="20" />
 		</Button>
-	</div>
+	</form>
 </template>
 
 <script>
-import InputVue from './InputVue.vue'
+import TextField from '@nextcloud/vue/dist/Components/TextField'
 import Button from '@nextcloud/vue/dist/Components/Button'
 import Close from 'vue-material-design-icons/Close.vue'
 
@@ -43,7 +43,7 @@ export default {
 	name: 'PollOption',
 
 	components: {
-		InputVue,
+		TextField,
 		Button,
 		Close,
 	},

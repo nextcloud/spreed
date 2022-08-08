@@ -19,8 +19,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import Vue from 'vue'
-import { getPollData } from '../services/SimplePollsService.js'
+import { set } from 'vue'
+import pollService from '../services/pollService.js'
 
 const state = {
 	polls: {},
@@ -35,9 +35,9 @@ const getters = {
 const mutations = {
 	addPoll(state, { token, poll }) {
 		if (!state.polls[token]) {
-			Vue.set(state.polls, token, {})
+			set(state.polls, token, {})
 		}
-		Vue.set(state.polls[token], poll.id, poll)
+		set(state.polls[token], poll.id, poll)
 	},
 }
 
@@ -49,7 +49,19 @@ const actions = {
 	async getPollData(context, { token, pollId }) {
 		console.debug('Getting poll data')
 		try {
-			const response = await getPollData(token, pollId)
+			const response = await pollService.getPollData(token, pollId)
+			const poll = response.data.ocs.data
+			context.dispatch('addPoll', { token, poll })
+			console.debug('polldata', response)
+		} catch (error) {
+			console.debug(error)
+		}
+	},
+
+	async submitVote(context, { token, pollId, vote }) {
+		console.debug('Submitting vote')
+		try {
+			const response = await pollService.submitVote(token, pollId, vote)
 			const poll = response.data.ocs.data
 			context.dispatch('addPoll', { token, poll })
 			console.debug('polldata', response)

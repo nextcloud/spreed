@@ -38,62 +38,74 @@
 			</div>
 		</a>
 
-		<!-- voting dialog -->
+		<!-- voting and results dialog -->
 		<Modal v-if="vote !== undefined && showModal"
 			size="small"
 			@close="showModal = false">
 			<div class="poll__modal">
-				<!-- Title -->
-				<h2 class="poll__modal-title">
-					{{ pollName }}
-				</h2>
+				<!-- First screen, displayed while voting-->
+				<template v-if="modalPage === 'results'">
+					<!-- Title -->
+					<h2 class="poll__modal-title">
+						{{ pollName }}
+					</h2>
 
-				<!-- options -->
-				<div class="poll__modal-options">
-					<template v-if="checkboxRadioSwitchType === 'radio'">
-						<CheckboxRadioSwitch v-for="option, index in options"
-							:key="'radio' + index"
-							:checked.sync="vote"
-							class="poll__option"
-							:value="option"
-							:type="checkboxRadioSwitchType"
-							name="answerType">
-							{{ option }}
-						</CheckboxRadioSwitch>
-					</template>
-					<template v-else>
-						<CheckboxRadioSwitch v-for="option, index in options"
-							:key="'checkbox' + index"
-							:checked.sync="vote"
-							:value="option"
-							:type="checkboxRadioSwitchType"
-							name="answerType">
-							{{ option }}
-						</CheckboxRadioSwitch>
-					</template>
-				</div>
+					<!-- options -->
+					<div class="poll__modal-options">
+						<template v-if="checkboxRadioSwitchType === 'radio'">
+							<CheckboxRadioSwitch v-for="option, index in options"
+								:key="'radio' + index"
+								:checked.sync="vote"
+								class="poll__option"
+								:value="option"
+								:type="checkboxRadioSwitchType"
+								name="answerType">
+								{{ option }}
+							</CheckboxRadioSwitch>
+						</template>
+						<template v-else>
+							<CheckboxRadioSwitch v-for="option, index in options"
+								:key="'checkbox' + index"
+								:checked.sync="vote"
+								:value="option"
+								:type="checkboxRadioSwitchType"
+								name="answerType">
+								{{ option }}
+							</CheckboxRadioSwitch>
+						</template>
+					</div>
 
-				<div class="poll__modal-actions">
-					<ButtonVue type="tertiary" @click="dismissModal">
-						{{ t('spreed', 'Dismiss') }}
-					</ButtonVue>
-					<!-- create poll button-->
-					<ButtonVue type="primary" @click="submit">
-						{{ t('spreed', 'Submit') }}
-					</ButtonVue>
-				</div>
+					<div class="poll__modal-actions">
+						<ButtonVue type="tertiary" @click="dismissModal">
+							{{ t('spreed', 'Dismiss') }}
+						</ButtonVue>
+						<!-- create poll button-->
+						<ButtonVue type="primary" :disabled="!canSubmitVote" @click="submitVote">
+							{{ t('spreed', 'Submit') }}
+						</ButtonVue>
+					</div>
+				</template>
+
+				<!-- Results page -->
+				<template v-if="modalPage === 'results'">
+					<div>
+						results
+					</div>
+				</template>
 			</div>
 		</modal>
 	</div>
 </template>
 
 <script>
+
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import ButtonVue from '@nextcloud/vue/dist/Components/Button'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 
 export default {
+
 	name: 'Poll',
 
 	components: {
@@ -124,10 +136,12 @@ export default {
 		return {
 			vote: undefined,
 			showModal: false,
+			modalPage: 'voting',
 		}
 	},
 
 	computed: {
+
 		poll() {
 			return this.$store.getters.getPoll(this.token, this.id)
 		},
@@ -167,15 +181,22 @@ export default {
 		checkboxRadioSwitchType() {
 			return this.poll.maxVotes === 0 ? 'checkbox' : 'radio'
 		},
-	},
 
-	watch: {
-		pollLoaded() {
-			this.setComponentData()
+		canSubmitVote() {
+			return this.vote !== undefined && this.vote !== '' && this.vote !== []
 		},
 	},
 
+	watch: {
+
+		pollLoaded() {
+			this.setComponentData()
+		},
+
+	},
+
 	methods: {
+
 		getPollData() {
 			if (!this.pollLoaded) {
 				this.$store.dispatch('getPollData', {
@@ -199,9 +220,14 @@ export default {
 			typeof this.vote === 'string' ? this.vote = '' : this.vote = []
 		},
 
-		submit() {
-			console('submit')
+		submitVote() {
+			this.$store.dispatch('submitVote', {
+				token: this.token,
+				pollId: this.id,
+				vote: this.vote,
+			})
 		},
+
 	},
 }
 </script>
@@ -268,7 +294,6 @@ export default {
 }
 
 // Upstream
-
 ::v-deep .checkbox-radio-switch {
 	&__label {
 		align-items: unset;
@@ -281,6 +306,5 @@ export default {
 			align-self: flex-start;
 		}
 	}
-
 }
 </style>
