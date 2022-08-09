@@ -56,7 +56,7 @@
 								:key="'radio' + index"
 								:checked.sync="vote"
 								class="poll__option"
-								:value="option"
+								:value="index.toString()"
 								:type="checkboxRadioSwitchType"
 								name="answerType">
 								{{ option }}
@@ -66,7 +66,7 @@
 							<CheckboxRadioSwitch v-for="option, index in options"
 								:key="'checkbox' + index"
 								:checked.sync="vote"
-								:value="option"
+								:value="index.toString()"
 								:type="checkboxRadioSwitchType"
 								name="answerType">
 								{{ option }}
@@ -220,11 +220,17 @@ export default {
 		},
 
 		submitVote() {
+			let voteToSubmit = this.vote
+			// If its a radio, we add the selected index to the array
+			if (!Array.isArray(this.vote)) {
+				voteToSubmit = [this.vote]
+			}
 			this.$store.dispatch('submitVote', {
 				token: this.token,
 				pollId: this.id,
-				vote: this.vote,
+				vote: voteToSubmit.map(element => parseInt(element)),
 			})
+			this.showModal = false
 		},
 
 	},
