@@ -434,7 +434,7 @@ class RoomController extends AEnvironmentAwareController {
 			'avatarVersion' => $this->avatarService->getAvatarVersion($room),
 			'breakoutRoomMode' => BreakoutRoom::MODE_NOT_CONFIGURED,
 			'breakoutRoomStatus' => BreakoutRoom::STATUS_STOPPED,
-			'preHistory' => false,
+			'showHistory' => false,
 		];
 
 		$lastActivity = $room->getLastActivity();
@@ -511,7 +511,7 @@ class RoomController extends AEnvironmentAwareController {
 			'messageExpiration' => $room->getMessageExpiration(),
 			'breakoutRoomMode' => $room->getBreakoutRoomMode(),
 			'breakoutRoomStatus' => $room->getBreakoutRoomStatus(),
-			'preHistory' => $room->getPreHistory(),
+			'showHistory' => $room->getShowHistory(),
 		]);
 
 		if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
@@ -1782,8 +1782,9 @@ class RoomController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireModeratorParticipant
 	 */
-	public function setPreHistory(int $preHistory): DataResponse {
-		$this->roomService->setPreHistory($this->room, $preHistory);
+	public function setShowHistory(int $showHistory): DataResponse {
+		$this->roomService->setShowHistory($this->room, $showHistory);
+
 		return new DataResponse();
 	}
 }

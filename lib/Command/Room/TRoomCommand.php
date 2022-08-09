@@ -429,7 +429,7 @@ trait TRoomCommand {
 		$this->roomService->setMessageExpiration($room, $seconds);
 	}
 
-	protected function setPreHistory(Room $room, int $preHistory): void {
-		$this->roomService->setPreHistory($room, $preHistory);
+	protected function setShowHistory(Room $room, int $showHistory): void {
+		$this->roomService->setShowHistory($room, $showHistory);
 	}
 }

@@ -87,7 +87,7 @@ class Update extends Base {
 				InputOption::VALUE_REQUIRED,
 				'Seconds to expire a message after sent. If zero will disable the expire message duration.'
 			)->addOption(
-				'pre-history',
+				'show-history',
 				null,
 				InputOption::VALUE_REQUIRED,
 				'Hide/Unhide message history for new participants.'
@@ -104,7 +104,7 @@ class Update extends Base {
 		$password = $input->getOption('password');
 		$owner = $input->getOption('owner');
 		$messageExpiration = $input->getOption('message-expiration');
-		$preHistory = $input->getOption('preHistory');
+		$showHistory = $input->getOption('showHistory');
 
 		if (!in_array($public, [null, '0', '1'], true)) {
 			$output->writeln('<error>Invalid value for option "--public" given.</error>');
@@ -175,8 +175,8 @@ class Update extends Base {
 				$this->setMessageExpiration($room, (int) $messageExpiration);
 			}
 
-			if ($preHistory !== null) {
-				$this->setPreHistory($room, (int) $preHistory);
+			if ($showHistory !== null) {
+				$this->setShowHistory($room, (int) $showHistory);
 			}
 		} catch (InvalidArgumentException $e) {
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));

@@ -168,7 +168,7 @@ class Room {
 	private int $readOnly;
 	private int $listable;
 	private int $messageExpiration;
-	private int $preHistory;
+	private int $showHistory;
 	private int $lobbyState;
 	private int $sipEnabled;
 	private ?int $assignedSignalingServer;
@@ -206,7 +206,7 @@ class Room {
 								int $readOnly,
 								int $listable,
 								int $messageExpiration,
-								bool $preHistory,
+								bool $showHistory,
 								int $lobbyState,
 								int $sipEnabled,
 								?int $assignedSignalingServer,
@@ -240,7 +240,7 @@ class Room {
 		$this->readOnly = $readOnly;
 		$this->listable = $listable;
 		$this->messageExpiration = $messageExpiration;
-		$this->preHistory = $preHistory;
+		$this->showHistory = $showHistory;
 		$this->lobbyState = $lobbyState;
 		$this->sipEnabled = $sipEnabled;
 		$this->assignedSignalingServer = $assignedSignalingServer;
@@ -314,12 +314,12 @@ class Room {
 		$this->messageExpiration = $messageExpiration;
 	}
 
-	public function getPreHistory(): int {
-		return $this->preHistory;
+	public function getShowHistory(): int {
+		return $this->showHistory;
 	}
 
-	public function setPreHistory(int $preHistory): void {
-		$this->preHistory = $preHistory;
+	public function setShowHistory(int $showHistory): void {
+		$this->showHistory = $showHistory;
 	}
 
 	public function getLobbyState(bool $validateTime = true): int {

@@ -106,7 +106,7 @@ return [
 		['name' => 'Room#setSIPEnabled', 'url' => '/api/{apiVersion}/room/{token}/webinar/sip', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::setMessageExpiration() */
 		['name' => 'Room#setMessageExpiration', 'url' => '/api/{apiVersion}/room/{token}/message-expiration', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
-		/** @see \OCA\Talk\Controller\RoomController::setPreHistory() */
-		['name' => 'Room#setPreHistory', 'url' => '/api/{apiVersion}/room/{token}/pre-history', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::setShowHistory() */
+		['name' => 'Room#setShowHistory', 'url' => '/api/{apiVersion}/room/{token}/show-history', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 	],
 ];

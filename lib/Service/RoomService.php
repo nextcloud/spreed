@@ -815,12 +815,12 @@ class RoomService {
 		}
 	}
 
-	public function setPreHistory(Room $room, int $preHistory): void {
+	public function setShowHistory(Room $room, int $showHistory): void {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
-			->set('pre_history', $update->createNamedParameter($preHistory, IQueryBuilder::PARAM_INT));
+			->set('pre_history', $update->createNamedParameter($showHistory, IQueryBuilder::PARAM_INT));
 		$update->executeStatement();
 
-		$room->setPreHistory($preHistory);
+		$room->setShowHistory($showHistory);
 	}
 }

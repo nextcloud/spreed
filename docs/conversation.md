@@ -58,7 +58,7 @@
 | `readOnly`              | int     | v1    |         | Read-only state for the current user (only available with `read-only-rooms` capability)                                                                                                                                                                                                                                                                                                           |
 | `listable`              | int     | v3    |         | Listable scope for the room (only available with `listable-rooms` capability)                                                                                                                                                                                                                                                                                                                     |
 | `messageExpiration`     | int     | v4    |         | The message expiration time in seconds in this chat. Zero if disabled. (only available with `message-expiration` capability)                                                                                                                                                                                                                                                                      |
-| `preHistory`     | bool     | v4    |         | Hide/unhide message history for new participants                                                                                                                                                                                                                                                                                                                                                        |
+| `showHistory`     | bool     | v4    |         | Hide/unhide message history for new participants                                                                                                                                                                                                                                                                                                                                                        |
 | `count`                 | int     | v1    | v2      | **Removed:** Count the users on the [Get list of participants in a conversation](participant.md#get-list-of-participants-in-a-conversation) endpoint                                                                                                                                                                                                                                              |
 | `numGuests`             | int     | v1    | v2      | **Removed:** Count the guests on the [Get list of participants in a conversation](participant.md#get-list-of-participants-in-a-conversation) endpoin                                                                                                                                                                                                                                              |
 | `lastPing`              | int     | v1    |         | Timestamp of the user's session making the request                                                                                                                                                                                                                                                                                                                                                |
@@ -389,12 +389,12 @@ Get all (for moderators and in case of "free selection) or the assigned breakout
 
 * Required capability: `limit-show-history`
 * Method: `POST`
-* Endpoint: `/room/{token}/pre-history`
+* Endpoint: `/room/{token}/show-history`
 * Data:
 
 | field        | type | Description                                      |
 |--------------|------|--------------------------------------------------|
-| `preHistory` | bool | Hide/unhide message history for new participants |
+| `showHistory` | bool | Hide/unhide message history for new participants |
 
 * Response:
     - Status code:
