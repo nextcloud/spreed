@@ -43,7 +43,7 @@
 			@close="showModal = false">
 			<div class="poll__modal">
 				<!-- First screen, displayed while voting-->
-				<template v-if="modalPage === 'results'">
+				<template v-if="modalPage === 'voting'">
 					<!-- Title -->
 					<h2 class="poll__modal-title">
 						{{ pollName }}
