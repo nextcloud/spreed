@@ -457,9 +457,10 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('You deleted a reaction');
 			}
 		} elseif ($message === 'message_expiration_enabled') {
-			$weeks = $parameters['seconds'] > (86400 * 7) ? (int) round($parameters['seconds'] / (86400 * 7)) : 0;
-			$days = $parameters['seconds'] > 86400 ? (int) round($parameters['seconds'] / 86400) : 0;
-			$hours = $parameters['seconds']  ? (int) round($parameters['seconds'] / 3600) : 0;
+			$weeks = $parameters['seconds'] >= (86400 * 7) ? (int) round($parameters['seconds'] / (86400 * 7)) : 0;
+			$days = $parameters['seconds'] >= 86400 ? (int) round($parameters['seconds'] / 86400) : 0;
+			$hours = $parameters['seconds'] >= 3600 ? (int) round($parameters['seconds'] / 3600) : 0;
+			$minutes = (int) round($parameters['seconds'] / 60);
 
 			$parsedParameters['seconds'] = $parameters['seconds'];
 			if ($currentUserIsActor) {
@@ -467,16 +468,20 @@ class SystemMessage {
 					$parsedMessage = $this->l->n('You set the message expiration to %n week', 'You set the message expiration to %n weeks', $weeks);
 				} elseif ($days > 0) {
 					$parsedMessage = $this->l->n('You set the message expiration to %n day', 'You set the message expiration to %n days', $days);
-				} else {
+				} elseif ($hours > 0) {
 					$parsedMessage = $this->l->n('You set the message expiration to %n hour', 'You set the message expiration to %n hours', $hours);
+				} else {
+					$parsedMessage = $this->l->n('You set the message expiration to %n minute', 'You set the message expiration to %n minutes', $minutes);
 				}
 			} else {
 				if ($weeks > 0) {
 					$parsedMessage = $this->l->n('{actor} set the message expiration to %n week', '{actor} set the message expiration to %n weeks', $weeks);
 				} elseif ($days > 0) {
 					$parsedMessage = $this->l->n('{actor} set the message expiration to %n day', '{actor} set the message expiration to %n days', $days);
-				} else {
+				} elseif ($hours > 0) {
 					$parsedMessage = $this->l->n('{actor} set the message expiration to %n hour', '{actor} set the message expiration to %n hours', $hours);
+				} else {
+					$parsedMessage = $this->l->n('{actor} set the message expiration to %n minute', '{actor} set the message expiration to %n minutes', $minutes);
 				}
 			}
 		} elseif ($message === 'message_expiration_disabled') {

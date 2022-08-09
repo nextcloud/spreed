@@ -390,6 +390,18 @@ const setCallPermissions = async (token, permissions) => {
 		})
 }
 
+/**
+ * Set the message expiration
+ *
+ * @param {string} token conversation token
+ * @param {number} seconds the seconds for the message expiration, 0 to disable
+ */
+const setMessageExpiration = async (token, seconds) => {
+	return await axios.post(generateOcsUrl('apps/spreed/api/v4/room/{token}/message-expiration', { token }), {
+		seconds,
+	})
+}
+
 const validatePassword = async (password) => {
 	return await axios.post(generateOcsUrl('apps/password_policy/api/v1/validate'), {
 		password,
@@ -422,5 +434,6 @@ export {
 	clearConversationHistory,
 	setConversationPermissions,
 	setCallPermissions,
+	setMessageExpiration,
 	validatePassword,
 }
