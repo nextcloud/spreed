@@ -32,7 +32,7 @@
 				@change="toggleListableUsers">
 			<label for="listable_settings_registered_users_checkbox">{{ t('spreed', 'Open conversation to registered users') }}</label>
 		</div>
-		<div v-if="listable !== LISTABLE.NONE" class="indent">
+		<div v-if="listable !== LISTABLE.NONE" class="indent" aria-live="polite">
 			<div id="moderation_settings_listable_conversation_hint" class="app-settings-section__hint">
 				{{ t('spreed', 'This conversation will be shown in search results') }}
 			</div>

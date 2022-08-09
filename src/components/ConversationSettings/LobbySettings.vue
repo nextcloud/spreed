@@ -40,7 +40,7 @@
 				<label for="moderation_settings_enable_lobby_checkbox">{{ t('spreed', 'Enable lobby') }}</label>
 			</div>
 		</div>
-		<div class="app-settings-subsection">
+		<div class="app-settings-subsection" aria-live="polite">
 			<div v-if="hasLobbyEnabled" id="moderation_settings_lobby_timer_hint" class="app-settings-section__hint">
 				{{ t('spreed', 'After the time limit the lobby will be automatically disabled.') }}
 			</div>

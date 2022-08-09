@@ -38,7 +38,7 @@
 				<label for="link_share_settings_toggle_guests">{{ t('spreed', 'Allow guests') }}</label>
 			</div>
 		</div>
-		<div v-show="isSharedPublicly" class="app-settings-subsection">
+		<div v-show="isSharedPublicly" class="app-settings-subsection" aria-live="polite">
 			<div id="link_share_settings_password_hint" class="app-settings-section__hint">
 				{{ t('spreed', 'Set a password to restrict who can use the public link.') }}
 			</div>
