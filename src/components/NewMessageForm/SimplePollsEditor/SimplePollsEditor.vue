@@ -23,7 +23,7 @@
 <template>
 	<Modal size="small" v-on="$listeners">
 		<div class="simple-polls-editor">
-			<h2>Create new poll</h2>
+			<h2>{{ t('spreed', 'Create new poll') }}</h2>
 
 			<!-- Poll Question -->
 			<p class="simple-polls-editor__caption">
@@ -39,7 +39,7 @@
 				:key="index"
 				class="poll-option"
 				:value.sync="pollOptions[index]"
-				:placeholder="t('spreed', 'Answer') + ' ' + (index + 1)"
+				:placeholder="t('spreed', 'Answer {option}', {option: index + 1})"
 				:can-delete="pollOptions.length > 2"
 				@delete-option="deleteOption(index)" />
 
