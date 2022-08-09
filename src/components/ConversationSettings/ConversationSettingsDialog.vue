@@ -27,6 +27,7 @@
 		:container="container">
 		<!-- description -->
 		<AppSettingsSection v-if="showDescription"
+			id="description"
 			:title="t('spreed', 'Description')">
 			<Description :editable="canFullModerate"
 				:description="description"
@@ -38,12 +39,14 @@
 		</AppSettingsSection>
 
 		<!-- Notifications settings -->
-		<AppSettingsSection :title="t('spreed', 'Notifications')">
+		<AppSettingsSection id="notifications"
+			:title="t('spreed', 'Notifications')">
 			<NotificationsSettings :conversation="conversation" />
 		</AppSettingsSection>
 
 		<!-- Devices preview sceren -->
-		<AppSettingsSection :title="t('spreed', 'Device check')">
+		<AppSettingsSection id="device-checker"
+			:title="t('spreed', 'Device check')">
 			<CheckboxRadioSwitch :checked.sync="showDeviceChecker">
 				{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
 			</CheckboxRadioSwitch>
@@ -51,6 +54,7 @@
 
 		<!-- Guest access -->
 		<AppSettingsSection v-if="canFullModerate"
+			id="guests"
 			:title="t('spreed', 'Guests access')">
 			<LinkShareSettings ref="linkShareSettings" />
 		</AppSettingsSection>
@@ -60,6 +64,7 @@
 		move lock conversation in destructive actions and create a separate
 		section for listablesettings -->
 		<AppSettingsSection v-if="canFullModerate"
+			id="conversation-settings"
 			:title="t('spreed', 'Conversation settings')">
 			<ListableSettings :token="token" />
 			<LockingSettings :token="token" />
@@ -67,12 +72,14 @@
 
 		<!-- Conversation permissions -->
 		<AppSettingsSection v-if="canFullModerate"
+			id="permissions"
 			:title="t('spreed', 'Participants permissions')">
 			<ConversationPermissionsSettings :token="token" />
 		</AppSettingsSection>
 
 		<!-- Meeting settings -->
 		<AppSettingsSection v-if="canFullModerate"
+			id="meeting"
 			:title="t('spreed', 'Meeting settings')">
 			<LobbySettings :token="token" />
 			<SipSettings v-if="canUserEnableSIP" />
@@ -84,6 +91,7 @@
 
 		<!-- Destructive actions -->
 		<AppSettingsSection v-if="canLeaveConversation || canDeleteConversation"
+			id="dangerzone"
 			:title="t('spreed', 'Danger zone')">
 			<DangerZone :conversation="conversation"
 				:can-leave-conversation="canLeaveConversation"
