@@ -176,7 +176,7 @@ class Update extends Base {
 			}
 
 			if ($preHistory !== null) {
-				$this->setPreHistory($room, (bool) $preHistory);
+				$this->setPreHistory($room, (int) $preHistory);
 			}
 		} catch (InvalidArgumentException $e) {
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));

@@ -145,7 +145,7 @@ class Create extends Base {
 
 			$this->setRoomReadOnly($room, $readonly);
 			$this->setRoomListable($room, (int)$listable);
-			$this->setPreHistory($room, (bool)$preHistory);
+			$this->setPreHistory($room, (int)$preHistory);
 
 			if ($password !== null) {
 				$this->setRoomPassword($room, $password);

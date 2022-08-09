@@ -1782,7 +1782,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireModeratorParticipant
 	 */
-	public function setPreHistory(bool $preHistory): DataResponse {
+	public function setPreHistory(int $preHistory): DataResponse {
 		$this->roomService->setPreHistory($this->room, $preHistory);
 		return new DataResponse();
 	}
