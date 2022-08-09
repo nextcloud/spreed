@@ -95,6 +95,11 @@ class Create extends Base {
 				null,
 				InputOption::VALUE_REQUIRED,
 				'Seconds to expire a message after sent. If zero will disable the expire message duration.'
+			)->addOption(
+				'pre-history',
+				null,
+				InputOption::VALUE_NONE,
+				'Unhide message history for new participants.'
 			);
 	}
 
@@ -110,6 +115,7 @@ class Create extends Base {
 		$owner = $input->getOption('owner');
 		$moderators = $input->getOption('moderator');
 		$messageExpiration = $input->getOption('message-expiration');
+		$preHistory = $input->getOption('pre-history');
 
 		if (!in_array($listable, [
 			null,
@@ -139,6 +145,7 @@ class Create extends Base {
 
 			$this->setRoomReadOnly($room, $readonly);
 			$this->setRoomListable($room, (int)$listable);
+			$this->setPreHistory($room, (bool)$preHistory);
 
 			if ($password !== null) {
 				$this->setRoomPassword($room, $password);

@@ -428,4 +428,8 @@ trait TRoomCommand {
 	protected function setMessageExpiration(Room $room, int $seconds): void {
 		$this->roomService->setMessageExpiration($room, $seconds);
 	}
+
+	protected function setPreHistory(Room $room, bool $preHistory): void {
+		$this->roomService->setPreHistory($room, $preHistory);
+	}
 }
