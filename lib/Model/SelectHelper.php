@@ -53,7 +53,7 @@ class SelectHelper {
 			->addSelect($alias . 'object_id')
 			->addSelect($alias . 'listable')
 			->addSelect($alias . 'message_expiration')
-			->addSelect($alias . 'pre_history')
+			->addSelect($alias . 'show_history')
 			->addSelect($alias . 'remote_server')
 			->addSelect($alias . 'remote_token')
 			->addSelect($alias . 'breakout_room_mode')

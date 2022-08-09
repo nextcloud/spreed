@@ -165,7 +165,7 @@ class Manager {
 			(int) $row['read_only'],
 			(int) $row['listable'],
 			(int) $row['message_expiration'],
-			(int) $row['pre_history'],
+			(int) $row['show_history'],
 			(int) $row['lobby_state'],
 			(int) $row['sip_enabled'],
 			$assignedSignalingServer,

@@ -52,9 +52,9 @@ class Version15000Date20220809000040 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		$table = $schema->getTable('talk_rooms');
-		if (!$table->hasColumn('pre_history')) {
+		if (!$table->hasColumn('show_history')) {
 			// As per call the default for NEW conversations should be "Hidden".
-			$table->addColumn('pre_history', Types::SMALLINT, [
+			$table->addColumn('show_history', Types::SMALLINT, [
 				'notnull' => false
 			]);
 		}
@@ -79,11 +79,11 @@ class Version15000Date20220809000040 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		$table = $schema->getTable('talk_rooms');
-		if ($table->hasColumn('pre_history')) {
+		if ($table->hasColumn('show_history')) {
 			// For existing conversations we should fall back to "Visible".
 			$update = $this->connection->getQueryBuilder();
 			$update->update('talk_rooms')
-				->set('pre_history', $update->createNamedParameter(1, IQueryBuilder::PARAM_INT));
+				->set('show_history', $update->createNamedParameter(1, IQueryBuilder::PARAM_INT));
 			$update->executeStatement();
 		}
 	}
