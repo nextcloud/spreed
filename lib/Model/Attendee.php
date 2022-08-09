@@ -146,7 +146,7 @@ class Attendee extends Entity {
 	/** @var string */
 	protected $remoteId;
 
-	/** @var bool */
+	/** @var null|\DateTime */
 	protected $historySince;
 
 	public function __construct() {
