@@ -162,7 +162,7 @@ export default {
 	}
 
 	&__caption {
-		padding: 16px 0 4px 8px;
+		padding: 16px 0 4px 0;
 		font-weight: bold;
 		color: var(--color-primary-element);
 	}
