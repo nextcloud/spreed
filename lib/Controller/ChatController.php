@@ -467,10 +467,17 @@ class ChatController extends AEnvironmentAwareController {
 
 		$i = 0;
 		$messages = $commentIdToIndex = $parentIds = [];
+		$historySince = $attendee->getHistorySince();
 		foreach ($comments as $comment) {
 			$id = (int) $comment->getId();
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
+
+			if ($historySince) {
+				if ($message->getComment()->getCreationDateTime() < $historySince) {
+					break;
+				}
+			}
 
 			if (!$message->getVisibility()) {
 				$commentIdToIndex[$id] = null;
