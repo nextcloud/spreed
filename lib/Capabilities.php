@@ -115,6 +115,7 @@ class Capabilities implements IPublicCapability {
 				'breakout-rooms-v1',
 				'recording-v1',
 				'avatar',
+				'limit-chat-history',
 			],
 			'config' => [
 				'attachments' => [
