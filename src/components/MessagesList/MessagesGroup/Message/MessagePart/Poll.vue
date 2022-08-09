@@ -27,8 +27,7 @@
 			role="button"
 			@click="showModal = true">
 			<div class="poll__header">
-				<PollIcon :size="20"
-					poll />
+				<PollIcon :size="20" />
 				<p>
 					{{ pollName }}
 				</p>
