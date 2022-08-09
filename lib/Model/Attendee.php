@@ -60,6 +60,7 @@ use OCP\AppFramework\Db\Entity;
  * @method null|string getAccessToken()
  * @method void setRemoteId(string $remoteId)
  * @method string getRemoteId()
+ * @method bool getHistorySince()
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';
@@ -145,6 +146,9 @@ class Attendee extends Entity {
 	/** @var string */
 	protected $remoteId;
 
+	/** @var bool */
+	protected $historySince;
+
 	public function __construct() {
 		$this->addType('roomId', 'int');
 		$this->addType('actorType', 'string');
@@ -163,6 +167,7 @@ class Attendee extends Entity {
 		$this->addType('permissions', 'int');
 		$this->addType('accessToken', 'string');
 		$this->addType('remote_id', 'string');
+		$this->addType('historySince', 'datetime');
 	}
 
 	public function getDisplayName(): string {
@@ -192,6 +197,7 @@ class Attendee extends Entity {
 			'permissions' => $this->getPermissions(),
 			'access_token' => $this->getAccessToken(),
 			'remote_id' => $this->getRemoteId(),
+			'history_since' => $this->getHistorySince(),
 		];
 	}
 }

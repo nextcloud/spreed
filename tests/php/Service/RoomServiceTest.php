@@ -370,6 +370,7 @@ class RoomServiceTest extends TestCase {
 			Room::READ_WRITE,
 			Room::LISTABLE_NONE,
 			0,
+			false,
 			Webinary::LOBBY_NONE,
 			0,
 			null,

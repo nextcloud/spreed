@@ -814,4 +814,13 @@ class RoomService {
 			));
 		}
 	}
+
+	public function setPreHistory(Room $room, bool $preHistory): void {
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('pre_history', $update->createNamedParameter($preHistory, IQueryBuilder::PARAM_BOOL));
+		$update->executeStatement();
+
+		$room->setPreHistory($preHistory);
+	}
 }
