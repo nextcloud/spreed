@@ -23,7 +23,6 @@ import { set } from 'vue'
 import pollService from '../services/pollService.js'
 import { showError } from '@nextcloud/dialogs'
 
-
 const state = {
 	polls: {},
 }

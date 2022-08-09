@@ -141,8 +141,12 @@ const getters = {
 	messagesList: (state) => (token) => {
 		if (state.messages[token]) {
 			return Object.values(state.messages[token]).filter(message => {
-				// Filter out reaction messages
-				if (message.systemMessage === 'reaction' || message.systemMessage === 'reaction_deleted' || message.systemMessage === 'reaction_revoked') {
+				// Filter out some system messages
+				if (message.systemMessage === 'reaction'
+					|| message.systemMessage === 'reaction_deleted'
+					|| message.systemMessage === 'reaction_revoked'
+					|| message.systemMessage === 'poll_voted'
+				) {
 					return false
 				} else {
 					return true
