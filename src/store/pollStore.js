@@ -21,6 +21,8 @@
  */
 import { set } from 'vue'
 import pollService from '../services/pollService.js'
+import { showError } from '@nextcloud/dialogs'
+
 
 const state = {
 	polls: {},
@@ -67,6 +69,7 @@ const actions = {
 			console.debug('polldata', response)
 		} catch (error) {
 			console.debug(error)
+			showError(t('spreed', 'An error occurred while submitting your vote'))
 		}
 	},
 }
