@@ -575,6 +575,9 @@ class ChatController extends AEnvironmentAwareController {
 	 * @return array
 	 */
 	private function filterHistorySince(array $comments, Attendee $attendee): array {
+		if ($this->room->getShowHistory() === 1) {
+			return $comments;
+		}
 		$historySince = $attendee->getHistorySince();
 		if (!$historySince) {
 			return $comments;
