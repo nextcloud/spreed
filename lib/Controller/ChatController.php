@@ -464,20 +464,14 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		$this->preloadShares($comments);
+		$comments = $this->filterHistorySince($comments, $attendee);
 
 		$i = 0;
 		$messages = $commentIdToIndex = $parentIds = [];
-		$historySince = $attendee->getHistorySince();
 		foreach ($comments as $comment) {
 			$id = (int) $comment->getId();
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
-
-			if ($historySince) {
-				if ($message->getComment()->getCreationDateTime() < $historySince) {
-					break;
-				}
-			}
 
 			if (!$message->getVisibility()) {
 				$commentIdToIndex[$id] = null;
@@ -568,6 +562,23 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		return $response;
+	}
+
+	/**
+	 * If the attendee only can see the history after join date,
+	 * will remove all comments before join date.
+	 *
+	 * @param array IComment[] $comments
+	 * @param Attendee $attendee
+	 * @return array
+	 */
+	private function filterHistorySince(array $comments, Attendee $attendee): array {
+		$historySince = $attendee->getHistorySince();
+		if (!$historySince) {
+			return $comments;
+		}
+		$comments = array_filter($comments, fn ($comment) => $comment->getCreationDateTime() >= $historySince);
+		return $comments;
 	}
 
 	protected function loadSelfReactions(array $messages, array $commentIdToIndex): array {
