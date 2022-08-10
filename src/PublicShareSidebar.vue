@@ -302,6 +302,15 @@ export default {
 	margin-bottom: 10px;
 }
 
+#talk-sidebar .button-centered {
+	/*
+	 * When there is an icon the servers empty-content rule
+	 * .emptycontent [class*="icon-"] is matching button-vue--icon-and-text
+	 * setting the height to 64px, so we need to reset this.
+	 */
+	height: 44px;
+}
+
 #talk-sidebar #call-container {
 	position: relative;
 
