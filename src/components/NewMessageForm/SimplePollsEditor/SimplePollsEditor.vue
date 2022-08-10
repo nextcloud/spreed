@@ -54,10 +54,10 @@
 				{{ t('spreed', 'Settings') }}
 			</p>
 			<div class="simple-polls-editor__settings">
-				<CheckBoxRadioSwitch class="simple-polls-editor__switch" :checked.sync="isPrivate" type="switch">
+				<CheckBoxRadioSwitch class="simple-polls-editor__switch" :checked.sync="isPrivate" type="checkbox">
 					{{ t('spreed', 'Private poll') }}
 				</CheckBoxRadioSwitch>
-				<CheckBoxRadioSwitch class="simple-polls-editor__switch" :checked.sync="isMultipleAnswer" type="switch">
+				<CheckBoxRadioSwitch class="simple-polls-editor__switch" :checked.sync="isMultipleAnswer" type="checkbox">
 					{{ t('spreed', 'Multiple answers') }}
 				</CheckBoxRadioSwitch>
 				<div class="simple-polls-editor__actions">
