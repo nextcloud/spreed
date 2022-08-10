@@ -26,10 +26,15 @@
 			<div v-if="!conversation" class="emptycontent room-not-joined">
 				<div class="icon icon-talk" />
 				<h2>{{ t('spreed', 'Discuss this file') }}</h2>
-				<button class="primary" :disabled="joiningConversation" @click="joinConversation">
+				<ButtonVue type="primary"
+					class="button-centered"
+					:disabled="joiningConversation"
+					@click="joinConversation">
+					<template #icon>
+						<span v-if="joiningConversation" class="icon icon-loading-small" />
+					</template>
 					{{ t('spreed', 'Join conversation') }}
-					<span v-if="joiningConversation" class="icon icon-loading-small" />
-				</button>
+				</ButtonVue>
 			</div>
 			<template v-else>
 				<CallView v-if="isInCall"
@@ -45,6 +50,7 @@
 </template>
 
 <script>
+import ButtonVue from '@nextcloud/vue/dist/Components/Button'
 import PreventUnload from 'vue-prevent-unload'
 import { loadState } from '@nextcloud/initial-state'
 import CallView from './components/CallView/CallView.vue'
@@ -69,6 +75,7 @@ export default {
 	name: 'PublicShareSidebar',
 
 	components: {
+		ButtonVue,
 		CallButton,
 		CallView,
 		ChatView,
@@ -285,6 +292,7 @@ export default {
 	right: -5px;
 }
 
+#talk-sidebar .button-centered,
 #talk-sidebar .call-button {
 	/* Center button horizontally. */
 	margin-left: auto;
