@@ -27,15 +27,16 @@
 		<p v-if="message" class="emptycontent-additional">
 			{{ message }}
 		</p>
-		<button v-if="showLink"
-			class="primary"
+		<ButtonVue v-if="showLink"
+			type="primary"
 			@click.stop.prevent="copyLinkToConversation">
 			{{ t('spreed', 'Copy link') }}
-		</button>
+		</ButtonVue>
 	</div>
 </template>
 
 <script>
+import ButtonVue from '@nextcloud/vue/dist/Components/Button'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
@@ -43,6 +44,10 @@ import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 export default {
 
 	name: 'EmptyCallView',
+
+	components: {
+		ButtonVue,
+	},
 
 	props: {
 		isGrid: {
@@ -175,6 +180,8 @@ export default {
 	align-content: center;
 	justify-content: center;
 	text-align: center;
+	z-index: 1; // Otherwise the "Copy link" button is not clickable
+
 	.icon {
 		background-size: 64px;
 		height: 64px;
