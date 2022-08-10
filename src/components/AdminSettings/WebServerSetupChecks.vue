@@ -32,41 +32,46 @@
 		<ul class="web-server-setup-checks">
 			<li class="background-blur">
 				{{ t('spreed', 'Files required for background blur can be loaded') }}
-				<button v-if="backgroundBlurAvailable === false"
-					v-tooltip="backgroundBlurAvailableToolTip"
+				<ButtonVue v-tooltip="backgroundBlurAvailableToolTip"
+					type="tertiary"
+					class="vue-button-inline"
+					:class="{'success-button': backgroundBlurAvailable === true, 'error-button': backgroundBlurAvailable === false}"
 					:aria-label="backgroundBlurAvailableAriaLabel"
-					class="icon"
-					:class="backgroundBlurAvailableClasses"
-					@click="checkBackgroundBlur" />
-				<button v-else-if="backgroundBlurAvailable === true"
-					v-tooltip="backgroundBlurAvailableToolTip"
-					:aria-label="backgroundBlurAvailableAriaLabel"
-					class="icon"
-					:class="backgroundBlurAvailableClasses"
-					@click="checkBackgroundBlur" />
-				<span v-else
-					v-tooltip="backgroundBlurAvailableToolTip"
-					:aria-label="backgroundBlurAvailableAriaLabel"
-					class="icon"
-					:class="backgroundBlurAvailableClasses" />
+					@click="checkBackgroundBlur">
+					<template #icon>
+						<AlertCircle v-if="backgroundBlurAvailable === false" size="20" />
+						<Check v-else-if="backgroundBlurAvailable === true" size="20" />
+						<span v-else class="icon icon-loading-small" />
+					</template>
+				</ButtonVue>
 			</li>
 		</ul>
 	</div>
 </template>
 
 <script>
-import { generateFilePath } from '@nextcloud/router'
+import AlertCircle from 'vue-material-design-icons/AlertCircle'
+import ButtonVue from '@nextcloud/vue/dist/Components/Button'
+import Check from 'vue-material-design-icons/Check'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import { VIRTUAL_BACKGROUND_TYPE } from '../../utils/media/effects/virtual-background/constants.js'
 import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
 import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
+
+import { generateFilePath } from '@nextcloud/router'
 import { loadState } from '@nextcloud/initial-state'
+import { VIRTUAL_BACKGROUND_TYPE } from '../../utils/media/effects/virtual-background/constants.js'
 
 export default {
 	name: 'WebServerSetupChecks',
 
 	directives: {
 		tooltip: Tooltip,
+	},
+
+	components: {
+		AlertCircle,
+		ButtonVue,
+		Check,
 	},
 
 	data() {
@@ -79,14 +84,6 @@ export default {
 	computed: {
 		backgroundBlurAvailable() {
 			return this.backgroundBlurLoaded
-		},
-
-		backgroundBlurAvailableClasses() {
-			return {
-				'icon-checkmark': this.backgroundBlurAvailable === true,
-				'icon-error': this.backgroundBlurAvailable === false,
-				'icon-loading-small': this.backgroundBlurAvailable === undefined,
-			}
 		},
 
 		backgroundBlurAvailableAriaLabel() {
@@ -182,9 +179,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-button.icon {
-	background-color: transparent;
-	border: none;
-	width: 44px;
+.vue-button-inline {
+	display: inline-block !important;
+
+	&.success-button {
+		color: var(--color-success);
+	}
+
+	&.error-button {
+		color: var(--color-error);
+	}
 }
 </style>
