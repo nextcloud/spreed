@@ -31,18 +31,27 @@
 		<span class="contact-selection-bubble__username">
 			{{ displayName }}
 		</span>
-		<button class="icon-close contact-selection-bubble__remove"
-			@click="removeParticipantFromSelection(participant)" />
+		<ButtonVue type="tertiary-no-background"
+			:aria-label="removeLabel"
+			@click="removeParticipantFromSelection(participant)">
+			<template #icon>
+				<Close size="16" />
+			</template>
+		</ButtonVue>
 	</div>
 </template>
 
 <script>
+import ButtonVue from '@nextcloud/vue/dist/Components/Button'
+import Close from 'vue-material-design-icons/Close.vue'
 import AvatarWrapperSmall from '../../../../AvatarWrapper/AvatarWrapperSmall.vue'
 export default {
 	name: 'ContactSelectionBubble',
 
 	components: {
 		AvatarWrapperSmall,
+		ButtonVue,
+		Close,
 	},
 
 	props: {
@@ -57,6 +66,10 @@ export default {
 			// Used to be the group of characters before the first space in the name.
 			// But it causes weird scenarios in formal companies or when people have titles.
 			return this.participant.label
+		},
+
+		removeLabel() {
+			return t('spreed', 'Remove participant {name}', { name: this.displayName })
 		},
 	},
 
@@ -89,18 +102,6 @@ $bubble-height: 24px;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-	}
-	&__remove {
-		margin: 0 0 0 4px;
-		border: none;
-		border-radius: $bubble-height;
-		height: $bubble-height;
-		width: $bubble-height;
-		background-color: var(--color-primary-active);
-		&:active,
-		&:focus {
-			background-color: transparent !important;
-		}
 	}
 }
 
