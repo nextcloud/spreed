@@ -66,12 +66,14 @@
 			</CheckboxRadioSwitch>
 
 			<!-- Edit advanced permissions -->
-			<button v-show="showEditButton"
+			<ButtonVue v-show="showEditButton"
+				type="tertiary"
 				:aria-label="t('spreed', 'Edit permissions')"
-				class="nc-button nc-button__main"
 				@click="showPermissionsEditor = true">
-				<Pencil :size="20" />
-			</button>
+				<template #icon>
+					<Pencil :size="20" />
+				</template>
+			</ButtonVue>
 		</div>
 		<PermissionEditor v-if="showPermissionsEditor"
 			:conversation-name="conversationName"
@@ -84,6 +86,7 @@
 
 <script>
 import PermissionEditor from '../PermissionsEditor/PermissionsEditor.vue'
+import ButtonVue from '@nextcloud/vue/dist/Components/Button'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import { PARTICIPANT } from '../../constants.js'
@@ -96,6 +99,7 @@ export default {
 
 	components: {
 		PermissionEditor,
+		ButtonVue,
 		CheckboxRadioSwitch,
 		Pencil,
 	},
