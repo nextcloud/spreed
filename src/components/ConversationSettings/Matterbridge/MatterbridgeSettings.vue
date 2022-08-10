@@ -35,7 +35,7 @@
 			<div class="basic-settings">
 				<div v-show="!enabled"
 					class="add-part-wrapper">
-					<span class="icon icon-add" />
+					<Plus class="icon" size="20" />
 					<Multiselect ref="partMultiselect"
 						v-model="selectedType"
 						label="displayName"
@@ -64,10 +64,15 @@
 						{{ t('spreed', 'Enable bridge') }}
 						({{ processStateText }})
 					</label>
-					<button v-if="enabled"
+					<ButtonVue v-if="enabled"
+						type="tertiary"
 						v-tooltip.top="{ content: t('spreed', 'Show Matterbridge log') }"
-						class="icon icon-edit"
-						@click="showLogContent" />
+						:aria-label="t('spreed', 'Show Matterbridge log')"
+						@click="showLogContent">
+						<template #icon>
+							<Message size="20" />
+						</template>
+					</ButtonVue>
 					<Modal v-if="logModal"
 						:container="container"
 						@close="closeLogModal">
@@ -100,8 +105,11 @@ import {
 } from '../../../services/matterbridgeService.js'
 import { showSuccess } from '@nextcloud/dialogs'
 import { imagePath } from '@nextcloud/router'
+import ButtonVue from '@nextcloud/vue/dist/Components/Button'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import Message from 'vue-material-design-icons/Message'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
+import Plus from 'vue-material-design-icons/Plus'
 import BridgePart from './BridgePart.vue'
 
 import Vue from 'vue'
@@ -113,7 +121,10 @@ export default {
 	components: {
 		Multiselect,
 		BridgePart,
+		ButtonVue,
+		Message,
 		Modal,
+		Plus,
 	},
 
 	mixins: [
@@ -699,7 +710,8 @@ export default {
 			display: inline-block;
 			width: 40px;
 			height: 34px;
-			background-position: 14px center;
+			padding: 6px 10px 0;
+			vertical-align: middle;
 		}
 		.add-part-wrapper {
 			margin-top: 5px;
