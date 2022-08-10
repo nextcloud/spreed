@@ -178,13 +178,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-button {
-	height: 44px;
-	border: none;
-	display: block;
-	margin: 8px 0;
-}
-
 h4 {
 	font-weight: bold;
 }
