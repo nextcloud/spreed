@@ -104,7 +104,7 @@ class Update extends Base {
 		$password = $input->getOption('password');
 		$owner = $input->getOption('owner');
 		$messageExpiration = $input->getOption('message-expiration');
-		$showHistory = $input->getOption('showHistory');
+		$showHistory = $input->getOption('show-history');
 
 		if (!in_array($public, [null, '0', '1'], true)) {
 			$output->writeln('<error>Invalid value for option "--public" given.</error>');
