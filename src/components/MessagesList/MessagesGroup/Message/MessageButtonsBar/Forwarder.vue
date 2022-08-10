@@ -206,9 +206,6 @@ export default {
 		display: flex;
 		justify-content: space-between;
 		padding: 12px;
-		button {
-			height: 44px;
-		}
 	}
 }
 
