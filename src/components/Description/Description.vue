@@ -243,7 +243,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/variables';
-@import '../../assets/buttons';
 
 .description {
 	display: flex;
