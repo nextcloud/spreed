@@ -806,8 +806,8 @@ describe('Message.vue', () => {
 			expect(reactionButtons.length).toBe(3)
 
 			// Text of the buttons
-			expect(reactionButtons.wrappers[0].text()).toBe('❤️  1')
-			expect(reactionButtons.wrappers[1].text()).toBe('👍  7')
+			expect(reactionButtons.wrappers[0].text()).toBe('❤️ 1')
+			expect(reactionButtons.wrappers[1].text()).toBe('👍 7')
 		})
 
 		test('shows reaction buttons with the right emoji count but without emoji placeholder when no chat permission', () => {
@@ -838,8 +838,8 @@ describe('Message.vue', () => {
 			expect(reactionButtons.length).toBe(2)
 
 			// Text of the buttons
-			expect(reactionButtons.wrappers[0].text()).toBe('❤️  1')
-			expect(reactionButtons.wrappers[1].text()).toBe('👍  7')
+			expect(reactionButtons.wrappers[0].text()).toBe('❤️ 1')
+			expect(reactionButtons.wrappers[1].text()).toBe('👍 7')
 		})
 
 		test('no emoji picker is mounted when the bottom bar is not shown', () => {
@@ -863,7 +863,7 @@ describe('Message.vue', () => {
 			const addReactionToMessageAction = jest.fn()
 			const userHasReactedGetter = jest.fn().mockReturnValue(() => false)
 			const reactionsLoadedGetter = jest.fn().mockReturnValue(() => true)
-			testStoreConfig.modules.quoteReplyStore.actions.addReactionToMessage = addReactionToMessageAction
+			testStoreConfig.modules.messagesStore.actions.addReactionToMessage = addReactionToMessageAction
 			testStoreConfig.modules.messagesStore.getters.userHasReacted = userHasReactedGetter
 			testStoreConfig.modules.messagesStore.getters.reactionsLoaded = reactionsLoadedGetter
 
@@ -906,7 +906,7 @@ describe('Message.vue', () => {
 			const removeReactionFromMessageAction = jest.fn()
 			const userHasReactedGetter = jest.fn().mockReturnValue(() => true)
 			const reactionsLoadedGetter = jest.fn().mockReturnValue(() => true)
-			testStoreConfig.modules.quoteReplyStore.actions.removeReactionFromMessage = removeReactionFromMessageAction
+			testStoreConfig.modules.messagesStore.actions.removeReactionFromMessage = removeReactionFromMessageAction
 			testStoreConfig.modules.messagesStore.getters.userHasReacted = userHasReactedGetter
 			testStoreConfig.modules.messagesStore.getters.reactionsLoaded = reactionsLoadedGetter
 
@@ -923,7 +923,7 @@ describe('Message.vue', () => {
 			})
 
 			// Click reaction button upon having already reacted
-			await wrapper.find('.reaction-button').trigger('click')
+			await wrapper.find('.reaction-button').getComponent(ButtonVue).vm.$emit('click')
 
 			await wrapper.vm.$nextTick()
 			await wrapper.vm.$nextTick()
