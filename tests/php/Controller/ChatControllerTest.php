@@ -730,6 +730,14 @@ class ChatControllerTest extends TestCase {
 				$comment2 = $this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000008), 'testMessage2'),
 				$comment1 = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000004), 'testMessage1')
 			]);
+		$this->chatManager->expects($this->once())
+			->method('filterHistorySince')
+			->willReturn([
+				$comment4,
+				$comment3,
+				$comment2,
+				$comment1,
+			]);
 
 		$participant = $this->createMock(Participant::class);
 
@@ -797,6 +805,14 @@ class ChatControllerTest extends TestCase {
 				$comment3 = $this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
 				$comment2 = $this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000008), 'testMessage2'),
 				$comment1 = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000004), 'testMessage1')
+			]);
+		$this->chatManager->expects($this->once())
+			->method('filterHistorySince')
+			->willReturn([
+				$comment4,
+				$comment3,
+				$comment2,
+				$comment1,
 			]);
 
 		$i = 4;
@@ -866,6 +882,14 @@ class ChatControllerTest extends TestCase {
 				$comment3 = $this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
 				$comment2 = $this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000008), 'testMessage2'),
 				$comment1 = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000004), 'testMessage1')
+			]);
+		$this->chatManager->expects($this->once())
+			->method('filterHistorySince')
+			->willReturn([
+				$comment4,
+				$comment3,
+				$comment2,
+				$comment1,
 			]);
 
 		$i = 4;
@@ -939,6 +963,15 @@ class ChatControllerTest extends TestCase {
 				$comment3 = $this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
 				$comment4 = $this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage4'),
 			]);
+
+		$this->chatManager->expects($this->once())
+		->method('filterHistorySince')
+		->willReturn([
+			$comment1,
+			$comment2,
+			$comment3,
+			$comment4,
+		]);
 
 		$this->userManager->expects($this->once())
 			->method('get')

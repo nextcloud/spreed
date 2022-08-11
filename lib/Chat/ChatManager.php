@@ -780,44 +780,36 @@ class ChatManager {
 		$this->commentsManager->deleteCommentsExpiredAtObject('chat', '');
 	}
 
-	public function fileOfMessageExists(string $message): bool {
-		$parameters = $this->getParametersFromMessage($message);
-		try {
-			$this->shareProvider->getShareById($parameters['share']);
-		} catch (ShareNotFound $e) {
-			return false;
-		}
-		return true;
-	}
-
-	public function isSharedFile(string $message): bool {
-		$parameters = $this->getParametersFromMessage($message);
-		return !empty($parameters['share']);
-	}
-
-	protected function getParametersFromMessage(string $message): array {
-		$data = json_decode($message, true);
-		if (!\is_array($data) || !array_key_exists('parameters', $data) || !is_array($data['parameters'])) {
-			return [];
-		}
-		return $data['parameters'];
-	}
-
 	/**
-	 * When receive a list of comments, filter the comments,
-	 * removing all that have shares of file that no more exists
+	 * If the attendee only can see the history after join date,
+	 * will remove all comments before join date.
 	 *
-	 * @param IComment[] $comments
-	 * @return IComment[]
+	 * @param Room $room The room of comments
+	 * @param array IComment[] $comments
+	 * @param Attendee $attendee
+	 * @return array
 	 */
-	public function filterCommentsWithNonExistingFiles(array $comments): array {
-		return array_filter($comments, function (IComment $comment) {
-			if ($this->isSharedFile($comment->getMessage())) {
-				if (!$this->fileOfMessageExists($comment->getMessage())) {
-					return false;
-				}
+	public function filterHistorySince(Room $room, array $comments, Attendee $attendee): array {
+		// Filter nothing if the room setting is to show history to all
+		if ($room->getShowHistory() === 1) {
+			return $comments;
+		}
+		// Filter nothing if the user haven't the history since.
+		// This will occur for all user added before the manager limit the history to new participants
+		$historySince = $attendee->getHistorySince();
+		if (!$historySince) {
+			return $comments;
+		}
+		foreach ($comments as $key => $comment) {
+			// Ignore if the comment isn't of current room
+			if ($comment->getObjectId() != $room->getId()) {
+				continue;
 			}
-			return true;
-		});
+			if ($comment->getCreationDateTime() <= $historySince) {
+				unset($comments[$key]);
+				continue;
+			}
+		}
+		return $comments;
 	}
 }

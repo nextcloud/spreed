@@ -448,7 +448,7 @@ class ChatController extends AEnvironmentAwareController {
 			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit, (bool) $includeLastKnown);
 		}
 
-		$comments = $this->filterHistorySince($comments, $attendee);
+		$comments = $this->chatManager->filterHistorySince($this->room, $comments, $attendee);
 
 		if (empty($comments)) {
 			$response = new DataResponse([], Http::STATUS_NOT_MODIFIED);
@@ -564,26 +564,6 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		return $response;
-	}
-
-	/**
-	 * If the attendee only can see the history after join date,
-	 * will remove all comments before join date.
-	 *
-	 * @param array IComment[] $comments
-	 * @param Attendee $attendee
-	 * @return array
-	 */
-	private function filterHistorySince(array $comments, Attendee $attendee): array {
-		if ($this->room->getShowHistory() === 1) {
-			return $comments;
-		}
-		$historySince = $attendee->getHistorySince();
-		if (!$historySince) {
-			return $comments;
-		}
-		$comments = array_filter($comments, fn ($comment) => $comment->getCreationDateTime() >= $historySince);
-		return $comments;
 	}
 
 	protected function loadSelfReactions(array $messages, array $commentIdToIndex): array {
