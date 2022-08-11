@@ -168,6 +168,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../assets/variables';
+
 .turn-server {
 	h2 {
 		height: 44px;

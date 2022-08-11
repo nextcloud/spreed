@@ -151,6 +151,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../assets/variables';
+
 .stun-server {
 	h2 {
 		height: 44px;
