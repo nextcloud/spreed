@@ -48,7 +48,7 @@ class Vote extends Entity {
 	protected string $actorType = '';
 	protected string $actorId = '';
 	protected ?string $displayName = null;
-	protected int $optionId = 0;
+	protected ?int $optionId = null;
 
 	public function __construct() {
 		$this->addType('pollId', 'int');

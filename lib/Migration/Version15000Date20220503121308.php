@@ -132,7 +132,6 @@ class Version15000Date20220503121308 extends SimpleMigrationStep {
 			$table->addColumn('option_id', Types::INTEGER, [
 				'notnull' => true,
 				'length' => 6,
-				'default' => 1,
 			]);
 
 			$table->setPrimaryKey(['id']);
