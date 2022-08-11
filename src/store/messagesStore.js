@@ -976,7 +976,7 @@ const actions = {
 	 * @param {object} data.messageToBeForwarded the message object;
 	 */
 	async forwardMessage(context, { messageToBeForwarded }) {
-		const response = await postNewMessage(messageToBeForwarded)
+		const response = await postNewMessage(messageToBeForwarded, { silent: false })
 		return response
 	},
 
