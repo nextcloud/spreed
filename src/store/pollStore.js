@@ -22,6 +22,7 @@
 import { set } from 'vue'
 import pollService from '../services/pollService.js'
 import { showError } from '@nextcloud/dialogs'
+import debounce from 'debounce'
 
 const state = {
 	polls: {},
@@ -40,6 +41,17 @@ const mutations = {
 		}
 		set(state.polls[token], poll.id, poll)
 	},
+
+	// Add debounce function for getting the poll data
+	addDebounceGetPollDataFunction(state, { token, pollId, debounceGetPollDataFunction }) {
+		if (!state.polls?.pollDebounceFunctions) {
+			set(state.polls, 'pollDebounceFunctions', {})
+		}
+		if (!state.polls.pollDebounceFunctions?.[token]) {
+			set(state.polls.pollDebounceFunctions, [token], {})
+		}
+		set(state.polls.pollDebounceFunctions[token], pollId, debounceGetPollDataFunction)
+	},
 }
 
 const actions = {
@@ -48,7 +60,6 @@ const actions = {
 	},
 
 	async getPollData(context, { token, pollId }) {
-		console.debug('Getting poll data')
 		try {
 			const response = await pollService.getPollData(token, pollId)
 			const poll = response.data.ocs.data
@@ -57,6 +68,37 @@ const actions = {
 		} catch (error) {
 			console.debug(error)
 		}
+	},
+
+	/**
+	 * In order to limit the amount of requests, we cannot get the
+	 * poll data every time someone votes, so we create a debounce
+	 * function for each poll and store it in the pollStore
+	 *
+	 * @param { object } context The store context
+	 * @param { object } root0 The arguments passed to the action
+	 * @param { string } root0.token The token of the conversation
+	 * @param { number }root0.pollId The id of the poll
+	 */
+	debounceGetPollData(context, { token, pollId }) {
+		// Create debounce function for getting this particular poll
+		// if it does not exist yet
+		if (!context.state.polls?.pollDebounceFunctions?.[token]?.[pollId]) {
+			const debounceGetPollDataFunction = debounce(() => {
+				context.dispatch('getPollData', {
+					token,
+					pollId,
+				})
+			}, 5000)
+			// Add the debounce function to the state object
+			context.commit('addDebounceGetPollDataFunction', {
+				token,
+				pollId,
+				debounceGetPollDataFunction,
+			})
+		}
+		// Call the debounce function for getting the poll data
+		context.state.polls.pollDebounceFunctions[token][pollId]()
 	},
 
 	async submitVote(context, { token, pollId, vote }) {
