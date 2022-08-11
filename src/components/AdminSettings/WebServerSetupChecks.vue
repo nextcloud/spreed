@@ -39,8 +39,8 @@
 					:aria-label="backgroundBlurAvailableAriaLabel"
 					@click="checkBackgroundBlur">
 					<template #icon>
-						<AlertCircle v-if="backgroundBlurAvailable === false" size="20" />
-						<Check v-else-if="backgroundBlurAvailable === true" size="20" />
+						<AlertCircle v-if="backgroundBlurAvailable === false" :size="20" />
+						<Check v-else-if="backgroundBlurAvailable === true" :size="20" />
 						<span v-else class="icon icon-loading-small" />
 					</template>
 				</ButtonVue>
