@@ -69,7 +69,7 @@ function Peer(options) {
 					if (sender.track) {
 						// The stream is not known, but it is only used when the
 						// track is added, so it can be ignored here.
-						self.handleLocalTrackEnabledChanged(sender.track, null)
+						self.handleSentTrackEnabledChanged(sender.track, null)
 					}
 				})
 
@@ -121,7 +121,7 @@ function Peer(options) {
 				this.broadcaster = options.broadcaster
 			}
 		} else {
-			this.parent.localStreams.forEach(function(stream) {
+			this.parent.sentStreams.forEach(function(stream) {
 				stream.getTracks().forEach(function(track) {
 					if (track.kind !== 'video' || self.sendVideoIfAvailable) {
 						self.pc.addTrack(track, stream)
@@ -129,13 +129,13 @@ function Peer(options) {
 				})
 			})
 
-			this.handleLocalTrackReplacedBound = this.handleLocalTrackReplaced.bind(this)
+			this.handleSentTrackReplacedBound = this.handleSentTrackReplaced.bind(this)
 			// TODO What would happen if the track is replaced while the peer is
 			// still negotiating the offer and answer?
-			this.parent.on('localTrackReplaced', this.handleLocalTrackReplacedBound)
+			this.parent.on('sentTrackReplaced', this.handleSentTrackReplacedBound)
 
-			this.handleLocalTrackEnabledChangedBound = this.handleLocalTrackEnabledChanged.bind(this)
-			this.parent.on('localTrackEnabledChanged', this.handleLocalTrackEnabledChangedBound)
+			this.handleSentTrackEnabledChangedBound = this.handleSentTrackEnabledChanged.bind(this)
+			this.parent.on('sentTrackEnabledChanged', this.handleSentTrackEnabledChangedBound)
 		}
 	}
 
@@ -616,13 +616,13 @@ Peer.prototype.end = function() {
 	}
 	this.pc.close()
 	this.handleStreamRemoved()
-	this.parent.off('localTrackReplaced', this.handleLocalTrackReplacedBound)
-	this.parent.off('localTrackEnabledChanged', this.handleLocalTrackEnabledChangedBound)
+	this.parent.off('sentTrackReplaced', this.handleSentTrackReplacedBound)
+	this.parent.off('sentTrackEnabledChanged', this.handleSentTrackEnabledChangedBound)
 
 	this.parent.emit('peerEnded', this)
 }
 
-Peer.prototype.handleLocalTrackReplaced = function(newTrack, oldTrack, stream) {
+Peer.prototype.handleSentTrackReplaced = function(newTrack, oldTrack, stream) {
 	this._pendingReplaceTracksQueue.push({ newTrack, oldTrack, stream })
 
 	this._processPendingReplaceTracks()
@@ -805,14 +805,14 @@ Peer.prototype._replaceTrack = async function(newTrack, oldTrack, stream) {
 	return Promise.allSettled(replaceTrackPromises)
 }
 
-Peer.prototype.handleLocalTrackEnabledChanged = function(track, stream) {
+Peer.prototype.handleSentTrackEnabledChanged = function(track, stream) {
 	const sender = this.pc.getSenders().find(sender => sender.track === track)
 	const stoppedSender = this.pc.getSenders().find(sender => sender.trackDisabled === track)
 
 	if (track.enabled && stoppedSender) {
-		this.handleLocalTrackReplacedBound(track, track, stream)
+		this.handleSentTrackReplacedBound(track, track, stream)
 	} else if (!track.enabled && sender) {
-		this.handleLocalTrackReplacedBound(track, track, stream)
+		this.handleSentTrackReplacedBound(track, track, stream)
 	}
 }
 
