@@ -421,6 +421,7 @@ const actions = {
 		if ((lastMessage.actorType !== 'bots'
 				|| lastMessage.actorId === 'changelog')
 			&& lastMessage.systemMessage !== 'reaction'
+			&& lastMessage.systemMessage !== 'poll_voted'
 			&& lastMessage.systemMessage !== 'reaction_deleted'
 			&& lastMessage.systemMessage !== 'reaction_revoked'
 			&& lastMessage.systemMessage !== 'message_deleted'
