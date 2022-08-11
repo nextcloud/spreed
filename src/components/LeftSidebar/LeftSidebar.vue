@@ -37,7 +37,7 @@
 				<ul ref="scroller"
 					class="scroller"
 					@scroll="debounceHandleScroll">
-					<AppNavigationCaption v-if="isSearching"
+					<AppNavigationCaption :class="{'hidden-visually': !isSearching}"
 						:title="t('spreed', 'Conversations')" />
 					<li role="presentation">
 						<ConversationsList ref="conversationsList"
