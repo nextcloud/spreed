@@ -96,7 +96,7 @@
 						:placeholder-text="placeholderText"
 						:aria-label="placeholderText"
 						@update:contentEditable="contentEditableToParsed"
-						@submit="handleSubmit"
+						@submit="handleSubmit({ silent: false })"
 						@files-pasted="handlePastedFiles" />
 				</div>
 
