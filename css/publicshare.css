@@ -67,21 +67,3 @@
 	 * from the top padding of the second element). */
 	padding-bottom: 8px;
 }
-
-
-
-#talk-sidebar-trigger {
-	width: 44px;
-	height: 44px;
-
-	background-color: transparent;
-	border-color: transparent;
-
-	opacity: 0.6;
-}
-
-#talk-sidebar-trigger:hover,
-#talk-sidebar-trigger:focus,
-#talk-sidebar-trigger:active {
-	opacity: 1;
-}
