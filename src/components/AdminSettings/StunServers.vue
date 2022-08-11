@@ -154,13 +154,6 @@ export default {
 		display: flex;
 		align-items: center;
 	}
-
-	&__add-icon {
-		display: inline-block;
-		width: 44px;
-		height: 44px;
-		vertical-align: middle;
-	}
 }
 
 </style>
