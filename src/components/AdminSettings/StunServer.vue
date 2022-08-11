@@ -44,7 +44,7 @@
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
-				<Delete />
+				<Delete :size="20" />
 			</template>
 		</Button>
 	</div>
@@ -52,16 +52,11 @@
 
 <script>
 import Button from '@nextcloud/vue/dist/Components/Button'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import AlertCircle from 'vue-material-design-icons/AlertCircle'
 import Delete from 'vue-material-design-icons/Delete'
 
 export default {
 	name: 'StunServer',
-
-	directives: {
-		tooltip: Tooltip,
-	},
 
 	components: {
 		Button,

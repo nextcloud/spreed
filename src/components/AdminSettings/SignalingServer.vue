@@ -38,24 +38,30 @@
 			@change="updateVerify">
 		<label :for="'verify' + index">{{ t('spreed', 'Validate SSL certificate') }}</label>
 
-		<a v-show="!loading"
-			v-tooltip.auto="t('spreed', 'Delete this server')"
-			class="icon icon-delete"
-			@click="removeServer" />
+		<Button v-show="!loading"
+			type="tertiary-no-background"
+			:aria-label="t('spreed', 'Delete this server')"
+			@click="removeServer">
+			<template #icon>
+				<Delete :size="20" />
+			</template>
+		</Button>
 
 		<span v-if="server">{{ connectionState }}</span>
 	</div>
 </template>
 
 <script>
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import Button from '@nextcloud/vue/dist/Components/Button'
+import Delete from 'vue-material-design-icons/Delete'
 import { getWelcomeMessage } from '../../services/signalingService.js'
 
 export default {
 	name: 'SignalingServer',
 
-	directives: {
-		tooltip: Tooltip,
+	components: {
+		Button,
+		Delete,
 	},
 
 	props: {

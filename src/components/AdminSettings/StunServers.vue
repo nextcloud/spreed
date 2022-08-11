@@ -31,7 +31,7 @@
 				:aria-label="t('spreed', 'Add a new STUN server')"
 				@click="newServer">
 				<template #icon>
-					<Plus />
+					<Plus :size="20" />
 				</template>
 			</Button>
 		</h2>
@@ -57,7 +57,6 @@
 <script>
 import StunServer from '../../components/AdminSettings/StunServer.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Plus from 'vue-material-design-icons/Plus'
 import debounce from 'debounce'
 import { loadState } from '@nextcloud/initial-state'
@@ -65,10 +64,6 @@ import { showSuccess } from '@nextcloud/dialogs'
 
 export default {
 	name: 'StunServers',
-
-	directives: {
-		tooltip: Tooltip,
-	},
 
 	components: {
 		Button,
@@ -158,13 +153,6 @@ export default {
 		height: 44px;
 		display: flex;
 		align-items: center;
-	}
-
-	&__add-icon {
-		display: inline-block;
-		width: 44px;
-		height: 44px;
-		vertical-align: middle;
 	}
 }
 
