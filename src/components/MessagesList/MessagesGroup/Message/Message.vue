@@ -116,14 +116,13 @@ the main body of the message as well as a quote.
 					:key="reaction"
 					:delay="200"
 					trigger="hover">
-					<button v-if="simpleReactions[reaction]!== 0"
+					<ButtonVue v-if="simpleReactions[reaction]!== 0"
 						slot="trigger"
 						class="reaction-button"
 						:class="{'reaction-button__has-reacted': userHasReacted(reaction)}"
 						@click="handleReactionClick(reaction)">
-						<span class="reaction-button__emoji">{{ reaction }}</span>
-						<span> {{ simpleReactions[reaction] }}</span>
-					</button>
+						{{ reaction }} {{ simpleReactions[reaction] }}
+					</ButtonVue>
 					<div v-if="detailedReactions" class="reaction-details">
 						<span>{{ getReactionSummary(reaction) }}</span>
 					</div>
@@ -134,14 +133,18 @@ the main body of the message as well as a quote.
 					:per-line="5"
 					:container="`#message_${id}`"
 					@select="handleReactionClick">
-					<button class="reaction-button">
-						<EmoticonOutline :size="15" />
-					</button>
+					<ButtonVue class="reaction-button">
+						<template #icon>
+							<EmoticonOutline :size="15" />
+						</template>
+					</ButtonVue>
 				</EmojiPicker>
-				<button v-else-if="canReact"
+				<ButtonVue v-else-if="canReact"
 					class="reaction-button">
-					<EmoticonOutline :size="15" />
-				</button>
+					<template #icon>
+						<EmoticonOutline :size="15" />
+					</template>
+				</ButtonVue>
 			</div>
 		</div>
 
@@ -922,21 +925,21 @@ export default {
 .reaction-button {
 	// Clear server rules
 	min-height: 0 !important;
-	padding: 0 8px !important;
-	font-weight: normal !important;
+	::v-deep .button-vue__text {
+		font-weight: normal !important;
+	}
 
 	margin: 2px;
 	height: 26px;
-	background-color: var(--color-main-background);
+	background-color: var(--color-main-background) !important;
+	margin-right: 8px !important;
 
 	&__emoji {
 		margin: 0 4px 0 0;
 	}
 
-	&__has-reacted,
-	&:hover {
-		border-color: var(--color-primary-element);
-		background-color: var(--color-primary-element-lighter);
+	&__has-reacted {
+		background-color: var(--color-primary-element-lighter) !important;
 	}
 }
 
