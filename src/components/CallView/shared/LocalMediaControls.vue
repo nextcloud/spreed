@@ -23,11 +23,11 @@
 		<div class="buttons-bar">
 			<div class="network-connection-state">
 				<Popover v-if="qualityWarningTooltip"
-					:boundaries-element="boundaryElement"
+					:boundary="boundaryElement"
 					:aria-label="qualityWarningAriaLabel"
 					trigger="hover"
 					:auto-hide="false"
-					:open="showQualityWarningTooltip">
+					:shown="showQualityWarningTooltip">
 					<template #trigger>
 						<Button id="quality_warning_button"
 							type="tertiary-no-background"
