@@ -749,6 +749,7 @@ OC.L10N.register(
     "Access to microphone was denied" : "Нема пристап до микрофонот",
     "Error while accessing microphone" : "Грешка при пристап до микрофон",
     "Access to camera is only possible with HTTPS" : "Пристап до камерата е возможен само преку безбедноска врска HTTPS",
+    "Media" : "Медија",
     "Files" : "Датотеки",
     "Locations" : "Локации",
     "Audio" : "Аудио",
