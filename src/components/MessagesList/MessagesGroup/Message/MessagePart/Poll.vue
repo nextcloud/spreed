@@ -267,6 +267,8 @@ export default {
 	}
 	&__footer {
 		color: var(--color-text-lighter);
+		white-space: normal;
+		margin-top: 8px;
 	}
 
 	&__modal {
