@@ -7,6 +7,7 @@ const mockconsole = require('mockconsole')
 // Only mediaDevicesManager is used, but it can not be assigned here due to not
 // being initialized yet.
 const webrtcIndex = require('../index.js')
+const BlackVideoEnforcer = require('../../media/pipeline/BlackVideoEnforcer.js').default
 const MediaDevicesSource = require('../../media/pipeline/MediaDevicesSource.js').default
 const SpeakingMonitor = require('../../media/pipeline/SpeakingMonitor.js').default
 const TrackConstrainer = require('../../media/pipeline/TrackConstrainer.js').default
@@ -39,6 +40,7 @@ function LocalMedia(opts) {
 	this._localMediaActive = false
 
 	this.localStreams = []
+	this.sentStreams = []
 	this.localScreens = []
 
 	if (!webrtcIndex.mediaDevicesManager.isSupported()) {
@@ -56,6 +58,8 @@ function LocalMedia(opts) {
 	this._virtualBackground.on('loadFailed', () => {
 		this.emit('virtualBackgroundLoadFailed')
 	})
+
+	this._blackVideoEnforcer = new BlackVideoEnforcer()
 
 	this._speakingMonitor = new SpeakingMonitor()
 	this._speakingMonitor.on('speaking', () => {
@@ -78,6 +82,10 @@ function LocalMedia(opts) {
 	this._trackToStream.addInputTrackSlot('audio')
 	this._trackToStream.addInputTrackSlot('video')
 
+	this._trackToSentStream = new TrackToStream()
+	this._trackToSentStream.addInputTrackSlot('audio')
+	this._trackToSentStream.addInputTrackSlot('video')
+
 	this._handleStreamSetBound = this._handleStreamSet.bind(this)
 	this._handleTrackReplacedBound = this._handleTrackReplaced.bind(this)
 	this._handleTrackEnabledBound = this._handleTrackEnabled.bind(this)
@@ -87,12 +95,16 @@ function LocalMedia(opts) {
 
 	this._audioTrackEnabler.connectTrackSink('default', this._speakingMonitor)
 	this._audioTrackEnabler.connectTrackSink('default', this._trackToStream, 'audio')
+	this._audioTrackEnabler.connectTrackSink('default', this._trackToSentStream, 'audio')
 
 	this._videoTrackEnabler.connectTrackSink('default', this._videoTrackConstrainer)
 
 	this._videoTrackConstrainer.connectTrackSink('default', this._virtualBackground)
 
 	this._virtualBackground.connectTrackSink('default', this._trackToStream, 'video')
+	this._virtualBackground.connectTrackSink('default', this._blackVideoEnforcer, 'default')
+
+	this._blackVideoEnforcer.connectTrackSink('default', this._trackToSentStream, 'video')
 }
 
 util.inherits(LocalMedia, WildEmitter)
@@ -166,12 +178,17 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 
 	this._mediaDevicesSource.start(retryNoVideoCallback).then(() => {
 		self.localStreams.push(self._trackToStream.getStream())
+		self.sentStreams.push(self._trackToSentStream.getStream())
 
 		self.emit('localStream', self._trackToStream.getStream())
 
 		self._trackToStream.on('streamSet', self._handleStreamSetBound)
 		self._trackToStream.on('trackReplaced', self._handleTrackReplacedBound)
 		self._trackToStream.on('trackEnabled', self._handleTrackEnabledBound)
+
+		self._trackToSentStream.on('streamSet', self._handleStreamSetBound)
+		self._trackToSentStream.on('trackReplaced', self._handleTrackReplacedBound)
+		self._trackToSentStream.on('trackEnabled', self._handleTrackEnabledBound)
 
 		self._localMediaActive = true
 
@@ -190,6 +207,10 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		self._trackToStream.on('trackReplaced', self._handleTrackReplacedBound)
 		self._trackToStream.on('trackEnabled', self._handleTrackEnabledBound)
 
+		self._trackToSentStream.on('streamSet', self._handleStreamSetBound)
+		self._trackToSentStream.on('trackReplaced', self._handleTrackReplacedBound)
+		self._trackToSentStream.on('trackEnabled', self._handleTrackEnabledBound)
+
 		self._localMediaActive = true
 
 		if (cb) {
@@ -204,7 +225,7 @@ LocalMedia.prototype._handleStreamSet = function(trackToStream, newStream, oldSt
 	}
 
 	if (newStream) {
-		this.localStreams.push(newStream)
+		trackToStream === this._trackToStream ? this.localStreams.push(newStream) : this.sentStreams.push(newStream)
 	}
 
 	// "streamSet" is always emitted along with "trackReplaced", so the
@@ -212,16 +233,24 @@ LocalMedia.prototype._handleStreamSet = function(trackToStream, newStream, oldSt
 }
 
 LocalMedia.prototype._handleTrackReplaced = function(trackToStream, newTrack, oldTrack) {
-	// "localStreamChanged" is expected to be emitted also when the tracks of
-	// the stream change, even if the stream itself is the same.
-	this.emit('localStreamChanged', trackToStream.getStream())
-	this.emit('localTrackReplaced', newTrack, oldTrack, trackToStream.getStream())
+	if (trackToStream === this._trackToStream) {
+		// "localStreamChanged" is expected to be emitted also when the tracks
+		// of the stream change, even if the stream itself is the same.
+		this.emit('localStreamChanged', trackToStream.getStream())
+		this.emit('localTrackReplaced', newTrack, oldTrack, trackToStream.getStream())
+	} else {
+		this.emit('sentTrackReplaced', newTrack, oldTrack, trackToStream.getStream())
+	}
 }
 
 LocalMedia.prototype._handleTrackEnabled = function(trackToStream, track) {
 	// MediaStreamTrack does not emit an event when the enabled property
 	// changes, so it needs to be explicitly notified.
-	this.emit('localTrackEnabledChanged', track, trackToStream.getStream())
+	if (trackToStream === this._trackToStream) {
+		this.emit('localTrackEnabledChanged', track, trackToStream.getStream())
+	} else {
+		this.emit('sentTrackEnabledChanged', track, trackToStream.getStream())
+	}
 }
 
 LocalMedia.prototype.stop = function() {
@@ -231,6 +260,10 @@ LocalMedia.prototype.stop = function() {
 	this._trackToStream.off('trackReplaced', this._handleTrackReplacedBound)
 	this._trackToStream.off('trackEnabled', this._handleTrackEnabledBound)
 
+	this._trackToSentStream.off('streamSet', this._handleStreamSetBound)
+	this._trackToSentStream.off('trackReplaced', this._handleTrackReplacedBound)
+	this._trackToSentStream.off('trackEnabled', this._handleTrackEnabledBound)
+
 	this.stopStream()
 	this.stopScreenShare()
 
@@ -239,11 +272,15 @@ LocalMedia.prototype.stop = function() {
 
 LocalMedia.prototype.stopStream = function() {
 	const stream = this._trackToStream.getStream()
+	const sentStream = this._trackToSentStream.getStream()
 
 	this._mediaDevicesSource.stop()
 
 	if (stream) {
 		this._removeStream(stream)
+	}
+	if (sentStream) {
+		this._removeStream(sentStream)
 	}
 }
 
@@ -431,12 +468,22 @@ LocalMedia.prototype._removeStream = function(stream) {
 	if (idx > -1) {
 		this.localStreams.splice(idx, 1)
 		this.emit('localStreamStopped', stream)
-	} else {
-		idx = this.localScreens.indexOf(stream)
-		if (idx > -1) {
-			this.localScreens.splice(idx, 1)
-			this.emit('localScreenStopped', stream)
-		}
+
+		return
+	}
+
+	idx = this.sentStreams.indexOf(stream)
+	if (idx > -1) {
+		this.sentStreams.splice(idx, 1)
+		this.emit('sentStreamStopped', stream)
+
+		return
+	}
+
+	idx = this.localScreens.indexOf(stream)
+	if (idx > -1) {
+		this.localScreens.splice(idx, 1)
+		this.emit('localScreenStopped', stream)
 	}
 }
 
