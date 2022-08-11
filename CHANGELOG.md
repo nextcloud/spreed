@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.0.4 – 2022-08-11
+### Added
+- Extend search result attributes for better handling in mobile clients
+  [#7588](https://github.com/nextcloud/spreed/pull/7588)
+  [#7587](https://github.com/nextcloud/spreed/pull/7587)
+
+### Fixed
+- Location shares not visible in chat anymore (only in the sidebar tab)
+  [#7550](https://github.com/nextcloud/spreed/pull/7550)
+- Reduce sent information with disabled videos
+  [#7709](https://github.com/nextcloud/spreed/pull/7709)
+- Multiple accessibility fixes
+  [#7599](https://github.com/nextcloud/spreed/pull/7599)
+  [#7654](https://github.com/nextcloud/spreed/pull/7654)
+  [#7553](https://github.com/nextcloud/spreed/pull/7553)
+  [#7570](https://github.com/nextcloud/spreed/pull/7570)
+
+## 13.0.8 – 2022-08-11
+### Added
+- Extend search result attributes for better handling in mobile clients
+  [#7590](https://github.com/nextcloud/spreed/pull/7590)
+  [#7589](https://github.com/nextcloud/spreed/pull/7589)
+
+### Fixed
+- Reduce sent information with disabled videos
+  [#7710](https://github.com/nextcloud/spreed/pull/7710)
+
 ## 14.0.3 – 2022-07-08
 ### Added
 - Add brute force protection for conversation tokens and passwords
