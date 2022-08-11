@@ -53,16 +53,11 @@
 
 <script>
 import Button from '@nextcloud/vue/dist/Components/Button'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Delete from 'vue-material-design-icons/Delete'
 import { getWelcomeMessage } from '../../services/signalingService.js'
 
 export default {
 	name: 'SignalingServer',
-
-	directives: {
-		tooltip: Tooltip,
-	},
 
 	components: {
 		Button,

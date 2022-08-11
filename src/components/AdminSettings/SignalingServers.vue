@@ -87,7 +87,6 @@
 <script>
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Plus from 'vue-material-design-icons/Plus'
 import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
@@ -96,10 +95,6 @@ import { SIGNALING } from '../../constants.js'
 
 export default {
 	name: 'SignalingServers',
-
-	directives: {
-		tooltip: Tooltip,
-	},
 
 	components: {
 		Button,

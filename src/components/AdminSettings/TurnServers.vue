@@ -61,7 +61,6 @@
 
 <script>
 import Button from '@nextcloud/vue/dist/Components/Button'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import TurnServer from '../../components/AdminSettings/TurnServer.vue'
 import { loadState } from '@nextcloud/initial-state'
 import Plus from 'vue-material-design-icons/Plus'
@@ -70,10 +69,6 @@ import debounce from 'debounce'
 
 export default {
 	name: 'TurnServers',
-
-	directives: {
-		tooltip: Tooltip,
-	},
 
 	components: {
 		Button,

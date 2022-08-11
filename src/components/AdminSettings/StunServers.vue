@@ -57,7 +57,6 @@
 <script>
 import StunServer from '../../components/AdminSettings/StunServer.vue'
 import Button from '@nextcloud/vue/dist/Components/Button'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import Plus from 'vue-material-design-icons/Plus'
 import debounce from 'debounce'
 import { loadState } from '@nextcloud/initial-state'
@@ -65,10 +64,6 @@ import { showSuccess } from '@nextcloud/dialogs'
 
 export default {
 	name: 'StunServers',
-
-	directives: {
-		tooltip: Tooltip,
-	},
 
 	components: {
 		Button,
