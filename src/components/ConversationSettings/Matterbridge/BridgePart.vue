@@ -185,10 +185,6 @@ export default {
 	padding-top: 10px;
 }
 
-button {
-	display: inline-block;
-}
-
 h3 {
 	display: flex;
 	margin-bottom: 0;

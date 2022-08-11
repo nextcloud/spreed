@@ -330,8 +330,6 @@ export default {
 
 <style lang="scss" scoped>
 
-@import '../../../assets/buttons';
-
 .audio-recorder {
 	display: flex;
 	// Audio record button

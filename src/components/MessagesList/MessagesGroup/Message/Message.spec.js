@@ -5,6 +5,7 @@ import { cloneDeep } from 'lodash'
 import { EventBus } from '../../../../services/EventBus.js'
 import storeConfig from '../../../../store/storeConfig.js'
 import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../constants.js'
+import ButtonVue from '@nextcloud/vue/dist/Components/Button'
 
 // Components
 import Check from 'vue-material-design-icons/Check'
@@ -665,13 +666,13 @@ describe('Message.vue', () => {
 
 			expect(wrapper.vm.showReloadButton).toBe(true)
 
-			const reloadButtonIcon = reloadButton.find('button')
-			expect(reloadButtonIcon.exists()).toBe(true)
+			const reloadButtonVue = wrapper.findComponent(ButtonVue)
+			expect(reloadButtonVue.exists()).toBe(true)
 
 			const retryEvent = jest.fn()
 			EventBus.$on('retry-message', retryEvent)
 
-			await reloadButtonIcon.trigger('click')
+			await reloadButtonVue.vm.$emit('click')
 
 			expect(retryEvent).toHaveBeenCalledWith(123)
 		})

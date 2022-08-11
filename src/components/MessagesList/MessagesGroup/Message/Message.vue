@@ -79,14 +79,13 @@ the main body of the message as well as a quote.
 						@focus="showReloadButton = true"
 						@mouseleave="showReloadButton = true"
 						@blur="showReloadButton = true">
-						<Button v-if="sendingErrorCanRetry && showReloadButton"
-							class="nc-button nc-button__main--dark"
+						<ButtonVue v-if="sendingErrorCanRetry && showReloadButton"
 							:aria-label="sendingErrorIconTooltip"
 							@click="handleRetry">
 							<template #icon>
 								<Reload :size="16" />
 							</template>
-						</Button>
+						</ButtonVue>
 						<AlertCircle v-else
 							:size="16" />
 					</div>
@@ -170,6 +169,7 @@ the main body of the message as well as a quote.
 </template>
 
 <script>
+import ButtonVue from '@nextcloud/vue/dist/Components/Button'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import CallButton from '../../../TopBar/CallButton.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
@@ -204,6 +204,7 @@ export default {
 	},
 
 	components: {
+		ButtonVue,
 		CallButton,
 		Quote,
 		RichText,
@@ -782,7 +783,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../../assets/variables';
-@import '../../../../assets/buttons';
 
 .message:hover .normal-message-body {
 	border-radius: 8px;

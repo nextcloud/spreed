@@ -561,7 +561,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/buttons';
+@import '../../assets/variables';
 
 .wrapper {
 	display: flex;

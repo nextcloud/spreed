@@ -728,21 +728,6 @@ export default {
 					margin: 0 10px 0 15px;
 				}
 			}
-			button {
-				opacity: 0.5;
-				width: 44px;
-				height: 44px;
-				border-radius: var(--border-radius-pill);
-				background-color: transparent;
-				border: none;
-				margin: 0;
-
-				&:hover,
-				&:focus {
-					opacity: 1;
-					background-color: var(--color-background-hover);
-				}
-			}
 		}
 	}
 
