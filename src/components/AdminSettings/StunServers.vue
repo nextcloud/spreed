@@ -31,7 +31,7 @@
 				:aria-label="t('spreed', 'Add a new STUN server')"
 				@click="newServer">
 				<template #icon>
-					<Plus />
+					<Plus :size="20" />
 				</template>
 			</Button>
 		</h2>

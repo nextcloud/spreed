@@ -44,7 +44,7 @@
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
-				<Delete />
+				<Delete :size="20" />
 			</template>
 		</Button>
 	</div>
