@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 13.0.8 – 2022-08-11
+### Added
+- Extend search result attributes for better handling in mobile clients
+  [#7590](https://github.com/nextcloud/spreed/pull/7590)
+  [#7589](https://github.com/nextcloud/spreed/pull/7589)
+
+### Fixed
+- Reduce sent information with disabled videos
+  [#7710](https://github.com/nextcloud/spreed/pull/7710)
+
 ## 13.0.7 – 2022-07-08
 ### Added
 - Add brute force protection for conversation tokens and passwords
