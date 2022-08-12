@@ -98,6 +98,7 @@ appstore:
 	--exclude=stylelint.config.js \
 	--exclude=.tx \
 	--exclude=tests \
+	--exclude=tsconfig.json \
 	--exclude=webpack.js \
 	$(project_dir)/  $(sign_dir)/$(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
