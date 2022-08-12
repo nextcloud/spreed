@@ -87,8 +87,19 @@
 
 				<!-- Results page -->
 				<template v-if="modalPage === 'results'">
-					<div>
-						results
+					<div class="poll__modal-content">
+						<!-- Title -->
+						<h2 class="poll__modal-title">
+							{{ pollName }}
+						</h2>
+						<div v-for="option, index in options" :key="index">
+							<div class="results__option">
+								<p>
+									{{ option }}
+								</p>
+								<ProgressBar :value="getVotePercentage(index)" size="medium" />
+							</div>
+						</div>
 					</div>
 				</template>
 			</div>
@@ -102,6 +113,7 @@ import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwi
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import ButtonVue from '@nextcloud/vue/dist/Components/Button'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
+import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
 
 export default {
 
@@ -112,6 +124,7 @@ export default {
 		Modal,
 		ButtonVue,
 		PollIcon,
+		ProgressBar,
 	},
 
 	props: {
@@ -184,6 +197,15 @@ export default {
 		canSubmitVote() {
 			return this.vote !== undefined && this.vote !== '' && this.vote !== []
 		},
+
+		getVotePercentage() {
+			return (index) => {
+				if (this.pollVotes[`option-${index}`] === undefined) {
+					return 0
+				}
+				return this.pollVotes[`option-${index}`] / this.votersNumber * 100
+			}
+		},
 	},
 
 	watch: {
@@ -195,7 +217,6 @@ export default {
 	},
 
 	methods: {
-
 		getPollData() {
 			if (!this.pollLoaded) {
 				this.$store.dispatch('getPollData', {
@@ -230,9 +251,8 @@ export default {
 				pollId: this.id,
 				vote: voteToSubmit.map(element => parseInt(element)),
 			})
-			this.showModal = false
+			this.modalPage = 'results'
 		},
-
 	},
 }
 </script>
@@ -275,6 +295,10 @@ export default {
 		position: relative;
 	}
 
+	&__modal-content {
+		padding: 20px;
+	}
+
 	&__modal-title {
 		position: sticky;
 		top: 0;
@@ -298,6 +322,12 @@ export default {
 		background-color: var(--color-main-background)
 	}
 
+}
+
+.results__option {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 }
 
 // Upstream

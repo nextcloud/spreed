@@ -81,11 +81,11 @@ const actions = {
 	 * @param { number }root0.pollId The id of the poll
 	 */
 	debounceGetPollData(context, { token, pollId }) {
-		// Create debounce function for getting this particular poll
+		// Create debounce function for getting this particular poll data
 		// if it does not exist yet
 		if (!context.state.polls?.pollDebounceFunctions?.[token]?.[pollId]) {
-			const debounceGetPollDataFunction = debounce(() => {
-				context.dispatch('getPollData', {
+			const debounceGetPollDataFunction = debounce(async () => {
+				await context.dispatch('getPollData', {
 					token,
 					pollId,
 				})
