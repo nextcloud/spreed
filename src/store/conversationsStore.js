@@ -40,6 +40,7 @@ import {
 	setNotificationCalls,
 	setConversationPermissions,
 	setCallPermissions,
+	setMessageExpiration,
 } from '../services/conversationsService.js'
 import { getCurrentUser } from '@nextcloud/auth'
 // eslint-disable-next-line import/extensions
@@ -159,6 +160,10 @@ const mutations = {
 
 	setCallPermissions(state, { token, permissions }) {
 		Vue.set(state.conversations[token], 'callPermissions', permissions)
+	},
+
+	setMessageExpiration(state, { token, seconds }) {
+		Vue.set(state.conversations[token], 'messageExpiration', seconds)
 	},
 }
 
@@ -498,6 +503,11 @@ const actions = {
 	async setConversationPermissions(context, { token, permissions }) {
 		await setConversationPermissions(token, permissions)
 		context.commit('setConversationPermissions', { token, permissions })
+	},
+
+	async setMessageExpiration({ commit }, { token, seconds }) {
+		await setMessageExpiration(token, seconds)
+		commit('setMessageExpiration', { token, seconds })
 	},
 
 	async setCallPermissions(context, { token, permissions }) {

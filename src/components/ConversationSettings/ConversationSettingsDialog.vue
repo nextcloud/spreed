@@ -66,6 +66,7 @@
 		<AppSettingsSection v-if="canFullModerate"
 			id="conversation-settings"
 			:title="t('spreed', 'Conversation settings')">
+			<ExpirationSettings :token="token" />
 			<ListableSettings :token="token" />
 			<LockingSettings :token="token" />
 		</AppSettingsSection>
@@ -105,6 +106,7 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { PARTICIPANT, CONVERSATION } from '../../constants.js'
 import AppSettingsDialog from '@nextcloud/vue/dist/Components/AppSettingsDialog'
 import AppSettingsSection from '@nextcloud/vue/dist/Components/AppSettingsSection'
+import ExpirationSettings from './ExpirationSettings.vue'
 import LinkShareSettings from './LinkShareSettings.vue'
 import ListableSettings from './ListableSettings.vue'
 import LockingSettings from './LockingSettings.vue'
@@ -126,6 +128,7 @@ export default {
 	components: {
 		AppSettingsDialog,
 		AppSettingsSection,
+		ExpirationSettings,
 		LinkShareSettings,
 		LobbySettings,
 		ListableSettings,
