@@ -460,6 +460,9 @@ class ParticipantService {
 			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
 			$attendee->setLastReadMessage($lastMessage);
 			$attendee->setReadPrivacy($readPrivacy);
+			if (!$room->getShowHistory()) {
+				$attendee->setHistorySince($this->timeFactory->getDateTime());
+			}
 			try {
 				$entity = $this->attendeeMapper->insert($attendee);
 				$attendees[] = $attendee;
