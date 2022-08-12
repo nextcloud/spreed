@@ -22,29 +22,22 @@
 <template>
 	<div class="app-settings-subsection">
 		<div>
-			<input id="listable_settings_registered_users_checkbox"
-				aria-describedby="listable_settings_listable_conversation_hint"
-				type="checkbox"
-				class="checkbox"
-				name="listable_settings_registered_users_checkbox"
-				:checked="listable !== LISTABLE.NONE"
+			<NcCheckboxRadioSwitch :checked="listable !== LISTABLE.NONE"
 				:disabled="isListableLoading"
-				@change="toggleListableUsers">
-			<label for="listable_settings_registered_users_checkbox">{{ t('spreed', 'Open conversation to registered users') }}</label>
+				@update:checked="toggleListableUsers">
+				{{ t('spreed', 'Open conversation to registered users') }}
+			</NcCheckboxRadioSwitch>
 		</div>
 		<div v-if="listable !== LISTABLE.NONE" class="indent">
 			<div id="moderation_settings_listable_conversation_hint" class="app-settings-section__hint">
 				{{ t('spreed', 'This conversation will be shown in search results') }}
 			</div>
 			<div v-if="listable !== LISTABLE.NONE && isGuestsAccountsEnabled">
-				<input id="listable_settings_guestapp_users_checkbox"
-					type="checkbox"
-					class="checkbox"
-					name="listable_settings_guestapp_users_checkbox"
-					:checked="listable === LISTABLE.ALL"
+				<NcCheckboxRadioSwitch :checked="listable === LISTABLE.ALL"
 					:disabled="isListableLoading"
-					@change="toggleListableGuests">
-				<label for="listable_settings_guestapp_users_checkbox">{{ t('spreed', 'Also open to guest app users') }}</label>
+					@update:checked="toggleListableGuests">
+					{{ t('spreed', 'Also open to guest app users') }}
+				</NcCheckboxRadioSwitch>
 			</div>
 		</div>
 	</div>
@@ -54,9 +47,14 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants.js'
 import { loadState } from '@nextcloud/initial-state'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch'
 
 export default {
 	name: 'ListableSettings',
+
+	components: {
+		NcCheckboxRadioSwitch,
+	},
 
 	props: {
 		token: {
@@ -108,12 +106,12 @@ export default {
 	},
 
 	methods: {
-		async toggleListableUsers(event) {
-			await this.saveListable(event.target.checked ? this.LISTABLE.USERS : this.LISTABLE.NONE)
+		async toggleListableUsers(checked) {
+			await this.saveListable(checked ? this.LISTABLE.USERS : this.LISTABLE.NONE)
 		},
 
-		async toggleListableGuests(input) {
-			await this.saveListable(event.target.checked ? this.LISTABLE.ALL : this.LISTABLE.USERS)
+		async toggleListableGuests(checked) {
+			await this.saveListable(checked ? this.LISTABLE.ALL : this.LISTABLE.USERS)
 		},
 
 		async saveListable(listable) {
