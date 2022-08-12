@@ -35,7 +35,7 @@
 			<div class="basic-settings">
 				<div v-show="!enabled"
 					class="add-part-wrapper">
-					<Plus class="icon" size="20" />
+					<Plus class="icon" :size="20" />
 					<Multiselect ref="partMultiselect"
 						v-model="selectedType"
 						label="displayName"
