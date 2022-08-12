@@ -86,6 +86,7 @@
 			<SipSettings v-if="canUserEnableSIP" />
 		</AppSettingsSection>
 		<AppSettingsSection v-if="canFullModerate && matterbridgeEnabled"
+			id="matterbridge"
 			:title="t('spreed', 'Matterbridge')">
 			<MatterbridgeSettings />
 		</AppSettingsSection>
