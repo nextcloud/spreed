@@ -291,7 +291,6 @@ OC.L10N.register(
     "Error" : "Eroare",
     "Blocked" : "Blocat",
     "Active" : "Activ",
-    "Saved" : "Salvat",
     "OK" : "OK",
     "Copy link" : "Copiză link",
     "Dismiss" : "Elimină",
@@ -350,6 +349,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Parola este incorectă. Încercaţi din nou.",
     "Android app" : "Aplicație Android",
     "iOS app" : "Aplicație iOS",
+    "Saved" : "Salvat",
     "Camera" : "Cameră"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

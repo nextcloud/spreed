@@ -260,7 +260,6 @@ OC.L10N.register(
     "Created at" : "Geskep om",
     "Pending" : "Hangend",
     "Error" : "Fout",
-    "Saved" : "Bewaar",
     "OK" : "Goed",
     "Checking …" : "Gaan tans na …",
     "Copy link" : "Kopieer skakel",
@@ -313,6 +312,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "Android app" : "Android-toep",
     "iOS app" : "iOS-toep",
+    "Saved" : "Bewaar",
     "Microphone" : "Mikrofoon",
     "Camera" : "Kamera"
 },

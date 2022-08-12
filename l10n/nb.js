@@ -409,7 +409,6 @@ OC.L10N.register(
     "Validate SSL certificate" : "Bekreft SSL-sertifikat",
     "Delete this server" : "Slett denne serveren",
     "Status: Checking connection" : "Status: Sjekker tilkobling",
-    "Saved" : "Lagret",
     "STUN server URL" : "STUN server URL",
     "STUN servers" : "STUN-server",
     "A STUN server is used to determine the public IP address of participants behind a router." : "En STUN-server brukes til å fastsette den offentlige IP-adressen for deltagere bak en ruter.",
@@ -580,6 +579,7 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signalserver kan alternativt brukes for større installasjoner. La stå tom for å bruke intern signalserver.",
     "Android app" : "Android-app",
     "iOS app" : "iOS-app",
+    "Saved" : "Lagret",
     "Microphone" : "Mikrofon",
     "Camera" : "Kamera"
 },

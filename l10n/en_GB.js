@@ -325,7 +325,6 @@ OC.L10N.register(
     "Expired" : "Expired",
     "Shared secret" : "Shared secret",
     "Validate SSL certificate" : "Validate SSL certificate",
-    "Saved" : "Saved",
     "STUN servers" : "STUN servers",
     "A STUN server is used to determine the public IP address of participants behind a router." : "A STUN server is used to determine the public IP address of participants behind a router.",
     "TURN server protocols" : "TURN server protocols",
@@ -427,6 +426,7 @@ OC.L10N.register(
     "%s Talk on your mobile devices" : "%s Talk on your mobile devices",
     "Android app" : "Android app",
     "iOS app" : "iOS app",
+    "Saved" : "Saved",
     "Camera" : "Camera"
 },
 "nplurals=2; plural=(n != 1);");

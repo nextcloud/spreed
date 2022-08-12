@@ -264,7 +264,6 @@
     "Error" : "Eraro",
     "Blocked" : "Barita",
     "Expired" : "Senvalidiĝis",
-    "Saved" : "Konservita",
     "OK" : "Bone",
     "Copy link" : "Kopii ligilon",
     "Dismiss" : "Preterpasi",
@@ -314,6 +313,7 @@
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
+    "Saved" : "Konservita",
     "Camera" : "Fotilo"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

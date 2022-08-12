@@ -35,7 +35,6 @@ OC.L10N.register(
     "Created at" : "Creóse a les",
     "Pending" : "Pendiente",
     "Error" : "Fallu",
-    "Saved" : "Guardóse",
     "TURN server protocols" : "Protocolos del sirvidor TURN",
     "OK" : "Aceutar",
     "Checking …" : "Comprobando...",
@@ -102,6 +101,7 @@ OC.L10N.register(
     "TURN server" : "Sirvidor TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El sirvidor TURN úsase pa unviar al proxy el tráficu de los participantes darrera de tornafueos.",
     "Android app" : "Aplicación p'Android",
-    "iOS app" : "Aplicación pa iOS"
+    "iOS app" : "Aplicación pa iOS",
+    "Saved" : "Guardóse"
 },
 "nplurals=2; plural=(n != 1);");

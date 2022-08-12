@@ -43,7 +43,6 @@ OC.L10N.register(
     "Expired" : "გაუქმდა",
     "Shared secret" : "გაზიარებული საიდუმლო",
     "Validate SSL certificate" : "SSL სერტიფიკატის ვალიდაცია",
-    "Saved" : "დამახსოვრდა",
     "STUN servers" : "STUN სერვერები",
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN სერვერი როუტერს მიღმა მყოფი მონაწილეების ღია IP მისამართების დადგენისთვის.",
     "TURN server protocols" : "TURN სერვერის პროტოკოლები",
@@ -130,6 +129,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN სერვერი გამოიყენება ფაირვოლს უკან მყოფი მონაწილეების ტრეფიკის რწმუნებულებების გადასაცემად.",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "დიდი ინსტალაციებისთვის შესაძლებელია გარე სასიგნალო სერვერის გამოყენება. შიდა სიგნალის სერვერის გამოსაყენებლად დატოვეთ ცარიელი.",
     "Android app" : "Android აპლიკაცია",
-    "iOS app" : "iOS აპლიკაცია"
+    "iOS app" : "iOS აპლიკაცია",
+    "Saved" : "დამახსოვრდა"
 },
 "nplurals=2; plural=(n!=1);");
