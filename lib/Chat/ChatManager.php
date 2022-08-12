@@ -476,13 +476,18 @@ class ChatManager {
 	/**
 	 * @param Room $chat
 	 * @param string $parentId
+	 * @param Attendee $attendee
 	 * @return IComment
 	 * @throws NotFoundException
 	 */
-	public function getParentComment(Room $chat, string $parentId): IComment {
+	public function getParentComment(Room $chat, string $parentId, Attendee $attendee): IComment {
 		$comment = $this->commentsManager->get($parentId);
 
 		if ($comment->getObjectType() !== 'chat' || $comment->getObjectId() !== (string) $chat->getId()) {
+			throw new NotFoundException('Parent not found in the right context');
+		}
+
+		if (!$chat->getShowHistory() && $comment->getCreationDateTime() < $attendee->getHistorySince()) {
 			throw new NotFoundException('Parent not found in the right context');
 		}
 

@@ -210,7 +210,7 @@ class ChatController extends AEnvironmentAwareController {
 		$parent = $parentMessage = null;
 		if ($replyTo !== 0) {
 			try {
-				$parent = $this->chatManager->getParentComment($this->room, (string) $replyTo);
+				$parent = $this->chatManager->getParentComment($this->room, (string) $replyTo, $this->participant->getAttendee());
 			} catch (NotFoundException $e) {
 				// Someone is trying to reply cross-rooms or to a non-existing message
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -515,7 +515,7 @@ class ChatController extends AEnvironmentAwareController {
 			// Parent was not skipped due to visibility, so we need to manually grab it.
 			if (!isset($commentIdToIndex[$parentId])) {
 				try {
-					$comment = $this->chatManager->getParentComment($this->room, $parentId);
+					$comment = $this->chatManager->getParentComment($this->room, $parentId, $this->participant->getAttendee());
 					$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 					$this->messageParser->parseMessage($message);
 
