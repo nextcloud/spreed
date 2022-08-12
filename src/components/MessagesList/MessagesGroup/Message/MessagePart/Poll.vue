@@ -107,6 +107,17 @@
 							<ProgressBar :value="getVotePercentage(index)" size="medium" />
 						</div>
 					</div>
+					<div class="poll__modal-actions">
+						<ButtonVue type="tertiary" @click="modalPage = 'voting'">
+							{{ t('spreed', 'Back') }}
+						</ButtonVue>
+						<!-- create poll button-->
+						<ButtonVue v-if="canClosePoll"
+							type="error"
+							@click="closePoll">
+							{{ t('spreed', 'Close poll') }}
+						</ButtonVue>
+					</div>
 				</template>
 			</div>
 		</modal>
@@ -120,6 +131,7 @@ import Modal from '@nextcloud/vue/dist/Components/Modal'
 import ButtonVue from '@nextcloud/vue/dist/Components/Button'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
+import { PARTICIPANT } from '../../../../../constants.js'
 
 export default {
 
@@ -212,6 +224,44 @@ export default {
 				return this.pollVotes[`option-${index}`] / this.votersNumber * 100
 			}
 		},
+
+		/**
+		 * Current actor id
+		 */
+		actorId() {
+			return this.$store.getters.getActorId()
+		},
+
+		/**
+		 * Current actor type
+		 */
+		actorType() {
+			return this.$store.getters.getActorType()
+		},
+
+		currentUserIsPollCreator() {
+			return this.poll.actorType === this.actorType && this.poll.actorId === this.actorId
+		},
+
+		conversation() {
+			return this.$store.getters.conversation(this.token)
+		},
+
+		participantType() {
+			return this.conversation.participantType
+		},
+
+		currentUserIsModerator() {
+			return this.participantTypeIsModerator(this.currentParticipant.participantType)
+		},
+
+		participantTypeIsModerator(participantType) {
+			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1
+		},
+
+		canClosePoll() {
+			return this.currentUserIsPollCreator || this.participantTypeIsModerator
+		},
 	},
 
 	watch: {
@@ -258,6 +308,13 @@ export default {
 				vote: voteToSubmit.map(element => parseInt(element)),
 			})
 			this.modalPage = 'results'
+		},
+
+		closePoll() {
+			this.$store.dispatch('closePoll', {
+				token: this.token,
+				pollId: this.id,
+			})
 		},
 	},
 }

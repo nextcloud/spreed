@@ -146,6 +146,7 @@ const getters = {
 					|| message.systemMessage === 'reaction_deleted'
 					|| message.systemMessage === 'reaction_revoked'
 					|| message.systemMessage === 'poll_voted'
+					|| message.systemMessage === 'poll_closed'
 				) {
 					return false
 				} else {
