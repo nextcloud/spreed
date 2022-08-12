@@ -290,14 +290,6 @@ export default {
 			this.$refs.advancedInput.focusInput()
 		},
 
-		disabled(newValue) {
-			// the menu is not always available
-			if (!this.$refs.uploadMenu) {
-				return
-			}
-			this.$refs.uploadMenu.$refs.menuButton.disabled = newValue
-		},
-
 		text(newValue) {
 			this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: newValue })
 		},
