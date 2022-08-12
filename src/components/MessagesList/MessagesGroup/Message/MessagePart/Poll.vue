@@ -107,8 +107,10 @@
 							<ProgressBar :value="getVotePercentage(index)" size="medium" />
 						</div>
 					</div>
-					<div class="poll__modal-actions">
-						<ButtonVue type="tertiary" @click="modalPage = 'voting'">
+					<div v-if="pollIsOpen"
+						class="poll__modal-actions">
+						<ButtonVue type="tertiary"
+							@click="modalPage = 'voting'">
 							{{ t('spreed', 'Back') }}
 						</ButtonVue>
 						<!-- create poll button-->
@@ -166,7 +168,7 @@ export default {
 		return {
 			vote: undefined,
 			showModal: false,
-			modalPage: 'voting',
+			modalPage: '',
 		}
 	},
 
@@ -206,6 +208,10 @@ export default {
 
 		status() {
 			return this.pollLoaded ? this.poll.status : undefined
+		},
+
+		pollIsOpen() {
+			return this.status === 0
 		},
 
 		checkboxRadioSwitchType() {
@@ -288,6 +294,7 @@ export default {
 			} else {
 				this.vote = []
 			}
+			this.pollIsOpen ? this.modalPage = 'voting' : this.modalPage = 'results'
 		},
 
 		dismissModal() {
@@ -395,7 +402,7 @@ export default {
 	flex-direction: column;
 	gap: 12px;
 	word-wrap: anywhere;
-	margin-top: 8px;
+	margin: 8px 0 20px 0;
 }
 .results__option {
 	display: flex;
