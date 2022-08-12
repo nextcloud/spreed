@@ -37,7 +37,7 @@
 			</p>
 			<PollOption v-for="option, index in pollOptions"
 				:key="index"
-				class="poll-option"
+				class="simple-polls-editor__option"
 				:value.sync="pollOptions[index]"
 				:placeholder="t('spreed', 'Answer {option}', {option: index + 1})"
 				:can-delete="pollOptions.length > 2"
@@ -161,6 +161,10 @@ export default {
 		padding: 16px 0 4px 0;
 		font-weight: bold;
 		color: var(--color-primary-element);
+	}
+
+	&__option {
+		height: 44px;
 	}
 
 	&__actions {

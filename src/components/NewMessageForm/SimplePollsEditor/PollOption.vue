@@ -22,7 +22,7 @@
 
 <template>
 	<form class="poll-option">
-		<TextField v-bind="$attrs" v-on="$listeners" />
+		<TextField class="poll-option__input" v-bind="$attrs" v-on="$listeners" />
 		<Button v-if="canDelete"
 			type="tertiary-no-background"
 			@click="deleteOption">
@@ -70,6 +70,9 @@ export default {
 .poll-option {
 	display: flex;
 	width: 100%;
+	&__input {
+		margin: auto;
+	}
 }
 
 </style>
