@@ -122,8 +122,6 @@
     "Shared secret" : "Koplietojams noslēpums",
     "Validate SSL certificate" : "Pārbaudīt SSL sertifikātu",
     "Delete this server" : "Dzēst šo serveri",
-    "Saved" : "Saglabāts",
-    "Add a new server" : "Pievienot jaunu serveri",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Lielāka izmēra instalācijām pēc izvēles jāizmanto ārējais signalizēšanas serveris. Atstājiet tukšu, lai izmantotu iekšējo signalizēšanas serveri.",
     "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Zvani, kuros ir vairāk nekā 4 dalībnieki bez ārējā paraksta servera, var saskarties ar savienojamības problēmām un radīt lielu slodzi iesaistītajām ierīcēm.",
     "Don't warn about connectivity issues in calls with more than 4 participants" : "Nebrīdināt par savienojamības problēmām zvanos ar vairāk nekā 4 dalībniekiem",
@@ -233,6 +231,8 @@
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Ārējo signalizēšanas serveri var pēc izvēles izmantot lielākām instalācijām. Atstājiet tukšu, lai izmantotu iekšējo signalizēšanas serveri.",
     "%s Talk on your mobile devices" : "%s Sarunas mobilajās ierīcēs",
     "Android app" : "Android lietotne",
-    "iOS app" : "iOS lietotne"
+    "iOS app" : "iOS lietotne",
+    "Saved" : "Saglabāts",
+    "Add a new server" : "Pievienot jaunu serveri"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);"
 }

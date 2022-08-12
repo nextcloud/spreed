@@ -309,7 +309,6 @@ OC.L10N.register(
     "Active" : "啟動",
     "Expired" : "已過期",
     "Validate SSL certificate" : "驗證 SSL憑證",
-    "Saved" : "儲存",
     "OK" : "確定",
     "Checking …" : "檢查中 ...",
     "Copy link" : "複製連結",
@@ -403,6 +402,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "密碼錯誤，請重試",
     "Android app" : "安卓應用",
     "iOS app" : "蘋果應用",
+    "Saved" : "儲存",
     "Microphone" : "麥克風",
     "Camera" : "相機"
 },

@@ -43,7 +43,6 @@
     "Created at" : "Dibuat saat",
     "Pending" : "Tunggu",
     "Error" : "Kesalahan",
-    "Saved" : "Disimpan",
     "OK" : "OK",
     "Copy link" : "Salin tautan",
     "Dismiss" : "Batal",
@@ -108,6 +107,7 @@
     "Default" : "Bawaan",
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
-    "iOS app" : "Aplikasi iOS"
+    "iOS app" : "Aplikasi iOS",
+    "Saved" : "Disimpan"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

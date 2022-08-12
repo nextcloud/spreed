@@ -45,7 +45,6 @@ OC.L10N.register(
     "Created at" : "Dibuat saat",
     "Pending" : "Tunggu",
     "Error" : "Kesalahan",
-    "Saved" : "Disimpan",
     "OK" : "OK",
     "Copy link" : "Salin tautan",
     "Dismiss" : "Batal",
@@ -110,6 +109,7 @@ OC.L10N.register(
     "Default" : "Bawaan",
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
-    "iOS app" : "Aplikasi iOS"
+    "iOS app" : "Aplikasi iOS",
+    "Saved" : "Disimpan"
 },
 "nplurals=1; plural=0;");

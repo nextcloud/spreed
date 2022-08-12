@@ -22,7 +22,6 @@ OC.L10N.register(
     "Created at" : "Skapt den",
     "Pending" : "Under vegs",
     "Error" : "Feil",
-    "Saved" : "Lagra",
     "OK" : "OK",
     "Copy link" : "Kopier lenkje",
     "Dismiss" : "Forkast",
@@ -82,6 +81,7 @@ OC.L10N.register(
     "Other" : "Anna",
     "Away" : "Borte",
     "Default" : "Standard",
-    "The password is wrong. Try again." : "Passordet er gale. Prøv igjen."
+    "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
+    "Saved" : "Lagra"
 },
 "nplurals=2; plural=(n != 1);");

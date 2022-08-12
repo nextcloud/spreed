@@ -417,8 +417,6 @@ OC.L10N.register(
     "This information is sent in invitation emails as well as displayed in the sidebar to all participants." : "Ове информације се шаљу у е-порукама са позивницама и приказују се на бочној траци свим учесницима.",
     "Validate SSL certificate" : "Потвди SSL сертификат",
     "Delete this server" : "Обриши овај сервер",
-    "Saved" : "Сачувано",
-    "Add a new server" : "Додај нови сервер",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Спољни сигнализациони сервер би требало опционо користити за веће инсталације. Оставите празним да бисте користили интерни сигнализациони сервер.",
     "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Уколико се не користе спољни сигнализациони сервер, код позива са више од 4 учесника, учесници могу да искусе проблеме са конекцијом и  да изазову велико оптерећење на уређаје осталих учесника.",
     "Don't warn about connectivity issues in calls with more than 4 participants" : "Не упозоравај на проблеме са конекцијом у разговорима са више од 4 учесника",
@@ -559,6 +557,8 @@ OC.L10N.register(
     "%s Talk on your mobile devices" : "%s „Разговор“ на мобилним уређајима",
     "Android app" : "Андроид апликација",
     "iOS app" : "iOS апликација",
+    "Saved" : "Сачувано",
+    "Add a new server" : "Додај нови сервер",
     "Chat notifications" : "Обавештења ћаскања",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Тренутно чекате у лобију. Овај састанак је заказан за {startTime}",
     "Camera" : "Камера"
