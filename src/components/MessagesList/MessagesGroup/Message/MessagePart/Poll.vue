@@ -45,9 +45,12 @@
 				<!-- First screen, displayed while voting-->
 				<template v-if="modalPage === 'voting'">
 					<!-- Title -->
-					<h2 class="poll__modal-title">
-						{{ pollName }}
-					</h2>
+					<div class="poll__header">
+						<PollIcon :size="20" />
+						<h2 class="poll__modal-title">
+							{{ pollName }}
+						</h2>
+					</div>
 
 					<!-- options -->
 					<div class="poll__modal-options">
@@ -87,18 +90,21 @@
 
 				<!-- Results page -->
 				<template v-if="modalPage === 'results'">
-					<div class="poll__modal-content">
-						<!-- Title -->
+					<!-- Title -->
+					<div class="poll__header">
+						<PollIcon :size="20" />
 						<h2 class="poll__modal-title">
 							{{ pollName }}
 						</h2>
-						<div v-for="option, index in options" :key="index">
-							<div class="results__option">
-								<p>
-									{{ option }}
-								</p>
-								<ProgressBar :value="getVotePercentage(index)" size="medium" />
-							</div>
+					</div>
+					<div class="results__options">
+						<div v-for="option, index in options"
+							:key="index"
+							class="results__option">
+							<p class="">
+								{{ option }}
+							</p>
+							<ProgressBar :value="getVotePercentage(index)" size="medium" />
 						</div>
 					</div>
 				</template>
@@ -268,7 +274,7 @@ export default {
 	box-shadow: 0 0 2px 0 var(--color-box-shadow);
 	margin: 4px 0;
 	max-width: 300px;
-	padding: 16px;
+	padding: 0 16px 16px 16px;
 	flex-direction: column;
 	background: var(--color-main-background);
 	border-radius: var(--border-radius-large);
@@ -280,6 +286,13 @@ export default {
 		gap: 8px;
 		white-space: normal;
 		align-items: flex-start;
+		position: sticky;
+		top: 0;
+		padding: 0 0 8px 0;
+		background-color: var(--color-main-background);
+		word-wrap: anywhere;
+		padding-top: 20px;
+
 		span {
 			margin-bottom: auto;
 		}
@@ -293,23 +306,18 @@ export default {
 
 	&__modal {
 		position: relative;
-	}
-
-	&__modal-content {
-		padding: 20px;
+		padding: 0 20px;
 	}
 
 	&__modal-title {
-		position: sticky;
-		top: 0;
+		margin: 0;
 		font-size: 18px;
 		font-weight: bold;
-		padding: 20px 20px 8px 20px;
-		background-color: var(--color-main-background)
 	}
 
 	&__modal-options {
-		padding: 0 20px;
+		word-wrap: anywhere;
+		margin-top: 8px;
 	}
 
 	&__modal-actions {
@@ -318,12 +326,20 @@ export default {
 		display: flex;
 		justify-content: center;
 		gap: 4px;
-		padding: 12px 0 16px 0;
-		background-color: var(--color-main-background)
+		padding: 12px 0 0 0;
+		background-color: var(--color-main-background);
+		padding-bottom: 20px;
 	}
 
 }
 
+.results__options {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	word-wrap: anywhere;
+	margin-top: 8px;
+}
 .results__option {
 	display: flex;
 	flex-direction: column;
