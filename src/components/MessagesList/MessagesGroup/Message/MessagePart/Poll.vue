@@ -104,9 +104,14 @@
 						<div v-for="option, index in options"
 							:key="index"
 							class="results__option">
-							<p class="">
-								{{ option }}
-							</p>
+							<div class="results__option-title">
+								<p>
+									{{ option }}
+								</p>
+								<p class="percentage">
+									{{ getVotePercentage(index) + '%' }}
+								</p>
+							</div>
 							<ProgressBar :value="getVotePercentage(index)" size="medium" />
 						</div>
 					</div>
@@ -407,7 +412,7 @@ export default {
 .results__options {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 20px;
 	word-wrap: anywhere;
 	margin: 8px 0 20px 0;
 }
@@ -415,6 +420,16 @@ export default {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
+}
+
+.results__option-title {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	.percentage {
+		white-space: nowrap;
+		margin-left: 16px;
+	}
 }
 
 // Upstream
