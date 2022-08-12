@@ -86,7 +86,7 @@
 
 <script>
 import PermissionEditor from '../PermissionsEditor/PermissionsEditor.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import { PARTICIPANT } from '../../constants.js'

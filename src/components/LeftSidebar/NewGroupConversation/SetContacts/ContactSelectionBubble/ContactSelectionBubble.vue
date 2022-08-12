@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import Close from 'vue-material-design-icons/Close.vue'
 import AvatarWrapperSmall from '../../../../AvatarWrapper/AvatarWrapperSmall.vue'
 export default {

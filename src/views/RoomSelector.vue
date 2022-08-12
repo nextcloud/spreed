@@ -56,12 +56,12 @@
 					</div>
 				</div>
 				<div id="modal-buttons">
-					<Button v-if="!loading && availableRooms.length > 0"
+					<ButtonVue v-if="!loading && availableRooms.length > 0"
 						type="primary"
 						:disabled="!selectedRoom"
 						@click="select">
 						{{ t('spreed', 'Select conversation') }}
-					</Button>
+					</ButtonVue>
 				</div>
 			</div>
 		</div>
@@ -74,14 +74,14 @@ import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { CONVERSATION } from '../constants.js'
 import ConversationIcon from '../components/ConversationIcon.vue'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 
 export default {
 	name: 'RoomSelector',
 	components: {
 		ConversationIcon,
 		Modal,
-		Button,
+		ButtonVue,
 	},
 	props: {
 		container: {

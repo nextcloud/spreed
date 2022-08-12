@@ -23,13 +23,13 @@
 		<div class="buttons-bar">
 			<div class="network-connection-state">
 				<Popover v-if="qualityWarningTooltip"
-					:boundaries-element="boundaryElement"
+					:boundary="boundaryElement"
 					:aria-label="qualityWarningAriaLabel"
 					trigger="hover"
 					:auto-hide="false"
-					:open="showQualityWarningTooltip">
+					:shown="showQualityWarningTooltip">
 					<template #trigger>
-						<Button id="quality_warning_button"
+						<ButtonVue id="quality_warning_button"
 							type="tertiary-no-background"
 							class="trigger"
 							@click="mouseover = !mouseover">
@@ -37,29 +37,29 @@
 								<NetworkStrength2Alert fill-color="#e9322d"
 									:size="20" />
 							</template>
-						</Button>
+						</ButtonVue>
 					</template>
 					<div class="hint">
 						<span>{{ qualityWarningTooltip.content }}</span>
 						<div class="hint__actions">
-							<Button v-if="qualityWarningTooltip.action"
+							<ButtonVue v-if="qualityWarningTooltip.action"
 								type="primary"
 								class="hint__button"
 								@click="executeQualityWarningTooltipAction">
 								{{ qualityWarningTooltip.actionLabel }}
-							</Button>
-							<Button v-if="!isQualityWarningTooltipDismissed"
+							</ButtonVue>
+							<ButtonVue v-if="!isQualityWarningTooltipDismissed"
 								type="tertiary"
 								class="hint__button"
 								@click="dismissQualityWarningTooltip">
 								{{ t('spreed', 'Dismiss') }}
-							</Button>
+							</ButtonVue>
 						</div>
 					</div>
 				</Popover>
 			</div>
 			<div id="muteWrapper">
-				<Button v-shortkey.once="['m']"
+				<ButtonVue v-shortkey.once="['m']"
 					v-tooltip="audioButtonTooltip"
 					type="tertiary-no-background"
 					:aria-label="audioButtonAriaLabel"
@@ -74,13 +74,13 @@
 							:size="20"
 							fill-color="#ffffff" />
 					</template>
-				</Button>
+				</ButtonVue>
 				<span v-show="model.attributes.audioAvailable"
 					ref="volumeIndicator"
 					class="volume-indicator"
 					:class="{'microphone-off': !showMicrophoneOn}" />
 			</div>
-			<Button v-shortkey.once="['v']"
+			<ButtonVue v-shortkey.once="['v']"
 				v-tooltip="videoButtonTooltip"
 				type="tertiary-no-background"
 				:aria-label="videoButtonAriaLabel"
@@ -95,8 +95,8 @@
 						:size="20"
 						fill-color="#ffffff" />
 				</template>
-			</Button>
-			<Button v-if="isVirtualBackgroundAvailable && !showActions"
+			</ButtonVue>
+			<ButtonVue v-if="isVirtualBackgroundAvailable && !showActions"
 				v-tooltip="toggleVirtualBackgroundButtonLabel"
 				type="tertiary-no-background"
 				:aria-label="toggleVirtualBackgroundButtonLabel"
@@ -110,7 +110,7 @@
 						:size="20"
 						fill-color="#ffffff" />
 				</template>
-			</Button>
+			</ButtonVue>
 			<Actions v-if="!screenSharingButtonHidden"
 				id="screensharing-button"
 				v-tooltip="screenSharingButtonTooltip"
@@ -156,7 +156,7 @@
 					{{ t('spreed', 'Stop screensharing') }}
 				</ActionButton>
 			</Actions>
-			<Button v-shortkey.once="['r']"
+			<ButtonVue v-shortkey.once="['r']"
 				v-tooltip="t('spreed', 'Lower hand (R)')"
 				type="tertiary-no-background"
 				class="lower-hand"
@@ -171,7 +171,7 @@
 					<HandBackLeft :size="18"
 						fill-color="#ffffff" />
 				</template>
-			</Button>
+			</ButtonVue>
 			<Actions v-if="showActions"
 				v-tooltip="t('spreed', 'More actions')"
 				:container="container"
@@ -245,7 +245,7 @@ import VideoOff from 'vue-material-design-icons/VideoOff'
 import Blur from 'vue-material-design-icons/Blur'
 import BlurOff from 'vue-material-design-icons/BlurOff'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { PARTICIPANT } from '../../../constants.js'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
@@ -270,7 +270,7 @@ export default {
 		Actions,
 		ActionSeparator,
 		ActionButton,
-		Button,
+		ButtonVue,
 		CancelPresentation,
 		Cog,
 		DotsHorizontal,

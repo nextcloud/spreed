@@ -81,11 +81,11 @@
 				</option>
 			</select>
 
-			<Button type="primary"
+			<ButtonVue type="primary"
 				:disabled="!hostedHPBFilled || loading"
 				@click="requestHPBTrial">
 				{{ t('spreed', 'Request signaling server trial') }}
-			</Button>
+			</ButtonVue>
 
 			<p v-if="requestError !== ''"
 				class="warning">
@@ -122,17 +122,17 @@
 				{{ requestError }}
 			</p>
 
-			<Button type="error"
+			<ButtonVue type="error"
 				:disabled="loading"
 				@click="deleteAccount">
 				{{ t('spreed', 'Delete the signaling server account') }}
-			</Button>
+			</ButtonVue>
 		</div>
 	</div>
 </template>
 
 <script>
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import { loadState } from '@nextcloud/initial-state'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
@@ -142,7 +142,7 @@ export default {
 	name: 'HostedSignalingServer',
 
 	components: {
-		Button,
+		ButtonVue,
 	},
 
 	data() {

@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import PreventUnload from 'vue-prevent-unload'
 import { loadState } from '@nextcloud/initial-state'
 import CallView from './components/CallView/CallView.vue'

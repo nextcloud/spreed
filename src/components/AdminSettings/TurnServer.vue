@@ -73,7 +73,7 @@
 			</option>
 		</select>
 
-		<Button v-show="!loading"
+		<ButtonVue v-show="!loading"
 			type="tertiary-no-background"
 			:aria-label="testResult"
 			@click="testServer">
@@ -83,20 +83,20 @@
 				<Check v-else-if="testingSuccess" />
 				<CategoryMonitoring v-else />
 			</template>
-		</Button>
-		<Button v-show="!loading"
+		</ButtonVue>
+		<ButtonVue v-show="!loading"
 			type="tertiary-no-background"
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
 				<Delete :size="20" />
 			</template>
-		</Button>
+		</ButtonVue>
 	</div>
 </template>
 
 <script>
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import AlertCircle from 'vue-material-design-icons/AlertCircle'
 import Check from 'vue-material-design-icons/Check'
@@ -114,7 +114,7 @@ export default {
 	},
 
 	components: {
-		Button,
+		ButtonVue,
 		AlertCircle,
 		CategoryMonitoring,
 		Check,

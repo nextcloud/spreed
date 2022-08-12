@@ -50,7 +50,7 @@
 		<template v-if="integrations.length !== 0">
 			<AppNavigationCaption :title="t('spreed', 'Integrations')" />
 			<ul>
-				<Button v-for="(integration, index) in integrations"
+				<ButtonVue v-for="(integration, index) in integrations"
 					:key="'integration' + index"
 					type="tertiary-no-background"
 					@click="runIntegration(integration)">
@@ -59,7 +59,7 @@
 						<AccountPlus :size="20" />
 					</template>
 					{{ integration.label }}
-				</Button>
+				</ButtonVue>
 			</ul>
 		</template>
 
@@ -101,7 +101,7 @@ import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
 import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
 import Hint from '../../../Hint.vue'
 import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 
 export default {
 	name: 'ParticipantsSearchResults',
@@ -111,7 +111,7 @@ export default {
 		AppNavigationCaption,
 		Hint,
 		AccountPlus,
-		Button,
+		ButtonVue,
 	},
 
 	props: {

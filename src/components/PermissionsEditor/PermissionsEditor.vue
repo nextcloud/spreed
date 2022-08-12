@@ -57,13 +57,13 @@
 						class="checkbox">
 						{{ t('spreed', 'Share the screen') }}
 					</CheckboxRadioSwitch>
-					<Button ref="submit"
+					<ButtonVue ref="submit"
 						native-type="submit"
 						class="button-update-permission"
 						type="primary"
 						:disabled="submitButtonDisabled">
 						{{ t('spreed', 'Update permissions') }}
-					</Button>
+					</ButtonVue>
 				</form>
 			</template>
 			<div v-if="loading" class="loading-screen">
@@ -78,7 +78,7 @@
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import { PARTICIPANT } from '../../constants.js'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS
 
@@ -88,7 +88,7 @@ export default {
 	components: {
 		CheckboxRadioSwitch,
 		Modal,
-		Button,
+		ButtonVue,
 	},
 
 	props: {

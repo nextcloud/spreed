@@ -27,16 +27,16 @@
 			<div class="icon icon-talk" />
 			<h2>{{ t('spreed', 'Discuss this file') }}</h2>
 			<p>{{ t('spreed', 'Share this file with others to discuss it') }}</p>
-			<Button type="primary" @click="openSharingTab">
+			<ButtonVue type="primary" @click="openSharingTab">
 				{{ t('spreed', 'Share this file') }}
-			</Button>
+			</ButtonVue>
 		</div>
 		<div v-else-if="isTalkSidebarSupportedForFile && !token" class="emptycontent room-not-joined">
 			<div class="icon icon-talk" />
 			<h2>{{ t('spreed', 'Discuss this file') }}</h2>
-			<Button type="primary" @click="joinConversation">
+			<ButtonVue type="primary" @click="joinConversation">
 				{{ t('spreed', 'Join conversation') }}
-			</Button>
+			</ButtonVue>
 		</div>
 		<template v-else>
 			<CallButton class="call-button" />
@@ -66,7 +66,7 @@ import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import browserCheck from './mixins/browserCheck.js'
 import '@nextcloud/dialogs/styles/toast.scss'
 import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 
 export default {
 
@@ -77,7 +77,7 @@ export default {
 		ChatView,
 		UploadEditor,
 		DeviceChecker,
-		Button,
+		ButtonVue,
 	},
 
 	mixins: [

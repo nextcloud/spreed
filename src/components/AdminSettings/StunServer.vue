@@ -32,26 +32,26 @@
 			:disabled="loading"
 			:aria-label="t('spreed', 'STUN server URL')"
 			@input="update">
-		<Button v-show="!isValidServer"
+		<ButtonVue v-show="!isValidServer"
 			type="tertiary-no-background"
 			:aria-label="t('spreed', 'The server address is invalid')">
 			<template #icon>
 				<AlertCircle />
 			</template>
-		</Button>
-		<Button v-show="!loading"
+		</ButtonVue>
+		<ButtonVue v-show="!loading"
 			type="tertiary-no-background"
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
 				<Delete :size="20" />
 			</template>
-		</Button>
+		</ButtonVue>
 	</div>
 </template>
 
 <script>
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import AlertCircle from 'vue-material-design-icons/AlertCircle'
 import Delete from 'vue-material-design-icons/Delete'
 
@@ -59,7 +59,7 @@ export default {
 	name: 'StunServer',
 
 	components: {
-		Button,
+		ButtonVue,
 		AlertCircle,
 		Delete,
 	},

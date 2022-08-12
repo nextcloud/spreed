@@ -45,14 +45,14 @@
 					</template>
 					<div :key="'addMore'"
 						class="add-more">
-						<Button :aria-label="addMoreAriaLabel"
+						<ButtonVue :aria-label="addMoreAriaLabel"
 							type="primary"
 							class="add-more__button"
 							@click="clickImportInput">
 							<template #icon>
 								<Plus :size="48" />
 							</template>
-						</Button>
+						</ButtonVue>
 					</div>
 				</transition-group>
 			</template>
@@ -61,12 +61,12 @@
 					:local-url="voiceMessageLocalURL" />
 			</template>
 			<div class="upload-editor__actions">
-				<Button type="tertiary" @click="handleDismiss">
+				<ButtonVue type="tertiary" @click="handleDismiss">
 					{{ t('spreed', 'Dismiss') }}
-				</Button>
-				<Button ref="submitButton" type="primary" @click="handleUpload">
+				</ButtonVue>
+				<ButtonVue ref="submitButton" type="primary" @click="handleUpload">
 					{{ t('spreed', 'Send') }}
-				</Button>
+				</ButtonVue>
 			</div>
 		</div>
 	</Modal>
@@ -78,7 +78,7 @@ import Modal from '@nextcloud/vue/dist/Components/Modal'
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import Plus from 'vue-material-design-icons/Plus'
 import AudioPlayer from './MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 
 export default {
 	name: 'UploadEditor',
@@ -88,7 +88,7 @@ export default {
 		FilePreview,
 		Plus,
 		AudioPlayer,
-		Button,
+		ButtonVue,
 	},
 
 	computed: {

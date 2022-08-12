@@ -38,21 +38,21 @@
 			@change="updateVerify">
 		<label :for="'verify' + index">{{ t('spreed', 'Validate SSL certificate') }}</label>
 
-		<Button v-show="!loading"
+		<ButtonVue v-show="!loading"
 			type="tertiary-no-background"
 			:aria-label="t('spreed', 'Delete this server')"
 			@click="removeServer">
 			<template #icon>
 				<Delete :size="20" />
 			</template>
-		</Button>
+		</ButtonVue>
 
 		<span v-if="server">{{ connectionState }}</span>
 	</div>
 </template>
 
 <script>
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import Delete from 'vue-material-design-icons/Delete'
 import { getWelcomeMessage } from '../../services/signalingService.js'
 
@@ -60,7 +60,7 @@ export default {
 	name: 'SignalingServer',
 
 	components: {
-		Button,
+		ButtonVue,
 		Delete,
 	},
 

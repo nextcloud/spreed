@@ -50,11 +50,11 @@
 				label="displayname"
 				@search-change="searchGroup" />
 
-			<Button type="primary"
+			<ButtonVue type="primary"
 				:disabled="loading"
 				@click="saveAllowedGroups">
 				{{ saveLabelAllowedGroups }}
-			</Button>
+			</ButtonVue>
 		</div>
 
 		<h3>{{ t('spreed', 'Limit creating a public and group conversation') }}</h3>
@@ -75,11 +75,11 @@
 				label="displayname"
 				@search-change="searchGroup" />
 
-			<Button type="primary"
+			<ButtonVue type="primary"
 				:disabled="loading"
 				@click="saveStartConversationsGroups">
 				{{ saveLabelStartConversations }}
-			</Button>
+			</ButtonVue>
 		</div>
 
 		<h3>{{ t('spreed', 'Limit starting a call') }}</h3>
@@ -106,7 +106,7 @@ import axios from '@nextcloud/axios'
 import debounce from 'debounce'
 import { generateOcsUrl } from '@nextcloud/router'
 import { loadState } from '@nextcloud/initial-state'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 
 const startCallOptions = [
 	{ value: 0, label: t('spreed', 'Everyone') },
@@ -120,7 +120,7 @@ export default {
 
 	components: {
 		Multiselect,
-		Button,
+		ButtonVue,
 	},
 
 	data() {

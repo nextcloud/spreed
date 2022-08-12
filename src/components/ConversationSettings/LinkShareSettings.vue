@@ -70,43 +70,43 @@
 						name="link_share_settings_link_password"
 						:placeholder="t('spreed', 'Enter a password')"
 						:disabled="isSaving">
-					<Button id="link_share_settings_link_password_submit"
+					<ButtonVue id="link_share_settings_link_password_submit"
 						:aria-label="t('spreed', 'Save password')"
 						:disabled="isSaving"
 						native-type="submit">
 						<template #icon>
 							<ArrowRight />
 						</template>
-					</Button>
+					</ButtonVue>
 				</form>
 			</div>
 		</div>
 		<div class="app-settings-subsection">
-			<Button ref="copyLinkButton"
+			<ButtonVue ref="copyLinkButton"
 				@click.prevent="handleCopyLink"
 				@keydown.enter="handleCopyLink">
 				<template #icon>
 					<ClipboardTextOutline />
 				</template>
 				{{ t('spreed', 'Copy conversation link') }}
-			</Button>
+			</ButtonVue>
 		</div>
 		<div v-if="isSharedPublicly" class="app-settings-subsection">
-			<Button :disabled="isSendingInvitations"
+			<ButtonVue :disabled="isSendingInvitations"
 				@click.prevent="handleResendInvitations"
 				@keydown.enter="handleResendInvitations">
 				<template #icon>
 					<Email />
 				</template>
 				{{ t('spreed', 'Resend invitations') }}
-			</Button>
+			</ButtonVue>
 			<span v-if="isSendingInvitations" class="icon-loading-small spinner" />
 		</div>
 	</div>
 </template>
 
 <script>
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants.js'
 import {
@@ -121,7 +121,7 @@ export default {
 	name: 'LinkShareSettings',
 
 	components: {
-		Button,
+		ButtonVue,
 		ArrowRight,
 		ClipboardTextOutline,
 		Email,
@@ -213,7 +213,6 @@ export default {
 				this.showPasswordField = true
 				await this.handlePasswordEnable()
 				this.$nextTick(() => {
-					console.error(this.$refs.passwordField)
 					this.$refs.passwordField.focus()
 				})
 			} else {

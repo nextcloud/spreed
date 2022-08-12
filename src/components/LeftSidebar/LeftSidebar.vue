@@ -94,20 +94,20 @@
 					</template>
 				</ul>
 			</li>
-			<Button v-if="!preventFindingUnread && unreadNum > 0"
+			<ButtonVue v-if="!preventFindingUnread && unreadNum > 0"
 				class="unread-mention-button"
 				type="primary"
 				@click="scrollBottomUnread">
 				{{ t('spreed', 'Unread mentions') }}
-			</Button>
+			</ButtonVue>
 		</template>
 
 		<template #footer>
 			<div id="app-settings">
 				<div id="app-settings-header">
-					<Button class="settings-button" @click="showSettings">
+					<ButtonVue class="settings-button" @click="showSettings">
 						{{ t('spreed', 'Talk settings') }}
-					</Button>
+					</ButtonVue>
 				</div>
 			</div>
 		</template>
@@ -122,7 +122,7 @@ import ConversationsList from './ConversationsList/ConversationsList.vue'
 import Conversation from './ConversationsList/Conversation.vue'
 import ConversationsOptionsList from '../ConversationsOptionsList.vue'
 import Hint from '../Hint.vue'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import SearchBox from './SearchBox/SearchBox.vue'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus.js'
@@ -145,7 +145,7 @@ export default {
 		AppNavigation,
 		AppNavigationCaption,
 		ConversationsList,
-		Button,
+		ButtonVue,
 		ConversationsOptionsList,
 		Hint,
 		SearchBox,

@@ -52,7 +52,7 @@
 		<span v-if="isLoading"
 			v-tooltip="previewTooltip"
 			class="preview loading" />
-		<Button v-if="isUploadEditor"
+		<ButtonVue v-if="isUploadEditor"
 			class="remove-file"
 			tabindex="1"
 			type="primary"
@@ -61,7 +61,7 @@
 			<template #icon>
 				<Close />
 			</template>
-		</Button>
+		</ButtonVue>
 		<ProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
 		<div v-if="shouldShowFileDetail" class="name-container">
 			{{ fileDetail }}
@@ -78,7 +78,7 @@ import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { encodePath } from '@nextcloud/paths'
 import AudioPlayer from './AudioPlayer.vue'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,
@@ -94,7 +94,7 @@ export default {
 		ProgressBar,
 		Close,
 		PlayCircleOutline,
-		Button,
+		ButtonVue,
 	},
 
 	directives: {

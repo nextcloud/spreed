@@ -2,7 +2,7 @@ import mockAxios from '../__mocks__/axios.js'
 import { generateOcsUrl } from '@nextcloud/router'
 import { shallowMount } from '@vue/test-utils'
 import { CONVERSATION } from '../constants.js'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import RoomSelector from './RoomSelector.vue'
 
 describe('RoomSelector.vue', () => {
@@ -139,7 +139,7 @@ describe('RoomSelector.vue', () => {
 
 		const list = wrapper.findAll('li')
 		await list.at(1).trigger('click')
-		await wrapper.findComponent(Button).vm.$emit('click')
+		await wrapper.findComponent(ButtonVue).vm.$emit('click')
 
 		expect(eventHandler).toHaveBeenCalledWith('token-3')
 	})

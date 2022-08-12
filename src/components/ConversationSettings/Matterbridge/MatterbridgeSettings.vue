@@ -35,7 +35,7 @@
 			<div class="basic-settings">
 				<div v-show="!enabled"
 					class="add-part-wrapper">
-					<Plus class="icon" size="20" />
+					<Plus class="icon" :size="20" />
 					<Multiselect ref="partMultiselect"
 						v-model="selectedType"
 						label="displayName"
@@ -47,7 +47,8 @@
 						@input="clickAddPart">
 						<template #option="{option}">
 							<img class="icon-multiselect-service"
-								:src="option.iconUrl">
+								:src="option.iconUrl"
+								alt="">
 							{{ option.displayName }}
 						</template>
 					</Multiselect>
@@ -65,8 +66,8 @@
 						({{ processStateText }})
 					</label>
 					<ButtonVue v-if="enabled"
-						type="tertiary"
 						v-tooltip.top="{ content: t('spreed', 'Show Matterbridge log') }"
+						type="tertiary"
 						:aria-label="t('spreed', 'Show Matterbridge log')"
 						@click="showLogContent">
 						<template #icon>
@@ -105,7 +106,7 @@ import {
 } from '../../../services/matterbridgeService.js'
 import { showSuccess } from '@nextcloud/dialogs'
 import { imagePath } from '@nextcloud/router'
-import ButtonVue from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import Message from 'vue-material-design-icons/Message'
 import Modal from '@nextcloud/vue/dist/Components/Modal'

@@ -5,7 +5,7 @@ import { cloneDeep } from 'lodash'
 import { EventBus } from '../../../../services/EventBus.js'
 import storeConfig from '../../../../store/storeConfig.js'
 import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../constants.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 
 // Components
 import Check from 'vue-material-design-icons/Check'

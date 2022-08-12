@@ -25,12 +25,12 @@
 		@submit.prevent="handleChooseUserName">
 		<!-- eslint-disable-next-line vue/no-v-html -->
 		<h3 v-html="displayNameLabel" />
-		<Button @click.prevent="handleEditUsername">
+		<ButtonVue @click.prevent="handleEditUsername">
 			{{ t('spreed', 'Edit') }}
 			<template #icon>
 				<Pencil :size="20" />
 			</template>
-		</Button>
+		</ButtonVue>
 		<div v-if="isEditingUsername"
 			class="username-form__wrapper">
 			<input ref="usernameInput"
@@ -40,21 +40,21 @@
 				type="text"
 				@keydown.enter="handleChooseUserName"
 				@keydown.esc="isEditingUsername = !isEditingUsername">
-			<Button class="username-form__button"
+			<ButtonVue class="username-form__button"
 				native-type="submit"
 				:aria-label="t('spreed', 'Save name')"
 				type="tertiary">
 				<template #icon>
 					<ArrowRight :size="20" />
 				</template>
-			</Button>
+			</ButtonVue>
 		</div>
 	</form>
 </template>
 
 <script>
 import { setGuestUserName } from '../services/participantsService.js'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import Pencil from 'vue-material-design-icons/Pencil'
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 
@@ -62,7 +62,7 @@ export default {
 	name: 'SetGuestUsername',
 
 	components: {
-		Button,
+		ButtonVue,
 		Pencil,
 		ArrowRight,
 	},

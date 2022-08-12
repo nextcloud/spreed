@@ -64,24 +64,24 @@
 							:container="container"
 							:close-on-select="false"
 							@select="addEmoji">
-							<Button :disabled="disabled"
+							<ButtonVue :disabled="disabled"
 								:aria-label="t('spreed', 'Add emoji')"
 								type="tertiary-no-background"
 								:aria-haspopup="true">
 								<template #icon>
 									<EmoticonOutline :size="16" />
 								</template>
-							</Button>
+							</ButtonVue>
 						</EmojiPicker>
 						<!-- Disabled emoji picker placeholder button -->
-						<Button v-else
+						<ButtonVue v-else
 							type="tertiary"
 							:aria-label="t('spreed', 'Add emoji')"
 							:disabled="true">
 							<template #icon>
 								<EmoticonOutline :size="16" />
 							</template>
-						</Button>
+						</ButtonVue>
 					</div>
 					<div v-if="messageToBeReplied" class="new-message-form__quote">
 						<Quote :is-new-message-form-quote="true"
@@ -118,7 +118,7 @@
 						</ActionButton>
 					</Actions>
 					<!-- Send -->
-					<Button :disabled="disabled"
+					<ButtonVue :disabled="disabled"
 						type="tertiary"
 						native-type="submit"
 						:title="t('spreed', 'Send message')"
@@ -127,7 +127,7 @@
 						<template #icon>
 							<Send :size="16" />
 						</template>
-					</Button>
+					</ButtonVue>
 				</template>
 			</form>
 		</div>
@@ -139,7 +139,7 @@ import AdvancedInput from './AdvancedInput/AdvancedInput.vue'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { getCapabilities } from '@nextcloud/capabilities'
 import Quote from '../Quote.vue'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
@@ -166,7 +166,7 @@ export default {
 		Quote,
 		Actions,
 		ActionButton,
-		Button,
+		ButtonVue,
 		Paperclip,
 		EmojiPicker,
 		EmoticonOutline,
@@ -288,14 +288,6 @@ export default {
 	watch: {
 		currentConversationIsJoined(newValue) {
 			this.$refs.advancedInput.focusInput()
-		},
-
-		disabled(newValue) {
-			// the menu is not always available
-			if (!this.$refs.uploadMenu) {
-				return
-			}
-			this.$refs.uploadMenu.$refs.menuButton.disabled = newValue
 		},
 
 		text(newValue) {
@@ -595,6 +587,7 @@ export default {
 			flex-grow: 1;
 			overflow: hidden;
 			position: relative;
+			padding: 2px;
 		}
 		&__quote {
 			margin: 0 16px 12px 24px;

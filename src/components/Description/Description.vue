@@ -35,21 +35,21 @@
 			@keydown.esc="handleCancelEditing" />
 		<template v-if="!loading">
 			<template v-if="editing">
-				<Button type="tertiary"
+				<ButtonVue type="tertiary"
 					:aria-label="t('spreed', 'Cancel editing description')"
 					@click="handleCancelEditing">
 					<template #icon>
 						<Close :size="20" />
 					</template>
-				</Button>
-				<Button type="primary"
+				</ButtonVue>
+				<ButtonVue type="primary"
 					:aria-label="t('spreed', 'Submit conversation description')"
 					:disabled="!canSubmit"
 					@click="handleSubmitDescription">
 					<template #icon>
 						<Check :size="20" />
 					</template>
-				</Button>
+				</ButtonVue>
 				<div v-if="showCountDown"
 					v-tooltip.auto="countDownWarningText"
 					class="counter"
@@ -58,14 +58,14 @@
 					<span>{{ charactersCountDown }}</span>
 				</div>
 			</template>
-			<Button v-if="!editing && editable"
+			<ButtonVue v-if="!editing && editable"
 				type="tertiary"
 				:aria-label="t('spreed', 'Edit conversation description')"
 				@click="handleEditDescription">
 				<template #icon>
 					<Pencil :size="20" />
 				</template>
-			</Button>
+			</ButtonVue>
 		</template>
 		<div v-if="loading" class="icon-loading-small spinner" />
 	</div>
@@ -77,7 +77,7 @@ import Check from 'vue-material-design-icons/Check'
 import Close from 'vue-material-design-icons/Close'
 import RichContentEditable from '@nextcloud/vue/dist/Components/RichContenteditable'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 
 export default {
 	name: 'Description',
@@ -86,7 +86,7 @@ export default {
 		Check,
 		Close,
 		RichContentEditable,
-		Button,
+		ButtonVue,
 	},
 
 	directives: {
