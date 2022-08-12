@@ -257,13 +257,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	/**
 	 * @When /^user "([^"]*)" search for "([^"]*)" in room "([^"]*)"$/
+	 * @When /^user "([^"]*)" search for "([^"]*)"$/
 	 * @param string $term
 	 */
-	public function searchingForComments(string $user, string $term, string $identifier, TableNode $formData = null): void {
+	public function searchingForComments(string $user, string $term, ?string $identifier, TableNode $formData = null): void {
 		$this->setCurrentUser($user);
+		if ($identifier) {
+			$from = '/call/' . self::$identifierToToken[$identifier];
+		} else {
+			$from = '/apps/spreed';
+		}
 		$this->sendRequest('GET', '/search/providers/talk-message-current/search?' . http_build_query([
 			'term' => urlencode($term),
-			'from' => '/call/' . self::$identifierToToken[$identifier],
+			'from' => $from,
 		]));
 		$this->assertStatusCode($this->response, 200);
 
