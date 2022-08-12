@@ -805,7 +805,7 @@ class ChatManager {
 			if ($comment->getObjectId() != $room->getId()) {
 				continue;
 			}
-			if ($comment->getCreationDateTime() <= $historySince) {
+			if ($comment->getCreationDateTime() < $historySince) {
 				unset($comments[$key]);
 				continue;
 			}
