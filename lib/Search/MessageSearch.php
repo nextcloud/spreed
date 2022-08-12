@@ -151,8 +151,18 @@ class MessageSearch implements IProvider {
 			$query->getLimit()
 		);
 
+		$filteredComments = [];
+		foreach ($roomMap as $room) {
+			$participant = $room->getParticipant($user->getUID(), false);
+			$attendee = $participant->getAttendee();
+			$filteredComments = array_merge(
+				$filteredComments,
+				$this->chatManager->filterHistorySince($room, $comments, $attendee)
+			);
+		}
+
 		$result = [];
-		foreach ($comments as $comment) {
+		foreach ($filteredComments as $comment) {
 			$room = $roomMap[$comment->getObjectId()];
 			try {
 				$result[] = $this->commentToSearchResultEntry($room, $user, $comment, $query);

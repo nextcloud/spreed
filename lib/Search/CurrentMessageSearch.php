@@ -115,6 +115,10 @@ class CurrentMessageSearch extends MessageSearch {
 			$query->getLimit()
 		);
 
+		$participant = $room->getParticipant($user->getUID(), false);
+		$attendee = $participant->getAttendee();
+		$comments = $this->chatManager->filterHistorySince($room, $comments, $attendee);
+
 		$result = [];
 		foreach ($comments as $comment) {
 			try {
