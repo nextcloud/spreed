@@ -73,7 +73,7 @@
 					<Button id="link_share_settings_link_password_submit"
 						:aria-label="t('spreed', 'Save password')"
 						:disabled="isSaving"
-						:native-type="submit">
+						native-type="submit">
 						<template #icon>
 							<ArrowRight />
 						</template>
