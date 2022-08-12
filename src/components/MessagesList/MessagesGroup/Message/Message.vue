@@ -198,6 +198,7 @@ import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Popover from '@nextcloud/vue/dist/Components/Popover'
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
+import Poll from './MessagePart/Poll.vue'
 
 export default {
 	name: 'Message',
@@ -501,6 +502,18 @@ export default {
 					richParameters[p] = {
 						component: Location,
 						props: this.messageParameters[p],
+					}
+				} else if (type === 'talk-poll') {
+					const props = Object.assign({}, this.messageParameters[p])
+					// Add the token to the component props
+					props.token = this.token
+					// The word 'name' is reserved in for the component name in
+					// vue instances so we cannot pass that into the component
+					// as a prop. Therefore we rename it into pollName
+					props.pollName = this.messageParameters[p].name
+					richParameters[p] = {
+						component: Poll,
+						props,
 					}
 				} else if (mimetype === 'text/vcard') {
 					richParameters[p] = {

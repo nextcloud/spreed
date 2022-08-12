@@ -141,8 +141,13 @@ const getters = {
 	messagesList: (state) => (token) => {
 		if (state.messages[token]) {
 			return Object.values(state.messages[token]).filter(message => {
-				// Filter out reaction messages
-				if (message.systemMessage === 'reaction' || message.systemMessage === 'reaction_deleted' || message.systemMessage === 'reaction_revoked') {
+				// Filter out some system messages
+				if (message.systemMessage === 'reaction'
+					|| message.systemMessage === 'reaction_deleted'
+					|| message.systemMessage === 'reaction_revoked'
+					|| message.systemMessage === 'poll_voted'
+					|| message.systemMessage === 'poll_closed'
+				) {
 					return false
 				} else {
 					return true
@@ -408,6 +413,13 @@ const actions = {
 			context.commit('resetReactions', {
 				token: message.token,
 				messageId: message.parent,
+			})
+		}
+
+		if (message.systemMessage === 'poll_voted') {
+			context.dispatch('debounceGetPollData', {
+				token: message.token,
+				pollId: message.messageParameters.poll.id,
 			})
 		}
 

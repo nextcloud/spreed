@@ -40,6 +40,7 @@ import windowVisibilityStore from './windowVisibilityStore.js'
 import integrationsStore from './integrationsStore.js'
 import reactionsStore from './reactionsStore.js'
 import sharedItemStore from './sharedItemsStore.js'
+import pollStore from './pollStore.js'
 
 export default {
 	modules: {
@@ -63,6 +64,7 @@ export default {
 		integrationsStore,
 		reactionsStore,
 		sharedItemStore,
+		pollStore,
 	},
 
 	mutations: {},
