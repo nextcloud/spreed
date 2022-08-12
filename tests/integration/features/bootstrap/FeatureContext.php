@@ -256,6 +256,27 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" search for "([^"]*)" in room "([^"]*)"$/
+	 * @param string $term
+	 */
+	public function searchingForComments(string $user, string $term, string $identifier, TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/search/providers/talk-message-current/search?' . http_build_query([
+			'term' => urlencode($term),
+			'from' => '/call/' . self::$identifierToToken[$identifier],
+		]));
+		$this->assertStatusCode($this->response, 200);
+
+		$searchResult = $this->getDataFromResponse($this->response);
+
+		if ($formData === null) {
+			Assert::assertEmpty($searchResult['entries']);
+			return;
+		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" is participant of the following rooms \((v4)\)$/
 	 * @Then /^user "([^"]*)" is participant of the following (unordered )?rooms \((v4)\)$/
 	 *
 	 * @param string $user
