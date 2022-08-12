@@ -21,6 +21,7 @@
 
 <template>
 	<ListItem :title="item.displayName"
+		:titleTooltip="{content: item.displayName, boundariesElement: boundariesElement}"
 		:class="{'unread-mention-conversation': item.unreadMention}"
 		:anchor-id="`conversation_${item.token}`"
 		:active="isActive"
@@ -141,6 +142,9 @@ export default {
 	},
 
 	computed: {
+		boundariesElement() {
+			return document.querySelector('#content-vue')
+		},
 
 		counterType() {
 			if (this.item.unreadMentionDirect || (this.item.unreadMessages !== 0 && this.item.type === CONVERSATION.TYPE.ONE_TO_ONE)) {
