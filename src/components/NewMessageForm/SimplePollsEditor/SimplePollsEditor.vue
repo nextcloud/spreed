@@ -44,10 +44,10 @@
 				@delete-option="deleteOption(index)" />
 
 			<!-- Add options -->
-			<Button class="simple-polls-editor__add-more" type="tertiary-no-background" @click="addOption">
+			<ButtonVue class="simple-polls-editor__add-more" type="tertiary-no-background" @click="addOption">
 				<Plus slot="icon" />
 				{{ t('spreed', 'Add answer') }}
-			</Button>
+			</ButtonVue>
 
 			<!-- Poll settings -->
 			<p class="simple-polls-editor__caption">
@@ -61,13 +61,13 @@
 					{{ t('spreed', 'Multiple answers') }}
 				</CheckBoxRadioSwitch>
 				<div class="simple-polls-editor__actions">
-					<Button type="tertiary" @click="dismissEditor">
+					<ButtonVue type="tertiary" @click="dismissEditor">
 						{{ t('spreed', 'Dismiss') }}
-					</Button>
+					</ButtonVue>
 					<!-- create poll button-->
-					<Button type="primary" @click="createPoll">
+					<ButtonVue type="primary" @click="createPoll">
 						{{ t('spreed', 'Create poll') }}
-					</Button>
+					</ButtonVue>
 				</div>
 			</div>
 		</div>
@@ -77,7 +77,7 @@
 <script>
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import CheckBoxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import PollOption from './PollOption.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import TextField from '@nextcloud/vue/dist/Components/TextField'
@@ -89,7 +89,7 @@ export default {
 	components: {
 		Modal,
 		CheckBoxRadioSwitch,
-		Button,
+		ButtonVue,
 		PollOption,
 		Plus,
 		TextField,

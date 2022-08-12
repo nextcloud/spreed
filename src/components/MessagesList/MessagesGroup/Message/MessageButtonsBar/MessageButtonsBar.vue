@@ -25,14 +25,14 @@
 		class="message-buttons-bar"
 		:class="{ 'message-buttons-bar--last-read' : isLastRead }">
 		<template v-if="!isReactionsMenuOpen">
-			<Button v-if="canReact"
+			<ButtonVue v-if="canReact"
 				type="tertiary"
 				:aria-label="t('spreed', 'Add a reaction to this message')"
 				@click="openReactionsMenu">
 				<template #icon>
 					<EmoticonOutline :size="20" />
 				</template>
-			</Button>
+			</ButtonVue>
 			<Actions v-show="isReplyable">
 				<ActionButton @click.stop="handleReply">
 					<template #icon>

@@ -23,20 +23,20 @@
 <template>
 	<form class="poll-option">
 		<TextField class="poll-option__input" v-bind="$attrs" v-on="$listeners" />
-		<Button v-if="canDelete"
+		<ButtonVue v-if="canDelete"
 			type="tertiary-no-background"
 			@click="deleteOption">
 			<Close slot="icon"
 				decorative
 				title=""
 				:size="20" />
-		</Button>
+		</ButtonVue>
 	</form>
 </template>
 
 <script>
 import TextField from '@nextcloud/vue/dist/Components/TextField'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import Close from 'vue-material-design-icons/Close.vue'
 
 export default {
@@ -44,7 +44,7 @@ export default {
 
 	components: {
 		TextField,
-		Button,
+		ButtonVue,
 		Close,
 	},
 

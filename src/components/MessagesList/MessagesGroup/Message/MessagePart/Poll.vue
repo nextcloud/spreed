@@ -138,7 +138,7 @@
 
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
-import ButtonVue from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
 import { PARTICIPANT } from '../../../../../constants.js'
