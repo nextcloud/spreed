@@ -587,6 +587,7 @@ export default {
 			flex-grow: 1;
 			overflow: hidden;
 			position: relative;
+			padding: 2px;
 		}
 		&__quote {
 			margin: 0 16px 12px 24px;
