@@ -28,7 +28,6 @@ OC.L10N.register(
     "Blocked" : "Blokeeritud",
     "Expired" : "Aegunud",
     "Delete this server" : "Kustuta see server",
-    "Saved" : "Salvestatud",
     "OK" : "OK",
     "Copy link" : "Kopeeri link",
     "Dismiss" : "Jäta vahele",
@@ -77,6 +76,7 @@ OC.L10N.register(
     "Default" : "Vaikeväärtus",
     "The password is wrong. Try again." : "Parool on vale. Proovi uuesti.",
     "Android app" : "Androidi rakendus",
-    "iOS app" : "iOS-i rakendus"
+    "iOS app" : "iOS-i rakendus",
+    "Saved" : "Salvestatud"
 },
 "nplurals=2; plural=(n != 1);");

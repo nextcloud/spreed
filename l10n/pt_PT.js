@@ -231,7 +231,6 @@ OC.L10N.register(
     "Expired" : "Expirado",
     "Shared secret" : "Segredo partilhado",
     "Validate SSL certificate" : "Validar certificado SSL",
-    "Saved" : "Gravado",
     "TURN server protocols" : "Protocolos do servidor TURN",
     "OK" : "Ok",
     "Checking …" : "A verificar...",
@@ -320,6 +319,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "A palavra-passe está errada. Por favor, tente de novo.",
     "Android app" : "Aplicação Android",
     "iOS app" : "Aplicação iOS",
+    "Saved" : "Gravado",
     "Camera" : "Câmera"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
