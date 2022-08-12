@@ -54,10 +54,10 @@
 				{{ t('spreed', 'Settings') }}
 			</p>
 			<div class="simple-polls-editor__settings">
-				<CheckBoxRadioSwitch class="simple-polls-editor__switch" :checked.sync="isPrivate" type="checkbox">
+				<CheckBoxRadioSwitch :checked.sync="isPrivate" type="checkbox">
 					{{ t('spreed', 'Private poll') }}
 				</CheckBoxRadioSwitch>
-				<CheckBoxRadioSwitch class="simple-polls-editor__switch" :checked.sync="isMultipleAnswer" type="checkbox">
+				<CheckBoxRadioSwitch :checked.sync="isMultipleAnswer" type="checkbox">
 					{{ t('spreed', 'Multiple answers') }}
 				</CheckBoxRadioSwitch>
 				<div class="simple-polls-editor__actions">
@@ -157,10 +157,6 @@ export default {
 	justify-content: center;
 	align-items: left;
 
-	&__switch {
-		margin: 2px 0;
-	}
-
 	&__caption {
 		padding: 16px 0 4px 0;
 		font-weight: bold;
@@ -171,6 +167,21 @@ export default {
 		display: flex;
 		justify-content: flex-end;
 		gap: 4px;
+	}
+}
+
+// Upstream
+::v-deep .checkbox-radio-switch {
+	&__label {
+		align-items: unset;
+		height: unset;
+		margin: 4px 0;
+		padding: 8px;
+		width: 100%;
+		border-radius: var(--border-radius-large);
+		span {
+			align-self: flex-start;
+		}
 	}
 }
 
