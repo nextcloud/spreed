@@ -213,7 +213,6 @@ export default {
 				this.showPasswordField = true
 				await this.handlePasswordEnable()
 				this.$nextTick(() => {
-					console.error(this.$refs.passwordField)
 					this.$refs.passwordField.focus()
 				})
 			} else {
