@@ -267,7 +267,6 @@ OC.L10N.register(
     "Blocked" : "مسدود کردن",
     "Active" : "فعال کردن",
     "Expired" : "منقضی شده",
-    "Saved" : "ذخیره شد",
     "OK" : "تایید",
     "Copy link" : "کپی کردن لینک",
     "You can invite others in the participant tab of the sidebar" : "شما می‌توانید دیگران را از زبانه اعضا در نوارکناری دعوت کنید",
@@ -351,6 +350,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "رمزعبور اشتباه می باشد. دوباره امتحان کنید.",
     "Android app" : "اپ اندروید",
     "iOS app" : "اپ iOS",
+    "Saved" : "ذخیره شد",
     "Camera" : "دوربین"
 },
 "nplurals=2; plural=(n > 1);");

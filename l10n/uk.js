@@ -80,7 +80,6 @@ OC.L10N.register(
     "Error" : "Помилка",
     "Blocked" : "Заблоковано",
     "Delete this server" : "Вилучити цей сервер",
-    "Saved" : "Збережено",
     "OK" : "Гаразд",
     "Copy link" : "Скопіювати посилання",
     "Waiting for others to join the call …" : "Чекаємо, доки хтось приєднається до виклику...",
@@ -202,6 +201,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Пароль неправильний. Спробуйте ще раз.",
     "Android app" : "Застосунок для Android",
     "iOS app" : "Застосунок для iOS",
+    "Saved" : "Збережено",
     "Chat notifications" : "Сповіщення чату",
     "Camera" : "Камера"
 },

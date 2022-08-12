@@ -384,8 +384,6 @@ OC.L10N.register(
     "Shared secret" : "Sameiginlegur leynilykill",
     "Validate SSL certificate" : "Sannreyna SSL-skilríki",
     "Delete this server" : "Eyða þessum þjóni",
-    "Saved" : "Vistað",
-    "Add a new server" : "Bæta við nýjum þjóni",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Mögulegt er að nota utanaðkomandi merkjasendingaþjón fyrir mjög stórar uppsetningar. Skildu þetta eftir autt til að nota innbyggða merkjasendingaþjóninn.",
     "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Athugaðu að samtöl með fleiri en 4 þátttakendum og án merkjasendingaþjóns geta orðið fyrir truflunum í tengingum ásamt því að valda miklu álagi á tengdum tækjum.",
     "STUN server URL" : "URL-slóð STUN-þjóns",
@@ -518,6 +516,8 @@ OC.L10N.register(
     "%s Talk on your mobile devices" : "%s Talaðu á snjalltækjunum þínum",
     "Android app" : "Android-forrit",
     "iOS app" : "iOS-forrit",
+    "Saved" : "Vistað",
+    "Add a new server" : "Bæta við nýjum þjóni",
     "Microphone" : "Microphone",
     "Camera" : "Myndavél"
 },

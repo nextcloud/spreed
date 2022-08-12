@@ -30,7 +30,6 @@ OC.L10N.register(
     "Pending" : "Pendiente",
     "Error" : "Error",
     "Blocked" : "Bloqueado",
-    "Saved" : "Guardado",
     "TURN server protocols" : "Protocolos del servidor TURN",
     "OK" : "OK",
     "Copy link" : "Copiar enlace",
@@ -109,6 +108,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
+    "Saved" : "Guardado",
     "Camera" : "Cámara"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

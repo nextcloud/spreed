@@ -266,7 +266,6 @@ OC.L10N.register(
     "Error" : "Eraro",
     "Blocked" : "Barita",
     "Expired" : "Senvalidiĝis",
-    "Saved" : "Konservita",
     "OK" : "Bone",
     "Copy link" : "Kopii ligilon",
     "Dismiss" : "Preterpasi",
@@ -316,6 +315,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
+    "Saved" : "Konservita",
     "Camera" : "Fotilo"
 },
 "nplurals=2; plural=(n != 1);");

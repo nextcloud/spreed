@@ -25,7 +25,6 @@ OC.L10N.register(
     "Created at" : "สร้างเมื่อ",
     "Pending" : "อยู่ระหว่างดำเนินการ",
     "Error" : "ข้อผิดพลาด",
-    "Saved" : "บันทึกแล้ว",
     "OK" : "ตกลง",
     "Copy link" : "คัดลอกลิงค์",
     "Dismiss" : "ยกเลิก",
@@ -78,6 +77,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "รหัสผ่านที่ไม่ถูกต้อง กรุณาลองอีกครั้ง",
     "Android app" : "แอพฯ แอนดรอยด์",
     "iOS app" : "แอพฯ IOS",
+    "Saved" : "บันทึกแล้ว",
     "Camera" : "กล้อง",
     "[Unknown username]" : "[ไม่รู้จักชื่อผู้ใช้]"
 },
