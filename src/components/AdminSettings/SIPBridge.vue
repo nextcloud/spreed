@@ -73,17 +73,17 @@
 				:disabled="loading"
 				:placeholder="t('spreed', 'Phone number (Country)')" />
 
-			<Button type="primary"
+			<ButtonVue type="primary"
 				:disabled="loading"
 				@click="saveSIPSettings">
 				{{ t('spreed', 'Save changes') }}
-			</Button>
+			</ButtonVue>
 		</template>
 	</div>
 </template>
 
 <script>
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import axios from '@nextcloud/axios'
 import debounce from 'debounce'
@@ -96,7 +96,7 @@ export default {
 	name: 'SIPBridge',
 
 	components: {
-		Button,
+		ButtonVue,
 		Multiselect,
 	},
 

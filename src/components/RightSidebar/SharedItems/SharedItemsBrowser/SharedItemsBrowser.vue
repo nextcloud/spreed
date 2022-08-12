@@ -24,13 +24,13 @@
 		<div class="shared-items-browser">
 			<div class="shared-items-browser__navigation">
 				<template v-for="type in sharedItemsOrder">
-					<Button v-if="sharedItems[type]"
+					<ButtonVue v-if="sharedItems[type]"
 						:key="type"
 						:class="{'active' : activeTab === type}"
 						type="tertiary"
 						@click="handleTabClick(type)">
 						{{ getTitle(type) }}
-					</Button>
+					</ButtonVue>
 				</template>
 			</div>
 			<div ref="scroller" class="shared-items-browser__content" @scroll="debounceHandleScroll">
@@ -43,7 +43,7 @@
 
 <script>
 import Modal from '@nextcloud/vue/dist/Components/Modal'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import SharedItems from '../SharedItems.vue'
 import sharedItems from '../../../../mixins/sharedItems.js'
 import debounce from 'debounce'
@@ -52,8 +52,8 @@ export default {
 	name: 'SharedItemsBrowser',
 
 	components: {
+		ButtonVue,
 		Modal,
-		Button,
 		SharedItems,
 	},
 

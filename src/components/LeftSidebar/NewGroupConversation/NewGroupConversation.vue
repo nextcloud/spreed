@@ -21,7 +21,7 @@
 
 <template>
 	<div class="wrapper">
-		<Button slot="trigger"
+		<ButtonVue slot="trigger"
 			v-tooltip.bottom="t('spreed', 'Create a new group conversation')"
 			type="tertiary"
 			class="toggle"
@@ -30,7 +30,7 @@
 			<template #icon>
 				<Plus :size="20" />
 			</template>
-		</Button>
+		</ButtonVue>
 		<!-- New group form -->
 		<Modal v-if="modal"
 			:container="container"
@@ -77,38 +77,38 @@
 				placement are rendered depending on the current page -->
 				<div class="navigation">
 					<!-- First page -->
-					<Button v-if="page===0 && isPublic"
+					<ButtonVue v-if="page===0 && isPublic"
 						:disabled="disabled"
 						type="tertiary"
 						@click="handleCreateConversation">
 						{{ t('spreed', 'Create conversation') }}
-					</Button>
-					<Button v-if="page===0"
+					</ButtonVue>
+					<ButtonVue v-if="page===0"
 						type="primary"
 						:disabled="disabled"
 						class="navigation__button-right"
 						@click="handleSetConversationName">
 						{{ t('spreed', 'Add participants') }}
-					</Button>
+					</ButtonVue>
 					<!-- Second page -->
-					<Button v-if="page===1"
+					<ButtonVue v-if="page===1"
 						type="tertiary"
 						@click="handleClickBack">
 						{{ t('spreed', 'Back') }}
-					</Button>
-					<Button v-if="page===1"
+					</ButtonVue>
+					<ButtonVue v-if="page===1"
 						type="primary"
 						class="navigation__button-right"
 						@click="handleCreateConversation">
 						{{ t('spreed', 'Create conversation') }}
-					</Button>
+					</ButtonVue>
 					<!-- Third page -->
-					<Button v-if="page===2 && (error || isPublic)"
+					<ButtonVue v-if="page===2 && (error || isPublic)"
 						type="primary"
 						class="navigation__button-right"
 						@click="closeModal">
 						{{ t('spreed', 'Close') }}
-					</Button>
+					</ButtonVue>
 				</div>
 			</div>
 		</modal>
@@ -124,7 +124,7 @@ import SetContacts from './SetContacts/SetContacts.vue'
 import SetConversationName from './SetConversationName/SetConversationName.vue'
 import SetConversationType from './SetConversationType/SetConversationType.vue'
 import Confirmation from './Confirmation/Confirmation.vue'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import { addParticipant } from '../../../services/participantsService.js'
 import {
 	createPublicConversation,
@@ -152,7 +152,7 @@ export default {
 		SetContacts,
 		SetConversationName,
 		SetConversationType,
-		Button,
+		ButtonVue,
 		Confirmation,
 		PasswordProtect,
 		ListableSettings,

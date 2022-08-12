@@ -21,7 +21,7 @@
 
 <template>
 	<div>
-		<Button v-if="showStartCallButton"
+		<ButtonVue v-if="showStartCallButton"
 			id="call_button"
 			v-tooltip="{
 				placement: 'auto',
@@ -37,8 +37,8 @@
 				<Video :size="20" />
 			</template>
 			{{ startCallLabel }}
-		</Button>
-		<Button v-else-if="showLeaveCallButton && !canEndForAll"
+		</ButtonVue>
+		<ButtonVue v-else-if="showLeaveCallButton && !canEndForAll"
 			id="call_button"
 			type="error"
 			:disabled="loading"
@@ -47,7 +47,7 @@
 				<VideoOff :size="20" />
 			</template>
 			{{ leaveCallLabel }}
-		</Button>
+		</ButtonVue>
 		<Actions v-else-if="showLeaveCallButton && canEndForAll"
 			:disabled="loading">
 			<template #icon>
@@ -86,7 +86,7 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Video from 'vue-material-design-icons/Video'
 import VideoOff from 'vue-material-design-icons/VideoOff'
 import MenuDown from 'vue-material-design-icons/MenuDown'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 
 export default {
 	name: 'CallButton',
@@ -101,7 +101,7 @@ export default {
 		Video,
 		VideoOff,
 		MenuDown,
-		Button,
+		ButtonVue,
 	},
 
 	mixins: [

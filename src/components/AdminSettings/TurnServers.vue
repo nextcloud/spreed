@@ -25,7 +25,7 @@
 		<h2>
 			{{ t('spreed', 'TURN servers') }}
 
-			<Button v-if="!loading"
+			<ButtonVue v-if="!loading"
 				class="turn-server__add-icon"
 				type="tertiary-no-background"
 				:aria-label="t('spreed', 'Add a new TURN server')"
@@ -33,7 +33,7 @@
 				<template #icon>
 					<Plus :size="20" />
 				</template>
-			</Button>
+			</ButtonVue>
 		</h2>
 
 		<!-- eslint-disable-next-line vue/no-v-html -->
@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import TurnServer from '../../components/AdminSettings/TurnServer.vue'
 import { loadState } from '@nextcloud/initial-state'
 import Plus from 'vue-material-design-icons/Plus'
@@ -71,7 +71,7 @@ export default {
 	name: 'TurnServers',
 
 	components: {
-		Button,
+		ButtonVue,
 		TurnServer,
 		Plus,
 	},

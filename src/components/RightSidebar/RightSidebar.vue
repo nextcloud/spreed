@@ -73,12 +73,12 @@
 				:attendee-pin="conversation.attendeePin" />
 			<div v-if="!getUserId" id="app-settings">
 				<div id="app-settings-header">
-					<Button type="tertiary" @click="showSettings">
+					<ButtonVue type="tertiary" @click="showSettings">
 						<template #icon>
 							<CogIcon :size="20" />
 						</template>
 						{{ t('spreed', 'Settings') }}
-					</Button>
+					</ButtonVue>
 				</div>
 			</div>
 		</AppSidebarTab>
@@ -108,7 +108,7 @@ import isInLobby from '../../mixins/isInLobby.js'
 import SetGuestUsername from '../SetGuestUsername.vue'
 import SipSettings from './SipSettings.vue'
 import LobbyStatus from './LobbyStatus.vue'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import AccountMultiple from 'vue-material-design-icons/AccountMultiple'
 import CogIcon from 'vue-material-design-icons/Cog'
 import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage'
@@ -126,7 +126,7 @@ export default {
 		SetGuestUsername,
 		SipSettings,
 		LobbyStatus,
-		Button,
+		ButtonVue,
 		AccountMultiple,
 		CogIcon,
 		FolderMultipleImage,

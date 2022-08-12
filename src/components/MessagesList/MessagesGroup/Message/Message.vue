@@ -172,7 +172,7 @@ the main body of the message as well as a quote.
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import CallButton from '../../../TopBar/CallButton.vue'
 import DeckCard from './MessagePart/DeckCard.vue'

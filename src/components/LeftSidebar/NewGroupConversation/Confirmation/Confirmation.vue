@@ -33,7 +33,7 @@
 				<p class="confirmation__warning">
 					{{ t('spreed', 'All set') }}
 				</p>
-				<Button id="copy-link"
+				<ButtonVue id="copy-link"
 					slot="trigger"
 					v-clipboard:copy="linkToConversation"
 					v-clipboard:success="onCopy"
@@ -41,7 +41,7 @@
 					type="secondary"
 					class="confirmation__copy-link">
 					{{ t('spreed', 'Copy conversation link') }}
-				</Button>
+				</ButtonVue>
 				<p class="confirmation__warning">
 					{{ confirmationText }}
 				</p>
@@ -57,12 +57,12 @@
 </template>
 
 <script>
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 
 export default {
 	name: 'Confirmation',
 	components: {
-		Button,
+		ButtonVue,
 	},
 	props: {
 		conversationName: {

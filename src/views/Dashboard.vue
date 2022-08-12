@@ -44,11 +44,11 @@
 			<EmptyContent icon="icon-talk">
 				<template #desc>
 					{{ t('spreed', 'Say hi to your friends and colleagues!') }}
-					<Button class="button-start-conversation"
+					<ButtonVue class="button-start-conversation"
 						type="secondary"
 						@click="clickStartNew">
 						{{ t('spreed', 'Start a conversation') }}
-					</Button>
+					</ButtonVue>
 				</template>
 			</EmptyContent>
 		</template>
@@ -62,7 +62,7 @@ import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl, generateUrl } from '@nextcloud/router'
 import { CONVERSATION } from '../constants.js'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 
 const ROOM_POLLING_INTERVAL = 30
 
@@ -77,7 +77,14 @@ const propertySort = (properties) => (a, b) => properties.map(obj => {
 
 export default {
 	name: 'Dashboard',
-	components: { DashboardWidget, Button, DashboardWidgetItem, ConversationIcon, EmptyContent },
+
+	components: {
+		DashboardWidget,
+		DashboardWidgetItem,
+		ButtonVue,
+		ConversationIcon,
+		EmptyContent,
+	},
 
 	data() {
 		return {

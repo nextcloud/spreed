@@ -43,12 +43,12 @@
 					</template>
 				</EmptyContent>
 				<div class="forwarded-confirmation__navigation">
-					<Button type="tertiary" @click="handleClose">
+					<ButtonVue type="tertiary" @click="handleClose">
 						{{ t('spreed', 'Dismiss') }}
-					</Button>
-					<Button type="primary" @click="openConversation">
+					</ButtonVue>
+					<ButtonVue type="primary" @click="openConversation">
 						{{ t('spreed', 'Go to conversation') }}
-					</Button>
+					</ButtonVue>
 				</div>
 			</div>
 		</Modal>
@@ -61,7 +61,7 @@ import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import { showError } from '@nextcloud/dialogs'
 import cloneDeep from 'lodash/cloneDeep'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 
 export default {
 	name: 'Forwarder',
@@ -70,7 +70,7 @@ export default {
 		RoomSelector,
 		EmptyContent,
 		Modal,
-		Button,
+		ButtonVue,
 	},
 
 	props: {

@@ -51,7 +51,7 @@
 
 <script>
 import AlertCircle from 'vue-material-design-icons/AlertCircle'
-import ButtonVue from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import Check from 'vue-material-design-icons/Check'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'

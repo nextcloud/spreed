@@ -25,7 +25,7 @@
 		<h2>
 			{{ t('spreed', 'High-performance backend') }}
 
-			<Button v-if="!loading && showAddServerButton"
+			<ButtonVue v-if="!loading && showAddServerButton"
 				class="signaling-server__add-icon"
 				type="tertiary-no-background"
 				:aria-label="t('spreed', 'Add a new high-performance backend server')"
@@ -33,7 +33,7 @@
 				<template #icon>
 					<Plus :size="20" />
 				</template>
-			</Button>
+			</ButtonVue>
 		</h2>
 
 		<p class="settings-hint">
@@ -86,7 +86,7 @@
 
 <script>
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import Plus from 'vue-material-design-icons/Plus'
 import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
@@ -97,7 +97,7 @@ export default {
 	name: 'SignalingServers',
 
 	components: {
-		Button,
+		ButtonVue,
 		SignalingServer,
 		Plus,
 	},

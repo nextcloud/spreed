@@ -60,7 +60,7 @@
 			-->
 			<div class="device-checker__call-preferences">
 				<!-- Audio toggle -->
-				<Button v-tooltip="audioButtonTooltip"
+				<ButtonVue v-tooltip="audioButtonTooltip"
 					type="tertiary"
 					:aria-label="audioButtonTooltip"
 					:disabled="!audioPreviewAvailable"
@@ -71,7 +71,7 @@
 						<MicrophoneOff v-else
 							:size="20" />
 					</template>
-				</Button>
+				</ButtonVue>
 				<VolumeIndicator class="indicator"
 					:audio-preview-available="audioPreviewAvailable"
 					:current-volume="currentVolume"
@@ -79,7 +79,7 @@
 					:disabled="!audioOn" />
 
 				<!-- Video toggle -->
-				<Button v-tooltip="videoButtonTooltip"
+				<ButtonVue v-tooltip="videoButtonTooltip"
 					type="tertiary"
 					:aria-label="videoButtonTooltip"
 					:disabled="!videoPreviewAvailable"
@@ -90,10 +90,10 @@
 						<VideoOff v-else
 							:size="20" />
 					</template>
-				</Button>
+				</ButtonVue>
 
 				<!-- Blur toggle -->
-				<Button v-if="videoPreviewAvailable && blurPreviewAvailable"
+				<ButtonVue v-if="videoPreviewAvailable && blurPreviewAvailable"
 					v-tooltip="blurButtonTooltip"
 					type="tertiary"
 					:aria-label="blurButtonTooltip"
@@ -105,12 +105,12 @@
 						<BlurOff v-else
 							:size="20" />
 					</template>
-				</Button>
+				</ButtonVue>
 			</div>
 
 			<!-- Device selection -->
 			<div class="device-checker__device-selection">
-				<Button v-if="!showDeviceSelection"
+				<ButtonVue v-if="!showDeviceSelection"
 					type="tertiary"
 					class="select-devices"
 					@click="showDeviceSelection = true">
@@ -118,7 +118,7 @@
 						<Cog :size="20" />
 					</template>
 					{{ t('spreed', 'Choose devices') }}
-				</Button>
+				</ButtonVue>
 				<template v-if="showDeviceSelection">
 					<MediaDevicesSelector kind="audioinput"
 						:devices="devices"
@@ -189,7 +189,7 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import isInLobby from '../../mixins/isInLobby.js'
@@ -212,7 +212,7 @@ export default {
 		CallButton,
 		CheckboxRadioSwitch,
 		VolumeIndicator,
-		Button,
+		ButtonVue,
 		ActionButton,
 		Actions,
 		BellOff,

@@ -27,7 +27,7 @@
 				<SharedItems :type="type"
 					:limit="limit(type)"
 					:items="sharedItems[type]" />
-				<Button v-if="hasMore(sharedItems[type])"
+				<ButtonVue v-if="hasMore(sharedItems[type])"
 					type="tertiary-no-background"
 					class="more"
 					:wide="true"
@@ -36,7 +36,7 @@
 						<DotsHorizontal :size="20" />
 					</template>
 					{{ getButtonTitle(type) }}
-				</Button>
+				</ButtonVue>
 			</div>
 		</template>
 		<AppNavigationCaption :title="t('spreed', 'Projects')" />
@@ -59,7 +59,7 @@ import { SHARED_ITEM } from '../../../constants.js'
 import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
 import SharedItemsBrowser from './SharedItemsBrowser/SharedItemsBrowser.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import sharedItems from '../../../mixins/sharedItems.js'
 
 export default {
@@ -72,7 +72,7 @@ export default {
 		AppNavigationCaption,
 		SharedItemsBrowser,
 		DotsHorizontal,
-		Button,
+		ButtonVue,
 	},
 
 	mixins: [sharedItems],

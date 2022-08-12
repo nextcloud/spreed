@@ -98,37 +98,37 @@
 		</template>
 
 		<template v-if="isReactionsMenuOpen">
-			<Button type="tertiary"
+			<ButtonVue type="tertiary"
 				:aria-label="t('spreed', 'Close reactions menu')"
 				@click="closeReactionsMenu">
 				<template #icon>
 					<ArrowLeft :size="20" />
 				</template>
-			</Button>
-			<Button type="tertiary"
+			</ButtonVue>
+			<ButtonVue type="tertiary"
 				:aria-label="t('spreed', 'React with {emoji}', { emoji: '👍' })"
 				@click="handleReactionClick('👍')">
 				<template #icon>
 					<span>👍</span>
 				</template>
-			</Button>
-			<Button type="tertiary"
+			</ButtonVue>
+			<ButtonVue type="tertiary"
 				:aria-label="t('spreed', 'React with {emoji}', { emoji: '❤' })"
 				@click="handleReactionClick('❤️')">
 				<template #icon>
 					<span>❤️</span>
 				</template>
-			</Button>
+			</ButtonVue>
 			<EmojiPicker :container="`#message_${id} .message-buttons-bar`"
 				@select="handleReactionClick"
 				@after-show="onEmojiPickerOpen"
 				@after-hide="onEmojiPickerClose">
-				<Button type="tertiary"
+				<ButtonVue type="tertiary"
 					:aria-label="t('spreed', 'React with another emoji')">
 					<template #icon>
 						<Plus :size="20" />
 					</template>
-				</Button>
+				</ButtonVue>
 			</EmojiPicker>
 		</template>
 		<Forwarder v-if="showForwarder"
@@ -158,7 +158,7 @@ import {
 	showSuccess,
 } from '@nextcloud/dialogs'
 import Forwarder from './Forwarder.vue'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
 
 export default {
@@ -173,7 +173,7 @@ export default {
 		Share,
 		ActionSeparator,
 		Forwarder,
-		Button,
+		ButtonVue,
 		EmoticonOutline,
 		ArrowLeft,
 		Plus,

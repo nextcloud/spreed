@@ -21,7 +21,7 @@
 
 <template>
 	<div class="audio-recorder">
-		<Button v-if="!isRecording"
+		<ButtonVue v-if="!isRecording"
 			v-tooltip.auto="{
 				content: startRecordingTooltip,
 				delay: tooltipDelay,
@@ -33,9 +33,9 @@
 			<template #icon>
 				<Microphone :size="16" />
 			</template>
-		</Button>
+		</ButtonVue>
 		<div v-else class="wrapper">
-			<Button v-tooltip.auto="{
+			<ButtonVue v-tooltip.auto="{
 					content: abortRecordingTooltip,
 					delay: tooltipDelay,
 				}"
@@ -45,13 +45,13 @@
 				<template #icon>
 					<Close :size="16" />
 				</template>
-			</Button>
+			</ButtonVue>
 			<div class="audio-recorder__info">
 				<div class="recording-indicator fadeOutIn" />
 				<span class="time">
 					{{ parsedRecordTime }}</span>
 			</div>
-			<Button v-tooltip.auto="{
+			<ButtonVue v-tooltip.auto="{
 					content: stopRecordingTooltip,
 					delay: tooltipDelay,
 				}"
@@ -62,7 +62,7 @@
 				<template #icon>
 					<Check :size="16" />
 				</template>
-			</Button>
+			</ButtonVue>
 		</div>
 	</div>
 </template>
@@ -75,7 +75,7 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { mediaDevicesManager } from '../../../utils/webrtc/index.js'
 import { showError } from '@nextcloud/dialogs'
 import { MediaRecorder } from 'extendable-media-recorder'
-import Button from '@nextcloud/vue/dist/Components/Button'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
 
 export default {
 	name: 'AudioRecorder',
@@ -84,7 +84,7 @@ export default {
 		Microphone,
 		Close,
 		Check,
-		Button,
+		ButtonVue,
 	},
 
 	directives: {
