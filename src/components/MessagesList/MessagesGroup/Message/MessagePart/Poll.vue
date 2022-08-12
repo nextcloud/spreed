@@ -97,6 +97,9 @@
 							{{ pollName }}
 						</h2>
 					</div>
+					<div class="poll__summary">
+						{{ n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', votersNumber) }}
+					</div>
 					<div class="results__options">
 						<div v-for="option, index in options"
 							:key="index"
@@ -395,6 +398,10 @@ export default {
 		padding-bottom: 20px;
 	}
 
+	&__summary {
+		color: var(--color-text-maxcontrast);
+		margin-bottom: 16px;
+	}
 }
 
 .results__options {
