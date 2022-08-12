@@ -23,12 +23,16 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
+use Firebase\JWT\JWT;
+
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCA\Talk\Events\GetTurnServersEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IGroupManager;
+use OCP\IURLGenerator;
 use OCP\IUser;
+use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 
 class Config {
@@ -36,9 +40,14 @@ class Config {
 	public const SIGNALING_EXTERNAL = 'external';
 	public const SIGNALING_CLUSTER_CONVERSATION = 'conversation_cluster';
 
+	public const SIGNALING_TICKET_V1 = 1;
+	public const SIGNALING_TICKET_V2 = 2;
+
 	protected IConfig $config;
 	protected ITimeFactory $timeFactory;
 	private IGroupManager $groupManager;
+	private IUserManager $userManager;
+	private IURLGenerator $urlGenerator;
 	private ISecureRandom $secureRandom;
 	private IEventDispatcher $dispatcher;
 
@@ -47,11 +56,15 @@ class Config {
 	public function __construct(IConfig $config,
 								ISecureRandom $secureRandom,
 								IGroupManager $groupManager,
+								IUserManager $userManager,
+								IURLGenerator $urlGenerator,
 								ITimeFactory $timeFactory,
 								IEventDispatcher $dispatcher) {
 		$this->config = $config;
 		$this->secureRandom = $secureRandom;
 		$this->groupManager = $groupManager;
+		$this->userManager = $userManager;
+		$this->urlGenerator = $urlGenerator;
 		$this->timeFactory = $timeFactory;
 		$this->dispatcher = $dispatcher;
 	}
@@ -340,10 +353,26 @@ class Config {
 	}
 
 	/**
+	 * @param int $version
 	 * @param string $userId
 	 * @return string
 	 */
-	public function getSignalingTicket(?string $userId): string {
+	public function getSignalingTicket(int $version, ?string $userId): string {
+		switch ($version) {
+			case self::SIGNALING_TICKET_V1:
+				return $this->getSignalingTicketV1($userId);
+			case self::SIGNALING_TICKET_V2:
+				return $this->getSignalingTicketV2($userId);
+			default:
+				return $this->getSignalingTicketV1($userId);
+		}
+	}
+
+	/**
+	 * @param string $userId
+	 * @return string
+	 */
+	private function getSignalingTicketV1(?string $userId): string {
 		if (empty($userId)) {
 			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret');
 		} else {
@@ -367,6 +396,99 @@ class Config {
 		$data = $random . ':' . $timestamp . ':' . $userId;
 		$hash = hash_hmac('sha256', $data, $secret);
 		return $data . ':' . $hash;
+	}
+
+	private function ensureSignalingTokenKeys(string $alg): void {
+		$secret = $this->config->getAppValue('spreed', 'signaling_token_privkey_' . strtolower($alg));
+		if ($secret) {
+			return;
+		}
+
+		if (substr($alg, 0, 2) === 'ES') {
+			$privKey = openssl_pkey_new([
+				'curve_name' => 'prime256v1',
+				'private_key_type' => OPENSSL_KEYTYPE_EC,
+			]);
+			$pubKey = openssl_pkey_get_details($privKey);
+			$public = $pubKey['key'];
+			if (!openssl_pkey_export($privKey, $secret)) {
+				throw new \Exception('Could not export private key');
+			}
+		} elseif (substr($alg, 0, 2) === 'RS') {
+			$privKey = openssl_pkey_new([
+				'private_key_bits' => 2048,
+				'private_key_type' => OPENSSL_KEYTYPE_RSA,
+			]);
+			$pubKey = openssl_pkey_get_details($privKey);
+			$public = $pubKey['key'];
+			if (!openssl_pkey_export($privKey, $secret)) {
+				throw new \Exception('Could not export private key');
+			}
+		} elseif ($alg === 'EdDSA') {
+			$privKey = sodium_crypto_sign_keypair();
+			$public = base64_encode(sodium_crypto_sign_publickey($privKey));
+			$secret = base64_encode(sodium_crypto_sign_secretkey($privKey));
+		} else {
+			throw new \Exception('Unsupported algorithm ' . $alg);
+		}
+
+		$this->config->setAppValue('spreed', 'signaling_token_privkey_' . strtolower($alg), $secret);
+		$this->config->setAppValue('spreed', 'signaling_token_pubkey_' . strtolower($alg), $public);
+	}
+
+	public function getSignalingTokenAlgorithm(): string {
+		return $this->config->getAppValue('spreed', 'signaling_token_alg', 'ES256');
+	}
+
+	public function getSignalingTokenPrivateKey(?string $alg = null): string {
+		if (!$alg) {
+			$alg = $this->getSignalingTokenAlgorithm();
+		}
+		$this->ensureSignalingTokenKeys($alg);
+
+		return $this->config->getAppValue('spreed', 'signaling_token_privkey_' . strtolower($alg));
+	}
+
+	public function getSignalingTokenPublicKey(?string $alg = null): string {
+		if (!$alg) {
+			$alg = $this->getSignalingTokenAlgorithm();
+		}
+		$this->ensureSignalingTokenKeys($alg);
+
+		return $this->config->getAppValue('spreed', 'signaling_token_pubkey_' . strtolower($alg));
+	}
+
+	/**
+	 * @param IUser $user
+	 * @return array
+	 */
+	public function getSignalingUserData(IUser $user): array {
+		return [
+			'displayname' => $user->getDisplayName(),
+		];
+	}
+
+	/**
+	 * @param string $userId
+	 * @return string
+	 */
+	private function getSignalingTicketV2(?string $userId): string {
+		$timestamp = $this->timeFactory->getTime();
+		$data = [
+			'iss' => $this->urlGenerator->getAbsoluteURL(''),
+			'iat' => $timestamp,
+			'exp' => $timestamp + 60,  // Valid for 1 minute.
+		];
+		$user = !empty($userId) ? $this->userManager->get($userId) : null;
+		if ($user instanceof IUser) {
+			$data['sub'] = $user->getUID();
+			$data['userdata'] = $this->getSignalingUserData($user);
+		}
+
+		$alg = $this->getSignalingTokenAlgorithm();
+		$secret = $this->getSignalingTokenPrivateKey($alg);
+		$token = JWT::encode($data, $secret, $alg);
+		return $token;
 	}
 
 	/**

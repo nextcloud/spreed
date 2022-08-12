@@ -316,4 +316,21 @@ class CapabilitiesTest extends TestCase {
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$this->assertSame([], $capabilities->getCapabilities());
 	}
+
+	public function testCapabilitiesHelloV2Key(): void {
+		$capabilities = new Capabilities(
+			$this->serverConfig,
+			$this->talkConfig,
+			$this->commentsManager,
+			$this->userSession,
+			$this->appManager
+		);
+
+		$this->talkConfig->expects($this->once())
+			->method('getSignalingTokenPublicKey')
+			->willReturn('this-is-the-key');
+
+		$data = $capabilities->getCapabilities();
+		$this->assertEquals('this-is-the-key', $data['spreed']['config']['signaling']['hello-v2-token-key']);
+	}
 }
