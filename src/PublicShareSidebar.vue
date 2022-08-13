@@ -32,6 +32,9 @@
 				</button>
 			</div>
 			<template v-else>
+				<TopBar v-if="isInCall"
+					:is-in-call="true"
+					:is-sidebar="true" />
 				<CallView v-if="isInCall"
 					:token="token"
 					:is-sidebar="true" />
@@ -50,6 +53,7 @@ import { loadState } from '@nextcloud/initial-state'
 import CallView from './components/CallView/CallView'
 import ChatView from './components/ChatView'
 import CallButton from './components/TopBar/CallButton'
+import TopBar from './components/TopBar/TopBar'
 import { EventBus } from './services/EventBus'
 import { getPublicShareConversationData } from './services/filesIntegrationServices'
 import {
@@ -74,6 +78,7 @@ export default {
 		ChatView,
 		PreventUnload,
 		DeviceChecker,
+		TopBar,
 	},
 
 	mixins: [
