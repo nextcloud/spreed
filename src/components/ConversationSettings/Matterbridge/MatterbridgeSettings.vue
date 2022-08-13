@@ -71,7 +71,7 @@
 						:aria-label="t('spreed', 'Show Matterbridge log')"
 						@click="showLogContent">
 						<template #icon>
-							<Message size="20" />
+							<Message :size="20" />
 						</template>
 					</ButtonVue>
 					<Modal v-if="logModal"

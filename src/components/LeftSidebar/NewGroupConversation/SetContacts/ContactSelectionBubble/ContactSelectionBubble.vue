@@ -35,7 +35,7 @@
 			:aria-label="removeLabel"
 			@click="removeParticipantFromSelection(participant)">
 			<template #icon>
-				<Close size="16" />
+				<Close :size="16" />
 			</template>
 		</ButtonVue>
 	</div>
