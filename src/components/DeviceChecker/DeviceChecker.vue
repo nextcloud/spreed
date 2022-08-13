@@ -170,6 +170,7 @@
 
 <script>
 import Modal from '@nextcloud/vue/dist/Components/Modal.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import { devices } from '../../mixins/devices.js'
 import MediaDevicesSelector from '../MediaDevicesSelector.vue'
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
@@ -196,6 +197,10 @@ import isInLobby from '../../mixins/isInLobby.js'
 
 export default {
 	name: 'DeviceChecker',
+
+	directives: {
+		Tooltip,
+	},
 
 	components: {
 		Modal,
