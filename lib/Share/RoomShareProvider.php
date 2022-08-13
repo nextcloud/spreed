@@ -28,6 +28,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Share;
 
+use OC\Cache\CappedMemoryCache;
 use OC\Files\Cache\Cache;
 use OCA\Talk\Events\AlreadySharedEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -83,6 +84,8 @@ class RoomShareProvider implements IShareProvider {
 	private IL10N $l;
 	private IMimeTypeLoader $mimeTypeLoader;
 
+	private $sharesByIdCache;
+
 	public function __construct(
 			IDBConnection $connection,
 			ISecureRandom $secureRandom,
@@ -103,6 +106,7 @@ class RoomShareProvider implements IShareProvider {
 		$this->timeFactory = $timeFactory;
 		$this->l = $l;
 		$this->mimeTypeLoader = $mimeTypeLoader;
+		$this->sharesByIdCache = new CappedMemoryCache();
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
@@ -631,6 +635,11 @@ class RoomShareProvider implements IShareProvider {
 	 * @throws ShareNotFound
 	 */
 	public function getShareById($id, $recipientId = null): IShare {
+
+		if (isset($this->sharesByIdCache[$id])) {
+			return $this->sharesByIdCache[$id];
+		}
+
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('s.*',
 			'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
@@ -663,6 +672,51 @@ class RoomShareProvider implements IShareProvider {
 		}
 
 		return $share;
+	}
+
+	/**
+	 * Get shares by ids
+	 *
+	 * Not part of IShareProvider API, but needed by OCA\Talk\Controller\ChatController.
+	 *
+	 * @param int[] $id
+	 * @param string|null $recipientId
+	 * @return IShare[]
+	 * @throws ShareNotFound
+	 */
+	public function getSharesByIds($ids, $recipientId = null): array {
+
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->select('s.*',
+			'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
+			'f.parent AS f_parent', 'f.name', 'f.mimetype', 'f.mimepart', 'f.size', 'f.mtime', 'f.storage_mtime',
+			'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum'
+		)
+			->selectAlias('st.id', 'storage_string_id')
+			->from('share', 's')
+			->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
+			->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'))
+			->where($qb->expr()->in('s.id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)))
+			->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)));
+
+		$cursor = $qb->executeQuery();
+
+		$shares = [];
+		while ($data = $cursor->fetch()) {
+			$share = $this->createShareObject($data);
+			$id = (int) $share->getId();
+			if (!isset($this->sharesByIdCache[$id])) {
+				$this->sharesByIdCache[$id] = $share;
+			}
+			$shares[] = $share;
+		}
+		$cursor->closeCursor();
+
+		if ($recipientId !== null) {
+			return $this->resolveSharesForRecipient($shares, $recipientId);
+		} else {
+			return $shares;
+		}
 	}
 
 	/**

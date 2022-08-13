@@ -40,6 +40,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Share\RoomShareProvider;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -74,6 +75,7 @@ class ChatController extends AEnvironmentAwareController {
 	/** @var string[] */
 	protected array $guestNames;
 	private MessageParser $messageParser;
+	protected RoomShareProvider $shareProvider;
 	private IManager $autoCompleteManager;
 	private IUserStatusManager $statusManager;
 	protected MatterbridgeManager $matterbridgeManager;
@@ -97,6 +99,7 @@ class ChatController extends AEnvironmentAwareController {
 								AttachmentService $attachmentService,
 								GuestManager $guestManager,
 								MessageParser $messageParser,
+								RoomShareProvider $shareProvider,
 								IManager $autoCompleteManager,
 								IUserStatusManager $statusManager,
 								MatterbridgeManager $matterbridgeManager,
@@ -119,6 +122,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->attachmentService = $attachmentService;
 		$this->guestManager = $guestManager;
 		$this->messageParser = $messageParser;
+		$this->shareProvider = $shareProvider;
 		$this->autoCompleteManager = $autoCompleteManager;
 		$this->statusManager = $statusManager;
 		$this->matterbridgeManager = $matterbridgeManager;
@@ -431,6 +435,22 @@ class ChatController extends AEnvironmentAwareController {
 			}
 			return $response;
 		}
+
+		// Quickly scan messages for share IDs
+		$share_ids = [];
+		foreach ($comments as $comment) {
+			$verb = $comment->getVerb();
+			$message = $comment->getMessage();
+			if ($verb === 'object_shared') {
+				$data = json_decode($message, true);
+				$parameters = $data['parameters'];
+				$share_ids[] = $parameters['share'];
+			}
+		}
+		// Ignore the result for now. Retrieved Share objects will be cached by
+		// the RoomShareProvider and returned from the cache to
+		// the MessageParser without additional database queries.
+		$this->shareProvider->getSharesByIds($share_ids);
 
 		$i = 0;
 		$messages = $commentIdToIndex = $parentIds = [];
