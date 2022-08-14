@@ -599,6 +599,7 @@ OC.L10N.register(
     "Contact" : "Liên hệ",
     "{stack} in {board}" : "{stack} trong {board}",
     "Deck Card" : "Thẻ bài",
+    "Submit" : "Gửi đi",
     "Scroll to bottom" : "Cuộn xuống dưới cùng",
     "Today" : "Hôm nay",
     "Yesterday" : "Hôm qua",
