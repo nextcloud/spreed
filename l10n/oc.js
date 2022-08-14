@@ -864,6 +864,7 @@ OC.L10N.register(
     "{stack} in {board}" : "{stack} dins {board}",
     "Remove {fileName}" : "Suprimir {fileName}",
     "Open this location in OpenStreetMap" : "Dobrir aquesta posicion dins OpenStreetMap",
+    "Submit" : "Transmetre",
     "Scroll to bottom" : "Desfilar enbàs",
     "Today" : "Uèi",
     "Yesterday" : "Ièr",

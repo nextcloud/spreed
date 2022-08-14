@@ -461,6 +461,7 @@ OC.L10N.register(
     "Mark as unread" : "Merkja allt sem ólesið",
     "Go to file" : "Fara í skrá",
     "Contact" : "Tengiliður",
+    "Submit" : "Senda inn",
     "Close poll" : "Loka könnun",
     "Today" : "Í dag",
     "Yesterday" : "Í gær",
