@@ -103,7 +103,7 @@ import { ATTENDEE } from '../../../constants.js'
 
 export default {
 
-	name: 'Video',
+	name: 'VideoVue',
 
 	components: {
 		Avatar,

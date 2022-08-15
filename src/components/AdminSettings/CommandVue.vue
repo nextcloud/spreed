@@ -44,7 +44,7 @@
 import { Fragment } from 'vue-frag'
 
 export default {
-	name: 'Command',
+	name: 'CommandVue',
 	components: {
 		Fragment,
 	},

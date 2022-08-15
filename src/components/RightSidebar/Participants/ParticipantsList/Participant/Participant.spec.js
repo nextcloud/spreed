@@ -7,7 +7,7 @@ import { ATTENDEE, PARTICIPANT } from '../../../../../constants.js'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 import Phone from 'vue-material-design-icons/Phone.vue'
-import Video from 'vue-material-design-icons/Video.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText.js'
@@ -294,7 +294,7 @@ describe('Participant.vue', () => {
 		test('does not renders call icon when disconnected', () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(Video).exists()).toBe(false)
+			expect(wrapper.findComponent(VideoIcon).exists()).toBe(false)
 			expect(wrapper.findComponent(Phone).exists()).toBe(false)
 			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
 			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
@@ -302,7 +302,7 @@ describe('Participant.vue', () => {
 		test('renders video call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(Video).exists()).toBe(true)
+			expect(wrapper.findComponent(VideoIcon).exists()).toBe(true)
 			expect(wrapper.findComponent(Phone).exists()).toBe(false)
 			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
 			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
@@ -312,7 +312,7 @@ describe('Participant.vue', () => {
 		test('renders audio call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_AUDIO
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(Video).exists()).toBe(false)
+			expect(wrapper.findComponent(VideoIcon).exists()).toBe(false)
 			expect(wrapper.findComponent(Phone).exists()).toBe(false)
 			expect(wrapper.findComponent(Microphone).exists()).toBe(true)
 			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
@@ -322,7 +322,7 @@ describe('Participant.vue', () => {
 		test('renders phone call icon', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_PHONE
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(Video).exists()).toBe(false)
+			expect(wrapper.findComponent(VideoIcon).exists()).toBe(false)
 			expect(wrapper.findComponent(Phone).exists()).toBe(true)
 			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
 			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)
@@ -334,7 +334,7 @@ describe('Participant.vue', () => {
 			getParticipantRaisedHandMock = jest.fn().mockReturnValue({ state: true })
 
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(Video).exists()).toBe(false)
+			expect(wrapper.findComponent(VideoIcon).exists()).toBe(false)
 			expect(wrapper.findComponent(Phone).exists()).toBe(false)
 			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
 			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(true)
@@ -346,7 +346,7 @@ describe('Participant.vue', () => {
 		test('renders video call icon when joined with multiple', async () => {
 			participant.inCall = PARTICIPANT.CALL_FLAG.WITH_VIDEO | PARTICIPANT.CALL_FLAG.WITH_PHONE
 			const wrapper = mountParticipant(participant)
-			expect(wrapper.findComponent(Video).exists()).toBe(true)
+			expect(wrapper.findComponent(VideoIcon).exists()).toBe(true)
 			expect(wrapper.findComponent(Phone).exists()).toBe(false)
 			expect(wrapper.findComponent(Microphone).exists()).toBe(false)
 			expect(wrapper.findComponent(HandBackLeft).exists()).toBe(false)

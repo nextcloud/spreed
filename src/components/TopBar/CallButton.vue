@@ -34,7 +34,7 @@
 			:type="startCallButtonType"
 			@click="handleClick">
 			<template #icon>
-				<Video :size="20" />
+				<VideoIcon :size="20" />
 			</template>
 			{{ startCallLabel }}
 		</ButtonVue>
@@ -83,7 +83,7 @@ import { loadState } from '@nextcloud/initial-state'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import Actions from '@nextcloud/vue/dist/Components/Actions.js'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
-import Video from 'vue-material-design-icons/Video.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import MenuDown from 'vue-material-design-icons/MenuDown.vue'
 import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
@@ -98,7 +98,7 @@ export default {
 	components: {
 		Actions,
 		ActionButton,
-		Video,
+		VideoIcon,
 		VideoOff,
 		MenuDown,
 		ButtonVue,

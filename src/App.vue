@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<Content v-shortkey.once="['ctrl', 'f']"
+	<ContentVue v-shortkey.once="['ctrl', 'f']"
 		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
 		app-name="talk"
 		@shortkey.native="handleAppSearch">
@@ -34,13 +34,13 @@
 		<UploadEditor />
 		<SettingsDialog />
 		<ConversationSettingsDialog />
-	</Content>
+	</ContentVue>
 </template>
 
 <script>
 import debounce from 'debounce'
 import AppContent from '@nextcloud/vue/dist/Components/AppContent.js'
-import Content from '@nextcloud/vue/dist/Components/Content.js'
+import ContentVue from '@nextcloud/vue/dist/Components/Content.js'
 import LeftSidebar from './components/LeftSidebar/LeftSidebar.vue'
 import PreventUnload from 'vue-prevent-unload'
 import Router from './router/router.js'
@@ -72,7 +72,7 @@ export default {
 	name: 'App',
 	components: {
 		AppContent,
-		Content,
+		ContentVue,
 		LeftSidebar,
 		PreventUnload,
 		RightSidebar,

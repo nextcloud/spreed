@@ -80,7 +80,7 @@
 				:size="20" />
 			<Phone v-if="callIcon === 'phone'"
 				:size="20" />
-			<Video v-if="callIcon === 'video'"
+			<VideoIcon v-if="callIcon === 'video'"
 				:size="20" />
 			<!-- The following icon is much bigger than all the others
 						so we reduce its size -->
@@ -216,7 +216,7 @@ import Bell from 'vue-material-design-icons/Bell.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 import Phone from 'vue-material-design-icons/Phone.vue'
-import Video from 'vue-material-design-icons/Video.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
 import Crown from 'vue-material-design-icons/Crown.vue'
 import Account from 'vue-material-design-icons/Account.vue'
 import Lock from 'vue-material-design-icons/Lock.vue'
@@ -242,7 +242,7 @@ export default {
 		DotsHorizontal,
 		Microphone,
 		Phone,
-		Video,
+		VideoIcon,
 		HandBackLeft,
 		Crown,
 		Account,

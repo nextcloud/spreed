@@ -85,7 +85,7 @@
 					:disabled="!videoPreviewAvailable"
 					@click="toggleVideo">
 					<template #icon>
-						<Video v-if="videoOn"
+						<VideoIcon v-if="videoOn"
 							:size="20" />
 						<VideoOff v-else
 							:size="20" />
@@ -177,7 +177,7 @@ import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
-import Video from 'vue-material-design-icons/Video.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import Blur from 'vue-material-design-icons/Blur.vue'
 import BlurOff from 'vue-material-design-icons/BlurOff.vue'
@@ -205,7 +205,7 @@ export default {
 		Cog,
 		Microphone,
 		MicrophoneOff,
-		Video,
+		VideoIcon,
 		VideoOff,
 		Blur,
 		BlurOff,

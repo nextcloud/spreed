@@ -48,20 +48,20 @@
 			<div class="head enabled">
 				{{ t('spreed', 'Enabled for') }}
 			</div>
-			<Command v-for="command in commands" :key="command.id" v-bind="command" />
+			<CommandVue v-for="command in commands" :key="command.id" v-bind="command" />
 		</div>
 	</div>
 </template>
 
 <script>
-import Command from '../../components/AdminSettings/Command.vue'
+import CommandVue from '../../components/AdminSettings/CommandVue.vue'
 import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'Commands',
 
 	components: {
-		Command,
+		CommandVue,
 	},
 
 	data() {

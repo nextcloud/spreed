@@ -240,7 +240,7 @@ import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import Monitor from 'vue-material-design-icons/Monitor.vue'
 import PresentToAll from '../../missingMaterialDesignIcons/PresentToAll.vue'
 import PromotedView from '../../missingMaterialDesignIcons/PromotedView.vue'
-import Video from 'vue-material-design-icons/Video.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import Blur from 'vue-material-design-icons/Blur.vue'
 import BlurOff from 'vue-material-design-icons/BlurOff.vue'
@@ -280,7 +280,7 @@ export default {
 		MicrophoneOff,
 		PresentToAll,
 		PromotedView,
-		VideoIcon: Video,
+		VideoIcon,
 		VideoOff,
 		Monitor,
 		Blur,

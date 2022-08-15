@@ -101,7 +101,7 @@ import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import Monitor from 'vue-material-design-icons/Monitor.vue'
-import Video from 'vue-material-design-icons/Video.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import { PARTICIPANT } from '../../../constants.js'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
@@ -116,7 +116,7 @@ export default {
 		Microphone,
 		MicrophoneOff,
 		Monitor,
-		VideoIcon: Video,
+		VideoIcon,
 		VideoOff,
 	},
 
