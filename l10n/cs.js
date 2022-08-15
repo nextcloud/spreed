@@ -194,7 +194,7 @@ OC.L10N.register(
     "{actor} ended the call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "{actor} ukončil hovor s {user1}, {user2}, {user3} a {user4} (trval {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Hovor s {user1}, {user2}, {user3}, {user4} a {user5} (trval {duration})",
     "{actor} ended the call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "{actor} ukončil hovor s {user1}, {user2}, {user3}, {user4} a {user5} (trval {duration})",
-    "Talk to %s" : "Mluvit s %s",
+    "Talk to %s" : "Talk s %s",
     "File is not shared, or shared but not with the user" : "Soubor není sdílen, nebo je sdílený s jiným uživatelem",
     "No account available to delete." : "Není k dispozici žádný účet pro smazání.",
     "No image file provided" : "Neposkytnut žádný soubor, obsahující obrázek",
