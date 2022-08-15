@@ -31,3 +31,22 @@ Feature: chat/limit-chat-history
       | room  | actorType | actorId      | actorDisplayName         | systemMessage |
       | room1 | users     | participant1 | participant1-displayname | user_added    |
     Then user "participant2" sees the following messages in room "room1" before message "user_added" with 304 (v1)
+
+
+  Scenario: Getting future messages from a valid message id but not visible by current user, don't will show the not visible messages
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 3     |
+      | roomName | room1 |
+    And user "participant1" sends message "Message 1" to room "room1" with 201
+    And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
+    And user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | systemMessage         |
+      | room1 | users     | participant1 | participant1-displayname | user_added            |
+      | room1 | users     | participant1 | participant1-displayname | conversation_created  |
+    And user "participant1" sees the following messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | room1 | users     | participant1 | participant1-displayname | Message 1 | []                |
+    And user "participant1" sends message "Message 2" to room "room1" with 201
+    Then user "participant2" sees the following messages in room "room1" starting with "conversation_created" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | message    | messageParameters |
+      | room1 | users     | participant1 | participant1-displayname | Message 2  | []                |
