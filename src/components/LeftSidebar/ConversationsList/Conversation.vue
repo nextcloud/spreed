@@ -23,6 +23,7 @@
 	<ListItem :title="item.displayName"
 		:class="{'unread-mention-conversation': item.unreadMention}"
 		:anchor-id="`conversation_${item.token}`"
+		:actions-aria-label="t('spreed', 'Conversation actions')"
 		:active="isActive"
 		:to="to"
 		:bold="!!item.unreadMessages"
