@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService.js'
 import browserCheck from './mixins/browserCheck.js'
 import '@nextcloud/dialogs/styles/toast.scss'

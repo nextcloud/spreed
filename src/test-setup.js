@@ -20,7 +20,7 @@
  *
  */
 
-// eslint-disable-next-line node/no-unpublished-import
+// eslint-disable-next-line
 import 'regenerator-runtime/runtime'
 import Vue from 'vue'
 

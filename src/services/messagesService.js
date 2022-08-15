@@ -22,8 +22,8 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import SHA256 from 'crypto-js/sha256'
-import Hex from 'crypto-js/enc-hex'
+import SHA256 from 'crypto-js/sha256.js'
+import Hex from 'crypto-js/enc-hex.js'
 
 /**
  * Fetches messages that belong to a particular conversation

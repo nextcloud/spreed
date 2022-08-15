@@ -69,12 +69,12 @@
 </template>
 
 <script>
-import Modal from '@nextcloud/vue/dist/Components/Modal'
+import Modal from '@nextcloud/vue/dist/Components/Modal.js'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { CONVERSATION } from '../constants.js'
 import ConversationIcon from '../components/ConversationIcon.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 
 export default {
 	name: 'RoomSelector',

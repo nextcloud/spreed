@@ -24,7 +24,7 @@
 			<Microphone v-if="deviceIcon === 'microphone'"
 				title=""
 				:size="16" />
-			<Video v-if="deviceIcon === 'camera'"
+			<VideoIcon v-if="deviceIcon === 'camera'"
 				title=""
 				:size="16" />
 		</div>
@@ -41,9 +41,9 @@
 </template>
 
 <script>
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import Multiselect from '@nextcloud/vue/dist/Components/Multiselect.js'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
-import Video from 'vue-material-design-icons/Video.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
 
 export default {
 
@@ -52,7 +52,7 @@ export default {
 	components: {
 		Multiselect,
 		Microphone,
-		Video,
+		VideoIcon,
 	},
 
 	props: {

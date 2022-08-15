@@ -86,8 +86,8 @@
 
 <script>
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
-import Plus from 'vue-material-design-icons/Plus'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import Plus from 'vue-material-design-icons/Plus.vue'
 import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import debounce from 'debounce'

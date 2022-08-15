@@ -55,7 +55,7 @@
 					<!-- options -->
 					<div class="poll__modal-options">
 						<template v-if="checkboxRadioSwitchType === 'radio'">
-							<CheckboxRadioSwitch v-for="option, index in options"
+							<CheckboxRadioSwitch v-for="(option, index) in options"
 								:key="'radio' + index"
 								:checked.sync="vote"
 								class="poll__option"
@@ -66,7 +66,7 @@
 							</CheckboxRadioSwitch>
 						</template>
 						<template v-else>
-							<CheckboxRadioSwitch v-for="option, index in options"
+							<CheckboxRadioSwitch v-for="(option, index) in options"
 								:key="'checkbox' + index"
 								:checked.sync="vote"
 								:value="index.toString()"
@@ -101,7 +101,7 @@
 						{{ n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', votersNumber) }}
 					</div>
 					<div class="results__options">
-						<div v-for="option, index in options"
+						<div v-for="(option, index) in options"
 							:key="index"
 							class="results__option">
 							<div class="results__option-title">
@@ -136,11 +136,11 @@
 
 <script>
 
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
-import Modal from '@nextcloud/vue/dist/Components/Modal'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
+import Modal from '@nextcloud/vue/dist/Components/Modal.js'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
-import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
+import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar.js'
 import { PARTICIPANT } from '../../../../../constants.js'
 
 export default {
@@ -266,15 +266,11 @@ export default {
 		},
 
 		currentUserIsModerator() {
-			return this.participantTypeIsModerator(this.currentParticipant.participantType)
-		},
-
-		participantTypeIsModerator(participantType) {
-			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1
+			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
 		},
 
 		canClosePoll() {
-			return this.currentUserIsPollCreator || this.participantTypeIsModerator
+			return this.currentUserIsPollCreator || this.currentUserIsModerator
 		},
 	},
 

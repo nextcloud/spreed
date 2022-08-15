@@ -27,9 +27,9 @@ import storeConfig from '../../../store/storeConfig.js'
 import EmitterMixin from '../../../utils/EmitterMixin.js'
 import CallParticipantModel from '../../../utils/webrtc/models/CallParticipantModel.js'
 
-import Video from './Video.vue'
+import VideoVue from './VideoVue.vue'
 
-describe('Video.vue', () => {
+describe('VideoVue.vue', () => {
 	let localVue
 	let store
 	let testStoreConfig
@@ -116,7 +116,7 @@ describe('Video.vue', () => {
 		 * async).
 		 */
 		function setupWrapper() {
-			wrapper = shallowMount(Video, {
+			wrapper = shallowMount(VideoVue, {
 				localVue,
 				store,
 				propsData: {

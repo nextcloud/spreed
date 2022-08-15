@@ -72,12 +72,12 @@
 </template>
 
 <script>
-import Pencil from 'vue-material-design-icons/Pencil'
-import Check from 'vue-material-design-icons/Check'
-import Close from 'vue-material-design-icons/Close'
-import RichContentEditable from '@nextcloud/vue/dist/Components/RichContenteditable'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Check from 'vue-material-design-icons/Check.vue'
+import Close from 'vue-material-design-icons/Close.vue'
+import RichContentEditable from '@nextcloud/vue/dist/Components/RichContenteditable.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 
 export default {
 	name: 'Description',

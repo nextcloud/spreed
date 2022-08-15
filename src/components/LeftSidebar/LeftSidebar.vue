@@ -116,13 +116,13 @@
 
 <script>
 import CancelableRequest from '../../utils/cancelableRequest.js'
-import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
-import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
+import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation.js'
+import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption.js'
 import ConversationsList from './ConversationsList/ConversationsList.vue'
 import Conversation from './ConversationsList/Conversation.vue'
 import ConversationsOptionsList from '../ConversationsOptionsList.vue'
 import Hint from '../Hint.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 import SearchBox from './SearchBox/SearchBox.vue'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus.js'

@@ -58,8 +58,8 @@
 </template>
 
 <script>
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
+import Multiselect from '@nextcloud/vue/dist/Components/Multiselect.js'
 import { loadState } from '@nextcloud/initial-state'
 
 const defaultGroupNotificationOptions = [

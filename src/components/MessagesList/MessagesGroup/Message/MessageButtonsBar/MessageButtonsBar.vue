@@ -139,13 +139,13 @@
 
 <script>
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
-import Actions from '@nextcloud/vue/dist/Components/Actions'
-import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
-import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
+import ActionLink from '@nextcloud/vue/dist/Components/ActionLink.js'
+import Actions from '@nextcloud/vue/dist/Components/Actions.js'
+import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator.js'
+import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-import File from 'vue-material-design-icons/File'
+import File from 'vue-material-design-icons/File.vue'
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Reply from 'vue-material-design-icons/Reply.vue'
@@ -158,8 +158,8 @@ import {
 	showSuccess,
 } from '@nextcloud/dialogs'
 import Forwarder from './Forwarder.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
-import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker.js'
 
 export default {
 	name: 'MessageButtonsBar',

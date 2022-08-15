@@ -66,9 +66,9 @@
 
 <script>
 import attachMediaStream from 'attachmediastream'
-import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import Hex from 'crypto-js/enc-hex'
-import SHA1 from 'crypto-js/sha1'
+import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
+import Hex from 'crypto-js/enc-hex.js'
+import SHA1 from 'crypto-js/sha1.js'
 import {
 	showError,
 	showInfo,

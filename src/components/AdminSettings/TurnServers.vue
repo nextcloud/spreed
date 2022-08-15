@@ -60,10 +60,10 @@
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 import TurnServer from '../../components/AdminSettings/TurnServer.vue'
 import { loadState } from '@nextcloud/initial-state'
-import Plus from 'vue-material-design-icons/Plus'
+import Plus from 'vue-material-design-icons/Plus.vue'
 import { showSuccess } from '@nextcloud/dialogs'
 import debounce from 'debounce'
 

@@ -27,7 +27,7 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 
 export default {
 	name: 'LobbyStatus',

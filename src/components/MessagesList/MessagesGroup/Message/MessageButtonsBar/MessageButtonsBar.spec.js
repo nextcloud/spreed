@@ -4,7 +4,7 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
 import { findActionButton } from '../../../../../test-helpers.js'
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
 

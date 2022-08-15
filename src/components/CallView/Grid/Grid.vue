@@ -52,7 +52,7 @@
 						<template v-if="!devMode && (!isLessThanTwoVideos || !isStripe)">
 							<EmptyCallView v-if="videos.length === 0 && !isStripe" class="video" :is-grid="true" />
 							<template v-for="callParticipantModel in displayedVideos">
-								<Video :key="callParticipantModel.attributes.peerId"
+								<VideoVue :key="callParticipantModel.attributes.peerId"
 									:class="{'video': !isStripe}"
 									:show-video-overlay="showVideoOverlay"
 									:token="token"
@@ -146,23 +146,23 @@
 
 <script>
 import debounce from 'debounce'
-import Video from '../shared/Video.vue'
+import VideoVue from '../shared/VideoVue.vue'
 import LocalVideo from '../shared/LocalVideo.vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateFilePath } from '@nextcloud/router'
 import EmptyCallView from '../shared/EmptyCallView.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import ChevronRight from 'vue-material-design-icons/ChevronRight'
-import ChevronLeft from 'vue-material-design-icons/ChevronLeft'
-import ChevronUp from 'vue-material-design-icons/ChevronUp'
-import ChevronDown from 'vue-material-design-icons/ChevronDown'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+import ChevronRight from 'vue-material-design-icons/ChevronRight.vue'
+import ChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
+import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
+import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 
 export default {
 	name: 'Grid',
 
 	components: {
-		Video,
+		VideoVue,
 		LocalVideo,
 		EmptyCallView,
 		VideoBottomBar,

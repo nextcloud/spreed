@@ -5,8 +5,8 @@ import { cloneDeep } from 'lodash'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { imagePath, generateRemoteUrl } from '@nextcloud/router'
 import { loadState } from '@nextcloud/initial-state'
-import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 import FilePreview from './FilePreview.vue'
 
 jest.mock('@nextcloud/initial-state', () => ({

@@ -1,4 +1,4 @@
-/* eslint-disable import/no-named-as-default-member */
+// eslint-disable-next-line n/no-unpublished-import
 import mockConsole from 'jest-mock-console'
 import { createLocalVue } from '@vue/test-utils'
 import messagesStore from './messagesStore.js'

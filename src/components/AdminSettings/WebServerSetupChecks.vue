@@ -50,10 +50,10 @@
 </template>
 
 <script>
-import AlertCircle from 'vue-material-design-icons/AlertCircle'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
-import Check from 'vue-material-design-icons/Check'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import Check from 'vue-material-design-icons/Check.vue'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
 import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
 

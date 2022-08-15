@@ -38,7 +38,7 @@
 
 <script>
 
-import UserBubble from '@nextcloud/vue/dist/Components/UserBubble'
+import UserBubble from '@nextcloud/vue/dist/Components/UserBubble.js'
 
 export default {
 	name: 'Mention',

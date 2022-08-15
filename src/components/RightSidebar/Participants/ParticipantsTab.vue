@@ -50,7 +50,7 @@ import { addParticipant } from '../../../services/participantsService.js'
 import { loadState } from '@nextcloud/initial-state'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 import { showError } from '@nextcloud/dialogs'
-import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
+import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption.js'
 import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults.vue'
 import getParticipants from '../../../mixins/getParticipants.js'
 

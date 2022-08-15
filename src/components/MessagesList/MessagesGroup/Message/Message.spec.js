@@ -5,11 +5,11 @@ import { cloneDeep } from 'lodash'
 import { EventBus } from '../../../../services/EventBus.js'
 import storeConfig from '../../../../store/storeConfig.js'
 import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../constants.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 
 // Components
-import Check from 'vue-material-design-icons/Check'
-import CheckAll from 'vue-material-design-icons/CheckAll'
+import Check from 'vue-material-design-icons/Check.vue'
+import CheckAll from 'vue-material-design-icons/CheckAll.vue'
 import Quote from '../../../Quote.vue'
 import Mention from './MessagePart/Mention.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
@@ -18,8 +18,8 @@ import Location from './MessagePart/Location.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import Message from './Message.vue'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
+import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker.js'
 
 // needed because of https://github.com/vuejs/vue-test-utils/issues/1507
 const RichTextStub = {

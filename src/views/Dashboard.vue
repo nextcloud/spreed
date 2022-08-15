@@ -58,11 +58,11 @@
 <script>
 import { DashboardWidget, DashboardWidgetItem } from '@nextcloud/vue-dashboard'
 import ConversationIcon from './../components/ConversationIcon.vue'
-import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
+import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent.js'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl, generateUrl } from '@nextcloud/router'
 import { CONVERSATION } from '../constants.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 
 const ROOM_POLLING_INTERVAL = 30
 

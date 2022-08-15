@@ -20,7 +20,7 @@
  *
  */
 
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
 
 // helpers
 const findActionButton = function(wrapper, text) {

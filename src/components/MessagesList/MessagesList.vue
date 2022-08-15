@@ -72,9 +72,9 @@ import { ATTENDEE } from '../../constants.js'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus.js'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
-import ChevronDown from 'vue-material-design-icons/ChevronDown'
-import uniqueId from 'lodash/uniqueId'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
+import uniqueId from 'lodash/uniqueId.js'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 
 export default {
 	name: 'MessagesList',

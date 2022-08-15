@@ -37,7 +37,7 @@
 			class="conversation-icon__avatar" />
 		<div v-if="showCall"
 			class="overlap-icon">
-			<Video :size="20"
+			<VideoIcon :size="20"
 				:fill-color="'#E9322D'" />
 			<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
 		</div>
@@ -51,9 +51,9 @@
 </template>
 
 <script>
-import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import Star from 'vue-material-design-icons/Star'
-import Video from 'vue-material-design-icons/Video'
+import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
+import Star from 'vue-material-design-icons/Star.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
 import { CONVERSATION } from '../constants.js'
 
 export default {
@@ -61,7 +61,7 @@ export default {
 	components: {
 		Avatar,
 		Star,
-		Video,
+		VideoIcon,
 	},
 	props: {
 		/**

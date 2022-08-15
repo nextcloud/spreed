@@ -96,15 +96,15 @@
 
 <script>
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import AlertCircle from 'vue-material-design-icons/AlertCircle'
-import Microphone from 'vue-material-design-icons/Microphone'
-import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff'
-import Monitor from 'vue-material-design-icons/Monitor'
-import Video from 'vue-material-design-icons/Video'
-import VideoOff from 'vue-material-design-icons/VideoOff'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import Microphone from 'vue-material-design-icons/Microphone.vue'
+import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
+import Monitor from 'vue-material-design-icons/Monitor.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
+import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import { PARTICIPANT } from '../../../constants.js'
-import HandBackLeft from 'vue-material-design-icons/HandBackLeft'
+import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import { emit } from '@nextcloud/event-bus'
 
 export default {
@@ -116,7 +116,7 @@ export default {
 		Microphone,
 		MicrophoneOff,
 		Monitor,
-		VideoIcon: Video,
+		VideoIcon,
 		VideoOff,
 	},
 

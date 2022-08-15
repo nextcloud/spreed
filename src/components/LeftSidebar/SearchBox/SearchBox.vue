@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 import Close from 'vue-material-design-icons/Close.vue'
 import { EventBus } from '../../../services/EventBus.js'
 

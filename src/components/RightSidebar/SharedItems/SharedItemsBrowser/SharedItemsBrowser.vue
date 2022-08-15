@@ -42,8 +42,8 @@
 </template>
 
 <script>
-import Modal from '@nextcloud/vue/dist/Components/Modal'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import Modal from '@nextcloud/vue/dist/Components/Modal.js'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 import SharedItems from '../SharedItems.vue'
 import sharedItems from '../../../../mixins/sharedItems.js'
 import debounce from 'debounce'

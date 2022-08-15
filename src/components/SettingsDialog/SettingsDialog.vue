@@ -143,9 +143,9 @@ import { getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs
 import { PRIVACY } from '../../constants.js'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import MediaDevicesPreview from '../MediaDevicesPreview.vue'
-import AppSettingsDialog from '@nextcloud/vue/dist/Components/AppSettingsDialog'
-import AppSettingsSection from '@nextcloud/vue/dist/Components/AppSettingsSection'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
+import AppSettingsDialog from '@nextcloud/vue/dist/Components/AppSettingsDialog.js'
+import AppSettingsSection from '@nextcloud/vue/dist/Components/AppSettingsSection.js'
+import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
 
 export default {
 	name: 'SettingsDialog',

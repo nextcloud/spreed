@@ -31,7 +31,7 @@
 					class="video__promoted selected-video"
 					:class="{'full-page': isOneToOne}">
 					<template v-for="callParticipantModel in reversedCallParticipantModels">
-						<Video v-if="callParticipantModel.attributes.peerId === selectedVideoPeerId"
+						<VideoVue v-if="callParticipantModel.attributes.peerId === selectedVideoPeerId"
 							:key="callParticipantModel.attributes.selectedVideoPeerId"
 							:token="token"
 							:model="callParticipantModel"
@@ -84,7 +84,7 @@
 					class="video__promoted autopilot"
 					:class="{'full-page': isOneToOne}">
 					<template v-for="callParticipantModel in reversedCallParticipantModels">
-						<Video v-if="sharedDatas[callParticipantModel.attributes.peerId].promoted"
+						<VideoVue v-if="sharedDatas[callParticipantModel.attributes.peerId].promoted"
 							:key="callParticipantModel.attributes.peerId"
 							:token="token"
 							:model="callParticipantModel"
@@ -145,7 +145,7 @@ import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
 import { fetchPeers } from '../../services/callsService.js'
 import { showMessage } from '@nextcloud/dialogs'
 import EmptyCallView from './shared/EmptyCallView.vue'
-import Video from './shared/Video.vue'
+import VideoVue from './shared/VideoVue.vue'
 import LocalVideo from './shared/LocalVideo.vue'
 import Screen from './shared/Screen.vue'
 import debounce from 'debounce'
@@ -158,7 +158,7 @@ export default {
 	components: {
 		Grid,
 		EmptyCallView,
-		Video,
+		VideoVue,
 		LocalVideo,
 		Screen,
 	},

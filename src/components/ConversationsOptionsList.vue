@@ -35,7 +35,7 @@
 
 <script>
 import ConversationIcon from './ConversationIcon.vue'
-import ListItem from '@nextcloud/vue/dist/Components/ListItem'
+import ListItem from '@nextcloud/vue/dist/Components/ListItem.js'
 import { CONVERSATION } from '../constants.js'
 
 export default {

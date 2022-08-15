@@ -1,3 +1,4 @@
+// eslint-disable-next-line n/no-unpublished-import
 import mockConsole from 'jest-mock-console'
 import { createLocalVue } from '@vue/test-utils'
 import talkHashStore from './talkHashStore.js'

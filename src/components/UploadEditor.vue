@@ -74,11 +74,11 @@
 
 <script>
 
-import Modal from '@nextcloud/vue/dist/Components/Modal'
+import Modal from '@nextcloud/vue/dist/Components/Modal.js'
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
-import Plus from 'vue-material-design-icons/Plus'
+import Plus from 'vue-material-design-icons/Plus.vue'
 import AudioPlayer from './MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 
 export default {
 	name: 'UploadEditor',
