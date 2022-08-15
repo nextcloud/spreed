@@ -2115,6 +2115,24 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" sees the following messages in room "([^"]*)" before message "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $knownMessage
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userSeeTheFollowingMessagesInRoomBeforeThan($user, $identifier, $knownMessage, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=0&includeLastKnown=0&lastKnownMessageId=' . self::$textToMessageId[$knownMessage]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$this->compareDataResponse($formData);
+	}
+
+	/**
 	 * @param TableNode|null $formData
 	 */
 	protected function compareDataResponse(TableNode $formData = null) {
