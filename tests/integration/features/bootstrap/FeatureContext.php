@@ -2574,7 +2574,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @return array
 	 */
 	protected function getDataFromResponse(ResponseInterface $response) {
-		$jsonBody = json_decode($response->getBody()->getContents(), true);
+		$contents = $response->getBody()->getContents();
+		if (!$contents) {
+			return [];
+		}
+		$jsonBody = json_decode($contents, true);
 		return $jsonBody['ocs']['data'];
 	}
 
