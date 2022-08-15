@@ -44,7 +44,7 @@ import {
 } from '../services/conversationsService.js'
 import { getCurrentUser } from '@nextcloud/auth'
 // eslint-disable-next-line import/extensions
-import { CONVERSATION, WEBINAR, PARTICIPANT } from '../constants'
+import { CONVERSATION, WEBINAR, PARTICIPANT } from '../constants.js'
 
 const DUMMY_CONVERSATION = {
 	token: '',

@@ -118,13 +118,13 @@
 <script>
 
 import { CONVERSATION } from '../../../constants.js'
-import Modal from '@nextcloud/vue/dist/Components/Modal'
-import Plus from 'vue-material-design-icons/Plus'
+import Modal from '@nextcloud/vue/dist/Components/Modal.js'
+import Plus from 'vue-material-design-icons/Plus.vue'
 import SetContacts from './SetContacts/SetContacts.vue'
 import SetConversationName from './SetConversationName/SetConversationName.vue'
 import SetConversationType from './SetConversationType/SetConversationType.vue'
 import Confirmation from './Confirmation/Confirmation.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 import { addParticipant } from '../../../services/participantsService.js'
 import {
 	createPublicConversation,
@@ -136,7 +136,7 @@ import PasswordProtect from './PasswordProtect/PasswordProtect.vue'
 import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
 import isInCall from '../../../mixins/isInCall.js'
 import participant from '../../../mixins/participant.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import { EventBus } from '../../../services/EventBus.js'
 
 export default {

@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import Avatar from '@nextcloud/vue/dist/Components/Avatar'
+import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
 import { ATTENDEE } from '../../../constants.js'
 
 export default {

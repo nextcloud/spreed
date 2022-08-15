@@ -31,8 +31,8 @@ import {
 	removeReactionFromMessage,
 } from '../services/messagesService.js'
 
-import SHA256 from 'crypto-js/sha256'
-import Hex from 'crypto-js/enc-hex'
+import SHA256 from 'crypto-js/sha256.js'
+import Hex from 'crypto-js/enc-hex.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import { showError } from '@nextcloud/dialogs'
 import {

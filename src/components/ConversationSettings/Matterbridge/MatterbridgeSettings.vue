@@ -106,15 +106,15 @@ import {
 } from '../../../services/matterbridgeService.js'
 import { showSuccess } from '@nextcloud/dialogs'
 import { imagePath } from '@nextcloud/router'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
-import Message from 'vue-material-design-icons/Message'
-import Modal from '@nextcloud/vue/dist/Components/Modal'
-import Plus from 'vue-material-design-icons/Plus'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import Multiselect from '@nextcloud/vue/dist/Components/Multiselect.js'
+import Message from 'vue-material-design-icons/Message.vue'
+import Modal from '@nextcloud/vue/dist/Components/Modal.js'
+import Plus from 'vue-material-design-icons/Plus.vue'
 import BridgePart from './BridgePart.vue'
 
 import Vue from 'vue'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 Vue.directive('tooltip', Tooltip)
 
 export default {

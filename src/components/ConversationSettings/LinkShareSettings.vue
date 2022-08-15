@@ -106,16 +106,16 @@
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants.js'
 import {
 	setConversationPassword,
 } from '../../services/conversationsService.js'
 import { generateUrl } from '@nextcloud/router'
-import ArrowRight from 'vue-material-design-icons/ArrowRight'
-import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline'
-import Email from 'vue-material-design-icons/Email'
+import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
+import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline.vue'
+import Email from 'vue-material-design-icons/Email.vue'
 
 export default {
 	name: 'LinkShareSettings',

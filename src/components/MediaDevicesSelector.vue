@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import Multiselect from '@nextcloud/vue/dist/Components/Multiselect.js'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 import Video from 'vue-material-design-icons/Video.vue'
 

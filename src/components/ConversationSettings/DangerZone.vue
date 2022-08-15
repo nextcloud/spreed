@@ -64,7 +64,7 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 
 export default {
 	name: 'DangerZone',

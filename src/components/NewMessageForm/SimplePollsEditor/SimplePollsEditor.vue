@@ -75,12 +75,12 @@
 </template>
 
 <script>
-import Modal from '@nextcloud/vue/dist/Components/Modal'
-import CheckBoxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import Modal from '@nextcloud/vue/dist/Components/Modal.js'
+import CheckBoxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 import PollOption from './PollOption.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
-import TextField from '@nextcloud/vue/dist/Components/TextField'
+import TextField from '@nextcloud/vue/dist/Components/TextField.js'
 import pollService from '../../../services/pollService.js'
 
 export default {

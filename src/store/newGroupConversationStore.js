@@ -19,7 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import isEqual from 'lodash/isEqual'
+import isEqual from 'lodash/isEqual.js'
 
 const state = {
 	selectedParticipants: [],

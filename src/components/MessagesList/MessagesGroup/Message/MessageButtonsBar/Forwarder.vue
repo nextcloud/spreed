@@ -57,11 +57,11 @@
 
 <script>
 import RoomSelector from '../../../../../views/RoomSelector.vue'
-import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent'
-import Modal from '@nextcloud/vue/dist/Components/Modal'
+import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent.js'
+import Modal from '@nextcloud/vue/dist/Components/Modal.js'
 import { showError } from '@nextcloud/dialogs'
-import cloneDeep from 'lodash/cloneDeep'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import cloneDeep from 'lodash/cloneDeep.js'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 
 export default {
 	name: 'Forwarder',

@@ -54,8 +54,8 @@
 
 <script>
 import { setGuestUserName } from '../services/participantsService.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
-import Pencil from 'vue-material-design-icons/Pencil'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 
 export default {

@@ -51,9 +51,9 @@
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
-import AlertCircle from 'vue-material-design-icons/AlertCircle'
-import Delete from 'vue-material-design-icons/Delete'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 
 export default {
 	name: 'StunServer',

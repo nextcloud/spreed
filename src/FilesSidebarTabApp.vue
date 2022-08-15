@@ -66,7 +66,7 @@ import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import browserCheck from './mixins/browserCheck.js'
 import '@nextcloud/dialogs/styles/toast.scss'
 import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 
 export default {
 

@@ -56,8 +56,8 @@
 
 <script>
 import StunServer from '../../components/AdminSettings/StunServer.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
-import Plus from 'vue-material-design-icons/Plus'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import Plus from 'vue-material-design-icons/Plus.vue'
 import debounce from 'debounce'
 import { loadState } from '@nextcloud/initial-state'
 import { showSuccess } from '@nextcloud/dialogs'

@@ -75,10 +75,10 @@
 </template>
 
 <script>
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
+import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
 import { PARTICIPANT } from '../../constants.js'
-import Modal from '@nextcloud/vue/dist/Components/Modal'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import Modal from '@nextcloud/vue/dist/Components/Modal.js'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS
 

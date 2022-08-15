@@ -93,16 +93,16 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import Cog from 'vue-material-design-icons/Cog'
-import Delete from 'vue-material-design-icons/Delete'
-import EyeOutline from 'vue-material-design-icons/EyeOutline'
-import Star from 'vue-material-design-icons/Star'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
+import Cog from 'vue-material-design-icons/Cog.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import EyeOutline from 'vue-material-design-icons/EyeOutline.vue'
+import Star from 'vue-material-design-icons/Star.vue'
 import ConversationIcon from './../../ConversationIcon.vue'
 import { generateUrl } from '@nextcloud/router'
 import { emit } from '@nextcloud/event-bus'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
-import ListItem from '@nextcloud/vue/dist/Components/ListItem'
+import ListItem from '@nextcloud/vue/dist/Components/ListItem.js'
 
 export default {
 	name: 'Conversation',

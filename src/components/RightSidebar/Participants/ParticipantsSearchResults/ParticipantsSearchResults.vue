@@ -98,10 +98,10 @@
 
 <script>
 import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
-import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption'
+import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption.js'
 import Hint from '../../../Hint.vue'
 import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 
 export default {
 	name: 'ParticipantsSearchResults',

@@ -152,11 +152,11 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateFilePath } from '@nextcloud/router'
 import EmptyCallView from '../shared/EmptyCallView.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import ChevronRight from 'vue-material-design-icons/ChevronRight'
-import ChevronLeft from 'vue-material-design-icons/ChevronLeft'
-import ChevronUp from 'vue-material-design-icons/ChevronUp'
-import ChevronDown from 'vue-material-design-icons/ChevronDown'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+import ChevronRight from 'vue-material-design-icons/ChevronRight.vue'
+import ChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
+import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
+import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 
 export default {
 	name: 'Grid',

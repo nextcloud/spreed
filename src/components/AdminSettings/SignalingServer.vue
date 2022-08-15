@@ -52,8 +52,8 @@
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
-import Delete from 'vue-material-design-icons/Delete'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import Delete from 'vue-material-design-icons/Delete.vue'
 import { getWelcomeMessage } from '../../services/signalingService.js'
 
 export default {

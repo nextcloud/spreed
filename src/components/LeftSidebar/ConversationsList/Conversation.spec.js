@@ -4,7 +4,7 @@ import { createLocalVue, shallowMount, mount, RouterLinkStub } from '@vue/test-u
 import { cloneDeep } from 'lodash'
 import storeConfig from '../../../store/storeConfig.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 
 import Conversation from './Conversation.vue'

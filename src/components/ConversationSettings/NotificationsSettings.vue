@@ -73,11 +73,11 @@
 
 <script>
 import { PARTICIPANT } from '../../constants.js'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch'
-import VolumeHigh from 'vue-material-design-icons/VolumeHigh'
-import Account from 'vue-material-design-icons/Account'
-import VolumeOff from 'vue-material-design-icons/VolumeOff'
-import Check from 'vue-material-design-icons/Check'
+import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
+import VolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
+import Account from 'vue-material-design-icons/Account.vue'
+import VolumeOff from 'vue-material-design-icons/VolumeOff.vue'
+import Check from 'vue-material-design-icons/Check.vue'
 
 export default {
 	name: 'NotificationsSettings',

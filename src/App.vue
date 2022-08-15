@@ -39,8 +39,8 @@
 
 <script>
 import debounce from 'debounce'
-import AppContent from '@nextcloud/vue/dist/Components/AppContent'
-import Content from '@nextcloud/vue/dist/Components/Content'
+import AppContent from '@nextcloud/vue/dist/Components/AppContent.js'
+import Content from '@nextcloud/vue/dist/Components/Content.js'
 import LeftSidebar from './components/LeftSidebar/LeftSidebar.vue'
 import PreventUnload from 'vue-prevent-unload'
 import Router from './router/router.js'

@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 import MenuPeople from './components/missingMaterialDesignIcons/MenuPeople.vue'
 
 export default {

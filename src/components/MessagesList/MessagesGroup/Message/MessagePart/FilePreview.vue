@@ -71,14 +71,14 @@
 
 <script>
 import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
-import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
-import Close from 'vue-material-design-icons/Close'
-import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline'
+import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+import Close from 'vue-material-design-icons/Close.vue'
+import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { encodePath } from '@nextcloud/paths'
 import AudioPlayer from './AudioPlayer.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,

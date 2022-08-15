@@ -35,8 +35,8 @@
 </template>
 
 <script>
-import TextField from '@nextcloud/vue/dist/Components/TextField'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import TextField from '@nextcloud/vue/dist/Components/TextField.js'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 import Close from 'vue-material-design-icons/Close.vue'
 
 export default {

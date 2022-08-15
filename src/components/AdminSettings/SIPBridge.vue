@@ -83,8 +83,8 @@
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import Multiselect from '@nextcloud/vue/dist/Components/Multiselect.js'
 import axios from '@nextcloud/axios'
 import debounce from 'debounce'
 import { generateOcsUrl } from '@nextcloud/router'

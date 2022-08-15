@@ -97,8 +97,8 @@
 
 <script>
 import { emit } from '@nextcloud/event-bus'
-import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
-import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
+import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar.js'
+import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab.js'
 import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
 import ChatView from '../ChatView.vue'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -108,12 +108,12 @@ import isInLobby from '../../mixins/isInLobby.js'
 import SetGuestUsername from '../SetGuestUsername.vue'
 import SipSettings from './SipSettings.vue'
 import LobbyStatus from './LobbyStatus.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
-import AccountMultiple from 'vue-material-design-icons/AccountMultiple'
-import CogIcon from 'vue-material-design-icons/Cog'
-import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage'
-import InformationOutline from 'vue-material-design-icons/InformationOutline'
-import Message from 'vue-material-design-icons/Message'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
+import CogIcon from 'vue-material-design-icons/Cog.vue'
+import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
+import InformationOutline from 'vue-material-design-icons/InformationOutline.vue'
+import Message from 'vue-material-design-icons/Message.vue'
 
 export default {
 	name: 'RightSidebar',

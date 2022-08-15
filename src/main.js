@@ -47,7 +47,7 @@ import { translate, translatePlural } from '@nextcloud/l10n'
 import VueObserveVisibility from 'vue-observe-visibility'
 import VueShortKey from 'vue-shortkey'
 import vOutsideEvents from 'vue-outside-events'
-import { options as TooltipOptions } from '@nextcloud/vue/dist/Directives/Tooltip'
+import { options as TooltipOptions } from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 // Styles
 import '@nextcloud/dialogs/styles/toast.scss'

@@ -2,7 +2,7 @@ import mockAxios from '../__mocks__/axios.js'
 import { generateOcsUrl } from '@nextcloud/router'
 import { shallowMount } from '@vue/test-utils'
 import { CONVERSATION } from '../constants.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue'
+import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
 import RoomSelector from './RoomSelector.vue'
 
 describe('RoomSelector.vue', () => {

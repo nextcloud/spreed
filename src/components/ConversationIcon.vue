@@ -51,9 +51,9 @@
 </template>
 
 <script>
-import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import Star from 'vue-material-design-icons/Star'
-import Video from 'vue-material-design-icons/Video'
+import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
+import Star from 'vue-material-design-icons/Star.vue'
+import Video from 'vue-material-design-icons/Video.vue'
 import { CONVERSATION } from '../constants.js'
 
 export default {
