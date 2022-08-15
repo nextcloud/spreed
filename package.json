@@ -17,7 +17,7 @@
 		"stylelint:fix": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --fix"
 	},
 	"dependencies": {
-		"@juliushaertl/vue-richtext": "^0.3.3",
+		"@juliushaertl/vue-richtext": "^2.0.0-dev.0",
 		"@nextcloud/auth": "^2.0.0",
 		"@nextcloud/axios": "^2.0.0",
 		"@nextcloud/browser-storage": "^0.1.1",
