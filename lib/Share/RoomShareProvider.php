@@ -681,8 +681,8 @@ class RoomShareProvider implements IShareProvider {
 		$start = 0;
 		while (true) {
 			/** @var IShare[] $shareSlice */
-			$shareSlice = array_slice($shares, $start, 100);
-			$start += 100;
+			$shareSlice = array_slice($shares, $start, 1000);
+			$start += 1000;
 
 			if ($shareSlice === []) {
 				break;
