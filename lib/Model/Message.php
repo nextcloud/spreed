@@ -170,6 +170,13 @@ class Message {
 	}
 
 	public function toArray(): array {
+		$reactions = $this->getComment()->getReactions();
+		if (empty($reactions)) {
+			// Cheating here to make sure the reactions array is always a
+			// JSON object on the API, even when there is no reaction at all.
+			$reactions = new \StdClass();
+		}
+
 		$data = [
 			'id' => (int) $this->getComment()->getId(),
 			'token' => $this->getRoom()->getToken(),
@@ -183,7 +190,7 @@ class Message {
 			'messageType' => $this->getMessageType(),
 			'isReplyable' => $this->isReplyable(),
 			'referenceId' => (string) $this->getComment()->getReferenceId(),
-			'reactions' => $this->getComment()->getReactions(),
+			'reactions' => $reactions,
 		];
 
 		if ($this->getMessageType() === ChatManager::VERB_MESSAGE_DELETED) {
