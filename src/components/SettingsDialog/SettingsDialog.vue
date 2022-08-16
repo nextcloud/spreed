@@ -275,11 +275,6 @@ export default {
 
 <style lang="scss" scoped>
 
-.wrapper {
-	overflow-y: scroll;
-	padding: 20px;
-}
-
 .app-settings-section {
 	margin-bottom: 80px;
 	&.last {
@@ -301,10 +296,6 @@ export default {
 	.shortcut-description {
 		width: calc(100% - 160px);
 	}
-}
-
-::v-deep .modal-container {
-	display: flex !important;
 }
 
 </style>
