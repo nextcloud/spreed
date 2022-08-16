@@ -67,7 +67,7 @@ class TalkWidget implements IWidget {
 	 * @inheritDoc
 	 */
 	public function getIconClass(): string {
-		return 'icon-talk';
+		return 'dashboard-talk-icon';
 	}
 
 	/**
