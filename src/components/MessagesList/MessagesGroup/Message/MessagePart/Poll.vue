@@ -282,6 +282,10 @@ export default {
 
 	},
 
+	mounted() {
+		this.setComponentData()
+	},
+
 	methods: {
 		getPollData() {
 			if (!this.pollLoaded) {
