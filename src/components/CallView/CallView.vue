@@ -43,7 +43,7 @@
 					</template>
 				</div>
 				<!-- Screens -->
-				<div v-else-if="!isSidebar && (showLocalScreen || showRemoteScreen || showSelectedScreen)" id="screens">
+				<div v-else-if="showLocalScreen || showRemoteScreen || showSelectedScreen" id="screens">
 					<!-- local screen -->
 					<Screen v-if="showLocalScreen"
 						:token="token"
