@@ -988,10 +988,10 @@ class Manager {
 			$otherParticipant = '';
 			$userIsParticipant = false;
 
+			$displayNameCache = \OCP\Server::get(\OC\User\DisplayNameCache::class);
 			foreach ($users as $participantId) {
 				if ($participantId !== $userId) {
-					$user = $this->userManager->get($participantId);
-					$otherParticipant = $user instanceof IUser ? $user->getDisplayName() : $participantId;
+					$otherParticipant = $displayNameCache->getDisplayName($participantId);
 				} else {
 					$userIsParticipant = true;
 				}

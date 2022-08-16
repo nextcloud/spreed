@@ -79,8 +79,8 @@ class MessageParser {
 		$actorId = $comment->getActorId();
 		$displayName = '';
 		if ($comment->getActorType() === Attendee::ACTOR_USERS) {
-			$user = $this->userManager->get($comment->getActorId());
-			$displayName = $user instanceof IUser ? $user->getDisplayName() : $comment->getActorId();
+			$displayNameCache = \OCP\Server::get(\OC\User\DisplayNameCache::class);
+			$displayName = $displayNameCache->getDisplayName($comment->getActorId());
 		} elseif ($comment->getActorType() === Attendee::ACTOR_BRIDGED) {
 			$displayName = $comment->getActorId();
 			$actorId = MatterbridgeManager::BRIDGE_BOT_USERID;
