@@ -79,3 +79,7 @@
 .app-files .app-sidebar__close.forced-white {
 	color: #ffffff;
 }
+
+.dashboard-talk-icon {
+	background-image: url(../img/app-dark.svg);
+}
