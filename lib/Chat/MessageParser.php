@@ -34,7 +34,6 @@ use OCA\Talk\Room;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
-use OCP\IUser;
 use OCP\IUserManager;
 
 /**
@@ -79,7 +78,7 @@ class MessageParser {
 		$actorId = $comment->getActorId();
 		$displayName = '';
 		if ($comment->getActorType() === Attendee::ACTOR_USERS) {
-			$displayName = $this->userManager->getDisplayName($comment->getActorId());
+			$displayName = $this->userManager->getDisplayName($comment->getActorId()) ?? $comment->getActorId();
 		} elseif ($comment->getActorType() === Attendee::ACTOR_BRIDGED) {
 			$displayName = $comment->getActorId();
 			$actorId = MatterbridgeManager::BRIDGE_BOT_USERID;

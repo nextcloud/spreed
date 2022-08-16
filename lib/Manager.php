@@ -990,7 +990,7 @@ class Manager {
 
 			foreach ($users as $participantId) {
 				if ($participantId !== $userId) {
-					$otherParticipant = $this->userManager->getDisplayName($participantId);
+					$otherParticipant = $this->userManager->getDisplayName($participantId) ?? $participantId;
 				} else {
 					$userIsParticipant = true;
 				}

@@ -948,17 +948,13 @@ class SystemMessageTest extends TestCase {
 		$parser = $this->getParser();
 
 		if ($validUser) {
-			$user = $this->createMock(IUser::class);
-			$user->expects($this->once())
-				->method('getDisplayName')
-				->willReturn($name);
 			$this->userManager->expects($this->once())
-				->method('get')
+				->method('getDisplayName')
 				->with($uid)
-				->willReturn($user);
+				->willReturn($name);
 		} else {
 			$this->userManager->expects($this->once())
-				->method('get')
+				->method('getDisplayName')
 				->with($uid)
 				->willReturn(null);
 			$this->expectException(ParticipantNotFoundException::class);
