@@ -50,7 +50,7 @@ OC.L10N.register(
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Se ha producido un error al ejecutar el comando. Por favor, contacte con el administrador para que compruebe los registros.",
     "Talk updates ✅" : "Actualizaciones de Talk ✅",
     "Reaction deleted by author" : "Reacción borrada por el autor",
-    "{actor} created the conversation" : "{actor} creaó la conversación",
+    "{actor} created the conversation" : "{actor} creó la conversación",
     "You created the conversation" : "Has creado la conversación",
     "An administrator created the conversation" : "Un administrador ha creado la conversación",
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} ha renombrado la conversación de \"%1$s\" a \"%2$s\"",

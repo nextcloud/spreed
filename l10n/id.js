@@ -66,6 +66,7 @@ OC.L10N.register(
     "Nickname" : "Nama panggilan",
     "Client ID" : "ID Klien",
     "Choose devices" : "Pilih perangkat",
+    "Mark as read" : "tandai sudah dibaca",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Tambah ke favorit",
     "Loading" : "Memuat",
