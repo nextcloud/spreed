@@ -109,6 +109,13 @@ class RoomShareProvider implements IShareProvider {
 		$this->sharesByIdCache = new CappedMemoryCache();
 	}
 
+	/*
+	 * Clean sharesByIdCache
+	 */
+	private function cleanSharesByIdCache() {
+		$this->sharesByIdCache = new CappedMemoryCache();
+	}
+
 	public static function register(IEventDispatcher $dispatcher): void {
 		$listener = static function (RoomEvent $event): void {
 			$room = $event->getRoom();
@@ -318,6 +325,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare The share object
 	 */
 	public function update(IShare $share): IShare {
+		$this->cleanSharesByIdCache();
+
 		$update = $this->dbConnection->getQueryBuilder();
 		$update->update('share')
 			->where($update->expr()->eq('id', $update->createNamedParameter($share->getId())))
@@ -361,6 +370,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @param IShare $share
 	 */
 	public function delete(IShare $share): void {
+		$this->cleanSharesByIdCache();
+
 		$delete = $this->dbConnection->getQueryBuilder();
 		$delete->delete('share')
 			->where($delete->expr()->eq('id', $delete->createNamedParameter($share->getId())));
@@ -380,6 +391,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $recipient UserId of the recipient
 	 */
 	public function deleteFromSelf(IShare $share, $recipient): void {
+		$this->cleanSharesByIdCache();
+
 		// Check if there is a userroom share
 		$qb = $this->dbConnection->getQueryBuilder();
 		$stmt = $qb->select(['id', 'permissions'])
@@ -432,6 +445,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @throws GenericShareException In case the share could not be restored
 	 */
 	public function restore(IShare $share, string $recipient): IShare {
+		$this->cleanSharesByIdCache();
+
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('permissions')
 			->from('share')
@@ -472,6 +487,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare
 	 */
 	public function move(IShare $share, $recipient): IShare {
+		$this->cleanSharesByIdCache();
+
 		// Check if there is a userroom share
 		$qb = $this->dbConnection->getQueryBuilder();
 		$stmt = $qb->select('id')
@@ -1110,6 +1127,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string|null $user
 	 */
 	public function deleteInRoom(string $roomToken, string $user = null): void {
+		$this->cleanSharesByIdCache();
+
 		//First delete all custom room shares for the original shares to be removed
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('id')
