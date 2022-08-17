@@ -990,8 +990,7 @@ class Manager {
 
 			foreach ($users as $participantId) {
 				if ($participantId !== $userId) {
-					$user = $this->userManager->get($participantId);
-					$otherParticipant = $user instanceof IUser ? $user->getDisplayName() : $participantId;
+					$otherParticipant = $this->userManager->getDisplayName($participantId) ?? $participantId;
 				} else {
 					$userIsParticipant = true;
 				}

@@ -44,7 +44,6 @@ use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IPreview as IPreviewManager;
 use OCP\IURLGenerator;
-use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Server;
 use OCP\Share\Exceptions\ShareNotFound;
@@ -698,9 +697,9 @@ class SystemMessage {
 	}
 
 	protected function getDisplayName(string $uid): string {
-		$user = $this->userManager->get($uid);
-		if ($user instanceof IUser) {
-			return $user->getDisplayName();
+		$userName = $this->userManager->getDisplayName($uid);
+		if ($userName !== null) {
+			return $userName;
 		}
 
 		throw new ParticipantNotFoundException();
