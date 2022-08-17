@@ -590,12 +590,12 @@ class SystemMessage {
 						throw new NotFoundException('File was not found');
 					}
 
-					/** @var Node $userNode */
+					/** @var Node $node */
 					$node = reset($userNodes);
-					$fullPath = $userNode->getPath();
+					$fullPath = $node->getPath();
 					$pathSegments = explode('/', $fullPath, 4);
-					$name = $userNode->getName();
-					$size = $userNode->getSize();
+					$name = $node->getName();
+					$size = $node->getSize();
 					$path = $pathSegments[3] ?? $name;
 				}
 			} else {
