@@ -437,20 +437,23 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		// Quickly scan messages for share IDs
-		$share_ids = [];
+		$shareIds = [];
 		foreach ($comments as $comment) {
 			$verb = $comment->getVerb();
-			$message = $comment->getMessage();
 			if ($verb === 'object_shared') {
+				$message = $comment->getMessage();
 				$data = json_decode($message, true);
-				$parameters = $data['parameters'];
-				$share_ids[] = $parameters['share'];
+				if (isset($data['parameters']['share'])) {
+					$shareIds[] = $data['parameters']['share'];
+				}
 			}
 		}
 		// Ignore the result for now. Retrieved Share objects will be cached by
 		// the RoomShareProvider and returned from the cache to
 		// the MessageParser without additional database queries.
-		$this->shareProvider->getSharesByIds($share_ids);
+		if (!empty($shareIds)) {
+			$this->shareProvider->getSharesByIds($shareIds);
+		}
 
 		$i = 0;
 		$messages = $commentIdToIndex = $parentIds = [];

@@ -28,7 +28,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Share;
 
-use OC\Cache\CappedMemoryCache;
+use OCP\Cache\CappedMemoryCache;
 use OC\Files\Cache\Cache;
 use OCA\Talk\Events\AlreadySharedEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -84,7 +84,7 @@ class RoomShareProvider implements IShareProvider {
 	private IL10N $l;
 	private IMimeTypeLoader $mimeTypeLoader;
 
-	private $sharesByIdCache;
+	private CappedMemoryCache $sharesByIdCache;
 
 	public function __construct(
 			IDBConnection $connection,
@@ -684,7 +684,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare[]
 	 * @throws ShareNotFound
 	 */
-	public function getSharesByIds($ids, $recipientId = null): array {
+	public function getSharesByIds(array $ids, ?string $recipientId = null): array {
 
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('s.*',
