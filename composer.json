@@ -10,13 +10,16 @@
 		}
 	},
 	"config": {
+		"allow-plugins": {
+			"bamarni/composer-bin-plugin": true
+		},
 		"autoloader-suffix": "Talk",
-		"optimize-autoloader": true,
 		"classmap-authoritative": true,
-		"sort-packages": true,
+		"optimize-autoloader": true,
 		"platform": {
 			"php": "7.4"
-		}
+		},
+		"sort-packages": true
 	},
 	"scripts": {
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
@@ -25,16 +28,23 @@
 		"psalm": "psalm --threads=1",
 		"psalm:update-baseline": "psalm --threads=1 --update-baseline --set-baseline=tests/psalm-baseline.xml",
 		"psalm:clear": "psalm --clear-cache && psalm --clear-global-cache",
-		"psalm:fix": "psalm --alter --issues=InvalidReturnType,InvalidNullableReturnType,MissingParamType,InvalidFalsableReturnType"
+		"psalm:fix": "psalm --alter --issues=InvalidReturnType,InvalidNullableReturnType,MissingParamType,InvalidFalsableReturnType",
+		"post-install-cmd": [
+			"@composer bin all install --ansi",
+			"composer dump-autoload"
+		],
+		"post-update-cmd": [
+			"@composer bin all update --ansi",
+			"composer dump-autoload"
+		],
+		"test": "cd tests/php/ && phpunit -c phpunit.xml"
 	},
 	"require-dev": {
+		"bamarni/composer-bin-plugin": "^1.8",
 		"christophwurst/nextcloud": "dev-master",
-		"nextcloud/coding-standard": "^1.0",
-		"phpunit/phpunit": "^9.5",
-		"roave/security-advisories": "dev-latest",
-		"vimeo/psalm": "^4.22"
+		"roave/security-advisories": "dev-latest"
 	},
 	"require": {
-		"firebase/php-jwt": "^6.2"
+		"firebase/php-jwt": "^6.3"
 	}
 }

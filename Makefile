@@ -13,7 +13,7 @@ version+=master
 
 all: dev-setup build-production
 
-dev-setup: clean-dev composer-install-production npm-init
+dev-setup: clean-dev composer-install-dev npm-init
 
 release: appstore create-tag
 
@@ -99,6 +99,9 @@ appstore:
 	--exclude=.tx \
 	--exclude=tests \
 	--exclude=tsconfig.json \
+	--exclude=vendor \
+	--exclude=vendor-bin/production/composer.json \
+	--exclude=vendor-bin/production/composer.lock \
 	--exclude=webpack.js \
 	$(project_dir)/  $(sign_dir)/$(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
