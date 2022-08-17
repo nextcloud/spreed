@@ -44,7 +44,6 @@ use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IPreview as IPreviewManager;
 use OCP\IURLGenerator;
-use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IShare;
