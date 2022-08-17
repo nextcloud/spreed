@@ -570,16 +570,12 @@ class SystemMessage {
 	 */
 	protected function getFileFromShare(Participant $participant, string $shareId): array {
 		$share = $this->shareProvider->getShareById($shareId);
-		$node = $share->getNode();
-		$name = $node->getName();
-		$size = $node->getSize();
-		$path = $name;
 
 		if (!$participant->isGuest()) {
 			if ($share->getShareOwner() !== $participant->getAttendee()->getActorId()) {
 				$userFolder = $this->rootFolder->getUserFolder($participant->getAttendee()->getActorId());
 				if ($userFolder instanceof Node) {
-					$userNodes = $userFolder->getById($node->getId());
+					$userNodes = $userFolder->getById($share->getNodeId());
 
 					if (empty($userNodes)) {
 						// FIXME This should be much more sensible, e.g.
@@ -587,7 +583,7 @@ class SystemMessage {
 						// 2. Once per request
 						\OC_Util::tearDownFS();
 						\OC_Util::setupFS($participant->getAttendee()->getActorId());
-						$userNodes = $userFolder->getById($node->getId());
+						$userNodes = $userFolder->getById($share->getNodeId());
 					}
 
 					if (empty($userNodes)) {
@@ -595,23 +591,32 @@ class SystemMessage {
 					}
 
 					/** @var Node $userNode */
-					$userNode = reset($userNodes);
+					$node = reset($userNodes);
 					$fullPath = $userNode->getPath();
 					$pathSegments = explode('/', $fullPath, 4);
 					$name = $userNode->getName();
 					$size = $userNode->getSize();
-					$path = $pathSegments[3] ?? $path;
+					$path = $pathSegments[3] ?? $name;
 				}
 			} else {
+				$node = $share->getNode();
+				$name = $node->getName();
+				$size = $node->getSize();
+
 				$fullPath = $node->getPath();
 				$pathSegments = explode('/', $fullPath, 4);
-				$path = $pathSegments[3] ?? $path;
+				$path = $pathSegments[3] ?? $name;
 			}
 
 			$url = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', [
 				'fileid' => $node->getId(),
 			]);
 		} else {
+			$node = $share->getNode();
+			$name = $node->getName();
+			$size = $node->getSize();
+			$path = $name;
+
 			$url = $this->url->linkToRouteAbsolute('files_sharing.sharecontroller.showShare', [
 				'token' => $share->getToken(),
 			]);
