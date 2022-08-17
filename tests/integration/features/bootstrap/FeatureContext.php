@@ -246,13 +246,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" is participant of the following rooms \((v4)\)$/
+	 * @Then /^user "([^"]*)" is participant of the following (unordered )?rooms \((v4)\)$/
 	 *
 	 * @param string $user
+	 * @param string $shouldOrder
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userIsParticipantOfRooms(string $user, string $apiVersion, TableNode $formData = null): void {
+	public function userIsParticipantOfRooms(string $user, string $shouldOrder, string $apiVersion, TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room');
 		$this->assertStatusCode($this->response, 200);
@@ -268,16 +269,27 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 
-		$this->assertRooms($rooms, $formData);
+		$this->assertRooms($rooms, $formData, $shouldOrder !== '');
 	}
 
 	/**
 	 * @param array $rooms
 	 * @param TableNode $formData
 	 */
-	private function assertRooms($rooms, TableNode $formData) {
+	private function assertRooms($rooms, TableNode $formData, bool $shouldOrder = false) {
 		Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
-		Assert::assertEquals($formData->getHash(), array_map(function ($room, $expectedRoom) {
+
+		$expected = $formData->getHash();
+		if ($shouldOrder) {
+			$sorter = static function (array $roomA, array $roomB): int {
+				return $roomA['id'] < $roomB['id'] ? -1 : 1;
+			};
+
+			usort($expected, $sorter);
+			usort($rooms, $sorter);
+		}
+
+		Assert::assertEquals($expected, array_map(function ($room, $expectedRoom) {
 			if (!isset(self::$identifierToToken[$room['name']])) {
 				self::$identifierToToken[$room['name']] = $room['token'];
 			}

@@ -16,7 +16,7 @@ Feature: User remove
     And the command output contains the text "Users successfully removed from all rooms"
     Then the command was successful
     And user "participant2" is participant of the following rooms (v4)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | id    | name                     | type | participantType |
       | room1 | participant2-displayname | 2    | 1               |
       | room2 | room                     | 3    | 1               |
