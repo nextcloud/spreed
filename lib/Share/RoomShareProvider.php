@@ -653,39 +653,20 @@ class RoomShareProvider implements IShareProvider {
 	 */
 	public function getShareById($id, $recipientId = null): IShare {
 
-		if (isset($this->sharesByIdCache[$id])) {
-			return $this->sharesByIdCache[$id];
+		if (($recipientId === null) && isset($this->sharesByIdCache[$id])) {
+			$share = $this->sharesByIdCache[$id];
+		} else {
+			$shares = $this->getSharesByIds([$id], $recipientId);
+			if (empty($shares)) {
+				throw new ShareNotFound();
+			}
+			$share = $shares[0];
 		}
 
-		$qb = $this->dbConnection->getQueryBuilder();
-		$qb->select('s.*',
-			'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
-			'f.parent AS f_parent', 'f.name', 'f.mimetype', 'f.mimepart', 'f.size', 'f.mtime', 'f.storage_mtime',
-			'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum'
-		)
-			->selectAlias('st.id', 'storage_string_id')
-			->from('share', 's')
-			->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
-			->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'))
-			->where($qb->expr()->eq('s.id', $qb->createNamedParameter($id)))
-			->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)));
-
-		$cursor = $qb->executeQuery();
-		$data = $cursor->fetch();
-		$cursor->closeCursor();
-
-		if ($data === false) {
+		if ($share === false) {
+			// Shares referring to deleted files are stored as 'false',
+			// both in the cache and in the array returned from getSharesByIds.
 			throw new ShareNotFound();
-		}
-
-		if (!$this->isAccessibleResult($data)) {
-			throw new ShareNotFound();
-		}
-
-		$share = $this->createShareObject($data);
-
-		if ($recipientId !== null) {
-			$share = $this->resolveSharesForRecipient([$share], $recipientId)[0];
 		}
 
 		return $share;
@@ -699,7 +680,6 @@ class RoomShareProvider implements IShareProvider {
 	 * @param int[] $id
 	 * @param string|null $recipientId
 	 * @return IShare[]
-	 * @throws ShareNotFound
 	 */
 	public function getSharesByIds(array $ids, ?string $recipientId = null): array {
 
@@ -718,11 +698,24 @@ class RoomShareProvider implements IShareProvider {
 
 		$cursor = $qb->executeQuery();
 
+		/*
+		 * Keep retrieved shares in sharesByIdCache.
+		 * 
+		 * Fill the cache only when $recipientId === null.
+		 * 
+		 * For inaccessible shares use 'false' instead of the IShare object.
+		 * (This is required to avoid additional queries in getShareById when
+		 * the share refers to a deleted file.)
+		 */
 		$shares = [];
 		while ($data = $cursor->fetch()) {
-			$share = $this->createShareObject($data);
-			$id = (int) $share->getId();
-			if (!isset($this->sharesByIdCache[$id])) {
+			$id = $data['id'];
+			if ($this->isAccessibleResult($data)) {
+				$share = $this->createShareObject($data);
+			} else {
+				$share = false;
+			}
+			if ($recipientId === null && !isset($this->sharesByIdCache[$id])) {
 				$this->sharesByIdCache[$id] = $share;
 			}
 			$shares[] = $share;
