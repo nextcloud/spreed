@@ -28,7 +28,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Share;
 
-use OCP\Cache\CappedMemoryCache;
 use OC\Files\Cache\Cache;
 use OCA\Talk\Events\AlreadySharedEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -39,6 +38,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Cache\CappedMemoryCache;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Folder;

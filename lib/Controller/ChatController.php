@@ -309,6 +309,31 @@ class ChatController extends AEnvironmentAwareController {
 		return $this->parseCommentToResponse($comment);
 	}
 
+	/*
+	 * Gather share IDs from the comments and preload share definitions
+	 * to avoid separate database query for each individual share.
+	 */
+	protected function preloadShares(array $comments) {
+		// Scan messages for share IDs
+		$shareIds = [];
+		foreach ($comments as $comment) {
+			$verb = $comment->getVerb();
+			if ($verb === 'object_shared') {
+				$message = $comment->getMessage();
+				$data = json_decode($message, true);
+				if (isset($data['parameters']['share'])) {
+					$shareIds[] = $data['parameters']['share'];
+				}
+			}
+		}
+		if (!empty($shareIds)) {
+			// Ignore the result for now. Retrieved Share objects will be cached by
+			// the RoomShareProvider and returned from the cache to
+			// the Parser\SystemMessage without additional database queries.
+			$this->shareProvider->getSharesByIds($shareIds);
+		}
+	}
+
 	/**
 	 * @PublicPage
 	 * @RequireParticipant
@@ -436,24 +461,7 @@ class ChatController extends AEnvironmentAwareController {
 			return $response;
 		}
 
-		// Quickly scan messages for share IDs
-		$shareIds = [];
-		foreach ($comments as $comment) {
-			$verb = $comment->getVerb();
-			if ($verb === 'object_shared') {
-				$message = $comment->getMessage();
-				$data = json_decode($message, true);
-				if (isset($data['parameters']['share'])) {
-					$shareIds[] = $data['parameters']['share'];
-				}
-			}
-		}
-		// Ignore the result for now. Retrieved Share objects will be cached by
-		// the RoomShareProvider and returned from the cache to
-		// the MessageParser without additional database queries.
-		if (!empty($shareIds)) {
-			$this->shareProvider->getSharesByIds($shareIds);
-		}
+		$this->preloadShares($comments);
 
 		$i = 0;
 		$messages = $commentIdToIndex = $parentIds = [];
