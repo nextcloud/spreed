@@ -34,7 +34,7 @@
 		</p>
 
 		<div class="allowed-groups-settings-content">
-			<Multiselect v-model="allowedGroups"
+			<NcMultiselect v-model="allowedGroups"
 				name="allow_groups_use_talk"
 				class="allowed-groups-select"
 				:options="groups"
@@ -50,16 +50,16 @@
 				label="displayname"
 				@search-change="searchGroup" />
 
-			<ButtonVue type="primary"
+			<NcButton type="primary"
 				:disabled="loading"
 				@click="saveAllowedGroups">
 				{{ saveLabelAllowedGroups }}
-			</ButtonVue>
+			</NcButton>
 		</div>
 
 		<h3>{{ t('spreed', 'Limit creating a public and group conversation') }}</h3>
 		<div class="allowed-groups-settings-content">
-			<Multiselect v-model="canStartConversations"
+			<NcMultiselect v-model="canStartConversations"
 				name="allow_groups_start_conversation"
 				class="allowed-groups-select"
 				:options="groups"
@@ -75,16 +75,16 @@
 				label="displayname"
 				@search-change="searchGroup" />
 
-			<ButtonVue type="primary"
+			<NcButton type="primary"
 				:disabled="loading"
 				@click="saveStartConversationsGroups">
 				{{ saveLabelStartConversations }}
-			</ButtonVue>
+			</NcButton>
 		</div>
 
 		<h3>{{ t('spreed', 'Limit starting a call') }}</h3>
 		<div class="allowed-groups-settings-content">
-			<Multiselect id="start_calls"
+			<NcMultiselect id="start_calls"
 				v-model="startCalls"
 				name="allow_groups_start_calls"
 				:options="startCallOptions"
@@ -101,12 +101,12 @@
 </template>
 
 <script>
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect.js'
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
 import axios from '@nextcloud/axios'
 import debounce from 'debounce'
 import { generateOcsUrl } from '@nextcloud/router'
 import { loadState } from '@nextcloud/initial-state'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 const startCallOptions = [
 	{ value: 0, label: t('spreed', 'Everyone') },
@@ -119,8 +119,8 @@ export default {
 	name: 'AllowedGroups',
 
 	components: {
-		Multiselect,
-		ButtonVue,
+		NcMultiselect,
+		NcButton,
 	},
 
 	data() {

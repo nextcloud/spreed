@@ -23,14 +23,14 @@
 		<!-- "submit-wrapper" is used to mimic the login button and thus get
 			automatic colouring of the confirm icon by the Theming app. -->
 		<div id="submit-wrapper" class="request-password-wrapper">
-			<ButtonVue id="request-password-button"
+			<NcButton id="request-password-button"
 				type="primary"
 				:wide="true"
 				:disabled="isRequestInProgress"
 				@click="requestPassword"
 				@keydown.enter="requestPassword">
 				{{ t('spreed', 'Request password') }}
-			</ButtonVue>
+			</NcButton>
 		</div>
 		<p v-if="hasRequestFailed" class="warning error-message">
 			{{ t('spreed', 'Error requesting the password.') }}
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService.js'
 import browserCheck from './mixins/browserCheck.js'
 import '@nextcloud/dialogs/styles/toast.scss'
@@ -49,7 +49,7 @@ export default {
 	name: 'PublicShareAuthRequestPasswordButton',
 
 	components: {
-		ButtonVue,
+		NcButton,
 	},
 
 	mixins: [

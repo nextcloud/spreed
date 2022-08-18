@@ -34,43 +34,43 @@
 		<!-- Second step of the flow: confirmation modal that gives the user
 		the possibility to direclty route to the conversation to which the
 		message has been forwarded -->
-		<Modal v-else
+		<NcModal v-else
 			@close="handleClose">
 			<div class="forwarder">
-				<EmptyContent icon="icon-checkmark" class="forwarded-confirmation__emptycontent">
+				<NcEmptyContent icon="icon-checkmark" class="forwarded-confirmation__emptycontent">
 					<template #desc>
 						{{ t('spreed', 'The message has been forwarded to {selectedConversationName}', { selectedConversationName }) }}
 					</template>
-				</EmptyContent>
+				</NcEmptyContent>
 				<div class="forwarded-confirmation__navigation">
-					<ButtonVue type="tertiary" @click="handleClose">
+					<NcButton type="tertiary" @click="handleClose">
 						{{ t('spreed', 'Dismiss') }}
-					</ButtonVue>
-					<ButtonVue type="primary" @click="openConversation">
+					</NcButton>
+					<NcButton type="primary" @click="openConversation">
 						{{ t('spreed', 'Go to conversation') }}
-					</ButtonVue>
+					</NcButton>
 				</div>
 			</div>
-		</Modal>
+		</NcModal>
 	</div>
 </template>
 
 <script>
 import RoomSelector from '../../../../../views/RoomSelector.vue'
-import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent.js'
-import Modal from '@nextcloud/vue/dist/Components/Modal.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import { showError } from '@nextcloud/dialogs'
 import cloneDeep from 'lodash/cloneDeep.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'Forwarder',
 
 	components: {
 		RoomSelector,
-		EmptyContent,
-		Modal,
-		ButtonVue,
+		NcEmptyContent,
+		NcModal,
+		NcButton,
 	},
 
 	props: {

@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<AppNavigation :aria-label="t('spreed', 'Conversation list')">
+	<NcAppNavigation :aria-label="t('spreed', 'Conversation list')">
 		<div class="new-conversation"
 			:class="{ 'new-conversation--scrolled-down': !isScrolledToTop }">
 			<SearchBox v-model="searchText"
@@ -37,7 +37,7 @@
 				<ul ref="scroller"
 					class="scroller"
 					@scroll="debounceHandleScroll">
-					<AppNavigationCaption :class="{'hidden-visually': !isSearching}"
+					<NcAppNavigationCaption :class="{'hidden-visually': !isSearching}"
 						:title="t('spreed', 'Conversations')" />
 					<li role="presentation">
 						<ConversationsList ref="conversationsList"
@@ -49,7 +49,7 @@
 					</li>
 					<template v-if="isSearching">
 						<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
-							<AppNavigationCaption :title="t('spreed', 'Open conversations')" />
+							<NcAppNavigationCaption :title="t('spreed', 'Open conversations')" />
 							<Conversation v-for="item of searchResultsListedConversations"
 								:key="item.id"
 								:item="item"
@@ -57,14 +57,14 @@
 								@click="joinListedConversation(item)" />
 						</template>
 						<template v-if="searchResultsUsers.length !== 0">
-							<AppNavigationCaption :title="t('spreed', 'Users')" />
+							<NcAppNavigationCaption :title="t('spreed', 'Users')" />
 							<li v-if="searchResultsUsers.length !== 0" role="presentation">
 								<ConversationsOptionsList :items="searchResultsUsers"
 									@click="createAndJoinConversation" />
 							</li>
 						</template>
 						<template v-if="!showStartConversationsOptions">
-							<AppNavigationCaption v-if="searchResultsUsers.length === 0"
+							<NcAppNavigationCaption v-if="searchResultsUsers.length === 0"
 								:title="t('spreed', 'Users')" />
 							<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 							<Hint v-else :hint="t('spreed', 'No search results')" />
@@ -72,7 +72,7 @@
 					</template>
 					<template v-if="showStartConversationsOptions">
 						<template v-if="searchResultsGroups.length !== 0">
-							<AppNavigationCaption :title="t('spreed', 'Groups')" />
+							<NcAppNavigationCaption :title="t('spreed', 'Groups')" />
 							<li v-if="searchResultsGroups.length !== 0" role="presentation">
 								<ConversationsOptionsList :items="searchResultsGroups"
 									@click="createAndJoinConversation" />
@@ -80,49 +80,49 @@
 						</template>
 
 						<template v-if="searchResultsCircles.length !== 0">
-							<AppNavigationCaption :title="t('spreed', 'Circles')" />
+							<NcAppNavigationCaption :title="t('spreed', 'Circles')" />
 							<li v-if="searchResultsCircles.length !== 0" role="presentation">
 								<ConversationsOptionsList :items="searchResultsCircles"
 									@click="createAndJoinConversation" />
 							</li>
 						</template>
 
-						<AppNavigationCaption v-if="sourcesWithoutResults"
+						<NcAppNavigationCaption v-if="sourcesWithoutResults"
 							:title="sourcesWithoutResultsList" />
 						<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 						<Hint v-else :hint="t('spreed', 'No search results')" />
 					</template>
 				</ul>
 			</li>
-			<ButtonVue v-if="!preventFindingUnread && unreadNum > 0"
+			<NcButton v-if="!preventFindingUnread && unreadNum > 0"
 				class="unread-mention-button"
 				type="primary"
 				@click="scrollBottomUnread">
 				{{ t('spreed', 'Unread mentions') }}
-			</ButtonVue>
+			</NcButton>
 		</template>
 
 		<template #footer>
 			<div id="app-settings">
 				<div id="app-settings-header">
-					<ButtonVue class="settings-button" @click="showSettings">
+					<NcButton class="settings-button" @click="showSettings">
 						{{ t('spreed', 'Talk settings') }}
-					</ButtonVue>
+					</NcButton>
 				</div>
 			</div>
 		</template>
-	</AppNavigation>
+	</NcAppNavigation>
 </template>
 
 <script>
 import CancelableRequest from '../../utils/cancelableRequest.js'
-import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation.js'
-import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption.js'
+import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
+import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import ConversationsList from './ConversationsList/ConversationsList.vue'
 import Conversation from './ConversationsList/Conversation.vue'
 import ConversationsOptionsList from '../ConversationsOptionsList.vue'
 import Hint from '../Hint.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import SearchBox from './SearchBox/SearchBox.vue'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus.js'
@@ -142,10 +142,10 @@ export default {
 	name: 'LeftSidebar',
 
 	components: {
-		AppNavigation,
-		AppNavigationCaption,
+		NcAppNavigation,
+		NcAppNavigationCaption,
 		ConversationsList,
-		ButtonVue,
+		NcButton,
 		ConversationsOptionsList,
 		Hint,
 		SearchBox,

@@ -30,7 +30,7 @@
 		:allow-spaces="false"
 		@at="handleAtEvent">
 		<template #item="scope">
-			<Avatar v-if="isMentionToAll(scope.item.id)"
+			<NcAvatar v-if="isMentionToAll(scope.item.id)"
 				:size="44"
 				:icon-class="'icon-group-forced-white'"
 				:disable-tooltip="true"
@@ -41,7 +41,7 @@
 				:style="getGuestAvatarStyle()">
 				{{ getFirstLetterOfGuestName(scope.item.label) }}
 			</div>
-			<Avatar v-else
+			<NcAvatar v-else
 				:key="scope.item.source + '#' + scope.item.id"
 				:size="44"
 				:user="atRemoveQuotesFromUserIdForAvatars(scope.item.id)"
@@ -98,7 +98,7 @@ import VueAtReparenter from '../../../mixins/vueAtReparenter.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { searchPossibleMentions } from '../../../services/mentionsService.js'
 import { fetchClipboardContent } from '../../../utils/clipboard.js'
-import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import Mention from '../../MessagesList/MessagesGroup/Message/MessagePart/Mention.vue'
 import escapeHtml from 'escape-html'
 import debounce from 'debounce'
@@ -166,7 +166,7 @@ export default {
 	name: 'AdvancedInput',
 	components: {
 		At,
-		Avatar,
+		NcAvatar,
 		Mention,
 	},
 	mixins: [

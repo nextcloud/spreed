@@ -21,7 +21,7 @@
   -->
 
 <template>
-	<Modal size="small" v-on="$listeners">
+	<NcModal size="small" v-on="$listeners">
 		<div class="simple-polls-editor">
 			<h2>{{ t('spreed', 'Create new poll') }}</h2>
 
@@ -29,7 +29,7 @@
 			<p class="simple-polls-editor__caption">
 				{{ t('spreed', 'Question') }}
 			</p>
-			<TextField :value.sync="pollQuestion" :placeholder="t('spreed', 'Ask a question ')" v-on="$listeners" />
+			<NcTextField :value.sync="pollQuestion" :placeholder="t('spreed', 'Ask a question ')" v-on="$listeners" />
 
 			<!-- Poll options -->
 			<p class="simple-polls-editor__caption">
@@ -44,10 +44,10 @@
 				@delete-option="deleteOption(index)" />
 
 			<!-- Add options -->
-			<ButtonVue class="simple-polls-editor__add-more" type="tertiary-no-background" @click="addOption">
+			<NcButton class="simple-polls-editor__add-more" type="tertiary-no-background" @click="addOption">
 				<Plus slot="icon" />
 				{{ t('spreed', 'Add answer') }}
-			</ButtonVue>
+			</NcButton>
 
 			<!-- Poll settings -->
 			<p class="simple-polls-editor__caption">
@@ -61,38 +61,38 @@
 					{{ t('spreed', 'Multiple answers') }}
 				</CheckBoxRadioSwitch>
 				<div class="simple-polls-editor__actions">
-					<ButtonVue type="tertiary" @click="dismissEditor">
+					<NcButton type="tertiary" @click="dismissEditor">
 						{{ t('spreed', 'Dismiss') }}
-					</ButtonVue>
+					</NcButton>
 					<!-- create poll button-->
-					<ButtonVue type="primary" @click="createPoll">
+					<NcButton type="primary" @click="createPoll">
 						{{ t('spreed', 'Create poll') }}
-					</ButtonVue>
+					</NcButton>
 				</div>
 			</div>
 		</div>
-	</Modal>
+	</NcModal>
 </template>
 
 <script>
-import Modal from '@nextcloud/vue/dist/Components/Modal.js'
-import CheckBoxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import CheckBoxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import PollOption from './PollOption.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
-import TextField from '@nextcloud/vue/dist/Components/TextField.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import pollService from '../../../services/pollService.js'
 
 export default {
 	name: 'SimplePollsEditor',
 
 	components: {
-		Modal,
+		NcModal,
 		CheckBoxRadioSwitch,
-		ButtonVue,
+		NcButton,
 		PollOption,
 		Plus,
-		TextField,
+		NcTextField,
 	},
 
 	props: {

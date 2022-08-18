@@ -21,7 +21,7 @@
 
 <template>
 	<div class="wrapper">
-		<ButtonVue slot="trigger"
+		<NcButton slot="trigger"
 			v-tooltip.bottom="t('spreed', 'Create a new group conversation')"
 			type="tertiary"
 			class="toggle"
@@ -30,9 +30,9 @@
 			<template #icon>
 				<Plus :size="20" />
 			</template>
-		</ButtonVue>
+		</NcButton>
 		<!-- New group form -->
-		<Modal v-if="modal"
+		<NcModal v-if="modal"
 			:container="container"
 			size="normal"
 			@close="closeModal">
@@ -77,54 +77,54 @@
 				placement are rendered depending on the current page -->
 				<div class="navigation">
 					<!-- First page -->
-					<ButtonVue v-if="page===0 && isPublic"
+					<NcButton v-if="page===0 && isPublic"
 						:disabled="disabled"
 						type="tertiary"
 						@click="handleCreateConversation">
 						{{ t('spreed', 'Create conversation') }}
-					</ButtonVue>
-					<ButtonVue v-if="page===0"
+					</NcButton>
+					<NcButton v-if="page===0"
 						type="primary"
 						:disabled="disabled"
 						class="navigation__button-right"
 						@click="handleSetConversationName">
 						{{ t('spreed', 'Add participants') }}
-					</ButtonVue>
+					</NcButton>
 					<!-- Second page -->
-					<ButtonVue v-if="page===1"
+					<NcButton v-if="page===1"
 						type="tertiary"
 						@click="handleClickBack">
 						{{ t('spreed', 'Back') }}
-					</ButtonVue>
-					<ButtonVue v-if="page===1"
+					</NcButton>
+					<NcButton v-if="page===1"
 						type="primary"
 						class="navigation__button-right"
 						@click="handleCreateConversation">
 						{{ t('spreed', 'Create conversation') }}
-					</ButtonVue>
+					</NcButton>
 					<!-- Third page -->
-					<ButtonVue v-if="page===2 && (error || isPublic)"
+					<NcButton v-if="page===2 && (error || isPublic)"
 						type="primary"
 						class="navigation__button-right"
 						@click="closeModal">
 						{{ t('spreed', 'Close') }}
-					</ButtonVue>
+					</NcButton>
 				</div>
 			</div>
-		</modal>
+		</NcModal>
 	</div>
 </template>
 
 <script>
 
 import { CONVERSATION } from '../../../constants.js'
-import Modal from '@nextcloud/vue/dist/Components/Modal.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import SetContacts from './SetContacts/SetContacts.vue'
 import SetConversationName from './SetConversationName/SetConversationName.vue'
 import SetConversationType from './SetConversationType/SetConversationType.vue'
 import Confirmation from './Confirmation/Confirmation.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { addParticipant } from '../../../services/participantsService.js'
 import {
 	createPublicConversation,
@@ -148,11 +148,11 @@ export default {
 	},
 
 	components: {
-		Modal,
+		NcModal,
 		SetContacts,
 		SetConversationName,
 		SetConversationType,
-		ButtonVue,
+		NcButton,
 		Confirmation,
 		PasswordProtect,
 		ListableSettings,

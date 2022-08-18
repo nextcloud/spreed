@@ -57,23 +57,23 @@
 			</p>
 
 			<p>
-				<ButtonVue v-if="isInstalling">
+				<NcButton v-if="isInstalling">
 					<template #icon>
 						<span class="icon icon-loading-small" />
 					</template>
 					{{ t('spreed', 'Downloading …') }}
-				</ButtonVue>
-				<ButtonVue v-else
+				</NcButton>
+				<NcButton v-else
 					@click="enableMatterbridgeApp">
 					{{ t('spreed', 'Install Talk Matterbridge') }}
-				</ButtonVue>
+				</NcButton>
 			</p>
 		</template>
 	</div>
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { loadState } from '@nextcloud/initial-state'
 import { showError } from '@nextcloud/dialogs'
 import {
@@ -86,7 +86,7 @@ export default {
 	name: 'MatterbridgeIntegration',
 
 	components: {
-		ButtonVue,
+		NcButton,
 	},
 
 	data() {

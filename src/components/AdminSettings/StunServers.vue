@@ -25,7 +25,7 @@
 		<h2>
 			{{ t('spreed', 'STUN servers') }}
 
-			<ButtonVue v-if="!loading"
+			<NcButton v-if="!loading"
 				class="stun-server__add-icon"
 				type="tertiary-no-background"
 				:aria-label="t('spreed', 'Add a new STUN server')"
@@ -33,7 +33,7 @@
 				<template #icon>
 					<Plus :size="20" />
 				</template>
-			</ButtonVue>
+			</NcButton>
 		</h2>
 
 		<p class="settings-hint">
@@ -56,7 +56,7 @@
 
 <script>
 import StunServer from '../../components/AdminSettings/StunServer.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import debounce from 'debounce'
 import { loadState } from '@nextcloud/initial-state'
@@ -66,7 +66,7 @@ export default {
 	name: 'StunServers',
 
 	components: {
-		ButtonVue,
+		NcButton,
 		StunServer,
 		Plus,
 	},

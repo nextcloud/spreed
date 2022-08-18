@@ -37,7 +37,7 @@
 				<!-- Attachments menu -->
 				<div v-if="canUploadFiles || canShareFiles"
 					class="new-message-form__upload-menu">
-					<Actions ref="attachmentsMenu"
+					<NcActions ref="attachmentsMenu"
 						:container="container"
 						:boundaries-element="containerElement"
 						:disabled="disabled"
@@ -45,19 +45,19 @@
 						:aria-haspopup="true">
 						<Paperclip slot="icon"
 							:size="16" />
-						<ActionButton v-if="canUploadFiles"
+						<NcActionButton v-if="canUploadFiles"
 							:close-after-click="true"
 							icon="icon-upload"
 							@click.prevent="clickImportInput">
 							{{ t('spreed', 'Upload new files') }}
-						</ActionButton>
-						<ActionButton v-if="canShareFiles"
+						</NcActionButton>
+						<NcActionButton v-if="canShareFiles"
 							:close-after-click="true"
 							icon="icon-folder"
 							@click.prevent="handleFileShare">
 							{{ t('spreed', 'Share from Files') }}
-						</ActionButton>
-						<ActionButton v-if="canCreatePoll"
+						</NcActionButton>
+						<NcActionButton v-if="canCreatePoll"
 							:close-after-click="true"
 							@click.prevent="toggleSimplePollsEditor(true)">
 							<Poll slot="icon"
@@ -65,34 +65,34 @@
 								decorative
 								title="" />
 							{{ t('spreed', 'Create new poll') }}
-						</ActionButton>
-					</Actions>
+						</NcActionButton>
+					</NcActions>
 				</div>
 				<!-- Input area -->
 				<div class="new-message-form__input">
 					<div class="new-message-form__emoji-picker">
-						<EmojiPicker v-if="!disabled"
+						<NcEmojiPicker v-if="!disabled"
 							:container="container"
 							:close-on-select="false"
 							@select="addEmoji">
-							<ButtonVue :disabled="disabled"
+							<NcButton :disabled="disabled"
 								:aria-label="t('spreed', 'Add emoji')"
 								type="tertiary-no-background"
 								:aria-haspopup="true">
 								<template #icon>
 									<EmoticonOutline :size="16" />
 								</template>
-							</ButtonVue>
-						</EmojiPicker>
+							</NcButton>
+						</NcEmojiPicker>
 						<!-- Disabled emoji picker placeholder button -->
-						<ButtonVue v-else
+						<NcButton v-else
 							type="tertiary"
 							:aria-label="t('spreed', 'Add emoji')"
 							:disabled="true">
 							<template #icon>
 								<EmoticonOutline :size="16" />
 							</template>
-						</ButtonVue>
+						</NcButton>
 					</div>
 					<div v-if="messageToBeReplied" class="new-message-form__quote">
 						<Quote :is-new-message-form-quote="true"
@@ -116,19 +116,19 @@
 					@audio-file="handleAudioFile" />
 				<!-- Send buttons -->
 				<template v-else>
-					<Actions :force-menu="true">
+					<NcActions :force-menu="true">
 						<!-- Silent send -->
-						<ActionButton :close-after-click="true"
+						<NcActionButton :close-after-click="true"
 							icon="icon-upload"
 							:title="t('spreed', 'Send without notification')"
 							@click.prevent="handleSubmit({ silent: true })">
 							{{ silentSendInfo }}
 							<BellOff slot="icon"
 								:size="16" />
-						</ActionButton>
-					</Actions>
+						</NcActionButton>
+					</NcActions>
 					<!-- Send -->
-					<ButtonVue :disabled="disabled"
+					<NcButton :disabled="disabled"
 						type="tertiary"
 						native-type="submit"
 						:title="t('spreed', 'Send message')"
@@ -137,7 +137,7 @@
 						<template #icon>
 							<Send :size="16" />
 						</template>
-					</ButtonVue>
+					</NcButton>
 				</template>
 			</form>
 		</div>
@@ -152,10 +152,10 @@ import AdvancedInput from './AdvancedInput/AdvancedInput.vue'
 import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { getCapabilities } from '@nextcloud/capabilities'
 import Quote from '../Quote.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
-import Actions from '@nextcloud/vue/dist/Components/Actions.js'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
-import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { CONVERSATION, PARTICIPANT } from '../../constants.js'
@@ -179,11 +179,11 @@ export default {
 	components: {
 		AdvancedInput,
 		Quote,
-		Actions,
-		ActionButton,
-		ButtonVue,
+		NcActions,
+		NcActionButton,
+		NcButton,
 		Paperclip,
-		EmojiPicker,
+		NcEmojiPicker,
 		EmoticonOutline,
 		Send,
 		AudioRecorder,
@@ -476,7 +476,7 @@ export default {
 		},
 
 		/**
-		 * Clicks the hidden file input when clicking the correspondent ActionButton,
+		 * Clicks the hidden file input when clicking the correspondent NcActionButton,
 		 * thus opening the file-picker
 		 */
 		clickImportInput() {

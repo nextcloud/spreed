@@ -9,9 +9,9 @@ import Microphone from 'vue-material-design-icons/Microphone.vue'
 import Phone from 'vue-material-design-icons/Phone.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
-import ActionText from '@nextcloud/vue/dist/Components/ActionText.js'
-import { findActionButton } from '../../../../../test-helpers.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
+import { findNcActionButton } from '../../../../../test-helpers.js'
 
 import Participant from './Participant.vue'
 
@@ -97,7 +97,7 @@ describe('Participant.vue', () => {
 				showUserStatus,
 			},
 			stubs: {
-				ActionButton,
+				NcActionButton,
 			},
 			directives: {
 				tooltip: tooltipMock,
@@ -391,7 +391,7 @@ describe('Participant.vue', () => {
 			 */
 			async function testCanDemote() {
 				const wrapper = mountParticipant(participant)
-				const actionButton = findActionButton(wrapper, 'Demote from moderator')
+				const actionButton = findNcActionButton(wrapper, 'Demote from moderator')
 				expect(actionButton.exists()).toBe(true)
 
 				await actionButton.find('button').trigger('click')
@@ -407,7 +407,7 @@ describe('Participant.vue', () => {
 			 */
 			async function testCannotDemote() {
 				const wrapper = mountParticipant(participant)
-				const actionButton = findActionButton(wrapper, 'Demote to moderator')
+				const actionButton = findNcActionButton(wrapper, 'Demote to moderator')
 				expect(actionButton.exists()).toBe(false)
 			}
 
@@ -483,7 +483,7 @@ describe('Participant.vue', () => {
 			 */
 			async function testCanPromote() {
 				const wrapper = mountParticipant(participant)
-				const actionButton = findActionButton(wrapper, 'Promote to moderator')
+				const actionButton = findNcActionButton(wrapper, 'Promote to moderator')
 				expect(actionButton.exists()).toBe(true)
 
 				await actionButton.find('button').trigger('click')
@@ -499,7 +499,7 @@ describe('Participant.vue', () => {
 			 */
 			async function testCannotPromote() {
 				const wrapper = mountParticipant(participant)
-				const actionButton = findActionButton(wrapper, 'Promote to moderator')
+				const actionButton = findNcActionButton(wrapper, 'Promote to moderator')
 				expect(actionButton.exists()).toBe(false)
 			}
 
@@ -575,7 +575,7 @@ describe('Participant.vue', () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.actorType = ATTENDEE.ACTOR_TYPE.EMAILS
 				const wrapper = mountParticipant(participant)
-				const actionButton = findActionButton(wrapper, 'Resend invitation')
+				const actionButton = findNcActionButton(wrapper, 'Resend invitation')
 				expect(actionButton.exists()).toBe(true)
 
 				await actionButton.find('button').trigger('click')
@@ -589,14 +589,14 @@ describe('Participant.vue', () => {
 			test('does not allow non-moderators to resend invitations', async () => {
 				participant.actorType = ATTENDEE.ACTOR_TYPE.EMAILS
 				const wrapper = mountParticipant(participant)
-				const actionButton = findActionButton(wrapper, 'Resend invitation')
+				const actionButton = findNcActionButton(wrapper, 'Resend invitation')
 				expect(actionButton.exists()).toBe(false)
 			})
 
 			test('does not display resend invitations action when not an email actor', async () => {
 				participant.actorType = ATTENDEE.ACTOR_TYPE.USERS
 				const wrapper = mountParticipant(participant)
-				const actionButton = findActionButton(wrapper, 'Resend invitation')
+				const actionButton = findNcActionButton(wrapper, 'Resend invitation')
 				expect(actionButton.exists()).toBe(false)
 			})
 		})
@@ -615,7 +615,7 @@ describe('Participant.vue', () => {
 			 */
 			async function testCanRemove(buttonText = 'Remove participant') {
 				const wrapper = mountParticipant(participant)
-				const actionButton = findActionButton(wrapper, buttonText)
+				const actionButton = findNcActionButton(wrapper, buttonText)
 				expect(actionButton.exists()).toBe(true)
 
 				await actionButton.find('button').trigger('click')
@@ -631,7 +631,7 @@ describe('Participant.vue', () => {
 			 */
 			async function testCannotRemove() {
 				const wrapper = mountParticipant(participant)
-				const actionButton = findActionButton(wrapper, 'Remove participant')
+				const actionButton = findNcActionButton(wrapper, 'Remove participant')
 				expect(actionButton.exists()).toBe(false)
 			}
 
@@ -698,7 +698,7 @@ describe('Participant.vue', () => {
 			 */
 			function testPinVisible() {
 				const wrapper = mountParticipant(participant)
-				let actionTexts = wrapper.findAllComponents(ActionText)
+				let actionTexts = wrapper.findAllComponents(NcActionText)
 				actionTexts = actionTexts.filter((actionText) => {
 					return actionText.props('title').indexOf('PIN') >= 0
 				})
@@ -723,7 +723,7 @@ describe('Participant.vue', () => {
 				conversation.participantType = PARTICIPANT.TYPE.USER
 				participant.attendeePin = '12345678'
 				const wrapper = mountParticipant(participant)
-				let actionTexts = wrapper.findAllComponents(ActionText)
+				let actionTexts = wrapper.findAllComponents(NcActionText)
 				actionTexts = actionTexts.filter((actionText) => {
 					return actionText.props('title').indexOf('PIN') >= 0
 				})
@@ -735,7 +735,7 @@ describe('Participant.vue', () => {
 				conversation.participantType = PARTICIPANT.TYPE.MODERATOR
 				participant.attendeePin = ''
 				const wrapper = mountParticipant(participant)
-				let actionTexts = wrapper.findAllComponents(ActionText)
+				let actionTexts = wrapper.findAllComponents(NcActionText)
 				actionTexts = actionTexts.filter((actionText) => {
 					return actionText.props('title').indexOf('PIN') >= 0
 				})
@@ -755,7 +755,7 @@ describe('Participant.vue', () => {
 			const wrapper = mountParticipant(participant)
 
 			// no actions
-			expect(wrapper.findAllComponents(ActionButton).exists()).toBe(false)
+			expect(wrapper.findAllComponents(NcActionButton).exists()).toBe(false)
 		})
 
 		test('triggers event when clicking', async () => {

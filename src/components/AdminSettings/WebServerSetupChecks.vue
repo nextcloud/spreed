@@ -32,7 +32,7 @@
 		<ul class="web-server-setup-checks">
 			<li class="background-blur">
 				{{ t('spreed', 'Files required for background blur can be loaded') }}
-				<ButtonVue v-tooltip="backgroundBlurAvailableToolTip"
+				<NcButton v-tooltip="backgroundBlurAvailableToolTip"
 					type="tertiary"
 					class="vue-button-inline"
 					:class="{'success-button': backgroundBlurAvailable === true, 'error-button': backgroundBlurAvailable === false}"
@@ -43,7 +43,7 @@
 						<Check v-else-if="backgroundBlurAvailable === true" :size="20" />
 						<span v-else class="icon icon-loading-small" />
 					</template>
-				</ButtonVue>
+				</NcButton>
 			</li>
 		</ul>
 	</div>
@@ -51,7 +51,7 @@
 
 <script>
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Check from 'vue-material-design-icons/Check.vue'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
@@ -70,7 +70,7 @@ export default {
 
 	components: {
 		AlertCircle,
-		ButtonVue,
+		NcButton,
 		Check,
 	},
 

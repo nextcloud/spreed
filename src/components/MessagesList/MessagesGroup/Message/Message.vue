@@ -79,13 +79,13 @@ the main body of the message as well as a quote.
 						@focus="showReloadButton = true"
 						@mouseleave="showReloadButton = true"
 						@blur="showReloadButton = true">
-						<ButtonVue v-if="sendingErrorCanRetry && showReloadButton"
+						<NcButton v-if="sendingErrorCanRetry && showReloadButton"
 							:aria-label="sendingErrorIconTooltip"
 							@click="handleRetry">
 							<template #icon>
 								<Reload :size="16" />
 							</template>
-						</ButtonVue>
+						</NcButton>
 						<AlertCircle v-else
 							:size="16" />
 					</div>
@@ -112,39 +112,39 @@ the main body of the message as well as a quote.
 			<div v-if="hasReactions"
 				class="message-body__reactions"
 				@mouseover="handleReactionsMouseOver">
-				<Popover v-for="reaction in Object.keys(simpleReactions)"
+				<NcPopover v-for="reaction in Object.keys(simpleReactions)"
 					:key="reaction"
 					:delay="200"
 					trigger="hover">
-					<ButtonVue v-if="simpleReactions[reaction]!== 0"
+					<NcButton v-if="simpleReactions[reaction]!== 0"
 						slot="trigger"
 						class="reaction-button"
 						:class="{'reaction-button__has-reacted': userHasReacted(reaction)}"
 						@click="handleReactionClick(reaction)">
 						{{ reaction }} {{ simpleReactions[reaction] }}
-					</ButtonVue>
+					</NcButton>
 					<div v-if="detailedReactions" class="reaction-details">
 						<span>{{ getReactionSummary(reaction) }}</span>
 					</div>
-				</Popover>
+				</NcPopover>
 
 				<!-- More reactions picker -->
-				<EmojiPicker v-if="canReact && showMessageButtonsBar"
+				<NcEmojiPicker v-if="canReact && showMessageButtonsBar"
 					:per-line="5"
 					:container="`#message_${id}`"
 					@select="handleReactionClick">
-					<ButtonVue class="reaction-button">
+					<NcButton class="reaction-button">
 						<template #icon>
 							<EmoticonOutline :size="15" />
 						</template>
-					</ButtonVue>
-				</EmojiPicker>
-				<ButtonVue v-else-if="canReact"
+					</NcButton>
+				</NcEmojiPicker>
+				<NcButton v-else-if="canReact"
 					class="reaction-button">
 					<template #icon>
 						<EmoticonOutline :size="15" />
 					</template>
-				</ButtonVue>
+				</NcButton>
 			</div>
 		</div>
 
@@ -172,7 +172,7 @@ the main body of the message as well as a quote.
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import CallButton from '../../../TopBar/CallButton.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
@@ -193,9 +193,9 @@ import moment from '@nextcloud/moment'
 import Location from './MessagePart/Location.vue'
 import Contact from './MessagePart/Contact.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
-import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker.js'
+import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-import Popover from '@nextcloud/vue/dist/Components/Popover.js'
+import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import Poll from './MessagePart/Poll.vue'
@@ -208,7 +208,7 @@ export default {
 	},
 
 	components: {
-		ButtonVue,
+		NcButton,
 		CallButton,
 		Quote,
 		RichText,
@@ -217,9 +217,9 @@ export default {
 		CheckAll,
 		Reload,
 		MessageButtonsBar,
-		EmojiPicker,
+		NcEmojiPicker,
 		EmoticonOutline,
-		Popover,
+		NcPopover,
 	},
 
 	mixins: [

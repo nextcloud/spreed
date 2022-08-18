@@ -20,17 +20,17 @@
 -->
 
 <template>
-	<Modal size="large" :container="container" v-on="$listeners">
+	<NcModal size="large" :container="container" v-on="$listeners">
 		<div class="shared-items-browser">
 			<div class="shared-items-browser__navigation">
 				<template v-for="type in sharedItemsOrder">
-					<ButtonVue v-if="sharedItems[type]"
+					<NcButton v-if="sharedItems[type]"
 						:key="type"
 						:class="{'active' : activeTab === type}"
 						type="tertiary"
 						@click="handleTabClick(type)">
 						{{ getTitle(type) }}
-					</ButtonVue>
+					</NcButton>
 				</template>
 			</div>
 			<div ref="scroller" class="shared-items-browser__content" @scroll="debounceHandleScroll">
@@ -38,12 +38,12 @@
 					:items="sharedItems[activeTab]" />
 			</div>
 		</div>
-	</Modal>
+	</NcModal>
 </template>
 
 <script>
-import Modal from '@nextcloud/vue/dist/Components/Modal.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import SharedItems from '../SharedItems.vue'
 import sharedItems from '../../../../mixins/sharedItems.js'
 import debounce from 'debounce'
@@ -52,8 +52,8 @@ export default {
 	name: 'SharedItemsBrowser',
 
 	components: {
-		ButtonVue,
-		Modal,
+		NcButton,
+		NcModal,
 		SharedItems,
 	},
 

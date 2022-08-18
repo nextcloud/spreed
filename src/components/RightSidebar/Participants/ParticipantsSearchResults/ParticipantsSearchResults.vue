@@ -23,34 +23,34 @@
 	<div class="participants-search-results"
 		:class="{'scrollable': scrollable }">
 		<template v-if="addableUsers.length !== 0">
-			<AppNavigationCaption :title="t('spreed', 'Add users')" />
+			<NcAppNavigationCaption :title="t('spreed', 'Add users')" />
 			<ParticipantsList :items="addableUsers"
 				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableGroups.length !== 0">
-			<AppNavigationCaption :title="t('spreed', 'Add groups')" />
+			<NcAppNavigationCaption :title="t('spreed', 'Add groups')" />
 			<ParticipantsList :items="addableGroups"
 				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableEmails.length !== 0">
-			<AppNavigationCaption :title="t('spreed', 'Add emails')" />
+			<NcAppNavigationCaption :title="t('spreed', 'Add emails')" />
 			<ParticipantsList :items="addableEmails"
 				@click="handleClickParticipant" />
 		</template>
 
 		<template v-if="addableCircles.length !== 0">
-			<AppNavigationCaption :title="t('spreed', 'Add circles')" />
+			<NcAppNavigationCaption :title="t('spreed', 'Add circles')" />
 			<ParticipantsList :items="addableCircles"
 				@click="handleClickParticipant" />
 		</template>
 
 		<!-- integrations -->
 		<template v-if="integrations.length !== 0">
-			<AppNavigationCaption :title="t('spreed', 'Integrations')" />
+			<NcAppNavigationCaption :title="t('spreed', 'Integrations')" />
 			<ul>
-				<ButtonVue v-for="(integration, index) in integrations"
+				<NcButton v-for="(integration, index) in integrations"
 					:key="'integration' + index"
 					type="tertiary-no-background"
 					@click="runIntegration(integration)">
@@ -59,16 +59,16 @@
 						<AccountPlus :size="20" />
 					</template>
 					{{ integration.label }}
-				</ButtonVue>
+				</NcButton>
 			</ul>
 		</template>
 
 		<template v-if="addableRemotes.length !== 0">
-			<AppNavigationCaption :title="t('spreed', 'Add federated users')" />
+			<NcAppNavigationCaption :title="t('spreed', 'Add federated users')" />
 			<ParticipantsList :items="addableRemotes"
 				@click="handleClickParticipant" />
 		</template>
-		<AppNavigationCaption v-if="sourcesWithoutResults"
+		<NcAppNavigationCaption v-if="sourcesWithoutResults"
 			:title="sourcesWithoutResultsList" />
 		<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
 		<Hint v-if="!contactsLoading && sourcesWithoutResults" :hint="t('spreed', 'No search results')" />
@@ -98,20 +98,20 @@
 
 <script>
 import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
-import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption.js'
+import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import Hint from '../../../Hint.vue'
 import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'ParticipantsSearchResults',
 
 	components: {
 		ParticipantsList,
-		AppNavigationCaption,
+		NcAppNavigationCaption,
 		Hint,
 		AccountPlus,
-		ButtonVue,
+		NcButton,
 	},
 
 	props: {

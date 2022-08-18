@@ -41,16 +41,16 @@
 			</DashboardWidgetItem>
 		</template>
 		<template #empty-content>
-			<EmptyContent icon="icon-talk">
+			<NcEmptyContent icon="icon-talk">
 				<template #desc>
 					{{ t('spreed', 'Say hi to your friends and colleagues!') }}
-					<ButtonVue class="button-start-conversation"
+					<NcButton class="button-start-conversation"
 						type="secondary"
 						@click="clickStartNew">
 						{{ t('spreed', 'Start a conversation') }}
-					</ButtonVue>
+					</NcButton>
 				</template>
-			</EmptyContent>
+			</NcEmptyContent>
 		</template>
 	</DashboardWidget>
 </template>
@@ -58,11 +58,11 @@
 <script>
 import { DashboardWidget, DashboardWidgetItem } from '@nextcloud/vue-dashboard'
 import ConversationIcon from './../components/ConversationIcon.vue'
-import EmptyContent from '@nextcloud/vue/dist/Components/EmptyContent.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl, generateUrl } from '@nextcloud/router'
 import { CONVERSATION } from '../constants.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 const ROOM_POLLING_INTERVAL = 30
 
@@ -81,9 +81,9 @@ export default {
 	components: {
 		DashboardWidget,
 		DashboardWidgetItem,
-		ButtonVue,
+		NcButton,
 		ConversationIcon,
-		EmptyContent,
+		NcEmptyContent,
 	},
 
 	data() {

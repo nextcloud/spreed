@@ -20,16 +20,16 @@
 -->
 
 <template>
-	<AppSettingsDialog :open.sync="showSettings"
+	<NcAppSettingsDialog :open.sync="showSettings"
 		:show-navigation="true"
 		first-selected-section="keyboard shortcuts"
 		:container="container">
-		<AppSettingsSection id="devices"
+		<NcAppSettingsSection id="devices"
 			:title="t('spreed', 'Choose devices')"
 			class="app-settings-section">
 			<MediaDevicesPreview />
-		</AppSettingsSection>
-		<AppSettingsSection v-if="!isGuest"
+		</NcAppSettingsSection>
+		<NcAppSettingsSection v-if="!isGuest"
 			id="attachments"
 			:title="t('spreed', 'Attachments folder')"
 			class="app-settings-section">
@@ -41,31 +41,31 @@
 				:value="attachmentFolder"
 				:disabled="attachmentFolderLoading"
 				@click="selectAttachmentFolder">
-		</AppSettingsSection>
-		<AppSettingsSection v-if="!isGuest"
+		</NcAppSettingsSection>
+		<NcAppSettingsSection v-if="!isGuest"
 			id="privacy"
 			:title="t('spreed', 'Privacy')"
 			class="app-settings-section">
-			<CheckboxRadioSwitch id="read_status_privacy"
+			<NcCheckboxRadioSwitch id="read_status_privacy"
 				:checked="readStatusPrivacyIsPublic"
 				:disabled="privacyLoading"
 				type="switch"
 				class="checkbox"
 				@update:checked="toggleReadStatusPrivacy">
 				{{ t('spreed', 'Share my read-status and show the read-status of others') }}
-			</CheckboxRadioSwitch>
-		</AppSettingsSection>
-		<AppSettingsSection id="sounds"
+			</NcCheckboxRadioSwitch>
+		</NcAppSettingsSection>
+		<NcAppSettingsSection id="sounds"
 			:title="t('spreed', 'Sounds')"
 			class="app-settings-section">
-			<CheckboxRadioSwitch id="play_sounds"
+			<NcCheckboxRadioSwitch id="play_sounds"
 				:checked="playSounds"
 				:disabled="playSoundsLoading"
 				type="switch"
 				class="checkbox"
 				@update:checked="togglePlaySounds">
 				{{ t('spreed', 'Play sounds when participants join or leave a call') }}
-			</CheckboxRadioSwitch>
+			</NcCheckboxRadioSwitch>
 			<em>{{ t('spreed', 'Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
 
 			<a :href="settingsUrl"
@@ -74,8 +74,8 @@
 				class="external">
 				{{ t('spreed', 'Sounds for chat and call notifications can be adjusted in the personal settings.') }} ↗
 			</a>
-		</AppSettingsSection>
-		<AppSettingsSection id="shortcuts"
+		</NcAppSettingsSection>
+		<NcAppSettingsSection id="shortcuts"
 			:title="t('spreed', 'Keyboard shortcuts')">
 			<em>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</em>
 
@@ -133,8 +133,8 @@
 					</dd>
 				</div>
 			</dl>
-		</AppSettingsSection>
-	</AppSettingsDialog>
+		</NcAppSettingsSection>
+	</NcAppSettingsDialog>
 </template>
 
 <script>
@@ -143,18 +143,18 @@ import { getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs
 import { PRIVACY } from '../../constants.js'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import MediaDevicesPreview from '../MediaDevicesPreview.vue'
-import AppSettingsDialog from '@nextcloud/vue/dist/Components/AppSettingsDialog.js'
-import AppSettingsSection from '@nextcloud/vue/dist/Components/AppSettingsSection.js'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
+import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDialog.js'
+import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
 export default {
 	name: 'SettingsDialog',
 
 	components: {
 		MediaDevicesPreview,
-		AppSettingsDialog,
-		AppSettingsSection,
-		CheckboxRadioSwitch,
+		NcAppSettingsDialog,
+		NcAppSettingsSection,
+		NcCheckboxRadioSwitch,
 	},
 
 	data() {

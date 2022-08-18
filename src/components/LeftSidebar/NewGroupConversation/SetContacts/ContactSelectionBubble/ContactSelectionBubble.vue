@@ -31,18 +31,18 @@
 		<span class="contact-selection-bubble__username">
 			{{ displayName }}
 		</span>
-		<ButtonVue type="tertiary-no-background"
+		<NcButton type="tertiary-no-background"
 			:aria-label="removeLabel"
 			@click="removeParticipantFromSelection(participant)">
 			<template #icon>
 				<Close :size="16" />
 			</template>
-		</ButtonVue>
+		</NcButton>
 	</div>
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Close from 'vue-material-design-icons/Close.vue'
 import AvatarWrapperSmall from '../../../../AvatarWrapper/AvatarWrapperSmall.vue'
 export default {
@@ -50,7 +50,7 @@ export default {
 
 	components: {
 		AvatarWrapperSmall,
-		ButtonVue,
+		NcButton,
 		Close,
 	},
 

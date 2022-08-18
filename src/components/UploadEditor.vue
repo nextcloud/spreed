@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<Modal v-if="showModal"
+	<NcModal v-if="showModal"
 		:size="isVoiceMessage ? 'small' : 'normal'"
 		class="upload-editor"
 		:container="container"
@@ -45,14 +45,14 @@
 					</template>
 					<div :key="'addMore'"
 						class="add-more">
-						<ButtonVue :aria-label="addMoreAriaLabel"
+						<NcButton :aria-label="addMoreAriaLabel"
 							type="primary"
 							class="add-more__button"
 							@click="clickImportInput">
 							<template #icon>
 								<Plus :size="48" />
 							</template>
-						</ButtonVue>
+						</NcButton>
 					</div>
 				</transition-group>
 			</template>
@@ -61,34 +61,34 @@
 					:local-url="voiceMessageLocalURL" />
 			</template>
 			<div class="upload-editor__actions">
-				<ButtonVue type="tertiary" @click="handleDismiss">
+				<NcButton type="tertiary" @click="handleDismiss">
 					{{ t('spreed', 'Dismiss') }}
-				</ButtonVue>
-				<ButtonVue ref="submitButton" type="primary" @click="handleUpload">
+				</NcButton>
+				<NcButton ref="submitButton" type="primary" @click="handleUpload">
 					{{ t('spreed', 'Send') }}
-				</ButtonVue>
+				</NcButton>
 			</div>
 		</div>
-	</Modal>
+	</NcModal>
 </template>
 
 <script>
 
-import Modal from '@nextcloud/vue/dist/Components/Modal.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import AudioPlayer from './MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'UploadEditor',
 
 	components: {
-		Modal,
+		NcModal,
 		FilePreview,
 		Plus,
 		AudioPlayer,
-		ButtonVue,
+		NcButton,
 	},
 
 	computed: {
@@ -170,7 +170,7 @@ export default {
 			this.$store.dispatch('uploadFiles', this.currentUploadId)
 		},
 		/**
-		 * Clicks the hidden file input when clicking the correspondent ActionButton,
+		 * Clicks the hidden file input when clicking the correspondent NcActionButton,
 		 * thus opening the file-picker
 		 */
 		clickImportInput() {

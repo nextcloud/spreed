@@ -27,7 +27,7 @@
 			:is-searching="isSearching"
 			@input="handleInput"
 			@abort-search="abortSearch" />
-		<AppNavigationCaption v-if="isSearching && canAdd"
+		<NcAppNavigationCaption v-if="isSearching && canAdd"
 			:title="t('spreed', 'Participants')" />
 		<CurrentParticipants :search-text="searchText"
 			:participants-initialised="participantsInitialised" />
@@ -50,14 +50,14 @@ import { addParticipant } from '../../../services/participantsService.js'
 import { loadState } from '@nextcloud/initial-state'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 import { showError } from '@nextcloud/dialogs'
-import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption.js'
+import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults.vue'
 import getParticipants from '../../../mixins/getParticipants.js'
 
 export default {
 	name: 'ParticipantsTab',
 	components: {
-		AppNavigationCaption,
+		NcAppNavigationCaption,
 		CurrentParticipants,
 		SearchBox,
 		ParticipantsSearchResults,

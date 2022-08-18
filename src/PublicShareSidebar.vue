@@ -26,7 +26,7 @@
 			<div v-if="!conversation" class="emptycontent room-not-joined">
 				<div class="icon icon-talk" />
 				<h2>{{ t('spreed', 'Discuss this file') }}</h2>
-				<ButtonVue type="primary"
+				<NcButton type="primary"
 					class="button-centered"
 					:disabled="joiningConversation"
 					@click="joinConversation">
@@ -34,7 +34,7 @@
 						<span v-if="joiningConversation" class="icon icon-loading-small" />
 					</template>
 					{{ t('spreed', 'Join conversation') }}
-				</ButtonVue>
+				</NcButton>
 			</div>
 			<template v-else>
 				<TopBar v-if="isInCall"
@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import PreventUnload from 'vue-prevent-unload'
 import { loadState } from '@nextcloud/initial-state'
 import CallView from './components/CallView/CallView.vue'
@@ -79,7 +79,7 @@ export default {
 	name: 'PublicShareSidebar',
 
 	components: {
-		ButtonVue,
+		NcButton,
 		CallButton,
 		CallView,
 		ChatView,

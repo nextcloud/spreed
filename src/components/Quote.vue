@@ -45,19 +45,19 @@ components.
 			</blockquote>
 		</div>
 		<div v-if="isNewMessageFormQuote" class="quote__main__right">
-			<ButtonVue type="tertiary"
+			<NcButton type="tertiary"
 				:aria-label="cancelQuoteLabel"
 				@click="handleAbortReply">
 				<template #icon>
 					<Close :size="20" />
 				</template>
-			</ButtonVue>
+			</NcButton>
 		</div>
 	</a>
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Close from 'vue-material-design-icons/Close.vue'
 import RichText from '@juliushaertl/vue-richtext'
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
@@ -67,7 +67,7 @@ import { EventBus } from '../services/EventBus.js'
 export default {
 	name: 'Quote',
 	components: {
-		ButtonVue,
+		NcButton,
 		Close,
 		RichText,
 	},

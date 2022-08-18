@@ -38,7 +38,7 @@
 		</a>
 
 		<!-- voting and results dialog -->
-		<Modal v-if="vote !== undefined && showModal"
+		<NcModal v-if="vote !== undefined && showModal"
 			size="small"
 			@close="showModal = false">
 			<div class="poll__modal">
@@ -55,7 +55,7 @@
 					<!-- options -->
 					<div class="poll__modal-options">
 						<template v-if="checkboxRadioSwitchType === 'radio'">
-							<CheckboxRadioSwitch v-for="(option, index) in options"
+							<NcCheckboxRadioSwitch v-for="(option, index) in options"
 								:key="'radio' + index"
 								:checked.sync="vote"
 								class="poll__option"
@@ -63,28 +63,28 @@
 								:type="checkboxRadioSwitchType"
 								name="answerType">
 								{{ option }}
-							</CheckboxRadioSwitch>
+							</NcCheckboxRadioSwitch>
 						</template>
 						<template v-else>
-							<CheckboxRadioSwitch v-for="(option, index) in options"
+							<NcCheckboxRadioSwitch v-for="(option, index) in options"
 								:key="'checkbox' + index"
 								:checked.sync="vote"
 								:value="index.toString()"
 								:type="checkboxRadioSwitchType"
 								name="answerType">
 								{{ option }}
-							</CheckboxRadioSwitch>
+							</NcCheckboxRadioSwitch>
 						</template>
 					</div>
 
 					<div class="poll__modal-actions">
-						<ButtonVue type="tertiary" @click="dismissModal">
+						<NcButton type="tertiary" @click="dismissModal">
 							{{ t('spreed', 'Dismiss') }}
-						</ButtonVue>
+						</NcButton>
 						<!-- create poll button-->
-						<ButtonVue type="primary" :disabled="!canSubmitVote" @click="submitVote">
+						<NcButton type="primary" :disabled="!canSubmitVote" @click="submitVote">
 							{{ t('spreed', 'Submit') }}
-						</ButtonVue>
+						</NcButton>
 					</div>
 				</template>
 
@@ -112,35 +112,35 @@
 									{{ getVotePercentage(index) + '%' }}
 								</p>
 							</div>
-							<ProgressBar :value="getVotePercentage(index)" size="medium" />
+							<NcProgressBar :value="getVotePercentage(index)" size="medium" />
 						</div>
 					</div>
 					<div v-if="pollIsOpen"
 						class="poll__modal-actions">
-						<ButtonVue type="tertiary"
+						<NcButton type="tertiary"
 							@click="modalPage = 'voting'">
 							{{ t('spreed', 'Back') }}
-						</ButtonVue>
+						</NcButton>
 						<!-- create poll button-->
-						<ButtonVue v-if="canClosePoll"
+						<NcButton v-if="canClosePoll"
 							type="error"
 							@click="closePoll">
 							{{ t('spreed', 'Close poll') }}
-						</ButtonVue>
+						</NcButton>
 					</div>
 				</template>
 			</div>
-		</modal>
+		</NcModal>
 	</div>
 </template>
 
 <script>
 
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
-import Modal from '@nextcloud/vue/dist/Components/Modal.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
-import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar.js'
+import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
 import { PARTICIPANT } from '../../../../../constants.js'
 
 export default {
@@ -148,11 +148,11 @@ export default {
 	name: 'Poll',
 
 	components: {
-		CheckboxRadioSwitch,
-		Modal,
-		ButtonVue,
+		NcCheckboxRadioSwitch,
+		NcModal,
+		NcButton,
 		PollIcon,
-		ProgressBar,
+		NcProgressBar,
 	},
 
 	props: {

@@ -30,9 +30,9 @@
 				<p class="danger-zone__hint">
 					{{ t('spreed', 'Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time.') }}
 				</p>
-				<ButtonVue type="warning" @click.prevent.exact="leaveConversation">
+				<NcButton type="warning" @click.prevent.exact="leaveConversation">
 					{{ t('spreed', 'Leave conversation') }}
-				</ButtonVue>
+				</NcButton>
 			</template>
 			<template v-if="canDeleteConversation">
 				<br>
@@ -40,10 +40,10 @@
 				<p class="danger-zone__hint">
 					{{ t('spreed', 'Permanently delete this conversation.') }}
 				</p>
-				<ButtonVue type="error"
+				<NcButton type="error"
 					@click.prevent.exact="deleteConversation">
 					{{ t('spreed', 'Delete conversation') }}
-				</ButtonVue>
+				</NcButton>
 			</template>
 			<template v-if="canDeleteConversation">
 				<br>
@@ -51,10 +51,10 @@
 				<p class="danger-zone__hint">
 					{{ t('spreed', 'Permanently delete all the messages in this conversation.') }}
 				</p>
-				<ButtonVue type="error"
+				<NcButton type="error"
 					@click.prevent.exact="clearChatHistory">
 					{{ t('spreed', 'Delete chat messages') }}
-				</ButtonVue>
+				</NcButton>
 			</template>
 			<div />
 		</div>
@@ -64,12 +64,12 @@
 <script>
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'DangerZone',
 	components: {
-		ButtonVue,
+		NcButton,
 	},
 	props: {
 		conversation: {

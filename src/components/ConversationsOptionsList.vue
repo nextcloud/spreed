@@ -21,7 +21,7 @@
 
 <template>
 	<ul class="contacts-list">
-		<ListItem v-for="item of items"
+		<NcListItem v-for="item of items"
 			:key="item.id"
 			:title="item.label"
 			@click="onClick(item)">
@@ -29,20 +29,20 @@
 				<ConversationIcon :item="iconData(item)"
 					:disable-menu="true" />
 			</template>
-		</ListItem>
+		</NcListItem>
 	</ul>
 </template>
 
 <script>
 import ConversationIcon from './ConversationIcon.vue'
-import ListItem from '@nextcloud/vue/dist/Components/ListItem.js'
+import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import { CONVERSATION } from '../constants.js'
 
 export default {
 	name: 'ConversationsOptionsList',
 	components: {
 		ConversationIcon,
-		ListItem,
+		NcListItem,
 	},
 	props: {
 		items: {

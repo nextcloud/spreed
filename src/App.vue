@@ -20,27 +20,27 @@
 -->
 
 <template>
-	<ContentVue v-shortkey.once="['ctrl', 'f']"
+	<NcContent v-shortkey.once="['ctrl', 'f']"
 		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
 		app-name="talk"
 		@shortkey.native="handleAppSearch">
 		<LeftSidebar v-if="getUserId && !isFullscreen" />
-		<AppContent>
+		<NcAppContent>
 			<router-view />
-		</AppContent>
+		</NcAppContent>
 		<RightSidebar :show-chat-in-sidebar="isInCall" />
 		<PreventUnload :when="warnLeaving || isSendingMessages" />
 		<DeviceChecker :initialize-on-mounted="false" />
 		<UploadEditor />
 		<SettingsDialog />
 		<ConversationSettingsDialog />
-	</ContentVue>
+	</NcContent>
 </template>
 
 <script>
 import debounce from 'debounce'
-import AppContent from '@nextcloud/vue/dist/Components/AppContent.js'
-import ContentVue from '@nextcloud/vue/dist/Components/Content.js'
+import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
+import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
 import LeftSidebar from './components/LeftSidebar/LeftSidebar.vue'
 import PreventUnload from 'vue-prevent-unload'
 import Router from './router/router.js'
@@ -71,8 +71,8 @@ import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
 export default {
 	name: 'App',
 	components: {
-		AppContent,
-		ContentVue,
+		NcAppContent,
+		NcContent,
 		LeftSidebar,
 		PreventUnload,
 		RightSidebar,

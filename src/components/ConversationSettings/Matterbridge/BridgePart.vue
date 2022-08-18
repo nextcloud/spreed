@@ -28,28 +28,28 @@
 			<span>
 				{{ type.name }}
 			</span>
-			<Actions :force-menu="false">
-				<ActionButton v-if="editable"
+			<NcActions :force-menu="false">
+				<NcActionButton v-if="editable"
 					:icon="editing ? 'icon-checkmark' : 'icon-rename'"
 					@click="onEditClick">
 					{{ editing ? t('spreed', 'Save'): t('spreed', 'Edit') }}
-				</ActionButton>
-			</Actions>
-			<Actions class="actions"
+				</NcActionButton>
+			</NcActions>
+			<NcActions class="actions"
 				:force-menu="true"
 				placement="bottom">
-				<ActionLink icon="icon-info"
+				<NcActionLink icon="icon-info"
 					target="_blank"
 					:title="t('spreed', 'More information')"
 					:href="type.infoTarget"
 					:close-after-click="true" />
-				<ActionButton v-if="editable"
+				<NcActionButton v-if="editable"
 					icon="icon-delete"
 					:close-after-click="true"
 					@click="$emit('delete-part')">
 					{{ t('spreed', 'Delete') }}
-				</ActionButton>
-			</Actions>
+				</NcActionButton>
+			</NcActions>
 		</h3>
 		<div v-for="(field, key) in displayedFields"
 			:key="key"
@@ -88,16 +88,16 @@
 </template>
 
 <script>
-import Actions from '@nextcloud/vue/dist/Components/Actions.js'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
-import ActionLink from '@nextcloud/vue/dist/Components/ActionLink.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 
 export default {
 	name: 'BridgePart',
 	components: {
-		Actions,
-		ActionButton,
-		ActionLink,
+		NcActions,
+		NcActionButton,
+		NcActionLink,
 	},
 
 	mixins: [

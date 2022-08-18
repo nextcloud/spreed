@@ -20,11 +20,11 @@
  *
  */
 
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 
 // helpers
-const findActionButton = function(wrapper, text) {
-	const actionButtons = wrapper.findAllComponents(ActionButton)
+const findNcActionButton = function(wrapper, text) {
+	const actionButtons = wrapper.findAllComponents(NcActionButton)
 	const items = actionButtons.filter(actionButton => {
 		return actionButton.text() === text
 	})
@@ -35,5 +35,5 @@ const findActionButton = function(wrapper, text) {
 }
 
 export {
-	findActionButton,
+	findNcActionButton,
 }

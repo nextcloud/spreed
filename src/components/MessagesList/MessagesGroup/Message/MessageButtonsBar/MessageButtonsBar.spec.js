@@ -4,8 +4,8 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
-import { findActionButton } from '../../../../../test-helpers.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import { findNcActionButton } from '../../../../../test-helpers.js'
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
 
 describe('MessageButtonsBar.vue', () => {
@@ -89,12 +89,12 @@ describe('MessageButtonsBar.vue', () => {
 					localVue,
 					store,
 					stubs: {
-						ActionButton,
+						NcActionButton,
 					},
 					propsData: messageProps,
 				})
 
-				const actionButton = findActionButton(wrapper, 'Reply')
+				const actionButton = findNcActionButton(wrapper, 'Reply')
 				expect(actionButton.exists()).toBe(true)
 				expect(actionButton.isVisible()).toBe(true)
 				await actionButton.find('button').trigger('click')
@@ -122,12 +122,12 @@ describe('MessageButtonsBar.vue', () => {
 					localVue,
 					store,
 					stubs: {
-						ActionButton,
+						NcActionButton,
 					},
 					propsData: messageProps,
 				})
 
-				const actionButton = findActionButton(wrapper, 'Reply')
+				const actionButton = findNcActionButton(wrapper, 'Reply')
 				expect(actionButton.isVisible()).toBe(false)
 			})
 		})
@@ -150,12 +150,12 @@ describe('MessageButtonsBar.vue', () => {
 						},
 					},
 					stubs: {
-						ActionButton,
+						NcActionButton,
 					},
 					propsData: messageProps,
 				})
 
-				const actionButton = findActionButton(wrapper, 'Reply privately')
+				const actionButton = findNcActionButton(wrapper, 'Reply privately')
 				expect(actionButton.exists()).toBe(true)
 
 				createOneToOneConversation.mockResolvedValueOnce({
@@ -184,12 +184,12 @@ describe('MessageButtonsBar.vue', () => {
 					localVue,
 					store,
 					stubs: {
-						ActionButton,
+						NcActionButton,
 					},
 					propsData: messageProps,
 				})
 
-				const actionButton = findActionButton(wrapper, 'Reply privately')
+				const actionButton = findNcActionButton(wrapper, 'Reply privately')
 				expect(actionButton.exists()).toBe(visible)
 			}
 
@@ -228,12 +228,12 @@ describe('MessageButtonsBar.vue', () => {
 					localVue,
 					store,
 					stubs: {
-						ActionButton,
+						NcActionButton,
 					},
 					propsData: messageProps,
 				})
 
-				const actionButton = findActionButton(wrapper, 'Delete')
+				const actionButton = findNcActionButton(wrapper, 'Delete')
 				expect(actionButton.exists()).toBe(true)
 
 				await actionButton.find('button').trigger('click')
@@ -263,12 +263,12 @@ describe('MessageButtonsBar.vue', () => {
 					localVue,
 					store,
 					stubs: {
-						ActionButton,
+						NcActionButton,
 					},
 					propsData: messageProps,
 				})
 
-				const actionButton = findActionButton(wrapper, 'Delete')
+				const actionButton = findNcActionButton(wrapper, 'Delete')
 				expect(actionButton.exists()).toBe(visible)
 			}
 
@@ -340,13 +340,13 @@ describe('MessageButtonsBar.vue', () => {
 				localVue,
 				store,
 				stubs: {
-					ActionButton,
+					NcActionButton,
 				},
 
 				propsData: messageProps,
 			})
 
-			const actionButton = findActionButton(wrapper, 'Mark as unread')
+			const actionButton = findNcActionButton(wrapper, 'Mark as unread')
 			expect(actionButton.exists()).toBe(true)
 
 			await actionButton.find('button').trigger('click')
@@ -384,13 +384,13 @@ describe('MessageButtonsBar.vue', () => {
 					$copyText: copyTextMock,
 				},
 				stubs: {
-					ActionButton,
+					NcActionButton,
 				},
 
 				propsData: messageProps,
 			})
 
-			const actionButton = findActionButton(wrapper, 'Copy message link')
+			const actionButton = findNcActionButton(wrapper, 'Copy message link')
 			expect(actionButton.exists()).toBe(true)
 
 			await actionButton.find('button').trigger('click')
@@ -417,12 +417,12 @@ describe('MessageButtonsBar.vue', () => {
 				localVue,
 				store,
 				stubs: {
-					ActionButton,
+					NcActionButton,
 				},
 				propsData: messageProps,
 			})
 
-			const actionButton = findActionButton(wrapper, 'first action')
+			const actionButton = findNcActionButton(wrapper, 'first action')
 			expect(actionButton.exists()).toBe(true)
 			await actionButton.find('button').trigger('click')
 
@@ -430,7 +430,7 @@ describe('MessageButtonsBar.vue', () => {
 				apiDummyData: 1,
 			},)
 
-			const actionButton2 = findActionButton(wrapper, 'second action')
+			const actionButton2 = findNcActionButton(wrapper, 'second action')
 			expect(actionButton2.exists()).toBe(true)
 			await actionButton2.find('button').trigger('click')
 

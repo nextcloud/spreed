@@ -51,7 +51,7 @@
 					<div>
 						<label for="moderation_settings_lobby_timer_field">{{ t('spreed', 'Meeting start time') }}</label>
 					</div>
-					<DatetimePicker id="moderation_settings_lobby_timer_field"
+					<NcDatetimePicker id="moderation_settings_lobby_timer_field"
 						aria-describedby="moderation_settings_lobby_timer_hint"
 						:value="lobbyTimer"
 						:default-value="defaultLobbyTimer"
@@ -70,13 +70,13 @@
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { WEBINAR } from '../../constants.js'
-import DatetimePicker from '@nextcloud/vue/dist/Components/DatetimePicker.js'
+import NcDatetimePicker from '@nextcloud/vue/dist/Components/NcDatetimePicker.js'
 
 export default {
 	name: 'LobbySettings',
 
 	components: {
-		DatetimePicker,
+		NcDatetimePicker,
 	},
 
 	props: {

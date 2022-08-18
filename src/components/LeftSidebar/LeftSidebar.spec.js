@@ -46,7 +46,7 @@ describe('LeftSidebar.vue', () => {
 			store,
 			stubs: {
 				// to prevent user status fetching
-				Avatar: true,
+				NcAvatar: true,
 				// to prevent complex dialog logic
 				NewGroupConversation: true,
 			},
@@ -134,7 +134,7 @@ describe('LeftSidebar.vue', () => {
 			expect(fetchConversationsAction).toHaveBeenCalledWith(expect.anything(), undefined)
 			expect(conversationsListMock).toHaveBeenCalled()
 
-			const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+			const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
 			const listEl = appNavEl.findComponent({ name: 'ConversationsList' })
 
 			expect(listEl.exists()).toBe(true)
@@ -316,7 +316,7 @@ describe('LeftSidebar.vue', () => {
 			expect(fetchConversationsAction).toHaveBeenCalledWith(expect.anything(), undefined)
 			expect(conversationsListMock).toHaveBeenCalled()
 
-			const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+			const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
 			const searchBoxEl = appNavEl.findComponent({ name: 'SearchBox' })
 			expect(searchBoxEl.exists()).toBe(true)
 
@@ -345,9 +345,9 @@ describe('LeftSidebar.vue', () => {
 					}
 				)
 
-				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
 
-				const captionListEl = appNavEl.findAllComponents({ name: 'AppNavigationCaption' })
+				const captionListEl = appNavEl.findAllComponents({ name: 'NcAppNavigationCaption' })
 
 				expect(captionListEl.exists()).toBe(true)
 				expect(captionListEl.length).toBe(5)
@@ -391,9 +391,9 @@ describe('LeftSidebar.vue', () => {
 					}
 				)
 
-				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
 
-				const captionListEl = appNavEl.findAllComponents({ name: 'AppNavigationCaption' })
+				const captionListEl = appNavEl.findAllComponents({ name: 'NcAppNavigationCaption' })
 
 				expect(captionListEl.exists()).toBe(true)
 				expect(captionListEl.length).toBe(3)
@@ -433,9 +433,9 @@ describe('LeftSidebar.vue', () => {
 					}
 				)
 
-				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
 
-				const captionListEl = appNavEl.findAllComponents({ name: 'AppNavigationCaption' })
+				const captionListEl = appNavEl.findAllComponents({ name: 'NcAppNavigationCaption' })
 
 				expect(captionListEl.exists()).toBe(true)
 				expect(captionListEl.length).toBe(4)
@@ -479,7 +479,7 @@ describe('LeftSidebar.vue', () => {
 			async function testSearchNotFound(searchTerm, possibleResults, listedResults, loadStateSettingsOverride, expectedCaption) {
 				const wrapper = await testSearch(searchTerm, possibleResults, listedResults, loadStateSettingsOverride)
 
-				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
 				const listEl = appNavEl.findComponent({ name: 'ConversationsList' })
 				expect(listEl.exists()).toBe(true)
 				const listedEls = appNavEl.findAllComponents({ name: 'Conversation' })
@@ -489,7 +489,7 @@ describe('LeftSidebar.vue', () => {
 				expect(listedEls.at(0).props('item')).toStrictEqual(conversationsList[0])
 				expect(listedEls.at(1).props('item')).toStrictEqual(conversationsList[1])
 
-				const captionsEls = appNavEl.findAllComponents({ name: 'AppNavigationCaption' })
+				const captionsEls = appNavEl.findAllComponents({ name: 'NcAppNavigationCaption' })
 				expect(captionsEls.exists()).toBe(true)
 				if (listedResults.length > 0) {
 					expect(captionsEls.length).toBeGreaterThan(2)
@@ -610,7 +610,7 @@ describe('LeftSidebar.vue', () => {
 			test('joins listed conversation from search result', async () => {
 				const wrapper = await testSearch('search', [], listedResults)
 
-				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
 				const listedEls = appNavEl.findAllComponents({ name: 'Conversation' })
 				expect(listedEls.exists()).toBe(true)
 				expect(listedEls.length).toBe(4)
@@ -628,7 +628,7 @@ describe('LeftSidebar.vue', () => {
 
 				const wrapper = await testSearch('search', [...usersResults], [])
 
-				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
 				const optionsEls = appNavEl.findAllComponents({ name: 'ConversationsOptionsList' })
 				expect(optionsEls.exists()).toBe(true)
 				await optionsEls.at(0).findAll('a').at(1).trigger('click')
@@ -643,7 +643,7 @@ describe('LeftSidebar.vue', () => {
 
 				const wrapper = await testSearch('search', [...groupsResults], [])
 
-				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
 				const optionsEls = appNavEl.findAllComponents({ name: 'ConversationsOptionsList' })
 				expect(optionsEls.exists()).toBe(true)
 				await optionsEls.at(0).findAll('a').at(1).trigger('click')
@@ -660,7 +660,7 @@ describe('LeftSidebar.vue', () => {
 
 				const wrapper = await testSearch('search', [...circlesResults], [])
 
-				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
 				const optionsEls = appNavEl.findAllComponents({ name: 'ConversationsOptionsList' })
 				expect(optionsEls.exists()).toBe(true)
 				await optionsEls.at(0).findAll('a').at(1).trigger('click')
@@ -678,7 +678,7 @@ describe('LeftSidebar.vue', () => {
 
 				const wrapper = await testSearch('search', [...usersResults], [])
 
-				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
 				const searchBoxEl = appNavEl.findComponent({ name: 'SearchBox' })
 				const input = searchBoxEl.find('input[type="text"]')
 				expect(input.element.value).toBe('search')
@@ -695,7 +695,7 @@ describe('LeftSidebar.vue', () => {
 			test('does not clear search results when clicking group chat', async () => {
 				const wrapper = await testSearch('search', [...groupsResults], [])
 
-				const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
 				const searchBoxEl = appNavEl.findComponent({ name: 'SearchBox' })
 				const input = searchBoxEl.find('input[type="text"]')
 				expect(input.element.value).toBe('search')
@@ -739,7 +739,7 @@ describe('LeftSidebar.vue', () => {
 		subscribe('show-settings', eventHandler)
 		const wrapper = mountComponent()
 
-		const appNavEl = wrapper.findComponent({ name: 'AppNavigation' })
+		const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
 		const button = appNavEl.find('.settings-button')
 		expect(button.exists()).toBe(true)
 

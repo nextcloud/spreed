@@ -25,7 +25,7 @@
 		<div v-if="iconClass"
 			class="avatar icon"
 			:class="iconClass" />
-		<Avatar v-else
+		<NcAvatar v-else
 			:size="44"
 			:user="item.name"
 			:disable-menu="disableMenu"
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import Star from 'vue-material-design-icons/Star.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import { CONVERSATION } from '../constants.js'
@@ -59,7 +59,7 @@ import { CONVERSATION } from '../constants.js'
 export default {
 	name: 'ConversationIcon',
 	components: {
-		Avatar,
+		NcAvatar,
 		Star,
 		VideoIcon,
 	},

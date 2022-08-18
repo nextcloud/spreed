@@ -5,7 +5,7 @@ import { cloneDeep } from 'lodash'
 import { EventBus } from '../../../../services/EventBus.js'
 import storeConfig from '../../../../store/storeConfig.js'
 import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../constants.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 // Components
 import Check from 'vue-material-design-icons/Check.vue'
@@ -18,8 +18,8 @@ import Location from './MessagePart/Location.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import Message from './Message.vue'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
-import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
 // needed because of https://github.com/vuejs/vue-test-utils/issues/1507
 const RichTextStub = {
@@ -585,7 +585,7 @@ describe('Message.vue', () => {
 			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(true)
 
 			// actions are present and rendered when the buttonsBar is renderend
-			const actions = wrapper.findAllComponents({ name: 'Actions' })
+			const actions = wrapper.findAllComponents({ name: 'NcActions' })
 			expect(actions.length).toBe(2)
 
 			// Mouseleave
@@ -611,7 +611,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				stubs: {
-					ActionButton,
+					NcActionButton,
 					MessageButtonsBar,
 				},
 				propsData: messageProps,
@@ -666,13 +666,13 @@ describe('Message.vue', () => {
 
 			expect(wrapper.vm.showReloadButton).toBe(true)
 
-			const reloadButtonVue = wrapper.findComponent(ButtonVue)
-			expect(reloadButtonVue.exists()).toBe(true)
+			const reloadNcButton = wrapper.findComponent(NcButton)
+			expect(reloadNcButton.exists()).toBe(true)
 
 			const retryEvent = jest.fn()
 			EventBus.$on('retry-message', retryEvent)
 
-			await reloadButtonVue.vm.$emit('click')
+			await reloadNcButton.vm.$emit('click')
 
 			expect(retryEvent).toHaveBeenCalledWith(123)
 		})
@@ -850,11 +850,11 @@ describe('Message.vue', () => {
 				store,
 				propsData: messageProps,
 				stubs: {
-					EmojiPicker,
+					NcEmojiPicker,
 				},
 			})
 
-			const emojiPicker = wrapper.findComponent(EmojiPicker)
+			const emojiPicker = wrapper.findComponent(NcEmojiPicker)
 
 			expect(emojiPicker.vm).toBeUndefined()
 		})
@@ -878,7 +878,7 @@ describe('Message.vue', () => {
 				store,
 				propsData: messagePropsWithReactions,
 				stubs: {
-					EmojiPicker,
+					NcEmojiPicker,
 				},
 				mixins: [{
 					computed: {
@@ -889,7 +889,7 @@ describe('Message.vue', () => {
 				}],
 			})
 
-			const emojiPicker = wrapper.findComponent(EmojiPicker)
+			const emojiPicker = wrapper.findComponent(NcEmojiPicker)
 
 			emojiPicker.vm.$emit('select', '❤️')
 
@@ -923,7 +923,7 @@ describe('Message.vue', () => {
 			})
 
 			// Click reaction button upon having already reacted
-			await wrapper.find('.reaction-button').getComponent(ButtonVue).vm.$emit('click')
+			await wrapper.find('.reaction-button').getComponent(NcButton).vm.$emit('click')
 
 			await wrapper.vm.$nextTick()
 			await wrapper.vm.$nextTick()

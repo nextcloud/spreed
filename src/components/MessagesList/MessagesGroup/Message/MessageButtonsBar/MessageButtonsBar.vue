@@ -25,111 +25,111 @@
 		class="message-buttons-bar"
 		:class="{ 'message-buttons-bar--last-read' : isLastRead }">
 		<template v-if="!isReactionsMenuOpen">
-			<ButtonVue v-if="canReact"
+			<NcButton v-if="canReact"
 				type="tertiary"
 				:aria-label="t('spreed', 'Add a reaction to this message')"
 				@click="openReactionsMenu">
 				<template #icon>
 					<EmoticonOutline :size="20" />
 				</template>
-			</ButtonVue>
-			<Actions v-show="isReplyable">
-				<ActionButton @click.stop="handleReply">
+			</NcButton>
+			<NcActions v-show="isReplyable">
+				<NcActionButton @click.stop="handleReply">
 					<template #icon>
 						<Reply :size="16" />
 					</template>
 					{{ t('spreed', 'Reply') }}
-				</ActionButton>
-			</Actions>
-			<Actions :force-menu="true"
+				</NcActionButton>
+			</NcActions>
+			<NcActions :force-menu="true"
 				:container="`#message_${id}`"
 				:boundaries-element="containerElement"
 				@open="onMenuOpen"
 				@close="onMenuClose">
-				<ActionButton v-if="isPrivateReplyable"
+				<NcActionButton v-if="isPrivateReplyable"
 					icon="icon-user"
 					:close-after-click="true"
 					@click.stop="handlePrivateReply">
 					{{ t('spreed', 'Reply privately') }}
-				</ActionButton>
-				<ActionButton icon="icon-external"
+				</NcActionButton>
+				<NcActionButton icon="icon-external"
 					:close-after-click="true"
 					@click.stop.prevent="handleCopyMessageLink">
 					{{ t('spreed', 'Copy message link') }}
-				</ActionButton>
-				<ActionButton :close-after-click="true"
+				</NcActionButton>
+				<NcActionButton :close-after-click="true"
 					@click.stop="handleMarkAsUnread">
 					<template #icon>
 						<EyeOffOutline :size="16" />
 					</template>
 					{{ t('spreed', 'Mark as unread') }}
-				</ActionButton>
-				<ActionLink v-if="linkToFile"
+				</NcActionButton>
+				<NcActionLink v-if="linkToFile"
 					:href="linkToFile">
 					<File slot="icon"
 						:size="20" />
 					{{ t('spreed', 'Go to file') }}
-				</ActionLink>
-				<ActionButton v-if="!isCurrentGuest && !isFileShare && !isDeletedMessage"
+				</NcActionLink>
+				<NcActionButton v-if="!isCurrentGuest && !isFileShare && !isDeletedMessage"
 					:close-after-click="true"
 					@click.stop="showForwarder = true">
 					<Share slot="icon"
 						:size="16" />
 					{{ t('spreed', 'Forward message') }}
-				</ActionButton>
-				<ActionSeparator v-if="messageActions.length > 0" />
+				</NcActionButton>
+				<NcActionSeparator v-if="messageActions.length > 0" />
 				<template v-for="action in messageActions">
-					<ActionButton :key="action.label"
+					<NcActionButton :key="action.label"
 						:icon="action.icon"
 						:close-after-click="true"
 						@click="action.callback(messageApiData)">
 						{{ action.label }}
-					</ActionButton>
+					</NcActionButton>
 				</template>
 				<template v-if="isDeleteable">
-					<ActionSeparator />
-					<ActionButton icon="icon-delete"
+					<NcActionSeparator />
+					<NcActionButton icon="icon-delete"
 						:close-after-click="true"
 						@click.stop="handleDelete">
 						{{ t('spreed', 'Delete') }}
-					</ActionButton>
+					</NcActionButton>
 				</template>
-			</Actions>
+			</NcActions>
 		</template>
 
 		<template v-if="isReactionsMenuOpen">
-			<ButtonVue type="tertiary"
+			<NcButton type="tertiary"
 				:aria-label="t('spreed', 'Close reactions menu')"
 				@click="closeReactionsMenu">
 				<template #icon>
 					<ArrowLeft :size="20" />
 				</template>
-			</ButtonVue>
-			<ButtonVue type="tertiary"
+			</NcButton>
+			<NcButton type="tertiary"
 				:aria-label="t('spreed', 'React with {emoji}', { emoji: '👍' })"
 				@click="handleReactionClick('👍')">
 				<template #icon>
 					<span>👍</span>
 				</template>
-			</ButtonVue>
-			<ButtonVue type="tertiary"
+			</NcButton>
+			<NcButton type="tertiary"
 				:aria-label="t('spreed', 'React with {emoji}', { emoji: '❤' })"
 				@click="handleReactionClick('❤️')">
 				<template #icon>
 					<span>❤️</span>
 				</template>
-			</ButtonVue>
-			<EmojiPicker :container="`#message_${id} .message-buttons-bar`"
+			</NcButton>
+			<NcEmojiPicker :container="`#message_${id} .message-buttons-bar`"
 				@select="handleReactionClick"
 				@after-show="onEmojiPickerOpen"
 				@after-hide="onEmojiPickerClose">
-				<ButtonVue type="tertiary"
+				<NcButton type="tertiary"
 					:aria-label="t('spreed', 'React with another emoji')">
 					<template #icon>
 						<Plus :size="20" />
 					</template>
-				</ButtonVue>
-			</EmojiPicker>
+				</NcButton>
+			</NcEmojiPicker>
 		</template>
 		<Forwarder v-if="showForwarder"
 			:message-object="messageObject"
@@ -139,10 +139,10 @@
 
 <script>
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
-import ActionLink from '@nextcloud/vue/dist/Components/ActionLink.js'
-import Actions from '@nextcloud/vue/dist/Components/Actions.js'
-import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import File from 'vue-material-design-icons/File.vue'
@@ -158,27 +158,27 @@ import {
 	showSuccess,
 } from '@nextcloud/dialogs'
 import Forwarder from './Forwarder.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
-import EmojiPicker from '@nextcloud/vue/dist/Components/EmojiPicker.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
 export default {
 	name: 'MessageButtonsBar',
 
 	components: {
-		Actions,
-		ActionButton,
-		ActionLink,
+		NcActions,
+		NcActionButton,
+		NcActionLink,
 		EyeOffOutline,
 		File,
 		Share,
-		ActionSeparator,
+		NcActionSeparator,
 		Forwarder,
-		ButtonVue,
+		NcButton,
 		EmoticonOutline,
 		ArrowLeft,
 		Plus,
 		Reply,
-		EmojiPicker,
+		NcEmojiPicker,
 	},
 
 	props: {

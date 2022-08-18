@@ -2,7 +2,7 @@ import mockAxios from '../__mocks__/axios.js'
 import { generateOcsUrl } from '@nextcloud/router'
 import { shallowMount } from '@vue/test-utils'
 import { CONVERSATION } from '../constants.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import RoomSelector from './RoomSelector.vue'
 
 describe('RoomSelector.vue', () => {
@@ -139,7 +139,7 @@ describe('RoomSelector.vue', () => {
 
 		const list = wrapper.findAll('li')
 		await list.at(1).trigger('click')
-		await wrapper.findComponent(ButtonVue).vm.$emit('click')
+		await wrapper.findComponent(NcButton).vm.$emit('click')
 
 		expect(eventHandler).toHaveBeenCalledWith('token-3')
 	})
@@ -150,7 +150,7 @@ describe('RoomSelector.vue', () => {
 		const eventHandler = jest.fn()
 		wrapper.vm.$root.$on('close', eventHandler)
 
-		await wrapper.findComponent({ name: 'Modal' }).vm.$emit('close')
+		await wrapper.findComponent({ name: 'NcModal' }).vm.$emit('close')
 
 		expect(eventHandler).toHaveBeenCalled()
 	})

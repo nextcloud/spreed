@@ -28,52 +28,52 @@
 
 		<!-- All permissions -->
 		<div class="conversation-permissions-editor__setting">
-			<CheckboxRadioSwitch :checked.sync="radioValue"
+			<NcCheckboxRadioSwitch :checked.sync="radioValue"
 				:disabled="loading"
 				value="all"
 				name="permission_radio"
 				type="radio"
 				@update:checked="handleSubmitPermissions">
 				{{ t('spreed', 'All permissions') }}
-			</CheckboxRadioSwitch>
+			</NcCheckboxRadioSwitch>
 			<span v-show="loading && radioValue === 'all'" class="icon-loading-small" />
 		</div>
 		<p>{{ t('spreed', 'Participants have permissions to start a call, join a call, enable audio and video, and share screen.') }}</p>
 
 		<!-- No permissions -->
 		<div class="conversation-permissions-editor__setting">
-			<CheckboxRadioSwitch :checked.sync="radioValue"
+			<NcCheckboxRadioSwitch :checked.sync="radioValue"
 				value="restricted"
 				:disabled="loading"
 				name="permission_radio"
 				type="radio"
 				@update:checked="handleSubmitPermissions">
 				{{ t('spreed', 'Restricted') }}
-			</CheckboxRadioSwitch>
+			</NcCheckboxRadioSwitch>
 			<span v-show="loading && radioValue === 'restricted'" class="icon-loading-small" />
 		</div>
 		<p>{{ t('spreed', 'Participants can join calls, but cannot enable audio nor video nor share screen until a moderator manually grants them permissions.') }}</p>
 
 		<!-- Advanced permissions -->
 		<div class="conversation-permissions-editor__setting--advanced">
-			<CheckboxRadioSwitch :checked.sync="radioValue"
+			<NcCheckboxRadioSwitch :checked.sync="radioValue"
 				value="advanced"
 				:disabled="loading"
 				name="permission_radio"
 				type="radio"
 				@update:checked="showPermissionsEditor = true">
 				{{ t('spreed', 'Advanced permissions') }}
-			</CheckboxRadioSwitch>
+			</NcCheckboxRadioSwitch>
 
 			<!-- Edit advanced permissions -->
-			<ButtonVue v-show="showEditButton"
+			<NcButton v-show="showEditButton"
 				type="tertiary"
 				:aria-label="t('spreed', 'Edit permissions')"
 				@click="showPermissionsEditor = true">
 				<template #icon>
 					<Pencil :size="20" />
 				</template>
-			</ButtonVue>
+			</NcButton>
 		</div>
 		<PermissionEditor v-if="showPermissionsEditor"
 			:conversation-name="conversationName"
@@ -86,8 +86,8 @@
 
 <script>
 import PermissionEditor from '../PermissionsEditor/PermissionsEditor.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import { PARTICIPANT } from '../../constants.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
@@ -99,8 +99,8 @@ export default {
 
 	components: {
 		PermissionEditor,
-		ButtonVue,
-		CheckboxRadioSwitch,
+		NcButton,
+		NcCheckboxRadioSwitch,
 		Pencil,
 	},
 

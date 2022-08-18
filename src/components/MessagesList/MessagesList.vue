@@ -49,7 +49,7 @@ get the messagesList array and loop through the list to generate the messages.
 				:count="15" />
 		</template>
 		<transition name="fade">
-			<ButtonVue v-show="!isChatScrolledToBottom"
+			<NcButton v-show="!isChatScrolledToBottom"
 				type="secondary"
 				:aria-label="scrollToBottomAriaLabel"
 				class="scroll-to-bottom"
@@ -57,7 +57,7 @@ get the messagesList array and loop through the list to generate the messages.
 				<template #icon>
 					<ChevronDown :size="20" />
 				</template>
-			</ButtonVue>
+			</NcButton>
 		</transition>
 	</div>
 </template>
@@ -74,7 +74,7 @@ import { EventBus } from '../../services/EventBus.js'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import uniqueId from 'lodash/uniqueId.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'MessagesList',
@@ -82,7 +82,7 @@ export default {
 		LoadingPlaceholder,
 		MessagesGroup,
 		ChevronDown,
-		ButtonVue,
+		NcButton,
 	},
 
 	mixins: [
