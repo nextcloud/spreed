@@ -139,18 +139,18 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			$user = $this->userManager->get($userId);
-			if (!$user instanceof IUser) {
+			$userDisplayName = $this->userManager->getDisplayName($userId);
+			if ($userDisplayName === null) {
 				continue;
 			}
 
-			if (strtolower($user->getDisplayName()) === $search) {
-				$exactMatches[] = $this->createResult('user', $user->getUID(), $user->getDisplayName());
+			if (strtolower($userDisplayName) === $search) {
+				$exactMatches[] = $this->createResult('user', $userId, $userDisplayName);
 				continue;
 			}
 
-			if (stripos($user->getDisplayName(), $search) !== false) {
-				$matches[] = $this->createResult('user', $user->getUID(), $user->getDisplayName());
+			if (stripos($userDisplayName, $search) !== false) {
+				$matches[] = $this->createResult('user', $userId, $userDisplayName);
 				continue;
 			}
 		}
@@ -207,12 +207,7 @@ class SearchPlugin implements ISearchPlugin {
 
 	protected function createResult(string $type, string $uid, string $name): array {
 		if ($type === 'user' && $name === '') {
-			$user = $this->userManager->get($uid);
-			if ($user instanceof IUser) {
-				$name = $user->getDisplayName();
-			} else {
-				$name = $uid;
-			}
+			$name = $this->userManager->getDisplayName($uid) ?? $uid;
 		}
 
 		return [
