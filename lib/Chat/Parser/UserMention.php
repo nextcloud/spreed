@@ -91,8 +91,8 @@ class UserMention {
 			}
 
 			if ($mention['type'] === 'user') {
-				$user = $this->userManager->get($mention['id']);
-				if (!$user instanceof IUser) {
+				$userDisplayName = $this->userManager->getDisplayName($mention['id']);
+				if ($userDisplayName === null) {
 					continue;
 				}
 			}
