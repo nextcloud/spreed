@@ -461,7 +461,6 @@ class SystemMessage {
 			$hours = $parameters['seconds'] >= 3600 ? (int) round($parameters['seconds'] / 3600) : 0;
 			$minutes = (int) round($parameters['seconds'] / 60);
 
-			$parsedParameters['seconds'] = $parameters['seconds'];
 			if ($currentUserIsActor) {
 				if ($weeks > 0) {
 					$parsedMessage = $this->l->n('You set the message expiration to %n week', 'You set the message expiration to %n weeks', $weeks);
