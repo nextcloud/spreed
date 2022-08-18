@@ -332,13 +332,13 @@ class Notifier implements INotifier {
 		$isGuest = false;
 		if ($subjectParameters['userType'] === 'users') {
 			$userId = $subjectParameters['userId'];
-			$user = $this->userManager->get($userId);
+			$userDisplayName = $this->userManager->getDisplayName($userId);
 
-			if ($user instanceof IUser) {
+			if ($userDisplayName !== null) {
 				$richSubjectUser = [
 					'type' => 'user',
 					'id' => $userId,
-					'name' => $user->getDisplayName(),
+					'name' => $userDisplayName,
 				];
 			}
 		} else {
@@ -559,8 +559,8 @@ class Notifier implements INotifier {
 		$parameters = $notification->getSubjectParameters();
 		$uid = $parameters['actorId'] ?? $parameters[0];
 
-		$user = $this->userManager->get($uid);
-		if (!$user instanceof IUser) {
+		$userDisplayName = $this->userManager->getDisplayName($uid);
+		if ($userDisplayName === null) {
 			throw new AlreadyProcessedException();
 		}
 
@@ -574,13 +574,13 @@ class Notifier implements INotifier {
 			}
 
 			$notification
-				->setParsedSubject(str_replace('{user}', $user->getDisplayName(), $subject))
+				->setParsedSubject(str_replace('{user}', $userDisplayName, $subject))
 				->setRichSubject(
 					$subject, [
 						'user' => [
 							'type' => 'user',
 							'id' => $uid,
-							'name' => $user->getDisplayName(),
+							'name' => $userDisplayName,
 						],
 						'call' => [
 							'type' => 'call',
@@ -599,13 +599,13 @@ class Notifier implements INotifier {
 			}
 
 			$notification
-				->setParsedSubject(str_replace(['{user}', '{call}'], [$user->getDisplayName(), $roomName], $subject))
+				->setParsedSubject(str_replace(['{user}', '{call}'], [$userDisplayName, $roomName], $subject))
 				->setRichSubject(
 					$subject, [
 						'user' => [
 							'type' => 'user',
 							'id' => $uid,
-							'name' => $user->getDisplayName(),
+							'name' => $userDisplayName,
 						],
 						'call' => [
 							'type' => 'call',
@@ -639,8 +639,8 @@ class Notifier implements INotifier {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			$parameters = $notification->getSubjectParameters();
 			$calleeId = $parameters['callee'];
-			$user = $this->userManager->get($calleeId);
-			if ($user instanceof IUser) {
+			$userDisplayName = $this->userManager->getDisplayName($calleeId);
+			if ($userDisplayName !== null) {
 				if ($this->notificationManager->isPreparingPushNotification() || $this->participantService->hasActiveSessionsInCall($room)) {
 					$notification = $this->addActionButton($notification, $l->t('Answer call'));
 					$subject = $l->t('{user} would like to talk with you');
@@ -650,13 +650,13 @@ class Notifier implements INotifier {
 				}
 
 				$notification
-					->setParsedSubject(str_replace('{user}', $user->getDisplayName(), $subject))
+					->setParsedSubject(str_replace('{user}', $userDisplayName, $subject))
 					->setRichSubject(
 						$subject, [
 							'user' => [
 								'type' => 'user',
 								'id' => $calleeId,
-								'name' => $user->getDisplayName(),
+								'name' => $userDisplayName,
 							],
 							'call' => [
 								'type' => 'call',
