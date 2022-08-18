@@ -4,7 +4,7 @@ import { createLocalVue, shallowMount, mount, RouterLinkStub } from '@vue/test-u
 import { cloneDeep } from 'lodash'
 import storeConfig from '../../../store/storeConfig.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import { showSuccess, showError } from '@nextcloud/dialogs'
 
 import Conversation from './Conversation.vue'
@@ -85,7 +85,7 @@ describe('Conversation.vue', () => {
 			},
 		})
 
-		const el = wrapper.findComponent({ name: 'ListItem' })
+		const el = wrapper.findComponent({ name: 'NcListItem' })
 		expect(el.exists()).toBe(true)
 		expect(el.props('title')).toBe('conversation one')
 
@@ -114,7 +114,7 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'ListItem' })
+			const el = wrapper.findComponent({ name: 'NcListItem' })
 			expect(el.vm.$slots.subtitle[0].text.trim()).toBe(expectedText)
 		}
 
@@ -210,7 +210,7 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'ListItem' })
+			const el = wrapper.findComponent({ name: 'NcListItem' })
 			expect(el.exists()).toBe(true)
 
 			expect(el.props('counterNumber')).toBe(expectedCounterText)
@@ -261,7 +261,7 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'ListItem' })
+			const el = wrapper.findComponent({ name: 'NcListItem' })
 			expect(el.exists()).toBe(true)
 
 			expect(el.vm.$slots.counter).not.toBeDefined()
@@ -279,8 +279,8 @@ describe('Conversation.vue', () => {
 		 * @param {object} wrapper Parent element to search the text in
 		 * @param {string} text Text to find within the wrapper
 		 */
-		function findActionButton(wrapper, text) {
-			const actionButtons = wrapper.findAllComponents(ActionButton)
+		function findNcActionButton(wrapper, text) {
+			const actionButtons = wrapper.findAllComponents(NcActionButton)
 			const items = actionButtons.filter(actionButton => {
 				return actionButton.text() === text
 			})
@@ -301,7 +301,7 @@ describe('Conversation.vue', () => {
 					$router,
 				},
 				stubs: {
-					ActionButton,
+					NcActionButton,
 				},
 				propsData: {
 					isSearchResult: false,
@@ -309,10 +309,10 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'ListItem' })
+			const el = wrapper.findComponent({ name: 'NcListItem' })
 			expect(el.exists()).toBe(true)
 
-			return findActionButton(el, actionName)
+			return findNcActionButton(el, actionName)
 		}
 
 		test('forwards click event on list item', async () => {
@@ -328,7 +328,7 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'ListItem' })
+			const el = wrapper.findComponent({ name: 'NcListItem' })
 			expect(el.exists()).toBe(true)
 
 			await el.find('a').trigger('click')
@@ -440,7 +440,7 @@ describe('Conversation.vue', () => {
 					$copyText: copyTextMock,
 				},
 				stubs: {
-					ActionButton,
+					NcActionButton,
 				},
 				propsData: {
 					isSearchResult: false,
@@ -448,10 +448,10 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'ListItem' })
+			const el = wrapper.findComponent({ name: 'NcListItem' })
 			expect(el.exists()).toBe(true)
 
-			const action = findActionButton(el, 'Copy link')
+			const action = findNcActionButton(el, 'Copy link')
 			expect(action.exists()).toBe(true)
 
 			await action.find('button').trigger('click')
@@ -469,7 +469,7 @@ describe('Conversation.vue', () => {
 				localVue,
 				store: new Vuex.Store(testStoreConfig),
 				stubs: {
-					ActionButton,
+					NcActionButton,
 				},
 				propsData: {
 					isSearchResult: false,
@@ -477,13 +477,13 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'ListItem' })
+			const el = wrapper.findComponent({ name: 'NcListItem' })
 			expect(el.exists()).toBe(true)
 
-			const action = findActionButton(el, 'Add to favorites')
+			const action = findNcActionButton(el, 'Add to favorites')
 			expect(action.exists()).toBe(true)
 
-			expect(findActionButton(el, 'Remove from favorites').exists()).toBe(false)
+			expect(findNcActionButton(el, 'Remove from favorites').exists()).toBe(false)
 
 			await action.find('button').trigger('click')
 
@@ -500,7 +500,7 @@ describe('Conversation.vue', () => {
 				localVue,
 				store: new Vuex.Store(testStoreConfig),
 				stubs: {
-					ActionButton,
+					NcActionButton,
 				},
 				propsData: {
 					isSearchResult: false,
@@ -508,13 +508,13 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'ListItem' })
+			const el = wrapper.findComponent({ name: 'NcListItem' })
 			expect(el.exists()).toBe(true)
 
-			const action = findActionButton(el, 'Remove from favorites')
+			const action = findNcActionButton(el, 'Remove from favorites')
 			expect(action.exists()).toBe(true)
 
-			expect(findActionButton(el, 'Add to favorites').exists()).toBe(false)
+			expect(findNcActionButton(el, 'Add to favorites').exists()).toBe(false)
 
 			await action.find('button').trigger('click')
 
@@ -536,7 +536,7 @@ describe('Conversation.vue', () => {
 				localVue,
 				store: new Vuex.Store(testStoreConfig),
 				stubs: {
-					ActionButton,
+					NcActionButton,
 				},
 				propsData: {
 					isSearchResult: true,
@@ -544,10 +544,10 @@ describe('Conversation.vue', () => {
 				},
 			})
 
-			const el = wrapper.findComponent({ name: 'ListItem' })
+			const el = wrapper.findComponent({ name: 'NcListItem' })
 			expect(el.exists()).toBe(true)
 
-			const actionButtons = wrapper.findAllComponents(ActionButton)
+			const actionButtons = wrapper.findAllComponents(NcActionButton)
 			expect(actionButtons.exists()).toBe(false)
 		})
 	})

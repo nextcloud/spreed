@@ -25,7 +25,7 @@
 		<div v-if="iconClass"
 			class="icon"
 			:class="[`avatar-${sizeToString}px`, iconClass]" />
-		<Avatar v-else-if="!isGuest"
+		<NcAvatar v-else-if="!isGuest"
 			:user="id"
 			:display-name="name"
 			:menu-container="menuContainer"
@@ -43,14 +43,14 @@
 </template>
 
 <script>
-import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 export default {
 
 	name: 'AvatarWrapperSmall',
 
 	components: {
-		Avatar,
+		NcAvatar,
 	},
 
 	props: {

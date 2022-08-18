@@ -89,7 +89,7 @@
 		</div>
 
 		<!-- Participant's actions menu -->
-		<Actions v-if="canBeModerated && !isSearched"
+		<NcActions v-if="canBeModerated && !isSearched"
 			:container="container"
 			:aria-label="participantSettingsAriaLabel"
 			:force-menu="true"
@@ -104,77 +104,77 @@
 				<DotsHorizontal v-else
 					:size="20" />
 			</template>
-			<ActionText v-if="attendeePin"
+			<NcActionText v-if="attendeePin"
 				:title="t('spreed', 'Dial-in PIN')"
 				icon="icon-password">
 				{{ attendeePin }}
-			</ActionText>
-			<ActionButton v-if="canBeDemoted"
+			</NcActionText>
+			<NcActionButton v-if="canBeDemoted"
 				:close-after-click="true"
 				@click="demoteFromModerator">
 				<template #icon>
 					<Account :size="20" />
 					{{ t('spreed', 'Demote from moderator') }}
 				</template>
-			</ActionButton>
-			<ActionButton v-if="canBePromoted"
+			</NcActionButton>
+			<NcActionButton v-if="canBePromoted"
 				:close-after-click="true"
 				@click="promoteToModerator">
 				<template #icon>
 					<Crown :size="20" />
 				</template>
 				{{ t('spreed', 'Promote to moderator') }}
-			</ActionButton>
+			</NcActionButton>
 
 			<!-- Permissions -->
 			<template v-if="showPermissionsOptions">
-				<ActionSeparator />
-				<ActionButton v-if="hasNonDefaultPermissions"
+				<NcActionSeparator />
+				<NcActionButton v-if="hasNonDefaultPermissions"
 					:close-after-click="true"
 					@click="applyDefaultPermissions">
 					<template #icon>
 						<LockReset :size="20" />
 					</template>
 					{{ t('spreed', 'Reset custom permissions') }}
-				</ActionButton>
-				<ActionButton :close-after-click="true"
+				</NcActionButton>
+				<NcActionButton :close-after-click="true"
 					@click="grantAllPermissions">
 					<template #icon>
 						<LockOpenVariant :size="20" />
 					</template>
 					{{ t('spreed', 'Grant all permissions') }}
-				</ActionButton>
-				<ActionButton :close-after-click="true"
+				</NcActionButton>
+				<NcActionButton :close-after-click="true"
 					@click="removeAllPermissions">
 					<template #icon>
 						<Lock :size="20" />
 					</template>
 					{{ t('spreed', 'Remove all permissions') }}
-				</ActionButton>
-				<ActionButton :close-after-click="true"
+				</NcActionButton>
+				<NcActionButton :close-after-click="true"
 					@click="showPermissionsEditor">
 					<template #icon>
 						<Pencil :size="20" />
 					</template>
 					{{ t('spreed', 'Edit permissions') }}
-				</ActionButton>
+				</NcActionButton>
 			</template>
-			<ActionButton v-if="isEmailActor"
+			<NcActionButton v-if="isEmailActor"
 				icon="icon-mail"
 				:close-after-click="true"
 				@click="resendInvitation">
 				{{ t('spreed', 'Resend invitation') }}
-			</ActionButton>
-			<ActionButton v-if="canSendCallNotification"
+			</NcActionButton>
+			<NcActionButton v-if="canSendCallNotification"
 				:close-after-click="true"
 				@click="sendCallNotification">
 				<template #icon>
 					<Bell :size="20" />
 				</template>
 				{{ t('spreed', 'Send call notification') }}
-			</ActionButton>
-			<ActionSeparator v-if="attendeePin || canBePromoted || canBeDemoted || isEmailActor" />
-			<ActionButton icon="icon-delete"
+			</NcActionButton>
+			<NcActionSeparator v-if="attendeePin || canBePromoted || canBeDemoted || isEmailActor" />
+			<NcActionButton icon="icon-delete"
 				:close-after-click="true"
 				@click="removeParticipant">
 				<template v-if="isGroup">
@@ -183,8 +183,8 @@
 				<template v-else>
 					{{ t('spreed', 'Remove participant') }}
 				</template>
-			</ActionButton>
-		</Actions>
+			</NcActionButton>
+		</NcActions>
 		<ParticipantPermissionsEditor v-if="permissionsEditor"
 			:actor-id="participant.actorId"
 			:close-after-click="true"
@@ -199,11 +199,11 @@
 <script>
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
-import ActionText from '@nextcloud/vue/dist/Components/ActionText.js'
-import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
+import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
-import Actions from '@nextcloud/vue/dist/Components/Actions.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
 import UserStatus from '../../../../../mixins/userStatus.js'
 import readableNumber from '../../../../../mixins/readableNumber.js'
@@ -230,10 +230,10 @@ export default {
 	name: 'Participant',
 
 	components: {
-		Actions,
-		ActionButton,
-		ActionText,
-		ActionSeparator,
+		NcActions,
+		NcActionButton,
+		NcActionText,
+		NcActionSeparator,
 		AvatarWrapper,
 		ParticipantPermissionsEditor,
 

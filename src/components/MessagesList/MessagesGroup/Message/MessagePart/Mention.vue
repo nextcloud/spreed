@@ -21,15 +21,15 @@
 
 <template>
 	<div class="mention">
-		<UserBubble v-if="isMentionToAll"
+		<NcUserBubble v-if="isMentionToAll"
 			:display-name="name"
 			:avatar-image="'icon-group-forced-white'"
 			:primary="true" />
-		<UserBubble v-else-if="isMentionToGuest"
+		<NcUserBubble v-else-if="isMentionToGuest"
 			:display-name="name"
 			:avatar-image="'icon-user-forced-white'"
 			:primary="isCurrentGuest" />
-		<UserBubble v-else
+		<NcUserBubble v-else
 			:display-name="name"
 			:user="id"
 			:primary="isCurrentUser" />
@@ -38,13 +38,13 @@
 
 <script>
 
-import UserBubble from '@nextcloud/vue/dist/Components/UserBubble.js'
+import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
 
 export default {
 	name: 'Mention',
 
 	components: {
-		UserBubble,
+		NcUserBubble,
 	},
 
 	props: {

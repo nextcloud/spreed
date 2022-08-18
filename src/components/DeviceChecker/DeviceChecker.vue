@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<Modal v-if="modal"
+	<NcModal v-if="modal"
 		class="talk-modal"
 		size="small"
 		@close="closeModal">
@@ -40,7 +40,7 @@
 					class="preview__novideo">
 					<VideoBackground :display-name="displayName"
 						:user="userId" />
-					<Avatar v-if="userId"
+					<NcAvatar v-if="userId"
 						:size="128"
 						:disable-menu="true"
 						:disable-tooltip="true"
@@ -60,7 +60,7 @@
 			-->
 			<div class="device-checker__call-preferences">
 				<!-- Audio toggle -->
-				<ButtonVue v-tooltip="audioButtonTooltip"
+				<NcButton v-tooltip="audioButtonTooltip"
 					type="tertiary"
 					:aria-label="audioButtonTooltip"
 					:disabled="!audioPreviewAvailable"
@@ -71,7 +71,7 @@
 						<MicrophoneOff v-else
 							:size="20" />
 					</template>
-				</ButtonVue>
+				</NcButton>
 				<VolumeIndicator class="indicator"
 					:audio-preview-available="audioPreviewAvailable"
 					:current-volume="currentVolume"
@@ -79,7 +79,7 @@
 					:disabled="!audioOn" />
 
 				<!-- Video toggle -->
-				<ButtonVue v-tooltip="videoButtonTooltip"
+				<NcButton v-tooltip="videoButtonTooltip"
 					type="tertiary"
 					:aria-label="videoButtonTooltip"
 					:disabled="!videoPreviewAvailable"
@@ -90,10 +90,10 @@
 						<VideoOff v-else
 							:size="20" />
 					</template>
-				</ButtonVue>
+				</NcButton>
 
 				<!-- Blur toggle -->
-				<ButtonVue v-if="videoPreviewAvailable && blurPreviewAvailable"
+				<NcButton v-if="videoPreviewAvailable && blurPreviewAvailable"
 					v-tooltip="blurButtonTooltip"
 					type="tertiary"
 					:aria-label="blurButtonTooltip"
@@ -105,12 +105,12 @@
 						<BlurOff v-else
 							:size="20" />
 					</template>
-				</ButtonVue>
+				</NcButton>
 			</div>
 
 			<!-- Device selection -->
 			<div class="device-checker__device-selection">
-				<ButtonVue v-if="!showDeviceSelection"
+				<NcButton v-if="!showDeviceSelection"
 					type="tertiary"
 					class="select-devices"
 					@click="showDeviceSelection = true">
@@ -118,7 +118,7 @@
 						<Cog :size="20" />
 					</template>
 					{{ t('spreed', 'Choose devices') }}
-				</ButtonVue>
+				</NcButton>
 				<template v-if="showDeviceSelection">
 					<MediaDevicesSelector kind="audioinput"
 						:devices="devices"
@@ -130,51 +130,51 @@
 						@update:deviceId="videoInputId = $event" />
 				</template>
 			</div>
-			<CheckboxRadioSwitch :checked.sync="showDeviceChecker"
+			<NcCheckboxRadioSwitch :checked.sync="showDeviceChecker"
 				class="checkbox">
 				{{ t('spreed', 'Always show this dialog before joining a call in this conversation.') }}
-			</CheckboxRadioSwitch>
+			</NcCheckboxRadioSwitch>
 
 			<div class="device-checker__call-buttons">
 				<!-- Silent call -->
-				<Actions v-if="showSilentCallOption" :force-menu="true">
+				<NcActions v-if="showSilentCallOption" :force-menu="true">
 					<template v-if="!silentCall">
-						<ActionButton :close-after-click="true"
+						<NcActionButton :close-after-click="true"
 							icon="icon-upload"
 							:title="t('spreed', 'Call without notification')"
 							@click="silentCall= true">
 							{{ t('spreed', 'The conversation participants will not be notified about this call') }}
 							<BellOff slot="icon"
 								:size="16" />
-						</ActionButton>
+						</NcActionButton>
 					</template>
 					<template v-else>
-						<ActionButton :close-after-click="true"
+						<NcActionButton :close-after-click="true"
 							icon="icon-upload"
 							:title="t('spreed', 'Normal call')"
 							@click="silentCall= false">
 							{{ t('spreed', 'The conversation participants will be notified about this call') }}
 							<Bell slot="icon"
 								:size="16" />
-						</ActionButton>
+						</NcActionButton>
 					</template>
-				</Actions>
+				</NcActions>
 				<!-- Join call -->
 				<CallButton class="call-button"
 					:force-join-call="true"
 					:silent-call="silentCall" />
 			</div>
 		</div>
-	</Modal>
+	</NcModal>
 </template>
 
 <script>
-import Modal from '@nextcloud/vue/dist/Components/Modal.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import { devices } from '../../mixins/devices.js'
 import MediaDevicesSelector from '../MediaDevicesSelector.vue'
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
-import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
@@ -187,12 +187,12 @@ import Bell from 'vue-material-design-icons/Bell.vue'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 import CallButton from '../TopBar/CallButton.vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
-import Actions from '@nextcloud/vue/dist/Components/Actions.js'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import isInLobby from '../../mixins/isInLobby.js'
 
 export default {
@@ -203,10 +203,10 @@ export default {
 	},
 
 	components: {
-		Modal,
+		NcModal,
 		MediaDevicesSelector,
 		VideoBackground,
-		Avatar,
+		NcAvatar,
 		Cog,
 		Microphone,
 		MicrophoneOff,
@@ -215,11 +215,11 @@ export default {
 		Blur,
 		BlurOff,
 		CallButton,
-		CheckboxRadioSwitch,
+		NcCheckboxRadioSwitch,
 		VolumeIndicator,
-		ButtonVue,
-		ActionButton,
-		Actions,
+		NcButton,
+		NcActionButton,
+		NcActions,
 		BellOff,
 		Bell,
 	},

@@ -63,17 +63,17 @@
 		</a>
 
 		<h4>{{ t('spreed', 'Calls') }}</h4>
-		<CheckboxRadioSwitch id="notification_calls"
+		<NcCheckboxRadioSwitch id="notification_calls"
 			:checked.sync="notifyCalls"
 			@update:checked="setNotificationCalls">
 			{{ t('spreed', 'Notify about calls in this conversation') }}
-		</CheckboxRadioSwitch>
+		</NcCheckboxRadioSwitch>
 	</div>
 </template>
 
 <script>
 import { PARTICIPANT } from '../../constants.js'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import VolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import Account from 'vue-material-design-icons/Account.vue'
 import VolumeOff from 'vue-material-design-icons/VolumeOff.vue'
@@ -83,7 +83,7 @@ export default {
 	name: 'NotificationsSettings',
 
 	components: {
-		CheckboxRadioSwitch,
+		NcCheckboxRadioSwitch,
 		VolumeHigh,
 		Account,
 		VolumeOff,

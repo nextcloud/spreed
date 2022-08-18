@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<Avatar v-if="isUser"
+	<NcAvatar v-if="isUser"
 		:disable-tooltip="true"
 		class="messages__avatar__icon"
 		:user="authorId"
@@ -46,13 +46,13 @@
 </template>
 
 <script>
-import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import { ATTENDEE } from '../../../constants.js'
 
 export default {
 	name: 'AuthorAvatar',
 	components: {
-		Avatar,
+		NcAvatar,
 	},
 	props: {
 		authorType: {

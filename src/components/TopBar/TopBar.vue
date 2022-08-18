@@ -69,7 +69,7 @@
 				class="top-bar__separator" />
 
 			<!-- sidebar toggle -->
-			<Actions v-if="!isSidebar"
+			<NcActions v-if="!isSidebar"
 				v-shortkey.once="['f']"
 				class="top-bar__button"
 				:aria-label="t('spreed', 'Conversation actions')"
@@ -79,86 +79,86 @@
 					:class="{'top-bar__button__force-white': isInCall}">
 					<Cog :size="20" />
 				</span>
-				<ActionButton :icon="iconFullscreen"
+				<NcActionButton :icon="iconFullscreen"
 					:aria-label="t('spreed', 'Toggle fullscreen')"
 					:close-after-click="true"
 					@click="toggleFullscreen">
 					{{ labelFullscreen }}
-				</ActionButton>
-				<ActionSeparator v-if="showModerationOptions" />
-				<ActionLink v-if="isFileConversation"
+				</NcActionButton>
+				<NcActionSeparator v-if="showModerationOptions" />
+				<NcActionLink v-if="isFileConversation"
 					:href="linkToFile">
 					<File slot="icon"
 						:size="20" />
 					{{ t('spreed', 'Go to file') }}
-				</ActionLink>
+				</NcActionLink>
 				<template v-if="showModerationOptions">
-					<ActionButton :close-after-click="true"
+					<NcActionButton :close-after-click="true"
 						icon="icon-rename"
 						@click="handleRenameConversation">
 						{{ t('spreed', 'Rename conversation') }}
-					</ActionButton>
+					</NcActionButton>
 				</template>
-				<ActionButton v-if="!isOneToOneConversation"
+				<NcActionButton v-if="!isOneToOneConversation"
 					icon="icon-clippy"
 					:close-after-click="true"
 					@click="handleCopyLink">
 					{{ t('spreed', 'Copy link') }}
-				</ActionButton>
+				</NcActionButton>
 				<template v-if="showModerationOptions && canFullModerate && isInCall">
-					<ActionSeparator />
-					<ActionButton :close-after-click="true"
+					<NcActionSeparator />
+					<NcActionButton :close-after-click="true"
 						@click="forceMuteOthers">
 						<MicrophoneOff slot="icon"
 							:size="20" />
 						{{ t('spreed', 'Mute others') }}
-					</ActionButton>
+					</NcActionButton>
 				</template>
-				<ActionSeparator v-if="showModerationOptions" />
-				<ActionButton :close-after-click="true"
+				<NcActionSeparator v-if="showModerationOptions" />
+				<NcActionButton :close-after-click="true"
 					@click="openConversationSettings">
 					<template #icon>
 						<Cog :size="20" />
 					</template>
 					{{ t('spreed', 'Conversation settings') }}
-				</ActionButton>
-			</Actions>
-			<Actions v-if="showOpenSidebarButton"
+				</NcActionButton>
+			</NcActions>
+			<NcActions v-if="showOpenSidebarButton"
 				class="top-bar__button"
 				close-after-click="true"
 				:container="container">
-				<ActionButton v-if="isInCall"
+				<NcActionButton v-if="isInCall"
 					key="openSideBarButtonMessageText"
 					@click="openSidebar">
 					<MessageText slot="icon"
 						:size="20"
 						fill-color="#ffffff" />
-				</ActionButton>
-				<ActionButton v-else
+				</NcActionButton>
+				<NcActionButton v-else
 					key="openSideBarButtonMenuPeople"
 					@click="openSidebar">
 					<MenuPeople slot="icon"
 						:size="20" />
-				</ActionButton>
-			</Actions>
+				</NcActionButton>
+			</NcActions>
 		</div>
-		<CounterBubble v-if="!isSidebar && showOpenSidebarButton && isInCall && unreadMessagesCounter > 0"
+		<NcCounterBubble v-if="!isSidebar && showOpenSidebarButton && isInCall && unreadMessagesCounter > 0"
 			class="unread-messages-counter"
 			:highlighted="hasUnreadMentions">
 			{{ unreadMessagesCounter }}
-		</CounterBubble>
+		</NcCounterBubble>
 	</div>
 </template>
 
 <script>
 import { showError, showSuccess, showMessage } from '@nextcloud/dialogs'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
-import Actions from '@nextcloud/vue/dist/Components/Actions.js'
-import CounterBubble from '@nextcloud/vue/dist/Components/CounterBubble.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 import CallButton from './CallButton.vue'
 import BrowserStorage from '../../services/BrowserStorage.js'
-import ActionLink from '@nextcloud/vue/dist/Components/ActionLink.js'
-import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
+import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import File from 'vue-material-design-icons/File.vue'
 import MenuPeople from '../missingMaterialDesignIcons/MenuPeople.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
@@ -183,12 +183,12 @@ export default {
 	},
 
 	components: {
-		ActionButton,
-		Actions,
-		ActionLink,
-		CounterBubble,
+		NcActionButton,
+		NcActions,
+		NcActionLink,
+		NcCounterBubble,
 		CallButton,
-		ActionSeparator,
+		NcActionSeparator,
 		File,
 		MenuPeople,
 		MessageText,

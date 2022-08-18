@@ -38,7 +38,7 @@
 			<VideoBackground v-if="isGrid || isStripe"
 				:display-name="displayName"
 				:user="userId" />
-			<Avatar v-if="userId"
+			<NcAvatar v-if="userId"
 				:size="avatarSize"
 				:disable-menu="true"
 				:disable-tooltip="true"
@@ -66,7 +66,7 @@
 
 <script>
 import attachMediaStream from 'attachmediastream'
-import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 import {
@@ -83,7 +83,7 @@ export default {
 	name: 'LocalVideo',
 
 	components: {
-		Avatar,
+		NcAvatar,
 		VideoBackground,
 	},
 

@@ -36,7 +36,7 @@
 				<div v-show="!enabled"
 					class="add-part-wrapper">
 					<Plus class="icon" :size="20" />
-					<Multiselect ref="partMultiselect"
+					<NcMultiselect ref="partNcMultiselect"
 						v-model="selectedType"
 						label="displayName"
 						track-by="type"
@@ -51,7 +51,7 @@
 								alt="">
 							{{ option.displayName }}
 						</template>
-					</Multiselect>
+					</NcMultiselect>
 				</div>
 				<div v-show="parts.length > 0"
 					class="enable-switch-line">
@@ -65,7 +65,7 @@
 						{{ t('spreed', 'Enable bridge') }}
 						({{ processStateText }})
 					</label>
-					<ButtonVue v-if="enabled"
+					<NcButton v-if="enabled"
 						v-tooltip.top="{ content: t('spreed', 'Show Matterbridge log') }"
 						type="tertiary"
 						:aria-label="t('spreed', 'Show Matterbridge log')"
@@ -73,14 +73,14 @@
 						<template #icon>
 							<Message :size="20" />
 						</template>
-					</ButtonVue>
-					<Modal v-if="logModal"
+					</NcButton>
+					<NcModal v-if="logModal"
 						:container="container"
 						@close="closeLogModal">
 						<div class="modal__content">
 							<textarea v-model="processLog" class="log-content" />
 						</div>
-					</Modal>
+					</NcModal>
 				</div>
 			</div>
 			<ul>
@@ -106,10 +106,10 @@ import {
 } from '../../../services/matterbridgeService.js'
 import { showSuccess } from '@nextcloud/dialogs'
 import { imagePath } from '@nextcloud/router'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
 import Message from 'vue-material-design-icons/Message.vue'
-import Modal from '@nextcloud/vue/dist/Components/Modal.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import BridgePart from './BridgePart.vue'
 
@@ -120,11 +120,11 @@ Vue.directive('tooltip', Tooltip)
 export default {
 	name: 'MatterbridgeSettings',
 	components: {
-		Multiselect,
+		NcMultiselect,
 		BridgePart,
-		ButtonVue,
+		NcButton,
 		Message,
-		Modal,
+		NcModal,
 		Plus,
 	},
 

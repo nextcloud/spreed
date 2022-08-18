@@ -28,7 +28,7 @@
 
 		<div class="paragraph">
 			<label for="default_group_notification">{{ t('spreed', 'Default group notification') }}</label>
-			<Multiselect id="default_group_notification"
+			<NcMultiselect id="default_group_notification"
 				v-model="defaultGroupNotification"
 				name="default_group_notification"
 				:options="defaultGroupNotificationOptions"
@@ -41,25 +41,25 @@
 
 		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
 
-		<CheckboxRadioSwitch :checked.sync="conversationsFiles"
+		<NcCheckboxRadioSwitch :checked.sync="conversationsFiles"
 			name="conversations_files"
 			:disabled="loading || loadingConversationsFiles"
 			@change="saveConversationsFiles">
 			{{ t('spreed', 'Allow conversations on files') }}
-		</CheckboxRadioSwitch>
+		</NcCheckboxRadioSwitch>
 
-		<CheckboxRadioSwitch :checked.sync="conversationsFilesPublicShares"
+		<NcCheckboxRadioSwitch :checked.sync="conversationsFilesPublicShares"
 			name="conversations_files_public_shares"
 			:disabled="loading || loadingConversationsFiles || !conversationsFiles"
 			@change="saveConversationsFilesPublicShares">
 			{{ t('spreed', 'Allow conversations on public shares for files') }}
-		</CheckboxRadioSwitch>
+		</NcCheckboxRadioSwitch>
 	</div>
 </template>
 
 <script>
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
 import { loadState } from '@nextcloud/initial-state'
 
 const defaultGroupNotificationOptions = [
@@ -71,8 +71,8 @@ export default {
 	name: 'GeneralSettings',
 
 	components: {
-		CheckboxRadioSwitch,
-		Multiselect,
+		NcCheckboxRadioSwitch,
+		NcMultiselect,
 	},
 
 	data() {

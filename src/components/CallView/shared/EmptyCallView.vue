@@ -27,16 +27,16 @@
 		<p v-if="message" class="emptycontent-additional">
 			{{ message }}
 		</p>
-		<ButtonVue v-if="showLink"
+		<NcButton v-if="showLink"
 			type="primary"
 			@click.stop.prevent="copyLinkToConversation">
 			{{ t('spreed', 'Copy link') }}
-		</ButtonVue>
+		</NcButton>
 	</div>
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
@@ -46,7 +46,7 @@ export default {
 	name: 'EmptyCallView',
 
 	components: {
-		ButtonVue,
+		NcButton,
 	},
 
 	props: {

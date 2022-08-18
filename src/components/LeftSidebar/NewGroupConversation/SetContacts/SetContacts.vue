@@ -30,7 +30,7 @@
 			type="text"
 			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">
-		<ButtonVue v-if="isSearching"
+		<NcButton v-if="isSearching"
 			class="abort-search"
 			type="tertiary-no-background"
 			:aria-label="cancelSearchLabel"
@@ -38,7 +38,7 @@
 			<template #icon>
 				<Close :size="20" />
 			</template>
-		</ButtonVue>
+		</NcButton>
 		<transition-group v-if="hasSelectedParticipants"
 			name="zoom"
 			tag="div"
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Close from 'vue-material-design-icons/Close.vue'
 import CancelableRequest from '../../../../utils/cancelableRequest.js'
 import debounce from 'debounce'
@@ -71,7 +71,7 @@ import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBub
 export default {
 	name: 'SetContacts',
 	components: {
-		ButtonVue,
+		NcButton,
 		Close,
 		ParticipantSearchResults,
 		ContactSelectionBubble,

@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<ListItem :title="item.displayName"
+	<NcListItem :title="item.displayName"
 		:class="{'unread-mention-conversation': item.unreadMention}"
 		:anchor-id="`conversation_${item.token}`"
 		:actions-aria-label="t('spreed', 'Conversation actions')"
@@ -45,7 +45,7 @@
 			</template>
 		</template>
 		<template v-if="!isSearchResult" slot="actions">
-			<ActionButton v-if="canFavorite"
+			<NcActionButton v-if="canFavorite"
 				@click.prevent.exact="toggleFavoriteConversation">
 				<Star v-if="item.isFavorite"
 					slot="icon"
@@ -55,31 +55,31 @@
 					:size="20"
 					:fill-color="'#FFCC00'" />
 				{{ labelFavorite }}
-			</ActionButton>
-			<ActionButton icon="icon-clippy"
+			</NcActionButton>
+			<NcActionButton icon="icon-clippy"
 				@click.stop.prevent="copyLinkToConversation">
 				{{ t('spreed', 'Copy link') }}
-			</ActionButton>
-			<ActionButton :close-after-click="true"
+			</NcActionButton>
+			<NcActionButton :close-after-click="true"
 				@click.prevent.exact="markConversationAsRead">
 				<template #icon>
 					<EyeOutline :size="16" />
 				</template>
 				{{ t('spreed', 'Mark as read') }}
-			</ActionButton>
-			<ActionButton :close-after-click="true"
+			</NcActionButton>
+			<NcActionButton :close-after-click="true"
 				@click.prevent.exact="showConversationSettings">
 				<Cog slot="icon"
 					:size="20" />
 				{{ t('spreed', 'Conversation settings') }}
-			</ActionButton>
-			<ActionButton v-if="canLeaveConversation"
+			</NcActionButton>
+			<NcActionButton v-if="canLeaveConversation"
 				:close-after-click="true"
 				:icon="iconLeaveConversation"
 				@click.prevent.exact="leaveConversation">
 				{{ t('spreed', 'Leave conversation') }}
-			</ActionButton>
-			<ActionButton v-if="canDeleteConversation"
+			</NcActionButton>
+			<NcActionButton v-if="canDeleteConversation"
 				:close-after-click="true"
 				class="critical"
 				@click.prevent.exact="deleteConversation">
@@ -87,14 +87,14 @@
 					<Delete :size="16" />
 				</template>
 				{{ t('spreed', 'Delete conversation') }}
-			</ActionButton>
+			</NcActionButton>
 		</template>
-	</ListItem>
+	</NcListItem>
 </template>
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import EyeOutline from 'vue-material-design-icons/EyeOutline.vue'
@@ -103,13 +103,13 @@ import ConversationIcon from './../../ConversationIcon.vue'
 import { generateUrl } from '@nextcloud/router'
 import { emit } from '@nextcloud/event-bus'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
-import ListItem from '@nextcloud/vue/dist/Components/ListItem.js'
+import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
 export default {
 	name: 'Conversation',
 	components: {
-		ActionButton,
-		ListItem,
+		NcActionButton,
+		NcListItem,
 		ConversationIcon,
 		Cog,
 		Delete,

@@ -20,19 +20,19 @@
 -->
 
 <template>
-	<ButtonVue type="primary" @click="disableLobby">
+	<NcButton type="primary" @click="disableLobby">
 		{{ t('spreed', 'Disable lobby' ) }}
-	</ButtonVue>
+	</NcButton>
 </template>
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'LobbyStatus',
 	components: {
-		ButtonVue,
+		NcButton,
 	},
 	props: {
 		token: {

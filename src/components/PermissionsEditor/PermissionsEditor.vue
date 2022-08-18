@@ -20,50 +20,50 @@
 -->
 
 <template>
-	<Modal size="small"
+	<NcModal size="small"
 		v-on="$listeners">
 		<div class="wrapper">
 			<template v-if="!loading">
 				<!-- eslint-disable-next-line vue/no-v-html -->
 				<p class="title" v-html="modalTitle" />
 				<form @submit.prevent="handleSubmitPermissions">
-					<CheckboxRadioSwitch ref="callStart"
+					<NcCheckboxRadioSwitch ref="callStart"
 						:checked.sync="callStart"
 						class="checkbox">
 						{{ t('spreed', 'Start a call') }}
-					</CheckboxRadioSwitch>
-					<CheckboxRadioSwitch ref="lobbyIgnore"
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch ref="lobbyIgnore"
 						:checked.sync="lobbyIgnore"
 						class="checkbox">
 						{{ t('spreed', 'Skip the lobby') }}
-					</CheckboxRadioSwitch>
-					<CheckboxRadioSwitch ref="chatMessagesAndReactions"
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch ref="chatMessagesAndReactions"
 						:checked.sync="chatMessagesAndReactions"
 						class="checkbox">
 						{{ t('spreed', 'Can post messages and reactions') }}
-					</CheckboxRadioSwitch>
-					<CheckboxRadioSwitch ref="publishAudio"
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch ref="publishAudio"
 						:checked.sync="publishAudio"
 						class="checkbox">
 						{{ t('spreed', 'Enable the microphone') }}
-					</CheckboxRadioSwitch>
-					<CheckboxRadioSwitch ref="publishVideo"
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch ref="publishVideo"
 						:checked.sync="publishVideo"
 						class="checkbox">
 						{{ t('spreed', 'Enable the camera') }}
-					</CheckboxRadioSwitch>
-					<CheckboxRadioSwitch ref="publishScreen"
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch ref="publishScreen"
 						:checked.sync="publishScreen"
 						class="checkbox">
 						{{ t('spreed', 'Share the screen') }}
-					</CheckboxRadioSwitch>
-					<ButtonVue ref="submit"
+					</NcCheckboxRadioSwitch>
+					<NcButton ref="submit"
 						native-type="submit"
 						class="button-update-permission"
 						type="primary"
 						:disabled="submitButtonDisabled">
 						{{ t('spreed', 'Update permissions') }}
-					</ButtonVue>
+					</NcButton>
 				</form>
 			</template>
 			<div v-if="loading" class="loading-screen">
@@ -71,14 +71,14 @@
 				<p>{{ t('spreed', 'Updating permissions') }}</p>
 			</div>
 		</div>
-	</Modal>
+	</NcModal>
 </template>
 
 <script>
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import { PARTICIPANT } from '../../constants.js'
-import Modal from '@nextcloud/vue/dist/Components/Modal.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS
 
@@ -86,9 +86,9 @@ export default {
 	name: 'PermissionsEditor',
 
 	components: {
-		CheckboxRadioSwitch,
-		Modal,
-		ButtonVue,
+		NcCheckboxRadioSwitch,
+		NcModal,
+		NcButton,
 	},
 
 	props: {

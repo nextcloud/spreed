@@ -28,7 +28,7 @@
 			type="text"
 			:placeHolder="placeholderText"
 			@keypress.enter.prevent="handleSubmit">
-		<ButtonVue v-if="isSearching"
+		<NcButton v-if="isSearching"
 			class="abort-search"
 			type="tertiary-no-background"
 			:aria-label="cancelSearchLabel"
@@ -36,19 +36,19 @@
 			<template #icon>
 				<Close :size="20" />
 			</template>
-		</ButtonVue>
+		</NcButton>
 	</form>
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Close from 'vue-material-design-icons/Close.vue'
 import { EventBus } from '../../../services/EventBus.js'
 
 export default {
 	name: 'SearchBox',
 	components: {
-		ButtonVue,
+		NcButton,
 		Close,
 	},
 	props: {

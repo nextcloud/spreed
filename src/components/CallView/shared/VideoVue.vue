@@ -50,7 +50,7 @@
 				<template v-if="participantUserId">
 					<VideoBackground :display-name="participantName"
 						:user="participantUserId" />
-					<Avatar :size="avatarSize"
+					<NcAvatar :size="avatarSize"
 						:disable-menu="true"
 						:disable-tooltip="true"
 						:user="participantUserId"
@@ -89,7 +89,7 @@
 
 <script>
 import attachMediaStream from 'attachmediastream'
-import Avatar from '@nextcloud/vue/dist/Components/Avatar.js'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 import SHA1 from 'crypto-js/sha1.js'
 import Hex from 'crypto-js/enc-hex.js'
@@ -106,7 +106,7 @@ export default {
 	name: 'VideoVue',
 
 	components: {
-		Avatar,
+		NcAvatar,
 		VideoBackground,
 		AccountCircle,
 		Screen,

@@ -21,7 +21,7 @@
 -->
 
 <template>
-	<AppSidebar v-show="opened"
+	<NcAppSidebar v-show="opened"
 		id="app-sidebar"
 		:title="title"
 		:title-tooltip="title"
@@ -39,7 +39,7 @@
 		<template slot="description">
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
-		<AppSidebarTab v-if="showChatInSidebar"
+		<NcAppSidebarTab v-if="showChatInSidebar"
 			id="chat"
 			:order="1"
 			:name="t('spreed', 'Chat')">
@@ -47,8 +47,8 @@
 				<Message :size="20" />
 			</template>
 			<ChatView :is-visible="opened" />
-		</AppSidebarTab>
-		<AppSidebarTab v-if="getUserId && !isOneToOne"
+		</NcAppSidebarTab>
+		<NcAppSidebarTab v-if="getUserId && !isOneToOne"
 			id="participants"
 			ref="participantsTab"
 			:order="2"
@@ -59,8 +59,8 @@
 			<ParticipantsTab :is-active="activeTab === 'participants'"
 				:can-search="canSearchParticipants"
 				:can-add="canAddParticipants" />
-		</AppSidebarTab>
-		<AppSidebarTab v-if="!getUserId || showSIPSettings"
+		</NcAppSidebarTab>
+		<NcAppSidebarTab v-if="!getUserId || showSIPSettings"
 			id="details-tab"
 			:order="3"
 			:name="t('spreed', 'Details')">
@@ -73,16 +73,16 @@
 				:attendee-pin="conversation.attendeePin" />
 			<div v-if="!getUserId" id="app-settings">
 				<div id="app-settings-header">
-					<ButtonVue type="tertiary" @click="showSettings">
+					<NcButton type="tertiary" @click="showSettings">
 						<template #icon>
 							<CogIcon :size="20" />
 						</template>
 						{{ t('spreed', 'Settings') }}
-					</ButtonVue>
+					</NcButton>
 				</div>
 			</div>
-		</AppSidebarTab>
-		<AppSidebarTab v-if="getUserId"
+		</NcAppSidebarTab>
+		<NcAppSidebarTab v-if="getUserId"
 			id="shared-items"
 			ref="sharedItemsTab"
 			:order="4"
@@ -91,14 +91,14 @@
 				<FolderMultipleImage :size="20" />
 			</template>
 			<SharedItemsTab :active="activeTab === 'shared-items'" />
-		</AppSidebarTab>
-	</AppSidebar>
+		</NcAppSidebarTab>
+	</NcAppSidebar>
 </template>
 
 <script>
 import { emit } from '@nextcloud/event-bus'
-import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar.js'
-import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab.js'
+import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
+import NcAppSidebarTab from '@nextcloud/vue/dist/Components/NcAppSidebarTab.js'
 import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
 import ChatView from '../ChatView.vue'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -108,7 +108,7 @@ import isInLobby from '../../mixins/isInLobby.js'
 import SetGuestUsername from '../SetGuestUsername.vue'
 import SipSettings from './SipSettings.vue'
 import LobbyStatus from './LobbyStatus.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import CogIcon from 'vue-material-design-icons/Cog.vue'
 import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
@@ -118,15 +118,15 @@ import Message from 'vue-material-design-icons/Message.vue'
 export default {
 	name: 'RightSidebar',
 	components: {
-		AppSidebar,
-		AppSidebarTab,
+		NcAppSidebar,
+		NcAppSidebarTab,
 		SharedItemsTab,
 		ChatView,
 		ParticipantsTab,
 		SetGuestUsername,
 		SipSettings,
 		LobbyStatus,
-		ButtonVue,
+		NcButton,
 		AccountMultiple,
 		CogIcon,
 		FolderMultipleImage,
@@ -205,7 +205,7 @@ export default {
 		},
 
 		/**
-		 * The conversation title value passed into the AppSidebar component.
+		 * The conversation title value passed into the NcAppSidebar component.
 		 *
 		 * @return {string} The conversation's title.
 		 */

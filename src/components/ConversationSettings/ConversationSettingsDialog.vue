@@ -20,13 +20,13 @@
 -->
 
 <template>
-	<AppSettingsDialog role="dialog"
+	<NcAppSettingsDialog role="dialog"
 		:aria-label="t('spreed', 'Conversation settings')"
 		:open.sync="showSettings"
 		:show-navigation="true"
 		:container="container">
 		<!-- description -->
-		<AppSettingsSection v-if="showDescription"
+		<NcAppSettingsSection v-if="showDescription"
 			id="description"
 			:title="t('spreed', 'Description')">
 			<Description :editable="canFullModerate"
@@ -36,77 +36,77 @@
 				:placeholder="t('spreed', 'Enter a description for this conversation')"
 				@submit-description="handleUpdateDescription"
 				@update:editing="handleEditDescription" />
-		</AppSettingsSection>
+		</NcAppSettingsSection>
 
 		<!-- Notifications settings -->
-		<AppSettingsSection id="notifications"
+		<NcAppSettingsSection id="notifications"
 			:title="t('spreed', 'Notifications')">
 			<NotificationsSettings :conversation="conversation" />
-		</AppSettingsSection>
+		</NcAppSettingsSection>
 
 		<!-- Devices preview sceren -->
-		<AppSettingsSection id="device-checker"
+		<NcAppSettingsSection id="device-checker"
 			:title="t('spreed', 'Device check')">
-			<CheckboxRadioSwitch :checked.sync="showDeviceChecker">
+			<NcCheckboxRadioSwitch :checked.sync="showDeviceChecker">
 				{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
-			</CheckboxRadioSwitch>
-		</AppSettingsSection>
+			</NcCheckboxRadioSwitch>
+		</NcAppSettingsSection>
 
 		<!-- Guest access -->
-		<AppSettingsSection v-if="canFullModerate"
+		<NcAppSettingsSection v-if="canFullModerate"
 			id="guests"
 			:title="t('spreed', 'Guests access')">
 			<LinkShareSettings ref="linkShareSettings" />
-		</AppSettingsSection>
+		</NcAppSettingsSection>
 
 		<!-- TODO sepatate these 2 settings and rename the settings sections
 		all the settings in this component are conversation settings. Proposal:
 		move lock conversation in destructive actions and create a separate
 		section for listablesettings -->
-		<AppSettingsSection v-if="canFullModerate"
+		<NcAppSettingsSection v-if="canFullModerate"
 			id="conversation-settings"
 			:title="t('spreed', 'Conversation settings')">
 			<ExpirationSettings :token="token" />
 			<ListableSettings :token="token" />
 			<LockingSettings :token="token" />
-		</AppSettingsSection>
+		</NcAppSettingsSection>
 
 		<!-- Conversation permissions -->
-		<AppSettingsSection v-if="canFullModerate"
+		<NcAppSettingsSection v-if="canFullModerate"
 			id="permissions"
 			:title="t('spreed', 'Participants permissions')">
 			<ConversationPermissionsSettings :token="token" />
-		</AppSettingsSection>
+		</NcAppSettingsSection>
 
 		<!-- Meeting settings -->
-		<AppSettingsSection v-if="canFullModerate"
+		<NcAppSettingsSection v-if="canFullModerate"
 			id="meeting"
 			:title="t('spreed', 'Meeting settings')">
 			<LobbySettings :token="token" />
 			<SipSettings v-if="canUserEnableSIP" />
-		</AppSettingsSection>
-		<AppSettingsSection v-if="canFullModerate && matterbridgeEnabled"
+		</NcAppSettingsSection>
+		<NcAppSettingsSection v-if="canFullModerate && matterbridgeEnabled"
 			id="matterbridge"
 			:title="t('spreed', 'Matterbridge')">
 			<MatterbridgeSettings />
-		</AppSettingsSection>
+		</NcAppSettingsSection>
 
 		<!-- Destructive actions -->
-		<AppSettingsSection v-if="canLeaveConversation || canDeleteConversation"
+		<NcAppSettingsSection v-if="canLeaveConversation || canDeleteConversation"
 			id="dangerzone"
 			:title="t('spreed', 'Danger zone')">
 			<DangerZone :conversation="conversation"
 				:can-leave-conversation="canLeaveConversation"
 				:can-delete-conversation="canDeleteConversation" />
-		</AppSettingsSection>
-	</AppSettingsDialog>
+		</NcAppSettingsSection>
+	</NcAppSettingsDialog>
 </template>
 
 <script>
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { PARTICIPANT, CONVERSATION } from '../../constants.js'
-import AppSettingsDialog from '@nextcloud/vue/dist/Components/AppSettingsDialog.js'
-import AppSettingsSection from '@nextcloud/vue/dist/Components/AppSettingsSection.js'
+import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDialog.js'
+import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
 import ExpirationSettings from './ExpirationSettings.vue'
 import LinkShareSettings from './LinkShareSettings.vue'
 import ListableSettings from './ListableSettings.vue'
@@ -119,7 +119,7 @@ import DangerZone from './DangerZone.vue'
 import NotificationsSettings from './NotificationsSettings.vue'
 import { showError } from '@nextcloud/dialogs'
 import Description from '../Description/Description.vue'
-import CheckboxRadioSwitch from '@nextcloud/vue/dist/Components/CheckboxRadioSwitch.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import ConversationPermissionsSettings from './ConversationPermissionsSettings.vue'
 
@@ -127,8 +127,8 @@ export default {
 	name: 'ConversationSettingsDialog',
 
 	components: {
-		AppSettingsDialog,
-		AppSettingsSection,
+		NcAppSettingsDialog,
+		NcAppSettingsSection,
 		ExpirationSettings,
 		LinkShareSettings,
 		LobbySettings,
@@ -139,7 +139,7 @@ export default {
 		DangerZone,
 		NotificationsSettings,
 		Description,
-		CheckboxRadioSwitch,
+		NcCheckboxRadioSwitch,
 		ConversationPermissionsSettings,
 	},
 

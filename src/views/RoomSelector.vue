@@ -21,7 +21,7 @@
   -->
 
 <template>
-	<Modal size="normal"
+	<NcModal size="normal"
 		:container="container"
 		@close="close">
 		<div id="modal-inner" class="talk-modal" :class="{ 'icon-loading': loading }">
@@ -56,32 +56,32 @@
 					</div>
 				</div>
 				<div id="modal-buttons">
-					<ButtonVue v-if="!loading && availableRooms.length > 0"
+					<NcButton v-if="!loading && availableRooms.length > 0"
 						type="primary"
 						:disabled="!selectedRoom"
 						@click="select">
 						{{ t('spreed', 'Select conversation') }}
-					</ButtonVue>
+					</NcButton>
 				</div>
 			</div>
 		</div>
-	</Modal>
+	</NcModal>
 </template>
 
 <script>
-import Modal from '@nextcloud/vue/dist/Components/Modal.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { CONVERSATION } from '../constants.js'
 import ConversationIcon from '../components/ConversationIcon.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'RoomSelector',
 	components: {
 		ConversationIcon,
-		Modal,
-		ButtonVue,
+		NcModal,
+		NcButton,
 	},
 	props: {
 		container: {

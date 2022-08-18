@@ -21,7 +21,7 @@
 
 <template>
 	<div>
-		<ButtonVue v-if="showStartCallButton"
+		<NcButton v-if="showStartCallButton"
 			id="call_button"
 			v-tooltip="{
 				placement: 'auto',
@@ -37,8 +37,8 @@
 				<VideoIcon :size="20" />
 			</template>
 			{{ startCallLabel }}
-		</ButtonVue>
-		<ButtonVue v-else-if="showLeaveCallButton && !canEndForAll"
+		</NcButton>
+		<NcButton v-else-if="showLeaveCallButton && !canEndForAll"
 			id="call_button"
 			type="error"
 			:disabled="loading"
@@ -47,27 +47,27 @@
 				<VideoOff :size="20" />
 			</template>
 			{{ leaveCallLabel }}
-		</ButtonVue>
-		<Actions v-else-if="showLeaveCallButton && canEndForAll"
+		</NcButton>
+		<NcActions v-else-if="showLeaveCallButton && canEndForAll"
 			:disabled="loading">
 			<template #icon>
 				<VideoOff :size="16" />
 				<span class="label">{{ leaveCallLabel }}</span>
 				<MenuDown :size="16" />
 			</template>
-			<ActionButton @click="leaveCall(false)">
+			<NcActionButton @click="leaveCall(false)">
 				<template #icon>
 					<VideoOff :size="20" />
 				</template>
 				{{ leaveCallLabel }}
-			</ActionButton>
-			<ActionButton @click="leaveCall(true)">
+			</NcActionButton>
+			<NcActionButton @click="leaveCall(true)">
 				<template #icon>
 					<VideoOff :size="20" />
 				</template>
 				{{ t('spreed', 'End meeting for all') }}
-			</ActionButton>
-		</Actions>
+			</NcActionButton>
+		</NcActions>
 	</div>
 </template>
 
@@ -81,12 +81,12 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import BrowserStorage from '../../services/BrowserStorage.js'
-import Actions from '@nextcloud/vue/dist/Components/Actions.js'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import MenuDown from 'vue-material-design-icons/MenuDown.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'CallButton',
@@ -96,12 +96,12 @@ export default {
 	},
 
 	components: {
-		Actions,
-		ActionButton,
+		NcActions,
+		NcActionButton,
 		VideoIcon,
 		VideoOff,
 		MenuDown,
-		ButtonVue,
+		NcButton,
 	},
 
 	mixins: [

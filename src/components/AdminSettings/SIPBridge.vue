@@ -35,7 +35,7 @@
 				{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
 			</p>
 
-			<Multiselect v-model="sipGroups"
+			<NcMultiselect v-model="sipGroups"
 				class="sip-bridge__sip-groups-select"
 				:options="groups"
 				:placeholder="t('spreed', 'Enable SIP configuration')"
@@ -73,18 +73,18 @@
 				:disabled="loading"
 				:placeholder="t('spreed', 'Phone number (Country)')" />
 
-			<ButtonVue type="primary"
+			<NcButton type="primary"
 				:disabled="loading"
 				@click="saveSIPSettings">
 				{{ t('spreed', 'Save changes') }}
-			</ButtonVue>
+			</NcButton>
 		</template>
 	</div>
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
 import axios from '@nextcloud/axios'
 import debounce from 'debounce'
 import { generateOcsUrl } from '@nextcloud/router'
@@ -96,8 +96,8 @@ export default {
 	name: 'SIPBridge',
 
 	components: {
-		ButtonVue,
-		Multiselect,
+		NcButton,
+		NcMultiselect,
 	},
 
 	data() {

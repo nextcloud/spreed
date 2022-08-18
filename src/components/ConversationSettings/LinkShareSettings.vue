@@ -70,43 +70,43 @@
 						name="link_share_settings_link_password"
 						:placeholder="t('spreed', 'Enter a password')"
 						:disabled="isSaving">
-					<ButtonVue id="link_share_settings_link_password_submit"
+					<NcButton id="link_share_settings_link_password_submit"
 						:aria-label="t('spreed', 'Save password')"
 						:disabled="isSaving"
 						native-type="submit">
 						<template #icon>
 							<ArrowRight />
 						</template>
-					</ButtonVue>
+					</NcButton>
 				</form>
 			</div>
 		</div>
 		<div class="app-settings-subsection">
-			<ButtonVue ref="copyLinkButton"
+			<NcButton ref="copyLinkButton"
 				@click.prevent="handleCopyLink"
 				@keydown.enter="handleCopyLink">
 				<template #icon>
 					<ClipboardTextOutline />
 				</template>
 				{{ t('spreed', 'Copy conversation link') }}
-			</ButtonVue>
+			</NcButton>
 		</div>
 		<div v-if="isSharedPublicly" class="app-settings-subsection">
-			<ButtonVue :disabled="isSendingInvitations"
+			<NcButton :disabled="isSendingInvitations"
 				@click.prevent="handleResendInvitations"
 				@keydown.enter="handleResendInvitations">
 				<template #icon>
 					<Email />
 				</template>
 				{{ t('spreed', 'Resend invitations') }}
-			</ButtonVue>
+			</NcButton>
 			<span v-if="isSendingInvitations" class="icon-loading-small spinner" />
 		</div>
 	</div>
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants.js'
 import {
@@ -121,7 +121,7 @@ export default {
 	name: 'LinkShareSettings',
 
 	components: {
-		ButtonVue,
+		NcButton,
 		ArrowRight,
 		ClipboardTextOutline,
 		Email,

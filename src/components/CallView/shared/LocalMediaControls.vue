@@ -22,14 +22,14 @@
 		@shortkey="handleShortkey">
 		<div class="buttons-bar">
 			<div class="network-connection-state">
-				<Popover v-if="qualityWarningTooltip"
+				<NcPopover v-if="qualityWarningTooltip"
 					:boundary="boundaryElement"
 					:aria-label="qualityWarningAriaLabel"
 					trigger="hover"
 					:auto-hide="false"
 					:shown="showQualityWarningTooltip">
 					<template #trigger>
-						<ButtonVue id="quality_warning_button"
+						<NcButton id="quality_warning_button"
 							type="tertiary-no-background"
 							class="trigger"
 							@click="mouseover = !mouseover">
@@ -37,29 +37,29 @@
 								<NetworkStrength2Alert fill-color="#e9322d"
 									:size="20" />
 							</template>
-						</ButtonVue>
+						</NcButton>
 					</template>
 					<div class="hint">
 						<span>{{ qualityWarningTooltip.content }}</span>
 						<div class="hint__actions">
-							<ButtonVue v-if="qualityWarningTooltip.action"
+							<NcButton v-if="qualityWarningTooltip.action"
 								type="primary"
 								class="hint__button"
 								@click="executeQualityWarningTooltipAction">
 								{{ qualityWarningTooltip.actionLabel }}
-							</ButtonVue>
-							<ButtonVue v-if="!isQualityWarningTooltipDismissed"
+							</NcButton>
+							<NcButton v-if="!isQualityWarningTooltipDismissed"
 								type="tertiary"
 								class="hint__button"
 								@click="dismissQualityWarningTooltip">
 								{{ t('spreed', 'Dismiss') }}
-							</ButtonVue>
+							</NcButton>
 						</div>
 					</div>
-				</Popover>
+				</NcPopover>
 			</div>
 			<div id="muteWrapper">
-				<ButtonVue v-shortkey.once="['m']"
+				<NcButton v-shortkey.once="['m']"
 					v-tooltip="audioButtonTooltip"
 					type="tertiary-no-background"
 					:aria-label="audioButtonAriaLabel"
@@ -74,13 +74,13 @@
 							:size="20"
 							fill-color="#ffffff" />
 					</template>
-				</ButtonVue>
+				</NcButton>
 				<span v-show="model.attributes.audioAvailable"
 					ref="volumeIndicator"
 					class="volume-indicator"
 					:class="{'microphone-off': !showMicrophoneOn}" />
 			</div>
-			<ButtonVue v-shortkey.once="['v']"
+			<NcButton v-shortkey.once="['v']"
 				v-tooltip="videoButtonTooltip"
 				type="tertiary-no-background"
 				:aria-label="videoButtonAriaLabel"
@@ -95,8 +95,8 @@
 						:size="20"
 						fill-color="#ffffff" />
 				</template>
-			</ButtonVue>
-			<ButtonVue v-if="isVirtualBackgroundAvailable && !showActions"
+			</NcButton>
+			<NcButton v-if="isVirtualBackgroundAvailable && !showActions"
 				v-tooltip="toggleVirtualBackgroundButtonLabel"
 				type="tertiary-no-background"
 				:aria-label="toggleVirtualBackgroundButtonLabel"
@@ -110,8 +110,8 @@
 						:size="20"
 						fill-color="#ffffff" />
 				</template>
-			</ButtonVue>
-			<Actions v-if="!screenSharingButtonHidden"
+			</NcButton>
+			<NcActions v-if="!screenSharingButtonHidden"
 				id="screensharing-button"
 				v-tooltip="screenSharingButtonTooltip"
 				:aria-label="screenSharingButtonAriaLabel"
@@ -133,30 +133,30 @@
 				</template>
 				<!-- /Actions button icon -->
 				<!-- Actions -->
-				<ActionButton v-if="!screenSharingMenuOpen"
+				<NcActionButton v-if="!screenSharingMenuOpen"
 					@click.stop="toggleScreenSharingMenu">
 					<template #icon>
 						<PresentToAll :size="20"
 							fill-color="#ffffff" />
 					</template>
 					{{ screenSharingButtonTooltip }}
-				</ActionButton>
-				<ActionButton v-if="model.attributes.localScreen"
+				</NcActionButton>
+				<NcActionButton v-if="model.attributes.localScreen"
 					@click="showScreen">
 					<template #icon>
 						<Monitor :size="20" />
 					</template>
 					{{ t('spreed', 'Show your screen') }}
-				</ActionButton>
-				<ActionButton v-if="model.attributes.localScreen"
+				</NcActionButton>
+				<NcActionButton v-if="model.attributes.localScreen"
 					@click="stopScreen">
 					<template #icon>
 						<CancelPresentation :size="20" />
 					</template>
 					{{ t('spreed', 'Stop screensharing') }}
-				</ActionButton>
-			</Actions>
-			<ButtonVue v-shortkey.once="['r']"
+				</NcActionButton>
+			</NcActions>
+			<NcButton v-shortkey.once="['r']"
 				v-tooltip="t('spreed', 'Lower hand (R)')"
 				type="tertiary-no-background"
 				class="lower-hand"
@@ -171,8 +171,8 @@
 					<HandBackLeft :size="18"
 						fill-color="#ffffff" />
 				</template>
-			</ButtonVue>
-			<Actions v-if="showActions"
+			</NcButton>
+			<NcActions v-if="showActions"
 				v-tooltip="t('spreed', 'More actions')"
 				:container="container"
 				:aria-label="t('spreed', 'More actions')">
@@ -181,7 +181,7 @@
 						fill-color="#ffffff" />
 				</template>
 
-				<ActionButton :close-after-click="true"
+				<NcActionButton :close-after-click="true"
 					@click="toggleHandRaised">
 					<!-- The following icon is much bigger than all the others
 						so we reduce its size -->
@@ -189,8 +189,8 @@
 						<HandBackLeft :size="18" />
 					</template>
 					{{ raiseHandButtonLabel }}
-				</ActionButton>
-				<ActionButton v-if="isVirtualBackgroundAvailable"
+				</NcActionButton>
+				<NcActionButton v-if="isVirtualBackgroundAvailable"
 					:close-after-click="true"
 					@click="toggleVirtualBackground">
 					<template #icon>
@@ -200,9 +200,9 @@
 							:size="20" />
 					</template>
 					{{ toggleVirtualBackgroundButtonLabel }}
-				</ActionButton>
+				</NcActionButton>
 				<!-- Call layout switcher -->
-				<ActionButton v-if="isInCall"
+				<NcActionButton v-if="isInCall"
 					:close-after-click="true"
 					@click="changeView">
 					<template #icon>
@@ -212,16 +212,16 @@
 							:size="20" />
 					</template>
 					{{ changeViewText }}
-				</ActionButton>
-				<ActionSeparator />
-				<ActionButton :close-after-click="true"
+				</NcActionButton>
+				<NcActionSeparator />
+				<NcActionButton :close-after-click="true"
 					@click="showSettings">
 					<template #icon>
 						<Cog :size="20" />
 					</template>
 					{{ t('spreed', 'Devices settings') }}
-				</ActionButton>
-			</Actions>
+				</NcActionButton>
+			</NcActions>
 		</div>
 	</div>
 </template>
@@ -244,15 +244,15 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import Blur from 'vue-material-design-icons/Blur.vue'
 import BlurOff from 'vue-material-design-icons/BlurOff.vue'
-import Popover from '@nextcloud/vue/dist/Components/Popover.js'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import { PARTICIPANT } from '../../../constants.js'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
 import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
-import Actions from '@nextcloud/vue/dist/Components/Actions.js'
-import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator.js'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import { callAnalyzer } from '../../../utils/webrtc/index.js'
 import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer.js'
 import isInCall from '../../../mixins/isInCall.js'
@@ -266,11 +266,11 @@ export default {
 	},
 	components: {
 		NetworkStrength2Alert,
-		Popover,
-		Actions,
-		ActionSeparator,
-		ActionButton,
-		ButtonVue,
+		NcPopover,
+		NcActions,
+		NcActionSeparator,
+		NcActionButton,
+		NcButton,
 		CancelPresentation,
 		Cog,
 		DotsHorizontal,

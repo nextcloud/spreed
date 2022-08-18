@@ -6,7 +6,7 @@ import storeConfig from '../../../../../store/storeConfig.js'
 import { imagePath, generateRemoteUrl } from '@nextcloud/router'
 import { loadState } from '@nextcloud/initial-state'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import FilePreview from './FilePreview.vue'
 
 jest.mock('@nextcloud/initial-state', () => ({
@@ -169,7 +169,7 @@ describe('FilePreview.vue', () => {
 				expect(wrapper.element.tagName).toBe('DIV')
 				expect(wrapper.find('img').attributes('src')).toBe('blob:XYZ')
 
-				const progressEl = wrapper.findComponent({ name: 'ProgressBar' })
+				const progressEl = wrapper.findComponent({ name: 'NcProgressBar' })
 				expect(progressEl.exists()).toBe(true)
 				expect(progressEl.props('value')).toBe(85)
 
@@ -518,7 +518,7 @@ describe('FilePreview.vue', () => {
 			await imageMock.onload()
 
 			expect(wrapper.element.tagName).toBe('DIV')
-			await wrapper.findComponent(ButtonVue).trigger('click')
+			await wrapper.findComponent(NcButton).trigger('click')
 			expect(wrapper.emitted()['remove-file']).toStrictEqual([['123']])
 		})
 	})

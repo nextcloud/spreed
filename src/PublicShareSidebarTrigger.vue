@@ -20,18 +20,18 @@
 
 <template>
 	<div class="button-holder">
-		<ButtonVue type="tertiary-on-primary"
+		<NcButton type="tertiary-on-primary"
 			:aria-label="ariaLabel"
 			@click="$emit('click')">
 			<template #icon>
 				<MenuPeople :size="20" />
 			</template>
-		</ButtonVue>
+		</NcButton>
 	</div>
 </template>
 
 <script>
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import MenuPeople from './components/missingMaterialDesignIcons/MenuPeople.vue'
 
 export default {
@@ -39,7 +39,7 @@ export default {
 	name: 'PublicShareSidebarTrigger',
 
 	components: {
-		ButtonVue,
+		NcButton,
 		MenuPeople,
 	},
 

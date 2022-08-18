@@ -23,11 +23,11 @@
 	<div v-if="!loading && active">
 		<template v-for="type in sharedItemsOrder">
 			<div v-if="sharedItems[type]" :key="type">
-				<AppNavigationCaption :title="getTitle(type)" />
+				<NcAppNavigationCaption :title="getTitle(type)" />
 				<SharedItems :type="type"
 					:limit="limit(type)"
 					:items="sharedItems[type]" />
-				<ButtonVue v-if="hasMore(sharedItems[type])"
+				<NcButton v-if="hasMore(sharedItems[type])"
 					type="tertiary-no-background"
 					class="more"
 					:wide="true"
@@ -36,10 +36,10 @@
 						<DotsHorizontal :size="20" />
 					</template>
 					{{ getButtonTitle(type) }}
-				</ButtonVue>
+				</NcButton>
 			</div>
 		</template>
-		<AppNavigationCaption :title="t('spreed', 'Projects')" />
+		<NcAppNavigationCaption :title="t('spreed', 'Projects')" />
 		<CollectionList v-if="getUserId && token"
 			:id="token"
 			type="room"
@@ -56,10 +56,10 @@
 import { CollectionList } from 'nextcloud-vue-collections'
 import SharedItems from './SharedItems.vue'
 import { SHARED_ITEM } from '../../../constants.js'
-import AppNavigationCaption from '@nextcloud/vue/dist/Components/AppNavigationCaption.js'
+import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import SharedItemsBrowser from './SharedItemsBrowser/SharedItemsBrowser.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import sharedItems from '../../../mixins/sharedItems.js'
 
 export default {
@@ -69,10 +69,10 @@ export default {
 	components: {
 		SharedItems,
 		CollectionList,
-		AppNavigationCaption,
+		NcAppNavigationCaption,
 		SharedItemsBrowser,
 		DotsHorizontal,
-		ButtonVue,
+		NcButton,
 	},
 
 	mixins: [sharedItems],

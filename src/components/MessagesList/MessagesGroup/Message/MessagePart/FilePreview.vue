@@ -52,7 +52,7 @@
 		<span v-if="isLoading"
 			v-tooltip="previewTooltip"
 			class="preview loading" />
-		<ButtonVue v-if="isUploadEditor"
+		<NcButton v-if="isUploadEditor"
 			class="remove-file"
 			tabindex="1"
 			type="primary"
@@ -61,8 +61,8 @@
 			<template #icon>
 				<Close />
 			</template>
-		</ButtonVue>
-		<ProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
+		</NcButton>
+		<NcProgressBar v-if="isTemporaryUpload && !isUploadEditor" :value="uploadProgress" />
 		<div v-if="shouldShowFileDetail" class="name-container">
 			{{ fileDetail }}
 		</div>
@@ -71,14 +71,14 @@
 
 <script>
 import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
-import ProgressBar from '@nextcloud/vue/dist/Components/ProgressBar.js'
+import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import Close from 'vue-material-design-icons/Close.vue'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { encodePath } from '@nextcloud/paths'
 import AudioPlayer from './AudioPlayer.vue'
-import ButtonVue from '@nextcloud/vue/dist/Components/ButtonVue.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,
@@ -91,10 +91,10 @@ export default {
 	name: 'FilePreview',
 
 	components: {
-		ProgressBar,
+		NcProgressBar,
 		Close,
 		PlayCircleOutline,
-		ButtonVue,
+		NcButton,
 	},
 
 	directives: {
