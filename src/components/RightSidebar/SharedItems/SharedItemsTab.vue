@@ -39,12 +39,14 @@
 				</NcButton>
 			</div>
 		</template>
-		<NcAppNavigationCaption :title="t('spreed', 'Projects')" />
-		<CollectionList v-if="getUserId && token"
-			:id="token"
-			type="room"
-			:name="conversation.displayName"
-			:is-active="active" />
+		<template v-if="projectsEnabled">
+			<NcAppNavigationCaption :title="t('spreed', 'Projects')" />
+			<CollectionList v-if="getUserId && token"
+				:id="token"
+				type="room"
+				:name="conversation.displayName"
+				:is-active="active" />
+		</template>
 		<SharedItemsBrowser v-if="showSharedItemsBrowser"
 			:shared-items="sharedItems"
 			:active-tab.sync="browserActiveTab"
@@ -54,6 +56,8 @@
 
 <script>
 import { CollectionList } from 'nextcloud-vue-collections'
+import { loadState } from '@nextcloud/initial-state'
+
 import SharedItems from './SharedItems.vue'
 import { SHARED_ITEM } from '../../../constants.js'
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
@@ -89,6 +93,7 @@ export default {
 		return {
 			showSharedItemsBrowser: false,
 			browserActiveTab: '',
+			projectsEnabled: loadState('core', 'projects_enabled', false),
 		}
 	},
 
