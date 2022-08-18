@@ -25,7 +25,7 @@ describe('AvatarWrapper.vue', () => {
 		})
 		expect(wrapper.vm.iconClass).toBe('')
 		// Check that the first child is the avatar component
-		expect(wrapper.element.firstChild.nodeName).toBe('AVATAR-STUB')
+		expect(wrapper.element.firstChild.nodeName).toBe('NCAVATAR-STUB')
 		expect(wrapper.props().size).toBe(32)
 	})
 	it('Renders group icons properly', () => {
