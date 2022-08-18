@@ -606,27 +606,32 @@ class RoomShareProvider implements IShareProvider {
 	 */
 	public function getSharesBy($userId, $shareType, $node, $reshares, $limit, $offset): array {
 		$qb = $this->dbConnection->getQueryBuilder();
-		$qb->select('*')
-			->from('share');
+		$qb->select('share.*', 'ta.history_since', 'tr.show_history')
+			->from('share', 'share')
+			->join('share', 'talk_rooms', 'tr', $qb->expr()->eq('tr.token', 'share.share_with'))
+			->join('tr', 'talk_attendees', 'ta', $qb->expr()->andX(
+				$qb->expr()->eq('ta.room_id', 'tr.id'),
+				$qb->expr()->eq('ta.actor_id', 'share.uid_initiator')
+			));
 
-		$qb->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)));
+		$qb->andWhere($qb->expr()->eq('share.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)));
 
 		/**
 		 * Reshares for this user are shares where they are the owner.
 		 */
 		if ($reshares === false) {
-			$qb->andWhere($qb->expr()->eq('uid_initiator', $qb->createNamedParameter($userId)));
+			$qb->andWhere($qb->expr()->eq('share.uid_initiator', $qb->createNamedParameter($userId)));
 		} else {
 			$qb->andWhere(
 				$qb->expr()->orX(
-					$qb->expr()->eq('uid_owner', $qb->createNamedParameter($userId)),
-					$qb->expr()->eq('uid_initiator', $qb->createNamedParameter($userId))
+					$qb->expr()->eq('share.uid_owner', $qb->createNamedParameter($userId)),
+					$qb->expr()->eq('share.uid_initiator', $qb->createNamedParameter($userId))
 				)
 			);
 		}
 
 		if ($node !== null) {
-			$qb->andWhere($qb->expr()->eq('file_source', $qb->createNamedParameter($node->getId())));
+			$qb->andWhere($qb->expr()->eq('share.file_source', $qb->createNamedParameter($node->getId())));
 		}
 
 		if ($limit !== -1) {
@@ -634,16 +639,30 @@ class RoomShareProvider implements IShareProvider {
 		}
 
 		$qb->setFirstResult($offset);
-		$qb->orderBy('id');
+		$qb->orderBy('share.id');
 
 		$cursor = $qb->executeQuery();
 		$shares = [];
 		while ($data = $cursor->fetch()) {
-			$shares[] = $this->createShareObject($data);
+			$share = $this->createShareObject($data);
+			if (!$this->participantCanSeeShareSince($share, $data)) {
+				continue;
+			}
+			$shares[] = $share;
 		}
 		$cursor->closeCursor();
 
 		return $shares;
+	}
+
+	private function participantCanSeeShareSince(IShare $share, array $data): bool {
+		if ($data['show_history'] === null && $data['history_since']) {
+			$historySince = \DateTime::createFromFormat('Y-m-d H:i:s', $data['history_since']);
+			if ($share->getShareTime() < $historySince) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -843,13 +862,20 @@ class RoomShareProvider implements IShareProvider {
 			$qb->select('s.*',
 				'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
 				'f.parent AS f_parent', 'f.name', 'f.mimetype', 'f.mimepart', 'f.size', 'f.mtime', 'f.storage_mtime',
-				'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum'
+				'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum',
+				'ta.history_since', 'tr.show_history'
 			)
 				->selectAlias('st.id', 'storage_string_id')
 				->from('share', 's')
+				->join('s', 'talk_rooms', 'tr', $qb->expr()->eq('tr.token', 's.share_with'))
+				->join('tr', 'talk_attendees', 'ta', $qb->expr()->andX(
+					$qb->expr()->eq('ta.room_id', 'tr.id'),
+					$qb->expr()->eq('ta.actor_id', 's.uid_initiator')
+				))
 				->orderBy('s.id')
 				->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
 				->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'));
+
 
 			if ($limit !== -1) {
 				$qb->setMaxResults($limit);
@@ -881,7 +907,13 @@ class RoomShareProvider implements IShareProvider {
 					continue;
 				}
 
-				$shares[] = $this->createShareObject($data);
+				$share = $this->createShareObject($data);
+
+				if (!$this->participantCanSeeShareSince($share, $data)) {
+					continue;
+				}
+
+				$shares[] = $share;
 			}
 			$cursor->closeCursor();
 		}

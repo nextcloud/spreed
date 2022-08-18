@@ -60,3 +60,12 @@ Feature: chat/limit-chat-history
       | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
       | public room | users     | participant1 | participant1-displayname | {file}   | "IGNORE" |
     And user "participant2" sees the following shared file in room "public room" with 200
+
+  Scenario: Shares in a public room must not be accessible either
+    Given user "participant1" creates room "public room" (v4)
+      | roomType | 3           |
+      | roomName | public room |
+    When user "participant1" shares "welcome.txt" with room "public room" with OCS 100
+    And user "participant1" adds user "participant2" to room "public room" with 200 (v4)
+    And user "participant2" gets all shares
+    And the list of returned shares has 0 shares
