@@ -699,24 +699,10 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareForRecipient() {
-		$node = $this->createMock(Node::class);
-		$node->expects($this->exactly(3))
-			->method('getId')
-			->willReturn('54');
-		$node->expects($this->once())
-			->method('getName')
-			->willReturn('name');
-		$node->expects($this->atLeastOnce())
-			->method('getMimeType')
-			->willReturn('application/octet-stream');
-		$node->expects($this->once())
-			->method('getSize')
-			->willReturn(65510);
-
 		$share = $this->createMock(IShare::class);
-		$share->expects($this->once())
-			->method('getNode')
-			->willReturn($node);
+		$share->expects($this->any())
+			->method('getNodeId')
+			->willReturn(54);
 
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->once())
@@ -736,6 +722,9 @@ class SystemMessageTest extends TestCase {
 			->willReturn($share);
 
 		$file = $this->createMock(Node::class);
+		$file->expects($this->any())
+			->method('getId')
+			->willReturn('54');
 		$file->expects($this->once())
 			->method('getName')
 			->willReturn('different');
@@ -745,6 +734,9 @@ class SystemMessageTest extends TestCase {
 		$file->expects($this->once())
 			->method('getSize')
 			->willReturn(65515);
+		$file->expects($this->atLeastOnce())
+			->method('getMimeType')
+			->willReturn('application/octet-stream');
 
 		$userFolder = $this->createMock(Folder::class);
 		$userFolder->expects($this->once())
@@ -759,7 +751,7 @@ class SystemMessageTest extends TestCase {
 
 		$this->previewManager->expects($this->once())
 			->method('isAvailable')
-			->with($node)
+			->with($file)
 			->willReturn(false);
 
 		$this->url->expects($this->once())
@@ -783,18 +775,10 @@ class SystemMessageTest extends TestCase {
 	}
 
 	public function testGetFileFromShareForRecipientThrows() {
-		$node = $this->createMock(Node::class);
-		$node->expects($this->exactly(2))
-			->method('getId')
-			->willReturn('54');
-		$node->expects($this->once())
-			->method('getName')
-			->willReturn('name');
-
 		$share = $this->createMock(IShare::class);
-		$share->expects($this->once())
-			->method('getNode')
-			->willReturn($node);
+		$share->expects($this->any())
+			->method('getNodeId')
+			->willReturn(54);
 
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->once())
