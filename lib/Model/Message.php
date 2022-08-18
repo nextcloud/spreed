@@ -170,6 +170,8 @@ class Message {
 	}
 
 	public function toArray(): array {
+		$expireDate = $this->getComment()->getExpireDate();
+
 		$data = [
 			'id' => (int) $this->getComment()->getId(),
 			'token' => $this->getRoom()->getToken(),
@@ -184,6 +186,7 @@ class Message {
 			'isReplyable' => $this->isReplyable(),
 			'referenceId' => (string) $this->getComment()->getReferenceId(),
 			'reactions' => $this->getComment()->getReactions(),
+			'expirationTimestamp' => $expireDate ? $expireDate->getTimestamp() : 0,
 		];
 
 		if ($this->getMessageType() === ChatManager::VERB_MESSAGE_DELETED) {
