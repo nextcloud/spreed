@@ -586,6 +586,12 @@ class SystemMessageTest extends TestCase {
 		$node->expects($this->once())
 			->method('getSize')
 			->willReturn(65530);
+		$node->expects($this->once())
+			->method('getEtag')
+			->willReturn(md5('etag'));
+		$node->expects($this->once())
+			->method('getPermissions')
+			->willReturn(27);
 
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->once())
@@ -625,6 +631,8 @@ class SystemMessageTest extends TestCase {
 			'size' => 65530,
 			'path' => 'name',
 			'link' => 'absolute-link',
+			'etag' => '1872ade88f3013edeb33decd74a4f947',
+			'permissions' => 27,
 			'mimetype' => 'text/plain',
 			'preview-available' => 'yes',
 		], self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']));
@@ -647,6 +655,12 @@ class SystemMessageTest extends TestCase {
 		$node->expects($this->once())
 			->method('getSize')
 			->willReturn(65520);
+		$node->expects($this->once())
+			->method('getEtag')
+			->willReturn(md5('etag'));
+		$node->expects($this->once())
+			->method('getPermissions')
+			->willReturn(27);
 
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->once())
@@ -693,6 +707,8 @@ class SystemMessageTest extends TestCase {
 			'size' => 65520,
 			'path' => 'path/to/file/name',
 			'link' => 'absolute-link-owner',
+			'etag' => '1872ade88f3013edeb33decd74a4f947',
+			'permissions' => 27,
 			'mimetype' => 'httpd/unix-directory',
 			'preview-available' => 'no',
 		], self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']));
@@ -734,6 +750,12 @@ class SystemMessageTest extends TestCase {
 		$file->expects($this->once())
 			->method('getSize')
 			->willReturn(65515);
+		$file->expects($this->once())
+			->method('getEtag')
+			->willReturn(md5('etag'));
+		$file->expects($this->once())
+			->method('getPermissions')
+			->willReturn(27);
 		$file->expects($this->atLeastOnce())
 			->method('getMimeType')
 			->willReturn('application/octet-stream');
@@ -769,6 +791,8 @@ class SystemMessageTest extends TestCase {
 			'size' => 65515,
 			'path' => 'Shared/different',
 			'link' => 'absolute-link-owner',
+			'etag' => '1872ade88f3013edeb33decd74a4f947',
+			'permissions' => 27,
 			'mimetype' => 'application/octet-stream',
 			'preview-available' => 'no',
 		], self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']));
