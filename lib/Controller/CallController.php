@@ -78,9 +78,9 @@ class CallController extends AEnvironmentAwareController {
 				if ($participant->getAttendee()->getDisplayName()) {
 					$displayName = $participant->getAttendee()->getDisplayName();
 				} else {
-					$user = $this->userManager->get($participant->getAttendee()->getActorId());
-					if ($user instanceof IUser) {
-						$displayName = $user->getDisplayName();
+					$userDisplayName = $this->userManager->getDisplayName($participant->getAttendee()->getActorId());
+					if ($userDisplayName !== null) {
+						$displayName = $userDisplayName;
 					}
 				}
 			} else {
