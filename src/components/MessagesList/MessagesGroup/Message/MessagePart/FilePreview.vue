@@ -146,6 +146,20 @@ export default {
 			default: '',
 		},
 		/**
+		 * File ETag
+		 */
+		etag: {
+			type: String,
+			default: '',
+		},
+		/**
+		 * File ETag
+		 */
+		permissions: {
+			type: Number,
+			default: 0,
+		},
+		/**
 		 * Whether a preview is available, string "yes" for yes
 		 * otherwise the string "no"
 		 */
@@ -448,6 +462,25 @@ export default {
 				OCA.Files.Sidebar.state.file = this.internalAbsolutePath
 			}
 
+			let permissions = ''
+			if (this.permissions) {
+				if (this.permissions & OC.PERMISSION_CREATE) {
+					permissions += 'CK'
+				}
+				if (this.permissions & OC.PERMISSION_READ) {
+					permissions += 'G'
+				}
+				if (this.permissions & OC.PERMISSION_UPDATE) {
+					permissions += 'W'
+				}
+				if (this.permissions & OC.PERMISSION_DELETE) {
+					permissions += 'D'
+				}
+				if (this.permissions & OC.PERMISSION_SHARE) {
+					permissions += 'R'
+				}
+			}
+
 			OCA.Viewer.open({
 				// Viewer expects an internal absolute path starting with "/".
 				path: this.internalAbsolutePath,
@@ -458,6 +491,8 @@ export default {
 						basename: this.name,
 						mime: this.mimetype,
 						hasPreview: this.previewAvailable === 'yes',
+						etag: this.etag,
+						permissions,
 					},
 				],
 			})

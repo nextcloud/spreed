@@ -629,6 +629,8 @@ class SystemMessage {
 			'size' => $size,
 			'path' => $path,
 			'link' => $url,
+			'etag' => $node->getEtag(),
+			'permissions' => $node->getPermissions(),
 			'mimetype' => $node->getMimeType(),
 			'preview-available' => $this->previewManager->isAvailable($node) ? 'yes' : 'no',
 		];
