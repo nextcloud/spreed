@@ -282,7 +282,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" is participant of the following rooms \((v4)\)$/
 	 * @Then /^user "([^"]*)" is participant of the following (unordered )?rooms \((v4)\)$/
 	 *
 	 * @param string $user
