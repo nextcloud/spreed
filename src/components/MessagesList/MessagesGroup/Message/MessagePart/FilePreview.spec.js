@@ -48,6 +48,8 @@ describe('FilePreview.vue', () => {
 			name: 'test.jpg',
 			path: 'path/to/test.jpg',
 			size: 128,
+			etag: '1872ade88f3013edeb33decd74a4f947',
+			permissions: 15,
 			mimetype: 'image/jpeg',
 			previewAvailable: 'yes',
 		}
@@ -370,10 +372,12 @@ describe('FilePreview.vue', () => {
 				expect(OCA.Viewer.open).toHaveBeenCalledWith({
 					list: [{
 						basename: 'test.jpg',
+						etag: '1872ade88f3013edeb33decd74a4f947',
 						fileid: 123,
 						filename: '/path/to/test.jpg',
 						hasPreview: true,
 						mime: 'image/jpeg',
+						permissions: 'CKGWD',
 					}],
 					path: '/path/to/test.jpg',
 				})

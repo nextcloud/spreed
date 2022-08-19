@@ -59,6 +59,14 @@ global.OC = {
 	MimeType: {
 		getIconUrl: jest.fn(),
 	},
+
+	PERMISSION_NONE: 0,
+	PERMISSION_READ: 1,
+	PERMISSION_UPDATE: 2,
+	PERMISSION_CREATE: 4,
+	PERMISSION_DELETE: 8,
+	PERMISSION_SHARE: 16,
+	PERMISSION_ALL: 31,
 }
 global.OCA = {
 	Talk: {
