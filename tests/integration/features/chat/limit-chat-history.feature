@@ -69,5 +69,6 @@ Feature: chat/limit-chat-history
     And user "participant1" adds user "participant2" to room "public room" with 200 (v4)
     When user "participant2" gets all shares
     And the list of returned shares has 0 shares
+    # Shares from before the timestamp must not be accessible directly
     And user "participant2" gets all shares for "/welcome.txt"
     And the list of returned shares has 0 shares
