@@ -610,9 +610,11 @@ class RoomShareProvider implements IShareProvider {
 			->from('share', 'share')
 			->join('share', 'talk_rooms', 'tr', $qb->expr()->eq('tr.token', 'share.share_with'))
 			->join('tr', 'talk_attendees', 'ta', $qb->expr()->andX(
-				$qb->expr()->eq('ta.room_id', 'tr.id'),
-				$qb->expr()->eq('ta.actor_id', 'share.uid_initiator')
-			));
+				$qb->expr()->eq('ta.room_id', 'tr.id')
+			))
+			->andWhere(
+				$qb->expr()->eq('ta.actor_id', $qb->createNamedParameter($userId))
+			);
 
 		$qb->andWhere($qb->expr()->eq('share.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)));
 
@@ -657,6 +659,7 @@ class RoomShareProvider implements IShareProvider {
 
 	private function participantCanSeeShareSince(IShare $share, array $data): bool {
 		if ($data['show_history'] === null && $data['history_since']) {
+			// $this->timeFactory->getDateTime($data['history_since'], new \DateTimeZone('UTC'))
 			$historySince = \DateTime::createFromFormat('Y-m-d H:i:s', $data['history_since']);
 			if ($share->getShareTime() < $historySince) {
 				return false;
@@ -868,13 +871,13 @@ class RoomShareProvider implements IShareProvider {
 				->selectAlias('st.id', 'storage_string_id')
 				->from('share', 's')
 				->join('s', 'talk_rooms', 'tr', $qb->expr()->eq('tr.token', 's.share_with'))
-				->join('tr', 'talk_attendees', 'ta', $qb->expr()->andX(
-					$qb->expr()->eq('ta.room_id', 'tr.id'),
-					$qb->expr()->eq('ta.actor_id', 's.uid_initiator')
-				))
+				->join('tr', 'talk_attendees', 'ta', $qb->expr()->eq('ta.room_id', 'tr.id'))
 				->orderBy('s.id')
 				->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
-				->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'));
+				->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'))
+				->andWhere(
+					$qb->expr()->eq('ta.actor_id', $qb->createNamedParameter($userId))
+				);
 
 
 			if ($limit !== -1) {
