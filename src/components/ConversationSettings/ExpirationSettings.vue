@@ -118,7 +118,7 @@ export default {
 					}))
 				}
 			} catch (error) {
-				showError(t('spreed', 'Error when trying to set the messages expiration'))
+				showError(t('spreed', 'Error when trying to set message expiration'))
 				console.error(error)
 			}
 
