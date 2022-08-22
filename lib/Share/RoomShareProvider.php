@@ -652,7 +652,6 @@ class RoomShareProvider implements IShareProvider {
 	 * @throws ShareNotFound
 	 */
 	public function getShareById($id, $recipientId = null): IShare {
-
 		if (($recipientId === null) && isset($this->sharesByIdCache[$id])) {
 			$share = $this->sharesByIdCache[$id];
 		} else {
@@ -682,7 +681,6 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare[]
 	 */
 	public function getSharesByIds(array $ids, ?string $recipientId = null): array {
-
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('s.*',
 			'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
@@ -700,9 +698,9 @@ class RoomShareProvider implements IShareProvider {
 
 		/*
 		 * Keep retrieved shares in sharesByIdCache.
-		 * 
+		 *
 		 * Fill the cache only when $recipientId === null.
-		 * 
+		 *
 		 * For inaccessible shares use 'false' instead of the IShare object.
 		 * (This is required to avoid additional queries in getShareById when
 		 * the share refers to a deleted file.)
