@@ -49,7 +49,7 @@
 		"ua-parser-js": "^1.0.2",
 		"url-parse": "^1.5.10",
 		"util": "^0.12.4",
-		"vue": "^2.7.8",
+		"vue": "^2.7.9",
 		"vue-at": "^2.5.0",
 		"vue-clipboard2": "^0.3.3",
 		"vue-frag": "^1.4.1",
@@ -88,6 +88,7 @@
 		"terser-webpack-plugin": "^5.3.5",
 		"ts-loader": "^9.3.1",
 		"typescript": "^4.7.4",
+		"vue-template-compiler": "^2.7.9",
 		"wasm-check": "^2.1.2",
 		"webpack-node-externals": "^3.0.0",
 		"worker-loader": "^3.0.8"
