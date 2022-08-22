@@ -680,12 +680,12 @@ class ParticipantService {
 		$missingUsers = array_diff($users, $participants);
 
 		foreach ($missingUsers as $userId) {
-			$user = $this->userManager->get($userId);
-			if ($user instanceof IUser) {
+			$userDisplayName = $this->userManager->getDisplayName($userId);
+			if ($userDisplayName !== null) {
 				$this->addUsers($room, [[
 					'actorType' => Attendee::ACTOR_USERS,
-					'actorId' => $user->getUID(),
-					'displayName' => $user->getDisplayName(),
+					'actorId' => $userId,
+					'displayName' => $userDisplayName,
 					'participantType' => Participant::OWNER,
 				]]);
 			}

@@ -1011,11 +1011,11 @@ class RoomController extends AEnvironmentAwareController {
 
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
 				if (!$result['displayName']) {
-					$user = $this->userManager->get($userId);
-					if (!$user instanceof IUser) {
+					$userDisplayName = $this->userManager->getDisplayName($userId);
+					if ($userDisplayName === null) {
 						continue;
 					}
-					$result['displayName'] = $user->getDisplayName();
+					$result['displayName'] = $userDisplayName;
 				}
 
 				if (isset($statuses[$userId])) {

@@ -254,44 +254,7 @@ class BaseTest extends TestCase {
 		], self::invokePrivate($provider, 'getRoom', [$room, 'user']));
 	}
 
-	public function dataGetUser() {
-		return [
-			['test', [], false, 'Test'],
-			['foo', ['admin' => 'Admin'], false, 'Bar'],
-			['admin', ['admin' => 'Administrator'], true, 'Administrator'],
-		];
-	}
-
-	/**
-	 * @dataProvider dataGetUser
-	 *
-	 * @param string $uid
-	 * @param array $cache
-	 * @param bool $cacheHit
-	 * @param string $name
-	 */
-	public function testGetUser($uid, $cache, $cacheHit, $name) {
-		$provider = $this->getProvider(['getDisplayName']);
-
-		self::invokePrivate($provider, 'displayNames', [$cache]);
-
-		if (!$cacheHit) {
-			$provider->expects($this->once())
-				->method('getDisplayName')
-				->with($uid)
-				->willReturn($name);
-		} else {
-			$provider->expects($this->never())
-				->method('getDisplayName');
-		}
-
-		$result = self::invokePrivate($provider, 'getUser', [$uid]);
-		$this->assertSame('user', $result['type']);
-		$this->assertSame($uid, $result['id']);
-		$this->assertSame($name, $result['name']);
-	}
-
-	public function dataGetDisplayName() {
+	public function dataGetUser(): array {
 		return [
 			['test', true, 'Test'],
 			['foo', false, 'foo'],
@@ -299,31 +262,31 @@ class BaseTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider dataGetDisplayName
+	 * @dataProvider dataGetUser
 	 *
 	 * @param string $uid
 	 * @param bool $validUser
 	 * @param string $name
 	 */
-	public function testGetDisplayName($uid, $validUser, $name) {
+	public function testGetUser(string $uid, bool $validUser, string $name): void {
 		$provider = $this->getProvider();
 
 		if ($validUser) {
-			$user = $this->createMock(IUser::class);
-			$user->expects($this->once())
-				->method('getDisplayName')
-				->willReturn($name);
 			$this->userManager->expects($this->once())
-				->method('get')
+				->method('getDisplayName')
 				->with($uid)
-				->willReturn($user);
+				->willReturn($name);
 		} else {
 			$this->userManager->expects($this->once())
-				->method('get')
+				->method('getDisplayName')
 				->with($uid)
 				->willReturn(null);
 		}
 
-		$this->assertSame($name, self::invokePrivate($provider, 'getDisplayName', [$uid]));
+		$this->assertSame([
+			'type' => 'user',
+			'id' => $uid,
+			'name' => $name,
+		], self::invokePrivate($provider, 'getUser', [$uid]));
 	}
 }

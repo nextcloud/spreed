@@ -19,7 +19,7 @@
  *
  */
 
-namespace OCA\Talk\Tests\php\Notifications;
+namespace OCA\Talk\Tests\php\Notification;
 
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\Chat\CommentsManager;
@@ -113,7 +113,7 @@ class NotifierTest extends TestCase {
 		);
 	}
 
-	public function dataPrepareOne2One() {
+	public function dataPrepareOne2One(): array {
 		return [
 			['admin', 'Admin', 'Admin invited you to a private conversation'],
 			['test', 'Test user', 'Test user invited you to a private conversation'],
@@ -126,7 +126,7 @@ class NotifierTest extends TestCase {
 	 * @param string $displayName
 	 * @param string $parsedSubject
 	 */
-	public function testPrepareOne2One($uid, $displayName, $parsedSubject) {
+	public function testPrepareOne2One(string $uid, string $displayName, string $parsedSubject): void {
 		/** @var INotification|MockObject $n */
 		$n = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
@@ -158,20 +158,15 @@ class NotifierTest extends TestCase {
 			->willReturn($l);
 
 		$recipient = $this->createMock(IUser::class);
-		$u = $this->createMock(IUser::class);
-		$u->expects($this->exactly(2))
-			->method('getDisplayName')
-			->willReturn($displayName);
-		$this->userManager->expects($this->exactly(2))
+		$this->userManager->expects($this->once())
 			->method('get')
-			->withConsecutive(
-				['recipient'],
-				[$uid]
-			)
-			->willReturnOnConsecutiveCalls(
-				$recipient,
-				$u
-			);
+			->with('recipient')
+			->willReturn($recipient);
+
+		$this->userManager->expects($this->once())
+			->method('getDisplayName')
+			->with($uid)
+			->willReturn($displayName);
 
 		$n->expects($this->once())
 			->method('setIcon')
@@ -264,16 +259,15 @@ class NotifierTest extends TestCase {
 			->willReturn($l);
 
 		$recipient = $this->createMock(IUser::class);
-		$u = $this->createMock(IUser::class);
-		$u->expects($this->exactly($numNotifications * 2))
-			->method('getDisplayName')
-			->willReturn($displayName);
 		$this->userManager->expects($this->any())
 			->method('get')
-			->willReturnMap([
-				['recipient', $recipient],
-				[$uid, $u],
-			]);
+			->with('recipient')
+			->willReturn($recipient);
+
+		$this->userManager->expects($this->any())
+			->method('getDisplayName')
+			->with($uid)
+			->willReturn($displayName);
 
 		$n = $this->getNotificationMock($parsedSubject, $uid, $displayName);
 		$this->notifier->prepare($n, 'de');
@@ -314,7 +308,6 @@ class NotifierTest extends TestCase {
 				],
 			])
 			->willReturnSelf();
-
 
 		$n->expects($this->exactly(2))
 			->method('getUser')
@@ -381,20 +374,15 @@ class NotifierTest extends TestCase {
 			->willReturn($l);
 
 		$recipient = $this->createMock(IUser::class);
-		$u = $this->createMock(IUser::class);
-		$u->expects($this->exactly(2))
-			->method('getDisplayName')
-			->willReturn($displayName);
-		$this->userManager->expects($this->exactly(2))
+		$this->userManager->expects($this->once())
 			->method('get')
-			->withConsecutive(
-				['recipient'],
-				[$uid]
-			)
-			->willReturnOnConsecutiveCalls(
-				$recipient,
-				$u
-			);
+			->with('recipient')
+			->willReturn($recipient);
+
+		$this->userManager->expects($this->once())
+			->method('getDisplayName')
+			->with($uid)
+			->willReturn($displayName);
 
 		$n->expects($this->once())
 			->method('setIcon')
@@ -902,27 +890,24 @@ class NotifierTest extends TestCase {
 			->willReturn($l);
 
 		$recipient = $this->createMock(IUser::class);
-		$userManagerGet['with'][] = ['recipient'];
-		$userManagerGet['willReturn'][] = $recipient;
+		$this->userManager->expects($this->once())
+			->method('get')
+			->with('recipient')
+			->willReturn($recipient);
 
-		$user = $this->createMock(IUser::class);
+		$userManagerGet = [
+			'with' => [],
+			'willReturn' => [],
+		];
 		if ($subjectParameters['userType'] === 'users' && !$deletedUser) {
-			$user->expects($this->once())
-				->method('getDisplayName')
-				->willReturn($displayName);
 			$userManagerGet['with'][] = [$subjectParameters['userId']];
-			$userManagerGet['willReturn'][] = $user;
+			$userManagerGet['willReturn'][] = $displayName;
 		} elseif ($subjectParameters['userType'] === 'users' && $deletedUser) {
-			$user->expects($this->never())
-				->method('getDisplayName');
 			$userManagerGet['with'][] = [$subjectParameters['userId']];
 			$userManagerGet['willReturn'][] = null;
-		} else {
-			$user->expects($this->never())
-				->method('getDisplayName');
 		}
 		$this->userManager->expects($this->exactly(count($userManagerGet['with'])))
-			->method('get')
+			->method('getDisplayName')
 			->withConsecutive(...$userManagerGet['with'])
 			->willReturnOnConsecutiveCalls(...$userManagerGet['willReturn']);
 

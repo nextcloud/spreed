@@ -34,7 +34,6 @@ use OCA\Talk\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\IL10N;
-use OCP\IUser;
 use OCP\IUserManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -97,7 +96,7 @@ class UserMentionTest extends TestCase {
 		$this->assertEquals([], $chatMessage->getMessageParameters());
 	}
 
-	public function testGetRichMessageWithSingleMention() {
+	public function testGetRichMessageWithSingleMention(): void {
 		$mentions = [
 			['type' => 'user', 'id' => 'testUser'],
 		];
@@ -109,9 +108,9 @@ class UserMentionTest extends TestCase {
 			->willReturn('testUser display name');
 
 		$this->userManager->expects($this->once())
-			->method('get')
+			->method('getDisplayName')
 			->with('testUser')
-			->willReturn($this->createMock(IUser::class));
+			->willReturn('testUser display name');
 
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);
@@ -148,9 +147,9 @@ class UserMentionTest extends TestCase {
 			->willReturn('testUser display name');
 
 		$this->userManager->expects($this->once())
-			->method('get')
+			->method('getDisplayName')
 			->with('testUser')
-			->willReturn($this->createMock(IUser::class));
+			->willReturn('testUser display name');
 
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);
@@ -210,12 +209,15 @@ class UserMentionTest extends TestCase {
 			});
 
 		$this->userManager->expects($this->exactly(2))
-			->method('get')
+			->method('getDisplayName')
 			->withConsecutive(
 				[$longerId],
 				[$baseId]
 			)
-			->willReturn($this->createMock(IUser::class));
+			->willReturnOnConsecutiveCalls(
+				$longerId . ' display name',
+				$baseId . ' display name'
+			);
 
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);
@@ -271,13 +273,17 @@ class UserMentionTest extends TestCase {
 			);
 
 		$this->userManager->expects($this->exactly(3))
-			->method('get')
+			->method('getDisplayName')
 			->withConsecutive(
 				['testUser1'],
 				['testUser2'],
 				['testUser3']
 			)
-			->willReturn($this->createMock(IUser::class));
+			->willReturnOnConsecutiveCalls(
+				'testUser1 display name',
+				'testUser2 display name',
+				'testUser3 display name'
+			);
 
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);
@@ -325,10 +331,10 @@ class UserMentionTest extends TestCase {
 			->willReturn('testUser display name');
 
 		$this->userManager->expects($this->exactly(2))
-			->method('get')
+			->method('getDisplayName')
 			->willReturnMap([
 				['me', null],
-				['testUser', $this->createMock(IUser::class)],
+				['testUser', 'testUser display name'],
 			]);
 
 		/** @var Room|MockObject $room */
@@ -365,9 +371,9 @@ class UserMentionTest extends TestCase {
 			->willThrowException(new \OutOfBoundsException());
 
 		$this->userManager->expects($this->once())
-			->method('get')
+			->method('getDisplayName')
 			->with('testUser')
-			->willReturn($this->createMock(IUser::class));
+			->willReturn('existing user but does not resolve later');
 
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);

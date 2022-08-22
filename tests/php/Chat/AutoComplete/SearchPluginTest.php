@@ -167,13 +167,13 @@ class SearchPluginTest extends TestCase {
 		return [
 			['test', [], [], [], []],
 			['test', ['current', 'foo', 'test', 'test1'], [
-				['uid' => 'current', 'name' => 'test'],
-				['uid' => 'test', 'name' => 'Te st'],
-				['uid' => 'test1', 'name' => 'Te st 1'],
+				['current', 'test'],
+				['test', 'Te st'],
+				['test1', 'Te st 1'],
 			], [['test1' => '']], [['test' => '']]],
 			['test', ['foo', 'bar'], [
-				['uid' => 'foo', 'name' => 'Test'],
-				['uid' => 'bar', 'name' => 'test One'],
+				['foo', 'Test'],
+				['bar', 'test One'],
 			], [['bar' => 'test One']], [['foo' => 'Test']]],
 			['', ['foo', 'bar'], [
 			], [['foo' => ''], ['bar' => '']], []],
@@ -191,13 +191,9 @@ class SearchPluginTest extends TestCase {
 	public function testSearchUsers($search, array $userIds, array $userNames, array $expected, array $expectedExact) {
 		$result = $this->createMock(ISearchResult::class);
 
-		$userMap = array_map(function ($userData) {
-			return [$userData['uid'], $this->createUserMock($userData)];
-		}, $userNames);
-
 		$this->userManager->expects($this->any())
-			->method('get')
-			->willReturnMap($userMap);
+			->method('getDisplayName')
+			->willReturnMap($userNames);
 
 		$result->expects($this->once())
 			->method('addResultSet')
@@ -286,12 +282,12 @@ class SearchPluginTest extends TestCase {
 	public function testCreateResult($type, $uid, $name, $managerName, array $expected) {
 		if ($managerName !== null) {
 			$this->userManager->expects($this->any())
-				->method('get')
+				->method('getDisplayName')
 				->with($uid)
-				->willReturn($this->createUserMock(['uid' => $uid, 'name' => $managerName]));
+				->willReturn($managerName);
 		} else {
 			$this->userManager->expects($this->any())
-				->method('get')
+				->method('getDisplayName')
 				->with($uid)
 				->willReturn(null);
 		}

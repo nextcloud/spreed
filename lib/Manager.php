@@ -1002,8 +1002,8 @@ class Manager {
 			}
 
 			if ($otherParticipant === '' && $room->getName() !== '') {
-				$user = $this->userManager->get($room->getName());
-				$otherParticipant = $user instanceof IUser ? $user->getDisplayName() : $this->l->t('Deleted user (%s)', $room->getName());
+				$userDisplayName = $this->userManager->getDisplayName($room->getName());
+				$otherParticipant = $userDisplayName ?? $this->l->t('Deleted user (%s)', $room->getName());
 			}
 
 			return $otherParticipant;
@@ -1054,8 +1054,7 @@ class Manager {
 		$displayNames = [];
 
 		foreach ($users as $participantId) {
-			$user = $this->userManager->get($participantId);
-			$displayNames[] = $user instanceof IUser ? $user->getDisplayName() : $participantId;
+			$displayNames[] = $this->userManager->getDisplayName($participantId) ?? $participantId;
 		}
 
 		$roomName = implode(', ', $displayNames);

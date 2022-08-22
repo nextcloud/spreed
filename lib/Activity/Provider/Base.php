@@ -43,9 +43,6 @@ abstract class Base implements IProvider {
 	protected IUserManager $userManager;
 	protected Manager $manager;
 
-	/** @var string[] */
-	protected array $displayNames = [];
-
 	public function __construct(IFactory $languageFactory,
 								IURLGenerator $url,
 								Config $config,
@@ -134,22 +131,10 @@ abstract class Base implements IProvider {
 	}
 
 	protected function getUser(string $uid): array {
-		if (!isset($this->displayNames[$uid])) {
-			$this->displayNames[$uid] = $this->getDisplayName($uid);
-		}
-
 		return [
 			'type' => 'user',
 			'id' => $uid,
-			'name' => $this->displayNames[$uid],
+			'name' => $this->userManager->getDisplayName($uid) ?? $uid,
 		];
-	}
-
-	protected function getDisplayName(string $uid): string {
-		$user = $this->userManager->get($uid);
-		if ($user instanceof IUser) {
-			return $user->getDisplayName();
-		}
-		return $uid;
 	}
 }
