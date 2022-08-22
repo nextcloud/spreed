@@ -33,7 +33,6 @@ use OCP\Collaboration\Collaborators\ISearchPlugin;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
 use OCP\IL10N;
-use OCP\IUser;
 use OCP\IUserManager;
 
 class SearchPlugin implements ISearchPlugin {

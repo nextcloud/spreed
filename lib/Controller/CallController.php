@@ -36,7 +36,6 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
-use OCP\IUser;
 use OCP\IUserManager;
 
 class CallController extends AEnvironmentAwareController {
