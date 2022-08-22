@@ -29,7 +29,7 @@
 			<p class="simple-polls-editor__caption">
 				{{ t('spreed', 'Question') }}
 			</p>
-			<NcTextField :value.sync="pollQuestion" :placeholder="t('spreed', 'Ask a question ')" v-on="$listeners" />
+			<NcTextField :value.sync="pollQuestion" :placeholder="t('spreed', 'Ask a question')" v-on="$listeners" />
 
 			<!-- Poll options -->
 			<p class="simple-polls-editor__caption">
