@@ -22,7 +22,7 @@
 <template>
 	<div class="wrapper">
 		<a v-observe-visibility="getPollData"
-			:aria-label="t('spreed', 'poll')"
+			:aria-label="t('spreed', 'Poll')"
 			class="poll"
 			role="button"
 			@click="showModal = true">
