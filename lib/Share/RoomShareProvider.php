@@ -678,7 +678,7 @@ class RoomShareProvider implements IShareProvider {
 	 *
 	 * @param int[] $id
 	 * @param string|null $recipientId
-	 * @return (IShare|false)[]
+	 * @return IShare[]
 	 */
 	public function getSharesByIds(array $ids, ?string $recipientId = null): array {
 		$qb = $this->dbConnection->getQueryBuilder();
