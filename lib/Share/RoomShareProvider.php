@@ -662,9 +662,8 @@ class RoomShareProvider implements IShareProvider {
 			$share = $shares[0];
 		}
 
+		// Shares referring to deleted files are stored as 'false' in the cache.
 		if ($share === false) {
-			// Shares referring to deleted files are stored as 'false',
-			// both in the cache and in the array returned from getSharesByIds.
 			throw new ShareNotFound();
 		}
 
