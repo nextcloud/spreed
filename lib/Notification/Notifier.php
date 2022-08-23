@@ -36,6 +36,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Webinary;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\HintException;
@@ -242,6 +243,13 @@ class Notifier implements INotifier {
 			return $this->parseInvitation($notification, $room, $l);
 		}
 		if ($subject === 'call') {
+			if ($room->getLobbyState() !== Webinary::LOBBY_NONE &&
+				$participant instanceof Participant &&
+				!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+				// User is blocked by the lobby, remove notification
+				throw new AlreadyProcessedException();
+			}
+
 			if ($room->getObjectType() === 'share:password') {
 				return $this->parsePasswordRequest($notification, $room, $l);
 			}
