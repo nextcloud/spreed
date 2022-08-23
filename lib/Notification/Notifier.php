@@ -269,6 +269,13 @@ class Notifier implements INotifier {
 			return $this->parseCall($notification, $room, $l);
 		}
 		if ($subject === 'reply' || $subject === 'mention' || $subject === 'chat') {
+			if ($room->getLobbyState() !== Webinary::LOBBY_NONE &&
+				$participant instanceof Participant &&
+				!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+				// User is blocked by the lobby, remove notification
+				throw new AlreadyProcessedException();
+			}
+
 			return $this->parseChatMessage($notification, $room, $participant, $l);
 		}
 
