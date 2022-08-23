@@ -39,12 +39,21 @@
 				</NcButton>
 			</div>
 		</template>
-		<NcAppNavigationCaption :title="t('spreed', 'Projects')" />
-		<CollectionList v-if="getUserId && token"
-			:id="token"
-			type="room"
-			:name="conversation.displayName"
-			:is-active="active" />
+		<template v-if="projectsEnabled">
+			<NcAppNavigationCaption :title="t('spreed', 'Projects')" />
+			<CollectionList v-if="getUserId && token"
+				:id="token"
+				type="room"
+				:name="conversation.displayName"
+				:is-active="active" />
+		</template>
+		<NcEmptyContent v-else-if="!hasSharedItems">
+			<template #icon>
+				<FolderMultipleImage :size="20" />
+			</template>
+
+			{{ t('spreed', 'No shared items') }}
+		</NcEmptyContent>
 		<SharedItemsBrowser v-if="showSharedItemsBrowser"
 			:shared-items="sharedItems"
 			:active-tab.sync="browserActiveTab"
@@ -54,11 +63,15 @@
 
 <script>
 import { CollectionList } from 'nextcloud-vue-collections'
+import { loadState } from '@nextcloud/initial-state'
+
 import SharedItems from './SharedItems.vue'
 import { SHARED_ITEM } from '../../../constants.js'
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import SharedItemsBrowser from './SharedItemsBrowser/SharedItemsBrowser.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import sharedItems from '../../../mixins/sharedItems.js'
 
@@ -70,9 +83,11 @@ export default {
 		SharedItems,
 		CollectionList,
 		NcAppNavigationCaption,
+		NcButton,
+		NcEmptyContent,
 		SharedItemsBrowser,
 		DotsHorizontal,
-		NcButton,
+		FolderMultipleImage,
 	},
 
 	mixins: [sharedItems],
@@ -89,6 +104,7 @@ export default {
 		return {
 			showSharedItemsBrowser: false,
 			browserActiveTab: '',
+			projectsEnabled: loadState('core', 'projects_enabled', false),
 		}
 	},
 
@@ -106,11 +122,15 @@ export default {
 		},
 
 		loading() {
-			return !this.sharedItems
+			return !this.$store.getters.isOverviewLoaded(this.token)
 		},
 
 		sharedItems() {
 			return this.$store.getters.sharedItems(this.token)
+		},
+
+		hasSharedItems() {
+			return Object.keys(this.$store.getters.sharedItems(this.token)).length > 0
 		},
 	},
 

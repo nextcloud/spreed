@@ -66,6 +66,10 @@ const state = {
 }
 
 const getters = {
+	isOverviewLoaded: state => token => {
+		return !!state.overviewLoaded[token]
+	},
+
 	sharedItems: state => token => {
 		const sharedItems = {}
 		if (!state.sharedItemsByConversationAndType[token]) {
