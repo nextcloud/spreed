@@ -608,12 +608,12 @@ class RoomShareProvider implements IShareProvider {
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('share.*', 'ta.history_since', 'tr.show_history')
 			->from('share', 'share')
-			->join('share', 'talk_rooms', 'tr', $qb->expr()->eq('tr.token', 'share.share_with'))
-			->join('tr', 'talk_attendees', 'ta', $qb->expr()->andX(
-				$qb->expr()->eq('ta.room_id', 'tr.id')
-			))
-			->andWhere(
-				$qb->expr()->eq('ta.actor_id', $qb->createNamedParameter($userId))
+			->leftJoin('share', 'talk_rooms', 'tr', $qb->expr()->eq('tr.token', 'share.share_with'))
+			->leftJoin('tr', 'talk_attendees', 'ta',
+				$qb->expr()->andX(
+					$qb->expr()->eq('ta.room_id', 'tr.id'),
+					$qb->expr()->eq('ta.actor_id', $qb->createNamedParameter($userId))
+				)
 			);
 
 		$qb->andWhere($qb->expr()->eq('share.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)));
@@ -658,11 +658,13 @@ class RoomShareProvider implements IShareProvider {
 	}
 
 	private function participantCanSeeShareSince(IShare $share, array $data): bool {
-		if ($data['show_history'] === null && $data['history_since']) {
-			// $this->timeFactory->getDateTime($data['history_since'], new \DateTimeZone('UTC'))
-			$historySince = \DateTime::createFromFormat('Y-m-d H:i:s', $data['history_since']);
-			if ($share->getShareTime() < $historySince) {
-				return false;
+		if (!empty($data['show_history']) && !empty($data['history_since'])) {
+			if ($data['show_history'] === null && $data['history_since']) {
+				// $this->timeFactory->getDateTime($data['history_since'], new \DateTimeZone('UTC'))
+				$historySince = \DateTime::createFromFormat('Y-m-d H:i:s', $data['history_since']);
+				if ($share->getShareTime() < $historySince) {
+					return false;
+				}
 			}
 		}
 		return true;
@@ -870,14 +872,16 @@ class RoomShareProvider implements IShareProvider {
 			)
 				->selectAlias('st.id', 'storage_string_id')
 				->from('share', 's')
-				->join('s', 'talk_rooms', 'tr', $qb->expr()->eq('tr.token', 's.share_with'))
-				->join('tr', 'talk_attendees', 'ta', $qb->expr()->eq('ta.room_id', 'tr.id'))
+				->leftJoin('s', 'talk_rooms', 'tr', $qb->expr()->eq('tr.token', 's.share_with'))
+				->leftJoin('tr', 'talk_attendees', 'ta',
+					$qb->expr()->andX(
+						$qb->expr()->eq('ta.room_id', 'tr.id'),
+						$qb->expr()->eq('ta.actor_id', $qb->createNamedParameter($userId))
+					)
+				)
 				->orderBy('s.id')
 				->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
-				->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'))
-				->andWhere(
-					$qb->expr()->eq('ta.actor_id', $qb->createNamedParameter($userId))
-				);
+				->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'));
 
 
 			if ($limit !== -1) {
