@@ -32,6 +32,7 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IConfig;
@@ -450,6 +451,13 @@ class Notifier {
 
 				$participant = $room->getParticipant($userId, false);
 				$attendee = $participant->getAttendee();
+			} else {
+				$participant = new Participant($room, $attendee, null);
+			}
+
+			if ($room->getLobbyState() !== Webinary::LOBBY_NONE &&
+				!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+				return false;
 			}
 
 			$notificationLevel = $attendee->getNotificationLevel();
