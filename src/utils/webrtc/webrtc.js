@@ -913,7 +913,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 
 		usersChanged(signaling, [], previousUsersInRoom)
 		usersInCallMapping = {}
-		previousUsersInRoom = []
 
 		// Reconnects with a new session id will trigger "usersChanged"
 		// with the users in the room and that will re-establish the
@@ -1653,7 +1652,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 
 		usersChanged(signaling, [], previousUsersInRoom)
 		usersInCallMapping = {}
-		previousUsersInRoom = []
 	})
 
 	return webrtc
