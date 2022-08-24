@@ -112,7 +112,7 @@ class RoomShareProvider implements IShareProvider {
 	/*
 	 * Clean sharesByIdCache
 	 */
-	private function cleanSharesByIdCache() {
+	private function cleanSharesByIdCache(): void {
 		$this->sharesByIdCache = new CappedMemoryCache();
 	}
 
@@ -675,7 +675,7 @@ class RoomShareProvider implements IShareProvider {
 	 *
 	 * Not part of IShareProvider API, but needed by OCA\Talk\Controller\ChatController.
 	 *
-	 * @param int[] $id
+	 * @param int[] $ids
 	 * @param string|null $recipientId
 	 * @return IShare[]
 	 */

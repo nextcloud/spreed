@@ -312,8 +312,10 @@ class ChatController extends AEnvironmentAwareController {
 	/*
 	 * Gather share IDs from the comments and preload share definitions
 	 * to avoid separate database query for each individual share.
+	 *
+	 * @param IComment[] $comments
 	 */
-	protected function preloadShares(array $comments) {
+	protected function preloadShares(array $comments): void {
 		// Scan messages for share IDs
 		$shareIds = [];
 		foreach ($comments as $comment) {
