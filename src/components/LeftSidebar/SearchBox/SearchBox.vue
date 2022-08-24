@@ -101,7 +101,7 @@ export default {
 	methods: {
 		// Focus the input field of the searchbox component.
 		focusInput() {
-			this.$refs.searchConversations.focus()
+			this.$refs.searchConversations.$el.focus()
 		},
 		// Focuses the input if the current route is root.
 		focusInputIfRoot() {
