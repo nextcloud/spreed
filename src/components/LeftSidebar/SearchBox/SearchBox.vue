@@ -140,8 +140,4 @@ export default {
 	flex-grow: 1;
 }
 
-.abort-search {
-	margin-left: -44px;
-}
-
 </style>
