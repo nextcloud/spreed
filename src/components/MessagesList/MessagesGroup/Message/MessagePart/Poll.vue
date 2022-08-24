@@ -33,8 +33,9 @@
 				</p>
 			</div>
 			<div class="poll__footer">
-				{{ t('spreed', 'Poll ・ Click to vote') }}
+				{{ selfHasVoted ? t('spreed', 'Poll ・ You voted') : t('spreed', 'Poll ・ Click to vote') }}
 			</div>
+
 		</a>
 
 		<!-- voting and results dialog -->
@@ -213,6 +214,19 @@ export default {
 		},
 
 		selfHasVoted() {
+			if (this.pollLoaded) {
+				if (typeof this.votedSelf === 'object') {
+					return this.votedSelf.length > 0
+				} else {
+					return !!this.votedSelf
+				}
+			} else {
+				return undefined
+			}
+		},
+
+		// The actual vote of the user as returned from the server
+		votedSelf() {
 			return this.pollLoaded ? this.poll.votedSelf : undefined
 		},
 
@@ -316,12 +330,12 @@ export default {
 			if (this.checkboxRadioSwitchType === 'radio') {
 				this.vote = ''
 				if (this.selfHasVoted) {
-					this.vote = this.selfHasVoted[0].toString()
+					this.vote = this.votedSelf[0].toString()
 				}
 			} else {
 				this.vote = []
 				if (this.selfHasVoted) {
-					this.vote = this.selfHasVoted.map(element => element.toString())
+					this.vote = this.votedSelf.map(element => element.toString())
 				}
 			}
 		},
@@ -329,6 +343,8 @@ export default {
 		openPoll() {
 			if (this.selfHasVoted) {
 				this.modalPage = 'results'
+			} else {
+				this.modalPage = 'voting'
 			}
 			this.showModal = true
 		},
