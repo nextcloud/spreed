@@ -223,7 +223,11 @@ export default {
 		},
 
 		checkboxRadioSwitchType() {
-			return this.poll.maxVotes === 0 ? 'checkbox' : 'radio'
+			if (this.pollLoaded) {
+				return this.poll.maxVotes === 0 ? 'checkbox' : 'radio'
+			} else {
+				return undefined
+			}
 		},
 
 		canSubmitVote() {
