@@ -338,8 +338,14 @@ Signaling.Base.prototype.leaveCall = function(token, keepToken, all = false) {
 				}
 			}.bind(this))
 			.catch(function() {
+				this._trigger('leaveCall', [token, keepToken])
 				reject(new Error())
-			})
+				// We left the current call.
+				if (!keepToken && token === this.currentCallToken) {
+					this.currentCallToken = null
+					this.currentCallFlags = null
+				}
+			}.bind(this))
 	})
 }
 
