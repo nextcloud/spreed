@@ -1046,6 +1046,7 @@ OC.L10N.register(
     "Shared items" : "Общие элементы",
     "Participants ({count})" : "Участники ({count})",
     "Projects" : "Проекты",
+    "No shared items" : "Нет общих элементов",
     "Show all media" : "Показать все медиа",
     "Show all files" : "Показать всё файлы",
     "Show all voice messages" : "Показать все голосовые сообщения",

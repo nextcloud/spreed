@@ -1044,6 +1044,7 @@ OC.L10N.register(
     "Shared items" : "Zdieľané položky",
     "Participants ({count})" : "({count}) účastníkov",
     "Projects" : "Projekty",
+    "No shared items" : "Žiadne zdieľané položky",
     "Show all files" : "Zobraziť všetky súbory",
     "Meeting ID: {meetingId}" : "ID schôdzky: {meetingId}",
     "Your PIN: {attendeePin}" : "Váš PIN: {attendeePin}",
