@@ -35,18 +35,14 @@
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
-import Close from 'vue-material-design-icons/Close.vue'
 import { EventBus } from '../../../services/EventBus.js'
 
 export default {
 	name: 'SearchBox',
 	components: {
-		NcButton,
 		NcTextField,
-		Close,
 		Magnify,
 	},
 	props: {
