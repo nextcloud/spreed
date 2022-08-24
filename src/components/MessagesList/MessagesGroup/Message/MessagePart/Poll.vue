@@ -117,7 +117,11 @@
 					</div>
 					<div v-if="pollIsOpen"
 						class="poll__modal-actions">
-						<NcButton type="tertiary"
+						<!-- Dismiss -->
+						<NcButton type="secondary"
+							@click="dismissModal">
+							{{ t('spreed', 'Dismiss') }}
+						</NcButton>
 							@click="modalPage = 'voting'">
 							{{ t('spreed', 'Back') }}
 						</NcButton>
