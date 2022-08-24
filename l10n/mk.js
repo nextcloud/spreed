@@ -824,6 +824,7 @@ OC.L10N.register(
     "Shared items" : "Споделени предмети",
     "Participants ({count})" : "Учесници ({count})",
     "Projects" : "Проекти",
+    "No shared items" : "Нема споделени предмети",
     "Show all media" : "Прикажи ги сите медиа датотеки",
     "Show all files" : "Прикажи ги сите датотеки",
     "Show all voice messages" : "Прикажи ги сите говорни пораки",

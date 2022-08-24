@@ -1070,6 +1070,7 @@ OC.L10N.register(
     "Shared items" : "共有済みアイテム",
     "Participants ({count})" : "参加者 ({count})",
     "Projects" : "プロジェクト",
+    "No shared items" : "共有アイテムがありません",
     "Show all media" : "全てのメディアを表示",
     "Show all files" : "すべてのファイルを表示",
     "Show all deck cards" : "全てのDeckカードを表示",

@@ -525,6 +525,7 @@ OC.L10N.register(
     "Reply" : "Svar",
     "Mark as unread" : "Merk som ulest",
     "Contact" : "Kontakt",
+    "Poll" : "Avstemning",
     "Submit" : "Send inn",
     "Today" : "I dag",
     "Yesterday" : "I går",
