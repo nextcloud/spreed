@@ -52,7 +52,7 @@ let ownScreenPeer = null
 let selfInCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
 // Special variable to know when the local user explicitly joined and left the
 // call; this is needed to know when the user was kicked out from the call by a
-// moderator.
+// moderator and discard signaling events if received when not in the call.
 let localUserInCall = false
 const delayedConnectionToPeer = []
 let callParticipantCollection = null
@@ -527,12 +527,20 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	localCallParticipantModel = _localCallParticipantModel
 
 	signaling.on('usersLeft', function(users) {
+		if (!localUserInCall) {
+			return
+		}
+
 		users.forEach(function(user) {
 			delete usersInCallMapping[user]
 		})
 		usersChanged(signaling, [], users)
 	})
 	signaling.on('usersChanged', function(users) {
+		if (!localUserInCall) {
+			return
+		}
+
 		users.forEach(function(user) {
 			const sessionId = user.sessionId || user.sessionid
 			usersInCallMapping[sessionId] = user
@@ -540,6 +548,10 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		usersInCallChanged(signaling, usersInCallMapping)
 	})
 	signaling.on('participantFlagsChanged', function(event) {
+		if (!localUserInCall) {
+			return
+		}
+
 		/**
 		 * event {
 		 *   roomid: "1609407087",
@@ -558,6 +570,10 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		}
 	})
 	signaling.on('usersInRoom', function(users) {
+		if (!localUserInCall) {
+			return
+		}
+
 		usersInCallMapping = {}
 		users.forEach(function(user) {
 			const sessionId = user.sessionId || user.sessionid
@@ -614,6 +630,14 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	})
 
 	signaling.on('message', function(message) {
+		if (!localUserInCall) {
+			console.debug('Message received when not in the call, ignore', message.type, message)
+
+			message.type = 'message-to-ignore'
+
+			return
+		}
+
 		if (message.type === 'answer' && message.roomType === 'video' && delayedConnectionToPeer[message.from]) {
 			clearInterval(delayedConnectionToPeer[message.from])
 			delete delayedConnectionToPeer[message.from]
@@ -641,12 +665,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		if (message.roomType === 'video' && delayedConnectionToPeer[message.from]) {
 			clearInterval(delayedConnectionToPeer[message.from])
 			delete delayedConnectionToPeer[message.from]
-		}
-
-		if (!selfInCall) {
-			console.debug('Offer received when not in the call, ignore')
-
-			message.type = 'offer-to-ignore'
 		}
 
 		// MCU screen offers do not include the "broadcaster" property,
