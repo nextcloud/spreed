@@ -137,6 +137,7 @@ export default {
 	z-index: 1;
 	display: flex;
 	justify-content: center;
+	flex-grow: 1;
 }
 
 .abort-search {
