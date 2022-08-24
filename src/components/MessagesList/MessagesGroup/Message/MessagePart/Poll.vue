@@ -251,7 +251,11 @@ export default {
 		},
 
 		canSubmitVote() {
-			return this.vote !== undefined && this.vote !== '' && this.vote !== []
+			if (typeof this.vote === 'object') {
+				return this.vote.length > 0
+			} else {
+				return this.vote !== undefined && this.vote !== ''
+			}
 		},
 
 		getVotePercentage() {
