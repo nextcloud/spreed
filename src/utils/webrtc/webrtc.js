@@ -599,12 +599,20 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		// stopped, as the current own session is not passed along with the
 		// sessions of the other participants as "disconnected" to
 		// "usersChanged" when a call is left.
-		// The peer, on the other hand, is automatically ended by "leaveCall"
-		// below.
+		// The peer, on the other hand, is ended by the calls below.
 		if (ownPeer && delayedConnectionToPeer[ownPeer.id]) {
 			clearInterval(delayedConnectionToPeer[ownPeer.id])
 			delete delayedConnectionToPeer[ownPeer.id]
 		}
+
+		// Besides stopping the media "leaveCall" would end the peers, but it
+		// does not stop the timers for pending connections, removes models or
+		// clears the call data, so this needs to be explicitly done here
+		// instead.
+		selfInCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
+
+		usersChanged(signaling, [], previousUsersInRoom)
+		usersInCallMapping = {}
 
 		webrtc.leaveCall()
 	})
