@@ -25,7 +25,7 @@
 			:aria-label="t('spreed', 'Poll')"
 			class="poll"
 			role="button"
-			@click="showModal = true">
+			@click="openPoll">
 			<div class="poll__header">
 				<PollIcon :size="20" />
 				<p>
@@ -78,7 +78,7 @@
 					</div>
 
 					<div class="poll__modal-actions">
-						<NcButton type="tertiary" @click="dismissModal">
+						<NcButton type="secondary" @click="dismissModal">
 							{{ t('spreed', 'Dismiss') }}
 						</NcButton>
 						<!-- create poll button-->
@@ -122,8 +122,10 @@
 							@click="dismissModal">
 							{{ t('spreed', 'Dismiss') }}
 						</NcButton>
+						<!-- Vote again-->
+						<NcButton type="secondary"
 							@click="modalPage = 'voting'">
-							{{ t('spreed', 'Back') }}
+							{{ t('spreed', 'Change your vote') }}
 						</NcButton>
 						<!-- create poll button-->
 						<NcButton v-if="canClosePoll"
@@ -285,13 +287,19 @@ export default {
 	watch: {
 
 		pollLoaded() {
-			this.setComponentData()
+			this.setVoteData()
+		},
+
+		modalPage(value) {
+			if (value === 'voting') {
+				this.setVoteData()
+			}
 		},
 
 	},
 
 	mounted() {
-		this.setComponentData()
+		this.setVoteData()
 	},
 
 	methods: {
@@ -304,13 +312,25 @@ export default {
 			}
 		},
 
-		setComponentData() {
+		setVoteData() {
 			if (this.checkboxRadioSwitchType === 'radio') {
 				this.vote = ''
+				if (this.selfHasVoted) {
+					this.vote = this.selfHasVoted[0].toString()
+				}
 			} else {
 				this.vote = []
+				if (this.selfHasVoted) {
+					this.vote = this.selfHasVoted.map(element => element.toString())
+				}
 			}
-			this.pollIsOpen ? this.modalPage = 'voting' : this.modalPage = 'results'
+		},
+
+		openPoll() {
+			if (this.selfHasVoted) {
+				this.modalPage = 'results'
+			}
+			this.showModal = true
 		},
 
 		dismissModal() {
@@ -405,7 +425,7 @@ export default {
 		bottom: 0;
 		display: flex;
 		justify-content: center;
-		gap: 4px;
+		gap: 8px;
 		padding: 12px 0 0 0;
 		background-color: var(--color-main-background);
 		padding-bottom: 20px;
