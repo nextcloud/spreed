@@ -38,6 +38,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Cache\CappedMemoryCache;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Folder;
@@ -83,6 +84,8 @@ class RoomShareProvider implements IShareProvider {
 	private IL10N $l;
 	private IMimeTypeLoader $mimeTypeLoader;
 
+	private CappedMemoryCache $sharesByIdCache;
+
 	public function __construct(
 			IDBConnection $connection,
 			ISecureRandom $secureRandom,
@@ -103,6 +106,14 @@ class RoomShareProvider implements IShareProvider {
 		$this->timeFactory = $timeFactory;
 		$this->l = $l;
 		$this->mimeTypeLoader = $mimeTypeLoader;
+		$this->sharesByIdCache = new CappedMemoryCache();
+	}
+
+	/*
+	 * Clean sharesByIdCache
+	 */
+	private function cleanSharesByIdCache(): void {
+		$this->sharesByIdCache = new CappedMemoryCache();
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
@@ -314,6 +325,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare The share object
 	 */
 	public function update(IShare $share): IShare {
+		$this->cleanSharesByIdCache();
+
 		$update = $this->dbConnection->getQueryBuilder();
 		$update->update('share')
 			->where($update->expr()->eq('id', $update->createNamedParameter($share->getId())))
@@ -357,6 +370,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @param IShare $share
 	 */
 	public function delete(IShare $share): void {
+		$this->cleanSharesByIdCache();
+
 		$delete = $this->dbConnection->getQueryBuilder();
 		$delete->delete('share')
 			->where($delete->expr()->eq('id', $delete->createNamedParameter($share->getId())));
@@ -376,6 +391,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $recipient UserId of the recipient
 	 */
 	public function deleteFromSelf(IShare $share, $recipient): void {
+		$this->cleanSharesByIdCache();
+
 		// Check if there is a userroom share
 		$qb = $this->dbConnection->getQueryBuilder();
 		$stmt = $qb->select(['id', 'permissions'])
@@ -428,6 +445,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @throws GenericShareException In case the share could not be restored
 	 */
 	public function restore(IShare $share, string $recipient): IShare {
+		$this->cleanSharesByIdCache();
+
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('permissions')
 			->from('share')
@@ -468,6 +487,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare
 	 */
 	public function move(IShare $share, $recipient): IShare {
+		$this->cleanSharesByIdCache();
+
 		// Check if there is a userroom share
 		$qb = $this->dbConnection->getQueryBuilder();
 		$stmt = $qb->select('id')
@@ -631,6 +652,34 @@ class RoomShareProvider implements IShareProvider {
 	 * @throws ShareNotFound
 	 */
 	public function getShareById($id, $recipientId = null): IShare {
+		if (($recipientId === null) && isset($this->sharesByIdCache[$id])) {
+			$share = $this->sharesByIdCache[$id];
+		} else {
+			$shares = $this->getSharesByIds([$id], $recipientId);
+			if (empty($shares)) {
+				throw new ShareNotFound();
+			}
+			$share = $shares[0];
+		}
+
+		// Shares referring to deleted files are stored as 'false' in the cache.
+		if ($share === false) {
+			throw new ShareNotFound();
+		}
+
+		return $share;
+	}
+
+	/**
+	 * Get shares by ids
+	 *
+	 * Not part of IShareProvider API, but needed by OCA\Talk\Controller\ChatController.
+	 *
+	 * @param int[] $ids
+	 * @param string|null $recipientId
+	 * @return IShare[]
+	 */
+	public function getSharesByIds(array $ids, ?string $recipientId = null): array {
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('s.*',
 			'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
@@ -641,28 +690,40 @@ class RoomShareProvider implements IShareProvider {
 			->from('share', 's')
 			->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
 			->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'))
-			->where($qb->expr()->eq('s.id', $qb->createNamedParameter($id)))
+			->where($qb->expr()->in('s.id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)))
 			->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)));
 
 		$cursor = $qb->executeQuery();
-		$data = $cursor->fetch();
+
+		/*
+		 * Keep retrieved shares in sharesByIdCache.
+		 *
+		 * Fill the cache only when $recipientId === null.
+		 *
+		 * For inaccessible shares use 'false' instead of the IShare object.
+		 * (This is required to avoid additional queries in getShareById when
+		 * the share refers to a deleted file.)
+		 */
+		$shares = [];
+		while ($data = $cursor->fetch()) {
+			$id = $data['id'];
+			if ($this->isAccessibleResult($data)) {
+				$share = $this->createShareObject($data);
+				$shares[] = $share;
+			} else {
+				$share = false;
+			}
+			if ($recipientId === null && !isset($this->sharesByIdCache[$id])) {
+				$this->sharesByIdCache[$id] = $share;
+			}
+		}
 		$cursor->closeCursor();
 
-		if ($data === false) {
-			throw new ShareNotFound();
-		}
-
-		if (!$this->isAccessibleResult($data)) {
-			throw new ShareNotFound();
-		}
-
-		$share = $this->createShareObject($data);
-
 		if ($recipientId !== null) {
-			$share = $this->resolveSharesForRecipient([$share], $recipientId)[0];
+			return $this->resolveSharesForRecipient($shares, $recipientId);
+		} else {
+			return $shares;
 		}
-
-		return $share;
 	}
 
 	/**
@@ -1056,6 +1117,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string|null $user
 	 */
 	public function deleteInRoom(string $roomToken, string $user = null): void {
+		$this->cleanSharesByIdCache();
+
 		//First delete all custom room shares for the original shares to be removed
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('id')
