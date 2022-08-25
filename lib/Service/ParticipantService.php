@@ -698,17 +698,12 @@ class ParticipantService {
 
 		$session = $participant->getSession();
 		if ($session instanceof Session) {
-			$dispatchLeaveCallEvents = $session->getInCall() !== Participant::FLAG_DISCONNECTED;
-			if ($dispatchLeaveCallEvents) {
-				$event = new ModifyParticipantEvent($room, $participant, 'inCall', Participant::FLAG_DISCONNECTED, $session->getInCall());
-				$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_LEAVE_CALL, $event);
+			$isInCall = $session->getInCall() !== Participant::FLAG_DISCONNECTED;
+			if ($isInCall) {
+				$this->changeInCall($room, $participant, Participant::FLAG_DISCONNECTED);
 			}
 
 			$this->sessionMapper->delete($session);
-
-			if ($dispatchLeaveCallEvents) {
-				$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $event);
-			}
 		} else {
 			$this->sessionMapper->deleteByAttendeeId($participant->getAttendee()->getId());
 		}
