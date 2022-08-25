@@ -406,7 +406,6 @@ export default {
 		gap: 8px;
 		white-space: normal;
 		align-items: flex-start;
-		position: sticky;
 		top: 0;
 		padding: 0 0 8px 0;
 		background-color: var(--color-main-background);
