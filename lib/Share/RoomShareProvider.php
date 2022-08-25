@@ -659,12 +659,9 @@ class RoomShareProvider implements IShareProvider {
 
 	private function participantCanSeeShareSince(IShare $share, array $data): bool {
 		if (!empty($data['show_history']) && !empty($data['history_since'])) {
-			if ($data['show_history'] === null && $data['history_since']) {
-				// $this->timeFactory->getDateTime($data['history_since'], new \DateTimeZone('UTC'))
-				$historySince = \DateTime::createFromFormat('Y-m-d H:i:s', $data['history_since']);
-				if ($share->getShareTime() < $historySince) {
-					return false;
-				}
+			$historySince = $this->timeFactory->getDateTime($data['history_since'], new \DateTimeZone('UTC'));
+			if ($share->getShareTime() < $historySince) {
+				return false;
 			}
 		}
 		return true;
