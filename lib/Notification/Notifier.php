@@ -393,6 +393,10 @@ class Notifier implements INotifier {
 			throw new AlreadyProcessedException();
 		}
 
+		if ($message->getMessageType() === 'comment_deleted') {
+			throw new AlreadyProcessedException();
+		}
+
 		$placeholders = $replacements = [];
 		foreach ($message->getMessageParameters() as $placeholder => $parameter) {
 			$placeholders[] = '{' . $placeholder . '}';
