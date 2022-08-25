@@ -28,6 +28,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
+use OCA\Talk\Events\DuplicatedParticipantEvent;
 use OCA\Talk\Events\EndCallForEveryoneEvent;
 use OCA\Talk\Events\ModifyEveryoneEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
@@ -254,9 +255,13 @@ class Listener {
 
 			$sessionIds = [];
 			if ($event->getParticipant()->getSession()) {
-				// Only for guests and self-joined users disconnecting is "leaving" and therefor should trigger a disinvite
+				// If a previous duplicated session is being removed it must be
+				// notified to the external signaling server. Otherwise only for
+				// guests and self-joined users disconnecting is "leaving" and
+				// therefor should trigger a disinvite.
 				$attendeeParticipantType = $event->getParticipant()->getAttendee()->getParticipantType();
-				if ($attendeeParticipantType === Participant::GUEST
+				if ($event instanceof DuplicatedParticipantEvent
+					|| $attendeeParticipantType === Participant::GUEST
 					|| $attendeeParticipantType === Participant::GUEST_MODERATOR) {
 					$sessionIds[] = $event->getParticipant()->getSession()->getSessionId();
 					$notifier->roomSessionsRemoved($event->getRoom(), $sessionIds);

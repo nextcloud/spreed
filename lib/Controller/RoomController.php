@@ -1401,7 +1401,7 @@ class RoomController extends AEnvironmentAwareController {
 				$this->participantService->changeInCall($room, $previousParticipant, Participant::FLAG_DISCONNECTED);
 			}
 
-			$this->participantService->leaveRoomAsSession($room, $previousParticipant);
+			$this->participantService->leaveRoomAsSession($room, $previousParticipant, true);
 		}
 
 		$user = $this->userManager->get($this->userId);
