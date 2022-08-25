@@ -496,9 +496,9 @@ class SystemMessage {
 		} elseif ($message === 'poll_closed') {
 			$parsedParameters['poll'] = $parameters['poll'];
 			$parsedParameters['poll']['id'] = (string) $parsedParameters['poll']['id'];
-			$parsedMessage = $this->l->t('{actor} closed the poll {poll}');
+			$parsedMessage = $this->l->t('{actor} ended the poll {poll}');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You closed the poll {poll}');
+				$parsedMessage = $this->l->t('You ended the poll {poll}');
 			}
 		} elseif ($message === 'poll_voted') {
 			$parsedParameters['poll'] = $parameters['poll'];
