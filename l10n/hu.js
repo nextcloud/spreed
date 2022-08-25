@@ -1018,6 +1018,7 @@ OC.L10N.register(
     "Deck Card" : "Kártya",
     "Remove {fileName}" : "{fileName} eltávolítása",
     "Open this location in OpenStreetMap" : "Hely megnyitása az OpenStreetMapen",
+    "Poll" : "Szavazás",
     "Poll ・ Click to vote" : "Szavazás ・ Kattintson a szavazáshoz",
     "Submit" : "Beküldés",
     "Close poll" : "Szavazás lezárása",
