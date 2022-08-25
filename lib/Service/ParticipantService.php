@@ -33,6 +33,7 @@ use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\ChatEvent;
+use OCA\Talk\Events\DuplicatedParticipantEvent;
 use OCA\Talk\Events\EndCallForEveryoneEvent;
 use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
@@ -692,8 +693,12 @@ class ParticipantService {
 		}
 	}
 
-	public function leaveRoomAsSession(Room $room, Participant $participant): void {
-		$event = new ParticipantEvent($room, $participant);
+	public function leaveRoomAsSession(Room $room, Participant $participant, bool $duplicatedParticipant = false): void {
+		if ($duplicatedParticipant) {
+			$event = new DuplicatedParticipantEvent($room, $participant);
+		} else {
+			$event = new ParticipantEvent($room, $participant);
+		}
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_DISCONNECT, $event);
 
 		$session = $participant->getSession();
