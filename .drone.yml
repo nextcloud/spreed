@@ -13,7 +13,9 @@ steps:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
+      - git clone --depth 1 -b "$CORE_BRANCH" https://github.com/nextcloud/notifications apps/notifications
       - ./occ app:enable $APP_NAME
+      - ./occ app:enable notifications
       - cd apps/$APP_NAME
 
       # Run integration tests
@@ -48,7 +50,9 @@ steps:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
+      - git clone --depth 1 -b "$CORE_BRANCH" https://github.com/nextcloud/notifications apps/notifications
       - ./occ app:enable $APP_NAME
+      - ./occ app:enable notifications
       - cd apps/$APP_NAME
 
       # Run integration tests
@@ -262,7 +266,9 @@ steps:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
+      - git clone --depth 1 -b "$CORE_BRANCH" https://github.com/nextcloud/notifications apps/notifications
       - ./occ app:enable $APP_NAME
+      - ./occ app:enable notifications
       - cd apps/$APP_NAME
 
       # Run integration tests
@@ -311,7 +317,9 @@ steps:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
+      - git clone --depth 1 -b "$CORE_BRANCH" https://github.com/nextcloud/notifications apps/notifications
       - ./occ app:enable $APP_NAME
+      - ./occ app:enable notifications
       - cd apps/$APP_NAME
 
       # Run integration tests
@@ -609,7 +617,9 @@ steps:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
+      - git clone --depth 1 -b "$CORE_BRANCH" https://github.com/nextcloud/notifications apps/notifications
       - ./occ app:enable $APP_NAME
+      - ./occ app:enable notifications
       - cd apps/$APP_NAME
 
       # Run integration tests
@@ -653,7 +663,9 @@ steps:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
+      - git clone --depth 1 -b "$CORE_BRANCH" https://github.com/nextcloud/notifications apps/notifications
       - ./occ app:enable $APP_NAME
+      - ./occ app:enable notifications
       - cd apps/$APP_NAME
 
       # Run integration tests
