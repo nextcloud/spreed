@@ -22,7 +22,7 @@
 <template>
 	<div>
 		<div class="app-settings-section__hint">
-			{{ t('spreed', 'Chat messages expire after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation.') }}
+			{{ t('spreed', 'Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation.') }}
 		</div>
 		<NcMultiselect :value="selectedOption"
 			:options="expirationOptions"
