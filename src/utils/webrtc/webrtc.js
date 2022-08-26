@@ -52,7 +52,7 @@ let ownScreenPeer = null
 let selfInCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
 // Special variable to know when the local user explicitly joined and left the
 // call; this is needed to know when the user was kicked out from the call by a
-// moderator.
+// moderator and discard signaling events if received when not in the call.
 let localUserInCall = false
 const delayedConnectionToPeer = []
 let callParticipantCollection = null
@@ -527,12 +527,20 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 	localCallParticipantModel = _localCallParticipantModel
 
 	signaling.on('usersLeft', function(users) {
+		if (!localUserInCall) {
+			return
+		}
+
 		users.forEach(function(user) {
 			delete usersInCallMapping[user]
 		})
 		usersChanged(signaling, [], users)
 	})
 	signaling.on('usersChanged', function(users) {
+		if (!localUserInCall) {
+			return
+		}
+
 		users.forEach(function(user) {
 			const sessionId = user.sessionId || user.sessionid
 			usersInCallMapping[sessionId] = user
@@ -540,6 +548,10 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		usersInCallChanged(signaling, usersInCallMapping)
 	})
 	signaling.on('participantFlagsChanged', function(event) {
+		if (!localUserInCall) {
+			return
+		}
+
 		/**
 		 * event {
 		 *   roomid: "1609407087",
@@ -558,6 +570,10 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		}
 	})
 	signaling.on('usersInRoom', function(users) {
+		if (!localUserInCall) {
+			return
+		}
+
 		usersInCallMapping = {}
 		users.forEach(function(user) {
 			const sessionId = user.sessionId || user.sessionid
@@ -595,17 +611,33 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		// stopped, as the current own session is not passed along with the
 		// sessions of the other participants as "disconnected" to
 		// "usersChanged" when a call is left.
-		// The peer, on the other hand, is automatically ended by "leaveCall"
-		// below.
+		// The peer, on the other hand, is ended by the calls below.
 		if (ownPeer && delayedConnectionToPeer[ownPeer.id]) {
 			clearInterval(delayedConnectionToPeer[ownPeer.id])
 			delete delayedConnectionToPeer[ownPeer.id]
 		}
 
+		// Besides stopping the media "leaveCall" would end the peers, but it
+		// does not stop the timers for pending connections, removes models or
+		// clears the call data, so this needs to be explicitly done here
+		// instead.
+		selfInCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
+
+		usersChanged(signaling, [], previousUsersInRoom)
+		usersInCallMapping = {}
+
 		webrtc.leaveCall()
 	})
 
 	signaling.on('message', function(message) {
+		if (!localUserInCall) {
+			console.debug('Message received when not in the call, ignore', message.type, message)
+
+			message.type = 'message-to-ignore'
+
+			return
+		}
+
 		if (message.type === 'answer' && message.roomType === 'video' && delayedConnectionToPeer[message.from]) {
 			clearInterval(delayedConnectionToPeer[message.from])
 			delete delayedConnectionToPeer[message.from]
@@ -633,12 +665,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		if (message.roomType === 'video' && delayedConnectionToPeer[message.from]) {
 			clearInterval(delayedConnectionToPeer[message.from])
 			delete delayedConnectionToPeer[message.from]
-		}
-
-		if (!selfInCall) {
-			console.debug('Offer received when not in the call, ignore')
-
-			message.type = 'offer-to-ignore'
 		}
 
 		// MCU screen offers do not include the "broadcaster" property,
@@ -913,7 +939,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 
 		usersChanged(signaling, [], previousUsersInRoom)
 		usersInCallMapping = {}
-		previousUsersInRoom = []
 
 		// Reconnects with a new session id will trigger "usersChanged"
 		// with the users in the room and that will re-establish the
@@ -1653,7 +1678,6 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 
 		usersChanged(signaling, [], previousUsersInRoom)
 		usersInCallMapping = {}
-		previousUsersInRoom = []
 	})
 
 	return webrtc
