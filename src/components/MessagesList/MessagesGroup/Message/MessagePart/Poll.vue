@@ -259,7 +259,7 @@ export default {
 				if (this.pollVotes[`option-${index}`] === undefined) {
 					return 0
 				}
-				return this.pollVotes[`option-${index}`] / this.votersNumber * 100
+				return parseInt(this.pollVotes[`option-${index}`] / this.votersNumber * 100)
 			}
 		},
 
