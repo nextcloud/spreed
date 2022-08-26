@@ -815,7 +815,6 @@
     "Do you really want to delete all messages in \"{displayName}\"?" : "Opravdu chcete smazat všechny zprávy v „{displayName}“?",
     "Delete all chat messages" : "Smazat všechny zprávy chatu",
     "Error while clearing chat history" : "Chyba při mazání historie konverzace",
-    "Expire chat messages after a certain time. Note: files shared into the chat will only be unshared from the conversation but are not deleted for the owner." : "Ukončit platnost zpráv chatu po uplynutí určité doby. Poznámka: u souborů, sdílených v chatu, bude pouze ukončeno sdílení v konverzaci, ale vlastníkovi smazány nebudou.",
     "Custom expiration time" : "Uživatelsky určený okamžik skončení platnosti",
     "Message expiration disabled" : "Ukončení platnosti zprávy vypnuto",
     "Message expiration set: {duration}" : "Okamžik skončení platnosti zprávy nastaven na: {duration}",
