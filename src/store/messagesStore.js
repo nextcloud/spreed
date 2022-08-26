@@ -422,6 +422,13 @@ const actions = {
 			})
 		}
 
+		if (message.systemMessage === 'poll_closed') {
+			context.dispatch('getPollData', {
+				token: message.token,
+				pollId: message.messageParameters.poll.id,
+			})
+		}
+
 		context.commit('addMessage', message)
 
 		 if ((message.messageType === 'comment' && message.message === '{file}' && message.messageParameters?.file)

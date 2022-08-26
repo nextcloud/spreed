@@ -375,7 +375,7 @@ export default {
 		},
 
 		openPoll() {
-			if (this.selfHasVoted) {
+			if (this.selfHasVoted || this.pollIsClosed) {
 				this.modalPage = 'results'
 			} else {
 				this.modalPage = 'voting'
