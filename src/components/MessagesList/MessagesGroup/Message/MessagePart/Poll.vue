@@ -110,7 +110,12 @@
 									{{ getVotePercentage(index) + '%' }}
 								</p>
 							</div>
-							<NcProgressBar :value="getVotePercentage(index)" size="medium" />
+							<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
+								{{ t('spreed','You voted') }}
+							</p>
+							<NcProgressBar class="results__option-progress"
+								:value="getVotePercentage(index)"
+								size="medium" />
 						</div>
 					</div>
 					<div v-if="pollIsOpen"
@@ -384,6 +389,14 @@ export default {
 				pollId: this.id,
 			})
 		},
+
+		selfHasVotedOption(index) {
+			if (this.votedSelf.includes(index)) {
+				return true
+			} else {
+				return false
+			}
+		},
 	},
 }
 </script>
@@ -471,7 +484,13 @@ export default {
 .results__option {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	&-subtitle {
+		color: var(--color-text-maxcontrast);
+	}
+
+	&-progress {
+		margin-top: 4px;
+	}
 }
 
 .results__option-title {
