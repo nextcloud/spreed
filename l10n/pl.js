@@ -817,7 +817,6 @@ OC.L10N.register(
     "Do you really want to delete all messages in \"{displayName}\"?" : "Czy na pewno chcesz usunąć wszystkie wiadomości w \"{displayName}\"?",
     "Delete all chat messages" : "Usuń wszystkie wiadomości czatu",
     "Error while clearing chat history" : "Błąd podczas czyszczenia historii czatu",
-    "Expire chat messages after a certain time. Note: files shared into the chat will only be unshared from the conversation but are not deleted for the owner." : "Wiadomości czatu wygasają po pewnym czasie. Uwaga: pliki udostępnione na czacie nie zostaną usunięte dla właściciela, ale nie będą już dalej udostępnione w rozmowie.",
     "Custom expiration time" : "Własny czas wygaśnięcia",
     "Message expiration disabled" : "Wygaśnięcie wiadomości wyłączone",
     "Message expiration set: {duration}" : "Ustawione wygaśnięcie wiadomości: {duration}",
