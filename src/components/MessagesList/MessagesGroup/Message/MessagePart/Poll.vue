@@ -417,7 +417,7 @@ export default {
 
 	&__modal {
 		position: relative;
-		padding: 0 20px;
+		padding: 20px 20px 0 20px;
 	}
 
 	&__modal-title {
