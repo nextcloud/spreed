@@ -319,7 +319,7 @@ export default {
 		},
 
 		canEndPoll() {
-			return this.currentUserIsPollCreator || this.currentUserIsModerator
+			return (this.currentUserIsPollCreator || this.currentUserIsModerator) && this.pollIsOpen
 		},
 
 		pollFooterText() {
@@ -408,6 +408,7 @@ export default {
 				token: this.token,
 				pollId: this.id,
 			})
+			this.modalPage = 'results'
 		},
 
 		selfHasVotedOption(index) {
@@ -446,7 +447,6 @@ export default {
 		align-items: flex-start;
 		top: 0;
 		padding: 0 0 8px 0;
-		background-color: var(--color-main-background);
 		word-wrap: anywhere;
 		padding-top: 20px;
 
