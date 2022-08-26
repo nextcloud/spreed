@@ -367,7 +367,7 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('An administrator demoted {user} from moderator');
 			}
 		} elseif ($message === 'guest_moderator_promoted') {
-			$parsedParameters['user'] = $this->getGuest($room, $parameters['session']);
+			$parsedParameters['user'] = $this->getGuest($room, Attendee::ACTOR_GUESTS, $parameters['session']);
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
@@ -380,7 +380,7 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('An administrator promoted {user} to moderator');
 			}
 		} elseif ($message === 'guest_moderator_demoted') {
-			$parsedParameters['user'] = $this->getGuest($room, $parameters['session']);
+			$parsedParameters['user'] = $this->getGuest($room, Attendee::ACTOR_GUESTS, $parameters['session']);
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
@@ -660,8 +660,8 @@ class SystemMessage {
 	}
 
 	protected function getActor(Room $room, string $actorType, string $actorId): array {
-		if ($actorType === Attendee::ACTOR_GUESTS) {
-			return $this->getGuest($room, $actorId);
+		if ($actorType === Attendee::ACTOR_GUESTS || $actorType === Attendee::ACTOR_EMAILS) {
+			return $this->getGuest($room, $actorType, $actorId);
 		}
 		if ($actorType === Attendee::ACTOR_FEDERATED_USERS) {
 			return $this->getRemoteUser($actorId);
@@ -769,23 +769,26 @@ class SystemMessage {
 		}
 	}
 
-	protected function getGuest(Room $room, string $actorId): array {
-		if (!isset($this->guestNames[$actorId])) {
-			$this->guestNames[$actorId] = $this->getGuestName($room, $actorId);
+	protected function getGuest(Room $room, string $actorType, string $actorId): array {
+		$key = $room->getId() . '/' . $actorType . '/' . $actorId;
+		if (!isset($this->guestNames[$key])) {
+			$this->guestNames[$key] = $this->getGuestName($room, $actorType, $actorId);
 		}
 
 		return [
 			'type' => 'guest',
 			'id' => 'guest/' . $actorId,
-			'name' => $this->guestNames[$actorId],
+			'name' => $this->guestNames[$key],
 		];
 	}
 
-	protected function getGuestName(Room $room, string $actorId): string {
+	protected function getGuestName(Room $room, string $actorType, string $actorId): string {
 		try {
-			$participant = $room->getParticipantByActor(Attendee::ACTOR_GUESTS, $actorId);
+			$participant = $room->getParticipantByActor($actorType, $actorId);
 			$name = $participant->getAttendee()->getDisplayName();
-			if ($name === '') {
+			if ($name === '' && $actorType === Attendee::ACTOR_EMAILS) {
+				$name = $actorId;
+			} elseif ($name === '') {
 				return $this->l->t('Guest');
 			}
 			return $this->l->t('%s (guest)', [$name]);
