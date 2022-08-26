@@ -111,7 +111,12 @@
 						</h2>
 					</div>
 					<div class="poll__summary">
-						{{ n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', votersNumber) }}
+						<template v-if="currentUserIsPollCreator || currentUserIsModerator || pollIsPublic">
+							{{ n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', votersNumber) }}
+						</template>
+						<template v-else-if="selfHasVoted">
+							{{ t('spreed', 'Poll ・ You voted') }}
+						</template>
 					</div>
 					<div class="results__options">
 						<div v-for="(option, index) in options"
@@ -249,6 +254,10 @@ export default {
 
 		resultMode() {
 			return this.pollLoaded ? this.poll.resultMode : undefined
+		},
+
+		pollIsPublic() {
+			return this.resultMode === 0
 		},
 
 		status() {
