@@ -88,9 +88,15 @@
 					</div>
 
 					<div class="poll__modal-actions">
-						<!-- create poll button-->
+						<!-- Submit vote button-->
 						<NcButton type="primary" :disabled="!canSubmitVote" @click="submitVote">
-							{{ t('spreed', 'Submit') }}
+							{{ t('spreed', 'Submit vote') }}
+						</NcButton>
+						<!-- End poll button-->
+						<NcButton v-if="canEndPoll"
+							type="error"
+							@click="endPoll">
+							{{ t('spreed', 'End poll') }}
 						</NcButton>
 					</div>
 				</template>
@@ -134,7 +140,7 @@
 							@click="modalPage = 'voting'">
 							{{ t('spreed', 'Change your vote') }}
 						</NcButton>
-						<!-- create poll button-->
+						<!-- End poll button-->
 						<NcButton v-if="canEndPoll"
 							type="error"
 							@click="endPoll">
