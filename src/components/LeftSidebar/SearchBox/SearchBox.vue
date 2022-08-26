@@ -24,7 +24,7 @@
 		@submit.prevent="handleSubmit">
 		<NcTextField ref="searchConversations"
 			:value.sync="localValue"
-			:place-holder="placeholderText"
+			:placeholder="placeholderText"
 			:show-trailing-button="isSearching"
 			trailing-button-icon="close"
 			@trailing-button-click="abortSearch"
