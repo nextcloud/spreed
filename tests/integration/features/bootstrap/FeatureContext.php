@@ -805,6 +805,36 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" sets notifications to (default|disabled|mention|all) for room "([^"]*)" \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $level
+	 * @param string $identifier
+	 * @param string $apiVersion
+	 */
+	public function userSetsNotificationLevelForRoom(string $user, string $level, string $identifier, string $apiVersion): void {
+		$this->setCurrentUser($user);
+
+		$intLevel = 0; // default
+		if ($level === 'disabled') {
+			$intLevel = 3;
+		} elseif ($level === 'mention') {
+			$intLevel = 2;
+		} elseif ($level === 'all') {
+			$intLevel = 1;
+		}
+
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/notify',
+			new TableNode([
+				['level', $intLevel],
+			])
+		);
+
+		$this->assertStatusCode($this->response, 200);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" leaves room "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
@@ -1784,6 +1814,55 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->changedConfigs[] = $row[0];
 		}
 		$this->setCurrentUser($currentUser);
+	}
+
+	/**
+	 * @Then user :user has the following notifications
+	 *
+	 * @param string $user
+	 * @param TableNode|null $body
+	 */
+	public function userNotifications(string $user, TableNode $body = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'GET', '/apps/notifications/api/v2/notifications'
+		);
+
+		$data = $this->getDataFromResponse($this->response);
+
+		if ($body === null) {
+			Assert::assertCount(0, $data);
+			return;
+		}
+
+		$this->assertNotifications($data, $body);
+	}
+
+	private function assertNotifications($notifications, TableNode $formData) {
+		Assert::assertCount(count($formData->getHash()), $notifications, 'Notifications count does not match');
+		Assert::assertEquals($formData->getHash(), array_map(function ($notification, $expectedNotification) {
+			$data = [];
+			if (isset($expectedNotification['object_id'])) {
+				if (strpos($notification['object_id'], '/') !== false) {
+					[$roomToken, $message] = explode('/', $notification['object_id']);
+					$data['object_id'] = self::$tokenToIdentifier[$roomToken] . '/' . self::$messageIdToText[$message] ?? 'UNKNOWN_MESSAGE';
+				} else {
+					[$roomToken,] = explode('/', $notification['object_id']);
+					$data['object_id'] = self::$tokenToIdentifier[$roomToken];
+				}
+			}
+			if (isset($expectedNotification['subject'])) {
+				$data['subject'] = (string) $notification['subject'];
+			}
+			if (isset($expectedNotification['object_type'])) {
+				$data['object_type'] = (string) $notification['object_type'];
+			}
+			if (isset($expectedNotification['app'])) {
+				$data['app'] = (string) $notification['app'];
+			}
+
+			return $data;
+		}, $notifications, $formData->getHash()));
 	}
 
 	/**

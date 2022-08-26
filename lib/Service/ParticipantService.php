@@ -1283,6 +1283,28 @@ class ParticipantService {
 			->andWhere($query->expr()->eq('a.notification_calls', $query->createNamedParameter(Participant::NOTIFY_CALLS_ON)))
 			->andWhere($query->expr()->isNull('s.in_call'));
 
+		if ($room->getLobbyState() !== Webinary::LOBBY_NONE) {
+			// Filter out non-moderators and users without lobby permissions
+			$query->andWhere(
+				$query->expr()->orX(
+					$query->expr()->in('a.participant_type', $query->createNamedParameter(
+						[Participant::MODERATOR, Participant::OWNER],
+						IQueryBuilder::PARAM_INT_ARRAY
+					)),
+					$query->expr()->eq(
+						$query->expr()->castColumn(
+							$query->expr()->bitwiseAnd(
+								'permissions',
+								Attendee::PERMISSIONS_LOBBY_IGNORE
+							),
+							IQueryBuilder::PARAM_INT
+						),
+						$query->createNamedParameter(Attendee::PERMISSIONS_LOBBY_IGNORE, IQueryBuilder::PARAM_INT)
+					)
+				)
+			);
+		}
+
 		$userIds = [];
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
