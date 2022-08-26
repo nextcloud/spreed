@@ -55,6 +55,14 @@ the main body of the message as well as a quote.
 					<RichText :text="message" :arguments="richParameters" :autolink="true" />
 					<CallButton />
 				</div>
+				<div v-else-if="showResultsButton" class="message-body__main__text system-message">
+					<RichText :text="message" :arguments="richParameters" :autolink="true" />
+					<!-- Displays only the "see results" button with the results modal -->
+					<Poll :id="messageParameters.poll.id"
+						:poll-name="messageParameters.poll.name"
+						:token="token"
+						:show-as-button="true" />
+				</div>
 				<div v-else-if="isDeletedMessage" class="message-body__main__text deleted-message">
 					<RichText :text="message" :arguments="richParameters" :autolink="true" />
 				</div>
@@ -220,6 +228,7 @@ export default {
 		NcEmojiPicker,
 		EmoticonOutline,
 		NcPopover,
+		Poll,
 	},
 
 	mixins: [
@@ -457,6 +466,10 @@ export default {
 				&& !this.isInCall
 		},
 
+		showResultsButton() {
+			return this.systemMessage === 'poll_closed'
+		},
+
 		isSingleEmoji() {
 			const regex = emojiRegex()
 			let match
@@ -503,7 +516,7 @@ export default {
 						component: Location,
 						props: this.messageParameters[p],
 					}
-				} else if (type === 'talk-poll') {
+				} else if (type === 'talk-poll' && this.systemMessage !== 'poll_closed') {
 					const props = Object.assign({}, this.messageParameters[p])
 					// Add the token to the component props
 					props.token = this.token

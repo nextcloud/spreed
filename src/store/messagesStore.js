@@ -146,7 +146,6 @@ const getters = {
 					|| message.systemMessage === 'reaction_deleted'
 					|| message.systemMessage === 'reaction_revoked'
 					|| message.systemMessage === 'poll_voted'
-					|| message.systemMessage === 'poll_closed'
 				) {
 					return false
 				} else {
@@ -418,6 +417,13 @@ const actions = {
 
 		if (message.systemMessage === 'poll_voted') {
 			context.dispatch('debounceGetPollData', {
+				token: message.token,
+				pollId: message.messageParameters.poll.id,
+			})
+		}
+
+		if (message.systemMessage === 'poll_closed') {
+			context.dispatch('getPollData', {
 				token: message.token,
 				pollId: message.messageParameters.poll.id,
 			})

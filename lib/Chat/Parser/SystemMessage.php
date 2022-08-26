@@ -410,6 +410,7 @@ class SystemMessage {
 			}
 		} elseif ($message === 'object_shared') {
 			$parsedParameters['object'] = $parameters['metaData'];
+			$parsedParameters['object']['id'] = (string) $parsedParameters['object']['id'];
 			$parsedMessage = '{object}';
 
 			if (isset($parsedParameters['object']['type'])
@@ -494,12 +495,14 @@ class SystemMessage {
 			}
 		} elseif ($message === 'poll_closed') {
 			$parsedParameters['poll'] = $parameters['poll'];
+			$parsedParameters['poll']['id'] = (string) $parsedParameters['poll']['id'];
 			$parsedMessage = $this->l->t('{actor} closed the poll {poll}');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You closed the poll {poll}');
 			}
 		} elseif ($message === 'poll_voted') {
 			$parsedParameters['poll'] = $parameters['poll'];
+			$parsedParameters['poll']['id'] = (string) $parsedParameters['poll']['id'];
 			$parsedMessage = $this->l->t('Someone voted on the poll {poll}');
 			unset($parsedParameters['actor']);
 		} else {

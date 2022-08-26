@@ -114,16 +114,16 @@ const actions = {
 		}
 	},
 
-	async closePoll(context, { token, pollId }) {
-		console.debug('Closing poll')
+	async endPoll(context, { token, pollId }) {
+		console.debug('Ending poll')
 		try {
-			const response = await pollService.closePoll(token, pollId)
+			const response = await pollService.endPoll(token, pollId)
 			const poll = response.data.ocs.data
 			context.dispatch('addPoll', { token, poll })
 			console.debug('polldata', response)
 		} catch (error) {
 			console.error(error)
-			showError(t('spreed', 'An error occurred while closing the poll'))
+			showError(t('spreed', 'An error occurred while ending the poll'))
 		}
 	},
 }

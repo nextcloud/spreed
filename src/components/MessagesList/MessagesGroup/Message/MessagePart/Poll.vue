@@ -21,11 +21,13 @@
 
 <template>
 	<div class="wrapper">
-		<a v-observe-visibility="getPollData"
+		<!-- Poll card -->
+		<a v-if="!showAsButton"
+			v-observe-visibility="getPollData"
 			:aria-label="t('spreed', 'Poll')"
 			class="poll"
 			role="button"
-			@click="showModal = true">
+			@click="openPoll">
 			<div class="poll__header">
 				<PollIcon :size="20" />
 				<p>
@@ -33,14 +35,22 @@
 				</p>
 			</div>
 			<div class="poll__footer">
-				{{ t('spreed', 'Poll ・ Click to vote') }}
+				{{ pollFooterText }}
 			</div>
+
 		</a>
+
+		<!-- Poll results button in system message -->
+		<div v-else class="poll-closed">
+			<NcButton type="secondary" @click="openPoll">
+				{{ t('spreed', 'See results') }}
+			</NcButton>
+		</div>
 
 		<!-- voting and results dialog -->
 		<NcModal v-if="vote !== undefined && showModal"
 			size="small"
-			@close="showModal = false">
+			@close="dismissModal">
 			<div class="poll__modal">
 				<!-- First screen, displayed while voting-->
 				<template v-if="modalPage === 'voting'">
@@ -78,12 +88,15 @@
 					</div>
 
 					<div class="poll__modal-actions">
-						<NcButton type="tertiary" @click="dismissModal">
-							{{ t('spreed', 'Dismiss') }}
-						</NcButton>
-						<!-- create poll button-->
+						<!-- Submit vote button-->
 						<NcButton type="primary" :disabled="!canSubmitVote" @click="submitVote">
-							{{ t('spreed', 'Submit') }}
+							{{ t('spreed', 'Submit vote') }}
+						</NcButton>
+						<!-- End poll button-->
+						<NcButton v-if="canEndPoll"
+							type="error"
+							@click="endPoll">
+							{{ t('spreed', 'End poll') }}
 						</NcButton>
 					</div>
 				</template>
@@ -98,7 +111,12 @@
 						</h2>
 					</div>
 					<div class="poll__summary">
-						{{ n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', votersNumber) }}
+						<template v-if="currentUserIsPollCreator || currentUserIsModerator || pollIsPublic">
+							{{ n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', votersNumber) }}
+						</template>
+						<template v-else-if="selfHasVoted">
+							{{ t('spreed', 'Poll ・ You voted') }}
+						</template>
 					</div>
 					<div class="results__options">
 						<div v-for="(option, index) in options"
@@ -112,20 +130,26 @@
 									{{ getVotePercentage(index) + '%' }}
 								</p>
 							</div>
-							<NcProgressBar :value="getVotePercentage(index)" size="medium" />
+							<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
+								{{ t('spreed','You voted') }}
+							</p>
+							<NcProgressBar class="results__option-progress"
+								:value="getVotePercentage(index)"
+								size="medium" />
 						</div>
 					</div>
 					<div v-if="pollIsOpen"
 						class="poll__modal-actions">
-						<NcButton type="tertiary"
+						<!-- Vote again-->
+						<NcButton type="secondary"
 							@click="modalPage = 'voting'">
-							{{ t('spreed', 'Back') }}
+							{{ t('spreed', 'Change your vote') }}
 						</NcButton>
-						<!-- create poll button-->
-						<NcButton v-if="canClosePoll"
+						<!-- End poll button-->
+						<NcButton v-if="canEndPoll"
 							type="error"
-							@click="closePoll">
-							{{ t('spreed', 'Close poll') }}
+							@click="endPoll">
+							{{ t('spreed', 'End poll') }}
 						</NcButton>
 					</div>
 				</template>
@@ -162,13 +186,18 @@ export default {
 		},
 
 		id: {
-			type: Number,
+			type: String,
 			required: true,
 		},
 
 		token: {
 			type: String,
 			required: true,
+		},
+
+		showAsButton: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -207,11 +236,28 @@ export default {
 		},
 
 		selfHasVoted() {
+			if (this.pollLoaded) {
+				if (typeof this.votedSelf === 'object') {
+					return this.votedSelf.length > 0
+				} else {
+					return !!this.votedSelf
+				}
+			} else {
+				return undefined
+			}
+		},
+
+		// The actual vote of the user as returned from the server
+		votedSelf() {
 			return this.pollLoaded ? this.poll.votedSelf : undefined
 		},
 
 		resultMode() {
 			return this.pollLoaded ? this.poll.resultMode : undefined
+		},
+
+		pollIsPublic() {
+			return this.resultMode === 0
 		},
 
 		status() {
@@ -222,12 +268,24 @@ export default {
 			return this.status === 0
 		},
 
+		pollIsClosed() {
+			return this.status === 1
+		},
+
 		checkboxRadioSwitchType() {
-			return this.poll.maxVotes === 0 ? 'checkbox' : 'radio'
+			if (this.pollLoaded) {
+				return this.poll.maxVotes === 0 ? 'checkbox' : 'radio'
+			} else {
+				return undefined
+			}
 		},
 
 		canSubmitVote() {
-			return this.vote !== undefined && this.vote !== '' && this.vote !== []
+			if (typeof this.vote === 'object') {
+				return this.vote.length > 0
+			} else {
+				return this.vote !== undefined && this.vote !== ''
+			}
 		},
 
 		getVotePercentage() {
@@ -235,7 +293,7 @@ export default {
 				if (this.pollVotes[`option-${index}`] === undefined) {
 					return 0
 				}
-				return this.pollVotes[`option-${index}`] / this.votersNumber * 100
+				return parseInt(this.pollVotes[`option-${index}`] / this.votersNumber * 100)
 			}
 		},
 
@@ -269,17 +327,36 @@ export default {
 			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
 		},
 
-		canClosePoll() {
-			return this.currentUserIsPollCreator || this.currentUserIsModerator
+		canEndPoll() {
+			return (this.currentUserIsPollCreator || this.currentUserIsModerator) && this.pollIsOpen
+		},
+
+		pollFooterText() {
+			if (this.pollIsOpen) {
+				return this.selfHasVoted ? t('spreed', 'Poll ・ You voted') : t('spreed', 'Poll ・ Click to vote')
+			} else if (this.pollIsClosed) {
+				return t('spreed', 'Poll ・ Closed')
+			}
+			return ''
 		},
 	},
 
 	watch: {
 
 		pollLoaded() {
-			this.setComponentData()
+			this.setVoteData()
 		},
 
+		modalPage(value) {
+			if (value === 'voting') {
+				this.setVoteData()
+			}
+		},
+
+	},
+
+	mounted() {
+		this.setVoteData()
 	},
 
 	methods: {
@@ -292,13 +369,27 @@ export default {
 			}
 		},
 
-		setComponentData() {
+		setVoteData() {
 			if (this.checkboxRadioSwitchType === 'radio') {
 				this.vote = ''
+				if (this.selfHasVoted) {
+					this.vote = this.votedSelf[0].toString()
+				}
 			} else {
 				this.vote = []
+				if (this.selfHasVoted) {
+					this.vote = this.votedSelf.map(element => element.toString())
+				}
 			}
-			this.pollIsOpen ? this.modalPage = 'voting' : this.modalPage = 'results'
+		},
+
+		openPoll() {
+			if (this.selfHasVoted || this.pollIsClosed) {
+				this.modalPage = 'results'
+			} else {
+				this.modalPage = 'voting'
+			}
+			this.showModal = true
 		},
 
 		dismissModal() {
@@ -321,11 +412,20 @@ export default {
 			this.modalPage = 'results'
 		},
 
-		closePoll() {
-			this.$store.dispatch('closePoll', {
+		endPoll() {
+			this.$store.dispatch('endPoll', {
 				token: this.token,
 				pollId: this.id,
 			})
+			this.modalPage = 'results'
+		},
+
+		selfHasVotedOption(index) {
+			if (this.votedSelf.includes(index)) {
+				return true
+			} else {
+				return false
+			}
 		},
 	},
 }
@@ -354,10 +454,8 @@ export default {
 		gap: 8px;
 		white-space: normal;
 		align-items: flex-start;
-		position: sticky;
 		top: 0;
 		padding: 0 0 8px 0;
-		background-color: var(--color-main-background);
 		word-wrap: anywhere;
 		padding-top: 20px;
 
@@ -374,7 +472,7 @@ export default {
 
 	&__modal {
 		position: relative;
-		padding: 0 20px;
+		padding: 20px 20px 0 20px;
 	}
 
 	&__modal-title {
@@ -393,7 +491,7 @@ export default {
 		bottom: 0;
 		display: flex;
 		justify-content: center;
-		gap: 4px;
+		gap: 8px;
 		padding: 12px 0 0 0;
 		background-color: var(--color-main-background);
 		padding-bottom: 20px;
@@ -415,7 +513,13 @@ export default {
 .results__option {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	&-subtitle {
+		color: var(--color-text-maxcontrast);
+	}
+
+	&-progress {
+		margin-top: 4px;
+	}
 }
 
 .results__option-title {
@@ -426,6 +530,12 @@ export default {
 		white-space: nowrap;
 		margin-left: 16px;
 	}
+}
+
+.poll-closed {
+	display: flex;
+	justify-content: center;
+	margin-top: 4px;
 }
 
 // Upstream

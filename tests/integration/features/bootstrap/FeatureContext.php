@@ -1934,7 +1934,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 			$result = preg_match('/POLL_ID\(([^)]+)\)/', $expected[$i]['messageParameters'], $matches);
 			if ($result) {
-				$expected[$i]['messageParameters'] = str_replace($matches[0], self::$questionToPollId[$matches[1]], $expected[$i]['messageParameters']);
+				$expected[$i]['messageParameters'] = str_replace($matches[0], '"' . self::$questionToPollId[$matches[1]] . '"', $expected[$i]['messageParameters']);
 			}
 		}
 
