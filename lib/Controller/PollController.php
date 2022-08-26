@@ -202,6 +202,10 @@ class PollController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		if ($poll->getStatus() === Poll::STATUS_CLOSED) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		$poll->setStatus(Poll::STATUS_CLOSED);
 
 		try {

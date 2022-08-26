@@ -77,6 +77,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Status code:
         + `200 OK`
+        + `400 Bad Request` When the poll is already closed
         + `403 Forbidden` When the participant is not the author of the poll or a moderator
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the poll id could not be found in the conversation

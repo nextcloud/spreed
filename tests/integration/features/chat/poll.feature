@@ -382,6 +382,7 @@ Feature: chat/poll
       | actorDisplayName    | participant1-displayname |
       | status     | closed |
       | votedSelf  | [0] |
+    Then user "participant1" closes poll "What is the question?" in room "room" with 400
     Then user "participant1" sees the following system messages in room "room" with 200 (v1)
       | room | actorType | actorId      | actorDisplayName         | systemMessage        |
       | room | users     | participant1 | participant1-displayname | poll_closed          |
