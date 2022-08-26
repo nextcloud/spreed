@@ -21,7 +21,9 @@
 
 <template>
 	<div class="wrapper">
-		<a v-observe-visibility="getPollData"
+		<!-- Poll card -->
+		<a v-if="!showAsButton"
+			v-observe-visibility="getPollData"
 			:aria-label="t('spreed', 'Poll')"
 			class="poll"
 			role="button"
@@ -37,6 +39,13 @@
 			</div>
 
 		</a>
+
+		<!-- Poll results button in system message -->
+		<div v-else class="poll-closed">
+			<NcButton type="secondary" @click="openPoll">
+				{{ t('spreed', 'See results') }}
+			</NcButton>
+		</div>
 
 		<!-- voting and results dialog -->
 		<NcModal v-if="vote !== undefined && showModal"
@@ -166,13 +175,18 @@ export default {
 		},
 
 		id: {
-			type: Number,
+			type: String,
 			required: true,
 		},
 
 		token: {
 			type: String,
 			required: true,
+		},
+
+		showAsButton: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -501,6 +515,12 @@ export default {
 		white-space: nowrap;
 		margin-left: 16px;
 	}
+}
+
+.poll-closed {
+	display: flex;
+	justify-content: center;
+	margin-top: 4px;
 }
 
 // Upstream
