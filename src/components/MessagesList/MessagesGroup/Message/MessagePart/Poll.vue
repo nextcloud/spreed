@@ -41,7 +41,7 @@
 		<!-- voting and results dialog -->
 		<NcModal v-if="vote !== undefined && showModal"
 			size="small"
-			@close="showModal = false">
+			@close="dismissModal">
 			<div class="poll__modal">
 				<!-- First screen, displayed while voting-->
 				<template v-if="modalPage === 'voting'">
@@ -79,9 +79,6 @@
 					</div>
 
 					<div class="poll__modal-actions">
-						<NcButton type="secondary" @click="dismissModal">
-							{{ t('spreed', 'Dismiss') }}
-						</NcButton>
 						<!-- create poll button-->
 						<NcButton type="primary" :disabled="!canSubmitVote" @click="submitVote">
 							{{ t('spreed', 'Submit') }}
@@ -118,11 +115,6 @@
 					</div>
 					<div v-if="pollIsOpen"
 						class="poll__modal-actions">
-						<!-- Dismiss -->
-						<NcButton type="secondary"
-							@click="dismissModal">
-							{{ t('spreed', 'Dismiss') }}
-						</NcButton>
 						<!-- Vote again-->
 						<NcButton type="secondary"
 							@click="modalPage = 'voting'">
