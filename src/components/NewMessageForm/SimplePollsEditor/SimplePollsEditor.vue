@@ -37,6 +37,7 @@
 			</p>
 			<PollOption v-for="option, index in pollOptions"
 				:key="index"
+				:ref="`pollOption${index}`"
 				class="simple-polls-editor__option"
 				:value.sync="pollOptions[index]"
 				:placeholder="t('spreed', 'Answer {option}', {option: index + 1})"
@@ -123,6 +124,11 @@ export default {
 
 		addOption() {
 			this.pollOptions.push('')
+			this.$nextTick(() => {
+				const indexOfNewPollOption = this.pollOptions.length - 1
+				const refOfNewPollOption = `pollOption${indexOfNewPollOption}`
+				this.$refs[refOfNewPollOption][0].$el.querySelector('.input-field__input').focus()
+			})
 		},
 
 		async createPoll() {
