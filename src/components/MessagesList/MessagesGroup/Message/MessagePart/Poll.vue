@@ -33,7 +33,7 @@
 				</p>
 			</div>
 			<div class="poll__footer">
-				{{ selfHasVoted ? t('spreed', 'Poll ・ You voted') : t('spreed', 'Poll ・ Click to vote') }}
+				{{ pollFooterText }}
 			</div>
 
 		</a>
@@ -234,6 +234,10 @@ export default {
 			return this.status === 0
 		},
 
+		pollIsClosed() {
+			return this.status === 1
+		},
+
 		checkboxRadioSwitchType() {
 			if (this.pollLoaded) {
 				return this.poll.maxVotes === 0 ? 'checkbox' : 'radio'
@@ -291,6 +295,15 @@ export default {
 
 		canEndPoll() {
 			return this.currentUserIsPollCreator || this.currentUserIsModerator
+		},
+
+		pollFooterText() {
+			if (this.pollIsOpen) {
+				return this.selfHasVoted ? t('spreed', 'Poll ・ You voted') : t('spreed', 'Poll ・ Click to vote')
+			} else if (this.pollIsClosed) {
+				return t('spreed', 'Poll ・ Closed')
+			}
+			return ''
 		},
 	},
 
