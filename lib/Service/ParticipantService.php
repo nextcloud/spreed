@@ -33,6 +33,7 @@ use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\ChatEvent;
+use OCA\Talk\Events\DuplicatedParticipantEvent;
 use OCA\Talk\Events\EndCallForEveryoneEvent;
 use OCA\Talk\Events\JoinRoomGuestEvent;
 use OCA\Talk\Events\JoinRoomUserEvent;
@@ -687,23 +688,22 @@ class ParticipantService {
 		}
 	}
 
-	public function leaveRoomAsSession(Room $room, Participant $participant): void {
-		$event = new ParticipantEvent($room, $participant);
+	public function leaveRoomAsSession(Room $room, Participant $participant, bool $duplicatedParticipant = false): void {
+		if ($duplicatedParticipant) {
+			$event = new DuplicatedParticipantEvent($room, $participant);
+		} else {
+			$event = new ParticipantEvent($room, $participant);
+		}
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_DISCONNECT, $event);
 
 		$session = $participant->getSession();
 		if ($session instanceof Session) {
-			$dispatchLeaveCallEvents = $session->getInCall() !== Participant::FLAG_DISCONNECTED;
-			if ($dispatchLeaveCallEvents) {
-				$event = new ModifyParticipantEvent($room, $participant, 'inCall', Participant::FLAG_DISCONNECTED, $session->getInCall());
-				$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_LEAVE_CALL, $event);
+			$isInCall = $session->getInCall() !== Participant::FLAG_DISCONNECTED;
+			if ($isInCall) {
+				$this->changeInCall($room, $participant, Participant::FLAG_DISCONNECTED);
 			}
 
 			$this->sessionMapper->delete($session);
-
-			if ($dispatchLeaveCallEvents) {
-				$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $event);
-			}
 		} else {
 			$this->sessionMapper->deleteByAttendeeId($participant->getAttendee()->getId());
 		}
