@@ -129,10 +129,10 @@
 							{{ t('spreed', 'Change your vote') }}
 						</NcButton>
 						<!-- create poll button-->
-						<NcButton v-if="canClosePoll"
+						<NcButton v-if="canEndPoll"
 							type="error"
-							@click="closePoll">
-							{{ t('spreed', 'Close poll') }}
+							@click="endPoll">
+							{{ t('spreed', 'End poll') }}
 						</NcButton>
 					</div>
 				</template>
@@ -297,7 +297,7 @@ export default {
 			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
 		},
 
-		canClosePoll() {
+		canEndPoll() {
 			return this.currentUserIsPollCreator || this.currentUserIsModerator
 		},
 	},
@@ -373,8 +373,8 @@ export default {
 			this.modalPage = 'results'
 		},
 
-		closePoll() {
-			this.$store.dispatch('closePoll', {
+		endPoll() {
+			this.$store.dispatch('endPoll', {
 				token: this.token,
 				pollId: this.id,
 			})

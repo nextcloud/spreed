@@ -68,13 +68,13 @@ const pollService = {
 	},
 
 	/**
-	 * Closes the poll
+	 * Ends the poll
 	 *
 	 * @param {string} token The conversation token
 	 * @param {number} pollId ID of the poll
 	 * @return {object} The poll object
 	 */
-	async closePoll(token, pollId) {
+	async endPoll(token, pollId) {
 		return axios.delete(generateOcsUrl('apps/spreed/api/v1/poll/{token}/{pollId}', { token, pollId }))
 	},
 }
