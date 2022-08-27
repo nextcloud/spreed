@@ -748,7 +748,6 @@ OC.L10N.register(
     "Go to file" : "Оди до датотеката",
     "Message link copied to clipboard" : "Линкот до пораката е копиран во клипборд",
     "Contact" : "Контакт",
-    "Submit" : "Испрати",
     "Scroll to bottom" : "Скролај до долу",
     "Today" : "Денес",
     "Yesterday" : "Вчера",

@@ -186,7 +186,6 @@ OC.L10N.register(
     "Reply" : "Atbildēt",
     "Go to file" : "Doties uz datni",
     "Contact" : "Kontakts",
-    "Submit" : "Iesniegt",
     "Today" : "Šodien",
     "Yesterday" : "Vakar",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

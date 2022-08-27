@@ -104,7 +104,7 @@ OC.L10N.register(
     "Conversation name" : "Nombre de la conversación",
     "Reply" : "Responder",
     "Contact" : "Contacto",
-    "Submit" : "Enviar",
+    "You voted" : "Votaste",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
