@@ -296,7 +296,6 @@ OC.L10N.register(
     "Close" : "Malfermi",
     "Reply" : "Respondi",
     "Contact" : "Kontakto",
-    "Submit" : "Sendi",
     "Today" : "Hodiaŭ",
     "Yesterday" : "Hieraŭ",
     "Create new poll" : "Krei novan enketon",

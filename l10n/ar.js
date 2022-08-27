@@ -860,7 +860,6 @@ OC.L10N.register(
     "Contact" : "التواصل",
     "{stack} in {board}" : "{stack} في  {board}",
     "Deck Card" : "بطاقة Deck",
-    "Submit" : "إرسال ",
     "Scroll to bottom" : "انتقل للاسفل",
     "Today" : "اليوم",
     "Yesterday" : "امس",

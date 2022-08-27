@@ -889,8 +889,6 @@ OC.L10N.register(
     "{stack} in {board}" : "{stack} in {board}",
     "Deck Card" : "Ischeda de Deck",
     "Remove {fileName}" : "Boga•nche {fileName}",
-    "Submit" : "Imbia",
-    "Close poll" : "Serra su sondàgiu",
     "Scroll to bottom" : "Iscurre a bàsciu",
     "Today" : "Oe",
     "Yesterday" : "Eris",

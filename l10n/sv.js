@@ -632,7 +632,6 @@ OC.L10N.register(
     "Mark as unread" : "Markera som oläst",
     "Go to file" : "Gå till fil",
     "Contact" : "Kontakt",
-    "Submit" : "Skicka",
     "Today" : "Idag",
     "Yesterday" : "Igår",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

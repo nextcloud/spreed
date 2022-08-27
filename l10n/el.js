@@ -823,8 +823,6 @@ OC.L10N.register(
     "Go to file" : "Μετάβαση στο αρχείο",
     "Contact" : "Επικοινωνία",
     "{stack} in {board}" : "{stack} στο {board}",
-    "Submit" : "Υποβολή",
-    "Close poll" : "Κλείστε τη δημοσκόπηση",
     "Scroll to bottom" : "Μετακινηθείτε προς τα κάτω",
     "Today" : "Σήμερα",
     "Yesterday" : "Χθες",

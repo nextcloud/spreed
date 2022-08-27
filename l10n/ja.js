@@ -981,7 +981,6 @@ OC.L10N.register(
     "Deck Card" : "Deckカード",
     "Remove {fileName}" : "{fileName} を削除",
     "Open this location in OpenStreetMap" : "オープンストリートマップでこの場所を表示",
-    "Submit" : "送信",
     "Scroll to bottom" : "下にスクロール",
     "Today" : "本日",
     "Yesterday" : "昨日",

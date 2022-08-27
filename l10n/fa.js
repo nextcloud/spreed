@@ -310,7 +310,6 @@ OC.L10N.register(
     "Reply" : "پاسخ",
     "Mark as unread" : "علامت به عنوان خوانده‌نشده",
     "Contact" : "مخاطب",
-    "Submit" : "ارسال",
     "Today" : "Today",
     "Yesterday" : "دیروز",
     "Record voice message" : "ضبط پیام صوتی",

@@ -290,7 +290,6 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "U wag tans in die voorportaal",
     "Reply" : "Antwoord",
     "Contact" : "Kontak",
-    "Submit" : "Dien in",
     "Today" : "Vandag",
     "Yesterday" : "Gister",
     "Settings" : "Instellings",
