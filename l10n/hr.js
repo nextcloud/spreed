@@ -928,8 +928,6 @@ OC.L10N.register(
     "Deck Card" : "Deck kartica",
     "Remove {fileName}" : "Ukloni {fileName}",
     "Open this location in OpenStreetMap" : "Otvorite ovu lokaciju u aplikaciji OpenStreetMap",
-    "Submit" : "Šalji",
-    "Close poll" : "Zatvori anketu",
     "Scroll to bottom" : "Pomakni se na dno",
     "Today" : "Danas",
     "Yesterday" : "Jučer",

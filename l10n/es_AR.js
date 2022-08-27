@@ -74,7 +74,6 @@ OC.L10N.register(
     "Conversation name" : "Nombre de conversación",
     "Reply" : "Responder",
     "Contact" : "Contacto",
-    "Submit" : "Enviar",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "Send message" : "Enviar mensaje",

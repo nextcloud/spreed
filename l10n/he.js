@@ -502,7 +502,6 @@ OC.L10N.register(
     "Mark as unread" : "סימון כלא נקרא",
     "Go to file" : "מעבר לקובץ",
     "Contact" : "איש/אשת קשר",
-    "Submit" : "שליחה",
     "Today" : "היום",
     "Yesterday" : "מחר",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

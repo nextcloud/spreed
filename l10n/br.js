@@ -641,7 +641,6 @@ OC.L10N.register(
     "Select camera" : "Choaz ur c'hamera",
     "Reply" : "Respont",
     "Go to file" : "Mont d'ar restr",
-    "Submit" : "Kinnig",
     "Today" : "Hiziv",
     "Yesterday" : "Dec'h",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

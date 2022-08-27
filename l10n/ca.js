@@ -711,7 +711,7 @@ OC.L10N.register(
     "Reply" : "Respon",
     "Go to file" : "Vés al fitxer",
     "Contact" : "Contacte",
-    "Submit" : "Envia",
+    "You voted" : "Has votat",
     "Scroll to bottom" : "Desplaça al final",
     "Today" : "Avui",
     "Yesterday" : "Ahir",

@@ -216,7 +216,6 @@ OC.L10N.register(
     "Reply" : "Përgjigju",
     "Mark as unread" : "Shënoje si të palexuar",
     "Contact" : "Kontakt",
-    "Submit" : "Dërgo",
     "Today" : "Sot",
     "Yesterday" : "Dje",
     "Create new poll" : "Krijo sondazh të ri",
