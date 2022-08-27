@@ -98,7 +98,7 @@ OC.L10N.register(
     "Reply" : "პასუხი",
     "Mark as unread" : "წაუკითხავად მონიშვნა",
     "Contact" : "კონტაქტი",
-    "Submit" : "გაგზავნა",
+    "You voted" : "თქვენ მიეცით ხმა",
     "Today" : "დღეს",
     "Yesterday" : "გუშინ",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

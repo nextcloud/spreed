@@ -51,7 +51,6 @@ OC.L10N.register(
     "Add participants" : "เพิ่มผู้เข้าร่วม",
     "Close" : "ปิด",
     "Reply" : "ตอบกลับ",
-    "Submit" : "ส่ง",
     "Today" : "วันนี้",
     "Yesterday" : "เมื่อวานนี้",
     "Invalid path selected" : "เลือกเส้นทางไม่ถูกต้อง",

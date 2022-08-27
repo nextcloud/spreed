@@ -592,8 +592,6 @@ OC.L10N.register(
     "Go to file" : "Pereiti į failą",
     "Contact" : "Adresatas",
     "Remove {fileName}" : "Šalinti {fileName}",
-    "Submit" : "Pateikti",
-    "Close poll" : "Baigti apklausą",
     "Scroll to bottom" : "Slinkti į apačią",
     "Today" : "Šiandien",
     "Yesterday" : "Vakar",

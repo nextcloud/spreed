@@ -324,7 +324,6 @@ OC.L10N.register(
     "Reply" : "Răspunde",
     "Mark as unread" : "Marchează ca necitit",
     "Contact" : "Contact",
-    "Submit" : "Trimite",
     "Today" : "Azi",
     "Yesterday" : "Ieri",
     "Invalid path selected" : "Calea selectată este invalidă",

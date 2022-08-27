@@ -280,7 +280,6 @@ OC.L10N.register(
     "Conversation name" : "Nome da conversação",
     "Reply" : "Resposta",
     "Contact" : "Contacto",
-    "Submit" : "Submeter",
     "Today" : "Hoje",
     "Yesterday" : "Ontem",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

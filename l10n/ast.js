@@ -78,7 +78,6 @@ OC.L10N.register(
     "Close" : "Zarrar",
     "Reply" : "Rempuesta",
     "Contact" : "Contautu",
-    "Submit" : "Unviar",
     "Today" : "Güei",
     "Yesterday" : "Ayeri",
     "Settings" : "Settings",
