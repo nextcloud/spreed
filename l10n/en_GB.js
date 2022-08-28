@@ -384,6 +384,7 @@ OC.L10N.register(
     "Conversation name" : "Conversation name",
     "Reply" : "Reply",
     "Contact" : "Contact",
+    "You voted" : "You voted",
     "Today" : "Today",
     "Yesterday" : "Yesterday",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

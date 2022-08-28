@@ -357,6 +357,7 @@ OC.L10N.register(
     "Reply" : "回覆",
     "Mark as unread" : "標為未讀",
     "Contact" : "聯絡人",
+    "You voted" : "您已投票",
     "Today" : "今天",
     "Yesterday" : "昨天",
     "Record voice message" : "錄製語音訊息",
