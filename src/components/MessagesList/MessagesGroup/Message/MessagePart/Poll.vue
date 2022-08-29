@@ -126,6 +126,8 @@
 								<p>
 									{{ option }}
 								</p>
+								<PollVotersDetails v-if="details"
+									:details="details" />
 								<p class="percentage">
 									{{ getVotePercentage(index) + '%' }}
 								</p>
@@ -166,6 +168,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
 import { PARTICIPANT } from '../../../../../constants.js'
+import PollVotersDetails from './PollVotersDetails.vue'
 
 export default {
 
@@ -177,6 +180,7 @@ export default {
 		NcButton,
 		PollIcon,
 		NcProgressBar,
+		PollVotersDetails,
 	},
 
 	props: {
@@ -270,6 +274,14 @@ export default {
 
 		pollIsClosed() {
 			return this.status === 1
+		},
+
+		details() {
+			if (!this.pollLoaded || this.pollIsOpen) {
+				return undefined
+			} else {
+				return this.poll.details
+			}
 		},
 
 		checkboxRadioSwitchType() {
