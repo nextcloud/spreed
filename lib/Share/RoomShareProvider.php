@@ -612,7 +612,8 @@ class RoomShareProvider implements IShareProvider {
 			->leftJoin('tr', 'talk_attendees', 'ta',
 				$qb->expr()->andX(
 					$qb->expr()->eq('ta.room_id', 'tr.id'),
-					$qb->expr()->eq('ta.actor_id', $qb->createNamedParameter($userId))
+					$qb->expr()->eq('ta.actor_id', $qb->createNamedParameter($userId)),
+					$qb->expr()->eq('ta.actor_type', $qb->createNamedParameter(Attendee::ACTOR_USERS))
 				)
 			);
 
@@ -873,7 +874,8 @@ class RoomShareProvider implements IShareProvider {
 				->leftJoin('tr', 'talk_attendees', 'ta',
 					$qb->expr()->andX(
 						$qb->expr()->eq('ta.room_id', 'tr.id'),
-						$qb->expr()->eq('ta.actor_id', $qb->createNamedParameter($userId))
+						$qb->expr()->eq('ta.actor_id', $qb->createNamedParameter($userId)),
+						$qb->expr()->eq('ta.actor_type', $qb->createNamedParameter(Attendee::ACTOR_USERS))
 					)
 				)
 				->orderBy('s.id')
