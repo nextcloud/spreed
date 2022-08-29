@@ -792,17 +792,17 @@ class ChatManager {
 	 * @param Room $room The room of comments
 	 * @param array IComment[] $comments
 	 * @param Attendee $attendee
-	 * @return array
+	 * @return IComment[]
 	 */
 	public function filterHistorySince(Room $room, array $comments, Attendee $attendee): array {
 		// Filter nothing if the room setting is to show history to all
 		if ($room->getShowHistory() === 1) {
 			return $comments;
 		}
-		// Filter nothing if the user haven't the history since.
-		// This will occur for all user added before the manager limit the history to new participants
+		// Filter nothing if the attendee doesn't have the history since.
+		// This will occur for all attendees added before the history was limited
 		$historySince = $attendee->getHistorySince();
-		if (!$historySince) {
+		if (!$historySince instanceof \DateTime) {
 			return $comments;
 		}
 		foreach ($comments as $key => $comment) {

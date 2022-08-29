@@ -60,7 +60,7 @@ use OCP\AppFramework\Db\Entity;
  * @method null|string getAccessToken()
  * @method void setRemoteId(string $remoteId)
  * @method string getRemoteId()
- * @method null|int getHistorySince()
+ * @method null|\DateTime getHistorySince()
  * @method void setHistorySince(?\DateTime $dateTime)
  */
 class Attendee extends Entity {
