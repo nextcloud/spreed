@@ -20,21 +20,34 @@
 -->
 
 <template>
-	<div class="poll-voters-details">
-		<AvatarWrapper v-for="(item, index) in details"
-			:id="item.actorId"
-			:key="index" />
-	</div>
+	<NcPopover trigger="hover">
+		<div slot="trigger" tabindex="0" class="poll-voters-details">
+			<AvatarWrapper v-for="(item, index) in details"
+				:id="item.actorId"
+				:key="index"
+				:source="item.actorType"
+				:disable-menu="true"
+				:show-user-status-compact="true"
+				:name="item.actorDisplayName"
+				:size="24" />
+		</div>
+		<div tabindex="0">
+			Some content
+		</div>
+	</NcPopover>
 </template>
 
 <script>
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
+import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
+
 export default {
 
 	name: 'PollVotersDetails',
 
-	components:	{
+	components: {
 		AvatarWrapper,
+		NcPopover,
 	},
 
 	props: {
