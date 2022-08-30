@@ -27,7 +27,10 @@ import fromStateOr from './helper.js'
 import { findUniquePath, getFileExtension } from '../utils/fileUpload.js'
 import moment from '@nextcloud/moment'
 import { EventBus } from '../services/EventBus.js'
-import { shareFile } from '../services/filesSharingServices.js'
+import {
+	getFileTemplates,
+	shareFile,
+} from '../services/filesSharingServices.js'
 import { setAttachmentFolder } from '../services/settingsService.js'
 
 const state = {
@@ -36,6 +39,9 @@ const state = {
 	uploads: {
 	},
 	currentUploadId: undefined,
+
+	fileTemplatesInitialised: false,
+	fileTemplates: [],
 }
 
 const getters = {
@@ -92,6 +98,14 @@ const getters = {
 
 	currentUploadId: (state) => {
 		return state.currentUploadId
+	},
+
+	areFileTemplatesInitialised: (state) => {
+		return state.fileTemplatesInitialised
+	},
+
+	getFileTemplates: (state) => () => {
+		return state.fileTemplates
 	},
 }
 
@@ -181,6 +195,11 @@ const mutations = {
 
 	discardUpload(state, { uploadId }) {
 		Vue.delete(state.uploads, uploadId)
+	},
+
+	storeFilesTemplates(state, { template }) {
+		state.fileTemplates.push(template)
+		state.fileTemplatesInitialised = true
 	},
 }
 
@@ -406,6 +425,17 @@ const actions = {
 		commit('removeFileFromSelection', temporaryMessageId)
 	},
 
+	async getFileTemplates({ commit }) {
+		try {
+			const response = await getFileTemplates()
+
+			response.data.ocs.data.forEach(template => {
+				commit('storeFilesTemplates', { template })
+			})
+		} catch (error) {
+			console.error('An error happened when trying to load the templates', error)
+		}
+	},
 }
 
 export default { state, mutations, getters, actions }

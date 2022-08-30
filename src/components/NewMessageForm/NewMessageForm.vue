@@ -63,14 +63,15 @@
 							</template>
 							{{ shareFromNextcloudLabel }}
 						</NcActionButton>
-						<NcActionButton v-if="canShareFiles"
-							:close-after-click="true"
-							@click.prevent="showTextFileDialog = true">
-							<template #icon>
-								<TextBox :size="20" />
-							</template>
-							{{ t('spreed', 'Create text file') }}
-						</NcActionButton>
+						<template v-if="canShareFiles">
+							<NcActionButton v-for="(fileTemplate, i) in fileTemplateOptions"
+								:key="i"
+								:close-after-click="true"
+								:icon="fileTemplate.iconClass"
+								@click.prevent="showTextFileDialog = i">
+								{{ fileTemplate.label }}
+							</NcActionButton>
+						</template>
 						<NcActionButton v-if="canCreatePoll"
 							:close-after-click="true"
 							@click.prevent="toggleSimplePollsEditor(true)">
@@ -160,12 +161,12 @@
 			@close="toggleSimplePollsEditor(false)" />
 
 		<!-- Text file creation dialog -->
-		<NcModal v-if="showTextFileDialog"
+		<NcModal v-if="showTextFileDialog !== false"
 			size="small"
 			@close="dismissTextFileCreation">
 			<div class="new-text-file">
 				<h2>
-					{{ t('spreed', 'Create and share a text file') }}
+					{{ t('spreed', 'Create and share a new file') }}
 				</h2>
 				<form class="new-text-file__form"
 					@submit.prevent="handleCreateTextFile">
@@ -178,7 +179,7 @@
 					</NcButton>
 					<NcButton type="primary"
 						@click="handleCreateTextFile">
-						{{ t('spreed', 'Create text file') }}
+						{{ t('spreed', 'Create file') }}
 					</NcButton>
 				</div>
 			</div>
@@ -205,7 +206,6 @@ import BellOff from 'vue-material-design-icons/BellOff.vue'
 import AudioRecorder from './AudioRecorder/AudioRecorder.vue'
 import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
 import Poll from 'vue-material-design-icons/Poll.vue'
-import TextBox from 'vue-material-design-icons/TextBox.vue'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import Folder from 'vue-material-design-icons/Folder.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
@@ -236,7 +236,6 @@ export default {
 		BellOff,
 		SimplePollsEditor,
 		Poll,
-		TextBox,
 		NcModal,
 		Folder,
 		Upload,
@@ -362,6 +361,10 @@ export default {
 		shareFromNextcloudLabel() {
 			return t('spreed', 'Share from {nextcloud}', { nextcloud: window.oc_defaults.productName })
 		},
+
+		fileTemplateOptions() {
+			return this.$store.getters.getFileTemplates()
+		},
 	},
 
 	watch: {
@@ -382,7 +385,9 @@ export default {
 		},
 
 		showTextFileDialog(newValue) {
-			if (newValue) {
+			if (newValue !== false) {
+				const fileTemplate = this.fileTemplateOptions[newValue]
+				this.textFileTitle = fileTemplate.label + fileTemplate.extension
 				this.$nextTick(() => {
 					this.focusTextDialogInput()
 				})
@@ -395,6 +400,10 @@ export default {
 		EventBus.$on('retry-message', this.handleRetryMessage)
 		this.text = this.$store.getters.currentMessageInput(this.token) || ''
 		// this.startRecording()
+
+		if (!this.$store.getters.areFileTemplatesInitialised) {
+			this.$store.dispatch('getFileTemplates')
+		}
 	},
 
 	beforeDestroy() {
@@ -642,7 +651,13 @@ export default {
 
 		// Create text file and share it to a conversation
 		async handleCreateTextFile() {
-			const filePath = this.textFileTitle + '.md'
+			let filePath = this.textFileTitle
+			const fileTemplate = this.fileTemplateOptions[this.showTextFileDialog]
+
+			if (!filePath.endsWith(fileTemplate.extension)) {
+				filePath += fileTemplate.extension
+			}
+
 			await createTextFile(filePath)
 			// FIXME If creation failed we should not share, as it could be an old/other file with the same name.
 			const response = await shareFile(filePath, this.token)

@@ -55,6 +55,10 @@ const shareFile = async function(path, token, referenceId, metadata) {
 	}
 }
 
+const getFileTemplates = async () => {
+	return await axios.get(generateOcsUrl('apps/files/api/v1/templates'))
+}
+
 /**
  * Share a text file to a conversation
  *
@@ -82,5 +86,6 @@ const createTextFile = async function(filePath) {
 
 export {
 	shareFile,
+	getFileTemplates,
 	createTextFile,
 }
