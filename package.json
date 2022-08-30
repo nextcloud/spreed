@@ -17,7 +17,6 @@
 		"stylelint:fix": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --fix"
 	},
 	"dependencies": {
-		"@juliushaertl/vue-richtext": "^2.0.0-dev.0",
 		"@nextcloud/auth": "^2.0.0",
 		"@nextcloud/axios": "^2.0.0",
 		"@nextcloud/browser-storage": "^0.1.1",
@@ -73,6 +72,7 @@
 		"@nextcloud/browserslist-config": "^2.3.0",
 		"@nextcloud/eslint-config": "^8.1.2",
 		"@nextcloud/stylelint-config": "^2.2.0",
+		"@nextcloud/vue-richtext": "^2.0.0",
 		"@nextcloud/webpack-vue-config": "^5.3.0",
 		"@vue/cli-plugin-unit-jest": "^5.0.8",
 		"@vue/cli-service": "^5.0.8",

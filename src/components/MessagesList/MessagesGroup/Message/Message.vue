@@ -187,7 +187,7 @@ import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
 import Mention from './MessagePart/Mention.vue'
-import RichText from '@juliushaertl/vue-richtext'
+import RichText from '@nextcloud/vue-richtext'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
@@ -811,7 +811,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@juliushaertl/vue-richtext/dist/style.css';
+@import '@nextcloud/vue-richtext/dist/style.css';
 @import '../../../../assets/variables';
 
 .message:hover .normal-message-body {
@@ -837,6 +837,7 @@ export default {
 		min-width: 100%;
 		&__text {
 			flex: 0 1 600px;
+			max-width: 600px;
 			color: var(--color-text-light);
 			.single-emoji {
 				font-size: 250%;
@@ -867,6 +868,10 @@ export default {
 			::v-deep .rich-text--wrapper {
 				white-space: pre-wrap;
 				word-break: break-word;
+
+				.rich-text--reference-widget {
+					width: calc(100% + 132px);
+				}
 			}
 
 			&--quote {

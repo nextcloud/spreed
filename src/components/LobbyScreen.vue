@@ -49,7 +49,7 @@
 
 <script>
 import moment from '@nextcloud/moment'
-import RichText from '@juliushaertl/vue-richtext'
+import RichText from '@nextcloud/vue-richtext'
 import SetGuestUsername from './SetGuestUsername.vue'
 import Lobby from './missingMaterialDesignIcons/Lobby.vue'
 
