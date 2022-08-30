@@ -49,6 +49,9 @@ class Listener {
 		$message = $event->getComment();
 		$participant = $event->getParticipant();
 
+		/**
+		 * @var Listener $listener
+		 */
 		$listener = Server::get(self::class);
 
 		if (strpos($message->getMessage(), '//') === 0) {
