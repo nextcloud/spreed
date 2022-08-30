@@ -829,7 +829,8 @@ class RoomService {
 		}
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
-			->set('show_history', $update->createNamedParameter($showHistory, IQueryBuilder::PARAM_INT));
+			->set('show_history', $update->createNamedParameter($showHistory, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 
 		$room->setShowHistory($showHistory);
