@@ -816,7 +816,6 @@ class RoomService {
 	}
 
 	/**
-	 * @return Room
 	 * @throws InvalidArgumentException when the showHistory is out of range
 	 */
 	public function setShowHistory(Room $room, int $showHistory): void {
