@@ -189,7 +189,7 @@
 
 <script>
 import AdvancedInput from './AdvancedInput/AdvancedInput.vue'
-import { getFilePickerBuilder } from '@nextcloud/dialogs'
+import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { getCapabilities } from '@nextcloud/capabilities'
 import Quote from '../Quote.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -258,7 +258,7 @@ export default {
 			isRecordingAudio: false,
 			showSimplePollsEditor: false,
 			showTextFileDialog: false,
-			textFileTitle: t('spreed', 'New text file'),
+			textFileTitle: t('spreed', 'New file'),
 		}
 	},
 
@@ -658,19 +658,49 @@ export default {
 				filePath += fileTemplate.extension
 			}
 
-			await createTextFile(filePath)
-			// FIXME If creation failed we should not share, as it could be an old/other file with the same name.
-			const response = await shareFile(filePath, this.token)
-			// TODO: before getting the link from the system message we need
-			// to wait till the message itself is received
-			const link = this.$store.getters.getSharedFileLink(this.token, response.data.ocs.data.file_source)
-			window.open(link, '_self')
+			let fileData
+			try {
+				const response = await createTextFile(filePath)
+				fileData = response.data.ocs.data
+			} catch (error) {
+				console.error('Error while creating file', error)
+				if (error?.response?.data?.ocs?.meta?.message) {
+					showError(error.response.data.ocs.meta.message)
+				} else {
+					showError(t('spreed', 'Error while creating file'))
+				}
+				return
+			}
+
+			await shareFile(filePath, this.token, '', '')
+
+			OCA.Viewer.open({
+				// Viewer expects an internal absolute path starting with "/".
+				path: filePath,
+				list: [
+					fileData,
+				],
+			})
+
+			// FIXME Remove this hack once it is possible to set the parent
+			// element of the viewer.
+			// By default the viewer is a sibling of the fullscreen element, so
+			// it is not visible when in fullscreen mode. It is not possible to
+			// specify the parent nor to know when the viewer was actually
+			// opened, so for the time being it is reparented if needed shortly
+			// after calling it.
+			setTimeout(() => {
+				if (this.$store.getters.isFullscreen()) {
+					document.getElementById('content-vue').appendChild(document.getElementById('viewer'))
+				}
+			}, 1000)
+
 			this.dismissTextFileCreation()
 		},
 
 		dismissTextFileCreation() {
 			this.showTextFileDialog = false
-			this.textFileTitle = t('spreed', 'New text file')
+			this.textFileTitle = t('spreed', 'New file')
 		},
 
 		// Focus and select the text within the input field

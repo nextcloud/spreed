@@ -30,7 +30,7 @@ import { showError } from '@nextcloud/dialogs'
  * @param {string} token The conversation's token
  * e.g. `/myfile.txt`
  * @param {string} referenceId An optional reference id to recognize the message later
- * @param {Array} metadata the metadata json encoded array
+ * @param {string} metadata the metadata json encoded array
  */
 const shareFile = async function(path, token, referenceId, metadata) {
 	try {
@@ -66,22 +66,9 @@ const getFileTemplates = async () => {
  * @return { object } the file object
  */
 const createTextFile = async function(filePath) {
-	try {
-		return await axios.post(
-			generateOcsUrl('apps/files/api/v1/templates/create'),
-			{
-				filePath,
-			})
-	} catch (error) {
-		// FIXME: errors should be handled by called instead
-		if (error?.response?.data?.ocs?.meta?.message) {
-			console.error('Error while creating file: ' + error.response.data.ocs.meta.message)
-			showError(error.response.data.ocs.meta.message)
-		} else {
-			console.error('Error while creating file: Unknown error')
-			showError(t('spreed', 'Error while creating file'))
-		}
-	}
+	return await axios.post(generateOcsUrl('apps/files/api/v1/templates/create'), {
+		filePath,
+	})
 }
 
 export {
