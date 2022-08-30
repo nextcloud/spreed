@@ -163,6 +163,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Написати повідомлення, @ім'я для згадки про користувача…",
     "Invalid path selected" : "Вибрано неправильний шлях",
     "Settings" : "Налаштування",
+    "Create poll" : "Створити опитування",
     "guest" : "гість",
     "Promote to moderator" : "Призначити модератором",
     "Remove group and members" : "Вилучити групи та учасників",
