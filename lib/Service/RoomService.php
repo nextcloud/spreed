@@ -815,7 +815,18 @@ class RoomService {
 		}
 	}
 
+	/**
+	 * @return Room
+	 * @throws InvalidArgumentException when the showHistory is out of range
+	 */
 	public function setShowHistory(Room $room, int $showHistory): void {
+		$allowedHistoryTypes = [
+			ChatManager::HISTORY_HIDE_BEFORE_JOIN,
+			ChatManager::HISTORY_SHOW
+		];
+		if (!in_array($showHistory, $allowedHistoryTypes)) {
+			throw new InvalidArgumentException('showHistory');
+		}
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('show_history', $update->createNamedParameter($showHistory, IQueryBuilder::PARAM_INT));
