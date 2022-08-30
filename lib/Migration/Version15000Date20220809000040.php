@@ -53,9 +53,10 @@ class Version15000Date20220809000040 extends SimpleMigrationStep {
 
 		$table = $schema->getTable('talk_rooms');
 		if (!$table->hasColumn('show_history')) {
-			// As per call the default for NEW conversations should be "Hidden".
+			// Defaulting to "Hidden" for existing conversations.
 			$table->addColumn('show_history', Types::SMALLINT, [
-				'notnull' => false
+				'notnull' => true,
+				'default' => 1,
 			]);
 		}
 
@@ -67,24 +68,5 @@ class Version15000Date20220809000040 extends SimpleMigrationStep {
 		}
 
 		return $schema;
-	}
-
-	/**
-	 * @param IOutput $output
-	 * @param \Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
-	 * @param array $options
-	 */
-	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
-		/** @var ISchemaWrapper $schema */
-		$schema = $schemaClosure();
-
-		$table = $schema->getTable('talk_rooms');
-		if ($table->hasColumn('show_history')) {
-			// For existing conversations we should fall back to "Visible".
-			$update = $this->connection->getQueryBuilder();
-			$update->update('talk_rooms')
-				->set('show_history', $update->createNamedParameter(1, IQueryBuilder::PARAM_INT));
-			$update->executeStatement();
-		}
 	}
 }
