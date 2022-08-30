@@ -93,7 +93,7 @@ appstore:
 	--exclude=.php_cs.dist \
 	--exclude=psalm.xml \
 	--exclude=README.md \
-	--exclude=src \
+	--exclude=/src \
 	--exclude=.stylelintignore \
 	--exclude=stylelint.config.js \
 	--exclude=.tx \
