@@ -786,8 +786,7 @@ class ChatManager {
 	}
 
 	/**
-	 * If the attendee only can see the history after join date,
-	 * will remove all comments before join date.
+	 * Filter the history if the attendee joined the room later and the history is restricted
 	 *
 	 * @param Room $room The room of comments
 	 * @param array IComment[] $comments
@@ -807,6 +806,7 @@ class ChatManager {
 		}
 		foreach ($comments as $key => $comment) {
 			// Ignore if the comment isn't of current room
+			// This case will occur when the search return comments from different rooms
 			if ($comment->getObjectId() != $room->getId()) {
 				continue;
 			}
