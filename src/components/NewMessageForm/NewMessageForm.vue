@@ -651,7 +651,7 @@ export default {
 
 		// Create text file and share it to a conversation
 		async handleCreateTextFile() {
-			let filePath = this.textFileTitle
+			let filePath = this.$store.getters.getAttachmentFolder() + '/' + this.textFileTitle.replace('/', '')
 			const fileTemplate = this.fileTemplateOptions[this.showTextFileDialog]
 
 			if (!filePath.endsWith(fileTemplate.extension)) {
