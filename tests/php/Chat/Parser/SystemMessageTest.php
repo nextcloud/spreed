@@ -492,7 +492,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn(['id' => $parameters['group'] ?? 'group', 'type' => 'group']);
 		$parser->expects($this->any())
 			->method('getGuest')
-			->with($room, $parameters['session'] ?? 'guest')
+			->with($room, Attendee::ACTOR_GUESTS, $parameters['session'] ?? 'guest')
 			->willReturn(['id' => $parameters['session'] ?? 'guest', 'type' => 'guest']);
 
 		if ($message === 'call_ended') {
@@ -885,7 +885,7 @@ class SystemMessageTest extends TestCase {
 		} else {
 			$parser->expects($this->once())
 				->method('getGuest')
-				->with($room, 'author-id')
+				->with($room, Attendee::ACTOR_GUESTS, 'author-id')
 				->willReturn($guestData);
 		}
 
@@ -1041,40 +1041,65 @@ class SystemMessageTest extends TestCase {
 		self::assertSame($name, self::invokePrivate($parser, 'getDisplayNameGroup', [$gid]));
 	}
 
-	public function testGetGuest() {
-		$actorId = sha1('name');
+	public function dataGetGuest(): array {
+		return [
+			[Attendee::ACTOR_GUESTS, sha1('name')],
+			[Attendee::ACTOR_EMAILS, 'test@test.tld'],
+		];
+	}
 
+	/**
+	 * @dataProvider dataGetGuest
+	 * @param string $attendeeType
+	 * @param string $actorId
+	 */
+	public function testGetGuest(string $attendeeType, string $actorId): void {
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);
 
 		$parser = $this->getParser(['getGuestName']);
 		$parser->expects($this->once())
 			->method('getGuestName')
-			->with($room, $actorId)
+			->with($room, $attendeeType, $actorId)
 			->willReturn('name');
 
 		$this->assertSame([
 			'type' => 'guest',
 			'id' => 'guest/' . $actorId,
 			'name' => 'name',
-		], self::invokePrivate($parser, 'getGuest', [$room, $actorId]));
+		], self::invokePrivate($parser, 'getGuest', [$room, $attendeeType, $actorId]));
 
 		// Cached call: no call to getGuestName() again
 		$this->assertSame([
 			'type' => 'guest',
 			'id' => 'guest/' . $actorId,
 			'name' => 'name',
-		], self::invokePrivate($parser, 'getGuest', [$room, $actorId]));
+		], self::invokePrivate($parser, 'getGuest', [$room, $attendeeType, $actorId]));
 	}
 
-	public function testGetGuestName() {
-		$actorId = sha1('name');
+	public function dataGetGuestName(): array {
+		return [
+			[Attendee::ACTOR_GUESTS, sha1('name'), 'name', 'name (guest)'],
+			[Attendee::ACTOR_GUESTS, sha1('name'), '', 'Guest'],
+			[Attendee::ACTOR_EMAILS, 'test@test.tld', 'name', 'name (guest)'],
+			[Attendee::ACTOR_EMAILS, 'test@test.tld', '', 'test@test.tld (guest)'],
+		];
+	}
+
+	/**
+	 * @dataProvider dataGetGuestName
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @param string $attendeeName
+	 * @param string $expected
+	 */
+	public function testGetGuestName(string $actorType, string $actorId, string $attendeeName, string $expected): void {
 
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);
 
 		$attendee = Attendee::fromParams([
-			'displayName' => 'name',
+			'displayName' => $attendeeName,
 		]);
 
 		/** @var Participant|MockObject $room */
@@ -1083,12 +1108,12 @@ class SystemMessageTest extends TestCase {
 			->willReturn($attendee);
 
 		$room->method('getParticipantByActor')
-			->with(Attendee::ACTOR_GUESTS, $actorId)
+			->with($actorType, $actorId)
 			->willReturn($participant);
 
 		$parser = $this->getParser();
 		self::invokePrivate($parser, 'l', [$this->l]);
-		$this->assertSame('name (guest)', self::invokePrivate($parser, 'getGuestName', [$room, $actorId]));
+		$this->assertSame($expected, self::invokePrivate($parser, 'getGuestName', [$room, $actorType, $actorId]));
 	}
 
 	public function testGetGuestNameThrows() {
@@ -1103,7 +1128,7 @@ class SystemMessageTest extends TestCase {
 
 		$parser = $this->getParser();
 		self::invokePrivate($parser, 'l', [$this->l]);
-		$this->assertSame('Guest', self::invokePrivate($parser, 'getGuestName', [$room, $actorId]));
+		$this->assertSame('Guest', self::invokePrivate($parser, 'getGuestName', [$room, Attendee::ACTOR_GUESTS, $actorId]));
 	}
 
 	public function dataParseCall(): array {
