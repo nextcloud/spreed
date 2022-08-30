@@ -112,5 +112,4 @@ title: Capabilities
 * `recording-v1` - Call recording is available.
 * `config => call => breakout-rooms` - Whether breakout rooms are enabled on this instance
 * `config => call => recording` - Whether calls can be recorded (requires the High-performance backend server)
-* `limit-chat-history` - Limit chat history to timestamp of joining
-* `limit-show-history` - Limit chat history to timestamp of joining
+* `limit-show-history` - Chat history can be limited for guests/participants to the moment of joining.

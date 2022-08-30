@@ -1,4 +1,4 @@
-Feature: chat/limit-chat-history
+Feature: chat/limit-show-history
 
   Background:
     Given user "participant1" exists
@@ -22,7 +22,7 @@ Feature: chat/limit-chat-history
     And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
     Then user "participant2" sends reply "Message 1-1" on message "Message 1" to room "room1" with 400
 
-  Scenario: A request for older history must return 304 like when there is actually no history at all
+    Scenario: A request for older history must return 304 like when there is actually no history at all
     Given user "participant1" creates room "room1" (v4)
       | roomType | 3     |
       | roomName | room1 |
