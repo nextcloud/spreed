@@ -82,6 +82,9 @@ class ChatManager {
 	public const VERB_REACTION = 'reaction';
 	public const VERB_REACTION_DELETED = 'reaction_deleted';
 
+	public const HISTORY_SHOW = 1;
+	public const HISTORY_HIDE_BEFORE_JOIN = 0;
+
 	/** @var ICommentsManager|CommentsManager
 	 */
 	private $commentsManager;
@@ -795,7 +798,7 @@ class ChatManager {
 	 */
 	public function filterHistorySince(Room $room, array $comments, Attendee $attendee): array {
 		// Filter nothing if the room setting is to show history to all
-		if ($room->getShowHistory() === 1) {
+		if ($room->getShowHistory() === self::HISTORY_SHOW) {
 			return $comments;
 		}
 		// Filter nothing if the attendee doesn't have the history since.

@@ -434,7 +434,7 @@ class RoomController extends AEnvironmentAwareController {
 			'avatarVersion' => $this->avatarService->getAvatarVersion($room),
 			'breakoutRoomMode' => BreakoutRoom::MODE_NOT_CONFIGURED,
 			'breakoutRoomStatus' => BreakoutRoom::STATUS_STOPPED,
-			'showHistory' => false,
+			'showHistory' => ChatManager::HISTORY_HIDE_BEFORE_JOIN,
 		];
 
 		$lastActivity = $room->getLastActivity();
