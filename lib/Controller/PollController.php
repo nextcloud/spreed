@@ -252,7 +252,7 @@ class PollController extends AEnvironmentAwareController {
 
 		if (!$canSeeSummary && $poll->getStatus() === Poll::STATUS_OPEN) {
 			$data['votes'] = [];
-			if ($this->participant->hasModeratorPermissions(false)
+			if ($this->participant->hasModeratorPermissions()
 				|| ($poll->getActorType() === $this->participant->getAttendee()->getActorType()
 					&& $poll->getActorId() === $this->participant->getAttendee()->getActorId())) {
 				// Allow moderators and the author to see the number of voters,
