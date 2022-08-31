@@ -350,7 +350,7 @@ export default {
 			if (this.pollIsOpen) {
 				return this.selfHasVoted ? t('spreed', 'Poll ・ You voted') : t('spreed', 'Poll ・ Click to vote')
 			} else if (this.pollIsClosed) {
-				return t('spreed', 'Poll ・ Closed')
+				return t('spreed', 'Poll ・ Ended')
 			}
 			return ''
 		},
