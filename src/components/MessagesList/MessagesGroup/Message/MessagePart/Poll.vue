@@ -130,11 +130,10 @@
 									{{ getVotePercentage(index) + '%' }}
 								</p>
 							</div>
-							<div class="results__option__details">
+							<div v-if="getFilteredDetails(index).length > 0 || selfHasVotedOption(index)"
+								class="results__option__details">
 								<PollVotersDetails v-if="details"
-									:details="details.filter((item) => {
-										return item.optionId === index
-									}).slice(0, 8)" />
+									:details="getFilteredDetails(index)" />
 								<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
 									{{ t('spreed','You voted') }}
 								</p>
@@ -442,6 +441,15 @@ export default {
 			} else {
 				return false
 			}
+		},
+
+		getFilteredDetails(index) {
+			if (!this.details) {
+				return []
+			}
+			return this.details.filter((item) => {
+				return item.optionId === index
+			}).slice(0, 8)
 		},
 	},
 }
