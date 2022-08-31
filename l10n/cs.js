@@ -173,8 +173,6 @@ OC.L10N.register(
     "You disabled message expiration" : "Vypnuli jste omezení časové platnosti zprávy",
     "{actor} cleared the history of the conversation" : "{actor} vyčistil(a) historii konverzace",
     "You cleared the history of the conversation" : "Vyčistili jste historii konverzace",
-    "{actor} closed the poll {poll}" : "{actor} uzavřel(a) anketu {poll}",
-    "You closed the poll {poll}" : "Uzavřeli jste anketu {poll}",
     "Someone voted on the poll {poll}" : "Někdo hlasoval v anketě {poll}",
     "Message deleted by author" : "Autor zprávu smazal",
     "Message deleted by {actor}" : "Zpráva byla smazána uživatelem {actor}",

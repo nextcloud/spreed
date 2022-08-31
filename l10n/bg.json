@@ -169,8 +169,6 @@
     "You disabled message expiration" : "Деактивирахте изтичането на съобщението",
     "{actor} cleared the history of the conversation" : "{actor} изчисти историята на разговора",
     "You cleared the history of the conversation" : "Изчистихте историята на разговора",
-    "{actor} closed the poll {poll}" : "{actor} затвори анкетата {poll}",
-    "You closed the poll {poll}" : "Затворихте анкетата {poll}",
     "Someone voted on the poll {poll}" : "Някой гласува в анкетата {poll}",
     "Message deleted by author" : "Съобщението е изтрито от автора",
     "Message deleted by {actor}" : "Съобщението е изтрито от {actor}",
