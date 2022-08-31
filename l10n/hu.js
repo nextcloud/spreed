@@ -173,8 +173,6 @@ OC.L10N.register(
     "You disabled message expiration" : "Kikapcsolta az üzenetek elévülését",
     "{actor} cleared the history of the conversation" : "{actor} törölte a beszélgetés előzményeit",
     "You cleared the history of the conversation" : "Törölte a beszélgetés előzményeit",
-    "{actor} closed the poll {poll}" : "{actor} lezárta a(z) {poll} szavazást",
-    "You closed the poll {poll}" : "Lezárta a(z) {poll} szavazásban",
     "Someone voted on the poll {poll}" : "Valaki szavazott a(z) {poll} szavazásban",
     "Message deleted by author" : "Az üzenetet a szerző törölte",
     "Message deleted by {actor}" : "{actor} törölte az üzenetet",

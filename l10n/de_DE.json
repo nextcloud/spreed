@@ -171,8 +171,6 @@
     "You disabled message expiration" : "Sie haben den Ablauf von Nachrichten deaktiviert",
     "{actor} cleared the history of the conversation" : "{actor} hat den Gesprächsverlauf gelöscht",
     "You cleared the history of the conversation" : "Sie haben den Gesprächsverlauf gelöscht",
-    "{actor} closed the poll {poll}" : "{actor} hat die Umfrage {poll} beendet",
-    "You closed the poll {poll}" : "Sie haben die Umfrage {poll} beendet",
     "Someone voted on the poll {poll}" : "Jemand hat in der Umfrage {poll} abgestimmt",
     "Message deleted by author" : "Nachricht vom Autor gelöscht",
     "Message deleted by {actor}" : "Nachricht von {actor} gelöscht",
