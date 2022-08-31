@@ -545,7 +545,6 @@ export default {
 
 	&-subtitle {
 		color: var(--color-text-maxcontrast);
-		margin-left: 8px;
 	}
 
 	&-progress {

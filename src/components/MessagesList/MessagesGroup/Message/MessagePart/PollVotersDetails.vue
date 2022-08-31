@@ -84,6 +84,7 @@ export default {
 	background: none;
 	border: none;
 	padding: 0;
+	margin-right: 8px;
 
 	&__popover{
 		padding: 8px;
