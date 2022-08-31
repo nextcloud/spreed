@@ -721,8 +721,8 @@ export default {
 
 		// Focus and select the text within the input field
 		focusTextDialogInput() {
-			// this.$refs.textFileTitleInput.$el.focus()
-			this.$refs.textFileTitleInput.$el.select()
+			// this.$refs.textFileTitleInput.$refs.inputField.$refs.input.focus()
+			this.$refs.textFileTitleInput.$refs.inputField.$refs.input.select()
 
 		},
 	},
