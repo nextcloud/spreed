@@ -23,7 +23,7 @@ webpackConfig.output.assetModuleFilename = '[name][ext]?v=[contenthash]'
 
 // Edit JS rule
 webpackRules.RULE_JS.exclude = BabelLoaderExcludeNodeModulesExcept([
-	'@juliushaertl/vue-richtext',
+	'@nextcloud/vue-richtext',
 	'@nextcloud/event-bus',
 	'@nextcloud/vue-dashboard',
 	'ansi-regex',
