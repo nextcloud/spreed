@@ -24,6 +24,7 @@
 const ignorePatterns = [
 	'vue-material-design-icons',
 	'@juliushaertl',
+	'@nextcloud/vue-richtext',
 	'tributejs',
 	'@nextcloud/vue',
 	'splitpanes',
