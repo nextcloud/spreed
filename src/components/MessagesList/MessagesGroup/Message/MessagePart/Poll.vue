@@ -130,9 +130,11 @@
 									{{ getVotePercentage(index) + '%' }}
 								</p>
 							</div>
-							<div>
+							<div class="results__option__details">
 								<PollVotersDetails v-if="details"
-									:details="details" />
+									:details="details.filter((item) => {
+										return item.optionId === index
+									}).slice(0, 8)" />
 								<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
 									{{ t('spreed','You voted') }}
 								</p>
@@ -520,15 +522,21 @@ export default {
 .results__options {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 24px;
 	word-wrap: anywhere;
 	margin: 8px 0 20px 0;
 }
 .results__option {
 	display: flex;
 	flex-direction: column;
+
+	&__details {
+		display: flex;
+	}
+
 	&-subtitle {
 		color: var(--color-text-maxcontrast);
+		margin-left: 8px;
 	}
 
 	&-progress {
@@ -540,6 +548,7 @@ export default {
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
+	margin-bottom: 4px;
 	.percentage {
 		white-space: nowrap;
 		margin-left: 16px;
