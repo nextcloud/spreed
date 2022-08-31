@@ -882,6 +882,7 @@ export default {
 		width: 100%;
 
 		.templates-picker__list {
+			margin: 20px 0;
 			display: grid;
 			grid-gap: calc(var(--margin) * 2);
 			grid-auto-columns: 1fr;
