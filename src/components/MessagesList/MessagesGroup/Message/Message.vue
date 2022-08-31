@@ -52,11 +52,17 @@ the main body of the message as well as a quote.
 					</div>
 				</div>
 				<div v-else-if="showJoinCallButton" class="message-body__main__text call-started">
-					<RichText :text="message" :arguments="richParameters" :autolink="true" />
+					<RichText :text="message"
+						:arguments="richParameters"
+						:autolink="true"
+						:reference-limit="10" />
 					<CallButton />
 				</div>
 				<div v-else-if="showResultsButton" class="message-body__main__text system-message">
-					<RichText :text="message" :arguments="richParameters" :autolink="true" />
+					<RichText :text="message"
+						:arguments="richParameters"
+						:autolink="true"
+						:reference-limit="10" />
 					<!-- Displays only the "see results" button with the results modal -->
 					<Poll :id="messageParameters.poll.id"
 						:poll-name="messageParameters.poll.name"
@@ -64,11 +70,17 @@ the main body of the message as well as a quote.
 						:show-as-button="true" />
 				</div>
 				<div v-else-if="isDeletedMessage" class="message-body__main__text deleted-message">
-					<RichText :text="message" :arguments="richParameters" :autolink="true" />
+					<RichText :text="message"
+						:arguments="richParameters"
+						:autolink="true"
+						:reference-limit="10" />
 				</div>
 				<div v-else class="message-body__main__text" :class="{'system-message': isSystemMessage}">
 					<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
-					<RichText :text="message" :arguments="richParameters" :autolink="true" />
+					<RichText :text="message"
+						:arguments="richParameters"
+						:autolink="true"
+						:reference-limit="10" />
 				</div>
 				<div v-if="!isDeletedMessage" class="message-body__main__right">
 					<span v-tooltip.auto="messageDate"
@@ -187,7 +199,7 @@ import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
 import Mention from './MessagePart/Mention.vue'
-import RichText from '@juliushaertl/vue-richtext'
+import RichText from '@nextcloud/vue-richtext'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
@@ -811,6 +823,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@nextcloud/vue-richtext/dist/style.css';
 @import '../../../../assets/variables';
 
 .message:hover .normal-message-body {
@@ -836,6 +849,7 @@ export default {
 		min-width: 100%;
 		&__text {
 			flex: 0 1 600px;
+			max-width: 600px;
 			color: var(--color-text-light);
 			.single-emoji {
 				font-size: 250%;
@@ -866,6 +880,10 @@ export default {
 			::v-deep .rich-text--wrapper {
 				white-space: pre-wrap;
 				word-break: break-word;
+
+				.rich-text--reference-widget {
+					width: calc(100% + 132px);
+				}
 			}
 
 			&--quote {
