@@ -153,6 +153,7 @@ export default {
 		width: unset;
 		height: unset;
 		margin-left: -2px;
+		display: flex;
 		::v-deep img {
 			outline: 2px solid var(--color-main-background);
 		}

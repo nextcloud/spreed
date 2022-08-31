@@ -21,19 +21,36 @@
 
 <template>
 	<NcPopover trigger="hover">
-		<div slot="trigger" tabindex="0" class="poll-voters-details">
+		<button slot="trigger"
+			tabindex="0"
+			class="poll-voters-details">
 			<AvatarWrapper v-for="(item, index) in details"
 				:id="item.actorId"
 				:key="index"
 				:source="item.actorType"
 				:disable-menu="true"
+				:disable-tooltip="true"
 				:show-user-status="false"
 				:name="item.actorDisplayName"
 				:condensed="true"
 				:size="24" />
-		</div>
-		<div tabindex="0">
-			Some content
+		</button>
+		<div class="poll-voters-details__popover" tabindex="0">
+			<div v-for="(item, index) in details"
+				:key="index"
+				class="poll-voters-details__list-item">
+				<AvatarWrapper :id="item.actorId"
+					:key="index"
+					:source="item.actorType"
+					:disable-menu="true"
+					:show-user-status="false"
+					:name="item.actorDisplayName"
+					:condensed="true"
+					:size="24" />
+				<p class="poll-voters-details__display-name">
+					{{ item.actorDisplayName }}
+				</p>
+			</div>
 		</div>
 	</NcPopover>
 </template>
@@ -64,7 +81,29 @@ export default {
 
 .poll-voters-details {
 	display: flex;
-	cursor: pointer;
+	background: none;
+	border: none;
+	padding: 0;
+
+	&__popover{
+		padding: 8px;
+		max-height: 400px;
+		overflow-y: scroll;
+	}
+
+	&__display-name {
+			margin-left: 4px;
+		}
+
+	&__list-item {
+		display: flex;
+		align-items: center;
+		height: 32px;
+		margin-bottom: var(--margin-small);
+		min-width: 150px;
+		justify-content: flex-start;
+		align-items: center;
+	}
 }
 
 </style>

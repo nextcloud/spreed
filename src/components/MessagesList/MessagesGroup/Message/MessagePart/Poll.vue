@@ -532,6 +532,7 @@ export default {
 
 	&__details {
 		display: flex;
+		height: 32px;
 	}
 
 	&-subtitle {
