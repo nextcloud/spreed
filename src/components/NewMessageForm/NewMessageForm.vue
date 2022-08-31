@@ -64,12 +64,12 @@
 							{{ shareFromNextcloudLabel }}
 						</NcActionButton>
 						<template v-if="canShareFiles">
-							<NcActionButton v-for="(fileTemplate, i) in fileTemplateOptions"
+							<NcActionButton v-for="(provider, i) in fileTemplateOptions"
 								:key="i"
 								:close-after-click="true"
-								:icon="fileTemplate.iconClass"
+								:icon="provider.iconClass"
 								@click.prevent="showTextFileDialog = i">
-								{{ fileTemplate.label }}
+								{{ provider.label }}
 							</NcActionButton>
 						</template>
 						<NcActionButton v-if="canCreatePoll"
@@ -876,6 +876,7 @@ export default {
 	&__buttons {
 		display: flex;
 		gap: 4px;
+		justify-content: center;
 	}
 
 	&__form {
