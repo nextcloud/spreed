@@ -30,11 +30,11 @@ import { showError } from '@nextcloud/dialogs'
  * @param {string} token The conversation's token
  * e.g. `/myfile.txt`
  * @param {string} referenceId An optional reference id to recognize the message later
- * @param {Array} metadata the metadata json encoded array
+ * @param {string} metadata the metadata json encoded array
  */
 const shareFile = async function(path, token, referenceId, metadata) {
 	try {
-		return axios.post(
+		return await axios.post(
 			generateOcsUrl('apps/files_sharing/api/v1/shares'),
 			{
 				shareType: 10, // OC.Share.SHARE_TYPE_ROOM,
@@ -55,6 +55,28 @@ const shareFile = async function(path, token, referenceId, metadata) {
 	}
 }
 
+const getFileTemplates = async () => {
+	return await axios.get(generateOcsUrl('apps/files/api/v1/templates'))
+}
+
+/**
+ * Share a text file to a conversation
+ *
+ * @param {string} filePath The new file destination path
+ * @param {string} templatePath The template source path
+ * @param {string} templateType The template type e.g 'user'
+ * @return { object } the file object
+ */
+const createTextFile = async function(filePath, templatePath, templateType) {
+	return await axios.post(generateOcsUrl('apps/files/api/v1/templates/create'), {
+		filePath,
+		templatePath,
+		templateType,
+	})
+}
+
 export {
 	shareFile,
+	getFileTemplates,
+	createTextFile,
 }

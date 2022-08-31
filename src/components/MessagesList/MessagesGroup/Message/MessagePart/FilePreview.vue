@@ -376,7 +376,7 @@ export default {
 
 			const availableHandlers = OCA.Viewer.availableHandlers
 			for (let i = 0; i < availableHandlers.length; i++) {
-				if (availableHandlers[i]?.mimes?.includes(this.mimetype)) {
+				if (availableHandlers[i]?.mimes?.includes && availableHandlers[i].mimes.includes(this.mimetype)) {
 					return true
 				}
 			}
