@@ -490,7 +490,7 @@ class ChatManager {
 			throw new NotFoundException('Parent not found in the right context');
 		}
 
-		if (!$chat->getShowHistory() && $comment->getCreationDateTime() < $attendee->getHistorySince()) {
+		if (!$chat->getShowHistory() && $comment->getId() < $attendee->getJoinCommentId()) {
 			throw new NotFoundException('Parent not found in the right context');
 		}
 
@@ -813,7 +813,7 @@ class ChatManager {
 			if ($comment->getObjectId() != $room->getId()) {
 				continue;
 			}
-			if ($comment->getCreationDateTime() < $historySince) {
+			if ($comment->getId() < $attendee->getJoinCommentId()) {
 				unset($comments[$key]);
 				continue;
 			}

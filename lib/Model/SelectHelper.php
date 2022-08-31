@@ -82,6 +82,7 @@ class SelectHelper {
 			->addSelect($alias . 'last_mention_direct')
 			->addSelect($alias . 'read_privacy')
 			->addSelect($alias . 'history_since')
+			->addSelect($alias . 'join_comment_id')
 			->addSelect($alias . 'permissions')
 			->addSelect($alias . 'access_token')
 			->addSelect($alias . 'remote_id')

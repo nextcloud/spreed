@@ -62,6 +62,8 @@ use OCP\AppFramework\Db\Entity;
  * @method string getRemoteId()
  * @method null|\DateTime getHistorySince()
  * @method void setHistorySince(?\DateTime $dateTime)
+ * @method int getJoinCommentId()
+ * @method void setJoinCommentId(int $commentId)
  */
 class Attendee extends Entity {
 	public const ACTOR_USERS = 'users';
@@ -150,6 +152,9 @@ class Attendee extends Entity {
 	/** @var null|\DateTime */
 	protected $historySince;
 
+	/** @var int */
+	protected $joinCommentId;
+
 	public function __construct() {
 		$this->addType('roomId', 'int');
 		$this->addType('actorType', 'string');
@@ -199,6 +204,7 @@ class Attendee extends Entity {
 			'access_token' => $this->getAccessToken(),
 			'remote_id' => $this->getRemoteId(),
 			'history_since' => $this->getHistorySince(),
+			'join_comment_id' => $this->getJoinCommentId(),
 		];
 	}
 }

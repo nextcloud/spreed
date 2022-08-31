@@ -297,6 +297,7 @@ class AttendeeMapper extends QBMapper {
 			'access_token' => (string) $row['access_token'],
 			'remote_id' => (string) $row['remote_id'],
 			'history_since' => $row['history_since'],
+			'join_comment_id' => $row['join_comment_id'],
 		]);
 	}
 }

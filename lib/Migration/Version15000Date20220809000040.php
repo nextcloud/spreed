@@ -55,7 +55,7 @@ class Version15000Date20220809000040 extends SimpleMigrationStep {
 			// Defaulting to "Hidden" for existing conversations.
 			$table->addColumn('show_history', Types::SMALLINT, [
 				'notnull' => true,
-				'default' => 1,
+				'default' => 0,
 			]);
 		}
 
@@ -63,6 +63,14 @@ class Version15000Date20220809000040 extends SimpleMigrationStep {
 		if (!$table->hasColumn('history_since')) {
 			$table->addColumn('history_since', Types::DATETIME_MUTABLE, [
 				'notnull' => false,
+			]);
+		}
+		if (!$table->hasColumn('join_comment_id')) {
+			$table->addColumn('join_comment_id', 'integer', [
+				'notnull' => true,
+				'default' => 0,
+				'length' => 11,
+				'unsigned' => true,
 			]);
 		}
 
