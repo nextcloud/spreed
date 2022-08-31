@@ -173,8 +173,6 @@ OC.L10N.register(
     "You disabled message expiration" : "Du hast den Ablauf von Nachrichten deaktiviert.",
     "{actor} cleared the history of the conversation" : "{actor} hat den Gesprächsverlauf gelöscht",
     "You cleared the history of the conversation" : "Du hast den Gesprächsverlauf gelöscht",
-    "{actor} closed the poll {poll}" : "{actor} hat die Umfrage {poll} beendet",
-    "You closed the poll {poll}" : "Du hast die Umfrage {poll} beendet",
     "Someone voted on the poll {poll}" : "Jemand hat in der Umfrage {poll} abgestimmt",
     "Message deleted by author" : "Nachricht vom Autor gelöscht",
     "Message deleted by {actor}" : "Nachricht von {actor} gelöscht",
