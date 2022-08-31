@@ -162,13 +162,15 @@
 
 		<!-- Text file creation dialog -->
 		<NcModal v-if="showTextFileDialog !== false"
-			size="small"
+			size="normal"
+			class="templates-picker"
 			@close="dismissTextFileCreation">
 			<div class="new-text-file">
 				<h2>
 					{{ t('spreed', 'Create and share a new file') }}
 				</h2>
-				<form class="new-text-file__form"
+				<form class="new-text-file__form templates-picker__form"
+					:style="style"
 					@submit.prevent="handleCreateTextFile">
 					<NcTextField id="new-file-form-name"
 						ref="textFileTitleInput"
@@ -177,17 +179,33 @@
 						:label="t('spreed', 'Name of the new file')"
 						:placeholder="textFileTitle"
 						:value.sync="textFileTitle" />
+
+					<template v-if="fileTemplate.templates.length">
+						<ul class="templates-picker__list">
+							<TemplatePreview v-bind="emptyTemplate"
+								:checked="checked === emptyTemplate.fileid"
+								@check="onCheck" />
+
+							<TemplatePreview v-for="template in fileTemplate.templates"
+								:key="template.fileid"
+								v-bind="template"
+								:checked="checked === template.fileid"
+								:ratio="fileTemplate.ratio"
+								@check="onCheck" />
+						</ul>
+					</template>
+
+					<div class="new-text-file__buttons">
+						<NcButton type="tertiary"
+							@click="dismissTextFileCreation">
+							{{ t('spreed', 'Close') }}
+						</NcButton>
+						<NcButton type="primary"
+							@click="handleCreateTextFile">
+							{{ t('spreed', 'Create file') }}
+						</NcButton>
+					</div>
 				</form>
-				<div class="new-text-file__buttons">
-					<NcButton type="tertiary"
-						@click="dismissTextFileCreation">
-						{{ t('spreed', 'Close') }}
-					</NcButton>
-					<NcButton type="primary"
-						@click="handleCreateTextFile">
-						{{ t('spreed', 'Create file') }}
-					</NcButton>
-				</div>
 			</div>
 		</NcModal>
 	</div>
@@ -216,6 +234,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import Folder from 'vue-material-design-icons/Folder.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import TemplatePreview from './TemplatePreview.vue'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -223,6 +242,10 @@ const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setType(1)
 	.allowDirectories()
 	.build()
+
+const border = 2
+const margin = 8
+const width = margin * 20
 
 export default {
 
@@ -245,6 +268,7 @@ export default {
 		NcModal,
 		Folder,
 		Upload,
+		TemplatePreview,
 		NcTextField,
 	},
 
@@ -266,6 +290,9 @@ export default {
 			showTextFileDialog: false,
 			textFileTitle: t('spreed', 'New file'),
 			newFileError: '',
+
+			// Check empty template by default
+			checked: -1,
 		}
 	},
 
@@ -371,6 +398,34 @@ export default {
 
 		fileTemplateOptions() {
 			return this.$store.getters.getFileTemplates()
+		},
+
+		fileTemplate() {
+			return this.fileTemplateOptions[this.showTextFileDialog]
+		},
+
+		emptyTemplate() {
+			return {
+				basename: t('files', 'Blank'),
+				fileid: -1,
+				filename: t('files', 'Blank'),
+				hasPreview: false,
+				mime: this.fileTemplate?.mimetypes[0] || this.fileTemplate?.mimetypes,
+			}
+		},
+
+		selectedTemplate() {
+			return this.fileTemplate.templates.find(template => template.fileid === this.checked)
+		},
+
+		style() {
+			return {
+				'--margin': margin + 'px',
+				'--width': width + 'px',
+				'--border': border + 'px',
+				'--fullwidth': width + 2 * margin + 2 * border + 'px',
+				'--height': this.fileTemplate.ratio ? Math.round(width / this.fileTemplate.ratio) + 'px' : null,
+			}
 		},
 	},
 
@@ -656,19 +711,31 @@ export default {
 			this.showSimplePollsEditor = value
 		},
 
+		/**
+		 * Manages the radio template picker change
+		 *
+		 * @param {number} fileid the selected template file id
+		 */
+		onCheck(fileid) {
+			this.checked = fileid
+		},
+
 		// Create text file and share it to a conversation
 		async handleCreateTextFile() {
 			this.newFileError = ''
 			let filePath = this.$store.getters.getAttachmentFolder() + '/' + this.textFileTitle.replace('/', '')
-			const fileTemplate = this.fileTemplateOptions[this.showTextFileDialog]
 
-			if (!filePath.endsWith(fileTemplate.extension)) {
-				filePath += fileTemplate.extension
+			if (!filePath.endsWith(this.fileTemplate.extension)) {
+				filePath += this.fileTemplate.extension
 			}
 
 			let fileData
 			try {
-				const response = await createTextFile(filePath)
+				const response = await createTextFile(
+					filePath,
+					this.selectedTemplate?.filename,
+					this.selectedTemplate?.templateType,
+				)
 				fileData = response.data.ocs.data
 			} catch (error) {
 				console.error('Error while creating file', error)
@@ -813,6 +880,19 @@ export default {
 
 	&__form {
 		width: 100%;
+
+		.templates-picker__list {
+			display: grid;
+			grid-gap: calc(var(--margin) * 2);
+			grid-auto-columns: 1fr;
+			// We want maximum 5 columns. Putting 6 as we don't count the grid gap. So it will always be lower than 6
+			max-width: calc(var(--fullwidth) * 6);
+			grid-template-columns: repeat(auto-fit, var(--fullwidth));
+			// Make sure all rows are the same height
+			grid-auto-rows: 1fr;
+			// Center the columns set
+			justify-content: center;
+		}
 	}
 }
 </style>

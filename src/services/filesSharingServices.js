@@ -62,12 +62,16 @@ const getFileTemplates = async () => {
 /**
  * Share a text file to a conversation
  *
- * @param { string } filePath the file path
+ * @param {string} filePath The new file destination path
+ * @param {string} templatePath The template source path
+ * @param {string} templateType The template type e.g 'user'
  * @return { object } the file object
  */
-const createTextFile = async function(filePath) {
+const createTextFile = async function(filePath, templatePath, templateType) {
 	return await axios.post(generateOcsUrl('apps/files/api/v1/templates/create'), {
 		filePath,
+		templatePath,
+		templateType,
 	})
 }
 
