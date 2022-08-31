@@ -21,7 +21,10 @@
 
 <template>
 	<div class="avatar-wrapper"
-		:class="{'offline': offline}">
+		:class="{
+			'offline': offline,
+			'avatar-wrapper--condensed': condensed,
+		}">
 		<div v-if="iconClass"
 			class="icon"
 			:class="[`avatar-${sizeToString}px`, iconClass]" />
@@ -86,6 +89,11 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+
+		condensed: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	computed: {
 		// Determines which icon is displayed
@@ -118,13 +126,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/avatar';
+@import '../../assets/avatar.scss';
 
 .avatar-wrapper {
 	$avatar-size: 22px;
 	height: $avatar-size;
 	width: $avatar-size;
 	@include avatar-mixin($avatar-size);
+
+	&--condensed {
+		width: unset;
+		height: unset;
+		margin-left: -2px;
+		display: flex;
+
+		& > .icon,
+		& > .guest,
+		::v-deep img {
+			outline: 2px solid var(--color-main-background);
+		}
+	}
 }
 
 .offline {
