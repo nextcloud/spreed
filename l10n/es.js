@@ -171,8 +171,6 @@ OC.L10N.register(
     "You disabled message expiration" : "Has desactivado la caducidad del mensaje",
     "{actor} cleared the history of the conversation" : "{actor} ha vaciado el historial de la conversación",
     "You cleared the history of the conversation" : "Ha vaciado el historial de la conversación",
-    "{actor} closed the poll {poll}" : "{actor} ha cerrado la votación {poll}",
-    "You closed the poll {poll}" : "Has cerrado la votación {poll}",
     "Message deleted by author" : "Mensaje eliminado por el autor",
     "Message deleted by {actor}" : "Mensaje eliminado por {actor}",
     "Message deleted by you" : "Has eliminado este mensaje",

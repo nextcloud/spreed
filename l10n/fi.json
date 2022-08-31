@@ -136,8 +136,6 @@
     "You disabled message expiration" : "Poistit käytöstä viestien vanhenemisen",
     "{actor} cleared the history of the conversation" : "{actor} tyhjensi keskusteluhistorian",
     "You cleared the history of the conversation" : "Sinä tyhjensit keskusteluhistorian",
-    "{actor} closed the poll {poll}" : "{actor} sulki kyselyn {poll}",
-    "You closed the poll {poll}" : "Suljit kyselyn {poll}",
     "%s (guest)" : "%s (vieras)",
     "You missed a call from {user}" : "Sinulta jäi vastaamatta puhelu käyttäjältä {user}",
     "You tried to call {user}" : "Yritit soittaa käyttäjälle {user}",

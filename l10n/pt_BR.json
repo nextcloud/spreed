@@ -171,8 +171,6 @@
     "You disabled message expiration" : "Você desativou a expiração de mensagens",
     "{actor} cleared the history of the conversation" : "{actor} limpou o histórico da conversa ",
     "You cleared the history of the conversation" : "Você limpou o histórico da conversa ",
-    "{actor} closed the poll {poll}" : "{actor} fechou a enquete {poll}",
-    "You closed the poll {poll}" : "Você fechou a enquete {poll}",
     "Someone voted on the poll {poll}" : "Alguém votou na enquete {poll}",
     "Message deleted by author" : "Mensagem excluída pelo autor",
     "Message deleted by {actor}" : "Mensagem excluída por {actor}",

@@ -139,8 +139,6 @@
     "You disabled message expiration" : "Avètz desactivat l’expiracion dels messatges",
     "{actor} cleared the history of the conversation" : "{actor} escafèt l'istoric de la conversacion",
     "You cleared the history of the conversation" : "Avètz escafat l'istoric de la conversacion",
-    "{actor} closed the poll {poll}" : "{actor} a barrat lo sondatge {poll}",
-    "You closed the poll {poll}" : "Avètz barrat lo sondatge {poll}",
     "Someone voted on the poll {poll}" : "Qualqu’un a votat dins lo sondatge {poll}",
     "Message deleted by author" : "Messatge suprimit per son autor",
     "Message deleted by {actor}" : "Messatge suprimit per {actor}",

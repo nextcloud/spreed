@@ -173,8 +173,6 @@ OC.L10N.register(
     "You disabled message expiration" : "Mezuaren iraungitzea desgaitu duzu",
     "{actor} cleared the history of the conversation" : "{actor} elkarrizketaren historia ezabatu du",
     "You cleared the history of the conversation" : "Elkarrizketaren historia ezabatu duzu",
-    "{actor} closed the poll {poll}" : "{actor}-(e)k {poll} galdeketa itxi du",
-    "You closed the poll {poll}" : "{poll} galdeketa itxi duzu",
     "Someone voted on the poll {poll}" : "Norbaitek {poll} galdeketan bozkatu du.",
     "Message deleted by author" : "Egileak mezua ezabatu du",
     "Message deleted by {actor}" : "{actor} erabiltzaileak mezua ezabatu du",

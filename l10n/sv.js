@@ -523,6 +523,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Checking …" : "Kontrollerar...",
     "Copy link" : "Kopiera länk",
+    "Connecting …" : "Ansluter…",
     "Waiting for others to join the call …" : "Väntar på andra ansluter sig till samtalet ...",
     "You can invite others in the participant tab of the sidebar" : "Du kan bjuda in andra på fliken deltagare i sidofältet",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Du kan bjuda in andra på fliken deltagare i sidofältet eller dela den här länken!",

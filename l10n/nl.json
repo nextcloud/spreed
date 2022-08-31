@@ -169,8 +169,6 @@
     "You disabled message expiration" : "Jij hebt berichtverval uitgeschakeld",
     "{actor} cleared the history of the conversation" : "{actor} heeft gesprekshistorie leeggemaakt",
     "You cleared the history of the conversation" : "Je hebt de gesprekshistorie schoongemaakt",
-    "{actor} closed the poll {poll}" : "{actor} heeft de enquête {poll} gesloten",
-    "You closed the poll {poll}" : "Jij hebt de enquête {poll} gesloten",
     "Someone voted on the poll {poll}" : "Iemand heeft gestemd op de enquête {poll}",
     "Message deleted by author" : "Bericht verwijderd door de schrijver",
     "Message deleted by {actor}" : "Bericht verwijderd door {actor}",

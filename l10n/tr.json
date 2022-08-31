@@ -171,8 +171,6 @@
     "You disabled message expiration" : "İleti geçerlilik süresini devre dışı bıraktınız",
     "{actor} cleared the history of the conversation" : "{actor} görüşme geçmişini sildi",
     "You cleared the history of the conversation" : "Görüşme geçmişini sildiniz",
-    "{actor} closed the poll {poll}" : "{actor}, {poll} anketini sona erdirdi.",
-    "You closed the poll {poll}" : "{poll} anketini sona erdirdiniz",
     "Someone voted on the poll {poll}" : "Birisi {poll} anketinde oy verdi",
     "Message deleted by author" : "İleti yazarı tarafından silindi",
     "Message deleted by {actor}" : "İleti {actor} tarafından silindi",
