@@ -170,7 +170,13 @@
 				</h2>
 				<form class="new-text-file__form"
 					@submit.prevent="handleCreateTextFile">
-					<InputVue ref="textFileTitleInput" :value.sync="textFileTitle" />
+					<NcTextField id="new-file-form-name"
+						ref="textFileTitleInput"
+						:error="!!newFileError"
+						:helper-text="newFileError"
+						:label="t('spreed', 'Name of the new file')"
+						:placeholder="textFileTitle"
+						:value.sync="textFileTitle" />
 				</form>
 				<div class="new-text-file__buttons">
 					<NcButton type="tertiary"
@@ -209,7 +215,7 @@ import Poll from 'vue-material-design-icons/Poll.vue'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import Folder from 'vue-material-design-icons/Folder.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
-import InputVue from '../InputVue.vue'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -239,7 +245,7 @@ export default {
 		NcModal,
 		Folder,
 		Upload,
-		InputVue,
+		NcTextField,
 	},
 
 	props: {
@@ -259,6 +265,7 @@ export default {
 			showSimplePollsEditor: false,
 			showTextFileDialog: false,
 			textFileTitle: t('spreed', 'New file'),
+			newFileError: '',
 		}
 	},
 
@@ -651,6 +658,7 @@ export default {
 
 		// Create text file and share it to a conversation
 		async handleCreateTextFile() {
+			this.newFileError = ''
 			let filePath = this.$store.getters.getAttachmentFolder() + '/' + this.textFileTitle.replace('/', '')
 			const fileTemplate = this.fileTemplateOptions[this.showTextFileDialog]
 
@@ -666,6 +674,7 @@ export default {
 				console.error('Error while creating file', error)
 				if (error?.response?.data?.ocs?.meta?.message) {
 					showError(error.response.data.ocs.meta.message)
+					this.newFileError = error.response.data.ocs.meta.message
 				} else {
 					showError(t('spreed', 'Error while creating file'))
 				}
@@ -701,6 +710,7 @@ export default {
 		dismissTextFileCreation() {
 			this.showTextFileDialog = false
 			this.textFileTitle = t('spreed', 'New file')
+			this.newFileError = ''
 		},
 
 		// Focus and select the text within the input field
