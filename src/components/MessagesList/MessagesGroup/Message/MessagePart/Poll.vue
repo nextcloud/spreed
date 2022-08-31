@@ -126,15 +126,17 @@
 								<p>
 									{{ option }}
 								</p>
-								<PollVotersDetails v-if="details"
-									:details="details" />
 								<p class="percentage">
 									{{ getVotePercentage(index) + '%' }}
 								</p>
 							</div>
-							<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
-								{{ t('spreed','You voted') }}
-							</p>
+							<div>
+								<PollVotersDetails v-if="details"
+									:details="details" />
+								<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
+									{{ t('spreed','You voted') }}
+								</p>
+							</div>
 							<NcProgressBar class="results__option-progress"
 								:value="getVotePercentage(index)"
 								size="medium" />

@@ -27,8 +27,9 @@
 				:key="index"
 				:source="item.actorType"
 				:disable-menu="true"
-				:show-user-status-compact="true"
+				:show-user-status="false"
 				:name="item.actorDisplayName"
+				:condensed="true"
 				:size="24" />
 		</div>
 		<div tabindex="0">
@@ -63,6 +64,7 @@ export default {
 
 .poll-voters-details {
 	display: flex;
+	cursor: pointer;
 }
 
 </style>
