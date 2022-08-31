@@ -52,11 +52,17 @@ the main body of the message as well as a quote.
 					</div>
 				</div>
 				<div v-else-if="showJoinCallButton" class="message-body__main__text call-started">
-					<RichText :text="message" :arguments="richParameters" :autolink="true" :reference-limit="10" />
+					<RichText :text="message"
+						:arguments="richParameters"
+						:autolink="true"
+						:reference-limit="10" />
 					<CallButton />
 				</div>
 				<div v-else-if="showResultsButton" class="message-body__main__text system-message">
-					<RichText :text="message" :arguments="richParameters" :autolink="true" />
+					<RichText :text="message"
+						:arguments="richParameters"
+						:autolink="true"
+						:reference-limit="10" />
 					<!-- Displays only the "see results" button with the results modal -->
 					<Poll :id="messageParameters.poll.id"
 						:poll-name="messageParameters.poll.name"
@@ -64,11 +70,17 @@ the main body of the message as well as a quote.
 						:show-as-button="true" />
 				</div>
 				<div v-else-if="isDeletedMessage" class="message-body__main__text deleted-message">
-					<RichText :text="message" :arguments="richParameters" :autolink="true"  :reference-limit="10"/>
+					<RichText :text="message"
+						:arguments="richParameters"
+						:autolink="true"
+						:reference-limit="10" />
 				</div>
 				<div v-else class="message-body__main__text" :class="{'system-message': isSystemMessage}">
 					<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
-					<RichText :text="message" :arguments="richParameters" :autolink="true"  :reference-limit="10"/>
+					<RichText :text="message"
+						:arguments="richParameters"
+						:autolink="true"
+						:reference-limit="10" />
 				</div>
 				<div v-if="!isDeletedMessage" class="message-body__main__right">
 					<span v-tooltip.auto="messageDate"
