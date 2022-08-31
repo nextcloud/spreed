@@ -130,9 +130,14 @@
 									{{ getVotePercentage(index) + '%' }}
 								</p>
 							</div>
-							<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
-								{{ t('spreed','You voted') }}
-							</p>
+							<div v-if="getFilteredDetails(index).length > 0 || selfHasVotedOption(index)"
+								class="results__option__details">
+								<PollVotersDetails v-if="details"
+									:details="getFilteredDetails(index)" />
+								<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
+									{{ t('spreed','You voted') }}
+								</p>
+							</div>
 							<NcProgressBar class="results__option-progress"
 								:value="getVotePercentage(index)"
 								size="medium" />
@@ -166,6 +171,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import PollIcon from 'vue-material-design-icons/Poll.vue'
 import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
 import { PARTICIPANT } from '../../../../../constants.js'
+import PollVotersDetails from './PollVotersDetails.vue'
 
 export default {
 
@@ -177,6 +183,7 @@ export default {
 		NcButton,
 		PollIcon,
 		NcProgressBar,
+		PollVotersDetails,
 	},
 
 	props: {
@@ -272,6 +279,14 @@ export default {
 			return this.status === 1
 		},
 
+		details() {
+			if (!this.pollLoaded || this.pollIsOpen) {
+				return undefined
+			} else {
+				return this.poll.details
+			}
+		},
+
 		checkboxRadioSwitchType() {
 			if (this.pollLoaded) {
 				return this.poll.maxVotes === 0 ? 'checkbox' : 'radio'
@@ -335,7 +350,7 @@ export default {
 			if (this.pollIsOpen) {
 				return this.selfHasVoted ? t('spreed', 'Poll ・ You voted') : t('spreed', 'Poll ・ Click to vote')
 			} else if (this.pollIsClosed) {
-				return t('spreed', 'Poll ・ Closed')
+				return t('spreed', 'Poll ・ Ended')
 			}
 			return ''
 		},
@@ -427,6 +442,15 @@ export default {
 				return false
 			}
 		},
+
+		getFilteredDetails(index) {
+			if (!this.details) {
+				return []
+			}
+			return this.details.filter((item) => {
+				return item.optionId === index
+			}).slice(0, 8)
+		},
 	},
 }
 </script>
@@ -506,13 +530,19 @@ export default {
 .results__options {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 24px;
 	word-wrap: anywhere;
 	margin: 8px 0 20px 0;
 }
 .results__option {
 	display: flex;
 	flex-direction: column;
+
+	&__details {
+		display: flex;
+		height: 32px;
+	}
+
 	&-subtitle {
 		color: var(--color-text-maxcontrast);
 	}
@@ -526,6 +556,7 @@ export default {
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
+	margin-bottom: 4px;
 	.percentage {
 		white-space: nowrap;
 		margin-left: 16px;
