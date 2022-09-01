@@ -13,6 +13,8 @@ $config
 	->notPath('build')
 	->notPath('l10n')
 	->notPath('src')
+	->notPath('lib/Vendor')
 	->notPath('vendor')
+	->notPath('vendor-bin')
 	->in(__DIR__);
 return $config;

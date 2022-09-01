@@ -4,9 +4,8 @@
 
 # PHP Code Sniffer
 /vendor
-/vendor-bin/csfixer/vendor
-/vendor-bin/phpunit/vendor
-/vendor-bin/psalm/vendor
+/vendor-bin/*/vendor
+/lib/Vendor
 /.php-cs-fixer.cache
 
 # Local docs

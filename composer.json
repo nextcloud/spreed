@@ -24,17 +24,19 @@
 	"scripts": {
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
 		"cs:fix": "php-cs-fixer fix",
-		"lint": "find . -name \\*.php -not -path './vendor/*' -not -path './build/*' -not -path './tests/integration/vendor/*' -print0 | xargs -0 -n1 php -l",
+		"lint": "find . -name \\*.php -not -path './vendor/*' -not -path './vendor-bin/*' -not -path './lib/Vendor/*' -not -path './build/*' -not -path './tests/integration/vendor/*' -print0 | xargs -0 -n1 php -l",
 		"psalm": "psalm --threads=1",
 		"psalm:update-baseline": "psalm --threads=1 --update-baseline --set-baseline=tests/psalm-baseline.xml",
 		"psalm:clear": "psalm --clear-cache && psalm --clear-global-cache",
 		"psalm:fix": "psalm --alter --issues=InvalidReturnType,InvalidNullableReturnType,MissingParamType,InvalidFalsableReturnType",
 		"post-install-cmd": [
 			"@composer bin all install --ansi",
+			"\"vendor/bin/mozart\" compose",
 			"composer dump-autoload"
 		],
 		"post-update-cmd": [
 			"@composer bin all update --ansi",
+			"\"vendor/bin/mozart\" compose",
 			"composer dump-autoload"
 		],
 		"test": "cd tests/php/ && phpunit -c phpunit.xml"
@@ -46,5 +48,16 @@
 	},
 	"require": {
 		"firebase/php-jwt": "^6.3"
+	},
+	"extra": {
+		"mozart": {
+			"dep_namespace": "OCA\\Talk\\Vendor\\",
+			"dep_directory": "/lib/Vendor/",
+			"classmap_directory": "/lib/autoload/",
+			"classmap_prefix": "NEXTCLOUDTALK_",
+			"packages": [
+				"firebase/php-jwt"
+			]
+		}
 	}
 }

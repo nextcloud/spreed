@@ -1,0 +1,11 @@
+{
+	"config": {
+		"platform": {
+			"php": "7.4"
+		},
+		"sort-packages": true
+	},
+	"require": {
+		"coenjacobs/mozart": "^0.7.1"
+	}
+}

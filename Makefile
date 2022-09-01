@@ -100,8 +100,7 @@ appstore:
 	--exclude=tests \
 	--exclude=tsconfig.json \
 	--exclude=vendor \
-	--exclude=vendor-bin/production/composer.json \
-	--exclude=vendor-bin/production/composer.lock \
+	--exclude=vendor-bin \
 	--exclude=webpack.js \
 	$(project_dir)/  $(sign_dir)/$(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \

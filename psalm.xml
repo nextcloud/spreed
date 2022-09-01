@@ -10,6 +10,7 @@
 	<projectFiles>
 		<directory name="lib" />
 		<ignoreFiles>
+			<directory name="lib/Vendor" />
 			<directory name="vendor" />
 		</ignoreFiles>
 	</projectFiles>
