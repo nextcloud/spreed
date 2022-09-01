@@ -21,6 +21,19 @@
 
 <template>
 	<div class="forwarder">
+		<NcEmptyContent :description="t('spreed', 'The message has been forwarded to {selectedConversationName}')">
+			<template #icon>
+				<Check :size="64" />
+			</template>
+			<template #action>
+				<NcButton type="tertiary" @click="handleClose">
+					{{ t('spreed', 'Dismiss') }}
+				</NcButton>
+				<NcButton type="primary" @click="openConversation">
+					{{ t('spreed', 'Go to conversation') }}
+				</NcButton>
+			</template>
+		</NcEmptyContent>
 		<!-- First step of the flow: selection of the room to which forward the
 		message to -->
 		<RoomSelector v-if="!showForwardedConfirmation"
@@ -32,25 +45,23 @@
 			@close="handleClose" />
 
 		<!-- Second step of the flow: confirmation modal that gives the user
-		the possibility to direclty route to the conversation to which the
+		the possibility to directly route to the conversation to which the
 		message has been forwarded -->
 		<NcModal v-else
 			@close="handleClose">
-			<div class="forwarder">
-				<NcEmptyContent icon="icon-checkmark" class="forwarded-confirmation__emptycontent">
-					<template #desc>
-						{{ t('spreed', 'The message has been forwarded to {selectedConversationName}', { selectedConversationName }) }}
-					</template>
-				</NcEmptyContent>
-				<div class="forwarded-confirmation__navigation">
+			<NcEmptyContent :description="t('spreed', 'The message has been forwarded to {selectedConversationName}', { selectedConversationName })">
+				<template #icon>
+					<Check :size="64" />
+				</template>
+				<template #action>
 					<NcButton type="tertiary" @click="handleClose">
 						{{ t('spreed', 'Dismiss') }}
 					</NcButton>
 					<NcButton type="primary" @click="openConversation">
 						{{ t('spreed', 'Go to conversation') }}
 					</NcButton>
-				</div>
-			</div>
+				</template>
+			</NcEmptyContent>
 		</NcModal>
 	</div>
 </template>
@@ -62,6 +73,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import { showError } from '@nextcloud/dialogs'
 import cloneDeep from 'lodash/cloneDeep.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import Check from 'vue-material-design-icons/Check.vue'
 
 export default {
 	name: 'Forwarder',
@@ -71,6 +83,7 @@ export default {
 		NcEmptyContent,
 		NcModal,
 		NcButton,
+		Check,
 	},
 
 	props: {
@@ -196,18 +209,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.forwarded-confirmation {
-	&__emptycontent {
-		width: 100%;
-		text-align: center;
-		margin-top: 15vh !important;
-	}
-	&__navigation {
-		display: flex;
-		justify-content: space-between;
-		padding: 12px;
-	}
-}
 
 .forwarder {
 	padding: 20px;

@@ -41,9 +41,11 @@
 			</DashboardWidgetItem>
 		</template>
 		<template #empty-content>
-			<NcEmptyContent icon="icon-talk">
-				<template #desc>
-					{{ t('spreed', 'Say hi to your friends and colleagues!') }}
+			<NcEmptyContent :description="t('spreed', 'Say hi to your friends and colleagues!')">
+				<template #icon>
+					<span class="icon icon-talk" />
+				</template>
+				<template #action>
 					<NcButton class="button-start-conversation"
 						type="secondary"
 						@click="clickStartNew">
@@ -219,6 +221,12 @@ export default {
 	.empty-content {
 		text-align: center;
 		margin-top: 5vh;
+
+		.icon-talk {
+			width: 64px;
+			height: 64px;
+			background-size: 64px;
+		}
 
 		&.half-screen {
 			margin-top: 0;
