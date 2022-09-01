@@ -313,11 +313,10 @@ OC.L10N.register(
     "Today" : "Today",
     "Yesterday" : "دیروز",
     "Record voice message" : "ضبط پیام صوتی",
-    "Upload new files" : "فایل‌های جدید را آپلود کنید",
-    "Share from Files" : "اشتراک‌گذاری از فایل‌ها",
     "Create new poll" : "نظرسنجی جدید ایجاد کنید",
     "Send message" : "پیام فرستادن",
     "File to share" : "فایل برای اشتراک‌گذاری",
+    "New file" : "پروندهٔ تازه",
     "Invalid path selected" : "مسیر نامعتبر انتخاب شده است",
     "Settings" : "تنظیمات",
     "guest" : "میهمان",
@@ -352,6 +351,8 @@ OC.L10N.register(
     "Android app" : "اپ اندروید",
     "iOS app" : "اپ iOS",
     "Saved" : "ذخیره شد",
-    "Camera" : "دوربین"
+    "Camera" : "دوربین",
+    "Upload new files" : "فایل‌های جدید را آپلود کنید",
+    "Share from Files" : "اشتراک‌گذاری از فایل‌ها"
 },
 "nplurals=2; plural=(n > 1);");

@@ -220,6 +220,7 @@ OC.L10N.register(
     "Yesterday" : "Dje",
     "Create new poll" : "Krijo sondazh të ri",
     "Send message" : "Dërgo mesazh",
+    "New file" : "Skedë e re",
     "Settings" : "Rregullimet",
     "Create poll" : "Krijo sondazh",
     "guest" : "vizitor",
