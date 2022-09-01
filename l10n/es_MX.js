@@ -183,6 +183,7 @@ OC.L10N.register(
     "Yesterday" : "Ayer",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Create new poll" : "Crear nueva encuesta",
+    "New file" : "Archivo nuevo",
     "Settings" : "Configuraciones ",
     "Create poll" : "Crear encuesta",
     "moderator" : "moderador",

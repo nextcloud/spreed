@@ -284,6 +284,7 @@ OC.L10N.register(
     "Yesterday" : "Ontem",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Send message" : "Enviar mensagem",
+    "New file" : "Ficheiro novo",
     "Settings" : "Definições",
     "moderator" : "moderador",
     "guest" : "convidado",

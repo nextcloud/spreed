@@ -390,6 +390,7 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Create new poll" : "Create new poll",
     "Send message" : "Send message",
+    "New file" : "New file",
     "Settings" : "Settings",
     "Create poll" : "Create poll",
     "moderator" : "moderator",

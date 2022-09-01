@@ -598,12 +598,11 @@ OC.L10N.register(
     "Yesterday" : "Vakar",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Microphone either not available or disabled in settings" : "Mikrofonas arba neprieinamas, arba išjungtas nustatymuose",
-    "Upload new files" : "Išsiųsti naujus failus",
-    "Share from Files" : "Bendrinti iš Failų",
     "Create new poll" : "Sukurti naują apklausą",
     "Add emoji" : "Pridėti šypsenėlę",
     "Send message" : "Siųsti žinutę",
     "File to share" : "Failas, kurį bendrinti",
+    "New file" : "Naujas failas",
     "This conversation has been locked" : "Šis pokalbis užrakintas",
     "Write message, @ to mention someone …" : "Rašykite žinutę, naudokite @ norėdami kažką paminėti…",
     "Invalid path selected" : "Pasirinktas neteisingas kelias",
@@ -711,6 +710,8 @@ OC.L10N.register(
     "Microphone" : "Mikrofonas",
     "Camera" : "Kamera",
     "[Unknown username]" : "[Nežinomas naudotojo vardas]",
+    "Upload new files" : "Išsiųsti naujus failus",
+    "Share from Files" : "Bendrinti iš Failų",
     "Display name: " : "Rodomas vardas: "
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

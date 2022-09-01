@@ -506,12 +506,11 @@ OC.L10N.register(
     "Yesterday" : "מחר",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Share files to the conversation" : "שיתוף קבצים לדיון",
-    "Upload new files" : "העלאת קבצים חדשים",
-    "Share from Files" : "שיתוף מקבצים",
     "Create new poll" : "יצירת סקר חדש",
     "Add emoji" : "הוספת אמוג׳י",
     "Send message" : "שליחת הודעה",
     "File to share" : "קובץ לשיתוף",
+    "New file" : "קובץ חדש",
     "Invalid path selected" : "הנתיב שנבחר שגוי",
     "Settings" : "הגדרות",
     "Create poll" : "יצירת סקר",
@@ -586,6 +585,8 @@ OC.L10N.register(
     "Microphone" : "מיקרופון",
     "Camera" : "מצלמה",
     "[Unknown username]" : "[שם משתמש לא ידוע]",
+    "Upload new files" : "העלאת קבצים חדשים",
+    "Share from Files" : "שיתוף מקבצים",
     "Display name: " : "שם תצוגה:"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

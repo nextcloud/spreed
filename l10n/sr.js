@@ -505,6 +505,7 @@ OC.L10N.register(
     "Create new poll" : "Направи ново гласање",
     "Send message" : "Пошаљи поруку",
     "File to share" : "Фајл за дељење",
+    "New file" : "Нови фајл",
     "Invalid path selected" : "Одабрана неисправна путања",
     "Settings" : "Поставке",
     "Create poll" : "Направи гласање",

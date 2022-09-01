@@ -390,12 +390,12 @@ OC.L10N.register(
     "Today" : "I dag",
     "Yesterday" : "I går",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
-    "Upload new files" : "Upload nye filer",
-    "Share from Files" : "Del fra Filer",
     "Create new poll" : "Opret ny afstemning",
     "Send message" : "Send besked",
     "File to share" : "Vælg fil til deling",
+    "New file" : "Ny fil",
     "Write message, @ to mention someone …" : "Skriv besked, brug @ for at nævne en bruger ...",
+    "Blank" : "Tom",
     "Invalid path selected" : "Ugyldig filsti valgt",
     "Settings" : "Indstillinger",
     "Create poll" : "Opret afstemning",
@@ -472,6 +472,8 @@ OC.L10N.register(
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Du venter nu i lobbyen. Dette møde er planlagt til {startTime}",
     "Camera" : "Kamera",
     "[Unknown username]" : "[Ukendt brugernavn]",
+    "Upload new files" : "Upload nye filer",
+    "Share from Files" : "Del fra Filer",
     "Display name: " : "Vist navn:"
 },
 "nplurals=2; plural=(n != 1);");

@@ -53,6 +53,8 @@ OC.L10N.register(
     "Reply" : "ตอบกลับ",
     "Today" : "วันนี้",
     "Yesterday" : "เมื่อวานนี้",
+    "New file" : "ไฟล์ใหม่",
+    "Blank" : "ว่าง",
     "Invalid path selected" : "เลือกเส้นทางไม่ถูกต้อง",
     "Settings" : "ตั้งค่า",
     "bot" : "บอต",
