@@ -498,14 +498,6 @@ export default {
 </script>
 
 <style lang="scss">
-body {
-	overflow: hidden;
-
-	/** override toastify position due to top bar */
-	&.has-topbar .toastify-top {
-		margin-top: 105px;
-	}
-}
 
 /* FIXME: remove after https://github.com/nextcloud/nextcloud-vue/issues/2097 is solved */
 .mx-datepicker-main.mx-datepicker-popup {
@@ -515,16 +507,8 @@ body {
 </style>
 
 <style lang="scss" scoped>
+
 .content {
-	height: 100%;
-
-	//FIXME: remove this v-deep once nextcloud vue v4 is adopted
-	::v-deep .app-navigation-toggle {
-		top: 8px;
-		right: -8px;
-		border-radius: var(--border-radius-pill);
-	}
-
 	&.in-call {
 		&:hover ::v-deep .app-navigation-toggle {
 			background-color: rgba(0, 0, 0, .1) !important;
@@ -554,8 +538,4 @@ body {
 	}
 }
 
-.app-content {
-	min-width: 0;
-	flex: 1 1 100%;
-}
 </style>
