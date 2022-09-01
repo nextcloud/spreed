@@ -47,12 +47,11 @@
 				:name="conversation.displayName"
 				:is-active="active" />
 		</template>
-		<NcEmptyContent v-else-if="!hasSharedItems">
+		<NcEmptyContent v-else-if="!hasSharedItems"
+			:title="t('spreed', 'No shared items')">
 			<template #icon>
 				<FolderMultipleImage :size="20" />
 			</template>
-
-			{{ t('spreed', 'No shared items') }}
 		</NcEmptyContent>
 		<SharedItemsBrowser v-if="showSharedItemsBrowser"
 			:shared-items="sharedItems"
