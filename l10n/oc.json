@@ -873,8 +873,6 @@
     "Error while recording audio" : "Error en enregistrant l’àudio",
     "Talk recording from {time} ({conversation})" : "Enregistrament Talk a partir de {time} ({conversation})",
     "Share files to the conversation" : "Partejar de fichièrs dins la conversacion",
-    "Upload new files" : "Enviar fichièrs novèls",
-    "Share from Files" : "Partejar a partir dels Fichièrs",
     "Add emoji" : "Apondre emoji",
     "Send message" : "Enviar un messatge",
     "File to share" : "Fichièr de partejar",
@@ -1065,6 +1063,8 @@
     "Camera" : "Camèra",
     "Message link copied to clipboard." : "Ligam del messatge copiat al quichapapièrs.",
     "[Unknown username]" : "[utilizaire desconegut]",
+    "Upload new files" : "Enviar fichièrs novèls",
+    "Share from Files" : "Partejar a partir dels Fichièrs",
     "Invitation was sent to {actorId}." : "Invitacion enviada a {actorId}.",
     "Display name: " : "Nom d’afichatge :",
     "Video on and off" : "Vidèo activada/desactivada"

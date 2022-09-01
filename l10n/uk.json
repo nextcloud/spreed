@@ -153,11 +153,10 @@
     "Yesterday" : "Вчора",
     "Record voice message" : "Записати голосове повідомлення",
     "Share files to the conversation" : "Поділитися файлами під час розмови",
-    "Upload new files" : "Додати файл",
-    "Share from Files" : "Відкрити Файли",
     "Create new poll" : "Створити нове опитування",
     "Send message" : "Надіслати повідомлення",
     "File to share" : "Виберіть файл для надання доступу",
+    "New file" : "Новий файл",
     "Write message, @ to mention someone …" : "Написати повідомлення, @ім'я для згадки про користувача…",
     "Invalid path selected" : "Вибрано неправильний шлях",
     "Settings" : "Налаштування",
@@ -204,6 +203,8 @@
     "iOS app" : "Застосунок для iOS",
     "Saved" : "Збережено",
     "Chat notifications" : "Сповіщення чату",
-    "Camera" : "Камера"
+    "Camera" : "Камера",
+    "Upload new files" : "Додати файл",
+    "Share from Files" : "Відкрити Файли"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);"
 }

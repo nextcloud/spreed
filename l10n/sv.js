@@ -637,12 +637,12 @@ OC.L10N.register(
     "Yesterday" : "Igår",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Share files to the conversation" : "Dela filer till konversationen",
-    "Upload new files" : "Ladda upp nya filer",
-    "Share from Files" : "Dela från Filer",
     "Create new poll" : "Skapa ny omröstning",
     "Send message" : "Skicka meddelande",
     "File to share" : "Fil att dela",
+    "New file" : "Ny fil",
     "Write message, @ to mention someone …" : "Skriv meddelande, @ för att nämna någon ...",
+    "Blank" : "Tom",
     "Invalid path selected" : "Ogiltig sökväg vald",
     "Settings" : "Inställningar",
     "Create poll" : "Skapa omröstning",
@@ -730,6 +730,8 @@ OC.L10N.register(
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Du väntar för närvarande i lobbyn. Detta möte är planerat till {startTime}",
     "Camera" : "Kamera",
     "[Unknown username]" : "[Okänt användarnamn]",
+    "Upload new files" : "Ladda upp nya filer",
+    "Share from Files" : "Dela från Filer",
     "Display name: " : "Visningsnamn:"
 },
 "nplurals=2; plural=(n != 1);");

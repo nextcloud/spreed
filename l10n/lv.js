@@ -190,6 +190,7 @@ OC.L10N.register(
     "Yesterday" : "Vakar",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "File to share" : "Kopīgojamā datne",
+    "New file" : "Jauns fails",
     "Write message, @ to mention someone …" : "Rakstiet ziņu, @ lai pieminētu kādu …",
     "Settings" : "Iestatījumi",
     "moderator" : "moderators",

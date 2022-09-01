@@ -532,6 +532,7 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Create new poll" : "Opprett ny avstemning",
     "Send message" : "Send melding",
+    "New file" : "Ny fil",
     "Invalid path selected" : "Ugyldig angitt sti",
     "Settings" : "Innstillinger",
     "Create poll" : "Opprett avstemning",

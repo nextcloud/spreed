@@ -326,6 +326,8 @@ OC.L10N.register(
     "Contact" : "Contact",
     "Today" : "Azi",
     "Yesterday" : "Ieri",
+    "New file" : "Fișier nou",
+    "Blank" : "Gol",
     "Invalid path selected" : "Calea selectată este invalidă",
     "Settings" : "Setări",
     "guest" : "invitat",
