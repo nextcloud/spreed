@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<form class="app-navigation-search"
-		@submit.prevent="handleSubmit">
+	<form @submit.prevent="handleSubmit">
 		<NcTextField ref="searchConversations"
 			:value.sync="localValue"
 			:placeholder="placeholderText"
@@ -128,16 +127,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/variables';
 
-.app-navigation-search {
-	position: sticky;
-	top: 0;
-	background-color: var(--color-main-background);
-	z-index: 1;
-	display: flex;
-	justify-content: center;
-	flex-grow: 1;
+::v-deep .input-field__input {
+	border-radius: var(--border-radius-pill);
 }
 
 </style>

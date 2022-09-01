@@ -390,7 +390,12 @@ export default {
 	justify-content: space-between;
 	position: relative;
 	&__content {
-		height: calc(100% - 50px);
+		/**
+		 * Top: 30px line height header + 12px margin
+		 * Bottom: 44px buttons + 12 px margin
+		 * Total: 98px
+		 */
+		height: calc(100% - 98px);
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
