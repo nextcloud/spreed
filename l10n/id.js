@@ -82,6 +82,7 @@ OC.L10N.register(
     "Reply" : "Balas",
     "Today" : "Hari ini",
     "Yesterday" : "Kemarin",
+    "New file" : "File baru",
     "Invalid path selected" : "Jalur terpilih invalid",
     "Settings" : "Setelan",
     "guest" : "pengunjung",

@@ -359,12 +359,12 @@
     "Today" : "今天",
     "Yesterday" : "昨天",
     "Record voice message" : "錄製語音訊息",
-    "Upload new files" : "上傳新檔案",
-    "Share from Files" : "從「檔案」分享",
     "Create new poll" : "新增一項調查",
     "Add emoji" : "新增表情符號",
     "Send message" : "傳送訊息",
     "File to share" : "要分享的檔案",
+    "New file" : "新增檔案",
+    "Blank" : "空白",
     "Invalid path selected" : "所選的路徑無效",
     "Settings" : "設定",
     "Private poll" : "私人投票",
@@ -406,6 +406,8 @@
     "iOS app" : "蘋果應用",
     "Saved" : "儲存",
     "Microphone" : "麥克風",
-    "Camera" : "相機"
+    "Camera" : "相機",
+    "Upload new files" : "上傳新檔案",
+    "Share from Files" : "從「檔案」分享"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
