@@ -38,7 +38,6 @@ use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class CheckHostedSignalingServerTest extends TestCase {
-
 	/** @var ITimeFactory|MockObject */
 	protected $timeFactory;
 	/** @var HostedSignalingServerService|MockObject */

@@ -37,7 +37,6 @@ use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class ExecutorTest extends TestCase {
-
 	/** @var IEventDispatcher|MockObject */
 	protected $dispatcher;
 

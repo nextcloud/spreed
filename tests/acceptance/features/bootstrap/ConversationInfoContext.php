@@ -251,9 +251,9 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 		// menu. Therefore, if the menu is visible, wait a little just in case
 		// it is in the process of being hidden due to a previous action.
 		if (!WaitFor::elementToBeEventuallyNotShown(
-				$this->actor,
-				self::roomModerationMenu(),
-				$timeout = 5 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::roomModerationMenu(),
+			$timeout = 5 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The room moderation menu is still shown after $timeout seconds");
 		}
 

@@ -489,10 +489,10 @@ class Manager {
 			// Non guest user
 			$helper->selectAttendeesTable($query);
 			$query->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
-					$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
-					$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
-					$query->expr()->eq('a.room_id', 'r.id')
-				))
+				$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
+				$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
+				$query->expr()->eq('a.room_id', 'r.id')
+			))
 				->andWhere($query->expr()->isNotNull('a.id'));
 		}
 
@@ -550,10 +550,10 @@ class Manager {
 			// Non guest user
 			$helper->selectAttendeesTable($query);
 			$query->leftJoin('r', 'talk_attendees', 'a', $query->expr()->andX(
-					$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
-					$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
-					$query->expr()->eq('a.room_id', 'r.id')
-				));
+				$query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)),
+				$query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)),
+				$query->expr()->eq('a.room_id', 'r.id')
+			));
 			if ($sessionId !== null) {
 				$helper->selectSessionsTable($query);
 				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(

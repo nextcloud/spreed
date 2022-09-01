@@ -75,8 +75,8 @@ jobs:
 #          php -S localhost:8080 &
 
       - name: PHPUnit
-        working-directory: apps/${{ env.APP_NAME }}/tests/php
-        run: ../../vendor/phpunit/phpunit/phpunit -c phpunit.xml
+        working-directory: apps/${{ env.APP_NAME }}
+        run: composer run test
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}
@@ -150,8 +150,8 @@ jobs:
 #          php -S localhost:8080 &
 
       - name: PHPUnit
-        working-directory: apps/${{ env.APP_NAME }}/tests/php
-        run: ../../vendor/phpunit/phpunit/phpunit -c phpunit.xml
+        working-directory: apps/${{ env.APP_NAME }}
+        run: composer run test
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}
@@ -222,8 +222,8 @@ jobs:
 #          php -S localhost:8080 &
 
       - name: PHPUnit
-        working-directory: apps/${{ env.APP_NAME }}/tests/php
-        run: ../../vendor/phpunit/phpunit/phpunit -c phpunit.xml
+        working-directory: apps/${{ env.APP_NAME }}
+        run: composer run test
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}
@@ -287,8 +287,8 @@ jobs:
 #          php -S localhost:8080 &
 
       - name: PHPUnit
-        working-directory: apps/${{ env.APP_NAME }}/tests/php
-        run: ../../vendor/phpunit/phpunit/phpunit -c phpunit.xml
+        working-directory: apps/${{ env.APP_NAME }}
+        run: composer run test
 
 #      - name: PHPUnit integration
 #        working-directory: apps/${{ env.APP_NAME }}

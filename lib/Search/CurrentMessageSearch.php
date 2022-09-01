@@ -32,7 +32,6 @@ use OCP\Search\ISearchQuery;
 use OCP\Search\SearchResult;
 
 class CurrentMessageSearch extends MessageSearch {
-
 	/**
 	 * @inheritDoc
 	 */

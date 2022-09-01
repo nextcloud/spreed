@@ -36,7 +36,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class RestrictStartingCallsTest extends TestCase {
-
 	/** @var IConfig|MockObject */
 	protected $serverConfig;
 	/** @var ParticipantService|MockObject */

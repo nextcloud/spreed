@@ -54,7 +54,6 @@ use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 
 class SignalingController extends OCSController {
-
 	/** @var int */
 	private const PULL_MESSAGES_TIMEOUT = 30;
 
@@ -445,7 +444,7 @@ class SignalingController extends OCSController {
 	 */
 	private function validateBackendRequest(string $data): bool {
 		if (!isset($_SERVER['HTTP_SPREED_SIGNALING_RANDOM'],
-			  $_SERVER['HTTP_SPREED_SIGNALING_CHECKSUM'])) {
+			$_SERVER['HTTP_SPREED_SIGNALING_CHECKSUM'])) {
 			return false;
 		}
 		$random = $_SERVER['HTTP_SPREED_SIGNALING_RANDOM'];

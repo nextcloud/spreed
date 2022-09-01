@@ -111,9 +111,6 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function register(IRegistrationContext $context): void {
-		// Register the composer autoloader for packages shipped by this app
-		include_once __DIR__ . '/../../vendor/autoload.php';
-
 		$context->registerMiddleWare(CanUseTalkMiddleware::class);
 		$context->registerMiddleWare(InjectionMiddleware::class);
 		$context->registerCapability(Capabilities::class);

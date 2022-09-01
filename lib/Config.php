@@ -23,10 +23,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use Firebase\JWT\JWT;
-
-use OCP\AppFramework\Utility\ITimeFactory;
 use OCA\Talk\Events\GetTurnServersEvent;
+use OCA\Talk\Vendor\Firebase\JWT\JWT;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IGroupManager;

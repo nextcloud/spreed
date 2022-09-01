@@ -27,7 +27,6 @@ use OCP\AppFramework\Db\QBMapper;
 use OCP\IDBConnection;
 
 class CommandMapper extends QBMapper {
-
 	/**
 	 * @param IDBConnection $db
 	 */

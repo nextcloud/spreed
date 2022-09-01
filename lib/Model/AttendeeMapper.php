@@ -36,7 +36,6 @@ use OCP\IDBConnection;
  * @method Attendee[] findEntities(IQueryBuilder $query)
  */
 class AttendeeMapper extends QBMapper {
-
 	/**
 	 * @param IDBConnection $db
 	 */

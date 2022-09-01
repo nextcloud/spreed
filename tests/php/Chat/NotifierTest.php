@@ -43,7 +43,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class NotifierTest extends TestCase {
-
 	/** @var INotificationManager|MockObject */
 	protected $notificationManager;
 	/** @var IUserManager|MockObject */

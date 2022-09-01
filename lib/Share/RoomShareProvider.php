@@ -65,7 +65,6 @@ use OCP\Share\IShareProvider;
  * modifying the share for the other users in the room.
  */
 class RoomShareProvider implements IShareProvider {
-
 	// Special share type for user modified room shares
 	public const SHARE_TYPE_USERROOM = 11;
 

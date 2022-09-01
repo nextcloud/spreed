@@ -8,6 +8,38 @@ updates:
     time: "03:00"
     timezone: Europe/Paris
   open-pull-requests-limit: 10
+- package-ecosystem: composer
+  directory: "/vendor-bin/csfixer"
+  schedule:
+    interval: weekly
+    day: saturday
+    time: "03:00"
+    timezone: Europe/Paris
+  open-pull-requests-limit: 10
+- package-ecosystem: composer
+  directory: "/vendor-bin/mozart"
+  schedule:
+    interval: weekly
+    day: saturday
+    time: "03:00"
+    timezone: Europe/Paris
+  open-pull-requests-limit: 10
+- package-ecosystem: composer
+  directory: "/vendor-bin/phpunit"
+  schedule:
+    interval: weekly
+    day: saturday
+    time: "03:00"
+    timezone: Europe/Paris
+  open-pull-requests-limit: 10
+- package-ecosystem: composer
+  directory: "/vendor-bin/psalm"
+  schedule:
+    interval: weekly
+    day: saturday
+    time: "03:00"
+    timezone: Europe/Paris
+  open-pull-requests-limit: 10
 - package-ecosystem: npm
   directory: "/"
   schedule:

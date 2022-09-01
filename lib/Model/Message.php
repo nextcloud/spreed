@@ -30,7 +30,6 @@ use OCP\Comments\IComment;
 use OCP\IL10N;
 
 class Message {
-
 	/** @var Room */
 	protected $room;
 

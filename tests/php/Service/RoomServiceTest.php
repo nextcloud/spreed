@@ -50,7 +50,6 @@ use Test\TestCase;
  * @group DB
  */
 class RoomServiceTest extends TestCase {
-
 	/** @var Manager|MockObject */
 	protected $manager;
 	/** @var ParticipantService|MockObject */

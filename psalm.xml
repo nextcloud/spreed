@@ -10,6 +10,7 @@
 	<projectFiles>
 		<directory name="lib" />
 		<ignoreFiles>
+			<directory name="lib/Vendor" />
 			<directory name="vendor" />
 		</ignoreFiles>
 	</projectFiles>
@@ -53,6 +54,7 @@
 				<referencedClass name="OCA\Circles\Model\Member" />
 				<referencedClass name="OCA\DAV\CardDAV\PhotoCache" />
 				<referencedClass name="OCA\FederatedFileSharing\AddressHandler" />
+				<referencedClass name="Symfony\Component\EventDispatcher\EventDispatcherInterface" />
 			</errorLevel>
 		</UndefinedDocblockClass>
 		<UndefinedInterfaceMethod>
@@ -73,5 +75,6 @@
 	</issueHandlers>
 	<stubs>
 		<file name="tests/stubs/oc_comments_manager.php" />
+		<file name="tests/stubs/Symfony_Component_EventDispatcher_GenericEvent.php" />
 	</stubs>
 </psalm>

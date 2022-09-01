@@ -28,7 +28,6 @@ use GuzzleHttp\Cookie\CookieJar;
 use Psr\Http\Message\ResponseInterface;
 
 class SharingContext implements Context {
-
 	/** @var string */
 	private $baseUrl = '';
 

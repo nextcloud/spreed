@@ -45,7 +45,6 @@ use OCP\WorkflowEngine\IRuleMatcher;
 use UnexpectedValueException;
 
 class Operation implements IOperation {
-
 	/** @var int[] */
 	public const MESSAGE_MODES = [
 		'NO_MENTION' => 1,

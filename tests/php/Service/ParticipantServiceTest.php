@@ -49,7 +49,6 @@ use Test\TestCase;
  * @group DB
  */
 class ParticipantServiceTest extends TestCase {
-
 	/** @var IConfig|MockObject */
 	protected $serverConfig;
 	/** @var Config|MockObject */

@@ -227,9 +227,9 @@ class ConversationListContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheConversationIsShownInTheList($conversation) {
 		if (!WaitFor::elementToBeEventuallyShown(
-				$this->actor,
-				self::conversationListItemFor($conversation),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::conversationListItemFor($conversation),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The $conversation conversation is not shown yet in the list after $timeout seconds");
 		}
 	}
@@ -239,9 +239,9 @@ class ConversationListContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheConversationIsNotShownInTheList($conversation) {
 		if (!WaitFor::elementToBeEventuallyNotShown(
-				$this->actor,
-				self::conversationListItemFor($conversation),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::conversationListItemFor($conversation),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The $conversation conversation is still shown in the list after $timeout seconds");
 		}
 	}
@@ -256,9 +256,9 @@ class ConversationListContext implements Context, ActorAwareInterface {
 		// waited for it to be visible instead of relying on the implicit wait
 		// made to find the element.
 		if (!WaitFor::elementToBeEventuallyShown(
-				$this->actor,
-				self::activeConversationListItemFor($conversation),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::activeConversationListItemFor($conversation),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The $conversation conversation is not active yet after $timeout seconds");
 		}
 	}
@@ -268,9 +268,9 @@ class ConversationListContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheConversationIsNotActive($conversation) {
 		if (!WaitFor::elementToBeEventuallyNotShown(
-				$this->actor,
-				self::activeConversationListItemFor($conversation),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::activeConversationListItemFor($conversation),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The $conversation conversation is still active after $timeout seconds");
 		}
 	}

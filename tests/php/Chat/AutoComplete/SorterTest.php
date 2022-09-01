@@ -29,7 +29,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class SorterTest extends TestCase {
-
 	/** @var CommentsManager|MockObject */
 	protected $commentsManager;
 

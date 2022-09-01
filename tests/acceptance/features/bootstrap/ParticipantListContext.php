@@ -99,9 +99,9 @@ class ParticipantListContext implements Context, ActorAwareInterface {
 		};
 
 		if (!Utils::waitFor(
-				$numberOfParticipantsMatchCallback,
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier(),
-				$timeoutStep = 1)) {
+			$numberOfParticipantsMatchCallback,
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier(),
+			$timeoutStep = 1)) {
 			PHPUnit_Framework_Assert::fail("The number of participants is still not $numberOfParticipants after $timeout seconds");
 		}
 	}
@@ -121,9 +121,9 @@ class ParticipantListContext implements Context, ActorAwareInterface {
 		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::itemInParticipantsListFor($participantName), 10));
 
 		if (!WaitFor::elementToBeEventuallyNotShown(
-				$this->actor,
-				self::moderatorIndicatorFor($participantName),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::moderatorIndicatorFor($participantName),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("Participant $participantName is still marked as a moderator after $timeout seconds but it should be a normal participant instead");
 		}
 	}

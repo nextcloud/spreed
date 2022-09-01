@@ -27,7 +27,6 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCP\Activity\IEvent;
 
 class Invitation extends Base {
-
 	/**
 	 * @param string $language
 	 * @param IEvent $event

@@ -53,7 +53,6 @@ use Test\TestCase;
  * @group DB
  */
 class ChatManagerTest extends TestCase {
-
 	/** @var CommentsManager|ICommentsManager|MockObject */
 	protected $commentsManager;
 	/** @var IEventDispatcher|MockObject */

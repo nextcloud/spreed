@@ -39,7 +39,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class ConversationProviderTest extends TestCase {
-
 	/** @var Manager|MockObject */
 	protected $manager;
 	/** @var IUserSession|MockObject */

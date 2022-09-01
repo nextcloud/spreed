@@ -46,9 +46,9 @@ class TalkPublicShareContext extends PublicShareContext {
 	 */
 	public function iSeeThatTheTalkSidebarIsShownInThePublicSharePage() {
 		if (!WaitFor::elementToBeEventuallyShown(
-				$this->actor,
-				self::talkSidebar(),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::talkSidebar(),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The Talk sidebar is not shown yet after $timeout seconds");
 		}
 	}
@@ -68,7 +68,7 @@ class TalkPublicShareContext extends PublicShareContext {
 			sleep(2 * $this->actor->getFindTimeoutMultiplier());
 
 			PHPUnit_Framework_Assert::assertFalse(
-					$this->actor->find(self::talkSidebar())->isVisible());
+				$this->actor->find(self::talkSidebar())->isVisible());
 		} catch (NoSuchElementException $exception) {
 		}
 	}

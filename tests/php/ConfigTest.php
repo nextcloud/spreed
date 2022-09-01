@@ -20,12 +20,11 @@
  */
 namespace OCA\Talk\Tests\php;
 
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
-
 use OCA\Talk\Config;
 use OCA\Talk\Events\GetTurnServersEvent;
 use OCA\Talk\Tests\php\Mocks\GetTurnServerListener;
+use OCA\Talk\Vendor\Firebase\JWT\JWT;
+use OCA\Talk\Vendor\Firebase\JWT\Key;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
@@ -116,7 +115,6 @@ class ConfigTest extends TestCase {
 	}
 
 	public function testGenerateTurnSettings() {
-
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config

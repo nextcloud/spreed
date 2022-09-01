@@ -38,7 +38,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class SearchPluginTest extends TestCase {
-
 	/** @var IUserManager|MockObject */
 	protected $userManager;
 	/** @var GuestManager|MockObject */

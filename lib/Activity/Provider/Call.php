@@ -27,7 +27,6 @@ use OCP\Activity\IEvent;
 use OCP\IL10N;
 
 class Call extends Base {
-
 	/**
 	 * @param string $language
 	 * @param IEvent $event

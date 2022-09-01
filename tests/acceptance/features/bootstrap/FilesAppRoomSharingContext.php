@@ -31,6 +31,6 @@ class FilesAppRoomSharingContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheFileIsSharedWithMeInTheConversationBy($conversationName, $sharedByName) {
 		PHPUnit_Framework_Assert::assertEquals(
-				$this->actor->find(FilesAppSharingContext::sharedByLabel(), 10)->getText(), "Shared with you and the conversation $conversationName by $sharedByName");
+			$this->actor->find(FilesAppSharingContext::sharedByLabel(), 10)->getText(), "Shared with you and the conversation $conversationName by $sharedByName");
 	}
 }

@@ -35,7 +35,6 @@ use OCP\Migration\SimpleMigrationStep;
  * But the install migration was fixed, so this only does something on update.
  */
 class Version10000Date20201015150000 extends SimpleMigrationStep {
-
 	/**
 	 * @param IOutput $output
 	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`

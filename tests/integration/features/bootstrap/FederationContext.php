@@ -35,7 +35,6 @@ require __DIR__ . '/../../vendor/autoload.php';
  * Federation context.
  */
 class FederationContext implements Context, SnippetAcceptingContext {
-
 	/** @var string */
 	private $baseUrl = '';
 	/** @var string */

@@ -31,7 +31,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class TalkSessionTest extends TestCase {
-
 	/** @var ISession|MockObject */
 	protected $session;
 
