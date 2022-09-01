@@ -22,14 +22,14 @@
 <template>
 	<div class="set-contacts">
 		<!-- Search -->
-		<div class="icon-search" />
-		<input ref="setContacts"
+		<NcTextField ref="setContacts"
 			v-model="searchText"
 			v-observe-visibility="visibilityChanged"
-			class="set-contacts__input"
 			type="text"
 			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">
+			<Magnify :size="16" />
+		</NcTextField>
 		<NcButton v-if="isSearching"
 			class="abort-search"
 			type="tertiary-no-background"
@@ -60,7 +60,9 @@
 
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import Close from 'vue-material-design-icons/Close.vue'
+import Magnify from 'vue-material-design-icons/Magnify.vue'
 import CancelableRequest from '../../../../utils/cancelableRequest.js'
 import debounce from 'debounce'
 import { showError } from '@nextcloud/dialogs'
@@ -75,6 +77,8 @@ export default {
 		Close,
 		ParticipantSearchResults,
 		ContactSelectionBubble,
+		NcTextField,
+		Magnify,
 	},
 
 	props: {
@@ -184,7 +188,7 @@ export default {
 			}
 		},
 		focusInput() {
-			this.$refs.setContacts.focus()
+			this.$refs.setContacts.$el.focus()
 		},
 	},
 }
@@ -197,14 +201,6 @@ export default {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-	&__input {
-		width: 100%;
-		font-size: 16px;
-		padding-left: 28px;
-		line-height: 34px;
-		box-shadow: 0 10px 5px var(--color-main-background);
-		z-index: 1;
-	}
 	&__icon {
 		margin-top: 40px;
 	}
@@ -230,13 +226,6 @@ export default {
 	flex: 0 240px;
 	flex: 1 0 auto;
 	align-content: flex-start;
-}
-
-.icon-search {
-	position: absolute;
-	top: 12px;
-	left: 8px;
-	z-index: 2;
 }
 
 .zoom-enter-active {

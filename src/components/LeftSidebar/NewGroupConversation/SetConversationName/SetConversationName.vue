@@ -21,21 +21,25 @@
 
 <template>
 	<div class="set-conversation-name">
-		<input ref="conversationName"
+		<NcTextField ref="conversationName"
 			v-observe-visibility="visibilityChanged"
 			type="text"
 			:value="value"
-			class="conversation-name"
 			:placeholder="t('spreed', 'Conversation name')"
 			@input="handleInput"
 			@keydown.enter="handleKeydown">
+		</NcTextField>
 	</div>
 </template>
 
 <script>
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 export default {
 	name: 'SetConversationName',
+	components: {
+		NcTextField,
+	},
 	props: {
 		value: {
 			type: String,

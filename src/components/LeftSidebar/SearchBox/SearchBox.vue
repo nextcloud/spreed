@@ -22,34 +22,28 @@
 <template>
 	<form class="app-navigation-search"
 		@submit.prevent="handleSubmit">
-		<input ref="searchConversations"
-			v-model="localValue"
-			class="app-navigation-search__input"
-			type="text"
-			:placeHolder="placeholderText"
+		<NcTextField ref="searchConversations"
+			:value.sync="localValue"
+			:placeholder="placeholderText"
+			:show-trailing-button="isSearching"
+			trailing-button-icon="close"
+			@trailing-button-click="abortSearch"
 			@keypress.enter.prevent="handleSubmit">
-		<NcButton v-if="isSearching"
-			class="abort-search"
-			type="tertiary-no-background"
-			:aria-label="cancelSearchLabel"
-			@click="abortSearch">
-			<template #icon>
-				<Close :size="20" />
-			</template>
-		</NcButton>
+			<Magnify :size="16" />
+		</NcTextField>
 	</form>
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import Close from 'vue-material-design-icons/Close.vue'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import Magnify from 'vue-material-design-icons/Magnify.vue'
 import { EventBus } from '../../../services/EventBus.js'
 
 export default {
 	name: 'SearchBox',
 	components: {
-		NcButton,
-		Close,
+		NcTextField,
+		Magnify,
 	},
 	props: {
 		/**
@@ -107,7 +101,7 @@ export default {
 	methods: {
 		// Focus the input field of the searchbox component.
 		focusInput() {
-			this.$refs.searchConversations.focus()
+			this.$refs.searchConversations.$el.focus()
 		},
 		// Focuses the input if the current route is root.
 		focusInputIfRoot() {
@@ -137,23 +131,13 @@ export default {
 @import '../../../assets/variables';
 
 .app-navigation-search {
-	flex: 1 0 auto;
 	position: sticky;
 	top: 0;
 	background-color: var(--color-main-background);
 	z-index: 1;
 	display: flex;
 	justify-content: center;
-	&__input {
-		align-self: center;
-		width: 100%;
-		margin: 4px;
-		padding-left: 8px;
-	}
-}
-
-.abort-search {
-	margin-left: -44px;
+	flex-grow: 1;
 }
 
 </style>

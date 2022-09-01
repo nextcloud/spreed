@@ -38,22 +38,22 @@
 			@close="closeModal">
 			<!-- Wrapper for content & navigation -->
 			<div class="new-group-conversation talk-modal">
+				<h2>{{ t('spreed', 'Create a new group conversation') }}</h2>
 				<!-- Content -->
 				<div class="new-group-conversation__content">
 					<!-- First page -->
 					<template v-if="page === 0">
 						<SetConversationName v-model="conversationNameInput"
 							@click-enter="handleEnter" />
-						<SetConversationType v-model="isPublic"
-							:conversation-name="conversationName" />
+						<NcCheckboxRadioSwitch :checked.sync="isPublic">
+							{{ t('spreed', 'Allow guests to join via link') }}
+						</NcCheckboxRadioSwitch>
 						<!-- Password protection -->
 						<template v-if="isPublic">
-							<input id="password-checkbox"
-								type="checkbox"
-								class="checkbox"
-								:checked="passwordProtect"
-								@input="handleCheckboxInput">
-							<label for="password-checkbox">{{ t('spreed', 'Password protect') }}</label>
+							<NcCheckboxRadioSwitch :checked.sync="passwordProtect"
+								@checked="handleCheckboxInput">
+								{{ t('spreed', 'Password protect') }}
+							</NcCheckboxRadioSwitch>
 							<PasswordProtect v-if="passwordProtect"
 								v-model="password" />
 						</template>
@@ -118,13 +118,13 @@
 <script>
 
 import { CONVERSATION } from '../../../constants.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import SetContacts from './SetContacts/SetContacts.vue'
 import SetConversationName from './SetConversationName/SetConversationName.vue'
-import SetConversationType from './SetConversationType/SetConversationType.vue'
 import Confirmation from './Confirmation/Confirmation.vue'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { addParticipant } from '../../../services/participantsService.js'
 import {
 	createPublicConversation,
@@ -151,8 +151,8 @@ export default {
 		NcModal,
 		SetContacts,
 		SetConversationName,
-		SetConversationType,
 		NcButton,
+		NcCheckboxRadioSwitch,
 		Confirmation,
 		PasswordProtect,
 		ListableSettings,
@@ -391,6 +391,9 @@ export default {
 	position: relative;
 	&__content {
 		height: calc(100% - 50px);
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
 	}
 }
 
@@ -415,18 +418,12 @@ it back */
 	}
 }
 
-.wrapper {
-	margin: auto;
-}
-
 ::v-deep .app-settings-section__hint {
 	color: var(--color-text-lighter);
 	padding: 8px 0;
 }
 
 ::v-deep .app-settings-subsection {
-	margin-top: 25px;
-
 	&:first-child {
 		margin-top: 0;
 	}
