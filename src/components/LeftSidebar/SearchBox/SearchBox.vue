@@ -125,3 +125,11 @@ export default {
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+
+::v-deep .input-field__input {
+	border-radius: var(--border-radius-pill);
+}
+
+</style>
