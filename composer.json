@@ -42,11 +42,11 @@
 		"test": "cd tests/php/ && phpunit -c phpunit.xml"
 	},
 	"require-dev": {
-		"bamarni/composer-bin-plugin": "^1.8",
 		"christophwurst/nextcloud": "dev-master",
 		"roave/security-advisories": "dev-latest"
 	},
 	"require": {
+		"bamarni/composer-bin-plugin": "^1.8",
 		"firebase/php-jwt": "^6.3"
 	},
 	"extra": {
