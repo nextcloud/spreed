@@ -24,31 +24,29 @@
 		<button slot="trigger"
 			tabindex="0"
 			class="poll-voters-details">
-			<AvatarWrapper v-for="(item, index) in details"
+			<AvatarWrapperSmall v-for="(item, index) in details"
 				:id="item.actorId"
 				:key="index"
 				:source="item.actorType"
 				:disable-menu="true"
 				:disable-tooltip="true"
 				:show-user-status="false"
-				:name="item.actorDisplayName"
-				:condensed="true"
-				:size="24" />
+				:name="getDisplayName(item)"
+				:condensed="true" />
 		</button>
 		<div class="poll-voters-details__popover" tabindex="0">
 			<div v-for="(item, index) in details"
 				:key="index"
 				class="poll-voters-details__list-item">
-				<AvatarWrapper :id="item.actorId"
+				<AvatarWrapperSmall :id="item.actorId"
 					:key="index"
 					:source="item.actorType"
 					:disable-menu="true"
 					:show-user-status="false"
-					:name="item.actorDisplayName"
-					:condensed="true"
-					:size="24" />
+					:name="getDisplayName(item)"
+					:condensed="true" />
 				<p class="poll-voters-details__display-name">
-					{{ item.actorDisplayName }}
+					{{ getDisplayName(item) }}
 				</p>
 			</div>
 		</div>
@@ -56,15 +54,16 @@
 </template>
 
 <script>
-import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
+import AvatarWrapperSmall from '../../../../AvatarWrapper/AvatarWrapperSmall.vue'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
+import { ATTENDEE } from '../../../../../constants.js'
 
 export default {
 
 	name: 'PollVotersDetails',
 
 	components: {
-		AvatarWrapper,
+		AvatarWrapperSmall,
 		NcPopover,
 	},
 
@@ -72,6 +71,16 @@ export default {
 		details: {
 			type: Array,
 			required: true,
+		},
+	},
+
+	methods: {
+		getDisplayName(item) {
+			if (item.actorDisplayName === '' && item.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+				return t('spreed', 'Guest')
+			}
+
+			return item.actorDisplayName
 		},
 	},
 }
@@ -86,7 +95,7 @@ export default {
 	padding: 0;
 	margin-right: 8px;
 
-	&__popover{
+	&__popover {
 		padding: 8px;
 		max-height: 400px;
 		overflow-y: scroll;

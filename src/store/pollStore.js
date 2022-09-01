@@ -107,7 +107,6 @@ const actions = {
 			const response = await pollService.submitVote(token, pollId, vote)
 			const poll = response.data.ocs.data
 			context.dispatch('addPoll', { token, poll })
-			console.debug('polldata', response)
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while submitting your vote'))
@@ -120,7 +119,6 @@ const actions = {
 			const response = await pollService.endPoll(token, pollId)
 			const poll = response.data.ocs.data
 			context.dispatch('addPoll', { token, poll })
-			console.debug('polldata', response)
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while ending the poll'))
