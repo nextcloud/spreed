@@ -287,6 +287,8 @@ class BackendNotifierTest extends TestCase {
 					'active-since' => null,
 					'sip-enabled' => 0,
 					'participant-list' => 'refresh',
+					'avatarId' => 'icon-public',
+					'avatarVersion' => 1,
 				],
 			],
 		]);
@@ -324,6 +326,8 @@ class BackendNotifierTest extends TestCase {
 					'active-since' => null,
 					'sip-enabled' => 0,
 					'participant-list' => 'refresh',
+					'avatarId' => 'icon-public',
+					'avatarVersion' => 1,
 				],
 			],
 		]);
@@ -391,6 +395,8 @@ class BackendNotifierTest extends TestCase {
 					'active-since' => null,
 					'sip-enabled' => 0,
 					'participant-list' => 'refresh',
+					'avatarId' => 'icon-public',
+					'avatarVersion' => 1,
 				],
 			],
 		]);
@@ -430,6 +436,8 @@ class BackendNotifierTest extends TestCase {
 					'active-since' => null,
 					'sip-enabled' => 0,
 					'participant-list' => 'refresh',
+					'avatarId' => 'icon-public',
+					'avatarVersion' => 1,
 				],
 			],
 		]);
@@ -463,6 +471,8 @@ class BackendNotifierTest extends TestCase {
 					'active-since' => null,
 					'sip-enabled' => 0,
 					'participant-list' => 'refresh',
+					'avatarId' => 'icon-public',
+					'avatarVersion' => 1,
 				],
 			],
 		]);
@@ -489,6 +499,8 @@ class BackendNotifierTest extends TestCase {
 					'listable' => Room::LISTABLE_NONE,
 					'active-since' => null,
 					'sip-enabled' => 0,
+					'avatarId' => 'icon-public',
+					'avatarVersion' => 1,
 				],
 			],
 		]);

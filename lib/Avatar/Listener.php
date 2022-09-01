@@ -46,7 +46,7 @@ class Listener {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$listener = static function (GenericEvent $event) {
+		$listener = static function (GenericEvent $event): void {
 			if ($event->getArgument('feature') !== 'avatar') {
 				return;
 			}

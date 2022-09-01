@@ -169,7 +169,7 @@ class Listener implements IEventListener {
 		}
 	}
 
-	public static function sendSystemMessageAfterAvatarSet(ModifyRoomEvent $event) {
+	public static function sendSystemMessageAfterAvatarSet(ModifyRoomEvent $event): void {
 		$room = $event->getRoom();
 		/** @var self $listener */
 		$listener = \OC::$server->get(self::class);

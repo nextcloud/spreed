@@ -14,6 +14,11 @@
       <code>$listener</code>
     </InvalidArgument>
   </file>
+  <file src="lib/Avatar/RoomAvatar.php">
+    <MissingDependency occurrences="3">
+      <code>Image</code>
+    </MissingDependency>
+  </file>
   <file src="lib/BackgroundJob/CheckReferenceIdColumn.php">
     <UndefinedClass occurrences="1">
       <code>SchemaWrapper</code>
@@ -172,6 +177,11 @@
       <code>IRootFolder</code>
       <code>IRootFolder</code>
     </MissingDependency>
+  </file>
+  <file src="lib/Controller/RoomAvatarController.php">
+    <UndefinedClass occurrences="1">
+      <code>\OC\Files\Filesystem</code>
+    </UndefinedClass>
   </file>
   <file src="lib/Controller/SettingsController.php">
     <InvalidArgument occurrences="1">

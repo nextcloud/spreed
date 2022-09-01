@@ -27,7 +27,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Avatar;
 
 use OCA\Talk\Room;
-use OCP\Files\File;
+use OCP\Color;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -263,9 +263,10 @@ class RoomAvatar implements IAvatar {
 	/**
 	 * Remove the room avatar
 	 *
+	 * @param bool $silent Whether removing the avatar should trigger a change
 	 * @return void
 	 */
-	public function remove(): void {
+	public function remove(bool $silent = false): void {
 		$this->removeFiles();
 
 		$this->room->setAvatar($this->getRoomAvatarType(), $this->room->getAvatarVersion() + 1);
@@ -289,10 +290,10 @@ class RoomAvatar implements IAvatar {
 	 * Get the file of the avatar
 	 *
 	 * @param int $size -1 can be used to not scale the image
-	 * @return ISimpleFile|File
+	 *
 	 * @throws NotFoundException
 	 */
-	public function getFile($size) {
+	public function getFile(int $size): ISimpleFile {
 		$size = (int) $size;
 
 		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
@@ -369,15 +370,14 @@ class RoomAvatar implements IAvatar {
 	/**
 	 * Ignored.
 	 */
-	public function avatarBackgroundColor(string $text) {
-		// Unused, unneeded, and Color class it not even public, so just return
-		// null.
-		return null;
+	public function avatarBackgroundColor(string $hash): Color {
+		// Unused, unneeded, so just return
+		return new Color(0, 0, 0);
 	}
 
 	/**
 	 * Ignored.
 	 */
-	public function userChanged($feature, $oldValue, $newValue) {
+	public function userChanged(string $feature, $oldValue, $newValue): void {
 	}
 }
