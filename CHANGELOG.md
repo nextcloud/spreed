@@ -1,6 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.0-beta.2 – 2022-09-01
+### Added
+- 🗒️ Allow to create new files from within the chat
+- 🌏 Show link previews for chat messages with links
+- Show more details on the poll result screen
+- Upgrade @nextcloud/vue to version 7
+
+### Changed
+- Improve performance by using the UserDisplayNameCache
+- Improve performance of chats with a lot of shared files
+- Populate ETag and permissions so the image editor works as expected
+
+### Fixed
+- Fix depenendency management and make sure all required dependencies are shipped
+- Fix type of icon size
+- Fix missing aria-labels and tooltips in various places
+- Fix missing local media in share sidebar
+- Fix missing screenshares in share sidebar
+- Ensure that the reactions details is always an object
+- Do not allow to close a poll twice
+- Make handling of guest moderators more consistent
+
 ## 15.0.0-beta.1 – 2022-08-12
 ### Added
 - 🛂 Chat permission
