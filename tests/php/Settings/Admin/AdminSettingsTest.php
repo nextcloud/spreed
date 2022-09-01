@@ -38,7 +38,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class AdminSettingsTest extends TestCase {
-
 	/** @var Config|MockObject */
 	protected $talkConfig;
 	/** @var IConfig|MockObject */

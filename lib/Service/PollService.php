@@ -255,12 +255,12 @@ class PollService {
 		$resultQuery->selectAlias(
 			$resultQuery->func()->concat(
 				$resultQuery->expr()->literal('"'),
-					'option_id',
+				'option_id',
 				$resultQuery->expr()->literal('":'),
 				$resultQuery->func()->count('id')
-				),
-				'colonseparatedvalue'
-			)
+			),
+			'colonseparatedvalue'
+		)
 			->from('talk_poll_votes')
 			->where($resultQuery->expr()->eq('poll_id', $resultQuery->createNamedParameter($pollId)))
 			->groupBy('option_id')

@@ -29,7 +29,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Test\TestCase;
 
 class AddTest extends TestCase {
-
 	/** @var IConfig|\PHPUnit_Framework_MockObject_MockObject */
 	private $config;
 

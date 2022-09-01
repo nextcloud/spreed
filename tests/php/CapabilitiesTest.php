@@ -39,7 +39,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class CapabilitiesTest extends TestCase {
-
 	/** @var IConfig|MockObject */
 	protected $serverConfig;
 	/** @var Config|MockObject */

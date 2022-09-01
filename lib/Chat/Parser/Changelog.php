@@ -27,7 +27,6 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 
 class Changelog {
-
 	/**
 	 * @param Message $chatMessage
 	 * @throws \OutOfBoundsException

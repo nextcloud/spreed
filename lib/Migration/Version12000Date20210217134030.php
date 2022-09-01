@@ -35,7 +35,6 @@ use OCP\Migration\SimpleMigrationStep;
  * allowing an attendee to have multiple sessions in the same conversation.
  */
 class Version12000Date20210217134030 extends SimpleMigrationStep {
-
 	/**
 	 * @param IOutput $output
 	 * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`

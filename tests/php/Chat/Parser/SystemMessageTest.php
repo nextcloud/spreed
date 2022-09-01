@@ -54,7 +54,6 @@ use Test\TestCase;
  * @group DB
  */
 class SystemMessageTest extends TestCase {
-
 	/** @var IUserManager|MockObject */
 	protected $userManager;
 	/** @var IGroupManager|MockObject */
@@ -1094,7 +1093,6 @@ class SystemMessageTest extends TestCase {
 	 * @param string $expected
 	 */
 	public function testGetGuestName(string $actorType, string $actorId, string $attendeeName, string $expected): void {
-
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);
 

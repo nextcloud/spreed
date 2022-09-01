@@ -246,7 +246,7 @@ class BackendNotifierTest extends TestCase {
 					[$a['userId'] ?? '', $a['participantType'], $a['sessionId'], $a['lastPing']]
 					<=>
 					[$b['userId'] ?? '', $b['participantType'], $b['sessionId'], $b['lastPing']]
-					;
+				;
 			});
 		}
 		if ($message['type'] === 'incall') {
@@ -255,7 +255,7 @@ class BackendNotifierTest extends TestCase {
 					[$a['userId'] ?? '', $a['participantType'], $a['sessionId'], $a['lastPing']]
 					<=>
 					[$b['userId'] ?? '', $b['participantType'], $b['sessionId'], $b['lastPing']]
-					;
+				;
 			});
 		}
 		return $message;

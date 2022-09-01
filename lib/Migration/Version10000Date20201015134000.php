@@ -219,7 +219,7 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 				->setParameter('last_joined_call', $lastJoinedCall, IQueryBuilder::PARAM_INT)
 				->setParameter('last_read_message', (int) $row['last_read_message'], IQueryBuilder::PARAM_INT)
 				->setParameter('last_mention_message', (int) $row['last_mention_message'], IQueryBuilder::PARAM_INT)
-				;
+			;
 
 			try {
 				$insert->executeStatement();

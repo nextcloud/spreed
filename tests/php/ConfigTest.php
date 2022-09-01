@@ -115,7 +115,6 @@ class ConfigTest extends TestCase {
 	}
 
 	public function testGenerateTurnSettings() {
-
 		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config

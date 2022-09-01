@@ -36,7 +36,6 @@ use OCP\IUser;
 use OCP\Util;
 
 trait TInitialState {
-
 	/** @var Config */
 	protected $talkConfig;
 	/** @var IConfig */

@@ -67,9 +67,9 @@ class FilesAppChatTabContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheChatTabHeaderIsNotShownInTheDetailsView() {
 		if (!WaitFor::elementToBeEventuallyNotShown(
-				$this->actor,
-				FilesAppContext::tabHeaderInDetailsViewNamed("Chat"),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			FilesAppContext::tabHeaderInDetailsViewNamed("Chat"),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The tab header named Chat is still shown in the details view after $timeout seconds");
 		}
 	}
@@ -90,9 +90,9 @@ class FilesAppChatTabContext implements Context, ActorAwareInterface {
 		// waited for it to be visible instead of relying on the implicit wait
 		// made to find the element.
 		if (!WaitFor::elementToBeEventuallyShown(
-				$this->actor,
-				ChatContext::chatView(FilesAppContext::tabInDetailsViewNamed("Chat")),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			ChatContext::chatView(FilesAppContext::tabInDetailsViewNamed("Chat")),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The chat was not shown yet in the chat tab after $timeout seconds");
 		}
 	}

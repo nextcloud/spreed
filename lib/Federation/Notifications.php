@@ -149,12 +149,12 @@ class Notifications {
 		$notification = $this->cloudFederationFactory->getCloudFederationNotification();
 		$notification->setMessage(
 			'SHARE_ACCEPTED',
-		FederationManager::TALK_ROOM_RESOURCE,
-		$id,
-		[
-			'sharedSecret' => $token,
-			'message' => 'Recipient accepted the share',
-		]);
+			FederationManager::TALK_ROOM_RESOURCE,
+			$id,
+			[
+				'sharedSecret' => $token,
+				'message' => 'Recipient accepted the share',
+			]);
 		$response = $this->federationProviderManager->sendNotification($remote, $notification);
 		if (!is_array($response)) {
 			$this->logger->info(

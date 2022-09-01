@@ -106,8 +106,8 @@ class TalkAppContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheCurrentPageIsTheTalkApp() {
 		PHPUnit_Framework_Assert::assertStringStartsWith(
-				$this->actor->locatePath("/apps/spreed/"),
-				$this->actor->getSession()->getCurrentUrl());
+			$this->actor->locatePath("/apps/spreed/"),
+			$this->actor->getSession()->getCurrentUrl());
 	}
 
 	/**
@@ -118,9 +118,9 @@ class TalkAppContext implements Context, ActorAwareInterface {
 		// waited for it to be visible instead of relying on the implicit wait
 		// made to find the element.
 		if (!WaitFor::elementToBeEventuallyShown(
-				$this->actor,
-				self::emptyContent(),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::emptyContent(),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The empty content was not shown yet after $timeout seconds");
 		}
 
@@ -135,9 +135,9 @@ class TalkAppContext implements Context, ActorAwareInterface {
 		// waited for it to be visible instead of relying on the implicit wait
 		// made to find the element.
 		if (!WaitFor::elementToBeEventuallyShown(
-				$this->actor,
-				self::sidebar(),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::sidebar(),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The sidebar was not shown yet after $timeout seconds");
 		}
 	}
@@ -147,9 +147,9 @@ class TalkAppContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheSidebarIsClosed() {
 		if (!WaitFor::elementToBeEventuallyNotShown(
-				$this->actor,
-				self::sidebar(),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::sidebar(),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The sidebar is still shown after $timeout seconds");
 		}
 	}

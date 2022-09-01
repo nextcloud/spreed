@@ -31,7 +31,6 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class VoteMapper extends QBMapper {
-
 	/**
 	 * @param IDBConnection $db
 	 */

@@ -27,7 +27,6 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
 class EndCallForEveryoneEvent extends ModifyRoomEvent {
-
 	/** @var string[] */
 	protected array $sessionIds = [];
 	/** @var string[] */

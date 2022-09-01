@@ -36,7 +36,6 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
  * when needed.
  */
 trait ChatAncestorSetter {
-
 	/**
 	 * @var ChatContext
 	 */

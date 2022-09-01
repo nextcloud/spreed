@@ -40,7 +40,6 @@ use Test\TestCase;
  * @package OCA\Talk\Tests\php\Activity
  */
 class BaseTest extends TestCase {
-
 	/** @var IFactory|MockObject */
 	protected $l10nFactory;
 	/** @var IURLGenerator|MockObject */

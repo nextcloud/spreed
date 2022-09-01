@@ -97,9 +97,9 @@ class PublicConversationContext implements Context, ActorAwareInterface {
 		// URL, but the authenticate page for public conversations does not, so
 		// it needs to be checked that the warning is shown instead.
 		if (!WaitFor::elementToBeEventuallyShown(
-				$this->actor,
-				self::passwordProtectedConversationWarning(),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::passwordProtectedConversationWarning(),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The password protected conversation warning was not shown yet after $timeout seconds");
 		}
 	}
@@ -112,9 +112,9 @@ class PublicConversationContext implements Context, ActorAwareInterface {
 		// URL, but the authenticate page for public conversations does not, so
 		// it needs to be checked that the warning is shown instead.
 		if (!WaitFor::elementToBeEventuallyShown(
-				$this->actor,
-				self::wrongPasswordMessage(),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::wrongPasswordMessage(),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The wrong password warning was not shown yet after $timeout seconds");
 		}
 	}
@@ -124,8 +124,8 @@ class PublicConversationContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheCurrentPageIsThePublicConversationLinkIWroteDown() {
 		PHPUnit_Framework_Assert::assertEquals(
-				$this->actor->getSharedNotebook()["public conversation link"],
-				$this->actor->getSession()->getCurrentUrl());
+			$this->actor->getSharedNotebook()["public conversation link"],
+			$this->actor->getSession()->getCurrentUrl());
 
 		$this->setChatAncestorForActor(TalkAppContext::mainView(), $this->actor);
 

@@ -24,7 +24,6 @@
 use Behat\Behat\Context\Context;
 
 class ChatContext implements Context, ActorAwareInterface {
-
 	/**
 	 * @var Actor
 	 */
@@ -329,9 +328,9 @@ class ChatContext implements Context, ActorAwareInterface {
 		// Instead of waiting for the input to be enabled before sending a new
 		// message it is easier to wait for the working icon to not be shown.
 		if (!WaitFor::elementToBeEventuallyNotShown(
-				$this->actor,
-				self::newChatMessageWorkingIcon($this->chatAncestor),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::newChatMessageWorkingIcon($this->chatAncestor),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The working icon for the new message was still being shown after $timeout seconds");
 		}
 
@@ -359,9 +358,9 @@ class ChatContext implements Context, ActorAwareInterface {
 		// Instead of waiting for the input to be enabled before sending a new
 		// message it is easier to wait for the working icon to not be shown.
 		if (!WaitFor::elementToBeEventuallyNotShown(
-				$this->actor,
-				self::newChatMessageWorkingIcon($this->chatAncestor),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::newChatMessageWorkingIcon($this->chatAncestor),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The working icon for the new message was still being shown after $timeout seconds");
 		}
 
@@ -394,17 +393,17 @@ class ChatContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheMessageWasSentByWithTheText($number, $author, $message) {
 		if (!WaitFor::elementToBeEventuallyShown(
-				$this->actor,
-				self::authorOfChatMessage($this->chatAncestor, $number),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::authorOfChatMessage($this->chatAncestor, $number),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The author of the message $number was not shown yet after $timeout seconds");
 		}
 		PHPUnit_Framework_Assert::assertEquals($author, $this->actor->find(self::authorOfChatMessage($this->chatAncestor, $number))->getText());
 
 		if (!WaitFor::elementToBeEventuallyShown(
-				$this->actor,
-				self::textOfChatMessage($this->chatAncestor, $number),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::textOfChatMessage($this->chatAncestor, $number),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The text of the message $number was not shown yet after $timeout seconds");
 		}
 		PHPUnit_Framework_Assert::assertEquals($message, $this->actor->find(self::textOfChatMessage($this->chatAncestor, $number))->getText());
@@ -415,9 +414,9 @@ class ChatContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheMessageWasSentWithTheTextAndGroupedWithThePreviousOne($number, $message) {
 		if (!WaitFor::elementToBeEventuallyShown(
-				$this->actor,
-				self::textOfGroupedChatMessage($this->chatAncestor, $number),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::textOfGroupedChatMessage($this->chatAncestor, $number),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The text of the message $number was not shown yet after $timeout seconds");
 		}
 		PHPUnit_Framework_Assert::assertEquals($message, $this->actor->find(self::textOfGroupedChatMessage($this->chatAncestor, $number))->getText());

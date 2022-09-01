@@ -28,7 +28,6 @@ use PHPUnit\Framework\Assert;
 require __DIR__ . '/../../vendor/autoload.php';
 
 trait CommandLineTrait {
-
 	/** @var int return code of last command */
 	private $lastCode;
 	/** @var string stdout of last command */

@@ -57,9 +57,9 @@ class PublicSharePasswordRequestContext implements Context, ActorAwareInterface 
 	 */
 	public function iSeeThatTheRequestPasswordButtonIsShown() {
 		if (!WaitFor::elementToBeEventuallyShown(
-				$this->actor,
-				self::requestPasswordButton(),
-				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			$this->actor,
+			self::requestPasswordButton(),
+			$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The request password button is not shown yet after $timeout seconds");
 		}
 	}
@@ -72,7 +72,7 @@ class PublicSharePasswordRequestContext implements Context, ActorAwareInterface 
 			// Wait a little before deciding that the button is not shown, as
 			// the button would be loaded after the page has loaded.
 			PHPUnit_Framework_Assert::assertFalse(
-					$this->actor->find(self::requestPasswordButton(), 5)->isVisible());
+				$this->actor->find(self::requestPasswordButton(), 5)->isVisible());
 		} catch (NoSuchElementException $exception) {
 		}
 	}

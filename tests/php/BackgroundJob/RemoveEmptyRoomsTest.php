@@ -35,7 +35,6 @@ use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class RemoveEmptyRoomsTest extends TestCase {
-
 	/** @var ITimeFactory|MockObject */
 	protected $timeFactory;
 	/** @var Manager|MockObject */

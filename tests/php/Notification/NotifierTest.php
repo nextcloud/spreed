@@ -50,7 +50,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class NotifierTest extends TestCase {
-
 	/** @var IFactory|MockObject */
 	protected $lFactory;
 	/** @var IURLGenerator|MockObject */

@@ -97,7 +97,7 @@ class ListenerTest extends TestCase {
 			$this->session,
 			$this->userSession,
 			$this->timeFactory
-		 );
+		);
 
 		$this->overwriteService(Listener::class, $this->listener);
 		$this->listener->register($this->eventDispatcher);

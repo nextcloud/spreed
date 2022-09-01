@@ -34,7 +34,6 @@ use OCP\IRequest;
 use OCP\Share\IShare;
 
 class ApiController extends OCSController {
-
 	/** @var IDBConnection */
 	private $db;
 

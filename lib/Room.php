@@ -46,7 +46,6 @@ use OCP\Security\IHasher;
 use OCP\Server;
 
 class Room {
-
 	/**
 	 * Regex that matches SIP incompatible rooms:
 	 * 1. duplicate digit: …11…

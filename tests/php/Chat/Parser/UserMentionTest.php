@@ -39,7 +39,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class UserMentionTest extends TestCase {
-
 	/** @var ICommentsManager|MockObject */
 	protected $commentsManager;
 	/** @var IUserManager|MockObject */

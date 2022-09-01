@@ -37,7 +37,6 @@ use OCP\IUserManager;
  * Helper class to get a rich message from a plain text message.
  */
 class UserMention {
-
 	/**
 	 * Do NOT inject OCA\Talk\Chat\CommentsManager here
 	 * otherwise the display name resolvers are lost

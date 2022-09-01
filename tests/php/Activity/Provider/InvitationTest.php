@@ -42,7 +42,6 @@ use Test\TestCase;
  * @package OCA\Talk\Tests\php\Activity
  */
 class InvitationTest extends TestCase {
-
 	/** @var IFactory|MockObject */
 	protected $l10nFactory;
 	/** @var IURLGenerator|MockObject */

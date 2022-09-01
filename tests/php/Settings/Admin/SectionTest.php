@@ -30,7 +30,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class SectionTest extends TestCase {
-
 	/** @var IURLGenerator|MockObject */
 	protected $url;
 	/** @var IL10N|MockObject */
