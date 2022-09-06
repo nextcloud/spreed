@@ -133,12 +133,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "9a171fc34f71e7ba615228b5b3f9fea09d557b17"
+                "reference": "a6ffee74b70a14bf4775e058db1b02a4e62375fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/9a171fc34f71e7ba615228b5b3f9fea09d557b17",
-                "reference": "9a171fc34f71e7ba615228b5b3f9fea09d557b17",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/a6ffee74b70a14bf4775e058db1b02a4e62375fa",
+                "reference": "a6ffee74b70a14bf4775e058db1b02a4e62375fa",
                 "shasum": ""
             },
             "require": {
@@ -169,7 +169,7 @@
                 "issues": "https://github.com/ChristophWurst/nextcloud_composer/issues",
                 "source": "https://github.com/ChristophWurst/nextcloud_composer/tree/master"
             },
-            "time": "2022-09-01T02:29:23+00:00"
+            "time": "2022-09-03T02:36:52+00:00"
         },
         {
             "name": "psr/container",
