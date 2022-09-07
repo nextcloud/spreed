@@ -14,7 +14,6 @@
 	position: static;
 }
 
-#content,
 #content.full-height {
 	/* Always full height without header. */
 	height: calc(100% - 50px);
@@ -32,10 +31,6 @@
 	 * available for the content. */
 	min-height: 0;
 	padding-top: 0;
-
-	/* Does not change anything in normal mode, but ensures that the element
-	 * will stretch to the full width in full screen mode. */
-	width: 100%;
 
 	/* Override margin used in server, as the header is part of the flex layout
 	 * and thus the content does not need to be pushed down. */
@@ -55,6 +50,10 @@
 
 #files-public-content {
 	flex-grow: 1;
+}
+
+#content footer {
+	position: relative;
 }
 
 #content footer p a {
