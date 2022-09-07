@@ -377,7 +377,7 @@ export default {
 	left: 0;
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
-	border-radius: var(--border-radius-large);
+	border-radius: calc(var(--default-clickable-area)/2);
 }
 
 .bottom-bar {
@@ -408,7 +408,7 @@ export default {
 // Always display the local video in the last row
 #localVideoContainer {
 	grid-row-end: -1;
-	border-radius: var(--border-radius-large);
+	border-radius: calc(var(--default-clickable-area)/2);
 }
 
 </style>
