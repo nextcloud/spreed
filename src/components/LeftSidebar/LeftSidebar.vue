@@ -542,4 +542,7 @@ export default {
 	flex-grow: 1;
 }
 
+.settings-button {
+	justify-content: flex-start !important;
+}
 </style>
