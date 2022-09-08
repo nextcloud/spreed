@@ -21,6 +21,7 @@
 
 <template>
 	<NcAppSettingsDialog :open.sync="showSettings"
+		:title="t('spreed', 'Talk settings')"
 		:show-navigation="true"
 		first-selected-section="keyboard shortcuts"
 		:container="container">
