@@ -517,7 +517,7 @@ export default {
 	padding: 6px 0 6px 10px;
 	align-items: center;
 	&--scrolled-down {
-		border-bottom: 1px solid var(--color-border);
+		border-bottom: 1px solid var(--color-placeholder-dark);
 	}
 }
 
