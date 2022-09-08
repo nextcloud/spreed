@@ -514,7 +514,7 @@ export default {
 
 .new-conversation {
 	display: flex;
-	padding: 4px;
+	padding: 6px 0 6px 10px;
 	align-items: center;
 	&--scrolled-down {
 		border-bottom: 1px solid var(--color-border);
@@ -537,4 +537,9 @@ export default {
 	z-index: 100;
 	bottom: 10px;
 }
+
+.conversations-search {
+	flex-grow: 1;
+}
+
 </style>
