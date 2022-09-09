@@ -843,7 +843,7 @@ export default {
 		object-fit: cover;
 		height: 100%;
 		width: 100%;
-		border-radius: var(--border-radius-large);
+		border-radius: calc(var(--default-clickable-area)/2);
 	}
 }
 
