@@ -22,6 +22,7 @@
 <template>
 	<NcAppSettingsDialog role="dialog"
 		:aria-label="t('spreed', 'Conversation settings')"
+		:title="t('spreed', 'Conversation settings')"
 		:open.sync="showSettings"
 		:show-navigation="true"
 		:container="container">
