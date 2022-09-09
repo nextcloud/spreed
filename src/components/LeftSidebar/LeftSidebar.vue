@@ -514,10 +514,10 @@ export default {
 
 .new-conversation {
 	display: flex;
-	padding: 4px;
+	padding: 6px 0 6px 10px;
 	align-items: center;
 	&--scrolled-down {
-		border-bottom: 1px solid var(--color-border);
+		border-bottom: 1px solid var(--color-placeholder-dark);
 	}
 }
 
@@ -536,5 +536,13 @@ export default {
 	transform: translateX(-50%);
 	z-index: 100;
 	bottom: 10px;
+}
+
+.conversations-search {
+	flex-grow: 1;
+}
+
+.settings-button {
+	justify-content: flex-start !important;
 }
 </style>
