@@ -510,6 +510,10 @@ export default {
 
 .content {
 	&.in-call {
+		::v-deep .app-content {
+			background-color: transparent;
+		}
+
 		&:hover ::v-deep .app-navigation-toggle {
 			background-color: rgba(0, 0, 0, .1) !important;
 

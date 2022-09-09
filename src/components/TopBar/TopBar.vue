@@ -526,7 +526,7 @@ export default {
 		position: absolute;
 		top: 0;
 		left:0;
-		background-color: $color-call-background;
+		background-color: transparent;
 		display: flex;
 		flex-wrap: wrap-reverse;
 	}
