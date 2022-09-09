@@ -75,10 +75,11 @@
 				:aria-label="t('spreed', 'Conversation actions')"
 				:container="container"
 				@shortkey.native="toggleFullscreen">
-				<span slot="icon"
-					:class="{'top-bar__button__force-white': isInCall}">
-					<Cog :size="20" />
-				</span>
+				<template #icon>
+					<span :class="{'top-bar__button__force-white': isInCall}">
+						<Cog :size="20" />
+					</span>
+				</template>
 				<NcActionButton :icon="iconFullscreen"
 					:aria-label="t('spreed', 'Toggle fullscreen')"
 					:close-after-click="true"
@@ -88,8 +89,9 @@
 				<NcActionSeparator v-if="showModerationOptions" />
 				<NcActionLink v-if="isFileConversation"
 					:href="linkToFile">
-					<File slot="icon"
-						:size="20" />
+					<template #icon>
+						<File :size="20" />
+					</template>
 					{{ t('spreed', 'Go to file') }}
 				</NcActionLink>
 				<template v-if="showModerationOptions">
@@ -109,8 +111,9 @@
 					<NcActionSeparator />
 					<NcActionButton :close-after-click="true"
 						@click="forceMuteOthers">
-						<MicrophoneOff slot="icon"
-							:size="20" />
+						<template #icon>
+							<MicrophoneOff :size="20" />
+						</template>
 						{{ t('spreed', 'Mute others') }}
 					</NcActionButton>
 				</template>
@@ -130,15 +133,17 @@
 				<NcActionButton v-if="isInCall"
 					key="openSideBarButtonMessageText"
 					@click="openSidebar">
-					<MessageText slot="icon"
-						:size="20"
-						fill-color="#ffffff" />
+					<template #icon>
+						<MessageText :size="20"
+							fill-color="#ffffff" />
+					</template>
 				</NcActionButton>
 				<NcActionButton v-else
 					key="openSideBarButtonMenuPeople"
 					@click="openSidebar">
-					<MenuPeople slot="icon"
-						:size="20" />
+					<template #icon>
+						<MenuPeople :size="20" />
+					</template>
 				</NcActionButton>
 			</NcActions>
 		</div>
