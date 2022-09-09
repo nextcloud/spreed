@@ -215,6 +215,7 @@ OC.L10N.register(
     "More information" : "Докладно",
     "Delete" : "Вилучити",
     "Password" : "Пароль",
+    "API token" : "Маркер API",
     "Login" : "Login",
     "Nickname" : "Прізвисько",
     "Client ID" : "Ідентифікатор клієнта",
