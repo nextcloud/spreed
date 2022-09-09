@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.0-beta.3 – 2022-09-09
+### Changed
+- Finish polls UI
+
+### Fixed
+- Several fixes to adapt to the UI changes in Nextcloud 25
+
 ## 15.0.0-beta.2 – 2022-09-01
 ### Added
 - 🗒️ Allow to create new files from within the chat
