@@ -79,5 +79,6 @@ export default {
 	flex-grow: 1;
 	flex-direction: column;
 	align-content: space-between;
+	position: relative;
 }
 </style>
