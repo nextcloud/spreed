@@ -45,6 +45,7 @@ use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\EventDispatcher\GenericEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
@@ -268,6 +269,8 @@ class PageController extends Controller {
 		}
 
 		$this->eventDispatcher->dispatch('\OCP\Collaboration\Resources::loadAdditionalScripts', new GenericEvent());
+		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
+
 		$response = new TemplateResponse($this->appName, 'index', [
 			'app' => Application::APP_ID,
 			'id-app-content' => '#app-content-vue',
@@ -344,6 +347,7 @@ class PageController extends Controller {
 		}
 
 		$this->publishInitialStateForGuest();
+		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
 
 		$response = new PublicTemplateResponse($this->appName, 'index', [
 			'id-app-content' => '#app-content-vue',
