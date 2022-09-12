@@ -50,6 +50,7 @@
 		<!-- voting and results dialog -->
 		<NcModal v-if="vote !== undefined && showModal"
 			size="small"
+			:container="$store.getters.getMainContainerSelector()"
 			@close="dismissModal">
 			<div class="poll__modal">
 				<!-- First screen, displayed while voting-->

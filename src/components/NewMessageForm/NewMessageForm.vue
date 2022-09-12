@@ -163,6 +163,7 @@
 		<!-- Text file creation dialog -->
 		<NcModal v-if="showTextFileDialog !== false"
 			size="normal"
+			:container="$store.getters.getMainContainerSelector()"
 			class="templates-picker"
 			@close="dismissTextFileCreation">
 			<div class="new-text-file">

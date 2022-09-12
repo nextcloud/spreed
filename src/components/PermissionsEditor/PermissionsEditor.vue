@@ -21,6 +21,7 @@
 
 <template>
 	<NcModal size="small"
+		:container="$store.getters.getMainContainerSelector()"
 		v-on="$listeners">
 		<div class="wrapper">
 			<template v-if="!loading">

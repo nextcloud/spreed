@@ -21,7 +21,9 @@
   -->
 
 <template>
-	<NcModal size="small" v-on="$listeners">
+	<NcModal size="small"
+		:container="$store.getters.getMainContainerSelector()"
+		v-on="$listeners">
 		<div class="simple-polls-editor">
 			<h2>{{ t('spreed', 'Create new poll') }}</h2>
 
