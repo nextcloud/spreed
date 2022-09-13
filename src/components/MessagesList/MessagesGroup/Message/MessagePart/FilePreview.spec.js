@@ -4,13 +4,13 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import storeConfig from '../../../../../store/storeConfig.js'
 import { imagePath, generateRemoteUrl } from '@nextcloud/router'
-import { loadState } from '@nextcloud/initial-state'
+import { getCapabilities } from '@nextcloud/capabilities'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import FilePreview from './FilePreview.vue'
 
-jest.mock('@nextcloud/initial-state', () => ({
-	loadState: jest.fn(),
+jest.mock('@nextcloud/capabilities', () => ({
+	getCapabilities: jest.fn(),
 }))
 
 describe('FilePreview.vue', () => {
@@ -230,19 +230,16 @@ describe('FilePreview.vue', () => {
 				propsData.name = 'test %20.gif'
 				propsData.path = 'path/to/test %20.gif'
 
-				loadState.mockImplementation((app, key) => {
-					if (app === 'core' && key === 'capabilities') {
-						return {
-							spreed: {
-								config: {
-									previews: {
-										'max-gif-size': 1024,
-									},
+				getCapabilities.mockImplementation(() => {
+					return {
+						spreed: {
+							config: {
+								previews: {
+									'max-gif-size': 1024,
 								},
 							},
-						}
+						},
 					}
-					return null
 				})
 			})
 			test('directly renders small GIF files', async () => {
