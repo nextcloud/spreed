@@ -32,6 +32,7 @@ const ignorePatterns = [
 	'strip-ansi',
 	'ansi-regex',
 	'char-regex',
+	'uuid',
 ]
 
 module.exports = {
@@ -40,7 +41,6 @@ module.exports = {
 	testMatch: ['<rootDir>/src/**/*.(spec|test).(ts|js)'],
 	transformIgnorePatterns: [
 		'node_modules/(?!(' + ignorePatterns.join('|') + ')/)',
-		'/node_modules/(?!vue-material-design-icons|uuid)',
 	],
 	resetMocks: false,
 	setupFiles: ['jest-localstorage-mock'],
