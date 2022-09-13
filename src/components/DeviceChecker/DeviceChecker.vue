@@ -23,6 +23,7 @@
 	<NcModal v-if="modal"
 		class="talk-modal"
 		size="small"
+		:container="$store.getters.getMainContainerSelector()"
 		@close="closeModal">
 		<div class="device-checker">
 			<h2 class="device-checker__title">
