@@ -1,8 +1,5 @@
 <?php
-/** @var array $_ */
 /** @var \OCP\IL10N $l */
-script('spreed', ['talk-admin-settings']);
-style('spreed', ['settings-admin']);
 ?>
 
 <div id="admin_settings">
