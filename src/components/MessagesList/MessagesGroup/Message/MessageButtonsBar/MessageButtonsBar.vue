@@ -72,9 +72,10 @@
 				</NcActionLink>
 				<NcActionButton v-if="!isCurrentGuest && !isFileShare && !isDeletedMessage"
 					:close-after-click="true"
-					@click.stop="showForwarder = true">
-					<Share slot="icon"
-						:size="16" />
+					@click.stop="openForwarder">
+					<template #icon>
+						<Share :size="16" />
+					</template>
 					{{ t('spreed', 'Forward message') }}
 				</NcActionButton>
 				<NcActionSeparator v-if="messageActions.length > 0" />
@@ -131,9 +132,9 @@
 				</NcButton>
 			</NcEmojiPicker>
 		</template>
-		<Forwarder v-if="showForwarder"
+		<Forwarder v-if="isForwarderOpen"
 			:message-object="messageObject"
-			@close="showForwarder = false" />
+			@close="closeForwarder" />
 	</div>
 </template>
 
@@ -294,6 +295,11 @@ export default {
 			required: true,
 		},
 
+		isForwarderOpen: {
+			type: Boolean,
+			required: true,
+		},
+
 		canReact: {
 			type: Boolean,
 			required: true,
@@ -308,13 +314,6 @@ export default {
 			type: Boolean,
 			required: true,
 		},
-	},
-
-	data() {
-		return {
-			// Shows/hides the message forwarder component
-			showForwarder: false,
-		}
 	},
 
 	computed: {
@@ -472,6 +471,14 @@ export default {
 
 		openReactionsMenu() {
 			this.$emit('update:isReactionsMenuOpen', true)
+		},
+
+		openForwarder() {
+			this.$emit('update:isForwarderOpen', true)
+		},
+
+		closeForwarder() {
+			this.$emit('update:isForwarderOpen', false)
 		},
 
 		// Making sure that the click is outside the MessageButtonsBar
