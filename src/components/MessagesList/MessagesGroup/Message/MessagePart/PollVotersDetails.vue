@@ -80,6 +80,10 @@ export default {
 				return t('spreed', 'Guest')
 			}
 
+			if (item.actorType === 'deleted_users') {
+				return t('spreed', 'Deleted user')
+			}
+
 			return item.actorDisplayName
 		},
 	},
