@@ -254,6 +254,11 @@ export default {
 				this.removeExpiredMessagesFromStore()
 			},
 		},
+
+		token(newToken, oldToken) {
+			// Expire older messages when navigating to another conversation
+			this.$store.dispatch('easeMessageList', { token: oldToken })
+		},
 	},
 
 	mounted() {
