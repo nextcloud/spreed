@@ -27,8 +27,7 @@
 			:value="value"
 			:placeholder="t('spreed', 'Conversation name')"
 			@input="handleInput"
-			@keydown.enter="handleKeydown">
-		</NcTextField>
+			@keydown.enter="handleKeydown" />
 	</div>
 </template>
 

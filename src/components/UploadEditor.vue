@@ -158,7 +158,7 @@ export default {
 	methods: {
 		focus() {
 			this.$nextTick(() => {
-				this.$refs.submitButton.focus()
+				this.$refs.submitButton.$el.focus()
 			})
 		},
 

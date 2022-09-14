@@ -226,7 +226,7 @@ export default {
 			this.$store.dispatch('updateConversationSettingsToken', token)
 			this.showSettings = true
 			this.$nextTick(() => {
-				this.$refs.linkShareSettings.focus()
+				this.$refs.linkShareSettings.$el.focus()
 			})
 		},
 
