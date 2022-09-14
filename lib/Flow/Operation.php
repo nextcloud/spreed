@@ -29,6 +29,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager as TalkManager;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\EventDispatcher\Event;
@@ -116,7 +117,17 @@ class Operation implements IOperation {
 				}
 
 				$room = $this->getRoom($token, $uid);
+				if (!($room->getReadOnly() !== Room::READ_WRITE)) {
+					// Ignore conversation because it is locked
+					continue;
+				}
+
 				$participant = $this->getParticipant($uid, $room);
+				if (!($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
+					// Ignore conversation because the user has no permissions
+					continue;
+				}
+
 				$this->chatManager->sendMessage(
 					$room,
 					$participant,
