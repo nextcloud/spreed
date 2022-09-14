@@ -116,7 +116,7 @@
 							{{ n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', votersNumber) }}
 						</template>
 						<template v-else-if="selfHasVoted">
-							{{ t('spreed', 'Poll ・ You voted') }}
+							{{ t('spreed', 'Poll ・ You voted already') }}
 						</template>
 					</div>
 					<div class="results__options">
@@ -136,7 +136,7 @@
 								<PollVotersDetails v-if="details"
 									:details="getFilteredDetails(index)" />
 								<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
-									{{ t('spreed','You voted') }}
+									{{ t('spreed','You voted this option') }}
 								</p>
 							</div>
 							<NcProgressBar class="results__option-progress"
@@ -349,7 +349,7 @@ export default {
 
 		pollFooterText() {
 			if (this.pollIsOpen) {
-				return this.selfHasVoted ? t('spreed', 'Poll ・ You voted') : t('spreed', 'Poll ・ Click to vote')
+				return this.selfHasVoted ? t('spreed', 'Poll ・ You voted already') : t('spreed', 'Poll ・ Click to vote')
 			} else if (this.pollIsClosed) {
 				return t('spreed', 'Poll ・ Ended')
 			}
