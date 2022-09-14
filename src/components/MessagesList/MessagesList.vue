@@ -129,6 +129,8 @@ export default {
 			loadingOldMessages: false,
 
 			destroying: false,
+
+			expirationInterval: null,
 		}
 	},
 
@@ -247,7 +249,15 @@ export default {
 					this.$store.dispatch('cancelLookForNewMessages', { requestId: oldValue })
 				}
 				this.handleStartGettingMessagesPreconditions()
+
+				// Remove expired messages when joining a room
+				this.removeExpiredMessagesFromStore()
 			},
+		},
+
+		token(newToken, oldToken) {
+			// Expire older messages when navigating to another conversation
+			this.$store.dispatch('easeMessageList', { token: oldToken })
 		},
 	},
 
@@ -261,6 +271,13 @@ export default {
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
+
+		/**
+		 * Every 30 seconds we remove expired messages from the store
+		 */
+		this.expirationInterval = window.setInterval(() => {
+			this.removeExpiredMessagesFromStore()
+		}, 30000)
 	},
 
 	beforeDestroy() {
@@ -275,9 +292,20 @@ export default {
 
 		unsubscribe('networkOffline', this.handleNetworkOffline)
 		unsubscribe('networkOnline', this.handleNetworkOnline)
+
+		if (this.expirationInterval) {
+			clearInterval(this.expirationInterval)
+			this.expirationInterval = null
+		}
 	},
 
 	methods: {
+		removeExpiredMessagesFromStore() {
+			this.$store.dispatch('removeExpiredMessages', {
+				token: this.token,
+			})
+		},
+
 		/**
 		 * Compare two messages to decide if they should be grouped
 		 *
