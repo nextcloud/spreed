@@ -382,6 +382,21 @@ const mutations = {
 			}
 		}
 	},
+
+	removeExpiredMessages(state, { token }) {
+		if (!state.messages[token]) {
+			return
+		}
+
+		const timestamp = (new Date()) / 1000
+		const messageIds = Object.keys(state.messages[token])
+		messageIds.forEach((messageId) => {
+			if (state.messages[token][messageId].expirationTimestamp
+				&& timestamp > state.messages[token][messageId].expirationTimestamp) {
+				Vue.delete(state.messages[token], messageId)
+			}
+		})
+	},
 }
 
 const actions = {
@@ -1078,6 +1093,10 @@ const actions = {
 			console.error(error)
 			showError(t('spreed', 'Failed to remove reaction'))
 		}
+	},
+
+	async removeExpiredMessages(context, { token }) {
+		context.commit('removeExpiredMessages', { token })
 	},
 }
 
