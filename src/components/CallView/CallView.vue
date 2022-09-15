@@ -39,6 +39,7 @@
 							:show-talking-highlight="false"
 							:is-grid="true"
 							:is-big="true"
+							:is-one-to-one="isOneToOne"
 							:fit-video="true" />
 					</template>
 				</div>
