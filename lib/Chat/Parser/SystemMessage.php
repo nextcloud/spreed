@@ -417,6 +417,7 @@ class SystemMessage {
 					$chatMessage->setMessageType(ChatManager::VERB_MESSAGE);
 				}
 			} catch (\Exception $e) {
+				$chatMessage->setVisibility(false);
 				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You shared a file which is no longer available');

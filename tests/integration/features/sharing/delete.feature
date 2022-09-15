@@ -353,3 +353,17 @@ Feature: delete
       | share_with             | participant2 |
       | share_with_displayname | participant2-displayname |
       | share_type             | 0 |
+
+  Scenario: Delete file in app Files and don't receive the deleted file when list the shared files with "file" format
+    Given user "participant1" creates room "public room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
+    And user "participant1" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
+      | public room | users     | participant1 | participant1-displayname | {file}   | "IGNORE"          |
+    When user "participant1" deletes file "welcome.txt"
+    Then user "participant1" sees the following shared file in room "public room" with 200
+    And user "participant1" sees the following system messages in room "public room" with 200
+      | room        | actorType | actorId      | actorDisplayName         | systemMessage |
+      | public room | users     | participant1 | participant1-displayname | conversation_created |
