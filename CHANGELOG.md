@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.0-beta.4 – 2022-09-15
+### Added
+- Add related_resources UI
+
+### Changed
+- Use Node 16 and NPM 8 to compile the interface
+- Several dependency updates
+- Unload chat messages when moving to another chat to avoid lagging on return
+
+### Fixed
+- Several fixes to adapt to the UI changes in Nextcloud 25
+- Respect message expiration in the frontend when the user never leaves the conversation
+- Fix handling of deleted users in polls
+- Allow recalling the owner as a normal moderator
+
 ## 14.0.5 – 2022-09-15
 ### Fixed
 - Fix notification sending when the user is blocked by the lobby
