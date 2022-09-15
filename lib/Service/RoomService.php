@@ -132,7 +132,7 @@ class RoomService {
 	 */
 	public function createConversation(int $type, string $name, ?IUser $owner = null, string $objectType = '', string $objectId = ''): Room {
 		$name = trim($name);
-		if ($name === '' || isset($name[255])) {
+		if ($name === '' || isset($name[256])) {
 			throw new InvalidArgumentException('name');
 		}
 

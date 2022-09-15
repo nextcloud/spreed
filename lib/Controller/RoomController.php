@@ -869,7 +869,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		$roomName = trim($roomName);
 
-		if ($roomName === '' || strlen($roomName) > 200) {
+		if ($roomName === '' || strlen($roomName) > 255) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
