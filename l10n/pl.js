@@ -1024,8 +1024,6 @@ OC.L10N.register(
     "See results" : "Zobacz wyniki",
     "Submit vote" : "Wyślij głos",
     "End poll" : "Zakończ sondę",
-    "Poll ・ You voted" : "Sonda ・ Zagłosowałeś",
-    "You voted" : "Zagłosowałeś",
     "Change your vote" : "Zmień swój głos",
     "Poll ・ Click to vote" : "Sonda ・ Kliknij, aby zagłosować",
     "Poll ・ Ended" : "Sonda ・ Zakończona",

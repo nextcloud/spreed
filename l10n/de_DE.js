@@ -1024,8 +1024,6 @@ OC.L10N.register(
     "See results" : "Ergebnisse anzeigen",
     "Submit vote" : "Stimme senden",
     "End poll" : "Umfrage beenden",
-    "Poll ・ You voted" : "Umfrage ・ Sie haben abgestimmt",
-    "You voted" : "Sie haben abgestimmt",
     "Change your vote" : "Ihre Stimmabgabe ändern",
     "Poll ・ Click to vote" : "Umfrage ・ Zur Abstimmung klicken",
     "Poll ・ Ended" : "Poll ・ Beendet",

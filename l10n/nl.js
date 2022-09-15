@@ -1008,7 +1008,6 @@ OC.L10N.register(
     "Deck Card" : "Deck kaart",
     "Remove {fileName}" : "Verwijderen {fileName}",
     "Open this location in OpenStreetMap" : "Open deze locatie in Openstreetmap",
-    "You voted" : "Je hebt gestemd",
     "Scroll to bottom" : "Scroll naar beneden",
     "Today" : "Vandaag",
     "Yesterday" : "Gisteren",

@@ -498,7 +498,6 @@ OC.L10N.register(
     "Mark as unread" : "Означи као непрочитано",
     "Go to file" : "Иди на фајл",
     "Contact" : "Контакт",
-    "You voted" : "Гласали сте",
     "Today" : "Данас",
     "Yesterday" : "Јуче",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

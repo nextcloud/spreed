@@ -139,7 +139,6 @@ OC.L10N.register(
     "Select camera" : "Seleccione la cámara",
     "Reply" : "Responder",
     "Contact" : "Contacto",
-    "You voted" : "Votaste",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
