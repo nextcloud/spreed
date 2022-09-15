@@ -961,7 +961,6 @@ OC.L10N.register(
     "Deck Card" : "Карточка",
     "Remove {fileName}" : "Удалить {fileName}",
     "Open this location in OpenStreetMap" : "Открыть местоположение в OpenStreetMap",
-    "You voted" : "Вы проголосовали",
     "Scroll to bottom" : "Прокрутить вниз",
     "Today" : "Сегодня",
     "Yesterday" : "Вчера",
