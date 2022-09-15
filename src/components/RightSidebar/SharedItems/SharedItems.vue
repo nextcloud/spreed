@@ -32,9 +32,17 @@
 			<div v-else-if="type === 'deckcard'"
 				:key="item.id"
 				class="shared-items__deckcard"
-				:class="{ 'shared-items__location--nolimit': limit === 0 }">
+				:class="{ 'shared-items__deckcard--nolimit': limit === 0 }">
 				<DeckCard :wide="true"
 					v-bind="item.messageParameters.object" />
+			</div>
+			<div v-else-if="type === 'poll'"
+				:key="item.id"
+				class="shared-items__poll"
+				:class="{ 'shared-items__poll--nolimit': limit === 0 }">
+				<Poll v-bind="item.messageParameters.object"
+					:token="$store.getters.getToken()"
+					:poll-name="item.messageParameters.object.name" />
 			</div>
 			<template v-else-if="type === 'other'">
 				<div :key="item.id"
@@ -60,18 +68,20 @@
 </template>
 
 <script>
-import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
-import { SHARED_ITEM } from '../../../constants.js'
-import Location from '../../MessagesList/MessagesGroup/Message/MessagePart/Location.vue'
 import DeckCard from '../../MessagesList/MessagesGroup/Message/MessagePart/DeckCard.vue'
+import FilePreview from '../../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
+import Location from '../../MessagesList/MessagesGroup/Message/MessagePart/Location.vue'
+import Poll from '../../MessagesList/MessagesGroup/Message/MessagePart/Poll.vue'
+import { SHARED_ITEM } from '../../../constants.js'
 
 export default {
 	name: 'SharedItems',
 
 	components: {
+		DeckCard,
 		FilePreview,
 		Location,
-		DeckCard,
+		Poll,
 	},
 
 	props: {
@@ -119,10 +129,12 @@ export default {
 	grid-template-rows: 1fr 1fr;
 	grid-gap: 4px;
 	margin: auto;
+
 	&__list {
 		display: flex;
 		flex-wrap: wrap;
 	}
+
 	&__location {
 		width: 100%;
 		height: 150px;
@@ -132,8 +144,14 @@ export default {
 			width: 33%;
 		}
 	}
+
+	&__poll,
 	&__deckcard {
 		width: 100%;
+
+		&--nolimit {
+			width: 33%;
+		}
 	}
 
 	&__other {

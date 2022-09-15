@@ -26,7 +26,7 @@ const sharedItems = {
 	computed: {
 		// Defines the order of the sections
 		sharedItemsOrder() {
-			return [SHARED_ITEM.TYPES.MEDIA, SHARED_ITEM.TYPES.FILE, SHARED_ITEM.TYPES.VOICE, SHARED_ITEM.TYPES.AUDIO, SHARED_ITEM.TYPES.LOCATION, SHARED_ITEM.TYPES.DECK_CARD, SHARED_ITEM.TYPES.OTHER]
+			return [SHARED_ITEM.TYPES.MEDIA, SHARED_ITEM.TYPES.FILE, SHARED_ITEM.TYPES.POLL, SHARED_ITEM.TYPES.VOICE, SHARED_ITEM.TYPES.AUDIO, SHARED_ITEM.TYPES.LOCATION, SHARED_ITEM.TYPES.DECK_CARD, SHARED_ITEM.TYPES.OTHER]
 		},
 	},
 
@@ -37,6 +37,8 @@ const sharedItems = {
 				return t('spreed', 'Media')
 			case SHARED_ITEM.TYPES.FILE:
 				return t('spreed', 'Files')
+			case SHARED_ITEM.TYPES.POLL:
+				return t('spreed', 'Polls')
 			case SHARED_ITEM.TYPES.DECK_CARD:
 				return t('spreed', 'Deck cards')
 			case SHARED_ITEM.TYPES.VOICE:

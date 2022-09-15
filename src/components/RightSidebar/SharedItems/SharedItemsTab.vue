@@ -27,7 +27,7 @@
 				<SharedItems :type="type"
 					:limit="limit(type)"
 					:items="sharedItems[type]" />
-				<NcButton v-if="hasMore(sharedItems[type])"
+				<NcButton v-if="hasMore(type, sharedItems[type])"
 					type="tertiary-no-background"
 					class="more"
 					:wide="true"
@@ -146,8 +146,8 @@ export default {
 			this.$store.dispatch('getSharedItemsOverview', { token: this.token })
 		},
 
-		hasMore(items) {
-			return Object.values(items).length > 6
+		hasMore(type, items) {
+			return Object.values(items).length > this.limit(type)
 		},
 
 		showMore(type) {
@@ -156,7 +156,7 @@ export default {
 		},
 
 		limit(type) {
-			if (type === SHARED_ITEM.TYPES.DECK_CARD || type === SHARED_ITEM.TYPES.LOCATION) {
+			if (type === SHARED_ITEM.TYPES.DECK_CARD || type === SHARED_ITEM.TYPES.LOCATION || type === SHARED_ITEM.TYPES.POLL) {
 				return 2
 			} else {
 				return 6
@@ -169,6 +169,8 @@ export default {
 				return t('spreed', 'Show all media')
 			case SHARED_ITEM.TYPES.FILE:
 				return t('spreed', 'Show all files')
+			case SHARED_ITEM.TYPES.POLL:
+				return t('spreed', 'Show all polls')
 			case SHARED_ITEM.TYPES.DECK_CARD:
 				return t('spreed', 'Show all deck cards')
 			case SHARED_ITEM.TYPES.VOICE:

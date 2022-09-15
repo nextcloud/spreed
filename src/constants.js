@@ -113,6 +113,7 @@ export const SHARED_ITEM = {
 		LOCATION: 'location',
 		MEDIA: 'media',
 		OTHER: 'other',
+		POLL: 'poll',
 		VOICE: 'voice',
 	},
 }

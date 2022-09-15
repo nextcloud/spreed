@@ -30,6 +30,8 @@ const getItemTypeFromMessage = function(message) {
 			return SHARED_ITEM.TYPES.LOCATION
 		} else if (message.messageParameters.object.type === 'deck-card') {
 			return SHARED_ITEM.TYPES.DECK_CARD
+		} else if (message.messageParameters.object.type === 'talk-poll') {
+			return SHARED_ITEM.TYPES.POLL
 		} else {
 			return SHARED_ITEM.TYPES.OTHER
 		}
