@@ -409,6 +409,7 @@ export default {
 #localVideoContainer {
 	grid-row-end: -1;
 	border-radius: calc(var(--default-clickable-area)/2);
+	z-index: 1;
 }
 
 </style>
