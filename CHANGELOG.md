@@ -1,6 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.0.5 – 2022-09-15
+### Fixed
+- Fix notification sending when the user is blocked by the lobby
+  [#7794](https://github.com/nextcloud/spreed/pull/7794)
+- Fix missing local media controls in public share sidebar
+  [#7758](https://github.com/nextcloud/spreed/pull/7758)
+- Fix missing screenshares in sidebar
+  [#7760](https://github.com/nextcloud/spreed/pull/7760)
+- Fix inconsistent state when leaving a call fails
+  [#7803](https://github.com/nextcloud/spreed/pull/7803)
+
+## 13.0.9 – 2022-09-15
+### Fixed
+- Fix notification sending when the user is blocked by the lobby
+  [#7796](https://github.com/nextcloud/spreed/pull/7796)
+- Fix missing local media controls in public share sidebar
+  [#7759](https://github.com/nextcloud/spreed/pull/7759)
+- Fix missing screenshares in sidebar
+  [#7763](https://github.com/nextcloud/spreed/pull/7763)
+- Fix inconsistent state when leaving a call fails
+  [#7804](https://github.com/nextcloud/spreed/pull/7804)
+
 ## 14.0.4 – 2022-08-11
 ### Added
 - Extend search result attributes for better handling in mobile clients
