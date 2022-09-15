@@ -1014,7 +1014,6 @@
     "Deck Card" : "Carte Deck",
     "Remove {fileName}" : "Supprimer {fileName}",
     "Open this location in OpenStreetMap" : "Ouvrir cet emplacement dans OpenStreetMap",
-    "You voted" : "Vous avez voté",
     "Poll ・ Click to vote" : "Sondage ・ Cliquez pour participer",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Résultats du sondage • %n participation","Résultats du sondage • %n participations","Résultats du sondage • %n participations"],
     "Scroll to bottom" : "Défiler jusqu'en bas",

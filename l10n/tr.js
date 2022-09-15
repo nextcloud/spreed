@@ -1024,8 +1024,6 @@ OC.L10N.register(
     "See results" : "Sonuçları görüntüle",
     "Submit vote" : "Oyu gönder",
     "End poll" : "Anketi sonlandır",
-    "Poll ・ You voted" : "Anket ・ Oyladınız",
-    "You voted" : "Oyladınız",
     "Change your vote" : "Oyunuzu değiştirin",
     "Poll ・ Click to vote" : "Anket - Oylamak için tıklayın",
     "Poll ・ Ended" : "Anket ・ Sona ermiş",

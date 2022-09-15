@@ -813,8 +813,6 @@ OC.L10N.register(
     "See results" : "Näytä tulokset",
     "Submit vote" : "Lähetä ääni",
     "End poll" : "Lopeta kysely",
-    "Poll ・ You voted" : "Kysely ・ Äänestit",
-    "You voted" : "Äänestit",
     "Change your vote" : "Muuta antamaasi ääntä",
     "Poll ・ Click to vote" : "Kysely ・ Napsauta äänestääksesi",
     "Poll ・ Ended" : "Kysely ・ Päättynyt",

@@ -1024,8 +1024,6 @@ OC.L10N.register(
     "See results" : "查看結果",
     "Submit vote" : "遞交投票",
     "End poll" : "結束民意調查",
-    "Poll ・ You voted" : "民意調查・已投票",
-    "You voted" : "您已投票",
     "Change your vote" : "更改您的投票",
     "Poll ・ Click to vote" : "民意調查 · 點擊投票",
     "Poll ・ Ended" : "民意調查・ 已結束",

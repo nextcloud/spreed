@@ -93,7 +93,6 @@ OC.L10N.register(
     "Close" : "Cerrar",
     "Reply" : "Responder",
     "Contact" : "Contacto",
-    "You voted" : "Votaste",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "Create new poll" : "Crear nueva encuesta",
