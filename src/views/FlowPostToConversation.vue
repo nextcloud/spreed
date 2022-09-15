@@ -18,7 +18,7 @@
 import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import { FLOW, CONVERSATION } from '../constants.js'
+import { FLOW, CONVERSATION, PARTICIPANT } from '../constants.js'
 
 export default {
 	name: 'FlowPostToConversation',
@@ -80,6 +80,7 @@ export default {
 			axios.get(generateOcsUrl('/apps/spreed/api/v4/room')).then((response) => {
 				this.roomOptions = response.data.ocs.data.filter(function(room) {
 					return room.readOnly === CONVERSATION.STATE.READ_WRITE
+						&& (room.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
 				})
 			})
 		},
