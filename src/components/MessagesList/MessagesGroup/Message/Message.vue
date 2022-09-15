@@ -174,6 +174,7 @@ the main body of the message as well as a quote.
 			:is-action-menu-open.sync="isActionMenuOpen"
 			:is-emoji-picker-open.sync="isEmojiPickerOpen"
 			:is-reactions-menu-open.sync="isReactionsMenuOpen"
+			:is-forwarder-open.sync="isForwarderOpen"
 			:message-api-data="messageApiData"
 			:message-object="messageObject"
 			:is-last-read="isLastReadMessage"
@@ -400,6 +401,7 @@ export default {
 			isActionMenuOpen: false,
 			isEmojiPickerOpen: false,
 			isReactionsMenuOpen: false,
+			isForwarderOpen: false,
 			detailedReactionsLoading: false,
 		}
 	},
@@ -566,7 +568,7 @@ export default {
 		},
 
 		showMessageButtonsBar() {
-			return !this.isSystemMessage && !this.isTemporary && (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isReactionsMenuOpen)
+			return !this.isSystemMessage && !this.isTemporary && (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isReactionsMenuOpen || this.isForwarderOpen)
 		},
 
 		isTemporaryUpload() {
