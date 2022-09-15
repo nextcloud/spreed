@@ -76,7 +76,8 @@
 				{{ t('spreed', 'Sounds for chat and call notifications can be adjusted in the personal settings.') }} ↗
 			</a>
 		</NcAppSettingsSection>
-		<NcAppSettingsSection id="shortcuts"
+		<NcAppSettingsSection v-if="!disableKeyboardShortcuts"
+			id="shortcuts"
 			:title="t('spreed', 'Keyboard shortcuts')">
 			<em>{{ t('spreed', 'Speed up your Talk experience with these quick shortcuts.') }}</em>
 
@@ -198,6 +199,10 @@ export default {
 
 		settingsUrl() {
 			return generateUrl('/settings/user/notifications')
+		},
+
+		disableKeyboardShortcuts() {
+			return OCP.Accessibility.disableKeyboardShortcuts()
 		},
 	},
 

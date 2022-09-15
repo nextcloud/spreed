@@ -75,7 +75,7 @@
 			</span>
 		</template>
 		<div ref="contentEditable"
-			v-shortkey.once="['c']"
+			v-shortkey.once="disableKeyboardShortcuts ? null : ['c']"
 			:contenteditable="activeInput"
 			:placeHolder="placeholderText"
 			role="textbox"
@@ -208,6 +208,13 @@ export default {
 			required: true,
 		},
 	},
+
+	computed: {
+		disableKeyboardShortcuts() {
+			return OCP.Accessibility.disableKeyboardShortcuts()
+		},
+	},
+
 	data() {
 		return {
 			text: '',
