@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<NcContent v-shortkey.once="['ctrl', 'f']"
+	<NcContent v-shortkey.once="disableKeyboardShortcuts ? null : ['ctrl', 'f']"
 		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
 		app-name="talk"
 		@shortkey.native="handleAppSearch">
@@ -195,6 +195,10 @@ export default {
 		 */
 		isOneToOne() {
 			return this.currentConversation?.type === CONVERSATION.TYPE.ONE_TO_ONE
+		},
+
+		disableKeyboardShortcuts() {
+			return OCP.Accessibility.disableKeyboardShortcuts()
 		},
 	},
 

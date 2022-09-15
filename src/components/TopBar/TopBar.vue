@@ -70,7 +70,7 @@
 
 			<!-- sidebar toggle -->
 			<NcActions v-if="!isSidebar"
-				v-shortkey.once="['f']"
+				v-shortkey.once="disableKeyboardShortcuts ? null : ['f']"
 				class="top-bar__button"
 				:aria-label="t('spreed', 'Conversation actions')"
 				:container="container"
@@ -360,6 +360,10 @@ export default {
 			if (peer) {
 				return !peer.sessionIds.length
 			} else return false
+		},
+
+		disableKeyboardShortcuts() {
+			return OCP.Accessibility.disableKeyboardShortcuts()
 		},
 	},
 
