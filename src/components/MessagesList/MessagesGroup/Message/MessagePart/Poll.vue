@@ -136,7 +136,7 @@
 								<PollVotersDetails v-if="details"
 									:details="getFilteredDetails(index)" />
 								<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
-									{{ t('spreed','You voted this option') }}
+									{{ t('spreed','You voted for this option') }}
 								</p>
 							</div>
 							<NcProgressBar class="results__option-progress"
