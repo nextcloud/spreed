@@ -463,7 +463,6 @@ OC.L10N.register(
     "Contact" : "Tengiliður",
     "Poll" : "Poll",
     "End poll" : "End poll",
-    "You voted" : "Þú kaust",
     "Today" : "Í dag",
     "Yesterday" : "Í gær",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

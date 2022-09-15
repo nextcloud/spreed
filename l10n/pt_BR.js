@@ -1018,7 +1018,6 @@ OC.L10N.register(
     "Open this location in OpenStreetMap" : "Abra este local no OpenStreetMap",
     "Poll" : "Enquete",
     "End poll" : "Encerrar enquete",
-    "You voted" : "Você votou",
     "Poll ・ Click to vote" : "Enquete ・ Clique para votar",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Resultado da enquete • %n voto","Resultado da enquete • %n votes","Resultado da enquete • %n votos"],
     "Scroll to bottom" : "Rolar para baixo",

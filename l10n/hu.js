@@ -1024,8 +1024,6 @@ OC.L10N.register(
     "See results" : "Találatok megtekintése",
     "Submit vote" : "Szavazat leadása",
     "End poll" : "Szavazás befejezése",
-    "Poll ・ You voted" : "Szavazás ・ Szavazott",
-    "You voted" : "Szavazott",
     "Change your vote" : "Szavazat módosítása",
     "Poll ・ Click to vote" : "Szavazás ・ Kattintson a szavazáshoz",
     "Poll ・ Ended" : "Poll ・ Befejezve",

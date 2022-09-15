@@ -960,7 +960,6 @@ OC.L10N.register(
     "Deck Card" : "Karta aplikácie Deck",
     "Remove {fileName}" : "Dostrániť {fileName}",
     "Open this location in OpenStreetMap" : "Otvoriť toto umiestnenie v Openstreetmap",
-    "You voted" : "Hlasovali ste",
     "Scroll to bottom" : "Posuňte sa nadol",
     "Today" : "Dnes",
     "Yesterday" : "Včera",
