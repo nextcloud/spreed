@@ -192,6 +192,7 @@ class RoomServiceTest extends TestCase {
 			[''],
 			['        '],
 			[str_repeat('a', 256)],
+			[str_repeat('😃', 200)],
 		];
 	}
 
