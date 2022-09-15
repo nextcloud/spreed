@@ -117,7 +117,7 @@ class Operation implements IOperation {
 				}
 
 				$room = $this->getRoom($token, $uid);
-				if (!($room->getReadOnly() !== Room::READ_WRITE)) {
+				if ($room->getReadOnly() !== Room::READ_WRITE) {
 					// Ignore conversation because it is locked
 					continue;
 				}
