@@ -537,6 +537,7 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "Грешка приликом дохватања учесника",
     "Media" : "Мултимедија",
     "Files" : "Фајлови",
+    "Polls" : "Гласања",
     "Locations" : "Локације",
     "Audio" : "Звук",
     "Other" : "Остало",

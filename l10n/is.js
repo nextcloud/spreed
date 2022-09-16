@@ -501,6 +501,7 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Taktu þátt í samtali eða byrjaðu nýtt samtal",
     "Media" : "Margmiðlunargögn",
     "Files" : "Skrár",
+    "Polls" : "Kannanir",
     "Locations" : "Staðsetningar",
     "Audio" : "Hljóð",
     "Other" : "Annað",

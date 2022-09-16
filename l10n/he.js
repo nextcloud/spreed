@@ -559,6 +559,7 @@ OC.L10N.register(
     "Access to microphone was denied" : "הגישה למיקרופון נדחתה",
     "An error occurred while fetching the participants" : "אירעה שגיאה במהלך קבלת המשתתפים",
     "Files" : "קבצים",
+    "Polls" : "סקרים",
     "Locations" : "מיקומים",
     "Audio" : "שמע",
     "Other" : "אחר",
