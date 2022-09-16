@@ -70,7 +70,7 @@
 						:size="20" />
 					{{ t('spreed', 'Go to file') }}
 				</NcActionLink>
-				<NcActionButton v-if="!isCurrentGuest && !isFileShare && !isDeletedMessage"
+				<NcActionButton v-if="canForwardMessage"
 					:close-after-click="true"
 					@click.stop="openForwarder">
 					<template #icon>
@@ -378,6 +378,19 @@ export default {
 
 		isDeletedMessage() {
 			return this.messageType === 'comment_deleted'
+		},
+
+		isPollMessage() {
+			return this.messageType === 'comment'
+				&& this.message === '{object}'
+				&& this.messageParameters?.object?.type === 'talk-poll'
+		},
+
+		canForwardMessage() {
+			return !this.isCurrentGuest
+				&& !this.isFileShare
+				&& !this.isDeletedMessage
+				&& !this.isPollMessage
 		},
 	},
 
