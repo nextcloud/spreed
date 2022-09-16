@@ -450,7 +450,7 @@ export default {
 			}
 			return this.details.filter((item) => {
 				return item.optionId === index
-			}).slice(0, 8)
+			})
 		},
 	},
 }

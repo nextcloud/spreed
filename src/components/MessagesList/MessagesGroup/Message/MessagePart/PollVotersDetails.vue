@@ -24,7 +24,7 @@
 		<button slot="trigger"
 			tabindex="0"
 			class="poll-voters-details">
-			<AvatarWrapperSmall v-for="(item, index) in details"
+			<AvatarWrapperSmall v-for="(item, index) in details.slice(0, 8)"
 				:id="item.actorId"
 				:key="index"
 				:source="item.actorType"
