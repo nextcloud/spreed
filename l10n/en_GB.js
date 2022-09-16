@@ -411,6 +411,7 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Join a conversation or start a new one",
     "Media" : "Media",
     "Files" : "Files",
+    "Polls" : "Polls",
     "Audio" : "Audio",
     "Other" : "Other",
     "Do not disturb" : "Do not disturb",

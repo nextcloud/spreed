@@ -126,6 +126,7 @@ OC.L10N.register(
     "Send" : "Enviar",
     "Join a conversation or start a new one" : "Únete a la conversación o incia una nueva",
     "Files" : "Archivos",
+    "Polls" : "Encuestas",
     "Audio" : "Audio",
     "Other" : "Otro",
     "Away" : "Ausente",

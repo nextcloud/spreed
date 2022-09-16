@@ -693,6 +693,7 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "Ett fel uppstod när deltagarna hämtades",
     "Media" : "Media",
     "Files" : "Filer",
+    "Polls" : "Omröstningar",
     "Locations" : "Platser",
     "Audio" : "Ljud",
     "Other" : "Annat",
