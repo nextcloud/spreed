@@ -235,6 +235,7 @@ OC.L10N.register(
     "Start a conversation" : "Filloni një bisedë",
     "Media" : "Media",
     "Files" : "Skedarët",
+    "Polls" : "Sondazhe",
     "Audio" : "Audio",
     "Other" : "Tjetër",
     "Default" : "E paracaktuar",

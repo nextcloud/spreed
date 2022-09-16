@@ -341,6 +341,7 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "عضو یک گفتگو شوید یا یک گفتگو جدید شروع کنید",
     "Media" : "رسانه‌ها",
     "Files" : "فایل ها",
+    "Polls" : "نظرسنجی ها",
     "Locations" : "مکانها",
     "Audio" : "صدا",
     "Other" : "اعلان‌ها",

@@ -73,6 +73,7 @@ OC.L10N.register(
     "Search" : "Otsi",
     "Send" : "Saada",
     "Files" : "Failid",
+    "Polls" : "Küsitlused",
     "Locations" : "Asukohad",
     "Audio" : "Helid",
     "Other" : "Muu",

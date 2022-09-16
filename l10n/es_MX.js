@@ -203,6 +203,7 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Únete a la conversación o incia una nueva",
     "Media" : "Multimedia",
     "Files" : "Archivos",
+    "Polls" : "Encuestas",
     "Locations" : "Ubicaciones",
     "Audio" : "Audio",
     "Other" : "Otro",

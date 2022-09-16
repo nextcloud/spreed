@@ -439,6 +439,7 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "Kunne ikke hente listen over deltagere",
     "Media" : "Medier",
     "Files" : "Filer",
+    "Polls" : "Afstemning",
     "Locations" : "Sted",
     "Audio" : "Audio",
     "Other" : "Andet",
