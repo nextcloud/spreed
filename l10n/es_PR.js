@@ -112,6 +112,7 @@ OC.L10N.register(
     "Search" : "Buscar",
     "Send" : "Enviar",
     "Files" : "Archivos",
+    "Polls" : "Encuestas",
     "Audio" : "Audio",
     "Other" : "Otro",
     "Default" : "Predeterminado",

@@ -89,6 +89,7 @@ OC.L10N.register(
     "Search" : "Search",
     "Send" : "Unviar",
     "Files" : "Ficheros",
+    "Polls" : "Enquestes",
     "Audio" : "Audiu",
     "Other" : "Otru",
     "Default" : "Predetermináu",

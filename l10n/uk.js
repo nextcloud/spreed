@@ -292,6 +292,7 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Приєднайтеся до розмови або почніть нову",
     "Media" : "Медіа",
     "Files" : "Робота з файлами",
+    "Polls" : "Опитування",
     "Locations" : "Розташування",
     "Audio" : "Аудіо",
     "Other" : "Інші",

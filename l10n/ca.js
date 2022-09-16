@@ -790,6 +790,7 @@ OC.L10N.register(
     "An error occurred while fetching the participants" : "S'ha produït un error en recuperar els participants",
     "Media" : "Multimèdia",
     "Files" : "Fitxers",
+    "Polls" : "Enquestes",
     "Locations" : "Ubicacions",
     "Audio" : "Àudio",
     "Other" : "Altres",

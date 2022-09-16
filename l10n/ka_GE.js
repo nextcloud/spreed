@@ -118,6 +118,7 @@ OC.L10N.register(
     "Search" : "ძიება",
     "Send" : "გაგზავნა",
     "Files" : "ფაილები",
+    "Polls" : "გამოკითხვები",
     "Audio" : "აუდიო",
     "Other" : "სხვა",
     "Default" : "საწყისი",

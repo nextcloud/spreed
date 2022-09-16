@@ -163,6 +163,7 @@ OC.L10N.register(
     "Join a conversation or start a new one" : "Únete a la conversación o incia una nueva",
     "Access to camera is only possible with HTTPS" : "El acceso a la cámara sólo es posible con HTTPS",
     "Files" : "Archivos",
+    "Polls" : "Encuestas",
     "Audio" : "Audio",
     "Other" : "Otro",
     "Default" : "Predeterminado",

@@ -310,6 +310,7 @@ OC.L10N.register(
     "Search" : "Serĉi",
     "Send" : "Sendi",
     "Files" : "Dosieroj",
+    "Polls" : "Enketilo",
     "Audio" : "Sonaĵo",
     "Other" : "Alia",
     "Default" : "Defaŭlta",
