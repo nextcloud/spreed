@@ -30,12 +30,13 @@ use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
 use OCP\Dashboard\IAPIWidget;
+use OCP\Dashboard\IIconWidget;
 use OCP\Dashboard\Model\WidgetItem;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Util;
 
-class TalkWidget implements IAPIWidget {
+class TalkWidget implements IAPIWidget, IIconWidget {
 	private IURLGenerator $url;
 	private IL10N $l10n;
 	private Manager $manager;
@@ -79,6 +80,13 @@ class TalkWidget implements IAPIWidget {
 	 */
 	public function getIconClass(): string {
 		return 'dashboard-talk-icon';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getIconUrl(): string {
+		return $this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.svg'));
 	}
 
 	/**
@@ -145,11 +153,11 @@ class TalkWidget implements IAPIWidget {
 			$room->getDisplayName($userId),
 			$subtitle,
 			$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
-			$this->getIconUrl($room, $userId)
+			$this->getRoomIconUrl($room, $userId)
 		);
 	}
 
-	protected function getIconUrl(Room $room, string $userId): string {
+	protected function getRoomIconUrl(Room $room, string $userId): string {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			$participants = json_decode($room->getName(), true);
 
