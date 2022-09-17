@@ -177,6 +177,7 @@ OC.L10N.register(
     "Someone is requesting the password to access {file}" : "Kažkas prašo slaptažodžio, kad gautų prieigą prie {file}",
     "Someone tried to request the password to access {file}" : "Kažkas bandė paprašyti slaptažodžio, kad gautų prieigą prie {file}",
     "Open settings" : "Atverti nustatymus",
+    "Open Talk" : "Atverti pokalbius",
     "Conversations" : "Pokalbiai",
     "Messages" : "Žinutės",
     "{user}" : "{user}",
