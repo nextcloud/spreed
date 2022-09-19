@@ -620,7 +620,7 @@ class RoomController extends AEnvironmentAwareController {
 			return [];
 		}
 
-		return $message->toArray();
+		return $message->toArray($this->getResponseFormat());
 	}
 
 	/**

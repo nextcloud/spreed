@@ -164,9 +164,9 @@ class ChatController extends AEnvironmentAwareController {
 
 		$this->participantService->updateLastReadMessage($this->participant, (int) $comment->getId());
 
-		$data = $chatMessage->toArray();
+		$data = $chatMessage->toArray($this->getResponseFormat());
 		if ($parentMessage instanceof Message) {
-			$data['parent'] = $parentMessage->toArray();
+			$data['parent'] = $parentMessage->toArray($this->getResponseFormat());
 		}
 
 		$response = new DataResponse($data, Http::STATUS_CREATED);
@@ -445,7 +445,7 @@ class ChatController extends AEnvironmentAwareController {
 				$parentIds[$id] = $comment->getParentId();
 			}
 
-			$messages[] = $message->toArray();
+			$messages[] = $message->toArray($this->getResponseFormat());
 			$commentIdToIndex[$id] = $i;
 			$i++;
 		}
@@ -481,7 +481,7 @@ class ChatController extends AEnvironmentAwareController {
 					$this->messageParser->parseMessage($message);
 
 					if ($message->getVisibility()) {
-						$loadedParents[$parentId] = $message->toArray();
+						$loadedParents[$parentId] = $message->toArray($this->getResponseFormat());
 						$messages[$commentKey]['parent'] = $loadedParents[$parentId];
 						continue;
 					}
@@ -630,8 +630,8 @@ class ChatController extends AEnvironmentAwareController {
 		$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 		$this->messageParser->parseMessage($message);
 
-		$data = $systemMessage->toArray();
-		$data['parent'] = $message->toArray();
+		$data = $systemMessage->toArray($this->getResponseFormat());
+		$data['parent'] = $message->toArray($this->getResponseFormat());
 
 		$bridge = $this->matterbridgeManager->getBridgeOfRoom($this->room);
 
@@ -667,7 +667,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->messageParser->parseMessage($systemMessage);
 
 
-		$data = $systemMessage->toArray();
+		$data = $systemMessage->toArray($this->getResponseFormat());
 
 		$bridge = $this->matterbridgeManager->getBridgeOfRoom($this->room);
 
@@ -759,7 +759,7 @@ class ChatController extends AEnvironmentAwareController {
 				continue;
 			}
 
-			$messages[(int) $comment->getId()] = $message->toArray();
+			$messages[(int) $comment->getId()] = $message->toArray($this->getResponseFormat());
 		}
 
 		$messagesByType = [];
@@ -815,7 +815,7 @@ class ChatController extends AEnvironmentAwareController {
 				continue;
 			}
 
-			$messages[(int) $comment->getId()] = $message->toArray();
+			$messages[(int) $comment->getId()] = $message->toArray($this->getResponseFormat());
 		}
 
 		return $messages;
