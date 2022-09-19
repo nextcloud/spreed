@@ -46,6 +46,7 @@
 		</template>
 		<template v-if="!isSearchResult" slot="actions">
 			<NcActionButton v-if="canFavorite"
+				:close-after-click="true"
 				@click.prevent.exact="toggleFavoriteConversation">
 				<Star v-if="item.isFavorite"
 					slot="icon"
