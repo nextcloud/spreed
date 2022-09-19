@@ -168,11 +168,11 @@ class Message {
 			\in_array($this->getActorType(), [Attendee::ACTOR_USERS, Attendee::ACTOR_GUESTS]);
 	}
 
-	public function toArray(): array {
+	public function toArray(string $format): array {
 		$expireDate = $this->getComment()->getExpireDate();
 
 		$reactions = $this->getComment()->getReactions();
-		if (empty($reactions)) {
+		if ($format === 'json' && empty($reactions)) {
 			// Cheating here to make sure the reactions array is always a
 			// JSON object on the API, even when there is no reaction at all.
 			$reactions = new \StdClass();
