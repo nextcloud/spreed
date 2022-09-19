@@ -30,13 +30,17 @@ use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
 use OCP\Dashboard\IAPIWidget;
+use OCP\Dashboard\IButtonWidget;
 use OCP\Dashboard\IIconWidget;
+use OCP\Dashboard\IOptionWidget;
+use OCP\Dashboard\Model\WidgetButton;
 use OCP\Dashboard\Model\WidgetItem;
+use OCP\Dashboard\Model\WidgetOptions;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Util;
 
-class TalkWidget implements IAPIWidget, IIconWidget {
+class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidget {
 	private IURLGenerator $url;
 	private IL10N $l10n;
 	private Manager $manager;
@@ -80,6 +84,23 @@ class TalkWidget implements IAPIWidget, IIconWidget {
 	 */
 	public function getIconClass(): string {
 		return 'dashboard-talk-icon';
+	}
+
+	public function getWidgetOptions(): WidgetOptions {
+		return new WidgetOptions(true);
+	}
+
+	/**
+	 * @return \OCP\Dashboard\Model\WidgetButton[]
+	 */
+	public function getWidgetButtons(string $userId): array {
+		$buttons = [];
+		$buttons[] = new WidgetButton(
+			WidgetButton::TYPE_MORE,
+			$this->url->linkToRouteAbsolute('spreed.Page.index'),
+			$this->l10n->t('More unread mentions')
+		);
+		return $buttons;
 	}
 
 	/**
