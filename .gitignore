@@ -18,6 +18,7 @@
 /tests/php/.phpunit.result.cache
 /tests/integration/vendor
 /tests/integration/output
+/drone
 
 # Compiled javascript
 /js
