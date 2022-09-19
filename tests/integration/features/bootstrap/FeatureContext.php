@@ -1695,6 +1695,79 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" sees the following entry when loading the list of dashboard widgets(?: \((v1)\))$/
+	 *
+	 * @param string $user
+	 * @param string $apiVersion
+	 * @param ?TableNode $formData
+	 */
+	public function userGetsDashboardWidgets($user, $apiVersion = 'v1', TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/dashboard/api/' . $apiVersion . '/widgets');
+		$this->assertStatusCode($this->response, 200);
+
+		$data = $this->getDataFromResponse($this->response);
+		$expectedWidgets = $formData->getColumnsHash();
+
+		foreach ($expectedWidgets as $widget) {
+			$id = $widget['id'];
+			Assert::assertArrayHasKey($widget['id'], $data);
+
+			$widgetIconUrl = $widget['icon_url'];
+			$dataIconUrl = $data[$id]['icon_url'];
+
+			unset($widget['icon_url'], $data[$id]['icon_url']);
+
+			$widget['item_icons_round'] = (bool) $widget['item_icons_round'];
+			$widget['order'] = (int) $widget['order'];
+			$widget['buttons'] = json_decode($widget['buttons'], true);
+
+			Assert::assertEquals($widget, $data[$id], 'Mismatch of data for widget ' . $id);
+			Assert::assertStringEndsWith($widgetIconUrl, $dataIconUrl, 'Mismatch of icon URL for widget ' . $id);
+		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sees the following entries for dashboard widgets "([^"]*)"(?: \((v1)\))$/
+	 *
+	 * @param string $user
+	 * @param string $widgetId
+	 * @param string $apiVersion
+	 * @param ?TableNode $formData
+	 */
+	public function userGetsDashboardWidgetItems($user, $widgetId, $apiVersion = 'v1', TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/dashboard/api/' . $apiVersion . '/widget-items?widgets[]=' . $widgetId);
+		$this->assertStatusCode($this->response, 200);
+
+		$data = $this->getDataFromResponse($this->response);
+
+		Assert::assertArrayHasKey($widgetId, $data);
+		$expectedItems = $formData->getColumnsHash();
+
+		if (empty($expectedItems)) {
+			Assert::assertEmpty($data[$widgetId]);
+			return;
+		}
+
+		Assert::assertCount(count($expectedItems), $data[$widgetId]);
+
+		foreach ($expectedItems as $key => $widget) {
+			$widget['link'] = $this->baseUrl . 'index.php/call/' . self::$identifierToToken[$widget['link']];
+
+			Assert::assertEquals($widget, $data[$widgetId][$key], 'Wrong details for item #' . $key);
+		}
+	}
+
+	/**
+	 * @Then /^sleep 1 second$/
+	 *
+	 */
+	public function sleepOneSecond(): void {
+		sleep(1);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" deletes message "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
