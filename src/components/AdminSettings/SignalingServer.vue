@@ -47,12 +47,24 @@
 			</template>
 		</NcButton>
 
-		<span v-if="server">{{ connectionState }}</span>
+		<div v-if="server">
+			<div class="testing-icon">
+				<NcLoadingIcon v-if="!checked" :size="20" />
+				<AlertCircle v-else-if="errorMessage" :size="20" :fill-color="'#E9322D'" />
+				<Check v-else :size="20" :fill-color="'#46BA61'" />
+			</div>
+			<div class="testing-label">
+				{{ connectionState }}
+			</div>
+		</div>
 	</div>
 </template>
 
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import Check from 'vue-material-design-icons/Check.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import { getWelcomeMessage } from '../../services/signalingService.js'
 
@@ -61,6 +73,9 @@ export default {
 
 	components: {
 		NcButton,
+		NcLoadingIcon,
+		AlertCircle,
+		Check,
 		Delete,
 	},
 
@@ -174,6 +189,20 @@ export default {
 	label {
 		margin: 0 20px;
 		display: inline-block;
+	}
+
+	.testing-icon{
+		display: inline-block;
+		height: 20px;
+		line-height: 44px;
+		vertical-align: middle;
+	}
+
+	.testing-label {
+		display: inline-block;
+		height: 44px;
+		line-height: 44px;
+		vertical-align: middle;
 	}
 }
 </style>
