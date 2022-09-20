@@ -1720,6 +1720,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 			$widget['item_icons_round'] = (bool) $widget['item_icons_round'];
 			$widget['order'] = (int) $widget['order'];
+			$widget['widget_url'] = str_replace('{$BASE_URL}', $this->baseUrl, $widget['widget_url']);
+			$widget['buttons'] = str_replace('{$BASE_URL}', $this->baseUrl, $widget['buttons']);
 			$widget['buttons'] = json_decode($widget['buttons'], true);
 
 			Assert::assertEquals($widget, $data[$id], 'Mismatch of data for widget ' . $id);
@@ -1752,19 +1754,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		Assert::assertCount(count($expectedItems), $data[$widgetId]);
 
-		foreach ($expectedItems as $key => $widget) {
-			$widget['link'] = $this->baseUrl . 'index.php/call/' . self::$identifierToToken[$widget['link']];
+		foreach ($expectedItems as $key => $item) {
+			$item['link'] = $this->baseUrl . 'index.php/call/' . self::$identifierToToken[$item['link']];
+			$item['iconUrl'] = str_replace('{$BASE_URL}', $this->baseUrl, $item['iconUrl']);
 
-			Assert::assertEquals($widget, $data[$widgetId][$key], 'Wrong details for item #' . $key);
+			Assert::assertEquals($item, $data[$widgetId][$key], 'Wrong details for item #' . $key);
 		}
-	}
-
-	/**
-	 * @Then /^sleep 1 second$/
-	 *
-	 */
-	public function sleepOneSecond(): void {
-		sleep(1);
 	}
 
 	/**
@@ -2667,7 +2662,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When wait for :seconds seconds
+	 * @When wait for :seconds seconds?
 	 */
 	public function waitForXSeconds($seconds): void {
 		sleep($seconds);
