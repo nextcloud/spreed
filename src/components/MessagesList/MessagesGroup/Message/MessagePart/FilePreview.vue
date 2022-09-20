@@ -300,6 +300,8 @@ export default {
 			let classes = ''
 			if (this.smallPreview) {
 				classes += 'preview-small '
+			} else if (!this.mimetype.startsWith('image/') && !this.mimetype.startsWith('video/')) {
+				classes += 'preview-medium '
 			} else {
 				classes += 'preview '
 			}
@@ -560,6 +562,12 @@ export default {
 		border-radius: var(--border-radius);
 		max-width: 100%;
 		max-height: 384px;
+	}
+	.preview-medium {
+		display: inline-block;
+		border-radius: var(--border-radius);
+		max-width: 100%;
+		max-height: 192px;
 	}
 	.preview-small {
 		display: inline-block;
