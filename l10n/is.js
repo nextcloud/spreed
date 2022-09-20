@@ -397,6 +397,7 @@ OC.L10N.register(
     "OK" : "Í lagi",
     "Checking …" : "Athuga …",
     "Copy link" : "Afrita tengil",
+    "Connecting …" : "Tengist ...",
     "Waiting for others to join the call …" : "Bíð eftir að fleiri komi inn í símtalið …",
     "You can invite others in the participant tab of the sidebar" : "Þú getur boðið öðrum að taka þátt af þátttakendaflipa hliðarspjaldsins",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Þú getur boðið öðrum að taka þátt af þátttakendaflipa hliðarspjaldsins eða deilt þessum tengli til að bjóða öðrum!",
@@ -458,6 +459,7 @@ OC.L10N.register(
     "Unread messages" : "Ólesin skilaboð",
     "Message sent" : "Skilaboðin hafa verið send",
     "Reply" : "Svara",
+    "Copy message link" : "Afrita skilaboðatengil",
     "Mark as unread" : "Merkja allt sem ólesið",
     "Go to file" : "Fara í skrá",
     "Contact" : "Tengiliður",
@@ -527,6 +529,7 @@ OC.L10N.register(
     "Saved" : "Vistað",
     "Add a new server" : "Bæta við nýjum þjóni",
     "Microphone" : "Microphone",
-    "Camera" : "Myndavél"
+    "Camera" : "Myndavél",
+    "Message link copied to clipboard." : "Skilaboðatengill afritaður á klippispjald."
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");
