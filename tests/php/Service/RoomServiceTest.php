@@ -192,7 +192,11 @@ class RoomServiceTest extends TestCase {
 			[''],
 			['        '],
 			[str_repeat('a', 256)],
-			[str_repeat('😃', 200)],
+			// Isn't a multibyte emoji
+			[str_repeat('😃', 256)],
+			// This is a multibyte emoji and need 2 chars in database
+			// 256 / 2 = 128
+			[str_repeat('‍💻', 128)],
 		];
 	}
 
