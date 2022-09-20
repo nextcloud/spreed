@@ -138,8 +138,8 @@ the main body of the message as well as a quote.
 					trigger="hover">
 					<NcButton v-if="simpleReactions[reaction]!== 0"
 						slot="trigger"
+						:type="userHasReacted(reaction) ? 'primary' : 'secondary'"
 						class="reaction-button"
-						:class="{'reaction-button__has-reacted': userHasReacted(reaction)}"
 						@click="handleReactionClick(reaction)">
 						{{ reaction }} {{ simpleReactions[reaction] }}
 					</NcButton>
@@ -977,15 +977,10 @@ export default {
 
 	margin: 2px;
 	height: 26px;
-	background-color: var(--color-main-background) !important;
-	margin-right: 8px !important;
+	padding: 0 6px !important;
 
 	&__emoji {
 		margin: 0 4px 0 0;
-	}
-
-	&__has-reacted {
-		background-color: var(--color-primary-element-lighter) !important;
 	}
 }
 
