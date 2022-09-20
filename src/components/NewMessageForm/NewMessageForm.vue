@@ -357,8 +357,7 @@ export default {
 		},
 
 		canCreatePoll() {
-			// FIXME
-			return !this.isOneToOne
+			return !this.isOneToOne && !this.noChatPermission
 		},
 
 		attachmentFolderFreeSpace() {
