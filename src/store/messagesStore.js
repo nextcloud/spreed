@@ -96,6 +96,15 @@ const state = {
 	visualLastReadMessageId: {},
 
 	/**
+	 * Loaded messages history parts of a conversation
+	 *
+	 * The messages list can still be empty due to message expiration,
+	 * but if we ever loaded the history, we need to show an empty content
+	 * instead of the loading animation
+	 */
+	loadedMessages: {},
+
+	/**
 	 * Stores the cancel function returned by `cancelableFetchMessages`,
 	 * which allows to cancel the previous request for old messages
 	 * when quickly switching to a new conversation.
@@ -130,6 +139,10 @@ const getters = {
 		}
 
 		return getters.getLastKnownMessageId(token) < conversation.lastMessage.id
+	},
+
+	isMessageListPopulated: (state) => (token) => {
+		return !!state.loadedMessages[token]
 	},
 
 	/**
@@ -365,6 +378,10 @@ const mutations = {
 		} else {
 			state.messages[token][messageId].reactionsSelf.push(reaction)
 		}
+	},
+
+	loadedMessagesOfConversation(state, { token }) {
+		Vue.set(state.loadedMessages, token, true)
 	},
 
 	// Decreases reaction count for a particular reaction on a message
@@ -760,6 +777,8 @@ const actions = {
 			})
 		}
 
+		context.commit('loadedMessagesOfConversation', { token })
+
 		return response
 	},
 
@@ -886,6 +905,8 @@ const actions = {
 				})
 			}
 		}
+
+		context.commit('loadedMessagesOfConversation', { token })
 
 		return response
 	},

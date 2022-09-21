@@ -44,10 +44,17 @@ get the messagesList array and loop through the list to generate the messages.
 			:messages="item"
 			:next-message-id="(messagesGroupedByAuthor[index + 1] && messagesGroupedByAuthor[index + 1][0].id) || 0"
 			:previous-message-id="(index > 0 && messagesGroupedByAuthor[index - 1][messagesGroupedByAuthor[index - 1].length - 1].id) || 0" />
-		<template v-if="!messagesGroupedByAuthor.length">
+		<template v-if="showLoadingAnimation">
 			<LoadingPlaceholder type="messages"
 				:count="15" />
 		</template>
+		<NcEmptyContent v-else-if="showEmptyContent"
+			:title="t('spreed', 'No messages')"
+			:description="t('spreed', 'All messages have expired or have been deleted.')">
+			<template #icon>
+				<Message :size="64" />
+			</template>
+		</NcEmptyContent>
 		<transition name="fade">
 			<NcButton v-show="!isChatScrolledToBottom"
 				type="secondary"
@@ -73,8 +80,10 @@ import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus.js'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
+import Message from 'vue-material-design-icons/Message.vue'
 import uniqueId from 'lodash/uniqueId.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
 export default {
 	name: 'MessagesList',
@@ -82,7 +91,9 @@ export default {
 		LoadingPlaceholder,
 		MessagesGroup,
 		ChevronDown,
+		Message,
 		NcButton,
+		NcEmptyContent,
 	},
 
 	mixins: [
@@ -189,6 +200,15 @@ export default {
 				}
 			}
 			return groups
+		},
+
+		showLoadingAnimation() {
+			return !this.$store.getters.isMessageListPopulated(this.token)
+				&& !this.messagesGroupedByAuthor.length
+		},
+
+		showEmptyContent() {
+			return !this.messagesGroupedByAuthor.length
 		},
 
 		/**
