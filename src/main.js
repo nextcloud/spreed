@@ -42,7 +42,6 @@ import { getRequestToken } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
 
 // Directives
-import VueClipboard from 'vue-clipboard2'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import VueObserveVisibility from 'vue-observe-visibility'
 import VueShortKey from 'vue-shortkey'
@@ -76,7 +75,6 @@ Vue.prototype.OCA = OCA
 
 Vue.use(Vuex)
 Vue.use(VueRouter)
-Vue.use(VueClipboard)
 Vue.use(VueObserveVisibility)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)

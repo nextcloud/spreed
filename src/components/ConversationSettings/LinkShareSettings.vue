@@ -242,13 +242,11 @@ export default {
 
 		async handleCopyLink() {
 			try {
-				await this.$copyText(this.linkToConversation)
+				await navigator.clipboard.writeText(this.linkToConversation)
 				showSuccess(t('spreed', 'Conversation link copied to clipboard.'))
 			} catch (error) {
 				showError(t('spreed', 'The link could not be copied.'))
 			}
-			// workaround for https://github.com/Inndy/vue-clipboard2/issues/105
-			this.$refs.copyLinkButton.focus()
 		},
 
 		async handleResendInvitations() {
