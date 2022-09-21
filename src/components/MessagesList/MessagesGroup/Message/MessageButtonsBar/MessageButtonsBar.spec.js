@@ -52,6 +52,7 @@ describe('MessageButtonsBar.vue', () => {
 			canReact: true,
 			isReactionsMenuOpen: false,
 			isLastRead: false,
+			isForwarderOpen: false,
 			timestamp: new Date('2020-05-07 09:23:00').getTime() / 1000,
 			token: TOKEN,
 			systemMessage: '',
