@@ -864,8 +864,8 @@ describe('Message.vue', () => {
 			const userHasReactedGetter = jest.fn().mockReturnValue(() => false)
 			const reactionsLoadedGetter = jest.fn().mockReturnValue(() => true)
 			testStoreConfig.modules.messagesStore.actions.addReactionToMessage = addReactionToMessageAction
-			testStoreConfig.modules.messagesStore.getters.userHasReacted = userHasReactedGetter
-			testStoreConfig.modules.messagesStore.getters.reactionsLoaded = reactionsLoadedGetter
+			testStoreConfig.modules.reactionsStore.getters.userHasReacted = userHasReactedGetter
+			testStoreConfig.modules.reactionsStore.getters.reactionsLoaded = reactionsLoadedGetter
 
 			store = new Store(testStoreConfig)
 
@@ -907,8 +907,8 @@ describe('Message.vue', () => {
 			const userHasReactedGetter = jest.fn().mockReturnValue(() => true)
 			const reactionsLoadedGetter = jest.fn().mockReturnValue(() => true)
 			testStoreConfig.modules.messagesStore.actions.removeReactionFromMessage = removeReactionFromMessageAction
-			testStoreConfig.modules.messagesStore.getters.userHasReacted = userHasReactedGetter
-			testStoreConfig.modules.messagesStore.getters.reactionsLoaded = reactionsLoadedGetter
+			testStoreConfig.modules.reactionsStore.getters.userHasReacted = userHasReactedGetter
+			testStoreConfig.modules.reactionsStore.getters.reactionsLoaded = reactionsLoadedGetter
 
 			store = new Store(testStoreConfig)
 
