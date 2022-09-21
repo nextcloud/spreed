@@ -580,6 +580,26 @@ export default {
 				if (temporaryMessage) {
 					this.text = temporaryMessage.message || this.text
 					this.parsedText = temporaryMessage.message || this.parsedText
+
+					// Restore the parent/quote message
+					if (temporaryMessage.parent) {
+						const temporaryParent = this.$store.getters.message(this.token, temporaryMessage.parent)
+
+						this.$store.dispatch('addMessageToBeReplied', {
+							id: temporaryParent.id,
+							actorId: temporaryParent.actorId,
+							actorType: temporaryParent.actorType,
+							actorDisplayName: temporaryParent.actorDisplayName,
+							timestamp: temporaryParent.timestamp,
+							systemMessage: temporaryParent.systemMessage,
+							messageType: temporaryParent.messageType,
+							message: temporaryParent.message,
+							messageParameters: temporaryParent.messageParameters,
+							token: temporaryParent.token,
+							previousMessageId: temporaryParent.previousMessageId,
+						})
+					}
+
 					this.$store.dispatch('removeTemporaryMessageFromStore', temporaryMessage)
 				}
 			}
