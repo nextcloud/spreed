@@ -380,14 +380,17 @@ describe('MessageButtonsBar.vue', () => {
 			const wrapper = shallowMount(MessageButtonsBar, {
 				localVue,
 				store,
-				mocks: {
-					$copyText: copyTextMock,
-				},
 				stubs: {
 					NcActionButton,
 				},
 
 				propsData: messageProps,
+			})
+
+			Object.assign(navigator, {
+				clipboard: {
+					writeText: copyTextMock,
+				},
 			})
 
 			const actionButton = findNcActionButton(wrapper, 'Copy message link')
