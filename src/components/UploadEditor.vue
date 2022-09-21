@@ -192,10 +192,6 @@ export default {
 <style lang="scss" scoped>
 @import '../assets/variables';
 
-::v-deep .modal-container {
-	height: 700px;
-}
-
 .upload-editor {
 	height: 100%;
 	position: relative;
