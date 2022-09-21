@@ -63,7 +63,11 @@
 			</div>
 
 			<!-- Second line: participant status message if applicable -->
-			<div v-if="statusMessage"
+			<div v-if="isSearched && shareWithDisplayNameUnique"
+				class="participant-row__status">
+				<span>{{ shareWithDisplayNameUnique }}</span>
+			</div>
+			<div v-else-if="statusMessage"
 				ref="statusMessage"
 				class="participant-row__status"
 				@mouseover="updateStatusNeedsTooltip()">
@@ -418,6 +422,10 @@ export default {
 
 		label() {
 			return this.participant.label
+		},
+
+		shareWithDisplayNameUnique() {
+			return this.participant.shareWithDisplayNameUnique
 		},
 
 		isHandRaised() {
