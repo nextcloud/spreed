@@ -670,7 +670,7 @@ export default {
 
 .remove-file {
 	visibility: hidden;
-	position: absolute;
+	position: absolute !important;
 	top: 8px;
 	right: 8px;
 }
