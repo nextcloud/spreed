@@ -35,11 +35,9 @@
 				</p>
 				<NcButton id="copy-link"
 					slot="trigger"
-					v-clipboard:copy="linkToConversation"
-					v-clipboard:success="onCopy"
-					v-clipboard:error="onError"
 					type="secondary"
-					class="confirmation__copy-link">
+					class="confirmation__copy-link"
+					@click="onClickCopyLink">
 					{{ t('spreed', 'Copy conversation link') }}
 				</NcButton>
 				<p class="confirmation__warning">
@@ -100,6 +98,14 @@ export default {
 	},
 
 	methods: {
+		async onClickCopyLink() {
+			try {
+				await navigator.clipboard.writeText(this.linkToConversation)
+				this.onCopy()
+			} catch (error) {
+				this.onError()
+			}
+		},
 		onCopy() {
 			this.confirmationText = t('spreed', 'Link copied to the clipboard!')
 			this.showConfirmationText = true

@@ -421,7 +421,7 @@ export default {
 		async handleCopyMessageLink() {
 			try {
 				const link = window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token) + '#message_' + this.id
-				await this.$copyText(link)
+				await navigator.clipboard.writeText(link)
 				showSuccess(t('spreed', 'Message link copied to clipboard'))
 			} catch (error) {
 				console.error('Error copying link: ', error)

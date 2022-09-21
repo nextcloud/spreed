@@ -51,7 +51,6 @@
 		"util": "^0.12.4",
 		"vue": "^2.7.10",
 		"vue-at": "^2.5.1",
-		"vue-clipboard2": "^0.3.3",
 		"vue-frag": "^1.4.1",
 		"vue-material-design-icons": "^5.1.2",
 		"vue-observe-visibility": "^1.0.0",
