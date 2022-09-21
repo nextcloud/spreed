@@ -50,7 +50,7 @@ get the messagesList array and loop through the list to generate the messages.
 		</template>
 		<NcEmptyContent v-else-if="showEmptyContent"
 			:title="t('spreed', 'No messages')"
-			:description="t('spreed', 'All messages have been expired or deleted. Restart the conversation!')">
+			:description="t('spreed', 'All messages have expired or have been deleted.')">
 			<template #icon>
 				<Message :size="64" />
 			</template>
