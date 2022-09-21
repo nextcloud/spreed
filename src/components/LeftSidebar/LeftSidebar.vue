@@ -480,14 +480,16 @@ export default {
 		handleUnreadMention() {
 			this.unreadNum = 0
 			const unreadMentions = document.getElementsByClassName('unread-mention-conversation')
-			unreadMentions.forEach(x => {
-				if (this.elementIsBelowViewpoint(this.$refs.scroller, x)) {
-					if (this.unreadNum === 0) {
-						this.firstUnreadPos = x.offsetTop
+			if (unreadMentions.length) {
+				unreadMentions.forEach(x => {
+					if (this.elementIsBelowViewpoint(this.$refs.scroller, x)) {
+						if (this.unreadNum === 0) {
+							this.firstUnreadPos = x.offsetTop
+						}
+						this.unreadNum += 1
 					}
-					this.unreadNum += 1
-				}
-			})
+				})
+			}
 		},
 		debounceHandleScroll: debounce(function() {
 			this.handleScroll()
