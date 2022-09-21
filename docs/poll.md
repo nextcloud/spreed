@@ -18,6 +18,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Status code:
         + `201 Created`
+        + `400 Bad Request` When the room is a one-to-one conversation
         + `400 Bad Request` When the question or the options were too long or invalid (not strings)
         + `403 Forbidden` When the conversation is read-only
         + `403 Forbidden` When the actor does not have chat permissions

@@ -233,7 +233,7 @@ Feature: chat/poll
       | votedSelf  | not voted |
       | details    | {} |
 
-  Scenario: Non-moderators can note create polls without chat permission
+  Scenario: Non-moderators can not create polls without chat permission
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -587,6 +587,16 @@ Feature: chat/poll
     When user "participant1" creates a poll in room "room" with 400
       | question   |  |
       | options    | ["Empty question is not","allowed either"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+
+  Scenario: Can not poll in one-to-one
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    When user "participant1" creates a poll in room "room" with 400
+      | question   | Can I poll in one-to-one? |
+      | options    | ["No","Nope"] |
       | resultMode | public |
       | maxVotes   | unlimited |
 
