@@ -819,6 +819,7 @@ OC.L10N.register(
     "Poll ・ Click to vote" : "Kysely ・ Napsauta äänestääksesi",
     "Poll ・ Ended" : "Kysely ・ Päättynyt",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Kyselyn tulokset • %n ääni","Kyselyn tulokset • %n ääntä"],
+    "No messages" : "Ei viestejä",
     "Scroll to bottom" : "Vieritä alas",
     "Today" : "Tänään",
     "Yesterday" : "Eilen",

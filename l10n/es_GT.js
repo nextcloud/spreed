@@ -101,6 +101,7 @@ OC.L10N.register(
     "Conversation name" : "Nombre de la conversación",
     "Reply" : "Responder",
     "Contact" : "Contacto",
+    "No messages" : "No hay mensajes",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

@@ -886,6 +886,7 @@ OC.L10N.register(
     "Your browser does not support playing audio files" : "귀하의 브라우저는 오디오 파일 재생을 지원하지 않습니다",
     "Contact" : "연락처",
     "Open this location in OpenStreetMap" : "OpenStreetMap에서 이 위치를 엽니다.",
+    "No messages" : "메시지가 없음",
     "Scroll to bottom" : "맨 아래로 스크롤",
     "Today" : "오늘",
     "Yesterday" : "어제",

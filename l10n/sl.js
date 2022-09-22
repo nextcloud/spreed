@@ -935,6 +935,7 @@ OC.L10N.register(
     "Remove {fileName}" : "Odstrani datoteko {fileName}",
     "Open this location in OpenStreetMap" : "Odpri to mesto v programu Openstreetmap",
     "End poll" : "Končaj anketo",
+    "No messages" : "Ni sporočil",
     "Scroll to bottom" : "Podrsajte do dna",
     "Today" : "Danes",
     "Yesterday" : "Včeraj",
