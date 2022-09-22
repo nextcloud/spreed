@@ -29,7 +29,7 @@ get the messagesList array and loop through the list to generate the messages.
 	<!-- size and remain refer to the amount and initial height of the items that
 	are outside of the viewport -->
 	<div ref="scroller"
-		class="scroller"
+		class="scroller messages-list__scroller"
 		@scroll="debounceHandleScroll">
 		<div v-if="displayMessagesLoader"
 			class="scroller__loading"
