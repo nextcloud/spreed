@@ -851,6 +851,8 @@ export default {
 		min-width: 100%;
 		&__text {
 			flex: 0 1 600px;
+			width: 100%;
+			min-width: 0;
 			max-width: 600px;
 			color: var(--color-text-light);
 			.single-emoji {
@@ -882,10 +884,6 @@ export default {
 			::v-deep .rich-text--wrapper {
 				white-space: pre-wrap;
 				word-break: break-word;
-
-				.rich-text--reference-widget {
-					width: calc(100% + 132px);
-				}
 			}
 
 			&--quote {
