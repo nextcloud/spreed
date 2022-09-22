@@ -315,6 +315,35 @@ class BackendNotifierTest extends \Test\TestCase {
 		]);
 	}
 
+	public function testRoomDisinviteOnRemovalOfGuest() {
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
+		$participant = $this->participantService->joinRoomAsNewGuest($room, '');
+		$this->controller->clearRequests();
+		$this->participantService->removeAttendee($room, $participant, Room::PARTICIPANT_REMOVED);
+
+		$this->assertMessageWasSent($room, [
+			'type' => 'disinvite',
+			'disinvite' => [
+				'sessionids' => [
+					$participant->getSession()->getSessionId(),
+				],
+				'alluserids' => [
+				],
+				'properties' => [
+					'name' => $room->getDisplayName(''),
+					'type' => $room->getType(),
+					'lobby-state' => Webinary::LOBBY_NONE,
+					'lobby-timer' => null,
+					'read-only' => Room::READ_WRITE,
+					'listable' => Room::LISTABLE_NONE,
+					'active-since' => null,
+					'sip-enabled' => 0,
+					'participant-list' => 'refresh',
+				],
+			],
+		]);
+	}
+
 	public function testNoRoomDisinviteOnLeaveOfNormalUser() {
 		/** @var IUser|MockObject $testUser */
 		$testUser = $this->createMock(IUser::class);
