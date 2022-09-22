@@ -516,7 +516,7 @@ export default {
 
 .new-conversation {
 	display: flex;
-	padding: 6px 0 6px 10px;
+	padding: 8px 0 8px 12px;
 	align-items: center;
 	&--scrolled-down {
 		border-bottom: 1px solid var(--color-placeholder-dark);
