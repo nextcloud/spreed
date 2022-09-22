@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.0-rc.1 – 2022-09-22
+### Added
+- Implement the new dashboard widget modes
+
+### Changed
+- Allow to opt-out of keyboard shortcuts to improve accessibility
+
+### Fixed
+- Show more poll voters in details popover
+- Do not allow to forward polls as they become non-functional
+- Fix coloring of reaction buttons
+- Reduce preview size for non-images
+- Disallow polls in one-to-one chats
+- Adjust the height of file upload modals
+- Show empty content when all messages expire
+- Correctly quote the parent again when sending the message failed
+
 ## 15.0.0-beta.4 – 2022-09-15
 ### Added
 - Add related_resources UI
