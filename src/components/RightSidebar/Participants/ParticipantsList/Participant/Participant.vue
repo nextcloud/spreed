@@ -97,6 +97,7 @@
 			:container="container"
 			:aria-label="participantSettingsAriaLabel"
 			:force-menu="true"
+			placement="bottom-end"
 			class="participant-row__actions">
 			<template #icon>
 				<LockOpenVariant v-if="actionIcon === 'LockOpenVariant'"
