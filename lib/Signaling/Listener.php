@@ -227,16 +227,9 @@ class Listener {
 
 			$sessionIds = [];
 
-			/** @var SessionService $sessionService */
-			$sessionService = \OC::$server->get(SessionService::class);
-			$sessions = $sessionService->getAllSessionsForAttendee($event->getParticipant()->getAttendee());
+			$sessions = $event->getSessions();
 			foreach ($sessions as $session) {
 				$sessionIds[] = $session->getSessionId();
-			}
-
-			if ($event->getParticipant()->getSession()) {
-				$sessionIds[] = $event->getParticipant()->getSession()->getSessionId();
-				$notifier->roomSessionsRemoved($event->getRoom(), $sessionIds);
 			}
 
 			if (!empty($sessionIds)) {
