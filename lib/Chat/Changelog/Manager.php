@@ -119,6 +119,11 @@ class Manager {
 			$this->l->t('New in Talk %s', ['14']),
 			$this->l->t('- You can now react to chat message'),
 			$this->l->t('- In the sidebar you can now find an overview of the latest shared items'),
+			$this->l->t('New in Talk %s', ['15']),
+			$this->l->t('- Use a poll to collect the opinions of others or settle on a date'),
+			$this->l->t('- Configure an expiration time for chat messages'),
+			$this->l->t('- Start calls without notifying others in big conversations. You can send individual call notifications once the call has started.'),
+			$this->l->t('- Send chat messages without notifying the recipients in case it is not urgent'),
 		];
 	}
 }
