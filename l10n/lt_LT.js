@@ -640,6 +640,7 @@ OC.L10N.register(
     "Remove {fileName}" : "Šalinti {fileName}",
     "Poll" : "Apklausa",
     "See results" : "Rodyti rezultatus",
+    "No messages" : "Nėra laiškų",
     "Scroll to bottom" : "Slinkti į apačią",
     "Today" : "Šiandien",
     "Yesterday" : "Vakar",

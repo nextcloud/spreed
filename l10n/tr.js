@@ -1033,6 +1033,7 @@ OC.L10N.register(
     "Poll ・ Click to vote" : "Anket - Oylamak için tıklayın",
     "Poll ・ Ended" : "Anket ・ Sona ermiş",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Anket sonuçları • %n oy","Anket sonuçları • %n oy"],
+    "No messages" : "Herhangi bir ileti yok",
     "Scroll to bottom" : "Aşağıya kaydır",
     "Today" : "Bugün",
     "Yesterday" : "Dün",

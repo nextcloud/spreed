@@ -1030,6 +1030,7 @@ OC.L10N.register(
     "Poll ・ Click to vote" : "Szavazás ・ Kattintson a szavazáshoz",
     "Poll ・ Ended" : "Poll ・ Befejezve",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Szavazás eredménye • %n szavazat","Szavazás eredménye • %n szavazat"],
+    "No messages" : "Nincs üzenet",
     "Scroll to bottom" : "Görgetés az aljára",
     "Today" : "Ma",
     "Yesterday" : "Tegnap",

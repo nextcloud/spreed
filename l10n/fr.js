@@ -1031,6 +1031,7 @@ OC.L10N.register(
     "Poll ・ Click to vote" : "Sondage ・ Cliquez pour participer",
     "Poll ・ Ended" : "Sondage ・ Terminé",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Résultats du sondage • %n participation","Résultats du sondage • %n participations","Résultats du sondage • %n participations"],
+    "No messages" : "Aucun message",
     "Scroll to bottom" : "Défiler jusqu'en bas",
     "Today" : "Aujourd'hui",
     "Yesterday" : "Hier",

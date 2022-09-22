@@ -528,6 +528,7 @@ OC.L10N.register(
     "Mark as unread" : "Merk som ulest",
     "Contact" : "Kontakt",
     "Poll" : "Avstemning",
+    "No messages" : "Ingen meldinger",
     "Today" : "I dag",
     "Yesterday" : "I går",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

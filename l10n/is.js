@@ -465,6 +465,7 @@ OC.L10N.register(
     "Contact" : "Tengiliður",
     "Poll" : "Poll",
     "End poll" : "End poll",
+    "No messages" : "Engin skilaboð",
     "Today" : "Í dag",
     "Yesterday" : "Í gær",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

@@ -711,6 +711,7 @@ OC.L10N.register(
     "Reply" : "Respon",
     "Go to file" : "Vés al fitxer",
     "Contact" : "Contacte",
+    "No messages" : "No hi ha missatges",
     "Scroll to bottom" : "Desplaça al final",
     "Today" : "Avui",
     "Yesterday" : "Ahir",
