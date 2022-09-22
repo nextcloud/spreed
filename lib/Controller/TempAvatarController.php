@@ -122,7 +122,7 @@ class TempAvatarController extends OCSController {
 				'exception' => $e,
 			]);
 
-			return new DataResponse(['message' => $this->l->t('An error occurred. Please contact your admin.')], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['message' => $this->l->t('An error occurred. Please contact your administrator.')], Http::STATUS_BAD_REQUEST);
 		}
 	}
 
