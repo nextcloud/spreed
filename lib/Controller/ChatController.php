@@ -793,6 +793,7 @@ class ChatController extends AEnvironmentAwareController {
 			$messageIdsByType[$objectType] = array_map(static fn (Attachment $attachment): int => $attachment->getMessageId(), $attachments);
 		}
 		$comments = $this->chatManager->getMessagesById($this->room, array_merge(...array_values($messageIdsByType)));
+		$this->preloadShares($comments);
 
 		foreach ($comments as $comment) {
 			if (!$this->messageParser->fileOfMessageExists($comment->getMessage())) {
@@ -852,6 +853,7 @@ class ChatController extends AEnvironmentAwareController {
 
 	private function getMessagesForRoom(Room $room, array $messageIds): array {
 		$comments = $this->chatManager->getMessagesById($room, $messageIds);
+		$this->preloadShares($comments);
 
 		$messages = [];
 		foreach ($comments as $comment) {
