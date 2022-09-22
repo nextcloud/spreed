@@ -1030,6 +1030,7 @@ OC.L10N.register(
     "Poll ・ Click to vote" : "Umfrage ・ Zur Abstimmung klicken",
     "Poll ・ Ended" : "Umfrage ・ Beendet",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Umfrageergebnis • %n Stimme","Umfrageergebnisse • %n Stimmen"],
+    "No messages" : "Keine Nachrichten",
     "Scroll to bottom" : "Nach unten blättern",
     "Today" : "Heute",
     "Yesterday" : "Gestern",

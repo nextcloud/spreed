@@ -891,6 +891,7 @@ OC.L10N.register(
     "{stack} in {board}" : "{stack} in {board}",
     "Deck Card" : "Ischeda de Deck",
     "Remove {fileName}" : "Boga•nche {fileName}",
+    "No messages" : "Perunu messàgiu",
     "Scroll to bottom" : "Iscurre a bàsciu",
     "Today" : "Oe",
     "Yesterday" : "Eris",

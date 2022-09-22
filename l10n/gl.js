@@ -830,6 +830,7 @@ OC.L10N.register(
     "Contact" : "Contacto",
     "{stack} in {board}" : "{stack} en {board}",
     "Deck Card" : "Tarxeta do Deck",
+    "No messages" : "Non hai mensaxes",
     "Scroll to bottom" : "Desprazarse ata o final",
     "Today" : "Hoxe",
     "Yesterday" : "Onte",

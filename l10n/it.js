@@ -958,6 +958,7 @@ OC.L10N.register(
     "Deck Card" : "Scheda di Deck",
     "Remove {fileName}" : "Rimuovi {fileName}",
     "Open this location in OpenStreetMap" : "Apri questa posizione in OpenStreetMap",
+    "No messages" : "Nessun messaggio",
     "Scroll to bottom" : "Scorri in fondo",
     "Today" : "Oggi",
     "Yesterday" : "Ieri",

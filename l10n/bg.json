@@ -1029,6 +1029,7 @@
     "Poll ・ Click to vote" : "Анкета ・ Кликнете, за да гласувате",
     "Poll ・ Ended" : "Анкета ・ Прекратена",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Резултати от анкетата • %n гласа","Резултати от анкетата • %n гласа"],
+    "No messages" : "Няма съобщения.",
     "Scroll to bottom" : "Превъртане до долу",
     "Today" : "Днес",
     "Yesterday" : "Вчера",
