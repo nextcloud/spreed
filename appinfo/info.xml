@@ -78,12 +78,12 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	</repair-steps>
 
 	<commands>
-		<command>OCA\Talk\Command\ActiveCalls</command>
 		<command>OCA\Talk\Command\Command\Add</command>
 		<command>OCA\Talk\Command\Command\AddSamples</command>
 		<command>OCA\Talk\Command\Command\Delete</command>
 		<command>OCA\Talk\Command\Command\ListCommand</command>
 		<command>OCA\Talk\Command\Command\Update</command>
+		<command>OCA\Talk\Command\Monitor\HasActiveCalls</command>
 		<command>OCA\Talk\Command\Stun\Add</command>
 		<command>OCA\Talk\Command\Stun\Delete</command>
 		<command>OCA\Talk\Command\Stun\ListCommand</command>

@@ -21,7 +21,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Talk\Command;
+namespace OCA\Talk\Command\Monitor;
 
 use OC\Core\Command\Base;
 use OCA\Talk\Participant;
@@ -29,7 +29,7 @@ use OCP\IDBConnection;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ActiveCalls extends Base {
+class HasActiveCalls extends Base {
 	protected IDBConnection $connection;
 
 	public function __construct(IDBConnection $connection) {
@@ -43,7 +43,8 @@ class ActiveCalls extends Base {
 
 		$this
 			->setName('talk:active-calls')
-			->setDescription('Allows you to check if calls are currently in process')	;
+			->setDescription('Allows you to check if calls are currently in process')
+		;
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
