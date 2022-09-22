@@ -851,7 +851,7 @@ class ChatController extends AEnvironmentAwareController {
 		return $response;
 	}
 
-	private function getMessagesForRoom(Room $room, array $messageIds): array {
+	protected function getMessagesForRoom(Room $room, array $messageIds): array {
 		$comments = $this->chatManager->getMessagesById($room, $messageIds);
 		$this->preloadShares($comments);
 
