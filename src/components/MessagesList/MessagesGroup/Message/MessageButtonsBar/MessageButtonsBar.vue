@@ -43,6 +43,7 @@
 			</NcActions>
 			<NcActions :force-menu="true"
 				:container="`#message_${id}`"
+				placement="bottom-end"
 				:boundaries-element="containerElement"
 				@open="onMenuOpen"
 				@close="onMenuClose">
@@ -322,7 +323,7 @@ export default {
 		},
 
 		containerElement() {
-			return document.querySelector(this.container)
+			return document.querySelector('.messages-list__scroller')
 		},
 
 		isDeleteable() {
