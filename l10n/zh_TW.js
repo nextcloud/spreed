@@ -545,6 +545,7 @@ OC.L10N.register(
     "Message link copied to clipboard" : "訊息連結已複製到剪貼簿",
     "Contact" : "聯絡人",
     "{stack} in {board}" : "{stack} 於 {board}",
+    "No messages" : "沒有郵件",
     "Today" : "今天",
     "Yesterday" : "昨天",
     "Record voice message" : "錄製語音訊息",

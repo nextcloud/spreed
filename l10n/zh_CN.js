@@ -953,6 +953,7 @@ OC.L10N.register(
     "Deck Card" : "Deck 卡片",
     "Remove {fileName}" : "删除 {fileName}",
     "Open this location in OpenStreetMap" : "在 OpenStreetMap 中打开此位置",
+    "No messages" : "没有消息",
     "Scroll to bottom" : "滚动到底部",
     "Today" : "今天",
     "Yesterday" : "昨天",

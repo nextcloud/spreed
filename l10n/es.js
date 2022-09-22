@@ -1001,6 +1001,7 @@ OC.L10N.register(
     "Open this location in OpenStreetMap" : "Abrir esta ubicación en OpenStreetMap",
     "Poll" : "Encuesta",
     "End poll" : "Cerrar la encuesta",
+    "No messages" : "No hay mensajes",
     "Scroll to bottom" : "Ir al final",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",

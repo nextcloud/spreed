@@ -825,6 +825,7 @@ OC.L10N.register(
     "Go to file" : "Μετάβαση στο αρχείο",
     "Contact" : "Επικοινωνία",
     "{stack} in {board}" : "{stack} στο {board}",
+    "No messages" : "Κανένα μήνυμα",
     "Scroll to bottom" : "Μετακινηθείτε προς τα κάτω",
     "Today" : "Σήμερα",
     "Yesterday" : "Χθες",
