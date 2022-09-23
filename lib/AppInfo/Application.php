@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\AppInfo;
 
+use OCA\Talk\Collaboration\Reference\TalkReferenceProvider;
 use OCP\Util;
 use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleDestroyedEvent;
@@ -144,6 +145,8 @@ class Application extends App implements IBootstrap {
 		$context->registerDashboardWidget(TalkWidget::class);
 
 		$context->registerProfileLinkAction(TalkAction::class);
+
+		$context->registerReferenceProvider(TalkReferenceProvider::class);
 
 		$context->registerTalkBackend(TalkBackend::class);
 	}
