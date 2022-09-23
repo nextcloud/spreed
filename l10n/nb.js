@@ -76,7 +76,6 @@ OC.L10N.register(
     "Invalid file provided" : "Ugyldig fil oppgitt",
     "Invalid image" : "Ugyldig bilde",
     "Unknown filetype" : "Ukjent filtype",
-    "An error occurred. Please contact your admin." : "Det oppstod en feil. Kontakt din administrator.",
     "Talk mentions" : "Talk nevner",
     "Write to conversation" : "Skrive til samtalen",
     "You were invited to a conversation." : "Du ble invitert til en samtale.",
@@ -587,6 +586,7 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signalserver kan alternativt brukes for større installasjoner. La stå tom for å bruke intern signalserver.",
     "Android app" : "Android-app",
     "iOS app" : "iOS-app",
+    "An error occurred. Please contact your admin." : "Det oppstod en feil. Kontakt din administrator.",
     "Saved" : "Lagret",
     "Microphone" : "Mikrofon",
     "Camera" : "Kamera"
