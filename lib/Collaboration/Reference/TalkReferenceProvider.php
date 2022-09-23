@@ -234,14 +234,19 @@ class TalkReferenceProvider implements IReferenceProvider {
 			return '';
 		}
 
-		return $referenceMatch['token'] . '#' . ($referenceMatch['message'] ?? 0);
+		return $referenceMatch['token'];
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function getCacheKey(string $referenceId): ?string {
-		return $this->userId ?? '';
+		$referenceMatch = $this->getTalkAppLinkToken($referenceId);
+		if ($referenceMatch === null) {
+			return '';
+		}
+
+		return ($this->userId ?? '') . '#' . ($referenceMatch['message'] ?? 0);
 	}
 
 	protected function getRoomIconUrl(Room $room, string $userId): string {

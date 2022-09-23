@@ -27,7 +27,6 @@ namespace OCA\Talk\Tests\php\Chat;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\Notifier;
-use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Participant;
@@ -37,6 +36,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Collaboration\Reference\IReferenceManager;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -61,8 +61,6 @@ class ChatManagerTest extends TestCase {
 	protected $notificationManager;
 	/** @var IManager|MockObject */
 	protected $shareManager;
-	/** @var Manager|MockObject */
-	protected $manager;
 	/** @var RoomShareProvider|MockObject */
 	protected $shareProvider;
 	/** @var ParticipantService|MockObject */
@@ -75,6 +73,8 @@ class ChatManagerTest extends TestCase {
 	protected $timeFactory;
 	/** @var AttachmentService|MockObject */
 	protected $attachmentService;
+	/** @var IReferenceManager|MockObject */
+	protected $referenceManager;
 	protected ?ChatManager $chatManager = null;
 
 	public function setUp(): void {
@@ -84,13 +84,13 @@ class ChatManagerTest extends TestCase {
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->notificationManager = $this->createMock(INotificationManager::class);
 		$this->shareManager = $this->createMock(IManager::class);
-		$this->manager = $this->createMock(Manager::class);
 		$this->shareProvider = $this->createMock(RoomShareProvider::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->pollService = $this->createMock(PollService::class);
 		$this->notifier = $this->createMock(Notifier::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->attachmentService = $this->createMock(AttachmentService::class);
+		$this->referenceManager = $this->createMock(IReferenceManager::class);
 		$cacheFactory = $this->createMock(ICacheFactory::class);
 
 		$this->chatManager = new ChatManager(
@@ -99,14 +99,14 @@ class ChatManagerTest extends TestCase {
 			\OC::$server->getDatabaseConnection(),
 			$this->notificationManager,
 			$this->shareManager,
-			$this->manager,
 			$this->shareProvider,
 			$this->participantService,
 			$this->pollService,
 			$this->notifier,
 			$cacheFactory,
 			$this->timeFactory,
-			$this->attachmentService
+			$this->attachmentService,
+			$this->referenceManager
 		);
 	}
 
@@ -125,7 +125,6 @@ class ChatManagerTest extends TestCase {
 					\OC::$server->getDatabaseConnection(),
 					$this->notificationManager,
 					$this->shareManager,
-					$this->manager,
 					$this->shareProvider,
 					$this->participantService,
 					$this->pollService,
@@ -133,6 +132,7 @@ class ChatManagerTest extends TestCase {
 					$cacheFactory,
 					$this->timeFactory,
 					$this->attachmentService,
+					$this->referenceManager,
 				])
 				->onlyMethods($methods)
 				->getMock();
@@ -144,14 +144,14 @@ class ChatManagerTest extends TestCase {
 			\OC::$server->getDatabaseConnection(),
 			$this->notificationManager,
 			$this->shareManager,
-			$this->manager,
 			$this->shareProvider,
 			$this->participantService,
 			$this->pollService,
 			$this->notifier,
 			$cacheFactory,
 			$this->timeFactory,
-			$this->attachmentService
+			$this->attachmentService,
+			$this->referenceManager
 		);
 	}
 
