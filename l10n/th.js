@@ -5,7 +5,6 @@ OC.L10N.register(
     "Invalid file provided" : "ระบุไฟล์ไม่ถูกต้อง",
     "Invalid image" : "รูปภาพไม่ถูกต้อง",
     "Unknown filetype" : "ชนิดไฟล์ที่ไม่รู้จัก",
-    "An error occurred. Please contact your admin." : "เกิดข้อผิดพลาด กรุณาติดต่อผู้ดูแลระบบของคุณ",
     "Open settings" : "เปิดการตั้งค่า",
     "Invalid date, date format must be YYYY-MM-DD" : "วันที่ไม่ถูกต้อง รูปแบบวันที่จะต้องเป็น YYYY-MM-DD",
     "Conversation not found" : "ไม่พบการสนทนา",
@@ -79,6 +78,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "รหัสผ่านที่ไม่ถูกต้อง กรุณาลองอีกครั้ง",
     "Android app" : "แอพฯ แอนดรอยด์",
     "iOS app" : "แอพฯ IOS",
+    "An error occurred. Please contact your admin." : "เกิดข้อผิดพลาด กรุณาติดต่อผู้ดูแลระบบของคุณ",
     "Saved" : "บันทึกแล้ว",
     "Camera" : "กล้อง",
     "[Unknown username]" : "[ไม่รู้จักชื่อผู้ใช้]"

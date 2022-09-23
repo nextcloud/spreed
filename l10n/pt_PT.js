@@ -22,7 +22,6 @@ OC.L10N.register(
     "Invalid file provided" : "Fornecido ficheiro inválido",
     "Invalid image" : "Imagem inválida",
     "Unknown filetype" : "Tipo de ficheiro desconhecido",
-    "An error occurred. Please contact your admin." : "Ocorreu um erro. Por favor, contacte o seu administrador.",
     "Join call" : "Juntar-se à chamada",
     "A group call has started in {call}" : "Uma chamada de grupo começou em {call}",
     "Open settings" : "Abrir definições",
@@ -321,6 +320,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "A palavra-passe está errada. Por favor, tente de novo.",
     "Android app" : "Aplicação Android",
     "iOS app" : "Aplicação iOS",
+    "An error occurred. Please contact your admin." : "Ocorreu um erro. Por favor, contacte o seu administrador.",
     "Saved" : "Gravado",
     "Camera" : "Câmera"
 },

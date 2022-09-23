@@ -7,7 +7,6 @@ OC.L10N.register(
     "Invalid file provided" : "Archivo proporcionado inválido",
     "Invalid image" : "Imagen inválida",
     "Unknown filetype" : "Tipo de archivo desconocido",
-    "An error occurred. Please contact your admin." : "Se presentó un error. Favor de contactar a su adminsitrador. ",
     "Open settings" : "Abrir opciones",
     "Messages" : "Mensajes",
     "Invalid date, date format must be YYYY-MM-DD" : "La fecha es inválida, favor de seguir el formato AAAA-MM-DD",
@@ -109,6 +108,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
+    "An error occurred. Please contact your admin." : "Se presentó un error. Favor de contactar a su adminsitrador. ",
     "Saved" : "Guardado",
     "Camera" : "Cámara"
 },
