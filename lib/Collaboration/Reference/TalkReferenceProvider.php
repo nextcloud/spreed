@@ -31,6 +31,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Collaboration\Reference\IReference;
 use OCP\Collaboration\Reference\IReferenceProvider;
@@ -150,6 +151,11 @@ class TalkReferenceProvider implements IReferenceProvider {
 		}
 
 		$room = $this->roomManager->getRoomForUserByToken($referenceMatch['token'], $this->userId);
+		try {
+			$participant = $room->getParticipant($this->userId);
+		} catch (ParticipantNotFoundException $e) {
+			$participant = null;
+		}
 
 		/**
 		 * Default handling:
@@ -158,15 +164,13 @@ class TalkReferenceProvider implements IReferenceProvider {
 		 */
 		$roomName = $room->getDisplayName($this->userId);
 		$title = $roomName;
-		$description = $room->getDescription();
+		$description = '';
 
-		$participant = null;
-		if (!empty($referenceMatch['message'])) {
-			try {
-				$participant = $room->getParticipant($this->userId);
-			} catch (ParticipantNotFoundException $e) {
-			}
+		if ($participant instanceof Participant
+			|| $this->roomManager->isRoomListableByUser($room, $this->userId)) {
+			$description = $room->getDescription();
 		}
+
 
 		/**
 		 * If linking to a comment and the user is already a participant
