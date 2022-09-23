@@ -135,8 +135,8 @@ the main body of the message as well as a quote.
 				<NcPopover v-for="reaction in Object.keys(simpleReactions)"
 					:key="reaction"
 					:delay="200"
-					trigger="hover">
-					<NcButton v-if="simpleReactions[reaction]!== 0"
+					:triggers="['hover']">
+					<NcButton v-if="simpleReactions[reaction] !== 0"
 						slot="trigger"
 						:type="userHasReacted(reaction) ? 'primary' : 'secondary'"
 						class="reaction-button"
@@ -153,14 +153,16 @@ the main body of the message as well as a quote.
 					:per-line="5"
 					:container="`#message_${id}`"
 					@select="handleReactionClick">
-					<NcButton class="reaction-button">
+					<NcButton class="reaction-button"
+						:aria-label="t('spreed', 'Add more reactions')">
 						<template #icon>
 							<EmoticonOutline :size="15" />
 						</template>
 					</NcButton>
 				</NcEmojiPicker>
 				<NcButton v-else-if="canReact"
-					class="reaction-button">
+					class="reaction-button"
+					:aria-label="t('spreed', 'Add more reactions')">
 					<template #icon>
 						<EmoticonOutline :size="15" />
 					</template>
