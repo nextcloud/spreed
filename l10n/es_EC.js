@@ -40,7 +40,6 @@ OC.L10N.register(
     "Invalid file provided" : "Archivo proporcionado inválido",
     "Invalid image" : "Imagen inválida",
     "Unknown filetype" : "Tipo de archivo desconocido",
-    "An error occurred. Please contact your admin." : "Se presentó un error. Por favor contacta a tu adminsitrador. ",
     "{user} in {call}" : "{user} en {call}",
     "Deleted user in {call}" : "Usuario eliminado de {call}",
     "{guest} (guest) in {call}" : "{guest} (invitado) en {call}",
@@ -180,6 +179,7 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. ",
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS",
+    "An error occurred. Please contact your admin." : "Se presentó un error. Por favor contacta a tu adminsitrador. ",
     "Saved" : "Guardado",
     "Error while accessing camera: it is likely in use by another program" : "Error mientras se accedía a la cámara: parece estar siendo usada por otro programa",
     "Camera" : "Cámara"
