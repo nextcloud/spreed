@@ -82,7 +82,6 @@ OC.L10N.register(
     "Invalid file provided" : "Se proporcionó un archivo invalido",
     "Invalid image" : "Imagen inválida",
     "Unknown filetype" : "Tipo de archivo desconocido",
-    "An error occurred. Please contact your admin." : "Se presentó un error. Por favor contacta a tu adminsitrador. ",
     "%s invited you to a conversation." : "%s te invitó a una conversación",
     "You were invited to a conversation." : "fuiste invitado a una conversación",
     "Conversation invitation" : "invitación a una conversación",
@@ -223,6 +222,7 @@ OC.L10N.register(
     "%s Talk on your mobile devices" : "%s Habla en tus dispositivos móviles",
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS",
+    "An error occurred. Please contact your admin." : "Se presentó un error. Por favor contacta a tu adminsitrador. ",
     "Saved" : "Guardado"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -51,7 +51,6 @@ OC.L10N.register(
     "Invalid file provided" : "Invalid file provided",
     "Invalid image" : "Invalid image",
     "Unknown filetype" : "Unknown filetype",
-    "An error occurred. Please contact your admin." : "An error occurred. Please contact your admin.",
     "{user} mentioned you in a private conversation" : "{user} mentioned you in a private conversation",
     "{user} invited you to a private conversation" : "{user} invited you to a private conversation",
     "Join call" : "Join call",
@@ -430,6 +429,7 @@ OC.L10N.register(
     "%s Talk on your mobile devices" : "%s Talk on your mobile devices",
     "Android app" : "Android app",
     "iOS app" : "iOS app",
+    "An error occurred. Please contact your admin." : "An error occurred. Please contact your admin.",
     "Saved" : "Saved",
     "Camera" : "Camera"
 },

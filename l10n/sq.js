@@ -7,7 +7,6 @@ OC.L10N.register(
     "Invalid file provided" : "U dha kartelë e pavlefshme",
     "Invalid image" : "Figurë e pavlefshme",
     "Unknown filetype" : "Lloj i panjohur skedari",
-    "An error occurred. Please contact your admin." : "Ndodhi një gabim. Ju lutemi, lidhuni me përgjegjësin tuaj.",
     "Open settings" : "Hap rregullimet",
     "Conversations" : "Bisedat",
     "Andorra" : "Andorra",
@@ -249,6 +248,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Serveri TURN përdoret për të përcjellë trafikun nga pjesëmarrësit pas një firewalli.",
     "Android app" : "Aplikacion Android",
     "iOS app" : "Aplikacion iOS",
+    "An error occurred. Please contact your admin." : "Ndodhi një gabim. Ju lutemi, lidhuni me përgjegjësin tuaj.",
     "Saved" : "U ruajt",
     "Camera" : "Kamera"
 },

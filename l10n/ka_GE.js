@@ -17,7 +17,6 @@ OC.L10N.register(
     "Invalid file provided" : "არასწორი ფაილი",
     "Invalid image" : "არასწორი სურათი",
     "Unknown filetype" : "ამოუცნობი ფაილის ტიპი",
-    "An error occurred. Please contact your admin." : "წარმოიშვა შეცდომა. გთხოვთ დაუკავშირდეთ თქვენს ადმინისტრატორს.",
     "Join call" : "შეუერთდით ზარს",
     "A group call has started in {call}" : "ჯგუფური ზარი დაიწყო {call}-ში",
     "Open settings" : "პარამეტრების გახსნა",
@@ -133,6 +132,7 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "დიდი ინსტალაციებისთვის შესაძლებელია გარე სასიგნალო სერვერის გამოყენება. შიდა სიგნალის სერვერის გამოსაყენებლად დატოვეთ ცარიელი.",
     "Android app" : "Android აპლიკაცია",
     "iOS app" : "iOS აპლიკაცია",
+    "An error occurred. Please contact your admin." : "წარმოიშვა შეცდომა. გთხოვთ დაუკავშირდეთ თქვენს ადმინისტრატორს.",
     "Saved" : "დამახსოვრდა"
 },
 "nplurals=2; plural=(n!=1);");
