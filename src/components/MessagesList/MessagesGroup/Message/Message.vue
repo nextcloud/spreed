@@ -136,14 +136,13 @@ the main body of the message as well as a quote.
 					:key="reaction"
 					:delay="200"
 					:triggers="['hover']">
-					<template #trigger>
-						<NcButton v-if="simpleReactions[reaction] !== 0"
-							:type="userHasReacted(reaction) ? 'primary' : 'secondary'"
-							class="reaction-button"
-							@click="handleReactionClick(reaction)">
-							{{ reaction }} {{ simpleReactions[reaction] }}
-						</NcButton>
-					</template>
+					<NcButton v-if="simpleReactions[reaction] !== 0"
+						slot="trigger"
+						:type="userHasReacted(reaction) ? 'primary' : 'secondary'"
+						class="reaction-button"
+						@click="handleReactionClick(reaction)">
+						{{ reaction }} {{ simpleReactions[reaction] }}
+					</NcButton>
 					<div v-if="detailedReactions" class="reaction-details">
 						<span>{{ getReactionSummary(reaction) }}</span>
 					</div>
