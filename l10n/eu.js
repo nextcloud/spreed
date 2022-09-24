@@ -1026,6 +1026,7 @@ OC.L10N.register(
     "Submit vote" : "Bidali botoa",
     "End poll" : "Amaitu galdeketa",
     "Poll ・ You voted already" : "Galdeketa ・ Botoa dagoeneko eman duzu",
+    "You voted for this option" : "Aukera hau bozkatu duzu",
     "Change your vote" : "Aldatu zure botoa",
     "Poll ・ Click to vote" : "Galdeketa・ Egin klik botoa emateko",
     "Poll ・ Ended" : "Inkesta ・ Bukatuta",
