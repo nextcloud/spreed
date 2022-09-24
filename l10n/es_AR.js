@@ -19,6 +19,7 @@ OC.L10N.register(
     "User" : "Usuario",
     "Disabled" : "Deshabilitado",
     "Users" : "Ususarios",
+    "Beta" : "Beta",
     "Name" : "Nombre",
     "General settings" : "Configuraciones generales",
     "Off" : "Apagado",
