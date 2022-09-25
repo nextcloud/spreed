@@ -728,6 +728,7 @@ OC.L10N.register(
     "Blank" : "En blanc",
     "Invalid path selected" : "Camí seleccionat invàlid",
     "Settings" : "Paràmetres",
+    "Private poll" : "Enquesta privada",
     "Create poll" : "Crea enquesta",
     "moderator" : "moderador",
     "guest" : "convidat",
