@@ -214,6 +214,7 @@
                 "issues": "https://github.com/ChristophWurst/nextcloud_composer/issues",
                 "source": "https://github.com/ChristophWurst/nextcloud_composer/tree/stable24"
             },
+            "abandoned": "nextcloud/ocp",
             "time": "2022-08-23T02:31:47+00:00"
         },
         {
