@@ -42,7 +42,7 @@
 		"test": "cd tests/php/ && phpunit -c phpunit.xml"
 	},
 	"require-dev": {
-		"christophwurst/nextcloud": "dev-master",
+		"christophwurst/nextcloud": "dev-stable25",
 		"roave/security-advisories": "dev-latest"
 	},
 	"require": {
