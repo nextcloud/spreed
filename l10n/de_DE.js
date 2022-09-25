@@ -992,6 +992,7 @@ OC.L10N.register(
     "Select microphone" : "Mikrofon auswählen",
     "No camera available" : "Keine Kamera verfügbar",
     "Select camera" : "Kamera auswählen",
+    "Add more reactions" : "Weitere Reaktionen hinzufügen",
     "Unread messages" : "Ungelesene Nachrichten",
     "Sending message" : "Sende Nachricht",
     "Message sent" : "Nachricht gesendet",
