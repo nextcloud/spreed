@@ -133,12 +133,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "f3abf96743e08aab987088d192c663765712cf6b"
+                "reference": "f5ba6d163e242b7971adc3a7544075ac0a57f0fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/f3abf96743e08aab987088d192c663765712cf6b",
-                "reference": "f3abf96743e08aab987088d192c663765712cf6b",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/f5ba6d163e242b7971adc3a7544075ac0a57f0fd",
+                "reference": "f5ba6d163e242b7971adc3a7544075ac0a57f0fd",
                 "shasum": ""
             },
             "require": {
@@ -151,7 +151,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "25.0.0-dev"
+                    "dev-master": "26.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -169,7 +169,8 @@
                 "issues": "https://github.com/ChristophWurst/nextcloud_composer/issues",
                 "source": "https://github.com/ChristophWurst/nextcloud_composer/tree/master"
             },
-            "time": "2022-09-17T02:33:38+00:00"
+            "abandoned": "nextcloud/ocp",
+            "time": "2022-09-22T12:30:27+00:00"
         },
         {
             "name": "psr/container",
