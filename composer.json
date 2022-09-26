@@ -1,7 +1,7 @@
 {
 	"autoload-dev": {
 		"psr-4": {
-			"OCP\\": "vendor/christophwurst/nextcloud/OCP",
+			"OCP\\": "vendor/nextcloud/ocp/OCP",
 			"OCA\\Talk\\": "lib/"
 		}
 	},
@@ -10,6 +10,9 @@
 		"classmap-authoritative": true,
 		"platform": {
 			"php": "7.4"
+		},
+		"allow-plugins": {
+			"bamarni/composer-bin-plugin": true
 		}
 	},
 	"scripts": {
@@ -24,7 +27,7 @@
 	"require-dev": {
 		"nextcloud/coding-standard": "^1.0",
 		"vimeo/psalm": "^4.22",
-		"christophwurst/nextcloud": "dev-stable24",
-		"phpunit/phpunit": "^9.5"
+		"phpunit/phpunit": "^9.5",
+		"nextcloud/ocp": "dev-stable24"
 	}
 }
