@@ -6,7 +6,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"OCP\\": "vendor/christophwurst/nextcloud/OCP"
+			"OCP\\": "vendor/nextcloud/ocp/OCP"
 		}
 	},
 	"config": {
@@ -42,7 +42,7 @@
 		"test": "cd tests/php/ && phpunit -c phpunit.xml"
 	},
 	"require-dev": {
-		"christophwurst/nextcloud": "dev-master",
+		"nextcloud/ocp": "dev-master",
 		"roave/security-advisories": "dev-latest"
 	},
 	"require": {
