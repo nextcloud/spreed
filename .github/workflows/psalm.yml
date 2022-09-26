@@ -5,20 +5,17 @@ on:
   push:
     branches:
       - master
+      - main
       - stable*
 
 jobs:
-  static-psalm-analysis:
+  static-analysis:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        ocp-version: [ 'dev-stable23' ]
 
     name: Nextcloud ${{ matrix.ocp-version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
 
       - name: Set up php
         uses: shivammathur/setup-php@v2
@@ -28,9 +25,6 @@ jobs:
 
       - name: Install dependencies
         run: composer i
-
-      - name: Install dependencies
-        run: composer require --dev christophwurst/nextcloud:${{ matrix.ocp-version }}
 
       - name: Run coding standards check
         run: composer run psalm
