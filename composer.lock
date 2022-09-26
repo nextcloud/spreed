@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1cebffe742b2f87901c37364833a0b97",
+    "content-hash": "fb2a33a6df7a1cded38bd9a87e29093a",
     "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
@@ -128,16 +128,16 @@
     ],
     "packages-dev": [
         {
-            "name": "christophwurst/nextcloud",
+            "name": "nextcloud/ocp",
             "version": "dev-stable25",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
+                "url": "https://github.com/nextcloud-deps/ocp.git",
                 "reference": "f79ac43d0422211b35542856338d808bc94a116b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/f79ac43d0422211b35542856338d808bc94a116b",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/f79ac43d0422211b35542856338d808bc94a116b",
                 "reference": "f79ac43d0422211b35542856338d808bc94a116b",
                 "shasum": ""
             },
@@ -165,10 +165,8 @@
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
             "support": {
-                "issues": "https://github.com/ChristophWurst/nextcloud_composer/issues",
-                "source": "https://github.com/ChristophWurst/nextcloud_composer/tree/stable25"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/stable25"
             },
-            "abandoned": "nextcloud/ocp",
             "time": "2022-09-22T12:39:39+00:00"
         },
         {
@@ -838,7 +836,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "christophwurst/nextcloud": 20,
+        "nextcloud/ocp": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,
