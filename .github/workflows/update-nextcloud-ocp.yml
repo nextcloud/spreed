@@ -3,7 +3,7 @@
 # https://github.com/nextcloud/.github
 # https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
 
-name: Update christophwurst/nextcloud
+name: Update nextcloud/ocp
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ on:
     - cron: "5 4 * * 0"
 
 jobs:
-  update-christophwurst-nextcloud:
+  update-nextcloud-ocp:
     runs-on: ubuntu-latest
 
     strategy:
@@ -19,7 +19,7 @@ jobs:
       matrix:
         branches: ["master", "stable25", "stable24", "stable23"]
 
-    name: update-christophwurst-nextcloud-${{ matrix.branches }}
+    name: update-nextcloud-ocp-${{ matrix.branches }}
 
     steps:
       - uses: actions/checkout@v3
@@ -37,8 +37,8 @@ jobs:
       - name: Composer install
         run: composer install
 
-      - name: Composer update christophwurst/nextcloud
-        run: composer require --dev christophwurst/nextcloud:dev-${{ matrix.branches }}
+      - name: Composer update nextcloud/ocp
+        run: composer require --dev nextcloud/ocp:dev-${{ matrix.branches }}
         continue-on-error: true
 
       - name: Reset checkout dirs
@@ -56,10 +56,10 @@ jobs:
           committer: GitHub <noreply@github.com>
           author: nextcloud-command <nextcloud-command@users.noreply.github.com>
           signoff: true
-          branch: automated/noid/${{ matrix.branches }}-update-christophwurst-nextcloud
-          title: "[${{ matrix.branches }}] Update christophwurst/nextcloud dependency"
+          branch: automated/noid/${{ matrix.branches }}-update-nextcloud-ocp
+          title: "[${{ matrix.branches }}] Update nextcloud/ocp dependency"
           body: |
-            Auto-generated update of [christophwurst/nextcloud](https://github.com/ChristophWurst/nextcloud_composer/) dependency
+            Auto-generated update of [nextcloud/ocp](https://github.com/nextcloud-deps/ocp/) dependency
           labels: |
             dependencies
             3. to review
