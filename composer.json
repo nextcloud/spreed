@@ -1,7 +1,7 @@
 {
 	"autoload-dev": {
 		"psr-4": {
-			"OCP\\": "vendor/christophwurst/nextcloud/OCP",
+			"OCP\\": "vendor/nextcloud/ocp/OCP",
 			"OCA\\Talk\\": "lib/"
 		}
 	},
@@ -25,6 +25,6 @@
 		"phpunit/phpunit": "^8.5",
 		"nextcloud/coding-standard": "^0.4.0",
 		"vimeo/psalm": "^4.10",
-		"christophwurst/nextcloud": "dev-stable23"
+		"nextcloud/ocp": "dev-stable23"
 	}
 }
