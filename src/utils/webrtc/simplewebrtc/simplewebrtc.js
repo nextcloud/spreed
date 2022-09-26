@@ -167,12 +167,26 @@ function SimpleWebRTC(opts) {
 
 	connection.on('stunservers', function(args) {
 		// resets/overrides the config
-		self.webrtc.config.peerConnectionConfig.iceServers = args
+		// Only items with non-empty urls may occur in iceServers according to WebRTC spec.
+		var stunServers = []
+		for (const stunServer of args) {
+			if (stunServer.urls && stunServer.urls.length) {
+				stunServers.push(stunServer)
+			}
+		}
+		self.webrtc.config.peerConnectionConfig.iceServers = stunServers
 		self.emit('stunservers', args)
 	})
 	connection.on('turnservers', function(args) {
 		// appends to the config
-		self.webrtc.config.peerConnectionConfig.iceServers = self.webrtc.config.peerConnectionConfig.iceServers.concat(args)
+		// Only items with non-empty urls may occur in iceServers according to WebRTC spec.
+		var turnServers = []
+		for (const turnServer of args) {
+			if (turnServer.urls && turnServer.urls.length) {
+				turnServers.push(turnServer)
+			}
+		}
+		self.webrtc.config.peerConnectionConfig.iceServers = self.webrtc.config.peerConnectionConfig.iceServers.concat(turnServers)
 		self.emit('turnservers', args)
 	})
 

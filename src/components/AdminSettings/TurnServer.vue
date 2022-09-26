@@ -1,5 +1,6 @@
 <!--
  - @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ - @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
  -
  - @author Joas Schilling <coding@schilljs.com>
  -
@@ -234,11 +235,19 @@ export default {
 			}
 
 			// Create a PeerConnection with no streams, but force a m=audio line.
-			const config = {
-				iceServers: [
-					iceServer,
-				],
-				iceTransportPolicy: 'relay',
+			// Only items with non-empty urls may occur in iceServers according to WebRTC spec.
+			if (urls.length) {
+				const config = {
+					iceServers: [
+						iceServer,
+					],
+					iceTransportPolicy: 'relay',
+				}
+			} else {
+				const config = {
+					iceServers: [],
+					iceTransportPolicy: 'relay',
+				}
 			}
 			const offerOptions = {
 				offerToReceiveAudio: 1,
