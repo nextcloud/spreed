@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f7336054efaa2c0b48dee7a11d99f644",
+    "content-hash": "d4912fe23802cd529cc22d3dc3829261",
     "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
@@ -128,17 +128,17 @@
     ],
     "packages-dev": [
         {
-            "name": "christophwurst/nextcloud",
+            "name": "nextcloud/ocp",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "f5ba6d163e242b7971adc3a7544075ac0a57f0fd"
+                "url": "https://github.com/nextcloud-deps/ocp.git",
+                "reference": "35711a5c821cc9589d58efa0ded87ae948ab71ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/f5ba6d163e242b7971adc3a7544075ac0a57f0fd",
-                "reference": "f5ba6d163e242b7971adc3a7544075ac0a57f0fd",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/35711a5c821cc9589d58efa0ded87ae948ab71ed",
+                "reference": "35711a5c821cc9589d58efa0ded87ae948ab71ed",
                 "shasum": ""
             },
             "require": {
@@ -166,11 +166,9 @@
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
             "support": {
-                "issues": "https://github.com/ChristophWurst/nextcloud_composer/issues",
-                "source": "https://github.com/ChristophWurst/nextcloud_composer/tree/master"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/master"
             },
-            "abandoned": "nextcloud/ocp",
-            "time": "2022-09-22T12:30:27+00:00"
+            "time": "2022-09-22T12:49:25+00:00"
         },
         {
             "name": "psr/container",
@@ -839,7 +837,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "christophwurst/nextcloud": 20,
+        "nextcloud/ocp": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,
