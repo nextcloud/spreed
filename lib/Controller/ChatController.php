@@ -523,7 +523,7 @@ class ChatController extends AEnvironmentAwareController {
 					}
 
 					$loadedParents[$parentId] = [
-						'id' => $parentId,
+						'id' => (int) $parentId,
 						'deleted' => true,
 					];
 				} catch (NotFoundException $e) {
@@ -532,7 +532,7 @@ class ChatController extends AEnvironmentAwareController {
 
 			// Message is not visible to the user
 			$messages[$commentKey]['parent'] = [
-				'id' => $parentId,
+				'id' => (int) $parentId,
 				'deleted' => true,
 			];
 		}
