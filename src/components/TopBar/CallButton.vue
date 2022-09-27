@@ -49,11 +49,11 @@
 			{{ leaveCallLabel }}
 		</NcButton>
 		<NcActions v-else-if="showLeaveCallButton && canEndForAll"
-			:disabled="loading">
+			:disabled="loading"
+			:menu-title="leaveCallCombinedLabel"
+			type="error">
 			<template #icon>
-				<VideoOff :size="16" />
-				<span class="label">{{ leaveCallLabel }}</span>
-				<MenuDown :size="16" />
+				<VideoOff :size="20" />
 			</template>
 			<NcActionButton @click="leaveCall(false)">
 				<template #icon>
@@ -85,7 +85,6 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
-import MenuDown from 'vue-material-design-icons/MenuDown.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
@@ -100,7 +99,6 @@ export default {
 		NcActionButton,
 		VideoIcon,
 		VideoOff,
-		MenuDown,
 		NcButton,
 	},
 
@@ -179,6 +177,10 @@ export default {
 
 		leaveCallLabel() {
 			return t('spreed', 'Leave call')
+		},
+
+		leaveCallCombinedLabel() {
+			return this.leaveCallLabel + ' ▼'
 		},
 
 		startCallLabel() {
@@ -307,37 +309,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.success {
-	color: white;
-	background-color: var(--color-success);
-	border: 1px solid var(--color-success);
-
-	&:hover,
-	&:focus,
-	&:active {
-		border: 1px solid var(--color-success) !important;
-	}
-}
-
 #call_button {
 	margin: 0 auto;
-}
-
-/* HACK: to override the default action button styles to make it look like a regular button */
-::v-deep .trigger > button {
-	&,
-	&:hover,
-	&:focus,
-	&:active {
-		color: white;
-		background-color: var(--color-error) !important;
-		border: 1px solid var(--color-error) !important;
-		padding: 0 16px;
-		opacity: 1;
-	}
-
-	& > .label {
-		margin: 0 8px;
-	}
 }
 </style>
