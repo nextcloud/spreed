@@ -336,6 +336,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['callFlag'])) {
 				$data['callFlag'] = (int) $room['callFlag'];
 			}
+			if (isset($expectedRoom['lobbyState'])) {
+				$data['lobbyState'] = (int) $room['lobbyState'];
+			}
 			if (isset($expectedRoom['attendeePin'])) {
 				$data['attendeePin'] = $room['attendeePin'] ? '**PIN**' : '';
 			}
@@ -1131,6 +1134,33 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest(
 			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/webinar/lobby',
 			new TableNode([['state', $lobbyState]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" sets lobby state for room "([^"]*)" to "([^"]*)" for (\d+) seconds with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $lobbyStateString
+	 * @param int $lobbyTimer
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSetsLobbyStateAndTimerForRoom(string $user, string $identifier, string $lobbyStateString, int $lobbyTimer, int $statusCode, string $apiVersion): void {
+		if ($lobbyStateString === 'no lobby') {
+			$lobbyState = 0;
+		} elseif ($lobbyStateString === 'non moderators') {
+			$lobbyState = 1;
+		} else {
+			Assert::fail('Invalid lobby state');
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/webinar/lobby',
+			new TableNode([['state', $lobbyState], ['timer', time() + $lobbyTimer]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
@@ -2662,7 +2692,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When wait for :seconds seconds?
+	 * @When wait for :seconds second
+	 */
+	public function waitForXSecond($seconds): void {
+		sleep($seconds);
+	}
+
+	/**
+	 * @When wait for :seconds seconds
 	 */
 	public function waitForXSeconds($seconds): void {
 		sleep($seconds);
