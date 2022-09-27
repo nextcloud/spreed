@@ -126,6 +126,9 @@ export default {
 // Override vue overflow rules for <ul> elements within app-navigation
 .conversations {
 	overflow: visible !important;
-	margin-top: 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 0 !important;
 }
 </style>

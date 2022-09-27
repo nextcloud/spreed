@@ -511,7 +511,7 @@ export default {
 
 @import '../../assets/variables';
 .scroller {
-	padding: 0 4px 0 6px;
+	padding: 0 !important;
 }
 
 .new-conversation {
