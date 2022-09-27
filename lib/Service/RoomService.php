@@ -279,7 +279,7 @@ class RoomService {
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function setLobby(Room $room, int $newState, ?\DateTime $dateTime, bool $timerReached = false): bool {
-		$oldState = $room->getLobbyState();
+		$oldState = $room->getLobbyState(false);
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
 			return false;
