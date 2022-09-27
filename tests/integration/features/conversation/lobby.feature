@@ -249,3 +249,22 @@ Feature: conversation/lobby
     And user "guest2" is participant of room "room" (v4)
       | name | description     | type | participantType | lastMessage |
       | room | the description | 3    | 4               |             |
+
+
+  # Not all the values are checked in the test, only the most relevant ones
+  Scenario: Make sure resetting the lobby timer works on the room list
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    Then user "participant1" is participant of room "room" (v4)
+      | name | lobbyState |
+      | room | 0          |
+    When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
+    Then user "participant1" is participant of room "room" (v4)
+      | name | lobbyState |
+      | room | 1          |
+    When user "participant1" sets lobby state for room "room" to "non moderators" for 5 seconds with 200 (v4)
+    When wait for 10 second
+    Then user "participant1" is participant of room "room" (v4)
+      | name | lobbyState |
+      | room | 0          |
