@@ -742,4 +742,26 @@ class ChatManagerTest extends TestCase {
 		$actual = $this->chatManager->addConversationNotify([], $search, $room, $participant);
 		$this->assertEquals($expected, $actual);
 	}
+
+	/**
+	 * @dataProvider dataIsSharedFile
+	 */
+	public function testIsSharedFile(string $message, bool $expected): void {
+		$actual = $this->chatManager->isSharedFile($message);
+		$this->assertEquals($expected, $actual);
+	}
+
+	public function dataIsSharedFile(): array {
+		return [
+			['', false],
+			[json_encode([]), false],
+			[json_encode(['parameters' => '']), false],
+			[json_encode(['parameters' => []]), false],
+			[json_encode(['parameters' => ['share' => null]]), false],
+			[json_encode(['parameters' => ['share' => '']]), false],
+			[json_encode(['parameters' => ['share' => []]]), false],
+			[json_encode(['parameters' => ['share' => 0]]), false],
+			[json_encode(['parameters' => ['share' => 1]]), true],
+		];
+	}
 }

@@ -37,7 +37,6 @@ use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\IUserManager;
-use OCP\Share\Exceptions\ShareNotFound;
 
 /**
  * Helper class to get a rich message from a plain text message.
