@@ -119,7 +119,7 @@ class MessageParser {
 
 	protected function getParametersFromMessage(string $message): array {
 		$data = json_decode($message, true);
-		if (!\is_array($data)) {
+		if (!\is_array($data) || !array_key_exists('parameters', $data) || !is_array($data['parameters'])) {
 			return [];
 		}
 		return $data['parameters'];
@@ -127,9 +127,6 @@ class MessageParser {
 
 	public function fileOfMessageExists(string $message): bool {
 		$parameters = $this->getParametersFromMessage($message);
-		if (empty($parameters['share'])) {
-			return false;
-		}
 		try {
 			$this->shareProvider->getShareById($parameters['share']);
 		} catch (ShareNotFound $e) {
