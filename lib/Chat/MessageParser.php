@@ -117,7 +117,7 @@ class MessageParser {
 		return !empty($parameters['share']);
 	}
 
-	private function getParametersFromMessage(string $message): array {
+	protected function getParametersFromMessage(string $message): array {
 		$data = json_decode($message, true);
 		if (!\is_array($data)) {
 			return [];
