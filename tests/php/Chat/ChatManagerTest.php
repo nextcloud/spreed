@@ -764,4 +764,36 @@ class ChatManagerTest extends TestCase {
 			[json_encode(['parameters' => ['share' => 1]]), true],
 		];
 	}
+
+	/**
+	 * @dataProvider dataRemoveFileNotExists
+	 */
+	public function testRemoveFileNotExists(array $list, int $expectedCount): void {
+		// Transform text messages in instance of comment and mock with the message
+		foreach ($list as $key => $message) {
+			$list[$key] = $this->createMock(IComment::class);
+			$list[$key]->method('getMessage')
+				->willReturn($message);
+			$messageDecoded = json_decode($message, true);
+			if (isset($messageDecoded['parameters']['share']) && $messageDecoded['parameters']['share'] === 'notExists') {
+				$this->shareProvider->expects($this->once())
+					->method('getShareById')
+					->with('notExists')
+					->willThrowException(new ShareNotFound());
+			}
+		}
+		if (count($list) !== $expectedCount) {
+		}
+		$result = $this->chatManager->removeFileNotExists($list);
+		$this->assertCount($expectedCount, $result);
+	}
+
+	public function dataRemoveFileNotExists(): array {
+		return [
+			[[], 0],
+			[[json_encode(['parameters' => ['not a shared file']])], 1],
+			[[json_encode(['parameters' => ['share' => 'notExists']])], 0],
+			[[json_encode(['parameters' => ['share' => 1]])], 1],
+		];
+	}
 }

@@ -814,10 +814,10 @@ class ChatManager {
 		return array_filter($comments, function (IComment $comment) {
 			if ($this->isSharedFile($comment->getMessage())) {
 				if (!$this->fileOfMessageExists($comment->getMessage())) {
-					return true;
+					return false;
 				}
 			}
-			return false;
+			return true;
 		});
 	}
 }
