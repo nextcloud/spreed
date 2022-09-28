@@ -255,19 +255,13 @@ class TalkReferenceProvider implements IReferenceProvider {
 
 	protected function getRoomIconUrl(Room $room, string $userId): string {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
-			$participants = json_decode($room->getName(), true);
-
-			foreach ($participants as $p) {
-				if ($p !== $userId) {
-					return $this->urlGenerator->linkToRouteAbsolute(
-						'core.avatar.getAvatar',
-						[
-							'userId' => $p,
-							'size' => 64,
-						]
-					);
-				}
-			}
+			return $this->urlGenerator->linkToRouteAbsolute(
+				'core.avatar.getAvatar',
+				[
+					'userId' => $room->getSecondParticipant($userId),
+					'size' => 64,
+				]
+			);
 		}
 
 		return $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'changelog.svg'));
