@@ -111,27 +111,4 @@ class MessageParser {
 			$displayName
 		);
 	}
-
-	public function isSharedFile(string $message): bool {
-		$parameters = $this->getParametersFromMessage($message);
-		return !empty($parameters['share']);
-	}
-
-	protected function getParametersFromMessage(string $message): array {
-		$data = json_decode($message, true);
-		if (!\is_array($data) || !array_key_exists('parameters', $data) || !is_array($data['parameters'])) {
-			return [];
-		}
-		return $data['parameters'];
-	}
-
-	public function fileOfMessageExists(string $message): bool {
-		$parameters = $this->getParametersFromMessage($message);
-		try {
-			$this->shareProvider->getShareById($parameters['share']);
-		} catch (ShareNotFound $e) {
-			return false;
-		}
-		return true;
-	}
 }

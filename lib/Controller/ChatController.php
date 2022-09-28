@@ -790,7 +790,7 @@ class ChatController extends AEnvironmentAwareController {
 		$comments = $this->chatManager->getMessagesById($this->room, array_merge(...array_values($messageIdsByType)));
 		$this->preloadShares($comments);
 
-		$comments = $this->removeFileNotExists($comments);
+		$comments = $this->chatManager->removeFileNotExists($comments);
 		foreach ($comments as $comment) {
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
@@ -848,7 +848,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->preloadShares($comments);
 
 		$messages = [];
-		$comments = $this->removeFileNotExists($comments);
+		$comments = $this->chatManager->removeFileNotExists($comments);
 		foreach ($comments as $comment) {
 			$message = $this->messageParser->createMessage($room, $this->participant, $comment, $this->l);
 
@@ -862,24 +862,6 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		return $messages;
-	}
-
-	/**
-	 * When receive a list of comments, filter the comments,
-	 * removing all that have shares of file that no more exists
-	 *
-	 * @param IComment[] $comments
-	 * @return IComment[]
-	 */
-	protected function removeFileNotExists(array $comments): array {
-		return array_filter($comments, function (IComment $comment) {
-			if ($this->messageParser->isSharedFile($comment->getMessage())) {
-				if (!$this->messageParser->fileOfMessageExists($comment->getMessage())) {
-					return true;
-				}
-			}
-			return false;
-		});
 	}
 
 	/**
