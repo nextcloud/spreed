@@ -783,14 +783,38 @@ class ChatController extends AEnvironmentAwareController {
 
 		$messages = [];
 		$messageIdsByType = [];
+		// Get all attachments
 		foreach ($objectTypes as $objectType) {
 			$attachments = $this->attachmentService->getAttachmentsByType($this->room, $objectType, 0, $limit);
 			$messageIdsByType[$objectType] = array_map(static fn (Attachment $attachment): int => $attachment->getMessageId(), $attachments);
 		}
-		$comments = $this->chatManager->getMessagesById($this->room, array_merge(...array_values($messageIdsByType)));
+
+		$messages = $this->getFilteredMessages(array_merge(...array_values($messageIdsByType)));
+
+		$messagesByType = [];
+		// Group the messages again using the filtered comments
+		foreach ($objectTypes as $objectType) {
+			$messagesByType[$objectType] = [];
+
+			foreach ($messageIdsByType[$objectType] as $messageId) {
+				if (isset($messages[$messageId])) {
+					$messagesByType[$objectType][] = $messages[$messageId];
+				}
+			}
+		}
+
+		return new DataResponse($messagesByType, Http::STATUS_OK);
+	}
+
+	private function getFilteredMessages($messagesIds): array {
+		// Get all comments associated to attachments
+		$comments = $this->chatManager->getMessagesById($this->room, $messagesIds);
 		$this->preloadShares($comments);
 
-		$comments = $this->chatManager->removeFileNotExists($comments);
+		$messages = $this->chatManager->removeFileNotExists($comments);
+
+		// Filter only visible message
+		// and create an array with messageId as key
 		foreach ($comments as $comment) {
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
@@ -801,17 +825,7 @@ class ChatController extends AEnvironmentAwareController {
 
 			$messages[(int) $comment->getId()] = $message->toArray($this->getResponseFormat());
 		}
-
-		$messagesByType = [];
-		foreach ($objectTypes as $objectType) {
-			$messagesByType[$objectType] = [];
-
-			foreach ($messageIdsByType[$objectType] as $messageId) {
-				$messagesByType[$objectType][] = $messages[$messageId];
-			}
-		}
-
-		return new DataResponse($messagesByType, Http::STATUS_OK);
+		return $messages;
 	}
 
 	/**
