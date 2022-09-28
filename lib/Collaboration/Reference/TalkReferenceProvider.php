@@ -74,7 +74,7 @@ class TalkReferenceProvider implements IReferenceProvider {
 	 * @return array|null
 	 * @psalm-return ReferenceMatch|null
 	 */
-	private function getTalkAppLinkToken(string $referenceText): ?array {
+	protected function getTalkAppLinkToken(string $referenceText): ?array {
 		$indexPhpUrl = $this->urlGenerator->getAbsoluteURL('/index.php/call/');
 		$rewriteUrl = $this->urlGenerator->getAbsoluteURL('/call/');
 
@@ -109,7 +109,7 @@ class TalkReferenceProvider implements IReferenceProvider {
 		if ($hashPosition !== false) {
 			$afterHash = substr($urlOfInterest, $hashPosition + 1);
 			if (preg_match('/^message_(\d+)$/', $afterHash, $matches)) {
-				$messageId = $matches[1];
+				$messageId = (int) $matches[1];
 			}
 		}
 
@@ -140,7 +140,7 @@ class TalkReferenceProvider implements IReferenceProvider {
 	/**
 	 * @throws RoomNotFoundException
 	 */
-	private function fetchReference(Reference $reference): void {
+	protected function fetchReference(Reference $reference): void {
 		if ($this->userId === null) {
 			throw new RoomNotFoundException();
 		}
