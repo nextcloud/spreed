@@ -83,7 +83,9 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<command>OCA\Talk\Command\Command\Delete</command>
 		<command>OCA\Talk\Command\Command\ListCommand</command>
 		<command>OCA\Talk\Command\Command\Update</command>
+		<command>OCA\Talk\Command\Monitor\Calls</command>
 		<command>OCA\Talk\Command\Monitor\HasActiveCalls</command>
+		<command>OCA\Talk\Command\Monitor\Room</command>
 		<command>OCA\Talk\Command\Stun\Add</command>
 		<command>OCA\Talk\Command\Stun\Delete</command>
 		<command>OCA\Talk\Command\Stun\ListCommand</command>

@@ -158,6 +158,23 @@ trait CommandLineTrait {
 	}
 
 	/**
+	 * @Then /^the command output contains the list entry '([^']*)' with value '([^']*)'$/
+	 */
+	public function theCommandOutputContainsTheListEntry(string $key, string $value): void {
+		if (preg_match('/^"ROOM\(([^"]+)\)"$/', $key, $matches)) {
+			$key = '"' . self::$identifierToToken[$matches[1]] . '"';
+		}
+		$text = '- ' . $key . ': ' . $value;
+
+		if ($this->lastStdOut === '' && $this->lastStdErr !== '') {
+			Assert::assertStringContainsString($text, $this->lastStdErr, 'The command did not output the expected text on stdout');
+			Assert::assertTrue(false, 'The command did not output the expected text on stdout but stderr');
+		}
+
+		Assert::assertStringContainsString($text, $this->lastStdOut, 'The command did not output the expected text on stdout');
+	}
+
+	/**
 	 * @Then /^the command error output contains the text "([^"]*)"$/
 	 */
 	public function theCommandErrorOutputContainsTheText($text) {
