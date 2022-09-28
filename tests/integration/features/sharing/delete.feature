@@ -367,4 +367,5 @@ Feature: delete
     And user "participant1" sees the following shared overview in room "public room" with 200
     And user "participant1" sees the following system messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | systemMessage |
+      | public room | users     | participant1 | participant1-displayname | file_shared          |
       | public room | users     | participant1 | participant1-displayname | conversation_created |
