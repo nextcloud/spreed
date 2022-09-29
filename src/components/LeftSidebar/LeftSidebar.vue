@@ -547,4 +547,12 @@ export default {
 .settings-button {
 	justify-content: flex-start !important;
 }
+
+::v-deep .app-navigation ul {
+	padding: 0 !important;
+}
+
+::v-deep .app-navigation__list {
+	padding: 0 !important;
+}
 </style>
