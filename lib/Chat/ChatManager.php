@@ -38,6 +38,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Collaboration\Reference\IReferenceManager;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
@@ -86,7 +87,6 @@ class ChatManager {
 	private IDBConnection $connection;
 	private INotificationManager $notificationManager;
 	private IManager $shareManager;
-	private Manager $manager;
 	private RoomShareProvider $shareProvider;
 	private ParticipantService $participantService;
 	private PollService $pollService;
@@ -95,26 +95,26 @@ class ChatManager {
 	protected ICache $cache;
 	protected ICache $unreadCountCache;
 	protected AttachmentService $attachmentService;
+	protected IReferenceManager $referenceManager;
 
 	public function __construct(CommentsManager $commentsManager,
 								IEventDispatcher $dispatcher,
 								IDBConnection $connection,
 								INotificationManager $notificationManager,
 								IManager $shareManager,
-								Manager $manager,
 								RoomShareProvider $shareProvider,
 								ParticipantService $participantService,
 								PollService $pollService,
 								Notifier $notifier,
 								ICacheFactory $cacheFactory,
 								ITimeFactory $timeFactory,
-								AttachmentService $attachmentService) {
+								AttachmentService $attachmentService,
+								IReferenceManager $referenceManager) {
 		$this->commentsManager = $commentsManager;
 		$this->dispatcher = $dispatcher;
 		$this->connection = $connection;
 		$this->notificationManager = $notificationManager;
 		$this->shareManager = $shareManager;
-		$this->manager = $manager;
 		$this->shareProvider = $shareProvider;
 		$this->participantService = $participantService;
 		$this->pollService = $pollService;
@@ -123,6 +123,7 @@ class ChatManager {
 		$this->unreadCountCache = $cacheFactory->createDistributed('talk/unreadcount');
 		$this->timeFactory = $timeFactory;
 		$this->attachmentService = $attachmentService;
+		$this->referenceManager = $referenceManager;
 	}
 
 	/**
@@ -377,6 +378,8 @@ class ChatManager {
 		$this->commentsManager->save($comment);
 
 		$this->attachmentService->deleteAttachmentByMessageId((int) $comment->getId());
+
+		$this->referenceManager->invalidateCache($chat->getToken());
 
 		return $this->addSystemMessage(
 			$chat,
