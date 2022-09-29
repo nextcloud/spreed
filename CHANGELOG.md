@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.0-rc.2 – 2022-09-29
+### Added
+- Commands to monitor calls and a single room
+- Add a reference provider for call links
+
+### Fixed
+- Reaction summary missing when hovering a chat message
+- Fix recursion when the lobby of a conversation expired
+- Fix missing "Leave call" button for moderators in restricted rooms
+- Fix padding in the left sidebar
+- Bump @nextcloud/vue and @nextcloud/vue-richtext
+
 ## 15.0.0-rc.1 – 2022-09-22
 ### Added
 - Implement the new dashboard widget modes
