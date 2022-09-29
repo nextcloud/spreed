@@ -1,4 +1,4 @@
-Feature: create
+Feature: command/active-calls
 
   Background:
     Given user "participant1" exists
