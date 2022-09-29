@@ -40,7 +40,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 
 /**
- * @psalm-type ReferenceMatch = array{token: string, message: ?int}
+ * @psalm-type ReferenceMatch = array{token: string, message: int|null}
  */
 class TalkReferenceProvider implements IReferenceProvider {
 	protected IURLGenerator $urlGenerator;
@@ -79,9 +79,9 @@ class TalkReferenceProvider implements IReferenceProvider {
 		$rewriteUrl = $this->urlGenerator->getAbsoluteURL('/call/');
 
 		if (str_starts_with($referenceText, $indexPhpUrl)) {
-			$urlOfInterest = substr($referenceText, strlen($indexPhpUrl)) ?: null;
+			$urlOfInterest = substr($referenceText, strlen($indexPhpUrl));
 		} elseif (str_starts_with($referenceText, $rewriteUrl)) {
-			$urlOfInterest = substr($referenceText, strlen($rewriteUrl)) ?: null;
+			$urlOfInterest = substr($referenceText, strlen($rewriteUrl));
 		} else {
 			return null;
 		}
@@ -178,7 +178,7 @@ class TalkReferenceProvider implements IReferenceProvider {
 		 * Description is the plain text chat message
 		 */
 		if ($participant && !empty($referenceMatch['message'])) {
-			$comment = $this->chatManager->getComment($room, $referenceMatch['message']);
+			$comment = $this->chatManager->getComment($room, (string) $referenceMatch['message']);
 			$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
 
