@@ -603,7 +603,7 @@ OC.L10N.register(
     "URL of this Nextcloud instance" : "URL de cette instance Nextcloud",
     "Full name of the user requesting the trial" : "Nom complet de l'utilisateur qui demande la période d'essai",
     "Name of the user requesting the trial" : "Nom de l'utilisateur qui demande la période d'essai",
-    "Email of the user" : "Courriel de l'utilisateur",
+    "Email of the user" : "E-mail de l'utilisateur",
     "Language" : "Langue",
     "Country" : "Pays",
     "Request signaling server trial" : "Demande de période d'essai pour un serveur de signalement",
