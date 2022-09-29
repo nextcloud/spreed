@@ -30,7 +30,10 @@ components.
 		:class="{'quote-own-message': isOwnMessageQuoted}"
 		@click.prevent="handleQuoteClick">
 		<div class="quote__main">
-			<div class="quote__main__author" role="heading" aria-level="4">
+			<div v-if="id"
+				class="quote__main__author"
+				role="heading"
+				aria-level="4">
 				{{ getDisplayName }}
 			</div>
 			<div v-if="isFileShareMessage"
@@ -74,49 +77,49 @@ export default {
 	props: {
 		actorId: {
 			type: String,
-			required: true,
+			default: '',
 		},
 		/**
 		 * The sender of the message to be replied to.
 		 */
 		actorType: {
 			type: String,
-			required: true,
+			default: '',
 		},
 		/**
 		 * The display name of the sender of the message.
 		 */
 		actorDisplayName: {
 			type: String,
-			required: true,
+			default: '',
 		},
 		/**
 		 * The text of the message to be replied to.
 		 */
 		message: {
 			type: String,
-			required: true,
+			default: '',
 		},
 		/**
 		 * The text of the message to be replied to.
 		 */
 		messageParameters: {
 			type: [Array, Object],
-			required: true,
+			default: () => { return {} },
 		},
 		/**
 		 * The message id of the message to be replied to.
 		 */
 		id: {
 			type: Number,
-			required: true,
+			default: 0,
 		},
 		/**
 		 * The conversation token of the message to be replied to.
 		 */
 		token: {
 			type: String,
-			required: true,
+			default: '',
 		},
 		/**
 		 * If the quote component is used in the `NewMessageForm` component we display
@@ -194,6 +197,10 @@ export default {
 		 * @return {string} A simple message to show below the conversation name
 		 */
 		simpleQuotedMessage() {
+			if (!this.id) {
+				return t('spreed', 'The message has expired or has been deleted')
+			}
+
 			if (!Object.keys(this.messageParameters).length) {
 				return this.message
 			}
