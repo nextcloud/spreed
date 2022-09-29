@@ -39,14 +39,15 @@
 					@scroll="debounceHandleScroll">
 					<NcAppNavigationCaption :class="{'hidden-visually': !isSearching}"
 						:title="t('spreed', 'Conversations')" />
-					<li role="presentation">
-						<ConversationsList ref="conversationsList"
-							:conversations-list="conversationsList"
-							:initialised-conversations="initialisedConversations"
-							:search-text="searchText"
-							@click-search-result="handleClickSearchResult"
-							@focus="setFocusedIndex" />
-					</li>
+					<Conversation v-for="item of conversationsList"
+						:key="item.id"
+						:item="item"
+						@click="handleClickSearchResult(item)" />
+					<template v-if="!initialisedConversations">
+						<LoadingPlaceholder type="conversations" />
+					</template>
+					<Hint v-else-if="searchText && !conversationsList.length"
+						:hint="t('spreed', 'No matches')" />
 					<template v-if="isSearching">
 						<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
 							<NcAppNavigationCaption :title="t('spreed', 'Open conversations')" />
@@ -118,7 +119,6 @@
 import CancelableRequest from '../../utils/cancelableRequest.js'
 import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
-import ConversationsList from './ConversationsList/ConversationsList.vue'
 import Conversation from './ConversationsList/Conversation.vue'
 import ConversationsOptionsList from '../ConversationsOptionsList.vue'
 import Hint from '../Hint.vue'
@@ -136,6 +136,7 @@ import NewGroupConversation from './NewGroupConversation/NewGroupConversation.vu
 import arrowNavigation from '../../mixins/arrowNavigation.js'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
+import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 
 export default {
 
@@ -144,13 +145,13 @@ export default {
 	components: {
 		NcAppNavigation,
 		NcAppNavigationCaption,
-		ConversationsList,
 		NcButton,
 		ConversationsOptionsList,
 		Hint,
 		SearchBox,
 		NewGroupConversation,
 		Conversation,
+		LoadingPlaceholder,
 	},
 
 	mixins: [
@@ -262,13 +263,17 @@ export default {
 
 		EventBus.$on('should-refresh-conversations', this.debounceFetchConversations)
 		EventBus.$once('conversations-received', this.handleUnreadMention)
-
+		EventBus.$on('route-change', this.onRouteChange)
+		EventBus.$once('joined-conversation', ({ token }) => {
+			this.scrollToConversation(token)
+		})
 		this.mountArrowNavigation()
 	},
 
 	beforeDestroy() {
 		EventBus.$off('should-refresh-conversations', this.debounceFetchConversations)
 		EventBus.$off('conversations-received', this.handleUnreadMention)
+		EventBus.$off('route-change', this.onRouteChange)
 
 		this.cancelSearchPossibleConversations()
 		this.cancelSearchPossibleConversations = null
@@ -502,6 +507,40 @@ export default {
 				this.$router.push({ name: 'conversation', params: { token: this.conversationsList[0].token } })
 			}
 			this.handleClickSearchResult()
+		},
+
+		scrollToConversation(token) {
+			// FIXME: not sure why we can't scroll earlier even when the element exists already
+			// when too early, Firefox only scrolls a few pixels towards the element but
+			// not enough to make it visible
+			setTimeout(() => {
+				const conversation = document.getElementById(`conversation_${token}`)
+				if (!conversation) {
+					return
+				}
+				this.$nextTick(() => {
+					conversation.scrollIntoView({
+						behavior: 'smooth',
+						block: 'start',
+						inline: 'nearest',
+					})
+				})
+			}, 500)
+		},
+
+		onRouteChange({ from, to }) {
+			if (from.name === 'conversation'
+				&& to.name === 'conversation'
+				&& from.params.token === to.params.token) {
+				// this is triggered when the hash in the URL changes
+				return
+			}
+			if (from.name === 'conversation') {
+				this.$store.dispatch('leaveConversation', { token: from.params.token })
+			}
+			if (to.name === 'conversation') {
+				this.$store.dispatch('joinConversation', { token: to.params.token })
+			}
 		},
 	},
 }
