@@ -369,6 +369,21 @@ class Room {
 		return $this->name;
 	}
 
+	public function getSecondParticipant(string $userId): string {
+		if ($this->getType() !== self::TYPE_ONE_TO_ONE) {
+			throw new \InvalidArgumentException('Not a one-to-one room');
+		}
+		$participants = json_decode($this->getName(), true);
+
+		foreach ($participants as $uid) {
+			if ($uid !== $userId) {
+				return $uid;
+			}
+		}
+
+		return $this->getName();
+	}
+
 	public function getDisplayName(string $userId): string {
 		return $this->manager->resolveRoomDisplayName($this, $userId);
 	}
