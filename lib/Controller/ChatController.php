@@ -792,7 +792,7 @@ class ChatController extends AEnvironmentAwareController {
 		$messages = $this->getFilteredMessages(array_merge(...array_values($messageIdsByType)));
 
 		$messagesByType = [];
-		// Group the messages again using the filtered comments
+		// Convert list of $messages to array grouped by type
 		foreach ($objectTypes as $objectType) {
 			$messagesByType[$objectType] = [];
 
