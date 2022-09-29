@@ -54,13 +54,13 @@ class Calls extends Base {
 			->from('talk_sessions')
 			->where($subQuery->expr()->gt('in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED)))
 			->andWhere($subQuery->expr()->gt('last_ping', $query->createNamedParameter(time() - 60)))
-			->addGroupBy('attendee_id');
+			->groupBy('attendee_id');
 
 		$query->select('r.token', $query->func()->count('*', 'num_attendees'))
 			->from('talk_attendees', 'a')
 			->leftJoin('a', 'talk_rooms', 'r', $query->expr()->eq('a.room_id', 'r.id'))
 			->where($query->expr()->in('a.id', $query->createFunction('(' . $subQuery->getSQL() . ')')))
-			->groupBy('a.room_id');
+			->groupBy('r.token');
 
 		$data = [];
 		$result = $query->executeQuery();
