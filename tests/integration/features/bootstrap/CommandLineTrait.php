@@ -113,6 +113,8 @@ trait CommandLineTrait {
 	public function theCommandWasSuccessful() {
 		$exceptions = $this->findExceptions();
 		if ($this->lastCode !== 0) {
+			echo $this->lastStdErr;
+
 			$msg = 'The command was not successful, exit code was ' . $this->lastCode . '.';
 			if (!empty($exceptions)) {
 				$msg .= ' Exceptions: ' . implode(', ', $exceptions);
