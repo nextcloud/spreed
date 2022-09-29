@@ -27,19 +27,9 @@ namespace OCA\Talk\Tests\php\Collaboration\Resources;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Collaboration\Reference\TalkReferenceProvider;
-use OCA\Talk\Collaboration\Resources\ConversationProvider;
-use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
-use OCA\Talk\Model\Attendee;
-use OCA\Talk\Participant;
-use OCA\Talk\Room;
-use OCP\Collaboration\Resources\IResource;
-use OCP\Collaboration\Resources\ResourceException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
-use OCP\IUser;
-use OCP\IUserSession;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -97,7 +87,7 @@ class TalkReferenceProviderTest extends TestCase {
 	public function testGetTalkAppLinkToken(string $reference, ?array $expected): void {
 		$this->urlGenerator->expects($this->any())
 			->method('getAbsoluteURL')
-			->willReturnCallback(static fn($url) => 'https://localhost' . $url);
+			->willReturnCallback(static fn ($url) => 'https://localhost' . $url);
 
 		$actual = self::invokePrivate($this->provider, 'getTalkAppLinkToken', [$reference]);
 		self::assertSame($expected, $actual);
