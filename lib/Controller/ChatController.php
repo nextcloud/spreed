@@ -806,15 +806,16 @@ class ChatController extends AEnvironmentAwareController {
 		return new DataResponse($messagesByType, Http::STATUS_OK);
 	}
 
-	private function getFilteredMessages($messagesIds): array {
+	protected function getFilteredMessages($messagesIds): array {
 		// Get all comments associated to attachments
 		$comments = $this->chatManager->getMessagesById($this->room, $messagesIds);
 		$this->preloadShares($comments);
 
-		$messages = $this->chatManager->removeFileNotExists($comments);
+		$comments = $this->chatManager->removeFileNotExists($comments);
 
 		// Filter only visible message
 		// and create an array with messageId as key
+		$messages = [];
 		foreach ($comments as $comment) {
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);

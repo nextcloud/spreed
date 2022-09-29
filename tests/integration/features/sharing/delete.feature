@@ -362,9 +362,26 @@ Feature: delete
     And user "participant1" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
       | public room | users     | participant1 | participant1-displayname | {file}   | "IGNORE"          |
+    And user "participant1" sees the following shared summarized overview in room "public room" with 200
+      | audio    | 0 |
+      | deckcard | 0 |
+      | file     | 1 |
+      | location | 0 |
+      | media    | 0 |
+      | other    | 0 |
+      | poll     | 0 |
+      | voice    | 0 |
     When user "participant1" deletes file "welcome.txt"
     Then user "participant1" sees the following shared file in room "public room" with 200
-    And user "participant1" sees the following shared overview in room "public room" with 200
+    And user "participant1" sees the following shared summarized overview in room "public room" with 200
+      | audio    | 0 |
+      | deckcard | 0 |
+      | file     | 0 |
+      | location | 0 |
+      | media    | 0 |
+      | other    | 0 |
+      | poll     | 0 |
+      | voice    | 0 |
     And user "participant1" sees the following system messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | systemMessage |
       | public room | users     | participant1 | participant1-displayname | file_shared          |

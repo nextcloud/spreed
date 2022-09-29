@@ -2024,7 +2024,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sees the following shared overview in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 * @Then /^user "([^"]*)" sees the following shared summarized overview in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
@@ -2036,7 +2036,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/share/overview');
 		$this->assertStatusCode($this->response, $statusCode);
 
-		$this->compareDataResponse($formData);
+		$overview = $this->getDataFromResponse($this->response);
+		$expected = $formData->getRowsHash();
+		$summarized = array_map(function ($type) {
+			return (string) count($type);
+		}, $overview);
+		Assert::assertEquals($expected, $summarized);
 	}
 
 	/**
