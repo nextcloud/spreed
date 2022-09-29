@@ -56,6 +56,8 @@ import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
 // eslint-disable-next-line
 import 'leaflet-defaulticon-compatibility'
+// eslint-disable-next-line
+import VueVirtualScroller from 'vue-virtual-scroller'
 
 // CSP config for webpack dynamic chunk loading
 // eslint-disable-next-line
@@ -78,6 +80,7 @@ Vue.use(VueRouter)
 Vue.use(VueObserveVisibility)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
+Vue.use(VueVirtualScroller)
 
 TooltipOptions.container = '#content-vue'
 store.dispatch('setMainContainerSelector', '#content-vue')

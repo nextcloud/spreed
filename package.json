@@ -59,6 +59,7 @@
 		"vue-resize": "^1.0.1",
 		"vue-router": "^3.6.5",
 		"vue-shortkey": "^3.1.7",
+		"vue-virtual-scroller": "^1.0.10",
 		"vue2-leaflet": "^2.7.1",
 		"vuex": "^3.6.2",
 		"webdav": "^4.11.0",
