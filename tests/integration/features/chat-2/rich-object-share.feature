@@ -1,4 +1,4 @@
-Feature: chat/public
+Feature: chat-2/rich-object-share
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

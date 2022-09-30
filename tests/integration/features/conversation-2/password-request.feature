@@ -1,4 +1,4 @@
-Feature: conversation/password-request
+Feature: conversation-2/password-request
 
   Background:
     Given user "participant1" exists

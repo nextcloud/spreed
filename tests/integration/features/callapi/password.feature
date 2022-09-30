@@ -1,4 +1,4 @@
-Feature: callapi/public
+Feature: callapi/password
   Background:
     Given user "participant1" exists
     And user "participant2" exists

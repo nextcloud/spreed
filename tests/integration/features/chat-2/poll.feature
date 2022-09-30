@@ -1,4 +1,4 @@
-Feature: chat/poll
+Feature: chat-2/poll
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

@@ -1,5 +1,4 @@
-
-Feature: chat/search
+Feature: chat-2/search
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

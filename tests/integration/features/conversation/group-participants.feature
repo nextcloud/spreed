@@ -1,4 +1,4 @@
-Feature: public
+Feature: conversation/group-participants
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

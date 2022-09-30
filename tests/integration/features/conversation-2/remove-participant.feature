@@ -1,4 +1,4 @@
-Feature: public
+Feature: conversation-2/remove-participant
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
