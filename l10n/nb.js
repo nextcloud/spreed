@@ -451,6 +451,7 @@ OC.L10N.register(
     "Conversation messages" : "Samtale meldinger",
     "Post message" : "Send melding",
     "You need to be logged in to upload files" : "Du må være på logget for å laste opp filer",
+    "Drop your files to upload" : "Dropp filer for å laste opp",
     "Favorite" : "Merk som favoritt",
     "Restricted" : "Begrenset",
     "Conversation settings" : "Samtale innstillinger",
@@ -526,6 +527,7 @@ OC.L10N.register(
     "Reply" : "Svar",
     "Mark as unread" : "Merk som ulest",
     "Contact" : "Kontakt",
+    "{stack} in {board}" : "{stack} i {board}",
     "Poll" : "Avstemning",
     "No messages" : "Ingen meldinger",
     "Today" : "I dag",
@@ -533,6 +535,7 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Create new poll" : "Opprett ny avstemning",
     "Send message" : "Send melding",
+    "File to share" : "Fil for deling",
     "New file" : "Ny fil",
     "Invalid path selected" : "Ugyldig angitt sti",
     "Settings" : "Innstillinger",
@@ -589,6 +592,8 @@ OC.L10N.register(
     "An error occurred. Please contact your admin." : "Det oppstod en feil. Kontakt din administrator.",
     "Saved" : "Lagret",
     "Microphone" : "Mikrofon",
-    "Camera" : "Kamera"
+    "Camera" : "Kamera",
+    "Upload new files" : "Last opp nye filer",
+    "Share from Files" : "Del fra Filer"
 },
 "nplurals=2; plural=(n != 1);");
