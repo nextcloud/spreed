@@ -1,4 +1,4 @@
-Feature: set-description
+Feature: conversation-2/set-description
   Background:
     Given user "owner" exists
     Given user "moderator" exists

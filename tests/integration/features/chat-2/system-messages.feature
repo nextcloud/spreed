@@ -1,4 +1,4 @@
-Feature: System messages
+Feature: chat-2/system-messages
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

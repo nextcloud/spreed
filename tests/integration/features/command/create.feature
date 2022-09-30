@@ -1,4 +1,4 @@
-Feature: create
+Feature: command/create
 
   Background:
     Given user "participant1" exists
