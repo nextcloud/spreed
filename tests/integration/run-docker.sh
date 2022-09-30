@@ -103,7 +103,7 @@ function prepareDatabase() {
 	fi
 
 	echo "Starting database server"
-	docker run --detach --name=$DATABASE_CONTAINER $DATABASE_CONTAINER_OPTIONS $DATABASE_IMAGE
+	docker run --detach --name=$DATABASE_CONTAINER $DATABASE_CONTAINER_OPTIONS $DATABASE_IMAGE $DATABASE_CUSTOM_COMMAND
 
 	DATABASE_IP=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DATABASE_CONTAINER)
 
@@ -248,6 +248,16 @@ elif [ "$DATABASE" = "pgsql" ]; then
 fi
 if [ "$1" = "--database-image" ]; then
 	DATABASE_IMAGE=$2
+
+	shift 2
+fi
+
+# "--database-custom-command XXX" option can be provided to use a custom command
+# when starting the database container. For example,
+# '--database-custom-command "mysqld --sql-mode=ONLY_FULL_GROUP_BY"'
+DATABASE_CUSTOM_COMMAND=""
+if [ "$1" = "--database-custom-command" ]; then
+	DATABASE_CUSTOM_COMMAND=$2
 
 	shift 2
 fi
