@@ -242,9 +242,9 @@ fi
 # "--database-image XXX" option can be provided to set the Docker image to use
 # for the database container (ignored when using "sqlite").
 if [ "$DATABASE" = "mysql" ]; then
-	DATABASE_IMAGE="mysql:5.7"
+	DATABASE_IMAGE="ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4"
 elif [ "$DATABASE" = "pgsql" ]; then
-	DATABASE_IMAGE="postgres:10"
+	DATABASE_IMAGE="ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13"
 fi
 if [ "$1" = "--database-image" ]; then
 	DATABASE_IMAGE=$2
