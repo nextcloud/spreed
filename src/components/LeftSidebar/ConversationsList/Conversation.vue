@@ -93,7 +93,7 @@
 	</NcListItem>
 </template>
 
-<script>
+<script lang="ts">
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import Cog from 'vue-material-design-icons/Cog.vue'
@@ -105,8 +105,21 @@ import { generateUrl } from '@nextcloud/router'
 import { emit } from '@nextcloud/event-bus'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
+import { defineComponent, PropType } from 'vue'
 
-export default {
+type Item = {
+	token: string
+	// participants: Array<IParticipant>
+	participantType: number
+	unreadMessages: number
+	unreadMention: boolean
+	objectType: string
+	type: number
+	displayName: string
+	isFavorite: boolean
+}
+
+export default defineComponent({
 	name: 'Conversation',
 	components: {
 		NcActionButton,
@@ -123,7 +136,7 @@ export default {
 			default: false,
 		},
 		item: {
-			type: Object,
+			type: Object as PropType<Item>,
 			default() {
 				return {
 					token: '',
@@ -323,7 +336,7 @@ export default {
 		 * Deletes the conversation.
 		 */
 		async deleteConversation() {
-			OC.dialogs.confirm(
+			window.OC.dialogs.confirm(
 				t('spreed', 'Do you really want to delete "{displayName}"?', this.item, undefined, {
 					escape: false,
 					sanitize: false,
@@ -376,7 +389,7 @@ export default {
 			this.$emit('click', event)
 		},
 	},
-}
+})
 </script>
 
 <style lang="scss" scoped>

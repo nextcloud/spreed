@@ -1,20 +1,28 @@
 {
+	"vueCompilerOptions": {
+		"target": 2.7
+	},
 	"compilerOptions": {
 		"outDir": "./dist/",
 		"sourceMap": false,
-		"noImplicitAny": true,
-		"module": "es6",
-		"target": "es5",
-		"paths": {
-			"@nextcloud/event-bus": [
-				"./node_modules/@nextcloud/event-bus/dist/index.js",
-				"./node_modules/@nextcloud/event-bus/dist/lib/*"
-			]
-		},
-		"allowJs": true
+		"noImplicitAny": false,
+		"allowJs": true,
+		"target": "ESNext",
+		"useDefineForClassFields": true,
+		"module": "ESNext",
+		"moduleResolution": "Node",
+		"strict": true,
+		"jsx": "preserve",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"lib": ["ESNext", "DOM"],
+		"skipLibCheck": true,
+		"noEmit": true
 	},
 	"include": [
-		"src/**/*.ts"
+		"src/**/*.ts",
+		"src/**/*.js",
 	],
 	"exclude": [
 		"node_modules",
