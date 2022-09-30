@@ -26,6 +26,8 @@ namespace OCA\Talk\Search;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Webinary;
 use OCP\IUser;
 use OCP\Search\ISearchQuery;
 use OCP\Search\SearchResult;
@@ -81,6 +83,23 @@ class CurrentMessageSearch extends MessageSearch {
 				$user->getUID()
 			);
 		} catch (RoomNotFoundException $e) {
+			return SearchResult::complete(
+				$this->l->t('Messages'),
+				[]
+			);
+		}
+
+		try {
+			$participant = $room->getParticipant($user->getUID(), false);
+		} catch (ParticipantNotFoundException $e) {
+			return SearchResult::complete(
+				$this->l->t('Messages'),
+				[]
+			);
+		}
+
+		if ($room->getLobbyState() !== Webinary::LOBBY_NONE &&
+			!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
 			return SearchResult::complete(
 				$this->l->t('Messages'),
 				[]

@@ -31,6 +31,7 @@ use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Manager as RoomManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
+use OCA\Talk\Webinary;
 use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -124,6 +125,13 @@ class MessageSearch implements IProvider {
 			if ($this->getCurrentConversationToken($query) === $room->getToken()) {
 				// No search result from current conversation
 				continue;
+			}
+
+			if ($room->getLobbyState() !== Webinary::LOBBY_NONE) {
+				$participant = $room->getParticipant($user->getUID(), false);
+				if (!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
+					continue;
+				}
 			}
 
 			$roomMap[(string) $room->getId()] = $room;
