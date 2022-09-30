@@ -34,66 +34,19 @@
 		</div>
 		<template #list>
 			<li class="left-sidebar__list">
-				<ul ref="scroller"
-					class="scroller"
-					@scroll="debounceHandleScroll">
-					<NcAppNavigationCaption :class="{'hidden-visually': !isSearching}"
-						:title="t('spreed', 'Conversations')" />
-					<Conversation v-for="item of conversationsList"
-						:key="item.id"
-						:item="item"
-						@click="handleClickSearchResult(item)" />
-					<template v-if="!initialisedConversations">
-						<LoadingPlaceholder type="conversations" />
+				<DynamicScroller :items="dynamicScrollerItems"
+					:min-item-size="64"
+					class="scroller">
+					<template #default="{ item, index, active }">
+						<DynamicScrollerItem :item="item"
+							:active="active"
+							:data-index="index">
+							<el :is="item.is"
+								v-bind="item.props"
+								v-on="item.listeners" />
+						</DynamicScrollerItem>
 					</template>
-					<Hint v-else-if="searchText && !conversationsList.length"
-						:hint="t('spreed', 'No matches')" />
-					<template v-if="isSearching">
-						<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
-							<NcAppNavigationCaption :title="t('spreed', 'Open conversations')" />
-							<Conversation v-for="item of searchResultsListedConversations"
-								:key="item.id"
-								:item="item"
-								:is-search-result="true"
-								@click="joinListedConversation(item)" />
-						</template>
-						<template v-if="searchResultsUsers.length !== 0">
-							<NcAppNavigationCaption :title="t('spreed', 'Users')" />
-							<li v-if="searchResultsUsers.length !== 0" role="presentation">
-								<ConversationsOptionsList :items="searchResultsUsers"
-									@click="createAndJoinConversation" />
-							</li>
-						</template>
-						<template v-if="!showStartConversationsOptions">
-							<NcAppNavigationCaption v-if="searchResultsUsers.length === 0"
-								:title="t('spreed', 'Users')" />
-							<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-							<Hint v-else :hint="t('spreed', 'No search results')" />
-						</template>
-					</template>
-					<template v-if="showStartConversationsOptions">
-						<template v-if="searchResultsGroups.length !== 0">
-							<NcAppNavigationCaption :title="t('spreed', 'Groups')" />
-							<li v-if="searchResultsGroups.length !== 0" role="presentation">
-								<ConversationsOptionsList :items="searchResultsGroups"
-									@click="createAndJoinConversation" />
-							</li>
-						</template>
-
-						<template v-if="searchResultsCircles.length !== 0">
-							<NcAppNavigationCaption :title="t('spreed', 'Circles')" />
-							<li v-if="searchResultsCircles.length !== 0" role="presentation">
-								<ConversationsOptionsList :items="searchResultsCircles"
-									@click="createAndJoinConversation" />
-							</li>
-						</template>
-
-						<NcAppNavigationCaption v-if="sourcesWithoutResults"
-							:title="sourcesWithoutResultsList" />
-						<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-						<Hint v-else :hint="t('spreed', 'No search results')" />
-					</template>
-				</ul>
+				</DynamicScroller>
 			</li>
 			<NcButton v-if="!preventFindingUnread && unreadNum > 0"
 				class="unread-mention-button"
@@ -120,7 +73,7 @@ import CancelableRequest from '../../utils/cancelableRequest.js'
 import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import Conversation from './ConversationsList/Conversation.vue'
-import ConversationsOptionsList from '../ConversationsOptionsList.vue'
+import ConversationSearchResult from '../ConversationSearchResult.vue'
 import Hint from '../Hint.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import SearchBox from './SearchBox/SearchBox.vue'
@@ -146,12 +99,10 @@ export default {
 		NcAppNavigation,
 		NcAppNavigationCaption,
 		NcButton,
-		ConversationsOptionsList,
 		Hint,
 		SearchBox,
 		NewGroupConversation,
 		Conversation,
-		LoadingPlaceholder,
 	},
 
 	mixins: [
@@ -239,6 +190,96 @@ export default {
 				}
 			}
 			return t('spreed', 'Other sources')
+		},
+
+		dynamicScrollerItems() {
+			// Placeholder if conversations are not fetched yet
+			if (!this.initialisedConversations) {
+				return [{
+					is: LoadingPlaceholder,
+					id: 'loading-placeholder',
+					props: {
+						type: 'conversation',
+					},
+				}]
+			}
+
+			if (!this.isSearching) {
+				return this.conversationsList.map(conversation => ({
+					is: Conversation,
+					id: conversation.token,
+					props: {
+						item: conversation,
+					},
+					listeners: {
+						click: this.handleClickSearchResult,
+					},
+				}))
+			}
+
+			// No results
+			if (this.isSearching && !this.conversationsList.length) {
+				return [{
+					is: Hint,
+					id: 'no-results',
+					props: {
+						hint: t('spreed', 'No matches'),
+					},
+				}]
+			}
+
+			// Search results
+			const searchResultsTypes = [
+				{
+					title: t('spreed', 'Open conversations'),
+					source: this.searchResultsListedConversations,
+					component: Conversation,
+					clickHandler: this.joinListedConversation,
+				},
+				{
+					title: t('spreed', 'Users'),
+					source: this.searchResultsUsers,
+					component: ConversationSearchResult,
+					clickHandler: this.createAndJoinConversation,
+				},
+				{
+					title: t('spreed', 'Groups'),
+					source: this.searchResultsGroups,
+					component: ConversationSearchResult,
+					clickHandler: this.createAndJoinConversation,
+				},
+				{
+					title: t('spreed', 'Circles'),
+					source: this.searchResultsCircles,
+					component: ConversationSearchResult,
+					clickHandler: this.createAndJoinConversation,
+				},
+			]
+
+			return searchResultsTypes.map((type) => {
+				if (type.source.length === 0) {
+					return []
+				}
+
+				return [{
+					is: NcAppNavigationCaption,
+					id: `caption_${type.title}`,
+					props: {
+						title: type.title,
+					},
+				}, ...type.source.map((item) => {
+					return {
+						is: type.component,
+						id: item.id,
+						props: {
+							item,
+						},
+						listeners: {
+							click: type.clickHandler,
+						},
+					}
+				})]
+			}).flat()
 		},
 	},
 
@@ -549,10 +590,6 @@ export default {
 <style lang="scss" scoped>
 
 @import '../../assets/variables';
-.scroller {
-	padding: 0 4px 0 6px;
-}
-
 .new-conversation {
 	display: flex;
 	padding: 8px 0 8px 12px;
@@ -566,9 +603,11 @@ export default {
 .left-sidebar__list {
 	height: 100% !important;
 	width: 100% !important;
-	overflow-y: auto !important;
-	overflow-x: hidden !important;
 	padding: 0;
+	.scroller {
+		height: 100%;
+		overflow: auto;
+	}
 }
 
 .unread-mention-button {

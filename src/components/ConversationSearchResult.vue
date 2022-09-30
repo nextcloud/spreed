@@ -20,17 +20,14 @@
 -->
 
 <template>
-	<ul class="contacts-list">
-		<NcListItem v-for="item of items"
-			:key="item.id"
-			:title="item.label"
-			@click="onClick(item)">
-			<template #icon>
-				<ConversationIcon :item="iconData(item)"
-					:disable-menu="true" />
-			</template>
-		</NcListItem>
-	</ul>
+	<NcListItem :key="item.id"
+		:title="item.label"
+		@click="onClick(item)">
+		<template #icon>
+			<ConversationIcon :item="iconData(item)"
+				:disable-menu="true" />
+		</template>
+	</NcListItem>
 </template>
 
 <script>
@@ -39,19 +36,15 @@ import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import { CONVERSATION } from '../constants.js'
 
 export default {
-	name: 'ConversationsOptionsList',
+	name: 'ConversationSearchResult',
 	components: {
 		ConversationIcon,
 		NcListItem,
 	},
 	props: {
-		items: {
-			type: Array,
+		item: {
+			type: Object,
 			required: true,
-		},
-		isLoading: {
-			type: Boolean,
-			default: false,
 		},
 	},
 	methods: {
