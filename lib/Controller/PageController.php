@@ -227,28 +227,8 @@ class PageController extends Controller {
 				}
 
 				if ($requirePassword) {
-					$password = $password !== '' ? $password : (string) $this->talkSession->getPasswordForRoom($token);
-
-					$passwordVerification = $this->roomService->verifyPassword($room, $password);
-
-					if ($passwordVerification['result']) {
-						$this->talkSession->renewSessionId();
-						$this->talkSession->setPasswordForRoom($token, $password);
-						$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomPassword', ['token' => $token]);
-					} else {
-						$this->talkSession->removePasswordForRoom($token);
-						$showBruteForceWarning = $this->throttler->getDelay($this->request->getRemoteAddress(), 'talkRoomPassword') > 5000;
-
-						if ($passwordVerification['url'] === '') {
-							$response = new TemplateResponse($this->appName, 'authenticate', [
-								'wrongpw' => $password !== '',
-								'showBruteForceWarning' => $showBruteForceWarning,
-							], 'guest');
-						} else {
-							$response = new RedirectResponse($passwordVerification['url']);
-						}
-
-						$response->throttle(['token' => $token]);
+					$response = $this->verifyPassword($room, $token, $password);
+					if ($response) {
 						return $response;
 					}
 				}
@@ -297,6 +277,31 @@ class PageController extends Controller {
 		return $response;
 	}
 
+	protected function verifyPassword(Room $room, string $token, string $password): ?TemplateResponse {
+		$password = $password !== '' ? $password : (string) $this->talkSession->getPasswordForRoom($token);
+
+		$passwordVerification = $this->roomService->verifyPassword($room, $password);
+		if ($passwordVerification['result']) {
+			$this->talkSession->renewSessionId();
+			$this->talkSession->setPasswordForRoom($token, $password);
+			$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomPassword', ['token' => $token]);
+		} else {
+			$this->talkSession->removePasswordForRoom($token);
+			$showBruteForceWarning = $this->throttler->getDelay($this->request->getRemoteAddress(), 'talkRoomPassword') > 5000;
+
+			if ($passwordVerification['url'] === '') {
+				$response = new TemplateResponse($this->appName, 'authenticate', [
+					'wrongpw' => $password !== '',
+					'showBruteForceWarning' => $showBruteForceWarning,
+				], 'guest');
+			} else {
+				$response = new RedirectResponse($passwordVerification['url']);
+			}
+			$response->throttle(['token' => $token]);
+			return $response;
+		}
+	}
+
 	/**
 	 * @param string $token
 	 * @param string $password
@@ -322,26 +327,8 @@ class PageController extends Controller {
 		}
 
 		if ($room->hasPassword()) {
-			$password = $password !== '' ? $password : (string) $this->talkSession->getPasswordForRoom($token);
-
-			$passwordVerification = $this->roomService->verifyPassword($room, $password);
-			if ($passwordVerification['result']) {
-				$this->talkSession->renewSessionId();
-				$this->talkSession->setPasswordForRoom($token, $password);
-				$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomPassword', ['token' => $token]);
-			} else {
-				$this->talkSession->removePasswordForRoom($token);
-				$showBruteForceWarning = $this->throttler->getDelay($this->request->getRemoteAddress(), 'talkRoomPassword') > 5000;
-
-				if ($passwordVerification['url'] === '') {
-					$response = new TemplateResponse($this->appName, 'authenticate', [
-						'wrongpw' => $password !== '',
-						'showBruteForceWarning' => $showBruteForceWarning,
-					], 'guest');
-				} else {
-					$response = new RedirectResponse($passwordVerification['url']);
-				}
-				$response->throttle(['token' => $token]);
+			$response = $this->verifyPassword($room, $token, $password);
+			if ($response) {
 				return $response;
 			}
 		}

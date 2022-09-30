@@ -391,7 +391,21 @@ class RoomShareProvider implements IShareProvider {
 	 */
 	public function deleteFromSelf(IShare $share, $recipient): void {
 		$this->cleanSharesByIdCache();
+		$data = $this->getUserRoomShare($share, $recipient);
 
+		if ($data === false) {
+			$this->createUserRoom($share, $recipient);
+		} elseif ($data['permissions'] !== 0) {
+			// Already a userroom share. Update it.
+			$qb = $this->dbConnection->getQueryBuilder();
+			$qb->update('share')
+				->set('permissions', $qb->createNamedParameter(0))
+				->where($qb->expr()->eq('id', $qb->createNamedParameter($data['id'])))
+				->executeStatement();
+		}
+	}
+
+	public function getUserRoomShare(IShare $share, $recipient): ?array {
 		// Check if there is a userroom share
 		$qb = $this->dbConnection->getQueryBuilder();
 		$stmt = $qb->select(['id', 'permissions'])
@@ -403,36 +417,12 @@ class RoomShareProvider implements IShareProvider {
 				$qb->expr()->eq('item_type', $qb->createNamedParameter('file')),
 				$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
 			))
+			->setMaxResults(1)
 			->executeQuery();
 
 		$data = $stmt->fetch();
 		$stmt->closeCursor();
-
-		if ($data === false) {
-			// No userroom share yet. Create one.
-			$qb = $this->dbConnection->getQueryBuilder();
-			$qb->insert('share')
-				->values([
-					'share_type' => $qb->createNamedParameter(self::SHARE_TYPE_USERROOM),
-					'share_with' => $qb->createNamedParameter($recipient),
-					'uid_owner' => $qb->createNamedParameter($share->getShareOwner()),
-					'uid_initiator' => $qb->createNamedParameter($share->getSharedBy()),
-					'parent' => $qb->createNamedParameter($share->getId()),
-					'item_type' => $qb->createNamedParameter($share->getNodeType()),
-					'item_source' => $qb->createNamedParameter($share->getNodeId()),
-					'file_source' => $qb->createNamedParameter($share->getNodeId()),
-					'file_target' => $qb->createNamedParameter($share->getTarget()),
-					'permissions' => $qb->createNamedParameter(0),
-					'stime' => $qb->createNamedParameter($share->getShareTime()->getTimestamp()),
-				])->executeStatement();
-		} elseif ($data['permissions'] !== 0) {
-			// Already a userroom share. Update it.
-			$qb = $this->dbConnection->getQueryBuilder();
-			$qb->update('share')
-				->set('permissions', $qb->createNamedParameter(0))
-				->where($qb->expr()->eq('id', $qb->createNamedParameter($data['id'])))
-				->executeStatement();
-		}
+		return $data;
 	}
 
 	/**
@@ -487,41 +477,10 @@ class RoomShareProvider implements IShareProvider {
 	 */
 	public function move(IShare $share, $recipient): IShare {
 		$this->cleanSharesByIdCache();
-
-		// Check if there is a userroom share
-		$qb = $this->dbConnection->getQueryBuilder();
-		$stmt = $qb->select('id')
-			->from('share')
-			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
-			->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($recipient)))
-			->andWhere($qb->expr()->eq('parent', $qb->createNamedParameter($share->getId())))
-			->andWhere($qb->expr()->orX(
-				$qb->expr()->eq('item_type', $qb->createNamedParameter('file')),
-				$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
-			))
-			->setMaxResults(1)
-			->executeQuery();
-
-		$data = $stmt->fetch();
-		$stmt->closeCursor();
+		$data = $this->getUserRoomShare($share, $recipient);
 
 		if ($data === false) {
-			// No userroom share yet. Create one.
-			$qb = $this->dbConnection->getQueryBuilder();
-			$qb->insert('share')
-				->values([
-					'share_type' => $qb->createNamedParameter(self::SHARE_TYPE_USERROOM),
-					'share_with' => $qb->createNamedParameter($recipient),
-					'uid_owner' => $qb->createNamedParameter($share->getShareOwner()),
-					'uid_initiator' => $qb->createNamedParameter($share->getSharedBy()),
-					'parent' => $qb->createNamedParameter($share->getId()),
-					'item_type' => $qb->createNamedParameter($share->getNodeType()),
-					'item_source' => $qb->createNamedParameter($share->getNodeId()),
-					'file_source' => $qb->createNamedParameter($share->getNodeId()),
-					'file_target' => $qb->createNamedParameter($share->getTarget()),
-					'permissions' => $qb->createNamedParameter($share->getPermissions()),
-					'stime' => $qb->createNamedParameter($share->getShareTime()->getTimestamp()),
-				])->executeStatement();
+			$this->createUserRoom($share, $recipient);
 		} else {
 			// Already a userroom share. Update it.
 			$qb = $this->dbConnection->getQueryBuilder();
@@ -532,6 +491,25 @@ class RoomShareProvider implements IShareProvider {
 		}
 
 		return $share;
+	}
+
+	public function createUserRoom(IShare $share, $recipient): void {
+		// No userroom share yet. Create one.
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->insert('share')
+			->values([
+				'share_type' => $qb->createNamedParameter(self::SHARE_TYPE_USERROOM),
+				'share_with' => $qb->createNamedParameter($recipient),
+				'uid_owner' => $qb->createNamedParameter($share->getShareOwner()),
+				'uid_initiator' => $qb->createNamedParameter($share->getSharedBy()),
+				'parent' => $qb->createNamedParameter($share->getId()),
+				'item_type' => $qb->createNamedParameter($share->getNodeType()),
+				'item_source' => $qb->createNamedParameter($share->getNodeId()),
+				'file_source' => $qb->createNamedParameter($share->getNodeId()),
+				'file_target' => $qb->createNamedParameter($share->getTarget()),
+				'permissions' => $qb->createNamedParameter($share->getPermissions()),
+				'stime' => $qb->createNamedParameter($share->getShareTime()->getTimestamp()),
+			])->executeStatement();
 	}
 
 	/**
