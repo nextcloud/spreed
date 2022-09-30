@@ -67,6 +67,7 @@ import ConversationSettingsDialog from './components/ConversationSettings/Conver
 import '@nextcloud/dialogs/styles/toast.scss'
 import { CONVERSATION } from './constants.js'
 import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
+import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
 
 export default {
 	name: 'App',
@@ -88,6 +89,7 @@ export default {
 		sessionIssueHandler,
 		isInCall,
 		participant,
+		isMobile,
 	],
 
 	data() {
@@ -213,7 +215,7 @@ export default {
 
 		token() {
 			// Collapse the sidebar if it's a 1to1 conversation
-			if (this.isOneToOne || BrowserStorage.getItem('sidebarOpen') === 'false' || window.screen.width < (getComputedStyle(document.documentElement).getPropertyValue('--breakpoint-mobile') / 2)) {
+			if (this.isOneToOne || BrowserStorage.getItem('sidebarOpen') === 'false' || this.isMobile) {
 				this.$store.dispatch('hideSidebar')
 			} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
 				this.$store.dispatch('showSidebar')
@@ -374,6 +376,12 @@ export default {
 			this.$store.dispatch('hideSidebar')
 		} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
 			this.$store.dispatch('showSidebar')
+		}
+		if (this.$route.name === 'root' && this.isMobile) {
+			await this.$nextTick()
+			emit('toggle-navigation', {
+				open: true,
+			})
 		}
 	},
 
