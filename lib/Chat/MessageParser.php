@@ -32,7 +32,6 @@ use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
-use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
@@ -45,20 +44,17 @@ class MessageParser {
 	public const EVENT_MESSAGE_PARSE = self::class . '::parseMessage';
 
 	protected IEventDispatcher $dispatcher;
-	protected RoomShareProvider $shareProvider;
 	protected IUserManager $userManager;
 	protected ParticipantService $participantService;
 
 	protected array $guestNames = [];
 
 	public function __construct(IEventDispatcher $dispatcher,
-								RoomShareProvider $shareProvider,
 								IUserManager $userManager,
 								ParticipantService $participantService) {
 		$this->dispatcher = $dispatcher;
-		$this->shareProvider = $shareProvider;
-		$this->userManager = $userManager;
 		$this->participantService = $participantService;
+		$this->userManager = $userManager;
 	}
 
 	public function createMessage(Room $room, Participant $participant, IComment $comment, IL10N $l): Message {

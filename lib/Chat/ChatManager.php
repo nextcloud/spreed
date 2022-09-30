@@ -810,7 +810,7 @@ class ChatManager {
 	 * @param IComment[] $comments
 	 * @return IComment[]
 	 */
-	public function removeFileNotExists(array $comments): array {
+	public function filterCommentsWithNonExistingFiles(array $comments): array {
 		return array_filter($comments, function (IComment $comment) {
 			if ($this->isSharedFile($comment->getMessage())) {
 				if (!$this->fileOfMessageExists($comment->getMessage())) {

@@ -766,9 +766,9 @@ class ChatManagerTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider dataRemoveFileNotExists
+	 * @dataProvider dataFilterCommentsWithNonExistingFiles
 	 */
-	public function testRemoveFileNotExists(array $list, int $expectedCount): void {
+	public function testFilterCommentsWithNonExistingFiles(array $list, int $expectedCount): void {
 		// Transform text messages in instance of comment and mock with the message
 		foreach ($list as $key => $message) {
 			$list[$key] = $this->createMock(IComment::class);
@@ -784,11 +784,11 @@ class ChatManagerTest extends TestCase {
 		}
 		if (count($list) !== $expectedCount) {
 		}
-		$result = $this->chatManager->removeFileNotExists($list);
+		$result = $this->chatManager->filterCommentsWithNonExistingFiles($list);
 		$this->assertCount($expectedCount, $result);
 	}
 
-	public function dataRemoveFileNotExists(): array {
+	public function dataFilterCommentsWithNonExistingFiles(): array {
 		return [
 			[[], 0],
 			[[json_encode(['parameters' => ['not a shared file']])], 1],
