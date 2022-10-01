@@ -35,13 +35,10 @@
 			</p>
 
 			<p v-if="matterbridgeVersion">
-				<input id="enable_matterbridge"
-					v-model="matterbridgeEnabled"
-					type="checkbox"
-					name="enable_matterbridge"
-					class="checkbox"
-					@change="saveMatterbridgeEnabled">
-				<label for="enable_matterbridge">{{ t('spreed', 'Enable Matterbridge integration') }}</label>
+				<NcCheckboxRadioSwitch :checked="isEnabled"
+					@update:checked="saveMatterbridgeEnabled">
+					{{ t('spreed', 'Enable Matterbridge integration') }}
+				</NcCheckboxRadioSwitch>
 			</p>
 		</template>
 
@@ -74,6 +71,7 @@
 
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import { loadState } from '@nextcloud/initial-state'
 import { showError } from '@nextcloud/dialogs'
 import {
@@ -87,6 +85,7 @@ export default {
 
 	components: {
 		NcButton,
+		NcCheckboxRadioSwitch,
 	},
 
 	data() {
@@ -99,6 +98,10 @@ export default {
 	},
 
 	computed: {
+		isEnabled() {
+			return this.matterbridgeEnabled
+		},
+
 		installedVersion() {
 			return t('spreed', 'Installed version: {version}', {
 				version: this.matterbridgeVersion,
@@ -128,6 +131,7 @@ export default {
 
 	methods: {
 		saveMatterbridgeEnabled() {
+			this.matterbridgeEnabled = !this.matterbridgeEnabled
 			OCP.AppConfig.setValue('spreed', 'enable_matterbridge', this.matterbridgeEnabled ? '1' : '0', {
 				success: function() {
 					if (!this.matterbridgeEnabled) {
