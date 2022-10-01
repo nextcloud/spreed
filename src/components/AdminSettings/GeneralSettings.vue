@@ -41,17 +41,15 @@
 
 		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
 
-		<NcCheckboxRadioSwitch :checked.sync="conversationsFiles"
-			name="conversations_files"
+		<NcCheckboxRadioSwitch :checked="isConversationsFilesChecked"
 			:disabled="loading || loadingConversationsFiles"
-			@change="saveConversationsFiles">
+			@update:checked="saveConversationsFiles">
 			{{ t('spreed', 'Allow conversations on files') }}
 		</NcCheckboxRadioSwitch>
 
-		<NcCheckboxRadioSwitch :checked.sync="conversationsFilesPublicShares"
-			name="conversations_files_public_shares"
-			:disabled="loading || loadingConversationsFiles || !conversationsFiles"
-			@change="saveConversationsFilesPublicShares">
+		<NcCheckboxRadioSwitch :checked="isConversationsFilesPublicSharesChecked"
+			:disabled="loading || loadingConversationsFiles || !isConversationsFilesChecked"
+			@update:checked="saveConversationsFilesPublicShares">
 			{{ t('spreed', 'Allow conversations on public shares for files') }}
 		</NcCheckboxRadioSwitch>
 	</div>
@@ -84,16 +82,23 @@ export default {
 			defaultGroupNotificationOptions,
 			defaultGroupNotification: defaultGroupNotificationOptions[1],
 
-			conversationsFiles: true,
-			conversationsFilesPublicShares: true,
+			conversationsFiles: parseInt(loadState('spreed', 'conversations_files')) === 1,
+			conversationsFilesPublicShares:  parseInt(loadState('spreed', 'conversations_files_public_shares')) === 1,
 		}
+	},
+
+	computed: {
+		isConversationsFilesChecked() {
+			return this.conversationsFiles
+		},
+		isConversationsFilesPublicSharesChecked() {
+			return this.conversationsFilesPublicShares
+		},
 	},
 
 	mounted() {
 		this.loading = true
-		this.conversationsFiles = parseInt(loadState('spreed', 'conversations_files')) === 1
 		this.defaultGroupNotification = defaultGroupNotificationOptions[parseInt(loadState('spreed', 'default_group_notification')) - 1]
-		this.conversationsFilesPublicShares = parseInt(loadState('spreed', 'conversations_files_public_shares')) === 1
 		this.loading = false
 	},
 
@@ -107,8 +112,9 @@ export default {
 				}.bind(this),
 			})
 		},
-		saveConversationsFiles() {
+		saveConversationsFiles(checked) {
 			this.loadingConversationsFiles = true
+			this.conversationsFiles = checked
 
 			OCP.AppConfig.setValue('spreed', 'conversations_files', this.conversationsFiles ? '1' : '0', {
 				success: function() {
@@ -126,8 +132,9 @@ export default {
 				}.bind(this),
 			})
 		},
-		saveConversationsFilesPublicShares() {
+		saveConversationsFilesPublicShares(checked) {
 			this.loadingConversationsFiles = true
+			this.conversationsFilesPublicShares = checked
 
 			OCP.AppConfig.setValue('spreed', 'conversations_files_public_shares', this.conversationsFilesPublicShares ? '1' : '0', {
 				success: function() {
