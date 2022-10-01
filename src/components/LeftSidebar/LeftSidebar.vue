@@ -34,19 +34,10 @@
 		</div>
 		<template #list>
 			<li class="left-sidebar__list">
-				<DynamicScroller :items="dynamicScrollerItems"
-					:min-item-size="64"
-					class="scroller">
-					<template #default="{ item, index, active }">
-						<DynamicScrollerItem :item="item"
-							:active="active"
-							:data-index="index">
-							<el :is="item.is"
-								v-bind="item.props"
-								v-on="item.listeners" />
-						</DynamicScrollerItem>
-					</template>
-				</DynamicScroller>
+				<VirtualList style="height: 360px; overflow-y: auto;"
+					data-key="id"
+					:data-sources="dynamicScrollerItems"
+					:data-component="VirtualScrollerItem" />
 			</li>
 			<NcButton v-if="!preventFindingUnread && unreadNum > 0"
 				class="unread-mention-button"
@@ -90,6 +81,8 @@ import arrowNavigation from '../../mixins/arrowNavigation.js'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
+import VirtualList from 'vue-virtual-scroll-list'
+import VirtualScrollerItem from './VirtualScrollerItem.vue'
 
 export default {
 
@@ -97,12 +90,10 @@ export default {
 
 	components: {
 		NcAppNavigation,
-		NcAppNavigationCaption,
 		NcButton,
-		Hint,
 		SearchBox,
 		NewGroupConversation,
-		Conversation,
+		VirtualList,
 	},
 
 	mixins: [
@@ -130,6 +121,7 @@ export default {
 			unreadNum: 0,
 			firstUnreadPos: 0,
 			preventFindingUnread: false,
+			VirtualScrollerItem,
 		}
 	},
 
@@ -233,25 +225,25 @@ export default {
 				{
 					title: t('spreed', 'Open conversations'),
 					source: this.searchResultsListedConversations,
-					component: Conversation,
+					component: 'Conversation',
 					clickHandler: this.joinListedConversation,
 				},
 				{
 					title: t('spreed', 'Users'),
 					source: this.searchResultsUsers,
-					component: ConversationSearchResult,
+					component: 'ConversationSearchResult',
 					clickHandler: this.createAndJoinConversation,
 				},
 				{
 					title: t('spreed', 'Groups'),
 					source: this.searchResultsGroups,
-					component: ConversationSearchResult,
+					component: 'ConversationSearchResult',
 					clickHandler: this.createAndJoinConversation,
 				},
 				{
 					title: t('spreed', 'Circles'),
 					source: this.searchResultsCircles,
-					component: ConversationSearchResult,
+					component: 'ConversationSearchResult',
 					clickHandler: this.createAndJoinConversation,
 				},
 			]
