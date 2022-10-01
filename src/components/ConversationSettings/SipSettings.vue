@@ -25,36 +25,36 @@
 			{{ t('spreed', 'Allow participants to join from a phone.') }}
 		</div>
 		<div>
-			<input id="sip_settings_checkbox"
+			<NcCheckboxRadioSwitch :checked="hasSIPEnabled"
+				type="switch"
 				aria-describedby="sip_settings_hint"
-				type="checkbox"
-				class="checkbox"
-				name="sip_settings_checkbox"
-				:checked="hasSIPEnabled"
 				:disabled="isSipLoading"
-				@change="toggleSetting('enable')">
-			<label for="sip_settings_checkbox">{{ t('spreed', 'Enable SIP dial-in') }}</label>
+				@update:checked="toggleSetting('enable')">
+				{{ t('spreed', 'Enable SIP dial-in') }}
+			</NcCheckboxRadioSwitch>
 		</div>
 		<div v-if="hasSIPEnabled">
-			<input id="sip_nopin_checkbox"
-				aria-describedby="sip_nopin_checkbox"
-				type="checkbox"
-				class="checkbox"
-				name="sip_nopin_checkbox"
-				:checked="noPinRequired"
+			<NcCheckboxRadioSwitch :checked="noPinRequired"
+				type="switch"
 				:disabled="isSipLoading || !hasSIPEnabled"
-				@change="toggleSetting('nopin')">
-			<label for="sip_nopin_checkbox">{{ t('spreed', 'Allow to dial-in without a PIN') }}</label>
+				@update:checked="toggleSetting('nopin')">
+				{{ t('spreed', 'Allow to dial-in without a PIN') }}
+			</NcCheckboxRadioSwitch>
 		</div>
 	</div>
 </template>
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import { WEBINAR } from '../../constants.js'
 
 export default {
 	name: 'SipSettings',
+
+	components: {
+		NcCheckboxRadioSwitch,
+	},
 
 	data() {
 		return {
