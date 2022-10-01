@@ -41,6 +41,7 @@ import {
 	setConversationPermissions,
 	setCallPermissions,
 	setMessageExpiration,
+	setConversationPassword,
 } from '../services/conversationsService.js'
 import { getCurrentUser } from '@nextcloud/auth'
 // eslint-disable-next-line import/extensions
@@ -164,6 +165,10 @@ const mutations = {
 
 	setMessageExpiration(state, { token, seconds }) {
 		Vue.set(state.conversations[token], 'messageExpiration', seconds)
+	},
+
+	setConversationHasPassword(state, { token, hasPassword }) {
+		Vue.set(state.conversations[token], 'hasPassword', hasPassword)
 	},
 }
 
@@ -325,6 +330,15 @@ const actions = {
 	async setConversationDescription({ commit }, { token, description }) {
 		await setConversationDescription(token, description)
 		commit('setConversationDescription', { token, description })
+	},
+
+	async setConversationPassword({ commit }, { token, newPassword }) {
+		await setConversationPassword(token, newPassword)
+
+		commit('setConversationHasPassword', {
+			token,
+			hasPassword: !!newPassword,
+		})
 	},
 
 	async setReadOnlyState({ commit, getters }, { token, readOnly }) {
