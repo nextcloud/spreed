@@ -28,15 +28,13 @@
 			{{ t('spreed', 'This will also terminate the ongoing call.') }}
 		</div>
 		<div>
-			<input id="moderation_settings_lock_conversation_checkbox"
+			<NcCheckboxRadioSwitch :checked="isReadOnly"
+				type="switch"
 				aria-describedby="moderation_settings_lock_conversation_hint"
-				type="checkbox"
-				class="checkbox"
-				name="moderation_settings_lock_conversation_checkbox"
-				:checked="isReadOnly"
 				:disabled="isReadOnlyStateLoading"
-				@change="toggleReadOnly">
-			<label for="moderation_settings_lock_conversation_checkbox">{{ t('spreed', 'Lock conversation') }}</label>
+				@update:checked="toggleReadOnly">
+				{{ t('spreed', 'Lock conversation') }}
+			</NcCheckboxRadioSwitch>
 		</div>
 	</div>
 </template>
@@ -44,9 +42,14 @@
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
 export default {
 	name: 'LockingSettings',
+
+	components: {
+		NcCheckboxRadioSwitch,
+	},
 
 	props: {
 		token: {
