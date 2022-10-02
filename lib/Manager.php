@@ -3,6 +3,7 @@
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -156,6 +157,7 @@ class Manager {
 		}
 
 		return new Room(
+			$this->config,
 			$this,
 			$this->db,
 			$this->dispatcher,
@@ -910,6 +912,12 @@ class Manager {
 	 * @return Room
 	 */
 	public function createRoom(int $type, string $name = '', string $objectType = '', string $objectId = ''): Room {
+
+		// Force group room if public room was requested and public rooms are disallowed.
+		if (($type === Room::TYPE_PUBLIC) && ($this->config->getAppValue('spreed', 'public_rooms_allowed', 'yes') === 'no')) {
+			$type = Room::TYPE_GROUP;
+		}
+
 		$token = $this->getNewToken();
 
 		$insert = $this->db->getQueryBuilder();
