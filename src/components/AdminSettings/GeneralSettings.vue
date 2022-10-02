@@ -83,7 +83,7 @@ export default {
 			defaultGroupNotification: defaultGroupNotificationOptions[1],
 
 			conversationsFiles: parseInt(loadState('spreed', 'conversations_files')) === 1,
-			conversationsFilesPublicShares:  parseInt(loadState('spreed', 'conversations_files_public_shares')) === 1,
+			conversationsFilesPublicShares: parseInt(loadState('spreed', 'conversations_files_public_shares')) === 1,
 		}
 	},
 
