@@ -55,16 +55,11 @@
 				</div>
 				<div v-show="parts.length > 0"
 					class="enable-switch-line">
-					<input id="enable-checkbox"
-						type="checkbox"
-						class="checkbox"
-						:token="token"
-						:checked="enabled"
-						@change="onEnabled">
-					<label for="enable-checkbox">
+					<NcCheckboxRadioSwitch :checked="enabled"
+						@update:checked="onEnabled">
 						{{ t('spreed', 'Enable bridge') }}
 						({{ processStateText }})
-					</label>
+					</NcCheckboxRadioSwitch>
 					<NcButton v-if="enabled"
 						v-tooltip.top="{ content: t('spreed', 'Show Matterbridge log') }"
 						type="tertiary"
@@ -107,6 +102,7 @@ import {
 import { showSuccess } from '@nextcloud/dialogs'
 import { imagePath } from '@nextcloud/router'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
 import Message from 'vue-material-design-icons/Message.vue'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
@@ -120,9 +116,10 @@ Vue.directive('tooltip', Tooltip)
 export default {
 	name: 'MatterbridgeSettings',
 	components: {
+		NcButton,
+		NcCheckboxRadioSwitch,
 		NcMultiselect,
 		BridgePart,
-		NcButton,
 		Message,
 		NcModal,
 		Plus,
@@ -578,8 +575,8 @@ export default {
 				this.save()
 			}
 		},
-		onEnabled(e) {
-			this.enabled = e.target.checked
+		onEnabled(checked) {
+			this.enabled = checked
 			this.save()
 		},
 		save() {
