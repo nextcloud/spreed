@@ -33,6 +33,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -49,6 +50,7 @@ class Listener {
 	protected ChatManager $chatManager;
 
 	protected ParticipantService $participantService;
+	protected RoomService $roomService;
 
 	protected LoggerInterface $logger;
 
@@ -58,12 +60,14 @@ class Listener {
 								IUserSession $userSession,
 								ChatManager $chatManager,
 								ParticipantService $participantService,
+								RoomService $roomService,
 								LoggerInterface $logger,
 								ITimeFactory $timeFactory) {
 		$this->activityManager = $activityManager;
 		$this->userSession = $userSession;
 		$this->chatManager = $chatManager;
 		$this->participantService = $participantService;
+		$this->roomService = $roomService;
 		$this->logger = $logger;
 		$this->timeFactory = $timeFactory;
 	}
@@ -136,7 +140,7 @@ class Listener {
 			$message = 'call_missed';
 		}
 
-		if (!$room->resetActiveSince()) {
+		if (!$this->roomService->resetActiveSince($room)) {
 			// Race-condition, the room was already reset.
 			return false;
 		}

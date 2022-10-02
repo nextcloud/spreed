@@ -551,4 +551,19 @@ class RoomService {
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, $event);
 	}
+
+	public function resetActiveSince(Room $room): bool {
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('active_guests', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('active_since', $update->createNamedParameter(null, IQueryBuilder::PARAM_DATE))
+			->set('call_flag', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('call_permissions', $update->createNamedParameter(Attendee::PERMISSIONS_DEFAULT, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($update->expr()->isNotNull('active_since'));
+
+		$room->resetActiveSince();
+
+		return (bool) $update->executeStatement();
+	}
 }
