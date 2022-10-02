@@ -30,13 +30,11 @@
 			:disabled="loading"
 			:aria-label="t('spreed', 'High-performance backend URL')"
 			@input="updateServer">
-		<input :id="'verify' + index"
-			type="checkbox"
-			:name="'verify' + index"
-			class="checkbox verify"
-			:checked="verify"
-			@change="updateVerify">
-		<label :for="'verify' + index">{{ t('spreed', 'Validate SSL certificate') }}</label>
+
+		<NcCheckboxRadioSwitch :checked="verify"
+			@update:checked="updateVerify">
+			{{ t('spreed', 'Validate SSL certificate') }}
+		</NcCheckboxRadioSwitch>
 
 		<NcButton v-show="!loading"
 			type="tertiary-no-background"
@@ -62,6 +60,7 @@
 
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
@@ -73,6 +72,7 @@ export default {
 
 	components: {
 		NcButton,
+		NcCheckboxRadioSwitch,
 		NcLoadingIcon,
 		AlertCircle,
 		Check,
@@ -144,8 +144,8 @@ export default {
 		updateServer(event) {
 			this.$emit('update:server', event.target.value)
 		},
-		updateVerify(event) {
-			this.$emit('update:verify', event.target.checked)
+		updateVerify(checked) {
+			this.$emit('update:verify', checked)
 		},
 
 		async checkServerVersion() {
