@@ -1191,7 +1191,7 @@ OC.L10N.register(
     "End meeting for all" : "Ukončit schůzku pro všechny",
     "Start call silently" : "Zahájit hovor tiše",
     "Start call" : "Zavolat",
-    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk bylo aktualizováno – aby jste mohli začít hovor nebo se k němu připojit, je třeba stránku načíst znovu.",
+    "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk bylo aktualizováno – abyste mohli začít hovor nebo se k němu připojit, je třeba stránku načíst znovu.",
     "You will be able to join the call only after a moderator starts it." : "K hovoru se budete moci připojit až poté, co ho moderátor zahájí.",
     "Toggle fullscreen" : "Vyp/zap. zobrazení na celou obrazovku",
     "Rename conversation" : "Přejmenovat konverzaci",
