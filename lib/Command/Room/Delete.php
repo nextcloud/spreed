@@ -62,7 +62,7 @@ class Delete extends Base {
 			return 1;
 		}
 
-		$room->deleteRoom();
+		$this->roomService->deleteRoom($room);
 
 		$output->writeln('<info>Room successfully deleted.</info>');
 		return 0;

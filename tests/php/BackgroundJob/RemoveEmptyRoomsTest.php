@@ -29,6 +29,7 @@ use OCA\Talk\BackgroundJob\RemoveEmptyRooms;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\Config\IUserMountCache;
 use Psr\Log\LoggerInterface;
@@ -39,6 +40,8 @@ class RemoveEmptyRoomsTest extends TestCase {
 	protected $timeFactory;
 	/** @var Manager|MockObject */
 	protected $manager;
+	/** @var RoomService|MockObject */
+	protected $roomService;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
 	/** @var LoggerInterface|MockObject */
@@ -51,6 +54,7 @@ class RemoveEmptyRoomsTest extends TestCase {
 
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->manager = $this->createMock(Manager::class);
+		$this->roomService = $this->createMock(RoomService::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->loggerInterface = $this->createMock(LoggerInterface::class);
 		$this->userMountCache = $this->createMock(IUserMountCache::class);
@@ -60,6 +64,7 @@ class RemoveEmptyRoomsTest extends TestCase {
 		return new RemoveEmptyRooms(
 			$this->timeFactory,
 			$this->manager,
+			$this->roomService,
 			$this->participantService,
 			$this->loggerInterface,
 			$this->userMountCache

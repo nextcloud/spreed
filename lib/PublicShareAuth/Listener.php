@@ -33,6 +33,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Server;
 
@@ -171,6 +172,8 @@ class Listener {
 			return;
 		}
 
-		$room->deleteRoom();
+		$roomService = Server::get(RoomService::class);
+
+		$roomService->deleteRoom($room);
 	}
 }

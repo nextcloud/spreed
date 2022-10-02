@@ -27,6 +27,7 @@ use InvalidArgumentException;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
+use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -41,6 +42,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\HintException;
 use OCP\IDBConnection;
 use OCP\IUser;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\Events\ValidatePasswordPolicyEvent;
 use OCP\Security\IHasher;
 use OCP\Share\IManager as IShareManager;
@@ -565,5 +567,29 @@ class RoomService {
 		$room->resetActiveSince();
 
 		return (bool) $update->executeStatement();
+	}
+
+	public function deleteRoom(Room $room): void {
+		$event = new RoomEvent($room);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_DELETE, $event);
+		$delete = $this->db->getQueryBuilder();
+
+		// Delete attendees
+		$delete->delete('talk_attendees')
+			->where($delete->expr()->eq('room_id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$delete->executeStatement();
+
+		// Delete room
+		$delete->delete('talk_rooms')
+			->where($delete->expr()->eq('id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$delete->executeStatement();
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_DELETE, $event);
+		if (class_exists(CriticalActionPerformedEvent::class)) {
+			$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+				'Conversation "%s" deleted',
+				['name' => $room->getName()],
+			));
+		}
 	}
 }

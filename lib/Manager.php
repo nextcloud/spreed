@@ -55,22 +55,22 @@ use OCP\Server;
 class Manager {
 	public const EVENT_TOKEN_GENERATE = self::class . '::generateNewToken';
 
-	private IDBConnection $db;
-	private IConfig $config;
-	private Config $talkConfig;
-	private IAppManager $appManager;
-	private AttendeeMapper $attendeeMapper;
-	private SessionMapper $sessionMapper;
-	private ParticipantService $participantService;
-	private ISecureRandom $secureRandom;
-	private IUserManager $userManager;
-	private IGroupManager $groupManager;
-	private ICommentsManager $commentsManager;
-	private TalkSession $talkSession;
-	private IEventDispatcher $dispatcher;
+	protected IDBConnection $db;
+	protected IConfig $config;
+	protected Config $talkConfig;
+	protected IAppManager $appManager;
+	protected AttendeeMapper $attendeeMapper;
+	protected SessionMapper $sessionMapper;
+	protected ParticipantService $participantService;
+	protected ISecureRandom $secureRandom;
+	protected IUserManager $userManager;
+	protected IGroupManager $groupManager;
+	protected ICommentsManager $commentsManager;
+	protected TalkSession $talkSession;
+	protected IEventDispatcher $dispatcher;
 	protected ITimeFactory $timeFactory;
-	private IHasher $hasher;
-	private IL10N $l;
+	protected IHasher $hasher;
+	protected IL10N $l;
 
 	public function __construct(IDBConnection $db,
 								IConfig $config,
@@ -383,7 +383,7 @@ class Manager {
 		$rooms = $this->getRoomsForUser($user->getUID());
 		foreach ($rooms as $room) {
 			if ($this->participantService->getNumberOfUsers($room) === 1) {
-				$room->deleteRoom();
+				Server::get(RoomService::class)->deleteRoom($room);
 			} else {
 				$this->participantService->removeUser($room, $user, Room::PARTICIPANT_REMOVED);
 			}

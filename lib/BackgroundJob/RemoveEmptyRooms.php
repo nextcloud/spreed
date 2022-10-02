@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\BackgroundJob;
 
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 use OCA\Talk\Manager;
@@ -39,17 +40,16 @@ use Psr\Log\LoggerInterface;
  */
 class RemoveEmptyRooms extends TimedJob {
 	protected Manager $manager;
-
+	protected RoomService $roomService;
 	protected ParticipantService $participantService;
-
 	protected LoggerInterface $logger;
-
 	protected IUserMountCache $userMountCache;
 
 	protected int $numDeletedRooms = 0;
 
 	public function __construct(ITimeFactory $timeFactory,
 								Manager $manager,
+								RoomService $roomService,
 								ParticipantService $participantService,
 								LoggerInterface $logger,
 								IUserMountCache $userMountCache) {
@@ -60,6 +60,7 @@ class RemoveEmptyRooms extends TimedJob {
 		$this->setTimeSensitivity(IJob::TIME_INSENSITIVE);
 
 		$this->manager = $manager;
+		$this->roomService = $roomService;
 		$this->participantService = $participantService;
 		$this->logger = $logger;
 		$this->userMountCache = $userMountCache;
@@ -115,7 +116,7 @@ class RemoveEmptyRooms extends TimedJob {
 	}
 
 	private function doDeleteRoom(Room $room): void {
-		$room->deleteRoom();
+		$this->roomService->deleteRoom($room);
 		$this->numDeletedRooms++;
 	}
 }

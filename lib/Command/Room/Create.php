@@ -156,7 +156,7 @@ class Create extends Base {
 				$this->setMessageExpiration($room, (int) $messageExpiration);
 			}
 		} catch (InvalidArgumentException $e) {
-			$room->deleteRoom();
+			$this->roomService->deleteRoom($room);
 
 			$output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
 			return 1;

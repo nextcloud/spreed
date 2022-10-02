@@ -28,7 +28,6 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCA\Talk\Events\ModifyRoomEvent;
-use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
@@ -41,7 +40,6 @@ use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
-use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\IHasher;
 use OCP\Server;
 
@@ -682,30 +680,6 @@ class Room {
 		}
 
 		return $this->manager->createParticipantObject($this, $row);
-	}
-
-	public function deleteRoom(): void {
-		$event = new RoomEvent($this);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOM_DELETE, $event);
-		$delete = $this->db->getQueryBuilder();
-
-		// Delete attendees
-		$delete->delete('talk_attendees')
-			->where($delete->expr()->eq('room_id', $delete->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$delete->executeStatement();
-
-		// Delete room
-		$delete->delete('talk_rooms')
-			->where($delete->expr()->eq('id', $delete->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$delete->executeStatement();
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_ROOM_DELETE, $event);
-		if (class_exists(CriticalActionPerformedEvent::class)) {
-			$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
-				'Conversation "%s" deleted',
-				['name' => $this->getName()],
-			));
-		}
 	}
 
 	/**
