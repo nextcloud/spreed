@@ -677,7 +677,15 @@ export default {
 		 */
 		findFirstVisibleMessage(messageEl) {
 			let el = messageEl
+
+			// When the current message is not visible (reaction or expired)
+			// we use the next message from the list start the scroller-visibility check
+			if (!el) {
+				const messageId = this.$store.getters.getFirstDisplayableMessageIdAfterReadMarker(this.token, this.conversation.lastReadMessage)
+				el = document.getElementById('message_' + messageId)
+			}
 			let previousEl = el
+
 			const scrollTop = this.scroller.scrollTop
 			while (el) {
 				// is the message element fully visible with no intersection with the bottom border ?
@@ -716,11 +724,11 @@ export default {
 		}, 1000),
 
 		/**
-		 * Finds the first visual unread message element
+		 * Finds the last visual read message element
 		 *
-		 * @return {object} DOM element of the first unread message
+		 * @return {object} DOM element of the last read message
 		 */
-		getUnreadMessageElement() {
+		getVisualLastReadMessageElement() {
 			let el = document.getElementById('message_' + this.visualLastReadMessageId)
 			if (el) {
 				el = el.closest('.message')
@@ -754,10 +762,10 @@ export default {
 				return
 			}
 
-			const unreadMessageElement = this.getUnreadMessageElement()
+			const lastReadMessageElement = this.getVisualLastReadMessageElement()
 
 			// first unread message has not been seen yet, so don't move it
-			if (!unreadMessageElement || unreadMessageElement.getAttribute('data-seen') !== 'true') {
+			if (lastReadMessageElement && lastReadMessageElement.getAttribute('data-seen') !== 'true') {
 				return
 			}
 
@@ -768,12 +776,12 @@ export default {
 				return
 			}
 
-			if (unreadMessageElement.offsetTop - this.scroller.scrollTop > 0) {
+			if (lastReadMessageElement && (lastReadMessageElement.offsetTop - this.scroller.scrollTop > 0)) {
 				// still visible, hasn't disappeared at the top yet
 				return
 			}
 
-			const firstVisibleMessage = this.findFirstVisibleMessage(unreadMessageElement)
+			const firstVisibleMessage = this.findFirstVisibleMessage(lastReadMessageElement)
 			if (!firstVisibleMessage) {
 				console.warn('First visible message not found: ', firstVisibleMessage)
 				return
@@ -786,7 +794,7 @@ export default {
 			}
 
 			// we don't update visually here, it will update the next time the
-			// user focusses back on the conversation. See refreshReadMarkerPosition().
+			// user focuses back on the conversation. See refreshReadMarkerPosition().
 			console.debug('updateLastReadMessage token=' + this.token + ' messageId=' + messageId)
 			this.$store.dispatch('updateLastReadMessage', { token: this.token, id: messageId, updateVisually: false })
 		},
