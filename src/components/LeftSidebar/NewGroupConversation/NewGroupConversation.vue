@@ -1,5 +1,6 @@
 <!--
   - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@icloud.com>
+  - @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
@@ -45,7 +46,7 @@
 					<template v-if="page === 0">
 						<SetConversationName v-model="conversationNameInput"
 							@click-enter="handleEnter" />
-						<NcCheckboxRadioSwitch :checked.sync="isPublic">
+						<NcCheckboxRadioSwitch :checked.sync="isPublic" v-if="publicRoomsEnabled">
 							{{ t('spreed', 'Allow guests to join via link') }}
 						</NcCheckboxRadioSwitch>
 						<!-- Password protection -->
@@ -138,6 +139,7 @@ import isInCall from '../../../mixins/isInCall.js'
 import participant from '../../../mixins/participant.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import { EventBus } from '../../../services/EventBus.js'
+import { loadState } from '@nextcloud/initial-state'
 
 export default {
 
@@ -177,6 +179,7 @@ export default {
 			password: '',
 			passwordProtect: false,
 			listable: CONVERSATION.LISTABLE.NONE,
+			publicRoomsEnabled: loadState('spreed', 'public_rooms_allowed'),
 		}
 	},
 

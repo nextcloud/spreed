@@ -3,6 +3,7 @@
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -141,6 +142,11 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState(
 			'matterbridge_enable',
 			$this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1'
+		);
+
+		$this->initialState->provideInitialState(
+			'public_rooms_allowed',
+			$this->serverConfig->getAppValue('spreed', 'public_rooms_allowed', 'yes') === 'yes'
 		);
 	}
 

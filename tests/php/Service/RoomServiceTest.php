@@ -3,6 +3,7 @@
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -38,6 +39,7 @@ use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\Security\IHasher;
@@ -354,6 +356,7 @@ class RoomServiceTest extends TestCase {
 		);
 
 		$room = new Room(
+			$this->createMock(IConfig::class),
 			$this->createMock(Manager::class),
 			$this->createMock(IDBConnection::class),
 			$dispatcher,

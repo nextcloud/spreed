@@ -4,6 +4,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
  *
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Joas Schilling <coding@schilljs.com>
@@ -38,6 +39,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
+use OCP\IConfig;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
@@ -185,8 +187,10 @@ class Room {
 
 	protected ?string $currentUser = null;
 	protected ?Participant $participant = null;
+	protected IConfig $config;
 
-	public function __construct(Manager $manager,
+	public function __construct(IConfig $config,
+								Manager $manager,
 								IDBConnection $db,
 								IEventDispatcher $dispatcher,
 								ITimeFactory $timeFactory,
@@ -216,6 +220,7 @@ class Room {
 								?\DateTime $lobbyTimer,
 								string $objectType,
 								string $objectId) {
+		$this->config = $config;
 		$this->manager = $manager;
 		$this->db = $db;
 		$this->dispatcher = $dispatcher;
@@ -257,6 +262,11 @@ class Room {
 	}
 
 	public function setType(int $type): void {
+		// Force group room if public room was requested and public rooms are disallowed.
+		if (($type === self::TYPE_PUBLIC) && ($this->config->getAppValue('spreed', 'public_rooms_allowed', 'yes') === 'no')) {
+			$type = self::TYPE_GROUP;
+		}
+
 		$this->type = $type;
 	}
 

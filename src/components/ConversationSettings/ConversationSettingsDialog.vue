@@ -1,5 +1,6 @@
 <!--
   - @copyright Copyright (c) 2020 Vincent Petry <vincent@nextcloud.com>
+  - @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
   -
   - @author Vincent Petry <vincent@nextcloud.com>
   -
@@ -53,7 +54,7 @@
 		</NcAppSettingsSection>
 
 		<!-- Guest access -->
-		<NcAppSettingsSection v-if="canFullModerate"
+		<NcAppSettingsSection v-if="canFullModerate && publicRoomsEnabled"
 			id="guests"
 			:title="t('spreed', 'Guests access')">
 			<LinkShareSettings ref="linkShareSettings" />
@@ -147,6 +148,7 @@ export default {
 		return {
 			showSettings: false,
 			matterbridgeEnabled: loadState('spreed', 'enable_matterbridge'),
+			publicRoomsEnabled: loadState('spreed', 'public_rooms_allowed'),
 			isEditingDescription: false,
 			isDescriptionLoading: false,
 			showDeviceChecker: false,
@@ -224,9 +226,11 @@ export default {
 		handleShowSettings({ token }) {
 			this.$store.dispatch('updateConversationSettingsToken', token)
 			this.showSettings = true
-			this.$nextTick(() => {
-				this.$refs.linkShareSettings.focus()
-			})
+			if (loadState('spreed', 'public_rooms_allowed')) {
+				this.$nextTick(() => {
+					this.$refs.linkShareSettings.focus()
+				})
+			}
 		},
 
 		handleHideSettings() {
