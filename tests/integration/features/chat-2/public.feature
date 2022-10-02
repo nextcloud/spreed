@@ -1,4 +1,4 @@
-Feature: chat/public
+Feature: chat-2/public
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
@@ -96,3 +96,18 @@ Feature: chat/public
       | public room | guests    | guest        |                          | Message 3 | []                |
       | public room | users     | participant2 | participant2-displayname | Message 2 | []                |
       | public room | users     | participant1 | participant1-displayname | Message 1 | []                |
+
+
+  Scenario: Create room with big name and rename
+    # 260 chars
+    When user "participant1" creates room "public room" with 400 (v4)
+      | roomType | 3 |
+      | roomName | A name with 260 chars 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 12345678 |
+    # 255 chars
+    And user "participant1" creates room "public room" (v4)
+      | roomType | 3 |
+      | roomName | A name with 255 chars 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123 |
+    # 260 chars
+    And user "participant1" renames room "public room" to "A name with 260 chars 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 12345678" with 400 (v4)
+    # 255 chars
+    And user "participant1" renames room "public room" to "Another name with 255 chars 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567" with 200 (v4)

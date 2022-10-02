@@ -23,8 +23,8 @@
 	<div class="set-contacts">
 		<!-- Search -->
 		<NcTextField ref="setContacts"
-			v-model="searchText"
 			v-observe-visibility="visibilityChanged"
+			:value.sync="searchText"
 			type="text"
 			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">

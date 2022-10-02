@@ -39,6 +39,7 @@
 							:show-talking-highlight="false"
 							:is-grid="true"
 							:is-big="true"
+							:is-one-to-one="isOneToOne"
 							:fit-video="true" />
 					</template>
 				</div>
@@ -678,6 +679,7 @@ export default {
 	width: 100%;
 	height: 100%;
 	background-color: $color-call-background;
+	backdrop-filter: blur(25px);
 }
 
 #videos {

@@ -43,6 +43,7 @@
 			</NcActions>
 			<NcActions :force-menu="true"
 				:container="`#message_${id}`"
+				placement="bottom-end"
 				:boundaries-element="containerElement"
 				@open="onMenuOpen"
 				@close="onMenuClose">
@@ -70,11 +71,12 @@
 						:size="20" />
 					{{ t('spreed', 'Go to file') }}
 				</NcActionLink>
-				<NcActionButton v-if="!isCurrentGuest && !isFileShare && !isDeletedMessage"
+				<NcActionButton v-if="canForwardMessage"
 					:close-after-click="true"
-					@click.stop="showForwarder = true">
-					<Share slot="icon"
-						:size="16" />
+					@click.stop="openForwarder">
+					<template #icon>
+						<Share :size="16" />
+					</template>
 					{{ t('spreed', 'Forward message') }}
 				</NcActionButton>
 				<NcActionSeparator v-if="messageActions.length > 0" />
@@ -120,6 +122,8 @@
 				</template>
 			</NcButton>
 			<NcEmojiPicker :container="`#message_${id} .message-buttons-bar`"
+				:boundary="containerElement"
+				placement="auto"
 				@select="handleReactionClick"
 				@after-show="onEmojiPickerOpen"
 				@after-hide="onEmojiPickerClose">
@@ -131,9 +135,9 @@
 				</NcButton>
 			</NcEmojiPicker>
 		</template>
-		<Forwarder v-if="showForwarder"
+		<Forwarder v-if="isForwarderOpen"
 			:message-object="messageObject"
-			@close="showForwarder = false" />
+			@close="closeForwarder" />
 	</div>
 </template>
 
@@ -294,6 +298,11 @@ export default {
 			required: true,
 		},
 
+		isForwarderOpen: {
+			type: Boolean,
+			required: true,
+		},
+
 		canReact: {
 			type: Boolean,
 			required: true,
@@ -310,20 +319,13 @@ export default {
 		},
 	},
 
-	data() {
-		return {
-			// Shows/hides the message forwarder component
-			showForwarder: false,
-		}
-	},
-
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.token)
 		},
 
 		containerElement() {
-			return document.querySelector(this.container)
+			return document.querySelector('.messages-list__scroller')
 		},
 
 		isDeleteable() {
@@ -380,6 +382,19 @@ export default {
 		isDeletedMessage() {
 			return this.messageType === 'comment_deleted'
 		},
+
+		isPollMessage() {
+			return this.messageType === 'comment'
+				&& this.message === '{object}'
+				&& this.messageParameters?.object?.type === 'talk-poll'
+		},
+
+		canForwardMessage() {
+			return !this.isCurrentGuest
+				&& !this.isFileShare
+				&& !this.isDeletedMessage
+				&& !this.isPollMessage
+		},
 	},
 
 	methods: {
@@ -409,7 +424,7 @@ export default {
 		async handleCopyMessageLink() {
 			try {
 				const link = window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token) + '#message_' + this.id
-				await this.$copyText(link)
+				await navigator.clipboard.writeText(link)
 				showSuccess(t('spreed', 'Message link copied to clipboard'))
 			} catch (error) {
 				console.error('Error copying link: ', error)
@@ -472,6 +487,14 @@ export default {
 
 		openReactionsMenu() {
 			this.$emit('update:isReactionsMenuOpen', true)
+		},
+
+		openForwarder() {
+			this.$emit('update:isForwarderOpen', true)
+		},
+
+		closeForwarder() {
+			this.$emit('update:isForwarderOpen', false)
 		},
 
 		// Making sure that the click is outside the MessageButtonsBar

@@ -75,7 +75,7 @@
 			</span>
 		</template>
 		<div ref="contentEditable"
-			v-shortkey.once="['c']"
+			v-shortkey.once="disableKeyboardShortcuts ? null : ['c']"
 			:contenteditable="activeInput"
 			:placeHolder="placeholderText"
 			role="textbox"
@@ -208,6 +208,13 @@ export default {
 			required: true,
 		},
 	},
+
+	computed: {
+		disableKeyboardShortcuts() {
+			return OCP.Accessibility.disableKeyboardShortcuts()
+		},
+	},
+
 	data() {
 		return {
 			text: '',
@@ -306,6 +313,9 @@ export default {
 		 * Focuses the contenteditable div input
 		 */
 		focusInput() {
+			if (this.isMobile) {
+				return
+			}
 			if (!this.$route || this.$route.name === 'conversation') {
 				const contentEditable = this.$refs.contentEditable
 				// This is a hack but it's the only way I've found to focus a contenteditable div
@@ -408,6 +418,10 @@ export default {
 			}
 
 			return 'user'
+		},
+
+		isMobile() {
+			return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
 		},
 	},
 }

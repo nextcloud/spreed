@@ -29,15 +29,12 @@
 				{{ t('spreed', 'This will also remove non-moderators from the ongoing call.') }}
 			</div>
 			<div>
-				<input id="moderation_settings_enable_lobby_checkbox"
-					aria-describedby="moderation_settings_enable_lobby_hint"
-					type="checkbox"
-					class="checkbox"
-					name="moderation_settings_enable_lobby_checkbox"
-					:checked="hasLobbyEnabled"
+				<NcCheckboxRadioSwitch :checked="hasLobbyEnabled"
+					type="switch"
 					:disabled="isLobbyStateLoading"
-					@change="toggleLobby">
-				<label for="moderation_settings_enable_lobby_checkbox">{{ t('spreed', 'Enable lobby') }}</label>
+					@update:checked="toggleLobby">
+					{{ t('spreed', 'Enable lobby') }}
+				</NcCheckboxRadioSwitch>
 			</div>
 		</div>
 		<div class="app-settings-subsection">
@@ -70,12 +67,14 @@
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { WEBINAR } from '../../constants.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDatetimePicker from '@nextcloud/vue/dist/Components/NcDatetimePicker.js'
 
 export default {
 	name: 'LobbySettings',
 
 	components: {
+		NcCheckboxRadioSwitch,
 		NcDatetimePicker,
 	},
 

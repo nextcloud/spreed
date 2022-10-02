@@ -23,6 +23,7 @@
 <template>
 	<NcAppSettingsDialog role="dialog"
 		:aria-label="t('spreed', 'Conversation settings')"
+		:title="t('spreed', 'Conversation settings')"
 		:open.sync="showSettings"
 		:show-navigation="true"
 		:container="container">
@@ -228,7 +229,7 @@ export default {
 			this.showSettings = true
 			if (loadState('spreed', 'public_rooms_allowed')) {
 				this.$nextTick(() => {
-					this.$refs.linkShareSettings.focus()
+					this.$refs.linkShareSettings.$el.focus()
 				})
 			}
 		},

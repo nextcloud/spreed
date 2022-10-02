@@ -18,7 +18,7 @@
   -
   -->
 <template>
-	<div v-shortkey.push="['space']"
+	<div v-shortkey.push="disableKeyboardShortcuts ? null : ['space']"
 		@shortkey="handleShortkey">
 		<div class="buttons-bar">
 			<div class="network-connection-state">
@@ -59,7 +59,7 @@
 				</NcPopover>
 			</div>
 			<div id="muteWrapper">
-				<NcButton v-shortkey.once="['m']"
+				<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['m']"
 					v-tooltip="audioButtonTooltip"
 					type="tertiary-no-background"
 					:aria-label="audioButtonAriaLabel"
@@ -80,7 +80,7 @@
 					class="volume-indicator"
 					:class="{'microphone-off': !showMicrophoneOn}" />
 			</div>
-			<NcButton v-shortkey.once="['v']"
+			<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['v']"
 				v-tooltip="videoButtonTooltip"
 				type="tertiary-no-background"
 				:aria-label="videoButtonAriaLabel"
@@ -156,13 +156,13 @@
 					{{ t('spreed', 'Stop screensharing') }}
 				</NcActionButton>
 			</NcActions>
-			<NcButton v-shortkey.once="['r']"
-				v-tooltip="t('spreed', 'Lower hand (R)')"
+			<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['r']"
+				v-tooltip="disableKeyboardShortcuts ? t('spreed', 'Lower hand') : t('spreed', 'Lower hand (R)')"
 				type="tertiary-no-background"
 				class="lower-hand"
 				:class="model.attributes.raisedHand.state ? '' : 'hidden-visually'"
 				:tabindex="model.attributes.raisedHand.state ? 0 : -1"
-				:aria-label="t('spreed', 'Lower hand (R)')"
+				:aria-label="disableKeyboardShortcuts ? t('spreed', 'Lower hand') : t('spreed', 'Lower hand (R)')"
 				@shortkey="toggleHandRaised"
 				@click.stop="toggleHandRaised">
 				<template #icon>
@@ -339,7 +339,13 @@ export default {
 	computed: {
 		raiseHandButtonLabel() {
 			if (!this.model.attributes.raisedHand.state) {
+				if (this.disableKeyboardShortcuts) {
+					return t('spreed', 'Raise hand')
+				}
 				return t('spreed', 'Raise hand (R)')
+			}
+			if (this.disableKeyboardShortcuts) {
+				return t('spreed', 'Lower hand')
 			}
 			return t('spreed', 'Lower hand (R)')
 		},
@@ -405,8 +411,23 @@ export default {
 				}
 			}
 
+			let content = ''
+			if (this.model.attributes.audioEnabled) {
+				if (this.disableKeyboardShortcuts) {
+					content = t('spreed', 'Mute audio')
+				} else {
+					content = t('spreed', 'Mute audio (M)')
+				}
+			} else {
+				if (this.disableKeyboardShortcuts) {
+					content = t('spreed', 'Unmute audio')
+				} else {
+					content = t('spreed', 'Unmute audio (M)')
+				}
+			}
+
 			return {
-				content: this.model.attributes.audioEnabled ? t('spreed', 'Mute audio (M)') : t('spreed', 'Unmute audio (M)'),
+				content,
 				show: false,
 			}
 		},
@@ -463,11 +484,23 @@ export default {
 			}
 
 			if (this.model.attributes.videoEnabled) {
+				if (this.disableKeyboardShortcuts) {
+					return t('spreed', 'Disable video')
+				}
+
 				return t('spreed', 'Disable video (V)')
 			}
 
 			if (!this.model.getWebRtc() || !this.model.getWebRtc().connection || this.model.getWebRtc().connection.getSendVideoIfAvailable()) {
+				if (this.disableKeyboardShortcuts) {
+					return t('spreed', 'Enable video')
+				}
+
 				return t('spreed', 'Enable video (V)')
+			}
+
+			if (this.disableKeyboardShortcuts) {
+				return t('spreed', 'Enable video - Your connection will be briefly interrupted when enabling the video for the first time')
 			}
 
 			return t('spreed', 'Enable video (V) - Your connection will be briefly interrupted when enabling the video for the first time')
@@ -646,6 +679,9 @@ export default {
 			return this.$store.getters.isGrid
 		},
 
+		disableKeyboardShortcuts() {
+			return OCP.Accessibility.disableKeyboardShortcuts()
+		},
 	},
 
 	watch: {

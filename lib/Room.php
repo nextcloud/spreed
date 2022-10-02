@@ -305,8 +305,10 @@ class Room {
 		$this->messageExpiration = $messageExpiration;
 	}
 
-	public function getLobbyState(): int {
-		$this->validateTimer();
+	public function getLobbyState(bool $validateTime = true): int {
+		if ($validateTime) {
+			$this->validateTimer();
+		}
 		return $this->lobbyState;
 	}
 
@@ -314,8 +316,10 @@ class Room {
 		$this->lobbyState = $lobbyState;
 	}
 
-	public function getLobbyTimer(): ?\DateTime {
-		$this->validateTimer();
+	public function getLobbyTimer(bool $validateTime = true): ?\DateTime {
+		if ($validateTime) {
+			$this->validateTimer();
+		}
 		return $this->lobbyTimer;
 	}
 
@@ -325,7 +329,9 @@ class Room {
 
 	protected function validateTimer(): void {
 		if ($this->lobbyTimer !== null && $this->lobbyTimer < $this->timeFactory->getDateTime()) {
-			Server::get(RoomService::class)->setLobby($this, Webinary::LOBBY_NONE, null, true);
+			/** @var RoomService $roomService */
+			$roomService = Server::get(RoomService::class);
+			$roomService->setLobby($this, Webinary::LOBBY_NONE, null, true);
 		}
 	}
 
@@ -371,6 +377,21 @@ class Room {
 			}
 		}
 		return $this->name;
+	}
+
+	public function getSecondParticipant(string $userId): string {
+		if ($this->getType() !== self::TYPE_ONE_TO_ONE) {
+			throw new \InvalidArgumentException('Not a one-to-one room');
+		}
+		$participants = json_decode($this->getName(), true);
+
+		foreach ($participants as $uid) {
+			if ($uid !== $userId) {
+				return $uid;
+			}
+		}
+
+		return $this->getName();
 	}
 
 	public function getDisplayName(string $userId): string {

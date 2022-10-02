@@ -1,4 +1,4 @@
-Feature: User remove
+Feature: command/user-remove
 
   Background:
     Given user "participant1" exists

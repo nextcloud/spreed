@@ -6,7 +6,6 @@ OC.L10N.register(
     "Invalid file provided" : "Ongeldige lêer verskaf",
     "Invalid image" : "Ongeldige beeld",
     "Unknown filetype" : "Onbekende lêertipe",
-    "An error occurred. Please contact your admin." : "'n Fout het voorgekom. Kontak asseblief u administrateur.",
     "Open settings" : "Open instellings",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Verenigde Arabiese Emirate",
@@ -312,6 +311,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Die wagwoord is verkeerd. Probeer weer.",
     "Android app" : "Android-toep",
     "iOS app" : "iOS-toep",
+    "An error occurred. Please contact your admin." : "'n Fout het voorgekom. Kontak asseblief u administrateur.",
     "Saved" : "Bewaar",
     "Microphone" : "Mikrofoon",
     "Camera" : "Kamera"

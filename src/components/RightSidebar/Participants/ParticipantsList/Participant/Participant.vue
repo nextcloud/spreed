@@ -49,7 +49,7 @@
 		<div class="participant-row__user-wrapper"
 			:class="{
 				'has-call-icon': callIcon,
-				'has-menu-icon': canBeModerated && !isSearched
+				'has-menu-icon': (canBeModerated || canSendCallNotification) && !isSearched
 			}">
 			<!-- First line: participant's name and type -->
 			<div ref="userName"
@@ -63,7 +63,11 @@
 			</div>
 
 			<!-- Second line: participant status message if applicable -->
-			<div v-if="statusMessage"
+			<div v-if="isSearched && shareWithDisplayNameUnique"
+				class="participant-row__status">
+				<span>{{ shareWithDisplayNameUnique }}</span>
+			</div>
+			<div v-else-if="statusMessage"
 				ref="statusMessage"
 				class="participant-row__status"
 				@mouseover="updateStatusNeedsTooltip()">
@@ -89,10 +93,11 @@
 		</div>
 
 		<!-- Participant's actions menu -->
-		<NcActions v-if="canBeModerated && !isSearched"
+		<NcActions v-if="(canBeModerated || canSendCallNotification) && !isSearched"
 			:container="container"
 			:aria-label="participantSettingsAriaLabel"
 			:force-menu="true"
+			placement="bottom-end"
 			class="participant-row__actions">
 			<template #icon>
 				<LockOpenVariant v-if="actionIcon === 'LockOpenVariant'"
@@ -159,7 +164,7 @@
 					{{ t('spreed', 'Edit permissions') }}
 				</NcActionButton>
 			</template>
-			<NcActionButton v-if="isEmailActor"
+			<NcActionButton v-if="canBeModerated && isEmailActor"
 				icon="icon-mail"
 				:close-after-click="true"
 				@click="resendInvitation">
@@ -174,7 +179,8 @@
 				{{ t('spreed', 'Send call notification') }}
 			</NcActionButton>
 			<NcActionSeparator v-if="attendeePin || canBePromoted || canBeDemoted || isEmailActor" />
-			<NcActionButton icon="icon-delete"
+			<NcActionButton v-if="canBeModerated"
+				icon="icon-delete"
 				:close-after-click="true"
 				@click="removeParticipant">
 				<template v-if="isGroup">
@@ -419,6 +425,10 @@ export default {
 			return this.participant.label
 		},
 
+		shareWithDisplayNameUnique() {
+			return this.participant.shareWithDisplayNameUnique
+		},
+
 		isHandRaised() {
 			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return false
@@ -472,7 +482,7 @@ export default {
 		},
 
 		attendeePin() {
-			return this.participant.attendeePin ? this.readableNumber(this.participant.attendeePin) : ''
+			return this.canBeModerated && this.participant.attendeePin ? this.readableNumber(this.participant.attendeePin) : ''
 		},
 
 		token() {
@@ -528,7 +538,7 @@ export default {
 		},
 
 		showPermissionsOptions() {
-			return this.selfIsModerator
+			return this.canBeModerated
 				&& !this.isModerator
 				&& (this.participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
 					|| this.participant.actorType === ATTENDEE.ACTOR_TYPE.GUESTS

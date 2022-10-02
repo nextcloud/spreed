@@ -27,7 +27,7 @@
 				<SharedItems :type="type"
 					:limit="limit(type)"
 					:items="sharedItems[type]" />
-				<NcButton v-if="hasMore(sharedItems[type])"
+				<NcButton v-if="hasMore(type, sharedItems[type])"
 					type="tertiary-no-background"
 					class="more"
 					:wide="true"
@@ -39,6 +39,10 @@
 				</NcButton>
 			</div>
 		</template>
+		<NcRelatedResourcesPanel class="related-resources"
+			provider-id="talk"
+			:item-id="conversation.token"
+			@has-resources="value => hasRelatedResources = value" />
 		<template v-if="projectsEnabled">
 			<NcAppNavigationCaption :title="t('spreed', 'Projects')" />
 			<CollectionList v-if="getUserId && token"
@@ -47,7 +51,7 @@
 				:name="conversation.displayName"
 				:is-active="active" />
 		</template>
-		<NcEmptyContent v-else-if="!hasSharedItems"
+		<NcEmptyContent v-else-if="!hasSharedItems && !hasRelatedResources"
 			:title="t('spreed', 'No shared items')">
 			<template #icon>
 				<FolderMultipleImage :size="20" />
@@ -67,6 +71,7 @@ import { loadState } from '@nextcloud/initial-state'
 import SharedItems from './SharedItems.vue'
 import { SHARED_ITEM } from '../../../constants.js'
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
+import NcRelatedResourcesPanel from '@nextcloud/vue/dist/Components/NcRelatedResourcesPanel.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import SharedItemsBrowser from './SharedItemsBrowser/SharedItemsBrowser.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
@@ -82,6 +87,7 @@ export default {
 		SharedItems,
 		CollectionList,
 		NcAppNavigationCaption,
+		NcRelatedResourcesPanel,
 		NcButton,
 		NcEmptyContent,
 		SharedItemsBrowser,
@@ -104,6 +110,7 @@ export default {
 			showSharedItemsBrowser: false,
 			browserActiveTab: '',
 			projectsEnabled: loadState('core', 'projects_enabled', false),
+			hasRelatedResources: false,
 		}
 	},
 
@@ -146,8 +153,8 @@ export default {
 			this.$store.dispatch('getSharedItemsOverview', { token: this.token })
 		},
 
-		hasMore(items) {
-			return Object.values(items).length > 6
+		hasMore(type, items) {
+			return Object.values(items).length > this.limit(type)
 		},
 
 		showMore(type) {
@@ -156,7 +163,7 @@ export default {
 		},
 
 		limit(type) {
-			if (type === SHARED_ITEM.TYPES.DECK_CARD || type === SHARED_ITEM.TYPES.LOCATION) {
+			if (type === SHARED_ITEM.TYPES.DECK_CARD || type === SHARED_ITEM.TYPES.LOCATION || type === SHARED_ITEM.TYPES.POLL) {
 				return 2
 			} else {
 				return 6
@@ -169,6 +176,8 @@ export default {
 				return t('spreed', 'Show all media')
 			case SHARED_ITEM.TYPES.FILE:
 				return t('spreed', 'Show all files')
+			case SHARED_ITEM.TYPES.POLL:
+				return t('spreed', 'Show all polls')
 			case SHARED_ITEM.TYPES.DECK_CARD:
 				return t('spreed', 'Show all deck cards')
 			case SHARED_ITEM.TYPES.VOICE:
@@ -187,9 +196,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use 'sass:math';
+@import '../../../assets/variables';
 
 .more {
 	margin-top: 8px;
 }
 
+// Override default NcRelatedResourcesPanel styles
+.related-resources {
+	&::v-deep .related-resources__header {
+		margin: 14px 0 !important;
+		padding: 0 8px 0 math.div($clickable-area, 2) !important;
+		h5 {
+			opacity: .7 !important;
+			color: var(--color-primary-element) !important;
+		}
+	}
+}
 </style>

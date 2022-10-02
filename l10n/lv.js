@@ -68,7 +68,6 @@ OC.L10N.register(
     "Invalid file provided" : "Norādīta nederīga datne",
     "Invalid image" : "Nederīgs attēls",
     "Unknown filetype" : "Nezināms datnes tips",
-    "An error occurred. Please contact your admin." : "Notika kļūda. Lūdzu sazinies ar savu administratoru.",
     "%s invited you to a conversation." : "%s uzaicināja jūs uz sarunu.",
     "You were invited to a conversation." : "Jūs uzaicinājāt uz sarunu.",
     "Conversation invitation" : "Sarunas uzaicinājums",
@@ -235,6 +234,7 @@ OC.L10N.register(
     "%s Talk on your mobile devices" : "%s Sarunas mobilajās ierīcēs",
     "Android app" : "Android lietotne",
     "iOS app" : "iOS lietotne",
+    "An error occurred. Please contact your admin." : "Notika kļūda. Lūdzu sazinies ar savu administratoru.",
     "Saved" : "Saglabāts",
     "Add a new server" : "Pievienot jaunu serveri"
 },

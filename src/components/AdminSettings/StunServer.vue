@@ -36,7 +36,7 @@
 			type="tertiary-no-background"
 			:aria-label="t('spreed', 'The server address is invalid')">
 			<template #icon>
-				<AlertCircle />
+				<AlertCircle :fill-color="'#E9322D'" />
 			</template>
 		</NcButton>
 		<NcButton v-show="!loading"

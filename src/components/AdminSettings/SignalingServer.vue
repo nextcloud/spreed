@@ -30,13 +30,11 @@
 			:disabled="loading"
 			:aria-label="t('spreed', 'High-performance backend URL')"
 			@input="updateServer">
-		<input :id="'verify' + index"
-			type="checkbox"
-			:name="'verify' + index"
-			class="checkbox verify"
-			:checked="verify"
-			@change="updateVerify">
-		<label :for="'verify' + index">{{ t('spreed', 'Validate SSL certificate') }}</label>
+
+		<NcCheckboxRadioSwitch :checked="verify"
+			@update:checked="updateVerify">
+			{{ t('spreed', 'Validate SSL certificate') }}
+		</NcCheckboxRadioSwitch>
 
 		<NcButton v-show="!loading"
 			type="tertiary-no-background"
@@ -47,12 +45,25 @@
 			</template>
 		</NcButton>
 
-		<span v-if="server">{{ connectionState }}</span>
+		<div v-if="server">
+			<div class="testing-icon">
+				<NcLoadingIcon v-if="!checked" :size="20" />
+				<AlertCircle v-else-if="errorMessage" :size="20" :fill-color="'#E9322D'" />
+				<Check v-else :size="20" :fill-color="'#46BA61'" />
+			</div>
+			<div class="testing-label">
+				{{ connectionState }}
+			</div>
+		</div>
 	</div>
 </template>
 
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import Check from 'vue-material-design-icons/Check.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import { getWelcomeMessage } from '../../services/signalingService.js'
 
@@ -61,6 +72,10 @@ export default {
 
 	components: {
 		NcButton,
+		NcCheckboxRadioSwitch,
+		NcLoadingIcon,
+		AlertCircle,
+		Check,
 		Delete,
 	},
 
@@ -129,8 +144,8 @@ export default {
 		updateServer(event) {
 			this.$emit('update:server', event.target.value)
 		},
-		updateVerify(event) {
-			this.$emit('update:verify', event.target.checked)
+		updateVerify(checked) {
+			this.$emit('update:verify', checked)
 		},
 
 		async checkServerVersion() {
@@ -174,6 +189,20 @@ export default {
 	label {
 		margin: 0 20px;
 		display: inline-block;
+	}
+
+	.testing-icon{
+		display: inline-block;
+		height: 20px;
+		line-height: 44px;
+		vertical-align: middle;
+	}
+
+	.testing-label {
+		display: inline-block;
+		height: 44px;
+		line-height: 44px;
+		vertical-align: middle;
 	}
 }
 </style>

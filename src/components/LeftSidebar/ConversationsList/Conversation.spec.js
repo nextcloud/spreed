@@ -436,15 +436,18 @@ describe('Conversation.vue', () => {
 			const wrapper = shallowMount(Conversation, {
 				localVue,
 				store: new Vuex.Store(testStoreConfig),
-				mocks: {
-					$copyText: copyTextMock,
-				},
 				stubs: {
 					NcActionButton,
 				},
 				propsData: {
 					isSearchResult: false,
 					item,
+				},
+			})
+
+			Object.assign(navigator, {
+				clipboard: {
+					writeText: copyTextMock,
 				},
 			})
 

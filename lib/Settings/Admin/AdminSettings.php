@@ -42,6 +42,7 @@ use OCP\IUser;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use OCP\Settings\ISettings;
+use OCP\Util;
 
 class AdminSettings implements ISettings {
 	private Config $talkConfig;
@@ -90,6 +91,9 @@ class AdminSettings implements ISettings {
 		$this->initSignalingServers();
 		$this->initRequestSignalingServerTrial();
 		$this->initSIPBridge();
+
+
+		Util::addScript('spreed', 'talk-admin-settings');
 
 		return new TemplateResponse('spreed', 'settings/admin-settings', [], '');
 	}

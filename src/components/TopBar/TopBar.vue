@@ -70,15 +70,16 @@
 
 			<!-- sidebar toggle -->
 			<NcActions v-if="!isSidebar"
-				v-shortkey.once="['f']"
+				v-shortkey.once="disableKeyboardShortcuts ? null : ['f']"
 				class="top-bar__button"
 				:aria-label="t('spreed', 'Conversation actions')"
 				:container="container"
 				@shortkey.native="toggleFullscreen">
-				<span slot="icon"
-					:class="{'top-bar__button__force-white': isInCall}">
-					<Cog :size="20" />
-				</span>
+				<template #icon>
+					<span :class="{'top-bar__button__force-white': isInCall}">
+						<Cog :size="20" />
+					</span>
+				</template>
 				<NcActionButton :icon="iconFullscreen"
 					:aria-label="t('spreed', 'Toggle fullscreen')"
 					:close-after-click="true"
@@ -88,8 +89,9 @@
 				<NcActionSeparator v-if="showModerationOptions" />
 				<NcActionLink v-if="isFileConversation"
 					:href="linkToFile">
-					<File slot="icon"
-						:size="20" />
+					<template #icon>
+						<File :size="20" />
+					</template>
 					{{ t('spreed', 'Go to file') }}
 				</NcActionLink>
 				<template v-if="showModerationOptions">
@@ -109,8 +111,9 @@
 					<NcActionSeparator />
 					<NcActionButton :close-after-click="true"
 						@click="forceMuteOthers">
-						<MicrophoneOff slot="icon"
-							:size="20" />
+						<template #icon>
+							<MicrophoneOff :size="20" />
+						</template>
 						{{ t('spreed', 'Mute others') }}
 					</NcActionButton>
 				</template>
@@ -130,15 +133,17 @@
 				<NcActionButton v-if="isInCall"
 					key="openSideBarButtonMessageText"
 					@click="openSidebar">
-					<MessageText slot="icon"
-						:size="20"
-						fill-color="#ffffff" />
+					<template #icon>
+						<MessageText :size="20"
+							fill-color="#ffffff" />
+					</template>
 				</NcActionButton>
 				<NcActionButton v-else
 					key="openSideBarButtonMenuPeople"
 					@click="openSidebar">
-					<MenuPeople slot="icon"
-						:size="20" />
+					<template #icon>
+						<MenuPeople :size="20" />
+					</template>
 				</NcActionButton>
 			</NcActions>
 		</div>
@@ -356,6 +361,10 @@ export default {
 				return !peer.sessionIds.length
 			} else return false
 		},
+
+		disableKeyboardShortcuts() {
+			return OCP.Accessibility.disableKeyboardShortcuts()
+		},
 	},
 
 	watch: {
@@ -475,7 +484,7 @@ export default {
 
 		async handleCopyLink() {
 			try {
-				await this.$copyText(this.linkToConversation)
+				await navigator.clipboard.writeText(this.linkToConversation)
 				showSuccess(t('spreed', 'Conversation link copied to clipboard'))
 			} catch (error) {
 				showError(t('spreed', 'The link could not be copied'))
@@ -521,7 +530,7 @@ export default {
 		position: absolute;
 		top: 0;
 		left:0;
-		background-color: $color-call-background;
+		background-color: transparent;
 		display: flex;
 		flex-wrap: wrap-reverse;
 	}

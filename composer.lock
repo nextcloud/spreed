@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f7336054efaa2c0b48dee7a11d99f644",
+    "content-hash": "d4912fe23802cd529cc22d3dc3829261",
     "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
@@ -128,17 +128,17 @@
     ],
     "packages-dev": [
         {
-            "name": "christophwurst/nextcloud",
+            "name": "nextcloud/ocp",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "a6ffee74b70a14bf4775e058db1b02a4e62375fa"
+                "url": "https://github.com/nextcloud-deps/ocp.git",
+                "reference": "04ad54073af7a8c57ff147d33c3252832bba10f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/a6ffee74b70a14bf4775e058db1b02a4e62375fa",
-                "reference": "a6ffee74b70a14bf4775e058db1b02a4e62375fa",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/04ad54073af7a8c57ff147d33c3252832bba10f9",
+                "reference": "04ad54073af7a8c57ff147d33c3252832bba10f9",
                 "shasum": ""
             },
             "require": {
@@ -151,7 +151,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "25.0.0-dev"
+                    "dev-master": "26.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -166,10 +166,9 @@
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
             "support": {
-                "issues": "https://github.com/ChristophWurst/nextcloud_composer/issues",
-                "source": "https://github.com/ChristophWurst/nextcloud_composer/tree/master"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/master"
             },
-            "time": "2022-09-03T02:36:52+00:00"
+            "time": "2022-10-02T00:58:49+00:00"
         },
         {
             "name": "psr/container",
@@ -838,7 +837,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "christophwurst/nextcloud": 20,
+        "nextcloud/ocp": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,

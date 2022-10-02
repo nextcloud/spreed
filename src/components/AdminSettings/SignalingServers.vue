@@ -47,14 +47,13 @@
 		</p>
 
 		<div v-if="!servers.length" class="signaling-warning">
-			<input id="hide_warning"
-				v-model="hideWarning"
-				type="checkbox"
+			<NcCheckboxRadioSwitch :checked.sync="hideWarning"
 				name="hide_warning"
-				class="checkbox"
 				:disabled="loading"
-				@change="updateHideWarning">
-			<label for="hide_warning">{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 4 participants') }}</label>
+				type="switch"
+				@update:checked="updateHideWarning">
+				{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 4 participants') }}
+			</NcCheckboxRadioSwitch>
 		</div>
 
 		<ul class="turn-servers">
@@ -87,6 +86,7 @@
 <script>
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
@@ -98,6 +98,7 @@ export default {
 
 	components: {
 		NcButton,
+		NcCheckboxRadioSwitch,
 		SignalingServer,
 		Plus,
 	},

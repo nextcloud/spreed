@@ -25,7 +25,6 @@
     "Invalid file provided" : "Berkas tidak valid",
     "Invalid image" : "Gambar tidak valid",
     "Unknown filetype" : "Tipe berkas tak dikenal",
-    "An error occurred. Please contact your admin." : "Terjadi kesalahan. Silakan hubungi admin Anda.",
     "Invalid date, date format must be YYYY-MM-DD" : "Tanggal salah, format tanggal harus TTTT-BB-HH",
     "Request password" : "Minta kata sandi",
     "Limit to groups" : "Batasi ke grup",
@@ -110,6 +109,7 @@
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
     "iOS app" : "Aplikasi iOS",
+    "An error occurred. Please contact your admin." : "Terjadi kesalahan. Silakan hubungi admin Anda.",
     "Saved" : "Disimpan"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

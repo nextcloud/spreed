@@ -1,4 +1,4 @@
-Feature: reaction/react
+Feature: chat-2/reaction
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
@@ -164,3 +164,25 @@ Feature: reaction/react
     And user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message                | messageParameters                                                               | reactions |
       | room | users     | participant1 | participant1-displayname | Message deleted by you | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"}} | []        |
+
+  Scenario: Deleting a user neutralizes their details
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" sends message "Message 1" to room "room" with 201
+    And user "participant2" react with "👍" on message "Message 1" to room "room" with 201
+      | actorType | actorId      | actorDisplayName         | reaction |
+      | users     | participant2 | participant2-displayname | 👍       |
+    And user "participant2" react with "👎" on message "Message 1" to room "room" with 201
+      | actorType | actorId      | actorDisplayName         | reaction |
+      | users     | participant2 | participant2-displayname | 👎       |
+      | users     | participant2 | participant2-displayname | 👍       |
+    When user "participant2" is deleted
+    And user "participant1" retrieve reactions "👎" of message "Message 1" in room "room" with 200
+      | actorType     | actorId       | actorDisplayName | reaction |
+      | deleted_users | deleted_users |                  | 👎       |
+    And user "participant1" retrieve reactions "all" of message "Message 1" in room "room" with 200
+      | actorType     | actorId       | actorDisplayName | reaction |
+      | deleted_users | deleted_users |                  | 👎       |
+      | deleted_users | deleted_users |                  | 👍       |

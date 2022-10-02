@@ -1,4 +1,4 @@
-Feature: chat/poll
+Feature: chat-2/poll
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
@@ -233,7 +233,7 @@ Feature: chat/poll
       | votedSelf  | not voted |
       | details    | {} |
 
-  Scenario: Non-moderators can note create polls without chat permission
+  Scenario: Non-moderators can not create polls without chat permission
     Given user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
@@ -589,3 +589,66 @@ Feature: chat/poll
       | options    | ["Empty question is not","allowed either"] |
       | resultMode | public |
       | maxVotes   | unlimited |
+
+  Scenario: Can not poll in one-to-one
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    When user "participant1" creates a poll in room "room" with 400
+      | question   | Can I poll in one-to-one? |
+      | options    | ["No","Nope"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+
+  Scenario: Deleting a user neutralizes their details
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant2" creates a poll in room "room" with 201
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+    And user "participant2" votes for options "[0]" on poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"option-0":1} |
+      | numVoters  | 1 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant2 |
+      | actorDisplayName    | participant2-displayname |
+      | status     | open |
+      | votedSelf  | [0] |
+    And user "participant2" closes poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"option-0":1}   |
+      | numVoters  | 1 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant2 |
+      | actorDisplayName    | participant2-displayname |
+      | status     | closed |
+      | votedSelf  | [0] |
+      | details    | [{"actorType":"users","actorId":"participant2","actorDisplayName":"participant2-displayname","optionId":0}] |
+    When user "participant2" is deleted
+    Then user "participant1" sees poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | {"option-0":1}   |
+      | numVoters  | 1 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | deleted_users |
+      | actorId    | deleted_users |
+      | actorDisplayName    | |
+      | status     | closed |
+      | votedSelf  | [] |
+      | details    | [{"actorType":"deleted_users","actorId":"deleted_users","actorDisplayName":"","optionId":0}] |

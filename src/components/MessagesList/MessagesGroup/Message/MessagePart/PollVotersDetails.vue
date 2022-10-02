@@ -24,7 +24,7 @@
 		<button slot="trigger"
 			tabindex="0"
 			class="poll-voters-details">
-			<AvatarWrapperSmall v-for="(item, index) in details"
+			<AvatarWrapperSmall v-for="(item, index) in details.slice(0, 8)"
 				:id="item.actorId"
 				:key="index"
 				:source="item.actorType"
@@ -78,6 +78,10 @@ export default {
 		getDisplayName(item) {
 			if (item.actorDisplayName === '' && item.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 				return t('spreed', 'Guest')
+			}
+
+			if (item.actorType === 'deleted_users') {
+				return t('spreed', 'Deleted user')
 			}
 
 			return item.actorDisplayName

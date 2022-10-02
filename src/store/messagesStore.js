@@ -96,6 +96,15 @@ const state = {
 	visualLastReadMessageId: {},
 
 	/**
+	 * Loaded messages history parts of a conversation
+	 *
+	 * The messages list can still be empty due to message expiration,
+	 * but if we ever loaded the history, we need to show an empty content
+	 * instead of the loading animation
+	 */
+	loadedMessages: {},
+
+	/**
 	 * Stores the cancel function returned by `cancelableFetchMessages`,
 	 * which allows to cancel the previous request for old messages
 	 * when quickly switching to a new conversation.
@@ -130,6 +139,10 @@ const getters = {
 		}
 
 		return getters.getLastKnownMessageId(token) < conversation.lastMessage.id
+	},
+
+	isMessageListPopulated: (state) => (token) => {
+		return !!state.loadedMessages[token]
 	},
 
 	/**
@@ -367,6 +380,10 @@ const mutations = {
 		}
 	},
 
+	loadedMessagesOfConversation(state, { token }) {
+		Vue.set(state.loadedMessages, token, true)
+	},
+
 	// Decreases reaction count for a particular reaction on a message
 	removeReactionFromMessage(state, { token, messageId, reaction }) {
 		const reactionCount = state.messages[token][messageId].reactions[reaction] - 1
@@ -380,6 +397,43 @@ const mutations = {
 			if (i !== -1) {
 				Vue.delete(state.messages[token][messageId], 'reactionsSelf', i)
 			}
+		}
+	},
+
+	removeExpiredMessages(state, { token }) {
+		if (!state.messages[token]) {
+			return
+		}
+
+		const timestamp = (new Date()) / 1000
+		const messageIds = Object.keys(state.messages[token])
+		messageIds.forEach((messageId) => {
+			if (state.messages[token][messageId].expirationTimestamp
+				&& timestamp > state.messages[token][messageId].expirationTimestamp) {
+				Vue.delete(state.messages[token], messageId)
+			}
+		})
+	},
+
+	easeMessageList(state, { token }) {
+		if (!state.messages[token]) {
+			return
+		}
+
+		const messageIds = Object.keys(state.messages[token])
+		if (messageIds.length < 300) {
+			return
+		}
+
+		const messagesToRemove = messageIds.sort().reverse().slice(199)
+		const newFirstKnown = messagesToRemove.shift()
+
+		messagesToRemove.forEach((messageId) => {
+			Vue.delete(state.messages[token], messageId)
+		})
+
+		if (state.firstKnown[token] && messagesToRemove.includes(state.firstKnown[token])) {
+			Vue.set(state.firstKnown, token, newFirstKnown)
 		}
 	},
 }
@@ -723,6 +777,8 @@ const actions = {
 			})
 		}
 
+		context.commit('loadedMessagesOfConversation', { token })
+
 		return response
 	},
 
@@ -849,6 +905,8 @@ const actions = {
 				})
 			}
 		}
+
+		context.commit('loadedMessagesOfConversation', { token })
 
 		return response
 	},
@@ -1078,6 +1136,14 @@ const actions = {
 			console.error(error)
 			showError(t('spreed', 'Failed to remove reaction'))
 		}
+	},
+
+	async removeExpiredMessages(context, { token }) {
+		context.commit('removeExpiredMessages', { token })
+	},
+
+	async easeMessageList(context, { token }) {
+		context.commit('easeMessageList', { token })
 	},
 }
 

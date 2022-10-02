@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<NcContent v-shortkey.once="['ctrl', 'f']"
+	<NcContent v-shortkey.once="disableKeyboardShortcuts ? null : ['ctrl', 'f']"
 		:class="{ 'icon-loading': loading, 'in-call': isInCall }"
 		app-name="talk"
 		@shortkey.native="handleAppSearch">
@@ -67,6 +67,7 @@ import ConversationSettingsDialog from './components/ConversationSettings/Conver
 import '@nextcloud/dialogs/styles/toast.scss'
 import { CONVERSATION } from './constants.js'
 import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
+import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
 
 export default {
 	name: 'App',
@@ -88,6 +89,7 @@ export default {
 		sessionIssueHandler,
 		isInCall,
 		participant,
+		isMobile,
 	],
 
 	data() {
@@ -196,6 +198,10 @@ export default {
 		isOneToOne() {
 			return this.currentConversation?.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
+
+		disableKeyboardShortcuts() {
+			return OCP.Accessibility.disableKeyboardShortcuts()
+		},
 	},
 
 	watch: {
@@ -209,7 +215,7 @@ export default {
 
 		token() {
 			// Collapse the sidebar if it's a 1to1 conversation
-			if (this.isOneToOne || BrowserStorage.getItem('sidebarOpen') === 'false' || window.screen.width < (getComputedStyle(document.documentElement).getPropertyValue('--breakpoint-mobile') / 2)) {
+			if (this.isOneToOne || BrowserStorage.getItem('sidebarOpen') === 'false' || this.isMobile) {
 				this.$store.dispatch('hideSidebar')
 			} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
 				this.$store.dispatch('showSidebar')
@@ -371,6 +377,12 @@ export default {
 		} else if (BrowserStorage.getItem('sidebarOpen') === 'true') {
 			this.$store.dispatch('showSidebar')
 		}
+		if (this.$route.name === 'root' && this.isMobile) {
+			await this.$nextTick()
+			emit('toggle-navigation', {
+				open: true,
+			})
+		}
 	},
 
 	methods: {
@@ -510,6 +522,10 @@ export default {
 
 .content {
 	&.in-call {
+		::v-deep .app-content {
+			background-color: transparent;
+		}
+
 		&:hover ::v-deep .app-navigation-toggle {
 			background-color: rgba(0, 0, 0, .1) !important;
 

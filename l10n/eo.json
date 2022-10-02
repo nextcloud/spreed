@@ -7,7 +7,6 @@
     "Invalid file provided" : "Nevalida dosiero provizita",
     "Invalid image" : "Nevalida bildo",
     "Unknown filetype" : "Nekonata dosiertipo",
-    "An error occurred. Please contact your admin." : "Eraro okazis. Bonvolu kontakti vian administranton.",
     "Andorra" : "Andoro",
     "United Arab Emirates" : "Unuiĝintaj Arabaj Emirlandoj",
     "Afghanistan" : "Afganujo",
@@ -308,12 +307,14 @@
     "Search" : "Serĉi",
     "Send" : "Sendi",
     "Files" : "Dosieroj",
+    "Polls" : "Enketilo",
     "Audio" : "Sonaĵo",
     "Other" : "Alia",
     "Default" : "Defaŭlta",
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
+    "An error occurred. Please contact your admin." : "Eraro okazis. Bonvolu kontakti vian administranton.",
     "Saved" : "Konservita",
     "Camera" : "Fotilo"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

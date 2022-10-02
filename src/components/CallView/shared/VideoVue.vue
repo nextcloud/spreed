@@ -539,7 +539,7 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	border-radius: var(--border-radius-large);
+	border-radius: calc(var(--default-clickable-area)/2);
 }
 
 .video-container-big {
@@ -568,14 +568,14 @@ export default {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	border-radius: var(--border-radius-large);
+	border-radius: calc(var(--default-clickable-area)/2);
 }
 
 .videoWrapper,
 .video {
 	height: 100%;
 	width: 100%;
-	border-radius: var(--border-radius-large);
+	border-radius: calc(var(--default-clickable-area)/2);
 }
 
 .videoWrapper.icon-loading:after {
@@ -619,7 +619,7 @@ export default {
 	top: 0;
 	left: 0;
 	box-shadow: inset 0 0 0 2px white;
-	border-radius: var(--border-radius-large);
+	border-radius: calc(var(--default-clickable-area)/2);
 }
 
 .hover-shadow {
@@ -630,7 +630,7 @@ export default {
 	left: 0;
 	box-shadow: inset 0 0 0 3px white;
 	cursor: pointer;
-	border-radius: var(--border-radius-large);
+	border-radius: calc(var(--default-clickable-area)/2);
 }
 
 </style>

@@ -79,8 +79,8 @@
 			@click="testServer">
 			<template #icon>
 				<span v-if="testing" class="icon icon-loading-small" />
-				<AlertCircle v-else-if="testingError" />
-				<Check v-else-if="testingSuccess" />
+				<AlertCircle v-else-if="testingError" :fill-color="'#E9322D'" />
+				<Check v-else-if="testingSuccess" :fill-color="'#46BA61'" />
 				<CategoryMonitoring v-else />
 			</template>
 		</NcButton>

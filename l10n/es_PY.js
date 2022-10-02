@@ -17,7 +17,6 @@ OC.L10N.register(
     "Invalid file provided" : "Archivo proporcionado inválido",
     "Invalid image" : "Imagen inválida",
     "Unknown filetype" : "Tipo de archivo desconocido",
-    "An error occurred. Please contact your admin." : "Se presentó un error. Por favor contacta a tu adminsitrador. ",
     "Join call" : "Unirse a la llamada",
     "A group call has started in {call}" : "Una llamada en grupo ha iniciado en {call}",
     "Open settings" : "Abrir configuraciones",
@@ -93,7 +92,6 @@ OC.L10N.register(
     "Close" : "Cerrar",
     "Reply" : "Responder",
     "Contact" : "Contacto",
-    "You voted" : "Votaste",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "Create new poll" : "Crear nueva encuesta",
@@ -113,6 +111,7 @@ OC.L10N.register(
     "Search" : "Buscar",
     "Send" : "Enviar",
     "Files" : "Archivos",
+    "Polls" : "Encuestas",
     "Locations" : "Ubicaciones",
     "Audio" : "Audio",
     "Other" : "Otro",
@@ -128,6 +127,7 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. ",
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
+    "An error occurred. Please contact your admin." : "Se presentó un error. Por favor contacta a tu adminsitrador. ",
     "Saved" : "Guardado"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

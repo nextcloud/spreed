@@ -480,14 +480,16 @@ export default {
 		handleUnreadMention() {
 			this.unreadNum = 0
 			const unreadMentions = document.getElementsByClassName('unread-mention-conversation')
-			unreadMentions.forEach(x => {
-				if (this.elementIsBelowViewpoint(this.$refs.scroller, x)) {
-					if (this.unreadNum === 0) {
-						this.firstUnreadPos = x.offsetTop
+			if (unreadMentions.length) {
+				unreadMentions.forEach(x => {
+					if (this.elementIsBelowViewpoint(this.$refs.scroller, x)) {
+						if (this.unreadNum === 0) {
+							this.firstUnreadPos = x.offsetTop
+						}
+						this.unreadNum += 1
 					}
-					this.unreadNum += 1
-				}
-			})
+				})
+			}
 		},
 		debounceHandleScroll: debounce(function() {
 			this.handleScroll()
@@ -514,10 +516,10 @@ export default {
 
 .new-conversation {
 	display: flex;
-	padding: 4px;
+	padding: 8px 0 8px 12px;
 	align-items: center;
 	&--scrolled-down {
-		border-bottom: 1px solid var(--color-border);
+		border-bottom: 1px solid var(--color-placeholder-dark);
 	}
 }
 
@@ -536,5 +538,21 @@ export default {
 	transform: translateX(-50%);
 	z-index: 100;
 	bottom: 10px;
+}
+
+.conversations-search {
+	flex-grow: 1;
+}
+
+.settings-button {
+	justify-content: flex-start !important;
+}
+
+::v-deep .app-navigation ul {
+	padding: 0 !important;
+}
+
+::v-deep .app-navigation__list {
+	padding: 0 !important;
 }
 </style>

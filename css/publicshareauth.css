@@ -33,6 +33,8 @@ body.talk-sidebar-enabled #body-login {
 
 /* #body-login should be used to override the #content rules set in server. */
 #body-login #content {
+	position: relative;
+
 	flex-grow: 1;
 
 	flex-direction: column;

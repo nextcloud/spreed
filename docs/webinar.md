@@ -44,7 +44,7 @@ Group and public conversations can be used to host webinars. Those online meetin
 
 | field   | type | Description                                                    |
 |---------|------|----------------------------------------------------------------|
-| `state` | int  | New SIP state for the conversation (0 = disabled, 1 = enabled) |
+| `state` | int  | New SIP state for the conversation (see [constants list](constants.md#sip-states)) |
 
 * Response:
     - Status code:

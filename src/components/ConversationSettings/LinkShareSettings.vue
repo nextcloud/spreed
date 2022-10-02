@@ -26,16 +26,12 @@
 				{{ t('spreed', 'Allow guests to use a public link to join this conversation.') }}
 			</div>
 			<div>
-				<input id="link_share_settings_toggle_guests"
-					ref="toggleGuests"
-					aria-describedby="link_share_settings_hint"
-					type="checkbox"
-					class="checkbox"
-					name="link_share_settings_toggle_guests"
-					:checked="isSharedPublicly"
+				<NcCheckboxRadioSwitch :checked="isSharedPublicly"
 					:disabled="isSaving"
-					@change="toggleGuests">
-				<label for="link_share_settings_toggle_guests">{{ t('spreed', 'Allow guests') }}</label>
+					aria-describedby="link_share_settings_hint"
+					@update:checked="toggleGuests">
+					{{ t('spreed', 'Allow guests') }}
+				</NcCheckboxRadioSwitch>
 			</div>
 		</div>
 		<div v-show="isSharedPublicly" class="app-settings-subsection">
@@ -43,16 +39,12 @@
 				{{ t('spreed', 'Set a password to restrict who can use the public link.') }}
 			</div>
 			<div>
-				<input id="link_share_settings_toggle_password"
-					ref="togglePassword"
-					aria-describedby="link_share_settings_password_hint"
-					type="checkbox"
-					class="checkbox"
-					:checked="conversation.hasPassword"
-					name="link_share_settings_toggle_password"
+				<NcCheckboxRadioSwitch :checked="conversation.hasPassword"
 					:disabled="isSaving"
-					@change="togglePassword">
-				<label for="link_share_settings_toggle_password">{{ t('spreed', 'Password protection') }}</label>
+					aria-describedby="link_share_settings_password_hint"
+					@update:checked="togglePassword">
+					{{ t('spreed', 'Password protection') }}
+				</NcCheckboxRadioSwitch>
 			</div>
 		</div>
 		<div class="app-settings-subsection">
@@ -107,11 +99,9 @@
 
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants.js'
-import {
-	setConversationPassword,
-} from '../../services/conversationsService.js'
 import { generateUrl } from '@nextcloud/router'
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline.vue'
@@ -122,6 +112,7 @@ export default {
 
 	components: {
 		NcButton,
+		NcCheckboxRadioSwitch,
 		ArrowRight,
 		ClipboardTextOutline,
 		Email,
@@ -166,7 +157,10 @@ export default {
 		async setConversationPassword(newPassword) {
 			this.isSaving = true
 			try {
-				await setConversationPassword(this.token, newPassword)
+				await this.$store.dispatch('setConversationPassword', {
+					token: this.token,
+					newPassword,
+				})
 				if (newPassword !== '') {
 					showSuccess(t('spreed', 'Conversation password has been saved'))
 				} else {
@@ -208,8 +202,8 @@ export default {
 			this.isSaving = false
 		},
 
-		async togglePassword() {
-			if (this.$refs.togglePassword.checked) {
+		async togglePassword(checked) {
+			if (checked) {
 				this.showPasswordField = true
 				await this.handlePasswordEnable()
 				this.$nextTick(() => {
@@ -242,13 +236,11 @@ export default {
 
 		async handleCopyLink() {
 			try {
-				await this.$copyText(this.linkToConversation)
+				await navigator.clipboard.writeText(this.linkToConversation)
 				showSuccess(t('spreed', 'Conversation link copied to clipboard.'))
 			} catch (error) {
 				showError(t('spreed', 'The link could not be copied.'))
 			}
-			// workaround for https://github.com/Inndy/vue-clipboard2/issues/105
-			this.$refs.copyLinkButton.focus()
 		},
 
 		async handleResendInvitations() {

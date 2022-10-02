@@ -333,4 +333,24 @@ class PollService {
 			->andWhere($update->expr()->eq('actor_id', $update->createNamedParameter($actorId)));
 		$update->executeStatement();
 	}
+
+	public function neutralizeDeletedUser(string $actorType, string $actorId): void {
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_polls')
+			->set('display_name', $update->createNamedParameter(''))
+			->set('actor_type', $update->createNamedParameter('deleted_users'))
+			->set('actor_id', $update->createNamedParameter('deleted_users'))
+			->where($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
+			->andWhere($update->expr()->eq('actor_id', $update->createNamedParameter($actorId)));
+		$update->executeStatement();
+
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_poll_votes')
+			->set('display_name', $update->createNamedParameter(''))
+			->set('actor_type', $update->createNamedParameter('deleted_users'))
+			->set('actor_id', $update->createNamedParameter('deleted_users'))
+			->where($update->expr()->eq('actor_type', $update->createNamedParameter($actorType)))
+			->andWhere($update->expr()->eq('actor_id', $update->createNamedParameter($actorId)));
+		$update->executeStatement();
+	}
 }

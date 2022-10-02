@@ -55,14 +55,14 @@ the main body of the message as well as a quote.
 					<RichText :text="message"
 						:arguments="richParameters"
 						:autolink="true"
-						:reference-limit="10" />
+						:reference-limit="0" />
 					<CallButton />
 				</div>
 				<div v-else-if="showResultsButton" class="message-body__main__text system-message">
 					<RichText :text="message"
 						:arguments="richParameters"
 						:autolink="true"
-						:reference-limit="10" />
+						:reference-limit="0" />
 					<!-- Displays only the "see results" button with the results modal -->
 					<Poll :id="messageParameters.poll.id"
 						:poll-name="messageParameters.poll.name"
@@ -73,14 +73,14 @@ the main body of the message as well as a quote.
 					<RichText :text="message"
 						:arguments="richParameters"
 						:autolink="true"
-						:reference-limit="10" />
+						:reference-limit="0" />
 				</div>
 				<div v-else class="message-body__main__text" :class="{'system-message': isSystemMessage}">
 					<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
 					<RichText :text="message"
 						:arguments="richParameters"
 						:autolink="true"
-						:reference-limit="10" />
+						:reference-limit="1" />
 				</div>
 				<div v-if="!isDeletedMessage" class="message-body__main__right">
 					<span v-tooltip.auto="messageDate"
@@ -135,11 +135,11 @@ the main body of the message as well as a quote.
 				<NcPopover v-for="reaction in Object.keys(simpleReactions)"
 					:key="reaction"
 					:delay="200"
-					trigger="hover">
-					<NcButton v-if="simpleReactions[reaction]!== 0"
+					:triggers="['hover']">
+					<NcButton v-if="simpleReactions[reaction] !== 0"
 						slot="trigger"
+						:type="userHasReacted(reaction) ? 'primary' : 'secondary'"
 						class="reaction-button"
-						:class="{'reaction-button__has-reacted': userHasReacted(reaction)}"
 						@click="handleReactionClick(reaction)">
 						{{ reaction }} {{ simpleReactions[reaction] }}
 					</NcButton>
@@ -153,14 +153,16 @@ the main body of the message as well as a quote.
 					:per-line="5"
 					:container="`#message_${id}`"
 					@select="handleReactionClick">
-					<NcButton class="reaction-button">
+					<NcButton class="reaction-button"
+						:aria-label="t('spreed', 'Add more reactions')">
 						<template #icon>
 							<EmoticonOutline :size="15" />
 						</template>
 					</NcButton>
 				</NcEmojiPicker>
 				<NcButton v-else-if="canReact"
-					class="reaction-button">
+					class="reaction-button"
+					:aria-label="t('spreed', 'Add more reactions')">
 					<template #icon>
 						<EmoticonOutline :size="15" />
 					</template>
@@ -174,6 +176,7 @@ the main body of the message as well as a quote.
 			:is-action-menu-open.sync="isActionMenuOpen"
 			:is-emoji-picker-open.sync="isEmojiPickerOpen"
 			:is-reactions-menu-open.sync="isReactionsMenuOpen"
+			:is-forwarder-open.sync="isForwarderOpen"
 			:message-api-data="messageApiData"
 			:message-object="messageObject"
 			:is-last-read="isLastReadMessage"
@@ -400,6 +403,7 @@ export default {
 			isActionMenuOpen: false,
 			isEmojiPickerOpen: false,
 			isReactionsMenuOpen: false,
+			isForwarderOpen: false,
 			detailedReactionsLoading: false,
 		}
 	},
@@ -566,7 +570,7 @@ export default {
 		},
 
 		showMessageButtonsBar() {
-			return !this.isSystemMessage && !this.isTemporary && (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isReactionsMenuOpen)
+			return !this.isSystemMessage && !this.isTemporary && (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isReactionsMenuOpen || this.isForwarderOpen)
 		},
 
 		isTemporaryUpload() {
@@ -849,6 +853,8 @@ export default {
 		min-width: 100%;
 		&__text {
 			flex: 0 1 600px;
+			width: 100%;
+			min-width: 0;
 			max-width: 600px;
 			color: var(--color-text-light);
 			.single-emoji {
@@ -880,10 +886,6 @@ export default {
 			::v-deep .rich-text--wrapper {
 				white-space: pre-wrap;
 				word-break: break-word;
-
-				.rich-text--reference-widget {
-					width: calc(100% + 132px);
-				}
 			}
 
 			&--quote {
@@ -975,15 +977,10 @@ export default {
 
 	margin: 2px;
 	height: 26px;
-	background-color: var(--color-main-background) !important;
-	margin-right: 8px !important;
+	padding: 0 6px !important;
 
 	&__emoji {
 		margin: 0 4px 0 0;
-	}
-
-	&__has-reacted {
-		background-color: var(--color-primary-element-lighter) !important;
 	}
 }
 

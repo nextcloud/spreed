@@ -100,7 +100,7 @@
 | `roomType` | int    | See [constants list](constants.md#conversation-types)                                                                                                                |
 | `invite`   | string | user id (`roomType = 1`), group id (`roomType = 2` - optional), circle id (`roomType = 2`, `source = 'circles'`], only available with `circles-support` capability)) |
 | `source`   | string | The source for the invite, only supported on `roomType = 2` for `groups` and `circles` (only available with `circles-support` capability)                            |
-| `roomName` | string | conversation name (Not available for `roomType = 1`)                                                                                                                 |
+| `roomName` | string | Conversation name up to 255 characters (Not available for `roomType = 1`)                                                                                            |
 
 * Response:
     - Status code:
@@ -156,9 +156,9 @@
 * Endpoint: `/room/{token}`
 * Data:
 
-| field      | type   | Description                                      |
-|------------|--------|--------------------------------------------------|
-| `roomName` | string | New name for the conversation (1-200 characters) |
+| field      | type   | Description                                          |
+|------------|--------|------------------------------------------------------|
+| `roomName` | string | New name for the conversation (up to 255 characters) |
 
 * Response:
     - Status code:

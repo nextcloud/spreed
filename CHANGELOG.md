@@ -1,6 +1,79 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.0-rc.2 – 2022-09-29
+### Added
+- Commands to monitor calls and a single room
+- Add a reference provider for call links
+
+### Fixed
+- Reaction summary missing when hovering a chat message
+- Fix recursion when the lobby of a conversation expired
+- Fix missing "Leave call" button for moderators in restricted rooms
+- Fix padding in the left sidebar
+- Bump @nextcloud/vue and @nextcloud/vue-richtext
+
+## 15.0.0-rc.1 – 2022-09-22
+### Added
+- Implement the new dashboard widget modes
+
+### Changed
+- Allow to opt-out of keyboard shortcuts to improve accessibility
+
+### Fixed
+- Show more poll voters in details popover
+- Do not allow to forward polls as they become non-functional
+- Fix coloring of reaction buttons
+- Reduce preview size for non-images
+- Disallow polls in one-to-one chats
+- Adjust the height of file upload modals
+- Show empty content when all messages expire
+- Correctly quote the parent again when sending the message failed
+
+## 15.0.0-beta.4 – 2022-09-15
+### Added
+- Add related_resources UI
+
+### Changed
+- Use Node 16 and NPM 8 to compile the interface
+- Several dependency updates
+- Unload chat messages when moving to another chat to avoid lagging on return
+
+### Fixed
+- Several fixes to adapt to the UI changes in Nextcloud 25
+- Respect message expiration in the frontend when the user never leaves the conversation
+- Fix handling of deleted users in polls
+- Allow recalling the owner as a normal moderator
+
+## 14.0.5 – 2022-09-15
+### Fixed
+- Fix notification sending when the user is blocked by the lobby
+  [#7794](https://github.com/nextcloud/spreed/pull/7794)
+- Fix missing local media controls in public share sidebar
+  [#7758](https://github.com/nextcloud/spreed/pull/7758)
+- Fix missing screenshares in sidebar
+  [#7760](https://github.com/nextcloud/spreed/pull/7760)
+- Fix inconsistent state when leaving a call fails
+  [#7803](https://github.com/nextcloud/spreed/pull/7803)
+
+## 13.0.9 – 2022-09-15
+### Fixed
+- Fix notification sending when the user is blocked by the lobby
+  [#7796](https://github.com/nextcloud/spreed/pull/7796)
+- Fix missing local media controls in public share sidebar
+  [#7759](https://github.com/nextcloud/spreed/pull/7759)
+- Fix missing screenshares in sidebar
+  [#7763](https://github.com/nextcloud/spreed/pull/7763)
+- Fix inconsistent state when leaving a call fails
+  [#7804](https://github.com/nextcloud/spreed/pull/7804)
+
+## 15.0.0-beta.3 – 2022-09-09
+### Changed
+- Finish polls UI
+
+### Fixed
+- Several fixes to adapt to the UI changes in Nextcloud 25
+
 ## 15.0.0-beta.2 – 2022-09-01
 ### Added
 - 🗒️ Allow to create new files from within the chat

@@ -336,6 +336,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['callFlag'])) {
 				$data['callFlag'] = (int) $room['callFlag'];
 			}
+			if (isset($expectedRoom['lobbyState'])) {
+				$data['lobbyState'] = (int) $room['lobbyState'];
+			}
 			if (isset($expectedRoom['attendeePin'])) {
 				$data['attendeePin'] = $room['attendeePin'] ? '**PIN**' : '';
 			}
@@ -1136,6 +1139,33 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" sets lobby state for room "([^"]*)" to "([^"]*)" for (\d+) seconds with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $lobbyStateString
+	 * @param int $lobbyTimer
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSetsLobbyStateAndTimerForRoom(string $user, string $identifier, string $lobbyStateString, int $lobbyTimer, int $statusCode, string $apiVersion): void {
+		if ($lobbyStateString === 'no lobby') {
+			$lobbyState = 0;
+		} elseif ($lobbyStateString === 'non moderators') {
+			$lobbyState = 1;
+		} else {
+			Assert::fail('Invalid lobby state');
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/webinar/lobby',
+			new TableNode([['state', $lobbyState], ['timer', time() + $lobbyTimer]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @When /^user "([^"]*)" sets SIP state for room "([^"]*)" to "([^"]*)" with (\d+) \((v4)\)$/
 	 *
 	 * @param string $user
@@ -1695,6 +1725,74 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" sees the following entry when loading the list of dashboard widgets(?: \((v1)\))$/
+	 *
+	 * @param string $user
+	 * @param string $apiVersion
+	 * @param ?TableNode $formData
+	 */
+	public function userGetsDashboardWidgets($user, $apiVersion = 'v1', TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/dashboard/api/' . $apiVersion . '/widgets');
+		$this->assertStatusCode($this->response, 200);
+
+		$data = $this->getDataFromResponse($this->response);
+		$expectedWidgets = $formData->getColumnsHash();
+
+		foreach ($expectedWidgets as $widget) {
+			$id = $widget['id'];
+			Assert::assertArrayHasKey($widget['id'], $data);
+
+			$widgetIconUrl = $widget['icon_url'];
+			$dataIconUrl = $data[$id]['icon_url'];
+
+			unset($widget['icon_url'], $data[$id]['icon_url']);
+
+			$widget['item_icons_round'] = (bool) $widget['item_icons_round'];
+			$widget['order'] = (int) $widget['order'];
+			$widget['widget_url'] = str_replace('{$BASE_URL}', $this->baseUrl, $widget['widget_url']);
+			$widget['buttons'] = str_replace('{$BASE_URL}', $this->baseUrl, $widget['buttons']);
+			$widget['buttons'] = json_decode($widget['buttons'], true);
+
+			Assert::assertEquals($widget, $data[$id], 'Mismatch of data for widget ' . $id);
+			Assert::assertStringEndsWith($widgetIconUrl, $dataIconUrl, 'Mismatch of icon URL for widget ' . $id);
+		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sees the following entries for dashboard widgets "([^"]*)"(?: \((v1)\))$/
+	 *
+	 * @param string $user
+	 * @param string $widgetId
+	 * @param string $apiVersion
+	 * @param ?TableNode $formData
+	 */
+	public function userGetsDashboardWidgetItems($user, $widgetId, $apiVersion = 'v1', TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/dashboard/api/' . $apiVersion . '/widget-items?widgets[]=' . $widgetId);
+		$this->assertStatusCode($this->response, 200);
+
+		$data = $this->getDataFromResponse($this->response);
+
+		Assert::assertArrayHasKey($widgetId, $data);
+		$expectedItems = $formData->getColumnsHash();
+
+		if (empty($expectedItems)) {
+			Assert::assertEmpty($data[$widgetId]);
+			return;
+		}
+
+		Assert::assertCount(count($expectedItems), $data[$widgetId]);
+
+		foreach ($expectedItems as $key => $item) {
+			$item['link'] = $this->baseUrl . 'index.php/call/' . self::$identifierToToken[$item['link']];
+			$item['iconUrl'] = str_replace('{$BASE_URL}', $this->baseUrl, $item['iconUrl']);
+
+			Assert::assertEquals($item, $data[$widgetId][$key], 'Wrong details for item #' . $key);
+		}
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" deletes message "([^"]*)" from room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
@@ -1833,6 +1931,27 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" searches for "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $search
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSearchesInRoom(string $user, string $search, string $identifier, $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/search/providers/talk-message-current/search?term=' . $search . '&from=' . '/call/' . self::$identifierToToken[$identifier]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== '200') {
+			return;
+		}
+
+		$this->compareSearchResponse($formData);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" sees the following shared (media|audio|voice|file|deckcard|location|other) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
@@ -1966,6 +2085,36 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				}
 			}
 			return $data;
+		}, $messages));
+	}
+
+	/**
+	 * @param TableNode|null $formData
+	 */
+	protected function compareSearchResponse(TableNode $formData = null) {
+		$messages = $this->getDataFromResponse($this->response)['entries'];
+
+		if ($formData === null) {
+			Assert::assertEmpty($messages);
+			return;
+		}
+
+		$expected = array_map(static function (array $message) {
+			$message['attributes.conversation'] = self::$identifierToToken[$message['attributes.conversation']];
+			$message['attributes.messageId'] = self::$textToMessageId[$message['attributes.messageId']];
+			return $message;
+		}, $formData->getHash());
+
+		$count = count($expected);
+		Assert::assertCount($count, $messages, 'Message count does not match');
+
+		Assert::assertEquals($expected, array_map(static function ($message) {
+			return [
+				'title' => $message['title'],
+				'subline' => $message['subline'],
+				'attributes.conversation' => $message['attributes']['conversation'],
+				'attributes.messageId' => $message['attributes']['messageId'],
+			];
 		}, $messages));
 	}
 
@@ -2591,6 +2740,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'seconds' => $messageExpiration,
 		]);
 		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When wait for :seconds second
+	 */
+	public function waitForXSecond($seconds): void {
+		sleep($seconds);
 	}
 
 	/**

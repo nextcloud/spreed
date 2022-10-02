@@ -32,7 +32,6 @@ OC.L10N.register(
     "Invalid file provided" : "Numele fișierului pe care l-ai oferit este invalid",
     "Invalid image" : "Imagine invalidă",
     "Unknown filetype" : "Tip fișier necunoscut",
-    "An error occurred. Please contact your admin." : "A apărut o eroare. Te rugăm să contactezi administratorul.",
     "Open settings" : "Deschide setările",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "United Arab Emirates",
@@ -351,6 +350,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Parola este incorectă. Încercaţi din nou.",
     "Android app" : "Aplicație Android",
     "iOS app" : "Aplicație iOS",
+    "An error occurred. Please contact your admin." : "A apărut o eroare. Te rugăm să contactezi administratorul.",
     "Saved" : "Salvat",
     "Camera" : "Cameră"
 },

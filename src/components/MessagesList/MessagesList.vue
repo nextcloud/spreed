@@ -29,7 +29,7 @@ get the messagesList array and loop through the list to generate the messages.
 	<!-- size and remain refer to the amount and initial height of the items that
 	are outside of the viewport -->
 	<div ref="scroller"
-		class="scroller"
+		class="scroller messages-list__scroller"
 		@scroll="debounceHandleScroll">
 		<div v-if="displayMessagesLoader"
 			class="scroller__loading"
@@ -44,10 +44,17 @@ get the messagesList array and loop through the list to generate the messages.
 			:messages="item"
 			:next-message-id="(messagesGroupedByAuthor[index + 1] && messagesGroupedByAuthor[index + 1][0].id) || 0"
 			:previous-message-id="(index > 0 && messagesGroupedByAuthor[index - 1][messagesGroupedByAuthor[index - 1].length - 1].id) || 0" />
-		<template v-if="!messagesGroupedByAuthor.length">
+		<template v-if="showLoadingAnimation">
 			<LoadingPlaceholder type="messages"
 				:count="15" />
 		</template>
+		<NcEmptyContent v-else-if="showEmptyContent"
+			:title="t('spreed', 'No messages')"
+			:description="t('spreed', 'All messages have expired or have been deleted.')">
+			<template #icon>
+				<Message :size="64" />
+			</template>
+		</NcEmptyContent>
 		<transition name="fade">
 			<NcButton v-show="!isChatScrolledToBottom"
 				type="secondary"
@@ -73,8 +80,10 @@ import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus.js'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
+import Message from 'vue-material-design-icons/Message.vue'
 import uniqueId from 'lodash/uniqueId.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
 export default {
 	name: 'MessagesList',
@@ -82,7 +91,9 @@ export default {
 		LoadingPlaceholder,
 		MessagesGroup,
 		ChevronDown,
+		Message,
 		NcButton,
+		NcEmptyContent,
 	},
 
 	mixins: [
@@ -129,6 +140,8 @@ export default {
 			loadingOldMessages: false,
 
 			destroying: false,
+
+			expirationInterval: null,
 		}
 	},
 
@@ -189,6 +202,15 @@ export default {
 			return groups
 		},
 
+		showLoadingAnimation() {
+			return !this.$store.getters.isMessageListPopulated(this.token)
+				&& !this.messagesGroupedByAuthor.length
+		},
+
+		showEmptyContent() {
+			return !this.messagesGroupedByAuthor.length
+		},
+
 		/**
 		 * In order for the state of the component to be sticky,
 		 * the div .scroller must be scrolled to the bottom.
@@ -247,7 +269,15 @@ export default {
 					this.$store.dispatch('cancelLookForNewMessages', { requestId: oldValue })
 				}
 				this.handleStartGettingMessagesPreconditions()
+
+				// Remove expired messages when joining a room
+				this.removeExpiredMessagesFromStore()
 			},
+		},
+
+		token(newToken, oldToken) {
+			// Expire older messages when navigating to another conversation
+			this.$store.dispatch('easeMessageList', { token: oldToken })
 		},
 	},
 
@@ -261,6 +291,13 @@ export default {
 		subscribe('networkOffline', this.handleNetworkOffline)
 		subscribe('networkOnline', this.handleNetworkOnline)
 		window.addEventListener('focus', this.onWindowFocus)
+
+		/**
+		 * Every 30 seconds we remove expired messages from the store
+		 */
+		this.expirationInterval = window.setInterval(() => {
+			this.removeExpiredMessagesFromStore()
+		}, 30000)
 	},
 
 	beforeDestroy() {
@@ -275,9 +312,20 @@ export default {
 
 		unsubscribe('networkOffline', this.handleNetworkOffline)
 		unsubscribe('networkOnline', this.handleNetworkOnline)
+
+		if (this.expirationInterval) {
+			clearInterval(this.expirationInterval)
+			this.expirationInterval = null
+		}
 	},
 
 	methods: {
+		removeExpiredMessagesFromStore() {
+			this.$store.dispatch('removeExpiredMessages', {
+				token: this.token,
+			})
+		},
+
 		/**
 		 * Compare two messages to decide if they should be grouped
 		 *

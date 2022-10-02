@@ -30,6 +30,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCA\Talk\Model\Poll;
 use OCA\Talk\Model\Vote;
+use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\PollService;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -76,6 +77,10 @@ class PollController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function createPoll(string $question, array $options, int $resultMode, int $maxVotes): DataResponse {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		$attendee = $this->participant->getAttendee();
 		try {
 			$poll = $this->pollService->createPoll(

@@ -118,7 +118,7 @@ export default {
 		},
 
 		selectedConversationName() {
-			return this.$store.getters?.conversation(this.selectedConversationToken).name
+			return this.$store.getters?.conversation(this.selectedConversationToken).displayName
 		},
 
 		/**

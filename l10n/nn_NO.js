@@ -7,7 +7,6 @@ OC.L10N.register(
     "Invalid file provided" : "Ugyldig fil",
     "Invalid image" : "Ugyldig bilete",
     "Unknown filetype" : "Ukjend filtype",
-    "An error occurred. Please contact your admin." : "Det oppstod ein feil. Ver venleg og kontakt systemadministrator.",
     "Open settings" : "Opne instillingar",
     "Messages" : "Meldingar",
     "Everyone" : "Alle",
@@ -82,6 +81,7 @@ OC.L10N.register(
     "Away" : "Borte",
     "Default" : "Standard",
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
+    "An error occurred. Please contact your admin." : "Det oppstod ein feil. Ver venleg og kontakt systemadministrator.",
     "Saved" : "Lagra"
 },
 "nplurals=2; plural=(n != 1);");

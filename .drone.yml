@@ -72,6 +72,42 @@ trigger:
   - push
 ---
 kind: pipeline
+name: int-sqlite-chat-2
+services:
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
+  - ./occ app:enable notifications
+  - cd apps/$APP_NAME
+  - composer --version
+  - composer self-update --2
+  - composer install
+  - cd tests/integration/
+  - bash run.sh features/chat-2
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: sqlite
+    GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-chat-2
+trigger:
+  branch:
+  - master
+  - stable*
+  event:
+  - push
+---
+kind: pipeline
 name: int-sqlite-command
 services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
@@ -218,7 +254,7 @@ trigger:
   - push
 ---
 kind: pipeline
-name: int-sqlite-reaction
+name: int-sqlite-integration
 services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
@@ -237,7 +273,7 @@ steps:
   - composer self-update --2
   - composer install
   - cd tests/integration/
-  - bash run.sh features/reaction
+  - bash run.sh features/integration
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
@@ -245,7 +281,7 @@ steps:
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-  name: integration-reaction
+  name: integration-integration
 trigger:
   branch:
   - master
@@ -419,6 +455,57 @@ steps:
     NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-chat
+trigger:
+  branch:
+  - master
+  - stable*
+  event:
+  - pull_request
+  - push
+---
+kind: pipeline
+name: int-mysql-chat-2
+services:
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- command:
+  - --innodb_large_prefix=true
+  - --innodb_file_format=barracuda
+  - --innodb_file_per_table=true
+  - --sql-mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+  environment:
+    MYSQL_DATABASE: oc_autotest
+    MYSQL_PASSWORD: owncloud
+    MYSQL_ROOT_PASSWORD: owncloud
+    MYSQL_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4
+  name: mysql
+  tmpfs:
+  - /var/lib/mysql
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
+  - ./occ app:enable notifications
+  - cd apps/$APP_NAME
+  - composer --version
+  - composer self-update --2
+  - composer install
+  - cd tests/integration/
+  - bash run.sh features/chat-2
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: mysql
+    GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-chat-2
 trigger:
   branch:
   - master
@@ -634,7 +721,7 @@ trigger:
   - push
 ---
 kind: pipeline
-name: int-mysql-reaction
+name: int-mysql-integration
 services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
@@ -667,7 +754,7 @@ steps:
   - composer self-update --2
   - composer install
   - cd tests/integration/
-  - bash run.sh features/reaction
+  - bash run.sh features/integration
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
@@ -675,7 +762,7 @@ steps:
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-  name: integration-reaction
+  name: integration-integration
 trigger:
   branch:
   - master
@@ -877,6 +964,51 @@ trigger:
   - push
 ---
 kind: pipeline
+name: int-pgsql-chat-2
+services:
+- image: ghcr.io/nextcloud/continuous-integration-redis:latest
+  name: cache
+- environment:
+    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_HOST_AUTH_METHOD: trust
+    POSTGRES_PASSWORD: ""
+    POSTGRES_USER: oc_autotest
+  image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
+  name: pgsql
+  tmpfs:
+  - /var/lib/postgresql/data
+steps:
+- commands:
+  - bash tests/drone-run-integration-tests.sh || exit 0
+  - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+  - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+  - cd ../server
+  - ./occ app:enable $APP_NAME
+  - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
+    apps/notifications
+  - ./occ app:enable notifications
+  - cd apps/$APP_NAME
+  - composer --version
+  - composer self-update --2
+  - composer install
+  - cd tests/integration/
+  - bash run.sh features/chat-2
+  environment:
+    APP_NAME: spreed
+    CORE_BRANCH: master
+    DATABASEHOST: pgsql
+    GUESTS_BRANCH: master
+    NOTIFICATIONS_BRANCH: master
+  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  name: integration-chat-2
+trigger:
+  branch:
+  - master
+  - stable*
+  event:
+  - push
+---
+kind: pipeline
 name: int-pgsql-command
 services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
@@ -1059,7 +1191,7 @@ trigger:
   - push
 ---
 kind: pipeline
-name: int-pgsql-reaction
+name: int-pgsql-integration
 services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
@@ -1087,7 +1219,7 @@ steps:
   - composer self-update --2
   - composer install
   - cd tests/integration/
-  - bash run.sh features/reaction
+  - bash run.sh features/integration
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
@@ -1095,7 +1227,7 @@ steps:
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
-  name: integration-reaction
+  name: integration-integration
 trigger:
   branch:
   - master

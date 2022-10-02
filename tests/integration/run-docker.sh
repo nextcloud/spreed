@@ -103,7 +103,7 @@ function prepareDatabase() {
 	fi
 
 	echo "Starting database server"
-	docker run --detach --name=$DATABASE_CONTAINER $DATABASE_CONTAINER_OPTIONS $DATABASE_IMAGE
+	docker run --detach --name=$DATABASE_CONTAINER $DATABASE_CONTAINER_OPTIONS $DATABASE_IMAGE $DATABASE_CUSTOM_COMMAND
 
 	DATABASE_IP=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DATABASE_CONTAINER)
 
@@ -242,12 +242,22 @@ fi
 # "--database-image XXX" option can be provided to set the Docker image to use
 # for the database container (ignored when using "sqlite").
 if [ "$DATABASE" = "mysql" ]; then
-	DATABASE_IMAGE="mysql:5.7"
+	DATABASE_IMAGE="ghcr.io/nextcloud/continuous-integration-mariadb-10.4:10.4"
 elif [ "$DATABASE" = "pgsql" ]; then
-	DATABASE_IMAGE="postgres:10"
+	DATABASE_IMAGE="ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13"
 fi
 if [ "$1" = "--database-image" ]; then
 	DATABASE_IMAGE=$2
+
+	shift 2
+fi
+
+# "--database-custom-command XXX" option can be provided to use a custom command
+# when starting the database container. For example,
+# '--database-custom-command "mysqld --sql-mode=ONLY_FULL_GROUP_BY"'
+DATABASE_CUSTOM_COMMAND=""
+if [ "$1" = "--database-custom-command" ]; then
+	DATABASE_CUSTOM_COMMAND=$2
 
 	shift 2
 fi
