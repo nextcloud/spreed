@@ -122,6 +122,8 @@
 				</template>
 			</NcButton>
 			<NcEmojiPicker :container="`#message_${id} .message-buttons-bar`"
+				:boundary="containerElement"
+				placement="auto"
 				@select="handleReactionClick"
 				@after-show="onEmojiPickerOpen"
 				@after-hide="onEmojiPickerClose">
