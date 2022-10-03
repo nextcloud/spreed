@@ -318,6 +318,12 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			frequentlyUsedEmojis: [],
+		}
+	},
+
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.token)
@@ -393,12 +399,6 @@ export default {
 				&& !this.isFileShare
 				&& !this.isDeletedMessage
 				&& !this.isPollMessage
-		},
-
-		frequentlyUsedEmojis() {
-			return frequently.get(5).map(emojiStrings => {
-				return EmojiIndex.emoji(emojiStrings).native
-			})
 		},
 	},
 
@@ -483,6 +483,7 @@ export default {
 		},
 
 		onEmojiPickerOpen() {
+			this.updateFrequentlyUsedEmojis()
 			this.$emit('update:isEmojiPickerOpen', true)
 		},
 
@@ -491,6 +492,7 @@ export default {
 		},
 
 		openReactionsMenu() {
+			this.updateFrequentlyUsedEmojis()
 			this.$emit('update:isReactionsMenuOpen', true)
 		},
 
@@ -512,6 +514,12 @@ export default {
 
 		closeReactionsMenu() {
 			this.$emit('update:isReactionsMenuOpen', false)
+		},
+
+		updateFrequentlyUsedEmojis() {
+			this.frequentlyUsedEmojis = frequently.get(5).map(emojiStrings => {
+				return EmojiIndex.emoji(emojiStrings).native
+			})
 		},
 	},
 }
