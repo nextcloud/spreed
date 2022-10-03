@@ -1722,7 +1722,7 @@ class RoomController extends AEnvironmentAwareController {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 		} else {
-			$participants = $this->participantService->getParticipantsForRoom($this->room);
+			$participants = $this->participantService->getActorsByType($this->room, Attendee::ACTOR_EMAILS);
 		}
 
 		foreach ($participants as $participant) {
