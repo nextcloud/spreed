@@ -42,34 +42,33 @@
 				@update:checked="togglePassword">
 				{{ t('spreed', 'Password protection') }}
 			</NcCheckboxRadioSwitch>
+
+			<template v-if="showPasswordField">
+				<form class="password-form"
+					@submit.prevent="handleSetNewPassword">
+					<NcPasswordField ref="passwordField"
+						:value.sync="password"
+						autocomplete="new-password"
+						:check-password-strength="true"
+						:disabled="isSaving"
+						class="password-form__input-field"
+						:label-visible="true"
+						:label="t('spreed', 'Enter new password')" />
+					<NcButton :disabled="isSaving"
+						type="primary"
+						native-type="submit">
+						<template #icon>
+							<ArrowRight />
+						</template>
+						{{ t('spreed', 'Save password') }}
+					</NcButton>
+				</form>
+			</template>
 		</div>
-		<div v-show="showPasswordField" class="app-settings-subsection">
-			<form :disabled="isSaving"
-				@submit.prevent="handleSetNewPassword">
-				<span class="icon-password" />
-				<input id="link_share_settings_link_password"
-					ref="passwordField"
-					v-model="password"
-					aria-describedby="link_share_settings_password_hint"
-					type="password"
-					class="checkbox"
-					autocomplete="new-password"
-					name="link_share_settings_link_password"
-					:placeholder="t('spreed', 'Enter a password')"
-					:disabled="isSaving">
-				<NcButton id="link_share_settings_link_password_submit"
-					:aria-label="t('spreed', 'Save password')"
-					:disabled="isSaving"
-					native-type="submit">
-					<template #icon>
-						<ArrowRight />
-					</template>
-				</NcButton>
-			</form>
-		</div>
-		<div class="app-settings-subsection__buttons">
+		<div class="app-settings-subsection app-settings-subsection__buttons">
 			<NcButton ref="copyLinkButton"
 				@click.prevent="handleCopyLink"
+				:wide="true"
 				@keydown.enter="handleCopyLink">
 				<template #icon>
 					<ClipboardTextOutline />
@@ -78,6 +77,7 @@
 			</NcButton>
 			<NcButton v-if="isSharedPublicly"
 				:disabled="isSendingInvitations"
+				:wide="true"
 				@click.prevent="handleResendInvitations"
 				@keydown.enter="handleResendInvitations">
 				<template #icon>
@@ -93,6 +93,7 @@
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants.js'
 import { generateUrl } from '@nextcloud/router'
@@ -107,6 +108,7 @@ export default {
 	components: {
 		NcButton,
 		NcCheckboxRadioSwitch,
+		NcPasswordField,
 		ArrowRight,
 		ClipboardTextOutline,
 		Email,
@@ -202,7 +204,7 @@ export default {
 				this.showPasswordField = true
 				await this.handlePasswordEnable()
 				this.$nextTick(() => {
-					this.$refs.passwordField.focus()
+					this.$refs.passwordField.$el.focus()
 				})
 			} else {
 				this.showPasswordField = false
@@ -263,8 +265,14 @@ button > .material-design-icon {
 	margin-left: 24px;
 }
 
-input[type=password] {
-	width: 200px;
+.password-form {
+	display: flex;
+	gap: 8px;
+	align-items: flex-end;
+
+	&__input-field {
+		width: 200px;
+	}
 }
 
 .app-settings-subsection__buttons {
