@@ -22,44 +22,36 @@
 <template>
 	<div>
 		<div class="app-settings-subsection">
-			<div id="moderation_settings_enable_lobby_hint" class="app-settings-section__hint">
-				{{ t('spreed', 'Enabling the lobby only allows moderators to post messages.') }}
-			</div>
-			<div v-if="hasCall" class="app-settings-section__hint">
-				{{ t('spreed', 'This will also remove non-moderators from the ongoing call.') }}
-			</div>
+			<NcNoteCard v-if="hasCall && !hasLobbyEnabled" type="warning">
+				{{ t('spreed', 'Enabling the lobby will remove non-moderators from the ongoing call.') }}
+			</NcNoteCard>
 			<div>
 				<NcCheckboxRadioSwitch :checked="hasLobbyEnabled"
 					type="switch"
 					:disabled="isLobbyStateLoading"
 					@update:checked="toggleLobby">
-					{{ t('spreed', 'Enable lobby') }}
+					{{ t('spreed', 'Enable lobby, restricting the conversation to moderators') }}
 				</NcCheckboxRadioSwitch>
 			</div>
 		</div>
-		<div class="app-settings-subsection">
-			<div v-if="hasLobbyEnabled" id="moderation_settings_lobby_timer_hint" class="app-settings-section__hint">
-				{{ t('spreed', 'After the time limit the lobby will be automatically disabled.') }}
-			</div>
-			<div v-if="hasLobbyEnabled">
-				<form :disabled="lobbyTimerFieldDisabled"
-					@submit.prevent="saveLobbyTimer">
-					<span class="icon-calendar-dark" />
-					<div>
-						<label for="moderation_settings_lobby_timer_field">{{ t('spreed', 'Meeting start time') }}</label>
-					</div>
-					<NcDatetimePicker id="moderation_settings_lobby_timer_field"
-						aria-describedby="moderation_settings_lobby_timer_hint"
-						:value="lobbyTimer"
-						:default-value="defaultLobbyTimer"
-						:placeholder="t('spreed', 'Start time (optional)')"
-						:disabled="lobbyTimerFieldDisabled"
-						type="datetime"
-						:input-class="['mx-input', { focusable: !lobbyTimerFieldDisabled }]"
-						v-bind="dateTimePickerAttrs"
-						@change="saveLobbyTimer" />
-				</form>
-			</div>
+		<div v-if="hasLobbyEnabled" class="app-settings-subsection">
+			<form :disabled="lobbyTimerFieldDisabled"
+				@submit.prevent="saveLobbyTimer">
+				<span class="icon-calendar-dark" />
+				<div>
+					<label for="moderation_settings_lobby_timer_field">{{ t('spreed', 'Meeting start time') }}</label>
+				</div>
+				<NcDatetimePicker id="moderation_settings_lobby_timer_field"
+					aria-describedby="moderation_settings_lobby_timer_hint"
+					:value="lobbyTimer"
+					:default-value="defaultLobbyTimer"
+					:placeholder="t('spreed', 'Start time (optional)')"
+					:disabled="lobbyTimerFieldDisabled"
+					type="datetime"
+					:input-class="['mx-input', { focusable: !lobbyTimerFieldDisabled }]"
+					v-bind="dateTimePickerAttrs"
+					@change="saveLobbyTimer" />
+			</form>
 		</div>
 	</div>
 </template>
@@ -69,6 +61,7 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import { WEBINAR } from '../../constants.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDatetimePicker from '@nextcloud/vue/dist/Components/NcDatetimePicker.js'
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
 export default {
 	name: 'LobbySettings',
@@ -76,6 +69,7 @@ export default {
 	components: {
 		NcCheckboxRadioSwitch,
 		NcDatetimePicker,
+		NcNoteCard,
 	},
 
 	props: {

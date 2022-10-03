@@ -30,6 +30,7 @@
 		<NcAppSettingsSection v-if="showDescription"
 			id="description"
 			:title="t('spreed', 'Description')">
+			<!-- Rename to "Basic info" when Name is moved over -->
 			<Description :editable="canFullModerate"
 				:description="description"
 				:editing="isEditingDescription"
@@ -39,53 +40,40 @@
 				@update:editing="handleEditDescription" />
 		</NcAppSettingsSection>
 
-		<!-- Notifications settings -->
+		<!-- Notifications settings and devices preview screen -->
 		<NcAppSettingsSection id="notifications"
-			:title="t('spreed', 'Notifications')">
+			:title="t('spreed', 'Personal')">
+			<NcCheckboxRadioSwitch :checked.sync="showDeviceChecker"
+				type="switch">
+				{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
+			</NcCheckboxRadioSwitch>
+
 			<NotificationsSettings :conversation="conversation" />
 		</NcAppSettingsSection>
 
-		<!-- Devices preview sceren -->
-		<NcAppSettingsSection id="device-checker"
-			:title="t('spreed', 'Device check')">
-			<NcCheckboxRadioSwitch :checked.sync="showDeviceChecker">
-				{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
-			</NcCheckboxRadioSwitch>
-		</NcAppSettingsSection>
-
-		<!-- Guest access -->
-		<NcAppSettingsSection v-if="canFullModerate"
-			id="guests"
-			:title="t('spreed', 'Guests access')">
-			<LinkShareSettings ref="linkShareSettings" />
-		</NcAppSettingsSection>
-
-		<!-- TODO sepatate these 2 settings and rename the settings sections
-		all the settings in this component are conversation settings. Proposal:
-		move lock conversation in destructive actions and create a separate
-		section for listablesettings -->
 		<NcAppSettingsSection v-if="canFullModerate"
 			id="conversation-settings"
-			:title="t('spreed', 'Conversation settings')">
-			<ExpirationSettings :token="token" />
+			:title="t('spreed', 'Moderation')">
 			<ListableSettings :token="token" />
-			<LockingSettings :token="token" />
+			<LinkShareSettings ref="linkShareSettings" />
+			<ExpirationSettings :token="token" />
+		</NcAppSettingsSection>
+
+		<NcAppSettingsSection v-if="canFullModerate"
+			id="meeting"
+			:title="t('spreed', 'Meeting')">
+			<LobbySettings :token="token" />
+			<SipSettings v-if="canUserEnableSIP" />
 		</NcAppSettingsSection>
 
 		<!-- Conversation permissions -->
 		<NcAppSettingsSection v-if="canFullModerate"
 			id="permissions"
-			:title="t('spreed', 'Participants permissions')">
+			:title="t('spreed', 'Permissions')">
 			<ConversationPermissionsSettings :token="token" />
 		</NcAppSettingsSection>
 
-		<!-- Meeting settings -->
-		<NcAppSettingsSection v-if="canFullModerate"
-			id="meeting"
-			:title="t('spreed', 'Meeting settings')">
-			<LobbySettings :token="token" />
-			<SipSettings v-if="canUserEnableSIP" />
-		</NcAppSettingsSection>
+		<!-- Matterbridge settings -->
 		<NcAppSettingsSection v-if="canFullModerate && matterbridgeEnabled"
 			id="matterbridge"
 			:title="t('spreed', 'Matterbridge')">
@@ -96,6 +84,7 @@
 		<NcAppSettingsSection v-if="canLeaveConversation || canDeleteConversation"
 			id="dangerzone"
 			:title="t('spreed', 'Danger zone')">
+			<LockingSettings :token="token" />
 			<DangerZone :conversation="conversation"
 				:can-leave-conversation="canLeaveConversation"
 				:can-delete-conversation="canDeleteConversation" />
@@ -278,6 +267,12 @@ export default {
 ::v-deep .app-settings-section__hint {
 	color: var(--color-text-lighter);
 	padding: 8px 0;
+}
+
+::v-deep .app-settings-section__subtitle,
+.app-settings-section__subtitle {
+	font-weight: bold;
+	font-size: var(--default-font-size);
 }
 
 ::v-deep .app-settings-subsection {

@@ -20,7 +20,10 @@
 -->
 
 <template>
-	<div>
+	<div class="app-settings-subsection">
+		<h4 class="app-settings-section__subtitle">
+			{{ t('spreed', 'Message expiration') }}
+		</h4>
 		<div class="app-settings-section__hint">
 			{{ t('spreed', 'Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation.') }}
 		</div>
@@ -56,12 +59,12 @@ export default {
 		return {
 			overwriteExpiration: undefined,
 			defaultExpirationOptions: [
-				{ id: 0, label: t('spreed', 'Off') },
-				{ id: 2419200, label: n('spreed', '%n week', '%n weeks', 4) },
-				{ id: 604800, label: n('spreed', '%n week', '%n weeks', 1) },
-				{ id: 86400, label: n('spreed', '%n day', '%n days', 1) },
-				{ id: 28800, label: n('spreed', '%n hour', '%n hours', 8) },
 				{ id: 3600, label: n('spreed', '%n hour', '%n hours', 1) },
+				{ id: 28800, label: n('spreed', '%n hour', '%n hours', 8) },
+				{ id: 86400, label: n('spreed', '%n day', '%n days', 1) },
+				{ id: 604800, label: n('spreed', '%n week', '%n weeks', 1) },
+				{ id: 2419200, label: n('spreed', '%n week', '%n weeks', 4) },
+				{ id: 0, label: t('spreed', 'Off') },
 			],
 		}
 	},

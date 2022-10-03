@@ -21,22 +21,25 @@
 
 <template>
 	<div>
-		<div class="app-settings-section__hint">
-			{{ t('spreed', 'Be careful, these actions cannot be undone.') }}
-		</div>
+		<NcNoteCard type="warning">
+			<p>{{ t('spreed', 'Be careful, these actions cannot be undone.') }}</p>
+		</NcNoteCard>
 		<div class="danger-zone">
-			<template v-if="canLeaveConversation">
-				<h4>{{ t('spreed', 'Leave conversation') }}</h4>
+			<div v-if="canLeaveConversation" class="app-settings-subsection">
+				<h4 class="app-settings-section__subtitle">
+					{{ t('spreed', 'Leave conversation') }}
+				</h4>
 				<p class="danger-zone__hint">
 					{{ t('spreed', 'Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time.') }}
 				</p>
 				<NcButton type="warning" @click.prevent.exact="leaveConversation">
 					{{ t('spreed', 'Leave conversation') }}
 				</NcButton>
-			</template>
-			<template v-if="canDeleteConversation">
-				<br>
-				<h4>{{ t('spreed', 'Delete conversation') }}</h4>
+			</div>
+			<div v-if="canDeleteConversation" class="app-settings-subsection">
+				<h4 class="app-settings-section__subtitle">
+					{{ t('spreed', 'Delete conversation') }}
+				</h4>
 				<p class="danger-zone__hint">
 					{{ t('spreed', 'Permanently delete this conversation.') }}
 				</p>
@@ -44,10 +47,11 @@
 					@click.prevent.exact="deleteConversation">
 					{{ t('spreed', 'Delete conversation') }}
 				</NcButton>
-			</template>
-			<template v-if="canDeleteConversation">
-				<br>
-				<h4>{{ t('spreed', 'Delete chat messages') }}</h4>
+			</div>
+			<div v-if="canDeleteConversation" class="app-settings-subsection">
+				<h4 class="app-settings-section__subtitle">
+					{{ t('spreed', 'Delete chat messages') }}
+				</h4>
 				<p class="danger-zone__hint">
 					{{ t('spreed', 'Permanently delete all the messages in this conversation.') }}
 				</p>
@@ -55,7 +59,7 @@
 					@click.prevent.exact="clearChatHistory">
 					{{ t('spreed', 'Delete chat messages') }}
 				</NcButton>
-			</template>
+			</div>
 			<div />
 		</div>
 	</div>
@@ -65,11 +69,13 @@
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
 export default {
 	name: 'DangerZone',
 	components: {
 		NcButton,
+		NcNoteCard,
 	},
 	props: {
 		conversation: {
