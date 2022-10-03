@@ -28,7 +28,6 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCA\Talk\Events\ModifyRoomEvent;
-use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
@@ -41,7 +40,6 @@ use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
-use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\IHasher;
 use OCP\Server;
 
@@ -404,6 +402,11 @@ class Room {
 		return $this->activeGuests;
 	}
 
+	public function resetActiveSince(): void {
+		$this->activeGuests = 0;
+		$this->activeSince = null;
+	}
+
 	public function getDefaultPermissions(): int {
 		return $this->defaultPermissions;
 	}
@@ -679,30 +682,6 @@ class Room {
 		return $this->manager->createParticipantObject($this, $row);
 	}
 
-	public function deleteRoom(): void {
-		$event = new RoomEvent($this);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOM_DELETE, $event);
-		$delete = $this->db->getQueryBuilder();
-
-		// Delete attendees
-		$delete->delete('talk_attendees')
-			->where($delete->expr()->eq('room_id', $delete->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$delete->executeStatement();
-
-		// Delete room
-		$delete->delete('talk_rooms')
-			->where($delete->expr()->eq('id', $delete->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$delete->executeStatement();
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_ROOM_DELETE, $event);
-		if (class_exists(CriticalActionPerformedEvent::class)) {
-			$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
-				'Conversation "%s" deleted',
-				['name' => $this->getName()],
-			));
-		}
-	}
-
 	/**
 	 * @param string $newName Currently it is only allowed to rename: self::TYPE_GROUP, self::TYPE_PUBLIC
 	 * @param string|null $oldName
@@ -802,21 +781,5 @@ class Room {
 		$this->lastMessage = $message;
 		$this->lastMessageId = (int) $message->getId();
 		$this->lastActivity = $message->getCreationDateTime();
-	}
-
-	public function resetActiveSince(): bool {
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('active_guests', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
-			->set('active_since', $update->createNamedParameter(null, IQueryBuilder::PARAM_DATE))
-			->set('call_flag', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
-			->set('call_permissions', $update->createNamedParameter(Attendee::PERMISSIONS_DEFAULT, IQueryBuilder::PARAM_INT))
-			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($update->expr()->isNotNull('active_since'));
-
-		$this->activeGuests = 0;
-		$this->activeSince = null;
-
-		return (bool) $update->executeStatement();
 	}
 }

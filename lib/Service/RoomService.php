@@ -27,6 +27,7 @@ use InvalidArgumentException;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
+use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -41,6 +42,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\HintException;
 use OCP\IDBConnection;
 use OCP\IUser;
+use OCP\Log\Audit\CriticalActionPerformedEvent;
 use OCP\Security\Events\ValidatePasswordPolicyEvent;
 use OCP\Security\IHasher;
 use OCP\Share\IManager as IShareManager;
@@ -550,5 +552,44 @@ class RoomService {
 		$room->setMessageExpiration($seconds);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, $event);
+	}
+
+	public function resetActiveSince(Room $room): bool {
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('active_guests', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('active_since', $update->createNamedParameter(null, IQueryBuilder::PARAM_DATE))
+			->set('call_flag', $update->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('call_permissions', $update->createNamedParameter(Attendee::PERMISSIONS_DEFAULT, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($update->expr()->isNotNull('active_since'));
+
+		$room->resetActiveSince();
+
+		return (bool) $update->executeStatement();
+	}
+
+	public function deleteRoom(Room $room): void {
+		$event = new RoomEvent($room);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_DELETE, $event);
+		$delete = $this->db->getQueryBuilder();
+
+		// Delete attendees
+		$delete->delete('talk_attendees')
+			->where($delete->expr()->eq('room_id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$delete->executeStatement();
+
+		// Delete room
+		$delete->delete('talk_rooms')
+			->where($delete->expr()->eq('id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$delete->executeStatement();
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_DELETE, $event);
+		if (class_exists(CriticalActionPerformedEvent::class)) {
+			$this->dispatcher->dispatchTyped(new CriticalActionPerformedEvent(
+				'Conversation "%s" deleted',
+				['name' => $room->getName()],
+			));
+		}
 	}
 }

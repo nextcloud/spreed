@@ -669,13 +669,13 @@ class BackendNotifierTest extends TestCase {
 		]);
 	}
 
-	public function testRoomDelete() {
+	public function testRoomDelete(): void {
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$this->participantService->addUsers($room, [[
 			'actorType' => 'users',
 			'actorId' => $this->userId,
 		]]);
-		$room->deleteRoom();
+		$this->roomService->deleteRoom($room);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'delete',

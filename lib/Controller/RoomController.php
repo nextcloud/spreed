@@ -909,7 +909,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->room->deleteRoom();
+		$this->roomService->deleteRoom($this->room);
 
 		return new DataResponse([]);
 	}
@@ -1201,7 +1201,7 @@ class RoomController extends AEnvironmentAwareController {
 				Participant::MODERATOR,
 				Participant::OWNER,
 			], true)) {
-			$room->deleteRoom();
+			$this->roomService->deleteRoom($room);
 			return new DataResponse();
 		}
 
