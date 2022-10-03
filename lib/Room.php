@@ -170,6 +170,7 @@ class Room {
 	private string $password;
 	private string $remoteServer;
 	private string $remoteToken;
+	private int $activeGuests;
 	private int $defaultPermissions;
 	private int $callPermissions;
 	private int $callFlag;
@@ -202,6 +203,7 @@ class Room {
 								string $password,
 								string $remoteServer,
 								string $remoteToken,
+								int $activeGuests,
 								int $defaultPermissions,
 								int $callPermissions,
 								int $callFlag,
@@ -231,6 +233,7 @@ class Room {
 		$this->password = $password;
 		$this->remoteServer = $remoteServer;
 		$this->remoteToken = $remoteToken;
+		$this->activeGuests = $activeGuests;
 		$this->defaultPermissions = $defaultPermissions;
 		$this->callPermissions = $callPermissions;
 		$this->callFlag = $callFlag;
@@ -391,7 +394,16 @@ class Room {
 		$this->description = $description;
 	}
 
+	/**
+	 * @deprecated Use ParticipantService::getGuestCount() instead
+	 * @return int
+	 */
+	public function getActiveGuests(): int {
+		return $this->activeGuests;
+	}
+
 	public function resetActiveSince(): void {
+		$this->activeGuests = 0;
 		$this->activeSince = null;
 	}
 
@@ -716,8 +728,14 @@ class Room {
 	 * @param \DateTime $since
 	 * @return void
 	 */
-	public function setActiveSince(\DateTime $since): void {
-		$this->activeSince = $since;
+	public function setActiveSince(\DateTime $since, int $callFlag, bool $isGuest): void {
+		if (!$this->activeSince) {
+			$this->activeSince = $since;
+		}
+		$this->callFlag = $this->callFlag | $callFlag;
+		if ($isGuest) {
+			$this->activeGuests++;
+		}
 	}
 
 	public function setLastMessage(IComment $message): void {

@@ -598,6 +598,7 @@ class RoomService {
 		}
 
 		if ($room->getActiveSince() instanceof \DateTime) {
+			$room->setActiveSince($room->getActiveSince(), $callFlag, $isGuest);
 			return false;
 		}
 
@@ -608,7 +609,7 @@ class RoomService {
 			->andWhere($update->expr()->isNull('active_since'));
 		$update->executeStatement();
 
-		$room->setActiveSince($since);
+		$room->setActiveSince($since, $callFlag, $isGuest);
 
 		return true;
 	}
