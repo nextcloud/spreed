@@ -170,7 +170,6 @@ class Room {
 	private string $password;
 	private string $remoteServer;
 	private string $remoteToken;
-	private int $activeGuests;
 	private int $defaultPermissions;
 	private int $callPermissions;
 	private int $callFlag;
@@ -203,7 +202,6 @@ class Room {
 								string $password,
 								string $remoteServer,
 								string $remoteToken,
-								int $activeGuests,
 								int $defaultPermissions,
 								int $callPermissions,
 								int $callFlag,
@@ -233,7 +231,6 @@ class Room {
 		$this->password = $password;
 		$this->remoteServer = $remoteServer;
 		$this->remoteToken = $remoteToken;
-		$this->activeGuests = $activeGuests;
 		$this->defaultPermissions = $defaultPermissions;
 		$this->callPermissions = $callPermissions;
 		$this->callFlag = $callFlag;
@@ -394,16 +391,7 @@ class Room {
 		$this->description = $description;
 	}
 
-	/**
-	 * @deprecated Use ParticipantService::getGuestCount() instead
-	 * @return int
-	 */
-	public function getActiveGuests(): int {
-		return $this->activeGuests;
-	}
-
 	public function resetActiveSince(): void {
-		$this->activeGuests = 0;
 		$this->activeSince = null;
 	}
 
@@ -726,48 +714,10 @@ class Room {
 
 	/**
 	 * @param \DateTime $since
-	 * @param int $callFlag
-	 * @param bool $isGuest
-	 * @return bool
+	 * @return void
 	 */
-	public function setActiveSince(\DateTime $since, int $callFlag, bool $isGuest): bool {
-		if ($isGuest && $this->getType() === self::TYPE_PUBLIC) {
-			$update = $this->db->getQueryBuilder();
-			$update->update('talk_rooms')
-				->set('active_guests', $update->createFunction($update->getColumnName('active_guests') . ' + 1'))
-				->set(
-					'call_flag',
-					$update->expr()->bitwiseOr('call_flag', $callFlag)
-				)
-				->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-			$update->executeStatement();
-
-			$this->activeGuests++;
-		} elseif (!$isGuest) {
-			$update = $this->db->getQueryBuilder();
-			$update->update('talk_rooms')
-				->set(
-					'call_flag',
-					$update->expr()->bitwiseOr('call_flag', $callFlag)
-				)
-				->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-			$update->executeStatement();
-		}
-
-		if ($this->activeSince instanceof \DateTime) {
-			return false;
-		}
-
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('active_since', $update->createNamedParameter($since, IQueryBuilder::PARAM_DATE))
-			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($update->expr()->isNull('active_since'));
-		$update->executeStatement();
-
+	public function setActiveSince(\DateTime $since): void {
 		$this->activeSince = $since;
-
-		return true;
 	}
 
 	public function setLastMessage(IComment $message): void {

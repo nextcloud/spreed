@@ -569,6 +569,50 @@ class RoomService {
 		return (bool) $update->executeStatement();
 	}
 
+	/**
+	 * @param \DateTime $since
+	 * @param int $callFlag
+	 * @param bool $isGuest
+	 * @return bool
+	 */
+	public function setActiveSince(Room $room, \DateTime $since, int $callFlag, bool $isGuest): bool {
+		if ($isGuest && $room->getType() === Room::TYPE_PUBLIC) {
+			$update = $this->db->getQueryBuilder();
+			$update->update('talk_rooms')
+				->set('active_guests', $update->createFunction($update->getColumnName('active_guests') . ' + 1'))
+				->set(
+					'call_flag',
+					$update->expr()->bitwiseOr('call_flag', $callFlag)
+				)
+				->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+			$update->executeStatement();
+		} elseif (!$isGuest) {
+			$update = $this->db->getQueryBuilder();
+			$update->update('talk_rooms')
+				->set(
+					'call_flag',
+					$update->expr()->bitwiseOr('call_flag', $callFlag)
+				)
+				->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+			$update->executeStatement();
+		}
+
+		if ($room->getActiveSince() instanceof \DateTime) {
+			return false;
+		}
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('active_since', $update->createNamedParameter($since, IQueryBuilder::PARAM_DATE))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($update->expr()->isNull('active_since'));
+		$update->executeStatement();
+
+		$room->setActiveSince($since);
+
+		return true;
+	}
+
 	public function deleteRoom(Room $room): void {
 		$event = new RoomEvent($room);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_DELETE, $event);
