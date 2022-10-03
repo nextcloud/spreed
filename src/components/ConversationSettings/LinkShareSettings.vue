@@ -20,60 +20,54 @@
 -->
 
 <template>
-	<div>
+	<Fragment>
 		<div class="app-settings-subsection">
-			<div id="link_share_settings_hint" class="app-settings-section__hint">
-				{{ t('spreed', 'Allow guests to use a public link to join this conversation.') }}
-			</div>
-			<div>
-				<NcCheckboxRadioSwitch :checked="isSharedPublicly"
-					:disabled="isSaving"
-					aria-describedby="link_share_settings_hint"
-					@update:checked="toggleGuests">
-					{{ t('spreed', 'Allow guests') }}
-				</NcCheckboxRadioSwitch>
-			</div>
+			<h4 class="app-settings-section__subtitle">
+				{{ t('spreed', 'Guest access') }}
+			</h4>
+
+			<NcCheckboxRadioSwitch :checked="isSharedPublicly"
+				:disabled="isSaving"
+				type="switch"
+				aria-describedby="link_share_settings_hint"
+				@update:checked="toggleGuests">
+				{{ t('spreed', 'Allow guests to join this conversation via link') }}
+			</NcCheckboxRadioSwitch>
+
+			<NcCheckboxRadioSwitch v-show="isSharedPublicly"
+				:checked="conversation.hasPassword"
+				:disabled="isSaving"
+				type="switch"
+				aria-describedby="link_share_settings_password_hint"
+				@update:checked="togglePassword">
+				{{ t('spreed', 'Password protection') }}
+			</NcCheckboxRadioSwitch>
 		</div>
-		<div v-show="isSharedPublicly" class="app-settings-subsection">
-			<div id="link_share_settings_password_hint" class="app-settings-section__hint">
-				{{ t('spreed', 'Set a password to restrict who can use the public link.') }}
-			</div>
-			<div>
-				<NcCheckboxRadioSwitch :checked="conversation.hasPassword"
-					:disabled="isSaving"
+		<div v-show="showPasswordField" class="app-settings-subsection">
+			<form :disabled="isSaving"
+				@submit.prevent="handleSetNewPassword">
+				<span class="icon-password" />
+				<input id="link_share_settings_link_password"
+					ref="passwordField"
+					v-model="password"
 					aria-describedby="link_share_settings_password_hint"
-					@update:checked="togglePassword">
-					{{ t('spreed', 'Password protection') }}
-				</NcCheckboxRadioSwitch>
-			</div>
+					type="password"
+					class="checkbox"
+					autocomplete="new-password"
+					name="link_share_settings_link_password"
+					:placeholder="t('spreed', 'Enter a password')"
+					:disabled="isSaving">
+				<NcButton id="link_share_settings_link_password_submit"
+					:aria-label="t('spreed', 'Save password')"
+					:disabled="isSaving"
+					native-type="submit">
+					<template #icon>
+						<ArrowRight />
+					</template>
+				</NcButton>
+			</form>
 		</div>
-		<div class="app-settings-subsection">
-			<div v-show="showPasswordField">
-				<form :disabled="isSaving"
-					@submit.prevent="handleSetNewPassword">
-					<span class="icon-password" />
-					<input id="link_share_settings_link_password"
-						ref="passwordField"
-						v-model="password"
-						aria-describedby="link_share_settings_password_hint"
-						type="password"
-						class="checkbox"
-						autocomplete="new-password"
-						name="link_share_settings_link_password"
-						:placeholder="t('spreed', 'Enter a password')"
-						:disabled="isSaving">
-					<NcButton id="link_share_settings_link_password_submit"
-						:aria-label="t('spreed', 'Save password')"
-						:disabled="isSaving"
-						native-type="submit">
-						<template #icon>
-							<ArrowRight />
-						</template>
-					</NcButton>
-				</form>
-			</div>
-		</div>
-		<div class="app-settings-subsection">
+		<div class="app-settings-subsection__buttons">
 			<NcButton ref="copyLinkButton"
 				@click.prevent="handleCopyLink"
 				@keydown.enter="handleCopyLink">
@@ -82,9 +76,8 @@
 				</template>
 				{{ t('spreed', 'Copy conversation link') }}
 			</NcButton>
-		</div>
-		<div v-if="isSharedPublicly" class="app-settings-subsection">
-			<NcButton :disabled="isSendingInvitations"
+			<NcButton v-if="isSharedPublicly"
+				:disabled="isSendingInvitations"
 				@click.prevent="handleResendInvitations"
 				@keydown.enter="handleResendInvitations">
 				<template #icon>
@@ -94,7 +87,7 @@
 			</NcButton>
 			<span v-if="isSendingInvitations" class="icon-loading-small spinner" />
 		</div>
-	</div>
+	</Fragment>
 </template>
 
 <script>
@@ -106,6 +99,7 @@ import { generateUrl } from '@nextcloud/router'
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline.vue'
 import Email from 'vue-material-design-icons/Email.vue'
+import { Fragment } from 'vue-frag'
 
 export default {
 	name: 'LinkShareSettings',
@@ -116,6 +110,7 @@ export default {
 		ArrowRight,
 		ClipboardTextOutline,
 		Email,
+		Fragment,
 	},
 
 	data() {
@@ -270,5 +265,10 @@ button > .material-design-icon {
 
 input[type=password] {
 	width: 200px;
+}
+
+.app-settings-subsection__buttons {
+	display: flex;
+	gap: 8px;
 }
 </style>

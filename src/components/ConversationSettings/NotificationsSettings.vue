@@ -20,8 +20,10 @@
 -->
 
 <template>
-	<div>
-		<h4>{{ t('spreed', 'Chat messages') }}</h4>
+	<div class="app-settings-subsection">
+		<h4 class="app-settings-section__subtitle">
+			{{ t('spreed', 'Notifications') }}
+		</h4>
 		<a href="#"
 			class="radio-element"
 			:class="{'radio-element--active': isNotifyAlways}"
@@ -62,8 +64,8 @@
 				:size="20" />
 		</a>
 
-		<h4>{{ t('spreed', 'Calls') }}</h4>
 		<NcCheckboxRadioSwitch id="notification_calls"
+			type="switch"
 			:checked.sync="notifyCalls"
 			@update:checked="setNotificationCalls">
 			{{ t('spreed', 'Notify about calls in this conversation') }}
