@@ -80,14 +80,13 @@
 					{{ t('spreed', 'Forward message') }}
 				</NcActionButton>
 				<NcActionSeparator v-if="messageActions.length > 0" />
-				<template v-for="action in messageActions">
-					<NcActionButton :key="action.label"
-						:icon="action.icon"
-						:close-after-click="true"
-						@click="action.callback(messageApiData)">
-						{{ action.label }}
-					</NcActionButton>
-				</template>
+				<NcActionButton v-for="action in messageActions"
+					:key="action.label"
+					:icon="action.icon"
+					:close-after-click="true"
+					@click="action.callback(messageApiData)">
+					{{ action.label }}
+				</NcActionButton>
 				<template v-if="isDeleteable">
 					<NcActionSeparator />
 					<NcActionButton icon="icon-delete"
@@ -160,7 +159,9 @@ import {
 import Forwarder from './Forwarder.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
+// eslint-disable-next-line n/no-extraneous-import
 import { frequently, EmojiIndex as EmojiIndexFactory } from 'emoji-mart-vue-fast'
+// eslint-disable-next-line n/no-extraneous-import
 import data from 'emoji-mart-vue-fast/data/all.json'
 
 const EmojiIndex = new EmojiIndexFactory(data)
