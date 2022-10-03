@@ -21,19 +21,21 @@
 
 <template>
 	<div class="app-settings-subsection">
-		<div id="moderation_settings_lock_conversation_hint" class="app-settings-section__hint">
-			{{ t('spreed', 'Locking the conversation prevents anyone to post messages or start calls.') }}
-		</div>
-		<div v-if="hasCall" class="app-settings-section__hint">
-			{{ t('spreed', 'This will also terminate the ongoing call.') }}
-		</div>
+		<h4 class="app-settings-section__subtitle">
+			{{ t('spreed', 'Lock conversation') }}
+		</h4>
+		<NcNoteCard v-if="hasCall" type="warning">
+			<p>
+				{{ t('spreed', 'This will also terminate the ongoing call.') }}
+			</p>
+		</NcNoteCard>
 		<div>
 			<NcCheckboxRadioSwitch :checked="isReadOnly"
 				type="switch"
 				aria-describedby="moderation_settings_lock_conversation_hint"
 				:disabled="isReadOnlyStateLoading"
 				@update:checked="toggleReadOnly">
-				{{ t('spreed', 'Lock conversation') }}
+				{{ t('spreed', 'Lock the conversation to prevent anyone to post messages or start calls') }}
 			</NcCheckboxRadioSwitch>
 		</div>
 	</div>
@@ -43,12 +45,14 @@
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { CONVERSATION } from '../../constants.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 
 export default {
 	name: 'LockingSettings',
 
 	components: {
 		NcCheckboxRadioSwitch,
+		NcNoteCard,
 	},
 
 	props: {

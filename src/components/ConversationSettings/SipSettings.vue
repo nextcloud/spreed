@@ -21,16 +21,17 @@
 
 <template>
 	<div class="app-settings-subsection">
-		<div id="sip_settings_hint" class="app-settings-section__hint">
-			{{ t('spreed', 'Allow participants to join from a phone.') }}
-		</div>
+		<h4 class="app-settings-section__subtitle">
+			{{ t('spreed', 'Phone and SIP dial-in') }}
+		</h4>
+
 		<div>
 			<NcCheckboxRadioSwitch :checked="hasSIPEnabled"
 				type="switch"
 				aria-describedby="sip_settings_hint"
 				:disabled="isSipLoading"
 				@update:checked="toggleSetting('enable')">
-				{{ t('spreed', 'Enable SIP dial-in') }}
+				{{ t('spreed', 'Enable phone and SIP dial-in') }}
 			</NcCheckboxRadioSwitch>
 		</div>
 		<div v-if="hasSIPEnabled">

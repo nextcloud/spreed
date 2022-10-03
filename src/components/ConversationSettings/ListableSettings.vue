@@ -20,21 +20,20 @@
 -->
 
 <template>
-	<div class="app-settings-subsection">
+	<div>
 		<div>
 			<NcCheckboxRadioSwitch :checked="listable !== LISTABLE.NONE"
 				:disabled="isListableLoading"
+				type="switch"
 				@update:checked="toggleListableUsers">
-				{{ t('spreed', 'Open conversation to registered users') }}
+				{{ t('spreed', 'Open conversation to registered users, showing it in search results') }}
 			</NcCheckboxRadioSwitch>
 		</div>
-		<div v-if="listable !== LISTABLE.NONE" class="indent">
-			<div id="moderation_settings_listable_conversation_hint" class="app-settings-section__hint">
-				{{ t('spreed', 'This conversation will be shown in search results') }}
-			</div>
-			<div v-if="listable !== LISTABLE.NONE && isGuestsAccountsEnabled">
+		<div v-if="listable !== LISTABLE.NONE">
+			<div v-if="isGuestsAccountsEnabled">
 				<NcCheckboxRadioSwitch :checked="listable === LISTABLE.ALL"
 					:disabled="isListableLoading"
+					type="switch"
 					@update:checked="toggleListableGuests">
 					{{ t('spreed', 'Also open to guest app users') }}
 				</NcCheckboxRadioSwitch>
@@ -150,12 +149,3 @@ export default {
 
 }
 </script>
-<style lang="scss" scoped>
-.listable-options-select {
-	width: 100%;
-}
-
-.indent {
-	margin-left: 26px;
-}
-</style>

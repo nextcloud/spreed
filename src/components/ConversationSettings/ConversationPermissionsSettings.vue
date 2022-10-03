@@ -21,10 +21,15 @@
 
 <template>
 	<div class="conversation-permissions-editor">
-		<h4 class="conversation-permissions-editor__title">
+		<div class="app-settings-section__hint">
 			{{ t('spreed', 'Edit the default permissions for participants in this conversation. These settings do not affect moderators.') }}
-		</h4>
-		<p>{{ t('spreed', 'Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost.') }}</p>
+		</div>
+
+		<NcNoteCard type="warning">
+			<p>
+				{{ t('spreed', 'Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost.') }}
+			</p>
+		</NcNoteCard>
 
 		<!-- All permissions -->
 		<div class="conversation-permissions-editor__setting">
@@ -38,7 +43,9 @@
 			</NcCheckboxRadioSwitch>
 			<span v-show="loading && radioValue === 'all'" class="icon-loading-small" />
 		</div>
-		<p>{{ t('spreed', 'Participants have permissions to start a call, join a call, enable audio and video, and share screen.') }}</p>
+		<p class="conversation-permissions-editor__hint">
+			{{ t('spreed', 'Participants have permissions to start a call, join a call, enable audio and video, and share screen.') }}
+		</p>
 
 		<!-- No permissions -->
 		<div class="conversation-permissions-editor__setting">
@@ -52,7 +59,9 @@
 			</NcCheckboxRadioSwitch>
 			<span v-show="loading && radioValue === 'restricted'" class="icon-loading-small" />
 		</div>
-		<p>{{ t('spreed', 'Participants can join calls, but cannot enable audio nor video nor share screen until a moderator manually grants them permissions.') }}</p>
+		<p class="conversation-permissions-editor__hint">
+			{{ t('spreed', 'Participants can join calls, but cannot enable audio nor video nor share screen until a moderator manually grants them permissions.') }}
+		</p>
 
 		<!-- Advanced permissions -->
 		<div class="conversation-permissions-editor__setting--advanced">
@@ -88,6 +97,7 @@
 import PermissionEditor from '../PermissionsEditor/PermissionsEditor.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 import { PARTICIPANT } from '../../constants.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
@@ -101,6 +111,7 @@ export default {
 		PermissionEditor,
 		NcButton,
 		NcCheckboxRadioSwitch,
+		NcNoteCard,
 		Pencil,
 	},
 
@@ -256,7 +267,7 @@ export default {
 	}
 }
 
-p {
+.conversation-permissions-editor__hint {
 	color: var(--color-text-lighter);
 	margin-bottom: 16px;
 }
