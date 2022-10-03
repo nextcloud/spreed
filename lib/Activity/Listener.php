@@ -108,7 +108,8 @@ class Listener {
 	}
 
 	public function setActive(Room $room, Participant $participant): void {
-		$room->setActiveSince(
+		$this->roomService->setActiveSince(
+			$room,
 			$this->timeFactory->getDateTime(),
 			$participant->getSession() ? $participant->getSession()->getInCall() : Participant::FLAG_DISCONNECTED,
 			$participant->getAttendee()->getActorType() !== Attendee::ACTOR_USERS
