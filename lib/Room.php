@@ -724,15 +724,11 @@ class Room {
 		return true;
 	}
 
-	/**
-	 * @param \DateTime $since
-	 * @return void
-	 */
 	public function setActiveSince(\DateTime $since, int $callFlag, bool $isGuest): void {
 		if (!$this->activeSince) {
 			$this->activeSince = $since;
 		}
-		$this->callFlag = $this->callFlag | $callFlag;
+		$this->callFlag |= $callFlag;
 		if ($isGuest) {
 			$this->activeGuests++;
 		}
