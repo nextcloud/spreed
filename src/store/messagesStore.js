@@ -213,6 +213,23 @@ const getters = {
 		return null
 	},
 
+	getFirstDisplayableMessageIdAfterReadMarker: (state, getters) => (token, readMessageId) => {
+		if (!state.messages[token]) {
+			return null
+		}
+
+		const displayableMessages = getters.messagesList(token).filter(message => {
+			return message.id >= readMessageId
+				&& !('' + message.id).startsWith('temp-')
+		})
+
+		if (displayableMessages.length) {
+			return displayableMessages.shift().id
+		}
+
+		return null
+	},
+
 	isSendingMessages: (state) => {
 		// the cancel handler only exists when a message is being sent
 		return Object.keys(state.cancelPostNewMessage).length !== 0
