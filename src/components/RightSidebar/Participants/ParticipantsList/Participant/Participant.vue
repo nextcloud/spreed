@@ -130,6 +130,20 @@
 				</template>
 				{{ t('spreed', 'Promote to moderator') }}
 			</NcActionButton>
+			<NcActionButton v-if="canBeModerated && isEmailActor"
+				icon="icon-mail"
+				:close-after-click="true"
+				@click="resendInvitation">
+				{{ t('spreed', 'Resend invitation') }}
+			</NcActionButton>
+			<NcActionButton v-if="canSendCallNotification"
+				:close-after-click="true"
+				@click="sendCallNotification">
+				<template #icon>
+					<Bell :size="20" />
+				</template>
+				{{ t('spreed', 'Send call notification') }}
+			</NcActionButton>
 
 			<!-- Permissions -->
 			<template v-if="showPermissionsOptions">
@@ -164,21 +178,9 @@
 					{{ t('spreed', 'Edit permissions') }}
 				</NcActionButton>
 			</template>
-			<NcActionButton v-if="canBeModerated && isEmailActor"
-				icon="icon-mail"
-				:close-after-click="true"
-				@click="resendInvitation">
-				{{ t('spreed', 'Resend invitation') }}
-			</NcActionButton>
-			<NcActionButton v-if="canSendCallNotification"
-				:close-after-click="true"
-				@click="sendCallNotification">
-				<template #icon>
-					<Bell :size="20" />
-				</template>
-				{{ t('spreed', 'Send call notification') }}
-			</NcActionButton>
-			<NcActionSeparator v-if="attendeePin || canBePromoted || canBeDemoted || isEmailActor" />
+
+			<!-- Remove -->
+			<NcActionSeparator v-if="canBeModerated" />
 			<NcActionButton v-if="canBeModerated"
 				icon="icon-delete"
 				:close-after-click="true"
