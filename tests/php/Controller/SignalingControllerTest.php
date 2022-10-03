@@ -592,9 +592,9 @@ class SignalingControllerTest extends TestCase {
 		$participant->expects($this->any())
 			->method('getPermissions')
 			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
-		$room->expects($this->once())
+		$this->participantService->expects($this->once())
 			->method('getParticipantBySession')
-			->with($sessionId)
+			->with($room, $sessionId)
 			->willReturn($participant);
 		$room->expects($this->once())
 			->method('getToken')
@@ -654,9 +654,9 @@ class SignalingControllerTest extends TestCase {
 		$participant->expects($this->any())
 			->method('getPermissions')
 			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
-		$room->expects($this->once())
+		$this->participantService->expects($this->once())
 			->method('getParticipantBySession')
-			->with($sessionId)
+			->with($room, $sessionId)
 			->willReturn($participant);
 		$room->expects($this->once())
 			->method('getToken')
@@ -780,7 +780,7 @@ class SignalingControllerTest extends TestCase {
 			->with($roomToken)
 			->willReturn($room);
 
-		$room->expects($this->once())
+		$this->participantService->expects($this->once())
 			->method('getParticipantBySession')
 			->willThrowException(new ParticipantNotFoundException());
 

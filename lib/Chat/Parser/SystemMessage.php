@@ -32,6 +32,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\Federation\ICloudIdManager;
@@ -53,6 +54,7 @@ class SystemMessage {
 	protected IUserManager $userManager;
 	protected IGroupManager $groupManager;
 	protected GuestManager $guestManager;
+	protected ParticipantService $participantService;
 	protected IPreviewManager $previewManager;
 	protected RoomShareProvider $shareProvider;
 	protected PhotoCache $photoCache;
@@ -77,6 +79,7 @@ class SystemMessage {
 	public function __construct(IUserManager $userManager,
 								IGroupManager $groupManager,
 								GuestManager $guestManager,
+								ParticipantService $participantService,
 								IPreviewManager $previewManager,
 								RoomShareProvider $shareProvider,
 								PhotoCache $photoCache,
@@ -86,6 +89,7 @@ class SystemMessage {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->guestManager = $guestManager;
+		$this->participantService = $participantService;
 		$this->previewManager = $previewManager;
 		$this->shareProvider = $shareProvider;
 		$this->photoCache = $photoCache;
@@ -784,7 +788,7 @@ class SystemMessage {
 
 	protected function getGuestName(Room $room, string $actorType, string $actorId): string {
 		try {
-			$participant = $room->getParticipantByActor($actorType, $actorId);
+			$participant = $this->participantService->getParticipantByActor($room, $actorType, $actorId);
 			$name = $participant->getAttendee()->getDisplayName();
 			if ($name === '' && $actorType === Attendee::ACTOR_EMAILS) {
 				$name = $actorId;

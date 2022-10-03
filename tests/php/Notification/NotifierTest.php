@@ -923,8 +923,8 @@ class NotifierTest extends TestCase {
 			->willReturn($comment);
 
 		if (is_string($guestName)) {
-			$room->method('getParticipantByActor')
-				->with(Attendee::ACTOR_GUESTS, 'random-hash')
+			$this->participantService->method('getParticipantByActor')
+				->with($room, Attendee::ACTOR_GUESTS, 'random-hash')
 				->willReturn($participant);
 
 			$attendee = Attendee::fromRow([
@@ -935,8 +935,8 @@ class NotifierTest extends TestCase {
 			$participant->method('getAttendee')
 				->willReturn($attendee);
 		} else {
-			$room->method('getParticipantByActor')
-				->with(Attendee::ACTOR_GUESTS, 'random-hash')
+			$this->participantService->method('getParticipantByActor')
+				->with($room, Attendee::ACTOR_GUESTS, 'random-hash')
 				->willThrowException(new ParticipantNotFoundException());
 		}
 

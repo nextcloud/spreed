@@ -52,7 +52,7 @@ class CircleDeletedListener implements IEventListener {
 		// Remove the circle itself from being a participant
 		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_CIRCLES, $circleId);
 		foreach ($rooms as $room) {
-			$participant = $room->getParticipantByActor(Attendee::ACTOR_CIRCLES, $circleId);
+			$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_CIRCLES, $circleId);
 			$this->participantService->removeAttendee($room, $participant, Room::PARTICIPANT_REMOVED);
 		}
 	}

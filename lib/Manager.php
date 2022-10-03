@@ -1013,7 +1013,7 @@ class Manager {
 			try {
 				if ($userId === '') {
 					$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
-					$room->getParticipantBySession($sessionId);
+					$this->participantService->getParticipantBySession($room, $sessionId);
 				} else {
 					$room->getParticipant($userId, false);
 				}

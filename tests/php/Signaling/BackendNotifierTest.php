@@ -706,7 +706,7 @@ class BackendNotifierTest extends TestCase {
 
 		$participant = $this->participantService->joinRoom($roomService, $room, $testUser, '');
 		$userSession = $participant->getSession()->getSessionId();
-		$participant = $room->getParticipantBySession($userSession);
+		$participant = $this->participantService->getParticipantBySession($room, $userSession);
 
 		$this->participantService->changeInCall($room, $participant, Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO);
 
@@ -743,7 +743,7 @@ class BackendNotifierTest extends TestCase {
 
 		$guestParticipant = $this->participantService->joinRoomAsNewGuest($roomService, $room, '');
 		$guestSession = $guestParticipant->getSession()->getSessionId();
-		$guestParticipant = $room->getParticipantBySession($guestSession);
+		$guestParticipant = $this->participantService->getParticipantBySession($room, $guestSession);
 		$this->participantService->changeInCall($room, $guestParticipant, Participant::FLAG_IN_CALL);
 
 		$this->assertMessageWasSent($room, [
@@ -911,7 +911,7 @@ class BackendNotifierTest extends TestCase {
 
 		$participant = $this->participantService->joinRoom($roomService, $room, $testUser, '');
 		$userSession = $participant->getSession()->getSessionId();
-		$participant = $room->getParticipantBySession($userSession);
+		$participant = $this->participantService->getParticipantBySession($room, $userSession);
 
 		$this->participantService->updateParticipantType($room, $participant, Participant::MODERATOR);
 
@@ -946,7 +946,7 @@ class BackendNotifierTest extends TestCase {
 
 		$guestParticipant = $this->participantService->joinRoomAsNewGuest($roomService, $room, '');
 		$guestSession = $guestParticipant->getSession()->getSessionId();
-		$guestParticipant = $room->getParticipantBySession($guestSession);
+		$guestParticipant = $this->participantService->getParticipantBySession($room, $guestSession);
 
 		$this->participantService->updateParticipantType($room, $guestParticipant, Participant::GUEST_MODERATOR);
 

@@ -31,6 +31,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\IL10N;
@@ -45,6 +46,8 @@ class UserMentionTest extends TestCase {
 	protected $userManager;
 	/** @var GuestManager|MockObject */
 	protected $guestManager;
+	/** @var ParticipantService|MockObject */
+	protected $participantService;
 	/** @var IL10N|MockObject */
 	protected $l;
 
@@ -56,12 +59,14 @@ class UserMentionTest extends TestCase {
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
+		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->l = $this->createMock(IL10N::class);
 
 		$this->parser = new UserMention(
 			$this->commentsManager,
 			$this->userManager,
 			$this->guestManager,
+			$this->participantService,
 			$this->l);
 	}
 
@@ -449,8 +454,8 @@ class UserMentionTest extends TestCase {
 		/** @var IL10N|MockObject $l */
 		$l = $this->createMock(IL10N::class);
 
-		$room->method('getParticipantByActor')
-			->with(Attendee::ACTOR_GUESTS, '123456')
+		$this->participantService->method('getParticipantByActor')
+			->with($room, Attendee::ACTOR_GUESTS, '123456')
 			->willThrowException(new ParticipantNotFoundException());
 		$this->l->expects($this->any())
 			->method('t')
@@ -488,8 +493,8 @@ class UserMentionTest extends TestCase {
 		/** @var IL10N|MockObject $l */
 		$l = $this->createMock(IL10N::class);
 
-		$room->method('getParticipantByActor')
-			->with(Attendee::ACTOR_GUESTS, '123456')
+		$this->participantService->method('getParticipantByActor')
+			->with($room, Attendee::ACTOR_GUESTS, '123456')
 			->willThrowException(new ParticipantNotFoundException());
 		$this->l->expects($this->any())
 			->method('t')
@@ -535,8 +540,8 @@ class UserMentionTest extends TestCase {
 		$participant->method('getAttendee')
 			->willReturn($attendee);
 
-		$room->method('getParticipantByActor')
-			->with(Attendee::ACTOR_GUESTS, 'abcdef')
+		$this->participantService->method('getParticipantByActor')
+			->with($room, Attendee::ACTOR_GUESTS, 'abcdef')
 			->willReturn($participant);
 		$this->l->expects($this->any())
 			->method('t')

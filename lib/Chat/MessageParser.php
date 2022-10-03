@@ -31,6 +31,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
@@ -42,16 +43,18 @@ use OCP\IUserManager;
 class MessageParser {
 	public const EVENT_MESSAGE_PARSE = self::class . '::parseMessage';
 
-	private IEventDispatcher $dispatcher;
-
-	private IUserManager $userManager;
+	protected IEventDispatcher $dispatcher;
+	protected IUserManager $userManager;
+	protected ParticipantService $participantService;
 
 	protected array $guestNames = [];
 
 	public function __construct(IEventDispatcher $dispatcher,
-								IUserManager $userManager) {
+								IUserManager $userManager,
+								ParticipantService $participantService) {
 		$this->dispatcher = $dispatcher;
 		$this->userManager = $userManager;
+		$this->participantService = $participantService;
 	}
 
 	public function createMessage(Room $room, Participant $participant, IComment $comment, IL10N $l): Message {
@@ -87,7 +90,7 @@ class MessageParser {
 				$displayName = $this->guestNames[$comment->getActorId()];
 			} else {
 				try {
-					$participant = $message->getRoom()->getParticipantByActor(Attendee::ACTOR_GUESTS, $comment->getActorId());
+					$participant = $this->participantService->getParticipantByActor($message->getRoom(), Attendee::ACTOR_GUESTS, $comment->getActorId());
 					$displayName = $participant->getAttendee()->getDisplayName();
 				} catch (ParticipantNotFoundException $e) {
 				}
