@@ -107,20 +107,16 @@
 					<ArrowLeft :size="20" />
 				</template>
 			</NcButton>
-			<NcButton type="tertiary"
-				:aria-label="t('spreed', 'React with {emoji}', { emoji: '👍' })"
-				@click="handleReactionClick('👍')">
+			<NcButton v-for="emoji in frequentlyUsedEmojis"
+				:key="emoji"
+				type="tertiary"
+				:aria-label="t('spreed', 'React with {emoji}', { emoji })"
+				@click="handleReactionClick(emoji)">
 				<template #icon>
-					<span>👍</span>
+					<span>{{ emoji }}</span>
 				</template>
 			</NcButton>
-			<NcButton type="tertiary"
-				:aria-label="t('spreed', 'React with {emoji}', { emoji: '❤' })"
-				@click="handleReactionClick('❤️')">
-				<template #icon>
-					<span>❤️</span>
-				</template>
-			</NcButton>
+
 			<NcEmojiPicker :container="`#message_${id} .message-buttons-bar`"
 				:boundary="containerElement"
 				placement="auto"
@@ -164,6 +160,10 @@ import {
 import Forwarder from './Forwarder.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
+import { frequently, EmojiIndex as EmojiIndexFactory } from 'emoji-mart-vue-fast'
+import data from 'emoji-mart-vue-fast/data/all.json'
+
+const EmojiIndex = new EmojiIndexFactory(data)
 
 export default {
 	name: 'MessageButtonsBar',
@@ -184,7 +184,6 @@ export default {
 		Reply,
 		NcEmojiPicker,
 	},
-
 	props: {
 		token: {
 			type: String,
@@ -394,6 +393,12 @@ export default {
 				&& !this.isFileShare
 				&& !this.isDeletedMessage
 				&& !this.isPollMessage
+		},
+
+		frequentlyUsedEmojis() {
+			return frequently.get(5).map(emojiStrings => {
+				return EmojiIndex.emoji(emojiStrings).native
+			})
 		},
 	},
 
