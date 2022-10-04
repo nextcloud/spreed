@@ -180,7 +180,7 @@ class Notifier implements INotifier {
 		}
 
 		try {
-			$participant = $room->getParticipant($userId, false);
+			$participant = $this->participantService->getParticipant($room, $userId, false);
 			$this->participants[$roomId][$userId] = $participant;
 			return $participant;
 		} catch (ParticipantNotFoundException $e) {

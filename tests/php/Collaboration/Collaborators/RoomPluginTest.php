@@ -30,6 +30,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
 use OCP\IUser;
@@ -39,6 +40,8 @@ use Test\TestCase;
 
 class RoomPluginTest extends TestCase {
 	protected ?Manager $manager = null;
+	/** @var ParticipantService|MockObject */
+	protected $participantService;
 
 	protected ?IUserSession $userSession = null;
 
@@ -52,6 +55,7 @@ class RoomPluginTest extends TestCase {
 		parent::setUp();
 
 		$this->manager = $this->createMock(Manager::class);
+		$this->participantService = $this->createMock(ParticipantService::class);
 
 		$this->user = $this->createMock(IUser::class);
 		$this->user->expects($this->any())
@@ -64,7 +68,11 @@ class RoomPluginTest extends TestCase {
 
 		$this->searchResult = $this->createMock(ISearchResult::class);
 
-		$this->plugin = new RoomPlugin($this->manager, $this->userSession);
+		$this->plugin = new RoomPlugin(
+			$this->manager,
+			$this->participantService,
+			$this->userSession
+		);
 	}
 
 	private function newRoom(int $type, string $token, string $name, int $permissions = Attendee::PERMISSIONS_MAX_DEFAULT): Room {
@@ -83,7 +91,7 @@ class RoomPluginTest extends TestCase {
 			->method('getDisplayName')
 			->willReturn($name);
 
-		$room->expects($this->any())
+		$this->participantService->expects($this->any())
 			->method('getParticipant')
 			->willReturn($participant);
 

@@ -283,7 +283,7 @@ class Notifier {
 			return;
 		}
 
-		$participant = $chat->getParticipant($comment->getActorId(), false);
+		$participant = $this->participantService->getParticipant($chat, $comment->getActorId(), false);
 		$notificationLevel = $participant->getAttendee()->getNotificationLevel();
 		if ($notificationLevel === Participant::NOTIFY_DEFAULT) {
 			if ($chat->getType() === Room::TYPE_ONE_TO_ONE) {
@@ -449,7 +449,7 @@ class Notifier {
 					return false;
 				}
 
-				$participant = $room->getParticipant($userId, false);
+				$participant = $this->participantService->getParticipant($room, $userId, false);
 				$attendee = $participant->getAttendee();
 			} else {
 				$participant = new Participant($room, $attendee, null);

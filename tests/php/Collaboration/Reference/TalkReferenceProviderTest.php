@@ -28,6 +28,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Collaboration\Reference\TalkReferenceProvider;
 use OCA\Talk\Manager;
+use OCA\Talk\Service\ParticipantService;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -38,6 +39,8 @@ class TalkReferenceProviderTest extends TestCase {
 	protected $urlGenerator;
 	/** @var Manager|MockObject */
 	protected $roomManager;
+	/** @var ParticipantService|MockObject */
+	protected $participantService;
 	/** @var ChatManager|MockObject */
 	protected $chatManager;
 	/** @var MessageParser|MockObject */
@@ -51,6 +54,7 @@ class TalkReferenceProviderTest extends TestCase {
 
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 		$this->roomManager = $this->createMock(Manager::class);
+		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->l = $this->createMock(IL10N::class);
@@ -58,6 +62,7 @@ class TalkReferenceProviderTest extends TestCase {
 		$this->provider = new TalkReferenceProvider(
 			$this->urlGenerator,
 			$this->roomManager,
+			$this->participantService,
 			$this->chatManager,
 			$this->messageParser,
 			$this->l,

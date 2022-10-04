@@ -32,6 +32,7 @@ use OCA\Talk\Manager as TalkManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\Event;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -53,22 +54,25 @@ class Operation implements IOperation {
 		'ROOM_MENTION' => 3,
 	];
 
-	private IL10N $l;
-	private IURLGenerator $urlGenerator;
-	private TalkManager $talkManager;
-	private IUserSession $session;
-	private ChatManager $chatManager;
+	protected IL10N $l;
+	protected IURLGenerator $urlGenerator;
+	protected TalkManager $talkManager;
+	protected ParticipantService $participantService;
+	protected IUserSession $session;
+	protected ChatManager $chatManager;
 
 	public function __construct(
 		IL10N $l,
 		IURLGenerator $urlGenerator,
 		TalkManager $talkManager,
+		ParticipantService $participantService,
 		IUserSession $session,
 		ChatManager $chatManager
 	) {
 		$this->l = $l;
 		$this->urlGenerator = $urlGenerator;
 		$this->talkManager = $talkManager;
+		$this->participantService = $participantService;
 		$this->session = $session;
 		$this->chatManager = $chatManager;
 	}
@@ -122,7 +126,7 @@ class Operation implements IOperation {
 					continue;
 				}
 
-				$participant = $this->getParticipant($uid, $room);
+				$participant = $this->participantService->getParticipant($room, $uid, false);
 				if (!($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
 					// Ignore conversation because the user has no permissions
 					continue;
@@ -214,7 +218,7 @@ class Operation implements IOperation {
 
 		if ($mode === self::MESSAGE_MODES['ROOM_MENTION']) {
 			try {
-				$participant = $this->getParticipant($uid, $room);
+				$participant = $this->participantService->getParticipant($room, $uid, false);
 				if (!$participant->hasModeratorPermissions(false)) {
 					throw new UnexpectedValueException('Not allowed to mention room');
 				}
@@ -240,12 +244,5 @@ class Operation implements IOperation {
 	 */
 	protected function getRoom(string $token, string $uid): Room {
 		return $this->talkManager->getRoomForUserByToken($token, $uid);
-	}
-
-	/**
-	 * @throws ParticipantNotFoundException
-	 */
-	protected function getParticipant(string $uid, Room $room): Participant {
-		return $room->getParticipant($uid, false);
 	}
 }

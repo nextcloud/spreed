@@ -373,7 +373,7 @@ class SignalingController extends OCSController {
 				if ($this->userId) {
 					// For logged in users we check if they are still part of the public conversation,
 					// if not they were removed instead of having a conflict.
-					$room->getParticipant($this->userId, false);
+					$this->participantService->getParticipant($room, $this->userId, false);
 				}
 
 				// Session was killed, make the UI redirect to an error
@@ -642,7 +642,7 @@ class SignalingController extends OCSController {
 			} elseif (!empty($userId)) {
 				// User trying to join room.
 				try {
-					$participant = $room->getParticipant($userId, false);
+					$participant = $this->participantService->getParticipant($room, $userId, false);
 				} catch (ParticipantNotFoundException $e) {
 				}
 			}

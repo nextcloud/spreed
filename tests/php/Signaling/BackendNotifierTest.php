@@ -985,7 +985,7 @@ class BackendNotifierTest extends TestCase {
 			'actorId' => $notJoinedUserId,
 		]]);
 
-		$notJoinedParticipant = $room->getParticipant($notJoinedUserId);
+		$notJoinedParticipant = $this->participantService->getParticipant($room, $notJoinedUserId);
 		$this->participantService->updateParticipantType($room, $notJoinedParticipant, Participant::MODERATOR);
 
 		$this->assertMessageWasSent($room, [

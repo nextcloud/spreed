@@ -535,6 +535,7 @@ class Room {
 	 *                                     null to try loading "any"
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the user is not a participant
+	 * @deprecated
 	 */
 	public function getParticipant(?string $userId, $sessionId = null): Participant {
 		if (!is_string($userId) || $userId === '') {

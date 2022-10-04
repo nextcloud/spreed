@@ -247,9 +247,9 @@ class NotifierTest extends TestCase {
 			->willReturn($room);
 
 		$participant = $this->createMock(Participant::class);
-		$room->expects($this->once())
+		$this->participantService->expects($this->once())
 			->method('getParticipant')
-			->with('recipient')
+			->with($room, 'recipient')
 			->willReturn($participant);
 
 		$this->lFactory->expects($this->exactly($numNotifications))
@@ -868,9 +868,9 @@ class NotifierTest extends TestCase {
 			->willReturn($roomName);
 
 		$participant = $this->createMock(Participant::class);
-		$room->expects($this->once())
+		$this->participantService->expects($this->once())
 			->method('getParticipant')
-			->with('recipient')
+			->with($room, 'recipient')
 			->willReturn($participant);
 
 		if ($roomName !== '') {

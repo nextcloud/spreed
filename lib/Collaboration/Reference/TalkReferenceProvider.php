@@ -33,6 +33,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Collaboration\Reference\IReference;
 use OCP\Collaboration\Reference\IReferenceProvider;
 use OCP\Collaboration\Reference\Reference;
@@ -45,6 +46,7 @@ use OCP\IURLGenerator;
 class TalkReferenceProvider implements IReferenceProvider {
 	protected IURLGenerator $urlGenerator;
 	protected Manager $roomManager;
+	protected ParticipantService $participantService;
 	protected ChatManager $chatManager;
 	protected MessageParser $messageParser;
 	protected IL10N $l;
@@ -52,12 +54,14 @@ class TalkReferenceProvider implements IReferenceProvider {
 
 	public function __construct(IURLGenerator $urlGenerator,
 								Manager $manager,
+								ParticipantService $participantService,
 								ChatManager $chatManager,
 								MessageParser $messageParser,
 								IL10N $l,
 								?string $userId) {
 		$this->urlGenerator = $urlGenerator;
 		$this->roomManager = $manager;
+		$this->participantService = $participantService;
 		$this->chatManager = $chatManager;
 		$this->messageParser = $messageParser;
 		$this->l = $l;
@@ -152,7 +156,7 @@ class TalkReferenceProvider implements IReferenceProvider {
 
 		$room = $this->roomManager->getRoomForUserByToken($referenceMatch['token'], $this->userId);
 		try {
-			$participant = $room->getParticipant($this->userId);
+			$participant = $this->participantService->getParticipant($room, $this->userId);
 		} catch (ParticipantNotFoundException $e) {
 			$participant = null;
 		}
