@@ -20,19 +20,24 @@
 -->
 
 <template>
-	<NcButton type="primary" @click="disableLobby">
+	<NcButton type="success" @click="disableLobby">
+		<template #icon>
+			<LockOpen />
+		</template>
 		{{ t('spreed', 'Disable lobby' ) }}
 	</NcButton>
 </template>
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import LockOpen from 'vue-material-design-icons/LockOpen.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'LobbyStatus',
 	components: {
 		NcButton,
+		LockOpen,
 	},
 	props: {
 		token: {
