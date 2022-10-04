@@ -26,6 +26,7 @@ namespace OCA\Talk\AppInfo;
 
 use OCA\Talk\Collaboration\Reference\ReferenceInvalidationListener;
 use OCA\Talk\Collaboration\Reference\TalkReferenceProvider;
+use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\Util;
 use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleDestroyedEvent;
@@ -197,7 +198,7 @@ class Application extends App implements IBootstrap {
 		/** @var IProviderManager $resourceManager */
 		$resourceManager = $server->get(IProviderManager::class);
 		$resourceManager->registerResourceProvider(ConversationProvider::class);
-		$server->getEventDispatcher()->addListener('\OCP\Collaboration\Resources::loadAdditionalScripts', function () {
+		$server->getEventDispatcher()->addListener(LoadAdditionalScriptsEvent::class, function () {
 			Util::addScript(self::APP_ID, 'talk-collections');
 		});
 	}

@@ -46,7 +46,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
-use OCP\EventDispatcher\GenericEvent;
+use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\HintException;
@@ -268,7 +268,7 @@ class PageController extends Controller {
 			$this->eventDispatcher->dispatchTyped(new LoadViewer());
 		}
 
-		$this->eventDispatcher->dispatch('\OCP\Collaboration\Resources::loadAdditionalScripts', new GenericEvent());
+		$this->eventDispatcher->dispatchTyped(new LoadAdditionalScriptsEvent());
 		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
 
 		$response = new TemplateResponse($this->appName, 'index', [
