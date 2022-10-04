@@ -356,7 +356,6 @@ OC.L10N.register(
     "Favorite" : "Favourite",
     "Restricted" : "Restricted",
     "Description" : "Description",
-    "Notifications" : "Notifications",
     "Leave conversation" : "Leave conversation",
     "Delete conversation" : "Delete conversation",
     "Password protection" : "Password protection",
@@ -369,7 +368,7 @@ OC.L10N.register(
     "Login" : "Login",
     "Nickname" : "Nickname",
     "Client ID" : "Client ID",
-    "Calls" : "Calls",
+    "Notifications" : "Notifications",
     "Call without notification" : "Call without notification",
     "Remove from favorites" : "Remove from favourites",
     "Add to favorites" : "Add to favourites",
@@ -431,6 +430,7 @@ OC.L10N.register(
     "iOS app" : "iOS app",
     "An error occurred. Please contact your admin." : "An error occurred. Please contact your admin.",
     "Saved" : "Saved",
-    "Camera" : "Camera"
+    "Camera" : "Camera",
+    "Calls" : "Calls"
 },
 "nplurals=2; plural=(n != 1);");

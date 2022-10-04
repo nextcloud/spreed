@@ -28,10 +28,9 @@ OC.L10N.register(
     "Back" : "Tilbake",
     "Favorite" : "Favoritt",
     "Description" : "Skildring",
-    "Notifications" : "Varsel",
+    "Personal" : "Personleg",
     "Leave conversation" : "Forlat samtalen",
     "Delete conversation" : "Slett samtale",
-    "Allow guests" : "Tillat gjester",
     "Password protection" : "Password protection",
     "Enter a password" : "Skriv inn eit passord",
     "Save" : "Lagre",
@@ -42,7 +41,7 @@ OC.L10N.register(
     "Login" : "Login",
     "Nickname" : "Kallenamn",
     "Client ID" : "Klient-ID",
-    "Calls" : "Samtalar",
+    "Notifications" : "Varsel",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
     "Loading" : "Loading",
@@ -82,6 +81,8 @@ OC.L10N.register(
     "Default" : "Standard",
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
     "An error occurred. Please contact your admin." : "Det oppstod ein feil. Ver venleg og kontakt systemadministrator.",
-    "Saved" : "Lagra"
+    "Saved" : "Lagra",
+    "Allow guests" : "Tillat gjester",
+    "Calls" : "Samtalar"
 },
 "nplurals=2; plural=(n != 1);");

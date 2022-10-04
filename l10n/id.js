@@ -53,10 +53,10 @@ OC.L10N.register(
     "Favorite" : "Favorit",
     "Restricted" : "Terbatas",
     "Description" : "Deskrisi",
-    "Notifications" : "Pemberitahuan",
+    "Personal" : "Pribadi",
+    "Meeting" : "Rapat",
     "Password protection" : "Password protection",
     "Enter a password" : "Masukkan kata sandi",
-    "Open conversation to registered users" : "Buka percakapan untuk pengguna terdaftar",
     "Save" : "Simpan",
     "Edit" : "Sunting",
     "Delete" : "Hapus",
@@ -64,6 +64,7 @@ OC.L10N.register(
     "Login" : "Log masuk",
     "Nickname" : "Nama panggilan",
     "Client ID" : "ID Klien",
+    "Notifications" : "Pemberitahuan",
     "Choose devices" : "Pilih perangkat",
     "Mark as read" : "tandai sudah dibaca",
     "Remove from favorites" : "Remove from favorites",
@@ -112,6 +113,7 @@ OC.L10N.register(
     "Android app" : "Aplikasi Android",
     "iOS app" : "Aplikasi iOS",
     "An error occurred. Please contact your admin." : "Terjadi kesalahan. Silakan hubungi admin Anda.",
-    "Saved" : "Disimpan"
+    "Saved" : "Disimpan",
+    "Open conversation to registered users" : "Buka percakapan untuk pengguna terdaftar"
 },
 "nplurals=1; plural=0;");

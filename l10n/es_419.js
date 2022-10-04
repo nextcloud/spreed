@@ -71,7 +71,6 @@ OC.L10N.register(
     "Favorite" : "Hacer favorito",
     "Restricted" : "Restringido",
     "Description" : "Descripción",
-    "Notifications" : "Notificaciones",
     "Password protection" : "Protección con contraseña",
     "Enter a password" : "Ingresa una contraseña",
     "Save" : "Guardar",
@@ -82,7 +81,7 @@ OC.L10N.register(
     "Login" : "Iniciar sesión",
     "Nickname" : "Apodo",
     "Client ID" : "ID del cliente",
-    "Calls" : "Llamadas",
+    "Notifications" : "Notificaciones",
     "Remove from favorites" : "Eliminar de favoritos",
     "Add to favorites" : "Agregar a tus favoritos",
     "Loading" : "Cargando",
@@ -127,6 +126,7 @@ OC.L10N.register(
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
     "An error occurred. Please contact your admin." : "Se presentó un error. Por favor contacta a tu adminsitrador. ",
-    "Saved" : "Guardado"
+    "Saved" : "Guardado",
+    "Calls" : "Llamadas"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
