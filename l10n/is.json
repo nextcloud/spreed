@@ -423,11 +423,12 @@
     "Favorite" : "Eftirlæti",
     "Restricted" : "Takmarkað",
     "Description" : "Lýsing",
-    "Notifications" : "Tilkynningar",
+    "Personal" : "Persónulegt",
+    "Meeting" : "Fundur",
+    "Permissions" : "Heimildir",
     "Leave conversation" : "Hætta í samtali",
     "Delete conversation" : "Eyða samtali",
     "You need to promote a new moderator before you can leave the conversation." : "Þú þarft að uppfæra einhvern í stöðu umsjónarmanna áður en þú getur hætt í samtalinu.",
-    "Allow guests" : "Leyfa gesti",
     "Password protection" : "Verndun með lykilorði",
     "Enter a password" : "Settu inn lykilorð",
     "Start time (optional)" : "Upphafstími (valfrjálst)",
@@ -440,7 +441,7 @@
     "Login" : "Innskráning",
     "Nickname" : "Stuttnefni",
     "Client ID" : "Biðlaraauðkenni",
-    "Calls" : "Samtöl",
+    "Notifications" : "Tilkynningar",
     "Mark as read" : "Merkja sem lesið",
     "Remove from favorites" : "Fjarlægja úr eftirlætum",
     "Add to favorites" : "Bæta í eftirlæti",
@@ -527,8 +528,10 @@
     "An error occurred. Please contact your admin." : "Villa kom upp. Hafðu samband við kerfisstjóra.",
     "Saved" : "Vistað",
     "Add a new server" : "Bæta við nýjum þjóni",
+    "Allow guests" : "Leyfa gesti",
     "Microphone" : "Microphone",
     "Camera" : "Myndavél",
-    "Message link copied to clipboard." : "Skilaboðatengill afritaður á klippispjald."
+    "Message link copied to clipboard." : "Skilaboðatengill afritaður á klippispjald.",
+    "Calls" : "Samtöl"
 },"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"
 }

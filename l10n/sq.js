@@ -188,7 +188,8 @@ OC.L10N.register(
     "Favorite" : "I/E Preferuar",
     "Restricted" : "I/E kufizuar",
     "Description" : "Përshkrim",
-    "Notifications" : "Njoftimet",
+    "Personal" : "Personale",
+    "Permissions" : "Lejet",
     "Leave conversation" : "Largohuni nga biseda",
     "Delete conversation" : "Fshijeni bisedën",
     "Password protection" : "Password protection",
@@ -201,7 +202,7 @@ OC.L10N.register(
     "Login" : "Hyrje",
     "Nickname" : "Nofkë",
     "Client ID" : "ID klienti",
-    "Calls" : "Thirrjet",
+    "Notifications" : "Njoftimet",
     "Mark as read" : "Shënoje si të lexuar",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Shtoje tek të parapëlqyerat",
@@ -250,6 +251,7 @@ OC.L10N.register(
     "iOS app" : "Aplikacion iOS",
     "An error occurred. Please contact your admin." : "Ndodhi një gabim. Ju lutemi, lidhuni me përgjegjësin tuaj.",
     "Saved" : "U ruajt",
-    "Camera" : "Kamera"
+    "Camera" : "Kamera",
+    "Calls" : "Thirrjet"
 },
 "nplurals=2; plural=(n != 1);");

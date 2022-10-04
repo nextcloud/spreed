@@ -72,7 +72,8 @@ OC.L10N.register(
     "Favorite" : "რჩეული",
     "Restricted" : "აკრძალული",
     "Description" : "აღწერილობა",
-    "Notifications" : "შეტყობინებები",
+    "Personal" : "პირადი",
+    "Permissions" : "უფლებები",
     "Password protection" : "პაროლით თავდაცვა",
     "Enter a password" : "შეიყვანეთ პაროლი",
     "Save" : "შენახვა",
@@ -83,7 +84,7 @@ OC.L10N.register(
     "Login" : "ავტორიზაცია",
     "Nickname" : "ნიკნეიმი",
     "Client ID" : "კლიენტის ID",
-    "Calls" : "ზარები",
+    "Notifications" : "შეტყობინებები",
     "Mark as read" : "წაკითხულად მონიშვნა",
     "Remove from favorites" : "რჩეულებიდან ამოშლა",
     "Add to favorites" : "რჩეულებში დამატება",
@@ -133,6 +134,7 @@ OC.L10N.register(
     "Android app" : "Android აპლიკაცია",
     "iOS app" : "iOS აპლიკაცია",
     "An error occurred. Please contact your admin." : "წარმოიშვა შეცდომა. გთხოვთ დაუკავშირდეთ თქვენს ადმინისტრატორს.",
-    "Saved" : "დამახსოვრდა"
+    "Saved" : "დამახსოვრდა",
+    "Calls" : "ზარები"
 },
 "nplurals=2; plural=(n!=1);");
