@@ -292,7 +292,7 @@ class RoomController extends AEnvironmentAwareController {
 				$participant = $room->getParticipant($this->userId, $sessionId);
 			} catch (ParticipantNotFoundException $e) {
 				try {
-					$participant = $room->getParticipantBySession($sessionId);
+					$participant = $this->participantService->getParticipantBySession($room, $sessionId);
 				} catch (ParticipantNotFoundException $e) {
 				}
 			}
@@ -1224,7 +1224,7 @@ class RoomController extends AEnvironmentAwareController {
 	 */
 	public function removeAttendeeFromRoom(int $attendeeId): DataResponse {
 		try {
-			$targetParticipant = $this->room->getParticipantByAttendeeId($attendeeId);
+			$targetParticipant = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -1370,7 +1370,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		} else {
 			try {
-				$previousParticipant = $room->getParticipantBySession($sessionId);
+				$previousParticipant = $this->participantService->getParticipantBySession($room, $sessionId);
 				$previousSession = $previousParticipant->getSession();
 			} catch (ParticipantNotFoundException $e) {
 			}
@@ -1444,7 +1444,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		try {
-			$participant = $this->room->getParticipantByPin($pin);
+			$participant = $this->participantService->getParticipantByPin($this->room, $pin);
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -1494,7 +1494,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		try {
 			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
-			$participant = $room->getParticipantBySession($sessionId);
+			$participant = $this->participantService->getParticipantBySession($room, $sessionId);
 			$this->participantService->leaveRoomAsSession($room, $participant);
 		} catch (RoomNotFoundException $e) {
 		} catch (ParticipantNotFoundException $e) {
@@ -1535,7 +1535,7 @@ class RoomController extends AEnvironmentAwareController {
 	 */
 	protected function changeParticipantType(int $attendeeId, bool $promote): DataResponse {
 		try {
-			$targetParticipant = $this->room->getParticipantByAttendeeId($attendeeId);
+			$targetParticipant = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -1605,7 +1605,7 @@ class RoomController extends AEnvironmentAwareController {
 	 */
 	public function setAttendeePermissions(int $attendeeId, string $method, int $permissions): DataResponse {
 		try {
-			$targetParticipant = $this->room->getParticipantByAttendeeId($attendeeId);
+			$targetParticipant = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -1717,7 +1717,7 @@ class RoomController extends AEnvironmentAwareController {
 		// targeting specific participant
 		if ($attendeeId !== null) {
 			try {
-				$participants[] = $this->room->getParticipantByAttendeeId($attendeeId);
+				$participants[] = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
 			} catch (ParticipantNotFoundException $e) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}

@@ -1288,6 +1288,30 @@ class ParticipantService {
 	}
 
 	/**
+	 * @param IQueryBuilder $query
+	 * @return Participant
+	 * @throws ParticipantNotFoundException
+	 */
+	protected function getParticipantFromQuery(IQueryBuilder $query, Room $room): Participant {
+		$result = $query->executeQuery();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new ParticipantNotFoundException('User is not a participant');
+		}
+
+		$attendee = $this->attendeeMapper->createAttendeeFromRow($row);
+		if (isset($row['s_id'])) {
+			$session = $this->sessionMapper->createSessionFromRow($row);
+		} else {
+			$session = null;
+		}
+
+		return new Participant($room, $attendee, $session);
+	}
+
+	/**
 	 * @param Room $room
 	 * @param \DateTime|null $maxLastJoined
 	 * @return string[]
@@ -1466,5 +1490,89 @@ class ParticipantService {
 		}
 
 		return $pin;
+	}
+
+	/**
+	 * @param Room $room
+	 * @param string|null $sessionId
+	 * @return Participant
+	 * @throws ParticipantNotFoundException When the user is not a participant
+	 */
+	public function getParticipantBySession(Room $room, ?string $sessionId): Participant {
+		if (!is_string($sessionId) || $sessionId === '' || $sessionId === '0') {
+			throw new ParticipantNotFoundException('Not a user');
+		}
+
+		$query = $this->connection->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$helper->selectSessionsTable($query);
+		$query->from('talk_sessions', 's')
+			->leftJoin('s', 'talk_attendees', 'a', $query->expr()->eq('a.id', 's.attendee_id'))
+			->where($query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)))
+			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId())))
+			->setMaxResults(1);
+
+		return $this->getParticipantFromQuery($query, $room);
+	}
+
+	/**
+	 * @param Room $room
+	 * @param string $pin
+	 * @return Participant
+	 * @throws ParticipantNotFoundException When the pin is not valid (has no participant assigned)
+	 */
+	public function getParticipantByPin(Room $room, string $pin): Participant {
+		$query = $this->connection->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$query->from('talk_attendees', 'a')
+			->where($query->expr()->eq('a.pin', $query->createNamedParameter($pin)))
+			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId())))
+			->setMaxResults(1);
+
+		return $this->getParticipantFromQuery($query, $room);
+	}
+
+	/**
+	 * @param Room $room
+	 * @param int $attendeeId
+	 * @return Participant
+	 * @throws ParticipantNotFoundException When the pin is not valid (has no participant assigned)
+	 */
+	public function getParticipantByAttendeeId(Room $room, int $attendeeId): Participant {
+		$query = $this->connection->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$query->from('talk_attendees', 'a')
+			->where($query->expr()->eq('a.id', $query->createNamedParameter($attendeeId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId())))
+			->setMaxResults(1);
+
+		return $this->getParticipantFromQuery($query, $room);
+	}
+
+	/**
+	 * @param Room $room
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @return Participant
+	 * @throws ParticipantNotFoundException When the pin is not valid (has no participant assigned)
+	 */
+	public function getParticipantByActor(Room $room, string $actorType, string $actorId): Participant {
+		if ($actorType === Attendee::ACTOR_USERS) {
+			return $room->getParticipant($actorId, false);
+		}
+
+		$query = $this->connection->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$query->from('talk_attendees', 'a')
+			->andWhere($query->expr()->eq('a.actor_type', $query->createNamedParameter($actorType)))
+			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($actorId)))
+			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId())))
+			->setMaxResults(1);
+
+		return $this->getParticipantFromQuery($query, $room);
 	}
 }

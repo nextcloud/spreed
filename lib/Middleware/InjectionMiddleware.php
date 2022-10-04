@@ -34,6 +34,7 @@ use OCA\Talk\Middleware\Exceptions\ReadOnlyException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Controller;
@@ -48,21 +49,24 @@ use OCP\IRequest;
 use OCP\Security\Bruteforce\IThrottler;
 
 class InjectionMiddleware extends Middleware {
-	private IRequest $request;
-	private IControllerMethodReflector $reflector;
-	private TalkSession $talkSession;
-	private Manager $manager;
-	private IThrottler $throttler;
-	private ?string $userId;
+	protected IRequest $request;
+	protected IControllerMethodReflector $reflector;
+	protected ParticipantService $participantService;
+	protected TalkSession $talkSession;
+	protected Manager $manager;
+	protected IThrottler $throttler;
+	protected ?string $userId;
 
 	public function __construct(IRequest $request,
 								IControllerMethodReflector $reflector,
+								ParticipantService $participantService,
 								TalkSession $talkSession,
 								Manager $manager,
 								IThrottler $throttler,
 								?string $userId) {
 		$this->request = $request;
 		$this->reflector = $reflector;
+		$this->participantService = $participantService;
 		$this->talkSession = $talkSession;
 		$this->manager = $manager;
 		$this->throttler = $throttler;
@@ -168,7 +172,7 @@ class InjectionMiddleware extends Middleware {
 			$participant = null;
 			if ($sessionId !== null) {
 				try {
-					$participant = $room->getParticipantBySession($sessionId);
+					$participant = $this->participantService->getParticipantBySession($room, $sessionId);
 				} catch (ParticipantNotFoundException $e) {
 					// ignore and fall back in case a concurrent request might have
 					// invalidated the session

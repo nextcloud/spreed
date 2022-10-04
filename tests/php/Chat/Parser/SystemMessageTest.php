@@ -31,6 +31,7 @@ use OCA\Talk\Model\Message;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\Federation\ICloudIdManager;
@@ -60,6 +61,8 @@ class SystemMessageTest extends TestCase {
 	protected $groupManager;
 	/** @var GuestManager|MockObject */
 	protected $guestManager;
+	/** @var ParticipantService|MockObject */
+	protected $participantService;
 	/** @var IPreviewManager|MockObject */
 	protected $previewManager;
 	/** @var RoomShareProvider|MockObject */
@@ -81,6 +84,7 @@ class SystemMessageTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
+		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->previewManager = $this->createMock(IPreviewManager::class);
 		$this->shareProvider = $this->createMock(RoomShareProvider::class);
 		$this->photoCache = $this->createMock(PhotoCache::class);
@@ -112,6 +116,7 @@ class SystemMessageTest extends TestCase {
 					$this->userManager,
 					$this->groupManager,
 					$this->guestManager,
+					$this->participantService,
 					$this->previewManager,
 					$this->shareProvider,
 					$this->photoCache,
@@ -128,6 +133,7 @@ class SystemMessageTest extends TestCase {
 			$this->userManager,
 			$this->groupManager,
 			$this->guestManager,
+			$this->participantService,
 			$this->previewManager,
 			$this->shareProvider,
 			$this->photoCache,
@@ -1105,8 +1111,8 @@ class SystemMessageTest extends TestCase {
 		$participant->method('getAttendee')
 			->willReturn($attendee);
 
-		$room->method('getParticipantByActor')
-			->with($actorType, $actorId)
+		$this->participantService->method('getParticipantByActor')
+			->with($room, $actorType, $actorId)
 			->willReturn($participant);
 
 		$parser = $this->getParser();
@@ -1120,8 +1126,8 @@ class SystemMessageTest extends TestCase {
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);
 
-		$room->method('getParticipantByActor')
-			->with(Attendee::ACTOR_GUESTS, $actorId)
+		$this->participantService->method('getParticipantByActor')
+			->with($room, Attendee::ACTOR_GUESTS, $actorId)
 			->willThrowException(new ParticipantNotFoundException());
 
 		$parser = $this->getParser();

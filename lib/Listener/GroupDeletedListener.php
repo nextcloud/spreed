@@ -60,7 +60,7 @@ class GroupDeletedListener implements IEventListener {
 		// Remove the group itself from being a participant
 		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_GROUPS, $gid);
 		foreach ($rooms as $room) {
-			$participant = $room->getParticipantByActor(Attendee::ACTOR_GROUPS, $gid);
+			$participant = $this->participantService->getParticipantByActor($room, Attendee::ACTOR_GROUPS, $gid);
 			$this->participantService->removeAttendee($room, $participant, Room::PARTICIPANT_REMOVED);
 		}
 	}

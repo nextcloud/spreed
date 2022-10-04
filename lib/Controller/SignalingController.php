@@ -280,7 +280,7 @@ class SignalingController extends OCSController {
 
 					if ($decodedMessage['type'] === 'control') {
 						$room = $this->manager->getRoomForSession($this->userId, $message['sessionId']);
-						$participant = $room->getParticipantBySession($message['sessionId']);
+						$participant = $this->participantService->getParticipantBySession($room, $message['sessionId']);
 
 						if (!$participant->hasModeratorPermissions(false)) {
 							break;
@@ -318,7 +318,7 @@ class SignalingController extends OCSController {
 			}
 
 			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
-			$participant = $room->getParticipantBySession($sessionId); // FIXME this causes another query
+			$participant = $this->participantService->getParticipantBySession($room, $sessionId); // FIXME this causes another query
 
 			$pingTimestamp = $this->timeFactory->getTime();
 			if ($participant->getSession() instanceof Session) {
@@ -599,20 +599,20 @@ class SignalingController extends OCSController {
 
 			if ($sessionId) {
 				try {
-					$participant = $room->getParticipantBySession($sessionId);
+					$participant = $this->participantService->getParticipantBySession($room, $sessionId);
 				} catch (ParticipantNotFoundException $e) {
 					if ($action === 'join') {
 						// If the user joins the session might not be known to the server yet.
 						// In this case we load by actor information and use the session id as new session.
 						try {
-							$participant = $room->getParticipantByActor($actorType, $actorId);
+							$participant = $this->participantService->getParticipantByActor($room, $actorType, $actorId);
 						} catch (ParticipantNotFoundException $e) {
 						}
 					}
 				}
 			} else {
 				try {
-					$participant = $room->getParticipantByActor($actorType, $actorId);
+					$participant = $this->participantService->getParticipantByActor($room, $actorType, $actorId);
 				} catch (ParticipantNotFoundException $e) {
 				}
 			}
@@ -636,7 +636,7 @@ class SignalingController extends OCSController {
 
 			if ($sessionId) {
 				try {
-					$participant = $room->getParticipantBySession($sessionId);
+					$participant = $this->participantService->getParticipantBySession($room, $sessionId);
 				} catch (ParticipantNotFoundException $e) {
 				}
 			} elseif (!empty($userId)) {

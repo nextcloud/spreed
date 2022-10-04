@@ -31,6 +31,7 @@ use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Collaboration\AutoComplete\AutoCompleteEvent;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -41,6 +42,7 @@ use OCP\Server;
 class Listener {
 	protected Manager $manager;
 	protected IUserManager $userManager;
+	protected ParticipantService $participantService;
 	protected Config $config;
 	/** @var string[] */
 	protected array $allowedGroupIds = [];
@@ -49,9 +51,11 @@ class Listener {
 
 	public function __construct(Manager $manager,
 								IUserManager $userManager,
+								ParticipantService $participantService,
 								Config $config) {
 		$this->manager = $manager;
 		$this->userManager = $userManager;
+		$this->participantService = $participantService;
 		$this->config = $config;
 	}
 
@@ -164,7 +168,7 @@ class Listener {
 		$groupId = $result['value']['shareWith'];
 
 		try {
-			$this->room->getParticipantByActor(Attendee::ACTOR_GROUPS, $groupId);
+			$this->participantService->getParticipantByActor($this->room, Attendee::ACTOR_GROUPS, $groupId);
 			return false;
 		} catch (ParticipantNotFoundException $e) {
 			return true;

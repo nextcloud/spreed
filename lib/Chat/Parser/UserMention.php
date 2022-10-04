@@ -29,6 +29,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\ICommentsManager;
 use OCP\IL10N;
 use OCP\IUserManager;
@@ -42,18 +43,21 @@ class UserMention {
 	 * otherwise the display name resolvers are lost
 	 * and mentions are not replaced anymore.
 	 */
-	private ICommentsManager $commentsManager;
-	private IUserManager $userManager;
-	private GuestManager $guestManager;
-	private IL10N $l;
+	protected ICommentsManager $commentsManager;
+	protected IUserManager $userManager;
+	protected GuestManager $guestManager;
+	protected ParticipantService $participantService;
+	protected IL10N $l;
 
 	public function __construct(ICommentsManager $commentsManager,
 								IUserManager $userManager,
 								GuestManager $guestManager,
+								ParticipantService $participantService,
 								IL10N $l) {
 		$this->commentsManager = $commentsManager;
 		$this->userManager = $userManager;
 		$this->guestManager = $guestManager;
+		$this->participantService = $participantService;
 		$this->l = $l;
 	}
 
@@ -125,7 +129,7 @@ class UserMention {
 				];
 			} elseif ($mention['type'] === 'guest') {
 				try {
-					$participant = $chatMessage->getRoom()->getParticipantByActor(Attendee::ACTOR_GUESTS, substr($mention['id'], strlen('guest/')));
+					$participant = $this->participantService->getParticipantByActor($chatMessage->getRoom(), Attendee::ACTOR_GUESTS, substr($mention['id'], strlen('guest/')));
 					$displayName = $participant->getAttendee()->getDisplayName() ?: $this->l->t('Guest');
 				} catch (ParticipantNotFoundException $e) {
 					$displayName = $this->l->t('Guest');
