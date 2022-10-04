@@ -23,7 +23,6 @@
 namespace OCA\Talk\Tests\php\Signaling;
 
 use OCA\Talk\AppInfo\Application;
-use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
@@ -89,8 +88,6 @@ class BackendNotifierTest extends TestCase {
 	/** @var IURLGenerator|MockObject */
 	private $urlGenerator;
 	private ?\OCA\Talk\Tests\php\Signaling\CustomBackendNotifier $controller = null;
-	/** @var null|ChatManager|MockObject */
-	private ?ChatManager $chatManager = null;
 
 	private ?Manager $manager = null;
 	private ?RoomService $roomService = null;
@@ -157,12 +154,10 @@ class BackendNotifierTest extends TestCase {
 			$this->createMock(IHasher::class),
 			$this->createMock(IL10N::class)
 		);
-		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->jobList = $this->createMock(IJobList::class);
 
 		$this->roomService = new RoomService(
 			$this->manager,
-			$this->chatManager,
 			$this->participantService,
 			$dbConnection,
 			$this->timeFactory,
@@ -503,7 +498,7 @@ class BackendNotifierTest extends TestCase {
 
 	public function testRoomNameChanged() {
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
-		$room->setName('Test room');
+		$this->roomService->setName($room, 'Test room');
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'update',
@@ -868,7 +863,7 @@ class BackendNotifierTest extends TestCase {
 
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$this->controller->clearRequests();
-		$room->setName('Test room');
+		$this->roomService->setName($room, 'Test room');
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'update',

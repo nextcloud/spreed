@@ -90,7 +90,7 @@ trait TRoomCommand {
 			throw new InvalidArgumentException('Invalid room name.');
 		}
 
-		if (!$room->setName($name)) {
+		if (!$this->roomService->setName($room, $name)) {
 			throw new InvalidArgumentException('Unable to change room name.');
 		}
 	}

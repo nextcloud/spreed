@@ -82,11 +82,11 @@ class ListenerTest extends TestCase {
 		$this->timeFactory->method('getDateTime')->willReturn($this->dummyTime);
 		$this->eventDispatcher = $this->createMock(IEventDispatcher::class);
 
-
 		$this->handlers = [];
 
 		$this->eventDispatcher->method('addListener')
 			->will($this->returnCallback(function ($eventName, $handler) {
+				$this->handlers[$eventName] ??= [];
 				$this->handlers[$eventName][] = $handler;
 			}));
 

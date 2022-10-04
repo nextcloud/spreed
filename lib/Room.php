@@ -27,7 +27,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk;
 
-use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
@@ -37,7 +36,6 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
 use OCP\Security\IHasher;
@@ -351,7 +349,9 @@ class Room {
 				// Fill the room name with the participants for 1-to-1 conversations
 				$users = $participantService->getParticipantUserIds($this);
 				sort($users);
-				$this->setName(json_encode($users), '');
+				/** @var RoomService $roomService */
+				$roomService = Server::get(RoomService::class);
+				$roomService->setName($this, json_encode($users), '');
 			} elseif (strpos($this->name, '["') !== 0) {
 				// TODO use DI
 				$participantService = Server::get(ParticipantService::class);
@@ -361,10 +361,16 @@ class Room {
 					$users[] = $this->name;
 				}
 				sort($users);
-				$this->setName(json_encode($users), '');
+				/** @var RoomService $roomService */
+				$roomService = Server::get(RoomService::class);
+				$roomService->setName($this, json_encode($users), '');
 			}
 		}
 		return $this->name;
+	}
+
+	public function setName(string $name): void {
+		$this->name = $name;
 	}
 
 	public function getSecondParticipant(string $userId): string {
@@ -435,6 +441,10 @@ class Room {
 		return $this->lastActivity;
 	}
 
+	public function setLastActivity(\DateTime $now): void {
+		$this->lastActivity = $now;
+	}
+
 	public function getLastMessage(): ?IComment {
 		if ($this->lastMessageId && $this->lastMessage === null) {
 			$this->lastMessage = $this->manager->loadLastCommentInfo($this->lastMessageId);
@@ -444,6 +454,11 @@ class Room {
 		}
 
 		return $this->lastMessage;
+	}
+
+	public function setLastMessage(IComment $message): void {
+		$this->lastMessage = $message;
+		$this->lastMessageId = (int) $message->getId();
 	}
 
 	public function getObjectType(): string {
@@ -572,48 +587,6 @@ class Room {
 		return $this->manager->createParticipantObject($this, $row);
 	}
 
-	/**
-	 * @param string $newName Currently it is only allowed to rename: self::TYPE_GROUP, self::TYPE_PUBLIC
-	 * @param string|null $oldName
-	 * @return bool True when the change was valid, false otherwise
-	 */
-	public function setName(string $newName, ?string $oldName = null): bool {
-		$oldName = $oldName !== null ? $oldName : $this->getName();
-		if ($newName === $oldName) {
-			return false;
-		}
-
-		$event = new ModifyRoomEvent($this, 'name', $newName, $oldName);
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_NAME_SET, $event);
-
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('name', $update->createNamedParameter($newName))
-			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$update->executeStatement();
-		$this->name = $newName;
-
-		$this->dispatcher->dispatch(self::EVENT_AFTER_NAME_SET, $event);
-
-		return true;
-	}
-
-	/**
-	 * @param \DateTime $now
-	 * @return bool
-	 */
-	public function setLastActivity(\DateTime $now): bool {
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('last_activity', $update->createNamedParameter($now, 'datetime'))
-			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$update->executeStatement();
-
-		$this->lastActivity = $now;
-
-		return true;
-	}
-
 	public function setActiveSince(\DateTime $since, int $callFlag, bool $isGuest): void {
 		if (!$this->activeSince) {
 			$this->activeSince = $since;
@@ -622,18 +595,5 @@ class Room {
 		if ($isGuest) {
 			$this->activeGuests++;
 		}
-	}
-
-	public function setLastMessage(IComment $message): void {
-		$update = $this->db->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('last_message', $update->createNamedParameter((int) $message->getId()))
-			->set('last_activity', $update->createNamedParameter($message->getCreationDateTime(), 'datetime'))
-			->where($update->expr()->eq('id', $update->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
-		$update->executeStatement();
-
-		$this->lastMessage = $message;
-		$this->lastMessageId = (int) $message->getId();
-		$this->lastActivity = $message->getCreationDateTime();
 	}
 }
