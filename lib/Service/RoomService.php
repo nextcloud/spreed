@@ -24,7 +24,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
-use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -50,7 +49,6 @@ use OCP\Share\IManager as IShareManager;
 
 class RoomService {
 	protected Manager $manager;
-	protected ChatManager $chatManager;
 	protected ParticipantService $participantService;
 	protected IDBConnection $db;
 	protected ITimeFactory $timeFactory;
@@ -60,7 +58,6 @@ class RoomService {
 	protected IJobList $jobList;
 
 	public function __construct(Manager $manager,
-								ChatManager $chatManager,
 								ParticipantService $participantService,
 								IDBConnection $db,
 								ITimeFactory $timeFactory,
@@ -69,7 +66,6 @@ class RoomService {
 								IEventDispatcher $dispatcher,
 								IJobList $jobList) {
 		$this->manager = $manager;
-		$this->chatManager = $chatManager;
 		$this->participantService = $participantService;
 		$this->db = $db;
 		$this->timeFactory = $timeFactory;
