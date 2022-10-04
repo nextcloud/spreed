@@ -503,7 +503,7 @@ class BackendNotifierTest extends TestCase {
 
 	public function testRoomNameChanged() {
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
-		$room->setName('Test room');
+		$this->roomService->setName($room, 'Test room');
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'update',
@@ -868,7 +868,7 @@ class BackendNotifierTest extends TestCase {
 
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$this->controller->clearRequests();
-		$room->setName('Test room');
+		$this->roomService->setName($room, 'Test room');
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'update',

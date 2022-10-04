@@ -873,7 +873,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$this->room->setName($roomName);
+		$this->roomService->setName($this->room, $roomName);
 		return new DataResponse();
 	}
 

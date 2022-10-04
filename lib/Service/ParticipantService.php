@@ -435,7 +435,10 @@ class ParticipantService {
 	}
 
 	protected function updateRoomLastMessage(Room $room, IComment $message): void {
-		$room->setLastMessage($message);
+		/** @var RoomService $roomService */
+		$roomService = Server::get(RoomService::class);
+		$roomService->setLastMessage($room, $message);
+
 		$lastMessageCache = $this->cacheFactory->createDistributed('talk/lastmsgid');
 		$lastMessageCache->remove($room->getToken());
 		$unreadCountCache = $this->cacheFactory->createDistributed('talk/unreadcount');

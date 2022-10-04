@@ -393,8 +393,10 @@ class Manager {
 		foreach ($leftRooms as $room) {
 			// We are changing the room type and name so a potential follow up
 			// user with the same user-id can not reopen the one-to-one conversation.
-			Server::get(RoomService::class)->setType($room, Room::TYPE_GROUP, true);
-			$room->setName($user->getDisplayName(), '');
+			/** @var RoomService $roomService */
+			$roomService = Server::get(RoomService::class);
+			$roomService->setType($room, Room::TYPE_GROUP, true);
+			$roomService->setName($room, $user->getDisplayName(), '');
 		}
 	}
 
@@ -975,7 +977,9 @@ class Manager {
 
 
 		if ($room->getType() !== Room::TYPE_ONE_TO_ONE && $room->getName() === '') {
-			$room->setName($this->getRoomNameByParticipants($room));
+			/** @var RoomService $roomService */
+			$roomService = Server::get(RoomService::class);
+			$roomService->setName($room, $this->getRoomNameByParticipants($room), '');
 		}
 
 		// Set the room name to the other participant for one-to-one rooms

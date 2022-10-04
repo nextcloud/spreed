@@ -36,6 +36,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\Reference\IReferenceManager;
@@ -89,6 +90,7 @@ class ChatManager {
 	private IManager $shareManager;
 	private RoomShareProvider $shareProvider;
 	private ParticipantService $participantService;
+	private RoomService $roomService;
 	private PollService $pollService;
 	private Notifier $notifier;
 	protected ITimeFactory $timeFactory;
@@ -104,6 +106,7 @@ class ChatManager {
 								IManager $shareManager,
 								RoomShareProvider $shareProvider,
 								ParticipantService $participantService,
+								RoomService $roomService,
 								PollService $pollService,
 								Notifier $notifier,
 								ICacheFactory $cacheFactory,
@@ -117,6 +120,7 @@ class ChatManager {
 		$this->shareManager = $shareManager;
 		$this->shareProvider = $shareProvider;
 		$this->participantService = $participantService;
+		$this->roomService = $roomService;
 		$this->pollService = $pollService;
 		$this->notifier = $notifier;
 		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
@@ -186,7 +190,7 @@ class ChatManager {
 
 			if (!$shouldSkipLastMessageUpdate) {
 				// Update last_message
-				$chat->setLastMessage($comment);
+				$this->roomService->setLastMessage($chat, $comment);
 				$this->unreadCountCache->clear($chat->getId() . '-');
 			}
 
@@ -226,7 +230,7 @@ class ChatManager {
 			$this->commentsManager->save($comment);
 
 			// Update last_message
-			$chat->setLastMessage($comment);
+			$this->roomService->setLastMessage($chat, $comment);
 			$this->unreadCountCache->clear($chat->getId() . '-');
 
 			$this->dispatcher->dispatch(self::EVENT_AFTER_SYSTEM_MESSAGE_SEND, $event);
@@ -277,10 +281,10 @@ class ChatManager {
 
 			// Update last_message
 			if ($comment->getActorType() !== 'bots' || $comment->getActorId() === 'changelog') {
-				$chat->setLastMessage($comment);
+				$this->roomService->setLastMessage($chat, $comment);
 				$this->unreadCountCache->clear($chat->getId() . '-');
 			} else {
-				$chat->setLastActivity($comment->getCreationDateTime());
+				$this->roomService->setLastActivity($chat, $comment->getCreationDateTime());
 			}
 
 			$alreadyNotifiedUsers = [];

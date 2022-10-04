@@ -37,6 +37,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
+use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\HintException;
@@ -266,6 +267,32 @@ class RoomService {
 		$room->setSIPEnabled($newSipEnabled);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SIP_ENABLED_SET, $event);
+
+		return true;
+	}
+	/**
+	 * @param string $newName Currently it is only allowed to rename: self::TYPE_GROUP, self::TYPE_PUBLIC
+	 * @param string|null $oldName
+	 * @return bool True when the change was valid, false otherwise
+	 */
+	public function setName(Room $room, string $newName, ?string $oldName = null): bool {
+		$oldName = $oldName !== null ? $oldName : $room->getName();
+		if ($newName === $oldName) {
+			return false;
+		}
+
+		$event = new ModifyRoomEvent($room, 'name', $newName, $oldName);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_NAME_SET, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('name', $update->createNamedParameter($newName))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setName($newName);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_NAME_SET, $event);
 
 		return true;
 	}
@@ -612,6 +639,28 @@ class RoomService {
 		$room->setActiveSince($since, $callFlag, $isGuest);
 
 		return true;
+	}
+
+	public function setLastMessage(Room $room, IComment $message): void {
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('last_message', $update->createNamedParameter((int) $message->getId()))
+			->set('last_activity', $update->createNamedParameter($message->getCreationDateTime(), 'datetime'))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setLastMessage($message);
+		$room->setLastActivity($message->getCreationDateTime());
+	}
+
+	public function setLastActivity(Room $room, \DateTime $now): void {
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('last_activity', $update->createNamedParameter($now, 'datetime'))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setLastActivity($now);
 	}
 
 	public function deleteRoom(Room $room): void {
