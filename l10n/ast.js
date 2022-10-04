@@ -56,7 +56,6 @@ OC.L10N.register(
     "You" : "Tu",
     "Favorite" : "Marcar como favoritu",
     "Description" : "Descripción",
-    "Notifications" : "Notificaciones",
     "Password protection" : "Password protection",
     "Enter a password" : "Introduz una contraseña",
     "Save" : "Guardar",
@@ -67,7 +66,7 @@ OC.L10N.register(
     "Login" : "Aniciu de sesión",
     "Nickname" : "Nomatu",
     "Client ID" : "ID de veceru",
-    "Calls" : "Llamaes",
+    "Notifications" : "Notificaciones",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
     "Loading" : "Cargando",
@@ -103,6 +102,7 @@ OC.L10N.register(
     "Android app" : "Aplicación p'Android",
     "iOS app" : "Aplicación pa iOS",
     "An error occurred. Please contact your admin." : "Asocedió un fallu. Contauta col to alministrador, por favor.",
-    "Saved" : "Guardóse"
+    "Saved" : "Guardóse",
+    "Calls" : "Llamaes"
 },
 "nplurals=2; plural=(n != 1);");
