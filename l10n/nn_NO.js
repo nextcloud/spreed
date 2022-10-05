@@ -32,7 +32,6 @@ OC.L10N.register(
     "Leave conversation" : "Forlat samtalen",
     "Delete conversation" : "Slett samtale",
     "Password protection" : "Password protection",
-    "Enter a password" : "Skriv inn eit passord",
     "Save" : "Lagre",
     "Edit" : "Endra",
     "More information" : "Meir informasjon",
@@ -83,6 +82,7 @@ OC.L10N.register(
     "An error occurred. Please contact your admin." : "Det oppstod ein feil. Ver venleg og kontakt systemadministrator.",
     "Saved" : "Lagra",
     "Allow guests" : "Tillat gjester",
+    "Enter a password" : "Skriv inn eit passord",
     "Calls" : "Samtalar"
 },
 "nplurals=2; plural=(n != 1);");

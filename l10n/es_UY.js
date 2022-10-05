@@ -74,7 +74,6 @@ OC.L10N.register(
     "Personal" : "Personal",
     "Permissions" : "Permisos",
     "Password protection" : "Protección con contraseña",
-    "Enter a password" : "Ingresa una contraseña",
     "Save" : "Guardar",
     "Edit" : "Editar",
     "Delete" : "Borrar",
@@ -130,6 +129,7 @@ OC.L10N.register(
     "iOS app" : "Aplicación iOS",
     "An error occurred. Please contact your admin." : "Se presentó un error. Por favor contacta a tu adminsitrador. ",
     "Saved" : "Guardado",
+    "Enter a password" : "Ingresa una contraseña",
     "Calls" : "Llamadas"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -39,7 +39,6 @@ OC.L10N.register(
     "Description" : "Kirjeldus",
     "Personal" : "Isiklik",
     "Password protection" : "Password protection",
-    "Enter a password" : "Enter a password",
     "Save" : "Salvesta",
     "Edit" : "Redigeeri",
     "Delete" : "Kustuta",
@@ -82,6 +81,7 @@ OC.L10N.register(
     "Android app" : "Androidi rakendus",
     "iOS app" : "iOS-i rakendus",
     "An error occurred. Please contact your admin." : "Tekkis tõrge. Palun võta ühendust administraatoriga.",
-    "Saved" : "Salvestatud"
+    "Saved" : "Salvestatud",
+    "Enter a password" : "Enter a password"
 },
 "nplurals=2; plural=(n != 1);");

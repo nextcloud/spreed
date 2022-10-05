@@ -268,9 +268,9 @@ OC.L10N.register(
     "This conversation is read-only" : "Hierdie gesprek is leesalleen",
     "Favorite" : "Gunsteling",
     "Description" : "Beskrywing",
+    "Personal" : "Persoonlik",
     "Leave conversation" : "verlaat gesprek",
     "Delete conversation" : "Skrap gesprek",
-    "Enter a password" : "Gee ’n wagwoord",
     "Save" : "Stoor",
     "Edit" : "Wysig",
     "Delete" : "Skrap",
@@ -313,6 +313,7 @@ OC.L10N.register(
     "iOS app" : "iOS-toep",
     "An error occurred. Please contact your admin." : "'n Fout het voorgekom. Kontak asseblief u administrateur.",
     "Saved" : "Bewaar",
+    "Enter a password" : "Gee ’n wagwoord",
     "Microphone" : "Mikrofoon",
     "Camera" : "Kamera"
 },

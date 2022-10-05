@@ -75,7 +75,6 @@ OC.L10N.register(
     "Personal" : "პირადი",
     "Permissions" : "უფლებები",
     "Password protection" : "პაროლით თავდაცვა",
-    "Enter a password" : "შეიყვანეთ პაროლი",
     "Save" : "შენახვა",
     "Edit" : "შეცვლა",
     "Delete" : "წაშლა",
@@ -135,6 +134,7 @@ OC.L10N.register(
     "iOS app" : "iOS აპლიკაცია",
     "An error occurred. Please contact your admin." : "წარმოიშვა შეცდომა. გთხოვთ დაუკავშირდეთ თქვენს ადმინისტრატორს.",
     "Saved" : "დამახსოვრდა",
+    "Enter a password" : "შეიყვანეთ პაროლი",
     "Calls" : "ზარები"
 },
 "nplurals=2; plural=(n!=1);");
