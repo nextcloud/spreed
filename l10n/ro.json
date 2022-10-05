@@ -298,7 +298,6 @@
     "Description" : "Descriere",
     "Personal" : "Personal",
     "Password protection" : "Password protection",
-    "Enter a password" : "Enter a password",
     "Save" : "Salvează",
     "Edit" : "Editează",
     "Delete" : "Șterge",
@@ -350,6 +349,7 @@
     "iOS app" : "Aplicație iOS",
     "An error occurred. Please contact your admin." : "A apărut o eroare. Te rugăm să contactezi administratorul.",
     "Saved" : "Salvat",
+    "Enter a password" : "Enter a password",
     "Camera" : "Cameră",
     "Calls" : "Apeluri"
 },"pluralForm" :"nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));"

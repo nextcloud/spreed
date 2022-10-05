@@ -167,7 +167,6 @@ OC.L10N.register(
     "Delete conversation" : "Dzēst sarunu",
     "You need to promote a new moderator before you can leave the conversation." : "Pirms sarunas atstāšanas ir jāieceļ jauns regulētājs.",
     "Password protection" : "Password protection",
-    "Enter a password" : "Enter a password",
     "Save" : "Saglabāt",
     "Edit" : "Rediģēt",
     "Delete" : "Dzēst",
@@ -238,6 +237,7 @@ OC.L10N.register(
     "iOS app" : "iOS lietotne",
     "An error occurred. Please contact your admin." : "Notika kļūda. Lūdzu sazinies ar savu administratoru.",
     "Saved" : "Saglabāts",
-    "Add a new server" : "Pievienot jaunu serveri"
+    "Add a new server" : "Pievienot jaunu serveri",
+    "Enter a password" : "Enter a password"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

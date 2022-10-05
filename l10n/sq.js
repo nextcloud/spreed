@@ -193,7 +193,6 @@ OC.L10N.register(
     "Leave conversation" : "Largohuni nga biseda",
     "Delete conversation" : "Fshijeni bisedën",
     "Password protection" : "Password protection",
-    "Enter a password" : "Fusni një fjalëkalim",
     "Save" : "Ruaj",
     "Edit" : "Përpuno",
     "Delete" : "Fshij",
@@ -251,6 +250,7 @@ OC.L10N.register(
     "iOS app" : "Aplikacion iOS",
     "An error occurred. Please contact your admin." : "Ndodhi një gabim. Ju lutemi, lidhuni me përgjegjësin tuaj.",
     "Saved" : "U ruajt",
+    "Enter a password" : "Fusni një fjalëkalim",
     "Camera" : "Kamera",
     "Calls" : "Thirrjet"
 },

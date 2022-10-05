@@ -50,10 +50,11 @@ OC.L10N.register(
     "Favorite" : "Favorito",
     "Restricted" : "Restringido",
     "Description" : "Descripción",
+    "Personal" : "Personal",
+    "Permissions" : "Permisos",
     "Leave conversation" : "Dejar la conversación",
     "Delete conversation" : "Eliminar conversación",
     "Password protection" : "Protección con contraseña",
-    "Enter a password" : "Ingrese una contraseña",
     "Save" : "Guardar",
     "Edit" : "Editar",
     "More information" : "Más información",
@@ -111,6 +112,7 @@ OC.L10N.register(
     "iOS app" : "Aplicación iOS",
     "An error occurred. Please contact your admin." : "Se presentó un error. Favor de contactar a su adminsitrador. ",
     "Saved" : "Guardado",
+    "Enter a password" : "Ingrese una contraseña",
     "Camera" : "Cámara"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
