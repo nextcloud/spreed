@@ -117,7 +117,6 @@ OC.L10N.register(
     "Leave conversation" : "Dejar la conversación",
     "Delete conversation" : "Borrar conversación",
     "Password protection" : "Protección con contraseña",
-    "Enter a password" : "Ingresa una contraseña",
     "Save" : "Guardar",
     "Edit" : "Editar",
     "Delete" : "Borrar",
@@ -183,6 +182,7 @@ OC.L10N.register(
     "An error occurred. Please contact your admin." : "Se presentó un error. Por favor contacta a tu adminsitrador. ",
     "Saved" : "Guardado",
     "Error while accessing camera: it is likely in use by another program" : "Error mientras se accedía a la cámara: parece estar siendo usada por otro programa",
+    "Enter a password" : "Ingresa una contraseña",
     "Camera" : "Cámara",
     "Calls" : "Llamadas"
 },

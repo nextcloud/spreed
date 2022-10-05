@@ -275,8 +275,8 @@ OC.L10N.register(
     "Favorite" : "Pliŝatata",
     "Restricted" : "Limigita",
     "Description" : "Priskribo",
+    "Personal" : "Persona",
     "Password protection" : "Protektita per pasvorto",
-    "Enter a password" : "Entajpu pasvorton",
     "Save" : "Konservi",
     "Edit" : "Modifi",
     "Delete" : "Forigi",
@@ -318,6 +318,7 @@ OC.L10N.register(
     "iOS app" : "iOS-aplikaĵo",
     "An error occurred. Please contact your admin." : "Eraro okazis. Bonvolu kontakti vian administranton.",
     "Saved" : "Konservita",
+    "Enter a password" : "Entajpu pasvorton",
     "Camera" : "Fotilo"
 },
 "nplurals=2; plural=(n != 1);");

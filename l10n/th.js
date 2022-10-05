@@ -34,7 +34,6 @@ OC.L10N.register(
     "Description" : "รายละเอียด",
     "Personal" : "ส่วนตัว",
     "Password protection" : "Password protection",
-    "Enter a password" : "Enter a password",
     "Save" : "บันทึก",
     "Edit" : "แก้ไข",
     "Delete" : "ลบ",
@@ -81,6 +80,7 @@ OC.L10N.register(
     "iOS app" : "แอพฯ IOS",
     "An error occurred. Please contact your admin." : "เกิดข้อผิดพลาด กรุณาติดต่อผู้ดูแลระบบของคุณ",
     "Saved" : "บันทึกแล้ว",
+    "Enter a password" : "Enter a password",
     "Camera" : "กล้อง",
     "[Unknown username]" : "[ไม่รู้จักชื่อผู้ใช้]"
 },

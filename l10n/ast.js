@@ -56,8 +56,9 @@ OC.L10N.register(
     "You" : "Tu",
     "Favorite" : "Marcar como favoritu",
     "Description" : "Descripción",
+    "Personal" : "Personal",
+    "Permissions" : "Permisos",
     "Password protection" : "Password protection",
-    "Enter a password" : "Introduz una contraseña",
     "Save" : "Guardar",
     "Edit" : "Editar",
     "Delete" : "Desaniciar",
@@ -103,6 +104,7 @@ OC.L10N.register(
     "iOS app" : "Aplicación pa iOS",
     "An error occurred. Please contact your admin." : "Asocedió un fallu. Contauta col to alministrador, por favor.",
     "Saved" : "Guardóse",
+    "Enter a password" : "Introduz una contraseña",
     "Calls" : "Llamaes"
 },
 "nplurals=2; plural=(n != 1);");

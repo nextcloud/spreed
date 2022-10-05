@@ -259,7 +259,6 @@ OC.L10N.register(
     "Leave conversation" : "Sair da conversação",
     "Delete conversation" : "Eliminar conversação",
     "Password protection" : "Protegido por palavra-passe",
-    "Enter a password" : "Insira uma palavra-passe",
     "Save" : "Guardar",
     "Edit" : "Editar",
     "Delete" : "Apagar",
@@ -322,6 +321,7 @@ OC.L10N.register(
     "iOS app" : "Aplicação iOS",
     "An error occurred. Please contact your admin." : "Ocorreu um erro. Por favor, contacte o seu administrador.",
     "Saved" : "Gravado",
+    "Enter a password" : "Insira uma palavra-passe",
     "Enable lobby" : "Ativar lobby",
     "Camera" : "Câmera"
 },

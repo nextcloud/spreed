@@ -56,7 +56,6 @@ OC.L10N.register(
     "Personal" : "Pribadi",
     "Meeting" : "Rapat",
     "Password protection" : "Password protection",
-    "Enter a password" : "Masukkan kata sandi",
     "Save" : "Simpan",
     "Edit" : "Sunting",
     "Delete" : "Hapus",
@@ -114,6 +113,7 @@ OC.L10N.register(
     "iOS app" : "Aplikasi iOS",
     "An error occurred. Please contact your admin." : "Terjadi kesalahan. Silakan hubungi admin Anda.",
     "Saved" : "Disimpan",
+    "Enter a password" : "Masukkan kata sandi",
     "Open conversation to registered users" : "Buka percakapan untuk pengguna terdaftar"
 },
 "nplurals=1; plural=0;");
