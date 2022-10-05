@@ -300,7 +300,6 @@ OC.L10N.register(
     "Description" : "Descriere",
     "Personal" : "Personal",
     "Password protection" : "Password protection",
-    "Enter a password" : "Enter a password",
     "Save" : "Salvează",
     "Edit" : "Editează",
     "Delete" : "Șterge",
@@ -352,6 +351,7 @@ OC.L10N.register(
     "iOS app" : "Aplicație iOS",
     "An error occurred. Please contact your admin." : "A apărut o eroare. Te rugăm să contactezi administratorul.",
     "Saved" : "Salvat",
+    "Enter a password" : "Enter a password",
     "Camera" : "Cameră",
     "Calls" : "Apeluri"
 },

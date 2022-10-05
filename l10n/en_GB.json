@@ -354,10 +354,11 @@
     "Favorite" : "Favourite",
     "Restricted" : "Restricted",
     "Description" : "Description",
+    "Personal" : "Personal",
+    "Permissions" : "Permissions",
     "Leave conversation" : "Leave conversation",
     "Delete conversation" : "Delete conversation",
     "Password protection" : "Password protection",
-    "Enter a password" : "Enter a password",
     "Save" : "Save",
     "Edit" : "Edit",
     "Delete" : "Delete",
@@ -428,6 +429,7 @@
     "iOS app" : "iOS app",
     "An error occurred. Please contact your admin." : "An error occurred. Please contact your admin.",
     "Saved" : "Saved",
+    "Enter a password" : "Enter a password",
     "Camera" : "Camera",
     "Calls" : "Calls"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

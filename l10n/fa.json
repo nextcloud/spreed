@@ -282,7 +282,6 @@
     "Leave conversation" : "ترک صحبت",
     "Delete conversation" : "مکالمه را حذف کنید",
     "Password protection" : "Password protection",
-    "Enter a password" : "یک گذرواژه وارد کنید",
     "Save" : "ذخیره",
     "Edit" : "ویرایش",
     "Delete" : "حذف",
@@ -353,6 +352,7 @@
     "An error occurred. Please contact your admin." : "یک خطا رخ داده است. لطفا با مدیر سیستم تماس بگیرید.",
     "Saved" : "ذخیره شد",
     "Allow guests" : "اجازه میهمانان",
+    "Enter a password" : "یک گذرواژه وارد کنید",
     "Camera" : "دوربین",
     "Upload new files" : "فایل‌های جدید را آپلود کنید",
     "Share from Files" : "اشتراک‌گذاری از فایل‌ها"
