@@ -839,6 +839,7 @@ OC.L10N.register(
     "Guest access" : "Přístup pro hosty",
     "Allow guests to join this conversation via link" : "Umožnit hostům, připojit se k této konverzace prostřednictvím odkazu.",
     "Password protection" : "Ochrana heslem",
+    "Enter new password" : "Zadejte nové heslo",
     "Save password" : "Uložit heslo",
     "Copy conversation link" : "Zkopírovat odkaz na konverzaci",
     "Resend invitations" : "Znovu poslat pozvánky",
