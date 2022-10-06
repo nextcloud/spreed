@@ -839,6 +839,7 @@ OC.L10N.register(
     "Guest access" : "訪客存取",
     "Allow guests to join this conversation via link" : "允許訪客透過連結加入此對話",
     "Password protection" : "密碼保護",
+    "Enter new password" : "輸入新密碼",
     "Save password" : "保存密碼",
     "Copy conversation link" : "複製對話連結",
     "Resend invitations" : "重新傳送邀請",
