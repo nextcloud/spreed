@@ -252,7 +252,6 @@ class RoomPluginTest extends TestCase {
 		array $expectedMatches,
 		bool $expectedHasMoreResults
 	) {
-
 		$rooms = [];
 		foreach ($roomsForParticipant as $roomData) {
 			$rooms[] = call_user_func_array([$this, 'newRoom'], $roomData);
