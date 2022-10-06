@@ -32,12 +32,13 @@
 				<p v-if="dialogSubtitle" class="subtitle">
 					{{ dialogSubtitle }}
 				</p>
-				<div class="search-form">
-					<div class="icon-search" />
-					<input v-model="searchText"
-						class="search-form__input"
-						type="text">
-				</div>
+				<NcTextField :value.sync="searchText"
+					trailing-button-icon="close"
+					class="search-form"
+					:show-trailing-button="searchText !==''"
+					@trailing-button-click="clearText">
+					<Magnify :size="16" />
+				</NcTextField>
 				<div id="room-list">
 					<ul v-if="!loading && availableRooms.length > 0">
 						<li v-for="room in availableRooms"
@@ -75,6 +76,8 @@ import { generateOcsUrl } from '@nextcloud/router'
 import { CONVERSATION } from '../constants.js'
 import ConversationIcon from '../components/ConversationIcon.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import Magnify from 'vue-material-design-icons/Magnify.vue'
 
 export default {
 	name: 'RoomSelector',
@@ -82,6 +85,8 @@ export default {
 		ConversationIcon,
 		NcModal,
 		NcButton,
+		NcTextField,
+		Magnify,
 	},
 	props: {
 		container: {
@@ -153,6 +158,11 @@ export default {
 
 			return conversation2.lastActivity - conversation1.lastActivity
 		},
+
+		clearText() {
+			this.searchText = ''
+		},
+
 		close() {
 			// FIXME: should not emit on $root but on itself
 			this.$root.$emit('close')
@@ -242,23 +252,6 @@ li {
 }
 
 .search-form {
-	position: relative;
-	display: flex;
-	flex-direction: column;
 	margin-bottom: 10px;
-	&__input {
-		width: 100%;
-		font-size: 16px;
-		padding-left: 28px;
-		line-height: 34px;
-		box-shadow: 0 10px 5px var(--color-main-background);
-		z-index: 1;
-	}
-	.icon-search {
-		position: absolute;
-		top: 12px;
-		left: 8px;
-		z-index: 2;
-	}
 }
 </style>
