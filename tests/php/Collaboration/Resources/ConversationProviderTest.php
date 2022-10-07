@@ -30,6 +30,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Collaboration\Resources\IResource;
 use OCP\Collaboration\Resources\ResourceException;
 use OCP\IURLGenerator;
@@ -41,6 +42,8 @@ use Test\TestCase;
 class ConversationProviderTest extends TestCase {
 	/** @var Manager|MockObject */
 	protected $manager;
+	/** @var ParticipantService|MockObject */
+	protected $participantService;
 	/** @var IUserSession|MockObject */
 	protected $userSession;
 	/** @var IURLGenerator|MockObject */
@@ -51,11 +54,13 @@ class ConversationProviderTest extends TestCase {
 		parent::setUp();
 
 		$this->manager = $this->createMock(Manager::class);
+		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 
 		$this->provider = new ConversationProvider(
 			$this->manager,
+			$this->participantService,
 			$this->userSession,
 			$this->urlGenerator
 		);
@@ -98,9 +103,9 @@ class ConversationProviderTest extends TestCase {
 			->method('getId')
 			->willReturn('token');
 		$room = $this->createMock(Room::class);
-		$room->expects($this->once())
+		$this->participantService->expects($this->once())
 			->method('getParticipant')
-			->with('uid')
+			->with($room, 'uid')
 			->willThrowException(new ParticipantNotFoundException());
 
 		$this->manager->expects($this->once())
@@ -132,9 +137,9 @@ class ConversationProviderTest extends TestCase {
 			->method('getAttendee')
 			->willReturn($attendee);
 		$room = $this->createMock(Room::class);
-		$room->expects($this->once())
+		$this->participantService->expects($this->once())
 			->method('getParticipant')
-			->with('uid')
+			->with($room, 'uid')
 			->willReturn($participant);
 
 		$this->manager->expects($this->once())
@@ -177,9 +182,9 @@ class ConversationProviderTest extends TestCase {
 			->method('getAttendee')
 			->willReturn($attendee);
 		$room = $this->createMock(Room::class);
-		$room->expects($this->once())
+		$this->participantService->expects($this->once())
 			->method('getParticipant')
-			->with('uid')
+			->with($room, 'uid')
 			->willReturn($participant);
 
 		$this->manager->expects($this->once())

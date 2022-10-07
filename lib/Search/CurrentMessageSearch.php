@@ -90,7 +90,7 @@ class CurrentMessageSearch extends MessageSearch {
 		}
 
 		try {
-			$participant = $room->getParticipant($user->getUID(), false);
+			$participant = $this->participantService->getParticipant($room, $user->getUID(), false);
 		} catch (ParticipantNotFoundException $e) {
 			return SearchResult::complete(
 				$this->l->t('Messages'),

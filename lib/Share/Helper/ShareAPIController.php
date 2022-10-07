@@ -28,6 +28,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IL10N;
@@ -41,21 +42,24 @@ use OCP\Share\IShare;
  * actions or checks specific to room shares.
  */
 class ShareAPIController {
-	private string $userId;
-	private Manager $manager;
+	protected string $userId;
+	protected Manager $manager;
+	protected ParticipantService $participantService;
 	protected ITimeFactory $timeFactory;
-	private IL10N $l;
-	private IURLGenerator $urlGenerator;
+	protected IL10N $l;
+	protected IURLGenerator $urlGenerator;
 
 	public function __construct(
 			string $UserId,
 			Manager $manager,
+			ParticipantService $participantService,
 			ITimeFactory $timeFactory,
 			IL10N $l10n,
 			IURLGenerator $urlGenerator
 	) {
 		$this->userId = $UserId;
 		$this->manager = $manager;
+		$this->participantService = $participantService;
 		$this->timeFactory = $timeFactory;
 		$this->l = $l10n;
 		$this->urlGenerator = $urlGenerator;
@@ -80,7 +84,7 @@ class ShareAPIController {
 
 		$result['share_with_displayname'] = $room->getDisplayName($this->userId);
 		try {
-			$room->getParticipant($this->userId, false);
+			$this->participantService->getParticipant($room, $this->userId, false);
 			$result['share_with_link'] = $this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]);
 		} catch (ParticipantNotFoundException $e) {
 			// Removing the conversation token from the leaked data if not a participant.
@@ -163,7 +167,7 @@ class ShareAPIController {
 		}
 
 		try {
-			$room->getParticipant($user, false);
+			$this->participantService->getParticipant($room, $user, false);
 		} catch (ParticipantNotFoundException $e) {
 			return false;
 		}

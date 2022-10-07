@@ -63,7 +63,7 @@ class BeforeUserLoggedOutListener implements IEventListener {
 		foreach ($sessionIds as $sessionId) {
 			try {
 				$room = $this->manager->getRoomForSession($user->getUID(), $sessionId);
-				$participant = $room->getParticipant($user->getUID(), $sessionId);
+				$participant = $this->participantService->getParticipant($room, $user->getUID(), $sessionId);
 				if ($participant->getSession() && $participant->getSession()->getInCall() !== Participant::FLAG_DISCONNECTED) {
 					$this->participantService->changeInCall($room, $participant, Participant::FLAG_DISCONNECTED);
 				}

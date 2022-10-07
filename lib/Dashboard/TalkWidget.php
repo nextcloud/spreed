@@ -28,6 +28,7 @@ namespace OCA\Talk\Dashboard;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\IComment;
 use OCP\Dashboard\IAPIWidget;
 use OCP\Dashboard\IButtonWidget;
@@ -41,20 +42,23 @@ use OCP\IURLGenerator;
 use OCP\Util;
 
 class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidget {
-	private IURLGenerator $url;
-	private IL10N $l10n;
-	private Manager $manager;
-	private MessageParser $messageParser;
+	protected IURLGenerator $url;
+	protected IL10N $l10n;
+	protected Manager $manager;
+	protected ParticipantService $participantService;
+	protected MessageParser $messageParser;
 
 	public function __construct(
 		IURLGenerator $url,
 		IL10N $l10n,
 		Manager $manager,
+		ParticipantService $participantService,
 		MessageParser $messageParser
 	) {
 		$this->url = $url;
 		$this->l10n = $l10n;
 		$this->manager = $manager;
+		$this->participantService = $participantService;
 		$this->messageParser = $messageParser;
 	}
 
@@ -128,8 +132,8 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	public function getItems(string $userId, ?string $since = null, int $limit = 7): array {
 		$rooms = $this->manager->getRoomsForUser($userId, [], true);
 
-		$rooms = array_filter($rooms, static function (Room $room) use ($userId) {
-			$participant = $room->getParticipant($userId);
+		$rooms = array_filter($rooms, function (Room $room) use ($userId) {
+			$participant = $this->participantService->getParticipant($room, $userId);
 			$attendee = $participant->getAttendee();
 			return $room->getLastMessage() && $room->getLastMessage()->getId() > $attendee->getLastReadMessage();
 		});
@@ -147,7 +151,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	}
 
 	protected function prepareRoom(Room $room, string $userId): WidgetItem {
-		$participant = $room->getParticipant($userId);
+		$participant = $this->participantService->getParticipant($room, $userId);
 		$subtitle = '';
 
 		$lastMessage = $room->getLastMessage();

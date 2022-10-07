@@ -91,15 +91,15 @@ class Listener {
 			return;
 		}
 
+		$participantService = Server::get(ParticipantService::class);
 		try {
-			$participant = $room->getParticipant($userId, false);
+			$participant = $participantService->getParticipant($room, $userId, false);
 			if ($participant->getAttendee()->getParticipantType() === Participant::OWNER) {
 				return;
 			}
 		} catch (ParticipantNotFoundException $e) {
 		}
 
-		$participantService = Server::get(ParticipantService::class);
 		if ($participantService->getNumberOfActors($room) > 1) {
 			throw new RoomNotFoundException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}

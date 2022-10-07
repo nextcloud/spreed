@@ -31,6 +31,7 @@ use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Manager as RoomManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Webinary;
 use OCP\Comments\IComment;
 use OCP\IL10N;
@@ -43,6 +44,7 @@ use OCP\Search\SearchResultEntry;
 
 class MessageSearch implements IProvider {
 	protected RoomManager $roomManager;
+	protected ParticipantService $participantService;
 	protected ChatManager $chatManager;
 	protected MessageParser $messageParser;
 	protected IURLGenerator $url;
@@ -50,12 +52,14 @@ class MessageSearch implements IProvider {
 
 	public function __construct(
 		RoomManager $roomManager,
+		ParticipantService $participantService,
 		ChatManager $chatManager,
 		MessageParser $messageParser,
 		IURLGenerator $url,
 		IL10N $l
 	) {
 		$this->roomManager = $roomManager;
+		$this->participantService = $participantService;
 		$this->chatManager = $chatManager;
 		$this->messageParser = $messageParser;
 		$this->url = $url;
@@ -122,7 +126,7 @@ class MessageSearch implements IProvider {
 			}
 
 			if ($room->getLobbyState() !== Webinary::LOBBY_NONE) {
-				$participant = $room->getParticipant($user->getUID(), false);
+				$participant = $this->participantService->getParticipant($room, $user->getUID(), false);
 				if (!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
 					continue;
 				}
@@ -165,7 +169,7 @@ class MessageSearch implements IProvider {
 	}
 
 	protected function commentToSearchResultEntry(Room $room, IUser $user, IComment $comment, ISearchQuery $query): SearchResultEntry {
-		$participant = $room->getParticipant($user->getUID(), false);
+		$participant = $this->participantService->getParticipant($room, $user->getUID(), false);
 
 		$id = (int) $comment->getId();
 		$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);

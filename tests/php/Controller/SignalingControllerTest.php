@@ -403,9 +403,9 @@ class SignalingControllerTest extends TestCase {
 		$participant->expects($this->any())
 			->method('getPermissions')
 			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
-		$room->expects($this->once())
+		$this->participantService->expects($this->once())
 			->method('getParticipant')
-			->with($this->userId)
+			->with($room, $this->userId)
 			->willReturn($participant);
 		$room->expects($this->once())
 			->method('getToken')
@@ -464,9 +464,9 @@ class SignalingControllerTest extends TestCase {
 		$participant->expects($this->any())
 			->method('getPermissions')
 			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
-		$room->expects($this->once())
+		$this->participantService->expects($this->once())
 			->method('getParticipant')
-			->with($this->userId)
+			->with($room, $this->userId)
 			->willReturn($participant);
 		$room->expects($this->once())
 			->method('getToken')
@@ -529,9 +529,9 @@ class SignalingControllerTest extends TestCase {
 			->method('hasModeratorPermissions')
 			->with(false)
 			->willReturn(true);
-		$room->expects($this->once())
+		$this->participantService->expects($this->once())
 			->method('getParticipant')
-			->with($this->userId)
+			->with($room, $this->userId)
 			->willReturn($participant);
 		$room->expects($this->once())
 			->method('getToken')
@@ -734,9 +734,9 @@ class SignalingControllerTest extends TestCase {
 		$participant->expects($this->any())
 			->method('getPermissions')
 			->willReturn($permissions);
-		$room->expects($this->once())
+		$this->participantService->expects($this->once())
 			->method('getParticipant')
-			->with($this->userId)
+			->with($room, $this->userId)
 			->willReturn($participant);
 		$room->expects($this->once())
 			->method('getToken')
@@ -829,9 +829,9 @@ class SignalingControllerTest extends TestCase {
 		$participant->expects($this->any())
 			->method('getPermissions')
 			->willReturn(Attendee::PERMISSIONS_MAX_CUSTOM);
-		$room->expects($this->once())
+		$this->participantService->expects($this->once())
 			->method('getParticipant')
-			->with($this->userId)
+			->with($room, $this->userId)
 			->willReturn($participant);
 		$room->expects($this->atLeastOnce())
 			->method('getToken')
@@ -1020,7 +1020,7 @@ class SignalingControllerTest extends TestCase {
 				'action' => 'join',
 			],
 		]);
-		$participant = $room->getParticipant($this->userId, $oldSessionId);
+		$participant = $participantService->getParticipant($room, $this->userId, $oldSessionId);
 		$this->assertEquals($oldSessionId, $participant->getSession()->getSessionId());
 
 		// The user is reloading the browser which will join him with another
@@ -1038,7 +1038,7 @@ class SignalingControllerTest extends TestCase {
 		]);
 
 		// Now the new session id is stored in the database.
-		$participant = $room->getParticipant($this->userId, $newSessionId);
+		$participant = $participantService->getParticipant($room, $this->userId, $newSessionId);
 		$this->assertEquals($newSessionId, $participant->getSession()->getSessionId());
 
 		// Leaving the old session id...
@@ -1053,7 +1053,7 @@ class SignalingControllerTest extends TestCase {
 		]);
 
 		// ...will keep the new session id in the database.
-		$participant = $room->getParticipant($this->userId, $newSessionId);
+		$participant = $participantService->getParticipant($room, $this->userId, $newSessionId);
 		$this->assertEquals($newSessionId, $participant->getSession()->getSessionId());
 	}
 }

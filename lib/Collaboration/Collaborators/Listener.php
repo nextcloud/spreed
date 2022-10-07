@@ -153,7 +153,7 @@ class Listener {
 		$userId = $result['value']['shareWith'];
 
 		try {
-			$participant = $this->room->getParticipant($userId, false);
+			$participant = $this->participantService->getParticipant($this->room, $userId, false);
 			if ($participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
 				// do list self-joined users so they can be added as permanent participants by moderators
 				return true;

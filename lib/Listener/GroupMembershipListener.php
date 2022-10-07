@@ -47,7 +47,7 @@ class GroupMembershipListener extends AMembershipListener {
 
 		foreach ($rooms as $room) {
 			try {
-				$participant = $room->getParticipant($user->getUID());
+				$participant = $this->participantService->getParticipant($room, $user->getUID());
 				if ($participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
 					$this->participantService->updateParticipantType($room, $participant, Participant::USER);
 				}

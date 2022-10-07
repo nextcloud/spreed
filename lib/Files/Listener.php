@@ -148,7 +148,7 @@ class Listener {
 		}
 
 		try {
-			$room->getParticipant($userId, false);
+			$this->participantService->getParticipant($room, $userId, false);
 		} catch (ParticipantNotFoundException $e) {
 			$user = $this->userManager->get($userId);
 

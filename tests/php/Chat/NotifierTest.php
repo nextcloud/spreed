@@ -129,9 +129,9 @@ class NotifierTest extends TestCase {
 		/** @var Room|MockObject */
 		$room = $this->createMock(Room::class);
 
-		$room->expects($this->any())
+		$this->participantService->expects($this->any())
 			->method('getParticipant')
-			->willReturnCallback(function (string $actorId) use ($room, $settings): Participant {
+			->willReturnCallback(function (Room $room, string $actorId) use ($settings): Participant {
 				if ($actorId === 'userNotInOneToOneChat') {
 					throw new ParticipantNotFoundException();
 				}

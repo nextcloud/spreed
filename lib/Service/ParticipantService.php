@@ -91,6 +91,9 @@ class ParticipantService {
 	private ITimeFactory $timeFactory;
 	private ICacheFactory $cacheFactory;
 
+	protected array $userCache;
+	protected array $sessionCache;
+
 	public function __construct(IConfig $serverConfig,
 								Config $talkConfig,
 								AttendeeMapper $attendeeMapper,
@@ -775,7 +778,7 @@ class ParticipantService {
 		$attendees = [];
 		foreach ($users as $user) {
 			try {
-				$participant = $room->getParticipant($user->getUID());
+				$participant = $this->getParticipant($room, $user->getUID());
 				$participantType = $participant->getAttendee()->getParticipantType();
 
 				$attendees[] = $participant->getAttendee();
@@ -838,7 +841,7 @@ class ParticipantService {
 		$attendees = [];
 		foreach ($users as $user) {
 			try {
-				$participant = $room->getParticipant($user->getUID());
+				$participant = $this->getParticipant($room, $user->getUID());
 				$participantType = $participant->getAttendee()->getParticipantType();
 
 				$attendees[] = $participant->getAttendee();
@@ -856,7 +859,7 @@ class ParticipantService {
 
 	public function removeUser(Room $room, IUser $user, string $reason): void {
 		try {
-			$participant = $room->getParticipant($user->getUID(), false);
+			$participant = $this->getParticipant($room, $user->getUID(), false);
 		} catch (ParticipantNotFoundException $e) {
 			return;
 		}
@@ -1497,6 +1500,66 @@ class ParticipantService {
 
 	/**
 	 * @param Room $room
+	 * @param string|null $userId
+	 * @param string|null|false $sessionId Set to false if you don't want to load a session (and save resources),
+	 *                                     string to try loading a specific session
+	 *                                     null to try loading "any"
+	 * @return Participant
+	 * @throws ParticipantNotFoundException When the user is not a participant
+	 */
+	public function getParticipant(Room $room, ?string $userId, $sessionId = null): Participant {
+		if (!is_string($userId) || $userId === '') {
+			throw new ParticipantNotFoundException('Not a user');
+		}
+
+		if (isset($this->userCache[$room->getId()][$userId])) {
+			$participant = $this->userCache[$room->getId()][$userId];
+			if (!$sessionId
+				|| ($participant->getSession() instanceof Session
+					&& $participant->getSession()->getSessionId() === $sessionId)) {
+				return $participant;
+			}
+		}
+
+		$query = $this->connection->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$query->from('talk_attendees', 'a')
+			->where($query->expr()->eq('a.actor_type', $query->createNamedParameter(Attendee::ACTOR_USERS)))
+			->andWhere($query->expr()->eq('a.actor_id', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('a.room_id', $query->createNamedParameter($room->getId())))
+			->setMaxResults(1);
+
+		if ($sessionId !== false) {
+			if ($sessionId !== null) {
+				$helper->selectSessionsTable($query);
+				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
+					$query->expr()->eq('s.session_id', $query->createNamedParameter($sessionId)),
+					$query->expr()->eq('a.id', 's.attendee_id')
+				));
+			} else {
+				$helper->selectSessionsTable($query); // FIXME PROBLEM
+				$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->eq('a.id', 's.attendee_id'));
+			}
+		}
+
+		$participant = $this->getParticipantFromQuery($query, $room);
+
+		$this->userCache ??= [];
+		$this->userCache[$room->getId()] ??= [];
+		$this->userCache[$room->getId()][$userId] = $participant;
+		if ($participant->getSession()) {
+			$participantSessionId = $participant->getSession()->getSessionId();
+			$this->sessionCache ??= [];
+			$this->sessionCache[$room->getId()] ??= [];
+			$this->sessionCache[$room->getId()][$participantSessionId] = $participant;
+		}
+
+		return $participant;
+	}
+
+	/**
+	 * @param Room $room
 	 * @param string|null $sessionId
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the user is not a participant
@@ -1564,7 +1627,7 @@ class ParticipantService {
 	 */
 	public function getParticipantByActor(Room $room, string $actorType, string $actorId): Participant {
 		if ($actorType === Attendee::ACTOR_USERS) {
-			return $room->getParticipant($actorId, false);
+			return $this->getParticipant($room, $actorId, false);
 		}
 
 		$query = $this->connection->getQueryBuilder();

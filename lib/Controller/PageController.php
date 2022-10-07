@@ -32,6 +32,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\TInitialState;
@@ -70,6 +71,7 @@ class PageController extends Controller {
 	private IUserSession $userSession;
 	private LoggerInterface $logger;
 	private Manager $manager;
+	private ParticipantService $participantService;
 	private RoomService $roomService;
 	private IURLGenerator $url;
 	private INotificationManager $notificationManager;
@@ -86,6 +88,7 @@ class PageController extends Controller {
 								?string $UserId,
 								LoggerInterface $logger,
 								Manager $manager,
+								ParticipantService $participantService,
 								RoomService $roomService,
 								IURLGenerator $url,
 								INotificationManager $notificationManager,
@@ -104,6 +107,7 @@ class PageController extends Controller {
 		$this->userId = $UserId;
 		$this->logger = $logger;
 		$this->manager = $manager;
+		$this->participantService = $participantService;
 		$this->roomService = $roomService;
 		$this->url = $url;
 		$this->notificationManager = $notificationManager;
@@ -220,7 +224,7 @@ class PageController extends Controller {
 			if ($room instanceof Room && $room->hasPassword()) {
 				// If the user joined themselves or is not found, they need the password.
 				try {
-					$participant = $room->getParticipant($this->userId, false);
+					$participant = $this->participantService->getParticipant($room, $this->userId, false);
 					$requirePassword = $participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED;
 				} catch (ParticipantNotFoundException $e) {
 					$requirePassword = true;

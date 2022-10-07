@@ -28,6 +28,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCP\Collaboration\Resources\IProvider;
 use OCP\Collaboration\Resources\IResource;
 use OCP\Collaboration\Resources\ResourceException;
@@ -37,13 +38,16 @@ use OCP\IUserSession;
 
 class ConversationProvider implements IProvider {
 	protected Manager $manager;
+	protected ParticipantService $participantService;
 	protected IUserSession $userSession;
 	protected IURLGenerator $urlGenerator;
 
 	public function __construct(Manager $manager,
+								ParticipantService $participantService,
 								IUserSession $userSession,
 								IURLGenerator $urlGenerator) {
 		$this->manager = $manager;
+		$this->participantService = $participantService;
 		$this->userSession = $userSession;
 		$this->urlGenerator = $urlGenerator;
 	}
@@ -89,7 +93,7 @@ class ConversationProvider implements IProvider {
 
 			// Logged in users need to have a regular participant,
 			// before they can do anything with the room.
-			$participant = $room->getParticipant($userId, false);
+			$participant = $this->participantService->getParticipant($room, $userId, false);
 			return $participant->getAttendee()->getParticipantType() !== Participant::USER_SELF_JOINED;
 		} catch (RoomNotFoundException $e) {
 			throw new ResourceException('Conversation not found');
