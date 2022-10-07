@@ -49,6 +49,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static $userToAttendeeId;
 	/** @var array[] */
 	protected static $messages;
+	/** @var int[] */
+	protected static $textToMessageId;
 
 
 	protected static $permissionsMap = [
@@ -1621,7 +1623,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$expected = array_map(static function (array $message) {
 			$message['attributes.conversation'] = self::$identifierToToken[$message['attributes.conversation']];
-			$message['attributes.messageId'] = self::$textToMessageId[$message['attributes.messageId']];
+			$message['attributes.messageId'] = self::$messages[$message['attributes.messageId']];
 			return $message;
 		}, $formData->getHash());
 
