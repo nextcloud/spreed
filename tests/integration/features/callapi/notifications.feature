@@ -1,4 +1,4 @@
-Feature: chat/notifications
+Feature: callapi/notifications
 
   Background:
     Given user "participant1" exists
