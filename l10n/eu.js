@@ -839,6 +839,7 @@ OC.L10N.register(
     "Guest access" : "Gonbidatuen sarbidea",
     "Allow guests to join this conversation via link" : "Onartu gonbidatuei elkarrizketa honetan esteka bidez sartzea",
     "Password protection" : "Pasahitz bidezko babesa",
+    "Enter new password" : "Sartu pasahitz berria",
     "Save password" : "Gorde pasahitza",
     "Copy conversation link" : "Kopiatu elkarrizketaren esteka",
     "Resend invitations" : "Birbidali gonbidapenak",

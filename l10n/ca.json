@@ -495,7 +495,7 @@
     "URL of this Nextcloud instance" : "URL d'aquesta instància de Nextcloud",
     "Full name of the user requesting the trial" : "Nom complet de l'usuari que sol·licita la prova",
     "Name of the user requesting the trial" : "Nom de l'usuari que sol·licita la prova",
-    "Language" : "Idioma",
+    "Language" : "Llengua",
     "Country" : "País",
     "Request signaling server trial" : "Sol·licita la prova del servidor de senyalització",
     "You can see the current status of your hosted signaling server in the following table." : "Podeu veure l'estat actual del servidor de senyalització allotjat a la taula següent.",
