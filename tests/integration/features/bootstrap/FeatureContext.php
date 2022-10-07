@@ -49,6 +49,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static $userToAttendeeId;
 	/** @var array[] */
 	protected static $messages;
+	/** @var int[] */
+	protected static $textToMessageId;
 
 
 	protected static $permissionsMap = [
@@ -1490,6 +1492,27 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" searches for "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $search
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSearchesInRoom(string $user, string $search, string $identifier, $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/search/providers/talk-message-current/search?term=' . $search . '&from=' . '/call/' . self::$identifierToToken[$identifier]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== '200') {
+			return;
+		}
+
+		$this->compareSearchResponse($formData);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" received a system messages in room "([^"]*)" to delete "([^"]*)"(?: \((v1)\))?$/
 	 *
 	 * @param string $user
@@ -1584,6 +1607,36 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$data['referenceId'] = $message['referenceId'];
 			}
 			return $data;
+		}, $messages));
+	}
+
+	/**
+	 * @param TableNode|null $formData
+	 */
+	protected function compareSearchResponse(TableNode $formData = null) {
+		$messages = $this->getDataFromResponse($this->response)['entries'];
+
+		if ($formData === null) {
+			Assert::assertEmpty($messages);
+			return;
+		}
+
+		$expected = array_map(static function (array $message) {
+			$message['attributes.conversation'] = self::$identifierToToken[$message['attributes.conversation']];
+			$message['attributes.messageId'] = self::$messages[$message['attributes.messageId']];
+			return $message;
+		}, $formData->getHash());
+
+		$count = count($expected);
+		Assert::assertCount($count, $messages, 'Message count does not match');
+
+		Assert::assertEquals($expected, array_map(static function ($message) {
+			return [
+				'title' => $message['title'],
+				'subline' => $message['subline'],
+				'attributes.conversation' => $message['attributes']['conversation'],
+				'attributes.messageId' => $message['attributes']['messageId'],
+			];
 		}, $messages));
 	}
 
