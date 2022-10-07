@@ -80,14 +80,13 @@
 					{{ t('spreed', 'Forward message') }}
 				</NcActionButton>
 				<NcActionSeparator v-if="messageActions.length > 0" />
-				<template v-for="action in messageActions">
-					<NcActionButton :key="action.label"
-						:icon="action.icon"
-						:close-after-click="true"
-						@click="action.callback(messageApiData)">
-						{{ action.label }}
-					</NcActionButton>
-				</template>
+				<NcActionButton v-for="action in messageActions"
+					:key="action.label"
+					:icon="action.icon"
+					:close-after-click="true"
+					@click="action.callback(messageApiData)">
+					{{ action.label }}
+				</NcActionButton>
 				<template v-if="isDeleteable">
 					<NcActionSeparator />
 					<NcActionButton icon="icon-delete"
@@ -107,20 +106,16 @@
 					<ArrowLeft :size="20" />
 				</template>
 			</NcButton>
-			<NcButton type="tertiary"
-				:aria-label="t('spreed', 'React with {emoji}', { emoji: '👍' })"
-				@click="handleReactionClick('👍')">
+			<NcButton v-for="emoji in frequentlyUsedEmojis"
+				:key="emoji"
+				type="tertiary"
+				:aria-label="t('spreed', 'React with {emoji}', { emoji })"
+				@click="handleReactionClick(emoji)">
 				<template #icon>
-					<span>👍</span>
+					<span>{{ emoji }}</span>
 				</template>
 			</NcButton>
-			<NcButton type="tertiary"
-				:aria-label="t('spreed', 'React with {emoji}', { emoji: '❤' })"
-				@click="handleReactionClick('❤️')">
-				<template #icon>
-					<span>❤️</span>
-				</template>
-			</NcButton>
+
 			<NcEmojiPicker :container="`#message_${id} .message-buttons-bar`"
 				:boundary="containerElement"
 				placement="auto"
@@ -164,6 +159,12 @@ import {
 import Forwarder from './Forwarder.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
+// eslint-disable-next-line n/no-extraneous-import
+import { frequently, EmojiIndex as EmojiIndexFactory } from 'emoji-mart-vue-fast'
+// eslint-disable-next-line n/no-extraneous-import
+import data from 'emoji-mart-vue-fast/data/all.json'
+
+const EmojiIndex = new EmojiIndexFactory(data)
 
 export default {
 	name: 'MessageButtonsBar',
@@ -184,7 +185,6 @@ export default {
 		Reply,
 		NcEmojiPicker,
 	},
-
 	props: {
 		token: {
 			type: String,
@@ -317,6 +317,12 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+	},
+
+	data() {
+		return {
+			frequentlyUsedEmojis: [],
+		}
 	},
 
 	computed: {
@@ -478,6 +484,7 @@ export default {
 		},
 
 		onEmojiPickerOpen() {
+			this.updateFrequentlyUsedEmojis()
 			this.$emit('update:isEmojiPickerOpen', true)
 		},
 
@@ -486,6 +493,7 @@ export default {
 		},
 
 		openReactionsMenu() {
+			this.updateFrequentlyUsedEmojis()
 			this.$emit('update:isReactionsMenuOpen', true)
 		},
 
@@ -507,6 +515,12 @@ export default {
 
 		closeReactionsMenu() {
 			this.$emit('update:isReactionsMenuOpen', false)
+		},
+
+		updateFrequentlyUsedEmojis() {
+			this.frequentlyUsedEmojis = frequently.get(5).map(emojiStrings => {
+				return EmojiIndex.emoji(emojiStrings).native
+			})
 		},
 	},
 }
