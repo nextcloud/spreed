@@ -30,7 +30,7 @@
 		"@nextcloud/router": "^2.0.0",
 		"@nextcloud/vue": "^7.0.0-beta.7",
 		"@nextcloud/vue-dashboard": "^2.0.1",
-		"@nextcloud/vue-richtext": "^2.0.3",
+		"@nextcloud/vue-richtext": "^2.0.4",
 		"attachmediastream": "^2.1.0",
 		"color.js": "^1.2.0",
 		"crypto-js": "^4.1.1",
