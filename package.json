@@ -41,7 +41,7 @@
 		"extendable-media-recorder-wav-encoder": "^7.0.76",
 		"extendable-media-recorder-wav-encoder-worker": "^8.0.69",
 		"hark": "^1.2.3",
-		"leaflet": "^1.9.1",
+		"leaflet": "^1.9.2",
 		"leaflet-defaulticon-compatibility": "^0.1.1",
 		"lodash": "^4.17.21",
 		"mockconsole": "0.0.1",
