@@ -119,8 +119,10 @@ let failedToStartCall = null
 /**
  * @param {object} signaling The signaling object
  * @param {object} configuration Media to connect with
+ * @param {boolean} silent Whether the call should trigger a notifications and
+ * sound for other participants or not
  */
-function startCall(signaling, configuration) {
+function startCall(signaling, configuration, silent) {
 	let flags = PARTICIPANT.CALL_FLAG.IN_CALL
 	if (configuration) {
 		if (configuration.audio) {
@@ -131,7 +133,7 @@ function startCall(signaling, configuration) {
 		}
 	}
 
-	signaling.joinCall(pendingJoinCallToken, flags).then(() => {
+	signaling.joinCall(pendingJoinCallToken, flags, silent).then(() => {
 		startedCall(flags)
 	}).catch(error => {
 		failedToStartCall(error)
@@ -170,10 +172,12 @@ async function signalingJoinConversation(token, sessionId) {
  *
  * @param {string} token Conversation to join the call
  * @param {number} flags Bitwise combination of PARTICIPANT.CALL_FLAG
+ * @param {boolean} silent Whether the call should trigger a notifications and
+ * sound for other participants or not
  * @return {Promise<void>} Resolved with the actual flags based on the
  *          available media
  */
-async function signalingJoinCall(token, flags) {
+async function signalingJoinCall(token, flags, silent) {
 	if (tokensInSignaling[token]) {
 		pendingJoinCallToken = token
 
@@ -219,13 +223,13 @@ async function signalingJoinCall(token, flags) {
 				webRtc.off('localMediaStarted', startCallOnceLocalMediaStarted)
 				webRtc.off('localMediaError', startCallOnceLocalMediaError)
 
-				startCall(_signaling, configuration)
+				startCall(_signaling, configuration, silent)
 			}
 			const startCallOnceLocalMediaError = () => {
 				webRtc.off('localMediaStarted', startCallOnceLocalMediaStarted)
 				webRtc.off('localMediaError', startCallOnceLocalMediaError)
 
-				startCall(_signaling, null)
+				startCall(_signaling, null, silent)
 			}
 
 			// ".once" can not be used, as both handlers need to be removed when
