@@ -133,12 +133,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "20476bc52a77f41fbebdb95ecdc6dbe290263305"
+                "reference": "43944a3cec16f7faba2f648665a08d54e2d93507"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/20476bc52a77f41fbebdb95ecdc6dbe290263305",
-                "reference": "20476bc52a77f41fbebdb95ecdc6dbe290263305",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/43944a3cec16f7faba2f648665a08d54e2d93507",
+                "reference": "43944a3cec16f7faba2f648665a08d54e2d93507",
                 "shasum": ""
             },
             "require": {
@@ -165,9 +165,10 @@
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
             "support": {
+                "issues": "https://github.com/nextcloud-deps/ocp/issues",
                 "source": "https://github.com/nextcloud-deps/ocp/tree/stable25"
             },
-            "time": "2022-10-01T01:06:18+00:00"
+            "time": "2022-10-04T01:00:11+00:00"
         },
         {
             "name": "psr/container",
