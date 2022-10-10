@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.0-rc.4 – 2022-10-10
+### Fixed
+- Fix call button missing on Safari for iPadOS
+- Fix silent call not working from web
+
 ## 15.0.0-rc.3 – 2022-10-10
 ### Changed
 - Move all checkboxes to NcCheckboxRadioSwitch component so the UI doesn't break
