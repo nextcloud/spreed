@@ -264,12 +264,13 @@ Signaling.Base.prototype._joinCallSuccess = function(/* token */) {
 	// Override in subclasses if necessary.
 }
 
-Signaling.Base.prototype.joinCall = function(token, flags) {
+Signaling.Base.prototype.joinCall = function(token, flags, silent) {
 	return new Promise((resolve, reject) => {
 		this._trigger('beforeJoinCall', [token])
 
 		axios.post(generateOcsUrl('apps/spreed/api/v4/call/{token}', { token }), {
 			flags,
+			silent,
 		})
 			.then(function() {
 				this.currentCallToken = token
