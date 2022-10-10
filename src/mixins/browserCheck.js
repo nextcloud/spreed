@@ -37,9 +37,12 @@ const browserCheck = {
 		},
 	},
 	computed: {
+		parser() {
+			return new UAParser()
+		},
+
 		browser() {
-			const parser = new UAParser()
-			return parser.getBrowser()
+			return this.parser.getBrowser()
 		},
 
 		isFirefox() {
@@ -61,8 +64,28 @@ const browserCheck = {
 			return this.browser.name === 'IE' || this.browser.name === 'IEMobile'
 		},
 
+		browserVersion() {
+			if (this.browser.version) {
+				return this.browser.version
+			}
+
+			if (this.browser.name === 'Safari') {
+				// Workaround for https://github.com/faisalman/ua-parser-js/issues/599
+				const match = this.parser.getUA().match(' Version/([0-9.,]+) ')
+				if (match) {
+					return match[1]
+				}
+			}
+
+			return undefined
+		},
+
 		majorVersion() {
-			return parseInt(this.browser.version.split('.')[0], 10)
+			if (this.browserVersion) {
+				return parseInt(this.browserVersion.split('.')[0], 10)
+			}
+
+			return 0
 		},
 
 		isFullySupported() {
