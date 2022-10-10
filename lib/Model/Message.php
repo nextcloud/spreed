@@ -175,7 +175,7 @@ class Message {
 		if ($format === 'json' && empty($reactions)) {
 			// Cheating here to make sure the reactions array is always a
 			// JSON object on the API, even when there is no reaction at all.
-			$reactions = new \StdClass();
+			$reactions = new \stdClass();
 		}
 
 		$data = [
