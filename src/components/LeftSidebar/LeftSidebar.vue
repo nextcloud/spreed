@@ -59,10 +59,15 @@
 						</template>
 						<template v-if="searchResultsUsers.length !== 0">
 							<NcAppNavigationCaption :title="t('spreed', 'Users')" />
-							<li v-if="searchResultsUsers.length !== 0" role="presentation">
-								<ConversationsOptionsList :items="searchResultsUsers"
-									@click="createAndJoinConversation" />
-							</li>
+							<NcListItem v-for="item of searchResultsUsers"
+								:key="item.id"
+								:title="item.label"
+								@click="createAndJoinConversation(item)">
+								<template #icon>
+									<ConversationIcon :item="iconData(item)"
+										:disable-menu="true" />
+								</template>
+							</NcListItem>
 						</template>
 						<template v-if="!showStartConversationsOptions">
 							<NcAppNavigationCaption v-if="searchResultsUsers.length === 0"
@@ -74,10 +79,15 @@
 					<template v-if="showStartConversationsOptions">
 						<template v-if="searchResultsGroups.length !== 0">
 							<NcAppNavigationCaption :title="t('spreed', 'Groups')" />
-							<li v-if="searchResultsGroups.length !== 0" role="presentation">
-								<ConversationsOptionsList :items="searchResultsGroups"
-									@click="createAndJoinConversation" />
-							</li>
+							<NcListItem v-for="item of searchResultsGroups"
+								:key="item.id"
+								:title="item.label"
+								@click="createAndJoinConversation(item)">
+								<template #icon>
+									<ConversationIcon :item="iconData(item)"
+										:disable-menu="true" />
+								</template>
+							</NcListItem>
 						</template>
 
 						<template v-if="searchResultsCircles.length !== 0">
@@ -138,6 +148,8 @@ import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
+import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
+import ConversationIcon from '../ConversationIcon.vue'
 
 export default {
 
@@ -153,6 +165,8 @@ export default {
 		NewGroupConversation,
 		Conversation,
 		LoadingPlaceholder,
+		NcListItem,
+		ConversationIcon,
 	},
 
 	mixins: [
@@ -547,6 +561,20 @@ export default {
 			}
 			if (to.name === 'conversation') {
 				this.$store.dispatch('joinConversation', { token: to.params.token })
+			}
+		},
+
+		iconData(item) {
+			if (item.source === 'users') {
+				return {
+					type: CONVERSATION.TYPE.ONE_TO_ONE,
+					displayName: item.label,
+					name: item.id,
+				}
+			}
+			return {
+				type: CONVERSATION.TYPE.GROUP,
+				objectType: item.source,
 			}
 		},
 	},
