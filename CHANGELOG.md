@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.0-rc.3 – 2022-10-10
+### Changed
+- Move all checkboxes to NcCheckboxRadioSwitch component so the UI doesn't break
+- Reorganize the conversation settings
+
+### Fixed
+- Fix chats not getting marked as read with reactions
+
 ## 15.0.0-rc.2 – 2022-09-29
 ### Added
 - Commands to monitor calls and a single room
