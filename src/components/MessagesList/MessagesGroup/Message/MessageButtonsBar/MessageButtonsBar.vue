@@ -159,9 +159,9 @@ import {
 import Forwarder from './Forwarder.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
-// eslint-disable-next-line n/no-extraneous-import
+
+// Keep version in sync with @nextcloud/vue in case of issues
 import { frequently, EmojiIndex as EmojiIndexFactory } from 'emoji-mart-vue-fast'
-// eslint-disable-next-line n/no-extraneous-import
 import data from 'emoji-mart-vue-fast/data/all.json'
 
 const EmojiIndex = new EmojiIndexFactory(data)
