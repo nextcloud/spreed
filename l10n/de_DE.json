@@ -854,7 +854,7 @@
     "Also open to guest app users" : "Auch für Gast-App-Benutzer öffnen",
     "Error occurred when opening or limiting the conversation" : "Es ist ein Fehler beim Öffnen oder Einschränken der Unterhaltung aufgetreten",
     "Enabling the lobby will remove non-moderators from the ongoing call." : "Durch Aktivieren der Lobby werden Nicht-Moderatoren aus dem laufenden Anruf entfernt.",
-    "Enable lobby, restricting the conversation to moderators" : "Lobby aktivieren, Konversation auf Moderatoren beschränken",
+    "Enable lobby, restricting the conversation to moderators" : "Lobby aktivieren, Unterhaltung auf Moderatoren beschränken",
     "Meeting start time" : "Meeting-Startzeit",
     "Start time (optional)" : "Startzeit (optional)",
     "Error occurred when restricting the conversation to moderator" : "Es ist ein Fehler beim Beschränken der Unterhaltung auf den Moderator aufgetreten",
