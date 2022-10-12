@@ -27,6 +27,7 @@ namespace OCA\Talk\Dashboard;
 
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Manager;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
 use OCP\Dashboard\IAPIWidget;
@@ -131,7 +132,9 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		$rooms = array_filter($rooms, static function (Room $room) use ($userId) {
 			$participant = $room->getParticipant($userId);
 			$attendee = $participant->getAttendee();
-			return $room->getLastMessage() && $room->getLastMessage()->getId() > $attendee->getLastReadMessage();
+			return $room->getCallFlag() !== Participant::FLAG_DISCONNECTED
+				|| $attendee->getLastMentionMessage() > $attendee->getLastReadMessage()
+				|| ($room->getType() === Room::TYPE_ONE_TO_ONE && $room->getLastMessage() && $room->getLastMessage()->getId() > $attendee->getLastReadMessage());
 		});
 
 		uasort($rooms, [$this, 'sortRooms']);
@@ -168,6 +171,12 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 
 				$subtitle = str_replace($placeholders, $replacements, $message->getMessage());
 			}
+		}
+
+		if ($room->getCallFlag() !== Participant::FLAG_DISCONNECTED) {
+			$subtitle = $this->l10n->t('Call in progress');
+		} elseif ($participant->getAttendee()->getLastMentionMessage() > $participant->getAttendee()->getLastReadMessage()) {
+			$subtitle = $this->l10n->t('You were mentioned');
 		}
 
 		return new WidgetItem(
@@ -207,6 +216,10 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	}
 
 	protected function sortRooms(Room $roomA, Room $roomB): int {
-		return $roomA->getLastActivity() < $roomB->getLastActivity() ? -1 : 1;
+		if ($roomA->getCallFlag() !== $roomB->getCallFlag()) {
+			return $roomA->getCallFlag() !== Participant::FLAG_DISCONNECTED ? -1 : 1;
+		}
+
+		return $roomA->getLastActivity() >= $roomB->getLastActivity() ? -1 : 1;
 	}
 }
