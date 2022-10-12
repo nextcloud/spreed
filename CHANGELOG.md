@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.0 – 2022-10-18
+### Added
+- 🌏 Show link previews for chat messages with links
+- 🛂 Chat permission
+- 📊 Simple polls
+- 📴 "Silent call" for group/public calls
+- 🔔 Allow to re-notify a participant for a call
+- 🔕 "Silent send" for chat messages
+- 🔍 Search for messages in mobile apps
+- 📵 Allow to disable calling functionality
+- 📞 Allow SIP dial-in without individual user PINs
+- 🗒️ Allow to create new files from within the chat
+- 💻 New CLI commands for devops to monitor calls and rooms
+
 ## 15.0.0-rc.5 – 2022-10-13
 ### Fixed
 - Fix frequent emoji list breaking due to multiple emoji-data versions
