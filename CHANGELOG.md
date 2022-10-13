@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.0-rc.5 – 2022-10-13
+### Fixed
+- Fix frequent emoji list breaking due to multiple emoji-data versions
+- Keep emoji picker open even when hovering another message
+- Adjust dashboard API list to be the same as in the web
+- Upgrade to @nextcloud/vue v7.0.0
+
 ## 15.0.0-rc.4 – 2022-10-10
 ### Fixed
 - Fix call button missing on Safari for iPadOS
