@@ -152,7 +152,9 @@ the main body of the message as well as a quote.
 				<NcEmojiPicker v-if="canReact && showMessageButtonsBar"
 					:per-line="5"
 					:container="`#message_${id}`"
-					@select="handleReactionClick">
+					@select="handleReactionClick"
+					@after-show="onEmojiPickerOpen"
+					@after-hide="onEmojiPickerClose">
 					<NcButton class="reaction-button"
 						:aria-label="t('spreed', 'Add more reactions')">
 						<template #icon>
@@ -401,7 +403,10 @@ export default {
 			// whether the message was seen, only used if this was marked as last read message
 			seen: false,
 			isActionMenuOpen: false,
+			// Right side bottom bar
 			isEmojiPickerOpen: false,
+			// Left side follow-up reaction
+			isFollowUpEmojiPickerOpen: false,
 			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
 			detailedReactionsLoading: false,
@@ -570,7 +575,7 @@ export default {
 		},
 
 		showMessageButtonsBar() {
-			return !this.isSystemMessage && !this.isTemporary && (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isReactionsMenuOpen || this.isForwarderOpen)
+			return !this.isSystemMessage && !this.isTemporary && (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isFollowUpEmojiPickerOpen || this.isReactionsMenuOpen || this.isForwarderOpen)
 		},
 
 		isTemporaryUpload() {
@@ -733,6 +738,14 @@ export default {
 			} catch {
 				this.detailedReactionsLoading = false
 			}
+		},
+
+		onEmojiPickerOpen() {
+			this.isFollowUpEmojiPickerOpen = true
+		},
+
+		onEmojiPickerClose() {
+			this.isFollowUpEmojiPickerOpen = false
 		},
 
 		async handleReactionClick(clickedEmoji) {
