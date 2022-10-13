@@ -12,11 +12,6 @@ on:
       - 'composer.json'
       - 'composer.lock'
 
-  push:
-    branches:
-      - master
-      - stable*
-
 env:
   APP_NAME: spreed
 
