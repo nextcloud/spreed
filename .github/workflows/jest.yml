@@ -2,10 +2,10 @@ name: Jest
 
 on:
   pull_request:
-  push:
-    branches:
-      - master
-      - stable*
+
+concurrency:
+  group: jest-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   build:
