@@ -3,6 +3,10 @@ name: Static analysis
 on:
   pull_request:
 
+concurrency:
+  group: psalm-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   static-analysis:
     runs-on: ubuntu-latest

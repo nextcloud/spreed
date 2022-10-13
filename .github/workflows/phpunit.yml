@@ -12,6 +12,10 @@ on:
       - 'composer.json'
       - 'composer.lock'
 
+concurrency:
+  group: phpunit-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 env:
   APP_NAME: spreed
 
