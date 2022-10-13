@@ -29,7 +29,7 @@ Feature: integration/dashboard
     And user "participant2" joins room "call room" with 200 (v4)
     And user "participant2" joins call "call room" with 200 (v4)
     Then user "participant1" sees the following entries for dashboard widgets "spreed" (v1)
-      | title                    | subtitle                                  | link            | iconUrl                                    | sinceId |
-      | participant2-displayname |  Hello                                    | one-to-one room | {$BASE_URL}index.php/avatar/participant2/64 |         |
-      | group room               |  Hello group room                         | group room      | {$BASE_URL}core/img/actions/group.svg       |         |
-      | call room                |  @participant2-displayname started a call | call room       | {$BASE_URL}core/img/actions/public.svg      |         |
+      | title                    | subtitle            | link            | iconUrl                                    | sinceId |
+      | call room                |  Call in progress   | call room       | {$BASE_URL}core/img/actions/public.svg      |         |
+      | group room               |  You were mentioned | group room      | {$BASE_URL}core/img/actions/group.svg       |         |
+      | participant2-displayname |  Hello              | one-to-one room | {$BASE_URL}index.php/avatar/participant2/64 |         |

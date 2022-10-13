@@ -190,6 +190,7 @@ export default {
 				})
 
 				if (importantRooms.length) {
+					// FIXME unread 1-1 conversations are not sorted like unread mentions in group chats
 					importantRooms.sort(propertySort(['-hasCall', '-unreadMention', '-lastActivity']))
 					this.roomOptions = importantRooms.slice(0, 7)
 					this.hasImportantConversations = true
