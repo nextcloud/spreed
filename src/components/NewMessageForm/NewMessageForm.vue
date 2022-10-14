@@ -120,6 +120,7 @@
 						:user-data="userData"
 						:placeholder-text="placeholderText"
 						:aria-label="placeholderText"
+						@paste="handlePastedFiles"
 						@submit="handleSubmit({ silent: false })"
 						@update:value="parsedText = arguments[0]" />
 				</div>
@@ -238,6 +239,7 @@ import Folder from 'vue-material-design-icons/Folder.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import TemplatePreview from './TemplatePreview.vue'
+import { fetchClipboardContent } from '../../utils/clipboard.js'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -659,9 +661,14 @@ export default {
 		 * Handles files pasting event
 		 *
 		 * @param {File[] | FileList} files pasted files list
+		 * @param e
 		 */
-		async handlePastedFiles(files) {
-			await this.handleFiles(files, true)
+		async handlePastedFiles(e) {
+			e.preventDefault()
+			const content = fetchClipboardContent(e)
+			if (content.kind === 'file') {
+				this.handleFiles(content.files, true)
+			}
 		},
 
 		/**
