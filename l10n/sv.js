@@ -625,6 +625,8 @@ OC.L10N.register(
     "Conversation name" : "Konversationens namn",
     "Search conversations or users" : "Sök konversationer eller användare",
     "You are currently waiting in the lobby" : "Du väntar för närvarande i lobbyn",
+    "No microphone available" : "Ingen mikrofon tillgänglig",
+    "No camera available" : "Ingen kamera tillgänglig",
     "Unread messages" : "Olästa meddelanden",
     "Message sent" : "Meddelande skickat",
     "Reply" : "Svara",
