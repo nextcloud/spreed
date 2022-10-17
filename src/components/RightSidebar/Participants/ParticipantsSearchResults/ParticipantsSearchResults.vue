@@ -1,5 +1,6 @@
 <!--
   - @copyright Copyright (c) 2020 Marco Ambrosini <marcoambrosini@icloud.com>
+  - @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
@@ -34,7 +35,7 @@
 				@click="handleClickParticipant" />
 		</template>
 
-		<template v-if="addableEmails.length !== 0">
+		<template v-if="addableEmails.length !== 0 && publicRoomsEnabled">
 			<NcAppNavigationCaption :title="t('spreed', 'Add emails')" />
 			<ParticipantsList :items="addableEmails"
 				@click="handleClickParticipant" />
@@ -102,6 +103,7 @@ import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigati
 import Hint from '../../../Hint.vue'
 import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'ParticipantsSearchResults',
@@ -161,6 +163,12 @@ export default {
 			type: String,
 			default: '',
 		},
+	},
+
+	data() {
+		return {
+			publicRoomsEnabled: loadState('spreed', 'public_rooms_allowed'),
+		}
 	},
 
 	computed: {

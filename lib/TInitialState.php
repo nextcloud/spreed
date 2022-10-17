@@ -107,6 +107,11 @@ trait TInitialState {
 		);
 
 		$this->initialState->provideInitialState(
+			'public_rooms_allowed',
+			$this->serverConfig->getAppValue('spreed', 'public_rooms_allowed', 'yes') === 'yes'
+		);
+
+		$this->initialState->provideInitialState(
 			'guests_accounts_enabled',
 			$appManager->isEnabledForUser('guests', $user)
 		);
