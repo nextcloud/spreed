@@ -581,6 +581,11 @@ export default {
 						return true
 					},
 				},
+				remoteVideoBlocker: {
+					isVideoEnabled() {
+						return true
+					},
+				},
 				screenVisible: false,
 			}
 		},
@@ -823,20 +828,11 @@ export default {
 		border: 1px solid #00FF41;
 		color: #00FF41;
 	}
-	font-size: 30px;
-	text-align: center;
-	vertical-align: middle;
 	position: relative;
 
 	&--self {
 		background-size: cover !important;
-
-		& > div {
-			width: 100%;
-			bottom: calc(-100% + 50px);
-			position: relative;
-			left: calc(50% - 88px);
-		}
+		border-radius: calc(var(--default-clickable-area) / 2);
 	}
 
 	img {
@@ -844,6 +840,10 @@ export default {
 		height: 100%;
 		width: 100%;
 		border-radius: calc(var(--default-clickable-area)/2);
+	}
+
+	.wrapper {
+		position: absolute;
 	}
 }
 
