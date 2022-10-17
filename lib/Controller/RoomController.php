@@ -4,6 +4,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
  *
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Joas Schilling <coding@schilljs.com>
@@ -1115,6 +1116,11 @@ class RoomController extends AEnvironmentAwareController {
 
 			$this->participantService->addCircle($this->room, $circle, $participants);
 		} elseif ($source === 'emails') {
+			// E-mails cannot be added if public rooms are disabled.
+			if ($this->config->getAppValue('spreed', 'public_rooms_allowed', 'yes') === 'no') {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
+
 			$data = [];
 			if ($this->roomService->setType($this->room, Room::TYPE_PUBLIC)) {
 				$data = ['type' => $this->room->getType()];
