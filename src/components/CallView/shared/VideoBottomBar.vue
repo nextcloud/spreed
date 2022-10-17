@@ -26,7 +26,7 @@
 			<div v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand.state"
 				class="bottom-bar__statusIndicator">
 				<HandBackLeft class="handIndicator"
-					size="18px"
+					:size="18"
 					fill-color="#ffffff" />
 			</div>
 		</transition>
