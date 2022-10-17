@@ -5,8 +5,10 @@
 
 name: Lint
 
-on:
-  pull_request:
+on: pull_request
+
+permissions:
+  contents: read
 
 concurrency:
   group: lint-eslint-${{ github.head_ref || github.run_id }}
