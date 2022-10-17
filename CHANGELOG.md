@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - 📵 Allow to disable calling functionality
 - 📞 Allow SIP dial-in without individual user PINs
 - 🗒️ Allow to create new files from within the chat
+- ⏳ Expiration for chat messages
 - 💻 New CLI commands for devops to monitor calls and rooms
 
 ## 15.0.0-rc.5 – 2022-10-13
