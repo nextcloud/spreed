@@ -20,7 +20,8 @@
 -->
 
 <template>
-	<NcPopover trigger="hover">
+	<NcPopover trigger="hover"
+		:focus-trap="false">
 		<button slot="trigger"
 			tabindex="0"
 			class="poll-voters-details">
