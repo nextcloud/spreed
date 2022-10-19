@@ -99,6 +99,8 @@ export default {
 	border: none;
 	padding: 0;
 	margin-right: 8px;
+    align-items: center;
+	padding: 4px;
 
 	&__popover {
 		padding: 8px;
