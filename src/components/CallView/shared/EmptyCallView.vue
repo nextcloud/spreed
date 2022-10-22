@@ -122,11 +122,10 @@ export default {
 			if (this.isConnecting) {
 				return t('spreed', 'Connecting …')
 			}
-			let callee = 'others'
 			if (this.isOneToOneConversation()) {
-				callee = this.getDisplayName()
+				return t('spreed', 'Waiting for {user} to join the call', { user: this.getDisplayName() })
 			}
-			return t('spreed', `Waiting for ${callee} to join the call …`)
+			return t('spreed', `Waiting for others to join the call …`)
 		},
 
 		message() {
