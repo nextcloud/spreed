@@ -466,7 +466,6 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		$this->preloadShares($comments);
-		$comments = $this->filterHistorySince($comments, $attendee);
 
 		$i = 0;
 		$messages = $commentIdToIndex = $parentIds = [];
