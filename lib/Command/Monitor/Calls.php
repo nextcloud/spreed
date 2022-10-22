@@ -59,7 +59,7 @@ class Calls extends Base {
 		$query->select('r.token', $query->func()->count('*', 'num_attendees'))
 			->from('talk_attendees', 'a')
 			->leftJoin('a', 'talk_rooms', 'r', $query->expr()->eq('a.room_id', 'r.id'))
-			->where($query->expr()->in('a.id', $query->createFunction('(' . $subQuery->getSQL() . ')')))
+			->where($query->expr()->in('a.id', $query->createFunction($subQuery->getSQL())))
 			->groupBy('r.token');
 
 		$data = [];
