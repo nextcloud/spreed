@@ -83,12 +83,20 @@ export default {
 			return this.conversation && this.conversation.type === CONVERSATION.TYPE.PUBLIC
 		},
 
+		isOneToOneConversation() {
+			return this.conversation && this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+		},
+
 		isPasswordRequestConversation() {
 			return this.conversation && this.conversation.objectType === 'share:password'
 		},
 
 		isFileConversation() {
 			return this.conversation && this.conversation.objectType === 'file'
+		},
+
+		getDisplayName() {
+			return this.conversation && this.conversation.displayName;
 		},
 
 		canInviteOthers() {
@@ -114,7 +122,11 @@ export default {
 			if (this.isConnecting) {
 				return t('spreed', 'Connecting …')
 			}
-			return t('spreed', 'Waiting for others to join the call …')
+			let callee = 'others'
+			if (this.isOneToOneConversation()) {
+				callee = this.getDisplayName()
+			}
+			return t('spreed', `Waiting for ${callee} to join the call …`)
 		},
 
 		message() {
