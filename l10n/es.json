@@ -652,6 +652,7 @@
     "It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end." : "Es muy recomendable configurar un caché distribuido cuando se usa Nextcloud Talk junto con un motor de alto rendimiento.",
     "Don't warn about connectivity issues in calls with more than 4 participants" : "No avisar de problemas de conectividad en llamadas con más de 4 participantes",
     "STUN server URL" : "URL del servidor STUN",
+    "The server address is invalid" : "La dirección del servidor no es válida",
     "STUN servers" : "Servidores STUN",
     "Add a new STUN server" : "Agregar un servidor STUN nuevo ",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Un servidor STUN se usa para determinar la dirección IP pública de participantes que estén tras un router.",
