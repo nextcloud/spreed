@@ -63,7 +63,7 @@
 		"vue2-leaflet": "^2.7.1",
 		"vuex": "^3.6.2",
 		"webdav": "^4.11.0",
-		"webrtc-adapter": "^8.1.2",
+		"webrtc-adapter": "^8.2.0",
 		"webrtcsupport": "^2.2.0",
 		"wildemitter": "^1.2.1",
 		"workbox-webpack-plugin": "^6.5.4"
