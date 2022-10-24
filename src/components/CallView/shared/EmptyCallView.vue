@@ -95,8 +95,8 @@ export default {
 			return this.conversation && this.conversation.objectType === 'file'
 		},
 
-		getDisplayName() {
-			return this.conversation && this.conversation.displayName;
+		conversationDisplayName() {
+			return this.conversation && this.conversation.displayName
 		},
 
 		canInviteOthers() {
@@ -122,10 +122,10 @@ export default {
 			if (this.isConnecting) {
 				return t('spreed', 'Connecting …')
 			}
-			if (this.isOneToOneConversation()) {
-				return t('spreed', 'Waiting for {user} to join the call', { user: this.getDisplayName() })
+			if (this.isOneToOneConversation) {
+				return t('spreed', 'Waiting for {user} to join the call', { user: this.conversationDisplayName })
 			}
-			return t('spreed', `Waiting for others to join the call …`)
+			return t('spreed', 'Waiting for others to join the call …')
 		},
 
 		message() {
