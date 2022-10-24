@@ -557,6 +557,7 @@ OC.L10N.register(
     "Calls are not supported in your browser" : "אין תמיכה בשיחות בדפדפן שלך",
     "Access to microphone was denied" : "הגישה למיקרופון נדחתה",
     "An error occurred while fetching the participants" : "אירעה שגיאה במהלך קבלת המשתתפים",
+    "Media" : "מדיה",
     "Files" : "קבצים",
     "Polls" : "סקרים",
     "Locations" : "מיקומים",
