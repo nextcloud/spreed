@@ -167,61 +167,11 @@
 				@click.stop="toggleHandRaised">
 				<template #icon>
 					<!-- The following icon is much bigger than all the others
-							so we reduce its size -->
+						so we reduce its size -->
 					<HandBackLeft :size="18"
 						fill-color="#ffffff" />
 				</template>
 			</NcButton>
-			<NcActions v-if="showActions"
-				v-tooltip="t('spreed', 'More actions')"
-				:container="container"
-				:aria-label="t('spreed', 'More actions')">
-				<template #icon>
-					<DotsHorizontal :size="20"
-						fill-color="#ffffff" />
-				</template>
-
-				<NcActionButton :close-after-click="true"
-					@click="toggleHandRaised">
-					<!-- The following icon is much bigger than all the others
-						so we reduce its size -->
-					<template #icon>
-						<HandBackLeft :size="18" />
-					</template>
-					{{ raiseHandButtonLabel }}
-				</NcActionButton>
-				<NcActionButton v-if="isVirtualBackgroundAvailable"
-					:close-after-click="true"
-					@click="toggleVirtualBackground">
-					<template #icon>
-						<BlurOff v-if="isVirtualBackgroundEnabled"
-							:size="20" />
-						<Blur v-else
-							:size="20" />
-					</template>
-					{{ toggleVirtualBackgroundButtonLabel }}
-				</NcActionButton>
-				<!-- Call layout switcher -->
-				<NcActionButton v-if="isInCall"
-					:close-after-click="true"
-					@click="changeView">
-					<template #icon>
-						<GridView v-if="!isGrid"
-							:size="20" />
-						<PromotedView v-else
-							:size="20" />
-					</template>
-					{{ changeViewText }}
-				</NcActionButton>
-				<NcActionSeparator />
-				<NcActionButton :close-after-click="true"
-					@click="showSettings">
-					<template #icon>
-						<Cog :size="20" />
-					</template>
-					{{ t('spreed', 'Devices settings') }}
-				</NcActionButton>
-			</NcActions>
 		</div>
 	</div>
 </template>
@@ -231,31 +181,26 @@ import escapeHtml from 'escape-html'
 import { emit } from '@nextcloud/event-bus'
 import { showMessage } from '@nextcloud/dialogs'
 import CancelPresentation from '../../missingMaterialDesignIcons/CancelPresentation.vue'
-import Cog from 'vue-material-design-icons/Cog.vue'
-import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import GridView from '../../missingMaterialDesignIcons/GridView.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import Monitor from 'vue-material-design-icons/Monitor.vue'
 import PresentToAll from '../../missingMaterialDesignIcons/PresentToAll.vue'
-import PromotedView from '../../missingMaterialDesignIcons/PromotedView.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
-import Blur from 'vue-material-design-icons/Blur.vue'
-import BlurOff from 'vue-material-design-icons/BlurOff.vue'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import { PARTICIPANT } from '../../../constants.js'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
 import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import { callAnalyzer } from '../../../utils/webrtc/index.js'
 import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer.js'
 import isInCall from '../../../mixins/isInCall.js'
+import Blur from 'vue-material-design-icons/Blur.vue'
+import BlurOff from 'vue-material-design-icons/BlurOff.vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 
 export default {
 
@@ -267,22 +212,17 @@ export default {
 	components: {
 		NetworkStrength2Alert,
 		NcPopover,
-		NcActions,
-		NcActionSeparator,
-		NcActionButton,
-		NcButton,
 		CancelPresentation,
-		Cog,
-		DotsHorizontal,
-		GridView,
 		HandBackLeft,
 		Microphone,
 		MicrophoneOff,
 		PresentToAll,
-		PromotedView,
 		VideoIcon,
 		VideoOff,
 		Monitor,
+		NcButton,
+		NcActions,
+		NcActionButton,
 		Blur,
 		BlurOff,
 	},
@@ -337,19 +277,6 @@ export default {
 	},
 
 	computed: {
-		raiseHandButtonLabel() {
-			if (!this.model.attributes.raisedHand.state) {
-				if (this.disableKeyboardShortcuts) {
-					return t('spreed', 'Raise hand')
-				}
-				return t('spreed', 'Raise hand (R)')
-			}
-			if (this.disableKeyboardShortcuts) {
-				return t('spreed', 'Lower hand')
-			}
-			return t('spreed', 'Lower hand (R)')
-		},
-
 		isVirtualBackgroundAvailable() {
 			return this.model.attributes.virtualBackgroundAvailable
 		},
@@ -667,18 +594,6 @@ export default {
 			return tooltip
 		},
 
-		changeViewText() {
-			if (this.isGrid) {
-				return t('spreed', 'Speaker view')
-			} else {
-				return t('spreed', 'Grid view')
-			}
-		},
-
-		isGrid() {
-			return this.$store.getters.isGrid
-		},
-
 		disableKeyboardShortcuts() {
 			return OCP.Accessibility.disableKeyboardShortcuts()
 		},
@@ -730,10 +645,6 @@ export default {
 			// round up to avoid property changes
 			const height = Math.floor(maximumVolumeIndicatorHeight * this.currentVolumeProportion)
 			this.$refs.volumeIndicator.style.height = height + 'px'
-		},
-
-		showSettings() {
-			emit('show-settings')
 		},
 
 		/**
@@ -909,11 +820,6 @@ export default {
 
 		dismissQualityWarningTooltip() {
 			this.$store.dispatch('dismissQualityWarningTooltip')
-		},
-
-		changeView() {
-			this.$store.dispatch('setCallViewMode', { isGrid: !this.isGrid })
-			this.$store.dispatch('selectedVideoPeerId', null)
 		},
 	},
 }

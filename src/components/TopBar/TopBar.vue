@@ -61,6 +61,12 @@
 			:show-actions="!isSidebar"
 			:screen-sharing-button-hidden="isSidebar"
 			:local-call-participant-model="localCallParticipantModel" />
+
+		<!-- TopBar menu -->
+		<TopBarMenu :token="token"
+			:show-actions="!isSidebar"
+			:model="localMediaModel" />
+
 		<div class="top-bar__buttons">
 			<CallButton class="top-bar__button" />
 
@@ -179,6 +185,7 @@ import userStatus from '../../mixins/userStatus.js'
 import LocalMediaControls from '../CallView/shared/LocalMediaControls.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import getParticipants from '../../mixins/getParticipants.js'
+import TopBarMenu from './TopBarMenu.vue'
 
 export default {
 	name: 'TopBar',
@@ -201,6 +208,7 @@ export default {
 		ConversationIcon,
 		LocalMediaControls,
 		Cog,
+		TopBarMenu,
 	},
 
 	mixins: [
