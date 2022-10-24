@@ -498,7 +498,7 @@ OC.L10N.register(
     "Remove from favorites" : "Вилучено з улюбленого",
     "Add to favorites" : "Додати до улюбленого",
     "Loading" : "Завантаження",
-    "No search results" : "Відсутні результати",
+    "No search results" : "Нічого не знайдено",
     "Groups" : "Групи",
     "Circles" : "Кола",
     "Unread mentions" : "Непрочитані згадки",
