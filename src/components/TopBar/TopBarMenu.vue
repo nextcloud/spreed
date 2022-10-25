@@ -20,54 +20,105 @@
 -->
 
 <template>
-	<NcActions v-if="showActions && isInCall"
-		v-tooltip="t('spreed', 'More actions')"
+	<NcActions v-if="!isSidebar"
+		v-shortkey.once="disableKeyboardShortcuts ? null : ['f']"
+		v-tooltip="t('spreed', 'Conversation actions')"
+		class="top-bar__button"
+		:aria-label="t('spreed', 'Conversation actions')"
 		:container="container"
-		:aria-label="t('spreed', 'More actions')">
-		<template #icon>
+		@shortkey.native="toggleFullscreen">
+		<!-- White icon if in call -->
+		<template v-if="isInCall" #icon>
 			<DotsHorizontal :size="20"
 				fill-color="#ffffff" />
 		</template>
-		<NcActionButton :close-after-click="true"
-			@click="toggleHandRaised">
-			<!-- The following icon is much bigger than all the others
-						so we reduce its size -->
-			<template #icon>
-				<HandBackLeft :size="18" />
-			</template>
-			{{ raiseHandButtonLabel }}
-		</NcActionButton>
-		<NcActionButton v-if="isVirtualBackgroundAvailable"
+		<NcActionButton :icon="iconFullscreen"
+			:aria-label="t('spreed', 'Toggle fullscreen')"
 			:close-after-click="true"
-			@click="toggleVirtualBackground">
-			<template #icon>
-				<BlurOff v-if="isVirtualBackgroundEnabled"
-					:size="20" />
-				<Blur v-else
-					:size="20" />
-			</template>
-			{{ toggleVirtualBackgroundButtonLabel }}
+			@click="toggleFullscreen">
+			{{ labelFullscreen }}
 		</NcActionButton>
-		<!-- Call layout switcher -->
-		<NcActionButton v-if="isInCall"
+		<NcActionSeparator v-if="showModerationOptions" />
+		<NcActionLink v-if="isFileConversation"
+			:href="linkToFile">
+			<template #icon>
+				<File :size="20" />
+			</template>
+			{{ t('spreed', 'Go to file') }}
+		</NcActionLink>
+		<template v-if="showModerationOptions">
+			<NcActionButton :close-after-click="true"
+				icon="icon-rename"
+				@click="handleRenameConversation">
+				{{ t('spreed', 'Rename conversation') }}
+			</NcActionButton>
+		</template>
+		<NcActionButton v-if="!isOneToOneConversation"
+			icon="icon-clippy"
 			:close-after-click="true"
-			@click="changeView">
-			<template #icon>
-				<GridView v-if="!isGrid"
-					:size="20" />
-				<PromotedView v-else
-					:size="20" />
-			</template>
-			{{ changeViewText }}
+			@click="handleCopyLink">
+			{{ t('spreed', 'Copy link') }}
 		</NcActionButton>
-		<NcActionSeparator />
+		<template v-if="showModerationOptions && canFullModerate && isInCall">
+			<NcActionSeparator />
+			<NcActionButton :close-after-click="true"
+				@click="forceMuteOthers">
+				<template #icon>
+					<MicrophoneOff :size="20" />
+				</template>
+				{{ t('spreed', 'Mute others') }}
+			</NcActionButton>
+		</template>
+		<NcActionSeparator v-if="showModerationOptions" />
 		<NcActionButton :close-after-click="true"
-			@click="showSettings">
+			@click="openConversationSettings">
 			<template #icon>
 				<Cog :size="20" />
 			</template>
-			{{ t('spreed', 'Devices settings') }}
+			{{ t('spreed', 'Conversation settings') }}
 		</NcActionButton>
+		<template v-if="showActions && isInCall">
+			<NcActionButton :close-after-click="true"
+				@click="toggleHandRaised">
+				<!-- The following icon is much bigger than all the others
+								so we reduce its size -->
+				<template #icon>
+					<HandBackLeft :size="18" />
+				</template>
+				{{ raiseHandButtonLabel }}
+			</NcActionButton>
+			<NcActionButton v-if="isVirtualBackgroundAvailable"
+				:close-after-click="true"
+				@click="toggleVirtualBackground">
+				<template #icon>
+					<BlurOff v-if="isVirtualBackgroundEnabled"
+						:size="20" />
+					<Blur v-else
+						:size="20" />
+				</template>
+				{{ toggleVirtualBackgroundButtonLabel }}
+			</NcActionButton>
+			<!-- Call layout switcher -->
+			<NcActionButton v-if="isInCall"
+				:close-after-click="true"
+				@click="changeView">
+				<template #icon>
+					<GridView v-if="!isGrid"
+						:size="20" />
+					<PromotedView v-else
+						:size="20" />
+				</template>
+				{{ changeViewText }}
+			</NcActionButton>
+			<NcActionSeparator />
+			<NcActionButton :close-after-click="true"
+				@click="showSettings">
+				<template #icon>
+					<Cog :size="20" />
+				</template>
+				{{ t('spreed', 'Devices settings') }}
+			</NcActionButton>
+		</template>
 	</NcActions>
 </template>
 
@@ -84,6 +135,10 @@ import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import isInCall from '../../mixins/isInCall.js'
 import Blur from 'vue-material-design-icons/Blur.vue'
 import BlurOff from 'vue-material-design-icons/BlurOff.vue'
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { callParticipantCollection } from '../../utils/webrtc/index.js'
+import { generateUrl } from '@nextcloud/router'
+import { CONVERSATION, PARTICIPANT } from '../../constants.js'
 
 export default {
 	name: 'TopBarMenu',
@@ -107,16 +162,16 @@ export default {
 
 	props: {
 		/**
-		 * The conversation token
-		 */
+			* The conversation token
+			*/
 		token: {
 			type: String,
 			required: true,
 		},
 
 		/**
-		 * The local media model
-		 */
+			* The local media model
+			*/
 		model: {
 			type: Object,
 			required: true,
@@ -125,6 +180,14 @@ export default {
 		showActions: {
 			type: Boolean,
 			default: true,
+		},
+
+		/**
+			* In the sidebar the conversation settings are hidden
+			*/
+		isSidebar: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -137,6 +200,49 @@ export default {
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
+		isFullscreen() {
+			return this.$store.getters.isFullscreen()
+		},
+
+		iconFullscreen() {
+			if (this.isInCall) {
+				return 'forced-white icon-fullscreen'
+			}
+			return 'icon-fullscreen'
+		},
+
+		labelFullscreen() {
+			if (this.isFullscreen) {
+				return t('spreed', 'Exit fullscreen (F)')
+			}
+			return t('spreed', 'Fullscreen (F)')
+		},
+
+		conversationHasSettings() {
+			return this.conversation.type === CONVERSATION.TYPE.GROUP
+			|| this.conversation.type === CONVERSATION.TYPE.PUBLIC
+		},
+
+		showModerationOptions() {
+			return !this.isOneToOneConversation && this.canModerate
+		},
+
+		isFileConversation() {
+			return this.conversation.objectType === 'file' && this.conversation.objectId
+		},
+
+		linkToFile() {
+			if (this.isFileConversation) {
+				return window.location.protocol + '//' + window.location.host + generateUrl('/f/' + this.conversation.objectId)
+			} else {
+				return ''
+			}
+		},
+
+		isOneToOneConversation() {
+			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
 
 		toggleVirtualBackgroundButtonLabel() {
@@ -182,9 +288,83 @@ export default {
 			}
 			return t('spreed', 'Lower hand (R)')
 		},
+
+		disableKeyboardShortcuts() {
+			return OCP.Accessibility.disableKeyboardShortcuts()
+		},
+
+		canFullModerate() {
+			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
+		},
+
+		canModerate() {
+			return this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
+		},
 	},
 
 	methods: {
+		handleRenameConversation() {
+			this.$store.dispatch('isRenamingConversation', true)
+			this.$store.dispatch('showSidebar')
+		},
+		forceMuteOthers() {
+			callParticipantCollection.callParticipantModels.forEach(callParticipantModel => {
+				callParticipantModel.forceMute()
+			})
+		},
+
+		fullScreenChanged() {
+			this.$store.dispatch(
+				'setIsFullscreen',
+				document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement
+			)
+		},
+
+		toggleFullscreen() {
+			if (this.isFullscreen) {
+				this.disableFullscreen()
+				this.$store.dispatch('setIsFullscreen', false)
+			} else {
+				this.enableFullscreen()
+				this.$store.dispatch('setIsFullscreen', true)
+			}
+		},
+
+		enableFullscreen() {
+			const fullscreenElem = document.getElementById('content-vue')
+
+			if (fullscreenElem.requestFullscreen) {
+				fullscreenElem.requestFullscreen()
+			} else if (fullscreenElem.webkitRequestFullscreen) {
+				fullscreenElem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
+			} else if (fullscreenElem.mozRequestFullScreen) {
+				fullscreenElem.mozRequestFullScreen()
+			} else if (fullscreenElem.msRequestFullscreen) {
+				fullscreenElem.msRequestFullscreen()
+			}
+		},
+
+		disableFullscreen() {
+			if (document.exitFullscreen) {
+				document.exitFullscreen()
+			} else if (document.webkitExitFullscreen) {
+				document.webkitExitFullscreen()
+			} else if (document.mozCancelFullScreen) {
+				document.mozCancelFullScreen()
+			} else if (document.msExitFullscreen) {
+				document.msExitFullscreen()
+			}
+		},
+
+		async handleCopyLink() {
+			try {
+				await navigator.clipboard.writeText(this.linkToConversation)
+				showSuccess(t('spreed', 'Conversation link copied to clipboard'))
+			} catch (error) {
+				showError(t('spreed', 'The link could not be copied'))
+			}
+		},
+
 		toggleVirtualBackground() {
 			if (this.model.attributes.virtualBackgroundEnabled) {
 				this.model.disableVirtualBackground()
@@ -213,10 +393,10 @@ export default {
 				}
 			)
 		},
+
+		openConversationSettings() {
+			emit('show-conversation-settings', { token: this.token })
+		},
 	},
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>
