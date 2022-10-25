@@ -32,52 +32,8 @@
 			<DotsHorizontal :size="20"
 				fill-color="#ffffff" />
 		</template>
-		<NcActionButton :icon="iconFullscreen"
-			:aria-label="t('spreed', 'Toggle fullscreen')"
-			:close-after-click="true"
-			@click="toggleFullscreen">
-			{{ labelFullscreen }}
-		</NcActionButton>
-		<NcActionSeparator v-if="showModerationOptions" />
-		<NcActionLink v-if="isFileConversation"
-			:href="linkToFile">
-			<template #icon>
-				<File :size="20" />
-			</template>
-			{{ t('spreed', 'Go to file') }}
-		</NcActionLink>
-		<template v-if="showModerationOptions">
-			<NcActionButton :close-after-click="true"
-				icon="icon-rename"
-				@click="handleRenameConversation">
-				{{ t('spreed', 'Rename conversation') }}
-			</NcActionButton>
-		</template>
-		<NcActionButton v-if="!isOneToOneConversation"
-			icon="icon-clippy"
-			:close-after-click="true"
-			@click="handleCopyLink">
-			{{ t('spreed', 'Copy link') }}
-		</NcActionButton>
-		<template v-if="showModerationOptions && canFullModerate && isInCall">
-			<NcActionSeparator />
-			<NcActionButton :close-after-click="true"
-				@click="forceMuteOthers">
-				<template #icon>
-					<MicrophoneOff :size="20" />
-				</template>
-				{{ t('spreed', 'Mute others') }}
-			</NcActionButton>
-		</template>
-		<NcActionSeparator v-if="showModerationOptions" />
-		<NcActionButton :close-after-click="true"
-			@click="openConversationSettings">
-			<template #icon>
-				<Cog :size="20" />
-			</template>
-			{{ t('spreed', 'Conversation settings') }}
-		</NcActionButton>
 		<template v-if="showActions && isInCall">
+			<!-- Raise hand -->
 			<NcActionButton :close-after-click="true"
 				@click="toggleHandRaised">
 				<!-- The following icon is much bigger than all the others
@@ -87,6 +43,7 @@
 				</template>
 				{{ raiseHandButtonLabel }}
 			</NcActionButton>
+			<!-- Blur background -->
 			<NcActionButton v-if="isVirtualBackgroundAvailable"
 				:close-after-click="true"
 				@click="toggleVirtualBackground">
@@ -98,27 +55,66 @@
 				</template>
 				{{ toggleVirtualBackgroundButtonLabel }}
 			</NcActionButton>
-			<!-- Call layout switcher -->
-			<NcActionButton v-if="isInCall"
-				:close-after-click="true"
-				@click="changeView">
-				<template #icon>
-					<GridView v-if="!isGrid"
-						:size="20" />
-					<PromotedView v-else
-						:size="20" />
-				</template>
-				{{ changeViewText }}
-			</NcActionButton>
-			<NcActionSeparator />
+			<!-- Mute others -->
+			<template v-if="showModerationOptions && canFullModerate">
+				<NcActionButton :close-after-click="true"
+					@click="forceMuteOthers">
+					<template #icon>
+						<MicrophoneOff :size="20" />
+					</template>
+					{{ t('spreed', 'Mute others') }}
+				</NcActionButton>
+			</template>
+			<!-- Device settings -->
 			<NcActionButton :close-after-click="true"
 				@click="showSettings">
 				<template #icon>
-					<Cog :size="20" />
+					<VideoIcon :size="20" />
 				</template>
 				{{ t('spreed', 'Devices settings') }}
 			</NcActionButton>
+			<NcActionSeparator />
 		</template>
+		<!-- Call layout switcher -->
+		<NcActionButton v-if="showActions && isInCall"
+			:close-after-click="true"
+			@click="changeView">
+			<template #icon>
+				<GridView v-if="!isGrid"
+					:size="20" />
+				<PromotedView v-else
+					:size="20" />
+			</template>
+			{{ changeViewText }}
+		</NcActionButton>
+		<NcActionButton :icon="iconFullscreen"
+			:aria-label="t('spreed', 'Toggle fullscreen')"
+			:close-after-click="true"
+			@click="toggleFullscreen">
+			{{ labelFullscreen }}
+		</NcActionButton>
+		<NcActionLink v-if="isFileConversation"
+			:href="linkToFile">
+			<template #icon>
+				<File :size="20" />
+			</template>
+			{{ t('spreed', 'Go to file') }}
+		</NcActionLink>
+		<NcActionSeparator v-if="showModerationOptions" />
+		<template v-if="showModerationOptions">
+			<NcActionButton :close-after-click="true"
+				icon="icon-rename"
+				@click="handleRenameConversation">
+				{{ t('spreed', 'Rename conversation') }}
+			</NcActionButton>
+		</template>
+		<NcActionButton :close-after-click="true"
+			@click="openConversationSettings">
+			<template #icon>
+				<Cog :size="20" />
+			</template>
+			{{ t('spreed', 'Conversation settings') }}
+		</NcActionButton>
 	</NcActions>
 </template>
 
@@ -135,10 +131,11 @@ import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import isInCall from '../../mixins/isInCall.js'
 import Blur from 'vue-material-design-icons/Blur.vue'
 import BlurOff from 'vue-material-design-icons/BlurOff.vue'
-import { showError, showSuccess } from '@nextcloud/dialogs'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 import { generateUrl } from '@nextcloud/router'
 import { CONVERSATION, PARTICIPANT } from '../../constants.js'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
+import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 
 export default {
 	name: 'TopBarMenu',
@@ -154,6 +151,8 @@ export default {
 		HandBackLeft,
 		Blur,
 		BlurOff,
+		VideoIcon,
+		MicrophoneOff,
 	},
 
 	mixins: [
@@ -293,6 +292,10 @@ export default {
 			return OCP.Accessibility.disableKeyboardShortcuts()
 		},
 
+		participantType() {
+			return this.conversation.participantType
+		},
+
 		canFullModerate() {
 			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
 		},
@@ -353,15 +356,6 @@ export default {
 				document.mozCancelFullScreen()
 			} else if (document.msExitFullscreen) {
 				document.msExitFullscreen()
-			}
-		},
-
-		async handleCopyLink() {
-			try {
-				await navigator.clipboard.writeText(this.linkToConversation)
-				showSuccess(t('spreed', 'Conversation link copied to clipboard'))
-			} catch (error) {
-				showError(t('spreed', 'The link could not be copied'))
 			}
 		},
 

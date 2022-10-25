@@ -188,10 +188,6 @@ export default {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
 
-		participantType() {
-			return this.conversation.participantType
-		},
-
 		token() {
 			return this.$store.getters.getToken()
 		},
