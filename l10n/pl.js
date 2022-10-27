@@ -711,6 +711,7 @@ OC.L10N.register(
     "Expand stripe" : "Rozwiń pasek",
     "Copy link" : "Kopiuj link",
     "Connecting …" : "Łączę…",
+    "Waiting for {user} to join the call" : "Oczekiwanie na {user}, aż dołączy do połączenia",
     "Waiting for others to join the call …" : "Oczekiwanie na dołączenie się pozostałych do połączenia…",
     "You can invite others in the participant tab of the sidebar" : "Możesz zapraszać inne osoby z zakładki uczestników na pasku bocznym",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Możesz zapraszać inne osoby z zakładki uczestników na pasku bocznym lub udostępnić ten link do zaproszenia!",

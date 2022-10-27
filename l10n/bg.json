@@ -709,6 +709,7 @@
     "Expand stripe" : "Разширяване на лента",
     "Copy link" : "Копирай връзката",
     "Connecting …" : "Свързване ...",
+    "Waiting for {user} to join the call" : "Изчаква се {user} да се присъедини към обаждането",
     "Waiting for others to join the call …" : "Изчаква се и други да се присъединят към обаждането ...",
     "You can invite others in the participant tab of the sidebar" : "Можете да поканите други от раздела за участници в страничната лента",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Можете да поканите други от раздела за участници на страничната лента или да споделите тази връзка, за да поканите други!",

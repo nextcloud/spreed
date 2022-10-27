@@ -711,6 +711,7 @@ OC.L10N.register(
     "Expand stripe" : "Streifen aufklappen",
     "Copy link" : "Link kopieren",
     "Connecting …" : "Verbinde …",
+    "Waiting for {user} to join the call" : "Warte darauf, dass  {user} der Unterhaltung beitritt",
     "Waiting for others to join the call …" : "Warte auf weitere Teilnehmer…",
     "You can invite others in the participant tab of the sidebar" : "Sie können andere Teilnehmer auf dem Teilnehmer-Tab der Seitenleiste einladen",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Sie können andere Teilnehmer auf dem Teilnehmer-Tab der Seitenleiste oder über diesen Link einladen!",
