@@ -26,6 +26,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Dashboard;
 
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Config;
+use OCA\Talk\Exceptions\NotAllowedToUseTalkException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -40,6 +42,8 @@ use OCP\Dashboard\Model\WidgetItem;
 use OCP\Dashboard\Model\WidgetOptions;
 use OCP\IL10N;
 use OCP\IURLGenerator;
+use OCP\IUser;
+use OCP\IUserSession;
 use OCP\Util;
 
 class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidget {
@@ -50,12 +54,21 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	protected MessageParser $messageParser;
 
 	public function __construct(
+		IUserSession $userSession,
+		Config $talkConfig,
 		IURLGenerator $url,
 		IL10N $l10n,
 		Manager $manager,
 		ParticipantService $participantService,
 		MessageParser $messageParser
 	) {
+		$user = $userSession->getUser();
+		if ($user instanceof IUser && $talkConfig->isDisabledForUser($user)) {
+			// This is dirty and will log everytime a user opens the dashboard or requests the api,
+			// so we should look for a different solution in the server.
+			throw new NotAllowedToUseTalkException();
+		}
+
 		$this->url = $url;
 		$this->l10n = $l10n;
 		$this->manager = $manager;
