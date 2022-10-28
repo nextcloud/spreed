@@ -526,13 +526,44 @@ export default {
 		window.addEventListener('resize', this.handleResize)
 		subscribe('navigation-toggled', this.handleResize)
 		this.makeGrid()
+
+		window.OCA.Talk.gridDebugInformation = this.gridDebugInformation
 	},
 	beforeDestroy() {
+		window.OCA.Talk.gridDebugInformation = () => console.debug('Not in a call')
+
 		window.removeEventListener('resize', this.handleResize)
 		unsubscribe('navigation-toggled', this.handleResize)
 	},
 
 	methods: {
+		gridDebugInformation() {
+			console.debug('Grid debug information')
+			console.debug({
+				minWidth: this.minWidth,
+				minHeight: this.minHeight,
+				videosCap: this.videosCap,
+				videosCapEnforced: this.videosCapEnforced,
+				targetAspectRatio: this.targetAspectRatio,
+				videosCount: this.videosCount,
+				videoWidth: this.videoWidth,
+				videoHeight: this.videoHeight,
+				devicePixelRatio: window.devicePixelRatio,
+				dpiFactor: this.dpiFactor,
+				dpiAwareMinWidth: this.dpiAwareMinWidth,
+				dpiAwareMinHeight: this.dpiAwareMinHeight,
+				gridAspectRatio: this.gridAspectRatio,
+				columnsMax: this.columnsMax,
+				rowsMax: this.rowsMax,
+				numberOfPages: this.numberOfPages,
+				videoContainerAspectRatio: this.videoContainerAspectRatio,
+				bodyWidth: document.body.clientWidth,
+				bodyHeight: document.body.clientHeight,
+				gridWidth: this.$refs.grid.clientWidth,
+				gridHeight: this.$refs.grid.clientHeight,
+			})
+		},
+
 		rebuildGrid() {
 			console.debug('isStripe: ', this.isStripe)
 			console.debug('stripeOpen: ', this.stripeOpen)
