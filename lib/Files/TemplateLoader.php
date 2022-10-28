@@ -88,11 +88,15 @@ class TemplateLoader implements IEventListener {
 			return;
 		}
 
+		$user = $this->userSession->getUser();
+		if ($user instanceof IUser && $this->talkConfig->isDisabledForUser($user)) {
+			return;
+		}
+
 		Util::addStyle(Application::APP_ID, 'At');
 		Util::addStyle(Application::APP_ID, 'icons');
 		Util::addScript(Application::APP_ID, 'talk-files-sidebar');
 
-		$user = $this->userSession->getUser();
 		if ($user instanceof IUser) {
 			$this->publishInitialStateForUser($user, $this->rootFolder, $this->appManager);
 		} else {
