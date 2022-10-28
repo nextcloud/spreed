@@ -71,10 +71,6 @@
 		<div class="top-bar__buttons">
 			<CallButton class="top-bar__button" />
 
-			<!-- Vertical line -->
-			<div v-if="!isSidebar && isInCall"
-				class="top-bar__separator" />
-
 			<!-- sidebar toggle -->
 			<NcActions v-if="showOpenSidebarButton"
 				class="top-bar__button"
@@ -114,7 +110,7 @@ import CallButton from './CallButton.vue'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import MenuPeople from '../missingMaterialDesignIcons/MenuPeople.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
-import { CONVERSATION, PARTICIPANT } from '../../constants.js'
+import { CONVERSATION } from '../../constants.js'
 import { generateUrl } from '@nextcloud/router'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 import { emit } from '@nextcloud/event-bus'
@@ -386,14 +382,6 @@ export default {
 		top: 40px;
 		right: 4px;
 		pointer-events: none;
-	}
-
-	&__separator {
-		top: 4px;
-		border-left: 1px solid white;
-		height: 36px;
-		margin: auto 6px;
-		opacity: 0.5;
 	}
 }
 
