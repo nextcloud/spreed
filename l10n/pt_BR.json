@@ -709,6 +709,7 @@
     "Expand stripe" : "Expandir faixa",
     "Copy link" : "Copiar link",
     "Connecting …" : "Conectando …",
+    "Waiting for {user} to join the call" : "Aguardando {user} participar da chamada",
     "Waiting for others to join the call …" : "Esperando outros juntarem-se à chamada...",
     "You can invite others in the participant tab of the sidebar" : "Você pode convidar outros na guia do participante da barra lateral",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Você pode convidar outros na guia \"Participantes\" da barra lateral ou compartilhar esse link para convidar outras pessoas!",
