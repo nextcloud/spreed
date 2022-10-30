@@ -565,6 +565,7 @@
     "Request password" : "Vyžadovat heslo",
     "Error requesting the password." : "Chyba při požadavku na heslo.",
     "This conversation has ended" : "Tato konverzace skončila",
+    "Error occurred when joining the conversation" : "Při připojování se ke konverzaci došlo k chybě",
     "Close Talk sidebar" : "Zavřít postranní panel Talk",
     "Open Talk sidebar" : "Otevřít postranní panel Talk",
     "Limit to groups" : "Omezit na skupiny",
