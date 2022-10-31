@@ -300,7 +300,7 @@ export default {
 		},
 
 		// The videos array. This is the total number of grid elements.
-		// Depending on `gridWidthm`, `gridHeight`, `minWidth`, `minHeight` and
+		// Depending on `gridWidth`, `gridHeight`, `minWidth`, `minHeight` and
 		// `videosCap`, these videos are shown in one or more grid 'pages'.
 		videos() {
 			if (this.devMode) {
@@ -350,6 +350,29 @@ export default {
 			return this.videos.length <= 1 && !this.screens.length
 		},
 
+		dpiFactor() {
+			const devicePixelRatio = window.devicePixelRatio
+
+			// Some sanity check to not screw up the math.
+			if (devicePixelRatio < 0.5) {
+				return 0.5
+			}
+
+			if (devicePixelRatio > 2.0) {
+				return 2.0
+			}
+
+			return devicePixelRatio
+		},
+
+		dpiAwareMinWidth() {
+			return this.minWidth / this.dpiFactor
+		},
+
+		dpiAwareMinHeight() {
+			return this.minHeight / this.dpiFactor
+		},
+
 		// The aspect ratio of the grid (in terms of px)
 		gridAspectRatio() {
 			return (this.gridWidth / this.gridHeight).toPrecision([2])
@@ -357,21 +380,21 @@ export default {
 
 		// Max number of columns possible
 		columnsMax() {
-			if (Math.floor(this.gridWidth / this.minWidth) < 1) {
+			if (Math.floor(this.gridWidth / this.dpiAwareMinWidth) < 1) {
 				// Return at least 1 column
 				return 1
 			} else {
-				return Math.floor(this.gridWidth / this.minWidth)
+				return Math.floor(this.gridWidth / this.dpiAwareMinWidth)
 			}
 		},
 
 		// Max number of rows possible
 		rowsMax() {
-			if (Math.floor(this.gridHeight / this.minHeight) < 1) {
+			if (Math.floor(this.gridHeight / this.dpiAwareMinHeight) < 1) {
 				// Return at least 1 row
 				return 1
 			} else {
-				return Math.floor(this.gridHeight / this.minHeight)
+				return Math.floor(this.gridHeight / this.dpiAwareMinHeight)
 			}
 		},
 
@@ -423,8 +446,8 @@ export default {
 			}
 
 			return {
-				gridTemplateColumns: `repeat(${columns}, minmax(${this.minWidth}px, 1fr))`,
-				gridTemplateRows: `repeat(${rows}, minmax(${this.minHeight}px, 1fr))`,
+				gridTemplateColumns: `repeat(${columns}, minmax(${this.dpiAwareMinWidth}px, 1fr))`,
+				gridTemplateRows: `repeat(${rows}, minmax(${this.dpiAwareMinHeight}px, 1fr))`,
 			}
 		},
 
@@ -503,13 +526,44 @@ export default {
 		window.addEventListener('resize', this.handleResize)
 		subscribe('navigation-toggled', this.handleResize)
 		this.makeGrid()
+
+		window.OCA.Talk.gridDebugInformation = this.gridDebugInformation
 	},
 	beforeDestroy() {
+		window.OCA.Talk.gridDebugInformation = () => console.debug('Not in a call')
+
 		window.removeEventListener('resize', this.handleResize)
 		unsubscribe('navigation-toggled', this.handleResize)
 	},
 
 	methods: {
+		gridDebugInformation() {
+			console.debug('Grid debug information')
+			console.debug({
+				minWidth: this.minWidth,
+				minHeight: this.minHeight,
+				videosCap: this.videosCap,
+				videosCapEnforced: this.videosCapEnforced,
+				targetAspectRatio: this.targetAspectRatio,
+				videosCount: this.videosCount,
+				videoWidth: this.videoWidth,
+				videoHeight: this.videoHeight,
+				devicePixelRatio: window.devicePixelRatio,
+				dpiFactor: this.dpiFactor,
+				dpiAwareMinWidth: this.dpiAwareMinWidth,
+				dpiAwareMinHeight: this.dpiAwareMinHeight,
+				gridAspectRatio: this.gridAspectRatio,
+				columnsMax: this.columnsMax,
+				rowsMax: this.rowsMax,
+				numberOfPages: this.numberOfPages,
+				videoContainerAspectRatio: this.videoContainerAspectRatio,
+				bodyWidth: document.body.clientWidth,
+				bodyHeight: document.body.clientHeight,
+				gridWidth: this.$refs.grid.clientWidth,
+				gridHeight: this.$refs.grid.clientHeight,
+			})
+		},
+
 		rebuildGrid() {
 			console.debug('isStripe: ', this.isStripe)
 			console.debug('stripeOpen: ', this.stripeOpen)
