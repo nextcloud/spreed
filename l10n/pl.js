@@ -567,6 +567,7 @@ OC.L10N.register(
     "Request password" : "Żądanie hasła",
     "Error requesting the password." : "Błąd podczas żądania hasła.",
     "This conversation has ended" : "Rozmowa została zakończona",
+    "Error occurred when joining the conversation" : "Wystąpił błąd podczas dołączania do rozmowy",
     "Close Talk sidebar" : "Zamknij pasek boczny Talka",
     "Open Talk sidebar" : "Otwórz pasek boczny Talka",
     "Limit to groups" : "Ogranicz dla grup",
