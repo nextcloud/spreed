@@ -27,7 +27,6 @@ namespace OCA\Talk\Dashboard;
 
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
-use OCA\Talk\Exceptions\NotAllowedToUseTalkException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -35,6 +34,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\IComment;
 use OCP\Dashboard\IAPIWidget;
 use OCP\Dashboard\IButtonWidget;
+use OCP\Dashboard\IConditionalWidget;
 use OCP\Dashboard\IIconWidget;
 use OCP\Dashboard\IOptionWidget;
 use OCP\Dashboard\Model\WidgetButton;
@@ -46,7 +46,9 @@ use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Util;
 
-class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidget {
+class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidget, IConditionalWidget {
+	protected IUserSession $userSession;
+	protected Config $talkConfig;
 	protected IURLGenerator $url;
 	protected IL10N $l10n;
 	protected Manager $manager;
@@ -62,13 +64,8 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		ParticipantService $participantService,
 		MessageParser $messageParser
 	) {
-		$user = $userSession->getUser();
-		if ($user instanceof IUser && $talkConfig->isDisabledForUser($user)) {
-			// This is dirty and will log everytime a user opens the dashboard or requests the api,
-			// so we should look for a different solution in the server.
-			throw new NotAllowedToUseTalkException();
-		}
-
+		$this->userSession = $userSession;
+		$this->talkConfig = $talkConfig;
 		$this->url = $url;
 		$this->l10n = $l10n;
 		$this->manager = $manager;
@@ -102,6 +99,14 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	 */
 	public function getIconClass(): string {
 		return 'dashboard-talk-icon';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function isEnabled(): bool {
+		$user = $this->userSession->getUser();
+		return !($user instanceof IUser && $this->talkConfig->isDisabledForUser($user));
 	}
 
 	public function getWidgetOptions(): WidgetOptions {
