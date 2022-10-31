@@ -21,14 +21,14 @@
   -->
 
 <template>
-	<DashboardWidget id="talk-panel"
+	<NcDashboardWidget id="talk-panel"
 		:items="roomOptions"
 		:show-more-url="''"
 		:loading="loading"
 		:show-items-and-empty-content="!hasImportantConversations"
 		:half-empty-content-message="t('spreed', 'No unread mentions')">
 		<template #default="{ item }">
-			<DashboardWidgetItem :target-url="getItemTargetUrl(item)"
+			<NcDashboardWidgetItem :target-url="getItemTargetUrl(item)"
 				:main-text="getMainText(item)"
 				:sub-text="getSubText(item)"
 				:item="item">
@@ -38,7 +38,7 @@
 						:hide-call="false"
 						:disable-menu="true" />
 				</template>
-			</DashboardWidgetItem>
+			</NcDashboardWidgetItem>
 		</template>
 		<template #empty-content>
 			<NcEmptyContent :description="t('spreed', 'Say hi to your friends and colleagues!')">
@@ -54,12 +54,13 @@
 				</template>
 			</NcEmptyContent>
 		</template>
-	</DashboardWidget>
+	</NcDashboardWidget>
 </template>
 
 <script>
-import { DashboardWidget, DashboardWidgetItem } from '@nextcloud/vue-dashboard'
 import ConversationIcon from './../components/ConversationIcon.vue'
+import NcDashboardWidget from '@nextcloud/vue/dist/Components/NcDashboardWidget.js'
+import NcDashboardWidgetItem from '@nextcloud/vue/dist/Components/NcDashboardWidgetItem.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl, generateUrl } from '@nextcloud/router'
@@ -81,8 +82,8 @@ export default {
 	name: 'Dashboard',
 
 	components: {
-		DashboardWidget,
-		DashboardWidgetItem,
+		NcDashboardWidget,
+		NcDashboardWidgetItem,
 		NcButton,
 		ConversationIcon,
 		NcEmptyContent,
