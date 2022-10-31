@@ -7,6 +7,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCP\IURLGenerator;
 use OCP\Talk\IConversation;
 use OCP\Talk\IConversationOptions;
@@ -15,13 +16,16 @@ use OCP\Talk\ITalkBackend;
 class TalkBackend implements ITalkBackend {
 	protected Manager $manager;
 	protected ParticipantService $participantService;
+	protected RoomService $roomService;
 	protected IURLGenerator $url;
 
 	public function __construct(Manager $manager,
 								ParticipantService $participantService,
+								RoomService $roomService,
 								IURLGenerator $url) {
 		$this->manager = $manager;
 		$this->participantService = $participantService;
+		$this->roomService = $roomService;
 		$this->url = $url;
 	}
 
@@ -45,5 +49,10 @@ class TalkBackend implements ITalkBackend {
 		}
 
 		return new Conversation($this->url, $room);
+	}
+
+	public function deleteConversation(string $id): void {
+		$room = $this->manager->getRoomByToken($id);
+		$this->roomService->deleteRoom($room);
 	}
 }

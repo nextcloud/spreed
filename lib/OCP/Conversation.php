@@ -16,6 +16,10 @@ class Conversation implements IConversation {
 		$this->room = $room;
 	}
 
+	public function getId(): string {
+		return $this->room->getToken();
+	}
+
 	public function getAbsoluteUrl(): string {
 		return $this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $this->room->getToken()]);
 	}
