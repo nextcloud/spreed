@@ -49,6 +49,7 @@
 
 <script>
 import PreventUnload from 'vue-prevent-unload'
+import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 import CallView from './components/CallView/CallView'
 import ChatView from './components/ChatView'
@@ -147,9 +148,19 @@ export default {
 
 			this.joiningConversation = true
 
-			await this.getPublicShareConversationData()
+			try {
+				await this.getPublicShareConversationData()
 
-			await this.$store.dispatch('joinConversation', { token: this.token })
+				await this.$store.dispatch('joinConversation', { token: this.token })
+			} catch (exception) {
+				this.joiningConversation = false
+
+				showError(t('spreed', 'Error occurred when joining the conversation'))
+
+				console.error(exception)
+
+				return
+			}
 
 			// No need to wait for it, but fetching the conversation needs to be
 			// done once the user has joined the conversation (otherwise only
