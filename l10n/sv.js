@@ -649,6 +649,7 @@ OC.L10N.register(
     "Blank" : "Tom",
     "Invalid path selected" : "Ogiltig sökväg vald",
     "Settings" : "Inställningar",
+    "Private poll" : "Privat omröstning",
     "Create poll" : "Skapa omröstning",
     "moderator" : "moderator",
     "guest" : "gäst",
