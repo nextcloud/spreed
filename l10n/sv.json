@@ -721,6 +721,8 @@
     "WebRTC is not supported in your browser" : "WebRTC är inte kompatibelt med din webbläsare",
     "Please use a different browser like Firefox or Chrome" : "Vänligen använd en annan webbläsare som t.ex Firefox eller Chrome",
     "Error while accessing microphone & camera" : "Fel vid åtkomst till mikrofon och kamera",
+    "We have detected multiple invalid password attempts from your IP. Therefore your next attempt is throttled up to 30 seconds." : "Vi har upptäckt flera felaktiga inloggningsförsök från din IP-adress. Ditt nästa inloggningsförsök kommer därför att fördröjas med upp till 30 sekunder.",
+    "This conversation is password-protected." : "Konversationen är lösenordsskyddad.",
     "The password is wrong. Try again." : "Lösenordet är fel. Försök igen.",
     "Specify commands the users can use in chats" : "Ange kommandon som användare kan använda i chattar",
     "TURN server" : "TURN-server",
@@ -740,11 +742,19 @@
     "Open conversation to registered users" : "Öppna konversation för registrerade användare",
     "Enable lobby" : "Aktivera lobbyn",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Du väntar för närvarande i lobbyn. Detta möte är planerat till {startTime}",
+    "Microphone" : "Mikrofon",
     "Camera" : "Kamera",
+    "Message link copied to clipboard." : "Meddelandelänk kopierad till urklipp.",
     "[Unknown username]" : "[Okänt användarnamn]",
     "Upload new files" : "Ladda upp nya filer",
     "Share from Files" : "Dela från Filer",
+    "Invitation was sent to {actorId}." : "Inbjudan skickades till {actorId}.",
     "Display name: " : "Visningsnamn:",
+    "Video on and off" : "Video av och på",
+    "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Ett Deck-kort har lagts till för den valda <a href=\"{link}\">konversationen</a>.",
+    "Device check" : "Enhetskontroll",
+    "Participants permissions" : "Deltagarbehörigheter",
+    "Chat messages" : "Chattmeddelanden",
     "Calls" : "Samtal"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
