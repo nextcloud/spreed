@@ -64,7 +64,7 @@
 					</div>
 					<div class="poll__summary">
 						<template v-if="currentUserIsPollCreator || currentUserIsModerator || pollIsPublic">
-							{{ n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', votersNumber) }}
+							{{ n('spreed', 'Poll intermediate results • %n vote', 'Poll intermediate results • %n votes', votersNumber) }}
 						</template>
 					</div>
 
