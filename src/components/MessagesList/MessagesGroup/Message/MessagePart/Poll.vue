@@ -62,6 +62,11 @@
 							{{ pollName }}
 						</h2>
 					</div>
+					<div class="poll__summary">
+						<template v-if="currentUserIsPollCreator || currentUserIsModerator || pollIsPublic">
+							{{ n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', votersNumber) }}
+						</template>
+					</div>
 
 					<!-- options -->
 					<div class="poll__modal-options">
