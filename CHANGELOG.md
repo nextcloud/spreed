@@ -1,6 +1,32 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 13.0.10 – 2022-11-03
+### Changed
+- Take the device pixel ratio into account when calculating minimum grid size (should see more videos now on High DPI settings like MacOS and most 4k setup)
+  [#8248](https://github.com/nextcloud/spreed/pull/8248)
+
+### Fixed
+- Hide talk dashboard when user can not use the Talk app
+  [#8238](https://github.com/nextcloud/spreed/pull/8238)
+- Hide talk sidebar integration when user can not use the Talk app
+  [#8242](https://github.com/nextcloud/spreed/pull/8242)
+- Fix participant sessions not sent to the HPB
+  [#8100](https://github.com/nextcloud/spreed/pull/8100)
+- Don't search in lobbied conversations
+  [#8117](https://github.com/nextcloud/spreed/pull/8117)
+- Fix an issue with detecting Safari on iOS version
+  [#8136](https://github.com/nextcloud/spreed/pull/8136)
+
+## 12.2.8 – 2022-11-03
+### Fixed
+- Fix participant sessions not sent to the HPB
+  [#8114](https://github.com/nextcloud/spreed/pull/8114)
+- Fix guest names in search results
+  [#7591](https://github.com/nextcloud/spreed/pull/7591)
+- Fix an issue with detecting Safari on iOS version
+  [#8277](https://github.com/nextcloud/spreed/pull/8277)
+
 ## 13.0.9 – 2022-09-15
 ### Fixed
 - Fix notification sending when the user is blocked by the lobby
