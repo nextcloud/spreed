@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 12.2.8 – 2022-11-03
+### Fixed
+- Fix participant sessions not sent to the HPB
+  [#8114](https://github.com/nextcloud/spreed/pull/8114)
+- Fix guest names in search results
+  [#7591](https://github.com/nextcloud/spreed/pull/7591)
+- Fix an issue with detecting Safari on iOS version
+  [#8277](https://github.com/nextcloud/spreed/pull/8277)
+
 ## 12.2.7 – 2022-07-08
 ### Added
 - Add brute force protection for conversation tokens and passwords
