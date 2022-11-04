@@ -153,26 +153,9 @@ const getters = {
 	 */
 	messagesList: (state) => (token) => {
 		if (state.messages[token]) {
-			return Object.values(state.messages[token]).filter(message => {
-				// Filter out some system messages
-				if (message.systemMessage === 'reaction'
-					|| message.systemMessage === 'reaction_deleted'
-					|| message.systemMessage === 'reaction_revoked'
-					|| message.systemMessage === 'poll_voted'
-				) {
-					return false
-				} else {
-					return true
-				}
-			})
+			return Object.values(state.messages[token])
 		}
 		return []
-	},
-	messages: (state) => (token) => {
-		if (state.messages[token]) {
-			return state.messages[token]
-		}
-		return {}
 	},
 	message: (state) => (token, id) => {
 		if (state.messages[token][id]) {
@@ -479,7 +462,9 @@ const actions = {
 			})
 		}
 
-		if (message.systemMessage === 'reaction' || message.systemMessage === 'reaction_revoked') {
+		if (message.systemMessage === 'reaction'
+			|| message.systemMessage === 'reaction_deleted'
+			|| message.systemMessage === 'reaction_revoked') {
 			context.commit('resetReactions', {
 				token: message.token,
 				messageId: message.parent,
@@ -500,7 +485,14 @@ const actions = {
 			})
 		}
 
-		context.commit('addMessage', message)
+		// Filter out some system messages
+		if (message.systemMessage !== 'reaction'
+			&& message.systemMessage !== 'reaction_deleted'
+			&& message.systemMessage !== 'reaction_revoked'
+			&& message.systemMessage !== 'poll_voted'
+		) {
+			context.commit('addMessage', message)
+		}
 
 		 if ((message.messageType === 'comment' && message.message === '{file}' && message.messageParameters?.file)
 			|| (message.messageType === 'comment' && message.message === '{object}' && message.messageParameters?.object)) {
@@ -766,6 +758,8 @@ const actions = {
 			})
 		}
 
+		let invisibleMessages = 0
+
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach(message => {
 			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
@@ -774,6 +768,14 @@ const actions = {
 			}
 			context.dispatch('processMessage', message)
 			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
+
+			if (message.systemMessage === 'reaction'
+				|| message.systemMessage === 'reaction_deleted'
+				|| message.systemMessage === 'reaction_revoked'
+				|| message.systemMessage === 'poll_voted'
+			) {
+				invisibleMessages++
+			}
 		})
 
 		if (response.headers['x-chat-last-given']) {
@@ -795,6 +797,15 @@ const actions = {
 		}
 
 		context.commit('loadedMessagesOfConversation', { token })
+
+		if (invisibleMessages > 95) {
+			// If there are more than 95 invisible messages we load another chunk
+			return await context.dispatch('fetchMessages', {
+				token,
+				lastKnownMessageId: context.getters.getFirstKnownMessageId(token),
+				includeLastKnown,
+			})
+		}
 
 		return response
 	},
