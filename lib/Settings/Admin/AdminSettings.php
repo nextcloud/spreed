@@ -101,7 +101,7 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState('default_group_notification', (int) $this->serverConfig->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_MENTION));
 		$this->initialState->provideInitialState('conversations_files', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files', '1'));
 		$this->initialState->provideInitialState('conversations_files_public_shares', (int) $this->serverConfig->getAppValue('spreed', 'conversations_files_public_shares', '1'));
-		$this->initialState->provideInitialState('valid_apache_php_configuration', (int) $this->validApachePHPConfiguration());
+		$this->initialState->provideInitialState('valid_apache_php_configuration', $this->validApachePHPConfiguration());
 	}
 
 	protected function initAllowedGroups(): void {
@@ -502,12 +502,20 @@ class AdminSettings implements ISettings {
 		return $groups;
 	}
 
-	protected function validApachePHPConfiguration(): bool {
+	protected function validApachePHPConfiguration(): string {
+		if (!function_exists('exec')) {
+			return 'unknown';
+		}
+
 		$output = [];
-		@exec('apachectl -M | grep mpm', $output, $returnCode);
+		try {
+			@exec('apachectl -M | grep mpm', $output, $returnCode);
+		} catch (\Throwable $e) {
+			return 'unknown';
+		}
 
 		if ($returnCode > 0) {
-			return true;
+			return 'unknown';
 		}
 
 		$apacheModule = implode("\n", $output);
@@ -515,11 +523,11 @@ class AdminSettings implements ISettings {
 
 		if ($usingFPM) {
 			// Needs to use mpm_event
-			return strpos($apacheModule, 'mpm_event') !== false;
+			return strpos($apacheModule, 'mpm_event') !== false ? '' : 'invalid';
 		}
 
 		// Needs to use mpm_prefork
-		return strpos($apacheModule, 'mpm_prefork') !== false;
+		return strpos($apacheModule, 'mpm_prefork') !== false ? '' : 'invalid';
 	}
 
 	/**
