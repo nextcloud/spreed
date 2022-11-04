@@ -77,7 +77,7 @@ export default {
 	data() {
 		return {
 			backgroundBlurLoaded: undefined,
-			validApachePHPConfiguration: true,
+			validApachePHPConfiguration: '',
 		}
 	},
 
@@ -115,12 +115,18 @@ export default {
 		},
 
 		apacheWarning() {
-			return t('spreed', 'It seems that the PHP and Apache configuration is not compatible. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module.')
+			if (this.validApachePHPConfiguration === 'invalid') {
+				return t('spreed', 'It seems that the PHP and Apache configuration is not compatible. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module.')
+			}
+			if (this.validApachePHPConfiguration === 'unknown') {
+				return t('spreed', 'Could not detect the PHP and Apache configuration because exec is disabled or apachectl is not working as expected. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module.')
+			}
+			return ''
 		},
 	},
 
 	mounted() {
-		this.validApachePHPConfiguration = parseInt(loadState('spreed', 'valid_apache_php_configuration')) === 1
+		this.validApachePHPConfiguration = loadState('spreed', 'valid_apache_php_configuration')
 	},
 
 	beforeMount() {
