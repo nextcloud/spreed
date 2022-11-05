@@ -586,13 +586,9 @@ OC.L10N.register(
     "Allow guests" : "לאפשר אורחים",
     "Enter a password" : "נא להקליד ססמה",
     "Enable lobby" : "הפעלת לובי",
-    "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "בנך בהמתנה בלובי. פגישה זו זומנה ל־{startTime}",
-    "Microphone" : "מיקרופון",
-    "Camera" : "מצלמה",
-    "[Unknown username]" : "[שם משתמש לא ידוע]",
+    "Calls" : "שיחות",
     "Upload new files" : "העלאת קבצים חדשים",
     "Share from Files" : "שיתוף מקבצים",
-    "Display name: " : "שם תצוגה:",
-    "Calls" : "שיחות"
+    "Display name: " : "שם תצוגה:"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

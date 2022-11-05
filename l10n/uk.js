@@ -587,13 +587,11 @@ OC.L10N.register(
     "iOS app" : "Застосунок для iOS",
     "An error occurred. Please contact your admin." : "Виникла помилка. Будь ласка, зв'яжіться з вашим адміністратором.",
     "Saved" : "Збережено",
-    "Chat notifications" : "Сповіщення чату",
     "Allow guests" : "Дозволити гостей",
     "Enter a password" : "Enter a password",
     "Enable lobby" : "Увімкнути схвалення входу",
-    "Camera" : "Камера",
+    "Calls" : "Виклики",
     "Upload new files" : "Додати файл",
-    "Share from Files" : "Відкрити Файли",
-    "Calls" : "Виклики"
+    "Share from Files" : "Відкрити Файли"
 },
 "nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);");

@@ -836,20 +836,13 @@
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Podeu instal·lar el Matterbridge per enllaçar Nextcloud Talk amb altres serveis, visiteu la seva pàgina {linkstart1}GitHub{linkend} per obtenir més detalls. La descàrrega i instal·lació de l'aplicació pot trigar una estona. En cas que s’esgoti l’espera, instal·leu-lo manualment des de {linkstart2}appstore{linkend}.",
     "Saved" : "Desat",
     "Add a new server" : "Afegeix un nou servidor",
-    "Your internet connection or computer are busy and other participants might be unable to see you. To improve the situation try to disable your video while doing a screenshare." : "La connexió a Internet o l'ordinador estan ocupats i és possible que altres participants no us puguin veure. Per millorar la situació, proveu de desactivar el vídeo mentre es comparteix la pantalla.",
-    "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "La connexió a Internet o l'ordinador estan ocupats i és possible que altres participants no puguin entendre i veure la vostra pantalla. Per millorar la situació intenteu desactivar la compartició de pantalla.",
-    "Chat notifications" : "Notificacions del xat",
     "Allow guests" : "Permet visitants",
     "Enter a password" : "Introduïu una contrasenya",
     "Enable lobby" : "Habilita el vestíbul",
-    "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Ara esteu esperant al vestíbul. Aquesta reunió està prevista per a {startTime}",
-    "Microphone" : "Micròfon",
-    "Camera" : "Càmera",
-    "[Unknown username]" : "[Nom d'usuari desconegut]",
+    "Calls" : "Trucades",
     "Upload new files" : "Pujar arxius nous",
     "Share from Files" : "Comparteix des de fitxers",
     "Display name: " : "Nom a mostrar: ",
-    "Video on and off" : "Vídeo activat i desactivat",
-    "Calls" : "Trucades"
+    "Video on and off" : "Vídeo activat i desactivat"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

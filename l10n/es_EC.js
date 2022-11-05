@@ -183,7 +183,6 @@ OC.L10N.register(
     "Saved" : "Guardado",
     "Error while accessing camera: it is likely in use by another program" : "Error mientras se accedía a la cámara: parece estar siendo usada por otro programa",
     "Enter a password" : "Ingresa una contraseña",
-    "Camera" : "Cámara",
     "Calls" : "Llamadas"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -531,9 +531,7 @@ OC.L10N.register(
     "Add a new server" : "Bæta við nýjum þjóni",
     "Allow guests" : "Leyfa gesti",
     "Enter a password" : "Settu inn lykilorð",
-    "Microphone" : "Microphone",
-    "Camera" : "Myndavél",
-    "Message link copied to clipboard." : "Skilaboðatengill afritaður á klippispjald.",
-    "Calls" : "Samtöl"
+    "Calls" : "Samtöl",
+    "Message link copied to clipboard." : "Skilaboðatengill afritaður á klippispjald."
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

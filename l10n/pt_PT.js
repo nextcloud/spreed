@@ -322,7 +322,6 @@ OC.L10N.register(
     "An error occurred. Please contact your admin." : "Ocorreu um erro. Por favor, contacte o seu administrador.",
     "Saved" : "Gravado",
     "Enter a password" : "Insira uma palavra-passe",
-    "Enable lobby" : "Ativar lobby",
-    "Camera" : "Câmera"
+    "Enable lobby" : "Ativar lobby"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

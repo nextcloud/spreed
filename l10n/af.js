@@ -313,8 +313,6 @@ OC.L10N.register(
     "iOS app" : "iOS-toep",
     "An error occurred. Please contact your admin." : "'n Fout het voorgekom. Kontak asseblief u administrateur.",
     "Saved" : "Bewaar",
-    "Enter a password" : "Gee ’n wagwoord",
-    "Microphone" : "Mikrofoon",
-    "Camera" : "Kamera"
+    "Enter a password" : "Gee ’n wagwoord"
 },
 "nplurals=2; plural=(n != 1);");

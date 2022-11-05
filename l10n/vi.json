@@ -741,10 +741,7 @@
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Bạn có thể cài đặt Matterbridge để liên kết vWorkspace Talk với một số dịch vụ khác. Quá trình tải xuống và cài đặt ứng dụng có thể mất một chút thời gian. Trong trường hợp hết thời gian, vui lòng cài đặt thủ công từ {linkstart2} appstore {linkend}.",
     "Saved" : "Đã lưu",
     "Add a new server" : "Thêm một máy chủ mới",
-    "Your internet connection or computer are busy and other participants might be unable to see you. To improve the situation try to disable your video while doing a screenshare." : "Kết nối internet hoặc máy tính của bạn đang bận và những người tham gia khác có thể không nhìn thấy bạn. Để cải thiện tình hình, hãy thử tắt video của bạn trong khi thực hiện chia sẻ màn hình.",
-    "Your internet connection or computer are busy and other participants might be unable to understand and see your screen. To improve the situation try to disable your screenshare." : "Kết nối internet hoặc máy tính của bạn đang bận và những người tham gia khác có thể không hiểu và nhìn thấy màn hình của bạn. Để cải thiện tình hình, hãy thử tắt tính năng chia sẻ màn hình của bạn.",
     "Error while accessing camera: it is likely in use by another program" : "Lỗi khi truy cập máy ảnh: nó có thể đang được chương trình khác sử dụng",
-    "Chat notifications" : "Thông báo trò chuyện",
     "Guests access" : "Khách truy cập",
     "Meeting settings" : "Cài đặt cuộc họp",
     "Allow guests to use a public link to join this conversation." : "Cho phép khách sử dụng liên kết công khai để tham gia cuộc trò chuyện này.",
@@ -758,12 +755,9 @@
     "Enable lobby" : "Bật sảnh đợi",
     "After the time limit the lobby will be automatically disabled." : "Sau thời gian giới hạn, sảnh đợi sẽ tự động bị vô hiệu hóa.",
     "Locking the conversation prevents anyone to post messages or start calls." : "Khóa cuộc trò chuyện sẽ ngăn không cho bất kỳ ai đăng tin nhắn hoặc bắt đầu cuộc gọi.",
-    "Set the notification level for the current conversation. This will affect only the notifications you receive." : "Đặt mức thông báo cho cuộc trò chuyện hiện tại. Điều này sẽ chỉ ảnh hưởng đến các thông báo bạn nhận được.",
+    "Calls" : "Cuộc gọi",
     "Allow participants to join from a phone." : "Cho phép tham gia từ điện thoại.",
     "Enable SIP dial-in" : "Bật quay số SIP",
-    "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Bạn hiện đang đợi ở sảnh. Cuộc họp này được lên lịch vào {startTime}",
-    "Microphone" : "Micrô",
-    "Camera" : "Camera",
     "Message link copied to clipboard." : "Đã sao chép liên kết tin nhắn vào khay nhớ tạm.",
     "Upload new files" : "Tải lên các tệp mới",
     "Share from Files" : "Chia sẻ từ Thư mục",
@@ -771,7 +765,6 @@
     "Display name: " : "Tên hiển thị:",
     "Video on and off" : "Bật và tắt video",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Bộ bài đã được đăng lên <a href=\"{link}\">cuộc đối thoại</a> đã chọn.",
-    "An error occurred while posting deck card to conversation." : "Đã xảy ra lỗi khi đăng bộ bài lên cuộc trò chuyện.",
-    "Calls" : "Cuộc gọi"
+    "An error occurred while posting deck card to conversation." : "Đã xảy ra lỗi khi đăng bộ bài lên cuộc trò chuyện."
 },"pluralForm" :"nplurals=1; plural=0;"
 }
