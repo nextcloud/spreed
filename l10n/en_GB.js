@@ -432,7 +432,6 @@ OC.L10N.register(
     "An error occurred. Please contact your admin." : "An error occurred. Please contact your admin.",
     "Saved" : "Saved",
     "Enter a password" : "Enter a password",
-    "Camera" : "Camera",
     "Calls" : "Calls"
 },
 "nplurals=2; plural=(n != 1);");

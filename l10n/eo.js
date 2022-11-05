@@ -318,7 +318,6 @@ OC.L10N.register(
     "iOS app" : "iOS-aplikaĵo",
     "An error occurred. Please contact your admin." : "Eraro okazis. Bonvolu kontakti vian administranton.",
     "Saved" : "Konservita",
-    "Enter a password" : "Entajpu pasvorton",
-    "Camera" : "Fotilo"
+    "Enter a password" : "Entajpu pasvorton"
 },
 "nplurals=2; plural=(n != 1);");

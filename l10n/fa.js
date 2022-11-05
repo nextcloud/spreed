@@ -355,7 +355,6 @@ OC.L10N.register(
     "Saved" : "ذخیره شد",
     "Allow guests" : "اجازه میهمانان",
     "Enter a password" : "یک گذرواژه وارد کنید",
-    "Camera" : "دوربین",
     "Upload new files" : "فایل‌های جدید را آپلود کنید",
     "Share from Files" : "اشتراک‌گذاری از فایل‌ها"
 },

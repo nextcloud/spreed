@@ -593,11 +593,9 @@ OC.L10N.register(
     "Allow guests" : "Tillat gjester",
     "Enter a password" : "Skriv inn et passord",
     "Enable lobby" : "Aktiver lobby",
-    "Microphone" : "Mikrofon",
-    "Camera" : "Kamera",
-    "Upload new files" : "Last opp nye filer",
-    "Share from Files" : "Del fra Filer",
     "Chat messages" : "Samtalemeldinger",
-    "Calls" : "Samtaler"
+    "Calls" : "Samtaler",
+    "Upload new files" : "Last opp nye filer",
+    "Share from Files" : "Del fra Filer"
 },
 "nplurals=2; plural=(n != 1);");
