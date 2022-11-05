@@ -66,7 +66,6 @@
     "Invalid file provided" : "Norādīta nederīga datne",
     "Invalid image" : "Nederīgs attēls",
     "Unknown filetype" : "Nezināms datnes tips",
-    "An error occurred. Please contact your admin." : "Notika kļūda. Lūdzu sazinies ar savu administratoru.",
     "%s invited you to a conversation." : "%s uzaicināja jūs uz sarunu.",
     "You were invited to a conversation." : "Jūs uzaicinājāt uz sarunu.",
     "Conversation invitation" : "Sarunas uzaicinājums",
@@ -160,12 +159,12 @@
     "Favorite" : "Favorīts",
     "Restricted" : "Ierobežota",
     "Description" : "Apraksts",
-    "Notifications" : "Paziņojumi",
+    "Personal" : "Personīgs",
+    "Permissions" : "Atļaujas",
     "Leave conversation" : "Atstāt sarunu",
     "Delete conversation" : "Dzēst sarunu",
     "You need to promote a new moderator before you can leave the conversation." : "Pirms sarunas atstāšanas ir jāieceļ jauns regulētājs.",
     "Password protection" : "Password protection",
-    "Enter a password" : "Enter a password",
     "Save" : "Saglabāt",
     "Edit" : "Rediģēt",
     "Delete" : "Dzēst",
@@ -174,6 +173,7 @@
     "Login" : "Autorizēties",
     "Nickname" : "Iesauka",
     "Client ID" : "Klienta ID",
+    "Notifications" : "Paziņojumi",
     "Remove from favorites" : "Noņemt no favorītiem",
     "Add to favorites" : "Pievienot izlasei",
     "Loading" : "Ielādē",
@@ -233,7 +233,9 @@
     "%s Talk on your mobile devices" : "%s Sarunas mobilajās ierīcēs",
     "Android app" : "Android lietotne",
     "iOS app" : "iOS lietotne",
+    "An error occurred. Please contact your admin." : "Notika kļūda. Lūdzu sazinies ar savu administratoru.",
     "Saved" : "Saglabāts",
-    "Add a new server" : "Pievienot jaunu serveri"
+    "Add a new server" : "Pievienot jaunu serveri",
+    "Enter a password" : "Enter a password"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);"
 }

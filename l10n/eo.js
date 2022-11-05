@@ -9,7 +9,6 @@ OC.L10N.register(
     "Invalid file provided" : "Nevalida dosiero provizita",
     "Invalid image" : "Nevalida bildo",
     "Unknown filetype" : "Nekonata dosiertipo",
-    "An error occurred. Please contact your admin." : "Eraro okazis. Bonvolu kontakti vian administranton.",
     "Andorra" : "Andoro",
     "United Arab Emirates" : "Unuiĝintaj Arabaj Emirlandoj",
     "Afghanistan" : "Afganujo",
@@ -276,9 +275,8 @@ OC.L10N.register(
     "Favorite" : "Pliŝatata",
     "Restricted" : "Limigita",
     "Description" : "Priskribo",
-    "Notifications" : "Sciigoj",
+    "Personal" : "Persona",
     "Password protection" : "Protektita per pasvorto",
-    "Enter a password" : "Entajpu pasvorton",
     "Save" : "Konservi",
     "Edit" : "Modifi",
     "Delete" : "Forigi",
@@ -287,6 +285,7 @@ OC.L10N.register(
     "Login" : "Login",
     "Nickname" : "Kromnomo",
     "Client ID" : "Klientidentigilo",
+    "Notifications" : "Sciigoj",
     "Remove from favorites" : "Forigi el pliŝataĵoj",
     "Add to favorites" : "Aldoni al pliŝataĵoj",
     "Loading" : "Ŝargado",
@@ -317,7 +316,8 @@ OC.L10N.register(
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
+    "An error occurred. Please contact your admin." : "Eraro okazis. Bonvolu kontakti vian administranton.",
     "Saved" : "Konservita",
-    "Camera" : "Fotilo"
+    "Enter a password" : "Entajpu pasvorton"
 },
 "nplurals=2; plural=(n != 1);");

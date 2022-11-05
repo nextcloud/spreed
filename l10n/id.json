@@ -25,7 +25,6 @@
     "Invalid file provided" : "Berkas tidak valid",
     "Invalid image" : "Gambar tidak valid",
     "Unknown filetype" : "Tipe berkas tak dikenal",
-    "An error occurred. Please contact your admin." : "Terjadi kesalahan. Silakan hubungi admin Anda.",
     "Invalid date, date format must be YYYY-MM-DD" : "Tanggal salah, format tanggal harus TTTT-BB-HH",
     "Request password" : "Minta kata sandi",
     "Limit to groups" : "Batasi ke grup",
@@ -52,10 +51,9 @@
     "Favorite" : "Favorit",
     "Restricted" : "Terbatas",
     "Description" : "Deskrisi",
-    "Notifications" : "Pemberitahuan",
+    "Personal" : "Pribadi",
+    "Meeting" : "Rapat",
     "Password protection" : "Password protection",
-    "Enter a password" : "Masukkan kata sandi",
-    "Open conversation to registered users" : "Buka percakapan untuk pengguna terdaftar",
     "Save" : "Simpan",
     "Edit" : "Sunting",
     "Delete" : "Hapus",
@@ -63,6 +61,7 @@
     "Login" : "Log masuk",
     "Nickname" : "Nama panggilan",
     "Client ID" : "ID Klien",
+    "Notifications" : "Pemberitahuan",
     "Choose devices" : "Pilih perangkat",
     "Mark as read" : "tandai sudah dibaca",
     "Remove from favorites" : "Remove from favorites",
@@ -110,6 +109,9 @@
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
     "iOS app" : "Aplikasi iOS",
-    "Saved" : "Disimpan"
+    "An error occurred. Please contact your admin." : "Terjadi kesalahan. Silakan hubungi admin Anda.",
+    "Saved" : "Disimpan",
+    "Enter a password" : "Masukkan kata sandi",
+    "Open conversation to registered users" : "Buka percakapan untuk pengguna terdaftar"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

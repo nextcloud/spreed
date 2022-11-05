@@ -8,7 +8,6 @@ OC.L10N.register(
     "Invalid file provided" : "Vigane fail",
     "Invalid image" : "Vigane pilt",
     "Unknown filetype" : "Tundmatu failitüüp",
-    "An error occurred. Please contact your admin." : "Tekkis tõrge. Palun võta ühendust administraatoriga.",
     "Invalid date, date format must be YYYY-MM-DD" : "Vigane kuupäev, formaat peab olema YYYY-MM-DD",
     "Limit to groups" : "Luba gruppidele",
     "Everyone" : "Igaüks",
@@ -38,9 +37,8 @@ OC.L10N.register(
     "Favorite" : "Lemmik",
     "Restricted" : "Piiratud",
     "Description" : "Kirjeldus",
-    "Notifications" : "Teavitused",
+    "Personal" : "Isiklik",
     "Password protection" : "Password protection",
-    "Enter a password" : "Enter a password",
     "Save" : "Salvesta",
     "Edit" : "Redigeeri",
     "Delete" : "Kustuta",
@@ -49,6 +47,7 @@ OC.L10N.register(
     "Login" : "Logi sisse",
     "Nickname" : "Hüüdnimi",
     "Client ID" : "Kliendi ID",
+    "Notifications" : "Teavitused",
     "Remove from favorites" : "Eemalda lemmikutest",
     "Add to favorites" : "Lisa lemmikutesse",
     "Loading" : "Laadimine",
@@ -81,6 +80,8 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Parool on vale. Proovi uuesti.",
     "Android app" : "Androidi rakendus",
     "iOS app" : "iOS-i rakendus",
-    "Saved" : "Salvestatud"
+    "An error occurred. Please contact your admin." : "Tekkis tõrge. Palun võta ühendust administraatoriga.",
+    "Saved" : "Salvestatud",
+    "Enter a password" : "Enter a password"
 },
 "nplurals=2; plural=(n != 1);");

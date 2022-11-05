@@ -80,7 +80,6 @@
     "Invalid file provided" : "Se proporcionó un archivo invalido",
     "Invalid image" : "Imagen inválida",
     "Unknown filetype" : "Tipo de archivo desconocido",
-    "An error occurred. Please contact your admin." : "Se presentó un error. Por favor contacta a tu adminsitrador. ",
     "%s invited you to a conversation." : "%s te invitó a una conversación",
     "You were invited to a conversation." : "fuiste invitado a una conversación",
     "Conversation invitation" : "invitación a una conversación",
@@ -152,11 +151,11 @@
     "Favorite" : "Hacer favorito",
     "Restricted" : "Restringido",
     "Description" : "Descripción",
-    "Notifications" : "Notificaciones",
+    "Personal" : "Personal",
+    "Permissions" : "Permisos",
     "Leave conversation" : "Dejar la conversación",
     "Delete conversation" : "Borrar conversación",
     "Password protection" : "Protección con contraseña",
-    "Enter a password" : "Ingresa una contraseña",
     "Save" : "Guardar",
     "Edit" : "Editar",
     "Delete" : "Eliminar",
@@ -165,7 +164,7 @@
     "Login" : "Iniciar sesión",
     "Nickname" : "Apodo",
     "Client ID" : "ID del cliente",
-    "Calls" : "Llamadas",
+    "Notifications" : "Notificaciones",
     "Remove from favorites" : "Eliminar de favoritos",
     "Add to favorites" : "Agregar a favoritos",
     "Loading" : "Cargando",
@@ -221,6 +220,9 @@
     "%s Talk on your mobile devices" : "%s Habla en tus dispositivos móviles",
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS",
-    "Saved" : "Guardado"
+    "An error occurred. Please contact your admin." : "Se presentó un error. Por favor contacta a tu adminsitrador. ",
+    "Saved" : "Guardado",
+    "Enter a password" : "Ingresa una contraseña",
+    "Calls" : "Llamadas"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

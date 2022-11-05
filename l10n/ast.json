@@ -5,7 +5,6 @@
     "Invalid file provided" : "Apurrióse un ficheru non válidu",
     "Invalid image" : "Imaxe non válida",
     "Unknown filetype" : "Triba desconocida de ficheru",
-    "An error occurred. Please contact your admin." : "Asocedió un fallu. Contauta col to alministrador, por favor.",
     "Andorra" : "Andorra",
     "Anguilla" : "Anguilla",
     "Albania" : "Albania",
@@ -55,9 +54,9 @@
     "You" : "Tu",
     "Favorite" : "Marcar como favoritu",
     "Description" : "Descripción",
-    "Notifications" : "Notificaciones",
+    "Personal" : "Personal",
+    "Permissions" : "Permisos",
     "Password protection" : "Password protection",
-    "Enter a password" : "Introduz una contraseña",
     "Save" : "Guardar",
     "Edit" : "Editar",
     "Delete" : "Desaniciar",
@@ -66,7 +65,7 @@
     "Login" : "Aniciu de sesión",
     "Nickname" : "Nomatu",
     "Client ID" : "ID de veceru",
-    "Calls" : "Llamaes",
+    "Notifications" : "Notificaciones",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
     "Loading" : "Cargando",
@@ -101,6 +100,9 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El sirvidor TURN úsase pa unviar al proxy el tráficu de los participantes darrera de tornafueos.",
     "Android app" : "Aplicación p'Android",
     "iOS app" : "Aplicación pa iOS",
-    "Saved" : "Guardóse"
+    "An error occurred. Please contact your admin." : "Asocedió un fallu. Contauta col to alministrador, por favor.",
+    "Saved" : "Guardóse",
+    "Enter a password" : "Introduz una contraseña",
+    "Calls" : "Llamaes"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

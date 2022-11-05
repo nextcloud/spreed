@@ -32,7 +32,6 @@ OC.L10N.register(
     "Invalid file provided" : "Numele fișierului pe care l-ai oferit este invalid",
     "Invalid image" : "Imagine invalidă",
     "Unknown filetype" : "Tip fișier necunoscut",
-    "An error occurred. Please contact your admin." : "A apărut o eroare. Te rugăm să contactezi administratorul.",
     "Open settings" : "Deschide setările",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "United Arab Emirates",
@@ -299,9 +298,8 @@ OC.L10N.register(
     "Back" : "Înapoi",
     "Favorite" : "Favorite",
     "Description" : "Descriere",
-    "Notifications" : "Notificări",
+    "Personal" : "Personal",
     "Password protection" : "Password protection",
-    "Enter a password" : "Enter a password",
     "Save" : "Salvează",
     "Edit" : "Editează",
     "Delete" : "Șterge",
@@ -309,7 +307,7 @@ OC.L10N.register(
     "Login" : "Autentificare",
     "Nickname" : "Pseudonim",
     "Client ID" : "ID client",
-    "Calls" : "Apeluri",
+    "Notifications" : "Notificări",
     "Mark as read" : "Marchează ca citit",
     "Remove from favorites" : "Șterge din favorite",
     "Add to favorites" : "Adăugați la favorite",
@@ -351,7 +349,9 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Parola este incorectă. Încercaţi din nou.",
     "Android app" : "Aplicație Android",
     "iOS app" : "Aplicație iOS",
+    "An error occurred. Please contact your admin." : "A apărut o eroare. Te rugăm să contactezi administratorul.",
     "Saved" : "Salvat",
-    "Camera" : "Cameră"
+    "Enter a password" : "Enter a password",
+    "Calls" : "Apeluri"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");
