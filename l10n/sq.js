@@ -251,7 +251,6 @@ OC.L10N.register(
     "An error occurred. Please contact your admin." : "Ndodhi një gabim. Ju lutemi, lidhuni me përgjegjësin tuaj.",
     "Saved" : "U ruajt",
     "Enter a password" : "Fusni një fjalëkalim",
-    "Camera" : "Kamera",
     "Calls" : "Thirrjet"
 },
 "nplurals=2; plural=(n != 1);");

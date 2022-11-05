@@ -78,8 +78,6 @@
     "iOS app" : "แอพฯ IOS",
     "An error occurred. Please contact your admin." : "เกิดข้อผิดพลาด กรุณาติดต่อผู้ดูแลระบบของคุณ",
     "Saved" : "บันทึกแล้ว",
-    "Enter a password" : "Enter a password",
-    "Camera" : "กล้อง",
-    "[Unknown username]" : "[ไม่รู้จักชื่อผู้ใช้]"
+    "Enter a password" : "Enter a password"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

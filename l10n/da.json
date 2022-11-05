@@ -501,18 +501,14 @@
     "An error occurred. Please contact your admin." : "Der opstod et problem. Kontakt venligst administratoren.",
     "Saved" : "Gemt",
     "Add a new server" : "Tilføj en ny server",
-    "Chat notifications" : "Chat-notifikationer",
     "Meeting settings" : "Møde indstillinger",
     "Allow guests" : "Tillad gæster",
     "Enter a password" : "Enter a password",
     "Open conversation to registered users" : "Begynd en samtale til registrerede brugere",
     "Enable lobby" : "Aktiver lobby",
-    "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Du venter nu i lobbyen. Dette møde er planlagt til {startTime}",
-    "Camera" : "Kamera",
-    "[Unknown username]" : "[Ukendt brugernavn]",
+    "Calls" : "Opkald",
     "Upload new files" : "Upload nye filer",
     "Share from Files" : "Del fra Filer",
-    "Display name: " : "Vist navn:",
-    "Calls" : "Opkald"
+    "Display name: " : "Vist navn:"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

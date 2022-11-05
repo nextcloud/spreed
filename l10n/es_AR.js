@@ -112,7 +112,6 @@ OC.L10N.register(
     "iOS app" : "Aplicación iOS",
     "An error occurred. Please contact your admin." : "Se presentó un error. Favor de contactar a su adminsitrador. ",
     "Saved" : "Guardado",
-    "Enter a password" : "Ingrese una contraseña",
-    "Camera" : "Cámara"
+    "Enter a password" : "Ingrese una contraseña"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

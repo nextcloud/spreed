@@ -562,12 +562,9 @@ OC.L10N.register(
     "An error occurred. Please contact your admin." : "Дошло је до грешке. Контактирајте администратора.",
     "Saved" : "Сачувано",
     "Add a new server" : "Додај нови сервер",
-    "Chat notifications" : "Обавештења ћаскања",
     "Allow guests" : "Дозволи госте",
     "Enter a password" : "Унесите лозинку",
     "Enable lobby" : "Омогући лоби",
-    "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Тренутно чекате у лобију. Овај састанак је заказан за {startTime}",
-    "Camera" : "Камера",
     "Calls" : "Позиви"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");
