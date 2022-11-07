@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
@@ -32,25 +35,17 @@ use OCP\IRequest;
 class CommandController extends OCSController {
 	protected CommandService $commandService;
 
-	/**
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param CommandService $commandService
-	 */
-	public function __construct($appName,
+	public function __construct(string $appName,
 								IRequest $request,
 								CommandService $commandService) {
 		parent::__construct($appName, $request);
 		$this->commandService = $commandService;
 	}
 
-	/**
-	 * @return DataResponse
-	 */
 	public function index(): DataResponse {
 		$commands = $this->commandService->findAll();
 
-		$result = array_map(function (Command $command) {
+		$result = array_map(static function (Command $command) {
 			return $command->asArray();
 		}, $commands);
 
