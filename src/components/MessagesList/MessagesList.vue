@@ -75,7 +75,10 @@ import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import Axios from '@nextcloud/axios'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import isInLobby from '../../mixins/isInLobby.js'
-import { ATTENDEE } from '../../constants.js'
+import {
+	ATTENDEE,
+	CHAT,
+} from '../../constants.js'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus.js'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
@@ -547,6 +550,7 @@ export default {
 					token: this.token,
 					lastKnownMessageId: this.$store.getters.getFirstKnownMessageId(this.token),
 					includeLastKnown,
+					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
 
 				this.loadingOldMessages = false

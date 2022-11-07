@@ -37,6 +37,7 @@ import CancelableRequest from '../utils/cancelableRequest.js'
 import { showError } from '@nextcloud/dialogs'
 import {
 	ATTENDEE,
+	CHAT,
 } from '../constants.js'
 
 /**
@@ -732,9 +733,12 @@ const actions = {
 	 * @param {string} data.token the conversation token;
 	 * @param {object} data.requestOptions request options;
 	 * @param {string} data.lastKnownMessageId last known message id;
+	 * @param {number} data.minimumVisible Minimum number of chat messages we want to load
 	 * @param {boolean} data.includeLastKnown whether to include the last known message in the response;
 	 */
-	async fetchMessages(context, { token, lastKnownMessageId, includeLastKnown, requestOptions }) {
+	async fetchMessages(context, { token, lastKnownMessageId, includeLastKnown, requestOptions, minimumVisible }) {
+		minimumVisible = minimumVisible || CHAT.MINIMUM_VISIBLE
+
 		context.dispatch('cancelFetchMessages')
 
 		// Get a new cancelable request function and cancel function pair
@@ -746,6 +750,7 @@ const actions = {
 			token,
 			lastKnownMessageId,
 			includeLastKnown,
+			limit: CHAT.FETCH_LIMIT,
 		}, requestOptions)
 
 		let newestKnownMessageId = 0
@@ -758,8 +763,6 @@ const actions = {
 			})
 		}
 
-		let invisibleMessages = 0
-
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach(message => {
 			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
@@ -769,12 +772,12 @@ const actions = {
 			context.dispatch('processMessage', message)
 			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
 
-			if (message.systemMessage === 'reaction'
-				|| message.systemMessage === 'reaction_deleted'
-				|| message.systemMessage === 'reaction_revoked'
-				|| message.systemMessage === 'poll_voted'
+			if (message.systemMessage !== 'reaction'
+				&& message.systemMessage !== 'reaction_deleted'
+				&& message.systemMessage !== 'reaction_revoked'
+				&& message.systemMessage !== 'poll_voted'
 			) {
-				invisibleMessages++
+				minimumVisible--
 			}
 		})
 
@@ -798,12 +801,14 @@ const actions = {
 
 		context.commit('loadedMessagesOfConversation', { token })
 
-		if (invisibleMessages > 95) {
-			// If there are more than 95 invisible messages we load another chunk
+		if (minimumVisible > 0) {
+			// There are not yet enough visible messages loaded, so fetch another chunk.
+			// This can happen when a lot of reactions or poll votings happen
 			return await context.dispatch('fetchMessages', {
 				token,
 				lastKnownMessageId: context.getters.getFirstKnownMessageId(token),
 				includeLastKnown,
+				minimumVisible,
 			})
 		}
 
