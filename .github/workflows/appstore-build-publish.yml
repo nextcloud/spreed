@@ -10,7 +10,7 @@ on:
     types: [published]
 
 env:
-  PHP_VERSION: 7.4
+  PHP_VERSION: 8.0
 
 jobs:
   build_and_publish:
@@ -27,7 +27,7 @@ jobs:
 
       - name: Set app env
         run: |
-          # Split and keep last 
+          # Split and keep last
           echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
           echo "APP_VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
 

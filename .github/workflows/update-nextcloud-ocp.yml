@@ -8,7 +8,7 @@ name: Update nextcloud/ocp
 on:
   workflow_dispatch:
   schedule:
-    - cron: "5 4 * * 0"
+    - cron: '5 4 * * 0'
 
 jobs:
   update-nextcloud-ocp:
@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        branches: ["master", "stable25", "stable24", "stable23"]
+        branches: ['master', 'stable25', 'stable24', 'stable23']
 
     name: update-nextcloud-ocp-${{ matrix.branches }}
 
@@ -27,10 +27,10 @@ jobs:
           ref: ${{ matrix.branches }}
           submodules: true
 
-      - name: Set up php7.4
+      - name: Set up PHP 8.0
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.0
           extensions: ctype,curl,dom,fileinfo,gd,intl,json,mbstring,openssl,pdo_sqlite,posix,sqlite,xml,zip
           coverage: none
 
