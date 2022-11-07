@@ -23,7 +23,7 @@
 import Vue from 'vue'
 import client from '../services/DavClient.js'
 import { showError } from '@nextcloud/dialogs'
-import fromStateOr from './helper.js'
+import { loadState } from '@nextcloud/initial-state'
 import { findUniquePath, getFileExtension } from '../utils/fileUpload.js'
 import moment from '@nextcloud/moment'
 import { EventBus } from '../services/EventBus.js'
@@ -34,8 +34,8 @@ import {
 import { setAttachmentFolder } from '../services/settingsService.js'
 
 const state = {
-	attachmentFolder: fromStateOr('spreed', 'attachment_folder', ''),
-	attachmentFolderFreeSpace: fromStateOr('spreed', 'attachment_folder_free_space', 0),
+	attachmentFolder: loadState('spreed', 'attachment_folder', ''),
+	attachmentFolderFreeSpace: loadState('spreed', 'attachment_folder_free_space', 0),
 	uploads: {
 	},
 	currentUploadId: undefined,

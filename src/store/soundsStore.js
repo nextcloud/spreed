@@ -20,13 +20,13 @@
  *
  */
 
-import fromStateOr from './helper.js'
+import { loadState } from '@nextcloud/initial-state'
 import BrowserStorage from '../services/BrowserStorage.js'
 import { setPlaySounds } from '../services/settingsService.js'
 
 const state = {
 	userId: undefined,
-	playSoundsUser: fromStateOr('spreed', 'play_sounds', false),
+	playSoundsUser: loadState('spreed', 'play_sounds', false),
 	playSoundsGuest: BrowserStorage.getItem('play_sounds') !== 'no',
 }
 

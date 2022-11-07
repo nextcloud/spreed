@@ -13,7 +13,6 @@ import { showError } from '@nextcloud/dialogs'
 import fileUploadStore from './fileUploadStore.js'
 
 jest.mock('../services/DavClient')
-jest.mock('./helper')
 jest.mock('../utils/fileUpload', () => ({
 	findUniquePath: jest.fn(),
 	getFileExtension: jest.fn(),
