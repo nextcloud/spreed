@@ -350,7 +350,7 @@ export default {
 				return false // No previous message
 			}
 
-			if (message1.actorType === ATTENDEE.ACTOR_TYPE_BOTS // Don't group messages of commands and bots
+			if (message1.actorType === ATTENDEE.ACTOR_TYPE.BOTS // Don't group messages of commands and bots
 				&& message1.actorId !== ATTENDEE.CHANGELOG_BOT_ID) { // Apart from the changelog bot
 				return false
 			}
@@ -371,7 +371,13 @@ export default {
 				return false
 			}
 
-			return !this.messagesHaveDifferentDate(message1, message2) // Posted on the same day
+			if (this.messagesHaveDifferentDate(message1, message2)) {
+				// Not posted on the same day
+				return false
+			}
+
+			// Only group messages within a short period of time, so unrelated messages are not grouped together
+			return (this.getDateOfMessage(message1).format('X') - this.getDateOfMessage(message2).format('X')) < 300
 		},
 
 		/**
