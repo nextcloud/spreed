@@ -32,6 +32,7 @@ describe('messagesService', () => {
 					setReadMarker: 0,
 					lookIntoFuture: 0,
 					lastKnownMessageId: 1234,
+					limit: 100,
 					includeLastKnown: 0,
 				},
 			}
@@ -55,6 +56,7 @@ describe('messagesService', () => {
 					setReadMarker: 0,
 					lookIntoFuture: 0,
 					lastKnownMessageId: 1234,
+					limit: 100,
 					includeLastKnown: 1,
 				},
 			}

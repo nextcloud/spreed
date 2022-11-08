@@ -737,7 +737,7 @@ const actions = {
 	 * @param {boolean} data.includeLastKnown whether to include the last known message in the response;
 	 */
 	async fetchMessages(context, { token, lastKnownMessageId, includeLastKnown, requestOptions, minimumVisible }) {
-		minimumVisible = minimumVisible || CHAT.MINIMUM_VISIBLE
+		minimumVisible = (typeof minimumVisible === 'undefined') ? CHAT.MINIMUM_VISIBLE : minimumVisible
 
 		context.dispatch('cancelFetchMessages')
 
