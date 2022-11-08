@@ -22,7 +22,7 @@ steps:
   - bash run.sh features/callapi
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -58,7 +58,7 @@ steps:
   - bash run.sh features/chat
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -94,7 +94,7 @@ steps:
   - bash run.sh features/chat-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -130,7 +130,7 @@ steps:
   - bash run.sh features/command
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -167,7 +167,7 @@ steps:
   - bash run.sh features/conversation
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -204,7 +204,7 @@ steps:
   - bash run.sh features/conversation-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -240,7 +240,7 @@ steps:
   - bash run.sh features/federation
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -276,7 +276,7 @@ steps:
   - bash run.sh features/integration
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -312,7 +312,7 @@ steps:
   - bash run.sh features/sharing
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -348,7 +348,7 @@ steps:
   - bash run.sh features/sharing-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -398,7 +398,7 @@ steps:
   - bash run.sh features/callapi
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -449,7 +449,7 @@ steps:
   - bash run.sh features/chat
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -500,7 +500,7 @@ steps:
   - bash run.sh features/chat-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -551,7 +551,7 @@ steps:
   - bash run.sh features/command
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -603,7 +603,7 @@ steps:
   - bash run.sh features/conversation
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -655,7 +655,7 @@ steps:
   - bash run.sh features/conversation-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -706,7 +706,7 @@ steps:
   - bash run.sh features/federation
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -757,7 +757,7 @@ steps:
   - bash run.sh features/integration
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -808,7 +808,7 @@ steps:
   - bash run.sh features/sharing
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -859,7 +859,7 @@ steps:
   - bash run.sh features/sharing-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -905,7 +905,7 @@ steps:
   - bash run.sh features/callapi
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -950,7 +950,7 @@ steps:
   - bash run.sh features/chat
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -995,7 +995,7 @@ steps:
   - bash run.sh features/chat-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1040,7 +1040,7 @@ steps:
   - bash run.sh features/command
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1086,7 +1086,7 @@ steps:
   - bash run.sh features/conversation
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1132,7 +1132,7 @@ steps:
   - bash run.sh features/conversation-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1177,7 +1177,7 @@ steps:
   - bash run.sh features/federation
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1222,7 +1222,7 @@ steps:
   - bash run.sh features/integration
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1267,7 +1267,7 @@ steps:
   - bash run.sh features/sharing
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1312,7 +1312,7 @@ steps:
   - bash run.sh features/sharing-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: read_shares_in_folder
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
