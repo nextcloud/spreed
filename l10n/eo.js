@@ -268,8 +268,6 @@ OC.L10N.register(
     "OK" : "Bone",
     "Copy link" : "Kopii ligilon",
     "Dismiss" : "Preterpasi",
-    "More actions" : "Pliaj agoj",
-    "Grid view" : "Krada vido",
     "Back" : "Antaŭen",
     "You" : "Vi",
     "Favorite" : "Pliŝatata",
@@ -307,6 +305,7 @@ OC.L10N.register(
     "Privacy" : "Privateco",
     "Keyboard shortcuts" : "Fulmoklavoj",
     "Search" : "Serĉi",
+    "Grid view" : "Krada vido",
     "Send" : "Sendi",
     "Files" : "Dosieroj",
     "Polls" : "Enketilo",
@@ -318,6 +317,7 @@ OC.L10N.register(
     "iOS app" : "iOS-aplikaĵo",
     "An error occurred. Please contact your admin." : "Eraro okazis. Bonvolu kontakti vian administranton.",
     "Saved" : "Konservita",
+    "More actions" : "Pliaj agoj",
     "Enter a password" : "Entajpu pasvorton"
 },
 "nplurals=2; plural=(n != 1);");

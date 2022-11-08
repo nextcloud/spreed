@@ -266,8 +266,6 @@
     "OK" : "Bone",
     "Copy link" : "Kopii ligilon",
     "Dismiss" : "Preterpasi",
-    "More actions" : "Pliaj agoj",
-    "Grid view" : "Krada vido",
     "Back" : "Antaŭen",
     "You" : "Vi",
     "Favorite" : "Pliŝatata",
@@ -305,6 +303,7 @@
     "Privacy" : "Privateco",
     "Keyboard shortcuts" : "Fulmoklavoj",
     "Search" : "Serĉi",
+    "Grid view" : "Krada vido",
     "Send" : "Sendi",
     "Files" : "Dosieroj",
     "Polls" : "Enketilo",
@@ -316,6 +315,7 @@
     "iOS app" : "iOS-aplikaĵo",
     "An error occurred. Please contact your admin." : "Eraro okazis. Bonvolu kontakti vian administranton.",
     "Saved" : "Konservita",
+    "More actions" : "Pliaj agoj",
     "Enter a password" : "Entajpu pasvorton"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
