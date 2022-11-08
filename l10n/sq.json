@@ -172,10 +172,8 @@
     "Dismiss" : "Hiq",
     "Show your screen" : "Shfaq ekranin tënd",
     "Stop screensharing" : "Ndalo ndarjen e ekranit",
-    "More actions" : "Më tepër veprime ",
     "Mute audio" : "Mute audio",
     "Disable video" : "Çaktivizo video",
-    "Grid view" : "Pamje galeri",
     "Screensharing requires the page to be loaded through HTTPS." : "Ndarja e ekranit kërkon faqen të ngarkohet përmes HTTPS.",
     "Sharing your screen only works with Firefox version 52 or newer." : "Ndarja e ekranit punon vetëm me Firefox, versionin 52 ose më të ri.",
     "Screensharing extension is required to share your screen." : "Zgjerim i ndarja së Ekranit është i nevojshëm për të ndarë ekranin tuaj.",
@@ -228,6 +226,7 @@
     "Keyboard shortcuts" : "Shkurtoret e tastierës",
     "Search" : "Kërko",
     "Rename conversation" : "Riemërtojeni bisedën",
+    "Grid view" : "Pamje galeri",
     "Send" : "Dërgo",
     "Start a conversation" : "Filloni një bisedë",
     "Media" : "Media",
@@ -248,6 +247,7 @@
     "iOS app" : "Aplikacion iOS",
     "An error occurred. Please contact your admin." : "Ndodhi një gabim. Ju lutemi, lidhuni me përgjegjësin tuaj.",
     "Saved" : "U ruajt",
+    "More actions" : "Më tepër veprime ",
     "Enter a password" : "Fusni një fjalëkalim",
     "Calls" : "Thirrjet"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

@@ -291,8 +291,6 @@
     "OK" : "OK",
     "Copy link" : "Copiză link",
     "Dismiss" : "Elimină",
-    "More actions" : "Mai multe acțiuni",
-    "Grid view" : "Afișare în grilă",
     "Back" : "Înapoi",
     "Favorite" : "Favorite",
     "Description" : "Descriere",
@@ -335,6 +333,7 @@
     "Privacy" : "Confindențialitate",
     "Keyboard shortcuts" : "Scurtături din tastatură",
     "Search" : "Caută",
+    "Grid view" : "Afișare în grilă",
     "Send" : "Trimite",
     "Media" : "Media",
     "Files" : "Fișiere",
@@ -349,6 +348,7 @@
     "iOS app" : "Aplicație iOS",
     "An error occurred. Please contact your admin." : "A apărut o eroare. Te rugăm să contactezi administratorul.",
     "Saved" : "Salvat",
+    "More actions" : "Mai multe acțiuni",
     "Enter a password" : "Enter a password",
     "Calls" : "Apeluri"
 },"pluralForm" :"nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));"
