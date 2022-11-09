@@ -7,6 +7,14 @@ name: Node
 
 on:
   pull_request:
+    paths:
+      - '.github/workflows/**'
+      - 'src/**'
+      - 'appinfo/info.xml'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - '**.js'
 
 permissions:
   contents: read

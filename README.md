@@ -15,24 +15,24 @@
 
 More in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/).
 
-If you have suggestions or problems, please [open an issue](https://github.com/nextcloud/spreed/issues) or contribute directly :)
+If you have suggestions or problems, please [open an issue](https://github.com/nextcloud/spreed/issues) or contribute directly 🤓
 
 ### Supported Browsers
 
-| Browser | Compatible |
-|---|---|
-| Firefox | ✔️ 52 or later |
-| Chrome/Chromium | ✔️ 49 or later |
-| Opera | ✔️ 72 or later |
-| Edge | ⚠️ Latest versions <br> 🎤 Speakers are not promoted <br> 🏷 Name changes while a call is on-going are not reflected |
-| Safari | ⚠️ 12 or later <br> ❌ No screensharing support <br> 🖥 Viewing screens of others' work |
+| Browser         | Compatible                                                                                                           |
+|-----------------|----------------------------------------------------------------------------------------------------------------------|
+| Firefox         | ✔️ 52 or later                                                                                                       |
+| Chrome/Chromium | ✔️ 49 or later                                                                                                       |
+| Opera           | ✔️ 72 or later                                                                                                       |
+| Safari          | ✔️ 13 or later <br> ⚠️ Safari 12 also works, but can not share their own screen                                      |
+| Edge            | ⚠️ Latest versions <br> 🎤 Speakers are not promoted <br> 🏷 Name changes while a call is on-going are not reflected |
 
 
 ## Installing for Production
 
 Nextcloud Talk is really easy to install. You just need to enable the app from the [Nextcloud App Store](https://apps.nextcloud.com/apps/spreed) and everything will work out of the box.
 
-There are some scenarios (users behind strict firewalls / symmetric NATs) where a TURN server is needed. That's a bit more tricky to install. You can [find instructions in our documentation](https://nextcloud-talk.readthedocs.io/en/latest/TURN/) and the team behind the Nextcloud VM has developed a script which takes care of everything for you ([vm-talk.sh](https://github.com/nextcloud/vm/blob/master/apps/talk.sh)). The script is tested on Ubuntu Server 18.04, but should work on 16.04 as well. Please keep in mind that it's developed for the VM specifically and any issues should be reported in that repo, not here.
+There are some scenarios (users behind strict firewalls / symmetric NATs) where a TURN server is needed. That's a bit more tricky to install. You can [find instructions in our documentation](https://nextcloud-talk.readthedocs.io/en/latest/TURN/) and the team behind the Nextcloud VM has developed a script which takes care of everything for you ([vm-talk.sh](https://github.com/nextcloud/vm/blob/master/apps/talk.sh)). The script is tested on the recent Ubuntu Server LTS. Please keep in mind that it's developed for the VM specifically and any issues should be reported in that repository, not here.
 
 Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
 
@@ -76,44 +76,42 @@ If you need to use Talk in an enterprise environment, [contact our sales team](h
 
 ## Development Setup
 
-1. Simply clone this repository into the `apps` folder of your Nextcloud development instance.
-2. Run `make dev-setup` to install the dependencies.
-3. Run `make build-js`.
-4. Then activate it through the apps management. :tada:
-5. To build the docs locally, install mkdocs locally: `apt install mkdocs mkdocs-bootstrap`.
+1. 🗂️ Simply clone this repository into the `apps` folder of your Nextcloud development instance.
+2. 📦 Run `make dev-setup` to install the dependencies.
+3. 🏗️ Run `make build-js`.
+4. 🔌 Then activate it through the apps management. :tada:
+5. 📘 To build the docs locally, install mkdocs locally: `apt install mkdocs mkdocs-bootstrap`.
 
 We are also available on [our public Talk team conversation](https://cloud.nextcloud.com/call/c7fz9qpr), if you want to join the discussion.
-
-### API documentation
-
-The API documentation is available [here](https://nextcloud-talk.readthedocs.io/en/latest/).
-
-### Milestones and Branches
-
-#### Branches
-
-In the Talk app we have one branch per Nextcloud server version. stable* branches of the app should always work with the same branch of the Nextcloud server.
-This is only off close to releases of the server, to allow easier finishing of features, so we don't have to backport them.
-
-#### Milestones
-
-* 10.0.0 - **Numeric** milestones are settled and waiting for their release or some final polishing
-* 💛 Next Minor (20) - The **next minor** milestone is for issues/PR that go into the next Dot-Release for the given Nextcloud version (in the example 20 - e.g. 10.0.1)
-* 💚 Next Major (21) - The **next major** milestone is for issues/PR that go into the next feature release for the new Major Nextcloud version (as there are Minors for 20, this would be 21)
-* 💔 Backlog - The **backlog** milestone is assigned to all remaining issues
-
-You can always pick a task of any of the milestones and we will help you to get it into the assigned milestone or also an earlier one if time permits. It's just a matter of having an overview and better visibility what we think should be worked on, but it's not exclusive.
-
 
 ### Useful tricks for testing
 
 * Disable camera until reboot: `sudo modprobe -r uvcvideo`
 * Re-enable camera: `sudo modprobe uvcvideo`
 * Send fake-stream (audio and video) in Firefox:
-  1. Open `about:config`
-  2. Search for `fake`
-  3. Toggle `media.navigator.streams.fake` to **true**
+	1. Open `about:config`
+	2. Search for `fake`
+	3. Toggle `media.navigator.streams.fake` to **true**
 
+### API documentation
+
+The API documentation is available on [nextcloud-talk.readthedocs.io/](https://nextcloud-talk.readthedocs.io/en/latest/).
+
+### Milestones and Branches
+
+#### Branches
+
+In the Talk app we have one branch per Nextcloud server version. `stable*` branches of the app should always work with the same branch of the Nextcloud server.
+This is only off close to releases of the server, to allow easier finishing of features, so we don't have to backport them.
+
+#### Milestones
+
+* `10.0.0` - **Numeric** milestones are settled and waiting for their release or some final polishing
+* `💛 Next Minor (20)` - The **next minor** milestone is for issues/PR that go into the next Dot-Release for the given Nextcloud version (in the example 20 - e.g. 10.0.1)
+* `💚 Next Major (21)` - The **next major** milestone is for issues/PR that go into the next feature release for the new Major Nextcloud version (as there are Minors for 20, this would be 21)
+* `💔 Backlog` - The **backlog** milestone is assigned to all remaining issues
+
+You can always pick a task of any of the milestones and we will help you to get it into the assigned milestone or also an earlier one if time permits. It's just a matter of having an overview and better visibility what we think should be worked on, but it's not exclusive.
 
 ## Contribution Guidelines
 
