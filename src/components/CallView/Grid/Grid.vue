@@ -359,6 +359,12 @@ export default {
 		},
 
 		dpiFactor() {
+			if (this.isStripe) {
+				// On the stripe we only ever want 1 row, so we ignore the DPR
+				// as the height of the grid is the height of the video elements then.
+				return 1.0
+			}
+
 			const devicePixelRatio = window.devicePixelRatio
 
 			// Some sanity check to not screw up the math.
