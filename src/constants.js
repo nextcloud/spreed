@@ -24,6 +24,10 @@ export const SIGNALING = {
 		CLUSTER_CONVERSATION: 'conversation_cluster',
 	},
 }
+export const CHAT = {
+	FETCH_LIMIT: 100,
+	MINIMUM_VISIBLE: 5,
+}
 export const CONVERSATION = {
 	START_CALL: {
 		EVERYONE: 0,

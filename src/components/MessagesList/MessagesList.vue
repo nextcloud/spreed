@@ -75,7 +75,10 @@ import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import Axios from '@nextcloud/axios'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import isInLobby from '../../mixins/isInLobby.js'
-import { ATTENDEE } from '../../constants.js'
+import {
+	ATTENDEE,
+	CHAT,
+} from '../../constants.js'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus.js'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
@@ -164,18 +167,7 @@ export default {
 			return this.$store.getters.messagesList(this.token)
 		},
 		/**
-		 * Gets the messages object, which is structured so that the key of each message element
-		 * corresponds to the id of the message, and makes it easy and efficient to access the
-		 * individual message object.
-		 *
-		 * @return {object}
-		 */
-		messages() {
-			// FIXME: remove if unused ?
-			return this.$store.getters.messages(this.token)
-		},
-		/**
-		 * Creates an array of messages grouped in nested arrays by same autor.
+		 * Creates an array of messages grouped in nested arrays by same author.
 		 *
 		 * @return {Array}
 		 */
@@ -558,6 +550,7 @@ export default {
 					token: this.token,
 					lastKnownMessageId: this.$store.getters.getFirstKnownMessageId(this.token),
 					includeLastKnown,
+					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
 
 				this.loadingOldMessages = false
@@ -599,7 +592,7 @@ export default {
 					return
 				}
 
-				if (exception.response && exception.response.status === 304) {
+				if (exception?.response?.status === 304) {
 					// 304 - Not modified
 					// This is not an error, so reset error timeout and poll again
 					this.pollingErrorTimeout = 1

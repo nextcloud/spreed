@@ -137,19 +137,14 @@ describe('messagesStore', () => {
 		expect(store.getters.messagesList(TOKEN)[1]).toStrictEqual(message3)
 		expect(store.getters.messagesList('token-2')[0]).toStrictEqual(message2)
 
-		// by id
-		expect(store.getters.messages(TOKEN)[1]).toStrictEqual(message1)
-		expect(store.getters.messages(TOKEN)[3]).toStrictEqual(message3)
-		expect(store.getters.messages('token-2')[2]).toStrictEqual(message2)
-
 		// with messages getter
-		expect(store.getters.messages(TOKEN)).toStrictEqual({
-			1: message1,
-			3: message3,
-		})
-		expect(store.getters.messages('token-2')).toStrictEqual({
-			2: message2,
-		})
+		expect(store.getters.messagesList(TOKEN)).toStrictEqual([
+			message1,
+			message3,
+		])
+		expect(store.getters.messagesList('token-2')).toStrictEqual([
+			message2,
+		])
 	})
 
 	describe('delete message', () => {
@@ -767,12 +762,14 @@ describe('messagesStore', () => {
 				requestOptions: {
 					dummyOption: true,
 				},
+				minimumVisible: 0,
 			})
 
 			expect(fetchMessages).toHaveBeenCalledWith({
 				token: TOKEN,
 				lastKnownMessageId: 100,
 				includeLastKnown: true,
+				limit: 100,
 			}, {
 				dummyOption: true,
 			})
@@ -818,12 +815,14 @@ describe('messagesStore', () => {
 				requestOptions: {
 					dummyOption: true,
 				},
+				minimumVisible: 0,
 			})
 
 			expect(fetchMessages).toHaveBeenCalledWith({
 				token: TOKEN,
 				lastKnownMessageId: 100,
 				includeLastKnown: false,
+				limit: 100,
 			}, {
 				dummyOption: true,
 			})

@@ -37,6 +37,7 @@ import CancelableRequest from '../utils/cancelableRequest.js'
 import { showError } from '@nextcloud/dialogs'
 import {
 	ATTENDEE,
+	CHAT,
 } from '../constants.js'
 
 /**
@@ -153,26 +154,9 @@ const getters = {
 	 */
 	messagesList: (state) => (token) => {
 		if (state.messages[token]) {
-			return Object.values(state.messages[token]).filter(message => {
-				// Filter out some system messages
-				if (message.systemMessage === 'reaction'
-					|| message.systemMessage === 'reaction_deleted'
-					|| message.systemMessage === 'reaction_revoked'
-					|| message.systemMessage === 'poll_voted'
-				) {
-					return false
-				} else {
-					return true
-				}
-			})
+			return Object.values(state.messages[token])
 		}
 		return []
-	},
-	messages: (state) => (token) => {
-		if (state.messages[token]) {
-			return state.messages[token]
-		}
-		return {}
 	},
 	message: (state) => (token, id) => {
 		if (state.messages[token][id]) {
@@ -479,7 +463,9 @@ const actions = {
 			})
 		}
 
-		if (message.systemMessage === 'reaction' || message.systemMessage === 'reaction_revoked') {
+		if (message.systemMessage === 'reaction'
+			|| message.systemMessage === 'reaction_deleted'
+			|| message.systemMessage === 'reaction_revoked') {
 			context.commit('resetReactions', {
 				token: message.token,
 				messageId: message.parent,
@@ -500,7 +486,14 @@ const actions = {
 			})
 		}
 
-		context.commit('addMessage', message)
+		// Filter out some system messages
+		if (message.systemMessage !== 'reaction'
+			&& message.systemMessage !== 'reaction_deleted'
+			&& message.systemMessage !== 'reaction_revoked'
+			&& message.systemMessage !== 'poll_voted'
+		) {
+			context.commit('addMessage', message)
+		}
 
 		 if ((message.messageType === 'comment' && message.message === '{file}' && message.messageParameters?.file)
 			|| (message.messageType === 'comment' && message.message === '{object}' && message.messageParameters?.object)) {
@@ -740,9 +733,12 @@ const actions = {
 	 * @param {string} data.token the conversation token;
 	 * @param {object} data.requestOptions request options;
 	 * @param {string} data.lastKnownMessageId last known message id;
+	 * @param {number} data.minimumVisible Minimum number of chat messages we want to load
 	 * @param {boolean} data.includeLastKnown whether to include the last known message in the response;
 	 */
-	async fetchMessages(context, { token, lastKnownMessageId, includeLastKnown, requestOptions }) {
+	async fetchMessages(context, { token, lastKnownMessageId, includeLastKnown, requestOptions, minimumVisible }) {
+		minimumVisible = (typeof minimumVisible === 'undefined') ? CHAT.MINIMUM_VISIBLE : minimumVisible
+
 		context.dispatch('cancelFetchMessages')
 
 		// Get a new cancelable request function and cancel function pair
@@ -754,6 +750,7 @@ const actions = {
 			token,
 			lastKnownMessageId,
 			includeLastKnown,
+			limit: CHAT.FETCH_LIMIT,
 		}, requestOptions)
 
 		let newestKnownMessageId = 0
@@ -774,6 +771,14 @@ const actions = {
 			}
 			context.dispatch('processMessage', message)
 			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
+
+			if (message.systemMessage !== 'reaction'
+				&& message.systemMessage !== 'reaction_deleted'
+				&& message.systemMessage !== 'reaction_revoked'
+				&& message.systemMessage !== 'poll_voted'
+			) {
+				minimumVisible--
+			}
 		})
 
 		if (response.headers['x-chat-last-given']) {
@@ -795,6 +800,17 @@ const actions = {
 		}
 
 		context.commit('loadedMessagesOfConversation', { token })
+
+		if (minimumVisible > 0) {
+			// There are not yet enough visible messages loaded, so fetch another chunk.
+			// This can happen when a lot of reactions or poll votings happen
+			return await context.dispatch('fetchMessages', {
+				token,
+				lastKnownMessageId: context.getters.getFirstKnownMessageId(token),
+				includeLastKnown,
+				minimumVisible,
+			})
+		}
 
 		return response
 	},
