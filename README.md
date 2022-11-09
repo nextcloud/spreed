@@ -19,13 +19,13 @@ If you have suggestions or problems, please [open an issue](https://github.com/n
 
 ### Supported Browsers
 
-| Browser | Compatible |
-|---|---|
-| Firefox | ✔️ 52 or later |
-| Chrome/Chromium | ✔️ 49 or later |
-| Opera | ✔️ 72 or later |
-| Edge | ⚠️ Latest versions <br> 🎤 Speakers are not promoted <br> 🏷 Name changes while a call is on-going are not reflected |
-| Safari | ⚠️ 12 or later <br> ❌ No screensharing support <br> 🖥 Viewing screens of others' work |
+| Browser         | Compatible                                                                                                           |
+|-----------------|----------------------------------------------------------------------------------------------------------------------|
+| Firefox         | ✔️ 52 or later                                                                                                       |
+| Chrome/Chromium | ✔️ 49 or later                                                                                                       |
+| Opera           | ✔️ 72 or later                                                                                                       |
+| Safari          | ✔️ 13 or later <br> ⚠️ Safari 12 also works, but can not share their own screen                                      |
+| Edge            | ⚠️ Latest versions <br> 🎤 Speakers are not promoted <br> 🏷 Name changes while a call is on-going are not reflected |
 
 
 ## Installing for Production
