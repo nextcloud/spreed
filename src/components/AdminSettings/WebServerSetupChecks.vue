@@ -24,10 +24,10 @@
 			{{ t('spreed', 'Web server setup checks') }}
 		</h2>
 
-		<p v-if="!validApachePHPConfiguration"
-			class="settings-hint warning">
+		<NcNoteCard v-if="apacheWarning"
+			:type="apacheWarningType">
 			{{ apacheWarning }}
-		</p>
+		</NcNoteCard>
 
 		<ul class="web-server-setup-checks">
 			<li class="background-blur">
@@ -52,6 +52,7 @@
 <script>
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import Check from 'vue-material-design-icons/Check.vue'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
@@ -71,13 +72,14 @@ export default {
 	components: {
 		AlertCircle,
 		NcButton,
+		NcNoteCard,
 		Check,
 	},
 
 	data() {
 		return {
 			backgroundBlurLoaded: undefined,
-			validApachePHPConfiguration: '',
+			apachePHPConfiguration: '',
 		}
 	},
 
@@ -115,18 +117,25 @@ export default {
 		},
 
 		apacheWarning() {
-			if (this.validApachePHPConfiguration === 'invalid') {
+			if (this.apachePHPConfiguration === 'invalid') {
 				return t('spreed', 'It seems that the PHP and Apache configuration is not compatible. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module.')
 			}
-			if (this.validApachePHPConfiguration === 'unknown') {
+			if (this.apachePHPConfiguration === 'unknown') {
 				return t('spreed', 'Could not detect the PHP and Apache configuration because exec is disabled or apachectl is not working as expected. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module.')
 			}
 			return ''
 		},
+
+		apacheWarningType() {
+			if (this.apachePHPConfiguration === 'invalid') {
+				return 'error'
+			}
+			return 'warning'
+		},
 	},
 
 	mounted() {
-		this.validApachePHPConfiguration = loadState('spreed', 'valid_apache_php_configuration')
+		this.apachePHPConfiguration = loadState('spreed', 'valid_apache_php_configuration')
 	},
 
 	beforeMount() {
