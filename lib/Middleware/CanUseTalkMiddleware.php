@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Middleware;
 
 use OCA\Talk\Config;
+use OCA\Talk\Controller\SignalingController;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Middleware\Exceptions\CanNotUseTalkException;
 use OCA\Talk\Room;
@@ -36,20 +37,24 @@ use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Utility\IControllerMethodReflector;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\IUserSession;
 
 class CanUseTalkMiddleware extends Middleware {
 	private IUserSession $userSession;
+	private IGroupManager $groupManager;
 	private IControllerMethodReflector $reflector;
 	private Config $talkConfig;
 	private IConfig $serverConfig;
 
 	public function __construct(IUserSession $userSession,
+								IGroupManager $groupManager,
 								IControllerMethodReflector $reflector,
 								Config $talkConfig,
 								IConfig $serverConfig) {
 		$this->userSession = $userSession;
+		$this->groupManager = $groupManager;
 		$this->reflector = $reflector;
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
@@ -64,6 +69,12 @@ class CanUseTalkMiddleware extends Middleware {
 	public function beforeController($controller, $methodName): void {
 		$user = $this->userSession->getUser();
 		if ($user instanceof IUser && $this->talkConfig->isDisabledForUser($user)) {
+			if ($methodName === 'getWelcomeMessage'
+				&& $controller instanceof SignalingController
+				&& $this->groupManager->isAdmin($user->getUID())) {
+				return;
+			}
+
 			throw new CanNotUseTalkException();
 		}
 
