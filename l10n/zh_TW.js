@@ -505,6 +505,7 @@ OC.L10N.register(
     "Password" : "密碼",
     "Rocket.Chat channel" : "Rocket.Chat 頻道",
     "API token" : "API token",
+    "Channel" : "頻道",
     "Login" : "帳號",
     "Chat ID" : "聊天 ID",
     "IRC server URL (e.g. chat.freenode.net:6667)" : "IRC 伺服器 URL (比如: chat.freenode.net:6667)",
