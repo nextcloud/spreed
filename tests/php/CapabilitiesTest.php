@@ -122,6 +122,7 @@ class CapabilitiesTest extends TestCase {
 			'send-call-notification',
 			'talk-polls',
 			'breakout-rooms-v1',
+			'avatar',
 			'message-expiration',
 			'reactions',
 		];

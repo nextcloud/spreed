@@ -1,8 +1,8 @@
-Feature: chat/group-avatar
+Feature: chat/avatar
   Background:
     Given user "participant1" exists
 
-  Scenario: Define an image as group avatar when the group already exists
+  Scenario: Define an image as avatar when the conversation already exists
     Given user "participant1" creates room "room1" (v4)
       | roomType | 3 |
       | roomName | room1 |

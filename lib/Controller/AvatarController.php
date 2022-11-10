@@ -26,8 +26,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use InvalidArgumentException;
 use OC\Files\Filesystem;
-use OC\NotSquareException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
@@ -37,7 +37,7 @@ use OCP\Files\NotFoundException;
 use OCP\IL10N;
 use OCP\IRequest;
 
-class GroupAvatarController extends AEnvironmentAwareController {
+class AvatarController extends AEnvironmentAwareController {
 	private IAppData $appData;
 	private IL10N $l;
 
@@ -54,17 +54,13 @@ class GroupAvatarController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
+	 * @RequireModeratorParticipant
 	 */
-	public function postAvatar(): DataResponse {
+	public function uploadAvatar(): DataResponse {
 		$file = $this->request->getUploadedFile('file');
 
 		if (is_null($file)) {
-			return new DataResponse(
-				['message' => $this->l->t('No image file provided')],
-				Http::STATUS_BAD_REQUEST
-			);
+			throw new InvalidArgumentException($this->l->t('No image file provided'));
 		}
 
 		if (
@@ -81,10 +77,7 @@ class GroupAvatarController extends AEnvironmentAwareController {
 			$content = file_get_contents($file['tmp_name']);
 			unlink($file['tmp_name']);
 		} else {
-			return new DataResponse(
-				['message' => $this->l->t('Invalid file provided')],
-				Http::STATUS_BAD_REQUEST
-			);
+			throw new InvalidArgumentException($this->l->t('Invalid file provided'));
 		}
 
 		try {
@@ -93,22 +86,16 @@ class GroupAvatarController extends AEnvironmentAwareController {
 			$image->readExif($content);
 			$image->fixOrientation();
 			if (!($image->height() === $image->width())) {
-				throw new NotSquareException($this->l->t('Avatar image is not square'));
+				throw new InvalidArgumentException($this->l->t('Avatar image is not square'));
 			}
 
 			if (!$image->valid()) {
-				return new DataResponse(
-					['data' => ['message' => $this->l->t('Invalid image')]],
-					Http::STATUS_BAD_REQUEST
-				);
+				throw new InvalidArgumentException($this->l->t('Invalid image'));
 			}
 
 			$mimeType = $image->mimeType();
 			if ($mimeType !== 'image/jpeg' && $mimeType !== 'image/png') {
-				return new DataResponse(
-					['data' => ['message' => $this->l->t('Unknown filetype')]],
-					Http::STATUS_BAD_REQUEST
-				);
+				throw new InvalidArgumentException($this->l->t('Unknown filetype'));
 			}
 
 			try {
@@ -120,7 +107,7 @@ class GroupAvatarController extends AEnvironmentAwareController {
 			$extension = explode('/', $mimeType)[1];
 			$folder->newFile($token . '.' . $extension, $image->data());
 			return new DataResponse();
-		} catch (NotSquareException $e) {
+		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		} catch (\Exception $e) {
 			$this->logger->error('Failed to post avatar', [
@@ -134,7 +121,6 @@ class GroupAvatarController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
 	 */
 	public function getAvatar(): Response {
 		try {
@@ -152,15 +138,16 @@ class GroupAvatarController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$resp = new FileDisplayResponse($file);
-		$resp->addHeader('Content-Type', $file->getMimeType());
-		return $resp;
+		$response = new FileDisplayResponse($file);
+		$response->addHeader('Content-Type', $file->getMimeType());
+		// Cache for 1 day
+		$response->cacheFor(60 * 60 * 24, false, true);
+		return $response;
 	}
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
+	 * @RequireModeratorParticipant
 	 */
 	public function deleteAvatar(): DataResponse {
 		try {

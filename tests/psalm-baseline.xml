@@ -172,7 +172,7 @@
       <code>$commentIdToIndex[$parentId]</code>
     </InvalidArrayOffset>
   </file>
-  <file src="lib/Controller/GroupAvatarController.php">
+  <file src="lib/Controller/AvatarController.php">
     <UndefinedClass occurrences="1">
       <code>Filesystem</code>
     </UndefinedClass>

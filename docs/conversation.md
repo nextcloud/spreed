@@ -378,3 +378,42 @@
         + `400 Bad Request` When the conversation type does not support making it listable (only group and public conversation)
         + `403 Forbidden` When the current user is not a moderator/owner or the conversation is not a public conversation
         + `404 Not Found` When the conversation could not be found for the participant
+
+## Handle the avatar of conversation
+
+* Required capability: `avatar`
+* Method: `POST`
+* Endpoint: `/room/{token}/avatar`
+* Data:
+
+| field  | type   | Description                                                                                                                         |
+| ------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `file` | string | Blob of image in a multipart/form-data request. Only accept images with mimetype equal to PNG or JPEG and need to be squared image. |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When: no image, file is too big, invalid mimetype or resource, isn't square, unknown error
+        + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
+        + `404 Not Found` When the conversation could not be found for the participant
+
+* Required capability: `avatar`
+* Method: `DELETE`
+* Endpoint: `/room/{token}/avatar`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
+        + `404 Not Found` When the conversation could not be found for the participant
+
+
+* Required capability: `avatar`
+* Method: `GET`
+* Endpoint: `/room/{token}/avatar`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the conversation haven't an avatar
+        + `404 Not Found` When the conversation could not be found for the participant
