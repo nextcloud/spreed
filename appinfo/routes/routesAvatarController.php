@@ -31,10 +31,12 @@ $requirements = [
 return [
 	'ocs' => [
 		/** @see \OCA\Talk\Controller\AvatarController::uploadAvatar() */
-		['name' => 'Avatar#uploadAvatar', 'url' => '/api/{apiVersion}/group-avatar/{token}', 'verb' => 'POST', 'requirements' => $requirements],
+		['name' => 'Avatar#uploadAvatar', 'url' => '/api/{apiVersion}/room/{token}/avatar', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\AvatarController::getAvatar() */
-		['name' => 'Avatar#getAvatar', 'url' => '/api/{apiVersion}/group-avatar/{token}', 'verb' => 'GET', 'requirements' => $requirements],
+		['name' => 'Avatar#getAvatar', 'url' => '/api/{apiVersion}/room/{token}/avatar', 'verb' => 'GET', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\AvatarController::getAvatar() */
+		['name' => 'Avatar#getAvatarDark', 'url' => '/api/{apiVersion}/room/{token}/avatar/dark', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\AvatarController::deleteAvatar() */
-		['name' => 'Avatar#deleteAvatar', 'url' => '/api/{apiVersion}/group-avatar/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
+		['name' => 'Avatar#deleteAvatar', 'url' => '/api/{apiVersion}/room/{token}/avatar', 'verb' => 'DELETE', 'requirements' => $requirements],
 	],
 ];

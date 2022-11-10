@@ -122,7 +122,7 @@ class AvatarController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireParticipant
 	 */
-	public function getAvatar(): Response {
+	public function getAvatar(?bool $dark = false): Response {
 		try {
 			$folder = $this->appData->getFolder('room-avatar');
 		} catch (NotFoundException $e) {
@@ -143,6 +143,14 @@ class AvatarController extends AEnvironmentAwareController {
 		// Cache for 1 day
 		$response->cacheFor(60 * 60 * 24, false, true);
 		return $response;
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireParticipant
+	 */
+	public function getAvatarDark(): Response {
+		return $this->getAvatar(true);
 	}
 
 	/**

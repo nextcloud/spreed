@@ -407,10 +407,19 @@
         + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
         + `404 Not Found` When the conversation could not be found for the participant
 
-
 * Required capability: `avatar`
 * Method: `GET`
 * Endpoint: `/room/{token}/avatar`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the conversation haven't an avatar
+        + `404 Not Found` When the conversation could not be found for the participant
+
+* Required capability: `avatar`
+* Method: `GET`
+* Endpoint: `/room/{token}/avatar/dark`
 
 * Response:
     - Status code:

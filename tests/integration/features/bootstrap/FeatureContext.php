@@ -2883,7 +2883,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				],
 			],
 		];
-		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/avatar/' . self::$identifierToToken[$identifier], null, [], $options);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar', null, [], $options);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
@@ -2891,7 +2891,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @When /^the room "([^"]*)" need to have an avatar with (\d+)(?: \((v1)\))?$/
 	 */
 	public function theRoomNeedToHaveAnAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/avatar/' . self::$identifierToToken[$identifier]);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar');
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
@@ -2900,7 +2900,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userDeleteTheAvatarOfRoom(string $user, string $identifier, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
-		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/avatar/' . self::$identifierToToken[$identifier]);
+		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar');
 	}
 
 	/**
