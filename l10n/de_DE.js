@@ -567,7 +567,7 @@ OC.L10N.register(
     "Request password" : "Passwort anfordern",
     "Error requesting the password." : "Fehler bei der Passwortanforderung.",
     "This conversation has ended" : "Diese Unterhaltung wurde beendet",
-    "Error occurred when joining the conversation" : "Beim Beitritt zur Konversation ist ein Fehler aufgetreten",
+    "Error occurred when joining the conversation" : "Beim Beitritt zur Unterhaltung ist ein Fehler aufgetreten",
     "Close Talk sidebar" : "Talk-Seitenleiste schließen",
     "Open Talk sidebar" : "Talk-Seitenleiste öffnen",
     "Limit to groups" : "Auf Gruppen beschränken",
