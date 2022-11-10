@@ -28,6 +28,7 @@ namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
 use OC\Files\Filesystem;
+use OCA\Talk\Service\AvatarService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
@@ -36,19 +37,26 @@ use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\IL10N;
 use OCP\IRequest;
+use OCP\IUserSession;
 
 class AvatarController extends AEnvironmentAwareController {
 	private IAppData $appData;
+	private AvatarService $avatarService;
+	private IUserSession $userSession;
 	private IL10N $l;
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		IAppData $appData,
+		AvatarService $avatarService,
+		IUserSession $userSession,
 		IL10N $l10n
 	) {
 		parent::__construct($appName, $request);
 		$this->appData = $appData;
+		$this->avatarService = $avatarService;
+		$this->userSession = $userSession;
 		$this->l = $l10n;
 	}
 
@@ -94,7 +102,12 @@ class AvatarController extends AEnvironmentAwareController {
 			}
 
 			$mimeType = $image->mimeType();
-			if ($mimeType !== 'image/jpeg' && $mimeType !== 'image/png') {
+			$allowedMimeTypes = [
+				'image/jpeg',
+				'image/png',
+				'image/svg',
+			];
+			if (!in_array($mimeType, $allowedMimeTypes)) {
 				throw new InvalidArgumentException($this->l->t('Unknown filetype'));
 			}
 
@@ -104,8 +117,7 @@ class AvatarController extends AEnvironmentAwareController {
 				$folder = $this->appData->newFolder('room-avatar');
 			}
 			$token = $this->getRoom()->getToken();
-			$extension = explode('/', $mimeType)[1];
-			$folder->newFile($token . '.' . $extension, $image->data());
+			$folder->newFile($token, $image->data());
 			return new DataResponse();
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
@@ -122,21 +134,8 @@ class AvatarController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireParticipant
 	 */
-	public function getAvatar(?bool $dark = false): Response {
-		try {
-			$folder = $this->appData->getFolder('room-avatar');
-		} catch (NotFoundException $e) {
-			$folder = $this->appData->newFolder('room-avatar');
-		}
-		$token = $this->getRoom()->getToken();
-		if ($folder->fileExists($token . '.png')) {
-			$file = $folder->getFile($token . '.png');
-		} elseif ($folder->fileExists($token . '.jpeg')) {
-			$file = $folder->getFile($token . '.jpeg');
-		} else {
-			// @todo Implement fallback images
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
+	public function getAvatar(bool $dark = false): Response {
+		$file = $this->avatarService->getAvatar($this->getRoom(), $this->userSession->getUser(), $dark);
 
 		$response = new FileDisplayResponse($file);
 		$response->addHeader('Content-Type', $file->getMimeType());
@@ -158,14 +157,7 @@ class AvatarController extends AEnvironmentAwareController {
 	 * @RequireModeratorParticipant
 	 */
 	public function deleteAvatar(): DataResponse {
-		try {
-			$folder = $this->appData->getFolder('room-avatar');
-		} catch (NotFoundException $e) {
-			$folder = $this->appData->newFolder('room-avatar');
-		}
-		$token = $this->getRoom()->getToken();
-		$folder->delete($token . '.png');
-		$folder->delete($token . '.jpeg');
+		$this->avatarService->deleteAvatar($this->getRoom());
 		return new DataResponse([]);
 	}
 }

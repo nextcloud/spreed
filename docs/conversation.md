@@ -414,7 +414,6 @@
 * Response:
     - Status code:
         + `200 OK`
-        + `400 Bad Request` When the conversation haven't an avatar
         + `404 Not Found` When the conversation could not be found for the participant
 
 * Required capability: `avatar`
