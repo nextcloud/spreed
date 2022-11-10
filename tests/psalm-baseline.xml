@@ -167,15 +167,15 @@
       <code>null</code>
     </NullArgument>
   </file>
-  <file src="lib/Controller/ChatController.php">
-    <InvalidArrayOffset occurrences="1">
-      <code>$commentIdToIndex[$parentId]</code>
-    </InvalidArrayOffset>
-  </file>
   <file src="lib/Controller/AvatarController.php">
     <UndefinedClass occurrences="1">
       <code>Filesystem</code>
     </UndefinedClass>
+  </file>
+  <file src="lib/Controller/ChatController.php">
+    <InvalidArrayOffset occurrences="1">
+      <code>$commentIdToIndex[$parentId]</code>
+    </InvalidArrayOffset>
   </file>
   <file src="lib/Controller/PageController.php">
     <MissingDependency occurrences="2">
@@ -256,6 +256,11 @@
   <file src="lib/PublicShareAuth/TemplateLoader.php">
     <UndefinedClass occurrences="1">
       <code>BeforeTemplateRenderedEvent</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Service/AvatarService.php">
+    <UndefinedClass occurrences="1">
+      <code>\OC_Image</code>
     </UndefinedClass>
   </file>
   <file src="lib/Share/Listener.php">

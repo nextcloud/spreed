@@ -33,7 +33,6 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
 use OCP\AppFramework\Http\Response;
-use OCP\Files\IAppData;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserSession;
@@ -46,13 +45,11 @@ class AvatarController extends AEnvironmentAwareController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		IAppData $appData,
 		AvatarService $avatarService,
 		IUserSession $userSession,
 		IL10N $l10n
 	) {
 		parent::__construct($appName, $request);
-		$this->appData = $appData;
 		$this->avatarService = $avatarService;
 		$this->userSession = $userSession;
 		$this->l = $l10n;
