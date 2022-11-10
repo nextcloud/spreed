@@ -2879,7 +2879,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'multipart' => [
 				[
 					'name' => 'file',
-					'contents' => fopen($this->baseUrl . $file, 'r'),
+					'contents' => $file !== 'invalid' ? fopen(__DIR__ . '/../../../..' . $file, 'r') : '',
 				],
 			],
 		];
@@ -2898,9 +2898,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @When /^user "([^"]*)" delete the avatar of room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
-	public function userDeleteTheAvatarOfRoom(string $user, string $identifier, string $apiVersion = 'v1'): void {
+	public function userDeleteTheAvatarOfRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar');
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/**

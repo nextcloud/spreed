@@ -26,24 +26,61 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
+use InvalidArgumentException;
 use OCA\Talk\Room;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\InMemoryFile;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\IAvatarManager;
+use OCP\IL10N;
 use OCP\IUser;
 
 class AvatarService {
 	private IAppData $appData;
+	private IL10N $l;
 	private IAvatarManager $avatarManager;
 
 	public function __construct(
 		IAppData $appData,
+		IL10N $l,
 		IAvatarManager $avatarManager
 	) {
 		$this->appData = $appData;
+		$this->l = $l;
 		$this->avatarManager = $avatarManager;
+	}
+
+	public function setAvatar(Room $room, string $content): void {
+		$image = new \OC_Image();
+		$image->loadFromData($content);
+		$image->readExif($content);
+		$image->fixOrientation();
+		if (!($image->height() === $image->width())) {
+			throw new InvalidArgumentException($this->l->t('Avatar image is not square'));
+		}
+
+		if (!$image->valid()) {
+			throw new InvalidArgumentException($this->l->t('Invalid image'));
+		}
+
+		$mimeType = $image->mimeType();
+		$allowedMimeTypes = [
+			'image/jpeg',
+			'image/png',
+			'image/svg',
+		];
+		if (!in_array($mimeType, $allowedMimeTypes)) {
+			throw new InvalidArgumentException($this->l->t('Unknown filetype'));
+		}
+
+		try {
+			$folder = $this->appData->getFolder('room-avatar');
+		} catch (NotFoundException $e) {
+			$folder = $this->appData->newFolder('room-avatar');
+		}
+		$token = $room->getToken();
+		$folder->newFile($token, $image->data());
 	}
 
 	public function getAvatar(Room $room, ?IUser $user, bool $dark = false): ISimpleFile {

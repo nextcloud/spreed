@@ -34,13 +34,11 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\Files\IAppData;
-use OCP\Files\NotFoundException;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserSession;
 
 class AvatarController extends AEnvironmentAwareController {
-	private IAppData $appData;
 	private AvatarService $avatarService;
 	private IUserSession $userSession;
 	private IL10N $l;
@@ -65,59 +63,27 @@ class AvatarController extends AEnvironmentAwareController {
 	 * @RequireModeratorParticipant
 	 */
 	public function uploadAvatar(): DataResponse {
-		$file = $this->request->getUploadedFile('file');
+		try {
+			$file = $this->request->getUploadedFile('file');
 
-		if (is_null($file)) {
-			throw new InvalidArgumentException($this->l->t('No image file provided'));
-		}
-
-		if (
-			$file['error'] === 0 &&
-			is_uploaded_file($file['tmp_name']) &&
-			!Filesystem::isFileBlacklisted($file['tmp_name'])
-		) {
-			if ($file['size'] > 20 * 1024 * 1024) {
-				return new DataResponse(
-					['message' => $this->l->t('File is too big')],
-					Http::STATUS_BAD_REQUEST
-				);
+			if (is_null($file)) {
+				throw new InvalidArgumentException($this->l->t('No image file provided'));
 			}
+
+			if (
+				$file['error'] !== 0 ||
+				!is_uploaded_file($file['tmp_name']) ||
+				Filesystem::isFileBlacklisted($file['tmp_name'])
+			) {
+				throw new InvalidArgumentException($this->l->t('Invalid file provided'));
+			}
+			if ($file['size'] > 20 * 1024 * 1024) {
+				throw new InvalidArgumentException($this->l->t('File is too big'));
+			}
+
 			$content = file_get_contents($file['tmp_name']);
 			unlink($file['tmp_name']);
-		} else {
-			throw new InvalidArgumentException($this->l->t('Invalid file provided'));
-		}
-
-		try {
-			$image = new \OC_Image();
-			$image->loadFromData($content);
-			$image->readExif($content);
-			$image->fixOrientation();
-			if (!($image->height() === $image->width())) {
-				throw new InvalidArgumentException($this->l->t('Avatar image is not square'));
-			}
-
-			if (!$image->valid()) {
-				throw new InvalidArgumentException($this->l->t('Invalid image'));
-			}
-
-			$mimeType = $image->mimeType();
-			$allowedMimeTypes = [
-				'image/jpeg',
-				'image/png',
-				'image/svg',
-			];
-			if (!in_array($mimeType, $allowedMimeTypes)) {
-				throw new InvalidArgumentException($this->l->t('Unknown filetype'));
-			}
-
-			try {
-				$folder = $this->appData->getFolder('room-avatar');
-			} catch (NotFoundException $e) {
-				$folder = $this->appData->newFolder('room-avatar');
-			}
-			$token = $this->getRoom()->getToken();
-			$folder->newFile($token, $image->data());
+			$this->avatarService->setAvatar($this->getRoom(), $content);
 			return new DataResponse();
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
