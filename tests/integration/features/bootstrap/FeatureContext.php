@@ -2871,6 +2871,39 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" send the file "([^"]*)" as avatar of room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function userSendTheFileAsAvatarOfRoom(string $user, string $file, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->setCurrentUser($user);
+		$options = [
+			'multipart' => [
+				[
+					'name' => 'file',
+					'contents' => fopen($this->baseUrl . $file, 'r'),
+				],
+			],
+		];
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/group-avatar/' . self::$identifierToToken[$identifier], null, [], $options);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When /^the room "([^"]*)" need to have an avatar with (\d+)(?: \((v1)\))?$/
+	 */
+	public function theRoomNeedToHaveAnAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/group-avatar/' . self::$identifierToToken[$identifier]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" delete the avatar of room "([^"]*)"(?: \((v1)\))?$/
+	 */
+	public function userDeleteTheAvatarOfRoom(string $user, string $identifier, string $apiVersion = 'v1'): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/group-avatar/' . self::$identifierToToken[$identifier]);
+	}
+
+	/**
 	 * @param ResponseInterface $response
 	 * @return string
 	 */
@@ -2885,9 +2918,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param TableNode|array|null $body
 	 * @param array $headers
 	 */
-	public function sendRequest($verb, $url, $body = null, array $headers = []) {
+	public function sendRequest($verb, $url, $body = null, array $headers = [], array $options = []) {
 		$fullUrl = $this->baseUrl . 'ocs/v2.php' . $url;
-		$this->sendRequestFullUrl($verb, $fullUrl, $body, $headers);
+		$this->sendRequestFullUrl($verb, $fullUrl, $body, $headers, $options);
 	}
 
 	/**
@@ -2907,9 +2940,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param TableNode|array|null $body
 	 * @param array $headers
 	 */
-	public function sendRequestFullUrl($verb, $fullUrl, $body = null, array $headers = []) {
+	public function sendRequestFullUrl($verb, $fullUrl, $body = null, array $headers = [], array $options = []) {
 		$client = new Client();
-		$options = ['cookies' => $this->getUserCookieJar($this->currentUser)];
+		$options = array_merge($options, ['cookies' => $this->getUserCookieJar($this->currentUser)]);
 		if ($this->currentUser === 'admin') {
 			$options['auth'] = ['admin', 'admin'];
 		} elseif (strpos($this->currentUser, 'guest') !== 0) {
