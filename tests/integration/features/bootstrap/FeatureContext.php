@@ -2896,7 +2896,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" delete the avatar of room "([^"]*)"(?: \((v1)\))?$/
+	 * @When /^user "([^"]*)" delete the avatar of room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
 	public function userDeleteTheAvatarOfRoom(string $user, string $identifier, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
