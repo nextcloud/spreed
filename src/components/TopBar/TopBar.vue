@@ -21,16 +21,14 @@
 
 <template>
 	<div class="top-bar" :class="{ 'in-call': isInCall }">
-		<ConversationIcon v-if="!isInCall"
-			:key="conversation.token"
+		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
 			:offline="isPeerOffline"
 			:item="conversation"
 			:hide-favorite="false"
 			:hide-call="false" />
 		<!-- conversation header -->
-		<a v-if="!isInCall"
-			role="button"
+		<a role="button"
 			class="conversation-header"
 			@click="openConversationSettings">
 			<div class="conversation-header__text"
@@ -354,7 +352,7 @@ export default {
 		left:0;
 		background-color: transparent;
 		display: flex;
-		flex-wrap: wrap-reverse;
+		flex-wrap: wrap;
 	}
 
 	&__buttons {
@@ -395,7 +393,8 @@ export default {
 	overflow-x: hidden;
 	overflow-y: clip;
 	white-space: nowrap;
-	width: 100%;
+	width: 0;
+	flex-grow: 1;
 	cursor: pointer;
 	&__text {
 		display: flex;
