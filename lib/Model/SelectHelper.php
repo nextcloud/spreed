@@ -54,6 +54,7 @@ class SelectHelper {
 			->addSelect($alias . 'message_expiration')
 			->addSelect($alias . 'remote_server')
 			->addSelect($alias . 'remote_token')
+			->addSelect($alias . 'breakout_room_mode')
 			->selectAlias($alias . 'id', 'r_id');
 	}
 

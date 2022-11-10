@@ -160,7 +160,6 @@ class Manager {
 			$this->db,
 			$this->dispatcher,
 			$this->timeFactory,
-			$this->hasher,
 			(int) $row['r_id'],
 			(int) $row['type'],
 			(int) $row['read_only'],
@@ -185,7 +184,8 @@ class Manager {
 			$lastMessage,
 			$lobbyTimer,
 			(string) $row['object_type'],
-			(string) $row['object_id']
+			(string) $row['object_id'],
+			(int) $row['breakout_room_mode']
 		);
 	}
 
@@ -763,6 +763,30 @@ class Manager {
 		}
 
 		return $this->createRoomObject($row);
+	}
+
+	/**
+	 * @param string $objectType
+	 * @param string $objectId
+	 * @return Room[]
+	 */
+	public function getMultipleRoomsByObject(string $objectType, string $objectId): array {
+		$query = $this->db->getQueryBuilder();
+		$helper = new SelectHelper();
+		$helper->selectRoomsTable($query);
+		$query->from('talk_rooms', 'r')
+			->where($query->expr()->eq('r.object_type', $query->createNamedParameter($objectType)))
+			->andWhere($query->expr()->eq('r.object_id', $query->createNamedParameter($objectId)));
+
+		$result = $query->executeQuery();
+		$rooms = [];
+		while ($row = $result->fetch()) {
+			$room = $this->createRoomObject($row);
+			$rooms[] = $room;
+		}
+		$result->closeCursor();
+
+		return $rooms;
 	}
 
 	/**
