@@ -67,6 +67,11 @@ class BreakoutRoomService {
 			throw new InvalidArgumentException('room');
 		}
 
+		if ($parent->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			// Can not nest breakout rooms
+			throw new InvalidArgumentException('room');
+		}
+
 		if (!$this->roomService->setBreakoutRoomMode($parent, $mode)) {
 			throw new InvalidArgumentException('mode');
 		}
