@@ -105,3 +105,6 @@ title: Capabilities
 * `config => call => enabled` - Whether calling is enabled on the instance or not
 * `config => signaling => session-ping-limit` - Number of sessions the HPB is allowed to ping in the same request
 * `config => signaling => hello-v2-token-key` - Public key to use when verifying JWT auth tokens for hello V2.
+
+## 16
+* `breakout-rooms-v1` - Whether breakout-rooms API v1 is available
