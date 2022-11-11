@@ -92,7 +92,7 @@ class AvatarService {
 		$this->cache->set($token . '.avatarVersion', md5($content));
 	}
 
-	public function getAvatar(Room $room, ?IUser $user, bool $dark = false): ISimpleFile {
+	public function getAvatar(Room $room, ?IUser $user): ISimpleFile {
 		$token = $room->getToken();
 		try {
 			$folder = $this->appData->getFolder('room-avatar');

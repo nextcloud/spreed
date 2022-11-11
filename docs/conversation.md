@@ -415,12 +415,3 @@
     - Status code:
         + `200 OK`
         + `404 Not Found` When the conversation could not be found for the participant
-
-* Required capability: `avatar`
-* Method: `GET`
-* Endpoint: `/room/{token}/avatar/dark`
-
-* Response:
-    - Status code:
-        + `200 OK`
-        + `404 Not Found` When the conversation could not be found for the participant
