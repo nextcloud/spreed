@@ -95,6 +95,7 @@ class AvatarController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
+	 * @NoCSRFRequired
 	 * @RequireParticipant
 	 */
 	public function getAvatar(bool $dark = false): Response {

@@ -33,21 +33,29 @@ use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\InMemoryFile;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\IAvatarManager;
+use OCP\ICache;
+use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IUser;
 
 class AvatarService {
 	private IAppData $appData;
 	private IL10N $l;
+	private ICache $cache;
+	private IConfig $config;
 	private IAvatarManager $avatarManager;
 
 	public function __construct(
 		IAppData $appData,
 		IL10N $l,
+		ICache $cache,
+		IConfig $config,
 		IAvatarManager $avatarManager
 	) {
 		$this->appData = $appData;
 		$this->l = $l;
+		$this->cache = $cache;
+		$this->config = $config;
 		$this->avatarManager = $avatarManager;
 	}
 
@@ -68,7 +76,6 @@ class AvatarService {
 		$allowedMimeTypes = [
 			'image/jpeg',
 			'image/png',
-			'image/svg',
 		];
 		if (!in_array($mimeType, $allowedMimeTypes)) {
 			throw new InvalidArgumentException($this->l->t('Unknown filetype'));
@@ -80,21 +87,22 @@ class AvatarService {
 			$folder = $this->appData->newFolder('room-avatar');
 		}
 		$token = $room->getToken();
-		$folder->newFile($token, $image->data());
+		$content = $image->data();
+		$folder->newFile($token, $content);
+		$this->cache->set($token . '.avatarVersion', md5($content));
 	}
 
 	public function getAvatar(Room $room, ?IUser $user, bool $dark = false): ISimpleFile {
+		$token = $room->getToken();
 		try {
 			$folder = $this->appData->getFolder('room-avatar');
+			if ($folder->fileExists($token)) {
+				$file = $folder->getFile($token);
+			}
 		} catch (NotFoundException $e) {
-			$folder = $this->appData->newFolder('room-avatar');
 		}
-		$token = $room->getToken();
-		if ($folder->fileExists($token . '.png')) {
-			$file = $folder->getFile($token . '.png');
-		} elseif ($folder->fileExists($token . '.jpeg')) {
-			$file = $folder->getFile($token . '.jpeg');
-		} else {
+		// Fallback
+		if (!isset($file)) {
 			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 				$users = json_decode($room->getName(), true);
 				foreach ($users as $participantId) {
@@ -104,7 +112,7 @@ class AvatarService {
 					}
 				}
 			} elseif ($room->getObjectType() === 'file') {
-				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-file-white.svg'));
+				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-text-white.svg'));
 			} elseif ($room->getObjectType() === 'share:password') {
 				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-password-white.svg'));
 			} elseif ($room->getObjectType() === 'emails') {
@@ -121,10 +129,28 @@ class AvatarService {
 	public function deleteAvatar(Room $room): void {
 		try {
 			$folder = $this->appData->getFolder('room-avatar');
+			$token = $room->getToken();
+			$folder->delete($token);
+			$this->cache->clear($token . '.avatarVersion');
 		} catch (NotFoundException $e) {
-			$folder = $this->appData->newFolder('room-avatar');
 		}
-		$token = $room->getToken();
-		$folder->delete($token);
+	}
+
+	public function roomHasAvatar(Room $room): bool {
+		try {
+			$folder = $this->appData->getFolder('room-avatar');
+			if ($folder->fileExists($room->getToken())) {
+				return true;
+			}
+		} catch (NotFoundException $e) {
+		}
+		return $room->getType() === Room::TYPE_ONE_TO_ONE;
+	}
+
+	public function getAvatarVersion(Room $room, ?string $userId): string {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE && $userId) {
+			return (string) $this->config->getUserValue($userId, 'avatar', 'version', '0');
+		}
+		return (string) ($this->cache->get($room->getToken() . '.avatarVersion') ?? 0);
 	}
 }
