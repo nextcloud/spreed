@@ -116,6 +116,7 @@
     "Language" : "Valoda",
     "Country" : "Valsts",
     "Status" : "Status",
+    "Created at" : "Izveidots plkst.",
     "Pending" : "Gaida",
     "Error" : "Kļūda",
     "Shared secret" : "Koplietojams noslēpums",
