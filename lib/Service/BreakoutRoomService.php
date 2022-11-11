@@ -185,7 +185,7 @@ class BreakoutRoomService {
 				$parent->getType(),
 				str_replace('{number}', (string) $i, $this->l->t('Room {number}')),
 				null,
-				'room',
+				BreakoutRoom::PARENT_OBJECT_TYPE,
 				$parent->getToken()
 			);
 		}
@@ -199,7 +199,7 @@ class BreakoutRoomService {
 	}
 
 	protected function deleteBreakoutRooms(Room $parent): void {
-		$breakoutRooms = $this->manager->getMultipleRoomsByObject('room', $parent->getToken());
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
 		foreach ($breakoutRooms as $breakoutRoom) {
 			$this->roomService->deleteRoom($breakoutRoom);
 		}
