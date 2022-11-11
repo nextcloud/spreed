@@ -118,6 +118,7 @@ OC.L10N.register(
     "Language" : "Valoda",
     "Country" : "Valsts",
     "Status" : "Status",
+    "Created at" : "Izveidots plkst.",
     "Pending" : "Gaida",
     "Error" : "Kļūda",
     "Shared secret" : "Koplietojams noslēpums",
