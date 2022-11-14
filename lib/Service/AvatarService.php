@@ -60,6 +60,9 @@ class AvatarService {
 	}
 
 	public function setAvatar(Room $room, string $content): void {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			throw new InvalidArgumentException($this->l->t('One to one rooms always need to show the other users avatar'));
+		}
 		$image = new \OC_Image();
 		$image->loadFromData($content);
 		$image->readExif($content);
