@@ -36,6 +36,7 @@ use OCP\IAvatarManager;
 use OCP\ICache;
 use OCP\IConfig;
 use OCP\IL10N;
+use OCP\IURLGenerator;
 use OCP\IUser;
 
 class AvatarService {
@@ -43,6 +44,7 @@ class AvatarService {
 	private IL10N $l;
 	private ICache $cache;
 	private IConfig $config;
+	private IURLGenerator $url;
 	private IAvatarManager $avatarManager;
 
 	public function __construct(
@@ -50,12 +52,14 @@ class AvatarService {
 		IL10N $l,
 		ICache $cache,
 		IConfig $config,
+		IURLGenerator $url,
 		IAvatarManager $avatarManager
 	) {
 		$this->appData = $appData;
 		$this->l = $l;
 		$this->cache = $cache;
 		$this->config = $config;
+		$this->url = $url;
 		$this->avatarManager = $avatarManager;
 	}
 
@@ -155,5 +159,16 @@ class AvatarService {
 			return (string) $this->config->getUserValue($userId, 'avatar', 'version', '0');
 		}
 		return (string) ($this->cache->get($room->getToken() . '.avatarVersion') ?? 0);
+	}
+
+	public function getAvatarUrl(Room $room, ?string $userId = null): string {
+		if (!$this->roomHasAvatar($room)) {
+			return '';
+		}
+		return $this->url->linkToRouteAbsolute('ocs.spreed.Avatar.getAvatar', [
+			'token' => $room->getToken(),
+			'apiVersion' => 'v1',
+			'v' => $this->getAvatarVersion($room, $userId),
+		]);
 	}
 }
