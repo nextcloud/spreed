@@ -30,3 +30,9 @@ Feature: chat/avatar
       | roomType | 1 |
       | invite   | participant2 |
     Then the room "one2one" need to have an avatar with 200
+
+  Scenario: Try to change avatar of one2one without success
+    When user "participant1" creates room "one2one" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    Then user "participant1" send the file "/img/favicon.png" as avatar of room "room2" with 404
