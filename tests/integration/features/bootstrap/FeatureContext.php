@@ -2233,6 +2233,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				Assert::assertRegExp('/^guest\/[0-9a-f]{40}$/', $mentions[$key]['id']);
 				$mentions[$key]['id'] = 'GUEST_ID';
 			}
+			if (array_key_exists('avatar', $row)) {
+				Assert::assertRegExp('/' . self::$identifierToToken[$row['avatar']] . '\/avatar/', $mentions[$key]['avatar']);
+				unset($row['avatar']);
+			}
+			unset($mentions[$key]['avatar'], );
 			Assert::assertEquals($row, $mentions[$key]);
 		}
 	}
