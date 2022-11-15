@@ -66,10 +66,10 @@
 			:is-sidebar="isSidebar"
 			:model="localMediaModel" />
 
-		<div class="top-bar__buttons">
-			<CallButton class="top-bar__button" />
+		<CallButton class="top-bar__button" />
 
-			<!-- sidebar toggle -->
+		<!-- chat button -->
+		<div class="chat-button">
 			<NcActions v-if="showOpenSidebarButton"
 				class="top-bar__button"
 				close-after-click="true"
@@ -82,20 +82,26 @@
 							fill-color="#ffffff" />
 					</template>
 				</NcActionButton>
-				<NcActionButton v-else
-					key="openSideBarButtonMenuPeople"
-					@click="openSidebar">
-					<template #icon>
-						<MenuPeople :size="20" />
-					</template>
-				</NcActionButton>
 			</NcActions>
+			<NcCounterBubble v-if="!isSidebar && showOpenSidebarButton && isInCall && unreadMessagesCounter > 0"
+				class="chat-button__unread-messages-counter"
+				:highlighted="hasUnreadMentions">
+				{{ unreadMessagesCounter }}
+			</NcCounterBubble>
 		</div>
-		<NcCounterBubble v-if="!isSidebar && showOpenSidebarButton && isInCall && unreadMessagesCounter > 0"
-			class="unread-messages-counter"
-			:highlighted="hasUnreadMentions">
-			{{ unreadMessagesCounter }}
-		</NcCounterBubble>
+
+		<!-- participants button -->
+		<NcButton v-if="showOpenSidebarButton"
+			class="top-bar__button"
+			close-after-click="true"
+			:type="isInCall ? 'tertiary-on-primary': 'tertiary'"
+			@click="openSidebar">
+			<template #icon>
+				<AccountMultiple :size="20"
+					:fill-color="isInCall ? '#ffffff': ''" />
+			</template>
+			{{ isInCall ? participantsInCall : '' }}
+		</NcButton>
 	</div>
 </template>
 
@@ -106,7 +112,7 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 import CallButton from './CallButton.vue'
 import BrowserStorage from '../../services/BrowserStorage.js'
-import MenuPeople from '../missingMaterialDesignIcons/MenuPeople.vue'
+import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
 import { CONVERSATION } from '../../constants.js'
 import { generateUrl } from '@nextcloud/router'
@@ -119,6 +125,7 @@ import userStatus from '../../mixins/userStatus.js'
 import LocalMediaControls from '../CallView/shared/LocalMediaControls.vue'
 import getParticipants from '../../mixins/getParticipants.js'
 import TopBarMenu from './TopBarMenu.vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'TopBar',
@@ -132,11 +139,12 @@ export default {
 		NcActions,
 		NcCounterBubble,
 		CallButton,
-		MenuPeople,
+		AccountMultiple,
 		MessageText,
 		ConversationIcon,
 		LocalMediaControls,
 		TopBarMenu,
+		NcButton,
 	},
 
 	mixins: [
@@ -245,6 +253,10 @@ export default {
 			if (peer) {
 				return !peer.sessionIds.length
 			} else return false
+		},
+
+		participantsInCall() {
+			return this.$store.getters.participantsInCall(this.token)
 		},
 	},
 
@@ -355,11 +367,6 @@ export default {
 		flex-wrap: wrap;
 	}
 
-	&__buttons {
-		display: flex;
-		margin-left: 8px;
-	}
-
 	&__button {
 		margin: 0 2px;
 		align-self: center;
@@ -375,11 +382,14 @@ export default {
 		}
 	}
 
-	.unread-messages-counter {
-		position: absolute;
-		top: 40px;
-		right: 4px;
-		pointer-events: none;
+	.chat-button {
+		position: relative;
+		&__unread-messages-counter {
+			position: absolute;
+			top: 24px;
+			right: 2px;
+			pointer-events: none;
+		}
 	}
 }
 

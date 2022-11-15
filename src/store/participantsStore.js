@@ -155,6 +155,14 @@ const getters = {
 
 		return {}
 	},
+
+	participantsInCall: (state) => (token) => {
+		if (state.inCall[token]) {
+			return Object.keys(state.inCall[token]).length
+		} else {
+			return 0
+		}
+	},
 }
 
 const mutations = {
