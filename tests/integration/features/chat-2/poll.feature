@@ -652,3 +652,66 @@ Feature: chat-2/poll
       | status     | closed |
       | votedSelf  | [] |
       | details    | [{"actorType":"deleted_users","actorId":"deleted_users","actorDisplayName":"","optionId":0}] |
+
+  Scenario: Deleting the poll message removes all details
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant2" creates a poll in room "room" with 201
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+    And user "participant1" sees the following messages in room "room" with 200 (v1)
+      | room | actorType | actorId      | actorDisplayName         | message  | messageParameters |
+      | room | users     | participant2 | participant2-displayname | {object} | "IGNORE"          |
+    And user "participant1" deletes message "{object}" from room "room" with 200 (v1)
+    And user "participant1" votes for options "[1]" on poll "What is the question?" in room "room" with 404
+    And user "participant2" votes for options "[0]" on poll "What is the question?" in room "room" with 404
+    And user "participant1" closes poll "What is the question?" in room "room" with 404
+    And user "participant2" closes poll "What is the question?" in room "room" with 404
+    Then user "participant1" sees poll "What is the question?" in room "room" with 404
+    Then user "participant2" sees poll "What is the question?" in room "room" with 404
+    And user "participant1" sees the following messages in room "room" with 200 (v1)
+      | room | actorType | actorId      | actorDisplayName         | message                | messageParameters |
+      | room | users     | participant2 | participant2-displayname | Message deleted by you | "IGNORE"          |
+
+  Scenario: Deleting a closed poll message removes also the close message
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant2" creates a poll in room "room" with 201
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+    And user "participant1" sees the following messages in room "room" with 200 (v1)
+      | room | actorType | actorId      | actorDisplayName         | message  | messageParameters |
+      | room | users     | participant2 | participant2-displayname | {object} | "IGNORE"          |
+    And user "participant2" closes poll "What is the question?" in room "room" with 200
+      | id         | POLL_ID(What is the question?) |
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | votes      | [] |
+      | numVoters  | 0 |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+      | actorType  | users |
+      | actorId    | participant2 |
+      | actorDisplayName    | participant2-displayname |
+      | status     | closed |
+      | votedSelf  | [] |
+      | details    | [] |
+    And user "participant1" deletes message "{object}" from room "room" with 200 (v1)
+    And user "participant1" votes for options "[1]" on poll "What is the question?" in room "room" with 404
+    And user "participant2" votes for options "[0]" on poll "What is the question?" in room "room" with 404
+    And user "participant1" closes poll "What is the question?" in room "room" with 404
+    And user "participant2" closes poll "What is the question?" in room "room" with 404
+    Then user "participant1" sees poll "What is the question?" in room "room" with 404
+    Then user "participant2" sees poll "What is the question?" in room "room" with 404
+    And user "participant1" sees the following messages in room "room" with 200 (v1)
+      | room | actorType | actorId      | actorDisplayName         | message                | messageParameters |
+      | room | users     | participant2 | participant2-displayname | Message deleted by you | "IGNORE"          |
+      | room | users     | participant2 | participant2-displayname | Message deleted by you | "IGNORE"          |
