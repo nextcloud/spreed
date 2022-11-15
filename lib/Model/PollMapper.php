@@ -66,4 +66,13 @@ class PollMapper extends QBMapper {
 
 		$query->executeStatement();
 	}
+
+	public function deleteByPollId(int $pollId): void {
+		$query = $this->db->getQueryBuilder();
+
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('id', $query->createNamedParameter($pollId, IQueryBuilder::PARAM_INT)));
+
+		$query->executeStatement();
+	}
 }

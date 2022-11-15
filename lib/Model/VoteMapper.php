@@ -77,6 +77,15 @@ class VoteMapper extends QBMapper {
 		$query->executeStatement();
 	}
 
+	public function deleteByPollId(int $pollId): void {
+		$query = $this->db->getQueryBuilder();
+
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('poll_id', $query->createNamedParameter($pollId, IQueryBuilder::PARAM_INT)));
+
+		$query->executeStatement();
+	}
+
 	public function deleteVotesByActor(int $pollId, string $actorType, string $actorId): void {
 		$query = $this->db->getQueryBuilder();
 

@@ -318,6 +318,11 @@ class PollService {
 		$this->pollMapper->deleteByRoomId($roomId);
 	}
 
+	public function deleteByPollId(int $pollId): void {
+		$this->voteMapper->deleteByPollId($pollId);
+		$this->pollMapper->deleteByPollId($pollId);
+	}
+
 	public function updateDisplayNameForActor(string $actorType, string $actorId, string $displayName): void {
 		$update = $this->connection->getQueryBuilder();
 		$update->update('talk_polls')
