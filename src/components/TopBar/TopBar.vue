@@ -52,6 +52,14 @@
 				</p>
 			</div>
 		</a>
+
+		<!-- Call time -->
+		<CallTime v-if="isInCall"
+			:start="new Date"
+			:is-recording="isRecording"
+			@stop-recording="isRecording = false" />
+
+		<!-- Local media controls -->
 		<LocalMediaControls v-if="isInCall"
 			class="local-media-controls"
 			:token="token"
@@ -100,7 +108,9 @@
 				<AccountMultiple :size="20"
 					:fill-color="isInCall ? '#ffffff': ''" />
 			</template>
-			{{ isInCall ? participantsInCall : '' }}
+			<template v-if="isInCall">
+				{{ participantsInCall }}
+			</template>
 		</NcButton>
 	</div>
 </template>
@@ -126,6 +136,7 @@ import LocalMediaControls from '../CallView/shared/LocalMediaControls.vue'
 import getParticipants from '../../mixins/getParticipants.js'
 import TopBarMenu from './TopBarMenu.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import CallTime from './CallTime.vue'
 
 export default {
 	name: 'TopBar',
@@ -145,6 +156,7 @@ export default {
 		LocalMediaControls,
 		TopBarMenu,
 		NcButton,
+		CallTime,
 	},
 
 	mixins: [
@@ -173,7 +185,8 @@ export default {
 			unreadNotificationHandle: null,
 			localCallParticipantModel,
 			localMediaModel,
-
+			// TODO: real value
+			isRecording: true,
 		}
 	},
 
@@ -335,6 +348,11 @@ export default {
 		openConversationSettings() {
 			emit('show-conversation-settings', { token: this.token })
 		},
+
+		// TODO: implement real method
+		stopRecording() {
+			console.log('stop recordiiing')
+		},
 	},
 }
 </script>
@@ -430,9 +448,5 @@ export default {
 		max-width: fit-content;
 		color: var(--color-text-lighter);
 	}
-}
-
-.local-media-controls {
-	padding-left: $clickable-area;
 }
 </style>
