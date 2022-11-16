@@ -96,4 +96,6 @@ webpackConfig.module.rules.push({
 // Add typescript extension resolver
 webpackConfig.resolve.extensions.push('.tsx')
 
+webpackConfig.cache = true
+
 module.exports = webpackConfig
