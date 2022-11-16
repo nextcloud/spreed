@@ -217,7 +217,7 @@ export default {
 		handleShowSettings({ token }) {
 			this.$store.dispatch('updateConversationSettingsToken', token)
 			this.showSettings = true
-			if (loadState('spreed', 'public_rooms_allowed')) {
+			if (this.publicRoomsEnabled) {
 				this.$nextTick(() => {
 					this.$refs.linkShareSettings.$el.focus()
 				})
