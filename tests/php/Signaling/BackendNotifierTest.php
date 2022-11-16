@@ -157,6 +157,7 @@ class BackendNotifierTest extends TestCase {
 		$this->jobList = $this->createMock(IJobList::class);
 
 		$this->roomService = new RoomService(
+			$this->config,
 			$this->manager,
 			$this->participantService,
 			$dbConnection,

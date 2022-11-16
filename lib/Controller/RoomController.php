@@ -661,6 +661,9 @@ class RoomController extends AEnvironmentAwareController {
 				}
 				return $this->createGroupRoom($invite);
 			case Room::TYPE_PUBLIC:
+				if (!$this->talkConfig->isAllowedToCreatePublicConversations()) {
+					return new DataResponse([], Http::STATUS_BAD_REQUEST);
+				}
 				return $this->createEmptyRoom($roomName);
 		}
 
@@ -1117,7 +1120,7 @@ class RoomController extends AEnvironmentAwareController {
 			$this->participantService->addCircle($this->room, $circle, $participants);
 		} elseif ($source === 'emails') {
 			// E-mails cannot be added if public rooms are disabled.
-			if ($this->config->getAppValue('spreed', 'public_rooms_allowed', 'yes') === 'no') {
+			if (!$this->talkConfig->isAllowedToCreatePublicConversations()) {
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
 

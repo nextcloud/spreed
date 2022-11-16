@@ -4,7 +4,6 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
- * @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
  *
  * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Joas Schilling <coding@schilljs.com>
