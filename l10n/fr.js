@@ -663,7 +663,7 @@ OC.L10N.register(
     "Error: Cannot connect to server" : "Erreur : impossible de se connecter au serveur",
     "Error: Server did not respond with proper JSON" : "Erreur: Le serveur n'a pas répondu avec un JSON correct",
     "Could not get version" : "Impossible d'obtenir la version",
-    "Error: Running version: {version}; Server needs to be updated to be compatible with this version of Talk" : "Erreur : version en cours {version}; le serveur a besoin d'être mis à jour pour être compatible avec cette version de Talk",
+    "Error: Running version: {version}; Server needs to be updated to be compatible with this version of Talk" : "Erreur : version en cours {version} ; le serveur a besoin d'être mis à jour pour être compatible avec cette version de Talk",
     "Error: Server responded with: {error}" : "Erreur: Le serveur a répondu avec: {error}",
     "Error: Unknown error occurred" : "Erreur: Une erreur inconnue est survenue",
     "High-performance backend" : "Infrastructure de haute performance",
