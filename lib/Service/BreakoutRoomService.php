@@ -67,6 +67,12 @@ class BreakoutRoomService {
 			throw new InvalidArgumentException('room');
 		}
 
+		if ($parent->getType() !== Room::TYPE_GROUP
+			&& $parent->getType() !== Room::TYPE_PUBLIC) {
+			// Can only do breakout rooms in group and public rooms
+			throw new InvalidArgumentException('room');
+		}
+
 		if ($parent->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			// Can not nest breakout rooms
 			throw new InvalidArgumentException('room');
