@@ -1,6 +1,5 @@
 <!--
   - @copyright Copyright (c) 2020 Marco Ambrosini <marcoambrosini@icloud.com>
-  - @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
