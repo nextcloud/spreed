@@ -86,6 +86,10 @@ class BreakoutRoomService {
 			throw new InvalidArgumentException('amount');
 		}
 
+		if ($amount > BreakoutRoom::MAXIMUM_ROOM_AMOUNT) {
+			throw new InvalidArgumentException('amount');
+		}
+
 		if ($mode === BreakoutRoom::MODE_MANUAL) {
 			try {
 				$attendeeMap = json_decode($attendeeMap, true, 2, JSON_THROW_ON_ERROR);
