@@ -108,7 +108,7 @@ trait TInitialState {
 
 		$this->initialState->provideInitialState(
 			'public_rooms_allowed',
-			$this->serverConfig->getAppValue('spreed', 'public_rooms_allowed', 'yes') === 'yes'
+			$this->talkConfig->isAllowedToCreatePublicConversations()
 		);
 
 		$this->initialState->provideInitialState(
@@ -163,11 +163,6 @@ trait TInitialState {
 		$this->initialState->provideInitialState(
 			'enable_matterbridge',
 			$this->serverConfig->getAppValue('spreed', 'enable_matterbridge', '0') === '1'
-		);
-
-		$this->initialState->provideInitialState(
-			'public_rooms_allowed',
-			$this->serverConfig->getAppValue('spreed', 'public_rooms_allowed', 'yes') === 'yes'
 		);
 	}
 
