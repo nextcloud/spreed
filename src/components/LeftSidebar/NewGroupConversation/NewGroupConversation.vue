@@ -46,7 +46,7 @@
 					<template v-if="page === 0">
 						<SetConversationName v-model="conversationNameInput"
 							@click-enter="handleEnter" />
-						<NcCheckboxRadioSwitch :checked.sync="isPublic" v-if="publicRoomsEnabled">
+						<NcCheckboxRadioSwitch v-if="publicRoomsEnabled" :checked.sync="isPublic">
 							{{ t('spreed', 'Allow guests to join via link') }}
 						</NcCheckboxRadioSwitch>
 						<!-- Password protection -->
