@@ -31,6 +31,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Webinary;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 
@@ -196,13 +197,17 @@ class BreakoutRoomService {
 
 		$rooms = [];
 		for ($i = 1; $i <= $amount; $i++) {
-			$rooms[] = $this->roomService->createConversation(
+			$breakoutRoom = $this->roomService->createConversation(
 				$parent->getType(),
 				str_replace('{number}', (string) $i, $this->l->t('Room {number}')),
 				null,
 				BreakoutRoom::PARENT_OBJECT_TYPE,
 				$parent->getToken()
 			);
+
+			$this->roomService->setLobby($breakoutRoom, Webinary::LOBBY_NON_MODERATORS, null);
+
+			$rooms[] = $breakoutRoom;
 		}
 
 		return $rooms;
