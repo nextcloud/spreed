@@ -5,9 +5,9 @@
 	"description": "",
 	"author": "Joas Schilling <coding@schilljs.com>",
 	"scripts": {
-		"build": "NODE_ENV=production webpack --progress --config webpack.js",
-		"dev": "NODE_ENV=development webpack --config webpack.js",
-		"watch": "NODE_ENV=development webpack --progress --watch --config webpack.js",
+		"build": "webpack --node-env production --progress",
+		"dev": "webpack --node-env development --progress",
+		"watch": "webpack --node-env development --progress --watch",
 		"test:unit": "TZ=UTC jest",
 		"test:coverage": "TZ=UTC jest --coverage",
 		"test:watch": "TZ=UTC jest test:unit --watchAll",
