@@ -178,10 +178,12 @@ class ParticipantService {
 					if ($promotedToModerator) {
 						// Add participant as a moderator when they were not in the room already
 						$this->addUsers($breakoutRoom, [
-							'actorType' => $attendee->getActorType(),
-							'actorId' => $attendee->getActorId(),
-							'displayName' => $attendee->getDisplayName(),
-							'participantType' => $attendee->getParticipantType(),
+							[
+								'actorType' => $attendee->getActorType(),
+								'actorId' => $attendee->getActorId(),
+								'displayName' => $attendee->getDisplayName(),
+								'participantType' => $attendee->getParticipantType(),
+							],
 						]);
 					}
 				}

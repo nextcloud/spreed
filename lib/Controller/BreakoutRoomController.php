@@ -50,11 +50,11 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	 * @param string $attendeeMap
 	 * @return DataResponse
 	 */
-	public function configureBreakoutRooms(int $mode, int $amount, string $attendeeMap): DataResponse {
+	public function configureBreakoutRooms(int $mode, int $amount, string $attendeeMap = '[]'): DataResponse {
 		try {
 			$this->breakoutRoomService->setupBreakoutRooms($this->room, $mode, $amount, $attendeeMap);
 		} catch (InvalidArgumentException $e) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
 		// FIXME make a useful response?
