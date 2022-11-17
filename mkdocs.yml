@@ -28,6 +28,7 @@ nav:
       - 'Chat management': 'chat.md'
       - 'Reaction management': 'reaction.md'
       - 'Poll management': 'poll.md'
+      - 'Breakout rooms management': 'breakout-rooms.md'
       - 'Webinar management': 'webinar.md'
       - 'Settings': 'settings.md'
       - 'Integration by other apps': 'integration.md'
