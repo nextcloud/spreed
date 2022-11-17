@@ -311,6 +311,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if (isset($expectedRoom['name'])) {
 				$data['name'] = $room['name'];
+
+				// Breakout room regex
+				if (strpos($expectedRoom['name'], '/') === 0 && preg_match($expectedRoom['name'], $room['name'])) {
+					$data['name'] = $expectedRoom['name'];
+				}
 			}
 			if (isset($expectedRoom['description'])) {
 				$data['description'] = $room['description'];
@@ -546,7 +551,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$result[] = $data;
 			}
 
-			$expected = array_map(function ($attendee) {
+			$expected = array_map(function ($attendee, $actual) {
 				if (isset($attendee['actorId']) && substr($attendee['actorId'], 0, strlen('"guest')) === '"guest') {
 					$attendee['actorId'] = sha1(self::$userToSessionId[trim($attendee['actorId'], '"')]);
 				}
@@ -555,11 +560,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$attendee['actorId'] .= '@' . rtrim($this->baseRemoteUrl, '/');
 				}
 
+				// Breakout room regex
+				if (isset($attendee['actorId']) && strpos($attendee['actorId'], '/') === 0 && preg_match($attendee['actorId'], $actual['actorId'])) {
+					$attendee['actorId'] = $actual['actorId'];
+				}
+
 				if (isset($attendee['participantType'])) {
 					$attendee['participantType'] = (string)$this->mapParticipantTypeTestInput($attendee['participantType']);
 				}
 				return $attendee;
-			}, $formData->getHash());
+			}, $formData->getHash(), $result);
 
 			$result = array_map(function ($attendee) {
 				if (isset($attendee['permissions'])) {

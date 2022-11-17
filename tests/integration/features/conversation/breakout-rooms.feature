@@ -5,7 +5,7 @@ Feature: conversation/breakout-rooms
     Given user "participant3" exists
     Given user "participant4" exists
 
-  Scenario: Teacher creates breakout rooms
+  Scenario: Teacher creates manual breakout rooms
     Given user "participant1" creates room "class room" (v4)
       | roomType | 3 |
       | roomName | class room |
@@ -40,6 +40,51 @@ Feature: conversation/breakout-rooms
       | type | name       |
       | 3    | class room |
       | 3    | Room 3     |
+
+  Scenario: Teacher creates automatic breakout rooms
+    Given user "participant1" creates room "class room" (v4)
+      | roomType | 3 |
+      | roomName | class room |
+    And user "participant1" adds user "participant2" to room "class room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "class room" with 200 (v4)
+    And user "participant1" adds user "participant4" to room "class room" with 200 (v4)
+    And user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
+      | users      | participant3 | 3               |
+      | users      | participant4 | 3               |
+    When user "participant1" creates 3 automatic breakout rooms for "class room" with 200 (v1)
+    Then user "participant1" is participant of the following rooms (v4)
+      | type | name       |
+      | 3    | class room |
+      | 3    | Room 1     |
+      | 3    | Room 2     |
+      | 3    | Room 3     |
+    And user "participant1" sees the following attendees in room "Room 1" with 200 (v4)
+      | actorType  | actorId           | participantType |
+      | users      | participant1      | 1               |
+      | users      | /^participant\d$/ | 3               |
+    And user "participant1" sees the following attendees in room "Room 2" with 200 (v4)
+      | actorType  | actorId           | participantType |
+      | users      | participant1      | 1               |
+      | users      | /^participant\d$/ | 3               |
+    And user "participant1" sees the following attendees in room "Room 3" with 200 (v4)
+      | actorType  | actorId           | participantType |
+      | users      | participant1      | 1               |
+      | users      | /^participant\d$/ | 3               |
+    Then user "participant2" is participant of the following rooms (v4)
+      | type | name        |
+      | 3    | class room  |
+      | 3    | /^Room \d$/ |
+    Then user "participant3" is participant of the following rooms (v4)
+      | type | name        |
+      | 3    | class room  |
+      | 3    | /^Room \d$/ |
+    Then user "participant4" is participant of the following rooms (v4)
+      | type | name        |
+      | 3    | class room  |
+      | 3    | /^Room \d$/ |
 
   Scenario: Co-teachers are promoted and removed in all breakout rooms
     Given user "participant1" creates room "class room" (v4)
