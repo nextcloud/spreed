@@ -113,3 +113,15 @@ Feature: conversation/breakout-rooms
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" creates 3 manual breakout rooms for "one-to-one room" with 400 (v1)
+
+  Scenario: Can not create more than 20 breakout rooms
+    When user "participant1" creates room "class room" (v4)
+      | roomType | 3 |
+      | roomName | class room |
+    And user "participant1" creates 21 manual breakout rooms for "class room" with 400 (v1)
+
+  Scenario: Can not create less than 1 breakout rooms
+    When user "participant1" creates room "class room" (v4)
+      | roomType | 3 |
+      | roomName | class room |
+    And user "participant1" creates 0 manual breakout rooms for "class room" with 400 (v1)
