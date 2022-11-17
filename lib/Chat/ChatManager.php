@@ -29,8 +29,8 @@ use OC\Memcache\ArrayCache;
 use OC\Memcache\NullCache;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
-use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Poll;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
@@ -38,6 +38,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Share\RoomShareProvider;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\Reference\IReferenceManager;
 use OCP\Comments\IComment;
@@ -358,6 +359,60 @@ class ChatManager {
 	}
 
 	/**
+	 * @param Room $room
+	 * @param Participant $participant
+	 * @param array $messageData
+	 * @throws ShareNotFound
+	 */
+	public function removePollOnMessageDelete(Room $room, Participant $participant, array $messageData, \DateTime $deletionTime): void {
+		if (!isset($messageData['message'], $messageData['parameters']['objectType'], $messageData['parameters']['objectId'])
+			|| $messageData['message'] !== 'object_shared'
+			|| $messageData['parameters']['objectType'] !== 'talk-poll') {
+			// Not a poll share
+			return;
+		}
+
+		try {
+			$poll = $this->pollService->getPoll($room->getId(), (int)$messageData['parameters']['objectId']);
+		} catch (DoesNotExistException $e) {
+			return;
+		}
+
+		if ($poll->getStatus() === Poll::STATUS_CLOSED) {
+			$closingMessages = $this->commentsManager->searchForObjects(
+				json_encode([
+					'message' => 'poll_closed',
+					'parameters' => [
+						'poll' => [
+							'type' => 'talk-poll',
+							'id' => $poll->getId(),
+							'name' => $poll->getQuestion(),
+						],
+					],
+				], JSON_THROW_ON_ERROR),
+				'chat',
+				[(string) $room->getId()],
+				'system',
+				0
+			);
+			foreach ($closingMessages as $closingMessage) {
+				$this->deleteMessage($room, $closingMessage, $participant, $deletionTime);
+			}
+		}
+
+		if (!$participant->hasModeratorPermissions(false)) {
+			$attendee = $participant->getAttendee();
+			if (!($attendee->getActorType() === $poll->getActorType()
+				&& $attendee->getActorId() === $poll->getActorId())) {
+				// Only moderators or the poll creator can delete it
+				return;
+			}
+		}
+
+		$this->pollService->deleteByPollId($poll->getId());
+	}
+
+	/**
 	 * @param Room $chat
 	 * @param IComment $comment
 	 * @param Participant $participant
@@ -369,6 +424,7 @@ class ChatManager {
 		if ($comment->getVerb() === self::VERB_OBJECT_SHARED) {
 			$messageData = json_decode($comment->getMessage(), true);
 			$this->unshareFileOnMessageDelete($chat, $participant, $messageData);
+			$this->removePollOnMessageDelete($chat, $participant, $messageData, $deletionTime);
 		}
 
 		$comment->setMessage(
