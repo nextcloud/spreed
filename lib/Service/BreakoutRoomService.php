@@ -95,7 +95,17 @@ class BreakoutRoomService {
 			try {
 				$attendeeMap = json_decode($attendeeMap, true, 2, JSON_THROW_ON_ERROR);
 			} catch (\JsonException $e) {
-				throw new InvalidArgumentException('map');
+				throw new InvalidArgumentException('attendeeMap');
+			}
+
+			if (!empty($attendeeMap)) {
+				if (max($attendeeMap) >= $amount) {
+					throw new InvalidArgumentException('attendeeMap');
+				}
+
+				if (min($attendeeMap) < 0) {
+					throw new InvalidArgumentException('attendeeMap');
+				}
 			}
 		}
 
