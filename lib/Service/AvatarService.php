@@ -33,7 +33,6 @@ use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\InMemoryFile;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\IAvatarManager;
-use OCP\ICache;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -42,7 +41,6 @@ use OCP\IUser;
 class AvatarService {
 	private IAppData $appData;
 	private IL10N $l;
-	private ICache $cache;
 	private IConfig $config;
 	private IURLGenerator $url;
 	private IAvatarManager $avatarManager;
@@ -50,14 +48,12 @@ class AvatarService {
 	public function __construct(
 		IAppData $appData,
 		IL10N $l,
-		ICache $cache,
 		IConfig $config,
 		IURLGenerator $url,
 		IAvatarManager $avatarManager
 	) {
 		$this->appData = $appData;
 		$this->l = $l;
-		$this->cache = $cache;
 		$this->config = $config;
 		$this->url = $url;
 		$this->avatarManager = $avatarManager;
@@ -96,7 +92,6 @@ class AvatarService {
 		$token = $room->getToken();
 		$content = $image->data();
 		$folder->newFile($token, $content);
-		$this->cache->set($token . '.avatarVersion', md5($content));
 	}
 
 	public function getAvatar(Room $room, ?IUser $user): ISimpleFile {
@@ -138,7 +133,6 @@ class AvatarService {
 			$folder = $this->appData->getFolder('room-avatar');
 			$token = $room->getToken();
 			$folder->delete($token);
-			$this->cache->clear($token . '.avatarVersion');
 		} catch (NotFoundException $e) {
 		}
 	}
