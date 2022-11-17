@@ -1614,9 +1614,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/poll/' . self::$identifierToToken[$identifier] . '/' . self::$questionToPollId[$question]);
 		$this->assertStatusCode($this->response, $statusCode);
 
-		$expected = $this->preparePollExpectedData($formData->getRowsHash());
-		$response = $this->getDataFromResponse($this->response);
-		$this->assertPollEquals($expected, $response);
+		if ($statusCode === '200' || $formData instanceof TableNode) {
+			$expected = $this->preparePollExpectedData($formData->getRowsHash());
+			$response = $this->getDataFromResponse($this->response);
+			$this->assertPollEquals($expected, $response);
+		}
 	}
 
 	/**
