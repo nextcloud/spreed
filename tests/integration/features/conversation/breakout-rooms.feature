@@ -94,3 +94,22 @@ Feature: conversation/breakout-rooms
     And user "participant1" sees the following attendees in room "Room 3" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
+
+  Scenario: Can not nest breakout rooms
+    When user "participant1" creates room "class room" (v4)
+      | roomType | 3 |
+      | roomName | class room |
+    And user "participant1" creates 3 manual breakout rooms for "class room" with 200 (v1)
+    And user "participant1" is participant of the following rooms (v4)
+      | type | name       |
+      | 3    | class room |
+      | 3    | Room 1     |
+      | 3    | Room 2     |
+      | 3    | Room 3     |
+    And user "participant1" creates 3 manual breakout rooms for "Room 1" with 400 (v1)
+
+  Scenario: Can not create breakout rooms in one-to-one
+    When user "participant1" creates room "one-to-one room" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    And user "participant1" creates 3 manual breakout rooms for "one-to-one room" with 400 (v1)
