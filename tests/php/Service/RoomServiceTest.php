@@ -3,6 +3,7 @@
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -25,6 +26,7 @@ namespace OCA\Talk\Tests\php\Service;
 
 use InvalidArgumentException;
 use OC\EventDispatcher\EventDispatcher;
+use OCA\Talk\Config;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -49,6 +51,8 @@ use Test\TestCase;
  * @group DB
  */
 class RoomServiceTest extends TestCase {
+	/** @var Config|MockObject */
+	protected $config;
 	/** @var Manager|MockObject */
 	protected $manager;
 	/** @var ParticipantService|MockObject */
@@ -66,6 +70,7 @@ class RoomServiceTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
+		$this->config = $this->createMock(Config::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
@@ -74,6 +79,7 @@ class RoomServiceTest extends TestCase {
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->jobList = $this->createMock(IJobList::class);
 		$this->service = new RoomService(
+			$this->config,
 			$this->manager,
 			$this->participantService,
 			\OC::$server->get(IDBConnection::class),
@@ -344,6 +350,7 @@ class RoomServiceTest extends TestCase {
 		});
 
 		$service = new RoomService(
+			$this->config,
 			$this->manager,
 			$this->participantService,
 			\OC::$server->get(IDBConnection::class),

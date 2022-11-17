@@ -161,6 +161,10 @@ class Config {
 		return empty(array_intersect($allowedGroups, $userGroups));
 	}
 
+	public function isAllowedToCreatePublicConversations(): bool {
+		return $this->config->getAppValue('spreed', 'public_rooms_allowed', 'yes') === 'yes';
+	}
+
 	public function getAttachmentFolder(string $userId): string {
 		return $this->config->getUserValue($userId, 'spreed', 'attachment_folder', '/Talk');
 	}

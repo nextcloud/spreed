@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OCA\Talk\Config;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -48,6 +49,7 @@ use OCP\Security\IHasher;
 use OCP\Share\IManager as IShareManager;
 
 class RoomService {
+	protected Config $config;
 	protected Manager $manager;
 	protected ParticipantService $participantService;
 	protected IDBConnection $db;
@@ -57,7 +59,8 @@ class RoomService {
 	protected IEventDispatcher $dispatcher;
 	protected IJobList $jobList;
 
-	public function __construct(Manager $manager,
+	public function __construct(Config $config,
+								Manager $manager,
 								ParticipantService $participantService,
 								IDBConnection $db,
 								ITimeFactory $timeFactory,
@@ -65,6 +68,7 @@ class RoomService {
 								IHasher $hasher,
 								IEventDispatcher $dispatcher,
 								IJobList $jobList) {
+		$this->config = $config;
 		$this->manager = $manager;
 		$this->participantService = $participantService;
 		$this->db = $db;
@@ -352,6 +356,10 @@ class RoomService {
 		}
 
 		if (!in_array($newType, [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
+			return false;
+		}
+
+		if ($newType === Room::TYPE_PUBLIC && !$this->config->isAllowedToCreatePublicConversations()) {
 			return false;
 		}
 

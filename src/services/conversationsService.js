@@ -79,7 +79,7 @@ const searchPossibleConversations = async function({ searchText, token, onlyUser
 	if (!onlyUsers) {
 		shareTypes.push(SHARE.TYPE.GROUP)
 		shareTypes.push(SHARE.TYPE.CIRCLE)
-		if (token !== 'new') {
+		if (token !== 'new' && loadState('spreed', 'public_rooms_allowed')) {
 			shareTypes.push(SHARE.TYPE.EMAIL)
 
 			if (loadState('spreed', 'federation_enabled')) {

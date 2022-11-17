@@ -3,6 +3,7 @@
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2022 Informatyka Boguslawski sp. z o.o. sp.k., http://www.ib.pl/
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -103,6 +104,11 @@ trait TInitialState {
 		$this->initialState->provideInitialState(
 			'circles_enabled',
 			$appManager->isEnabledForUser('circles', $user)
+		);
+
+		$this->initialState->provideInitialState(
+			'public_rooms_allowed',
+			$this->talkConfig->isAllowedToCreatePublicConversations()
 		);
 
 		$this->initialState->provideInitialState(
