@@ -36,20 +36,22 @@
 				<p class="title">
 					{{ conversation.displayName }}
 				</p>
-				<p v-if="showUserStatusAsDescription"
-					class="description">
-					{{ statusMessage }}
-				</p>
-				<p v-else-if="conversation.description"
-					v-tooltip.bottom="{
-						content: renderedDescription,
-						delay: { show: 500, hide: 500 },
-						autoHide: false,
-						html: true,
-					}"
-					class="description">
-					{{ conversation.description }}
-				</p>
+				<template v-if="!isInCall">
+					<p v-if="showUserStatusAsDescription"
+						class="description">
+						{{ statusMessage }}
+					</p>
+					<p v-else-if="conversation.description"
+						v-tooltip.bottom="{
+							content: renderedDescription,
+							delay: { show: 500, hide: 500 },
+							autoHide: false,
+							html: true,
+						}"
+						class="description">
+						{{ conversation.description }}
+					</p>
+				</template>
 			</div>
 		</a>
 
