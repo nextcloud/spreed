@@ -2876,7 +2876,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" send the file "([^"]*)" as avatar of room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 * @When /^user "([^"]*)" uploads file "([^"]*)" as avatar of room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
 	public function userSendTheFileAsAvatarOfRoom(string $user, string $file, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
