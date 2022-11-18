@@ -552,6 +552,11 @@ export default {
 	padding: 0 !important;
 }
 
+::v-deep .app-navigation-toggle {
+	top: 8px !important;
+	right: -6px !important;
+}
+
 ::v-deep .app-navigation__list {
 	padding: 0 !important;
 }
