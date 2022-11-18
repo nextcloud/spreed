@@ -56,7 +56,7 @@
 
 		<!-- Call time -->
 		<CallTime v-if="isInCall"
-			:start="1668761491"
+			:start="conversation.callStartTime"
 			:is-recording="isRecording"
 			@stop-recording="isRecording = false" />
 
@@ -85,7 +85,7 @@
 				:container="container">
 				<NcActionButton v-if="isInCall"
 					key="openSideBarButtonMessageText"
-					@click="openSidebar">
+					@click="openSidebar('chat')">
 					<template #icon>
 						<MessageText :size="20"
 							fill-color="#ffffff" />
@@ -104,7 +104,7 @@
 			class="top-bar__button"
 			close-after-click="true"
 			:type="isInCall ? 'tertiary-on-primary': 'tertiary'"
-			@click="openSidebar">
+			@click="openSidebar('participants')">
 			<template #icon>
 				<AccountMultiple :size="20"
 					:fill-color="isInCall ? '#ffffff': ''" />
@@ -341,7 +341,10 @@ export default {
 			}
 		},
 
-		openSidebar() {
+		openSidebar(activeTab) {
+			if (activeTab) {
+				emit('spreed:select-active-sidebar-tab', activeTab)
+			}
 			this.$store.dispatch('showSidebar')
 			BrowserStorage.setItem('sidebarOpen', 'true')
 		},
