@@ -44,6 +44,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
@@ -89,6 +90,7 @@ class RoomController extends AEnvironmentAwareController {
 	protected IEventDispatcher $dispatcher;
 	protected MessageParser $messageParser;
 	protected ITimeFactory $timeFactory;
+	protected AvatarService $avatarService;
 	protected IL10N $l10n;
 	protected IConfig $config;
 	protected Config $talkConfig;
@@ -114,6 +116,7 @@ class RoomController extends AEnvironmentAwareController {
 								IEventDispatcher $dispatcher,
 								MessageParser $messageParser,
 								ITimeFactory $timeFactory,
+								AvatarService $avatarService,
 								IL10N $l10n,
 								IConfig $config,
 								Config $talkConfig,
@@ -136,6 +139,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->dispatcher = $dispatcher;
 		$this->messageParser = $messageParser;
 		$this->timeFactory = $timeFactory;
+		$this->avatarService = $avatarService;
 		$this->l10n = $l10n;
 		$this->config = $config;
 		$this->talkConfig = $talkConfig;
@@ -481,6 +485,7 @@ class RoomController extends AEnvironmentAwareController {
 			'description' => $room->getDescription(),
 			'listable' => $room->getListable(),
 			'messageExpiration' => $room->getMessageExpiration(),
+			'avatar' => $this->avatarService->getAvatarUrl($room, $userId),
 		]);
 
 		if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
