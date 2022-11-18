@@ -29,6 +29,7 @@
 		<template #trigger>
 			<NcButton :disabled="!isRecording"
 				:wide="true"
+				:class="{ 'call-time__not-recording': !isRecording }"
 				type="tertiary"
 				@click="showPopover = true">
 				<template v-if="isRecording" #icon>
@@ -155,14 +156,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .call-time {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 44px;
+	height: var(--default-clickable-area);
 	font-weight: bold;
 	color: #fff;
 	width: 120px;
+
+	&__not-recording {
+		padding-left: var(--default-clickable-area) !important
+	}
 
 	&--wide {
 		width: 180px;
