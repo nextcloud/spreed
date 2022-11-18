@@ -55,7 +55,7 @@
 
 		<!-- Call time -->
 		<CallTime v-if="isInCall"
-			:start="new Date"
+			:start="1668761491"
 			:is-recording="isRecording"
 			@stop-recording="isRecording = false" />
 
@@ -351,7 +351,7 @@ export default {
 
 		// TODO: implement real method
 		stopRecording() {
-			console.log('stop recordiiing')
+			console.debug('stop recordiiing')
 		},
 	},
 }

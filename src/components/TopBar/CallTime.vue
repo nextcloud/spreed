@@ -19,31 +19,34 @@
 -->
 
 <template>
-	<div class="call-time">
-		<NcPopover class="top-bar__button"
-			close-after-click="true"
-			:menu-title="callTime"
-			:shown.sync="showPopover"
-			:triggers="[]"
-			:container="container">
-			<template #trigger>
-				<NcButton :disabled="!isRecording" type="tertiary" @click="showPopover = true">
-					<template v-if="isRecording" #icon>
-						<RecordCircle :size="20"
-							fill-color="#e9322d" />
-					</template>
-					{{ callTime }}
-				</ncbutton>
-			</template>
-			<NcButton type="tertiary-no-background"
-				@click="stopRecording">
-				<template #icon>
-					<StopIcon :size="20" />
+	<NcPopover class="top-bar__button call-time"
+		close-after-click="true"
+		:menu-title="callTime"
+		:shown.sync="showPopover"
+		:class="{ 'call-time--wide': isWide }"
+		:triggers="[]"
+		:container="container">
+		<template #trigger>
+			<NcButton :disabled="!isRecording"
+				:wide="true"
+				type="tertiary"
+				@click="showPopover = true">
+				<template v-if="isRecording" #icon>
+					<RecordCircle :size="20"
+						fill-color="#e9322d" />
 				</template>
-				{{ t('spreed', 'Stop recording') }}
-			</NcButton>
-		</NcPopover>
-	</div>
+				{{ formattedTime }}
+			</ncbutton>
+		</template>
+		<NcButton type="tertiary-no-background"
+			:wide="true"
+			@click="stopRecording">
+			<template #icon>
+				<StopIcon :size="20" />
+			</template>
+			{{ t('spreed', 'Stop recording') }}
+		</NcButton>
+	</NcPopover>
 </template>
 
 <script>
@@ -65,12 +68,11 @@ export default {
 
 	props: {
 		/**
-		 * The date object, if undefined the stopwatch is back to the initial
-		 * state.
+		 * Unix timestamp representing the start of the call
 		 */
 		start: {
-			type: Date,
-			default: undefined,
+			type: Number,
+			required: true,
 		},
 
 		isRecording: {
@@ -81,31 +83,72 @@ export default {
 
 	data() {
 		return {
-			hours: undefined,
-			minutes: undefined,
-			seconds: undefined,
+			callTime: undefined,
 			showPopover: false,
 		}
 	},
 
 	computed: {
-		hasTime() {
-			return this.start !== undefined
-		},
-
 		container() {
 			return this.$store.getters.getMainContainerSelector()
 		},
 
-		callTime() {
-			return '11:11'
+		/**
+		 * Create date object based on the unix time received from the API
+		 *
+		 * @return {Date} The date object
+		 */
+		callStart() {
+			return new Date(this.start * 1000)
 		},
+
+		/**
+		 * Calculates the stopwatch string given the callTime (ms)
+		 *
+		 * @return {string} The formatted time
+		 */
+		formattedTime() {
+			let seconds = Math.floor((this.callTime / 1000) % 60)
+			if (seconds < 10) {
+				seconds = '0' + seconds
+			}
+			let minutes = Math.floor((this.callTime / (1000 * 60)) % 60)
+			if (minutes < 10) {
+				minutes = '0' + minutes
+			}
+			let hours = Math.floor((this.callTime / (1000 * 60 * 60)) % 24)
+			if (hours < 10) {
+				hours = '0' + hours
+			}
+			if (hours === '00') {
+				return minutes + ' : ' + seconds
+			} else {
+				return hours + ' : ' + minutes + ' : ' + seconds
+			}
+		},
+
+		isWide() {
+			return this.formattedTime.length > 7
+		},
+	},
+
+	mounted() {
+		// Start the timer when mounted
+		setInterval(this.computeElapsedTime, 1000)
+	},
+
+	beforeDestroy() {
+		clearInterval(this.computeElapsedTime)
 	},
 
 	methods: {
 		stopRecording() {
 			this.$emit('stop-recording')
 			this.showPopover = false
+		},
+
+		computeElapsedTime() {
+			this.callTime = new Date() - this.callStart
 		},
 	},
 }
@@ -119,9 +162,19 @@ export default {
 	height: 44px;
 	font-weight: bold;
 	color: #fff;
+	width: 120px;
+
+	&--wide {
+		width: 180px;
+	}
 }
 
-::v-deep .button-vue:disabled {
-	opacity: 1 !important;
+::v-deep .button-vue {
+	justify-content: left !important;
+
+	&:disabled {
+		opacity: 1 !important;
+	}
 }
+
 </style>
