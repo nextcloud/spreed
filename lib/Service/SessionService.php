@@ -26,6 +26,7 @@ namespace OCA\Talk\Service;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Model\SessionMapper;
+use OCA\Talk\Participant;
 use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -92,6 +93,7 @@ class SessionService {
 	public function createSessionForAttendee(Attendee $attendee, string $forceSessionId = ''): Session {
 		$session = new Session();
 		$session->setAttendeeId($attendee->getId());
+		$session->setInCall(Participant::FLAG_DISCONNECTED);
 
 		if ($forceSessionId !== '') {
 			$session->setSessionId($forceSessionId);
