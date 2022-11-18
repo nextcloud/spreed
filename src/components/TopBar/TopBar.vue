@@ -317,7 +317,6 @@ export default {
 
 		// Starts and stops the getParticipantsMixin logic
 		isOneToOneConversation(newValue) {
-			console.log(newValue)
 			if (newValue) {
 				this.initialiseGetParticipantsMixin()
 			} else {
@@ -400,6 +399,9 @@ export default {
 		background-color: transparent;
 		display: flex;
 		flex-wrap: wrap;
+		& * {
+			color: #fff;
+		}
 	}
 
 	&__button {

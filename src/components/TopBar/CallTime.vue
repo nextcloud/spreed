@@ -165,7 +165,6 @@ export default {
 	align-items: center;
 	height: var(--default-clickable-area);
 	font-weight: bold;
-	color: #fff;
 	width: 116px;
 
 	&__not-recording {
@@ -179,6 +178,7 @@ export default {
 
 ::v-deep .button-vue {
 	justify-content: left !important;
+	color: #fff !important;
 
 	&:disabled {
 		opacity: 1 !important;
