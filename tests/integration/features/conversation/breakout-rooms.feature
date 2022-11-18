@@ -194,3 +194,17 @@ Feature: conversation/breakout-rooms
       | users      | participant2 | 3               |
     When user "participant1" creates 3 manual breakout rooms for "class room" with 400 (v1)
       | users::participant2 | 4 |
+
+  Scenario: Breakout rooms are disabled
+    Given user "participant1" creates room "class room" (v4)
+      | roomType | 3 |
+      | roomName | class room |
+    And user "participant1" adds user "participant2" to room "class room" with 200 (v4)
+    And user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
+    And the following "spreed" app config is set
+      | breakout_rooms | no |
+    When user "participant1" creates 3 manual breakout rooms for "class room" with 400 (v1)
+      | users::participant2 | 1 |

@@ -26,6 +26,7 @@ Group and public conversations can be used to host breakout rooms.
 * Response:
     - Status code:
         + `200 OK`
+        + `400 Bad Request` When breakout rooms are disabled on the server
         + `400 Bad Request` When breakout rooms are already configured
         + `400 Bad Request` When the conversation is not a group or public conversation
         + `400 Bad Request` When the conversation is a breakout room itself

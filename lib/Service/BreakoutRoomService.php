@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
@@ -36,17 +37,20 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 
 class BreakoutRoomService {
+	protected Config $config;
 	protected Manager $manager;
 	protected RoomService $roomService;
 	protected ParticipantService $participantService;
 	protected IEventDispatcher $dispatcher;
 	protected IL10N $l;
 
-	public function __construct(Manager $manager,
+	public function __construct(Config $config,
+								Manager $manager,
 								RoomService $roomService,
 								ParticipantService $participantService,
 								IEventDispatcher $dispatcher,
 								IL10N $l) {
+		$this->config = $config;
 		$this->manager = $manager;
 		$this->roomService = $roomService;
 		$this->participantService = $participantService;
@@ -64,6 +68,10 @@ class BreakoutRoomService {
 	 * @throws InvalidArgumentException When the breakout rooms are configured already
 	 */
 	public function setupBreakoutRooms(Room $parent, int $mode, int $amount, string $attendeeMap): array {
+		if (!$this->config->isBreakoutRoomsEnabled()) {
+			throw new InvalidArgumentException('config');
+		}
+
 		if ($parent->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
 			throw new InvalidArgumentException('room');
 		}
@@ -201,7 +209,7 @@ class BreakoutRoomService {
 		}
 	}
 
-	public function createBreakoutRooms(Room $parent, int $amount): array {
+	protected function createBreakoutRooms(Room $parent, int $amount): array {
 		// Safety caution cleaning up potential orphan rooms
 		$this->deleteBreakoutRooms($parent);
 

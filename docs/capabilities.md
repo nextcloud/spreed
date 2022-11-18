@@ -108,4 +108,5 @@ title: Capabilities
 
 ## 16
 * `breakout-rooms-v1` - Whether breakout-rooms API v1 is available
+* `config => call => breakout-rooms` - Whether breakout rooms are enabled on this instance
 * `avatar` - Avatar of conversation
