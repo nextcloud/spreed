@@ -1,5 +1,5 @@
 <!--
-  - @copyright Copyright (c) 2021 Marco Ambrosini <marcoambrosini@icloud.com>  -
+  - @copyright Copyright (c) 2022 Marco Ambrosini <marcoambrosini@icloud.com>  -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
   - @license GNU AGPL version 3 or any later version
