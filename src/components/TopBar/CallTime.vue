@@ -171,7 +171,7 @@ export default {
 	}
 
 	&--wide {
-		width: 180px;
+		width: 148px;
 	}
 }
 
