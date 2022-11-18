@@ -2893,7 +2893,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^the room "([^"]*)" need to have an avatar with (\d+)(?: \((v1)\))?$/
+	 * @When /^the room "([^"]*)" has an avatar with (\d+)(?: \((v1)\))?$/
 	 */
 	public function theRoomNeedToHaveAnAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar');

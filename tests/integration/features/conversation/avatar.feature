@@ -16,20 +16,20 @@ Feature: conversation/avatar
       | roomType | 3 |
       | roomName | room2 |
     And user "participant1" send the file "/img/favicon.png" as avatar of room "room2" with 200
-    Then the room "room2" need to have an avatar with 200
+    Then the room "room2" has an avatar with 200
     And user "participant1" delete the avatar of room "room2" with 200
 
   Scenario: Get avatar of conversation without custom avatar (fallback)
     Given user "participant1" creates room "room3" (v4)
       | roomType | 3 |
       | roomName | room3 |
-    Then the room "room3" need to have an avatar with 200
+    Then the room "room3" has an avatar with 200
 
   Scenario: Get avatar of one2one without custom avatar (fallback)
     When user "participant1" creates room "one2one" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    Then the room "one2one" need to have an avatar with 200
+    Then the room "one2one" has an avatar with 200
 
   Scenario: Try to change avatar of one2one without success
     When user "participant1" creates room "one2one" (v4)
