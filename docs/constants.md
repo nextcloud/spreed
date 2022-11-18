@@ -88,6 +88,14 @@ title: Constants
 * `bots` - Used by commands (actor-id is the used `/command`) and the changelog conversation (actor-id is `changelog`)
 * `bridged` - Users whose messages are bridged in by the [Matterbridge integration](matterbridge.md)
 
+## Call
+
+### Start call
+* `0` - Everyone
+* `1` - Participants of the conversation with an account on the instance
+* `2` - Moderators
+* `3` - No one
+
 ## Chat
 
 ### Shared item types
