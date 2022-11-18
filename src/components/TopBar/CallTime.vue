@@ -109,6 +109,9 @@ export default {
 		 * @return {string} The formatted time
 		 */
 		formattedTime() {
+			if (!this.callTime) {
+				return '-- : --'
+			}
 			let seconds = Math.floor((this.callTime / 1000) % 60)
 			if (seconds < 10) {
 				seconds = '0' + seconds
@@ -117,15 +120,11 @@ export default {
 			if (minutes < 10) {
 				minutes = '0' + minutes
 			}
-			let hours = Math.floor((this.callTime / (1000 * 60 * 60)) % 24)
-			if (hours < 10) {
-				hours = '0' + hours
-			}
-			if (hours === '00') {
+			const hours = Math.floor((this.callTime / (1000 * 60 * 60)) % 24)
+			if (hours === 0) {
 				return minutes + ' : ' + seconds
-			} else {
-				return hours + ' : ' + minutes + ' : ' + seconds
 			}
+			return hours + ' : ' + minutes + ' : ' + seconds
 		},
 
 		isWide() {
@@ -149,6 +148,9 @@ export default {
 		},
 
 		computeElapsedTime() {
+			if (this.start === 0) {
+				return
+			}
 			this.callTime = new Date() - this.callStart
 		},
 	},
@@ -164,7 +166,7 @@ export default {
 	height: var(--default-clickable-area);
 	font-weight: bold;
 	color: #fff;
-	width: 120px;
+	width: 116px;
 
 	&__not-recording {
 		padding-left: var(--default-clickable-area) !important
