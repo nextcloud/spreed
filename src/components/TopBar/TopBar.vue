@@ -77,42 +77,52 @@
 
 		<CallButton class="top-bar__button" />
 
-		<!-- chat button -->
-		<div class="chat-button">
-			<NcActions v-if="showOpenSidebarButton"
+		<template v-if="showOpenSidebarButton">
+			<!-- sidebar toggle -->
+			<NcButton v-if="!isInCall"
 				class="top-bar__button"
 				close-after-click="true"
-				:container="container">
-				<NcActionButton v-if="isInCall"
-					key="openSideBarButtonMessageText"
-					@click="openSidebar('chat')">
-					<template #icon>
-						<MessageText :size="20"
-							fill-color="#ffffff" />
-					</template>
-				</NcActionButton>
-			</NcActions>
-			<NcCounterBubble v-if="!isSidebar && showOpenSidebarButton && isInCall && unreadMessagesCounter > 0"
-				class="chat-button__unread-messages-counter"
-				:highlighted="hasUnreadMentions">
-				{{ unreadMessagesCounter }}
-			</NcCounterBubble>
-		</div>
+				type="tertiary"
+				@click="openSidebar">
+				<template #icon>
+					<MenuIcon :size="20" />
+				</template>
+			</NcButton>
 
-		<!-- participants button -->
-		<NcButton v-if="showOpenSidebarButton"
-			class="top-bar__button"
-			close-after-click="true"
-			:type="isInCall ? 'tertiary-on-primary': 'tertiary'"
-			@click="openSidebar('participants')">
-			<template #icon>
-				<AccountMultiple :size="20"
-					:fill-color="isInCall ? '#ffffff': ''" />
-			</template>
-			<template v-if="isInCall">
+			<!-- chat button -->
+			<div v-if="isInCall"
+				class="chat-button">
+				<NcActions class="top-bar__button"
+					close-after-click="true"
+					:container="container">
+					<NcActionButton key="openSideBarButtonMessageText"
+						@click="openSidebar('chat')">
+						<template #icon>
+							<MessageText :size="20"
+								fill-color="#ffffff" />
+						</template>
+					</NcActionButton>
+				</NcActions>
+				<NcCounterBubble v-if="!isSidebar && isInCall && unreadMessagesCounter > 0"
+					class="chat-button__unread-messages-counter"
+					:highlighted="hasUnreadMentions">
+					{{ unreadMessagesCounter }}
+				</NcCounterBubble>
+			</div>
+
+			<!-- participants button -->
+			<NcButton v-if="isInCall & !isOneToOneConversation"
+				class="top-bar__button"
+				close-after-click="true"
+				:type="isInCall ? 'tertiary-on-primary': 'tertiary'"
+				@click="openSidebar('participants')">
+				<template #icon>
+					<AccountMultiple :size="20"
+						:fill-color="isInCall ? '#ffffff': ''" />
+				</template>
 				{{ participantsInCall }}
-			</template>
-		</NcButton>
+			</NcButton>
+		</template>
 	</div>
 </template>
 
@@ -138,6 +148,7 @@ import getParticipants from '../../mixins/getParticipants.js'
 import TopBarMenu from './TopBarMenu.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import CallTime from './CallTime.vue'
+import MenuIcon from 'vue-material-design-icons/Menu.vue'
 
 export default {
 	name: 'TopBar',
@@ -158,6 +169,7 @@ export default {
 		TopBarMenu,
 		NcButton,
 		CallTime,
+		MenuIcon,
 	},
 
 	mixins: [
@@ -270,7 +282,7 @@ export default {
 		},
 
 		participantsInCall() {
-			return this.$store.getters.participantsInCall(this.token)
+			return this.$store.getters.participantsInCall(this.token) ? this.$store.getters.participantsInCall(this.token) : ''
 		},
 	},
 
@@ -305,6 +317,7 @@ export default {
 
 		// Starts and stops the getParticipantsMixin logic
 		isOneToOneConversation(newValue) {
+			console.log(newValue)
 			if (newValue) {
 				this.initialiseGetParticipantsMixin()
 			} else {
@@ -342,7 +355,7 @@ export default {
 		},
 
 		openSidebar(activeTab) {
-			if (activeTab) {
+			if (typeof activeTab === 'string') {
 				emit('spreed:select-active-sidebar-tab', activeTab)
 			}
 			this.$store.dispatch('showSidebar')
