@@ -45,17 +45,23 @@
 					<template v-if="page === 0">
 						<SetConversationName v-model="conversationNameInput"
 							@click-enter="handleEnter" />
-						<NcCheckboxRadioSwitch :checked.sync="isPublic">
+						<NcCheckboxRadioSwitch :checked.sync="isPublic"
+							type="switch">
 							{{ t('spreed', 'Allow guests to join via link') }}
 						</NcCheckboxRadioSwitch>
 						<!-- Password protection -->
 						<template v-if="isPublic">
 							<NcCheckboxRadioSwitch :checked.sync="passwordProtect"
+								type="switch"
 								@checked="handleCheckboxInput">
 								{{ t('spreed', 'Password protect') }}
 							</NcCheckboxRadioSwitch>
-							<PasswordProtect v-if="passwordProtect"
-								v-model="password" />
+							<NcPasswordField v-if="passwordProtect"
+								autocomplete="new-password"
+								:check-password-strength="true"
+								:label-visible="true"
+								:label="t('spreed', 'Enter password')"
+								:value.sync="password" />
 						</template>
 						<ListableSettings v-model="listable" />
 					</template>
@@ -120,6 +126,7 @@
 import { CONVERSATION } from '../../../constants.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import SetContacts from './SetContacts/SetContacts.vue'
@@ -132,7 +139,6 @@ import {
 	setConversationPassword,
 } from '../../../services/conversationsService.js'
 import { generateUrl } from '@nextcloud/router'
-import PasswordProtect from './PasswordProtect/PasswordProtect.vue'
 import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
 import isInCall from '../../../mixins/isInCall.js'
 import participant from '../../../mixins/participant.js'
@@ -149,12 +155,12 @@ export default {
 
 	components: {
 		NcModal,
+		NcPasswordField,
 		SetContacts,
 		SetConversationName,
 		NcButton,
 		NcCheckboxRadioSwitch,
 		Confirmation,
-		PasswordProtect,
 		ListableSettings,
 		Plus,
 	},
