@@ -505,7 +505,6 @@ OC.L10N.register(
     "Create conversation" : "Opprett samtale",
     "Add participants" : "Legg til deltager",
     "Close" : "Lukk",
-    "Choose a password" : "Velg et passord",
     "Search participants" : "Søk etter deltakere",
     "Conversation name" : "Samtalenavn",
     "Search conversations or users" : "Søk etter samtaler eller brukere",
@@ -595,6 +594,7 @@ OC.L10N.register(
     "Enable lobby" : "Aktiver lobby",
     "Chat messages" : "Samtalemeldinger",
     "Calls" : "Samtaler",
+    "Choose a password" : "Velg et passord",
     "Upload new files" : "Last opp nye filer",
     "Share from Files" : "Del fra Filer"
 },
