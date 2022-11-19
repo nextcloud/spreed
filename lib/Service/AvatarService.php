@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OC\Files\Filesystem;
 use OCA\Talk\Room;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
@@ -59,13 +60,38 @@ class AvatarService {
 		$this->avatarManager = $avatarManager;
 	}
 
-	public function setAvatar(Room $room, string $content): void {
+	public function setAvatarFromRequest(Room $room, array $file): void {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			throw new InvalidArgumentException($this->l->t('One to one rooms always need to show the other users avatar'));
 		}
+
+		if (is_null($file)) {
+			throw new InvalidArgumentException($this->l->t('No image file provided'));
+		}
+
+		if (
+			$file['error'] !== 0 ||
+			!is_uploaded_file($file['tmp_name']) ||
+			Filesystem::isFileBlacklisted($file['tmp_name'])
+		) {
+			throw new InvalidArgumentException($this->l->t('Invalid file provided'));
+		}
+		if ($file['size'] > 20 * 1024 * 1024) {
+			throw new InvalidArgumentException($this->l->t('File is too big'));
+		}
+
+		$content = file_get_contents($file['tmp_name']);
+		unlink($file['tmp_name']);
 		$image = new \OC_Image();
 		$image->loadFromData($content);
 		$image->readExif($content);
+		$this->setAvatar($room, $image);
+	}
+
+	public function setAvatar(Room $room, \OC_Image $image): void {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			throw new InvalidArgumentException($this->l->t('One to one rooms always need to show the other users avatar'));
+		}
 		$image->fixOrientation();
 		if (!($image->height() === $image->width())) {
 			throw new InvalidArgumentException($this->l->t('Avatar image is not square'));

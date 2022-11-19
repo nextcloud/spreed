@@ -167,11 +167,6 @@
       <code>null</code>
     </NullArgument>
   </file>
-  <file src="lib/Controller/AvatarController.php">
-    <UndefinedClass occurrences="1">
-      <code>Filesystem</code>
-    </UndefinedClass>
-  </file>
   <file src="lib/Controller/ChatController.php">
     <InvalidArrayOffset occurrences="1">
       <code>$commentIdToIndex[$parentId]</code>
@@ -259,7 +254,8 @@
     </UndefinedClass>
   </file>
   <file src="lib/Service/AvatarService.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass occurrences="2">
+      <code>Filesystem</code>
       <code>\OC_Image</code>
     </UndefinedClass>
   </file>

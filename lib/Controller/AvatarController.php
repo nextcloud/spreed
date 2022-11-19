@@ -27,7 +27,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
-use OC\Files\Filesystem;
 use OCA\Talk\Service\AvatarService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -36,23 +35,27 @@ use OCP\AppFramework\Http\Response;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserSession;
+use Psr\Log\LoggerInterface;
 
 class AvatarController extends AEnvironmentAwareController {
 	private AvatarService $avatarService;
 	private IUserSession $userSession;
 	private IL10N $l;
+	private LoggerInterface $logger;
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		AvatarService $avatarService,
 		IUserSession $userSession,
-		IL10N $l10n
+		IL10N $l10n,
+		LoggerInterface $logger
 	) {
 		parent::__construct($appName, $request);
 		$this->avatarService = $avatarService;
 		$this->userSession = $userSession;
 		$this->l = $l10n;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -62,25 +65,7 @@ class AvatarController extends AEnvironmentAwareController {
 	public function uploadAvatar(): DataResponse {
 		try {
 			$file = $this->request->getUploadedFile('file');
-
-			if (is_null($file)) {
-				throw new InvalidArgumentException($this->l->t('No image file provided'));
-			}
-
-			if (
-				$file['error'] !== 0 ||
-				!is_uploaded_file($file['tmp_name']) ||
-				Filesystem::isFileBlacklisted($file['tmp_name'])
-			) {
-				throw new InvalidArgumentException($this->l->t('Invalid file provided'));
-			}
-			if ($file['size'] > 20 * 1024 * 1024) {
-				throw new InvalidArgumentException($this->l->t('File is too big'));
-			}
-
-			$content = file_get_contents($file['tmp_name']);
-			unlink($file['tmp_name']);
-			$this->avatarService->setAvatar($this->getRoom(), $content);
+			$this->avatarService->setAvatarFromRequest($this->getRoom(), $file);
 			return new DataResponse();
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
