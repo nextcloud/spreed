@@ -628,7 +628,6 @@ OC.L10N.register(
     "Create conversation" : "Krouiñ un diviz",
     "Add participants" : "Ouzhpennan tud",
     "Close" : "Serriñ",
-    "Choose a password" : "Choaz ur get-trmenn",
     "Search participants" : "Klask implijer",
     "Conversation name" : "Anv diviz",
     "Search conversations or users" : "Klask divizoù ha implijourienn",
@@ -749,6 +748,7 @@ OC.L10N.register(
     "Add a new server" : "Ouzhpennañ ur servijour nevez",
     "Enter a password" : "Ebarzhiñ ar ger-tremen",
     "Enable lobby" : "Aotreañ ar sal gortoz",
+    "Choose a password" : "Choaz ur get-trmenn",
     "Upload new files" : "Pelkas ur restr nevez",
     "Share from Files" : "Rannañ diouzh Restroù",
     "Display name: " : "Anv tra :"

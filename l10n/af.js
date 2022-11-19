@@ -284,6 +284,7 @@ OC.L10N.register(
     "Loading" : "Laai tans..",
     "Groups" : "Groepe",
     "Password protect" : "Beskerm met 'n wagwoord",
+    "Enter password" : "Voer wagwoord in",
     "Add participants" : "Voeg deelnemers toe",
     "Close" : "Sluit",
     "You are currently waiting in the lobby" : "U wag tans in die voorportaal",

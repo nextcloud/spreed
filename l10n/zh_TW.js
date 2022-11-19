@@ -535,6 +535,7 @@ OC.L10N.register(
     "Create a new group conversation" : "建立新群組對話",
     "Allow guests to join via link" : "允許訪客透過連結加入",
     "Password protect" : "密碼防護",
+    "Enter password" : "輸入密碼",
     "Add participants" : "新增成員",
     "Close" : "關閉",
     "Search participants" : "搜尋參與者",
