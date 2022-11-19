@@ -449,6 +449,7 @@ OC.L10N.register(
     "Circles" : "Hringir",
     "Create a new group conversation" : "Create a new group conversation",
     "Password protect" : "Verja með lykilorði",
+    "Enter password" : "Enter password",
     "Add participants" : "Bæta við þátttakanda",
     "Close" : "Loka",
     "Conversation name" : "Heiti samtals",
