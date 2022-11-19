@@ -401,7 +401,6 @@ OC.L10N.register(
     "Create conversation" : "Opret samtale",
     "Add participants" : "Tilføj deltagere",
     "Close" : "Luk",
-    "Choose a password" : "Vælg en adgangskode",
     "Search participants" : "Find deltagere",
     "Conversation name" : "Samtalenavn",
     "Search conversations or users" : "Søg samtaler eller kontakter",
@@ -509,6 +508,7 @@ OC.L10N.register(
     "Open conversation to registered users" : "Begynd en samtale til registrerede brugere",
     "Enable lobby" : "Aktiver lobby",
     "Calls" : "Opkald",
+    "Choose a password" : "Vælg en adgangskode",
     "Upload new files" : "Upload nye filer",
     "Share from Files" : "Del fra Filer",
     "Display name: " : "Vist navn:"

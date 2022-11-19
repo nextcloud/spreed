@@ -486,7 +486,6 @@ OC.L10N.register(
     "Create conversation" : "יצירת דיון",
     "Add participants" : "הוספת משתתפים",
     "Close" : "סגירה",
-    "Choose a password" : "בחירת ססמה",
     "Search participants" : "חיפוש משתתפים",
     "Conversation name" : "שם דיון",
     "You are currently waiting in the lobby" : "הנך בהמתנה בלובי",
@@ -587,6 +586,7 @@ OC.L10N.register(
     "Enter a password" : "נא להקליד ססמה",
     "Enable lobby" : "הפעלת לובי",
     "Calls" : "שיחות",
+    "Choose a password" : "בחירת ססמה",
     "Upload new files" : "העלאת קבצים חדשים",
     "Share from Files" : "שיתוף מקבצים",
     "Display name: " : "שם תצוגה:"
