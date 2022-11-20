@@ -51,7 +51,7 @@
 		"util": "^0.12.5",
 		"vue": "^2.7.14",
 		"vue-at": "^2.5.1",
-		"vue-frag": "^1.4.1",
+		"vue-frag": "^1.4.2",
 		"vue-material-design-icons": "^5.1.2",
 		"vue-observe-visibility": "^1.0.0",
 		"vue-outside-events": "^1.1.3",
