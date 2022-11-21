@@ -1799,8 +1799,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		Assert::assertCount(count($expectedItems), $data[$widgetId]);
 
 		foreach ($expectedItems as $key => $item) {
-			$item['link'] = $this->baseUrl . 'index.php/call/' . self::$identifierToToken[$item['link']];
+			$token = self::$identifierToToken[$item['link']];
+			$item['link'] = $this->baseUrl . 'call/' . $token;
 			$item['iconUrl'] = str_replace('{$BASE_URL}', $this->baseUrl, $item['iconUrl']);
+			$item['iconUrl'] = str_replace('{token}', $token, $item['iconUrl']);
 
 			Assert::assertEquals($item, $data[$widgetId][$key], 'Wrong details for item #' . $key);
 		}

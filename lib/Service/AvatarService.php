@@ -202,10 +202,13 @@ class AvatarService {
 	}
 
 	public function getAvatarUrl(Room $room): string {
-		return $this->url->linkToRouteAbsolute('ocs.spreed.Avatar.getAvatar', [
+		$arguments = [
 			'token' => $room->getToken(),
 			'apiVersion' => 'v1',
-			'v' => $room->getAvatar(),
-		]);
+		];
+		if ($avatar = $room->getAvatar()) {
+			$arguments['v'] = $room->getAvatar();
+		}
+		return $this->url->linkToRouteAbsolute('ocs.spreed.Avatar.getAvatar', $arguments);
 	}
 }
