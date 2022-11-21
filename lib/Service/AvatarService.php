@@ -187,9 +187,10 @@ class AvatarService {
 
 	public function deleteAvatar(Room $room): void {
 		try {
-			$folder = $this->appData->getFolder('room-avatar');
 			$token = $room->getToken();
-			$folder->delete($token);
+			$avatarFolder = $this->getAvatarFolder($token);
+			$avatarFolder->delete();
+			$this->roomService->setAvatar($room, null);
 		} catch (NotFoundException $e) {
 		}
 	}
