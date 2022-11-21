@@ -341,12 +341,19 @@ class RoomService {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			return false;
 		}
+
+		$event = new ModifyRoomEvent($room, 'avatar', $avatarName, $room->getAvatar());
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_AVATAR_SET, $event);
+
 		$room->setAvatar($avatarName);
+
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('avatar', $update->createNamedParameter($avatarName))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_AVATAR_SET, $event);
 		return true;
 	}
 

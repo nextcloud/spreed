@@ -147,6 +147,8 @@ class Room {
 	public const EVENT_AFTER_SET_BREAKOUT_ROOM_MODE = self::class . '::afterSetBreakoutRoomMode';
 	public const EVENT_BEFORE_SET_BREAKOUT_ROOM_STATUS = self::class . '::beforeSetBreakoutRoomStatus';
 	public const EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS = self::class . '::afterSetBreakoutRoomStatus';
+	public const EVENT_BEFORE_AVATAR_SET = self::class . '::preSetAvatar';
+	public const EVENT_AFTER_AVATAR_SET = self::class . '::postSetAvatar';
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
