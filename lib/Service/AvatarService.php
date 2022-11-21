@@ -39,13 +39,14 @@ use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
-use Sabre\DAV\UUIDUtil;
+use OCP\Security\ISecureRandom;
 
 class AvatarService {
 	private IAppData $appData;
 	private IL10N $l;
 	private IConfig $config;
 	private IURLGenerator $url;
+	private ISecureRandom $random;
 	private RoomService $roomService;
 	private IAvatarManager $avatarManager;
 
@@ -54,6 +55,7 @@ class AvatarService {
 		IL10N $l,
 		IConfig $config,
 		IURLGenerator $url,
+		ISecureRandom $random,
 		RoomService $roomService,
 		IAvatarManager $avatarManager
 	) {
@@ -61,6 +63,7 @@ class AvatarService {
 		$this->l = $l;
 		$this->config = $config;
 		$this->url = $url;
+		$this->random = $random;
 		$this->roomService = $roomService;
 		$this->avatarManager = $avatarManager;
 	}
@@ -117,10 +120,18 @@ class AvatarService {
 
 		$token = $room->getToken();
 		$avatarFolder = $this->getAvatarFolder($token);
-		$avatarName = UUIDUtil::getUUID();
+		$avatarName = $this->getRandomAvatarName($room);
 		$avatarFolder->newFile($avatarName, $image->data());
 		$room->setAvatar($avatarName);
 		$this->roomService->setAvatar($room, $avatarName);
+	}
+
+	private function getRandomAvatarName(Room $room): string {
+		$name = $this->random->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
+		if ($name === $room->getName()) {
+			return $this->getRandomAvatarName($room);
+		}
+		return $name;
 	}
 
 	private function getAvatarFolder(string $token): ISimpleFolder {
