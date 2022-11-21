@@ -67,7 +67,7 @@ class AvatarController extends AEnvironmentAwareController {
 			$file = $this->request->getUploadedFile('file');
 			$this->avatarService->setAvatarFromRequest($this->getRoom(), $file);
 			return new DataResponse([
-				'avatar' => $this->avatarService->getAvatarUrl($this->getRoom(), $this->userSession->getUser()->getUID()),
+				'avatar' => $this->avatarService->getAvatarUrl($this->getRoom()),
 			]);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);

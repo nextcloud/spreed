@@ -201,10 +201,7 @@ class AvatarService {
 		return (string) ($this->cache->get($room->getToken() . '.avatarVersion') ?? 0);
 	}
 
-	public function getAvatarUrl(Room $room, ?string $userId = null): string {
-		if (!$this->roomHasAvatar($room)) {
-			return '';
-		}
+	public function getAvatarUrl(Room $room): string {
 		return $this->url->linkToRouteAbsolute('ocs.spreed.Avatar.getAvatar', [
 			'token' => $room->getToken(),
 			'apiVersion' => 'v1',

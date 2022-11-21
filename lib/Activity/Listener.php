@@ -175,6 +175,7 @@ class Listener {
 				->setTimestamp($this->timeFactory->getTime())
 				->setSubject('call', [
 					'room' => $room->getId(),
+					'avatar' => $room->getAvatar(),
 					'users' => $userIds,
 					'guests' => $numGuests,
 					'duration' => $duration,
@@ -221,6 +222,7 @@ class Listener {
 				->setSubject('invitation', [
 					'user' => $actor->getUID(),
 					'room' => $room->getId(),
+					'avatar' => $room->getAvatar(),
 				]);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
@@ -253,6 +255,7 @@ class Listener {
 					->setSubject('invitation', [
 						'user' => $actor->getUID(),
 						'room' => $room->getId(),
+						'avatar' => $room->getAvatar(),
 						'name' => $roomName,
 					])
 					->setAffectedUser($participant['actorId']);
