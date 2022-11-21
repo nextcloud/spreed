@@ -417,6 +417,7 @@ class RoomController extends AEnvironmentAwareController {
 			'listable' => Room::LISTABLE_NONE,
 			'callFlag' => Participant::FLAG_DISCONNECTED,
 			'messageExpiration' => 0,
+			'avatar' => $this->avatarService->getAvatarUrl($room),
 		];
 
 		$lastActivity = $room->getLastActivity();
@@ -485,7 +486,6 @@ class RoomController extends AEnvironmentAwareController {
 			'description' => $room->getDescription(),
 			'listable' => $room->getListable(),
 			'messageExpiration' => $room->getMessageExpiration(),
-			'avatar' => $this->avatarService->getAvatarUrl($room),
 		]);
 
 		if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
