@@ -762,7 +762,6 @@ class ChatManager {
 				'id' => 'all',
 				'label' => $roomDisplayName,
 				'source' => 'calls',
-				'avatar' => $this->avatarService->getAvatarUrl($room),
 			]);
 		}
 		return $results;

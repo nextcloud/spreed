@@ -222,7 +222,6 @@ class Listener {
 				->setSubject('invitation', [
 					'user' => $actor->getUID(),
 					'room' => $room->getId(),
-					'avatar' => $room->getAvatar(),
 				]);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
@@ -255,7 +254,6 @@ class Listener {
 					->setSubject('invitation', [
 						'user' => $actor->getUID(),
 						'room' => $room->getId(),
-						'avatar' => $room->getAvatar(),
 						'name' => $roomName,
 					])
 					->setAffectedUser($participant['actorId']);

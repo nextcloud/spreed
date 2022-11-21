@@ -117,37 +117,21 @@ class ConversationSearch implements IProvider {
 				}
 			}
 
-			if ($this->avatarService->roomHasAvatar($room)) {
-				$arguments = [
-					'token' => $room->getToken(),
-					'apiVersion' => 'v1',
-				];
-				if ($avatar = $room->getAvatar()) {
-					$arguments['v'] = $avatar;
-				}
-				$icon = $this->url->linkToRouteAbsolute('ocs.spreed.Avatar.getAvatar', $arguments);
-			} else {
-				$icon = '';
+			$arguments = [
+				'token' => $room->getToken(),
+				'apiVersion' => 'v1',
+			];
+			if ($avatar = $room->getAvatar()) {
+				$arguments['v'] = $avatar;
 			}
-			$iconClass = '';
-			if ($room->getObjectType() === 'file') {
-				$iconClass = 'conversation-icon icon-text-white';
-			} elseif ($room->getObjectType() === 'share:password') {
-				$iconClass = 'conversation-icon icon-password-white';
-			} elseif ($room->getObjectType() === 'emails') {
-				$iconClass = 'conversation-icon icon-mail-white';
-			} elseif ($room->getType() === Room::TYPE_PUBLIC) {
-				$iconClass = 'conversation-icon icon-public-white';
-			} else {
-				$iconClass = 'conversation-icon icon-contacts-white';
-			}
+			$icon = $this->url->linkToOCSRouteAbsolute('spreed.Avatar.getAvatar', $arguments);
 
 			$entry = new SearchResultEntry(
 				$icon,
 				$room->getDisplayName($user->getUID()),
 				'',
 				$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
-				$iconClass,
+				'',
 				true
 			);
 

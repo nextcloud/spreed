@@ -219,7 +219,7 @@ class AvatarService {
 			'apiVersion' => 'v1',
 		];
 		if ($avatar = $room->getAvatar()) {
-			$arguments['v'] = $room->getAvatar();
+			$arguments['v'] = $avatar;
 		}
 		return $this->url->linkToRouteAbsolute('ocs.spreed.Avatar.getAvatar', $arguments);
 	}
