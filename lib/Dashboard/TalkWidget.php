@@ -209,12 +209,8 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			$room->getDisplayName($userId),
 			$subtitle,
 			$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
-			$this->getRoomIconUrl($room)
+			$this->avatarService->getAvatarUrl($room)
 		);
-	}
-
-	protected function getRoomIconUrl(Room $room): string {
-		return $this->avatarService->getAvatarUrl($room);
 	}
 
 	protected function sortRooms(Room $roomA, Room $roomB): int {

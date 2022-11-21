@@ -227,7 +227,7 @@ class TalkReferenceProvider implements IReferenceProvider {
 		$reference->setTitle($title);
 		$reference->setDescription($description);
 		$reference->setUrl($this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]));
-		$reference->setImageUrl($this->getRoomIconUrl($room));
+		$reference->setImageUrl($this->avatarService->getAvatarUrl($room));
 
 		$reference->setRichObject('call', [
 			'id' => $room->getToken(),
@@ -259,10 +259,6 @@ class TalkReferenceProvider implements IReferenceProvider {
 		}
 
 		return ($this->userId ?? '') . '#' . ($referenceMatch['message'] ?? 0);
-	}
-
-	protected function getRoomIconUrl(Room $room): string {
-		return $this->avatarService->getAvatarUrl($room);
 	}
 
 	protected function getRoomType(Room $room): string {
