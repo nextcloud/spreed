@@ -341,10 +341,12 @@ class RoomService {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			return false;
 		}
+		$room->setAvatar($avatarName);
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
-			->set('avatar', $avatarName)
+			->set('avatar', $update->createNamedParameter($avatarName))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
 		return true;
 	}
 
