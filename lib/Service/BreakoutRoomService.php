@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -34,6 +35,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Notification\IManager as INotificationManager;
 use OCP\IL10N;
 
 class BreakoutRoomService {
@@ -41,6 +43,8 @@ class BreakoutRoomService {
 	protected Manager $manager;
 	protected RoomService $roomService;
 	protected ParticipantService $participantService;
+	protected ChatManager $chatManager;
+	protected INotificationManager $notificationManager;
 	protected IEventDispatcher $dispatcher;
 	protected IL10N $l;
 
@@ -48,12 +52,16 @@ class BreakoutRoomService {
 								Manager $manager,
 								RoomService $roomService,
 								ParticipantService $participantService,
+								ChatManager $chatManager,
+								INotificationManager $notificationManager,
 								IEventDispatcher $dispatcher,
 								IL10N $l) {
 		$this->config = $config;
 		$this->manager = $manager;
 		$this->roomService = $roomService;
 		$this->participantService = $participantService;
+		$this->chatManager = $chatManager;
+		$this->notificationManager = $notificationManager;
 		$this->dispatcher = $dispatcher;
 		$this->l = $l;
 	}
@@ -243,6 +251,29 @@ class BreakoutRoomService {
 		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
 		foreach ($breakoutRooms as $breakoutRoom) {
 			$this->roomService->deleteRoom($breakoutRoom);
+		}
+	}
+
+	public function broadcastMessageToAllBreakoutRooms(Room $parent, Participant $participant, string $message): void {
+		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
+			throw new \InvalidArgumentException('mode');
+		}
+
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+		$attendeeType = $participant->getAttendee()->getActorType();
+		$attendeeId = $participant->getAttendee()->getActorId();
+		$creationDateTime = new \DateTime();
+
+		$shouldFlush = $this->notificationManager->defer();
+		try {
+			foreach ($breakoutRooms as $breakoutRoom) {
+				$breakoutParticipant = $this->participantService->getParticipantByActor($breakoutRoom, $attendeeType, $attendeeId);
+				$this->chatManager->sendMessage($breakoutRoom, $breakoutParticipant, $attendeeType, $attendeeId, $message, $creationDateTime, null, '', false);
+			}
+		} finally {
+			if ($shouldFlush) {
+				$this->notificationManager->flush();
+			}
 		}
 	}
 }

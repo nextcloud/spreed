@@ -2336,6 +2336,29 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" broadcasts message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $message
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userBroadcastsMessageToBreakoutRooms(string $user, string $message, string $identifier, string $statusCode, string $apiVersion = 'v1') {
+		$body = new TableNode([['message', $message]]);
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$identifier] . '/broadcast',
+			$body
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
+	}
+
+
+	/**
 	 * @Then /^user "([^"]*)" sets setting "([^"]*)" to "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user

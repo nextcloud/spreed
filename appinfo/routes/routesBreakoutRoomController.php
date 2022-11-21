@@ -34,5 +34,7 @@ return [
 		['name' => 'BreakoutRoom#configureBreakoutRooms', 'url' => '/api/{apiVersion}/breakout-rooms/{token}', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\BreakoutRoomController::removeBreakoutRooms() */
 		['name' => 'BreakoutRoom#removeBreakoutRooms', 'url' => '/api/{apiVersion}/breakout-rooms/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\BreakoutRoomController::broadcastChatMessage() */
+		['name' => 'BreakoutRoom#broadcastChatMessage', 'url' => '/api/{apiVersion}/breakout-rooms/{token}/broadcast', 'verb' => 'POST', 'requirements' => $requirements],
 	],
 ];
