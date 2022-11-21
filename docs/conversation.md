@@ -393,7 +393,7 @@
 * Response:
     - Status code:
         + `200 OK`
-        + `400 Bad Request` When: no image, file is too big, invalid mimetype or resource, isn't square, unknown error
+        + `400 Bad Request` When: is one2one, no image, file is too big, invalid mimetype or resource, isn't square, unknown error
         + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
         + `404 Not Found` When the conversation could not be found for the participant
 

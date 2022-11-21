@@ -35,7 +35,7 @@ Feature: conversation/avatar
     When user "participant1" creates room "one2one" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    Then user "participant1" uploads file "/img/favicon.png" as avatar of room "one2one" with 404
+    Then user "participant1" uploads file "/img/favicon.png" as avatar of room "one2one" with 400
 
   Scenario: get mentions in a group room with no other participant
     When user "participant1" creates room "group room" (v4)
