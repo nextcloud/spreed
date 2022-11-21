@@ -121,6 +121,10 @@ class AvatarService {
 		$token = $room->getToken();
 		$avatarFolder = $this->getAvatarFolder($token);
 		$avatarName = $this->getRandomAvatarName($room);
+		$previousAvatarName = $room->getAvatar();
+		if ($previousAvatarName) {
+			$avatarFolder->getFile($previousAvatarName)->delete();
+		}
 		$avatarFolder->newFile($avatarName, $image->data());
 		$room->setAvatar($avatarName);
 		$this->roomService->setAvatar($room, $avatarName);

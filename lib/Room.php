@@ -170,7 +170,7 @@ class Room {
 	private string $name;
 	private string $description;
 	private string $password;
-	private string $avatar;
+	private ?string $avatar;
 	private string $remoteServer;
 	private string $remoteToken;
 	private int $activeGuests;
@@ -492,11 +492,11 @@ class Room {
 		$this->password = $password;
 	}
 
-	public function setAvatar(string $avatar): void {
+	public function setAvatar(?string $avatar): void {
 		$this->avatar = $avatar;
 	}
 
-	public function getAvatar(): string {
+	public function getAvatar(): ?string {
 		return $this->avatar;
 	}
 
