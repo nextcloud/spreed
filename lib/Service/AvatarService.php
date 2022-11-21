@@ -137,7 +137,7 @@ class AvatarService {
 		return $avatarFolder;
 	}
 
-	public function getAvatar(Room $room, ?IUser $user): ISimpleFile {
+	public function getAvatar(Room $room, ?IUser $user, bool $darkTheme = false): ISimpleFile {
 		$token = $room->getToken();
 		$avatar = $room->getAvatar();
 		if ($avatar) {
@@ -156,7 +156,7 @@ class AvatarService {
 				foreach ($users as $participantId) {
 					if ($participantId !== $user->getUID()) {
 						$avatar = $this->avatarManager->getAvatar($participantId);
-						$file = $avatar->getFile(512);
+						$file = $avatar->getFile(512, $darkTheme);
 					}
 				}
 			} elseif ($room->getObjectType() === 'file') {

@@ -85,14 +85,23 @@ class AvatarController extends AEnvironmentAwareController {
 	 * @NoCSRFRequired
 	 * @RequireParticipant
 	 */
-	public function getAvatar(): Response {
-		$file = $this->avatarService->getAvatar($this->getRoom(), $this->userSession->getUser());
+	public function getAvatar(bool $darkTheme = false): Response {
+		$file = $this->avatarService->getAvatar($this->getRoom(), $this->userSession->getUser(), $darkTheme);
 
 		$response = new FileDisplayResponse($file);
 		$response->addHeader('Content-Type', $file->getMimeType());
 		// Cache for 1 day
 		$response->cacheFor(60 * 60 * 24, false, true);
 		return $response;
+	}
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 * @RequireParticipant
+	 */
+	public function getAvatarDark(): Response {
+		return $this->getAvatar(true);
 	}
 
 	/**
