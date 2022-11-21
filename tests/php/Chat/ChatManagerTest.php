@@ -32,6 +32,7 @@ use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\RoomService;
@@ -72,6 +73,8 @@ class ChatManagerTest extends TestCase {
 	protected $pollService;
 	/** @var Notifier|MockObject */
 	protected $notifier;
+	/** @var AvatarService|MockObject */
+	protected $avatarService;
 	/** @var ITimeFactory|MockObject */
 	protected $timeFactory;
 	/** @var AttachmentService|MockObject */
@@ -92,6 +95,7 @@ class ChatManagerTest extends TestCase {
 		$this->roomService = $this->createMock(RoomService::class);
 		$this->pollService = $this->createMock(PollService::class);
 		$this->notifier = $this->createMock(Notifier::class);
+		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->attachmentService = $this->createMock(AttachmentService::class);
 		$this->referenceManager = $this->createMock(IReferenceManager::class);
@@ -108,6 +112,7 @@ class ChatManagerTest extends TestCase {
 			$this->roomService,
 			$this->pollService,
 			$this->notifier,
+			$this->avatarService,
 			$cacheFactory,
 			$this->timeFactory,
 			$this->attachmentService,
@@ -135,6 +140,7 @@ class ChatManagerTest extends TestCase {
 					$this->roomService,
 					$this->pollService,
 					$this->notifier,
+					$this->avatarService,
 					$cacheFactory,
 					$this->timeFactory,
 					$this->attachmentService,
@@ -155,6 +161,7 @@ class ChatManagerTest extends TestCase {
 			$this->roomService,
 			$this->pollService,
 			$this->notifier,
+			$this->avatarService,
 			$cacheFactory,
 			$this->timeFactory,
 			$this->attachmentService,
@@ -698,7 +705,7 @@ class ChatManagerTest extends TestCase {
 					'actor_type' => Attendee::ACTOR_USERS,
 					'actor_id' => 'user',
 				])],
-				[['id' => 'all', 'label' => 'test', 'source' => 'calls']]
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'avatar' => '']]
 			],
 			[
 				'all',
@@ -707,7 +714,7 @@ class ChatManagerTest extends TestCase {
 					'actor_type' => Attendee::ACTOR_USERS,
 					'actor_id' => 'user',
 				])],
-				[['id' => 'all', 'label' => 'test', 'source' => 'calls']]
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'avatar' => '']]
 			],
 			[
 				'here',
@@ -716,7 +723,7 @@ class ChatManagerTest extends TestCase {
 					'actor_type' => Attendee::ACTOR_GUESTS,
 					'actor_id' => 'guest',
 				])],
-				[['id' => 'all', 'label' => 'test', 'source' => 'calls']]
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'avatar' => '']]
 			]
 		];
 	}

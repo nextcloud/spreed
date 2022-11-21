@@ -41,6 +41,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static $identifierToToken;
 	/** @var string[] */
 	protected static $tokenToIdentifier;
+	/** @var array[] */
+	protected static $identifierToAvatar;
 	/** @var string[] */
 	protected static $sessionIdToUser;
 	/** @var string[] */

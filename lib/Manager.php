@@ -172,6 +172,7 @@ class Manager {
 			(string) $row['name'],
 			(string) $row['description'],
 			(string) $row['password'],
+			(string) $row['avatar'],
 			(string) $row['remote_server'],
 			(string) $row['remote_token'],
 			(int) $row['active_guests'],

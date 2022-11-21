@@ -33,17 +33,20 @@ use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\InMemoryFile;
 use OCP\Files\SimpleFS\ISimpleFile;
+use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IAvatarManager;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
+use Sabre\DAV\UUIDUtil;
 
 class AvatarService {
 	private IAppData $appData;
 	private IL10N $l;
 	private IConfig $config;
 	private IURLGenerator $url;
+	private RoomService $roomService;
 	private IAvatarManager $avatarManager;
 
 	public function __construct(
@@ -51,21 +54,23 @@ class AvatarService {
 		IL10N $l,
 		IConfig $config,
 		IURLGenerator $url,
+		RoomService $roomService,
 		IAvatarManager $avatarManager
 	) {
 		$this->appData = $appData;
 		$this->l = $l;
 		$this->config = $config;
 		$this->url = $url;
+		$this->roomService = $roomService;
 		$this->avatarManager = $avatarManager;
 	}
 
-	public function setAvatarFromRequest(Room $room, array $file): void {
+	public function setAvatarFromRequest(Room $room, ?array $file): void {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			throw new InvalidArgumentException($this->l->t('One to one rooms always need to show the other users avatar'));
 		}
 
-		if (is_null($file)) {
+		if (is_null($file) || !is_array($file)) {
 			throw new InvalidArgumentException($this->l->t('No image file provided'));
 		}
 
@@ -110,24 +115,39 @@ class AvatarService {
 			throw new InvalidArgumentException($this->l->t('Unknown filetype'));
 		}
 
+		$token = $room->getToken();
+		$avatarFolder = $this->getAvatarFolder($token);
+		$avatarName = UUIDUtil::getUUID();
+		$avatarFolder->newFile($avatarName, $image->data());
+		$room->setAvatar($avatarName);
+		$this->roomService->setAvatar($room, $avatarName);
+	}
+
+	private function getAvatarFolder(string $token): ISimpleFolder {
 		try {
 			$folder = $this->appData->getFolder('room-avatar');
 		} catch (NotFoundException $e) {
 			$folder = $this->appData->newFolder('room-avatar');
 		}
-		$token = $room->getToken();
-		$content = $image->data();
-		$folder->newFile($token, $content);
+		try {
+			$avatarFolder = $folder->getFolder($token);
+		} catch (NotFoundException $e) {
+			$avatarFolder = $folder->newFolder($token);
+		}
+		return $avatarFolder;
 	}
 
 	public function getAvatar(Room $room, ?IUser $user): ISimpleFile {
 		$token = $room->getToken();
-		try {
-			$folder = $this->appData->getFolder('room-avatar');
-			if ($folder->fileExists($token)) {
-				$file = $folder->getFile($token);
+		$avatar = $room->getAvatar();
+		if ($avatar) {
+			try {
+				$folder = $this->appData->getFolder('room-avatar');
+				if ($folder->fileExists($token)) {
+					$file = $folder->getFolder($token)->getFile($avatar);
+				}
+			} catch (NotFoundException $e) {
 			}
-		} catch (NotFoundException $e) {
 		}
 		// Fallback
 		if (!isset($file)) {
@@ -188,7 +208,7 @@ class AvatarService {
 		return $this->url->linkToRouteAbsolute('ocs.spreed.Avatar.getAvatar', [
 			'token' => $room->getToken(),
 			'apiVersion' => 'v1',
-			'v' => $this->getAvatarVersion($room, $userId),
+			'v' => $room->getAvatar(),
 		]);
 	}
 }

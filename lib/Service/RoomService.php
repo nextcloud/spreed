@@ -337,6 +337,17 @@ class RoomService {
 		return true;
 	}
 
+	public function setAvatar(Room $room, $avatarName): bool {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			return false;
+		}
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('avatar', $avatarName)
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		return true;
+	}
+
 	/**
 	 * @param Room $room
 	 * @param int $newType Currently it is only allowed to change between `Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
