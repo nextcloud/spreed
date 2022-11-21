@@ -30,6 +30,6 @@ Feature: integration/dashboard
     And user "participant2" joins call "call room" with 200 (v4)
     Then user "participant1" sees the following entries for dashboard widgets "spreed" (v1)
       | title                    | subtitle            | link            | iconUrl                                                  | sinceId |
-      | call room                |  Call in progress   | call room       | {$BASE_URL}ocsapp/apps/spreed/api/v1/room/{token}/avatar |         |
-      | group room               |  You were mentioned | group room      | {$BASE_URL}ocsapp/apps/spreed/api/v1/room/{token}/avatar |         |
-      | participant2-displayname |  Hello              | one-to-one room | {$BASE_URL}ocsapp/apps/spreed/api/v1/room/{token}/avatar |         |
+      | call room                |  Call in progress   | call room       | {$BASE_URL}index.php/ocsapp/apps/spreed/api/v1/room/{token}/avatar |         |
+      | group room               |  You were mentioned | group room      | {$BASE_URL}index.php/ocsapp/apps/spreed/api/v1/room/{token}/avatar |         |
+      | participant2-displayname |  Hello              | one-to-one room | {$BASE_URL}index.php/ocsapp/apps/spreed/api/v1/room/{token}/avatar |         |

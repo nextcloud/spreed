@@ -1800,7 +1800,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		foreach ($expectedItems as $key => $item) {
 			$token = self::$identifierToToken[$item['link']];
-			$item['link'] = $this->baseUrl . 'call/' . $token;
+			$item['link'] = $this->baseUrl . 'index.php/call/' . $token;
 			$item['iconUrl'] = str_replace('{$BASE_URL}', $this->baseUrl, $item['iconUrl']);
 			$item['iconUrl'] = str_replace('{token}', $token, $item['iconUrl']);
 
