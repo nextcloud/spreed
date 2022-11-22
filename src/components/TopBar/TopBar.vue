@@ -118,7 +118,7 @@
 				@click="openSidebar('participants')">
 				<template #icon>
 					<AccountMultiple :size="20"
-						fill-color="#fffff" />
+						fill-color="#ffffff" />
 				</template>
 				{{ participantsInCall }}
 			</NcButton>
