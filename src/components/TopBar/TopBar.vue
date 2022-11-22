@@ -21,16 +21,14 @@
 
 <template>
 	<div class="top-bar" :class="{ 'in-call': isInCall }">
-		<ConversationIcon v-if="!isInCall"
-			:key="conversation.token"
+		<ConversationIcon :key="conversation.token"
 			class="conversation-icon"
 			:offline="isPeerOffline"
 			:item="conversation"
 			:hide-favorite="false"
 			:hide-call="false" />
 		<!-- conversation header -->
-		<a v-if="!isInCall"
-			role="button"
+		<a role="button"
 			class="conversation-header"
 			@click="openConversationSettings">
 			<div class="conversation-header__text"
@@ -42,18 +40,27 @@
 					class="description">
 					{{ statusMessage }}
 				</p>
-				<p v-else-if="conversation.description"
-					v-tooltip.bottom="{
-						content: renderedDescription,
-						delay: { show: 500, hide: 500 },
-						autoHide: false,
-						html: true,
-					}"
-					class="description">
-					{{ conversation.description }}
-				</p>
+				<template v-if="!isInCall && conversation.description">
+					<p v-tooltip.bottom="{
+							content: renderedDescription,
+							delay: { show: 500, hide: 500 },
+							autoHide: false,
+							html: true,
+						}"
+						class="description">
+						{{ conversation.description }}
+					</p>
+				</template>
 			</div>
 		</a>
+
+		<!-- Call time -->
+		<CallTime v-if="isInCall"
+			:start="conversation.callStartTime"
+			:is-recording="isRecording"
+			@stop-recording="isRecording = false" />
+
+		<!-- Local media controls -->
 		<LocalMediaControls v-if="isInCall"
 			class="local-media-controls"
 			:token="token"
@@ -68,36 +75,54 @@
 			:is-sidebar="isSidebar"
 			:model="localMediaModel" />
 
-		<div class="top-bar__buttons">
-			<CallButton class="top-bar__button" />
+		<CallButton class="top-bar__button" />
 
+		<template v-if="showOpenSidebarButton">
 			<!-- sidebar toggle -->
-			<NcActions v-if="showOpenSidebarButton"
+			<NcButton v-if="!isInCall"
 				class="top-bar__button"
 				close-after-click="true"
-				:container="container">
-				<NcActionButton v-if="isInCall"
-					key="openSideBarButtonMessageText"
-					@click="openSidebar">
-					<template #icon>
-						<MessageText :size="20"
-							fill-color="#ffffff" />
-					</template>
-				</NcActionButton>
-				<NcActionButton v-else
-					key="openSideBarButtonMenuPeople"
-					@click="openSidebar">
-					<template #icon>
-						<MenuPeople :size="20" />
-					</template>
-				</NcActionButton>
-			</NcActions>
-		</div>
-		<NcCounterBubble v-if="!isSidebar && showOpenSidebarButton && isInCall && unreadMessagesCounter > 0"
-			class="unread-messages-counter"
-			:highlighted="hasUnreadMentions">
-			{{ unreadMessagesCounter }}
-		</NcCounterBubble>
+				type="tertiary"
+				@click="openSidebar">
+				<template #icon>
+					<MenuIcon :size="20" />
+				</template>
+			</NcButton>
+
+			<!-- chat button -->
+			<div v-if="isInCall"
+				class="chat-button">
+				<NcActions class="top-bar__button"
+					close-after-click="true"
+					:container="container">
+					<NcActionButton key="openSideBarButtonMessageText"
+						@click="openSidebar('chat')">
+						<template #icon>
+							<MessageText :size="20"
+								fill-color="#ffffff" />
+						</template>
+					</NcActionButton>
+				</NcActions>
+				<NcCounterBubble v-if="!isSidebar && isInCall && unreadMessagesCounter > 0"
+					class="chat-button__unread-messages-counter"
+					:highlighted="hasUnreadMentions">
+					{{ unreadMessagesCounter }}
+				</NcCounterBubble>
+			</div>
+
+			<!-- participants button -->
+			<NcButton v-if="isInCall && !isOneToOneConversation"
+				class="top-bar__button"
+				close-after-click="true"
+				type="tertiary"
+				@click="openSidebar('participants')">
+				<template #icon>
+					<AccountMultiple :size="20"
+						fill-color="#ffffff" />
+				</template>
+				{{ participantsInCall }}
+			</NcButton>
+		</template>
 	</div>
 </template>
 
@@ -108,7 +133,7 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 import CallButton from './CallButton.vue'
 import BrowserStorage from '../../services/BrowserStorage.js'
-import MenuPeople from '../missingMaterialDesignIcons/MenuPeople.vue'
+import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
 import { CONVERSATION } from '../../constants.js'
 import { generateUrl } from '@nextcloud/router'
@@ -121,6 +146,9 @@ import userStatus from '../../mixins/userStatus.js'
 import LocalMediaControls from '../CallView/shared/LocalMediaControls.vue'
 import getParticipants from '../../mixins/getParticipants.js'
 import TopBarMenu from './TopBarMenu.vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import CallTime from './CallTime.vue'
+import MenuIcon from 'vue-material-design-icons/Menu.vue'
 
 export default {
 	name: 'TopBar',
@@ -134,11 +162,14 @@ export default {
 		NcActions,
 		NcCounterBubble,
 		CallButton,
-		MenuPeople,
+		AccountMultiple,
 		MessageText,
 		ConversationIcon,
 		LocalMediaControls,
 		TopBarMenu,
+		NcButton,
+		CallTime,
+		MenuIcon,
 	},
 
 	mixins: [
@@ -167,7 +198,8 @@ export default {
 			unreadNotificationHandle: null,
 			localCallParticipantModel,
 			localMediaModel,
-
+			// TODO: real value
+			isRecording: true,
 		}
 	},
 
@@ -248,6 +280,10 @@ export default {
 				return !peer.sessionIds.length
 			} else return false
 		},
+
+		participantsInCall() {
+			return this.$store.getters.participantsInCall(this.token) ? this.$store.getters.participantsInCall(this.token) : ''
+		},
 	},
 
 	watch: {
@@ -317,13 +353,21 @@ export default {
 			}
 		},
 
-		openSidebar() {
+		openSidebar(activeTab) {
+			if (typeof activeTab === 'string') {
+				emit('spreed:select-active-sidebar-tab', activeTab)
+			}
 			this.$store.dispatch('showSidebar')
 			BrowserStorage.setItem('sidebarOpen', 'true')
 		},
 
 		openConversationSettings() {
 			emit('show-conversation-settings', { token: this.token })
+		},
+
+		// TODO: implement real method
+		stopRecording() {
+			console.debug('stop recordiiing')
 		},
 	},
 }
@@ -354,12 +398,10 @@ export default {
 		left:0;
 		background-color: transparent;
 		display: flex;
-		flex-wrap: wrap-reverse;
-	}
-
-	&__buttons {
-		display: flex;
-		margin-left: 8px;
+		flex-wrap: wrap;
+		& * {
+			color: #fff;
+		}
 	}
 
 	&__button {
@@ -377,11 +419,14 @@ export default {
 		}
 	}
 
-	.unread-messages-counter {
-		position: absolute;
-		top: 40px;
-		right: 4px;
-		pointer-events: none;
+	.chat-button {
+		position: relative;
+		&__unread-messages-counter {
+			position: absolute;
+			top: 24px;
+			right: 2px;
+			pointer-events: none;
+		}
 	}
 }
 
@@ -395,7 +440,8 @@ export default {
 	overflow-x: hidden;
 	overflow-y: clip;
 	white-space: nowrap;
-	width: 100%;
+	width: 0;
+	flex-grow: 1;
 	cursor: pointer;
 	&__text {
 		display: flex;
@@ -421,9 +467,5 @@ export default {
 		max-width: fit-content;
 		color: var(--color-text-lighter);
 	}
-}
-
-.local-media-controls {
-	padding-left: $clickable-area;
 }
 </style>

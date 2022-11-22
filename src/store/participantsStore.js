@@ -155,6 +155,13 @@ const getters = {
 
 		return {}
 	},
+
+	participantsInCall: (state) => (token) => {
+		if (state.attendees[token]) {
+			return Object.values(state.attendees[token]).filter(attendee => attendee.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED).length
+		}
+		return 0
+	},
 }
 
 const mutations = {

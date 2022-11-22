@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import { emit } from '@nextcloud/event-bus'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
 import NcAppSidebarTab from '@nextcloud/vue/dist/Components/NcAppSidebarTab.js'
 import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
@@ -272,6 +272,14 @@ export default {
 				this.$refs.participantsTab.$el.scrollTop = 0
 			}
 		},
+	},
+
+	mounted() {
+		subscribe('spreed:select-active-sidebar-tab', this.handleUpdateActive)
+	},
+
+	beforeDestroy() {
+		unsubscribe('spreed:select-active-sidebar-tab', this.handleUpdateActive)
 	},
 
 	methods: {
