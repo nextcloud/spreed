@@ -118,21 +118,18 @@ class AvatarService {
 			throw new InvalidArgumentException($this->l->t('Unknown filetype'));
 		}
 
-		$this->deleteAvatarFromFilesystem($room);
 
 		$token = $room->getToken();
 		$avatarFolder = $this->getAvatarFolder($token);
-		$avatarName = $this->getRandomAvatarName($room);
+
+		// Delete previous avatars
+		foreach ($avatarFolder->getDirectoryListing() as $file) {
+			$file->delete();
+		}
+
+		$avatarName = $this->random->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
 		$avatarFolder->newFile($avatarName, $image->data());
 		$this->roomService->setAvatar($room, $avatarName);
-	}
-
-	private function getRandomAvatarName(Room $room): string {
-		$name = $this->random->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
-		if ($name === $room->getName()) {
-			return $this->getRandomAvatarName($room);
-		}
-		return $name;
 	}
 
 	private function getAvatarFolder(string $token): ISimpleFolder {
@@ -186,40 +183,14 @@ class AvatarService {
 		return $file;
 	}
 
-	private function deleteAvatarFromFilesystem(Room $room): void {
-		$token = $room->getToken();
-		$avatarFolder = $this->getAvatarFolder($token);
-		if (count($avatarFolder->getDirectoryListing()) >= 1) {
-			$avatarFolder->delete();
-		} elseif ($room->getAvatar() && $avatarFolder->fileExists($room->getAvatar())) {
-			$avatarFolder->getFile($room->getAvatar())->delete();
-		}
-	}
-
 	public function deleteAvatar(Room $room): void {
 		try {
-			$this->deleteAvatarFromFilesystem($room);
+			$folder = $this->appData->getFolder('room-avatar');
+			$avatarFolder = $folder->getFolder($room->getToken());
+			$avatarFolder->delete();
 			$this->roomService->setAvatar($room, null);
 		} catch (NotFoundException $e) {
 		}
-	}
-
-	public function roomHasAvatar(Room $room): bool {
-		try {
-			$folder = $this->appData->getFolder('room-avatar');
-			if ($folder->fileExists($room->getToken())) {
-				return true;
-			}
-		} catch (NotFoundException $e) {
-		}
-		return $room->getType() === Room::TYPE_ONE_TO_ONE;
-	}
-
-	public function getAvatarVersion(Room $room, ?string $userId): string {
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE && $userId) {
-			return (string) $this->config->getUserValue($userId, 'avatar', 'version', '0');
-		}
-		return (string) ($this->cache->get($room->getToken() . '.avatarVersion') ?? 0);
 	}
 
 	public function getAvatarUrl(Room $room): string {
@@ -227,8 +198,10 @@ class AvatarService {
 			'token' => $room->getToken(),
 			'apiVersion' => 'v1',
 		];
-		if ($avatar = $room->getAvatar()) {
-			$arguments['v'] = $avatar;
+
+		$avatarVersion = $room->getAvatar();
+		if ($avatarVersion) {
+			$arguments['v'] = $avatarVersion;
 		}
 		return $this->url->linkToOCSRouteAbsolute('spreed.Avatar.getAvatar', $arguments);
 	}
