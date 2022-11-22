@@ -25,6 +25,7 @@ use OCA\Talk\Activity\Provider\Base;
 use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\IURLGenerator;
@@ -50,6 +51,8 @@ class BaseTest extends TestCase {
 	protected $activityManager;
 	/** @var IUserManager|MockObject */
 	protected $userManager;
+	/** @var AvatarService|MockObject */
+	protected $avatarService;
 	/** @var Manager|MockObject */
 	protected $manager;
 
@@ -61,6 +64,7 @@ class BaseTest extends TestCase {
 		$this->config = $this->createMock(Config::class);
 		$this->activityManager = $this->createMock(IManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->manager = $this->createMock(Manager::class);
 	}
 
@@ -77,6 +81,7 @@ class BaseTest extends TestCase {
 				$this->config,
 				$this->activityManager,
 				$this->userManager,
+				$this->avatarService,
 				$this->manager,
 			])
 			->onlyMethods($methods)
@@ -85,10 +90,12 @@ class BaseTest extends TestCase {
 
 
 	public function dataPreParse(): array {
+		$user = $this->createMock(IUser::class);
 		return [
-			[false, true, true, 'app-dark.png'],
-			[true, true, false, 'app-dark.svg'],
-			[true, false, false, 'app-dark.svg'],
+			['other',  null,  true,  true],
+			['spreed', null,  true,  true],
+			['spreed', $user, true,  true],
+			['spreed', $user, false, false],
 		];
 	}
 
@@ -97,66 +104,37 @@ class BaseTest extends TestCase {
 	 *
 	 * @param bool $validUser
 	 * @param bool $disabledForUser
-	 * @param bool $png
-	 * @param string $imagePath
 	 */
-	public function testPreParse(bool $validUser, bool $disabledForUser, bool $png, string $imagePath): void {
+	public function testPreParse(string $appId, ?IUser $user, bool $disabledForUser, bool $willThrowException): void {
 		/** @var IEvent|MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
 			->method('getApp')
-			->willReturn('spreed');
+			->willReturn($appId);
 
-		if ($validUser) {
-			$event->expects($this->once())
-				->method('getAffectedUser')
-				->willReturn('user');
+		if ($willThrowException) {
+			$this->expectException(\InvalidArgumentException::class);
+		}
+		$event->expects($this->exactly($willThrowException ? 0 : 1))
+			->method('setIcon')
+			->willReturnSelf();
 
-			$user = $this->createMock(IUser::class);
-			$this->userManager->expects($this->once())
-				->method('get')
-				->with('user')
-				->willReturn($user);
-			$this->config->expects($this->once())
+		if ($user) {
+			$this->config
 				->method('isDisabledForUser')
 				->with($user)
 				->willReturn($disabledForUser);
-		} else {
+			$this->userManager
+				->method('get')
+				->with('user')
+				->willReturn($user);
 			$event->expects($this->once())
 				->method('getAffectedUser')
-				->willReturn('no-user');
-			$this->userManager->expects($this->once())
-				->method('get')
-				->with('no-user')
-				->willReturn(null);
-			$this->config->expects($this->never())
-				->method('isDisabledForUser');
-		}
-
-		if ($disabledForUser) {
-			$this->expectException(\InvalidArgumentException::class);
-		} else {
-			$this->activityManager->expects($this->once())
-				->method('getRequirePNG')
-				->willReturn($png);
-
-			$this->url->expects($this->once())
-				->method('imagePath')
-				->with('spreed', $imagePath)
-				->willReturn('imagePath');
-			$this->url->expects($this->once())
-				->method('getAbsoluteURL')
-				->with('imagePath')
-				->willReturn('getAbsoluteURL');
-
-			$event->expects($this->once())
-				->method('setIcon')
-				->with('getAbsoluteURL')
-				->willReturnSelf();
+				->willReturn('user');
 		}
 
 		$provider = $this->getProvider();
-		$this->assertSame($event, static::invokePrivate($provider, 'preParse', [$event]));
+		static::invokePrivate($provider, 'preParse', [$event]);
 	}
 
 	public function testPreParseThrows() {

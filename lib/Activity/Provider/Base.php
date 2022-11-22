@@ -72,14 +72,15 @@ abstract class Base implements IProvider {
 			throw new \InvalidArgumentException('Wrong app');
 		}
 
-		$user = $this->userManager->get($event->getAffectedUser());
+		$uid = $event->getAffectedUser();
+		$user = $this->userManager->get($uid);
 		if (!$user instanceof IUser || $this->config->isDisabledForUser($user)) {
 			throw new \InvalidArgumentException('User can not user Talk');
 		}
 
 		try {
-			$room = $this->manager->getRoomForUser($event->getObjectId(), $event->getAffectedUser());
-			$event->setIcon($this->avatarService->getAvatarUrl($room, $event->getAffectedUser()));
+			$room = $this->manager->getRoomForUser($event->getObjectId(), $uid);
+			$event->setIcon($this->avatarService->getAvatarUrl($room, $uid));
 		} catch (RoomNotFoundException $th) {
 			// When the roomId wont exists and to prevent an exception
 			$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.png')));
