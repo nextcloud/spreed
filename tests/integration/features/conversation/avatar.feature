@@ -36,12 +36,3 @@ Feature: conversation/avatar
       | roomType | 1 |
       | invite   | participant2 |
     Then user "participant1" uploads file "/img/favicon.png" as avatar of room "one2one" with 400
-
-  Scenario: get mentions in a group room with no other participant
-    When user "participant1" creates room "group room" (v4)
-      | roomType | 2 |
-      | roomName | room |
-    And user "participant1" uploads file "/img/favicon.png" as avatar of room "group room" with 200
-    Then user "participant1" gets the following candidate mentions in room "group room" for "" with 200
-      | id           | label                    | source | avatar       |
-      | all          | room                     | calls  | group room   |
