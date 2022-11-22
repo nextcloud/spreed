@@ -80,10 +80,14 @@ abstract class Base implements IProvider {
 
 		try {
 			$room = $this->manager->getRoomForUser($event->getObjectId(), $uid);
-			$event->setIcon($this->avatarService->getAvatarUrl($room, $uid));
+			$event->setIcon($this->avatarService->getAvatarUrl($room));
 		} catch (RoomNotFoundException $th) {
-			// When the roomId wont exists and to prevent an exception
-			$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.png')));
+			// When the room doesn't exist and to prevent an exception
+			if ($this->activityManager->getRequirePNG()) {
+				$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.png')));
+			} else {
+				$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.svg')));
+			}
 		}
 
 		return $event;
@@ -125,7 +129,7 @@ abstract class Base implements IProvider {
 			'id' => $room->getId(),
 			'name' => $room->getDisplayName($userId),
 			'link' => $this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
-			'iconUrl' => $this->avatarService->getAvatarUrl($room, $userId),
+			'icon-url' => $this->avatarService->getAvatarUrl($room),
 			'call-type' => $stringType,
 		];
 	}

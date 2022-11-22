@@ -95,7 +95,6 @@ class ChatManager {
 	private RoomService $roomService;
 	private PollService $pollService;
 	private Notifier $notifier;
-	private AvatarService $avatarService;
 	protected ITimeFactory $timeFactory;
 	protected ICache $cache;
 	protected ICache $unreadCountCache;
@@ -112,7 +111,6 @@ class ChatManager {
 								RoomService $roomService,
 								PollService $pollService,
 								Notifier $notifier,
-								AvatarService $avatarService,
 								ICacheFactory $cacheFactory,
 								ITimeFactory $timeFactory,
 								AttachmentService $attachmentService,
@@ -127,7 +125,6 @@ class ChatManager {
 		$this->roomService = $roomService;
 		$this->pollService = $pollService;
 		$this->notifier = $notifier;
-		$this->avatarService = $avatarService;
 		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
 		$this->unreadCountCache = $cacheFactory->createDistributed('talk/unreadcount');
 		$this->timeFactory = $timeFactory;

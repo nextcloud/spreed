@@ -337,21 +337,21 @@ class RoomService {
 		return true;
 	}
 
-	public function setAvatar(Room $room, $avatarName): bool {
+	public function setAvatar(Room $room, ?string $avatar): bool {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			return false;
 		}
 
-		$event = new ModifyRoomEvent($room, 'avatar', $avatarName, $room->getAvatar());
+		$event = new ModifyRoomEvent($room, 'avatar', $avatar, $room->getAvatar());
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_AVATAR_SET, $event);
-
-		$room->setAvatar($avatarName);
 
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
-			->set('avatar', $update->createNamedParameter($avatarName))
+			->set('avatar', $update->createNamedParameter($avatar))
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
+
+		$room->setAvatar($avatar);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_AVATAR_SET, $event);
 		return true;

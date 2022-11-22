@@ -73,8 +73,6 @@ class ChatManagerTest extends TestCase {
 	protected $pollService;
 	/** @var Notifier|MockObject */
 	protected $notifier;
-	/** @var AvatarService|MockObject */
-	protected $avatarService;
 	/** @var ITimeFactory|MockObject */
 	protected $timeFactory;
 	/** @var AttachmentService|MockObject */
@@ -95,7 +93,6 @@ class ChatManagerTest extends TestCase {
 		$this->roomService = $this->createMock(RoomService::class);
 		$this->pollService = $this->createMock(PollService::class);
 		$this->notifier = $this->createMock(Notifier::class);
-		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->attachmentService = $this->createMock(AttachmentService::class);
 		$this->referenceManager = $this->createMock(IReferenceManager::class);
@@ -112,7 +109,6 @@ class ChatManagerTest extends TestCase {
 			$this->roomService,
 			$this->pollService,
 			$this->notifier,
-			$this->avatarService,
 			$cacheFactory,
 			$this->timeFactory,
 			$this->attachmentService,

@@ -117,17 +117,8 @@ class ConversationSearch implements IProvider {
 				}
 			}
 
-			$arguments = [
-				'token' => $room->getToken(),
-				'apiVersion' => 'v1',
-			];
-			if ($avatar = $room->getAvatar()) {
-				$arguments['v'] = $avatar;
-			}
-			$icon = $this->url->linkToOCSRouteAbsolute('spreed.Avatar.getAvatar', $arguments);
-
 			$entry = new SearchResultEntry(
-				$icon,
+				$this->avatarService->getAvatarUrl($room),
 				$room->getDisplayName($user->getUID()),
 				'',
 				$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),

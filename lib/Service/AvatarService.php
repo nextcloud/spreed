@@ -124,7 +124,6 @@ class AvatarService {
 		$avatarFolder = $this->getAvatarFolder($token);
 		$avatarName = $this->getRandomAvatarName($room);
 		$avatarFolder->newFile($avatarName, $image->data());
-		$room->setAvatar($avatarName);
 		$this->roomService->setAvatar($room, $avatarName);
 	}
 
@@ -167,7 +166,7 @@ class AvatarService {
 			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 				$users = json_decode($room->getName(), true);
 				foreach ($users as $participantId) {
-					if ($participantId !== $user->getUID()) {
+					if ($user instanceof IUser && $participantId !== $user->getUID()) {
 						$avatar = $this->avatarManager->getAvatar($participantId);
 						$file = $avatar->getFile(512, $darkTheme);
 					}
@@ -231,6 +230,6 @@ class AvatarService {
 		if ($avatar = $room->getAvatar()) {
 			$arguments['v'] = $avatar;
 		}
-		return $this->url->linkToRouteAbsolute('ocs.spreed.Avatar.getAvatar', $arguments);
+		return $this->url->linkToOCSRouteAbsolute('spreed.Avatar.getAvatar', $arguments);
 	}
 }

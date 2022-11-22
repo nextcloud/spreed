@@ -175,7 +175,6 @@ class Listener {
 				->setTimestamp($this->timeFactory->getTime())
 				->setSubject('call', [
 					'room' => $room->getId(),
-					'avatar' => $room->getAvatar(),
 					'users' => $userIds,
 					'guests' => $numGuests,
 					'duration' => $duration,
