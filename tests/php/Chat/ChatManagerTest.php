@@ -705,7 +705,7 @@ class ChatManagerTest extends TestCase {
 					'actor_type' => Attendee::ACTOR_USERS,
 					'actor_id' => 'user',
 				])],
-				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'avatar' => '']]
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls']]
 			],
 			[
 				'all',
@@ -714,7 +714,7 @@ class ChatManagerTest extends TestCase {
 					'actor_type' => Attendee::ACTOR_USERS,
 					'actor_id' => 'user',
 				])],
-				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'avatar' => '']]
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls']]
 			],
 			[
 				'here',
@@ -723,7 +723,7 @@ class ChatManagerTest extends TestCase {
 					'actor_type' => Attendee::ACTOR_GUESTS,
 					'actor_id' => 'guest',
 				])],
-				[['id' => 'all', 'label' => 'test', 'source' => 'calls', 'avatar' => '']]
+				[['id' => 'all', 'label' => 'test', 'source' => 'calls']]
 			]
 		];
 	}
