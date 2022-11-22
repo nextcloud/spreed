@@ -25,12 +25,18 @@ import { PARTICIPANT, WEBINAR } from '../constants.js'
  * Mixin to check whether the current participant is waiting in the lobby or
  * not.
  *
- * Components using this mixin require a "conversation" property (that can be
- * null) with, at least, "participantType" and "lobbyState" properties.
  */
 export default {
 
 	computed: {
+		token() {
+			return this.$store.getters.getToken()
+		},
+
+		conversation() {
+			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
 		isModerator() {
 			return this.conversation
 				&& (this.conversation.participantType === PARTICIPANT.TYPE.OWNER

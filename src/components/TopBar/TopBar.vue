@@ -111,14 +111,14 @@
 			</div>
 
 			<!-- participants button -->
-			<NcButton v-if="isInCall & !isOneToOneConversation"
+			<NcButton v-if="isInCall && !isOneToOneConversation"
 				class="top-bar__button"
 				close-after-click="true"
-				:type="isInCall ? 'tertiary-on-primary': 'tertiary'"
+				type="tertiary"
 				@click="openSidebar('participants')">
 				<template #icon>
 					<AccountMultiple :size="20"
-						:fill-color="isInCall ? '#ffffff': ''" />
+						fill-color="#fffff" />
 				</template>
 				{{ participantsInCall }}
 			</NcButton>

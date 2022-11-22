@@ -27,7 +27,7 @@
 		:triggers="[]"
 		:container="container">
 		<template #trigger>
-			<NcButton :disabled="!isRecording"
+			<NcButton :disabled="!isRecording || !isModerator"
 				:wide="true"
 				:class="{ 'call-time__not-recording': !isRecording }"
 				type="tertiary"
@@ -56,6 +56,7 @@ import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import isInLobby from '../../mixins/isInLobby.js'
 
 export default {
 	name: 'CallTime',
@@ -66,6 +67,8 @@ export default {
 		NcPopover,
 		NcButton,
 	},
+
+	mixins: [isInLobby],
 
 	props: {
 		/**
@@ -80,12 +83,18 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+
+		canModerate: {
+			type: Boolean,
+			required: true,
+		},
 	},
 
 	data() {
 		return {
 			callTime: undefined,
 			showPopover: false,
+			timer: null,
 		}
 	},
 
@@ -134,11 +143,11 @@ export default {
 
 	mounted() {
 		// Start the timer when mounted
-		setInterval(this.computeElapsedTime, 1000)
+		this.timer = setInterval(this.computeElapsedTime, 1000)
 	},
 
 	beforeDestroy() {
-		clearInterval(this.computeElapsedTime)
+		clearInterval(this.timer)
 	},
 
 	methods: {
