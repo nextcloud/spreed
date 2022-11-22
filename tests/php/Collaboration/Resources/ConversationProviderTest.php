@@ -30,6 +30,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Collaboration\Resources\IResource;
 use OCP\Collaboration\Resources\ResourceException;
@@ -42,6 +43,8 @@ use Test\TestCase;
 class ConversationProviderTest extends TestCase {
 	/** @var Manager|MockObject */
 	protected $manager;
+	/** @var AvatarService|MockObject */
+	protected $avatarService;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
 	/** @var IUserSession|MockObject */
@@ -54,12 +57,14 @@ class ConversationProviderTest extends TestCase {
 		parent::setUp();
 
 		$this->manager = $this->createMock(Manager::class);
+		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 
 		$this->provider = new ConversationProvider(
 			$this->manager,
+			$this->avatarService,
 			$this->participantService,
 			$this->userSession,
 			$this->urlGenerator
