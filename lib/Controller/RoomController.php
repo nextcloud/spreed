@@ -417,7 +417,7 @@ class RoomController extends AEnvironmentAwareController {
 			'listable' => Room::LISTABLE_NONE,
 			'callFlag' => Participant::FLAG_DISCONNECTED,
 			'messageExpiration' => 0,
-			'avatar' => $this->avatarService->getAvatarUrl($room),
+			'avatarUrl' => $this->avatarService->getAvatarUrl($room),
 		];
 
 		$lastActivity = $room->getLastActivity();
