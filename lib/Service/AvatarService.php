@@ -188,7 +188,7 @@ class AvatarService {
 			$folder = $this->appData->getFolder('room-avatar');
 			$avatarFolder = $folder->getFolder($room->getToken());
 			$avatarFolder->delete();
-			$this->roomService->setAvatar($room, null);
+			$this->roomService->setAvatar($room, '');
 		} catch (NotFoundException $e) {
 		}
 	}
@@ -200,7 +200,7 @@ class AvatarService {
 		];
 
 		$avatarVersion = $room->getAvatar();
-		if ($avatarVersion) {
+		if ($avatarVersion !== '') {
 			$arguments['v'] = $avatarVersion;
 		}
 		return $this->url->linkToOCSRouteAbsolute('spreed.Avatar.getAvatar', $arguments);

@@ -48,6 +48,7 @@ class Version16000Date20221116163301 extends SimpleMigrationStep {
 			$table->addColumn('avatar', Types::STRING, [
 				'notnull' => false,
 				'length' => 10,
+				'default' => '',
 			]);
 			return $schema;
 		}

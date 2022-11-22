@@ -337,7 +337,7 @@ class RoomService {
 		return true;
 	}
 
-	public function setAvatar(Room $room, ?string $avatar): bool {
+	public function setAvatar(Room $room, string $avatar): bool {
 		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 			return false;
 		}
