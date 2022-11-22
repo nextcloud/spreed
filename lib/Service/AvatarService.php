@@ -190,9 +190,9 @@ class AvatarService {
 	private function deleteAvatarFromFilesystem(Room $room): void {
 		$token = $room->getToken();
 		$avatarFolder = $this->getAvatarFolder($token);
-		if (count($avatarFolder->getDirectoryListing()) === 1) {
+		if (count($avatarFolder->getDirectoryListing()) >= 1) {
 			$avatarFolder->delete();
-		} elseif ($avatarFolder->fileExists($room->getAvatar())) {
+		} elseif ($room->getAvatar() && $avatarFolder->fileExists($room->getAvatar())) {
 			$avatarFolder->getFile($room->getAvatar())->delete();
 		}
 	}
