@@ -139,6 +139,14 @@ export default {
 		isWide() {
 			return this.formattedTime.length > 7
 		},
+
+		token() {
+			return this.$store.getters.getToken()
+		},
+
+		conversation() {
+			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
 	},
 
 	mounted() {
