@@ -118,13 +118,11 @@ class AvatarService {
 			throw new InvalidArgumentException($this->l->t('Unknown filetype'));
 		}
 
+		$this->deleteAvatarFromFilesystem($room);
+
 		$token = $room->getToken();
 		$avatarFolder = $this->getAvatarFolder($token);
 		$avatarName = $this->getRandomAvatarName($room);
-		$previousAvatarName = $room->getAvatar();
-		if ($previousAvatarName) {
-			$avatarFolder->getFile($previousAvatarName)->delete();
-		}
 		$avatarFolder->newFile($avatarName, $image->data());
 		$room->setAvatar($avatarName);
 		$this->roomService->setAvatar($room, $avatarName);
@@ -189,11 +187,19 @@ class AvatarService {
 		return $file;
 	}
 
+	private function deleteAvatarFromFilesystem(Room $room): void {
+		$token = $room->getToken();
+		$avatarFolder = $this->getAvatarFolder($token);
+		if (count($avatarFolder->getDirectoryListing()) === 1) {
+			$avatarFolder->delete();
+		} elseif ($avatarFolder->fileExists($room->getAvatar())) {
+			$avatarFolder->getFile($room->getAvatar())->delete();
+		}
+	}
+
 	public function deleteAvatar(Room $room): void {
 		try {
-			$token = $room->getToken();
-			$avatarFolder = $this->getAvatarFolder($token);
-			$avatarFolder->delete();
+			$this->deleteAvatarFromFilesystem($room);
 			$this->roomService->setAvatar($room, null);
 		} catch (NotFoundException $e) {
 		}
