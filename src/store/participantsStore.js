@@ -157,11 +157,10 @@ const getters = {
 	},
 
 	participantsInCall: (state) => (token) => {
-		if (state.inCall[token]) {
-			return Object.keys(state.inCall[token]).length
-		} else {
-			return 0
+		if (state.attendees[token]) {
+			return Object.values(state.attendees[token]).filter(attendee => attendee.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED).length
 		}
+		return 0
 	},
 }
 
