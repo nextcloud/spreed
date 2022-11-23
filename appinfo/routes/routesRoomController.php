@@ -24,12 +24,12 @@ declare(strict_types=1);
  */
 
 $requirements = [
-	'apiVersion' => 'v(4)',
+	'apiVersion' => 'v4',
 ];
 
 $requirementsWithToken = [
-	'apiVersion' => 'v(4)',
-	'token' => '^[a-z0-9]{4,30}$',
+	'apiVersion' => 'v4',
+	'token' => '[a-z0-9]{4,30}',
 ];
 
 return [
@@ -60,7 +60,7 @@ return [
 		['name' => 'Room#setPassword', 'url' => '/api/{apiVersion}/room/{token}/password', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::setPermissions() */
 		['name' => 'Room#setPermissions', 'url' => '/api/{apiVersion}/room/{token}/permissions/{mode}', 'verb' => 'PUT', 'requirements' => array_merge($requirementsWithToken, [
-			'mode' => '^(call|default)$',
+			'mode' => '(call|default)',
 		])],
 		/** @see \OCA\Talk\Controller\RoomController::getParticipants() */
 		['name' => 'Room#getParticipants', 'url' => '/api/{apiVersion}/room/{token}/participants', 'verb' => 'GET', 'requirements' => $requirementsWithToken],
@@ -90,7 +90,7 @@ return [
 		['name' => 'Room#removeFromFavorites', 'url' => '/api/{apiVersion}/room/{token}/favorite', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::getParticipantByDialInPin() */
 		['name' => 'Room#getParticipantByDialInPin', 'url' => '/api/{apiVersion}/room/{token}/pin/{pin}', 'verb' => 'GET', 'requirements' => array_merge($requirementsWithToken, [
-			'pin' => '^\d{7,32}$',
+			'pin' => '\d{7,32}',
 		])],
 		/** @see \OCA\Talk\Controller\RoomController::createGuestByDialIn() */
 		['name' => 'Room#createGuestByDialIn', 'url' => '/api/{apiVersion}/room/{token}/open-dial-in', 'verb' => 'POST', 'requirements' => $requirementsWithToken],

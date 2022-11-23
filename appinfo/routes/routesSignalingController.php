@@ -24,13 +24,13 @@ declare(strict_types=1);
  */
 
 $requirements = [
-	'apiVersion' => 'v(3)',
+	'apiVersion' => 'v3',
 ];
 
 
 $requirementsWithToken = [
-	'apiVersion' => 'v(3)',
-	'token' => '^[a-z0-9]{4,30}$',
+	'apiVersion' => 'v3',
+	'token' => '[a-z0-9]{4,30}',
 ];
 
 return [
@@ -39,7 +39,7 @@ return [
 		['name' => 'Signaling#getSettings', 'url' => '/api/{apiVersion}/signaling/settings', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\SignalingController::getWelcomeMessage() */
 		['name' => 'Signaling#getWelcomeMessage', 'url' => '/api/{apiVersion}/signaling/welcome/{serverId}', 'verb' => 'GET', 'requirements' => array_merge($requirements, [
-			'serverId' => '^\d+$',
+			'serverId' => '\d+',
 		])],
 		/** @see \OCA\Talk\Controller\SignalingController::backend() */
 		['name' => 'Signaling#backend', 'url' => '/api/{apiVersion}/signaling/backend', 'verb' => 'POST', 'requirements' => $requirements],
