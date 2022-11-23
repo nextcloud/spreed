@@ -569,6 +569,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Du måste tilldela en ny moderator innan du kan lämna konversationen.",
     "Do you really want to delete \"{displayName}\"?" : "Vill du verkligen radera \"{displayName}\"?",
     "Password protection" : "Lösenordsskydd",
+    "Enter new password" : "Ange nytt lösenord",
     "Copy conversation link" : "Kopiera konversationslänk",
     "Conversation link copied to clipboard." : "Konversationslänk kopierad till urklipp.",
     "The link could not be copied." : "Länken kunde inte kopieras.",
