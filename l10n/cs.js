@@ -1186,6 +1186,7 @@ OC.L10N.register(
     "Start call" : "Zavolat",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk bylo aktualizováno – abyste mohli začít hovor nebo se k němu připojit, je třeba stránku načíst znovu.",
     "You will be able to join the call only after a moderator starts it." : "K hovoru se budete moci připojit až poté, co ho moderátor zahájí.",
+    "Stop recording" : "Zastavit nahrávání",
     "You have new unread messages in the chat." : "Máte nové nepřečtené zprávy v chatu.",
     "You have been mentioned in the chat." : "Byli jste zmíněni v chatu.",
     "Mute others" : "Ztlumit ostatní",
