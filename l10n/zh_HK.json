@@ -1184,6 +1184,7 @@
     "Start call" : "開始通話",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk已更新，您需要重新加載頁面才能開始或加入通話。",
     "You will be able to join the call only after a moderator starts it." : "只有主持人發起通話後，您才能加入該通話。",
+    "Stop recording" : "停止錄音",
     "You have new unread messages in the chat." : "您在聊天中有新的未讀消息。",
     "You have been mentioned in the chat." : "您已在聊天中被提及。",
     "Mute others" : "使其他人靜音",
