@@ -30,20 +30,17 @@
 		<NcAppSettingsSection v-if="showDescription"
 			id="description"
 			:title="t('spreed', 'Details')">
-			<Description :editable="canFullModerate"
-				:description="conversation.displayName"
-				:editing="isEditingDescription"
-				:loading="isDescriptionLoading"
+			<NcButton v-if="!isEditingDetails" type="secondary" @click="isEditingDetails = true">
+				{{ t('spreed', 'Edit details') }}
+			</NcButton>
+			<NcButton v-if="isEditingDetails" type="secondary" @click="handleUpdateDescription">
+				{{ t('spreed', 'Save') }}
+			</NcButton>
+			<NcTextField :value.sync="descriptionTextField"
+				:label="t('spreed', 'Conversation description')"
 				:placeholder="t('spreed', 'Enter a description for this conversation')"
-				@submit-description="handleUpdateDescription"
-				@update:editing="handleEditDescription" />
-			<Description :editable="canFullModerate"
-				:description="description"
-				:editing="isEditingDescription"
-				:loading="isDescriptionLoading"
-				:placeholder="t('spreed', 'Enter a description for this conversation')"
-				@submit-description="handleUpdateDescription"
-				@update:editing="handleEditDescription" />
+				:disabled="!isEditingDetails || isDescriptionLoading"
+				:label-visible="true" />
 		</NcAppSettingsSection>
 
 		<!-- Notifications settings and devices preview screen -->
@@ -115,10 +112,11 @@ import { loadState } from '@nextcloud/initial-state'
 import DangerZone from './DangerZone.vue'
 import NotificationsSettings from './NotificationsSettings.vue'
 import { showError } from '@nextcloud/dialogs'
-import Description from '../Description/Description.vue'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import ConversationPermissionsSettings from './ConversationPermissionsSettings.vue'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -135,18 +133,20 @@ export default {
 		MatterbridgeSettings,
 		DangerZone,
 		NotificationsSettings,
-		Description,
 		NcCheckboxRadioSwitch,
 		ConversationPermissionsSettings,
+		NcTextField,
+		NcButton,
 	},
 
 	data() {
 		return {
 			showSettings: false,
 			matterbridgeEnabled: loadState('spreed', 'enable_matterbridge'),
-			isEditingDescription: false,
+			isEditingDetails: false,
 			isDescriptionLoading: false,
 			showDeviceChecker: false,
+			descriptionTextField: '',
 		}
 	},
 
@@ -179,11 +179,11 @@ export default {
 		},
 
 		canDeleteConversation() {
-			return this.conversation.canDeleteConversation
+			return !!this.conversation.canDeleteConversation
 		},
 
 		canLeaveConversation() {
-			return this.conversation.canLeaveConversation
+			return !!this.conversation.canLeaveConversation
 		},
 
 		description() {
@@ -207,6 +207,7 @@ export default {
 	},
 
 	mounted() {
+		this.descriptionTextField = this.conversation.description ? this.conversation.description : ''
 		subscribe('show-conversation-settings', this.handleShowSettings)
 		subscribe('hide-conversation-settings', this.handleHideSettings)
 
@@ -236,14 +237,14 @@ export default {
 			unsubscribe('hide-conversation-settings', this.handleHideSettings)
 		},
 
-		async handleUpdateDescription(description) {
+		async handleUpdateDescription() {
 			this.isDescriptionLoading = true
 			try {
 				await this.$store.dispatch('setConversationDescription', {
 					token: this.token,
-					description,
+					description: this.descriptionTextField,
 				})
-				this.isEditingDescription = false
+				this.isEditingDetails = false
 			} catch (error) {
 				console.error('Error while setting conversation description', error)
 				showError(t('spreed', 'Error while updating conversation description'))
@@ -251,8 +252,8 @@ export default {
 			this.isDescriptionLoading = false
 		},
 
-		handleEditDescription(payload) {
-			this.isEditingDescription = payload
+		handleUpdateDetails() {
+			return 1
 		},
 	},
 }
@@ -287,6 +288,13 @@ export default {
 
 	&:first-child {
 		margin-top: 0;
+	}
+}
+
+::v-deep .input-field__input {
+	&:disabled {
+		border-color: transparent !important;
+		cursor: pointer;
 	}
 }
 </style>
