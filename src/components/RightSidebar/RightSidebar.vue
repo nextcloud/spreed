@@ -24,15 +24,9 @@
 	<NcAppSidebar v-show="opened"
 		:title="title"
 		:title-tooltip="title"
-		:starred="isFavorited"
 		:active="activeTab"
-		:title-editable="canModerate && isRenamingConversation"
 		:class="'active-tab-' + activeTab"
 		@update:active="handleUpdateActive"
-		@update:starred="onFavoriteChange"
-		@update:title="handleUpdateTitle"
-		@submit-title="handleSubmitTitle"
-		@dismiss-editing="dismissEditing"
 		@closed="handleClosed"
 		@close="handleClose">
 		<template slot="description">
@@ -173,14 +167,6 @@ export default {
 			return this.$store.getters.getUserId()
 		},
 
-		isFavorited() {
-			if (!this.getUserId) {
-				return null
-			}
-
-			return this.conversation.isFavorite
-		},
-
 		canAddParticipants() {
 			return this.canFullModerate && this.canSearchParticipants
 		},
@@ -214,10 +200,6 @@ export default {
 			} else {
 				return this.conversation.displayName
 			}
-		},
-
-		isRenamingConversation() {
-			return this.$store.getters.isRenamingConversation
 		},
 
 		showSIPSettings() {
@@ -287,10 +269,6 @@ export default {
 			this.dismissEditing()
 			this.$store.dispatch('hideSidebar')
 			BrowserStorage.setItem('sidebarOpen', 'false')
-		},
-
-		async onFavoriteChange() {
-			this.$store.dispatch('toggleFavorite', this.conversation)
 		},
 
 		handleUpdateActive(active) {

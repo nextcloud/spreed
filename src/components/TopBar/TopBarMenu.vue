@@ -101,13 +101,6 @@
 			{{ t('spreed', 'Go to file') }}
 		</NcActionLink>
 		<NcActionSeparator v-if="showModerationOptions" />
-		<template v-if="showModerationOptions">
-			<NcActionButton :close-after-click="true"
-				icon="icon-rename"
-				@click="handleRenameConversation">
-				{{ t('spreed', 'Rename conversation') }}
-			</NcActionButton>
-		</template>
 		<NcActionButton :close-after-click="true"
 			@click="openConversationSettings">
 			<template #icon>
@@ -306,10 +299,6 @@ export default {
 	},
 
 	methods: {
-		handleRenameConversation() {
-			this.$store.dispatch('isRenamingConversation', true)
-			this.$store.dispatch('showSidebar')
-		},
 		forceMuteOthers() {
 			callParticipantCollection.callParticipantModels.forEach(callParticipantModel => {
 				callParticipantModel.forceMute()

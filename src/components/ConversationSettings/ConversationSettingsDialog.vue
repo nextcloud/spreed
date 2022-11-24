@@ -29,8 +29,14 @@
 		<!-- description -->
 		<NcAppSettingsSection v-if="showDescription"
 			id="description"
-			:title="t('spreed', 'Description')">
-			<!-- Rename to "Basic info" when Name is moved over -->
+			:title="t('spreed', 'Details')">
+			<Description :editable="canFullModerate"
+				:description="conversation.displayName"
+				:editing="isEditingDescription"
+				:loading="isDescriptionLoading"
+				:placeholder="t('spreed', 'Enter a description for this conversation')"
+				@submit-description="handleUpdateDescription"
+				@update:editing="handleEditDescription" />
 			<Description :editable="canFullModerate"
 				:description="description"
 				:editing="isEditingDescription"
