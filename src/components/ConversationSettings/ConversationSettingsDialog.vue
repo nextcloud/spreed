@@ -30,21 +30,8 @@
 		<NcAppSettingsSection v-if="showDetails"
 			id="details"
 			:title="t('spreed', 'Details')">
-			<NcTextField :value.sync="conversationNameTextField"
-				 :label="t('spreed', 'Conversation Name')"
-				 :disabled="!isEditingDetails || detailsLoading"
-				 :label-visible="true" />
-			<NcTextField :value.sync="descriptionTextField"
-				:label="t('spreed', 'Conversation description')"
-				:placeholder="t('spreed', 'Enter a description for this conversation')"
-				:disabled="!isEditingDetails || detailsLoading"
-				:label-visible="true" />
-			<NcButton class="details__button" v-if="!isEditingDetails" type="secondary" @click="isEditingDetails = true">
-				{{ t('spreed', 'Edit details') }}
-			</NcButton>
-			<NcButton class="details__button" v-else-if="isEditingDetails" type="secondary" @click="handleUpdateDetails">
-				{{ t('spreed', 'Save') }}
-			</NcButton>
+			<DetailsSettings :token="token"
+				:conversation="conversation" />
 		</NcAppSettingsSection>
 
 		<!-- Notifications settings and devices preview screen -->
@@ -115,12 +102,10 @@ import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings.vue'
 import { loadState } from '@nextcloud/initial-state'
 import DangerZone from './DangerZone.vue'
 import NotificationsSettings from './NotificationsSettings.vue'
-import { showError } from '@nextcloud/dialogs'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import ConversationPermissionsSettings from './ConversationPermissionsSettings.vue'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import DetailsSettings from './DetailsSettings.vue'
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -139,19 +124,14 @@ export default {
 		NotificationsSettings,
 		NcCheckboxRadioSwitch,
 		ConversationPermissionsSettings,
-		NcTextField,
-		NcButton,
+		DetailsSettings,
 	},
 
 	data() {
 		return {
 			showSettings: false,
 			matterbridgeEnabled: loadState('spreed', 'enable_matterbridge'),
-			isEditingDetails: false,
-			detailsLoading: false,
 			showDeviceChecker: false,
-			conversationNameTextField: '',
-			descriptionTextField: '',
 		}
 	},
 
@@ -209,14 +189,6 @@ export default {
 			const browserValue = newValue ? 'true' : 'false'
 			BrowserStorage.setItem('showDeviceChecker' + this.token, browserValue)
 		},
-
-		// Update details everytime the conversation object changes
-		conversation() {
-			if (this.isEditingDetails) {
-				return
-			}
-			this.updateDetailsValues()
-		}
 	},
 
 	mounted() {
@@ -248,61 +220,11 @@ export default {
 			unsubscribe('show-conversation-settings', this.handleShowSettings)
 			unsubscribe('hide-conversation-settings', this.handleHideSettings)
 		},
-
-		updateDetailsValues() {
-			if (this.conversation.displayName !== this.conversationNameTextField) {
-				this.conversationNameTextField = this.conversation.displayName
-
-			}
-			if (this.conversation.description !== this.descriptionTextField) {
-				this.descriptionTextField = this.conversation.description ? this.conversation.description : ''
-			}
-		},
-
-		async handleUpdateDetails() {
-			this.isEditingDetails = true
-			// Update conversation name if new
-			if (this.conversationNameTextField !== this.conversation.displayName) {
-				this.detailsLoading = true
-				try {
-					await this.$store.dispatch('setConversationName', {
-						token: this.token,
-						name: this.conversationNameTextField
-					})
-				} catch (error) {
-					console.error('Error while setting conversation name', error)
-					showError(t('spreed', 'Error while updating conversation name'))
-				}
-				this.detailsLoading = false
-			}
-			// Update description if new
-			if (this.descriptionTextField !== this.conversation.description) {
-				this.detailsLoading = true
-				try {
-					await this.$store.dispatch('setConversationDescription', {
-						token: this.token,
-						description: this.descriptionTextField,
-					})
-				} catch (error) {
-					console.error('Error while setting conversation description', error)
-					showError(t('spreed', 'Error while updating conversation description'))
-				}
-				this.detailsLoading = false
-			}
-			this.updateDetailsValues()
-			this.isEditingDetails = false
-		},
-
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-.details {
-	&__button {
-		margin-top: calc(var(--default-grid-baseline) * 2);
-	}
-}
 
 ::v-deep button.icon {
 	height: 32px;

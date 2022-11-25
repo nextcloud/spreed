@@ -209,18 +209,18 @@ export default {
 		},
 	},
 
-	computed: {
-		disableKeyboardShortcuts() {
-			return OCP.Accessibility.disableKeyboardShortcuts()
-		},
-	},
-
 	data() {
 		return {
 			text: '',
 			autoCompleteMentionCandidates: [],
 			blurTimer: null,
 		}
+	},
+
+	computed: {
+		disableKeyboardShortcuts() {
+			return OCP.Accessibility.disableKeyboardShortcuts()
+		},
 	},
 	watch: {
 		text(text) {
