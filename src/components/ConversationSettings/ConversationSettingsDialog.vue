@@ -26,21 +26,25 @@
 		:open.sync="showSettings"
 		:show-navigation="true"
 		:container="container">
-		<!-- description -->
-		<NcAppSettingsSection v-if="showDescription"
-			id="description"
+		<!-- Conversation details -->
+		<NcAppSettingsSection v-if="showDetails"
+			id="details"
 			:title="t('spreed', 'Details')">
-			<NcButton v-if="!isEditingDetails" type="secondary" @click="isEditingDetails = true">
-				{{ t('spreed', 'Edit details') }}
-			</NcButton>
-			<NcButton v-if="isEditingDetails" type="secondary" @click="handleUpdateDescription">
-				{{ t('spreed', 'Save') }}
-			</NcButton>
+			<NcTextField :value.sync="conversationNameTextField"
+				 :label="t('spreed', 'Conversation Name')"
+				 :disabled="!isEditingDetails || detailsLoading"
+				 :label-visible="true" />
 			<NcTextField :value.sync="descriptionTextField"
 				:label="t('spreed', 'Conversation description')"
 				:placeholder="t('spreed', 'Enter a description for this conversation')"
-				:disabled="!isEditingDetails || isDescriptionLoading"
+				:disabled="!isEditingDetails || detailsLoading"
 				:label-visible="true" />
+			<NcButton class="details__button" v-if="!isEditingDetails" type="secondary" @click="isEditingDetails = true">
+				{{ t('spreed', 'Edit details') }}
+			</NcButton>
+			<NcButton class="details__button" v-else-if="isEditingDetails" type="secondary" @click="handleUpdateDetails">
+				{{ t('spreed', 'Save') }}
+			</NcButton>
 		</NcAppSettingsSection>
 
 		<!-- Notifications settings and devices preview screen -->
@@ -144,8 +148,9 @@ export default {
 			showSettings: false,
 			matterbridgeEnabled: loadState('spreed', 'enable_matterbridge'),
 			isEditingDetails: false,
-			isDescriptionLoading: false,
+			detailsLoading: false,
 			showDeviceChecker: false,
+			conversationNameTextField: '',
 			descriptionTextField: '',
 		}
 	},
@@ -190,7 +195,7 @@ export default {
 			return this.conversation.description
 		},
 
-		showDescription() {
+		showDetails() {
 			if (this.canFullModerate) {
 				return this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
 			} else {
@@ -204,10 +209,17 @@ export default {
 			const browserValue = newValue ? 'true' : 'false'
 			BrowserStorage.setItem('showDeviceChecker' + this.token, browserValue)
 		},
+
+		// Update details everytime the conversation object changes
+		conversation() {
+			if (this.isEditingDetails) {
+				return
+			}
+			this.updateDetailsValues()
+		}
 	},
 
 	mounted() {
-		this.descriptionTextField = this.conversation.description ? this.conversation.description : ''
 		subscribe('show-conversation-settings', this.handleShowSettings)
 		subscribe('hide-conversation-settings', this.handleHideSettings)
 
@@ -237,29 +249,61 @@ export default {
 			unsubscribe('hide-conversation-settings', this.handleHideSettings)
 		},
 
-		async handleUpdateDescription() {
-			this.isDescriptionLoading = true
-			try {
-				await this.$store.dispatch('setConversationDescription', {
-					token: this.token,
-					description: this.descriptionTextField,
-				})
-				this.isEditingDetails = false
-			} catch (error) {
-				console.error('Error while setting conversation description', error)
-				showError(t('spreed', 'Error while updating conversation description'))
+		updateDetailsValues() {
+			if (this.conversation.displayName !== this.conversationNameTextField) {
+				this.conversationNameTextField = this.conversation.displayName
+
 			}
-			this.isDescriptionLoading = false
+			if (this.conversation.description !== this.descriptionTextField) {
+				this.descriptionTextField = this.conversation.description ? this.conversation.description : ''
+			}
 		},
 
-		handleUpdateDetails() {
-			return 1
+		async handleUpdateDetails() {
+			this.isEditingDetails = true
+			// Update conversation name if new
+			if (this.conversationNameTextField !== this.conversation.displayName) {
+				this.detailsLoading = true
+				try {
+					await this.$store.dispatch('setConversationName', {
+						token: this.token,
+						name: this.conversationNameTextField
+					})
+				} catch (error) {
+					console.error('Error while setting conversation name', error)
+					showError(t('spreed', 'Error while updating conversation name'))
+				}
+				this.detailsLoading = false
+			}
+			// Update description if new
+			if (this.descriptionTextField !== this.conversation.description) {
+				this.detailsLoading = true
+				try {
+					await this.$store.dispatch('setConversationDescription', {
+						token: this.token,
+						description: this.descriptionTextField,
+					})
+				} catch (error) {
+					console.error('Error while setting conversation description', error)
+					showError(t('spreed', 'Error while updating conversation description'))
+				}
+				this.detailsLoading = false
+			}
+			this.updateDetailsValues()
+			this.isEditingDetails = false
 		},
+
 	},
 }
 </script>
 
 <style lang="scss" scoped>
+.details {
+	&__button {
+		margin-top: calc(var(--default-grid-baseline) * 2);
+	}
+}
+
 ::v-deep button.icon {
 	height: 32px;
 	width: 32px;
@@ -293,8 +337,7 @@ export default {
 
 ::v-deep .input-field__input {
 	&:disabled {
-		border-color: transparent !important;
-		cursor: pointer;
+		cursor: default;
 	}
 }
 </style>

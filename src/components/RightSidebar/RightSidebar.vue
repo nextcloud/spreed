@@ -275,29 +275,6 @@ export default {
 			this.activeTab = active
 		},
 
-		/**
-		 * Updates the conversationName value while editing the conversation's title.
-		 *
-		 * @param {string} title the conversation title emitted by the AppSidevar vue
-		 * component.
-		 */
-		handleUpdateTitle(title) {
-			this.conversationName = title
-		},
-
-		async handleSubmitTitle(event) {
-			const name = event.target[0].value.trim()
-			try {
-				await this.$store.dispatch('setConversationName', {
-					token: this.token,
-					name,
-				})
-				this.dismissEditing()
-			} catch (exception) {
-				console.debug(exception)
-			}
-		},
-
 		dismissEditing() {
 			this.$store.dispatch('isRenamingConversation', false)
 		},
