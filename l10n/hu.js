@@ -1186,6 +1186,7 @@ OC.L10N.register(
     "Start call" : "Hívás indítása",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "A Nextcloud Beszélgetés frissült, újra kell töltenie az oldalt, mielőtt hívást indíthatna vagy csatlakozhatna egyhez.",
     "You will be able to join the call only after a moderator starts it." : "Csak akkor csatlakozhat a híváshoz, ha azt egy moderátor elindítja.",
+    "Stop recording" : "Felvétel leállítása",
     "You have new unread messages in the chat." : "Olvasatlan üzenetek vannak a csevegésben.",
     "You have been mentioned in the chat." : "Megemlítették a csevegésben.",
     "Mute others" : "Mások elnémítása",
