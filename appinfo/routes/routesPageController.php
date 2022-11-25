@@ -23,6 +23,10 @@ declare(strict_types=1);
  *
  */
 
+$requirements = [
+	'token' => '[a-z0-9]{4,30}',
+];
+
 return [
 	'routes' => [
 		/** @see \OCA\Talk\Controller\PageController::index() */
@@ -32,8 +36,8 @@ return [
 		/** @see \OCA\Talk\Controller\PageController::duplicateSession() */
 		['name' => 'Page#duplicateSession', 'url' => '/duplicate-session', 'verb' => 'GET'],
 		/** @see \OCA\Talk\Controller\PageController::showCall() */
-		['name' => 'Page#showCall', 'url' => '/call/{token}', 'root' => '', 'verb' => 'GET'],
+		['name' => 'Page#showCall', 'url' => '/call/{token}', 'root' => '', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\PageController::authenticatePassword() */
-		['name' => 'Page#authenticatePassword', 'url' => '/call/{token}', 'root' => '', 'verb' => 'POST'],
+		['name' => 'Page#authenticatePassword', 'url' => '/call/{token}', 'root' => '', 'verb' => 'POST', 'requirements' => $requirements],
 	],
 ];

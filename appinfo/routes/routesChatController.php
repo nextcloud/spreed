@@ -25,13 +25,13 @@ declare(strict_types=1);
 
 $requirements = [
 	'apiVersion' => 'v1',
-	'token' => '^[a-z0-9]{4,30}$',
+	'token' => '[a-z0-9]{4,30}',
 ];
 
 $requirementsWithMessageId = [
 	'apiVersion' => 'v1',
-	'token' => '^[a-z0-9]{4,30}$',
-	'messageId' => '^[0-9]+$',
+	'token' => '[a-z0-9]{4,30}',
+	'messageId' => '[0-9]+',
 ];
 
 return [

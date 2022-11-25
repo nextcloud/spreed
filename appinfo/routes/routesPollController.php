@@ -25,13 +25,13 @@ declare(strict_types=1);
 
 $requirements = [
 	'apiVersion' => 'v1',
-	'token' => '^[a-z0-9]{4,30}$',
+	'token' => '[a-z0-9]{4,30}',
 ];
 
 $requirementsWithPollId = [
 	'apiVersion' => 'v1',
-	'token' => '^[a-z0-9]{4,30}$',
-	'pollId' => '^[0-9]+$',
+	'token' => '[a-z0-9]{4,30}',
+	'pollId' => '\d+',
 ];
 
 return [

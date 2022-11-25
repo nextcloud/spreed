@@ -23,11 +23,13 @@ declare(strict_types=1);
  *
  */
 
+$requirements = [
+	'apiVersion' => 'v1',
+];
+
 return [
 	'ocs' => [
 		/** @see \OCA\Talk\Controller\CommandController::index() */
-		['name' => 'Command#index', 'url' => '/api/{apiVersion}/command', 'verb' => 'GET', 'requirements' => [
-			'apiVersion' => 'v1',
-		]],
+		['name' => 'Command#index', 'url' => '/api/{apiVersion}/command', 'verb' => 'GET', 'requirements' => $requirements],
 	],
 ];
