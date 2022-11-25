@@ -90,4 +90,36 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 		}
 		return new DataResponse([], Http::STATUS_CREATED);
 	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireLoggedInModeratorParticipant
+	 *
+	 * @return DataResponse
+	 */
+	public function startBreakoutRooms(): DataResponse {
+		try {
+			$this->breakoutRoomService->startBreakoutRooms($this->room);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireLoggedInModeratorParticipant
+	 *
+	 * @return DataResponse
+	 */
+	public function stopBreakoutRooms(): DataResponse {
+		try {
+			$this->breakoutRoomService->stopBreakoutRooms($this->room);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
 }

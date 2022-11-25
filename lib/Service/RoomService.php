@@ -624,6 +624,30 @@ class RoomService {
 		return true;
 	}
 
+	public function setBreakoutRoomStatus(Room $room, int $status): bool {
+		if (!in_array($status, [
+			BreakoutRoom::STATUS_STOPPED,
+			BreakoutRoom::STATUS_STARTED,
+		], true)) {
+			return false;
+		}
+
+		$event = new ModifyRoomEvent($room, 'breakoutRoomStatus', $status);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_BREAKOUT_ROOM_STATUS, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('breakout_room_status', $update->createNamedParameter($status, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setBreakoutRoomStatus($status);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS, $event);
+
+		return true;
+	}
+
 	public function resetActiveSince(Room $room): bool {
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')

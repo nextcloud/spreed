@@ -224,6 +224,16 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You restricted the conversation to moderators');
 			}
+		} elseif ($message === 'breakout_rooms_started') {
+			$parsedMessage = $this->l->t('{actor} started breakout rooms');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You started breakout rooms');
+			}
+		} elseif ($message === 'breakout_rooms_stopped') {
+			$parsedMessage = $this->l->t('{actor} stopped breakout rooms');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You stopped breakout rooms');
+			}
 		} elseif ($message === 'guests_allowed') {
 			$parsedMessage = $this->l->t('{actor} allowed guests');
 			if ($currentUserIsActor) {

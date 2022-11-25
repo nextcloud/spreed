@@ -276,4 +276,34 @@ class BreakoutRoomService {
 			}
 		}
 	}
+
+	public function startBreakoutRooms(Room $parent): void {
+		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
+			throw new \InvalidArgumentException('mode');
+		}
+
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+		foreach ($breakoutRooms as $breakoutRoom) {
+			$this->roomService->setLobby($breakoutRoom, Webinary::LOBBY_NONE, null);
+		}
+
+		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STARTED);
+
+		// FIXME missing to send the signaling messages so participants are moved
+	}
+
+	public function stopBreakoutRooms(Room $parent): void {
+		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
+			throw new \InvalidArgumentException('mode');
+		}
+
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+		foreach ($breakoutRooms as $breakoutRoom) {
+			$this->roomService->setLobby($breakoutRoom, Webinary::LOBBY_NON_MODERATORS, null);
+		}
+
+		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STOPPED);
+
+		// FIXME missing to send the signaling messages so participants are moved back
+	}
 }

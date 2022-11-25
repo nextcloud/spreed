@@ -391,3 +391,5 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `poll_closed` - {actor} closed the poll {poll}
 * `message_expiration_enabled` - {actor} set the message expiration to 3 hours
 * `message_expiration_disabled` - {actor} disabled message expiration
+* `breakout_rooms_started` - {actor} started breakout rooms
+* `breakout_rooms_stopped` - {actor} stopped breakout rooms

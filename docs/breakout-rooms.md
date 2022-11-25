@@ -48,6 +48,32 @@ Group and public conversations can be used to host breakout rooms.
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the conversation could not be found for the participant
 
+## Start breakout rooms
+
+* Required capability: `breakout-rooms-v1`
+* Method: `POST`
+* Endpoint: `/breakout-rooms/{token}/rooms`
+
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `400 Bad Request` When breakout rooms are not configured
+		+ `403 Forbidden` When the current user is not a moderator/owner
+		+ `404 Not Found` When the conversation could not be found for the participant
+
+## Stop breakout rooms
+
+* Required capability: `breakout-rooms-v1`
+* Method: `DELETE`
+* Endpoint: `/breakout-rooms/{token}/rooms`
+
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `400 Bad Request` When breakout rooms are not configured
+		+ `403 Forbidden` When the current user is not a moderator/owner
+		+ `404 Not Found` When the conversation could not be found for the participant
+
 ## Broadcast message to breakout rooms
 
 * Required capability: `breakout-rooms-v1`
