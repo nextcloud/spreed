@@ -302,16 +302,17 @@ class RoomService {
 	 * 						file conversations and password request conversations.
 	 * @param \DateTime|null $dateTime
 	 * @param bool $timerReached
+	 * @param bool $dispatchEvents (Only skip if the room is created in the same PHP request)
 	 * @return bool True when the change was valid, false otherwise
 	 */
-	public function setLobby(Room $room, int $newState, ?\DateTime $dateTime, bool $timerReached = false): bool {
+	public function setLobby(Room $room, int $newState, ?\DateTime $dateTime, bool $timerReached = false, bool $dispatchEvents = true): bool {
 		$oldState = $room->getLobbyState(false);
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
 			return false;
 		}
 
-		if ($room->getObjectType() !== '') {
+		if ($room->getObjectType() !== '' && $room->getObjectType() !== BreakoutRoom::PARENT_OBJECT_TYPE) {
 			return false;
 		}
 
@@ -320,7 +321,9 @@ class RoomService {
 		}
 
 		$event = new ModifyLobbyEvent($room, 'lobby', $newState, $oldState, $dateTime, $timerReached);
-		$this->dispatcher->dispatch(Room::EVENT_BEFORE_LOBBY_STATE_SET, $event);
+		if ($dispatchEvents) {
+			$this->dispatcher->dispatch(Room::EVENT_BEFORE_LOBBY_STATE_SET, $event);
+		}
 
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
@@ -332,7 +335,9 @@ class RoomService {
 		$room->setLobbyState($newState);
 		$room->setLobbyTimer($dateTime);
 
-		$this->dispatcher->dispatch(Room::EVENT_AFTER_LOBBY_STATE_SET, $event);
+		if ($dispatchEvents) {
+			$this->dispatcher->dispatch(Room::EVENT_AFTER_LOBBY_STATE_SET, $event);
+		}
 
 		return true;
 	}

@@ -234,7 +234,7 @@ class BreakoutRoomService {
 				$parent->getToken()
 			);
 
-			$this->roomService->setLobby($breakoutRoom, Webinary::LOBBY_NON_MODERATORS, null);
+			$this->roomService->setLobby($breakoutRoom, Webinary::LOBBY_NON_MODERATORS, null, false, false);
 
 			$rooms[] = $breakoutRoom;
 		}
