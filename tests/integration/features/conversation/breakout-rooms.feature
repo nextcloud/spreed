@@ -256,11 +256,11 @@ Feature: conversation/breakout-rooms
       | users      | participant1 | 1               |
     When user "participant1" creates 3 manual breakout rooms for "class room" with 200 (v1)
     And user "participant1" is participant of the following rooms (v4)
-      | type | name       | lobbyState |
-      | 3    | class room | 0          |
-      | 3    | Room 1     | 1          |
-      | 3    | Room 2     | 1          |
-      | 3    | Room 3     | 1          |
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 3    | class room | 0          | 2                | 0                  |
+      | 3    | Room 1     | 1          | 0                | 0                  |
+      | 3    | Room 2     | 1          | 0                | 0                  |
+      | 3    | Room 3     | 1          | 0                | 0                  |
     Then user "participant1" sees the following system messages in room "Room 1" with 200
       | room   | actorType | actorId      | actorDisplayName         | systemMessage          |
       | Room 1 | users     | participant1 | participant1-displayname | conversation_created   |
@@ -272,11 +272,11 @@ Feature: conversation/breakout-rooms
       | Room 3 | users     | participant1 | participant1-displayname | conversation_created   |
     And user "participant1" starts breakout rooms in room "class room" with 200 (v1)
     And user "participant1" is participant of the following rooms (v4)
-      | type | name       | lobbyState |
-      | 3    | class room | 0          |
-      | 3    | Room 1     | 0          |
-      | 3    | Room 2     | 0          |
-      | 3    | Room 3     | 0          |
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 3    | class room | 0          | 2                | 1                  |
+      | 3    | Room 1     | 0          | 0                | 0                  |
+      | 3    | Room 2     | 0          | 0                | 0                  |
+      | 3    | Room 3     | 0          | 0                | 0                  |
     Then user "participant1" sees the following system messages in room "Room 1" with 200
       | room   | actorType | actorId      | actorDisplayName         | systemMessage          |
       | Room 1 | users     | participant1 | participant1-displayname | breakout_rooms_started |
@@ -291,11 +291,11 @@ Feature: conversation/breakout-rooms
       | Room 3 | users     | participant1 | participant1-displayname | conversation_created   |
     And user "participant1" stops breakout rooms in room "class room" with 200 (v1)
     And user "participant1" is participant of the following rooms (v4)
-      | type | name       | lobbyState |
-      | 3    | class room | 0          |
-      | 3    | Room 1     | 1          |
-      | 3    | Room 2     | 1          |
-      | 3    | Room 3     | 1          |
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 3    | class room | 0          | 2                | 0                  |
+      | 3    | Room 1     | 1          | 0                | 0                  |
+      | 3    | Room 2     | 1          | 0                | 0                  |
+      | 3    | Room 3     | 1          | 0                | 0                  |
     Then user "participant1" sees the following system messages in room "Room 1" with 200
       | room   | actorType | actorId      | actorDisplayName         | systemMessage          |
       | Room 1 | users     | participant1 | participant1-displayname | breakout_rooms_stopped |

@@ -41,6 +41,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -418,6 +419,8 @@ class RoomController extends AEnvironmentAwareController {
 			'callFlag' => Participant::FLAG_DISCONNECTED,
 			'messageExpiration' => 0,
 			'avatarUrl' => $this->avatarService->getAvatarUrl($room),
+			'breakoutRoomMode' => BreakoutRoom::MODE_NOT_CONFIGURED,
+			'breakoutRoomStatus' => BreakoutRoom::STATUS_STOPPED,
 		];
 
 		$lastActivity = $room->getLastActivity();
@@ -486,6 +489,8 @@ class RoomController extends AEnvironmentAwareController {
 			'description' => $room->getDescription(),
 			'listable' => $room->getListable(),
 			'messageExpiration' => $room->getMessageExpiration(),
+			'breakoutRoomMode' => $room->getBreakoutRoomMode(),
+			'breakoutRoomStatus' => $room->getBreakoutRoomStatus(),
 		]);
 
 		if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
