@@ -52,6 +52,9 @@ class Version16000Date20221110151714 extends SimpleMigrationStep {
 			$table->addColumn('breakout_room_mode', Types::INTEGER, [
 				'default' => 0,
 			]);
+			$table->addColumn('breakout_room_status', Types::INTEGER, [
+				'default' => 0,
+			]);
 			return $schema;
 		}
 

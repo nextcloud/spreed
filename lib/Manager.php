@@ -185,7 +185,8 @@ class Manager {
 			$lobbyTimer,
 			(string) $row['object_type'],
 			(string) $row['object_id'],
-			(int) $row['breakout_room_mode']
+			(int) $row['breakout_room_mode'],
+			(int) $row['breakout_room_status']
 		);
 	}
 

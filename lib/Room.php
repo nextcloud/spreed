@@ -145,6 +145,8 @@ class Room {
 	public const EVENT_AFTER_SET_MESSAGE_EXPIRATION = self::class . '::afterSetMessageExpiration';
 	public const EVENT_BEFORE_SET_BREAKOUT_ROOM_MODE = self::class . '::beforeSetBreakoutRoomMode';
 	public const EVENT_AFTER_SET_BREAKOUT_ROOM_MODE = self::class . '::afterSetBreakoutRoomMode';
+	public const EVENT_BEFORE_SET_BREAKOUT_ROOM_STATUS = self::class . '::beforeSetBreakoutRoomStatus';
+	public const EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS = self::class . '::afterSetBreakoutRoomStatus';
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
@@ -179,6 +181,7 @@ class Room {
 	private string $objectType;
 	private string $objectId;
 	private int $breakoutRoomMode;
+	private int $breakoutRoomStatus;
 
 	protected ?string $currentUser = null;
 	protected ?Participant $participant = null;
@@ -212,7 +215,8 @@ class Room {
 								?\DateTime $lobbyTimer,
 								string $objectType,
 								string $objectId,
-								int $breakoutRoomMode) {
+								int $breakoutRoomMode,
+								int $breakoutRoomStatus) {
 		$this->manager = $manager;
 		$this->db = $db;
 		$this->dispatcher = $dispatcher;
@@ -243,6 +247,7 @@ class Room {
 		$this->objectType = $objectType;
 		$this->objectId = $objectId;
 		$this->breakoutRoomMode = $breakoutRoomMode;
+		$this->breakoutRoomStatus = $breakoutRoomStatus;
 	}
 
 	public function getId(): int {
@@ -605,5 +610,13 @@ class Room {
 
 	public function setBreakoutRoomMode(int $mode): void {
 		$this->breakoutRoomMode = $mode;
+	}
+
+	public function getBreakoutRoomStatus(): int {
+		return $this->breakoutRoomStatus;
+	}
+
+	public function setBreakoutRoomStatus(int $status): void {
+		$this->breakoutRoomStatus = $status;
 	}
 }
