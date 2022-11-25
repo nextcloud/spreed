@@ -92,43 +92,32 @@ class TalkSession {
 
 	protected function getValue(string $key, string $token): ?string {
 		$values = $this->getValues($key);
-
-		if (!isset($values[$token])) {
-			return null;
-		}
-		return $values[$token];
+		return $values[$token] ?? null;
 	}
 
 	protected function setValue(string $key, string $token, string $value): void {
-		$values = $this->session->get($key);
-		if ($values === null) {
-			$values = [];
-		} else {
-			$values = json_decode($values, true);
-			if ($values === null) {
-				$values = [];
-			}
-		}
+		$reopened = $this->session->reopen();
 
-
+		$values = $this->getValues($key);
 		$values[$token] = $value;
 		$this->session->set($key, json_encode($values));
+
+
+		if ($reopened) {
+			$this->session->close();
+		}
 	}
 
 	protected function removeValue(string $key, string $token): void {
-		$values = $this->session->get($key);
-		if ($values === null) {
-			$values = [];
-		} else {
-			$values = json_decode($values, true);
-			if ($values === null) {
-				$values = [];
-			} else {
-				unset($values[$token]);
-			}
-		}
+		$reopened = $this->session->reopen();
 
+		$values = $this->getValues($key);
+		unset($values[$token]);
 		$this->session->set($key, json_encode($values));
+
+		if ($reopened) {
+			$this->session->close();
+		}
 	}
 
 	public function renewSessionId(): void {

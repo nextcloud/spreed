@@ -1344,7 +1344,6 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @UseSession
 	 * @BruteForceProtection(action=talkRoomPassword)
 	 *
 	 * @param string $token
@@ -1485,7 +1484,6 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @UseSession
 	 *
 	 * @param string $token
 	 * @return DataResponse
