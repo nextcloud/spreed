@@ -18,7 +18,7 @@
 	},
 	"dependencies": {
 		"@nextcloud/auth": "^2.0.0",
-		"@nextcloud/axios": "^2.1.0",
+		"@nextcloud/axios": "^2.2.0",
 		"@nextcloud/browser-storage": "^0.2.0",
 		"@nextcloud/capabilities": "^1.0.4",
 		"@nextcloud/dialogs": "^3.2.0",
