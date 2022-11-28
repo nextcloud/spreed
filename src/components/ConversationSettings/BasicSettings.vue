@@ -1,23 +1,23 @@
 <template>
 	<Fragment>
 		<NcTextField :value.sync="conversationNameTextField"
-			:label="t('spreed', 'Conversation Name')"
-			:disabled="!isEditingDetails"
+			:label="t('spreed', 'Name')"
+			:disabled="!isEditing"
 			:label-visible="true" />
 		<NcTextField :value.sync="descriptionTextField"
-			:label="t('spreed', 'Conversation description')"
+			:label="t('spreed', 'Description')"
 			:placeholder="t('spreed', 'Enter a description for this conversation')"
-			:disabled="!isEditingDetails"
+			:disabled="!isEditing"
 			:label-visible="true" />
-		<div class="details__buttons">
-			<NcButton v-if="!isEditingDetails" type="secondary" @click="isEditingDetails = true">
-				{{ t('spreed', 'Edit details') }}
+		<div class="basic-settings__buttons">
+			<NcButton v-if="!isEditing" type="secondary" @click="isEditing = true">
+				{{ t('spreed', 'Edit basic settings') }}
 			</NcButton>
-			<template v-else-if="isEditingDetails">
+			<template v-else-if="isEditing">
 				<NcButton type="tertiary" @click="cancelEditing">
 					{{ t('spreed', 'Cancel') }}
 				</NcButton>
-				<NcButton type="secondary" @click="handleUpdateDetails">
+				<NcButton type="secondary" @click="saveSettings">
 					{{ t('spreed', 'Save') }}
 				</NcButton>
 			</template>
@@ -32,7 +32,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { Fragment } from 'vue-frag'
 
 export default {
-	name: 'DetailsSettings',
+	name: 'BasicSettings',
 
 	components: {
 		NcTextField,
@@ -60,28 +60,30 @@ export default {
 
 	data() {
 		return {
-			isEditingDetails: false,
+			isEditing: false,
 			conversationNameTextField: '',
 			descriptionTextField: '',
 		}
 	},
 
 	watch: {
-		// Update details everytime the conversation object changes
+		// Update local values everytime the conversation object changes
 		conversation() {
-			if (this.isEditingDetails) {
+			if (this.isEditing) {
+				// While editing, we do not want to update the local values
+				// because the user is modifying them.
 				return
 			}
-			this.updateDetailsLocalValues()
+			this.updateLocalValues()
 		},
 	},
 
 	mounted() {
-		this.updateDetailsLocalValues()
+		this.updateLocalValues()
 	},
 
 	methods: {
-		updateDetailsLocalValues() {
+		updateLocalValues() {
 			if (this.conversation.displayName !== this.conversationNameTextField) {
 				this.conversationNameTextField = this.conversation.displayName
 
@@ -92,12 +94,12 @@ export default {
 		},
 
 		cancelEditing() {
-			this.updateDetailsLocalValues()
-			this.isEditingDetails = false
+			this.updateLocalValues()
+			this.isEditing = false
 		},
 
-		async handleUpdateDetails() {
-			this.isEditingDetails = true
+		async saveSettings() {
+			this.isEditing = true
 			// Update conversation name if new
 			if (this.conversationNameTextField !== this.conversation.displayName) {
 				try {
@@ -122,15 +124,15 @@ export default {
 					showError(t('spreed', 'Error while updating conversation description'))
 				}
 			}
-			this.updateDetailsLocalValues()
-			this.isEditingDetails = false
+			this.updateLocalValues()
+			this.isEditing = false
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-.details {
+.basic-settings {
 	&__buttons {
 		display: flex;
 		gap: var(--default-grid-baseline);

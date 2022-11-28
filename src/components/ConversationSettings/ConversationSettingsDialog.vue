@@ -26,11 +26,11 @@
 		:open.sync="showSettings"
 		:show-navigation="true"
 		:container="container">
-		<!-- Conversation details -->
-		<NcAppSettingsSection v-if="showDetails"
-			id="details"
-			:title="t('spreed', 'Details')">
-			<DetailsSettings :token="token"
+		<!-- Conversation bassic settings -->
+		<NcAppSettingsSection v-if="showBasicSettings"
+			id="basic-settings"
+			:title="t('spreed', 'Basic settings')">
+			<BasicSettings :token="token"
 				:conversation="conversation" />
 		</NcAppSettingsSection>
 
@@ -105,7 +105,7 @@ import NotificationsSettings from './NotificationsSettings.vue'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import ConversationPermissionsSettings from './ConversationPermissionsSettings.vue'
-import DetailsSettings from './DetailsSettings.vue'
+import BasicSettings from './BasicSettings.vue'
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -124,7 +124,7 @@ export default {
 		NotificationsSettings,
 		NcCheckboxRadioSwitch,
 		ConversationPermissionsSettings,
-		DetailsSettings,
+		BasicSettings,
 	},
 
 	data() {
@@ -175,7 +175,7 @@ export default {
 			return this.conversation.description
 		},
 
-		showDetails() {
+		showBasicSettings() {
 			if (this.canFullModerate) {
 				return this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
 			} else {
