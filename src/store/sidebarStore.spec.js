@@ -22,7 +22,6 @@ describe('sidebarStore', () => {
 
 	test('defaults are off', () => {
 		expect(store.getters.getSidebarStatus).toBe(true)
-		expect(store.getters.isRenamingConversation).toBe(false)
 	})
 
 	test('toggle sidebar', () => {
