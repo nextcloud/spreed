@@ -83,11 +83,6 @@ export default {
 			type: Boolean,
 			required: true,
 		},
-
-		canModerate: {
-			type: Boolean,
-			required: true,
-		},
 	},
 
 	data() {
