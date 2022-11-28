@@ -67,8 +67,8 @@
 		</div>
 		<div class="app-settings-subsection app-settings-subsection__buttons">
 			<NcButton ref="copyLinkButton"
-				@click.prevent="handleCopyLink"
 				:wide="true"
+				@click.prevent="handleCopyLink"
 				@keydown.enter="handleCopyLink">
 				<template #icon>
 					<ClipboardTextOutline />

@@ -38,6 +38,17 @@
 		<template slot="description">
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
+		<NcAppSidebarTab v-if="getUserId && !isOneToOne"
+			id="breakout-rooms"
+			ref="breakout-rooms"
+			:order="1"
+			:name="breakoutRoomsText">
+			<template slot="icon">
+				<!-- TODO: choose final icon -->
+				<DotsCircle :size="20" />
+			</template>
+			<BreakoutRoomsTab v-if="showBreakoutRoomsTab" :is-active="activeTab === 'breakout-rooms'" />
+		</NcAppSidebarTab>
 		<NcAppSidebarTab v-if="showChatInSidebar"
 			id="chat"
 			:order="1"
@@ -113,6 +124,8 @@ import CogIcon from 'vue-material-design-icons/Cog.vue'
 import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 import InformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import Message from 'vue-material-design-icons/Message.vue'
+import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+import BreakoutRoomsTab from './BreakoutRooms/BreakoutRoomsTab.vue'
 
 export default {
 	name: 'RightSidebar',
@@ -131,6 +144,8 @@ export default {
 		FolderMultipleImage,
 		InformationOutline,
 		Message,
+		DotsCircle,
+		BreakoutRoomsTab,
 	},
 
 	mixins: [
@@ -184,13 +199,16 @@ export default {
 		canAddParticipants() {
 			return this.canFullModerate && this.canSearchParticipants
 		},
+
 		canSearchParticipants() {
 			return (this.conversation.type === CONVERSATION.TYPE.GROUP
 					|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== 'share:password'))
 		},
+
 		isSearching() {
 			return this.searchText !== ''
 		},
+
 		participantType() {
 			return this.conversation.participantType
 		},
@@ -238,6 +256,14 @@ export default {
 			return t('spreed', 'Participants ({count})', { count: participants.length })
 		},
 
+		breakoutRoomsText() {
+			return t('spreed', 'Breakout rooms')
+		},
+
+		// TODO: compute actual value
+		showBreakoutRoomsTab() {
+			return true
+		},
 	},
 
 	watch: {
