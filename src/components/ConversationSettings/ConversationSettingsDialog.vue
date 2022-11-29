@@ -79,7 +79,7 @@
 			<NcAppSettingsSection v-if="canFullModerate"
 				id="breakout-rooms"
 				:title="t('spreed', 'Breakout Rooms')">
-				Put an explainatory paragraph here and create a dedicated component for this
+				Put an explanatory paragraph here and create a dedicated component for this
 				<NcButton type="secondary"
 					@click="openBreakoutRoomsEditor">
 					<template #icon>
@@ -233,7 +233,7 @@ export default {
 		subscribe('hide-conversation-settings', this.handleHideSettings)
 
 		/**
-		 * Get the deviceChecker value from the browserstorage.
+		 * Get the deviceChecker value from the browser storage.
 		 */
 		this.showDeviceChecker = BrowserStorage.getItem('showDeviceChecker' + this.token) === null
 			|| BrowserStorage.getItem('showDeviceChecker' + this.token) === 'true'
