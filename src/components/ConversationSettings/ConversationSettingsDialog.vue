@@ -20,77 +20,96 @@
 -->
 
 <template>
-	<NcAppSettingsDialog role="dialog"
-		:aria-label="t('spreed', 'Conversation settings')"
-		:title="t('spreed', 'Conversation settings')"
-		:open.sync="showSettings"
-		:show-navigation="true"
-		:container="container">
-		<!-- description -->
-		<NcAppSettingsSection v-if="showDescription"
-			id="description"
-			:title="t('spreed', 'Description')">
-			<!-- Rename to "Basic info" when Name is moved over -->
-			<Description :editable="canFullModerate"
-				:description="description"
-				:editing="isEditingDescription"
-				:loading="isDescriptionLoading"
-				:placeholder="t('spreed', 'Enter a description for this conversation')"
-				@submit-description="handleUpdateDescription"
-				@update:editing="handleEditDescription" />
-		</NcAppSettingsSection>
+	<Fragment>
+		<NcAppSettingsDialog role="dialog"
+			:aria-label="t('spreed', 'Conversation settings')"
+			:title="t('spreed', 'Conversation settings')"
+			:open.sync="showSettings"
+			:show-navigation="true"
+			:container="container">
+			<!-- description -->
+			<NcAppSettingsSection v-if="showDescription"
+				id="description"
+				:title="t('spreed', 'Description')">
+				<!-- Rename to "Basic info" when Name is moved over -->
+				<Description :editable="canFullModerate"
+					:description="description"
+					:editing="isEditingDescription"
+					:loading="isDescriptionLoading"
+					:placeholder="t('spreed', 'Enter a description for this conversation')"
+					@submit-description="handleUpdateDescription"
+					@update:editing="handleEditDescription" />
+			</NcAppSettingsSection>
 
-		<!-- Notifications settings and devices preview screen -->
-		<NcAppSettingsSection id="notifications"
-			:title="t('spreed', 'Personal')">
-			<NcCheckboxRadioSwitch :checked.sync="showDeviceChecker"
-				type="switch">
-				{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
-			</NcCheckboxRadioSwitch>
+			<!-- Notifications settings and devices preview screen -->
+			<NcAppSettingsSection id="notifications"
+				:title="t('spreed', 'Personal')">
+				<NcCheckboxRadioSwitch :checked.sync="showDeviceChecker"
+					type="switch">
+					{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
+				</NcCheckboxRadioSwitch>
 
-			<NotificationsSettings :conversation="conversation" />
-		</NcAppSettingsSection>
+				<NotificationsSettings :conversation="conversation" />
+			</NcAppSettingsSection>
 
-		<NcAppSettingsSection id="conversation-settings"
-			:title="t('spreed', 'Moderation')">
-			<ListableSettings v-if="canFullModerate"
-				:token="token" />
-			<LinkShareSettings v-if="canFullModerate"
-				ref="linkShareSettings" />
-			<ExpirationSettings :token="token" />
-		</NcAppSettingsSection>
+			<NcAppSettingsSection id="conversation-settings"
+				:title="t('spreed', 'Moderation')">
+				<ListableSettings v-if="canFullModerate"
+					:token="token" />
+				<LinkShareSettings v-if="canFullModerate"
+					ref="linkShareSettings" />
+				<ExpirationSettings :token="token" />
+			</NcAppSettingsSection>
 
-		<NcAppSettingsSection v-if="canFullModerate"
-			id="meeting"
-			:title="t('spreed', 'Meeting')">
-			<LobbySettings :token="token" />
-			<SipSettings v-if="canUserEnableSIP" />
-		</NcAppSettingsSection>
+			<NcAppSettingsSection v-if="canFullModerate"
+				id="meeting"
+				:title="t('spreed', 'Meeting')">
+				<LobbySettings :token="token" />
+				<SipSettings v-if="canUserEnableSIP" />
+			</NcAppSettingsSection>
 
-		<!-- Conversation permissions -->
-		<NcAppSettingsSection v-if="canFullModerate"
-			id="permissions"
-			:title="t('spreed', 'Permissions')">
-			<ConversationPermissionsSettings :token="token" />
-		</NcAppSettingsSection>
+			<!-- Conversation permissions -->
+			<NcAppSettingsSection v-if="canFullModerate"
+				id="permissions"
+				:title="t('spreed', 'Permissions')">
+				<ConversationPermissionsSettings :token="token" />
+			</NcAppSettingsSection>
 
-		<!-- Matterbridge settings -->
-		<NcAppSettingsSection v-if="canFullModerate && matterbridgeEnabled"
-			id="matterbridge"
-			:title="t('spreed', 'Matterbridge')">
-			<MatterbridgeSettings />
-		</NcAppSettingsSection>
+			<!-- Breakout rooms -->
+			<NcAppSettingsSection v-if="canFullModerate"
+				id="breakout-rooms"
+				:title="t('spreed', 'Breakout Rooms')">
+				Put an explainatory paragraph here and create a dedicated component for this
+				<NcButton type="secondary"
+					@click="openBreakoutRoomsEditor">
+					<template #icon>
+						<DotsCircle :size="20" />
+					</template>
+					{{ t('spreed', 'Setup breakout rooms') }}
+				</NcButton>
+			</NcAppSettingsSection>
 
-		<!-- Destructive actions -->
-		<NcAppSettingsSection v-if="canLeaveConversation || canDeleteConversation"
-			id="dangerzone"
-			:title="t('spreed', 'Danger zone')">
-			<LockingSettings :token="token" />
-			<DangerZone :conversation="conversation"
-				:can-leave-conversation="canLeaveConversation"
-				:can-delete-conversation="canDeleteConversation" />
-		</NcAppSettingsSection>
-	</NcAppSettingsDialog>
+			<!-- Matterbridge settings -->
+			<NcAppSettingsSection v-if="canFullModerate && matterbridgeEnabled"
+				id="matterbridge"
+				:title="t('spreed', 'Matterbridge')">
+				<MatterbridgeSettings />
+			</NcAppSettingsSection>
+
+			<!-- Destructive actions -->
+			<NcAppSettingsSection v-if="canLeaveConversation || canDeleteConversation"
+				id="dangerzone"
+				:title="t('spreed', 'Danger zone')">
+				<LockingSettings :token="token" />
+				<DangerZone :conversation="conversation"
+					:can-leave-conversation="canLeaveConversation"
+					:can-delete-conversation="canDeleteConversation" />
+			</NcAppSettingsSection>
+		</NcAppSettingsDialog>
+
+		<!-- Breakout rooms editor -->
+		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor" @close="showBreakoutRoomsEditor = false" />
+	</Fragment>
 </template>
 
 <script>
@@ -113,6 +132,10 @@ import Description from '../Description/Description.vue'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import ConversationPermissionsSettings from './ConversationPermissionsSettings.vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+import { Fragment } from 'vue-frag'
+import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -132,6 +155,10 @@ export default {
 		Description,
 		NcCheckboxRadioSwitch,
 		ConversationPermissionsSettings,
+		NcButton,
+		DotsCircle,
+		Fragment,
+		BreakoutRoomsEditor,
 	},
 
 	data() {
@@ -141,6 +168,7 @@ export default {
 			isEditingDescription: false,
 			isDescriptionLoading: false,
 			showDeviceChecker: false,
+			showBreakoutRoomsEditor: false,
 		}
 	},
 
@@ -247,6 +275,10 @@ export default {
 
 		handleEditDescription(payload) {
 			this.isEditingDescription = payload
+		},
+
+		openBreakoutRoomsEditor() {
+			this.showBreakoutRoomsEditor = true
 		},
 	},
 }
