@@ -140,6 +140,7 @@
 <script>
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import { emit } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
@@ -168,6 +169,7 @@ export default {
 	components: {
 		NcActions,
 		NcActionSeparator,
+		NcActionLink,
 		NcActionButton,
 		PromotedView,
 		Cog,
