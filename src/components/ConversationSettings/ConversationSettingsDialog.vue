@@ -26,7 +26,7 @@
 		:open.sync="showSettings"
 		:show-navigation="true"
 		:container="container">
-		<!-- Conversation bassic settings -->
+		<!-- Conversation basic settings -->
 		<NcAppSettingsSection v-if="showBasicSettings"
 			id="basic-settings"
 			:title="t('spreed', 'Basic settings')">
@@ -196,7 +196,7 @@ export default {
 		subscribe('hide-conversation-settings', this.handleHideSettings)
 
 		/**
-		 * Get the deviceChecker value from the browserstorage.
+		 * Get the deviceChecker value from the browser storage.
 		 */
 		this.showDeviceChecker = BrowserStorage.getItem('showDeviceChecker' + this.token) === null
 			|| BrowserStorage.getItem('showDeviceChecker' + this.token) === 'true'
