@@ -248,11 +248,6 @@ export default {
 			return t('spreed', 'Fullscreen (F)')
 		},
 
-		conversationHasSettings() {
-			return this.conversation.type === CONVERSATION.TYPE.GROUP
-			|| this.conversation.type === CONVERSATION.TYPE.PUBLIC
-		},
-
 		showModerationOptions() {
 			return !this.isOneToOneConversation && this.canModerate
 		},
