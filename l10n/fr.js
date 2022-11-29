@@ -1186,6 +1186,7 @@ OC.L10N.register(
     "Start call" : "Démarrer l'appel",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk a été mis à jour, vous devez recharger cette page avant de pouvoir démarrer ou rejoindre un appel.",
     "You will be able to join the call only after a moderator starts it." : "Vous pourrez rejoindre l'appel seulement après son lancement par un modérateur.",
+    "Stop recording" : "Arrêter l'enregistrement",
     "You have new unread messages in the chat." : "Vous avez des messages non lus dans la discussion.",
     "You have been mentioned in the chat." : "Vous avez été mentionné dans la discussion.",
     "Mute others" : "Mettre en sourdine les autres",
