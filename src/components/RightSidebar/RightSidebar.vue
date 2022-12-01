@@ -339,6 +339,10 @@ export default {
 	flex-direction: column;
 }
 
+::v-deep .app-sidebar-tabs {
+	min-height: 0;
+}
+
 .app-sidebar-tabs__content #tab-chat {
 	/* Remove padding to maximize the space for the chat view. */
 	padding: 0;
