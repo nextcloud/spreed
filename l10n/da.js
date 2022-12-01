@@ -323,6 +323,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Checking …" : "Tjekker...",
     "Copy link" : "Kopier link",
+    "Connecting …" : "Forbinder ...",
     "Waiting for others to join the call …" : "Venter på andre tilslutter sig opkaldet ...",
     "You can invite others in the participant tab of the sidebar" : "Du kan invitere andre i fanebladet \"deltagere\" i menuen i siden",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Du kan invitere andre i fanebladet \"deltagere\" i menuen i siden, eller dele dette link for at invitere andre!",
