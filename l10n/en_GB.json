@@ -936,7 +936,7 @@
     "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long.",
     "Camera and microphone check" : "Camera and microphone check",
     "Choose devices" : "Choose devices",
-    "Always show this dialog before joining a call in this conversation." : "Always show this dialog before joining a call in this conversation.",
+    "Always show this dialog before joining a call in this conversation." : "Always show this dialogue before joining a call in this conversation.",
     "Call without notification" : "Call without notification",
     "The conversation participants will not be notified about this call" : "The conversation participants will not be notified about this call",
     "Normal call" : "Normal call",
