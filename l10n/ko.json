@@ -1054,6 +1054,7 @@
     "WebRTC is not supported in your browser" : "웹 브라우저에서 WebRTC를 지원하지 않음",
     "Please use a different browser like Firefox or Chrome" : "Firefox 및 Chrome과 같은 다른 웹 브라우저를 사용하십시오",
     "Error while accessing microphone & camera" : "마이크와 카메라에 접근하는 중 오류 발생",
+    "We have detected multiple invalid password attempts from your IP. Therefore your next attempt is throttled up to 30 seconds." : "사용 중인 IP 주소에서 암호를 너무 많이 틀렸습니다. 30초 후에 다시 로그인할 수 있습니다.",
     "The password is wrong. Try again." : "암호가 잘못되었습니다. 다시 시도하십시오",
     "Specify commands the users can use in chats" : "사용자가 채팅에서 사용할 수 있는 명령 지정",
     "TURN server" : "TURN 서버",
