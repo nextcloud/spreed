@@ -1,13 +1,60 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.2 – 2022-12-01
+### Changed
+- Allow to disable the changelog conversation with an app config
+  [#8365](https://github.com/nextcloud/spreed/pull/8365)
+- Improve message grouping duration to match better with UX expectations
+  [#8288](https://github.com/nextcloud/spreed/pull/8288)
+- Update @nextcloud/vue library to 7.1.0
+  [#8405](https://github.com/nextcloud/spreed/pull/8405)
+  [#8419](https://github.com/nextcloud/spreed/pull/8419)
+
+### Fixed
+- Fix in_call flag on the "Join room" API response
+  [#8371](https://github.com/nextcloud/spreed/pull/8371)
+- Fix bottom stripe of speaker view with high DPI
+  [#8319](https://github.com/nextcloud/spreed/pull/8319)
+- Make webserver configuration check less error-prone
+  [#8310](https://github.com/nextcloud/spreed/pull/8310)
+  [#8332](https://github.com/nextcloud/spreed/pull/8332)
+- Fix monitoring command when using SQLite
+  [#8304](https://github.com/nextcloud/spreed/pull/8304)
+- Fix chat not loading in certain situations (e.g. more than 100 votes in a row without any chat message in between)
+  [#8322](https://github.com/nextcloud/spreed/pull/8322)
+- Immediately remove poll data when deleting the "asking message"
+  [#8362](https://github.com/nextcloud/spreed/pull/8362)
+- Fix inconsistent behaviour of link and password option on conversation creation
+  [#8367](https://github.com/nextcloud/spreed/pull/8367)
+
+## 14.0.7 – 2022-12-01
+### Changed
+- Allow to disable the changelog conversation with an app config
+  [#8365](https://github.com/nextcloud/spreed/pull/8365)
+
+### Fixed
+- Fix in_call flag on the "Join room" API response
+  [#8372](https://github.com/nextcloud/spreed/pull/8372)
+- Fix bottom stripe of speaker view with high DPI
+  [#8320](https://github.com/nextcloud/spreed/pull/8320)
+
+## 13.0.11 – 2022-12-01
+### Changed
+- Allow to disable the changelog conversation with an app config
+  [#8366](https://github.com/nextcloud/spreed/pull/8366)
+
+### Fixed
+- Fix bottom stripe of speaker view with high DPI
+  [#8321](https://github.com/nextcloud/spreed/pull/8321)
+
 ## 15.0.1 – 2022-11-03
 ### Changed
 - Take the device pixel ratio into account when calculating minimum grid size (should see more videos now on High DPI settings like MacOS and most 4k setup)
   [#8246](https://github.com/nextcloud/spreed/pull/8246)
 
 ### Fixed
-- Show the number of casted votes to the question raiser and moderators on the voting screen
+- Show the number of cast votes to the question raiser and moderators on the voting screen
   [#8273](https://github.com/nextcloud/spreed/pull/8273)
 - Hide talk dashboard when user can not use the Talk app
   [#8236](https://github.com/nextcloud/spreed/pull/8236)
