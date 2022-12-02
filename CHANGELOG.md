@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 13.0.11 – 2022-12-01
+### Changed
+- Allow to disable the changelog conversation with an app config
+  [#8366](https://github.com/nextcloud/spreed/pull/8366)
+
+### Fixed
+- Fix bottom stripe of speaker view with high DPI
+  [#8321](https://github.com/nextcloud/spreed/pull/8321)
+
 ## 13.0.10 – 2022-11-03
 ### Changed
 - Take the device pixel ratio into account when calculating minimum grid size (should see more videos now on High DPI settings like MacOS and most 4k setup)
