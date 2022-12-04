@@ -551,6 +551,7 @@
     "Testing whether the TURN server returns ICE candidates" : "S'està provant si el servidor TURN retorna els candidats de l'ICE",
     "Test this server" : "Prova aquest servidor",
     "TURN servers" : "Servidors TURN",
+    "Failed" : "Ha fallat",
     "OK" : "D'acord",
     "Checking …" : "Comprovant ...",
     "Copy link" : "Copia l'enllaç",
