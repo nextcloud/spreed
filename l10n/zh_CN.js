@@ -800,6 +800,7 @@ OC.L10N.register(
     "Error while clearing chat history" : "清除聊天信息时出错",
     "Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation." : "可指定聊天消息在一定时间后过期。注意：聊天中分享的文件不会被从所有者一方删除，但是会被从会话中取消分享。",
     "Password protection" : "密码保护",
+    "Enter new password" : "输入新密码",
     "Save password" : "保存密码",
     "Copy conversation link" : "复制对话链接",
     "Resend invitations" : "重新发送邀请",
