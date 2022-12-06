@@ -33,6 +33,9 @@ use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
+/**
+ * @template-extends QBMapper<Poll>
+ */
 class PollMapper extends QBMapper {
 	/**
 	 * @param IDBConnection $db

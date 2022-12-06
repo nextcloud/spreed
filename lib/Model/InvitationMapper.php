@@ -42,6 +42,7 @@ use OCP\IUser;
  * @method Invitation mapRowToEntity(array $row)
  * @method Invitation findEntity(IQueryBuilder $query)
  * @method Invitation[] findEntities(IQueryBuilder $query)
+ * @template-extends QBMapper<Invitation>
  */
 class InvitationMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
