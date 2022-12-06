@@ -359,7 +359,6 @@ class RoomServiceTest extends TestCase {
 			$this->createMock(IDBConnection::class),
 			$dispatcher,
 			$this->createMock(ITimeFactory::class),
-			$this->createMock(IHasher::class),
 			1,
 			Room::TYPE_PUBLIC,
 			Room::READ_WRITE,
@@ -384,7 +383,9 @@ class RoomServiceTest extends TestCase {
 			null,
 			null,
 			'',
-			''
+			'',
+			0,
+			0
 		);
 
 		$verificationResult = $service->verifyPassword($room, '1234');

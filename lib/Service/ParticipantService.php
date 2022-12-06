@@ -53,6 +53,7 @@ use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Federation\Notifications;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\SelectHelper;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Model\SessionMapper;
@@ -139,6 +140,55 @@ class ParticipantService {
 
 		$attendee->setParticipantType($participantType);
 		$this->attendeeMapper->update($attendee);
+
+		$promotedToModerator = in_array($participantType, [
+			Participant::OWNER,
+			Participant::MODERATOR,
+		], true);
+		$demotedFromModerator = in_array($oldType, [
+			Participant::OWNER,
+			Participant::MODERATOR,
+		], true);
+
+		// XOR so we don't move the participant in and out when they are changed from moderator to owner or vice-versa
+		if (($promotedToModerator xor $demotedFromModerator) && $room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
+			/** @var Manager $manager */
+			$manager = Server::get(Manager::class);
+
+			$breakoutRooms = $manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $room->getToken());
+
+			foreach ($breakoutRooms as $breakoutRoom) {
+				try {
+					$breakoutRoomParticipant = $this->getParticipantByActor(
+						$breakoutRoom,
+						$attendee->getActorType(),
+						$attendee->getActorId()
+					);
+
+					if ($demotedFromModerator) {
+						// Remove participant from all breakout rooms
+						$this->removeAttendee($breakoutRoom, $breakoutRoomParticipant, Room::PARTICIPANT_REMOVED);
+					} elseif (!$breakoutRoomParticipant->hasModeratorPermissions()) {
+						if ($breakoutRoomParticipant->getAttendee()->getParticipantType() === Participant::USER
+							|| $breakoutRoomParticipant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+							$this->updateParticipantType($breakoutRoom, $breakoutRoomParticipant, Participant::MODERATOR);
+						}
+					}
+				} catch (ParticipantNotFoundException $e) {
+					if ($promotedToModerator) {
+						// Add participant as a moderator when they were not in the room already
+						$this->addUsers($breakoutRoom, [
+							[
+								'actorType' => $attendee->getActorType(),
+								'actorId' => $attendee->getActorId(),
+								'displayName' => $attendee->getDisplayName(),
+								'participantType' => $attendee->getParticipantType(),
+							],
+						]);
+					}
+				}
+			}
+		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
 	}

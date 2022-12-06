@@ -31,6 +31,7 @@ use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
@@ -575,6 +576,32 @@ class RoomService {
 		$room->setMessageExpiration($seconds);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, $event);
+	}
+
+	public function setBreakoutRoomMode(Room $room, int $mode): bool {
+		if (!in_array($mode, [
+			BreakoutRoom::MODE_NOT_CONFIGURED,
+			BreakoutRoom::MODE_AUTOMATIC,
+			BreakoutRoom::MODE_MANUAL,
+			BreakoutRoom::MODE_FREE
+		], true)) {
+			return false;
+		}
+
+		$event = new ModifyRoomEvent($room, 'breakoutRoomMode', $mode);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_BREAKOUT_ROOM_MODE, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('breakout_room_mode', $update->createNamedParameter($mode, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setBreakoutRoomMode($mode);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_BREAKOUT_ROOM_MODE, $event);
+
+		return true;
 	}
 
 	public function resetActiveSince(Room $room): bool {

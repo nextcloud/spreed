@@ -38,7 +38,6 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
-use OCP\Security\IHasher;
 use OCP\Server;
 
 class Room {
@@ -144,6 +143,10 @@ class Room {
 	public const EVENT_BEFORE_SIGNALING_PROPERTIES = self::class . '::beforeSignalingProperties';
 	public const EVENT_BEFORE_SET_MESSAGE_EXPIRATION = self::class . '::beforeSetMessageExpiration';
 	public const EVENT_AFTER_SET_MESSAGE_EXPIRATION = self::class . '::afterSetMessageExpiration';
+	public const EVENT_BEFORE_SET_BREAKOUT_ROOM_MODE = self::class . '::beforeSetBreakoutRoomMode';
+	public const EVENT_AFTER_SET_BREAKOUT_ROOM_MODE = self::class . '::afterSetBreakoutRoomMode';
+	public const EVENT_BEFORE_SET_BREAKOUT_ROOM_STATUS = self::class . '::beforeSetBreakoutRoomStatus';
+	public const EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS = self::class . '::afterSetBreakoutRoomStatus';
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
@@ -151,7 +154,6 @@ class Room {
 	private IDBConnection $db;
 	private IEventDispatcher $dispatcher;
 	private ITimeFactory $timeFactory;
-	private IHasher $hasher;
 
 	private int $id;
 	private int $type;
@@ -178,6 +180,8 @@ class Room {
 	private ?IComment $lastMessage;
 	private string $objectType;
 	private string $objectId;
+	private int $breakoutRoomMode;
+	private int $breakoutRoomStatus;
 
 	protected ?string $currentUser = null;
 	protected ?Participant $participant = null;
@@ -186,7 +190,6 @@ class Room {
 								IDBConnection $db,
 								IEventDispatcher $dispatcher,
 								ITimeFactory $timeFactory,
-								IHasher $hasher,
 								int $id,
 								int $type,
 								int $readOnly,
@@ -211,12 +214,13 @@ class Room {
 								?IComment $lastMessage,
 								?\DateTime $lobbyTimer,
 								string $objectType,
-								string $objectId) {
+								string $objectId,
+								int $breakoutRoomMode,
+								int $breakoutRoomStatus) {
 		$this->manager = $manager;
 		$this->db = $db;
 		$this->dispatcher = $dispatcher;
 		$this->timeFactory = $timeFactory;
-		$this->hasher = $hasher;
 		$this->id = $id;
 		$this->type = $type;
 		$this->readOnly = $readOnly;
@@ -242,6 +246,8 @@ class Room {
 		$this->lobbyTimer = $lobbyTimer;
 		$this->objectType = $objectType;
 		$this->objectId = $objectId;
+		$this->breakoutRoomMode = $breakoutRoomMode;
+		$this->breakoutRoomStatus = $breakoutRoomStatus;
 	}
 
 	public function getId(): int {
@@ -596,5 +602,21 @@ class Room {
 		if ($isGuest) {
 			$this->activeGuests++;
 		}
+	}
+
+	public function getBreakoutRoomMode(): int {
+		return $this->breakoutRoomMode;
+	}
+
+	public function setBreakoutRoomMode(int $mode): void {
+		$this->breakoutRoomMode = $mode;
+	}
+
+	public function getBreakoutRoomStatus(): int {
+		return $this->breakoutRoomStatus;
+	}
+
+	public function setBreakoutRoomStatus(int $status): void {
+		$this->breakoutRoomStatus = $status;
 	}
 }

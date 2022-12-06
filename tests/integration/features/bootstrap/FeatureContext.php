@@ -37,17 +37,17 @@ use Psr\Http\Message\ResponseInterface;
 class FeatureContext implements Context, SnippetAcceptingContext {
 	public const TEST_PASSWORD = '123456';
 
-	/** @var array[] */
+	/** @var string[] */
 	protected static $identifierToToken;
-	/** @var array[] */
+	/** @var string[] */
 	protected static $tokenToIdentifier;
-	/** @var array[] */
+	/** @var string[] */
 	protected static $sessionIdToUser;
-	/** @var array[] */
+	/** @var string[] */
 	protected static $userToSessionId;
-	/** @var array[] */
+	/** @var int[] */
 	protected static $userToAttendeeId;
-	/** @var array[] */
+	/** @var string[] */
 	protected static $messages;
 	protected static $textToMessageId;
 	/** @var array[] */
@@ -118,7 +118,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	public function getAttendeeId(string $type, string $id, string $room, string $user = null) {
-		if (!isset(self::$userToAttendeeId[$type][$id])) {
+		if (!isset(self::$userToAttendeeId[$room][$type][$id])) {
 			if ($user !== null) {
 				$this->userLoadsAttendeeIdsInRoom($user, $room, 'v4');
 			} else {
@@ -126,7 +126,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}
 
-		return self::$userToAttendeeId[$type][$id];
+		return self::$userToAttendeeId[$room][$type][$id];
 	}
 
 	/**
@@ -311,6 +311,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if (isset($expectedRoom['name'])) {
 				$data['name'] = $room['name'];
+
+				// Breakout room regex
+				if (strpos($expectedRoom['name'], '/') === 0 && preg_match($expectedRoom['name'], $room['name'])) {
+					$data['name'] = $expectedRoom['name'];
+				}
 			}
 			if (isset($expectedRoom['description'])) {
 				$data['description'] = $room['description'];
@@ -538,15 +543,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$data['attendeePermissions'] = (string) $attendee['attendeePermissions'];
 				}
 
-				if (!isset(self::$userToAttendeeId[$attendee['actorType']])) {
-					self::$userToAttendeeId[$attendee['actorType']] = [];
+				if (!isset(self::$userToAttendeeId[$identifier][$attendee['actorType']])) {
+					self::$userToAttendeeId[$identifier][$attendee['actorType']] = [];
 				}
-				self::$userToAttendeeId[$attendee['actorType']][$attendee['actorId']] = $attendee['attendeeId'];
+				self::$userToAttendeeId[$identifier][$attendee['actorType']][$attendee['actorId']] = $attendee['attendeeId'];
 
 				$result[] = $data;
 			}
 
-			$expected = array_map(function ($attendee) {
+			$expected = array_map(function ($attendee, $actual) {
 				if (isset($attendee['actorId']) && substr($attendee['actorId'], 0, strlen('"guest')) === '"guest') {
 					$attendee['actorId'] = sha1(self::$userToSessionId[trim($attendee['actorId'], '"')]);
 				}
@@ -555,11 +560,16 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					$attendee['actorId'] .= '@' . rtrim($this->baseRemoteUrl, '/');
 				}
 
+				// Breakout room regex
+				if (isset($attendee['actorId']) && strpos($attendee['actorId'], '/') === 0 && preg_match($attendee['actorId'], $actual['actorId'])) {
+					$attendee['actorId'] = $actual['actorId'];
+				}
+
 				if (isset($attendee['participantType'])) {
 					$attendee['participantType'] = (string)$this->mapParticipantTypeTestInput($attendee['participantType']);
 				}
 				return $attendee;
-			}, $formData->getHash());
+			}, $formData->getHash(), $result);
 
 			$result = array_map(function ($attendee) {
 				if (isset($attendee['permissions'])) {
@@ -594,10 +604,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$attendees = $this->getDataFromResponse($this->response);
 
 		foreach ($attendees as $attendee) {
-			if (!isset(self::$userToAttendeeId[$attendee['actorType']])) {
-				self::$userToAttendeeId[$attendee['actorType']] = [];
+			if (!isset(self::$userToAttendeeId[$identifier][$attendee['actorType']])) {
+				self::$userToAttendeeId[$identifier][$attendee['actorType']] = [];
 			}
-			self::$userToAttendeeId[$attendee['actorType']][$attendee['actorId']] = $attendee['attendeeId'];
+			self::$userToAttendeeId[$identifier][$attendee['actorType']][$attendee['actorId']] = $attendee['attendeeId'];
 		}
 	}
 
@@ -1436,7 +1446,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userPingsAttendeeInRoomTo(string $user, string $actorType, string $actorId, string $identifier, int $statusCode, string $apiVersion): void {
 		$this->setCurrentUser($user);
-		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier] . '/ring/' . self::$userToAttendeeId[$actorType . 's'][$actorId]);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/call/' . self::$identifierToToken[$identifier] . '/ring/' . self::$userToAttendeeId[$identifier][$actorType . 's'][$actorId]);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
@@ -2271,6 +2281,52 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" creates (\d+) (automatic|manual|free) breakout rooms for "([^"]*)" with (\d+) \((v1)\)$/
+	 *
+	 * @param string $user
+	 * @param int $amount
+	 * @param string $modeString
+	 * @param string $roomName
+	 * @param int $status
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userCreatesBreakoutRooms(string $user, int $amount, string $modeString, string $roomName, int $status, string $apiVersion, TableNode $formData = null): void {
+		switch ($modeString) {
+			case 'automatic':
+				$mode = 1;
+				break;
+			case 'manual':
+				$mode = 2;
+				break;
+			case 'free':
+				$mode = 3;
+				break;
+			default:
+				throw new \InvalidArgumentException('Invalid breakout room mode: ' . $modeString);
+		}
+
+		$data = [
+			'mode' => $mode,
+			'amount' => $amount,
+		];
+
+		if ($modeString === 'manual' && $formData instanceof TableNode) {
+			$mapArray = [];
+			foreach ($formData->getRowsHash() as $attendee => $roomNumber) {
+				[$type, $id] = explode('::', $attendee);
+				$attendeeId = $this->getAttendeeId($type, $id, $roomName);
+				$mapArray[$attendeeId] = (int) $roomNumber;
+			}
+			$data['attendeeMap'] = json_encode($mapArray, JSON_THROW_ON_ERROR);
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$roomName], $data);
+		$this->assertStatusCode($this->response, $status);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" sets setting "([^"]*)" to "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
@@ -2893,6 +2949,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $message
 	 */
 	protected function assertStatusCode(ResponseInterface $response, int $statusCode, string $message = '') {
-		Assert::assertEquals($statusCode, $response->getStatusCode(), $message);
+		if ($statusCode !== $response->getStatusCode()) {
+			$content = $this->response->getBody()->getContents();
+			Assert::assertEquals(
+				$statusCode,
+				$response->getStatusCode(),
+				$message . ($message ? ': ' : '') . $content
+			);
+		} else {
+			Assert::assertEquals($statusCode, $response->getStatusCode(), $message);
+		}
 	}
 }

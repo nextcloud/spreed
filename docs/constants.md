@@ -28,6 +28,12 @@ title: Constants
 * `1` Enabled (Each participant needs a unique PIN)
 * `2` Enabled without PIN (Only the conversation token is required)
 
+### Breakout room modes
+* `0` Not configured
+* `1` Automatic - Attendees are unsorted and then distributed equaly over the rooms, so they all have the same participant count (+/- 1)
+* `2` Manual - A map with attendee to room number specifies the participants
+* `3` Free - Each attendee picks their own breakout room
+
 ## Participants
 
 ### Participant types
