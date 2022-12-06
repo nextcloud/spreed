@@ -106,9 +106,9 @@ local PipelinePostgreSQL(test_set) = Pipeline(
 			image: "ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13",
 			environment: {
 				POSTGRES_USER: "oc_autotest",
-				POSTGRES_DB: "oc_autotest_dummy",
+				POSTGRES_DB: "oc_autotest",
 				POSTGRES_HOST_AUTH_METHOD: "trust",
-				POSTGRES_PASSWORD: ""
+				POSTGRES_PASSWORD: "owncloud"
 			},
 			tmpfs: [
 				"/var/lib/postgresql/data"
