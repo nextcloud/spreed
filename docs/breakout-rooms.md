@@ -2,8 +2,8 @@
 
 Group and public conversations can be used to host breakout rooms.
 
-* Only moderators can configure and remove breakout out rooms
-* Only moderators can start and stop breakout out rooms
+* Only moderators can configure and remove breakout rooms
+* Only moderators can start and stop breakout rooms
 * Moderators in the parent conversation are added as moderators to all breakout rooms and remove from all on demotion
 
 ## Base endpoint
