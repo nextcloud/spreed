@@ -585,7 +585,7 @@ class SystemMessage {
 	 * @throws ShareNotFound
 	 */
 	protected function getFileFromShare(Participant $participant, string $shareId): array {
-		$share = $this->shareProvider->getShareById($shareId);
+		$share = $this->shareProvider->getShareById((int) $shareId);
 
 		if (!$participant->isGuest()) {
 			if ($share->getShareOwner() !== $participant->getAttendee()->getActorId()) {

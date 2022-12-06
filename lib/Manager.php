@@ -1098,7 +1098,7 @@ class Manager {
 	 * @return string
 	 */
 	protected function getNewToken(): string {
-		$entropy = (int) $this->config->getAppValue('spreed', 'token_entropy', 8);
+		$entropy = (int) $this->config->getAppValue('spreed', 'token_entropy', '8');
 		$entropy = max(8, $entropy); // For update cases
 		$digitsOnly = $this->talkConfig->isSIPConfigured();
 		if ($digitsOnly) {
@@ -1129,7 +1129,7 @@ class Manager {
 		}
 
 		$entropy++;
-		$this->config->setAppValue('spreed', 'token_entropy', $entropy);
+		$this->config->setAppValue('spreed', 'token_entropy', (string) $entropy);
 		return $this->generateNewToken($query, $entropy, $digitsOnly);
 	}
 

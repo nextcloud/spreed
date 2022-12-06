@@ -506,7 +506,7 @@ class ChatManager {
 	}
 
 	public function getLastReadMessageFromLegacy(Room $chat, IUser $user): int {
-		$marker = $this->commentsManager->getReadMark('chat', $chat->getId(), $user);
+		$marker = $this->commentsManager->getReadMark('chat', (string) $chat->getId(), $user);
 		if ($marker === null) {
 			return 0;
 		}
@@ -719,7 +719,7 @@ class ChatManager {
 	 * @return IComment[]
 	 */
 	public function getMessagesById(Room $chat, array $commentIds): array {
-		$comments = $this->commentsManager->getCommentsById($commentIds);
+		$comments = $this->commentsManager->getCommentsById(array_map('strval', $commentIds));
 
 		$comments = array_filter($comments, static function (IComment $comment) use ($chat) {
 			return $comment->getObjectType() === 'chat'

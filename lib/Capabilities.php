@@ -121,7 +121,7 @@ class Capabilities implements IPublicCapability {
 					'allowed' => $user instanceof IUser,
 				],
 				'call' => [
-					'enabled' => ((int) $this->serverConfig->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE)) !== Room::START_CALL_NOONE,
+					'enabled' => ((int) $this->serverConfig->getAppValue('spreed', 'start_calls', (string) Room::START_CALL_EVERYONE)) !== Room::START_CALL_NOONE,
 					'breakout-rooms' => $this->talkConfig->isBreakoutRoomsEnabled(),
 					'recording' => $this->talkConfig->isRecordingEnabled(),
 				],
