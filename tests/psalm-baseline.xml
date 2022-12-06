@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.29.0@7ec5ffbd5f68ae03782d7fd33fff0c45a69f95b3">
+<files psalm-version="5.1.0@4defa177c89397c5e14737a80fe4896584130674">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass occurrences="2">
       <code>BeforeTemplateRenderedEvent</code>
@@ -25,17 +25,9 @@
     </UndefinedVariable>
   </file>
   <file src="lib/Chat/Parser/SystemMessage.php">
-    <MissingDependency occurrences="3">
-      <code>$this-&gt;rootFolder</code>
-      <code>IRootFolder</code>
-      <code>IRootFolder</code>
-    </MissingDependency>
     <UndefinedClass occurrences="1">
       <code>\OC_Util</code>
     </UndefinedClass>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>getById</code>
-    </UndefinedInterfaceMethod>
   </file>
   <file src="lib/Command/Command/Add.php">
     <UndefinedClass occurrences="1">
@@ -172,21 +164,10 @@
       <code>$commentIdToIndex[$parentId]</code>
     </InvalidArrayOffset>
   </file>
-  <file src="lib/Controller/PageController.php">
-    <MissingDependency occurrences="2">
-      <code>IRootFolder</code>
-      <code>IRootFolder</code>
-    </MissingDependency>
-  </file>
   <file src="lib/Controller/SettingsController.php">
     <InvalidArgument occurrences="1">
       <code>SharedStorage::class</code>
     </InvalidArgument>
-    <MissingDependency occurrences="3">
-      <code>$this-&gt;rootFolder</code>
-      <code>IRootFolder</code>
-      <code>IRootFolder</code>
-    </MissingDependency>
   </file>
   <file src="lib/Controller/TempAvatarController.php">
     <UndefinedClass occurrences="1">
@@ -194,10 +175,6 @@
     </UndefinedClass>
   </file>
   <file src="lib/Files/TemplateLoader.php">
-    <MissingDependency occurrences="2">
-      <code>IRootFolder</code>
-      <code>IRootFolder</code>
-    </MissingDependency>
     <UndefinedClass occurrences="2">
       <code>LoadSidebar</code>
       <code>LoadSidebar</code>
@@ -207,13 +184,6 @@
     <InvalidArgument occurrences="1">
       <code>SharedStorage::class</code>
     </InvalidArgument>
-    <MissingDependency occurrences="5">
-      <code>$this-&gt;rootFolder</code>
-      <code>$this-&gt;rootFolder</code>
-      <code>$this-&gt;rootFolder</code>
-      <code>IRootFolder</code>
-      <code>IRootFolder</code>
-    </MissingDependency>
   </file>
   <file src="lib/MatterbridgeManager.php">
     <UndefinedClass occurrences="7">
@@ -279,8 +249,8 @@
     </UndefinedClass>
   </file>
   <file src="lib/TInitialState.php">
-    <MissingDependency occurrences="1">
-      <code>IRootFolder</code>
-    </MissingDependency>
+    <UndefinedClass occurrences="1">
+      <code>NoUserException</code>
+    </UndefinedClass>
   </file>
 </files>
