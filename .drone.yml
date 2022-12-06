@@ -738,9 +738,9 @@ services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
 - environment:
-    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_DB: oc_autotest
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: ""
+    POSTGRES_PASSWORD: owncloud
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -780,9 +780,9 @@ services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
 - environment:
-    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_DB: oc_autotest
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: ""
+    POSTGRES_PASSWORD: owncloud
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -822,9 +822,9 @@ services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
 - environment:
-    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_DB: oc_autotest
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: ""
+    POSTGRES_PASSWORD: owncloud
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -864,9 +864,9 @@ services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
 - environment:
-    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_DB: oc_autotest
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: ""
+    POSTGRES_PASSWORD: owncloud
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -907,9 +907,9 @@ services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
 - environment:
-    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_DB: oc_autotest
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: ""
+    POSTGRES_PASSWORD: owncloud
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -950,9 +950,9 @@ services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
 - environment:
-    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_DB: oc_autotest
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: ""
+    POSTGRES_PASSWORD: owncloud
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -992,9 +992,9 @@ services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
 - environment:
-    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_DB: oc_autotest
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: ""
+    POSTGRES_PASSWORD: owncloud
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -1034,9 +1034,9 @@ services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
 - environment:
-    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_DB: oc_autotest
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: ""
+    POSTGRES_PASSWORD: owncloud
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
@@ -1076,9 +1076,9 @@ services:
 - image: ghcr.io/nextcloud/continuous-integration-redis:latest
   name: cache
 - environment:
-    POSTGRES_DB: oc_autotest_dummy
+    POSTGRES_DB: oc_autotest
     POSTGRES_HOST_AUTH_METHOD: trust
-    POSTGRES_PASSWORD: ""
+    POSTGRES_PASSWORD: owncloud
     POSTGRES_USER: oc_autotest
   image: ghcr.io/nextcloud/continuous-integration-postgres-13:postgres-13
   name: pgsql
