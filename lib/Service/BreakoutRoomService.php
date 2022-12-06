@@ -205,11 +205,14 @@ class BreakoutRoomService {
 		// Safety caution cleaning up potential orphan rooms
 		$this->deleteBreakoutRooms($parent);
 
+		// TRANSLATORS Label for the breakout rooms, this is not a plural! The result will be "Room 1", "Room 2", "Room 3", ...
+		$label = $this->l->t('Room {number}');
+
 		$rooms = [];
 		for ($i = 1; $i <= $amount; $i++) {
 			$breakoutRoom = $this->roomService->createConversation(
 				$parent->getType(),
-				str_replace('{number}', (string) $i, $this->l->t('Room {number}')),
+				str_replace('{number}', (string) $i, $label),
 				null,
 				BreakoutRoom::PARENT_OBJECT_TYPE,
 				$parent->getToken()
