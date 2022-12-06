@@ -34,6 +34,9 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\IUser;
 use OCP\User\Events\BeforeUserLoggedOutEvent;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class BeforeUserLoggedOutListener implements IEventListener {
 	private Manager $manager;
 	private ParticipantService $participantService;

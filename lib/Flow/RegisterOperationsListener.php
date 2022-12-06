@@ -28,6 +28,9 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\Util;
 use OCP\WorkflowEngine\Events\RegisterOperationsEvent;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class RegisterOperationsListener implements IEventListener {
 	private Operation $operation;
 

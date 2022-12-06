@@ -27,11 +27,15 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCP\EventDispatcher\Event;
+use OCP\EventDispatcher\IEventListener;
 use OCP\Group\Events\UserAddedEvent;
 use OCP\Group\Events\UserRemovedEvent;
 use OCP\IGroup;
 use OCP\IUser;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class GroupMembershipListener extends AMembershipListener {
 	public function handle(Event $event): void {
 		if ($event instanceof UserAddedEvent) {

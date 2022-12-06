@@ -29,6 +29,9 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\IRequest;
 use OCP\Util;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class DeckPluginLoader implements IEventListener {
 	private IRequest $request;
 

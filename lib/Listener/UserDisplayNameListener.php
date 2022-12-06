@@ -30,6 +30,9 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\User\Events\UserChangedEvent;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class UserDisplayNameListener implements IEventListener {
 	private ParticipantService $participantService;
 	private PollService $pollService;
