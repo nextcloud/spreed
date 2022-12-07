@@ -127,7 +127,13 @@ class AvatarService {
 			$file->delete();
 		}
 
-		$avatarName = $this->random->generate(10, ISecureRandom::CHAR_HUMAN_READABLE);
+		$avatarName = $this->random->generate(16, ISecureRandom::CHAR_HUMAN_READABLE);
+		if ($mimeType === 'image/jpeg') {
+			$avatarName .= '.jpg';
+		} else {
+			$avatarName .= '.png';
+		}
+
 		$avatarFolder->newFile($avatarName, $image->data());
 		$this->roomService->setAvatar($room, $avatarName);
 	}
@@ -201,7 +207,8 @@ class AvatarService {
 
 		$avatarVersion = $room->getAvatar();
 		if ($avatarVersion !== '') {
-			$arguments['v'] = $avatarVersion;
+			[$version] = explode('.', $avatarVersion);
+			$arguments['v'] = $version ?? '';
 		}
 		return $this->url->linkToOCSRouteAbsolute('spreed.Avatar.getAvatar', $arguments);
 	}
