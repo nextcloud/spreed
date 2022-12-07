@@ -93,3 +93,27 @@ Group and public conversations can be used to host breakout rooms.
 		+ `403 Forbidden` When the participant is not a moderator
 		+ `404 Not Found` When the conversation could not be found for the participant
 		+ `413 Payload Too Large` When the message was longer than the allowed limit of 32000 characters (check the `spreed => config => chat => max-length` capability for the limit)
+
+## Request assistance
+
+This endpoint allows participants to raise their hand (token is the breakout room) and moderators will see it in any of the breakout rooms as well as the parent room.
+
+* Required capability: `breakout-rooms-v1`
+* Method: `POST`
+* Endpoint: `/breakout-rooms/{token}/request-assistance`
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `400 Bad Request` When the room is not a breakout room or breakout rooms are not started
+		+ `404 Not Found` When the conversation could not be found for the participant
+
+## Reset request for assistance
+
+* Required capability: `breakout-rooms-v1`
+* Method: `DELETE`
+* Endpoint: `/breakout-rooms/{token}/request-assistance`
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `400 Bad Request` When the room does not have breakout rooms configured
+		+ `404 Not Found` When the conversation could not be found for the participant

@@ -277,6 +277,25 @@ class BreakoutRoomService {
 		}
 	}
 
+	public function setBreakoutRoomAssistanceRequest(Room $breakoutRoom, int $status): void {
+		if ($breakoutRoom->getObjectType() !== BreakoutRoom::PARENT_OBJECT_TYPE) {
+			throw new \InvalidArgumentException('room');
+		}
+
+		if ($breakoutRoom->getLobbyState() !== Webinary::LOBBY_NONE) {
+			throw new \InvalidArgumentException('room');
+		}
+
+		if (!in_array($status, [
+			BreakoutRoom::STATUS_ASSISTANCE_RESET,
+			BreakoutRoom::STATUS_ASSISTANCE_REQUESTED,
+		], true)) {
+			throw new \InvalidArgumentException('status');
+		}
+
+		$this->roomService->setBreakoutRoomStatus($breakoutRoom, $status);
+	}
+
 	public function startBreakoutRooms(Room $parent): void {
 		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
 			throw new \InvalidArgumentException('mode');

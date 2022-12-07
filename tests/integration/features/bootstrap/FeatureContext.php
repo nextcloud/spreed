@@ -2383,6 +2383,25 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" (requests assistance|cancels request for assistance) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $requestCancel
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userRequestsOrCancelsAssistanceInBreakoutRooms(string $user, string $requestCancel, string $identifier, string $statusCode, string $apiVersion = 'v1') {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			$requestCancel === 'requests assistance' ? 'POST' : 'DELETE',
+			'/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$identifier] . '/request-assistance'
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" sets setting "([^"]*)" to "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user

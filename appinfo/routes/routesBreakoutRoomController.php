@@ -36,6 +36,10 @@ return [
 		['name' => 'BreakoutRoom#removeBreakoutRooms', 'url' => '/api/{apiVersion}/breakout-rooms/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\BreakoutRoomController::broadcastChatMessage() */
 		['name' => 'BreakoutRoom#broadcastChatMessage', 'url' => '/api/{apiVersion}/breakout-rooms/{token}/broadcast', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\BreakoutRoomController::requestAssistance() */
+		['name' => 'BreakoutRoom#requestAssistance', 'url' => '/api/{apiVersion}/breakout-rooms/{token}/request-assistance', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\BreakoutRoomController::resetRequestForAssistance() */
+		['name' => 'BreakoutRoom#resetRequestForAssistance', 'url' => '/api/{apiVersion}/breakout-rooms/{token}/request-assistance', 'verb' => 'DELETE', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\BreakoutRoomController::startBreakoutRooms() */
 		['name' => 'BreakoutRoom#startBreakoutRooms', 'url' => '/api/{apiVersion}/breakout-rooms/{token}/rooms', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\BreakoutRoomController::stopBreakoutRooms() */
