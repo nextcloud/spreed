@@ -181,7 +181,8 @@
     </UndefinedClass>
   </file>
   <file src="lib/Files/Util.php">
-    <InvalidArgument occurrences="1">
+    <InvalidArgument occurrences="2">
+      <code>$fileId</code>
       <code>SharedStorage::class</code>
     </InvalidArgument>
   </file>

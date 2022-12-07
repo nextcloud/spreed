@@ -67,7 +67,7 @@ class Util {
 			if (!$node->getStorage()->instanceOfStorage(SharedStorage::class)) {
 				// The file is not a shared file,
 				// let's check the accesslist for mount points of groupfolders and external storages
-				$mountsForFile = $this->userMountCache->getMountsForFileId((int) $fileId);
+				$mountsForFile = $this->userMountCache->getMountsForFileId($fileId);
 				$affectedUserIds = array_map(function (ICachedMountInfo $mount) {
 					return $mount->getUser()->getUID();
 				}, $mountsForFile);
