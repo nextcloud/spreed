@@ -1,7 +1,6 @@
 <?php
 
 namespace OC\Comments {
-
 	class Comment implements \OCP\Comments\IComment {
 		public function __construct(array $data = null) {
 		}
