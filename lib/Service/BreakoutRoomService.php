@@ -254,7 +254,7 @@ class BreakoutRoomService {
 		}
 	}
 
-	public function broadcastMessageToAllBreakoutRooms(Room $parent, Participant $participant, string $message): void {
+	public function broadcastChatMessage(Room $parent, Participant $participant, string $message): void {
 		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
 			throw new \InvalidArgumentException('mode');
 		}

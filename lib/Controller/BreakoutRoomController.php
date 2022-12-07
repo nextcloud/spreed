@@ -65,8 +65,6 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	/**
 	 * @NoAdminRequired
 	 * @RequireLoggedInModeratorParticipant
-	 *
-	 * @return DataResponse
 	 */
 	public function removeBreakoutRooms(): DataResponse {
 		$this->breakoutRoomService->removeBreakoutRooms($this->room);
@@ -76,13 +74,10 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	/**
 	 * @NoAdminRequired
 	 * @RequireLoggedInModeratorParticipant
-	 *
-	 * @param string $message
-	 * @return DataResponse
 	 */
 	public function broadcastChatMessage(string $message): DataResponse {
 		try {
-			$this->breakoutRoomService->broadcastMessageToAllBreakoutRooms($this->room, $this->participant, $message);
+			$this->breakoutRoomService->broadcastChatMessage($this->room, $this->participant, $message);
 		} catch (MessageTooLongException $e) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (InvalidArgumentException $e) {
@@ -94,8 +89,6 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	/**
 	 * @NoAdminRequired
 	 * @RequireLoggedInModeratorParticipant
-	 *
-	 * @return DataResponse
 	 */
 	public function startBreakoutRooms(): DataResponse {
 		try {
@@ -110,8 +103,6 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	/**
 	 * @NoAdminRequired
 	 * @RequireLoggedInModeratorParticipant
-	 *
-	 * @return DataResponse
 	 */
 	public function stopBreakoutRooms(): DataResponse {
 		try {

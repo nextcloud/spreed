@@ -2372,7 +2372,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userStartsOsStopsBreakoutRooms(string $user, string $startStop, string $identifier, string $statusCode, string $apiVersion = 'v1') {
+	public function userStartsOrStopsBreakoutRooms(string $user, string $startStop, string $identifier, string $statusCode, string $apiVersion = 'v1') {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			$startStop === 'starts' ? 'POST' : 'DELETE',
