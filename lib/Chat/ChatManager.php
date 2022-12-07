@@ -757,7 +757,7 @@ class ChatManager {
 			array_unshift($results, [
 				'id' => 'all',
 				'label' => $roomDisplayName,
-				'source' => 'calls'
+				'source' => 'calls',
 			]);
 		}
 		return $results;

@@ -88,6 +88,7 @@
 | `statusMessage`         | string  | v4    |         | Optional: Only available for one-to-one conversations and when  `includeStatus=true` is set                                                                                                                                                                                                                                                                                                       |
 | `participants`          | array   | v1    | v2      | **Removed**                                                                                                                                                                                                                                                                                                                                                                                       |
 | `guestList`             | string  | v1    | v2      | **Removed**                                                                                                                                                                                                                                                                                                                                                                                       |
+| `avatarUrl`             | string  | v4    |         | Avatar URL of the conversation including a version flag `v=…` for easier expiration of the avatar in case a moderator updates it, since the avatar endpoint should be cached for 24 hours.                                                                                                                                                                                                        |
 
 ## Creating a new conversation
 
@@ -377,4 +378,50 @@
         + `200 OK`
         + `400 Bad Request` When the conversation type does not support making it listable (only group and public conversation)
         + `403 Forbidden` When the current user is not a moderator/owner or the conversation is not a public conversation
+        + `404 Not Found` When the conversation could not be found for the participant
+
+## Handle the avatar of conversation
+
+* Required capability: `avatar`
+* Method: `POST`
+* Endpoint: `/room/{token}/avatar`
+* Data:
+
+| field  | type   | Description                                                                                                                         |
+| ------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `file` | string | Blob of image in a multipart/form-data request. Only accept images with mimetype equal to PNG or JPEG and need to be squared image. |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When: is one2one, no image, file is too big, invalid mimetype or resource, isn't square, unknown error
+        + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
+        + `404 Not Found` When the conversation could not be found for the participant
+
+* Required capability: `avatar`
+* Method: `DELETE`
+* Endpoint: `/room/{token}/avatar`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
+        + `404 Not Found` When the conversation could not be found for the participant
+
+* Required capability: `avatar`
+* Method: `GET`
+* Endpoint: `/room/{token}/avatar`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `404 Not Found` When the conversation could not be found for the participant
+
+* Required capability: `avatar`
+* Method: `GET`
+* Endpoint: `/room/{token}/avatar/dark`
+
+* Response:
+    - Status code:
+        + `200 OK`
         + `404 Not Found` When the conversation could not be found for the participant

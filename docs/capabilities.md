@@ -108,3 +108,4 @@ title: Capabilities
 
 ## 16
 * `breakout-rooms-v1` - Whether breakout-rooms API v1 is available
+* `avatar` - Avatar of conversation

@@ -28,6 +28,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Collaboration\Resources\IProvider;
 use OCP\Collaboration\Resources\IResource;
@@ -39,14 +40,17 @@ use OCP\IUserSession;
 class ConversationProvider implements IProvider {
 	protected Manager $manager;
 	protected ParticipantService $participantService;
+	protected AvatarService $avatarService;
 	protected IUserSession $userSession;
 	protected IURLGenerator $urlGenerator;
 
 	public function __construct(Manager $manager,
+								AvatarService $avatarService,
 								ParticipantService $participantService,
 								IUserSession $userSession,
 								IURLGenerator $urlGenerator) {
 		$this->manager = $manager;
+		$this->avatarService = $avatarService;
 		$this->participantService = $participantService;
 		$this->userSession = $userSession;
 		$this->urlGenerator = $urlGenerator;
@@ -58,7 +62,7 @@ class ConversationProvider implements IProvider {
 			$userId = $user instanceof IUser ? $user->getUID() : '';
 			$room = $this->manager->getRoomByToken($resource->getId(), $userId);
 
-			$iconURL = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'app-dark.svg'));
+			$iconURL = $this->avatarService->getAvatarUrl($room, $userId);
 			/**
 			 * Disabled for now, because it would show a square avatar
 			 * if ($room->getType() === Room::TYPE_ONE_TO_ONE) {

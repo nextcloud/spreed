@@ -373,6 +373,7 @@ class RoomServiceTest extends TestCase {
 			'passy',
 			'',
 			'',
+			'',
 			0,
 			Attendee::PERMISSIONS_DEFAULT,
 			Attendee::PERMISSIONS_DEFAULT,

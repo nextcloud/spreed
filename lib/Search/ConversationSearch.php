@@ -26,6 +26,7 @@ namespace OCA\Talk\Search;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -35,15 +36,18 @@ use OCP\Search\SearchResult;
 use OCP\Search\SearchResultEntry;
 
 class ConversationSearch implements IProvider {
+	protected AvatarService $avatarService;
 	protected Manager $manager;
 	protected IURLGenerator $url;
 	protected IL10N $l;
 
 	public function __construct(
+		AvatarService $avatarService,
 		Manager $manager,
 		IURLGenerator $url,
 		IL10N $l
 	) {
+		$this->avatarService = $avatarService;
 		$this->manager = $manager;
 		$this->url = $url;
 		$this->l = $l;
@@ -113,36 +117,12 @@ class ConversationSearch implements IProvider {
 				}
 			}
 
-			$icon = '';
-			$iconClass = '';
-			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
-				$users = json_decode($room->getName(), true);
-				foreach ($users as $participantId) {
-					if ($participantId !== $user->getUID()) {
-						$icon = $this->url->linkToRouteAbsolute('core.avatar.getAvatar', [
-							'userId' => $participantId,
-							'size' => 512,
-						]);
-					}
-				}
-			} elseif ($room->getObjectType() === 'file') {
-				$iconClass = 'conversation-icon icon-file-white';
-			} elseif ($room->getObjectType() === 'share:password') {
-				$iconClass = 'conversation-icon icon-password-white';
-			} elseif ($room->getObjectType() === 'emails') {
-				$iconClass = 'conversation-icon icon-mail-white';
-			} elseif ($room->getType() === Room::TYPE_PUBLIC) {
-				$iconClass = 'conversation-icon icon-public-white';
-			} else {
-				$iconClass = 'conversation-icon icon-contacts-white';
-			}
-
 			$entry = new SearchResultEntry(
-				$icon,
+				$this->avatarService->getAvatarUrl($room),
 				$room->getDisplayName($user->getUID()),
 				'',
 				$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
-				$iconClass,
+				'',
 				true
 			);
 

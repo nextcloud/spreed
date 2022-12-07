@@ -113,6 +113,7 @@ class Capabilities implements IPublicCapability {
 				'send-call-notification',
 				'talk-polls',
 				'breakout-rooms-v1',
+				'avatar',
 			],
 			'config' => [
 				'attachments' => [
