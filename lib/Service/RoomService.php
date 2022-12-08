@@ -362,6 +362,42 @@ class RoomService {
 		return true;
 	}
 
+	public function startRecording(Room $room, $status): bool {
+		if (!in_array($status, [1, 2])) {
+			return false;
+		}
+		return $this->setCallRecording($room, $status);
+	}
+
+	public function stopRecording(Room $room): bool {
+		return $this->setCallRecording($room);
+	}
+
+	/**
+	 * Undocumented function
+	 *
+	 * @param Room $room
+	 * @param integer $status 0 none|1 video|2 audio
+	 */
+	public function setCallRecording(Room $room, int $status = 0): bool {
+		if (!in_array($status, [0, 1, 2])) {
+			return false;
+		}
+
+		$oldStatus = $room->getCallRecording();
+		$event = new ModifyRoomEvent($room, 'callRecording', $status, $oldStatus);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_CALL_RECORDING, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('call_recording', $update->createNamedParameter($status, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_CALL_RECORDING, $event);
+		return true;
+	}
+
 	/**
 	 * @param Room $room
 	 * @param int $newType Currently it is only allowed to change between `Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`

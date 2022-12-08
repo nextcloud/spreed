@@ -386,6 +386,7 @@ class RoomServiceTest extends TestCase {
 			'',
 			'',
 			0,
+			0,
 			0
 		);
 

@@ -102,3 +102,31 @@
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the user did not join the conversation before
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator
+
+## Start call recording
+
+* Method: `POST`
+* Endpoint: `/call/{token}/recording`
+* Data:
+
+| Field  | Type | Description                                           |
+| ------ | ---- | ----------------------------------------------------- |
+| status | int  | Type of call recording when 1 is video and 2 is audio |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the status to start is invalid
+        + `400 Bad Request` The haven't the capability `recording-v1`
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
+
+## Stop call recording
+
+* Method: `DELETE`
+* Endpoint: `/call/{token}/recording`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` The haven't the capability `recording-v1`
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator

@@ -40,5 +40,9 @@ return [
 		['name' => 'Call#updateCallFlags', 'url' => '/api/{apiVersion}/call/{token}', 'verb' => 'PUT', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\CallController::leaveCall() */
 		['name' => 'Call#leaveCall', 'url' => '/api/{apiVersion}/call/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\CallController::startRecording() */
+		['name' => 'Call#startRecording', 'url' => '/api/{apiVersion}/call/{token}/recording', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\CallController::stopRecording() */
+		['name' => 'Call#stopRecording', 'url' => '/api/{apiVersion}/call/{token}/recording', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
 	],
 ];

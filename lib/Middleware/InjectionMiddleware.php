@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Middleware;
 
+use OCA\Talk\Config;
 use OCA\Talk\Controller\AEnvironmentAwareController;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\PermissionsException;
@@ -55,6 +56,7 @@ class InjectionMiddleware extends Middleware {
 	protected TalkSession $talkSession;
 	protected Manager $manager;
 	protected IThrottler $throttler;
+	protected Config $config;
 	protected ?string $userId;
 
 	public function __construct(IRequest $request,
@@ -63,6 +65,7 @@ class InjectionMiddleware extends Middleware {
 								TalkSession $talkSession,
 								Manager $manager,
 								IThrottler $throttler,
+								Config $config,
 								?string $userId) {
 		$this->request = $request;
 		$this->reflector = $reflector;
@@ -70,6 +73,7 @@ class InjectionMiddleware extends Middleware {
 		$this->talkSession = $talkSession;
 		$this->manager = $manager;
 		$this->throttler = $throttler;
+		$this->config = $config;
 		$this->userId = $userId;
 	}
 
@@ -116,6 +120,10 @@ class InjectionMiddleware extends Middleware {
 
 		if ($this->reflector->hasAnnotation('RequireModeratorOrNoLobby')) {
 			$this->checkLobbyState($controller);
+		}
+
+		if ($this->reflector->hasAnnotation('RequireCallRecording')) {
+			$this->checkCallRecording($controller);
 		}
 
 		$requiredPermissions = $this->reflector->getAnnotationParameter('RequirePermissions', 'permissions');
@@ -244,6 +252,12 @@ class InjectionMiddleware extends Middleware {
 		$room = $controller->getRoom();
 		if (!$room instanceof Room || $room->getLobbyState() !== Webinary::LOBBY_NONE) {
 			throw new LobbyException();
+		}
+	}
+
+	protected function checkCallRecording(AEnvironmentAwareController $controller): void {
+		if (!$this->config->isCallRecordingEnabled()) {
+			throw new ReadOnlyException();
 		}
 	}
 
