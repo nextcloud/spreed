@@ -138,7 +138,7 @@ class Config {
 
 	public function isRecordingEnabled(): bool {
 		$isSignalingInternal = $this->getSignalingMode() === self::SIGNALING_INTERNAL;
-		$callRecordingCapability = $this->config->getAppValue('spreed', 'call_recording', 'no');
+		$callRecordingCapability = $this->config->getAppValue('spreed', 'call_recording', 'yes');
 		$recordingEnabled = $callRecordingCapability === 'yes';
 
 		return !$isSignalingInternal && $recordingEnabled;
