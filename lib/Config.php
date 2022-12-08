@@ -136,6 +136,10 @@ class Config {
 		return $this->canEnableSIP[$user->getUID()];
 	}
 
+	public function isBreakoutRoomsEnabled(): bool {
+		return $this->config->getAppValue('spreed', 'call_recording', 'yes') === 'yes';
+	}
+
 	public function isDisabledForUser(IUser $user): bool {
 		$allowedGroups = $this->getAllowedTalkGroupIds();
 		if (empty($allowedGroups)) {

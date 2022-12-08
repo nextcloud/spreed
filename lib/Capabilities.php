@@ -146,6 +146,10 @@ class Capabilities implements IPublicCapability {
 			$capabilities['features'][] = 'reactions';
 		}
 
+		if ($this->talkConfig->isBreakoutRoomsEnabled()) {
+			$capabilities['features'][] = 'recording-v1';
+		}
+
 		if ($user instanceof IUser) {
 			$capabilities['config']['attachments']['folder'] = $this->talkConfig->getAttachmentFolder($user->getUID());
 			$capabilities['config']['chat']['read-privacy'] = $this->talkConfig->getUserReadPrivacy($user->getUID());

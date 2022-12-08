@@ -344,4 +344,35 @@ class CapabilitiesTest extends TestCase {
 		$data = $capabilities->getCapabilities();
 		$this->assertEquals('this-is-the-key', $data['spreed']['config']['signaling']['hello-v2-token-key']);
 	}
+
+	/**
+	 * @dataProvider dataTestCapabilityRecording
+	 */
+	public function testCapabilityRecording($enabled, $expected): void {
+		$capabilities = new Capabilities(
+			$this->serverConfig,
+			$this->talkConfig,
+			$this->commentsManager,
+			$this->userSession,
+			$this->appManager
+		);
+
+		$this->talkConfig->expects($this->once())
+			->method('isBreakoutRoomsEnabled')
+			->willReturn($enabled === 'yes');
+
+		$data = $capabilities->getCapabilities();
+		if ($expected === true) {
+			$this->assertContains('recording-v1', $data['spreed']['features']);
+		} else {
+			$this->assertNotContains('recording-v1', $data['spreed']['features']);
+		}
+	}
+
+	public function dataTestCapabilityRecording(): array {
+		return [
+			['yes', true],
+			['no', false],
+		];
+	}
 }
