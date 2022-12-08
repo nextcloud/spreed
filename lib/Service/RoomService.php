@@ -374,8 +374,6 @@ class RoomService {
 	}
 
 	/**
-	 * Undocumented function
-	 *
 	 * @param Room $room
 	 * @param integer $status 0 none|1 video|2 audio
 	 */
