@@ -28,7 +28,7 @@ Group and public conversations can be used to host breakout rooms.
         + `200 OK`
         + `400 Bad Request` When breakout rooms are disabled on the server
         + `400 Bad Request` When breakout rooms are already configured
-        + `400 Bad Request` When the conversation is not a group or public conversation
+        + `400 Bad Request` When the conversation is not a group conversation
         + `400 Bad Request` When the conversation is a breakout room itself
         + `400 Bad Request` When the mode is invalid
         + `400 Bad Request` When the amount is below the minimum or above the maximum
@@ -117,3 +117,7 @@ This endpoint allows participants to raise their hand (token is the breakout roo
 		+ `200 OK`
 		+ `400 Bad Request` When the room does not have breakout rooms configured
 		+ `404 Not Found` When the conversation could not be found for the participant
+
+## List all breakout rooms
+
+See [conversation API](conversation.md#get-breakout-rooms))

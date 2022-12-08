@@ -283,6 +283,39 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" sees the following breakout rooms for room "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $apiVersion
+	 * @param int $status
+	 * @param TableNode|null $formData
+	 */
+	public function userListsBreakoutRooms(string $user, string $identifier, int $status, string $apiVersion, TableNode $formData = null): void {
+		$token = self::$identifierToToken[$identifier];
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . $token . '/breakout-rooms');
+		$this->assertStatusCode($this->response, $status);
+
+		if ($status !== 200) {
+			return;
+		}
+
+		$rooms = $this->getDataFromResponse($this->response);
+
+		$rooms = array_filter($rooms, function ($room) {
+			return $room['type'] !== 4;
+		});
+
+		if ($formData === null) {
+			Assert::assertEmpty($rooms);
+			return;
+		}
+
+		$this->assertRooms($rooms, $formData);
+	}
+
+	/**
 	 * @param array $rooms
 	 * @param TableNode $formData
 	 */

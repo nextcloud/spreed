@@ -28,6 +28,7 @@ namespace OCA\Talk\Service;
 use InvalidArgumentException;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
@@ -84,9 +85,8 @@ class BreakoutRoomService {
 			throw new InvalidArgumentException('room');
 		}
 
-		if ($parent->getType() !== Room::TYPE_GROUP
-			&& $parent->getType() !== Room::TYPE_PUBLIC) {
-			// Can only do breakout rooms in group and public rooms
+		if ($parent->getType() !== Room::TYPE_GROUP) {
+			// Can only do breakout rooms in group rooms
 			throw new InvalidArgumentException('room');
 		}
 
@@ -324,5 +324,42 @@ class BreakoutRoomService {
 		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STOPPED);
 
 		// FIXME missing to send the signaling messages so participants are moved back
+	}
+
+	/**
+	 * @param Room $parent
+	 * @param Participant $participant
+	 * @return Room[]
+	 */
+	public function getBreakoutRooms(Room $parent, Participant $participant): array {
+		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
+			throw new \InvalidArgumentException('mode');
+		}
+
+		if (!$participant->hasModeratorPermissions() && $parent->getBreakoutRoomStatus() !== BreakoutRoom::STATUS_STARTED) {
+			throw new \InvalidArgumentException('status');
+		}
+
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+
+		$returnAll = $participant->hasModeratorPermissions() || $parent->getBreakoutRoomMode() === BreakoutRoom::MODE_FREE;
+		if (!$returnAll) {
+			$rooms = [];
+			foreach ($breakoutRooms as $breakoutRoom) {
+				try {
+					$this->participantService->getParticipantByActor(
+						$breakoutRoom,
+						$participant->getAttendee()->getActorType(),
+						$participant->getAttendee()->getActorId()
+					);
+					$rooms[] = $breakoutRoom;
+				} catch (ParticipantNotFoundException $e){
+					// Skip this room
+				}
+			}
+		} else {
+			$rooms = $breakoutRooms;
+		}
+		return $rooms;
 	}
 }
