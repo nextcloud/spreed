@@ -170,6 +170,7 @@ class CapabilitiesTest extends TestCase {
 					'call' => [
 						'enabled' => true,
 						'breakout-rooms' => false,
+						'recording' => false,
 					],
 					'chat' => [
 						'max-length' => 32000,
@@ -271,6 +272,7 @@ class CapabilitiesTest extends TestCase {
 					'call' => [
 						'enabled' => false,
 						'breakout-rooms' => true,
+						'recording' => false,
 					],
 					'chat' => [
 						'max-length' => 32000,
@@ -347,9 +349,9 @@ class CapabilitiesTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider dataTestCapabilityRecording
+	 * @dataProvider dataTestConfigRecording
 	 */
-	public function testCapabilityRecording($enabled, $expected): void {
+	public function testConfigRecording(bool $enabled): void {
 		$capabilities = new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
@@ -360,20 +362,16 @@ class CapabilitiesTest extends TestCase {
 
 		$this->talkConfig->expects($this->once())
 			->method('isRecordingEnabled')
-			->willReturn($enabled === 'yes');
+			->willReturn($enabled);
 
 		$data = $capabilities->getCapabilities();
-		if ($expected === true) {
-			$this->assertContains('recording', $data['spreed']['features']);
-		} else {
-			$this->assertNotContains('recording', $data['spreed']['features']);
-		}
+		$this->assertEquals($data['spreed']['config']['call']['recording'], $enabled);
 	}
 
-	public function dataTestCapabilityRecording(): array {
+	public function dataTestConfigRecording(): array {
 		return [
-			['yes', true],
-			['no', false],
+			[true],
+			[false],
 		];
 	}
 }

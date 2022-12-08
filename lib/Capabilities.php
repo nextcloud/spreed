@@ -147,9 +147,7 @@ class Capabilities implements IPublicCapability {
 			$capabilities['features'][] = 'reactions';
 		}
 
-		if ($this->talkConfig->isRecordingEnabled()) {
-			$capabilities['features'][] = 'recording';
-		}
+		$capabilities['config']['call']['recording'] = $this->talkConfig->isRecordingEnabled();
 
 		if ($user instanceof IUser) {
 			$capabilities['config']['attachments']['folder'] = $this->talkConfig->getAttachmentFolder($user->getUID());
