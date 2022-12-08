@@ -110,4 +110,5 @@ title: Capabilities
 * `breakout-rooms-v1` - Whether breakout-rooms API v1 is available
 * `config => call => breakout-rooms` - Whether breakout rooms are enabled on this instance
 * `avatar` - Avatar of conversation
-* `recording-v1` - Call recording. Only available if app setting `call_recording` is equal to `yes`.
+* `recording-v1` - Call recording is available.
+* `recording` - Call recording is enabled. Only available if app setting `call_recording` is equal to `yes` and isn't signaling internal.

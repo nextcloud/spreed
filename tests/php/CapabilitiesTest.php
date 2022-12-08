@@ -122,6 +122,7 @@ class CapabilitiesTest extends TestCase {
 			'send-call-notification',
 			'talk-polls',
 			'breakout-rooms-v1',
+			'recording-v1',
 			'avatar',
 			'message-expiration',
 			'reactions',
@@ -358,14 +359,14 @@ class CapabilitiesTest extends TestCase {
 		);
 
 		$this->talkConfig->expects($this->once())
-			->method('isBreakoutRoomsEnabled')
+			->method('isRecordingEnabled')
 			->willReturn($enabled === 'yes');
 
 		$data = $capabilities->getCapabilities();
 		if ($expected === true) {
-			$this->assertContains('recording-v1', $data['spreed']['features']);
+			$this->assertContains('recording', $data['spreed']['features']);
 		} else {
-			$this->assertNotContains('recording-v1', $data['spreed']['features']);
+			$this->assertNotContains('recording', $data['spreed']['features']);
 		}
 	}
 

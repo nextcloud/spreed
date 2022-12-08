@@ -136,8 +136,12 @@ class Config {
 		return $this->canEnableSIP[$user->getUID()];
 	}
 
-	public function isBreakoutRoomsEnabled(): bool {
-		return $this->config->getAppValue('spreed', 'call_recording', 'yes') === 'yes';
+	public function isRecordingEnabled(): bool {
+		$isSignalingInternal = $this->getSignalingMode() === self::SIGNALING_INTERNAL;
+		$callRecordingCapability = $this->config->getAppValue('spreed', 'call_recording', 'no');
+		$recordingEnabled = $callRecordingCapability === 'yes';
+
+		return !$isSignalingInternal && $recordingEnabled;
 	}
 
 	public function isDisabledForUser(IUser $user): bool {

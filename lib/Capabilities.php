@@ -113,6 +113,7 @@ class Capabilities implements IPublicCapability {
 				'send-call-notification',
 				'talk-polls',
 				'breakout-rooms-v1',
+				'recording-v1',
 				'avatar',
 			],
 			'config' => [
@@ -146,8 +147,8 @@ class Capabilities implements IPublicCapability {
 			$capabilities['features'][] = 'reactions';
 		}
 
-		if ($this->talkConfig->isBreakoutRoomsEnabled()) {
-			$capabilities['features'][] = 'recording-v1';
+		if ($this->talkConfig->isRecordingEnabled()) {
+			$capabilities['features'][] = 'recording';
 		}
 
 		if ($user instanceof IUser) {
