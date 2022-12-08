@@ -217,6 +217,7 @@
     "Messages in {conversation}" : "Messàgios in {conversation}",
     "{user} in {conversation}" : "{user} in {conversation}",
     "Messages in other conversations" : "Messàgios in àteras resonadas",
+    "Avatar image is not square" : "S'imàgine de s'avatar no est cuadrada",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "No s'at pòdidu pedire sa versione de proa, ca su serbidore de proa no si podet cuntatare. Torra a proare luego.",
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "B'at unu problema cun s'autenticatzione de custa istàntzia. Fortzis no si podet cuntatare dae foras pro verificare s'URL.",
     "Something unexpected happened." : "Est sutzèdida calincuna cosa no prevèdida.",

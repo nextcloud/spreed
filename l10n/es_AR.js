@@ -9,6 +9,7 @@ OC.L10N.register(
     "Unknown filetype" : "Tipo de archivo desconocido",
     "Open settings" : "Abrir opciones",
     "Messages" : "Mensajes",
+    "Avatar image is not square" : "La imagen del avatar no es un cuadrado",
     "Invalid date, date format must be YYYY-MM-DD" : "La fecha es inválida, favor de seguir el formato AAAA-MM-DD",
     "Leave call" : "Dejar la llamada",
     "Limit to groups" : "Limitar a grupos",

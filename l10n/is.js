@@ -97,6 +97,7 @@ OC.L10N.register(
     "Open settings" : "Opna stillingar",
     "Conversations" : "Samtöl",
     "Messages" : "Skilaboð",
+    "Avatar image is not square" : "Auðkennismynd er ekki ferningslaga",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Sameinuðu arabísku furstadæmin",
     "Afghanistan" : "Afganistan",

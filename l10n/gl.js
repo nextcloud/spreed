@@ -192,6 +192,7 @@ OC.L10N.register(
     "Messages in {conversation}" : "Mensaxes en {conversation}",
     "{user} in {conversation}" : "{user} en {conversation}",
     "Messages in other conversations" : "Mensaxes noutras conversas",
+    "Avatar image is not square" : "A imaxe do avatar non é un cadrado",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Produciuse un fallo na solicitude de proba porque o servidor de proba non é accesíbel. Ténteo de novo máis tarde.",
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "Hai un problema coa autenticación desta instancia. Quizais non sexa accesíbel dende o exterior para verificar o seu URL.",
     "Something unexpected happened." : "Pasou algo inesperado.",

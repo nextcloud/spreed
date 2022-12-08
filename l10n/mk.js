@@ -226,6 +226,7 @@ OC.L10N.register(
     "Messages in {conversation}" : "Пораки во {conversation}",
     "{user} in {conversation}" : "{user} во {conversation}",
     "Messages in other conversations" : "Пораки во други разговори",
+    "Avatar image is not square" : "Сликата за Аватар не е квадратна",
     "Something unexpected happened." : "Се случи нешто неочекувано.",
     "The URL is invalid." : "Невалидна URL адреса.",
     "An HTTPS URL is required." : "Потебна е HTTPS URL.",

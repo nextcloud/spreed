@@ -90,6 +90,7 @@ OC.L10N.register(
     "Messages" : "הודעות",
     "{user}" : "{user}",
     "Messages in other conversations" : "הודעות בדיונים אחרים",
+    "Avatar image is not square" : "התמונה המייצגת אינה מרובעת",
     "The email address is invalid." : "כתובת הדוא״ל שגויה.",
     "Andorra" : "אנדורה",
     "United Arab Emirates" : "איחוד האמירויות הערביות",

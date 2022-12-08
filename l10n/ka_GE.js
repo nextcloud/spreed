@@ -20,6 +20,7 @@ OC.L10N.register(
     "Join call" : "შეუერთდით ზარს",
     "A group call has started in {call}" : "ჯგუფური ზარი დაიწყო {call}-ში",
     "Open settings" : "პარამეტრების გახსნა",
+    "Avatar image is not square" : "ავატარის სურათი არაა კვადრატი",
     "Invalid date, date format must be YYYY-MM-DD" : "არასწორი თარიღი, თარიღის ფორმატი უნდა იყოს წწწწ-თთ-დდ",
     "Leave call" : "ზარის დატოვება",
     "Limit to groups" : "ლიმიტი ჯგუფებზე",

@@ -189,6 +189,7 @@ OC.L10N.register(
     "Conversations" : "Pokalbiai",
     "Messages" : "Žinutės",
     "{user}" : "{user}",
+    "Avatar image is not square" : "Avataro paveikslas nėra kvadratinis",
     "Something unexpected happened." : "Nutiko kažkas netikėto.",
     "The URL is invalid." : "URL yra neteisingas.",
     "An HTTPS URL is required." : "Reikalingas HTTPS URL.",

@@ -124,6 +124,7 @@ OC.L10N.register(
     "Open Talk" : "Отвори Talk",
     "Conversations" : "Разговори",
     "Messages" : "Поруке",
+    "Avatar image is not square" : "Слика аватара није квадратна",
     "Andorra" : "Андора",
     "United Arab Emirates" : "Уједињени Арапски Емирати",
     "Afghanistan" : "Авганистан",

@@ -235,6 +235,7 @@ OC.L10N.register(
     "Messages in {conversation}" : "Poruke u {conversation}",
     "{user} in {conversation}" : "{user} u {conversation}",
     "Messages in other conversations" : "Poruke u ostalim razgovorima",
+    "Avatar image is not square" : "Slika avatara nije kvadratna",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Zahtjev za probni rad nije upućen jer probni poslužitelj nije dostupan. Pokušajte ponovo kasnije.",
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "Došlo je do poteškoća s autentifikacijom za ovu instancu. Možda joj nije moguće pristupiti izvana kako bi se provjerio njen URL.",
     "Something unexpected happened." : "Nešto se neočekivano dogodilo.",
