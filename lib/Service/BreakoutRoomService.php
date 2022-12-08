@@ -353,7 +353,7 @@ class BreakoutRoomService {
 						$participant->getAttendee()->getActorId()
 					);
 					$rooms[] = $breakoutRoom;
-				} catch (ParticipantNotFoundException $e){
+				} catch (ParticipantNotFoundException $e) {
 					// Skip this room
 				}
 			}
