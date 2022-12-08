@@ -92,6 +92,7 @@ OC.L10N.register(
     "Open settings" : "تنظیمات را باز کنید",
     "Conversations" : "گفتگو",
     "Messages" : "پیام ها",
+    "Avatar image is not square" : "تصویر آواتار مربع نیست",
     "There is no such account registered." : "این حساب کاربری ثبت نام نشده است.",
     "United Arab Emirates" : "امارات متحده عربی",
     "Afghanistan" : "افغانستان",

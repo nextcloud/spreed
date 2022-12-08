@@ -27,6 +27,7 @@ OC.L10N.register(
     "Open settings" : "Abrir definições",
     "Conversations" : "Conversações",
     "Messages" : "Mensagens",
+    "Avatar image is not square" : "A imagem do avatar não é quadrada.",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Emirados Árabes Unidos",
     "Afghanistan" : "Afeganistão",

@@ -254,6 +254,7 @@
     "Messages in {conversation}" : "{conversation} のメッセージ",
     "{user} in {conversation}" : "{conversation} の {user}",
     "Messages in other conversations" : "他の会話のメッセージ",
+    "Avatar image is not square" : "アバター画像が正方形ではありません",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "トライアルサーバーに到達できないため、トライアルのリクエストに失敗しました。後ほどもう一度お試しください。",
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "このインスタンスの認証に問題があります。もしかしたら、外部からURLを確認しても届かないのかもしれません。",
     "Something unexpected happened." : "想定外のことが起きました。",

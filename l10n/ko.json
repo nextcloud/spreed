@@ -185,6 +185,7 @@
     "Messages in {conversation}" : "{conversation} 속의 메시지",
     "{user} in {conversation}" : "{conversation} 속의 {user}",
     "Messages in other conversations" : "다른 대화들 속의 메시지들",
+    "Avatar image is not square" : "아바타 사진이 정사각형이 아님",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "평가판 서버에 연결할 수 없으므로 평가판을 요청하지 못했습니다. 나중에 다시 시도해 주십시오.",
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "이 인스턴스를 인증하는 데 문제가 있습니다. URL을 확인하기 위해 외부에서 연결할 수 없을 수 있습니다.",
     "Something unexpected happened." : "예상하지 못한 일이 일어났습니다.",

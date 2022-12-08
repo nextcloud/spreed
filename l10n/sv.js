@@ -198,6 +198,7 @@ OC.L10N.register(
     "Open settings" : "Öppna inställningar",
     "Conversations" : "Konversationer",
     "Messages" : "Meddelanden",
+    "Avatar image is not square" : "Profilbilden är inte fyrkantig",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Förenade arabemiraten",
     "Afghanistan" : "Afghanistan",
