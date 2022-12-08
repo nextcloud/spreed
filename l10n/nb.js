@@ -106,6 +106,7 @@ OC.L10N.register(
     "Messages in {conversation}" : "Meldinger i {conversation}",
     "{user} in {conversation}" : "{user} i {conversation}",
     "Messages in other conversations" : "Meldinger i andre samtaler",
+    "Avatar image is not square" : "Avatarbilde er ikke firkantet",
     "Something unexpected happened." : "Noe uventet inntraff.",
     "The URL is invalid." : "Nettadressen er ugyldig.",
     "An HTTPS URL is required." : "En HTTPS URL er påkrevd.",

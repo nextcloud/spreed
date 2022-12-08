@@ -192,6 +192,7 @@
     "Messages in {conversation}" : "Μηνύματα στην {conversation}",
     "{user} in {conversation}" : "Υπάρχουν {user} στην συνομιλία {conversation}",
     "Messages in other conversations" : "Μηνύματα σε άλλες συνομιλίες",
+    "Avatar image is not square" : "Η εικόνα του άβαταρ δεν είναι τετράγωνη",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Η αίτηση για δοκιμή απέτυχε επειδή δεν ήταν δυνατή η πρόσβαση στον δοκιμαστικό διακομιστή. Παρακαλούμε δοκιμάστε ξανά αργότερα.",
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "Υπάρχει πρόβλημα με τον έλεγχο ταυτότητας αυτής της περίπτωσης. Ίσως δεν είναι προσβάσιμο από έξω για την επαλήθευση της διεύθυνσης URL του.",
     "Something unexpected happened." : "Κάτι απροσδόκητο συνέβη.",
