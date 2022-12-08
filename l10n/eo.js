@@ -9,6 +9,7 @@ OC.L10N.register(
     "Invalid file provided" : "Nevalida dosiero provizita",
     "Invalid image" : "Nevalida bildo",
     "Unknown filetype" : "Nekonata dosiertipo",
+    "Avatar image is not square" : "Avatarbildo ne estas kvadrata",
     "Andorra" : "Andoro",
     "United Arab Emirates" : "Unuiĝintaj Arabaj Emirlandoj",
     "Afghanistan" : "Afganujo",

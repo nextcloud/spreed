@@ -9,6 +9,7 @@ OC.L10N.register(
     "Unknown filetype" : "Lloj i panjohur skedari",
     "Open settings" : "Hap rregullimet",
     "Conversations" : "Bisedat",
+    "Avatar image is not square" : "Imazhi avatar nuk është katror",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "Emiratet e Bashkuara Arabe",
     "Afghanistan" : "Afganistani",

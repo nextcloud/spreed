@@ -263,6 +263,7 @@
     "Messages in {conversation}" : "Berichten in {conversation}",
     "{user} in {conversation}" : "{user} in {conversation}",
     "Messages in other conversations" : "Berichten in andere gesprekken",
+    "Avatar image is not square" : "Avatar afbeelding is niet vierkant",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Het aanvragen van een proefversie is mislukt, omdat de proefserver niet bereikbaar is. Probeer het later opnieuw.",
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "Er is een probleem met authenticatie van deze instantie. Misschien is deze niet van buitenaf bereikbaar om de URL te verifiëren.",
     "Something unexpected happened." : "Er is iets onverwachts gebeurd.",

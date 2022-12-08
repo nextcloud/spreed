@@ -171,6 +171,7 @@ OC.L10N.register(
     "Open settings" : "Відкрити налаштування",
     "Conversations" : "Розмови",
     "Messages" : "Повідомлення",
+    "Avatar image is not square" : "Зображення аватара не квадратне",
     "Andorra" : "Андорра",
     "United Arab Emirates" : "Об'єднані Арабські Емірати",
     "Afghanistan" : "Афганістан",
