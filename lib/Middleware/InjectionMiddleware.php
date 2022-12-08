@@ -256,7 +256,7 @@ class InjectionMiddleware extends Middleware {
 	}
 
 	protected function checkCallRecording(AEnvironmentAwareController $controller): void {
-		if (!$this->config->isCallRecordingEnabled()) {
+		if (!$this->config->isRecordingEnabled()) {
 			throw new ReadOnlyException();
 		}
 	}
