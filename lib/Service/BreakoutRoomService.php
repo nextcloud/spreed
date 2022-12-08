@@ -26,6 +26,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
@@ -33,23 +35,33 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Notification\IManager as INotificationManager;
 use OCP\IL10N;
 
 class BreakoutRoomService {
+	protected Config $config;
 	protected Manager $manager;
 	protected RoomService $roomService;
 	protected ParticipantService $participantService;
+	protected ChatManager $chatManager;
+	protected INotificationManager $notificationManager;
 	protected IEventDispatcher $dispatcher;
 	protected IL10N $l;
 
-	public function __construct(Manager $manager,
+	public function __construct(Config $config,
+								Manager $manager,
 								RoomService $roomService,
 								ParticipantService $participantService,
+								ChatManager $chatManager,
+								INotificationManager $notificationManager,
 								IEventDispatcher $dispatcher,
 								IL10N $l) {
+		$this->config = $config;
 		$this->manager = $manager;
 		$this->roomService = $roomService;
 		$this->participantService = $participantService;
+		$this->chatManager = $chatManager;
+		$this->notificationManager = $notificationManager;
 		$this->dispatcher = $dispatcher;
 		$this->l = $l;
 	}
@@ -64,6 +76,10 @@ class BreakoutRoomService {
 	 * @throws InvalidArgumentException When the breakout rooms are configured already
 	 */
 	public function setupBreakoutRooms(Room $parent, int $mode, int $amount, string $attendeeMap): array {
+		if (!$this->config->isBreakoutRoomsEnabled()) {
+			throw new InvalidArgumentException('config');
+		}
+
 		if ($parent->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
 			throw new InvalidArgumentException('room');
 		}
@@ -201,7 +217,7 @@ class BreakoutRoomService {
 		}
 	}
 
-	public function createBreakoutRooms(Room $parent, int $amount): array {
+	protected function createBreakoutRooms(Room $parent, int $amount): array {
 		// Safety caution cleaning up potential orphan rooms
 		$this->deleteBreakoutRooms($parent);
 
@@ -218,7 +234,7 @@ class BreakoutRoomService {
 				$parent->getToken()
 			);
 
-			$this->roomService->setLobby($breakoutRoom, Webinary::LOBBY_NON_MODERATORS, null);
+			$this->roomService->setLobby($breakoutRoom, Webinary::LOBBY_NON_MODERATORS, null, false, false);
 
 			$rooms[] = $breakoutRoom;
 		}
@@ -236,5 +252,58 @@ class BreakoutRoomService {
 		foreach ($breakoutRooms as $breakoutRoom) {
 			$this->roomService->deleteRoom($breakoutRoom);
 		}
+	}
+
+	public function broadcastChatMessage(Room $parent, Participant $participant, string $message): void {
+		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
+			throw new \InvalidArgumentException('mode');
+		}
+
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+		$attendeeType = $participant->getAttendee()->getActorType();
+		$attendeeId = $participant->getAttendee()->getActorId();
+		$creationDateTime = new \DateTime();
+
+		$shouldFlush = $this->notificationManager->defer();
+		try {
+			foreach ($breakoutRooms as $breakoutRoom) {
+				$breakoutParticipant = $this->participantService->getParticipantByActor($breakoutRoom, $attendeeType, $attendeeId);
+				$this->chatManager->sendMessage($breakoutRoom, $breakoutParticipant, $attendeeType, $attendeeId, $message, $creationDateTime, null, '', false);
+			}
+		} finally {
+			if ($shouldFlush) {
+				$this->notificationManager->flush();
+			}
+		}
+	}
+
+	public function startBreakoutRooms(Room $parent): void {
+		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
+			throw new \InvalidArgumentException('mode');
+		}
+
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+		foreach ($breakoutRooms as $breakoutRoom) {
+			$this->roomService->setLobby($breakoutRoom, Webinary::LOBBY_NONE, null);
+		}
+
+		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STARTED);
+
+		// FIXME missing to send the signaling messages so participants are moved
+	}
+
+	public function stopBreakoutRooms(Room $parent): void {
+		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
+			throw new \InvalidArgumentException('mode');
+		}
+
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+		foreach ($breakoutRooms as $breakoutRoom) {
+			$this->roomService->setLobby($breakoutRoom, Webinary::LOBBY_NON_MODERATORS, null);
+		}
+
+		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STOPPED);
+
+		// FIXME missing to send the signaling messages so participants are moved back
 	}
 }

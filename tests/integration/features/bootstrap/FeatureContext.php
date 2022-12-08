@@ -346,6 +346,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (isset($expectedRoom['lobbyState'])) {
 				$data['lobbyState'] = (int) $room['lobbyState'];
 			}
+			if (isset($expectedRoom['breakoutRoomMode'])) {
+				$data['breakoutRoomMode'] = (int) $room['breakoutRoomMode'];
+			}
+			if (isset($expectedRoom['breakoutRoomStatus'])) {
+				$data['breakoutRoomStatus'] = (int) $room['breakoutRoomStatus'];
+			}
 			if (isset($expectedRoom['attendeePin'])) {
 				$data['attendeePin'] = $room['attendeePin'] ? '**PIN**' : '';
 			}
@@ -2333,6 +2339,47 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$roomName], $data);
 		$this->assertStatusCode($this->response, $status);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" broadcasts message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $message
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userBroadcastsMessageToBreakoutRooms(string $user, string $message, string $identifier, string $statusCode, string $apiVersion = 'v1') {
+		$body = new TableNode([['message', $message]]);
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$identifier] . '/broadcast',
+			$body
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" (starts|stops) breakout rooms in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $startStop
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userStartsOrStopsBreakoutRooms(string $user, string $startStop, string $identifier, string $statusCode, string $apiVersion = 'v1') {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			$startStop === 'starts' ? 'POST' : 'DELETE',
+			'/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$identifier] . '/rooms'
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/**

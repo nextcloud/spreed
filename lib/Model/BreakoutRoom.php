@@ -31,6 +31,9 @@ class BreakoutRoom {
 	public const MODE_MANUAL = 2;
 	public const MODE_FREE = 3;
 
+	public const STATUS_STOPPED = 0;
+	public const STATUS_STARTED = 1;
+
 	public const MINIMUM_ROOM_AMOUNT = 1;
 	public const MAXIMUM_ROOM_AMOUNT = 20;
 

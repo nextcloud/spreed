@@ -29,6 +29,7 @@ use InvalidArgumentException;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\Comments\MessageTooLongException;
 use OCP\IRequest;
 
 class BreakoutRoomController extends AEnvironmentAwareController {
@@ -64,11 +65,52 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	/**
 	 * @NoAdminRequired
 	 * @RequireLoggedInModeratorParticipant
-	 *
-	 * @return DataResponse
 	 */
 	public function removeBreakoutRooms(): DataResponse {
 		$this->breakoutRoomService->removeBreakoutRooms($this->room);
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireLoggedInModeratorParticipant
+	 */
+	public function broadcastChatMessage(string $message): DataResponse {
+		try {
+			$this->breakoutRoomService->broadcastChatMessage($this->room, $this->participant, $message);
+		} catch (MessageTooLongException $e) {
+			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+		return new DataResponse([], Http::STATUS_CREATED);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireLoggedInModeratorParticipant
+	 */
+	public function startBreakoutRooms(): DataResponse {
+		try {
+			$this->breakoutRoomService->startBreakoutRooms($this->room);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireLoggedInModeratorParticipant
+	 */
+	public function stopBreakoutRooms(): DataResponse {
+		try {
+			$this->breakoutRoomService->stopBreakoutRooms($this->room);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+
 		return new DataResponse();
 	}
 }

@@ -144,6 +144,10 @@ class CapabilitiesTest extends TestCase {
 		$this->talkConfig->expects($this->never())
 			->method('isDisabledForUser');
 
+		$this->talkConfig->expects($this->once())
+			->method('isBreakoutRoomsEnabled')
+			->willReturn(false);
+
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
 			->willReturnMap([
@@ -164,6 +168,7 @@ class CapabilitiesTest extends TestCase {
 					],
 					'call' => [
 						'enabled' => true,
+						'breakout-rooms' => false,
 					],
 					'chat' => [
 						'max-length' => 32000,
@@ -220,6 +225,10 @@ class CapabilitiesTest extends TestCase {
 			->willReturn(false);
 
 		$this->talkConfig->expects($this->once())
+			->method('isBreakoutRoomsEnabled')
+			->willReturn(true);
+
+		$this->talkConfig->expects($this->once())
 			->method('getAttachmentFolder')
 			->with('uid')
 			->willReturn('/Talk');
@@ -260,6 +269,7 @@ class CapabilitiesTest extends TestCase {
 					],
 					'call' => [
 						'enabled' => false,
+						'breakout-rooms' => true,
 					],
 					'chat' => [
 						'max-length' => 32000,

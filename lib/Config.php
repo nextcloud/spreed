@@ -106,6 +106,10 @@ class Config {
 		return $this->config->getAppValue('spreed', 'federation_enabled', 'no') === 'yes';
 	}
 
+	public function isBreakoutRoomsEnabled(): bool {
+		return $this->config->getAppValue('spreed', 'breakout_rooms', 'yes') === 'yes';
+	}
+
 	public function getDialInInfo(): string {
 		return $this->config->getAppValue('spreed', 'sip_bridge_dialin_info');
 	}

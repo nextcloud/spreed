@@ -302,16 +302,17 @@ class RoomService {
 	 * 						file conversations and password request conversations.
 	 * @param \DateTime|null $dateTime
 	 * @param bool $timerReached
+	 * @param bool $dispatchEvents (Only skip if the room is created in the same PHP request)
 	 * @return bool True when the change was valid, false otherwise
 	 */
-	public function setLobby(Room $room, int $newState, ?\DateTime $dateTime, bool $timerReached = false): bool {
+	public function setLobby(Room $room, int $newState, ?\DateTime $dateTime, bool $timerReached = false, bool $dispatchEvents = true): bool {
 		$oldState = $room->getLobbyState(false);
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
 			return false;
 		}
 
-		if ($room->getObjectType() !== '') {
+		if ($room->getObjectType() !== '' && $room->getObjectType() !== BreakoutRoom::PARENT_OBJECT_TYPE) {
 			return false;
 		}
 
@@ -320,7 +321,9 @@ class RoomService {
 		}
 
 		$event = new ModifyLobbyEvent($room, 'lobby', $newState, $oldState, $dateTime, $timerReached);
-		$this->dispatcher->dispatch(Room::EVENT_BEFORE_LOBBY_STATE_SET, $event);
+		if ($dispatchEvents) {
+			$this->dispatcher->dispatch(Room::EVENT_BEFORE_LOBBY_STATE_SET, $event);
+		}
 
 		$update = $this->db->getQueryBuilder();
 		$update->update('talk_rooms')
@@ -332,7 +335,9 @@ class RoomService {
 		$room->setLobbyState($newState);
 		$room->setLobbyTimer($dateTime);
 
-		$this->dispatcher->dispatch(Room::EVENT_AFTER_LOBBY_STATE_SET, $event);
+		if ($dispatchEvents) {
+			$this->dispatcher->dispatch(Room::EVENT_AFTER_LOBBY_STATE_SET, $event);
+		}
 
 		return true;
 	}
@@ -620,6 +625,30 @@ class RoomService {
 		$room->setBreakoutRoomMode($mode);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_BREAKOUT_ROOM_MODE, $event);
+
+		return true;
+	}
+
+	public function setBreakoutRoomStatus(Room $room, int $status): bool {
+		if (!in_array($status, [
+			BreakoutRoom::STATUS_STOPPED,
+			BreakoutRoom::STATUS_STARTED,
+		], true)) {
+			return false;
+		}
+
+		$event = new ModifyRoomEvent($room, 'breakoutRoomStatus', $status);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_BREAKOUT_ROOM_STATUS, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('breakout_room_status', $update->createNamedParameter($status, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setBreakoutRoomStatus($status);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS, $event);
 
 		return true;
 	}

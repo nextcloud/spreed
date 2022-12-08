@@ -36,6 +36,7 @@ use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -232,7 +233,13 @@ class Listener implements IEventListener {
 		$room = $event->getRoom();
 		$listener = Server::get(self::class);
 
-		if ($event->isTimerReached()) {
+		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			if ($event->getNewValue() === Webinary::LOBBY_NONE) {
+				$listener->sendSystemMessage($room, 'breakout_rooms_started');
+			} else {
+				$listener->sendSystemMessage($room, 'breakout_rooms_stopped');
+			}
+		} elseif ($event->isTimerReached()) {
 			$listener->sendSystemMessage($room, 'lobby_timer_reached');
 		} elseif ($event->getNewValue() === Webinary::LOBBY_NONE) {
 			$listener->sendSystemMessage($room, 'lobby_none');

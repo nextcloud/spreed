@@ -26,6 +26,7 @@ Group and public conversations can be used to host breakout rooms.
 * Response:
     - Status code:
         + `200 OK`
+        + `400 Bad Request` When breakout rooms are disabled on the server
         + `400 Bad Request` When breakout rooms are already configured
         + `400 Bad Request` When the conversation is not a group or public conversation
         + `400 Bad Request` When the conversation is a breakout room itself
@@ -46,3 +47,49 @@ Group and public conversations can be used to host breakout rooms.
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the conversation could not be found for the participant
+
+## Start breakout rooms
+
+* Required capability: `breakout-rooms-v1`
+* Method: `POST`
+* Endpoint: `/breakout-rooms/{token}/rooms`
+
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `400 Bad Request` When breakout rooms are not configured
+		+ `403 Forbidden` When the current user is not a moderator/owner
+		+ `404 Not Found` When the conversation could not be found for the participant
+
+## Stop breakout rooms
+
+* Required capability: `breakout-rooms-v1`
+* Method: `DELETE`
+* Endpoint: `/breakout-rooms/{token}/rooms`
+
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `400 Bad Request` When breakout rooms are not configured
+		+ `403 Forbidden` When the current user is not a moderator/owner
+		+ `404 Not Found` When the conversation could not be found for the participant
+
+## Broadcast message to breakout rooms
+
+* Required capability: `breakout-rooms-v1`
+* Method: `POST`
+* Endpoint: `/breakout-rooms/{token}/broadcast`
+* Data:
+
+| field     | type   | Description                                                                                                    |
+|-----------|--------|----------------------------------------------------------------------------------------------------------------|
+| `message` | string | A chat message to be posted in all breakout rooms in the name of the moderator                                 |
+| `token`   | string | **Note:** The token in the URL is the parent room. The message will appear in all breakout rooms automatically |
+
+* Response:
+	- Status code:
+		+ `201 Created`
+		+ `400 Bad Request` When the room does not have breakout rooms configured
+		+ `403 Forbidden` When the participant is not a moderator
+		+ `404 Not Found` When the conversation could not be found for the participant
+		+ `413 Payload Too Large` When the message was longer than the allowed limit of 32000 characters (check the `spreed => config => chat => max-length` capability for the limit)

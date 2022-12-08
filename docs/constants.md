@@ -34,6 +34,10 @@ title: Constants
 * `2` Manual - A map with attendee to room number specifies the participants
 * `3` Free - Each attendee picks their own breakout room
 
+### Breakout room status
+* `0` Stopped (breakout rooms lobbies are enabled)
+* `1` Started (breakout rooms lobbies are disabled)
+
 ## Participants
 
 ### Participant types

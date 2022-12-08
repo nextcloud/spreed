@@ -194,3 +194,120 @@ Feature: conversation/breakout-rooms
       | users      | participant2 | 3               |
     When user "participant1" creates 3 manual breakout rooms for "class room" with 400 (v1)
       | users::participant2 | 4 |
+
+  Scenario: Breakout rooms are disabled
+    Given user "participant1" creates room "class room" (v4)
+      | roomType | 3 |
+      | roomName | class room |
+    And user "participant1" adds user "participant2" to room "class room" with 200 (v4)
+    And user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
+    And the following "spreed" app config is set
+      | breakout_rooms | no |
+    When user "participant1" creates 3 manual breakout rooms for "class room" with 400 (v1)
+      | users::participant2 | 1 |
+
+  Scenario: Broadcast chat message to all breakout room
+    Given user "participant1" creates room "class room" (v4)
+      | roomType | 3 |
+      | roomName | class room |
+    And user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+    When user "participant1" creates 3 manual breakout rooms for "class room" with 200 (v1)
+    And user "participant1" is participant of the following rooms (v4)
+      | type | name       |
+      | 3    | class room |
+      | 3    | Room 1     |
+      | 3    | Room 2     |
+      | 3    | Room 3     |
+    And user "participant1" broadcasts message "Hello rooms 1-3" to room "class room" with 201 (v1)
+    Then user "participant1" sees the following messages in room "Room 1" with 200
+      | room   | actorType | actorId      | actorDisplayName         | message         | messageParameters |
+      | Room 1 | users     | participant1 | participant1-displayname | Hello rooms 1-3 | []                |
+    Then user "participant1" sees the following messages in room "Room 2" with 200
+      | room   | actorType | actorId      | actorDisplayName         | message         | messageParameters |
+      | Room 2 | users     | participant1 | participant1-displayname | Hello rooms 1-3 | []                |
+    Then user "participant1" sees the following messages in room "Room 3" with 200
+      | room   | actorType | actorId      | actorDisplayName         | message         | messageParameters |
+      | Room 3 | users     | participant1 | participant1-displayname | Hello rooms 1-3 | []                |
+
+  Scenario: Can not broadcast chat message in a non-breakout room
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | class room |
+    And user "participant1" broadcasts message "Does not work" to room "room" with 400 (v1)
+
+  Scenario: Can not start in a non-breakout room
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" starts breakout rooms in room "room" with 400 (v1)
+    And user "participant1" stops breakout rooms in room "room" with 400 (v1)
+
+  Scenario: Moderator starts and stops breakout rooms
+    Given user "participant1" creates room "class room" (v4)
+      | roomType | 3 |
+      | roomName | class room |
+    And user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+    When user "participant1" creates 3 manual breakout rooms for "class room" with 200 (v1)
+    And user "participant1" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 3    | class room | 0          | 2                | 0                  |
+      | 3    | Room 1     | 1          | 0                | 0                  |
+      | 3    | Room 2     | 1          | 0                | 0                  |
+      | 3    | Room 3     | 1          | 0                | 0                  |
+    Then user "participant1" sees the following system messages in room "Room 1" with 200
+      | room   | actorType | actorId      | actorDisplayName         | systemMessage          |
+      | Room 1 | users     | participant1 | participant1-displayname | conversation_created   |
+    Then user "participant1" sees the following system messages in room "Room 2" with 200
+      | room   | actorType | actorId      | actorDisplayName         | systemMessage          |
+      | Room 2 | users     | participant1 | participant1-displayname | conversation_created   |
+    Then user "participant1" sees the following system messages in room "Room 3" with 200
+      | room   | actorType | actorId      | actorDisplayName         | systemMessage          |
+      | Room 3 | users     | participant1 | participant1-displayname | conversation_created   |
+    And user "participant1" starts breakout rooms in room "class room" with 200 (v1)
+    And user "participant1" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 3    | class room | 0          | 2                | 1                  |
+      | 3    | Room 1     | 0          | 0                | 0                  |
+      | 3    | Room 2     | 0          | 0                | 0                  |
+      | 3    | Room 3     | 0          | 0                | 0                  |
+    Then user "participant1" sees the following system messages in room "Room 1" with 200
+      | room   | actorType | actorId      | actorDisplayName         | systemMessage          |
+      | Room 1 | users     | participant1 | participant1-displayname | breakout_rooms_started |
+      | Room 1 | users     | participant1 | participant1-displayname | conversation_created   |
+    Then user "participant1" sees the following system messages in room "Room 2" with 200
+      | room   | actorType | actorId      | actorDisplayName         | systemMessage          |
+      | Room 2 | users     | participant1 | participant1-displayname | breakout_rooms_started |
+      | Room 2 | users     | participant1 | participant1-displayname | conversation_created   |
+    Then user "participant1" sees the following system messages in room "Room 3" with 200
+      | room   | actorType | actorId      | actorDisplayName         | systemMessage          |
+      | Room 3 | users     | participant1 | participant1-displayname | breakout_rooms_started |
+      | Room 3 | users     | participant1 | participant1-displayname | conversation_created   |
+    And user "participant1" stops breakout rooms in room "class room" with 200 (v1)
+    And user "participant1" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 3    | class room | 0          | 2                | 0                  |
+      | 3    | Room 1     | 1          | 0                | 0                  |
+      | 3    | Room 2     | 1          | 0                | 0                  |
+      | 3    | Room 3     | 1          | 0                | 0                  |
+    Then user "participant1" sees the following system messages in room "Room 1" with 200
+      | room   | actorType | actorId      | actorDisplayName         | systemMessage          |
+      | Room 1 | users     | participant1 | participant1-displayname | breakout_rooms_stopped |
+      | Room 1 | users     | participant1 | participant1-displayname | breakout_rooms_started |
+      | Room 1 | users     | participant1 | participant1-displayname | conversation_created   |
+    Then user "participant1" sees the following system messages in room "Room 2" with 200
+      | room   | actorType | actorId      | actorDisplayName         | systemMessage          |
+      | Room 2 | users     | participant1 | participant1-displayname | breakout_rooms_stopped |
+      | Room 2 | users     | participant1 | participant1-displayname | breakout_rooms_started |
+      | Room 2 | users     | participant1 | participant1-displayname | conversation_created   |
+    Then user "participant1" sees the following system messages in room "Room 3" with 200
+      | room   | actorType | actorId      | actorDisplayName         | systemMessage          |
+      | Room 3 | users     | participant1 | participant1-displayname | breakout_rooms_stopped |
+      | Room 3 | users     | participant1 | participant1-displayname | breakout_rooms_started |
+      | Room 3 | users     | participant1 | participant1-displayname | conversation_created   |
