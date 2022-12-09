@@ -367,8 +367,8 @@ Feature: conversation/breakout-rooms
     Then user "participant2" sees the following breakout rooms for room "class room" with 400 (v4)
     Then user "participant1" sees the following breakout rooms for room "class room" with 200 (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
-      | 2    | Room 1     | 0          | 0                | 0                  |
-      | 2    | Room 2     | 0          | 0                | 0                  |
+      | 2    | Room 1     | 1          | 0                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
     And user "participant1" starts breakout rooms in room "class room" with 200 (v1)
     Then user "participant2" sees the following breakout rooms for room "class room" with 200 (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
