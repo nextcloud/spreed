@@ -2961,6 +2961,38 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" start "([^"]*)" recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function userStartRecordingInRoom(string $user, string $recordingType, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$recordingTypes = [
+			'video' => 1,
+			'audio' => 2,
+		];
+
+		$data = [
+			'status' => $recordingTypes[$recordingType]
+		];
+
+		$this->setCurrentUser($user);
+		$roomToken = self::$identifierToToken[$identifier];
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/call/' . $roomToken . '/recording', $data);
+		$response = $this->response->getBody()->getContents();
+		$this->assertStatusCode($this->response, $statusCode);
+		// $response = $this->getDataFromResponse($this->response);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" stop recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function userStopRecordingInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->setCurrentUser($user);
+		$roomToken = self::$identifierToToken[$identifier];
+		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/call/' . $roomToken . '/recording');
+		$response = $this->response->getBody()->getContents();
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @param ResponseInterface $response
 	 * @return string
 	 */

@@ -28,6 +28,11 @@ $requirements = [
 	'token' => '[a-z0-9]{4,30}',
 ];
 
+$requirementsRecording = [
+	'apiVersion' => 'v1',
+	'token' => '[a-z0-9]{4,30}',
+];
+
 return [
 	'ocs' => [
 		/** @see \OCA\Talk\Controller\CallController::getPeersForCall() */
@@ -41,8 +46,8 @@ return [
 		/** @see \OCA\Talk\Controller\CallController::leaveCall() */
 		['name' => 'Call#leaveCall', 'url' => '/api/{apiVersion}/call/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\CallController::startRecording() */
-		['name' => 'Call#startRecording', 'url' => '/api/{apiVersion}/call/{token}/recording', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
+		['name' => 'Call#startRecording', 'url' => '/api/{apiVersion}/call/{token}/recording', 'verb' => 'POST', 'requirements' => $requirementsRecording],
 		/** @see \OCA\Talk\Controller\CallController::stopRecording() */
-		['name' => 'Call#stopRecording', 'url' => '/api/{apiVersion}/call/{token}/recording', 'verb' => 'DELETE', 'requirements' => $requirementsWithToken],
+		['name' => 'Call#stopRecording', 'url' => '/api/{apiVersion}/call/{token}/recording', 'verb' => 'DELETE', 'requirements' => $requirementsRecording],
 	],
 ];

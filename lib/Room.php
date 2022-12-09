@@ -639,7 +639,7 @@ class Room {
 	}
 
 	public function getCallRecording(): int {
-		return $this->breakoutRoomStatus;
+		return $this->callRecording;
 	}
 
 	public function setCallRecording(int $status): void {
