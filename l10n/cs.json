@@ -276,6 +276,8 @@
     "Messages in {conversation}" : "Zprávy v {conversation}",
     "{user} in {conversation}" : "{user} v {conversation}",
     "Messages in other conversations" : "Zprávy v ostatních konverzacích",
+    "One to one rooms always need to show the other users avatar" : "Místnosti s jen dvěma komunikujícími vždy vyžadují zobrazení profilového obrázku druhého uživatele",
+    "Avatar image is not square" : "Profilový obrázek není čtvercový",
     "Room {number}" : "Místnost {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Nepodařilo se zažádat o zkušební období, protože příslušný server není dosažitelný. Prosím zkuste to znovu později.",
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "Je problém s ověřováním této instance. Možná není dosažitelná zvenčí, což je třeba pro ověření její URL adresy.",

@@ -7,6 +7,7 @@ OC.L10N.register(
     "Invalid file provided" : "Apurrióse un ficheru non válidu",
     "Invalid image" : "Imaxe non válida",
     "Unknown filetype" : "Triba desconocida de ficheru",
+    "Avatar image is not square" : "La imaxe del avatar nun ye cuadrada",
     "Andorra" : "Andorra",
     "Anguilla" : "Anguilla",
     "Albania" : "Albania",

@@ -278,6 +278,7 @@ OC.L10N.register(
     "Messages in {conversation}" : "Messages dans {conversation}",
     "{user} in {conversation}" : "{user} dans {conversation}",
     "Messages in other conversations" : "Messages dans les autres conversations",
+    "One to one rooms always need to show the other users avatar" : "Les salons en tête-à-tête doivent toujours montrer l'avatar de l'autre utilisateur.",
     "Avatar image is not square" : "L'image d'avatar n'est pas carré",
     "Room {number}" : "Salon {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "La requête de période d'essai a échouée car le serveur d'essai est injoignable. Merci d'essayer plus tard. ",
