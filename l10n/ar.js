@@ -206,6 +206,7 @@ OC.L10N.register(
     "Messages in {conversation}" : "الرسائل في {conversation}",
     "{user} in {conversation}" : "{user} في {conversation}",
     "Messages in other conversations" : "الرسائل في المحادثات الآخرى",
+    "Avatar image is not square" : "الصورة الرمزية ليست على شكل مربّع",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "فشل طلب التجربة لأن لا يمكن الوصول لخادم الإصدار التجريبي. يرجى معاودة المحاولة لاحقًا.",
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "هناك مشكلة في مصادقة هذه الحالة. ربما لا يمكن الوصول إليه من الخارج للتحقق من عنوان URL الخاص به.",
     "Something unexpected happened." : "حصل خطأ غير متوقع. ",
