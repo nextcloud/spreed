@@ -204,8 +204,7 @@ class CallController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireCallEnabled
-	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
+	 * @RequireModeratorParticipant
 	 * @RequireCallRecording
 	 */
 	public function startRecording(int $status): DataResponse {
@@ -218,8 +217,7 @@ class CallController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireCallEnabled
-	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
+	 * @RequireModeratorParticipant
 	 * @RequireCallRecording
 	 */
 	public function stopRecording(): DataResponse {

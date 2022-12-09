@@ -2976,9 +2976,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($user);
 		$roomToken = self::$identifierToToken[$identifier];
 		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/call/' . $roomToken . '/recording', $data);
-		$response = $this->response->getBody()->getContents();
 		$this->assertStatusCode($this->response, $statusCode);
-		// $response = $this->getDataFromResponse($this->response);
 	}
 
 	/**
