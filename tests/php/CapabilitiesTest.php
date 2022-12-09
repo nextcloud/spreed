@@ -122,6 +122,7 @@ class CapabilitiesTest extends TestCase {
 			'send-call-notification',
 			'talk-polls',
 			'breakout-rooms-v1',
+			'recording-v1',
 			'avatar',
 			'message-expiration',
 			'reactions',
@@ -169,6 +170,7 @@ class CapabilitiesTest extends TestCase {
 					'call' => [
 						'enabled' => true,
 						'breakout-rooms' => false,
+						'recording' => false,
 					],
 					'chat' => [
 						'max-length' => 32000,
@@ -270,6 +272,7 @@ class CapabilitiesTest extends TestCase {
 					'call' => [
 						'enabled' => false,
 						'breakout-rooms' => true,
+						'recording' => false,
 					],
 					'chat' => [
 						'max-length' => 32000,
@@ -343,5 +346,32 @@ class CapabilitiesTest extends TestCase {
 
 		$data = $capabilities->getCapabilities();
 		$this->assertEquals('this-is-the-key', $data['spreed']['config']['signaling']['hello-v2-token-key']);
+	}
+
+	/**
+	 * @dataProvider dataTestConfigRecording
+	 */
+	public function testConfigRecording(bool $enabled): void {
+		$capabilities = new Capabilities(
+			$this->serverConfig,
+			$this->talkConfig,
+			$this->commentsManager,
+			$this->userSession,
+			$this->appManager
+		);
+
+		$this->talkConfig->expects($this->once())
+			->method('isRecordingEnabled')
+			->willReturn($enabled);
+
+		$data = $capabilities->getCapabilities();
+		$this->assertEquals($data['spreed']['config']['call']['recording'], $enabled);
+	}
+
+	public function dataTestConfigRecording(): array {
+		return [
+			[true],
+			[false],
+		];
 	}
 }

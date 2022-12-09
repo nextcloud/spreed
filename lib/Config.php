@@ -136,6 +136,13 @@ class Config {
 		return $this->canEnableSIP[$user->getUID()];
 	}
 
+	public function isRecordingEnabled(): bool {
+		$isSignalingInternal = $this->getSignalingMode() === self::SIGNALING_INTERNAL;
+		$recordingAllowed = $this->config->getAppValue('spreed', 'call_recording', 'yes') === 'yes';
+
+		return !$isSignalingInternal && $recordingAllowed;
+	}
+
 	public function isDisabledForUser(IUser $user): bool {
 		$allowedGroups = $this->getAllowedTalkGroupIds();
 		if (empty($allowedGroups)) {

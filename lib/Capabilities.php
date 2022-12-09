@@ -113,6 +113,7 @@ class Capabilities implements IPublicCapability {
 				'send-call-notification',
 				'talk-polls',
 				'breakout-rooms-v1',
+				'recording-v1',
 				'avatar',
 			],
 			'config' => [
@@ -122,12 +123,15 @@ class Capabilities implements IPublicCapability {
 				'call' => [
 					'enabled' => ((int) $this->serverConfig->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE)) !== Room::START_CALL_NOONE,
 					'breakout-rooms' => $this->talkConfig->isBreakoutRoomsEnabled(),
+					'recording' => $this->talkConfig->isRecordingEnabled(),
 				],
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
 					'read-privacy' => Participant::PRIVACY_PUBLIC,
 				],
-				'conversations' => [],
+				'conversations' => [
+					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user)
+				],
 				'previews' => [
 					'max-gif-size' => (int)$this->serverConfig->getAppValue('spreed', 'max-gif-size', '3145728'),
 				],
@@ -150,8 +154,6 @@ class Capabilities implements IPublicCapability {
 			$capabilities['config']['attachments']['folder'] = $this->talkConfig->getAttachmentFolder($user->getUID());
 			$capabilities['config']['chat']['read-privacy'] = $this->talkConfig->getUserReadPrivacy($user->getUID());
 		}
-
-		$capabilities['config']['conversations']['can-create'] = $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user);
 
 		$pubKey = $this->talkConfig->getSignalingTokenPublicKey();
 		if ($pubKey) {
