@@ -277,7 +277,15 @@ class BreakoutRoomService {
 		}
 	}
 
-	public function setBreakoutRoomAssistanceRequest(Room $breakoutRoom, int $status): void {
+	public function requestAssistance(Room $breakoutRoom): void {
+		$this->setAssistanceRequest($breakoutRoom, BreakoutRoom::STATUS_ASSISTANCE_REQUESTED);
+	}
+
+	public function resetRequestForAssistance(Room $breakoutRoom): void {
+		$this->setAssistanceRequest($breakoutRoom, BreakoutRoom::STATUS_ASSISTANCE_RESET);
+	}
+
+	protected function setAssistanceRequest(Room $breakoutRoom, int $status): void {
 		if ($breakoutRoom->getObjectType() !== BreakoutRoom::PARENT_OBJECT_TYPE) {
 			throw new \InvalidArgumentException('room');
 		}
@@ -319,6 +327,10 @@ class BreakoutRoomService {
 		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
 		foreach ($breakoutRooms as $breakoutRoom) {
 			$this->roomService->setLobby($breakoutRoom, Webinary::LOBBY_NON_MODERATORS, null);
+
+			if ($breakoutRoom->getBreakoutRoomStatus() === BreakoutRoom::STATUS_ASSISTANCE_REQUESTED) {
+				$this->roomService->setBreakoutRoomStatus($breakoutRoom, BreakoutRoom::STATUS_ASSISTANCE_RESET);
+			}
 		}
 
 		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STOPPED);
@@ -357,9 +369,8 @@ class BreakoutRoomService {
 					// Skip this room
 				}
 			}
-		} else {
-			$rooms = $breakoutRooms;
+			return $rooms;
 		}
-		return $rooms;
+		return $breakoutRooms;
 	}
 }

@@ -95,7 +95,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	 */
 	public function requestAssistance(): DataResponse {
 		try {
-			$this->breakoutRoomService->setBreakoutRoomAssistanceRequest($this->room, BreakoutRoom::STATUS_ASSISTANCE_REQUESTED);
+			$this->breakoutRoomService->requestAssistance($this->room);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
@@ -111,7 +111,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	 */
 	public function resetRequestForAssistance(): DataResponse {
 		try {
-			$this->breakoutRoomService->setBreakoutRoomAssistanceRequest($this->room, BreakoutRoom::STATUS_ASSISTANCE_RESET);
+			$this->breakoutRoomService->resetRequestForAssistance($this->room);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
