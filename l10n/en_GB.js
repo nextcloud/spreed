@@ -278,6 +278,7 @@ OC.L10N.register(
     "Messages in {conversation}" : "Messages in {conversation}",
     "{user} in {conversation}" : "{user} in {conversation}",
     "Messages in other conversations" : "Messages in other conversations",
+    "One to one rooms always need to show the other users avatar" : "One to one rooms always need to show the other users avatar",
     "Avatar image is not square" : "Avatar image is not square",
     "Room {number}" : "Room {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Failed to request trial because the trial server is unreachable. Please try again later.",

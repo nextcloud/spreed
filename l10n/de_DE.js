@@ -278,6 +278,7 @@ OC.L10N.register(
     "Messages in {conversation}" : "Nachrichten in {conversation}",
     "{user} in {conversation}" : "{user} in {conversation}",
     "Messages in other conversations" : "Nachrichten in anderen Unterhaltungen",
+    "Avatar image is not square" : "Benutzerbild ist nicht quadratisch",
     "Room {number}" : "Raum {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Trial-Test konnte nicht angefordert werden, da der Testserver nicht erreichbar ist. Bitte versuchen Sie es später noch einmal.",
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "Problem bei der Authentifizierung dieser Instanz aufgetreten. Möglicherweise ist sie von außen nicht erreichbar, um ihre URL zu überprüfen.",

@@ -276,6 +276,7 @@
     "Messages in {conversation}" : "{conversation} 中的訊息",
     "{user} in {conversation}" : "{conversation} 中的 {user}",
     "Messages in other conversations" : "其他對話中的訊息",
+    "One to one rooms always need to show the other users avatar" : "一對一的房間一律需要顯示其他用戶的虛擬化身",
     "Avatar image is not square" : "虛擬化身圖像不是正方形",
     "Room {number}" : "聊天室 {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "由於聯繫不到試用伺服器，因此無法請求試用。請稍後再試。",

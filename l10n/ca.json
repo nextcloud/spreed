@@ -167,6 +167,7 @@
     "Messages in {conversation}" : "Missatges a {conversation}",
     "{user} in {conversation}" : "{usuari} a {conversa}",
     "Messages in other conversations" : "Missatges en altres converses",
+    "Avatar image is not square" : "La imatge de l'avatar no és quadrada",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "No s'ha pogut sol·licitar la prova perquè el servidor de prova no és accessible. Torneu-ho a provar més tard.",
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "Hi ha un problema amb l'autenticació d'aquesta instància. Potser no es pot arribar des de l'exterior per verificar l’URL.",
     "Something unexpected happened." : "Ha passat una cosa inesperada.",
