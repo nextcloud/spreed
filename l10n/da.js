@@ -168,6 +168,7 @@ OC.L10N.register(
     "Open settings" : "Indstillinger",
     "Conversations" : "Samtaler",
     "Messages" : "Beskeder",
+    "Avatar image is not square" : "Avatar billedet er ikke kvadratisk",
     "Andorra" : "Andorra",
     "Afghanistan" : "Afghanistan",
     "Albania" : "Albanien",
