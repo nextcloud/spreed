@@ -31,6 +31,7 @@ use OCA\Talk\Events\DuplicatedParticipantEvent;
 use OCA\Talk\Events\EndCallForEveryoneEvent;
 use OCA\Talk\Events\ModifyEveryoneEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
+use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
@@ -39,6 +40,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Server;
@@ -51,7 +53,9 @@ class Listener {
 
 	protected static function isUsingInternalSignaling(): bool {
 		$config = Server::get(Config::class);
-		return $config->getSignalingMode() === Config::SIGNALING_INTERNAL;
+		$isSignalingInternal = $config->getSignalingMode() === Config::SIGNALING_INTERNAL;
+		$isSignalingDev = $config->isSignalingDev();
+		return $isSignalingInternal && !$isSignalingDev;
 	}
 
 	protected static function registerInternalSignaling(IEventDispatcher $dispatcher): void {
@@ -96,6 +100,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, [self::class, 'notifyAfterJoinUpdateAndLeave']);
 		$dispatcher->addListener(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, [self::class, 'sendEndCallForEveryone']);
 		$dispatcher->addListener(Room::EVENT_AFTER_GUESTS_CLEAN, [self::class, 'notifyParticipantsAfterGuestClean']);
+		$dispatcher->addListener(Room::EVENT_AFTER_SET_CALL_RECORDING, [self::class, 'sendSignalingMessageWhenToggleRecording']);
 		$dispatcher->addListener(GuestManager::EVENT_AFTER_NAME_UPDATE, [self::class, 'notifyParticipantsAfterNameUpdated']);
 		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND, [self::class, 'notifyUsersViaExternalSignalingToRefreshTheChat']);
 		$dispatcher->addListener(ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND, [self::class, 'notifyUsersViaExternalSignalingToRefreshTheChat']);
@@ -361,5 +366,46 @@ class Listener {
 			],
 		];
 		$notifier->sendRoomMessage($room, $message);
+	}
+
+	public static function sendSignalingMessageWhenToggleRecording(ModifyRoomEvent $event): void {
+		if (self::isUsingInternalSignaling()) {
+			return;
+		}
+		if ($event->getParameter() !== 'callRecording') {
+			return;
+		}
+
+		$room = $event->getRoom();
+		$message = [
+			'type' => self::getCallRecordingType($event),
+			'recording' => [
+				'enabled' => self::isRecordingEnabled($event),
+			],
+		];
+
+		$notifier = Server::get(BackendNotifier::class);
+		$notifier->sendRoomMessage($room, $message);
+	}
+
+	private static function isRecordingEnabled(ModifyRoomEvent $event): bool {
+		$newStatus = $event->getNewValue();
+		$startStatus = [
+			RoomService::RECORDING_VIDEO,
+			RoomService::RECORDING_AUDIO,
+		];
+		return in_array($newStatus, $startStatus);
+	}
+
+	/**
+	 * @param ModifyRoomEvent $event
+	 * @return string audio|video
+	 */
+	private static function getCallRecordingType(ModifyRoomEvent $event): string {
+		$newValue = $event->getNewValue();
+		$oldValue = $event->getOldValue();
+		$isAudioStatus = $newValue === RoomService::RECORDING_AUDIO
+			|| $oldValue === RoomService::RECORDING_AUDIO;
+		return $isAudioStatus ? 'recording_audio' : 'recording_video';
 	}
 }
