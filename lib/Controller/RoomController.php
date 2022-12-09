@@ -236,11 +236,9 @@ class RoomController extends AEnvironmentAwareController {
 		foreach ($rooms as $room) {
 			try {
 				$return[] = $this->formatRoom($room, $this->participantService->getParticipant($room, $this->userId), $statuses);
-			} catch (RoomNotFoundException $e) {
 			} catch (ParticipantNotFoundException $e) {
 				// for example in case the room was deleted concurrently,
-				// the user is not a participant any more
-			} catch (\RuntimeException $e) {
+				// the user is not a participant anymore
 			}
 		}
 
@@ -260,11 +258,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		$return = [];
 		foreach ($rooms as $room) {
-			try {
-				$return[] = $this->formatRoom($room, null);
-			} catch (RoomNotFoundException $e) {
-			} catch (\RuntimeException $e) {
-			}
+			$return[] = $this->formatRoom($room, null);
 		}
 
 		return new DataResponse($return, Http::STATUS_OK);
@@ -294,10 +288,7 @@ class RoomController extends AEnvironmentAwareController {
 				$participant = null;
 			}
 
-			try {
-				$return[] = $this->formatRoom($room, $participant, null, false, true);
-			} catch (\RuntimeException $e) {
-			}
+			$return[] = $this->formatRoom($room, $participant, null, false, true);
 		}
 
 
@@ -389,28 +380,10 @@ class RoomController extends AEnvironmentAwareController {
 		throw new UnauthorizedException('Invalid HMAC provided');
 	}
 
-	/**
-	 * @param Room $room
-	 * @param Participant|null $currentParticipant
-	 * @param array|null $statuses
-	 * @param bool $isSIPBridgeRequest
-	 * @param bool $isListingBreakoutRooms
-	 * @return array
-	 * @throws RoomNotFoundException
-	 */
 	protected function formatRoom(Room $room, ?Participant $currentParticipant, ?array $statuses = null, bool $isSIPBridgeRequest = false, bool $isListingBreakoutRooms = false): array {
 		return $this->formatRoomV4($room, $currentParticipant, $statuses, $isSIPBridgeRequest, $isListingBreakoutRooms);
 	}
 
-	/**
-	 * @param Room $room
-	 * @param Participant|null $currentParticipant
-	 * @param array|null $statuses
-	 * @param bool $isSIPBridgeRequest
-	 * @param bool $isListingBreakoutRooms
-	 * @return array
-	 * @throws RoomNotFoundException
-	 */
 	protected function formatRoomV4(Room $room, ?Participant $currentParticipant, ?array $statuses, bool $isSIPBridgeRequest, bool $isListingBreakoutRooms): array {
 		$roomData = [
 			'id' => $room->getId(),
