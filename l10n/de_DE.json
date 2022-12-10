@@ -276,6 +276,7 @@
     "Messages in {conversation}" : "Nachrichten in {conversation}",
     "{user} in {conversation}" : "{user} in {conversation}",
     "Messages in other conversations" : "Nachrichten in anderen Unterhaltungen",
+    "One to one rooms always need to show the other users avatar" : "Eins-zu-Eins-Räume müssen immer den Avatar des anderen Benutzers anzeigen",
     "Avatar image is not square" : "Benutzerbild ist nicht quadratisch",
     "Room {number}" : "Raum {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Trial-Test konnte nicht angefordert werden, da der Testserver nicht erreichbar ist. Bitte versuchen Sie es später noch einmal.",
