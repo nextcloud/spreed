@@ -590,6 +590,7 @@ OC.L10N.register(
     "Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check." : "실패: WebAssembly가 이 브라우저에서 비활성화되었거나 지원되지 않습니다. WebAssembly를 활성화하거나 이를 지원하는 브라우저를 사용하여 확인하십시오.",
     "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "실패: \".wasm\" 및 \".tflite\" 파일이 웹 서버에서 제대로 반환되지 않았습니다. Talk 문서의 \"시스템 요구 사항\" 섹션을 확인하십시오.",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "확인: \".wasm\" 및 \".tflite\" 파일이 웹 서버에서 정상적으로 반환되었습니다.",
+    "It seems that the PHP and Apache configuration is not compatible. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module." : "현재 PHP와 Apache 설정이 호환되지 않는 것 같습니다. PHP는 오직 MPM_PREFORK 모듈과 함께 사용되어야 하며, PHP-FPM은 오직 MPM_EVENT 모듈과 함께 사용되어야 합니다.",
     "A participant raised their hand." : "한 참가자가 손을 들었다.",
     "Previous page of videos" : "비디오의 이전 페이지",
     "Next page of videos" : "비디오의 다음 페이지",
