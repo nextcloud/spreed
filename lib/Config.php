@@ -145,8 +145,8 @@ class Config {
 		$isSignalingDev = $this->isSignalingDev();
 		$isSignalingOk = $isSignalingDev || !$isSignalingInternal;
 
-		$callRecordingCapability = $this->config->getAppValue('spreed', 'call_recording', 'yes');
-		$recordingEnabled = $callRecordingCapability === 'yes';
+		$callRecordingConfig = $this->config->getAppValue('spreed', 'call_recording', 'yes');
+		$recordingEnabled = $callRecordingConfig === 'yes';
 
 		return $isSignalingOk && $recordingEnabled;
 	}
