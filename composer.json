@@ -17,7 +17,7 @@
 		"classmap-authoritative": true,
 		"optimize-autoloader": true,
 		"platform": {
-			"php": "7.4"
+			"php": "8.0"
 		},
 		"sort-packages": true
 	},

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "23896333b32bfe3507db7bcffd56cf69",
+    "content-hash": "01e5cf68b29df453cc5dd7744ce97db1",
     "packages": [
         {
             "name": "coenjacobs/mozart",
@@ -1162,7 +1162,7 @@
     "platform": [],
     "platform-dev": [],
     "platform-overrides": {
-        "php": "7.4"
+        "php": "8.0"
     },
     "plugin-api-version": "2.3.0"
 }
