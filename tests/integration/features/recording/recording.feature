@@ -9,7 +9,7 @@ Feature: recording/recording
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
-    And user "participant1" start "video" recording in room "room1" with 200 (v1)
+    And user "participant1" starts "video" recording in room "room1" with 200 (v1)
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
       | room1 | users     | participant1 | participant1-displayname | recording_started    |
@@ -27,7 +27,7 @@ Feature: recording/recording
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
-    And user "participant1" start "audio" recording in room "room1" with 200 (v1)
+    And user "participant1" starts "audio" recording in room "room1" with 200 (v1)
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage           |
       | room1 | users     | participant1 | participant1-displayname | audio_recording_started |
@@ -46,8 +46,8 @@ Feature: recording/recording
       | roomType | 2 |
       | roomName | room1 |
     And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
-    Then user "participant1" start "video" recording in room "room1" with 403 (v1)
-    Then user "participant1" start "audio" recording in room "room1" with 403 (v1)
+    Then user "participant1" starts "video" recording in room "room1" with 403 (v1)
+    Then user "participant1" starts "audio" recording in room "room1" with 403 (v1)
 
   Scenario: Get error when non manager try to start recording
     When the following "spreed" app config is set
@@ -56,5 +56,5 @@ Feature: recording/recording
       | roomType | 2 |
       | roomName | room1 |
     And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
-    Then user "participant2" start "video" recording in room "room1" with 403 (v1)
-    Then user "participant2" start "audio" recording in room "room1" with 403 (v1)
+    Then user "participant2" starts "video" recording in room "room1" with 403 (v1)
+    Then user "participant2" starts "audio" recording in room "room1" with 403 (v1)
