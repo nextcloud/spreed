@@ -393,7 +393,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `message_expiration_disabled` - {actor} disabled message expiration
 * `breakout_rooms_started` - {actor} started breakout rooms
 * `breakout_rooms_stopped` - {actor} stopped breakout rooms
-* `audio_recording_started` - {actor} started a video recording
-* `audio_recording_stopped` - {actor} stopped a video recording
+* `video_recording_started` - {actor} started a video recording
+* `video_recording_stopped` - {actor} stopped a video recording
 * `audio_recording_started` - {actor} started an audio recording
 * `audio_recording_stopped` - {actor} stopped an audio recording
