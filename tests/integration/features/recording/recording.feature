@@ -39,6 +39,29 @@ Feature: recording/recording
       | room1 | users     | participant1 | participant1-displayname | audio_recording_started |
       | room1 | users     | participant1 | participant1-displayname | conversation_created    |
 
+  Scenario: Get error when start|stop recording and already did this
+    Given the following "spreed" app config is set
+      | signaling_dev | yes |
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    When user "participant1" starts "audio" recording in room "room1" with 200 (v1)
+    Then user "participant1" starts "audio" recording in room "room1" with 400 (v1)
+    When user "participant1" stops recording in room "room1" with 200 (v1)
+    Then user "participant1" stops recording in room "room1" with 400 (v1)
+    When user "participant1" starts "video" recording in room "room1" with 200 (v1)
+    Then user "participant1" starts "video" recording in room "room1" with 400 (v1)
+    When user "participant1" stops recording in room "room1" with 200 (v1)
+    Then user "participant1" stops recording in room "room1" with 400 (v1)
+
+  Scenario: Get error when try to start recording with invalid status
+    When the following "spreed" app config is set
+      | signaling_dev | yes |
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    Then user "participant1" starts "invalid" recording in room "room1" with 400 (v1)
+
   Scenario: Manager try without success to start recording when signaling is internal
     When the following "spreed" app config is set
       | signaling_dev | no |
@@ -46,10 +69,10 @@ Feature: recording/recording
       | roomType | 2 |
       | roomName | room1 |
     And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
-    Then user "participant1" starts "video" recording in room "room1" with 403 (v1)
-    Then user "participant1" starts "audio" recording in room "room1" with 403 (v1)
+    Then user "participant1" starts "video" recording in room "room1" with 400 (v1)
+    And user "participant1" starts "audio" recording in room "room1" with 400 (v1)
 
-  Scenario: Get error when non manager try to start recording
+  Scenario: Get error when non moderator/owner try to start recording
     When the following "spreed" app config is set
       | signaling_dev | yes |
     And user "participant1" creates room "room1" (v4)
@@ -57,4 +80,4 @@ Feature: recording/recording
       | roomName | room1 |
     And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
     Then user "participant2" starts "video" recording in room "room1" with 403 (v1)
-    Then user "participant2" starts "audio" recording in room "room1" with 403 (v1)
+    And user "participant2" starts "audio" recording in room "room1" with 403 (v1)

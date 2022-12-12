@@ -2961,10 +2961,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" starts "(audio|video)" recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 * @When /^user "([^"]*)" starts "(invalid|audio|video)" recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
 	public function userStartRecordingInRoom(string $user, string $recordingType, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$recordingTypes = [
+			'invalid' => -1,
 			'video' => 1,
 			'audio' => 2,
 		];
