@@ -53,9 +53,7 @@ class Listener {
 
 	protected static function isUsingInternalSignaling(): bool {
 		$config = Server::get(Config::class);
-		$isSignalingInternal = $config->getSignalingMode() === Config::SIGNALING_INTERNAL;
-		$isSignalingDev = $config->isSignalingDev();
-		return $isSignalingInternal && !$isSignalingDev;
+		return $config->getSignalingMode() === Config::SIGNALING_INTERNAL;
 	}
 
 	protected static function registerInternalSignaling(IEventDispatcher $dispatcher): void {
