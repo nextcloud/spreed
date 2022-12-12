@@ -1,4 +1,4 @@
-Feature: callapi/recording
+Feature: recording/recording
   Background:
     Given user "participant1" exists
     Given user "participant2" exists

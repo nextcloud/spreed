@@ -2975,7 +2975,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->setCurrentUser($user);
 		$roomToken = self::$identifierToToken[$identifier];
-		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/call/' . $roomToken . '/recording', $data);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/recording/' . $roomToken, $data);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
@@ -2985,7 +2985,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userStopRecordingInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 		$roomToken = self::$identifierToToken[$identifier];
-		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/call/' . $roomToken . '/recording');
+		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/recording/' . $roomToken);
 		$response = $this->response->getBody()->getContents();
 		$this->assertStatusCode($this->response, $statusCode);
 	}
