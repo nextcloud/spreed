@@ -642,7 +642,7 @@ class Room {
 		return $this->callRecording;
 	}
 
-	public function setCallRecording(int $status): void {
-		$this->callRecording = $status;
+	public function setCallRecording(int $callRecording): void {
+		$this->callRecording = $callRecording;
 	}
 }
