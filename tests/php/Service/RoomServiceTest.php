@@ -25,6 +25,7 @@ namespace OCA\Talk\Tests\php\Service;
 
 use InvalidArgumentException;
 use OC\EventDispatcher\EventDispatcher;
+use OCA\Talk\Config;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -55,6 +56,8 @@ class RoomServiceTest extends TestCase {
 	protected $participantService;
 	/** @var IShareManager|MockObject */
 	protected $shareManager;
+	/** @var Config|MockObject */
+	protected $config;
 	/** @var IHasher|MockObject */
 	protected $hasher;
 	/** @var IEventDispatcher|MockObject */
@@ -70,6 +73,7 @@ class RoomServiceTest extends TestCase {
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->shareManager = $this->createMock(IShareManager::class);
+		$this->config = $this->createMock(Config::class);
 		$this->hasher = $this->createMock(IHasher::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->jobList = $this->createMock(IJobList::class);
@@ -79,6 +83,7 @@ class RoomServiceTest extends TestCase {
 			\OC::$server->get(IDBConnection::class),
 			$this->timeFactory,
 			$this->shareManager,
+			$this->config,
 			$this->hasher,
 			$this->dispatcher,
 			$this->jobList
@@ -349,6 +354,7 @@ class RoomServiceTest extends TestCase {
 			\OC::$server->get(IDBConnection::class),
 			$this->timeFactory,
 			$this->shareManager,
+			$this->config,
 			$this->hasher,
 			$dispatcher,
 			$this->jobList

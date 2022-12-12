@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OCA\Talk\Config;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -54,6 +55,7 @@ class RoomService {
 	protected IDBConnection $db;
 	protected ITimeFactory $timeFactory;
 	protected IShareManager $shareManager;
+	protected Config $config;
 	protected IHasher $hasher;
 	protected IEventDispatcher $dispatcher;
 	protected IJobList $jobList;
@@ -63,6 +65,7 @@ class RoomService {
 								IDBConnection $db,
 								ITimeFactory $timeFactory,
 								IShareManager $shareManager,
+								Config $config,
 								IHasher $hasher,
 								IEventDispatcher $dispatcher,
 								IJobList $jobList) {
@@ -71,6 +74,7 @@ class RoomService {
 		$this->db = $db;
 		$this->timeFactory = $timeFactory;
 		$this->shareManager = $shareManager;
+		$this->config = $config;
 		$this->hasher = $hasher;
 		$this->dispatcher = $dispatcher;
 		$this->jobList = $jobList;
@@ -363,6 +367,9 @@ class RoomService {
 	}
 
 	public function startRecording(Room $room, $status): bool {
+		if (!$this->config->isRecordingEnabled()) {
+			return false;
+		}
 		$availableRecordingTypes = [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
 		if (!in_array($status, $availableRecordingTypes)) {
 			return false;
@@ -371,6 +378,9 @@ class RoomService {
 	}
 
 	public function stopRecording(Room $room): bool {
+		if (!$this->config->isRecordingEnabled()) {
+			return false;
+		}
 		return $this->setCallRecording($room);
 	}
 

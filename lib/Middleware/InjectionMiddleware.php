@@ -122,10 +122,6 @@ class InjectionMiddleware extends Middleware {
 			$this->checkLobbyState($controller);
 		}
 
-		if ($this->reflector->hasAnnotation('RequireCallRecording')) {
-			$this->checkCallRecording($controller);
-		}
-
 		$requiredPermissions = $this->reflector->getAnnotationParameter('RequirePermissions', 'permissions');
 		if ($requiredPermissions) {
 			$this->checkPermissions($controller, $requiredPermissions);
@@ -252,12 +248,6 @@ class InjectionMiddleware extends Middleware {
 		$room = $controller->getRoom();
 		if (!$room instanceof Room || $room->getLobbyState() !== Webinary::LOBBY_NONE) {
 			throw new LobbyException();
-		}
-	}
-
-	protected function checkCallRecording(AEnvironmentAwareController $controller): void {
-		if (!$this->config->isRecordingEnabled()) {
-			throw new ReadOnlyException();
 		}
 	}
 

@@ -44,7 +44,6 @@ class RecordingController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireCallEnabled
 	 * @RequireModeratorParticipant
-	 * @RequireCallRecording
 	 */
 	public function startRecording(int $status): DataResponse {
 		if (!$this->roomService->startRecording($this->room, $status)) {
@@ -57,7 +56,6 @@ class RecordingController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireCallEnabled
 	 * @RequireModeratorParticipant
-	 * @RequireCallRecording
 	 */
 	public function stopRecording(): DataResponse {
 		$this->roomService->stopRecording($this->room);

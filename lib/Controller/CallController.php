@@ -200,28 +200,4 @@ class CallController extends AEnvironmentAwareController {
 
 		return new DataResponse();
 	}
-
-	/**
-	 * @PublicPage
-	 * @RequireCallEnabled
-	 * @RequireModeratorParticipant
-	 * @RequireCallRecording
-	 */
-	public function startRecording(int $status): DataResponse {
-		if (!$this->roomService->startRecording($this->room, $status)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-		return new DataResponse();
-	}
-
-	/**
-	 * @PublicPage
-	 * @RequireCallEnabled
-	 * @RequireModeratorParticipant
-	 * @RequireCallRecording
-	 */
-	public function stopRecording(): DataResponse {
-		$this->roomService->stopRecording($this->room);
-		return new DataResponse();
-	}
 }

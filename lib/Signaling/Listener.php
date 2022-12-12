@@ -40,7 +40,6 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
-use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Server;
