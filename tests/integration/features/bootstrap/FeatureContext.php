@@ -2961,7 +2961,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" start "([^"]*)" recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 * @When /^user "([^"]*)" starts "(audio|video)" recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
 	public function userStartRecordingInRoom(string $user, string $recordingType, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$recordingTypes = [
@@ -2980,7 +2980,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^user "([^"]*)" stop recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 * @When /^user "([^"]*)" stops recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
 	public function userStopRecordingInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);

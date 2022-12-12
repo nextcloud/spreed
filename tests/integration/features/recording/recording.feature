@@ -14,7 +14,7 @@ Feature: recording/recording
       | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
       | room1 | users     | participant1 | participant1-displayname | recording_started    |
       | room1 | users     | participant1 | participant1-displayname | conversation_created |
-    When user "participant1" stop recording in room "room1" with 200 (v1)
+    When user "participant1" stops recording in room "room1" with 200 (v1)
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
       | room1 | users     | participant1 | participant1-displayname | recording_stopped    |
@@ -32,7 +32,7 @@ Feature: recording/recording
       | room  | actorType | actorId      | actorDisplayName         | systemMessage           |
       | room1 | users     | participant1 | participant1-displayname | audio_recording_started |
       | room1 | users     | participant1 | participant1-displayname | conversation_created    |
-    When user "participant1" stop recording in room "room1" with 200 (v1)
+    When user "participant1" stops recording in room "room1" with 200 (v1)
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage           |
       | room1 | users     | participant1 | participant1-displayname | audio_recording_stopped |
