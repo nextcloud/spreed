@@ -505,8 +505,8 @@ class Listener implements IEventListener {
 	private static function getCallRecordingSuffix(ModifyRoomEvent $event): string {
 		$newStatus = $event->getNewValue();
 		$startStatus = [
-			RoomService::RECORDING_VIDEO,
-			RoomService::RECORDING_AUDIO,
+			Room::RECORDING_VIDEO,
+			Room::RECORDING_AUDIO,
 		];
 		$suffix = in_array($newStatus, $startStatus) ? 'started' : 'stopped';
 		return $suffix;
@@ -515,8 +515,8 @@ class Listener implements IEventListener {
 	private static function getCallRecordingPrefix(ModifyRoomEvent $event): string {
 		$newValue = $event->getNewValue();
 		$oldValue = $event->getOldValue();
-		$isAudioStatus = $newValue === RoomService::RECORDING_AUDIO
-			|| $oldValue === RoomService::RECORDING_AUDIO;
+		$isAudioStatus = $newValue === Room::RECORDING_AUDIO
+			|| $oldValue === Room::RECORDING_AUDIO;
 		return $isAudioStatus ? 'audio_' : '';
 	}
 }

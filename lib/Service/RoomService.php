@@ -49,9 +49,6 @@ use OCP\Security\IHasher;
 use OCP\Share\IManager as IShareManager;
 
 class RoomService {
-	public const RECORDING_STOP = 0;
-	public const RECORDING_VIDEO = 1;
-	public const RECORDING_AUDIO = 2;
 	protected Manager $manager;
 	protected ParticipantService $participantService;
 	protected IDBConnection $db;
@@ -366,7 +363,7 @@ class RoomService {
 	}
 
 	public function startRecording(Room $room, $status): bool {
-		$availableRecordingTypes = [self::RECORDING_VIDEO, self::RECORDING_AUDIO];
+		$availableRecordingTypes = [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
 		if (!in_array($status, $availableRecordingTypes)) {
 			return false;
 		}
@@ -381,8 +378,8 @@ class RoomService {
 	 * @param Room $room
 	 * @param integer $status 0 none|1 video|2 audio
 	 */
-	public function setCallRecording(Room $room, int $status = self::RECORDING_STOP): bool {
-		$availableRecordingStatus = [self::RECORDING_STOP, self::RECORDING_VIDEO, self::RECORDING_AUDIO];
+	public function setCallRecording(Room $room, int $status = Room::RECORDING_STOP): bool {
+		$availableRecordingStatus = [Room::RECORDING_STOP, Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
 		if (!in_array($status, $availableRecordingStatus)) {
 			return false;
 		}
