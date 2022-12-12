@@ -88,6 +88,38 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
+	 * @RequireLoggedInParticipant
+	 *
+	 * @return DataResponse
+	 */
+	public function requestAssistance(): DataResponse {
+		try {
+			$this->breakoutRoomService->requestAssistance($this->room);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireLoggedInParticipant
+	 *
+	 * @return DataResponse
+	 */
+	public function resetRequestForAssistance(): DataResponse {
+		try {
+			$this->breakoutRoomService->resetRequestForAssistance($this->room);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
 	 * @RequireLoggedInModeratorParticipant
 	 */
 	public function startBreakoutRooms(): DataResponse {
@@ -107,6 +139,20 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	public function stopBreakoutRooms(): DataResponse {
 		try {
 			$this->breakoutRoomService->stopBreakoutRooms($this->room);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireLoggedInParticipant
+	 */
+	public function switchBreakoutRoom(string $target): DataResponse {
+		try {
+			$this->breakoutRoomService->switchBreakoutRoom($this->room, $this->participant, $target);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}

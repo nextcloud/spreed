@@ -633,6 +633,8 @@ class RoomService {
 		if (!in_array($status, [
 			BreakoutRoom::STATUS_STOPPED,
 			BreakoutRoom::STATUS_STARTED,
+			BreakoutRoom::STATUS_ASSISTANCE_RESET,
+			BreakoutRoom::STATUS_ASSISTANCE_REQUESTED,
 		], true)) {
 			return false;
 		}

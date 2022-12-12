@@ -28,6 +28,7 @@ namespace OCA\Talk\Service;
 use InvalidArgumentException;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
@@ -84,9 +85,8 @@ class BreakoutRoomService {
 			throw new InvalidArgumentException('room');
 		}
 
-		if ($parent->getType() !== Room::TYPE_GROUP
-			&& $parent->getType() !== Room::TYPE_PUBLIC) {
-			// Can only do breakout rooms in group and public rooms
+		if ($parent->getType() !== Room::TYPE_GROUP) {
+			// Can only do breakout rooms in group rooms
 			throw new InvalidArgumentException('room');
 		}
 
@@ -277,6 +277,33 @@ class BreakoutRoomService {
 		}
 	}
 
+	public function requestAssistance(Room $breakoutRoom): void {
+		$this->setAssistanceRequest($breakoutRoom, BreakoutRoom::STATUS_ASSISTANCE_REQUESTED);
+	}
+
+	public function resetRequestForAssistance(Room $breakoutRoom): void {
+		$this->setAssistanceRequest($breakoutRoom, BreakoutRoom::STATUS_ASSISTANCE_RESET);
+	}
+
+	protected function setAssistanceRequest(Room $breakoutRoom, int $status): void {
+		if ($breakoutRoom->getObjectType() !== BreakoutRoom::PARENT_OBJECT_TYPE) {
+			throw new \InvalidArgumentException('room');
+		}
+
+		if ($breakoutRoom->getLobbyState() !== Webinary::LOBBY_NONE) {
+			throw new \InvalidArgumentException('room');
+		}
+
+		if (!in_array($status, [
+			BreakoutRoom::STATUS_ASSISTANCE_RESET,
+			BreakoutRoom::STATUS_ASSISTANCE_REQUESTED,
+		], true)) {
+			throw new \InvalidArgumentException('status');
+		}
+
+		$this->roomService->setBreakoutRoomStatus($breakoutRoom, $status);
+	}
+
 	public function startBreakoutRooms(Room $parent): void {
 		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
 			throw new \InvalidArgumentException('mode');
@@ -300,10 +327,115 @@ class BreakoutRoomService {
 		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
 		foreach ($breakoutRooms as $breakoutRoom) {
 			$this->roomService->setLobby($breakoutRoom, Webinary::LOBBY_NON_MODERATORS, null);
+
+			if ($breakoutRoom->getBreakoutRoomStatus() === BreakoutRoom::STATUS_ASSISTANCE_REQUESTED) {
+				$this->roomService->setBreakoutRoomStatus($breakoutRoom, BreakoutRoom::STATUS_ASSISTANCE_RESET);
+			}
 		}
 
 		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STOPPED);
 
 		// FIXME missing to send the signaling messages so participants are moved back
+	}
+
+	public function switchBreakoutRoom(Room $parent, Participant $participant, string $targetToken): void {
+		if ($parent->getBreakoutRoomMode() !== BreakoutRoom::MODE_FREE) {
+			throw new \InvalidArgumentException('mode');
+		}
+
+		if ($parent->getBreakoutRoomStatus() !== BreakoutRoom::STATUS_STARTED) {
+			throw new \InvalidArgumentException('status');
+		}
+
+		if ($participant->hasModeratorPermissions()) {
+			// Moderators don't switch, they are part of all breakout rooms
+			throw new \InvalidArgumentException('moderator');
+		}
+
+		$attendee = $participant->getAttendee();
+
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+
+		$foundTarget = false;
+		foreach ($breakoutRooms as $breakoutRoom) {
+			if ($targetToken === $breakoutRoom->getToken()) {
+				$foundTarget = true;
+				break;
+			}
+		}
+
+		if (!$foundTarget) {
+			throw new \InvalidArgumentException('target');
+		}
+
+		foreach ($breakoutRooms as $breakoutRoom) {
+			try {
+				$removeParticipant = $this->participantService->getParticipantByActor(
+					$breakoutRoom,
+					$attendee->getActorType(),
+					$attendee->getActorId()
+				);
+
+				if ($targetToken !== $breakoutRoom->getToken()) {
+					// Remove from all other breakout rooms
+					$this->participantService->removeAttendee(
+						$breakoutRoom,
+						$removeParticipant,
+						Room::PARTICIPANT_LEFT
+					);
+				}
+			} catch (ParticipantNotFoundException $e) {
+				if ($targetToken === $breakoutRoom->getToken()) {
+					// Join the target breakout room
+					$this->participantService->addUsers(
+						$breakoutRoom,
+						[
+							[
+								'actorType' => $attendee->getActorType(),
+								'actorId' => $attendee->getActorId(),
+								'displayName' => $attendee->getDisplayName(),
+								'participantType' => $attendee->getParticipantType(),
+							]
+						]
+					);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param Room $parent
+	 * @param Participant $participant
+	 * @return Room[]
+	 */
+	public function getBreakoutRooms(Room $parent, Participant $participant): array {
+		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
+			throw new \InvalidArgumentException('mode');
+		}
+
+		if (!$participant->hasModeratorPermissions() && $parent->getBreakoutRoomStatus() !== BreakoutRoom::STATUS_STARTED) {
+			throw new \InvalidArgumentException('status');
+		}
+
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+
+		$returnAll = $participant->hasModeratorPermissions() || $parent->getBreakoutRoomMode() === BreakoutRoom::MODE_FREE;
+		if (!$returnAll) {
+			$rooms = [];
+			foreach ($breakoutRooms as $breakoutRoom) {
+				try {
+					$this->participantService->getParticipantByActor(
+						$breakoutRoom,
+						$participant->getAttendee()->getActorType(),
+						$participant->getAttendee()->getActorId()
+					);
+					$rooms[] = $breakoutRoom;
+				} catch (ParticipantNotFoundException $e) {
+					// Skip this room
+				}
+			}
+			return $rooms;
+		}
+		return $breakoutRooms;
 	}
 }

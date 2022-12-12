@@ -42,6 +42,8 @@ return [
 		['name' => 'Room#createRoom', 'url' => '/api/{apiVersion}/room', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\RoomController::getSingleRoom() */
 		['name' => 'Room#getSingleRoom', 'url' => '/api/{apiVersion}/room/{token}', 'verb' => 'GET', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::getBreakoutRooms() */
+		['name' => 'Room#getBreakoutRooms', 'url' => '/api/{apiVersion}/room/{token}/breakout-rooms', 'verb' => 'GET', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::renameRoom() */
 		['name' => 'Room#renameRoom', 'url' => '/api/{apiVersion}/room/{token}', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::deleteRoom() */

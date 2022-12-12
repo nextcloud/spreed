@@ -46,6 +46,7 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
+use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
@@ -83,6 +84,7 @@ class RoomController extends AEnvironmentAwareController {
 	protected Manager $manager;
 	protected ICloudIdManager $cloudIdManager;
 	protected RoomService $roomService;
+	protected BreakoutRoomService $breakoutRoomService;
 	protected ParticipantService $participantService;
 	protected SessionService $sessionService;
 	protected GuestManager $guestManager;
@@ -109,6 +111,7 @@ class RoomController extends AEnvironmentAwareController {
 								IGroupManager $groupManager,
 								Manager $manager,
 								RoomService $roomService,
+								BreakoutRoomService $breakoutRoomService,
 								ParticipantService $participantService,
 								SessionService $sessionService,
 								GuestManager $guestManager,
@@ -132,6 +135,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->groupManager = $groupManager;
 		$this->manager = $manager;
 		$this->roomService = $roomService;
+		$this->breakoutRoomService = $breakoutRoomService;
 		$this->participantService = $participantService;
 		$this->sessionService = $sessionService;
 		$this->guestManager = $guestManager;
@@ -232,11 +236,9 @@ class RoomController extends AEnvironmentAwareController {
 		foreach ($rooms as $room) {
 			try {
 				$return[] = $this->formatRoom($room, $this->participantService->getParticipant($room, $this->userId), $statuses);
-			} catch (RoomNotFoundException $e) {
 			} catch (ParticipantNotFoundException $e) {
 				// for example in case the room was deleted concurrently,
-				// the user is not a participant any more
-			} catch (\RuntimeException $e) {
+				// the user is not a participant anymore
 			}
 		}
 
@@ -256,16 +258,42 @@ class RoomController extends AEnvironmentAwareController {
 
 		$return = [];
 		foreach ($rooms as $room) {
-			try {
-				$return[] = $this->formatRoom($room, null);
-			} catch (RoomNotFoundException $e) {
-			} catch (\RuntimeException $e) {
-			}
+			$return[] = $this->formatRoom($room, null);
 		}
 
 		return new DataResponse($return, Http::STATUS_OK);
 	}
 
+	/**
+	 * Get all (for moderators and in case of "free selection) or the assigned breakout room
+	 *
+	 * @NoAdminRequired
+	 * @RequireLoggedInParticipant
+	 * @BruteForceProtection(action=talkRoomToken)
+	 *
+	 * @return DataResponse
+	 */
+	public function getBreakoutRooms(): DataResponse {
+		try {
+			$rooms = $this->breakoutRoomService->getBreakoutRooms($this->room, $this->participant);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+
+		$return = [];
+		foreach ($rooms as $room) {
+			try {
+				$participant = $this->participantService->getParticipant($room, $this->userId);
+			} catch (ParticipantNotFoundException $e) {
+				$participant = null;
+			}
+
+			$return[] = $this->formatRoom($room, $participant, null, false, true);
+		}
+
+
+		return new DataResponse($return);
+	}
 
 	/**
 	 * @PublicPage
@@ -352,27 +380,11 @@ class RoomController extends AEnvironmentAwareController {
 		throw new UnauthorizedException('Invalid HMAC provided');
 	}
 
-	/**
-	 * @param Room $room
-	 * @param Participant|null $currentParticipant
-	 * @param array|null $statuses
-	 * @param bool $isSIPBridgeRequest
-	 * @return array
-	 * @throws RoomNotFoundException
-	 */
-	protected function formatRoom(Room $room, ?Participant $currentParticipant, ?array $statuses = null, bool $isSIPBridgeRequest = false): array {
-		return $this->formatRoomV4($room, $currentParticipant, $statuses, $isSIPBridgeRequest);
+	protected function formatRoom(Room $room, ?Participant $currentParticipant, ?array $statuses = null, bool $isSIPBridgeRequest = false, bool $isListingBreakoutRooms = false): array {
+		return $this->formatRoomV4($room, $currentParticipant, $statuses, $isSIPBridgeRequest, $isListingBreakoutRooms);
 	}
 
-	/**
-	 * @param Room $room
-	 * @param Participant|null $currentParticipant
-	 * @param array|null $statuses
-	 * @param bool $isSIPBridgeRequest
-	 * @return array
-	 * @throws RoomNotFoundException
-	 */
-	protected function formatRoomV4(Room $room, ?Participant $currentParticipant, ?array $statuses, bool $isSIPBridgeRequest): array {
+	protected function formatRoomV4(Room $room, ?Participant $currentParticipant, ?array $statuses, bool $isSIPBridgeRequest, bool $isListingBreakoutRooms): array {
 		$roomData = [
 			'id' => $room->getId(),
 			'token' => $room->getToken(),
@@ -438,6 +450,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		if ($isSIPBridgeRequest
+			|| ($isListingBreakoutRooms && !$currentParticipant instanceof Participant)
 			|| ($room->getListable() !== Room::LISTABLE_NONE && !$currentParticipant instanceof Participant)
 		) {
 			return array_merge($roomData, [
@@ -453,6 +466,8 @@ class RoomController extends AEnvironmentAwareController {
 				'lobbyTimer' => $lobbyTimer,
 				'sipEnabled' => $room->getSIPEnabled(),
 				'listable' => $room->getListable(),
+				'breakoutRoomMode' => $room->getBreakoutRoomMode(),
+				'breakoutRoomStatus' => $room->getBreakoutRoomStatus(),
 			]);
 		}
 

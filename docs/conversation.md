@@ -153,6 +153,24 @@
 
     - Data: See array definition in `Get user´s conversations`
 
+## Get breakout rooms
+
+Get all (for moderators and in case of "free selection) or the assigned breakout room
+
+* Required capability: `breakout-rooms-v1`
+* Method: `GET`
+* Endpoint: `/room/{token}/breakout-rooms`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the conversation does not have breakout rooms configured
+        + `400 Bad Request` When the breakout rooms are not started and the participant is not a moderator
+        + `401 Unauthorized` When the user is not logged in
+        + `404 Not Found` When the conversation could not be found for the participant
+
+    - Data: See array definition in `Get user´s conversations`
+
 ## Rename a conversation
 
 * Method: `PUT`

@@ -283,6 +283,39 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" sees the following breakout rooms for room "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $apiVersion
+	 * @param int $status
+	 * @param TableNode|null $formData
+	 */
+	public function userListsBreakoutRooms(string $user, string $identifier, int $status, string $apiVersion, TableNode $formData = null): void {
+		$token = self::$identifierToToken[$identifier];
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . $token . '/breakout-rooms');
+		$this->assertStatusCode($this->response, $status);
+
+		if ($status !== 200) {
+			return;
+		}
+
+		$rooms = $this->getDataFromResponse($this->response);
+
+		$rooms = array_filter($rooms, function ($room) {
+			return $room['type'] !== 4;
+		});
+
+		if ($formData === null) {
+			Assert::assertEmpty($rooms);
+			return;
+		}
+
+		$this->assertRooms($rooms, $formData);
+	}
+
+	/**
 	 * @param array $rooms
 	 * @param TableNode $formData
 	 */
@@ -2377,6 +2410,47 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest(
 			$startStop === 'starts' ? 'POST' : 'DELETE',
 			'/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$identifier] . '/rooms'
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" switches in room "([^"]*)" to breakout room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $target
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSwitchesBreakoutRoom(string $user, string $identifier, string $target, string $statusCode, string $apiVersion = 'v1') {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST',
+			'/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$identifier] . '/switch',
+			[
+				'target' => self::$identifierToToken[$target],
+			]
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" (requests assistance|cancels request for assistance) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $requestCancel
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userRequestsOrCancelsAssistanceInBreakoutRooms(string $user, string $requestCancel, string $identifier, string $statusCode, string $apiVersion = 'v1') {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			$requestCancel === 'requests assistance' ? 'POST' : 'DELETE',
+			'/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$identifier] . '/request-assistance'
 		);
 
 		$this->assertStatusCode($this->response, $statusCode);

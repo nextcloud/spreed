@@ -28,7 +28,7 @@ Group and public conversations can be used to host breakout rooms.
         + `200 OK`
         + `400 Bad Request` When breakout rooms are disabled on the server
         + `400 Bad Request` When breakout rooms are already configured
-        + `400 Bad Request` When the conversation is not a group or public conversation
+        + `400 Bad Request` When the conversation is not a group conversation
         + `400 Bad Request` When the conversation is a breakout room itself
         + `400 Bad Request` When the mode is invalid
         + `400 Bad Request` When the amount is below the minimum or above the maximum
@@ -93,3 +93,53 @@ Group and public conversations can be used to host breakout rooms.
 		+ `403 Forbidden` When the participant is not a moderator
 		+ `404 Not Found` When the conversation could not be found for the participant
 		+ `413 Payload Too Large` When the message was longer than the allowed limit of 32000 characters (check the `spreed => config => chat => max-length` capability for the limit)
+
+## Request assistance
+
+This endpoint allows participants to raise their hand (token is the breakout room) and moderators will see it in any of the breakout rooms as well as the parent room.
+
+* Required capability: `breakout-rooms-v1`
+* Method: `POST`
+* Endpoint: `/breakout-rooms/{token}/request-assistance`
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `400 Bad Request` When the room is not a breakout room or breakout rooms are not started
+		+ `404 Not Found` When the conversation could not be found for the participant
+
+## Reset request for assistance
+
+* Required capability: `breakout-rooms-v1`
+* Method: `DELETE`
+* Endpoint: `/breakout-rooms/{token}/request-assistance`
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `400 Bad Request` When the room does not have breakout rooms configured
+		+ `404 Not Found` When the conversation could not be found for the participant
+
+## List all breakout rooms
+
+See [conversation API](conversation.md#get-breakout-rooms))
+
+## Switch to a different breakout room (as non moderator)
+
+This endpoint allows participants to raise their hand (token is the breakout room) and moderators will see it in any of the breakout rooms as well as the parent room.
+
+* Required capability: `breakout-rooms-v1`
+* Method: `POST`
+* Endpoint: `/breakout-rooms/{token}/switch`
+* Data:
+
+| field    | type   | Description                                                                   |
+|----------|--------|-------------------------------------------------------------------------------|
+| `token`  | string | (In the URL) Conversation token of the parent room hosting the breakout rooms |
+| `target` | string | Conversation token of the target breakout room                                |
+
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `400 Bad Request` When the participant is a moderator in the conversation
+		+ `400 Bad Request` When breakout rooms are not configured in `free` mode
+		+ `400 Bad Request` When breakout rooms are not started
+		+ `404 Not Found` When the conversation could not be found for the participant
