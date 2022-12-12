@@ -394,6 +394,8 @@ class RoomService {
 			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$update->executeStatement();
 
+		$room->setCallRecording($status);
+
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_CALL_RECORDING, $event);
 		return true;
 	}
