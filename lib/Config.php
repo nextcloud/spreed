@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCA\Talk\Events\GetTurnServersEvent;
+use OCA\Talk\Model\Attendee;
 use OCA\Talk\Vendor\Firebase\JWT\JWT;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -33,6 +34,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
+use OCP\Server;
 
 class Config {
 	public const SIGNALING_INTERNAL = 'internal';
@@ -170,6 +172,17 @@ class Config {
 
 		$userGroups = $this->groupManager->getUserGroupIds($user);
 		return empty(array_intersect($allowedGroups, $userGroups));
+	}
+
+	public function getDefaultPermissions(): int {
+		// Admin configured default permissions
+		$configurableDefault = $this->config->getAppValue('spreed', 'default_permissions');
+		if ($configurableDefault !== '') {
+			return (int) $configurableDefault;
+		}
+
+		// Falling back to an unrestricted set of permissions, only ignoring the lobby is off
+		return Attendee::PERMISSIONS_MAX_DEFAULT & ~Attendee::PERMISSIONS_LOBBY_IGNORE;
 	}
 
 	public function getAttachmentFolder(string $userId): string {

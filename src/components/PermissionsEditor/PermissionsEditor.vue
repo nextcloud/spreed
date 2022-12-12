@@ -80,6 +80,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import { PARTICIPANT } from '../../constants.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { loadState } from '@nextcloud/initial-state'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS
 
@@ -160,7 +161,11 @@ export default {
 				return this.permissions
 			}
 
-			return PERMISSIONS.MAX_DEFAULT & ~PERMISSIONS.LOBBY_IGNORE
+			return loadState(
+				'spreed',
+				'default_permissions',
+				PERMISSIONS.MAX_DEFAULT & ~PERMISSIONS.LOBBY_IGNORE
+			)
 		},
 
 		/**
