@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use InvalidArgumentException;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -47,7 +48,7 @@ class RecordingController extends AEnvironmentAwareController {
 	 */
 	public function startRecording(int $status): DataResponse {
 		try {
-			$this->roomService->startRecording($this->room, $status)
+			$this->roomService->startRecording($this->room, $status);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
