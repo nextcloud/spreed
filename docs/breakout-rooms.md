@@ -121,3 +121,25 @@ This endpoint allows participants to raise their hand (token is the breakout roo
 ## List all breakout rooms
 
 See [conversation API](conversation.md#get-breakout-rooms))
+
+## Switch to a different breakout room (as non moderator)
+
+This endpoint allows participants to raise their hand (token is the breakout room) and moderators will see it in any of the breakout rooms as well as the parent room.
+
+* Required capability: `breakout-rooms-v1`
+* Method: `POST`
+* Endpoint: `/breakout-rooms/{token}/switch`
+* Data:
+
+| field    | type   | Description                                                                   |
+|----------|--------|-------------------------------------------------------------------------------|
+| `token`  | string | (In the URL) Conversation token of the parent room hosting the breakout rooms |
+| `target` | string | Conversation token of the target breakout room                                |
+
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `400 Bad Request` When the participant is a moderator in the conversation
+		+ `400 Bad Request` When breakout rooms are not configured in `free` mode
+		+ `400 Bad Request` When breakout rooms are not started
+		+ `404 Not Found` When the conversation could not be found for the participant

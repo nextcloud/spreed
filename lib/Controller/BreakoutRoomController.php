@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
-use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -140,6 +139,20 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	public function stopBreakoutRooms(): DataResponse {
 		try {
 			$this->breakoutRoomService->stopBreakoutRooms($this->room);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireLoggedInParticipant
+	 */
+	public function switchBreakoutRoom(string $target): DataResponse {
+		try {
+			$this->breakoutRoomService->switchBreakoutRoom($this->room, $this->participant, $target);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}

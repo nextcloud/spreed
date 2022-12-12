@@ -338,6 +338,71 @@ class BreakoutRoomService {
 		// FIXME missing to send the signaling messages so participants are moved back
 	}
 
+	public function switchBreakoutRoom(Room $parent, Participant $participant, string $targetToken): void {
+		if ($parent->getBreakoutRoomMode() !== BreakoutRoom::MODE_FREE) {
+			throw new \InvalidArgumentException('mode');
+		}
+
+		if ($parent->getBreakoutRoomStatus() !== BreakoutRoom::STATUS_STARTED) {
+			throw new \InvalidArgumentException('status');
+		}
+
+		if ($participant->hasModeratorPermissions()) {
+			// Moderators don't switch, they are part of all breakout rooms
+			throw new \InvalidArgumentException('moderator');
+		}
+
+		$attendee = $participant->getAttendee();
+
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+
+		$foundTarget = false;
+		foreach ($breakoutRooms as $breakoutRoom) {
+			if ($targetToken === $breakoutRoom->getToken()) {
+				$foundTarget = true;
+				break;
+			}
+		}
+
+		if (!$foundTarget) {
+			throw new \InvalidArgumentException('target');
+		}
+
+		foreach ($breakoutRooms as $breakoutRoom) {
+			try {
+				$removeParticipant = $this->participantService->getParticipantByActor(
+					$breakoutRoom,
+					$attendee->getActorType(),
+					$attendee->getActorId()
+				);
+
+				if ($targetToken !== $breakoutRoom->getToken()) {
+					// Remove from all other breakout rooms
+					$this->participantService->removeAttendee(
+						$breakoutRoom,
+						$removeParticipant,
+						Room::PARTICIPANT_LEFT
+					);
+				}
+			} catch (ParticipantNotFoundException $e) {
+				if ($targetToken === $breakoutRoom->getToken()) {
+					// Join the target breakout room
+					$this->participantService->addUsers(
+						$breakoutRoom,
+						[
+							[
+								'actorType' => $attendee->getActorType(),
+								'actorId' => $attendee->getActorId(),
+								'displayName' => $attendee->getDisplayName(),
+								'participantType' => $attendee->getParticipantType(),
+							]
+						]
+					);
+				}
+			}
+		}
+	}
+
 	/**
 	 * @param Room $parent
 	 * @param Participant $participant

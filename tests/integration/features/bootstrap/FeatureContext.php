@@ -2416,6 +2416,28 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" switches in room "([^"]*)" to breakout room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $target
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSwitchesBreakoutRoom(string $user, string $identifier, string $target, string $statusCode, string $apiVersion = 'v1') {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST',
+			'/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$identifier] . '/switch',
+			[
+				'target' => self::$identifierToToken[$target],
+			]
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" (requests assistance|cancels request for assistance) in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user

@@ -44,5 +44,7 @@ return [
 		['name' => 'BreakoutRoom#startBreakoutRooms', 'url' => '/api/{apiVersion}/breakout-rooms/{token}/rooms', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\BreakoutRoomController::stopBreakoutRooms() */
 		['name' => 'BreakoutRoom#stopBreakoutRooms', 'url' => '/api/{apiVersion}/breakout-rooms/{token}/rooms', 'verb' => 'DELETE', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\BreakoutRoomController::switchBreakoutRoom() */
+		['name' => 'BreakoutRoom#switchBreakoutRoom', 'url' => '/api/{apiVersion}/breakout-rooms/{token}/switch', 'verb' => 'POST', 'requirements' => $requirements],
 	],
 ];
