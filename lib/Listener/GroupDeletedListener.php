@@ -32,6 +32,9 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\Group\Events\GroupDeletedEvent;
 use OCP\IConfig;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class GroupDeletedListener implements IEventListener {
 	private IConfig $config;
 	private Manager $manager;

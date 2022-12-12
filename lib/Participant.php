@@ -93,7 +93,7 @@ class Participant {
 	}
 
 	public function canStartCall(IConfig $config): bool {
-		$defaultStartCall = (int) $config->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE);
+		$defaultStartCall = (int) $config->getAppValue('spreed', 'start_calls', (string) Room::START_CALL_EVERYONE);
 
 		if ($defaultStartCall === Room::START_CALL_NOONE) {
 			return false;

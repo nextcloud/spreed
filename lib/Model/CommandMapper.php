@@ -26,6 +26,9 @@ namespace OCA\Talk\Model;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\IDBConnection;
 
+/**
+ * @template-extends QBMapper<Command>
+ */
 class CommandMapper extends QBMapper {
 	/**
 	 * @param IDBConnection $db

@@ -32,6 +32,7 @@ use OCP\IDBConnection;
  * @method Attachment mapRowToEntity(array $row)
  * @method Attachment findEntity(IQueryBuilder $query)
  * @method Attachment[] findEntities(IQueryBuilder $query)
+ * @template-extends QBMapper<Attachment>
  */
 class AttachmentMapper extends QBMapper {
 	use TTransactional;

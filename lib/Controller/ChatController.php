@@ -161,7 +161,7 @@ class ChatController extends AEnvironmentAwareController {
 		if (!$chatMessage->getVisibility()) {
 			$response = new DataResponse([], Http::STATUS_CREATED);
 			if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-				$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+				$response->addHeader('X-Chat-Last-Common-Read', (string) $this->chatManager->getLastCommonReadMessage($this->room));
 			}
 			return $response;
 		}
@@ -175,7 +175,7 @@ class ChatController extends AEnvironmentAwareController {
 
 		$response = new DataResponse($data, Http::STATUS_CREATED);
 		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-			$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+			$response->addHeader('X-Chat-Last-Common-Read', (string) $this->chatManager->getLastCommonReadMessage($this->room));
 		}
 		return $response;
 	}
@@ -457,7 +457,7 @@ class ChatController extends AEnvironmentAwareController {
 					// As per "section 10.3.5 of RFC 2616" entity headers shall be
 					// stripped out on 304: https://stackoverflow.com/a/17822709
 					$response->setStatus(Http::STATUS_OK);
-					$response->addHeader('X-Chat-Last-Common-Read', $newLastCommonRead);
+					$response->addHeader('X-Chat-Last-Common-Read', (string) $newLastCommonRead);
 				}
 			}
 			return $response;
@@ -543,9 +543,9 @@ class ChatController extends AEnvironmentAwareController {
 
 		$newLastKnown = end($comments);
 		if ($newLastKnown instanceof IComment) {
-			$response->addHeader('X-Chat-Last-Given', $newLastKnown->getId());
+			$response->addHeader('X-Chat-Last-Given', (string) $newLastKnown->getId());
 			/**
-			 * This falsely set the read marker on new messages although you
+			 * This falsely set the read marker on new messages, although you
 			 * navigated away to a different chat already. So we removed this
 			 * and instead update the read marker before your next waiting.
 			 * So when you are still there, it will just have a wrong read
@@ -556,7 +556,7 @@ class ChatController extends AEnvironmentAwareController {
 			 * }
 			 */
 			if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-				$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+				$response->addHeader('X-Chat-Last-Common-Read', (string) $this->chatManager->getLastCommonReadMessage($this->room));
 			}
 		}
 
@@ -674,7 +674,7 @@ class ChatController extends AEnvironmentAwareController {
 
 		$response = new DataResponse($data, $bridge['enabled'] ? Http::STATUS_ACCEPTED : Http::STATUS_OK);
 		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-			$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+			$response->addHeader('X-Chat-Last-Common-Read', (string) $this->chatManager->getLastCommonReadMessage($this->room));
 		}
 		return $response;
 	}
@@ -710,7 +710,7 @@ class ChatController extends AEnvironmentAwareController {
 
 		$response = new DataResponse($data, $bridge['enabled'] ? Http::STATUS_ACCEPTED : Http::STATUS_OK);
 		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-			$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+			$response->addHeader('X-Chat-Last-Common-Read', (string) $this->chatManager->getLastCommonReadMessage($this->room));
 		}
 		return $response;
 	}
@@ -726,7 +726,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->participantService->updateLastReadMessage($this->participant, $lastReadMessage);
 		$response = new DataResponse();
 		if ($this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-			$response->addHeader('X-Chat-Last-Common-Read', $this->chatManager->getLastCommonReadMessage($this->room));
+			$response->addHeader('X-Chat-Last-Common-Read', (string) $this->chatManager->getLastCommonReadMessage($this->room));
 		}
 		return $response;
 	}

@@ -56,7 +56,7 @@ class Util {
 
 	public function getUsersWithAccessFile(string $fileId): array {
 		if (!isset($this->accessLists[$fileId])) {
-			$nodes = $this->rootFolder->getById($fileId);
+			$nodes = $this->rootFolder->getById((int) $fileId);
 
 			if (empty($nodes)) {
 				return [];
@@ -87,7 +87,7 @@ class Util {
 
 	public function canGuestsAccessFile(string $fileId): bool {
 		if (!isset($this->publicAccessLists[$fileId])) {
-			$nodes = $this->rootFolder->getById($fileId);
+			$nodes = $this->rootFolder->getById((int) $fileId);
 
 			if (empty($nodes)) {
 				return false;

@@ -106,7 +106,7 @@ class RemoveEmptyRooms extends TimedJob {
 			return false;
 		}
 
-		$mountsForFile = $this->userMountCache->getMountsForFileId($room->getObjectId());
+		$mountsForFile = $this->userMountCache->getMountsForFileId((int) $room->getObjectId());
 		if (!empty($mountsForFile)) {
 			return false;
 		}

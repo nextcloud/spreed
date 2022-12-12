@@ -31,6 +31,9 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class CSPListener implements IEventListener {
 	private Config $config;
 

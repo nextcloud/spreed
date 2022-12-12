@@ -41,6 +41,8 @@ use OCP\Util;
  * Helper class to extend the "publicshare" template from the server.
  *
  * The additional scripts modify the page in the browser to inject the Talk UI as needed.
+ *
+ * @template-implements IEventListener<Event>
  */
 class TemplateLoader implements IEventListener {
 	use TInitialState;

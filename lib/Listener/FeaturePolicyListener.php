@@ -30,6 +30,9 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class FeaturePolicyListener implements IEventListener {
 	public function handle(Event $event): void {
 		if (!($event instanceof AddFeaturePolicyEvent)) {

@@ -57,6 +57,9 @@ use OCP\Server;
 use OCP\Share\IShare;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class Listener implements IEventListener {
 	protected IRequest $request;
 	protected ChatManager $chatManager;

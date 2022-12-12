@@ -74,7 +74,9 @@
 		</UnimplementedInterfaceMethod>
 	</issueHandlers>
 	<stubs>
+		<file name="tests/stubs/oc_comments_comment.php" />
 		<file name="tests/stubs/oc_comments_manager.php" />
+		<file name="tests/stubs/oc_hooks_emitter.php" />
 		<file name="tests/stubs/Symfony_Component_EventDispatcher_GenericEvent.php" />
 	</stubs>
 </psalm>

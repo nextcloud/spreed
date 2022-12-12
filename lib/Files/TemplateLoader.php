@@ -42,6 +42,8 @@ use OCP\Util;
 
 /**
  * Helper class to add the Talk UI to the sidebar of the Files app.
+ *
+ * @template-implements IEventListener<Event>
  */
 class TemplateLoader implements IEventListener {
 	use TInitialState;

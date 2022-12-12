@@ -31,6 +31,9 @@ use OCA\Talk\Service\ParticipantService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class CircleDeletedListener implements IEventListener {
 	private Manager $manager;
 	private ParticipantService $participantService;

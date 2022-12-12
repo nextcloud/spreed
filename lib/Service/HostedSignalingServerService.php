@@ -84,7 +84,7 @@ class HostedSignalingServerService {
 				'timeout' => 10,
 			]);
 
-			// this is needed here because the delete happens in a concurrent request
+			// this is needed here because the deletion happens in a concurrent request
 			// and thus the cached value in the config object would trigger an UPDATE
 			// instead of an INSERT if there is another request to the API server
 			$this->config->deleteAppValue('spreed', 'hosted-signaling-server-nonce');
@@ -243,7 +243,7 @@ class HostedSignalingServerService {
 	 *
 	 * @return (\ArrayAccess|array|mixed)[]|\ArrayAccess
 	 *
-	 * @psalm-return \ArrayAccess|array{created: mixed, owner: \ArrayAccess|array, status: mixed, signaling?: \ArrayAccess|array}
+	 * @psalm-return \ArrayAccess|non-empty-array{created: mixed, owner: \ArrayAccess|array, status: mixed, signaling?: \ArrayAccess|array}
 	 */
 	public function fetchAccountInfo(AccountId $accountId) {
 		try {

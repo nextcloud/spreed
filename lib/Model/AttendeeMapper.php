@@ -34,6 +34,7 @@ use OCP\IDBConnection;
  * @method Attendee mapRowToEntity(array $row)
  * @method Attendee findEntity(IQueryBuilder $query)
  * @method Attendee[] findEntities(IQueryBuilder $query)
+ * @template-extends QBMapper<Attendee>
  */
 class AttendeeMapper extends QBMapper {
 	/**

@@ -420,7 +420,7 @@ class Notifier {
 	}
 
 	protected function getDefaultGroupNotification(): int {
-		return (int) $this->config->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_MENTION);
+		return (int) $this->config->getAppValue('spreed', 'default_group_notification', (string) Participant::NOTIFY_MENTION);
 	}
 
 	/**

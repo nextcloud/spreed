@@ -32,12 +32,16 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\App\IAppManager;
+use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 abstract class AMembershipListener implements IEventListener {
 	protected Manager $manager;
 	protected IAppManager $appManager;

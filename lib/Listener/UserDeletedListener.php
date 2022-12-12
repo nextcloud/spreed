@@ -30,6 +30,9 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\User\Events\UserDeletedEvent;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class UserDeletedListener implements IEventListener {
 	private Manager $manager;
 	private PollService $pollService;

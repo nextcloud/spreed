@@ -30,6 +30,9 @@ use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
+/**
+ * @template-extends QBMapper<Vote>
+ */
 class VoteMapper extends QBMapper {
 	/**
 	 * @param IDBConnection $db

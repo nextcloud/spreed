@@ -154,7 +154,7 @@ class CapabilitiesTest extends TestCase {
 			->willReturnMap([
 				['spreed', 'has_reference_id', 'no', 'no'],
 				['spreed', 'max-gif-size', '3145728', '200000'],
-				['spreed', 'start_calls', Room::START_CALL_EVERYONE, Room::START_CALL_EVERYONE],
+				['spreed', 'start_calls', (string) Room::START_CALL_EVERYONE, (string) Room::START_CALL_EVERYONE],
 				['spreed', 'session-ping-limit', '200', '200'],
 				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
 			]);
@@ -250,7 +250,7 @@ class CapabilitiesTest extends TestCase {
 			->willReturnMap([
 				['spreed', 'has_reference_id', 'no', 'yes'],
 				['spreed', 'max-gif-size', '3145728', '200000'],
-				['spreed', 'start_calls', Room::START_CALL_EVERYONE, Room::START_CALL_NOONE],
+				['spreed', 'start_calls', (string) Room::START_CALL_EVERYONE, (string) Room::START_CALL_NOONE],
 				['spreed', 'session-ping-limit', '200', '50'],
 				['core', 'backgroundjobs_mode', 'ajax', 'cron'],
 			]);

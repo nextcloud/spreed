@@ -30,6 +30,7 @@ use OCP\IDBConnection;
 
 /**
  * @method Session mapRowToEntity(array $row)
+ * @template-extends QBMapper<Session>
  */
 class SessionMapper extends QBMapper {
 	/**
