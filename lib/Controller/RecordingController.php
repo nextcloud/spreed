@@ -46,8 +46,10 @@ class RecordingController extends AEnvironmentAwareController {
 	 * @RequireModeratorParticipant
 	 */
 	public function startRecording(int $status): DataResponse {
-		if (!$this->roomService->startRecording($this->room, $status)) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		try {
+			$this->roomService->startRecording($this->room, $status)
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 		return new DataResponse();
 	}
@@ -58,7 +60,11 @@ class RecordingController extends AEnvironmentAwareController {
 	 * @RequireModeratorParticipant
 	 */
 	public function stopRecording(): DataResponse {
-		$this->roomService->stopRecording($this->room);
+		try {
+			$this->roomService->stopRecording($this->room);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
 		return new DataResponse();
 	}
 }

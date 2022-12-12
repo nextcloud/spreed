@@ -367,19 +367,19 @@ class RoomService {
 	}
 
 	public function startRecording(Room $room, $status): bool {
-		if (!$this->config->isRecordingEnabled()) {
-			return false;
-		}
 		$availableRecordingTypes = [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
 		if (!in_array($status, $availableRecordingTypes)) {
-			return false;
+			throw new InvalidArgumentException('status');
+		}
+		if ($room->getCallRecording() !== 0) {
+			throw new InvalidArgumentException('room');
 		}
 		return $this->setCallRecording($room, $status);
 	}
 
 	public function stopRecording(Room $room): bool {
-		if (!$this->config->isRecordingEnabled()) {
-			return false;
+		if ($room->getCallRecording() === 0) {
+			throw new InvalidArgumentException('room');
 		}
 		return $this->setCallRecording($room);
 	}
@@ -389,9 +389,13 @@ class RoomService {
 	 * @param integer $status 0 none|1 video|2 audio
 	 */
 	public function setCallRecording(Room $room, int $status = Room::RECORDING_STOP): bool {
+		if (!$this->config->isRecordingEnabled()) {
+			throw new InvalidArgumentException('config');
+		}
+
 		$availableRecordingStatus = [Room::RECORDING_STOP, Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
 		if (!in_array($status, $availableRecordingStatus)) {
-			return false;
+			throw new InvalidArgumentException('status');
 		}
 
 		$oldStatus = $room->getCallRecording();
