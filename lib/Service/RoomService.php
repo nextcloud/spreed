@@ -794,14 +794,23 @@ class RoomService {
 	public function deleteRoom(Room $room): void {
 		$event = new RoomEvent($room);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_ROOM_DELETE, $event);
-		$delete = $this->db->getQueryBuilder();
+
+		// Delete all breakout rooms when deleting a parent room
+		if ($room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
+			$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $room->getToken());
+			foreach ($breakoutRooms as $breakoutRoom) {
+				$this->deleteRoom($breakoutRoom);
+			}
+		}
 
 		// Delete attendees
+		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_attendees')
 			->where($delete->expr()->eq('room_id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$delete->executeStatement();
 
 		// Delete room
+		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_rooms')
 			->where($delete->expr()->eq('id', $delete->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
 		$delete->executeStatement();

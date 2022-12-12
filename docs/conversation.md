@@ -193,6 +193,8 @@ Get all (for moderators and in case of "free selection) or the assigned breakout
 
 ## Delete a conversation
 
+*Note:* Deleting a conversation that is the parent of breakout rooms, will also delete them.
+
 * Method: `DELETE`
 * Endpoint: `/room/{token}`
 
