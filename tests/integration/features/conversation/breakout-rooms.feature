@@ -516,3 +516,67 @@ Feature: conversation/breakout-rooms
     When user "participant1" deletes room "class room" with 200 (v4)
     And user "participant1" is participant of the following rooms (v4)
     And user "participant2" is participant of the following rooms (v4)
+
+  Scenario: Create an additional breakout room on the fly
+    Given user "participant1" creates room "class room" (v4)
+      | roomType | 2 |
+      | roomName | class room |
+    And user "participant1" adds user "participant2" to room "class room" with 200 (v4)
+    And user "participant1" promotes "participant2" in room "class room" with 200 (v4)
+    And user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 2               |
+    And user "participant1" creates 2 automatic breakout rooms for "class room" with 200 (v1)
+    And user "participant1" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 1                | 0                  |
+      | 2    | Room 1     | 1          | 0                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
+    And user "participant2" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 1                | 0                  |
+      | 2    | Room 1     | 1          | 0                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
+    # Can not nest
+    Given user "participant1" creates room "Room 3" with 400 (v4)
+      | roomType   | 2 |
+      | roomName   | Room 3 |
+      | objectType | room |
+      | objectId   | ROOM(Room 2) |
+    Given user "participant1" creates room "Room 3" with 201 (v4)
+      | roomType   | 2 |
+      | roomName   | Room 3 |
+      | objectType | room |
+      | objectId   | ROOM(class room) |
+    And user "participant1" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 1                | 0                  |
+      | 2    | Room 1     | 1          | 0                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
+      | 2    | Room 3     | 1          | 0                | 0                  |
+    And user "participant2" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 1                | 0                  |
+      | 2    | Room 1     | 1          | 0                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
+      | 2    | Room 3     | 1          | 0                | 0                  |
+    And user "participant1" starts breakout rooms in room "class room" with 200 (v1)
+    And user "participant1" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 1                | 1                  |
+      | 2    | Room 1     | 0          | 0                | 0                  |
+      | 2    | Room 2     | 0          | 0                | 0                  |
+      | 2    | Room 3     | 0          | 0                | 0                  |
+    Given user "participant1" creates room "Room 3" with 201 (v4)
+      | roomType   | 2 |
+      | roomName   | Room 4 |
+      | objectType | room |
+      | objectId   | ROOM(class room) |
+    And user "participant1" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 1                | 1                  |
+      | 2    | Room 1     | 0          | 0                | 0                  |
+      | 2    | Room 2     | 0          | 0                | 0                  |
+      | 2    | Room 3     | 0          | 0                | 0                  |
+      | 2    | Room 4     | 0          | 0                | 0                  |

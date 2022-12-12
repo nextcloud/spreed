@@ -96,16 +96,20 @@
 
 ## Creating a new conversation
 
+*Note:* Creating a conversation as a child breakout room, will automatically set the lobby when breakout rooms are not started and will always overwrite the room type with the parent room type. Also moderators of the parent conversation will be automatically added as moderators.
+
 * Method: `POST`
 * Endpoint: `/room`
 * Data:
 
-| field      | type   | Description                                                                                                                                                          |
-|------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `roomType` | int    | See [constants list](constants.md#conversation-types)                                                                                                                |
-| `invite`   | string | user id (`roomType = 1`), group id (`roomType = 2` - optional), circle id (`roomType = 2`, `source = 'circles'`], only available with `circles-support` capability)) |
-| `source`   | string | The source for the invite, only supported on `roomType = 2` for `groups` and `circles` (only available with `circles-support` capability)                            |
-| `roomName` | string | Conversation name up to 255 characters (Not available for `roomType = 1`)                                                                                            |
+| field        | type   | Description                                                                                                                                                           |
+|--------------|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `roomType`   | int    | See [constants list](constants.md#conversation-types)                                                                                                                 |
+| `invite`     | string | user id (`roomType = 1`), group id (`roomType = 2` - optional), circle id (`roomType = 2`, `source = 'circles'`], only available with `circles-support` capability))  |
+| `source`     | string | The source for the invite, only supported on `roomType = 2` for `groups` and `circles` (only available with `circles-support` capability)                             |
+| `roomName`   | string | Conversation name up to 255 characters (Not available for `roomType = 1`)                                                                                             |
+| `objectType` | string | Type of an object this room references, currently only allowed value is `room` to indicate the parent of a breakout room                                              |
+| `objectId`   | string | Id of an object this room references, room token is used for the parent of a breakout room                                                                            |
 
 * Response:
     - Status code:

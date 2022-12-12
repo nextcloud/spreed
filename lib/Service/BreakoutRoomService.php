@@ -171,7 +171,7 @@ class BreakoutRoomService {
 	 * @param Room[] $rooms
 	 * @param Participant[] $moderators
 	 */
-	protected function addModeratorsToBreakoutRooms(array $rooms, array $moderators): void {
+	public function addModeratorsToBreakoutRooms(array $rooms, array $moderators): void {
 		$moderatorsToAdd = [];
 		foreach ($moderators as $moderator) {
 			$attendee = $moderator->getAttendee();
