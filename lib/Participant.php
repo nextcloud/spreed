@@ -28,6 +28,7 @@ namespace OCA\Talk;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCP\IConfig;
+use OCP\Server;
 
 class Participant {
 	public const OWNER = 1;
@@ -144,7 +145,6 @@ class Participant {
 			return $this->room->getDefaultPermissions();
 		}
 
-		// Falling back to an unrestricted set of permissions, only ignoring the lobby is off
-		return Attendee::PERMISSIONS_MAX_DEFAULT & ~Attendee::PERMISSIONS_LOBBY_IGNORE;
+		return Server::get(Config::class)->getDefaultPermissions();
 	}
 }

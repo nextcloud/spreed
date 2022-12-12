@@ -90,6 +90,11 @@ trait TInitialState {
 			'federation_enabled',
 			$this->talkConfig->isFederationEnabled()
 		);
+
+		$this->initialState->provideInitialState(
+			'default_permissions',
+			$this->talkConfig->getDefaultPermissions()
+		);
 	}
 
 	protected function publishInitialStateForUser(IUser $user, IRootFolder $rootFolder, IAppManager $appManager): void {
