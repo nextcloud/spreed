@@ -41,6 +41,7 @@ import integrationsStore from './integrationsStore.js'
 import reactionsStore from './reactionsStore.js'
 import sharedItemStore from './sharedItemsStore.js'
 import pollStore from './pollStore.js'
+import breakoutRoomsStore from './breakoutRoomsStore.js'
 
 export default {
 	modules: {
@@ -65,6 +66,7 @@ export default {
 		reactionsStore,
 		sharedItemStore,
 		pollStore,
+		breakoutRoomsStore,
 	},
 
 	mutations: {},
