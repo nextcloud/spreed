@@ -157,7 +157,9 @@
 		</NcActions>
 
 		<!-- Breakout rooms editor -->
-		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor" @close="showBreakoutRoomsEditor = false" />
+		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
+			:token="token"
+			@close="showBreakoutRoomsEditor = false" />
 	</Fragment>
 </template>
 

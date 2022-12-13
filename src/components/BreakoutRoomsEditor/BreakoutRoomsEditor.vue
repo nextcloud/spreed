@@ -1,4 +1,4 @@
-<!--
+\<!--
   - @copyright Copyright (c) 2022 Marco Ambrosini <marcoambrosini@icloud.com>
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
@@ -23,19 +23,75 @@
 	<NcModal v-bind="$attrs"
 		v-on="$listeners">
 		<div class="breakout-rooms-editor">
-			DUMMMAYYY
+			<h2>{{ t('spreed', 'Create rooms') }}</h2>
+			<NcInputField :label="t('spreed', 'Number of breakout rooms')" type="number" :value.sync="amount" />
+			<NcCheckboxRadioSwitch :checked.sync="mode"
+				value="1"
+				name="mode_radio"
+				type="radio">
+				{{ t('spreed', 'Automatically assign participants') }}
+			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch :checked.sync="mode"
+				value="2"
+				name="mode_radio"
+				type="radio">
+				{{ t('spreed', 'Manually assign participants') }}
+			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch :checked.sync="mode"
+				value="3"
+				name="mode_radio"
+				type="radio">
+				{{ t('spreed', 'Allow participants to choose') }}
+			</NcCheckboxRadioSwitch>
+			<div class="breakout-rooms-editor__buttons">
+				<NcButton @click="handleCreateRooms">
+					{{ t('spreed', 'Create rooms') }}
+				</NcButton>
+			</div>
 		</div>
-	</NcModal>
+	</ncmodal>
 </template>
 
 <script>
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcInputField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'BreakoutRoomsEditor',
 
 	components: {
 		NcModal,
+		NcInputField,
+		NcCheckboxRadioSwitch,
+		NcButton,
+	},
+
+	props: {
+		token: {
+			type: String,
+			required: true,
+		},
+	},
+
+	data() {
+		return {
+			mode: 'auto',
+			amount: 1,
+			attendeeMap: '',
+		}
+	},
+
+	methods: {
+		handleCreateRooms() {
+			this.$store.dispatch('configureBreakoutRoomsAction', {
+				token: this.token,
+				mode: this.mode,
+				amount: this.amount,
+				attendeeMap: this.attendeeMap,
+			})
+		},
 	},
 }
 </script>
@@ -43,9 +99,9 @@ export default {
 <style scoped>
 .breakout-rooms-editor {
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: 400px;
-	width: 300px;
+	flex-direction: column;
+	padding: 20px;
+	justify-content: flex-start;
+	align-items: flex-start;
 }
 </style>

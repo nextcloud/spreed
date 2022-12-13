@@ -35,6 +35,7 @@
 		</div>
 		<!-- Breakout rooms editor -->
 		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
+			:token="token"
 			@close="showBreakoutRoomsEditor = false" />
 	</Fragment>
 </template>
