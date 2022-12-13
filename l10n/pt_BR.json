@@ -277,6 +277,7 @@
     "{user} in {conversation}" : "{user} em {conversation}",
     "Messages in other conversations" : "Mensagens em outras conversas",
     "Avatar image is not square" : "A imagem do avatar não é quadrada",
+    "Room {number}" : "Sala {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Falha ao solicitar a avaliação porque o servidor está inacessível. Tente novamente mais tarde.",
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "Há um problema com a autenticação desta instância. Talvez não seja acessível externamente para verificar sua URL.",
     "Something unexpected happened." : "Algo inesperado aconteceu.",

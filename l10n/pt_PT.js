@@ -253,6 +253,7 @@ OC.L10N.register(
     "You" : "Você",
     "Show screen" : "Mostrar ecrã",
     "Favorite" : "Favorito",
+    "Restricted" : "Restrito",
     "Description" : "Descrição",
     "Personal" : "Pessoal",
     "Leave conversation" : "Sair da conversação",
