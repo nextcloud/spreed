@@ -978,6 +978,7 @@
     "Lost connection to signaling server. Try to reload the page manually." : "Χάθηκε η σύνδεση με τον διακομιστή σηματοδοσίας. Προσπαθήστε να ανανεώσετε την σελίδα χειροκίνητα.",
     "Establishing signaling connection is taking longer than expected …" : "Η διαδικασία σύνδεσης διαρκεί περισσότερο από το αναμενόμενο ...",
     "Failed to establish signaling connection. Retrying …" : "Η διαδικασία σύνδεσης απέτυχε. Προσπάθεια ξανά ...",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Ο διαμορφωμένος διακομιστής σηματοδότησης πρέπει να ενημερωθεί για να είναι συμβατός με αυτήν την έκδοση του Talk. Επικοινωνήστε με τον διαχειριστή σας.",
     "Default" : "Προεπιλεγμένο",
     "Microphone {number}" : "Μικρόφωνο {number}",
     "Camera {number}" : "Κάμερα {number}",
