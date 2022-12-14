@@ -34,6 +34,7 @@ use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Db\TTransactional;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -71,6 +72,8 @@ class Manager {
 	protected ITimeFactory $timeFactory;
 	private IHasher $hasher;
 	private IL10N $l;
+
+	use TTransactional;
 
 	public function __construct(IDBConnection $db,
 								IConfig $config,
@@ -910,25 +913,27 @@ class Manager {
 	public function createRoom(int $type, string $name = '', string $objectType = '', string $objectId = ''): Room {
 		$token = $this->getNewToken();
 
-		$insert = $this->db->getQueryBuilder();
-		$insert->insert('talk_rooms')
-			->values(
-				[
-					'name' => $insert->createNamedParameter($name),
-					'type' => $insert->createNamedParameter($type, IQueryBuilder::PARAM_INT),
-					'token' => $insert->createNamedParameter($token),
-				]
-			);
+		$room = $this->atomic(function () use ($type, $name, $token, $objectType, $objectId) {
+			$insert = $this->db->getQueryBuilder();
+			$insert->insert('talk_rooms')
+				->values(
+					[
+						'name' => $insert->createNamedParameter($name),
+						'type' => $insert->createNamedParameter($type, IQueryBuilder::PARAM_INT),
+						'token' => $insert->createNamedParameter($token),
+					]
+				);
 
-		if (!empty($objectType) && !empty($objectId)) {
-			$insert->setValue('object_type', $insert->createNamedParameter($objectType))
-				->setValue('object_id', $insert->createNamedParameter($objectId));
-		}
+			if (!empty($objectType) && !empty($objectId)) {
+				$insert->setValue('object_type', $insert->createNamedParameter($objectType))
+					->setValue('object_id', $insert->createNamedParameter($objectId));
+			}
 
-		$insert->executeStatement();
-		$roomId = $insert->getLastInsertId();
+			$insert->executeStatement();
+			$roomId = $insert->getLastInsertId();
 
-		$room = $this->getRoomById($roomId);
+			return $this->getRoomById($roomId);
+		}, $this->db);
 
 		$event = new RoomEvent($room);
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_CREATE, $event);
@@ -945,21 +950,23 @@ class Manager {
 	public function createRemoteRoom(int $type, string $name, string $remoteToken, string $remoteServer): Room {
 		$token = $this->getNewToken();
 
-		$qb = $this->db->getQueryBuilder();
+		return $this->atomic(function () use ($type, $name, $token, $remoteToken, $remoteServer) {
+			$qb = $this->db->getQueryBuilder();
 
-		$qb->insert('talk_rooms')
-			->values([
-				'name' => $qb->createNamedParameter($name),
-				'type' => $qb->createNamedParameter($type, IQueryBuilder::PARAM_INT),
-				'token' => $qb->createNamedParameter($token),
-				'remote_token' => $qb->createNamedParameter($remoteToken),
-				'remote_server' => $qb->createNamedParameter($remoteServer),
-			]);
+			$qb->insert('talk_rooms')
+				->values([
+					'name' => $qb->createNamedParameter($name),
+					'type' => $qb->createNamedParameter($type, IQueryBuilder::PARAM_INT),
+					'token' => $qb->createNamedParameter($token),
+					'remote_token' => $qb->createNamedParameter($remoteToken),
+					'remote_server' => $qb->createNamedParameter($remoteServer),
+				]);
 
-		$qb->executeStatement();
-		$roomId = $qb->getLastInsertId();
+			$qb->executeStatement();
+			$roomId = $qb->getLastInsertId();
 
-		return $this->getRoomById($roomId);
+			return $this->getRoomById($roomId);
+		}, $this->db);
 	}
 
 	public function resolveRoomDisplayName(Room $room, string $userId): string {
