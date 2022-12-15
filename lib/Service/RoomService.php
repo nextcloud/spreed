@@ -371,7 +371,7 @@ class RoomService {
 		if (!in_array($status, $availableRecordingTypes)) {
 			throw new InvalidArgumentException('status');
 		}
-		if ($room->getCallRecording() !== 0) {
+		if ($room->getCallRecording() !== Room::RECORDING_NONE) {
 			throw new InvalidArgumentException('room');
 		}
 		if (!$room->getActiveSince() instanceof \DateTimeInterface) {
@@ -381,7 +381,7 @@ class RoomService {
 	}
 
 	public function stopRecording(Room $room): bool {
-		if ($room->getCallRecording() === 0) {
+		if ($room->getCallRecording() === Room::RECORDING_NONE) {
 			throw new InvalidArgumentException('room');
 		}
 		return $this->setCallRecording($room);
