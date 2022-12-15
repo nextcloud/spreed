@@ -43,7 +43,6 @@ class RecordingController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireCallEnabled
 	 * @RequireModeratorParticipant
 	 */
 	public function startRecording(int $status): DataResponse {
@@ -57,7 +56,6 @@ class RecordingController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireCallEnabled
 	 * @RequireModeratorParticipant
 	 */
 	public function stopRecording(): DataResponse {
