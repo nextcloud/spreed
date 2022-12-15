@@ -374,6 +374,9 @@ class RoomService {
 		if ($room->getCallRecording() !== 0) {
 			throw new InvalidArgumentException('room');
 		}
+		if (!$room->getActiveSince() instanceof \DateTimeInterface) {
+			throw new InvalidArgumentException('call');
+		}
 		return $this->setCallRecording($room, $status);
 	}
 
