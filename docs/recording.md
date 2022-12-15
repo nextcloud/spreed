@@ -1,6 +1,6 @@
 # Call recording API
 
-* API v1: 🏁 since Nextcloud 26
+* API v1: Base endpoint `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 26
 
 ## Start call recording
 
