@@ -105,7 +105,6 @@ title: Constants
 * `1` - Participants of the conversation with an account on the instance
 * `2` - Moderators
 * `3` - No one
-## Call recording
 
 ### Call recording status
 * `0` - Stopped recording
