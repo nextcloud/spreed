@@ -520,19 +520,19 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('You started a video recording');
 			}
 		} elseif ($message === 'recording_stopped') {
-			$parsedMessage = $this->l->t('{actor} stopped a video recording');
+			$parsedMessage = $this->l->t('{actor} stopped the video recording');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You stopped a video recording');
+				$parsedMessage = $this->l->t('You stopped the video recording');
 			}
 		} elseif ($message === 'audio_recording_started') {
-			$parsedMessage = $this->l->t('{actor} started an audio recording');
+			$parsedMessage = $this->l->t('{actor} started the audio recording');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You started an audio recording');
+				$parsedMessage = $this->l->t('You started the audio recording');
 			}
 		} elseif ($message === 'audio_recording_stopped') {
-			$parsedMessage = $this->l->t('{actor} stopped an audio recording');
+			$parsedMessage = $this->l->t('{actor} stopped the audio recording');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You stopped an audio recording');
+				$parsedMessage = $this->l->t('You stopped the audio recording');
 			}
 		} elseif ($message === 'poll_voted') {
 			$parsedParameters['poll'] = $parameters['poll'];
