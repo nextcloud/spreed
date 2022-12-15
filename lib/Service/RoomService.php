@@ -372,7 +372,7 @@ class RoomService {
 			throw new InvalidArgumentException('status');
 		}
 		if ($room->getCallRecording() !== Room::RECORDING_NONE) {
-			throw new InvalidArgumentException('room');
+			throw new InvalidArgumentException('recording');
 		}
 		if (!$room->getActiveSince() instanceof \DateTimeInterface) {
 			throw new InvalidArgumentException('call');
@@ -382,7 +382,7 @@ class RoomService {
 
 	public function stopRecording(Room $room): bool {
 		if ($room->getCallRecording() === Room::RECORDING_NONE) {
-			throw new InvalidArgumentException('room');
+			throw new InvalidArgumentException('recording');
 		}
 		return $this->setCallRecording($room);
 	}

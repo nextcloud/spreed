@@ -18,7 +18,7 @@
         + `200 OK`
         + `400 Bad Request` Message: `status`. When the status to start is invalid.
         + `400 Bad Request` Message: `config`. Need to enable the config `recording`.
-        + `400 Bad Request` Message: `room`. Already have a recording in progress.
+        + `400 Bad Request` Message: `recording`. Already have a recording in progress.
         + `400 Bad Request` Message: `call`. Call is not activated.
         + `403 Forbidden` When the user is not a moderator/owner.
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator.
@@ -33,7 +33,7 @@
     - Status code:
         + `200 OK`
         + `400 Bad Request` Message: `config`. Need to enable the config `recording`.
-        + `400 Bad Request` Message: `room`. Recording has already been stopped.
+        + `400 Bad Request` Message: `recording`. Recording has already been stopped.
         + `400 Bad Request` Message: `call`. Call is not activated.
         + `403 Forbidden` When the user is not a moderator/owner.
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator.
