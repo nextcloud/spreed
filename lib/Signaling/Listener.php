@@ -378,34 +378,13 @@ class Listener {
 
 		$room = $event->getRoom();
 		$message = [
-			'type' => self::getCallRecordingType($event),
+			'type' => 'recording',
 			'recording' => [
-				'enabled' => self::isRecordingEnabled($event),
+				'status' => $event->getNewValue(),
 			],
 		];
 
 		$notifier = Server::get(BackendNotifier::class);
 		$notifier->sendRoomMessage($room, $message);
-	}
-
-	private static function isRecordingEnabled(ModifyRoomEvent $event): bool {
-		$newStatus = $event->getNewValue();
-		$startStatus = [
-			Room::RECORDING_VIDEO,
-			Room::RECORDING_AUDIO,
-		];
-		return in_array($newStatus, $startStatus);
-	}
-
-	/**
-	 * @param ModifyRoomEvent $event
-	 * @return string audio|video
-	 */
-	private static function getCallRecordingType(ModifyRoomEvent $event): string {
-		$newValue = $event->getNewValue();
-		$oldValue = $event->getOldValue();
-		$isAudioStatus = $newValue === Room::RECORDING_AUDIO
-			|| $oldValue === Room::RECORDING_AUDIO;
-		return $isAudioStatus ? 'recording_audio' : 'recording_video';
 	}
 }
