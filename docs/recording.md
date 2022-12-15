@@ -9,9 +9,9 @@
 * Endpoint: `/recording/{token}`
 * Data:
 
-| Field  | Type | Description                                           |
-| ------ | ---- | ----------------------------------------------------- |
-| status | int  | Type of call recording when 1 is video and 2 is audio |
+| Field  | Type | Description                                                                                          |
+| ------ | ---- | ---------------------------------------------------------------------------------------------------- |
+| status | int  | Type of call recording (see [Constants - Call recording status](constants.md#call-recording-status)) |
 
 * Response:
     - Status code:
