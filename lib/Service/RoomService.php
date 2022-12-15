@@ -366,7 +366,7 @@ class RoomService {
 		return true;
 	}
 
-	public function startRecording(Room $room, $status): bool {
+	public function startRecording(Room $room, int $status): bool {
 		$availableRecordingTypes = [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
 		if (!in_array($status, $availableRecordingTypes)) {
 			throw new InvalidArgumentException('status');
