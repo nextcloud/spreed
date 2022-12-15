@@ -55,7 +55,7 @@ class Room {
 	public const TYPE_PUBLIC = 3;
 	public const TYPE_CHANGELOG = 4;
 
-	public const RECORDING_STOP = 0;
+	public const RECORDING_NONE = 0;
 	public const RECORDING_VIDEO = 1;
 	public const RECORDING_AUDIO = 2;
 
