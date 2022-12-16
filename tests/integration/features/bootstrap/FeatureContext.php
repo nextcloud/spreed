@@ -24,7 +24,6 @@ require __DIR__ . '/../../vendor/autoload.php';
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
@@ -2992,11 +2991,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When the response json match with:
+	 * @Then the response error matches with :error
 	 */
-	public function theResponseJsonIsEqualTo(PyStringNode $jsonString): void {
-		$responseContent = $this->response->getBody()->getContents();
-		Assert::assertEquals((string) $jsonString, $responseContent, 'Invalid JSON string');
+	public function assertResponseErrorMatchesWith(string $error): void {
+		$responseData = $this->getDataFromResponse($this->response);
+		Assert::assertEquals(['error' => $error], $responseData);
 	}
 
 	/**

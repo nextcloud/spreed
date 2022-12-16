@@ -57,28 +57,16 @@ Feature: callapi/recording
     And user "participant1" joins call "room1" with 200 (v4)
     When user "participant1" starts "audio" recording in room "room1" with 200 (v1)
     Then user "participant1" starts "audio" recording in room "room1" with 400 (v1)
-    And the response json match with:
-      """
-      {"ocs":{"meta":{"status":"failure","statuscode":400,"message":null},"data":{"error":"recording"}}}
-      """
+    And the response error matches with "recording"
     When user "participant1" stops recording in room "room1" with 200 (v1)
     Then user "participant1" stops recording in room "room1" with 400 (v1)
-    And the response json match with:
-      """
-      {"ocs":{"meta":{"status":"failure","statuscode":400,"message":null},"data":{"error":"recording"}}}
-      """
+    And the response error matches with "recording"
     When user "participant1" starts "video" recording in room "room1" with 200 (v1)
     Then user "participant1" starts "video" recording in room "room1" with 400 (v1)
-    And the response json match with:
-      """
-      {"ocs":{"meta":{"status":"failure","statuscode":400,"message":null},"data":{"error":"recording"}}}
-      """
+    And the response error matches with "recording"
     When user "participant1" stops recording in room "room1" with 200 (v1)
     Then user "participant1" stops recording in room "room1" with 400 (v1)
-    And the response json match with:
-      """
-      {"ocs":{"meta":{"status":"failure","statuscode":400,"message":null},"data":{"error":"recording"}}}
-      """
+    And the response error matches with "recording"
 
   Scenario: Get error when try to start recording with invalid status
     When the following "spreed" app config is set
@@ -89,10 +77,7 @@ Feature: callapi/recording
     And user "participant1" joins room "room1" with 200 (v4)
     And user "participant1" joins call "room1" with 200 (v4)
     Then user "participant1" starts "invalid" recording in room "room1" with 400 (v1)
-    And the response json match with:
-      """
-      {"ocs":{"meta":{"status":"failure","statuscode":400,"message":null},"data":{"error":"status"}}}
-      """
+    And the response error matches with "status"
 
   Scenario: Manager try without success to start recording when signaling is internal
     When the following "spreed" app config is set
@@ -103,15 +88,9 @@ Feature: callapi/recording
     And user "participant1" joins room "room1" with 200 (v4)
     And user "participant1" joins call "room1" with 200 (v4)
     Then user "participant1" starts "video" recording in room "room1" with 400 (v1)
-    And the response json match with:
-      """
-      {"ocs":{"meta":{"status":"failure","statuscode":400,"message":null},"data":{"error":"config"}}}
-      """
+    And the response error matches with "config"
     And user "participant1" starts "audio" recording in room "room1" with 400 (v1)
-    And the response json match with:
-      """
-      {"ocs":{"meta":{"status":"failure","statuscode":400,"message":null},"data":{"error":"config"}}}
-      """
+    And the response error matches with "config"
 
   Scenario: Get error when non moderator/owner try to start recording
     Given the following "spreed" app config is set
@@ -134,12 +113,6 @@ Feature: callapi/recording
       | roomType | 2 |
       | roomName | room1 |
     Then user "participant1" starts "video" recording in room "room1" with 400 (v1)
-    And the response json match with:
-      """
-      {"ocs":{"meta":{"status":"failure","statuscode":400,"message":null},"data":{"error":"call"}}}
-      """
+    And the response error matches with "call"
     Then user "participant1" starts "audio" recording in room "room1" with 400 (v1)
-    And the response json match with:
-      """
-      {"ocs":{"meta":{"status":"failure","statuscode":400,"message":null},"data":{"error":"call"}}}
-      """
+    And the response error matches with "call"
