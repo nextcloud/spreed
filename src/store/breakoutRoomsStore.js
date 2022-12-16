@@ -41,7 +41,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import { configureBreakoutRooms, deleteBreakoutRooms } from '../services/breakoutRoomsService.js'
+import {
+	configureBreakoutRooms,
+	deleteBreakoutRooms,
+	getBreakoutRooms,
+} from '../services/breakoutRoomsService.js'
 import { showError } from '@nextcloud/dialogs'
 
 const actions = {
@@ -60,6 +64,14 @@ const actions = {
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while deleting breakout rooms'))
+		}
+	},
+
+	async getBreakoutRoomsAction(context, { token }) {
+		try {
+			await getBreakoutRooms(token)
+		} catch (error) {
+			console.error(error)
 		}
 	},
 }

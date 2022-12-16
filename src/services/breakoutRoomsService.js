@@ -31,10 +31,15 @@ const configureBreakoutRooms = async function(token, mode, amount, attendeeMap) 
 }
 
 const deleteBreakoutRooms = async function(token) {
-	return await axios.delete(generateOcsUrl('/apps/spreed/api/v1/sbreakout-rooms/{token}', { token }))
+	return await axios.delete(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}', { token }))
+}
+
+const getBreakoutRooms = async function(token) {
+	return await axios.get(generateOcsUrl('/apps/spreed/api/v1/room/{token}/breakout-rooms', { token }))
 }
 
 export {
 	configureBreakoutRooms,
 	deleteBreakoutRooms,
+	getBreakoutRooms,
 }

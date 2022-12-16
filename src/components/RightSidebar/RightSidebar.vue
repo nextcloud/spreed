@@ -47,7 +47,9 @@
 				<!-- TODO: choose final icon -->
 				<DotsCircle :size="20" />
 			</template>
-			<BreakoutRoomsTab v-if="showBreakoutRoomsTab" :is-active="activeTab === 'breakout-rooms'" />
+			<BreakoutRoomsTab v-if="showBreakoutRoomsTab"
+				:token="token"
+				:is-active="activeTab === 'breakout-rooms'" />
 		</NcAppSidebarTab>
 		<NcAppSidebarTab v-if="showChatInSidebar"
 			id="chat"
@@ -260,9 +262,10 @@ export default {
 			return t('spreed', 'Breakout rooms')
 		},
 
-		// TODO: compute actual value
 		showBreakoutRoomsTab() {
-			return true
+			return this.conversation.breakoutRoomMode !== 0
+			// TODO: find out why the CONVERSATION constants object doesn't seem to be defined
+			// return this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
 		},
 	},
 
@@ -297,6 +300,11 @@ export default {
 			if (this.$refs.participantsTab) {
 				this.$refs.participantsTab.$el.scrollTop = 0
 			}
+		},
+
+		$slots() {
+			console.debug('Sidebar slots changed, re rendering')
+			this.$forceUpdate()
 		},
 	},
 

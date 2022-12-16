@@ -21,6 +21,13 @@
 
 <template>
 	<div class="breakout-rooms">
+		<NcButton v-tooltip.auto="t('spreed', 'Delete breakout rooms')"
+			type="tertiary-no-background"
+			@click="deleteBreakoutRooms">
+			<template #icon>
+				<Delete :size="20" />
+			</template>
+		</NcButton>
 		<template v-for="breakoutRoom in breakoutRooms">
 			<NcAppNavigationItem :key="breakoutRoom.displayName"
 				:title="breakoutRoom.displayName"
@@ -41,6 +48,8 @@
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
 import Participant from '../Participants/ParticipantsList/Participant/Participant.vue'
 import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'BreakoutRoomsTab',
@@ -49,6 +58,15 @@ export default {
 		NcAppNavigationItem,
 		Participant,
 		GoogleCircles,
+		Delete,
+		NcButton,
+	},
+
+	props: {
+		token: {
+			type: String,
+			required: true,
+		},
 	},
 
 	computed: {
@@ -62,9 +80,26 @@ export default {
 		},
 	},
 
-	watch: {
-		breakoutRooms() {
-			this.$forceUpdate()
+	methods: {
+		deleteBreakoutRooms() {
+			OC.dialogs.confirmDestructive(
+				t('spreed', 'Current breakout rooms settings and configuration will be lost'),
+				t('spreed', 'Delete breakout rooms'),
+				{
+					type: OC.dialogs.YES_NO_BUTTONS,
+					confirm: t('spreed', 'Delete breakout rooms'),
+					confirmClasses: 'error',
+					cancel: t('spreed', 'Cancel'),
+				},
+				(decision) => {
+					if (!decision) {
+						return
+					}
+					this.$store.dispatch('deleteBreakoutRoomsAction', {
+						token: this.token,
+					})
+				}
+			)
 		},
 	},
 }
