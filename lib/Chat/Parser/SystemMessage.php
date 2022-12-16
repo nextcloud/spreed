@@ -515,9 +515,9 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('You ended the poll {poll}');
 			}
 		} elseif ($message === 'recording_started') {
-			$parsedMessage = $this->l->t('{actor} started a video recording');
+			$parsedMessage = $this->l->t('{actor} started the video recording');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You started a video recording');
+				$parsedMessage = $this->l->t('You started the video recording');
 			}
 		} elseif ($message === 'recording_stopped') {
 			$parsedMessage = $this->l->t('{actor} stopped the video recording');
