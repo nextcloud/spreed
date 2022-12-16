@@ -392,7 +392,7 @@ class RoomService {
 	 * @param integer $status 0 none|1 video|2 audio
 	 */
 	public function setCallRecording(Room $room, int $status = Room::RECORDING_NONE): void {
-		if (!$this->config->isRecordingEnabled()) {
+		if (!$this->config->isRecordingEnabled() && $status !== Room::RECORDING_NONE) {
 			throw new InvalidArgumentException('config');
 		}
 
