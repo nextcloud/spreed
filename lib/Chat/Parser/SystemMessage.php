@@ -507,6 +507,16 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You cleared the history of the conversation');
 			}
+		} elseif ($message === 'avatar_set') {
+			$parsedMessage = $this->l->t('{actor} set the conversation avatar');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You set the conversation avatar');
+			}
+		} elseif ($message === 'avatar_removed') {
+			$parsedMessage = $this->l->t('{actor} removed the conversation avatar');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You removed the conversation avatar');
+			}
 		} elseif ($message === 'poll_closed') {
 			$parsedParameters['poll'] = $parameters['poll'];
 			$parsedParameters['poll']['id'] = (string) $parsedParameters['poll']['id'];

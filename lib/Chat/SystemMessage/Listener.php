@@ -101,6 +101,7 @@ class Listener implements IEventListener {
 		$dispatcher->addListener(RoomShareProvider::EVENT_SHARE_FILE_AGAIN, self::class . '::fixMimeTypeOfVoiceMessage');
 		$dispatcher->addListener(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, self::class . '::afterSetMessageExpiration');
 		$dispatcher->addListener(Room::EVENT_AFTER_SET_CALL_RECORDING, self::class . '::setCallRecording');
+		$dispatcher->addListener(Room::EVENT_AFTER_AVATAR_SET, self::class . '::avatarChanged');
 	}
 
 	public static function sendSystemMessageAboutBeginOfCall(ModifyParticipantEvent $event): void {
@@ -520,5 +521,16 @@ class Listener implements IEventListener {
 		$isAudioStatus = $newValue === Room::RECORDING_AUDIO
 			|| $oldValue === Room::RECORDING_AUDIO;
 		return $isAudioStatus ? 'audio_' : '';
+	}
+
+	public static function avatarChanged(ModifyRoomEvent $event): void {
+		if ($event->getNewValue()) {
+			$message = 'avatar_set';
+		} else {
+			$message = 'avatar_removed';
+		}
+
+		$listener = Server::get(self::class);
+		$listener->sendSystemMessage($event->getRoom(), $message);
 	}
 }

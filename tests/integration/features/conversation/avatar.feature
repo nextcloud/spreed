@@ -15,9 +15,18 @@ Feature: conversation/avatar
     Given user "participant1" creates room "room2" (v4)
       | roomType | 3 |
       | roomName | room2 |
-    And user "participant1" uploads file "/img/favicon.png" as avatar of room "room2" with 200
+    When user "participant1" uploads file "/img/favicon.png" as avatar of room "room2" with 200
     Then the room "room2" has an avatar with 200
+    And user "participant1" sees the following system messages in room "room2" with 200
+      | room  | actorType     | actorId      | systemMessage        | message                         |
+      | room2 | users         | participant1 | avatar_set           | You set the conversation avatar |
+      | room2 | users         | participant1 | conversation_created | You created the conversation    |
     And user "participant1" delete the avatar of room "room2" with 200
+    And user "participant1" sees the following system messages in room "room2" with 200
+      | room  | actorType     | actorId      | systemMessage        | message                             |
+      | room2 | users         | participant1 | avatar_removed       | You removed the conversation avatar |
+      | room2 | users         | participant1 | avatar_set           | You set the conversation avatar     |
+      | room2 | users         | participant1 | conversation_created | You created the conversation        |
 
   Scenario: Get avatar of conversation without custom avatar (fallback)
     Given user "participant1" creates room "room3" (v4)
