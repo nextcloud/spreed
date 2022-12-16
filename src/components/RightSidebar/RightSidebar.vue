@@ -38,19 +38,6 @@
 		<template slot="description">
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
-		<NcAppSidebarTab v-if="getUserId && !isOneToOne"
-			id="breakout-rooms"
-			ref="breakout-rooms"
-			:order="1"
-			:name="breakoutRoomsText">
-			<template slot="icon">
-				<!-- TODO: choose final icon -->
-				<DotsCircle :size="20" />
-			</template>
-			<BreakoutRoomsTab v-if="showBreakoutRoomsTab"
-				:token="token"
-				:is-active="activeTab === 'breakout-rooms'" />
-		</NcAppSidebarTab>
 		<NcAppSidebarTab v-if="showChatInSidebar"
 			id="chat"
 			:order="1"
@@ -72,9 +59,21 @@
 				:can-search="canSearchParticipants"
 				:can-add="canAddParticipants" />
 		</NcAppSidebarTab>
+		<NcAppSidebarTab v-if="getUserId && !isOneToOne"
+			id="breakout-rooms"
+			ref="breakout-rooms"
+			:order="3"
+			:name="breakoutRoomsText">
+			<template slot="icon">
+				<DotsCircle :size="20" />
+			</template>
+			<BreakoutRoomsTab :token="token"
+				:conversation="conversation"
+				:is-active="activeTab === 'breakout-rooms'" />
+		</NcAppSidebarTab>
 		<NcAppSidebarTab v-if="!getUserId || showSIPSettings"
 			id="details-tab"
-			:order="3"
+			:order="4"
 			:name="t('spreed', 'Details')">
 			<template slot="icon">
 				<InformationOutline :size="20" />
@@ -97,7 +96,7 @@
 		<NcAppSidebarTab v-if="getUserId"
 			id="shared-items"
 			ref="sharedItemsTab"
-			:order="4"
+			:order="5"
 			:name="t('spreed', 'Shared items')">
 			<template slot="icon">
 				<FolderMultipleImage :size="20" />
@@ -261,12 +260,6 @@ export default {
 		breakoutRoomsText() {
 			return t('spreed', 'Breakout rooms')
 		},
-
-		showBreakoutRoomsTab() {
-			return this.conversation.breakoutRoomMode !== 0
-			// TODO: find out why the CONVERSATION constants object doesn't seem to be defined
-			// return this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
-		},
 	},
 
 	watch: {
@@ -334,7 +327,7 @@ export default {
 		/**
 		 * Updates the conversationName value while editing the conversation's title.
 		 *
-		 * @param {string} title the conversation title emitted by the AppSidevar vue
+		 * @param {string} title the conversation title emitted by the AppSidebar vue
 		 * component.
 		 */
 		handleUpdateTitle(title) {

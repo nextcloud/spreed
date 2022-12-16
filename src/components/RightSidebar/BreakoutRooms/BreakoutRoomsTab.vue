@@ -21,26 +21,44 @@
 
 <template>
 	<div class="breakout-rooms">
-		<NcButton v-tooltip.auto="t('spreed', 'Delete breakout rooms')"
-			type="tertiary-no-background"
-			@click="deleteBreakoutRooms">
+		<!-- Configuration button -->
+		<NcButton v-if="!breakoutRoomsConfigured"
+			type="secondary"
+			@click="openBreakoutRoomsEditor">
 			<template #icon>
-				<Delete :size="20" />
+				<DotsCircle :size="20" />
 			</template>
+			{{ t('spreed', 'Setup breakout rooms for this conversation') }}
 		</NcButton>
-		<template v-for="breakoutRoom in breakoutRooms">
-			<NcAppNavigationItem :key="breakoutRoom.displayName"
-				:title="breakoutRoom.displayName"
-				:allow-collapse="true">
+		<template v-if="breakoutRoomsConfigured">
+			<NcButton v-tooltip.auto="t('spreed', 'Delete breakout rooms')"
+				type="tertiary-no-background"
+				@click="deleteBreakoutRooms">
 				<template #icon>
-					<!-- TODO: choose final icon -->
-					<GoogleCircles :size="20" />
+					<Delete :size="20" />
 				</template>
-				<template v-for="participant in $store.getters.participantsList(breakoutRoom.token)">
-					<Participant :key="participant.actorId" :participant="participant" />
+			</NcButton>
+			<div v-if="false">
+				<template v-for="breakoutRoom in breakoutRooms">
+					<NcAppNavigationItem :key="breakoutRoom.displayName"
+						:title="breakoutRoom.displayName"
+						:allow-collapse="true">
+						<template #icon>
+							<!-- TODO: choose final icon -->
+							<GoogleCircles :size="20" />
+						</template>
+						<template v-for="participant in $store.getters.participantsList(breakoutRoom.token)">
+							<Participant :key="participant.actorId" :participant="participant" />
+						</template>
+					</NcAppNavigationItem>
 				</template>
-			</NcAppNavigationItem>
+			</div>
 		</template>
+
+		<!-- Breakout rooms editor -->
+		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
+			:token="token"
+			@close="showBreakoutRoomsEditor = false" />
 	</div>
 </template>
 
@@ -50,6 +68,9 @@ import Participant from '../Participants/ParticipantsList/Participant/Participan
 import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { CONVERSATION } from '../../../constants.js'
+import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+import BreakoutRoomsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 
 export default {
 	name: 'BreakoutRoomsTab',
@@ -60,6 +81,8 @@ export default {
 		GoogleCircles,
 		Delete,
 		NcButton,
+		DotsCircle,
+		BreakoutRoomsEditor,
 	},
 
 	props: {
@@ -67,6 +90,17 @@ export default {
 			type: String,
 			required: true,
 		},
+
+		conversation: {
+			type: Object,
+			required: true,
+		},
+	},
+
+	data() {
+		return {
+			showBreakoutRoomsEditor: false,
+		}
 	},
 
 	computed: {
@@ -77,7 +111,22 @@ export default {
 				this.$store.getters.conversation('py2qhwa7'),
 				this.$store.getters.conversation('sngyetkc'),
 			]
+			// return this.$store.getters.breakoutRooms()
 		},
+
+		breakoutRoomsConfigured() {
+			return this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
+		},
+	},
+
+	mounted() {
+		/**
+		if (this.breakoutRoomsConfigured) {
+			this.$store.dispatch('getBreakoutRoomsAction', {
+				token: this.token,
+			})
+		}
+		 */
 	},
 
 	methods: {
@@ -100,6 +149,10 @@ export default {
 					})
 				}
 			)
+		},
+
+		openBreakoutRoomsEditor() {
+			this.showBreakoutRoomsEditor = true
 		},
 	},
 }

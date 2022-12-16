@@ -69,7 +69,8 @@ const actions = {
 
 	async getBreakoutRoomsAction(context, { token }) {
 		try {
-			await getBreakoutRooms(token)
+			const response = await getBreakoutRooms(token)
+			console.debug('response', response)
 		} catch (error) {
 			console.error(error)
 		}
