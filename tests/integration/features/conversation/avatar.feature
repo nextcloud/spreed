@@ -19,13 +19,13 @@ Feature: conversation/avatar
     Then the room "room2" has an avatar with 200
     And user "participant1" sees the following system messages in room "room2" with 200
       | room  | actorType     | actorId      | systemMessage        | message                         |
-      | room2 | users         | participant1 | set_room_avatar      | You set the conversation avatar |
+      | room2 | users         | participant1 | avatar_set           | You set the conversation avatar |
       | room2 | users         | participant1 | conversation_created | You created the conversation    |
     And user "participant1" delete the avatar of room "room2" with 200
     And user "participant1" sees the following system messages in room "room2" with 200
       | room  | actorType     | actorId      | systemMessage        | message                             |
-      | room2 | users         | participant1 | delete_room_avatar   | You deleted the conversation avatar |
-      | room2 | users         | participant1 | set_room_avatar      | You set the conversation avatar     |
+      | room2 | users         | participant1 | avatar_removed       | You removed the conversation avatar |
+      | room2 | users         | participant1 | avatar_set           | You set the conversation avatar     |
       | room2 | users         | participant1 | conversation_created | You created the conversation        |
 
   Scenario: Get avatar of conversation without custom avatar (fallback)

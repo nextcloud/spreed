@@ -397,5 +397,5 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 * `video_recording_stopped` - {actor} stopped a video recording
 * `audio_recording_started` - {actor} started an audio recording
 * `audio_recording_stopped` - {actor} stopped an audio recording
-* `set_room_avatar` - {actor} set the conversation avatar
-* `delete_room_avatar` - {actor} deleted the conversation avatar
+* `avatar_set` - {actor} set the conversation avatar
+* `avatar_removed` - {actor} removed the conversation avatar

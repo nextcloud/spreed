@@ -525,9 +525,9 @@ class Listener implements IEventListener {
 
 	public static function avatarChanged(ModifyRoomEvent $event): void {
 		if ($event->getNewValue()) {
-			$message = 'set_room_avatar';
+			$message = 'avatar_set';
 		} else {
-			$message = 'delete_room_avatar';
+			$message = 'avatar_removed';
 		}
 
 		$listener = Server::get(self::class);
