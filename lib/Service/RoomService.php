@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OCA\Talk\Config;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -54,6 +55,7 @@ class RoomService {
 	protected IDBConnection $db;
 	protected ITimeFactory $timeFactory;
 	protected IShareManager $shareManager;
+	protected Config $config;
 	protected IHasher $hasher;
 	protected IEventDispatcher $dispatcher;
 	protected IJobList $jobList;
@@ -63,6 +65,7 @@ class RoomService {
 								IDBConnection $db,
 								ITimeFactory $timeFactory,
 								IShareManager $shareManager,
+								Config $config,
 								IHasher $hasher,
 								IEventDispatcher $dispatcher,
 								IJobList $jobList) {
@@ -71,6 +74,7 @@ class RoomService {
 		$this->db = $db;
 		$this->timeFactory = $timeFactory;
 		$this->shareManager = $shareManager;
+		$this->config = $config;
 		$this->hasher = $hasher;
 		$this->dispatcher = $dispatcher;
 		$this->jobList = $jobList;
@@ -360,6 +364,56 @@ class RoomService {
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_AVATAR_SET, $event);
 		return true;
+	}
+
+	public function startRecording(Room $room, int $status): void {
+		$availableRecordingTypes = [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
+		if (!in_array($status, $availableRecordingTypes)) {
+			throw new InvalidArgumentException('status');
+		}
+		if ($room->getCallRecording() !== Room::RECORDING_NONE) {
+			throw new InvalidArgumentException('recording');
+		}
+		if (!$room->getActiveSince() instanceof \DateTimeInterface) {
+			throw new InvalidArgumentException('call');
+		}
+		$this->setCallRecording($room, $status);
+	}
+
+	public function stopRecording(Room $room): void {
+		if ($room->getCallRecording() === Room::RECORDING_NONE) {
+			throw new InvalidArgumentException('recording');
+		}
+		$this->setCallRecording($room);
+	}
+
+	/**
+	 * @param Room $room
+	 * @param integer $status 0 none|1 video|2 audio
+	 */
+	public function setCallRecording(Room $room, int $status = Room::RECORDING_NONE): void {
+		if (!$this->config->isRecordingEnabled() && $status !== Room::RECORDING_NONE) {
+			throw new InvalidArgumentException('config');
+		}
+
+		$availableRecordingStatus = [Room::RECORDING_NONE, Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
+		if (!in_array($status, $availableRecordingStatus)) {
+			throw new InvalidArgumentException('status');
+		}
+
+		$oldStatus = $room->getCallRecording();
+		$event = new ModifyRoomEvent($room, 'callRecording', $status, $oldStatus);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_CALL_RECORDING, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('call_recording', $update->createNamedParameter($status, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setCallRecording($status);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_CALL_RECORDING, $event);
 	}
 
 	/**

@@ -31,6 +31,7 @@ use OCA\Talk\Events\DuplicatedParticipantEvent;
 use OCA\Talk\Events\EndCallForEveryoneEvent;
 use OCA\Talk\Events\ModifyEveryoneEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
+use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
@@ -96,6 +97,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, [self::class, 'notifyAfterJoinUpdateAndLeave']);
 		$dispatcher->addListener(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, [self::class, 'sendEndCallForEveryone']);
 		$dispatcher->addListener(Room::EVENT_AFTER_GUESTS_CLEAN, [self::class, 'notifyParticipantsAfterGuestClean']);
+		$dispatcher->addListener(Room::EVENT_AFTER_SET_CALL_RECORDING, [self::class, 'sendSignalingMessageWhenToggleRecording']);
 		$dispatcher->addListener(GuestManager::EVENT_AFTER_NAME_UPDATE, [self::class, 'notifyParticipantsAfterNameUpdated']);
 		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND, [self::class, 'notifyUsersViaExternalSignalingToRefreshTheChat']);
 		$dispatcher->addListener(ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND, [self::class, 'notifyUsersViaExternalSignalingToRefreshTheChat']);
@@ -360,6 +362,29 @@ class Listener {
 				'refresh' => true,
 			],
 		];
+		$notifier->sendRoomMessage($room, $message);
+	}
+
+	public static function sendSignalingMessageWhenToggleRecording(ModifyRoomEvent $event): void {
+		$config = Server::get(Config::class);
+		$isSignalingDev = $config->isSignalingDev();
+
+		if (self::isUsingInternalSignaling() && $isSignalingDev) {
+			return;
+		}
+		if ($event->getParameter() !== 'callRecording') {
+			return;
+		}
+
+		$room = $event->getRoom();
+		$message = [
+			'type' => 'recording',
+			'recording' => [
+				'status' => $event->getNewValue(),
+			],
+		];
+
+		$notifier = Server::get(BackendNotifier::class);
 		$notifier->sendRoomMessage($room, $message);
 	}
 }

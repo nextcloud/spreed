@@ -55,6 +55,10 @@ class Room {
 	public const TYPE_PUBLIC = 3;
 	public const TYPE_CHANGELOG = 4;
 
+	public const RECORDING_NONE = 0;
+	public const RECORDING_VIDEO = 1;
+	public const RECORDING_AUDIO = 2;
+
 	/** @deprecated Use self::TYPE_UNKNOWN */
 	public const UNKNOWN_CALL = self::TYPE_UNKNOWN;
 	/** @deprecated Use self::TYPE_ONE_TO_ONE */
@@ -147,6 +151,8 @@ class Room {
 	public const EVENT_AFTER_SET_BREAKOUT_ROOM_MODE = self::class . '::afterSetBreakoutRoomMode';
 	public const EVENT_BEFORE_SET_BREAKOUT_ROOM_STATUS = self::class . '::beforeSetBreakoutRoomStatus';
 	public const EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS = self::class . '::afterSetBreakoutRoomStatus';
+	public const EVENT_BEFORE_SET_CALL_RECORDING = self::class . '::beforeSetCallRecording';
+	public const EVENT_AFTER_SET_CALL_RECORDING = self::class . '::afterSetCallRecording';
 	public const EVENT_BEFORE_AVATAR_SET = self::class . '::preSetAvatar';
 	public const EVENT_AFTER_AVATAR_SET = self::class . '::postSetAvatar';
 
@@ -185,6 +191,7 @@ class Room {
 	private string $objectId;
 	private int $breakoutRoomMode;
 	private int $breakoutRoomStatus;
+	private int $callRecording;
 
 	protected ?string $currentUser = null;
 	protected ?Participant $participant = null;
@@ -220,7 +227,8 @@ class Room {
 								string $objectType,
 								string $objectId,
 								int $breakoutRoomMode,
-								int $breakoutRoomStatus) {
+								int $breakoutRoomStatus,
+								int $callRecording) {
 		$this->manager = $manager;
 		$this->db = $db;
 		$this->dispatcher = $dispatcher;
@@ -253,6 +261,7 @@ class Room {
 		$this->objectId = $objectId;
 		$this->breakoutRoomMode = $breakoutRoomMode;
 		$this->breakoutRoomStatus = $breakoutRoomStatus;
+		$this->callRecording = $callRecording;
 	}
 
 	public function getId(): int {
@@ -631,5 +640,13 @@ class Room {
 
 	public function setBreakoutRoomStatus(int $status): void {
 		$this->breakoutRoomStatus = $status;
+	}
+
+	public function getCallRecording(): int {
+		return $this->callRecording;
+	}
+
+	public function setCallRecording(int $callRecording): void {
+		$this->callRecording = $callRecording;
 	}
 }

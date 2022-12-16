@@ -138,11 +138,19 @@ class Config {
 		return $this->canEnableSIP[$user->getUID()];
 	}
 
+	public function isSignalingDev(): bool {
+		return $this->config->getAppValue('spreed', 'signaling_dev', 'no') === 'yes';
+	}
+
 	public function isRecordingEnabled(): bool {
 		$isSignalingInternal = $this->getSignalingMode() === self::SIGNALING_INTERNAL;
-		$recordingAllowed = $this->config->getAppValue('spreed', 'call_recording', 'yes') === 'yes';
+		$isSignalingDev = $this->isSignalingDev();
+		$isSignalingOk = $isSignalingDev || !$isSignalingInternal;
 
-		return !$isSignalingInternal && $recordingAllowed;
+		$callRecordingConfig = $this->config->getAppValue('spreed', 'call_recording', 'yes');
+		$recordingEnabled = $callRecordingConfig === 'yes';
+
+		return $isSignalingOk && $recordingEnabled;
 	}
 
 	public function isDisabledForUser(IUser $user): bool {
@@ -334,7 +342,7 @@ class Config {
 		}
 		if ($numSignalingServers === 1
 			&& $cleanExternalSignaling
-			&& $this->config->getAppValue('spreed', 'signaling_dev', 'no') === 'no') {
+			&& !$this->isSignalingDev()) {
 			return self::SIGNALING_EXTERNAL;
 		}
 

@@ -57,6 +57,7 @@ class SelectHelper {
 			->addSelect($alias . 'remote_token')
 			->addSelect($alias . 'breakout_room_mode')
 			->addSelect($alias . 'breakout_room_status')
+			->addSelect($alias . 'call_recording')
 			->selectAlias($alias . 'id', 'r_id');
 	}
 

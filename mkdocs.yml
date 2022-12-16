@@ -25,6 +25,7 @@ nav:
       - 'Conversations management': 'conversation.md'
       - 'Participants management': 'participant.md'
       - 'Call management': 'call.md'
+      - 'Call recording management': 'recording.md'
       - 'Chat management': 'chat.md'
       - 'Reaction management': 'reaction.md'
       - 'Poll management': 'poll.md'

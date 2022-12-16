@@ -3035,6 +3035,44 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" starts "(invalid|audio|video)" recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function userStartRecordingInRoom(string $user, string $recordingType, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$recordingTypes = [
+			'invalid' => -1,
+			'video' => 1,
+			'audio' => 2,
+		];
+
+		$data = [
+			'status' => $recordingTypes[$recordingType]
+		];
+
+		$this->setCurrentUser($user);
+		$roomToken = self::$identifierToToken[$identifier];
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/recording/' . $roomToken, $data);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" stops recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function userStopRecordingInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->setCurrentUser($user);
+		$roomToken = self::$identifierToToken[$identifier];
+		$this->sendRequest('DELETE', '/apps/spreed/api/' . $apiVersion . '/recording/' . $roomToken);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then the response error matches with :error
+	 */
+	public function assertResponseErrorMatchesWith(string $error): void {
+		$responseData = $this->getDataFromResponse($this->response);
+		Assert::assertEquals(['error' => $error], $responseData);
+	}
+
+	/**
 	 * @param ResponseInterface $response
 	 * @return string
 	 */

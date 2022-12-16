@@ -15,6 +15,7 @@
 * [Conversation API](conversation.md)
 * [Participant API](participant.md)
 * [Call API](call.md)
+* [Call recording API](recording.md)
 * [Chat API](chat.md)
 * [Reaction API](reaction.md)
 * [Webinar API](webinar.md)

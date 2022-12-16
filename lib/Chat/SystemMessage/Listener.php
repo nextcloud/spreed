@@ -100,6 +100,7 @@ class Listener implements IEventListener {
 		$dispatcher->addListener('OCP\Share::postShare', self::class . '::fixMimeTypeOfVoiceMessage');
 		$dispatcher->addListener(RoomShareProvider::EVENT_SHARE_FILE_AGAIN, self::class . '::fixMimeTypeOfVoiceMessage');
 		$dispatcher->addListener(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, self::class . '::afterSetMessageExpiration');
+		$dispatcher->addListener(Room::EVENT_AFTER_SET_CALL_RECORDING, self::class . '::setCallRecording');
 	}
 
 	public static function sendSystemMessageAboutBeginOfCall(ModifyParticipantEvent $event): void {
@@ -492,5 +493,32 @@ class Listener implements IEventListener {
 				'seconds' => $seconds,
 			]
 		);
+	}
+
+	public static function setCallRecording(ModifyRoomEvent $event): void {
+		$prefix = self::getCallRecordingPrefix($event);
+		$suffix = self::getCallRecordingSuffix($event);
+		$systemMessage = $prefix . 'recording_' . $suffix;
+
+		$listener = Server::get(self::class);
+		$listener->sendSystemMessage($event->getRoom(), $systemMessage);
+	}
+
+	private static function getCallRecordingSuffix(ModifyRoomEvent $event): string {
+		$newStatus = $event->getNewValue();
+		$startStatus = [
+			Room::RECORDING_VIDEO,
+			Room::RECORDING_AUDIO,
+		];
+		$suffix = in_array($newStatus, $startStatus) ? 'started' : 'stopped';
+		return $suffix;
+	}
+
+	private static function getCallRecordingPrefix(ModifyRoomEvent $event): string {
+		$newValue = $event->getNewValue();
+		$oldValue = $event->getOldValue();
+		$isAudioStatus = $newValue === Room::RECORDING_AUDIO
+			|| $oldValue === Room::RECORDING_AUDIO;
+		return $isAudioStatus ? 'audio_' : '';
 	}
 }

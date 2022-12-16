@@ -106,6 +106,11 @@ title: Constants
 * `2` - Moderators
 * `3` - No one
 
+### Call recording status
+* `0` - No recording
+* `1` - Recording video
+* `2` - Recording audio
+
 ## Chat
 
 ### Shared item types
