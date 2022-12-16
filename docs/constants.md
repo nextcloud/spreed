@@ -107,7 +107,7 @@ title: Constants
 * `3` - No one
 
 ### Call recording status
-* `0` - Stopped recording
+* `0` - No recording
 * `1` - Recording video
 * `2` - Recording audio
 
