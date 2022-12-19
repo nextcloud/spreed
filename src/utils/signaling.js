@@ -1275,6 +1275,11 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 			this._trigger('participantListChanged')
 		}
 		break
+	case 'switchto':
+		EventBus.$emit('switch-to-conversation', {
+			token: data.event.switchto.roomid,
+		})
+		break
 	case 'message':
 		this.processRoomMessageEvent(data.event.message.data)
 		break

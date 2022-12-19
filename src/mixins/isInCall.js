@@ -35,8 +35,9 @@ export default {
 
 	computed: {
 		isInCall() {
-			return this.sessionStorageJoinedConversation === this.$store.getters.getToken()
-				&& this.$store.getters.isInCall(this.$store.getters.getToken())
+			return this.$store.getters.forceCallView
+				|| (this.sessionStorageJoinedConversation === this.$store.getters.getToken()
+					&& this.$store.getters.isInCall(this.$store.getters.getToken()))
 		},
 	},
 
