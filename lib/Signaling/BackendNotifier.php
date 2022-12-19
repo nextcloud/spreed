@@ -281,6 +281,33 @@ class BackendNotifier {
 	}
 
 	/**
+	 * The given participants should switch to the given room.
+	 *
+	 * @param Room $room
+	 * @param string $switchToRoomToken
+	 * @param string[] $sessionIds
+	 * @throws \Exception
+	 */
+	public function switchToRoom(Room $room, string $switchToRoomToken, array $sessionIds): void {
+		$start = microtime(true);
+		$this->backendRequest($room, [
+			'type' => 'switchto',
+			'switchto' => [
+				'roomid' => $switchToRoomToken,
+				'sessions' => $sessionIds,
+			],
+		]);
+		$duration = microtime(true) - $start;
+		$this->logger->debug('Switch to room: {token} {roomid} {sessions} ({duration})', [
+			'token' => $room->getToken(),
+			'roomid' => $switchToRoomToken,
+			'sessions' => print_r($sessionIds, true),
+			'duration' => sprintf('%.2f', $duration),
+			'app' => 'spreed-hpb',
+		]);
+	}
+
+	/**
 	 * The participant list of the given room has been modified.
 	 *
 	 * @param Room $room

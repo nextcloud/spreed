@@ -37,6 +37,8 @@ use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\GuestManager;
+use OCA\Talk\Manager;
+use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
@@ -98,6 +100,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, [self::class, 'sendEndCallForEveryone']);
 		$dispatcher->addListener(Room::EVENT_AFTER_GUESTS_CLEAN, [self::class, 'notifyParticipantsAfterGuestClean']);
 		$dispatcher->addListener(Room::EVENT_AFTER_SET_CALL_RECORDING, [self::class, 'sendSignalingMessageWhenToggleRecording']);
+		$dispatcher->addListener(Room::EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS, [self::class, 'notifyParticipantsAfterSetBreakoutRoomStatus']);
 		$dispatcher->addListener(GuestManager::EVENT_AFTER_NAME_UPDATE, [self::class, 'notifyParticipantsAfterNameUpdated']);
 		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND, [self::class, 'notifyUsersViaExternalSignalingToRefreshTheChat']);
 		$dispatcher->addListener(ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND, [self::class, 'notifyUsersViaExternalSignalingToRefreshTheChat']);
@@ -322,6 +325,84 @@ class Listener {
 		// so the signaling server can optimize forwarding the message.
 		$sessionIds = [];
 		$notifier->participantsModified($event->getRoom(), $sessionIds);
+	}
+
+	public static function notifyParticipantsAfterSetBreakoutRoomStatus(RoomEvent $event): void {
+		if (self::isUsingInternalSignaling()) {
+			return;
+		}
+
+		$room = $event->getRoom();
+		if ($room->getBreakoutRoomStatus() === BreakoutRoom::STATUS_STARTED) {
+			self::notifyParticipantsAfterBreakoutRoomStarted($room);
+		} else {
+			self::notifyParticipantsAfterBreakoutRoomStopped($room);
+		}
+	}
+
+	private static function notifyParticipantsAfterBreakoutRoomStarted(Room $room): void {
+		$manager = Server::get(Manager::class);
+		$breakoutRooms = $manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $room->getToken());
+
+		$switchToData = [];
+
+		$participantService = Server::get(ParticipantService::class);
+		$parentRoomParticipants = $participantService->getSessionsAndParticipantsForRoom($room);
+
+		$notifier = Server::get(BackendNotifier::class);
+
+		foreach ($breakoutRooms as $breakoutRoom) {
+			$sessionIds = [];
+
+			$breakoutRoomParticipants = $participantService->getParticipantsForRoom($breakoutRoom);
+			foreach ($breakoutRoomParticipants as $breakoutRoomParticipant) {
+				foreach (self::getSessionIdsForNonModeratorsMatchingParticipant($breakoutRoomParticipant, $parentRoomParticipants) as $sessionId) {
+					$sessionIds[] = $sessionId;
+				}
+			}
+
+			$notifier->switchToRoom($room, $breakoutRoom->getToken(), $sessionIds);
+		}
+	}
+
+	private static function getSessionIdsForNonModeratorsMatchingParticipant(Participant $targetParticipant, array $participants) {
+		$sessionIds = [];
+
+		foreach ($participants as $participant) {
+			if ($participant->getAttendee()->getActorType() === $targetParticipant->getAttendee()->getActorType() &&
+					$participant->getAttendee()->getActorId() === $targetParticipant->getAttendee()->getActorId() &&
+					!$participant->hasModeratorPermissions()) {
+				$session = $participant->getSession();
+				if ($session) {
+					$sessionIds[] = $session->getSessionId();
+				}
+			}
+		}
+
+		return $sessionIds;
+	}
+
+	private static function notifyParticipantsAfterBreakoutRoomStopped(Room $room): void {
+		$manager = Server::get(Manager::class);
+		$breakoutRooms = $manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $room->getToken());
+
+		$participantService = Server::get(ParticipantService::class);
+
+		$notifier = Server::get(BackendNotifier::class);
+
+		foreach ($breakoutRooms as $breakoutRoom) {
+			$sessionIds = [];
+
+			$participants = $participantService->getSessionsAndParticipantsForRoom($breakoutRoom);
+			foreach ($participants as $participant) {
+				$session = $participant->getSession();
+				if ($session) {
+					$sessionIds[] = $session->getSessionId();
+				}
+			}
+
+			$notifier->switchToRoom($breakoutRoom, $room->getToken(), $sessionIds);
+		}
 	}
 
 	public static function notifyParticipantsAfterNameUpdated(ModifyParticipantEvent $event): void {
