@@ -21,24 +21,28 @@
 
 <template>
 	<div class="breakout-rooms">
-		<!-- Configuration button -->
-		<NcButton v-if="!breakoutRoomsConfigured"
-			type="secondary"
-			@click="openBreakoutRoomsEditor">
-			<template #icon>
-				<DotsCircle :size="20" />
-			</template>
-			{{ t('spreed', 'Setup breakout rooms for this conversation') }}
-		</NcButton>
-		<template v-if="breakoutRoomsConfigured">
-			<NcButton v-tooltip.auto="t('spreed', 'Delete breakout rooms')"
+		<div class="breakout-rooms__actions">
+			<!-- Configuration button -->
+			<NcButton v-if="!breakoutRoomsConfigured"
+				:wide="true"
+				type="secondary"
+				@click="openBreakoutRoomsEditor">
+				<template #icon>
+					<DotsCircle :size="20" />
+				</template>
+				{{ t('spreed', 'Setup breakout rooms for this conversation') }}
+			</NcButton>
+			<NcButton v-if="breakoutRoomsConfigured"
+				v-tooltip.auto="t('spreed', 'Delete breakout rooms')"
 				type="tertiary-no-background"
 				@click="deleteBreakoutRooms">
 				<template #icon>
 					<Delete :size="20" />
 				</template>
 			</NcButton>
-			<div v-if="false">
+		</div>
+		<template v-if="breakoutRoomsConfigured">
+			<template v-if="breakoutRooms">
 				<template v-for="breakoutRoom in breakoutRooms">
 					<NcAppNavigationItem :key="breakoutRoom.displayName"
 						:title="breakoutRoom.displayName"
@@ -53,7 +57,7 @@
 						</template>
 					</NcAppNavigationItem>
 				</template>
-			</div>
+			</template>
 		</template>
 
 		<!-- Breakout rooms editor -->
@@ -105,7 +109,6 @@ export default {
 	},
 
 	computed: {
-		// TODO: get actual rooms
 		breakoutRooms() {
 			return this.$store.getters.breakoutRoomsReferences(this.token).map(reference => {
 				return this.$store.getters.conversation(reference)
@@ -118,13 +121,11 @@ export default {
 	},
 
 	mounted() {
-		/**
 		if (this.breakoutRoomsConfigured) {
 			this.$store.dispatch('getBreakoutRoomsAction', {
 				token: this.token,
 			})
 		}
-		 */
 	},
 
 	methods: {
@@ -157,6 +158,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.breakout-rooms {
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+	}
+}
 
 ::v-deep .app-navigation-entry__title {
 	font-weight: bold !important;
