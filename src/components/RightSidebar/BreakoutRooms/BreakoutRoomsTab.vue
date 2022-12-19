@@ -107,12 +107,9 @@ export default {
 	computed: {
 		// TODO: get actual rooms
 		breakoutRooms() {
-			return [
-				this.$store.getters.conversation('zsn49dx9'),
-				this.$store.getters.conversation('py2qhwa7'),
-				this.$store.getters.conversation('sngyetkc'),
-			]
-			// return this.$store.getters.breakoutRooms()
+			return this.$store.getters.breakoutRoomsReferences(this.token).map(reference => {
+				return this.$store.getters.conversation(reference)
+			})
 		},
 
 		breakoutRoomsConfigured() {
