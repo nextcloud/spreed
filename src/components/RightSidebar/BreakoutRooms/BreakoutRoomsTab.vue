@@ -42,7 +42,8 @@
 				<template v-for="breakoutRoom in breakoutRooms">
 					<NcAppNavigationItem :key="breakoutRoom.displayName"
 						:title="breakoutRoom.displayName"
-						:allow-collapse="true">
+						:allow-collapse="true"
+						:open="true">
 						<template #icon>
 							<!-- TODO: choose final icon -->
 							<GoogleCircles :size="20" />
