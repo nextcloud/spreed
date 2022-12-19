@@ -23,14 +23,18 @@
 	<div class="breakout-rooms">
 		<div class="breakout-rooms__actions">
 			<!-- Configuration button -->
-			<NcButton v-if="!breakoutRoomsConfigured"
-				:wide="true"
+			<NcButton :wide="true"
 				type="secondary"
 				@click="openBreakoutRoomsEditor">
 				<template #icon>
 					<DotsCircle :size="20" />
 				</template>
-				{{ t('spreed', 'Setup breakout rooms for this conversation') }}
+				<template v-if="!breakoutRoomsConfigured">
+					{{ t('spreed', 'Configure breakout rooms') }}
+				</template>
+				<template v-else>
+					{{ t('spreed', 'Re-configure breakout rooms') }}
+				</template>
 			</NcButton>
 			<NcButton v-if="breakoutRoomsConfigured"
 				v-tooltip.auto="t('spreed', 'Delete breakout rooms')"
@@ -131,7 +135,7 @@ export default {
 	methods: {
 		deleteBreakoutRooms() {
 			OC.dialogs.confirmDestructive(
-				t('spreed', 'Current breakout rooms settings and configuration will be lost'),
+				t('spreed', 'Current breakout rooms and settings will be lost'),
 				t('spreed', 'Delete breakout rooms'),
 				{
 					type: OC.dialogs.YES_NO_BUTTONS,
@@ -151,7 +155,26 @@ export default {
 		},
 
 		openBreakoutRoomsEditor() {
-			this.showBreakoutRoomsEditor = true
+			if (!this.breakoutRoomsConfigured) {
+				this.showBreakoutRoomsEditor = true
+				return
+			}
+			OC.dialogs.confirmDestructive(
+				t('spreed', 'Current breakout rooms and settings will be lost'),
+				t('spreed', 'Re-configure breakout rooms'),
+				{
+					type: OC.dialogs.YES_NO_BUTTONS,
+					confirm: t('spreed', 'Re-configure breakout rooms'),
+					confirmClasses: 'primary',
+					cancel: t('spreed', 'Cancel'),
+				},
+				(decision) => {
+					if (!decision) {
+						return
+					}
+					this.showBreakoutRoomsEditor = true
+				}
+			)
 		},
 	},
 }
