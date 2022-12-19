@@ -208,9 +208,11 @@ class BackendNotifierTest extends TestCase {
 	}
 
 	private function assertMessageWasSent(Room $room, array $message): void {
+		$expectedUrl = $this->baseUrl . '/api/v1/room/' . $room->getToken();
+
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function ($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		$bodies = array_map(function ($request) use ($expectedUrl) {
+			return json_decode($this->validateBackendRequest($expectedUrl, $request), true);
 		}, $requests);
 
 		$bodies = array_filter($bodies, function (array $body) use ($message) {
