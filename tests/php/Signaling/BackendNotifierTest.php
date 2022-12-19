@@ -211,6 +211,9 @@ class BackendNotifierTest extends TestCase {
 		$expectedUrl = $this->baseUrl . '/api/v1/room/' . $room->getToken();
 
 		$requests = $this->controller->getRequests();
+		$requests = array_filter($requests, function ($request) use ($expectedUrl) {
+			return $request['url'] === $expectedUrl;
+		});
 		$bodies = array_map(function ($request) use ($expectedUrl) {
 			return json_decode($this->validateBackendRequest($expectedUrl, $request), true);
 		}, $requests);
