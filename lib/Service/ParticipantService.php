@@ -134,6 +134,9 @@ class ParticipantService {
 		}
 
 		$oldType = $attendee->getParticipantType();
+		if ($oldType === $participantType) {
+			return;
+		}
 
 		$event = new ModifyParticipantEvent($room, $participant, 'type', $participantType, $oldType);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_TYPE_SET, $event);
