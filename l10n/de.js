@@ -867,6 +867,8 @@ OC.L10N.register(
     "Open conversation to registered users, showing it in search results" : "Konversation für registrierte Benutzer öffnen und in den Suchergebnissen anzeigen",
     "Also open to guest app users" : "Auch für Gast-App-Benutzer öffnen",
     "Error occurred when opening or limiting the conversation" : "Beim Öffnen oder Einschränken der Konversation ist ein Fehler aufgetreten",
+    "Enabling the lobby will remove non-moderators from the ongoing call." : "Durch Aktivieren der Lobby werden Nicht-Moderatoren aus dem laufenden Anruf entfernt.",
+    "Enable lobby, restricting the conversation to moderators" : "Aktivieren der Lobby, beschränke die Unterhaltung auf die Moderatoren.",
     "Meeting start time" : "Meeting Startzeit",
     "Start time (optional)" : "Startzeit (optional)",
     "Error occurred when restricting the conversation to moderator" : "Fehler beim Beschränken der Unterhaltung auf den Moderator aufgetreten",
