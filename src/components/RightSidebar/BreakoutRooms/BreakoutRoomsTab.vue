@@ -22,9 +22,28 @@
 <template>
 	<div class="breakout-rooms">
 		<div class="breakout-rooms__actions">
+			<template v-if="breakoutRoomsConfigured">
+				<NcButton v-if="breakoutRoomsStarted"
+					v-tooltip.auto="t('spreed', 'Start breakout rooms')"
+					type="secondary"
+					@click="startBreakoutRooms">
+					<template #icon>
+						<Play :size="20" />
+					</template>
+				</NcButton>
+				<NcButton v-else
+					v-tooltip.auto="t('spreed', 'Start breakout rooms')"
+					type="secondary"
+					@click="stopBreakoutRooms">
+					<template #icon>
+						<StopIcon :size="20" />
+					</template>
+				</NcButton>
+			</template>
+
 			<!-- Configuration button -->
 			<NcButton :wide="true"
-				type="secondary"
+				:type="breakoutRoomsConfigured ? 'tertiary' : 'secondary'"
 				@click="openBreakoutRoomsEditor">
 				<template #icon>
 					<DotsCircle :size="20" />
@@ -72,26 +91,38 @@
 </template>
 
 <script>
+// Components
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
 import Participant from '../Participants/ParticipantsList/Participant/Participant.vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import BreakoutRoomsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
+
+// Icons
 import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import { CONVERSATION } from '../../../constants.js'
+import Play from 'vue-material-design-icons/Play.vue'
+import StopIcon from 'vue-material-design-icons/Stop.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
-import BreakoutRoomsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
+
+// Constants
+import { CONVERSATION } from '../../../constants.js'
 
 export default {
 	name: 'BreakoutRoomsTab',
 
 	components: {
+		// Components
 		NcAppNavigationItem,
 		Participant,
+		NcButton,
+		BreakoutRoomsEditor,
+
+		// Icons
 		GoogleCircles,
 		Delete,
-		NcButton,
+		Play,
 		DotsCircle,
-		BreakoutRoomsEditor,
+		StopIcon,
 	},
 
 	props: {
@@ -121,6 +152,10 @@ export default {
 
 		breakoutRoomsConfigured() {
 			return this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
+		},
+
+		breakoutRoomsStarted() {
+			return this.conversation.breakoutRoomStatus !== CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
 		},
 	},
 
@@ -175,6 +210,14 @@ export default {
 					this.showBreakoutRoomsEditor = true
 				}
 			)
+		},
+
+		startBreakoutRooms() {
+			this.$store.dispatch('startBreakoutRoomsAction', this.token)
+		},
+
+		stopBreakoutRooms() {
+			this.$store.dispatch('stopBreakoutRoomsAction', this.token)
 		},
 	},
 }

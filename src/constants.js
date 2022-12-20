@@ -68,6 +68,11 @@ export const CONVERSATION = {
 		MANUAL: 2,
 		FREE: 3,
 	},
+
+	BREAKOUT_ROOM_STATUS: {
+		STOPPED: 0,
+		STARTED: 1,
+	},
 }
 export const ATTENDEE = {
 	ACTOR_TYPE: {

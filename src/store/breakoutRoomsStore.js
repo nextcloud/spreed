@@ -23,6 +23,8 @@ import {
 	configureBreakoutRooms,
 	deleteBreakoutRooms,
 	getBreakoutRooms,
+	startBreakoutRooms,
+	stopBreakoutRooms,
 } from '../services/breakoutRoomsService.js'
 import { showError } from '@nextcloud/dialogs'
 import { set } from 'vue'
@@ -75,6 +77,24 @@ const actions = {
 			console.debug('response', response)
 		} catch (error) {
 			console.error(error)
+		}
+	},
+
+	async startBreakoutRoomsAction(context, token) {
+		try {
+			await startBreakoutRooms(token)
+		} catch (error) {
+			console.error(error)
+			showError(t('spreed', 'An error occurred while starting breakout rooms'))
+		}
+	},
+
+	async stopBreakoutRoomsAction(context, token) {
+		try {
+			await stopBreakoutRooms(token)
+		} catch (error) {
+			console.error(error)
+			showError(t('spreed', 'An error occurred while stopping breakout rooms'))
 		}
 	},
 }
