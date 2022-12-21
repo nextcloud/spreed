@@ -399,6 +399,7 @@ class RoomController extends AEnvironmentAwareController {
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => false,
 			'callStartTime' => 0,
+			'callRecording' => Room::RECORDING_NONE,
 			'canStartCall' => false,
 			'lastActivity' => 0,
 			'lastReadMessage' => 0,
@@ -468,6 +469,8 @@ class RoomController extends AEnvironmentAwareController {
 				'listable' => $room->getListable(),
 				'breakoutRoomMode' => $room->getBreakoutRoomMode(),
 				'breakoutRoomStatus' => $room->getBreakoutRoomStatus(),
+				'callStartTime' => $room->getActiveSince() instanceof \DateTimeInterface ? $room->getActiveSince()->getTimestamp() : 0,
+				'callRecording' => $room->getCallRecording(),
 			]);
 		}
 
@@ -487,6 +490,7 @@ class RoomController extends AEnvironmentAwareController {
 			'readOnly' => $room->getReadOnly(),
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 			'callStartTime' => $room->getActiveSince() instanceof \DateTimeInterface ? $room->getActiveSince()->getTimestamp() : 0,
+			'callRecording' => $room->getCallRecording(),
 			'lastActivity' => $lastActivity,
 			'callFlag' => $room->getCallFlag(),
 			'isFavorite' => $attendee->isFavorite(),
