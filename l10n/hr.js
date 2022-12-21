@@ -1109,7 +1109,6 @@ OC.L10N.register(
     "Saved" : "Spremljeno",
     "Add a new server" : "Dodaj novi poslužitelj",
     "More actions" : "Dodatne radnje",
-    "Error while accessing camera: it is likely in use by another program" : "Došlo je do pogreške pri pristupanju kameri: vjerojatno je upotrebljava neki drugi program",
     "Device check" : "Provjera uređaja",
     "Guests access" : "Pristupi kao gost",
     "Participants permissions" : "Dopuštenja sudionika",
@@ -1134,8 +1133,6 @@ OC.L10N.register(
     "Upload new files" : "Otpremi nove datoteke",
     "Share from Files" : "Dijeli iz datoteka",
     "Invitation was sent to {actorId}." : "Poslana je pozivnica za {actorId}.",
-    "Display name: " : "Ime za prikaz: ",
-    "Video on and off" : "Video uključen i isključen",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deck kartica je objavljena u odabranom <a href=\"{link}\">razgovoru</a>.",
     "An error occurred while posting deck card to conversation." : "Došlo je do pogreške pri objavi Deck kartice u razgovor."
 },

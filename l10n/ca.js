@@ -866,8 +866,6 @@ OC.L10N.register(
     "Calls" : "Trucades",
     "Choose a password" : "Establiu una contrasenya",
     "Upload new files" : "Pujar arxius nous",
-    "Share from Files" : "Comparteix des de fitxers",
-    "Display name: " : "Nom a mostrar: ",
-    "Video on and off" : "Vídeo activat i desactivat"
+    "Share from Files" : "Comparteix des de fitxers"
 },
 "nplurals=2; plural=(n != 1);");

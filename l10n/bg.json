@@ -1309,9 +1309,7 @@
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Можете да инсталирате Matterbridge, за да свържете Nextcloud Talk с някои други услуги, посетете тяхната {linkstart1}страница на GitHub{linkend} за повече подробности. Изтеглянето и инсталирането на приложението може да отнеме известно време. В случай, че то изтече, моля, инсталирайте го ръчно от {linkstart2}appstore{linkend}.",
     "Saved" : "Запазено",
     "Add a new server" : "Добавяне на нов съсрвър",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: Файловете „wasm“ и „.tflite“ са върнати правилно от уеб сървъра",
     "More actions" : "Повече действия",
-    "Error while accessing camera: it is likely in use by another program" : "Грешка при достъп до камера: вероятно тя се използва от друга програма",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Предупреждение: Всеки път, когато се променят права в този раздел, персонализираните права, присвоени преди това на отделни участници, ще бъдат загубени.",
     "Device check" : "Проверка на устройството",
     "Guests access" : "Достъп за гости",
@@ -1337,8 +1335,6 @@
     "Upload new files" : "Качване на нови файлове",
     "Share from Files" : "Споделяне от файлове",
     "Invitation was sent to {actorId}." : "Беше изпратена покана до {actorId}.",
-    "Display name: " : "Име за визуализация:",
-    "Video on and off" : "Включване и изключване на видео",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deck картата е публикувана в избраният <a href=\"{link}\">разговор</a>.",
     "An error occurred while posting deck card to conversation." : "Възникна грешка при публикуване на deck карта в разговор."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

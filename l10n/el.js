@@ -1009,7 +1009,6 @@ OC.L10N.register(
     "Saved" : "Αποθηκεύτηκαν",
     "Add a new server" : "Προσθήκη νέου διακομιστή",
     "More actions" : "Περισσότερες δράσεις",
-    "Error while accessing camera: it is likely in use by another program" : "Σφάλμα κατά την πρόσβαση στην κάμερα: είναι πιθανό να χρησιμοποιείται από άλλο πρόγραμμα",
     "Device check" : "Έλεγχος συσκευής",
     "Guests access" : "Πρόσβαση επισκεπτών",
     "Participants permissions" : "Δικαιώματα συμμετεχόντων",
@@ -1030,8 +1029,6 @@ OC.L10N.register(
     "Enable SIP dial-in" : "Ενεργοποίηση SIP dial-in",
     "Choose a password" : "Επιλέξτε κωδικό πρόσβασης",
     "Upload new files" : "Μεταφόρτωση νέων αρχείων",
-    "Share from Files" : "Κοινή χρήση από Αρχεία",
-    "Display name: " : "Εμφανιζόμενο όνομα:",
-    "Video on and off" : "Ενεργοποίηση και απενεργοποίηση βίντεο"
+    "Share from Files" : "Κοινή χρήση από Αρχεία"
 },
 "nplurals=2; plural=(n != 1);");

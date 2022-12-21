@@ -1255,9 +1255,7 @@ OC.L10N.register(
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Matterbridge позволяет настроить обмен сообщениями между приложением «Конференции» для Nextcloud и сторонними службами. Подробная информация приведена на {linkstart1}странице проекта на сервере GitHub{linkend}. Скачивание и установка приложения может занять некоторое время. В случае превышения времени ожидания установки, приложение возможно установить вручную из {linkstart1}магазина приложений{linkend}.",
     "Saved" : "Сохранено",
     "Add a new server" : "Добавить новый сервер",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: файлы \".wasm\" и \".tflite\" корректно возвращены веб-сервером",
     "More actions" : "Дополнительные действия",
-    "Error while accessing camera: it is likely in use by another program" : "Не удалось получить доступ к камере, вероятно, она используется другим приложением",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Предупреждение: Каждый раз, когда разрешения изменяются в этом разделе, то ранее назначенные пользовательские разрешения для отдельных участников, будут потеряны.",
     "Device check" : "Проверка устройства",
     "Guests access" : "Доступ для гостей",
@@ -1283,8 +1281,6 @@ OC.L10N.register(
     "Upload new files" : "Отправить файлы",
     "Share from Files" : "Опубликовать из приложения Файлы",
     "Invitation was sent to {actorId}." : "Приглашение отправлено {actorId}.",
-    "Display name: " : "Отображаемое имя:",
-    "Video on and off" : "Включить или отключить видео",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Карточка была опубликована в выбранном <a href=\"{link}\">обсуждении</a>.",
     "An error occurred while posting deck card to conversation." : "Не удалось опубликовать карточку в обсуждении."
 },

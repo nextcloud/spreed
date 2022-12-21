@@ -700,8 +700,6 @@ OC.L10N.register(
     "Upload new files" : "上傳新檔案",
     "Share from Files" : "從「檔案」分享",
     "Invitation was sent to {actorId}." : "邀請已傳送到 {actorId}。",
-    "Display name: " : "顯示名稱: ",
-    "Video on and off" : "開啟和關閉視訊",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "看板卡片已發佈到選定的 <a href=\"{link}\">對話</a>。"
 },
 "nplurals=1; plural=0;");

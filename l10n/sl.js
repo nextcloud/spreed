@@ -1242,7 +1242,6 @@ OC.L10N.register(
     "Saved" : "Shranjeno",
     "Add a new server" : "Dodaj nov strežnik",
     "More actions" : "Več dejanj",
-    "Error while accessing camera: it is likely in use by another program" : "Napaka dostopa do kamere: najverjetneje je v uporabi pri drugem programu.",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Opozorilo: vsakič, ko se dovoljenja spremenijo, se izbrišejo tudi vsa dodeljena dovoljenja posameznih udeležencev.",
     "Device check" : "Preverjanje naprave",
     "Guests access" : "Dostop gostov",
@@ -1268,8 +1267,6 @@ OC.L10N.register(
     "Upload new files" : "Pošlji nove datoteke",
     "Share from Files" : "Poveži iz oblaka",
     "Invitation was sent to {actorId}." : "Poslano povabilo: {actorId}.",
-    "Display name: " : "Prikazano ime:",
-    "Video on and off" : "Preklopi prikaz videa pogovora",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Naloga Deck je dodana v izbran <a href=\"{link}\">pogovor</a>.",
     "An error occurred while posting deck card to conversation." : "Prišlo je do napake med dodajanjem naloge v pogovor."
 },

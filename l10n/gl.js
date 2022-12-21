@@ -1035,7 +1035,6 @@ OC.L10N.register(
     "Saved" : "Gardado",
     "Add a new server" : "Engadir un novo servidor",
     "More actions" : "Máis accións",
-    "Error while accessing camera: it is likely in use by another program" : "Produciuse un erro ao acceder á cámara: é probábel que estea en uso por outro programa",
     "Guests access" : "Acceso de convidado",
     "Meeting settings" : "Axustes da xuntanza",
     "Allow guests to use a public link to join this conversation." : "Permitirlle aos convidados usar unha ligazón pública para unirse a esta conversa.",
@@ -1057,8 +1056,6 @@ OC.L10N.register(
     "Upload new files" : "Enviar novos ficheiros",
     "Share from Files" : "Compartir dende «Ficheiros»",
     "Invitation was sent to {actorId}." : "Enviouse o convite a {actorId}.",
-    "Display name: " : "Nome para amosar:",
-    "Video on and off" : "Acendido e apagado do vídeo",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "A tarxeta do Deck foi publicada na <a href=\"{link}\">conversa</a> seleccionada.",
     "An error occurred while posting deck card to conversation." : "Produciuse un erro ao publicar a tarxeta do deck na conversa."
 },

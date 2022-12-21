@@ -528,6 +528,7 @@ OC.L10N.register(
     "Yesterday" : "I går",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Create new poll" : "Opprett ny avstemning",
+    "Add emoji" : "Legg til emoji",
     "Send message" : "Send melding",
     "File to share" : "Fil for deling",
     "New file" : "Ny fil",

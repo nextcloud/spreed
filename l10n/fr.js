@@ -1311,9 +1311,7 @@ OC.L10N.register(
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Vous pouvez installer Matterbridge pour connecter Nextcloud Talk à d'autres services, visitez leur {linkstart1}dépôt GitHub{linkend} pour plus de détails. Le téléchargement et l'installation de l'application peut prendre un moment. Si elle s'interrompt, veuillez l'installer manuellement depuis {linkstart2}le magasin d'applications{linkend}.",
     "Saved" : "Sauvegardé",
     "Add a new server" : "Ajouter un nouveau serveur",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK : les fichiers \".wasm\" and \".tflite\" ont bien été retournés par le serveur web",
     "More actions" : "Plus d'actions",
-    "Error while accessing camera: it is likely in use by another program" : "Erreur lors de l’accès à la caméra : elle est certainement utilisée par une autre application.",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Attention : chaque fois que les permissions sont modifiés dans cette section, les permissions particulières assignées auparavant aux participants individuels sont perdues.",
     "Device check" : "Vérification du périphérique",
     "Guests access" : " Accès invités",
@@ -1339,8 +1337,6 @@ OC.L10N.register(
     "Upload new files" : "Téléverser de nouveaux fichiers",
     "Share from Files" : "Partager depuis Fichiers",
     "Invitation was sent to {actorId}." : "L'invitation a été envoyée à {actorId}.",
-    "Display name: " : "Nom à afficher :",
-    "Video on and off" : "Activer ou désactiver la vidéo",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "La carte Deck a été publiée dans la <a href=\"{link}\">conversation</a> sélectionnée.",
     "An error occurred while posting deck card to conversation." : "Une erreur s'est produite lors de la publication de la carte Deck dans la conversation."
 },

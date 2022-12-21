@@ -784,7 +784,6 @@
     "Saved" : "Įrašyta",
     "Add a new server" : "Pridėti naują serverį",
     "More actions" : "Daugiau veiksmų",
-    "Error while accessing camera: it is likely in use by another program" : "Klaida gaunant prieigą prie kameros: tikėtina, kad ją naudoja kita programa",
     "Meeting settings" : "Susitikimo nustatymai",
     "Allow guests to use a public link to join this conversation." : "Leisti svečiams naudotis viešąja nuoroda, kad prisijungtų prie šio pokalbio.",
     "Allow guests" : "Leisti svečius",
@@ -795,7 +794,6 @@
     "Allow participants to join from a phone." : "Leisti dalyviams prisijungti iš telefono.",
     "Message link copied to clipboard." : "Žinutės nuoroda nukopijuota į iškarpinę.",
     "Upload new files" : "Išsiųsti naujus failus",
-    "Share from Files" : "Bendrinti iš Failų",
-    "Display name: " : "Rodomas vardas: "
+    "Share from Files" : "Bendrinti iš Failų"
 },"pluralForm" :"nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);"
 }

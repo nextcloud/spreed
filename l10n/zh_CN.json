@@ -1174,9 +1174,7 @@
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "你可以安装 Matterbridge 来把 Nextcloud Talk 和其他一些服务相连，更多细节请访问它们的 {linkstart1}GitHub 页面{linkend}。下载和安装这个应用程序可能需要一段时间。如果超时了，请手动安装它，网址为 {linkstart2}appstore{linkend}。",
     "Saved" : "已保存",
     "Add a new server" : "添加新服务器",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "好的：网页服务器正确返回了 \".wasm\" 和 \".tflite\" 文件",
     "More actions" : "更多操作 ",
-    "Error while accessing camera: it is likely in use by another program" : "访问摄像头时出现错误：它可能正在被另一个程序使用",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "警告：每次修改本部分权限后，之前分配给单个参与者的自定义权限将会丢失。",
     "Device check" : "设备检查",
     "Guests access" : "来宾访问",
@@ -1202,8 +1200,6 @@
     "Upload new files" : "上传新文件",
     "Share from Files" : "从文件共享",
     "Invitation was sent to {actorId}." : "邀请已发送至 {actorId}",
-    "Display name: " : "显示名称：",
-    "Video on and off" : "视频开和关",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deck 卡片已被张贴到所选的 <a href=\"{link}\">会话</a>",
     "An error occurred while posting deck card to conversation." : "将 Deck 卡片发送到会话时发生了一个错误。"
 },"pluralForm" :"nplurals=1; plural=0;"
