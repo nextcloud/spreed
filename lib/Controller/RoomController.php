@@ -399,7 +399,7 @@ class RoomController extends AEnvironmentAwareController {
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => false,
 			'callStartTime' => 0,
-			'callRecording' => 0,
+			'callRecording' => Room::RECORDING_NONE,
 			'canStartCall' => false,
 			'lastActivity' => 0,
 			'lastReadMessage' => 0,
