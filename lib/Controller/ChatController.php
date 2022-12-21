@@ -468,6 +468,11 @@ class ChatController extends AEnvironmentAwareController {
 		$i = 0;
 		$messages = $commentIdToIndex = $parentIds = [];
 		foreach ($comments as $comment) {
+			$message = $comment->getMessage();
+			if ($this->messageParser->isSharedFile($message) && !$this->messageParser->fileOfMessageExists($message)) {
+				continue;
+			}
+
 			$id = (int) $comment->getId();
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
@@ -790,6 +795,10 @@ class ChatController extends AEnvironmentAwareController {
 		$comments = $this->chatManager->getMessagesById($this->room, array_merge(...array_values($messageIdsByType)));
 
 		foreach ($comments as $comment) {
+			if (!$this->messageParser->fileOfMessageExists($comment->getMessage())) {
+				continue;
+			}
+
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
 
@@ -841,12 +850,17 @@ class ChatController extends AEnvironmentAwareController {
 		return $response;
 	}
 
-	protected function getMessagesForRoom(Room $room, array $messageIds): array {
+	private function getMessagesForRoom(Room $room, array $messageIds): array {
 		$comments = $this->chatManager->getMessagesById($room, $messageIds);
 
 		$messages = [];
 		foreach ($comments as $comment) {
+			if (!$this->messageParser->fileOfMessageExists($comment->getMessage())) {
+				continue;
+			}
+
 			$message = $this->messageParser->createMessage($room, $this->participant, $comment, $this->l);
+
 			$this->messageParser->parseMessage($message);
 
 			if (!$message->getVisibility()) {

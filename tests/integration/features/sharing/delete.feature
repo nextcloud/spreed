@@ -364,6 +364,7 @@ Feature: delete
       | public room | users     | participant1 | participant1-displayname | {file}   | "IGNORE"          |
     When user "participant1" deletes file "welcome.txt"
     Then user "participant1" sees the following shared file in room "public room" with 200
+    And user "participant1" sees the following shared overview in room "public room" with 200
     And user "participant1" sees the following system messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | systemMessage |
       | public room | users     | participant1 | participant1-displayname | conversation_created |

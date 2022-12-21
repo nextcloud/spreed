@@ -32,10 +32,12 @@ use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\IUserManager;
+use OCP\Share\Exceptions\ShareNotFound;
 
 /**
  * Helper class to get a rich message from a plain text message.
@@ -44,15 +46,18 @@ class MessageParser {
 	public const EVENT_MESSAGE_PARSE = self::class . '::parseMessage';
 
 	protected IEventDispatcher $dispatcher;
+	protected RoomShareProvider $shareProvider;
 	protected IUserManager $userManager;
 	protected ParticipantService $participantService;
 
 	protected array $guestNames = [];
 
 	public function __construct(IEventDispatcher $dispatcher,
+								RoomShareProvider $shareProvider,
 								IUserManager $userManager,
 								ParticipantService $participantService) {
 		$this->dispatcher = $dispatcher;
+		$this->shareProvider = $shareProvider;
 		$this->userManager = $userManager;
 		$this->participantService = $participantService;
 	}
@@ -105,5 +110,31 @@ class MessageParser {
 			$actorId,
 			$displayName
 		);
+	}
+
+	public function isSharedFile(string $message): bool {
+		$parameters = $this->getParametersFromMessage($message);
+		return !empty($parameters['share']);
+	}
+
+	private function getParametersFromMessage(string $message): array {
+		$data = json_decode($message, true);
+		if (!\is_array($data)) {
+			return [];
+		}
+		return $data['parameters'];
+	}
+
+	public function fileOfMessageExists(string $message): bool {
+		$parameters = $this->getParametersFromMessage($message);
+		if (empty($parameters['share'])) {
+			return false;
+		}
+		try {
+			$this->shareProvider->getShareById($parameters['share']);
+		} catch (ShareNotFound $e) {
+			return false;
+		}
+		return true;
 	}
 }
