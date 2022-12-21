@@ -1309,9 +1309,7 @@
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Sie können Matterbridge installieren, um Nextcloud Talk mit einigen anderen Diensten zu verlinken. Besuchen Sie deren {linkstart1}GitHub-Seite{linkend} für weitere Details. Das Herunterladen und Installieren der App kann eine Weile dauern. Falls die Zeit überschritten wird, installieren Sie sie bitte manuell über den {linkstart2}appstore{linkend}.",
     "Saved" : "Gespeichert",
     "Add a new server" : "Neuen Server hinzufügen",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: \".wasm\"- und \".tflite\"-Dateien wurden ordnungsgemäß vom Webserver zurückgegeben.",
     "More actions" : "Weitere Aktionen",
-    "Error while accessing camera: it is likely in use by another program" : "Fehler beim Zugriff auf die Kamera: sie wird wahrscheinlich von einem anderen Programm verwendet",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Achtung: Bei jeder Änderung der Berechtigungen in diesem Abschnitt gehen die benutzerdefinierten Berechtigungen, die den einzelnen Teilnehmern zuvor zugewiesen wurden, verloren.",
     "Device check" : "Gerätetest",
     "Guests access" : "Gastzugriff",
@@ -1337,8 +1335,6 @@
     "Upload new files" : "Neue Dateien hochladen",
     "Share from Files" : "Aus Dateien heraus teilen",
     "Invitation was sent to {actorId}." : "Einladung wurde an {actorId} versendet.",
-    "Display name: " : "Anzeigename:",
-    "Video on and off" : "Kamera ein- und ausschalten",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deckkarte wurde an die ausgewählte <a href=\"{link}\">Unterhaltung</a> gesendet.",
     "An error occurred while posting deck card to conversation." : "Es ist ein Fehler beim Posten der Deckkarte an die Unterhaltung aufgetreten."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

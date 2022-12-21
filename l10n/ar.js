@@ -1013,7 +1013,6 @@ OC.L10N.register(
     "Saved" : "تم الإحتفاظ به",
     "Add a new server" : "إضافة خادم جديد",
     "More actions" : "إجراءات أخرى",
-    "Error while accessing camera: it is likely in use by another program" : "لا يمكن الوصول للكاميرا: من الممكن انك تستخدمها في برنامج آخر.",
     "Guests access" : "الوصول للضيوف ",
     "Meeting settings" : "إعدادات الإجتماع ",
     "Allow guests to use a public link to join this conversation." : "السماح للضيوف باستخدام الرابط العام للانضمام إلى هذه المحادثة ",
@@ -1035,8 +1034,6 @@ OC.L10N.register(
     "Upload new files" : "رفع ملفات جديدة",
     "Share from Files" : "مشاركة من الملفات",
     "Invitation was sent to {actorId}." : "تم إرسال الدعوة إلى {هوية المستخدم}.",
-    "Display name: " : "اسم العرض:",
-    "Video on and off" : "تفعيل او تعطيل الفيديو",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "نُشرت بطاقة Deck إلى المحادثة المحددة <a href=\"{link}\">محادثة </a>.",
     "An error occurred while posting deck card to conversation." : "حدث خطأ أثناء نشر بطاقة deck للمحادثة"
 },

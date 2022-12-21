@@ -932,7 +932,6 @@ OC.L10N.register(
     "Saved" : "Зачувано",
     "Add a new server" : "Додади нов сервер",
     "More actions" : "Повеќе акции",
-    "Error while accessing camera: it is likely in use by another program" : "Грешка при пристап до камера: веројатно е во употреба од друга програма",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Предупредување: секогаш кога се менуваат дозволите во овој дел, приспособените дозволи претходно доделени на поединечни учесници ќе бидат изгубени.",
     "Device check" : "Проверка на уредот",
     "Guests access" : "Гостински пристап",
@@ -952,8 +951,6 @@ OC.L10N.register(
     "Message link copied to clipboard." : "Линкот до пораката е копиран во клипборд.",
     "Upload new files" : "Прикачи нови датотеки",
     "Share from Files" : "Сподели од датотеките",
-    "Invitation was sent to {actorId}." : "Покана е испратена до {actorId}.",
-    "Display name: " : "Име:",
-    "Video on and off" : "Вклучување и исклучување на видеото"
+    "Invitation was sent to {actorId}." : "Покана е испратена до {actorId}."
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

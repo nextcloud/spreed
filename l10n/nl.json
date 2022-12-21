@@ -1224,9 +1224,7 @@
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Je kan Matterbridge installeren om Nextcloud Talk te linken aan een aantal andere diensten; bezoek hun {linkstart1}Github pagina{linkend} voor meer details. De app downloaden en installeren kan even duren. Moest het mislukken, installeer ze dan manueel vanop de {linkstart2}appstore{linkend}.",
     "Saved" : "Opgeslagen",
     "Add a new server" : "Voeg een nieuwe server toe",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: \".wasm\" en \".tflite\" bestanden werden juist geretourneerd door de webserver",
     "More actions" : "Meer acties",
-    "Error while accessing camera: it is likely in use by another program" : "Fout bij toegang tot camera, vermoedelijk in gebruik bij andere app",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Waarschuwing: Elke keer dat machtigingen worden veranderd in deze sectie worden eerder ingestelde machtigingen voor individuele deelnemers verwijderd.",
     "Device check" : "Apparaat controle",
     "Guests access" : "Gastentoegang",
@@ -1252,8 +1250,6 @@
     "Upload new files" : "Uploaden nieuwe bestanden",
     "Share from Files" : "Delen vanuit Bestanden",
     "Invitation was sent to {actorId}." : "Uitnodiging verzonden naar {actorId}",
-    "Display name: " : "Weergavenaam:",
-    "Video on and off" : "Video aan en uit",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "De Deck kaart is gepubliceerd naar het geselecteerde </a>gesprek</a>.",
     "An error occurred while posting deck card to conversation." : "Er trad fout op bij het publiceren van de kaart in gesprek."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

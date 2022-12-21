@@ -1287,9 +1287,7 @@
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Pre prepojenie NextCloud Rozhovory s niektorými inými službami je možné nainštalovať Matterbridge, podrobnosti viď na {linkstart1}GitHub{linkend}. Stiahnutie a inštalácia aplikácie môže chvíľu trvať. V prípade prekročenia časového limitu ju prosím nainštalujte ručne z {linkstart2}katalógu aplikácií{linkend}.",
     "Saved" : "Uložené",
     "Add a new server" : "Pridať nový server",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: Webový server správne vrátil súbory „.wasm“ a „.tflite“.",
     "More actions" : "Viac akcií",
-    "Error while accessing camera: it is likely in use by another program" : "Chyba pri prístupe ku kamere: pravdepodobne ju používa iný program",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Upozornenie: Pri každej úprave oprávnení v tejto sekcii sa stratia vlastné oprávnenia, ktoré boli predtým pridelené jednotlivým účastníkom.",
     "Device check" : "Kontrola zariadenia",
     "Guests access" : "Prístup pre hostí",
@@ -1315,8 +1313,6 @@
     "Upload new files" : "Nahrať nové súbory",
     "Share from Files" : "Zdieľať zo Súborov",
     "Invitation was sent to {actorId}." : "Pozvánka odoslaná pre {name}",
-    "Display name: " : "Zobrazovaný názov:",
-    "Video on and off" : "Zapnúť a vypnúť video",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Karta Deck bola odoslaná do označeného <a href=\"{link}\">rozhovoru</a>.",
     "An error occurred while posting deck card to conversation." : "Pri odosielaní karty aplikácie Deck nastala chyba"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"

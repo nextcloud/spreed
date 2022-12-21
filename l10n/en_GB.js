@@ -1311,9 +1311,7 @@ OC.L10N.register(
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}.",
     "Saved" : "Saved",
     "Add a new server" : "Add a new server",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: \".wasm\" and \".tflite\" files were properly returned by the web server",
     "More actions" : "More actions",
-    "Error while accessing camera: it is likely in use by another program" : "Error while accessing camera: it is likely in use by another program",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost.",
     "Device check" : "Device check",
     "Guests access" : "Guests access",
@@ -1339,8 +1337,6 @@ OC.L10N.register(
     "Upload new files" : "Upload new files",
     "Share from Files" : "Share from Files",
     "Invitation was sent to {actorId}." : "Invitation was sent to {actorId}.",
-    "Display name: " : "Display name: ",
-    "Video on and off" : "Video on and off",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>.",
     "An error occurred while posting deck card to conversation." : "An error occurred while posting deck card to conversation."
 },

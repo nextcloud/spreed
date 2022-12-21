@@ -742,7 +742,6 @@ OC.L10N.register(
     "Saved" : "Đã lưu",
     "Add a new server" : "Thêm một máy chủ mới",
     "More actions" : "Nhiều hành động hơn",
-    "Error while accessing camera: it is likely in use by another program" : "Lỗi khi truy cập máy ảnh: nó có thể đang được chương trình khác sử dụng",
     "Guests access" : "Khách truy cập",
     "Meeting settings" : "Cài đặt cuộc họp",
     "Allow guests to use a public link to join this conversation." : "Cho phép khách sử dụng liên kết công khai để tham gia cuộc trò chuyện này.",
@@ -764,8 +763,6 @@ OC.L10N.register(
     "Upload new files" : "Tải lên các tệp mới",
     "Share from Files" : "Chia sẻ từ Thư mục",
     "Invitation was sent to {actorId}." : "Lời mời đã được gửi đến {actorId}.",
-    "Display name: " : "Tên hiển thị:",
-    "Video on and off" : "Bật và tắt video",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Bộ bài đã được đăng lên <a href=\"{link}\">cuộc đối thoại</a> đã chọn.",
     "An error occurred while posting deck card to conversation." : "Đã xảy ra lỗi khi đăng bộ bài lên cuộc trò chuyện."
 },

@@ -1287,9 +1287,7 @@
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Matterbridge instala dezakezu Nextcloud Talk beste zerbitzu batzuekin lotzeko, joan {linkstart1}GitHub orrira{linkend} xehetasun gehiagorako. Aplikazioak deskargatu eta instalatzeko denbora behar lezake. Denbora-muga gainditzen badu, saiatu eskuz instalatzen {linkstart2}appstoretik{linkend}.",
     "Saved" : "Gordeta",
     "Add a new server" : "Gehitu zerbitzari berria",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "Ados: \".wasm\" eta \".tflite\" fitxategiak behar bezala itzuli ditu web zerbitzariak",
     "More actions" : "Ekintza gehiago",
-    "Error while accessing camera: it is likely in use by another program" : "Errorea kamera atzitzean: litekeena da beste programa bat hura erabiltzen aritzea",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Oharra: Sekzio honetan baimenak aldatzen diren bakoitzean, parte-hartzaile bakoitzari lehen emandako baimen pertsonalizatuak galduko dira.",
     "Device check" : "Gailu egiaztapena",
     "Guests access" : "Gonbidatuen sarbidea",
@@ -1315,8 +1313,6 @@
     "Upload new files" : "Kargatu fitxategi berriak",
     "Share from Files" : "Partekatu Fitxategiak-etik",
     "Invitation was sent to {actorId}." : "Gonbidapena bildali da {actorId}(r)i.",
-    "Display name: " : "Pantaila-izena:",
-    "Video on and off" : "Bideoa gaitu eta desgaitu",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deck txartel bat argitaratu da hautaturiko <a href=\"{link}\">elkarrizketan</a>",
     "An error occurred while posting deck card to conversation." : "Errore bat gertatu da elkarrizketan deck txartela argitaratzean."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

@@ -589,7 +589,6 @@ OC.L10N.register(
     "Calls" : "שיחות",
     "Choose a password" : "בחירת ססמה",
     "Upload new files" : "העלאת קבצים חדשים",
-    "Share from Files" : "שיתוף מקבצים",
-    "Display name: " : "שם תצוגה:"
+    "Share from Files" : "שיתוף מקבצים"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

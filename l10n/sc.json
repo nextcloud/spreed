@@ -1052,7 +1052,6 @@
     "Saved" : "Sarvadu",
     "Add a new server" : "Agiunghe unu serbidore nou",
     "More actions" : "Àteras atziones",
-    "Error while accessing camera: it is likely in use by another program" : "Errore in s'atzessu a sa càmera: est possìbile chi un'àteru programma siat impreende•dda",
     "Guests access" : "Atzessu de is persones invitadas",
     "Meeting settings" : "Impostatziones de sa riunione",
     "Allow guests to use a public link to join this conversation." : "Permite a is persones invitadas de impreare unu ligòngiu pùblicu pro intrare in custa resonada.",
@@ -1074,8 +1073,6 @@
     "Upload new files" : "Càrriga archìvios noos",
     "Share from Files" : "Cumpartzi dae Archìvios",
     "Invitation was sent to {actorId}." : "S'invitu est istadu imbiadu a {actorId}.",
-    "Display name: " : "Mustra nùmene:",
-    "Video on and off" : "Vìdeo allutu e istudadu",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "S'ischeda de Deck est istada publicada in sa <a href=\"{link}\">resonada</a> seletzionada.",
     "An error occurred while posting deck card to conversation." : "B'at àpidu un'errore publichende s'ischeda de Deck in sa resonada."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

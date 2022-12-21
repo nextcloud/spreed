@@ -360,6 +360,7 @@ OC.L10N.register(
     "Personal" : "Personlig",
     "Meeting" : "Møde",
     "Permissions" : "Rettigheder",
+    "Danger zone" : "Farezone",
     "Leave conversation" : "Forlad samtale",
     "Delete conversation" : "Slet samtale",
     "You need to promote a new moderator before you can leave the conversation." : "Du skal udnævne en ny moderator før du kan forlade samtalen.",
@@ -423,6 +424,7 @@ OC.L10N.register(
     "Yesterday" : "I går",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Create new poll" : "Opret ny afstemning",
+    "Add emoji" : "Tilføj emoji",
     "Send message" : "Send besked",
     "File to share" : "Vælg fil til deling",
     "New file" : "Ny fil",
@@ -512,7 +514,6 @@ OC.L10N.register(
     "Calls" : "Opkald",
     "Choose a password" : "Vælg en adgangskode",
     "Upload new files" : "Upload nye filer",
-    "Share from Files" : "Del fra Filer",
-    "Display name: " : "Vist navn:"
+    "Share from Files" : "Del fra Filer"
 },
 "nplurals=2; plural=(n != 1);");

@@ -1042,7 +1042,6 @@ OC.L10N.register(
     "Saved" : "Enregistrat",
     "Add a new server" : "Apondre un servidor novèl",
     "More actions" : "Mai d’accions",
-    "Error while accessing camera: it is likely in use by another program" : "Error d’accès a la camèra : poiriá arribar qu’un autre programa l’utiliza",
     "Device check" : "Verificacion de periferic",
     "Guests access" : "Accès convidat",
     "Participants permissions" : "Permissions dels participants",
@@ -1064,8 +1063,6 @@ OC.L10N.register(
     "Message link copied to clipboard." : "Ligam del messatge copiat al quichapapièrs.",
     "Upload new files" : "Enviar fichièrs novèls",
     "Share from Files" : "Partejar a partir dels Fichièrs",
-    "Invitation was sent to {actorId}." : "Invitacion enviada a {actorId}.",
-    "Display name: " : "Nom d’afichatge :",
-    "Video on and off" : "Vidèo activada/desactivada"
+    "Invitation was sent to {actorId}." : "Invitacion enviada a {actorId}."
 },
 "nplurals=2; plural=(n > 1);");
