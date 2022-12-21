@@ -1299,9 +1299,7 @@ OC.L10N.register(
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Puedes instalar Matterbridge para enlazar Nextcloud Talk con otros servicios. Visita su {linkstart1}página de GitHub{linkend} para más detalles. Descargar e instalar esta app puede llevar un buen rato. En caso de que se agote el tiempo, instálala manualmente desde la {linkstart2}appstore{linkend}.",
     "Saved" : "Guardado",
     "Add a new server" : "Añadir un servidor nuevo",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: los archivos \".wasm\" y \".tflite\" han sido devueltos correctamente por el servidor web",
     "More actions" : "Más acciones",
-    "Error while accessing camera: it is likely in use by another program" : "Error al acceder a la cámara: puede que la esté usando otro programa",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Advertencia: Cada vez que se modifiquen los permisos en esta sección, los permisos personalizados asignados previamente a participantes concretos serán perdidos.",
     "Device check" : "Comprobación del dispositivo",
     "Guests access" : "Acceso de invitados",
@@ -1327,8 +1325,6 @@ OC.L10N.register(
     "Upload new files" : "Subir nuevos archivos",
     "Share from Files" : "Compartir desde Archivos",
     "Invitation was sent to {actorId}." : "Se ha enviado la invitación a {actorId}.",
-    "Display name: " : "Nombre para mostrar:",
-    "Video on and off" : "Vídeo encendido y apagado",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "La tarjeta de Deck se ha publicado en la <a href=\"{link}\">conversación</a> seleccionada",
     "An error occurred while posting deck card to conversation." : "Se ha producido un error al publicar la tarjeta de Deck en la conversación."
 },

@@ -1072,7 +1072,6 @@
     "Saved" : "저장됨",
     "Add a new server" : "새 서버 추가",
     "More actions" : "더 많은 동작",
-    "Error while accessing camera: it is likely in use by another program" : "카메라에 액세스하는 중 오류 발생: 다른 프로그램에서 사용 중인 것 같습니다.",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "경고: 이 섹션에서 권한이 수정될 때마다 개별 참가자에게 이전에 할당된 사용자 지정 권한이 손실됩니다.",
     "Device check" : "기기 확인",
     "Guests access" : "손님 접근",
@@ -1096,8 +1095,6 @@
     "Choose a password" : "비밀번호 선택",
     "Message link copied to clipboard." : "메시지 링크가 클립보드에 복사되었습니다.",
     "Upload new files" : "새로운 파일 업로드",
-    "Share from Files" : "파일 공유",
-    "Display name: " : "표시 이름:",
-    "Video on and off" : "비디오 켜기 그리고 끄기"
+    "Share from Files" : "파일 공유"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

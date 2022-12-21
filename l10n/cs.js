@@ -1299,9 +1299,7 @@ OC.L10N.register(
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Pro propojení Nextcloud Talk s některými ostatními službami je možné nainstalovat Matterbridge, podrobnosti viz {linkstart1}stránka na GitHub{linkend}. Stažení a instalace aplikace může chvíli trvat. V případě překročení časového limitu ji prosím nainstalujte ručně z {linkstart2}katalogu aplikací{linkend}.",
     "Saved" : "Uloženo",
     "Add a new server" : "Přidat nový server",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: server správně vrátil soubory „.wasm“ a „.tflite“",
     "More actions" : "Další akce",
-    "Error while accessing camera: it is likely in use by another program" : "Chyba při přistupování ke kameře: nejspíš je využívána jiným programem",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Varování: Pokaždé když jsou v této sekci změněna oprávnění, budou ztracena předtím udělená uživatelsky určená oprávnění, přiřazená jednotlivým účastníkům.",
     "Device check" : "Kontrola zařízení",
     "Guests access" : "Přístup pro hosty",
@@ -1327,8 +1325,6 @@ OC.L10N.register(
     "Upload new files" : "Nahrát nové soubory",
     "Share from Files" : "Sdílet ze Souborů",
     "Invitation was sent to {actorId}." : "Odeslána pozvánka pro {actorId}.",
-    "Display name: " : "Zobrazovaný název:",
-    "Video on and off" : "Video zapnout a vypnout",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Karta aplikace Deck byla odeslána do vybrané <a href=\"{link}\">konverzace</a>.",
     "An error occurred while posting deck card to conversation." : "Pri odesílání karty aplikace Deck došlo k chybě"
 },

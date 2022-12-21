@@ -1039,7 +1039,6 @@ OC.L10N.register(
     "Saved" : "Tallennettu",
     "Add a new server" : "Lisää uusi palvelin",
     "More actions" : "Lisää toimintoja",
-    "Error while accessing camera: it is likely in use by another program" : "Virhe yrittäessä käyttää kameraa: se on luultavasti toisen ohjelman käytössä",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Varoitus: Joka kerta kun oikeuksia muokataan tässä osiossa, aiemmin yksittäisille osallistujille määritetyt mukautetut oikeudet poistuvat.",
     "Device check" : "Laitteen tarkistus",
     "Guests access" : "Vieraiden pääsy",
@@ -1061,7 +1060,6 @@ OC.L10N.register(
     "Enable SIP dial-in" : "Käytä SIP-sisäänsoittoa",
     "Choose a password" : "Valitse salasana",
     "Message link copied to clipboard." : "Viestin linkki kopioitu leikepöydälle.",
-    "Upload new files" : "Lähetä uusia tiedostoja",
-    "Display name: " : "Näyttönimi:"
+    "Upload new files" : "Lähetä uusia tiedostoja"
 },
 "nplurals=2; plural=(n != 1);");

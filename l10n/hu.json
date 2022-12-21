@@ -1291,9 +1291,7 @@
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Telepítheti a Matterbridge-dzet, hogy összekapcsolja a Nextcloud Beszélgetés alkalmazást néhány további szolgáltatással. További részletekért keresse fel a {linkstart1}GitHub oldalukat{linkend}. Az alkalmazás letöltése és telepítése eltarthat egy ideig. Időtúllépés esetén telepítse kézzelaz {linkstart2}alkalmazásboltból{linkend}.",
     "Saved" : "Elmentve",
     "Add a new server" : "Új kiszolgáló hozzáadása",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "Rendben: a webkiszolgáló helyesen adta vissza a „.wasm” és a „.tflite” fájlokat.",
     "More actions" : "További lehetőségek",
-    "Error while accessing camera: it is likely in use by another program" : "Hiba történt a kamera elérésekor: valószínűleg egy másik program használja",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Figyelmeztetés: az egyes résztvevőkhöz rendelt egyéni jogosultságok elvesznek, ha módosítja a jogosultságokat ebben a szakaszban.",
     "Device check" : "Eszközellenőrzés",
     "Guests access" : "Vendégek hozzáférése",
@@ -1319,8 +1317,6 @@
     "Upload new files" : "Új fájlok feltöltése",
     "Share from Files" : "Megosztás a Fájlokból",
     "Invitation was sent to {actorId}." : "Meghívó elküldve a következőnek: {actorId}.",
-    "Display name: " : "Megjelenítendő név: ",
-    "Video on and off" : "Videó be- és kikapcsolása",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "A kártya elküldve a kiválasztott <a href=\"{link}\">beszélgetésbe</a>.",
     "An error occurred while posting deck card to conversation." : "Hiba történt a kártya beszélgetésbe küldése során."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

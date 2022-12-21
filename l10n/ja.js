@@ -1194,9 +1194,7 @@ OC.L10N.register(
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Matterbridgeをインストールして、Nextcloud Talkを他のサービスにリンクできます。詳細については、{linkstart1} GitHubページ{linkend}にアクセスしてください。アプリのダウンロードとインストールには時間がかかる場合があります。タイムアウトした場合は、{linkstart2} appstore {linkend}から手動でインストールしてください。",
     "Saved" : "保存しました",
     "Add a new server" : "新しいサーバーの追加",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: \".wasm\" と \".tflite\" ファイルがWebブラウザーにより正しく返却されました",
     "More actions" : "その他のアクション",
-    "Error while accessing camera: it is likely in use by another program" : "カメラへのアクセス時にエラー: その他のアプリケーションが利用中の可能性があります",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "警告: このセクションの各権限は変更されており、前回、参加者に個別に割り当てられていたカスタム権限は失われます。",
     "Device check" : "デバイスチェック",
     "Guests access" : "ゲスト参加",
@@ -1222,8 +1220,6 @@ OC.L10N.register(
     "Upload new files" : "新規ファイルをアップロード",
     "Share from Files" : "ファイルから共有",
     "Invitation was sent to {actorId}." : "招待状が {actorId} に送信されました。",
-    "Display name: " : "表示名:",
-    "Video on and off" : "ビデオのオンとオフ",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "選択した<a href=\"{link}\">会話</a>にデッキカードが投稿されました。",
     "An error occurred while posting deck card to conversation." : "デッキカードを会話に投稿中にエラーが発生しました。"
 },

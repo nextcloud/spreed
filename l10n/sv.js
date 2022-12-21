@@ -753,8 +753,6 @@ OC.L10N.register(
     "Upload new files" : "Ladda upp nya filer",
     "Share from Files" : "Dela från Filer",
     "Invitation was sent to {actorId}." : "Inbjudan skickades till {actorId}.",
-    "Display name: " : "Visningsnamn:",
-    "Video on and off" : "Video av och på",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Ett Deck-kort har lagts till för den valda <a href=\"{link}\">konversationen</a>."
 },
 "nplurals=2; plural=(n != 1);");

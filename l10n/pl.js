@@ -1299,9 +1299,7 @@ OC.L10N.register(
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Możesz zainstalować Matterbridge, aby połączyć Nextcloud Talk z innymi usługami. Odwiedź {linkstart1}stronę GitHub{linkend}, aby uzyskać więcej informacji. Pobieranie i instalowanie aplikacji może chwilę potrwać. W przypadku przekroczenia limitu czasu, zainstaluj ją ręcznie ze {linkstart2}sklepu z aplikacjami{linkend}.",
     "Saved" : "Zapisano",
     "Add a new server" : "Dodaj serwer",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "OK: Pliki \".wasm\" i \".tflite\" zostały poprawnie zwrócone przez serwer WWW",
     "More actions" : "Więcej akcji",
-    "Error while accessing camera: it is likely in use by another program" : "Błąd podczas uzyskiwania dostępu do kamery: prawdopodobnie jest używana przez inny program",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Ostrzeżenie: Za każdym razem, gdy uprawnienia zostaną zmodyfikowane w tej sekcji, niestandardowe uprawnienia wcześniej przypisane poszczególnym uczestnikom zostaną utracone.",
     "Device check" : "Sprawdzenie urządzenia",
     "Guests access" : "Dostęp dla gości",
@@ -1327,8 +1325,6 @@ OC.L10N.register(
     "Upload new files" : "Wyślij nowe pliki",
     "Share from Files" : "Udostępnij z Plików",
     "Invitation was sent to {actorId}." : "Zaproszenie zostało wysłane do {actorId}.",
-    "Display name: " : "Wyświetlana nazwa:",
-    "Video on and off" : "Włącz i wyłącz obraz wideo",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Karta została umieszczona w wybranej <a href=\"{link}\">rozmowie</a>.",
     "An error occurred while posting deck card to conversation." : "Wystąpił błąd podczas dodawania karty do rozmowy."
 },

@@ -1309,9 +1309,7 @@
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Nextcloud Talk  ile diğer hizmetleri bağlamak için Matterbridge kurabilirsiniz. Ayrıntılı bilgi almak için Matterbridge {linkstart1}GitHub sayfasına{linkend} bakabilirsiniz. Uygulamanın indirilip kurulması biraz zaman alabilir. İşlem zaman aşımına uğrarsa {linkstart2}uygulama mağazasından{linkend} el ile kurun.",
     "Saved" : "Kaydedildi",
     "Add a new server" : "Yeni sunucu ekle",
-    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server" : "Tamamlandı: Web sunucu tarafından \".wasm\" ve \".tflite\" dosyaları düzgün şekilde geri döndürüldü",
     "More actions" : "Diğer işlemler",
-    "Error while accessing camera: it is likely in use by another program" : "Kameraya erişilirken sorun çıktı: Başka bir uygulama tarafından kullanılıyor olabilir",
     "Warning: Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Uyarı: Bu bölümdeki izinler her değiştirildiğinde, daha önce katılımcılara tek tek atanmış özel izinler kaybolur.",
     "Device check" : "Aygıt denetimi",
     "Guests access" : "Konuk erişimi",
@@ -1337,8 +1335,6 @@
     "Upload new files" : "Yeni dosyaları yükle",
     "Share from Files" : "Dosyalardan paylaş",
     "Invitation was sent to {actorId}." : "{actorId} için çağrı gönderildi.",
-    "Display name: " : "Görüntülenecek ad:",
-    "Video on and off" : "Görüntüyü açma ve kapatma",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Tahta kartı seçilmiş <a href=\"{link}\">görüşmeye</a> gönderildi.",
     "An error occurred while posting deck card to conversation." : "Tahta kartı seçilmiş görüşmeye gönderilirken bir sorun çıktı."
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
