@@ -136,12 +136,12 @@ Feature: command/user-remove
       | id                            | name                          | type | participantType |
       | moderator to owner            | moderator to owner            | 2    | 2               |
     And user "participant3" joins room "from self-joined to user" with 200 (v4)
-    And user "participant3" is participant of the following rooms (v4)
+    And user "participant3" is participant of the following unordered rooms (v4)
       | id                            | name                          | type | participantType |
       | moderator to owner            | moderator to owner            | 2    | 2               |
       | from self-joined to user      | from self-joined to user      | 3    | 5               |
     And user "participant3" joins room "from self-joined to moderator" with 200 (v4)
-    And user "participant3" is participant of the following rooms (v4)
+    And user "participant3" is participant of the following unordered rooms (v4)
       | id                            | name                          | type | participantType |
       | moderator to owner            | moderator to owner            | 2    | 2               |
       | from self-joined to user      | from self-joined to user      | 3    | 5               |
@@ -156,7 +156,7 @@ Feature: command/user-remove
       | moderator to owner            | moderator to owner            | 2    | 1               |
       | from self-joined to moderator | from self-joined to moderator | 3    | 2               |
       | from self-joined to user      | from self-joined to user      | 3    | 3               |
-    And user "participant3" is participant of the following rooms (v4)
+    And user "participant3" is participant of the following unordered rooms (v4)
       | id                            | name                          | type | participantType |
       | moderator                     | moderator                     | 2    | 2               |
       | owner                         | owner                         | 2    | 1               |
