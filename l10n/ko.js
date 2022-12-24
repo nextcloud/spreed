@@ -697,6 +697,7 @@ OC.L10N.register(
     "Error while deleting conversation" : "대화를 삭제하는 동안 오류가 발생했습니다",
     "Delete all chat messages" : "모든 채팅 메시지 삭제",
     "Error while clearing chat history" : "채팅 기록을 지우는 동안 오류가 발생했습니다.",
+    "Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation." : "채팅 메시지가 특정 시간 이후에 만료될 수 있습니다. 참고: 채팅에서 공유된 파일들은 소유자에게서 삭제 되지 않지만, 대화에서 더이상 공유되지 않습니다.",
     "Guest access" : "게스트 접속",
     "Password protection" : "암호 보호",
     "Save password" : "비밀번호 저장",
