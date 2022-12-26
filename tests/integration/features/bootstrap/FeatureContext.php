@@ -3086,7 +3086,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				],
 				[
 					'name' => 'owner',
-					'contents' => 'fakeowner',
+					'contents' => $user,
 				],
 			],
 		];
