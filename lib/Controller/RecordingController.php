@@ -26,18 +26,28 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
+use OCA\Talk\Config;
+use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Service\SIPBridgeService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
 class RecordingController extends AEnvironmentAwareController {
+	private Config $talkConfig;
+	private SIPBridgeService $SIPBridgeService;
 	private RoomService $roomService;
+
 
 	public function __construct(string $appName,
 								IRequest $request,
+								Config $talkConfig,
+								SIPBridgeService $SIPBridgeService,
 								RoomService $roomService) {
 		parent::__construct($appName, $request);
+		$this->talkConfig = $talkConfig;
+		$this->SIPBridgeService = $SIPBridgeService;
 		$this->roomService = $roomService;
 	}
 
@@ -61,6 +71,36 @@ class RecordingController extends AEnvironmentAwareController {
 	public function stopRecording(): DataResponse {
 		try {
 			$this->roomService->stopRecording($this->room);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+		return new DataResponse();
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireRoom
+	 * @BruteForceProtection(action=talkSipBridgeSecret)
+	 *
+	 * @return DataResponse
+	 */
+	public function store(string $owner): DataResponse {
+		try {
+			$random = $this->request->getHeader('TALK_SIPBRIDGE_RANDOM');
+			$checksum = $this->request->getHeader('TALK_SIPBRIDGE_CHECKSUM');
+			$secret = $this->talkConfig->getSIPSharedSecret();
+			if (!$this->SIPBridgeService->validateSIPBridgeRequest($random, $checksum, $secret, $this->room->getToken())) {
+				throw new UnauthorizedException();
+			}
+		} catch (UnauthorizedException $e) {
+			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response->throttle();
+			return $response;
+		}
+
+		try {
+			$file = $this->request->getUploadedFile('file');
+			$this->roomService->store($this->getRoom(), $owner, $file);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}

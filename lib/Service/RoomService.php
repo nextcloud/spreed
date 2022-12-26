@@ -416,6 +416,9 @@ class RoomService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_CALL_RECORDING, $event);
 	}
 
+	public function store(Room $room, string $owner, array $file): void {
+	}
+
 	/**
 	 * @param Room $room
 	 * @param int $newType Currently it is only allowed to change between `Room::TYPE_GROUP` and `Room::TYPE_PUBLIC`
