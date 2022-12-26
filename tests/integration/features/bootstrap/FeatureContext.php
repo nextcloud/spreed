@@ -3065,6 +3065,42 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" store recording file "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function userStoreRecordingFileInRoom(string $user, string $file, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->setCurrentUser($user);
+
+		$sipBridgeSharedSecret = 'the secret';
+		$this->setAppConfig('spreed', new TableNode([['sip_bridge_shared_secret', $sipBridgeSharedSecret]]));
+		$validRandom = md5((string) rand());
+		$validChecksum = hash_hmac('sha256', $validRandom . self::$identifierToToken[$identifier], $sipBridgeSharedSecret);
+		$headers = [
+			'TALK_SIPBRIDGE_RANDOM' => $validRandom,
+			'TALK_SIPBRIDGE_CHECKSUM' => $validChecksum,
+		];
+		$options = [
+			'multipart' => [
+				[
+					'name' => 'file',
+					'contents' => $file !== 'invalid' ? fopen(__DIR__ . '/../../../..' . $file, 'r') : '',
+				],
+				[
+					'name' => 'owner',
+					'contents' => 'fakeowner',
+				],
+			],
+		];
+		$this->sendRequest(
+			'POST',
+			'/apps/spreed/api/' . $apiVersion . '/recording/' . self::$identifierToToken[$identifier] . '/store',
+			null,
+			$headers,
+			$options
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then the response error matches with :error
 	 */
 	public function assertResponseErrorMatchesWith(string $error): void {
