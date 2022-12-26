@@ -41,6 +41,7 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IMimeTypeDetector;
 use OCP\Http\Client\IClientService;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -162,6 +163,7 @@ class BackendNotifierTest extends TestCase {
 			$dbConnection,
 			$this->timeFactory,
 			$this->createMock(IManager::class),
+			$this->createMock(IMimeTypeDetector::class),
 			$this->createMock(Config::class),
 			$this->createMock(IHasher::class),
 			$this->dispatcher,
