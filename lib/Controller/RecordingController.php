@@ -100,7 +100,7 @@ class RecordingController extends AEnvironmentAwareController {
 
 		try {
 			$file = $this->request->getUploadedFile('file');
-			$this->roomService->store($this->getRoom(), $owner, $file);
+			$this->roomService->storeRecording($this->getRoom(), $owner, $file);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}

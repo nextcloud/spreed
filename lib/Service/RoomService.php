@@ -416,7 +416,7 @@ class RoomService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_CALL_RECORDING, $event);
 	}
 
-	public function store(Room $room, string $owner, array $file): void {
+	public function storeRecording(Room $room, string $owner, array $file): void {
 	}
 
 	/**
