@@ -231,8 +231,9 @@
     </UndefinedClass>
   </file>
   <file src="lib/Service/RecordingService.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass occurrences="2">
       <code>Filesystem</code>
+      <code>NoUserException</code>
     </UndefinedClass>
   </file>
   <file src="lib/Share/Listener.php">
