@@ -25,6 +25,7 @@ namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
 use OC\Files\Filesystem;
+use OC\User\NoUserException;
 use OCA\Talk\Config;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
@@ -47,6 +48,7 @@ use OCP\Files\Folder;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\HintException;
 use OCP\IDBConnection;
 use OCP\IUser;
@@ -467,18 +469,23 @@ class RoomService {
 		try {
 			$this->participantService->getParticipant($room, $owner);
 		} catch (ParticipantNotFoundException $e) {
-			throw new InvalidArgumentException('owner');
+			throw new InvalidArgumentException('owner_participant');
 		}
 
-		$recordingFolder = $this->getRecordingFolder($rootFolder, $owner, $room->getToken());
-		$recordingFolder->newFile($recordFileName, $content);
+		try {
+			$recordingFolder = $this->getRecordingFolder($rootFolder, $owner, $room->getToken());
+			$recordingFolder->newFile($recordFileName, $content);
+		} catch (NoUserException $e) {
+			throw new InvalidArgumentException('owner_invalid');
+		} catch (NotPermittedException $e) {
+			throw new InvalidArgumentException('owner_permission');
+		}
 	}
 
 	private function getRecordingFolder(IRootFolder $rootFolder, string $owner, string $token): Folder {
 		$attachmentFolder = $this->config->getAttachmentFolder($owner);
 
 		$userFolder = $rootFolder->getUserFolder($owner);
-
 		try {
 			$attachmentFolder = $userFolder->get($attachmentFolder);
 		} catch (NotFoundException $e) {
