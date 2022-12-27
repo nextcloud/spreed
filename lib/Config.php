@@ -197,6 +197,10 @@ class Config {
 		return $this->config->getUserValue($userId, 'spreed', 'attachment_folder', '/Talk');
 	}
 
+	public function getRecordingFolder(string $userId): string {
+		return $this->config->getUserValue($userId, 'spreed', 'recording_folder', '/Recording');
+	}
+
 	/**
 	 * @return string[]
 	 */

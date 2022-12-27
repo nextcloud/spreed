@@ -483,18 +483,19 @@ class RoomService {
 	}
 
 	private function getRecordingFolder(IRootFolder $rootFolder, string $owner, string $token): Folder {
-		$attachmentFolder = $this->config->getAttachmentFolder($owner);
+		$attachmentFolderName = $this->config->getAttachmentFolder($owner);
 
 		$userFolder = $rootFolder->getUserFolder($owner);
 		try {
-			$attachmentFolder = $userFolder->get($attachmentFolder);
+			$attachmentFolder = $userFolder->get($attachmentFolderName);
 		} catch (NotFoundException $e) {
-			$attachmentFolder = $userFolder->newFolder($attachmentFolder);
+			$attachmentFolder = $userFolder->newFolder($attachmentFolderName);
 		}
+		$recordingRootFolderName = $this->config->getRecordingFolder($owner);
 		try {
-			$recordingRootFolder = $attachmentFolder->get('Recording');
+			$recordingRootFolder = $attachmentFolder->get($recordingRootFolderName);
 		} catch (NotFoundException $e) {
-			$recordingRootFolder = $attachmentFolder->newFolder('Recording');
+			$recordingRootFolder = $attachmentFolder->newFolder($recordingRootFolderName);
 		}
 		try {
 			$recordingFolder = $recordingRootFolder->get($token);
