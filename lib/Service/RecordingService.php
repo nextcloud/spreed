@@ -40,6 +40,7 @@ use OCP\Files\NotPermittedException;
 class RecordingService {
 	private IMimeTypeDetector $mimeTypeDetector;
 	private ParticipantService $participantService;
+	private IRootFolder $rootFolder;
 	private Config $config;
 
 	public function __construct(
@@ -76,7 +77,7 @@ class RecordingService {
 		}
 	}
 
-	private function getContentFromFileArray(array $file): string {
+	public function getContentFromFileArray(array $file): string {
 		if (
 			$file['error'] !== 0 ||
 			!is_uploaded_file($file['tmp_name']) ||
@@ -87,6 +88,10 @@ class RecordingService {
 
 		$content = file_get_contents($file['tmp_name']);
 		unlink($file['tmp_name']);
+
+		if (!$content) {
+			throw new InvalidArgumentException('empty_file');
+		}
 		return $content;
 	}
 

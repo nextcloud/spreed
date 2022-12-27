@@ -62,6 +62,7 @@
     - Status code:
         + `200 OK`
         + `400 Bad Request` Message: `invalid_file`. File in block list or invalid.
+        + `400 Bad Request` Message: `empty_file`. Invalid file extension.
         + `400 Bad Request` Message: `file_mimetype`. Invalid mimetype.
         + `400 Bad Request` Message: `file_name`. Invalid file name.
         + `400 Bad Request` Message: `file_extension`. Invalid file extension.

@@ -23,6 +23,16 @@ declare(strict_types=1);
  *
  */
 
+namespace OCA\Talk\Service;
+
+/**
+ * Overwrite is_uploaded_file in the OCA\Talk\Service namespace
+ * to allow proper unit testing of the postAvatar call.
+ */
+function is_uploaded_file($filename) {
+	return file_exists($filename);
+}
+
 namespace OCA\Talk\Tests\php\Service;
 
 use OCA\Talk\Config;
@@ -106,6 +116,32 @@ class RecordingServiceTest extends TestCase {
 			['name.mp3', file_get_contents(__DIR__ . '/../../../img/join_call.ogg'), 'file_extension'],
 			# Success
 			['name.ogg', file_get_contents(__DIR__ . '/../../../img/join_call.ogg'), ''],
+		];
+	}
+
+	/**
+	 * @dataProvider dataGetContentFromFileArray
+	 */
+	public function testGetContentFromFileArray(array $file, $expected, string $exceptionMessage): void {
+		if ($exceptionMessage) {
+			$this->expectExceptionMessage($exceptionMessage);
+		}
+
+		$actual = $this->recordingService->getContentFromFileArray($file);
+		$this->assertEquals($expected, $actual);
+		$this->assertFileDoesNotExist($file['tmp_name']);
+	}
+
+	public function dataGetContentFromFileArray(): array {
+		$fileWithContent = tempnam(sys_get_temp_dir(), 'txt');
+		file_put_contents($fileWithContent, 'bla');
+		return [
+			[['error' => 0, 'tmp_name' => ''], '', 'invalid_file'],
+			[['error' => 0, 'tmp_name' => 'a'], '', 'invalid_file'],
+			# Empty file
+			[['error' => 0, 'tmp_name' => tempnam(sys_get_temp_dir(), 'txt')], '', 'empty_file'],
+			# file with content
+			[['error' => 0, 'tmp_name' => $fileWithContent], 'bla', ''],
 		];
 	}
 }
