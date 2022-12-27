@@ -79,6 +79,7 @@ class RecordingService {
 		}
 
 		$recordFileName = escapeshellcmd($file['name']);
+		$recordFileName = pathinfo($recordFileName,  PATHINFO_FILENAME);
 		if (strlen($recordFileName) !== strlen($file['name'])) {
 			throw new InvalidArgumentException('file_name');
 		}
