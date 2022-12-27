@@ -230,7 +230,7 @@
       <code>\OC_Image</code>
     </UndefinedClass>
   </file>
-  <file src="lib/Service/RoomService.php">
+  <file src="lib/Service/RecordingService.php">
     <UndefinedClass occurrences="1">
       <code>Filesystem</code>
     </UndefinedClass>

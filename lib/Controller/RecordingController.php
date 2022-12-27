@@ -28,6 +28,7 @@ namespace OCA\Talk\Controller;
 use InvalidArgumentException;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SIPBridgeService;
 use OCP\AppFramework\Http;
@@ -39,6 +40,7 @@ class RecordingController extends AEnvironmentAwareController {
 	private Config $talkConfig;
 	private IRootFolder $rootFolder;
 	private SIPBridgeService $SIPBridgeService;
+	private RecordingService $recordingService;
 	private RoomService $roomService;
 
 
@@ -47,11 +49,13 @@ class RecordingController extends AEnvironmentAwareController {
 								Config $talkConfig,
 								IRootFolder $rootFolder,
 								SIPBridgeService $SIPBridgeService,
+								RecordingService $recordingService,
 								RoomService $roomService) {
 		parent::__construct($appName, $request);
 		$this->talkConfig = $talkConfig;
 		$this->rootFolder = $rootFolder;
 		$this->SIPBridgeService = $SIPBridgeService;
+		$this->recordingService = $recordingService;
 		$this->roomService = $roomService;
 	}
 
@@ -104,7 +108,7 @@ class RecordingController extends AEnvironmentAwareController {
 
 		try {
 			$file = $this->request->getUploadedFile('file');
-			$this->roomService->storeRecording($this->getRoom(), $owner, $file, $this->rootFolder);
+			$this->recordingService->store($this->getRoom(), $owner, $file, $this->rootFolder);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}

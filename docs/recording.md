@@ -61,7 +61,6 @@
 * Response:
     - Status code:
         + `200 OK`
-        + `400 Bad Request` Message: `no_file`. No file defined to be stored.
         + `400 Bad Request` Message: `invalid_file`. File in block list or invalid.
         + `400 Bad Request` Message: `file_mimetype`. Invalid mimetype.
         + `400 Bad Request` Message: `file_name`. Invalid file name.

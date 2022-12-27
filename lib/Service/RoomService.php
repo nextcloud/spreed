@@ -24,14 +24,11 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
-use OC\Files\Filesystem;
-use OC\User\NoUserException;
 use OCA\Talk\Config;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
-use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
@@ -44,11 +41,6 @@ use OCP\BackgroundJob\IJobList;
 use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Files\Folder;
-use OCP\Files\IMimeTypeDetector;
-use OCP\Files\IRootFolder;
-use OCP\Files\NotFoundException;
-use OCP\Files\NotPermittedException;
 use OCP\HintException;
 use OCP\IDBConnection;
 use OCP\IUser;
@@ -63,7 +55,6 @@ class RoomService {
 	protected IDBConnection $db;
 	protected ITimeFactory $timeFactory;
 	protected IShareManager $shareManager;
-	protected IMimeTypeDetector $mimeTypeDetector;
 	protected Config $config;
 	protected IHasher $hasher;
 	protected IEventDispatcher $dispatcher;
@@ -74,7 +65,6 @@ class RoomService {
 								IDBConnection $db,
 								ITimeFactory $timeFactory,
 								IShareManager $shareManager,
-								IMimeTypeDetector $mimeTypeDetector,
 								Config $config,
 								IHasher $hasher,
 								IEventDispatcher $dispatcher,
@@ -84,7 +74,6 @@ class RoomService {
 		$this->db = $db;
 		$this->timeFactory = $timeFactory;
 		$this->shareManager = $shareManager;
-		$this->mimeTypeDetector = $mimeTypeDetector;
 		$this->config = $config;
 		$this->hasher = $hasher;
 		$this->dispatcher = $dispatcher;
@@ -425,80 +414,6 @@ class RoomService {
 		$room->setCallRecording($status);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_CALL_RECORDING, $event);
-	}
-
-	public function storeRecording(Room $room, string $owner, array $file, IRootFolder $rootFolder): void {
-		if (
-			$file['error'] !== 0 ||
-			!is_uploaded_file($file['tmp_name']) ||
-			Filesystem::isFileBlacklisted($file['tmp_name'])
-		) {
-			throw new InvalidArgumentException('invalid_file');
-		}
-
-		$content = file_get_contents($file['tmp_name']);
-		unlink($file['tmp_name']);
-
-		$mimeType = $this->mimeTypeDetector->detectString($content);
-		$allowedMimeTypes = [
-			'video/mp4',
-			'video/mpeg',
-			'video/ogg',
-			'audio/mp3',
-			'audio/ogg',
-		];
-		if (!in_array($mimeType, $allowedMimeTypes)) {
-			throw new InvalidArgumentException('file_mimetype');
-		}
-
-		$recordFileName = escapeshellcmd($file['name']);
-		if (strlen($recordFileName) !== strlen($file['name'])) {
-			throw new InvalidArgumentException('file_name');
-		}
-
-		$extensionFromMime = pathinfo(str_replace('/', '.', $mimeType), PATHINFO_EXTENSION);
-		$extensionFromFileName = strtolower(pathinfo($recordFileName, PATHINFO_EXTENSION));
-		if ($extensionFromFileName !== $extensionFromMime) {
-			throw new InvalidArgumentException('file_extension');
-		}
-
-		try {
-			$this->participantService->getParticipant($room, $owner);
-		} catch (ParticipantNotFoundException $e) {
-			throw new InvalidArgumentException('owner_participant');
-		}
-
-		try {
-			$recordingFolder = $this->getRecordingFolder($rootFolder, $owner, $room->getToken());
-			$recordingFolder->newFile($recordFileName, $content);
-		} catch (NoUserException $e) {
-			throw new InvalidArgumentException('owner_invalid');
-		} catch (NotPermittedException $e) {
-			throw new InvalidArgumentException('owner_permission');
-		}
-	}
-
-	private function getRecordingFolder(IRootFolder $rootFolder, string $owner, string $token): Folder {
-		$attachmentFolderName = $this->config->getAttachmentFolder($owner);
-
-		$userFolder = $rootFolder->getUserFolder($owner);
-		try {
-			$attachmentFolder = $userFolder->get($attachmentFolderName);
-		} catch (NotFoundException $e) {
-			$attachmentFolder = $userFolder->newFolder($attachmentFolderName);
-		}
-		$recordingRootFolderName = $this->config->getRecordingFolder($owner);
-		try {
-			$recordingRootFolder = $attachmentFolder->get($recordingRootFolderName);
-		} catch (NotFoundException $e) {
-			$recordingRootFolder = $attachmentFolder->newFolder($recordingRootFolderName);
-		}
-		try {
-			$recordingFolder = $recordingRootFolder->get($token);
-		} catch (NotFoundException $e) {
-			$recordingFolder = $recordingRootFolder->newFolder($token);
-		}
-		return $recordingFolder;
 	}
 
 	/**

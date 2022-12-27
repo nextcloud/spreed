@@ -38,7 +38,6 @@ use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Files\IMimeTypeDetector;
 use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\Security\IHasher;
@@ -57,8 +56,6 @@ class RoomServiceTest extends TestCase {
 	protected $participantService;
 	/** @var IShareManager|MockObject */
 	protected $shareManager;
-	/** @var IMimeTypeDetector */
-	protected $mimeTypeDetector;
 	/** @var Config|MockObject */
 	protected $config;
 	/** @var IHasher|MockObject */
@@ -76,7 +73,6 @@ class RoomServiceTest extends TestCase {
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->shareManager = $this->createMock(IShareManager::class);
-		$this->mimeTypeDetector = $this->createMock(IMimeTypeDetector::class);
 		$this->config = $this->createMock(Config::class);
 		$this->hasher = $this->createMock(IHasher::class);
 		$this->dispatcher = $this->createMock(IEventDispatcher::class);
@@ -87,7 +83,6 @@ class RoomServiceTest extends TestCase {
 			\OC::$server->get(IDBConnection::class),
 			$this->timeFactory,
 			$this->shareManager,
-			$this->mimeTypeDetector,
 			$this->config,
 			$this->hasher,
 			$this->dispatcher,
@@ -359,7 +354,6 @@ class RoomServiceTest extends TestCase {
 			\OC::$server->get(IDBConnection::class),
 			$this->timeFactory,
 			$this->shareManager,
-			$this->mimeTypeDetector,
 			$this->config,
 			$this->hasher,
 			$dispatcher,
