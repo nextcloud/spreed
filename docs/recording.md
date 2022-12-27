@@ -41,7 +41,7 @@
 ## Store call recording
 
 * Required capability: `recording-v1`
-* Method: `POPST`
+* Method: `POST`
 * Endpoint: `/recording/{token}/store`
 
 * Header:
