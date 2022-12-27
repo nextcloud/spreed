@@ -33,12 +33,10 @@ use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SIPBridgeService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\Files\IRootFolder;
 use OCP\IRequest;
 
 class RecordingController extends AEnvironmentAwareController {
 	private Config $talkConfig;
-	private IRootFolder $rootFolder;
 	private SIPBridgeService $SIPBridgeService;
 	private RecordingService $recordingService;
 	private RoomService $roomService;
@@ -47,13 +45,11 @@ class RecordingController extends AEnvironmentAwareController {
 	public function __construct(string $appName,
 								IRequest $request,
 								Config $talkConfig,
-								IRootFolder $rootFolder,
 								SIPBridgeService $SIPBridgeService,
 								RecordingService $recordingService,
 								RoomService $roomService) {
 		parent::__construct($appName, $request);
 		$this->talkConfig = $talkConfig;
-		$this->rootFolder = $rootFolder;
 		$this->SIPBridgeService = $SIPBridgeService;
 		$this->recordingService = $recordingService;
 		$this->roomService = $roomService;
@@ -108,7 +104,7 @@ class RecordingController extends AEnvironmentAwareController {
 
 		try {
 			$file = $this->request->getUploadedFile('file');
-			$this->recordingService->store($this->getRoom(), $owner, $file, $this->rootFolder);
+			$this->recordingService->store($this->getRoom(), $owner, $file);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}

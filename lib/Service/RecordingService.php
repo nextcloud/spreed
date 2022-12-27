@@ -45,14 +45,16 @@ class RecordingService {
 	public function __construct(
 		IMimeTypeDetector $mimeTypeDetector,
 		ParticipantService $participantService,
+		IRootFolder $rootFolder,
 		Config $config
 	) {
 		$this->mimeTypeDetector = $mimeTypeDetector;
 		$this->participantService = $participantService;
+		$this->rootFolder = $rootFolder;
 		$this->config = $config;
 	}
 
-	public function store(Room $room, string $owner, array $file, IRootFolder $rootFolder): void {
+	public function store(Room $room, string $owner, array $file): void {
 		if (
 			$file['error'] !== 0 ||
 			!is_uploaded_file($file['tmp_name']) ||
@@ -94,7 +96,7 @@ class RecordingService {
 		}
 
 		try {
-			$recordingFolder = $this->getRecordingFolder($rootFolder, $owner, $room->getToken());
+			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
 			$recordingFolder->newFile($recordFileName, $content);
 		} catch (NoUserException $e) {
 			throw new InvalidArgumentException('owner_invalid');
@@ -103,10 +105,10 @@ class RecordingService {
 		}
 	}
 
-	private function getRecordingFolder(IRootFolder $rootFolder, string $owner, string $token): Folder {
+	private function getRecordingFolder(string $owner, string $token): Folder {
 		$attachmentFolderName = $this->config->getAttachmentFolder($owner);
 
-		$userFolder = $rootFolder->getUserFolder($owner);
+		$userFolder = $this->rootFolder->getUserFolder($owner);
 		try {
 			/** @var \OCP\Files\Folder */
 			$attachmentFolder = $userFolder->get($attachmentFolderName);
