@@ -118,15 +118,8 @@ Feature: callapi/recording
     And the response error matches with "call"
 
   Scenario: Store recording
-    When the following "spreed" app config is set
-      | signaling_dev | yes |
-    And user "participant1" creates room "room1" (v4)
+    Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
     And user "participant1" joins room "room1" with 200 (v4)
-    And user "participant1" joins call "room1" with 200 (v4)
-    And user "participant1" starts "video" recording in room "room1" with 200 (v1)
-    And user "participant1" stops recording in room "room1" with 200 (v1)
     Then user "participant1" store recording file "/img/join_call.ogg" in room "room1" with 200 (v1)
-    # And user "participant1" shares "join_call.ogg" with room "room1"
-    # And user "participant1" sees the following shared file in room "room1" with 200
