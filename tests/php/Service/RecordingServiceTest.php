@@ -34,7 +34,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class RecordingServiceTest extends TestCase {
-	/** @var IMimeTypeDetector|MockObject */
+	/** @var IMimeTypeDetector */
 	private $mimeTypeDetector;
 	/** @var ParticipantService|MockObject */
 	private $participantService;
@@ -48,7 +48,7 @@ class RecordingServiceTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->mimeTypeDetector = $this->createMock(IMimeTypeDetector::class);
+		$this->mimeTypeDetector = \OC::$server->get(IMimeTypeDetector::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->rootFolder = $this->createMock(IRootFolder::class);
 		$this->config = $this->createMock(Config::class);
@@ -81,6 +81,31 @@ class RecordingServiceTest extends TestCase {
 			['{}ab', '', 'file_name'],
 			['[]ab', '', 'file_name'],
 			['a.b', 'a.b', ''],
+		];
+	}
+
+	/** @dataProvider dataValidateFileFormat */
+	public function testValidateFileFormat(string $fileName, string $content, string $exceptionMessage):void {
+		if ($exceptionMessage) {
+			$this->expectExceptionMessage($exceptionMessage);
+		} else {
+			$this->expectNotToPerformAssertions();
+		}
+		$this->recordingService->validateFileFormat($fileName, $content);
+	}
+
+	public function dataValidateFileFormat(): array {
+		return [
+			# file_mimetype
+			['', '', 'file_mimetype'],
+			['', file_get_contents(__DIR__ . '/../../../img/app.svg'), 'file_mimetype'],
+			['name.ogg', file_get_contents(__DIR__ . '/../../../img/app.svg'), 'file_mimetype'],
+			# file_extension
+			['', file_get_contents(__DIR__ . '/../../../img/join_call.ogg'), 'file_extension'],
+			['name', file_get_contents(__DIR__ . '/../../../img/join_call.ogg'), 'file_extension'],
+			['name.mp3', file_get_contents(__DIR__ . '/../../../img/join_call.ogg'), 'file_extension'],
+			# Success
+			['name.ogg', file_get_contents(__DIR__ . '/../../../img/join_call.ogg'), ''],
 		];
 	}
 }

@@ -90,7 +90,7 @@ class RecordingService {
 		return $content;
 	}
 
-	private function validateFileFormat(string $fileName, $content): void {
+	public function validateFileFormat(string $fileName, $content): void {
 		$mimeType = $this->mimeTypeDetector->detectString($content);
 		$allowedMimeTypes = [
 			'video/mp4',
