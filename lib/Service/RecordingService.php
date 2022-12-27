@@ -108,14 +108,17 @@ class RecordingService {
 
 		$userFolder = $rootFolder->getUserFolder($owner);
 		try {
+			/** @var \OCP\Files\Folder */
 			$attachmentFolder = $userFolder->get($attachmentFolderName);
 		} catch (NotFoundException $e) {
 			$attachmentFolder = $userFolder->newFolder($attachmentFolderName);
 		}
 		$recordingRootFolderName = $this->config->getRecordingFolder($owner);
 		try {
+			/** @var \OCP\Files\Folder */
 			$recordingRootFolder = $attachmentFolder->get($recordingRootFolderName);
 		} catch (NotFoundException $e) {
+			/** @var \OCP\Files\Folder */
 			$recordingRootFolder = $attachmentFolder->newFolder($recordingRootFolderName);
 		}
 		try {
