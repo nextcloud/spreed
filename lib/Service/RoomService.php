@@ -428,10 +428,6 @@ class RoomService {
 	}
 
 	public function storeRecording(Room $room, string $owner, array $file, IRootFolder $rootFolder): void {
-		if (is_null($file) || !is_array($file)) {
-			throw new InvalidArgumentException('no_file');
-		}
-
 		if (
 			$file['error'] !== 0 ||
 			!is_uploaded_file($file['tmp_name']) ||
