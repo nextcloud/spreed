@@ -55,40 +55,10 @@ class RecordingService {
 	}
 
 	public function store(Room $room, string $owner, array $file): void {
-		if (
-			$file['error'] !== 0 ||
-			!is_uploaded_file($file['tmp_name']) ||
-			Filesystem::isFileBlacklisted($file['tmp_name'])
-		) {
-			throw new InvalidArgumentException('invalid_file');
-		}
+		$content = $this->getContentFromFileArray($file['tmp_name']);
 
-		$content = file_get_contents($file['tmp_name']);
-		unlink($file['tmp_name']);
-
-		$mimeType = $this->mimeTypeDetector->detectString($content);
-		$allowedMimeTypes = [
-			'video/mp4',
-			'video/mpeg',
-			'video/ogg',
-			'audio/mp3',
-			'audio/ogg',
-		];
-		if (!in_array($mimeType, $allowedMimeTypes)) {
-			throw new InvalidArgumentException('file_mimetype');
-		}
-
-		$recordFileName = escapeshellcmd($file['name']);
-		$recordFileName = pathinfo($recordFileName,  PATHINFO_BASENAME);
-		if ($recordFileName !== $file['name']) {
-			throw new InvalidArgumentException('file_name');
-		}
-
-		$extensionFromMime = pathinfo(str_replace('/', '.', $mimeType), PATHINFO_EXTENSION);
-		$extensionFromFileName = strtolower(pathinfo($recordFileName, PATHINFO_EXTENSION));
-		if ($extensionFromFileName !== $extensionFromMime) {
-			throw new InvalidArgumentException('file_extension');
-		}
+		$recordFileName = $this->sanitizeFileName($file['name']);
+		$this->validateFileFormat($recordFileName, $content);
 
 		try {
 			$this->participantService->getParticipant($room, $owner);
@@ -104,6 +74,49 @@ class RecordingService {
 		} catch (NotPermittedException $e) {
 			throw new InvalidArgumentException('owner_permission');
 		}
+	}
+
+	private function getContentFromFileArray(array $file): string {
+		if (
+			$file['error'] !== 0 ||
+			!is_uploaded_file($file['tmp_name']) ||
+			Filesystem::isFileBlacklisted($file['tmp_name'])
+		) {
+			throw new InvalidArgumentException('invalid_file');
+		}
+
+		$content = file_get_contents($file['tmp_name']);
+		unlink($file['tmp_name']);
+		return $content;
+	}
+
+	private function validateFileFormat(string $fileName, $content): void {
+		$mimeType = $this->mimeTypeDetector->detectString($content);
+		$allowedMimeTypes = [
+			'video/mp4',
+			'video/mpeg',
+			'video/ogg',
+			'audio/mp3',
+			'audio/ogg',
+		];
+		if (!in_array($mimeType, $allowedMimeTypes)) {
+			throw new InvalidArgumentException('file_mimetype');
+		}
+
+		$extensionFromMime = pathinfo(str_replace('/', '.', $mimeType), PATHINFO_EXTENSION);
+		$extensionFromFileName = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+		if ($extensionFromFileName !== $extensionFromMime) {
+			throw new InvalidArgumentException('file_extension');
+		}
+	}
+
+	public function sanitizeFileName(string $fileName): string {
+		$recordFileName = escapeshellcmd($fileName);
+		$recordFileName = pathinfo($recordFileName, PATHINFO_BASENAME);
+		if ($recordFileName !== $fileName) {
+			throw new InvalidArgumentException('file_name');
+		}
+		return $recordFileName;
 	}
 
 	private function getRecordingFolder(string $owner, string $token): Folder {
