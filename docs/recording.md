@@ -45,12 +45,14 @@
 * Endpoint: `/recording/{token}/store`
 
 * Header:
+
 | field                     | type   | Description                                                                                                               |
 | ------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------- |
 | `TALK_SIPBRIDGE_RANDOM`   | string | Random string that need to be concatenated with room token to generate the checksum using the `sip_bridge_shared_secret`. |
 | `TALK_SIPBRIDGE_CHECKSUM` | string | The checksum generated with `TALK_SIPBRIDGE_RANDOM`.                                                                      |
 
 * Data:
+
 | field   | type   | Description                                     |
 | ------- | ------ | ----------------------------------------------- |
 | `file`  | string | Blob of image in a multipart/form-data request. |
