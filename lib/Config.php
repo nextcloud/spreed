@@ -153,6 +153,10 @@ class Config {
 		return $isSignalingOk && $recordingEnabled;
 	}
 
+	public function getRecordingFolder(string $userId): string {
+		return $this->config->getUserValue($userId, 'spreed', 'recording_folder', '/Recording');
+	}
+
 	public function isDisabledForUser(IUser $user): bool {
 		$allowedGroups = $this->getAllowedTalkGroupIds();
 		if (empty($allowedGroups)) {
@@ -195,10 +199,6 @@ class Config {
 
 	public function getAttachmentFolder(string $userId): string {
 		return $this->config->getUserValue($userId, 'spreed', 'attachment_folder', '/Talk');
-	}
-
-	public function getRecordingFolder(string $userId): string {
-		return $this->config->getUserValue($userId, 'spreed', 'recording_folder', '/Recording');
 	}
 
 	/**
