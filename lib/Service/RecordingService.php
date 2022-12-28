@@ -56,7 +56,7 @@ class RecordingService {
 	}
 
 	public function store(Room $room, string $owner, array $file): void {
-		$content = $this->getContentFromFileArray($file['tmp_name']);
+		$content = $this->getContentFromFileArray($file);
 
 		$recordFileName = $this->sanitizeFileName($file['name']);
 		$this->validateFileFormat($recordFileName, $content);
