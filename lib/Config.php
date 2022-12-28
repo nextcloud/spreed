@@ -157,6 +157,17 @@ class Config {
 		return $this->config->getUserValue($userId, 'spreed', 'recording_folder', '/Recording');
 	}
 
+	public function getRecordingAllowedMimes(): array {
+		$defaultMimes = [
+			'audio/ogg' => ['ogg'],
+			'video/ogg' => ['ogv'],
+			'video/x-matroska' => ['mkv'],
+		];
+		$allowedMimes = $this->config->getAppValue('spreed', 'allowed_recording_mimes', json_encode($defaultMimes));
+		$allowedMimes = json_decode($allowedMimes, true);
+		return is_array($allowedMimes) ? $allowedMimes : $defaultMimes;
+	}
+
 	public function isDisabledForUser(IUser $user): bool {
 		$allowedGroups = $this->getAllowedTalkGroupIds();
 		if (empty($allowedGroups)) {

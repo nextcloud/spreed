@@ -97,20 +97,13 @@ class RecordingService {
 
 	public function validateFileFormat(string $fileName, $content): void {
 		$mimeType = $this->mimeTypeDetector->detectString($content);
-		$allowedMimeTypes = [
-			'video/mp4',
-			'video/mpeg',
-			'video/ogg',
-			'audio/mp3',
-			'audio/ogg',
-		];
-		if (!in_array($mimeType, $allowedMimeTypes)) {
+		$allowed = $this->config->getRecordingAllowedMimes();
+		if (!array_key_exists($mimeType, $allowed)) {
 			throw new InvalidArgumentException('file_mimetype');
 		}
 
-		$extensionFromMime = pathinfo(str_replace('/', '.', $mimeType), PATHINFO_EXTENSION);
-		$extensionFromFileName = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-		if ($extensionFromFileName !== $extensionFromMime) {
+		$extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+		if (!$extension || !in_array($extension, $allowed[$mimeType])) {
 			throw new InvalidArgumentException('file_extension');
 		}
 	}

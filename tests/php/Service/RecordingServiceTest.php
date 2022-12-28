@@ -98,9 +98,10 @@ class RecordingServiceTest extends TestCase {
 	public function testValidateFileFormat(string $fileName, string $content, string $exceptionMessage):void {
 		if ($exceptionMessage) {
 			$this->expectExceptionMessage($exceptionMessage);
-		} else {
-			$this->expectNotToPerformAssertions();
 		}
+		$this->config->expects($this->once())
+			->method('getRecordingAllowedMimes')
+			->willReturn(['audio/ogg' => ['ogg']]);
 		$this->recordingService->validateFileFormat($fileName, $content);
 	}
 
