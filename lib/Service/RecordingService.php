@@ -118,22 +118,14 @@ class RecordingService {
 	}
 
 	private function getRecordingFolder(string $owner, string $token): Folder {
-		$attachmentFolderName = $this->config->getAttachmentFolder($owner);
-
 		$userFolder = $this->rootFolder->getUserFolder($owner);
-		try {
-			/** @var \OCP\Files\Folder */
-			$attachmentFolder = $userFolder->get($attachmentFolderName);
-		} catch (NotFoundException $e) {
-			$attachmentFolder = $userFolder->newFolder($attachmentFolderName);
-		}
 		$recordingRootFolderName = $this->config->getRecordingFolder($owner);
 		try {
 			/** @var \OCP\Files\Folder */
-			$recordingRootFolder = $attachmentFolder->get($recordingRootFolderName);
+			$recordingRootFolder = $userFolder->get($recordingRootFolderName);
 		} catch (NotFoundException $e) {
 			/** @var \OCP\Files\Folder */
-			$recordingRootFolder = $attachmentFolder->newFolder($recordingRootFolderName);
+			$recordingRootFolder = $userFolder->newFolder($recordingRootFolderName);
 		}
 		try {
 			$recordingFolder = $recordingRootFolder->get($token);

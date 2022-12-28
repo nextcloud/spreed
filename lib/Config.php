@@ -160,7 +160,12 @@ class Config {
 	}
 
 	public function getRecordingFolder(string $userId): string {
-		return $this->config->getUserValue($userId, 'spreed', 'recording_folder', '/Recording');
+		return $this->config->getUserValue(
+			$userId,
+			'spreed',
+			'recording_folder',
+			$this->getAttachmentFolder($userId) . '/Recording'
+		);
 	}
 
 	public function getRecordingAllowedMimes(): array {
