@@ -454,4 +454,27 @@ class ConfigTest extends TestCase {
 		$this->assertEquals($now, $decoded->iat);
 		$this->assertEquals('https://domain.invalid/nextcloud', $decoded->iss);
 	}
+
+	/**
+	 * @dataProvider dataGetRecordingAllowedMimes
+	 */
+	public function testGetRecordingAllowedMimes($settings, $expected): void {
+		/** @var MockObject|IConfig $config */
+		$config = $this->createMock(IConfig::class);
+		$config
+			->expects($this->once())
+			->method('getAppValue')
+			->willReturn(json_encode($settings));
+		$helper = $this->createConfig($config);
+		$actual = $helper->getRecordingAllowedMimes();
+		$this->assertEquals($expected, $actual);
+	}
+
+	public function dataGetRecordingAllowedMimes(): array {
+		return [
+			['', Config::DEFAULT_ALLOWED_RECORDING_FORMATS],
+			[[], Config::DEFAULT_ALLOWED_RECORDING_FORMATS],
+			[['audio/ogg' => ['ogg']], ['audio/ogg' => ['ogg']]],
+		];
+	}
 }

@@ -44,6 +44,12 @@ class Config {
 	public const SIGNALING_TICKET_V1 = 1;
 	public const SIGNALING_TICKET_V2 = 2;
 
+	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
+		'audio/ogg' => ['ogg'],
+		'video/ogg' => ['ogv'],
+		'video/x-matroska' => ['mkv'],
+	];
+
 	protected IConfig $config;
 	protected ITimeFactory $timeFactory;
 	private IGroupManager $groupManager;
@@ -158,14 +164,16 @@ class Config {
 	}
 
 	public function getRecordingAllowedMimes(): array {
-		$defaultMimes = [
-			'audio/ogg' => ['ogg'],
-			'video/ogg' => ['ogv'],
-			'video/x-matroska' => ['mkv'],
-		];
-		$allowedMimes = $this->config->getAppValue('spreed', 'allowed_recording_mimes', json_encode($defaultMimes));
+		$allowedMimes = $this->config->getAppValue(
+			'spreed',
+			'allowed_recording_mimes',
+			json_encode(self::DEFAULT_ALLOWED_RECORDING_FORMATS)
+		);
 		$allowedMimes = json_decode($allowedMimes, true);
-		return is_array($allowedMimes) ? $allowedMimes : $defaultMimes;
+		if (is_array($allowedMimes) && count($allowedMimes)) {
+			return $allowedMimes;
+		}
+		return self::DEFAULT_ALLOWED_RECORDING_FORMATS;
 	}
 
 	public function isDisabledForUser(IUser $user): bool {
