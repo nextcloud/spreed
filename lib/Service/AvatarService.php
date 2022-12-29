@@ -205,11 +205,16 @@ class AvatarService {
 			'apiVersion' => 'v1',
 		];
 
-		$avatarVersion = $room->getAvatar();
+		$avatarVersion = $this->getAvatarVersion($room);
 		if ($avatarVersion !== '') {
-			[$version] = explode('.', $avatarVersion);
-			$arguments['v'] = $version ?? '';
+			$arguments['v'] = $avatarVersion;
 		}
 		return $this->url->linkToOCSRouteAbsolute('spreed.Avatar.getAvatar', $arguments);
+	}
+
+	public function getAvatarVersion(Room $room): string {
+		$avatarVersion = $room->getAvatar();
+		[$version] = explode('.', $avatarVersion);
+		return $version;
 	}
 }
