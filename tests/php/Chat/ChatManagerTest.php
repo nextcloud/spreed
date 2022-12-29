@@ -663,15 +663,36 @@ class ChatManagerTest extends TestCase {
 
 	public function dataSearchIsPartOfConversationNameOrAtAll(): array {
 		return [
-			['a', 'test', true],
-			['h', 'test', true],
-			['A', 'test', false],
-			['H', 'test', false],
-			['T', 'test', true],
-			['t', 'test', true],
-			['notbeginingall', 'test', false],
-			['notbegininghere', 'test', false],
-			['notbeginingtest', 'test', false]
+			'found a in all' => [
+				'a', 'room', true
+			],
+			'found h in here' => [
+				'h', 'room', true
+			],
+			'case sensitive, not found A in all' => [
+				'A', 'room', false
+			],
+			'case sensitive, not found H in here' => [
+				'H', 'room', false
+			],
+			'non case sensitive, found r in room' => [
+				'R', 'room', true
+			],
+			'found r in begin of room' => [
+				'r', 'room', true
+			],
+			'found o in middle of room' => [
+				'o', 'room', true
+			],
+			'not found all in middle of text' => [
+				'notbeginingall', 'room', false
+			],
+			'not found here in middle of text' => [
+				'notbegininghere', 'room', false
+			],
+			'not found room in middle of text' => [
+				'notbeginingroom', 'room', false
+			],
 		];
 	}
 
