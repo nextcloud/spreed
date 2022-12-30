@@ -145,12 +145,12 @@ export default {
 				return
 			}
 
-			const headerAction = document.querySelector('.app-sidebar-header__action')
-			if (!headerAction) {
+			const headerDescription = document.querySelector('.app-sidebar-header__description')
+			if (!headerDescription) {
 				return
 			}
 
-			if (this.$el.parentElement === headerAction) {
+			if (this.$el.parentElement === headerDescription) {
 				return
 			}
 
@@ -254,7 +254,7 @@ export default {
 
 		/**
 		 * Shows the sidebar header contents and moves the call view back to the
-		 * actions.
+		 * description.
 		 */
 		restoreSidebarHeaderContents() {
 			const header = document.querySelector('.app-sidebar-header')
@@ -272,9 +272,9 @@ export default {
 				}
 			}
 
-			const headerAction = document.querySelector('.app-sidebar-header__action')
-			if (headerAction) {
-				headerAction.appendChild(this.$el)
+			const headerDescription = document.querySelector('.app-sidebar-header__description')
+			if (headerDescription) {
+				headerDescription.appendChild(this.$el)
 			}
 		},
 	},
