@@ -27,7 +27,7 @@
 		"@nextcloud/l10n": "^1.6.0",
 		"@nextcloud/moment": "^1.2.1",
 		"@nextcloud/paths": "^2.1.0",
-		"@nextcloud/router": "^2.0.0",
+		"@nextcloud/router": "^2.0.1",
 		"@nextcloud/vue": "^7.2.0",
 		"@nextcloud/vue-richtext": "^2.0.4",
 		"attachmediastream": "^2.1.0",
