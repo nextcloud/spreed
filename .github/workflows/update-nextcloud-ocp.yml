@@ -8,7 +8,7 @@ name: Update nextcloud/ocp
 on:
   workflow_dispatch:
   schedule:
-    - cron: '5 4 * * 0'
+    - cron: "5 4 * * 0"
 
 jobs:
   update-nextcloud-ocp:
@@ -17,20 +17,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        branches: ['master', 'stable25', 'stable24']
+        branches: ["master", "stable25", "stable24"]
 
     name: update-nextcloud-ocp-${{ matrix.branches }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3
         with:
           ref: ${{ matrix.branches }}
           submodules: true
 
-      - name: Set up PHP 8.0
-        uses: shivammathur/setup-php@v2
+      - name: Set up php8.1
+        uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4 # v2
         with:
-          php-version: 8.0
+          php-version: 8.1
           extensions: ctype,curl,dom,fileinfo,gd,intl,json,mbstring,openssl,pdo_sqlite,posix,sqlite,xml,zip
           coverage: none
 
@@ -45,14 +45,15 @@ jobs:
         run: |
           git clean -f 3rdparty
           git clean -f vendor
-          git checkout 3rdparty vendor
+          git clean -f vendor-bin
+          git checkout 3rdparty vendor vendor-bin
         continue-on-error: true
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@18f7dc018cc2cd597073088f7c7591b9d1c02672 # v3
         with:
           token: ${{ secrets.COMMAND_BOT_PAT }}
-          commit-message: Update psalm baseline
+          commit-message: "chore(dev-deps): Bump nextcloud/ocp package"
           committer: GitHub <noreply@github.com>
           author: nextcloud-command <nextcloud-command@users.noreply.github.com>
           signoff: true
