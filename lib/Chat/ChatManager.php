@@ -760,7 +760,7 @@ class ChatManager {
 	}
 
 	private function searchIsPartOfConversationNameOrAtAll(string $search, string $roomDisplayName): bool {
-		if (stripos($roomDisplayName, $search) === 0) {
+		if (stripos($roomDisplayName, $search) !== false) {
 			return true;
 		}
 		if (strpos('all', $search) === 0) {
