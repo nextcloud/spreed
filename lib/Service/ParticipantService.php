@@ -485,7 +485,7 @@ class ParticipantService {
 
 			$lastMessage = $event->getLastMessage();
 			if ($lastMessage instanceof IComment) {
-				$attendee->setJoinCommentId($lastMessage->getId());
+				$attendee->setJoinCommentId((int) $lastMessage->getId());
 				$this->attendeeMapper->update($attendee);
 				$this->updateRoomLastMessage($room, $lastMessage);
 			}

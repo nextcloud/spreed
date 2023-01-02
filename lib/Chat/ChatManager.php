@@ -788,6 +788,47 @@ class ChatManager {
 		$this->commentsManager->deleteCommentsExpiredAtObject('chat', '');
 	}
 
+	public function fileOfMessageExists(string $message): bool {
+		$parameters = $this->getParametersFromMessage($message);
+		try {
+			$this->shareProvider->getShareById($parameters['share']);
+		} catch (ShareNotFound $e) {
+			return false;
+		}
+		return true;
+	}
+
+	public function isSharedFile(string $message): bool {
+		$parameters = $this->getParametersFromMessage($message);
+		return !empty($parameters['share']);
+	}
+
+	protected function getParametersFromMessage(string $message): array {
+		$data = json_decode($message, true);
+		if (!\is_array($data) || !array_key_exists('parameters', $data) || !is_array($data['parameters'])) {
+			return [];
+		}
+		return $data['parameters'];
+	}
+
+	/**
+	 * When receive a list of comments, filter the comments,
+	 * removing all that have shares of file that no more exists
+	 *
+	 * @param IComment[] $comments
+	 * @return IComment[]
+	 */
+	public function filterCommentsWithNonExistingFiles(array $comments): array {
+		return array_filter($comments, function (IComment $comment) {
+			if ($this->isSharedFile($comment->getMessage())) {
+				if (!$this->fileOfMessageExists($comment->getMessage())) {
+					return false;
+				}
+			}
+			return true;
+		});
+	}
+
 	/**
 	 * Filter the history if the attendee joined the room later and the history is restricted
 	 *

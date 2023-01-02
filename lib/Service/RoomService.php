@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\ModifyLobbyEvent;
 use OCA\Talk\Events\ModifyRoomEvent;

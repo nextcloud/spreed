@@ -791,19 +791,6 @@ class ChatController extends AEnvironmentAwareController {
 			$messageIdsByType[$objectType] = array_map(static fn (Attachment $attachment): int => $attachment->getMessageId(), $attachments);
 		}
 
-		$attendee = $this->participant->getAttendee();
-		$comments = $this->chatManager->filterHistorySince($this->room, $comments, $attendee);
-
-		foreach ($comments as $comment) {
-			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
-			$this->messageParser->parseMessage($message);
-
-			if (!$message->getVisibility()) {
-				continue;
-			}
-
-			$messages[(int) $comment->getId()] = $message->toArray($this->getResponseFormat());
-		}
 		$messages = $this->getMessagesForRoom(array_merge(...array_values($messageIdsByType)));
 
 		$messagesByType = [];
@@ -855,7 +842,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->preloadShares($comments);
 
 		$attendee = $this->participant->getAttendee();
-		$comments = $this->chatManager->filterHistorySince($room, $comments, $attendee);
+		$comments = $this->chatManager->filterHistorySince($this->room, $comments, $attendee);
 
 		$messages = [];
 		$comments = $this->chatManager->filterCommentsWithNonExistingFiles($comments);
