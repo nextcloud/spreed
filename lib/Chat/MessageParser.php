@@ -31,6 +31,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\BotService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -48,11 +49,14 @@ class MessageParser {
 	protected ParticipantService $participantService;
 
 	protected array $guestNames = [];
+	protected array $bots = [];
+	protected array $botNames = [];
 
 	public function __construct(
 		IEventDispatcher $dispatcher,
 		IUserManager $userManager,
 		ParticipantService $participantService,
+		protected BotService         $botService,
 	) {
 		$this->dispatcher = $dispatcher;
 		$this->participantService = $participantService;
@@ -98,8 +102,17 @@ class MessageParser {
 				}
 				$this->guestNames[$comment->getActorId()] = $displayName;
 			}
-		} elseif ($comment->getActorType() === 'bots') {
+		} elseif ($comment->getActorType() === Attendee::ACTOR_BOTS) {
+			$actorId = $comment->getActorId();
 			$displayName = $comment->getActorId() . '-bot';
+			$token = $message->getRoom()->getToken();
+			if (str_starts_with($actorId, Attendee::ACTOR_BOT_PREFIX)) {
+				$urlHash = substr($actorId, strlen(Attendee::ACTOR_BOT_PREFIX));
+				$botName = $this->getBotNameByUrlHashForConversation($token, $urlHash);
+				if ($botName) {
+					$displayName = $botName . ' (Bot)';
+				}
+			}
 		}
 
 		$message->setActor(
@@ -107,5 +120,18 @@ class MessageParser {
 			$actorId,
 			$displayName
 		);
+	}
+
+	protected function getBotNameByUrlHashForConversation(string $token, string $urlHash): ?string {
+		if (!isset($this->botNames[$token])) {
+			$this->botNames[$token] = [];
+			$bots = $this->botService->getBotsForToken($token);
+			foreach ($bots as $bot) {
+				$botServer = $bot->getBotServer();
+				$this->botNames[$token][$botServer->getUrlHash()] = $botServer->getName();
+			}
+		}
+
+		return $this->botNames[$token][$urlHash] ?? null;
 	}
 }

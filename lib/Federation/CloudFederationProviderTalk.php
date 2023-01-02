@@ -204,6 +204,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 		$this->session->set('talk-overwrite-actor-type', $attendee->getActorType());
 		$this->session->set('talk-overwrite-actor-id', $attendee->getActorId());
+		$this->session->set('talk-overwrite-actor-displayname', $attendee->getDisplayName());
 
 		$room = $this->manager->getRoomById($attendee->getRoomId());
 		$event = new AttendeesAddedEvent($room, [$attendee]);
@@ -211,6 +212,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 		$this->session->remove('talk-overwrite-actor-type');
 		$this->session->remove('talk-overwrite-actor-id');
+		$this->session->remove('talk-overwrite-actor-displayname');
 
 		return [];
 	}
@@ -225,6 +227,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 		$this->session->set('talk-overwrite-actor-type', $attendee->getActorType());
 		$this->session->set('talk-overwrite-actor-id', $attendee->getActorId());
+		$this->session->set('talk-overwrite-actor-displayname', $attendee->getDisplayName());
 
 		$room = $this->manager->getRoomById($attendee->getRoomId());
 		$participant = new Participant($room, $attendee, null);
@@ -232,6 +235,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 
 		$this->session->remove('talk-overwrite-actor-type');
 		$this->session->remove('talk-overwrite-actor-id');
+		$this->session->remove('talk-overwrite-actor-displayname');
 		return [];
 	}
 

@@ -68,7 +68,9 @@ class Attendee extends Entity {
 	public const ACTOR_EMAILS = 'emails';
 	public const ACTOR_CIRCLES = 'circles';
 	public const ACTOR_BRIDGED = 'bridged';
+	public const ACTOR_BOTS = 'bots';
 	public const ACTOR_FEDERATED_USERS = 'federated_users';
+	public const ACTOR_BOT_PREFIX = 'bot-';
 
 	public const PERMISSIONS_DEFAULT = 0;
 	public const PERMISSIONS_CUSTOM = 1;

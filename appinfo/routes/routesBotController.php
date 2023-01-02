@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023, Joas Schilling <coding@schilljs.com>
+ *
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -21,26 +23,14 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Talk\Events;
+$requirements = [
+	'apiVersion' => 'v1',
+	'token' => '[a-z0-9]{4,30}',
+];
 
-use OCA\Talk\Participant;
-use OCA\Talk\Room;
-use OCP\Comments\IComment;
-
-class ChatParticipantEvent extends ChatEvent {
-	protected Participant $participant;
-
-	public function __construct(
-		Room $room,
-		IComment $message,
-		Participant $participant,
-		bool $silent,
-	) {
-		parent::__construct($room, $message, false, $silent);
-		$this->participant = $participant;
-	}
-
-	public function getParticipant(): Participant {
-		return $this->participant;
-	}
-}
+return [
+	'ocs' => [
+		/** @see \OCA\Talk\Controller\BotController::sendMessage() */
+		['name' => 'Bot#sendMessage', 'url' => '/api/{apiVersion}/bot/{token}/message', 'verb' => 'POST', 'requirements' => $requirements],
+	],
+];
