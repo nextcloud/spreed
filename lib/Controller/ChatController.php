@@ -783,29 +783,23 @@ class ChatController extends AEnvironmentAwareController {
 
 		$messages = [];
 		$messageIdsByType = [];
+		// Get all attachments
 		foreach ($objectTypes as $objectType) {
 			$attachments = $this->attachmentService->getAttachmentsByType($this->room, $objectType, 0, $limit);
 			$messageIdsByType[$objectType] = array_map(static fn (Attachment $attachment): int => $attachment->getMessageId(), $attachments);
 		}
-		$comments = $this->chatManager->getMessagesById($this->room, array_merge(...array_values($messageIdsByType)));
 
-		foreach ($comments as $comment) {
-			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
-			$this->messageParser->parseMessage($message);
-
-			if (!$message->getVisibility()) {
-				continue;
-			}
-
-			$messages[(int) $comment->getId()] = $message->toArray($this->getResponseFormat());
-		}
+		$messages = $this->getMessagesForRoom(array_merge(...array_values($messageIdsByType)));
 
 		$messagesByType = [];
+		// Convert list of $messages to array grouped by type
 		foreach ($objectTypes as $objectType) {
 			$messagesByType[$objectType] = [];
 
 			foreach ($messageIdsByType[$objectType] as $messageId) {
-				$messagesByType[$objectType][] = $messages[$messageId];
+				if (isset($messages[$messageId])) {
+					$messagesByType[$objectType][] = $messages[$messageId];
+				}
 			}
 		}
 
@@ -829,7 +823,7 @@ class ChatController extends AEnvironmentAwareController {
 		$attachments = $this->attachmentService->getAttachmentsByType($this->room, $objectType, $offset, $limit);
 		$messageIds = array_map(static fn (Attachment $attachment): int => $attachment->getMessageId(), $attachments);
 
-		$messages = $this->getMessagesForRoom($this->room, $messageIds);
+		$messages = $this->getMessagesForRoom($messageIds);
 
 		$response = new DataResponse($messages, Http::STATUS_OK);
 
@@ -841,12 +835,15 @@ class ChatController extends AEnvironmentAwareController {
 		return $response;
 	}
 
-	protected function getMessagesForRoom(Room $room, array $messageIds): array {
-		$comments = $this->chatManager->getMessagesById($room, $messageIds);
+	protected function getMessagesForRoom(array $messageIds): array {
+		$comments = $this->chatManager->getMessagesById($this->room, $messageIds);
+		$this->preloadShares($comments);
 
 		$messages = [];
+		$comments = $this->chatManager->filterCommentsWithNonExistingFiles($comments);
 		foreach ($comments as $comment) {
-			$message = $this->messageParser->createMessage($room, $this->participant, $comment, $this->l);
+			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
+
 			$this->messageParser->parseMessage($message);
 
 			if (!$message->getVisibility()) {

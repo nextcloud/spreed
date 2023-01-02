@@ -763,4 +763,58 @@ class ChatManagerTest extends TestCase {
 		$actual = $this->chatManager->addConversationNotify([], $search, $room, $participant);
 		$this->assertEquals($expected, $actual);
 	}
+
+	/**
+	 * @dataProvider dataIsSharedFile
+	 */
+	public function testIsSharedFile(string $message, bool $expected): void {
+		$actual = $this->chatManager->isSharedFile($message);
+		$this->assertEquals($expected, $actual);
+	}
+
+	public function dataIsSharedFile(): array {
+		return [
+			['', false],
+			[json_encode([]), false],
+			[json_encode(['parameters' => '']), false],
+			[json_encode(['parameters' => []]), false],
+			[json_encode(['parameters' => ['share' => null]]), false],
+			[json_encode(['parameters' => ['share' => '']]), false],
+			[json_encode(['parameters' => ['share' => []]]), false],
+			[json_encode(['parameters' => ['share' => 0]]), false],
+			[json_encode(['parameters' => ['share' => 1]]), true],
+		];
+	}
+
+	/**
+	 * @dataProvider dataFilterCommentsWithNonExistingFiles
+	 */
+	public function testFilterCommentsWithNonExistingFiles(array $list, int $expectedCount): void {
+		// Transform text messages in instance of comment and mock with the message
+		foreach ($list as $key => $message) {
+			$list[$key] = $this->createMock(IComment::class);
+			$list[$key]->method('getMessage')
+				->willReturn($message);
+			$messageDecoded = json_decode($message, true);
+			if (isset($messageDecoded['parameters']['share']) && $messageDecoded['parameters']['share'] === 'notExists') {
+				$this->shareProvider->expects($this->once())
+					->method('getShareById')
+					->with('notExists')
+					->willThrowException(new ShareNotFound());
+			}
+		}
+		if (count($list) !== $expectedCount) {
+		}
+		$result = $this->chatManager->filterCommentsWithNonExistingFiles($list);
+		$this->assertCount($expectedCount, $result);
+	}
+
+	public function dataFilterCommentsWithNonExistingFiles(): array {
+		return [
+			[[], 0],
+			[[json_encode(['parameters' => ['not a shared file']])], 1],
+			[[json_encode(['parameters' => ['share' => 'notExists']])], 0],
+			[[json_encode(['parameters' => ['share' => 1]])], 1],
+		];
+	}
 }

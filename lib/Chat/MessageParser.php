@@ -53,8 +53,8 @@ class MessageParser {
 								IUserManager $userManager,
 								ParticipantService $participantService) {
 		$this->dispatcher = $dispatcher;
-		$this->userManager = $userManager;
 		$this->participantService = $participantService;
+		$this->userManager = $userManager;
 	}
 
 	public function createMessage(Room $room, Participant $participant, IComment $comment, IL10N $l): Message {
