@@ -52,6 +52,7 @@ use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\Flow\RegisterOperationsListener;
 use OCA\Talk\Listener\BeforeUserLoggedOutListener;
+use OCA\Talk\Listener\BotListener;
 use OCA\Talk\Listener\CircleDeletedListener;
 use OCA\Talk\Listener\CircleMembershipListener;
 use OCA\Talk\Listener\CSPListener;
@@ -186,6 +187,7 @@ class Application extends App implements IBootstrap {
 		CollaboratorsListener::register($dispatcher);
 		ResourceListener::register($dispatcher);
 		ReferenceInvalidationListener::register($dispatcher);
+		BotListener::register($dispatcher);
 		// Register only when Talk Updates are not disabled
 		if ($server->getConfig()->getAppValue('spreed', 'changelog', 'yes') === 'yes') {
 			ChangelogListener::register($dispatcher);
