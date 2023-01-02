@@ -517,6 +517,51 @@ Feature: conversation/breakout-rooms
     And user "participant1" is participant of the following rooms (v4)
     And user "participant2" is participant of the following rooms (v4)
 
+  Scenario: Deleting a single breakout room unassigned the students from the mapping
+    Given user "participant1" creates room "class room" (v4)
+      | roomType | 2 |
+      | roomName | class room |
+    And user "participant1" adds user "participant2" to room "class room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "class room" with 200 (v4)
+    And user "participant1" adds user "participant4" to room "class room" with 200 (v4)
+    And user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
+      | users      | participant3 | 3               |
+      | users      | participant4 | 3               |
+    And user "participant1" creates 3 manual breakout rooms for "class room" with 200 (v1)
+      | users::participant2 | 0 |
+      | users::participant3 | 1 |
+      | users::participant4 | 2 |
+    And user "participant1" is participant of the following rooms (v4)
+      | type | name       |
+      | 2    | class room |
+      | 2    | Room 1     |
+      | 2    | Room 2     |
+      | 2    | Room 3     |
+    And user "participant2" is participant of the following rooms (v4)
+      | type | name       |
+      | 2    | class room |
+      | 2    | Room 1     |
+    And user "participant3" is participant of the following rooms (v4)
+      | type | name       |
+      | 2    | class room |
+      | 2    | Room 2     |
+    And user "participant4" is participant of the following rooms (v4)
+      | type | name       |
+      | 2    | class room |
+      | 2    | Room 3     |
+    When user "participant1" deletes room "Room 2" with 200 (v4)
+    Then user "participant1" is participant of the following rooms (v4)
+      | type | name       |
+      | 2    | class room |
+      | 2    | Room 1     |
+      | 2    | Room 3     |
+    And user "participant3" is participant of the following rooms (v4)
+      | type | name       |
+      | 2    | class room |
+
   Scenario: Create an additional breakout room on the fly
     Given user "participant1" creates room "class room" (v4)
       | roomType | 2 |
