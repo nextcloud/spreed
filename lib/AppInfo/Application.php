@@ -82,6 +82,7 @@ use OCA\Talk\Share\Listener as ShareListener;
 use OCA\Talk\Share\RoomShareProvider;
 use OCA\Talk\Signaling\Listener as SignalingListener;
 use OCA\Talk\Status\Listener as StatusListener;
+use OCA\Talk\Webhooks\Listener as WebhookListener;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -184,6 +185,7 @@ class Application extends App implements IBootstrap {
 		CollaboratorsListener::register($dispatcher);
 		ResourceListener::register($dispatcher);
 		ReferenceInvalidationListener::register($dispatcher);
+		WebhookListener::register($dispatcher);
 		// Register only when Talk Updates are not disabled
 		if ($server->getConfig()->getAppValue('spreed', 'changelog', 'yes') === 'yes') {
 			ChangelogListener::register($dispatcher);
