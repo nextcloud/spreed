@@ -120,9 +120,10 @@ export default {
 			if (this.apachePHPConfiguration === 'invalid') {
 				return t('spreed', 'It seems that the PHP and Apache configuration is not compatible. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module.')
 			}
-			if (this.apachePHPConfiguration === 'unknown') {
-				return t('spreed', 'Could not detect the PHP and Apache configuration because exec is disabled or apachectl is not working as expected. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module.')
-			}
+			// Disabling this for now as there were too many false catches (VMs, AIO, nginx, permissions issue, …)
+			// if (this.apachePHPConfiguration === 'unknown') {
+			// return t('spreed', 'Could not detect the PHP and Apache configuration because exec is disabled or apachectl is not working as expected. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module.')
+			// }
 			return ''
 		},
 
