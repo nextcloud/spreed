@@ -431,7 +431,7 @@ class RoomController extends AEnvironmentAwareController {
 			'listable' => Room::LISTABLE_NONE,
 			'callFlag' => Participant::FLAG_DISCONNECTED,
 			'messageExpiration' => 0,
-			'avatarUrl' => $this->avatarService->getAvatarUrl($room),
+			'avatarVersion' => $this->avatarService->getAvatarVersion($room),
 			'breakoutRoomMode' => BreakoutRoom::MODE_NOT_CONFIGURED,
 			'breakoutRoomStatus' => BreakoutRoom::STATUS_STOPPED,
 		];
