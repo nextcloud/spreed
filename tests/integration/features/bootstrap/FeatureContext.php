@@ -2420,6 +2420,32 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" moves participants into different breakout rooms for "([^"]*)" with (\d+) \((v1)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param int $status
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userMovesParticipantsInsideBreakoutRooms(string $user, string $identifier, int $status, string $apiVersion, TableNode $formData = null): void {
+		$data = [];
+		if ($formData instanceof TableNode) {
+			$mapArray = [];
+			foreach ($formData->getRowsHash() as $attendee => $roomNumber) {
+				[$type, $id] = explode('::', $attendee);
+				$attendeeId = $this->getAttendeeId($type, $id, $identifier);
+				$mapArray[$attendeeId] = (int) $roomNumber;
+			}
+			$data['attendeeMap'] = json_encode($mapArray, JSON_THROW_ON_ERROR);
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$identifier] . '/attendees', $data);
+		$this->assertStatusCode($this->response, $status);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" broadcasts message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user

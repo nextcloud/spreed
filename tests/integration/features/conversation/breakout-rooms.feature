@@ -701,3 +701,56 @@ Feature: conversation/breakout-rooms
     When user "participant1" adds user "participant2" to room "Room 2" with 400 (v4)
     # Can not "add" groups
     When user "participant1" adds group "group1" to room "Room 2" with 400 (v4)
+
+  Scenario: Teacher applies a new attendee map
+    Given user "participant1" creates room "class room" (v4)
+      | roomType | 2 |
+      | roomName | class room |
+    And user "participant1" adds user "participant2" to room "class room" with 200 (v4)
+    And user "participant1" adds user "participant3" to room "class room" with 200 (v4)
+    And user "participant1" adds user "participant4" to room "class room" with 200 (v4)
+    And user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
+      | users      | participant3 | 3               |
+      | users      | participant4 | 3               |
+    And user "participant1" promotes "participant2" in room "class room" with 200 (v4)
+    And user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 2               |
+      | users      | participant3 | 3               |
+      | users      | participant4 | 3               |
+    When user "participant1" creates 3 manual breakout rooms for "class room" with 200 (v1)
+      | users::participant3 | 0 |
+      | users::participant4 | 1 |
+    Then user "participant3" is participant of the following rooms (v4)
+      | type | name       |
+      | 2    | class room |
+      | 2    | Room 1     |
+    Then user "participant4" is participant of the following rooms (v4)
+      | type | name       |
+      | 2    | class room |
+      | 2    | Room 2     |
+    When user "participant1" moves participants into different breakout rooms for "class room" with 400 (v1)
+      | users::participant2 | 0 |
+      | users::participant3 | 2 |
+      | users::participant4 | 1 |
+    When user "participant1" moves participants into different breakout rooms for "class room" with 400 (v1)
+      | users::participant3 | -2 |
+      | users::participant4 | 1 |
+    When user "participant1" moves participants into different breakout rooms for "class room" with 400 (v1)
+      | users::participant3 | 3 |
+      | users::participant4 | 1 |
+    When user "participant1" moves participants into different breakout rooms for "class room" with 200 (v1)
+      | users::participant3 | 2 |
+      | users::participant4 | 1 |
+    Then user "participant3" is participant of the following rooms (v4)
+      | type | name       |
+      | 2    | class room |
+      | 2    | Room 3     |
+    Then user "participant4" is participant of the following rooms (v4)
+      | type | name       |
+      | 2    | class room |
+      | 2    | Room 2     |

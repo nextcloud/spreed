@@ -68,6 +68,55 @@ class BreakoutRoomService {
 	}
 
 	/**
+	 * @param string $map
+	 * @param int $max
+	 * @return array
+	 */
+	protected function parseAttendeeMap(string $map, int $max): array {
+		if ($map === '') {
+			return [];
+		}
+
+		try {
+			$attendeeMap = json_decode($map, true, 2, JSON_THROW_ON_ERROR);
+		} catch (\JsonException) {
+			throw new InvalidArgumentException('attendeeMap');
+		}
+
+		if (!is_array($attendeeMap)) {
+			throw new InvalidArgumentException('attendeeMap');
+		}
+
+		if (empty($attendeeMap)) {
+			return [];
+		}
+
+		try {
+			$attendeeMap = array_filter($attendeeMap, static fn (int $roomNumber, int $attendeeId) => true, ARRAY_FILTER_USE_BOTH);
+		} catch (\Throwable) {
+			throw new InvalidArgumentException('attendeeMap');
+		}
+
+		if (empty($attendeeMap)) {
+			return [];
+		}
+
+		if (max($attendeeMap) >= $max) {
+			throw new InvalidArgumentException('attendeeMap');
+		}
+
+		if (min($attendeeMap) < 0) {
+			throw new InvalidArgumentException('attendeeMap');
+		}
+
+		if (min(array_keys($attendeeMap)) <= 0) {
+			throw new InvalidArgumentException('attendeeMap');
+		}
+
+		return $attendeeMap;
+	}
+
+	/**
 	 * @param Room $parent
 	 * @param int $mode
 	 * @psalm-param 0|1|2|3 $mode
@@ -108,21 +157,7 @@ class BreakoutRoomService {
 		}
 
 		if ($mode === BreakoutRoom::MODE_MANUAL) {
-			try {
-				$attendeeMap = json_decode($attendeeMap, true, 2, JSON_THROW_ON_ERROR);
-			} catch (\JsonException $e) {
-				throw new InvalidArgumentException('attendeeMap');
-			}
-
-			if (!empty($attendeeMap)) {
-				if (max($attendeeMap) >= $amount) {
-					throw new InvalidArgumentException('attendeeMap');
-				}
-
-				if (min($attendeeMap) < 0) {
-					throw new InvalidArgumentException('attendeeMap');
-				}
-			}
+			$cleanedMap = $this->parseAttendeeMap($attendeeMap, $amount);
 		}
 
 		$breakoutRooms = $this->createBreakoutRooms($parent, $amount);
@@ -149,12 +184,11 @@ class BreakoutRoomService {
 		} elseif ($mode === BreakoutRoom::MODE_MANUAL) {
 			$map = [];
 			foreach ($others as $participant) {
-				$roomNumber = $attendeeMap[$participant->getAttendee()->getId()] ?? null;
-				if ($roomNumber === null) {
+				if (!isset($cleanedMap[$participant->getAttendee()->getId()])) {
 					continue;
 				}
 
-				$roomNumber = (int) $roomNumber;
+				$roomNumber = (int) $cleanedMap[$participant->getAttendee()->getId()];
 
 				$map[$roomNumber] ??= [];
 				$map[$roomNumber][] = $participant;
@@ -165,6 +199,72 @@ class BreakoutRoomService {
 
 
 		return $breakoutRooms;
+	}
+
+	/**
+	 * @param Room $parent
+	 * @param string $attendeeMap
+	 * @throws InvalidArgumentException When the map was invalid
+	 */
+	public function applyAttendeeMap(Room $parent, string $attendeeMap): void {
+		if (!$this->config->isBreakoutRoomsEnabled()) {
+			throw new InvalidArgumentException('config');
+		}
+
+		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
+			throw new InvalidArgumentException('mode');
+		}
+
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+		$amount = count($breakoutRooms);
+
+		$cleanedMap = $this->parseAttendeeMap($attendeeMap, $amount);
+		$attendeeIds = array_keys($cleanedMap);
+
+		$participants = $this->participantService->getParticipantsForRoom($parent);
+		$participants = array_filter($participants, static fn (Participant $participant) => in_array($participant->getAttendee()->getId(), $attendeeIds, true));
+		// TODO Removing any non-users here as breakout rooms only support logged in users in version 1
+		$participants = array_filter($participants, static fn (Participant $participant) => $participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS);
+
+		$userIds = array_map(static fn (Participant $participant) => $participant->getAttendee()->getActorId(), $participants);
+
+		$removals = [];
+		foreach ($breakoutRooms as $breakoutRoom) {
+			$breakoutRoomParticipants = $this->participantService->getParticipantsForRoom($breakoutRoom);
+
+			foreach ($breakoutRoomParticipants as $participant) {
+				$attendee = $participant->getAttendee();
+				if ($attendee->getActorType() === Attendee::ACTOR_USERS && in_array($attendee->getActorId(), $userIds, true)) {
+					if ($participant->hasModeratorPermissions()) {
+						// Can not remove moderators with this method
+						throw new \InvalidArgumentException('moderator');
+					}
+
+					$removals[] = [
+						'room' => $breakoutRoom,
+						'participant' => $participant,
+					];
+				}
+			}
+		}
+
+		foreach ($removals as $removal) {
+			$this->participantService->removeAttendee($removal['room'], $removal['participant'], Room::PARTICIPANT_REMOVED);
+		}
+
+		$map = [];
+		foreach ($participants as $participant) {
+			if (!isset($cleanedMap[$participant->getAttendee()->getId()])) {
+				continue;
+			}
+
+			$roomNumber = (int) $cleanedMap[$participant->getAttendee()->getId()];
+
+			$map[$roomNumber] ??= [];
+			$map[$roomNumber][] = $participant;
+		}
+
+		$this->addOthersToBreakoutRooms($breakoutRooms, $map);
 	}
 
 	/**

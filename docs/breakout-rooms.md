@@ -32,7 +32,7 @@ Group and public conversations can be used to host breakout rooms.
         + `400 Bad Request` When the conversation is a breakout room itself
         + `400 Bad Request` When the mode is invalid
         + `400 Bad Request` When the amount is below the minimum or above the maximum
-        + `400 Bad Request` When the attendee map contains an invalid room number
+        + `400 Bad Request` When the attendee map contains an invalid room number or moderator
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the conversation could not be found for the participant
 
@@ -93,6 +93,26 @@ Group and public conversations can be used to host breakout rooms.
 		+ `403 Forbidden` When the participant is not a moderator
 		+ `404 Not Found` When the conversation could not be found for the participant
 		+ `413 Payload Too Large` When the message was longer than the allowed limit of 32000 characters (check the `spreed => config => chat => max-length` capability for the limit)
+
+## Configure breakout rooms
+
+* Required capability: `breakout-rooms-v1`
+* Method: `POST`
+* Endpoint: `/breakout-rooms/{token}/attendees`
+* Data:
+
+| field         | type   | Description                                                                                          |
+|---------------|--------|------------------------------------------------------------------------------------------------------|
+| `attendeeMap` | string | A json encoded Map of attendeeId => room number (0 based) (Only considered when the mode is "manual" |
+
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `400 Bad Request` When breakout rooms are disabled on the server
+		+ `400 Bad Request` When breakout rooms are not configured
+		+ `400 Bad Request` When the attendee map contains an invalid room number or moderator
+		+ `403 Forbidden` When the current user is not a moderator/owner
+		+ `404 Not Found` When the conversation could not be found for the participant
 
 ## Request assistance
 
