@@ -1120,6 +1120,11 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
+		if ($source !== 'users' && $this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			// Can only add users to breakout rooms
+			return new DataResponse(['error' => 'source'], Http::STATUS_BAD_REQUEST);
+		}
+
 		$participants = $this->participantService->getParticipantsForRoom($this->room);
 		$participantsByUserId = [];
 		$remoteParticipantsByFederatedId = [];
@@ -1222,6 +1227,28 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$addedBy = $this->userManager->get($this->userId);
+
+		if ($source === 'users' && $this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			$parentRoom = $this->manager->getRoomByToken($this->room->getObjectId());
+
+			// Also add to parent room in case the user is missing
+			try {
+				$this->participantService->getParticipantByActor(
+					$parentRoom,
+					Attendee::ACTOR_USERS,
+					$newParticipant
+				);
+			} catch (ParticipantNotFoundException $e) {
+				$this->participantService->addUsers($parentRoom, $participantsToAdd, $addedBy);
+			}
+
+			// Remove from previous breakout room in case the user is moved
+			try {
+				$this->breakoutRoomService->removeAttendeeFromBreakoutRoom($parentRoom, Attendee::ACTOR_USERS, $newParticipant);
+			} catch (\InvalidArgumentException $e) {
+				return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			}
+		}
 
 		// add the remaining users in batch
 		$this->participantService->addUsers($this->room, $participantsToAdd, $addedBy);

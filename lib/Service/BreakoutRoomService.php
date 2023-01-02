@@ -438,4 +438,33 @@ class BreakoutRoomService {
 		}
 		return $breakoutRooms;
 	}
+
+	/**
+	 * @param Room $parent
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @return void
+	 * @throws InvalidArgumentException When being used for a moderator
+	 */
+	public function removeAttendeeFromBreakoutRoom(Room $parent, string $actorType, string $actorId): void {
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+
+		foreach ($breakoutRooms as $breakoutRoom) {
+			try {
+				$participant = $this->participantService->getParticipantByActor(
+					$breakoutRoom,
+					$actorType,
+					$actorId
+				);
+
+				if ($participant->hasModeratorPermissions()) {
+					throw new \InvalidArgumentException('moderator');
+				}
+
+				$this->participantService->removeAttendee($breakoutRoom, $participant, Room::PARTICIPANT_REMOVED);
+			} catch (ParticipantNotFoundException $e) {
+				// Skip this room
+			}
+		}
+	}
 }

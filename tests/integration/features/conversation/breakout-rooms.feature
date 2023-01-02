@@ -4,6 +4,7 @@ Feature: conversation/breakout-rooms
     Given user "participant2" exists
     Given user "participant3" exists
     Given user "participant4" exists
+    Given group "group1" exists
 
   Scenario: Teacher creates manual breakout rooms
     Given user "participant1" creates room "class room" (v4)
@@ -625,3 +626,72 @@ Feature: conversation/breakout-rooms
       | 2    | Room 2     | 0          | 0                | 0                  |
       | 2    | Room 3     | 0          | 0                | 0                  |
       | 2    | Room 4     | 0          | 0                | 0                  |
+
+  Scenario: Adding a user directly to a breakout room adds them to the parent as well
+    Given user "participant1" creates room "class room" (v4)
+      | roomType | 2 |
+      | roomName | class room |
+    And user "participant1" creates 2 automatic breakout rooms for "class room" with 200 (v1)
+    And user "participant1" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 1                | 0                  |
+      | 2    | Room 1     | 1          | 0                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
+    When user "participant1" adds user "participant2" to room "Room 2" with 200 (v4)
+    Then user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
+    And user "participant1" sees the following attendees in room "Room 2" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
+    And user "participant2" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 1                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
+
+  Scenario: Adding a user directly to a breakout room adds them to the parent as well
+    Given user "participant1" creates room "class room" (v4)
+      | roomType | 2 |
+      | roomName | class room |
+    And user "participant1" creates 2 automatic breakout rooms for "class room" with 200 (v1)
+    And user "participant1" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 1                | 0                  |
+      | 2    | Room 1     | 1          | 0                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
+    When user "participant1" adds user "participant2" to room "Room 2" with 200 (v4)
+    Then user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
+    And user "participant1" sees the following attendees in room "Room 2" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
+    And user "participant2" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 1                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
+
+  Scenario: Only users with normal level can be moved between breakout rooms
+    Given user "participant1" creates room "class room" (v4)
+      | roomType | 2 |
+      | roomName | class room |
+    When user "participant1" adds user "participant2" to room "class room" with 200 (v4)
+    Then user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
+    And user "participant1" promotes "participant2" in room "class room" with 200 (v4)
+    And user "participant1" creates 2 automatic breakout rooms for "class room" with 200 (v1)
+    And user "participant1" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 1                | 0                  |
+      | 2    | Room 1     | 1          | 0                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
+    # Can not "move" moderators
+    When user "participant1" adds user "participant2" to room "Room 2" with 400 (v4)
+    # Can not "add" groups
+    When user "participant1" adds group "group1" to room "Room 2" with 400 (v4)
