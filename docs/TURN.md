@@ -3,15 +3,15 @@ The configuration of Nextcloud Talk mainly depends on your desired usage:
 
 - As long as it shall be used only **within one local network**, besides the app, nothing else should be required. Just verify that all browsers support the underlying [WebRTC](https://en.wikipedia.org/wiki/WebRTC) protocol - most contemporary browsers do with current versions, though mobile browsers tend to lag behind a little - and you should be good to go. Browser support can be tested for example here: [https://test.webrtc.org/](https://test.webrtc.org/)
 
-- Talk tries to establish a direct [peer-to-peer (P2P)](https://en.wikipedia.org/wiki/Peer-to-peer) connection, thus on connections **beyond the local network** (behind a [NAT](https://en.wikipedia.org/wiki/Network_address_translation) or router), clients do not only need to know each others public IP, but the participants local IPs as well. Processing this, is the job of a [STUN](https://en.wikipedia.org/wiki/STUN) server. As there is one preconfigured for Nextcloud Talk that is operated by Nextcloud GmbH, for this case nothing else needs to be done.
+- Talk tries to establish a direct [peer-to-peer (P2P)](https://en.wikipedia.org/wiki/Peer-to-peer) connection, thus on connections **beyond the local network** (behind a [NAT](https://en.wikipedia.org/wiki/Network_address_translation) or router), clients do not only need to know each other's public IP, but the participants local IPs as well. Processing this, is the job of a [STUN](https://en.wikipedia.org/wiki/STUN) server. As there is one preconfigured for Nextcloud Talk that is operated by Nextcloud GmbH, for this case nothing else needs to be done.
 
-- But in many cases, especially **in combination with firewalls or [symmetric NAT](https://en.wikipedia.org/wiki/Network_address_translation#Symmetric_NAT)**, a direct P2P connection is not possible, even with the help of a STUN server. For this a so called [TURN server](https://en.wikipedia.org/wiki/Traversal_Using_Relays_around_NAT) needs to be configured additionally.
+- But in many cases, especially **in combination with firewalls or [symmetric NAT](https://en.wikipedia.org/wiki/Network_address_translation#Symmetric_NAT)**, a direct P2P connection is not possible, even with the help of a STUN server. For this a so-called [TURN server](https://en.wikipedia.org/wiki/Traversal_Using_Relays_around_NAT) needs to be configured additionally.
 
-- Nextcloud Talk will try direct P2P in the first place, use STUN if needed and TURN as last resort fallback. Thus to be most flexible and guarantee functionality of your Nextcloud Talk instance in all possible connection cases, you would want to setup a TURN server.
+- Nextcloud Talk will try direct P2P in the first place, use STUN if needed and TURN as last resort fallback. Thus, to be most flexible and guarantee functionality of your Nextcloud Talk instance, in all possible connection cases, you would want to set up a TURN server.
 
 #### TURN server and Nextcloud Talk High Performance Backend
 
-A TURN server might be needed even if the Nextcloud Talk High Performance Backend is used and it is publicly accessible.
+A TURN server might be needed even if the Nextcloud Talk High Performance Backend is used and publicly accessible.
 
 The High Performance Backend uses a certain range of ports for WebRTC media connections (20000-40000 by default). A client could be behind a restrictive firewall that only allows connections to port 443, so even if the High Performance Backend is publicly accessible the client would need to connect to a TURN server in port 443, and the TURN server will then relay the packets to the 20000-40000 range in the High Performance Backend.
 
@@ -38,12 +38,12 @@ It is recommended to install the latest _coTURN_ version; at the very minimum _c
     sudo sed -i '/TURNSERVER_ENABLED/c\TURNSERVER_ENABLED=1' /etc/default/coturn
     ```
 
-- Since **Debian Buster** and **Ubuntu disco** the package ships a systemd unit, which does not use `/etc/default/coturn` but is enabled automatically on install. To check whether a systemd unit is available:
+- Since **Debian Buster** and **Ubuntu disco** the package ships a systemd unit, which does not use `/etc/default/coturn` but is enabled automatically on installation. To check whether a systemd unit is available:
     ```
     ls -l /lib/systemd/system/coturn.service
     ```
 
-- If you installed coTURN manually, you may want to create an sysvinit service or systemd unit, or use another method to run the following during boot:
+- If you installed coTURN manually, you may want to create a sysvinit service or systemd unit, or use another method to run the following during boot:
     ```
     /path/to/turnserver -c /path/to/turnserver.conf -o
     ```
@@ -60,7 +60,7 @@ Depending on the system configuration Linux kernel capabilities could be used to
 setcap cap_net_bind_service=+ep /usr/bin/turnserver
 ```
 
-Alternatively, if the system configuration does not allow to set the capability, or if the coturn process needs to access files only readable by root like a SSL certificate for TLS connections, you could configure the _coturn_ service to be executed by root instead of the unprivileged user by executing:
+Alternatively, if the system configuration does not allow to set the capability, or if the coturn process needs to access files only readable by root like an SSL certificate for TLS connections, you could configure the _coturn_ service to be executed by root instead of the unprivileged user by executing:
 ```
 systemctl edit coturn
 ```
@@ -101,7 +101,7 @@ no-multicast-peers
 
   Also note that even with TURN over TLS a client may not be able to connect with the TURN server if the firewall performs deep packet inspection and drops packets to port 443 that are not really HTTPS packets. This would be a corner case, though, as given that the connection is encrypted in order to inspect the packets that means that the firewall acts as a man-in-the-middle and the connection is not actually encrypted end-to-end. There is nothing that can be done in that case, but it should be rather uncommon.
 
-  In order to use TLS connections to the TURN server the TURN server requires a SSL certificate and, therefore, a domain. The path to the certificate file must be set in the [`cert` parameter](https://github.com/coturn/coturn/blob/upstream/4.5.1.3/README.turnserver#L442-L446), and the private key file must be set in the [`pkey` file](https://github.com/coturn/coturn/blob/upstream/4.5.1.3/README.turnserver#L448-L452). Besides that in [Talk settings](#4-configure-nextcloud-talk-to-use-your-turn-server) you must set the TURN server scheme as `turns:` or `turn: and turns:`.
+  In order to use TLS connections to the TURN server the TURN server requires an SSL certificate and, therefore, a domain. The path to the certificate file must be set in the [`cert` parameter](https://github.com/coturn/coturn/blob/upstream/4.5.1.3/README.turnserver#L442-L446), and the private key file must be set in the [`pkey` file](https://github.com/coturn/coturn/blob/upstream/4.5.1.3/README.turnserver#L448-L452). Besides that in [Talk settings](#4-configure-nextcloud-talk-to-use-your-turn-server) you must set the TURN server scheme as `turns:` or `turn: and turns:`.
 
   Note that, even if TLS provides the maximum compatibility, using a domain can cause problems with Firefox on a very specific scenario: [currently Firefox does not perform DNS requests through HTTP tunnels](https://bugzilla.mozilla.org/show_bug.cgi?id=1239006), so even if the WebRTC connection would work through the TURN server the TURN server may not be reachable.
 
@@ -109,7 +109,7 @@ no-multicast-peers
 
 - The `total-quota` parameter limits the number of allowed simultaneous connections to the TURN server. Along with [`max-bps` and `bps-capacity`](https://github.com/coturn/coturn/blob/upstream/4.5.1.3/README.turnserver#L414-L423) it can be used to limit the effects of a [DoS attack against the TURN server](https://tools.ietf.org/html/rfc8656#section-21.3.1). The value of _0_ shown above means _unlimited_; if a connection limit is desired it should be adjusted depending on your specific setup.
 
-  Please note that the number of allowed simultaneous connections limited by `total-quota` are not only fully established connections, but also the connections being tested during the negotiation phase used to establish the actual connection. During the negotiation phase each peer generates several candidates (an IP address and port) that can be used to establish a connection with that peer. Then the peers try to establish a connection between them with different candidate combinations until a valid one is found. If there is a TURN server then the client will connect to the TURN server too and it will generate additional candidates with the IP address of the TURN server (the so called "relay" candidates). Each of those relay candidates will try to connect to the candidates of the other peer, and each of those connection attempts allocates a slot in the available quota of the TURN server. If there are no more available slots "Allocation Quota Reached" message is written to coTURN logs.
+  Please note that the number of allowed simultaneous connections limited by `total-quota` are not only fully established connections, but also the connections being tested during the negotiation phase used to establish the actual connection. During the negotiation phase each peer generates several candidates (an IP address and port) that can be used to establish a connection with that peer. Then the peers try to establish a connection between them with different candidate combinations until a valid one is found. If there is a TURN server, then the client will connect to the TURN server too, and it will generate additional candidates with the IP address of the TURN server (the so-called "relay" candidates). Each of those relay candidates will try to connect to the candidates of the other peer, and each of those connection attempts allocates a slot in the available quota of the TURN server. If there are no more available slots "Allocation Quota Reached" message is written to coTURN logs.
 
   In most cases the candidates that will be generated, and thus the connections to the TURN server during the negotiation phase, can not be known beforehand. When Janus is used the number of candidate combinations is reduced, as the Janus candidates can be known, but the number of relay candidates that will be generated by the client may still be unknown. For example, it seems that browsers generate one relay candidate for each host candidate. Host candidates are those with the IP address known to the client, so typically there will be one for each network device in the system; in the case of Firefox host candidates are also generated for the IP addresses of local bridge network devices.
 
@@ -161,7 +161,7 @@ denied-peer-ip=203.0.113.0-203.0.113.255
 denied-peer-ip=240.0.0.0-255.255.255.255
 ```
 
-Otherwise [a malicious user could access services in that internal network through your TURN server](https://www.rtcsec.com/2020/04/01-slack-webrtc-turn-compromise/).
+Otherwise, [a malicious user could access services in that internal network through your TURN server](https://www.rtcsec.com/2020/04/01-slack-webrtc-turn-compromise/).
 
 Alternatively you could of course prevent access to that internal network from the TURN server by means of a firewall.
 
@@ -188,8 +188,9 @@ If you need to retain the previous behaviour you should now do it by external me
 
 - The TURN server on `<yourChosenPortNumber>` needs to be accessible for all Talk participants, so you need to open it to the web and if your TURN server is running **behind a NAT**, forward it to the related machine. Also make sure to set the [`--external-ip` option](https://github.com/coturn/coturn/wiki/turnserver#options) when your TURN server is in a private network.
 
-- If the High Performance Backend is used the TURN server and the High Performance Backend must be able to reach each other. If set, the `external-ip` option defines the IP address of the TURN server that the High Performance Backend will try to connect to. Therefore if both the TURN server and the High Performance Backend are in the same private network they may be able to reach each other using their local IP addresses, and thus it may not be needed to set the `external-ip` option. Moreover, when both servers are behind a firewall, in some cases (depending on the firewall configuration) setting the external IP can even cause the TURN server and the High Performance Backend to fail to reach each other (for example, if the firewall is not able to "loop" a packet from an internal address to an external one which then should go back to another internal address).
-  - Note that in some cases additional addresses can be found during the negotiation of the connection, the so called peer reflexive candidates. Due to this even if the external IP of the TURN server is not reachable by the High Performance Backend the connection may still work, but this should not be relied on.
+- If the High Performance Backend is used the TURN server and the High Performance Backend must be able to reach each other. If set, the `external-ip` option defines the IP address of the TURN server that the High Performance Backend will try to connect to. Therefore, if both the TURN server and the High Performance Backend are in the same private network they may be able to reach each other using their local IP addresses, and thus it may not be needed to set the `external-ip` option. Moreover, when both servers are behind a firewall, in some cases (depending on the firewall configuration) setting the external IP can even cause the TURN server and the High Performance Backend to fail to reach each other (for example, if the firewall is not able to "loop" a packet from an internal address to an external one which then should go back to another internal address).
+
+    * Note that in some cases additional addresses can be found during the negotiation of the connection, the so-called peer reflexive candidates. Due to this even if the external IP of the TURN server is not reachable by the High Performance Backend the connection may still work, but this should not be relied on.
 
 #### 6. Testing the TURN server
 
@@ -198,12 +199,13 @@ If you need to retain the previous behaviour you should now do it by external me
 Install _coTURN_ on your client. Please [refer above for details](#1-download-and-install). Note that in the case of the client you only need to install it, you do not need to perform any configuration after that.
 
 Run `turnutils_uclient -p <port> -W <static-auth-secret> -v -y turn.example.com` where
+
 - `<port>` is the port where your TURN server is listening
 - `<static-auth-secret>` is the _static-auth-secret_ value configured in your TURN server
 - `-v` enables the verbose mode to be able to check all the details
 - `-y` enables _client-to-client_ connections, so _turnutils_uclient_ acts as both the client and the peer that the TURN server relays to; otherwise you would need to also run _turnutils_peer_ to act as the peer to relay to and specify its address and port when running _turnutils_uclient_ with `-e` and `-r`
 
-By default the connection between the TURN client and the TURN server will be done using UDP. To instead test TCP connections you need to add `-t` to the options.
+By default, the connection between the TURN client and the TURN server will be done using UDP. To instead test TCP connections you need to add `-t` to the options.
 
 No matter if you are using UDP or TCP the output should look similar to:
 
@@ -221,7 +223,7 @@ No matter if you are using UDP or TCP the output should look similar to:
     4: Average round trip delay 32.500000 ms; min = 15 ms, max = 56 ms
     4: Average jitter 12.600000 ms; min = 0 ms, max = 41 ms
 
-If the output hangs at some point this could mean that the TURN server is not accessible (for example, because a firewall blocks its ports). Pay special attention too to the _Total lost packets_ and _total send dropped_ values, as there would be no error message if the data was successfully sent to the TURN server but then it was not properly relayed.
+If the output hangs at some point this could mean that the TURN server is not accessible (for example, because a firewall blocks its ports). Pay special attention too to the _Total lost packets_ and _total send dropped_ values, as there would be no error message if the data was successfully sent to the TURN server, but then it was not properly relayed.
 
 Further you should see in the TURN server log the successful connection.
 
@@ -245,7 +247,7 @@ Firefox and Chromium handle `iceTransportPolicy = 'relay'` in slightly different
 
 For example, if a Janus gateway is used too, the TURN server is in the same server as the Janus gateway and both are behind a firewall (not recommended), relay candidates could have the public IP address of the server while peer reflexive candidates could have the internal one. If the firewall drops connections between the public IP address and the public IP address the connection between coTURN and Janus may not be established (but without failing either), which would cause that Firefox establishes a connection with the TURN server, but the TURN server does not send or receive any packet to or from Janus. In Chromium, on the other hand, the connection would work as it would use the internal IP address of the server from the peer reflexive candidate.
 
-However, in the scenario above Firefox would not be able to establish a connection only if relay candidates are forced. With a standard Firefox configuration it would take into account peer reflexive candidates too and thus it should work without issues. Nevertheless, note that although using `iceTransportPolicy = 'relay'` in the browser console is just a temporary setting there is a persistent setting in Firefox configuration (_about:config_) to force relay candidates, `media.peerconnection.ice.relay_only`. This setting is targeted towards privacy-minded people, so you may want to test the TURN server with Firefox to ensure that it works even with the most restrictive configurations.
+However, in the scenario above Firefox would not be able to establish a connection only if relay candidates are forced. With a standard Firefox configuration it would take into account peer reflexive candidates too, and thus, it should work without issues. Nevertheless, note that although using `iceTransportPolicy = 'relay'` in the browser console is just a temporary setting there is a persistent setting in Firefox configuration (_about:config_) to force relay candidates, `media.peerconnection.ice.relay_only`. This setting is targeted towards privacy-minded people, so you may want to test the TURN server with Firefox to ensure that it works even with the most restrictive configurations.
 
 ### What else
 Nextcloud Talk´s WebRTC handling is still mostly based on the one from the [Spreed.ME](https://www.spreed.me/) WebRTC solution. For this reason, all guides about how to configure coTURN for it, applies to Nextcloud Talk too.
