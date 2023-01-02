@@ -825,6 +825,8 @@ class RoomController extends AEnvironmentAwareController {
 			} catch (ParticipantNotFoundException $e) {
 				return new DataResponse(['error' => 'permissions'], Http::STATUS_BAD_REQUEST);
 			}
+		} elseif ($objectType !== '') {
+			return new DataResponse(['error' => 'object'], Http::STATUS_BAD_REQUEST);
 		}
 
 		// Create the room

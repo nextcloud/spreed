@@ -584,12 +584,18 @@ Feature: conversation/breakout-rooms
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
       | 2    | Room 2     | 1          | 0                | 0                  |
-    # Can not nest
+    # Can not nest breakout rooms
     Given user "participant1" creates room "Room 3" with 400 (v4)
       | roomType   | 2 |
       | roomName   | Room 3 |
       | objectType | room |
       | objectId   | ROOM(Room 2) |
+    # Can not create room for other object types
+    Given user "participant1" creates room "Room 3" with 400 (v4)
+      | roomType   | 2 |
+      | roomName   | Room 3 |
+      | objectType | files |
+      | objectId   | ROOM(class room) |
     Given user "participant1" creates room "Room 3" with 201 (v4)
       | roomType   | 2 |
       | roomName   | Room 3 |
