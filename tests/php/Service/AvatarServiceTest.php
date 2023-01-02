@@ -79,7 +79,7 @@ class AvatarServiceTest extends TestCase {
 	/**
 	 * @dataProvider dataGetAvatarVersion
 	 */
-	public function testGetAvatarVersion(string $avatar, $expected): void {
+	public function testGetAvatarVersion(string $avatar, string $expected): void {
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);
 		$room->expects($this->once())
