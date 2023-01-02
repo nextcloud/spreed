@@ -40,6 +40,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var string[] */
 	protected static $identifierToToken;
 	/** @var string[] */
+	protected static $identifierToId;
+	/** @var string[] */
 	protected static $tokenToIdentifier;
 	/** @var array[] */
 	protected static $identifierToAvatar;
@@ -146,6 +148,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function setUp() {
 		self::$identifierToToken = [];
+		self::$identifierToId = [];
 		self::$tokenToIdentifier = [];
 		self::$sessionIdToUser = [];
 		self::$userToSessionId = [];
@@ -325,7 +328,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$expected = $formData->getHash();
 		if ($shouldOrder) {
 			$sorter = static function (array $roomA, array $roomB): int {
-				return $roomA['id'] < $roomB['id'] ? -1 : 1;
+				$idA = $roomA['id'];
+				$idB = $roomB['id'];
+				if (isset(self::$identifierToId[$idA])) {
+					$idA = self::$identifierToId[$idA];
+				}
+				if (isset(self::$identifierToId[$idB])) {
+					$idB = self::$identifierToId[$idB];
+				}
+				return $idA < $idB ? -1 : 1;
 			};
 
 			usort($expected, $sorter);
@@ -786,6 +797,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		if ($statusCode === 201) {
 			self::$identifierToToken[$identifier] = $response['token'];
+			self::$identifierToId[$identifier] = $response['id'];
 			self::$tokenToIdentifier[$response['token']] = $identifier;
 		}
 	}
