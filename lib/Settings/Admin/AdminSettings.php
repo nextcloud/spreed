@@ -509,7 +509,7 @@ class AdminSettings implements ISettings {
 
 		$output = [];
 		try {
-			@exec('apachectl -M | grep mpm', $output, $returnCode);
+			@exec('apachectl -V | grep MPM', $output, $returnCode);
 		} catch (\Throwable $e) {
 			return 'unknown';
 		}
@@ -523,11 +523,11 @@ class AdminSettings implements ISettings {
 
 		if ($usingFPM) {
 			// Needs to use mpm_event
-			return strpos($apacheModule, 'mpm_event') !== false ? '' : 'invalid';
+			return strpos($apacheModule, 'event') !== false ? '' : 'invalid';
 		}
 
 		// Needs to use mpm_prefork
-		return strpos($apacheModule, 'mpm_prefork') !== false ? '' : 'invalid';
+		return strpos($apacheModule, 'prefork') !== false ? '' : 'invalid';
 	}
 
 	/**
