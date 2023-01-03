@@ -161,7 +161,7 @@
 
 ## Get breakout rooms
 
-Get all (for moderators and in case of "free selection) or the assigned breakout room
+Get all (for moderators and in case of "free selection") or the assigned breakout room
 
 * Required capability: `breakout-rooms-v1`
 * Method: `GET`
