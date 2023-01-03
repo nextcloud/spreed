@@ -105,6 +105,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<command>OCA\Talk\Command\Room\Demote</command>
 		<command>OCA\Talk\Command\Room\Update</command>
 		<command>OCA\Talk\Command\User\Remove</command>
+		<command>OCA\Talk\Command\User\TransferOwnership</command>
 	</commands>
 
 	<settings>
