@@ -34,7 +34,6 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
-use OCP\Server;
 
 class Config {
 	public const SIGNALING_INTERNAL = 'internal';
@@ -43,12 +42,6 @@ class Config {
 
 	public const SIGNALING_TICKET_V1 = 1;
 	public const SIGNALING_TICKET_V2 = 2;
-
-	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
-		'audio/ogg' => ['ogg'],
-		'video/ogg' => ['ogv'],
-		'video/x-matroska' => ['mkv'],
-	];
 
 	protected IConfig $config;
 	protected ITimeFactory $timeFactory;
@@ -166,19 +159,6 @@ class Config {
 			'recording_folder',
 			$this->getAttachmentFolder($userId) . '/Recording'
 		);
-	}
-
-	public function getRecordingAllowedMimes(): array {
-		$allowedMimes = $this->config->getAppValue(
-			'spreed',
-			'allowed_recording_mimes',
-			json_encode(self::DEFAULT_ALLOWED_RECORDING_FORMATS)
-		);
-		$allowedMimes = json_decode($allowedMimes, true);
-		if (is_array($allowedMimes) && count($allowedMimes)) {
-			return $allowedMimes;
-		}
-		return self::DEFAULT_ALLOWED_RECORDING_FORMATS;
 	}
 
 	public function isDisabledForUser(IUser $user): bool {

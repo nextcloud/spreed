@@ -38,6 +38,11 @@ use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 
 class RecordingService {
+	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
+		'audio/ogg' => ['ogg'],
+		'video/ogg' => ['ogv'],
+		'video/x-matroska' => ['mkv'],
+	];
 	private IMimeTypeDetector $mimeTypeDetector;
 	private ParticipantService $participantService;
 	private IRootFolder $rootFolder;
@@ -97,7 +102,7 @@ class RecordingService {
 
 	public function validateFileFormat(string $fileName, $content): void {
 		$mimeType = $this->mimeTypeDetector->detectString($content);
-		$allowed = $this->config->getRecordingAllowedMimes();
+		$allowed = self::DEFAULT_ALLOWED_RECORDING_FORMATS;
 		if (!array_key_exists($mimeType, $allowed)) {
 			throw new InvalidArgumentException('file_mimetype');
 		}
