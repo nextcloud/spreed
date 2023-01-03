@@ -681,6 +681,43 @@ Feature: conversation/breakout-rooms
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 2     | 1          | 0                | 0                  |
 
+  Scenario: Removing a user from the parent also removes them from the breakout room
+    Given user "participant1" creates room "class room" (v4)
+      | roomType | 2 |
+      | roomName | class room |
+    When user "participant1" adds user "participant2" to room "class room" with 200 (v4)
+    When user "participant1" adds user "participant3" to room "class room" with 200 (v4)
+    When user "participant1" adds user "participant4" to room "class room" with 200 (v4)
+    Then user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+      | users      | participant2 | 3               |
+      | users      | participant3 | 3               |
+      | users      | participant4 | 3               |
+    And user "participant1" promotes "participant2" in room "class room" with 200 (v4)
+    When user "participant1" creates 2 manual breakout rooms for "class room" with 200 (v1)
+      | users::participant3 | 0 |
+      | users::participant4 | 1 |
+    And user "participant2" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 2                | 0                  |
+      | 2    | Room 1     | 1          | 0                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
+    And user "participant3" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 2                | 0                  |
+      | 2    | Room 1     | 1          | 0                | 0                  |
+    And user "participant4" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 2                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
+    When user "participant1" removes user "participant2" from room "class room" with 200 (v4)
+    And user "participant1" removes user "participant3" from room "class room" with 200 (v4)
+    And user "participant4" removes themselves from room "class room" with 200 (v4)
+    Then user "participant2" is participant of the following rooms (v4)
+    And user "participant3" is participant of the following rooms (v4)
+    And user "participant4" is participant of the following rooms (v4)
+
   Scenario: Only users with normal level can be moved between breakout rooms
     Given user "participant1" creates room "class room" (v4)
       | roomType | 2 |

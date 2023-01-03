@@ -543,10 +543,11 @@ class BreakoutRoomService {
 	 * @param Room $parent
 	 * @param string $actorType
 	 * @param string $actorId
+	 * @param bool $throwOnModerator
 	 * @return void
 	 * @throws InvalidArgumentException When being used for a moderator
 	 */
-	public function removeAttendeeFromBreakoutRoom(Room $parent, string $actorType, string $actorId): void {
+	public function removeAttendeeFromBreakoutRoom(Room $parent, string $actorType, string $actorId, bool $throwOnModerator = true): void {
 		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
 
 		foreach ($breakoutRooms as $breakoutRoom) {
@@ -557,7 +558,7 @@ class BreakoutRoomService {
 					$actorId
 				);
 
-				if ($participant->hasModeratorPermissions()) {
+				if ($throwOnModerator && $participant->hasModeratorPermissions()) {
 					throw new \InvalidArgumentException('moderator');
 				}
 
