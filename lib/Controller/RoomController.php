@@ -1740,6 +1740,11 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
+		if ($this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			// Do not allow manual changing the lobby in breakout rooms
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		if (!$this->roomService->setLobby($this->room, $state, $timerDateTime)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}

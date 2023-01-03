@@ -435,6 +435,14 @@ class RoomService {
 			return false;
 		}
 
+		if ($room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
+			return false;
+		}
+
+		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			return false;
+		}
+
 		$oldType = $room->getType();
 
 		$event = new ModifyRoomEvent($room, 'type', $newType, $oldType);
@@ -514,6 +522,10 @@ class RoomService {
 		}
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
+			return false;
+		}
+
+		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			return false;
 		}
 

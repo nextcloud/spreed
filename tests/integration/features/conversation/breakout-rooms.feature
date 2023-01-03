@@ -791,3 +791,23 @@ Feature: conversation/breakout-rooms
       | type | name       |
       | 2    | class room |
       | 2    | Room 2     |
+
+  Scenario: Can not change lobby status, allow or disallow guests in breakout rooms directly
+    Given user "participant1" creates room "class room" (v4)
+      | roomType | 2 |
+      | roomName | class room |
+    And user "participant1" sees the following attendees in room "class room" with 200 (v4)
+      | actorType  | actorId      | participantType |
+      | users      | participant1 | 1               |
+    And user "participant1" creates 2 automatic breakout rooms for "class room" with 200 (v1)
+    And user "participant1" is participant of the following rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 1                | 0                  |
+      | 2    | Room 1     | 1          | 0                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
+    # Can not disable lobby
+    Then user "participant1" sets lobby state for room "Room 1" to "no lobby" with 400 (v4)
+    # Can not enable listing
+    And user "participant1" allows listing room "Room 1" for "all" with 400 (v4)
+    # Can not allow guests
+    And user "participant1" makes room "Room 1" public with 400 (v4)
