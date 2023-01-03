@@ -185,6 +185,15 @@ export default {
 				return
 			}
 
+			// TODO: move to store under a special action ?
+
+			// Remove the conversation to ensure that the old data is not used
+			// before fetching it again if this conversation is joined again.
+			await this.$store.dispatch('deleteConversation', this.token)
+			// Remove the participant to ensure that it will be set again fresh
+			// if this conversation is joined again.
+			await this.$store.dispatch('purgeParticipantsStore', this.token)
+
 			await this.$store.dispatch('joinConversation', { token: this.token })
 
 			// The current participant (which is automatically set when fetching
@@ -218,15 +227,6 @@ export default {
 			EventBus.$off('should-refresh-conversations', OCA.Talk.fetchCurrentConversationWrapper)
 			EventBus.$off('signaling-participant-list-changed', OCA.Talk.fetchCurrentConversationWrapper)
 			window.clearInterval(OCA.Talk.fetchCurrentConversationIntervalId)
-
-			// TODO: move to store under a special action ?
-
-			// Remove the conversation to ensure that the old data is not used
-			// before fetching it again if this conversation is joined again.
-			this.$store.dispatch('deleteConversation', this.token)
-			// Remove the participant to ensure that it will be set again fresh
-			// if this conversation is joined again.
-			this.$store.dispatch('purgeParticipantsStore', this.token)
 
 			this.$store.dispatch('leaveConversation', { token: this.token })
 
