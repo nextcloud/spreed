@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
-use OC\Files\Filesystem;
 use OC\User\NoUserException;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -63,8 +62,8 @@ class RecordingService {
 	public function store(Room $room, string $owner, array $file): void {
 		$content = $this->getContentFromFileArray($file);
 
-		$recordFileName = $this->sanitizeFileName($file['name']);
-		$this->validateFileFormat($recordFileName, $content);
+		$this->validateFileName($file['name']);
+		$this->validateFileFormat($file['name'], $content);
 
 		try {
 			$this->participantService->getParticipant($room, $owner);
@@ -74,7 +73,7 @@ class RecordingService {
 
 		try {
 			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
-			$recordingFolder->newFile($recordFileName, $content);
+			$recordingFolder->newFile($file['name'], $content);
 		} catch (NoUserException $e) {
 			throw new InvalidArgumentException('owner_invalid');
 		} catch (NotPermittedException $e) {
@@ -85,8 +84,7 @@ class RecordingService {
 	public function getContentFromFileArray(array $file): string {
 		if (
 			$file['error'] !== 0 ||
-			!is_uploaded_file($file['tmp_name']) ||
-			Filesystem::isFileBlacklisted($file['tmp_name'])
+			!is_uploaded_file($file['tmp_name'])
 		) {
 			throw new InvalidArgumentException('invalid_file');
 		}
@@ -113,7 +111,7 @@ class RecordingService {
 		}
 	}
 
-	public function sanitizeFileName(string $fileName): string {
+	public function validateFileName(string $fileName): string {
 		$recordFileName = escapeshellcmd($fileName);
 		$recordFileName = pathinfo($recordFileName, PATHINFO_BASENAME);
 		if ($recordFileName !== $fileName) {

@@ -53,21 +53,22 @@
 
 * Data:
 
-| field   | type   | Description                                     |
-| ------- | ------ | ----------------------------------------------- |
-| `file`  | string | Blob of image in a multipart/form-data request. |
-| `owner` | string | The moderator/owner of room.                    |
+| field   | type   | Description                                               |
+| ------- | ------ | --------------------------------------------------------- |
+| `file`  | string | File with the recording in a multipart/form-data request. |
+| `owner` | string | The person that started the recording.                    |
 
 * Response:
     - Status code:
         + `200 OK`
-        + `400 Bad Request` Message: `invalid_file`. File in block list or invalid.
-        + `400 Bad Request` Message: `empty_file`. Invalid file extension.
-        + `400 Bad Request` Message: `file_mimetype`. Invalid mimetype.
-        + `400 Bad Request` Message: `file_name`. Invalid file name.
-        + `400 Bad Request` Message: `file_extension`. Invalid file extension.
-        + `400 Bad Request` Message: `owner_participant`. Onwer need to be a participant of room.
-        + `400 Bad Request` Message: `owner_invalid`. Onwer invalid.
-        + `400 Bad Request` Message: `owner_permission`. Onwer have not permission to store record file.
+        + `400 Bad Request` Error: `invalid_file`: File in block list or invalid
+        + `400 Bad Request` Error: `empty_file`: Invalid file extension
+        + `400 Bad Request` Error: `file_mimetype`: Invalid mimetype
+        + `400 Bad Request` Error: `file_name`. :nvalid file name
+        + `400 Bad Request` Error: `file_extension`: Invalid file extension
+        + `400 Bad Request` Error: `owner_participant`: Owner is not to be a participant of room
+        + `400 Bad Request` Error: `owner_invalid`: Owner invalid
+        + `400 Bad Request` Error: `owner_permission`: Owner have not permission to store record file
         + `401 Unauthorized` When the validation as SIP bridge failed
-        + `404 Not Found` Invalid room or brute force identified.
+        + `404 Not Found` Room not found
+        + `429 Too Many Request` Brute force protection

@@ -72,17 +72,17 @@ class RecordingServiceTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider dataSanitizeFileName
+	 * @dataProvider dataValidateFileName
 	 */
-	public function testSanitizeFileName(string $name, string $expected, string $exceptionMessage): void {
+	public function testValidateFileName(string $name, string $expected, string $exceptionMessage): void {
 		if ($exceptionMessage) {
 			$this->expectExceptionMessage($exceptionMessage);
 		}
-		$actual = $this->recordingService->sanitizeFileName($name);
+		$actual = $this->recordingService->validateFileName($name);
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function dataSanitizeFileName(): array {
+	public function dataValidateFileName(): array {
 		return [
 			['a/b', '', 'file_name'],
 			['a`b', '', 'file_name'],
