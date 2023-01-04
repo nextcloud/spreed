@@ -46,17 +46,41 @@ class RecordingService {
 	private ParticipantService $participantService;
 	private IRootFolder $rootFolder;
 	private Config $config;
+	private RoomService $roomService;
 
 	public function __construct(
 		IMimeTypeDetector $mimeTypeDetector,
 		ParticipantService $participantService,
 		IRootFolder $rootFolder,
-		Config $config
+		Config $config,
+		RoomService $roomService
 	) {
 		$this->mimeTypeDetector = $mimeTypeDetector;
 		$this->participantService = $participantService;
 		$this->rootFolder = $rootFolder;
 		$this->config = $config;
+		$this->roomService = $roomService;
+	}
+
+	public function startRecording(Room $room, int $status): void {
+		$availableRecordingTypes = [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
+		if (!in_array($status, $availableRecordingTypes)) {
+			throw new InvalidArgumentException('status');
+		}
+		if ($room->getCallRecording() !== Room::RECORDING_NONE) {
+			throw new InvalidArgumentException('recording');
+		}
+		if (!$room->getActiveSince() instanceof \DateTimeInterface) {
+			throw new InvalidArgumentException('call');
+		}
+		$this->roomService->setCallRecording($room, $status);
+	}
+
+	public function stopRecording(Room $room): void {
+		if ($room->getCallRecording() === Room::RECORDING_NONE) {
+			throw new InvalidArgumentException('recording');
+		}
+		$this->roomService->setCallRecording($room);
 	}
 
 	public function store(Room $room, string $owner, array $file): void {
