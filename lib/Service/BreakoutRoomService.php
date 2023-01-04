@@ -204,7 +204,7 @@ class BreakoutRoomService {
 	/**
 	 * @param Room $parent
 	 * @param string $attendeeMap
-	 * @throws InvalidArgumentException When the map was invalid
+	 * @throws InvalidArgumentException When the map was invalid, breakout rooms are disabled or not configured for this conversation
 	 */
 	public function applyAttendeeMap(Room $parent, string $attendeeMap): void {
 		if (!$this->config->isBreakoutRoomsEnabled()) {
