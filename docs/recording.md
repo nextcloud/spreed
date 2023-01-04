@@ -37,3 +37,38 @@
         + `400 Bad Request` Message: `call`. Call is not activated.
         + `403 Forbidden` When the user is not a moderator/owner.
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator.
+
+## Store call recording
+
+* Required capability: `recording-v1`
+* Method: `POST`
+* Endpoint: `/recording/{token}/store`
+
+* Header:
+
+| field                     | type   | Description                                                                                                                |
+| ------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `TALK_SIPBRIDGE_RANDOM`   | string | Random string that needs to be concatenated with room token to generate the checksum using the `sip_bridge_shared_secret`. |
+| `TALK_SIPBRIDGE_CHECKSUM` | string | The checksum generated with `TALK_SIPBRIDGE_RANDOM`.                                                                       |
+
+* Data:
+
+| field   | type   | Description                                               |
+| ------- | ------ | --------------------------------------------------------- |
+| `file`  | string | File with the recording in a multipart/form-data request. |
+| `owner` | string | The person that started the recording.                    |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` Error: `invalid_file`: File in block list or invalid
+        + `400 Bad Request` Error: `empty_file`: Invalid file extension
+        + `400 Bad Request` Error: `file_mimetype`: Invalid mimetype
+        + `400 Bad Request` Error: `file_name`. :nvalid file name
+        + `400 Bad Request` Error: `file_extension`: Invalid file extension
+        + `400 Bad Request` Error: `owner_participant`: Owner is not to be a participant of room
+        + `400 Bad Request` Error: `owner_invalid`: Owner invalid
+        + `400 Bad Request` Error: `owner_permission`: Owner have not permission to store record file
+        + `401 Unauthorized` When the validation as SIP bridge failed
+        + `404 Not Found` Room not found
+        + `429 Too Many Request` Brute force protection

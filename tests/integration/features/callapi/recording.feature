@@ -116,3 +116,10 @@ Feature: callapi/recording
     And the response error matches with "call"
     Then user "participant1" starts "audio" recording in room "room1" with 400 (v1)
     And the response error matches with "call"
+
+  Scenario: Store recording
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    Then user "participant1" store recording file "/img/join_call.ogg" in room "room1" with 200 (v1)

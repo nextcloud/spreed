@@ -34,5 +34,7 @@ return [
 		['name' => 'Recording#startRecording', 'url' => '/api/{apiVersion}/recording/{token}', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\RecordingController::stopRecording() */
 		['name' => 'Recording#stopRecording', 'url' => '/api/{apiVersion}/recording/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\RecordingController::store() */
+		['name' => 'Recording#store', 'url' => '/api/{apiVersion}/recording/{token}/store', 'verb' => 'POST', 'requirements' => $requirements],
 	],
 ];

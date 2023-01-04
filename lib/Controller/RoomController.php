@@ -50,6 +50,7 @@ use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Service\SIPBridgeService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
@@ -94,6 +95,7 @@ class RoomController extends AEnvironmentAwareController {
 	protected MessageParser $messageParser;
 	protected ITimeFactory $timeFactory;
 	protected AvatarService $avatarService;
+	protected SIPBridgeService $SIPBridgeService;
 	protected IL10N $l10n;
 	protected IConfig $config;
 	protected Config $talkConfig;
@@ -121,6 +123,7 @@ class RoomController extends AEnvironmentAwareController {
 								MessageParser $messageParser,
 								ITimeFactory $timeFactory,
 								AvatarService $avatarService,
+								SIPBridgeService $SIPBridgeService,
 								IL10N $l10n,
 								IConfig $config,
 								Config $talkConfig,
@@ -145,6 +148,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->messageParser = $messageParser;
 		$this->timeFactory = $timeFactory;
 		$this->avatarService = $avatarService;
+		$this->SIPBridgeService = $SIPBridgeService;
 		$this->l10n = $l10n;
 		$this->config = $config;
 		$this->talkConfig = $talkConfig;
@@ -347,37 +351,15 @@ class RoomController extends AEnvironmentAwareController {
 	 * and the body of the request, calculated with the shared secret from the
 	 * configuration.
 	 *
-	 * @param string $data
+	 * @param string $token
 	 * @return bool True if the request is from the SIP bridge and valid, false if not from SIP bridge
 	 * @throws UnauthorizedException when the request tried to sign as SIP bridge but is not valid
 	 */
-	private function validateSIPBridgeRequest(string $data): bool {
+	private function validateSIPBridgeRequest(string $token): bool {
 		$random = $this->request->getHeader('TALK_SIPBRIDGE_RANDOM');
 		$checksum = $this->request->getHeader('TALK_SIPBRIDGE_CHECKSUM');
-
-		if ($random === '' && $checksum === '') {
-			return false;
-		}
-
-		if (strlen($random) < 32) {
-			throw new UnauthorizedException('Invalid random provided');
-		}
-
-		if (empty($checksum)) {
-			throw new UnauthorizedException('Invalid checksum provided');
-		}
-
 		$secret = $this->talkConfig->getSIPSharedSecret();
-		if (empty($secret)) {
-			throw new UnauthorizedException('No shared SIP secret provided');
-		}
-		$hash = hash_hmac('sha256', $random . $data, $secret);
-
-		if (hash_equals($hash, strtolower($checksum))) {
-			return true;
-		}
-
-		throw new UnauthorizedException('Invalid HMAC provided');
+		return $this->SIPBridgeService->validateSIPBridgeRequest($random, $checksum, $secret, $token);
 	}
 
 	protected function formatRoom(Room $room, ?Participant $currentParticipant, ?array $statuses = null, bool $isSIPBridgeRequest = false, bool $isListingBreakoutRooms = false): array {

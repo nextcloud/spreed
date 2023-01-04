@@ -34,7 +34,6 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
-use OCP\Server;
 
 class Config {
 	public const SIGNALING_INTERNAL = 'internal';
@@ -151,6 +150,15 @@ class Config {
 		$recordingEnabled = $callRecordingConfig === 'yes';
 
 		return $isSignalingOk && $recordingEnabled;
+	}
+
+	public function getRecordingFolder(string $userId): string {
+		return $this->config->getUserValue(
+			$userId,
+			'spreed',
+			'recording_folder',
+			$this->getAttachmentFolder($userId) . '/Recording'
+		);
 	}
 
 	public function isDisabledForUser(IUser $user): bool {

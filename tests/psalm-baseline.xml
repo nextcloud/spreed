@@ -235,6 +235,12 @@
       <code>\OC_Image</code>
     </UndefinedClass>
   </file>
+  <file src="lib/Service/RecordingService.php">
+    <UndefinedClass occurrences="2">
+      <code>Filesystem</code>
+      <code>NoUserException</code>
+    </UndefinedClass>
+  </file>
   <file src="lib/Share/Listener.php">
     <InvalidArgument occurrences="1">
       <code>[self::class, 'listenPreShare']</code>
