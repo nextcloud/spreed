@@ -103,24 +103,4 @@ class ApiController extends OCSController {
 
 		return new DataResponse();
 	}
-
-	/**
-	 * @NoCSRFRequired
-	 *
-	 * @return DataResponse
-	 */
-	public function getMessageExpirationJob(): DataResponse {
-		$query = $this->db->getQueryBuilder();
-		$query->select('id')
-			->from('jobs')
-			->where(
-				$query->expr()->eq('class', $query->createNamedParameter(ExpireChatMessages::class))
-			);
-		$result = $query->executeQuery();
-		$job = $result->fetchOne();
-		if ($job) {
-			return new DataResponse(['id' => (int) $job]);
-		}
-		return new DataResponse([], Http::STATUS_NOT_FOUND);
-	}
 }
