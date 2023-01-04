@@ -30,10 +30,10 @@ $requirements = [
 
 return [
 	'ocs' => [
-		/** @see \OCA\Talk\Controller\RecordingController::startRecording() */
-		['name' => 'Recording#startRecording', 'url' => '/api/{apiVersion}/recording/{token}', 'verb' => 'POST', 'requirements' => $requirements],
-		/** @see \OCA\Talk\Controller\RecordingController::stopRecording() */
-		['name' => 'Recording#stopRecording', 'url' => '/api/{apiVersion}/recording/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\RecordingController::start() */
+		['name' => 'Recording#start', 'url' => '/api/{apiVersion}/recording/{token}', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\RecordingController::stop() */
+		['name' => 'Recording#stop', 'url' => '/api/{apiVersion}/recording/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\RecordingController::store() */
 		['name' => 'Recording#store', 'url' => '/api/{apiVersion}/recording/{token}/store', 'verb' => 'POST', 'requirements' => $requirements],
 	],

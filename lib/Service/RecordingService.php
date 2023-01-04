@@ -62,7 +62,7 @@ class RecordingService {
 		$this->roomService = $roomService;
 	}
 
-	public function startRecording(Room $room, int $status): void {
+	public function start(Room $room, int $status): void {
 		$availableRecordingTypes = [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
 		if (!in_array($status, $availableRecordingTypes)) {
 			throw new InvalidArgumentException('status');
@@ -76,7 +76,7 @@ class RecordingService {
 		$this->roomService->setCallRecording($room, $status);
 	}
 
-	public function stopRecording(Room $room): void {
+	public function stop(Room $room): void {
 		if ($room->getCallRecording() === Room::RECORDING_NONE) {
 			throw new InvalidArgumentException('recording');
 		}
