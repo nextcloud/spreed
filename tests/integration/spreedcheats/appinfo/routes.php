@@ -26,6 +26,5 @@ declare(strict_types=1);
 return [
 	'ocs' => [
 		['name' => 'Api#resetSpreed', 'url' => '/', 'verb' => 'DELETE'],
-		['name' => 'Api#getMessageExpirationJob', 'url' => '/get_message_expiration_job', 'verb' => 'GET'],
 	],
 ];
