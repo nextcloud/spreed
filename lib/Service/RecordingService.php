@@ -62,8 +62,8 @@ class RecordingService {
 	public function store(Room $room, string $owner, array $file): void {
 		$content = $this->getContentFromFileArray($file);
 
-		$this->validateFileName($file['name']);
-		$this->validateFileFormat($file['name'], $content);
+		$fileName = basename($file['name']);
+		$this->validateFileFormat($fileName, $content);
 
 		try {
 			$this->participantService->getParticipant($room, $owner);
@@ -73,7 +73,7 @@ class RecordingService {
 
 		try {
 			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
-			$recordingFolder->newFile($file['name'], $content);
+			$recordingFolder->newFile($fileName, $content);
 		} catch (NoUserException $e) {
 			throw new InvalidArgumentException('owner_invalid');
 		} catch (NotPermittedException $e) {
@@ -109,15 +109,6 @@ class RecordingService {
 		if (!$extension || !in_array($extension, $allowed[$mimeType])) {
 			throw new InvalidArgumentException('file_extension');
 		}
-	}
-
-	public function validateFileName(string $fileName): string {
-		$recordFileName = escapeshellcmd($fileName);
-		$recordFileName = pathinfo($recordFileName, PATHINFO_BASENAME);
-		if ($recordFileName !== $fileName) {
-			throw new InvalidArgumentException('file_name');
-		}
-		return $recordFileName;
 	}
 
 	private function getRecordingFolder(string $owner, string $token): Folder {

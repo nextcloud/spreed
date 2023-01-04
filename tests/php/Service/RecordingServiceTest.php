@@ -71,29 +71,6 @@ class RecordingServiceTest extends TestCase {
 		);
 	}
 
-	/**
-	 * @dataProvider dataValidateFileName
-	 */
-	public function testValidateFileName(string $name, string $expected, string $exceptionMessage): void {
-		if ($exceptionMessage) {
-			$this->expectExceptionMessage($exceptionMessage);
-		}
-		$actual = $this->recordingService->validateFileName($name);
-		$this->assertEquals($expected, $actual);
-	}
-
-	public function dataValidateFileName(): array {
-		return [
-			['a/b', '', 'file_name'],
-			['a`b', '', 'file_name'],
-			['a\b', '', 'file_name'],
-			['../ab', '', 'file_name'],
-			['{}ab', '', 'file_name'],
-			['[]ab', '', 'file_name'],
-			['a.b', 'a.b', ''],
-		];
-	}
-
 	/** @dataProvider dataValidateFileFormat */
 	public function testValidateFileFormat(string $fileName, string $content, string $exceptionMessage):void {
 		if ($exceptionMessage) {
