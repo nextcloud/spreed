@@ -25,8 +25,6 @@ declare(strict_types=1);
 
 namespace OCA\SpreedCheats\Controller;
 
-use OCA\Talk\BackgroundJob\ExpireChatMessages;
-use OCP\AppFramework\Http;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IDBConnection;

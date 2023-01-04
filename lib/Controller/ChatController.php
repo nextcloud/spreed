@@ -466,7 +466,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->preloadShares($comments);
 
 		$i = 0;
-		$now = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
+		$now = $this->timeFactory->getDateTime();
 		$messages = $commentIdToIndex = $parentIds = [];
 		foreach ($comments as $comment) {
 			$id = (int) $comment->getId();
@@ -475,7 +475,8 @@ class ChatController extends AEnvironmentAwareController {
 
 			$expireDate = $message->getComment()->getExpireDate();
 			if ($expireDate instanceof \DateTime && $expireDate < $now) {
-				$message->setVisibility(false);
+				$commentIdToIndex[$id] = null;
+				continue;
 			}
 
 			if (!$message->getVisibility()) {
@@ -525,6 +526,12 @@ class ChatController extends AEnvironmentAwareController {
 					if ($message->getVisibility()) {
 						$loadedParents[$parentId] = $message->toArray($this->getResponseFormat());
 						$messages[$commentKey]['parent'] = $loadedParents[$parentId];
+						continue;
+					}
+
+					$expireDate = $message->getComment()->getExpireDate();
+					if ($expireDate instanceof \DateTime && $expireDate < $now) {
+						$commentIdToIndex[$id] = null;
 						continue;
 					}
 
@@ -851,6 +858,12 @@ class ChatController extends AEnvironmentAwareController {
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 
 			$this->messageParser->parseMessage($message);
+
+			$now = $this->timeFactory->getDateTime();
+			$expireDate = $message->getComment()->getExpireDate();
+			if ($expireDate instanceof \DateTime && $expireDate < $now) {
+				continue;
+			}
 
 			if (!$message->getVisibility()) {
 				continue;
