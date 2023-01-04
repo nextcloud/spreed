@@ -32,6 +32,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Dashboard\IAPIWidget;
 use OCP\Dashboard\IButtonWidget;
@@ -56,6 +57,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	protected AvatarService $avatarService;
 	protected ParticipantService $participantService;
 	protected MessageParser $messageParser;
+	protected ITimeFactory $timeFactory;
 
 	public function __construct(
 		IUserSession $userSession,
@@ -65,7 +67,8 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		Manager $manager,
 		AvatarService $avatarService,
 		ParticipantService $participantService,
-		MessageParser $messageParser
+		MessageParser $messageParser,
+		ITimeFactory $timeFactory
 	) {
 		$this->userSession = $userSession;
 		$this->talkConfig = $talkConfig;
@@ -75,6 +78,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		$this->avatarService = $avatarService;
 		$this->participantService = $participantService;
 		$this->messageParser = $messageParser;
+		$this->timeFactory = $timeFactory;
 	}
 
 	/**
@@ -183,7 +187,11 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		if ($lastMessage instanceof IComment) {
 			$message = $this->messageParser->createMessage($room, $participant, $room->getLastMessage(), $this->l10n);
 			$this->messageParser->parseMessage($message);
-			if ($message->getVisibility()) {
+
+			$now = $this->timeFactory->getDateTime();
+			$expireDate = $message->getComment()->getExpireDate();
+			if ((!$expireDate instanceof \DateTime || $expireDate >= $now)
+				&& $message->getVisibility()) {
 				$placeholders = $replacements = [];
 
 				foreach ($message->getMessageParameters() as $placeholder => $parameter) {
