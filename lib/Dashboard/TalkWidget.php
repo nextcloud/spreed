@@ -31,6 +31,7 @@ use OCA\Talk\Exceptions\NotAllowedToUseTalkException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Dashboard\IAPIWidget;
 use OCP\Dashboard\IButtonWidget;
@@ -50,6 +51,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	private IL10N $l10n;
 	private Manager $manager;
 	private MessageParser $messageParser;
+	protected ITimeFactory $timeFactory;
 
 	public function __construct(
 		IUserSession $userSession,
@@ -57,7 +59,8 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		IURLGenerator $url,
 		IL10N $l10n,
 		Manager $manager,
-		MessageParser $messageParser
+		MessageParser $messageParser,
+		ITimeFactory $timeFactory
 	) {
 		$user = $userSession->getUser();
 		if ($user instanceof IUser && $talkConfig->isDisabledForUser($user)) {
