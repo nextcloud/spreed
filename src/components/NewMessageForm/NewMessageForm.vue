@@ -393,7 +393,7 @@ export default {
 		},
 
 		shareFromNextcloudLabel() {
-			return t('spreed', 'Share from {nextcloud}', { nextcloud: window.oc_defaults.productName })
+			return t('spreed', 'Share from {nextcloud}', { nextcloud: OC.theme.productName })
 		},
 
 		fileTemplateOptions() {
