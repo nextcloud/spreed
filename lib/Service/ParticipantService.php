@@ -931,7 +931,7 @@ class ParticipantService {
 		$attendee = $participant->getAttendee();
 		$sessions = $this->sessionService->getAllSessionsForAttendee($attendee);
 
-		if ($room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
+		if ($reason !== Room::PARTICIPANT_REMOVED_ALL && $room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
 			/** @var BreakoutRoomService $breakoutRoomService */
 			$breakoutRoomService = Server::get(BreakoutRoomService::class);
 			$breakoutRoomService->removeAttendeeFromBreakoutRoom(
@@ -940,6 +940,8 @@ class ParticipantService {
 				$attendee->getActorId(),
 				false
 			);
+		} elseif ($reason === Room::PARTICIPANT_REMOVED_ALL) {
+			$reason = Room::PARTICIPANT_REMOVED;
 		}
 
 		$event = new RemoveUserEvent($room, $participant, $user, $reason, $sessions);

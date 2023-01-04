@@ -94,6 +94,7 @@ class Room {
 	public const START_CALL_NOONE = 3;
 
 	public const PARTICIPANT_REMOVED = 'remove';
+	public const PARTICIPANT_REMOVED_ALL = 'remove_all';
 	public const PARTICIPANT_LEFT = 'leave';
 
 	public const EVENT_AFTER_ROOM_CREATE = self::class . '::createdRoom';
