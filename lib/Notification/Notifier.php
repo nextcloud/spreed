@@ -38,6 +38,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Webinary;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\HintException;
@@ -68,6 +69,7 @@ class Notifier implements INotifier {
 	protected INotificationManager $notificationManager;
 	protected ICommentsManager $commentManager;
 	protected MessageParser $messageParser;
+	protected ITimeFactory $timeFactory;
 	protected Definitions $definitions;
 	protected AddressHandler $addressHandler;
 
@@ -87,6 +89,7 @@ class Notifier implements INotifier {
 								INotificationManager $notificationManager,
 								CommentsManager $commentManager,
 								MessageParser $messageParser,
+								ITimeFactory $timeFactory,
 								Definitions $definitions,
 								AddressHandler $addressHandler) {
 		$this->lFactory = $lFactory;
@@ -100,6 +103,7 @@ class Notifier implements INotifier {
 		$this->notificationManager = $notificationManager;
 		$this->commentManager = $commentManager;
 		$this->messageParser = $messageParser;
+		$this->timeFactory = $timeFactory;
 		$this->definitions = $definitions;
 		$this->addressHandler = $addressHandler;
 	}
@@ -382,6 +386,12 @@ class Notifier implements INotifier {
 		$this->messageParser->parseMessage($message);
 
 		if (!$message->getVisibility()) {
+			throw new AlreadyProcessedException();
+		}
+
+		$now = $this->timeFactory->getDateTime();
+		$expireDate = $message->getComment()->getExpireDate();
+		if ($expireDate instanceof \DateTime && $expireDate < $now) {
 			throw new AlreadyProcessedException();
 		}
 

@@ -70,6 +70,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		$this->l10n = $l10n;
 		$this->manager = $manager;
 		$this->messageParser = $messageParser;
+		$this->timeFactory = $timeFactory;
 	}
 
 	/**
@@ -170,7 +171,11 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		if ($lastMessage instanceof IComment) {
 			$message = $this->messageParser->createMessage($room, $participant, $room->getLastMessage(), $this->l10n);
 			$this->messageParser->parseMessage($message);
-			if ($message->getVisibility()) {
+
+			$now = $this->timeFactory->getDateTime();
+			$expireDate = $message->getComment()->getExpireDate();
+			if ((!$expireDate instanceof \DateTime || $expireDate >= $now)
+				&& $message->getVisibility()) {
 				$placeholders = $replacements = [];
 
 				foreach ($message->getMessageParameters() as $placeholder => $parameter) {
