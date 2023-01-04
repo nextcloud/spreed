@@ -32,6 +32,7 @@ use OCA\Talk\Manager as RoomManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -45,6 +46,7 @@ class MessageSearch implements IProvider {
 	protected RoomManager $roomManager;
 	protected ChatManager $chatManager;
 	protected MessageParser $messageParser;
+	protected ITimeFactory $timeFactory;
 	protected IURLGenerator $url;
 	protected IL10N $l;
 
@@ -52,12 +54,14 @@ class MessageSearch implements IProvider {
 		RoomManager $roomManager,
 		ChatManager $chatManager,
 		MessageParser $messageParser,
+		ITimeFactory $timeFactory,
 		IURLGenerator $url,
 		IL10N $l
 	) {
 		$this->roomManager = $roomManager;
 		$this->chatManager = $chatManager;
 		$this->messageParser = $messageParser;
+		$this->timeFactory = $timeFactory;
 		$this->url = $url;
 		$this->l = $l;
 	}
@@ -190,8 +194,13 @@ class MessageSearch implements IProvider {
 			$messageStr = '…' . mb_substr($messageStr, $matchPosition - 10);
 		}
 
+		$now = $this->timeFactory->getDateTime();
+		$expireDate = $message->getComment()->getExpireDate();
+		if ($expireDate instanceof \DateTime && $expireDate < $now) {
+			throw new UnauthorizedException('Expired');
+		}
+
 		if (!$message->getVisibility()) {
-			$commentIdToIndex[$id] = null;
 			throw new UnauthorizedException('Not visible');
 		}
 

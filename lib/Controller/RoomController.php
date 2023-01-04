@@ -624,6 +624,12 @@ class RoomController extends AEnvironmentAwareController {
 			return [];
 		}
 
+		$now = $this->timeFactory->getDateTime();
+		$expireDate = $message->getComment()->getExpireDate();
+		if ($expireDate instanceof \DateTime && $expireDate < $now) {
+			return [];
+		}
+
 		return $message->toArray($this->getResponseFormat());
 	}
 

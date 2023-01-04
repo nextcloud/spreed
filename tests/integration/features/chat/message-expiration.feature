@@ -15,11 +15,10 @@ Feature: chat/message-expiration
     And user "participant3" set the message expiration to 3 of room "room" with 404 (v4)
     And user "participant1" set the message expiration to 3 of room "room" with 200 (v4)
     And user "participant1" sends message "Message 2" to room "room" with 201
-    Then user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following rooms (v4)
       | id   | type | messageExpiration |
       | room | 3    | 3                 |
     And wait for 3 seconds
-    And apply message expiration job manually
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
       | room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
@@ -34,7 +33,6 @@ Feature: chat/message-expiration
       | room  | actorType | actorId      | actorDisplayName         | message  | messageParameters |
       | room2 | users     | participant1 | participant1-displayname | {file}   | "IGNORE"          |
     And wait for 3 seconds
-    And apply message expiration job manually
     Then user "participant1" sees the following messages in room "room2" with 200
       | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
     And user "participant1" gets last share
