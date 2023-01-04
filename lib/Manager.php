@@ -126,6 +126,44 @@ class Manager {
 	}
 
 	/**
+	 * @param array $data
+	 * @return Room
+	 */
+	public function createRoomObjectFromData(array $data): Room {
+		return $this->createRoomObject(array_merge([
+			'r_id' => 0,
+			'type' => 0,
+			'read_only' => 0,
+			'listable' => 0,
+			'message_expiration' => 0,
+			'lobby_state' => 0,
+			'sip_enabled' => 0,
+			'assigned_hpb' => null,
+			'token' => '',
+			'name' => '',
+			'description' => '',
+			'password' => '',
+			'avatar' => '',
+			'remote_server' => '',
+			'remote_token' => '',
+			'active_guests' => 0,
+			'default_permissions' => 0,
+			'call_permissions' => 0,
+			'call_flag' => 0,
+			'active_since' => null,
+			'last_activity' => null,
+			'last_message' => 0,
+			'comment_id' => null,
+			'lobby_timer' => null,
+			'object_type' => '',
+			'object_id' => '',
+			'breakout_room_mode' => 0,
+			'breakout_room_status' => 0,
+			'call_recording' => 0,
+		], $data));
+	}
+
+	/**
 	 * @param array $row
 	 * @return Room
 	 */
@@ -956,8 +994,14 @@ class Manager {
 
 		$insert->executeStatement();
 		$roomId = $insert->getLastInsertId();
-
-		$room = $this->getRoomById($roomId);
+		$room = $this->createRoomObjectFromData([
+			'r_id' => $roomId,
+			'name' => $name,
+			'type' => $type,
+			'token' => $token,
+			'object_type' => $objectType,
+			'object_id' => $objectId,
+		]);
 
 		$event = new RoomEvent($room);
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_CREATE, $event);
@@ -988,7 +1032,14 @@ class Manager {
 		$qb->executeStatement();
 		$roomId = $qb->getLastInsertId();
 
-		return $this->getRoomById($roomId);
+		return $this->createRoomObjectFromData([
+			'r_id' => $roomId,
+			'name' => $name,
+			'type' => $type,
+			'token' => $token,
+			'remote_token' => $remoteToken,
+			'remote_server' => $remoteServer,
+		]);
 	}
 
 	public function resolveRoomDisplayName(Room $room, string $userId): string {
