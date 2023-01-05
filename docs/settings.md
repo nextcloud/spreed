@@ -21,10 +21,10 @@
 
 ## User settings
 
-| Key                   | Capability                        | Default | Valid values                                                                                             |
-|-----------------------|-----------------------------------|---------|----------------------------------------------------------------------------------------------------------|
-| `attachment_folder`   | `config => attachments => folder` | `/Talk` | Path owned by the user to store uploads and received shares. It is created if it does not exist.         |
-| `read_status_privacy` | `config => chat => read-privacy`  | `0`     | One of the read-status constants from the [constants list](constants.md#participant-read-status-privacy) |
+| Key                   | Capability                        | Default                                         | Valid values                                                                                             |
+|-----------------------|-----------------------------------|-------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| `attachment_folder`   | `config => attachments => folder` | Value of app config `default_attachment_folder` | Path owned by the user to store uploads and received shares. It is created if it does not exist.         |
+| `read_status_privacy` | `config => chat => read-privacy`  | `0`                                             | One of the read-status constants from the [constants list](constants.md#participant-read-status-privacy) |
 
 ## Set SIP settings
 
@@ -76,6 +76,7 @@ Option legend:
 | `hosted-signaling-server-account-id` | string                                                           |            |        | Account identifier of the hosted signaling server                                                                                                                                 |
 | `matterbridge_binary`                | string                                                           |            |        | Path to the matterbridge binary file                                                                                                                                              |
 | `bridge_bot_password`                | string                                                           |            |        | Automatically generated password of the matterbridge bot user profile                                                                                                             |
+| `default_attachment_folder`          | string                                                           | `/Talk`    |        | Specify default attachment folder location                                                                                                                                        |
 | `start_calls`                        | int                                                              | `0`        | 🖌️    | Who can start a call, see [constants list](constants.md#start-call)                                                                                                               |
 | `max-gif-size`                       | int                                                              | `3145728`  |        | Maximum file size for clients to render gifs previews with animation                                                                                                              |
 | `session-ping-limit`                 | int                                                              | `200`      |        | Number of sessions the HPB can ping in a single request                                                                                                                           |
