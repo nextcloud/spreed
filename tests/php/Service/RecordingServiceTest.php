@@ -41,6 +41,9 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
+use OCP\IL10N;
+use OCP\IURLGenerator;
+use OCP\Notification\IManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -64,6 +67,9 @@ class RecordingServiceTest extends TestCase {
 		$this->mimeTypeDetector = \OC::$server->get(IMimeTypeDetector::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->rootFolder = $this->createMock(IRootFolder::class);
+		$this->notificationManager = $this->createMock(IManager::class);
+		$this->l = $this->createMock(IL10N::class);
+		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 		$this->config = $this->createMock(Config::class);
 		$this->roomService = $this->createMock(RoomService::class);
 
@@ -71,8 +77,10 @@ class RecordingServiceTest extends TestCase {
 			$this->mimeTypeDetector,
 			$this->participantService,
 			$this->rootFolder,
-			$this->config,
-			$this->roomService
+			$this->notificationManager,
+			$this->l,
+			$this->urlGenerator,
+			$this->config
 		);
 	}
 

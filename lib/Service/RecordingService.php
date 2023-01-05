@@ -29,12 +29,18 @@ use InvalidArgumentException;
 use OC\User\NoUserException;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\IL10N;
+use OCP\IURLGenerator;
+use OCP\Notification\IAction;
+use OCP\Notification\IManager;
 
 class RecordingService {
 	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
@@ -47,6 +53,9 @@ class RecordingService {
 		private IMimeTypeDetector $mimeTypeDetector,
 		private ParticipantService $participantService,
 		private IRootFolder $rootFolder,
+		private IManager $notificationManager,
+		private IL10N $l,
+		private IURLGenerator $urlGenerator,
 		private Config $config,
 		private RoomService $roomService
 	) {
@@ -80,14 +89,15 @@ class RecordingService {
 		$this->validateFileFormat($fileName, $content);
 
 		try {
-			$this->participantService->getParticipant($room, $owner);
+			$participant = $this->participantService->getParticipant($room, $owner);
 		} catch (ParticipantNotFoundException $e) {
 			throw new InvalidArgumentException('owner_participant');
 		}
 
 		try {
 			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
-			$recordingFolder->newFile($fileName, $content);
+			$file = $recordingFolder->newFile($fileName, $content);
+			$this->notifyStoredRecording($room, $participant, $file);
 		} catch (NoUserException $e) {
 			throw new InvalidArgumentException('owner_invalid');
 		} catch (NotPermittedException $e) {
@@ -141,5 +151,69 @@ class RecordingService {
 			$recordingFolder = $recordingRootFolder->newFolder($token);
 		}
 		return $recordingFolder;
+	}
+
+	public function notifyStoredRecording(Room $room, Participant $participant, File $file): void {
+		$attendee = $participant->getAttendee();
+		$notificationLevel = $attendee->getNotificationLevel();
+		if ($notificationLevel === Participant::NOTIFY_NEVER) {
+			return;
+		}
+
+		$notification = $this->notificationManager->createNotification();
+
+		$shareAction = $notification->createAction()
+			->setParsedLabel($this->l->t('Share to chat'))
+			->setPrimary(true)
+			->setLink(
+				$this->urlGenerator->linkToRouteAbsolute(
+					'spreed.Chat.shareObjectToChat',
+					[
+						'token' => $room->getToken()
+					]
+				),
+				IAction::TYPE_POST
+			);
+
+		$notification
+			->setApp('spreed')
+			->setDateTime(new \DateTime())
+			->setObject('chat', $room->getToken())
+			->setUser($attendee->getActorId())
+			->setSubject('file', [
+				'objectType' => 'file',
+				'objectId' => $file->getId(),
+				'actorDisplayName' => $attendee->getDisplayName(),
+			])
+			->setRichSubject(
+				$this->l->t('Record file of {call}'),
+				[
+					'call' => [
+						'type' => 'call',
+						'id' => $room->getId(),
+						'name' => $room->getDisplayName((string) $attendee->getId()),
+						'call-type' => $this->getRoomType($room),
+					],
+				])
+			->addParsedAction($shareAction);
+		$this->notificationManager->notify($notification);
+	}
+
+	/**
+	 * @param Room $room
+	 * @return string
+	 * @throws \InvalidArgumentException
+	 */
+	protected function getRoomType(Room $room): string {
+		switch ($room->getType()) {
+			case Room::TYPE_ONE_TO_ONE:
+				return 'one2one';
+			case Room::TYPE_GROUP:
+				return 'group';
+			case Room::TYPE_PUBLIC:
+				return 'public';
+			default:
+				throw new \InvalidArgumentException('Unknown room type');
+		}
 	}
 }
