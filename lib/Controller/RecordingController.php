@@ -35,20 +35,14 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
 class RecordingController extends AEnvironmentAwareController {
-	private Config $talkConfig;
-	private SIPBridgeService $SIPBridgeService;
-	private RecordingService $recordingService;
-
-
-	public function __construct(string $appName,
-								IRequest $request,
-								Config $talkConfig,
-								SIPBridgeService $SIPBridgeService,
-								RecordingService $recordingService) {
+	public function __construct(
+		string $appName,
+		IRequest $request,
+		private Config $talkConfig,
+		private SIPBridgeService $SIPBridgeService,
+		private RecordingService $recordingService
+	) {
 		parent::__construct($appName, $request);
-		$this->talkConfig = $talkConfig;
-		$this->SIPBridgeService = $SIPBridgeService;
-		$this->recordingService = $recordingService;
 	}
 
 	/**
