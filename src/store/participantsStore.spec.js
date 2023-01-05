@@ -688,6 +688,46 @@ describe('participantsStore', () => {
 
 		await store.dispatch('leaveConversation', { token: TOKEN })
 
+		expect(leaveCall).not.toHaveBeenCalled()
+		expect(leaveConversation).toHaveBeenCalledWith(TOKEN)
+	})
+
+	test('leaves conversation while in call', async () => {
+		testStoreConfig.getters.getParticipantIdentifier = () => jest.fn().mockReturnValue({
+			attendeeId: 1,
+			sessionId: 'session-id-1',
+		})
+		store = new Vuex.Store(testStoreConfig)
+
+		store.dispatch('addParticipant', {
+			token: TOKEN,
+			participant: {
+				attendeeId: 1,
+				sessionId: 'session-id-1',
+				participantType: PARTICIPANT.TYPE.USER,
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			},
+		})
+
+		const flags = PARTICIPANT.CALL_FLAG.WITH_AUDIO | PARTICIPANT.CALL_FLAG.WITH_VIDEO
+		await store.dispatch('joinCall', {
+			token: TOKEN,
+			participantIdentifier: {
+				attendeeId: 1,
+				sessionId: 'session-id-1',
+			},
+			flags,
+			silent: false,
+		})
+
+		expect(store.getters.isInCall(TOKEN)).toBe(true)
+
+		leaveConversation.mockResolvedValue()
+
+		await store.dispatch('leaveConversation', { token: TOKEN })
+
+		expect(store.getters.isInCall(TOKEN)).toBe(false)
+		expect(leaveCall).toHaveBeenCalledWith(TOKEN, false)
 		expect(leaveConversation).toHaveBeenCalledWith(TOKEN)
 	})
 
