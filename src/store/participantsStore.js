@@ -546,6 +546,13 @@ const actions = {
 	 * @param {string} data.token - conversation token.
 	 */
 	async leaveConversation(context, { token }) {
+		if (context.getters.isInCall(token)) {
+			await context.dispatch('leaveCall', {
+				token,
+				participantIdentifier: context.getters.getParticipantIdentifier(),
+			})
+		}
+
 		await leaveConversation(token)
 	},
 
