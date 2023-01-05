@@ -36,6 +36,8 @@ return [
 		['name' => 'BreakoutRoom#removeBreakoutRooms', 'url' => '/api/{apiVersion}/breakout-rooms/{token}', 'verb' => 'DELETE', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\BreakoutRoomController::broadcastChatMessage() */
 		['name' => 'BreakoutRoom#broadcastChatMessage', 'url' => '/api/{apiVersion}/breakout-rooms/{token}/broadcast', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\BreakoutRoomController::applyAttendeeMap() */
+		['name' => 'BreakoutRoom#applyAttendeeMap', 'url' => '/api/{apiVersion}/breakout-rooms/{token}/attendees', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\BreakoutRoomController::requestAssistance() */
 		['name' => 'BreakoutRoom#requestAssistance', 'url' => '/api/{apiVersion}/breakout-rooms/{token}/request-assistance', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\BreakoutRoomController::resetRequestForAssistance() */

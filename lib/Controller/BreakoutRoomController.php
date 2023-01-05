@@ -88,6 +88,19 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
+	 * @RequireLoggedInModeratorParticipant
+	 */
+	public function applyAttendeeMap(string $attendeeMap): DataResponse {
+		try {
+			$this->breakoutRoomService->applyAttendeeMap($this->room, $attendeeMap);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+		return new DataResponse([], Http::STATUS_OK);
+	}
+
+	/**
+	 * @NoAdminRequired
 	 * @RequireLoggedInParticipant
 	 *
 	 * @return DataResponse

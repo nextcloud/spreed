@@ -789,8 +789,20 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param TableNode|null $formData
 	 */
 	public function userCreatesRoomWith(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $formData = null): void {
+		$body = $formData->getRowsHash();
+
+		if (isset($body['objectType'], $body['objectId']) && $body['objectType'] === 'room') {
+			$result = preg_match('/ROOM\(([^)]+)\)/', $body['objectId'], $matches);
+			if ($result && isset(self::$identifierToToken[$matches[1]])) {
+				$body['objectId'] = self::$identifierToToken[$matches[1]];
+			} elseif ($result) {
+				throw new \InvalidArgumentException('Could not find parent room');
+			}
+		}
+
+
 		$this->setCurrentUser($user);
-		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $formData);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room', $body);
 		$this->assertStatusCode($this->response, $statusCode);
 
 		$response = $this->getDataFromResponse($this->response);
@@ -2367,12 +2379,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $user
 	 * @param int $amount
 	 * @param string $modeString
-	 * @param string $roomName
+	 * @param string $identifier
 	 * @param int $status
 	 * @param string $apiVersion
 	 * @param TableNode|null $formData
 	 */
-	public function userCreatesBreakoutRooms(string $user, int $amount, string $modeString, string $roomName, int $status, string $apiVersion, TableNode $formData = null): void {
+	public function userCreatesBreakoutRooms(string $user, int $amount, string $modeString, string $identifier, int $status, string $apiVersion, TableNode $formData = null): void {
 		switch ($modeString) {
 			case 'automatic':
 				$mode = 1;
@@ -2396,14 +2408,40 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$mapArray = [];
 			foreach ($formData->getRowsHash() as $attendee => $roomNumber) {
 				[$type, $id] = explode('::', $attendee);
-				$attendeeId = $this->getAttendeeId($type, $id, $roomName);
+				$attendeeId = $this->getAttendeeId($type, $id, $identifier);
 				$mapArray[$attendeeId] = (int) $roomNumber;
 			}
 			$data['attendeeMap'] = json_encode($mapArray, JSON_THROW_ON_ERROR);
 		}
 
 		$this->setCurrentUser($user);
-		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$roomName], $data);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$identifier], $data);
+		$this->assertStatusCode($this->response, $status);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" moves participants into different breakout rooms for "([^"]*)" with (\d+) \((v1)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param int $status
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userMovesParticipantsInsideBreakoutRooms(string $user, string $identifier, int $status, string $apiVersion, TableNode $formData = null): void {
+		$data = [];
+		if ($formData instanceof TableNode) {
+			$mapArray = [];
+			foreach ($formData->getRowsHash() as $attendee => $roomNumber) {
+				[$type, $id] = explode('::', $attendee);
+				$attendeeId = $this->getAttendeeId($type, $id, $identifier);
+				$mapArray[$attendeeId] = (int) $roomNumber;
+			}
+			$data['attendeeMap'] = json_encode($mapArray, JSON_THROW_ON_ERROR);
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/breakout-rooms/' . self::$identifierToToken[$identifier] . '/attendees', $data);
 		$this->assertStatusCode($this->response, $status);
 	}
 

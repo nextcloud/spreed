@@ -657,7 +657,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param string $source
 	 * @return DataResponse
 	 */
-	public function createRoom(int $roomType, string $invite = '', string $roomName = '', string $source = ''): DataResponse {
+	public function createRoom(int $roomType, string $invite = '', string $roomName = '', string $source = '', string $objectType = '', string $objectId = ''): DataResponse {
 		if ($roomType !== Room::TYPE_ONE_TO_ONE) {
 			/** @var IUser $user */
 			$user = $this->userManager->get($this->userId);
@@ -672,7 +672,7 @@ class RoomController extends AEnvironmentAwareController {
 				return $this->createOneToOneRoom($invite);
 			case Room::TYPE_GROUP:
 				if ($invite === '') {
-					return $this->createEmptyRoom($roomName, false);
+					return $this->createEmptyRoom($roomName, false, $objectType, $objectId);
 				}
 				if ($source === 'circles') {
 					return $this->createCircleRoom($invite);
@@ -795,27 +795,65 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 *
-	 * @param string $roomName
-	 * @param bool $public
-	 * @return DataResponse
 	 */
-	protected function createEmptyRoom(string $roomName, bool $public = true): DataResponse {
+	protected function createEmptyRoom(string $roomName, bool $public = true, string $objectType = '', string $objectId = ''): DataResponse {
 		$currentUser = $this->userManager->get($this->userId);
 		if (!$currentUser instanceof IUser) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		$roomType = $public ? Room::TYPE_PUBLIC : Room::TYPE_GROUP;
+		/** @var Room|null $parentRoom */
+		$parentRoom = null;
+
+		if ($objectType === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			try {
+				$parentRoom = $this->manager->getRoomForUserByToken($objectId, $this->userId);
+				$parentRoomParticipant = $this->participantService->getParticipant($parentRoom, $this->userId);
+
+				if (!$parentRoomParticipant->hasModeratorPermissions()) {
+					return new DataResponse(['error' => 'permissions'], Http::STATUS_BAD_REQUEST);
+				}
+				if ($parentRoom->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
+					return new DataResponse(['error' => 'mode'], Http::STATUS_BAD_REQUEST);
+				}
+
+				// Overwriting the type with the parent type.
+				$roomType = $parentRoom->getType();
+			} catch (RoomNotFoundException $e) {
+				return new DataResponse(['error' => 'room'], Http::STATUS_BAD_REQUEST);
+			} catch (ParticipantNotFoundException $e) {
+				return new DataResponse(['error' => 'permissions'], Http::STATUS_BAD_REQUEST);
+			}
+		} elseif ($objectType !== '') {
+			return new DataResponse(['error' => 'object'], Http::STATUS_BAD_REQUEST);
+		}
 
 		// Create the room
 		try {
-			$room = $this->roomService->createConversation($roomType, $roomName, $currentUser);
+			$room = $this->roomService->createConversation($roomType, $roomName, $currentUser, $objectType, $objectId);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse($this->formatRoom($room, $this->participantService->getParticipant($room, $currentUser->getUID(), false)), Http::STATUS_CREATED);
+		$currentParticipant = $this->participantService->getParticipant($room, $currentUser->getUID(), false);
+		if ($objectType === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			// Enforce the lobby state when breakout rooms are disabled
+			if ($parentRoom instanceof Room && $parentRoom->getBreakoutRoomStatus() === BreakoutRoom::STATUS_STOPPED) {
+				$this->roomService->setLobby($room, Webinary::LOBBY_NON_MODERATORS, null, false, false);
+			}
+
+			$participants = $this->participantService->getParticipantsForRoom($parentRoom);
+			$moderators = array_filter($participants, static function (Participant $participant) use ($currentParticipant) {
+				return $participant->hasModeratorPermissions()
+					&& $participant->getAttendee()->getId() !== $currentParticipant->getAttendee()->getId();
+			});
+			if (!empty($moderators)) {
+				$this->breakoutRoomService->addModeratorsToBreakoutRooms([$room], $moderators);
+			}
+		}
+
+		return new DataResponse($this->formatRoom($room, $currentParticipant), Http::STATUS_CREATED);
 	}
 
 	/**
@@ -1084,6 +1122,11 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
+		if ($source !== 'users' && $this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			// Can only add users to breakout rooms
+			return new DataResponse(['error' => 'source'], Http::STATUS_BAD_REQUEST);
+		}
+
 		$participants = $this->participantService->getParticipantsForRoom($this->room);
 		$participantsByUserId = [];
 		$remoteParticipantsByFederatedId = [];
@@ -1186,6 +1229,28 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$addedBy = $this->userManager->get($this->userId);
+
+		if ($source === 'users' && $this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			$parentRoom = $this->manager->getRoomByToken($this->room->getObjectId());
+
+			// Also add to parent room in case the user is missing
+			try {
+				$this->participantService->getParticipantByActor(
+					$parentRoom,
+					Attendee::ACTOR_USERS,
+					$newParticipant
+				);
+			} catch (ParticipantNotFoundException $e) {
+				$this->participantService->addUsers($parentRoom, $participantsToAdd, $addedBy);
+			}
+
+			// Remove from previous breakout room in case the user is moved
+			try {
+				$this->breakoutRoomService->removeAttendeeFromBreakoutRoom($parentRoom, Attendee::ACTOR_USERS, $newParticipant);
+			} catch (\InvalidArgumentException $e) {
+				return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			}
+		}
 
 		// add the remaining users in batch
 		$this->participantService->addUsers($this->room, $participantsToAdd, $addedBy);
@@ -1673,6 +1738,11 @@ class RoomController extends AEnvironmentAwareController {
 			} catch (\Exception $e) {
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
+		}
+
+		if ($this->room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			// Do not allow manual changing the lobby in breakout rooms
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		if (!$this->roomService->setLobby($this->room, $state, $timerDateTime)) {

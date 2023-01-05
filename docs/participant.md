@@ -44,6 +44,12 @@
 
 ## Add a participant to a conversation
 
+*Note:* Adding a participant to a breakout room will automatically add them to the parent room as well.
+
+*Note:* Only source users can be added directly to a breakout room.
+
+*Note:* Adding a participant to a breakout room, that is already a participant in another breakout room of the same parent will remove them from there.
+
 * Method: `POST`
 * Endpoint: `/room/{token}/participants`
 * Data:

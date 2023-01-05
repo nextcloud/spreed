@@ -388,7 +388,7 @@ class Manager {
 			if ($this->participantService->getNumberOfUsers($room) === 1) {
 				Server::get(RoomService::class)->deleteRoom($room);
 			} else {
-				$this->participantService->removeUser($room, $user, Room::PARTICIPANT_REMOVED);
+				$this->participantService->removeUser($room, $user, Room::PARTICIPANT_REMOVED_ALL);
 			}
 		}
 
