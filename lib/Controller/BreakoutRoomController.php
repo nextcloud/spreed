@@ -33,13 +33,12 @@ use OCP\Comments\MessageTooLongException;
 use OCP\IRequest;
 
 class BreakoutRoomController extends AEnvironmentAwareController {
-	protected BreakoutRoomService $breakoutRoomService;
-
-	public function __construct(string $appName,
-								IRequest $request,
-								BreakoutRoomService $breakoutRoomService) {
+	public function __construct(
+		string $appName,
+		IRequest $request,
+		protected BreakoutRoomService $breakoutRoomService,
+	) {
 		parent::__construct($appName, $request);
-		$this->breakoutRoomService = $breakoutRoomService;
 	}
 
 	/**
