@@ -202,6 +202,9 @@ class BreakoutRoomService {
 
 		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
 		$amount = count($breakoutRooms);
+		usort($breakoutRooms, static function (Room $roomA, Room $roomB) {
+			return $roomA->getId() - $roomB->getId();
+		});
 
 		$cleanedMap = $this->parseAttendeeMap($attendeeMap, $amount);
 		$attendeeIds = array_keys($cleanedMap);

@@ -315,7 +315,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 
-		$this->assertRooms($rooms, $formData);
+		$this->assertRooms($rooms, $formData, true);
 	}
 
 	/**
