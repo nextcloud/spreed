@@ -5,7 +5,13 @@
 
 name: Static analysis
 
-on: pull_request
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - main
+      - stable*
 
 concurrency:
   group: psalm-${{ github.head_ref || github.run_id }}
@@ -18,13 +24,15 @@ jobs:
     name: Nextcloud
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3
 
       - name: Set up php
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4 # v2
         with:
-          php-version: 8.0
+          php-version: 8.1
           coverage: none
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install dependencies
         run: composer i

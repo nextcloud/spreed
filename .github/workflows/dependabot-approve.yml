@@ -1,12 +1,34 @@
-name: Dependabot auto approve
-on: pull_request_target
+# This workflow is provided via the organization template repository
+#
+# https://github.com/nextcloud/.github
+# https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
+
+name: Dependabot
+
+on:
+  pull_request_target:
+    branches:
+      - main
+      - master
+      - stable*
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependabot-approve-merge-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
-  auto-merge:
+  auto-approve:
+    if: github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
+    permissions:
+      # for hmarr/auto-approve-action to approve PRs
+      pull-requests: write
+
     steps:
-      # Default github action approve
-      - uses: hmarr/auto-approve-action@v2.0.0
-        if: github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'
+      # GitHub actions bot approve
+      - uses: hmarr/auto-approve-action@b40d6c9ed2fa10c9a2749eca7eb004418a705501 # v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

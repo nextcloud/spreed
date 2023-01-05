@@ -5,8 +5,10 @@
 
 name: Lint
 
-on:
-  pull_request:
+on: pull_request
+
+permissions:
+  contents: read
 
 concurrency:
   group: lint-stylelint-${{ github.head_ref || github.run_id }}
@@ -20,17 +22,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3
 
       - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@v1.1
+        uses: skjnldsv/read-package-engines-version-actions@1bdcee71fa343c46b18dc6aceffb4cd1e35209c6 # v1.2
         id: versions
         with:
           fallbackNode: '^12'
           fallbackNpm: '^6'
 
       - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # v3
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
 
