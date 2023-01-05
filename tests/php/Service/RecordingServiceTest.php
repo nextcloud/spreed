@@ -38,6 +38,7 @@ namespace OCA\Talk\Tests\php\Service;
 use OCA\Talk\Config;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
+use OCA\Talk\Service\RoomService;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -52,6 +53,8 @@ class RecordingServiceTest extends TestCase {
 	private $rootFolder;
 	/** @var Config|MockObject */
 	private $config;
+	/** @var RoomService|MockObject */
+	private $roomService;
 	/** @var RecordingService */
 	protected $recordingService;
 
@@ -62,12 +65,14 @@ class RecordingServiceTest extends TestCase {
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->rootFolder = $this->createMock(IRootFolder::class);
 		$this->config = $this->createMock(Config::class);
+		$this->roomService = $this->createMock(RoomService::class);
 
 		$this->recordingService = new RecordingService(
 			$this->mimeTypeDetector,
 			$this->participantService,
 			$this->rootFolder,
-			$this->config
+			$this->config,
+			$this->roomService
 		);
 	}
 

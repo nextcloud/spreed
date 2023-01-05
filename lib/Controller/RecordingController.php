@@ -29,7 +29,6 @@ use InvalidArgumentException;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Service\RecordingService;
-use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SIPBridgeService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -39,29 +38,26 @@ class RecordingController extends AEnvironmentAwareController {
 	private Config $talkConfig;
 	private SIPBridgeService $SIPBridgeService;
 	private RecordingService $recordingService;
-	private RoomService $roomService;
 
 
 	public function __construct(string $appName,
 								IRequest $request,
 								Config $talkConfig,
 								SIPBridgeService $SIPBridgeService,
-								RecordingService $recordingService,
-								RoomService $roomService) {
+								RecordingService $recordingService) {
 		parent::__construct($appName, $request);
 		$this->talkConfig = $talkConfig;
 		$this->SIPBridgeService = $SIPBridgeService;
 		$this->recordingService = $recordingService;
-		$this->roomService = $roomService;
 	}
 
 	/**
 	 * @PublicPage
 	 * @RequireModeratorParticipant
 	 */
-	public function startRecording(int $status): DataResponse {
+	public function start(int $status): DataResponse {
 		try {
-			$this->roomService->startRecording($this->room, $status);
+			$this->recordingService->start($this->room, $status);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
@@ -72,9 +68,9 @@ class RecordingController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireModeratorParticipant
 	 */
-	public function stopRecording(): DataResponse {
+	public function stop(): DataResponse {
 		try {
-			$this->roomService->stopRecording($this->room);
+			$this->recordingService->stop($this->room);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}

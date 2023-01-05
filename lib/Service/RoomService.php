@@ -366,27 +366,6 @@ class RoomService {
 		return true;
 	}
 
-	public function startRecording(Room $room, int $status): void {
-		$availableRecordingTypes = [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
-		if (!in_array($status, $availableRecordingTypes)) {
-			throw new InvalidArgumentException('status');
-		}
-		if ($room->getCallRecording() !== Room::RECORDING_NONE) {
-			throw new InvalidArgumentException('recording');
-		}
-		if (!$room->getActiveSince() instanceof \DateTimeInterface) {
-			throw new InvalidArgumentException('call');
-		}
-		$this->setCallRecording($room, $status);
-	}
-
-	public function stopRecording(Room $room): void {
-		if ($room->getCallRecording() === Room::RECORDING_NONE) {
-			throw new InvalidArgumentException('recording');
-		}
-		$this->setCallRecording($room);
-	}
-
 	/**
 	 * @param Room $room
 	 * @param integer $status 0 none|1 video|2 audio
