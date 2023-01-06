@@ -40,31 +40,16 @@ use OCP\Notification\IManager as INotificationManager;
 use OCP\IL10N;
 
 class BreakoutRoomService {
-	protected Config $config;
-	protected Manager $manager;
-	protected RoomService $roomService;
-	protected ParticipantService $participantService;
-	protected ChatManager $chatManager;
-	protected INotificationManager $notificationManager;
-	protected IEventDispatcher $dispatcher;
-	protected IL10N $l;
-
-	public function __construct(Config $config,
-								Manager $manager,
-								RoomService $roomService,
-								ParticipantService $participantService,
-								ChatManager $chatManager,
-								INotificationManager $notificationManager,
-								IEventDispatcher $dispatcher,
-								IL10N $l) {
-		$this->config = $config;
-		$this->manager = $manager;
-		$this->roomService = $roomService;
-		$this->participantService = $participantService;
-		$this->chatManager = $chatManager;
-		$this->notificationManager = $notificationManager;
-		$this->dispatcher = $dispatcher;
-		$this->l = $l;
+	public function __construct(
+		protected Config $config,
+		protected Manager $manager,
+		protected RoomService $roomService,
+		protected ParticipantService $participantService,
+		protected ChatManager $chatManager,
+		protected INotificationManager $notificationManager,
+		protected IEventDispatcher $dispatcher,
+		protected IL10N $l,
+	) {
 	}
 
 	/**
