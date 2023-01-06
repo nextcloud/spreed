@@ -42,24 +42,14 @@ class RecordingService {
 		'video/ogg' => ['ogv'],
 		'video/x-matroska' => ['mkv'],
 	];
-	private IMimeTypeDetector $mimeTypeDetector;
-	private ParticipantService $participantService;
-	private IRootFolder $rootFolder;
-	private Config $config;
-	private RoomService $roomService;
 
 	public function __construct(
-		IMimeTypeDetector $mimeTypeDetector,
-		ParticipantService $participantService,
-		IRootFolder $rootFolder,
-		Config $config,
-		RoomService $roomService
+		private IMimeTypeDetector $mimeTypeDetector,
+		private ParticipantService $participantService,
+		private IRootFolder $rootFolder,
+		private Config $config,
+		private RoomService $roomService
 	) {
-		$this->mimeTypeDetector = $mimeTypeDetector;
-		$this->participantService = $participantService;
-		$this->rootFolder = $rootFolder;
-		$this->config = $config;
-		$this->roomService = $roomService;
 	}
 
 	public function start(Room $room, int $status): void {
