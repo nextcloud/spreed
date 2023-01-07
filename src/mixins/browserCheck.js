@@ -63,7 +63,10 @@ const browserCheck = {
 		isIE() {
 			return this.browser.name === 'IE' || this.browser.name === 'IEMobile'
 		},
-
+		isYandex() {
+			return this.browser.name === 'Yandex'
+		},
+		
 		browserVersion() {
 			if (this.browser.version) {
 				return this.browser.version
@@ -94,6 +97,7 @@ const browserCheck = {
 			|| (this.isOpera && this.majorVersion >= 72)
 			|| (this.isSafari && this.majorVersion >= 12)
 			|| this.isEdge
+			|| this.isYandex
 		},
 		// Disable the call button and show the tooltip
 		blockCalls() {
