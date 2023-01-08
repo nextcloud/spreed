@@ -66,7 +66,6 @@ const browserCheck = {
 		isYandex() {
 			return this.browser.name === 'Yandex'
 		},
-		
 		browserVersion() {
 			if (this.browser.version) {
 				return this.browser.version
