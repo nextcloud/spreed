@@ -323,32 +323,32 @@ Feature: conversation/breakout-rooms
       | users      | participant1 | 1               |
       | users      | participant2 | 3               |
     When user "participant1" creates 1 automatic breakout rooms for "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
     And user "participant1" starts breakout rooms in room "class room" with 200 (v1)
-    And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 1                  |
       | 2    | Room 1     | 0          | 0                | 0                  |
     And user "participant2" requests assistance in room "Room 1" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 1                  |
       | 2    | Room 1     | 0          | 0                | 2                  |
     And user "participant2" cancels request for assistance in room "Room 1" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 1                  |
       | 2    | Room 1     | 0          | 0                | 0                  |
     And user "participant2" requests assistance in room "Room 1" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 1                  |
       | 2    | Room 1     | 0          | 0                | 2                  |
     And user "participant1" cancels request for assistance in room "Room 1" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 1                  |
       | 2    | Room 1     | 0          | 0                | 0                  |

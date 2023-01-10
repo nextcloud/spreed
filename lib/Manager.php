@@ -788,7 +788,8 @@ class Manager {
 		$helper->selectRoomsTable($query);
 		$query->from('talk_rooms', 'r')
 			->where($query->expr()->eq('r.object_type', $query->createNamedParameter($objectType)))
-			->andWhere($query->expr()->eq('r.object_id', $query->createNamedParameter($objectId)));
+			->andWhere($query->expr()->eq('r.object_id', $query->createNamedParameter($objectId)))
+			->orderBy('r.id');
 
 		$result = $query->executeQuery();
 		$row = $result->fetch();
