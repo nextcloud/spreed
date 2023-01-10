@@ -77,7 +77,7 @@ echo ''
 echo '#'
 echo '# Running tests'
 echo '#'
-${APP_INTEGRATION_DIR}/vendor/bin/behat -f junit -f pretty $1 $2
+${APP_INTEGRATION_DIR}/vendor/bin/behat --colors -f junit -f pretty $1 $2
 RESULT=$?
 
 echo ''
