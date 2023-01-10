@@ -272,7 +272,7 @@
     "Call back" : "Zurückrufen",
     "A group call has started in {call}" : "Ein Gruppenanruf wurde in {call} gestartet",
     "You missed a group call in {call}" : "Du hast einen Gruppenanruf in {call} verpasst",
-    "{email} is requesting the password to access {file}" : "{email} hat das Passwort angefordert um auf {file} zuzugreifen",
+    "{email} is requesting the password to access {file}" : "{email} hat das Passwort für den Zugriff auf {file} angefordert",
     "{email} tried to request the password to access {file}" : "{email} hat versucht, das Passwort für den Zugriff auf {file} anzufordern",
     "Someone is requesting the password to access {file}" : "Jemand hat das Passwort für den Zugriff auf {file} angefordert",
     "Someone tried to request the password to access {file}" : "Jemand hat versucht, das Passwort für den Zugriff auf {file} anzufordern",
