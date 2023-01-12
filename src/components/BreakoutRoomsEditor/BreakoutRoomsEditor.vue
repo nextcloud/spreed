@@ -23,26 +23,31 @@
 	<NcModal v-bind="$attrs"
 		v-on="$listeners">
 		<div class="breakout-rooms-editor">
-			<h2>{{ t('spreed', 'Create rooms') }}</h2>
-			<NcInputField :label="t('spreed', 'Number of breakout rooms')" type="number" :value.sync="amount" />
-			<NcCheckboxRadioSwitch :checked.sync="mode"
-				value="1"
-				name="mode_radio"
-				type="radio">
-				{{ t('spreed', 'Automatically assign participants') }}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch :checked.sync="mode"
-				value="2"
-				name="mode_radio"
-				type="radio">
-				{{ t('spreed', 'Manually assign participants') }}
-			</NcCheckboxRadioSwitch>
-			<NcCheckboxRadioSwitch :checked.sync="mode"
-				value="3"
-				name="mode_radio"
-				type="radio">
-				{{ t('spreed', 'Allow participants to choose') }}
-			</NcCheckboxRadioSwitch>
+			<template v-if="!isEditingParticipants">
+				<h2>{{ t('spreed', 'Create rooms') }}</h2>
+				<NcInputField :label="t('spreed', 'Number of breakout rooms')" type="number" :value.sync="amount" />
+				<NcCheckboxRadioSwitch :checked.sync="mode"
+					value="1"
+					name="mode_radio"
+					type="radio">
+					{{ t('spreed', 'Automatically assign participants') }}
+				</NcCheckboxRadioSwitch>
+				<NcCheckboxRadioSwitch :checked.sync="mode"
+					value="2"
+					name="mode_radio"
+					type="radio">
+					{{ t('spreed', 'Manually assign participants') }}
+				</NcCheckboxRadioSwitch>
+				<NcCheckboxRadioSwitch :checked.sync="mode"
+					value="3"
+					name="mode_radio"
+					type="radio">
+					{{ t('spreed', 'Allow participants to choose') }}
+				</NcCheckboxRadioSwitch>
+			</template>
+			<template v-else>
+				<BreakoutRoomsParticipantsEditor :token="token" />
+			</template>
 			<div class="breakout-rooms-editor__buttons">
 				<NcButton @click="handleCreateRooms">
 					{{ t('spreed', 'Create rooms') }}
@@ -57,6 +62,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcInputField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import BreakoutRoomsParticipantsEditor from './BreakoutRoomsParticipantsEditor.vue'
 
 export default {
 	name: 'BreakoutRoomsEditor',
@@ -66,6 +72,7 @@ export default {
 		NcInputField,
 		NcCheckboxRadioSwitch,
 		NcButton,
+		BreakoutRoomsParticipantsEditor,
 	},
 
 	props: {
@@ -80,6 +87,7 @@ export default {
 			mode: 'auto',
 			amount: 1,
 			attendeeMap: '',
+			isEditingParticipants: true,
 		}
 	},
 
