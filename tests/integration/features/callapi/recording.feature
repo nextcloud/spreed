@@ -123,3 +123,6 @@ Feature: callapi/recording
       | roomName | room1 |
     And user "participant1" joins room "room1" with 200 (v4)
     Then user "participant1" store recording file "/img/join_call.ogg" in room "room1" with 200 (v1)
+    And user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                              |
+      | spreed | chat        | room1     | Record file of Private conversation  |

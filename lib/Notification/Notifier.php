@@ -64,6 +64,7 @@ class Notifier implements INotifier {
 	protected IUserManager $userManager;
 	protected GuestManager $guestManager;
 	private IShareManager $shareManager;
+	private IURLGenerator $urlGenerator;
 	protected Manager $manager;
 	protected ParticipantService $participantService;
 	protected INotificationManager $notificationManager;
@@ -84,6 +85,7 @@ class Notifier implements INotifier {
 								IUserManager $userManager,
 								GuestManager $guestManager,
 								IShareManager $shareManager,
+								IURLGenerator $urlGenerator,
 								Manager $manager,
 								ParticipantService $participantService,
 								INotificationManager $notificationManager,
@@ -98,6 +100,7 @@ class Notifier implements INotifier {
 		$this->userManager = $userManager;
 		$this->guestManager = $guestManager;
 		$this->shareManager = $shareManager;
+		$this->urlGenerator = $urlGenerator;
 		$this->manager = $manager;
 		$this->participantService = $participantService;
 		$this->notificationManager = $notificationManager;
@@ -248,6 +251,9 @@ class Notifier implements INotifier {
 			->setLink($this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]));
 
 		$subject = $notification->getSubject();
+		if ($subject === 'record_file_stored') {
+			return $this->parseStoredRecording($notification, $room, $participant, $l);
+		}
 		if ($subject === 'invitation') {
 			return $this->parseInvitation($notification, $room, $l);
 		}
@@ -285,6 +291,36 @@ class Notifier implements INotifier {
 			$temp = mb_substr($temp, 0, -5);
 		}
 		return $temp;
+	}
+
+	private function parseStoredRecording(INotification $notification, Room $room, Participant $participant, IL10N $l): INOtification {
+		$shareAction = $notification->createAction()
+			->setParsedLabel($l->t('Share to chat'))
+			->setPrimary(true)
+			->setLink(
+				$this->urlGenerator->linkToRouteAbsolute(
+					'ocs.spreed.Chat.shareObjectToChat',
+					[
+						'apiVersion' => 'v1',
+						'token' => $room->getToken()
+					]
+				),
+				IAction::TYPE_POST
+			);
+
+		$notification
+			->setRichSubject(
+				$l->t('Record file of {call}'),
+				[
+					'call' => [
+						'type' => 'call',
+						'id' => $room->getId(),
+						'name' => $room->getDisplayName((string) $participant->getAttendee()->getId()),
+						'call-type' => $this->getRoomType($room),
+					],
+				])
+			->addParsedAction($shareAction);
+		return $notification;
 	}
 
 	/**
