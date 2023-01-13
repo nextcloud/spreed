@@ -64,12 +64,12 @@ class Notifier implements INotifier {
 	protected IUserManager $userManager;
 	protected GuestManager $guestManager;
 	private IShareManager $shareManager;
-	private IURLGenerator $urlGenerator;
 	protected Manager $manager;
 	protected ParticipantService $participantService;
 	protected INotificationManager $notificationManager;
 	protected ICommentsManager $commentManager;
 	protected MessageParser $messageParser;
+	private IURLGenerator $urlGenerator;
 	protected ITimeFactory $timeFactory;
 	protected Definitions $definitions;
 	protected AddressHandler $addressHandler;
@@ -85,12 +85,12 @@ class Notifier implements INotifier {
 								IUserManager $userManager,
 								GuestManager $guestManager,
 								IShareManager $shareManager,
-								IURLGenerator $urlGenerator,
 								Manager $manager,
 								ParticipantService $participantService,
 								INotificationManager $notificationManager,
 								CommentsManager $commentManager,
 								MessageParser $messageParser,
+								IURLGenerator $urlGenerator,
 								ITimeFactory $timeFactory,
 								Definitions $definitions,
 								AddressHandler $addressHandler) {
@@ -100,12 +100,12 @@ class Notifier implements INotifier {
 		$this->userManager = $userManager;
 		$this->guestManager = $guestManager;
 		$this->shareManager = $shareManager;
-		$this->urlGenerator = $urlGenerator;
 		$this->manager = $manager;
 		$this->participantService = $participantService;
 		$this->notificationManager = $notificationManager;
 		$this->commentManager = $commentManager;
 		$this->messageParser = $messageParser;
+		$this->urlGenerator = $urlGenerator;
 		$this->timeFactory = $timeFactory;
 		$this->definitions = $definitions;
 		$this->addressHandler = $addressHandler;
