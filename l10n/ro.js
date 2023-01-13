@@ -301,6 +301,7 @@ OC.L10N.register(
     "Save" : "Salvează",
     "Edit" : "Editează",
     "Delete" : "Șterge",
+    "Talk conversation" : "Conversație Talk",
     "Password" : "Parolă",
     "Login" : "Autentificare",
     "Nickname" : "Pseudonim",
