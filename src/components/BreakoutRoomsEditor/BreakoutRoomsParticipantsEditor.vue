@@ -21,12 +21,27 @@
 
 <template>
 	<div class="participants-editor">
+		<NcActions v-if="hasSelected" :menu-title="t('spreed', 'Assign participants to room')">
+			<NcActionButton v-for="breakoutRoom in breakoutRooms" :key="breakoutRoom.id">
+				<template #icon>
+					<!-- TODO: choose final icon -->
+					<GoogleCircles :size="20" />
+				</template>
+				{{ breakoutRoom.displayName }}
+			</NcActionButton>
+			<NcActionButton>
+				<template #icon>
+					<Reload :size="20" />
+				</template>
+				{{ t('spreed', 'Reset all assignments') }}
+			</NcActionButton>
+		</NcActions>
 		<div v-for="participant in participants"
 			:key="participant.attendeeId"
 			tabindex="0"
 			class="participants-editor__participant">
 			<input id="participant.attendeeId"
-				v-model="checkedParticipants"
+				v-model="selectedParticipants"
 				:value="participant.attendeeId"
 				type="checkbox"
 				name="participant.attendeeId">
@@ -47,11 +62,20 @@
 
 <script>
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
+import Reload from 'vue-material-design-icons/Reload.vue'
+
 export default {
 	name: 'BreakoutRoomsParticipantsEditor',
 
 	components: {
 		AvatarWrapper,
+		NcActions,
+		NcActionButton,
+		GoogleCircles,
+		Reload,
 	},
 
 	props: {
@@ -63,13 +87,23 @@ export default {
 
 	data() {
 		return {
-			checkedParticipants: [],
+			selectedParticipants: [],
 		}
 	},
 
 	computed: {
 		participants() {
 			return this.$store.getters.participantsList(this.token)
+		},
+
+		hasSelected() {
+			return !!this.selectedParticipants
+		},
+
+		breakoutRooms() {
+			return this.$store.getters.breakoutRoomsReferences(this.token).map(reference => {
+				return this.$store.getters.conversation(reference)
+			})
 		},
 	},
 }
