@@ -31,6 +31,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IMimeTypeDetector;
@@ -51,6 +52,7 @@ class RecordingService {
 		private ParticipantService $participantService,
 		private IRootFolder $rootFolder,
 		private IManager $notificationManager,
+		private ITimeFactory $timeFactory,
 		private Config $config,
 		private RoomService $roomService
 	) {
@@ -159,7 +161,7 @@ class RecordingService {
 
 		$notification
 			->setApp('spreed')
-			->setDateTime(new \DateTime())
+			->setDateTime($this->timeFactory->getDateTime())
 			->setObject('chat', $room->getToken())
 			->setUser($attendee->getActorId())
 			->setSubject('record_file_stored', [
@@ -168,23 +170,5 @@ class RecordingService {
 				'actorDisplayName' => $attendee->getDisplayName(),
 			]);
 		$this->notificationManager->notify($notification);
-	}
-
-	/**
-	 * @param Room $room
-	 * @return string
-	 * @throws \InvalidArgumentException
-	 */
-	protected function getRoomType(Room $room): string {
-		switch ($room->getType()) {
-			case Room::TYPE_ONE_TO_ONE:
-				return 'one2one';
-			case Room::TYPE_GROUP:
-				return 'group';
-			case Room::TYPE_PUBLIC:
-				return 'public';
-			default:
-				throw new \InvalidArgumentException('Unknown room type');
-		}
 	}
 }

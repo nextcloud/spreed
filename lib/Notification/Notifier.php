@@ -293,7 +293,7 @@ class Notifier implements INotifier {
 		return $temp;
 	}
 
-	private function parseStoredRecording(INotification $notification, Room $room, Participant $participant, IL10N $l): INOtification {
+	private function parseStoredRecording(INotification $notification, Room $room, Participant $participant, IL10N $l): INotification {
 		$shareAction = $notification->createAction()
 			->setParsedLabel($l->t('Share to chat'))
 			->setPrimary(true)
@@ -310,7 +310,7 @@ class Notifier implements INotifier {
 
 		$notification
 			->setRichSubject(
-				$l->t('Record file of {call}'),
+				$l->t('Recording for the call in {call} was uploaded.'),
 				[
 					'call' => [
 						'type' => 'call',
