@@ -581,6 +581,7 @@ OC.L10N.register(
     "Delete" : "Radera",
     "Nextcloud URL" : "Nextcloud-URL",
     "Nextcloud user" : "Nextcloud-användare",
+    "Talk conversation" : "Talk-konversation",
     "Matrix server URL" : "Matrix server-URL",
     "Matrix channel" : "Matrix-kanal",
     "Mattermost user" : "Mattermost-användare",
