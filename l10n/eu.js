@@ -279,6 +279,7 @@ OC.L10N.register(
     "{user} in {conversation}" : "{user} erabiltzailea {conversation} elkarrizketan",
     "Messages in other conversations" : "Mezuak beste elkarrizketa batzuetan",
     "Avatar image is not square" : "Abatarreko irudia ez da karratua",
+    "Room {number}" : "{number} gela",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Proba eskaerak huts egin du ezin delako atzitu probako zerbitzaria. Saiatu berriro beranduago.",
     "There is a problem with the authentication of this instance. Maybe it is not reachable from the outside to verify it's URL." : "Arazo bat dago instantzia honen autentifikazioarekin. Agian ez dago irisgarritasunik kanpoaldetik URLa egiaztatzeko.",
     "Something unexpected happened." : "Espero ez zen zerbait gertatu da.",
