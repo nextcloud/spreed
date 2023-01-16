@@ -36,27 +36,45 @@
 				{{ t('spreed', 'Reset all assignments') }}
 			</NcActionButton>
 		</NcActions>
-		<div v-for="participant in participants"
-			:key="participant.attendeeId"
-			tabindex="0"
-			class="participants-editor__participant">
-			<input id="participant.attendeeId"
-				v-model="selectedParticipants"
-				:value="participant.attendeeId"
-				type="checkbox"
-				name="participant.attendeeId">
-			<!-- Participant's avatar -->
-			<AvatarWrapper :id="participant.id"
-				:disable-tooltip="true"
-				:disable-menu="true"
-				:size="44"
-				:show-user-status="true"
-				:name="participant.displayName"
-				:source="participant.source || participant.actorType" />
-			<div>
-				{{ participant.displayName }}
+		<NcAppNavigationItem key="unassigned"
+			:title="t('spreed', 'Unassigned participants')"
+			:allow-collapse="true"
+			:open="true">
+			<div v-for="participant in participants"
+				:key="participant.attendeeId"
+				tabindex="0"
+				class="participants-editor__participant">
+				<input id="participant.attendeeId"
+					v-model="selectedParticipants"
+					:value="participant.attendeeId"
+					type="checkbox"
+					name="participant.attendeeId">
+				<!-- Participant's avatar -->
+				<AvatarWrapper :id="participant.id"
+					:disable-tooltip="true"
+					:disable-menu="true"
+					:size="44"
+					:show-user-status="true"
+					:name="participant.displayName"
+					:source="participant.source || participant.actorType" />
+				<div>
+					{{ participant.displayName }}
+				</div>
 			</div>
-		</div>
+			<template #icon>
+				<GoogleCircles :size="20" />
+			</template>
+		</NcAppNavigationItem>
+		<template v-for="breakoutRoom in breakoutRooms">
+			<NcAppNavigationItem :key="breakoutRoom.displayName"
+				:title="breakoutRoom.displayName"
+				:allow-collapse="true"
+				:open="true">
+				<template #icon>
+					<GoogleCircles :size="20" />
+				</template>
+			</NcAppNavigationItem>
+		</template>
 	</div>
 </template>
 
@@ -66,6 +84,7 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
+import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
 
 export default {
 	name: 'BreakoutRoomsParticipantsEditor',
@@ -76,6 +95,7 @@ export default {
 		NcActionButton,
 		GoogleCircles,
 		Reload,
+		NcAppNavigationItem,
 	},
 
 	props: {
@@ -113,8 +133,12 @@ export default {
 .participants-editor {
 	display: flex;
 	flex-direction: column;
+	gap: var(--default-grid-baseline);
 	&__participant {
 		display: flex;
+		align-items: center;
+		gap: var(--default-grid-baseline);
+		margin-left: 14px;
 	}
 }
 </style>
