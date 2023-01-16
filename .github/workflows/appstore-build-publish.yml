@@ -32,7 +32,7 @@ jobs:
           echo "APP_VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
         with:
           path: ${{ env.APP_NAME }}
 
@@ -50,8 +50,8 @@ jobs:
         continue-on-error: true
         with:
           path: ${{ env.APP_NAME }}
-          fallbackNode: "^12"
-          fallbackNpm: "^6"
+          fallbackNode: "^16"
+          fallbackNpm: "^7"
 
       - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
         # Skip if no package.json
@@ -102,8 +102,8 @@ jobs:
       - name: Install Krankerl
         if: steps.krankerl.outputs.files_exists == 'true'
         run: |
-          wget https://github.com/ChristophWurst/krankerl/releases/download/v0.13.0/krankerl_0.13.0_amd64.deb
-          sudo dpkg -i krankerl_0.13.0_amd64.deb
+          wget https://github.com/ChristophWurst/krankerl/releases/download/v0.14.0/krankerl_0.14.0_amd64.deb
+          sudo dpkg -i krankerl_0.14.0_amd64.deb
 
       - name: Package ${{ env.APP_NAME }} ${{ env.APP_VERSION }} with krankerl
         if: steps.krankerl.outputs.files_exists == 'true'
@@ -126,7 +126,7 @@ jobs:
           unzip latest-$NCVERSION.zip
 
       - name: Checkout server master fallback
-        uses: actions/checkout@755da8c3cf115ac066823e79a1e1788f8940201b # v3
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
         if: ${{ steps.server-checkout.outcome != 'success' }}
         with:
           repository: nextcloud/server
