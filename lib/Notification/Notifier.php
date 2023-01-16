@@ -315,7 +315,7 @@ class Notifier implements INotifier {
 					'call' => [
 						'type' => 'call',
 						'id' => $room->getId(),
-						'name' => $room->getDisplayName((string) $participant->getAttendee()->getId()),
+						'name' => $room->getDisplayName((string) $participant->getAttendee()->getActorId()),
 						'call-type' => $this->getRoomType($room),
 					],
 				])
