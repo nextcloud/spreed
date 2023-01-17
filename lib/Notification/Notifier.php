@@ -41,9 +41,7 @@ use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\HintException;
-use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -61,7 +59,6 @@ use OCP\Share\IShare;
 
 class Notifier implements INotifier {
 	protected IFactory $lFactory;
-	private IDBConnection $db;
 	protected IURLGenerator $url;
 	protected Config $config;
 	protected IUserManager $userManager;
@@ -83,7 +80,6 @@ class Notifier implements INotifier {
 	protected array $participants = [];
 
 	public function __construct(IFactory $lFactory,
-								IDBConnection $db,
 								IURLGenerator $url,
 								Config $config,
 								IUserManager $userManager,
@@ -99,7 +95,6 @@ class Notifier implements INotifier {
 								Definitions $definitions,
 								AddressHandler $addressHandler) {
 		$this->lFactory = $lFactory;
-		$this->db = $db;
 		$this->url = $url;
 		$this->config = $config;
 		$this->userManager = $userManager;
@@ -304,6 +299,7 @@ class Notifier implements INotifier {
 		Participant $participant,
 		IL10N $l
 	): INotification {
+		$parameters = $notification->getSubjectParameters();
 		$shareAction = $notification->createAction()
 			->setParsedLabel($l->t('Share to chat'))
 			->setPrimary(true)
@@ -327,10 +323,11 @@ class Notifier implements INotifier {
 			->setParsedLabel($l->t('Dismiss'))
 			->setLink(
 				$this->urlGenerator->linkToRouteAbsolute(
-					'ocs.notifications.Endpoint.deleteNotification',
+					'ocs.spreed.Recording.notificationDismiss',
 					[
-						'apiVersion' => 'v2',
-						'id' => $this->getNotificationId($notification),
+						'apiVersion' => 'v1',
+						'token' => $room->getToken(),
+						'dateTime' => $notification->getDateTime()->format('U'),
 					]
 				),
 				IAction::TYPE_DELETE
@@ -350,27 +347,6 @@ class Notifier implements INotifier {
 			->addParsedAction($shareAction)
 			->addParsedAction($dismissAction);
 		return $notification;
-	}
-
-	public function getNotificationId(INotification $notification): int {
-		$sql = $this->db->getQueryBuilder();
-		$sql->select('notification_id')
-			->from('notifications')
-			->andWhere($sql->expr()->eq('app',
-				$sql->createNamedParameter($notification->getApp())))
-			->andWhere($sql->expr()->eq('object_id',
-				$sql->createNamedParameter($notification->getObjectId())))
-			->andWhere($sql->expr()->eq('object_type',
-				$sql->createNamedParameter($notification->getObjectType())))
-			->andWhere($sql->expr()->eq('subject',
-				$sql->createNamedParameter($notification->getSubject())))
-			->andWhere($sql->expr()->eq('timestamp',
-				$sql->createNamedParameter($notification->getDateTime()->format('U')),
-				IQueryBuilder::PARAM_INT))
-			->setMaxResults(1);
-
-		$statement = $sql->executeQuery();
-		return (int) $statement->fetchOne();
 	}
 
 	/**

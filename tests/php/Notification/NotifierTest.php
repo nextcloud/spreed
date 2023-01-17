@@ -37,7 +37,6 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
-use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -54,8 +53,6 @@ use Test\TestCase;
 class NotifierTest extends TestCase {
 	/** @var IFactory|MockObject */
 	protected $lFactory;
-	/** @var IFactory|MockObject */
-	protected $db;
 	/** @var IURLGenerator|MockObject */
 	protected $url;
 	/** @var Config|MockObject */
@@ -90,7 +87,6 @@ class NotifierTest extends TestCase {
 		parent::setUp();
 
 		$this->lFactory = $this->createMock(IFactory::class);
-		$this->db = $this->createMock(IDBConnection::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->config = $this->createMock(Config::class);
 		$this->userManager = $this->createMock(IUserManager::class);
@@ -108,7 +104,6 @@ class NotifierTest extends TestCase {
 
 		$this->notifier = new Notifier(
 			$this->lFactory,
-			$this->db,
 			$this->url,
 			$this->config,
 			$this->userManager,

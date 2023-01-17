@@ -72,3 +72,20 @@
         + `401 Unauthorized` When the validation as SIP bridge failed
         + `404 Not Found` Room not found
         + `429 Too Many Request` Brute force protection
+
+## Dismiss store call recording notification
+
+* Required capability: `recording-v1`
+* Method: `DELETE`
+* Endpoint: `/recording/{token}/notification`
+* Data:
+
+| field      | type   | Description                                               |
+| ---------- | ------ | --------------------------------------------------------- |
+| `dateTime` | string | The date time that notification was created.              |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `403 Forbidden` When the user is not a moderator/owner.
+        + `404 Not Found` Room not found

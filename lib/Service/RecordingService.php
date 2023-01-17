@@ -29,6 +29,7 @@ use InvalidArgumentException;
 use OC\User\NoUserException;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -52,6 +53,7 @@ class RecordingService {
 		private ParticipantService $participantService,
 		private IRootFolder $rootFolder,
 		private IManager $notificationManager,
+		private Manager $roomManager,
 		private ITimeFactory $timeFactory,
 		private Config $config,
 		private RoomService $roomService
@@ -171,5 +173,16 @@ class RecordingService {
 				'actorDisplayName' => $attendee->getDisplayName(),
 			]);
 		$this->notificationManager->notify($notification);
+	}
+
+	public function notificationDismiss(string $roomToken, string $userId, string $dateTime): void {
+		$room = $this->roomManager->getRoomByToken($roomToken);
+		$notification = $this->notificationManager->createNotification();
+		$notification->setApp('spreed')
+			->setObject('chat', (string) $room->getToken())
+			->setSubject('record_file_stored')
+			->setDateTime($this->timeFactory->getDateTime('@' . $dateTime))
+			->setUser($userId);
+		$this->notificationManager->markProcessed($notification);
 	}
 }
