@@ -320,7 +320,7 @@ class Notifier implements INotifier {
 				IAction::TYPE_POST
 			);
 		$dismissAction = $notification->createAction()
-			->setParsedLabel($l->t('Dismiss'))
+			->setParsedLabel($l->t('Dismiss notification'))
 			->setLink(
 				$this->urlGenerator->linkToRouteAbsolute(
 					'ocs.spreed.Recording.notificationDismiss',
