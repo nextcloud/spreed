@@ -22,12 +22,12 @@
 <template>
 	<div class="participants-editor">
 		<NcActions v-if="hasSelected" :menu-title="t('spreed', 'Assign participants to room')">
-			<NcActionButton v-for="breakoutRoom in breakoutRooms" :key="breakoutRoom.id">
+			<NcActionButton v-for="(item, index) in configuration" :key="index" @click="assignAttendees(index)">
 				<template #icon>
 					<!-- TODO: choose final icon -->
 					<GoogleCircles :size="20" />
 				</template>
-				{{ breakoutRoom.displayName }}
+				{{ roomName(index) }}
 			</NcActionButton>
 			<NcActionButton>
 				<template #icon>
@@ -65,9 +65,9 @@
 				<GoogleCircles :size="20" />
 			</template>
 		</NcAppNavigationItem>
-		<template v-for="breakoutRoom in breakoutRooms">
-			<NcAppNavigationItem :key="breakoutRoom.displayName"
-				:title="breakoutRoom.displayName"
+		<template v-for="(item, index) in configuration">
+			<NcAppNavigationItem :key="index"
+				:title="roomName(index)"
 				:allow-collapse="true"
 				:open="true">
 				<template #icon>
@@ -103,11 +103,17 @@ export default {
 			type: String,
 			required: true,
 		},
+
+		roomNumber: {
+			type: Number,
+			default: 3,
+		},
 	},
 
 	data() {
 		return {
 			selectedParticipants: [],
+			configuration: [],
 		}
 	},
 
@@ -117,13 +123,32 @@ export default {
 		},
 
 		hasSelected() {
-			return !!this.selectedParticipants
+			return this.selectedParticipants.length !== 0
+		},
+	},
+
+	created() {
+		this.initialiseConfiguration()
+	},
+
+	methods: {
+		initialiseConfiguration() {
+			let count = 0
+			while (count < this.roomNumber) {
+				this.configuration.push([])
+				count++
+			}
 		},
 
-		breakoutRooms() {
-			return this.$store.getters.breakoutRoomsReferences(this.token).map(reference => {
-				return this.$store.getters.conversation(reference)
-			})
+		assignAttendees(roomIndex) {
+			debugger
+			this.configuration[roomIndex].push(...this.selectedParticipants)
+			this.selectedParticipants = []
+		},
+
+		roomName(index) {
+			const roomNumber = index + 1
+			return t('spreed', 'Room {roomNumber}', { roomNumber })
 		},
 	},
 }
