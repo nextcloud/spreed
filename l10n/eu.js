@@ -1185,6 +1185,7 @@ OC.L10N.register(
     "Start call" : "Hasi deia",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk eguneratu egin da, orria berriro kargatu behar duzu dei bat hasi edo dei batera elkartu aurretik.",
     "You will be able to join the call only after a moderator starts it." : "Moderatzaile batek deia hasten duenean bakarrik batu ahalko zara.",
+    "Stop recording" : "Utzi grabaketa",
     "You have new unread messages in the chat." : "Irakurri gabeko mezu berriak dauzkazu txatean.",
     "You have been mentioned in the chat." : "Txatean aipatu egin zaituzte.",
     "Mute others" : "Mututu besteak",
