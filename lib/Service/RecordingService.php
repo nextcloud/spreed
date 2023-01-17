@@ -167,6 +167,7 @@ class RecordingService {
 			->setSubject('record_file_stored', [
 				'objectType' => 'file',
 				'objectId' => $file->getId(),
+				'name' => $file->getName(),
 				'actorDisplayName' => $attendee->getDisplayName(),
 			]);
 		$this->notificationManager->notify($notification);

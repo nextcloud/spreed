@@ -312,6 +312,12 @@ class Notifier implements INotifier {
 					'ocs.spreed.Chat.shareObjectToChat',
 					[
 						'apiVersion' => 'v1',
+						'objectType' => 'file',
+						'objectId' => $notification->getObjectId(),
+						'metaData' => json_encode([
+							'name' => $parameters['name'],
+							'path' => $parameters['name'],
+						]),
 						'token' => $room->getToken()
 					]
 				),
@@ -337,7 +343,7 @@ class Notifier implements INotifier {
 					'call' => [
 						'type' => 'call',
 						'id' => $room->getId(),
-						'name' => $room->getDisplayName((string) $participant->getAttendee()->getActorId()),
+						'name' => $room->getDisplayName($participant->getAttendee()->getActorId()),
 						'call-type' => $this->getRoomType($room),
 					],
 				])
