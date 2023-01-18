@@ -68,7 +68,7 @@ class RecordingService {
 
 	public function stop(Room $room): void {
 		if ($room->getCallRecording() === Room::RECORDING_NONE) {
-			throw new InvalidArgumentException('recording');
+			return;
 		}
 		$this->roomService->setCallRecording($room);
 	}

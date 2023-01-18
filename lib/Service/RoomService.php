@@ -369,6 +369,8 @@ class RoomService {
 	/**
 	 * @param Room $room
 	 * @param integer $status 0 none|1 video|2 audio
+	 * @throws \InvalidArgumentException When the status is invalid, not Room::RECORDING_*
+	 * @throws \InvalidArgumentException When trying to start
 	 */
 	public function setCallRecording(Room $room, int $status = Room::RECORDING_NONE): void {
 		if (!$this->config->isRecordingEnabled() && $status !== Room::RECORDING_NONE) {
