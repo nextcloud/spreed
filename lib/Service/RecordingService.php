@@ -218,12 +218,12 @@ class RecordingService {
 			->setSharedWith($room->getToken())
 			->setPermissions(\OCP\Constants::PERMISSION_READ);
 
-		$this->shareManager->createShare($share);
+		$share = $this->shareManager->createShare($share);
 
 		$message = json_encode([
 			'message' => 'file_shared',
 			'parameters' => [
-				'share' => (string) $file->getId(),
+				'share' => $share->getId(),
 				'metaData' => [
 					'mimeType' => $file->getMimeType(),
 					'messageType' => $this->getTypeOfShare($file->getMimeType()),
