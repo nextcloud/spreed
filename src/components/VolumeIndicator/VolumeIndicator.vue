@@ -24,13 +24,14 @@
 		<Microphone v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
 		<MicrophoneOff v-else :size="size" :fill-color="primaryColor" />
 
-		<span
-			v-show="audioPreviewAvailable"
+		<span v-show="audioPreviewAvailable"
 			class="volume-indicator"
-			:style="{ height: currentVolumeIndicatorHeight + 'px' }"
-		>
-			<Microphone v-if="audioEnabled" :size="size" :fill-color="overlayColor" />
-			<MicrophoneOff v-else :size="size" :fill-color="overlayColor" />
+			:class="{ 'volume-indicator-mute': !audioEnabled }"
+			:style="{
+				height: currentVolumeIndicatorHeight + 'px',
+			}">
+			<Microphone v-if="audioEnabled" :size="size" />
+			<MicrophoneOff v-else :size="size" />
 		</span>
 	</span>
 </template>
@@ -75,11 +76,7 @@ export default {
 
 		primaryColor: {
 			type: String,
-		},
-
-		overlayColor: {
-			type: String,
-			default: '#cccccc',
+			default: undefined,
 		},
 	},
 
@@ -104,7 +101,7 @@ export default {
 }
 
 .volume-indicator {
-	/* The button height is 44px; the volume indicator covers primary icon and has 
+	/* The button height is 44px; the volume indicator covers primary icon and has
 	* the same size, but its height value will be changed based on the current volume */
 	width: 100%;
 	height: 100%;
@@ -122,6 +119,24 @@ export default {
 	& > span {
 		position: absolute;
 		bottom: 0;
+	}
+
+	/* Overlay icon inherits container color */
+	color: var(--color-success);
+
+	& :deep(svg) {
+		stroke: currentColor;
+		stroke-width: 0.2px;
+	}
+
+	&-mute {
+		color: var(--color-main-background);
+		opacity: 0.5;
+
+		& :deep(svg) {
+		stroke: var(--color-main-background);
+		stroke-opacity: 0.5;
+		}
 	}
 }
 </style>

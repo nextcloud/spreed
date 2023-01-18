@@ -66,13 +66,11 @@
 				@shortkey="toggleAudio"
 				@click.stop="toggleAudio">
 				<template #icon>
-					<VolumeIndicator
-					:audio-preview-available="model.attributes.audioAvailable"
-					:audio-enabled="showMicrophoneOn"
-					:current-volume="model.attributes.currentVolume"
-					:volume-threshold="model.attributes.volumeThreshold"
-					primary-color="#ffffff"
-					overlay-color="#999999" />
+					<VolumeIndicator :audio-preview-available="model.attributes.audioAvailable"
+						:audio-enabled="showMicrophoneOn"
+						:current-volume="model.attributes.currentVolume"
+						:volume-threshold="model.attributes.volumeThreshold"
+						primary-color="#ffffff" />
 				</template>
 			</NcButton>
 			<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['v']"
