@@ -20,23 +20,40 @@
 -->
 
 <template>
-	<div v-show="audioPreviewAvailable"
-		class="volume-indicator-wrapper"
-		:style="{ 'height': wrapperHeight + 'px' }">
-		<span ref="volumeIndicator"
+	<span class="volume-indicator-wrapper" :style="{ height: size + 'px' }">
+		<Microphone v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
+		<MicrophoneOff v-else :size="size" :fill-color="primaryColor" />
+
+		<span
+			v-show="audioPreviewAvailable"
 			class="volume-indicator"
-			:class="{'volume-indicator--disabled': disabled}"
-			:style="{ 'height': currentVolumeIndicatorHeight + 'px' }" />
-	</div>
+			:style="{ height: currentVolumeIndicatorHeight + 'px' }"
+		>
+			<Microphone v-if="audioEnabled" :size="size" :fill-color="overlayColor" />
+			<MicrophoneOff v-else :size="size" :fill-color="overlayColor" />
+		</span>
+	</span>
 </template>
 
 <script>
+import Microphone from 'vue-material-design-icons/Microphone.vue'
+import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 
 export default {
 	name: 'VolumeIndicator',
 
+	components: {
+		Microphone,
+		MicrophoneOff,
+	},
+
 	props: {
 		audioPreviewAvailable: {
+			type: Boolean,
+			required: true,
+		},
+
+		audioEnabled: {
 			type: Boolean,
 			required: true,
 		},
@@ -51,83 +68,60 @@ export default {
 			required: true,
 		},
 
-		wrapperHeight: {
+		size: {
 			type: Number,
-			default: 44,
+			default: 20,
 		},
 
-		disabled: {
-			type: Boolean,
-			default: false,
+		primaryColor: {
+			type: String,
 		},
-	},
 
-	data() {
-		return {
-			mounted: false,
-		}
+		overlayColor: {
+			type: String,
+			default: '#cccccc',
+		},
 	},
 
 	computed: {
 		currentVolumeIndicatorHeight() {
-			// refs can not be accessed on the initial render, only after the
-			// component has been mounted.
-			if (!this.mounted) {
-				return 0
-			}
-
 			// WebRTC volume goes from -100 (silence) to 0 (loudest sound in the
 			// system); for the volume indicator only sounds above the threshold
 			// are taken into account.
-			let currentVolumeProportion = 0
-			if (this.currentVolume > this.volumeThreshold) {
-				currentVolumeProportion = (this.volumeThreshold - this.currentVolume) / this.volumeThreshold
+			if (this.currentVolume < this.volumeThreshold) {
+				return 0
 			}
 
-			const volumeIndicatorStyle = window.getComputedStyle ? getComputedStyle(this.$refs.volumeIndicator, null) : this.$refs.volumeIndicator.currentStyle
-
-			const maximumVolumeIndicatorHeight = this.$refs.volumeIndicator.parentElement.clientHeight - (parseInt(volumeIndicatorStyle.bottom, 10) * 2)
-
-			return maximumVolumeIndicatorHeight * currentVolumeProportion
+			return this.size * (1 - this.currentVolume / this.volumeThreshold)
 		},
-	},
-
-	mounted() {
-		this.mounted = true
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
-
 .volume-indicator-wrapper {
-	/* Make the wrapper the positioning context of the volume indicator. */
 	position: relative;
-	margin-top: 16px;
-	margin-bottom: 16px;
 }
 
 .volume-indicator {
+	/* The button height is 44px; the volume indicator covers primary icon and has 
+	* the same size, but its height value will be changed based on the current volume */
+	width: 100%;
+	height: 100%;
+
+	/* Position of container with overlay icon is centered to cover primary icon */
 	position: absolute;
-	width: 4px;
-	right: 0;
+	bottom: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	pointer-events: none;
 
-	/* The button height is 44px; the volume indicator button is 44px at
-		* maximum, but its value will be changed based on the current volume;
-		* the height change will reveal more or less of the gradient, which has
-		* absolute dimensions and thus does not change when the height
-		* changes. */
-	height: $clickable-area;
-	bottom: 4px;
+	/*  Container hides overlay icon when its height changes*/
+	overflow: hidden;
 
-	background: linear-gradient(0deg, green, yellow, red 44px);
-
-	opacity: 0.7;
-
-	&--disabled {
-		background: var(--color-loading-light);
+	& > span {
+		position: absolute;
+		bottom: 0;
 	}
 }
-
 </style>

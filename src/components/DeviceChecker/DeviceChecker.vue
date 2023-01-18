@@ -67,17 +67,14 @@
 					:disabled="!audioPreviewAvailable"
 					@click="toggleAudio">
 					<template #icon>
-						<Microphone v-if="audioOn"
-							:size="20" />
-						<MicrophoneOff v-else
-							:size="20" />
+						<VolumeIndicator
+						:audio-preview-available="audioPreviewAvailable"
+						:audio-enabled="audioOn"
+						:current-volume="currentVolume"
+						:volume-threshold="volumeThreshold"
+						:overlay-color="'#999999'" />
 					</template>
 				</NcButton>
-				<VolumeIndicator class="indicator"
-					:audio-preview-available="audioPreviewAvailable"
-					:current-volume="currentVolume"
-					:volume-threshold="volumeThreshold"
-					:disabled="!audioOn" />
 
 				<!-- Video toggle -->
 				<NcButton v-tooltip="videoButtonTooltip"
@@ -187,8 +184,6 @@ import MediaDevicesSelector from '../MediaDevicesSelector.vue'
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import Cog from 'vue-material-design-icons/Cog.vue'
-import Microphone from 'vue-material-design-icons/Microphone.vue'
-import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import Blur from 'vue-material-design-icons/Blur.vue'
@@ -223,8 +218,6 @@ export default {
 		NcAvatar,
 		NcNoteCard,
 		Cog,
-		Microphone,
-		MicrophoneOff,
 		VideoIcon,
 		VideoOff,
 		Blur,
@@ -251,7 +244,6 @@ export default {
 			blurOn: undefined,
 			showDeviceChecker: true,
 			silentCall: false,
-
 		}
 	},
 
@@ -497,10 +489,6 @@ export default {
 	display: flex;
 	justify-content: center;
 	margin: 14px;
-}
-
-.indicator {
-	margin-left: -8px;
 }
 
 ::v-deep .modal-container {
