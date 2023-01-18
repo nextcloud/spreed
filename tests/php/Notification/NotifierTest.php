@@ -37,6 +37,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
+use OCP\Files\IRootFolder;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -75,6 +76,8 @@ class NotifierTest extends TestCase {
 	protected $messageParser;
 	/** @var IURLGenerator|MockObject */
 	protected $urlGenerator;
+	/** @var IRootFolder|MockObject */
+	protected $rootFolder;
 	/** @var ITimeFactory|MockObject */
 	protected $timeFactory;
 	/** @var Definitions|MockObject */
@@ -98,6 +101,7 @@ class NotifierTest extends TestCase {
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
+		$this->rootFolder = $this->createMock(IRootFolder::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->definitions = $this->createMock(Definitions::class);
 		$this->addressHandler = $this->createMock(AddressHandler::class);
@@ -115,6 +119,7 @@ class NotifierTest extends TestCase {
 			$this->commentsManager,
 			$this->messageParser,
 			$this->urlGenerator,
+			$this->rootFolder,
 			$this->timeFactory,
 			$this->definitions,
 			$this->addressHandler

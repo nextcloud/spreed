@@ -35,6 +35,7 @@ function is_uploaded_file($filename) {
 
 namespace OCA\Talk\Tests\php\Service;
 
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Service\ParticipantService;
@@ -44,6 +45,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
 use OCP\Notification\IManager;
+use OCP\Share\IManager as ShareManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -64,6 +66,10 @@ class RecordingServiceTest extends TestCase {
 	private $timeFactory;
 	/** @var RoomService|MockObject */
 	private $roomService;
+	/** @var ShareManager|MockObject */
+	private $shareManager;
+	/** @var ChatManager|MockObject */
+	private $chatManager;
 	/** @var RecordingService */
 	protected $recordingService;
 
@@ -78,6 +84,8 @@ class RecordingServiceTest extends TestCase {
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->config = $this->createMock(Config::class);
 		$this->roomService = $this->createMock(RoomService::class);
+		$this->shareManager = $this->createMock(ShareManager::class);
+		$this->chatManager = $this->createMock(ChatManager::class);
 
 		$this->recordingService = new RecordingService(
 			$this->mimeTypeDetector,
@@ -87,7 +95,9 @@ class RecordingServiceTest extends TestCase {
 			$this->roomManager,
 			$this->timeFactory,
 			$this->config,
-			$this->roomService
+			$this->roomService,
+			$this->shareManager,
+			$this->chatManager
 		);
 	}
 
