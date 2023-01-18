@@ -105,12 +105,30 @@ class RecordingController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireModeratorParticipant
 	 */
-	public function notificationDismiss(string $token, string $dateTime): DataResponse {
+	public function notificationDismiss(int $timestamp): DataResponse {
 		try {
 			$this->recordingService->notificationDismiss(
-				$token,
-				$this->participant->getAttendee()->getActorId(),
-				$dateTime
+				$this->getRoom(),
+				$this->participant,
+				$timestamp
+			);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+		return new DataResponse();
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireModeratorParticipant
+	 */
+	public function shareToChat(int $fileId, int $timestamp): DataResponse {
+		try {
+			$this->recordingService->shareToChat(
+				$this->getRoom(),
+				$this->participant,
+				$fileId,
+				$timestamp
 			);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);

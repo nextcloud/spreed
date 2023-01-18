@@ -41,6 +41,7 @@ use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
+use OCP\Files\IRootFolder;
 use OCP\HintException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -69,7 +70,8 @@ class Notifier implements INotifier {
 	protected INotificationManager $notificationManager;
 	protected ICommentsManager $commentManager;
 	protected MessageParser $messageParser;
-	private IURLGenerator $urlGenerator;
+	protected IURLGenerator $urlGenerator;
+	protected IRootFolder $rootFolder;
 	protected ITimeFactory $timeFactory;
 	protected Definitions $definitions;
 	protected AddressHandler $addressHandler;
@@ -91,6 +93,7 @@ class Notifier implements INotifier {
 								CommentsManager $commentManager,
 								MessageParser $messageParser,
 								IURLGenerator $urlGenerator,
+								IRootFolder $rootFolder,
 								ITimeFactory $timeFactory,
 								Definitions $definitions,
 								AddressHandler $addressHandler) {
@@ -106,6 +109,7 @@ class Notifier implements INotifier {
 		$this->commentManager = $commentManager;
 		$this->messageParser = $messageParser;
 		$this->urlGenerator = $urlGenerator;
+		$this->rootFolder = $rootFolder;
 		$this->timeFactory = $timeFactory;
 		$this->definitions = $definitions;
 		$this->addressHandler = $addressHandler;
@@ -300,20 +304,24 @@ class Notifier implements INotifier {
 		IL10N $l
 	): INotification {
 		$parameters = $notification->getSubjectParameters();
+		try {
+			$userFolder = $this->rootFolder->getUserFolder($notification->getUser());
+			/** @var \OCP\Files\File[] */
+			$files = $userFolder->getById($parameters['objectId']);
+			$file = array_shift($files);
+		} catch (\Throwable $th) {
+			throw new AlreadyProcessedException();
+		}
 		$shareAction = $notification->createAction()
 			->setParsedLabel($l->t('Share to chat'))
 			->setPrimary(true)
 			->setLink(
-				$this->urlGenerator->linkToRouteAbsolute(
-					'ocs.spreed.Chat.shareObjectToChat',
+				$this->urlGenerator->linkToOCSRouteAbsolute(
+					'spreed.Recording.shareToChat',
 					[
 						'apiVersion' => 'v1',
-						'objectType' => 'file',
-						'objectId' => $notification->getObjectId(),
-						'metaData' => json_encode([
-							'name' => $parameters['name'],
-							'path' => $parameters['name'],
-						]),
+						'fileId' => $file->getId(),
+						'timestamp' => $notification->getDateTime()->getTimestamp(),
 						'token' => $room->getToken()
 					]
 				),
@@ -322,12 +330,12 @@ class Notifier implements INotifier {
 		$dismissAction = $notification->createAction()
 			->setParsedLabel($l->t('Dismiss notification'))
 			->setLink(
-				$this->urlGenerator->linkToRouteAbsolute(
-					'ocs.spreed.Recording.notificationDismiss',
+				$this->urlGenerator->linkToOCSRouteAbsolute(
+					'spreed.Recording.notificationDismiss',
 					[
 						'apiVersion' => 'v1',
 						'token' => $room->getToken(),
-						'dateTime' => $notification->getDateTime()->format('U'),
+						'timestamp' => $notification->getDateTime()->getTimestamp(),
 					]
 				),
 				IAction::TYPE_DELETE

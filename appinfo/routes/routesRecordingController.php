@@ -38,5 +38,7 @@ return [
 		['name' => 'Recording#store', 'url' => '/api/{apiVersion}/recording/{token}/store', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\RecordingController::notificationDismiss() */
 		['name' => 'Recording#notificationDismiss', 'url' => '/api/{apiVersion}/recording/{token}/notification', 'verb' => 'DELETE', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\RecordingController::shareToChat() */
+		['name' => 'Recording#shareToChat', 'url' => '/api/{apiVersion}/recording/{token}/share-chat', 'verb' => 'POST', 'requirements' => $requirements],
 	],
 ];

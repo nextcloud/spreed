@@ -27,12 +27,14 @@ namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
 use OC\User\NoUserException;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Comments\MessageTooLongException;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IMimeTypeDetector;
@@ -40,6 +42,8 @@ use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Notification\IManager;
+use OCP\Share\IManager as ShareManager;
+use OCP\Share\IShare;
 
 class RecordingService {
 	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
@@ -49,14 +53,16 @@ class RecordingService {
 	];
 
 	public function __construct(
-		private IMimeTypeDetector $mimeTypeDetector,
-		private ParticipantService $participantService,
-		private IRootFolder $rootFolder,
-		private IManager $notificationManager,
-		private Manager $roomManager,
-		private ITimeFactory $timeFactory,
-		private Config $config,
-		private RoomService $roomService
+		protected IMimeTypeDetector $mimeTypeDetector,
+		protected ParticipantService $participantService,
+		protected IRootFolder $rootFolder,
+		protected IManager $notificationManager,
+		protected Manager $roomManager,
+		protected ITimeFactory $timeFactory,
+		protected Config $config,
+		protected RoomService $roomService,
+		protected ShareManager $shareManager,
+		protected ChatManager $chatManager
 	) {
 	}
 
@@ -167,22 +173,78 @@ class RecordingService {
 			->setObject('chat', $room->getToken())
 			->setUser($attendee->getActorId())
 			->setSubject('record_file_stored', [
-				'objectType' => 'file',
 				'objectId' => $file->getId(),
-				'name' => $file->getName(),
-				'actorDisplayName' => $attendee->getDisplayName(),
 			]);
 		$this->notificationManager->notify($notification);
 	}
 
-	public function notificationDismiss(string $roomToken, string $userId, string $dateTime): void {
-		$room = $this->roomManager->getRoomByToken($roomToken);
+	public function notificationDismiss(Room $room, Participant $participant, int $timestamp): void {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp('spreed')
 			->setObject('chat', (string) $room->getToken())
 			->setSubject('record_file_stored')
-			->setDateTime($this->timeFactory->getDateTime('@' . $dateTime))
-			->setUser($userId);
+			->setDateTime($this->timeFactory->getDateTime('@' . $timestamp))
+			->setUser($participant->getAttendee()->getActorId());
 		$this->notificationManager->markProcessed($notification);
+	}
+
+	private function getTypeOfShare(string $mimetype): string {
+		if (strpos($mimetype, 'video') !== false) {
+			return'record-video';
+		}
+		return 'record-audio';
+	}
+
+	public function shareToChat(Room $room, Participant $participant, int $fileId, int $timestamp): void {
+		try {
+			$userFolder = $this->rootFolder->getUserFolder(
+				$participant->getAttendee()->getActorId()
+			);
+			/** @var \OCP\Files\File[] */
+			$files = $userFolder->getById($fileId);
+			$file = array_shift($files);
+		} catch (\Throwable $th) {
+			throw new InvalidArgumentException('file');
+		}
+
+		$creationDateTime = $this->timeFactory->getDateTime();
+
+		$share = $this->shareManager->newShare();
+		$share->setNodeId($fileId)
+			->setShareTime($creationDateTime)
+			->setSharedBy($participant->getAttendee()->getActorId())
+			->setNode($file)
+			->setShareType(IShare::TYPE_ROOM)
+			->setSharedWith($room->getToken())
+			->setPermissions(\OCP\Constants::PERMISSION_READ);
+
+		$this->shareManager->createShare($share);
+
+		$message = json_encode([
+			'message' => 'file_shared',
+			'parameters' => [
+				'share' => (string) $file->getId(),
+				'metaData' => [
+					'mimeType' => $file->getMimeType(),
+					'messageType' => $this->getTypeOfShare($file->getMimeType()),
+				],
+			],
+		]);
+
+		try {
+			$this->chatManager->addSystemMessage(
+				$room,
+				$participant->getAttendee()->getActorType(),
+				$participant->getAttendee()->getActorId(),
+				$message,
+				$creationDateTime,
+				true
+			);
+		} catch (MessageTooLongException $e) {
+			throw new InvalidArgumentException('file-long-data');
+		} catch (\Exception $e) {
+			throw new InvalidArgumentException('send-system-message');
+		}
+		$this->notificationDismiss($room, $participant, $timestamp);
 	}
 }
