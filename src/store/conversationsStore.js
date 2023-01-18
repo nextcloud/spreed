@@ -43,9 +43,18 @@ import {
 	setMessageExpiration,
 	setConversationPassword,
 } from '../services/conversationsService.js'
+import {
+	startCallRecording,
+	stopCallRecording,
+} from '../services/recordingService.js'
 import { getCurrentUser } from '@nextcloud/auth'
 // eslint-disable-next-line import/extensions
-import { CONVERSATION, WEBINAR, PARTICIPANT } from '../constants.js'
+import {
+	CALL,
+	CONVERSATION,
+	PARTICIPANT,
+	WEBINAR,
+} from '../constants.js'
 
 const DUMMY_CONVERSATION = {
 	token: '',
@@ -161,6 +170,10 @@ const mutations = {
 
 	setCallPermissions(state, { token, permissions }) {
 		Vue.set(state.conversations[token], 'callPermissions', permissions)
+	},
+
+	setCallRecording(state, { token, callRecording }) {
+		Vue.set(state.conversations[token], 'callRecording', callRecording)
 	},
 
 	setMessageExpiration(state, { token, seconds }) {
@@ -528,6 +541,24 @@ const actions = {
 	async setCallPermissions(context, { token, permissions }) {
 		await setCallPermissions(token, permissions)
 		context.commit('setCallPermissions', { token, permissions })
+	},
+
+	async startCallRecording(context, { token, callRecording }) {
+		try {
+			await startCallRecording(token, callRecording)
+		} catch (e) {
+			console.error(e)
+		}
+		context.commit('setCallRecording', { token, callRecording })
+	},
+
+	async stopCallRecording(context, { token }) {
+		try {
+			await stopCallRecording(token)
+		} catch (e) {
+			console.error(e)
+		}
+		context.commit('setCallRecording', { token, callRecording: CALL.RECORDING.OFF })
 	},
 }
 

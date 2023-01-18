@@ -56,6 +56,7 @@ import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { CALL } from '../../constants.js'
 import isInLobby from '../../mixins/isInLobby.js'
 
 export default {
@@ -76,11 +77,6 @@ export default {
 		 */
 		start: {
 			type: Number,
-			required: true,
-		},
-
-		isRecording: {
-			type: Boolean,
 			required: true,
 		},
 	},
@@ -142,6 +138,10 @@ export default {
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
+
+		isRecording() {
+			return this.conversation.callRecording !== CALL.RECORDING.OFF
+		},
 	},
 
 	mounted() {
@@ -155,7 +155,9 @@ export default {
 
 	methods: {
 		stopRecording() {
-			this.$emit('stop-recording')
+			this.$store.dispatch('stopCallRecording', {
+				token: this.token,
+			})
 			this.showPopover = false
 		},
 

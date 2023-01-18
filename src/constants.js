@@ -28,6 +28,15 @@ export const CHAT = {
 	FETCH_LIMIT: 100,
 	MINIMUM_VISIBLE: 5,
 }
+
+export const CALL = {
+	RECORDING: {
+		OFF: 0,
+		VIDEO: 1,
+		AUDIO: 2,
+	},
+}
+
 export const CONVERSATION = {
 	START_CALL: {
 		EVERYONE: 0,
