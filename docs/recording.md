@@ -80,12 +80,33 @@
 * Endpoint: `/recording/{token}/notification`
 * Data:
 
-| field      | type   | Description                                               |
-| ---------- | ------ | --------------------------------------------------------- |
-| `dateTime` | string | The date time that notification was created.              |
+| field       | type   | Description                                                           |
+| ----------- | ------ | --------------------------------------------------------------------- |
+| `timestamp` | string | Timestamp in seconds and UTC time zone that notification was created. |
 
 * Response:
     - Status code:
         + `200 OK`
         + `403 Forbidden` When the user is not a moderator/owner.
+        + `404 Not Found` Room not found
+
+## Share store call recording
+
+* Required capability: `recording-v1`
+* Method: `POST`
+* Endpoint: `/recording/{token}/share-chat`
+* Data:
+
+| field       | type    | Description                                                           |
+| ----------- | ------- | --------------------------------------------------------------------- |
+| `timestamp` | string  | Timestamp in seconds and UTC time zone that notification was created. |
+| `fileId`    | integer | File id of recording to share at the room.                            |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` Error: `file`: Shared file is invalid
+        + `400 Bad Request` Error: `file-long-data`: Shared file have a too big name that can't stay in a message
+        + `400 Bad Request` Error: `send-system-message`: Failed to send the shared file as system message
+        + `403 Forbidden` When the user is not a moderator/owne
         + `404 Not Found` Room not found
