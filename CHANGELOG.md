@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.0.8 – 2023-01-19
+### Fixed
+- Allow autocompleting conversation names from the middle
+  [#8506](https://github.com/nextcloud/spreed/pull/8506)
+- Call view not shown when rejoining a call in the file sidebar
+  [#8508](https://github.com/nextcloud/spreed/pull/8508)
+- Fix leaving the call when switching to another conversation
+  [#8530](https://github.com/nextcloud/spreed/pull/8530)
+
 ## 14.0.7 – 2022-12-01
 ### Changed
 - Allow to disable the changelog conversation with an app config
