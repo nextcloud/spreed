@@ -1,6 +1,37 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.3 – 2023-01-19
+### Changed
+- Update @nextcloud/vue library to 7.4.0
+  [#8458](https://github.com/nextcloud/spreed/pull/8458)
+  [#8565](https://github.com/nextcloud/spreed/pull/8565)
+
+### Fixed
+- Allow autocompleting conversation names from the middle
+  [#8505](https://github.com/nextcloud/spreed/pull/8505)
+- Call view not shown when rejoining a call in the file sidebar
+  [#8507](https://github.com/nextcloud/spreed/pull/8507)
+- Fix leaving the call when switching to another conversation
+  [#8529](https://github.com/nextcloud/spreed/pull/8529)
+- Don't keep the session open longer than necessary when leaving and joining a conversation
+  [#8394](https://github.com/nextcloud/spreed/pull/8394)
+- Enforce a length of the private JWT keys used for signaling in case libressl has 0 as default
+  [#8468](https://github.com/nextcloud/spreed/pull/8468)
+- Remove webserver warning when in unknown state as it confuses admins
+  [#8512](https://github.com/nextcloud/spreed/pull/8512)
+- Remove expired messages from API even when the background job did not execute
+  [#8523](https://github.com/nextcloud/spreed/pull/8523)
+
+## 14.0.8 – 2023-01-19
+### Fixed
+- Allow autocompleting conversation names from the middle
+  [#8506](https://github.com/nextcloud/spreed/pull/8506)
+- Call view not shown when rejoining a call in the file sidebar
+  [#8508](https://github.com/nextcloud/spreed/pull/8508)
+- Fix leaving the call when switching to another conversation
+  [#8530](https://github.com/nextcloud/spreed/pull/8530)
+
 ## 15.0.2 – 2022-12-01
 ### Changed
 - Allow to disable the changelog conversation with an app config
