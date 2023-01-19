@@ -70,7 +70,8 @@
 						:audio-enabled="showMicrophoneOn"
 						:current-volume="model.attributes.currentVolume"
 						:volume-threshold="model.attributes.volumeThreshold"
-						primary-color="#ffffff" />
+						primary-color="#ffffff"
+						overlay-color="#999999" />
 				</template>
 			</NcButton>
 			<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['v']"

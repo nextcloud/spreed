@@ -20,18 +20,26 @@
 -->
 
 <template>
-	<span class="volume-indicator-wrapper" :style="{ height: size + 'px' }">
-		<Microphone v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
-		<MicrophoneOff v-else :size="size" :fill-color="primaryColor" />
+	<span class="volume-indicator"
+		:style="{ height: size + 'px', width: size + 'px' }">
+		<span class="volume-indicator-primary"
+			:style="{
+				height: size - 1 - currentVolumeIndicatorHeight + 'px',
+			}">
+			<Microphone v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
+			<MicrophoneOff v-else :size="size" :fill-color="primaryColor" />
+		</span>
 
 		<span v-show="audioPreviewAvailable"
-			class="volume-indicator"
-			:class="{ 'volume-indicator-mute': !audioEnabled }"
+			class="volume-indicator-overlay"
+			:class="{ 'volume-indicator-overlay-mute': !audioEnabled }"
 			:style="{
 				height: currentVolumeIndicatorHeight + 'px',
 			}">
-			<Microphone v-if="audioEnabled" :size="size" />
-			<MicrophoneOff v-else :size="size" />
+			<Microphone v-if="audioEnabled"
+				:size="size"
+				:fill-color="overlayMutedColor" />
+			<MicrophoneOff v-else :size="size" :fill-color="overlayMutedColor" />
 		</span>
 	</span>
 </template>
@@ -78,6 +86,11 @@ export default {
 			type: String,
 			default: undefined,
 		},
+
+		overlayColor: {
+			type: String,
+			default: undefined,
+		},
 	},
 
 	computed: {
@@ -91,16 +104,29 @@ export default {
 
 			return this.size * (1 - this.currentVolume / this.volumeThreshold)
 		},
+
+		overlayMutedColor() {
+			return !this.audioEnabled ? this.overlayColor : undefined
+		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-.volume-indicator-wrapper {
+.volume-indicator {
 	position: relative;
 }
 
-.volume-indicator {
+.volume-indicator-primary {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+
+	overflow: hidden;
+}
+
+.volume-indicator-overlay {
 	/* The button height is 44px; the volume indicator covers primary icon and has
 	* the same size, but its height value will be changed based on the current volume */
 	width: 100%;
@@ -113,7 +139,6 @@ export default {
 	transform: translateX(-50%);
 	pointer-events: none;
 
-	/*  Container hides overlay icon when its height changes*/
 	overflow: hidden;
 
 	& > span {
@@ -124,19 +149,8 @@ export default {
 	/* Overlay icon inherits container color */
 	color: var(--color-success);
 
-	& :deep(svg) {
-		stroke: currentColor;
-		stroke-width: 0.2px;
-	}
-
 	&-mute {
-		color: var(--color-main-background);
-		opacity: 0.5;
-
-		& :deep(svg) {
-		stroke: var(--color-main-background);
-		stroke-opacity: 0.5;
-		}
+		color: var(--color-loading-dark);
 	}
 }
 </style>
