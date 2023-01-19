@@ -315,7 +315,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 
-		$this->assertRooms($rooms, $formData);
+		$this->assertRooms($rooms, $formData, true);
 	}
 
 	/**
@@ -328,19 +328,26 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$expected = $formData->getHash();
 		if ($shouldOrder) {
 			$sorter = static function (array $roomA, array $roomB): int {
-				$idA = $roomA['id'];
-				$idB = $roomB['id'];
+				$idA = $roomA['id'] ?? self::$identifierToId[$roomA['name']];
+				$idB = $roomB['id'] ?? self::$identifierToId[$roomB['name']];
+
 				if (isset(self::$identifierToId[$idA])) {
 					$idA = self::$identifierToId[$idA];
+				} else {
+					self::$identifierToId[$roomA['name']] = $idA;
 				}
+
 				if (isset(self::$identifierToId[$idB])) {
 					$idB = self::$identifierToId[$idB];
+				} else {
+					self::$identifierToId[$roomB['name']] = $idB;
 				}
+
 				return $idA < $idB ? -1 : 1;
 			};
 
-			usort($expected, $sorter);
 			usort($rooms, $sorter);
+			usort($expected, $sorter);
 		}
 
 		Assert::assertEquals($expected, array_map(function ($room, $expectedRoom) {

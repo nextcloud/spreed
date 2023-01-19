@@ -28,14 +28,14 @@ Feature: command/user-remove
     And invoking occ with "talk:user:transfer-ownership participant2 participant3"
     And the command output contains the text "Added or promoted user participant3 in 2 rooms."
     Then the command was successful
-    And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
       | id          | name         | type | participantType |
       | one-to-one  | participant1 | 1    | 1               |
       | user        | user         | 3    | 3               |
       | moderator   | moderator    | 2    | 2               |
       | owner       | owner        | 2    | 1               |
       | self-joined | self-joined  | 3    | 5               |
-    And user "participant3" is participant of the following rooms (v4)
+    And user "participant3" is participant of the following unordered rooms (v4)
       | id          | name         | type | participantType |
       | moderator   | moderator    | 2    | 2               |
       | owner       | owner        | 2    | 1               |
@@ -63,14 +63,14 @@ Feature: command/user-remove
     And invoking occ with "talk:user:transfer-ownership --include-non-moderator participant2 participant3"
     And the command output contains the text "Added or promoted user participant3 in 3 rooms."
     Then the command was successful
-    And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
       | id          | name         | type | participantType |
       | one-to-one  | participant1 | 1    | 1               |
       | user        | user         | 3    | 3               |
       | moderator   | moderator    | 2    | 2               |
       | owner       | owner        | 2    | 1               |
       | self-joined | self-joined  | 3    | 5               |
-    And user "participant3" is participant of the following rooms (v4)
+    And user "participant3" is participant of the following unordered rooms (v4)
       | id          | name         | type | participantType |
       | user        | user         | 3    | 3               |
       | moderator   | moderator    | 2    | 2               |
@@ -99,12 +99,12 @@ Feature: command/user-remove
     And invoking occ with "talk:user:transfer-ownership --remove-source-user participant2 participant3"
     And the command output contains the text "Added or promoted user participant3 in 2 rooms."
     Then the command was successful
-    And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
       | id          | name         | type | participantType |
       | one-to-one  | participant1 | 1    | 1               |
       | user        | user         | 3    | 3               |
       | self-joined | self-joined  | 3    | 5               |
-    And user "participant3" is participant of the following rooms (v4)
+    And user "participant3" is participant of the following unordered rooms (v4)
       | id          | name         | type | participantType |
       | moderator   | moderator    | 2    | 2               |
       | owner       | owner        | 2    | 1               |
@@ -149,7 +149,7 @@ Feature: command/user-remove
     And invoking occ with "talk:user:transfer-ownership --include-non-moderator participant2 participant3"
     And the command output contains the text "Added or promoted user participant3 in 5 rooms."
     Then the command was successful
-    And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
       | id                            | name                          | type | participantType |
       | moderator                     | moderator                     | 2    | 2               |
       | owner                         | owner                         | 2    | 1               |

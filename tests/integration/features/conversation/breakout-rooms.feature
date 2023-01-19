@@ -23,21 +23,21 @@ Feature: conversation/breakout-rooms
       | users::participant2 | 0 |
       | users::participant3 | 1 |
       | users::participant4 | 2 |
-    Then user "participant1" is participant of the following rooms (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
       | 2    | Room 2     |
       | 2    | Room 3     |
-    Then user "participant2" is participant of the following rooms (v4)
+    Then user "participant2" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
-    Then user "participant3" is participant of the following rooms (v4)
+    Then user "participant3" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 2     |
-    Then user "participant4" is participant of the following rooms (v4)
+    Then user "participant4" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 3     |
@@ -56,7 +56,7 @@ Feature: conversation/breakout-rooms
       | users      | participant3 | 3               |
       | users      | participant4 | 3               |
     When user "participant1" creates 3 automatic breakout rooms for "class room" with 200 (v1)
-    Then user "participant1" is participant of the following rooms (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
@@ -98,7 +98,7 @@ Feature: conversation/breakout-rooms
       | users      | participant2 | 3               |
     And user "participant1" creates 3 manual breakout rooms for "class room" with 200 (v1)
       | users::participant2 | 0 |
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
@@ -109,7 +109,7 @@ Feature: conversation/breakout-rooms
       | 2    | class room |
       | 2    | Room 1     |
     When user "participant1" promotes "participant2" in room "class room" with 200 (v4)
-    Then user "participant2" is participant of the following rooms (v4)
+    Then user "participant2" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
@@ -146,7 +146,7 @@ Feature: conversation/breakout-rooms
       | roomType | 2 |
       | roomName | class room |
     And user "participant1" creates 3 manual breakout rooms for "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
@@ -218,7 +218,7 @@ Feature: conversation/breakout-rooms
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
     When user "participant1" creates 3 manual breakout rooms for "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
@@ -256,7 +256,7 @@ Feature: conversation/breakout-rooms
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
     When user "participant1" creates 3 manual breakout rooms for "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 2                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
@@ -272,7 +272,7 @@ Feature: conversation/breakout-rooms
       | room   | actorType | actorId      | actorDisplayName         | systemMessage          |
       | Room 3 | users     | participant1 | participant1-displayname | conversation_created   |
     And user "participant1" starts breakout rooms in room "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 2                | 1                  |
       | 2    | Room 1     | 0          | 0                | 0                  |
@@ -291,7 +291,7 @@ Feature: conversation/breakout-rooms
       | Room 3 | users     | participant1 | participant1-displayname | breakout_rooms_started |
       | Room 3 | users     | participant1 | participant1-displayname | conversation_created   |
     And user "participant1" stops breakout rooms in room "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 2                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
@@ -323,32 +323,32 @@ Feature: conversation/breakout-rooms
       | users      | participant1 | 1               |
       | users      | participant2 | 3               |
     When user "participant1" creates 1 automatic breakout rooms for "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
     And user "participant1" starts breakout rooms in room "class room" with 200 (v1)
-    And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 1                  |
       | 2    | Room 1     | 0          | 0                | 0                  |
     And user "participant2" requests assistance in room "Room 1" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 1                  |
       | 2    | Room 1     | 0          | 0                | 2                  |
     And user "participant2" cancels request for assistance in room "Room 1" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 1                  |
       | 2    | Room 1     | 0          | 0                | 0                  |
     And user "participant2" requests assistance in room "Room 1" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 1                  |
       | 2    | Room 1     | 0          | 0                | 2                  |
     And user "participant1" cancels request for assistance in room "Room 1" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 1                  |
       | 2    | Room 1     | 0          | 0                | 0                  |
@@ -358,7 +358,7 @@ Feature: conversation/breakout-rooms
       | roomType | 2 |
       | roomName | class room |
     And user "participant1" creates 2 free breakout rooms for "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 3                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
@@ -387,13 +387,13 @@ Feature: conversation/breakout-rooms
       | users      | participant2 | 3               |
     When user "participant1" creates 3 manual breakout rooms for "class room" with 200 (v1)
       | users::participant2 | 0 |
-    Then user "participant1" is participant of the following rooms (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
       | 2    | Room 2     |
       | 2    | Room 3     |
-    Then user "participant2" is participant of the following rooms (v4)
+    Then user "participant2" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
@@ -413,7 +413,7 @@ Feature: conversation/breakout-rooms
       | roomType | 2 |
       | roomName | class room |
     And user "participant1" creates 2 free breakout rooms for "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 3                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
@@ -426,7 +426,7 @@ Feature: conversation/breakout-rooms
       | roomType | 2 |
       | roomName | class room |
     And user "participant1" creates 2 free breakout rooms for "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 3                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
@@ -459,7 +459,7 @@ Feature: conversation/breakout-rooms
       | users      | participant2 | 3               |
     And user "participant1" creates 2 manual breakout rooms for "class room" with 200 (v1)
       | users::participant2 | 0 |
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 2                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
@@ -482,7 +482,7 @@ Feature: conversation/breakout-rooms
       | users      | participant2 | 3               |
     And user "participant1" creates 2 automatic breakout rooms for "class room" with 200 (v1)
       | users::participant2 | 0 |
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
@@ -505,7 +505,7 @@ Feature: conversation/breakout-rooms
       | users      | participant2 | 3               |
     And user "participant1" creates 2 automatic breakout rooms for "class room" with 200 (v1)
       | users::participant2 | 0 |
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
@@ -535,7 +535,7 @@ Feature: conversation/breakout-rooms
       | users::participant2 | 0 |
       | users::participant3 | 1 |
       | users::participant4 | 2 |
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
@@ -554,7 +554,7 @@ Feature: conversation/breakout-rooms
       | 2    | class room |
       | 2    | Room 3     |
     When user "participant1" deletes room "Room 2" with 200 (v4)
-    Then user "participant1" is participant of the following rooms (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
@@ -574,12 +574,12 @@ Feature: conversation/breakout-rooms
       | users      | participant1 | 1               |
       | users      | participant2 | 2               |
     And user "participant1" creates 2 automatic breakout rooms for "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
       | 2    | Room 2     | 1          | 0                | 0                  |
-    And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
@@ -601,20 +601,20 @@ Feature: conversation/breakout-rooms
       | roomName   | Room 3 |
       | objectType | room |
       | objectId   | ROOM(class room) |
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
       | 2    | Room 2     | 1          | 0                | 0                  |
       | 2    | Room 3     | 1          | 0                | 0                  |
-    And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
       | 2    | Room 2     | 1          | 0                | 0                  |
       | 2    | Room 3     | 1          | 0                | 0                  |
     And user "participant1" starts breakout rooms in room "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 1                  |
       | 2    | Room 1     | 0          | 0                | 0                  |
@@ -625,7 +625,7 @@ Feature: conversation/breakout-rooms
       | roomName   | Room 4 |
       | objectType | room |
       | objectId   | ROOM(class room) |
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 1                  |
       | 2    | Room 1     | 0          | 0                | 0                  |
@@ -638,7 +638,7 @@ Feature: conversation/breakout-rooms
       | roomType | 2 |
       | roomName | class room |
     And user "participant1" creates 2 automatic breakout rooms for "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
@@ -662,7 +662,7 @@ Feature: conversation/breakout-rooms
       | roomType | 2 |
       | roomName | class room |
     And user "participant1" creates 2 automatic breakout rooms for "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
@@ -698,7 +698,7 @@ Feature: conversation/breakout-rooms
     When user "participant1" creates 2 manual breakout rooms for "class room" with 200 (v1)
       | users::participant3 | 0 |
       | users::participant4 | 1 |
-    And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 2                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
@@ -729,7 +729,7 @@ Feature: conversation/breakout-rooms
       | users      | participant2 | 3               |
     And user "participant1" promotes "participant2" in room "class room" with 200 (v4)
     And user "participant1" creates 2 automatic breakout rooms for "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
@@ -762,11 +762,17 @@ Feature: conversation/breakout-rooms
     When user "participant1" creates 3 manual breakout rooms for "class room" with 200 (v1)
       | users::participant3 | 0 |
       | users::participant4 | 1 |
-    Then user "participant3" is participant of the following rooms (v4)
+    Then user "participant1" is participant of the following unordered rooms (v4)
+      | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
+      | 2    | class room | 0          | 2                | 0                  |
+      | 2    | Room 1     | 1          | 0                | 0                  |
+      | 2    | Room 2     | 1          | 0                | 0                  |
+      | 2    | Room 3     | 1          | 0                | 0                  |
+    Then user "participant3" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
-    Then user "participant4" is participant of the following rooms (v4)
+    Then user "participant4" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 2     |
@@ -783,11 +789,11 @@ Feature: conversation/breakout-rooms
     When user "participant1" moves participants into different breakout rooms for "class room" with 200 (v1)
       | users::participant3 | 2 |
       | users::participant4 | 1 |
-    Then user "participant3" is participant of the following rooms (v4)
+    Then user "participant3" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 3     |
-    Then user "participant4" is participant of the following rooms (v4)
+    Then user "participant4" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 2     |
@@ -800,7 +806,7 @@ Feature: conversation/breakout-rooms
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
     And user "participant1" creates 2 automatic breakout rooms for "class room" with 200 (v1)
-    And user "participant1" is participant of the following rooms (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
