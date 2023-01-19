@@ -22,7 +22,7 @@
 <template>
 	<div class="participants-editor">
 		<NcActions v-if="hasSelected" :menu-title="t('spreed', 'Assign participants to room')">
-			<NcActionButton v-for="(item, index) in configuration" :key="index" @click="assignAttendees(index)">
+			<NcActionButton v-for="(item, index) in assignments" :key="index" @click="assignAttendees(index)">
 				<template #icon>
 					<!-- TODO: choose final icon -->
 					<GoogleCircles :size="20" />
@@ -40,32 +40,16 @@
 			:title="t('spreed', 'Unassigned participants')"
 			:allow-collapse="true"
 			:open="true">
-			<div v-for="participant in participants"
-				:key="participant.attendeeId"
-				tabindex="0"
-				class="participants-editor__participant">
-				<input id="participant.attendeeId"
-					v-model="selectedParticipants"
-					:value="participant.attendeeId"
-					type="checkbox"
-					name="participant.attendeeId">
-				<!-- Participant's avatar -->
-				<AvatarWrapper :id="participant.id"
-					:disable-tooltip="true"
-					:disable-menu="true"
-					:size="44"
-					:show-user-status="true"
-					:name="participant.displayName"
-					:source="participant.source || participant.actorType" />
-				<div>
-					{{ participant.displayName }}
-				</div>
-			</div>
 			<template #icon>
 				<GoogleCircles :size="20" />
 			</template>
+			<SelectableParticipant v-for="participant in unassignedParticipants"
+				:key="participant.attendeeId"
+				:value="participant.attendeeId"
+				:checked.sync="selectedParticipants"
+				:participant="participant" />
 		</NcAppNavigationItem>
-		<template v-for="(item, index) in configuration">
+		<template v-for="(item, index) in assignments">
 			<NcAppNavigationItem :key="index"
 				:title="roomName(index)"
 				:allow-collapse="true"
@@ -73,29 +57,34 @@
 				<template #icon>
 					<GoogleCircles :size="20" />
 				</template>
+				<SelectableParticipant v-for="participant in filteredParticipants(index)"
+					:key="participant.attendeeId"
+					:value="assignments"
+					:checked.sync="selectedParticipants"
+					:participant="participant" />
 			</NcAppNavigationItem>
 		</template>
 	</div>
 </template>
 
 <script>
-import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import SelectableParticipant from './SelectableParticipant.vue'
 
 export default {
 	name: 'BreakoutRoomsParticipantsEditor',
 
 	components: {
-		AvatarWrapper,
 		NcActions,
 		NcActionButton,
 		GoogleCircles,
 		Reload,
 		NcAppNavigationItem,
+		SelectableParticipant,
 	},
 
 	props: {
@@ -113,7 +102,7 @@ export default {
 	data() {
 		return {
 			selectedParticipants: [],
-			configuration: [],
+			assignments: [],
 		}
 	},
 
@@ -122,33 +111,50 @@ export default {
 			return this.$store.getters.participantsList(this.token)
 		},
 
+		unassignedParticipants() {
+			if (this.assignments.length === 0) {
+				return []
+			}
+			// Flatten assignments array
+			const assignedParticipants = this.assignments.flat()
+			return this.participants.filter(participant => {
+				return !assignedParticipants.includes(participant.attendeeId)
+			})
+		},
+
 		hasSelected() {
 			return this.selectedParticipants.length !== 0
 		},
+
 	},
 
 	created() {
-		this.initialiseConfiguration()
+		this.initialiseAssignments()
 	},
 
 	methods: {
-		initialiseConfiguration() {
+		initialiseAssignments() {
 			let count = 0
 			while (count < this.roomNumber) {
-				this.configuration.push([])
+				this.assignments.push([])
 				count++
 			}
 		},
 
 		assignAttendees(roomIndex) {
-			debugger
-			this.configuration[roomIndex].push(...this.selectedParticipants)
+			this.assignments[roomIndex].push(...this.selectedParticipants)
 			this.selectedParticipants = []
 		},
 
 		roomName(index) {
 			const roomNumber = index + 1
 			return t('spreed', 'Room {roomNumber}', { roomNumber })
+		},
+
+		filteredParticipants(index) {
+			return this.participants.filter(participant => {
+				return this.assignments[index].includes(participant.attendeeId)
+			})
 		},
 	},
 }
