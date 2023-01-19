@@ -382,10 +382,10 @@ export default {
 	height: 44px;
 	width: 44px;
 	padding: 0;
-	margin: 0 0 0 4px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	margin: 0 var(--default-grid-baseline);
 }
 
 .new-group-conversation {
