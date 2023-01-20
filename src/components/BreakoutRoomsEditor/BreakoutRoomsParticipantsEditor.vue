@@ -57,11 +57,14 @@
 				<template #icon>
 					<GoogleCircles :size="20" />
 				</template>
-				<SelectableParticipant v-for="participant in filteredParticipants(index)"
-					:key="participant.attendeeId"
+				<!-- Template should be simple, declarative, without calling methods when possible -->
+				<!-- A method is call each time on each re-render for each loop iteration -->
+				<!-- Not cool for perf as well -->
+				<SelectableParticipant v-for="attendeeId in item"
+					:key="attendeeId"
 					:value="assignments"
 					:checked.sync="selectedParticipants"
-					:participant="participant" />
+					:participant="attendeesById[attendeeId]" />
 			</NcAppNavigationItem>
 		</template>
 	</div>
@@ -111,6 +114,13 @@ export default {
 			return this.$store.getters.participantsList(this.token)
 		},
 
+		// Should be a getter in Vuex?
+		attendeesById() {
+			// Just get all attendees for this conversation without mapping to an array
+			// Like participants, but object, not array
+			return this.$store.state.participants.attendees[this.token]
+		},
+
 		unassignedParticipants() {
 			if (this.assignments.length === 0) {
 				return []
@@ -134,11 +144,15 @@ export default {
 
 	methods: {
 		initialiseAssignments() {
-			let count = 0
-			while (count < this.roomNumber) {
-				this.assignments.push([])
-				count++
-			}
+			// let count = 0
+			// while (count < this.roomNumber) {
+			// 	this.assignments.push([])
+			// 	count++
+			// }
+
+			// Just more clean for me
+			// If it looks complex - then I'd prefer "for" instead of "while". It's fixed
+			this.assignments = Array.from(Array(this.roomNumber), () => [])
 		},
 
 		assignAttendees(roomIndex) {
@@ -151,11 +165,14 @@ export default {
 			return t('spreed', 'Room {roomNumber}', { roomNumber })
 		},
 
-		filteredParticipants(index) {
-			return this.participants.filter(participant => {
-				return this.assignments[index].includes(participant.attendeeId)
-			})
-		},
+		// This is not fast. Loop over all the participants, for each participant loop again in assignments.
+		// And it is called each time in v-for on each re-render.
+		// Also - this is not a vue-way
+		// filteredParticipants(index) {
+		// 	return this.participants.filter(participant => {
+		// 		return this.assignments[index].includes(participant.attendeeId)
+		// 	})
+		// },
 	},
 }
 </script>
