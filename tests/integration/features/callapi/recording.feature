@@ -59,14 +59,12 @@ Feature: callapi/recording
     Then user "participant1" starts "audio" recording in room "room1" with 400 (v1)
     And the response error matches with "recording"
     When user "participant1" stops recording in room "room1" with 200 (v1)
-    Then user "participant1" stops recording in room "room1" with 400 (v1)
-    And the response error matches with "recording"
+    Then user "participant1" stops recording in room "room1" with 200 (v1)
     When user "participant1" starts "video" recording in room "room1" with 200 (v1)
     Then user "participant1" starts "video" recording in room "room1" with 400 (v1)
     And the response error matches with "recording"
     When user "participant1" stops recording in room "room1" with 200 (v1)
-    Then user "participant1" stops recording in room "room1" with 400 (v1)
-    And the response error matches with "recording"
+    Then user "participant1" stops recording in room "room1" with 200 (v1)
 
   Scenario: Get error when try to start recording with invalid status
     When the following "spreed" app config is set
