@@ -203,6 +203,8 @@ class CapabilitiesTest extends TestCase {
 					],
 					'conversations' => [
 						'can-create' => false,
+						'can-create-group' => false,
+						'can-create-public' => false,
 					],
 					'previews' => [
 						'max-gif-size' => 200000,
@@ -218,21 +220,24 @@ class CapabilitiesTest extends TestCase {
 
 	public function dataGetCapabilitiesUserAllowed(): array {
 		return [
-			[true, false, 'none', true, Participant::PRIVACY_PRIVATE],
-			[false, true, '1 MB', true, Participant::PRIVACY_PUBLIC],
-			[false, true, '0 B', false, Participant::PRIVACY_PUBLIC],
+			[true, false, false, false, 'none', true, Participant::PRIVACY_PRIVATE],
+			[false, true, true, true, '1 MB', true, Participant::PRIVACY_PUBLIC],
+			[false, true, true, true, '0 B', false, Participant::PRIVACY_PUBLIC],
 		];
 	}
 
 	/**
 	 * @dataProvider dataGetCapabilitiesUserAllowed
-	 * @param bool $isNotAllowed
-	 * @param bool $canCreate
-	 * @param string $quota
-	 * @param bool $canUpload
-	 * @param int $readPrivacy
 	 */
-	public function testGetCapabilitiesUserAllowed(bool $isNotAllowed, bool $canCreate, string $quota, bool $canUpload, int $readPrivacy): void {
+	public function testGetCapabilitiesUserAllowed(
+		bool $isNotAllowed,
+		bool $canCreate,
+		bool $canCreateGroup,
+		bool $canCreatePublic,
+		string $quota,
+		bool $canUpload,
+		int $readPrivacy
+	): void {
 		$capabilities = new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
@@ -267,6 +272,16 @@ class CapabilitiesTest extends TestCase {
 
 		$this->talkConfig->expects($this->once())
 			->method('isNotAllowedToCreateConversations')
+			->with($user)
+			->willReturn($isNotAllowed);
+
+		$this->talkConfig->expects($this->once())
+			->method('isNotAllowedToCreateGroupConversations')
+			->with($user)
+			->willReturn($isNotAllowed);
+
+		$this->talkConfig->expects($this->once())
+			->method('isNotAllowedToCreatePublicConversations')
 			->with($user)
 			->willReturn($isNotAllowed);
 
@@ -324,6 +339,8 @@ class CapabilitiesTest extends TestCase {
 					],
 					'conversations' => [
 						'can-create' => $canCreate,
+						'can-create-group' => $canCreateGroup,
+						'can-create-public' => $canCreatePublic,
 					],
 					'previews' => [
 						'max-gif-size' => 200000,

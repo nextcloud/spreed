@@ -112,6 +112,10 @@ class AdminSettings implements ISettings {
 
 		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedConversationsGroupIds(), 'start_conversations');
 		$this->initialState->provideInitialState('start_conversations', $groups);
+		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedConversationsGroupIds(), 'start_group_conversations');
+		$this->initialState->provideInitialState('start_group_conversations', $groups);
+		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedConversationsGroupIds(), 'start_public_conversations');
+		$this->initialState->provideInitialState('start_public_conversations', $groups);
 
 		$groups = $this->getGroupDetailsArray($this->talkConfig->getAllowedTalkGroupIds(), 'allowed_groups');
 		$this->initialState->provideInitialState('allowed_groups', $groups);

@@ -136,7 +136,11 @@ class Capabilities implements IPublicCapability {
 					'translations' => $this->translationManager->getLanguages(),
 				],
 				'conversations' => [
-					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user)
+					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user),
+					'can-create-group' => $user instanceof IUser
+						&& !$this->talkConfig->isNotAllowedToCreateGroupConversations($user),
+					'can-create-public' => $user instanceof IUser
+						&& !$this->talkConfig->isNotAllowedToCreatePublicConversations($user),
 				],
 				'previews' => [
 					'max-gif-size' => (int)$this->serverConfig->getAppValue('spreed', 'max-gif-size', '3145728'),

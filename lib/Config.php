@@ -210,8 +210,46 @@ class Config {
 		return \is_array($groups) ? $groups : [];
 	}
 
+	/**
+	 * @return string[]
+	 */
+	public function getAllowedGroupConversationsGroupIds(): array {
+		$groups = $this->config->getAppValue('spreed', 'start_group_conversations', '[]');
+		$groups = json_decode($groups, true);
+		return \is_array($groups) ? $groups : [];
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getAllowedPublicConversationsGroupIds(): array {
+		$groups = $this->config->getAppValue('spreed', 'start_public_conversations', '[]');
+		$groups = json_decode($groups, true);
+		return \is_array($groups) ? $groups : [];
+	}
+
 	public function isNotAllowedToCreateConversations(IUser $user): bool {
 		$allowedGroups = $this->getAllowedConversationsGroupIds();
+		if (empty($allowedGroups)) {
+			return false;
+		}
+
+		$userGroups = $this->groupManager->getUserGroupIds($user);
+		return empty(array_intersect($allowedGroups, $userGroups));
+	}
+
+	public function isNotAllowedToCreateGroupConversations(IUser $user): bool {
+		$allowedGroups = $this->getAllowedGroupConversationsGroupIds();
+		if (empty($allowedGroups)) {
+			return false;
+		}
+
+		$userGroups = $this->groupManager->getUserGroupIds($user);
+		return empty(array_intersect($allowedGroups, $userGroups));
+	}
+
+	public function isNotAllowedToCreatePublicConversations(IUser $user): bool {
+		$allowedGroups = $this->getAllowedGroupConversationsGroupIds();
 		if (empty($allowedGroups)) {
 			return false;
 		}

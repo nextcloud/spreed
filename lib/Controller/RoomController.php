@@ -173,6 +173,8 @@ class RoomController extends AEnvironmentAwareController {
 				$this->config->getAppValue('spreed', 'allowed_groups') . '#' .
 				$this->config->getAppValue('spreed', 'start_calls') . '#' .
 				$this->config->getAppValue('spreed', 'start_conversations') . '#' .
+				$this->config->getAppValue('spreed', 'start_group_conversations', '') . '#' .
+				$this->config->getAppValue('spreed', 'start_public_conversations', '') . '#' .
 				$this->config->getAppValue('spreed', 'default_permissions') . '#' .
 				$this->config->getAppValue('spreed', 'breakout_rooms') . '#' .
 				$this->config->getAppValue('spreed', 'federation_enabled') . '#' .
