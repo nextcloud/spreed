@@ -198,7 +198,7 @@ class Application extends App implements IBootstrap {
 		/** @var IProviderManager $resourceManager */
 		$resourceManager = $server->get(IProviderManager::class);
 		$resourceManager->registerResourceProvider(ConversationProvider::class);
-		$server->getEventDispatcher()->addListener(LoadAdditionalScriptsEvent::class, function () {
+		$server->getEventDispatcher()->addListener(LoadAdditionalScriptsEvent::class, static function () {
 			Util::addScript(self::APP_ID, 'talk-collections');
 		});
 	}
@@ -212,7 +212,7 @@ class Application extends App implements IBootstrap {
 	}
 
 	protected function registerNavigationLink(IServerContainer $server): void {
-		$server->getNavigationManager()->add(function () use ($server) {
+		$server->getNavigationManager()->add(static function () use ($server) {
 			/** @var Config $config */
 			$config = $server->get(Config::class);
 			$user = $server->getUserSession()->getUser();
