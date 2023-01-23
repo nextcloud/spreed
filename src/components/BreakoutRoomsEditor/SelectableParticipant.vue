@@ -22,20 +22,6 @@
 <template>
 	<div tabindex="0"
 		class="participants-editor__participant">
-		<!--
-			Previously it was $emit('', event.target.value), where
-			event.target.value - is just a string from value attr
-			So "update" event changes Array value with String value
-
-			Native checkbox works only with boolean: checked / not checked.
-			Array for checkbox - is a feature of checkbox's v-model in Vue
-			Solution - use v-model.
-			Bad way: v-model="checked", but it is direct prop mutation.
-			Better solution: proxy v-model with computed with custom setter
-		-->
-		<!--  -->
-		<!--   -->
-		<!-- -->
 		<input id="participant.attendeeId"
 			v-model="modelProxy"
 			:value="participant.attendeeId"
@@ -80,18 +66,14 @@ export default {
 		},
 	},
 
-	// Best practice + migration to Vue 3
 	emits: ['update:checked'],
 
 	computed: {
 		modelProxy: {
 			get() {
-				// Value for v-model is just "checked"
-				// The same as v-model="checked"
 				return this.checked
 			},
 			set(value) {
-				// But instead of mutating checked in v-model="checked" we should emit event with the value was set
 				this.$emit('update:checked', value)
 			},
 		},
