@@ -47,6 +47,7 @@ import {
 	startCallRecording,
 	stopCallRecording,
 } from '../services/recordingService.js'
+import { showInfo, showSuccess } from '@nextcloud/dialogs'
 import { getCurrentUser } from '@nextcloud/auth'
 // eslint-disable-next-line import/extensions
 import {
@@ -549,6 +550,8 @@ const actions = {
 		} catch (e) {
 			console.error(e)
 		}
+
+		showSuccess(t('spreed', 'Call recording started.'))
 		context.commit('setCallRecording', { token, callRecording })
 	},
 
@@ -558,6 +561,8 @@ const actions = {
 		} catch (e) {
 			console.error(e)
 		}
+
+		showInfo(t('spreed', 'Call recording stopped. You will be notified once the recording is available.'))
 		context.commit('setCallRecording', { token, callRecording: CALL.RECORDING.OFF })
 	},
 }
