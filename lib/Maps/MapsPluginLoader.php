@@ -23,21 +23,31 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Maps;
 
+use OCA\Talk\Config;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IRequest;
+use OCP\IUser;
+use OCP\IUserSession;
 use OCP\Util;
 
 /**
  * @template-implements IEventListener<Event>
  */
 class MapsPluginLoader implements IEventListener {
-	/** @var IRequest */
-	private $request;
+	protected IRequest $request;
+	protected Config $talkConfig;
+	protected IUserSession $userSession;
 
-	public function __construct(IRequest $request) {
+	public function __construct(
+		IRequest $request,
+		Config $talkConfig,
+		IUserSession $userSession
+	) {
 		$this->request = $request;
+		$this->talkConfig = $talkConfig;
+		$this->userSession = $userSession;
 	}
 
 	public function handle(Event $event): void {
@@ -46,6 +56,11 @@ class MapsPluginLoader implements IEventListener {
 		}
 
 		if (!$event->isLoggedIn()) {
+			return;
+		}
+
+		$user = $this->userSession->getUser();
+		if ($user instanceof IUser && $this->talkConfig->isDisabledForUser($user)) {
 			return;
 		}
 
