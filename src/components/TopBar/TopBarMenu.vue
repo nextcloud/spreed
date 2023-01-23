@@ -66,7 +66,7 @@
 				</NcActionButton>
 			</template>
 			<!-- Call recording -->
-			<template v-if="canModerate">
+			<template v-if="canModerateRecording">
 				<NcActionButton v-if="!isRecording && isInCall"
 					:close-after-click="true"
 					@click="startRecording">
@@ -143,6 +143,7 @@ import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import { emit } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
+import { getCapabilities } from '@nextcloud/capabilities'
 
 import isInCall from '../../mixins/isInCall.js'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
@@ -328,6 +329,11 @@ export default {
 
 		canModerate() {
 			return this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
+		},
+
+		canModerateRecording() {
+			const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || false
+			return this.canModerate && recordingEnabled
 		},
 
 		isRecording() {
