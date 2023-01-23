@@ -160,10 +160,6 @@ class RecordingService {
 
 	public function notifyStoredRecording(Room $room, Participant $participant, File $file): void {
 		$attendee = $participant->getAttendee();
-		$notificationLevel = $attendee->getNotificationLevel();
-		if ($notificationLevel === Participant::NOTIFY_NEVER) {
-			return;
-		}
 
 		$notification = $this->notificationManager->createNotification();
 
