@@ -102,7 +102,7 @@ class RecordingController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @PublicPage
+	 * @NoAdminRequired
 	 * @RequireModeratorParticipant
 	 */
 	public function notificationDismiss(int $timestamp): DataResponse {
@@ -119,7 +119,7 @@ class RecordingController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @PublicPage
+	 * @NoAdminRequired
 	 * @RequireModeratorParticipant
 	 */
 	public function shareToChat(int $fileId, int $timestamp): DataResponse {
