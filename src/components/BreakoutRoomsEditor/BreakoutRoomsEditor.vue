@@ -23,6 +23,7 @@
 	<NcModal v-bind="$attrs"
 		v-on="$listeners">
 		<div class="breakout-rooms-editor">
+			<h2>{{ modalTitle }}</h2>
 			<template v-if="!isEditingParticipants">
 				<h2>{{ t('spreed', 'Create rooms') }}</h2>
 				<NcInputField :label="t('spreed', 'Number of breakout rooms')" type="number" :value.sync="amount" />
@@ -89,6 +90,14 @@ export default {
 			attendeeMap: '',
 			isEditingParticipants: true,
 		}
+	},
+
+	computed: {
+		modalTitle() {
+			return this.isEditingParticipants
+				? t('spreed', 'Assign participants to rooms')
+				: t('spreed', 'Configure breakout rooms')
+		},
 	},
 
 	methods: {
