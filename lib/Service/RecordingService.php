@@ -34,7 +34,6 @@ use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\Comments\MessageTooLongException;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IMimeTypeDetector;
@@ -177,7 +176,7 @@ class RecordingService {
 	public function notificationDismiss(Room $room, Participant $participant, int $timestamp): void {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp('spreed')
-			->setObject('chat', (string) $room->getToken())
+			->setObject('chat', $room->getToken())
 			->setSubject('record_file_stored')
 			->setDateTime($this->timeFactory->getDateTime('@' . $timestamp))
 			->setUser($participant->getAttendee()->getActorId());
@@ -185,8 +184,8 @@ class RecordingService {
 	}
 
 	private function getTypeOfShare(string $mimetype): string {
-		if (strpos($mimetype, 'video') !== false) {
-			return'record-video';
+		if (str_starts_with($mimetype, 'video/')) {
+			return 'record-video';
 		}
 		return 'record-audio';
 	}
@@ -236,10 +235,8 @@ class RecordingService {
 				$creationDateTime,
 				true
 			);
-		} catch (MessageTooLongException $e) {
-			throw new InvalidArgumentException('file-long-data');
 		} catch (\Exception $e) {
-			throw new InvalidArgumentException('send-system-message');
+			throw new InvalidArgumentException('system');
 		}
 		$this->notificationDismiss($room, $participant, $timestamp);
 	}

@@ -106,7 +106,6 @@
     - Status code:
         + `200 OK`
         + `400 Bad Request` Error: `file`: Shared file is invalid
-        + `400 Bad Request` Error: `file-long-data`: Shared file have a too big name that can't stay in a message
-        + `400 Bad Request` Error: `send-system-message`: Failed to send the shared file as system message
+        + `400 Bad Request` Error: `system`: Internal system error
         + `403 Forbidden` When the user is not a moderator/owne
         + `404 Not Found` Room not found
