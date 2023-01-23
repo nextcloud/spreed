@@ -21,52 +21,63 @@
 
 <template>
 	<div class="participants-editor">
-		<NcActions v-if="hasSelected" :menu-title="t('spreed', 'Assign participants to room')">
-			<NcActionButton v-for="(item, index) in assignments" :key="index" @click="assignAttendees(index)">
-				<template #icon>
-					<!-- TODO: choose final icon -->
-					<GoogleCircles :size="20" />
-				</template>
-				{{ roomName(index) }}
-			</NcActionButton>
-			<NcActionButton>
-				<template #icon>
-					<Reload :size="20" />
-				</template>
-				{{ t('spreed', 'Reset all assignments') }}
-			</NcActionButton>
-		</NcActions>
-		<NcAppNavigationItem key="unassigned"
-			:title="t('spreed', 'Unassigned participants')"
-			:allow-collapse="true"
-			:open="true">
-			<template #icon>
-				<GoogleCircles :size="20" />
-			</template>
-			<SelectableParticipant v-for="participant in unassignedParticipants"
-				:key="participant.attendeeId"
-				:value="participant.attendeeId"
-				:checked.sync="selectedParticipants"
-				:participant="participant" />
-		</NcAppNavigationItem>
-		<template v-for="(item, index) in assignments">
-			<NcAppNavigationItem :key="index"
-				:title="roomName(index)"
+		<div class="participants-editor__scroller">
+			<NcAppNavigationItem v-if="hasUnassigned"
+				key="unassigned"
+				class="participants-editor__section"
+				:title="t('spreed', 'Unassigned participants')"
 				:allow-collapse="true"
 				:open="true">
 				<template #icon>
 					<GoogleCircles :size="20" />
 				</template>
-				<!-- Template should be simple, declarative, without calling methods when possible -->
-				<!-- A method is call each time on each re-render for each loop iteration -->
-				<!-- Not cool for perf as well -->
-				<SelectableParticipant v-for="attendeeId in item"
-					:key="attendeeId"
-					:value="assignments"
+				<SelectableParticipant v-for="participant in unassignedParticipants"
+					:key="participant.attendeeId"
+					:value="participant.attendeeId"
 					:checked.sync="selectedParticipants"
-					:participant="attendeesById[attendeeId]" />
+					:participant="participant" />
 			</NcAppNavigationItem>
-		</template>
+			<template v-for="(item, index) in assignments">
+				<NcAppNavigationItem :key="index"
+					class="participants-editor__section"
+					:title="roomName(index)"
+					:allow-collapse="true"
+					:open="true">
+					<template #icon>
+						<GoogleCircles :size="20" />
+					</template>
+					<SelectableParticipant v-for="attendeeId in item"
+						:key="attendeeId"
+						:value="assignments"
+						:checked.sync="selectedParticipants"
+						:participant="attendeesById[attendeeId]" />
+				</NcAppNavigationItem>
+			</template>
+		</div>
+		<div class="participants-editor__buttons">
+			<NcButton v-if="hasAssigned" type="tertiary" @click="resetAssignments">
+				<template #icon>
+					<Reload :size="20" />
+				</template>
+				{{ t('spreed', 'Reset') }}
+			</NcButton>
+			<NcActions v-if="hasUnassigned"
+				:menu-title="t('spreed', 'Assign participants to room')">
+				<NcActionButton v-for="(item, index) in assignments"
+					:key="index"
+					:close-after-click="true"
+					@click="assignAttendees(index)">
+					<template #icon>
+						<!-- TODO: choose final icon -->
+						<GoogleCircles :size="20" />
+					</template>
+					{{ roomName(index) }}
+				</NcActionButton>
+			</NcActions>
+			<NcButton type="primary" @click="handleCreateRooms">
+				{{ t('spreed', 'Create rooms') }}
+			</NcButton>
+		</div>
 	</div>
 </template>
 
@@ -77,6 +88,7 @@ import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
 import SelectableParticipant from './SelectableParticipant.vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'BreakoutRoomsParticipantsEditor',
@@ -88,6 +100,7 @@ export default {
 		Reload,
 		NcAppNavigationItem,
 		SelectableParticipant,
+		NcButton,
 	},
 
 	props: {
@@ -118,7 +131,7 @@ export default {
 		attendeesById() {
 			// Just get all attendees for this conversation without mapping to an array
 			// Like participants, but object, not array
-			return this.$store.state.participants.attendees[this.token]
+			return this.$store.state.participantsStore.attendees[this.token]
 		},
 
 		unassignedParticipants() {
@@ -133,9 +146,12 @@ export default {
 		},
 
 		hasSelected() {
-			return this.selectedParticipants.length !== 0
+			return this.selectedParticipants.length > 0
 		},
 
+		hasAssigned() {
+			return this.assignments.flat().length > 0
+		},
 	},
 
 	created() {
@@ -144,14 +160,6 @@ export default {
 
 	methods: {
 		initialiseAssignments() {
-			// let count = 0
-			// while (count < this.roomNumber) {
-			// 	this.assignments.push([])
-			// 	count++
-			// }
-
-			// Just more clean for me
-			// If it looks complex - then I'd prefer "for" instead of "while". It's fixed
 			this.assignments = Array.from(Array(this.roomNumber), () => [])
 		},
 
@@ -180,13 +188,38 @@ export default {
 <style lang="scss" scoped>
 .participants-editor {
 	display: flex;
+	width: 100%;
 	flex-direction: column;
 	gap: var(--default-grid-baseline);
+	height: 100%;
+
+	&__section {
+		margin: calc(var(--default-grid-baseline) * 2) 0 var(--default-grid-baseline) 0;
+
+	}
+
 	&__participant {
 		display: flex;
 		align-items: center;
 		gap: var(--default-grid-baseline);
 		margin-left: 14px;
 	}
+
+	&__scroller {
+		height: 100%;
+		overflow: auto;
+	}
+
+	&__buttons {
+		display: flex;
+		justify-content: flex-end;
+		gap: calc(var(--default-grid-baseline) * 2);
+	}
+}
+
+// TODO: upsteream collapse icon position fix
+::v-deep .icon-collapse {
+	position: absolute !important;
+	left: 0;
 }
 </style>

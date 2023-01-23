@@ -25,7 +25,6 @@
 		<div class="breakout-rooms-editor">
 			<h2>{{ modalTitle }}</h2>
 			<template v-if="!isEditingParticipants">
-				<h2>{{ t('spreed', 'Create rooms') }}</h2>
 				<NcInputField :label="t('spreed', 'Number of breakout rooms')" type="number" :value.sync="amount" />
 				<NcCheckboxRadioSwitch :checked.sync="mode"
 					value="1"
@@ -45,15 +44,15 @@
 					type="radio">
 					{{ t('spreed', 'Allow participants to choose') }}
 				</NcCheckboxRadioSwitch>
+				<div class="breakout-rooms-editor__buttons">
+					<NcButton type="primary" @click="handleCreateRooms">
+						{{ t('spreed', 'Create rooms') }}
+					</NcButton>
+				</div>
 			</template>
 			<template v-else>
 				<BreakoutRoomsParticipantsEditor :token="token" />
 			</template>
-			<div class="breakout-rooms-editor__buttons">
-				<NcButton @click="handleCreateRooms">
-					{{ t('spreed', 'Create rooms') }}
-				</NcButton>
-			</div>
 		</div>
 	</ncmodal>
 </template>
@@ -120,5 +119,11 @@ export default {
 	padding: 20px;
 	justify-content: flex-start;
 	align-items: flex-start;
+	height: calc(100% - 80px);
+}
+
+::v-deep .modal-container {
+	overflow: hidden !important;
+	height: 100%;
 }
 </style>

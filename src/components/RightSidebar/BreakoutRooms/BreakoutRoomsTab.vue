@@ -236,9 +236,9 @@ export default {
 	font-weight: bold !important;
 }
 
-// TODO: upsteream collapse icon position fix
+// TODO: upstream collapse icon position fix
 ::v-deep .icon-collapse {
-	position: absolute !important;
-	left: 0;
+position: absolute !important;
+left: 0;
 }
 </style>
