@@ -97,7 +97,9 @@ class TemplateLoader implements IEventListener {
 
 		Util::addStyle(Application::APP_ID, 'At');
 		Util::addStyle(Application::APP_ID, 'icons');
-		Util::addScript(Application::APP_ID, 'talk-files-sidebar');
+		if (strpos(\OC::$server->getRequest()->getPathInfo(), '/apps/maps') !== 0) {
+			Util::addScript(Application::APP_ID, 'talk-files-sidebar');
+		}
 
 		if ($user instanceof IUser) {
 			$this->publishInitialStateForUser($user, $this->rootFolder, $this->appManager);
