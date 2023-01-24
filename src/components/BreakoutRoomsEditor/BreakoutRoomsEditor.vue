@@ -92,7 +92,7 @@ export default {
 	data() {
 		return {
 			mode: '1',
-			amount: 1,
+			amount: 2,
 			attendeeMap: '',
 			isEditingParticipants: false,
 		}
