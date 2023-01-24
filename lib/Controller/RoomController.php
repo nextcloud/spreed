@@ -1458,7 +1458,7 @@ class RoomController extends AEnvironmentAwareController {
 			} catch (ParticipantNotFoundException $e) {
 			}
 
-			if ($previousSession instanceof Session && $previousSession->getSessionId() !== '0') {
+			if ($previousSession instanceof Session && $previousSession->getSessionId() === $sessionId) {
 				if ($force === false && $previousSession->getInCall() !== Participant::FLAG_DISCONNECTED) {
 					// Previous session is/was active in the call, show a warning
 					return new DataResponse([
