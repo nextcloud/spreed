@@ -97,28 +97,30 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
+import { generateUrl } from '@nextcloud/router'
+import { emit } from '@nextcloud/event-bus'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
+
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import ExitToApp from 'vue-material-design-icons/ExitToApp.vue'
 import EyeOutline from 'vue-material-design-icons/EyeOutline.vue'
 import Star from 'vue-material-design-icons/Star.vue'
+
 import ConversationIcon from './../../ConversationIcon.vue'
-import { generateUrl } from '@nextcloud/router'
-import { emit } from '@nextcloud/event-bus'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
-import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
 export default {
 	name: 'Conversation',
 	components: {
-		NcActionButton,
-		NcListItem,
-		ConversationIcon,
 		Cog,
+		ConversationIcon,
 		Delete,
 		ExitToApp,
 		EyeOutline,
+		NcActionButton,
+		NcListItem,
 		Star,
 	},
 	props: {
