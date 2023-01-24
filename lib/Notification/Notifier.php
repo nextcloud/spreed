@@ -41,6 +41,7 @@ use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
+use OCP\Files\IRootFolder;
 use OCP\HintException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -69,6 +70,8 @@ class Notifier implements INotifier {
 	protected INotificationManager $notificationManager;
 	protected ICommentsManager $commentManager;
 	protected MessageParser $messageParser;
+	protected IURLGenerator $urlGenerator;
+	protected IRootFolder $rootFolder;
 	protected ITimeFactory $timeFactory;
 	protected Definitions $definitions;
 	protected AddressHandler $addressHandler;
@@ -89,6 +92,8 @@ class Notifier implements INotifier {
 								INotificationManager $notificationManager,
 								CommentsManager $commentManager,
 								MessageParser $messageParser,
+								IURLGenerator $urlGenerator,
+								IRootFolder $rootFolder,
 								ITimeFactory $timeFactory,
 								Definitions $definitions,
 								AddressHandler $addressHandler) {
@@ -103,6 +108,8 @@ class Notifier implements INotifier {
 		$this->notificationManager = $notificationManager;
 		$this->commentManager = $commentManager;
 		$this->messageParser = $messageParser;
+		$this->urlGenerator = $urlGenerator;
+		$this->rootFolder = $rootFolder;
 		$this->timeFactory = $timeFactory;
 		$this->definitions = $definitions;
 		$this->addressHandler = $addressHandler;
@@ -248,6 +255,9 @@ class Notifier implements INotifier {
 			->setLink($this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]));
 
 		$subject = $notification->getSubject();
+		if ($subject === 'record_file_stored') {
+			return $this->parseStoredRecording($notification, $room, $participant, $l);
+		}
 		if ($subject === 'invitation') {
 			return $this->parseInvitation($notification, $room, $l);
 		}
@@ -285,6 +295,66 @@ class Notifier implements INotifier {
 			$temp = mb_substr($temp, 0, -5);
 		}
 		return $temp;
+	}
+
+	private function parseStoredRecording(
+		INotification $notification,
+		Room $room,
+		Participant $participant,
+		IL10N $l
+	): INotification {
+		$parameters = $notification->getSubjectParameters();
+		try {
+			$userFolder = $this->rootFolder->getUserFolder($notification->getUser());
+			/** @var \OCP\Files\File[] */
+			$files = $userFolder->getById($parameters['objectId']);
+			$file = array_shift($files);
+		} catch (\Throwable $th) {
+			throw new AlreadyProcessedException();
+		}
+		$shareAction = $notification->createAction()
+			->setParsedLabel($l->t('Share to chat'))
+			->setPrimary(true)
+			->setLink(
+				$this->urlGenerator->linkToOCSRouteAbsolute(
+					'spreed.Recording.shareToChat',
+					[
+						'apiVersion' => 'v1',
+						'fileId' => $file->getId(),
+						'timestamp' => $notification->getDateTime()->getTimestamp(),
+						'token' => $room->getToken()
+					]
+				),
+				IAction::TYPE_POST
+			);
+		$dismissAction = $notification->createAction()
+			->setParsedLabel($l->t('Dismiss notification'))
+			->setLink(
+				$this->urlGenerator->linkToOCSRouteAbsolute(
+					'spreed.Recording.notificationDismiss',
+					[
+						'apiVersion' => 'v1',
+						'token' => $room->getToken(),
+						'timestamp' => $notification->getDateTime()->getTimestamp(),
+					]
+				),
+				IAction::TYPE_DELETE
+			);
+
+		$notification
+			->setRichSubject(
+				$l->t('Recording for the call in {call} was uploaded.'),
+				[
+					'call' => [
+						'type' => 'call',
+						'id' => $room->getId(),
+						'name' => $room->getDisplayName($participant->getAttendee()->getActorId()),
+						'call-type' => $this->getRoomType($room),
+					],
+				])
+			->addParsedAction($shareAction)
+			->addParsedAction($dismissAction);
+		return $notification;
 	}
 
 	/**

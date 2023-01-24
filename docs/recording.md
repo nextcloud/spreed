@@ -71,3 +71,40 @@
         + `401 Unauthorized` When the validation as SIP bridge failed
         + `404 Not Found` Room not found
         + `429 Too Many Request` Brute force protection
+
+## Dismiss store call recording notification
+
+* Required capability: `recording-v1`
+* Method: `DELETE`
+* Endpoint: `/recording/{token}/notification`
+* Data:
+
+| field       | type   | Description                                                           |
+| ----------- | ------ | --------------------------------------------------------------------- |
+| `timestamp` | string | Timestamp in seconds and UTC time zone that notification was created. |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `403 Forbidden` When the user is not a moderator/owner.
+        + `404 Not Found` Room not found
+
+## Share store call recording
+
+* Required capability: `recording-v1`
+* Method: `POST`
+* Endpoint: `/recording/{token}/share-chat`
+* Data:
+
+| field       | type    | Description                                                           |
+| ----------- | ------- | --------------------------------------------------------------------- |
+| `timestamp` | string  | Timestamp in seconds and UTC time zone that notification was created. |
+| `fileId`    | integer | File id of recording to share at the room.                            |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` Error: `file`: Shared file is invalid
+        + `400 Bad Request` Error: `system`: Internal system error
+        + `403 Forbidden` When the user is not a moderator/owne
+        + `404 Not Found` Room not found

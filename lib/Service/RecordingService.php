@@ -27,14 +27,23 @@ namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
 use OC\User\NoUserException;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Manager;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
+use OCP\Notification\IManager;
+use OCP\Share\IManager as ShareManager;
+use OCP\Share\IShare;
+use Psr\Log\LoggerInterface;
 
 class RecordingService {
 	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
@@ -44,11 +53,17 @@ class RecordingService {
 	];
 
 	public function __construct(
-		private IMimeTypeDetector $mimeTypeDetector,
-		private ParticipantService $participantService,
-		private IRootFolder $rootFolder,
-		private Config $config,
-		private RoomService $roomService
+		protected IMimeTypeDetector $mimeTypeDetector,
+		protected ParticipantService $participantService,
+		protected IRootFolder $rootFolder,
+		protected IManager $notificationManager,
+		protected Manager $roomManager,
+		protected ITimeFactory $timeFactory,
+		protected Config $config,
+		protected RoomService $roomService,
+		protected ShareManager $shareManager,
+		protected ChatManager $chatManager,
+		protected LoggerInterface $logger,
 	) {
 	}
 
@@ -80,14 +95,15 @@ class RecordingService {
 		$this->validateFileFormat($fileName, $content);
 
 		try {
-			$this->participantService->getParticipant($room, $owner);
+			$participant = $this->participantService->getParticipant($room, $owner);
 		} catch (ParticipantNotFoundException $e) {
 			throw new InvalidArgumentException('owner_participant');
 		}
 
 		try {
 			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
-			$recordingFolder->newFile($fileName, $content);
+			$file = $recordingFolder->newFile($fileName, $content);
+			$this->notifyStoredRecording($room, $participant, $file);
 		} catch (NoUserException $e) {
 			throw new InvalidArgumentException('owner_invalid');
 		} catch (NotPermittedException $e) {
@@ -141,5 +157,90 @@ class RecordingService {
 			$recordingFolder = $recordingRootFolder->newFolder($token);
 		}
 		return $recordingFolder;
+	}
+
+	public function notifyStoredRecording(Room $room, Participant $participant, File $file): void {
+		$attendee = $participant->getAttendee();
+
+		$notification = $this->notificationManager->createNotification();
+
+		$notification
+			->setApp('spreed')
+			->setDateTime($this->timeFactory->getDateTime())
+			->setObject('chat', $room->getToken())
+			->setUser($attendee->getActorId())
+			->setSubject('record_file_stored', [
+				'objectId' => $file->getId(),
+			]);
+		$this->notificationManager->notify($notification);
+	}
+
+	public function notificationDismiss(Room $room, Participant $participant, int $timestamp): void {
+		$notification = $this->notificationManager->createNotification();
+		$notification->setApp('spreed')
+			->setObject('chat', $room->getToken())
+			->setSubject('record_file_stored')
+			->setDateTime($this->timeFactory->getDateTime('@' . $timestamp))
+			->setUser($participant->getAttendee()->getActorId());
+		$this->notificationManager->markProcessed($notification);
+	}
+
+	private function getTypeOfShare(string $mimetype): string {
+		if (str_starts_with($mimetype, 'video/')) {
+			return 'record-video';
+		}
+		return 'record-audio';
+	}
+
+	public function shareToChat(Room $room, Participant $participant, int $fileId, int $timestamp): void {
+		try {
+			$userFolder = $this->rootFolder->getUserFolder(
+				$participant->getAttendee()->getActorId()
+			);
+			/** @var \OCP\Files\File[] */
+			$files = $userFolder->getById($fileId);
+			$file = array_shift($files);
+		} catch (\Throwable $th) {
+			throw new InvalidArgumentException('file');
+		}
+
+		$creationDateTime = $this->timeFactory->getDateTime();
+
+		$share = $this->shareManager->newShare();
+		$share->setNodeId($fileId)
+			->setShareTime($creationDateTime)
+			->setSharedBy($participant->getAttendee()->getActorId())
+			->setNode($file)
+			->setShareType(IShare::TYPE_ROOM)
+			->setSharedWith($room->getToken())
+			->setPermissions(\OCP\Constants::PERMISSION_READ);
+
+		$share = $this->shareManager->createShare($share);
+
+		$message = json_encode([
+			'message' => 'file_shared',
+			'parameters' => [
+				'share' => $share->getId(),
+				'metaData' => [
+					'mimeType' => $file->getMimeType(),
+					'messageType' => $this->getTypeOfShare($file->getMimeType()),
+				],
+			],
+		]);
+
+		try {
+			$this->chatManager->addSystemMessage(
+				$room,
+				$participant->getAttendee()->getActorType(),
+				$participant->getAttendee()->getActorId(),
+				$message,
+				$creationDateTime,
+				true
+			);
+		} catch (\Exception $e) {
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
+			throw new InvalidArgumentException('system');
+		}
+		$this->notificationDismiss($room, $participant, $timestamp);
 	}
 }

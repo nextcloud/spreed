@@ -35,13 +35,19 @@ function is_uploaded_file($filename) {
 
 namespace OCA\Talk\Tests\php\Service;
 
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
+use OCA\Talk\Manager;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
+use OCP\Notification\IManager;
+use OCP\Share\IManager as ShareManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class RecordingServiceTest extends TestCase {
@@ -53,8 +59,20 @@ class RecordingServiceTest extends TestCase {
 	private $rootFolder;
 	/** @var Config|MockObject */
 	private $config;
+	/** @var IManager|MockObject */
+	private $notificationManager;
+	/** @var Manager|MockObject */
+	private $roomManager;
+	/** @var ITimeFactory|MockObject */
+	private $timeFactory;
 	/** @var RoomService|MockObject */
 	private $roomService;
+	/** @var ShareManager|MockObject */
+	private $shareManager;
+	/** @var ChatManager|MockObject */
+	private $chatManager;
+	/** @var LoggerInterface|MockObject */
+	private $logger;
 	/** @var RecordingService */
 	protected $recordingService;
 
@@ -64,15 +82,27 @@ class RecordingServiceTest extends TestCase {
 		$this->mimeTypeDetector = \OC::$server->get(IMimeTypeDetector::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->rootFolder = $this->createMock(IRootFolder::class);
+		$this->notificationManager = $this->createMock(IManager::class);
+		$this->roomManager = $this->createMock(Manager::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->config = $this->createMock(Config::class);
 		$this->roomService = $this->createMock(RoomService::class);
+		$this->shareManager = $this->createMock(ShareManager::class);
+		$this->chatManager = $this->createMock(ChatManager::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 
 		$this->recordingService = new RecordingService(
 			$this->mimeTypeDetector,
 			$this->participantService,
 			$this->rootFolder,
+			$this->notificationManager,
+			$this->roomManager,
+			$this->timeFactory,
 			$this->config,
-			$this->roomService
+			$this->roomService,
+			$this->shareManager,
+			$this->chatManager,
+			$this->logger,
 		);
 	}
 

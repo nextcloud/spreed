@@ -382,6 +382,10 @@ class Listener implements IEventListener {
 		$listener = Server::get(self::class);
 		$manager = Server::get(Manager::class);
 
+		$request = Server::get(IRequest::class);
+		if ($request->getParam('_route') === 'ocs.spreed.Recording.shareToChat') {
+			return;
+		}
 		$room = $manager->getRoomByToken($share->getSharedWith());
 		$metaData = Server::get(IRequest::class)->getParam('talkMetaData') ?? '';
 		$metaData = json_decode($metaData, true);
