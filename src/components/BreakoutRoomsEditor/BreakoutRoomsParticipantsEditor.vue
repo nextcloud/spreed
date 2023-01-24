@@ -97,6 +97,7 @@ import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationI
 import SelectableParticipant from './SelectableParticipant.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import { PARTICIPANT } from '../../constants.js'
 
 export default {
 	name: 'BreakoutRoomsParticipantsEditor',
@@ -133,12 +134,13 @@ export default {
 
 	computed: {
 		participants() {
-			return this.$store.getters.participantsList(this.token)
+			return this.$store.getters.participantsList(this.token).filter(participant => {
+				return participant.participantType === PARTICIPANT.TYPE.USER
+					|| participant.participantType === PARTICIPANT.TYPE.GUEST
+			})
 		},
 
 		attendeesById() {
-			// Just get all attendees for this conversation without mapping to an array
-			// Like participants, but object, not array
 			return this.$store.state.participantsStore.attendees[this.token]
 		},
 
