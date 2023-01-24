@@ -102,18 +102,6 @@ export default {
 	},
 
 	mixins: [devices],
-
-	data() {
-		return {
-			mounted: false,
-			currentVolume: -100,
-			volumeThreshold: -100,
-		}
-	},
-
-	mounted() {
-		this.mounted = true
-	},
 }
 </script>
 

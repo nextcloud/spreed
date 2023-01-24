@@ -71,7 +71,7 @@
 						:current-volume="model.attributes.currentVolume"
 						:volume-threshold="model.attributes.volumeThreshold"
 						primary-color="#ffffff"
-						overlay-color="#999999" />
+						overlay-muted-color="#888888" />
 				</template>
 			</NcButton>
 			<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['v']"

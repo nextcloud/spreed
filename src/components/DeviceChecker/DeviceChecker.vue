@@ -71,7 +71,7 @@
 							:audio-enabled="audioOn"
 							:current-volume="currentVolume"
 							:volume-threshold="volumeThreshold"
-							:overlay-color="'#999999'" />
+							overlay-muted-color="#888888" />
 					</template>
 				</NcButton>
 

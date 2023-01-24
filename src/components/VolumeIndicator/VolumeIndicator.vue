@@ -20,25 +20,23 @@
 -->
 
 <template>
-	<span class="volume-indicator"
+	<span class="volume-indicator-wrapper"
 		:style="{ height: size + 'px', width: size + 'px' }">
-		<span class="volume-indicator-primary"
+		<span class="volume-indicator volume-indicator-primary"
 			:style="{
-				height: size - 1 - currentVolumeIndicatorHeight + 'px',
+				height: size - 2 - currentVolumeIndicatorHeight + 'px',
 			}">
 			<Microphone v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
 			<MicrophoneOff v-else :size="size" :fill-color="primaryColor" />
 		</span>
 
 		<span v-show="audioPreviewAvailable"
-			class="volume-indicator-overlay"
+			class="volume-indicator volume-indicator-overlay"
 			:class="{ 'volume-indicator-overlay-mute': !audioEnabled }"
 			:style="{
 				height: currentVolumeIndicatorHeight + 'px',
 			}">
-			<Microphone v-if="audioEnabled"
-				:size="size"
-				:fill-color="overlayMutedColor" />
+			<Microphone v-if="audioEnabled" :size="size" :fill-color="overlayColor" />
 			<MicrophoneOff v-else :size="size" :fill-color="overlayMutedColor" />
 		</span>
 	</span>
@@ -91,6 +89,11 @@ export default {
 			type: String,
 			default: undefined,
 		},
+
+		overlayMutedColor: {
+			type: String,
+			default: undefined,
+		},
 	},
 
 	computed: {
@@ -102,44 +105,55 @@ export default {
 				return 0
 			}
 
-			return this.size * (1 - this.currentVolume / this.volumeThreshold)
+			return this.size * this.computeVolumeLevel(20)
 		},
+	},
 
-		overlayMutedColor() {
-			return !this.audioEnabled ? this.overlayColor : undefined
+	methods: {
+		/**
+		 * Compute volume proportion based on currentVolume [-100, 0]
+		 * and volumeThreshold. Returns number between [0, 1]
+		 *
+		 * @param {number} overload to visually increase volume level
+		 */
+		computeVolumeLevel(overload = 0) {
+			const computedLevel
+				= (this.volumeThreshold - this.currentVolume)
+				/ (this.volumeThreshold + overload)
+
+			if (computedLevel < 0) return 0
+			else if (computedLevel > 1) return 1
+			else return computedLevel
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-.volume-indicator {
+.volume-indicator-wrapper {
 	position: relative;
 }
 
-.volume-indicator-primary {
+.volume-indicator {
 	position: absolute;
-	top: 0;
 	left: 50%;
 	transform: translateX(-50%);
 
-	overflow: hidden;
-}
-
-.volume-indicator-overlay {
-	/* The button height is 44px; the volume indicator covers primary icon and has
-	* the same size, but its height value will be changed based on the current volume */
 	width: 100%;
 	height: 100%;
 
-	/* Position of container with overlay icon is centered to cover primary icon */
-	position: absolute;
-	bottom: 0;
-	left: 50%;
-	transform: translateX(-50%);
-	pointer-events: none;
-
 	overflow: hidden;
+
+	transition: height 0.2s linear;
+}
+
+.volume-indicator-primary {
+	top: 0;
+}
+
+.volume-indicator-overlay {
+	bottom: 0;
+	pointer-events: none;
 
 	& > span {
 		position: absolute;
