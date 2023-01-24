@@ -24,7 +24,7 @@
 		<div class="breakout-rooms__actions">
 			<template v-if="breakoutRoomsConfigured">
 				<NcButton v-if="breakoutRoomsStarted"
-					v-tooltip.auto="t('spreed', 'Start breakout rooms')"
+					:title="t('spreed', 'Start breakout rooms')"
 					type="secondary"
 					@click="startBreakoutRooms">
 					<template #icon>
@@ -32,7 +32,7 @@
 					</template>
 				</NcButton>
 				<NcButton v-else
-					v-tooltip.auto="t('spreed', 'Start breakout rooms')"
+					:title="t('spreed', 'Start breakout rooms')"
 					type="secondary"
 					@click="stopBreakoutRooms">
 					<template #icon>
@@ -56,7 +56,7 @@
 				</template>
 			</NcButton>
 			<NcButton v-if="breakoutRoomsConfigured"
-				v-tooltip.auto="t('spreed', 'Delete breakout rooms')"
+				title="t('spreed', 'Delete breakout rooms')"
 				type="tertiary-no-background"
 				@click="deleteBreakoutRooms">
 				<template #icon>
