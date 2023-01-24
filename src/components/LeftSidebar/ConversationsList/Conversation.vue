@@ -76,8 +76,10 @@
 			</NcActionButton>
 			<NcActionButton v-if="canLeaveConversation"
 				:close-after-click="true"
-				:icon="iconLeaveConversation"
 				@click.prevent.exact="leaveConversation">
+				<template #icon>
+					<ExitToApp :size="16" />
+				</template>
 				{{ t('spreed', 'Leave conversation') }}
 			</NcActionButton>
 			<NcActionButton v-if="canDeleteConversation"
@@ -98,6 +100,7 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import ExitToApp from 'vue-material-design-icons/ExitToApp.vue'
 import EyeOutline from 'vue-material-design-icons/EyeOutline.vue'
 import Star from 'vue-material-design-icons/Star.vue'
 import ConversationIcon from './../../ConversationIcon.vue'
@@ -114,6 +117,7 @@ export default {
 		ConversationIcon,
 		Cog,
 		Delete,
+		ExitToApp,
 		EyeOutline,
 		Star,
 	},
@@ -188,13 +192,6 @@ export default {
 
 		canLeaveConversation() {
 			return this.item.canLeaveConversation
-		},
-
-		iconLeaveConversation() {
-			if (this.canDeleteConversation) {
-				return 'icon-close'
-			}
-			return 'icon-delete'
 		},
 
 		conversationInformation() {
