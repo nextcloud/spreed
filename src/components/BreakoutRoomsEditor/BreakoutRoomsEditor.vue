@@ -27,7 +27,11 @@
 			<template v-if="!isEditingParticipants">
 				<div class="breakout-rooms-editor__main">
 					<label for="room-number">{{ t('spreed', 'Number of breakout rooms') }} </label>
-					<input id="room-number" v-model.number="amount" type="number">
+					<input id="room-number"
+						v-model.number="amount"
+						type="number"
+						min="1"
+						max="20">
 					<NcCheckboxRadioSwitch :checked.sync="mode"
 						value="1"
 						name="mode_radio"
