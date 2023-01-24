@@ -1436,7 +1436,8 @@ class RoomController extends AEnvironmentAwareController {
 	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
 		$sessionId = $this->session->getSessionForRoom($token);
 		try {
-			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
+			// The participant is just joining, so enforce to not load any session
+			$room = $this->manager->getRoomForUserByToken($token, $this->userId, null);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
