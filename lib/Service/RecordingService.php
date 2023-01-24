@@ -43,6 +43,7 @@ use OCP\Files\NotPermittedException;
 use OCP\Notification\IManager;
 use OCP\Share\IManager as ShareManager;
 use OCP\Share\IShare;
+use Psr\Log\LoggerInterface;
 
 class RecordingService {
 	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
@@ -61,7 +62,8 @@ class RecordingService {
 		protected Config $config,
 		protected RoomService $roomService,
 		protected ShareManager $shareManager,
-		protected ChatManager $chatManager
+		protected ChatManager $chatManager,
+		protected LoggerInterface $logger,
 	) {
 	}
 
@@ -236,6 +238,7 @@ class RecordingService {
 				true
 			);
 		} catch (\Exception $e) {
+			$this->logger->error($e->getMessage(), ['exception' => $e]);
 			throw new InvalidArgumentException('system');
 		}
 		$this->notificationDismiss($room, $participant, $timestamp);

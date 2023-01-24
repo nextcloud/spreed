@@ -47,6 +47,7 @@ use OCP\Files\IRootFolder;
 use OCP\Notification\IManager;
 use OCP\Share\IManager as ShareManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 use Test\TestCase;
 
 class RecordingServiceTest extends TestCase {
@@ -70,6 +71,8 @@ class RecordingServiceTest extends TestCase {
 	private $shareManager;
 	/** @var ChatManager|MockObject */
 	private $chatManager;
+	/** @var LoggerInterface|MockObject */
+	private $logger;
 	/** @var RecordingService */
 	protected $recordingService;
 
@@ -86,6 +89,7 @@ class RecordingServiceTest extends TestCase {
 		$this->roomService = $this->createMock(RoomService::class);
 		$this->shareManager = $this->createMock(ShareManager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 
 		$this->recordingService = new RecordingService(
 			$this->mimeTypeDetector,
@@ -97,7 +101,8 @@ class RecordingServiceTest extends TestCase {
 			$this->config,
 			$this->roomService,
 			$this->shareManager,
-			$this->chatManager
+			$this->chatManager,
+			$this->logger,
 		);
 	}
 
