@@ -1436,7 +1436,8 @@ class RoomController extends AEnvironmentAwareController {
 	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
 		$sessionId = $this->session->getSessionForRoom($token);
 		try {
-			$room = $this->manager->getRoomForUserByToken($token, $this->userId, $sessionId);
+			// The participant is just joining, so enforce to not load any session
+			$room = $this->manager->getRoomForUserByToken($token, $this->userId, null);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -1445,35 +1446,34 @@ class RoomController extends AEnvironmentAwareController {
 		$previousParticipant = null;
 		/** @var Session|null $previousSession */
 		$previousSession = null;
-		if ($this->userId !== null) {
+
+		if ($sessionId !== null) {
 			try {
-				$previousParticipant = $this->participantService->getParticipant($room, $this->userId, $sessionId);
+				if ($this->userId !== null) {
+					$previousParticipant = $this->participantService->getParticipant($room, $this->userId, $sessionId);
+				} else {
+					$previousParticipant = $this->participantService->getParticipantBySession($room, $sessionId);
+				}
 				$previousSession = $previousParticipant->getSession();
 			} catch (ParticipantNotFoundException $e) {
 			}
-		} else {
-			try {
-				$previousParticipant = $this->participantService->getParticipantBySession($room, $sessionId);
-				$previousSession = $previousParticipant->getSession();
-			} catch (ParticipantNotFoundException $e) {
-			}
-		}
 
-		if ($previousSession instanceof Session && $previousSession->getSessionId() !== '0') {
-			if ($force === false && $previousSession->getInCall() !== Participant::FLAG_DISCONNECTED) {
-				// Previous session is/was active in the call, show a warning
-				return new DataResponse([
-					'sessionId' => $previousSession->getSessionId(),
-					'inCall' => $previousSession->getInCall(),
-					'lastPing' => $previousSession->getLastPing(),
-				], Http::STATUS_CONFLICT);
-			}
+			if ($previousSession instanceof Session && $previousSession->getSessionId() === $sessionId) {
+				if ($force === false && $previousSession->getInCall() !== Participant::FLAG_DISCONNECTED) {
+					// Previous session is/was active in the call, show a warning
+					return new DataResponse([
+						'sessionId' => $previousSession->getSessionId(),
+						'inCall' => $previousSession->getInCall(),
+						'lastPing' => $previousSession->getLastPing(),
+					], Http::STATUS_CONFLICT);
+				}
 
-			if ($previousSession->getInCall() !== Participant::FLAG_DISCONNECTED) {
-				$this->participantService->changeInCall($room, $previousParticipant, Participant::FLAG_DISCONNECTED);
-			}
+				if ($previousSession->getInCall() !== Participant::FLAG_DISCONNECTED) {
+					$this->participantService->changeInCall($room, $previousParticipant, Participant::FLAG_DISCONNECTED);
+				}
 
-			$this->participantService->leaveRoomAsSession($room, $previousParticipant, true);
+				$this->participantService->leaveRoomAsSession($room, $previousParticipant, true);
+			}
 		}
 
 		$user = $this->userManager->get($this->userId);
