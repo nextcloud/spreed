@@ -55,14 +55,21 @@
 			</template>
 		</div>
 		<div class="participants-editor__buttons">
+			<NcButton type="tertiary" @click="goBack">
+				<template #icon>
+					<!-- TODO: choose final icon -->
+					<ArrowLeft :size="20" />
+				</template>
+				{{ t('spreed', 'Back') }}
+			</NcButton>
 			<NcButton v-if="hasAssigned" type="tertiary" @click="resetAssignments">
 				<template #icon>
 					<Reload :size="20" />
 				</template>
 				{{ t('spreed', 'Reset') }}
 			</NcButton>
-			<NcActions v-if="hasUnassigned"
-				:menu-title="t('spreed', 'Assign participants to room')">
+			<NcActions v-if="hasSelected"
+				:menu-title="t('spreed', 'Assign participants')">
 				<NcActionButton v-for="(item, index) in assignments"
 					:key="index"
 					:close-after-click="true"
@@ -89,6 +96,7 @@ import Reload from 'vue-material-design-icons/Reload.vue'
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
 import SelectableParticipant from './SelectableParticipant.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 
 export default {
 	name: 'BreakoutRoomsParticipantsEditor',
@@ -101,6 +109,7 @@ export default {
 		NcAppNavigationItem,
 		SelectableParticipant,
 		NcButton,
+		ArrowLeft,
 	},
 
 	props: {
@@ -111,7 +120,7 @@ export default {
 
 		roomNumber: {
 			type: Number,
-			default: 3,
+			required: true,
 		},
 	},
 
@@ -152,6 +161,11 @@ export default {
 		hasAssigned() {
 			return this.assignments.flat().length > 0
 		},
+
+		// True if there's one or more unassigned participants
+		hasUnassigned() {
+			return this.unassignedParticipants.length > 0
+		},
 	},
 
 	created() {
@@ -173,14 +187,19 @@ export default {
 			return t('spreed', 'Room {roomNumber}', { roomNumber })
 		},
 
-		// This is not fast. Loop over all the participants, for each participant loop again in assignments.
-		// And it is called each time in v-for on each re-render.
-		// Also - this is not a vue-way
-		// filteredParticipants(index) {
-		// 	return this.participants.filter(participant => {
-		// 		return this.assignments[index].includes(participant.attendeeId)
-		// 	})
-		// },
+		handleCreateRooms() {
+			this.$emit('create-rooms', this.assignments)
+		},
+
+		resetAssignments() {
+			this.selectedParticipants = []
+			this.assignments = []
+			this.initialiseAssignments()
+		},
+
+		goBack() {
+			this.$emit('back')
+		},
 	},
 }
 </script>

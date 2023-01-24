@@ -25,33 +25,42 @@
 		<div class="breakout-rooms-editor">
 			<h2>{{ modalTitle }}</h2>
 			<template v-if="!isEditingParticipants">
-				<NcInputField :label="t('spreed', 'Number of breakout rooms')" type="number" :value.sync="amount" />
-				<NcCheckboxRadioSwitch :checked.sync="mode"
-					value="1"
-					name="mode_radio"
-					type="radio">
-					{{ t('spreed', 'Automatically assign participants') }}
-				</NcCheckboxRadioSwitch>
-				<NcCheckboxRadioSwitch :checked.sync="mode"
-					value="2"
-					name="mode_radio"
-					type="radio">
-					{{ t('spreed', 'Manually assign participants') }}
-				</NcCheckboxRadioSwitch>
-				<NcCheckboxRadioSwitch :checked.sync="mode"
-					value="3"
-					name="mode_radio"
-					type="radio">
-					{{ t('spreed', 'Allow participants to choose') }}
-				</NcCheckboxRadioSwitch>
+				<div class="breakout-rooms-editor__main">
+					<label for="room-number">{{ t('spreed', 'Number of breakout rooms') }} </label>
+					<input id="room-number" v-model.number="amount" type="number">
+					<NcCheckboxRadioSwitch :checked.sync="mode"
+						value="1"
+						name="mode_radio"
+						type="radio">
+						{{ t('spreed', 'Automatically assign participants') }}
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch :checked.sync="mode"
+						value="2"
+						name="mode_radio"
+						type="radio">
+						{{ t('spreed', 'Manually assign participants') }}
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch :checked.sync="mode"
+						value="3"
+						name="mode_radio"
+						type="radio">
+						{{ t('spreed', 'Allow participants to choose') }}
+					</NcCheckboxRadioSwitch>
+				</div>
 				<div class="breakout-rooms-editor__buttons">
-					<NcButton type="primary" @click="handleCreateRooms">
+					<NcButton v-if="mode === '2'" type="primary" @click="isEditingParticipants = true">
+						{{ t('spreed', 'Assign participants to rooms') }}
+					</NcButton>
+					<NcButton v-else type="primary" @click="handleCreateRooms">
 						{{ t('spreed', 'Create rooms') }}
 					</NcButton>
 				</div>
 			</template>
 			<template v-else>
-				<BreakoutRoomsParticipantsEditor :token="token" />
+				<BreakoutRoomsParticipantsEditor :token="token"
+					:room-number="amount"
+					@back="isEditingParticipants = false"
+					@create-rooms="handleCreateRooms" />
 			</template>
 		</div>
 	</ncmodal>
@@ -59,7 +68,6 @@
 
 <script>
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-import NcInputField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import BreakoutRoomsParticipantsEditor from './BreakoutRoomsParticipantsEditor.vue'
@@ -69,7 +77,6 @@ export default {
 
 	components: {
 		NcModal,
-		NcInputField,
 		NcCheckboxRadioSwitch,
 		NcButton,
 		BreakoutRoomsParticipantsEditor,
@@ -84,10 +91,10 @@ export default {
 
 	data() {
 		return {
-			mode: 'auto',
+			mode: '1',
 			amount: 1,
 			attendeeMap: '',
-			isEditingParticipants: true,
+			isEditingParticipants: false,
 		}
 	},
 
@@ -100,7 +107,8 @@ export default {
 	},
 
 	methods: {
-		handleCreateRooms() {
+		handleCreateRooms(payload) {
+			console.debug(payload)
 			this.$store.dispatch('configureBreakoutRoomsAction', {
 				token: this.token,
 				mode: this.mode,
@@ -112,14 +120,24 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .breakout-rooms-editor {
 	display: flex;
 	flex-direction: column;
 	padding: 20px;
 	justify-content: flex-start;
 	align-items: flex-start;
-	height: calc(100% - 80px);
+	height: calc(100% - 40px);
+	&__main {
+		height: 100%;
+	 }
+
+	&__buttons {
+		display: flex;
+		justify-content: flex-end;
+		gap: calc(var(--default-grid-baseline) * 2);
+		width: 100%;
+	}
 }
 
 ::v-deep .modal-container {
