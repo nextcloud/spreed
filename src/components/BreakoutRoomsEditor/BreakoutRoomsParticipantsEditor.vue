@@ -136,7 +136,6 @@ export default {
 			return this.$store.getters.participantsList(this.token)
 		},
 
-		// Should be a getter in Vuex?
 		attendeesById() {
 			// Just get all attendees for this conversation without mapping to an array
 			// Like participants, but object, not array
