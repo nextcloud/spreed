@@ -74,7 +74,7 @@ export default {
 
 	computed: {
 		hintText() {
-			return t('spreed', 'Breakout rooms are blah blah blah blah blah blah blah blah blah blah blah blah blah blah')
+			return t('spreed', 'Breakout rooms') // FIXME
 		},
 	},
 
