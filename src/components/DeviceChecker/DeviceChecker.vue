@@ -133,8 +133,18 @@
 			</div>
 			<NcCheckboxRadioSwitch :checked.sync="showDeviceChecker"
 				class="checkbox">
-				{{ t('spreed', 'Always show this dialog before joining a call in this conversation.') }}
+				<template v-if="canRecordingTakePlace">
+					{{ t('spreed', 'Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded.') }}
+				</template>
+				<template v-else>
+					{{ t('spreed', 'Always show this dialog before joining a call in this conversation.') }}
+				</template>
 			</NcCheckboxRadioSwitch>
+
+			<NcNoteCard v-if="isRecording"
+				type="warning">
+				<p>{{ t('spreed', 'The call is being recorded.') }}</p>
+			</NcNoteCard>
 
 			<div class="device-checker__call-buttons">
 				<!-- Silent call -->
@@ -185,6 +195,7 @@ import Blur from 'vue-material-design-icons/Blur.vue'
 import BlurOff from 'vue-material-design-icons/BlurOff.vue'
 import BellOff from 'vue-material-design-icons/BellOff.vue'
 import Bell from 'vue-material-design-icons/Bell.vue'
+import { CALL } from '../../constants.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 import CallButton from '../TopBar/CallButton.vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
@@ -194,7 +205,9 @@ import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import isInLobby from '../../mixins/isInLobby.js'
+import { getCapabilities } from '@nextcloud/capabilities'
 
 export default {
 	name: 'DeviceChecker',
@@ -208,6 +221,7 @@ export default {
 		MediaDevicesSelector,
 		VideoBackground,
 		NcAvatar,
+		NcNoteCard,
 		Cog,
 		Microphone,
 		MicrophoneOff,
@@ -300,8 +314,16 @@ export default {
 			return this.conversation.hasCall || this.conversation.hasCallOverwrittenByChat
 		},
 
+		isRecording() {
+			return this.conversation.callRecording !== CALL.RECORDING.OFF
+		},
+
 		showSilentCallOption() {
 			return !(this.hasCall && !this.isInLobby)
+		},
+
+		canRecordingTakePlace() {
+			return getCapabilities()?.spreed?.config?.call?.recording || false
 		},
 	},
 

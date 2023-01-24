@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { CONVERSATION, PARTICIPANT } from '../../constants.js'
+import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import browserCheck from '../../mixins/browserCheck.js'
 import isInCall from '../../mixins/isInCall.js'
 import isInLobby from '../../mixins/isInLobby.js'
@@ -146,6 +146,10 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
+		isRecording() {
+			return this.conversation.callRecording !== CALL.RECORDING.OFF
 		},
 
 		participantType() {
@@ -297,7 +301,7 @@ export default {
 			const shouldShowDeviceCheckerScreen = (BrowserStorage.getItem('showDeviceChecker' + this.token) === null
 				|| BrowserStorage.getItem('showDeviceChecker' + this.token) === 'true') && !this.forceJoinCall
 			console.debug(shouldShowDeviceCheckerScreen)
-			if (shouldShowDeviceCheckerScreen) {
+			if ((this.isRecording && !this.forceJoinCall) || shouldShowDeviceCheckerScreen) {
 				emit('talk:device-checker:show')
 			} else {
 				emit('talk:device-checker:hide')

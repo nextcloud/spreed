@@ -65,6 +65,25 @@
 					{{ t('spreed', 'Mute others') }}
 				</NcActionButton>
 			</template>
+			<!-- Call recording -->
+			<template v-if="canModerateRecording">
+				<NcActionButton v-if="!isRecording && isInCall"
+					:close-after-click="true"
+					@click="startRecording">
+					<template #icon>
+						<RecordCircle :size="20" />
+					</template>
+					{{ t('spreed', 'Start recording') }}
+				</NcActionButton>
+				<NcActionButton v-else-if="isRecording && isInCall"
+					:close-after-click="true"
+					@click="stopRecording">
+					<template #icon>
+						<StopIcon :size="20" />
+					</template>
+					{{ t('spreed', 'Stop recording') }}
+				</NcActionButton>
+			</template>
 			<!-- Device settings -->
 			<NcActionButton :close-after-click="true"
 				@click="showSettings">
@@ -123,19 +142,25 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import { emit } from '@nextcloud/event-bus'
-import PromotedView from '../missingMaterialDesignIcons/PromotedView.vue'
-import Cog from 'vue-material-design-icons/Cog.vue'
-import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import GridView from '../missingMaterialDesignIcons/GridView.vue'
-import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
+import { generateUrl } from '@nextcloud/router'
+import { getCapabilities } from '@nextcloud/capabilities'
+
 import isInCall from '../../mixins/isInCall.js'
+import { callParticipantCollection } from '../../utils/webrtc/index.js'
+import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
+
+import PromotedView from '../missingMaterialDesignIcons/PromotedView.vue'
+import GridView from '../missingMaterialDesignIcons/GridView.vue'
+
 import Blur from 'vue-material-design-icons/Blur.vue'
 import BlurOff from 'vue-material-design-icons/BlurOff.vue'
-import { callParticipantCollection } from '../../utils/webrtc/index.js'
-import { generateUrl } from '@nextcloud/router'
-import { CONVERSATION, PARTICIPANT } from '../../constants.js'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
+import Cog from 'vue-material-design-icons/Cog.vue'
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
+import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
+import StopIcon from 'vue-material-design-icons/Stop.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
 
 export default {
 	name: 'TopBarMenu',
@@ -153,6 +178,8 @@ export default {
 		BlurOff,
 		VideoIcon,
 		MicrophoneOff,
+		RecordCircle,
+		StopIcon,
 	},
 
 	mixins: [
@@ -303,6 +330,15 @@ export default {
 		canModerate() {
 			return this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
 		},
+
+		canModerateRecording() {
+			const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || false
+			return this.canModerate && recordingEnabled
+		},
+
+		isRecording() {
+			return this.conversation.callRecording !== CALL.RECORDING.OFF
+		},
 	},
 
 	methods: {
@@ -390,6 +426,19 @@ export default {
 
 		openConversationSettings() {
 			emit('show-conversation-settings', { token: this.token })
+		},
+
+		startRecording() {
+			this.$store.dispatch('startCallRecording', {
+				token: this.token,
+				callRecording: CALL.RECORDING.VIDEO,
+			})
+		},
+
+		stopRecording() {
+			this.$store.dispatch('stopCallRecording', {
+				token: this.token,
+			})
 		},
 	},
 }

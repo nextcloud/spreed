@@ -56,9 +56,7 @@
 
 		<!-- Call time -->
 		<CallTime v-if="isInCall"
-			:start="conversation.callStartTime"
-			:is-recording="isRecording"
-			@stop-recording="isRecording = false" />
+			:start="conversation.callStartTime" />
 
 		<!-- Local media controls -->
 		<LocalMediaControls v-if="isInCall"
@@ -198,8 +196,6 @@ export default {
 			unreadNotificationHandle: null,
 			localCallParticipantModel,
 			localMediaModel,
-			// TODO: real value
-			isRecording: true,
 		}
 	},
 
