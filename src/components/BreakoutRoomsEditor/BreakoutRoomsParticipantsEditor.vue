@@ -82,7 +82,7 @@
 				</NcActionButton>
 			</NcActions>
 			<NcButton type="primary" @click="handleCreateRooms">
-				{{ t('spreed', 'Create rooms') }}
+				{{ t('spreed', 'Create breakout rooms') }}
 			</NcButton>
 		</div>
 	</div>
