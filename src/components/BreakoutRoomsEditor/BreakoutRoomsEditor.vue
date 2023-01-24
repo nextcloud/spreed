@@ -107,13 +107,11 @@ export default {
 	},
 
 	methods: {
-		handleCreateRooms(payload) {
-			console.debug(payload)
+		handleCreateRooms() {
 			this.$store.dispatch('configureBreakoutRoomsAction', {
 				token: this.token,
 				mode: this.mode,
 				amount: this.amount,
-				attendeeMap: this.attendeeMap,
 			})
 		},
 	},

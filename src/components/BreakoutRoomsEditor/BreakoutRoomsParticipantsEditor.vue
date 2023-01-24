@@ -187,10 +187,6 @@ export default {
 			return t('spreed', 'Room {roomNumber}', { roomNumber })
 		},
 
-		handleCreateRooms() {
-			this.$emit('create-rooms', this.assignments)
-		},
-
 		resetAssignments() {
 			this.selectedParticipants = []
 			this.assignments = []
@@ -199,6 +195,22 @@ export default {
 
 		goBack() {
 			this.$emit('back')
+		},
+
+		handleCreateRooms() {
+			let attendeeMap = {}
+			this.assignments.forEach((room, index) => {
+				room.forEach(attendeeId => {
+					attendeeMap[attendeeId] = index
+				})
+			})
+			attendeeMap = JSON.stringify(attendeeMap)
+			this.$store.dispatch('configureBreakoutRoomsAction', {
+				token: this.token,
+				mode: 2,
+				amount: this.roomNumber,
+				attendeeMap,
+			})
 		},
 	},
 }
