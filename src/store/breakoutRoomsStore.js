@@ -35,16 +35,16 @@ const state = {
 
 const getters = {
 	breakoutRoomsReferences: (state) => (token) => {
-		return state[token]
+		return state.breakoutRoomsReferences[token]
 	},
 }
 
 const mutations = {
 	addBreakoutRoomsReferences(state, { token, breakoutRoomsReferences }) {
-		if (!state[token]) {
-			state[token] = []
+		if (!state.breakoutRoomsReferences[token]) {
+			state.breakoutRoomsReferences[token] = []
 		}
-		set(state, token, breakoutRoomsReferences)
+		set(state.breakoutRoomsReferences, token, breakoutRoomsReferences)
 	},
 }
 
