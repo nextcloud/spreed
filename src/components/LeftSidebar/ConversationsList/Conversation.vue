@@ -76,8 +76,10 @@
 			</NcActionButton>
 			<NcActionButton v-if="canLeaveConversation"
 				:close-after-click="true"
-				:icon="iconLeaveConversation"
 				@click.prevent.exact="leaveConversation">
+				<template #icon>
+					<ExitToApp :size="16" />
+				</template>
 				{{ t('spreed', 'Leave conversation') }}
 			</NcActionButton>
 			<NcActionButton v-if="canDeleteConversation"
@@ -95,26 +97,30 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import Cog from 'vue-material-design-icons/Cog.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
-import EyeOutline from 'vue-material-design-icons/EyeOutline.vue'
-import Star from 'vue-material-design-icons/Star.vue'
-import ConversationIcon from './../../ConversationIcon.vue'
 import { generateUrl } from '@nextcloud/router'
 import { emit } from '@nextcloud/event-bus'
-import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
+
+import Cog from 'vue-material-design-icons/Cog.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
+import ExitToApp from 'vue-material-design-icons/ExitToApp.vue'
+import EyeOutline from 'vue-material-design-icons/EyeOutline.vue'
+import Star from 'vue-material-design-icons/Star.vue'
+
+import ConversationIcon from './../../ConversationIcon.vue'
+import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
 
 export default {
 	name: 'Conversation',
 	components: {
+		Cog,
+		ConversationIcon,
+		Delete,
+		ExitToApp,
+		EyeOutline,
 		NcActionButton,
 		NcListItem,
-		ConversationIcon,
-		Cog,
-		Delete,
-		EyeOutline,
 		Star,
 	},
 	props: {
@@ -188,13 +194,6 @@ export default {
 
 		canLeaveConversation() {
 			return this.item.canLeaveConversation
-		},
-
-		iconLeaveConversation() {
-			if (this.canDeleteConversation) {
-				return 'icon-close'
-			}
-			return 'icon-delete'
 		},
 
 		conversationInformation() {
