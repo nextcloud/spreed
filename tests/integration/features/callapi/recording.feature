@@ -124,3 +124,37 @@ Feature: callapi/recording
     And user "participant1" has the following notifications
       | app    | object_type | object_id | subject                                        |
       | spreed | chat        | room1     | Recording for the call in room1 was uploaded.  |
+
+  Scenario: Stop recording automatically when end the call
+    When the following "spreed" app config is set
+      | signaling_dev | yes |
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    And user "participant1" joins call "room1" with 200 (v4)
+    And user "participant1" starts "audio" recording in room "room1" with 200 (v1)
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 2             |
+    Then user "participant1" ends call "room1" with 200 (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
+
+  Scenario: Stop recording automatically when the last participant go out
+    When the following "spreed" app config is set
+      | signaling_dev | yes |
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    And user "participant1" joins call "room1" with 200 (v4)
+    And user "participant1" starts "audio" recording in room "room1" with 200 (v1)
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 2             |
+    Then user "participant1" leaves room "room1" with 200 (v4)
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
