@@ -32,6 +32,7 @@ OC.L10N.register(
     "Invalid file provided" : "Numele fișierului pe care l-ai oferit este invalid",
     "Invalid image" : "Imagine invalidă",
     "Unknown filetype" : "Tip fișier necunoscut",
+    "Dismiss notification" : "Elimină notificarea",
     "Open settings" : "Deschide setările",
     "Andorra" : "Andorra",
     "United Arab Emirates" : "United Arab Emirates",

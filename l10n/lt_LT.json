@@ -154,6 +154,7 @@
     "Password request: %s" : "Slaptažodžio prašymas: %s",
     "Private conversation" : "Privatus pokalbis",
     "Deleted user (%s)" : "Ištrintas naudotojas (%s)",
+    "Dismiss notification" : "Atmesti pranešimą",
     "{user} sent you a private message" : "{user} išsiuntė jums privačią žinutę",
     "{user} sent a message in conversation {call}" : "{user} išsiuntė žinutę pokalbyje {call}",
     "A deleted user sent a message in conversation {call}" : "Ištrintas naudotojas išsiuntė žinutę pokalbyje {call}",

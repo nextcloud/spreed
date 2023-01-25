@@ -112,6 +112,7 @@ OC.L10N.register(
     "Password request: %s" : "密碼請求: %s",
     "Private conversation" : "私人對話",
     "Deleted user (%s)" : "已刪除使用者 (%s)",
+    "Dismiss notification" : "清除通知",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} 與您分享了在 {remoteServer} 上的聊天室 {roomName}",
     "{user} in {call}" : "{call} 中的 {user}",
     "View chat" : "檢視聊天",

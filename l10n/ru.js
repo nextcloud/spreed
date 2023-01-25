@@ -218,6 +218,7 @@ OC.L10N.register(
     "Password request: %s" : "Запрос пароля: %s",
     "Private conversation" : "Приватное обсуждение",
     "Deleted user (%s)" : "Пользователь, учётная запись которого удалена (%s)",
+    "Dismiss notification" : "Скрыть уведомление",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} предоставл(а) вам доступ к {roomName} на сервере {remoteServer}",
     "{user} in {call}" : "{user} в {call}",
     "Deleted user in {call}" : "Пользователь, который был удалён в {call}",

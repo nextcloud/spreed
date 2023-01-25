@@ -239,6 +239,7 @@ OC.L10N.register(
     "Password request: %s" : "Geslo: %s",
     "Private conversation" : "Zasebni pogovor",
     "Deleted user (%s)" : "Izbrisan uporabnik (%s)",
+    "Dismiss notification" : "Opusti obvestilo",
     "{user} in {call}" : "{user} v pogovoru {call}",
     "Deleted user in {call}" : "Iz klica {call} je izbrisan uporabnik",
     "{guest} (guest) in {call}" : "{guest} (gost) v klicu {call}",

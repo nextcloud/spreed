@@ -215,6 +215,7 @@ OC.L10N.register(
     "Password request: %s" : "Wachtwoordverzoek: %s",
     "Private conversation" : "Privégesprek",
     "Deleted user (%s)" : "Verwijderde gebruiker (%s)",
+    "Dismiss notification" : "Handel melding af",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} deelde kamer {roomName} op {remoteServer} met jou",
     "{user} in {call}" : "{user} in {call}",
     "Deleted user in {call}" : "Gebruiker verwijderd in {call}",

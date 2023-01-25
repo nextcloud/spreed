@@ -85,6 +85,7 @@
     "%s invited you to a conversation." : "%s شما را به یک گفتگو دعوت کرد",
     "You were invited to a conversation." : "شما به یک گفتگو دعوت شده اید",
     "Private conversation" : "مکالمه خصوصی",
+    "Dismiss notification" : "رد کردن اعلان",
     "{user} invited you to a private conversation" : "{user} شما را به یک گفتگوی خصوصی دعوت کرد",
     "{user} invited you to a group conversation: {call}" : "{user} شما را به یک گفتگو گروهی دعوت کرد: {call}",
     "Open settings" : "تنظیمات را باز کنید",
