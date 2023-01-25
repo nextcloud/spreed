@@ -4,9 +4,13 @@ Feature: command/user-remove
     Given user "participant1" exists
     Given user "participant2" exists
     Given user "participant3" exists
+    Given user "participant4" exists
 
   Scenario: Only transfer when moderator permissions
     Given user "participant1" creates room "one-to-one" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    Given user "participant4" creates room "one-to-one former" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     Given user "participant1" creates room "user" (v4)
@@ -25,12 +29,14 @@ Feature: command/user-remove
       | roomType | 3 |
       | roomName | self-joined |
     And user "participant2" joins room "self-joined" with 200 (v4)
+    And invoking occ with "talk:user:remove --user participant4"
     And invoking occ with "talk:user:transfer-ownership participant2 participant3"
     And the command output contains the text "Added or promoted user participant3 in 2 rooms."
     Then the command was successful
     And user "participant2" is participant of the following unordered rooms (v4)
       | id          | name         | type | participantType |
       | one-to-one  | participant1 | 1    | 1               |
+      | one-to-one former | participant4-displayname | 5 | 1 |
       | user        | user         | 3    | 3               |
       | moderator   | moderator    | 2    | 2               |
       | owner       | owner        | 2    | 1               |
@@ -44,6 +50,9 @@ Feature: command/user-remove
     Given user "participant1" creates room "one-to-one" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant4" creates room "one-to-one former" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
     Given user "participant1" creates room "user" (v4)
       | roomType | 3 |
       | roomName | user |
@@ -60,12 +69,14 @@ Feature: command/user-remove
       | roomType | 3 |
       | roomName | self-joined |
     And user "participant2" joins room "self-joined" with 200 (v4)
+    And invoking occ with "talk:user:remove --user participant4"
     And invoking occ with "talk:user:transfer-ownership --include-non-moderator participant2 participant3"
     And the command output contains the text "Added or promoted user participant3 in 3 rooms."
     Then the command was successful
     And user "participant2" is participant of the following unordered rooms (v4)
       | id          | name         | type | participantType |
       | one-to-one  | participant1 | 1    | 1               |
+      | one-to-one former | participant4-displayname | 5 | 1 |
       | user        | user         | 3    | 3               |
       | moderator   | moderator    | 2    | 2               |
       | owner       | owner        | 2    | 1               |
@@ -80,6 +91,9 @@ Feature: command/user-remove
     Given user "participant1" creates room "one-to-one" (v4)
       | roomType | 1 |
       | invite   | participant2 |
+    Given user "participant4" creates room "one-to-one former" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
     Given user "participant1" creates room "user" (v4)
       | roomType | 3 |
       | roomName | user |
@@ -96,12 +110,14 @@ Feature: command/user-remove
       | roomType | 3 |
       | roomName | self-joined |
     And user "participant2" joins room "self-joined" with 200 (v4)
+    And invoking occ with "talk:user:remove --user participant4"
     And invoking occ with "talk:user:transfer-ownership --remove-source-user participant2 participant3"
     And the command output contains the text "Added or promoted user participant3 in 2 rooms."
     Then the command was successful
     And user "participant2" is participant of the following unordered rooms (v4)
       | id          | name         | type | participantType |
       | one-to-one  | participant1 | 1    | 1               |
+      | one-to-one former | participant4-displayname | 5 | 1 |
       | user        | user         | 3    | 3               |
       | self-joined | self-joined  | 3    | 5               |
     And user "participant3" is participant of the following unordered rooms (v4)
