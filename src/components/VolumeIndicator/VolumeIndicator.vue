@@ -32,7 +32,11 @@
 
 		<span v-show="audioPreviewAvailable"
 			class="volume-indicator volume-indicator-overlay"
-			:class="{ 'volume-indicator-overlay-mute': !audioEnabled }"
+			:class="{
+				'volume-indicator-overlay-mute': !audioEnabled,
+				'volume-indicator-overlay-overload':
+					currentVolumeIndicatorHeight === size,
+			}"
 			:style="{
 				height: currentVolumeIndicatorHeight + 'px',
 			}">
@@ -75,6 +79,11 @@ export default {
 			required: true,
 		},
 
+		overloadLimit: {
+			type: Number,
+			default: -20,
+		},
+
 		size: {
 			type: Number,
 			default: 20,
@@ -105,21 +114,15 @@ export default {
 				return 0
 			}
 
-			return this.size * this.computeVolumeLevel(20)
+			return this.size * this.computeVolumeLevel()
 		},
 	},
 
 	methods: {
-		/**
-		 * Compute volume proportion based on currentVolume [-100, 0]
-		 * and volumeThreshold. Returns number between [0, 1]
-		 *
-		 * @param {number} overload to visually increase volume level
-		 */
-		computeVolumeLevel(overload = 0) {
+		computeVolumeLevel() {
 			const computedLevel
 				= (this.volumeThreshold - this.currentVolume)
-				/ (this.volumeThreshold + overload)
+				/ (this.volumeThreshold - this.overloadLimit)
 
 			if (computedLevel < 0) return 0
 			else if (computedLevel > 1) return 1
@@ -162,6 +165,11 @@ export default {
 
 	/* Overlay icon inherits container color */
 	color: var(--color-success);
+
+	&-overload {
+		color: var(--color-error);
+		transition: height 0s linear;
+	}
 
 	&-mute {
 		color: var(--color-loading-dark);
