@@ -78,6 +78,7 @@ OC.L10N.register(
     "Password request: %s" : "בקשת ססמה: %s",
     "Private conversation" : "דיון פרטי",
     "Deleted user (%s)" : "משתמש שנמחק (%s)",
+    "Dismiss notification" : "התעלמות מהתראה",
     "{user} sent you a private message" : "התקבלה הודעה פרטית מאת {user}",
     "{user} invited you to a private conversation" : "הוזמנת לדיון פרטי על ידי {user}",
     "Join call" : "הצטרפות לשיחה",

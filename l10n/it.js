@@ -193,6 +193,7 @@ OC.L10N.register(
     "Password request: %s" : "Password richiesta: %s",
     "Private conversation" : "Conversazione privata",
     "Deleted user (%s)" : "Utente eliminato (%s)",
+    "Dismiss notification" : "Cancella notifica",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} ha condiviso la stanza {roomName} su {remoteServer} con te",
     "{user} in {call}" : "{user} in {call}",
     "Deleted user in {call}" : "Utente eliminato in {call}",

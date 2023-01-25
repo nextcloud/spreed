@@ -88,6 +88,7 @@ OC.L10N.register(
     "Your PIN" : "Din PIN",
     "Private conversation" : "Privat samtale",
     "Deleted user (%s)" : "Slettet bruker (%s)",
+    "Dismiss notification" : "Ingen varsel",
     "{user} in {call}" : "{user} i {call}",
     "Deleted user in {call}" : "Slett bruker i {call}",
     "{guest} (guest) in {call}" : "{guest} (gjest) i {call}",

@@ -204,6 +204,7 @@ OC.L10N.register(
     "Password request: %s" : "Solicitude de contrasinal: %s",
     "Private conversation" : "Conversa privada",
     "Deleted user (%s)" : "Usuario eliminado (%s)",
+    "Dismiss notification" : "Rexeitar a notificación",
     "{user} in {call}" : "{user} en {call}",
     "Deleted user in {call}" : "Usuario eliminado en {call}",
     "{guest} (guest) in {call}" : "{guest} (guest) en {call}",

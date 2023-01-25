@@ -206,6 +206,7 @@ OC.L10N.register(
     "Password request: %s" : "パスワードのリクエスト :%s",
     "Private conversation" : "プライベート会話",
     "Deleted user (%s)" : "削除済みユーザー(%s)",
+    "Dismiss notification" : "通知を閉じる",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} さんが、あなたに {remoteServer} 上のルーム {roomName} を共有しました",
     "{user} in {call}" : "{call} の {user}",
     "Deleted user in {call}" : "{call} から削除されたユーザー",

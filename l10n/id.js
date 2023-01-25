@@ -27,6 +27,7 @@ OC.L10N.register(
     "Invalid file provided" : "Berkas tidak valid",
     "Invalid image" : "Gambar tidak valid",
     "Unknown filetype" : "Tipe berkas tak dikenal",
+    "Dismiss notification" : "Abaikan notifikasi",
     "Invalid date, date format must be YYYY-MM-DD" : "Tanggal salah, format tanggal harus TTTT-BB-HH",
     "Request password" : "Minta kata sandi",
     "Limit to groups" : "Batasi ke grup",

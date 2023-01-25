@@ -166,6 +166,7 @@ OC.L10N.register(
     "Password request: %s" : "Lösenordsförfrågan: %s",
     "Private conversation" : "Privat konversation",
     "Deleted user (%s)" : "Raderad användare (%s)",
+    "Dismiss notification" : "Avfärda notifiering",
     "{user} in {call}" : "{user} i {call}",
     "Deleted user in {call}" : "Tog bort användare från {call}",
     "{user} sent you a private message" : "{user} skickade dig ett privat meddelande",

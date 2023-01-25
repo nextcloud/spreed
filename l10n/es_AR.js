@@ -7,6 +7,7 @@ OC.L10N.register(
     "Invalid file provided" : "Archivo proporcionado inválido",
     "Invalid image" : "Imagen inválida",
     "Unknown filetype" : "Tipo de archivo desconocido",
+    "Dismiss notification" : "Eliminar notificación",
     "Open settings" : "Abrir opciones",
     "Messages" : "Mensajes",
     "Avatar image is not square" : "La imagen del avatar no es un cuadrado",

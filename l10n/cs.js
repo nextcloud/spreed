@@ -1209,6 +1209,7 @@ OC.L10N.register(
     "You have new unread messages in the chat." : "Máte nové nepřečtené zprávy v chatu.",
     "You have been mentioned in the chat." : "Byli jste zmíněni v chatu.",
     "Mute others" : "Ztlumit ostatní",
+    "Start recording" : "Zahájit nahrávání",
     "Devices settings" : "Nastavení pro zařízení",
     "Toggle fullscreen" : "Vyp/zap. zobrazení na celou obrazovku",
     "Rename conversation" : "Přejmenovat konverzaci",

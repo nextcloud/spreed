@@ -228,6 +228,7 @@ OC.L10N.register(
     "Password request: %s" : "Požiadavka na heslo: %s",
     "Private conversation" : "Súkromný rozhovor",
     "Deleted user (%s)" : "Odstránený používateľ (%s)",
+    "Dismiss notification" : "Odmietnuť upozornenie",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} s vami zozdieľal miestnosť {roomName} na {remoteServer}",
     "{user} in {call}" : "{user} v {call}",
     "Deleted user in {call}" : "Odstránený užívateľ v {call}",
