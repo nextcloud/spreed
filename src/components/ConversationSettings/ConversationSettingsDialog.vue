@@ -74,6 +74,13 @@
 			<ConversationPermissionsSettings :token="token" />
 		</NcAppSettingsSection>
 
+		<!-- Breakout rooms -->
+		<NcAppSettingsSection v-if="canFullModerate"
+			id="breakout-rooms"
+			:title="t('spreed', 'Breakout Rooms')">
+			<BreakoutRoomsSettings :token="token" />
+		</NcAppSettingsSection>
+
 		<!-- Matterbridge settings -->
 		<NcAppSettingsSection v-if="canFullModerate && matterbridgeEnabled"
 			id="matterbridge"
@@ -113,6 +120,7 @@ import Description from '../Description/Description.vue'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import ConversationPermissionsSettings from './ConversationPermissionsSettings.vue'
+import BreakoutRoomsSettings from './BreakoutRoomsSettings.vue'
 
 export default {
 	name: 'ConversationSettingsDialog',
@@ -132,6 +140,7 @@ export default {
 		Description,
 		NcCheckboxRadioSwitch,
 		ConversationPermissionsSettings,
+		BreakoutRoomsSettings,
 	},
 
 	data() {
@@ -205,7 +214,7 @@ export default {
 		subscribe('hide-conversation-settings', this.handleHideSettings)
 
 		/**
-		 * Get the deviceChecker value from the browserstorage.
+		 * Get the deviceChecker value from the browser storage.
 		 */
 		this.showDeviceChecker = BrowserStorage.getItem('showDeviceChecker' + this.token) === null
 			|| BrowserStorage.getItem('showDeviceChecker' + this.token) === 'true'

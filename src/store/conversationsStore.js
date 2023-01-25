@@ -89,7 +89,10 @@ const state = {
 
 const getters = {
 	conversations: state => state.conversations,
-	conversationsList: state => Object.values(state.conversations),
+	conversationsList: state => Object.values(state.conversations).filter(conversation => {
+		// Filter out breakout rooms from left sidebar
+		return conversation.objectType !== 'room'
+	}),
 	/**
 	 * Get a conversation providing it's token
 	 *

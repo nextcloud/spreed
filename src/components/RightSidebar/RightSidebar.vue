@@ -59,9 +59,21 @@
 				:can-search="canSearchParticipants"
 				:can-add="canAddParticipants" />
 		</NcAppSidebarTab>
+		<NcAppSidebarTab v-if="getUserId && !isOneToOne"
+			id="breakout-rooms"
+			ref="breakout-rooms"
+			:order="3"
+			:name="breakoutRoomsText">
+			<template slot="icon">
+				<DotsCircle :size="20" />
+			</template>
+			<BreakoutRoomsTab :token="token"
+				:conversation="conversation"
+				:is-active="activeTab === 'breakout-rooms'" />
+		</NcAppSidebarTab>
 		<NcAppSidebarTab v-if="!getUserId || showSIPSettings"
 			id="details-tab"
-			:order="3"
+			:order="4"
 			:name="t('spreed', 'Details')">
 			<template slot="icon">
 				<InformationOutline :size="20" />
@@ -84,7 +96,7 @@
 		<NcAppSidebarTab v-if="getUserId"
 			id="shared-items"
 			ref="sharedItemsTab"
-			:order="4"
+			:order="5"
 			:name="t('spreed', 'Shared items')">
 			<template slot="icon">
 				<FolderMultipleImage :size="20" />
@@ -113,6 +125,8 @@ import CogIcon from 'vue-material-design-icons/Cog.vue'
 import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 import InformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import Message from 'vue-material-design-icons/Message.vue'
+import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+import BreakoutRoomsTab from './BreakoutRooms/BreakoutRoomsTab.vue'
 
 export default {
 	name: 'RightSidebar',
@@ -131,6 +145,8 @@ export default {
 		FolderMultipleImage,
 		InformationOutline,
 		Message,
+		DotsCircle,
+		BreakoutRoomsTab,
 	},
 
 	mixins: [
@@ -184,13 +200,16 @@ export default {
 		canAddParticipants() {
 			return this.canFullModerate && this.canSearchParticipants
 		},
+
 		canSearchParticipants() {
 			return (this.conversation.type === CONVERSATION.TYPE.GROUP
 					|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== 'share:password'))
 		},
+
 		isSearching() {
 			return this.searchText !== ''
 		},
+
 		participantType() {
 			return this.conversation.participantType
 		},
@@ -238,6 +257,9 @@ export default {
 			return t('spreed', 'Participants ({count})', { count: participants.length })
 		},
 
+		breakoutRoomsText() {
+			return t('spreed', 'Breakout rooms')
+		},
 	},
 
 	watch: {
@@ -272,6 +294,11 @@ export default {
 				this.$refs.participantsTab.$el.scrollTop = 0
 			}
 		},
+
+		$slots() {
+			console.debug('Sidebar slots changed, re rendering')
+			this.$forceUpdate()
+		},
 	},
 
 	mounted() {
@@ -300,7 +327,7 @@ export default {
 		/**
 		 * Updates the conversationName value while editing the conversation's title.
 		 *
-		 * @param {string} title the conversation title emitted by the AppSidevar vue
+		 * @param {string} title the conversation title emitted by the AppSidebar vue
 		 * component.
 		 */
 		handleUpdateTitle(title) {

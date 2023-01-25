@@ -43,20 +43,35 @@ export const CONVERSATION = {
 		USERS: 1,
 		MODERATORS: 2,
 	},
+
 	STATE: {
 		READ_WRITE: 0,
 		READ_ONLY: 1,
 	},
+
 	LISTABLE: {
 		NONE: 0,
 		USERS: 1,
 		ALL: 2,
 	},
+
 	TYPE: {
 		ONE_TO_ONE: 1,
 		GROUP: 2,
 		PUBLIC: 3,
 		CHANGELOG: 4,
+	},
+
+	BREAKOUT_ROOM_MODE: {
+		NOT_CONFIGURED: 0,
+		AUTOMATIC: 1,
+		MANUAL: 2,
+		FREE: 3,
+	},
+
+	BREAKOUT_ROOM_STATUS: {
+		STOPPED: 0,
+		STARTED: 1,
 	},
 }
 export const ATTENDEE = {
@@ -69,7 +84,9 @@ export const ATTENDEE = {
 		BOTS: 'bots',
 		BRIDGED: 'bridged',
 	},
+
 	BRIDGE_BOT_ID: 'bridge-bot',
+
 	CHANGELOG_BOT_ID: 'changelog',
 }
 export const PARTICIPANT = {
@@ -80,22 +97,26 @@ export const PARTICIPANT = {
 		WITH_VIDEO: 4,
 		WITH_PHONE: 8,
 	},
+
 	SIP_FLAG: {
 		MUTE_MICROPHONE: 1,
 		MUTE_SPEAKER: 2,
 		SPEAKING: 4,
 		RAISE_HAND: 8,
 	},
+
 	NOTIFY: {
 		DEFAULT: 0,
 		ALWAYS: 1,
 		MENTION: 2,
 		NEVER: 3,
 	},
+
 	NOTIFY_CALLS: {
 		OFF: 0,
 		ON: 1,
 	},
+
 	TYPE: {
 		OWNER: 1,
 		MODERATOR: 2,
@@ -104,6 +125,7 @@ export const PARTICIPANT = {
 		USER_SELF_JOINED: 5,
 		GUEST_MODERATOR: 6,
 	},
+
 	PERMISSIONS: {
 		DEFAULT: 0,
 		CUSTOM: 1,
@@ -118,6 +140,7 @@ export const PARTICIPANT = {
 		MAX_CUSTOM: 255,
 	},
 }
+
 export const SHARED_ITEM = {
 	TYPES: {
 		AUDIO: 'audio',
@@ -130,17 +153,20 @@ export const SHARED_ITEM = {
 		VOICE: 'voice',
 	},
 }
+
 export const WEBINAR = {
 	LOBBY: {
 		NONE: 0,
 		NON_MODERATORS: 1,
 	},
+
 	SIP: {
 		DISABLED: 0,
 		ENABLED: 1,
 		ENABLED_NO_PIN: 2,
 	},
 }
+
 export const SHARE = {
 	TYPE: {
 		USER: 0,
@@ -150,6 +176,7 @@ export const SHARE = {
 		CIRCLE: 7,
 	},
 }
+
 export const FLOW = {
 	MESSAGE_MODES: {
 		NO_MENTION: 1,
@@ -157,10 +184,12 @@ export const FLOW = {
 		ROOM_MENTION: 3,
 	},
 }
+
 export const PRIVACY = {
 	PUBLIC: 0,
 	PRIVATE: 1,
 }
+
 export const SIMULCAST = {
 	LOW: 0,
 	MEDIUM: 1,
