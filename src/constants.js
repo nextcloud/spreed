@@ -60,6 +60,7 @@ export const CONVERSATION = {
 		GROUP: 2,
 		PUBLIC: 3,
 		CHANGELOG: 4,
+		ONE_TO_ONE_FORMER: 5,
 	},
 
 	BREAKOUT_ROOM_MODE: {

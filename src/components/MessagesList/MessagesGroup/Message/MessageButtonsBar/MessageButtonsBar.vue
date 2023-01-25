@@ -344,6 +344,7 @@ export default {
 				&& !this.isDeleting
 				&& (this.isMyMsg
 					|| (this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
+						&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 						&& (this.participant.participantType === PARTICIPANT.TYPE.OWNER
 							|| this.participant.participantType === PARTICIPANT.TYPE.MODERATOR)))
 		},

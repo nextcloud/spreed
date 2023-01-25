@@ -187,7 +187,7 @@ export default {
 				const importantRooms = rooms.filter((conversation) => {
 					return conversation.hasCall
 						|| conversation.unreadMention
-						|| (conversation.unreadMessages > 0 && conversation.type === CONVERSATION.TYPE.ONE_TO_ONE)
+						|| (conversation.unreadMessages > 0 && (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER))
 				})
 
 				if (importantRooms.length) {

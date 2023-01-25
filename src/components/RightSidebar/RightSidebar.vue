@@ -250,6 +250,7 @@ export default {
 
 		isOneToOne() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 		},
 
 		participantsText() {
@@ -269,7 +270,8 @@ export default {
 			}
 
 			if (newConversation.token !== oldConversation.token) {
-				if (newConversation.type === CONVERSATION.TYPE.ONE_TO_ONE) {
+				if (newConversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+					|| newConversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
 					this.activeTab = 'shared-items'
 				} else {
 					this.activeTab = 'participants'
@@ -281,7 +283,8 @@ export default {
 			if (chatInSidebar) {
 				this.activeTab = 'chat'
 			} else if (this.activeTab === 'chat') {
-				if (this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE) {
+				if (this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+					|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
 					this.activeTab = 'shared-items'
 				} else {
 					this.activeTab = 'participants'
