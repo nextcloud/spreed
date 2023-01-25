@@ -1,4 +1,4 @@
-\<!--
+<!--
   - @copyright Copyright (c) 2022 Marco Ambrosini <marcoambrosini@icloud.com>
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
