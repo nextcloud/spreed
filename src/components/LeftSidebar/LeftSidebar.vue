@@ -33,10 +33,10 @@
 			<NewGroupConversation v-if="canStartConversations" />
 		</div>
 		<template #list>
-			<li class="left-sidebar__list">
-				<ul ref="scroller"
-					class="scroller"
-					@scroll="debounceHandleScroll">
+			<li ref="container"
+				class="left-sidebar__list"
+				@scroll="debounceHandleScroll">
+				<ul class="scroller">
 					<NcAppNavigationCaption :class="{'hidden-visually': !isSearching}"
 						:title="t('spreed', 'Conversations')" />
 					<li role="presentation">
@@ -294,7 +294,7 @@ export default {
 		},
 		scrollBottomUnread() {
 			this.preventFindingUnread = true
-			this.$refs.scroller.scrollTo({
+			this.$refs.container.scrollTo({
 				top: this.firstUnreadPos - 150,
 				behavior: 'smooth',
 			})
@@ -472,7 +472,7 @@ export default {
 		// Checks whether the conversations list is scrolled all the way to the top
 		// or not
 		handleScroll() {
-			this.isScrolledToTop = this.$refs.scroller.scrollTop === 0
+			this.isScrolledToTop = this.$refs.container.scrollTop === 0
 		},
 		elementIsBelowViewpoint(container, element) {
 			return element.offsetTop > container.scrollTop + container.clientHeight
@@ -482,7 +482,7 @@ export default {
 			const unreadMentions = document.getElementsByClassName('unread-mention-conversation')
 			if (unreadMentions.length) {
 				unreadMentions.forEach(x => {
-					if (this.elementIsBelowViewpoint(this.$refs.scroller, x)) {
+					if (this.elementIsBelowViewpoint(this.$refs.container, x)) {
 						if (this.unreadNum === 0) {
 							this.firstUnreadPos = x.offsetTop
 						}
@@ -533,11 +533,12 @@ export default {
 }
 
 .unread-mention-button {
-	position: absolute;
+	position: absolute !important;
 	left: 50%;
 	transform: translateX(-50%);
 	z-index: 100;
 	bottom: 10px;
+	white-space: nowrap;
 }
 
 .conversations-search {
