@@ -503,7 +503,7 @@ class Notifier implements INotifier {
 				'id' => $message->getComment()->getId(),
 				'name' => $shortenMessage,
 			];
-			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 				$subject = "{user}\n{message}";
 			} elseif ($richSubjectUser) {
 				$subject = $l->t('{user} in {call}') . "\n{message}";
@@ -518,7 +518,7 @@ class Notifier implements INotifier {
 				}
 			}
 		} elseif ($notification->getSubject() === 'chat') {
-			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 				$subject = $l->t('{user} sent you a private message');
 			} elseif ($richSubjectUser) {
 				$subject = $l->t('{user} sent a message in conversation {call}');
@@ -533,7 +533,7 @@ class Notifier implements INotifier {
 				}
 			}
 		} elseif ($notification->getSubject() === 'reply') {
-			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 				$subject = $l->t('{user} replied to your private message');
 			} elseif ($richSubjectUser) {
 				$subject = $l->t('{user} replied to your message in conversation {call}');
@@ -554,7 +554,7 @@ class Notifier implements INotifier {
 				'name' => $subjectParameters['reaction'],
 			];
 
-			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 				$subject = $l->t('{user} reacted with {reaction} to your private message');
 			} elseif ($richSubjectUser) {
 				$subject = $l->t('{user} reacted with {reaction} to your message in conversation {call}');
@@ -568,7 +568,7 @@ class Notifier implements INotifier {
 					$subject = $l->t('A guest reacted with {reaction} to your message in conversation {call}');
 				}
 			}
-		} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+		} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			$subject = $l->t('{user} mentioned you in a private conversation');
 		} elseif ($richSubjectUser) {
 			$subject = $l->t('{user} mentioned you in conversation {call}');
@@ -628,6 +628,7 @@ class Notifier implements INotifier {
 	protected function getRoomType(Room $room): string {
 		switch ($room->getType()) {
 			case Room::TYPE_ONE_TO_ONE:
+			case Room::TYPE_ONE_TO_ONE_FORMER:
 				return 'one2one';
 			case Room::TYPE_GROUP:
 				return 'group';
@@ -660,7 +661,7 @@ class Notifier implements INotifier {
 		}
 
 		$roomName = $room->getDisplayName($notification->getUser());
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			$subject = $l->t('{user} invited you to a private conversation');
 			if ($this->participantService->hasActiveSessionsInCall($room)) {
 				$notification = $this->addActionButton($notification, $l->t('Join call'));
@@ -731,7 +732,7 @@ class Notifier implements INotifier {
 		}
 
 		$roomName = $room->getDisplayName($notification->getUser());
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			$parameters = $notification->getSubjectParameters();
 			$calleeId = $parameters['callee'];
 			$userDisplayName = $this->userManager->getDisplayName($calleeId);

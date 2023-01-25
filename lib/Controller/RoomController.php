@@ -524,7 +524,7 @@ class RoomController extends AEnvironmentAwareController {
 		if ($roomData['notificationLevel'] === Participant::NOTIFY_DEFAULT) {
 			if ($currentParticipant->isGuest()) {
 				$roomData['notificationLevel'] = Participant::NOTIFY_NEVER;
-			} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 				$roomData['notificationLevel'] = Participant::NOTIFY_ALWAYS;
 			} else {
 				$adminSetting = (int) $this->config->getAppValue('spreed', 'default_group_notification', (string) Participant::NOTIFY_DEFAULT);
@@ -574,6 +574,7 @@ class RoomController extends AEnvironmentAwareController {
 				$roomData['lastReadMessage'] = $lastReadMessage;
 
 				$roomData['canDeleteConversation'] = $room->getType() !== Room::TYPE_ONE_TO_ONE
+					&& $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER
 					&& $currentParticipant->hasModeratorPermissions(false);
 				$roomData['canLeaveConversation'] = true;
 				$roomData['canEnableSIP'] =
@@ -920,7 +921,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function renameRoom(string $roomName): DataResponse {
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -942,7 +943,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function setDescription(string $description): DataResponse {
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -962,7 +963,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function deleteRoom(): DataResponse {
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1118,7 +1119,9 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function addParticipantToRoom(string $newParticipant, string $source = 'users'): DataResponse {
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getObjectType() === 'share:password') {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE
+			|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
+			|| $this->room->getObjectType() === 'share:password') {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -1269,7 +1272,7 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	protected function removeSelfFromRoomLogic(Room $room, Participant $participant): DataResponse {
-		if ($room->getType() !== Room::TYPE_ONE_TO_ONE) {
+		if ($room->getType() !== Room::TYPE_ONE_TO_ONE && $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER) {
 			if ($participant->hasModeratorPermissions(false)
 				&& $this->participantService->getNumberOfUsers($room) > 1
 				&& $this->participantService->getNumberOfModerators($room) === 1) {
@@ -1318,7 +1321,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE) {
+		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 

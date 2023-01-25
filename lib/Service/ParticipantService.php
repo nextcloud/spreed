@@ -201,7 +201,7 @@ class ParticipantService {
 	 * @throws ForbiddenException
 	 */
 	public function updatePermissions(Room $room, Participant $participant, string $method, int $newPermissions): bool {
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			return false;
 		}
 

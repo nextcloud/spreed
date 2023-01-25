@@ -219,7 +219,8 @@ class RoomServiceTest extends TestCase {
 		return [
 			[Room::TYPE_ONE_TO_ONE],
 			[Room::TYPE_UNKNOWN],
-			[5],
+			[Room::TYPE_ONE_TO_ONE_FORMER],
+			[6],
 		];
 	}
 

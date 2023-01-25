@@ -182,7 +182,7 @@ class RoomService {
 	}
 
 	public function setPermissions(Room $room, string $level, string $method, int $permissions, bool $resetCustomPermissions): bool {
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			return false;
 		}
 
@@ -347,7 +347,7 @@ class RoomService {
 	}
 
 	public function setAvatar(Room $room, string $avatar): bool {
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			return false;
 		}
 
@@ -412,7 +412,15 @@ class RoomService {
 			return false;
 		}
 
-		if (!in_array($newType, [Room::TYPE_GROUP, Room::TYPE_PUBLIC], true)) {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+			return false;
+		}
+
+		if (!in_array($newType, [Room::TYPE_GROUP, Room::TYPE_PUBLIC, Room::TYPE_ONE_TO_ONE_FORMER], true)) {
+			return false;
+		}
+
+		if ($newType === Room::TYPE_ONE_TO_ONE_FORMER && $room->getType() !== Room::TYPE_ONE_TO_ONE) {
 			return false;
 		}
 
@@ -466,7 +474,10 @@ class RoomService {
 		}
 
 		if (!in_array($room->getType(), [Room::TYPE_GROUP, Room::TYPE_PUBLIC, Room::TYPE_CHANGELOG], true)) {
-			return false;
+			if ($newState !== Room::READ_ONLY || $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER) {
+				// Allowed for the automated conversation of one-to-one chats to read only former
+				return false;
+			}
 		}
 
 		if (!in_array($newState, [Room::READ_ONLY, Room::READ_WRITE], true)) {

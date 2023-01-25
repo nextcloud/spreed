@@ -217,7 +217,7 @@ class MessageSearch implements IProvider {
 		}
 
 		$subline = $this->getSublineTemplate();
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			$subline = '{user}';
 		}
 

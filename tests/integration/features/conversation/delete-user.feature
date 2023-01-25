@@ -12,27 +12,33 @@ Feature: conversation/delete-user
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant2" sends message "Message 1" to room "one-to-one room" with 201
+    Then user "participant1" is participant of the following rooms (v4)
+      | name         | type     | readOnly |
+      | participant2 | 1        | 0        |
     When user "participant2" is deleted
     Then user "participant1" sees the following messages in room "one-to-one room" with 200
       | room            | actorType     | actorId       | actorDisplayName | message   | messageParameters |
       | one-to-one room | deleted_users | deleted_users |                  | Message 1 | []                |
     Then user "participant1" is participant of the following rooms (v4)
-      | name                     | type     |
-      | participant2-displayname | 2        |
+      | name                     | type     | readOnly |
+      | participant2-displayname | 5        | 1        |
 
   Scenario: delete user who left a one-to-one room
     Given user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant2" sends message "Message 1" to room "one-to-one room" with 201
+    Then user "participant1" is participant of the following rooms (v4)
+      | name         | type     | readOnly |
+      | participant2 | 1        | 0        |
     When user "participant2" leaves room "one-to-one room" with 200 (v4)
     When user "participant2" is deleted
     Then user "participant1" sees the following messages in room "one-to-one room" with 200
       | room            | actorType     | actorId       | actorDisplayName | message   | messageParameters |
       | one-to-one room | deleted_users | deleted_users |                  | Message 1 | []                |
     Then user "participant1" is participant of the following rooms (v4)
-      | name                     | type     |
-      | participant2-displayname | 2        |
+      | name                     | type     | readOnly |
+      | participant2-displayname | 5        | 1        |
 
   Scenario: delete user who is in a group room
     Given user "participant1" creates room "group room" (v4)

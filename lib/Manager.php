@@ -432,12 +432,13 @@ class Manager {
 
 		$leftRooms = $this->getLeftOneToOneRoomsForUser($user->getUID());
 		foreach ($leftRooms as $room) {
-			// We are changing the room type and name so a potential follow up
+			// We are changing the room type and name so a potential follow-up
 			// user with the same user-id can not reopen the one-to-one conversation.
 			/** @var RoomService $roomService */
 			$roomService = Server::get(RoomService::class);
-			$roomService->setType($room, Room::TYPE_GROUP, true);
+			$roomService->setType($room, Room::TYPE_ONE_TO_ONE_FORMER, true);
 			$roomService->setName($room, $user->getDisplayName(), '');
+			$roomService->setReadOnly($room, Room::READ_ONLY);
 		}
 	}
 

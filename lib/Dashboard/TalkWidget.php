@@ -164,7 +164,11 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			$attendee = $participant->getAttendee();
 			return $room->getCallFlag() !== Participant::FLAG_DISCONNECTED
 				|| $attendee->getLastMentionMessage() > $attendee->getLastReadMessage()
-				|| ($room->getType() === Room::TYPE_ONE_TO_ONE && $room->getLastMessage() && $room->getLastMessage()->getId() > $attendee->getLastReadMessage());
+				|| (
+					($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER)
+					&& $room->getLastMessage()
+					&& $room->getLastMessage()->getId() > $attendee->getLastReadMessage()
+				);
 		});
 
 		uasort($rooms, [$this, 'sortRooms']);
