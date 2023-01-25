@@ -190,6 +190,7 @@ OC.L10N.register(
     "Password request: %s" : "Zaporka: %s",
     "Private conversation" : "Privatni razgovor",
     "Deleted user (%s)" : "Izbrisan korisnik (%s)",
+    "Dismiss notification" : "Zanemari obavijest",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} s vama dijeli sobu {roomName} na {remoteServer}",
     "{user} in {call}" : "{user} u {call}",
     "Deleted user in {call}" : "Izbrisan korisnik u {call}",

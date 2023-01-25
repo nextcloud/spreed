@@ -180,6 +180,7 @@ OC.L10N.register(
     "Password request: %s" : "Барање за лозинка: %s",
     "Private conversation" : "Приватен разговор",
     "Deleted user (%s)" : "Избришан корисник (%s)",
+    "Dismiss notification" : "Отфрли известување",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} сподели соба {roomName} на {remoteServer} со вас",
     "{user} in {call}" : "{user} во {call}",
     "Deleted user in {call}" : "Избришан корисник во {call}",

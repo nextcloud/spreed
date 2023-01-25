@@ -92,6 +92,7 @@
     "Password request: %s" : "Захтев за лозинком: %s",
     "Private conversation" : "Приватни разговор",
     "Deleted user (%s)" : "Обрисани корисник (%s)",
+    "Dismiss notification" : "Уклони обавештење",
     "{user} sent you a private message" : "{user} Вам је послао приватну поруку",
     "{user} sent a message in conversation {call}" : "{user} Вам је послао поруку у разговору: {call}",
     "A deleted user sent a message in conversation {call}" : "Обрисани корисник је послао поруку у разговору {call}",

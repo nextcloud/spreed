@@ -165,6 +165,7 @@ OC.L10N.register(
     "Write to conversation" : "Написати у розмові",
     "Click the button below to join." : "Натисніть на кнопку, щоб приєднатися",
     "Join »%s«" : "Приєднатися до \"%s\"",
+    "Dismiss notification" : "Скасувати сповіщення",
     "View chat" : "Перегляд чату",
     "Join call" : "Приєднатися",
     "Answer call" : "Відповісти на виклик",

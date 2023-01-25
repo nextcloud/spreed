@@ -145,6 +145,7 @@ OC.L10N.register(
     "Password request: %s" : "비밀번호 요구사항 : %s",
     "Private conversation" : "사적인 대화",
     "Deleted user (%s)" : "삭제된 유저 (%s)",
+    "Dismiss notification" : "알림 해제",
     "{user} in {call}" : "{user} 가 {call} 상태 ",
     "Deleted user in {call}" : "{call} 에서 삭제된 유저",
     "{guest} (guest) in {call}" : "{손님} (손님) {call} 상태",

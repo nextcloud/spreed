@@ -1209,6 +1209,7 @@ OC.L10N.register(
     "You have new unread messages in the chat." : "Tienes nuevos mensajes sin leer en el chat.",
     "You have been mentioned in the chat." : "Se le ha mencionado en el chat.",
     "Mute others" : "Silenciar a los demás",
+    "Start recording" : "Empezar a grabar",
     "Devices settings" : "Ajustes de dispositivos",
     "Toggle fullscreen" : "Cambiar a pantalla completa",
     "Rename conversation" : "Renombrar conversación",

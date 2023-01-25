@@ -176,6 +176,7 @@ OC.L10N.register(
     "Password request: %s" : "Salasanapyyntö: %s",
     "Private conversation" : "Yksityinen keskustelu",
     "Deleted user (%s)" : "Poistettiin käyttäjä (%s)",
+    "Dismiss notification" : "Hylkää ilmoitus",
     "{user} in {call}" : "{user} puhelussa {call}",
     "{guest} (guest) in {call}" : "{guest} (vieras) puhelussa {call}",
     "Guest in {call}" : "Vieras puhelussa {call}",

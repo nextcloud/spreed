@@ -75,6 +75,7 @@ OC.L10N.register(
     "Join »%s«" : "Pievienoties »%s«",
     "Password request: %s" : "Paroles pieprasījums: %s",
     "Private conversation" : "Privāta saruna",
+    "Dismiss notification" : "Noraidīt paziņojumu",
     "{user} sent you a private message" : "{user} nosūtīja jums privātu ziņojumu",
     "{user} sent a message in conversation {call}" : "{user} nosūtīja ziņu sarunā {call}",
     "A deleted user sent a message in conversation {call}" : "Izdzēsts lietotājs nosūtīja ziņojumu sarunā {call}",
