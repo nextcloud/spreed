@@ -21,9 +21,14 @@ local Pipeline(test_set, database, services) = {
 			},
 			commands: [
 				"bash tests/drone-run-integration-tests.sh || exit 0",
+				"composer --version",
+				"composer self-update --2",
 				"wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh",
 				"bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST",
 				"cd ../server",
+				"cd apps/$APP_NAME",
+				"composer install --no-dev",
+				"cd ../..",
 				"./occ app:enable $APP_NAME",
 				"git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications apps/notifications",
 				"./occ app:enable notifications"
@@ -32,11 +37,7 @@ local Pipeline(test_set, database, services) = {
 					"git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests"
 				] else []
 			) + [
-				"cd apps/$APP_NAME",
-				"composer --version",
-				"composer self-update --2",
-				"composer install",
-				"cd tests/integration/",
+				"cd apps/$APP_NAME/tests/integration/",
 				"bash run.sh features/"+test_set
 			]
 		}
