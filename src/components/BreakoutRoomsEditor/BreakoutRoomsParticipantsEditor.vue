@@ -97,7 +97,7 @@ import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationI
 import SelectableParticipant from './SelectableParticipant.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import { PARTICIPANT } from '../../constants.js'
+import { ATTENDEE, PARTICIPANT } from '../../constants.js'
 
 export default {
 	name: 'BreakoutRoomsParticipantsEditor',
@@ -135,8 +135,9 @@ export default {
 	computed: {
 		participants() {
 			return this.$store.getters.participantsList(this.token).filter(participant => {
-				return participant.participantType === PARTICIPANT.TYPE.USER
-					|| participant.participantType === PARTICIPANT.TYPE.GUEST
+				return (participant.participantType === PARTICIPANT.TYPE.USER
+						|| participant.participantType === PARTICIPANT.TYPE.GUEST)
+					&& participant.actorType === ATTENDEE.ACTOR_TYPE.USERS
 			})
 		},
 
