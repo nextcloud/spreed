@@ -7,18 +7,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/callapi
   environment:
     APP_NAME: spreed
@@ -43,18 +44,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/chat
   environment:
     APP_NAME: spreed
@@ -79,18 +81,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/chat-2
   environment:
     APP_NAME: spreed
@@ -115,18 +118,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/command
   environment:
     APP_NAME: spreed
@@ -151,19 +155,20 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/conversation
   environment:
     APP_NAME: spreed
@@ -188,19 +193,20 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/conversation-2
   environment:
     APP_NAME: spreed
@@ -225,18 +231,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/federation
   environment:
     APP_NAME: spreed
@@ -261,18 +268,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/integration
   environment:
     APP_NAME: spreed
@@ -297,18 +305,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/sharing
   environment:
     APP_NAME: spreed
@@ -333,18 +342,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/sharing-2
   environment:
     APP_NAME: spreed
@@ -383,18 +393,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/callapi
   environment:
     APP_NAME: spreed
@@ -433,18 +444,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/chat
   environment:
     APP_NAME: spreed
@@ -483,18 +495,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/chat-2
   environment:
     APP_NAME: spreed
@@ -533,18 +546,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/command
   environment:
     APP_NAME: spreed
@@ -583,19 +597,20 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/conversation
   environment:
     APP_NAME: spreed
@@ -634,19 +649,20 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/conversation-2
   environment:
     APP_NAME: spreed
@@ -685,18 +701,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/federation
   environment:
     APP_NAME: spreed
@@ -735,18 +752,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/integration
   environment:
     APP_NAME: spreed
@@ -785,18 +803,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/sharing
   environment:
     APP_NAME: spreed
@@ -835,18 +854,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/sharing-2
   environment:
     APP_NAME: spreed
@@ -880,18 +900,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/callapi
   environment:
     APP_NAME: spreed
@@ -926,18 +947,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/chat
   environment:
     APP_NAME: spreed
@@ -972,18 +994,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/chat-2
   environment:
     APP_NAME: spreed
@@ -1018,18 +1041,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/command
   environment:
     APP_NAME: spreed
@@ -1064,19 +1088,20 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/conversation
   environment:
     APP_NAME: spreed
@@ -1111,19 +1136,20 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/conversation-2
   environment:
     APP_NAME: spreed
@@ -1158,18 +1184,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/federation
   environment:
     APP_NAME: spreed
@@ -1204,18 +1231,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/integration
   environment:
     APP_NAME: spreed
@@ -1250,18 +1278,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/sharing
   environment:
     APP_NAME: spreed
@@ -1296,18 +1325,19 @@ services:
 steps:
 - commands:
   - bash tests/drone-run-integration-tests.sh || exit 0
+  - composer --version
+  - composer self-update --2
   - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
   - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
   - cd ../server
+  - cd apps/$APP_NAME
+  - composer install --no-dev
+  - cd ../..
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
   - ./occ app:enable notifications
-  - cd apps/$APP_NAME
-  - composer --version
-  - composer self-update --2
-  - composer install
-  - cd tests/integration/
+  - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/sharing-2
   environment:
     APP_NAME: spreed
