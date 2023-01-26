@@ -302,7 +302,8 @@ export default {
 	},
 
 	mounted() {
-		const titleSpan = document.getElementById(`conversation_${this.item.token}`).querySelector('.line-one__title')
+		const titleSpan = document.getElementById(`conversation_${this.item.token}`)?.querySelector('.line-one__title')
+		if (!titleSpan) return
 
 		if (titleSpan.offsetWidth < titleSpan.scrollWidth) titleSpan.setAttribute('title', this.item.displayName)
 	},
