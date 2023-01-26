@@ -276,7 +276,24 @@ export default {
 	props: {
 		isChatScrolledToBottom: {
 			type: Boolean,
+			default: true,
+		},
+
+		/**
+		 * The current conversation token or the breakout room token.
+		 */
+		token: {
+			type: String,
 			required: true,
+		},
+
+		/**
+		 * When this component is used to send message to a breakout room we
+		 * adapt the layout and remove some functionality.
+		 */
+		breakoutRoom: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -298,15 +315,6 @@ export default {
 	},
 
 	computed: {
-		/**
-		 * The current conversation token
-		 *
-		 * @return {string}
-		 */
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		conversation() {
 			return this.$store.getters.conversation(this.token) || {
 				readOnly: CONVERSATION.STATE.READ_WRITE,

@@ -45,6 +45,7 @@
 			:is-visible="isVisible"
 			@set-chat-scrolled-to-bottom="setScrollStatus" />
 		<NewMessageForm role="region"
+			:token="token"
 			:is-chat-scrolled-to-bottom="isChatScrolledToBottom"
 			:aria-label="t('spreed', 'Post message')" />
 	</div>
