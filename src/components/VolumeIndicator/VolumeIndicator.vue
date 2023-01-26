@@ -24,13 +24,12 @@
 	<span class="volume-indicator-wrapper"
 		:style="{ height: size + 'px', width: size + 'px' }"
 		:class="{ overload: hasOverload }">
-		<span class="volume-indicator volume-indicator-primary"
-			:style="{ height: iconPrimaryHeight + 'px' }">
+		<span class="volume-indicator volume-indicator-primary" :style="{ height: iconPrimaryHeight + 'px' }">
 			<Microphone v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
 			<MicrophoneOff v-else :size="size" :fill-color="primaryColor" />
 		</span>
 
-		<span v-show="audioPreviewAvailable"
+		<span v-if="audioPreviewAvailable"
 			class="volume-indicator volume-indicator-overlay"
 			:class="{ 'volume-indicator-overlay-mute': !audioEnabled }"
 			:style="{ height: iconOverlayHeight + 'px' }">
@@ -105,9 +104,9 @@ export default {
 		},
 
 		iconPrimaryHeight() {
-			return (
-				this.size - this.iconOffsetBottom - this.currentVolumeIndicatorHeight
-			)
+			return this.audioPreviewAvailable
+				? this.size - this.iconOffsetBottom - this.currentVolumeIndicatorHeight
+				: this.size
 		},
 
 		iconOverlayHeight() {
@@ -115,12 +114,14 @@ export default {
 		},
 
 		hasOverload() {
-			return (
-				this.currentVolumeIndicatorHeight === this.size - this.iconOffsetBottom
-			)
+			return this.audioPreviewAvailable && this.currentVolumeIndicatorHeight === this.size - this.iconOffsetBottom
 		},
 
 		currentVolumeIndicatorHeight() {
+			if (!this.audioPreviewAvailable) {
+				return 0
+			}
+
 			// WebRTC volume goes from -100 (silence) to 0 (loudest sound in the
 			// system); for the volume indicator only sounds above the threshold
 			// are taken into account.
@@ -134,9 +135,7 @@ export default {
 
 	methods: {
 		computeVolumeLevel() {
-			const computedLevel
-				= (this.volumeThreshold - this.currentVolume)
-				/ (this.volumeThreshold - this.overloadLimit)
+			const computedLevel = (this.volumeThreshold - this.currentVolume) / (this.volumeThreshold - this.overloadLimit)
 
 			if (computedLevel < 0) return 0
 			else if (computedLevel > 1) return 1
@@ -185,7 +184,10 @@ export default {
 }
 
 .overload .volume-indicator {
-	color: var(--color-error);
 	transition: height 0s linear;
+
+	&-overlay {
+		color: var(--color-error);
+	}
 }
 </style>
