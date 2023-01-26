@@ -17,6 +17,9 @@ Feature: callapi/recording
       | room1 | users     | participant1 | participant1-displayname | recording_started    |
       | room1 | users     | participant1 | participant1-displayname | call_started         |
       | room1 | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 1             |
     When user "participant1" stops recording in room "room1" with 200 (v1)
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
@@ -24,6 +27,9 @@ Feature: callapi/recording
       | room1 | users     | participant1 | participant1-displayname | recording_started    |
       | room1 | users     | participant1 | participant1-displayname | call_started         |
       | room1 | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
 
   Scenario: Start and stop audio recording
     When the following "spreed" app config is set
@@ -39,6 +45,9 @@ Feature: callapi/recording
       | room1 | users     | participant1 | participant1-displayname | audio_recording_started |
       | room1 | users     | participant1 | participant1-displayname | call_started            |
       | room1 | users     | participant1 | participant1-displayname | conversation_created    |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 2             |
     When user "participant1" stops recording in room "room1" with 200 (v1)
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage           |
@@ -46,6 +55,9 @@ Feature: callapi/recording
       | room1 | users     | participant1 | participant1-displayname | audio_recording_started |
       | room1 | users     | participant1 | participant1-displayname | call_started            |
       | room1 | users     | participant1 | participant1-displayname | conversation_created    |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
 
   Scenario: Get error when start|stop recording and already did this
     Given the following "spreed" app config is set
@@ -58,13 +70,25 @@ Feature: callapi/recording
     When user "participant1" starts "audio" recording in room "room1" with 200 (v1)
     Then user "participant1" starts "audio" recording in room "room1" with 400 (v1)
     And the response error matches with "recording"
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 2             |
     When user "participant1" stops recording in room "room1" with 200 (v1)
     Then user "participant1" stops recording in room "room1" with 200 (v1)
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
     When user "participant1" starts "video" recording in room "room1" with 200 (v1)
     Then user "participant1" starts "video" recording in room "room1" with 400 (v1)
     And the response error matches with "recording"
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 1             |
     When user "participant1" stops recording in room "room1" with 200 (v1)
     Then user "participant1" stops recording in room "room1" with 200 (v1)
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
 
   Scenario: Get error when try to start recording with invalid status
     When the following "spreed" app config is set
@@ -76,6 +100,9 @@ Feature: callapi/recording
     And user "participant1" joins call "room1" with 200 (v4)
     Then user "participant1" starts "invalid" recording in room "room1" with 400 (v1)
     And the response error matches with "status"
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
 
   Scenario: Manager try without success to start recording when signaling is internal
     When the following "spreed" app config is set
@@ -87,8 +114,14 @@ Feature: callapi/recording
     And user "participant1" joins call "room1" with 200 (v4)
     Then user "participant1" starts "video" recording in room "room1" with 400 (v1)
     And the response error matches with "config"
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
     And user "participant1" starts "audio" recording in room "room1" with 400 (v1)
     And the response error matches with "config"
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
 
   Scenario: Get error when non moderator/owner try to start recording
     Given the following "spreed" app config is set
@@ -103,6 +136,9 @@ Feature: callapi/recording
     And user "participant2" joins call "room1" with 200 (v4)
     Then user "participant2" starts "video" recording in room "room1" with 403 (v1)
     And user "participant2" starts "audio" recording in room "room1" with 403 (v1)
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
 
   Scenario: Get error when try to start recording and no call started
     Given the following "spreed" app config is set
@@ -112,8 +148,14 @@ Feature: callapi/recording
       | roomName | room1 |
     Then user "participant1" starts "video" recording in room "room1" with 400 (v1)
     And the response error matches with "call"
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
     Then user "participant1" starts "audio" recording in room "room1" with 400 (v1)
     And the response error matches with "call"
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
 
   Scenario: Store recording
     Given user "participant1" creates room "room1" (v4)
@@ -124,6 +166,9 @@ Feature: callapi/recording
     And user "participant1" has the following notifications
       | app    | object_type | object_id | subject                                        |
       | spreed | chat        | room1     | Recording for the call in room1 was uploaded.  |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
 
   Scenario: Stop recording automatically when end the call
     When the following "spreed" app config is set
