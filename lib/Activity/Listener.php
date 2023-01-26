@@ -33,6 +33,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -51,6 +52,7 @@ class Listener {
 
 	protected ParticipantService $participantService;
 	protected RoomService $roomService;
+	protected RecordingService $recordingService;
 
 	protected LoggerInterface $logger;
 
@@ -61,6 +63,7 @@ class Listener {
 								ChatManager $chatManager,
 								ParticipantService $participantService,
 								RoomService $roomService,
+								RecordingService $recordingService,
 								LoggerInterface $logger,
 								ITimeFactory $timeFactory) {
 		$this->activityManager = $activityManager;
@@ -68,6 +71,7 @@ class Listener {
 		$this->chatManager = $chatManager;
 		$this->participantService = $participantService;
 		$this->roomService = $roomService;
+		$this->recordingService = $recordingService;
 		$this->logger = $logger;
 		$this->timeFactory = $timeFactory;
 	}
@@ -146,6 +150,9 @@ class Listener {
 			return false;
 		}
 
+		if ($room->getCallRecording() !== Room::RECORDING_NONE) {
+			$this->recordingService->stop($room);
+		}
 		if ($actor instanceof Participant) {
 			$actorId = $actor->getAttendee()->getActorId();
 			$actorType = $actor->getAttendee()->getActorType();
