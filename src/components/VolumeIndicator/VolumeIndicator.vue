@@ -2,6 +2,7 @@
   - @copyright Copyright (c) 2021 Marco Ambrosini <marcoambrosini@icloud.com>
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
+  - @author Maksim Sukharev <antreesy.web@gmail.com>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -21,25 +22,18 @@
 
 <template>
 	<span class="volume-indicator-wrapper"
-		:style="{ height: size + 'px', width: size + 'px' }">
+		:style="{ height: size + 'px', width: size + 'px' }"
+		:class="{ overload: hasOverload }">
 		<span class="volume-indicator volume-indicator-primary"
-			:style="{
-				height: size - 2 - currentVolumeIndicatorHeight + 'px',
-			}">
+			:style="{ height: iconPrimaryHeight + 'px' }">
 			<Microphone v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
 			<MicrophoneOff v-else :size="size" :fill-color="primaryColor" />
 		</span>
 
 		<span v-show="audioPreviewAvailable"
 			class="volume-indicator volume-indicator-overlay"
-			:class="{
-				'volume-indicator-overlay-mute': !audioEnabled,
-				'volume-indicator-overlay-overload':
-					currentVolumeIndicatorHeight === size,
-			}"
-			:style="{
-				height: currentVolumeIndicatorHeight + 'px',
-			}">
+			:class="{ 'volume-indicator-overlay-mute': !audioEnabled }"
+			:style="{ height: iconOverlayHeight + 'px' }">
 			<Microphone v-if="audioEnabled" :size="size" :fill-color="overlayColor" />
 			<MicrophoneOff v-else :size="size" :fill-color="overlayMutedColor" />
 		</span>
@@ -81,7 +75,7 @@ export default {
 
 		overloadLimit: {
 			type: Number,
-			default: -20,
+			default: -25,
 		},
 
 		size: {
@@ -106,6 +100,26 @@ export default {
 	},
 
 	computed: {
+		iconOffsetBottom() {
+			return this.size / 8
+		},
+
+		iconPrimaryHeight() {
+			return (
+				this.size - this.iconOffsetBottom - this.currentVolumeIndicatorHeight
+			)
+		},
+
+		iconOverlayHeight() {
+			return this.iconOffsetBottom / 2 + this.currentVolumeIndicatorHeight
+		},
+
+		hasOverload() {
+			return (
+				this.currentVolumeIndicatorHeight === this.size - this.iconOffsetBottom
+			)
+		},
+
 		currentVolumeIndicatorHeight() {
 			// WebRTC volume goes from -100 (silence) to 0 (loudest sound in the
 			// system); for the volume indicator only sounds above the threshold
@@ -114,7 +128,7 @@ export default {
 				return 0
 			}
 
-			return this.size * this.computeVolumeLevel()
+			return (this.size - this.iconOffsetBottom) * this.computeVolumeLevel()
 		},
 	},
 
@@ -139,8 +153,7 @@ export default {
 
 .volume-indicator {
 	position: absolute;
-	left: 50%;
-	transform: translateX(-50%);
+	left: 0;
 
 	width: 100%;
 	height: 100%;
@@ -166,13 +179,13 @@ export default {
 	/* Overlay icon inherits container color */
 	color: var(--color-success);
 
-	&-overload {
-		color: var(--color-error);
-		transition: height 0s linear;
-	}
-
 	&-mute {
 		color: var(--color-loading-dark);
 	}
+}
+
+.overload .volume-indicator {
+	color: var(--color-error);
+	transition: height 0s linear;
 }
 </style>
