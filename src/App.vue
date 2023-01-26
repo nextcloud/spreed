@@ -197,6 +197,7 @@ export default {
 		 */
 		isOneToOne() {
 			return this.currentConversation?.type === CONVERSATION.TYPE.ONE_TO_ONE
+				|| this.currentConversation?.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 		},
 
 		disableKeyboardShortcuts() {

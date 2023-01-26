@@ -69,7 +69,7 @@ class AvatarService {
 	}
 
 	public function setAvatarFromRequest(Room $room, ?array $file): void {
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			throw new InvalidArgumentException($this->l->t('One to one rooms always need to show the other users avatar'));
 		}
 
@@ -97,7 +97,7 @@ class AvatarService {
 	}
 
 	public function setAvatar(Room $room, \OC_Image $image): void {
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			throw new InvalidArgumentException($this->l->t('One to one rooms always need to show the other users avatar'));
 		}
 		$image->fixOrientation();
@@ -166,7 +166,7 @@ class AvatarService {
 		}
 		// Fallback
 		if (!isset($file)) {
-			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 				$users = json_decode($room->getName(), true);
 				foreach ($users as $participantId) {
 					if ($user instanceof IUser && $participantId !== $user->getUID()) {

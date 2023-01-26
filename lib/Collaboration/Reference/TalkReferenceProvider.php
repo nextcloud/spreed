@@ -202,7 +202,7 @@ class TalkReferenceProvider implements IReferenceProvider {
 			$description = str_replace($placeholders, $replacements, $message->getMessage());
 
 			$titleLine = $this->l->t('Message of {user} in {conversation}');
-			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 				$titleLine = $this->l->t('Message of {user}');
 			}
 
@@ -264,6 +264,7 @@ class TalkReferenceProvider implements IReferenceProvider {
 	protected function getRoomType(Room $room): string {
 		switch ($room->getType()) {
 			case Room::TYPE_ONE_TO_ONE:
+			case Room::TYPE_ONE_TO_ONE_FORMER:
 				return 'one2one';
 			case Room::TYPE_GROUP:
 				return 'group';

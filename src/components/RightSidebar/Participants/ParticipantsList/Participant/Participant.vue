@@ -549,7 +549,7 @@ export default {
 
 		showModeratorLabel() {
 			return this.isModerator
-				&& [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.CHANGELOG].indexOf(this.conversation.type) === -1
+				&& [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER, CONVERSATION.TYPE.CHANGELOG].indexOf(this.conversation.type) === -1
 		},
 
 		canBeModerated() {

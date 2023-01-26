@@ -299,6 +299,7 @@ export default {
 
 		isOneToOneConversation() {
 			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 		},
 
 		toggleVirtualBackgroundButtonLabel() {

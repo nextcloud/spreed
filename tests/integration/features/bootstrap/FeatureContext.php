@@ -150,7 +150,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$identifierToToken = [];
 		self::$identifierToId = [];
 		self::$tokenToIdentifier = [];
-		self::$sessionIdToUser = [];
+		self::$sessionIdToUser = [
+			'cli' => 'cli',
+		];
 		self::$userToSessionId = [];
 		self::$userToAttendeeId = [];
 		self::$textToMessageId = [];

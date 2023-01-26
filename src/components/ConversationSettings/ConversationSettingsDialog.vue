@@ -179,6 +179,7 @@ export default {
 			return (this.participantType === PARTICIPANT.TYPE.OWNER
 				|| this.participantType === PARTICIPANT.TYPE.MODERATOR)
 				&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
+				&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 		},
 
 		canDeleteConversation() {
@@ -196,6 +197,7 @@ export default {
 		showDescription() {
 			if (this.canFullModerate) {
 				return this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
+					&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 			} else {
 				return this.description !== ''
 			}

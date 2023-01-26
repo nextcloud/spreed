@@ -118,6 +118,7 @@ class ConversationProvider implements IProvider {
 	protected function getRoomType(Room $room): string {
 		switch ($room->getType()) {
 			case Room::TYPE_ONE_TO_ONE:
+			case Room::TYPE_ONE_TO_ONE_FORMER:
 				return 'one2one';
 			case Room::TYPE_GROUP:
 				return 'group';

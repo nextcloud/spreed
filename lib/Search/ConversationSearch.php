@@ -100,7 +100,7 @@ class ConversationSearch implements IProvider {
 				continue;
 			}
 
-			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 				$otherUserId = str_replace(
 					json_encode($user->getUID()),
 					'',

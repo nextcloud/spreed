@@ -116,6 +116,8 @@ export default {
 				return 'icon-mail'
 			} else if (this.item.type === CONVERSATION.TYPE.CHANGELOG) {
 				return 'icon-changelog'
+			} else if (this.item.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
+				return 'icon-user'
 			} else if (this.item.type === CONVERSATION.TYPE.GROUP) {
 				return 'icon-contacts'
 			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
@@ -169,6 +171,7 @@ $icon-size: 44px;
 
 		&.icon-public,
 		&.icon-contacts,
+		&.icon-user,
 		&.icon-password,
 		&.icon-file,
 		&.icon-mail {

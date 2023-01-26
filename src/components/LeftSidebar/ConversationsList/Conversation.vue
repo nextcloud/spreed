@@ -151,7 +151,9 @@ export default {
 	computed: {
 
 		counterType() {
-			if (this.item.unreadMentionDirect || (this.item.unreadMessages !== 0 && this.item.type === CONVERSATION.TYPE.ONE_TO_ONE)) {
+			if (this.item.unreadMentionDirect || (this.item.unreadMessages !== 0 && (
+				this.item.type === CONVERSATION.TYPE.ONE_TO_ONE || this.item.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+			))) {
 				return 'highlighted'
 			} else if (this.item.unreadMention) {
 				return 'outlined'
@@ -220,6 +222,7 @@ export default {
 			}
 
 			if (this.item.type === CONVERSATION.TYPE.ONE_TO_ONE
+				|| this.item.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 				|| this.item.type === CONVERSATION.TYPE.CHANGELOG) {
 				return this.simpleLastChatMessage
 			}
