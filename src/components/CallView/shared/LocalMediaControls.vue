@@ -58,28 +58,22 @@
 					</div>
 				</NcPopover>
 			</div>
-			<div id="muteWrapper">
-				<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['m']"
-					v-tooltip="audioButtonTooltip"
-					type="tertiary-no-background"
-					:aria-label="audioButtonAriaLabel"
-					:class="audioButtonClass"
-					@shortkey="toggleAudio"
-					@click.stop="toggleAudio">
-					<template #icon>
-						<Microphone v-if="showMicrophoneOn"
-							:size="20"
-							fill-color="#ffffff" />
-						<MicrophoneOff v-else
-							:size="20"
-							fill-color="#ffffff" />
-					</template>
-				</NcButton>
-				<span v-show="model.attributes.audioAvailable"
-					ref="volumeIndicator"
-					class="volume-indicator"
-					:class="{'microphone-off': !showMicrophoneOn}" />
-			</div>
+			<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['m']"
+				v-tooltip="audioButtonTooltip"
+				type="tertiary-no-background"
+				:aria-label="audioButtonAriaLabel"
+				:class="audioButtonClass"
+				@shortkey="toggleAudio"
+				@click.stop="toggleAudio">
+				<template #icon>
+					<VolumeIndicator :audio-preview-available="model.attributes.audioAvailable"
+						:audio-enabled="showMicrophoneOn"
+						:current-volume="model.attributes.currentVolume"
+						:volume-threshold="model.attributes.volumeThreshold"
+						primary-color="#ffffff"
+						overlay-muted-color="#888888" />
+				</template>
+			</NcButton>
 			<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['v']"
 				v-tooltip="videoButtonTooltip"
 				type="tertiary-no-background"
@@ -180,27 +174,29 @@
 import escapeHtml from 'escape-html'
 import { emit } from '@nextcloud/event-bus'
 import { showMessage } from '@nextcloud/dialogs'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+
+import Blur from 'vue-material-design-icons/Blur.vue'
+import BlurOff from 'vue-material-design-icons/BlurOff.vue'
 import CancelPresentation from '../../missingMaterialDesignIcons/CancelPresentation.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
-import Microphone from 'vue-material-design-icons/Microphone.vue'
-import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import Monitor from 'vue-material-design-icons/Monitor.vue'
+import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
 import PresentToAll from '../../missingMaterialDesignIcons/PresentToAll.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
-import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+
+import VolumeIndicator from '../../VolumeIndicator/VolumeIndicator.vue'
+
 import { PARTICIPANT } from '../../../constants.js'
-import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
-import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
+import isInCall from '../../../mixins/isInCall.js'
 import { callAnalyzer } from '../../../utils/webrtc/index.js'
 import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer.js'
-import isInCall from '../../../mixins/isInCall.js'
-import Blur from 'vue-material-design-icons/Blur.vue'
-import BlurOff from 'vue-material-design-icons/BlurOff.vue'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
 
 export default {
 
@@ -210,21 +206,20 @@ export default {
 		tooltip: Tooltip,
 	},
 	components: {
-		NetworkStrength2Alert,
-		NcPopover,
+		Blur,
+		BlurOff,
 		CancelPresentation,
 		HandBackLeft,
-		Microphone,
-		MicrophoneOff,
+		Monitor,
+		NcActions,
+		NcActionButton,
+		NcButton,
+		NcPopover,
+		NetworkStrength2Alert,
 		PresentToAll,
 		VideoIcon,
 		VideoOff,
-		Monitor,
-		NcButton,
-		NcActions,
-		NcActionButton,
-		Blur,
-		BlurOff,
+		VolumeIndicator,
 	},
 
 	mixins: [
@@ -264,7 +259,6 @@ export default {
 
 	data() {
 		return {
-			mounted: false,
 			speakingWhileMutedNotification: null,
 			screenSharingMenuOpen: false,
 			boundaryElement: document.querySelector('.main-view'),
@@ -364,24 +358,6 @@ export default {
 				return t('spreed', 'No audio')
 			}
 			return this.model.attributes.audioEnabled ? t('spreed', 'Mute audio') : t('spreed', 'Unmute audio')
-		},
-
-		currentVolumeProportion() {
-			// refs can not be accessed on the initial render, only after the
-			// component has been mounted.
-			if (!this.mounted) {
-				return 0
-			}
-
-			// WebRTC volume goes from -100 (silence) to 0 (loudest sound in the
-			// system); for the volume indicator only sounds above the threshold
-			// are taken into account.
-			let currentVolumeProportion = 0
-			if (this.model.attributes.currentVolume > this.model.attributes.volumeThreshold) {
-				currentVolumeProportion = (this.model.attributes.volumeThreshold - this.model.attributes.currentVolume) / this.model.attributes.volumeThreshold
-			}
-
-			return currentVolumeProportion
 		},
 
 		videoButtonClass() {
@@ -600,13 +576,6 @@ export default {
 	},
 
 	watch: {
-		currentVolumeProportion() {
-			// The volume meter is updated directly in the DOM as it is
-			// more efficient than relying on Vue.js to animate the style property,
-			// because the latter would also process all neighboring components repeatedly.
-			this.updateVolumeMeter()
-		},
-
 		senderConnectionQualityIsBad(senderConnectionQualityIsBad) {
 			if (!senderConnectionQualityIsBad) {
 				return
@@ -623,9 +592,6 @@ export default {
 	},
 
 	mounted() {
-		this.mounted = true
-		this.updateVolumeMeter()
-
 		this.speakingWhileMutedWarner = new SpeakingWhileMutedWarner(this.model, this)
 	},
 
@@ -634,19 +600,6 @@ export default {
 	},
 
 	methods: {
-		updateVolumeMeter() {
-			if (!this.mounted) {
-				return
-			}
-
-			const volumeIndicatorStyle = window.getComputedStyle ? getComputedStyle(this.$refs.volumeIndicator, null) : this.$refs.volumeIndicator.currentStyle
-			const maximumVolumeIndicatorHeight = this.$refs.volumeIndicator.parentElement.clientHeight - (parseInt(volumeIndicatorStyle.bottom, 10) * 2)
-
-			// round up to avoid property changes
-			const height = Math.floor(maximumVolumeIndicatorHeight * this.currentVolumeProportion)
-			this.$refs.volumeIndicator.style.height = height + 'px'
-		},
-
 		/**
 		 * This method executes on spacebar keydown and keyup
 		 */
@@ -860,35 +813,6 @@ export default {
 	&, & * {
 		opacity: .7;
 		cursor: not-allowed;
-	}
-}
-
-#muteWrapper {
-	display: inline-block;
-
-	/* Make the wrapper the positioning context of the volume indicator. */
-	position: relative;
-}
-
-#muteWrapper .volume-indicator {
-	position: absolute;
-
-	width: 3px;
-	right: 0;
-
-	/* The button height is 44px; the volume indicator button is 36px at
-	* maximum, but its value will be changed based on the current volume; the
-	* height change will reveal more or less of the gradient, which has
-	* absolute dimensions and thus does not change when the height changes. */
-	height: 36px;
-	bottom: 4px;
-
-	background: linear-gradient(0deg, green, yellow, red 36px);
-
-	opacity: 0.7;
-
-	&.microphone-off {
-		background: linear-gradient(0deg, gray, white 36px);
 	}
 }
 

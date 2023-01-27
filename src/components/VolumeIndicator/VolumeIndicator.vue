@@ -2,6 +2,7 @@
   - @copyright Copyright (c) 2021 Marco Ambrosini <marcoambrosini@icloud.com>
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
+  - @author Maksim Sukharev <antreesy.web@gmail.com>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -20,23 +21,43 @@
 -->
 
 <template>
-	<div v-show="audioPreviewAvailable"
-		class="volume-indicator-wrapper"
-		:style="{ 'height': wrapperHeight + 'px' }">
-		<span ref="volumeIndicator"
-			class="volume-indicator"
-			:class="{'volume-indicator--disabled': disabled}"
-			:style="{ 'height': currentVolumeIndicatorHeight + 'px' }" />
-	</div>
+	<span class="volume-indicator-wrapper"
+		:style="{ height: size + 'px', width: size + 'px' }"
+		:class="{ overload: hasOverload }">
+		<span class="volume-indicator volume-indicator-primary" :style="{ height: iconPrimaryHeight + 'px' }">
+			<Microphone v-if="audioEnabled" :size="size" :fill-color="primaryColor" />
+			<MicrophoneOff v-else :size="size" :fill-color="primaryColor" />
+		</span>
+
+		<span v-if="audioPreviewAvailable"
+			class="volume-indicator volume-indicator-overlay"
+			:class="{ 'volume-indicator-overlay-mute': !audioEnabled }"
+			:style="{ height: iconOverlayHeight + 'px' }">
+			<Microphone v-if="audioEnabled" :size="size" :fill-color="overlayColor" />
+			<MicrophoneOff v-else :size="size" :fill-color="overlayMutedColor" />
+		</span>
+	</span>
 </template>
 
 <script>
+import Microphone from 'vue-material-design-icons/Microphone.vue'
+import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 
 export default {
 	name: 'VolumeIndicator',
 
+	components: {
+		Microphone,
+		MicrophoneOff,
+	},
+
 	props: {
 		audioPreviewAvailable: {
+			type: Boolean,
+			required: true,
+		},
+
+		audioEnabled: {
 			type: Boolean,
 			required: true,
 		},
@@ -51,83 +72,122 @@ export default {
 			required: true,
 		},
 
-		wrapperHeight: {
+		overloadLimit: {
 			type: Number,
-			default: 44,
+			default: -25,
 		},
 
-		disabled: {
-			type: Boolean,
-			default: false,
+		size: {
+			type: Number,
+			default: 20,
 		},
-	},
 
-	data() {
-		return {
-			mounted: false,
-		}
+		primaryColor: {
+			type: String,
+			default: undefined,
+		},
+
+		overlayColor: {
+			type: String,
+			default: undefined,
+		},
+
+		overlayMutedColor: {
+			type: String,
+			default: undefined,
+		},
 	},
 
 	computed: {
+		iconOffsetBottom() {
+			return this.size / 8
+		},
+
+		iconPrimaryHeight() {
+			return this.audioPreviewAvailable
+				? this.size - this.iconOffsetBottom - this.currentVolumeIndicatorHeight
+				: this.size
+		},
+
+		iconOverlayHeight() {
+			return this.iconOffsetBottom / 2 + this.currentVolumeIndicatorHeight
+		},
+
+		hasOverload() {
+			return this.audioPreviewAvailable && this.currentVolumeIndicatorHeight === this.size - this.iconOffsetBottom
+		},
+
 		currentVolumeIndicatorHeight() {
-			// refs can not be accessed on the initial render, only after the
-			// component has been mounted.
-			if (!this.mounted) {
+			if (!this.audioPreviewAvailable) {
 				return 0
 			}
 
 			// WebRTC volume goes from -100 (silence) to 0 (loudest sound in the
 			// system); for the volume indicator only sounds above the threshold
 			// are taken into account.
-			let currentVolumeProportion = 0
-			if (this.currentVolume > this.volumeThreshold) {
-				currentVolumeProportion = (this.volumeThreshold - this.currentVolume) / this.volumeThreshold
+			if (this.currentVolume < this.volumeThreshold) {
+				return 0
 			}
 
-			const volumeIndicatorStyle = window.getComputedStyle ? getComputedStyle(this.$refs.volumeIndicator, null) : this.$refs.volumeIndicator.currentStyle
-
-			const maximumVolumeIndicatorHeight = this.$refs.volumeIndicator.parentElement.clientHeight - (parseInt(volumeIndicatorStyle.bottom, 10) * 2)
-
-			return maximumVolumeIndicatorHeight * currentVolumeProportion
+			return (this.size - this.iconOffsetBottom) * this.computeVolumeLevel()
 		},
 	},
 
-	mounted() {
-		this.mounted = true
+	methods: {
+		computeVolumeLevel() {
+			const computedLevel = (this.volumeThreshold - this.currentVolume) / (this.volumeThreshold - this.overloadLimit)
+
+			if (computedLevel < 0) return 0
+			else if (computedLevel > 1) return 1
+			else return computedLevel
+		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
-
 .volume-indicator-wrapper {
-	/* Make the wrapper the positioning context of the volume indicator. */
 	position: relative;
-	margin-top: 16px;
-	margin-bottom: 16px;
 }
 
 .volume-indicator {
 	position: absolute;
-	width: 4px;
-	right: 0;
+	left: 0;
 
-	/* The button height is 44px; the volume indicator button is 44px at
-		* maximum, but its value will be changed based on the current volume;
-		* the height change will reveal more or less of the gradient, which has
-		* absolute dimensions and thus does not change when the height
-		* changes. */
-	height: $clickable-area;
-	bottom: 4px;
+	width: 100%;
+	height: 100%;
 
-	background: linear-gradient(0deg, green, yellow, red 44px);
+	overflow: hidden;
 
-	opacity: 0.7;
+	transition: height 0.2s linear;
+}
 
-	&--disabled {
-		background: var(--color-loading-light);
+.volume-indicator-primary {
+	top: 0;
+}
+
+.volume-indicator-overlay {
+	bottom: 0;
+	pointer-events: none;
+
+	& > span {
+		position: absolute;
+		bottom: 0;
+	}
+
+	/* Overlay icon inherits container color */
+	color: var(--color-success);
+
+	&-mute {
+		color: var(--color-loading-dark);
 	}
 }
 
+.overload .volume-indicator {
+	transition: height 0s linear;
+
+	&-overlay {
+		color: var(--color-error);
+	}
+}
 </style>

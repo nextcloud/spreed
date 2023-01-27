@@ -67,17 +67,13 @@
 					:disabled="!audioPreviewAvailable"
 					@click="toggleAudio">
 					<template #icon>
-						<Microphone v-if="audioOn"
-							:size="20" />
-						<MicrophoneOff v-else
-							:size="20" />
+						<VolumeIndicator :audio-preview-available="audioPreviewAvailable"
+							:audio-enabled="audioOn"
+							:current-volume="currentVolume"
+							:volume-threshold="volumeThreshold"
+							overlay-muted-color="#888888" />
 					</template>
 				</NcButton>
-				<VolumeIndicator class="indicator"
-					:audio-preview-available="audioPreviewAvailable"
-					:current-volume="currentVolume"
-					:volume-threshold="volumeThreshold"
-					:disabled="!audioOn" />
 
 				<!-- Video toggle -->
 				<NcButton v-tooltip="videoButtonTooltip"
@@ -180,34 +176,35 @@
 </template>
 
 <script>
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
-import { devices } from '../../mixins/devices.js'
-import MediaDevicesSelector from '../MediaDevicesSelector.vue'
-import VideoBackground from '../CallView/shared/VideoBackground.vue'
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
-import Cog from 'vue-material-design-icons/Cog.vue'
-import Microphone from 'vue-material-design-icons/Microphone.vue'
-import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-import VideoOff from 'vue-material-design-icons/VideoOff.vue'
-import Blur from 'vue-material-design-icons/Blur.vue'
-import BlurOff from 'vue-material-design-icons/BlurOff.vue'
-import BellOff from 'vue-material-design-icons/BellOff.vue'
-import Bell from 'vue-material-design-icons/Bell.vue'
-import { CALL } from '../../constants.js'
-import { localMediaModel } from '../../utils/webrtc/index.js'
-import CallButton from '../TopBar/CallButton.vue'
+import { getCapabilities } from '@nextcloud/capabilities'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import BrowserStorage from '../../services/BrowserStorage.js'
-import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+
+import Bell from 'vue-material-design-icons/Bell.vue'
+import BellOff from 'vue-material-design-icons/BellOff.vue'
+import Blur from 'vue-material-design-icons/Blur.vue'
+import BlurOff from 'vue-material-design-icons/BlurOff.vue'
+import Cog from 'vue-material-design-icons/Cog.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
+import VideoOff from 'vue-material-design-icons/VideoOff.vue'
+
+import CallButton from '../TopBar/CallButton.vue'
+import MediaDevicesSelector from '../MediaDevicesSelector.vue'
+import VideoBackground from '../CallView/shared/VideoBackground.vue'
+import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
+
+import { CALL } from '../../constants.js'
 import isInLobby from '../../mixins/isInLobby.js'
-import { getCapabilities } from '@nextcloud/capabilities'
+import { devices } from '../../mixins/devices.js'
+import BrowserStorage from '../../services/BrowserStorage.js'
+import { localMediaModel } from '../../utils/webrtc/index.js'
 
 export default {
 	name: 'DeviceChecker',
@@ -217,26 +214,24 @@ export default {
 	},
 
 	components: {
-		NcModal,
-		MediaDevicesSelector,
-		VideoBackground,
-		NcAvatar,
-		NcNoteCard,
-		Cog,
-		Microphone,
-		MicrophoneOff,
-		VideoIcon,
-		VideoOff,
+		Bell,
+		BellOff,
 		Blur,
 		BlurOff,
 		CallButton,
-		NcCheckboxRadioSwitch,
-		VolumeIndicator,
-		NcButton,
+		Cog,
 		NcActionButton,
 		NcActions,
-		BellOff,
-		Bell,
+		NcAvatar,
+		NcButton,
+		NcCheckboxRadioSwitch,
+		NcModal,
+		NcNoteCard,
+		MediaDevicesSelector,
+		VideoBackground,
+		VideoIcon,
+		VideoOff,
+		VolumeIndicator,
 	},
 
 	mixins: [devices, isInLobby],
@@ -251,7 +246,6 @@ export default {
 			blurOn: undefined,
 			showDeviceChecker: true,
 			silentCall: false,
-
 		}
 	},
 
@@ -497,10 +491,6 @@ export default {
 	display: flex;
 	justify-content: center;
 	margin: 14px;
-}
-
-.indicator {
-	margin-left: -8px;
 }
 
 ::v-deep .modal-container {
