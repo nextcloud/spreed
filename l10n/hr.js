@@ -640,6 +640,7 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants cannot connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Poslužitelj TURN upotrebljava se za usmjeravanje prometa sudionika iza vatrozida. Ako se pojedini sudionici ne mogu povezati s drugim sudionicima, vjerojatno je potreban poslužitelj TURN. Upute za postavljanje poslužitelja možete pronaći u {linkstart}ovoj dokumentaciji{linkend}.",
     "OK" : "U redu",
     "Back" : "Natrag",
+    "Reset" : "Resetiraj",
     "{nickName} raised their hand." : "{nickName} je podigao ruku.",
     "A participant raised their hand." : "Sudionik je podigao ruku.",
     "Previous page of videos" : "Prethodna stranica s videozapisima",

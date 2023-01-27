@@ -167,6 +167,7 @@ OC.L10N.register(
     "Join »%s«" : "Приєднатися до \"%s\"",
     "Dismiss notification" : "Скасувати сповіщення",
     "{user} mentioned you in a private conversation" : "{user} згадав вас у приватній розмові",
+    "A deleted user mentioned you in conversation {call}" : "Користувач, якого було вилучено, згадав вас у розмові {call}",
     "A guest mentioned you in conversation {call}" : "Гість згадав вас у розмові {call}",
     "View chat" : "Перегляд чату",
     "Join call" : "Приєднатися",

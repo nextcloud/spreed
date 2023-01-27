@@ -79,6 +79,7 @@ OC.L10N.register(
     "Today" : "Güei",
     "Yesterday" : "Ayeri",
     "Settings" : "Settings",
+    "Cancel" : "Encaboxar",
     "guest" : "invitáu",
     "No results" : "Ensin resultaos",
     "Add users or groups" : "Add users or groups",
