@@ -88,10 +88,10 @@
 							</NcActionButton>
 						</template>
 						<!-- Send message form -->
-						<SendMessageDialog v-if="dialogSwitches[breakoutRoom.token]"
+						<SendMessageDialog v-if="openedDialog === breakoutRoom.token"
 							:display-name="breakoutRoom.displayName"
 							:token="breakoutRoom.token"
-							@close="closeSendMessageForm" />
+							@close="closeSendMessageForm(breakoutRoom.token)" />
 						<template v-for="participant in $store.getters.participantsList(breakoutRoom.token)">
 							<Participant :key="participant.actorId" :participant="participant" />
 						</template>
@@ -163,19 +163,24 @@ export default {
 	data() {
 		return {
 			showBreakoutRoomsEditor: false,
-			dialogSwitches: false,
+			openedDialog: undefined,
+			referencesHaveChanged: false,
 		}
 	},
 
 	computed: {
 		breakoutRooms() {
 			// Return an empty array until the conversations object is populated
-			if (!this.$store.getters.conversation(this.$store.getters.breakoutRoomsReferences(this.token)[0])) {
+			if (!this.$store.getters.conversation(this.breakoutRoomsReferences[0])) {
 				return []
 			}
 			return this.$store.getters.breakoutRoomsReferences(this.token).map(reference => {
 				return this.$store.getters.conversation(reference)
 			})
+		},
+
+		breakoutRoomsReferences() {
+			return this.$store.getters.breakoutRoomsReferences(this.token)
 		},
 
 		breakoutRoomsConfigured() {
@@ -184,12 +189,6 @@ export default {
 
 		breakoutRoomsStarted() {
 			return this.conversation.breakoutRoomStatus !== CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
-		},
-	},
-
-	watch: {
-		breakoutRooms(newValue) {
-			this.initialiseDialogSwitches(newValue)
 		},
 	},
 
@@ -255,23 +254,11 @@ export default {
 		},
 
 		openSendMessageForm(token) {
-			this.dialogSwitches[token] = true
+			this.openedDialog = token
 		},
 
-		closeSendMessageForm(token) {
-			this.dialogSwitches[token] = false
-		},
-
-		initialiseDialogSwitches(breakoutRooms) {
-			// Do not initialise the data if the array's not modulated
-			if (breakoutRooms.length === 0) {
-				return
-			}
-			const switches = {}
-			for (const breakoutRoom of breakoutRooms) {
-				switches[breakoutRoom.token] = false
-			}
-			this.dialogSwitches = switches
+		closeSendMessageForm() {
+			this.openedDialog = undefined
 		},
 	},
 }

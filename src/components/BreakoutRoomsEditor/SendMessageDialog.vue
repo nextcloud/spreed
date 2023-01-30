@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<NcModal>
+	<NcModal v-on="$listeners">
 		<div class="send-message-dialog">
 			<h2 class="send-message-dialog__title">
 				{{ dialogTitle }}
@@ -28,7 +28,9 @@
 			<NewMessageForm role="region"
 				:token="token"
 				:breakout-room="true"
-				:aria-label="t('spreed', 'Post message')" />
+				:aria-label="t('spreed', 'Post message')"
+				@sent="handleMessageSent"
+				@failure="handleMessageFailure" />
 		</div>
 	</NcModal>
 </template>
@@ -36,6 +38,7 @@
 <script>
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NewMessageForm from '../NewMessageForm/NewMessageForm.vue'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 
 export default {
 	name: 'SendMessageDialog',
@@ -66,7 +69,19 @@ export default {
 
 	computed: {
 		dialogTitle() {
-			return t('spreed', 'Post a message to breakout room: {roomName}', { roomName: this.displayName })
+			return t('spreed', 'Post a message to "{roomName}"', { roomName: this.displayName })
+		},
+	},
+
+	methods: {
+		handleMessageSent() {
+			showSuccess(t('spreed', 'The message was sent to "{roomName}"', { roomName: this.displayName }))
+			this.$emit('close')
+		},
+
+		handleMessageFailure() {
+			showError(t('spreed', 'The message could not be sent'))
+			this.$emit('close')
 		},
 	},
 

@@ -438,7 +438,7 @@ export default {
 	},
 
 	watch: {
-		currentConversationIsJoined(newValue) {
+		currentConversationIsJoined() {
 			this.$refs.advancedInput.focusInput()
 		},
 
@@ -557,11 +557,22 @@ export default {
 				this.$store.dispatch('addTemporaryMessage', temporaryMessage)
 				this.text = ''
 				this.parsedText = ''
-				// Scrolls the message list to the last added message
-				EventBus.$emit('smooth-scroll-chat-to-bottom')
+
+				if (!this.breakoutRoom) {
+					// Scrolls the message list to the last added message
+					EventBus.$emit('smooth-scroll-chat-to-bottom')
+				}
+
 				// Also remove the message to be replied for this conversation
 				this.$store.dispatch('removeMessageToBeReplied', this.token)
-				await this.$store.dispatch('postNewMessage', { temporaryMessage, options })
+
+				try {
+					await this.$store.dispatch('postNewMessage', { temporaryMessage, options })
+					this.$emit('sent')
+				} catch {
+					this.$emit('failure')
+				}
+
 			}
 		},
 
