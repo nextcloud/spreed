@@ -276,7 +276,24 @@ export default {
 	props: {
 		isChatScrolledToBottom: {
 			type: Boolean,
+			default: true,
+		},
+
+		/**
+		 * The current conversation token or the breakout room token.
+		 */
+		token: {
+			type: String,
 			required: true,
+		},
+
+		/**
+		 * When this component is used to send message to a breakout room we
+		 * adapt the layout and remove some functionality.
+		 */
+		breakoutRoom: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -298,15 +315,6 @@ export default {
 	},
 
 	computed: {
-		/**
-		 * The current conversation token
-		 *
-		 * @return {string}
-		 */
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		conversation() {
 			return this.$store.getters.conversation(this.token) || {
 				readOnly: CONVERSATION.STATE.READ_WRITE,
@@ -431,7 +439,7 @@ export default {
 	},
 
 	watch: {
-		currentConversationIsJoined(newValue) {
+		currentConversationIsJoined() {
 			this.$refs.advancedInput.focusInput()
 		},
 
@@ -550,11 +558,22 @@ export default {
 				this.$store.dispatch('addTemporaryMessage', temporaryMessage)
 				this.text = ''
 				this.parsedText = ''
-				// Scrolls the message list to the last added message
-				EventBus.$emit('smooth-scroll-chat-to-bottom')
+
+				if (!this.breakoutRoom) {
+					// Scrolls the message list to the last added message
+					EventBus.$emit('smooth-scroll-chat-to-bottom')
+				}
+
 				// Also remove the message to be replied for this conversation
 				this.$store.dispatch('removeMessageToBeReplied', this.token)
-				await this.$store.dispatch('postNewMessage', { temporaryMessage, options })
+
+				try {
+					await this.$store.dispatch('postNewMessage', { temporaryMessage, options })
+					this.$emit('sent')
+				} catch {
+					this.$emit('failure')
+				}
+
 			}
 		},
 

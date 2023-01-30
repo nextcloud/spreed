@@ -71,6 +71,7 @@
 			<template v-if="breakoutRooms">
 				<template v-for="breakoutRoom in breakoutRooms">
 					<NcAppNavigationItem :key="breakoutRoom.displayName"
+						class="breakout-rooms__room"
 						:title="breakoutRoom.displayName"
 						:allow-collapse="true"
 						:open="true">
@@ -78,6 +79,19 @@
 							<!-- TODO: choose final icon -->
 							<GoogleCircles :size="20" />
 						</template>
+						<template #actions>
+							<NcActionButton @click="openSendMessageForm(breakoutRoom.token)">
+								<template #icon>
+									<Send :size="16" />
+								</template>
+								{{ t('spreed', 'Send message to room') }}
+							</NcActionButton>
+						</template>
+						<!-- Send message form -->
+						<SendMessageDialog v-if="openedDialog === breakoutRoom.token"
+							:display-name="breakoutRoom.displayName"
+							:token="breakoutRoom.token"
+							@close="closeSendMessageForm(breakoutRoom.token)" />
 						<template v-for="participant in $store.getters.participantsList(breakoutRoom.token)">
 							<Participant :key="participant.actorId" :participant="participant" />
 						</template>
@@ -99,6 +113,8 @@ import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationI
 import Participant from '../Participants/ParticipantsList/Participant/Participant.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import BreakoutRoomsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 
 // Icons
 import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
@@ -106,6 +122,7 @@ import Delete from 'vue-material-design-icons/Delete.vue'
 import Play from 'vue-material-design-icons/Play.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+import Send from 'vue-material-design-icons/Send.vue'
 
 // Constants
 import { CONVERSATION } from '../../../constants.js'
@@ -119,6 +136,8 @@ export default {
 		Participant,
 		NcButton,
 		BreakoutRoomsEditor,
+		NcActionButton,
+		SendMessageDialog,
 
 		// Icons
 		GoogleCircles,
@@ -126,6 +145,7 @@ export default {
 		Play,
 		DotsCircle,
 		StopIcon,
+		Send,
 	},
 
 	props: {
@@ -143,14 +163,24 @@ export default {
 	data() {
 		return {
 			showBreakoutRoomsEditor: false,
+			openedDialog: undefined,
+			referencesHaveChanged: false,
 		}
 	},
 
 	computed: {
 		breakoutRooms() {
+			// Return an empty array until the conversations object is populated
+			if (!this.$store.getters.conversation(this.breakoutRoomsReferences[0])) {
+				return []
+			}
 			return this.$store.getters.breakoutRoomsReferences(this.token).map(reference => {
 				return this.$store.getters.conversation(reference)
 			})
+		},
+
+		breakoutRoomsReferences() {
+			return this.$store.getters.breakoutRoomsReferences(this.token)
 		},
 
 		breakoutRoomsConfigured() {
@@ -222,6 +252,14 @@ export default {
 		stopBreakoutRooms() {
 			this.$store.dispatch('stopBreakoutRoomsAction', this.token)
 		},
+
+		openSendMessageForm(token) {
+			this.openedDialog = token
+		},
+
+		closeSendMessageForm() {
+			this.openedDialog = undefined
+		},
 	},
 }
 </script>
@@ -232,6 +270,10 @@ export default {
 	&__actions {
 		display: flex;
 		justify-content: flex-end;
+	}
+
+	&__room {
+		margin-top: var(--default-grid-baseline);
 	}
 }
 
