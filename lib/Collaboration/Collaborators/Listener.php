@@ -41,10 +41,12 @@ class Listener {
 	protected Manager $manager;
 	protected IUserManager $userManager;
 	protected Config $config;
+	protected TalkSession $talkSession;
 	/** @var string[] */
 	protected array $allowedGroupIds = [];
 	protected string $roomToken;
 	protected ?Room $room = null;
+	protected ?string $userId;
 
 	public function __construct(Manager $manager,
 								IUserManager $userManager,
@@ -52,6 +54,7 @@ class Listener {
 		$this->manager = $manager;
 		$this->userManager = $userManager;
 		$this->config = $config;
+		$this->userId = $userId;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
@@ -116,9 +119,13 @@ class Listener {
 	}
 
 	protected function filterExistingParticipants(string $token, array $results): array {
+		$sessionId = $this->talkSession->getSessionForRoom($token);
 		try {
-			$this->room = $this->manager->getRoomByToken($token);
+			$this->room = $this->manager->getRoomForUserByToken($token, $this->userId);
+			$this->participantService->getParticipant($this->room, $this->userId, $sessionId);
 		} catch (RoomNotFoundException $e) {
+			return $results;
+		} catch (ParticipantNotFoundException $e) {
 			return $results;
 		}
 

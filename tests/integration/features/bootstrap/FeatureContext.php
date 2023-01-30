@@ -1889,6 +1889,54 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" gets the following collaborator suggestions in room "([^"]*)" for "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $search
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 * @param TableNode|null $formData
+	 */
+	public function userGetsTheFollowingCollaboratorSuggestions($user, $identifier, $search, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/core/autocomplete/get?search=' . $search . '&itemType=call&itemId=' . self::$identifierToToken[$identifier] . '&shareTypes[]=0&shareTypes[]=1&shareTypes[]=7&shareTypes[]=4');
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$mentions = $this->getDataFromResponse($this->response);
+
+		if ($formData === null) {
+			Assert::assertEmpty($mentions);
+			return;
+		}
+
+		Assert::assertCount(count($formData->getHash()), $mentions, 'Mentions count does not match');
+
+		usort($mentions, function ($a, $b) {
+			if ($a['source'] === $b['source']) {
+				return $a['label'] <=> $b['label'];
+			}
+			return $a['source'] <=> $b['source'];
+		});
+
+		$expected = $formData->getHash();
+		usort($expected, function ($a, $b) {
+			if ($a['source'] === $b['source']) {
+				return $a['label'] <=> $b['label'];
+			}
+			return $a['source'] <=> $b['source'];
+		});
+
+		foreach ($expected as $key => $row) {
+			unset($mentions[$key]['icon']);
+			unset($mentions[$key]['status']);
+			unset($mentions[$key]['subline']);
+			unset($mentions[$key]['shareWithDisplayNameUnique']);
+			Assert::assertEquals($row, $mentions[$key]);
+		}
+	}
+
+	/**
 	 * @Then /^guest "([^"]*)" sets name to "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
