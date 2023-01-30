@@ -582,6 +582,7 @@ OC.L10N.register(
     "STUN servers" : "Διακομιστές STUN",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Ένας διακομιστής STUN χρησιμοποιείται για τον καθορισμό της δημόσιας διεύθυνσης IP των συμμετεχόντων πίσω από ένα δρομολογητή.",
     "{option1} and {option2}" : "{option1} και {option2}",
+    "{option} only" : "μόνο {option}",
     "TURN server URL" : "URL διακομιστή TURN",
     "TURN server secret" : "Μυστικό του διακομιστή TURN",
     "TURN server protocols" : "Πρωτόκολλα διακομιστή TURN",
@@ -692,6 +693,7 @@ OC.L10N.register(
     "Error occurred while disallowing guests" : "Παρουσιάστηκε σφάλμα κατά την απαγόρευση των επισκεπτών",
     "Conversation link copied to clipboard." : "Ο σύνδεσμος συνομιλίας αντιγράφηκε στο πρόχειρο.",
     "The link could not be copied." : "Ο σύνδεσμος δεν μπορεί να αντιγραφεί.",
+    "Invitations sent" : "Η προσκλήσεις στάλθηκαν",
     "Error occurred when sending invitations" : "Παρουσιάστηκε σφάλμα κατά την αποστολή προσκλήσεων",
     "Also open to guest app users" : "Ανοιχτό επίσης για επισκέπτες της εφαρμογής",
     "Error occurred when opening or limiting the conversation" : "Συνέβη σφάλμα κατά το άνοιγμα ή τον περιορισμό της συνομιλίας",
@@ -1037,6 +1039,7 @@ OC.L10N.register(
     "Enable SIP dial-in" : "Ενεργοποίηση SIP dial-in",
     "Choose a password" : "Επιλέξτε κωδικό πρόσβασης",
     "Upload new files" : "Μεταφόρτωση νέων αρχείων",
-    "Share from Files" : "Κοινή χρήση από Αρχεία"
+    "Share from Files" : "Κοινή χρήση από Αρχεία",
+    "Invitation was sent to {actorId}." : "Η πρόσκληση στάλθηκε {actorId}."
 },
 "nplurals=2; plural=(n != 1);");
