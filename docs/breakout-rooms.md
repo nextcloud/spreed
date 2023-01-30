@@ -35,6 +35,8 @@ Group and public conversations can be used to host breakout rooms.
         + `400 Bad Request` Error `attendeeMap`: When the attendee map contains an invalid room number or moderator
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the conversation could not be found for the participant
+    - Data: Array of conversations (breakout rooms and parent)
+      See array definition in `Get user´s conversations` (API v4)
 
 ## Remove breakout rooms
 
@@ -47,6 +49,8 @@ Group and public conversations can be used to host breakout rooms.
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the conversation could not be found for the participant
+    - Data: Parent conversation
+      See array definition in `Get user´s conversations` (API v4)
 
 ## Start breakout rooms
 
@@ -60,6 +64,8 @@ Group and public conversations can be used to host breakout rooms.
 		+ `400 Bad Request` Error `mode`: When breakout rooms are not configured
 		+ `403 Forbidden` When the current user is not a moderator/owner
 		+ `404 Not Found` When the conversation could not be found for the participant
+	- Data: Array of conversations (breakout rooms and parent)
+	  See array definition in `Get user´s conversations` (API v4)
 
 ## Stop breakout rooms
 
@@ -73,6 +79,8 @@ Group and public conversations can be used to host breakout rooms.
 		+ `400 Bad Request` Error `mode`: When breakout rooms are not configured
 		+ `403 Forbidden` When the current user is not a moderator/owner
 		+ `404 Not Found` When the conversation could not be found for the participant
+	- Data: Array of conversations (breakout rooms and parent)
+	  See array definition in `Get user´s conversations` (API v4)
 
 ## Broadcast message to breakout rooms
 
@@ -93,6 +101,8 @@ Group and public conversations can be used to host breakout rooms.
 		+ `403 Forbidden` When the participant is not a moderator
 		+ `404 Not Found` When the conversation could not be found for the participant
 		+ `413 Payload Too Large` When the message was longer than the allowed limit of 32000 characters (check the `spreed => config => chat => max-length` capability for the limit)
+	- Data: Array of conversations (breakout rooms and parent)
+	  See array definition in `Get user´s conversations` (API v4)
 
 ## Reorganize attendees
 
@@ -113,6 +123,8 @@ Group and public conversations can be used to host breakout rooms.
 		+ `400 Bad Request` Error `attendeeMap`: When the attendee map contains an invalid room number or moderator
 		+ `403 Forbidden` When the current user is not a moderator/owner
 		+ `404 Not Found` When the conversation could not be found for the participant
+	- Data: Array of conversations (breakout rooms and parent)
+	  See array definition in `Get user´s conversations` (API v4)
 
 ## Request assistance
 
@@ -126,6 +138,8 @@ This endpoint allows participants to raise their hand (token is the breakout roo
 		+ `200 OK`
 		+ `400 Bad Request` Error `room`: When the room is not a breakout room or breakout rooms are not started
 		+ `404 Not Found` When the conversation could not be found for the participant
+	- Data: Breakout room
+	  See array definition in `Get user´s conversations` (API v4)
 
 ## Reset request for assistance
 
@@ -135,8 +149,10 @@ This endpoint allows participants to raise their hand (token is the breakout roo
 * Response:
 	- Status code:
 		+ `200 OK`
-		+ `400 Bad Request` Error `room`: When the room does not have breakout rooms configured
+		+ `400 Bad Request` Error `room`: When the room is not a breakout room or breakout rooms are not started
 		+ `404 Not Found` When the conversation could not be found for the participant
+	- Data: Breakout room
+	  See array definition in `Get user´s conversations` (API v4)
 
 ## List all breakout rooms
 
@@ -164,3 +180,5 @@ This endpoint allows participants to raise their hand (token is the breakout roo
 		+ `400 Bad Request` Error `status`: When breakout rooms are not started
 		+ `400 Bad Request` Error `target`: When the target room is not breakout room of the parent
 		+ `404 Not Found` When the conversation could not be found for the participant
+	- Data: Target breakout room
+	  See array definition in `Get user´s conversations` (API v4)

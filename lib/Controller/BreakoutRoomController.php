@@ -26,7 +26,10 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Service\BreakoutRoomService;
+use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Comments\MessageTooLongException;
@@ -37,6 +40,9 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 		string $appName,
 		IRequest $request,
 		protected BreakoutRoomService $breakoutRoomService,
+		protected ParticipantService $participantService,
+		protected RoomFormatter $roomFormatter,
+		protected ?string $userId,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -52,13 +58,13 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	 */
 	public function configureBreakoutRooms(int $mode, int $amount, string $attendeeMap = '[]'): DataResponse {
 		try {
-			$this->breakoutRoomService->setupBreakoutRooms($this->room, $mode, $amount, $attendeeMap);
+			$rooms = $this->breakoutRoomService->setupBreakoutRooms($this->room, $mode, $amount, $attendeeMap);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
-		// FIXME make a useful response?
-		return new DataResponse();
+		$rooms[] = $this->room;
+		return new DataResponse($this->formatMultipleRooms($rooms), Http::STATUS_OK);
 	}
 
 	/**
@@ -67,7 +73,13 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	 */
 	public function removeBreakoutRooms(): DataResponse {
 		$this->breakoutRoomService->removeBreakoutRooms($this->room);
-		return new DataResponse();
+
+		return new DataResponse($this->roomFormatter->formatRoom(
+			$this->getResponseFormat(),
+			[],
+			$this->room,
+			$this->participant,
+		));
 	}
 
 	/**
@@ -76,13 +88,14 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	 */
 	public function broadcastChatMessage(string $message): DataResponse {
 		try {
-			$this->breakoutRoomService->broadcastChatMessage($this->room, $this->participant, $message);
+			$rooms = $this->breakoutRoomService->broadcastChatMessage($this->room, $this->participant, $message);
 		} catch (MessageTooLongException $e) {
 			return new DataResponse(['error' => 'message'], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
-		return new DataResponse([], Http::STATUS_CREATED);
+		$rooms[] = $this->room;
+		return new DataResponse($this->formatMultipleRooms($rooms), Http::STATUS_CREATED);
 	}
 
 	/**
@@ -91,18 +104,17 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	 */
 	public function applyAttendeeMap(string $attendeeMap): DataResponse {
 		try {
-			$this->breakoutRoomService->applyAttendeeMap($this->room, $attendeeMap);
+			$rooms = $this->breakoutRoomService->applyAttendeeMap($this->room, $attendeeMap);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
-		return new DataResponse([], Http::STATUS_OK);
+		$rooms[] = $this->room;
+		return new DataResponse($this->formatMultipleRooms($rooms), Http::STATUS_OK);
 	}
 
 	/**
 	 * @NoAdminRequired
 	 * @RequireLoggedInParticipant
-	 *
-	 * @return DataResponse
 	 */
 	public function requestAssistance(): DataResponse {
 		try {
@@ -111,14 +123,17 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse();
+		return new DataResponse($this->roomFormatter->formatRoom(
+			$this->getResponseFormat(),
+			[],
+			$this->room,
+			$this->participant,
+		));
 	}
 
 	/**
 	 * @NoAdminRequired
 	 * @RequireLoggedInParticipant
-	 *
-	 * @return DataResponse
 	 */
 	public function resetRequestForAssistance(): DataResponse {
 		try {
@@ -127,7 +142,12 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse();
+		return new DataResponse($this->roomFormatter->formatRoom(
+			$this->getResponseFormat(),
+			[],
+			$this->room,
+			$this->participant,
+		));
 	}
 
 	/**
@@ -136,12 +156,13 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	 */
 	public function startBreakoutRooms(): DataResponse {
 		try {
-			$this->breakoutRoomService->startBreakoutRooms($this->room);
+			$rooms = $this->breakoutRoomService->startBreakoutRooms($this->room);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse();
+		$rooms[] = $this->room;
+		return new DataResponse($this->formatMultipleRooms($rooms), Http::STATUS_OK);
 	}
 
 	/**
@@ -150,12 +171,13 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	 */
 	public function stopBreakoutRooms(): DataResponse {
 		try {
-			$this->breakoutRoomService->stopBreakoutRooms($this->room);
+			$rooms = $this->breakoutRoomService->stopBreakoutRooms($this->room);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse();
+		$rooms[] = $this->room;
+		return new DataResponse($this->formatMultipleRooms($rooms), Http::STATUS_OK);
 	}
 
 	/**
@@ -164,11 +186,32 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 	 */
 	public function switchBreakoutRoom(string $target): DataResponse {
 		try {
-			$this->breakoutRoomService->switchBreakoutRoom($this->room, $this->participant, $target);
+			$room = $this->breakoutRoomService->switchBreakoutRoom($this->room, $this->participant, $target);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse();
+		return new DataResponse($this->roomFormatter->formatRoom(
+			$this->getResponseFormat(),
+			[],
+			$room,
+			$this->participant,
+		));
+	}
+
+	protected function formatMultipleRooms(array $rooms): array {
+		$return = [];
+		foreach ($rooms as $room) {
+			try {
+				$return[] = $this->roomFormatter->formatRoom(
+					$this->getResponseFormat(),
+					[],
+					$room,
+					$this->participantService->getParticipant($room, $this->userId)
+				);
+			} catch (ParticipantNotFoundException $e) {
+			}
+		}
+		return $return;
 	}
 }
