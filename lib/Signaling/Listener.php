@@ -361,7 +361,9 @@ class Listener {
 				}
 			}
 
-			$notifier->switchToRoom($room, $breakoutRoom->getToken(), $sessionIds);
+			if (!empty($sessionIds)) {
+				$notifier->switchToRoom($room, $breakoutRoom->getToken(), $sessionIds);
+			}
 		}
 	}
 
@@ -401,7 +403,9 @@ class Listener {
 				}
 			}
 
-			$notifier->switchToRoom($breakoutRoom, $room->getToken(), $sessionIds);
+			if (!empty($sessionIds)) {
+				$notifier->switchToRoom($breakoutRoom, $room->getToken(), $sessionIds);
+			}
 		}
 	}
 

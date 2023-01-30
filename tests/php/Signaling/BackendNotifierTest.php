@@ -230,6 +230,24 @@ class BackendNotifierTest extends TestCase {
 		return $body;
 	}
 
+	private function assertMessageCount(Room $room, string $messageType, int $expectedCount): void {
+		$expectedUrl = $this->baseUrl . '/api/v1/room/' . $room->getToken();
+
+		$requests = $this->controller->getRequests();
+		$requests = array_filter($requests, function ($request) use ($expectedUrl) {
+			return $request['url'] === $expectedUrl;
+		});
+		$bodies = array_map(function ($request) use ($expectedUrl) {
+			return json_decode($this->validateBackendRequest($expectedUrl, $request), true);
+		}, $requests);
+
+		$bodies = array_filter($bodies, function (array $body) use ($messageType) {
+			return $body['type'] === $messageType;
+		});
+
+		$this->assertCount($expectedCount, $bodies, json_encode($bodies, JSON_PRETTY_PRINT));
+	}
+
 	private function assertMessageWasSent(Room $room, array $message): void {
 		$expectedUrl = $this->baseUrl . '/api/v1/room/' . $room->getToken();
 
@@ -1260,17 +1278,20 @@ class BackendNotifierTest extends TestCase {
 
 		$this->participantService->updateParticipantType($room, $participantModerator1, Participant::MODERATOR);
 
+		// Third room is explicitly empty.
 		$attendeeMap = [];
 		$attendeeMap[$participant1->getSession()->getAttendeeId()] = 0;
 		$attendeeMap[$participant2->getSession()->getAttendeeId()] = 1;
 		$attendeeMap[$participant3->getSession()->getAttendeeId()] = 0;
 		$attendeeMap[$participantModerator1->getSession()->getAttendeeId()] = 0;
 
-		$breakoutRooms = $this->breakoutRoomService->setupBreakoutRooms($room, BreakoutRoom::MODE_MANUAL, 2, json_encode($attendeeMap));
+		$breakoutRooms = $this->breakoutRoomService->setupBreakoutRooms($room, BreakoutRoom::MODE_MANUAL, 3, json_encode($attendeeMap));
 
 		$this->controller->clearRequests();
 
 		$this->breakoutRoomService->startBreakoutRooms($room);
+
+		$this->assertMessageCount($room, 'switchto', 2);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'switchto',
@@ -1362,13 +1383,14 @@ class BackendNotifierTest extends TestCase {
 
 		$this->participantService->updateParticipantType($room, $participantModerator1, Participant::MODERATOR);
 
+		// Third room is explicitly empty.
 		$attendeeMap = [];
 		$attendeeMap[$participant1->getSession()->getAttendeeId()] = 0;
 		$attendeeMap[$participant2->getSession()->getAttendeeId()] = 1;
 		$attendeeMap[$participant3->getSession()->getAttendeeId()] = 0;
 		$attendeeMap[$participantModerator1->getSession()->getAttendeeId()] = 0;
 
-		$breakoutRooms = $this->breakoutRoomService->setupBreakoutRooms($room, BreakoutRoom::MODE_MANUAL, 2, json_encode($attendeeMap));
+		$breakoutRooms = $this->breakoutRoomService->setupBreakoutRooms($room, BreakoutRoom::MODE_MANUAL, 3, json_encode($attendeeMap));
 
 		$this->breakoutRoomService->startBreakoutRooms($room);
 
@@ -1390,6 +1412,10 @@ class BackendNotifierTest extends TestCase {
 		$this->controller->clearRequests();
 
 		$this->breakoutRoomService->stopBreakoutRooms($room);
+
+		$this->assertMessageCount($breakoutRooms[0], 'switchto', 1);
+		$this->assertMessageCount($breakoutRooms[1], 'switchto', 1);
+		$this->assertMessageCount($breakoutRooms[2], 'switchto', 0);
 
 		$this->assertMessageWasSent($breakoutRooms[0], [
 			'type' => 'switchto',
