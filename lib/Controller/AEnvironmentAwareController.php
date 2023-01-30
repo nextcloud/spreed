@@ -64,6 +64,7 @@ abstract class AEnvironmentAwareController extends OCSController {
 	/**
 	 * Following the logic of {@see Dispatcher::executeController}
 	 * @return string Either 'json' or 'xml'
+	 * @psalm-return 'json'|'xml'
 	 */
 	public function getResponseFormat(): string {
 		// get format from the url format or request format parameter
