@@ -133,3 +133,46 @@ Feature: conversation/add-participant
       | users      | participant1 | 1               |
     And user "participant2" is not participant of room "room" (v4)
     And user "participant3" is not participant of room "room" (v4)
+
+  Scenario: Getting participant suggestions in a private room
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" gets the following collaborator suggestions in room "room" for "particip" with 200
+      | source | id           | label                    |
+      | users  | participant2 | participant2-displayname |
+      | users  | participant3 | participant3-displayname |
+    And user "participant1" gets the following collaborator suggestions in room "room" for "participant2" with 200
+      | source | id           | label                    |
+      | users  | participant2 | participant2-displayname |
+    And user "participant3" gets the following collaborator suggestions in room "room" for "participant2" with 200
+      | source | id           | label                    |
+      | users  | participant2 | participant2-displayname |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" gets the following collaborator suggestions in room "room" for "participant2" with 200
+    And user "participant3" gets the following collaborator suggestions in room "room" for "participant2" with 200
+      | source | id           | label                    |
+      | users  | participant2 | participant2-displayname |
+
+  Scenario: Getting participant suggestions in a public room
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" gets the following collaborator suggestions in room "room" for "particip" with 200
+      | source | id           | label                    |
+      | users  | participant2 | participant2-displayname |
+      | users  | participant3 | participant3-displayname |
+    And user "participant1" gets the following collaborator suggestions in room "room" for "participant2" with 200
+      | source | id           | label                    |
+      | users  | participant2 | participant2-displayname |
+    And user "participant3" gets the following collaborator suggestions in room "room" for "participant2" with 200
+      | source | id           | label                    |
+      | users  | participant2 | participant2-displayname |
+    And user "guest" joins room "room" with 200 (v4)
+    And user "guest" gets the following collaborator suggestions in room "room" for "participant2" with 401
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" gets the following collaborator suggestions in room "room" for "participant2" with 200
+    And user "participant3" gets the following collaborator suggestions in room "room" for "participant2" with 200
+      | source | id           | label                    |
+      | users  | participant2 | participant2-displayname |
+    And user "guest" gets the following collaborator suggestions in room "room" for "participant2" with 401
