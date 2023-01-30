@@ -80,7 +80,7 @@
 							<GoogleCircles :size="20" />
 						</template>
 						<template #actions>
-							<NcActionButton @click="openSendMessageForm">
+							<NcActionButton @click="openSendMessageForm(breakoutRoom.token)">
 								<template #icon>
 									<Send :size="16" />
 								</template>
@@ -88,7 +88,7 @@
 							</NcActionButton>
 						</template>
 						<!-- Send message form -->
-						<SendMessageDialog v-if="showSendMessageDialog"
+						<SendMessageDialog v-if="dialogSwitches[breakoutRoom.token]"
 							:display-name="breakoutRoom.displayName"
 							:token="breakoutRoom.token"
 							@close="closeSendMessageForm" />
@@ -163,12 +163,16 @@ export default {
 	data() {
 		return {
 			showBreakoutRoomsEditor: false,
-			showSendMessageDialog: false,
+			dialogSwitches: false,
 		}
 	},
 
 	computed: {
 		breakoutRooms() {
+			// Return an empty array until the conversations object is populated
+			if (!this.$store.getters.conversation(this.$store.getters.breakoutRoomsReferences(this.token)[0])) {
+				return []
+			}
 			return this.$store.getters.breakoutRoomsReferences(this.token).map(reference => {
 				return this.$store.getters.conversation(reference)
 			})
@@ -180,6 +184,12 @@ export default {
 
 		breakoutRoomsStarted() {
 			return this.conversation.breakoutRoomStatus !== CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
+		},
+	},
+
+	watch: {
+		breakoutRooms(newValue) {
+			this.initialiseDialogSwitches(newValue)
 		},
 	},
 
@@ -244,12 +254,24 @@ export default {
 			this.$store.dispatch('stopBreakoutRoomsAction', this.token)
 		},
 
-		openSendMessageForm() {
-			this.showSendMessageDialog = true
+		openSendMessageForm(token) {
+			this.dialogSwitches[token] = true
 		},
 
-		closeSendMessageForm() {
-			this.showSendMessageDialog = false
+		closeSendMessageForm(token) {
+			this.dialogSwitches[token] = false
+		},
+
+		initialiseDialogSwitches(breakoutRooms) {
+			// Do not initialise the data if the array's not modulated
+			if (breakoutRooms.length === 0) {
+				return
+			}
+			const switches = {}
+			for (const breakoutRoom of breakoutRooms) {
+				switches[breakoutRoom.token] = false
+			}
+			this.dialogSwitches = switches
 		},
 	},
 }
