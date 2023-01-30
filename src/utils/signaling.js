@@ -1026,7 +1026,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 		}
 	}
 
-	if (!this.hasFeature('audio-video-permissions') || !this.hasFeature('incall-all')) {
+	if (!this.hasFeature('audio-video-permissions') || !this.hasFeature('incall-all') || !this.hasFeature('switchto')) {
 		showError(
 			t('spreed', 'The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator.'),
 			{
