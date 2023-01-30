@@ -168,6 +168,11 @@ class Message {
 			\in_array($this->getActorType(), [Attendee::ACTOR_USERS, Attendee::ACTOR_GUESTS]);
 	}
 
+	/**
+	 * @param string $format
+	 * @psalm-param 'json'|'xml' $format
+	 * @return array
+	 */
 	public function toArray(string $format): array {
 		$expireDate = $this->getComment()->getExpireDate();
 

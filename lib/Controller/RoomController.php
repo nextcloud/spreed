@@ -28,8 +28,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
-use OCA\Talk\Chat\ChatManager;
-use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Events\UserEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
@@ -45,9 +43,9 @@ use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
-use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Service\SIPBridgeService;
@@ -57,14 +55,12 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\Comments\IComment;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudIdManager;
 use OCP\HintException;
 use OCP\IConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
-use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -90,13 +86,10 @@ class RoomController extends AEnvironmentAwareController {
 	protected SessionService $sessionService;
 	protected GuestManager $guestManager;
 	protected IUserStatusManager $statusManager;
-	protected ChatManager $chatManager;
 	protected IEventDispatcher $dispatcher;
-	protected MessageParser $messageParser;
 	protected ITimeFactory $timeFactory;
-	protected AvatarService $avatarService;
 	protected SIPBridgeService $SIPBridgeService;
-	protected IL10N $l10n;
+	protected RoomFormatter $roomFormatter;
 	protected IConfig $config;
 	protected Config $talkConfig;
 	protected IThrottler $throttler;
@@ -118,13 +111,10 @@ class RoomController extends AEnvironmentAwareController {
 								SessionService $sessionService,
 								GuestManager $guestManager,
 								IUserStatusManager $statusManager,
-								ChatManager $chatManager,
 								IEventDispatcher $dispatcher,
-								MessageParser $messageParser,
 								ITimeFactory $timeFactory,
-								AvatarService $avatarService,
 								SIPBridgeService $SIPBridgeService,
-								IL10N $l10n,
+								RoomFormatter $roomFormatter,
 								IConfig $config,
 								Config $talkConfig,
 								ICloudIdManager $cloudIdManager,
@@ -143,18 +133,15 @@ class RoomController extends AEnvironmentAwareController {
 		$this->sessionService = $sessionService;
 		$this->guestManager = $guestManager;
 		$this->statusManager = $statusManager;
-		$this->chatManager = $chatManager;
 		$this->dispatcher = $dispatcher;
-		$this->messageParser = $messageParser;
 		$this->timeFactory = $timeFactory;
-		$this->avatarService = $avatarService;
 		$this->SIPBridgeService = $SIPBridgeService;
-		$this->l10n = $l10n;
 		$this->config = $config;
 		$this->talkConfig = $talkConfig;
 		$this->cloudIdManager = $cloudIdManager;
 		$this->throttler = $throttler;
 		$this->logger = $logger;
+		$this->roomFormatter = $roomFormatter;
 	}
 
 	protected function getTalkHashHeader(): array {
@@ -363,288 +350,15 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	protected function formatRoom(Room $room, ?Participant $currentParticipant, ?array $statuses = null, bool $isSIPBridgeRequest = false, bool $isListingBreakoutRooms = false): array {
-		return $this->formatRoomV4($room, $currentParticipant, $statuses, $isSIPBridgeRequest, $isListingBreakoutRooms);
-	}
-
-	protected function formatRoomV4(Room $room, ?Participant $currentParticipant, ?array $statuses, bool $isSIPBridgeRequest, bool $isListingBreakoutRooms): array {
-		$roomData = [
-			'id' => $room->getId(),
-			'token' => $room->getToken(),
-			'type' => $room->getType(),
-			'name' => '',
-			'displayName' => '',
-			'objectType' => '',
-			'objectId' => '',
-			'participantType' => Participant::GUEST,
-			'participantFlags' => Participant::FLAG_DISCONNECTED,
-			'readOnly' => Room::READ_WRITE,
-			'hasPassword' => $room->hasPassword(),
-			'hasCall' => false,
-			'callStartTime' => 0,
-			'callRecording' => Room::RECORDING_NONE,
-			'canStartCall' => false,
-			'lastActivity' => 0,
-			'lastReadMessage' => 0,
-			'unreadMessages' => 0,
-			'unreadMention' => false,
-			'unreadMentionDirect' => false,
-			'isFavorite' => false,
-			'canLeaveConversation' => false,
-			'canDeleteConversation' => false,
-			'notificationLevel' => Participant::NOTIFY_NEVER,
-			'notificationCalls' => Participant::NOTIFY_CALLS_OFF,
-			'lobbyState' => Webinary::LOBBY_NONE,
-			'lobbyTimer' => 0,
-			'lastPing' => 0,
-			'sessionId' => '0',
-			'lastMessage' => [],
-			'sipEnabled' => Webinary::SIP_DISABLED,
-			'actorType' => '',
-			'actorId' => '',
-			'attendeeId' => 0,
-			'permissions' => Attendee::PERMISSIONS_CUSTOM,
-			'attendeePermissions' => Attendee::PERMISSIONS_CUSTOM,
-			'callPermissions' => Attendee::PERMISSIONS_CUSTOM,
-			'defaultPermissions' => Attendee::PERMISSIONS_CUSTOM,
-			'canEnableSIP' => false,
-			'attendeePin' => '',
-			'description' => '',
-			'lastCommonReadMessage' => 0,
-			'listable' => Room::LISTABLE_NONE,
-			'callFlag' => Participant::FLAG_DISCONNECTED,
-			'messageExpiration' => 0,
-			'avatarVersion' => $this->avatarService->getAvatarVersion($room),
-			'breakoutRoomMode' => BreakoutRoom::MODE_NOT_CONFIGURED,
-			'breakoutRoomStatus' => BreakoutRoom::STATUS_STOPPED,
-		];
-
-		$lastActivity = $room->getLastActivity();
-		if ($lastActivity instanceof \DateTimeInterface) {
-			$lastActivity = $lastActivity->getTimestamp();
-		} else {
-			$lastActivity = 0;
-		}
-
-		$lobbyTimer = $room->getLobbyTimer();
-		if ($lobbyTimer instanceof \DateTimeInterface) {
-			$lobbyTimer = $lobbyTimer->getTimestamp();
-		} else {
-			$lobbyTimer = 0;
-		}
-
-		if ($isSIPBridgeRequest
-			|| ($isListingBreakoutRooms && !$currentParticipant instanceof Participant)
-			|| ($room->getListable() !== Room::LISTABLE_NONE && !$currentParticipant instanceof Participant)
-		) {
-			return array_merge($roomData, [
-				'name' => $room->getName(),
-				'displayName' => $room->getDisplayName($isSIPBridgeRequest || $this->userId === null ? '' : $this->userId),
-				'objectType' => $room->getObjectType(),
-				'objectId' => $room->getObjectId(),
-				'readOnly' => $room->getReadOnly(),
-				'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
-				'lastActivity' => $lastActivity,
-				'callFlag' => $room->getCallFlag(),
-				'lobbyState' => $room->getLobbyState(),
-				'lobbyTimer' => $lobbyTimer,
-				'sipEnabled' => $room->getSIPEnabled(),
-				'listable' => $room->getListable(),
-				'breakoutRoomMode' => $room->getBreakoutRoomMode(),
-				'breakoutRoomStatus' => $room->getBreakoutRoomStatus(),
-				'callStartTime' => $room->getActiveSince() instanceof \DateTimeInterface ? $room->getActiveSince()->getTimestamp() : 0,
-				'callRecording' => $room->getCallRecording(),
-			]);
-		}
-
-		if (!$currentParticipant instanceof Participant) {
-			return $roomData;
-		}
-
-		$attendee = $currentParticipant->getAttendee();
-		$userId = $attendee->getActorType() === Attendee::ACTOR_USERS ? $attendee->getActorId() : '';
-
-		$roomData = array_merge($roomData, [
-			'name' => $room->getName(),
-			'displayName' => $room->getDisplayName($userId),
-			'objectType' => $room->getObjectType(),
-			'objectId' => $room->getObjectId(),
-			'participantType' => $attendee->getParticipantType(),
-			'readOnly' => $room->getReadOnly(),
-			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
-			'callStartTime' => $room->getActiveSince() instanceof \DateTimeInterface ? $room->getActiveSince()->getTimestamp() : 0,
-			'callRecording' => $room->getCallRecording(),
-			'lastActivity' => $lastActivity,
-			'callFlag' => $room->getCallFlag(),
-			'isFavorite' => $attendee->isFavorite(),
-			'notificationLevel' => $attendee->getNotificationLevel(),
-			'notificationCalls' => $attendee->getNotificationCalls(),
-			'lobbyState' => $room->getLobbyState(),
-			'lobbyTimer' => $lobbyTimer,
-			'actorType' => $attendee->getActorType(),
-			'actorId' => $attendee->getActorId(),
-			'attendeeId' => $attendee->getId(),
-			'permissions' => $currentParticipant->getPermissions(),
-			'attendeePermissions' => $attendee->getPermissions(),
-			'callPermissions' => $room->getCallPermissions(),
-			'defaultPermissions' => $room->getDefaultPermissions(),
-			'description' => $room->getDescription(),
-			'listable' => $room->getListable(),
-			'messageExpiration' => $room->getMessageExpiration(),
-			'breakoutRoomMode' => $room->getBreakoutRoomMode(),
-			'breakoutRoomStatus' => $room->getBreakoutRoomStatus(),
-		]);
-
-		if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
-			if (isset($this->commonReadMessages[$room->getId()])) {
-				$roomData['lastCommonReadMessage'] = $this->commonReadMessages[$room->getId()];
-			} else {
-				$roomData['lastCommonReadMessage'] = $this->chatManager->getLastCommonReadMessage($room);
-			}
-		}
-
-		if ($this->talkConfig->isSIPConfigured()) {
-			$roomData['sipEnabled'] = $room->getSIPEnabled();
-			if ($room->getSIPEnabled() !== Webinary::SIP_DISABLED) {
-				// Generate a PIN if the attendee is a user and doesn't have one.
-				$this->participantService->generatePinForParticipant($room, $currentParticipant);
-
-				$roomData['attendeePin'] = $attendee->getPin();
-			}
-		}
-
-		$session = $currentParticipant->getSession();
-		if ($session instanceof Session) {
-			$roomData = array_merge($roomData, [
-				'participantFlags' => $session->getInCall(),
-				'lastPing' => $session->getLastPing(),
-				'sessionId' => $session->getSessionId(),
-			]);
-		}
-
-		if ($roomData['notificationLevel'] === Participant::NOTIFY_DEFAULT) {
-			if ($currentParticipant->isGuest()) {
-				$roomData['notificationLevel'] = Participant::NOTIFY_NEVER;
-			} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-				$roomData['notificationLevel'] = Participant::NOTIFY_ALWAYS;
-			} else {
-				$adminSetting = (int) $this->config->getAppValue('spreed', 'default_group_notification', (string) Participant::NOTIFY_DEFAULT);
-				if ($adminSetting === Participant::NOTIFY_DEFAULT) {
-					$roomData['notificationLevel'] = Participant::NOTIFY_MENTION;
-				} else {
-					$roomData['notificationLevel'] = $adminSetting;
-				}
-			}
-		}
-
-		if ($room->getLobbyState() === Webinary::LOBBY_NON_MODERATORS &&
-			!$currentParticipant->hasModeratorPermissions() &&
-			!($currentParticipant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
-			// No participants and chat messages for users in the lobby.
-			$roomData['hasCall'] = false;
-			return $roomData;
-		}
-
-		$roomData['canStartCall'] = $currentParticipant->canStartCall($this->config);
-
-		if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
-			$currentUser = $this->userManager->get($attendee->getActorId());
-			if ($currentUser instanceof IUser) {
-				$lastReadMessage = $attendee->getLastReadMessage();
-				if ($lastReadMessage === -1) {
-					/*
-					 * Because the migration from the old comment_read_markers was
-					 * not possible in a programmatic way with a reasonable O(1) or O(n)
-					 * but only with O(user×chat), we do the conversion here.
-					 */
-					$lastReadMessage = $this->chatManager->getLastReadMessageFromLegacy($room, $currentUser);
-					$this->participantService->updateLastReadMessage($currentParticipant, $lastReadMessage);
-				}
-				if ($room->getLastMessage() && $lastReadMessage === (int) $room->getLastMessage()->getId()) {
-					// When the last message is the last read message, there are no unread messages,
-					// so we can save the query.
-					$roomData['unreadMessages'] = 0;
-				} else {
-					$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
-				}
-
-				$lastMention = $attendee->getLastMentionMessage();
-				$lastMentionDirect = $attendee->getLastMentionDirect();
-				$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
-				$roomData['unreadMentionDirect'] = $lastMentionDirect !== 0 && $lastReadMessage < $lastMentionDirect;
-				$roomData['lastReadMessage'] = $lastReadMessage;
-
-				$roomData['canDeleteConversation'] = $room->getType() !== Room::TYPE_ONE_TO_ONE
-					&& $room->getType() !== Room::TYPE_ONE_TO_ONE_FORMER
-					&& $currentParticipant->hasModeratorPermissions(false);
-				$roomData['canLeaveConversation'] = true;
-				$roomData['canEnableSIP'] =
-					$this->talkConfig->isSIPConfigured()
-					&& !preg_match(Room::SIP_INCOMPATIBLE_REGEX, $room->getToken())
-					&& ($room->getType() === Room::TYPE_GROUP || $room->getType() === Room::TYPE_PUBLIC)
-					&& $currentParticipant->hasModeratorPermissions(false)
-					&& $this->talkConfig->canUserEnableSIP($currentUser);
-			}
-		}
-
-		// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
-			$participants = json_decode($room->getName(), true);
-			foreach ($participants as $participant) {
-				if ($participant !== $attendee->getActorId()) {
-					$roomData['name'] = $participant;
-
-					if ($statuses === null
-						&& $this->userId !== null
-						&& $this->appManager->isEnabledForUser('user_status')) {
-						$statuses = $this->statusManager->getUserStatuses([$participant]);
-					}
-
-					if (isset($statuses[$participant])) {
-						$roomData['status'] = $statuses[$participant]->getStatus();
-						$roomData['statusIcon'] = $statuses[$participant]->getIcon();
-						$roomData['statusMessage'] = $statuses[$participant]->getMessage();
-						$roomData['statusClearAt'] = $statuses[$participant]->getClearAt();
-					} elseif (!empty($statuses)) {
-						$roomData['status'] = IUserStatus::OFFLINE;
-						$roomData['statusIcon'] = null;
-						$roomData['statusMessage'] = null;
-						$roomData['statusClearAt'] = null;
-					}
-				}
-			}
-		}
-
-		$lastMessage = $room->getLastMessage();
-		if ($lastMessage instanceof IComment) {
-			$roomData['lastMessage'] = $this->formatLastMessage($room, $currentParticipant, $lastMessage);
-		} else {
-			$roomData['lastMessage'] = [];
-		}
-
-		return $roomData;
-	}
-
-	/**
-	 * @param Room $room
-	 * @param Participant $participant
-	 * @param IComment $lastMessage
-	 * @return array
-	 */
-	protected function formatLastMessage(Room $room, Participant $participant, IComment $lastMessage): array {
-		$message = $this->messageParser->createMessage($room, $participant, $lastMessage, $this->l10n);
-		$this->messageParser->parseMessage($message);
-
-		if (!$message->getVisibility()) {
-			return [];
-		}
-
-		$now = $this->timeFactory->getDateTime();
-		$expireDate = $message->getComment()->getExpireDate();
-		if ($expireDate instanceof \DateTime && $expireDate < $now) {
-			return [];
-		}
-
-		return $message->toArray($this->getResponseFormat());
+		return $this->roomFormatter->formatRoom(
+			$this->getResponseFormat(),
+			$this->commonReadMessages,
+			$room,
+			$currentParticipant,
+			$statuses,
+			$isSIPBridgeRequest,
+			$isListingBreakoutRooms,
+		);
 	}
 
 	/**

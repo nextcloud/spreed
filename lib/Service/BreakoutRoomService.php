@@ -189,9 +189,10 @@ class BreakoutRoomService {
 	/**
 	 * @param Room $parent
 	 * @param string $attendeeMap
+	 * @return Room[]
 	 * @throws InvalidArgumentException When the map was invalid, breakout rooms are disabled or not configured for this conversation
 	 */
-	public function applyAttendeeMap(Room $parent, string $attendeeMap): void {
+	public function applyAttendeeMap(Room $parent, string $attendeeMap): array {
 		if (!$this->config->isBreakoutRoomsEnabled()) {
 			throw new InvalidArgumentException('config');
 		}
@@ -253,6 +254,8 @@ class BreakoutRoomService {
 		}
 
 		$this->addOthersToBreakoutRooms($breakoutRooms, $map);
+
+		return $breakoutRooms;
 	}
 
 	/**
@@ -342,7 +345,13 @@ class BreakoutRoomService {
 		}
 	}
 
-	public function broadcastChatMessage(Room $parent, Participant $participant, string $message): void {
+	/**
+	 * @param Room $parent
+	 * @param Participant $participant
+	 * @param string $message
+	 * @return Room[]
+	 */
+	public function broadcastChatMessage(Room $parent, Participant $participant, string $message): array {
 		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
 			throw new \InvalidArgumentException('mode');
 		}
@@ -356,13 +365,16 @@ class BreakoutRoomService {
 		try {
 			foreach ($breakoutRooms as $breakoutRoom) {
 				$breakoutParticipant = $this->participantService->getParticipantByActor($breakoutRoom, $attendeeType, $attendeeId);
-				$this->chatManager->sendMessage($breakoutRoom, $breakoutParticipant, $attendeeType, $attendeeId, $message, $creationDateTime, null, '', false);
+				$comment = $this->chatManager->sendMessage($breakoutRoom, $breakoutParticipant, $attendeeType, $attendeeId, $message, $creationDateTime, null, '', false);
+				$breakoutRoom->setLastMessage($comment);
 			}
 		} finally {
 			if ($shouldFlush) {
 				$this->notificationManager->flush();
 			}
 		}
+
+		return $breakoutRooms;
 	}
 
 	public function requestAssistance(Room $breakoutRoom): void {
@@ -392,7 +404,11 @@ class BreakoutRoomService {
 		$this->roomService->setBreakoutRoomStatus($breakoutRoom, $status);
 	}
 
-	public function startBreakoutRooms(Room $parent): void {
+	/**
+	 * @param Room $parent
+	 * @return Room[]
+	 */
+	public function startBreakoutRooms(Room $parent): array {
 		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
 			throw new \InvalidArgumentException('mode');
 		}
@@ -404,10 +420,14 @@ class BreakoutRoomService {
 
 		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STARTED);
 
-		// FIXME missing to send the signaling messages so participants are moved
+		return $breakoutRooms;
 	}
 
-	public function stopBreakoutRooms(Room $parent): void {
+	/**
+	 * @param Room $parent
+	 * @return Room[]
+	 */
+	public function stopBreakoutRooms(Room $parent): array {
 		if ($parent->getBreakoutRoomMode() === BreakoutRoom::MODE_NOT_CONFIGURED) {
 			throw new \InvalidArgumentException('mode');
 		}
@@ -423,10 +443,10 @@ class BreakoutRoomService {
 
 		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STOPPED);
 
-		// FIXME missing to send the signaling messages so participants are moved back
+		return $breakoutRooms;
 	}
 
-	public function switchBreakoutRoom(Room $parent, Participant $participant, string $targetToken): void {
+	public function switchBreakoutRoom(Room $parent, Participant $participant, string $targetToken): Room {
 		if ($parent->getBreakoutRoomMode() !== BreakoutRoom::MODE_FREE) {
 			throw new \InvalidArgumentException('mode');
 		}
@@ -444,15 +464,15 @@ class BreakoutRoomService {
 
 		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
 
-		$foundTarget = false;
+		$target = null;
 		foreach ($breakoutRooms as $breakoutRoom) {
 			if ($targetToken === $breakoutRoom->getToken()) {
-				$foundTarget = true;
+				$target = $breakoutRoom;
 				break;
 			}
 		}
 
-		if (!$foundTarget) {
+		if ($target === null) {
 			throw new \InvalidArgumentException('target');
 		}
 
@@ -489,6 +509,8 @@ class BreakoutRoomService {
 				}
 			}
 		}
+
+		return $target;
 	}
 
 	/**
