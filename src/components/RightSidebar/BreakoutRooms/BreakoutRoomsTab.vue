@@ -28,6 +28,7 @@
 				<template v-if="breakoutRoomsConfigured">
 					<NcButton v-if="breakoutRoomsStarted"
 						:title="t('spreed', 'Start breakout rooms')"
+						:aria-label="t('spreed', 'Start breakout rooms')"
 						type="tertiary"
 						@click="startBreakoutRooms">
 						<template #icon>
@@ -36,6 +37,7 @@
 					</NcButton>
 					<NcButton v-else
 						:title="t('spreed', 'Stop breakout rooms')"
+						:aria-label="t('spreed', 'Stop breakout rooms')"
 						type="tertiary"
 						@click="stopBreakoutRooms">
 						<template #icon>
@@ -43,6 +45,7 @@
 						</template>
 					</NcButton>
 					<NcButton :title="t('spreed', 'Send message to breakout rooms')"
+						:aria-label="t('spreed', 'Send message to breakout rooms')"
 						type="tertiary"
 						@click="openSendMessageDialog">
 						<template #icon>
@@ -55,6 +58,7 @@
 				<!-- Configuration button -->
 				<NcButton :type="breakoutRoomsConfigured ? 'tertiary' : 'secondary'"
 					:title="configurationButtonTitle"
+					:aria-label="configurationButtonTitle"
 					@click="openBreakoutRoomsEditor">
 					<template #icon>
 						<Reload :size="20" />
