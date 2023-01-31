@@ -29,6 +29,7 @@
 				:token="token"
 				:breakout-room="true"
 				:aria-label="t('spreed', 'Post message')"
+				:broadcast="broadcast"
 				@sent="handleMessageSent"
 				@failure="handleMessageFailure" />
 		</div>
@@ -58,24 +59,37 @@ export default {
 		},
 
 		/**
-		 * The breakout room display name
+		 * The conversation display name
 		 */
 		displayName: {
 			type: String,
-			required: true,
+			default: '',
 		},
 
+		/**
+		 * Broadcast messages to all breakout rooms of a given conversation. In
+		 * case this is true, the token needs to be from a conversation that
+		 * has breakout rooms configured.
+		 */
+		broadcast: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	computed: {
 		dialogTitle() {
-			return t('spreed', 'Post a message to "{roomName}"', { roomName: this.displayName })
+			return this.broadcast
+				? t('spreed', 'Send message to all breakout rooms')
+				: t('spreed', 'Send a message to "{roomName}"', { roomName: this.displayName })
 		},
 	},
 
 	methods: {
 		handleMessageSent() {
-			showSuccess(t('spreed', 'The message was sent to "{roomName}"', { roomName: this.displayName }))
+			showSuccess(this.broadcast
+				? t('spreed', 'The message was sent to all breakout rooms')
+				: t('spreed', 'The message was sent to "{roomName}"', { roomName: this.displayName }))
 			this.$emit('close')
 		},
 

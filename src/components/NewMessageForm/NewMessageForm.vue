@@ -295,6 +295,14 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		/**
+		 * Broadcast messages to all breakout rooms of a given conversation.
+		 */
+		broadcast: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	data() {
@@ -555,7 +563,7 @@ export default {
 			if (this.parsedText !== '') {
 				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', { text: this.parsedText, token: this.token })
 				// FIXME: move "addTemporaryMessage" into "postNewMessage" as it's a pre-requisite anyway ?
-				this.$store.dispatch('addTemporaryMessage', temporaryMessage)
+				await this.$store.dispatch('addTemporaryMessage', temporaryMessage)
 				this.text = ''
 				this.parsedText = ''
 
@@ -565,15 +573,32 @@ export default {
 				}
 
 				// Also remove the message to be replied for this conversation
-				this.$store.dispatch('removeMessageToBeReplied', this.token)
+				await this.$store.dispatch('removeMessageToBeReplied', this.token)
 
-				try {
-					await this.$store.dispatch('postNewMessage', { temporaryMessage, options })
-					this.$emit('sent')
-				} catch {
-					this.$emit('failure')
-				}
+				this.breakoutRoom
+					? await this.broadcastMessage(temporaryMessage, options)
+					: await this.postMessage(temporaryMessage, options)
+			}
+		},
 
+		// Post message to conversation
+		async postMessage(temporaryMessage, options) {
+			try {
+				await this.$store.dispatch('postNewMessage', { temporaryMessage, options })
+				this.$emit('sent')
+			} catch {
+				this.$emit('failure')
+			}
+		},
+
+		// Broadcast message to all breakout rooms
+		async broadcastMessage(temporaryMessage, options) {
+			try {
+				debugger
+				await this.$store.dispatch('broadcastMessageToBreakoutRoomsAction', { temporaryMessage, options })
+				this.$emit('sent')
+			} catch {
+				this.$emit('failure')
 			}
 		},
 
@@ -632,7 +657,7 @@ export default {
 					if (!path.startsWith('/')) {
 						throw new Error(t('files', 'Invalid path selected'))
 					}
-					shareFile(path, this.token)
+					await shareFile(path, this.token)
 					this.$refs.advancedInput.focusInput()
 				})
 
@@ -674,7 +699,7 @@ export default {
 		 * @param {File[] | FileList} files pasted files list
 		 */
 		async handlePastedFiles(files) {
-			this.handleFiles(files, true)
+			await this.handleFiles(files, true)
 		},
 
 		/**

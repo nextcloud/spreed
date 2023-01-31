@@ -84,6 +84,7 @@
 			<!-- Send message dialog -->
 			<SendMessageDialog v-if="sendMessageDialogOpened"
 				:token="token"
+				:broadcast="true"
 				@close="closeSendMessageDialog" />
 		</template>
 	</div>
