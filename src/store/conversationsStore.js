@@ -407,6 +407,17 @@ const actions = {
 		commit('addConversation', conversation)
 	},
 
+	async setConversationProperties({ commit, getters }, { token, properties }) {
+		let conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		conversation = Object.assign(conversation, properties)
+
+		commit('addConversation', conversation)
+	},
+
 	async markConversationRead({ commit, getters }, token) {
 		const conversation = Object.assign({}, getters.conversations[token])
 		if (!conversation) {

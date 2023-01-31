@@ -1311,6 +1311,33 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 				// Participant list in another room changed, we don't really care
 			}
 			break
+		} else {
+			// Some keys do not exactly match those in the room data, so they
+			// are normalized before emitting the event.
+			const properties = data.event.update.properties
+			const normalizedProperties = {}
+
+			Object.keys(properties).forEach(key => {
+				if (key === 'active-since') {
+					return
+				}
+
+				let normalizedKey = key
+				if (key === 'lobby-state') {
+					normalizedKey = 'lobbyState'
+				} else if (key === 'lobby-timer') {
+					normalizedKey = 'lobbyTimer'
+				} else if (key === 'read-only') {
+					normalizedKey = 'readOnly'
+				} else if (key === 'sip-enabled') {
+					normalizedKey = 'sipEnabled'
+				}
+
+				normalizedProperties[normalizedKey] = properties[key]
+			})
+
+			EventBus.$emit('should-refresh-conversations', data.event.update.roomid, normalizedProperties)
+			break
 		}
 		// eslint-disable-next-line no-fallthrough
 	case 'disinvite':
