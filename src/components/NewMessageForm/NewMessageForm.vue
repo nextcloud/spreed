@@ -594,7 +594,6 @@ export default {
 		// Broadcast message to all breakout rooms
 		async broadcastMessage(temporaryMessage, options) {
 			try {
-				debugger
 				await this.$store.dispatch('broadcastMessageToBreakoutRoomsAction', { temporaryMessage, options })
 				this.$emit('sent')
 			} catch {
