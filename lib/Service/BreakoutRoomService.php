@@ -432,6 +432,8 @@ class BreakoutRoomService {
 			throw new \InvalidArgumentException('mode');
 		}
 
+		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STOPPED);
+
 		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
 		foreach ($breakoutRooms as $breakoutRoom) {
 			$this->roomService->setLobby($breakoutRoom, Webinary::LOBBY_NON_MODERATORS, null);
@@ -440,8 +442,6 @@ class BreakoutRoomService {
 				$this->roomService->setBreakoutRoomStatus($breakoutRoom, BreakoutRoom::STATUS_ASSISTANCE_RESET);
 			}
 		}
-
-		$this->roomService->setBreakoutRoomStatus($parent, BreakoutRoom::STATUS_STOPPED);
 
 		return $breakoutRooms;
 	}
