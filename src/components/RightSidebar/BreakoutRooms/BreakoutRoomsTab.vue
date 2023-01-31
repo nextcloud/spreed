@@ -40,6 +40,13 @@
 							<StopIcon :size="20" />
 						</template>
 					</NcButton>
+					<NcButton :title="t('spreed', 'Send message to breakout rooms')"
+						type="tertiary"
+						@click="showSendMessageDialog">
+						<template #icon>
+							<Message :size="18" />
+						</template>
+					</NcButton>
 				</template>
 			</div>
 			<div class="breakout-rooms__actions-group">
@@ -118,6 +125,7 @@ import Play from 'vue-material-design-icons/Play.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
 import Send from 'vue-material-design-icons/Send.vue'
+import Message from 'vue-material-design-icons/Message.vue'
 
 // Constants
 import { CONVERSATION } from '../../../constants.js'
@@ -141,6 +149,7 @@ export default {
 		Reload,
 		StopIcon,
 		Send,
+		Message,
 	},
 
 	props: {
@@ -259,6 +268,10 @@ export default {
 		closeSendMessageForm() {
 			this.openedDialog = undefined
 		},
+
+		showSendMessageDialog() {
+			return 'test'
+		},
 	},
 }
 </script>
@@ -270,7 +283,6 @@ export default {
 		display: flex;
 		justify-content: space-between;
 		margin-bottom: calc(var(--default-grid-baseline) * 3);
-		gap: var(--default-grid-baseline);
 	}
 
 	&__actions-group {
