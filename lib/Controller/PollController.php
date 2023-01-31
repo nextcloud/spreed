@@ -77,8 +77,8 @@ class PollController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function createPoll(string $question, array $options, int $resultMode, int $maxVotes): DataResponse {
-		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE
-			|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+		if ($this->room->getType() !== Room::TYPE_GROUP
+			&& $this->room->getType() !== Room::TYPE_PUBLIC) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
