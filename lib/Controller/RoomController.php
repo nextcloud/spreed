@@ -699,9 +699,39 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$maxPingAge = $this->timeFactory->getTime() - Session::SESSION_TIMEOUT_KILL;
 		$participants = $this->participantService->getSessionsAndParticipantsForRoom($this->room);
+
+		return $this->formatParticipantList($participants, $includeStatus);
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireParticipant
+	 * @RequireModeratorOrNoLobby
+	 *
+	 * @param bool $includeStatus
+	 * @return DataResponse
+	 */
+	public function getBreakoutRoomParticipants(bool $includeStatus = false): DataResponse {
+		if ($this->participant->getAttendee()->getParticipantType() === Participant::GUEST) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$breakoutRooms = $this->breakoutRoomService->getBreakoutRooms($this->room, $this->participant);
+		$breakoutRooms[] = $this->room;
+		$participants = $this->participantService->getSessionsAndParticipantsForRooms($breakoutRooms);
+
+		return $this->formatParticipantList($participants, $includeStatus);
+	}
+
+	/**
+	 * @param Participant[] $participants
+	 * @param bool $includeStatus
+	 * @return DataResponse
+	 */
+	protected function formatParticipantList(array $participants, bool $includeStatus): DataResponse {
 		$results = $headers = $statuses = [];
+		$maxPingAge = $this->timeFactory->getTime() - Session::SESSION_TIMEOUT_KILL;
 
 		if ($this->userId !== null
 			&& $includeStatus
@@ -747,6 +777,7 @@ class RoomController extends AEnvironmentAwareController {
 			}
 
 			$result = [
+				'roomToken' => $participant->getRoom()->getToken(),
 				'inCall' => Participant::FLAG_DISCONNECTED,
 				'lastPing' => 0,
 				'sessionIds' => [],

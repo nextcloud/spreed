@@ -1267,6 +1267,34 @@ class ParticipantService {
 	}
 
 	/**
+	 * Get all sessions and attendees without a session for the room
+	 *
+	 * This will return multiple items for the same attendee if the attendee
+	 * has multiple sessions in the room.
+	 *
+	 * @param Room[] $rooms
+	 * @return Participant[]
+	 */
+	public function getSessionsAndParticipantsForRooms(array $rooms): array {
+		$roomIds = array_map(static fn (Room $room) => $room->getId(), $rooms);
+		$map = array_combine($roomIds, $rooms);
+
+		$query = $this->connection->getQueryBuilder();
+
+		$helper = new SelectHelper();
+		$helper->selectAttendeesTable($query);
+		$helper->selectSessionsTable($query);
+		$query->from('talk_attendees', 'a')
+			->leftJoin(
+				'a', 'talk_sessions', 's',
+				$query->expr()->eq('s.attendee_id', 'a.id')
+			)
+			->where($query->expr()->in('a.room_id', $query->createNamedParameter($roomIds, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		return $this->getParticipantsForRoomsFromQuery($query, $map);
+	}
+
+	/**
 	 * @param Room $room
 	 * @param int $maxAge
 	 * @return Participant[]
@@ -1350,12 +1378,28 @@ class ParticipantService {
 
 	/**
 	 * @param IQueryBuilder $query
+	 * @param Room $room
 	 * @return Participant[]
 	 */
 	protected function getParticipantsFromQuery(IQueryBuilder $query, Room $room): array {
+		return $this->getParticipantsForRoomsFromQuery($query, [$room->getId() => $room]);
+	}
+
+	/**
+	 * @param IQueryBuilder $query
+	 * @param Room[] $rooms Room ID => Room object
+	 * @psalm-param array<int, Room> $rooms
+	 * @return Participant[]
+	 */
+	protected function getParticipantsForRoomsFromQuery(IQueryBuilder $query, array $rooms): array {
 		$participants = [];
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
+			$room = $rooms[(int) $row['room_id']] ?? null;
+			if ($room === null) {
+				continue;
+			}
+
 			$attendee = $this->attendeeMapper->createAttendeeFromRow($row);
 			if (isset($row['s_id'])) {
 				$session = $this->sessionMapper->createSessionFromRow($row);

@@ -67,6 +67,10 @@ class Participant {
 		$this->session = $session;
 	}
 
+	public function getRoom(): Room {
+		return $this->room;
+	}
+
 	public function getAttendee(): Attendee {
 		return $this->attendee;
 	}
