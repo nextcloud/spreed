@@ -267,9 +267,29 @@ export default {
 			if (this.isInCall) {
 				this.$store.dispatch('setForceCallView', true)
 
+				const enableAudio = !localStorage.getItem('audioDisabled_' + this.token)
+				const enableVideo = !localStorage.getItem('videoDisabled_' + this.token)
+				const enableVirtualBackground = !!localStorage.getItem('virtualBackgroundEnabled_' + this.token)
+
 				EventBus.$once('joined-conversation', async ({ token }) => {
 					if (params.token !== token) {
 						return
+					}
+
+					if (enableAudio) {
+						localStorage.removeItem('audioDisabled_' + token)
+					} else {
+						localStorage.setItem('audioDisabled_' + token, 'true')
+					}
+					if (enableVideo) {
+						localStorage.removeItem('videoDisabled_' + token)
+					} else {
+						localStorage.setItem('videoDisabled_' + token, 'true')
+					}
+					if (enableVirtualBackground) {
+						localStorage.setItem('virtualBackgroundEnabled_' + token, 'true')
+					} else {
+						localStorage.removeItem('virtualBackgroundEnabled_' + token)
 					}
 
 					const conversation = this.$store.getters.conversation(token)
