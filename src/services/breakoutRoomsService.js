@@ -46,10 +46,27 @@ const stopBreakoutRooms = async function(token) {
 	return await axios.delete(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/rooms', { token }))
 }
 
+/**
+ *
+ * @param token the conversation token
+ * @param message The message to be posted
+ * @param token The conversation token
+ * @return {Promise<AxiosResponse<any>>} The array of conversations
+ */
+const broadcastMessageToBreakoutRooms = async function(message, token) {
+	return await axios.post(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/broadcast', {
+		token,
+	}), {
+		message,
+		token,
+	})
+}
+
 export {
 	configureBreakoutRooms,
 	deleteBreakoutRooms,
 	getBreakoutRooms,
 	startBreakoutRooms,
 	stopBreakoutRooms,
+	broadcastMessageToBreakoutRooms,
 }
