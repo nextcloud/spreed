@@ -200,6 +200,9 @@ class InjectionMiddleware extends Middleware {
 		if (!$room instanceof Room || $room->getReadOnly() === Room::READ_ONLY) {
 			throw new ReadOnlyException();
 		}
+		if ($room->getType() === Room::TYPE_CHANGELOG) {
+			throw new ReadOnlyException();
+		}
 	}
 
 	/**
