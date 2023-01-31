@@ -333,7 +333,7 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	margin-top: 8px;
+	margin-top: auto;
 	height: 242px !important;
 }
 
