@@ -22,6 +22,16 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
+/**
+ * Create breakout rooms for a given conversation
+ *
+ * @param token The conversation token
+ * @param mode Either manual, auto, or free, see constants file
+ * @param amount The amount of breakout rooms to be created
+ * @param attendeeMap A json encoded Map of attendeeId => room number (0 based)
+ * (Only considered when the mode is "manual")
+ * @return {Promise<AxiosResponse<any>>}
+ */
 const configureBreakoutRooms = async function(token, mode, amount, attendeeMap) {
 	return await axios.post(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}', { token }), {
 		mode,
@@ -30,18 +40,41 @@ const configureBreakoutRooms = async function(token, mode, amount, attendeeMap) 
 	})
 }
 
+/**
+ * Deletes all breakout rooms for a given conversation
+ *
+ * @param token
+ * @return {Promise<AxiosResponse<any>>}
+ */
 const deleteBreakoutRooms = async function(token) {
 	return await axios.delete(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}', { token }))
 }
 
+/**
+ * Fetches the breakout rooms for given conversation
+ *
+ * @param token The conversation token
+ * @return {Promise<AxiosResponse<any>>} The array of conversations
+ */
 const getBreakoutRooms = async function(token) {
 	return await axios.get(generateOcsUrl('/apps/spreed/api/v4/room/{token}/breakout-rooms', { token }))
 }
 
+/**
+ *
+ * @param token The conversation token
+ * @return {Promise<AxiosResponse<any>>} The array of conversations
+ */
 const startBreakoutRooms = async function(token) {
 	return await axios.post(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/rooms', { token }))
 }
 
+/**
+ * Stops the breakout rooms
+ *
+ * @param token The conversation token
+ * @return {Promise<AxiosResponse<any>>} The array of conversations
+ */
 const stopBreakoutRooms = async function(token) {
 	return await axios.delete(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/rooms', { token }))
 }
