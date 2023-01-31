@@ -21,6 +21,8 @@
 
 <template>
 	<div class="breakout-rooms">
+		<!-- Series of buttons at the top of the tab, these affect all
+		 breakout rooms -->
 		<div class="breakout-rooms__actions">
 			<div class="breakout-rooms__actions-group">
 				<template v-if="breakoutRoomsConfigured">
@@ -42,7 +44,7 @@
 					</NcButton>
 					<NcButton :title="t('spreed', 'Send message to breakout rooms')"
 						type="tertiary"
-						@click="showSendMessageDialog">
+						@click="openSendMessageDialog">
 						<template #icon>
 							<Message :size="18" />
 						</template>
@@ -69,62 +71,36 @@
 				</NcButton>
 			</div>
 		</div>
-		<template v-if="breakoutRoomsConfigured">
-			<template v-if="breakoutRooms">
-				<template v-for="breakoutRoom in breakoutRooms">
-					<NcAppNavigationItem :key="breakoutRoom.displayName"
-						class="breakout-rooms__room"
-						:title="breakoutRoom.displayName"
-						:allow-collapse="true"
-						:open="true">
-						<template #icon>
-							<!-- TODO: choose final icon -->
-							<GoogleCircles :size="20" />
-						</template>
-						<template #actions>
-							<NcActionButton @click="openSendMessageForm(breakoutRoom.token)">
-								<template #icon>
-									<Send :size="16" />
-								</template>
-								{{ t('spreed', 'Send message to room') }}
-							</NcActionButton>
-						</template>
-						<!-- Send message form -->
-						<SendMessageDialog v-if="openedDialog === breakoutRoom.token"
-							:display-name="breakoutRoom.displayName"
-							:token="breakoutRoom.token"
-							@close="closeSendMessageForm(breakoutRoom.token)" />
-						<template v-for="participant in $store.getters.participantsList(breakoutRoom.token)">
-							<Participant :key="participant.actorId" :participant="participant" />
-						</template>
-					</NcAppNavigationItem>
-				</template>
-			</template>
-		</template>
 
-		<!-- Breakout rooms editor -->
-		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
-			:token="token"
-			@close="showBreakoutRoomsEditor = false" />
+		<template v-if="breakoutRoomsConfigured">
+			<!-- Breakout rooms list -->
+			<BreakoutRoomsList v-if="breakoutRooms" :breakout-rooms="breakoutRooms" />
+
+			<!-- Breakout rooms editor -->
+			<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
+				:token="token"
+				@close="showBreakoutRoomsEditor = false" />
+
+			<!-- Send message dialog -->
+			<SendMessageDialog v-if="sendMessageDialogOpened"
+				:token="token"
+				@close="closeSendMessageDialog" />
+		</template>
 	</div>
 </template>
 
 <script>
 // Components
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import Participant from '../Participants/ParticipantsList/Participant/Participant.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import BreakoutRoomsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
+import BreakoutRoomsList from '../../BreakoutRoomsEditor/BreakoutRoomsList.vue'
 
 // Icons
-import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Play from 'vue-material-design-icons/Play.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
-import Send from 'vue-material-design-icons/Send.vue'
 import Message from 'vue-material-design-icons/Message.vue'
 
 // Constants
@@ -135,20 +111,16 @@ export default {
 
 	components: {
 		// Components
-		NcAppNavigationItem,
-		Participant,
 		NcButton,
 		BreakoutRoomsEditor,
-		NcActionButton,
 		SendMessageDialog,
+		BreakoutRoomsList,
 
 		// Icons
-		GoogleCircles,
 		Delete,
 		Play,
 		Reload,
 		StopIcon,
-		Send,
 		Message,
 	},
 
@@ -167,8 +139,7 @@ export default {
 	data() {
 		return {
 			showBreakoutRoomsEditor: false,
-			openedDialog: undefined,
-			referencesHaveChanged: false,
+			sendMessageDialogOpened: false,
 		}
 	},
 
@@ -261,16 +232,12 @@ export default {
 			this.$store.dispatch('stopBreakoutRoomsAction', this.token)
 		},
 
-		openSendMessageForm(token) {
-			this.openedDialog = token
+		openSendMessageDialog() {
+			this.sendMessageDialogOpened = true
 		},
 
-		closeSendMessageForm() {
-			this.openedDialog = undefined
-		},
-
-		showSendMessageDialog() {
-			return 'test'
+		closeSendMessageDialog() {
+			this.sendMessageDialogOpened = false
 		},
 	},
 }
