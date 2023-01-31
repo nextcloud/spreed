@@ -533,6 +533,13 @@ export default {
 		background-color: transparent;
 		display: flex;
 		flex-wrap: wrap-reverse;
+
+		:deep(.action-item--open .action-item__menutoggle),
+		:deep(.action-item__menutoggle:hover),
+		:deep(.action-item--single:hover),
+		:deep(.buttons-bar button:hover) {
+			background-color: rgba(0, 0, 0, 0.2) !important;
+		}
 	}
 
 	&__buttons {
