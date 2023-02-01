@@ -132,7 +132,11 @@ class Listener {
 		$sessionId = $this->talkSession->getSessionForRoom($token);
 		try {
 			$this->room = $this->manager->getRoomForUserByToken($token, $this->userId);
-			$this->participantService->getParticipant($this->room, $this->userId, $sessionId);
+			if ($this->userId !== null) {
+				$this->participantService->getParticipant($this->room, $this->userId, $sessionId);
+			} else {
+				$this->participantService->getParticipantBySession($this->room, $sessionId);
+			}
 		} catch (RoomNotFoundException $e) {
 			return $results;
 		} catch (ParticipantNotFoundException $e) {
