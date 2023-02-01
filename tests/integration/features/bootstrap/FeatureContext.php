@@ -709,6 +709,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	protected static function sortAttendees(array $a1, array $a2): int {
+		if (array_key_exists('roomToken', $a1) && array_key_exists('roomToken', $a2) && $a1['roomToken'] !== $a2['roomToken']) {
+			return $a1['roomToken'] <=> $a2['roomToken'];
+		}
 		if (array_key_exists('participantType', $a1) && array_key_exists('participantType', $a2) && $a1['participantType'] !== $a2['participantType']) {
 			return $a1['participantType'] <=> $a2['participantType'];
 		}
