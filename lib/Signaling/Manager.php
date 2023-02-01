@@ -55,7 +55,8 @@ class Manager {
 		$features = array_map('trim', $features);
 		return in_array('audio-video-permissions', $features, true)
 			&& in_array('incall-all', $features, true)
-			&& in_array('hello-v2', $features, true);
+			&& in_array('hello-v2', $features, true)
+			&& in_array('switchto', $features, true);
 	}
 
 	public function getSignalingServerLinkForConversation(?Room $room): string {

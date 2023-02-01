@@ -23,15 +23,18 @@
 namespace OCA\Talk\Tests\php\Signaling;
 
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
+use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Signaling\BackendNotifier;
@@ -47,6 +50,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Notification\IManager as INotificationManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use OCP\Share\IManager;
@@ -91,6 +95,7 @@ class BackendNotifierTest extends TestCase {
 
 	private ?Manager $manager = null;
 	private ?RoomService $roomService = null;
+	private ?BreakoutRoomService $breakoutRoomService = null;
 
 	private ?string $userId = null;
 	private ?string $signalingSecret = null;
@@ -167,6 +172,24 @@ class BackendNotifierTest extends TestCase {
 			$this->dispatcher,
 			$this->jobList
 		);
+
+		$l = $this->createMock(IL10N::class);
+		$l->expects($this->any())
+			->method('t')
+			->willReturnCallback(function ($text, $parameters = []) {
+				return vsprintf($text, $parameters);
+			});
+
+		$this->breakoutRoomService = new BreakoutRoomService(
+			$this->config,
+			$this->manager,
+			$this->roomService,
+			$this->participantService,
+			$this->createMock(ChatManager::class),
+			$this->createMock(INotificationManager::class),
+			$this->dispatcher,
+			$l
+		);
 	}
 
 	public function tearDown(): void {
@@ -207,10 +230,33 @@ class BackendNotifierTest extends TestCase {
 		return $body;
 	}
 
-	private function assertMessageWasSent(Room $room, array $message): void {
+	private function assertMessageCount(Room $room, string $messageType, int $expectedCount): void {
+		$expectedUrl = $this->baseUrl . '/api/v1/room/' . $room->getToken();
+
 		$requests = $this->controller->getRequests();
-		$bodies = array_map(function ($request) use ($room) {
-			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		$requests = array_filter($requests, function ($request) use ($expectedUrl) {
+			return $request['url'] === $expectedUrl;
+		});
+		$bodies = array_map(function ($request) use ($expectedUrl) {
+			return json_decode($this->validateBackendRequest($expectedUrl, $request), true);
+		}, $requests);
+
+		$bodies = array_filter($bodies, function (array $body) use ($messageType) {
+			return $body['type'] === $messageType;
+		});
+
+		$this->assertCount($expectedCount, $bodies, json_encode($bodies, JSON_PRETTY_PRINT));
+	}
+
+	private function assertMessageWasSent(Room $room, array $message): void {
+		$expectedUrl = $this->baseUrl . '/api/v1/room/' . $room->getToken();
+
+		$requests = $this->controller->getRequests();
+		$requests = array_filter($requests, function ($request) use ($expectedUrl) {
+			return $request['url'] === $expectedUrl;
+		});
+		$bodies = array_map(function ($request) use ($expectedUrl) {
+			return json_decode($this->validateBackendRequest($expectedUrl, $request), true);
 		}, $requests);
 
 		$bodies = array_filter($bodies, function (array $body) use ($message) {
@@ -252,6 +298,11 @@ class BackendNotifierTest extends TestCase {
 					<=>
 					[$b['userId'] ?? '', $b['participantType'], $b['sessionId'], $b['lastPing']]
 				;
+			});
+		}
+		if ($message['type'] === 'switchto') {
+			usort($message['switchto']['sessions'], static function ($a, $b) {
+				return $a <=> $b;
 			});
 		}
 		return $message;
@@ -1151,6 +1202,240 @@ class BackendNotifierTest extends TestCase {
 						'participantType' => Participant::GUEST,
 						'participantPermissions' => Attendee::PERMISSIONS_CUSTOM,
 					],
+				],
+			],
+		]);
+	}
+
+	public function testBreakoutRoomStart() {
+		$room = $this->manager->createRoom(Room::TYPE_GROUP);
+		$this->participantService->addUsers($room, [
+			[
+				'actorType' => 'users',
+				'actorId' => 'userId1',
+			],
+			[
+				'actorType' => 'users',
+				'actorId' => 'userId2',
+			],
+			[
+				'actorType' => 'users',
+				'actorId' => 'userId3',
+			],
+			[
+				'actorType' => 'users',
+				'actorId' => 'userIdModerator1',
+			],
+		]);
+
+		/** @var IUser|MockObject $user1 */
+		$user1 = $this->createMock(IUser::class);
+		$user1->expects($this->any())
+			->method('getUID')
+			->willReturn('userId1');
+
+		/** @var IUser|MockObject $user2 */
+		$user2 = $this->createMock(IUser::class);
+		$user2->expects($this->any())
+			->method('getUID')
+			->willReturn('userId2');
+
+		/** @var IUser|MockObject $user3 */
+		$user3 = $this->createMock(IUser::class);
+		$user3->expects($this->any())
+			->method('getUID')
+			->willReturn('userId3');
+
+		/** @var IUser|MockObject $userModerator1 */
+		$userModerator1 = $this->createMock(IUser::class);
+		$userModerator1->expects($this->any())
+			->method('getUID')
+			->willReturn('userIdModerator1');
+
+		$roomService = $this->createMock(RoomService::class);
+		$roomService->method('verifyPassword')
+			->willReturn(['result' => true, 'url' => '']);
+
+		$participant1 = $this->participantService->joinRoom($roomService, $room, $user1, '');
+		$sessionId1 = $participant1->getSession()->getSessionId();
+		$participant1 = $this->participantService->getParticipantBySession($room, $sessionId1);
+
+		$participant2 = $this->participantService->joinRoom($roomService, $room, $user2, '');
+		$sessionId2 = $participant2->getSession()->getSessionId();
+		$participant2 = $this->participantService->getParticipantBySession($room, $sessionId2);
+
+		$participant3 = $this->participantService->joinRoom($roomService, $room, $user3, '');
+		$sessionId3 = $participant3->getSession()->getSessionId();
+		$participant3 = $this->participantService->getParticipantBySession($room, $sessionId3);
+
+		$participant3b = $this->participantService->joinRoom($roomService, $room, $user3, '');
+		$sessionId3b = $participant3b->getSession()->getSessionId();
+		$participant3b = $this->participantService->getParticipantBySession($room, $sessionId3b);
+
+		$participantModerator1 = $this->participantService->joinRoom($roomService, $room, $userModerator1, '');
+		$sessionIdModerator1 = $participantModerator1->getSession()->getSessionId();
+		$participantModerator1 = $this->participantService->getParticipantBySession($room, $sessionIdModerator1);
+
+		$this->participantService->updateParticipantType($room, $participantModerator1, Participant::MODERATOR);
+
+		// Third room is explicitly empty.
+		$attendeeMap = [];
+		$attendeeMap[$participant1->getSession()->getAttendeeId()] = 0;
+		$attendeeMap[$participant2->getSession()->getAttendeeId()] = 1;
+		$attendeeMap[$participant3->getSession()->getAttendeeId()] = 0;
+		$attendeeMap[$participantModerator1->getSession()->getAttendeeId()] = 0;
+
+		$breakoutRooms = $this->breakoutRoomService->setupBreakoutRooms($room, BreakoutRoom::MODE_MANUAL, 3, json_encode($attendeeMap));
+
+		$this->controller->clearRequests();
+
+		$this->breakoutRoomService->startBreakoutRooms($room);
+
+		$this->assertMessageCount($room, 'switchto', 2);
+
+		$this->assertMessageWasSent($room, [
+			'type' => 'switchto',
+			'switchto' => [
+				'roomid' => $breakoutRooms[0]->getToken(),
+				'sessions' => [
+					$sessionId1,
+					$sessionId3,
+					$sessionId3b,
+				],
+			],
+		]);
+
+		$this->assertMessageWasSent($room, [
+			'type' => 'switchto',
+			'switchto' => [
+				'roomid' => $breakoutRooms[1]->getToken(),
+				'sessions' => [
+					$sessionId2,
+				],
+			],
+		]);
+	}
+
+	public function testBreakoutRoomStop() {
+		$room = $this->manager->createRoom(Room::TYPE_GROUP);
+		$this->participantService->addUsers($room, [
+			[
+				'actorType' => 'users',
+				'actorId' => 'userId1',
+			],
+			[
+				'actorType' => 'users',
+				'actorId' => 'userId2',
+			],
+			[
+				'actorType' => 'users',
+				'actorId' => 'userId3',
+			],
+			[
+				'actorType' => 'users',
+				'actorId' => 'userIdModerator1',
+			],
+		]);
+
+		/** @var IUser|MockObject $user1 */
+		$user1 = $this->createMock(IUser::class);
+		$user1->expects($this->any())
+			->method('getUID')
+			->willReturn('userId1');
+
+		/** @var IUser|MockObject $user2 */
+		$user2 = $this->createMock(IUser::class);
+		$user2->expects($this->any())
+			->method('getUID')
+			->willReturn('userId2');
+
+		/** @var IUser|MockObject $user3 */
+		$user3 = $this->createMock(IUser::class);
+		$user3->expects($this->any())
+			->method('getUID')
+			->willReturn('userId3');
+
+		/** @var IUser|MockObject $userModerator1 */
+		$userModerator1 = $this->createMock(IUser::class);
+		$userModerator1->expects($this->any())
+			->method('getUID')
+			->willReturn('userIdModerator1');
+
+		$roomService = $this->createMock(RoomService::class);
+		$roomService->method('verifyPassword')
+			->willReturn(['result' => true, 'url' => '']);
+
+		$participant1 = $this->participantService->joinRoom($roomService, $room, $user1, '');
+		$sessionId1 = $participant1->getSession()->getSessionId();
+		$participant1 = $this->participantService->getParticipantBySession($room, $sessionId1);
+
+		$participant2 = $this->participantService->joinRoom($roomService, $room, $user2, '');
+		$sessionId2 = $participant2->getSession()->getSessionId();
+		$participant2 = $this->participantService->getParticipantBySession($room, $sessionId2);
+
+		$participant3 = $this->participantService->joinRoom($roomService, $room, $user3, '');
+		$sessionId3 = $participant3->getSession()->getSessionId();
+		$participant3 = $this->participantService->getParticipantBySession($room, $sessionId3);
+
+		$participantModerator1 = $this->participantService->joinRoom($roomService, $room, $userModerator1, '');
+		$sessionIdModerator1 = $participantModerator1->getSession()->getSessionId();
+		$participantModerator1 = $this->participantService->getParticipantBySession($room, $sessionIdModerator1);
+
+		$this->participantService->updateParticipantType($room, $participantModerator1, Participant::MODERATOR);
+
+		// Third room is explicitly empty.
+		$attendeeMap = [];
+		$attendeeMap[$participant1->getSession()->getAttendeeId()] = 0;
+		$attendeeMap[$participant2->getSession()->getAttendeeId()] = 1;
+		$attendeeMap[$participant3->getSession()->getAttendeeId()] = 0;
+		$attendeeMap[$participantModerator1->getSession()->getAttendeeId()] = 0;
+
+		$breakoutRooms = $this->breakoutRoomService->setupBreakoutRooms($room, BreakoutRoom::MODE_MANUAL, 3, json_encode($attendeeMap));
+
+		$this->breakoutRoomService->startBreakoutRooms($room);
+
+		$participant1 = $this->participantService->joinRoom($roomService, $breakoutRooms[0], $user1, '');
+		$sessionId1 = $participant1->getSession()->getSessionId();
+
+		$participant2 = $this->participantService->joinRoom($roomService, $breakoutRooms[1], $user2, '');
+		$sessionId2 = $participant2->getSession()->getSessionId();
+
+		$participant3 = $this->participantService->joinRoom($roomService, $breakoutRooms[0], $user3, '');
+		$sessionId3 = $participant3->getSession()->getSessionId();
+
+		$participant3b = $this->participantService->joinRoom($roomService, $breakoutRooms[0], $user3, '');
+		$sessionId3b = $participant3b->getSession()->getSessionId();
+
+		$participantModerator1 = $this->participantService->joinRoom($roomService, $breakoutRooms[0], $userModerator1, '');
+		$sessionIdModerator1 = $participantModerator1->getSession()->getSessionId();
+
+		$this->controller->clearRequests();
+
+		$this->breakoutRoomService->stopBreakoutRooms($room);
+
+		$this->assertMessageCount($breakoutRooms[0], 'switchto', 1);
+		$this->assertMessageCount($breakoutRooms[1], 'switchto', 1);
+		$this->assertMessageCount($breakoutRooms[2], 'switchto', 0);
+
+		$this->assertMessageWasSent($breakoutRooms[0], [
+			'type' => 'switchto',
+			'switchto' => [
+				'roomid' => $room->getToken(),
+				'sessions' => [
+					$sessionId1,
+					$sessionId3,
+					$sessionId3b,
+					$sessionIdModerator1,
+				],
+			],
+		]);
+
+		$this->assertMessageWasSent($breakoutRooms[1], [
+			'type' => 'switchto',
+			'switchto' => [
+				'roomid' => $room->getToken(),
+				'sessions' => [
+					$sessionId2,
 				],
 			],
 		]);

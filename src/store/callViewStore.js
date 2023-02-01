@@ -27,6 +27,7 @@ import {
 } from '../constants.js'
 
 const state = {
+	forceCallView: false,
 	isGrid: false,
 	isStripeOpen: true,
 	lastIsGrid: null,
@@ -39,6 +40,7 @@ const state = {
 }
 
 const getters = {
+	forceCallView: (state) => state.forceCallView,
 	isGrid: (state) => state.isGrid,
 	isStripeOpen: (state) => state.isStripeOpen,
 	lastIsGrid: (state) => state.lastIsGrid,
@@ -65,6 +67,9 @@ const getters = {
 
 const mutations = {
 
+	setForceCallView(state, value) {
+		state.forceCallView = value
+	},
 	isGrid(state, value) {
 		state.isGrid = value
 	},
@@ -108,6 +113,10 @@ const mutations = {
 }
 
 const actions = {
+	setForceCallView(context, value) {
+		context.commit('setForceCallView', value)
+	},
+
 	selectedVideoPeerId(context, value) {
 		context.commit('selectedVideoPeerId', value)
 	},

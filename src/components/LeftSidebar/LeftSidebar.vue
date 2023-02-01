@@ -260,14 +260,14 @@ export default {
 			}
 		}, 30000)
 
-		EventBus.$on('should-refresh-conversations', this.debounceFetchConversations)
+		EventBus.$on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.$once('conversations-received', this.handleUnreadMention)
 
 		this.mountArrowNavigation()
 	},
 
 	beforeDestroy() {
-		EventBus.$off('should-refresh-conversations', this.debounceFetchConversations)
+		EventBus.$off('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.$off('conversations-received', this.handleUnreadMention)
 
 		this.cancelSearchPossibleConversations()
@@ -437,6 +437,14 @@ export default {
 			}
 
 			return conversation2.lastActivity - conversation1.lastActivity
+		},
+
+		async handleShouldRefreshConversations(token, properties) {
+			if (token && properties) {
+				await this.$store.dispatch('setConversationProperties', { token, properties })
+			}
+
+			this.debounceFetchConversations()
 		},
 
 		debounceFetchConversations: debounce(function() {

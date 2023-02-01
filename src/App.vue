@@ -65,7 +65,7 @@ import UploadEditor from './components/UploadEditor.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog.vue'
 import '@nextcloud/dialogs/styles/toast.scss'
-import { CONVERSATION } from './constants.js'
+import { CONVERSATION, PARTICIPANT } from './constants.js'
 import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
 import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
 
@@ -261,6 +261,58 @@ export default {
 					leaveConversationSync(this.token)
 				}
 			}
+		})
+
+		EventBus.$on('switch-to-conversation', (params) => {
+			if (this.isInCall) {
+				this.$store.dispatch('setForceCallView', true)
+
+				const enableAudio = !localStorage.getItem('audioDisabled_' + this.token)
+				const enableVideo = !localStorage.getItem('videoDisabled_' + this.token)
+				const enableVirtualBackground = !!localStorage.getItem('virtualBackgroundEnabled_' + this.token)
+
+				EventBus.$once('joined-conversation', async ({ token }) => {
+					if (params.token !== token) {
+						return
+					}
+
+					if (enableAudio) {
+						localStorage.removeItem('audioDisabled_' + token)
+					} else {
+						localStorage.setItem('audioDisabled_' + token, 'true')
+					}
+					if (enableVideo) {
+						localStorage.removeItem('videoDisabled_' + token)
+					} else {
+						localStorage.setItem('videoDisabled_' + token, 'true')
+					}
+					if (enableVirtualBackground) {
+						localStorage.setItem('virtualBackgroundEnabled_' + token, 'true')
+					} else {
+						localStorage.removeItem('virtualBackgroundEnabled_' + token)
+					}
+
+					const conversation = this.$store.getters.conversation(token)
+
+					let flags = PARTICIPANT.CALL_FLAG.IN_CALL
+					if (conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO) {
+						flags |= PARTICIPANT.CALL_FLAG.WITH_AUDIO
+					}
+					if (conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO) {
+						flags |= PARTICIPANT.CALL_FLAG.WITH_VIDEO
+					}
+
+					await this.$store.dispatch('joinCall', {
+						token: params.token,
+						participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+						flags,
+					})
+
+					this.$store.dispatch('setForceCallView', false)
+				})
+			}
+
+			this.$router.push({ name: 'conversation', params: { token: params.token, skipLeaveWarning: true } })
 		})
 
 		EventBus.$on('conversations-received', (params) => {
