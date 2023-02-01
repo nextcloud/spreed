@@ -177,8 +177,10 @@ export default {
 	},
 
 	watch: {
-		breakoutRoomsConfigured(newValue) {
-			if (newValue) {
+		conversation(newValue, oldValue) {
+			// Get the breakout rooms only if it's the first time the conversation loads.
+			// For subsequent changes the conversations will update regardless of this.
+			if (this.breakoutRoomsConfigured && oldValue.isDummyConversation) {
 				this.getBreakoutRooms()
 			}
 		},

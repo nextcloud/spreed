@@ -75,6 +75,7 @@ const DUMMY_CONVERSATION = {
 	lobbyState: WEBINAR.LOBBY.NONE,
 	lobbyTimer: 0,
 	attendeePin: '',
+	isDummyConversation: true,
 }
 
 const getDefaultState = () => {
