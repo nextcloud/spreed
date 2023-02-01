@@ -568,7 +568,9 @@ export default {
 			if (this.parsedText !== '') {
 				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', { text: this.parsedText, token: this.token })
 				// FIXME: move "addTemporaryMessage" into "postNewMessage" as it's a pre-requisite anyway ?
-				await this.$store.dispatch('addTemporaryMessage', temporaryMessage)
+				if (!this.broadcast) {
+					await this.$store.dispatch('addTemporaryMessage', temporaryMessage)
+				}
 				this.text = ''
 				this.parsedText = ''
 
