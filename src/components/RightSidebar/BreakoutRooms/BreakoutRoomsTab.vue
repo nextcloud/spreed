@@ -21,108 +21,92 @@
 
 <template>
 	<div class="breakout-rooms">
+		<!-- Series of buttons at the top of the tab, these affect all
+		 breakout rooms -->
 		<div class="breakout-rooms__actions">
-			<template v-if="breakoutRoomsConfigured">
-				<NcButton v-if="breakoutRoomsStarted"
-					:title="t('spreed', 'Start breakout rooms')"
-					:aria-label="t('spreed', 'Start breakout rooms')"
-					type="secondary"
-					@click="startBreakoutRooms">
-					<template #icon>
-						<Play :size="20" />
-					</template>
-				</NcButton>
-				<NcButton v-else
-					:title="t('spreed', 'Stop breakout rooms')"
-					:aria-label="t('spreed', 'Stop breakout rooms')"
-					type="secondary"
-					@click="stopBreakoutRooms">
-					<template #icon>
-						<StopIcon :size="20" />
-					</template>
-				</NcButton>
-			</template>
-
-			<!-- Configuration button -->
-			<NcButton :wide="true"
-				:type="breakoutRoomsConfigured ? 'tertiary' : 'secondary'"
-				@click="openBreakoutRoomsEditor">
-				<template #icon>
-					<DotsCircle :size="20" />
-				</template>
-				<template v-if="!breakoutRoomsConfigured">
-					{{ t('spreed', 'Configure breakout rooms') }}
-				</template>
-				<template v-else>
-					{{ t('spreed', 'Re-configure breakout rooms') }}
-				</template>
-			</NcButton>
-			<NcButton v-if="breakoutRoomsConfigured"
-				:title="t('spreed', 'Delete breakout rooms')"
-				:aria-label="t('spreed', 'Delete breakout rooms')"
-				type="tertiary-no-background"
-				@click="deleteBreakoutRooms">
-				<template #icon>
-					<Delete :size="20" />
-				</template>
-			</NcButton>
-		</div>
-		<template v-if="breakoutRoomsConfigured">
-			<template v-if="breakoutRooms">
-				<template v-for="breakoutRoom in breakoutRooms">
-					<NcAppNavigationItem :key="breakoutRoom.displayName"
-						class="breakout-rooms__room"
-						:title="breakoutRoom.displayName"
-						:allow-collapse="true"
-						:open="true">
+			<div class="breakout-rooms__actions-group">
+				<template v-if="breakoutRoomsConfigured">
+					<NcButton v-if="breakoutRoomsStarted"
+						:title="t('spreed', 'Start breakout rooms')"
+						:aria-label="t('spreed', 'Start breakout rooms')"
+						type="tertiary"
+						@click="startBreakoutRooms">
 						<template #icon>
-							<!-- TODO: choose final icon -->
-							<GoogleCircles :size="20" />
+							<Play :size="20" />
 						</template>
-						<template #actions>
-							<NcActionButton @click="openSendMessageForm(breakoutRoom.token)">
-								<template #icon>
-									<Send :size="16" />
-								</template>
-								{{ t('spreed', 'Send message to room') }}
-							</NcActionButton>
+					</NcButton>
+					<NcButton v-else
+						:title="t('spreed', 'Stop breakout rooms')"
+						:aria-label="t('spreed', 'Stop breakout rooms')"
+						type="tertiary"
+						@click="stopBreakoutRooms">
+						<template #icon>
+							<StopIcon :size="20" />
 						</template>
-						<!-- Send message form -->
-						<SendMessageDialog v-if="openedDialog === breakoutRoom.token"
-							:display-name="breakoutRoom.displayName"
-							:token="breakoutRoom.token"
-							@close="closeSendMessageForm(breakoutRoom.token)" />
-						<template v-for="participant in $store.getters.participantsList(breakoutRoom.token)">
-							<Participant :key="participant.actorId" :participant="participant" />
+					</NcButton>
+					<NcButton :title="t('spreed', 'Send message to breakout rooms')"
+						:aria-label="t('spreed', 'Send message to breakout rooms')"
+						type="tertiary"
+						@click="openSendMessageDialog">
+						<template #icon>
+							<Message :size="18" />
 						</template>
-					</NcAppNavigationItem>
+					</NcButton>
 				</template>
-			</template>
-		</template>
+			</div>
+			<div class="breakout-rooms__actions-group">
+				<!-- Configuration button -->
+				<NcButton :type="breakoutRoomsConfigured ? 'tertiary' : 'secondary'"
+					:title="configurationButtonTitle"
+					:aria-label="configurationButtonTitle"
+					@click="openBreakoutRoomsEditor">
+					<template #icon>
+						<Reload :size="20" />
+					</template>
+				</NcButton>
+				<NcButton v-if="breakoutRoomsConfigured"
+					:title="t('spreed', 'Delete breakout rooms')"
+					:aria-label="t('spreed', 'Delete breakout rooms')"
+					type="tertiary"
+					@click="deleteBreakoutRooms">
+					<template #icon>
+						<Delete :size="20" />
+					</template>
+				</NcButton>
+			</div>
+		</div>
 
-		<!-- Breakout rooms editor -->
-		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
-			:token="token"
-			@close="showBreakoutRoomsEditor = false" />
+		<template v-if="breakoutRoomsConfigured">
+			<!-- Breakout rooms list -->
+			<BreakoutRoomsList v-if="breakoutRooms" :breakout-rooms="breakoutRooms" />
+
+			<!-- Breakout rooms editor -->
+			<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
+				:token="token"
+				@close="showBreakoutRoomsEditor = false" />
+
+			<!-- Send message dialog -->
+			<SendMessageDialog v-if="sendMessageDialogOpened"
+				:token="token"
+				:broadcast="true"
+				@close="closeSendMessageDialog" />
+		</template>
 	</div>
 </template>
 
 <script>
 // Components
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import Participant from '../Participants/ParticipantsList/Participant/Participant.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import BreakoutRoomsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
+import BreakoutRoomsList from '../../BreakoutRoomsEditor/BreakoutRoomsList.vue'
 
 // Icons
-import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Play from 'vue-material-design-icons/Play.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
-import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
-import Send from 'vue-material-design-icons/Send.vue'
+import Reload from 'vue-material-design-icons/Reload.vue'
+import Message from 'vue-material-design-icons/Message.vue'
 
 // Constants
 import { CONVERSATION } from '../../../constants.js'
@@ -132,20 +116,17 @@ export default {
 
 	components: {
 		// Components
-		NcAppNavigationItem,
-		Participant,
 		NcButton,
 		BreakoutRoomsEditor,
-		NcActionButton,
 		SendMessageDialog,
+		BreakoutRoomsList,
 
 		// Icons
-		GoogleCircles,
 		Delete,
 		Play,
-		DotsCircle,
+		Reload,
 		StopIcon,
-		Send,
+		Message,
 	},
 
 	props: {
@@ -163,8 +144,7 @@ export default {
 	data() {
 		return {
 			showBreakoutRoomsEditor: false,
-			openedDialog: undefined,
-			referencesHaveChanged: false,
+			sendMessageDialogOpened: false,
 		}
 	},
 
@@ -189,6 +169,10 @@ export default {
 
 		breakoutRoomsStarted() {
 			return this.conversation.breakoutRoomStatus !== CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
+		},
+
+		configurationButtonTitle() {
+			return this.breakoutRoomsConfigured ? t('spreed', 'Re-configure breakout rooms') : t('spreed', 'Configure breakout rooms')
 		},
 	},
 
@@ -253,12 +237,12 @@ export default {
 			this.$store.dispatch('stopBreakoutRoomsAction', this.token)
 		},
 
-		openSendMessageForm(token) {
-			this.openedDialog = token
+		openSendMessageDialog() {
+			this.sendMessageDialogOpened = true
 		},
 
-		closeSendMessageForm() {
-			this.openedDialog = undefined
+		closeSendMessageDialog() {
+			this.sendMessageDialogOpened = false
 		},
 	},
 }
@@ -269,7 +253,14 @@ export default {
 .breakout-rooms {
 	&__actions {
 		display: flex;
-		justify-content: flex-end;
+		justify-content: space-between;
+		margin-bottom: calc(var(--default-grid-baseline) * 3);
+	}
+
+	&__actions-group {
+		display: flex;
+		gap: var(--default-grid-baseline);
+
 	}
 
 	&__room {
@@ -283,7 +274,7 @@ export default {
 
 // TODO: upstream collapse icon position fix
 ::v-deep .icon-collapse {
-position: absolute !important;
-left: 0;
+	position: absolute !important;
+	left: 0;
 }
 </style>

@@ -25,6 +25,7 @@ import {
 	getBreakoutRooms,
 	startBreakoutRooms,
 	stopBreakoutRooms,
+	broadcastMessageToBreakoutRooms,
 } from '../services/breakoutRoomsService.js'
 import { showError } from '@nextcloud/dialogs'
 import { set } from 'vue'
@@ -98,6 +99,15 @@ const actions = {
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while stopping breakout rooms'))
+		}
+	},
+
+	async broadcastMessageToBreakoutRoomsAction(context, { temporaryMessage }) {
+		try {
+			await broadcastMessageToBreakoutRooms(temporaryMessage.message, temporaryMessage.token)
+		} catch (error) {
+			console.error(error)
+			showError(t('spreed', 'An error occurred while sending a message to the breakout rooms'))
 		}
 	},
 }
