@@ -35,7 +35,7 @@
 			<form class="new-message-form"
 				@submit.prevent>
 				<!-- Attachments menu -->
-				<div v-if="canUploadFiles || canShareFiles"
+				<div v-if="showAttachmentsMenu"
 					class="new-message-form__upload-menu">
 					<NcActions ref="attachmentsMenu"
 						:container="container"
@@ -130,7 +130,8 @@
 					@audio-file="handleAudioFile" />
 				<!-- Send buttons -->
 				<template v-else>
-					<NcActions :force-menu="true">
+					<NcActions v-if="!broadcast"
+						:force-menu="true">
 						<!-- Silent send -->
 						<NcActionButton :close-after-click="true"
 							icon="icon-upload"
@@ -443,6 +444,10 @@ export default {
 				'--fullwidth': width + 2 * margin + 2 * border + 'px',
 				'--height': this.fileTemplate.ratio ? Math.round(width / this.fileTemplate.ratio) + 'px' : null,
 			}
+		},
+
+		showAttachmentsMenu() {
+			return (this.canUploadFiles || this.canShareFiles) && !this.broadcast
 		},
 	},
 
