@@ -49,8 +49,8 @@
 * Required capability: `breakout-rooms-v1`
 * Method: `GET`
 * Endpoint: `/room/{token}/breakout-rooms/participants`
-* Data: See Data in `Get list of participants in a conversations`
-* Response: See Response in `Get list of participants in a conversations`
+* Data: See Data in [Get list of participants in a conversations](participant.md#get-list-of-participants-in-a-conversation)
+* Response: See Response in [Get list of participants in a conversations](participant.md#get-list-of-participants-in-a-conversation)
 
 ## Add a participant to a conversation
 
