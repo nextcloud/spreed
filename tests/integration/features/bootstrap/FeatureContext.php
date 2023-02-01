@@ -580,11 +580,44 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		if ($formData instanceof TableNode) {
 			$attendees = $this->getDataFromResponse($this->response);
+		} else {
+			$attendees = [];
+		}
+		$this->assertAttendeeList($identifier, $formData, $attendees);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sees the following attendees in breakout rooms for room "([^"]*)" with (\d+) \((v4)\)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 * @param TableNode $formData
+	 */
+	public function userSeesAttendeesInBreakoutRoomsForRoom(string $user, string $identifier, int $statusCode, string $apiVersion, TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/breakout-rooms/participants');
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($formData instanceof TableNode) {
+			$attendees = $this->getDataFromResponse($this->response);
+		} else {
+			$attendees = [];
+		}
+		$this->assertAttendeeList($identifier, $formData, $attendees);
+	}
+
+	protected function assertAttendeeList(string $identifier, ?TableNode $formData, array $attendees): void {
+		if ($formData instanceof TableNode) {
 			$expectedKeys = array_flip($formData->getRows()[0]);
 
 			$result = [];
 			foreach ($attendees as $attendee) {
 				$data = [];
+				if (isset($expectedKeys['roomToken'])) {
+					$data['roomToken'] = self::$tokenToIdentifier[$attendee['roomToken']];
+				}
 				if (isset($expectedKeys['actorType'])) {
 					$data['actorType'] = $attendee['actorType'];
 				}
