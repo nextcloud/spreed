@@ -32,6 +32,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\TalkSession;
 use OCP\Collaboration\AutoComplete\AutoCompleteEvent;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -44,19 +45,25 @@ class Listener {
 	protected IUserManager $userManager;
 	protected ParticipantService $participantService;
 	protected Config $config;
+	protected TalkSession $talkSession;
 	/** @var string[] */
 	protected array $allowedGroupIds = [];
 	protected string $roomToken;
 	protected ?Room $room = null;
+	protected ?string $userId;
 
 	public function __construct(Manager $manager,
 								IUserManager $userManager,
 								ParticipantService $participantService,
-								Config $config) {
+								Config $config,
+								TalkSession $talkSession,
+								?string $userId) {
 		$this->manager = $manager;
 		$this->userManager = $userManager;
 		$this->participantService = $participantService;
+		$this->talkSession = $talkSession;
 		$this->config = $config;
+		$this->userId = $userId;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
@@ -122,9 +129,13 @@ class Listener {
 	}
 
 	protected function filterExistingParticipants(string $token, array $results): array {
+		$sessionId = $this->talkSession->getSessionForRoom($token);
 		try {
-			$this->room = $this->manager->getRoomByToken($token);
+			$this->room = $this->manager->getRoomForUserByToken($token, $this->userId);
+			$this->participantService->getParticipant($this->room, $this->userId, $sessionId);
 		} catch (RoomNotFoundException $e) {
+			return $results;
+		} catch (ParticipantNotFoundException $e) {
 			return $results;
 		}
 
