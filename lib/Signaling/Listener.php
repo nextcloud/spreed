@@ -83,6 +83,9 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_LISTABLE_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
 		$dispatcher->addListener(Room::EVENT_AFTER_LOBBY_STATE_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
 		$dispatcher->addListener(Room::EVENT_AFTER_SIP_ENABLED_SET, [self::class, 'notifyAfterRoomSettingsChanged']);
+		$dispatcher->addListener(Room::EVENT_AFTER_SET_CALL_RECORDING, [self::class, 'notifyAfterRoomSettingsChanged']);
+		$dispatcher->addListener(Room::EVENT_AFTER_SET_BREAKOUT_ROOM_MODE, [self::class, 'notifyAfterRoomSettingsChanged']);
+		$dispatcher->addListener(Room::EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS, [self::class, 'notifyAfterRoomSettingsChanged']);
 		// TODO remove handler with "roomModified" in favour of handler with
 		// "participantsModified" once the clients no longer expect a
 		// "roomModified" message for participant type changes.
