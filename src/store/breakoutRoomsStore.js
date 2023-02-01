@@ -93,7 +93,11 @@ const actions = {
 
 	async startBreakoutRoomsAction(context, token) {
 		try {
-			await startBreakoutRooms(token)
+			const response = await startBreakoutRooms(token)
+			// Add breakout rooms and conversations to the conversations store
+			response.data.ocs.data.forEach(conversation => {
+				context.commit('addConversation', conversation)
+			})
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while starting breakout rooms'))
@@ -102,7 +106,11 @@ const actions = {
 
 	async stopBreakoutRoomsAction(context, token) {
 		try {
-			await stopBreakoutRooms(token)
+			const response = await stopBreakoutRooms(token)
+			// Add breakout rooms and conversations to the conversations store
+			response.data.ocs.data.forEach(conversation => {
+				context.commit('addConversation', conversation)
+			})
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while stopping breakout rooms'))
