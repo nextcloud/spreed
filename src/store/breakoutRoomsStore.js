@@ -55,7 +55,11 @@ const mutations = {
 const actions = {
 	async configureBreakoutRoomsAction(context, { token, mode, amount, attendeeMap }) {
 		try {
-			 await configureBreakoutRooms(token, mode, amount, attendeeMap)
+			 const response = await configureBreakoutRooms(token, mode, amount, attendeeMap)
+			// Add breakout rooms and conversations to the conversations store
+			response.data.ocs.data.forEach(conversation => {
+				context.commit('addConversation', conversation)
+			})
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while creating breakout rooms'))
@@ -64,7 +68,10 @@ const actions = {
 
 	async deleteBreakoutRoomsAction(context, { token }) {
 		try {
-			await deleteBreakoutRooms(token)
+			const response = await deleteBreakoutRooms(token)
+			const conversation = response.data.ocs.data
+			// Update the parent conversation with the new configuration
+			context.commit('addConversation', conversation)
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while deleting breakout rooms'))
