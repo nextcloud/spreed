@@ -176,15 +176,23 @@ export default {
 		},
 	},
 
-	mounted() {
-		if (this.breakoutRoomsConfigured) {
-			this.$store.dispatch('getBreakoutRoomsAction', {
-				token: this.token,
-			})
-		}
+	watch: {
+		breakoutRoomsConfigured(newValue) {
+			if (newValue) {
+				this.getBreakoutRooms()
+			}
+		},
 	},
 
 	methods: {
+		getBreakoutRooms() {
+			if (this.breakoutRoomsConfigured) {
+				this.$store.dispatch('getBreakoutRoomsAction', {
+					token: this.token,
+				})
+			}
+		},
+
 		deleteBreakoutRooms() {
 			OC.dialogs.confirmDestructive(
 				t('spreed', 'Current breakout rooms and settings will be lost'),
