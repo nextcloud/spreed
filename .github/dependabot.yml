@@ -9,6 +9,14 @@ updates:
     timezone: Europe/Paris
   open-pull-requests-limit: 10
 - package-ecosystem: composer
+  directory: "/tests/integration"
+  schedule:
+    interval: weekly
+    day: saturday
+    time: "03:00"
+    timezone: Europe/Paris
+  open-pull-requests-limit: 10
+- package-ecosystem: composer
   directory: "/vendor-bin/csfixer"
   schedule:
     interval: weekly
