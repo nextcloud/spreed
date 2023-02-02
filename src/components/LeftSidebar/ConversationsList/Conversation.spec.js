@@ -9,6 +9,8 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 
 import Conversation from './Conversation.vue'
 
+import flushPromises from 'flush-promises'
+
 jest.mock('@nextcloud/dialogs', () => ({
 	showSuccess: jest.fn(),
 	showError: jest.fn(),
@@ -367,7 +369,8 @@ describe('Conversation.vue', () => {
 				const action = shallowMountAndGetAction('Leave conversation')
 				expect(action.exists()).toBe(true)
 
-				await action.find('button').trigger('click')
+				action.find('button').trigger('click')
+				await flushPromises()
 
 				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 				expect(showError).toHaveBeenCalledWith(expect.stringContaining('promote'))

@@ -20,7 +20,8 @@
 -->
 
 <template>
-	<NcListItem :title="item.displayName"
+	<NcListItem ref="listItem"
+		:title="item.displayName"
 		:class="{'unread-mention-conversation': item.unreadMention}"
 		:anchor-id="`conversation_${item.token}`"
 		:actions-aria-label="t('spreed', 'Conversation actions')"
@@ -300,6 +301,22 @@ export default {
 			}
 		},
 	},
+
+	watch: {
+		'item.displayName': {
+			immediate: true,
+			handler(value) {
+				this.$nextTick().then(() => {
+					const titleSpan = this.$refs.listItem?.$el?.querySelector('.line-one__title')
+
+					if (titleSpan && titleSpan.offsetWidth < titleSpan.scrollWidth) {
+						titleSpan.setAttribute('title', value)
+					}
+				})
+			},
+		},
+	},
+
 	methods: {
 		async copyLinkToConversation() {
 			try {
