@@ -27,7 +27,7 @@ steps:
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-callapi
 trigger:
   branch:
@@ -64,7 +64,7 @@ steps:
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-chat
 trigger:
   branch:
@@ -101,7 +101,7 @@ steps:
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-chat-2
 trigger:
   branch:
@@ -138,7 +138,7 @@ steps:
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-command
 trigger:
   branch:
@@ -176,7 +176,7 @@ steps:
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-conversation
 trigger:
   branch:
@@ -214,7 +214,7 @@ steps:
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-conversation-2
 trigger:
   branch:
@@ -251,7 +251,7 @@ steps:
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-federation
 trigger:
   branch:
@@ -288,7 +288,7 @@ steps:
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-integration
 trigger:
   branch:
@@ -325,7 +325,7 @@ steps:
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-sharing
 trigger:
   branch:
@@ -362,7 +362,7 @@ steps:
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-sharing-2
 trigger:
   branch:
@@ -413,7 +413,7 @@ steps:
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-callapi
 trigger:
   branch:
@@ -464,7 +464,7 @@ steps:
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-chat
 trigger:
   branch:
@@ -515,7 +515,7 @@ steps:
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-chat-2
 trigger:
   branch:
@@ -566,7 +566,7 @@ steps:
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-command
 trigger:
   branch:
@@ -618,7 +618,7 @@ steps:
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-conversation
 trigger:
   branch:
@@ -670,7 +670,7 @@ steps:
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-conversation-2
 trigger:
   branch:
@@ -721,7 +721,7 @@ steps:
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-federation
 trigger:
   branch:
@@ -772,7 +772,7 @@ steps:
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-integration
 trigger:
   branch:
@@ -823,7 +823,7 @@ steps:
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-sharing
 trigger:
   branch:
@@ -874,7 +874,7 @@ steps:
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-sharing-2
 trigger:
   branch:
@@ -920,7 +920,7 @@ steps:
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-callapi
 trigger:
   branch:
@@ -967,7 +967,7 @@ steps:
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-chat
 trigger:
   branch:
@@ -1014,7 +1014,7 @@ steps:
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-chat-2
 trigger:
   branch:
@@ -1061,7 +1061,7 @@ steps:
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-command
 trigger:
   branch:
@@ -1109,7 +1109,7 @@ steps:
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-conversation
 trigger:
   branch:
@@ -1157,7 +1157,7 @@ steps:
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-conversation-2
 trigger:
   branch:
@@ -1204,7 +1204,7 @@ steps:
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-federation
 trigger:
   branch:
@@ -1251,7 +1251,7 @@ steps:
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-integration
 trigger:
   branch:
@@ -1298,7 +1298,7 @@ steps:
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-sharing
 trigger:
   branch:
@@ -1345,7 +1345,7 @@ steps:
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
-  image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
+  image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-sharing-2
 trigger:
   branch:
