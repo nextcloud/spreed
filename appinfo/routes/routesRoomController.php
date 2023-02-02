@@ -66,6 +66,8 @@ return [
 		])],
 		/** @see \OCA\Talk\Controller\RoomController::getParticipants() */
 		['name' => 'Room#getParticipants', 'url' => '/api/{apiVersion}/room/{token}/participants', 'verb' => 'GET', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::getBreakoutRoomParticipants() */
+		['name' => 'Room#getBreakoutRoomParticipants', 'url' => '/api/{apiVersion}/room/{token}/breakout-rooms/participants', 'verb' => 'GET', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::addParticipantToRoom() */
 		['name' => 'Room#addParticipantToRoom', 'url' => '/api/{apiVersion}/room/{token}/participants', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::removeSelfFromRoom() */

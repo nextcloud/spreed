@@ -41,6 +41,18 @@ Feature: conversation/breakout-rooms
       | type | name       |
       | 2    | class room |
       | 2    | Room 3     |
+    And user "participant1" sees the following attendees in breakout rooms for room "class room" with 200 (v4)
+      | roomToken  | actorType  | actorId      | participantType |
+      | class room | users      | participant1 | 1               |
+      | class room | users      | participant2 | 3               |
+      | class room | users      | participant3 | 3               |
+      | class room | users      | participant4 | 3               |
+      | Room 1     | users      | participant1 | 1               |
+      | Room 1     | users      | participant2 | 3               |
+      | Room 2     | users      | participant1 | 1               |
+      | Room 2     | users      | participant3 | 3               |
+      | Room 3     | users      | participant1 | 1               |
+      | Room 3     | users      | participant4 | 3               |
 
   Scenario: Teacher creates automatic breakout rooms
     Given user "participant1" creates room "class room" (v4)
