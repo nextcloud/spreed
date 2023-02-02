@@ -534,10 +534,10 @@ export default {
 		display: flex;
 		flex-wrap: wrap-reverse;
 
-		:deep(.action-item--open .action-item__menutoggle),
-		:deep(.action-item__menutoggle:hover),
-		:deep(.action-item--single:hover),
-		:deep(.buttons-bar button:hover) {
+		::v-deep .action-item--open .action-item__menutoggle,
+		::v-deep .action-item__menutoggle:hover,
+		::v-deep .action-item--single:hover,
+		::v-deep .buttons-bar button:hover {
 			background-color: rgba(0, 0, 0, 0.2);
 		}
 	}
