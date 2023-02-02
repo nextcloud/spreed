@@ -25,7 +25,7 @@
 		 breakout rooms -->
 		<div class="breakout-rooms__actions">
 			<div class="breakout-rooms__actions-group">
-				<template v-if="breakoutRoomsConfigured">
+				<template v-if="isInCall">
 					<NcButton v-if="breakoutRoomsStarted"
 						:title="t('spreed', 'Start breakout rooms')"
 						:aria-label="t('spreed', 'Start breakout rooms')"
@@ -111,6 +111,9 @@ import Message from 'vue-material-design-icons/Message.vue'
 // Constants
 import { CONVERSATION } from '../../../constants.js'
 
+// Mixins
+import isInCall from '../../../mixins/isInCall.js'
+
 export default {
 	name: 'BreakoutRoomsTab',
 
@@ -128,6 +131,8 @@ export default {
 		StopIcon,
 		Message,
 	},
+
+	mixins: [isInCall],
 
 	props: {
 		token: {
