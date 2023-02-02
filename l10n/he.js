@@ -542,6 +542,7 @@ OC.L10N.register(
     "Start call" : "התחלת שיחה",
     "Mute others" : "השתקה של אחרים",
     "Rename conversation" : "שינוי שם הדיון",
+    "Exit fullscreen (F)" : "יציאה ממסך מלא (F)",
     "Speaker view" : "תצוגת דובר",
     "Grid view" : "תצוגת טבלה",
     "Send" : "שליחה",
