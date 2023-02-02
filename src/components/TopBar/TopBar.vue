@@ -538,7 +538,7 @@ export default {
 		:deep(.action-item__menutoggle:hover),
 		:deep(.action-item--single:hover),
 		:deep(.buttons-bar button:hover) {
-			background-color: rgba(0, 0, 0, 0.2) !important;
+			background-color: rgba(0, 0, 0, 0.2);
 		}
 	}
 
