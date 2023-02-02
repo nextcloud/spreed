@@ -36,10 +36,23 @@ const state = {
 
 const getters = {
 	breakoutRoomsReferences: (state) => (token) => {
-		if (!state.breakoutRoomsReferences[token]) {
+		if (!state.breakoutRoomsReferences?.[token]) {
 			return []
 		}
-		return state.breakoutRoomsReferences[token]
+		return state.breakoutRoomsReferences?.[token]
+	},
+
+	hasBreakoutRooms: (state) => (token) => {
+		if (!state.breakoutRoomsReferences?.[token]) {
+			return false
+		}
+		let result = true
+		state.breakoutRoomsReferences[token].forEach(breakoutRoomToken => {
+			if (!state.conversations?.[breakoutRoomToken]) {
+				result = false
+			}
+		})
+		return result
 	},
 }
 
@@ -49,6 +62,10 @@ const mutations = {
 			set(state.breakoutRoomsReferences, token, [])
 		}
 		state.breakoutRoomsReferences[token] = breakoutRoomsReferences
+	},
+
+	removeReferences(state, token) {
+		set(state.breakoutRoomsReferences, token, [])
 	},
 }
 
@@ -72,6 +89,8 @@ const actions = {
 			const conversation = response.data.ocs.data
 			// Update the parent conversation with the new configuration
 			context.commit('addConversation', conversation)
+			// Remove references from this store
+			context.commit('removeReferences', token)
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while deleting breakout rooms'))

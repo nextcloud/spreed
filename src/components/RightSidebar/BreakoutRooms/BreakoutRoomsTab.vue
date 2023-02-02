@@ -179,13 +179,16 @@ export default {
 		configurationButtonTitle() {
 			return this.breakoutRoomsConfigured ? t('spreed', 'Re-configure breakout rooms') : t('spreed', 'Configure breakout rooms')
 		},
+
+		hasBreakoutRooms() {
+			return this.$store.getters.hasBreakoutRooms(this.token)
+		},
 	},
 
 	watch: {
-		conversation(newValue, oldValue) {
-			// Get the breakout rooms only if it's the first time the conversation loads.
-			// For subsequent changes the conversations will update regardless of this.
-			if (this.breakoutRoomsConfigured && oldValue.isDummyConversation) {
+		conversation() {
+			// Get the breakout rooms only if they're not already in the store
+			if (!this.hasBreakoutRooms) {
 				this.getBreakoutRooms()
 			}
 		},
