@@ -482,6 +482,7 @@ OC.L10N.register(
     "Personal" : "個人",
     "Always show the device preview screen before joining a call in this conversation." : "在此對話中加入通話之前，一律顯示裝置預覽畫面。",
     "Meeting" : "會議",
+    "Permissions" : "權限",
     "Matterbridge" : "Matterbridge ",
     "Danger zone" : "危險區域",
     "Error while updating conversation description" : "更新對話描述時發生錯誤",
