@@ -9,7 +9,6 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 
 import Conversation from './Conversation.vue'
 
-// Update after migration to @vue/test-utils v2.0.0
 import flushPromises from 'flush-promises'
 
 jest.mock('@nextcloud/dialogs', () => ({

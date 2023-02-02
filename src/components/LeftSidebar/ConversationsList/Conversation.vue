@@ -302,7 +302,6 @@ export default {
 		},
 	},
 
-	// TODO: move the implementation to @nextcloud-vue/NcListItem
 	watch: {
 		'item.displayName': {
 			immediate: true,
