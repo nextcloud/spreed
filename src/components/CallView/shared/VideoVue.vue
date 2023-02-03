@@ -21,6 +21,7 @@
 <template>
 	<div v-show="!placeholderForPromoted || sharedData.promoted"
 		:id="(placeholderForPromoted ? 'placeholder-' : '') + 'container_' + peerId + '_video_incoming'"
+		ref="videoContainer"
 		class="videoContainer"
 		:class="containerClass"
 		@mouseover="showShadow"
@@ -29,11 +30,13 @@
 		<transition name="fade">
 			<div v-show="showVideo"
 				:class="videoWrapperClass"
-				class="videoWrapper">
+				class="videoWrapper"
+				:style="videoWrapperStyle">
 				<video ref="video"
 					:disablePictureInPicture="!isBig"
 					:class="videoClass"
-					class="video" />
+					class="video"
+					@playing="updateVideoAspectRatio" />
 			</div>
 		</transition>
 		<transition name="fade">
@@ -164,7 +167,25 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			videoAspectRatio: null,
+			containerAspectRatio: null,
+			resizeObserver: null,
+		}
+	},
+
 	computed: {
+
+		videoWrapperStyle() {
+			if (!this.containerAspectRatio || !this.videoAspectRatio) {
+				return
+			}
+
+			return (this.containerAspectRatio > this.videoAspectRatio)
+				? `width: ${this.$refs.videoContainer.clientHeight * this.videoAspectRatio}px`
+				: `height: ${this.$refs.videoContainer.clientWidth / this.videoAspectRatio}px`
+		},
 
 		isSelectable() {
 			if (this.isStripe) {
@@ -475,6 +496,17 @@ export default {
 
 		// Set initial state
 		this._setStream(this.model.attributes.stream)
+
+		if (this.isBig) {
+			this.resizeObserver = new ResizeObserver(this.updateContainerAspectRatio)
+			this.resizeObserver.observe(this.$refs.videoContainer)
+		}
+	},
+
+	beforeDestroy() {
+		if (this.resizeObserver) {
+			this.resizeObserver.disconnect()
+		}
 	},
 
 	destroyed() {
@@ -509,6 +541,20 @@ export default {
 			if (this.$refs.video.style.transform === 'scaleX(1)') {
 				this.$refs.video.style.transform = ''
 			}
+		},
+
+		updateContainerAspectRatio([{ target }]) {
+			this.containerAspectRatio = target.clientWidth / target.clientHeight
+		},
+
+		updateVideoAspectRatio() {
+			if (!this.isBig) {
+				return
+			}
+
+			this.videoAspectRatio = this.model.attributes.stream.getVideoTracks()?.[0].getSettings().aspectRatio
+				// Fallback for Firefox
+				?? this.$refs.video.videoWidth / this.$refs.video.videoHeight
 		},
 	},
 
@@ -548,7 +594,9 @@ export default {
 		width: calc(100% - 16px);
 		height: calc(100% - 8px);
 	}
-
+	& .videoWrapper {
+		margin: auto;
+	}
 }
 
 .avatar-container {
