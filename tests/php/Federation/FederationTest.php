@@ -62,6 +62,8 @@ class FederationTest extends TestCase {
 
 	/** @var Config|MockObject */
 	protected $config;
+	/** @var LoggerInterface|MockObject */
+	protected $logger;
 
 	/** @var AddressHandler|MockObject */
 	protected $addressHandler;

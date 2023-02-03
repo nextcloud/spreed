@@ -31,6 +31,7 @@ jobs:
         with:
           php-version: 8.1
           coverage: none
+          ini-file: development
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -54,6 +54,8 @@ class RoomServiceTest extends TestCase {
 	protected $manager;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
+	/** @var ITimeFactory|MockObject */
+	protected $timeFactory;
 	/** @var IShareManager|MockObject */
 	protected $shareManager;
 	/** @var Config|MockObject */

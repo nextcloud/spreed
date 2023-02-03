@@ -51,6 +51,8 @@ class BreakoutRoomServiceTest extends TestCase {
 	private $participantService;
 	/** @var ChatManager|MockObject */
 	private $chatManager;
+	/** @var INotificationManager|MockObject */
+	private $notificationManager;
 	/** @var IEventDispatcher|MockObject */
 	private $dispatcher;
 	/** @var IL10N|MockObject */

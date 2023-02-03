@@ -173,13 +173,6 @@ class ChatManagerTest extends TestCase {
 		$comment->method('getCreationDateTime')->willReturn($creationDateTime);
 		$comment->method('getMessage')->willReturn($message);
 
-		// Used for equals comparison
-		$comment->id = $id;
-		$comment->actorType = $actorType;
-		$comment->actorId = $actorId;
-		$comment->creationDateTime = $creationDateTime;
-		$comment->message = $message;
-
 		return $comment;
 	}
 
