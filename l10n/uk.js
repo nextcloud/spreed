@@ -172,6 +172,7 @@ OC.L10N.register(
     "View chat" : "Перегляд чату",
     "Join call" : "Приєднатися",
     "Answer call" : "Відповісти на виклик",
+    "A group call has started in {call}" : "Групову розмову розпочато у {call}",
     "Open settings" : "Відкрити налаштування",
     "Conversations" : "Розмови",
     "Messages" : "Повідомлення",
