@@ -45,7 +45,7 @@ class SIPBridgeServiceTest extends TestCase {
 	public function testValidateSIPBridgeRequest(string $random, string $checksum, string $secret, string $token, string $exceptionMessage, bool $expectedReturn): void {
 		if ($exceptionMessage) {
 			$this->expectException(UnauthorizedException::class);
-			$this->expectErrorMessage($exceptionMessage);
+			$this->expectExceptionMessage($exceptionMessage);
 		}
 		$actual = $this->SIPBridgeService->validateSIPBridgeRequest($random, $checksum, $secret, $token);
 		if (!$exceptionMessage) {
