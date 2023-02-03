@@ -25,11 +25,12 @@
 		 breakout rooms -->
 		<div class="breakout-rooms__actions">
 			<div class="breakout-rooms__actions-group">
-				<template v-if="isInCall">
-					<NcButton v-if="breakoutRoomsStarted"
+				<template>
+					<NcButton v-if="breakoutRoomsNotStarted"
 						:title="t('spreed', 'Start breakout rooms')"
 						:aria-label="t('spreed', 'Start breakout rooms')"
 						type="tertiary"
+						:disabled="!isInCall"
 						@click="startBreakoutRooms">
 						<template #icon>
 							<Play :size="20" />
@@ -172,7 +173,7 @@ export default {
 			return this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
 		},
 
-		breakoutRoomsStarted() {
+		breakoutRoomsNotStarted() {
 			return this.conversation.breakoutRoomStatus !== CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
 		},
 
