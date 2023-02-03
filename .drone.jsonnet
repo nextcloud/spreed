@@ -11,7 +11,7 @@ local Pipeline(test_set, database, services) = {
 	steps: [
 		{
 			name: "integration-"+test_set,
-			image: "ghcr.io/nextcloud/continuous-integration-php8.0:latest",
+			image: "ghcr.io/nextcloud/continuous-integration-php8.2:latest",
 			environment: {
 				APP_NAME: "spreed",
 				CORE_BRANCH: "master",
