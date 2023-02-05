@@ -31,6 +31,7 @@
 		<TurnServers />
 		<SignalingServers />
 		<HostedSignalingServer />
+		<RecordingServers />
 		<SIPBridge />
 	</div>
 </template>
@@ -41,6 +42,7 @@ import Commands from '../components/AdminSettings/Commands.vue'
 import GeneralSettings from '../components/AdminSettings/GeneralSettings.vue'
 import HostedSignalingServer from '../components/AdminSettings/HostedSignalingServer.vue'
 import MatterbridgeIntegration from '../components/AdminSettings/MatterbridgeIntegration.vue'
+import RecordingServers from '../components/AdminSettings/RecordingServers.vue'
 import SignalingServers from '../components/AdminSettings/SignalingServers.vue'
 import SIPBridge from '../components/AdminSettings/SIPBridge.vue'
 import StunServers from '../components/AdminSettings/StunServers.vue'
@@ -56,6 +58,7 @@ export default {
 		GeneralSettings,
 		HostedSignalingServer,
 		MatterbridgeIntegration,
+		RecordingServers,
 		SignalingServers,
 		SIPBridge,
 		StunServers,
