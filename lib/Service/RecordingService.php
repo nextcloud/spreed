@@ -124,6 +124,7 @@ class RecordingService {
 			$file['error'] !== 0 ||
 			!is_uploaded_file($file['tmp_name'])
 		) {
+			$this->logger->warning("Uploaded file might be larger than allowed by PHP settings 'upload_max_filesize' or 'post_max_size'");
 			throw new InvalidArgumentException('invalid_file');
 		}
 
@@ -140,11 +141,13 @@ class RecordingService {
 		$mimeType = $this->mimeTypeDetector->detectString($content);
 		$allowed = self::DEFAULT_ALLOWED_RECORDING_FORMATS;
 		if (!array_key_exists($mimeType, $allowed)) {
+			$this->logger->warning("Uploaded file detected mime type ($mimeType) is not allowed");
 			throw new InvalidArgumentException('file_mimetype');
 		}
 
 		$extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 		if (!$extension || !in_array($extension, $allowed[$mimeType])) {
+			$this->logger->warning("Uploaded file extensions ($extension) is not allowed for the detected mime type ($mimeType)");
 			throw new InvalidArgumentException('file_extension');
 		}
 	}
