@@ -55,11 +55,11 @@ def getRecorderArgs(status, displayId, audioSinkIndex, width, height, extensionl
     ffmpegInputAudio = ['-f', 'pulse', '-i', audioSinkIndex]
     ffmpegInputVideo = ['-f', 'x11grab', '-draw_mouse', '0', '-video_size', f'{width}x{height}', '-i', displayId]
     ffmpegOutputAudio = ['-c:a', 'libopus']
-    ffmpegOutputVideo = ['-c:v', 'libtheora', '-q:v', '7']
+    ffmpegOutputVideo = ['-c:v', 'libvpx', '-quality:v', 'realtime']
 
     extension = '.ogg'
     if status == RECORDING_STATUS_AUDIO_AND_VIDEO:
-        extension = '.mkv'
+        extension = '.webm'
 
     outputFileName = extensionlessOutputFileName + extension
 
