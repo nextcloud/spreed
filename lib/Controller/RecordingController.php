@@ -26,12 +26,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
+use GuzzleHttp\Exception\ConnectException;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\SIPBridgeService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\Http\Client\IClientService;
 use OCP\IRequest;
 
 class RecordingController extends AEnvironmentAwareController {
@@ -40,9 +42,44 @@ class RecordingController extends AEnvironmentAwareController {
 		IRequest $request,
 		private Config $talkConfig,
 		private SIPBridgeService $SIPBridgeService,
+		private IClientService $clientService,
 		private RecordingService $recordingService
 	) {
 		parent::__construct($appName, $request);
+	}
+
+	public function getWelcomeMessage(int $serverId): DataResponse {
+		$recordingServers = $this->talkConfig->getRecordingServers();
+		if (empty($recordingServers) || !isset($recordingServers[$serverId])) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$url = rtrim($recordingServers[$serverId]['server'], '/');
+
+		$client = $this->clientService->newClient();
+		try {
+			$response = $client->get($url . '/api/v1/welcome', [
+				'verify' => (bool) $recordingServers[$serverId]['verify'],
+				'nextcloud' => [
+					'allow_local_address' => true,
+				],
+			]);
+
+			$body = $response->getBody();
+			$data = json_decode($body, true);
+
+			if (!is_array($data)) {
+				return new DataResponse([
+					'error' => 'JSON_INVALID',
+				], Http::STATUS_INTERNAL_SERVER_ERROR);
+			}
+
+			return new DataResponse($data);
+		} catch (ConnectException $e) {
+			return new DataResponse(['error' => 'CAN_NOT_CONNECT'], Http::STATUS_INTERNAL_SERVER_ERROR);
+		} catch (\Exception $e) {
+			return new DataResponse(['error' => $e->getCode()], Http::STATUS_INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**

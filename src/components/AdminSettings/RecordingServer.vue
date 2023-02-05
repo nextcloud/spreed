@@ -45,6 +45,17 @@
 				<Delete :size="20" />
 			</template>
 		</NcButton>
+
+		<div v-if="server">
+			<div class="testing-icon">
+				<NcLoadingIcon v-if="!checked" :size="20" />
+				<AlertCircle v-else-if="errorMessage" :size="20" :fill-color="'#E9322D'" />
+				<Check v-else :size="20" :fill-color="'#46BA61'" />
+			</div>
+			<div class="testing-label">
+				{{ connectionState }}
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -52,7 +63,10 @@
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import Check from 'vue-material-design-icons/Check.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import { getWelcomeMessage } from '../../services/recordingService.js'
 
 export default {
 	name: 'RecordingServer',
@@ -61,6 +75,8 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcLoadingIcon,
+		AlertCircle,
+		Check,
 		Delete,
 	},
 
@@ -86,6 +102,42 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			checked: false,
+			errorMessage: '',
+			versionFound: '',
+		}
+	},
+
+	computed: {
+		connectionState() {
+			if (!this.checked) {
+				return t('spreed', 'Status: Checking connection')
+			}
+			if (this.errorMessage) {
+				return this.errorMessage
+			}
+			return t('spreed', 'OK: Running version: {version}', {
+				version: this.versionFound,
+			})
+		},
+	},
+
+	watch: {
+		loading(isLoading) {
+			if (!isLoading) {
+				this.checkServerVersion()
+			}
+		},
+	},
+
+	mounted() {
+		if (this.server) {
+			this.checkServerVersion()
+		}
+	},
+
 	methods: {
 		removeServer() {
 			this.$emit('remove-server', this.index)
@@ -95,6 +147,30 @@ export default {
 		},
 		updateVerify(checked) {
 			this.$emit('update:verify', checked)
+		},
+
+		async checkServerVersion() {
+			this.checked = false
+
+			this.errorMessage = ''
+			this.versionFound = ''
+
+			try {
+				const response = await getWelcomeMessage(this.index)
+				this.checked = true
+				this.versionFound = response.data.ocs.data.version
+			} catch (exception) {
+				this.checked = true
+				if (exception.response.data.ocs.data.error === 'CAN_NOT_CONNECT') {
+					this.errorMessage = t('spreed', 'Error: Cannot connect to server')
+				} else if (exception.response.data.ocs.data.error === 'JSON_INVALID') {
+					this.errorMessage = t('spreed', 'Error: Server did not respond with proper JSON')
+				} else if (exception.response.data.ocs.data.error) {
+					this.errorMessage = t('spreed', 'Error: Server responded with: {error}', exception.response.data.ocs.data)
+				} else {
+					this.errorMessage = t('spreed', 'Error: Unknown error occurred')
+				}
+			}
 		},
 	},
 }
@@ -109,6 +185,20 @@ export default {
 	label {
 		margin: 0 20px;
 		display: inline-block;
+	}
+
+	.testing-icon{
+		display: inline-block;
+		height: 20px;
+		line-height: 44px;
+		vertical-align: middle;
+	}
+
+	.testing-label {
+		display: inline-block;
+		height: 44px;
+		line-height: 44px;
+		vertical-align: middle;
 	}
 }
 </style>
