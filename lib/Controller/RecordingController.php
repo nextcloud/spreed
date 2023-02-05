@@ -28,22 +28,21 @@ namespace OCA\Talk\Controller;
 use InvalidArgumentException;
 use GuzzleHttp\Exception\ConnectException;
 use OCA\Talk\Config;
-use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Service\RecordingService;
-use OCA\Talk\Service\SIPBridgeService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Http\Client\IClientService;
 use OCP\IRequest;
+use Psr\Log\LoggerInterface;
 
 class RecordingController extends AEnvironmentAwareController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		private Config $talkConfig,
-		private SIPBridgeService $SIPBridgeService,
 		private IClientService $clientService,
-		private RecordingService $recordingService
+		private RecordingService $recordingService,
+		private LoggerInterface $logger
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -83,6 +82,33 @@ class RecordingController extends AEnvironmentAwareController {
 	}
 
 	/**
+	 * Check if the current request is coming from an allowed backend.
+	 *
+	 * The backends are sending the custom header "Talk-Recording-Random"
+	 * containing at least 32 bytes random data, and the header
+	 * "Talk-Recording-Checksum", which is the SHA256-HMAC of the random data
+	 * and the body of the request, calculated with the shared secret from the
+	 * configuration.
+	 *
+	 * @param string $data
+	 * @return bool
+	 */
+	private function validateBackendRequest(string $data): bool {
+		$random = $this->request->getHeader('Talk-Recording-Random');
+		if (empty($random) || strlen($random) < 32) {
+			$this->logger->debug("Missing random");
+			return false;
+		}
+		$checksum = $this->request->getHeader('Talk-Recording-Checksum');
+		if (empty($checksum)) {
+			$this->logger->debug("Missing checksum");
+			return false;
+		}
+		$hash = hash_hmac('sha256', $random . $data, $this->talkConfig->getRecordingSecret());
+		return hash_equals($hash, strtolower($checksum));
+	}
+
+	/**
 	 * @PublicPage
 	 * @RequireModeratorParticipant
 	 */
@@ -111,20 +137,20 @@ class RecordingController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireRoom
-	 * @BruteForceProtection(action=talkSipBridgeSecret)
+	 * @BruteForceProtection(action=talkRecordingSecret)
 	 *
 	 * @return DataResponse
 	 */
 	public function store(string $owner): DataResponse {
-		try {
-			$random = $this->request->getHeader('TALK_SIPBRIDGE_RANDOM');
-			$checksum = $this->request->getHeader('TALK_SIPBRIDGE_CHECKSUM');
-			$secret = $this->talkConfig->getSIPSharedSecret();
-			if (!$this->SIPBridgeService->validateSIPBridgeRequest($random, $checksum, $secret, $this->room->getToken())) {
-				throw new UnauthorizedException();
-			}
-		} catch (UnauthorizedException $e) {
-			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+		$data = $this->room->getToken();
+		if (!$this->validateBackendRequest($data)) {
+			$response = new DataResponse([
+				'type' => 'error',
+				'error' => [
+					'code' => 'invalid_request',
+					'message' => 'The request could not be authenticated.',
+				],
+			], Http::STATUS_UNAUTHORIZED);
 			$response->throttle();
 			return $response;
 		}

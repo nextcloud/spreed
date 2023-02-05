@@ -3223,13 +3223,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	public function userStoreRecordingFileInRoom(string $user, string $file, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->setCurrentUser($user);
 
-		$sipBridgeSharedSecret = 'the secret';
-		$this->setAppConfig('spreed', new TableNode([['sip_bridge_shared_secret', $sipBridgeSharedSecret]]));
+		$recordingServerSharedSecret = 'the secret';
+		$this->setAppConfig('spreed', new TableNode([['recording_servers', json_encode(['secret' => $recordingServerSharedSecret])]]));
 		$validRandom = md5((string) rand());
-		$validChecksum = hash_hmac('sha256', $validRandom . self::$identifierToToken[$identifier], $sipBridgeSharedSecret);
+		$validChecksum = hash_hmac('sha256', $validRandom . self::$identifierToToken[$identifier], $recordingServerSharedSecret);
 		$headers = [
-			'TALK_SIPBRIDGE_RANDOM' => $validRandom,
-			'TALK_SIPBRIDGE_CHECKSUM' => $validChecksum,
+			'TALK_RECORDING_RANDOM' => $validRandom,
+			'TALK_RECORDING_CHECKSUM' => $validChecksum,
 		];
 		$options = [
 			'multipart' => [
