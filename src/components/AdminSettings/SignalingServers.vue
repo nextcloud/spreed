@@ -56,7 +56,7 @@
 			</NcCheckboxRadioSwitch>
 		</div>
 
-		<ul class="turn-servers">
+		<ul class="signaling-servers">
 			<transition-group name="fade" tag="li">
 				<SignalingServer v-for="(server, index) in servers"
 					:key="`server${index}`"
