@@ -5,6 +5,10 @@ license = {text = "GNU AGPLv3+"}
 classifiers = [
     "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
 ]
+dependencies = [
+    "selenium>=4.6.0",
+    "websocket-client",
+]
 dynamic = ["version"]
 
 [tool.setuptools.dynamic]
