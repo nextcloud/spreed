@@ -1,0 +1,11 @@
+[project]
+name = "nextcloud-talk-recording"
+description = "Recording server for Nextcloud Talk"
+license = {text = "GNU AGPLv3+"}
+classifiers = [
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+]
+dynamic = ["version"]
+
+[tool.setuptools.dynamic]
+version = {attr = "nextcloud.talk.recording.__version__"}
