@@ -6,6 +6,8 @@ classifiers = [
     "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
 ]
 dependencies = [
+    "pulsectl",
+    "pyvirtualdisplay>=2.0",
     "selenium>=4.6.0",
     "urllib3",
     "websocket-client",
