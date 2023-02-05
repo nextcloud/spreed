@@ -32,6 +32,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
+use OCA\Talk\Recording\BackendNotifier;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
@@ -64,10 +65,11 @@ class RecordingService {
 		protected ShareManager $shareManager,
 		protected ChatManager $chatManager,
 		protected LoggerInterface $logger,
+		protected BackendNotifier $backendNotifier
 	) {
 	}
 
-	public function start(Room $room, int $status): void {
+	public function start(Room $room, int $status, string $owner): void {
 		$availableRecordingTypes = [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
 		if (!in_array($status, $availableRecordingTypes)) {
 			throw new InvalidArgumentException('status');
@@ -78,6 +80,9 @@ class RecordingService {
 		if (!$room->getActiveSince() instanceof \DateTimeInterface) {
 			throw new InvalidArgumentException('call');
 		}
+
+		$this->backendNotifier->start($room, $status, $owner);
+
 		$this->roomService->setCallRecording($room, $status);
 	}
 
@@ -85,6 +90,9 @@ class RecordingService {
 		if ($room->getCallRecording() === Room::RECORDING_NONE) {
 			return;
 		}
+
+		$this->backendNotifier->stop($room);
+
 		$this->roomService->setCallRecording($room);
 	}
 

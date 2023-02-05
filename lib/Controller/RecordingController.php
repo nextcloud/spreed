@@ -39,6 +39,7 @@ class RecordingController extends AEnvironmentAwareController {
 	public function __construct(
 		string $appName,
 		IRequest $request,
+		private ?string $userId,
 		private Config $talkConfig,
 		private IClientService $clientService,
 		private RecordingService $recordingService,
@@ -114,7 +115,7 @@ class RecordingController extends AEnvironmentAwareController {
 	 */
 	public function start(int $status): DataResponse {
 		try {
-			$this->recordingService->start($this->room, $status);
+			$this->recordingService->start($this->room, $status, $this->userId);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}

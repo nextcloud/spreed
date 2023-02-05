@@ -38,6 +38,7 @@ namespace OCA\Talk\Tests\php\Service;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Manager;
+use OCA\Talk\Recording\BackendNotifier;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
@@ -73,6 +74,8 @@ class RecordingServiceTest extends TestCase {
 	private $chatManager;
 	/** @var LoggerInterface|MockObject */
 	private $logger;
+	/** @var BackendNotifier|MockObject */
+	private $backendNotifier;
 	/** @var RecordingService */
 	protected $recordingService;
 
@@ -90,6 +93,7 @@ class RecordingServiceTest extends TestCase {
 		$this->shareManager = $this->createMock(ShareManager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
+		$this->backendNotifier = $this->createMock(BackendNotifier::class);
 
 		$this->recordingService = new RecordingService(
 			$this->mimeTypeDetector,
@@ -103,6 +107,7 @@ class RecordingServiceTest extends TestCase {
 			$this->shareManager,
 			$this->chatManager,
 			$this->logger,
+			$this->backendNotifier,
 		);
 	}
 
