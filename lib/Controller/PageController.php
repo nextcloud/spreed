@@ -184,6 +184,7 @@ class PageController extends Controller {
 	 * @throws HintException
 	 */
 	public function index(string $token = '', string $callUser = '', string $password = ''): Response {
+		$bruteForceToken = $token;
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
 			return $this->guestEnterRoom($token, $password);
@@ -296,7 +297,7 @@ class PageController extends Controller {
 		$response->setContentSecurityPolicy($csp);
 		if ($throttle) {
 			// Logged-in user tried to access a chat they can not access
-			$response->throttle();
+			$response->throttle(['token' => $bruteForceToken]);
 		}
 		return $response;
 	}
@@ -321,7 +322,7 @@ class PageController extends Controller {
 			$response = new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
 				'redirect_url' => $redirectUrl,
 			]));
-			$response->throttle();
+			$response->throttle(['token' => $token]);
 			return $response;
 		}
 

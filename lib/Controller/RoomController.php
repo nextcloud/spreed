@@ -324,7 +324,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse($this->formatRoom($room, $participant, [], $isSIPBridgeRequest), Http::STATUS_OK, $this->getTalkHashHeader());
 		} catch (RoomNotFoundException $e) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
-			$response->throttle();
+			$response->throttle(['token' => $token]);
 			return $response;
 		}
 	}
@@ -1233,6 +1233,7 @@ class RoomController extends AEnvironmentAwareController {
 			} else {
 				$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, $password, $result['result'], $previousParticipant);
 			}
+			$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomToken', ['token' => $token]);
 		} catch (InvalidPasswordException $e) {
 			$response = new DataResponse([], Http::STATUS_FORBIDDEN);
 			$response->throttle(['token' => $token]);
