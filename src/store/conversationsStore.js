@@ -62,6 +62,8 @@ const DUMMY_CONVERSATION = {
 	displayName: '',
 	isFavorite: false,
 	hasPassword: false,
+	breakoutRoomMode: CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED,
+	breakoutRoomStatus: CONVERSATION.BREAKOUT_ROOM_STATUS.STOPPED,
 	canEnableSIP: false,
 	type: CONVERSATION.TYPE.PUBLIC,
 	participantFlags: PARTICIPANT.CALL_FLAG.DISCONNECTED,
@@ -73,6 +75,7 @@ const DUMMY_CONVERSATION = {
 	lobbyState: WEBINAR.LOBBY.NONE,
 	lobbyTimer: 0,
 	attendeePin: '',
+	isDummyConversation: true,
 }
 
 const getDefaultState = () => {

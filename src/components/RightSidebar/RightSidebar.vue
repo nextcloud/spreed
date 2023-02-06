@@ -59,7 +59,7 @@
 				:can-search="canSearchParticipants"
 				:can-add="canAddParticipants" />
 		</NcAppSidebarTab>
-		<NcAppSidebarTab v-if="getUserId && !isOneToOne"
+		<NcAppSidebarTab v-if="showBreakoutRoomsTab"
 			id="breakout-rooms"
 			ref="breakout-rooms"
 			:order="3"
@@ -181,6 +181,7 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
+
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
@@ -256,6 +257,14 @@ export default {
 		participantsText() {
 			const participants = this.$store.getters.participantsList(this.token)
 			return t('spreed', 'Participants ({count})', { count: participants.length })
+		},
+
+		breakoutRoomsConfigured() {
+			return this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
+		},
+
+		showBreakoutRoomsTab() {
+			return this.getUserId && !this.isOneToOne && this.breakoutRoomsConfigured
 		},
 
 		breakoutRoomsText() {

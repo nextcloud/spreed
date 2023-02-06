@@ -36,10 +36,15 @@ const state = {
 
 const getters = {
 	breakoutRoomsReferences: (state) => (token) => {
-		if (!state.breakoutRoomsReferences[token]) {
+		if (!state.breakoutRoomsReferences?.[token]) {
 			return []
 		}
-		return state.breakoutRoomsReferences[token]
+		return state.breakoutRoomsReferences?.[token]
+	},
+
+	hasBreakoutRooms: (state, getters, rootState) => (token) => {
+		return !!state.breakoutRoomsReferences?.[token]
+			.every(breakoutRoomToken => rootState.conversationsStore.conversations?.[breakoutRoomToken])
 	},
 }
 
@@ -50,12 +55,31 @@ const mutations = {
 		}
 		state.breakoutRoomsReferences[token] = breakoutRoomsReferences
 	},
+
+	removeReferences(state, token) {
+		set(state.breakoutRoomsReferences, token, [])
+	},
 }
 
 const actions = {
 	async configureBreakoutRoomsAction(context, { token, mode, amount, attendeeMap }) {
 		try {
-			 await configureBreakoutRooms(token, mode, amount, attendeeMap)
+			const response = await configureBreakoutRooms(token, mode, amount, attendeeMap)
+			const breakoutRoomsReferences = []
+
+			// Add breakout rooms and conversations to the conversations store
+			response.data.ocs.data.forEach(conversation => {
+				context.commit('addConversation', conversation)
+				if (conversation.token !== token) {
+					breakoutRoomsReferences.push(conversation.token)
+				}
+			})
+
+			// Add breakout rooms references to this store
+			context.commit('addBreakoutRoomsReferences', {
+				token,
+				breakoutRoomsReferences,
+			})
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while creating breakout rooms'))
@@ -64,7 +88,12 @@ const actions = {
 
 	async deleteBreakoutRoomsAction(context, { token }) {
 		try {
-			await deleteBreakoutRooms(token)
+			const response = await deleteBreakoutRooms(token)
+			const conversation = response.data.ocs.data
+			// Update the parent conversation with the new configuration
+			context.commit('addConversation', conversation)
+			// Remove references from this store
+			context.commit('removeReferences', token)
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while deleting breakout rooms'))
@@ -78,7 +107,6 @@ const actions = {
 				token,
 				breakoutRoomsReferences: response.data.ocs.data.map(conversation => conversation.token),
 			})
-			console.debug('response', response)
 		} catch (error) {
 			console.error(error)
 		}
@@ -86,7 +114,11 @@ const actions = {
 
 	async startBreakoutRoomsAction(context, token) {
 		try {
-			await startBreakoutRooms(token)
+			const response = await startBreakoutRooms(token)
+			// Add breakout rooms and conversations to the conversations store
+			response.data.ocs.data.forEach(conversation => {
+				context.commit('addConversation', conversation)
+			})
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while starting breakout rooms'))
@@ -95,7 +127,11 @@ const actions = {
 
 	async stopBreakoutRoomsAction(context, token) {
 		try {
-			await stopBreakoutRooms(token)
+			const response = await stopBreakoutRooms(token)
+			// Add breakout rooms and conversations to the conversations store
+			response.data.ocs.data.forEach(conversation => {
+				context.commit('addConversation', conversation)
+			})
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while stopping breakout rooms'))

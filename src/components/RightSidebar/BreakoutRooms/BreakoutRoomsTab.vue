@@ -25,11 +25,12 @@
 		 breakout rooms -->
 		<div class="breakout-rooms__actions">
 			<div class="breakout-rooms__actions-group">
-				<template v-if="breakoutRoomsConfigured">
-					<NcButton v-if="breakoutRoomsStarted"
+				<template>
+					<NcButton v-if="breakoutRoomsNotStarted"
 						:title="t('spreed', 'Start breakout rooms')"
 						:aria-label="t('spreed', 'Start breakout rooms')"
 						type="tertiary"
+						:disabled="!isInCall"
 						@click="startBreakoutRooms">
 						<template #icon>
 							<Play :size="20" />
@@ -111,6 +112,9 @@ import Message from 'vue-material-design-icons/Message.vue'
 // Constants
 import { CONVERSATION } from '../../../constants.js'
 
+// Mixins
+import isInCall from '../../../mixins/isInCall.js'
+
 export default {
 	name: 'BreakoutRoomsTab',
 
@@ -128,6 +132,8 @@ export default {
 		StopIcon,
 		Message,
 	},
+
+	mixins: [isInCall],
 
 	props: {
 		token: {
@@ -151,7 +157,7 @@ export default {
 	computed: {
 		breakoutRooms() {
 			// Return an empty array until the conversations object is populated
-			if (!this.$store.getters.conversation(this.breakoutRoomsReferences[0])) {
+			if (!this.hasBreakoutRooms) {
 				return []
 			}
 			return this.$store.getters.breakoutRoomsReferences(this.token).map(reference => {
@@ -167,24 +173,35 @@ export default {
 			return this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
 		},
 
-		breakoutRoomsStarted() {
+		breakoutRoomsNotStarted() {
 			return this.conversation.breakoutRoomStatus !== CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
 		},
 
 		configurationButtonTitle() {
 			return this.breakoutRoomsConfigured ? t('spreed', 'Re-configure breakout rooms') : t('spreed', 'Configure breakout rooms')
 		},
+
+		hasBreakoutRooms() {
+			return this.$store.getters.hasBreakoutRooms(this.token)
+		},
 	},
 
 	mounted() {
-		if (this.breakoutRoomsConfigured) {
-			this.$store.dispatch('getBreakoutRoomsAction', {
-				token: this.token,
-			})
+		// Get the breakout rooms only if they're not already in the store
+		if (!this.hasBreakoutRooms) {
+			this.getBreakoutRooms()
 		}
 	},
 
 	methods: {
+		getBreakoutRooms() {
+			if (this.breakoutRoomsConfigured) {
+				this.$store.dispatch('getBreakoutRoomsAction', {
+					token: this.token,
+				})
+			}
+		},
+
 		deleteBreakoutRooms() {
 			OC.dialogs.confirmDestructive(
 				t('spreed', 'Current breakout rooms and settings will be lost'),
