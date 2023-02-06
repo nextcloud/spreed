@@ -42,17 +42,9 @@ const getters = {
 		return state.breakoutRoomsReferences?.[token]
 	},
 
-	hasBreakoutRooms: (state) => (token) => {
-		if (!state.breakoutRoomsReferences?.[token]) {
-			return false
-		}
-		let result = true
-		state.breakoutRoomsReferences[token].forEach(breakoutRoomToken => {
-			if (!state.conversations?.[breakoutRoomToken]) {
-				result = false
-			}
-		})
-		return result
+	hasBreakoutRooms: (state, getters, rootState) => (token) => {
+		return !!state.breakoutRoomsReferences?.[token]
+			.every(breakoutRoomToken => rootState.conversationsStore.conversations?.[breakoutRoomToken])
 	},
 }
 
@@ -72,10 +64,21 @@ const mutations = {
 const actions = {
 	async configureBreakoutRoomsAction(context, { token, mode, amount, attendeeMap }) {
 		try {
-			 const response = await configureBreakoutRooms(token, mode, amount, attendeeMap)
+			const response = await configureBreakoutRooms(token, mode, amount, attendeeMap)
+			const breakoutRoomsReferences = []
+
 			// Add breakout rooms and conversations to the conversations store
 			response.data.ocs.data.forEach(conversation => {
 				context.commit('addConversation', conversation)
+				if (conversation.token !== token) {
+					breakoutRoomsReferences.push(conversation.token)
+				}
+			})
+
+			// Add breakout rooms references to this store
+			context.commit('addBreakoutRoomsReferences', {
+				token,
+				breakoutRoomsReferences,
 			})
 		} catch (error) {
 			console.error(error)
@@ -104,7 +107,6 @@ const actions = {
 				token,
 				breakoutRoomsReferences: response.data.ocs.data.map(conversation => conversation.token),
 			})
-			console.debug('response', response)
 		} catch (error) {
 			console.error(error)
 		}

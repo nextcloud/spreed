@@ -157,7 +157,7 @@ export default {
 	computed: {
 		breakoutRooms() {
 			// Return an empty array until the conversations object is populated
-			if (!this.$store.getters.conversation(this.breakoutRoomsReferences[0])) {
+			if (!this.hasBreakoutRooms) {
 				return []
 			}
 			return this.$store.getters.breakoutRoomsReferences(this.token).map(reference => {
@@ -186,13 +186,11 @@ export default {
 		},
 	},
 
-	watch: {
-		conversation() {
-			// Get the breakout rooms only if they're not already in the store
-			if (!this.hasBreakoutRooms) {
-				this.getBreakoutRooms()
-			}
-		},
+	mounted() {
+		// Get the breakout rooms only if they're not already in the store
+		if (!this.hasBreakoutRooms) {
+			this.getBreakoutRooms()
+		}
 	},
 
 	methods: {

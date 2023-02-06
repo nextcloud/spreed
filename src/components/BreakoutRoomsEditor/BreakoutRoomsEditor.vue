@@ -111,12 +111,17 @@ export default {
 	},
 
 	methods: {
-		handleCreateRooms() {
-			this.$store.dispatch('configureBreakoutRoomsAction', {
-				token: this.token,
-				mode: this.mode,
-				amount: this.amount,
-			})
+		async handleCreateRooms() {
+			try {
+				await this.$store.dispatch('configureBreakoutRoomsAction', {
+					token: this.token,
+					mode: this.mode,
+					amount: this.amount,
+				})
+				this.$emit('close')
+			} catch (error) {
+				console.debug(error)
+			}
 		},
 	},
 }
