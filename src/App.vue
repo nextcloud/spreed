@@ -54,7 +54,7 @@ import {
 import {
 	signalingKill,
 } from './utils/webrtc/index.js'
-import { emit, subscribe } from '@nextcloud/event-bus'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import browserCheck from './mixins/browserCheck.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import isInCall from './mixins/isInCall.js'
@@ -229,6 +229,8 @@ export default {
 			EventBus.$off('should-refresh-conversations', this.debounceRefreshCurrentConversation)
 		}
 		document.removeEventListener('visibilitychange', this.changeWindowVisibility)
+
+		unsubscribe('notifications:action:execute', this.interceptNotificationActions)
 	},
 
 	beforeMount() {
@@ -453,31 +455,27 @@ export default {
 		 * @param {boolean} event.cancelAction Option to cancel the action so no page reload is happening
 		 */
 		interceptNotificationActions(event) {
-			if (event.notification.app === 'spreed' && event.action.type === 'WEB') {
-				const splitUrl = event.action.url.split('/call/')
-				if (splitUrl.length === 2) {
-					const data = splitUrl[1]
-					const tokenAndMessageId = data.split('#message_')
-					if (tokenAndMessageId.length === 2) {
-						this.$router.push({
-							name: 'conversation',
-							params: {
-								token: tokenAndMessageId[0],
-								hash: '#message_' + tokenAndMessageId[1],
-							},
-						})
-					} else {
-						this.$router.push({
-							name: 'conversation',
-							params: {
-								token: tokenAndMessageId[0],
-							},
-						})
-					}
-					event.cancelAction = true
-				}
+			if (event.notification.app !== 'spreed' || event.action.type !== 'WEB') {
+				return
 			}
+
+			const [, load] = event.action.url.split('/call/')
+			if (!load) {
+				return
+			}
+
+			const [token, messageId] = load.split('#message_')
+			this.$router.push({
+				name: 'conversation',
+				params: {
+					token,
+					hash: messageId ? `#message_${messageId}` : '',
+				},
+			})
+
+			event.cancelAction = true
 		},
+
 		fixmeDelayedSetupOfGuestUsers() {
 			// FIXME Refresh the data now that the user joined the conversation
 			// The join request returns this data already, but it's lost in the signaling code
