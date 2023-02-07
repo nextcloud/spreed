@@ -25,6 +25,7 @@ import {
 	updateLastReadMessage,
 	fetchMessages,
 	lookForNewMessages,
+	getMessageContext,
 	postNewMessage,
 	postRichObjectToConversation,
 	addReactionToMessage,
@@ -111,6 +112,12 @@ const state = {
 	 * when quickly switching to a new conversation.
 	 */
 	cancelFetchMessages: null,
+	/**
+	 * Stores the cancel function returned by `cancelableGetMessageContext`,
+	 * which allows to cancel the previous request for the context messages
+	 * when quickly switching to another conversation.
+	 */
+	cancelGetMessageContext: null,
 	/**
 	 * Stores the cancel function returned by `cancelableLookForNewMessages`,
 	 * which allows to cancel the previous long polling request for new
@@ -228,6 +235,10 @@ const getters = {
 const mutations = {
 	setCancelFetchMessages(state, cancelFunction) {
 		state.cancelFetchMessages = cancelFunction
+	},
+
+	setCancelGetMessageContext(state, cancelFunction) {
+		state.cancelGetMessageContext = cancelFunction
 	},
 
 	setCancelLookForNewMessages(state, { requestId, cancelFunction }) {
@@ -816,6 +827,96 @@ const actions = {
 	},
 
 	/**
+	 * Fetches messages that belong to a particular conversation
+	 * specified with its token.
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token the conversation token;
+	 * @param {number} data.messageId Message id to get the context for;
+	 * @param {object} data.requestOptions request options;
+	 * @param {number} data.minimumVisible Minimum number of chat messages we want to load
+	 */
+	async getMessageContext(context, { token, messageId, requestOptions, minimumVisible }) {
+		minimumVisible = (typeof minimumVisible === 'undefined') ? CHAT.MINIMUM_VISIBLE : minimumVisible
+
+		context.dispatch('cancelGetMessageContext')
+
+		// Get a new cancelable request function and cancel function pair
+		const { request, cancel } = CancelableRequest(getMessageContext)
+		// Assign the new cancel function to our data value
+		context.commit('setCancelGetMessageContext', cancel)
+
+		const response = await request({
+			token,
+			messageId,
+			limit: CHAT.FETCH_LIMIT,
+		}, requestOptions)
+
+		let newestKnownMessageId = 0
+
+		// if ('x-chat-last-common-read' in response.headers) {
+		// const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
+		// context.dispatch('updateLastCommonReadMessage', {
+		// token,
+		// lastCommonReadMessage,
+		// })
+		// }
+
+		// Process each messages and adds it to the store
+		response.data.ocs.data.forEach(message => {
+			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
+				// update guest display names cache
+				context.dispatch('setGuestNameIfEmpty', message)
+			}
+			context.dispatch('processMessage', message)
+			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
+
+			// if (message.systemMessage !== 'reaction'
+			// && message.systemMessage !== 'reaction_deleted'
+			// && message.systemMessage !== 'reaction_revoked'
+			// && message.systemMessage !== 'poll_voted'
+			// ) {
+			// minimumVisible--
+			// }
+		})
+
+		if ('x-chat-last-given' in response.headers) {
+			context.dispatch('setFirstKnownMessageId', {
+				token,
+				id: parseInt(response.headers['x-chat-last-given'], 10),
+			})
+		}
+
+		// TODO: Verify guests comment
+		// For guests, we also need to set the last known message id
+		// after the first grab of the history, otherwise they start loading
+		// the full history with fetchMessages().
+		if (newestKnownMessageId
+			&& !context.getters.getLastKnownMessageId(token)) {
+			context.dispatch('setLastKnownMessageId', {
+				token,
+				id: newestKnownMessageId,
+			})
+		}
+
+		context.commit('loadedMessagesOfConversation', { token })
+
+		// if (minimumVisible > 0) {
+		// // There are not yet enough visible messages loaded, so fetch another chunk.
+		// // This can happen when a lot of reactions or poll votings happen
+		// return await context.dispatch('fetchMessages', {
+		// token,
+		// lastKnownMessageId: context.getters.getFirstKnownMessageId(token),
+		// includeLastKnown,
+		// minimumVisible,
+		// })
+		// }
+
+		return response
+	},
+
+	/**
 	 * Cancels a previously running "fetchMessages" action if applicable.
 	 *
 	 * @param {object} context default store context;
@@ -825,6 +926,21 @@ const actions = {
 		if (context.state.cancelFetchMessages) {
 			context.state.cancelFetchMessages('canceled')
 			context.commit('setCancelFetchMessages', null)
+			return true
+		}
+		return false
+	},
+
+	/**
+	 * Cancels a previously running "getMessageContext" action if applicable.
+	 *
+	 * @param {object} context default store context;
+	 * @return {boolean} true if a request got cancelled, false otherwise
+	 */
+	cancelGetMessageContext(context) {
+		if (context.state.cancelGetMessageContext) {
+			context.state.cancelGetMessageContext('canceled')
+			context.commit('setCancelGetMessageContext', null)
 			return true
 		}
 		return false

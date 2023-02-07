@@ -490,11 +490,10 @@ export default {
 						id: this.conversation.lastReadMessage,
 					})
 
-					// get history before last read message
-					await this.getOldMessages(true)
-					// at this stage, the read marker will appear at the bottom of the view port since
-					// we haven't fetched the messages that come after it yet
-					// TODO: should we still show a spinner at this stage ?
+					// Get chat messages before last read message and after it
+					const startingMessage = this.$store.getters.getFirstKnownMessageId(this.token)
+					await this.getMessageContext(startingMessage)
+					this.focusMessage(startingMessage)
 				}
 
 				let hasScrolled = false
@@ -535,6 +534,24 @@ export default {
 				&& this.conversation.lastReadMessage === this.conversation.lastMessage.id
 
 			await this.getNewMessages(followInNewMessages)
+		},
+
+		async getMessageContext(messageId) {
+			try {
+				this.loadingOldMessages = true
+				await this.$store.dispatch('getMessageContext', {
+					token: this.token,
+					messageId,
+					minimumVisible: CHAT.MINIMUM_VISIBLE,
+				})
+
+				this.loadingOldMessages = false
+			} catch (exception) {
+				if (Axios.isCancel(exception)) {
+					console.debug('The request has been canceled', exception)
+				}
+				this.loadingOldMessages = false
+			}
 		},
 
 		/**
