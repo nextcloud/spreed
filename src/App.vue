@@ -54,7 +54,7 @@ import {
 import {
 	signalingKill,
 } from './utils/webrtc/index.js'
-import { emit } from '@nextcloud/event-bus'
+import { emit, subscribe } from '@nextcloud/event-bus'
 import browserCheck from './mixins/browserCheck.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import isInCall from './mixins/isInCall.js'
@@ -436,9 +436,48 @@ export default {
 				open: true,
 			})
 		}
+
+		subscribe('notifications:action:execute', this.interceptNotificationActions)
 	},
 
 	methods: {
+		/**
+		 * Intercept clicking actions on notifications and open the conversation without a page reload instead
+		 *
+		 * @param {object} event The event object provided by the notifications app
+		 * @param {object} event.notification The notification object
+		 * @param {string} event.notification.app The app ID of the app providing the notification
+		 * @param {object} event.action The action that was clicked
+		 * @param {string} event.action.url The URL the action is aiming at
+		 * @param {string} event.action.type The request type used for the action
+		 * @param {boolean} event.cancelAction Option to cancel the action so no page reload is happening
+		 */
+		interceptNotificationActions(event) {
+			if (event.notification.app === 'spreed' && event.action.type === 'WEB') {
+				const splitUrl = event.action.url.split('/call/')
+				if (splitUrl.length === 2) {
+					const data = splitUrl[1]
+					const tokenAndMessageId = data.split('#message_')
+					if (tokenAndMessageId.length === 2) {
+						this.$router.push({
+							name: 'conversation',
+							params: {
+								token: tokenAndMessageId[0],
+								hash: '#message_' + tokenAndMessageId[1],
+							},
+						})
+					} else {
+						this.$router.push({
+							name: 'conversation',
+							params: {
+								token: tokenAndMessageId[0],
+							},
+						})
+					}
+					event.cancelAction = true
+				}
+			}
+		},
 		fixmeDelayedSetupOfGuestUsers() {
 			// FIXME Refresh the data now that the user joined the conversation
 			// The join request returns this data already, but it's lost in the signaling code
