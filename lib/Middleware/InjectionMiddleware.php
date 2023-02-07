@@ -266,7 +266,9 @@ class InjectionMiddleware extends Middleware {
 					$ip = $this->request->getRemoteAddress();
 					$action = 'talkRoomToken';
 					$this->throttler->sleepDelay($ip, $action);
-					$this->throttler->registerAttempt($action, $ip);
+					$this->throttler->registerAttempt($action, $ip, [
+						'token' => $this->request->getParam('token') ?? '',
+					]);
 				}
 				throw new OCSException('', Http::STATUS_NOT_FOUND);
 			}
