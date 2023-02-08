@@ -713,7 +713,8 @@ class ParticipantService {
 			$this->sessionMapper->deleteByAttendeeId($participant->getAttendee()->getId());
 		}
 
-		if ($participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED) {
+		if ($participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED
+			&& empty($this->sessionMapper->findByAttendeeId($participant->getAttendee()->getId()))) {
 			$this->attendeeMapper->delete($participant->getAttendee());
 
 			$attendeeEvent = new AttendeesRemovedEvent($room, [$participant->getAttendee()]);
