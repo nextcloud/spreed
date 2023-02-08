@@ -75,12 +75,7 @@ export default {
 	data() {
 		return {
 			isDraggingOver: false,
-			/**
-			 * Initialised as true as when we open a new conversation we're scrolling to
-			 * the bottom for now. In the future when we'll open the conversation close
-			 * to the scroll position of the last read message, we will need to change this.
-			 */
-			isChatScrolledToBottom: true,
+			isChatScrolledToBottom: false,
 		}
 	},
 
