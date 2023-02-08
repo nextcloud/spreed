@@ -698,7 +698,7 @@ export default {
 	-webkit-align-items: flex-end;
 	align-items: flex-end;
 	flex-direction: column;
-	padding: 1px 8px 8px 8px;
+	padding: 0 8px 8px 8px;
 }
 
 .video__promoted {
