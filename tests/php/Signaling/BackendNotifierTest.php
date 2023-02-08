@@ -27,6 +27,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Events\SignalingRoomPropertiesEvent;
+use OCA\Talk\Federation\Notifications;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
@@ -35,8 +36,10 @@ use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BreakoutRoomService;
+use OCA\Talk\Service\MembershipService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
+use OCA\Talk\Service\SessionService;
 use OCA\Talk\Signaling\BackendNotifier;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
@@ -45,6 +48,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
+use OCP\ICacheFactory;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -130,7 +134,6 @@ class BackendNotifierTest extends TestCase {
 			],
 		]));
 
-		$this->participantService = \OC::$server->get(ParticipantService::class);
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
 		$this->signalingManager->expects($this->any())
 			->method('getSignalingServerForConversation')
@@ -138,11 +141,29 @@ class BackendNotifierTest extends TestCase {
 
 		$this->dispatcher = \OC::$server->get(IEventDispatcher::class);
 		$this->config = new Config($config, $this->secureRandom, $groupManager, $this->userManager, $this->urlGenerator, $this->timeFactory, $this->dispatcher);
+
+		$dbConnection = \OC::$server->getDatabaseConnection();
+		$this->participantService = new ParticipantService(
+			$config,
+			$this->config,
+			\OC::$server->get(AttendeeMapper::class),
+			\OC::$server->get(SessionMapper::class),
+			\OC::$server->get(SessionService::class),
+			$this->secureRandom,
+			$dbConnection,
+			$this->dispatcher,
+			$this->userManager,
+			$groupManager,
+			\OC::$server->get(MembershipService::class),
+			\OC::$server->get(Notifications::class),
+			$this->timeFactory,
+			\OC::$server->get(ICacheFactory::class)
+		);
+
 		$this->recreateBackendNotifier();
 
 		$this->overwriteService(BackendNotifier::class, $this->controller);
 
-		$dbConnection = \OC::$server->getDatabaseConnection();
 		$this->manager = new Manager(
 			$dbConnection,
 			$config,
@@ -492,6 +513,12 @@ class BackendNotifierTest extends TestCase {
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
 		$participant = $this->participantService->joinRoom($roomService, $room, $testUser, '');
 		$this->controller->clearRequests();
+
+		$this->userManager->expects($this->once())
+			->method('get')
+			->with($this->userId)
+			->willReturn($testUser);
+
 		$this->participantService->leaveRoomAsSession($room, $participant);
 
 		$this->assertMessageWasSent($room, [
