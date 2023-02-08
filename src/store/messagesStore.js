@@ -906,10 +906,6 @@ const actions = {
 			})
 		}
 
-		// TODO: Verify guests comment
-		// For guests, we also need to set the last known message id
-		// after the first grab of the history, otherwise they start loading
-		// the full history with fetchMessages().
 		if (newestKnownMessageId
 			&& !context.getters.getLastKnownMessageId(token)) {
 			context.dispatch('setLastKnownMessageId', {
