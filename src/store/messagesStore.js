@@ -872,13 +872,13 @@ const actions = {
 
 		let newestKnownMessageId = 0
 
-		// if ('x-chat-last-common-read' in response.headers) {
-		// const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
-		// context.dispatch('updateLastCommonReadMessage', {
-		// token,
-		// lastCommonReadMessage,
-		// })
-		// }
+		if ('x-chat-last-common-read' in response.headers) {
+			const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
+			context.dispatch('updateLastCommonReadMessage', {
+				token,
+				lastCommonReadMessage,
+			})
+		}
 
 		// Process each messages and adds it to the store
 		response.data.ocs.data.forEach(message => {
