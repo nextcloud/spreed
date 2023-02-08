@@ -151,6 +151,7 @@ export default {
 		return {
 			showBreakoutRoomsEditor: false,
 			sendMessageDialogOpened: false,
+			breakoutRoomsParticipantsInterval: undefined,
 		}
 	},
 
@@ -186,17 +187,35 @@ export default {
 		},
 	},
 
-	mounted() {
+	async mounted() {
 		// Get the breakout rooms only if they're not already in the store
 		if (!this.hasBreakoutRooms) {
-			this.getBreakoutRooms()
+			await this.getBreakoutRooms()
+			this.getParticipants()
+			// Start getting participants every 30 seconds
+			this.breakoutRoomsParticipantsInterval = setInterval(() => {
+				this.getParticipants()
+			}, 30000)
 		}
+	},
+
+	beforeDestroy() {
+		// Clear the interval
+		clearInterval(this.breakoutRoomsParticipantsInterval)
 	},
 
 	methods: {
 		getBreakoutRooms() {
 			if (this.breakoutRoomsConfigured) {
 				this.$store.dispatch('getBreakoutRoomsAction', {
+					token: this.token,
+				})
+			}
+		},
+
+		getParticipants() {
+			if (this.breakoutRoomsConfigured) {
+				this.$store.dispatch('getBreakoutRoomsParticipantsAction', {
 					token: this.token,
 				})
 			}
