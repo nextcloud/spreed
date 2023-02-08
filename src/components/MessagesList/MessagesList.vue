@@ -493,27 +493,20 @@ export default {
 					// Get chat messages before last read message and after it
 					const startingMessage = this.$store.getters.getFirstKnownMessageId(this.token)
 					await this.getMessageContext(startingMessage)
-					this.focusMessage(startingMessage)
-				}
+					const startingMessageFound = this.focusMessage(startingMessage, false, false)
 
-				let hasScrolled = false
-				// if lookForNewMessages will long poll instead of returning existing messages,
-				// scroll right away to avoid delays
-				if (!this.$store.getters.hasMoreMessagesToLoad(this.token)) {
-					hasScrolled = true
-					this.$nextTick(() => {
-						this.scrollToFocussedMessage()
-					})
+					if (!startingMessageFound) {
+						const fallbackStartingMessage = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, startingMessage)
+						this.$store.dispatch('setVisualLastReadMessageId', {
+							token: this.token,
+							id: fallbackStartingMessage,
+						})
+						this.focusMessage(fallbackStartingMessage, false, false)
+					}
 				}
 
 				// get new messages
 				await this.lookForNewMessages()
-
-				// don't scroll if lookForNewMessages was polling as we don't want
-				// to scroll back to the read marker after receiving new messages later
-				if (!hasScrolled) {
-					this.scrollToFocussedMessage()
-				}
 			} else {
 				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 			}
