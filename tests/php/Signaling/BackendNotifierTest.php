@@ -88,6 +88,8 @@ class BackendNotifierTest extends TestCase {
 	private $signalingManager;
 	/** @var IURLGenerator|MockObject */
 	private $urlGenerator;
+	/** @var IUserManager|MockObject */
+	private $userManager;
 	private ?\OCA\Talk\Tests\php\Signaling\CustomBackendNotifier $controller = null;
 	/** @var null|ChatManager|MockObject */
 	private ?ChatManager $chatManager = null;
@@ -113,7 +115,7 @@ class BackendNotifierTest extends TestCase {
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 		$groupManager = $this->createMock(IGroupManager::class);
-		$userManager = $this->createMock(IUserManager::class);
+		$this->userManager = $this->createMock(IUserManager::class);
 		$config = \OC::$server->getConfig();
 		$this->signalingSecret = 'the-signaling-secret';
 		$this->baseUrl = 'https://localhost/signaling';
@@ -133,7 +135,7 @@ class BackendNotifierTest extends TestCase {
 			->willReturn(['server' => $this->baseUrl]);
 
 		$this->dispatcher = \OC::$server->get(IEventDispatcher::class);
-		$this->config = new Config($config, $this->secureRandom, $groupManager, $userManager, $this->urlGenerator, $this->timeFactory, $this->dispatcher);
+		$this->config = new Config($config, $this->secureRandom, $groupManager, $this->userManager, $this->urlGenerator, $this->timeFactory, $this->dispatcher);
 		$this->recreateBackendNotifier();
 
 		$this->overwriteService(BackendNotifier::class, $this->controller);
