@@ -97,7 +97,7 @@ const getters = {
 		return conversation.objectType !== 'room'
 	}),
 	/**
-	 * Get a conversation providing it's token
+	 * Get a conversation providing its token
 	 *
 	 * @param {object} state state object
 	 * @return {Function} The callback function returning the conversation object
@@ -146,12 +146,15 @@ const mutations = {
 		Vue.set(state.conversations[token], 'lastMessage', lastMessage)
 	},
 
-	updateUnreadMessages(state, { token, unreadMessages, unreadMention }) {
+	updateUnreadMessages(state, { token, unreadMessages, unreadMention, unreadMentionDirect }) {
 		if (unreadMessages !== undefined) {
 			Vue.set(state.conversations[token], 'unreadMessages', unreadMessages)
 		}
 		if (unreadMention !== undefined) {
 			Vue.set(state.conversations[token], 'unreadMention', unreadMention)
+		}
+		if (unreadMentionDirect !== undefined) {
+			Vue.set(state.conversations[token], 'unreadMentionDirect', unreadMentionDirect)
 		}
 	},
 
@@ -475,6 +478,107 @@ const actions = {
 				&& lastMessage.message.startsWith('/'))) {
 			commit('updateConversationLastMessage', { token, lastMessage })
 		}
+	},
+
+	async updateConversationLastMessageFromNotification({ getters, commit }, { notification }) {
+		const [token, messageId] = notification.objectId.split('/')
+		const conversation = { ...getters.conversation(token) }
+
+		if (!conversation) {
+			// Conversation not loaded yet, skipping
+			return
+		}
+
+		const actor = notification.subjectRichParameters.user || notification.subjectRichParameters.guest || {
+			type: 'guest',
+			id: 'unknown',
+			name: t('spreed', 'Guest'),
+		}
+
+		const lastMessage = {
+			token,
+			id: parseInt(messageId, 10),
+			actorType: actor.type + 's',
+			actorId: actor.id,
+			actorDisplayName: actor.name,
+			message: notification.messageRich,
+			messageParameters: notification.messageRichParameters,
+			timestamp: (new Date(notification.datetime)).getTime() / 1000,
+
+			// Inaccurate but best effort from here on:
+			expirationTimestamp: 0,
+			isReplyable: true,
+			messageType: 'comment',
+			reactions: {},
+			referenceId: '',
+			systemMessage: '',
+		}
+
+		const unreadCounterUpdate = {
+			token,
+			unreadMessages: conversation.unreadMessages,
+			unreadMention: conversation.unreadMention,
+			unreadMentionDirect: conversation.unreadMentionDirect,
+		}
+
+		if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE) {
+			unreadCounterUpdate.unreadMessages++
+			unreadCounterUpdate.unreadMention++
+			unreadCounterUpdate.unreadMentionDirect = true
+		} else {
+			unreadCounterUpdate.unreadMessages++
+			Object.keys(notification.messageRichParameters).forEach(function(p) {
+				const parameter = notification.messageRichParameters[p]
+				if (parameter.type === 'user' && parameter.id === notification.user) {
+					unreadCounterUpdate.unreadMention++
+					unreadCounterUpdate.unreadMentionDirect = true
+				} else if (parameter.type === 'call' && parameter.id === token) {
+					unreadCounterUpdate.unreadMention++
+				}
+			})
+		}
+		conversation.lastActivity = lastMessage.timestamp
+
+		commit('addConversation', conversation)
+		commit('updateConversationLastMessage', { token, lastMessage })
+		commit('updateUnreadMessages', unreadCounterUpdate)
+	},
+
+	async updateCallStateFromNotification({ getters, commit }, { notification }) {
+		const token = notification.objectId
+		const conversation = { ...getters.conversation(token) }
+
+		if (!conversation) {
+			// Conversation not loaded yet, skipping
+			return
+		}
+
+		conversation.hasCall = true
+		conversation.callFlag = PARTICIPANT.CALL_FLAG.WITH_VIDEO
+		conversation.activeSince = (new Date(notification.datetime)).getTime() / 1000
+		conversation.lastActivity = conversation.activeSince
+		conversation.callStartTime = conversation.activeSince
+
+		// Inaccurate but best effort from here on:
+		const lastMessage = {
+			token,
+			id: 'temp' + conversation.activeSince,
+			actorType: 'guests',
+			actorId: 'unknown',
+			actorDisplayName: t('spreed', 'Guest'),
+			message: notification.subjectRich,
+			messageParameters: notification.subjectRichParameters,
+			timestamp: conversation.activeSince,
+			messageType: 'system',
+			systemMessage: 'call_started',
+			expirationTimestamp: 0,
+			isReplyable: false,
+			reactions: {},
+			referenceId: '',
+		}
+
+		commit('updateConversationLastMessage', { token, lastMessage })
+		commit('addConversation', conversation)
 	},
 
 	async updateConversationLastReadMessage({ commit }, { token, lastReadMessage }) {

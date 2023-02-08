@@ -440,6 +440,7 @@ export default {
 		}
 
 		subscribe('notifications:action:execute', this.interceptNotificationActions)
+		subscribe('notifications:notification:received', this.interceptNotificationReceived)
 	},
 
 	methods: {
@@ -474,6 +475,31 @@ export default {
 			})
 
 			event.cancelAction = true
+		},
+
+		/**
+		 * Intercept …
+		 *
+		 * @param {object} event The event object provided by the notifications app
+		 * @param {object} event.notification The notification object
+		 * @param {string} event.notification.app The app ID of the app providing the notification
+		 */
+		interceptNotificationReceived(event) {
+			if (event.notification.app !== 'spreed') {
+				return
+			}
+
+			if (event.notification.objectType === 'chat') {
+				this.$store.dispatch('updateConversationLastMessageFromNotification', {
+					notification: event.notification,
+				})
+			}
+
+			if (event.notification.objectType === 'call') {
+				this.$store.dispatch('updateCallStateFromNotification', {
+					notification: event.notification,
+				})
+			}
 		},
 
 		fixmeDelayedSetupOfGuestUsers() {
