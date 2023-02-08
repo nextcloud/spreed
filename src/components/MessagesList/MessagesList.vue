@@ -142,6 +142,10 @@ export default {
 
 			loadingOldMessages: false,
 
+			isInitialisingMessages: false,
+
+			isFocusingMessage: false,
+
 			destroying: false,
 
 			expirationInterval: null,
@@ -473,6 +477,7 @@ export default {
 
 				// prevent sticky mode before we have loaded anything
 				this.setChatScrolledToBottom(false)
+				this.isInitialisingMessages = true
 
 				this.$store.dispatch('setVisualLastReadMessageId', {
 					token: this.token,
@@ -592,6 +597,8 @@ export default {
 					requestId: this.chatIdentifier,
 				})
 
+				this.isInitialisingMessages = false
+
 				// Scroll to the last message if sticky
 				if (scrollToBottom && this.isSticky) {
 					this.smoothScrollToBottom()
@@ -630,7 +637,13 @@ export default {
 			}, 500)
 		},
 
-		debounceHandleScroll: debounce(function() {
+		debounceHandleScroll() {
+			if (!this.isInitialisingMessages && !this.isFocusingMessage) {
+				this.debounceHandleScrollWithoutPreconditions()
+			}
+		},
+
+		debounceHandleScrollWithoutPreconditions: debounce(function() {
 			this.handleScroll()
 		}, 50),
 
@@ -643,6 +656,16 @@ export default {
 				// This can happen if the browser is fast enough to close the sidebar
 				// when switching from a one-to-one to a group conversation.
 				console.debug('Ignoring handleScroll as the messages history is empty')
+				return
+			}
+
+			if (this.isInitialisingMessages) {
+				console.debug('Ignore handleScroll as we are initialising the message history')
+				return
+			}
+
+			if (this.isFocusingMessage) {
+				console.debug('Ignore handleScroll as we are programmatically scrolling to focus a message')
 				return
 			}
 
@@ -871,6 +894,9 @@ export default {
 				return false
 			}
 
+			console.debug('Scrolling to a focused message programmatically')
+			this.isFocusingMessage = true
+
 			this.$nextTick(async () => {
 				// FIXME: this doesn't wait for the smooth scroll to end
 				await element.scrollIntoView({
@@ -886,6 +912,7 @@ export default {
 					element.focus()
 					element.highlightAnimation()
 				}
+				this.isFocusingMessage = false
 			})
 
 			return true
@@ -951,7 +978,7 @@ export default {
 			this.$emit('set-chat-scrolled-to-bottom', boolean)
 			if (boolean) {
 				// mark as read if marker was seen
-				// we have to do this early because unfocussing the window will remove the stickiness
+				// we have to do this early because unfocusing the window will remove the stickiness
 				this.debounceUpdateReadMarkerPosition()
 			}
 		},
