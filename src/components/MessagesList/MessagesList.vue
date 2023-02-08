@@ -510,8 +510,24 @@ export default {
 					}
 				}
 
+				let hasScrolled = false
+				// if lookForNewMessages will long poll instead of returning existing messages,
+				// scroll right away to avoid delays
+				if (!this.$store.getters.hasMoreMessagesToLoad(this.token)) {
+					hasScrolled = true
+					this.$nextTick(() => {
+						this.scrollToFocussedMessage()
+					})
+				}
+
 				// get new messages
 				await this.lookForNewMessages()
+
+				// don't scroll if lookForNewMessages was polling as we don't want
+				// to scroll back to the read marker after receiving new messages later
+				if (!hasScrolled) {
+					this.scrollToFocussedMessage()
+				}
 			} else {
 				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
 			}
