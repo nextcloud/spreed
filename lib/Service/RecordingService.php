@@ -81,10 +81,11 @@ class RecordingService {
 		if (!$room->getActiveSince() instanceof \DateTimeInterface) {
 			throw new InvalidArgumentException('call');
 		}
+		if (!$this->config->isRecordingEnabled()) {
+			throw new InvalidArgumentException('config');
+		}
 
 		$this->backendNotifier->start($room, $status, $owner);
-
-		$this->roomService->setCallRecording($room, $status);
 	}
 
 	public function stop(Room $room): void {
@@ -93,8 +94,6 @@ class RecordingService {
 		}
 
 		$this->backendNotifier->stop($room);
-
-		$this->roomService->setCallRecording($room);
 	}
 
 	public function store(Room $room, string $owner, array $file): void {

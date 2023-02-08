@@ -110,3 +110,61 @@
         + `400 Bad Request` Error: `system`: Internal system error
         + `403 Forbidden` When the user is not a moderator/owne
         + `404 Not Found` Room not found
+
+## Recording server requests
+
+* Required capability: `recording-v1`
+* Method: `POST`
+* Endpoint: `/recording/backend`
+
+* Header:
+
+| field                     | type   | Description                                                                                                                         |
+| ------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `TALK_RECORDING_RANDOM`   | string | Random string that needs to be concatenated with request body to generate the checksum using the secret configured for the backend. |
+| `TALK_RECORDING_CHECKSUM` | string | The checksum generated with `TALK_RECORDING_RANDOM`.                                                                                |
+
+* Data:
+
+    - Body as a JSON encoded string; format depends on the request type, see below.
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request`: When the body data does not match the expected format.
+        + `403 Forbidden`: When the request validation failed.
+
+### Started call recording
+
+* Data format:
+
+    ```json
+    {
+      "type": "started",
+      "started": {
+        "token": "the-token-of-the-room",
+        "status": "the-type-of-recording (see [Constants - Call recording status](constants.md#call-recording-status))",
+      },
+    }
+    ```
+
+* Response:
+    - (Additional) Status code:
+        + `404 Not Found`: When the room is not found.
+
+### Stopped call recording
+
+* Data format:
+
+    ```json
+    {
+      "type": "stopped",
+      "stopped": {
+        "token": "the-token-of-the-room",
+      },
+    }
+    ```
+
+* Response:
+    - (Additional) Status code:
+        + `404 Not Found`: When the room is not found.

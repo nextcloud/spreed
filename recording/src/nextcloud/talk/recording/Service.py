@@ -222,6 +222,8 @@ class Service:
             self._logger.debug("Joining call")
             self._participant.joinCall(self.token)
 
+            BackendNotifier.started(self.backend, self.token, self.status)
+
             extensionlessFileName = f'{fullDirectory}/recording-{datetime.now().strftime("%Y%m%d-%H%M%S")}'
 
             recorderArgs = getRecorderArgs(self.status, self._display.new_display_var, audioSinkIndex, width, height, extensionlessFileName)
@@ -257,6 +259,8 @@ class Service:
         """
 
         self._stopHelpers()
+
+        BackendNotifier.stopped(self.backend, self.token)
 
         if not self._fileName:
             self._logger.error(f"Recording stopping before starting, nothing to upload")

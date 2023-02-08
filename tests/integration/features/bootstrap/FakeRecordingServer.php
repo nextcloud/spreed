@@ -74,6 +74,25 @@ if (preg_match('/\/api\/v1\/welcome/', $_SERVER['REQUEST_URI'])) {
 	unlink($receivedRequestsFile);
 
 	echo $requests;
+} elseif (preg_match('/\/fake\/send-backend-request/', $_SERVER['REQUEST_URI'])) {
+	$ch = curl_init();
+
+	curl_setopt($ch, CURLOPT_URL, $_SERVER['HTTP_BACKEND_URL']);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, [
+		'OCS-APiRequest: true',
+		'Talk-Recording-Random: ' . $_SERVER['HTTP_TALK_RECORDING_RANDOM'],
+		'Talk-Recording-Checksum: ' . $_SERVER['HTTP_TALK_RECORDING_CHECKSUM'],
+	]);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, file_get_contents('php://input'));
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+	$result = curl_exec($ch);
+	$responseCode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+
+	curl_close($ch);
+
+	http_response_code($responseCode);
+	echo $result;
 } else {
 	header('HTTP/1.0 404 Not Found');
 }

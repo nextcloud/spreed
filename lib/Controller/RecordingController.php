@@ -28,7 +28,10 @@ namespace OCA\Talk\Controller;
 use InvalidArgumentException;
 use GuzzleHttp\Exception\ConnectException;
 use OCA\Talk\Config;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Manager;
 use OCA\Talk\Service\RecordingService;
+use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Http\Client\IClientService;
@@ -42,7 +45,9 @@ class RecordingController extends AEnvironmentAwareController {
 		private ?string $userId,
 		private Config $talkConfig,
 		private IClientService $clientService,
+		private Manager $manager,
 		private RecordingService $recordingService,
+		private RoomService $roomService,
 		private LoggerInterface $logger
 	) {
 		parent::__construct($appName, $request);
@@ -107,6 +112,104 @@ class RecordingController extends AEnvironmentAwareController {
 		}
 		$hash = hash_hmac('sha256', $random . $data, $this->talkConfig->getRecordingSecret());
 		return hash_equals($hash, strtolower($checksum));
+	}
+
+	/**
+	 * Return the body of the backend request. This can be overridden in
+	 * tests.
+	 *
+	 * @return string
+	 */
+	protected function getInputStream(): string {
+		return file_get_contents('php://input');
+	}
+
+	/**
+	 * Backend API to update recording status by backends.
+	 *
+	 * @PublicPage
+	 * @BruteForceProtection(action=talkRecordingSecret)
+	 *
+	 * @return DataResponse
+	 */
+	public function backend(): DataResponse {
+		$json = $this->getInputStream();
+		if (!$this->validateBackendRequest($json)) {
+			$response = new DataResponse([
+				'type' => 'error',
+				'error' => [
+					'code' => 'invalid_request',
+					'message' => 'The request could not be authenticated.',
+				],
+			], Http::STATUS_FORBIDDEN);
+			$response->throttle();
+			return $response;
+		}
+
+		$message = json_decode($json, true);
+		switch ($message['type'] ?? '') {
+			case 'started':
+				return $this->backendStarted($message['started']);
+			case 'stopped':
+				return $this->backendStopped($message['stopped']);
+			default:
+				return new DataResponse([
+					'type' => 'error',
+					'error' => [
+						'code' => 'unknown_type',
+						'message' => 'The given type ' . json_encode($message) . ' is not supported.',
+					],
+				], Http::STATUS_BAD_REQUEST);
+		}
+	}
+
+	private function backendStarted(array $started): DataResponse {
+		$token = $started['token'];
+		$status = $started['status'];
+
+		try {
+			$room = $this->manager->getRoomByToken($token);
+		} catch (RoomNotFoundException $e) {
+			$this->logger->debug('Failed to get room {token}', [
+				'token' => $token,
+				'app' => 'spreed-recording',
+			]);
+			return new DataResponse([
+				'type' => 'error',
+				'error' => [
+					'code' => 'no_such_room',
+					'message' => 'Room not found.',
+				],
+			], Http::STATUS_NOT_FOUND);
+		}
+
+		$this->roomService->setCallRecording($room, $status);
+
+		return new DataResponse();
+	}
+
+	private function backendStopped(array $stopped): DataResponse {
+		$token = $stopped['token'];
+
+		try {
+			$room = $this->manager->getRoomByToken($token);
+		} catch (RoomNotFoundException $e) {
+			$this->logger->debug('Failed to get room {token}', [
+				'token' => $token,
+				'app' => 'spreed-recording',
+			]);
+			return new DataResponse([
+				'type' => 'error',
+				'error' => [
+					'code' => 'no_such_room',
+					'message' => 'Room not found.',
+				],
+			], Http::STATUS_NOT_FOUND);
+		}
+
+		$this->roomService->setCallRecording($room);
+
+		return new DataResponse();
 	}
 
 	/**

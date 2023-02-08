@@ -3336,6 +3336,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$options['form_params'] = $fd;
 		} elseif (is_array($body)) {
 			$options['form_params'] = $body;
+		} elseif (is_string($body)) {
+			$options['body'] = $body;
 		}
 
 		$options['headers'] = array_merge($headers, [

@@ -22,8 +22,13 @@ use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Client;
 use PHPUnit\Framework\Assert;
 
-// setAppConfig() method is expected to be available in the class that uses this
-// trait.
+// The following attributes and methods are expected to be available in the
+// class that uses this trait:
+// - baseUrl
+// - assertStatusCode()
+// - sendRequest()
+// - sendRequestFullUrl()
+// - setAppConfig()
 trait RecordingTrait {
 	/** @var string */
 	private $recordingServerPid = '';
@@ -61,6 +66,56 @@ trait RecordingTrait {
 		exec('kill ' . $this->recordingServerPid);
 
 		$this->recordingServerPid = '';
+	}
+
+	/**
+	 * @When /^recording server sent started request for "(audio|video)" recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function recordingServerSentStartedRequestForRecordingInRoomWith(string $recordingType, string $identifier, int $statusCode, string $apiVersion = 'v1') {
+		$recordingTypes = [
+			'video' => 1,
+			'audio' => 2,
+		];
+
+		$data = [
+			'type' => 'started',
+			'started' => [
+				'token' => FeatureContext::getTokenForIdentifier($identifier),
+				'status' => $recordingTypes[$recordingType],
+			],
+		];
+
+		$this->sendBackendRequestFromRecordingServer($data, $statusCode, $apiVersion);
+	}
+
+	/**
+	 * @When /^recording server sent stopped request for recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function recordingServerSentStoppedRequestForRecordingInRoomWith(string $identifier, int $statusCode, string $apiVersion = 'v1') {
+		$data = [
+			'type' => 'stopped',
+			'stopped' => [
+				'token' => FeatureContext::getTokenForIdentifier($identifier),
+			],
+		];
+
+		$this->sendBackendRequestFromRecordingServer($data, $statusCode, $apiVersion);
+	}
+
+	private function sendBackendRequestFromRecordingServer(array $data, int $statusCode, string $apiVersion = 'v1') {
+		$body = json_encode($data);
+
+		$random = md5((string) rand());
+		$checksum = hash_hmac('sha256', $random . $body, "the secret");
+
+		$headers = [
+			'Backend-Url' => $this->baseUrl . 'ocs/v2.php/apps/spreed/api/' . $apiVersion . '/recording/backend',
+			'Talk-Recording-Random' => $random,
+			'Talk-Recording-Checksum' => $checksum,
+		];
+
+		$this->sendRequestFullUrl('POST', 'http://' . $this->recordingServerAddress . '/fake/send-backend-request', $body, $headers);
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/**
