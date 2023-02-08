@@ -145,6 +145,11 @@ export default {
 			type: Object,
 			required: true,
 		},
+
+		isActive: {
+			type: Boolean,
+			required: true,
+		},
 	},
 
 	data() {
@@ -187,15 +192,27 @@ export default {
 		},
 	},
 
+	watch: {
+		isActive(newValue) {
+			if (newValue) {
+				// Cleanup previous intervals
+				clearInterval(this.breakoutRoomsParticipantsInterval)
+				// Get participants again when opening the tab
+				this.getParticipants()
+				// Start getting participants every 30 seconds
+				this.breakoutRoomsParticipantsInterval = setInterval(() => {
+					this.getParticipants()
+				}, 30000)
+			}
+		},
+	},
+
 	async mounted() {
 		// Get the breakout rooms only if they're not already in the store
 		if (!this.hasBreakoutRooms) {
 			await this.getBreakoutRooms()
+			// Get participants once at the beginnig
 			this.getParticipants()
-			// Start getting participants every 30 seconds
-			this.breakoutRoomsParticipantsInterval = setInterval(() => {
-				this.getParticipants()
-			}, 30000)
 		}
 	},
 
