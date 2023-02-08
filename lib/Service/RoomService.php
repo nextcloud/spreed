@@ -369,10 +369,12 @@ class RoomService {
 	/**
 	 * @param Room $room
 	 * @param integer $status 0 none|1 video|2 audio
+	 * @param Participant|null $participant the Participant that changed the
+	 *        state, null for the current user
 	 * @throws \InvalidArgumentException When the status is invalid, not Room::RECORDING_*
 	 * @throws \InvalidArgumentException When trying to start
 	 */
-	public function setCallRecording(Room $room, int $status = Room::RECORDING_NONE): void {
+	public function setCallRecording(Room $room, int $status = Room::RECORDING_NONE, ?Participant $participant = null): void {
 		if (!$this->config->isRecordingEnabled() && $status !== Room::RECORDING_NONE) {
 			throw new InvalidArgumentException('config');
 		}
@@ -383,7 +385,7 @@ class RoomService {
 		}
 
 		$oldStatus = $room->getCallRecording();
-		$event = new ModifyRoomEvent($room, 'callRecording', $status, $oldStatus);
+		$event = new ModifyRoomEvent($room, 'callRecording', $status, $oldStatus, $participant);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_CALL_RECORDING, $event);
 
 		$update = $this->db->getQueryBuilder();

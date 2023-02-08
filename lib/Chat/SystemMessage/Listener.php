@@ -506,7 +506,7 @@ class Listener implements IEventListener {
 		$systemMessage = $prefix . 'recording_' . $suffix;
 
 		$listener = Server::get(self::class);
-		$listener->sendSystemMessage($event->getRoom(), $systemMessage);
+		$listener->sendSystemMessage($event->getRoom(), $systemMessage, [], $event->getActor());
 	}
 
 	private static function getCallRecordingSuffix(ModifyRoomEvent $event): string {
