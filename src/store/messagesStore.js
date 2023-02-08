@@ -855,7 +855,7 @@ const actions = {
 	 * @param {number} data.minimumVisible Minimum number of chat messages we want to load
 	 */
 	async getMessageContext(context, { token, messageId, requestOptions, minimumVisible }) {
-		minimumVisible = (typeof minimumVisible === 'undefined') ? CHAT.MINIMUM_VISIBLE : minimumVisible
+		minimumVisible = (typeof minimumVisible === 'undefined') ? Math.floor(CHAT.MINIMUM_VISIBLE / 2) : minimumVisible
 
 		context.dispatch('cancelGetMessageContext')
 
@@ -889,13 +889,14 @@ const actions = {
 			context.dispatch('processMessage', message)
 			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
 
-			// if (message.systemMessage !== 'reaction'
-			// && message.systemMessage !== 'reaction_deleted'
-			// && message.systemMessage !== 'reaction_revoked'
-			// && message.systemMessage !== 'poll_voted'
-			// ) {
-			// minimumVisible--
-			// }
+			if (message.id <= messageId
+				&& message.systemMessage !== 'reaction'
+				&& message.systemMessage !== 'reaction_deleted'
+				&& message.systemMessage !== 'reaction_revoked'
+				&& message.systemMessage !== 'poll_voted'
+			) {
+				minimumVisible--
+			}
 		})
 
 		if ('x-chat-last-given' in response.headers) {
@@ -919,16 +920,16 @@ const actions = {
 
 		context.commit('loadedMessagesOfConversation', { token })
 
-		// if (minimumVisible > 0) {
-		// // There are not yet enough visible messages loaded, so fetch another chunk.
-		// // This can happen when a lot of reactions or poll votings happen
-		// return await context.dispatch('fetchMessages', {
-		// token,
-		// lastKnownMessageId: context.getters.getFirstKnownMessageId(token),
-		// includeLastKnown,
-		// minimumVisible,
-		// })
-		// }
+		if (minimumVisible > 0) {
+			// There are not yet enough visible messages loaded, so fetch another chunk.
+			// This can happen when a lot of reactions or poll votings happen
+			return await context.dispatch('fetchMessages', {
+				token,
+				lastKnownMessageId: context.getters.getFirstKnownMessageId(token),
+				includeLastKnown: false,
+				minimumVisible: minimumVisible * 2,
+			})
+		}
 
 		return response
 	},
