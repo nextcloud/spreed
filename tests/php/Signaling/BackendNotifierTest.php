@@ -84,6 +84,8 @@ class BackendNotifierTest extends TestCase {
 	private $signalingManager;
 	/** @var IURLGenerator|MockObject */
 	private $urlGenerator;
+	/** @var IUserManager|MockObject */
+	private $userManager;
 	private ?\OCA\Talk\Tests\php\Signaling\CustomBackendNotifier $controller = null;
 
 	private ?Manager $manager = null;
@@ -104,6 +106,7 @@ class BackendNotifierTest extends TestCase {
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
 		$groupManager = $this->createMock(IGroupManager::class);
+		$this->userManager = $this->createMock(IUserManager::class);
 		$config = \OC::$server->getConfig();
 		$this->signalingSecret = 'the-signaling-secret';
 		$this->baseUrl = 'https://localhost/signaling';
