@@ -27,6 +27,7 @@ namespace OCA\Talk\Recording;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
 use OCA\Talk\Config;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Http\Client\IClientService;
 use OCP\IURLGenerator;
@@ -136,13 +137,17 @@ class BackendNotifier {
 		$this->doRequest($url, $params);
 	}
 
-	public function start(Room $room, int $status, string $owner): void {
+	public function start(Room $room, int $status, string $owner, Participant $participant): void {
 		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'start',
 			'start' => [
 				'status' => $status,
 				'owner' => $owner,
+				'actor' => [
+					'type' => $participant->getAttendee()->getActorType(),
+					'id' => $participant->getAttendee()->getActorId(),
+				],
 			],
 		]);
 		$duration = microtime(true) - $start;
@@ -153,10 +158,19 @@ class BackendNotifier {
 		]);
 	}
 
-	public function stop(Room $room): void {
+	public function stop(Room $room, ?Participant $participant = null): void {
+		$parameters = [];
+		if ($participant !== null) {
+			$parameters['actor'] = [
+				'type' => $participant->getAttendee()->getActorType(),
+				'id' => $participant->getAttendee()->getActorId(),
+			];
+		}
+
 		$start = microtime(true);
 		$this->backendRequest($room, [
 			'type' => 'stop',
+			'stop' => $parameters,
 		]);
 		$duration = microtime(true) - $start;
 		$this->logger->debug('Send stop message: {token} ({duration})', [

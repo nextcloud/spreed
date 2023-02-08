@@ -45,6 +45,10 @@
       "start": {
         "status": "the-type-of-recording (1 for audio and video, 2 for audio only)",
         "owner": "the-user-to-upload-the-resulting-file-as",
+        "actor": {
+          "type": "the-type-of-the-actor",
+          "id": "the-id-of-the-actor",
+        },
       }
     }
     ```
@@ -56,5 +60,13 @@
     ```json
     {
       "type": "stop",
+      "stop": {
+        "actor": {
+          "type": "the-type-of-the-actor",
+          "id": "the-id-of-the-actor",
+        },
+      },
     }
     ```
+
+    - `actor` is optional

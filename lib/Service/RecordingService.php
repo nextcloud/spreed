@@ -70,7 +70,7 @@ class RecordingService {
 	) {
 	}
 
-	public function start(Room $room, int $status, string $owner): void {
+	public function start(Room $room, int $status, string $owner, Participant $participant): void {
 		$availableRecordingTypes = [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
 		if (!in_array($status, $availableRecordingTypes)) {
 			throw new InvalidArgumentException('status');
@@ -85,15 +85,15 @@ class RecordingService {
 			throw new InvalidArgumentException('config');
 		}
 
-		$this->backendNotifier->start($room, $status, $owner);
+		$this->backendNotifier->start($room, $status, $owner, $participant);
 	}
 
-	public function stop(Room $room): void {
+	public function stop(Room $room, ?Participant $participant = null): void {
 		if ($room->getCallRecording() === Room::RECORDING_NONE) {
 			return;
 		}
 
-		$this->backendNotifier->stop($room);
+		$this->backendNotifier->stop($room, $participant);
 	}
 
 	public function store(Room $room, string $owner, array $file): void {

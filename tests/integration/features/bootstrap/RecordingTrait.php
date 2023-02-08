@@ -69,9 +69,9 @@ trait RecordingTrait {
 	}
 
 	/**
-	 * @When /^recording server sent started request for "(audio|video)" recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 * @When /^recording server sent started request for "(audio|video)" recording in room "([^"]*)" as "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
-	public function recordingServerSentStartedRequestForRecordingInRoomWith(string $recordingType, string $identifier, int $statusCode, string $apiVersion = 'v1') {
+	public function recordingServerSentStartedRequestForRecordingInRoomAsWith(string $recordingType, string $identifier, string $user, int $statusCode, string $apiVersion = 'v1') {
 		$recordingTypes = [
 			'video' => 1,
 			'audio' => 2,
@@ -82,6 +82,10 @@ trait RecordingTrait {
 			'started' => [
 				'token' => FeatureContext::getTokenForIdentifier($identifier),
 				'status' => $recordingTypes[$recordingType],
+				'actor' => [
+					'type' => 'users',
+					'id' => $user,
+				],
 			],
 		];
 
@@ -92,12 +96,26 @@ trait RecordingTrait {
 	 * @When /^recording server sent stopped request for recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
 	public function recordingServerSentStoppedRequestForRecordingInRoomWith(string $identifier, int $statusCode, string $apiVersion = 'v1') {
+		$this->recordingServerSentStoppedRequestForRecordingInRoomAsWith($identifier, null, $statusCode, $apiVersion);
+	}
+
+	/**
+	 * @When /^recording server sent stopped request for recording in room "([^"]*)" as "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function recordingServerSentStoppedRequestForRecordingInRoomAsWith(string $identifier, ?string $user, int $statusCode, string $apiVersion = 'v1') {
 		$data = [
 			'type' => 'stopped',
 			'stopped' => [
 				'token' => FeatureContext::getTokenForIdentifier($identifier),
 			],
 		];
+
+		if ($user !== null) {
+			$data['stopped']['actor'] = [
+				'type' => 'users',
+				'id' => $user,
+			];
+		}
 
 		$this->sendBackendRequestFromRecordingServer($data, $statusCode, $apiVersion);
 	}

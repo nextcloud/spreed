@@ -103,12 +103,16 @@ def backendRequest(backend, data):
 
     doRequest(backend, backendRequest)
 
-def started(backend, token, status):
+def started(backend, token, status, actorType, actorId):
     """
     Notifies the backend that the recording was started.
 
     :param backend: the backend of the conversation.
     :param token: the token of the conversation.
+    :param actorType: the actor type of the Talk participant that stopped the
+           recording.
+    :param actorId: the actor id of the Talk participant that stopped the
+           recording.
     """
 
     backendRequest(backend, {
@@ -116,23 +120,39 @@ def started(backend, token, status):
         'started': {
             'token': token,
             'status': status,
+            'actor': {
+                'type': actorType,
+                'id': actorId,
+            },
         },
     })
 
-def stopped(backend, token):
+def stopped(backend, token, actorType, actorId):
     """
     Notifies the backend that the recording was stopped.
 
     :param backend: the backend of the conversation.
     :param token: the token of the conversation.
+    :param actorType: the actor type of the Talk participant that started the
+           recording.
+    :param actorId: the actor id of the Talk participant that started the
+           recording.
     """
 
-    backendRequest(backend, {
+    data = {
         'type': 'stopped',
         'stopped': {
             'token': token,
         },
-    })
+    }
+
+    if actorType != None and actorId != None:
+        data['stopped']['actor'] = {
+            'type': actorType,
+            'id': actorId,
+        }
+
+    backendRequest(backend, data)
 
 def uploadRecording(backend, token, fileName, owner):
     """

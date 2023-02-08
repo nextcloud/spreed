@@ -151,7 +151,7 @@ class Listener {
 		}
 
 		if ($room->getCallRecording() !== Room::RECORDING_NONE) {
-			$this->recordingService->stop($room);
+			$this->recordingService->stop($room, $actor);
 		}
 		if ($actor instanceof Participant) {
 			$actorId = $actor->getAttendee()->getActorId();

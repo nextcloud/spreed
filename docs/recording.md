@@ -144,6 +144,10 @@
       "started": {
         "token": "the-token-of-the-room",
         "status": "the-type-of-recording (see [Constants - Call recording status](constants.md#call-recording-status))",
+        "actor": {
+          "type": "the-type-of-the-actor",
+          "id": "the-id-of-the-actor",
+        },
       },
     }
     ```
@@ -161,9 +165,15 @@
       "type": "stopped",
       "stopped": {
         "token": "the-token-of-the-room",
+        "actor": {
+          "type": "the-type-of-the-actor",
+          "id": "the-id-of-the-actor",
+        },
       },
     }
     ```
+
+    - `actor` is optional
 
 * Response:
     - (Additional) Status code:

@@ -28,8 +28,11 @@ namespace OCA\Talk\Controller;
 use InvalidArgumentException;
 use GuzzleHttp\Exception\ConnectException;
 use OCA\Talk\Config;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Room;
+use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
@@ -46,6 +49,7 @@ class RecordingController extends AEnvironmentAwareController {
 		private Config $talkConfig,
 		private IClientService $clientService,
 		private Manager $manager,
+		private ParticipantService $participantService,
 		private RecordingService $recordingService,
 		private RoomService $roomService,
 		private LoggerInterface $logger
@@ -166,6 +170,7 @@ class RecordingController extends AEnvironmentAwareController {
 	private function backendStarted(array $started): DataResponse {
 		$token = $started['token'];
 		$status = $started['status'];
+		$actor = $started['actor'];
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
@@ -183,13 +188,23 @@ class RecordingController extends AEnvironmentAwareController {
 			], Http::STATUS_NOT_FOUND);
 		}
 
-		$this->roomService->setCallRecording($room, $status);
+		try {
+			$participant = $this->participantService->getParticipantByActor($room, $actor['type'], $actor['id']);
+		} catch (ParticipantNotFoundException $e) {
+			$participant = null;
+		}
+
+		$this->roomService->setCallRecording($room, $status, $participant);
 
 		return new DataResponse();
 	}
 
 	private function backendStopped(array $stopped): DataResponse {
 		$token = $stopped['token'];
+		$actor = null;
+		if (array_key_exists('actor', $stopped)) {
+			$actor = $stopped['actor'];
+		}
 
 		try {
 			$room = $this->manager->getRoomByToken($token);
@@ -207,7 +222,17 @@ class RecordingController extends AEnvironmentAwareController {
 			], Http::STATUS_NOT_FOUND);
 		}
 
-		$this->roomService->setCallRecording($room);
+		try {
+			if ($actor === null) {
+				throw new ParticipantNotFoundException();
+			}
+
+			$participant = $this->participantService->getParticipantByActor($room, $actor['type'], $actor['id']);
+		} catch (ParticipantNotFoundException $e) {
+			$participant = null;
+		}
+
+		$this->roomService->setCallRecording($room, Room::RECORDING_NONE, $participant);
 
 		return new DataResponse();
 	}
@@ -218,7 +243,7 @@ class RecordingController extends AEnvironmentAwareController {
 	 */
 	public function start(int $status): DataResponse {
 		try {
-			$this->recordingService->start($this->room, $status, $this->userId);
+			$this->recordingService->start($this->room, $status, $this->userId, $this->participant);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
@@ -231,7 +256,7 @@ class RecordingController extends AEnvironmentAwareController {
 	 */
 	public function stop(): DataResponse {
 		try {
-			$this->recordingService->stop($this->room);
+			$this->recordingService->stop($this->room, $this->participant);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
