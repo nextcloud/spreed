@@ -775,17 +775,8 @@ class ParticipantService {
 		if ($participant->getAttendee()->getParticipantType() === Participant::USER_SELF_JOINED
 			&& empty($this->sessionMapper->findByAttendeeId($participant->getAttendee()->getId()))) {
 			$user = $this->userManager->get($participant->getAttendee()->getActorId());
-			$reason = Room::PARTICIPANT_LEFT;
 
-			$event = new RemoveUserEvent($room, $participant, $user, $reason, [$session]);
-			$this->dispatcher->dispatch(Room::EVENT_BEFORE_USER_REMOVE, $event);
-
-			$this->attendeeMapper->delete($participant->getAttendee());
-
-			$attendeeEvent = new AttendeesRemovedEvent($room, [$participant->getAttendee()]);
-			$this->dispatcher->dispatchTyped($attendeeEvent);
-
-			$this->dispatcher->dispatch(Room::EVENT_AFTER_USER_REMOVE, $event);
+			$this->removeUser($room, $user, Room::PARTICIPANT_LEFT);
 		}
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_DISCONNECT, $event);
