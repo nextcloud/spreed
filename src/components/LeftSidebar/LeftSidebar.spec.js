@@ -76,7 +76,7 @@ describe('LeftSidebar.vue', () => {
 
 		// note: need a copy because the Vue modifies it when sorting
 		conversationsListMock = jest.fn()
-		fetchConversationsAction = jest.fn()
+		fetchConversationsAction = jest.fn().mockReturnValue({ headers: {} })
 		addConversationAction = jest.fn()
 		createOneToOneConversationAction = jest.fn()
 		const getUserIdMock = jest.fn().mockReturnValue('current-user')
@@ -131,7 +131,7 @@ describe('LeftSidebar.vue', () => {
 
 			const wrapper = mountComponent()
 
-			expect(fetchConversationsAction).toHaveBeenCalledWith(expect.anything(), undefined)
+			expect(fetchConversationsAction).toHaveBeenCalledWith(expect.anything(), expect.anything())
 			expect(conversationsListMock).toHaveBeenCalled()
 
 			const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
@@ -194,7 +194,7 @@ describe('LeftSidebar.vue', () => {
 
 			expect(fetchConversationsAction).not.toHaveBeenCalled()
 
-			EventBus.$emit('should-refresh-conversations')
+			EventBus.$emit('should-refresh-conversations', {})
 
 			// note: debounce was short-circuited so no delay needed
 			expect(fetchConversationsAction).toHaveBeenCalled()
@@ -313,7 +313,7 @@ describe('LeftSidebar.vue', () => {
 
 			const wrapper = mountComponent()
 
-			expect(fetchConversationsAction).toHaveBeenCalledWith(expect.anything(), undefined)
+			expect(fetchConversationsAction).toHaveBeenCalledWith(expect.anything(), expect.anything())
 			expect(conversationsListMock).toHaveBeenCalled()
 
 			const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })

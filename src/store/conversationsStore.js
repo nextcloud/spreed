@@ -604,13 +604,25 @@ const actions = {
 		}
 	},
 
-	async fetchConversations({ dispatch }) {
+	async fetchConversations({ dispatch }, { modifiedSince }) {
 		try {
 			dispatch('clearMaintenanceMode')
+			modifiedSince = modifiedSince || 0
 
-			const response = await fetchConversations()
+			let options = {}
+			if (modifiedSince !== 0) {
+				options = {
+					params: {
+						modifiedSince,
+					},
+				}
+			}
+
+			const response = await fetchConversations(options)
 			dispatch('updateTalkVersionHash', response)
-			dispatch('purgeConversationsStore')
+			if (modifiedSince === 0) {
+				dispatch('purgeConversationsStore')
+			}
 			response.data.ocs.data.forEach(conversation => {
 				dispatch('addConversation', conversation)
 			})

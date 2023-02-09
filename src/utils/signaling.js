@@ -1302,6 +1302,10 @@ Signaling.Standalone.prototype.processRoomMessageEvent = function(data) {
 
 Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 	switch (data.event.type) {
+	case 'delete':
+		console.debug('Room list event', data)
+		EventBus.$emit('should-refresh-conversations', { all: true })
+		break
 	case 'update':
 		if (data.event.update.properties['participant-list']) {
 			console.debug('Room list event for participant list', data)
