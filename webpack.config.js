@@ -7,6 +7,7 @@ webpackConfig.entry = {
 	'admin-settings': path.join(__dirname, 'src', 'mainAdminSettings.js'),
 	collections: path.join(__dirname, 'src', 'collections.js'),
 	main: path.join(__dirname, 'src', 'main.js'),
+	recording: path.join(__dirname, 'src', 'mainRecording.js'),
 	'files-sidebar': [
 		path.join(__dirname, 'src', 'mainFilesSidebar.js'),
 		path.join(__dirname, 'src', 'mainFilesSidebarLoader.js'),

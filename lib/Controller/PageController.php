@@ -41,6 +41,7 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
+use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -299,6 +300,56 @@ class PageController extends Controller {
 			// Logged-in user tried to access a chat they can not access
 			$response->throttle(['token' => $bruteForceToken]);
 		}
+		return $response;
+	}
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 * @BruteForceProtection(action=talkRoomToken)
+	 *
+	 * @param string $token
+	 * @return TemplateResponse|NotFoundResponse
+	 */
+	public function recording(string $token = ''): Response {
+		try {
+			$room = $this->manager->getRoomByToken($token);
+		} catch (RoomNotFoundException $e) {
+			$response = new NotFoundResponse();
+			$response->throttle(['token' => $token]);
+
+			return $response;
+		}
+
+		if (class_exists(LoadViewer::class)) {
+			$this->eventDispatcher->dispatchTyped(new LoadViewer());
+		}
+
+		$this->publishInitialStateForGuest();
+
+		$this->eventDispatcher->dispatchTyped(new LoadAdditionalScriptsEvent());
+		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
+
+		$response = new PublicTemplateResponse($this->appName, 'recording', [
+			'id-app-content' => '#app-content-vue',
+			'id-app-navigation' => null,
+		]);
+
+		$response->setFooterVisible(false);
+		$csp = new ContentSecurityPolicy();
+		$csp->addAllowedConnectDomain('*');
+		$csp->addAllowedMediaDomain('blob:');
+		$csp->addAllowedWorkerSrcDomain('blob:');
+		$csp->addAllowedWorkerSrcDomain("'self'");
+		$csp->addAllowedChildSrcDomain('blob:');
+		$csp->addAllowedChildSrcDomain("'self'");
+		$csp->addAllowedScriptDomain('blob:');
+		$csp->addAllowedScriptDomain("'self'");
+		$csp->addAllowedConnectDomain('blob:');
+		$csp->addAllowedConnectDomain("'self'");
+		$csp->addAllowedImageDomain('https://*.tile.openstreetmap.org');
+		$response->setContentSecurityPolicy($csp);
+
 		return $response;
 	}
 
