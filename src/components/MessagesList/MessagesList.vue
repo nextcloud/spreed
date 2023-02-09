@@ -87,6 +87,7 @@ import Message from 'vue-material-design-icons/Message.vue'
 import uniqueId from 'lodash/uniqueId.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
+import { getCapabilities } from '@nextcloud/capabilities'
 
 export default {
 	name: 'MessagesList',
@@ -145,6 +146,11 @@ export default {
 			isInitialisingMessages: false,
 
 			isFocusingMessage: false,
+
+			/**
+			 * Quick edit option to fall back to the loading history and then new messages
+			 */
+			loadChatInLegacyMode: getCapabilities()?.spreed?.config?.chat?.legacy || false,
 
 			destroying: false,
 
@@ -495,18 +501,27 @@ export default {
 						id: this.conversation.lastReadMessage,
 					})
 
-					// Get chat messages before last read message and after it
-					const startingMessage = this.$store.getters.getFirstKnownMessageId(this.token)
-					await this.getMessageContext(startingMessage)
-					const startingMessageFound = this.focusMessage(startingMessage, false, false)
+					if (this.loadChatInLegacyMode) {
+						// get history before last read message
+						await this.getOldMessages(true)
+						// at this stage, the read marker will appear at the bottom of the view port since
+						// we haven't fetched the messages that come after it yet
+						// TODO: should we still show a spinner at this stage ?
 
-					if (!startingMessageFound) {
-						const fallbackStartingMessage = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, startingMessage)
-						this.$store.dispatch('setVisualLastReadMessageId', {
-							token: this.token,
-							id: fallbackStartingMessage,
-						})
-						this.focusMessage(fallbackStartingMessage, false, false)
+					} else {
+						// Get chat messages before last read message and after it
+						const startingMessage = this.$store.getters.getFirstKnownMessageId(this.token)
+						await this.getMessageContext(startingMessage)
+						const startingMessageFound = this.focusMessage(startingMessage, false, false)
+
+						if (!startingMessageFound) {
+							const fallbackStartingMessage = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, startingMessage)
+							this.$store.dispatch('setVisualLastReadMessageId', {
+								token: this.token,
+								id: fallbackStartingMessage,
+							})
+							this.focusMessage(fallbackStartingMessage, false, false)
+						}
 					}
 				}
 
@@ -654,7 +669,9 @@ export default {
 		},
 
 		debounceHandleScroll() {
-			if (!this.isInitialisingMessages && !this.isFocusingMessage) {
+			if (this.loadChatInLegacyMode) {
+				this.debounceHandleScrollWithoutPreconditions()
+			} else if (!this.isInitialisingMessages && !this.isFocusingMessage) {
 				this.debounceHandleScrollWithoutPreconditions()
 			}
 		},
@@ -675,14 +692,16 @@ export default {
 				return
 			}
 
-			if (this.isInitialisingMessages) {
-				console.debug('Ignore handleScroll as we are initialising the message history')
-				return
-			}
+			if (!this.loadChatInLegacyMode) {
+				if (this.isInitialisingMessages) {
+					console.debug('Ignore handleScroll as we are initialising the message history')
+					return
+				}
 
-			if (this.isFocusingMessage) {
-				console.debug('Ignore handleScroll as we are programmatically scrolling to focus a message')
-				return
+				if (this.isFocusingMessage) {
+					console.debug('Ignore handleScroll as we are programmatically scrolling to focus a message')
+					return
+				}
 			}
 
 			const scrollHeight = this.scroller.scrollHeight

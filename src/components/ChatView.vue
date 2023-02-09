@@ -55,6 +55,7 @@
 import MessagesList from './MessagesList/MessagesList.vue'
 import NewMessageForm from './NewMessageForm/NewMessageForm.vue'
 import { CONVERSATION } from '../constants.js'
+import { getCapabilities } from '@nextcloud/capabilities'
 
 export default {
 
@@ -75,7 +76,7 @@ export default {
 	data() {
 		return {
 			isDraggingOver: false,
-			isChatScrolledToBottom: false,
+			isChatScrolledToBottom: getCapabilities()?.spreed?.config?.chat?.legacy || false,
 		}
 	},
 
