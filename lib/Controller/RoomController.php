@@ -173,7 +173,9 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param bool $includeStatus
 	 * @return DataResponse
 	 */
-	public function getRooms(int $noStatusUpdate = 0, bool $includeStatus = false): DataResponse {
+	public function getRooms(int $noStatusUpdate = 0, bool $includeStatus = false, int $modifiedSince = 0): DataResponse {
+		$nextModifiedSince = $this->timeFactory->getTime();
+
 		$event = new UserEvent($this->userId);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOMS_GET, $event);
 
@@ -196,6 +198,14 @@ class RoomController extends AEnvironmentAwareController {
 
 		$sessionIds = $this->session->getAllActiveSessions();
 		$rooms = $this->manager->getRoomsForUser($this->userId, $sessionIds, true);
+
+		if ($modifiedSince !== 0) {
+			$rooms = array_filter($rooms, static function (Room $room) use ($includeStatus, $modifiedSince): bool {
+				return ($includeStatus && $room->getType() === Room::TYPE_ONE_TO_ONE)
+					|| ($room->getLastActivity() && $room->getLastActivity()->getTimestamp() >= $modifiedSince);
+			});
+		}
+
 		$readPrivacy = $this->talkConfig->getUserReadPrivacy($this->userId);
 		if ($readPrivacy === Participant::PRIVACY_PUBLIC) {
 			$roomIds = array_map(static function (Room $room) {
@@ -233,7 +243,9 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
-		return new DataResponse($return, Http::STATUS_OK, $this->getTalkHashHeader());
+		$response = new DataResponse($return, Http::STATUS_OK, $this->getTalkHashHeader());
+		$response->addHeader('X-Nextcloud-Talk-Modified-Before', (string) $nextModifiedSince);
+		return $response;
 	}
 
 	/**
