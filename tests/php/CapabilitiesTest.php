@@ -124,6 +124,7 @@ class CapabilitiesTest extends TestCase {
 			'breakout-rooms-v1',
 			'recording-v1',
 			'avatar',
+			'chat-get-context',
 			'message-expiration',
 			'reactions',
 		];
