@@ -1336,7 +1336,10 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 				normalizedProperties[normalizedKey] = properties[key]
 			})
 
-			EventBus.$emit('should-refresh-conversations', data.event.update.roomid, normalizedProperties)
+			EventBus.$emit('should-refresh-conversations', {
+				token: data.event.update.roomid,
+				properties: normalizedProperties,
+			})
 			break
 		}
 		// eslint-disable-next-line no-fallthrough

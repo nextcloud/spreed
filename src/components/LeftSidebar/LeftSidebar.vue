@@ -439,7 +439,7 @@ export default {
 			return conversation2.lastActivity - conversation1.lastActivity
 		},
 
-		async handleShouldRefreshConversations(token, properties) {
+		async handleShouldRefreshConversations({ token, properties }) {
 			if (token && properties) {
 				await this.$store.dispatch('setConversationProperties', { token, properties })
 			}
