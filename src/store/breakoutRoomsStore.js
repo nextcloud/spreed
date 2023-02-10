@@ -163,7 +163,6 @@ const actions = {
 
 		} catch (error) {
 			console.error(error)
-			showError(t('spreed', 'An error occurred while sending a message to the breakout rooms'))
 		}
 	},
 }
