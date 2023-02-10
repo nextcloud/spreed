@@ -84,6 +84,9 @@ const actions = {
 				token,
 				breakoutRoomsReferences,
 			})
+
+			// Get the participants of the breakout rooms
+			context.dispatch('getBreakoutRoomsParticipantsAction', { token })
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while creating breakout rooms'))
