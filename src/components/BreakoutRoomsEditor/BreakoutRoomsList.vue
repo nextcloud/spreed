@@ -26,12 +26,21 @@
 				class="breakout-rooms__room"
 				:title="breakoutRoom.displayName"
 				:allow-collapse="true"
+				:inline-actions="1"
 				:open="true">
 				<template #icon>
 					<!-- TODO: choose final icon -->
 					<GoogleCircles :size="20" />
 				</template>
 				<template #actions>
+					<NcActionButton v-if="breakoutRoom.breakoutRoomStatus ===
+							CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED"
+						@click="dismissRequestAssistance(breakoutRoom.token)">
+						<template #icon>
+							<HandBackLeft :size="16" />
+						</template>
+						{{ t('spreed', 'Dismiss request for assistance') }}
+					</NcActionButton>
 					<NcActionButton @click="openSendMessageForm(breakoutRoom.token)">
 						<template #icon>
 							<Send :size="16" />
@@ -62,7 +71,11 @@ import SendMessageDialog from './SendMessageDialog.vue'
 
 // Icons
 import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
+import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Send from 'vue-material-design-icons/Send.vue'
+
+// Constants
+import { CONVERSATION } from '../../constants.js'
 
 export default {
 	name: 'BreakoutRoomsList',
@@ -76,6 +89,7 @@ export default {
 
 		// Icons
 		GoogleCircles,
+		HandBackLeft,
 		Send,
 	},
 
@@ -89,6 +103,7 @@ export default {
 	data() {
 		return {
 			openedDialog: undefined,
+			CONVERSATION,
 		}
 	},
 
@@ -99,6 +114,10 @@ export default {
 
 		closeSendMessageForm() {
 			this.openedDialog = undefined
+		},
+
+		dismissRequestAssistance(token) {
+			this.$store.dispatch('resetRequestAssistanceAction', { token })
 		},
 	},
 }
