@@ -213,6 +213,7 @@ export default {
 				amount: this.roomNumber,
 				attendeeMap,
 			})
+			this.$emit('close')
 		},
 	},
 }
