@@ -1,7 +1,8 @@
 <!--
-  - @copyright Copyright (c) 2023 Marco Ambrosini <marcoambrosini@icloud.com>
+  - @copyright Copyright (c) 2022 Marco Ambrosini <marcoambrosini@icloud.com>
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
+  - @author Maksim Sukharev <antreesy.web@gmail.com>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -20,65 +21,57 @@
 -->
 
 <template>
-	<div>
-		<template v-for="breakoutRoom in breakoutRooms">
-			<NcAppNavigationItem :key="breakoutRoom.displayName"
-				class="breakout-rooms__room"
-				:title="breakoutRoom.displayName"
-				:allow-collapse="true"
-				:inline-actions="1"
-				:open="true">
-				<template #icon>
-					<!-- TODO: choose final icon -->
-					<GoogleCircles :size="20" />
-				</template>
-				<template #actions>
-					<NcActionButton v-if="breakoutRoom.breakoutRoomStatus ===
-							CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED"
-						@click="dismissRequestAssistance(breakoutRoom.token)">
-						<template #icon>
-							<HandBackLeft :size="16" />
-						</template>
-						{{ t('spreed', 'Dismiss request for assistance') }}
-					</NcActionButton>
-					<NcActionButton @click="openSendMessageForm(breakoutRoom.token)">
-						<template #icon>
-							<Send :size="16" />
-						</template>
-						{{ t('spreed', 'Send message to room') }}
-					</NcActionButton>
-				</template>
-				<!-- Send message dialog -->
-				<SendMessageDialog v-if="openedDialog === breakoutRoom.token"
-					:display-name="breakoutRoom.displayName"
-					:token="breakoutRoom.token"
-					@close="closeSendMessageForm(breakoutRoom.token)" />
-				<template v-for="participant in $store.getters.participantsList(breakoutRoom.token)">
-					<Participant :key="participant.actorId" :participant="participant" />
-				</template>
-			</NcAppNavigationItem>
+	<NcAppNavigationItem :key="breakoutRoom.displayName"
+		class="breakout-rooms__room"
+		:title="breakoutRoom.displayName"
+		:allow-collapse="true"
+		:inline-actions="1"
+		:open="true">
+		<template #icon>
+			<!-- TODO: choose final icon -->
+			<GoogleCircles :size="20" />
 		</template>
-	</div>
+		<template #actions>
+			<NcActionButton v-if="breakoutRoom.breakoutRoomStatus ===
+					CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED"
+				@click="dismissRequestAssistance(breakoutRoom.token)">
+				<template #icon>
+					<HandBackLeft :size="16" />
+				</template>
+				{{ t('spreed', 'Dismiss request for assistance') }}
+			</NcActionButton>
+			<NcActionButton @click="openSendMessageForm(breakoutRoom.token)">
+				<template #icon>
+					<Send :size="16" />
+				</template>
+				{{ t('spreed', 'Send message to room') }}
+			</NcActionButton>
+		</template>
+		<!-- Send message dialog -->
+		<SendMessageDialog v-if="openedDialog === breakoutRoom.token"
+			:display-name="breakoutRoom.displayName"
+			:token="breakoutRoom.token"
+			@close="closeSendMessageForm(breakoutRoom.token)" />
+		<template v-for="participant in $store.getters.participantsList(breakoutRoom.token)">
+			<Participant :key="participant.actorId" :participant="participant" />
+		</template>
+	</NcAppNavigationItem>
 </template>
 
 <script>
-
-// Components
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import Participant from '../RightSidebar/Participants/ParticipantsList/Participant/Participant.vue'
+import Participant from '../Participants/ParticipantsList/Participant/Participant.vue'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import SendMessageDialog from './SendMessageDialog.vue'
-
-// Icons
+import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
 // Constants
-import { CONVERSATION } from '../../constants.js'
+import { CONVERSATION } from '../../../constants.js'
 
 export default {
-	name: 'BreakoutRoomsList',
+	name: 'BreakoutRoomItem',
 
 	components: {
 		// Components
@@ -94,8 +87,8 @@ export default {
 	},
 
 	props: {
-		breakoutRooms: {
-			type: Array,
+		breakoutRoom: {
+			type: Object,
 			required: true,
 		},
 	},
@@ -123,6 +116,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 
 </style>

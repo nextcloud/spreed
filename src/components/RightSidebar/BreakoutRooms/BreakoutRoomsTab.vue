@@ -79,7 +79,12 @@
 
 		<template v-if="breakoutRoomsConfigured">
 			<!-- Breakout rooms list -->
-			<BreakoutRoomsList v-if="breakoutRooms" :breakout-rooms="breakoutRooms" />
+			<ul v-if="breakoutRooms">
+				<template v-for="breakoutRoom in breakoutRooms">
+					<BreakoutRoomItem :key="breakoutRoom.token"
+						:breakout-room="breakoutRoom" />
+				</template>
+			</ul>
 
 			<!-- Breakout rooms editor -->
 			<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
@@ -100,7 +105,7 @@
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import BreakoutRoomsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
-import BreakoutRoomsList from '../../BreakoutRoomsEditor/BreakoutRoomsList.vue'
+import BreakoutRoomItem from './BreakoutRoomItem.vue'
 
 // Icons
 import Delete from 'vue-material-design-icons/Delete.vue'
@@ -123,7 +128,7 @@ export default {
 		NcButton,
 		BreakoutRoomsEditor,
 		SendMessageDialog,
-		BreakoutRoomsList,
+		BreakoutRoomItem,
 
 		// Icons
 		Delete,
