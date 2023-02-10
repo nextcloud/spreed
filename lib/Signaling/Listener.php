@@ -248,17 +248,14 @@ class Listener {
 			if ($event->getParticipant()->getSession()) {
 				// If a previous duplicated session is being removed it must be
 				// notified to the external signaling server. Otherwise only for
-				// guests and self-joined users disconnecting is "leaving" and
-				// therefor should trigger a disinvite.
+				// guests disconnecting is "leaving" and therefor should trigger
+				// a disinvite.
 				$attendeeParticipantType = $event->getParticipant()->getAttendee()->getParticipantType();
 				if ($event instanceof DuplicatedParticipantEvent
 					|| $attendeeParticipantType === Participant::GUEST
 					|| $attendeeParticipantType === Participant::GUEST_MODERATOR) {
 					$sessionIds[] = $event->getParticipant()->getSession()->getSessionId();
 					$notifier->roomSessionsRemoved($event->getRoom(), $sessionIds);
-				}
-				if ($attendeeParticipantType === Participant::USER_SELF_JOINED) {
-					$notifier->roomsDisinvited($event->getRoom(), [$event->getParticipant()->getAttendee()->getActorId()]);
 				}
 			}
 		});
