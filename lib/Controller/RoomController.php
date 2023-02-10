@@ -717,7 +717,12 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$breakoutRooms = $this->breakoutRoomService->getBreakoutRooms($this->room, $this->participant);
+		try {
+			$breakoutRooms = $this->breakoutRoomService->getBreakoutRooms($this->room, $this->participant);
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+
 		$breakoutRooms[] = $this->room;
 		$participants = $this->participantService->getSessionsAndParticipantsForRooms($breakoutRooms);
 
