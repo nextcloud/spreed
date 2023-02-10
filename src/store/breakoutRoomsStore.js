@@ -27,6 +27,8 @@ import {
 	stopBreakoutRooms,
 	broadcastMessageToBreakoutRooms,
 	getBreakoutRoomsParticipants,
+	requestAssistance,
+	resetRequestAssistance,
 } from '../services/breakoutRoomsService.js'
 import { showError } from '@nextcloud/dialogs'
 import { set } from 'vue'
@@ -163,6 +165,28 @@ const actions = {
 
 		} catch (error) {
 			console.error(error)
+		}
+	},
+
+	async requestAssistanceAction(context, { token }) {
+		try {
+			const response = await requestAssistance(token)
+			// Add the updated breakout room to the conversations store
+			context.commit('addConversation', response.data.ocs.data)
+		} catch (error) {
+			console.error(error)
+			showError(t('spreed', 'An error occurred while requesting assistance'))
+		}
+	},
+
+	async resetRequestAssistanceAction(context, { token }) {
+		try {
+			const response = await resetRequestAssistance(token)
+			// Add the updated breakout room to the conversations store
+			context.commit('addConversation', response.data.ocs.data)
+		} catch (error) {
+			console.error(error)
+			showError(t('spreed', 'An error occurred while resetting the request for assistance'))
 		}
 	},
 }

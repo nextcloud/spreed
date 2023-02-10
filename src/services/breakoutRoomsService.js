@@ -97,13 +97,38 @@ const broadcastMessageToBreakoutRooms = async function(message, token) {
 /**
  *
  * @param token the conversation token
- * @param message The message to be posted
  * @return {Promise<AxiosResponse<any>>} The array of conversations
  */
 const getBreakoutRoomsParticipants = async function(token) {
 	return await axios.get(generateOcsUrl('/apps/spreed/api/v4/room/{token}/breakout-rooms/participants', {
 		token,
 	}))
+}
+
+/**
+ * Requests assistance from a moderator
+ *
+ * @param token the breakout room token
+ * @return {Promise<AxiosResponse<any>>} The array of conversations
+ */
+const requestAssistance = async function(token) {
+	return await axios.post(generateOcsUrl('/apps/spreed/api/v1/room/{token}/breakout-rooms/{token}/request-assistance', {
+		token,
+	})
+	)
+}
+
+/**
+ * Resets the request assistance
+ *
+ * @param token the breakout room token
+ * @return {Promise<AxiosResponse<any>>} The array of conversations
+ */
+const resetRequestAssistance = async function(token) {
+	return await axios.delete(generateOcsUrl('/apps/spreed/api/v1/room/{token}/breakout-rooms/{token}/request-assistance', {
+		token,
+	})
+	)
 }
 
 export {
@@ -114,4 +139,6 @@ export {
 	stopBreakoutRooms,
 	broadcastMessageToBreakoutRooms,
 	getBreakoutRoomsParticipants,
+	requestAssistance,
+	resetRequestAssistance,
 }

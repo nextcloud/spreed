@@ -370,6 +370,14 @@ export default {
 		isRecording() {
 			return this.conversation.callRecording !== CALL.RECORDING.OFF
 		},
+
+		// True if current conversation is a breakout room and the brekour room has started
+		// And a call is in progress
+		userIsInBreakoutRoomAndInCall() {
+			return this.conversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
+				&& this.conversation.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
+				&& this.isInCall
+		},
 	},
 
 	methods: {
@@ -453,6 +461,13 @@ export default {
 					raisedHand: this.model.attributes.raisedHand,
 				}
 			)
+			// If the current conversation is a break-out room and the user is not a moderator,
+			// also send request for assistance to the moderators.
+			if (this.userIsInBreakoutRoomAndInCall && !this.canModerate) {
+				this.$store.dispatch('requestAssistanceAction', {
+					token: this.token,
+				})
+			}
 		},
 
 		openConversationSettings() {
