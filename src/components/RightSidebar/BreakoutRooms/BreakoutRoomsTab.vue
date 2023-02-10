@@ -193,10 +193,8 @@ export default {
 	},
 
 	watch: {
-		isActive(newValue) {
+		isActive(newValue, oldValue) {
 			if (newValue) {
-				// Cleanup previous intervals
-				clearInterval(this.breakoutRoomsParticipantsInterval)
 				// Get participants again when opening the tab
 				this.getParticipants()
 				// Start getting participants every 30 seconds
@@ -204,15 +202,18 @@ export default {
 					this.getParticipants()
 				}, 30000)
 			}
+
+			if (oldValue) {
+				// Cleanup previous intervals
+				clearInterval(this.breakoutRoomsParticipantsInterval)
+			}
 		},
 	},
 
-	async mounted() {
+	mounted() {
 		// Get the breakout rooms only if they're not already in the store
 		if (!this.hasBreakoutRooms) {
-			await this.getBreakoutRooms()
-			// Get participants once at the beginnig
-			this.getParticipants()
+			this.getBreakoutRooms()
 		}
 	},
 
