@@ -103,8 +103,7 @@ const broadcastMessageToBreakoutRooms = async function(message, token) {
 const getBreakoutRoomsParticipants = async function(token) {
 	return await axios.get(generateOcsUrl('/apps/spreed/api/v4/room/{token}/breakout-rooms/participants', {
 		token,
-	})
-	)
+	}))
 }
 
 export {
