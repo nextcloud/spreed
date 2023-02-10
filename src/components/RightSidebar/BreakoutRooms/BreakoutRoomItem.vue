@@ -40,7 +40,7 @@
 				</template>
 				{{ t('spreed', 'Dismiss request for assistance') }}
 			</NcActionButton>
-			<NcActionButton @click="openSendMessageForm(roomToken)">
+			<NcActionButton @click="openSendMessageForm">
 				<template #icon>
 					<Send :size="16" />
 				</template>
@@ -48,29 +48,32 @@
 			</NcActionButton>
 		</template>
 		<!-- Send message dialog -->
-		<SendMessageDialog v-if="openedDialog === roomToken"
+		<SendMessageDialog v-if="isDialogOpened"
 			:display-name="roomName"
 			:token="roomToken"
 			@close="closeSendMessageForm" />
-		<template v-for="participant in $store.getters.participantsList(roomToken)">
+		<template v-for="participant in roomParticipants">
 			<Participant :key="participant.actorId" :participant="participant" />
 		</template>
 	</NcAppNavigationItem>
 </template>
 
 <script>
+// Components
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
 import Participant from '../Participants/ParticipantsList/Participant/Participant.vue'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
+
+// Icons
 import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
-import { showWarning } from '@nextcloud/dialogs'
-
 // Constants
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
+
+import { showWarning } from '@nextcloud/dialogs'
 
 export default {
 	name: 'BreakoutRoomItem',
@@ -97,7 +100,7 @@ export default {
 
 	data() {
 		return {
-			openedDialog: undefined,
+			isDialogOpened: false,
 		}
 	},
 
@@ -112,6 +115,10 @@ export default {
 
 		roomToken() {
 			return this.breakoutRoom.token
+		},
+
+		roomParticipants() {
+			return this.$store.getters.participantsList(this.roomToken)
 		},
 
 		canFullModerate() {
@@ -139,11 +146,11 @@ export default {
 
 	methods: {
 		openSendMessageForm() {
-			this.openedDialog = this.roomToken
+			this.isDialogOpened = true
 		},
 
 		closeSendMessageForm() {
-			this.openedDialog = undefined
+			this.isDialogOpened = false
 		},
 
 		dismissRequestAssistance() {
