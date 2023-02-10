@@ -448,11 +448,20 @@ export default {
 			return moment.unix(message.timestamp)
 		},
 
-		scrollToFocussedMessage() {
-			let focussed = null
+		getMessageIdFromHash() {
 			if (this.$route?.hash?.startsWith('#message_')) {
 				// scroll to message in URL anchor
-				focussed = this.focusMessage(this.$route.hash.slice(9), false)
+				return parseInt(this.$route.hash.slice(9), 10)
+			}
+			return null
+		},
+
+		scrollToFocussedMessage() {
+			const focusMessageId = this.getMessageIdFromHash()
+			let focussed = null
+			if (focusMessageId) {
+				// scroll to message in URL anchor
+				focussed = this.focusMessage(focusMessageId, false)
 			}
 
 			if (!focussed && this.visualLastReadMessageId) {
@@ -484,6 +493,7 @@ export default {
 				// prevent sticky mode before we have loaded anything
 				this.setChatScrolledToBottom(false)
 				this.isInitialisingMessages = true
+				const focusMessageId = this.getMessageIdFromHash()
 
 				this.$store.dispatch('setVisualLastReadMessageId', {
 					token: this.token,
@@ -492,14 +502,27 @@ export default {
 
 				if (this.$store.getters.getFirstKnownMessageId(this.token) === null) {
 					// first time load, initialize important properties
-					this.$store.dispatch('setFirstKnownMessageId', {
-						token: this.token,
-						id: this.conversation.lastReadMessage,
-					})
-					this.$store.dispatch('setLastKnownMessageId', {
-						token: this.token,
-						id: this.conversation.lastReadMessage,
-					})
+					if (this.loadChatInLegacyMode || focusMessageId === null) {
+						// Start from unread marker
+						this.$store.dispatch('setFirstKnownMessageId', {
+							token: this.token,
+							id: this.conversation.lastReadMessage,
+						})
+						this.$store.dispatch('setLastKnownMessageId', {
+							token: this.token,
+							id: this.conversation.lastReadMessage,
+						})
+					} else {
+						// Start from message hash
+						this.$store.dispatch('setFirstKnownMessageId', {
+							token: this.token,
+							id: focusMessageId,
+						})
+						this.$store.dispatch('setLastKnownMessageId', {
+							token: this.token,
+							id: focusMessageId,
+						})
+					}
 
 					if (this.loadChatInLegacyMode) {
 						// get history before last read message
@@ -512,7 +535,7 @@ export default {
 						// Get chat messages before last read message and after it
 						const startingMessage = this.$store.getters.getFirstKnownMessageId(this.token)
 						await this.getMessageContext(startingMessage)
-						const startingMessageFound = this.focusMessage(startingMessage, false, false)
+						const startingMessageFound = this.focusMessage(startingMessage, false, focusMessageId !== null)
 
 						if (!startingMessageFound) {
 							const fallbackStartingMessage = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, startingMessage)
@@ -526,22 +549,26 @@ export default {
 				}
 
 				let hasScrolled = false
-				// if lookForNewMessages will long poll instead of returning existing messages,
-				// scroll right away to avoid delays
-				if (!this.$store.getters.hasMoreMessagesToLoad(this.token)) {
-					hasScrolled = true
-					this.$nextTick(() => {
-						this.scrollToFocussedMessage()
-					})
+				if (this.loadChatInLegacyMode || focusMessageId === null) {
+					// if lookForNewMessages will long poll instead of returning existing messages,
+					// scroll right away to avoid delays
+					if (!this.$store.getters.hasMoreMessagesToLoad(this.token)) {
+						hasScrolled = true
+						this.$nextTick(() => {
+							this.scrollToFocussedMessage()
+						})
+					}
 				}
 
 				// get new messages
 				await this.lookForNewMessages()
 
-				// don't scroll if lookForNewMessages was polling as we don't want
-				// to scroll back to the read marker after receiving new messages later
-				if (!hasScrolled) {
-					this.scrollToFocussedMessage()
+				if (this.loadChatInLegacyMode || focusMessageId === null) {
+					// don't scroll if lookForNewMessages was polling as we don't want
+					// to scroll back to the read marker after receiving new messages later
+					if (!hasScrolled) {
+						this.scrollToFocussedMessage()
+					}
 				}
 			} else {
 				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
