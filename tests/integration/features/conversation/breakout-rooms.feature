@@ -450,12 +450,12 @@ Feature: conversation/breakout-rooms
     When user "participant2" switches in room "class room" to breakout room "Room 1" with 400 (v1)
     And user "participant1" starts breakout rooms in room "class room" with 200 (v1)
     When user "participant2" switches in room "class room" to breakout room "Room 1" with 200 (v1)
-    Then user "participant2" is participant of the following rooms (v4)
+    Then user "participant2" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
     When user "participant2" switches in room "class room" to breakout room "Room 2" with 200 (v1)
-    Then user "participant2" is participant of the following rooms (v4)
+    Then user "participant2" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 2     |

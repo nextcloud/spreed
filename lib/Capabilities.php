@@ -115,6 +115,7 @@ class Capabilities implements IPublicCapability {
 				'breakout-rooms-v1',
 				'recording-v1',
 				'avatar',
+				'chat-get-context',
 			],
 			'config' => [
 				'attachments' => [
@@ -128,6 +129,7 @@ class Capabilities implements IPublicCapability {
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
 					'read-privacy' => Participant::PRIVACY_PUBLIC,
+					//'legacy' => true, // Temporary A-B switch to opt-out of the new context loading
 				],
 				'conversations' => [
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user)

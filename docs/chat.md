@@ -73,6 +73,37 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 13
 
     Full message array as shown above, but `parent` will never be set for a parent message.
 
+## Get context of a message
+
+!!! note
+
+    Due to the structure of the `lastMessage.reactions` array the response is not valid in XML.
+    It is therefor recommended to use `format=json` or send the `Accept: application/json` header,
+    to receive a JSON response.
+
+* Required capability: `chat-get-context`
+* Method: `GET`
+* Endpoint: `/chat/{token}/{messageId}/context`
+* Data:
+
+| field                | type | Description                                                                         |
+|----------------------|------|-------------------------------------------------------------------------------------|
+| `limit`              | int  | Number of chat messages to receive into each direction (50 by default, 100 at most) |
+
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `404 Not Found` When the conversation could not be found for the participant
+		+ `412 Precondition Failed` When the lobby is active and the user is not a moderator
+
+	- Header:
+
+| field                     | type | Description                                                                                                                                                                                                                                        |
+|---------------------------|------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `X-Chat-Last-Given`       | int  | Offset (lastKnownMessageId) for the next page when getting more history.                                                                                                                                                                           |
+| `X-Chat-Last-Common-Read` | int  | ID of the last message read by every user that has read privacy set to public. When the user themself has it set to private the value the header is not set (only available with `chat-read-status` capability and when lastCommonReadId was sent) |
+
+    - Data: See array definition in `Receive chat messages of a conversation`
 
 ## Sending a new chat message
 

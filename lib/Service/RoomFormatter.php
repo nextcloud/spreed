@@ -306,6 +306,8 @@ class RoomFormatter {
 					&& $currentParticipant->hasModeratorPermissions(false)
 					&& $this->talkConfig->canUserEnableSIP($currentUser);
 			}
+		} else {
+			$roomData['lastReadMessage'] = $attendee->getLastReadMessage();
 		}
 
 		// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …

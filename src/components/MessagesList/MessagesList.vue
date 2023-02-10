@@ -87,6 +87,7 @@ import Message from 'vue-material-design-icons/Message.vue'
 import uniqueId from 'lodash/uniqueId.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
+import { getCapabilities } from '@nextcloud/capabilities'
 
 export default {
 	name: 'MessagesList',
@@ -141,6 +142,15 @@ export default {
 			pollingErrorTimeout: 1,
 
 			loadingOldMessages: false,
+
+			isInitialisingMessages: false,
+
+			isFocusingMessage: false,
+
+			/**
+			 * Quick edit option to fall back to the loading history and then new messages
+			 */
+			loadChatInLegacyMode: getCapabilities()?.spreed?.config?.chat?.legacy || false,
 
 			destroying: false,
 
@@ -438,11 +448,20 @@ export default {
 			return moment.unix(message.timestamp)
 		},
 
-		scrollToFocussedMessage() {
-			let focussed = null
+		getMessageIdFromHash() {
 			if (this.$route?.hash?.startsWith('#message_')) {
 				// scroll to message in URL anchor
-				focussed = this.focusMessage(this.$route.hash.slice(9), false)
+				return parseInt(this.$route.hash.slice(9), 10)
+			}
+			return null
+		},
+
+		scrollToFocussedMessage() {
+			const focusMessageId = this.getMessageIdFromHash()
+			let focussed = null
+			if (focusMessageId) {
+				// scroll to message in URL anchor
+				focussed = this.focusMessage(focusMessageId, false)
 			}
 
 			if (!focussed && this.visualLastReadMessageId) {
@@ -473,6 +492,8 @@ export default {
 
 				// prevent sticky mode before we have loaded anything
 				this.setChatScrolledToBottom(false)
+				this.isInitialisingMessages = true
+				const focusMessageId = this.getMessageIdFromHash()
 
 				this.$store.dispatch('setVisualLastReadMessageId', {
 					token: this.token,
@@ -481,39 +502,73 @@ export default {
 
 				if (this.$store.getters.getFirstKnownMessageId(this.token) === null) {
 					// first time load, initialize important properties
-					this.$store.dispatch('setFirstKnownMessageId', {
-						token: this.token,
-						id: this.conversation.lastReadMessage,
-					})
-					this.$store.dispatch('setLastKnownMessageId', {
-						token: this.token,
-						id: this.conversation.lastReadMessage,
-					})
+					if (this.loadChatInLegacyMode || focusMessageId === null) {
+						// Start from unread marker
+						this.$store.dispatch('setFirstKnownMessageId', {
+							token: this.token,
+							id: this.conversation.lastReadMessage,
+						})
+						this.$store.dispatch('setLastKnownMessageId', {
+							token: this.token,
+							id: this.conversation.lastReadMessage,
+						})
+					} else {
+						// Start from message hash
+						this.$store.dispatch('setFirstKnownMessageId', {
+							token: this.token,
+							id: focusMessageId,
+						})
+						this.$store.dispatch('setLastKnownMessageId', {
+							token: this.token,
+							id: focusMessageId,
+						})
+					}
 
-					// get history before last read message
-					await this.getOldMessages(true)
-					// at this stage, the read marker will appear at the bottom of the view port since
-					// we haven't fetched the messages that come after it yet
-					// TODO: should we still show a spinner at this stage ?
+					if (this.loadChatInLegacyMode) {
+						// get history before last read message
+						await this.getOldMessages(true)
+						// at this stage, the read marker will appear at the bottom of the view port since
+						// we haven't fetched the messages that come after it yet
+						// TODO: should we still show a spinner at this stage ?
+
+					} else {
+						// Get chat messages before last read message and after it
+						const startingMessage = this.$store.getters.getFirstKnownMessageId(this.token)
+						await this.getMessageContext(startingMessage)
+						const startingMessageFound = this.focusMessage(startingMessage, false, focusMessageId !== null)
+
+						if (!startingMessageFound) {
+							const fallbackStartingMessage = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, startingMessage)
+							this.$store.dispatch('setVisualLastReadMessageId', {
+								token: this.token,
+								id: fallbackStartingMessage,
+							})
+							this.focusMessage(fallbackStartingMessage, false, false)
+						}
+					}
 				}
 
 				let hasScrolled = false
-				// if lookForNewMessages will long poll instead of returning existing messages,
-				// scroll right away to avoid delays
-				if (!this.$store.getters.hasMoreMessagesToLoad(this.token)) {
-					hasScrolled = true
-					this.$nextTick(() => {
-						this.scrollToFocussedMessage()
-					})
+				if (this.loadChatInLegacyMode || focusMessageId === null) {
+					// if lookForNewMessages will long poll instead of returning existing messages,
+					// scroll right away to avoid delays
+					if (!this.$store.getters.hasMoreMessagesToLoad(this.token)) {
+						hasScrolled = true
+						this.$nextTick(() => {
+							this.scrollToFocussedMessage()
+						})
+					}
 				}
 
 				// get new messages
 				await this.lookForNewMessages()
 
-				// don't scroll if lookForNewMessages was polling as we don't want
-				// to scroll back to the read marker after receiving new messages later
-				if (!hasScrolled) {
-					this.scrollToFocussedMessage()
+				if (this.loadChatInLegacyMode || focusMessageId === null) {
+					// don't scroll if lookForNewMessages was polling as we don't want
+					// to scroll back to the read marker after receiving new messages later
+					if (!hasScrolled) {
+						this.scrollToFocussedMessage()
+					}
 				}
 			} else {
 				this.$store.dispatch('cancelLookForNewMessages', { requestId: this.chatIdentifier })
@@ -535,6 +590,24 @@ export default {
 				&& this.conversation.lastReadMessage === this.conversation.lastMessage.id
 
 			await this.getNewMessages(followInNewMessages)
+		},
+
+		async getMessageContext(messageId) {
+			try {
+				this.loadingOldMessages = true
+				await this.$store.dispatch('getMessageContext', {
+					token: this.token,
+					messageId,
+					minimumVisible: CHAT.MINIMUM_VISIBLE,
+				})
+
+				this.loadingOldMessages = false
+			} catch (exception) {
+				if (Axios.isCancel(exception)) {
+					console.debug('The request has been canceled', exception)
+				}
+				this.loadingOldMessages = false
+			}
 		},
 
 		/**
@@ -582,6 +655,8 @@ export default {
 					requestId: this.chatIdentifier,
 				})
 
+				this.isInitialisingMessages = false
+
 				// Scroll to the last message if sticky
 				if (scrollToBottom && this.isSticky) {
 					this.smoothScrollToBottom()
@@ -620,7 +695,15 @@ export default {
 			}, 500)
 		},
 
-		debounceHandleScroll: debounce(function() {
+		debounceHandleScroll() {
+			if (this.loadChatInLegacyMode) {
+				this.debounceHandleScrollWithoutPreconditions()
+			} else if (!this.isInitialisingMessages && !this.isFocusingMessage) {
+				this.debounceHandleScrollWithoutPreconditions()
+			}
+		},
+
+		debounceHandleScrollWithoutPreconditions: debounce(function() {
 			this.handleScroll()
 		}, 50),
 
@@ -634,6 +717,18 @@ export default {
 				// when switching from a one-to-one to a group conversation.
 				console.debug('Ignoring handleScroll as the messages history is empty')
 				return
+			}
+
+			if (!this.loadChatInLegacyMode) {
+				if (this.isInitialisingMessages) {
+					console.debug('Ignore handleScroll as we are initialising the message history')
+					return
+				}
+
+				if (this.isFocusingMessage) {
+					console.debug('Ignore handleScroll as we are programmatically scrolling to focus a message')
+					return
+				}
 			}
 
 			const scrollHeight = this.scroller.scrollHeight
@@ -861,6 +956,9 @@ export default {
 				return false
 			}
 
+			console.debug('Scrolling to a focused message programmatically')
+			this.isFocusingMessage = true
+
 			this.$nextTick(async () => {
 				// FIXME: this doesn't wait for the smooth scroll to end
 				await element.scrollIntoView({
@@ -876,6 +974,7 @@ export default {
 					element.focus()
 					element.highlightAnimation()
 				}
+				this.isFocusingMessage = false
 			})
 
 			return true
@@ -941,7 +1040,7 @@ export default {
 			this.$emit('set-chat-scrolled-to-bottom', boolean)
 			if (boolean) {
 				// mark as read if marker was seen
-				// we have to do this early because unfocussing the window will remove the stickiness
+				// we have to do this early because unfocusing the window will remove the stickiness
 				this.debounceUpdateReadMarkerPosition()
 			}
 		},

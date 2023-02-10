@@ -443,11 +443,15 @@ class ChatController extends AEnvironmentAwareController {
 
 		$currentUser = $this->userManager->get($this->userId);
 		if ($lookIntoFuture) {
-			$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, $timeout, $currentUser, (bool) $includeLastKnown);
+			$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, $timeout, $currentUser, (bool)$includeLastKnown);
 		} else {
-			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit, (bool) $includeLastKnown);
+			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit, (bool)$includeLastKnown);
 		}
 
+		return $this->prepareCommentsAsDataResponse($comments);
+	}
+
+	protected function prepareCommentsAsDataResponse(array $comments, int $lastCommonReadId = 0): DataResponse {
 		if (empty($comments)) {
 			$response = new DataResponse([], Http::STATUS_NOT_MODIFIED);
 			if ($lastCommonReadId && $this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
@@ -574,6 +578,28 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		return $response;
+	}
+
+	/**
+	 * @PublicPage
+	 * @RequireParticipant
+	 * @RequireModeratorOrNoLobby
+	 *
+	 * @param int $messageId The focused message which should be in the "middle" of the returned context
+	 * @param int $limit Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)
+	 * @return DataResponse
+	 */
+	public function getMessageContext(
+		int $messageId,
+		int $limit = 50): DataResponse {
+		$limit = min(100, $limit);
+
+		$currentUser = $this->userManager->get($this->userId);
+		$commentsHistory = $this->chatManager->getHistory($this->room, $messageId, $limit, true);
+		$commentsHistory = array_reverse($commentsHistory);
+		$commentsFuture = $this->chatManager->waitForNewMessages($this->room, $messageId, $limit, 0, $currentUser, false);
+
+		return $this->prepareCommentsAsDataResponse(array_merge($commentsHistory, $commentsFuture));
 	}
 
 	protected function loadSelfReactions(array $messages, array $commentIdToIndex): array {

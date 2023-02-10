@@ -69,6 +69,25 @@ const lookForNewMessages = async ({ token, lastKnownMessageId }, options) => {
 }
 
 /**
+ * Get the context of a message
+ *
+ * Loads some messages from before and after the given one.
+ *
+ * @param {object} data the wrapping object;
+ * @param {string} data.token the conversation token;
+ * @param {number} data.messageId last known message id;
+ * @param {number} data.limit Number of messages to load (default: 50)
+ * @param {object} options options;
+ */
+const getMessageContext = async function({ token, messageId, limit }, options) {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}/context', { token, messageId }), Object.assign(options, {
+		params: {
+			limit: limit || 50,
+		},
+	}))
+}
+
+/**
  * Posts a new message to the server.
  *
  * @param {object} param0 The message object that is destructured
@@ -158,6 +177,7 @@ const getReactionsDetails = async function(token, messageId) {
 export {
 	fetchMessages,
 	lookForNewMessages,
+	getMessageContext,
 	postNewMessage,
 	deleteMessage,
 	postRichObjectToConversation,
