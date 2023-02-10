@@ -124,7 +124,7 @@
 						@files-pasted="handlePastedFiles" />
 				</div>
 
-				<AudioRecorder v-if="!hasText && canUploadFiles"
+				<AudioRecorder v-if="showAudioRecorder"
 					:disabled="disabled"
 					@recording="handleRecording"
 					@audio-file="handleAudioFile" />
@@ -448,6 +448,10 @@ export default {
 
 		showAttachmentsMenu() {
 			return (this.canUploadFiles || this.canShareFiles) && !this.broadcast
+		},
+
+		showAudioRecorder() {
+			return !this.hasText && this.canUploadFiles && !this.broadcast
 		},
 	},
 
