@@ -21,10 +21,10 @@
 -->
 
 <template>
-	<NcAppNavigationItem :key="breakoutRoom.displayName"
+	<NcAppNavigationItem :key="roomName"
 		:force-display-actions="true"
 		class="breakout-rooms__room"
-		:title="breakoutRoom.displayName"
+		:title="roomName"
 		:allow-collapse="true"
 		:inline-actions="1"
 		:open="true">
@@ -34,13 +34,13 @@
 		</template>
 		<template #actions>
 			<NcActionButton v-if="showAssistanceButton"
-				@click="dismissRequestAssistance(breakoutRoom.token)">
+				@click="dismissRequestAssistance">
 				<template #icon>
 					<HandBackLeft :size="16" />
 				</template>
 				{{ t('spreed', 'Dismiss request for assistance') }}
 			</NcActionButton>
-			<NcActionButton @click="openSendMessageForm(breakoutRoom.token)">
+			<NcActionButton @click="openSendMessageForm(roomToken)">
 				<template #icon>
 					<Send :size="16" />
 				</template>
@@ -48,11 +48,11 @@
 			</NcActionButton>
 		</template>
 		<!-- Send message dialog -->
-		<SendMessageDialog v-if="openedDialog === breakoutRoom.token"
-			:display-name="breakoutRoom.displayName"
-			:token="breakoutRoom.token"
-			@close="closeSendMessageForm(breakoutRoom.token)" />
-		<template v-for="participant in $store.getters.participantsList(breakoutRoom.token)">
+		<SendMessageDialog v-if="openedDialog === roomToken"
+			:display-name="roomName"
+			:token="roomToken"
+			@close="closeSendMessageForm" />
+		<template v-for="participant in $store.getters.participantsList(roomToken)">
 			<Participant :key="participant.actorId" :participant="participant" />
 		</template>
 	</NcAppNavigationItem>
@@ -106,6 +106,14 @@ export default {
 			return this.breakoutRoom.participantType
 		},
 
+		roomName() {
+			return this.breakoutRoom.displayName
+		},
+
+		roomToken() {
+			return this.breakoutRoom.token
+		},
+
 		canFullModerate() {
 			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
 		},
@@ -122,22 +130,24 @@ export default {
 	watch: {
 		showAssistanceButton(newValue) {
 			if (newValue) {
-				showWarning(t('spreed', 'Assistance requested in {roomName}', { roomName: this.breakoutRoom.displayName }))
+				showWarning(t('spreed', 'Assistance requested in {roomName}', {
+					roomName: this.roomName,
+				}))
 			}
 		},
 	},
 
 	methods: {
-		openSendMessageForm(token) {
-			this.openedDialog = token
+		openSendMessageForm() {
+			this.openedDialog = this.roomToken
 		},
 
 		closeSendMessageForm() {
 			this.openedDialog = undefined
 		},
 
-		dismissRequestAssistance(token) {
-			this.$store.dispatch('resetRequestAssistanceAction', { token })
+		dismissRequestAssistance() {
+			this.$store.dispatch('resetRequestAssistanceAction', { token: this.roomToken })
 		},
 	},
 }
