@@ -71,8 +71,12 @@ export const CONVERSATION = {
 	},
 
 	BREAKOUT_ROOM_STATUS: {
+		// Main room
 		STOPPED: 0,
 		STARTED: 1,
+		// Breakout rooms
+		STATUS_ASSISTANCE_RESET: 0,
+		STATUS_ASSISTANCE_REQUESTED: 2,
 	},
 }
 export const ATTENDEE = {
