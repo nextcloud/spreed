@@ -26,6 +26,7 @@ import {
 	startBreakoutRooms,
 	stopBreakoutRooms,
 	broadcastMessageToBreakoutRooms,
+	getBreakoutRoomsParticipants,
 } from '../services/breakoutRoomsService.js'
 import { showError } from '@nextcloud/dialogs'
 import { set } from 'vue'
@@ -43,6 +44,9 @@ const getters = {
 	},
 
 	hasBreakoutRooms: (state, getters, rootState) => (token) => {
+		if (!state.breakoutRoomsReferences?.[token]) {
+			return false
+		}
 		return !!state.breakoutRoomsReferences?.[token]
 			.every(breakoutRoomToken => rootState.conversationsStore.conversations?.[breakoutRoomToken])
 	},
@@ -144,6 +148,21 @@ const actions = {
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while sending a message to the breakout rooms'))
+		}
+	},
+
+	async getBreakoutRoomsParticipantsAction(context, { token }) {
+		try {
+			const response = await getBreakoutRoomsParticipants(token)
+			response.data.ocs.data.forEach(participant => {
+				context.dispatch('addParticipant', {
+					token: participant.roomToken,
+					participant,
+				})
+			})
+
+		} catch (error) {
+			console.error(error)
 		}
 	},
 }
