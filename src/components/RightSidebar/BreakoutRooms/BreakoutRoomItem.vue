@@ -32,8 +32,7 @@
 			<GoogleCircles :size="20" />
 		</template>
 		<template #actions>
-			<NcActionButton v-if="breakoutRoom.breakoutRoomStatus ===
-					CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED"
+			<NcActionButton v-if="showAssistanceButton"
 				@click="dismissRequestAssistance(breakoutRoom.token)">
 				<template #icon>
 					<HandBackLeft :size="16" />
@@ -67,8 +66,10 @@ import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
+import { showWarning } from '@nextcloud/dialogs'
+
 // Constants
-import { CONVERSATION } from '../../../constants.js'
+import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 
 export default {
 	name: 'BreakoutRoomItem',
@@ -96,8 +97,33 @@ export default {
 	data() {
 		return {
 			openedDialog: undefined,
-			CONVERSATION,
 		}
+	},
+
+	computed: {
+		participantType() {
+			return this.breakoutRoom.participantType
+		},
+
+		canFullModerate() {
+			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
+		},
+
+		canModerate() {
+			return this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
+		},
+
+		showAssistanceButton() {
+			return this.canModerate && this.breakoutRoom.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED
+		},
+	},
+
+	watch: {
+		showAssistanceButton(newValue) {
+			if (newValue) {
+				showWarning(t('spreed', 'Assistance requested in {roomName}', { roomName: this.breakoutRoom.displayName }))
+			}
+		},
 	},
 
 	methods: {
