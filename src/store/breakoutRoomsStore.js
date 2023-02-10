@@ -32,6 +32,7 @@ import {
 } from '../services/breakoutRoomsService.js'
 import { showError } from '@nextcloud/dialogs'
 import { set } from 'vue'
+import { emit } from '@nextcloud/event-bus'
 
 const state = {
 	breakoutRoomsReferences: {},
@@ -71,6 +72,8 @@ const actions = {
 	async configureBreakoutRoomsAction(context, { token, mode, amount, attendeeMap }) {
 		try {
 			const response = await configureBreakoutRooms(token, mode, amount, attendeeMap)
+			// Get the participants of the breakout rooms
+			context.dispatch('getBreakoutRoomsParticipantsAction', { token })
 			const breakoutRoomsReferences = []
 
 			// Add breakout rooms and conversations to the conversations store
@@ -86,6 +89,10 @@ const actions = {
 				token,
 				breakoutRoomsReferences,
 			})
+
+			// Open the sidebar and switch to the breakout rooms tab
+			emit('spreed:select-active-sidebar-tab', 'breakout-rooms')
+			context.dispatch('showSidebar')
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while creating breakout rooms'))

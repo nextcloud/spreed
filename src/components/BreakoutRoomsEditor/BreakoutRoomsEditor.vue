@@ -63,6 +63,7 @@
 			<template v-else>
 				<BreakoutRoomsParticipantsEditor :token="token"
 					:room-number="amount"
+					v-on="$listeners"
 					@back="isEditingParticipants = false"
 					@create-rooms="handleCreateRooms" />
 			</template>
