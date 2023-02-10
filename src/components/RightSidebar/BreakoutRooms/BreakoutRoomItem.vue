@@ -22,6 +22,7 @@
 
 <template>
 	<NcAppNavigationItem :key="breakoutRoom.displayName"
+		:force-display-actions="true"
 		class="breakout-rooms__room"
 		:title="breakoutRoom.displayName"
 		:allow-collapse="true"
