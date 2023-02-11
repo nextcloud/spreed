@@ -121,7 +121,12 @@ export default {
 
 		roomNumber: {
 			type: Number,
-			required: true,
+			default: undefined,
+		},
+
+		breakoutRooms: {
+			type: Number,
+			default: undefined,
 		},
 	},
 

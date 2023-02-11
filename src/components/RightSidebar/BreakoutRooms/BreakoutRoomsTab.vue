@@ -56,13 +56,13 @@
 				</template>
 			</div>
 			<div class="breakout-rooms__actions-group">
-				<!-- Configuration button -->
-				<NcButton :type="breakoutRoomsConfigured ? 'tertiary' : 'secondary'"
-					:title="configurationButtonTitle"
-					:aria-label="configurationButtonTitle"
-					@click="openBreakoutRoomsEditor">
+				<!-- Re-arrange participants button -->
+				<NcButton type="tertiary"
+					:title="moveParticipantsButtonTitle"
+					:aria-label="moveParticipantsButtonTitle"
+					@click="openParticipantsEditor">
 					<template #icon>
-						<Reload :size="20" />
+						<AccountMultiple :size="20" />
 					</template>
 				</NcButton>
 				<NcButton v-if="breakoutRoomsConfigured"
@@ -86,10 +86,17 @@
 				</template>
 			</ul>
 
-			<!-- Breakout rooms editor -->
-			<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
-				:token="token"
-				@close="showBreakoutRoomsEditor = false" />
+			<!-- Participants editor -->
+			<NcModal v-if="showParticipantsEditor"
+				@close="closeParticipantsEditor">
+				<div class="breakout-rooms-editor">
+					<h2>some title</h2>
+					<BreakoutRoomsParticipantsEditor :token="token"
+						:breakout-rooms="breakoutRooms"
+						:is-creating-rooms="false"
+						v-on="$listeners" />
+				</div>
+			</NcModal>
 
 			<!-- Send message dialog -->
 			<SendMessageDialog v-if="sendMessageDialogOpened"
@@ -103,7 +110,8 @@
 <script>
 // Components
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import BreakoutRoomsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import BreakoutRoomsParticipantsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsParticipantsEditor.vue'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 import BreakoutRoomItem from './BreakoutRoomItem.vue'
 
@@ -111,7 +119,7 @@ import BreakoutRoomItem from './BreakoutRoomItem.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Play from 'vue-material-design-icons/Play.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
-import Reload from 'vue-material-design-icons/Reload.vue'
+import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import Message from 'vue-material-design-icons/Message.vue'
 
 // Constants
@@ -126,14 +134,15 @@ export default {
 	components: {
 		// Components
 		NcButton,
-		BreakoutRoomsEditor,
+		BreakoutRoomsParticipantsEditor,
 		SendMessageDialog,
 		BreakoutRoomItem,
+		NcModal,
 
 		// Icons
 		Delete,
 		Play,
-		Reload,
+		AccountMultiple,
 		StopIcon,
 		Message,
 	},
@@ -159,7 +168,7 @@ export default {
 
 	data() {
 		return {
-			showBreakoutRoomsEditor: false,
+			showParticipantsEditor: false,
 			sendMessageDialogOpened: false,
 			breakoutRoomsParticipantsInterval: undefined,
 		}
@@ -188,8 +197,8 @@ export default {
 			return this.conversation.breakoutRoomStatus !== CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
 		},
 
-		configurationButtonTitle() {
-			return this.breakoutRoomsConfigured ? t('spreed', 'Re-configure breakout rooms') : t('spreed', 'Configure breakout rooms')
+		moveParticipantsButtonTitle() {
+			return t('spreed', 'Move participants')
 		},
 
 		hasBreakoutRooms() {
@@ -302,6 +311,14 @@ export default {
 
 		closeSendMessageDialog() {
 			this.sendMessageDialogOpened = false
+		},
+
+		openParticipantsEditor() {
+			this.showParticipantsEditor = true
+		},
+
+		closeParticipantsEditor() {
+			this.showParticipantsEditor = false
 		},
 	},
 }
