@@ -110,8 +110,8 @@ class RecordingController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @PublicPage
-	 * @RequireModeratorParticipant
+	 * @NoAdminRequired
+	 * @RequireLoggedInModeratorParticipant
 	 */
 	public function start(int $status): DataResponse {
 		try {
@@ -123,8 +123,8 @@ class RecordingController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @PublicPage
-	 * @RequireModeratorParticipant
+	 * @NoAdminRequired
+	 * @RequireLoggedInModeratorParticipant
 	 */
 	public function stop(): DataResponse {
 		try {
