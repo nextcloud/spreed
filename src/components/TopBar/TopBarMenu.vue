@@ -117,13 +117,21 @@
 		</template>
 		<!-- Call recording -->
 		<template v-if="canModerateRecording">
-			<NcActionButton v-if="!isRecording && isInCall"
+			<NcActionButton v-if="!isRecording && !isStartingRecording && isInCall"
 				:close-after-click="true"
 				@click="startRecording">
 				<template #icon>
 					<RecordCircle :size="20" />
 				</template>
 				{{ t('spreed', 'Start recording') }}
+			</NcActionButton>
+			<NcActionButton v-else-if="isStartingRecording && isInCall"
+				:close-after-click="true"
+				@click="stopRecording">
+				<template #icon>
+					<NcLoadingIcon :size="20" />
+				</template>
+				{{ t('spreed', 'Cancel recording start') }}
 			</NcActionButton>
 			<NcActionButton v-else-if="isRecording && isInCall"
 				:close-after-click="true"
@@ -160,6 +168,7 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import { emit } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 import { getCapabilities } from '@nextcloud/capabilities'
@@ -190,6 +199,7 @@ export default {
 		NcActionSeparator,
 		NcActionLink,
 		NcActionButton,
+		NcLoadingIcon,
 		PromotedView,
 		Cog,
 		DotsHorizontal,
@@ -356,8 +366,14 @@ export default {
 			return this.canFullModerate && recordingEnabled
 		},
 
+		isStartingRecording() {
+			return this.conversation.callRecording === CALL.RECORDING.VIDEO_STARTING
+				|| this.conversation.callRecording === CALL.RECORDING.AUDIO_STARTING
+		},
+
 		isRecording() {
-			return this.conversation.callRecording !== CALL.RECORDING.OFF
+			return this.conversation.callRecording === CALL.RECORDING.VIDEO
+				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
 		},
 
 		// True if current conversation is a breakout room and the brekour room has started

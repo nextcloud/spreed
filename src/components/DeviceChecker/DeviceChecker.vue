@@ -137,7 +137,7 @@
 				</template>
 			</NcCheckboxRadioSwitch>
 
-			<NcNoteCard v-if="isRecording"
+			<NcNoteCard v-if="isStartingRecording || isRecording"
 				type="warning">
 				<p>{{ t('spreed', 'The call is being recorded.') }}</p>
 			</NcNoteCard>
@@ -308,8 +308,14 @@ export default {
 			return this.conversation.hasCall || this.conversation.hasCallOverwrittenByChat
 		},
 
+		isStartingRecording() {
+			return this.conversation.callRecording === CALL.RECORDING.VIDEO_STARTING
+				|| this.conversation.callRecording === CALL.RECORDING.AUDIO_STARTING
+		},
+
 		isRecording() {
-			return this.conversation.callRecording !== CALL.RECORDING.OFF
+			return this.conversation.callRecording === CALL.RECORDING.VIDEO
+				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
 		},
 
 		showSilentCallOption() {
