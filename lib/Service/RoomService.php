@@ -379,7 +379,7 @@ class RoomService {
 			throw new InvalidArgumentException('config');
 		}
 
-		$availableRecordingStatus = [Room::RECORDING_NONE, Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
+		$availableRecordingStatus = [Room::RECORDING_NONE, Room::RECORDING_VIDEO, Room::RECORDING_AUDIO, Room::RECORDING_VIDEO_STARTING, Room::RECORDING_AUDIO_STARTING];
 		if (!in_array($status, $availableRecordingStatus)) {
 			throw new InvalidArgumentException('status');
 		}

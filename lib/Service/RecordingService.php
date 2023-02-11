@@ -86,6 +86,9 @@ class RecordingService {
 		}
 
 		$this->backendNotifier->start($room, $status, $owner, $participant);
+
+		$startingStatus = $status == Room::RECORDING_VIDEO ? Room::RECORDING_VIDEO_STARTING : Room::RECORDING_AUDIO_STARTING;
+		$this->roomService->setCallRecording($room, $startingStatus);
 	}
 
 	public function stop(Room $room, ?Participant $participant = null): void {

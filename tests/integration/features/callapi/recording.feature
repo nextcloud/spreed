@@ -18,7 +18,7 @@ Feature: callapi/recording
       | room1 | {"type":"start","start":{"status":1,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
-      | 2    | room1 | 0             |
+      | 2    | room1 | 3             |
     And recording server sent started request for "video" recording in room "room1" as "participant1" with 200
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
@@ -61,7 +61,7 @@ Feature: callapi/recording
       | room1 | {"type":"start","start":{"status":2,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
-      | 2    | room1 | 0             |
+      | 2    | room1 | 4             |
     And recording server sent started request for "audio" recording in room "room1" as "participant1" with 200
     Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage           |
@@ -102,10 +102,6 @@ Feature: callapi/recording
     And recording server received the following requests
       | token | data                                                         |
       | room1 | {"type":"start","start":{"status":2,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
-    And user "participant1" starts "audio" recording in room "room1" with 200 (v1)
-    And recording server received the following requests
-      | token | data                                                         |
-      | room1 | {"type":"start","start":{"status":2,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
     And recording server sent started request for "audio" recording in room "room1" as "participant1" with 200
     And user "participant1" starts "audio" recording in room "room1" with 400 (v1)
     Then the response error matches with "recording"
@@ -128,10 +124,6 @@ Feature: callapi/recording
       | type | name  | callRecording |
       | 2    | room1 | 0             |
     When user "participant1" starts "video" recording in room "room1" with 200 (v1)
-    And recording server received the following requests
-      | token | data                                                         |
-      | room1 | {"type":"start","start":{"status":1,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
-    And user "participant1" starts "video" recording in room "room1" with 200 (v1)
     And recording server received the following requests
       | token | data                                                         |
       | room1 | {"type":"start","start":{"status":1,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |

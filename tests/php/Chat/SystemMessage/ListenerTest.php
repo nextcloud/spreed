@@ -322,6 +322,34 @@ class ListenerTest extends TestCase {
 	public function callRecordingChangeProvider() {
 		return [
 			[
+				Room::RECORDING_VIDEO_STARTING,
+				Room::RECORDING_NONE,
+				null,
+				null,
+				null,
+			],
+			[
+				Room::RECORDING_VIDEO_STARTING,
+				Room::RECORDING_NONE,
+				Attendee::ACTOR_USERS,
+				'alice',
+				null,
+			],
+			[
+				Room::RECORDING_VIDEO,
+				Room::RECORDING_VIDEO_STARTING,
+				null,
+				null,
+				['message' => 'recording_started', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_VIDEO,
+				Room::RECORDING_VIDEO_STARTING,
+				Attendee::ACTOR_USERS,
+				'alice',
+				['message' => 'recording_started', 'parameters' => []],
+			],
+			[
 				Room::RECORDING_VIDEO,
 				Room::RECORDING_NONE,
 				null,
@@ -336,6 +364,34 @@ class ListenerTest extends TestCase {
 				['message' => 'recording_started', 'parameters' => []],
 			],
 			[
+				Room::RECORDING_AUDIO_STARTING,
+				Room::RECORDING_NONE,
+				null,
+				null,
+				null,
+			],
+			[
+				Room::RECORDING_AUDIO_STARTING,
+				Room::RECORDING_NONE,
+				Attendee::ACTOR_USERS,
+				'alice',
+				null,
+			],
+			[
+				Room::RECORDING_AUDIO,
+				Room::RECORDING_AUDIO_STARTING,
+				null,
+				null,
+				['message' => 'audio_recording_started', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_AUDIO,
+				Room::RECORDING_AUDIO_STARTING,
+				Attendee::ACTOR_USERS,
+				'alice',
+				['message' => 'audio_recording_started', 'parameters' => []],
+			],
+			[
 				Room::RECORDING_AUDIO,
 				Room::RECORDING_NONE,
 				null,
@@ -348,6 +404,20 @@ class ListenerTest extends TestCase {
 				Attendee::ACTOR_USERS,
 				'alice',
 				['message' => 'audio_recording_started', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_NONE,
+				Room::RECORDING_VIDEO_STARTING,
+				null,
+				null,
+				null,
+			],
+			[
+				Room::RECORDING_NONE,
+				Room::RECORDING_VIDEO_STARTING,
+				Attendee::ACTOR_USERS,
+				'bob',
+				null,
 			],
 			[
 				Room::RECORDING_NONE,
@@ -362,6 +432,20 @@ class ListenerTest extends TestCase {
 				Attendee::ACTOR_USERS,
 				'bob',
 				['message' => 'recording_stopped', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_NONE,
+				Room::RECORDING_AUDIO_STARTING,
+				null,
+				null,
+				null,
+			],
+			[
+				Room::RECORDING_NONE,
+				Room::RECORDING_AUDIO_STARTING,
+				Attendee::ACTOR_USERS,
+				'bob',
+				null,
 			],
 			[
 				Room::RECORDING_NONE,
@@ -389,7 +473,7 @@ class ListenerTest extends TestCase {
 	 * @param string|null $actorId
 	 * @param array $expectedMessage
 	 */
-	public function testAfterCallRecordingSet(int $newStatus, int $oldStatus, ?string $actorType, ?string $actorId, array $expectedMessage): void {
+	public function testAfterCallRecordingSet(int $newStatus, int $oldStatus, ?string $actorType, ?string $actorId, ?array $expectedMessage): void {
 		$this->mockLoggedInUser('logged_in_user');
 
 		$room = $this->createMock(Room::class);
@@ -416,19 +500,24 @@ class ListenerTest extends TestCase {
 
 		$event = new ModifyRoomEvent($room, 'callRecording', $newStatus, $oldStatus, $participant);
 
-		$this->chatManager->expects($this->once())
-			->method('addSystemMessage')
-			->with(
-				$room,
-				$expectedActorType,
-				$expectedActorId,
-				json_encode($expectedMessage),
-				$this->dummyTime,
-				false,
-				SELF::DUMMY_REFERENCE_ID,
-				null,
-				false
-			);
+		if ($expectedMessage !== null) {
+			$this->chatManager->expects($this->once())
+				->method('addSystemMessage')
+				->with(
+					$room,
+					$expectedActorType,
+					$expectedActorId,
+					json_encode($expectedMessage),
+					$this->dummyTime,
+					false,
+					SELF::DUMMY_REFERENCE_ID,
+					null,
+					false
+				);
+		} else {
+			$this->chatManager->expects($this->never())
+				->method('addSystemMessage');
+		}
 
 		$this->dispatch(Room::EVENT_AFTER_SET_CALL_RECORDING, $event);
 	}

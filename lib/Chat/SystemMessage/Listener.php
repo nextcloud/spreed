@@ -501,6 +501,15 @@ class Listener implements IEventListener {
 	}
 
 	public static function setCallRecording(ModifyRoomEvent $event): void {
+		$recordingHasStarted = in_array($event->getOldValue(), [Room::RECORDING_NONE, Room::RECORDING_VIDEO_STARTING, Room::RECORDING_AUDIO_STARTING])
+			&& in_array($event->getNewValue(), [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO]);
+		$recordingHasStopped = in_array($event->getOldValue(), [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO])
+			&& $event->getNewValue() === Room::RECORDING_NONE;
+
+		if (!$recordingHasStarted && !$recordingHasStopped) {
+			return;
+		}
+
 		$prefix = self::getCallRecordingPrefix($event);
 		$suffix = self::getCallRecordingSuffix($event);
 		$systemMessage = $prefix . 'recording_' . $suffix;
