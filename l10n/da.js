@@ -146,6 +146,7 @@ OC.L10N.register(
     "{actor} demoted you from moderator" : "{actor} degraderede dig fra moderator",
     "{actor} shared a file which is no longer available" : "{actor} delte en fil, der ikke længere er tilgængelig",
     "You shared a file which is no longer available" : "Du delte en fil, der ikke længere er tilgængelig",
+    "You cleared the history of the conversation" : "Du ryddede samtalens historik",
     "%s (guest)" : "%s (gæst)",
     "You missed a call from {user}" : "Du missede et opkald fra {user}",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Opkald med 1 gæst (Varighed {duration})","Opkald med %n gæster (Varighed {duration})"],
