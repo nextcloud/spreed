@@ -1057,7 +1057,7 @@ OC.L10N.register(
     "Enabling the lobby only allows moderators to post messages." : "Activar la sala d’espèra permet als moderators de publicar de messatges.",
     "This will also remove non-moderators from the ongoing call." : "Aquò tirarà tanben los non moderators de la sonada en cors.",
     "Enable lobby" : "Activar la sala d’espèra",
-    "After the time limit the lobby will be automatically disabled." : "Aprèp la limita de temps la sala d’espèra serà automaticament desactivada.",
+    "After the time limit the lobby will be automatically disabled." : "Aprèp lo limit de temps la sala d’espèra serà automaticament desactivada.",
     "Locking the conversation prevents anyone to post messages or start calls." : "Lo verrolhatge de la conversacion empacha qual que siá de publicar de messatges o començar de sonadas.",
     "Chat messages" : "Messatges",
     "Calls" : "Sonadas",
