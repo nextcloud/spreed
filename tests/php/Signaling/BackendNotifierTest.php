@@ -190,7 +190,7 @@ class BackendNotifierTest extends TestCase {
 			$dbConnection,
 			$this->timeFactory,
 			$this->createMock(IManager::class),
-			$this->createMock(Config::class),
+			$this->config,
 			$this->createMock(IHasher::class),
 			$this->dispatcher,
 			$this->jobList
@@ -1465,6 +1465,23 @@ class BackendNotifierTest extends TestCase {
 				'roomid' => $room->getToken(),
 				'sessions' => [
 					$sessionId2,
+				],
+			],
+		]);
+	}
+
+	public function testRecordingStatusChanged() {
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
+		$this->roomService->setCallRecording($room, Room::RECORDING_VIDEO);
+
+		$this->assertMessageWasSent($room, [
+			'type' => 'message',
+			'message' => [
+				'data' => [
+					'type' => 'recording',
+					'recording' => [
+						'status' => Room::RECORDING_VIDEO,
+					],
 				],
 			],
 		]);
