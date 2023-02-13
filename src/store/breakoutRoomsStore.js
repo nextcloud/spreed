@@ -29,6 +29,7 @@ import {
 	getBreakoutRoomsParticipants,
 	requestAssistance,
 	resetRequestAssistance,
+	reorganizeAttendees,
 } from '../services/breakoutRoomsService.js'
 import { showError } from '@nextcloud/dialogs'
 import { set } from 'vue'
@@ -96,6 +97,32 @@ const actions = {
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while creating breakout rooms'))
+		}
+	},
+
+	async reorganizeAttendeesAction(context, { token, attendeeMap }) {
+		try {
+			const response = await reorganizeAttendees(token, attendeeMap)
+			// Get the participants of the breakout rooms
+			context.dispatch('getBreakoutRoomsParticipantsAction', { token })
+			const breakoutRoomsReferences = []
+
+			// Add breakout rooms and conversations to the conversations store
+			response.data.ocs.data.forEach(conversation => {
+				context.commit('addConversation', conversation)
+				if (conversation.token !== token) {
+					breakoutRoomsReferences.push(conversation.token)
+				}
+			})
+
+			// Add breakout rooms references to this store
+			context.commit('addBreakoutRoomsReferences', {
+				token,
+				breakoutRoomsReferences,
+			})
+		} catch (error) {
+			console.error(error)
+			showError(t('spreed', 'An error occurred while re-ordering the attendees'))
 		}
 	},
 
