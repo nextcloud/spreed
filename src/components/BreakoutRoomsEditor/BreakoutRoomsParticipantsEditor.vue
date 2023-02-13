@@ -196,7 +196,22 @@ export default {
 		},
 
 		assignAttendees(roomIndex) {
-			this.assignments[roomIndex].push(...this.selectedParticipants)
+			this.selectedParticipants.forEach(attendeeId => {
+				if (this.unassignedParticipants.find(participant => participant.attendeeId === attendeeId)) {
+					this.assignments[roomIndex].push(attendeeId)
+					return
+				}
+
+				const assignedRoomIndex = this.assignments.findIndex(room => room.includes(attendeeId))
+
+				if (assignedRoomIndex === roomIndex) {
+					return
+				}
+
+				this.assignments[assignedRoomIndex].splice(this.assignments[assignedRoomIndex].findIndex(id => id === attendeeId), 1)
+				this.assignments[roomIndex].push(attendeeId)
+			})
+
 			this.selectedParticipants = []
 		},
 
