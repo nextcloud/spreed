@@ -71,7 +71,7 @@
 				{{ resetButtonLabel }}
 			</NcButton>
 			<NcActions v-if="hasSelected"
-				:menu-title="t('spreed', 'Assign participants')">
+				:menu-title="t('spreed', 'Assign')">
 				<NcActionButton v-for="(item, index) in assignments"
 					:key="index"
 					:close-after-click="true"
@@ -185,11 +185,11 @@ export default {
 		},
 
 		confirmButtonLabel() {
-			return this.isReorganizingAttendees ? t('spreed', 'Move participants') : t('spreed', 'Create breakout rooms')
+			return this.isReorganizingAttendees ? t('spreed', 'Confirm') : t('spreed', 'Create breakout rooms')
 		},
 
 		resetButtonLabel() {
-			return this.isReorganizingAttendees ? t('spreed', 'Un-assign participants') : t('spreed', 'Reset')
+			return t('spreed', 'Reset')
 		},
 	},
 

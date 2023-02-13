@@ -90,7 +90,7 @@
 			<NcModal v-if="showParticipantsEditor"
 				@close="closeParticipantsEditor">
 				<div class="breakout-rooms__editor">
-					<h2>some title</h2>
+					<h2> {{ moveParticipantsButtonTitle }} </h2>
 					<BreakoutRoomsParticipantsEditor :token="token"
 						:breakout-rooms="breakoutRooms"
 						:is-creating-rooms="false"
@@ -199,7 +199,7 @@ export default {
 		},
 
 		moveParticipantsButtonTitle() {
-			return t('spreed', 'Move participants')
+			return t('spreed', 'Reorganize participants')
 		},
 
 		hasBreakoutRooms() {
