@@ -1281,7 +1281,7 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 		})
 		break
 	case 'message':
-		this.processRoomMessageEvent(data.event.message.data)
+		this.processRoomMessageEvent(data.event.message.roomid, data.event.message.data)
 		break
 	default:
 		console.error('Unknown room event', data)
@@ -1289,11 +1289,14 @@ Signaling.Standalone.prototype.processRoomEvent = function(data) {
 	}
 }
 
-Signaling.Standalone.prototype.processRoomMessageEvent = function(data) {
+Signaling.Standalone.prototype.processRoomMessageEvent = function(token, data) {
 	switch (data.type) {
 	case 'chat':
 		// FIXME this is not listened to
 		EventBus.$emit('should-refresh-chat-messages')
+		break
+	case 'recording':
+		EventBus.$emit('signaling-recording-status-changed', token, data.recording.status)
 		break
 	default:
 		console.error('Unknown room message event', data)

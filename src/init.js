@@ -63,3 +63,7 @@ EventBus.$on('signaling-join-room', (payload) => {
 	const token = payload[0]
 	store.dispatch('updateLastJoinedConversationToken', token)
 })
+
+EventBus.$on('signaling-recording-status-changed', (token, status) => {
+	store.dispatch('setConversationProperties', { token, properties: { callRecording: status } })
+})
