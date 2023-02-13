@@ -94,6 +94,7 @@
 					<BreakoutRoomsParticipantsEditor :token="token"
 						:breakout-rooms="breakoutRooms"
 						:is-creating-rooms="false"
+						@close="closeParticipantsEditor"
 						v-on="$listeners" />
 				</div>
 			</NcModal>
