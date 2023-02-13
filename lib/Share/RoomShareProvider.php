@@ -193,9 +193,10 @@ class RoomShareProvider implements IShareProvider {
 			$share->getExpirationDate()
 		);
 
-		$data = $this->getRawShare($shareId);
+		$share->setId((string) $shareId);
+		$share->setProviderId($this->identifier());
 
-		return $this->createShareObject($data);
+		return $share;
 	}
 
 	/**
@@ -242,33 +243,7 @@ class RoomShareProvider implements IShareProvider {
 		}
 
 		$insert->executeStatement();
-		$id = $insert->getLastInsertId();
-
-		return $id;
-	}
-
-	/**
-	 * Get database row of the given share
-	 *
-	 * @param int $id
-	 * @return array
-	 * @throws ShareNotFound
-	 */
-	private function getRawShare(int $id): array {
-		$qb = $this->dbConnection->getQueryBuilder();
-		$qb->select('*')
-			->from('share')
-			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)));
-
-		$cursor = $qb->executeQuery();
-		$data = $cursor->fetch();
-		$cursor->closeCursor();
-
-		if ($data === false) {
-			throw new ShareNotFound();
-		}
-
-		return $data;
+		return $insert->getLastInsertId();
 	}
 
 	/**
