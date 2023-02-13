@@ -105,20 +105,9 @@ const actions = {
 			const response = await reorganizeAttendees(token, attendeeMap)
 			// Get the participants of the breakout rooms
 			context.dispatch('getBreakoutRoomsParticipantsAction', { token })
-			const breakoutRoomsReferences = []
-
 			// Add breakout rooms and conversations to the conversations store
 			response.data.ocs.data.forEach(conversation => {
 				context.commit('addConversation', conversation)
-				if (conversation.token !== token) {
-					breakoutRoomsReferences.push(conversation.token)
-				}
-			})
-
-			// Add breakout rooms references to this store
-			context.commit('addBreakoutRoomsReferences', {
-				token,
-				breakoutRoomsReferences,
 			})
 		} catch (error) {
 			console.error(error)
@@ -190,6 +179,16 @@ const actions = {
 	async getBreakoutRoomsParticipantsAction(context, { token }) {
 		try {
 			const response = await getBreakoutRoomsParticipants(token)
+
+			// Purge the participants of the breakout rooms before adding the updated ones
+			context.state.breakoutRoomsReferences[token].forEach(breakoutRoomToken => {
+				context.commit('purgeParticipantsStore', breakoutRoomToken)
+			})
+
+			// Purge the participants of the main room
+			context.commit('purgeParticipantsStore', token)
+
+			// Add the participants of the breakout rooms to the participants store
 			response.data.ocs.data.forEach(participant => {
 				context.dispatch('addParticipant', {
 					token: participant.roomToken,

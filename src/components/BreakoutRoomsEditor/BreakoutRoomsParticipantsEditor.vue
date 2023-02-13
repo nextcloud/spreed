@@ -81,8 +81,8 @@
 					{{ roomName(index) }}
 				</NcActionButton>
 			</NcActions>
-			<NcButton type="primary" @click="handleCreateRooms">
-				{{ t('spreed', 'Create breakout rooms') }}
+			<NcButton type="primary" @click="handleSubmit">
+				{{ confirmButtonLabel }}
 			</NcButton>
 		</div>
 	</div>
@@ -173,6 +173,16 @@ export default {
 		hasUnassigned() {
 			return this.unassignedParticipants.length > 0
 		},
+
+		// If the breakoutRooms prop is populated it means that this component is
+		// being used to reorganize the attendees of an existing breakout room.
+		isReorganizingAttendees() {
+			return this.breakoutRooms?.length
+		},
+
+		confirmButtonLabel() {
+			return this.isReorganizingAttendees ? t('spreed', 'Move participants') : t('spreed', 'Create breakout rooms')
+		},
 	},
 
 	created() {
@@ -181,7 +191,7 @@ export default {
 
 	methods: {
 		initialiseAssignments() {
-			if (this.breakoutRooms?.length) {
+			if (this.isReorganizingAttendees) {
 				this.assignments = this.breakoutRooms.map(room => {
 					const participantInBreakoutRoomActorIdList = this.$store.getters.participantsList(room.token)
 						.map(participant => participant.actorId)
@@ -230,19 +240,34 @@ export default {
 			this.$emit('back')
 		},
 
-		handleCreateRooms() {
-			let attendeeMap = {}
+		handleSubmit() {
+			this.isReorganizingAttendees ? this.reorganizeAttendees() : this.createRooms()
+		},
+
+		createAttendeeMap() {
+			const attendeeMap = {}
 			this.assignments.forEach((room, index) => {
 				room.forEach(attendeeId => {
 					attendeeMap[attendeeId] = index
 				})
 			})
-			attendeeMap = JSON.stringify(attendeeMap)
+			return JSON.stringify(attendeeMap)
+		},
+
+		createRooms() {
 			this.$store.dispatch('configureBreakoutRoomsAction', {
 				token: this.token,
 				mode: 2,
 				amount: this.roomNumber,
-				attendeeMap,
+				attendeeMap: this.createAttendeeMap(),
+			})
+			this.$emit('close')
+		},
+
+		reorganizeAttendees() {
+			this.$store.dispatch('reorganizeAttendeesAction', {
+				token: this.token,
+				attendeeMap: this.createAttendeeMap(),
 			})
 			this.$emit('close')
 		},
