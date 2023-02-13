@@ -28,6 +28,7 @@
 			<NcButton v-if="canReact"
 				type="tertiary"
 				:aria-label="t('spreed', 'Add a reaction to this message')"
+				:title="t('spreed', 'Add a reaction to this message')"
 				@click="openReactionsMenu">
 				<template #icon>
 					<EmoticonOutline :size="20" />
