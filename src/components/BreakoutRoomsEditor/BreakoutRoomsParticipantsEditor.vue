@@ -55,7 +55,9 @@
 			</template>
 		</div>
 		<div class="participants-editor__buttons">
-			<NcButton type="tertiary" @click="goBack">
+			<NcButton v-if="!isReorganizingAttendees"
+				type="tertiary"
+				@click="goBack">
 				<template #icon>
 					<!-- TODO: choose final icon -->
 					<ArrowLeft :size="20" />
@@ -66,10 +68,10 @@
 				<template #icon>
 					<Reload :size="20" />
 				</template>
-				{{ t('spreed', 'Reset') }}
+				{{ resetButtonLabel }}
 			</NcButton>
 			<NcActions v-if="hasSelected"
-				:menu-title="t('spreed', 'Assign participants')">
+				:menu-title="t('spreed', 'Assign')">
 				<NcActionButton v-for="(item, index) in assignments"
 					:key="index"
 					:close-after-click="true"
@@ -81,8 +83,10 @@
 					{{ roomName(index) }}
 				</NcActionButton>
 			</NcActions>
-			<NcButton type="primary" @click="handleCreateRooms">
-				{{ t('spreed', 'Create breakout rooms') }}
+			<NcButton :disabled="!hasAssigned"
+				type="primary"
+				@click="handleSubmit">
+				{{ confirmButtonLabel }}
 			</NcButton>
 		</div>
 	</div>
@@ -121,7 +125,12 @@ export default {
 
 		roomNumber: {
 			type: Number,
-			required: true,
+			default: undefined,
+		},
+
+		breakoutRooms: {
+			type: Array,
+			default: undefined,
 		},
 	},
 
@@ -168,6 +177,20 @@ export default {
 		hasUnassigned() {
 			return this.unassignedParticipants.length > 0
 		},
+
+		// If the breakoutRooms prop is populated it means that this component is
+		// being used to reorganize the attendees of an existing breakout room.
+		isReorganizingAttendees() {
+			return this.breakoutRooms?.length
+		},
+
+		confirmButtonLabel() {
+			return this.isReorganizingAttendees ? t('spreed', 'Confirm') : t('spreed', 'Create breakout rooms')
+		},
+
+		resetButtonLabel() {
+			return t('spreed', 'Reset')
+		},
 	},
 
 	created() {
@@ -175,12 +198,45 @@ export default {
 	},
 
 	methods: {
-		initialiseAssignments() {
-			this.assignments = Array.from(Array(this.roomNumber), () => [])
+		/**
+		 * Initialise the assignments array.
+		 *
+		 * @param forceReset {boolean} If true, the assignments array will be reset if the breakoutRooms prop is populated.
+		 */
+		initialiseAssignments(forceReset) {
+			if (this.isReorganizingAttendees && !forceReset) {
+				this.assignments = this.breakoutRooms.map(room => {
+					const participantInBreakoutRoomActorIdList = this.$store.getters.participantsList(room.token)
+						.map(participant => participant.actorId)
+
+					return this.participants.filter(participant => {
+						return participantInBreakoutRoomActorIdList.includes(participant.actorId)
+					}).map(participant => participant.attendeeId)
+				})
+			} else {
+				this.assignments = Array.from(Array(this.isReorganizingAttendees
+					? this.breakoutRooms.length
+					: this.roomNumber), () => [])
+			}
 		},
 
 		assignAttendees(roomIndex) {
-			this.assignments[roomIndex].push(...this.selectedParticipants)
+			this.selectedParticipants.forEach(attendeeId => {
+				if (this.unassignedParticipants.find(participant => participant.attendeeId === attendeeId)) {
+					this.assignments[roomIndex].push(attendeeId)
+					return
+				}
+
+				const assignedRoomIndex = this.assignments.findIndex(room => room.includes(attendeeId))
+
+				if (assignedRoomIndex === roomIndex) {
+					return
+				}
+
+				this.assignments[assignedRoomIndex].splice(this.assignments[assignedRoomIndex].findIndex(id => id === attendeeId), 1)
+				this.assignments[roomIndex].push(attendeeId)
+			})
+
 			this.selectedParticipants = []
 		},
 
@@ -192,26 +248,41 @@ export default {
 		resetAssignments() {
 			this.selectedParticipants = []
 			this.assignments = []
-			this.initialiseAssignments()
+			this.initialiseAssignments(true)
 		},
 
 		goBack() {
 			this.$emit('back')
 		},
 
-		handleCreateRooms() {
-			let attendeeMap = {}
+		handleSubmit() {
+			this.isReorganizingAttendees ? this.reorganizeAttendees() : this.createRooms()
+		},
+
+		createAttendeeMap() {
+			const attendeeMap = {}
 			this.assignments.forEach((room, index) => {
 				room.forEach(attendeeId => {
 					attendeeMap[attendeeId] = index
 				})
 			})
-			attendeeMap = JSON.stringify(attendeeMap)
+			return JSON.stringify(attendeeMap)
+		},
+
+		createRooms() {
 			this.$store.dispatch('configureBreakoutRoomsAction', {
 				token: this.token,
 				mode: 2,
 				amount: this.roomNumber,
-				attendeeMap,
+				attendeeMap: this.createAttendeeMap(),
+			})
+			this.$emit('close')
+		},
+
+		reorganizeAttendees() {
+			this.$store.dispatch('reorganizeAttendeesAction', {
+				token: this.token,
+				attendeeMap: this.createAttendeeMap(),
 			})
 			this.$emit('close')
 		},
