@@ -116,6 +116,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	private $guestsOldWhitelist;
 
 	use CommandLineTrait;
+	use RecordingTrait;
 
 	public static function getTokenForIdentifier(string $identifier) {
 		return self::$identifierToToken[$identifier];
