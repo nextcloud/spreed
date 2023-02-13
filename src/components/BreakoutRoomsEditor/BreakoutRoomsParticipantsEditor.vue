@@ -125,7 +125,7 @@ export default {
 		},
 
 		breakoutRooms: {
-			type: Number,
+			type: Array,
 			default: undefined,
 		},
 	},
@@ -181,7 +181,18 @@ export default {
 
 	methods: {
 		initialiseAssignments() {
-			this.assignments = Array.from(Array(this.roomNumber), () => [])
+			if (this.breakoutRooms?.length) {
+				this.assignments = this.breakoutRooms.map(room => {
+					const participantInBreakoutRoomActorIdList = this.$store.getters.participantsList(room.token)
+						.map(participant => participant.actorId)
+
+					return this.participants.filter(participant => {
+						return participantInBreakoutRoomActorIdList.includes(participant.actorId)
+					}).map(participant => participant.attendeeId)
+				})
+			} else {
+				this.assignments = Array.from(Array(this.roomNumber), () => [])
+			}
 		},
 
 		assignAttendees(roomIndex) {
