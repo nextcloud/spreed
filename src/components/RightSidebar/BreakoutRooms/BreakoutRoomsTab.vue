@@ -89,7 +89,7 @@
 			<!-- Participants editor -->
 			<NcModal v-if="showParticipantsEditor"
 				@close="closeParticipantsEditor">
-				<div class="breakout-rooms-editor">
+				<div class="breakout-rooms__editor">
 					<h2>some title</h2>
 					<BreakoutRoomsParticipantsEditor :token="token"
 						:breakout-rooms="breakoutRooms"
@@ -341,6 +341,10 @@ export default {
 
 	&__room {
 		margin-top: var(--default-grid-baseline);
+	}
+
+	&__editor {
+		padding: 20px;
 	}
 }
 
