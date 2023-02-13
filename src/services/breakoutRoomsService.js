@@ -41,6 +41,22 @@ const configureBreakoutRooms = async function(token, mode, amount, attendeeMap) 
 }
 
 /**
+ * Resets the request assistance
+ *
+ * @param token the breakout room token
+ * @param attendeeMap A json encoded Map of attendeeId => room number (0 based)
+ * @return {Promise<AxiosResponse<any>>} The array of conversations
+ */
+const reorganizeAttendees = async function(token, attendeeMap) {
+	return await axios.post(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/attendees', {
+		token,
+	}), {
+		attendeeMap,
+	}
+	)
+}
+
+/**
  * Deletes all breakout rooms for a given conversation
  *
  * @param token
@@ -133,6 +149,7 @@ const resetRequestAssistance = async function(token) {
 
 export {
 	configureBreakoutRooms,
+	reorganizeAttendees,
 	deleteBreakoutRooms,
 	getBreakoutRooms,
 	startBreakoutRooms,
