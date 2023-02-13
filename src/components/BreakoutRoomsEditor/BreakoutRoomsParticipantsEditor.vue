@@ -55,7 +55,9 @@
 			</template>
 		</div>
 		<div class="participants-editor__buttons">
-			<NcButton type="tertiary" @click="goBack">
+			<NcButton v-if="!isReorganizingAttendees"
+				type="tertiary"
+				@click="goBack">
 				<template #icon>
 					<!-- TODO: choose final icon -->
 					<ArrowLeft :size="20" />
@@ -66,7 +68,7 @@
 				<template #icon>
 					<Reload :size="20" />
 				</template>
-				{{ t('spreed', 'Reset') }}
+				{{ resetButtonLabel }}
 			</NcButton>
 			<NcActions v-if="hasSelected"
 				:menu-title="t('spreed', 'Assign participants')">
@@ -81,7 +83,9 @@
 					{{ roomName(index) }}
 				</NcActionButton>
 			</NcActions>
-			<NcButton type="primary" @click="handleSubmit">
+			<NcButton :disabled="!hasAssigned"
+				type="primary"
+				@click="handleSubmit">
 				{{ confirmButtonLabel }}
 			</NcButton>
 		</div>
@@ -183,6 +187,10 @@ export default {
 		confirmButtonLabel() {
 			return this.isReorganizingAttendees ? t('spreed', 'Move participants') : t('spreed', 'Create breakout rooms')
 		},
+
+		resetButtonLabel() {
+			return this.isReorganizingAttendees ? t('spreed', 'Un-assign participants') : t('spreed', 'Reset')
+		},
 	},
 
 	created() {
@@ -190,8 +198,13 @@ export default {
 	},
 
 	methods: {
-		initialiseAssignments() {
-			if (this.isReorganizingAttendees) {
+		/**
+		 * Initialise the assignments array.
+		 *
+		 * @param forceReset {boolean} If true, the assignments array will be reset if the breakoutRooms prop is populated.
+		 */
+		initialiseAssignments(forceReset) {
+			if (this.isReorganizingAttendees && !forceReset) {
 				this.assignments = this.breakoutRooms.map(room => {
 					const participantInBreakoutRoomActorIdList = this.$store.getters.participantsList(room.token)
 						.map(participant => participant.actorId)
@@ -201,7 +214,9 @@ export default {
 					}).map(participant => participant.attendeeId)
 				})
 			} else {
-				this.assignments = Array.from(Array(this.roomNumber), () => [])
+				this.assignments = Array.from(Array(this.isReorganizingAttendees
+					? this.breakoutRooms.length
+					: this.roomNumber), () => [])
 			}
 		},
 
@@ -233,7 +248,7 @@ export default {
 		resetAssignments() {
 			this.selectedParticipants = []
 			this.assignments = []
-			this.initialiseAssignments()
+			this.initialiseAssignments(true)
 		},
 
 		goBack() {
