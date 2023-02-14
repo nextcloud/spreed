@@ -364,7 +364,7 @@ export default {
 
 		canModerateRecording() {
 			const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || false
-			return this.canModerate && recordingEnabled
+			return this.canFullModerate && recordingEnabled
 		},
 
 		isRecording() {

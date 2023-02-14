@@ -30,6 +30,10 @@ $requirements = [
 
 return [
 	'ocs' => [
+		/** @see \OCA\Talk\Controller\RecordingController::getWelcomeMessage() */
+		['name' => 'Recording#getWelcomeMessage', 'url' => '/api/{apiVersion}/recording/welcome/{serverId}', 'verb' => 'GET', 'requirements' => array_merge($requirements, [
+			'serverId' => '\d+',
+		])],
 		/** @see \OCA\Talk\Controller\RecordingController::start() */
 		['name' => 'Recording#start', 'url' => '/api/{apiVersion}/recording/{token}', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\RecordingController::stop() */

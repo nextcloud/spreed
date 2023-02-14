@@ -89,6 +89,7 @@ class AdminSettings implements ISettings {
 		$this->initTurnServers();
 		$this->initSignalingServers();
 		$this->initRequestSignalingServerTrial();
+		$this->initRecordingServers();
 		$this->initSIPBridge();
 
 
@@ -469,6 +470,13 @@ class AdminSettings implements ISettings {
 		$this->initialState->provideInitialState('hosted_signaling_server_language_data', [
 			'languages' => $languages,
 			'countries' => $countries,
+		]);
+	}
+
+	protected function initRecordingServers(): void {
+		$this->initialState->provideInitialState('recording_servers', [
+			'servers' => $this->talkConfig->getRecordingServers(),
+			'secret' => $this->talkConfig->getRecordingSecret(),
 		]);
 	}
 

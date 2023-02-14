@@ -32,6 +32,7 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
+use OCA\Talk\Recording\BackendNotifier;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
@@ -49,6 +50,7 @@ class RecordingService {
 	public const DEFAULT_ALLOWED_RECORDING_FORMATS = [
 		'audio/ogg' => ['ogg'],
 		'video/ogg' => ['ogv'],
+		'video/webm' => ['webm'],
 		'video/x-matroska' => ['mkv'],
 	];
 
@@ -64,10 +66,11 @@ class RecordingService {
 		protected ShareManager $shareManager,
 		protected ChatManager $chatManager,
 		protected LoggerInterface $logger,
+		protected BackendNotifier $backendNotifier
 	) {
 	}
 
-	public function start(Room $room, int $status): void {
+	public function start(Room $room, int $status, string $owner): void {
 		$availableRecordingTypes = [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
 		if (!in_array($status, $availableRecordingTypes)) {
 			throw new InvalidArgumentException('status');
@@ -78,6 +81,9 @@ class RecordingService {
 		if (!$room->getActiveSince() instanceof \DateTimeInterface) {
 			throw new InvalidArgumentException('call');
 		}
+
+		$this->backendNotifier->start($room, $status, $owner);
+
 		$this->roomService->setCallRecording($room, $status);
 	}
 
@@ -85,6 +91,9 @@ class RecordingService {
 		if ($room->getCallRecording() === Room::RECORDING_NONE) {
 			return;
 		}
+
+		$this->backendNotifier->stop($room);
+
 		$this->roomService->setCallRecording($room);
 	}
 
@@ -116,6 +125,7 @@ class RecordingService {
 			$file['error'] !== 0 ||
 			!is_uploaded_file($file['tmp_name'])
 		) {
+			$this->logger->warning("Uploaded file might be larger than allowed by PHP settings 'upload_max_filesize' or 'post_max_size'");
 			throw new InvalidArgumentException('invalid_file');
 		}
 
@@ -132,11 +142,13 @@ class RecordingService {
 		$mimeType = $this->mimeTypeDetector->detectString($content);
 		$allowed = self::DEFAULT_ALLOWED_RECORDING_FORMATS;
 		if (!array_key_exists($mimeType, $allowed)) {
+			$this->logger->warning("Uploaded file detected mime type ($mimeType) is not allowed");
 			throw new InvalidArgumentException('file_mimetype');
 		}
 
 		$extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 		if (!$extension || !in_array($extension, $allowed[$mimeType])) {
+			$this->logger->warning("Uploaded file extensions ($extension) is not allowed for the detected mime type ($mimeType)");
 			throw new InvalidArgumentException('file_extension');
 		}
 	}

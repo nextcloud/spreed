@@ -20,6 +20,7 @@
         + `400 Bad Request` Message: `config`. Need to enable the config `recording`.
         + `400 Bad Request` Message: `recording`. Already have a recording in progress.
         + `400 Bad Request` Message: `call`. Call is not activated.
+        + `401 Unauthorized` When the participant is a guest.
         + `403 Forbidden` When the user is not a moderator/owner.
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator.
 
@@ -34,6 +35,7 @@
         + `200 OK`
         + `400 Bad Request` Message: `config`. Need to enable the config `recording`.
         + `400 Bad Request` Message: `call`. Call is not activated.
+        + `401 Unauthorized` When the participant is a guest.
         + `403 Forbidden` When the user is not a moderator/owner.
         + `412 Precondition Failed` When the lobby is active and the user is not a moderator.
 
@@ -45,10 +47,10 @@
 
 * Header:
 
-| field                     | type   | Description                                                                                                                |
-| ------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------- |
-| `TALK_SIPBRIDGE_RANDOM`   | string | Random string that needs to be concatenated with room token to generate the checksum using the `sip_bridge_shared_secret`. |
-| `TALK_SIPBRIDGE_CHECKSUM` | string | The checksum generated with `TALK_SIPBRIDGE_RANDOM`.                                                                       |
+| field                     | type   | Description                                                                                                                   |
+| ------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| `TALK_RECORDING_RANDOM`   | string | Random string that needs to be concatenated with room token to generate the checksum using the `recording_servers['secret']`. |
+| `TALK_RECORDING_CHECKSUM` | string | The checksum generated with `TALK_RECORDING_RANDOM`.                                                                          |
 
 * Data:
 
@@ -68,7 +70,7 @@
         + `400 Bad Request` Error: `owner_participant`: Owner is not to be a participant of room
         + `400 Bad Request` Error: `owner_invalid`: Owner invalid
         + `400 Bad Request` Error: `owner_permission`: Owner have not permission to store record file
-        + `401 Unauthorized` When the validation as SIP bridge failed
+        + `401 Unauthorized` When the validation as recording server failed
         + `404 Not Found` Room not found
         + `429 Too Many Request` Brute force protection
 

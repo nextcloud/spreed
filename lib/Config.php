@@ -141,6 +141,28 @@ class Config {
 		return $this->config->getAppValue('spreed', 'signaling_dev', 'no') === 'yes';
 	}
 
+	public function getRecordingServers(): array {
+		$config = $this->config->getAppValue('spreed', 'recording_servers');
+		$recording = json_decode($config, true);
+
+		if (!is_array($recording) || !isset($recording['servers'])) {
+			return [];
+		}
+
+		return $recording['servers'];
+	}
+
+	public function getRecordingSecret(): string {
+		$config = $this->config->getAppValue('spreed', 'recording_servers');
+		$recording = json_decode($config, true);
+
+		if (!is_array($recording)) {
+			return '';
+		}
+
+		return $recording['secret'];
+	}
+
 	public function isRecordingEnabled(): bool {
 		$isSignalingInternal = $this->getSignalingMode() === self::SIGNALING_INTERNAL;
 		$isSignalingDev = $this->isSignalingDev();
