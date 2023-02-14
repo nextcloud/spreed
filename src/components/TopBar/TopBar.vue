@@ -107,20 +107,19 @@
 					{{ unreadMessagesCounter }}
 				</NcCounterBubble>
 			</div>
-
-			<!-- participants button -->
-			<NcButton v-if="isInCall && !isOneToOneConversation"
-				class="top-bar__button"
-				close-after-click="true"
-				type="tertiary"
-				@click="openSidebar('participants')">
-				<template #icon>
-					<AccountMultiple :size="20"
-						fill-color="#ffffff" />
-				</template>
-				{{ participantsInCall }}
-			</NcButton>
 		</template>
+
+		<!-- participants button -->
+		<NcButton v-if="isInCall && !isOneToOneConversation"
+			class="top-bar__button"
+			type="tertiary"
+			@click="openSidebar('participants')">
+			<template #icon>
+				<AccountMultiple :size="20"
+					fill-color="#ffffff" />
+			</template>
+			{{ participantsInCall }}
+		</NcButton>
 	</div>
 </template>
 
@@ -278,7 +277,7 @@ export default {
 		},
 
 		participantsInCall() {
-			return this.$store.getters.participantsInCall(this.token) ? this.$store.getters.participantsInCall(this.token) : ''
+			return this.$store.getters.participantsInCall(this.token) || ''
 		},
 	},
 
@@ -399,6 +398,7 @@ export default {
 			color: #fff;
 		}
 
+		& button.top-bar__button:hover,
 		:deep(.action-item--open .action-item__menutoggle),
 		:deep(.action-item__menutoggle:hover),
 		:deep(.action-item--single:hover),
@@ -429,6 +429,7 @@ export default {
 			top: 24px;
 			right: 2px;
 			pointer-events: none;
+			color: var(--color-primary-element);
 		}
 	}
 }
