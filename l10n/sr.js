@@ -432,6 +432,7 @@ OC.L10N.register(
     "OK" : "У реду",
     "Checking …" : "Проверавам…",
     "Back" : "Назад",
+    "Confirm" : "Потврди",
     "Reset" : "Ресетуј",
     "Copy link" : "Копирај везу",
     "Waiting for others to join the call …" : "Чекам да се остали прикључе разговору…",

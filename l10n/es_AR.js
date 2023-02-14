@@ -35,6 +35,7 @@ OC.L10N.register(
     "TURN server protocols" : "Protocolos del servidor TURN",
     "OK" : "OK",
     "Back" : "Atrás",
+    "Confirm" : "Confirmar",
     "Reset" : "Restablecer",
     "Copy link" : "Copiar enlace",
     "Waiting for others to join the call …" : "Esperando a que los demás se unan a la llamada ...",

@@ -706,6 +706,7 @@ OC.L10N.register(
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "OK: Webový server správne vrátil súbory „.wasm“ a „.tflite“.",
     "It seems that the PHP and Apache configuration is not compatible. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module." : "Zdá sa, že konfigurácia PHP a Apache nie je kompatibilná. Upozorňujeme, že PHP je možné použiť iba s modulom MPM_PREFORK a PHP-FPM je možné použiť iba s modulom MPM_EVENT.",
     "Back" : "Späť",
+    "Confirm" : "Potvrdiť",
     "Reset" : "Resetovať",
     "Post message" : "Uverejniť správu",
     "{nickName} raised their hand." : "{nickName} zdvihol ruku.",

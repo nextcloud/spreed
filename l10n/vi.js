@@ -365,6 +365,7 @@ OC.L10N.register(
     "TURN servers" : "Máy chủ TURN",
     "OK" : "OK",
     "Back" : "Quay lại",
+    "Confirm" : "Xác nhận",
     "Reset" : "Đặt lại",
     "Post message" : "Đăng tin nhắn",
     "{nickName} raised their hand." : "{nickName} giơ tay.",

@@ -468,6 +468,7 @@ OC.L10N.register(
     "OK" : "Gerai",
     "Checking …" : "Tikrinama…",
     "Back" : "Atgal",
+    "Confirm" : "Patvirtinti",
     "Reset" : "Atstatyti",
     "{nickName} raised their hand." : "{nickName} pakėlė ranką.",
     "A participant raised their hand." : "Dalyvis pakėlė ranką.",

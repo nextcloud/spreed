@@ -30,6 +30,7 @@ OC.L10N.register(
     "Delete this server" : "Kustuta see server",
     "OK" : "OK",
     "Back" : "Tagasi",
+    "Confirm" : "Kinnita",
     "Reset" : "Lähtesta",
     "Copy link" : "Kopeeri link",
     "Dismiss" : "Jäta vahele",

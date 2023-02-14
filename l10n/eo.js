@@ -269,6 +269,7 @@ OC.L10N.register(
     "Expired" : "Senvalidiĝis",
     "OK" : "Bone",
     "Back" : "Antaŭen",
+    "Confirm" : "Konfirmi",
     "Reset" : "Restarigi",
     "Copy link" : "Kopii ligilon",
     "Dismiss" : "Preterpasi",
