@@ -151,12 +151,12 @@
 				</NcActionButton>
 			</NcActions>
 			<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['r']"
-				v-tooltip="disableKeyboardShortcuts ? t('spreed', 'Lower hand') : t('spreed', 'Lower hand (R)')"
+				v-tooltip="lowerHandAriaLabel"
+				:aria-label="lowerHandAriaLabel"
 				type="tertiary-no-background"
 				class="lower-hand"
 				:class="model.attributes.raisedHand.state ? '' : 'hidden-visually'"
 				:tabindex="model.attributes.raisedHand.state ? 0 : -1"
-				:aria-label="disableKeyboardShortcuts ? t('spreed', 'Lower hand') : t('spreed', 'Lower hand (R)')"
 				@shortkey="toggleHandRaised"
 				@click.stop="toggleHandRaised">
 				<template #icon>
@@ -356,6 +356,12 @@ export default {
 			return this.model.attributes.audioEnabled
 				? t('spreed', 'Mute audio')
 				: t('spreed', 'Unmute audio')
+		},
+
+		lowerHandAriaLabel() {
+			return this.disableKeyboardShortcuts
+				? t('spreed', 'Lower hand')
+				: t('spreed', 'Lower hand (R)')
 		},
 
 		videoButtonClass() {
