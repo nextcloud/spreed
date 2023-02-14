@@ -686,6 +686,7 @@ OC.L10N.register(
     "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "Не удалось: Файлы \".wasm\" и \".tflite\" некорректно возвращены веб-сервером. Пожалуйста, проверьте раздел \"Системные требования\" в документации Talk.",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "OK: файлы \".wasm\" и \".tflite\" некорректно возвращены веб-сервером.",
     "Back" : "Назад",
+    "Confirm" : "Подтвердить",
     "Reset" : "Сброс",
     "Post message" : "Опубликовать сообщение",
     "{nickName} raised their hand." : "{nickName} поднял руку.",

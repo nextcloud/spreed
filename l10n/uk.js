@@ -458,6 +458,7 @@ OC.L10N.register(
     "Failed" : "Не вдалося",
     "OK" : "Гаразд",
     "Back" : "Назад",
+    "Confirm" : "Підтвердити",
     "Reset" : "Скидання",
     "Copy link" : "Скопіювати посилання",
     "Waiting for others to join the call …" : "Чекаємо, доки хтось приєднається до виклику...",

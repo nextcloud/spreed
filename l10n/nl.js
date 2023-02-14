@@ -693,6 +693,7 @@ OC.L10N.register(
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "OK: \".wasm\"- en \".tflite\"-bestanden zijn correct geretourneerd door de webserver.",
     "It seems that the PHP and Apache configuration is not compatible. Please note that PHP can only be used with the MPM_PREFORK module and PHP-FPM can only be used with the MPM_EVENT module." : "Het lijkt erop dat de configuratie van PHP en Apache niet compatibel is. Houd er rekening mee dat PHP alleen kan worden gebruikt met de MPM_PREFORK-module en dat PHP-FPM alleen kan worden gebruikt met de MPM_EVENT-module.",
     "Back" : "Terug",
+    "Confirm" : "Bevestigen",
     "Reset" : "Herstellen",
     "Post message" : "Plaats bericht",
     "{nickName} raised their hand." : "{nickName} stak zijn/haar hand op",

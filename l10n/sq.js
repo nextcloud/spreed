@@ -172,6 +172,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Checking …" : "Duke kontrolluar ...",
     "Back" : "Prapa",
+    "Confirm" : "Konfirmo",
     "Reset" : "Rivendos",
     "Copy link" : "Kopjo linkun",
     "Waiting for others to join the call …" : "Duke pritur që të tjerët t'i bashkohen thirrjes ...",

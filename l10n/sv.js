@@ -527,6 +527,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Checking …" : "Kontrollerar...",
     "Back" : "Tillbaka",
+    "Confirm" : "Bekräfta",
     "Reset" : "Återställ",
     "Copy link" : "Kopiera länk",
     "Connecting …" : "Ansluter…",

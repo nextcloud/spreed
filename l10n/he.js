@@ -397,6 +397,7 @@ OC.L10N.register(
     "OK" : "אישור",
     "Checking …" : "מתבצעת בדיקה…",
     "Back" : "חזרה",
+    "Confirm" : "אימות",
     "Reset" : "איפוס",
     "Copy link" : "העתקת קישור",
     "Waiting for others to join the call …" : "בהמתנה לאחרים להצטרף לשיחה…",

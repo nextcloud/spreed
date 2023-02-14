@@ -84,6 +84,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Checking …" : "Verificando ...",
     "Back" : "Atrás",
+    "Confirm" : "Confirmar",
     "Reset" : "Restablecer",
     "Copy link" : "Copiar liga",
     "Waiting for others to join the call …" : "Esperando a que los demás se unan a la llamada ...",

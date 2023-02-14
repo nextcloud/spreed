@@ -420,6 +420,7 @@ OC.L10N.register(
     "OK" : "OK",
     "Checking …" : "Sjekker…",
     "Back" : "Tilbake",
+    "Confirm" : "Bekreft",
     "Reset" : "Tilbakestill",
     "Post message" : "Send melding",
     "A participant raised their hand." : "En deltaker løftet hånden.",

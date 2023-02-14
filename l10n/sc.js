@@ -624,6 +624,7 @@ OC.L10N.register(
     "A TURN server is used to proxy the traffic from participants behind a firewall. If individual participants cannot connect to others a TURN server is most likely required. See {linkstart}this documentation{linkend} for setup instructions." : "Unu serbidore TURN s'impreat pro imbiare su tràficu dae is partezipantes a secus de unu firewall. Chi is partetzipantes individuales non si podent connètere cun is àteras persones, est probàbile chi serbat unu serbidore TURN. Controlla {linkstart}custa documentatzione{linkend} pro is istrutziones de cunfiguratzione.",
     "OK" : "AB",
     "Back" : "In segus",
+    "Confirm" : "Cunfirma",
     "Reset" : "Torra a impostare",
     "Post message" : "Pùblica messàgiu",
     "{nickName} raised their hand." : "{nickName} ant artziadu sa manu",
