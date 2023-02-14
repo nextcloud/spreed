@@ -47,6 +47,7 @@ OC.L10N.register(
     "Error" : "Kesalahan",
     "OK" : "OK",
     "Back" : "Kembali",
+    "Confirm" : "Konfirmasi",
     "Reset" : "Setel ulang",
     "Copy link" : "Salin tautan",
     "Dismiss" : "Batal",

@@ -270,6 +270,7 @@ OC.L10N.register(
     "Expired" : "منقضی شده",
     "OK" : "تایید",
     "Back" : "بازگشت",
+    "Confirm" : "تائید",
     "Reset" : "بازنشاندن",
     "Copy link" : "کپی کردن لینک",
     "You can invite others in the participant tab of the sidebar" : "شما می‌توانید دیگران را از زبانه اعضا در نوارکناری دعوت کنید",

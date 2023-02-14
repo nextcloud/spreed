@@ -398,6 +398,7 @@ OC.L10N.register(
     "OK" : "Í lagi",
     "Checking …" : "Athuga …",
     "Back" : "Til baka",
+    "Confirm" : "Staðfesta",
     "Reset" : "Endurstilla",
     "Copy link" : "Afrita tengil",
     "Connecting …" : "Tengist ...",

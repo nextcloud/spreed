@@ -236,6 +236,7 @@ OC.L10N.register(
     "OK" : "Ok",
     "Checking …" : "A verificar...",
     "Back" : "Anterior",
+    "Confirm" : "Confirmar",
     "Reset" : "Reiniciar",
     "Copy link" : "Copiar ligação",
     "Waiting for others to join the call …" : "À espera que outros se juntem à chamada ..",

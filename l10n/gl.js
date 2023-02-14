@@ -651,6 +651,7 @@ OC.L10N.register(
     "OK" : "Aceptar",
     "Checking …" : "Comprobando...",
     "Back" : "Atrás",
+    "Confirm" : "Confirmar",
     "Reset" : "Restabelecer",
     "Post message" : "Publicar a mensaxe",
     "{nickName} raised their hand." : "{nickName} ergueu a man.",

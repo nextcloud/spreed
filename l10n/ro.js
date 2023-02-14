@@ -295,6 +295,7 @@ OC.L10N.register(
     "Active" : "Activ",
     "OK" : "OK",
     "Back" : "Înapoi",
+    "Confirm" : "Confirmă",
     "Reset" : "Resetare",
     "Copy link" : "Copiză link",
     "Dismiss" : "Elimină",

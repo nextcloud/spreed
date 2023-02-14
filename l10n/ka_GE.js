@@ -49,6 +49,7 @@ OC.L10N.register(
     "OK" : "კარგი",
     "Checking …" : "მოწმდება ...",
     "Back" : "უკან",
+    "Confirm" : "დადასტურება",
     "Reset" : "საწყის მდოგმარეობაში დაბრუნება",
     "Copy link" : "ბმულის კოპირება",
     "Waiting for others to join the call …" : "ზარში შემოსვლისთვის ველოდებით სხვებს …",

@@ -140,6 +140,7 @@ OC.L10N.register(
     "TURN servers" : "TURN serveris",
     "OK" : "Labi",
     "Back" : "Atpakaļ",
+    "Confirm" : "Apstiprināt",
     "Reset" : "Atiestatīt",
     "Copy link" : "Kopēt saiti",
     "Waiting for others to join the call …" : "Gaidot citus pievienoties zvanam …",

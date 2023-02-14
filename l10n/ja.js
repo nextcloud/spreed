@@ -672,6 +672,7 @@ OC.L10N.register(
     "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "失敗: \".wasm\" と \".tflite\" ファイルは、Webブラウザーにより正しく返却されませんでした。 Talkに関するドキュメントの\"システム要件\"をご確認ください。",
     "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "OK: \".wasm\" と \".tflite\" ファイルがWebブラウザーにより正しく返却されました。",
     "Back" : "戻る",
+    "Confirm" : "承認",
     "Reset" : "リセット",
     "Post message" : "メッセージを送信",
     "{nickName} raised their hand." : "{nickName} が挙手しました",
