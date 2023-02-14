@@ -178,6 +178,8 @@ export default {
 			unreadNum: 0,
 			firstUnreadPos: 0,
 			preventFindingUnread: false,
+			roomListModifiedBefore: 0,
+			forceFullRoomListRefreshAfterXLoops: 0,
 		}
 	},
 
@@ -439,8 +441,10 @@ export default {
 			return conversation2.lastActivity - conversation1.lastActivity
 		},
 
-		async handleShouldRefreshConversations(token, properties) {
-			if (token && properties) {
+		async handleShouldRefreshConversations({ token = undefined, properties = undefined, all = undefined }) {
+			if (all === true) {
+				this.roomListModifiedBefore = 0
+			} else if (token && properties) {
 				await this.$store.dispatch('setConversationProperties', { token, properties })
 			}
 
@@ -455,13 +459,32 @@ export default {
 
 		async fetchConversations() {
 			this.isFetchingConversations = true
+			if (this.forceFullRoomListRefreshAfterXLoops === 0) {
+				this.roomListModifiedBefore = 0
+				this.forceFullRoomListRefreshAfterXLoops = 10
+			} else {
+				this.forceFullRoomListRefreshAfterXLoops--
+			}
 
 			/**
 			 * Fetches the conversations from the server and then adds them one by one
 			 * to the store.
 			 */
 			try {
-				await this.$store.dispatch('fetchConversations')
+				const response = await this.$store.dispatch('fetchConversations', {
+					modifiedSince: this.roomListModifiedBefore,
+				})
+
+				// We can only support this with the HPB as otherwise rooms,
+				// you are not currently active in, will not be removed anymore,
+				// as there is no signaling message about it when the internal
+				// signaling is used.
+				if (loadState('spreed', 'signaling_mode') !== 'internal') {
+					if (response?.headers && response.headers['x-nextcloud-talk-modified-before']) {
+						this.roomListModifiedBefore = response.headers['x-nextcloud-talk-modified-before']
+					}
+				}
+
 				this.initialisedConversations = true
 				/**
 				 * Emits a global event that is used in App.vue to update the page title once the

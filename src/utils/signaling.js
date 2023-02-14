@@ -1302,6 +1302,10 @@ Signaling.Standalone.prototype.processRoomMessageEvent = function(data) {
 
 Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 	switch (data.event.type) {
+	case 'delete':
+		console.debug('Room list event', data)
+		EventBus.$emit('should-refresh-conversations', { all: true })
+		break
 	case 'update':
 		if (data.event.update.properties['participant-list']) {
 			console.debug('Room list event for participant list', data)
@@ -1336,7 +1340,10 @@ Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 				normalizedProperties[normalizedKey] = properties[key]
 			})
 
-			EventBus.$emit('should-refresh-conversations', data.event.update.roomid, normalizedProperties)
+			EventBus.$emit('should-refresh-conversations', {
+				token: data.event.update.roomid,
+				properties: normalizedProperties,
+			})
 			break
 		}
 		// eslint-disable-next-line no-fallthrough

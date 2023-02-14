@@ -259,9 +259,9 @@ describe('conversationsStore', () => {
 
 			fetchConversations.mockResolvedValue(response)
 
-			await store.dispatch('fetchConversations')
+			await store.dispatch('fetchConversations', {})
 
-			expect(fetchConversations).toHaveBeenCalledWith()
+			expect(fetchConversations).toHaveBeenCalledWith({})
 			expect(store.getters.conversationsList).toStrictEqual(testConversations)
 
 			expect(clearMaintenanceModeAction).toHaveBeenCalled()
@@ -281,7 +281,7 @@ describe('conversationsStore', () => {
 			const response = { status: 503 }
 			fetchConversations.mockRejectedValue({ response })
 
-			await expect(store.dispatch('fetchConversations')).rejects.toMatchObject({ response })
+			await expect(store.dispatch('fetchConversations', {})).rejects.toMatchObject({ response })
 
 			expect(checkMaintenanceModeAction).toHaveBeenCalledWith(expect.anything(), response)
 		})

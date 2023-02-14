@@ -13,14 +13,25 @@
     It is therefor recommended to use `format=json` or send the `Accept: application/json` header,
     to receive a JSON response.
 
+!!! note
+
+    When `modifiedSince` is provided only conversations with a newer `lastActivity` are returned.
+    Due to the nature of the data structure we can not return information that a conversation was deleted
+    or the user removed from a conversation. Therefore it is recommended to do a full refresh:
+    * Every 5 minutes
+    * When a signaling message of type `delete` or `disinvite` was received
+    * Internal signaling mode is used
+
+
 * Method: `GET`
 * Endpoint: `/room`
 * Data:
 
-| field            | type | Description                                                                                                      |
-|------------------|------|------------------------------------------------------------------------------------------------------------------|
-| `noStatusUpdate` | int  | Whether the "online" user status of the current user should be "kept-alive" (`1`) or not (`0`) (defaults to `0`) |
-| `includeStatus`  | bool | Whether the user status information of all one-to-one conversations should be loaded (default false)             |
+| field            | type | Description                                                                                                                                                                     |
+|------------------|------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `noStatusUpdate` | int  | Whether the "online" user status of the current user should be "kept-alive" (`1`) or not (`0`) (defaults to `0`)                                                                |
+| `includeStatus`  | bool | Whether the user status information of all one-to-one conversations should be loaded (default false)                                                                            |
+| `modifiedSince`  | int  | **Use with care as per note above.** When provided only conversations with a newer `lastActivity` (and one-to-one conversations when `includeStatus` is provided) are returned. |
 
 * Response:
     - Status code:
@@ -29,9 +40,10 @@
 
     - Header:
 
-| field                   | type   | Description                                                                                                                                              |
-|-------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `X-Nextcloud-Talk-Hash` | string | Sha1 value over some config. When you receive a different value on subsequent requests, the capabilities and the signaling settings should be refreshed. |
+| field                              | type   | Description                                                                                                                                              |
+|------------------------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `X-Nextcloud-Talk-Hash`            | string | Sha1 value over some config. When you receive a different value on subsequent requests, the capabilities and the signaling settings should be refreshed. |
+| `X-Nextcloud-Talk-Modified-Before` | string | Timestamp from before the database request that can be used as `modifiedSince` parameter in the next request                                             |
 
     - Data:
         Array of conversations, each conversation has at least:
