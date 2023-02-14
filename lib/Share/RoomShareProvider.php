@@ -37,6 +37,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Db\TTransactional;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Cache\CappedMemoryCache;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -65,6 +66,7 @@ use OCP\Share\IShareProvider;
  * modifying the share for the other users in the room.
  */
 class RoomShareProvider implements IShareProvider {
+	use TTransactional;
 	// Special share type for user modified room shares
 	public const SHARE_TYPE_USERROOM = 11;
 
@@ -181,19 +183,21 @@ class RoomShareProvider implements IShareProvider {
 			)
 		);
 
-		$shareId = $this->addShareToDB(
-			$share->getSharedWith(),
-			$share->getSharedBy(),
-			$share->getShareOwner(),
-			$share->getNodeType(),
-			$share->getNodeId(),
-			$share->getTarget(),
-			$share->getPermissions(),
-			$share->getToken(),
-			$share->getExpirationDate()
-		);
+		$data = $this->atomic(function () use ($share) {
+			$shareId = $this->addShareToDB(
+				$share->getSharedWith(),
+				$share->getSharedBy(),
+				$share->getShareOwner(),
+				$share->getNodeType(),
+				$share->getNodeId(),
+				$share->getTarget(),
+				$share->getPermissions(),
+				$share->getToken(),
+				$share->getExpirationDate()
+			);
 
-		$data = $this->getRawShare($shareId);
+			return $this->getRawShare($shareId);
+		}, $this->dbConnection);
 
 		return $this->createShareObject($data);
 	}
