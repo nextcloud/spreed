@@ -21,7 +21,7 @@
 
 <template>
 	<div class="grid-main-wrapper" :class="{'is-grid': !isStripe, 'transparent': isLessThanTwoVideos}">
-		<button v-if="isStripe"
+		<button v-if="isStripe && !isRecording"
 			class="stripe--collapse"
 			:aria-label="stripeButtonTooltip"
 			@click="handleClickStripeCollapse">
@@ -88,7 +88,7 @@
 								class="dev-mode-video--self video"
 								:style="{'background': 'url(' + placeholderImage(8) + ')'}" />
 						</template>
-						<LocalVideo v-if="!isStripe && !screenshotMode"
+						<LocalVideo v-if="!isStripe && !isRecording && !screenshotMode"
 							ref="localVideo"
 							class="video"
 							:is-grid="true"
@@ -108,7 +108,7 @@
 							:size="20" />
 					</button>
 				</div>
-				<LocalVideo v-if="isStripe && !screenshotMode"
+				<LocalVideo v-if="isStripe && !isRecording && !screenshotMode"
 					ref="localVideo"
 					class="video"
 					:is-stripe="true"
@@ -240,6 +240,10 @@ export default {
 			default: false,
 		},
 		isSidebar: {
+			type: Boolean,
+			default: false,
+		},
+		isRecording: {
 			type: Boolean,
 			default: false,
 		},

@@ -18,7 +18,8 @@
 -->
 
 <template>
-	<CallView :token="token" />
+	<CallView :token="token"
+		:is-recording="true" />
 </template>
 
 <script>
