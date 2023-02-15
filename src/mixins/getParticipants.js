@@ -85,14 +85,16 @@ const getParticipants = {
 		},
 
 		debounceUpdateParticipants() {
-			if (!this.$store.getters.windowIsVisible()
-				|| !this.$store.getters.getSidebarStatus
-				|| !this.isActive) {
-				this.debounceSlowUpdateParticipants()
+			if (!this.isActive) {
 				return
 			}
 
-			this.debounceFastUpdateParticipants()
+			if (this.$store.getters.windowIsVisible()) {
+				this.debounceFastUpdateParticipants()
+			} else {
+				this.debounceSlowUpdateParticipants()
+			}
+
 		},
 
 		debounceSlowUpdateParticipants: debounce(function() {
