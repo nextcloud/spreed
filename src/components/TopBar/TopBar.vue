@@ -58,6 +58,19 @@
 		<CallTime v-if="isInCall"
 			:start="conversation.callStartTime" />
 
+		<!-- Participants counter -->
+		<NcButton v-if="isInCall && !isOneToOneConversation"
+			v-tooltip="t('spreed', 'Participants in call')"
+			class="top-bar__button"
+			type="tertiary"
+			@click="openSidebar('participants')">
+			<template #icon>
+				<AccountMultiple :size="20"
+					fill-color="#ffffff" />
+			</template>
+			{{ participantsInCall }}
+		</NcButton>
+
 		<!-- Local media controls -->
 		<LocalMediaControls v-if="isInCall"
 			class="local-media-controls"
@@ -108,19 +121,6 @@
 				</NcCounterBubble>
 			</div>
 		</template>
-
-		<!-- participants button -->
-		<NcButton v-if="isInCall && !isOneToOneConversation"
-			v-tooltip="t('spreed', 'Participants in call')"
-			class="top-bar__button"
-			type="tertiary"
-			@click="openSidebar('participants')">
-			<template #icon>
-				<AccountMultiple :size="20"
-					fill-color="#ffffff" />
-			</template>
-			{{ participantsInCall }}
-		</NcButton>
 	</div>
 </template>
 
