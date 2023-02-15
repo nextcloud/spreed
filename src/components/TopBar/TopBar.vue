@@ -309,15 +309,11 @@ export default {
 				this.notifyUnreadMessages(null)
 			}
 		},
+	},
 
-		// Starts and stops the getParticipantsMixin logic
-		isOneToOneConversation(newValue) {
-			if (newValue) {
-				this.initialiseGetParticipantsMixin()
-			} else {
-				this.stopGetParticipantsMixin()
-			}
-		},
+	beforeMount() {
+		// Initialises the get participants mixin for participants counter
+		this.initialiseGetParticipantsMixin()
 	},
 
 	mounted() {
@@ -335,6 +331,8 @@ export default {
 		document.removeEventListener('MSFullscreenChange', this.fullScreenChanged, false)
 		document.removeEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
 		document.body.classList.remove('has-topbar')
+
+		this.stopGetParticipantsMixin()
 	},
 
 	methods: {
