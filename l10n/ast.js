@@ -39,6 +39,7 @@ OC.L10N.register(
     "OK" : "Aceutar",
     "Checking …" : "Comprobando...",
     "Back" : "Atrás",
+    "Confirm" : "Confirmar",
     "Copy link" : "Copiar enllaz",
     "Waiting for others to join the call …" : "Esperando que los otros se xunan a la llamada...",
     "Dismiss" : "Escartar",
