@@ -262,6 +262,7 @@ OC.L10N.register(
     "OK" : "Goed",
     "Checking …" : "Gaan tans na …",
     "Back" : "Terug",
+    "Confirm" : "Bevestig",
     "Reset" : "Herstel",
     "Copy link" : "Kopieer skakel",
     "Dismiss" : "Ontslaan",
