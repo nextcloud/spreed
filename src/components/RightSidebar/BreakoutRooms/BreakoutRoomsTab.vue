@@ -177,17 +177,7 @@ export default {
 
 	computed: {
 		breakoutRooms() {
-			// Return an empty array until the conversations object is populated
-			if (!this.hasBreakoutRooms) {
-				return []
-			}
-			return this.$store.getters.breakoutRoomsReferences(this.token).map(reference => {
-				return this.$store.getters.conversation(reference)
-			})
-		},
-
-		breakoutRoomsReferences() {
-			return this.$store.getters.breakoutRoomsReferences(this.token)
+			return this.$store.getters.breakoutRooms(this.token)
 		},
 
 		breakoutRoomsConfigured() {
@@ -200,10 +190,6 @@ export default {
 
 		moveParticipantsButtonTitle() {
 			return t('spreed', 'Reorganize participants')
-		},
-
-		hasBreakoutRooms() {
-			return this.$store.getters.hasBreakoutRooms(this.token)
 		},
 	},
 
