@@ -160,6 +160,10 @@ export default {
 	overflow: hidden;
 
 	transition: height 0.2s linear;
+
+	&, & * {
+		cursor: inherit;
+	}
 }
 
 .volume-indicator-primary {

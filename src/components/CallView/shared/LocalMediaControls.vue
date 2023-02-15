@@ -319,7 +319,7 @@ export default {
 
 			if (!this.model.attributes.audioAvailable) {
 				return {
-					content: t('spreed', 'No audio'),
+					content: t('spreed', 'No audio. Click to select device'),
 					show: false,
 				}
 			}
@@ -350,7 +350,7 @@ export default {
 
 		audioButtonAriaLabel() {
 			if (!this.model.attributes.audioAvailable) {
-				return t('spreed', 'No audio')
+				return t('spreed', 'No audio. Click to select device')
 			}
 
 			return this.model.attributes.audioEnabled
@@ -387,7 +387,7 @@ export default {
 			}
 
 			if (!this.model.attributes.videoAvailable) {
-				return t('spreed', 'No camera')
+				return t('spreed', 'No video. Click to select device')
 			}
 
 			if (this.model.attributes.videoEnabled) {
@@ -409,7 +409,7 @@ export default {
 
 		videoButtonAriaLabel() {
 			if (!this.model.attributes.videoAvailable) {
-				return t('spreed', 'No camera')
+				return t('spreed', 'No video. Click to select device')
 			}
 
 			if (this.model.attributes.videoEnabled) {
@@ -628,6 +628,7 @@ export default {
 
 		toggleAudio() {
 			if (!this.model.attributes.audioAvailable) {
+				emit('show-settings', {})
 				return
 			}
 
@@ -652,6 +653,7 @@ export default {
 			}
 
 			if (!this.model.attributes.videoAvailable) {
+				emit('show-settings', {})
 				return
 			}
 
@@ -814,7 +816,6 @@ export default {
 .buttons-bar button.no-screensharing-available {
 	&, & * {
 		opacity: .7;
-		cursor: not-allowed;
 	}
 }
 
