@@ -59,7 +59,7 @@
 			:start="conversation.callStartTime" />
 
 		<!-- Participants counter -->
-		<NcButton v-if="isInCall && !isOneToOneConversation"
+		<NcButton v-if="isInCall && !isOneToOneConversation && isModeratorOrUser"
 			v-tooltip="t('spreed', 'Participants in call')"
 			class="top-bar__button"
 			type="tertiary"
@@ -308,6 +308,13 @@ export default {
 			if (!newValue) {
 				// discard notification if the call ends
 				this.notifyUnreadMessages(null)
+			}
+		},
+
+		isModeratorOrUser(newValue) {
+			if (newValue) {
+				// fetch participants immediately when becomes available
+				this.cancelableGetParticipants()
 			}
 		},
 	},
