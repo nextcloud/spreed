@@ -212,10 +212,8 @@ export default {
 	},
 
 	mounted() {
-		// Get the breakout rooms only if they're not already in the store
-		if (!this.breakoutRooms) {
-			this.getBreakoutRooms()
-		}
+		// Get the breakout room every time the tab is mounted
+		this.getBreakoutRooms()
 	},
 
 	beforeDestroy() {
