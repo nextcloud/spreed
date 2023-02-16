@@ -29,6 +29,12 @@ import CallParticipantModel from '../../../utils/webrtc/models/CallParticipantMo
 
 import VideoVue from './VideoVue.vue'
 
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+	observe: jest.fn(),
+	unobserve: jest.fn(),
+	disconnect: jest.fn(),
+}))
+
 describe('VideoVue.vue', () => {
 	let localVue
 	let store
