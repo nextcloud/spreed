@@ -32,41 +32,66 @@ import {
 	reorganizeAttendees,
 } from '../services/breakoutRoomsService.js'
 import { showError } from '@nextcloud/dialogs'
-import { set } from 'vue'
+import Vue from 'vue'
 import { emit } from '@nextcloud/event-bus'
 
 const state = {
-	breakoutRoomsReferences: {},
+	breakoutRooms: {},
 }
 
 const getters = {
-	breakoutRoomsReferences: (state) => (token) => {
-		if (!state.breakoutRoomsReferences?.[token]) {
+	breakoutRooms: (state) => (token) => {
+		if (!state.breakoutRooms[token]) {
 			return []
 		}
-		return state.breakoutRoomsReferences?.[token]
-	},
-
-	hasBreakoutRooms: (state, getters, rootState) => (token) => {
-		if (!state.breakoutRoomsReferences?.[token]) {
-			return false
-		}
-		return !!state.breakoutRoomsReferences?.[token]
-			.every(breakoutRoomToken => rootState.conversationsStore.conversations?.[breakoutRoomToken])
+		return state.breakoutRooms?.[token]
 	},
 }
 
 const mutations = {
-	addBreakoutRoomsReferences(state, { token, breakoutRoomsReferences }) {
-		if (!state.breakoutRoomsReferences[token]) {
-			set(state.breakoutRoomsReferences, token, [])
+	/**
+	 * Adds a breakout room to the store.
+	 *
+	 * @param {object} state current store state;
+	 * @param {object} conversation the conversation;
+	 * @param conversation.parentRoomToken
+	 * @param parentRoomToken the parent room token;
+	 * @param breakoutRoom
+	 * @param conversation.breakoutRoom
+	 */
+	addBreakoutRoom(state, { parentRoomToken, breakoutRoom }) {
+		if (!state.breakoutRooms[parentRoomToken]) {
+			Vue.set(state.breakoutRooms, parentRoomToken, [])
 		}
-		state.breakoutRoomsReferences[token] = breakoutRoomsReferences
+		Vue.set(state.breakoutRooms, parentRoomToken, [...state.breakoutRooms[parentRoomToken], breakoutRoom])
 	},
 
-	removeReferences(state, token) {
-		set(state.breakoutRoomsReferences, token, [])
+	// Deletes all breakout rooms for a given parent room token
+	deleteBreakoutRooms(state, parentRoomToken) {
+		Vue.delete(state.breakoutRooms, parentRoomToken)
 	},
+}
+
+/**
+ * The breakout rooms api return an array with mixed breakout rooms and "parent" conversations, we want to add the
+ * breakout rooms to this store and update the parent conversations in the conversations store.
+ *
+ * @param conversationsList the array of mixed breakout rooms and "parent" conversation
+ * @param parentRoomToken
+ * @param context the context object
+ */
+const processConversations = (conversationsList, parentRoomToken, context) => {
+
+	conversationsList.forEach(conversation => {
+		if (conversation.token === parentRoomToken) {
+			context.commit('addConversation', conversation)
+		} else {
+			context.commit('addBreakoutRoom', {
+				parentRoomToken,
+				breakoutRoom: conversation,
+			})
+		}
+	})
 }
 
 const actions = {
@@ -75,25 +100,13 @@ const actions = {
 			const response = await configureBreakoutRooms(token, mode, amount, attendeeMap)
 			// Get the participants of the breakout rooms
 			context.dispatch('getBreakoutRoomsParticipantsAction', { token })
-			const breakoutRoomsReferences = []
 
-			// Add breakout rooms and conversations to the conversations store
-			response.data.ocs.data.forEach(conversation => {
-				context.commit('addConversation', conversation)
-				if (conversation.token !== token) {
-					breakoutRoomsReferences.push(conversation.token)
-				}
-			})
-
-			// Add breakout rooms references to this store
-			context.commit('addBreakoutRoomsReferences', {
-				token,
-				breakoutRoomsReferences,
-			})
+			processConversations(response.data.ocs.data, token, context)
 
 			// Open the sidebar and switch to the breakout rooms tab
 			emit('spreed:select-active-sidebar-tab', 'breakout-rooms')
 			context.dispatch('showSidebar')
+
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while creating breakout rooms'))
@@ -105,10 +118,9 @@ const actions = {
 			const response = await reorganizeAttendees(token, attendeeMap)
 			// Get the participants of the breakout rooms
 			context.dispatch('getBreakoutRoomsParticipantsAction', { token })
-			// Add breakout rooms and conversations to the conversations store
-			response.data.ocs.data.forEach(conversation => {
-				context.commit('addConversation', conversation)
-			})
+
+			processConversations(response.data.ocs.data, token, context)
+
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while re-ordering the attendees'))
@@ -119,10 +131,12 @@ const actions = {
 		try {
 			const response = await deleteBreakoutRooms(token)
 			const conversation = response.data.ocs.data
+
 			// Update the parent conversation with the new configuration
 			context.commit('addConversation', conversation)
-			// Remove references from this store
-			context.commit('removeReferences', token)
+
+			// Remove breakout rooms from this store
+			context.commit('deleteBreakoutRooms', token)
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while deleting breakout rooms'))
@@ -132,10 +146,9 @@ const actions = {
 	async getBreakoutRoomsAction(context, { token }) {
 		try {
 			const response = await getBreakoutRooms(token)
-			context.commit('addBreakoutRoomsReferences', {
-				token,
-				breakoutRoomsReferences: response.data.ocs.data.map(conversation => conversation.token),
-			})
+
+			processConversations(response.data.ocs.data, token, context)
+
 		} catch (error) {
 			console.error(error)
 		}
@@ -144,10 +157,8 @@ const actions = {
 	async startBreakoutRoomsAction(context, token) {
 		try {
 			const response = await startBreakoutRooms(token)
-			// Add breakout rooms and conversations to the conversations store
-			response.data.ocs.data.forEach(conversation => {
-				context.commit('addConversation', conversation)
-			})
+
+			processConversations(response.data.ocs.data, token, context)
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while starting breakout rooms'))
@@ -157,10 +168,8 @@ const actions = {
 	async stopBreakoutRoomsAction(context, token) {
 		try {
 			const response = await stopBreakoutRooms(token)
-			// Add breakout rooms and conversations to the conversations store
-			response.data.ocs.data.forEach(conversation => {
-				context.commit('addConversation', conversation)
-			})
+
+			processConversations(response.data.ocs.data, token, context)
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while stopping breakout rooms'))
@@ -181,8 +190,8 @@ const actions = {
 			const response = await getBreakoutRoomsParticipants(token)
 
 			// Purge the participants of the breakout rooms before adding the updated ones
-			context.state.breakoutRoomsReferences[token].forEach(breakoutRoomToken => {
-				context.commit('purgeParticipantsStore', breakoutRoomToken)
+			context.state.breakoutRooms[token].forEach(breakoutRoom => {
+				context.commit('purgeParticipantsStore', breakoutRoom.token)
 			})
 
 			// Purge the participants of the main room
