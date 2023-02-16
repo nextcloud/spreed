@@ -47,7 +47,7 @@
 			</template>
 			<ChatView :is-visible="opened" />
 		</NcAppSidebarTab>
-		<NcAppSidebarTab v-if="getUserId && !isOneToOne"
+		<NcAppSidebarTab v-if="(getUserId || isModeratorOrUser) && !isOneToOne"
 			id="participants"
 			ref="participantsTab"
 			:order="2"
@@ -311,6 +311,14 @@ export default {
 			console.debug('Sidebar slots changed, re rendering')
 			this.$forceUpdate()
 		},
+
+		// Switch tab for guest if he is demoted from moderators
+		isModeratorOrUser(newValue) {
+			if (!newValue) {
+				this.activeTab = 'chat'
+			}
+		},
+
 	},
 
 	mounted() {

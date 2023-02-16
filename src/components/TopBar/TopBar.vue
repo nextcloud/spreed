@@ -58,6 +58,19 @@
 		<CallTime v-if="isInCall"
 			:start="conversation.callStartTime" />
 
+		<!-- Participants counter -->
+		<NcButton v-if="isInCall && !isOneToOneConversation && isModeratorOrUser"
+			v-tooltip="t('spreed', 'Participants in call')"
+			class="top-bar__button"
+			type="tertiary"
+			@click="openSidebar('participants')">
+			<template #icon>
+				<AccountMultiple :size="20"
+					fill-color="#ffffff" />
+			</template>
+			{{ participantsInCall }}
+		</NcButton>
+
 		<!-- Local media controls -->
 		<LocalMediaControls v-if="isInCall"
 			class="local-media-controls"
@@ -107,19 +120,6 @@
 					{{ unreadMessagesCounter }}
 				</NcCounterBubble>
 			</div>
-
-			<!-- participants button -->
-			<NcButton v-if="isInCall && !isOneToOneConversation"
-				class="top-bar__button"
-				close-after-click="true"
-				type="tertiary"
-				@click="openSidebar('participants')">
-				<template #icon>
-					<AccountMultiple :size="20"
-						fill-color="#ffffff" />
-				</template>
-				{{ participantsInCall }}
-			</NcButton>
 		</template>
 	</div>
 </template>
@@ -278,7 +278,7 @@ export default {
 		},
 
 		participantsInCall() {
-			return this.$store.getters.participantsInCall(this.token) ? this.$store.getters.participantsInCall(this.token) : ''
+			return this.$store.getters.participantsInCall(this.token) || ''
 		},
 	},
 
@@ -311,14 +311,17 @@ export default {
 			}
 		},
 
-		// Starts and stops the getParticipantsMixin logic
-		isOneToOneConversation(newValue) {
+		isModeratorOrUser(newValue) {
 			if (newValue) {
-				this.initialiseGetParticipantsMixin()
-			} else {
-				this.stopGetParticipantsMixin()
+				// fetch participants immediately when becomes available
+				this.cancelableGetParticipants()
 			}
 		},
+	},
+
+	beforeMount() {
+		// Initialises the get participants mixin for participants counter
+		this.initialiseGetParticipantsMixin()
 	},
 
 	mounted() {
@@ -336,6 +339,8 @@ export default {
 		document.removeEventListener('MSFullscreenChange', this.fullScreenChanged, false)
 		document.removeEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
 		document.body.classList.remove('has-topbar')
+
+		this.stopGetParticipantsMixin()
 	},
 
 	methods: {
@@ -399,6 +404,7 @@ export default {
 			color: #fff;
 		}
 
+		& button.top-bar__button:hover,
 		:deep(.action-item--open .action-item__menutoggle),
 		:deep(.action-item__menutoggle:hover),
 		:deep(.action-item--single:hover),
@@ -429,6 +435,7 @@ export default {
 			top: 24px;
 			right: 2px;
 			pointer-events: none;
+			color: var(--color-primary-element);
 		}
 	}
 }

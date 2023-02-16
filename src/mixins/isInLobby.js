@@ -38,6 +38,13 @@ export default {
 					|| this.conversation.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
 		},
 
+		isModeratorOrUser() {
+			// Check isDummyConversation, because the participant type by default is USER
+			return this.conversation && !this.conversation.isDummyConversation && (this.isModerator
+				|| this.conversation.participantType === PARTICIPANT.TYPE.USER
+				|| this.conversation.participantType === PARTICIPANT.TYPE.USER_SELF_JOINED)
+		},
+
 		isInLobby() {
 			return this.conversation
 				&& this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
