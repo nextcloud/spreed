@@ -963,6 +963,10 @@ Signaling.Standalone.prototype.sendHello = function() {
 				},
 			},
 		}
+		if (this.settings.helloAuthParams.internal) {
+			msg.hello.auth.type = 'internal'
+			msg.hello.auth.params = this.settings.helloAuthParams.internal
+		}
 	}
 	this.doSend(msg, this.helloResponseReceived.bind(this))
 }
@@ -1026,7 +1030,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 		}
 	}
 
-	if (!this.hasFeature('audio-video-permissions') || !this.hasFeature('incall-all') || !this.hasFeature('switchto')) {
+	if (!this.settings.helloAuthParams.internal && (!this.hasFeature('audio-video-permissions') || !this.hasFeature('incall-all') || !this.hasFeature('switchto'))) {
 		showError(
 			t('spreed', 'The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator.'),
 			{
@@ -1045,7 +1049,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 	}
 
 	this._trigger('connect')
-	if (!resumedSession && this.currentRoomToken && this.nextcloudSessionId) {
+	if (!resumedSession && this.currentRoomToken && (this.nextcloudSessionId || this.settings.helloAuthParams.internal)) {
 		this.joinRoom(this.currentRoomToken, this.nextcloudSessionId)
 	}
 }
@@ -1146,6 +1150,21 @@ Signaling.Standalone.prototype.joinCall = function(token, flags) {
 		this.pendingJoinCall.promise = promise
 
 		return this.pendingJoinCall.promise
+	}
+
+	// When using an internal client no request is done and joining the call
+	// just succeeds (the incall flags were already set when the room was
+	// joined).
+	if (this.settings.helloAuthParams.internal) {
+		return new Promise((resolve, reject) => {
+			this._trigger('beforeJoinCall', [token])
+
+			this.currentCallToken = token
+			this.currentCallFlags = flags
+			this._trigger('joinCall', [token])
+
+			resolve()
+		})
 	}
 
 	return Signaling.Base.prototype.joinCall.apply(this, arguments)

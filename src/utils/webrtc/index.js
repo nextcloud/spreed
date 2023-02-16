@@ -49,7 +49,7 @@ let tokensInSignaling = {}
 /**
  * @param {string} token The token of the conversation to get the signaling settings for
  */
-async function getSignalingSettings(token) {
+async function getSignalingSettings(token, options) {
 	// If getSignalingSettings is called again while a previous one was still
 	// being executed the previous one is cancelled.
 	if (cancelFetchSignalingSettings) {
@@ -62,7 +62,7 @@ async function getSignalingSettings(token) {
 
 	let settings = null
 	try {
-		const response = await request({ token })
+		const response = await request({ token }, options)
 		settings = response.data.ocs.data
 
 		settings.token = token
@@ -77,6 +77,17 @@ async function getSignalingSettings(token) {
 	}
 
 	return settings
+}
+
+async function signalingGetSettingsForRecording(token, random, checksum) {
+	const options = {
+		headers: {
+			'Talk-Recording-Random': random,
+			'Talk-Recording-Checksum': checksum,
+		},
+	}
+
+	return getSignalingSettings(token, options)
 }
 
 /**
@@ -243,6 +254,73 @@ async function signalingJoinCall(token, flags, silent) {
 }
 
 /**
+ * Join the call of the given conversation for recording with an internal
+ * client.
+ *
+ * The authentication parameters for the internal client must contain:
+ * - random: string of at least 32 characters
+ * - token: the SHA-256 HMAC of random with the internal secret of the signaling
+ *   server
+ * - backend: the URL of the Nextcloud server that the conversation belongs to
+ *
+ * @param {string} token Conversation to join the call
+ * @param {object} settings the settings used to create the signaling connection
+ * @param {object} internalClientAuthParams the authentication parameters for
+ *        the internal client
+ * @return {Promise<void>} Resolved with the actual flags based on the
+ *          available media
+ */
+async function signalingJoinCallForRecording(token, settings, internalClientAuthParams) {
+	mediaDevicesManager.set('audioInputId', null)
+	mediaDevicesManager.set('videoInputId', null)
+
+	settings.helloAuthParams.internal = internalClientAuthParams
+
+	signaling = Signaling.createConnection(settings)
+
+	// No Nextcloud session ID is needed to join the room with an internal
+	// client.
+	await signaling.joinRoom(token)
+
+	pendingJoinCallToken = token
+
+	setupWebRtc()
+
+	const _signaling = signaling
+
+	return new Promise((resolve, reject) => {
+		startedCall = resolve
+		failedToStartCall = reject
+
+		const silent = true
+
+		localMediaModel.disableAudio()
+		localMediaModel.disableVideo()
+		localMediaModel.disableVirtualBackground()
+
+		const startCallOnceLocalMediaStarted = (configuration) => {
+			webRtc.off('localMediaStarted', startCallOnceLocalMediaStarted)
+			webRtc.off('localMediaError', startCallOnceLocalMediaError)
+
+			startCall(_signaling, configuration, silent)
+		}
+		const startCallOnceLocalMediaError = () => {
+			webRtc.off('localMediaStarted', startCallOnceLocalMediaStarted)
+			webRtc.off('localMediaError', startCallOnceLocalMediaError)
+
+			startCall(_signaling, null, silent)
+		}
+
+		// ".once" can not be used, as both handlers need to be removed when
+		// just one of them is executed.
+		webRtc.on('localMediaStarted', startCallOnceLocalMediaStarted)
+		webRtc.on('localMediaError', startCallOnceLocalMediaError)
+
+		webRtc.startMedia(token, PARTICIPANT.CALL_FLAG.IN_CALL)
+	})
+}
+
+/**
  * Leave the call of the given conversation
  *
  * @param {string} token Conversation to leave the call
@@ -292,8 +370,10 @@ export {
 
 	callAnalyzer,
 
+	signalingGetSettingsForRecording,
 	signalingJoinConversation,
 	signalingJoinCall,
+	signalingJoinCallForRecording,
 	signalingLeaveCall,
 	signalingLeaveConversation,
 	signalingKill,
