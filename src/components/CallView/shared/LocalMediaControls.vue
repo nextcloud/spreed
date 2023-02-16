@@ -151,12 +151,12 @@
 				</NcActionButton>
 			</NcActions>
 			<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['r']"
-				v-tooltip="disableKeyboardShortcuts ? t('spreed', 'Lower hand') : t('spreed', 'Lower hand (R)')"
+				v-tooltip="lowerHandAriaLabel"
+				:aria-label="lowerHandAriaLabel"
 				type="tertiary-no-background"
 				class="lower-hand"
 				:class="model.attributes.raisedHand.state ? '' : 'hidden-visually'"
 				:tabindex="model.attributes.raisedHand.state ? 0 : -1"
-				:aria-label="disableKeyboardShortcuts ? t('spreed', 'Lower hand') : t('spreed', 'Lower hand (R)')"
 				@shortkey="toggleHandRaised"
 				@click.stop="toggleHandRaised">
 				<template #icon>
@@ -280,10 +280,9 @@ export default {
 		},
 
 		toggleVirtualBackgroundButtonLabel() {
-			if (!this.isVirtualBackgroundEnabled) {
-				return t('spreed', 'Blur background')
-			}
-			return t('spreed', 'Disable background blur')
+			return this.isVirtualBackgroundEnabled
+				? t('spreed', 'Disable background blur')
+				: t('spreed', 'Blur background')
 		},
 
 		conversation() {
@@ -320,7 +319,7 @@ export default {
 
 			if (!this.model.attributes.audioAvailable) {
 				return {
-					content: t('spreed', 'No audio'),
+					content: t('spreed', 'No audio. Click to select device'),
 					show: false,
 				}
 			}
@@ -334,17 +333,13 @@ export default {
 
 			let content = ''
 			if (this.model.attributes.audioEnabled) {
-				if (this.disableKeyboardShortcuts) {
-					content = t('spreed', 'Mute audio')
-				} else {
-					content = t('spreed', 'Mute audio (M)')
-				}
+				content = this.disableKeyboardShortcuts
+					? t('spreed', 'Mute audio')
+					: t('spreed', 'Mute audio (M)')
 			} else {
-				if (this.disableKeyboardShortcuts) {
-					content = t('spreed', 'Unmute audio')
-				} else {
-					content = t('spreed', 'Unmute audio (M)')
-				}
+				content = this.disableKeyboardShortcuts
+					? t('spreed', 'Unmute audio')
+					: t('spreed', 'Unmute audio (M)')
 			}
 
 			return {
@@ -355,9 +350,18 @@ export default {
 
 		audioButtonAriaLabel() {
 			if (!this.model.attributes.audioAvailable) {
-				return t('spreed', 'No audio')
+				return t('spreed', 'No audio. Click to select device')
 			}
-			return this.model.attributes.audioEnabled ? t('spreed', 'Mute audio') : t('spreed', 'Unmute audio')
+
+			return this.model.attributes.audioEnabled
+				? t('spreed', 'Mute audio')
+				: t('spreed', 'Unmute audio')
+		},
+
+		lowerHandAriaLabel() {
+			return this.disableKeyboardShortcuts
+				? t('spreed', 'Lower hand')
+				: t('spreed', 'Lower hand (R)')
 		},
 
 		videoButtonClass() {
@@ -383,35 +387,29 @@ export default {
 			}
 
 			if (!this.model.attributes.videoAvailable) {
-				return t('spreed', 'No camera')
+				return t('spreed', 'No video. Click to select device')
 			}
 
 			if (this.model.attributes.videoEnabled) {
-				if (this.disableKeyboardShortcuts) {
-					return t('spreed', 'Disable video')
-				}
-
-				return t('spreed', 'Disable video (V)')
+				return this.disableKeyboardShortcuts
+					? t('spreed', 'Disable video')
+					: t('spreed', 'Disable video (V)')
 			}
 
 			if (!this.model.getWebRtc() || !this.model.getWebRtc().connection || this.model.getWebRtc().connection.getSendVideoIfAvailable()) {
-				if (this.disableKeyboardShortcuts) {
-					return t('spreed', 'Enable video')
-				}
-
-				return t('spreed', 'Enable video (V)')
+				return this.disableKeyboardShortcuts
+					? t('spreed', 'Enable video')
+					: t('spreed', 'Enable video (V)')
 			}
 
-			if (this.disableKeyboardShortcuts) {
-				return t('spreed', 'Enable video - Your connection will be briefly interrupted when enabling the video for the first time')
-			}
-
-			return t('spreed', 'Enable video (V) - Your connection will be briefly interrupted when enabling the video for the first time')
+			return this.disableKeyboardShortcuts
+				? t('spreed', 'Enable video - Your connection will be briefly interrupted when enabling the video for the first time')
+				: t('spreed', 'Enable video (V) - Your connection will be briefly interrupted when enabling the video for the first time')
 		},
 
 		videoButtonAriaLabel() {
 			if (!this.model.attributes.videoAvailable) {
-				return t('spreed', 'No camera')
+				return t('spreed', 'No video. Click to select device')
 			}
 
 			if (this.model.attributes.videoEnabled) {
@@ -445,7 +443,9 @@ export default {
 				return t('spreed', 'No screensharing')
 			}
 
-			return this.model.attributes.localScreen ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')
+			return this.model.attributes.localScreen
+				? t('spreed', 'Screensharing options')
+				: t('spreed', 'Enable screensharing')
 		},
 
 		screenSharingButtonAriaLabel() {
@@ -453,7 +453,9 @@ export default {
 				return ''
 			}
 
-			return this.model.attributes.localScreen ? t('spreed', 'Screensharing options') : t('spreed', 'Enable screensharing')
+			return this.model.attributes.localScreen
+				? t('spreed', 'Screensharing options')
+				: t('spreed', 'Enable screensharing')
 		},
 
 		container() {
@@ -626,6 +628,7 @@ export default {
 
 		toggleAudio() {
 			if (!this.model.attributes.audioAvailable) {
+				emit('show-settings', {})
 				return
 			}
 
@@ -650,6 +653,7 @@ export default {
 			}
 
 			if (!this.model.attributes.videoAvailable) {
+				emit('show-settings', {})
 				return
 			}
 
@@ -812,7 +816,6 @@ export default {
 .buttons-bar button.no-screensharing-available {
 	&, & * {
 		opacity: .7;
-		cursor: not-allowed;
 	}
 }
 
