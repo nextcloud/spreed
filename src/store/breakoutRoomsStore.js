@@ -41,7 +41,7 @@ const state = {
 
 const getters = {
 	breakoutRooms: (state) => (token) => {
-		if (!state.breakoutRooms?.[token]) {
+		if (!state.breakoutRooms[token]) {
 			return []
 		}
 		return state.breakoutRooms?.[token]
@@ -66,8 +66,9 @@ const mutations = {
 		Vue.set(state.breakoutRooms, parentRoomToken, [...state.breakoutRooms[parentRoomToken], breakoutRoom])
 	},
 
-	deleteBreakoutRooms(state, token) {
-		Vue.delete(state.breakoutRooms, token)
+	// Deletes all breakout rooms for a given parent room token
+	deleteBreakoutRooms(state, parentRoomToken) {
+		Vue.delete(state.breakoutRooms, parentRoomToken)
 	},
 }
 
@@ -76,7 +77,6 @@ const mutations = {
  * breakout rooms to this store and update the parent conversations in the conversations store.
  *
  * @param conversationsList the array of mixed breakout rooms and "parent" conversation
- * @param parentRoomTooken
  * @param parentRoomToken
  * @param context the context object
  */

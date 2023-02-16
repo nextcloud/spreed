@@ -213,7 +213,7 @@ export default {
 
 	mounted() {
 		// Get the breakout rooms only if they're not already in the store
-		if (!this.hasBreakoutRooms) {
+		if (!this.breakoutRooms) {
 			this.getBreakoutRooms()
 		}
 	},
