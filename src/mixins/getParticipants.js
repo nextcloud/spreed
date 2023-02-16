@@ -110,7 +110,7 @@ const getParticipants = {
 		}, 3000),
 
 		async cancelableGetParticipants() {
-			if (this.token === '' || this.isInLobby) {
+			if (this.token === '' || this.isInLobby || !this.isModeratorOrUser) {
 				return
 			}
 
