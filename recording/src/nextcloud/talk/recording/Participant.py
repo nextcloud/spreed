@@ -284,6 +284,14 @@ class SeleniumHelper:
 
         If realtime logs are available logs are printed as soon as they are
         received. Otherwise they will be printed once the script has finished.
+
+        The value returned by the script will be in turn returned by this
+        function; the type will be respected and adjusted as needed (so a
+        JavaScript string is returned as a Python string, but a JavaScript
+        object is returned as a Python dict). If nothing is returned by the
+        script None will be returned.
+
+        :return: the value returned by the script, or None
         """
 
         # Real time logs are enabled while the command is being executed.
@@ -291,7 +299,7 @@ class SeleniumHelper:
             self.printLogs()
             self.bidiLogsHelper.setRealtimeLogsEnabled(True)
 
-        self.driver.execute_script(script)
+        result = self.driver.execute_script(script)
 
         if self.bidiLogsHelper:
             # Give it some time to receive the last real time logs before
@@ -301,6 +309,8 @@ class SeleniumHelper:
             self.bidiLogsHelper.setRealtimeLogsEnabled(False)
 
         self.printLogs()
+
+        return result
 
     def executeAsync(self, script):
         """
@@ -321,6 +331,17 @@ class SeleniumHelper:
 
         If realtime logs are available logs are printed as soon as they are
         received. Otherwise they will be printed once the script has finished.
+
+        The value returned by the script will be in turn returned by this
+        function; the type will be respected and adjusted as needed (so a
+        JavaScript string is returned as a Python string, but a JavaScript
+        object is returned as a Python dict). If nothing is returned by the
+        script None will be returned.
+
+        The returned value must be explicitly assigned to "returnValue" in the
+        script.
+
+        :return: the value returned by the script, or None
         """
 
         # Real time logs are enabled while the command is being executed.
@@ -335,14 +356,14 @@ class SeleniumHelper:
 
         # await is not valid in the root context in Firefox, so the script to be
         # executed needs to be wrapped in an async function.
-        script = '(async() => { ' + script  + ' })().catch(error => { console.error(error) {RETURN} })'
+        script = 'returnValue = undefined; (async() => { ' + script  + ' })().catch(error => { console.error(error) {RETURN} })'
 
         # Asynchronous scripts need to explicitly signal that they are finished
         # by invoking the callback injected as the last argument.
         # https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute_async
-        script = script.replace('{RETURN}', '; arguments[arguments.length - 1]()')
+        script = script.replace('{RETURN}', '; arguments[arguments.length - 1](returnValue)')
 
-        self.driver.execute_async_script(script)
+        result = self.driver.execute_async_script(script)
 
         if self.bidiLogsHelper:
             # Give it some time to receive the last real time logs before
@@ -352,6 +373,8 @@ class SeleniumHelper:
             self.bidiLogsHelper.setRealtimeLogsEnabled(False)
 
         self.printLogs()
+
+        return result
 
 
 class Participant():
