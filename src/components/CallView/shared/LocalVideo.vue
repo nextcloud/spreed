@@ -20,6 +20,7 @@
 
 <template>
 	<div id="localVideoContainer"
+		ref="videoContainer"
 		class="videoContainer videoView"
 		:class="videoContainerClass"
 		@mouseover="showShadow"
@@ -27,12 +28,14 @@
 		@click="handleClickVideo">
 		<div v-show="localMediaModel.attributes.videoEnabled"
 			:class="videoWrapperClass"
-			class="videoWrapper">
+			class="videoWrapper"
+			:style="videoWrapperStyle">
 			<video id="localVideo"
 				ref="video"
 				disablePictureInPicture="true"
 				:class="videoClass"
-				class="video" />
+				class="video"
+				@playing="updateVideoAspectRatio" />
 		</div>
 		<div v-if="!localMediaModel.attributes.videoEnabled && !isSidebar" class="avatar-container">
 			<VideoBackground v-if="isGrid || isStripe"
@@ -123,6 +126,9 @@ export default {
 	data() {
 		return {
 			notificationHandle: null,
+			videoAspectRatio: null,
+			containerAspectRatio: null,
+			resizeObserver: null,
 		}
 	},
 
@@ -147,6 +153,15 @@ export default {
 				'video-container-stripe': this.isStripe,
 				'video-container-big': this.isBig,
 			}
+		},
+
+		videoWrapperStyle() {
+			if (!this.containerAspectRatio || !this.videoAspectRatio) {
+				return
+			}
+			return (this.containerAspectRatio > this.videoAspectRatio)
+				? `width: ${this.$refs.videoContainer.clientHeight * this.videoAspectRatio}px`
+				: `height: ${this.$refs.videoContainer.clientWidth / this.videoAspectRatio}px`
 		},
 
 		userId() {
@@ -259,6 +274,17 @@ export default {
 	mounted() {
 		// Set initial state
 		this._setLocalStream(this.localMediaModel.attributes.localStream)
+
+		if (this.isBig) {
+			this.resizeObserver = new ResizeObserver(this.updateContainerAspectRatio)
+			this.resizeObserver.observe(this.$refs.videoContainer)
+		}
+	},
+
+	beforeDestroy() {
+		if (this.resizeObserver) {
+			this.resizeObserver.disconnect()
+		}
 	},
 
 	destroyed() {
@@ -274,8 +300,8 @@ export default {
 
 		_handleForcedMute() {
 			// The default toast selector is "body-user", but as this toast can
-			// be shown to guests too a generic selector valid both for logged
-			// in users and guests needs to be used instead (undefined selects
+			// be shown to guests too, a generic selector valid both for logged-in
+			// users and guests needs to be used instead (undefined selects
 			// the body element).
 			showInfo(t('spreed', 'You have been muted by a moderator'), { selector: undefined })
 		},
@@ -299,6 +325,19 @@ export default {
 		handleStopFollowing() {
 			this.$store.dispatch('selectedVideoPeerId', null)
 			this.$store.dispatch('stopPresentation')
+		},
+
+		updateContainerAspectRatio([{ target }]) {
+			this.containerAspectRatio = target.clientWidth / target.clientHeight
+		},
+
+		updateVideoAspectRatio() {
+			if (!this.isBig) {
+				return
+			}
+			this.videoAspectRatio = this.localMediaModel.attributes.localStream.getVideoTracks()?.[0].getSettings().aspectRatio
+				// Fallback for Firefox
+				?? this.$refs.video.videoWidth / this.$refs.video.videoHeight
 		},
 	},
 
@@ -337,6 +376,18 @@ export default {
 	height: 242px !important;
 }
 
+.video-container-big {
+	position: absolute;
+	width: calc(100% - 16px);
+	height: calc(100% - 8px);
+	display: flex;
+	flex-direction: column;
+
+	& .videoWrapper {
+		margin: auto;
+	}
+}
+
 .videoWrapper,
 .video {
 	height: 100%;
@@ -361,12 +412,6 @@ export default {
 
 .avatar-container {
 	margin: auto;
-}
-
-.video-container-big {
-	position: absolute;
-	width: calc(100% - 16px);
-	height: calc(100% - 8px);
 }
 
 .hover-shadow {
