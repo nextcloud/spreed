@@ -219,6 +219,9 @@ class SeleniumHelper:
 
         options.set_preference('media.navigator.permission.disabled', True)
 
+        # Allow to play media without user interaction.
+        options.set_preference('media.autoplay.default', 0)
+
         options.add_argument('--kiosk')
         options.add_argument(f'--width={width}')
         options.add_argument(f'--height={height}')
@@ -395,22 +398,7 @@ class Participant():
         :param token: the token of the room to join.
         """
 
-        self.seleniumHelper.driver.get(self.nextcloudUrl + '/index.php/call/' + token)
-
-        # Hack to prevent the participant from using any device that might be
-        # available, including PulseAudio's "Monitor of Dummy Output".
-        self.seleniumHelper.execute('navigator.mediaDevices.getUserMedia = async function() { throw new Error() }')
-
-        WebDriverWait(self.seleniumHelper.driver, timeout=30).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.top-bar #call_button:not(:disabled)'))
-        self.seleniumHelper.driver.find_element(By.CSS_SELECTOR, '.top-bar #call_button').click()
-
-        try:
-            # If the device selector is shown click on the "Join call" button
-            # in the dialog to actually join the call.
-            WebDriverWait(self.seleniumHelper.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.device-checker #call_button'))
-            self.seleniumHelper.driver.find_element(By.CSS_SELECTOR, '.device-checker #call_button').click()
-        except:
-            pass
+        self.seleniumHelper.driver.get(self.nextcloudUrl + '/index.php/call/' + token + '/recording')
 
     def leaveCall(self):
         """

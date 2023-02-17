@@ -104,6 +104,7 @@
 			<Grid v-if="!isSidebar"
 				v-bind="$attrs"
 				:is-stripe="!isGrid"
+				:is-recording="isRecording"
 				:token="token"
 				:fit-video="true"
 				:has-pagination="true"
@@ -171,6 +172,11 @@ export default {
 		},
 		// Determines whether this component is used in the sidebar
 		isSidebar: {
+			type: Boolean,
+			default: false,
+		},
+		// Determines whether this component is used in the recording view
+		isRecording: {
 			type: Boolean,
 			default: false,
 		},

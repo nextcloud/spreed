@@ -23,6 +23,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import { getRootUrl, generateUrl } from '@nextcloud/router'
+import CallView from '../components/CallView/CallView.vue'
 import MainView from '../views/MainView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 import SessionConflictView from '../views/SessionConflictView.vue'
@@ -65,6 +66,12 @@ export default new Router({
 			path: '/call/:token',
 			name: 'conversation',
 			component: MainView,
+			props: true,
+		},
+		{
+			path: '/call/:token/recording',
+			name: 'recording',
+			component: CallView,
 			props: true,
 		},
 	],

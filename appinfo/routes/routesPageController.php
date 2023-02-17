@@ -39,5 +39,7 @@ return [
 		['name' => 'Page#showCall', 'url' => '/call/{token}', 'root' => '', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\PageController::authenticatePassword() */
 		['name' => 'Page#authenticatePassword', 'url' => '/call/{token}', 'root' => '', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\PageController::recording() */
+		['name' => 'Page#recording', 'url' => '/call/{token}/recording', 'root' => '', 'verb' => 'GET', 'requirements' => $requirements],
 	],
 ];
