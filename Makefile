@@ -25,7 +25,7 @@ composer-install-dev:
 	composer install
 
 composer-install-production:
-	composer install --no-dev
+	composer install --no-dev --classmap-authoritative
 
 build-js:
 	npm run dev
