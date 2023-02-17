@@ -63,9 +63,9 @@
 			</NcActionButton>
 			<NcActionButton @click="leaveCall(true)">
 				<template #icon>
-					<VideoOff :size="20" />
+					<VideoBoxOff :size="20" />
 				</template>
-				{{ t('spreed', 'End meeting for all') }}
+				{{ t('spreed', 'End call for everyone') }}
 			</NcActionButton>
 		</NcActions>
 	</div>
@@ -83,6 +83,7 @@ import { loadState } from '@nextcloud/initial-state'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import VideoBoxOff from 'vue-material-design-icons/VideoBoxOff.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -97,6 +98,7 @@ export default {
 	components: {
 		NcActions,
 		NcActionButton,
+		VideoBoxOff,
 		VideoIcon,
 		VideoOff,
 		NcButton,
@@ -153,13 +155,9 @@ export default {
 		},
 
 		canEndForAll() {
-			return ((this.conversation.callPermissions !== PARTICIPANT.PERMISSIONS.DEFAULT
-					&& (this.conversation.callPermissions & PARTICIPANT.PERMISSIONS.CALL_START) === 0)
-				|| (this.conversation.defaultPermissions !== PARTICIPANT.PERMISSIONS.DEFAULT
-					&& (this.conversation.defaultPermissions & PARTICIPANT.PERMISSIONS.CALL_START) === 0))
-			 && (this.participantType === PARTICIPANT.TYPE.OWNER
+			return this.participantType === PARTICIPANT.TYPE.OWNER
 				|| this.participantType === PARTICIPANT.TYPE.MODERATOR
-				|| this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
+				|| this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
 		},
 
 		hasCall() {
