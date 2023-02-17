@@ -311,7 +311,7 @@ class PageController extends Controller {
 	 * @param string $token
 	 * @return TemplateResponse|NotFoundResponse
 	 */
-	public function recording(string $token = ''): Response {
+	public function recording(string $token): Response {
 		try {
 			$room = $this->manager->getRoomByToken($token);
 		} catch (RoomNotFoundException $e) {
