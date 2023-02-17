@@ -84,7 +84,8 @@
 		<TopBarMenu :token="token"
 			:show-actions="!isSidebar"
 			:is-sidebar="isSidebar"
-			:model="localMediaModel" />
+			:model="localMediaModel"
+			@open="showBreakoutRoomsEditor = true" />
 
 		<CallButton class="top-bar__button" />
 
@@ -121,6 +122,11 @@
 				</NcCounterBubble>
 			</div>
 		</template>
+
+		<!-- Breakout rooms editor -->
+		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
+			:token="token"
+			@close="showBreakoutRoomsEditor = false" />
 	</div>
 </template>
 
@@ -147,6 +153,7 @@ import TopBarMenu from './TopBarMenu.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import CallTime from './CallTime.vue'
 import MenuIcon from 'vue-material-design-icons/Menu.vue'
+import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 
 export default {
 	name: 'TopBar',
@@ -156,6 +163,7 @@ export default {
 	},
 
 	components: {
+		BreakoutRoomsEditor,
 		NcActionButton,
 		NcActions,
 		NcCounterBubble,
@@ -194,6 +202,7 @@ export default {
 	data: () => {
 		return {
 			unreadNotificationHandle: null,
+			showBreakoutRoomsEditor: false,
 			localCallParticipantModel,
 			localMediaModel,
 		}

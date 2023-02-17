@@ -20,147 +20,139 @@
 -->
 
 <template>
-	<Fragment>
-		<NcActions v-if="!isSidebar"
-			v-shortkey.once="disableKeyboardShortcuts ? null : ['f']"
-			v-tooltip="t('spreed', 'Conversation actions')"
-			class="top-bar__button"
-			:aria-label="t('spreed', 'Conversation actions')"
-			:container="container"
-			@shortkey.native="toggleFullscreen">
-			<!-- Menu icon: white if in call -->
-			<template v-if="isInCall" #icon>
-				<DotsHorizontal :size="20"
-					fill-color="#ffffff" />
-			</template>
-			<template v-if="showActions && isInCall">
-				<!-- Raise hand -->
-				<NcActionButton :close-after-click="true"
-					@click="toggleHandRaised">
-					<!-- The following icon is much bigger than all the others
+	<NcActions v-if="!isSidebar"
+		v-shortkey.once="disableKeyboardShortcuts ? null : ['f']"
+		v-tooltip="t('spreed', 'Conversation actions')"
+		:aria-label="t('spreed', 'Conversation actions')"
+		:container="container"
+		@shortkey.native="toggleFullscreen">
+		<!-- Menu icon: white if in call -->
+		<template v-if="isInCall" #icon>
+			<DotsHorizontal :size="20"
+				fill-color="#ffffff" />
+		</template>
+		<template v-if="showActions && isInCall">
+			<!-- Raise hand -->
+			<NcActionButton :close-after-click="true"
+				@click="toggleHandRaised">
+				<!-- The following icon is much bigger than all the others
 					so we reduce its size -->
-					<template #icon>
-						<HandBackLeft :size="16" />
-					</template>
-					{{ raiseHandButtonLabel }}
-				</NcActionButton>
-
-				<!-- Blur background -->
-				<NcActionButton v-if="isVirtualBackgroundAvailable"
-					:close-after-click="true"
-					@click="toggleVirtualBackground">
-					<template #icon>
-						<BlurOff v-if="isVirtualBackgroundEnabled"
-							:size="20" />
-						<Blur v-else
-							:size="20" />
-					</template>
-					{{ toggleVirtualBackgroundButtonLabel }}
-				</NcActionButton>
-
-				<!-- Mute others -->
-				<template v-if="showModerationOptions && canFullModerate">
-					<NcActionButton :close-after-click="true"
-						@click="forceMuteOthers">
-						<template #icon>
-							<MicrophoneOff :size="20" />
-						</template>
-						{{ t('spreed', 'Mute others') }}
-					</NcActionButton>
-				</template>
-
-				<!-- Device settings -->
-				<NcActionButton :close-after-click="true"
-					@click="showSettings">
-					<template #icon>
-						<VideoIcon :size="20" />
-					</template>
-					{{ t('spreed', 'Devices settings') }}
-				</NcActionButton>
-				<NcActionSeparator />
-			</template>
-
-			<!-- Call layout switcher -->
-			<NcActionButton v-if="showActions && isInCall"
-				:close-after-click="true"
-				@click="changeView">
 				<template #icon>
-					<GridView v-if="!isGrid"
+					<HandBackLeft :size="16" />
+				</template>
+				{{ raiseHandButtonLabel }}
+			</NcActionButton>
+
+			<!-- Blur background -->
+			<NcActionButton v-if="isVirtualBackgroundAvailable"
+				:close-after-click="true"
+				@click="toggleVirtualBackground">
+				<template #icon>
+					<BlurOff v-if="isVirtualBackgroundEnabled"
 						:size="20" />
-					<PromotedView v-else
+					<Blur v-else
 						:size="20" />
 				</template>
-				{{ changeViewText }}
+				{{ toggleVirtualBackgroundButtonLabel }}
 			</NcActionButton>
 
-			<!-- Fullscreen -->
-			<NcActionButton :icon="iconFullscreen"
-				:aria-label="t('spreed', 'Toggle fullscreen')"
-				:close-after-click="true"
-				@click="toggleFullscreen">
-				{{ labelFullscreen }}
-			</NcActionButton>
-
-			<!-- Go to file -->
-			<NcActionLink v-if="isFileConversation"
-				:href="linkToFile">
-				<template #icon>
-					<File :size="20" />
-				</template>
-				{{ t('spreed', 'Go to file') }}
-			</NcActionLink>
-			<NcActionSeparator v-if="showModerationOptions" />
-			<template v-if="showModerationOptions">
+			<!-- Mute others -->
+			<template v-if="showModerationOptions && canFullModerate">
 				<NcActionButton :close-after-click="true"
-					icon="icon-rename"
-					@click="handleRenameConversation">
-					{{ t('spreed', 'Rename conversation') }}
-				</NcActionButton>
-			</template>
-			<!-- Call recording -->
-			<template v-if="canModerateRecording">
-				<NcActionButton v-if="!isRecording && isInCall"
-					:close-after-click="true"
-					@click="startRecording">
+					@click="forceMuteOthers">
 					<template #icon>
-						<RecordCircle :size="20" />
+						<MicrophoneOff :size="20" />
 					</template>
-					{{ t('spreed', 'Start recording') }}
-				</NcActionButton>
-				<NcActionButton v-else-if="isRecording && isInCall"
-					:close-after-click="true"
-					@click="stopRecording">
-					<template #icon>
-						<StopIcon :size="20" />
-					</template>
-					{{ t('spreed', 'Stop recording') }}
+					{{ t('spreed', 'Mute others') }}
 				</NcActionButton>
 			</template>
 
-			<!-- Breakout rooms -->
+			<!-- Device settings -->
 			<NcActionButton :close-after-click="true"
-				@click="openBreakoutRoomsEditor">
+				@click="showSettings">
 				<template #icon>
-					<DotsCircle :size="20" />
+					<VideoIcon :size="20" />
 				</template>
-				{{ t('spreed', 'Setup breakout rooms') }}
+				{{ t('spreed', 'Devices settings') }}
 			</NcActionButton>
+			<NcActionSeparator />
+		</template>
 
-			<!-- Conversation settings -->
+		<!-- Call layout switcher -->
+		<NcActionButton v-if="showActions && isInCall"
+			:close-after-click="true"
+			@click="changeView">
+			<template #icon>
+				<GridView v-if="!isGrid"
+					:size="20" />
+				<PromotedView v-else
+					:size="20" />
+			</template>
+			{{ changeViewText }}
+		</NcActionButton>
+
+		<!-- Fullscreen -->
+		<NcActionButton :icon="iconFullscreen"
+			:aria-label="t('spreed', 'Toggle fullscreen')"
+			:close-after-click="true"
+			@click="toggleFullscreen">
+			{{ labelFullscreen }}
+		</NcActionButton>
+
+		<!-- Go to file -->
+		<NcActionLink v-if="isFileConversation"
+			:href="linkToFile">
+			<template #icon>
+				<File :size="20" />
+			</template>
+			{{ t('spreed', 'Go to file') }}
+		</NcActionLink>
+		<NcActionSeparator v-if="showModerationOptions" />
+		<template v-if="showModerationOptions">
 			<NcActionButton :close-after-click="true"
-				@click="openConversationSettings">
-				<template #icon>
-					<Cog :size="20" />
-				</template>
-				{{ t('spreed', 'Conversation settings') }}
+				icon="icon-rename"
+				@click="handleRenameConversation">
+				{{ t('spreed', 'Rename conversation') }}
 			</NcActionButton>
-		</NcActions>
+		</template>
+		<!-- Call recording -->
+		<template v-if="canModerateRecording">
+			<NcActionButton v-if="!isRecording && isInCall"
+				:close-after-click="true"
+				@click="startRecording">
+				<template #icon>
+					<RecordCircle :size="20" />
+				</template>
+				{{ t('spreed', 'Start recording') }}
+			</NcActionButton>
+			<NcActionButton v-else-if="isRecording && isInCall"
+				:close-after-click="true"
+				@click="stopRecording">
+				<template #icon>
+					<StopIcon :size="20" />
+				</template>
+				{{ t('spreed', 'Stop recording') }}
+			</NcActionButton>
+		</template>
 
-		<!-- Breakout rooms editor -->
-		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
-			:token="token"
-			@close="showBreakoutRoomsEditor = false" />
-	</Fragment>
+		<!-- Breakout rooms -->
+		<NcActionButton :close-after-click="true"
+			@click="$emit('open')">
+			<template #icon>
+				<DotsCircle :size="20" />
+			</template>
+			{{ t('spreed', 'Setup breakout rooms') }}
+		</NcActionButton>
+
+		<!-- Conversation settings -->
+		<NcActionButton :close-after-click="true"
+			@click="openConversationSettings">
+			<template #icon>
+				<Cog :size="20" />
+			</template>
+			{{ t('spreed', 'Conversation settings') }}
+		</NcActionButton>
+	</NcActions>
 </template>
 
 <script>
@@ -189,8 +181,6 @@ import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
-import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
-import { Fragment } from 'vue-frag'
 
 export default {
 	name: 'TopBarMenu',
@@ -212,8 +202,6 @@ export default {
 		RecordCircle,
 		StopIcon,
 		DotsCircle,
-		BreakoutRoomsEditor,
-		Fragment,
 	},
 
 	mixins: [
@@ -251,10 +239,11 @@ export default {
 		},
 	},
 
+	emits: ['open'],
+
 	data() {
 		return {
 			boundaryElement: document.querySelector('.main-view'),
-			showBreakoutRoomsEditor: false,
 		}
 	},
 
@@ -485,10 +474,6 @@ export default {
 			this.$store.dispatch('stopCallRecording', {
 				token: this.token,
 			})
-		},
-
-		openBreakoutRoomsEditor() {
-			this.showBreakoutRoomsEditor = true
 		},
 	},
 }
