@@ -56,12 +56,13 @@
 
 		<!-- Call time -->
 		<CallTime v-if="isInCall"
-			:start="conversation.callStartTime" />
+			:start="conversation.callStartTime"
+			class="dark-hover" />
 
 		<!-- Participants counter -->
 		<NcButton v-if="isInCall && !isOneToOneConversation && isModeratorOrUser"
 			v-tooltip="t('spreed', 'Participants in call')"
-			class="top-bar__button"
+			class="top-bar__button dark-hover"
 			type="tertiary"
 			@click="openSidebar('participants')">
 			<template #icon>
@@ -73,7 +74,7 @@
 
 		<!-- Local media controls -->
 		<LocalMediaControls v-if="isInCall"
-			class="local-media-controls"
+			class="local-media-controls dark-hover"
 			:token="token"
 			:model="localMediaModel"
 			:show-actions="!isSidebar"
@@ -82,6 +83,7 @@
 
 		<!-- TopBar menu -->
 		<TopBarMenu :token="token"
+			class="top-bar__button dark-hover"
 			:show-actions="!isSidebar"
 			:is-sidebar="isSidebar"
 			:model="localMediaModel"
@@ -92,7 +94,7 @@
 		<template v-if="showOpenSidebarButton">
 			<!-- sidebar toggle -->
 			<NcButton v-if="!isInCall"
-				class="top-bar__button"
+				class="top-bar__button dark-hover"
 				close-after-click="true"
 				type="tertiary"
 				@click="openSidebar">
@@ -104,7 +106,7 @@
 			<!-- chat button -->
 			<div v-if="isInCall"
 				class="chat-button">
-				<NcActions class="top-bar__button"
+				<NcActions class="top-bar__button dark-hover"
 					close-after-click="true"
 					:container="container">
 					<NcActionButton key="openSideBarButtonMessageText"
@@ -413,11 +415,10 @@ export default {
 			color: #fff;
 		}
 
-		& button.top-bar__button:hover,
-		:deep(.action-item--open .action-item__menutoggle),
-		:deep(.action-item__menutoggle:hover),
-		:deep(.action-item--single:hover),
-		:deep(.buttons-bar button:hover) {
+		:deep(button.dark-hover:hover),
+		.dark-hover :deep(button:hover),
+		.dark-hover :deep(.action-item--open button),
+		:deep(.action-item--open.dark-hover button) {
 			background-color: rgba(0, 0, 0, 0.2);
 		}
 	}
