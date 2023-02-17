@@ -30,7 +30,6 @@ use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
-use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -54,7 +53,6 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 	protected IURLGenerator $url;
 	protected IL10N $l10n;
 	protected Manager $manager;
-	protected AvatarService $avatarService;
 	protected ParticipantService $participantService;
 	protected MessageParser $messageParser;
 	protected ITimeFactory $timeFactory;
@@ -65,7 +63,6 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		IURLGenerator $url,
 		IL10N $l10n,
 		Manager $manager,
-		AvatarService $avatarService,
 		ParticipantService $participantService,
 		MessageParser $messageParser,
 		ITimeFactory $timeFactory
@@ -75,7 +72,6 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		$this->url = $url;
 		$this->l10n = $l10n;
 		$this->manager = $manager;
-		$this->avatarService = $avatarService;
 		$this->participantService = $participantService;
 		$this->messageParser = $messageParser;
 		$this->timeFactory = $timeFactory;
@@ -221,8 +217,36 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			$room->getDisplayName($userId),
 			$subtitle,
 			$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
-			$this->avatarService->getAvatarUrl($room)
+			$this->getRoomIconUrl($room, $userId)
 		);
+	}
+
+	protected function getRoomIconUrl(Room $room, string $userId): string {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			$participants = json_decode($room->getName(), true);
+
+			foreach ($participants as $p) {
+				if ($p !== $userId) {
+					return $this->url->linkToRouteAbsolute(
+						'core.avatar.getAvatar',
+						[
+							'userId' => $p,
+							'size' => 64,
+						]
+					);
+				}
+			}
+		} elseif ($room->getObjectType() === 'file') {
+			return $this->url->getAbsoluteURL($this->url->imagePath('core', 'filetypes/file.svg'));
+		} elseif ($room->getObjectType() === 'share:password') {
+			return $this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/password.svg'));
+		} elseif ($room->getObjectType() === 'emails') {
+			return $this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/mail.svg'));
+		} elseif ($room->getType() === Room::TYPE_PUBLIC) {
+			return $this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/public.svg'));
+		}
+
+		return $this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/group.svg'));
 	}
 
 	protected function sortRooms(Room $roomA, Room $roomB): int {

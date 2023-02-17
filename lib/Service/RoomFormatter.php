@@ -46,7 +46,6 @@ use OCP\UserStatus\IUserStatus;
 class RoomFormatter {
 	public function __construct(
 		protected Config $talkConfig,
-		protected AvatarService $avatarService,
 		protected ParticipantService $participantService,
 		protected ChatManager $chatManager,
 		protected MessageParser $messageParser,
@@ -135,7 +134,6 @@ class RoomFormatter {
 			'listable' => Room::LISTABLE_NONE,
 			'callFlag' => Participant::FLAG_DISCONNECTED,
 			'messageExpiration' => 0,
-			'avatarVersion' => $this->avatarService->getAvatarVersion($room),
 			'breakoutRoomMode' => BreakoutRoom::MODE_NOT_CONFIGURED,
 			'breakoutRoomStatus' => BreakoutRoom::STATUS_STOPPED,
 		];

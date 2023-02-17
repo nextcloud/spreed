@@ -40,7 +40,6 @@ class SelectHelper {
 			->addSelect($alias . 'name')
 			->addSelect($alias . 'description')
 			->addSelect($alias . 'password')
-			->addSelect($alias . 'avatar')
 			->addSelect($alias . 'active_guests')
 			->addSelect($alias . 'active_since')
 			->addSelect($alias . 'default_permissions')

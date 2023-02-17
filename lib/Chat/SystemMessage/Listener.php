@@ -101,7 +101,6 @@ class Listener implements IEventListener {
 		$dispatcher->addListener(RoomShareProvider::EVENT_SHARE_FILE_AGAIN, self::class . '::fixMimeTypeOfVoiceMessage');
 		$dispatcher->addListener(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, self::class . '::afterSetMessageExpiration');
 		$dispatcher->addListener(Room::EVENT_AFTER_SET_CALL_RECORDING, self::class . '::setCallRecording');
-		$dispatcher->addListener(Room::EVENT_AFTER_AVATAR_SET, self::class . '::avatarChanged');
 	}
 
 	public static function sendSystemMessageAboutBeginOfCall(ModifyParticipantEvent $event): void {

@@ -33,7 +33,6 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
-use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Collaboration\Reference\IReference;
 use OCP\Collaboration\Reference\IReferenceProvider;
@@ -49,7 +48,6 @@ class TalkReferenceProvider implements IReferenceProvider {
 	protected Manager $roomManager;
 	protected ParticipantService $participantService;
 	protected ChatManager $chatManager;
-	protected AvatarService $avatarService;
 	protected MessageParser $messageParser;
 	protected IL10N $l;
 	protected ?string $userId;
@@ -58,7 +56,6 @@ class TalkReferenceProvider implements IReferenceProvider {
 								Manager $manager,
 								ParticipantService $participantService,
 								ChatManager $chatManager,
-								AvatarService $avatarService,
 								MessageParser $messageParser,
 								IL10N $l,
 								?string $userId) {
@@ -66,7 +63,6 @@ class TalkReferenceProvider implements IReferenceProvider {
 		$this->roomManager = $manager;
 		$this->participantService = $participantService;
 		$this->chatManager = $chatManager;
-		$this->avatarService = $avatarService;
 		$this->messageParser = $messageParser;
 		$this->l = $l;
 		$this->userId = $userId;
@@ -227,7 +223,7 @@ class TalkReferenceProvider implements IReferenceProvider {
 		$reference->setTitle($title);
 		$reference->setDescription($description);
 		$reference->setUrl($this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]));
-		$reference->setImageUrl($this->avatarService->getAvatarUrl($room));
+		$reference->setImageUrl($this->getRoomIconUrl($room, $this->userId));
 
 		$reference->setRichObject('call', [
 			'id' => $room->getToken(),
@@ -259,6 +255,20 @@ class TalkReferenceProvider implements IReferenceProvider {
 		}
 
 		return ($this->userId ?? '') . '#' . ($referenceMatch['message'] ?? 0);
+	}
+
+	protected function getRoomIconUrl(Room $room, string $userId): string {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+			return $this->urlGenerator->linkToRouteAbsolute(
+				'core.avatar.getAvatar',
+				[
+					'userId' => $room->getSecondParticipant($userId),
+					'size' => 64,
+				]
+			);
+		}
+
+		return $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'changelog.svg'));
 	}
 
 	protected function getRoomType(Room $room): string {

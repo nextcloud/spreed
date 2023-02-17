@@ -229,12 +229,6 @@
       <code>BeforeTemplateRenderedEvent</code>
     </UndefinedClass>
   </file>
-  <file src="lib/Service/AvatarService.php">
-    <UndefinedClass occurrences="2">
-      <code>Filesystem</code>
-      <code>\OC_Image</code>
-    </UndefinedClass>
-  </file>
   <file src="lib/Service/RecordingService.php">
     <UndefinedClass occurrences="2">
       <code>Filesystem</code>

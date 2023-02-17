@@ -26,7 +26,6 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
-use OCA\Talk\Service\AvatarService;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\IL10N;
@@ -53,8 +52,6 @@ class InvitationTest extends TestCase {
 	protected $activityManager;
 	/** @var IUserManager|MockObject */
 	protected $userManager;
-	/** @var AvatarService|MockObject */
-	protected $avatarService;
 	/** @var Manager|MockObject */
 	protected $manager;
 
@@ -66,7 +63,6 @@ class InvitationTest extends TestCase {
 		$this->config = $this->createMock(Config::class);
 		$this->activityManager = $this->createMock(IManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
-		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->manager = $this->createMock(Manager::class);
 	}
 
@@ -83,7 +79,6 @@ class InvitationTest extends TestCase {
 					$this->config,
 					$this->activityManager,
 					$this->userManager,
-					$this->avatarService,
 					$this->manager,
 				])
 				->onlyMethods($methods)
@@ -95,7 +90,6 @@ class InvitationTest extends TestCase {
 			$this->config,
 			$this->activityManager,
 			$this->userManager,
-			$this->avatarService,
 			$this->manager
 		);
 	}

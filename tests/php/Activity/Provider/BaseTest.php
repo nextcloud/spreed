@@ -25,7 +25,6 @@ use OCA\Talk\Activity\Provider\Base;
 use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
-use OCA\Talk\Service\AvatarService;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\IURLGenerator;
@@ -51,8 +50,6 @@ class BaseTest extends TestCase {
 	protected $activityManager;
 	/** @var IUserManager|MockObject */
 	protected $userManager;
-	/** @var AvatarService|MockObject */
-	protected $avatarService;
 	/** @var Manager|MockObject */
 	protected $manager;
 
@@ -64,7 +61,6 @@ class BaseTest extends TestCase {
 		$this->config = $this->createMock(Config::class);
 		$this->activityManager = $this->createMock(IManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
-		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->manager = $this->createMock(Manager::class);
 	}
 
@@ -81,7 +77,6 @@ class BaseTest extends TestCase {
 				$this->config,
 				$this->activityManager,
 				$this->userManager,
-				$this->avatarService,
 				$this->manager,
 			])
 			->onlyMethods($methods)
@@ -92,49 +87,60 @@ class BaseTest extends TestCase {
 	public function dataPreParse(): array {
 		$user = $this->createMock(IUser::class);
 		return [
-			['other',  null,  true,  true],
-			['spreed', null,  true,  true],
-			['spreed', $user, true,  true],
-			['spreed', $user, false, false],
+			[false, true, true, 'app-dark.png'],
+			[true, true, false, 'app-dark.svg'],
+			[true, false, false, 'app-dark.svg'],
 		];
 	}
+
 
 	/**
 	 * @dataProvider dataPreParse
 	 *
 	 * @param bool $validUser
 	 * @param bool $disabledForUser
+	 * @param bool $png
+	 * @param string $imagePath
 	 */
-	public function testPreParse(string $appId, ?IUser $user, bool $disabledForUser, bool $willThrowException): void {
+	public function testPreParse(bool $validUser, bool $disabledForUser, bool $png, string $imagePath): void {
 		/** @var IEvent|MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
 			->method('getApp')
-			->willReturn($appId);
+			->willReturn('spreed');
 
-		if ($willThrowException) {
-			$this->expectException(\InvalidArgumentException::class);
-		}
-		$event->expects($this->exactly($willThrowException ? 0 : 1))
-			->method('setIcon')
-			->willReturnSelf();
-
-		if ($user) {
-			$this->config
-				->method('isDisabledForUser')
-				->with($user)
-				->willReturn($disabledForUser);
-			$this->userManager
-				->method('get')
-				->with('user')
-				->willReturn($user);
+		if ($validUser) {
 			$event->expects($this->once())
 				->method('getAffectedUser')
 				->willReturn('user');
+
+			$user = $this->createMock(IUser::class);
+			$this->userManager->expects($this->once())
+				->method('get')
+				->with('user')
+				->willReturn($user);
+			$this->config->expects($this->once())
+				->method('isDisabledForUser')
+				->with($user)
+				->willReturn($disabledForUser);
+		} else {
+			$event->expects($this->once())
+				->method('getAffectedUser')
+				->willReturn('no-user');
+			$this->userManager->expects($this->once())
+				->method('get')
+				->with('no-user')
+				->willReturn(null);
+			$this->config->expects($this->never())
+				->method('isDisabledForUser');
+		}
+
+		if ($disabledForUser) {
+			$this->expectException(\InvalidArgumentException::class);
 		}
 
 		$provider = $this->getProvider();
-		static::invokePrivate($provider, 'preParse', [$event]);
+		$this->assertSame($event, static::invokePrivate($provider, 'preParse', [$event]));
 	}
 
 	public function testPreParseThrows() {
@@ -228,7 +234,6 @@ class BaseTest extends TestCase {
 			'name' => $expectedName,
 			'call-type' => $expectedType,
 			'link' => 'url',
-			'icon-url' => '',
 		], self::invokePrivate($provider, 'getRoom', [$room, 'user']));
 	}
 

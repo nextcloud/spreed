@@ -155,8 +155,6 @@ class Room {
 	public const EVENT_AFTER_SET_BREAKOUT_ROOM_STATUS = self::class . '::afterSetBreakoutRoomStatus';
 	public const EVENT_BEFORE_SET_CALL_RECORDING = self::class . '::beforeSetCallRecording';
 	public const EVENT_AFTER_SET_CALL_RECORDING = self::class . '::afterSetCallRecording';
-	public const EVENT_BEFORE_AVATAR_SET = self::class . '::preSetAvatar';
-	public const EVENT_AFTER_AVATAR_SET = self::class . '::postSetAvatar';
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
@@ -178,7 +176,6 @@ class Room {
 	private string $name;
 	private string $description;
 	private string $password;
-	private string $avatar;
 	private string $remoteServer;
 	private string $remoteToken;
 	private int $activeGuests;
@@ -214,7 +211,6 @@ class Room {
 								string $name,
 								string $description,
 								string $password,
-								string $avatar,
 								string $remoteServer,
 								string $remoteToken,
 								int $activeGuests,
@@ -247,7 +243,6 @@ class Room {
 		$this->name = $name;
 		$this->description = $description;
 		$this->password = $password;
-		$this->avatar = $avatar;
 		$this->remoteServer = $remoteServer;
 		$this->remoteToken = $remoteToken;
 		$this->activeGuests = $activeGuests;
@@ -501,14 +496,6 @@ class Room {
 
 	public function setPassword(string $password): void {
 		$this->password = $password;
-	}
-
-	public function setAvatar(string $avatar): void {
-		$this->avatar = $avatar;
-	}
-
-	public function getAvatar(): string {
-		return $this->avatar;
 	}
 
 	public function getRemoteServer(): string {
