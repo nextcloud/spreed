@@ -278,6 +278,21 @@ async function signalingJoinCallForRecording(token, settings, internalClientAuth
 
 	signaling = Signaling.createConnection(settings)
 
+	// The default call flags for internal clients include audio, so they must
+	// be downgraded to just "in call" to prevent other participants from trying
+	// to connect to the recording participant.
+	// This must be done before joining the room to ensure that other
+	// participants will see the correct flags from the beginning.
+	signaling.doSend({
+		type: 'internal',
+		internal: {
+			type: 'incall',
+			incall: {
+				incall: PARTICIPANT.CALL_FLAG.IN_CALL,
+			},
+		},
+	})
+
 	// No Nextcloud session ID is needed to join the room with an internal
 	// client.
 	await signaling.joinRoom(token)
