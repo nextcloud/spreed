@@ -125,6 +125,7 @@ class CapabilitiesTest extends TestCase {
 			'recording-v1',
 			'avatar',
 			'chat-get-context',
+			'single-conversation-status',
 			'message-expiration',
 			'reactions',
 		];

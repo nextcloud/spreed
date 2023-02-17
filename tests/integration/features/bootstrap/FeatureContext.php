@@ -1175,10 +1175,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param int $statusCode
 	 * @param string $apiVersion
 	 */
-	public function userGetsRoom(string $user, string $identifier, int $statusCode, string $apiVersion): void {
+	public function userGetsRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v4', TableNode $formData = null): void {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier]);
 		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($formData instanceof TableNode) {
+			$xpectedAttributes = $formData->getColumnsHash()[0];
+			$actual = $this->getDataFromResponse($this->response);
+			foreach ($xpectedAttributes as $attribute => $expectedValue) {
+				Assert::assertEquals($expectedValue, $actual[$attribute]);
+			}
+		}
 	}
 
 	/**
@@ -3250,6 +3258,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			null,
 			$headers,
 			$options
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When /^user "([^"]*)" set status to "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function setUserStatus(string $user, string $status, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT',
+			'/apps/user_status/api/' . $apiVersion . '/user_status/status',
+			new TableNode([['statusType', $status]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
