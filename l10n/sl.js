@@ -1220,7 +1220,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Shranjevanje nastavitev zvoka je spodletelo",
     "Sounds setting saved" : "Nastavitve zvokov so shranjene.",
     "Error while saving sounds setting" : "Prišlo je do napake med shranjevanjem nastavitev zvoka",
-    "End meeting for all" : "Končaj pogovor za vse",
     "Start call silently" : "Začni klic tiho",
     "Start call" : "Začni klic",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk je bil posodobljen, ponovno je treba naložiti stran, preden začnete pogovor.",
@@ -1366,6 +1365,7 @@ OC.L10N.register(
     "Upload new files" : "Pošlji nove datoteke",
     "Share from Files" : "Poveži iz oblaka",
     "Invitation was sent to {actorId}." : "Poslano povabilo: {actorId}.",
+    "End meeting for all" : "Končaj pogovor za vse",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Naloga Deck je dodana v izbran <a href=\"{link}\">pogovor</a>.",
     "An error occurred while posting deck card to conversation." : "Prišlo je do napake med dodajanjem naloge v pogovor."
 },

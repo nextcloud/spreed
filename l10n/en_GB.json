@@ -1233,7 +1233,6 @@
     "Failed to save sounds setting" : "Failed to save sounds setting",
     "Sounds setting saved" : "Sounds setting saved",
     "Error while saving sounds setting" : "Error while saving sounds setting",
-    "End meeting for all" : "End meeting for all",
     "Start call silently" : "Start call silently",
     "Start call" : "Start call",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk was updated, you need to reload the page before you can start or join a call.",
@@ -1381,6 +1380,7 @@
     "Upload new files" : "Upload new files",
     "Share from Files" : "Share from Files",
     "Invitation was sent to {actorId}." : "Invitation was sent to {actorId}.",
+    "End meeting for all" : "End meeting for all",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>.",
     "An error occurred while posting deck card to conversation." : "An error occurred while posting deck card to conversation."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

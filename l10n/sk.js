@@ -1183,7 +1183,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Nepodarilo sa uložiť nastavenie zvukov",
     "Sounds setting saved" : "Nastavenie zvukov uložené",
     "Error while saving sounds setting" : "Chyba pri ukladaní nastavenia zvuku",
-    "End meeting for all" : "Ukončiť stretnutie pre všetkých",
     "Start call silently" : "Začat hovor potichu",
     "Start call" : "Začať hovor",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Aplikácia Nextcloud Rozhovory bola aktualizovaná. Predtým, ako budete môcť začať hovor, musíte znova načítať stránku.",
@@ -1319,6 +1318,7 @@ OC.L10N.register(
     "Upload new files" : "Nahrať nové súbory",
     "Share from Files" : "Zdieľať zo Súborov",
     "Invitation was sent to {actorId}." : "Pozvánka odoslaná pre {name}",
+    "End meeting for all" : "Ukončiť stretnutie pre všetkých",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Karta Deck bola odoslaná do označeného <a href=\"{link}\">rozhovoru</a>.",
     "An error occurred while posting deck card to conversation." : "Pri odosielaní karty aplikácie Deck nastala chyba"
 },

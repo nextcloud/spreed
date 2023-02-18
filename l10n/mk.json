@@ -848,7 +848,6 @@
     "Failed to save sounds setting" : "Неуспешно зачувување на параметрите за звуци",
     "Sounds setting saved" : "Параматрите за звуци се зачувани",
     "Error while saving sounds setting" : "Грешка при зачувување на параметрите за звуци",
-    "End meeting for all" : "Заврши состанокот за сите",
     "Start call silently" : "Започни товок повик",
     "Start call" : "Повик",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Разговорот беше ажуриран, треба повторно да ја вчитате страницата пред да започнете или да се придружите на повик.",
@@ -953,6 +952,7 @@
     "Message link copied to clipboard." : "Линкот до пораката е копиран во клипборд.",
     "Upload new files" : "Прикачи нови датотеки",
     "Share from Files" : "Сподели од датотеките",
-    "Invitation was sent to {actorId}." : "Покана е испратена до {actorId}."
+    "Invitation was sent to {actorId}." : "Покана е испратена до {actorId}.",
+    "End meeting for all" : "Заврши состанокот за сите"
 },"pluralForm" :"nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;"
 }
