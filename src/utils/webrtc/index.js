@@ -254,6 +254,46 @@ async function signalingJoinCall(token, flags, silent) {
 }
 
 /**
+ * Wait until the signaling connection succeed.
+ *
+ * If the authentication fails an error is thrown and the waiting aborted.
+ *
+ * @param {object} signaling the signaling to check its connection.
+ */
+async function signalingIsConnected(signaling) {
+	let signalingConnectionSucceeded
+	let signalingConnectionFailed
+
+	const signalingConnection = new Promise((resolve, reject) => {
+		signalingConnectionSucceeded = resolve
+		signalingConnectionFailed = reject
+	})
+
+	const signalingConnectionSucceededOnConnect = () => {
+		signaling.off('connect', signalingConnectionSucceededOnConnect)
+		signaling.off('error', signalingConnectionFailedOnInvalidToken)
+
+		signalingConnectionSucceeded()
+	}
+
+	const signalingConnectionFailedOnInvalidToken = (error) => {
+		if (error.code !== 'invalid_token') {
+			return
+		}
+
+		signaling.off('connect', signalingConnectionSucceededOnConnect)
+		signaling.off('error', signalingConnectionFailedOnInvalidToken)
+
+		signalingConnectionFailed(new Error('Authentication failed for signaling server: ' + signaling.settings.server))
+	}
+
+	signaling.on('connect', signalingConnectionSucceededOnConnect)
+	signaling.on('error', signalingConnectionFailedOnInvalidToken)
+
+	await signalingConnection
+}
+
+/**
  * Join the call of the given conversation for recording with an internal
  * client.
  *
@@ -277,6 +317,8 @@ async function signalingJoinCallForRecording(token, settings, internalClientAuth
 	settings.helloAuthParams.internal = internalClientAuthParams
 
 	signaling = Signaling.createConnection(settings)
+
+	await signalingIsConnected(signaling)
 
 	// The default call flags for internal clients include audio, so they must
 	// be downgraded to just "in call" to prevent other participants from trying

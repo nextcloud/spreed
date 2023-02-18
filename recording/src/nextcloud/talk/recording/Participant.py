@@ -25,6 +25,7 @@ import hashlib
 import hmac
 import json
 import logging
+import re
 import threading
 import websocket
 
@@ -326,13 +327,21 @@ class SeleniumHelper:
         calls.
 
         The script needs to explicitly signal that the execution has finished by
-        including the special text "{RETURN}" (without quotes). If "{RETURN}" is
-        not included the function will automatically return once all the root
+        calling "returnResolve()" (with or without a parameter). If
+        "returnResolve()" is not called (no matter if with or without a
+        parameter) the function will automatically return once all the root
         statements of the script were executed (which works as expected if using
         "await" calls, but not if the script includes something like
         "someFunctionReturningAPromise().then(() => { more code })"; in that
         case the script should be written as
-        "someFunctionReturningAPromise().then(() => { more code {RETURN} })").
+        "someFunctionReturningAPromise().then(() => { more code; returnResolve() })").
+
+        Similarly, exceptions thrown by a root statement (including "await"
+        calls) will be propagated to the Python function. However, this does not
+        work if the script includes something like
+        "someFunctionReturningAPromise().catch(exception => { more code; throw exception })";
+        in that case the script should be written as
+        "someFunctionReturningAPromise().catch(exception => { more code; returnReject(exception) })".
 
         If realtime logs are available logs are printed as soon as they are
         received. Otherwise they will be printed once the script has finished.
@@ -343,8 +352,8 @@ class SeleniumHelper:
         object is returned as a Python dict). If nothing is returned by the
         script None will be returned.
 
-        The returned value must be explicitly assigned to "returnValue" in the
-        script.
+        Note that the value returned by the script must be explicitly specified
+        by calling "returnResolve(XXX)"; it is not possible to use "return XXX".
 
         :return: the value returned by the script, or None
         """
@@ -356,17 +365,16 @@ class SeleniumHelper:
 
         # Add an explicit return point at the end of the script if none is
         # given.
-        if script.find('{RETURN}') == -1:
-            script += '{RETURN}'
+        if re.search('returnResolve\(.*\)', script) == None:
+            script += '; returnResolve()'
 
         # await is not valid in the root context in Firefox, so the script to be
         # executed needs to be wrapped in an async function.
-        script = 'returnValue = undefined; (async() => { ' + script  + ' })().catch(error => { console.error(error) {RETURN} })'
-
         # Asynchronous scripts need to explicitly signal that they are finished
-        # by invoking the callback injected as the last argument.
-        # https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute_async
-        script = script.replace('{RETURN}', '; arguments[arguments.length - 1](returnValue)')
+        # by invoking the callback injected as the last argument with a promise
+        # and resolving or rejecting the promise.
+        # https://w3c.github.io/webdriver/#dfn-execute-async-script
+        script = 'promise = new Promise(async(returnResolve, returnReject) => { try { ' + script + ' } catch (exception) { returnReject(exception) } }); arguments[arguments.length - 1](promise)'
 
         result = self.driver.execute_async_script(script)
 
@@ -442,7 +450,7 @@ class Participant():
         # later in another script.
         settings = self.seleniumHelper.executeAsync(f'''
             window.signalingSettings = await OCA.Talk.signalingGetSettingsForRecording('{token}', '{random}', '{hmacValue.hexdigest()}')
-            returnValue = window.signalingSettings
+            returnResolve(window.signalingSettings)
         ''')
 
         secret = config.getSignalingSecret(settings['server'])
@@ -452,8 +460,8 @@ class Participant():
         random = token_urlsafe(64)
         hmacValue = hmac.new(secret.encode(), random.encode(), hashlib.sha256)
 
-        self.seleniumHelper.execute(f'''
-            OCA.Talk.signalingJoinCallForRecording(
+        self.seleniumHelper.executeAsync(f'''
+            await OCA.Talk.signalingJoinCallForRecording(
                 '{token}',
                 window.signalingSettings,
                 {{

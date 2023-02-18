@@ -769,6 +769,7 @@ Signaling.Standalone.prototype.connect = function() {
 				break
 			default:
 				console.error('Ignore unknown error', data)
+				this._trigger('error', [data.error])
 				break
 			}
 			break
