@@ -1123,7 +1123,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Kon geluidsinstellingen niet opslaan",
     "Sounds setting saved" : "Geluidsinstellingen opgeslagen",
     "Error while saving sounds setting" : "Fout bij opslaan geluidsinstellingen",
-    "End meeting for all" : "Beëindig vergadering voor iedereen",
     "Start call silently" : "Start gesprek stil",
     "Start call" : "Start oproep",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk is bijgewerkt, je moet de pagina herladen voordat je een oproep kunt starten of aan een oproep kunt deelnemen.",
@@ -1257,6 +1256,7 @@ OC.L10N.register(
     "Upload new files" : "Uploaden nieuwe bestanden",
     "Share from Files" : "Delen vanuit Bestanden",
     "Invitation was sent to {actorId}." : "Uitnodiging verzonden naar {actorId}",
+    "End meeting for all" : "Beëindig vergadering voor iedereen",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "De Deck kaart is gepubliceerd naar het geselecteerde </a>gesprek</a>.",
     "An error occurred while posting deck card to conversation." : "Er trad fout op bij het publiceren van de kaart in gesprek."
 },

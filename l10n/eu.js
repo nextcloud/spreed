@@ -1189,7 +1189,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Soinu ezarpenak gordetzeak huts egin du",
     "Sounds setting saved" : "Soinu ezarpenak gordeta",
     "Error while saving sounds setting" : "Errorea soinu ezarpenak gordetzean",
-    "End meeting for all" : "Amaitu bilera denentzat",
     "Start call silently" : "Hasi isilik deitzen",
     "Start call" : "Hasi deia",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk eguneratu egin da, orria berriro kargatu behar duzu dei bat hasi edo dei batera elkartu aurretik.",
@@ -1327,6 +1326,7 @@ OC.L10N.register(
     "Upload new files" : "Kargatu fitxategi berriak",
     "Share from Files" : "Partekatu Fitxategiak-etik",
     "Invitation was sent to {actorId}." : "Gonbidapena bildali da {actorId}(r)i.",
+    "End meeting for all" : "Amaitu bilera denentzat",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deck txartel bat argitaratu da hautaturiko <a href=\"{link}\">elkarrizketan</a>",
     "An error occurred while posting deck card to conversation." : "Errore bat gertatu da elkarrizketan deck txartela argitaratzean."
 },

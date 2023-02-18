@@ -1092,7 +1092,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "サウンド設定を保存できませんでした",
     "Sounds setting saved" : "サウンド設定を保存",
     "Error while saving sounds setting" : "サウンド設定を保存するときにエラー",
-    "End meeting for all" : "会議を完全に終了",
     "Start call silently" : "サイレント通話を開始",
     "Start call" : "通話を開始",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talkを更新しました。通話を開始したり、通話に参加したりするにはページをリロードする必要があります。",
@@ -1224,6 +1223,7 @@ OC.L10N.register(
     "Upload new files" : "新規ファイルをアップロード",
     "Share from Files" : "ファイルから共有",
     "Invitation was sent to {actorId}." : "招待状が {actorId} に送信されました。",
+    "End meeting for all" : "会議を完全に終了",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "選択した<a href=\"{link}\">会話</a>にデッキカードが投稿されました。",
     "An error occurred while posting deck card to conversation." : "デッキカードを会話に投稿中にエラーが発生しました。"
 },

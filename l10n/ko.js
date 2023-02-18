@@ -985,7 +985,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "소리 설정을 저장하지 못했습니다.",
     "Sounds setting saved" : "소리 설정이 저장되었습니다.",
     "Error while saving sounds setting" : "소리 설정을 저장하는 중 오류가 발생했습니다.",
-    "End meeting for all" : "모두에 대해 회의 종료",
     "Start call silently" : "조용히 통화 시작",
     "Start call" : "통화 시작",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud 토크가 업데이트되었습니다. 통화를 시작하거나 참여하려면 페이지를 다시 로드해야 합니다.",
@@ -1109,6 +1108,7 @@ OC.L10N.register(
     "Choose a password" : "비밀번호 선택",
     "Message link copied to clipboard." : "메시지 링크가 클립보드에 복사되었습니다.",
     "Upload new files" : "새로운 파일 업로드",
-    "Share from Files" : "파일 공유"
+    "Share from Files" : "파일 공유",
+    "End meeting for all" : "모두에 대해 회의 종료"
 },
 "nplurals=1; plural=0;");

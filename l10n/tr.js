@@ -1241,7 +1241,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Ses ayarları kaydedilemedi",
     "Sounds setting saved" : "Ses ayarları kaydedildi",
     "Error while saving sounds setting" : "Ses ayarları kaydedilirken sorun çıktı",
-    "End meeting for all" : "Toplantıyı herkes için sonlandır",
     "Start call silently" : "Çağrıyı sessizce başlat",
     "Start call" : "Çağrıyı başlat",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk güncellenmiş. Bir çağrıya başlamadan önce sayfayı yeniden yüklemelisiniz.",
@@ -1390,6 +1389,7 @@ OC.L10N.register(
     "Upload new files" : "Yeni dosyaları yükle",
     "Share from Files" : "Dosyalardan paylaş",
     "Invitation was sent to {actorId}." : "{actorId} için çağrı gönderildi.",
+    "End meeting for all" : "Toplantıyı herkes için sonlandır",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Tahta kartı seçilmiş <a href=\"{link}\">görüşmeye</a> gönderildi.",
     "An error occurred while posting deck card to conversation." : "Tahta kartı seçilmiş görüşmeye gönderilirken bir sorun çıktı."
 },

@@ -1019,7 +1019,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Spremanje postavki zvukova nije uspjelo",
     "Sounds setting saved" : "Postavka zvukova je spremljena",
     "Error while saving sounds setting" : "Pogreška pri spremanju postavke zvukova",
-    "End meeting for all" : "Završi sastanak za sve",
     "Start call" : "Uputi poziv",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk je ažuriran, ponovno učitajte stranicu prije upućivanja ili pridruživanja razgovoru.",
     "You will be able to join the call only after a moderator starts it." : "Pozivu ćete se moći pridružiti tek nakon što ga moderator pokrene.",
@@ -1137,6 +1136,7 @@ OC.L10N.register(
     "Upload new files" : "Otpremi nove datoteke",
     "Share from Files" : "Dijeli iz datoteka",
     "Invitation was sent to {actorId}." : "Poslana je pozivnica za {actorId}.",
+    "End meeting for all" : "Završi sastanak za sve",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deck kartica je objavljena u odabranom <a href=\"{link}\">razgovoru</a>.",
     "An error occurred while posting deck card to conversation." : "Došlo je do pogreške pri objavi Deck kartice u razgovor."
 },

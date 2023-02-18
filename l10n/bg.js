@@ -1233,7 +1233,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Неуспешно запазване на настройката за звуци",
     "Sounds setting saved" : "Настройката за звуци е запазена",
     "Error while saving sounds setting" : "Грешка при запазване на настройката за звуци",
-    "End meeting for all" : "Край на срещата за всички",
     "Start call silently" : "Започване на разговор безшумно",
     "Start call" : "Започване на обаждане",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk беше актуализиран, трябва да презаредите страницата, преди да можете да започнете или да се присъедините към обаждане.",
@@ -1379,6 +1378,7 @@ OC.L10N.register(
     "Upload new files" : "Качване на нови файлове",
     "Share from Files" : "Споделяне от файлове",
     "Invitation was sent to {actorId}." : "Беше изпратена покана до {actorId}.",
+    "End meeting for all" : "Край на срещата за всички",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deck картата е публикувана в избраният <a href=\"{link}\">разговор</a>.",
     "An error occurred while posting deck card to conversation." : "Възникна грешка при публикуване на deck карта в разговор."
 },
