@@ -1233,7 +1233,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Nem sikerült menteni a hangbeállításokat",
     "Sounds setting saved" : "Hangbeállítás mentve",
     "Error while saving sounds setting" : "Hiba a hangbeállítások mentése során",
-    "End meeting for all" : "Találkozó befejezése mindenki számára",
     "Start call silently" : "Hívás indítása némán",
     "Start call" : "Hívás indítása",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "A Nextcloud Beszélgetés frissült, újra kell töltenie az oldalt, mielőtt hívást indíthatna vagy csatlakozhatna egyhez.",
@@ -1379,6 +1378,7 @@ OC.L10N.register(
     "Upload new files" : "Új fájlok feltöltése",
     "Share from Files" : "Megosztás a Fájlokból",
     "Invitation was sent to {actorId}." : "Meghívó elküldve a következőnek: {actorId}.",
+    "End meeting for all" : "Találkozó befejezése mindenki számára",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "A kártya elküldve a kiválasztott <a href=\"{link}\">beszélgetésbe</a>.",
     "An error occurred while posting deck card to conversation." : "Hiba történt a kártya beszélgetésbe küldése során."
 },

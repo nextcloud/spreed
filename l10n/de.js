@@ -1233,7 +1233,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Toneinstellungen konnten nicht gespeichert werden",
     "Sounds setting saved" : "Toneinstellung gespeichert",
     "Error while saving sounds setting" : "Fehler beim Speichern der Toneinstellung",
-    "End meeting for all" : "Konferenz für alle beenden",
     "Start call silently" : "Anruf stumm beginnen",
     "Start call" : "Anruf starten",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk wurde aktualisiert, du musst die Seite neu laden, bevor du einen Anruf starten oder einem Anruf beitreten kannst.",
@@ -1379,6 +1378,7 @@ OC.L10N.register(
     "Upload new files" : "Neue Dateien hochladen",
     "Share from Files" : "Aus Dateien heraus teilen",
     "Invitation was sent to {actorId}." : "Einladung wurde an {actorId} gesendet.",
+    "End meeting for all" : "Konferenz für alle beenden",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deckkarte wurde an die ausgewählte <a href=\"{link}\">Unterhaltung</a> gesendet.",
     "An error occurred while posting deck card to conversation." : "Es ist ein Fehler beim Posten der Deckkarte an die Unterhaltung aufgetreten."
 },

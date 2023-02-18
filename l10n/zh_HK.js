@@ -1235,7 +1235,6 @@ OC.L10N.register(
     "Failed to save sounds setting" : "聲音設定儲存失敗",
     "Sounds setting saved" : "聲音設置已保存",
     "Error while saving sounds setting" : "儲存聲音設置時發生錯誤",
-    "End meeting for all" : "為大家結束會議",
     "Start call silently" : "安靜地開始通話",
     "Start call" : "開始通話",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk已更新，您需要重新加載頁面才能開始或加入通話。",
@@ -1383,6 +1382,7 @@ OC.L10N.register(
     "Upload new files" : "上傳新檔案",
     "Share from Files" : "從檔案進行分享",
     "Invitation was sent to {actorId}." : "邀請已傳送到 {actorId}。",
+    "End meeting for all" : "為大家結束會議",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "看板卡片已發佈到選定的 <a href=\"{link}\">對話</a>。",
     "An error occurred while posting deck card to conversation." : "將卡片發佈到對話時發生錯誤。"
 },

@@ -926,7 +926,6 @@
     "Failed to save sounds setting" : "Αποτυχία αποθήκευσης της ρύθμισης ήχων",
     "Sounds setting saved" : "Η ρύθμιση ήχων αποθηκεύτηκε",
     "Error while saving sounds setting" : "Σφάλμα κατά την αποθήκευση της ρύθμισης ήχων",
-    "End meeting for all" : "Τερματισμός της συνάντησης για όλους",
     "Start call" : "Έναρξη κλήσης",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Το Nextcloud Talk ενημερώθηκε, ανανεώστε τη σελίδα πριν την έναρξη ή συμμετοχή σε μια κλήση.",
     "You will be able to join the call only after a moderator starts it." : "Μπορείτε να συμμετάσχετε στην κλήση μόνο μετά την εκκίνηση από τον συντονιστή.",
@@ -1039,6 +1038,7 @@
     "Choose a password" : "Επιλέξτε κωδικό πρόσβασης",
     "Upload new files" : "Μεταφόρτωση νέων αρχείων",
     "Share from Files" : "Κοινή χρήση από Αρχεία",
-    "Invitation was sent to {actorId}." : "Η πρόσκληση στάλθηκε {actorId}."
+    "Invitation was sent to {actorId}." : "Η πρόσκληση στάλθηκε {actorId}.",
+    "End meeting for all" : "Τερματισμός της συνάντησης για όλους"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
