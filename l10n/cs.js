@@ -1243,6 +1243,7 @@ OC.L10N.register(
     "Failed to save sounds setting" : "Nastavení zvuků se nepodařilo uložit",
     "Sounds setting saved" : "Nastavení zvuku uloženo",
     "Error while saving sounds setting" : "Chyba při ukládání nastavení zvuku",
+    "End call for everyone" : "Ukončit hovor pro všechny",
     "Start call silently" : "Zahájit hovor tiše",
     "Start call" : "Zavolat",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk bylo aktualizováno – abyste mohli začít hovor nebo se k němu připojit, je třeba stránku načíst znovu.",
