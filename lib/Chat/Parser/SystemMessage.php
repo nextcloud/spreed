@@ -411,8 +411,14 @@ class SystemMessage {
 				$parsedParameters['file'] = $this->getFileFromShare($participant, $parameters['share']);
 				$parsedMessage = '{file}';
 				$metaData = $parameters['metaData'] ?? [];
-				if (isset($metaData['messageType']) && $metaData['messageType'] === 'voice-message') {
-					$chatMessage->setMessageType('voice-message');
+				if (isset($metaData['messageType'])) {
+					if ($metaData['messageType'] === 'voice-message') {
+						$chatMessage->setMessageType('voice-message');
+					} elseif ($metaData['messageType'] === 'record-audio') {
+						$chatMessage->setMessageType('record-audio');
+					} elseif ($metaData['messageType'] === 'record-video') {
+						$chatMessage->setMessageType('record-video');
+					}
 				} else {
 					$chatMessage->setMessageType(ChatManager::VERB_MESSAGE);
 				}
