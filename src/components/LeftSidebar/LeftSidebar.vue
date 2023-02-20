@@ -441,11 +441,20 @@ export default {
 			return conversation2.lastActivity - conversation1.lastActivity
 		},
 
-		async handleShouldRefreshConversations({ token = undefined, properties = undefined, all = undefined }) {
-			if (all === true) {
+		/**
+		 * @param {object} [options] Options for conversation refreshing
+		 * @param {string} [options.token] The conversation token that got update
+		 * @param {object} [options.properties] List of changed properties
+		 * @param {boolean} [options.all] Whether all conversations should be fetched
+		 */
+		async handleShouldRefreshConversations(options) {
+			if (options?.all === true) {
 				this.roomListModifiedBefore = 0
-			} else if (token && properties) {
-				await this.$store.dispatch('setConversationProperties', { token, properties })
+			} else if (options?.token && options?.properties) {
+				await this.$store.dispatch('setConversationProperties', {
+					token: options.token,
+					properties: options.properties,
+				})
 			}
 
 			this.debounceFetchConversations()
