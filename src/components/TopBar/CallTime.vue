@@ -30,6 +30,7 @@
 			<NcButton :disabled="(!isStartingRecording && !isRecording) || !isModerator"
 				:wide="true"
 				:class="{ 'call-time__not-recording': !isStartingRecording && !isRecording }"
+				:title="isStartingRecording ? t('spreed', 'Starting the recording') : t('spreed', 'Recording')"
 				type="tertiary"
 				@click="showPopover = true">
 				<template v-if="isStartingRecording" #icon>
