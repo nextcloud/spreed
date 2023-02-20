@@ -29,9 +29,18 @@ build-package-deb:
 	tar --extract --gzip --file nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION).tar.gz
 
 	# Add extra files needed to create Debian packages:
+	# - debian/py3dist-overrides: Python dependencies to Debian dependencies for
+	#   dh_python3 (also needed in the regenerated Python package, as it is
+	#   needed in the Debian package).
+	# - MANIFEST.in: the source package is regenerated to include the extra
+	#   files needed for the Debian package; MANIFEST.in explicitly adds those
+	#   files not included by default in a Python package (so setup.py does not
+	#   need to be included in MANIFEST.in, but debian/py3dist-overrides does).
 	# - setup.py: legacy setup file needed for stdeb (also needed in the
 	#   regenerated Python package, as stdeb is invoked through it to create the
 	#   source Debian package).
+	cp --recursive debian nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
+	cp MANIFEST.in nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
 	cp setup.py nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
 
 	# Build a source Debian package and then, from it, a binary Debian package
