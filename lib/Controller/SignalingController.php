@@ -51,6 +51,7 @@ use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Security\Bruteforce\IThrottler;
 use Psr\Log\LoggerInterface;
 
 class SignalingController extends OCSController {
@@ -72,6 +73,7 @@ class SignalingController extends OCSController {
 	private IEventDispatcher $dispatcher;
 	private ITimeFactory $timeFactory;
 	private IClientService $clientService;
+	private IThrottler $throttler;
 	private LoggerInterface $logger;
 	private ?string $userId;
 
@@ -90,6 +92,7 @@ class SignalingController extends OCSController {
 								IEventDispatcher $dispatcher,
 								ITimeFactory $timeFactory,
 								IClientService $clientService,
+								IThrottler $throttler,
 								LoggerInterface $logger,
 								?string $UserId) {
 		parent::__construct($appName, $request);
@@ -106,8 +109,36 @@ class SignalingController extends OCSController {
 		$this->dispatcher = $dispatcher;
 		$this->timeFactory = $timeFactory;
 		$this->clientService = $clientService;
+		$this->throttler = $throttler;
 		$this->logger = $logger;
 		$this->userId = $UserId;
+	}
+
+	/**
+	 * Check if the current request is coming from an allowed recording backend.
+	 *
+	 * The backends are sending the custom header "Talk-Recording-Random"
+	 * containing at least 32 bytes random data, and the header
+	 * "Talk-Recording-Checksum", which is the SHA256-HMAC of the random data
+	 * and the body of the request, calculated with the shared secret from the
+	 * configuration.
+	 *
+	 * @param string $data
+	 * @return bool
+	 */
+	private function validateRecordingBackendRequest(string $data): bool {
+		$random = $this->request->getHeader('Talk-Recording-Random');
+		if (empty($random) || strlen($random) < 32) {
+			$this->logger->debug("Missing random");
+			return false;
+		}
+		$checksum = $this->request->getHeader('Talk-Recording-Checksum');
+		if (empty($checksum)) {
+			$this->logger->debug("Missing checksum");
+			return false;
+		}
+		$hash = hash_hmac('sha256', $random . $data, $this->talkConfig->getRecordingSecret());
+		return hash_equals($hash, strtolower($checksum));
 	}
 
 	/**
@@ -118,8 +149,24 @@ class SignalingController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function getSettings(string $token = ''): DataResponse {
+		$isRecordingRequest = false;
+
+		if (!empty($this->request->getHeader('Talk-Recording-Random')) || !empty($this->request->getHeader('Talk-Recording-Checksum'))) {
+			if (!$this->validateRecordingBackendRequest('')) {
+				$ip = $this->request->getRemoteAddress();
+				$action = 'talkRecordingSecret';
+				$this->throttler->sleepDelay($ip, $action);
+				$this->throttler->registerAttempt($action, $ip);
+				return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			}
+
+			$isRecordingRequest = true;
+		}
+
 		try {
-			if ($token !== '') {
+			if ($token !== '' && $isRecordingRequest) {
+				$room = $this->manager->getRoomByToken($token);
+			} elseif ($token !== '') {
 				$room = $this->manager->getRoomForUserByToken($token, $this->userId);
 			} else {
 				// FIXME Soft-fail for legacy support in mobile apps
