@@ -1,6 +1,9 @@
 [project]
 name = "nextcloud-talk-recording"
 description = "Recording server for Nextcloud Talk"
+authors = [
+    { name = "Nextcloud Talk Team" },
+]
 license = {text = "GNU AGPLv3+"}
 classifiers = [
     "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
@@ -14,6 +17,9 @@ dependencies = [
     "websocket-client",
 ]
 dynamic = ["version"]
+
+[project.urls]
+repository = "https://github.com/nextcloud/spreed"
 
 [tool.setuptools.dynamic]
 version = {attr = "nextcloud.talk.recording.__version__"}
