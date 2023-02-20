@@ -35,6 +35,7 @@
 
 * Data format (JSON):
 
+    ```json
     {
       "type": "start",
       "start": {
@@ -42,11 +43,14 @@
         "owner": "the-user-to-upload-the-resulting-file-as",
       }
     }
+    ```
 
 ### Stop call recording
 
 * Data format:
 
+    ```json
     {
       "type": "stop",
     }
+    ```
