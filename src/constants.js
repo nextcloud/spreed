@@ -158,6 +158,7 @@ export const SHARED_ITEM = {
 		MEDIA: 'media',
 		OTHER: 'other',
 		POLL: 'poll',
+		RECORDING: 'recording',
 		VOICE: 'voice',
 	},
 }
