@@ -64,10 +64,11 @@ import CallButton from './components/TopBar/CallButton.vue'
 import ChatView from './components/ChatView.vue'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import browserCheck from './mixins/browserCheck.js'
-import '@nextcloud/dialogs/styles/toast.scss'
 import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
+// Styles
+import '@nextcloud/dialogs/dist/index.css'
 export default {
 
 	name: 'FilesSidebarTabApp',

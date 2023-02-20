@@ -48,7 +48,7 @@ import vOutsideEvents from 'vue-outside-events'
 import { options as TooltipOptions } from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 // Styles
-import '@nextcloud/dialogs/styles/toast.scss'
+import '@nextcloud/dialogs/dist/index.css'
 import 'leaflet/dist/leaflet.css'
 
 // Leaflet icon patch

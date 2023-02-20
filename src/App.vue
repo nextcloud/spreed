@@ -64,10 +64,12 @@ import { generateUrl } from '@nextcloud/router'
 import UploadEditor from './components/UploadEditor.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog.vue'
-import '@nextcloud/dialogs/styles/toast.scss'
 import { CONVERSATION, PARTICIPANT } from './constants.js'
 import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
 import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
+
+// Styles
+import '@nextcloud/dialogs/dist/index.css'
 
 export default {
 	name: 'App',

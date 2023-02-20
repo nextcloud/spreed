@@ -72,8 +72,10 @@ import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import isInCall from './mixins/isInCall.js'
 import participant from './mixins/participant.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
-import '@nextcloud/dialogs/styles/toast.scss'
 import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
+
+// Styles
+import '@nextcloud/dialogs/dist/index.css'
 
 export default {
 
