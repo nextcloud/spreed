@@ -40,63 +40,66 @@
 				@update:editing="handleEditDescription" />
 		</NcAppSettingsSection>
 
-		<!-- Notifications settings and devices preview screen -->
-		<NcAppSettingsSection id="notifications"
-			:title="t('spreed', 'Personal')">
-			<NcCheckboxRadioSwitch :checked.sync="showDeviceChecker"
-				type="switch">
-				{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
-			</NcCheckboxRadioSwitch>
+		<template v-if="!isBreakoutRoom">
+			<!-- Notifications settings and devices preview screen -->
+			<NcAppSettingsSection id="notifications"
+				:title="t('spreed', 'Personal')">
+				<NcCheckboxRadioSwitch :checked.sync="showDeviceChecker"
+					type="switch">
+					{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
+				</NcCheckboxRadioSwitch>
 
-			<NotificationsSettings :conversation="conversation" />
-		</NcAppSettingsSection>
+				<NotificationsSettings :conversation="conversation" />
+			</NcAppSettingsSection>
 
-		<NcAppSettingsSection id="conversation-settings"
-			:title="t('spreed', 'Moderation')">
-			<ListableSettings v-if="canFullModerate"
-				:token="token" />
-			<LinkShareSettings v-if="canFullModerate"
-				ref="linkShareSettings" />
-			<ExpirationSettings :token="token" />
-		</NcAppSettingsSection>
+			<NcAppSettingsSection id="conversation-settings"
+				:title="t('spreed', 'Moderation')">
+				<ListableSettings v-if="canFullModerate"
+					:token="token" />
+				<LinkShareSettings v-if="canFullModerate"
+					ref="linkShareSettings" />
+				<ExpirationSettings :token="token" />
+			</NcAppSettingsSection>
 
-		<NcAppSettingsSection v-if="canFullModerate"
-			id="meeting"
-			:title="t('spreed', 'Meeting')">
-			<LobbySettings :token="token" />
-			<SipSettings v-if="canUserEnableSIP" />
-		</NcAppSettingsSection>
+			<!-- Meeting: lobby and sip -->
+			<NcAppSettingsSection v-if="canFullModerate"
+				id="meeting"
+				:title="t('spreed', 'Meeting')">
+				<LobbySettings :token="token" />
+				<SipSettings v-if="canUserEnableSIP" />
+			</NcAppSettingsSection>
 
-		<!-- Conversation permissions -->
-		<NcAppSettingsSection v-if="canFullModerate"
-			id="permissions"
-			:title="t('spreed', 'Permissions')">
-			<ConversationPermissionsSettings :token="token" />
-		</NcAppSettingsSection>
+			<!-- Conversation permissions -->
+			<NcAppSettingsSection v-if="canFullModerate"
+				id="permissions"
+				:title="t('spreed', 'Permissions')">
+				<ConversationPermissionsSettings :token="token" />
+			</NcAppSettingsSection>
 
-		<!-- Breakout rooms -->
-		<NcAppSettingsSection v-if="canFullModerate"
-			id="breakout-rooms"
-			:title="t('spreed', 'Breakout Rooms')">
-			<BreakoutRoomsSettings :token="token" />
-		</NcAppSettingsSection>
+			<!-- Breakout rooms -->
+			<NcAppSettingsSection v-if="canFullModerate"
+				id="breakout-rooms"
+				:title="t('spreed', 'Breakout Rooms')">
+				<BreakoutRoomsSettings :token="token" />
+			</NcAppSettingsSection>
 
-		<!-- Matterbridge settings -->
-		<NcAppSettingsSection v-if="canFullModerate && matterbridgeEnabled"
-			id="matterbridge"
-			:title="t('spreed', 'Matterbridge')">
-			<MatterbridgeSettings />
-		</NcAppSettingsSection>
+			<!-- Matterbridge settings -->
+			<NcAppSettingsSection v-if="canFullModerate && matterbridgeEnabled"
+				id="matterbridge"
+				:title="t('spreed', 'Matterbridge')">
+				<MatterbridgeSettings />
+			</NcAppSettingsSection>
 
-		<!-- Destructive actions -->
-		<NcAppSettingsSection v-if="canLeaveConversation || canDeleteConversation"
-			id="dangerzone"
-			:title="t('spreed', 'Danger zone')">
-			<LockingSettings :token="token" />
-			<DangerZone :conversation="conversation"
-				:can-leave-conversation="canLeaveConversation"
-				:can-delete-conversation="canDeleteConversation" />
-		</NcAppSettingsSection>
+			<!-- Destructive actions -->
+			<NcAppSettingsSection v-if="canLeaveConversation || canDeleteConversation"
+				id="dangerzone"
+				:title="t('spreed', 'Danger zone')">
+				<LockingSettings :token="token" />
+				<DangerZone :conversation="conversation"
+					:can-leave-conversation="canLeaveConversation"
+					:can-delete-conversation="canDeleteConversation" />
+			</NcAppSettingsSection>
+		</template>
 	</NcAppSettingsDialog>
 </template>
 
@@ -201,6 +204,10 @@ export default {
 			} else {
 				return this.description !== ''
 			}
+		},
+
+		isBreakoutRoom() {
+			return this.conversation.objectType === 'room'
 		},
 	},
 
