@@ -155,6 +155,8 @@ export const SHARED_ITEM = {
 		MEDIA: 'media',
 		OTHER: 'other',
 		POLL: 'poll',
+		RECORD_AUDIO: 'record-audio',
+		RECORD_VIDEO: 'record-video',
 		VOICE: 'voice',
 	},
 }
