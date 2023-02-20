@@ -42,7 +42,9 @@
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { getPublicShareAuthConversationToken } from './services/publicShareAuthService.js'
 import browserCheck from './mixins/browserCheck.js'
-import '@nextcloud/dialogs/styles/toast.scss'
+
+// Styles
+import '@nextcloud/dialogs/dist/index.css'
 
 export default {
 
