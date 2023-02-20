@@ -72,6 +72,11 @@ global.OCA = {
 	Talk: {
 	},
 }
+global.OCP = {
+	Accessibility: {
+		disableKeyboardShortcuts: () => false,
+	},
+}
 
 // Work around missing "URL.createObjectURL" (which is used in the code but not
 // relevant for the tests) in jsdom:
