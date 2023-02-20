@@ -114,15 +114,18 @@
 							v-bind="messageToBeReplied" />
 					</div>
 					<NcRichContenteditable ref="richContenteditable"
+						v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
+						class="new-message-form__richContenteditable"
 						:value.sync="text"
 						:auto-complete="autoComplete"
-						:active-input="!disabled"
+						:disabled="disabled"
 						:user-data="userData"
-						:placeholder-text="placeholderText"
+						:placeholder="placeholderText"
 						:aria-label="placeholderText"
+						@shortkey="focusInput"
+						@keydown.esc.prevent="blurInput"
 						@paste="handlePastedFiles"
-						@submit="handleSubmit({ silent: false })"
-						@update:value="parsedText = arguments[0]" />
+						@submit="handleSubmit({ silent: false })" />
 				</div>
 
 				<AudioRecorder v-if="showAudioRecorder"
@@ -252,9 +255,12 @@ const border = 2
 const margin = 8
 const width = margin * 20
 
-export default {
+const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 
+export default {
 	name: 'NewMessageForm',
+
+	disableKeyboardShortcuts,
 
 	components: {
 		Quote,
@@ -312,7 +318,6 @@ export default {
 	data() {
 		return {
 			text: '',
-			parsedText: '',
 			conversationIsFirstInList: false,
 			// True when the audiorecorder component is recording
 			isRecordingAudio: false,
@@ -390,7 +395,7 @@ export default {
 		},
 
 		hasText() {
-			return this.parsedText !== ''
+			return this.text !== ''
 		},
 
 		container() {
@@ -460,8 +465,8 @@ export default {
 	},
 
 	watch: {
-		currentConversationIsJoined(newValue) {
-			this.$refs.richContenteditable.$refs.contenteditable.focus()
+		currentConversationIsJoined() {
+			this.focusInput()
 		},
 
 		text(newValue) {
@@ -507,7 +512,7 @@ export default {
 		handleUploadStart() {
 			// refocus on upload start as the user might want to type again
 			// while the upload is running
-			this.$refs.richContenteditable.$refs.contenteditable.focus()
+			this.focusInput()
 		},
 
 		/**
@@ -516,9 +521,9 @@ export default {
 		 * @param {object} options the submit options
 		 */
 		async handleSubmit(options) {
-			if (OC.debug && this.parsedText.startsWith('/spam ')) {
+			if (OC.debug && this.text.startsWith('/spam ')) {
 				const pattern = /^\/spam (\d+) messages$/i
-				const match = pattern.exec(this.parsedText)
+				const match = pattern.exec(this.text)
 				// Escape HTML
 				if (match) {
 					await this.handleSubmitSpam(match[1])
@@ -526,14 +531,13 @@ export default {
 				}
 			}
 
-			if (this.parsedText !== '') {
-				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', { text: this.parsedText, token: this.token })
+			if (this.text !== '') {
+				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', { text: this.text, token: this.token })
 				// FIXME: move "addTemporaryMessage" into "postNewMessage" as it's a pre-requisite anyway ?
 				if (!this.broadcast) {
 					await this.$store.dispatch('addTemporaryMessage', temporaryMessage)
 				}
 				this.text = ''
-				this.parsedText = ''
 				this.userData = {}
 				// Scrolls the message list to the last added message
 				EventBus.$emit('smooth-scroll-chat-to-bottom')
@@ -574,7 +578,7 @@ export default {
 				await this.sleep(randomNumber)
 
 				const loremIpsum = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\n\nDuis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.'
-				this.parsedText = loremIpsum.slice(0, 25 + randomNumber)
+				this.text = loremIpsum.slice(0, 25 + randomNumber)
 				await this.handleSubmit()
 			}
 		},
@@ -584,11 +588,10 @@ export default {
 		},
 
 		handleRetryMessage(temporaryMessageId) {
-			if (this.parsedText === '') {
+			if (this.text === '') {
 				const temporaryMessage = this.$store.getters.message(this.token, temporaryMessageId)
 				if (temporaryMessage) {
 					this.text = temporaryMessage.message || this.text
-					this.parsedText = temporaryMessage.message || this.parsedText
 
 					// Restore the parent/quote message
 					if (temporaryMessage.parent) {
@@ -614,15 +617,15 @@ export default {
 			}
 		},
 
-		async handleFileShare() {
+		handleFileShare() {
 			picker.pick()
-				.then(async (path) => {
+				.then((path) => {
 					console.debug(`path ${path} selected for sharing`)
 					if (!path.startsWith('/')) {
 						throw new Error(t('files', 'Invalid path selected'))
 					}
-					shareFile(path, this.token)
-					this.$refs.richContenteditable.$refs.contenteditable.focus()
+					this.focusInput()
+					return shareFile(path, this.token)
 				})
 
 			// FIXME Remove this hack once it is possible to set the parent
@@ -660,8 +663,7 @@ export default {
 		/**
 		 * Handles files pasting event
 		 *
-		 * @param {File[] | FileList} files pasted files list
-		 * @param e
+		 * @param {ClipboardEvent} e native paste event
 		 */
 		async handlePastedFiles(e) {
 			e.preventDefault()
@@ -869,6 +871,16 @@ export default {
 
 			callback(possibleMentions)
 		},
+
+		focusInput() {
+			this.$nextTick().then(() => {
+				this.$refs.richContenteditable.$refs.contenteditable.focus()
+			})
+		},
+
+		blurInput() {
+			document.activeElement.blur()
+		},
 	},
 }
 </script>
@@ -907,13 +919,20 @@ export default {
 			flex-grow: 1;
 			overflow: hidden;
 			position: relative;
+		}
 
-			.rich-contenteditable__input {
-				border: none;
-				word-break: break-word;
-				white-space: pre-wrap;
+		&__richContenteditable {
+			border: 1px solid var(--color-border-dark);
+			border-radius: calc($clickable-area / 2);
+			padding: 8px 16px 8px 44px;
+			max-height: 180px;
+			&:hover,
+			&:focus,
+			&:active {
+				border: 1px solid var(--color-primary-element);
 			}
 		}
+
 		&__quote {
 			margin: 0 16px 12px 24px;
 			background-color: var(--color-background-hover);
@@ -979,12 +998,5 @@ export default {
 			justify-content: center;
 		}
 	}
-}
-
-// Custom talk input styles
-::v-deep .rich-contenteditable__input {
-	border: 1px solid var(--color-border-dark) !important;
-	border-radius: 22px;
-	padding-left: 44px;
 }
 </style>
