@@ -2752,7 +2752,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				}
 			}
 			if (isset($expectedNotification['subject'])) {
-				$data['subject'] = (string) $notification['subject'];
+				$data['subject'] = str_replace($notification['object_id'], '{{TOKEN}}', (string) $notification['subject']);
 			}
 			if (isset($expectedNotification['object_type'])) {
 				$data['object_type'] = (string) $notification['object_type'];
