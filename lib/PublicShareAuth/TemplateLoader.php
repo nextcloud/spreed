@@ -76,7 +76,6 @@ class TemplateLoader implements IEventListener {
 			return;
 		}
 
-		Util::addStyle(Application::APP_ID, 'At');
 		Util::addStyle(Application::APP_ID, 'icons');
 		Util::addStyle(Application::APP_ID, 'publicshareauth');
 		Util::addScript(Application::APP_ID, 'talk-public-share-auth-sidebar');
