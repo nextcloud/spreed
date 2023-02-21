@@ -534,12 +534,13 @@ export default {
 .message-buttons-bar {
 	display: flex;
 	right: 14px;
-	bottom: -4px;
+	bottom: calc(8px - var(--default-clickable-area)); // 36px offset
 	position: absolute;
 	background-color: var(--color-main-background);
-	border-radius: calc($clickable-area / 2);
+	border-radius: calc(var(--default-clickable-area) / 2);
 	box-shadow: 0 0 4px 0 var(--color-box-shadow);
 	height: 44px;
+	z-index: 1;
 
 	& h6 {
 		margin-left: auto;

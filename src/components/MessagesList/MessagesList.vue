@@ -89,6 +89,7 @@ import uniqueId from 'lodash/uniqueId.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import { getCapabilities } from '@nextcloud/capabilities'
+import { computed } from 'vue'
 
 export default {
 	name: 'MessagesList',
@@ -105,6 +106,12 @@ export default {
 		isInLobby,
 		isInCall,
 	],
+
+	provide() {
+		return {
+			scrollerBoundingClientRect: computed(() => this.$refs.scroller.getBoundingClientRect()),
+		}
+	},
 
 	props: {
 		/**
