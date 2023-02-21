@@ -160,7 +160,7 @@ See [conversation API](conversation.md#get-breakout-rooms))
 
 ## Switch to a different breakout room (as non moderator)
 
-This endpoint allows participants to raise their hand (token is the breakout room) and moderators will see it in any of the breakout rooms as well as the parent room.
+This endpoint allows participants to switch between breakout rooms when they are allowed to choose the breakout room and not are automatically or manually assigned by the moderator.
 
 * Required capability: `breakout-rooms-v1`
 * Method: `POST`
