@@ -36,6 +36,7 @@ class Config:
         self._configParser = ConfigParser()
 
         self._backendIdsByBackendUrl = {}
+        self._signalingIdsBySignalingUrl = {}
 
     def load(self, fileName):
         fileName = os.path.abspath(fileName)
@@ -48,6 +49,7 @@ class Config:
         self._configParser.read(fileName)
 
         self._loadBackends()
+        self._loadSignalings()
 
     def _loadBackends(self):
         self._backendIdsByBackendUrl = {}
@@ -71,6 +73,35 @@ class Config:
 
             backendUrl = self._configParser[backendId]['url'].rstrip('/')
             self._backendIdsByBackendUrl[backendUrl] = backendId
+
+    def _loadSignalings(self):
+        self._signalingIdsBySignalingUrl = {}
+
+        if 'signaling' not in self._configParser:
+            self._logger.warning(f"No configured signalings")
+
+            return
+
+        if 'signalings' not in self._configParser['signaling']:
+            if 'internalsecret' not in self._configParser['signaling']:
+                self._logger.warning(f"No configured signalings")
+
+            return
+
+        signalingIds = self._configParser.get('signaling', 'signalings')
+        signalingIds = [signalingId.strip() for signalingId in signalingIds.split(',')]
+
+        for signalingId in signalingIds:
+            if 'url' not in self._configParser[signalingId]:
+                self._logger.error(f"Missing 'url' property for signaling {signalingId}")
+                continue
+
+            if 'internalsecret' not in self._configParser[signalingId]:
+                self._logger.error(f"Missing 'internalsecret' property for signaling {signalingId}")
+                continue
+
+            signalingUrl = self._configParser[signalingId]['url'].rstrip('/')
+            self._signalingIdsBySignalingUrl[signalingUrl] = signalingId
 
     def getLogLevel(self):
         """
@@ -156,5 +187,21 @@ class Config:
                 return self._configParser.get(backendId, key)
 
         return self._configParser.get('backend', key, fallback=default)
+
+    def getSignalingSecret(self, signalingUrl):
+        """
+        Returns the shared secret for authenticating as an internal client of
+        signaling servers.
+
+        Defaults to None.
+        """
+        signalingUrl = signalingUrl.rstrip('/')
+        if signalingUrl in self._signalingIdsBySignalingUrl:
+            signalingId = self._signalingIdsBySignalingUrl[signalingUrl]
+
+            if self._configParser.get(signalingId, 'internalsecret', fallback=None):
+                return self._configParser.get(signalingId, 'internalsecret')
+
+        return self._configParser.get('signaling', 'internalsecret', fallback=None)
 
 config = Config()

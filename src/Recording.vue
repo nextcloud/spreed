@@ -24,16 +24,6 @@
 
 <script>
 import {
-	PARTICIPANT,
-} from './constants.js'
-import {
-	joinCall,
-} from './services/callsService.js'
-import {
-	leaveConversationSync,
-} from './services/participantsService.js'
-import {
-	mediaDevicesManager,
 	signalingKill,
 } from './utils/webrtc/index.js'
 import CallView from './components/CallView/CallView.vue'
@@ -61,23 +51,16 @@ export default {
 			await this.$store.dispatch('updateToken', this.$route.params.token)
 
 			await this.$store.dispatch('setPlaySounds', false)
-
-			await this.$store.dispatch('joinConversation', { token: this.token })
-
-			mediaDevicesManager.set('audioInputId', null)
-			mediaDevicesManager.set('videoInputId', null)
-
-			await joinCall(this.token, PARTICIPANT.CALL_FLAG.IN_CALL, false)
 		}
 
+		// This should not be strictly needed, as the recording server is
+		// expected to clean up before leaving, but just in case.
 		window.addEventListener('unload', () => {
 			console.info('Navigating away, leaving conversation')
 			if (this.token) {
 				// We have to do this synchronously, because in unload and
 				// beforeunload Promises, async and await are prohibited.
 				signalingKill()
-
-				leaveConversationSync(this.token)
 			}
 		})
 	},

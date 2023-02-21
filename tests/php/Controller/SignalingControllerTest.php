@@ -53,6 +53,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
+use OCP\Security\Bruteforce\IThrottler;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -98,6 +99,8 @@ class SignalingControllerTest extends TestCase {
 	private ?string $userId = null;
 	private ?ISecureRandom $secureRandom = null;
 	private ?IEventDispatcher $dispatcher = null;
+	/** @var IThrottler|MockObject */
+	private $throttler;
 	/** @var LoggerInterface|MockObject */
 	private $logger;
 
@@ -129,6 +132,7 @@ class SignalingControllerTest extends TestCase {
 		$this->messages = $this->createMock(Messages::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->clientService = $this->createMock(IClientService::class);
+		$this->throttler = $this->createMock(IThrottler::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->recreateSignalingController();
 	}
@@ -150,6 +154,7 @@ class SignalingControllerTest extends TestCase {
 			$this->dispatcher,
 			$this->timeFactory,
 			$this->clientService,
+			$this->throttler,
 			$this->logger,
 			$this->userId
 		);

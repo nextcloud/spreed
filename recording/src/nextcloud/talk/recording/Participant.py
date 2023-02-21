@@ -21,18 +21,24 @@
 Module to join a call with a browser.
 """
 
+import hashlib
+import hmac
 import json
 import logging
+import re
 import threading
 import websocket
 
 from datetime import datetime
+from secrets import token_urlsafe
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.support.wait import WebDriverWait
 from shutil import disk_usage
 from time import sleep
+
+from .Config import config
 
 class BiDiLogsHelper:
     """
@@ -284,6 +290,14 @@ class SeleniumHelper:
 
         If realtime logs are available logs are printed as soon as they are
         received. Otherwise they will be printed once the script has finished.
+
+        The value returned by the script will be in turn returned by this
+        function; the type will be respected and adjusted as needed (so a
+        JavaScript string is returned as a Python string, but a JavaScript
+        object is returned as a Python dict). If nothing is returned by the
+        script None will be returned.
+
+        :return: the value returned by the script, or None
         """
 
         # Real time logs are enabled while the command is being executed.
@@ -291,7 +305,7 @@ class SeleniumHelper:
             self.printLogs()
             self.bidiLogsHelper.setRealtimeLogsEnabled(True)
 
-        self.driver.execute_script(script)
+        result = self.driver.execute_script(script)
 
         if self.bidiLogsHelper:
             # Give it some time to receive the last real time logs before
@@ -301,6 +315,8 @@ class SeleniumHelper:
             self.bidiLogsHelper.setRealtimeLogsEnabled(False)
 
         self.printLogs()
+
+        return result
 
     def executeAsync(self, script):
         """
@@ -311,16 +327,35 @@ class SeleniumHelper:
         calls.
 
         The script needs to explicitly signal that the execution has finished by
-        including the special text "{RETURN}" (without quotes). If "{RETURN}" is
-        not included the function will automatically return once all the root
+        calling "returnResolve()" (with or without a parameter). If
+        "returnResolve()" is not called (no matter if with or without a
+        parameter) the function will automatically return once all the root
         statements of the script were executed (which works as expected if using
         "await" calls, but not if the script includes something like
         "someFunctionReturningAPromise().then(() => { more code })"; in that
         case the script should be written as
-        "someFunctionReturningAPromise().then(() => { more code {RETURN} })").
+        "someFunctionReturningAPromise().then(() => { more code; returnResolve() })").
+
+        Similarly, exceptions thrown by a root statement (including "await"
+        calls) will be propagated to the Python function. However, this does not
+        work if the script includes something like
+        "someFunctionReturningAPromise().catch(exception => { more code; throw exception })";
+        in that case the script should be written as
+        "someFunctionReturningAPromise().catch(exception => { more code; returnReject(exception) })".
 
         If realtime logs are available logs are printed as soon as they are
         received. Otherwise they will be printed once the script has finished.
+
+        The value returned by the script will be in turn returned by this
+        function; the type will be respected and adjusted as needed (so a
+        JavaScript string is returned as a Python string, but a JavaScript
+        object is returned as a Python dict). If nothing is returned by the
+        script None will be returned.
+
+        Note that the value returned by the script must be explicitly specified
+        by calling "returnResolve(XXX)"; it is not possible to use "return XXX".
+
+        :return: the value returned by the script, or None
         """
 
         # Real time logs are enabled while the command is being executed.
@@ -330,19 +365,18 @@ class SeleniumHelper:
 
         # Add an explicit return point at the end of the script if none is
         # given.
-        if script.find('{RETURN}') == -1:
-            script += '{RETURN}'
+        if re.search('returnResolve\(.*\)', script) == None:
+            script += '; returnResolve()'
 
         # await is not valid in the root context in Firefox, so the script to be
         # executed needs to be wrapped in an async function.
-        script = '(async() => { ' + script  + ' })().catch(error => { console.error(error) {RETURN} })'
-
         # Asynchronous scripts need to explicitly signal that they are finished
-        # by invoking the callback injected as the last argument.
-        # https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute_async
-        script = script.replace('{RETURN}', '; arguments[arguments.length - 1]()')
+        # by invoking the callback injected as the last argument with a promise
+        # and resolving or rejecting the promise.
+        # https://w3c.github.io/webdriver/#dfn-execute-async-script
+        script = 'promise = new Promise(async(returnResolve, returnReject) => { try { ' + script + ' } catch (exception) { returnReject(exception) } }); arguments[arguments.length - 1](promise)'
 
-        self.driver.execute_async_script(script)
+        result = self.driver.execute_async_script(script)
 
         if self.bidiLogsHelper:
             # Give it some time to receive the last real time logs before
@@ -352,6 +386,8 @@ class SeleniumHelper:
             self.bidiLogsHelper.setRealtimeLogsEnabled(False)
 
         self.printLogs()
+
+        return result
 
 
 class Participant():
@@ -391,22 +427,56 @@ class Participant():
 
     def joinCall(self, token):
         """
-        Joins (or starts) the call in the room with the given token.
+        Joins the call in the room with the given token.
 
-        The participant will join as a guest.
+        The participant will join as an internal client of the signaling server.
 
         :param token: the token of the room to join.
         """
 
         self.seleniumHelper.driver.get(self.nextcloudUrl + '/index.php/call/' + token + '/recording')
 
-    def leaveCall(self):
-        """
-        Leaves the current call.
+        secret = config.getBackendSecret(self.nextcloudUrl)
+        if secret == None:
+            raise Exception(f"No configured backend secret for {self.nextcloudUrl}")
 
-        The call must have been joined first.
+        random = token_urlsafe(64)
+        hmacValue = hmac.new(secret.encode(), random.encode(), hashlib.sha256)
+
+        # If there are several signaling servers configured in Nextcloud the
+        # signaling settings can change between different calls, so they need to
+        # be got just once. The scripts are executed in their own scope, so
+        # values have to be stored in the window object to be able to use them
+        # later in another script.
+        settings = self.seleniumHelper.executeAsync(f'''
+            window.signalingSettings = await OCA.Talk.signalingGetSettingsForRecording('{token}', '{random}', '{hmacValue.hexdigest()}')
+            returnResolve(window.signalingSettings)
+        ''')
+
+        secret = config.getSignalingSecret(settings['server'])
+        if secret == None:
+            raise Exception(f"No configured signaling secret for {settings['server']}")
+
+        random = token_urlsafe(64)
+        hmacValue = hmac.new(secret.encode(), random.encode(), hashlib.sha256)
+
+        self.seleniumHelper.executeAsync(f'''
+            await OCA.Talk.signalingJoinCallForRecording(
+                '{token}',
+                window.signalingSettings,
+                {{
+                    random: '{random}',
+                    token: '{hmacValue.hexdigest()}',
+                    backend: '{self.nextcloudUrl}',
+                }}
+            )
+        ''')
+
+    def disconnect(self):
+        """
+        Disconnects from the signaling server.
         """
 
-        self.seleniumHelper.executeAsync('''
-            await OCA.Talk.SimpleWebRTC.connection.leaveCurrentCall()
+        self.seleniumHelper.execute('''
+            OCA.Talk.signalingKill()
         ''')

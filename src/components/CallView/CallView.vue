@@ -635,6 +635,14 @@ export default {
 		},
 
 		debounceFetchPeers: debounce(async function() {
+			// The recording participant does not have a Nextcloud session, so
+			// it can not fetch the peers. This should not be a problem, as all
+			// the needed data for the recording should be (eventually)
+			// available in the signaling data.
+			if (this.isRecording) {
+				return
+			}
+
 			const token = this.token
 			try {
 				const response = await fetchPeers(token)

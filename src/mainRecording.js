@@ -56,6 +56,12 @@ import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 // eslint-disable-next-line
 import 'leaflet-defaulticon-compatibility'
 
+import {
+	signalingGetSettingsForRecording,
+	signalingJoinCallForRecording,
+	signalingKill,
+} from './utils/webrtc/index.js'
+
 // CSP config for webpack dynamic chunk loading
 // eslint-disable-next-line
 __webpack_nonce__ = btoa(getRequestToken())
@@ -96,5 +102,10 @@ const instance = new Vue({
 
 // make the instance available to global components that might run on the same page
 OCA.Talk.instance = instance
+
+// Expose functions to be called by the recording server
+OCA.Talk.signalingGetSettingsForRecording = signalingGetSettingsForRecording
+OCA.Talk.signalingJoinCallForRecording = signalingJoinCallForRecording
+OCA.Talk.signalingKill = signalingKill
 
 export default instance

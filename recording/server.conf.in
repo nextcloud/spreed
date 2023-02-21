@@ -65,3 +65,32 @@
 # Shared secret for requests from and to the backend servers. This must be the
 # same value as configured in the Nextcloud admin ui.
 #secret = the-shared-secret
+
+[signaling]
+# Common shared secret for authenticating as an internal client of signaling
+# servers if a specific secret is not set for a signaling server. This must be
+# the same value as configured in the signaling server configuration file.
+#internalsecret = the-shared-secret-for-internal-clients
+
+# Comma-separated list of signaling servers with specific internal secrets.
+#signalings = signaling-id, another-signaling
+
+# Signaling server configurations as defined in the "[signaling]" section above.
+# The section names must match the ids used in "signalings" above.
+#[signaling-id]
+# URL of the signaling server
+#url = https://signaling.domain.invalid
+
+# Shared secret for authenticating as an internal client of signaling servers.
+# This must be the same value as configured in the signaling server
+# configuration file.
+#internalsecret = the-shared-secret-for-internal-clients
+
+#[another-signaling]
+# URL of the signaling server
+#url = https://signaling.otherdomain.invalid
+
+# Shared secret for authenticating as an internal client of signaling servers.
+# This must be the same value as configured in the signaling server
+# configuration file.
+#internalsecret = the-shared-secret-for-internal-clients

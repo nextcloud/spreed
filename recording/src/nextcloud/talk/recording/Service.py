@@ -284,11 +284,11 @@ class Service:
                 self._process = None
 
         if self._participant:
-            self._logger.debug("Leaving call")
+            self._logger.debug("Disconnecting from signaling server")
             try:
-                self._participant.leaveCall()
+                self._participant.disconnect()
             except:
-                self._logger.exception("Error when leaving call")
+                self._logger.exception("Error when disconnecting from signaling server")
             finally:
                 self._participant = None
 
