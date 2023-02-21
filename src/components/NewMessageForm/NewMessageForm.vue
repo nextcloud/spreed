@@ -113,15 +113,19 @@
 							:parent-id="messageToBeReplied.id"
 							v-bind="messageToBeReplied" />
 					</div>
-					<AdvancedInput ref="advancedInput"
-						v-model="text"
-						:token="token"
-						:active-input="!disabled"
-						:placeholder-text="placeholderText"
+					<NcRichContenteditable ref="richContenteditable"
+						v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
+						class="new-message-form__richContenteditable"
+						:value.sync="text"
+						:auto-complete="autoComplete"
+						:disabled="disabled"
+						:user-data="userData"
+						:placeholder="placeholderText"
 						:aria-label="placeholderText"
-						@update:contentEditable="contentEditableToParsed"
-						@submit="handleSubmit({ silent: false })"
-						@files-pasted="handlePastedFiles" />
+						@shortkey="focusInput"
+						@keydown.esc.prevent="blurInput"
+						@paste="handlePastedFiles"
+						@submit="handleSubmit({ silent: false })" />
 				</div>
 
 				<AudioRecorder v-if="showAudioRecorder"
@@ -214,14 +218,15 @@
 </template>
 
 <script>
-import AdvancedInput from './AdvancedInput/AdvancedInput.vue'
 import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { getCapabilities } from '@nextcloud/capabilities'
+import { searchPossibleMentions } from '../../services/mentionsService.js'
 import Quote from '../Quote.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
+import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile, createTextFile } from '../../services/filesSharingServices.js'
 import { CONVERSATION, PARTICIPANT } from '../../constants.js'
@@ -237,6 +242,7 @@ import Folder from 'vue-material-design-icons/Folder.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import TemplatePreview from './TemplatePreview.vue'
+import { fetchClipboardContent } from '../../utils/clipboard.js'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -249,18 +255,21 @@ const border = 2
 const margin = 8
 const width = margin * 20
 
-export default {
+const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 
+export default {
 	name: 'NewMessageForm',
 
+	disableKeyboardShortcuts,
+
 	components: {
-		AdvancedInput,
 		Quote,
 		NcActions,
 		NcActionButton,
 		NcButton,
 		Paperclip,
 		NcEmojiPicker,
+		NcRichContenteditable,
 		EmoticonOutline,
 		Send,
 		AudioRecorder,
@@ -309,7 +318,6 @@ export default {
 	data() {
 		return {
 			text: '',
-			parsedText: '',
 			conversationIsFirstInList: false,
 			// True when the audiorecorder component is recording
 			isRecordingAudio: false,
@@ -320,6 +328,7 @@ export default {
 
 			// Check empty template by default
 			checked: -1,
+			userData: {},
 		}
 	},
 
@@ -386,7 +395,7 @@ export default {
 		},
 
 		hasText() {
-			return this.parsedText !== ''
+			return this.text !== ''
 		},
 
 		container() {
@@ -457,7 +466,7 @@ export default {
 
 	watch: {
 		currentConversationIsJoined() {
-			this.$refs.advancedInput.focusInput()
+			this.focusInput()
 		},
 
 		text(newValue) {
@@ -503,54 +512,7 @@ export default {
 		handleUploadStart() {
 			// refocus on upload start as the user might want to type again
 			// while the upload is running
-			this.$refs.advancedInput.focusInput()
-		},
-
-		contentEditableToParsed(contentEditable) {
-			const mentions = contentEditable.querySelectorAll('span[data-at-embedded]')
-			mentions.forEach(mention => {
-				// FIXME Adding a space after the mention should be improved to
-				// do it or not based on the next element instead of always
-				// adding it.
-				mention.replaceWith(' @' + mention.firstElementChild.attributes['data-mention-id'].value + ' ')
-			})
-
-			this.parsedText = this.rawToParsed(contentEditable.innerHTML)
-		},
-		/**
-		 * Returns a parsed version of the given raw text of the content
-		 * editable div.
-		 *
-		 * The given raw text contains a plain text representation of HTML
-		 * content (like "first&nbsp;line<br>second&nbsp;line"). The returned
-		 * parsed text replaces the (known) HTML content with the format
-		 * expected by the server (like "first line\nsecond line").
-		 *
-		 * The parsed text is also trimmed.
-		 *
-		 * @param {string} text the raw text
-		 * @return {string} the parsed text
-		 */
-		rawToParsed(text) {
-			text = text.replace(/<br>/g, '\n')
-			text = text.replace(/<div>/g, '\n')
-			text = text.replace(/<\/div>/g, '')
-			text = text.replace(/&nbsp;/g, ' ')
-
-			// Since we used innerHTML to get the content of the div.contenteditable
-			// it is escaped. With this little trick from https://stackoverflow.com/a/7394787
-			// We unescape the code again, so if you write `<strong>` we can display
-			// it again instead of `&lt;strong&gt;`
-			const temp = document.createElement('textarea')
-			temp.innerHTML = text
-			text = temp.value
-
-			// Although the text is fully trimmed, at the very least the last
-			// "\n" occurrence should be always removed, as browsers add a
-			// "<br>" element as soon as some rich text is written in a content
-			// editable div (for example, if a new line is added the div content
-			// will be "<br><br>").
-			return text.trim()
+			this.focusInput()
 		},
 
 		/**
@@ -559,9 +521,9 @@ export default {
 		 * @param {object} options the submit options
 		 */
 		async handleSubmit(options) {
-			if (OC.debug && this.parsedText.startsWith('/spam ')) {
+			if (OC.debug && this.text.startsWith('/spam ')) {
 				const pattern = /^\/spam (\d+) messages$/i
-				const match = pattern.exec(this.parsedText)
+				const match = pattern.exec(this.text)
 				// Escape HTML
 				if (match) {
 					await this.handleSubmitSpam(match[1])
@@ -569,20 +531,16 @@ export default {
 				}
 			}
 
-			if (this.parsedText !== '') {
-				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', { text: this.parsedText, token: this.token })
+			if (this.text !== '') {
+				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', { text: this.text, token: this.token })
 				// FIXME: move "addTemporaryMessage" into "postNewMessage" as it's a pre-requisite anyway ?
 				if (!this.broadcast) {
 					await this.$store.dispatch('addTemporaryMessage', temporaryMessage)
 				}
 				this.text = ''
-				this.parsedText = ''
-
-				if (!this.breakoutRoom) {
-					// Scrolls the message list to the last added message
-					EventBus.$emit('smooth-scroll-chat-to-bottom')
-				}
-
+				this.userData = {}
+				// Scrolls the message list to the last added message
+				EventBus.$emit('smooth-scroll-chat-to-bottom')
 				// Also remove the message to be replied for this conversation
 				await this.$store.dispatch('removeMessageToBeReplied', this.token)
 
@@ -620,7 +578,7 @@ export default {
 				await this.sleep(randomNumber)
 
 				const loremIpsum = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\n\nDuis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.'
-				this.parsedText = loremIpsum.slice(0, 25 + randomNumber)
+				this.text = loremIpsum.slice(0, 25 + randomNumber)
 				await this.handleSubmit()
 			}
 		},
@@ -630,11 +588,10 @@ export default {
 		},
 
 		handleRetryMessage(temporaryMessageId) {
-			if (this.parsedText === '') {
+			if (this.text === '') {
 				const temporaryMessage = this.$store.getters.message(this.token, temporaryMessageId)
 				if (temporaryMessage) {
 					this.text = temporaryMessage.message || this.text
-					this.parsedText = temporaryMessage.message || this.parsedText
 
 					// Restore the parent/quote message
 					if (temporaryMessage.parent) {
@@ -660,15 +617,15 @@ export default {
 			}
 		},
 
-		async handleFileShare() {
+		handleFileShare() {
 			picker.pick()
-				.then(async (path) => {
+				.then((path) => {
 					console.debug(`path ${path} selected for sharing`)
 					if (!path.startsWith('/')) {
 						throw new Error(t('files', 'Invalid path selected'))
 					}
-					await shareFile(path, this.token)
-					this.$refs.advancedInput.focusInput()
+					this.focusInput()
+					return shareFile(path, this.token)
 				})
 
 			// FIXME Remove this hack once it is possible to set the parent
@@ -706,10 +663,14 @@ export default {
 		/**
 		 * Handles files pasting event
 		 *
-		 * @param {File[] | FileList} files pasted files list
+		 * @param {ClipboardEvent} e native paste event
 		 */
-		async handlePastedFiles(files) {
-			await this.handleFiles(files, true)
+		async handlePastedFiles(e) {
+			e.preventDefault()
+			const content = fetchClipboardContent(e)
+			if (content.kind === 'file') {
+				this.handleFiles(content.files, true)
+			}
 		},
 
 		/**
@@ -739,7 +700,7 @@ export default {
 		addEmoji(emoji) {
 			const selection = document.getSelection()
 
-			const contentEditable = this.$refs.advancedInput.$refs.contentEditable
+			const contentEditable = this.$refs.richContenteditable.$refs.contenteditable
 
 			// There is no select, or current selection does not start in the
 			// content editable element, so just append the emoji at the end.
@@ -865,7 +826,60 @@ export default {
 		focusTextDialogInput() {
 			// this.$refs.textFileTitleInput.$refs.inputField.$refs.input.focus()
 			this.$refs.textFileTitleInput.$refs.inputField.$refs.input.select()
+		},
 
+		async autoComplete(search, callback) {
+			const response = await searchPossibleMentions(this.token, search)
+			if (!response) {
+				// It was not possible to get the candidate mentions, so just
+				// keep the previous ones.
+				return
+			}
+
+			const possibleMentions = response.data.ocs.data
+
+			possibleMentions.forEach(possibleMention => {
+				// Wrap mention ids with spaces in quotes.
+				if (possibleMention.id.indexOf(' ') !== -1
+					|| possibleMention.id.indexOf('/') !== -1) {
+					possibleMention.id = '"' + possibleMention.id + '"'
+				}
+
+				// Set icon for candidate mentions that are not for users.
+				if (possibleMention.source === 'calls') {
+					possibleMention.icon = 'icon-group-forced-white'
+				} else if (possibleMention.source === 'guests') {
+					possibleMention.icon = 'icon-user-forced-white'
+				} else {
+					// The avatar is automatically shown for users, but an icon
+					// is nevertheless required as fallback.
+					possibleMention.icon = 'icon-user-forced-white'
+				}
+
+				// Convert status properties to an object.
+				if (possibleMention.status) {
+					const status = {
+						status: possibleMention.status,
+						icon: possibleMention.statusIcon,
+					}
+					possibleMention.status = status
+					possibleMention.subline = possibleMention.statusMessage
+				}
+				// Caching the user id data for each possible mention
+				this.userData[possibleMention.id] = possibleMention
+			})
+
+			callback(possibleMentions)
+		},
+
+		focusInput() {
+			this.$nextTick().then(() => {
+				this.$refs.richContenteditable.$refs.contenteditable.focus()
+			})
+		},
+
+		blurInput() {
+			document.activeElement.blur()
 		},
 	},
 }
@@ -897,7 +911,6 @@ export default {
 		margin: 0 4px;
 		&__emoji-picker {
 			position: absolute;
-			left: 5px;
 			bottom: 1px;
 			z-index: 1;
 		}
@@ -906,8 +919,20 @@ export default {
 			flex-grow: 1;
 			overflow: hidden;
 			position: relative;
-			padding: 2px;
 		}
+
+		&__richContenteditable {
+			border: 1px solid var(--color-border-dark);
+			border-radius: calc($clickable-area / 2);
+			padding: 8px 16px 8px 44px;
+			max-height: 180px;
+			&:hover,
+			&:focus,
+			&:active {
+				border: 1px solid var(--color-primary-element);
+			}
+		}
+
 		&__quote {
 			margin: 0 16px 12px 24px;
 			background-color: var(--color-background-hover);
