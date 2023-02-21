@@ -82,15 +82,15 @@ the main body of the message as well as a quote.
 						:autolink="true"
 						:reference-limit="1" />
 				</div>
-				<div v-if="!isDeletedMessage" class="message-body__main__right">
-					<span v-tooltip.auto="messageDate"
+				<div v-if="!isDeletedMessage" ref="messageInfo" class="message-body__main__right">
+					<span :title="messageDate"
 						class="date"
 						:style="{'visibility': hasDate ? 'visible' : 'hidden'}"
 						:class="{'date--self': showSentIcon}">{{ messageTime }}</span>
 
 					<!-- Message delivery status indicators -->
 					<div v-if="sendingFailure"
-						v-tooltip.auto="sendingErrorIconTooltip"
+						:title="sendingErrorIconTooltip"
 						class="message-status sending-failed"
 						:class="{'retry-option': sendingErrorCanRetry}"
 						:aria-label="sendingErrorIconTooltip"
@@ -110,17 +110,17 @@ the main body of the message as well as a quote.
 							:size="16" />
 					</div>
 					<div v-else-if="isTemporary && !isTemporaryUpload || isDeleting"
-						v-tooltip.auto="loadingIconTooltip"
+						:title="loadingIconTooltip"
 						class="icon-loading-small message-status"
 						:aria-label="loadingIconTooltip" />
 					<div v-else-if="showCommonReadIcon"
-						v-tooltip.auto="commonReadIconTooltip"
+						:title="commonReadIconTooltip"
 						class="message-status"
 						:aria-label="commonReadIconTooltip">
 						<CheckAll :size="16" />
 					</div>
 					<div v-else-if="showSentIcon"
-						v-tooltip.auto="sentIconTooltip"
+						:title="sentIconTooltip"
 						class="message-status"
 						:aria-label="sentIconTooltip">
 						<Check :size="16" />
@@ -198,7 +198,6 @@ the main body of the message as well as a quote.
 
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import CallButton from '../../../TopBar/CallButton.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
@@ -227,10 +226,6 @@ import Poll from './MessagePart/Poll.vue'
 
 export default {
 	name: 'Message',
-
-	directives: {
-		tooltip: Tooltip,
-	},
 
 	components: {
 		NcButton,
@@ -396,8 +391,6 @@ export default {
 	data() {
 		return {
 			isHovered: false,
-			// Is tall enough for both actions and date upon hovering
-			isTallEnough: false,
 			showReloadButton: false,
 			isDeleting: false,
 			// whether the message was seen, only used if this was marked as last read message
@@ -542,8 +535,8 @@ export default {
 					// Add the token to the component props
 					props.token = this.token
 					// The word 'name' is reserved in for the component name in
-					// vue instances so we cannot pass that into the component
-					// as a prop. Therefore we rename it into pollName
+					// Vue instances, so we cannot pass that into the component
+					// as a prop, therefore we rename it into pollName
 					props.pollName = this.messageParameters[p].name
 					richParameters[p] = {
 						component: Poll,
@@ -566,16 +559,11 @@ export default {
 
 		// Determines whether the date has to be displayed or not
 		hasDate() {
-			if (this.isTemporary || this.isDeleting || this.sendingFailure) {
-				// Never on temporary or failed messages
-				return false
-			}
-
-			return this.isSystemMessage || !this.isHovered || this.isTallEnough
+			return (!this.isTemporary && !this.isDeleting && !this.sendingFailure)
 		},
 
 		showMessageButtonsBar() {
-			return !this.isSystemMessage && !this.isTemporary && (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isFollowUpEmojiPickerOpen || this.isReactionsMenuOpen || this.isForwarderOpen)
+			return !this.isSystemMessage && !this.isDeletedMessage && !this.isTemporary && (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isFollowUpEmojiPickerOpen || this.isReactionsMenuOpen || this.isForwarderOpen)
 		},
 
 		isTemporaryUpload() {
@@ -654,11 +642,7 @@ export default {
 	},
 
 	mounted() {
-		if (this.$refs.messageMain.clientHeight > 56) {
-			this.isTallEnough = true
-		}
-
-		// define a function so it can be triggered directly on the DOM element
+		// define a function, so it can be triggered directly on the DOM element
 		// which can be found with document.getElementById()
 		this.$refs.message.highlightAnimation = () => {
 			this.highlightAnimation()
@@ -687,8 +671,7 @@ export default {
 			this.$refs.message.classList.add('highlight-animation')
 		},
 		highlightAnimationStop() {
-			// when the animation ended, remove the class so we can trigger it
-			// again another time
+			// when the animation ended, remove the class, so we can trigger it again another time
 			this.$refs.message.classList.remove('highlight-animation')
 		},
 
