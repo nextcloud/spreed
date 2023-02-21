@@ -75,7 +75,7 @@ class RecordingService {
 		if (!in_array($status, $availableRecordingTypes)) {
 			throw new InvalidArgumentException('status');
 		}
-		if ($room->getCallRecording() !== Room::RECORDING_NONE) {
+		if ($room->getCallRecording() !== Room::RECORDING_NONE && $room->getCallRecording() !== Room::RECORDING_FAILED) {
 			throw new InvalidArgumentException('recording');
 		}
 		if (!$room->getActiveSince() instanceof \DateTimeInterface) {

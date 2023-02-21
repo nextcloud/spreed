@@ -178,3 +178,20 @@
 * Response:
     - (Additional) Status code:
         + `404 Not Found`: When the room is not found.
+
+### Failed call recording
+
+* Data format:
+
+    ```json
+    {
+      "type": "failed",
+      "failed": {
+        "token": "the-token-of-the-room",
+      },
+    }
+    ```
+
+* Response:
+    - (Additional) Status code:
+        + `404 Not Found`: When the room is not found.

@@ -156,6 +156,8 @@ class RecordingController extends AEnvironmentAwareController {
 				return $this->backendStarted($message['started']);
 			case 'stopped':
 				return $this->backendStopped($message['stopped']);
+			case 'failed':
+				return $this->backendFailed($message['failed']);
 			default:
 				return new DataResponse([
 					'type' => 'error',
@@ -233,6 +235,30 @@ class RecordingController extends AEnvironmentAwareController {
 		}
 
 		$this->roomService->setCallRecording($room, Room::RECORDING_NONE, $participant);
+
+		return new DataResponse();
+	}
+
+	private function backendFailed(array $failed): DataResponse {
+		$token = $failed['token'];
+
+		try {
+			$room = $this->manager->getRoomByToken($token);
+		} catch (RoomNotFoundException $e) {
+			$this->logger->debug('Failed to get room {token}', [
+				'token' => $token,
+				'app' => 'spreed-recording',
+			]);
+			return new DataResponse([
+				'type' => 'error',
+				'error' => [
+					'code' => 'no_such_room',
+					'message' => 'Room not found.',
+				],
+			], Http::STATUS_NOT_FOUND);
+		}
+
+		$this->roomService->setCallRecording($room, Room::RECORDING_FAILED);
 
 		return new DataResponse();
 	}

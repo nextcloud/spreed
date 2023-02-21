@@ -120,6 +120,20 @@ trait RecordingTrait {
 		$this->sendBackendRequestFromRecordingServer($data, $statusCode, $apiVersion);
 	}
 
+	/**
+	 * @When /^recording server sent failed request for recording in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function recordingServerSentFailedRequestForRecordingInRoomWith(string $identifier, int $statusCode, string $apiVersion = 'v1') {
+		$data = [
+			'type' => 'failed',
+			'failed' => [
+				'token' => FeatureContext::getTokenForIdentifier($identifier),
+			],
+		];
+
+		$this->sendBackendRequestFromRecordingServer($data, $statusCode, $apiVersion);
+	}
+
 	private function sendBackendRequestFromRecordingServer(array $data, int $statusCode, string $apiVersion = 'v1') {
 		$body = json_encode($data);
 

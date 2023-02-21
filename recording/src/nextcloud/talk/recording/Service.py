@@ -250,6 +250,11 @@ class Service:
         except Exception as exception:
             self._stopHelpers()
 
+            try:
+                BackendNotifier.failed(self.backend, self.token)
+            except:
+                pass
+
             raise
 
     def stop(self, actorType, actorId):

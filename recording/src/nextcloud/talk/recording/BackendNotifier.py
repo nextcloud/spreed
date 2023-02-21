@@ -154,6 +154,23 @@ def stopped(backend, token, actorType, actorId):
 
     backendRequest(backend, data)
 
+def failed(backend, token):
+    """
+    Notifies the backend that the recording failed.
+
+    :param backend: the backend of the conversation.
+    :param token: the token of the conversation.
+    """
+
+    data = {
+        'type': 'failed',
+        'failed': {
+            'token': token,
+        },
+    }
+
+    backendRequest(backend, data)
+
 def uploadRecording(backend, token, fileName, owner):
     """
     Upload the recording specified by fileName.

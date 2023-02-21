@@ -61,6 +61,7 @@ class Room {
 	public const RECORDING_AUDIO = 2;
 	public const RECORDING_VIDEO_STARTING = 3;
 	public const RECORDING_AUDIO_STARTING = 4;
+	public const RECORDING_FAILED = 5;
 
 	/** @deprecated Use self::TYPE_UNKNOWN */
 	public const UNKNOWN_CALL = self::TYPE_UNKNOWN;

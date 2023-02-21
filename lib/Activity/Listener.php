@@ -150,7 +150,7 @@ class Listener {
 			return false;
 		}
 
-		if ($room->getCallRecording() !== Room::RECORDING_NONE) {
+		if ($room->getCallRecording() !== Room::RECORDING_NONE && $room->getCallRecording() !== Room::RECORDING_FAILED) {
 			$this->recordingService->stop($room, $actor);
 		}
 		if ($actor instanceof Participant) {
