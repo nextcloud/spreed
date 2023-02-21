@@ -87,7 +87,7 @@
 			:show-actions="!isSidebar"
 			:is-sidebar="isSidebar"
 			:model="localMediaModel"
-			@open="showBreakoutRoomsEditor = true" />
+			@open-breakout-rooms-editor="showBreakoutRoomsEditor = true" />
 
 		<CallButton class="top-bar__button" />
 

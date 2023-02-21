@@ -137,7 +137,7 @@
 
 		<!-- Breakout rooms -->
 		<NcActionButton :close-after-click="true"
-			@click="$emit('open')">
+			@click="$emit('open-breakout-rooms-editor')">
 			<template #icon>
 				<DotsCircle :size="20" />
 			</template>
@@ -239,7 +239,7 @@ export default {
 		},
 	},
 
-	emits: ['open'],
+	emits: ['open-breakout-rooms-editor'],
 
 	data() {
 		return {
