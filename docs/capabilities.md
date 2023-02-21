@@ -108,7 +108,6 @@ title: Capabilities
 
 ## 16
 * `breakout-rooms-v1` - Whether breakout-rooms API v1 is available
-* `avatar` - Avatar of conversation
 * `recording-v1` - Call recording is available.
 * `chat-get-context` - Whether the message context API endpoint is available
 * `config => call => breakout-rooms` - Whether breakout rooms are enabled on this instance
