@@ -509,7 +509,7 @@ Feature: conversation/breakout-rooms
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
       | 2    | Room 2     | 1          | 0                | 0                  |
-    Then user "participant2" is participant of the following rooms (v4)
+    Then user "participant2" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
