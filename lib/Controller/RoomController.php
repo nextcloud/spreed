@@ -332,8 +332,25 @@ class RoomController extends AEnvironmentAwareController {
 				} catch (ParticipantNotFoundException $e) {
 				}
 			}
+			$statuses = [];
+			if ($this->userId !== null
+				&& $this->appManager->isEnabledForUser('user_status')) {
+				$userIds = array_filter(array_map(function (Room $room) {
+					if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+						$participants = json_decode($room->getName(), true);
+						foreach ($participants as $participant) {
+							if ($participant !== $this->userId) {
+								return $participant;
+							}
+						}
+					}
+					return null;
+				}, [$room]));
 
-			return new DataResponse($this->formatRoom($room, $participant, [], $isSIPBridgeRequest), Http::STATUS_OK, $this->getTalkHashHeader());
+				$statuses = $this->statusManager->getUserStatuses($userIds);
+			}
+
+			return new DataResponse($this->formatRoom($room, $participant, $statuses, $isSIPBridgeRequest), Http::STATUS_OK, $this->getTalkHashHeader());
 		} catch (RoomNotFoundException $e) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
 			$response->throttle(['token' => $token]);

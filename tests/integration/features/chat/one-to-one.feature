@@ -67,3 +67,20 @@ Feature: chat/one-to-one
     Then user "participant1" sees the following messages in room "one-to-one room" with 200
       | room            | actorType | actorId      | actorDisplayName         | message   | messageParameters |
       | one-to-one room | users     | participant2 | participant2-displayname | Message   | []                |
+
+  Scenario: Return user status when get single conversation
+    Given user "participant1" creates room "one-to-one room" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    When user "participant2" set status to "online" with 200 (v1)
+    Then user "participant1" gets room "one-to-one room" with 200 (v4)
+      | status |
+      | online |
+    When user "participant2" set status to "offline" with 200 (v1)
+    Then user "participant1" gets room "one-to-one room" with 200 (v4)
+      | status  |
+      | offline |
+    Then user "participant2" set status to "away" with 200 (v1)
+    Then user "participant1" gets room "one-to-one room" with 200 (v4)
+      | status |
+      | away   |
