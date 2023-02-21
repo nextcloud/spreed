@@ -103,7 +103,7 @@ appstore:
 	--exclude=vendor/bamarni \
 	--exclude=vendor/bin \
 	--exclude=vendor-bin \
-	--exclude=webpack.js \
+	--exclude=webpack.config.js \
 	$(project_dir)/  $(sign_dir)/$(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
 		echo "Signing app files…"; \
