@@ -871,6 +871,7 @@ export default {
 	&__main {
 		display: flex;
 		justify-content: space-between;
+		align-items: flex-start;
 		min-width: 100%;
 		&__text {
 			flex: 0 1 600px;
