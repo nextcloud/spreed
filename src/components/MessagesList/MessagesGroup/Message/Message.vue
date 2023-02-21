@@ -186,6 +186,7 @@ the main body of the message as well as a quote.
 			v-bind="$props"
 			:previous-message-id="previousMessageId"
 			:participant="participant"
+			:style="messageButtonsBarStyle"
 			@delete="handleDelete" />
 		<div v-if="isLastReadMessage"
 			v-observe-visibility="lastReadMessageVisibilityChanged">
@@ -224,6 +225,9 @@ import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nex
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import Poll from './MessagePart/Poll.vue'
 
+/**
+ * @property {object} scrollerBoundingClientRect provided by MessageList.vue
+ */
 export default {
 	name: 'Message',
 
@@ -247,6 +251,8 @@ export default {
 		participant,
 		isInCall,
 	],
+
+	inject: ['scrollerBoundingClientRect'],
 
 	inheritAttrs: false,
 
@@ -403,6 +409,7 @@ export default {
 			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
 			detailedReactionsLoading: false,
+			messageButtonsBarStyle: undefined,
 		}
 	},
 
@@ -633,6 +640,11 @@ export default {
 		detailedReactionsLoaded() {
 			return this.$store.getters.reactionsLoaded(this.token, this.id)
 		},
+
+		messageButtonsBarHeight() {
+			return parseInt(getComputedStyle(this.$refs.message)
+				.getPropertyValue('--default-clickable-area').match(/\d+/)[0]) // 44
+		},
 	},
 
 	watch: {
@@ -685,6 +697,7 @@ export default {
 		handleMouseover() {
 			if (!this.isHovered) {
 				this.isHovered = true
+				this.messageButtonsBarStyle = this.getButtonsBarPositionStyle()
 			}
 		},
 
@@ -817,6 +830,18 @@ export default {
 			}
 
 			return displayName
+		},
+
+		getButtonsBarPositionStyle() {
+			if (!this.showMessageButtonsBar) {
+				return
+			}
+
+			// Check if the bottom of messageButtonsBar is outside visible area (36px offset from message bottom)
+			const messageButtonsBarBottom = this.$refs.message.getBoundingClientRect().bottom + this.messageButtonsBarHeight - 8
+			if (this.scrollerBoundingClientRect.bottom < messageButtonsBarBottom) {
+				return `bottom: calc(100% - ${this.$refs.messageInfo.offsetTop}px)`
+			}
 		},
 	},
 }
