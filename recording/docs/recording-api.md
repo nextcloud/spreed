@@ -24,6 +24,10 @@
 | `TALK_RECORDING_RANDOM`   | string | Random string that needs to be concatenated with request body to generate the checksum using the secret configured for the backend. |
 | `TALK_RECORDING_CHECKSUM` | string | The checksum generated with `TALK_RECORDING_RANDOM`.                                                                                |
 
+* Data:
+
+    - Body as a JSON encoded string; format depends on the request type, see below.
+
 * Response:
     - Status code:
         + `200 OK`
@@ -33,7 +37,7 @@
 
 ### Start call recording
 
-* Data format (JSON):
+* Data format:
 
     ```json
     {
