@@ -297,7 +297,7 @@ class Notifier implements INotifier {
 		return $temp;
 	}
 
-	private function parseStoredRecording(
+	protected function parseStoredRecording(
 		INotification $notification,
 		Room $room,
 		Participant $participant,
@@ -308,10 +308,13 @@ class Notifier implements INotifier {
 			$userFolder = $this->rootFolder->getUserFolder($notification->getUser());
 			/** @var \OCP\Files\File[] */
 			$files = $userFolder->getById($parameters['objectId']);
+			/** @var \OCP\Files\File $file */
 			$file = array_shift($files);
+			$path = $userFolder->getRelativePath($file->getPath());
 		} catch (\Throwable $th) {
 			throw new AlreadyProcessedException();
 		}
+
 		$shareAction = $notification->createAction()
 			->setParsedLabel($l->t('Share to chat'))
 			->setPrimary(true)
@@ -343,13 +346,20 @@ class Notifier implements INotifier {
 
 		$notification
 			->setRichSubject(
-				$l->t('Recording for the call in {call} was uploaded.'),
+				$l->t('Recording for the call in {call} was uploaded to {file}.'),
 				[
 					'call' => [
 						'type' => 'call',
 						'id' => $room->getId(),
 						'name' => $room->getDisplayName($participant->getAttendee()->getActorId()),
 						'call-type' => $this->getRoomType($room),
+					],
+					'file' => [
+						'type' => 'file',
+						'id' => $file->getId(),
+						'name' => $file->getName(),
+						'path' => $path,
+						'link' => $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', ['fileid' => $file->getId()]),
 					],
 				])
 			->addParsedAction($shareAction)
