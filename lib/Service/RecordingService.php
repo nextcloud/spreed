@@ -179,7 +179,7 @@ class RecordingService {
 		$notification
 			->setApp('spreed')
 			->setDateTime($this->timeFactory->getDateTime())
-			->setObject('chat', $room->getToken())
+			->setObject('recording', $room->getToken())
 			->setUser($attendee->getActorId())
 			->setSubject('record_file_stored', [
 				'objectId' => $file->getId(),
@@ -190,7 +190,7 @@ class RecordingService {
 	public function notificationDismiss(Room $room, Participant $participant, int $timestamp): void {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp('spreed')
-			->setObject('chat', $room->getToken())
+			->setObject('recording', $room->getToken())
 			->setSubject('record_file_stored')
 			->setDateTime($this->timeFactory->getDateTime('@' . $timestamp))
 			->setUser($participant->getAttendee()->getActorId());

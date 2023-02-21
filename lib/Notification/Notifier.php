@@ -297,7 +297,7 @@ class Notifier implements INotifier {
 		return $temp;
 	}
 
-	private function parseStoredRecording(
+	protected function parseStoredRecording(
 		INotification $notification,
 		Room $room,
 		Participant $participant,

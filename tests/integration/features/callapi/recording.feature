@@ -203,7 +203,7 @@ Feature: callapi/recording
     When user "participant1" store recording file "/img/join_call.ogg" in room "room1" with 200 (v1)
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                                        |
-      | spreed | chat        | room1     | Recording for the call in room1 was uploaded.  |
+      | spreed | recording   | room1     | Recording for the call in room1 was uploaded.  |
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 0             |
