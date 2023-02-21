@@ -28,7 +28,7 @@ import hmac
 from threading import Lock, Thread
 
 from flask import Flask, jsonify, request
-from werkzeug.exceptions import BadRequest, Forbidden
+from werkzeug.exceptions import BadRequest, Forbidden, NotFound
 
 from nextcloud.talk import recording
 from .Config import config
@@ -37,6 +37,7 @@ from .Service import RECORDING_STATUS_AUDIO_AND_VIDEO, Service
 app = Flask(__name__)
 
 services = {}
+servicesStopping = {}
 servicesLock = Lock()
 
 @app.route("/api/v1/welcome", methods=["GET"])
@@ -194,20 +195,51 @@ def stopRecording(backend, token, data):
 
     service = None
     with servicesLock:
+        if serviceId not in services and serviceId in servicesStopping:
+            app.logger.info(f"Trying to stop recording again: {backend} {token}")
+            return {}
+
         if serviceId not in services:
             app.logger.warning(f"Trying to stop unknown recording: {backend} {token}")
-            return {}
+            raise NotFound()
 
         service = services[serviceId]
 
         services.pop(serviceId)
 
+        servicesStopping[serviceId] = service
+
     app.logger.info(f"Stop recording: {backend} {token}")
 
-    serviceStopThread = Thread(target=service.stop, args=[actorType, actorId], daemon=True)
+    serviceStopThread = Thread(target=_stopRecordingService, args=[service, actorType, actorId], daemon=True)
     serviceStopThread.start()
 
     return {}
+
+def _stopRecordingService(service, actorType, actorId):
+    """
+    Helper function to stop a recording service.
+
+    The recording service will be removed from the list of services being
+    stopped once it is fully stopped.
+
+    :param service: the Service to stop.
+    """
+    serviceId = f'{service.backend}-{service.token}'
+
+    try:
+        service.stop(actorType, actorId)
+    except Exception as exception:
+        app.logger.exception(f"Failed to stop recording: {service.backend} {service.token}")
+    finally:
+        with servicesLock:
+            if serviceId not in servicesStopping:
+                # This should never happen.
+                app.logger.error(f"Recording stopped when not in the list of stopping services: {service.backend} {service.token}")
+
+                return
+
+            servicesStopping.pop(serviceId)
 
 # Despite this handler it seems that in some cases the geckodriver could have
 # been killed already when it is executed, which unfortunately prevents a proper

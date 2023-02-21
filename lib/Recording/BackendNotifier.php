@@ -24,11 +24,14 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Recording;
 
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
 use OCA\Talk\Config;
+use OCA\Talk\Exceptions\RecordingNotFoundException;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\AppFramework\Http;
 use OCP\Http\Client\IClientService;
 use OCP\IURLGenerator;
 use OCP\Security\ISecureRandom;
@@ -168,10 +171,18 @@ class BackendNotifier {
 		}
 
 		$start = microtime(true);
-		$this->backendRequest($room, [
-			'type' => 'stop',
-			'stop' => $parameters,
-		]);
+		try {
+			$this->backendRequest($room, [
+				'type' => 'stop',
+				'stop' => $parameters,
+			]);
+		} catch (ClientException $e) {
+			if ($e->getResponse()->getStatusCode() === Http::STATUS_NOT_FOUND) {
+				throw new RecordingNotFoundException();
+			}
+
+			throw $e;
+		}
 		$duration = microtime(true) - $start;
 		$this->logger->debug('Send stop message: {token} ({duration})', [
 			'token' => $room->getToken(),

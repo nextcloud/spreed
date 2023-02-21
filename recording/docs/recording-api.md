@@ -70,3 +70,7 @@
     ```
 
     - `actor` is optional
+
+* Response:
+    - (Additional) Status code:
+        + `404 Not Found`: When there is no recording for the token.

@@ -30,6 +30,7 @@ use OC\User\NoUserException;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RecordingNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Recording\BackendNotifier;
@@ -96,7 +97,14 @@ class RecordingService {
 			return;
 		}
 
-		$this->backendNotifier->stop($room, $participant);
+		try {
+			$this->backendNotifier->stop($room, $participant);
+		} catch (RecordingNotFoundException $e) {
+			// If the recording to be stopped is not known to the recording
+			// server it will never notify that the recording was stopped, so
+			// the status needs to be explicitly changed here.
+			$this->roomService->setCallRecording($room, Room::RECORDING_FAILED);
+		}
 	}
 
 	public function store(Room $room, string $owner, array $file): void {
