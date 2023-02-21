@@ -75,6 +75,7 @@ import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import Axios from '@nextcloud/axios'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import isInLobby from '../../mixins/isInLobby.js'
+import isInCall from '../../mixins/isInCall.js'
 import {
 	ATTENDEE,
 	CHAT,
@@ -102,6 +103,7 @@ export default {
 
 	mixins: [
 		isInLobby,
+		isInCall,
 	],
 
 	props: {
@@ -909,7 +911,7 @@ export default {
 		 */
 		smoothScrollToBottom() {
 			this.$nextTick(function() {
-				if (this.isWindowVisible && document.hasFocus()) {
+				if (this.isWindowVisible && (document.hasFocus() || this.isInCall)) {
 					// scrollTo is used when the user is watching
 					this.scroller.scrollTo({
 						top: this.scroller.scrollHeight,
