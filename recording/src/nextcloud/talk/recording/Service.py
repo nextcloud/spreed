@@ -178,12 +178,16 @@ class Service:
     def __del__(self):
         self._stopHelpers()
 
-    def start(self):
+    def start(self, actorType, actorId):
         """
         Starts the recording.
 
         This method blocks until the recording ends.
 
+        :param actorType: the actor type of the Talk participant that started
+               the recording.
+        :param actorId: the actor id of the Talk participant that started the
+               recording.
         :raise Exception: if the recording ends unexpectedly (including if it
                could not be started).
         """
@@ -222,6 +226,8 @@ class Service:
             self._logger.debug("Joining call")
             self._participant.joinCall(self.token)
 
+            BackendNotifier.started(self.backend, self.token, self.status, actorType, actorId)
+
             extensionlessFileName = f'{fullDirectory}/recording-{datetime.now().strftime("%Y%m%d-%H%M%S")}'
 
             recorderArgs = getRecorderArgs(self.status, self._display.new_display_var, audioSinkIndex, width, height, extensionlessFileName)
@@ -244,19 +250,30 @@ class Service:
         except Exception as exception:
             self._stopHelpers()
 
+            try:
+                BackendNotifier.failed(self.backend, self.token)
+            except:
+                pass
+
             raise
 
-    def stop(self):
+    def stop(self, actorType, actorId):
         """
         Stops the recording and uploads it.
 
         The recording is removed from the temporary directory once uploaded,
         although it is kept if the upload fails.
 
+        :param actorType: the actor type of the Talk participant that stopped
+               the recording.
+        :param actorId: the actor id of the Talk participant that stopped the
+               recording.
         :raise Exception: if the file could not be uploaded.
         """
 
         self._stopHelpers()
+
+        BackendNotifier.stopped(self.backend, self.token, actorType, actorId)
 
         if not self._fileName:
             self._logger.error(f"Recording stopping before starting, nothing to upload")

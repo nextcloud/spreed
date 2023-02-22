@@ -501,12 +501,23 @@ class Listener implements IEventListener {
 	}
 
 	public static function setCallRecording(ModifyRoomEvent $event): void {
+		$recordingHasStarted = in_array($event->getOldValue(), [Room::RECORDING_NONE, Room::RECORDING_VIDEO_STARTING, Room::RECORDING_AUDIO_STARTING, Room::RECORDING_FAILED])
+			&& in_array($event->getNewValue(), [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO]);
+		$recordingHasStopped = in_array($event->getOldValue(), [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO])
+			&& $event->getNewValue() === Room::RECORDING_NONE;
+		$recordingHasFailed = in_array($event->getOldValue(), [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO])
+			&& $event->getNewValue() === Room::RECORDING_FAILED;
+
+		if (!$recordingHasStarted && !$recordingHasStopped && !$recordingHasFailed) {
+			return;
+		}
+
 		$prefix = self::getCallRecordingPrefix($event);
 		$suffix = self::getCallRecordingSuffix($event);
 		$systemMessage = $prefix . 'recording_' . $suffix;
 
 		$listener = Server::get(self::class);
-		$listener->sendSystemMessage($event->getRoom(), $systemMessage);
+		$listener->sendSystemMessage($event->getRoom(), $systemMessage, [], $event->getActor());
 	}
 
 	private static function getCallRecordingSuffix(ModifyRoomEvent $event): string {
@@ -515,15 +526,20 @@ class Listener implements IEventListener {
 			Room::RECORDING_VIDEO,
 			Room::RECORDING_AUDIO,
 		];
-		$suffix = in_array($newStatus, $startStatus) ? 'started' : 'stopped';
-		return $suffix;
+		if (in_array($newStatus, $startStatus)) {
+			return 'started';
+		}
+		if ($newStatus === Room::RECORDING_FAILED) {
+			return 'failed';
+		}
+		return 'stopped';
 	}
 
 	private static function getCallRecordingPrefix(ModifyRoomEvent $event): string {
 		$newValue = $event->getNewValue();
 		$oldValue = $event->getOldValue();
 		$isAudioStatus = $newValue === Room::RECORDING_AUDIO
-			|| $oldValue === Room::RECORDING_AUDIO;
+			|| ($oldValue === Room::RECORDING_AUDIO && $newValue !== Room::RECORDING_FAILED);
 		return $isAudioStatus ? 'audio_' : '';
 	}
 

@@ -111,6 +111,9 @@ title: Constants
 * `0` - No recording
 * `1` - Recording video
 * `2` - Recording audio
+* `3` - Starting video recording
+* `4` - Starting audio recording
+* `5` - Recording failed
 
 ## Chat
 

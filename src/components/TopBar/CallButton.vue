@@ -150,8 +150,14 @@ export default {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
+		isStartingRecording() {
+			return this.conversation.callRecording === CALL.RECORDING.VIDEO_STARTING
+				|| this.conversation.callRecording === CALL.RECORDING.AUDIO_STARTING
+		},
+
 		isRecording() {
-			return this.conversation.callRecording !== CALL.RECORDING.OFF
+			return this.conversation.callRecording === CALL.RECORDING.VIDEO
+				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
 		},
 
 		participantType() {
@@ -299,7 +305,7 @@ export default {
 			const shouldShowDeviceCheckerScreen = (BrowserStorage.getItem('showDeviceChecker' + this.token) === null
 				|| BrowserStorage.getItem('showDeviceChecker' + this.token) === 'true') && !this.forceJoinCall
 			console.debug(shouldShowDeviceCheckerScreen)
-			if ((this.isRecording && !this.forceJoinCall) || shouldShowDeviceCheckerScreen) {
+			if (((this.isStartingRecording || this.isRecording) && !this.forceJoinCall) || shouldShowDeviceCheckerScreen) {
 				emit('talk:device-checker:show')
 			} else {
 				emit('talk:device-checker:hide')

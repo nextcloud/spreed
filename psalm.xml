@@ -77,6 +77,7 @@
 		<file name="tests/stubs/oc_comments_comment.php" />
 		<file name="tests/stubs/oc_comments_manager.php" />
 		<file name="tests/stubs/oc_hooks_emitter.php" />
+		<file name="tests/stubs/GuzzleHttp_Exception_ClientException.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ConnectException.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ServerException.php" />
 		<file name="tests/stubs/Symfony_Component_EventDispatcher_GenericEvent.php" />

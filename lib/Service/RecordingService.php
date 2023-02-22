@@ -30,6 +30,7 @@ use OC\User\NoUserException;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RecordingNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Recording\BackendNotifier;
@@ -70,31 +71,40 @@ class RecordingService {
 	) {
 	}
 
-	public function start(Room $room, int $status, string $owner): void {
+	public function start(Room $room, int $status, string $owner, Participant $participant): void {
 		$availableRecordingTypes = [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
 		if (!in_array($status, $availableRecordingTypes)) {
 			throw new InvalidArgumentException('status');
 		}
-		if ($room->getCallRecording() !== Room::RECORDING_NONE) {
+		if ($room->getCallRecording() !== Room::RECORDING_NONE && $room->getCallRecording() !== Room::RECORDING_FAILED) {
 			throw new InvalidArgumentException('recording');
 		}
 		if (!$room->getActiveSince() instanceof \DateTimeInterface) {
 			throw new InvalidArgumentException('call');
 		}
+		if (!$this->config->isRecordingEnabled()) {
+			throw new InvalidArgumentException('config');
+		}
 
-		$this->backendNotifier->start($room, $status, $owner);
+		$this->backendNotifier->start($room, $status, $owner, $participant);
 
-		$this->roomService->setCallRecording($room, $status);
+		$startingStatus = $status == Room::RECORDING_VIDEO ? Room::RECORDING_VIDEO_STARTING : Room::RECORDING_AUDIO_STARTING;
+		$this->roomService->setCallRecording($room, $startingStatus);
 	}
 
-	public function stop(Room $room): void {
+	public function stop(Room $room, ?Participant $participant = null): void {
 		if ($room->getCallRecording() === Room::RECORDING_NONE) {
 			return;
 		}
 
-		$this->backendNotifier->stop($room);
-
-		$this->roomService->setCallRecording($room);
+		try {
+			$this->backendNotifier->stop($room, $participant);
+		} catch (RecordingNotFoundException $e) {
+			// If the recording to be stopped is not known to the recording
+			// server it will never notify that the recording was stopped, so
+			// the status needs to be explicitly changed here.
+			$this->roomService->setCallRecording($room, Room::RECORDING_FAILED);
+		}
 	}
 
 	public function store(Room $room, string $owner, array $file): void {

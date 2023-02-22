@@ -684,18 +684,27 @@ const actions = {
 			console.error(e)
 		}
 
-		showSuccess(t('spreed', 'Call recording started.'))
-		context.commit('setCallRecording', { token, callRecording })
+		const startingCallRecording = callRecording === CALL.RECORDING.VIDEO ? CALL.RECORDING.VIDEO_STARTING : CALL.RECORDING.AUDIO_STARTING
+
+		showSuccess(t('spreed', 'Call recording is starting.'))
+		context.commit('setCallRecording', { token, callRecording: startingCallRecording })
 	},
 
 	async stopCallRecording(context, { token }) {
+		const previousCallRecordingStatus = context.getters.conversation(token).callRecording
+
 		try {
 			await stopCallRecording(token)
 		} catch (e) {
 			console.error(e)
 		}
 
-		showInfo(t('spreed', 'Call recording stopped. You will be notified once the recording is available.'))
+		if (previousCallRecordingStatus === CALL.RECORDING.VIDEO_STARTING
+			|| previousCallRecordingStatus === CALL.RECORDING.VIDEO_STARTING) {
+			showInfo(t('spreed', 'Call recording stopped while starting.'))
+		} else {
+			showInfo(t('spreed', 'Call recording stopped. You will be notified once the recording is available.'))
+		}
 		context.commit('setCallRecording', { token, callRecording: CALL.RECORDING.OFF })
 	},
 }

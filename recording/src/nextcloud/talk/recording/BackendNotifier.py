@@ -23,6 +23,7 @@ Module to send requests to the Nextcloud server.
 
 import hashlib
 import hmac
+import json
 import logging
 import os
 import ssl
@@ -73,6 +74,102 @@ def doRequest(backend, request, retries=3):
         else:
             logger.exception(f"Failed to send message to backend, giving up!")
             raise
+
+def backendRequest(backend, data):
+    """
+    Sends the data to the backend on the endpoint to receive notifications from
+    the recording server.
+
+    The data is automatically wrapped in a request for the appropriate URL and
+    with the needed headers.
+
+    :param backend: the backend to send the data to.
+    :param data: the data to send.
+    """
+    url = backend + '/ocs/v2.php/apps/spreed/api/v1/recording/backend'
+
+    data = json.dumps(data).encode()
+
+    random, checksum = getRandomAndChecksum(backend, data)
+
+    headers = {
+        'Content-Type': 'application/json',
+        'OCS-ApiRequest': 'true',
+        'Talk-Recording-Random': random,
+        'Talk-Recording-Checksum': checksum,
+    }
+
+    backendRequest = Request(url, data, headers)
+
+    doRequest(backend, backendRequest)
+
+def started(backend, token, status, actorType, actorId):
+    """
+    Notifies the backend that the recording was started.
+
+    :param backend: the backend of the conversation.
+    :param token: the token of the conversation.
+    :param actorType: the actor type of the Talk participant that stopped the
+           recording.
+    :param actorId: the actor id of the Talk participant that stopped the
+           recording.
+    """
+
+    backendRequest(backend, {
+        'type': 'started',
+        'started': {
+            'token': token,
+            'status': status,
+            'actor': {
+                'type': actorType,
+                'id': actorId,
+            },
+        },
+    })
+
+def stopped(backend, token, actorType, actorId):
+    """
+    Notifies the backend that the recording was stopped.
+
+    :param backend: the backend of the conversation.
+    :param token: the token of the conversation.
+    :param actorType: the actor type of the Talk participant that started the
+           recording.
+    :param actorId: the actor id of the Talk participant that started the
+           recording.
+    """
+
+    data = {
+        'type': 'stopped',
+        'stopped': {
+            'token': token,
+        },
+    }
+
+    if actorType != None and actorId != None:
+        data['stopped']['actor'] = {
+            'type': actorType,
+            'id': actorId,
+        }
+
+    backendRequest(backend, data)
+
+def failed(backend, token):
+    """
+    Notifies the backend that the recording failed.
+
+    :param backend: the backend of the conversation.
+    :param token: the token of the conversation.
+    """
+
+    data = {
+        'type': 'failed',
+        'failed': {
+            'token': token,
+        },
+    }
+
+    backendRequest(backend, data)
 
 def uploadRecording(backend, token, fileName, owner):
     """

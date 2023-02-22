@@ -34,6 +34,9 @@ export const CALL = {
 		OFF: 0,
 		VIDEO: 1,
 		AUDIO: 2,
+		VIDEO_STARTING: 3,
+		AUDIO_STARTING: 4,
+		FAILED: 5,
 	},
 }
 

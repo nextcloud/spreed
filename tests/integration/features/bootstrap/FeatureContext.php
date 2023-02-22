@@ -153,6 +153,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$tokenToIdentifier = [];
 		self::$sessionIdToUser = [
 			'cli' => 'cli',
+			'failed-to-get-session' => 'failed-to-get-session',
 		];
 		self::$userToSessionId = [];
 		self::$userToAttendeeId = [];
@@ -3336,6 +3337,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$options['form_params'] = $fd;
 		} elseif (is_array($body)) {
 			$options['form_params'] = $body;
+		} elseif (is_string($body)) {
+			$options['body'] = $body;
 		}
 
 		$options['headers'] = array_merge($headers, [

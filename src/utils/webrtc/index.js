@@ -48,6 +48,7 @@ let tokensInSignaling = {}
 
 /**
  * @param {string} token The token of the conversation to get the signaling settings for
+ * @param {object} options The additional options for the request
  */
 async function getSignalingSettings(token, options) {
 	// If getSignalingSettings is called again while a previous one was still
@@ -79,6 +80,12 @@ async function getSignalingSettings(token, options) {
 	return settings
 }
 
+/**
+ * @param {string} token The token of the conversation to get the signaling settings for
+ * @param {string} random A string of at least 32 characters
+ * @param {string} checksum The SHA-256 HMAC of random with the secret of the
+ *        recording server
+ */
 async function signalingGetSettingsForRecording(token, random, checksum) {
 	const options = {
 		headers: {

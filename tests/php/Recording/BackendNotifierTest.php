@@ -31,6 +31,7 @@ use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Recording\BackendNotifier;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -39,6 +40,7 @@ use OCP\Http\Client\IClientService;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
+use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
@@ -75,6 +77,8 @@ class BackendNotifierTest extends TestCase {
 	private $urlGenerator;
 	private ?\OCA\Talk\Tests\php\Recording\CustomBackendNotifier $backendNotifier = null;
 
+	/** @var ParticipantService|MockObject */
+	private $participantService;
 	private ?Manager $manager = null;
 
 	private ?string $recordingSecret = null;
@@ -107,6 +111,8 @@ class BackendNotifierTest extends TestCase {
 
 		$this->recreateBackendNotifier();
 
+		$this->participantService = \OC::$server->get(ParticipantService::class);
+
 		$dbConnection = \OC::$server->getDatabaseConnection();
 		$this->manager = new Manager(
 			$dbConnection,
@@ -115,7 +121,7 @@ class BackendNotifierTest extends TestCase {
 			\OC::$server->get(IAppManager::class),
 			\OC::$server->get(AttendeeMapper::class),
 			\OC::$server->get(SessionMapper::class),
-			$this->createMock(ParticipantService::class),
+			$this->participantService,
 			$this->secureRandom,
 			$this->createMock(IUserManager::class),
 			$groupManager,
@@ -182,26 +188,78 @@ class BackendNotifierTest extends TestCase {
 	}
 
 	public function testStart() {
-		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
+		$userId = 'testUser';
 
-		$this->backendNotifier->start($room, Room::RECORDING_VIDEO, 'participant1');
+		/** @var IUser|MockObject $testUser */
+		$testUser = $this->createMock(IUser::class);
+		$testUser->expects($this->any())
+			->method('getUID')
+			->willReturn($userId);
+
+		$roomService = $this->createMock(RoomService::class);
+		$roomService->method('verifyPassword')
+			->willReturn(['result' => true, 'url' => '']);
+
+		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
+		$this->participantService->addUsers($room, [[
+			'actorType' => 'users',
+			'actorId' => $userId,
+		]]);
+		$participant = $this->participantService->joinRoom($roomService, $room, $testUser, '');
+
+		$this->backendNotifier->start($room, Room::RECORDING_VIDEO, 'participant1', $participant);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'start',
 			'start' => [
 				'status' => Room::RECORDING_VIDEO,
 				'owner' => 'participant1',
+				'actor' => [
+					'type' => 'users',
+					'id' => $userId,
+				],
 			],
 		]);
 	}
 
 	public function testStop() {
+		$userId = 'testUser';
+
+		/** @var IUser|MockObject $testUser */
+		$testUser = $this->createMock(IUser::class);
+		$testUser->expects($this->any())
+			->method('getUID')
+			->willReturn($userId);
+
+		$roomService = $this->createMock(RoomService::class);
+		$roomService->method('verifyPassword')
+			->willReturn(['result' => true, 'url' => '']);
+
 		$room = $this->manager->createRoom(Room::TYPE_PUBLIC);
+		$this->participantService->addUsers($room, [[
+			'actorType' => 'users',
+			'actorId' => $userId,
+		]]);
+		$participant = $this->participantService->joinRoom($roomService, $room, $testUser, '');
+
+		$this->backendNotifier->stop($room, $participant);
+
+		$this->assertMessageWasSent($room, [
+			'type' => 'stop',
+			'stop' => [
+				'actor' => [
+					'type' => 'users',
+					'id' => $userId,
+				],
+			],
+		]);
 
 		$this->backendNotifier->stop($room);
 
 		$this->assertMessageWasSent($room, [
 			'type' => 'stop',
+			'stop' => [
+			],
 		]);
 	}
 }

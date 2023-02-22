@@ -25,6 +25,7 @@ use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\SystemMessage\Listener;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\ModifyParticipantEvent;
+use OCA\Talk\Events\ModifyRoomEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -316,5 +317,292 @@ class ListenerTest extends TestCase {
 		}
 
 		$this->dispatch(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
+	}
+
+	public function callRecordingChangeProvider() {
+		return [
+			[
+				Room::RECORDING_VIDEO_STARTING,
+				Room::RECORDING_NONE,
+				null,
+				null,
+				null,
+			],
+			[
+				Room::RECORDING_VIDEO_STARTING,
+				Room::RECORDING_NONE,
+				Attendee::ACTOR_USERS,
+				'alice',
+				null,
+			],
+			[
+				Room::RECORDING_VIDEO,
+				Room::RECORDING_VIDEO_STARTING,
+				null,
+				null,
+				['message' => 'recording_started', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_VIDEO,
+				Room::RECORDING_VIDEO_STARTING,
+				Attendee::ACTOR_USERS,
+				'alice',
+				['message' => 'recording_started', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_VIDEO,
+				Room::RECORDING_NONE,
+				null,
+				null,
+				['message' => 'recording_started', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_VIDEO,
+				Room::RECORDING_NONE,
+				Attendee::ACTOR_USERS,
+				'alice',
+				['message' => 'recording_started', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_AUDIO_STARTING,
+				Room::RECORDING_NONE,
+				null,
+				null,
+				null,
+			],
+			[
+				Room::RECORDING_AUDIO_STARTING,
+				Room::RECORDING_NONE,
+				Attendee::ACTOR_USERS,
+				'alice',
+				null,
+			],
+			[
+				Room::RECORDING_AUDIO,
+				Room::RECORDING_AUDIO_STARTING,
+				null,
+				null,
+				['message' => 'audio_recording_started', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_AUDIO,
+				Room::RECORDING_AUDIO_STARTING,
+				Attendee::ACTOR_USERS,
+				'alice',
+				['message' => 'audio_recording_started', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_AUDIO,
+				Room::RECORDING_NONE,
+				null,
+				null,
+				['message' => 'audio_recording_started', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_AUDIO,
+				Room::RECORDING_NONE,
+				Attendee::ACTOR_USERS,
+				'alice',
+				['message' => 'audio_recording_started', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_NONE,
+				Room::RECORDING_VIDEO_STARTING,
+				null,
+				null,
+				null,
+			],
+			[
+				Room::RECORDING_NONE,
+				Room::RECORDING_VIDEO_STARTING,
+				Attendee::ACTOR_USERS,
+				'bob',
+				null,
+			],
+			[
+				Room::RECORDING_NONE,
+				Room::RECORDING_VIDEO,
+				null,
+				null,
+				['message' => 'recording_stopped', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_NONE,
+				Room::RECORDING_VIDEO,
+				Attendee::ACTOR_USERS,
+				'bob',
+				['message' => 'recording_stopped', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_NONE,
+				Room::RECORDING_AUDIO_STARTING,
+				null,
+				null,
+				null,
+			],
+			[
+				Room::RECORDING_NONE,
+				Room::RECORDING_AUDIO_STARTING,
+				Attendee::ACTOR_USERS,
+				'bob',
+				null,
+			],
+			[
+				Room::RECORDING_NONE,
+				Room::RECORDING_AUDIO,
+				null,
+				null,
+				['message' => 'audio_recording_stopped', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_NONE,
+				Room::RECORDING_AUDIO,
+				Attendee::ACTOR_USERS,
+				'bob',
+				['message' => 'audio_recording_stopped', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_FAILED,
+				Room::RECORDING_VIDEO_STARTING,
+				null,
+				null,
+				null,
+			],
+			[
+				Room::RECORDING_FAILED,
+				Room::RECORDING_AUDIO_STARTING,
+				null,
+				null,
+				null,
+			],
+			[
+				Room::RECORDING_FAILED,
+				Room::RECORDING_VIDEO,
+				null,
+				null,
+				['message' => 'recording_failed', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_FAILED,
+				Room::RECORDING_AUDIO,
+				null,
+				null,
+				['message' => 'recording_failed', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_VIDEO_STARTING,
+				Room::RECORDING_FAILED,
+				null,
+				null,
+				null,
+			],
+			[
+				Room::RECORDING_VIDEO_STARTING,
+				Room::RECORDING_FAILED,
+				Attendee::ACTOR_USERS,
+				'alice',
+				null,
+			],
+			[
+				Room::RECORDING_VIDEO,
+				Room::RECORDING_FAILED,
+				null,
+				null,
+				['message' => 'recording_started', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_VIDEO,
+				Room::RECORDING_FAILED,
+				Attendee::ACTOR_USERS,
+				'alice',
+				['message' => 'recording_started', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_AUDIO_STARTING,
+				Room::RECORDING_FAILED,
+				null,
+				null,
+				null,
+			],
+			[
+				Room::RECORDING_AUDIO_STARTING,
+				Room::RECORDING_FAILED,
+				Attendee::ACTOR_USERS,
+				'alice',
+				null,
+			],
+			[
+				Room::RECORDING_AUDIO,
+				Room::RECORDING_FAILED,
+				null,
+				null,
+				['message' => 'audio_recording_started', 'parameters' => []],
+			],
+			[
+				Room::RECORDING_AUDIO,
+				Room::RECORDING_FAILED,
+				Attendee::ACTOR_USERS,
+				'alice',
+				['message' => 'audio_recording_started', 'parameters' => []],
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider callRecordingChangeProvider
+	 *
+	 * @param int $newStatus
+	 * @param int $oldStatus
+	 * @param string|null $actorType
+	 * @param string|null $actorId
+	 * @param array $expectedMessage
+	 */
+	public function testAfterCallRecordingSet(int $newStatus, int $oldStatus, ?string $actorType, ?string $actorId, ?array $expectedMessage): void {
+		$this->mockLoggedInUser('logged_in_user');
+
+		$room = $this->createMock(Room::class);
+		$room->expects($this->any())
+			->method('getType')
+			->willReturn(Room::TYPE_PUBLIC);
+
+		if ($actorType !== null && $actorId !== null) {
+			$attendee = new Attendee();
+			$attendee->setActorType($actorType);
+			$attendee->setActorId($actorId);
+
+			$participant = $this->createMock(Participant::class);
+			$participant->method('getAttendee')->willReturn($attendee);
+
+			$expectedActorType = $actorType;
+			$expectedActorId = $actorId;
+		} else {
+			$participant = null;
+
+			$expectedActorType = Attendee::ACTOR_USERS;
+			$expectedActorId = 'logged_in_user';
+		}
+
+		$event = new ModifyRoomEvent($room, 'callRecording', $newStatus, $oldStatus, $participant);
+
+		if ($expectedMessage !== null) {
+			$this->chatManager->expects($this->once())
+				->method('addSystemMessage')
+				->with(
+					$room,
+					$expectedActorType,
+					$expectedActorId,
+					json_encode($expectedMessage),
+					$this->dummyTime,
+					false,
+					SELF::DUMMY_REFERENCE_ID,
+					null,
+					false
+				);
+		} else {
+			$this->chatManager->expects($this->never())
+				->method('addSystemMessage');
+		}
+
+		$this->dispatch(Room::EVENT_AFTER_SET_CALL_RECORDING, $event);
 	}
 }

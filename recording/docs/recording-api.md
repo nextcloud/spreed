@@ -24,6 +24,10 @@
 | `TALK_RECORDING_RANDOM`   | string | Random string that needs to be concatenated with request body to generate the checksum using the secret configured for the backend. |
 | `TALK_RECORDING_CHECKSUM` | string | The checksum generated with `TALK_RECORDING_RANDOM`.                                                                                |
 
+* Data:
+
+    - Body as a JSON encoded string; format depends on the request type, see below.
+
 * Response:
     - Status code:
         + `200 OK`
@@ -33,7 +37,7 @@
 
 ### Start call recording
 
-* Data format (JSON):
+* Data format:
 
     ```json
     {
@@ -41,6 +45,10 @@
       "start": {
         "status": "the-type-of-recording (1 for audio and video, 2 for audio only)",
         "owner": "the-user-to-upload-the-resulting-file-as",
+        "actor": {
+          "type": "the-type-of-the-actor",
+          "id": "the-id-of-the-actor",
+        },
       }
     }
     ```
@@ -52,5 +60,17 @@
     ```json
     {
       "type": "stop",
+      "stop": {
+        "actor": {
+          "type": "the-type-of-the-actor",
+          "id": "the-id-of-the-actor",
+        },
+      },
     }
     ```
+
+    - `actor` is optional
+
+* Response:
+    - (Additional) Status code:
+        + `404 Not Found`: When there is no recording for the token.

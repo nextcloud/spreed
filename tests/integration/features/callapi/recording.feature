@@ -13,10 +13,14 @@ Feature: callapi/recording
     And user "participant1" joins room "room1" with 200 (v4)
     And user "participant1" joins call "room1" with 200 (v4)
     When user "participant1" starts "video" recording in room "room1" with 200 (v1)
-    Then recording server received the following requests
+    And recording server received the following requests
       | token | data                                                         |
-      | room1 | {"type":"start","start":{"status":1,"owner":"participant1"}} |
-    And user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room1 | {"type":"start","start":{"status":1,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 3             |
+    And recording server sent started request for "video" recording in room "room1" as "participant1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
       | room1 | users     | participant1 | participant1-displayname | recording_started    |
       | room1 | users     | participant1 | participant1-displayname | call_started         |
@@ -25,10 +29,14 @@ Feature: callapi/recording
       | type | name  | callRecording |
       | 2    | room1 | 1             |
     When user "participant1" stops recording in room "room1" with 200 (v1)
-    Then recording server received the following requests
+    And recording server received the following requests
       | token | data             |
-      | room1 | {"type":"stop"} |
-    And user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room1 | {"type":"stop","stop":{"actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 1             |
+    And recording server sent stopped request for recording in room "room1" as "participant1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
       | room1 | users     | participant1 | participant1-displayname | recording_stopped    |
       | room1 | users     | participant1 | participant1-displayname | recording_started    |
@@ -48,10 +56,14 @@ Feature: callapi/recording
     And user "participant1" joins room "room1" with 200 (v4)
     And user "participant1" joins call "room1" with 200 (v4)
     When user "participant1" starts "audio" recording in room "room1" with 200 (v1)
-    Then recording server received the following requests
+    And recording server received the following requests
       | token | data                                                         |
-      | room1 | {"type":"start","start":{"status":2,"owner":"participant1"}} |
-    And user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room1 | {"type":"start","start":{"status":2,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 4             |
+    And recording server sent started request for "audio" recording in room "room1" as "participant1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage           |
       | room1 | users     | participant1 | participant1-displayname | audio_recording_started |
       | room1 | users     | participant1 | participant1-displayname | call_started            |
@@ -60,15 +72,191 @@ Feature: callapi/recording
       | type | name  | callRecording |
       | 2    | room1 | 2             |
     When user "participant1" stops recording in room "room1" with 200 (v1)
-    Then recording server received the following requests
+    And recording server received the following requests
       | token | data             |
-      | room1 | {"type":"stop"} |
-    And user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room1 | {"type":"stop","stop":{"actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 2             |
+    And recording server sent stopped request for recording in room "room1" as "participant1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
       | room  | actorType | actorId      | actorDisplayName         | systemMessage           |
       | room1 | users     | participant1 | participant1-displayname | audio_recording_stopped |
       | room1 | users     | participant1 | participant1-displayname | audio_recording_started |
       | room1 | users     | participant1 | participant1-displayname | call_started            |
       | room1 | users     | participant1 | participant1-displayname | conversation_created    |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
+
+  Scenario: Recording failed to start
+    Given recording server is started
+    And the following "spreed" app config is set
+      | signaling_dev | yes |
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    And user "participant1" joins call "room1" with 200 (v4)
+    And user "participant1" starts "video" recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data                                                         |
+      | room1 | {"type":"start","start":{"status":1,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 3             |
+    When recording server sent failed request for recording in room "room1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room1 | users     | participant1 | participant1-displayname | call_started         |
+      | room1 | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 5             |
+
+  Scenario: Video recording failed
+    Given recording server is started
+    And the following "spreed" app config is set
+      | signaling_dev | yes |
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    And user "participant1" joins call "room1" with 200 (v4)
+    And user "participant1" starts "video" recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data                                                         |
+      | room1 | {"type":"start","start":{"status":1,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 3             |
+    And recording server sent started request for "video" recording in room "room1" as "participant1" with 200
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 1             |
+    When recording server sent failed request for recording in room "room1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId               | actorDisplayName         | systemMessage        |
+      | room1 | guests    | failed-to-get-session |                          | recording_failed     |
+      | room1 | users     | participant1          | participant1-displayname | recording_started    |
+      | room1 | users     | participant1          | participant1-displayname | call_started         |
+      | room1 | users     | participant1          | participant1-displayname | conversation_created |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 5             |
+
+  Scenario: Start and stop recording again after the previous one failed to start
+    Given recording server is started
+    And the following "spreed" app config is set
+      | signaling_dev | yes |
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    And user "participant1" joins call "room1" with 200 (v4)
+    And user "participant1" starts "video" recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data                                                         |
+      | room1 | {"type":"start","start":{"status":1,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 3             |
+    And recording server sent failed request for recording in room "room1" with 200
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 5             |
+    When user "participant1" starts "video" recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data                                                         |
+      | room1 | {"type":"start","start":{"status":1,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 3             |
+    And recording server sent started request for "video" recording in room "room1" as "participant1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room1 | users     | participant1 | participant1-displayname | recording_started    |
+      | room1 | users     | participant1 | participant1-displayname | call_started         |
+      | room1 | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 1             |
+    When user "participant1" stops recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data             |
+      | room1 | {"type":"stop","stop":{"actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 1             |
+    And recording server sent stopped request for recording in room "room1" as "participant1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room1 | users     | participant1 | participant1-displayname | recording_stopped    |
+      | room1 | users     | participant1 | participant1-displayname | recording_started    |
+      | room1 | users     | participant1 | participant1-displayname | call_started         |
+      | room1 | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
+
+  Scenario: Start and stop recording again after the previous one failed
+    Given recording server is started
+    And the following "spreed" app config is set
+      | signaling_dev | yes |
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    And user "participant1" joins call "room1" with 200 (v4)
+    And user "participant1" starts "video" recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data                                                         |
+      | room1 | {"type":"start","start":{"status":1,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 3             |
+    And recording server sent started request for "video" recording in room "room1" as "participant1" with 200
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 1             |
+    And recording server sent failed request for recording in room "room1" with 200
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 5             |
+    When user "participant1" starts "video" recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data                                                         |
+      | room1 | {"type":"start","start":{"status":1,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 3             |
+    And recording server sent started request for "video" recording in room "room1" as "participant1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId               | actorDisplayName         | systemMessage        |
+      | room1 | users     | participant1          | participant1-displayname | recording_started    |
+      | room1 | guests    | failed-to-get-session |                          | recording_failed     |
+      | room1 | users     | participant1          | participant1-displayname | recording_started    |
+      | room1 | users     | participant1          | participant1-displayname | call_started         |
+      | room1 | users     | participant1          | participant1-displayname | conversation_created |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 1             |
+    When user "participant1" stops recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data             |
+      | room1 | {"type":"stop","stop":{"actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 1             |
+    And recording server sent stopped request for recording in room "room1" as "participant1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId               | actorDisplayName         | systemMessage        |
+      | room1 | users     | participant1          | participant1-displayname | recording_stopped    |
+      | room1 | users     | participant1          | participant1-displayname | recording_started    |
+      | room1 | guests    | failed-to-get-session |                          | recording_failed     |
+      | room1 | users     | participant1          | participant1-displayname | recording_started    |
+      | room1 | users     | participant1          | participant1-displayname | call_started         |
+      | room1 | users     | participant1          | participant1-displayname | conversation_created |
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 0             |
@@ -85,7 +273,8 @@ Feature: callapi/recording
     When user "participant1" starts "audio" recording in room "room1" with 200 (v1)
     And recording server received the following requests
       | token | data                                                         |
-      | room1 | {"type":"start","start":{"status":2,"owner":"participant1"}} |
+      | room1 | {"type":"start","start":{"status":2,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And recording server sent started request for "audio" recording in room "room1" as "participant1" with 200
     And user "participant1" starts "audio" recording in room "room1" with 400 (v1)
     Then the response error matches with "recording"
     And recording server received the following requests
@@ -95,7 +284,12 @@ Feature: callapi/recording
     When user "participant1" stops recording in room "room1" with 200 (v1)
     And recording server received the following requests
       | token | data             |
-      | room1 | {"type":"stop"} |
+      | room1 | {"type":"stop","stop":{"actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" stops recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data             |
+      | room1 | {"type":"stop","stop":{"actor":{"type":"users","id":"participant1"}}} |
+    And recording server sent stopped request for recording in room "room1" as "participant1" with 200
     And user "participant1" stops recording in room "room1" with 200 (v1)
     Then recording server received the following requests
     And user "participant1" is participant of the following unordered rooms (v4)
@@ -104,7 +298,8 @@ Feature: callapi/recording
     When user "participant1" starts "video" recording in room "room1" with 200 (v1)
     And recording server received the following requests
       | token | data                                                         |
-      | room1 | {"type":"start","start":{"status":1,"owner":"participant1"}} |
+      | room1 | {"type":"start","start":{"status":1,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And recording server sent started request for "video" recording in room "room1" as "participant1" with 200
     And user "participant1" starts "video" recording in room "room1" with 400 (v1)
     Then the response error matches with "recording"
     And recording server received the following requests
@@ -114,7 +309,12 @@ Feature: callapi/recording
     When user "participant1" stops recording in room "room1" with 200 (v1)
     And recording server received the following requests
       | token | data             |
-      | room1 | {"type":"stop"} |
+      | room1 | {"type":"stop","stop":{"actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" stops recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data             |
+      | room1 | {"type":"stop","stop":{"actor":{"type":"users","id":"participant1"}}} |
+    And recording server sent stopped request for recording in room "room1" as "participant1" with 200
     And user "participant1" stops recording in room "room1" with 200 (v1)
     Then recording server received the following requests
     And user "participant1" is participant of the following unordered rooms (v4)
@@ -220,14 +420,19 @@ Feature: callapi/recording
     And user "participant1" starts "audio" recording in room "room1" with 200 (v1)
     And recording server received the following requests
       | token | data                                                         |
-      | room1 | {"type":"start","start":{"status":2,"owner":"participant1"}} |
+      | room1 | {"type":"start","start":{"status":2,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And recording server sent started request for "audio" recording in room "room1" as "participant1" with 200
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 2             |
     When user "participant1" ends call "room1" with 200 (v4)
     Then recording server received the following requests
       | token | data             |
-      | room1 | {"type":"stop"} |
+      | room1 | {"type":"stop","stop":{"actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 2             |
+    And recording server sent stopped request for recording in room "room1" as "participant1" with 200
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 0             |
@@ -244,14 +449,19 @@ Feature: callapi/recording
     And user "participant1" starts "audio" recording in room "room1" with 200 (v1)
     And recording server received the following requests
       | token | data                                                         |
-      | room1 | {"type":"start","start":{"status":2,"owner":"participant1"}} |
+      | room1 | {"type":"start","start":{"status":2,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And recording server sent started request for "audio" recording in room "room1" as "participant1" with 200
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 2             |
     When user "participant1" leaves room "room1" with 200 (v4)
     Then recording server received the following requests
       | token | data             |
-      | room1 | {"type":"stop"} |
+      | room1 | {"type":"stop","stop":[]} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 2             |
+    And recording server sent stopped request for recording in room "room1" with 200
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 0             |

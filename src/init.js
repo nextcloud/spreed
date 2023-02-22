@@ -23,6 +23,8 @@
 // The purpose of this file is to wrap the logic shared by the different talk
 // entry points
 
+import { showError } from '@nextcloud/dialogs'
+import { CALL, PARTICIPANT } from './constants.js'
 import store from './store/index.js'
 import { EventBus } from './services/EventBus.js'
 
@@ -66,4 +68,18 @@ EventBus.$on('signaling-join-room', (payload) => {
 
 EventBus.$on('signaling-recording-status-changed', (token, status) => {
 	store.dispatch('setConversationProperties', { token, properties: { callRecording: status } })
+
+	if (status !== CALL.RECORDING.FAILED) {
+		return
+	}
+
+	if (!store.getters.isInCall(store.getters.getToken())) {
+		return
+	}
+
+	const conversation = store.getters.conversation(store.getters.getToken())
+	if (conversation?.participantType === PARTICIPANT.TYPE.OWNER
+		|| conversation?.participantType === PARTICIPANT.TYPE.MODERATOR) {
+		showError(t('spreed', 'The recording failed. Please contact your administrator.'))
+	}
 })

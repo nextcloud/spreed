@@ -544,6 +544,8 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You stopped the audio recording');
 			}
+		} elseif ($message === 'recording_failed') {
+			$parsedMessage = $this->l->t('The recording failed');
 		} elseif ($message === 'poll_voted') {
 			$parsedParameters['poll'] = $parameters['poll'];
 			$parsedParameters['poll']['id'] = (string) $parsedParameters['poll']['id'];

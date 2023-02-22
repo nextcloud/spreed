@@ -27,19 +27,34 @@
 		:triggers="[]"
 		:container="container">
 		<template #trigger>
-			<NcButton :disabled="!isRecording || !isModerator"
+			<NcButton :disabled="(!isStartingRecording && !isRecording) || !isModerator"
 				:wide="true"
-				:class="{ 'call-time__not-recording': !isRecording }"
+				:class="{ 'call-time__not-recording': !isStartingRecording && !isRecording }"
+				:title="isStartingRecording ? t('spreed', 'Starting the recording') : t('spreed', 'Recording')"
 				type="tertiary"
 				@click="showPopover = true">
-				<template v-if="isRecording" #icon>
+				<template v-if="isStartingRecording" #icon>
+					<RecordCircle :size="20"
+						fill-color="var(--color-loading-light)" />
+				</template>
+				<template v-else-if="isRecording" #icon>
 					<RecordCircle :size="20"
 						fill-color="#e9322d" />
 				</template>
 				{{ formattedTime }}
 			</ncbutton>
 		</template>
-		<NcButton type="tertiary-no-background"
+		<NcButton v-if="isStartingRecording"
+			type="tertiary-no-background"
+			:wide="true"
+			@click="stopRecording">
+			<template #icon>
+				<NcLoadingIcon :size="20" />
+			</template>
+			{{ t('spreed', 'Cancel recording start') }}
+		</NcButton>
+		<NcButton v-else
+			type="tertiary-no-background"
 			:wide="true"
 			@click="stopRecording">
 			<template #icon>
@@ -54,6 +69,7 @@
 
 import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { CALL } from '../../constants.js'
@@ -65,6 +81,7 @@ export default {
 	components: {
 		RecordCircle,
 		StopIcon,
+		NcLoadingIcon,
 		NcPopover,
 		NcButton,
 	},
@@ -139,8 +156,14 @@ export default {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
+		isStartingRecording() {
+			return this.conversation.callRecording === CALL.RECORDING.VIDEO_STARTING
+				|| this.conversation.callRecording === CALL.RECORDING.AUDIO_STARTING
+		},
+
 		isRecording() {
-			return this.conversation.callRecording !== CALL.RECORDING.OFF
+			return this.conversation.callRecording === CALL.RECORDING.VIDEO
+				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
 		},
 	},
 
