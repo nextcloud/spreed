@@ -596,7 +596,7 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signalserver kan alternativt brukes for større installasjoner. La stå tom for å bruke intern signalserver.",
     "Android app" : "Android-app",
     "iOS app" : "iOS-app",
-    "An error occurred. Please contact your admin." : "Det oppstod en feil. Kontakt din administrator.",
+    "An error occurred. Please contact your admin." : "Det oppsto en feil. Kontakt din administrator.",
     "Saved" : "Lagret",
     "More actions" : "Flere handlinger",
     "Guests access" : "Gjeste tilgang",

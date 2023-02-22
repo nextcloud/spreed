@@ -246,7 +246,6 @@ OC.L10N.register(
     "Deleted user (%s)" : "Törölt felhasználó (%s)",
     "Share to chat" : "Megosztás csevegésben",
     "Dismiss notification" : "Értesítés mellőzése",
-    "Recording for the call in {call} was uploaded." : "A következő hívás felvétele feltöltésre került: {call}.",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} megosztotta Önnel a(z) {roomName} szobát a(z) {remoteServer} kiszolgálón",
     "{user} in {call}" : "{user} itt: {call}",
     "Deleted user in {call}" : "Felhasználó törölve a következőben: {call}",

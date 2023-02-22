@@ -244,7 +244,6 @@
     "Deleted user (%s)" : "Usunięty użytkownik (%s)",
     "Share to chat" : "Udostępnij na czacie",
     "Dismiss notification" : "Odrzuć powiadomienie",
-    "Recording for the call in {call} was uploaded." : "Wysłano nagranie rozmowy w {call}.",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} udostępniał Tobie pokój {roomName} na {remoteServer}",
     "{user} in {call}" : "{user} w {call}",
     "Deleted user in {call}" : "Usunięty użytkownik w {call}",

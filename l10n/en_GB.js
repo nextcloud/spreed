@@ -246,7 +246,6 @@ OC.L10N.register(
     "Deleted user (%s)" : "Deleted user (%s)",
     "Share to chat" : "Share to chat",
     "Dismiss notification" : "Dismiss notification",
-    "Recording for the call in {call} was uploaded." : "Recording for the call in {call} was uploaded.",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} shared room {roomName} on {remoteServer} with you",
     "{user} in {call}" : "{user} in {call}",
     "Deleted user in {call}" : "Deleted user in {call}",

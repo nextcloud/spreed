@@ -246,7 +246,6 @@ OC.L10N.register(
     "Deleted user (%s)" : "Smazán uživatel (%s)",
     "Share to chat" : "Nasdílet do chatu",
     "Dismiss notification" : "Zahodit upozornění",
-    "Recording for the call in {call} was uploaded." : "Nahrávka pro hovor v {call} byla nahrána.",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} vám nasdílel(a) místnost {roomName} na {remoteServer}",
     "{user} in {call}" : "{user} v {call}",
     "Deleted user in {call}" : "Smazaný uživatel v {call}",

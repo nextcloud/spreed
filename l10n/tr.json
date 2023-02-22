@@ -244,7 +244,6 @@
     "Deleted user (%s)" : "Silinmiş kullanıcı (%s)",
     "Share to chat" : "Sohbet ile paylaş",
     "Dismiss notification" : "Bildirimi yok say",
-    "Recording for the call in {call} was uploaded." : "{call} çağrısının kaydı yüklendi.",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} kullanıcısı {remoteServer} sunucusundaki {roomName} odasını sizinle paylaştı",
     "{user} in {call}" : "{call} içinde {user}",
     "Deleted user in {call}" : "{call} içinden kullanıcı silindi",
