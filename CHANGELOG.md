@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 14.0.9 – 2023-02-23
+### Changed
+- Update some dependencies
+
+### Fixed
+- Only filter mentions for participants of the conversation
+  [#8666](https://github.com/nextcloud/spreed/pull/8666)
+- Fix interaction of self-joined users with multiple sessions when navigating away
+  [#8730](https://github.com/nextcloud/spreed/pull/8730)
+
 ## 14.0.8 – 2023-01-19
 ### Fixed
 - Allow autocompleting conversation names from the middle
