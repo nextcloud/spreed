@@ -46,6 +46,15 @@ const getters = {
 		}
 		return state.breakoutRooms?.[token]
 	},
+
+	// Get the parent room token provided a breakoutroom token
+	parentRoomToken: (state) => (token) => {
+		for (const parentRoomToken in state.breakoutRooms) {
+			if (state.breakoutRooms[parentRoomToken].find(breakoutRoom => breakoutRoom.token === token)) {
+				return parentRoomToken
+			}
+		}
+	},
 }
 
 const mutations = {

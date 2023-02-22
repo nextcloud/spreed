@@ -33,6 +33,12 @@
 			<GoogleCircles :size="20" />
 		</template>
 		<template #actions>
+			<NcActionButton @click="joinRoom">
+				<template #icon>
+					<ArrowRight :size="16" />
+				</template>
+				{{ t('spreed', 'Join room') }}
+			</NcActionButton>
 			<NcActionButton v-if="showAssistanceButton"
 				@click="dismissRequestAssistance">
 				<template #icon>
@@ -69,11 +75,13 @@ import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Send from 'vue-material-design-icons/Send.vue'
+import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 
 // Constants
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 
 import { showWarning } from '@nextcloud/dialogs'
+import { EventBus } from '../../../services/EventBus.js'
 
 export default {
 	name: 'BreakoutRoomItem',
@@ -89,6 +97,7 @@ export default {
 		GoogleCircles,
 		HandBackLeft,
 		Send,
+		ArrowRight,
 	},
 
 	props: {
@@ -155,6 +164,12 @@ export default {
 
 		dismissRequestAssistance() {
 			this.$store.dispatch('resetRequestAssistanceAction', { token: this.roomToken })
+		},
+
+		joinRoom() {
+			EventBus.$emit('switch-to-conversation', {
+				token: this.roomToken,
+			})
 		},
 	},
 }

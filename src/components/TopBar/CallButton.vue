@@ -48,13 +48,21 @@
 			</template>
 			{{ leaveCallLabel }}
 		</NcButton>
-		<NcActions v-else-if="showLeaveCallButton && canEndForAll"
+		<NcActions v-else-if="(showLeaveCallButton && canEndForAll) || isBreakoutRoom"
 			:disabled="loading"
 			:menu-title="leaveCallCombinedLabel"
 			type="error">
 			<template #icon>
-				<VideoOff :size="20" />
+				<VideoOff v-if="!isBreakoutRoom" :size="20" />
+				<ArrowLeft v-else :size="20" />
 			</template>
+			<NcActionButton v-if="isBreakoutRoom"
+				@click="switchToParentRoom">
+				<template #icon>
+					<ArrowLeft :size="20" />
+				</template>
+				{{ backToMainRoomLabel }}
+			</NcActionButton>
 			<NcActionButton @click="leaveCall(false)">
 				<template #icon>
 					<VideoOff :size="20" />
@@ -87,6 +95,8 @@ import VideoBoxOff from 'vue-material-design-icons/VideoBoxOff.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { EventBus } from '../../services/EventBus.js'
+import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 
 export default {
 	name: 'CallButton',
@@ -102,6 +112,7 @@ export default {
 		VideoIcon,
 		VideoOff,
 		NcButton,
+		ArrowLeft,
 	},
 
 	mixins: [
@@ -187,6 +198,10 @@ export default {
 			return t('spreed', 'Leave call')
 		},
 
+		backToMainRoomLabel() {
+			return t('spreed', 'Back to main room')
+		},
+
 		leaveCallCombinedLabel() {
 			return this.leaveCallLabel + ' ▼'
 		},
@@ -239,6 +254,10 @@ export default {
 
 		currentConversationIsJoined() {
 			return this.$store.getters.currentConversationIsJoined
+		},
+
+		isBreakoutRoom() {
+			return this.conversation.objectType === 'room'
 		},
 	},
 
@@ -311,6 +330,12 @@ export default {
 				emit('talk:device-checker:hide')
 				this.joinCall()
 			}
+		},
+
+		switchToParentRoom() {
+			EventBus.$emit('switch-to-conversation', {
+				token: this.$store.getters.parentRoomToken(this.token),
+			})
 		},
 	},
 }
