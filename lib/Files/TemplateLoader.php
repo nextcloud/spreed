@@ -95,7 +95,6 @@ class TemplateLoader implements IEventListener {
 			return;
 		}
 
-		Util::addStyle(Application::APP_ID, 'At');
 		Util::addStyle(Application::APP_ID, 'icons');
 		if (strpos(\OC::$server->getRequest()->getPathInfo(), '/apps/maps') !== 0) {
 			Util::addScript(Application::APP_ID, 'talk-files-sidebar');
