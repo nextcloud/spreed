@@ -246,7 +246,6 @@ OC.L10N.register(
     "Deleted user (%s)" : "Izbrisan uporabnik (%s)",
     "Share to chat" : "Objavi v pogovor",
     "Dismiss notification" : "Opusti obvestilo",
-    "Recording for the call in {call} was uploaded." : "Posnetek klica {call} je poslan.",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} vam omogoči dostop do skupine {roomName} na strežniku {remoteServer}",
     "{user} in {call}" : "{user} v pogovoru {call}",
     "Deleted user in {call}" : "Iz klica {call} je izbrisan uporabnik",
