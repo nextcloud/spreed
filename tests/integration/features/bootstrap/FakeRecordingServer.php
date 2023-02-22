@@ -63,7 +63,7 @@ if (preg_match('/\/api\/v1\/welcome/', $_SERVER['REQUEST_URI'])) {
 		'data' => $data,
 	];
 	file_put_contents($receivedRequestsFile, json_encode($receivedRequests));
-} elseif (preg_match('/requests/', $_SERVER['REQUEST_URI'])) {
+} elseif (preg_match('/\/fake\/requests/', $_SERVER['REQUEST_URI'])) {
 	if (!file_exists($receivedRequestsFile)) {
 		return;
 	}

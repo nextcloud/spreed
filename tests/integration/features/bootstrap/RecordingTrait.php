@@ -91,7 +91,7 @@ trait RecordingTrait {
 	}
 
 	private function getRecordingServerReceivedRequests() {
-		$url = 'http://' . $this->recordingServerAddress . '/requests';
+		$url = 'http://' . $this->recordingServerAddress . '/fake/requests';
 		$client = new Client();
 		$response = $client->get($url);
 
