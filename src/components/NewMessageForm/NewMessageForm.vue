@@ -921,9 +921,10 @@ export default {
 			position: relative;
 		}
 
-		&__richContenteditable {
+		// Override NcRichContenteditable styles
+		& &__richContenteditable {
 			border: 1px solid var(--color-border-dark);
-			border-radius: calc($clickable-area / 2);
+			border-radius: calc(var(--default-clickable-area) / 2);
 			padding: 8px 16px 8px 44px;
 			max-height: 180px;
 			&:hover,
