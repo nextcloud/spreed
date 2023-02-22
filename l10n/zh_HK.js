@@ -246,7 +246,6 @@ OC.L10N.register(
     "Deleted user (%s)" : "已刪除用戶（%s）",
     "Share to chat" : "分享至聊天",
     "Dismiss notification" : "撤銷通告",
-    "Recording for the call in {call} was uploaded." : "{call} 中的通話錄音已上傳。",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{User1} 與您分享了在 {remoteServer} 上的房間 {roomName}",
     "{user} in {call}" : "{call} 中的 {user}",
     "Deleted user in {call}" : "{call} 中已刪除的 {user}",

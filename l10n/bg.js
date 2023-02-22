@@ -246,7 +246,6 @@ OC.L10N.register(
     "Deleted user (%s)" : "Изтрит потребител (%s)",
     "Share to chat" : "Споделяне в чата",
     "Dismiss notification" : "Спри известията",
-    "Recording for the call in {call} was uploaded." : "Записът на разговора в {call} е качен.",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} сподели стая {roomName} на {remoteServer} с вас",
     "{user} in {call}" : "{user} в {call}",
     "Deleted user in {call}" : "Изтрит потребител в {call}",

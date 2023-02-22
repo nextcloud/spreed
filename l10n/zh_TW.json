@@ -244,7 +244,6 @@
     "Deleted user (%s)" : "已刪除使用者 (%s)",
     "Share to chat" : "分享至聊天",
     "Dismiss notification" : "忽略通知",
-    "Recording for the call in {call} was uploaded." : "{call} 的通話錄製已上傳。",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} 與您分享了在 {remoteServer} 上的聊天室 {roomName}",
     "{user} in {call}" : "{call} 中的 {user}",
     "Deleted user in {call}" : "{call} 中已刪除的使用者",
