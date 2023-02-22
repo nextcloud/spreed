@@ -40,7 +40,7 @@ trait RecordingTrait {
 		}
 
 		// "the secret" is hardcoded in the fake recording server.
-		$this->setAppConfig('spreed', new TableNode([['recording_servers', json_encode(['servers' => [['server' => 'http://127.0.0.1:9000']], 'secret' => 'the secret'])]]));
+		$this->setAppConfig('spreed', new TableNode([['recording_servers', json_encode(['servers' => [['server' => 'http://' . $this->recordingServerAddress]], 'secret' => 'the secret'])]]));
 
 		$this->recordingServerPid = exec('php -S ' . $this->recordingServerAddress . ' features/bootstrap/FakeRecordingServer.php >/dev/null & echo $!');
 	}
