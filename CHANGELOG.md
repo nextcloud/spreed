@@ -1,6 +1,40 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.4 – 2023-02-23
+### Added
+- Make "End call for everyone" available for moderators all the time
+  [#8767](https://github.com/nextcloud/spreed/pull/8767)
+
+### Changed
+- Update some dependencies
+
+### Fixed
+- Show tooltip for conversations with a long title
+  [#8659](https://github.com/nextcloud/spreed/pull/8659)
+- Don't break the maps app with the Talk Files sidebar integration
+  [#8590](https://github.com/nextcloud/spreed/pull/8590)
+- Only register the maps integration when the user is allowed to use Talk
+  [#8591](https://github.com/nextcloud/spreed/pull/8591)
+- Fix missing "Unread mentions" floating button since Nextcloud 25 theming update
+  [#8603](https://github.com/nextcloud/spreed/pull/8603)
+- Fix button style while being in a call
+  [#8671](https://github.com/nextcloud/spreed/pull/8671)
+- Only filter mentions for participants of the conversation
+  [#8665](https://github.com/nextcloud/spreed/pull/8665)
+- Fix interaction of self-joined users with multiple sessions when navigating away
+  [#8729](https://github.com/nextcloud/spreed/pull/8729)
+
+## 14.0.9 – 2023-02-23
+### Changed
+- Update some dependencies
+
+### Fixed
+- Only filter mentions for participants of the conversation
+  [#8666](https://github.com/nextcloud/spreed/pull/8666)
+- Fix interaction of self-joined users with multiple sessions when navigating away
+  [#8730](https://github.com/nextcloud/spreed/pull/8730)
+
 ## 15.0.3 – 2023-01-19
 ### Changed
 - Update @nextcloud/vue library to 7.4.0
