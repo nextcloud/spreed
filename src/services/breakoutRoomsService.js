@@ -147,6 +147,23 @@ const resetRequestAssistance = async function(token) {
 	)
 }
 
+/**
+ * This endpoint allows participants to switch between breakout rooms when they are allowed to choose the breakout room
+ * and not are automatically or manually assigned by the moderator.
+ *
+ * @param token Conversation token of the parent room hosting the breakout rooms
+ * @param target Conversation token of the target breakout room
+ * @return {Promise<AxiosResponse<any>>} The target breakout room
+ */
+const switchToBreakoutRoom = async function(token, target) {
+	return await axios.post(generateOcsUrl('/apps/spreed/api/v1/breakout-rooms/{token}/switch', {
+		token,
+	}), {
+		target,
+	}
+	)
+}
+
 export {
 	configureBreakoutRooms,
 	reorganizeAttendees,
@@ -158,4 +175,5 @@ export {
 	getBreakoutRoomsParticipants,
 	requestAssistance,
 	resetRequestAssistance,
+	switchToBreakoutRoom,
 }

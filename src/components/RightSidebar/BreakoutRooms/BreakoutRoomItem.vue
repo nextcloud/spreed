@@ -166,10 +166,24 @@ export default {
 			this.$store.dispatch('resetRequestAssistanceAction', { token: this.roomToken })
 		},
 
-		joinRoom() {
-			EventBus.$emit('switch-to-conversation', {
-				token: this.roomToken,
-			})
+		async joinRoom() {
+			if (this.canModerate) {
+				EventBus.$emit('switch-to-conversation', {
+					token: this.roomToken,
+				})
+			} else {
+				try {
+					await this.$store.dispatch('switchToBreakoutRoomAction', {
+						token: this.$store.getters.parentRoomToken(this.roomToken),
+						target: this.roomToken,
+					})
+					EventBus.$emit('switch-to-conversation', {
+						token: this.roomToken,
+					})
+				} catch (error) {
+					console.debug(error)
+				}
+			}
 		},
 	},
 }

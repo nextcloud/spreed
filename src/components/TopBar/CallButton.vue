@@ -38,7 +38,7 @@
 			</template>
 			{{ startCallLabel }}
 		</NcButton>
-		<NcButton v-else-if="showLeaveCallButton && !canEndForAll"
+		<NcButton v-else-if="(showLeaveCallButton && !canEndForAll) && !isBreakoutRoom"
 			id="call_button"
 			type="error"
 			:disabled="loading"
@@ -48,7 +48,7 @@
 			</template>
 			{{ leaveCallLabel }}
 		</NcButton>
-		<NcActions v-else-if="(showLeaveCallButton && canEndForAll) || isBreakoutRoom"
+		<NcActions v-else-if="showLeaveCallButton && canEndForAll || isBreakoutRoom"
 			:disabled="loading"
 			:menu-title="leaveCallCombinedLabel"
 			type="error">
@@ -69,7 +69,7 @@
 				</template>
 				{{ leaveCallLabel }}
 			</NcActionButton>
-			<NcActionButton @click="leaveCall(true)">
+			<NcActionButton v-if="canEndForAll && !isBreakoutRoom" @click="leaveCall(true)">
 				<template #icon>
 					<VideoBoxOff :size="20" />
 				</template>
@@ -332,10 +332,25 @@ export default {
 			}
 		},
 
-		switchToParentRoom() {
-			EventBus.$emit('switch-to-conversation', {
-				token: this.$store.getters.parentRoomToken(this.token),
-			})
+		async switchToParentRoom() {
+			const parentRoomToken = this.$store.getters.parentRoomToken(this.token)
+			if (this.canModerate) {
+				EventBus.$emit('switch-to-conversation', {
+					token: parentRoomToken,
+				})
+			} else {
+				try {
+					await this.$store.dispatch('switchToBreakoutRoomAction', {
+						token: this.token,
+						target: parentRoomToken,
+					})
+					EventBus.$emit('switch-to-conversation', {
+						token: parentRoomToken,
+					})
+				} catch (error) {
+					console.debug(error)
+				}
+			}
 		},
 	},
 }
