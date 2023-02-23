@@ -23,10 +23,11 @@
 </template>
 
 <script>
+import CallView from './components/CallView/CallView.vue'
+
 import {
 	signalingKill,
 } from './utils/webrtc/index.js'
-import CallView from './components/CallView/CallView.vue'
 
 export default {
 	name: 'Recording',

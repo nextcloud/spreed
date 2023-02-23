@@ -20,6 +20,16 @@
  *
  */
 import Vue from 'vue'
+
+import { showError } from '@nextcloud/dialogs'
+import { generateUrl } from '@nextcloud/router'
+
+import { PARTICIPANT } from '../constants.js'
+import {
+	joinCall,
+	leaveCall,
+} from '../services/callsService.js'
+import { EventBus } from '../services/EventBus.js'
 import {
 	promoteToModerator,
 	demoteFromModerator,
@@ -33,15 +43,7 @@ import {
 	removeAllPermissionsFromParticipant,
 	setPermissions,
 } from '../services/participantsService.js'
-import { generateUrl } from '@nextcloud/router'
-import {
-	joinCall,
-	leaveCall,
-} from '../services/callsService.js'
 import SessionStorage from '../services/SessionStorage.js'
-import { PARTICIPANT } from '../constants.js'
-import { EventBus } from '../services/EventBus.js'
-import { showError } from '@nextcloud/dialogs'
 
 const state = {
 	attendees: {

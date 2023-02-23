@@ -19,6 +19,7 @@
  */
 
 import { generateFilePath } from '@nextcloud/router'
+
 import store from '../store/index.js'
 
 export const Sounds = {

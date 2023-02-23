@@ -32,6 +32,7 @@
 
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
 import MenuPeople from './components/missingMaterialDesignIcons/MenuPeople.vue'
 
 export default {

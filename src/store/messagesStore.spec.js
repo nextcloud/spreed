@@ -1,9 +1,11 @@
-// eslint-disable-next-line n/no-unpublished-import
-import mockConsole from 'jest-mock-console'
 import { createLocalVue } from '@vue/test-utils'
-import messagesStore from './messagesStore.js'
-import Vuex from 'vuex'
+import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
+import Vuex from 'vuex'
+
+import { showError } from '@nextcloud/dialogs'
+
+import messagesStore from './messagesStore.js'
 import {
 	ATTENDEE,
 } from '../constants.js'
@@ -15,7 +17,6 @@ import {
 	postNewMessage,
 } from '../services/messagesService.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
-import { showError } from '@nextcloud/dialogs'
 
 jest.mock('../services/messagesService', () => ({
 	deleteMessage: jest.fn(),

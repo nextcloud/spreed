@@ -49,6 +49,19 @@
 
 <script>
 
+import { getCurrentUser } from '@nextcloud/auth'
+import Axios from '@nextcloud/axios'
+import { loadState } from '@nextcloud/initial-state'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
+import ChatView from './components/ChatView.vue'
+import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
+import CallButton from './components/TopBar/CallButton.vue'
+import UploadEditor from './components/UploadEditor.vue'
+
+import browserCheck from './mixins/browserCheck.js'
+import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import { EventBus } from './services/EventBus.js'
 import { getFileConversation } from './services/filesIntegrationServices.js'
 import {
@@ -56,19 +69,10 @@ import {
 } from './services/participantsService.js'
 import CancelableRequest from './utils/cancelableRequest.js'
 import { signalingKill } from './utils/webrtc/index.js'
-import { getCurrentUser } from '@nextcloud/auth'
-import { loadState } from '@nextcloud/initial-state'
-import Axios from '@nextcloud/axios'
-import UploadEditor from './components/UploadEditor.vue'
-import CallButton from './components/TopBar/CallButton.vue'
-import ChatView from './components/ChatView.vue'
-import sessionIssueHandler from './mixins/sessionIssueHandler.js'
-import browserCheck from './mixins/browserCheck.js'
-import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 // Styles
 import '@nextcloud/dialogs/dist/index.css'
+
 export default {
 
 	name: 'FilesSidebarTabApp',

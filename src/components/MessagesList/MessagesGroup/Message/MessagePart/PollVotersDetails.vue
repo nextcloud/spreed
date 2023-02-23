@@ -54,8 +54,10 @@
 </template>
 
 <script>
-import AvatarWrapperSmall from '../../../../AvatarWrapper/AvatarWrapperSmall.vue'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
+
+import AvatarWrapperSmall from '../../../../AvatarWrapper/AvatarWrapperSmall.vue'
+
 import { ATTENDEE } from '../../../../../constants.js'
 
 export default {

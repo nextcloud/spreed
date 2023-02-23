@@ -66,17 +66,21 @@
 
 <script>
 import { CollectionList } from 'nextcloud-vue-collections'
-import { loadState } from '@nextcloud/initial-state'
 
-import SharedItems from './SharedItems.vue'
-import { SHARED_ITEM } from '../../../constants.js'
-import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
-import NcRelatedResourcesPanel from '@nextcloud/vue/dist/Components/NcRelatedResourcesPanel.js'
-import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
-import SharedItemsBrowser from './SharedItemsBrowser/SharedItemsBrowser.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
+
+import { loadState } from '@nextcloud/initial-state'
+
+import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
+import NcRelatedResourcesPanel from '@nextcloud/vue/dist/Components/NcRelatedResourcesPanel.js'
+
+import SharedItems from './SharedItems.vue'
+import SharedItemsBrowser from './SharedItemsBrowser/SharedItemsBrowser.vue'
+
+import { SHARED_ITEM } from '../../../constants.js'
 import sharedItems from '../../../mixins/sharedItems.js'
 
 export default {

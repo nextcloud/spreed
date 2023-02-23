@@ -1,19 +1,20 @@
-/* eslint-disable import/no-named-as-default-member */
-import Vuex from 'vuex'
 import { createLocalVue, mount } from '@vue/test-utils'
-import VueRouter from 'vue-router'
-import router from '../../router/router.js'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../store/storeConfig.js'
-import { loadState } from '@nextcloud/initial-state'
-import { EventBus } from '../../services/EventBus.js'
+import VueRouter from 'vue-router'
+import Vuex from 'vuex'
+
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
+
+import LeftSidebar from './LeftSidebar.vue'
+
+import router from '../../router/router.js'
 import {
 	searchPossibleConversations,
 	searchListedConversations,
 } from '../../services/conversationsService.js'
-
-import LeftSidebar from './LeftSidebar.vue'
+import { EventBus } from '../../services/EventBus.js'
+import storeConfig from '../../store/storeConfig.js'
 
 jest.mock('@nextcloud/initial-state', () => ({
 	loadState: jest.fn(),

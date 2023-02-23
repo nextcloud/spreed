@@ -15,9 +15,11 @@
 </template>
 
 <script>
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
+
 import { FLOW, CONVERSATION, PARTICIPANT } from '../constants.js'
 
 export default {

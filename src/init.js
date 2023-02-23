@@ -24,9 +24,10 @@
 // entry points
 
 import { showError } from '@nextcloud/dialogs'
+
 import { CALL, PARTICIPANT } from './constants.js'
-import store from './store/index.js'
 import { EventBus } from './services/EventBus.js'
+import store from './store/index.js'
 
 if (!window.OCA.Talk) {
 	window.OCA.Talk = {}

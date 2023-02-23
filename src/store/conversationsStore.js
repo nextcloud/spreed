@@ -20,6 +20,16 @@
  *
  */
 import Vue from 'vue'
+
+import { getCurrentUser } from '@nextcloud/auth'
+import { showInfo, showSuccess } from '@nextcloud/dialogs'
+
+import {
+	CALL,
+	CONVERSATION,
+	PARTICIPANT,
+	WEBINAR,
+} from '../constants.js'
 import {
 	makePublic,
 	makePrivate,
@@ -47,15 +57,6 @@ import {
 	startCallRecording,
 	stopCallRecording,
 } from '../services/recordingService.js'
-import { showInfo, showSuccess } from '@nextcloud/dialogs'
-import { getCurrentUser } from '@nextcloud/auth'
-// eslint-disable-next-line import/extensions
-import {
-	CALL,
-	CONVERSATION,
-	PARTICIPANT,
-	WEBINAR,
-} from '../constants.js'
 
 const DUMMY_CONVERSATION = {
 	token: '',

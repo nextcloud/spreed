@@ -20,9 +20,10 @@
  *
  */
 
-import { createClient, getPatcher } from 'webdav'
-import axios from '@nextcloud/axios'
 import parseUrl from 'url-parse'
+import { createClient, getPatcher } from 'webdav'
+
+import axios from '@nextcloud/axios'
 import { generateRemoteUrl } from '@nextcloud/router'
 
 // force our axios

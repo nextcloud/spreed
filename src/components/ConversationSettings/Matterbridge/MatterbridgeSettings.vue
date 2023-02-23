@@ -95,23 +95,28 @@
 </template>
 
 <script>
+import Vue from 'vue'
+
+import Message from 'vue-material-design-icons/Message.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
+
+import { showSuccess } from '@nextcloud/dialogs'
+import { imagePath } from '@nextcloud/router'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+
+import BridgePart from './BridgePart.vue'
+
 import {
 	editBridge,
 	getBridge,
 	getBridgeProcessState,
 } from '../../../services/matterbridgeService.js'
-import { showSuccess } from '@nextcloud/dialogs'
-import { imagePath } from '@nextcloud/router'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
-import Message from 'vue-material-design-icons/Message.vue'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-import Plus from 'vue-material-design-icons/Plus.vue'
-import BridgePart from './BridgePart.vue'
 
-import Vue from 'vue'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 Vue.directive('tooltip', Tooltip)
 
 export default {

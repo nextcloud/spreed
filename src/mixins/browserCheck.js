@@ -20,8 +20,9 @@
  *
  */
 
-import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 import UAParser from 'ua-parser-js'
+
+import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
 const browserCheck = {
 	methods: {

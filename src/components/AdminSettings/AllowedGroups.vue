@@ -101,12 +101,14 @@
 </template>
 
 <script>
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
-import axios from '@nextcloud/axios'
 import debounce from 'debounce'
-import { generateOcsUrl } from '@nextcloud/router'
+
+import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
+import { generateOcsUrl } from '@nextcloud/router'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
 
 const startCallOptions = [
 	{ value: 0, label: t('spreed', 'Everyone') },

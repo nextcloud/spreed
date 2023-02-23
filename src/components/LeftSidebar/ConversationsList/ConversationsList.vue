@@ -34,12 +34,15 @@
 </template>
 
 <script>
+import { emit } from '@nextcloud/event-bus'
+
+import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
+
 import Conversation from './Conversation.vue'
 import Hint from '../../Hint.vue'
 import LoadingPlaceholder from '../../LoadingPlaceholder.vue'
+
 import { EventBus } from '../../../services/EventBus.js'
-import { emit } from '@nextcloud/event-bus'
-import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
 
 export default {
 	name: 'ConversationsList',

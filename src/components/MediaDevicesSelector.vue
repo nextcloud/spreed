@@ -41,9 +41,10 @@
 </template>
 
 <script>
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
+
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
 
 export default {
 

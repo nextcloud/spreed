@@ -1,12 +1,15 @@
-import Vuex, { Store } from 'vuex'
-import vOutsideEvents from 'vue-outside-events'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../../../../store/storeConfig.js'
-import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
+import vOutsideEvents from 'vue-outside-events'
+import Vuex, { Store } from 'vuex'
+
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import { findNcActionButton } from '../../../../../test-helpers.js'
+
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
+
+import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
+import storeConfig from '../../../../../store/storeConfig.js'
+import { findNcActionButton } from '../../../../../test-helpers.js'
 
 describe('MessageButtonsBar.vue', () => {
 	const TOKEN = 'XXTOKENXX'

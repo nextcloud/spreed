@@ -44,9 +44,11 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { CONVERSATION } from '../../constants.js'
 import { loadState } from '@nextcloud/initial-state'
+
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+
+import { CONVERSATION } from '../../constants.js'
 
 export default {
 	name: 'ListableSettings',

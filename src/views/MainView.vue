@@ -18,8 +18,9 @@ import CallView from '../components/CallView/CallView.vue'
 import ChatView from '../components/ChatView.vue'
 import LobbyScreen from '../components/LobbyScreen.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
-import isInLobby from '../mixins/isInLobby.js'
+
 import isInCall from '../mixins/isInCall.js'
+import isInLobby from '../mixins/isInLobby.js'
 import participant from '../mixins/participant.js'
 
 export default {

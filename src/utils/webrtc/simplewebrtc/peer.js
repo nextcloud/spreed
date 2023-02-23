@@ -1,7 +1,8 @@
 /* global module */
 
-const adapter = require('webrtc-adapter')
 const util = require('util')
+
+const adapter = require('webrtc-adapter')
 const webrtcSupport = require('webrtcsupport')
 const WildEmitter = require('wildemitter')
 

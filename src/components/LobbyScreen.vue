@@ -50,8 +50,9 @@
 <script>
 import moment from '@nextcloud/moment'
 import RichText from '@nextcloud/vue-richtext'
-import SetGuestUsername from './SetGuestUsername.vue'
+
 import Lobby from './missingMaterialDesignIcons/Lobby.vue'
+import SetGuestUsername from './SetGuestUsername.vue'
 
 export default {
 

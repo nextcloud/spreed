@@ -1,10 +1,11 @@
-// eslint-disable-next-line n/no-unpublished-import
-import mockConsole from 'jest-mock-console'
 import { createLocalVue } from '@vue/test-utils'
-import talkHashStore from './talkHashStore.js'
-import Vuex from 'vuex'
+import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
+import Vuex from 'vuex'
+
 import { showError } from '@nextcloud/dialogs'
+
+import talkHashStore from './talkHashStore.js'
 
 jest.mock('@nextcloud/dialogs', () => ({
 	showError: jest.fn(),

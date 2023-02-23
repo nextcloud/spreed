@@ -1,16 +1,15 @@
-// eslint-disable-next-line n/no-unpublished-import
-import mockConsole from 'jest-mock-console'
-import Vuex from 'vuex'
-import { cloneDeep } from 'lodash'
 import { createLocalVue } from '@vue/test-utils'
+import mockConsole from 'jest-mock-console'
+import { cloneDeep } from 'lodash'
+import Vuex from 'vuex'
 
-import client from '../services/DavClient.js'
-import { findUniquePath, getFileExtension } from '../utils/fileUpload.js'
-import { shareFile } from '../services/filesSharingServices.js'
-import { setAttachmentFolder } from '../services/settingsService.js'
 import { showError } from '@nextcloud/dialogs'
 
 import fileUploadStore from './fileUploadStore.js'
+import client from '../services/DavClient.js'
+import { shareFile } from '../services/filesSharingServices.js'
+import { setAttachmentFolder } from '../services/settingsService.js'
+import { findUniquePath, getFileExtension } from '../utils/fileUpload.js'
 
 jest.mock('../services/DavClient')
 jest.mock('../utils/fileUpload', () => ({

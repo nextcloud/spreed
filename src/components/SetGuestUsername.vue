@@ -53,10 +53,12 @@
 </template>
 
 <script>
-import { setGuestUserName } from '../services/participantsService.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
+import { setGuestUserName } from '../services/participantsService.js'
 
 export default {
 	name: 'SetGuestUsername',

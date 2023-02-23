@@ -54,8 +54,9 @@
 </template>
 
 <script>
-import CommandVue from '../../components/AdminSettings/CommandVue.vue'
 import { loadState } from '@nextcloud/initial-state'
+
+import CommandVue from '../../components/AdminSettings/CommandVue.vue'
 
 export default {
 	name: 'Commands',

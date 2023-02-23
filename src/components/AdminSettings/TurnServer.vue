@@ -96,14 +96,17 @@
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+import Base64 from 'crypto-js/enc-base64.js'
+import hmacSHA1 from 'crypto-js/hmac-sha1.js'
+import debounce from 'debounce'
+
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
-import hmacSHA1 from 'crypto-js/hmac-sha1.js'
-import Base64 from 'crypto-js/enc-base64.js'
-import debounce from 'debounce'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+
 import CategoryMonitoring from '../missingMaterialDesignIcons/CategoryMonitoring.vue'
 
 export default {

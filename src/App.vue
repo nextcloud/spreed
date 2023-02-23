@@ -39,34 +39,38 @@
 
 <script>
 import debounce from 'debounce'
+import PreventUnload from 'vue-prevent-unload'
+
+import { getCurrentUser } from '@nextcloud/auth'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { generateUrl } from '@nextcloud/router'
+
 import NcAppContent from '@nextcloud/vue/dist/Components/NcAppContent.js'
 import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
+import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
+
+import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog.vue'
+import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
 import LeftSidebar from './components/LeftSidebar/LeftSidebar.vue'
-import PreventUnload from 'vue-prevent-unload'
-import Router from './router/router.js'
 import RightSidebar from './components/RightSidebar/RightSidebar.vue'
-import { EventBus } from './services/EventBus.js'
+import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
+import UploadEditor from './components/UploadEditor.vue'
+
+import { CONVERSATION, PARTICIPANT } from './constants.js'
+import browserCheck from './mixins/browserCheck.js'
+import isInCall from './mixins/isInCall.js'
+import participant from './mixins/participant.js'
+import sessionIssueHandler from './mixins/sessionIssueHandler.js'
+import talkHashCheck from './mixins/talkHashCheck.js'
+import Router from './router/router.js'
 import BrowserStorage from './services/BrowserStorage.js'
-import { getCurrentUser } from '@nextcloud/auth'
+import { EventBus } from './services/EventBus.js'
 import {
 	leaveConversationSync,
 } from './services/participantsService.js'
 import {
 	signalingKill,
 } from './utils/webrtc/index.js'
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
-import browserCheck from './mixins/browserCheck.js'
-import sessionIssueHandler from './mixins/sessionIssueHandler.js'
-import isInCall from './mixins/isInCall.js'
-import participant from './mixins/participant.js'
-import talkHashCheck from './mixins/talkHashCheck.js'
-import { generateUrl } from '@nextcloud/router'
-import UploadEditor from './components/UploadEditor.vue'
-import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
-import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog.vue'
-import { CONVERSATION, PARTICIPANT } from './constants.js'
-import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
-import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
 
 // Styles
 import '@nextcloud/dialogs/dist/index.css'

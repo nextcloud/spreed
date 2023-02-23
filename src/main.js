@@ -25,35 +25,30 @@
  */
 
 import Vue from 'vue'
-import App from './App.vue'
-import './init.js'
-
-// Store
-import Vuex from 'vuex'
-import store from './store/index.js'
-
-// Router
+import VueObserveVisibility from 'vue-observe-visibility'
+import vOutsideEvents from 'vue-outside-events'
 import VueRouter from 'vue-router'
-import router from './router/router.js'
+import VueShortKey from 'vue-shortkey'
+import Vuex from 'vuex'
 
-// Utils
-import { generateFilePath } from '@nextcloud/router'
 import { getRequestToken } from '@nextcloud/auth'
 import { emit } from '@nextcloud/event-bus'
-
-// Directives
 import { translate, translatePlural } from '@nextcloud/l10n'
-import VueObserveVisibility from 'vue-observe-visibility'
-import VueShortKey from 'vue-shortkey'
-import vOutsideEvents from 'vue-outside-events'
+import { generateFilePath } from '@nextcloud/router'
+
 import { options as TooltipOptions } from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
-// Styles
+import App from './App.vue'
+
+import './init.js'
+import router from './router/router.js'
+import store from './store/index.js'
+
 import '@nextcloud/dialogs/dist/index.css'
 import 'leaflet/dist/leaflet.css'
-
 // Leaflet icon patch
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
+
 // eslint-disable-next-line
 import 'leaflet-defaulticon-compatibility'
 

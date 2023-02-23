@@ -19,7 +19,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+import Hex from 'crypto-js/enc-hex.js'
+import SHA256 from 'crypto-js/sha256.js'
 import Vue from 'vue'
+
+import { showError } from '@nextcloud/dialogs'
+
+import {
+	ATTENDEE,
+	CHAT,
+} from '../constants.js'
 import {
 	deleteMessage,
 	updateLastReadMessage,
@@ -31,15 +40,7 @@ import {
 	addReactionToMessage,
 	removeReactionFromMessage,
 } from '../services/messagesService.js'
-
-import SHA256 from 'crypto-js/sha256.js'
-import Hex from 'crypto-js/enc-hex.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
-import { showError } from '@nextcloud/dialogs'
-import {
-	ATTENDEE,
-	CHAT,
-} from '../constants.js'
 
 /**
  * Returns whether the given message contains a mention to self, directly

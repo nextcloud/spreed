@@ -1,8 +1,10 @@
 /* global module */
 
 const util = require('util')
-const webrtcSupport = require('webrtcsupport')
+
 const mockconsole = require('mockconsole')
+const webrtcSupport = require('webrtcsupport')
+
 const localMedia = require('./localmedia.js')
 const Peer = require('./peer.js')
 

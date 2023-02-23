@@ -20,6 +20,7 @@
  *
  */
 import Vue from 'vue'
+
 import {
 	getReactionsDetails,
 } from '../services/messagesService.js'

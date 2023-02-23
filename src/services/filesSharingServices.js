@@ -20,8 +20,8 @@
  *
  */
 import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
 import { showError } from '@nextcloud/dialogs'
+import { generateOcsUrl } from '@nextcloud/router'
 
 /**
  * Appends a file as a message to the messagelist.

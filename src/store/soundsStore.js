@@ -21,6 +21,7 @@
  */
 
 import { loadState } from '@nextcloud/initial-state'
+
 import BrowserStorage from '../services/BrowserStorage.js'
 import { setPlaySounds } from '../services/settingsService.js'
 

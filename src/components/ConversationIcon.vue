@@ -51,9 +51,11 @@
 </template>
 
 <script>
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import Star from 'vue-material-design-icons/Star.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
+
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+
 import { CONVERSATION } from '../constants.js'
 
 export default {

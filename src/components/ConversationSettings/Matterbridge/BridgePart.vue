@@ -88,9 +88,9 @@
 </template>
 
 <script>
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 
 export default {
 	name: 'BridgePart',

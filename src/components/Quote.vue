@@ -60,11 +60,15 @@ components.
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Close from 'vue-material-design-icons/Close.vue'
+
 import RichText from '@nextcloud/vue-richtext'
-import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
 import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter.vue'
+import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
+
 import { EventBus } from '../services/EventBus.js'
 
 export default {

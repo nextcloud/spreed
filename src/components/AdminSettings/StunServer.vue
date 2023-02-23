@@ -51,9 +51,10 @@
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'StunServer',

@@ -97,11 +97,6 @@
 </template>
 
 <script>
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { generateUrl } from '@nextcloud/router'
-import { emit } from '@nextcloud/event-bus'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
@@ -109,7 +104,15 @@ import ExitToApp from 'vue-material-design-icons/ExitToApp.vue'
 import EyeOutline from 'vue-material-design-icons/EyeOutline.vue'
 import Star from 'vue-material-design-icons/Star.vue'
 
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { generateUrl } from '@nextcloud/router'
+
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
+
 import ConversationIcon from './../../ConversationIcon.vue'
+
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
 
 export default {

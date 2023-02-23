@@ -1,12 +1,13 @@
 /* global module */
 
 const util = require('util')
-const getScreenMedia = require('./getscreenmedia.js')
-const WildEmitter = require('wildemitter')
+
 const mockconsole = require('mockconsole')
+const WildEmitter = require('wildemitter')
+
+const getScreenMedia = require('./getscreenmedia.js')
 // Only mediaDevicesManager is used, but it can not be assigned here due to not
 // being initialized yet.
-const webrtcIndex = require('../index.js')
 const BlackVideoEnforcer = require('../../media/pipeline/BlackVideoEnforcer.js').default
 const MediaDevicesSource = require('../../media/pipeline/MediaDevicesSource.js').default
 const SpeakingMonitor = require('../../media/pipeline/SpeakingMonitor.js').default
@@ -14,6 +15,7 @@ const TrackConstrainer = require('../../media/pipeline/TrackConstrainer.js').def
 const TrackEnabler = require('../../media/pipeline/TrackEnabler.js').default
 const TrackToStream = require('../../media/pipeline/TrackToStream.js').default
 const VirtualBackground = require('../../media/pipeline/VirtualBackground.js').default
+const webrtcIndex = require('../index.js')
 
 /**
  * @param {object} opts the options object.

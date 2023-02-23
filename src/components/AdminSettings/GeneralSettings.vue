@@ -56,9 +56,10 @@
 </template>
 
 <script>
+import { loadState } from '@nextcloud/initial-state'
+
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
-import { loadState } from '@nextcloud/initial-state'
 
 const defaultGroupNotificationOptions = [
 	{ value: 1, label: t('spreed', 'All messages') },

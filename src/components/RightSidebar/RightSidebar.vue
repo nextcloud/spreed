@@ -107,26 +107,30 @@
 </template>
 
 <script>
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
-import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
-import NcAppSidebarTab from '@nextcloud/vue/dist/Components/NcAppSidebarTab.js'
-import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
-import ChatView from '../ChatView.vue'
-import BrowserStorage from '../../services/BrowserStorage.js'
-import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.js'
-import ParticipantsTab from './Participants/ParticipantsTab.vue'
-import isInLobby from '../../mixins/isInLobby.js'
-import SetGuestUsername from '../SetGuestUsername.vue'
-import SipSettings from './SipSettings.vue'
-import LobbyStatus from './LobbyStatus.vue'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import CogIcon from 'vue-material-design-icons/Cog.vue'
+import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import FolderMultipleImage from 'vue-material-design-icons/FolderMultipleImage.vue'
 import InformationOutline from 'vue-material-design-icons/InformationOutline.vue'
 import Message from 'vue-material-design-icons/Message.vue'
-import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+
+import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
+import NcAppSidebarTab from '@nextcloud/vue/dist/Components/NcAppSidebarTab.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
 import BreakoutRoomsTab from './BreakoutRooms/BreakoutRoomsTab.vue'
+import LobbyStatus from './LobbyStatus.vue'
+import ParticipantsTab from './Participants/ParticipantsTab.vue'
+import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
+import SipSettings from './SipSettings.vue'
+import ChatView from '../ChatView.vue'
+import SetGuestUsername from '../SetGuestUsername.vue'
+
+import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.js'
+import isInLobby from '../../mixins/isInLobby.js'
+import BrowserStorage from '../../services/BrowserStorage.js'
 
 export default {
 	name: 'RightSidebar',

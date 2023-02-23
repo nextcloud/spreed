@@ -26,29 +26,25 @@
 
 import Vue from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
+import vOutsideEvents from 'vue-outside-events'
+import VueShortKey from 'vue-shortkey'
+import Vuex from 'vuex'
+
+import { getRequestToken } from '@nextcloud/auth'
+import { translate, translatePlural } from '@nextcloud/l10n'
+import { generateFilePath } from '@nextcloud/router'
+
 import FilesSidebarCallViewApp from './FilesSidebarCallViewApp.vue'
 import FilesSidebarTabApp from './FilesSidebarTabApp.vue'
-import './init.js'
 
-// Store
-import Vuex from 'vuex'
+import './init.js'
 import store from './store/index.js'
 
-// Utils
-import { generateFilePath } from '@nextcloud/router'
-import { getRequestToken } from '@nextcloud/auth'
-
-// Directives
-import { translate, translatePlural } from '@nextcloud/l10n'
-import VueShortKey from 'vue-shortkey'
-import vOutsideEvents from 'vue-outside-events'
-
-// Styles
 import '@nextcloud/dialogs/dist/index.css'
 import 'leaflet/dist/leaflet.css'
-
 // Leaflet icon patch
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
+
 // eslint-disable-next-line
 import 'leaflet-defaulticon-compatibility'
 

@@ -138,32 +138,37 @@
 </template>
 
 <script>
-import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
-import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
-import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-import File from 'vue-material-design-icons/File.vue'
+import { frequently, EmojiIndex as EmojiIndexFactory } from 'emoji-mart-vue-fast'
+import data from 'emoji-mart-vue-fast/data/all.json'
+
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
+import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
+import File from 'vue-material-design-icons/File.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Reply from 'vue-material-design-icons/Reply.vue'
 import Share from 'vue-material-design-icons/Share.vue'
-import moment from '@nextcloud/moment'
-import { EventBus } from '../../../../../services/EventBus.js'
-import { generateUrl } from '@nextcloud/router'
+
 import {
 	showError,
 	showSuccess,
 } from '@nextcloud/dialogs'
-import Forwarder from './Forwarder.vue'
+import moment from '@nextcloud/moment'
+import { generateUrl } from '@nextcloud/router'
+
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
+import Forwarder from './Forwarder.vue'
+
+import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
+import { EventBus } from '../../../../../services/EventBus.js'
+
 // Keep version in sync with @nextcloud/vue in case of issues
-import { frequently, EmojiIndex as EmojiIndexFactory } from 'emoji-mart-vue-fast'
-import data from 'emoji-mart-vue-fast/data/all.json'
 
 const EmojiIndex = new EmojiIndexFactory(data)
 

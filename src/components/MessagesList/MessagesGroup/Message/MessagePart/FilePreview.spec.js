@@ -1,13 +1,17 @@
-/* eslint-disable import/no-named-as-default-member */
-import Vuex from 'vuex'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../../../../store/storeConfig.js'
-import { imagePath, generateRemoteUrl } from '@nextcloud/router'
-import { getCapabilities } from '@nextcloud/capabilities'
+import Vuex from 'vuex'
+
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
+
+import { getCapabilities } from '@nextcloud/capabilities'
+import { imagePath, generateRemoteUrl } from '@nextcloud/router'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
 import FilePreview from './FilePreview.vue'
+
+import storeConfig from '../../../../../store/storeConfig.js'
 
 jest.mock('@nextcloud/capabilities', () => ({
 	getCapabilities: jest.fn(),

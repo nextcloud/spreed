@@ -21,6 +21,7 @@
  */
 
 import Vue from 'vue'
+
 import AdminSettings from './views/AdminSettings.vue'
 
 // Styles

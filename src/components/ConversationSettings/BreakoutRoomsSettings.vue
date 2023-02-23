@@ -41,10 +41,13 @@
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 import { Fragment } from 'vue-frag'
+
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
+import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
 
 export default {
 	name: 'BreakoutRoomsSettings',

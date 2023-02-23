@@ -1,16 +1,16 @@
-/* eslint-disable import/no-named-as-default-member */
-import Vuex from 'vuex'
 import { createLocalVue, shallowMount, mount, RouterLinkStub } from '@vue/test-utils'
+import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../../store/storeConfig.js'
-import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import Vuex from 'vuex'
+
 import { showSuccess, showError } from '@nextcloud/dialogs'
+
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 
 import Conversation from './Conversation.vue'
 
-// Update after migration to @vue/test-utils v2.0.0
-import flushPromises from 'flush-promises'
+import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
+import storeConfig from '../../../store/storeConfig.js'
 
 jest.mock('@nextcloud/dialogs', () => ({
 	showSuccess: jest.fn(),

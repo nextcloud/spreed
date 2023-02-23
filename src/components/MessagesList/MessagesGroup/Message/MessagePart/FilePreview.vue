@@ -70,15 +70,18 @@
 </template>
 
 <script>
-import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
-import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import Close from 'vue-material-design-icons/Close.vue'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
+
 import { getCapabilities } from '@nextcloud/capabilities'
 import { encodePath } from '@nextcloud/paths'
-import AudioPlayer from './AudioPlayer.vue'
+import { generateUrl, imagePath, generateRemoteUrl } from '@nextcloud/router'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+
+import AudioPlayer from './AudioPlayer.vue'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,

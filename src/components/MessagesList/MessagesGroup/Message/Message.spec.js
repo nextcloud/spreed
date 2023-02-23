@@ -1,25 +1,27 @@
-import Vuex, { Store } from 'vuex'
-import vOutsideEvents from 'vue-outside-events'
 import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import { EventBus } from '../../../../services/EventBus.js'
-import storeConfig from '../../../../store/storeConfig.js'
-import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../constants.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import vOutsideEvents from 'vue-outside-events'
+import Vuex, { Store } from 'vuex'
 
-// Components
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
-import Quote from '../../../Quote.vue'
-import Mention from './MessagePart/Mention.vue'
-import FilePreview from './MessagePart/FilePreview.vue'
-import DeckCard from './MessagePart/DeckCard.vue'
-import Location from './MessagePart/Location.vue'
-import DefaultParameter from './MessagePart/DefaultParameter.vue'
-import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
-import Message from './Message.vue'
+
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
+
+import Message from './Message.vue'
+import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
+import DeckCard from './MessagePart/DeckCard.vue'
+import DefaultParameter from './MessagePart/DefaultParameter.vue'
+import FilePreview from './MessagePart/FilePreview.vue'
+import Location from './MessagePart/Location.vue'
+import Mention from './MessagePart/Mention.vue'
+import Quote from '../../../Quote.vue'
+
+import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../constants.js'
+import { EventBus } from '../../../../services/EventBus.js'
+import storeConfig from '../../../../store/storeConfig.js'
 
 // needed because of https://github.com/vuejs/vue-test-utils/issues/1507
 const RichTextStub = {

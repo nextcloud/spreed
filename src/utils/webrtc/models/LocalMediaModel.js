@@ -19,8 +19,8 @@
  *
  */
 
-import EmitterMixin from '../../EmitterMixin.js'
 import store from '../../../store/index.js'
+import EmitterMixin from '../../EmitterMixin.js'
 
 /**
  *

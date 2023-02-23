@@ -97,11 +97,13 @@
 </template>
 
 <script>
-import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
-import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
-import Hint from '../../../Hint.vue'
 import AccountPlus from 'vue-material-design-icons/AccountPlus.vue'
+
+import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
+import Hint from '../../../Hint.vue'
+import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
 
 export default {
 	name: 'ParticipantsSearchResults',

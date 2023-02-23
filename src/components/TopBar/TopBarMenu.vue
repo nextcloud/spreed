@@ -164,32 +164,33 @@
 </template>
 
 <script>
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
-import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
-import { emit } from '@nextcloud/event-bus'
-import { generateUrl } from '@nextcloud/router'
-import { getCapabilities } from '@nextcloud/capabilities'
-
-import isInCall from '../../mixins/isInCall.js'
-import { callParticipantCollection } from '../../utils/webrtc/index.js'
-import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
-
-import PromotedView from '../missingMaterialDesignIcons/PromotedView.vue'
-import GridView from '../missingMaterialDesignIcons/GridView.vue'
-
 import Blur from 'vue-material-design-icons/Blur.vue'
 import BlurOff from 'vue-material-design-icons/BlurOff.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
+import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
-import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+
+import { getCapabilities } from '@nextcloud/capabilities'
+import { emit } from '@nextcloud/event-bus'
+import { generateUrl } from '@nextcloud/router'
+
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
+import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+
+import GridView from '../missingMaterialDesignIcons/GridView.vue'
+import PromotedView from '../missingMaterialDesignIcons/PromotedView.vue'
+
+import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
+import isInCall from '../../mixins/isInCall.js'
+import { callParticipantCollection } from '../../utils/webrtc/index.js'
 
 export default {
 	name: 'TopBarMenu',

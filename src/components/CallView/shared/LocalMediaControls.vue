@@ -172,30 +172,32 @@
 
 <script>
 import escapeHtml from 'escape-html'
-import { emit } from '@nextcloud/event-bus'
+
+import Blur from 'vue-material-design-icons/Blur.vue'
+import BlurOff from 'vue-material-design-icons/BlurOff.vue'
+import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
+import Monitor from 'vue-material-design-icons/Monitor.vue'
+import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
+import VideoOff from 'vue-material-design-icons/VideoOff.vue'
+
 import { showMessage } from '@nextcloud/dialogs'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import { emit } from '@nextcloud/event-bus'
+
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
-import Blur from 'vue-material-design-icons/Blur.vue'
-import BlurOff from 'vue-material-design-icons/BlurOff.vue'
 import CancelPresentation from '../../missingMaterialDesignIcons/CancelPresentation.vue'
-import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
-import Monitor from 'vue-material-design-icons/Monitor.vue'
-import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
 import PresentToAll from '../../missingMaterialDesignIcons/PresentToAll.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-import VideoOff from 'vue-material-design-icons/VideoOff.vue'
-
 import VolumeIndicator from '../../VolumeIndicator/VolumeIndicator.vue'
 
 import { PARTICIPANT } from '../../../constants.js'
 import isInCall from '../../../mixins/isInCall.js'
-import { callAnalyzer } from '../../../utils/webrtc/index.js'
 import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer.js'
+import { callAnalyzer } from '../../../utils/webrtc/index.js'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
 
 export default {

@@ -21,12 +21,15 @@
  */
 
 import Vue from 'vue'
-import { generateFilePath, generateUrl } from '@nextcloud/router'
+
 import { getRequestToken } from '@nextcloud/auth'
-import { translate, translatePlural } from '@nextcloud/l10n'
 import { showSuccess, showError } from '@nextcloud/dialogs'
-import { postRichObjectToConversation } from './services/messagesService.js'
+import { translate, translatePlural } from '@nextcloud/l10n'
+import { generateFilePath, generateUrl } from '@nextcloud/router'
+
 import RoomSelector from './views/RoomSelector.vue'
+
+import { postRichObjectToConversation } from './services/messagesService.js'
 
 (function(OC, OCA, t, n) {
 	/**

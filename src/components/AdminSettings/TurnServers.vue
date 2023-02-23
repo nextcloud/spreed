@@ -60,12 +60,16 @@
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import TurnServer from '../../components/AdminSettings/TurnServer.vue'
-import { loadState } from '@nextcloud/initial-state'
-import Plus from 'vue-material-design-icons/Plus.vue'
-import { showSuccess } from '@nextcloud/dialogs'
 import debounce from 'debounce'
+
+import Plus from 'vue-material-design-icons/Plus.vue'
+
+import { showSuccess } from '@nextcloud/dialogs'
+import { loadState } from '@nextcloud/initial-state'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
+import TurnServer from '../../components/AdminSettings/TurnServer.vue'
 
 export default {
 	name: 'TurnServers',

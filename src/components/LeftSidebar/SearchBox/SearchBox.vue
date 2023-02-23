@@ -34,8 +34,10 @@
 </template>
 
 <script>
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
+
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+
 import { EventBus } from '../../../services/EventBus.js'
 
 export default {

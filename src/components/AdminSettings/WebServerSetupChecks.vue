@@ -51,16 +51,18 @@
 
 <script>
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import Check from 'vue-material-design-icons/Check.vue'
+
+import { loadState } from '@nextcloud/initial-state'
+import { generateFilePath } from '@nextcloud/router'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
-import Check from 'vue-material-design-icons/Check.vue'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+
+import { VIRTUAL_BACKGROUND_TYPE } from '../../utils/media/effects/virtual-background/constants.js'
 import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
 import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
-
-import { generateFilePath } from '@nextcloud/router'
-import { loadState } from '@nextcloud/initial-state'
-import { VIRTUAL_BACKGROUND_TYPE } from '../../utils/media/effects/virtual-background/constants.js'
 
 export default {
 	name: 'WebServerSetupChecks',

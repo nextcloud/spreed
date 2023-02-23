@@ -176,17 +176,6 @@
 </template>
 
 <script>
-import { getCapabilities } from '@nextcloud/capabilities'
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
-
 import Bell from 'vue-material-design-icons/Bell.vue'
 import BellOff from 'vue-material-design-icons/BellOff.vue'
 import Blur from 'vue-material-design-icons/Blur.vue'
@@ -195,14 +184,26 @@ import Cog from 'vue-material-design-icons/Cog.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
-import CallButton from '../TopBar/CallButton.vue'
-import MediaDevicesSelector from '../MediaDevicesSelector.vue'
+import { getCapabilities } from '@nextcloud/capabilities'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+
 import VideoBackground from '../CallView/shared/VideoBackground.vue'
+import MediaDevicesSelector from '../MediaDevicesSelector.vue'
+import CallButton from '../TopBar/CallButton.vue'
 import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 
 import { CALL } from '../../constants.js'
-import isInLobby from '../../mixins/isInLobby.js'
 import { devices } from '../../mixins/devices.js'
+import isInLobby from '../../mixins/isInLobby.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 

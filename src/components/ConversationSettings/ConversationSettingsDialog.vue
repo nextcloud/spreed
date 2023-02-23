@@ -104,26 +104,29 @@
 </template>
 
 <script>
+import { showError } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { PARTICIPANT, CONVERSATION } from '../../constants.js'
+import { loadState } from '@nextcloud/initial-state'
+
 import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDialog.js'
 import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+
+import BreakoutRoomsSettings from './BreakoutRoomsSettings.vue'
+import ConversationPermissionsSettings from './ConversationPermissionsSettings.vue'
+import DangerZone from './DangerZone.vue'
 import ExpirationSettings from './ExpirationSettings.vue'
 import LinkShareSettings from './LinkShareSettings.vue'
 import ListableSettings from './ListableSettings.vue'
-import LockingSettings from './LockingSettings.vue'
 import LobbySettings from './LobbySettings.vue'
-import SipSettings from './SipSettings.vue'
+import LockingSettings from './LockingSettings.vue'
 import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings.vue'
-import { loadState } from '@nextcloud/initial-state'
-import DangerZone from './DangerZone.vue'
 import NotificationsSettings from './NotificationsSettings.vue'
-import { showError } from '@nextcloud/dialogs'
+import SipSettings from './SipSettings.vue'
 import Description from '../Description/Description.vue'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+
+import { PARTICIPANT, CONVERSATION } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
-import ConversationPermissionsSettings from './ConversationPermissionsSettings.vue'
-import BreakoutRoomsSettings from './BreakoutRoomsSettings.vue'
 
 export default {
 	name: 'ConversationSettingsDialog',

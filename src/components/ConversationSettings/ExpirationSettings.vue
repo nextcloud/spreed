@@ -38,8 +38,9 @@
 </template>
 
 <script>
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
+
+import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
 
 export default {
 	name: 'ExpirationSettings',

@@ -69,9 +69,11 @@
 
 import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
 import { CALL } from '../../constants.js'
 import isInLobby from '../../mixins/isInLobby.js'
 

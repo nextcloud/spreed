@@ -24,11 +24,12 @@ import axios from '@nextcloud/axios'
 import {
 	generateOcsUrl,
 } from '@nextcloud/router'
+
+import { PARTICIPANT } from '../constants.js'
 import {
 	signalingJoinConversation,
 	signalingLeaveConversation,
 } from '../utils/webrtc/index.js'
-import { PARTICIPANT } from '../constants.js'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS
 

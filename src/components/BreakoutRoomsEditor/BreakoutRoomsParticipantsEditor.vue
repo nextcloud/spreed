@@ -93,14 +93,17 @@
 </template>
 
 <script>
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
+
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
-import SelectableParticipant from './SelectableParticipant.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+
+import SelectableParticipant from './SelectableParticipant.vue'
+
 import { ATTENDEE, PARTICIPANT } from '../../constants.js'
 
 export default {

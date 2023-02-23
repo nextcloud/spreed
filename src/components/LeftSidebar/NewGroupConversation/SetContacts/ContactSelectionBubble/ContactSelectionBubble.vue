@@ -42,9 +42,12 @@
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Close from 'vue-material-design-icons/Close.vue'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
 import AvatarWrapperSmall from '../../../../AvatarWrapper/AvatarWrapperSmall.vue'
+
 export default {
 	name: 'ContactSelectionBubble',
 

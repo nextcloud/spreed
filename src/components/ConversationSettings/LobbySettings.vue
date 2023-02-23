@@ -58,10 +58,12 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { WEBINAR } from '../../constants.js'
+
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcDatetimePicker from '@nextcloud/vue/dist/Components/NcDatetimePicker.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
+
+import { WEBINAR } from '../../constants.js'
 
 export default {
 	name: 'LobbySettings',

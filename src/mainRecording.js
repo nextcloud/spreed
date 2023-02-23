@@ -26,41 +26,35 @@
  */
 
 import Vue from 'vue'
-import Recording from './Recording.vue'
-
-// Store
-import Vuex from 'vuex'
-import store from './store/index.js'
-
-// Router
-import VueRouter from 'vue-router'
-import router from './router/router.js'
-
-// Utils
-import { generateFilePath } from '@nextcloud/router'
-import { getRequestToken } from '@nextcloud/auth'
-
-// Directives
-import { translate, translatePlural } from '@nextcloud/l10n'
 import VueObserveVisibility from 'vue-observe-visibility'
-import VueShortKey from 'vue-shortkey'
 import vOutsideEvents from 'vue-outside-events'
+import VueRouter from 'vue-router'
+import VueShortKey from 'vue-shortkey'
+import Vuex from 'vuex'
+
+import { getRequestToken } from '@nextcloud/auth'
+import { translate, translatePlural } from '@nextcloud/l10n'
+import { generateFilePath } from '@nextcloud/router'
+
 import { options as TooltipOptions } from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
-// Styles
-import '@nextcloud/dialogs/dist/index.css'
-import 'leaflet/dist/leaflet.css'
+import Recording from './Recording.vue'
 
-// Leaflet icon patch
-import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
-// eslint-disable-next-line
-import 'leaflet-defaulticon-compatibility'
-
+import router from './router/router.js'
+import store from './store/index.js'
 import {
 	signalingGetSettingsForRecording,
 	signalingJoinCallForRecording,
 	signalingKill,
 } from './utils/webrtc/index.js'
+
+import '@nextcloud/dialogs/dist/index.css'
+import 'leaflet/dist/leaflet.css'
+// Leaflet icon patch
+import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css' // Re-uses images from ~leaflet package
+
+// eslint-disable-next-line
+import 'leaflet-defaulticon-compatibility'
 
 // CSP config for webpack dynamic chunk loading
 // eslint-disable-next-line
