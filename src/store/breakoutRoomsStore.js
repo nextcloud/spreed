@@ -30,6 +30,7 @@ import {
 	requestAssistance,
 	resetRequestAssistance,
 	reorganizeAttendees,
+	switchToBreakoutRoom,
 } from '../services/breakoutRoomsService.js'
 import { showError } from '@nextcloud/dialogs'
 import Vue from 'vue'
@@ -45,6 +46,15 @@ const getters = {
 			return []
 		}
 		return state.breakoutRooms?.[token]
+	},
+
+	// Get the parent room token provided a breakoutroom token
+	parentRoomToken: (state) => (token) => {
+		for (const parentRoomToken in state.breakoutRooms) {
+			if (state.breakoutRooms[parentRoomToken].find(breakoutRoom => breakoutRoom.token === token)) {
+				return parentRoomToken
+			}
+		}
 	},
 }
 
@@ -63,6 +73,8 @@ const mutations = {
 		if (!state.breakoutRooms[parentRoomToken]) {
 			Vue.set(state.breakoutRooms, parentRoomToken, [])
 		}
+		// The breakout room to be added is first removed if it exists already.
+		state.breakoutRooms[parentRoomToken] = state.breakoutRooms[parentRoomToken].filter(current => current.token !== breakoutRoom.token)
 		Vue.set(state.breakoutRooms, parentRoomToken, [...state.breakoutRooms[parentRoomToken], breakoutRoom])
 	},
 
@@ -132,7 +144,7 @@ const actions = {
 			const response = await deleteBreakoutRooms(token)
 			const conversation = response.data.ocs.data
 
-			// Update the parent conversation with the new configuration
+			// Add the updated parent conversation to the conversations store
 			context.commit('addConversation', conversation)
 
 			// Remove breakout rooms from this store
@@ -213,7 +225,7 @@ const actions = {
 	async requestAssistanceAction(context, { token }) {
 		try {
 			const response = await requestAssistance(token)
-			// Add the updated breakout room to the conversations store
+			// Add the updated parent conversation to the conversations store
 			context.commit('addConversation', response.data.ocs.data)
 		} catch (error) {
 			console.error(error)
@@ -224,11 +236,24 @@ const actions = {
 	async resetRequestAssistanceAction(context, { token }) {
 		try {
 			const response = await resetRequestAssistance(token)
-			// Add the updated breakout room to the conversations store
+			// Add the updated parent conversation to the conversations store
 			context.commit('addConversation', response.data.ocs.data)
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'An error occurred while resetting the request for assistance'))
+		}
+	},
+
+	async switchToBreakoutRoomAction(context, { token, target }) {
+		try {
+			const response = await switchToBreakoutRoom(token, target)
+
+			// A single breakout room (the target one) is returned, so it needs
+			// to be wrapper in an array.
+			processConversations([response.data.ocs.data], token, context)
+		} catch (error) {
+			console.error(error)
+			showError(t('spreed', 'An error occurred while joining breakout room'))
 		}
 	},
 }

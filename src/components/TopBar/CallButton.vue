@@ -38,7 +38,7 @@
 			</template>
 			{{ startCallLabel }}
 		</NcButton>
-		<NcButton v-else-if="showLeaveCallButton && !canEndForAll"
+		<NcButton v-else-if="showLeaveCallButton && !canEndForAll && !isBreakoutRoom"
 			id="call_button"
 			type="error"
 			:disabled="loading"
@@ -48,20 +48,28 @@
 			</template>
 			{{ leaveCallLabel }}
 		</NcButton>
-		<NcActions v-else-if="showLeaveCallButton && canEndForAll"
+		<NcActions v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
 			:disabled="loading"
 			:menu-title="leaveCallCombinedLabel"
 			type="error">
 			<template #icon>
-				<VideoOff :size="20" />
+				<VideoOff v-if="!isBreakoutRoom" :size="20" />
+				<ArrowLeft v-else :size="20" />
 			</template>
+			<NcActionButton v-if="isBreakoutRoom"
+				@click="switchToParentRoom">
+				<template #icon>
+					<ArrowLeft :size="20" />
+				</template>
+				{{ backToMainRoomLabel }}
+			</NcActionButton>
 			<NcActionButton @click="leaveCall(false)">
 				<template #icon>
 					<VideoOff :size="20" />
 				</template>
 				{{ leaveCallLabel }}
 			</NcActionButton>
-			<NcActionButton @click="leaveCall(true)">
+			<NcActionButton v-if="canEndForAll" @click="leaveCall(true)">
 				<template #icon>
 					<VideoBoxOff :size="20" />
 				</template>
@@ -87,6 +95,8 @@ import VideoBoxOff from 'vue-material-design-icons/VideoBoxOff.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import { EventBus } from '../../services/EventBus.js'
+import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 
 export default {
 	name: 'CallButton',
@@ -102,6 +112,7 @@ export default {
 		VideoIcon,
 		VideoOff,
 		NcButton,
+		ArrowLeft,
 	},
 
 	mixins: [
@@ -165,9 +176,10 @@ export default {
 		},
 
 		canEndForAll() {
-			return this.participantType === PARTICIPANT.TYPE.OWNER
-				|| this.participantType === PARTICIPANT.TYPE.MODERATOR
-				|| this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
+			return (this.participantType === PARTICIPANT.TYPE.OWNER
+					|| this.participantType === PARTICIPANT.TYPE.MODERATOR
+					|| this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
+				&& !this.isBreakoutRoom
 		},
 
 		hasCall() {
@@ -185,6 +197,10 @@ export default {
 
 		leaveCallLabel() {
 			return t('spreed', 'Leave call')
+		},
+
+		backToMainRoomLabel() {
+			return t('spreed', 'Back to main room')
 		},
 
 		leaveCallCombinedLabel() {
@@ -239,6 +255,10 @@ export default {
 
 		currentConversationIsJoined() {
 			return this.$store.getters.currentConversationIsJoined
+		},
+
+		isBreakoutRoom() {
+			return this.conversation.objectType === 'room'
 		},
 	},
 
@@ -310,6 +330,27 @@ export default {
 			} else {
 				emit('talk:device-checker:hide')
 				this.joinCall()
+			}
+		},
+
+		async switchToParentRoom() {
+			const parentRoomToken = this.$store.getters.parentRoomToken(this.token)
+			if (this.canModerate) {
+				EventBus.$emit('switch-to-conversation', {
+					token: parentRoomToken,
+				})
+			} else {
+				try {
+					await this.$store.dispatch('switchToBreakoutRoomAction', {
+						token: this.token,
+						target: parentRoomToken,
+					})
+					EventBus.$emit('switch-to-conversation', {
+						token: parentRoomToken,
+					})
+				} catch (error) {
+					console.debug(error)
+				}
 			}
 		},
 	},
