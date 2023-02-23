@@ -882,12 +882,8 @@ export default {
 	padding: 16px;
 }
 
-.local-video-stripe {
-	width: 300px;
-}
-
 .stripe-wrapper {
-	width: calc(100% - 300px);
+	width: 100%;
 	position: relative;
 }
 
