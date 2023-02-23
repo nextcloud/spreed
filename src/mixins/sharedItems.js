@@ -46,9 +46,8 @@ const sharedItems = {
 			case SHARED_ITEM.TYPES.LOCATION:
 				return t('spreed', 'Locations')
 			case SHARED_ITEM.TYPES.RECORD_AUDIO:
-				return t('spreed', 'Audio record')
 			case SHARED_ITEM.TYPES.RECORD_VIDEO:
-				return t('spreed', 'Video record')
+				return t('spreed', 'Call record')
 			case SHARED_ITEM.TYPES.AUDIO:
 				return t('spreed', 'Audio')
 			default:

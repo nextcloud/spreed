@@ -38,9 +38,7 @@ const getItemTypeFromMessage = function(message) {
 	} else {
 		const messageType = message.messageType || ''
 		const mimetype = message.messageParameters.file?.mimetype || ''
-		if (messageType === 'record-audio') {
-			return SHARED_ITEM.TYPES.RECORD_AUDIO
-		} else if (messageType === 'record-video') {
+		if (messageType === 'record-audio' || messageType === 'record-video') {
 			return SHARED_ITEM.TYPES.RECORD_VIDEO
 		} else if (messageType === 'voice-message') {
 			return SHARED_ITEM.TYPES.VOICE
