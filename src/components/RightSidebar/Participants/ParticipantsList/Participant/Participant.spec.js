@@ -1,19 +1,21 @@
-/* eslint-disable import/no-named-as-default-member */
-import Vuex from 'vuex'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../../../../store/storeConfig.js'
-import { ATTENDEE, PARTICIPANT } from '../../../../../constants.js'
-import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
+import Vuex from 'vuex'
+
+import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 import Phone from 'vue-material-design-icons/Phone.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
-import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
+
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
-import { findNcActionButton } from '../../../../../test-helpers.js'
 
 import Participant from './Participant.vue'
+import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
+
+import { ATTENDEE, PARTICIPANT } from '../../../../../constants.js'
+import storeConfig from '../../../../../store/storeConfig.js'
+import { findNcActionButton } from '../../../../../test-helpers.js'
 
 describe('Participant.vue', () => {
 	let conversation

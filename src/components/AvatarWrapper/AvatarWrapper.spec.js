@@ -1,8 +1,10 @@
-import Vuex from 'vuex'
 import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../store/storeConfig.js'
+import Vuex from 'vuex'
+
 import AvatarWrapper from './AvatarWrapper.vue'
+
+import storeConfig from '../../store/storeConfig.js'
 
 describe('AvatarWrapper.vue', () => {
 	let testStoreConfig

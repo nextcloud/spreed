@@ -1,10 +1,11 @@
-import Vuex from 'vuex'
 import { createLocalVue, shallowMount } from '@vue/test-utils'
-import { ATTENDEE } from '../../../constants.js'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../../store/storeConfig.js'
+import Vuex from 'vuex'
 
 import MessagesGroup from './MessagesGroup.vue'
+
+import { ATTENDEE } from '../../../constants.js'
+import storeConfig from '../../../store/storeConfig.js'
 
 describe('MessagesGroup.vue', () => {
 	const TOKEN = 'XXTOKENXX'

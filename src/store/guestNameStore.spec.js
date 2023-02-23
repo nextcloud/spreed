@@ -1,6 +1,6 @@
-import Vuex from 'vuex'
-import { cloneDeep } from 'lodash'
 import { createLocalVue } from '@vue/test-utils'
+import { cloneDeep } from 'lodash'
+import Vuex from 'vuex'
 
 import guestNameStore from './guestNameStore.js'
 

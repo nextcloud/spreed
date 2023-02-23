@@ -1,8 +1,8 @@
-/* eslint-disable import/no-named-as-default-member */
 import { createLocalVue } from '@vue/test-utils'
-import storeConfig from './storeConfig.js'
-import Vuex from 'vuex'
 import { cloneDeep } from 'lodash'
+import Vuex from 'vuex'
+
+import storeConfig from './storeConfig.js'
 import {
 	CONVERSATION,
 	WEBINAR,

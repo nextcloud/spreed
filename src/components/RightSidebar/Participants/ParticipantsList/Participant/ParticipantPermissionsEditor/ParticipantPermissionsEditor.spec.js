@@ -1,11 +1,12 @@
-import Vuex from 'vuex'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
-import storeConfig from '../../../../../../store/storeConfig.js'
-import { PARTICIPANT, ATTENDEE } from '../../../../../../constants.js'
+import Vuex from 'vuex'
 
-import PermissionsEditor from '../../../../../PermissionsEditor/PermissionsEditor.vue'
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor.vue'
+import PermissionsEditor from '../../../../../PermissionsEditor/PermissionsEditor.vue'
+
+import { PARTICIPANT, ATTENDEE } from '../../../../../../constants.js'
+import storeConfig from '../../../../../../store/storeConfig.js'
 
 describe('ParticipantPermissionsEditor.vue', () => {
 	let conversation
