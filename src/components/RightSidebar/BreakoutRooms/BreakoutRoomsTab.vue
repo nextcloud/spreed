@@ -116,12 +116,12 @@ import StopIcon from 'vue-material-design-icons/Stop.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
-import BreakoutRoomItem from './BreakoutRoomItem.vue'
 import BreakoutRoomsParticipantsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsParticipantsEditor.vue'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
+import BreakoutRoomItem from './BreakoutRoomItem.vue'
 
+// Constants
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
-
 import isInCall from '../../../mixins/isInCall.js'
 
 export default {
