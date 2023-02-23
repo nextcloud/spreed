@@ -38,7 +38,7 @@
 			</template>
 			{{ startCallLabel }}
 		</NcButton>
-		<NcButton v-else-if="(showLeaveCallButton && !canEndForAll) && !isBreakoutRoom"
+		<NcButton v-else-if="showLeaveCallButton && !canEndForAll && !isBreakoutRoom"
 			id="call_button"
 			type="error"
 			:disabled="loading"
@@ -48,7 +48,7 @@
 			</template>
 			{{ leaveCallLabel }}
 		</NcButton>
-		<NcActions v-else-if="showLeaveCallButton && canEndForAll || isBreakoutRoom"
+		<NcActions v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
 			:disabled="loading"
 			:menu-title="leaveCallCombinedLabel"
 			type="error">
@@ -69,7 +69,7 @@
 				</template>
 				{{ leaveCallLabel }}
 			</NcActionButton>
-			<NcActionButton v-if="canEndForAll && !isBreakoutRoom" @click="leaveCall(true)">
+			<NcActionButton v-if="canEndForAll" @click="leaveCall(true)">
 				<template #icon>
 					<VideoBoxOff :size="20" />
 				</template>
@@ -176,9 +176,10 @@ export default {
 		},
 
 		canEndForAll() {
-			return this.participantType === PARTICIPANT.TYPE.OWNER
-				|| this.participantType === PARTICIPANT.TYPE.MODERATOR
-				|| this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
+			return (this.participantType === PARTICIPANT.TYPE.OWNER
+					|| this.participantType === PARTICIPANT.TYPE.MODERATOR
+					|| this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
+				&& !this.isBreakoutRoom
 		},
 
 		hasCall() {
