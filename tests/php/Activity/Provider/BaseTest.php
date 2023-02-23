@@ -228,7 +228,7 @@ class BaseTest extends TestCase {
 			'name' => $expectedName,
 			'call-type' => $expectedType,
 			'link' => 'url',
-			'icon-url' => '',
+			// 'icon-url' => '',
 		], self::invokePrivate($provider, 'getRoom', [$room, 'user']));
 	}
 

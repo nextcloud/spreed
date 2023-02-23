@@ -24,7 +24,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Activity\Provider;
 
 use OCA\Talk\Config;
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
@@ -78,16 +77,10 @@ abstract class Base implements IProvider {
 			throw new \InvalidArgumentException('User can not user Talk');
 		}
 
-		try {
-			$room = $this->manager->getRoomForUser($event->getObjectId(), $uid);
-			$event->setIcon($this->avatarService->getAvatarUrl($room));
-		} catch (RoomNotFoundException $th) {
-			// When the room doesn't exist and to prevent an exception
-			if ($this->activityManager->getRequirePNG()) {
-				$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.png')));
-			} else {
-				$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.svg')));
-			}
+		if ($this->activityManager->getRequirePNG()) {
+			$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.png')));
+		} else {
+			$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.svg')));
 		}
 
 		return $event;
@@ -130,7 +123,6 @@ abstract class Base implements IProvider {
 			'id' => $room->getId(),
 			'name' => $room->getDisplayName($userId),
 			'link' => $this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
-			'icon-url' => $this->avatarService->getAvatarUrl($room),
 			'call-type' => $stringType,
 		];
 	}

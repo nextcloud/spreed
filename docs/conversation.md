@@ -422,6 +422,7 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
 
 ## Handle the avatar of conversation
 
+* ⚠️ Preview - Might be modified before the capability is added
 * Required capability: `avatar`
 * Method: `POST`
 * Endpoint: `/room/{token}/avatar`

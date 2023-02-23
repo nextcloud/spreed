@@ -117,12 +117,36 @@ class ConversationSearch implements IProvider {
 				}
 			}
 
+			$icon = '';
+			$iconClass = '';
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
+				$users = json_decode($room->getName(), true);
+				foreach ($users as $participantId) {
+					if ($participantId !== $user->getUID()) {
+						$icon = $this->url->linkToRouteAbsolute('core.avatar.getAvatar', [
+							'userId' => $participantId,
+							'size' => 512,
+						]);
+					}
+				}
+			} elseif ($room->getObjectType() === 'file') {
+				$iconClass = 'conversation-icon icon-file-white';
+			} elseif ($room->getObjectType() === 'share:password') {
+				$iconClass = 'conversation-icon icon-password-white';
+			} elseif ($room->getObjectType() === 'emails') {
+				$iconClass = 'conversation-icon icon-mail-white';
+			} elseif ($room->getType() === Room::TYPE_PUBLIC) {
+				$iconClass = 'conversation-icon icon-public-white';
+			} else {
+				$iconClass = 'conversation-icon icon-contacts-white';
+			}
+
 			$entry = new SearchResultEntry(
-				$this->avatarService->getAvatarUrl($room),
+				$icon,
 				$room->getDisplayName($user->getUID()),
 				'',
 				$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
-				'',
+				$iconClass,
 				true
 			);
 
