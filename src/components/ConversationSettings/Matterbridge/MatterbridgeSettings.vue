@@ -637,6 +637,10 @@ body.theme--dark .icon-multiselect-service {
 	filter: invert(1);
 }
 
+::v-deep .modal-container {
+	height: 700px;
+}
+
 .matterbridge-settings {
 	.loading {
 		margin-top: 30px;

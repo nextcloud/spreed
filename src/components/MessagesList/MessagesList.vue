@@ -915,7 +915,7 @@ export default {
 }
 
 .scroll-to-bottom {
-	position: absolute;
+	position: absolute !important;
 	bottom: 76px;
 	right: 24px;
 	z-index: 2;
