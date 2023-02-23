@@ -1022,6 +1022,7 @@ OC.L10N.register(
     "Start call" : "Uputi poziv",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk je ažuriran, ponovno učitajte stranicu prije upućivanja ili pridruživanja razgovoru.",
     "You will be able to join the call only after a moderator starts it." : "Pozivu ćete se moći pridružiti tek nakon što ga moderator pokrene.",
+    "Recording" : "Snimanje",
     "You have new unread messages in the chat." : "Imate nove nepročitane poruke u prozoru za razmjenu poruka.",
     "You have been mentioned in the chat." : "Spomenuti ste u razmijenjenim porukama.",
     "Mute others" : "Utišaj druge",

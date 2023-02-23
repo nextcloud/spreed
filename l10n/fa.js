@@ -336,6 +336,7 @@ OC.L10N.register(
     "Privacy" : "حریم خصوصی",
     "Keyboard shortcuts" : "میان بر صفحه ی کلید",
     "Search" : "جستجو کردن",
+    "Recording" : "ضبط جلسه",
     "Rename conversation" : "تغییر نام مکالمه",
     "Grid view" : "نمایش گرید",
     "Send" : "ارسال",
