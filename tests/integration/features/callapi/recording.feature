@@ -5,8 +5,6 @@ Feature: callapi/recording
 
   Scenario: Start and stop video recording
     Given recording server is started
-    And the following "spreed" app config is set
-      | signaling_dev | yes |
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -48,8 +46,6 @@ Feature: callapi/recording
 
   Scenario: Start and stop audio recording
     Given recording server is started
-    And the following "spreed" app config is set
-      | signaling_dev | yes |
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -91,8 +87,6 @@ Feature: callapi/recording
 
   Scenario: Recording failed to start
     Given recording server is started
-    And the following "spreed" app config is set
-      | signaling_dev | yes |
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -116,8 +110,6 @@ Feature: callapi/recording
 
   Scenario: Video recording failed
     Given recording server is started
-    And the following "spreed" app config is set
-      | signaling_dev | yes |
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -147,8 +139,6 @@ Feature: callapi/recording
 
   Scenario: Start and stop recording again after the previous one failed to start
     Given recording server is started
-    And the following "spreed" app config is set
-      | signaling_dev | yes |
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -201,8 +191,6 @@ Feature: callapi/recording
 
   Scenario: Start and stop recording again after the previous one failed
     Given recording server is started
-    And the following "spreed" app config is set
-      | signaling_dev | yes |
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -263,8 +251,6 @@ Feature: callapi/recording
 
   Scenario: Get error when start|stop recording and already did this
     Given recording server is started
-    And the following "spreed" app config is set
-      | signaling_dev | yes |
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -323,8 +309,6 @@ Feature: callapi/recording
 
   Scenario: Get error when try to start recording with invalid status
     Given recording server is started
-    And the following "spreed" app config is set
-      | signaling_dev | yes |
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -338,9 +322,7 @@ Feature: callapi/recording
       | 2    | room1 | 0             |
 
   Scenario: Manager try without success to start recording when signaling is internal
-    Given the following "spreed" app config is set
-      | signaling_dev | no |
-    And user "participant1" creates room "room1" (v4)
+    Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
     And user "participant1" joins room "room1" with 200 (v4)
@@ -358,8 +340,6 @@ Feature: callapi/recording
 
   Scenario: Get error when non moderator/owner try to start recording
     Given recording server is started
-    And the following "spreed" app config is set
-      | signaling_dev | yes |
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -377,8 +357,6 @@ Feature: callapi/recording
 
   Scenario: Get error when try to start recording and no call started
     Given recording server is started
-    And the following "spreed" app config is set
-      | signaling_dev | yes |
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -410,8 +388,6 @@ Feature: callapi/recording
 
   Scenario: Stop recording automatically when end the call
     Given recording server is started
-    And the following "spreed" app config is set
-      | signaling_dev | yes |
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -439,8 +415,6 @@ Feature: callapi/recording
 
   Scenario: Stop recording automatically when the last participant go out
     Given recording server is started
-    And the following "spreed" app config is set
-      | signaling_dev | yes |
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
