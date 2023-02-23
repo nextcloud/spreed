@@ -80,23 +80,26 @@
 </template>
 
 <script>
+import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
+import VideoBoxOff from 'vue-material-design-icons/VideoBoxOff.vue'
+import VideoOff from 'vue-material-design-icons/VideoOff.vue'
+
+import { emit } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
+
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import browserCheck from '../../mixins/browserCheck.js'
 import isInCall from '../../mixins/isInCall.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import participant from '../../mixins/participant.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
-import { emit } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
 import BrowserStorage from '../../services/BrowserStorage.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import VideoBoxOff from 'vue-material-design-icons/VideoBoxOff.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-import VideoOff from 'vue-material-design-icons/VideoOff.vue'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { EventBus } from '../../services/EventBus.js'
-import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 
 export default {
 	name: 'CallButton',
