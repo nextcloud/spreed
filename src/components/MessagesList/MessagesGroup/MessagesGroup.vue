@@ -55,6 +55,7 @@
 <script>
 import AuthorAvatar from './AuthorAvatar.vue'
 import Message from './Message/Message.vue'
+
 import { ATTENDEE } from '../../../constants.js'
 
 export default {

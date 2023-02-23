@@ -42,11 +42,14 @@
 </template>
 
 <script>
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import SharedItems from '../SharedItems.vue'
-import sharedItems from '../../../../mixins/sharedItems.js'
 import debounce from 'debounce'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+
+import SharedItems from '../SharedItems.vue'
+
+import sharedItems from '../../../../mixins/sharedItems.js'
 
 export default {
 	name: 'SharedItemsBrowser',

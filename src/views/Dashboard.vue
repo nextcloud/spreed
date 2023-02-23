@@ -58,14 +58,17 @@
 </template>
 
 <script>
-import ConversationIcon from './../components/ConversationIcon.vue'
+import axios from '@nextcloud/axios'
+import { generateOcsUrl, generateUrl } from '@nextcloud/router'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcDashboardWidget from '@nextcloud/vue/dist/Components/NcDashboardWidget.js'
 import NcDashboardWidgetItem from '@nextcloud/vue/dist/Components/NcDashboardWidgetItem.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
-import axios from '@nextcloud/axios'
-import { generateOcsUrl, generateUrl } from '@nextcloud/router'
+
+import ConversationIcon from './../components/ConversationIcon.vue'
+
 import { CONVERSATION } from '../constants.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 const ROOM_POLLING_INTERVAL = 30
 

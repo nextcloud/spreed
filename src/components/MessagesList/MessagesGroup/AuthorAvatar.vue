@@ -47,6 +47,7 @@
 
 <script>
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+
 import { ATTENDEE } from '../../../constants.js'
 
 export default {

@@ -72,12 +72,13 @@
 </template>
 
 <script>
-import Pencil from 'vue-material-design-icons/Pencil.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import Close from 'vue-material-design-icons/Close.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import RichContentEditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 export default {
 	name: 'Description',

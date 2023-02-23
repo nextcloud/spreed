@@ -206,33 +206,38 @@
 
 <script>
 
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
-import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
-import UserStatus from '../../../../../mixins/userStatus.js'
-import readableNumber from '../../../../../mixins/readableNumber.js'
 import isEqual from 'lodash/isEqual.js'
-import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
-import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
 
-// Material design icons
-import Bell from 'vue-material-design-icons/Bell.vue'
-import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
-import Microphone from 'vue-material-design-icons/Microphone.vue'
-import Phone from 'vue-material-design-icons/Phone.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-import Crown from 'vue-material-design-icons/Crown.vue'
 import Account from 'vue-material-design-icons/Account.vue'
+import Bell from 'vue-material-design-icons/Bell.vue'
+import Crown from 'vue-material-design-icons/Crown.vue'
+import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Lock from 'vue-material-design-icons/Lock.vue'
 import LockOpenVariant from 'vue-material-design-icons/LockOpenVariant.vue'
-import Tune from 'vue-material-design-icons/Tune.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
-import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import LockReset from 'vue-material-design-icons/LockReset.vue'
+import Microphone from 'vue-material-design-icons/Microphone.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Phone from 'vue-material-design-icons/Phone.vue'
+import Tune from 'vue-material-design-icons/Tune.vue'
+import VideoIcon from 'vue-material-design-icons/Video.vue'
+
+import { showError, showSuccess } from '@nextcloud/dialogs'
+
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
+import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+
+import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
+import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
+
+import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
+import readableNumber from '../../../../../mixins/readableNumber.js'
+import UserStatus from '../../../../../mixins/userStatus.js'
+
+// Material design icons
 
 export default {
 	name: 'Participant',

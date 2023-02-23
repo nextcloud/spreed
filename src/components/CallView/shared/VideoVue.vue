@@ -92,17 +92,21 @@
 
 <script>
 import attachMediaStream from 'attachmediastream'
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
-import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
-import SHA1 from 'crypto-js/sha1.js'
 import Hex from 'crypto-js/enc-hex.js'
-import video from '../../../mixins/video.js'
-import VideoBackground from './VideoBackground.vue'
+import SHA1 from 'crypto-js/sha1.js'
+
 import AccountCircle from 'vue-material-design-icons/AccountCircle.vue'
-import VideoBottomBar from './VideoBottomBar.vue'
+
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+
 import Screen from './Screen.vue'
-import { EventBus } from '../../../services/EventBus.js'
+import VideoBackground from './VideoBackground.vue'
+import VideoBottomBar from './VideoBottomBar.vue'
+
 import { ATTENDEE } from '../../../constants.js'
+import video from '../../../mixins/video.js'
+import { EventBus } from '../../../services/EventBus.js'
+import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 export default {
 

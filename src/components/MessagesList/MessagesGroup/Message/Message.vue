@@ -198,32 +198,37 @@ the main body of the message as well as a quote.
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import CallButton from '../../../TopBar/CallButton.vue'
-import DeckCard from './MessagePart/DeckCard.vue'
-import DefaultParameter from './MessagePart/DefaultParameter.vue'
-import FilePreview from './MessagePart/FilePreview.vue'
-import Mention from './MessagePart/Mention.vue'
-import RichText from '@nextcloud/vue-richtext'
+import emojiRegex from 'emoji-regex/index.js'
+
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
+import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
+
+import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
+import moment from '@nextcloud/moment'
+import RichText from '@nextcloud/vue-richtext'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
+import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
+
+import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
+import Contact from './MessagePart/Contact.vue'
+import DeckCard from './MessagePart/DeckCard.vue'
+import DefaultParameter from './MessagePart/DefaultParameter.vue'
+import FilePreview from './MessagePart/FilePreview.vue'
+import Location from './MessagePart/Location.vue'
+import Mention from './MessagePart/Mention.vue'
+import Poll from './MessagePart/Poll.vue'
 import Quote from '../../../Quote.vue'
+import CallButton from '../../../TopBar/CallButton.vue'
+
+import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import isInCall from '../../../../mixins/isInCall.js'
 import participant from '../../../../mixins/participant.js'
 import { EventBus } from '../../../../services/EventBus.js'
-import emojiRegex from 'emoji-regex/index.js'
-import moment from '@nextcloud/moment'
-import Location from './MessagePart/Location.vue'
-import Contact from './MessagePart/Contact.vue'
-import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
-import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
-import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
-import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
-import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
-import Poll from './MessagePart/Poll.vue'
 
 /**
  * @property {object} scrollerBoundingClientRect provided by MessageList.vue

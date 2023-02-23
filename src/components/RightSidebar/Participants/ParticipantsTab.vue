@@ -41,18 +41,22 @@
 </template>
 
 <script>
-import CurrentParticipants from './CurrentParticipants/CurrentParticipants.vue'
-import SearchBox from '../../LeftSidebar/SearchBox/SearchBox.vue'
 import debounce from 'debounce'
-import { EventBus } from '../../../services/EventBus.js'
-import { searchPossibleConversations } from '../../../services/conversationsService.js'
-import { addParticipant } from '../../../services/participantsService.js'
-import { loadState } from '@nextcloud/initial-state'
-import CancelableRequest from '../../../utils/cancelableRequest.js'
+
 import { showError } from '@nextcloud/dialogs'
+import { loadState } from '@nextcloud/initial-state'
+
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
+
+import CurrentParticipants from './CurrentParticipants/CurrentParticipants.vue'
 import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults.vue'
+import SearchBox from '../../LeftSidebar/SearchBox/SearchBox.vue'
+
 import getParticipants from '../../../mixins/getParticipants.js'
+import { searchPossibleConversations } from '../../../services/conversationsService.js'
+import { EventBus } from '../../../services/EventBus.js'
+import { addParticipant } from '../../../services/participantsService.js'
+import CancelableRequest from '../../../utils/cancelableRequest.js'
 
 export default {
 	name: 'ParticipantsTab',

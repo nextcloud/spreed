@@ -34,8 +34,10 @@
 </template>
 
 <script>
-import ConversationIcon from './ConversationIcon.vue'
 import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
+
+import ConversationIcon from './ConversationIcon.vue'
+
 import { CONVERSATION } from '../constants.js'
 
 export default {

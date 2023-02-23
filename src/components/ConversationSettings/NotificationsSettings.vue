@@ -74,12 +74,14 @@
 </template>
 
 <script>
-import { PARTICIPANT } from '../../constants.js'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import VolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import Account from 'vue-material-design-icons/Account.vue'
-import VolumeOff from 'vue-material-design-icons/VolumeOff.vue'
 import Check from 'vue-material-design-icons/Check.vue'
+import VolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
+import VolumeOff from 'vue-material-design-icons/VolumeOff.vue'
+
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+
+import { PARTICIPANT } from '../../constants.js'
 
 export default {
 	name: 'NotificationsSettings',

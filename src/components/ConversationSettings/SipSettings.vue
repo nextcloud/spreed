@@ -47,7 +47,9 @@
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
+
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+
 import { WEBINAR } from '../../constants.js'
 
 export default {

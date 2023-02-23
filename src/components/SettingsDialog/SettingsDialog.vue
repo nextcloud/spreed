@@ -140,14 +140,17 @@
 </template>
 
 <script>
-import { generateUrl } from '@nextcloud/router'
 import { getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
-import { PRIVACY } from '../../constants.js'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import MediaDevicesPreview from '../MediaDevicesPreview.vue'
+import { generateUrl } from '@nextcloud/router'
+
 import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDialog.js'
 import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+
+import MediaDevicesPreview from '../MediaDevicesPreview.vue'
+
+import { PRIVACY } from '../../constants.js'
 
 export default {
 	name: 'SettingsDialog',

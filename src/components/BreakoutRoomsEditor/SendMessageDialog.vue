@@ -37,9 +37,11 @@
 </template>
 
 <script>
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-import NewMessageForm from '../NewMessageForm/NewMessageForm.vue'
 import { showError, showSuccess } from '@nextcloud/dialogs'
+
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+
+import NewMessageForm from '../NewMessageForm/NewMessageForm.vue'
 
 export default {
 	name: 'SendMessageDialog',

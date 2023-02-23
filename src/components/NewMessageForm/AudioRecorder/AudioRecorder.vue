@@ -68,14 +68,18 @@
 </template>
 
 <script>
-import Microphone from 'vue-material-design-icons/Microphone.vue'
-import Close from 'vue-material-design-icons/Close.vue'
-import Check from 'vue-material-design-icons/Check.vue'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
-import { mediaDevicesManager } from '../../../utils/webrtc/index.js'
-import { showError } from '@nextcloud/dialogs'
 import { MediaRecorder } from 'extendable-media-recorder'
+
+import Check from 'vue-material-design-icons/Check.vue'
+import Close from 'vue-material-design-icons/Close.vue'
+import Microphone from 'vue-material-design-icons/Microphone.vue'
+
+import { showError } from '@nextcloud/dialogs'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+
+import { mediaDevicesManager } from '../../../utils/webrtc/index.js'
 
 export default {
 	name: 'AudioRecorder',

@@ -59,16 +59,21 @@
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+import debounce from 'debounce'
+
 import Close from 'vue-material-design-icons/Close.vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
-import CancelableRequest from '../../../../utils/cancelableRequest.js'
-import debounce from 'debounce'
+
 import { showError } from '@nextcloud/dialogs'
-import { searchPossibleConversations } from '../../../../services/conversationsService.js'
-import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
+
 import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble.vue'
+import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
+
+import { searchPossibleConversations } from '../../../../services/conversationsService.js'
+import CancelableRequest from '../../../../utils/cancelableRequest.js'
 
 export default {
 	name: 'SetContacts',

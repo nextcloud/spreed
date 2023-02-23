@@ -83,13 +83,16 @@
 </template>
 
 <script>
+import debounce from 'debounce'
+
+import axios from '@nextcloud/axios'
+import { showSuccess } from '@nextcloud/dialogs'
+import { loadState } from '@nextcloud/initial-state'
+import { generateOcsUrl } from '@nextcloud/router'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
-import axios from '@nextcloud/axios'
-import debounce from 'debounce'
-import { generateOcsUrl } from '@nextcloud/router'
-import { loadState } from '@nextcloud/initial-state'
-import { showSuccess } from '@nextcloud/dialogs'
+
 import { setSIPSettings } from '../../services/settingsService.js'
 
 export default {

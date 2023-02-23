@@ -36,9 +36,11 @@
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 
 export default {

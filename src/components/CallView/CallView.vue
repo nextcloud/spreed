@@ -139,20 +139,23 @@
 </template>
 
 <script>
-import { loadState } from '@nextcloud/initial-state'
-import Grid from './Grid/Grid.vue'
-import { SIMULCAST } from '../../constants.js'
-import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
-import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
-import { fetchPeers } from '../../services/callsService.js'
+import debounce from 'debounce'
+
 import { showMessage } from '@nextcloud/dialogs'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { loadState } from '@nextcloud/initial-state'
+
+import Grid from './Grid/Grid.vue'
 import EmptyCallView from './shared/EmptyCallView.vue'
-import VideoVue from './shared/VideoVue.vue'
 import LocalVideo from './shared/LocalVideo.vue'
 import Screen from './shared/Screen.vue'
-import debounce from 'debounce'
+import VideoVue from './shared/VideoVue.vue'
+
+import { SIMULCAST } from '../../constants.js'
+import { fetchPeers } from '../../services/callsService.js'
 import { EventBus } from '../../services/EventBus.js'
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
+import RemoteVideoBlocker from '../../utils/webrtc/RemoteVideoBlocker.js'
 
 export default {
 	name: 'CallView',

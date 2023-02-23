@@ -133,29 +133,33 @@
 </template>
 
 <script>
+import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
+import MenuIcon from 'vue-material-design-icons/Menu.vue'
+import MessageText from 'vue-material-design-icons/MessageText.vue'
+
 import { showMessage } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { generateUrl } from '@nextcloud/router'
+
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
-import CallButton from './CallButton.vue'
-import BrowserStorage from '../../services/BrowserStorage.js'
-import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
-import MessageText from 'vue-material-design-icons/MessageText.vue'
-import { CONVERSATION } from '../../constants.js'
-import { generateUrl } from '@nextcloud/router'
-import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
-import { emit } from '@nextcloud/event-bus'
-import ConversationIcon from '../ConversationIcon.vue'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor.js'
-import userStatus from '../../mixins/userStatus.js'
-import LocalMediaControls from '../CallView/shared/LocalMediaControls.vue'
-import getParticipants from '../../mixins/getParticipants.js'
-import TopBarMenu from './TopBarMenu.vue'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
+import CallButton from './CallButton.vue'
 import CallTime from './CallTime.vue'
-import MenuIcon from 'vue-material-design-icons/Menu.vue'
+import TopBarMenu from './TopBarMenu.vue'
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
+import LocalMediaControls from '../CallView/shared/LocalMediaControls.vue'
+import ConversationIcon from '../ConversationIcon.vue'
+
+import { CONVERSATION } from '../../constants.js'
+import getParticipants from '../../mixins/getParticipants.js'
+import userStatus from '../../mixins/userStatus.js'
+import BrowserStorage from '../../services/BrowserStorage.js'
+import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 
 export default {
 	name: 'TopBar',

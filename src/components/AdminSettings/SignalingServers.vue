@@ -84,13 +84,18 @@
 </template>
 
 <script>
-import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import debounce from 'debounce'
+
 import Plus from 'vue-material-design-icons/Plus.vue'
+
 import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
-import debounce from 'debounce'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+
+import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
+
 import { SIGNALING } from '../../constants.js'
 
 export default {

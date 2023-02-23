@@ -109,24 +109,20 @@
 </template>
 
 <script>
-// Components
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-import BreakoutRoomsParticipantsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsParticipantsEditor.vue'
-import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
-import BreakoutRoomItem from './BreakoutRoomItem.vue'
-
-// Icons
+import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
+import Message from 'vue-material-design-icons/Message.vue'
 import Play from 'vue-material-design-icons/Play.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
-import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
-import Message from 'vue-material-design-icons/Message.vue'
 
-// Constants
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+
+import BreakoutRoomItem from './BreakoutRoomItem.vue'
+import BreakoutRoomsParticipantsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsParticipantsEditor.vue'
+import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
+
 import { CONVERSATION } from '../../../constants.js'
-
-// Mixins
 import isInCall from '../../../mixins/isInCall.js'
 
 export default {

@@ -55,12 +55,16 @@
 </template>
 
 <script>
-import StunServer from '../../components/AdminSettings/StunServer.vue'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import Plus from 'vue-material-design-icons/Plus.vue'
 import debounce from 'debounce'
-import { loadState } from '@nextcloud/initial-state'
+
+import Plus from 'vue-material-design-icons/Plus.vue'
+
 import { showSuccess } from '@nextcloud/dialogs'
+import { loadState } from '@nextcloud/initial-state'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
+import StunServer from '../../components/AdminSettings/StunServer.vue'
 
 export default {
 	name: 'StunServers',

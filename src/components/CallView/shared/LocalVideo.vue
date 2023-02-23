@@ -69,16 +69,20 @@
 
 <script>
 import attachMediaStream from 'attachmediastream'
-import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
+
 import {
 	showError,
 	showInfo,
 	TOAST_PERMANENT_TIMEOUT,
 } from '@nextcloud/dialogs'
-import video from '../../../mixins/video.js'
+
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+
 import VideoBackground from './VideoBackground.vue'
+
+import video from '../../../mixins/video.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 export default {

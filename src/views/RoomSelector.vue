@@ -70,14 +70,18 @@
 </template>
 
 <script>
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import Magnify from 'vue-material-design-icons/Magnify.vue'
+
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import { CONVERSATION } from '../constants.js'
-import ConversationIcon from '../components/ConversationIcon.vue'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
-import Magnify from 'vue-material-design-icons/Magnify.vue'
+
+import ConversationIcon from '../components/ConversationIcon.vue'
+
+import { CONVERSATION } from '../constants.js'
 
 export default {
 	name: 'RoomSelector',

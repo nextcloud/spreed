@@ -70,26 +70,31 @@ get the messagesList array and loop through the list to generate the messages.
 </template>
 
 <script>
-import moment from '@nextcloud/moment'
-import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
+import debounce from 'debounce'
+import uniqueId from 'lodash/uniqueId.js'
+import { computed } from 'vue'
+
+import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
+import Message from 'vue-material-design-icons/Message.vue'
+
 import Axios from '@nextcloud/axios'
+import { getCapabilities } from '@nextcloud/capabilities'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import isInLobby from '../../mixins/isInLobby.js'
-import isInCall from '../../mixins/isInCall.js'
+import moment from '@nextcloud/moment'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
+
+import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
+import LoadingPlaceholder from '../LoadingPlaceholder.vue'
+
 import {
 	ATTENDEE,
 	CHAT,
 } from '../../constants.js'
-import debounce from 'debounce'
+import isInCall from '../../mixins/isInCall.js'
+import isInLobby from '../../mixins/isInLobby.js'
 import { EventBus } from '../../services/EventBus.js'
-import LoadingPlaceholder from '../LoadingPlaceholder.vue'
-import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
-import Message from 'vue-material-design-icons/Message.vue'
-import uniqueId from 'lodash/uniqueId.js'
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
-import { getCapabilities } from '@nextcloud/capabilities'
-import { computed } from 'vue'
 
 export default {
 	name: 'MessagesList',

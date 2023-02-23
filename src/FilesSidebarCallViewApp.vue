@@ -33,12 +33,14 @@
 </template>
 
 <script>
+import PreventUnload from 'vue-prevent-unload'
+
 import CallView from './components/CallView/CallView.vue'
 import TopBar from './components/TopBar/TopBar.vue'
-import PreventUnload from 'vue-prevent-unload'
-import sessionIssueHandler from './mixins/sessionIssueHandler.js'
+
 import isInCall from './mixins/isInCall.js'
 import participant from './mixins/participant.js'
+import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
 
 // Styles

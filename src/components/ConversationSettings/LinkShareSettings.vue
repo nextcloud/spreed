@@ -91,16 +91,20 @@
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { CONVERSATION } from '../../constants.js'
-import { generateUrl } from '@nextcloud/router'
+import { Fragment } from 'vue-frag'
+
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline.vue'
 import Email from 'vue-material-design-icons/Email.vue'
-import { Fragment } from 'vue-frag'
+
+import { showError, showSuccess } from '@nextcloud/dialogs'
+import { generateUrl } from '@nextcloud/router'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
+
+import { CONVERSATION } from '../../constants.js'
 
 export default {
 	name: 'LinkShareSettings',

@@ -28,8 +28,8 @@
 </template>
 
 <script>
-import { generateRemoteUrl } from '@nextcloud/router'
 import { encodePath } from '@nextcloud/paths'
+import { generateRemoteUrl } from '@nextcloud/router'
 
 export default {
 	name: 'AudioPlayer',

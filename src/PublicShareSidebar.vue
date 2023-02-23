@@ -53,26 +53,30 @@
 </template>
 
 <script>
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import PreventUnload from 'vue-prevent-unload'
+
 import { showError } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
 import CallView from './components/CallView/CallView.vue'
 import ChatView from './components/ChatView.vue'
+import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
 import CallButton from './components/TopBar/CallButton.vue'
 import TopBar from './components/TopBar/TopBar.vue'
+
+import browserCheck from './mixins/browserCheck.js'
+import isInCall from './mixins/isInCall.js'
+import participant from './mixins/participant.js'
+import sessionIssueHandler from './mixins/sessionIssueHandler.js'
+import talkHashCheck from './mixins/talkHashCheck.js'
 import { EventBus } from './services/EventBus.js'
 import { getPublicShareConversationData } from './services/filesIntegrationServices.js'
 import {
 	leaveConversationSync,
 } from './services/participantsService.js'
 import { signalingKill } from './utils/webrtc/index.js'
-import browserCheck from './mixins/browserCheck.js'
-import sessionIssueHandler from './mixins/sessionIssueHandler.js'
-import isInCall from './mixins/isInCall.js'
-import participant from './mixins/participant.js'
-import talkHashCheck from './mixins/talkHashCheck.js'
-import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
 
 // Styles
 import '@nextcloud/dialogs/dist/index.css'

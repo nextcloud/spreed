@@ -48,8 +48,8 @@
 </template>
 
 <script>
-import { generateUrl } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
+import { generateUrl } from '@nextcloud/router'
 
 const encodeFilePath = function(path) {
 	const pathSections = (path.startsWith('/') ? path : `/${path}`).split('/')
