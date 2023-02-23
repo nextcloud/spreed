@@ -1096,6 +1096,7 @@ OC.L10N.register(
     "Start call" : "通話を開始",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talkを更新しました。通話を開始したり、通話に参加したりするにはページをリロードする必要があります。",
     "You will be able to join the call only after a moderator starts it." : "あなたは、モデレーターが通話を開始し後に通話参加できるようになります。",
+    "Recording" : "記録中",
     "You have new unread messages in the chat." : "チャットに未読のメッセージがあります",
     "You have been mentioned in the chat." : "チャットであなたについてのメッセージがありました。",
     "Mute others" : "他の人をミュートする",

@@ -544,6 +544,7 @@ OC.L10N.register(
     "Audio" : "Звук",
     "Other" : "Остало",
     "Nextcloud Talk was updated, please reload the page" : "Nextcloud talk је ажуриран, молимо освежите страну",
+    "Away" : "Одсутан",
     "Error while sharing file" : "Грешка приликом дељења фајла",
     "Default" : "Подразумевано",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Изгледа да причате док сте утишани. Укључите звук да би Вас други чули",

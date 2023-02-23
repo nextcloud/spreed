@@ -969,6 +969,7 @@ OC.L10N.register(
     "Start call" : "Cumintza mutida",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk est istadu agiornadu, depes torrare a carrigare sa pàgina antis de pòdere cumintzare o intrare in una mutida.",
     "You will be able to join the call only after a moderator starts it." : "As a pòdere intrare in una mutida isceti a pustis chi una persone chi moderat dda cumintzet.",
+    "Recording" : "Registratzione",
     "You have new unread messages in the chat." : "Tenes messàgios non lèghidos noos in sa tzarrada.",
     "You have been mentioned in the chat." : "T'ant mentovadu in sa tzarrada.",
     "Mute others" : "Tira s'àudio a àtere",
