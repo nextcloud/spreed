@@ -572,6 +572,7 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Скорочення",
     "Search" : "Пошук",
     "Start call" : "Почати виклик",
+    "Recording" : "Запис",
     "Toggle fullscreen" : "Перемкнути на весь екран",
     "Rename conversation" : "Перейменувати розмову",
     "Grid view" : "Упорядкування у формі сітки",

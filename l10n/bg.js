@@ -1314,7 +1314,6 @@ OC.L10N.register(
     "An error occurred while requesting assistance" : "Възникна грешка при заявка за съдействие",
     "An error occurred while resetting the request for assistance" : "Възникнала е грешка при възстановяване на заявката за съдействие",
     "Error while clearing conversation history" : "Грешка при изчистване на историята на разговорите",
-    "Call recording started." : "Записването на обаждането започна.",
     "Call recording stopped. You will be notified once the recording is available." : "Записването на обаждането е спряно. Ще бъдете уведомени, когато записът е наличен.",
     "Not enough free space to upload file \"{fileName}\"" : "Няма достатъчно свободно място за качване на файл „{fileName}“",
     "Error while uploading file \"{fileName}\"" : "Грешка при качването на файл „{fileName}“",

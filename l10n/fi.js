@@ -1052,7 +1052,6 @@ OC.L10N.register(
     "Away" : "Poissa",
     "Error while sharing file" : "Virhe tiedostoa jakaessa",
     "Error while clearing conversation history" : "Virhe keskusteluhistoriaa siivotessa",
-    "Call recording started." : "Puhelun tallennus aloitettiin.",
     "Call recording stopped. You will be notified once the recording is available." : "Puhelun tallennus lopetettiin. Saat ilmoituksen, kun tallenne on saatavilla.",
     "Not enough free space to upload file \"{fileName}\"" : "Ei riittävästi tallennustilaa tiedoston \"{fileName}\" lähettämiseksi",
     "Error while uploading file \"{fileName}\"" : "Virhe lähettäessä tiedostoa \"{fileName}\"",
