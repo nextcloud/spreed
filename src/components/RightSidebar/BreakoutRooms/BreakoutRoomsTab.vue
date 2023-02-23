@@ -23,37 +23,35 @@
 	<div class="breakout-rooms">
 		<!-- Series of buttons at the top of the tab, these affect all
 		 breakout rooms -->
-		<div class="breakout-rooms__actions">
+		<div v-if="canModerate" class="breakout-rooms__actions">
 			<div class="breakout-rooms__actions-group">
-				<template>
-					<NcButton v-if="breakoutRoomsNotStarted"
-						:title="t('spreed', 'Start breakout rooms')"
-						:aria-label="t('spreed', 'Start breakout rooms')"
-						type="tertiary"
-						:disabled="!isInCall"
-						@click="startBreakoutRooms">
-						<template #icon>
-							<Play :size="20" />
-						</template>
-					</NcButton>
-					<NcButton v-else
-						:title="t('spreed', 'Stop breakout rooms')"
-						:aria-label="t('spreed', 'Stop breakout rooms')"
-						type="tertiary"
-						@click="stopBreakoutRooms">
-						<template #icon>
-							<StopIcon :size="20" />
-						</template>
-					</NcButton>
-					<NcButton :title="t('spreed', 'Send message to breakout rooms')"
-						:aria-label="t('spreed', 'Send message to breakout rooms')"
-						type="tertiary"
-						@click="openSendMessageDialog">
-						<template #icon>
-							<Message :size="18" />
-						</template>
-					</NcButton>
-				</template>
+				<NcButton v-if="breakoutRoomsNotStarted"
+					:title="t('spreed', 'Start breakout rooms')"
+					:aria-label="t('spreed', 'Start breakout rooms')"
+					type="tertiary"
+					:disabled="!isInCall"
+					@click="startBreakoutRooms">
+					<template #icon>
+						<Play :size="20" />
+					</template>
+				</NcButton>
+				<NcButton v-else
+					:title="t('spreed', 'Stop breakout rooms')"
+					:aria-label="t('spreed', 'Stop breakout rooms')"
+					type="tertiary"
+					@click="stopBreakoutRooms">
+					<template #icon>
+						<StopIcon :size="20" />
+					</template>
+				</NcButton>
+				<NcButton :title="t('spreed', 'Send message to breakout rooms')"
+					:aria-label="t('spreed', 'Send message to breakout rooms')"
+					type="tertiary"
+					@click="openSendMessageDialog">
+					<template #icon>
+						<Message :size="18" />
+					</template>
+				</NcButton>
 			</div>
 			<div class="breakout-rooms__actions-group">
 				<!-- Re-arrange participants button -->
@@ -122,7 +120,8 @@ import BreakoutRoomItem from './BreakoutRoomItem.vue'
 import BreakoutRoomsParticipantsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsParticipantsEditor.vue'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 
-import { CONVERSATION } from '../../../constants.js'
+import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
+
 import isInCall from '../../../mixins/isInCall.js'
 
 export default {
@@ -186,6 +185,18 @@ export default {
 
 		moveParticipantsButtonTitle() {
 			return t('spreed', 'Reorganize participants')
+		},
+
+		participantType() {
+			return this.conversation.participantType
+		},
+
+		canFullModerate() {
+			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
+		},
+
+		canModerate() {
+			return !this.isOneToOne && (this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
 		},
 	},
 
