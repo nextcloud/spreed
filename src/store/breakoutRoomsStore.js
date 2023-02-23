@@ -73,6 +73,8 @@ const mutations = {
 		if (!state.breakoutRooms[parentRoomToken]) {
 			Vue.set(state.breakoutRooms, parentRoomToken, [])
 		}
+		// The breakout room to be added is first removed if it exists already.
+		state.breakoutRooms[parentRoomToken] = state.breakoutRooms[parentRoomToken].filter(current => current.token !== breakoutRoom.token)
 		Vue.set(state.breakoutRooms, parentRoomToken, [...state.breakoutRooms[parentRoomToken], breakoutRoom])
 	},
 
