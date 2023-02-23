@@ -32,20 +32,21 @@
  *
  */
 
-import { pullSignalingMessages } from '../services/signalingService.js'
-import { rejoinConversation } from '../services/participantsService.js'
-import CancelableRequest from './cancelableRequest.js'
-import { EventBus } from '../services/EventBus.js'
 import axios from '@nextcloud/axios'
-import {
-	generateOcsUrl,
-	generateUrl,
-} from '@nextcloud/router'
 import {
 	showError,
 	showWarning,
 	TOAST_PERMANENT_TIMEOUT,
 } from '@nextcloud/dialogs'
+import {
+	generateOcsUrl,
+	generateUrl,
+} from '@nextcloud/router'
+
+import CancelableRequest from './cancelableRequest.js'
+import { EventBus } from '../services/EventBus.js'
+import { rejoinConversation } from '../services/participantsService.js'
+import { pullSignalingMessages } from '../services/signalingService.js'
 
 const Signaling = {
 	Base: {},

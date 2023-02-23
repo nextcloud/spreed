@@ -2,7 +2,6 @@
 
 import { VIRTUAL_BACKGROUND_TYPE } from './constants.js'
 import WebWorker from './JitsiStreamBackgroundEffect.worker.js'
-
 import {
 	CLEAR_TIMEOUT,
 	TIMEOUT_TICK,

@@ -19,10 +19,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import { set } from 'vue'
-import pollService from '../services/pollService.js'
-import { showError } from '@nextcloud/dialogs'
 import debounce from 'debounce'
+import { set } from 'vue'
+
+import { showError } from '@nextcloud/dialogs'
+
+import pollService from '../services/pollService.js'
 
 const state = {
 	polls: {},

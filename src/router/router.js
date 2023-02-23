@@ -22,7 +22,9 @@
 
 import Vue from 'vue'
 import Router from 'vue-router'
+
 import { getRootUrl, generateUrl } from '@nextcloud/router'
+
 import CallView from '../components/CallView/CallView.vue'
 import MainView from '../views/MainView.vue'
 import NotFoundView from '../views/NotFoundView.vue'

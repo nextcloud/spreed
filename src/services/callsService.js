@@ -22,6 +22,7 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+
 import {
 	signalingJoinCall,
 	signalingLeaveCall,

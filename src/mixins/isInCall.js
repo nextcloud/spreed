@@ -19,8 +19,8 @@
  *
  */
 
-import SessionStorage from '../services/SessionStorage.js'
 import { EventBus } from '../services/EventBus.js'
+import SessionStorage from '../services/SessionStorage.js'
 
 /**
  * A mixin to check whether the user joined the call of the current token in this PHP session or not.

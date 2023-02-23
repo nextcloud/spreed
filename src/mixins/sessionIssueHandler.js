@@ -21,6 +21,7 @@
  */
 
 import { generateUrl } from '@nextcloud/router'
+
 import { EventBus } from '../services/EventBus.js'
 import SessionStorage from '../services/SessionStorage.js'
 

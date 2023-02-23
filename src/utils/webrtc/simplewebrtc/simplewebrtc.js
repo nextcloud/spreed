@@ -1,9 +1,10 @@
 /* global module */
 
-const WebRTC = require('./webrtc.js')
-const WildEmitter = require('wildemitter')
-const webrtcSupport = require('webrtcsupport')
 const mockconsole = require('mockconsole')
+const webrtcSupport = require('webrtcsupport')
+const WildEmitter = require('wildemitter')
+
+const WebRTC = require('./webrtc.js')
 
 /**
  * @param {object} opts the options object.

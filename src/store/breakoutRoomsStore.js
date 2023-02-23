@@ -19,6 +19,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+import Vue from 'vue'
+
+import { showError } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+
 import {
 	configureBreakoutRooms,
 	deleteBreakoutRooms,
@@ -32,9 +37,6 @@ import {
 	reorganizeAttendees,
 	switchToBreakoutRoom,
 } from '../services/breakoutRoomsService.js'
-import { showError } from '@nextcloud/dialogs'
-import Vue from 'vue'
-import { emit } from '@nextcloud/event-bus'
 
 const state = {
 	breakoutRooms: {},

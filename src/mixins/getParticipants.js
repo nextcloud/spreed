@@ -20,17 +20,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import { EventBus } from '../services/EventBus.js'
-import Axios from '@nextcloud/axios'
-import debounce from 'debounce'
-import CancelableRequest from '../utils/cancelableRequest.js'
-import { fetchParticipants } from '../services/participantsService.js'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
-import { PARTICIPANT } from '../constants.js'
-import { emit } from '@nextcloud/event-bus'
+import debounce from 'debounce'
+
+import Axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+
 import isInLobby from './isInLobby.js'
+import { PARTICIPANT } from '../constants.js'
+import { EventBus } from '../services/EventBus.js'
+import { fetchParticipants } from '../services/participantsService.js'
+import CancelableRequest from '../utils/cancelableRequest.js'
 
 const getParticipants = {
 

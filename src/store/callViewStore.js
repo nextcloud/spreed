@@ -21,10 +21,11 @@
  */
 
 import Vue from 'vue'
-import BrowserStorage from '../services/BrowserStorage.js'
+
 import {
 	CONVERSATION,
 } from '../constants.js'
+import BrowserStorage from '../services/BrowserStorage.js'
 
 const state = {
 	forceCallView: false,

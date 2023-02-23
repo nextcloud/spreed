@@ -21,9 +21,11 @@
  */
 
 import Vue from 'vue'
-import { generateFilePath } from '@nextcloud/router'
+
 import { getRequestToken } from '@nextcloud/auth'
 import { translate, translatePlural } from '@nextcloud/l10n'
+import { generateFilePath } from '@nextcloud/router'
+
 import Dashboard from './views/Dashboard.vue'
 
 // CSP config for webpack dynamic chunk loading

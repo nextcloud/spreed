@@ -1,8 +1,8 @@
-import createTFLiteModule from './vendor/tflite/tflite.js'
-import createTFLiteSIMDModule from './vendor/tflite/tflite-simd.js'
-import withoutSIMD from './vendor/tflite/tflite.wasm'
-import withSIMD from './vendor/tflite/tflite-simd.wasm'
 import landscape from './vendor/models/selfie_segmentation_landscape.tflite'
+import createTFLiteSIMDModule from './vendor/tflite/tflite-simd.js'
+import withSIMD from './vendor/tflite/tflite-simd.wasm'
+import createTFLiteModule from './vendor/tflite/tflite.js'
+import withoutSIMD from './vendor/tflite/tflite.wasm'
 
 const models = {
 	modelLandscape: landscape.split('/').pop(),
