@@ -125,6 +125,7 @@ title: Constants
 * `media` - Shared files with mimetype starting with image or video
 * `other` - Shared objects not falling into any other category
 * `voice` - Voice messages
+* `recording` - Audio and video recording file of a call
 
 ## Poll
 

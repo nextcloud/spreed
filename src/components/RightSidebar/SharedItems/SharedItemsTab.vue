@@ -190,6 +190,8 @@ export default {
 				return t('spreed', 'Show all locations')
 			case SHARED_ITEM.TYPES.AUDIO:
 				return t('spreed', 'Show all audio')
+			case SHARED_ITEM.TYPES.RECORDING:
+				return t('spreed', 'Show all call recordings')
 			case SHARED_ITEM.TYPES.OTHER:
 			default:
 				return t('spreed', 'Show all other')

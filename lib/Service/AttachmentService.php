@@ -61,7 +61,11 @@ class AttachmentService {
 			$messageType = $parameters['metaData']['messageType'] ?? '';
 			$mimetype = $parameters['metaData']['mimeType'] ?? '';
 
-			if ($messageType === 'voice-message') {
+			if ($messageType === 'record-audio') {
+				$attachment->setObjectType(Attachment::TYPE_RECORDING);
+			} elseif ($messageType === 'record-video') {
+				$attachment->setObjectType(Attachment::TYPE_RECORDING);
+			} elseif ($messageType === 'voice-message') {
 				$attachment->setObjectType(Attachment::TYPE_VOICE);
 			} elseif (str_starts_with($mimetype, 'audio/')) {
 				$attachment->setObjectType(Attachment::TYPE_AUDIO);
