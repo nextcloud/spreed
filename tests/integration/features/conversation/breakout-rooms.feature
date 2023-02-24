@@ -96,15 +96,15 @@ Feature: conversation/breakout-rooms
       | actorType  | actorId           | participantType |
       | users      | participant1      | 1               |
       | users      | /^participant\d$/ | 3               |
-    Then user "participant2" is participant of the following rooms (v4)
+    Then user "participant2" is participant of the following unordered rooms (v4)
       | type | name        |
       | 2    | class room  |
       | 2    | /^Room \d$/ |
-    Then user "participant3" is participant of the following rooms (v4)
+    Then user "participant3" is participant of the following unordered rooms (v4)
       | type | name        |
       | 2    | class room  |
       | 2    | /^Room \d$/ |
-    Then user "participant4" is participant of the following rooms (v4)
+    Then user "participant4" is participant of the following unordered rooms (v4)
       | type | name        |
       | 2    | class room  |
       | 2    | /^Room \d$/ |

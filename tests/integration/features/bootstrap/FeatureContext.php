@@ -332,6 +332,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$expected = $formData->getHash();
 		if ($shouldOrder) {
 			$sorter = static function (array $roomA, array $roomB): int {
+				if (str_starts_with($roomA['name'], '/')) {
+					return 1;
+				}
+				if (str_starts_with($roomB['name'], '/')) {
+					return -1;
+				}
+
 				$idA = $roomA['id'] ?? self::$identifierToId[$roomA['name']];
 				$idB = $roomB['id'] ?? self::$identifierToId[$roomB['name']];
 
