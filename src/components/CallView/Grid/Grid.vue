@@ -486,7 +486,7 @@ export default {
 		},
 
 		stripeOpen() {
-			return this.$store.getters.isStripeOpen
+			return this.$store.getters.isStripeOpen && !this.isRecording
 		},
 	},
 
