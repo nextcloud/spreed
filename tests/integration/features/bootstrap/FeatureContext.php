@@ -2754,8 +2754,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if (isset($expectedNotification['subject'])) {
 				$data['subject'] = (string) $notification['subject'];
-				if (str_contains($expectedNotification['subject'], '{{TOKEN}}')) {
-					$data['subject'] = str_replace($notification['object_id'], '{{TOKEN}}', $data['subject']);
+			}
+			if (isset($expectedNotification['message'])) {
+				$data['message'] = (string) $notification['message'];
+				if (str_contains($expectedNotification['message'], '{{TOKEN}}')) {
+					$data['message'] = str_replace($notification['object_id'], '{{TOKEN}}', $data['message']);
 				}
 			}
 			if (isset($expectedNotification['object_type'])) {
