@@ -22,7 +22,7 @@
 import Vue from 'vue'
 
 import { getCurrentUser } from '@nextcloud/auth'
-import { showInfo, showSuccess } from '@nextcloud/dialogs'
+import { showInfo, showSuccess, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
 import {
 	CALL,
@@ -704,7 +704,9 @@ const actions = {
 			|| previousCallRecordingStatus === CALL.RECORDING.VIDEO_STARTING) {
 			showInfo(t('spreed', 'Call recording stopped while starting.'))
 		} else {
-			showInfo(t('spreed', 'Call recording stopped. You will be notified once the recording is available.'))
+			showInfo(t('spreed', 'Call recording stopped. You will be notified once the recording is available.'), {
+				timeout: TOAST_PERMANENT_TIMEOUT,
+			})
 		}
 		context.commit('setCallRecording', { token, callRecording: CALL.RECORDING.OFF })
 	},
