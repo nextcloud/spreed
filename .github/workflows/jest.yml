@@ -42,4 +42,4 @@ jobs:
         run: npm ci
 
       - name: Run jest
-        run: npm run test:coverage
+        run: npm run test:coverage -- --colors
