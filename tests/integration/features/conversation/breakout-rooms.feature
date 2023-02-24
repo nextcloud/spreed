@@ -126,7 +126,7 @@ Feature: conversation/breakout-rooms
       | 2    | Room 1     |
       | 2    | Room 2     |
       | 2    | Room 3     |
-    And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
@@ -486,7 +486,7 @@ Feature: conversation/breakout-rooms
       | 2    | class room | 0          | 2                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
       | 2    | Room 2     | 1          | 0                | 0                  |
-    Then user "participant2" is participant of the following rooms (v4)
+    Then user "participant2" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
@@ -532,7 +532,7 @@ Feature: conversation/breakout-rooms
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
       | 2    | Room 2     | 1          | 0                | 0                  |
-    And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
@@ -563,15 +563,15 @@ Feature: conversation/breakout-rooms
       | 2    | Room 1     |
       | 2    | Room 2     |
       | 2    | Room 3     |
-    And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 1     |
-    And user "participant3" is participant of the following rooms (v4)
+    And user "participant3" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 2     |
-    And user "participant4" is participant of the following rooms (v4)
+    And user "participant4" is participant of the following unordered rooms (v4)
       | type | name       |
       | 2    | class room |
       | 2    | Room 3     |
@@ -674,7 +674,7 @@ Feature: conversation/breakout-rooms
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 3               |
-    And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 2     | 1          | 0                | 0                  |
@@ -698,7 +698,7 @@ Feature: conversation/breakout-rooms
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | users      | participant2 | 3               |
-    And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 1                | 0                  |
       | 2    | Room 2     | 1          | 0                | 0                  |
@@ -725,11 +725,11 @@ Feature: conversation/breakout-rooms
       | 2    | class room | 0          | 2                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
       | 2    | Room 2     | 1          | 0                | 0                  |
-    And user "participant3" is participant of the following rooms (v4)
+    And user "participant3" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 2                | 0                  |
       | 2    | Room 1     | 1          | 0                | 0                  |
-    And user "participant4" is participant of the following rooms (v4)
+    And user "participant4" is participant of the following unordered rooms (v4)
       | type | name       | lobbyState | breakoutRoomMode | breakoutRoomStatus |
       | 2    | class room | 0          | 2                | 0                  |
       | 2    | Room 2     | 1          | 0                | 0                  |
