@@ -54,6 +54,15 @@ class RecordingService {
 		'video/webm' => ['webm'],
 		'video/x-matroska' => ['mkv'],
 	];
+	public const UPLOAD_ERRORS = [
+		UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+		UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+		UPLOAD_ERR_PARTIAL => 'The file was only partially uploaded',
+		UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+		UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
+		UPLOAD_ERR_CANT_WRITE => 'Could not write file to disk',
+		UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload',
+	];
 
 	public function __construct(
 		protected IMimeTypeDetector $mimeTypeDetector,
@@ -108,16 +117,16 @@ class RecordingService {
 	}
 
 	public function store(Room $room, string $owner, array $file): void {
-		$content = $this->getContentFromFileArray($file);
-
-		$fileName = basename($file['name']);
-		$this->validateFileFormat($fileName, $content);
-
 		try {
 			$participant = $this->participantService->getParticipant($room, $owner);
 		} catch (ParticipantNotFoundException $e) {
 			throw new InvalidArgumentException('owner_participant');
 		}
+
+		$content = $this->getContentFromFileArray($file, $room, $participant);
+
+		$fileName = basename($file['name']);
+		$this->validateFileFormat($fileName, $content);
 
 		try {
 			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
@@ -130,12 +139,20 @@ class RecordingService {
 		}
 	}
 
-	public function getContentFromFileArray(array $file): string {
-		if (
-			$file['error'] !== 0 ||
-			!is_uploaded_file($file['tmp_name'])
-		) {
-			$this->logger->warning("Uploaded file might be larger than allowed by PHP settings 'upload_max_filesize' or 'post_max_size'");
+	public function getContentFromFileArray(array $file, Room $room, Participant $participant): string {
+		if ($file['error'] !== 0) {
+			$error = self::UPLOAD_ERRORS[$file['error']];
+			$this->logger->error($error);
+
+			$notification = $this->notificationManager->createNotification();
+			$notification
+				->setApp('spreed')
+				->setDateTime($this->timeFactory->getDateTime())
+				->setObject('recording', $room->getToken())
+				->setUser($participant->getAttendee()->getActorId())
+				->setSubject('record_file_store_fail');
+			$this->notificationManager->notify($notification);
+
 			throw new InvalidArgumentException('invalid_file');
 		}
 
