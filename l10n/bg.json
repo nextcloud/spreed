@@ -1245,6 +1245,7 @@
     "Start call" : "Започване на обаждане",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk беше актуализиран, трябва да презаредите страницата, преди да можете да започнете или да се присъедините към обаждане.",
     "You will be able to join the call only after a moderator starts it." : "Ще можете да се присъедините към разговора само след като го започне модератор.",
+    "Recording" : "Записване",
     "Stop recording" : "Спиране на записването",
     "Participants in call" : "Участници в разговора",
     "You have new unread messages in the chat." : "Имате нови непрочетени съобщения в чата.",
