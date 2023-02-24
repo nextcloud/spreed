@@ -700,7 +700,7 @@ const actions = {
 			console.error(e)
 		}
 
-		if (previousCallRecordingStatus === CALL.RECORDING.VIDEO_STARTING
+		if (previousCallRecordingStatus === CALL.RECORDING.AUDIO_STARTING
 			|| previousCallRecordingStatus === CALL.RECORDING.VIDEO_STARTING) {
 			showInfo(t('spreed', 'Call recording stopped while starting.'))
 		} else {
