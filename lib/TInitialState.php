@@ -54,8 +54,7 @@ trait TInitialState {
 
 		$signalingMode = $this->talkConfig->getSignalingMode();
 		if ($signalingMode === Config::SIGNALING_CLUSTER_CONVERSATION
-			&& !$this->memcacheFactory->isAvailable()
-			&& !$this->talkConfig->isSignalingDev()) {
+			&& !$this->memcacheFactory->isAvailable()) {
 			throw new HintException(
 				'High Performance Back-end clustering is only supported with a distributed cache!'
 			);

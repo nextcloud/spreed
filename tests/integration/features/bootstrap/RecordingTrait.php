@@ -30,11 +30,49 @@ use PHPUnit\Framework\Assert;
 // - sendRequestFullUrl()
 // - setAppConfig()
 trait RecordingTrait {
-	/** @var string */
-	private $recordingServerPid = '';
+	private string $recordingServerPid = '';
+	private string $signalingServerPid = '';
 
-	/** @var string */
-	private $recordingServerAddress = 'localhost:9000';
+	private string $recordingServerAddress = 'localhost';
+	private int $recordingServerPort = 0;
+	private string $signalingServerAddress = 'localhost';
+	private int $signalingServerPort = 0;
+
+	private function getRecordingServerAddress(): string {
+		if (!str_contains($this->recordingServerAddress, ':')) {
+			$port = $this->getOpenPort($this->recordingServerAddress);
+			$this->recordingServerAddress = $this->recordingServerAddress . ':' . $port;
+		}
+		return $this->recordingServerAddress;
+	}
+
+	private function getSignalingServerAddress(): string {
+		if (!str_contains($this->signalingServerAddress, ':')) {
+			$port = $this->getOpenPort($this->signalingServerAddress);
+			$this->signalingServerAddress = $this->signalingServerAddress . ':' . $port;
+		}
+		return $this->signalingServerAddress;
+	}
+
+	/**
+	 * Get an open port
+	 */
+	private function getOpenPort(string $address): int {
+		$sock = socket_create(AF_INET, SOCK_STREAM, 0);
+
+		if (!socket_bind($sock, $address, 0)) {
+			throw new \Exception('Failute to bind socket to host ' . $address);
+		}
+
+		socket_getsockname($sock, $ipAddress, $port);
+		socket_close($sock);
+
+		if ($port > 0) {
+			return $port;
+		}
+
+		throw new \Exception('Impossible to find an open port');
+	}
 
 	/**
 	 * @Given /^recording server is started$/
@@ -45,9 +83,39 @@ trait RecordingTrait {
 		}
 
 		// "the secret" is hardcoded in the fake recording server.
-		$this->setAppConfig('spreed', new TableNode([['recording_servers', json_encode(['servers' => [['server' => 'http://' . $this->recordingServerAddress]], 'secret' => 'the secret'])]]));
+		$this->setAppConfig('spreed', new TableNode([['recording_servers', json_encode([
+			'servers' => [
+				[
+					'server' => 'http://' . $this->getRecordingServerAddress()
+				]
+			],
+			'secret' => 'the secret'
+		])]]));
+		$this->setAppConfig('spreed', new TableNode([['signaling_servers', json_encode([
+			'servers' => [
+				[
+					'server' => 'http://' . $this->getSignalingServerAddress()
+				]
+			],
+			'secret' => 'the secret'
+		])]]));
 
-		$this->recordingServerPid = exec('php -S ' . $this->recordingServerAddress . ' features/bootstrap/FakeRecordingServer.php >/dev/null & echo $!');
+		$path = 'features/bootstrap/FakeRecordingServer.php';
+		$this->recordingServerPid = exec(
+			'php -S ' . $this->getRecordingServerAddress() . ' ' . $path . ' >/dev/null & echo $!'
+		);
+
+		$path = 'features/bootstrap/FakeSignalingServer.php';
+		$this->signalingServerPid = exec(
+			'php -S ' . $this->getSignalingServerAddress() . ' ' . $path . ' >/dev/null & echo $!'
+		);
+
+		register_shutdown_function(function () {
+			if ($this->recordingServerPid !== '') {
+				exec('kill ' . $this->recordingServerPid);
+				exec('kill ' . $this->signalingServerPid);
+			}
+		});
 	}
 
 	/**
@@ -64,8 +132,10 @@ trait RecordingTrait {
 		$this->getRecordingServerReceivedRequests();
 
 		exec('kill ' . $this->recordingServerPid);
+		exec('kill ' . $this->signalingServerPid);
 
 		$this->recordingServerPid = '';
+		$this->signalingServerPid = '';
 	}
 
 	/**
@@ -146,7 +216,7 @@ trait RecordingTrait {
 			'Talk-Recording-Checksum' => $checksum,
 		];
 
-		$this->sendRequestFullUrl('POST', 'http://' . $this->recordingServerAddress . '/fake/send-backend-request', $body, $headers);
+		$this->sendRequestFullUrl('POST', 'http://' . $this->getRecordingServerAddress() . '/fake/send-backend-request', $body, $headers);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
@@ -178,7 +248,7 @@ trait RecordingTrait {
 	}
 
 	private function getRecordingServerReceivedRequests() {
-		$url = 'http://' . $this->recordingServerAddress . '/fake/requests';
+		$url = 'http://' . $this->getRecordingServerAddress() . '/fake/requests';
 		$client = new Client();
 		$response = $client->get($url);
 

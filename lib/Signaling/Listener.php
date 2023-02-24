@@ -451,10 +451,7 @@ class Listener {
 	}
 
 	public static function sendSignalingMessageWhenToggleRecording(ModifyRoomEvent $event): void {
-		$config = Server::get(Config::class);
-		$isSignalingDev = $config->isSignalingDev();
-
-		if (self::isUsingInternalSignaling() && $isSignalingDev) {
+		if (self::isUsingInternalSignaling()) {
 			return;
 		}
 		if ($event->getParameter() !== 'callRecording') {

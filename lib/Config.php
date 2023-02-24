@@ -137,10 +137,6 @@ class Config {
 		return $this->canEnableSIP[$user->getUID()];
 	}
 
-	public function isSignalingDev(): bool {
-		return $this->config->getAppValue('spreed', 'signaling_dev', 'no') === 'yes';
-	}
-
 	public function getRecordingServers(): array {
 		$config = $this->config->getAppValue('spreed', 'recording_servers');
 		$recording = json_decode($config, true);
@@ -165,13 +161,11 @@ class Config {
 
 	public function isRecordingEnabled(): bool {
 		$isSignalingInternal = $this->getSignalingMode() === self::SIGNALING_INTERNAL;
-		$isSignalingDev = $this->isSignalingDev();
-		$isSignalingOk = $isSignalingDev || !$isSignalingInternal;
 
 		$callRecordingConfig = $this->config->getAppValue('spreed', 'call_recording', 'yes');
 		$recordingEnabled = $callRecordingConfig === 'yes';
 
-		return $isSignalingOk && $recordingEnabled;
+		return !$isSignalingInternal && $recordingEnabled;
 	}
 
 	public function getRecordingFolder(string $userId): string {
@@ -372,8 +366,7 @@ class Config {
 			return self::SIGNALING_INTERNAL;
 		}
 		if ($numSignalingServers === 1
-			&& $cleanExternalSignaling
-			&& !$this->isSignalingDev()) {
+			&& $cleanExternalSignaling) {
 			return self::SIGNALING_EXTERNAL;
 		}
 
