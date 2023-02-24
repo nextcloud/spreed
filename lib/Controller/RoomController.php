@@ -1196,7 +1196,9 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		try {
-			$this->roomService->setPassword($this->room, $password);
+			if (!$this->roomService->setPassword($this->room, $password)) {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
 		} catch (HintException $e) {
 			return new DataResponse([
 				'message' => $e->getHint(),
@@ -1613,7 +1615,13 @@ class RoomController extends AEnvironmentAwareController {
 		if ($seconds < 0) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
-		$this->roomService->setMessageExpiration($this->room, $seconds);
+
+		try {
+			$this->roomService->setMessageExpiration($this->room, $seconds);
+		} catch (\InvalidArgumentException $exception) {
+			return new DataResponse(['error' => $exception], Http::STATUS_BAD_REQUEST);
+		}
+
 		return new DataResponse();
 	}
 }

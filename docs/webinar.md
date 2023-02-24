@@ -50,6 +50,7 @@ Group and public conversations can be used to host webinars. Those online meetin
     - Status code:
         + `200 OK`
         + `400 Bad Request` When the state was invalid or the same
+        + `400 Bad Request` When the conversation is a breakout room
         + `401 Unauthorized` When the user can not enabled SIP
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the conversation could not be found for the participant

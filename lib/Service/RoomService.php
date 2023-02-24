@@ -186,6 +186,11 @@ class RoomService {
 			return false;
 		}
 
+		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			// Do not allow manual changing the permissions in breakout rooms
+			return false;
+		}
+
 		if ($level === 'default') {
 			$oldPermissions = $room->getDefaultPermissions();
 		} elseif ($level === 'call') {
@@ -241,6 +246,10 @@ class RoomService {
 		$oldSipEnabled = $room->getSIPEnabled();
 
 		if ($newSipEnabled === $oldSipEnabled) {
+			return false;
+		}
+
+		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			return false;
 		}
 
@@ -608,6 +617,10 @@ class RoomService {
 			return false;
 		}
 
+		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			return false;
+		}
+
 		if ($password !== '') {
 			$event = new ValidatePasswordPolicyEvent($password);
 			$this->dispatcher->dispatchTyped($event);
@@ -648,7 +661,14 @@ class RoomService {
 		];
 	}
 
+	/**
+	 * @throws \InvalidArgumentException When the room is a breakout room
+	 */
 	public function setMessageExpiration(Room $room, int $seconds): void {
+		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+			throw new \InvalidArgumentException('room');
+		}
+
 		$event = new ModifyRoomEvent($room, 'messageExpiration', $seconds);
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_MESSAGE_EXPIRATION, $event);
 
