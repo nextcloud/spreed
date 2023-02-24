@@ -59,6 +59,10 @@ module.exports = {
 		'vue',
 	],
 
+	moduleNameMapper: {
+		'\\.(css|scss)$': '<rootDir>/src/__mocks__/styles.js',
+	},
+
 	transform: {
 		// process `*.js` files with `babel-jest`
 		'.*\\.(js)$': 'babel-jest',
