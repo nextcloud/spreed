@@ -373,7 +373,7 @@ Feature: callapi/recording
       | type | name  | callRecording |
       | 2    | room1 | 0             |
 
-  Scenario: Store recording
+  Scenario: Store recording with success
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -382,6 +382,19 @@ Feature: callapi/recording
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                      | message                                                                                      |
       | spreed | recording   | room1     | Call recording now available | The recording for the call in room1 was uploaded to /Talk/Recording/{{TOKEN}}/join_call.ogg. |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
+
+  Scenario: Store recording with failure
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    When user "participant1" store recording file "big" in room "room1" with 400 (v1)
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                                                        |
+      | spreed | recording   | room1     | Fail to store recording of call room1, reach out to the admin. |
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 0             |
