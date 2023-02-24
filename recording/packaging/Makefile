@@ -39,9 +39,13 @@ build-package-deb:
 	# - setup.py: legacy setup file needed for stdeb (also needed in the
 	#   regenerated Python package, as stdeb is invoked through it to create the
 	#   source Debian package).
+	# - stdeb.cfg: additional configuration for stdeb (not needed in the
+	#   regenerated Python package, as stdeb loads it before changing to the
+	#   uncompressed source Python package).
 	cp --recursive debian nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
 	cp MANIFEST.in nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
 	cp setup.py nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
+	cp stdeb.cfg nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
 
 	# Build a source Debian package and then, from it, a binary Debian package
 	# Since the 60.0.0 release, Setuptools includes a local, vendored copy of
