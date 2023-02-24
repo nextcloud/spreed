@@ -21,28 +21,33 @@
 
 <template>
 	<div class="grid-main-wrapper" :class="{'is-grid': !isStripe, 'transparent': isLessThanTwoVideos}">
-		<button v-if="isStripe && !isRecording"
+		<NcButton v-if="isStripe && !isRecording"
 			class="stripe--collapse"
+			type="tertiary-no-background"
 			:aria-label="stripeButtonTooltip"
 			@click="handleClickStripeCollapse">
-			<ChevronDown v-if="stripeOpen"
-				fill-color="#ffffff"
-				:size="20" />
-			<ChevronUp v-else
-				fill-color="#ffffff"
-				:size="20" />
-		</button>
+			<template #icon>
+				<ChevronDown v-if="stripeOpen"
+					fill-color="#ffffff"
+					:size="20" />
+				<ChevronUp v-else
+					fill-color="#ffffff"
+					:size="20" />
+			</template>
+		</NcButton>
 		<transition :name="isStripe ? 'slide-down' : ''">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
 				<div :class="{'stripe-wrapper': isStripe, 'wrapper': !isStripe}">
-					<button v-if="hasPreviousPage && gridWidth > 0"
-						:class="{'stripe': isStripe}"
+					<NcButton v-if="hasPreviousPage && gridWidth > 0"
+						type="tertiary-no-background"
 						class="grid-navigation grid-navigation__previous"
 						:aria-label="t('spreed', 'Previous page of videos')"
 						@click="handleClickPrevious">
-						<ChevronLeft fill-color="#ffffff"
-							:size="20" />
-					</button>
+						<template #icon>
+							<ChevronLeft fill-color="#ffffff"
+								:size="20" />
+						</template>
+					</NcButton>
 					<div ref="grid"
 						class="grid"
 						:class="{stripe: isStripe}"
@@ -99,14 +104,16 @@
 							:local-call-participant-model="localCallParticipantModel"
 							@click-video="handleClickLocalVideo" />
 					</div>
-					<button v-if="hasNextPage && gridWidth > 0"
+					<NcButton v-if="hasNextPage && gridWidth > 0"
+						type="tertiary-no-background"
 						class="grid-navigation grid-navigation__next"
-						:class="{'stripe': isStripe}"
 						:aria-label="t('spreed', 'Next page of videos')"
 						@click="handleClickNext">
-						<ChevronRight fill-color="#ffffff"
-							:size="20" />
-					</button>
+						<template #icon>
+							<ChevronRight fill-color="#ffffff"
+								:size="20" />
+						</template>
+					</NcButton>
 				</div>
 				<LocalVideo v-if="isStripe && !isRecording && !screenshotMode"
 					ref="localVideo"
@@ -155,6 +162,7 @@ import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateFilePath } from '@nextcloud/router'
 
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import EmptyCallView from '../shared/EmptyCallView.vue'
@@ -169,6 +177,7 @@ export default {
 		VideoVue,
 		LocalVideo,
 		EmptyCallView,
+		NcButton,
 		VideoBottomBar,
 		ChevronRight,
 		ChevronLeft,
@@ -353,7 +362,7 @@ export default {
 
 		isLessThanTwoVideos() {
 			// without screen share, we don't want to duplicate videos if we were to show them in the stripe
-			// however, if a screen share is in progress, it means the video of the presenting user is not visible
+			// however, if a screen share is in progress, it means the video of the presenting user is not visible,
 			// so we can show it in the stripe
 			return this.videos.length <= 1 && !this.screens.length
 		},
@@ -690,7 +699,7 @@ export default {
 			// variables. These variables are kept in the data and represent how the
 			// grid looks at any given moment. We do this based on `gridWidth`,
 			// `gridHeight`, `minWidth` and `minHeight`. If the video is used in the
-			// context of the promoted view, we se 1 row directly and we remove 1 column
+			// context of the promoted view, we se 1 row directly, and we remove 1 column
 			// (one of the participants will be in the promoted video slot)
 			this.columns = this.columnsMax
 			this.rows = this.rowsMax
@@ -952,42 +961,33 @@ export default {
 
 .grid-navigation {
 	position: absolute;
-	width: 44px;
-	height: 44px;
-	top: calc(50% - 22px);
 	z-index: 2;
-	padding: 0;
-	margin: 0;
-	border: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background-color: rgba(0, 0, 0, 0.5) !important;
+	background-color: rgba(0, 0, 0, 0.5);
 
 	&:hover,
 	&:focus {
-		opacity: 1 !important;
 		background-color: rgba(0, 0, 0, 0.8) !important;
-
 	}
-	&__previous {
-		left: -4px;
+
+	.wrapper & {
+		top: calc(50% - var(--default-clickable-area) / 2);
+		&__previous {
+			left: -4px;
+		}
+		&__next {
+			right: -4px;
+		}
 	}
-	&__next {
-		right: -4px;
+
+	.stripe-wrapper & {
+		top: 16px;
+		&__previous {
+			left: 8px;
+		}
+		&__next {
+			right: 16px;
+		}
 	}
-}
-
-.grid-navigation__previous.stripe {
-	left: 8px;
-}
-
-.grid-navigation__next.stripe {
-	right: 16px;
-}
-
-.stripe-wrapper .grid-navigation {
-	top: 16px;
 }
 
 .pages-indicator {
@@ -1014,18 +1014,12 @@ export default {
 	}
 }
 
-/** FIXME: replace with nextcloud-vue button */
-button.stripe--collapse {
+.stripe--collapse {
 	position: absolute;
-	top: -50px;
+	top: calc(-1 * var(--default-clickable-area));
 	right: 0;
-	width: 44px;
-	height: 44px;
-	z-index: 10;
-	border: 0;
-	background: none;
+	z-index: 2;
 	opacity: .7;
-	padding: 0;
 
 	.app-content:hover & {
 		background-color: rgba(0, 0, 0, 0.1) !important;

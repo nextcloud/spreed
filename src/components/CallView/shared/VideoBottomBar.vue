@@ -44,52 +44,61 @@
 				<div v-if="!isScreen"
 					v-show="showVideoOverlay"
 					class="bottom-bar__mediaIndicator">
-					<button v-show="!connectionStateFailedNoRestart"
+					<NcButton v-show="!connectionStateFailedNoRestart"
 						v-if="showMicrophone || showMicrophoneOff"
 						v-tooltip="audioButtonTooltip"
 						class="muteIndicator"
+						type="tertiary-no-background"
 						:disabled="!model.attributes.audioAvailable || !selfIsModerator"
 						@click.stop="forceMute">
-						<Microphone v-if="showMicrophone"
-							:size="20"
-							fill-color="#ffffff" />
-						<MicrophoneOff v-if="showMicrophoneOff"
-							:size="20"
-							fill-color="#ffffff" />
-					</button>
-					<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
+						<template #icon>
+							<Microphone v-if="showMicrophone"
+								:size="20"
+								fill-color="#ffffff" />
+							<MicrophoneOff v-if="showMicrophoneOff"
+								:size="20"
+								fill-color="#ffffff" />
+						</template>
+					</NcButton>
+					<NcButton v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
 						v-tooltip="videoButtonTooltip"
 						class="hideRemoteVideo"
+						type="tertiary-no-background"
 						@click.stop="toggleVideo">
-						<VideoIcon v-if="showVideoButton"
-							:size="20"
-							fill-color="#ffffff" />
-						<VideoOff v-if="!showVideoButton"
-							:size="20"
-							fill-color="#ffffff" />
-					</button>
-					<button v-show="!connectionStateFailedNoRestart"
+						<template #icon>
+							<VideoIcon v-if="showVideoButton"
+								:size="20"
+								fill-color="#ffffff" />
+							<VideoOff v-if="!showVideoButton"
+								:size="20"
+								fill-color="#ffffff" />
+						</template>
+					</NcButton>
+					<NcButton v-show="!connectionStateFailedNoRestart"
 						v-tooltip="t('spreed', 'Show screen')"
 						class="screensharingIndicator"
+						type="tertiary-no-background"
 						:class="screenSharingButtonClass"
 						@click.stop="switchToScreen">
-						<Monitor :size="20"
-							fill-color="#ffffff" />
-					</button>
-					<button v-show="connectionStateFailedNoRestart"
-						class="iceFailedIndicator"
-						:class="{ 'not-failed': !connectionStateFailedNoRestart }"
-						disabled="true">
+						<template #icon>
+							<Monitor :size="20"
+								fill-color="#ffffff" />
+						</template>
+					</NcButton>
+					<div v-show="connectionStateFailedNoRestart"
+						class="iceFailedIndicator bottom-bar__statusIndicator"
+						:class="{ 'not-failed': !connectionStateFailedNoRestart }">
 						<AlertCircle :size="20"
 							fill-color="#ffffff" />
-					</button>
+					</div>
 				</div>
 			</transition>
-			<button v-if="hasSelectedVideo && isBig"
+			<NcButton v-if="hasSelectedVideo && isBig"
 				class="bottom-bar__button"
+				type="tertiary"
 				@click="handleStopFollowing">
 				{{ stopFollowingLabel }}
-			</button>
+			</NcButton>
 		</div>
 	</div>
 </template>
@@ -105,6 +114,7 @@ import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
 import { emit } from '@nextcloud/event-bus'
 
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import { PARTICIPANT } from '../../../constants.js'
@@ -119,6 +129,7 @@ export default {
 		Microphone,
 		MicrophoneOff,
 		Monitor,
+		NcButton,
 		VideoIcon,
 		VideoOff,
 	},
@@ -319,32 +330,18 @@ export default {
 		display: flex;
 		flex-wrap: nowrap;
 	}
-	&__button {
+	& &__button {
 		opacity: 0.8;
-		margin-left: 4px;
-		border: none;
+		background-color: var(--color-background-dark);
 		&:hover,
 		&:focus {
 			opacity: 1;
-			border: none;
 		}
 	}
 }
 
 .handIndicator {
 	margin-top: 8px;
-}
-
-.handIndicator,
-.muteIndicator,
-.hideRemoteVideo,
-.screensharingIndicator,
-.iceFailedIndicator {
-	position: relative;
-	display: inline-block;
-	background-color: transparent !important;
-	border: none;
-	padding: 0 12px;
 }
 
 .iceFailedIndicator {

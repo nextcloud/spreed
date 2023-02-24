@@ -58,11 +58,12 @@
 
 		<div v-if="mouseover && isSelectable" class="hover-shadow" />
 		<div class="bottom-bar">
-			<button v-if="isBig"
+			<NcButton v-if="isBig"
+				type="tertiary"
 				class="bottom-bar__button"
 				@click="handleStopFollowing">
 				{{ stopFollowingLabel }}
-			</button>
+			</NcButton>
 		</div>
 	</div>
 </template>
@@ -79,6 +80,7 @@ import {
 } from '@nextcloud/dialogs'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import VideoBackground from './VideoBackground.vue'
 
@@ -91,6 +93,7 @@ export default {
 
 	components: {
 		NcAvatar,
+		NcButton,
 		VideoBackground,
 	},
 
@@ -442,14 +445,12 @@ export default {
 		justify-content: center;
 		height: 48px;
 	}
-	&__button {
+	& &__button {
 		opacity: 0.8;
-		margin-left: 4px;
-		border: none;
+		background-color: var(--color-background-dark);
 		&:hover,
 		&:focus {
 			opacity: 1;
-			border: none;
 		}
 	}
 }
