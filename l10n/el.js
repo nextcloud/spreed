@@ -845,6 +845,7 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Record voice message" : "Εγγραφή φωνητικού μηνύματος",
     "Share files to the conversation" : "Διαμοιρασμός αρχείων στην συνομιλία",
+    "Upload from device" : "Μεταφόρτωση από συσκευή",
     "Create new poll" : "Δημιουργία νέας ψηφοφορίας",
     "Add emoji" : "Προσθήκη emoji",
     "Send message" : "Αποστολή μηνύματος",
