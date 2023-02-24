@@ -72,11 +72,7 @@ import attachMediaStream from 'attachmediastream'
 import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 
-import {
-	showError,
-	showInfo,
-	TOAST_PERMANENT_TIMEOUT,
-} from '@nextcloud/dialogs'
+import { showError, showInfo, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
@@ -160,7 +156,7 @@ export default {
 		},
 
 		videoWrapperStyle() {
-			if (!this.containerAspectRatio || !this.videoAspectRatio) {
+			if (!this.containerAspectRatio || !this.videoAspectRatio || !this.isBig) {
 				return
 			}
 			return (this.containerAspectRatio > this.videoAspectRatio)
@@ -371,13 +367,16 @@ export default {
 }
 
 .video-container-stripe:not(.local-video--sidebar) {
-	position:relative;
-	flex: 0 0 300px;
+	// aspect-ratio is set according to the maximum video resolution after applying constraints (720*540)
+	--aspect-ratio: 1.33333;
+	--stripe-height: 242px;
+	position: relative;
+	flex: 0 0 calc(var(--aspect-ratio) * var(--stripe-height));
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 	margin-top: auto;
-	height: 242px !important;
+	height: var(--stripe-height) !important;
 }
 
 .video-container-big {
