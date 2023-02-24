@@ -345,8 +345,9 @@ class Notifier implements INotifier {
 			);
 
 		$notification
-			->setRichSubject(
-				$l->t('Recording for the call in {call} was uploaded to {file}.'),
+			->setRichSubject($l->t('Call recording now available'))
+			->setRichMessage(
+				$l->t('The recording for the call in {call} was uploaded to {file}.'),
 				[
 					'call' => [
 						'type' => 'call',
