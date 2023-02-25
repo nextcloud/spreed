@@ -296,6 +296,7 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
     - Status code:
         + `200 OK`
         + `400 Bad Request` When the password does not match the password policy. Show `ocs.data.message` to the user in this case
+        + `400 Bad Request` When the conversation is a breakout room
         + `403 Forbidden` When the current user is not a moderator or owner
         + `403 Forbidden` When the conversation is not a public conversation
         + `404 Not Found` When the conversation could not be found for the participant
@@ -321,6 +322,7 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
         + `200 OK`
         + `400 Bad Request` When the conversation type does not support setting publishing permissions, e.g. one-to-one conversations
         + `400 Bad Request` When the mode is invalid
+        + `400 Bad Request` When the conversation is a breakout room
         + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
         + `404 Not Found` When the conversation could not be found for the participant
 
@@ -399,6 +401,7 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
     - Status code:
         + `200 OK`
         + `400 Bad Request` Invalid value
+        + `400 Bad Request` When the conversation is a breakout room
         + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
         + `404 Not Found` When the conversation could not be found for the participant
 
@@ -417,6 +420,7 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
     - Status code:
         + `200 OK`
         + `400 Bad Request` When the conversation type does not support making it listable (only group and public conversation)
+        + `400 Bad Request` When the conversation is a breakout room
         + `403 Forbidden` When the current user is not a moderator/owner or the conversation is not a public conversation
         + `404 Not Found` When the conversation could not be found for the participant
 
