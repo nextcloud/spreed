@@ -245,6 +245,8 @@
     "Deleted user (%s)" : "Smazán uživatel (%s)",
     "Share to chat" : "Nasdílet do chatu",
     "Dismiss notification" : "Zahodit upozornění",
+    "Call recording now available" : "Nahrávání hovoru je nyní k dispozici",
+    "The recording for the call in {call} was uploaded to {file}." : "Nahrávka pro hovor v {call} byla nahrána do {file}.",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} vám nasdílel(a) místnost {roomName} na {remoteServer}",
     "{user} in {call}" : "{user} v {call}",
     "Deleted user in {call}" : "Smazaný uživatel v {call}",
