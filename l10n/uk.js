@@ -474,6 +474,7 @@ OC.L10N.register(
     "Enable screensharing" : "Увімкнути демонстрацію екрану",
     "Screen sharing requires the page to be loaded through HTTPS." : "Демонстрація екрану вимагає доступу до сторінки через безпечний протокол https.",
     "Screensharing requires the page to be loaded through HTTPS." : "Демонстрація екрану вимагає доступу до сторінки через безпечний протокол https.",
+    "An error occurred while starting screensharing." : "Помилка під час спроби поділитися екраном.",
     "You" : "Ви",
     "Show screen" : "Демонстрація екрану",
     "Mute" : "Вимкнути звук",

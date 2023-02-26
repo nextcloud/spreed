@@ -470,6 +470,7 @@ OC.L10N.register(
     "Request password" : "Pyydä salasana",
     "Error requesting the password." : "Virhe pyytäessä salasanaa.",
     "This conversation has ended" : "Tämä keskustelu on päättynyt",
+    "Error occurred when joining the conversation" : "Keskusteluun liittyessä tapahtui virhe",
     "Close Talk sidebar" : "Sulje Talkin sivupalkki",
     "Open Talk sidebar" : "Avaa Talkin sivupalkki",
     "Limit to groups" : "Rajoita ryhmiin",
@@ -847,6 +848,8 @@ OC.L10N.register(
     "Mark as unread" : "Merkitse lukemattomaksi",
     "Go to file" : "Siirry tiedostoon",
     "Close reactions menu" : "Sulje reaktiovalikko",
+    "React with {emoji}" : "Reagoi emojilla {emoji}",
+    "React with another emoji" : "Reagoi toisella emojilla",
     "Message link copied to clipboard" : "Viestin linkki kopioitu leikepöydälle",
     "Your browser does not support playing audio files" : "Selaimesi ei tue äänitiedostojen toistamista",
     "Contact" : "Yhteystieto",
@@ -914,6 +917,7 @@ OC.L10N.register(
     "In this conversation <strong>{user}</strong> can:" : "Tässä keskustelussa käyttäjä <strong>{user}</strong> voi:",
     "The message has expired or has been deleted" : "Tämä viesti on vanhentunut tai se on poistettu",
     "Cancel quote" : "Peruuta lainaus",
+    "Join room" : "Liity huoneeseen",
     "Send message to room" : "Lähetä viesti huoneeseen",
     "Start breakout rooms" : "Käynnistä pienryhmätilat",
     "Stop breakout rooms" : "Lopeta pienryhmätilat",
@@ -1114,6 +1118,7 @@ OC.L10N.register(
     "Choose a password" : "Valitse salasana",
     "Message link copied to clipboard." : "Viestin linkki kopioitu leikepöydälle.",
     "Upload new files" : "Lähetä uusia tiedostoja",
+    "Invitation was sent to {actorId}." : "Kutsu lähetettiin käyttäjälle {actorId}.",
     "End meeting for all" : "Lopeta tapaaminen kaikkien osalta"
 },
 "nplurals=2; plural=(n != 1);");
