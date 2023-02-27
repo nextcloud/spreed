@@ -1,6 +1,32 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.0-beta.2 – 2023-02-27
+### Changed
+- Update several dependencies
+
+### Fixed
+- Don't show breakout room options in one-to-one and public conversations
+  [#8875](https://github.com/nextcloud/spreed/pull/8875)
+- Don't show recording options when no recording servers are configured
+  [#8874](https://github.com/nextcloud/spreed/pull/8874)
+- Focus conversation name field when creating conversation
+  [#8873](https://github.com/nextcloud/spreed/pull/8873)
+- Allow to abort emoji-autocomplete with ESC
+  [#8870](https://github.com/nextcloud/spreed/pull/8870)
+- Focus chat input when replying to a message
+  [#8864](https://github.com/nextcloud/spreed/pull/8864)
+- Fix message type of attachments uploaded via mobile apps
+  [#8861](https://github.com/nextcloud/spreed/pull/8861)
+- Hide the bottom video stripe in recordings
+  [#8844](https://github.com/nextcloud/spreed/pull/8844)
+- Don't allow to change certain settings directly inside breakout rooms
+  [#8841](https://github.com/nextcloud/spreed/pull/8841)
+- Fix detection of the recording state
+  [#8840](https://github.com/nextcloud/spreed/pull/8840)
+- Improve notification subject and message for recording uploads
+  [#8837](https://github.com/nextcloud/spreed/pull/8837)
+
 ## 16.0.0-beta.1 – 2023-02-23
 ### Added for users
 - Breakout rooms can be used to split a group call into temporary working groups (Requires the High-performance backend)
