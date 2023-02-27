@@ -393,8 +393,8 @@ Feature: callapi/recording
     And user "participant1" joins room "room1" with 200 (v4)
     When user "participant1" store recording file "big" in room "room1" with 400 (v1)
     Then user "participant1" has the following notifications
-      | app    | object_type | object_id | subject                                                          |
-      | spreed | recording   | room1     | Failed to store recording of call room1, reach out to the admin. |
+      | app    | object_type           | object_id | subject                                                          |
+      | spreed | recording_information | room1     | Failed to store recording of call room1, reach out to the admin. |
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 0             |
