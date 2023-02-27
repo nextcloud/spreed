@@ -1,4 +1,5 @@
 import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
+import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
 import { cloneDeep } from 'lodash'
 import vOutsideEvents from 'vue-outside-events'
 import Vuex, { Store } from 'vuex'
@@ -10,6 +11,7 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
+import Quote from '../../../Quote.vue'
 import Message from './Message.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
@@ -17,7 +19,6 @@ import DefaultParameter from './MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagePart/FilePreview.vue'
 import Location from './MessagePart/Location.vue'
 import Mention from './MessagePart/Mention.vue'
-import Quote from '../../../Quote.vue'
 
 import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../constants.js'
 import { EventBus } from '../../../../services/EventBus.js'
@@ -43,6 +44,7 @@ describe('Message.vue', () => {
 	let store
 	let messageProps
 	let conversationProps
+	let injected
 	let getActorTypeMock
 
 	beforeEach(() => {
@@ -56,6 +58,19 @@ describe('Message.vue', () => {
 			type: CONVERSATION.TYPE.GROUP,
 			readOnly: CONVERSATION.STATE.READ_WRITE,
 			permissions: PARTICIPANT.PERMISSIONS.MAX_DEFAULT,
+		}
+
+		injected = {
+			scrollerBoundingClientRect: {
+				x: 0,
+				y: 0,
+				width: 0,
+				height: 0,
+				top: 0,
+				right: 0,
+				bottom: 0,
+				left: 0,
+			},
 		}
 
 		testStoreConfig = cloneDeep(storeConfig)
@@ -113,6 +128,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			const message = wrapper.findComponent({ name: 'RichText' })
@@ -126,6 +142,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			const emoji = wrapper.find('.message-body__main__text')
@@ -161,6 +178,7 @@ describe('Message.vue', () => {
 					localVue,
 					store,
 					propsData: messageProps,
+					provide: injected,
 				})
 
 				const richText = wrapper.findComponent({ name: 'RichText' })
@@ -180,6 +198,7 @@ describe('Message.vue', () => {
 					localVue,
 					store,
 					propsData: messageProps,
+					provide: injected,
 				})
 
 				const callButton = wrapper.findComponent({ name: 'CallButton' })
@@ -196,6 +215,7 @@ describe('Message.vue', () => {
 					localVue,
 					store,
 					propsData: messageProps,
+					provide: injected,
 				})
 
 				const callButton = wrapper.findComponent({ name: 'CallButton' })
@@ -212,6 +232,7 @@ describe('Message.vue', () => {
 					localVue,
 					store,
 					propsData: messageProps,
+					provide: injected,
 					mixins: [{
 						// mock the isInCall mixin
 						computed: {
@@ -234,6 +255,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 				mixins: [{
 					// mock the isInCall mixin
 					computed: {
@@ -251,6 +273,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			const date = wrapper.find('.date')
@@ -280,6 +303,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			// parent message got queried from the store
@@ -306,6 +330,7 @@ describe('Message.vue', () => {
 						RichText: RichTextStub,
 					},
 					propsData: messageProps,
+					provide: injected,
 				})
 
 				const messageEl = wrapper.findComponent({ name: 'RichText' })
@@ -462,6 +487,7 @@ describe('Message.vue', () => {
 					observeVisibility,
 				},
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			const marker = wrapper.find('.new-message-marker')
@@ -495,6 +521,7 @@ describe('Message.vue', () => {
 					observeVisibility,
 				},
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			const marker = wrapper.find('.new-message-marker')
@@ -514,6 +541,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			const displayName = wrapper.find(AUTHOR_SELECTOR)
@@ -526,6 +554,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			const displayName = wrapper.find(AUTHOR_SELECTOR)
@@ -546,12 +575,11 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 			})
 
-			await wrapper.vm.$nextTick()
-
-			const messageButtonsBar = wrapper.findComponent(MessageButtonsBar)
-			expect(messageButtonsBar.exists()).toBe(false)
+			await wrapper.find('.message').trigger('mouseover')
+			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
 		})
 
 		test('does not render actions for temporary messages', async () => {
@@ -561,12 +589,25 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 			})
 
-			await wrapper.vm.$nextTick()
+			await wrapper.find('.message').trigger('mouseover')
+			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
+		})
 
-			const messageButtonsBar = wrapper.findComponent(MessageButtonsBar)
-			expect(messageButtonsBar.exists()).toBe(false)
+		test('does not render actions for deleted messages', async () => {
+			messageProps.messageType = 'comment_deleted'
+
+			const wrapper = shallowMount(Message, {
+				localVue,
+				store,
+				propsData: messageProps,
+				provide: injected,
+			})
+
+			await wrapper.find('.message').trigger('mouseover')
+			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
 		})
 
 		test('Buttons bar is rendered on mouse over', async () => {
@@ -575,24 +616,28 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			// Initial state
-			expect(wrapper.vm.showMessageButtonsBar).toBe(false)
 			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
 
 			// Mouseover
 			await wrapper.find('.message').trigger('mouseover')
-			expect(wrapper.vm.showMessageButtonsBar).toBe(true)
 			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(true)
 
-			// actions are present and rendered when the buttonsBar is renderend
+			// position of MessageButtonsBar is calculated correctly, to be in visible area
+			expect(wrapper.vm.getButtonsBarPositionStyle()).toBeUndefined()
+
+			injected.scrollerBoundingClientRect.bottom = -100
+			expect(wrapper.vm.getButtonsBarPositionStyle()).toBeTruthy()
+
+			// actions are present and rendered when the MessageButtonsBar is rendered
 			const actions = wrapper.findAllComponents({ name: 'NcActions' })
 			expect(actions.length).toBe(2)
 
 			// Mouseleave
 			await wrapper.find('.message').trigger('mouseleave')
-			expect(wrapper.vm.showMessageButtonsBar).toBe(false)
 			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(false)
 		})
 	})
@@ -617,11 +662,13 @@ describe('Message.vue', () => {
 					MessageButtonsBar,
 				},
 				propsData: messageProps,
+				provide: injected,
 			})
 
-			// Hover the messages in order to render the MessageButtonsBar
-			// component
+			// Hover the messages in order to render the MessageButtonsBar component
 			await wrapper.find('.message').trigger('mouseover')
+			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(true)
+
 			wrapper.findComponent(MessageButtonsBar).vm.$emit('delete')
 
 			expect(deleteMessage).toHaveBeenCalledWith(expect.anything(), {
@@ -632,14 +679,12 @@ describe('Message.vue', () => {
 				placeholder: expect.anything(),
 			})
 
-			await wrapper.vm.$nextTick()
+			await flushPromises()
 			expect(wrapper.vm.isDeleting).toBe(true)
 			expect(wrapper.find('.icon-loading-small').exists()).toBe(true)
 
 			resolveDeleteMessage(200)
-			// needs two updates...
-			await wrapper.vm.$nextTick()
-			await wrapper.vm.$nextTick()
+			await flushPromises()
 
 			expect(wrapper.vm.isDeleting).toBe(false)
 			expect(wrapper.find('.icon-loading-small').exists()).toBe(false)
@@ -657,9 +702,11 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			await wrapper.find('.message-body').trigger('mouseover')
+			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(true)
 
 			const reloadButton = wrapper.find('.sending-failed')
 			expect(reloadButton.exists()).toBe(true)
@@ -685,6 +732,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			const message = wrapper.findComponent({ name: 'RichText' })
@@ -699,6 +747,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 				mixins: [{
 					computed: {
 						participant: () => {
@@ -721,6 +770,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 				mixins: [{
 					computed: {
 						participant: () => {
@@ -743,6 +793,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 				mixins: [{
 					computed: {
 						participant: () => {
@@ -784,6 +835,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			const reactionsBar = wrapper.find('.message-body__reactions')
@@ -796,6 +848,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			const reactionsBar = wrapper.find('.message-body__reactions')
@@ -828,6 +881,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			const reactionsBar = wrapper.find('.message-body__reactions')
@@ -851,6 +905,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messageProps,
+				provide: injected,
 				stubs: {
 					NcEmojiPicker,
 				},
@@ -879,6 +934,7 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messagePropsWithReactions,
+				provide: injected,
 				stubs: {
 					NcEmojiPicker,
 				},
@@ -922,13 +978,13 @@ describe('Message.vue', () => {
 				localVue,
 				store,
 				propsData: messagePropsWithReactions,
+				provide: injected,
 			})
 
 			// Click reaction button upon having already reacted
-			await wrapper.find('.reaction-button').getComponent(NcButton).vm.$emit('click')
+			wrapper.find('.reaction-button').getComponent(NcButton).vm.$emit('click')
 
-			await wrapper.vm.$nextTick()
-			await wrapper.vm.$nextTick()
+			await flushPromises()
 
 			expect(removeReactionFromMessageAction).toHaveBeenCalledWith(expect.anything(), {
 				token: messageProps.token,

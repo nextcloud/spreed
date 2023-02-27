@@ -214,6 +214,8 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
+import Quote from '../../../Quote.vue'
+import CallButton from '../../../TopBar/CallButton.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
 import Contact from './MessagePart/Contact.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
@@ -222,8 +224,6 @@ import FilePreview from './MessagePart/FilePreview.vue'
 import Location from './MessagePart/Location.vue'
 import Mention from './MessagePart/Mention.vue'
 import Poll from './MessagePart/Poll.vue'
-import Quote from '../../../Quote.vue'
-import CallButton from '../../../TopBar/CallButton.vue'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import isInCall from '../../../../mixins/isInCall.js'
@@ -648,7 +648,7 @@ export default {
 
 		messageButtonsBarHeight() {
 			return parseInt(getComputedStyle(this.$refs.message)
-				.getPropertyValue('--default-clickable-area').match(/\d+/)[0]) // 44
+				.getPropertyValue('--default-clickable-area'), 10) || 0
 		},
 	},
 
