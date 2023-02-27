@@ -148,7 +148,7 @@ class RecordingService {
 			$notification
 				->setApp('spreed')
 				->setDateTime($this->timeFactory->getDateTime())
-				->setObject('recording', $room->getToken())
+				->setObject('recording_information', $room->getToken())
 				->setUser($participant->getAttendee()->getActorId())
 				->setSubject('record_file_store_fail');
 			$this->notificationManager->notify($notification);
