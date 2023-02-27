@@ -123,7 +123,7 @@
 						:placeholder="placeholderText"
 						:aria-label="placeholderText"
 						@shortkey="focusInput"
-						@keydown.esc.prevent="blurInput"
+						@keydown.esc="blurInput"
 						@paste="handlePastedFiles"
 						@submit="handleSubmit({ silent: false })" />
 				</div>
@@ -883,8 +883,19 @@ export default {
 			})
 		},
 
-		blurInput() {
-			document.activeElement.blur()
+		/**
+		 * Escape was used inside the chat input
+		 *
+		 * Unfocus it when there is no message, otherwise this is used to abort
+		 * autocompletion of emojis and users.
+		 *
+		 * @param {Event} event Key down event
+		 */
+		blurInput(event) {
+			if (this.text.trim() === '') {
+				document.activeElement.blur()
+				event.stopPropagation()
+			}
 		},
 	},
 }
