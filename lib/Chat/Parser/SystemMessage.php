@@ -418,6 +418,8 @@ class SystemMessage {
 						$chatMessage->setMessageType('record-audio');
 					} elseif ($metaData['messageType'] === 'record-video') {
 						$chatMessage->setMessageType('record-video');
+					} else {
+						$chatMessage->setMessageType(ChatManager::VERB_MESSAGE);
 					}
 				} else {
 					$chatMessage->setMessageType(ChatManager::VERB_MESSAGE);
