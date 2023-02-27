@@ -144,7 +144,8 @@
 		</template>
 
 		<!-- Breakout rooms -->
-		<NcActionButton :close-after-click="true"
+		<NcActionButton v-if="canConfigureBreakoutRooms"
+			:close-after-click="true"
 			@click="$emit('open-breakout-rooms-editor')">
 			<template #icon>
 				<DotsCircle :size="20" />
@@ -365,6 +366,15 @@ export default {
 		canModerateRecording() {
 			const recordingEnabled = getCapabilities()?.spreed?.config?.call?.recording || false
 			return this.canFullModerate && recordingEnabled
+		},
+
+		canConfigureBreakoutRooms() {
+		  if (!this.conversation.type === CONVERSATION.TYPE.GROUP || !this.canFullModerate) {
+		    return false
+		  }
+		  
+			const breakoutRoomsEnabled = getCapabilities()?.spreed?.config?.call?.['breakout-rooms']
+			return !!breakoutRoomsEnabled
 		},
 
 		isStartingRecording() {
