@@ -12,6 +12,16 @@ Feature: chat/file-share
       | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
       | public room | users     | participant1 | participant1-displayname | {file}   | "IGNORE"          |
 
+  Scenario: Share a file with meta data to a chat (like the mobile clients do)
+    Given user "participant1" creates room "public room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    When user "participant1" shares "welcome.txt" with room "public room"
+      | talkMetaData | {"mimetype":"text/plain","messageType":""} |
+    Then user "participant1" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
+      | public room | users     | participant1 | participant1-displayname | {file}   | "IGNORE"          |
+
   Scenario: Can not share a file without chat permission
     Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
