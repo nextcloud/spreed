@@ -53,7 +53,7 @@ export default {
 		visibilityChanged(isVisible) {
 			if (isVisible) {
 				// Focus the input field of the current component.
-				this.$refs.conversationName.focus()
+				this.$refs.conversationName?.$refs.inputField?.$refs.input?.focus()
 			}
 		},
 		// Forward the keydown event to the parent
