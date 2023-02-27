@@ -160,12 +160,24 @@ class Config {
 	}
 
 	public function isRecordingEnabled(): bool {
-		$isSignalingInternal = $this->getSignalingMode() === self::SIGNALING_INTERNAL;
+		if ($this->getSignalingMode() === self::SIGNALING_INTERNAL) {
+			return false;
+		}
 
-		$callRecordingConfig = $this->config->getAppValue('spreed', 'call_recording', 'yes');
-		$recordingEnabled = $callRecordingConfig === 'yes';
+		if ($this->config->getAppValue('spreed', 'call_recording', 'yes') !== 'yes') {
+			return false;
+		}
 
-		return !$isSignalingInternal && $recordingEnabled;
+		if ($this->getRecordingSecret() === '') {
+			return false;
+		}
+
+		$recordingServers = $this->getRecordingServers();
+		if (empty($recordingServers)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public function getRecordingFolder(string $userId): string {
