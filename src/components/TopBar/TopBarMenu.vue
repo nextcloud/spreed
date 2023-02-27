@@ -369,10 +369,12 @@ export default {
 		},
 
 		canConfigureBreakoutRooms() {
-			const breakoutRoomsEnabled = getCapabilities()?.spreed?.config?.call?.['breakout-rooms'] || false
-			return this.canFullModerate
-				&& breakoutRoomsEnabled
-				&& this.conversation.type === CONVERSATION.TYPE.GROUP
+		  if (!this.conversation.type === CONVERSATION.TYPE.GROUP || !this.canFullModerate) {
+		    return false
+		  }
+		  
+			const breakoutRoomsEnabled = getCapabilities()?.spreed?.config?.call?.['breakout-rooms']
+			return !!breakoutRoomsEnabled
 		},
 
 		isStartingRecording() {
