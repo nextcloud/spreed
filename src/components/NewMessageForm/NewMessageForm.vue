@@ -123,7 +123,9 @@
 						:placeholder="placeholderText"
 						:aria-label="placeholderText"
 						@shortkey="focusInput"
-						@keydown.esc.prevent="blurInput"
+						@keydown.esc.prevent="handleInputEsc"
+						@tribute-active-true.native="isTributePickerActive = true"
+						@tribute-active-false.native="isTributePickerActive = false"
 						@paste="handlePastedFiles"
 						@submit="handleSubmit({ silent: false })" />
 				</div>
@@ -329,7 +331,7 @@ export default {
 			showTextFileDialog: false,
 			textFileTitle: t('spreed', 'New file'),
 			newFileError: '',
-
+			isTributePickerActive: false,
 			// Check empty template by default
 			checked: -1,
 			userData: {},
@@ -886,6 +888,14 @@ export default {
 		blurInput() {
 			document.activeElement.blur()
 		},
+
+		handleInputEsc() {
+			// When the tribute picker (e.g. emoji picker or mentions) is open
+			// ESC should only close the picker but not blur
+			if (!this.isTributePickerActive) {
+				this.blurInput()
+			}
+		}
 	},
 }
 </script>
