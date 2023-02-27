@@ -497,10 +497,10 @@ export default {
 	},
 
 	mounted() {
+		EventBus.$on('focus-chat-input', this.focusInput)
 		EventBus.$on('upload-start', this.handleUploadStart)
 		EventBus.$on('retry-message', this.handleRetryMessage)
 		this.text = this.$store.getters.currentMessageInput(this.token) || ''
-		// this.startRecording()
 
 		if (!this.$store.getters.areFileTemplatesInitialised) {
 			this.$store.dispatch('getFileTemplates')
@@ -508,6 +508,7 @@ export default {
 	},
 
 	beforeDestroy() {
+		EventBus.$off('focus-chat-input', this.focusInput)
 		EventBus.$off('upload-start', this.handleUploadStart)
 		EventBus.$off('retry-message', this.handleRetryMessage)
 	},
