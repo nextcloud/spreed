@@ -21,19 +21,22 @@
 
 <template>
 	<NcPopover trigger="hover">
-		<button slot="trigger"
-			tabindex="0"
-			class="poll-voters-details">
-			<AvatarWrapperSmall v-for="(item, index) in details.slice(0, 8)"
-				:id="item.actorId"
-				:key="index"
-				:source="item.actorType"
-				:disable-menu="true"
-				:disable-tooltip="true"
-				:show-user-status="false"
-				:name="getDisplayName(item)"
-				:condensed="true" />
-		</button>
+		<template #trigger>
+			<NcButton type="tertiary-no-background"
+				class="poll-voters-details">
+				<template #icon>
+					<AvatarWrapperSmall v-for="(item, index) in details.slice(0, 8)"
+						:id="item.actorId"
+						:key="index"
+						:source="item.actorType"
+						:disable-menu="true"
+						:disable-tooltip="true"
+						:show-user-status="false"
+						:name="getDisplayName(item)"
+						:condensed="true" />
+				</template>
+			</NcButton>
+		</template>
 		<div class="poll-voters-details__popover" tabindex="0">
 			<div v-for="(item, index) in details"
 				:key="index"
@@ -54,6 +57,7 @@
 </template>
 
 <script>
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
 import AvatarWrapperSmall from '../../../../AvatarWrapper/AvatarWrapperSmall.vue'
@@ -66,6 +70,7 @@ export default {
 
 	components: {
 		AvatarWrapperSmall,
+		NcButton,
 		NcPopover,
 	},
 
@@ -95,11 +100,15 @@ export default {
 <style lang="scss" scoped>
 
 .poll-voters-details {
-	display: flex;
-	background: none;
-	border: none;
-	padding: 0;
 	margin-right: 8px;
+
+	&,
+	& :deep(.button-vue__icon) {
+		min-height: auto;
+		height: auto;
+		min-width: auto;
+		width: auto !important;
+	}
 
 	&__popover {
 		padding: 8px;
@@ -113,12 +122,11 @@ export default {
 
 	&__list-item {
 		display: flex;
-		align-items: center;
-		height: 32px;
-		margin-bottom: var(--margin-small);
-		min-width: 150px;
 		justify-content: flex-start;
 		align-items: center;
+		min-width: 150px;
+		height: 32px;
+		margin-bottom: var(--margin-small);
 	}
 }
 
