@@ -133,6 +133,14 @@ class BackendNotifierTest extends TestCase {
 				],
 			],
 		]));
+		$config->setAppValue('spreed', 'recording_servers', json_encode([
+			'secret' => $this->signalingSecret,
+			'servers' => [
+				[
+					'server' => $this->baseUrl,
+				],
+			],
+		]));
 
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
 		$this->signalingManager->expects($this->any())
@@ -218,6 +226,7 @@ class BackendNotifierTest extends TestCase {
 	public function tearDown(): void {
 		$config = \OC::$server->getConfig();
 		$config->deleteAppValue('spreed', 'signaling_servers');
+		$config->deleteAppValue('spreed', 'recording_servers');
 		$this->restoreService(BackendNotifier::class);
 		parent::tearDown();
 	}
