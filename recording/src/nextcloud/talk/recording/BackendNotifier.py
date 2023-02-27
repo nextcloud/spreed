@@ -109,9 +109,9 @@ def started(backend, token, status, actorType, actorId):
 
     :param backend: the backend of the conversation.
     :param token: the token of the conversation.
-    :param actorType: the actor type of the Talk participant that stopped the
+    :param actorType: the actor type of the Talk participant that started the
            recording.
-    :param actorId: the actor id of the Talk participant that stopped the
+    :param actorId: the actor id of the Talk participant that started the
            recording.
     """
 
@@ -133,9 +133,9 @@ def stopped(backend, token, actorType, actorId):
 
     :param backend: the backend of the conversation.
     :param token: the token of the conversation.
-    :param actorType: the actor type of the Talk participant that started the
+    :param actorType: the actor type of the Talk participant that stopped the
            recording.
-    :param actorId: the actor id of the Talk participant that started the
+    :param actorId: the actor id of the Talk participant that stopped the
            recording.
     """
 
