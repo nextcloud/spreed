@@ -119,6 +119,24 @@ trait RecordingTrait {
 		});
 	}
 
+	private function waitForMockServer(): void {
+		[$host, $port] = explode(':', $this->getSignalingServerAddress());
+		$mockServerIsUp = false;
+		for ($i = 0; $i <= 20; $i++) {
+			usleep(100000);
+
+			$open = @fsockopen($host, $port);
+			if (is_resource($open)) {
+				fclose($open);
+				$mockServerIsUp = true;
+				break;
+			}
+		}
+		if (!$mockServerIsUp) {
+			throw new \Exception('Failure to start mock server.');
+		}
+	}
+
 	/**
 	 * @return resource
 	 */
