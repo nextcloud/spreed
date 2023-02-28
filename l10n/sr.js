@@ -505,6 +505,7 @@ OC.L10N.register(
     "Send message" : "Пошаљи поруку",
     "File to share" : "Фајл за дељење",
     "New file" : "Нови фајл",
+    "Blank" : "Празно",
     "Invalid path selected" : "Одабрана неисправна путања",
     "Settings" : "Поставке",
     "Create poll" : "Направи гласање",
