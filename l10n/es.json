@@ -245,6 +245,8 @@
     "Deleted user (%s)" : "Borrado el usuario (%s)",
     "Share to chat" : "Compartir al chat",
     "Dismiss notification" : "Descartar notificación",
+    "Call recording now available" : "La grabación está disponible ahora",
+    "The recording for the call in {call} was uploaded to {file}." : "La grabación para llamada en {call} se ha subido a {file}.",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1} ha compartido la sala {roomName} en {remoteServer} con usted",
     "{user} in {call}" : "{user} en {call}",
     "Deleted user in {call}" : "Usuario eliminado de {call}",
