@@ -148,9 +148,6 @@ trait RecordingTrait {
 			return;
 		}
 
-		// Get received requests to clear them.
-		$this->getRecordingServerReceivedRequests();
-
 		exec('kill ' . $this->recordingServerPid);
 		exec('kill ' . $this->signalingServerPid);
 
