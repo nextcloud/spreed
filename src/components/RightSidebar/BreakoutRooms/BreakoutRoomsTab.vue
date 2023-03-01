@@ -195,7 +195,11 @@ export default {
 		},
 
 		breakoutRoomsNotStarted() {
-			return this.conversation.breakoutRoomStatus !== CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
+			if (this.isInBreakoutRoom) {
+				return this.parentRoom.breakoutRoomStatus !== CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
+			} else {
+				return this.conversation.breakoutRoomStatus !== CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
+			}
 		},
 
 		moveParticipantsButtonTitle() {
@@ -220,6 +224,14 @@ export default {
 
 		isInBreakoutRoom() {
 			return this.conversation.objectType === 'room'
+		},
+
+		parentRoom() {
+			if (!this.isInBreakoutRoom) {
+				return undefined
+			} else {
+				return this.$store.getters.conversation(this.conversation.objectId)
+			}
 		},
 	},
 
@@ -313,11 +325,20 @@ export default {
 		},
 
 		startBreakoutRooms() {
-			this.$store.dispatch('startBreakoutRoomsAction', this.token)
+			if (this.isInBreakoutRoom) {
+				this.$store.dispatch('startBreakoutRoomsAction', this.parentRoom.token)
+			} else {
+				this.$store.dispatch('startBreakoutRoomsAction', this.token)
+			}
+
 		},
 
 		stopBreakoutRooms() {
-			this.$store.dispatch('stopBreakoutRoomsAction', this.token)
+			if (this.isInBreakoutRoom) {
+				this.$store.dispatch('stopBreakoutRoomsAction', this.parentRoom.token)
+			} else {
+				this.$store.dispatch('stopBreakoutRoomsAction', this.token)
+			}
 		},
 
 		openSendMessageDialog() {
@@ -337,9 +358,8 @@ export default {
 		},
 
 		async switchToParentRoom() {
-			const parentRoomToken = this.conversation.objectId
 			EventBus.$emit('switch-to-conversation', {
-				token: parentRoomToken,
+				token: this.parentRoom.token,
 			})
 		},
 	},
