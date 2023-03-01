@@ -19,10 +19,10 @@
  *
  */
 
+import EmitterMixin from '../../EmitterMixin.js'
 import {
 	ParticipantAnalyzer,
 } from './ParticipantAnalyzer.js'
-import EmitterMixin from '../../EmitterMixin.js'
 
 /**
  * Analyzer for the quality of the connections of a call.

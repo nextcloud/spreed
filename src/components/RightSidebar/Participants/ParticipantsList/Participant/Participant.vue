@@ -230,8 +230,8 @@ import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.
 import NcActionText from '@nextcloud/vue/dist/Components/NcActionText.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
-import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
+import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
 
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
 import readableNumber from '../../../../../mixins/readableNumber.js'

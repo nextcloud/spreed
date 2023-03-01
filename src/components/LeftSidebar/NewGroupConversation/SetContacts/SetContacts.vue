@@ -69,8 +69,8 @@ import { showError } from '@nextcloud/dialogs'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble.vue'
 import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
+import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble.vue'
 
 import { searchPossibleConversations } from '../../../../services/conversationsService.js'
 import CancelableRequest from '../../../../utils/cancelableRequest.js'

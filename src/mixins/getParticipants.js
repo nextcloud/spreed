@@ -28,11 +28,11 @@ import Axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
-import isInLobby from './isInLobby.js'
 import { PARTICIPANT } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
 import { fetchParticipants } from '../services/participantsService.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
+import isInLobby from './isInLobby.js'
 
 const getParticipants = {
 

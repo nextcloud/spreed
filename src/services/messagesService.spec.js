@@ -1,5 +1,6 @@
 import { generateOcsUrl } from '@nextcloud/router'
 
+import mockAxios from '../__mocks__/axios.js'
 import {
 	fetchMessages,
 	lookForNewMessages,
@@ -8,7 +9,6 @@ import {
 	postRichObjectToConversation,
 	updateLastReadMessage,
 } from './messagesService.js'
-import mockAxios from '../__mocks__/axios.js'
 
 describe('messagesService', () => {
 	afterEach(() => {

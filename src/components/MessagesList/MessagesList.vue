@@ -85,8 +85,8 @@ import moment from '@nextcloud/moment'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
-import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
+import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 
 import {
 	ATTENDEE,

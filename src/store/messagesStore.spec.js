@@ -5,7 +5,6 @@ import Vuex from 'vuex'
 
 import { showError } from '@nextcloud/dialogs'
 
-import messagesStore from './messagesStore.js'
 import {
 	ATTENDEE,
 } from '../constants.js'
@@ -17,6 +16,7 @@ import {
 	postNewMessage,
 } from '../services/messagesService.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
+import messagesStore from './messagesStore.js'
 
 jest.mock('../services/messagesService', () => ({
 	deleteMessage: jest.fn(),

@@ -3,7 +3,6 @@ import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
-import participantsStore from './participantsStore.js'
 import { PARTICIPANT } from '../constants.js'
 import {
 	joinCall,
@@ -21,6 +20,7 @@ import {
 	grantAllPermissionsToParticipant,
 	removeAllPermissionsFromParticipant,
 } from '../services/participantsService.js'
+import participantsStore from './participantsStore.js'
 
 jest.mock('../services/participantsService', () => ({
 	promoteToModerator: jest.fn(),

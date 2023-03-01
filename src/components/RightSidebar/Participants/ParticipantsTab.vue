@@ -48,9 +48,9 @@ import { loadState } from '@nextcloud/initial-state'
 
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 
+import SearchBox from '../../LeftSidebar/SearchBox/SearchBox.vue'
 import CurrentParticipants from './CurrentParticipants/CurrentParticipants.vue'
 import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults.vue'
-import SearchBox from '../../LeftSidebar/SearchBox/SearchBox.vue'
 
 import getParticipants from '../../../mixins/getParticipants.js'
 import { searchPossibleConversations } from '../../../services/conversationsService.js'
