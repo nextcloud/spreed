@@ -43,10 +43,10 @@ import {
 	generateUrl,
 } from '@nextcloud/router'
 
-import CancelableRequest from './cancelableRequest.js'
 import { EventBus } from '../services/EventBus.js'
 import { rejoinConversation } from '../services/participantsService.js'
 import { pullSignalingMessages } from '../services/signalingService.js'
+import CancelableRequest from './cancelableRequest.js'
 
 const Signaling = {
 	Base: {},

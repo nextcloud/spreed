@@ -65,13 +65,12 @@
 </template>
 
 <script>
+import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Send from 'vue-material-design-icons/Send.vue'
-import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 
 import { showWarning } from '@nextcloud/dialogs'
-import { EventBus } from '../../../services/EventBus.js'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
@@ -80,6 +79,7 @@ import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 import Participant from '../Participants/ParticipantsList/Participant/Participant.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
+import { EventBus } from '../../../services/EventBus.js'
 
 export default {
 	name: 'BreakoutRoomItem',

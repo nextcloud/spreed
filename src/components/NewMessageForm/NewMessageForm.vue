@@ -239,10 +239,10 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
+import Quote from '../Quote.vue'
 import AudioRecorder from './AudioRecorder/AudioRecorder.vue'
 import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
 import TemplatePreview from './TemplatePreview.vue'
-import Quote from '../Quote.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
@@ -895,7 +895,7 @@ export default {
 			if (!this.isTributePickerActive) {
 				this.blurInput()
 			}
-		}
+		},
 	},
 }
 </script>

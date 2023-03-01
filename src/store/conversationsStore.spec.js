@@ -2,7 +2,6 @@ import { createLocalVue } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
-import storeConfig from './storeConfig.js'
 import {
 	CONVERSATION,
 	WEBINAR,
@@ -28,6 +27,7 @@ import {
 	setConversationPermissions,
 	setCallPermissions,
 } from '../services/conversationsService.js'
+import storeConfig from './storeConfig.js'
 
 jest.mock('../services/conversationsService', () => ({
 	makePublic: jest.fn(),

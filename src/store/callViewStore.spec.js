@@ -2,10 +2,10 @@ import { createLocalVue } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
-import storeConfig from './storeConfig.js'
 import {
 	CONVERSATION,
 } from '../constants.js'
+import storeConfig from './storeConfig.js'
 
 describe('callViewStore', () => {
 	let localVue = null

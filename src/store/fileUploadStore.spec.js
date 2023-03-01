@@ -5,11 +5,11 @@ import Vuex from 'vuex'
 
 import { showError } from '@nextcloud/dialogs'
 
-import fileUploadStore from './fileUploadStore.js'
 import client from '../services/DavClient.js'
 import { shareFile } from '../services/filesSharingServices.js'
 import { setAttachmentFolder } from '../services/settingsService.js'
 import { findUniquePath, getFileExtension } from '../utils/fileUpload.js'
+import fileUploadStore from './fileUploadStore.js'
 
 jest.mock('../services/DavClient')
 jest.mock('../utils/fileUpload', () => ({

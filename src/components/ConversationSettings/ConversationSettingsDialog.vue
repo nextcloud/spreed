@@ -77,7 +77,7 @@
 			</NcAppSettingsSection>
 
 			<!-- Breakout rooms -->
-			<NcAppSettingsSection v-if="canFullModerate"
+			<NcAppSettingsSection v-if="canConfigureBreakoutRooms"
 				id="breakout-rooms"
 				:title="t('spreed', 'Breakout Rooms')">
 				<BreakoutRoomsSettings :token="token" />
@@ -104,6 +104,7 @@
 </template>
 
 <script>
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
@@ -112,6 +113,7 @@ import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDia
 import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
+import Description from '../Description/Description.vue'
 import BreakoutRoomsSettings from './BreakoutRoomsSettings.vue'
 import ConversationPermissionsSettings from './ConversationPermissionsSettings.vue'
 import DangerZone from './DangerZone.vue'
@@ -123,7 +125,6 @@ import LockingSettings from './LockingSettings.vue'
 import MatterbridgeSettings from './Matterbridge/MatterbridgeSettings.vue'
 import NotificationsSettings from './NotificationsSettings.vue'
 import SipSettings from './SipSettings.vue'
-import Description from '../Description/Description.vue'
 
 import { PARTICIPANT, CONVERSATION } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -212,6 +213,13 @@ export default {
 		isBreakoutRoom() {
 			return this.conversation.objectType === 'room'
 		},
+
+		canConfigureBreakoutRooms() {
+			const breakoutRoomsEnabled = getCapabilities()?.spreed?.config?.call?.['breakout-rooms'] || false
+			return this.canFullModerate
+				&& breakoutRoomsEnabled
+				&& this.conversation.type === CONVERSATION.TYPE.GROUP
+		},
 	},
 
 	watch: {
@@ -237,7 +245,9 @@ export default {
 			this.$store.dispatch('updateConversationSettingsToken', token)
 			this.showSettings = true
 			this.$nextTick(() => {
-				this.$refs.linkShareSettings.$el.focus()
+				if (this.$refs.linkShareSettings) {
+					this.$refs.linkShareSettings.$el.focus()
+				}
 			})
 		},
 

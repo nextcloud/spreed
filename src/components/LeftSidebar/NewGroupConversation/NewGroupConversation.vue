@@ -133,10 +133,10 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
+import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
 import Confirmation from './Confirmation/Confirmation.vue'
 import SetContacts from './SetContacts/SetContacts.vue'
 import SetConversationName from './SetConversationName/SetConversationName.vue'
-import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
 
 import { CONVERSATION } from '../../../constants.js'
 import isInCall from '../../../mixins/isInCall.js'

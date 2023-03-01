@@ -120,13 +120,13 @@ import NcAppSidebar from '@nextcloud/vue/dist/Components/NcAppSidebar.js'
 import NcAppSidebarTab from '@nextcloud/vue/dist/Components/NcAppSidebarTab.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
+import ChatView from '../ChatView.vue'
+import SetGuestUsername from '../SetGuestUsername.vue'
 import BreakoutRoomsTab from './BreakoutRooms/BreakoutRoomsTab.vue'
 import LobbyStatus from './LobbyStatus.vue'
 import ParticipantsTab from './Participants/ParticipantsTab.vue'
 import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
 import SipSettings from './SipSettings.vue'
-import ChatView from '../ChatView.vue'
-import SetGuestUsername from '../SetGuestUsername.vue'
 
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.js'
 import isInLobby from '../../mixins/isInLobby.js'
@@ -268,7 +268,9 @@ export default {
 		},
 
 		showBreakoutRoomsTab() {
-			return this.getUserId && !this.isOneToOne && this.breakoutRoomsConfigured
+			return this.getUserId
+				&& !this.isOneToOne
+				&& (this.breakoutRoomsConfigured || this.conversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.FREE || this.conversation.objectType === 'room')
 		},
 
 		breakoutRoomsText() {
