@@ -38,7 +38,7 @@ components.
 			</div>
 			<div v-if="isFileShareMessage"
 				class="quote__main__text">
-				<RichText :text="message"
+				<NcRichText :text="message"
 					:arguments="richParameters"
 					:autolink="true" />
 			</div>
@@ -62,7 +62,7 @@ components.
 <script>
 import Close from 'vue-material-design-icons/Close.vue'
 
-import RichText from '@nextcloud/vue-richtext'
+import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -76,7 +76,7 @@ export default {
 	components: {
 		NcButton,
 		Close,
-		RichText,
+		NcRichText,
 	},
 	props: {
 		actorId: {
