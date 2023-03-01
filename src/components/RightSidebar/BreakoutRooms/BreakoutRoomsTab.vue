@@ -21,20 +21,18 @@
 
 <template>
 	<div class="breakout-rooms">
-		<template v-if="breakoutRoomsConfigured">
-			<!-- Actions -->
-			<BreakoutRoomsActions :token="token"
-				:conversation="conversation"
-				:breakout-rooms="breakoutRooms"
-				:breakout-rooms-configured="breakoutRoomsConfigured" />
-			<!-- Breakout rooms list -->
-			<ul v-if="breakoutRooms">
-				<template v-for="breakoutRoom in breakoutRooms">
-					<BreakoutRoomItem :key="breakoutRoom.token"
-						:breakout-room="breakoutRoom" />
-				</template>
-			</ul>
-		</template>
+		<!-- Actions -->
+		<BreakoutRoomsActions :token="token"
+			:conversation="conversation"
+			:breakout-rooms="breakoutRooms"
+			:breakout-rooms-configured="breakoutRoomsConfigured" />
+		<!-- Breakout rooms list -->
+		<ul v-if="breakoutRooms">
+			<template v-for="breakoutRoom in breakoutRooms">
+				<BreakoutRoomItem :key="breakoutRoom.token"
+					:breakout-room="breakoutRoom" />
+			</template>
+		</ul>
 	</div>
 </template>
 

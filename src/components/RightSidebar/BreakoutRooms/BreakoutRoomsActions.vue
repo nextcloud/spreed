@@ -1,26 +1,43 @@
 <template>
 	<!-- Series of buttons at the top of the tab, these affect all
 		 breakout rooms -->
-	<div v-if="canModerate || isInBreakoutRoom" class="breakout-rooms__actions">
-		<div class="breakout-rooms__actions-group">
+	<div v-if="canModerate || isInBreakoutRoom" class="breakout-rooms-actions">
+		<div class="breakout-rooms-actions__row">
 			<NcButton v-if="breakoutRoomsNotStarted && canModerate"
-				:title="t('spreed', 'Start breakout rooms')"
-				:aria-label="t('spreed', 'Start breakout rooms')"
-				type="tertiary"
+				:title="startLabel"
+				:aria-label="startLabel"
+				type="primary"
+				:wide="true"
 				:disabled="!isInCall"
 				@click="startBreakoutRooms">
 				<template #icon>
 					<Play :size="20" />
 				</template>
+				{{ startLabel }}
 			</NcButton>
 			<NcButton v-else-if="canModerate"
-				:title="t('spreed', 'Stop breakout rooms')"
-				:aria-label="t('spreed', 'Stop breakout rooms')"
-				type="tertiary"
+				:title="stopLabel"
+				:aria-label="stopLabel"
+				type="error"
+				:wide="true"
 				@click="stopBreakoutRooms">
 				<template #icon>
 					<StopIcon :size="20" />
 				</template>
+				{{ stopLabel }}
+			</NcButton>
+		</div>
+		<div class="breakout-rooms-actions__row">
+			<NcButton v-if="canModerate && !isInBreakoutRoom"
+				:title="sendMessageLabel"
+				:aria-label="sendMessageLabel"
+				type="secondary"
+				:wide="true"
+				@click="openSendMessageDialog">
+				<template #icon>
+					<Send :size="18" />
+				</template>
+				{{ sendMessageLabel }}
 			</NcButton>
 			<NcButton v-if="isInBreakoutRoom"
 				:title="backToMainRoomLabel"
@@ -33,31 +50,30 @@
 				</template>
 				{{ backToMainRoomLabel }}
 			</NcButton>
-			<NcButton v-if="canModerate"
-				:title="t('spreed', 'Send message to breakout rooms')"
-				:aria-label="t('spreed', 'Send message to breakout rooms')"
-				type="tertiary"
-				@click="openSendMessageDialog">
-				<template #icon>
-					<Message :size="18" />
-				</template>
-			</NcButton>
+			<NcActions v-if="canModerate" class="right">
+				<NcActionButton v-if="canModerate && isInBreakoutRoom"
+					:title="sendMessageLabel"
+					:aria-label="sendMessageLabel"
+					@click="openSendMessageDialog">
+					<template #icon>
+						<Send :size="20" />
+					</template>
+				</NcActionButton>
+				<NcActionButton v-if="canModerate"
+					:title="manageBreakoutRoomsTitle"
+					:aria-label="manageBreakoutRoomsTitle"
+					@click="openParticipantsEditor">
+					<template #icon>
+						<Cog :size="20" />
+					</template>
+				</NcActionButton>
+			</NcActions>
 		</div>
-		<div v-if="canModerate" class="breakout-rooms__actions-group right">
-			<!-- Manage breakout rooms button -->
-			<NcButton type="tertiary"
-				:title="manageBreakoutRoomsTitle"
-				:aria-label="manageBreakoutRoomsTitle"
-				@click="openParticipantsEditor">
-				<template #icon>
-					<Cog :size="20" />
-				</template>
-			</NcButton>
-		</div>
+
 		<!-- Participants editor -->
 		<NcModal v-if="showParticipantsEditor"
 			@close="closeParticipantsEditor">
-			<div class="breakout-rooms__editor">
+			<div class="breakout-rooms-actions__editor">
 				<h2> {{ manageBreakoutRoomsTitle }} </h2>
 				<BreakoutRoomsParticipantsEditor :token="token"
 					:breakout-rooms="breakoutRooms"
@@ -78,10 +94,12 @@
 <script>
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
-import Message from 'vue-material-design-icons/Message.vue'
 import Play from 'vue-material-design-icons/Play.vue'
+import Send from 'vue-material-design-icons/Send.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
 
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
@@ -101,14 +119,15 @@ export default {
 		BreakoutRoomsParticipantsEditor,
 		SendMessageDialog,
 		NcModal,
+		NcActions,
+		NcActionButton,
 
 		// Icons
 		Play,
 		Cog,
 		StopIcon,
-		Message,
 		ArrowLeft,
-
+		Send,
 	},
 
 	mixins: [isInCall],
@@ -182,6 +201,18 @@ export default {
 		participantType() {
 			return this.conversation.participantType
 		},
+
+		sendMessageLabel() {
+			return t('spreed', 'Message all rooms')
+		},
+
+		startLabel() {
+			return t('spreed', 'Start session')
+		},
+
+		stopLabel() {
+			return t('spreed', 'Stop session')
+		},
 	},
 
 	methods: {
@@ -228,17 +259,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.breakout-rooms {
-	&__actions {
-		display: flex;
-		justify-content: space-between;
-		margin-bottom: calc(var(--default-grid-baseline) * 3);
-	}
+.breakout-rooms-actions {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: calc(var(--default-grid-baseline) * 3);
 
-	&__actions-group {
+	&__row {
 		display: flex;
+		margin-bottom: var(--default-grid-baseline);
 		gap: var(--default-grid-baseline);
-		flex-grow: 1;
 	}
 
 	&__editor {
