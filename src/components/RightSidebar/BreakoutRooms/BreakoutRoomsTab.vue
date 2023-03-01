@@ -23,9 +23,9 @@
 	<div class="breakout-rooms">
 		<!-- Series of buttons at the top of the tab, these affect all
 		 breakout rooms -->
-		<div v-if="canModerate" class="breakout-rooms__actions">
+		<div v-if="canModerate || isInBreakoutRoom" class="breakout-rooms__actions">
 			<div class="breakout-rooms__actions-group">
-				<NcButton v-if="breakoutRoomsNotStarted"
+				<NcButton v-if="breakoutRoomsNotStarted && canModerate"
 					:title="t('spreed', 'Start breakout rooms')"
 					:aria-label="t('spreed', 'Start breakout rooms')"
 					type="tertiary"
@@ -35,7 +35,7 @@
 						<Play :size="20" />
 					</template>
 				</NcButton>
-				<NcButton v-else
+				<NcButton v-else-if="canModerate"
 					:title="t('spreed', 'Stop breakout rooms')"
 					:aria-label="t('spreed', 'Stop breakout rooms')"
 					type="tertiary"
@@ -44,7 +44,19 @@
 						<StopIcon :size="20" />
 					</template>
 				</NcButton>
-				<NcButton :title="t('spreed', 'Send message to breakout rooms')"
+				<NcButton v-if="isInBreakoutRoom"
+					:title="backToMainRoomLabel"
+					:aria-label="backToMainRoomLabel"
+					:wide="true"
+					type="secondary"
+					@click="switchToParentRoom">
+					<template #icon>
+						<ArrowLeft :size="20" />
+					</template>
+					{{ backToMainRoomLabel }}
+				</NcButton>
+				<NcButton v-if="canModerate"
+					:title="t('spreed', 'Send message to breakout rooms')"
 					:aria-label="t('spreed', 'Send message to breakout rooms')"
 					type="tertiary"
 					@click="openSendMessageDialog">
@@ -53,7 +65,7 @@
 					</template>
 				</NcButton>
 			</div>
-			<div class="breakout-rooms__actions-group">
+			<div v-if="canModerate" class="breakout-rooms__actions-group right">
 				<!-- Re-arrange participants button -->
 				<NcButton type="tertiary"
 					:title="moveParticipantsButtonTitle"
@@ -108,6 +120,7 @@
 
 <script>
 import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
+import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Message from 'vue-material-design-icons/Message.vue'
 import Play from 'vue-material-design-icons/Play.vue'
@@ -123,6 +136,7 @@ import BreakoutRoomItem from './BreakoutRoomItem.vue'
 // Constants
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import isInCall from '../../../mixins/isInCall.js'
+import { EventBus } from '../../../services/EventBus.js'
 
 export default {
 	name: 'BreakoutRoomsTab',
@@ -141,6 +155,7 @@ export default {
 		AccountMultiple,
 		StopIcon,
 		Message,
+		ArrowLeft,
 	},
 
 	mixins: [isInCall],
@@ -197,6 +212,14 @@ export default {
 
 		canModerate() {
 			return !this.isOneToOne && (this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
+		},
+
+		backToMainRoomLabel() {
+			return t('spreed', 'Back to main room')
+		},
+
+		isInBreakoutRoom() {
+			return this.conversation.objectType === 'room'
 		},
 	},
 
@@ -312,6 +335,13 @@ export default {
 		closeParticipantsEditor() {
 			this.showParticipantsEditor = false
 		},
+
+		async switchToParentRoom() {
+			const parentRoomToken = this.conversation.objectId
+			EventBus.$emit('switch-to-conversation', {
+				token: parentRoomToken,
+			})
+		},
 	},
 }
 </script>
@@ -328,7 +358,7 @@ export default {
 	&__actions-group {
 		display: flex;
 		gap: var(--default-grid-baseline);
-
+		flex-grow: 1;
 	}
 
 	&__room {
@@ -338,6 +368,10 @@ export default {
 	&__editor {
 		padding: 20px;
 	}
+}
+
+.right {
+	justify-content: right;
 }
 
 ::v-deep .app-navigation-entry__title {
