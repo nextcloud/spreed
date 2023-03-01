@@ -325,7 +325,7 @@ export default {
 	}
 }
 
-// TODO: upsteream collapse icon position fix
+// TODO: upstream collapse icon position fix
 ::v-deep .icon-collapse {
 	position: absolute !important;
 	left: 0;
