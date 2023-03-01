@@ -60,6 +60,23 @@ Feature: reaction/react
       | room | users     | participant1 | participant1-displayname | user_added |
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
+  Scenario: React to message does not fail when the author left the conversation
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant2" sends message "Message 1" to room "room" with 201
+    And user "participant2" removes themselves from room "room" with 200 (v4)
+    And user "participant1" react with "👍" on message "Message 1" to room "room" with 201
+      | actorType | actorId      | actorDisplayName         | reaction |
+      | users     | participant1 | participant1-displayname | 👍       |
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant1 | participant1-displayname | reaction |
+      | room | users     | participant2 | participant2-displayname | user_removed |
+      | room | users     | participant1 | participant1-displayname | user_added |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+
   Scenario: Delete reaction to message with success
     Given user "participant1" creates room "room" (v4)
       | roomType | 3 |

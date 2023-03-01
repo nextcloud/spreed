@@ -270,7 +270,13 @@ class Notifier {
 			return;
 		}
 
-		$participant = $chat->getParticipant($comment->getActorId(), false);
+
+		try {
+			$participant = $chat->getParticipant($comment->getActorId(), false);
+		} catch (ParticipantNotFoundException $e) {
+			return;
+		}
+
 		$notificationLevel = $participant->getAttendee()->getNotificationLevel();
 		if ($notificationLevel === Participant::NOTIFY_DEFAULT) {
 			if ($chat->getType() === Room::TYPE_ONE_TO_ONE) {
