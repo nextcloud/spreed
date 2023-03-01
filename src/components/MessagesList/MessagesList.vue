@@ -30,6 +30,7 @@ get the messagesList array and loop through the list to generate the messages.
 	are outside of the viewport -->
 	<div ref="scroller"
 		class="scroller messages-list__scroller"
+		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom}"
 		@scroll="debounceHandleScroll">
 		<div v-if="displayMessagesLoader"
 			class="scroller__loading"
@@ -127,11 +128,6 @@ export default {
 			required: true,
 		},
 
-		isChatScrolledToBottom: {
-			type: Boolean,
-			required: true,
-		},
-
 		isVisible: {
 			type: Boolean,
 			default: true,
@@ -161,6 +157,7 @@ export default {
 
 			isFocusingMessage: false,
 
+			isChatScrolledToBottom: true,
 			/**
 			 * Quick edit option to fall back to the loading history and then new messages
 			 */
@@ -1051,7 +1048,7 @@ export default {
 		},
 
 		setChatScrolledToBottom(boolean) {
-			this.$emit('set-chat-scrolled-to-bottom', boolean)
+			this.isChatScrolledToBottom = boolean
 			if (boolean) {
 				// mark as read if marker was seen
 				// we have to do this early because unfocusing the window will remove the stickiness
@@ -1073,6 +1070,13 @@ export default {
 	flex: 1 0;
 	overflow-y: auto;
 	overflow-x: hidden;
+	border-bottom: 1px solid var(--color-border);
+	transition: border-bottom-color 150ms ease-in-out;
+
+	&--chatScrolledToBottom {
+		border-bottom-color: transparent;
+	}
+
 	&__loading {
 		height: 50px;
 		display: flex;
