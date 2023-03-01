@@ -196,7 +196,6 @@ export default {
 
 .upload-editor {
 	height: 100%;
-	position: relative;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
