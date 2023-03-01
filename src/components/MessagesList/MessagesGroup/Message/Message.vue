@@ -52,14 +52,14 @@ the main body of the message as well as a quote.
 					</div>
 				</div>
 				<div v-else-if="showJoinCallButton" class="message-body__main__text call-started">
-					<RichText :text="message"
+					<NcRichText :text="message"
 						:arguments="richParameters"
 						:autolink="true"
 						:reference-limit="0" />
 					<CallButton />
 				</div>
 				<div v-else-if="showResultsButton" class="message-body__main__text system-message">
-					<RichText :text="message"
+					<NcRichText :text="message"
 						:arguments="richParameters"
 						:autolink="true"
 						:reference-limit="0" />
@@ -70,14 +70,14 @@ the main body of the message as well as a quote.
 						:show-as-button="true" />
 				</div>
 				<div v-else-if="isDeletedMessage" class="message-body__main__text deleted-message">
-					<RichText :text="message"
+					<NcRichText :text="message"
 						:arguments="richParameters"
 						:autolink="true"
 						:reference-limit="0" />
 				</div>
 				<div v-else class="message-body__main__text" :class="{'system-message': isSystemMessage}">
 					<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
-					<RichText :text="message"
+					<NcRichText :text="message"
 						:arguments="richParameters"
 						:autolink="true"
 						:reference-limit="1" />
@@ -208,7 +208,7 @@ import Reload from 'vue-material-design-icons/Reload.vue'
 
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
-import RichText from '@nextcloud/vue-richtext'
+import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
@@ -240,7 +240,7 @@ export default {
 		NcButton,
 		CallButton,
 		Quote,
-		RichText,
+		NcRichText,
 		AlertCircle,
 		Check,
 		CheckAll,
@@ -853,7 +853,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@nextcloud/vue-richtext/dist/style.css';
 @import '../../../../assets/variables';
 
 .message:hover .normal-message-body {
