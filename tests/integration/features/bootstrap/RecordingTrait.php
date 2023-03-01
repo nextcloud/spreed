@@ -119,10 +119,6 @@ trait RecordingTrait {
 		});
 	}
 
-	private function isWindowsPlatform() : bool {
-		return defined('PHP_WINDOWS_VERSION_MAJOR');
-	}
-
 	/**
 	 * @return resource
 	 */
@@ -130,14 +126,11 @@ trait RecordingTrait {
 		$cmd = 'php -S ' . $path;
 		$stdout = tempnam(sys_get_temp_dir(), 'mockserv-stdout-');
 
-		$fullCmd = sprintf('%s > %s 2>&1',
+		// We need to prefix exec to get the correct process http://php.net/manual/ru/function.proc-get-status.php#93382
+		$fullCmd = sprintf('exec %s > %s 2>&1',
 			$cmd,
 			$stdout
 		);
-		if (!$this->isWindowsPlatform()) {
-			// We need to prefix exec to get the correct process http://php.net/manual/ru/function.proc-get-status.php#93382
-			$fullCmd = 'exec ' . $fullCmd;
-		}
 
 		$pipes = [];
 		$env = null;
