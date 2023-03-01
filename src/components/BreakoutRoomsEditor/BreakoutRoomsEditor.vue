@@ -21,8 +21,11 @@
 
 <template>
 	<NcModal v-bind="$attrs"
+		:container="$store.getters.getMainContainerSelector()"
+		:class="{'modal-mask__participants-step': isEditingParticipants}"
 		v-on="$listeners">
-		<div class="breakout-rooms-editor">
+		<div class="breakout-rooms-editor"
+			:class="{'breakout-rooms-editor__participants-step': isEditingParticipants}">
 			<h2>{{ modalTitle }}</h2>
 			<template v-if="!isEditingParticipants">
 				<div class="breakout-rooms-editor__main">
@@ -136,10 +139,15 @@ export default {
 	padding: 20px;
 	justify-content: flex-start;
 	align-items: flex-start;
-	height: calc(100% - 40px);
+
+	&__participants-step {
+		height: calc(100% - 40px);
+
+	}
+
 	&__main {
 		height: 100%;
-	 }
+	}
 
 	&__buttons {
 		display: flex;
@@ -149,8 +157,10 @@ export default {
 	}
 }
 
-::v-deep .modal-container {
-	overflow: hidden !important;
-	height: 100%;
+.modal-mask__participants-step {
+	::v-deep .modal-container {
+		overflow: hidden !important;
+		height: 100% !important;
+	}
 }
 </style>
