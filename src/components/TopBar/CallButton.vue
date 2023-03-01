@@ -338,23 +338,9 @@ export default {
 
 		async switchToParentRoom() {
 			const parentRoomToken = this.$store.getters.parentRoomToken(this.token)
-			if (this.canModerate) {
-				EventBus.$emit('switch-to-conversation', {
-					token: parentRoomToken,
-				})
-			} else {
-				try {
-					await this.$store.dispatch('switchToBreakoutRoomAction', {
-						token: this.token,
-						target: parentRoomToken,
-					})
-					EventBus.$emit('switch-to-conversation', {
-						token: parentRoomToken,
-					})
-				} catch (error) {
-					console.debug(error)
-				}
-			}
+			EventBus.$emit('switch-to-conversation', {
+				token: parentRoomToken,
+			})
 		},
 	},
 }
