@@ -44,22 +44,13 @@
 			</NcButton>
 		</div>
 		<div v-if="canModerate" class="breakout-rooms__actions-group right">
-			<!-- Re-arrange participants button -->
+			<!-- Manage breakout rooms button -->
 			<NcButton type="tertiary"
-				:title="moveParticipantsButtonTitle"
-				:aria-label="moveParticipantsButtonTitle"
+				:title="manageBreakoutRoomsTitle"
+				:aria-label="manageBreakoutRoomsTitle"
 				@click="openParticipantsEditor">
 				<template #icon>
-					<AccountMultiple :size="20" />
-				</template>
-			</NcButton>
-			<NcButton v-if="breakoutRoomsConfigured"
-				:title="t('spreed', 'Delete breakout rooms')"
-				:aria-label="t('spreed', 'Delete breakout rooms')"
-				type="tertiary"
-				@click="deleteBreakoutRooms">
-				<template #icon>
-					<Delete :size="20" />
+					<Cog :size="20" />
 				</template>
 			</NcButton>
 		</div>
@@ -67,7 +58,7 @@
 		<NcModal v-if="showParticipantsEditor"
 			@close="closeParticipantsEditor">
 			<div class="breakout-rooms__editor">
-				<h2> {{ moveParticipantsButtonTitle }} </h2>
+				<h2> {{ manageBreakoutRoomsTitle }} </h2>
 				<BreakoutRoomsParticipantsEditor :token="token"
 					:breakout-rooms="breakoutRooms"
 					:is-creating-rooms="false"
@@ -85,9 +76,8 @@
 </template>
 
 <script>
-import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
+import Cog from 'vue-material-design-icons/Cog.vue'
 import Message from 'vue-material-design-icons/Message.vue'
 import Play from 'vue-material-design-icons/Play.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
@@ -113,9 +103,8 @@ export default {
 		NcModal,
 
 		// Icons
-		Delete,
 		Play,
-		AccountMultiple,
+		Cog,
 		StopIcon,
 		Message,
 		ArrowLeft,
@@ -182,8 +171,8 @@ export default {
 			}
 		},
 
-		moveParticipantsButtonTitle() {
-			return t('spreed', 'Reorganize participants')
+		manageBreakoutRoomsTitle() {
+			return t('spreed', 'Manage breakout rooms')
 		},
 
 		backToMainRoomLabel() {
@@ -233,27 +222,6 @@ export default {
 			EventBus.$emit('switch-to-conversation', {
 				token: this.parentRoom.token,
 			})
-		},
-
-		deleteBreakoutRooms() {
-			OC.dialogs.confirmDestructive(
-				t('spreed', 'Current breakout rooms and settings will be lost'),
-				t('spreed', 'Delete breakout rooms'),
-				{
-					type: OC.dialogs.YES_NO_BUTTONS,
-					confirm: t('spreed', 'Delete breakout rooms'),
-					confirmClasses: 'error',
-					cancel: t('spreed', 'Cancel'),
-				},
-				(decision) => {
-					if (!decision) {
-						return
-					}
-					this.$store.dispatch('deleteBreakoutRoomsAction', {
-						token: this.token,
-					})
-				}
-			)
 		},
 	},
 }
