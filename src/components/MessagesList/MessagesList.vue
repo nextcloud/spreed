@@ -234,7 +234,7 @@ export default {
 		 * @return {boolean}
 		 */
 		isSticky() {
-			return this.isChatScrolledToBottom
+			return this.isChatScrolledToBottom && !this.isInitialisingMessages
 		},
 
 		/**
@@ -502,7 +502,6 @@ export default {
 			if (this.token && this.isParticipant && !this.isInLobby) {
 
 				// prevent sticky mode before we have loaded anything
-				this.setChatScrolledToBottom(false)
 				this.isInitialisingMessages = true
 				const focusMessageId = this.getMessageIdFromHash()
 
@@ -570,6 +569,8 @@ export default {
 						})
 					}
 				}
+
+				this.isInitialisingMessages = false
 
 				// get new messages
 				await this.lookForNewMessages()
@@ -666,8 +667,6 @@ export default {
 					requestId: this.chatIdentifier,
 				})
 
-				this.isInitialisingMessages = false
-
 				// Scroll to the last message if sticky
 				if (scrollToBottom && this.isSticky) {
 					this.smoothScrollToBottom()
@@ -706,15 +705,7 @@ export default {
 			}, 500)
 		},
 
-		debounceHandleScroll() {
-			if (this.loadChatInLegacyMode) {
-				this.debounceHandleScrollWithoutPreconditions()
-			} else if (!this.isInitialisingMessages && !this.isFocusingMessage) {
-				this.debounceHandleScrollWithoutPreconditions()
-			}
-		},
-
-		debounceHandleScrollWithoutPreconditions: debounce(function() {
+		debounceHandleScroll: debounce(function() {
 			this.handleScroll()
 		}, 50),
 
