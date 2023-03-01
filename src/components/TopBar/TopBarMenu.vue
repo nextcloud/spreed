@@ -369,9 +369,9 @@ export default {
 		},
 
 		canConfigureBreakoutRooms() {
-		  if (!this.conversation.type === CONVERSATION.TYPE.GROUP || !this.canFullModerate) {
-		    return false
-		  }
+			if (!this.conversation.type === CONVERSATION.TYPE.GROUP || !this.canFullModerate) {
+				return false
+			}
 
 			const breakoutRoomsEnabled = getCapabilities()?.spreed?.config?.call?.['breakout-rooms']
 			return !!breakoutRoomsEnabled
