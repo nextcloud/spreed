@@ -880,6 +880,9 @@ export default {
 		},
 
 		focusInput() {
+			if (this.isMobile()) {
+				return
+			}
 			this.$nextTick().then(() => {
 				this.$refs.richContenteditable.$refs.contenteditable.focus()
 			})
@@ -895,6 +898,10 @@ export default {
 			if (!this.isTributePickerActive) {
 				this.blurInput()
 			}
+		},
+
+		isMobile() {
+			return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
 		},
 	},
 }
