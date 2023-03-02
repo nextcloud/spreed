@@ -443,6 +443,7 @@ Signaling.Internal.prototype._joinRoomSuccess = function(token, sessionId) {
 
 Signaling.Internal.prototype._doLeaveRoom = function(token) {
 	this._joinCallAgainOnceDisconnected = false
+	this.pullMessagesRequest?.('canceled')
 }
 
 Signaling.Internal.prototype.sendCallMessage = function(data) {
