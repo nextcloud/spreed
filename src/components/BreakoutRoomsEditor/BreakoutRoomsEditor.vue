@@ -29,12 +29,15 @@
 			<h2>{{ modalTitle }}</h2>
 			<template v-if="!isEditingParticipants">
 				<div class="breakout-rooms-editor__main">
-					<label for="room-number">{{ t('spreed', 'Number of breakout rooms') }} </label>
+					<label class="breakout-rooms-editor__caption" for="room-number">{{ t('spreed', 'Number of breakout rooms') }} </label>
 					<input id="room-number"
 						v-model.number="amount"
+						class="breakout-rooms-editor__number-input"
 						type="number"
 						min="1"
 						max="20">
+
+					<label class="breakout-rooms-editor__caption">{{ t('spreed', 'Assignment method') }}</label>
 					<NcCheckboxRadioSwitch :checked.sync="mode"
 						value="1"
 						name="mode_radio"
@@ -139,6 +142,17 @@ export default {
 	padding: 20px;
 	justify-content: flex-start;
 	align-items: flex-start;
+
+	&__number-input{
+		display: block;
+		margin-bottom: calc(var(--default-grid-baseline)*4);
+	}
+
+	&__caption {
+		font-weight: bold;
+		display: block;
+		margin: calc(var(--default-grid-baseline)*3) 0 calc(var(--default-grid-baseline)*2) 0;
+	}
 
 	&__participants-step {
 		height: calc(100% - 40px);
