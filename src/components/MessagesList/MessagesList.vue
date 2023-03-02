@@ -260,10 +260,6 @@ export default {
 		scrollToBottomAriaLabel() {
 			return t('spreed', 'Scroll to bottom')
 		},
-
-		scroller() {
-			return this.$refs.scroller
-		},
 	},
 
 	watch: {
@@ -489,7 +485,7 @@ export default {
 
 			// if no scrollbars, clear read marker directly as scrolling is not possible for the user to clear it
 			// also clear in case lastReadMessage is zero which is due to an older bug
-			if (this.visualLastReadMessageId === 0 || this.scroller.scrollHeight <= this.scroller.offsetHeight) {
+			if (this.visualLastReadMessageId === 0 || this.$refs.scroller.scrollHeight <= this.$refs.scroller.offsetHeight) {
 				// clear after a delay, unless scrolling can resume in-between
 				this.debounceUpdateReadMarkerPosition()
 			}
@@ -730,16 +726,22 @@ export default {
 				}
 			}
 
-			const scrollHeight = this.scroller.scrollHeight
-			const scrollTop = this.scroller.scrollTop
+			const { scrollHeight, scrollTop, clientHeight } = this.$refs.scroller
 			const scrollOffset = scrollHeight - scrollTop
-			const elementHeight = this.scroller.clientHeight
 			const tolerance = 10
-			if (scrollOffset < elementHeight + tolerance && scrollOffset > elementHeight - tolerance) {
+
+			// For chats, scrolled to bottom or / and fitted in one screen
+			if (scrollOffset < clientHeight + tolerance && scrollOffset > clientHeight - tolerance) {
 				this.setChatScrolledToBottom(true)
 				this.displayMessagesLoader = false
 				this.previousScrollTopValue = scrollTop
-			} else if (scrollHeight > elementHeight && scrollTop < 800 && scrollTop <= this.previousScrollTopValue) {
+				this.debounceUpdateReadMarkerPosition()
+				return
+			}
+
+			this.setChatScrolledToBottom(false)
+
+			if (scrollHeight > clientHeight && scrollTop < 800 && scrollTop <= this.previousScrollTopValue) {
 				if (this.loadingOldMessages) {
 					// already loading, don't do it twice
 					return
@@ -749,13 +751,9 @@ export default {
 				}
 				await this.getOldMessages(false)
 				this.displayMessagesLoader = false
-				this.previousScrollTopValue = scrollTop
-			} else {
-				this.setChatScrolledToBottom(false)
-				this.displayMessagesLoader = false
-				this.previousScrollTopValue = scrollTop
 			}
 
+			this.previousScrollTopValue = scrollTop
 			this.debounceUpdateReadMarkerPosition()
 		},
 
@@ -779,7 +777,7 @@ export default {
 			}
 			let previousEl = el
 
-			const scrollTop = this.scroller.scrollTop
+			const { scrollTop } = this.$refs.scroller
 			while (el) {
 				// is the message element fully visible with no intersection with the bottom border ?
 				if (el.offsetTop - scrollTop >= 0) {
@@ -869,7 +867,7 @@ export default {
 				return
 			}
 
-			if (lastReadMessageElement && (lastReadMessageElement.offsetTop - this.scroller.scrollTop > 0)) {
+			if (lastReadMessageElement && (lastReadMessageElement.offsetTop - this.$refs.scroller.scrollTop > 0)) {
 				// still visible, hasn't disappeared at the top yet
 				return
 			}
@@ -899,7 +897,6 @@ export default {
 		handleScrollChatToBottomEvent(options) {
 			if ((options && options.force) || this.isChatScrolledToBottom) {
 				this.scrollToBottom()
-				this.setChatScrolledToBottom(true)
 			}
 		},
 
@@ -910,19 +907,19 @@ export default {
 			this.$nextTick(function() {
 				if (this.isWindowVisible && (document.hasFocus() || this.isInCall)) {
 					// scrollTo is used when the user is watching
-					this.scroller.scrollTo({
-						top: this.scroller.scrollHeight,
+					this.$refs.scroller.scrollTo({
+						top: this.$refs.scroller.scrollHeight,
 						behavior: 'smooth',
 					})
 					this.setChatScrolledToBottom(true)
 				} else {
 					// Otherwise we jump half a message and stop autoscrolling, so the user can read up
-					if (this.scroller.scrollHeight - this.scroller.scrollTop - this.scroller.offsetHeight < 40) {
+					if (this.$refs.scroller.scrollHeight - this.$refs.scroller.scrollTop - this.$refs.scroller.offsetHeight < 40) {
 						// Single new line from the previous author is 35px so scroll half a line
-						this.scroller.scrollTop += 10
+						this.$refs.scroller.scrollTop += 10
 					} else {
 						// Single new line from the new author is 75px so scroll half an avatar
-						this.scroller.scrollTop += 40
+						this.$refs.scroller.scrollTop += 40
 					}
 					this.setChatScrolledToBottom(false)
 				}
@@ -933,7 +930,7 @@ export default {
 		 */
 		scrollToBottom() {
 			this.$nextTick(function() {
-				this.scroller.scrollTop = this.scroller.scrollHeight
+				this.$refs.scroller.scrollTop = this.$refs.scroller.scrollHeight
 				this.setChatScrolledToBottom(true)
 			})
 
@@ -967,13 +964,14 @@ export default {
 				})
 				if (!smooth) {
 					// scroll the viewport slightly further to make sure the element is about 1/3 from the top
-					this.scroller.scrollTop += this.scroller.offsetHeight / 4
+					this.$refs.scroller.scrollTop += this.$refs.scroller.offsetHeight / 4
 				}
 				if (highlightAnimation) {
 					element.focus()
 					element.highlightAnimation()
 				}
 				this.isFocusingMessage = false
+				await this.handleScroll()
 			})
 
 			return true
