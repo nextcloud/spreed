@@ -47,6 +47,10 @@ final class DocumentationTest extends TestCase {
 
 	public function commandIsDocummented(string $command): void {
 		$docs = file_get_contents(__DIR__ . '/../../../docs/occ.md');
-		self::assertStringContainsString($command, $docs, 'Asserting that command ' . $command . ' is documented');
+		self::assertStringContainsString(
+			$command,
+			$docs,
+			'The command ' . $command . " haven't documentation. Run the command talk:developer:update-docs."
+		);
 	}
 }

@@ -1,198 +1,198 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.2.0@fb685a16df3050d4c18d8a4100fe83abe6458cba">
+<files psalm-version="5.6.0@e784128902dfe01d489c4123d69918a9f3c1eac5">
   <file src="lib/AppInfo/Application.php">
-    <UndefinedClass occurrences="2">
+    <UndefinedClass>
       <code>BeforeTemplateRenderedEvent</code>
       <code>BeforeTemplateRenderedEvent</code>
     </UndefinedClass>
-    <UndefinedInterfaceMethod occurrences="1">
+    <UndefinedInterfaceMethod>
       <code>getSettingsManager</code>
     </UndefinedInterfaceMethod>
   </file>
   <file src="lib/BackgroundJob/CheckReferenceIdColumn.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>SchemaWrapper</code>
     </UndefinedClass>
   </file>
   <file src="lib/Chat/ChatManager.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>NullCache</code>
     </UndefinedClass>
   </file>
   <file src="lib/Chat/MessageParser.php">
-    <UndefinedVariable occurrences="1">
+    <UndefinedVariable>
       <code>$guestNames</code>
     </UndefinedVariable>
   </file>
   <file src="lib/Chat/Parser/SystemMessage.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>\OC_Util</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Command/Add.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Command/AddSamples.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Command/Delete.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Command/ListCommand.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Command/Update.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Developer/UpdateDocs.php">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Monitor/Calls.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Monitor/HasActiveCalls.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Monitor/Room.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Room/Add.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Room/Create.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Room/Delete.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Room/Demote.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Room/Promote.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Room/Remove.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Room/Update.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Signaling/Add.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Signaling/Delete.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Signaling/ListCommand.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Stun/Add.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Stun/Delete.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Stun/ListCommand.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Turn/Add.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Turn/Delete.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/Turn/ListCommand.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/User/Remove.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Command/User/TransferOwnership.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Base</code>
     </UndefinedClass>
   </file>
   <file src="lib/Config.php">
-    <NullArgument occurrences="1">
+    <NullArgument>
       <code>null</code>
     </NullArgument>
   </file>
-  <file src="lib/Controller/ChatController.php">
-    <InvalidArrayOffset occurrences="1">
-      <code>$commentIdToIndex[$parentId]</code>
-    </InvalidArrayOffset>
-  </file>
   <file src="lib/Controller/SettingsController.php">
-    <InvalidArgument occurrences="1">
+    <InvalidArgument>
       <code>SharedStorage::class</code>
     </InvalidArgument>
   </file>
   <file src="lib/Controller/TempAvatarController.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Filesystem</code>
     </UndefinedClass>
   </file>
   <file src="lib/Files/TemplateLoader.php">
-    <UndefinedClass occurrences="2">
+    <UndefinedClass>
       <code>LoadSidebar</code>
       <code>LoadSidebar</code>
     </UndefinedClass>
   </file>
   <file src="lib/Files/Util.php">
-    <InvalidArgument occurrences="2">
+    <InvalidArgument>
       <code>$fileId</code>
       <code>SharedStorage::class</code>
     </InvalidArgument>
   </file>
   <file src="lib/MatterbridgeManager.php">
-    <UndefinedClass occurrences="7">
+    <UndefinedClass>
       <code>$this-&gt;tokenProvider</code>
       <code>$this-&gt;tokenProvider</code>
       <code>$this-&gt;tokenProvider</code>
@@ -203,49 +203,48 @@
     </UndefinedClass>
   </file>
   <file src="lib/Middleware/InjectionMiddleware.php">
-    <UndefinedInterfaceMethod occurrences="1">
+    <UndefinedInterfaceMethod>
       <code>getAnnotationParameter</code>
     </UndefinedInterfaceMethod>
   </file>
   <file src="lib/Migration/Version2001Date20170707115443.php">
-    <InvalidArrayAccess occurrences="1">
+    <InvalidArrayAccess>
       <code>$return['num_rooms']</code>
     </InvalidArrayAccess>
   </file>
   <file src="lib/Notification/Notifier.php">
-    <InvalidPropertyAssignmentValue occurrences="3">
+    <InvalidPropertyAssignmentValue>
       <code>$this-&gt;participants</code>
       <code>$this-&gt;rooms</code>
       <code>$this-&gt;rooms</code>
     </InvalidPropertyAssignmentValue>
   </file>
   <file src="lib/PublicShare/TemplateLoader.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>BeforeTemplateRenderedEvent</code>
     </UndefinedClass>
   </file>
   <file src="lib/PublicShareAuth/TemplateLoader.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>BeforeTemplateRenderedEvent</code>
     </UndefinedClass>
   </file>
   <file src="lib/Service/AvatarService.php">
-    <UndefinedClass occurrences="2">
+    <UndefinedClass>
       <code>Filesystem</code>
       <code>\OC_Image</code>
     </UndefinedClass>
   </file>
   <file src="lib/Service/RecordingService.php">
-    <UndefinedClass occurrences="2">
-      <code>Filesystem</code>
+    <UndefinedClass>
       <code>NoUserException</code>
     </UndefinedClass>
   </file>
   <file src="lib/Share/Listener.php">
-    <InvalidArgument occurrences="1">
+    <InvalidArgument>
       <code>[self::class, 'listenPreShare']</code>
     </InvalidArgument>
-    <UndefinedClass occurrences="7">
+    <UndefinedClass>
       <code>$event-&gt;getView()</code>
       <code>$event-&gt;getView()</code>
       <code>$event-&gt;getView()</code>
@@ -256,12 +255,12 @@
     </UndefinedClass>
   </file>
   <file src="lib/Share/RoomShareProvider.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>Cache</code>
     </UndefinedClass>
   </file>
   <file src="lib/TInitialState.php">
-    <UndefinedClass occurrences="1">
+    <UndefinedClass>
       <code>NoUserException</code>
     </UndefinedClass>
   </file>
