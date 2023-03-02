@@ -35,6 +35,7 @@ nav:
       - 'Integration by other apps': 'integration.md'
       - 'Signaling API': 'internal-signaling.md'
   - Commands: 'commands.md'
+  - 'Occ commands': 'occ.md'
   - 'PHP events': 'events.md'
   - 'Configuring coTURN': 'TURN.md'
   - 'Matterbridge integration': 'matterbridge.md'

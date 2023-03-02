@@ -51,6 +51,11 @@ class UpdateDocs extends Base {
 		$this
 			->setName('talk:developer:update-docs')
 			->setDescription('Update documentation of commands')
+			->addArgument(
+				'name',
+				InputArgument::OPTIONAL,
+				"The name of command to update. When have this argument, don't will upate the documentation, only will print the markdown output."
+			)
 		;
 	}
 
@@ -58,26 +63,39 @@ class UpdateDocs extends Base {
 		$this->appManager = \OC::$server->get(IAppManager::class);
 
 		$info = $this->appManager->getAppInfo('spreed');
+		$commandName = $input->getArgument('name');
 		$documentation = '';
 		foreach ($info['commands'] as $namespace) {
-			$this->sections['documentation'][] = $this->getDocumentation($namespace);
+			$command = $this->getCommand($namespace);
+			if ($commandName && $commandName !== $command->getName()) {
+				continue;
+			}
+			$this->sections['documentation'][] = $this->getDocumentation($command);
 		}
-		$documentation =
-			"# Talk occ commands\n\n" .
-			implode("\n", $this->sections['summary']) . "\n\n" .
-			implode("\n", $this->sections['documentation']);
 
-		$handle = fopen(__DIR__ . '/../../../docs/occ.md', 'w');
-		fwrite($handle, $documentation);
-		fclose($handle);
+		if ($commandName) {
+			$output->writeln(implode("\n", $this->sections['documentation']));
+		} else {
+			$documentation =
+				"# Talk occ commands\n\n" .
+				implode("\n", $this->sections['summary']) . "\n\n" .
+				implode("\n", $this->sections['documentation']);
+
+			$handle = fopen(__DIR__ . '/../../../docs/occ.md', 'w');
+			fwrite($handle, $documentation);
+			fclose($handle);
+		}
 		return 0;
 	}
 
-	protected function getDocumentation(string $namespace): string {
+	protected function getCommand(string $namespace): Command {
 		$command = \OC::$server->get($namespace);
 		// Clean full definition of command that have the default Symfony options
 		$command->setApplication($this->getApplication());
+		return $command;
+	}
 
+	protected function getDocumentation(Command $command): string {
 		$this->sections['summary'][] =
 			' * ' .
 			'[' . $command->getName() . ']' .
@@ -96,7 +114,7 @@ class UpdateDocs extends Base {
 				function ($carry, $usage) {
 					return $carry.'* `'.$usage.'`'."\n";
 				}
-			);
+			) . "\n";
 		$doc .= $this->describeInputDefinition($command);
 		$doc .= "\n";
 
@@ -108,9 +126,10 @@ class UpdateDocs extends Base {
 		$text = '';
 		if ($showArguments = \count($definition->getArguments()) > 0) {
 			$text .= "\n";
-			$text .= '### Arguments';
+			$text .= "| Arguments | Description | Is required | Is array | Default |\n";
+			$text .= '|---|---|---|---|---|';
 			foreach ($definition->getArguments() as $argument) {
-				$text .= "\n\n";
+				$text .= "\n";
 				if (null !== $describeInputArgument = $this->describeInputArgument($argument)) {
 					$text .= $describeInputArgument;
 				}
@@ -122,9 +141,10 @@ class UpdateDocs extends Base {
 				$text .= "\n\n";
 			}
 
-			$text .= '### Options';
+			$text .= "| Options | Accept value | Is value required | Is multiple | is nagatable | Default |\n";
+			$text .= '|---|---|---|---|---|---|';
 			foreach ($definition->getOptions() as $option) {
-				$text .= "\n\n";
+				$text .= "\n";
 				if (null !== $describeInputOption = $this->describeInputOption($option)) {
 					$text .= $describeInputOption;
 				}
@@ -134,12 +154,14 @@ class UpdateDocs extends Base {
 	}
 
 	protected function describeInputArgument(InputArgument $argument): string {
+		$description = $argument->getDescription();
+
 		return
-			'#### `'.($argument->getName() ?: '<none>')."`\n\n"
-			.($argument->getDescription() ? preg_replace('/\s*[\r\n]\s*/', "\n", $argument->getDescription())."\n\n" : '')
-			.'* Is required: '.($argument->isRequired() ? 'yes' : 'no')."\n"
-			.'* Is array: '.($argument->isArray() ? 'yes' : 'no')."\n"
-			.'* Default: `'.str_replace("\n", '', var_export($argument->getDefault(), true)).'`';
+			'| `'.($argument->getName() ?: '<none>')."` | " .
+			($description ? preg_replace('/\s*[\r\n]\s*/', " ", $description) : '') . ' | ' .
+			($argument->isRequired() ? 'yes' : 'no')." | " .
+			($argument->isArray() ? 'yes' : 'no')." | " .
+			'`' . str_replace("\n", '', var_export($argument->getDefault(), true)) . "` |";
 	}
 
 	protected function describeInputOption(InputOption $option): string {
@@ -150,14 +172,15 @@ class UpdateDocs extends Base {
 		if ($option->getShortcut()) {
 			$name .= '|-'.str_replace('|', '|-', $option->getShortcut()).'';
 		}
+		$description = $option->getDescription();
 
 		return
-			'#### `'.$name.'`'."\n\n"
-			.($option->getDescription() ? preg_replace('/\s*[\r\n]\s*/', "\n", $option->getDescription())."\n\n" : '')
-			.'* Accept value: '.($option->acceptValue() ? 'yes' : 'no')."\n"
-			.'* Is value required: '.($option->isValueRequired() ? 'yes' : 'no')."\n"
-			.'* Is multiple: '.($option->isArray() ? 'yes' : 'no')."\n"
-			.'* Is negatable: '.($option->isNegatable() ? 'yes' : 'no')."\n"
-			.'* Default: `'.str_replace("\n", '', var_export($option->getDefault(), true)).'`';
+			'| `'.$name.'` | ' .
+			($description ? preg_replace('/\s*[\r\n]\s*/', " ", $description) : '') . ' | '.
+			($option->acceptValue() ? 'yes' : 'no')." | " .
+			($option->isValueRequired() ? 'yes' : 'no')." | " .
+			($option->isArray() ? 'yes' : 'no')." | " .
+			($option->isNegatable() ? 'yes' : 'no')." | " .
+			str_replace("\n", '', var_export($option->getDefault(), true)).'` |';
 	}
 }
