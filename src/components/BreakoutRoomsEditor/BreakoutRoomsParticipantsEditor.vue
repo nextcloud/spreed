@@ -55,6 +55,17 @@
 			</template>
 		</div>
 		<div class="participants-editor__buttons">
+			<NcButton v-if="breakoutRoomsConfigured"
+				class="delete"
+				:title="deleteButtonLabel"
+				:aria-label="deleteButtonLabel"
+				type="error"
+				@click="deleteBreakoutRooms">
+				<template #icon>
+					<Delete :size="20" />
+				</template>
+				{{ deleteButtonLabel }}
+			</NcButton>
 			<NcButton v-if="!isReorganizingAttendees"
 				type="tertiary"
 				@click="goBack">
@@ -94,6 +105,7 @@
 
 <script>
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import Delete from 'vue-material-design-icons/Delete.vue'
 import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
 
@@ -104,7 +116,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import SelectableParticipant from './SelectableParticipant.vue'
 
-import { ATTENDEE, PARTICIPANT } from '../../constants.js'
+import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.js'
 
 export default {
 	name: 'BreakoutRoomsParticipantsEditor',
@@ -118,6 +130,7 @@ export default {
 		SelectableParticipant,
 		NcButton,
 		ArrowLeft,
+		Delete,
 	},
 
 	props: {
@@ -193,6 +206,18 @@ export default {
 
 		resetButtonLabel() {
 			return t('spreed', 'Reset')
+		},
+
+		conversation() {
+			return this.$store.getters.conversation(this.token)
+		},
+
+		breakoutRoomsConfigured() {
+			return this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
+		},
+
+		deleteButtonLabel() {
+			return t('spreed', 'Delete breakout rooms')
 		},
 	},
 
@@ -289,6 +314,27 @@ export default {
 			})
 			this.$emit('close')
 		},
+
+		deleteBreakoutRooms() {
+			OC.dialogs.confirmDestructive(
+				t('spreed', 'Current breakout rooms and settings will be lost'),
+				t('spreed', 'Delete breakout rooms'),
+				{
+					type: OC.dialogs.YES_NO_BUTTONS,
+					confirm: t('spreed', 'Delete breakout rooms'),
+					confirmClasses: 'error',
+					cancel: t('spreed', 'Cancel'),
+				},
+				(decision) => {
+					if (!decision) {
+						return
+					}
+					this.$store.dispatch('deleteBreakoutRoomsAction', {
+						token: this.token,
+					})
+				}
+			)
+		},
 	},
 }
 </script>
@@ -329,5 +375,9 @@ export default {
 ::v-deep .icon-collapse {
 	position: absolute !important;
 	left: 0;
+}
+
+.delete {
+	margin-right: auto;
 }
 </style>
