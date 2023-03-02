@@ -1044,17 +1044,22 @@ class Manager {
 		]);
 	}
 
-	public function resolveRoomDisplayName(Room $room, string $userId): string {
+	public function resolveRoomDisplayName(Room $room, string $userId, bool $forceName = false): string {
 		if ($room->getObjectType() === 'share:password') {
 			return $this->l->t('Password request: %s', [$room->getName()]);
 		}
+
 		if ($room->getType() === Room::TYPE_CHANGELOG) {
 			return $this->l->t('Talk updates ✅');
 		}
+
+		if ($forceName) {
+			return $room->getName();
+		}
+
 		if ($userId === '' && $room->getType() !== Room::TYPE_PUBLIC) {
 			return $this->l->t('Private conversation');
 		}
-
 
 		if ($room->getType() !== Room::TYPE_ONE_TO_ONE && $room->getName() === '') {
 			/** @var RoomService $roomService */

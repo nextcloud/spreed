@@ -413,8 +413,8 @@ class Room {
 		return $this->getName();
 	}
 
-	public function getDisplayName(string $userId): string {
-		return $this->manager->resolveRoomDisplayName($this, $userId);
+	public function getDisplayName(string $userId, bool $forceName = false): string {
+		return $this->manager->resolveRoomDisplayName($this, $userId, $forceName);
 	}
 
 	public function getDescription(): string {

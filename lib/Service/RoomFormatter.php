@@ -160,7 +160,7 @@ class RoomFormatter {
 		) {
 			return array_merge($roomData, [
 				'name' => $room->getName(),
-				'displayName' => $room->getDisplayName($isSIPBridgeRequest || $this->userId === null ? '' : $this->userId),
+				'displayName' => $room->getDisplayName($isListingBreakoutRooms || $isSIPBridgeRequest || $this->userId === null ? '' : $this->userId, $isListingBreakoutRooms || $isSIPBridgeRequest),
 				'objectType' => $room->getObjectType(),
 				'objectId' => $room->getObjectId(),
 				'readOnly' => $room->getReadOnly(),
