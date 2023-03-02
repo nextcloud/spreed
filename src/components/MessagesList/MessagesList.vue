@@ -89,10 +89,7 @@ import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 
-import {
-	ATTENDEE,
-	CHAT,
-} from '../../constants.js'
+import { ATTENDEE, CHAT } from '../../constants.js'
 import isInCall from '../../mixins/isInCall.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import { EventBus } from '../../services/EventBus.js'
@@ -346,7 +343,7 @@ export default {
 		 * @param {string} message1.id The ID of the new message
 		 * @param {string} message1.actorType Actor type of the new message
 		 * @param {string} message1.actorId Actor id of the new message
-		 * @param {string} message1.actorDisplayName Actor displayname of the new message
+		 * @param {string} message1.actorDisplayName Actor display name of the new message
 		 * @param {string} message1.systemMessage System message content of the new message
 		 * @param {number} message1.timestamp Timestamp of the new message
 		 * @param {null|object} message2 The previous message
@@ -376,7 +373,7 @@ export default {
 				return false
 			}
 
-			if (!message1IsSystem // System messages are grouped independent from author
+			if (!message1IsSystem // System messages are grouped independently of author
 				&& ((message1.actorType !== message2.actorType // Otherwise the type and id need to match
 					|| message1.actorId !== message2.actorId)
 				|| (message1.actorType === ATTENDEE.ACTOR_TYPE.BRIDGED // Or, if the message is bridged, display names also need to match
@@ -467,24 +464,24 @@ export default {
 			return null
 		},
 
-		scrollToFocussedMessage() {
+		scrollToFocusedMessage() {
 			const focusMessageId = this.getMessageIdFromHash()
-			let focussed = null
+			let isFocused = null
 			if (focusMessageId) {
 				// scroll to message in URL anchor
-				focussed = this.focusMessage(focusMessageId, false)
+				isFocused = this.focusMessage(focusMessageId, false)
 			}
 
-			if (!focussed && this.visualLastReadMessageId) {
+			if (!isFocused && this.visualLastReadMessageId) {
 				// scroll to last read message if visible in the current pages
-				focussed = this.focusMessage(this.visualLastReadMessageId, false, false)
+				isFocused = this.focusMessage(this.visualLastReadMessageId, false, false)
 			}
 
 			// TODO: in case the element is not in a page but does exist in the DB,
 			// we need to scroll up / down to the page where it would exist after
 			// loading said pages
 
-			if (!focussed) {
+			if (!isFocused) {
 				// if no anchor was present or the message to focus on did not exist,
 				// scroll to bottom
 				this.scrollToBottom()
@@ -565,7 +562,7 @@ export default {
 					if (!this.$store.getters.hasMoreMessagesToLoad(this.token)) {
 						hasScrolled = true
 						this.$nextTick(() => {
-							this.scrollToFocussedMessage()
+							this.scrollToFocusedMessage()
 						})
 					}
 				}
@@ -579,7 +576,7 @@ export default {
 					// don't scroll if lookForNewMessages was polling as we don't want
 					// to scroll back to the read marker after receiving new messages later
 					if (!hasScrolled) {
-						this.scrollToFocussedMessage()
+						this.scrollToFocusedMessage()
 					}
 				}
 			} else {
@@ -838,7 +835,7 @@ export default {
 		 * but only do so if the previous marker was already seen.
 		 *
 		 * The new marker position will be sent to the backend but not applied visually.
-		 * Visually, the marker will only move the next time the user is focussing back to this
+		 * Visually, the marker will only move the next time the user is focusing back to this
 		 * conversation in refreshReadMarkerPosition()
 		 */
 		updateReadMarkerPosition() {
