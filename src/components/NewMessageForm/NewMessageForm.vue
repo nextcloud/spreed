@@ -354,7 +354,7 @@ export default {
 		},
 
 		disabled() {
-			return this.isReadOnly || this.noChatPermission || this.isReadOnly || !this.currentConversationIsJoined || this.isRecordingAudio
+			return this.isReadOnly || this.noChatPermission || !this.currentConversationIsJoined || this.isRecordingAudio
 		},
 
 		placeholderText() {
