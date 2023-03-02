@@ -813,13 +813,17 @@ class Manager {
 	 * @param string $objectId
 	 * @return Room[]
 	 */
-	public function getMultipleRoomsByObject(string $objectType, string $objectId): array {
+	public function getMultipleRoomsByObject(string $objectType, string $objectId, bool $orderById = false): array {
 		$query = $this->db->getQueryBuilder();
 		$helper = new SelectHelper();
 		$helper->selectRoomsTable($query);
 		$query->from('talk_rooms', 'r')
 			->where($query->expr()->eq('r.object_type', $query->createNamedParameter($objectType)))
 			->andWhere($query->expr()->eq('r.object_id', $query->createNamedParameter($objectId)));
+
+		if ($orderById) {
+			$query->orderBy('id', 'ASC');
+		}
 
 		$result = $query->executeQuery();
 		$rooms = [];
@@ -1044,17 +1048,22 @@ class Manager {
 		]);
 	}
 
-	public function resolveRoomDisplayName(Room $room, string $userId): string {
+	public function resolveRoomDisplayName(Room $room, string $userId, bool $forceName = false): string {
 		if ($room->getObjectType() === 'share:password') {
 			return $this->l->t('Password request: %s', [$room->getName()]);
 		}
+
 		if ($room->getType() === Room::TYPE_CHANGELOG) {
 			return $this->l->t('Talk updates ✅');
 		}
+
+		if ($forceName) {
+			return $room->getName();
+		}
+
 		if ($userId === '' && $room->getType() !== Room::TYPE_PUBLIC) {
 			return $this->l->t('Private conversation');
 		}
-
 
 		if ($room->getType() !== Room::TYPE_ONE_TO_ONE && $room->getName() === '') {
 			/** @var RoomService $roomService */

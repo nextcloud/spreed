@@ -207,7 +207,10 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 					$this->getResponseFormat(),
 					[],
 					$room,
-					$this->participantService->getParticipant($room, $this->userId)
+					$this->participantService->getParticipant($room, $this->userId),
+					[],
+					false,
+					true
 				);
 			} catch (ParticipantNotFoundException $e) {
 			}

@@ -527,7 +527,7 @@ class BreakoutRoomService {
 			throw new \InvalidArgumentException('status');
 		}
 
-		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken());
+		$breakoutRooms = $this->manager->getMultipleRoomsByObject(BreakoutRoom::PARENT_OBJECT_TYPE, $parent->getToken(), true);
 
 		$returnAll = $participant->hasModeratorPermissions() || $parent->getBreakoutRoomMode() === BreakoutRoom::MODE_FREE;
 		if (!$returnAll) {
