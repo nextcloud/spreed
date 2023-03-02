@@ -24,7 +24,6 @@
 	<Fragment>
 		<li :key="roomName"
 			class="breakout-room-item">
-			<!-- TODO: choose final icon -->
 			<DotsCircle class="breakout-room-item__icon" :size="20" />
 			{{ roomName }}
 			<div class="breakout-room-item__actions">

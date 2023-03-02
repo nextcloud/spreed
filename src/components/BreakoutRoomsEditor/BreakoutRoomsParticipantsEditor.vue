@@ -29,7 +29,7 @@
 				:allow-collapse="true"
 				:open="true">
 				<template #icon>
-					<GoogleCircles :size="20" />
+					<DotsCircle :size="20" />
 				</template>
 				<SelectableParticipant v-for="participant in unassignedParticipants"
 					:key="participant.attendeeId"
@@ -44,7 +44,7 @@
 					:allow-collapse="true"
 					:open="true">
 					<template #icon>
-						<GoogleCircles :size="20" />
+						<DotsCircle :size="20" />
 					</template>
 					<SelectableParticipant v-for="attendeeId in item"
 						:key="attendeeId"
@@ -70,7 +70,6 @@
 				type="tertiary"
 				@click="goBack">
 				<template #icon>
-					<!-- TODO: choose final icon -->
 					<ArrowLeft :size="20" />
 				</template>
 				{{ t('spreed', 'Back') }}
@@ -88,8 +87,7 @@
 					:close-after-click="true"
 					@click="assignAttendees(index)">
 					<template #icon>
-						<!-- TODO: choose final icon -->
-						<GoogleCircles :size="20" />
+						<DotsCircle :size="20" />
 					</template>
 					{{ roomName(index) }}
 				</NcActionButton>
@@ -106,7 +104,7 @@
 <script>
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
-import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
+import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -124,7 +122,7 @@ export default {
 	components: {
 		NcActions,
 		NcActionButton,
-		GoogleCircles,
+		DotsCircle,
 		Reload,
 		NcAppNavigationItem,
 		SelectableParticipant,
