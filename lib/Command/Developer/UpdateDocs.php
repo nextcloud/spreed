@@ -64,28 +64,36 @@ class UpdateDocs extends Base {
 		ftruncate($this->doc, 0);
 
 		$info = $this->appManager->getAppInfo('spreed');
-		foreach ($info['commands'] as $commandNamespace) {
-			$path = str_replace('OCA\Talk', '', $commandNamespace);
-			$path = str_replace('\\', '/', $path);
-			$path = __DIR__ . '/../../../lib' . $path . '.php';
-			if (!file_exists($path)) {
-				$output->writeln('<error>The class of the follow namespase is not implemented: ' . $commandNamespace . '</error>');
-				return 1;
-			}
-			$code = file_get_contents($path);
-			preg_match("/->setName\('(?<command>[\w:\-_]+)'\)/", $code, $matches);
-			if (!array_key_exists('command', $matches)) {
-				preg_match("/\tname: '(?<command>[\w:\-_]+)',?\n/", $code, $matches);
-				if (!array_key_exists('command', $matches)) {
-					$output->writeln('<error>A command need to have a name. Namespace: ' . $commandNamespace . '</error>');
-					return 1;
-				}
-			}
-			$command = $matches['command'];
-			$this->updateDocumentation($commandNamespace, $command);
+		$commands = [];
+		fwrite($this->doc, "# Talk occ commands\n\n");
+		foreach ($info['commands'] as $namespace) {
+			$command = $this->getCommandByNamespace($namespace);
+			$commands[$namespace] = $command;
+			fwrite($this->doc, ' * [' . $command . '](#' . str_replace([':'], '', $command) . ")\n");
+		}
+		foreach ($commands as $namespace => $command) {
+			$this->updateDocumentation($namespace, $command);
 		}
 		fclose($this->doc);
 		return 0;
+	}
+
+	protected function getCommandByNamespace(string $namespace): string {
+		$path = str_replace('OCA\Talk', '', $namespace);
+		$path = str_replace('\\', '/', $path);
+		$path = __DIR__ . '/../../../lib' . $path . '.php';
+		if (!file_exists($path)) {
+			throw new \Exception('The class of the follow namespase is not implemented: ' . $namespace);
+		}
+		$code = file_get_contents($path);
+		preg_match("/->setName\('(?<command>[\w:\-_]+)'\)/", $code, $matches);
+		if (!array_key_exists('command', $matches)) {
+			preg_match("/\tname: '(?<command>[\w:\-_]+)',?\n/", $code, $matches);
+			if (!array_key_exists('command', $matches)) {
+				throw new \Exception('A command need to have a name. Namespace: ' . $namespace);
+			}
+		}
+		return $matches['command'];
 	}
 
 	protected function updateDocumentation(string $namespace, string $commandName): void {
