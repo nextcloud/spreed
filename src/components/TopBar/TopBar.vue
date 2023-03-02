@@ -91,8 +91,9 @@
 
 		<CallButton class="top-bar__button" />
 
+		<!-- sidebar toggle -->
 		<template v-if="showOpenSidebarButton">
-			<!-- sidebar toggle -->
+			<!-- in chat: open last tab -->
 			<NcButton v-if="!isInCall"
 				class="top-bar__button dark-hover"
 				close-after-click="true"
@@ -103,26 +104,21 @@
 				</template>
 			</NcButton>
 
-			<!-- chat button -->
-			<div v-if="isInCall"
-				class="chat-button">
-				<NcActions class="top-bar__button dark-hover"
-					close-after-click="true"
-					:container="container">
-					<NcActionButton key="openSideBarButtonMessageText"
-						@click="openSidebar('chat')">
-						<template #icon>
-							<MessageText :size="20"
-								fill-color="#ffffff" />
-						</template>
-					</NcActionButton>
-				</NcActions>
-				<NcCounterBubble v-if="!isSidebar && isInCall && unreadMessagesCounter > 0"
-					class="chat-button__unread-messages-counter"
-					:highlighted="hasUnreadMentions">
-					{{ unreadMessagesCounter }}
-				</NcCounterBubble>
-			</div>
+			<!-- in call: open chat tab -->
+			<NcButton v-else
+				class="top-bar__button chat-button dark-hover"
+				type="tertiary"
+				@click="openSidebar('chat')">
+				<template #icon>
+					<MessageText :size="20"
+						fill-color="#ffffff" />
+					<NcCounterBubble v-if="unreadMessagesCounter > 0"
+						class="chat-button__unread-messages-counter"
+						:highlighted="hasUnreadMentions">
+						{{ unreadMessagesCounter }}
+					</NcCounterBubble>
+				</template>
+			</NcButton>
 		</template>
 
 		<!-- Breakout rooms editor -->
@@ -141,8 +137,6 @@ import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 
-import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCounterBubble from '@nextcloud/vue/dist/Components/NcCounterBubble.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
@@ -170,8 +164,6 @@ export default {
 
 	components: {
 		BreakoutRoomsEditor,
-		NcActionButton,
-		NcActions,
 		NcCounterBubble,
 		CallButton,
 		AccountMultiple,
@@ -444,6 +436,7 @@ export default {
 
 	.chat-button {
 		position: relative;
+		overflow: visible;
 		&__unread-messages-counter {
 			position: absolute;
 			top: 24px;
