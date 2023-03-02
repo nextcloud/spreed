@@ -21,51 +21,47 @@
 -->
 
 <template>
-	<NcAppNavigationItem :key="roomName"
-		:force-display-actions="true"
-		class="breakout-rooms__room"
-		:title="roomName"
-		:allow-collapse="true"
-		:inline-actions="1"
-		:open="true">
-		<template #icon>
+	<Fragment>
+		<li :key="roomName"
+			class="breakout-room-item">
 			<!-- TODO: choose final icon -->
 			<GoogleCircles :size="20" />
-		</template>
-		<template #actions>
-			<NcActionButton @click="joinRoom">
-				<template #icon>
-					<ArrowRight :size="16" />
-				</template>
-				{{ t('spreed', 'Join room') }}
-			</NcActionButton>
-			<NcActionButton v-if="showAssistanceButton"
-				@click="dismissRequestAssistance">
-				<template #icon>
-					<HandBackLeft :size="16" />
-				</template>
-				{{ t('spreed', 'Dismiss request for assistance') }}
-			</NcActionButton>
-			<NcActionButton @click="openSendMessageForm">
-				<template #icon>
-					<Send :size="16" />
-				</template>
-				{{ t('spreed', 'Send message to room') }}
-			</NcActionButton>
-		</template>
-		<!-- Send message dialog -->
-		<SendMessageDialog v-if="isDialogOpened"
-			:display-name="roomName"
-			:token="roomToken"
-			@close="closeSendMessageForm" />
+			{{ roomName }}
+			<div class="breakout-room-item__actions">
+				<NcButton @click="joinRoom">
+					{{ t('spreed', 'Join') }}
+				</NcButton>
+				<NcActions :force-menu="true">
+					<NcActionButton v-if="showAssistanceButton"
+						@click="dismissRequestAssistance">
+						<template #icon>
+							<HandBackLeft :size="16" />
+						</template>
+						{{ t('spreed', 'Dismiss request for assistance') }}
+					</NcActionButton>
+					<NcActionButton @click="openSendMessageForm">
+						<template #icon>
+							<Send :size="16" />
+						</template>
+						{{ t('spreed', 'Send message to room') }}
+					</NcActionButton>
+				</NcActions>
+			</div>
+			<!-- Send message dialog -->
+			<SendMessageDialog v-if="isDialogOpened"
+				:display-name="roomName"
+				:token="roomToken"
+				@close="closeSendMessageForm" />
+		</li>
 		<template v-for="participant in roomParticipants">
 			<Participant :key="participant.actorId" :participant="participant" />
 		</template>
-	</NcAppNavigationItem>
+	</Fragment>
 </template>
 
 <script>
-import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
+import { Fragment } from 'vue-frag'
+
 import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Send from 'vue-material-design-icons/Send.vue'
@@ -73,7 +69,8 @@ import Send from 'vue-material-design-icons/Send.vue'
 import { showWarning } from '@nextcloud/dialogs'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 import Participant from '../Participants/ParticipantsList/Participant/Participant.vue'
@@ -86,16 +83,17 @@ export default {
 
 	components: {
 		// Components
-		NcAppNavigationItem,
 		Participant,
 		NcActionButton,
 		SendMessageDialog,
+		NcButton,
+		NcActions,
+		Fragment,
 
 		// Icons
 		GoogleCircles,
 		HandBackLeft,
 		Send,
-		ArrowRight,
 	},
 
 	props: {
@@ -187,6 +185,18 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.breakout-room-item {
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+	margin-top: calc(var(--default-grid-baseline)*5);
+	gap: var(--default-grid-baseline);
 
+	&__actions {
+		margin-left: auto;
+		display: flex;
+		gap: var(--default-grid-baseline);
+	}
+}
 </style>
