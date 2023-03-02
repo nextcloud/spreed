@@ -40,20 +40,15 @@
 		</transition>
 		<MessagesList role="region"
 			:aria-label="t('spreed', 'Conversation messages')"
-			:is-chat-scrolled-to-bottom="isChatScrolledToBottom"
 			:token="token"
-			:is-visible="isVisible"
-			@set-chat-scrolled-to-bottom="setScrollStatus" />
+			:is-visible="isVisible" />
 		<NewMessageForm role="region"
 			:token="token"
-			:is-chat-scrolled-to-bottom="isChatScrolledToBottom"
 			:aria-label="t('spreed', 'Post message')" />
 	</div>
 </template>
 
 <script>
-import { getCapabilities } from '@nextcloud/capabilities'
-
 import MessagesList from './MessagesList/MessagesList.vue'
 import NewMessageForm from './NewMessageForm/NewMessageForm.vue'
 
@@ -78,7 +73,6 @@ export default {
 	data() {
 		return {
 			isDraggingOver: false,
-			isChatScrolledToBottom: getCapabilities()?.spreed?.config?.chat?.legacy || false,
 		}
 	},
 
@@ -134,16 +128,14 @@ export default {
 			// Uploads and shares the files
 			this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId })
 		},
-
-		setScrollStatus(payload) {
-			this.isChatScrolledToBottom = payload
-		},
 	},
 
 }
 </script>
 
 <style lang="scss" scoped>
+@import '../assets/variables';
+
 .chatView {
 	width: 100%;
 	height: 100%;
@@ -195,7 +187,7 @@ export default {
 	}
 	&-enter-active,
 	&-leave-active {
-		transition: all 150ms ease-in-out;
+		transition: $fade-transition;
 	}
 }
 </style>

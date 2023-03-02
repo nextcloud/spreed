@@ -20,8 +20,7 @@
 -->
 
 <template>
-	<div class="wrapper"
-		:class="{'wrapper--chatScrolledToBottom': isChatScrolledToBottom}">
+	<div class="wrapper">
 		<!--native file picker, hidden -->
 		<input id="file-upload"
 			ref="fileUploadInput"
@@ -290,11 +289,6 @@ export default {
 	},
 
 	props: {
-		isChatScrolledToBottom: {
-			type: Boolean,
-			default: true,
-		},
-
 		/**
 		 * The current conversation token or the breakout room token.
 		 */
@@ -914,11 +908,7 @@ export default {
 	display: flex;
 	justify-content: center;
 	padding: 12px 0;
-	border-top: 1px solid var(--color-border);
 	min-height: 69px;
-	&--chatScrolledToBottom {
-		border-top: none;
-	}
 }
 
 .new-message {

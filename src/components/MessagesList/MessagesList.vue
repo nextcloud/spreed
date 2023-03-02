@@ -30,6 +30,7 @@ get the messagesList array and loop through the list to generate the messages.
 	are outside of the viewport -->
 	<div ref="scroller"
 		class="scroller messages-list__scroller"
+		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom}"
 		@scroll="debounceHandleScroll">
 		<div v-if="displayMessagesLoader"
 			class="scroller__loading"
@@ -88,10 +89,7 @@ import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 
-import {
-	ATTENDEE,
-	CHAT,
-} from '../../constants.js'
+import { ATTENDEE, CHAT } from '../../constants.js'
 import isInCall from '../../mixins/isInCall.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import { EventBus } from '../../services/EventBus.js'
@@ -127,11 +125,6 @@ export default {
 			required: true,
 		},
 
-		isChatScrolledToBottom: {
-			type: Boolean,
-			required: true,
-		},
-
 		isVisible: {
 			type: Boolean,
 			default: true,
@@ -161,6 +154,7 @@ export default {
 
 			isFocusingMessage: false,
 
+			isChatScrolledToBottom: true,
 			/**
 			 * Quick edit option to fall back to the loading history and then new messages
 			 */
@@ -237,7 +231,7 @@ export default {
 		 * @return {boolean}
 		 */
 		isSticky() {
-			return this.isChatScrolledToBottom
+			return this.isChatScrolledToBottom && !this.isInitialisingMessages
 		},
 
 		/**
@@ -266,10 +260,6 @@ export default {
 		scrollToBottomAriaLabel() {
 			return t('spreed', 'Scroll to bottom')
 		},
-
-		scroller() {
-			return this.$refs.scroller
-		},
 	},
 
 	watch: {
@@ -284,6 +274,7 @@ export default {
 				if (oldValue) {
 					this.$store.dispatch('cancelLookForNewMessages', { requestId: oldValue })
 				}
+				this.isChatScrolledToBottom = true
 				this.handleStartGettingMessagesPreconditions()
 
 				// Remove expired messages when joining a room
@@ -349,7 +340,7 @@ export default {
 		 * @param {string} message1.id The ID of the new message
 		 * @param {string} message1.actorType Actor type of the new message
 		 * @param {string} message1.actorId Actor id of the new message
-		 * @param {string} message1.actorDisplayName Actor displayname of the new message
+		 * @param {string} message1.actorDisplayName Actor display name of the new message
 		 * @param {string} message1.systemMessage System message content of the new message
 		 * @param {number} message1.timestamp Timestamp of the new message
 		 * @param {null|object} message2 The previous message
@@ -379,7 +370,7 @@ export default {
 				return false
 			}
 
-			if (!message1IsSystem // System messages are grouped independent from author
+			if (!message1IsSystem // System messages are grouped independently of author
 				&& ((message1.actorType !== message2.actorType // Otherwise the type and id need to match
 					|| message1.actorId !== message2.actorId)
 				|| (message1.actorType === ATTENDEE.ACTOR_TYPE.BRIDGED // Or, if the message is bridged, display names also need to match
@@ -470,24 +461,24 @@ export default {
 			return null
 		},
 
-		scrollToFocussedMessage() {
+		scrollToFocusedMessage() {
 			const focusMessageId = this.getMessageIdFromHash()
-			let focussed = null
+			let isFocused = null
 			if (focusMessageId) {
 				// scroll to message in URL anchor
-				focussed = this.focusMessage(focusMessageId, false)
+				isFocused = this.focusMessage(focusMessageId, false)
 			}
 
-			if (!focussed && this.visualLastReadMessageId) {
+			if (!isFocused && this.visualLastReadMessageId) {
 				// scroll to last read message if visible in the current pages
-				focussed = this.focusMessage(this.visualLastReadMessageId, false, false)
+				isFocused = this.focusMessage(this.visualLastReadMessageId, false, false)
 			}
 
 			// TODO: in case the element is not in a page but does exist in the DB,
 			// we need to scroll up / down to the page where it would exist after
 			// loading said pages
 
-			if (!focussed) {
+			if (!isFocused) {
 				// if no anchor was present or the message to focus on did not exist,
 				// scroll to bottom
 				this.scrollToBottom()
@@ -495,7 +486,7 @@ export default {
 
 			// if no scrollbars, clear read marker directly as scrolling is not possible for the user to clear it
 			// also clear in case lastReadMessage is zero which is due to an older bug
-			if (this.visualLastReadMessageId === 0 || this.scroller.scrollHeight <= this.scroller.offsetHeight) {
+			if (this.visualLastReadMessageId === 0 || this.$refs.scroller.scrollHeight <= this.$refs.scroller.offsetHeight) {
 				// clear after a delay, unless scrolling can resume in-between
 				this.debounceUpdateReadMarkerPosition()
 			}
@@ -505,7 +496,6 @@ export default {
 			if (this.token && this.isParticipant && !this.isInLobby) {
 
 				// prevent sticky mode before we have loaded anything
-				this.setChatScrolledToBottom(false)
 				this.isInitialisingMessages = true
 				const focusMessageId = this.getMessageIdFromHash()
 
@@ -569,10 +559,12 @@ export default {
 					if (!this.$store.getters.hasMoreMessagesToLoad(this.token)) {
 						hasScrolled = true
 						this.$nextTick(() => {
-							this.scrollToFocussedMessage()
+							this.scrollToFocusedMessage()
 						})
 					}
 				}
+
+				this.isInitialisingMessages = false
 
 				// get new messages
 				await this.lookForNewMessages()
@@ -581,7 +573,7 @@ export default {
 					// don't scroll if lookForNewMessages was polling as we don't want
 					// to scroll back to the read marker after receiving new messages later
 					if (!hasScrolled) {
-						this.scrollToFocussedMessage()
+						this.scrollToFocusedMessage()
 					}
 				}
 			} else {
@@ -669,8 +661,6 @@ export default {
 					requestId: this.chatIdentifier,
 				})
 
-				this.isInitialisingMessages = false
-
 				// Scroll to the last message if sticky
 				if (scrollToBottom && this.isSticky) {
 					this.smoothScrollToBottom()
@@ -709,15 +699,7 @@ export default {
 			}, 500)
 		},
 
-		debounceHandleScroll() {
-			if (this.loadChatInLegacyMode) {
-				this.debounceHandleScrollWithoutPreconditions()
-			} else if (!this.isInitialisingMessages && !this.isFocusingMessage) {
-				this.debounceHandleScrollWithoutPreconditions()
-			}
-		},
-
-		debounceHandleScrollWithoutPreconditions: debounce(function() {
+		debounceHandleScroll: debounce(function() {
 			this.handleScroll()
 		}, 50),
 
@@ -745,16 +727,22 @@ export default {
 				}
 			}
 
-			const scrollHeight = this.scroller.scrollHeight
-			const scrollTop = this.scroller.scrollTop
+			const { scrollHeight, scrollTop, clientHeight } = this.$refs.scroller
 			const scrollOffset = scrollHeight - scrollTop
-			const elementHeight = this.scroller.clientHeight
 			const tolerance = 10
-			if (scrollOffset < elementHeight + tolerance && scrollOffset > elementHeight - tolerance) {
+
+			// For chats, scrolled to bottom or / and fitted in one screen
+			if (scrollOffset < clientHeight + tolerance && scrollOffset > clientHeight - tolerance) {
 				this.setChatScrolledToBottom(true)
 				this.displayMessagesLoader = false
 				this.previousScrollTopValue = scrollTop
-			} else if (scrollHeight > elementHeight && scrollTop < 800 && scrollTop <= this.previousScrollTopValue) {
+				this.debounceUpdateReadMarkerPosition()
+				return
+			}
+
+			this.setChatScrolledToBottom(false)
+
+			if (scrollHeight > clientHeight && scrollTop < 800 && scrollTop <= this.previousScrollTopValue) {
 				if (this.loadingOldMessages) {
 					// already loading, don't do it twice
 					return
@@ -764,13 +752,9 @@ export default {
 				}
 				await this.getOldMessages(false)
 				this.displayMessagesLoader = false
-				this.previousScrollTopValue = scrollTop
-			} else {
-				this.setChatScrolledToBottom(false)
-				this.displayMessagesLoader = false
-				this.previousScrollTopValue = scrollTop
 			}
 
+			this.previousScrollTopValue = scrollTop
 			this.debounceUpdateReadMarkerPosition()
 		},
 
@@ -794,7 +778,7 @@ export default {
 			}
 			let previousEl = el
 
-			const scrollTop = this.scroller.scrollTop
+			const { scrollTop } = this.$refs.scroller
 			while (el) {
 				// is the message element fully visible with no intersection with the bottom border ?
 				if (el.offsetTop - scrollTop >= 0) {
@@ -850,7 +834,7 @@ export default {
 		 * but only do so if the previous marker was already seen.
 		 *
 		 * The new marker position will be sent to the backend but not applied visually.
-		 * Visually, the marker will only move the next time the user is focussing back to this
+		 * Visually, the marker will only move the next time the user is focusing back to this
 		 * conversation in refreshReadMarkerPosition()
 		 */
 		updateReadMarkerPosition() {
@@ -884,7 +868,7 @@ export default {
 				return
 			}
 
-			if (lastReadMessageElement && (lastReadMessageElement.offsetTop - this.scroller.scrollTop > 0)) {
+			if (lastReadMessageElement && (lastReadMessageElement.offsetTop - this.$refs.scroller.scrollTop > 0)) {
 				// still visible, hasn't disappeared at the top yet
 				return
 			}
@@ -914,7 +898,6 @@ export default {
 		handleScrollChatToBottomEvent(options) {
 			if ((options && options.force) || this.isChatScrolledToBottom) {
 				this.scrollToBottom()
-				this.setChatScrolledToBottom(true)
 			}
 		},
 
@@ -925,19 +908,19 @@ export default {
 			this.$nextTick(function() {
 				if (this.isWindowVisible && (document.hasFocus() || this.isInCall)) {
 					// scrollTo is used when the user is watching
-					this.scroller.scrollTo({
-						top: this.scroller.scrollHeight,
+					this.$refs.scroller.scrollTo({
+						top: this.$refs.scroller.scrollHeight,
 						behavior: 'smooth',
 					})
 					this.setChatScrolledToBottom(true)
 				} else {
 					// Otherwise we jump half a message and stop autoscrolling, so the user can read up
-					if (this.scroller.scrollHeight - this.scroller.scrollTop - this.scroller.offsetHeight < 40) {
+					if (this.$refs.scroller.scrollHeight - this.$refs.scroller.scrollTop - this.$refs.scroller.offsetHeight < 40) {
 						// Single new line from the previous author is 35px so scroll half a line
-						this.scroller.scrollTop += 10
+						this.$refs.scroller.scrollTop += 10
 					} else {
 						// Single new line from the new author is 75px so scroll half an avatar
-						this.scroller.scrollTop += 40
+						this.$refs.scroller.scrollTop += 40
 					}
 					this.setChatScrolledToBottom(false)
 				}
@@ -948,7 +931,7 @@ export default {
 		 */
 		scrollToBottom() {
 			this.$nextTick(function() {
-				this.scroller.scrollTop = this.scroller.scrollHeight
+				this.$refs.scroller.scrollTop = this.$refs.scroller.scrollHeight
 				this.setChatScrolledToBottom(true)
 			})
 
@@ -982,13 +965,14 @@ export default {
 				})
 				if (!smooth) {
 					// scroll the viewport slightly further to make sure the element is about 1/3 from the top
-					this.scroller.scrollTop += this.scroller.offsetHeight / 4
+					this.$refs.scroller.scrollTop += this.$refs.scroller.offsetHeight / 4
 				}
 				if (highlightAnimation) {
 					element.focus()
 					element.highlightAnimation()
 				}
 				this.isFocusingMessage = false
+				await this.handleScroll()
 			})
 
 			return true
@@ -1051,7 +1035,7 @@ export default {
 		},
 
 		setChatScrolledToBottom(boolean) {
-			this.$emit('set-chat-scrolled-to-bottom', boolean)
+			this.isChatScrolledToBottom = boolean
 			if (boolean) {
 				// mark as read if marker was seen
 				// we have to do this early because unfocusing the window will remove the stickiness
@@ -1073,6 +1057,13 @@ export default {
 	flex: 1 0;
 	overflow-y: auto;
 	overflow-x: hidden;
+	border-bottom: 1px solid var(--color-border);
+	transition: $fade-transition;
+
+	&--chatScrolledToBottom {
+		border-bottom-color: transparent;
+	}
+
 	&__loading {
 		height: 50px;
 		display: flex;
