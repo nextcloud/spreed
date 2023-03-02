@@ -274,6 +274,7 @@ export default {
 				if (oldValue) {
 					this.$store.dispatch('cancelLookForNewMessages', { requestId: oldValue })
 				}
+				this.isChatScrolledToBottom = true
 				this.handleStartGettingMessagesPreconditions()
 
 				// Remove expired messages when joining a room
