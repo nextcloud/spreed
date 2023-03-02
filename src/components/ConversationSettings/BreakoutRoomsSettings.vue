@@ -30,7 +30,7 @@
 				<template #icon>
 					<DotsCircle :size="20" />
 				</template>
-				{{ t('spreed', 'Setup breakout rooms for this conversation') }}
+				{{ t('spreed', 'Set up breakout rooms for this conversation') }}
 			</NcButton>
 		</div>
 		<!-- Breakout rooms editor -->

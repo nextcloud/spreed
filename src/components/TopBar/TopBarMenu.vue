@@ -150,7 +150,7 @@
 			<template #icon>
 				<DotsCircle :size="20" />
 			</template>
-			{{ t('spreed', 'Setup breakout rooms') }}
+			{{ t('spreed', 'Set up breakout rooms') }}
 		</NcActionButton>
 
 		<!-- Conversation settings -->
