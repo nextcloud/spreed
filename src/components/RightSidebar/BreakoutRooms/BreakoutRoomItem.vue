@@ -25,7 +25,7 @@
 		<li :key="roomName"
 			class="breakout-room-item">
 			<!-- TODO: choose final icon -->
-			<GoogleCircles :size="20" />
+			<DotsCircle class="breakout-room-item__icon" :size="20" />
 			{{ roomName }}
 			<div class="breakout-room-item__actions">
 				<NcButton @click="joinRoom">
@@ -62,7 +62,7 @@
 <script>
 import { Fragment } from 'vue-frag'
 
-import GoogleCircles from 'vue-material-design-icons/GoogleCircles.vue'
+import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
@@ -91,7 +91,7 @@ export default {
 		Fragment,
 
 		// Icons
-		GoogleCircles,
+		DotsCircle,
 		HandBackLeft,
 		Send,
 	},
@@ -192,6 +192,10 @@ export default {
 	align-items: center;
 	margin-top: calc(var(--default-grid-baseline)*5);
 	gap: var(--default-grid-baseline);
+
+	&__icon {
+		margin: 0 18px 0 16px ;
+	}
 
 	&__actions {
 		margin-left: auto;
