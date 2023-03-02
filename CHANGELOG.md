@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.0-rc.1 – 2023-03-02
+### Changed
+- Update several dependencies
+
+### Fixed
+- Design review changes for breakout rooms handling
+  [#8905](https://github.com/nextcloud/spreed/pull/8905)
+  [#8910](https://github.com/nextcloud/spreed/pull/8910)
+  [#8919](https://github.com/nextcloud/spreed/pull/8919)
+  [#8920](https://github.com/nextcloud/spreed/pull/8920)
+  [#8921](https://github.com/nextcloud/spreed/pull/8921)
+  [#8922](https://github.com/nextcloud/spreed/pull/8922)
+- Always expose the breakout room names when being a member of the parent
+  [#8925](https://github.com/nextcloud/spreed/pull/8925)
+- Hide breakout rooms from the dashboard widget
+  [#8918](https://github.com/nextcloud/spreed/pull/8918)
+- Fix chat scrolling to the end and the quick access button for it
+  [#8895](https://github.com/nextcloud/spreed/pull/8895)
+- Breakout rooms can not be configured in full screen mode
+  [#8897](https://github.com/nextcloud/spreed/pull/8897)
+- Button to reopen the chat sidebar while being in a call can disappear
+  [#8923](https://github.com/nextcloud/spreed/pull/8923)
+- Error when reacting to a message when the author left the conversation
+  [#8883](https://github.com/nextcloud/spreed/pull/8883)
+- File upload modal is positioned outside the chat
+  [#8906](https://github.com/nextcloud/spreed/pull/8906)
+
 ## 16.0.0-beta.2 – 2023-02-27
 ### Changed
 - Update several dependencies
