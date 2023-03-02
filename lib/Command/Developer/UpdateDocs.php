@@ -30,14 +30,12 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateDocs extends Base {
 	private IConfig $config;
 	private IAppManager $appManager;
-	/** @var resource */
-	private $doc;
+	private array $sections = [];
 
 	public function __construct(IConfig $config) {
 		$this->config = $config;
@@ -50,8 +48,6 @@ class UpdateDocs extends Base {
 	}
 
 	protected function configure(): void {
-		parent::configure();
-
 		$this
 			->setName('talk:developer:update-docs')
 			->setDescription('Update documentation of commands')
@@ -60,101 +56,93 @@ class UpdateDocs extends Base {
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$this->appManager = \OC::$server->get(IAppManager::class);
-		$this->doc = fopen(__DIR__ . '/../../../docs/occ.md', 'a');
-		ftruncate($this->doc, 0);
 
 		$info = $this->appManager->getAppInfo('spreed');
-		$commands = [];
-		fwrite($this->doc, "# Talk occ commands\n\n");
+		$documentation = '';
 		foreach ($info['commands'] as $namespace) {
-			$command = $this->getCommandByNamespace($namespace);
-			$commands[$namespace] = $command;
-			fwrite($this->doc, ' * [' . $command . '](#' . str_replace([':'], '', $command) . ")\n");
+			$this->sections['documentation'][] = $this->getDocumentation($namespace);
 		}
-		foreach ($commands as $namespace => $command) {
-			$this->updateDocumentation($namespace, $command);
-		}
-		fclose($this->doc);
+		$documentation =
+			"# Talk occ commands\n\n" .
+			implode("\n", $this->sections['summary']) . "\n\n" .
+			implode("\n", $this->sections['documentation']);
+
+		$handle = fopen(__DIR__ . '/../../../docs/occ.md', 'w');
+		fwrite($handle, $documentation);
+		fclose($handle);
 		return 0;
 	}
 
-	protected function getCommandByNamespace(string $namespace): string {
-		$path = str_replace('OCA\Talk', '', $namespace);
-		$path = str_replace('\\', '/', $path);
-		$path = __DIR__ . '/../../../lib' . $path . '.php';
-		if (!file_exists($path)) {
-			throw new \Exception('The class of the follow namespase is not implemented: ' . $namespace);
-		}
-		$code = file_get_contents($path);
-		preg_match("/->setName\('(?<command>[\w:\-_]+)'\)/", $code, $matches);
-		if (!array_key_exists('command', $matches)) {
-			preg_match("/\tname: '(?<command>[\w:\-_]+)',?\n/", $code, $matches);
-			if (!array_key_exists('command', $matches)) {
-				throw new \Exception('A command need to have a name. Namespace: ' . $namespace);
-			}
-		}
-		return $matches['command'];
-	}
-
-	protected function updateDocumentation(string $namespace, string $commandName): void {
-		$output = new BufferedOutput();
-
+	protected function getDocumentation(string $namespace): string {
 		$command = \OC::$server->get($namespace);
+		// Clean full definition of command that have the default Symfony options
+		$command->setApplication($this->getApplication());
 
-		$output->write('## ' . $command->getName() . "\n\n");
-		$output->write($command->getDescription() . "\n\n");
-		$output->write(
+		$this->sections['summary'][] =
+			' * ' .
+			'[' . $command->getName() . ']' .
+			'(#' . str_replace([':'], '', $command->getName()) . ')';
+
+		$doc = '## ' . $command->getName() . "\n\n";
+		$doc .= $command->getDescription() . "\n\n";
+		$doc .=
 			'### Usage' . "\n\n" .
-			array_reduce(array_merge([$command->getSynopsis()], $command->getAliases(), $command->getUsages()), function ($carry, $usage) {
-				return $carry.'* `'.$usage.'`'."\n";
-			})
-		);
-		$this->describeInputDefinition($command, $output);
-		$output->write("\n\n");
+			array_reduce(
+				array_merge(
+					[$command->getSynopsis()],
+					$command->getAliases(),
+					$command->getUsages()
+				),
+				function ($carry, $usage) {
+					return $carry.'* `'.$usage.'`'."\n";
+				}
+			);
+		$doc .= $this->describeInputDefinition($command);
+		$doc .= "\n";
 
-		fwrite($this->doc, $output->fetch());
-		return;
+		return $doc;
 	}
 
-	protected function describeInputDefinition(Command $command, OutputInterface $output): void {
+	protected function describeInputDefinition(Command $command): string {
 		$definition = $command->getDefinition();
+		$text = '';
 		if ($showArguments = \count($definition->getArguments()) > 0) {
-			$output->write("\n");
-			$output->write('### Arguments');
+			$text .= "\n";
+			$text .= '### Arguments';
 			foreach ($definition->getArguments() as $argument) {
-				$output->write("\n\n");
-				if (null !== $describeInputArgument = $this->describeInputArgument($argument, $output)) {
-					$output->write($describeInputArgument);
+				$text .= "\n\n";
+				if (null !== $describeInputArgument = $this->describeInputArgument($argument)) {
+					$text .= $describeInputArgument;
 				}
 			}
 		}
 
 		if (\count($definition->getOptions()) > 0) {
 			if ($showArguments) {
-				$output->write("\n\n");
+				$text .= "\n\n";
 			}
 
-			$output->write('### Options');
+			$text .= '### Options';
 			foreach ($definition->getOptions() as $option) {
-				$output->write("\n\n");
-				if (null !== $describeInputOption = $this->describeInputOption($option, $output)) {
-					$output->write($describeInputOption);
+				$text .= "\n\n";
+				if (null !== $describeInputOption = $this->describeInputOption($option)) {
+					$text .= $describeInputOption;
 				}
 			}
 		}
+		return $text;
 	}
 
-	protected function describeInputArgument(InputArgument $argument, OutputInterface $output): void {
-		$output->write(
+	protected function describeInputArgument(InputArgument $argument): string {
+		return
 			'#### `'.($argument->getName() ?: '<none>')."`\n\n"
 			.($argument->getDescription() ? preg_replace('/\s*[\r\n]\s*/', "\n", $argument->getDescription())."\n\n" : '')
 			.'* Is required: '.($argument->isRequired() ? 'yes' : 'no')."\n"
 			.'* Is array: '.($argument->isArray() ? 'yes' : 'no')."\n"
-			.'* Default: `'.str_replace("\n", '', var_export($argument->getDefault(), true)).'`'
-		);
+			.'* Default: `'.str_replace("\n", '', var_export($argument->getDefault(), true)).'`';
 	}
 
-	protected function describeInputOption(InputOption $option, OutputInterface $output) {
+	protected function describeInputOption(InputOption $option): string {
 		$name = '--'.$option->getName();
 		if ($option->isNegatable()) {
 			$name .= '|--no-'.$option->getName();
@@ -163,14 +151,13 @@ class UpdateDocs extends Base {
 			$name .= '|-'.str_replace('|', '|-', $option->getShortcut()).'';
 		}
 
-		$output->write(
+		return
 			'#### `'.$name.'`'."\n\n"
 			.($option->getDescription() ? preg_replace('/\s*[\r\n]\s*/', "\n", $option->getDescription())."\n\n" : '')
 			.'* Accept value: '.($option->acceptValue() ? 'yes' : 'no')."\n"
 			.'* Is value required: '.($option->isValueRequired() ? 'yes' : 'no')."\n"
 			.'* Is multiple: '.($option->isArray() ? 'yes' : 'no')."\n"
 			.'* Is negatable: '.($option->isNegatable() ? 'yes' : 'no')."\n"
-			.'* Default: `'.str_replace("\n", '', var_export($option->getDefault(), true)).'`'
-		);
+			.'* Default: `'.str_replace("\n", '', var_export($option->getDefault(), true)).'`';
 	}
 }
