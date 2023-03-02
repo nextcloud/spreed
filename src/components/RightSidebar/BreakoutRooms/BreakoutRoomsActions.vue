@@ -22,7 +22,7 @@
 				:wide="true"
 				@click="stopBreakoutRooms">
 				<template #icon>
-					<StopIcon :size="20" />
+					<Check :size="20" />
 				</template>
 				{{ stopLabel }}
 			</NcButton>
@@ -93,10 +93,10 @@
 
 <script>
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import Check from 'vue-material-design-icons/Check.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Play from 'vue-material-design-icons/Play.vue'
 import Send from 'vue-material-design-icons/Send.vue'
-import StopIcon from 'vue-material-design-icons/Stop.vue'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -125,7 +125,7 @@ export default {
 		// Icons
 		Play,
 		Cog,
-		StopIcon,
+		Check,
 		ArrowLeft,
 		Send,
 	},
