@@ -23,8 +23,19 @@
 <template>
 	<Fragment>
 		<li :key="roomName"
-			class="breakout-room-item">
-			<DotsCircle class="breakout-room-item__icon" :size="20" />
+			class="breakout-room-item"
+			@mouseenter="elementHoveredOrFocused = true"
+			@mouseleave="elementHoveredOrFocused = false">
+			<NcButton type="tertiary-no-background"
+				@focus="elementHoveredOrFocused = true"
+				@blur="elementHoveredOrFocused = false"
+				@click="toggleParticipantsVisibility">
+				<template #icon>
+					<DotsCircle v-if="!elementHoveredOrFocused" :size="20" />
+					<MenuRight v-else-if="elementHoveredOrFocused && !showParticipants" :size="20" />
+					<MenuDown v-else-if="elementHoveredOrFocused && showParticipants" :size="20" />
+				</template>
+			</NcButton>
 			{{ roomName }}
 			<div class="breakout-room-item__actions">
 				<NcButton @click="joinRoom">
@@ -52,9 +63,11 @@
 				:token="roomToken"
 				@close="closeSendMessageForm" />
 		</li>
-		<template v-for="participant in roomParticipants">
-			<Participant :key="participant.actorId" :participant="participant" />
-		</template>
+		<ul v-show="showParticipants">
+			<template v-for="participant in roomParticipants">
+				<Participant :key="participant.actorId" :participant="participant" />
+			</template>
+		</ul>
 	</Fragment>
 </template>
 
@@ -63,6 +76,8 @@ import { Fragment } from 'vue-frag'
 
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
+import MenuDown from 'vue-material-design-icons/MenuDown.vue'
+import MenuRight from 'vue-material-design-icons/MenuRight.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
 import { showWarning } from '@nextcloud/dialogs'
@@ -93,6 +108,8 @@ export default {
 		DotsCircle,
 		HandBackLeft,
 		Send,
+		MenuRight,
+		MenuDown,
 	},
 
 	props: {
@@ -104,7 +121,9 @@ export default {
 
 	data() {
 		return {
+			showParticipants: true,
 			isDialogOpened: false,
+			elementHoveredOrFocused: false,
 		}
 	},
 
@@ -180,6 +199,10 @@ export default {
 				}
 			}
 		},
+
+		toggleParticipantsVisibility() {
+			this.showParticipants = !this.showParticipants
+		},
 	},
 }
 </script>
@@ -191,10 +214,6 @@ export default {
 	align-items: center;
 	margin-top: calc(var(--default-grid-baseline)*5);
 	gap: var(--default-grid-baseline);
-
-	&__icon {
-		margin: 0 18px 0 16px ;
-	}
 
 	&__actions {
 		margin-left: auto;
