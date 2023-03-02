@@ -308,7 +308,10 @@ class Notifier implements INotifier {
 	): INotification {
 		$notification
 			->setRichSubject(
-				$l->t('Failed to store recording of call {call}, reach out to the admin.'),
+				$l->t('Failed to upload call recording'),
+			)
+			->setRichMessage(
+				$l->t('The recording server failed to upload recording of call {call}. Please reach out to the adminstrators.'),
 				[
 					'call' => [
 						'type' => 'call',
