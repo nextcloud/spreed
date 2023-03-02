@@ -81,6 +81,7 @@
 				{{ resetButtonLabel }}
 			</NcButton>
 			<NcActions v-if="hasSelected"
+				type="primary"
 				:menu-title="t('spreed', 'Assign')">
 				<NcActionButton v-for="(item, index) in assignments"
 					:key="index"
@@ -93,7 +94,7 @@
 				</NcActionButton>
 			</NcActions>
 			<NcButton :disabled="!hasAssigned"
-				type="primary"
+				:type="confirmButtonType"
 				@click="handleSubmit">
 				{{ confirmButtonLabel }}
 			</NcButton>
@@ -200,6 +201,10 @@ export default {
 
 		confirmButtonLabel() {
 			return this.isReorganizingAttendees ? t('spreed', 'Confirm') : t('spreed', 'Create breakout rooms')
+		},
+
+		confirmButtonType() {
+			return this.hasUnassigned ? 'secondary' : 'primary'
 		},
 
 		resetButtonLabel() {
