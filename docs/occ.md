@@ -53,9 +53,9 @@ List all available commands
 |---|---|---|---|---|
 | `app` | Only list the commands of a specific app, "custom" to list all custom commands | no | no | `NULL` |
 
-| Options | Accept value | Is value required | Is multiple | is nagatable | Default |
+| Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | no | 'plain'` |
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 
 ## talk:command:update
 
@@ -96,9 +96,9 @@ Prints a list with conversations that have an active call as well as their parti
 
 * `talk:monitor:calls [--output [OUTPUT]]`
 
-| Options | Accept value | Is value required | Is multiple | is nagatable | Default |
+| Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | no | 'plain'` |
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 
 ## talk:active-calls
 
@@ -108,9 +108,9 @@ Allows you to check if calls are currently in process
 
 * `talk:active-calls [--output [OUTPUT]]`
 
-| Options | Accept value | Is value required | Is multiple | is nagatable | Default |
+| Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | no | 'plain'` |
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 
 ## talk:monitor:room
 
@@ -125,10 +125,10 @@ Prints a list with conversations that have an active call as well as their parti
 |---|---|---|---|---|
 | `token` | Token of the room to monitor | yes | no | `NULL` |
 
-| Options | Accept value | Is value required | Is multiple | is nagatable | Default |
+| Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | no | 'plain'` |
-| `--separator` | Separator for the CSV list when output=csv is used | yes | yes | no | no | ','` |
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
+| `--separator` | Separator for the CSV list when output=csv is used | yes | yes | no | ','` |
 
 ## talk:room:add
 
@@ -143,10 +143,10 @@ Adds users to a room
 |---|---|---|---|---|
 | `token` | Token of the room to add users to | yes | no | `NULL` |
 
-| Options | Accept value | Is value required | Is multiple | is nagatable | Default |
+| Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--user` | Invites the given users to the room | yes | yes | yes | no | array ()` |
-| `--group` | Invites all members of the given groups to the room | yes | yes | yes | no | array ()` |
+| `--user` | Invites the given users to the room | yes | yes | yes | array ()` |
+| `--group` | Invites all members of the given groups to the room | yes | yes | yes | array ()` |
 
 ## talk:room:create
 
@@ -161,18 +161,18 @@ Create a new room
 |---|---|---|---|---|
 | `name` | The name of the room to create | yes | no | `NULL` |
 
-| Options | Accept value | Is value required | Is multiple | is nagatable | Default |
+| Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--description` | The description of the room to create | yes | yes | no | no | NULL` |
-| `--user` | Invites the given users to the room to create | yes | yes | yes | no | array ()` |
-| `--group` | Invites all members of the given group to the room to create | yes | yes | yes | no | array ()` |
-| `--public` | Creates the room as public room if set | no | no | no | no | false` |
-| `--readonly` | Creates the room with read-only access only if set | no | no | no | no | false` |
-| `--listable` | Creates the room with the given listable scope | yes | yes | no | no | NULL` |
-| `--password` | Protects the room to create with the given password | yes | yes | no | no | NULL` |
-| `--owner` | Sets the given user as owner of the room to create | yes | yes | no | no | NULL` |
-| `--moderator` | Promotes the given users to moderators | yes | yes | yes | no | array ()` |
-| `--message-expiration` | Seconds to expire a message after sent. If zero will disable the expire message duration. | yes | yes | no | no | NULL` |
+| `--description` | The description of the room to create | yes | yes | no | NULL` |
+| `--user` | Invites the given users to the room to create | yes | yes | yes | array ()` |
+| `--group` | Invites all members of the given group to the room to create | yes | yes | yes | array ()` |
+| `--public` | Creates the room as public room if set | no | no | no | false` |
+| `--readonly` | Creates the room with read-only access only if set | no | no | no | false` |
+| `--listable` | Creates the room with the given listable scope | yes | yes | no | NULL` |
+| `--password` | Protects the room to create with the given password | yes | yes | no | NULL` |
+| `--owner` | Sets the given user as owner of the room to create | yes | yes | no | NULL` |
+| `--moderator` | Promotes the given users to moderators | yes | yes | yes | array ()` |
+| `--message-expiration` | Seconds to expire a message after sent. If zero will disable the expire message duration. | yes | yes | no | NULL` |
 
 ## talk:room:delete
 
@@ -242,16 +242,16 @@ Updates a room
 |---|---|---|---|---|
 | `token` | The token of the room to update | yes | no | `NULL` |
 
-| Options | Accept value | Is value required | Is multiple | is nagatable | Default |
+| Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--name` | Sets a new name for the room | yes | yes | no | no | NULL` |
-| `--description` | Sets a new description for the room | yes | yes | no | no | NULL` |
-| `--public` | Modifies the room to be a public room (value 1) or private room (value 0) | yes | yes | no | no | NULL` |
-| `--readonly` | Modifies the room to be read-only (value 1) or read-write (value 0) | yes | yes | no | no | NULL` |
-| `--listable` | Modifies the room's listable scope | yes | yes | no | no | NULL` |
-| `--password` | Sets a new password for the room; pass an empty value to remove password protection | yes | yes | no | no | NULL` |
-| `--owner` | Sets the given user as owner of the room; pass an empty value to remove the owner | yes | yes | no | no | NULL` |
-| `--message-expiration` | Seconds to expire a message after sent. If zero will disable the expire message duration. | yes | yes | no | no | NULL` |
+| `--name` | Sets a new name for the room | yes | yes | no | NULL` |
+| `--description` | Sets a new description for the room | yes | yes | no | NULL` |
+| `--public` | Modifies the room to be a public room (value 1) or private room (value 0) | yes | yes | no | NULL` |
+| `--readonly` | Modifies the room to be read-only (value 1) or read-write (value 0) | yes | yes | no | NULL` |
+| `--listable` | Modifies the room's listable scope | yes | yes | no | NULL` |
+| `--password` | Sets a new password for the room; pass an empty value to remove password protection | yes | yes | no | NULL` |
+| `--owner` | Sets the given user as owner of the room; pass an empty value to remove the owner | yes | yes | no | NULL` |
+| `--message-expiration` | Seconds to expire a message after sent. If zero will disable the expire message duration. | yes | yes | no | NULL` |
 
 ## talk:signaling:add
 
@@ -267,9 +267,9 @@ Add an external signaling server.
 | `server` | A server string, ex. wss://signaling.example.org | yes | no | `NULL` |
 | `secret` | A shared secret string. | yes | no | `NULL` |
 
-| Options | Accept value | Is value required | Is multiple | is nagatable | Default |
+| Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--verify` | Validate SSL certificate if set. | no | no | no | no | false` |
+| `--verify` | Validate SSL certificate if set. | no | no | no | false` |
 
 ## talk:signaling:delete
 
@@ -292,9 +292,9 @@ List external signaling servers.
 
 * `talk:signaling:list [--output [OUTPUT]]`
 
-| Options | Accept value | Is value required | Is multiple | is nagatable | Default |
+| Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | no | 'plain'` |
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 
 ## talk:stun:add
 
@@ -330,9 +330,9 @@ List STUN servers.
 
 * `talk:stun:list [--output [OUTPUT]]`
 
-| Options | Accept value | Is value required | Is multiple | is nagatable | Default |
+| Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | no | 'plain'` |
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 
 ## talk:turn:add
 
@@ -349,10 +349,10 @@ Add a TURN server.
 | `server` | A domain name, ex. turn.nextcloud.com | yes | no | `NULL` |
 | `protocols` | Protocols, can be udp or tcp or udp,tcp. | yes | no | `NULL` |
 
-| Options | Accept value | Is value required | Is multiple | is nagatable | Default |
+| Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--secret` | A shard secret string | yes | yes | no | no | NULL` |
-| `--generate-secret` | Generate secret if set. | no | no | no | no | false` |
+| `--secret` | A shard secret string | yes | yes | no | NULL` |
+| `--generate-secret` | Generate secret if set. | no | no | no | false` |
 
 ## talk:turn:delete
 
@@ -377,9 +377,9 @@ List TURN servers.
 
 * `talk:turn:list [--output [OUTPUT]]`
 
-| Options | Accept value | Is value required | Is multiple | is nagatable | Default |
+| Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | no | 'plain'` |
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 
 ## talk:user:remove
 
@@ -389,9 +389,9 @@ Remove a user from all their rooms
 
 * `talk:user:remove [--user USER]`
 
-| Options | Accept value | Is value required | Is multiple | is nagatable | Default |
+| Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--user` | Remove the given users from all rooms | yes | yes | yes | no | array ()` |
+| `--user` | Remove the given users from all rooms | yes | yes | yes | array ()` |
 
 ## talk:user:transfer-ownership
 
@@ -407,7 +407,7 @@ Adds the destination-user with the same participant type to all (not one-to-one)
 | `source-user` | Owner of conversations which shall be moved | yes | no | `NULL` |
 | `destination-user` | User who will be the new owner of the conversations | yes | no | `NULL` |
 
-| Options | Accept value | Is value required | Is multiple | is nagatable | Default |
+| Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|
-| `--include-non-moderator` | Also include conversations where the source-user is a normal user | no | no | no | no | false` |
-| `--remove-source-user` | Remove the source-user from the conversations | no | no | no | no | false` |
+| `--include-non-moderator` | Also include conversations where the source-user is a normal user | no | no | no | false` |
+| `--remove-source-user` | Remove the source-user from the conversations | no | no | no | false` |

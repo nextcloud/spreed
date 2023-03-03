@@ -135,7 +135,7 @@ class UpdateDocs extends Base {
 				$text .= "\n\n";
 			}
 
-			$text .= "| Options | Accept value | Is value required | Is multiple | is nagatable | Default |\n";
+			$text .= "| Options | Accept value | Is value required | Is multiple | Default |\n";
 			$text .= '|---|---|---|---|---|---|';
 			foreach ($definition->getOptions() as $option) {
 				$text .= "\n";
@@ -160,9 +160,6 @@ class UpdateDocs extends Base {
 
 	protected function describeInputOption(InputOption $option): string {
 		$name = '--'.$option->getName();
-		if ($option->isNegatable()) {
-			$name .= '|--no-'.$option->getName();
-		}
 		if ($option->getShortcut()) {
 			$name .= '|-'.str_replace('|', '|-', $option->getShortcut()).'';
 		}
@@ -174,7 +171,6 @@ class UpdateDocs extends Base {
 			($option->acceptValue() ? 'yes' : 'no')." | " .
 			($option->isValueRequired() ? 'yes' : 'no')." | " .
 			($option->isArray() ? 'yes' : 'no')." | " .
-			($option->isNegatable() ? 'yes' : 'no')." | " .
 			str_replace("\n", '', var_export($option->getDefault(), true)).'` |';
 	}
 }
