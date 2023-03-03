@@ -14,9 +14,9 @@ local Pipeline(test_set, database, services) = {
 			image: "ghcr.io/nextcloud/continuous-integration-php8.2:latest",
 			environment: {
 				APP_NAME: "spreed",
-				CORE_BRANCH: "master",
+				CORE_BRANCH: "stable26",
 				GUESTS_BRANCH: "master",
-				NOTIFICATIONS_BRANCH: "master",
+				NOTIFICATIONS_BRANCH: "stable26",
 				DATABASEHOST: database
 			},
 			commands: [
