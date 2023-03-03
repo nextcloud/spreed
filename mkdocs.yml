@@ -17,10 +17,18 @@ markdown_extensions:
 
 nav:
   - 'Nextcloud Talk API': 'index.md'
-  - 'System requirements': 'system-requirements.md'
   - 'Call experience': 'call-experience.md'
-  - Constants: 'constants.md'
-  - Capabilities: 'capabilities.md'
+  - 'User system requirements': 'user-requirements.md'
+  - 'Administration documentation':
+      - 'Server system requirements': 'system-requirements.md'
+      - 'Configuring coTURN': 'TURN.md'
+      - 'Occ commands': 'occ.md'
+      - 'Commands': 'commands.md'
+      - 'Matterbridge integration': 'matterbridge.md'
+  - 'Developer documentation':
+      - 'Constants': 'constants.md'
+      - 'Capabilities': 'capabilities.md'
+      - 'PHP events': 'events.md'
   - 'API documentation':
       - 'Conversations management': 'conversation.md'
       - 'Participants management': 'participant.md'
@@ -34,7 +42,3 @@ nav:
       - 'Settings': 'settings.md'
       - 'Integration by other apps': 'integration.md'
       - 'Signaling API': 'internal-signaling.md'
-  - Commands: 'commands.md'
-  - 'PHP events': 'events.md'
-  - 'Configuring coTURN': 'TURN.md'
-  - 'Matterbridge integration': 'matterbridge.md'

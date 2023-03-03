@@ -1,6 +1,4 @@
----
-title: Capabilities
----
+# Capabilities
 
 ## 3.0 (Initial Talk release)
 * `audio` - audio is supported
