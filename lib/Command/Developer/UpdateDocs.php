@@ -59,6 +59,10 @@ class UpdateDocs extends Base {
 		$info = $this->appManager->getAppInfo('spreed');
 		$documentation = "# Talk occ commands\n\n";
 		foreach ($info['commands'] as $namespace) {
+			if ($namespace === self::class) {
+				continue;
+			}
+
 			$command = $this->getCommand($namespace);
 			$documentation .= $this->getDocumentation($command) . "\n";
 		}

@@ -69,14 +69,6 @@ Add a new command
 | `response` | Who should see the response: 0 - No one, 1 - User, 2 - All | yes | no | `NULL` |
 | `enabled` | Who can use this command: 0 - Disabled, 1 - Moderators, 2 - Users, 3 - Guests | yes | no | `NULL` |
 
-## talk:developer:update-docs
-
-Update documentation of commands
-
-### Usage
-
-* `talk:developer:update-docs`
-
 ## talk:monitor:calls
 
 Prints a list with conversations that have an active call as well as their participant count
