@@ -23,10 +23,10 @@ steps:
   - bash run.sh features/callapi
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-callapi
 trigger:
@@ -60,10 +60,10 @@ steps:
   - bash run.sh features/chat
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-chat
 trigger:
@@ -97,10 +97,10 @@ steps:
   - bash run.sh features/chat-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-chat-2
 trigger:
@@ -134,10 +134,10 @@ steps:
   - bash run.sh features/command
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-command
 trigger:
@@ -172,10 +172,10 @@ steps:
   - bash run.sh features/conversation
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-conversation
 trigger:
@@ -210,10 +210,10 @@ steps:
   - bash run.sh features/conversation-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-conversation-2
 trigger:
@@ -247,10 +247,10 @@ steps:
   - bash run.sh features/federation
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-federation
 trigger:
@@ -284,10 +284,10 @@ steps:
   - bash run.sh features/integration
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-integration
 trigger:
@@ -321,10 +321,10 @@ steps:
   - bash run.sh features/sharing
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-sharing
 trigger:
@@ -358,10 +358,10 @@ steps:
   - bash run.sh features/sharing-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-sharing-2
 trigger:
@@ -409,10 +409,10 @@ steps:
   - bash run.sh features/callapi
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-callapi
 trigger:
@@ -460,10 +460,10 @@ steps:
   - bash run.sh features/chat
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-chat
 trigger:
@@ -511,10 +511,10 @@ steps:
   - bash run.sh features/chat-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-chat-2
 trigger:
@@ -562,10 +562,10 @@ steps:
   - bash run.sh features/command
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-command
 trigger:
@@ -614,10 +614,10 @@ steps:
   - bash run.sh features/conversation
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-conversation
 trigger:
@@ -666,10 +666,10 @@ steps:
   - bash run.sh features/conversation-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-conversation-2
 trigger:
@@ -717,10 +717,10 @@ steps:
   - bash run.sh features/federation
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-federation
 trigger:
@@ -768,10 +768,10 @@ steps:
   - bash run.sh features/integration
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-integration
 trigger:
@@ -819,10 +819,10 @@ steps:
   - bash run.sh features/sharing
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-sharing
 trigger:
@@ -870,10 +870,10 @@ steps:
   - bash run.sh features/sharing-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-sharing-2
 trigger:
@@ -916,10 +916,10 @@ steps:
   - bash run.sh features/callapi
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-callapi
 trigger:
@@ -963,10 +963,10 @@ steps:
   - bash run.sh features/chat
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-chat
 trigger:
@@ -1010,10 +1010,10 @@ steps:
   - bash run.sh features/chat-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-chat-2
 trigger:
@@ -1057,10 +1057,10 @@ steps:
   - bash run.sh features/command
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-command
 trigger:
@@ -1105,10 +1105,10 @@ steps:
   - bash run.sh features/conversation
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-conversation
 trigger:
@@ -1153,10 +1153,10 @@ steps:
   - bash run.sh features/conversation-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-conversation-2
 trigger:
@@ -1200,10 +1200,10 @@ steps:
   - bash run.sh features/federation
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-federation
 trigger:
@@ -1247,10 +1247,10 @@ steps:
   - bash run.sh features/integration
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-integration
 trigger:
@@ -1294,10 +1294,10 @@ steps:
   - bash run.sh features/sharing
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-sharing
 trigger:
@@ -1341,10 +1341,10 @@ steps:
   - bash run.sh features/sharing-2
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: stable26
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
-    NOTIFICATIONS_BRANCH: master
+    NOTIFICATIONS_BRANCH: stable26
   image: ghcr.io/nextcloud/continuous-integration-php8.2:latest
   name: integration-sharing-2
 trigger:
