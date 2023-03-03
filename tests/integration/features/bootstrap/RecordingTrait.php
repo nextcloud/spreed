@@ -30,8 +30,10 @@ use PHPUnit\Framework\Assert;
 // - sendRequestFullUrl()
 // - setAppConfig()
 trait RecordingTrait {
-	private string $recordingServerPid = '';
-	private string $signalingServerPid = '';
+	/** @var ?resource */
+	private $recordingServerProcess = '';
+	/** @var ?resource */
+	private $signalingServerProcess = '';
 
 	private string $recordingServerAddress = 'localhost';
 	private int $recordingServerPort = 0;
@@ -78,7 +80,7 @@ trait RecordingTrait {
 	 * @Given /^recording server is started$/
 	 */
 	public function recordingServerIsStarted() {
-		if ($this->recordingServerPid !== '') {
+		if ($this->isRunning()) {
 			return;
 		}
 
@@ -101,21 +103,93 @@ trait RecordingTrait {
 		])]]));
 
 		$path = 'features/bootstrap/FakeRecordingServer.php';
-		$this->recordingServerPid = exec(
-			'php -S ' . $this->getRecordingServerAddress() . ' ' . $path . ' >/dev/null & echo $!'
+		$this->recordingServerProcess = $this->startMockServer(
+			$this->getRecordingServerAddress() . ' ' . $path
 		);
 
 		$path = 'features/bootstrap/FakeSignalingServer.php';
-		$this->signalingServerPid = exec(
-			'php -S ' . $this->getSignalingServerAddress() . ' ' . $path . ' >/dev/null & echo $!'
+		$this->signalingServerProcess = $this->startMockServer(
+			$this->getSignalingServerAddress() . ' ' . $path
 		);
 
+		$this->waitForMockServer();
+
 		register_shutdown_function(function () {
-			if ($this->recordingServerPid !== '') {
-				exec('kill ' . $this->recordingServerPid);
-				exec('kill ' . $this->signalingServerPid);
-			}
+			$this->recordingServerIsStopped();
 		});
+	}
+
+	/**
+	 * @return resource
+	 */
+	private function startMockServer(string $path) {
+		$cmd = 'php -S ' . $path;
+		$stdout = tempnam(sys_get_temp_dir(), 'mockserv-stdout-');
+
+		// We need to prefix exec to get the correct process http://php.net/manual/ru/function.proc-get-status.php#93382
+		$fullCmd = sprintf('exec %s > %s 2>&1',
+			$cmd,
+			$stdout
+		);
+
+		$pipes = [];
+		$env = null;
+		$cwd = null;
+
+		$stdin = fopen('php://stdin', 'rb');
+		$stdoutf = tempnam(sys_get_temp_dir(), 'MockWebServer.stdout');
+		$stderrf = tempnam(sys_get_temp_dir(), 'MockWebServer.stderr');
+
+		$descriptorSpec = [
+			0 => $stdin,
+			1 => [ 'file', $stdoutf, 'a' ],
+			2 => [ 'file', $stderrf, 'a' ],
+		];
+
+		$process = proc_open($fullCmd, $descriptorSpec, $pipes, $cwd, $env, [
+			'suppress_errors' => false,
+			'bypass_shell' => true,
+		]);
+
+		if (is_resource($process)) {
+			return $process;
+		}
+
+		throw new \Exception('Error starting server');
+	}
+
+	private function waitForMockServer(): void {
+		[$host, $port] = explode(':', $this->getSignalingServerAddress());
+		$mockServerIsUp = false;
+		for ($i = 0; $i <= 20; $i++) {
+			$open = @fsockopen($host, $port);
+			if (is_resource($open)) {
+				fclose($open);
+				$mockServerIsUp = true;
+				break;
+			}
+			usleep(100000);
+		}
+		if (!$mockServerIsUp) {
+			throw new \Exception('Failure to start mock server.');
+		}
+	}
+
+	/**
+	 * Is the Web Server currently running?
+	 */
+	public function isRunning() : bool {
+		if (!is_resource($this->recordingServerProcess)) {
+			return false;
+		}
+
+		$processStatus = proc_get_status($this->recordingServerProcess);
+
+		if (!$processStatus) {
+			return false;
+		}
+
+		return $processStatus['running'];
 	}
 
 	/**
@@ -124,18 +198,27 @@ trait RecordingTrait {
 	 * @When /^recording server is stopped$/
 	 */
 	public function recordingServerIsStopped() {
-		if ($this->recordingServerPid === '') {
-			return;
+		if (gettype($this->recordingServerProcess) === 'resource') {
+			$this->stop($this->recordingServerProcess);
+			$this->recordingServerProcess = null;
 		}
+		if (gettype($this->signalingServerProcess) === 'resource') {
+			$this->stop($this->signalingServerProcess);
+			$this->signalingServerProcess = null;
+		}
+	}
 
-		// Get received requests to clear them.
-		$this->getRecordingServerReceivedRequests();
+	private function stop($process): void {
+		proc_terminate($process);
 
-		exec('kill ' . $this->recordingServerPid);
-		exec('kill ' . $this->signalingServerPid);
+		$attempts = 0;
+		while ($this->isRunning()) {
+			if (++$attempts > 1000) {
+				throw new \Exception('Failed to stop server.');
+			}
 
-		$this->recordingServerPid = '';
-		$this->signalingServerPid = '';
+			usleep(10000);
+		}
 	}
 
 	/**
