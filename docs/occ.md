@@ -81,12 +81,9 @@ Update documentation of commands
 
 ### Usage
 
-* `talk:developer:update-docs [<name>]`
+* `talk:developer:update-docs`
 
 
-| Arguments | Description | Is required | Is array | Default |
-|---|---|---|---|---|
-| `name` | The name of command to update. When have this argument, don't will upate the documentation, only will print the markdown output. | no | no | `NULL` |
 
 ## talk:monitor:calls
 
@@ -411,3 +408,4 @@ Adds the destination-user with the same participant type to all (not one-to-one)
 |---|---|---|---|---|---|
 | `--include-non-moderator` | Also include conversations where the source-user is a normal user | no | no | no | false` |
 | `--remove-source-user` | Remove the source-user from the conversations | no | no | no | false` |
+

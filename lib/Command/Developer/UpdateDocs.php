@@ -35,7 +35,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class UpdateDocs extends Base {
 	private IConfig $config;
 	private IAppManager $appManager;
-	private array $sections = [];
 
 	public function __construct(IConfig $config) {
 		$this->config = $config;
@@ -51,11 +50,6 @@ class UpdateDocs extends Base {
 		$this
 			->setName('talk:developer:update-docs')
 			->setDescription('Update documentation of commands')
-			->addArgument(
-				'name',
-				InputArgument::OPTIONAL,
-				"The name of command to update. When have this argument, don't will upate the documentation, only will print the markdown output."
-			)
 		;
 	}
 
@@ -63,27 +57,15 @@ class UpdateDocs extends Base {
 		$this->appManager = \OC::$server->get(IAppManager::class);
 
 		$info = $this->appManager->getAppInfo('spreed');
-		$commandName = $input->getArgument('name');
-		$documentation = '';
+		$documentation = "# Talk occ commands\n\n";
 		foreach ($info['commands'] as $namespace) {
 			$command = $this->getCommand($namespace);
-			if ($commandName && $commandName !== $command->getName()) {
-				continue;
-			}
-			$this->sections['documentation'][] = $this->getDocumentation($command);
+			$documentation .= $this->getDocumentation($command) . "\n";
 		}
 
-		if ($commandName) {
-			$output->writeln(implode("\n", $this->sections['documentation']));
-		} else {
-			$documentation =
-				"# Talk occ commands\n\n" .
-				implode("\n", $this->sections['documentation']);
-
-			$handle = fopen(__DIR__ . '/../../../docs/occ.md', 'w');
-			fwrite($handle, $documentation);
-			fclose($handle);
-		}
+		$handle = fopen(__DIR__ . '/../../../docs/occ.md', 'w');
+		fwrite($handle, $documentation);
+		fclose($handle);
 		return 0;
 	}
 
