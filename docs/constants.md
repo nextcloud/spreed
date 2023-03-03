@@ -1,6 +1,4 @@
----
-title: Constants
----
+# Constants
 
 ## Conversation
 
