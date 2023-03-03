@@ -1,33 +1,5 @@
 # Talk occ commands
 
- * [talk:command:add](#talkcommandadd)
- * [talk:command:add-samples](#talkcommandadd-samples)
- * [talk:command:delete](#talkcommanddelete)
- * [talk:command:list](#talkcommandlist)
- * [talk:command:update](#talkcommandupdate)
- * [talk:developer:update-docs](#talkdeveloperupdate-docs)
- * [talk:monitor:calls](#talkmonitorcalls)
- * [talk:active-calls](#talkactive-calls)
- * [talk:monitor:room](#talkmonitorroom)
- * [talk:room:add](#talkroomadd)
- * [talk:room:create](#talkroomcreate)
- * [talk:room:delete](#talkroomdelete)
- * [talk:room:demote](#talkroomdemote)
- * [talk:room:promote](#talkroompromote)
- * [talk:room:remove](#talkroomremove)
- * [talk:room:update](#talkroomupdate)
- * [talk:signaling:add](#talksignalingadd)
- * [talk:signaling:delete](#talksignalingdelete)
- * [talk:signaling:list](#talksignalinglist)
- * [talk:stun:add](#talkstunadd)
- * [talk:stun:delete](#talkstundelete)
- * [talk:stun:list](#talkstunlist)
- * [talk:turn:add](#talkturnadd)
- * [talk:turn:delete](#talkturndelete)
- * [talk:turn:list](#talkturnlist)
- * [talk:user:remove](#talkuserremove)
- * [talk:user:transfer-ownership](#talkusertransfer-ownership)
-
 ## talk:command:add
 
 Add a new command

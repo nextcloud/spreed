@@ -78,7 +78,6 @@ class UpdateDocs extends Base {
 		} else {
 			$documentation =
 				"# Talk occ commands\n\n" .
-				implode("\n", $this->sections['summary']) . "\n\n" .
 				implode("\n", $this->sections['documentation']);
 
 			$handle = fopen(__DIR__ . '/../../../docs/occ.md', 'w');
@@ -96,11 +95,6 @@ class UpdateDocs extends Base {
 	}
 
 	protected function getDocumentation(Command $command): string {
-		$this->sections['summary'][] =
-			' * ' .
-			'[' . $command->getName() . ']' .
-			'(#' . str_replace([':'], '', $command->getName()) . ')';
-
 		$doc = '## ' . $command->getName() . "\n\n";
 		$doc .= $command->getDescription() . "\n\n";
 		$doc .=
