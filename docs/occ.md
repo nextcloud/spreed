@@ -8,7 +8,6 @@ Add a new command
 
 * `talk:command:add <cmd> <name> <script> <response> <enabled>`
 
-
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `cmd` | The command as used in the chat "/help" => "help" | yes | no | `NULL` |
@@ -25,8 +24,6 @@ Adds some sample commands: /wiki, …
 
 * `talk:command:add-samples`
 
-
-
 ## talk:command:delete
 
 Remove an existing command
@@ -34,7 +31,6 @@ Remove an existing command
 ### Usage
 
 * `talk:command:delete <command-id>`
-
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -48,13 +44,12 @@ List all available commands
 
 * `talk:command:list [--output [OUTPUT]] [--] [<app>]`
 
-
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `app` | Only list the commands of a specific app, "custom" to list all custom commands | no | no | `NULL` |
 
 | Options | Accept value | Is value required | Is multiple | Default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 
 ## talk:command:update
@@ -64,7 +59,6 @@ Add a new command
 ### Usage
 
 * `talk:command:update <command-id> <cmd> <name> <script> <response> <enabled>`
-
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -83,8 +77,6 @@ Update documentation of commands
 
 * `talk:developer:update-docs`
 
-
-
 ## talk:monitor:calls
 
 Prints a list with conversations that have an active call as well as their participant count
@@ -94,7 +86,7 @@ Prints a list with conversations that have an active call as well as their parti
 * `talk:monitor:calls [--output [OUTPUT]]`
 
 | Options | Accept value | Is value required | Is multiple | Default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 
 ## talk:active-calls
@@ -106,7 +98,7 @@ Allows you to check if calls are currently in process
 * `talk:active-calls [--output [OUTPUT]]`
 
 | Options | Accept value | Is value required | Is multiple | Default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 
 ## talk:monitor:room
@@ -117,13 +109,12 @@ Prints a list with conversations that have an active call as well as their parti
 
 * `talk:monitor:room [--output [OUTPUT]] [--separator SEPARATOR] [--] <token>`
 
-
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `token` | Token of the room to monitor | yes | no | `NULL` |
 
 | Options | Accept value | Is value required | Is multiple | Default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 | `--separator` | Separator for the CSV list when output=csv is used | yes | yes | no | ','` |
 
@@ -135,13 +126,12 @@ Adds users to a room
 
 * `talk:room:add [--user USER] [--group GROUP] [--] <token>`
 
-
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `token` | Token of the room to add users to | yes | no | `NULL` |
 
 | Options | Accept value | Is value required | Is multiple | Default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | `--user` | Invites the given users to the room | yes | yes | yes | array ()` |
 | `--group` | Invites all members of the given groups to the room | yes | yes | yes | array ()` |
 
@@ -153,13 +143,12 @@ Create a new room
 
 * `talk:room:create [--description DESCRIPTION] [--user USER] [--group GROUP] [--public] [--readonly] [--listable LISTABLE] [--password PASSWORD] [--owner OWNER] [--moderator MODERATOR] [--message-expiration MESSAGE-EXPIRATION] [--] <name>`
 
-
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `name` | The name of the room to create | yes | no | `NULL` |
 
 | Options | Accept value | Is value required | Is multiple | Default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | `--description` | The description of the room to create | yes | yes | no | NULL` |
 | `--user` | Invites the given users to the room to create | yes | yes | yes | array ()` |
 | `--group` | Invites all members of the given group to the room to create | yes | yes | yes | array ()` |
@@ -179,7 +168,6 @@ Deletes a room
 
 * `talk:room:delete <token>`
 
-
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `token` | Token of the room to delete | yes | no | `NULL` |
@@ -191,7 +179,6 @@ Demotes participants of a room to regular users
 ### Usage
 
 * `talk:room:demote <token> <participant>...`
-
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -206,7 +193,6 @@ Promotes participants of a room to moderators
 
 * `talk:room:promote <token> <participant>...`
 
-
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `token` | Token of the room in which users should be promoted | yes | no | `NULL` |
@@ -219,7 +205,6 @@ Remove users from a room
 ### Usage
 
 * `talk:room:remove <token> <participant>...`
-
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -234,13 +219,12 @@ Updates a room
 
 * `talk:room:update [--name NAME] [--description DESCRIPTION] [--public PUBLIC] [--readonly READONLY] [--listable LISTABLE] [--password PASSWORD] [--owner OWNER] [--message-expiration MESSAGE-EXPIRATION] [--] <token>`
 
-
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `token` | The token of the room to update | yes | no | `NULL` |
 
 | Options | Accept value | Is value required | Is multiple | Default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | `--name` | Sets a new name for the room | yes | yes | no | NULL` |
 | `--description` | Sets a new description for the room | yes | yes | no | NULL` |
 | `--public` | Modifies the room to be a public room (value 1) or private room (value 0) | yes | yes | no | NULL` |
@@ -258,14 +242,13 @@ Add an external signaling server.
 
 * `talk:signaling:add [--verify] [--] <server> <secret>`
 
-
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `server` | A server string, ex. wss://signaling.example.org | yes | no | `NULL` |
 | `secret` | A shared secret string. | yes | no | `NULL` |
 
 | Options | Accept value | Is value required | Is multiple | Default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | `--verify` | Validate SSL certificate if set. | no | no | no | false` |
 
 ## talk:signaling:delete
@@ -275,7 +258,6 @@ Remove an existing signaling server.
 ### Usage
 
 * `talk:signaling:delete <server>`
-
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -290,7 +272,7 @@ List external signaling servers.
 * `talk:signaling:list [--output [OUTPUT]]`
 
 | Options | Accept value | Is value required | Is multiple | Default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 
 ## talk:stun:add
@@ -300,7 +282,6 @@ Add a new STUN server.
 ### Usage
 
 * `talk:stun:add <server>`
-
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -313,7 +294,6 @@ Remove an existing STUN server.
 ### Usage
 
 * `talk:stun:delete <server>`
-
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -328,7 +308,7 @@ List STUN servers.
 * `talk:stun:list [--output [OUTPUT]]`
 
 | Options | Accept value | Is value required | Is multiple | Default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 
 ## talk:turn:add
@@ -339,7 +319,6 @@ Add a TURN server.
 
 * `talk:turn:add [--secret SECRET] [--generate-secret] [--] <schemes> <server> <protocols>`
 
-
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `schemes` | Schemes, can be turn or turns or turn,turns. | yes | no | `NULL` |
@@ -347,7 +326,7 @@ Add a TURN server.
 | `protocols` | Protocols, can be udp or tcp or udp,tcp. | yes | no | `NULL` |
 
 | Options | Accept value | Is value required | Is multiple | Default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | `--secret` | A shard secret string | yes | yes | no | NULL` |
 | `--generate-secret` | Generate secret if set. | no | no | no | false` |
 
@@ -358,7 +337,6 @@ Remove an existing TURN server.
 ### Usage
 
 * `talk:turn:delete <schemes> <server> <protocols>`
-
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -375,7 +353,7 @@ List TURN servers.
 * `talk:turn:list [--output [OUTPUT]]`
 
 | Options | Accept value | Is value required | Is multiple | Default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 
 ## talk:user:remove
@@ -387,7 +365,7 @@ Remove a user from all their rooms
 * `talk:user:remove [--user USER]`
 
 | Options | Accept value | Is value required | Is multiple | Default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | `--user` | Remove the given users from all rooms | yes | yes | yes | array ()` |
 
 ## talk:user:transfer-ownership
@@ -398,14 +376,13 @@ Adds the destination-user with the same participant type to all (not one-to-one)
 
 * `talk:user:transfer-ownership [--include-non-moderator] [--remove-source-user] [--] <source-user> <destination-user>`
 
-
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
 | `source-user` | Owner of conversations which shall be moved | yes | no | `NULL` |
 | `destination-user` | User who will be the new owner of the conversations | yes | no | `NULL` |
 
 | Options | Accept value | Is value required | Is multiple | Default |
-|---|---|---|---|---|---|
+|---|---|---|---|---|
 | `--include-non-moderator` | Also include conversations where the source-user is a normal user | no | no | no | false` |
 | `--remove-source-user` | Remove the source-user from the conversations | no | no | no | false` |
 

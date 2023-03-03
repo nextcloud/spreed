@@ -90,9 +90,8 @@ class UpdateDocs extends Base {
 				function ($carry, $usage) {
 					return $carry.'* `'.$usage.'`'."\n";
 				}
-			) . "\n";
+			);
 		$doc .= $this->describeInputDefinition($command);
-		$doc .= "\n";
 
 		return $doc;
 	}
@@ -100,7 +99,7 @@ class UpdateDocs extends Base {
 	protected function describeInputDefinition(Command $command): string {
 		$definition = $command->getDefinition();
 		$text = '';
-		if ($showArguments = \count($definition->getArguments()) > 0) {
+		if (\count($definition->getArguments()) > 0) {
 			$text .= "\n";
 			$text .= "| Arguments | Description | Is required | Is array | Default |\n";
 			$text .= '|---|---|---|---|---|';
@@ -110,21 +109,21 @@ class UpdateDocs extends Base {
 					$text .= $describeInputArgument;
 				}
 			}
+			$text .= "\n";
 		}
 
 		if (\count($definition->getOptions()) > 0) {
-			if ($showArguments) {
-				$text .= "\n\n";
-			}
+			$text .= "\n";
 
 			$text .= "| Options | Accept value | Is value required | Is multiple | Default |\n";
-			$text .= '|---|---|---|---|---|---|';
+			$text .= '|---|---|---|---|---|';
 			foreach ($definition->getOptions() as $option) {
 				$text .= "\n";
 				if (null !== $describeInputOption = $this->describeInputOption($option)) {
 					$text .= $describeInputOption;
 				}
 			}
+			$text .= "\n";
 		}
 		return $text;
 	}
