@@ -21,7 +21,7 @@
 <template>
 	<div class="chatView"
 		@dragover.prevent="handleDragOver"
-		@dragleave.prevent="isDraggingOver = false"
+		@dragleave.prevent="handleDragLeave"
 		@drop.prevent="handleDropFiles">
 		<transition name="slide" mode="out-in">
 			<div v-show="isDraggingOver"
@@ -110,6 +110,12 @@ export default {
 			}
 		},
 
+		handleDragLeave(event) {
+			if (!event.currentTarget.contains(event.relatedTarget)) {
+				this.isDraggingOver = false
+			}
+		},
+
 		handleDropFiles(event) {
 			if (!this.isDraggingOver) {
 				return
@@ -187,7 +193,8 @@ export default {
 	}
 	&-enter-active,
 	&-leave-active {
-		transition: $fade-transition;
+		pointer-events: none;
+		transition: $fade-transition-slow;
 	}
 }
 </style>
