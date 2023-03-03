@@ -1,4 +1,4 @@
-name: Occ command documentation
+name: Documentation
 
 on:
   pull_request:
@@ -24,11 +24,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: occ-command-documentation-${{ github.head_ref || github.run_id }}
+  group: occ-commands-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
-  occ-command-documentation:
+  occ-commands:
     runs-on: ubuntu-latest
 
     strategy:
@@ -88,4 +88,5 @@ jobs:
         id: check_documentation
         run: |
           ./occ talk:developer:update-docs
-          bash -c "[[ ! \"`git status --porcelain `\" ]] || (echo 'Documentation outdated. Run the command talk:developer:update-docs locally, commit the occ.md file and push the changes.' && exit 1)"
+          cd apps/${{ env.APP_NAME }}
+          bash -c "[[ ! \"`git status --porcelain `\" ]] || (cat docs/occ.md && echo 'Documentation outdated. Run the command talk:developer:update-docs locally, commit the occ.md file and push the changes.' && exit 1)"
