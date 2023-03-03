@@ -22,11 +22,9 @@
 <template>
 	<div ref="description"
 		:key="forceReRenderKey"
-		class="description"
-		:class="{'description--editing': editing}">
-		<RichContentEditable ref="contenteditable"
+		class="description">
+		<NcRichContentEditable ref="contenteditable"
 			:value.sync="descriptionText"
-			class="description__contenteditable"
 			:auto-complete="()=>{}"
 			:maxlength="maxLength"
 			:contenteditable="editing && !loading"
@@ -60,6 +58,7 @@
 			</template>
 			<NcButton v-if="!editing && editable"
 				type="tertiary"
+				class="description__edit"
 				:aria-label="t('spreed', 'Edit conversation description')"
 				@click="handleEditDescription">
 				<template #icon>
@@ -77,7 +76,7 @@ import Close from 'vue-material-design-icons/Close.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import RichContentEditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
+import NcRichContentEditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 export default {
@@ -86,7 +85,7 @@ export default {
 		Pencil,
 		Check,
 		Close,
-		RichContentEditable,
+		NcRichContentEditable,
 		NcButton,
 	},
 
@@ -252,12 +251,6 @@ export default {
 	position: relative;
 	min-height: $clickable-area;
 	align-items: flex-end;
-	&--editing {
-		box-shadow: 0 2px var(--color-primary-element);
-		transition: all 150ms ease-in-out;
-		max-height: unset;
-		align-items: flex-end;
-	}
 
 	&__header {
 		display: flex;
@@ -272,13 +265,8 @@ export default {
 		line-height: var(--default-line-height);
 	}
 
-	&__contenteditable {
-		width: 100%;
-		&--empty:before {
-			position: absolute;
-			content: attr(placeholder);
-			color: var(--color-text-maxcontrast);
-		}
+	&__edit {
+		margin-left: 44px;
 	}
 
 	&__action {
@@ -289,7 +277,7 @@ export default {
 .spinner {
 	width: $clickable-area;
 	height: $clickable-area;
-	margin: 0 0 4px 0;
+	margin: 0 0 4px 44px;
 }
 
 .counter {
@@ -307,28 +295,22 @@ export default {
 
 // Restyle richContentEditable component from our library.
 ::v-deep .rich-contenteditable__input {
+	align-self: flex-start;
 	min-height: var(--default-line-height);
-	border-radius: 0;
-	overflow-x: hidden;
+	max-height: unset;
+	margin: 12px 0 4px 0;
 	padding: 0 0 4px 0;
 	overflow: visible;
-	width: 100%;
+	width: 100% !important;
 	background-color: transparent;
-	border: none;
-	color: var(--color-main-text);
-	font-size: var(--default-font-size);
-	line-height: var(--default-line-height);
-	margin-bottom: 4px;
-	max-height: unset;
-	align-self: flex-start;
-	margin-top: 12px;
+	transition: $fade-transition;
 	&::before {
 		position: relative;
 	}
 	&[contenteditable='false'] {
 		background-color: transparent;
 		color: var(--color-main-text);
-		border: 0;
+		border-color: transparent;
 		opacity: 1;
 		border-radius: 0;
 	}
