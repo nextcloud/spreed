@@ -296,6 +296,7 @@ OC.L10N.register(
     "Today" : "Vandag",
     "Yesterday" : "Gister",
     "Settings" : "Instellings",
+    "Join" : "Sluit aan",
     "guest" : "gas",
     "Promote to moderator" : "Bevorder na moderator",
     "Remove participant" : "Verwyder deelnemer",
