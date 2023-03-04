@@ -652,6 +652,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Skrivañ ur gemenadenn, @ evit menegiñ unan bennak ...",
     "Invalid path selected" : "An hent dibabet n'eus ket anezhañ",
     "Settings" : "Arventennoù",
+    "Join" : "Kejañ",
     "moderator" : "habaskaer",
     "guest" : "kouviad",
     "Demote from moderator" : "Lemel eus ar moderatourienn",

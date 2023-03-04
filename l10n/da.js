@@ -475,6 +475,7 @@ OC.L10N.register(
     "Invalid path selected" : "Ugyldig filsti valgt",
     "Settings" : "Indstillinger",
     "Create poll" : "Opret afstemning",
+    "Join" : "Deltag",
     "moderator" : "moderator",
     "guest" : "Gæst",
     "Demote from moderator" : "Degrader fra moderator",
