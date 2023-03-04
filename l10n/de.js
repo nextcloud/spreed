@@ -1134,6 +1134,7 @@ OC.L10N.register(
     "Edit default permissions for participants in <strong>{conversationName}</strong>" : "Standardberechtigungen für Teilnehmer in <strong>{conversationName}</strong> bearbeiten",
     "The message has expired or has been deleted" : "Die Nachricht ist abgelaufen oder wurde gelöscht",
     "Cancel quote" : "Zitieren abbrechen",
+    "Join" : "Beitreten",
     "Send message to room" : "Nachricht an Raum senden",
     "Disable lobby" : "Lobby deaktivieren",
     "moderator" : "Moderator",

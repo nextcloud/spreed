@@ -1142,6 +1142,7 @@
     "Edit default permissions for participants in <strong>{conversationName}</strong>" : "Редактиране на права по подразбиране за участниците в <strong>{conversationName}</strong>",
     "The message has expired or has been deleted" : "Съобщението е изтекло или е изтрито",
     "Cancel quote" : "Отказ на офертата",
+    "Join" : "Влез",
     "Dismiss request for assistance" : "Отхвърляне на заявка за съдействие",
     "Send message to room" : "Изпращане на съобщение до стая",
     "Assistance requested in {roomName}" : "Поискано е съдействие в {roomName}",
