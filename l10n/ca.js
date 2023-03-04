@@ -748,6 +748,7 @@ OC.L10N.register(
     "Private poll" : "Enquesta privada",
     "Multiple answers" : "Respostes múltiples",
     "Create poll" : "Crea enquesta",
+    "Join" : "Uneix",
     "moderator" : "moderador",
     "guest" : "convidat",
     "Demote from moderator" : "Retenció del moderador",
