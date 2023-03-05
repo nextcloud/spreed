@@ -41,7 +41,7 @@
 		"test:unit": "vendor/bin/phpunit -c tests/php/phpunit.xml --color --fail-on-warning --fail-on-risky"
 	},
 	"require-dev": {
-		"nextcloud/ocp": "dev-master",
+		"nextcloud/ocp": "dev-stable26",
 		"roave/security-advisories": "dev-latest"
 	},
 	"require": {

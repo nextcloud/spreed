@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "00f4e9acdbfeeb58e42d0b212571e328",
+    "content-hash": "e392ce4a97f7764a60372457c8243188",
     "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
@@ -130,16 +130,16 @@
     "packages-dev": [
         {
             "name": "nextcloud/ocp",
-            "version": "dev-master",
+            "version": "dev-stable26",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "c4a05e2e3b749899fb3dd5577ecb5763d3993da3"
+                "reference": "d1142002189596564d2575b35cbf13f17ff1b4a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/c4a05e2e3b749899fb3dd5577ecb5763d3993da3",
-                "reference": "c4a05e2e3b749899fb3dd5577ecb5763d3993da3",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/d1142002189596564d2575b35cbf13f17ff1b4a2",
+                "reference": "d1142002189596564d2575b35cbf13f17ff1b4a2",
                 "shasum": ""
             },
             "require": {
@@ -149,7 +149,6 @@
                 "psr/event-dispatcher": "^1.0",
                 "psr/log": "^1.1"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -169,9 +168,9 @@
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
             "support": {
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
-                "source": "https://github.com/nextcloud-deps/ocp/tree/master"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/stable26"
             },
-            "time": "2023-02-22T00:36:09+00:00"
+            "time": "2023-03-03T14:19:31+00:00"
         },
         {
             "name": "psr/clock",
