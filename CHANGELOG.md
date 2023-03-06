@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.0-rc.2 – 2023-03-06
+### Changed
+- Update several dependencies
+- Migrate RichText component usage to NcRichText
+  [#8959](https://github.com/nextcloud/spreed/pull/8959)
+
+### Fixed
+- Design review changes for breakout rooms handling
+  [#8962](https://github.com/nextcloud/spreed/pull/8962)
+- Add documentation for OCC commands
+  [#8907](https://github.com/nextcloud/spreed/pull/8907)
+
 ## 16.0.0-rc.1 – 2023-03-02
 ### Changed
 - Update several dependencies
