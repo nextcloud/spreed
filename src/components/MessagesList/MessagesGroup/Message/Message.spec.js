@@ -131,7 +131,7 @@ describe('Message.vue', () => {
 				provide: injected,
 			})
 
-			const message = wrapper.findComponent({ name: 'RichText' })
+			const message = wrapper.findComponent({ name: 'NcRichText' })
 			expect(message.attributes('text')).toBe('test message')
 		})
 
@@ -148,7 +148,7 @@ describe('Message.vue', () => {
 			const emoji = wrapper.find('.message-body__main__text')
 			expect(emoji.text()).toBe('🌧️')
 
-			const message = wrapper.findComponent({ name: 'RichText' })
+			const message = wrapper.findComponent({ name: 'NcRichText' })
 			expect(message.exists()).toBe(false)
 		})
 
@@ -181,7 +181,7 @@ describe('Message.vue', () => {
 					provide: injected,
 				})
 
-				const richText = wrapper.findComponent({ name: 'RichText' })
+				const richText = wrapper.findComponent({ name: 'NcRichText' })
 				expect(richText.attributes('text')).toBe('message two')
 
 				const callButton = wrapper.findComponent({ name: 'CallButton' })
@@ -264,7 +264,7 @@ describe('Message.vue', () => {
 				}],
 			})
 
-			const richText = wrapper.findComponent({ name: 'RichText' })
+			const richText = wrapper.findComponent({ name: 'NcRichText' })
 			expect(richText.attributes('text')).toBe('message deleted')
 		})
 
@@ -333,7 +333,7 @@ describe('Message.vue', () => {
 					provide: injected,
 				})
 
-				const messageEl = wrapper.findComponent({ name: 'RichText' })
+				const messageEl = wrapper.findComponent({ name: 'NcRichText' })
 				// note: indices as object keys are on purpose
 				expect(messageEl.props('arguments')).toStrictEqual(expectedRichParameters)
 			}
@@ -735,7 +735,7 @@ describe('Message.vue', () => {
 				provide: injected,
 			})
 
-			const message = wrapper.findComponent({ name: 'RichText' })
+			const message = wrapper.findComponent({ name: 'NcRichText' })
 			expect(message.attributes('text')).toBe('test message')
 
 			expect(wrapper.find('.icon-loading-small').exists()).toBe(true)
