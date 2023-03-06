@@ -4,7 +4,7 @@
 	<div v-if="canModerate || isInBreakoutRoom" class="breakout-rooms-actions">
 		<div class="breakout-rooms-actions__row">
 			<NcButton v-if="breakoutRoomsNotStarted && canModerate"
-				:title="startLabel"
+				:title="startLabelTitle"
 				:aria-label="startLabel"
 				type="primary"
 				:wide="true"
@@ -50,6 +50,17 @@
 				</template>
 				{{ backToMainRoomLabel }}
 			</NcButton>
+			<NcButton v-else-if="!canModerate"
+				:title="backToBreakoutRoomLabel"
+				:aria-label="backToBreakoutRoomLabel"
+				:wide="true"
+				type="secondary"
+				@click="switchToBreakoutRoom">
+				<template #icon>
+					<ArrowRight :size="20" />
+				</template>
+				{{ backToBreakoutRoomLabel }}
+			</NcButton>
 			<NcActions v-if="canModerate" class="right">
 				<NcActionButton v-if="canModerate && isInBreakoutRoom"
 					:title="sendMessageLabel"
@@ -75,7 +86,7 @@
 			@close="closeParticipantsEditor">
 			<div class="breakout-rooms-actions__editor">
 				<h2> {{ manageBreakoutRoomsTitle }} </h2>
-				<BreakoutRoomsParticipantsEditor :token="token"
+				<BreakoutRoomsParticipantsEditor :token="mainToken"
 					:breakout-rooms="breakoutRooms"
 					:is-creating-rooms="false"
 					@close="closeParticipantsEditor"
@@ -85,7 +96,7 @@
 
 		<!-- Send message dialog -->
 		<SendMessageDialog v-if="sendMessageDialogOpened"
-			:token="token"
+			:token="mainToken"
 			:broadcast="true"
 			@close="closeSendMessageDialog" />
 	</div>
@@ -93,6 +104,7 @@
 
 <script>
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Play from 'vue-material-design-icons/Play.vue'
@@ -127,18 +139,19 @@ export default {
 		Cog,
 		Check,
 		ArrowLeft,
+		ArrowRight,
 		Send,
 	},
 
 	mixins: [isInCall],
 
 	props: {
-		token: {
+		mainToken: {
 			type: String,
 			required: true,
 		},
 
-		conversation: {
+		mainConversation: {
 			type: Object,
 			required: true,
 		},
@@ -163,31 +176,19 @@ export default {
 
 	computed: {
 		canFullModerate() {
-			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
+			return this.mainConversation.participantType === PARTICIPANT.TYPE.OWNER || this.mainConversation.participantType === PARTICIPANT.TYPE.MODERATOR
 		},
 
 		canModerate() {
-			return !this.isOneToOne && (this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
+			return !this.isOneToOne && (this.canFullModerate || this.mainConversation.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
 		},
 
 		breakoutRoomsNotStarted() {
-			if (this.isInBreakoutRoom) {
-				return this.parentRoom.breakoutRoomStatus !== CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
-			} else {
-				return this.conversation.breakoutRoomStatus !== CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
-			}
+			return this.mainConversation.breakoutRoomStatus !== CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED
 		},
 
 		isInBreakoutRoom() {
-			return this.conversation.objectType === 'room'
-		},
-
-		parentRoom() {
-			if (!this.isInBreakoutRoom) {
-				return undefined
-			} else {
-				return this.$store.getters.conversation(this.conversation.objectId)
-			}
+			return this.mainToken !== this.$store.getters.getToken()
 		},
 
 		manageBreakoutRoomsTitle() {
@@ -198,8 +199,8 @@ export default {
 			return t('spreed', 'Back to main room')
 		},
 
-		participantType() {
-			return this.conversation.participantType
+		backToBreakoutRoomLabel() {
+			return t('spreed', 'Back to your room')
 		},
 
 		sendMessageLabel() {
@@ -210,6 +211,13 @@ export default {
 			return t('spreed', 'Start session')
 		},
 
+		startLabelTitle() {
+			if (this.isInCall) {
+				return this.startLabel
+			}
+			return t('spreed', 'Start a call before you start a breakout room session')
+		},
+
 		stopLabel() {
 			return t('spreed', 'Stop session')
 		},
@@ -217,20 +225,11 @@ export default {
 
 	methods: {
 		startBreakoutRooms() {
-			if (this.isInBreakoutRoom) {
-				this.$store.dispatch('startBreakoutRoomsAction', this.parentRoom.token)
-			} else {
-				this.$store.dispatch('startBreakoutRoomsAction', this.token)
-			}
-
+			this.$store.dispatch('startBreakoutRoomsAction', this.mainToken)
 		},
 
 		stopBreakoutRooms() {
-			if (this.isInBreakoutRoom) {
-				this.$store.dispatch('stopBreakoutRoomsAction', this.parentRoom.token)
-			} else {
-				this.$store.dispatch('stopBreakoutRoomsAction', this.token)
-			}
+			this.$store.dispatch('stopBreakoutRoomsAction', this.mainToken)
 		},
 
 		openSendMessageDialog() {
@@ -251,7 +250,13 @@ export default {
 
 		async switchToParentRoom() {
 			EventBus.$emit('switch-to-conversation', {
-				token: this.parentRoom.token,
+				token: this.mainToken,
+			})
+		},
+
+		async switchToBreakoutRoom() {
+			EventBus.$emit('switch-to-conversation', {
+				token: this.mainToken,
 			})
 		},
 	},

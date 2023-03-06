@@ -22,26 +22,36 @@
 <template>
 	<div class="breakout-rooms">
 		<!-- Actions -->
-		<BreakoutRoomsActions :token="token"
-			:conversation="conversation"
+		<BreakoutRoomsActions :main-token="mainToken"
+			:main-conversation="mainConversation"
 			:breakout-rooms="breakoutRooms"
 			:breakout-rooms-configured="breakoutRoomsConfigured" />
 		<!-- Breakout rooms list -->
-		<ul v-if="breakoutRooms">
+		<ul v-if="showBreakoutRoomsList">
 			<template v-for="breakoutRoom in breakoutRooms">
 				<BreakoutRoomItem :key="breakoutRoom.token"
-					:breakout-room="breakoutRoom" />
+					:breakout-room="breakoutRoom"
+					:main-conversation="mainConversation" />
 			</template>
 		</ul>
+		<NcEmptyContent v-else :title="t('spreed', 'Breakout rooms are not started')">
+			<template #icon>
+				<DotsCircle :size="20" />
+			</template>
+		</NcEmptyContent>
 	</div>
 </template>
 
 <script>
+import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
+
+import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
+
 import BreakoutRoomItem from './BreakoutRoomItem.vue'
 import BreakoutRoomsActions from './BreakoutRoomsActions.vue'
 
 // Constants
-import { CONVERSATION } from '../../../constants.js'
+import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 
 export default {
 	name: 'BreakoutRoomsTab',
@@ -50,15 +60,19 @@ export default {
 		// Components
 		BreakoutRoomItem,
 		BreakoutRoomsActions,
+		NcEmptyContent,
+
+		// Icons
+		DotsCircle,
 	},
 
 	props: {
-		token: {
+		mainToken: {
 			type: String,
 			required: true,
 		},
 
-		conversation: {
+		mainConversation: {
 			type: Object,
 			required: true,
 		},
@@ -76,14 +90,26 @@ export default {
 	},
 
 	computed: {
+		canFullModerate() {
+			return this.mainConversation.participantType === PARTICIPANT.TYPE.OWNER || this.mainConversation.participantType === PARTICIPANT.TYPE.MODERATOR
+		},
+
+		canModerate() {
+			return !this.isOneToOne && (this.canFullModerate || this.mainConversation.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
+		},
+
+		showBreakoutRoomsList() {
+			return this.breakoutRoomsConfigured
+				&& (this.canModerate || this.mainConversation.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STARTED)
+		},
+
 		breakoutRooms() {
-			return this.$store.getters.breakoutRooms(this.token)
+			return this.$store.getters.breakoutRooms(this.mainToken)
 		},
 
 		breakoutRoomsConfigured() {
-			return this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
+			return this.mainConversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
 		},
-
 	},
 
 	watch: {
@@ -118,7 +144,7 @@ export default {
 		getBreakoutRooms() {
 			if (this.breakoutRoomsConfigured) {
 				this.$store.dispatch('getBreakoutRoomsAction', {
-					token: this.token,
+					token: this.mainToken,
 				})
 			}
 		},
@@ -126,7 +152,7 @@ export default {
 		getParticipants() {
 			if (this.breakoutRoomsConfigured) {
 				this.$store.dispatch('getBreakoutRoomsParticipantsAction', {
-					token: this.token,
+					token: this.mainToken,
 				})
 			}
 		},
