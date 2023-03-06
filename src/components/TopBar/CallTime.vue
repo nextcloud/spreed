@@ -23,23 +23,21 @@
 		close-after-click="true"
 		:menu-title="callTime"
 		:shown.sync="showPopover"
-		:class="{ 'call-time--wide': isWide }"
 		:triggers="[]"
 		:container="container">
 		<template #trigger>
-			<NcButton :disabled="(!isStartingRecording && !isRecording) || !isModerator"
+			<NcButton :disabled="!isShowRecordingStatus || !isModerator"
 				:wide="true"
-				:class="{ 'call-time__not-recording': !isStartingRecording && !isRecording }"
-				:title="isStartingRecording ? t('spreed', 'Starting the recording') : t('spreed', 'Recording')"
+				:title="recordingButtonTitle"
 				type="tertiary"
 				@click="showPopover = true">
-				<template v-if="isStartingRecording" #icon>
-					<RecordCircle :size="20"
-						fill-color="var(--color-loading-light)" />
-				</template>
-				<template v-else-if="isRecording" #icon>
-					<RecordCircle :size="20"
+				<template v-if="isShowRecordingStatus" #icon>
+					<RecordCircle v-if="isRecording"
+						:size="20"
 						fill-color="#e9322d" />
+					<RecordCircle v-else
+						:size="20"
+						fill-color="var(--color-loading-light)" />
 				</template>
 				{{ formattedTime }}
 			</NcButton>
@@ -145,10 +143,6 @@ export default {
 			return hours + ' : ' + minutes + ' : ' + seconds
 		},
 
-		isWide() {
-			return this.formattedTime.length > 7
-		},
-
 		token() {
 			return this.$store.getters.getToken()
 		},
@@ -165,6 +159,20 @@ export default {
 		isRecording() {
 			return this.conversation.callRecording === CALL.RECORDING.VIDEO
 				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
+		},
+
+		isShowRecordingStatus() {
+			return this.isStartingRecording || this.isRecording
+		},
+
+		recordingButtonTitle() {
+			if (this.isStartingRecording) {
+				return t('spreed', 'Starting the recording')
+			} else if (this.isRecording) {
+				return t('spreed', 'Recording')
+			}
+
+			return ''
 		},
 	},
 
@@ -203,15 +211,6 @@ export default {
 	align-items: center;
 	height: var(--default-clickable-area);
 	font-weight: bold;
-	width: 116px;
-
-	&__not-recording {
-		padding-left: var(--default-clickable-area) !important
-	}
-
-	&--wide {
-		width: 148px;
-	}
 }
 
 ::v-deep .button-vue {
@@ -220,6 +219,7 @@ export default {
 
 	&:disabled {
 		opacity: 1 !important;
+		pointer-events: none;
 	}
 }
 
