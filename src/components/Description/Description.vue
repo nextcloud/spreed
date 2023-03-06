@@ -23,7 +23,7 @@
 	<div ref="description"
 		:key="forceReRenderKey"
 		class="description">
-		<NcRichContentEditable ref="contenteditable"
+		<NcRichContenteditable ref="contenteditable"
 			:value.sync="descriptionText"
 			:auto-complete="()=>{}"
 			:maxlength="maxLength"
@@ -76,7 +76,7 @@ import Close from 'vue-material-design-icons/Close.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcRichContentEditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
+import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 export default {
@@ -85,7 +85,7 @@ export default {
 		Pencil,
 		Check,
 		Close,
-		NcRichContentEditable,
+		NcRichContenteditable,
 		NcButton,
 	},
 
@@ -213,11 +213,15 @@ export default {
 				return
 			}
 			// Remove leading/trailing whitespaces.
-			this.descriptionText = this.descriptionText.replace(/\r\n|\n|\r/gm, '\n').trim()
+			// FIXME: remove after issue is resolved: https://github.com/nextcloud/nextcloud-vue/issues/3264
+			const temp = document.createElement('textarea')
+			temp.innerHTML = this.descriptionText
+			this.descriptionText = temp.value.replace(/\r\n|\n|\r/gm, '\n').trim()
+
 			// Submit description
 			this.$emit('submit-description', this.descriptionText)
 			/**
-			 * Change the richcontenteditable key in order to trigger a re-render
+			 * Change the NcRichContenteditable key in order to trigger a re-render
 			 * without this all the trimmed new lines and whitespaces would
 			 * still be present in the contenteditable element.
 			 */
@@ -293,7 +297,7 @@ export default {
 	justify-content: center;
 }
 
-// Restyle richContentEditable component from our library.
+// Restyle NcRichContenteditable component from our library.
 ::v-deep .rich-contenteditable__input {
 	align-self: flex-start;
 	min-height: var(--default-line-height);
