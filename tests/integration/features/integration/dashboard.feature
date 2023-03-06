@@ -28,6 +28,13 @@ Feature: integration/dashboard
     And user "participant2" adds user "participant1" to room "call room" with 200 (v4)
     And user "participant2" joins room "call room" with 200 (v4)
     And user "participant2" joins call "call room" with 200 (v4)
+    Given user "participant2" creates room "breakout room parent" (v4)
+      | roomType | 2         |
+      | roomName | call room |
+    And user "participant2" adds user "participant1" to room "breakout room parent" with 200 (v4)
+    When user "participant2" creates 2 automatic breakout rooms for "breakout room parent" with 200 (v1)
+    And user "participant2" starts breakout rooms in room "breakout room parent" with 200 (v1)
+    And user "participant2" broadcasts message "@participant1 hello" to room "breakout room parent" with 201 (v1)
     Then user "participant1" sees the following entries for dashboard widgets "spreed" (v1)
       | title                    | subtitle            | link            | iconUrl                                     | sinceId |
       | call room                |  Call in progress   | call room       | {$BASE_URL}core/img/actions/public.svg      |         |
