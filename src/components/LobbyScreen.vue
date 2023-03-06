@@ -39,7 +39,7 @@
 			</p>
 
 			<p class="lobby__description">
-				<RichText :text="conversation.description"
+				<NcRichText :text="conversation.description"
 					:autolink="true" />
 			</p>
 		</div>
@@ -49,7 +49,7 @@
 
 <script>
 import moment from '@nextcloud/moment'
-import RichText from '@nextcloud/vue-richtext'
+import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import Lobby from './missingMaterialDesignIcons/Lobby.vue'
 import SetGuestUsername from './SetGuestUsername.vue'
@@ -60,7 +60,7 @@ export default {
 
 	components: {
 		SetGuestUsername,
-		RichText,
+		NcRichText,
 		Lobby,
 	},
 
