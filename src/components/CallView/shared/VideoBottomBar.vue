@@ -47,6 +47,7 @@
 					<NcButton v-show="!connectionStateFailedNoRestart"
 						v-if="showMicrophone || showMicrophoneOff"
 						v-tooltip="audioButtonTooltip"
+						:aria-label="audioButtonTooltip"
 						class="muteIndicator"
 						type="tertiary-no-background"
 						:disabled="!model.attributes.audioAvailable || !selfIsModerator"
@@ -62,6 +63,7 @@
 					</NcButton>
 					<NcButton v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
 						v-tooltip="videoButtonTooltip"
+						:aria-label="videoButtonTooltip"
 						class="hideRemoteVideo"
 						type="tertiary-no-background"
 						@click.stop="toggleVideo">
@@ -76,6 +78,7 @@
 					</NcButton>
 					<NcButton v-show="!connectionStateFailedNoRestart"
 						v-tooltip="t('spreed', 'Show screen')"
+						:aria-label="t('spreed', 'Show screen')"
 						class="screensharingIndicator"
 						type="tertiary-no-background"
 						:class="screenSharingButtonClass"
@@ -196,7 +199,7 @@ export default {
 				return t('spreed', 'Mute')
 			}
 
-			return null
+			return t('spreed', 'Muted')
 		},
 
 		showVideoButton() {

@@ -32,6 +32,7 @@
 						<NcButton id="quality_warning_button"
 							type="tertiary-no-background"
 							class="trigger"
+							:aria-label="qualityWarningAriaLabel"
 							@click="mouseover = !mouseover">
 							<template #icon>
 								<NetworkStrength2Alert fill-color="#e9322d"
