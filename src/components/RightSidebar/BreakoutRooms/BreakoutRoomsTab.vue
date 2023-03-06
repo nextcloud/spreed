@@ -22,8 +22,8 @@
 <template>
 	<div class="breakout-rooms">
 		<!-- Actions -->
-		<BreakoutRoomsActions :token="token"
-			:conversation="conversation"
+		<BreakoutRoomsActions :main-token="mainToken"
+			:main-conversation="mainConversation"
 			:breakout-rooms="breakoutRooms"
 			:breakout-rooms-configured="breakoutRoomsConfigured" />
 		<!-- Breakout rooms list -->
@@ -53,12 +53,12 @@ export default {
 	},
 
 	props: {
-		token: {
+		mainToken: {
 			type: String,
 			required: true,
 		},
 
-		conversation: {
+		mainConversation: {
 			type: Object,
 			required: true,
 		},
@@ -77,11 +77,11 @@ export default {
 
 	computed: {
 		breakoutRooms() {
-			return this.$store.getters.breakoutRooms(this.token)
+			return this.$store.getters.breakoutRooms(this.mainToken)
 		},
 
 		breakoutRoomsConfigured() {
-			return this.conversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
+			return this.mainConversation.breakoutRoomMode !== CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
 		},
 
 	},
@@ -118,7 +118,7 @@ export default {
 		getBreakoutRooms() {
 			if (this.breakoutRoomsConfigured) {
 				this.$store.dispatch('getBreakoutRoomsAction', {
-					token: this.token,
+					token: this.mainToken,
 				})
 			}
 		},
@@ -126,7 +126,7 @@ export default {
 		getParticipants() {
 			if (this.breakoutRoomsConfigured) {
 				this.$store.dispatch('getBreakoutRoomsParticipantsAction', {
-					token: this.token,
+					token: this.mainToken,
 				})
 			}
 		},

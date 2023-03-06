@@ -67,8 +67,8 @@
 			<template slot="icon">
 				<DotsCircle :size="20" />
 			</template>
-			<BreakoutRoomsTab :token="token"
-				:conversation="conversation"
+			<BreakoutRoomsTab :main-token="mainConversationToken"
+				:main-conversation="mainConversation"
 				:is-active="activeTab === 'breakout-rooms'" />
 		</NcAppSidebarTab>
 		<NcAppSidebarTab v-if="!getUserId || showSIPSettings"
@@ -188,6 +188,17 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
+		},
+
+		mainConversationToken() {
+			if (this.conversation.objectType === 'room') {
+				return this.conversation.objectId
+			}
+			return this.token
+		},
+
+		mainConversation() {
+			return this.$store.getters.conversation(this.mainConversationToken) || this.$store.getters.dummyConversation
 		},
 
 		getUserId() {
