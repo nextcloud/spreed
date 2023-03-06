@@ -221,6 +221,7 @@ export default {
 		getPermissionRadioValue(value) {
 			switch (value) {
 			case PERMISSIONS.MAX_DEFAULT:
+			case PERMISSIONS.MAX_CUSTOM:
 				return 'all'
 			case PERMISSIONS.CALL_JOIN:
 				return 'restricted'
