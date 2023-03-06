@@ -19,7 +19,7 @@
 -->
 
 <template>
-	<NcPopover class="top-bar__button call-time"
+	<NcPopover class="call-time"
 		close-after-click="true"
 		:menu-title="callTime"
 		:shown.sync="showPopover"
@@ -42,7 +42,7 @@
 						fill-color="#e9322d" />
 				</template>
 				{{ formattedTime }}
-			</ncbutton>
+			</NcButton>
 		</template>
 		<NcButton v-if="isStartingRecording"
 			type="tertiary-no-background"
@@ -66,7 +66,6 @@
 </template>
 
 <script>
-
 import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
 import StopIcon from 'vue-material-design-icons/Stop.vue'
 
@@ -81,11 +80,11 @@ export default {
 	name: 'CallTime',
 
 	components: {
-		RecordCircle,
-		StopIcon,
+		NcButton,
 		NcLoadingIcon,
 		NcPopover,
-		NcButton,
+		RecordCircle,
+		StopIcon,
 	},
 
 	mixins: [isInLobby],
