@@ -82,7 +82,7 @@ export default {
 	computed: {
 		dialogTitle() {
 			return this.broadcast
-				? t('spreed', 'Send message to all breakout rooms')
+				? t('spreed', 'Send a message to all breakout rooms')
 				: t('spreed', 'Send a message to "{roomName}"', { roomName: this.displayName })
 		},
 	},
