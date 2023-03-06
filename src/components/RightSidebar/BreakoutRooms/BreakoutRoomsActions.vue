@@ -4,7 +4,7 @@
 	<div v-if="canModerate || isInBreakoutRoom" class="breakout-rooms-actions">
 		<div class="breakout-rooms-actions__row">
 			<NcButton v-if="breakoutRoomsNotStarted && canModerate"
-				:title="startLabel"
+				:title="startLabelTitle"
 				:aria-label="startLabel"
 				type="primary"
 				:wide="true"
@@ -50,6 +50,17 @@
 				</template>
 				{{ backToMainRoomLabel }}
 			</NcButton>
+			<NcButton v-else-if="!isInBreakoutRoom && !canModerate"
+				:title="backToBreakoutRoomLabel"
+				:aria-label="backToBreakoutRoomLabel"
+				:wide="true"
+				type="secondary"
+				@click="switchToBreakoutRoom">
+				<template #icon>
+					<ArrowRight :size="20" />
+				</template>
+				{{ backToBreakoutRoomLabel }}
+			</NcButton>
 			<NcActions v-if="canModerate" class="right">
 				<NcActionButton v-if="canModerate && isInBreakoutRoom"
 					:title="sendMessageLabel"
@@ -93,6 +104,7 @@
 
 <script>
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Play from 'vue-material-design-icons/Play.vue'
@@ -127,6 +139,7 @@ export default {
 		Cog,
 		Check,
 		ArrowLeft,
+		ArrowRight,
 		Send,
 	},
 
@@ -186,12 +199,23 @@ export default {
 			return t('spreed', 'Back to main room')
 		},
 
+		backToBreakoutRoomLabel() {
+			return t('spreed', 'Back to your room')
+		},
+
 		sendMessageLabel() {
 			return t('spreed', 'Message all rooms')
 		},
 
 		startLabel() {
 			return t('spreed', 'Start session')
+		},
+
+		startLabelTitle() {
+			if (this.isInCall) {
+				return this.startLabel
+			}
+			return t('spreed', 'Start a call before you start a breakout room session')
 		},
 
 		stopLabel() {
@@ -225,6 +249,12 @@ export default {
 		},
 
 		async switchToParentRoom() {
+			EventBus.$emit('switch-to-conversation', {
+				token: this.mainToken,
+			})
+		},
+
+		async switchToBreakoutRoom() {
 			EventBus.$emit('switch-to-conversation', {
 				token: this.mainToken,
 			})
