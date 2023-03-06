@@ -38,7 +38,7 @@
 			</NcButton>
 			{{ roomName }}
 			<div class="breakout-room-item__actions">
-				<NcButton @click="joinRoom">
+				<NcButton v-if="showJoinButton" @click="joinRoom">
 					{{ t('spreed', 'Join') }}
 				</NcButton>
 				<NcActions :force-menu="true">
@@ -117,6 +117,10 @@ export default {
 			type: Object,
 			required: true,
 		},
+		mainConversation: {
+			type: Object,
+			required: true,
+		},
 	},
 
 	data() {
@@ -138,6 +142,10 @@ export default {
 
 		roomToken() {
 			return this.breakoutRoom.token
+		},
+
+		showJoinButton() {
+			return this.roomToken !== this.$store.getters.getToken()
 		},
 
 		roomParticipants() {
@@ -187,10 +195,12 @@ export default {
 				})
 			} else {
 				try {
-					await this.$store.dispatch('switchToBreakoutRoomAction', {
-						token: this.$store.getters.parentRoomToken(this.roomToken),
-						target: this.roomToken,
-					})
+					if (this.mainConversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.FREE) {
+						await this.$store.dispatch('switchToBreakoutRoomAction', {
+							token: this.$store.getters.parentRoomToken(this.roomToken),
+							target: this.roomToken,
+						})
+					}
 					EventBus.$emit('switch-to-conversation', {
 						token: this.roomToken,
 					})

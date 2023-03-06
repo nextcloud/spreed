@@ -30,7 +30,8 @@
 		<ul v-if="showBreakoutRoomsList">
 			<template v-for="breakoutRoom in breakoutRooms">
 				<BreakoutRoomItem :key="breakoutRoom.token"
-					:breakout-room="breakoutRoom" />
+					:breakout-room="breakoutRoom"
+					:main-conversation="mainConversation" />
 			</template>
 		</ul>
 		<NcEmptyContent v-else :title="t('spreed', 'Breakout rooms are not started')">
