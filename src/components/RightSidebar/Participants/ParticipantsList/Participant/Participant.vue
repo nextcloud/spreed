@@ -180,7 +180,7 @@
 			</template>
 
 			<!-- Remove -->
-			<NcActionSeparator v-if="canBeModerated" />
+			<NcActionSeparator v-if="canBeModerated && showPermissionsOptions" />
 			<NcActionButton v-if="canBeModerated"
 				icon="icon-delete"
 				:close-after-click="true"
