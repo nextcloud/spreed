@@ -50,7 +50,7 @@
 				</template>
 				{{ backToMainRoomLabel }}
 			</NcButton>
-			<NcButton v-else-if="!isInBreakoutRoom && !canModerate"
+			<NcButton v-else-if="!canModerate"
 				:title="backToBreakoutRoomLabel"
 				:aria-label="backToBreakoutRoomLabel"
 				:wide="true"
