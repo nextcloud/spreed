@@ -38,6 +38,16 @@ Group and public conversations can be used to host breakout rooms.
     - Data: Array of conversations (breakout rooms and parent)
       See array definition in [Get user´s conversations](conversation.md#get-user-s-conversations) (API v4)
 
+## Create additional breakout room
+
+In order to create an additional breakout room, create a conversation with object type `room` and object ID being the parent token.
+See [Creating a new conversation](conversation.md#creating-a-new-conversation) for more information.
+
+## Delete individual breakout room
+
+The normal deletion API can be used.
+See [Delete a conversation](conversation.md#delete-a-conversation) for more information.
+
 ## Remove breakout rooms
 
 * Required capability: `breakout-rooms-v1`
