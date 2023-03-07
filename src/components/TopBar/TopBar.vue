@@ -57,7 +57,7 @@
 		<!-- Call time -->
 		<CallTime v-if="isInCall"
 			:start="conversation.callStartTime"
-			class="dark-hover" />
+			class="top-bar__button dark-hover" />
 
 		<!-- Participants counter -->
 		<NcButton v-if="isInCall && !isOneToOneConversation && isModeratorOrUser"
@@ -163,17 +163,19 @@ export default {
 	},
 
 	components: {
+		// Components
 		BreakoutRoomsEditor,
-		NcCounterBubble,
 		CallButton,
-		AccountMultiple,
-		MessageText,
+		CallTime,
 		ConversationIcon,
 		LocalMediaControls,
-		TopBarMenu,
 		NcButton,
-		CallTime,
+		NcCounterBubble,
+		TopBarMenu,
+		// Icons
+		AccountMultiple,
 		MenuIcon,
+		MessageText,
 	},
 
 	mixins: [
@@ -265,7 +267,7 @@ export default {
 		 * Online status of the peer in one to one conversation.
 		 */
 		isPeerOffline() {
-			// Only compute this in on to one conversations
+			// Only compute this in one-to-one conversations
 			if (!this.isOneToOneConversation) {
 				return undefined
 			}
@@ -301,7 +303,7 @@ export default {
 			}
 		},
 
-		hasUnreadMentions(newValue, oldValue) {
+		hasUnreadMentions(newValue) {
 			if (!this.isInCall || !this.showOpenSidebarButton) {
 				return
 			}
@@ -375,14 +377,13 @@ export default {
 
 		// TODO: implement real method
 		stopRecording() {
-			console.debug('stop recordiiing')
+			console.debug('stop recording')
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-
 @import '../../assets/variables';
 
 .top-bar {
