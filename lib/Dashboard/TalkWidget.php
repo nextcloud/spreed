@@ -28,6 +28,7 @@ namespace OCA\Talk\Dashboard;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
@@ -160,6 +161,10 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		$rooms = $this->manager->getRoomsForUser($userId, [], true);
 
 		$rooms = array_filter($rooms, function (Room $room) use ($userId) {
+			if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
+				return false;
+			}
+
 			$participant = $this->participantService->getParticipant($room, $userId);
 			$attendee = $participant->getAttendee();
 			return $room->getCallFlag() !== Participant::FLAG_DISCONNECTED
