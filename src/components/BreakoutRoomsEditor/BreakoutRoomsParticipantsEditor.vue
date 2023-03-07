@@ -40,7 +40,7 @@
 			<template v-for="(item, index) in assignments">
 				<NcAppNavigationItem :key="index"
 					class="participants-editor__section"
-					:title="roomName(index)"
+					:name="roomName(index)"
 					:allow-collapse="true"
 					:open="true">
 					<template #icon>

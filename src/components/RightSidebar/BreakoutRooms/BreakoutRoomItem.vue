@@ -27,6 +27,7 @@
 		@mouseleave="elementHoveredOrFocused = false">
 		<div class="breakout-room-item__wrapper">
 			<NcButton type="tertiary-no-background"
+				:aria-label="toggleParticipantsListLabel"
 				@focus="elementHoveredOrFocused = true"
 				@blur="elementHoveredOrFocused = false"
 				@click="toggleParticipantsVisibility">
@@ -159,6 +160,12 @@ export default {
 
 		showAssistanceButton() {
 			return this.canModerate && this.breakoutRoom.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED
+		},
+
+		toggleParticipantsListLabel() {
+			return this.showParticipants
+				? t('spreed', 'Hide list of participants')
+				: t('spreed', 'Show list of participants')
 		},
 	},
 
