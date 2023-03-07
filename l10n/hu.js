@@ -743,7 +743,6 @@ OC.L10N.register(
     "Current breakout rooms and settings will be lost" : "A jelenlegi szétbontott szobák és beállítások elvesznek",
     "Cancel" : "Mégse",
     "Post message" : "Üzenet küldése",
-    "Send message to all breakout rooms" : "Üzenet küldése az összes szétbontott szobának",
     "Send a message to \"{roomName}\"" : "Üzenet küldése ide: „{roomName}”",
     "The message was sent to all breakout rooms" : "Az üzenet el lett küldve az összes szétbontott szobának",
     "The message was sent to \"{roomName}\"" : "Az üzenet el lett küldve ide: „{roomName}”",

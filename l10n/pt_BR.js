@@ -748,7 +748,6 @@ OC.L10N.register(
     "Current breakout rooms and settings will be lost" : "As salas de grupo e as configurações atuais serão perdidas",
     "Cancel" : "Cancelar",
     "Post message" : "Postar mensagem",
-    "Send message to all breakout rooms" : "Enviar mensagem para todas as salas temáticas",
     "Send a message to \"{roomName}\"" : "Envie uma mensagem para \"{roomName}\"",
     "The message was sent to all breakout rooms" : "A mensagem foi enviada para todas as salas temáticas",
     "The message was sent to \"{roomName}\"" : "A mensagem foi enviada para \"{roomName}\"",
