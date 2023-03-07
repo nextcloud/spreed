@@ -752,7 +752,6 @@ OC.L10N.register(
     "Current breakout rooms and settings will be lost" : "目前的分組討論室和設置將會丟失",
     "Cancel" : "取消",
     "Post message" : "發表訊息",
-    "Send message to all breakout rooms" : "向所有分組討論室傳送訊息",
     "Send a message to \"{roomName}\"" : "向 “{roomName}” 傳送訊息",
     "The message was sent to all breakout rooms" : "訊息已傳送至所有分組討論室",
     "The message was sent to \"{roomName}\"" : "訊息已發佈至 “{roomName}”",

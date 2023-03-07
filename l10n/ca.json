@@ -34,6 +34,7 @@
     "- You can now change your camera and microphone while being in a call" : "- Ara pots canviar la càmera i el micròfon mentre estàs en una trucada",
     "- Give your conversations some context with a description and open it up so logged in users can find it and join themselves" : "- Contextualitza les teves converses amb una descripció i obre-la perquè els usuaris iniciats la puguin trobar i unir-se",
     "- See a read status and send failed messages again" : "- Veure un estat de lectura i tornar a enviar missatges fallits",
+    "- Raise your hand in a call with the R key" : "- Alceu la mà en una trucada amb la tecla R",
     "There are currently no commands available." : "Actualment no hi ha comandaments disponibles.",
     "The command does not exist" : "No existeix aquest comandament",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "S'ha produït un error en executar l'ordre. Sol·liciteu a un administrador que comprovi els registres.",
