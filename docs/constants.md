@@ -9,6 +9,14 @@
 * `4` Changelog
 * `5` Former "One to one" (When a user is deleted from the server or removed from all their conversations, `1` "One to one" rooms are converted to this type)
 
+### Object types
+
+| Constant         | Can be created | Description                                                      | Object ID                             |
+|------------------|----------------|------------------------------------------------------------------|---------------------------------------|
+| `file`           | No             | Conversations about a file in the right sidebar of the files app | File ID                               |
+| `share:password` | No             | Video verification to verify the identity of the share recipient | Share token                           |
+| `room`           | Yes            | Room is a breakout room                                          | Token of the main/parent conversation |
+
 ### Read-only states
 * `0` Read-write
 * `1` Read-only
