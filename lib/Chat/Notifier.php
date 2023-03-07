@@ -316,20 +316,19 @@ class Notifier {
 
 		$objectTypes = [
 			'chat',
-			'recording',
-			'recording_information',
-			'remote_talk_share',
 		];
+		if (!$chatOnly) {
+			$objectTypes = [
+				'call',
+				'chat',
+				'room',
+				'recording',
+				'recording_information',
+				'remote_talk_share',
+			];
+		}
 		foreach ($objectTypes as $type) {
 			$notification->setObject($type, $chat->getToken());
-			$this->notificationManager->markProcessed($notification);
-		}
-
-		if (!$chatOnly) {
-			$notification->setObject('room', $chat->getToken());
-			$this->notificationManager->markProcessed($notification);
-
-			$notification->setObject('call', $chat->getToken());
 			$this->notificationManager->markProcessed($notification);
 		}
 
