@@ -749,7 +749,6 @@
     "Current breakout rooms and settings will be lost" : "Geçerli çalışma odaları ve ayarları kaybolacak",
     "Cancel" : "İptal",
     "Post message" : "İleti gönder",
-    "Send message to all breakout rooms" : "Tüm çalışma odalarına ileti gönder",
     "Send a message to \"{roomName}\"" : "\"{roomName}\" odasına bir ileti gönder",
     "The message was sent to all breakout rooms" : "İleti tüm çalışma odalarına gönderildi",
     "The message was sent to \"{roomName}\"" : "İleti tüm \"{roomName}\" odasına gönderildi",
