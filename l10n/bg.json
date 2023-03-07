@@ -749,7 +749,6 @@
     "Current breakout rooms and settings will be lost" : "Текущите стаи за отделно събрание и настройки ще бъдат изгубени",
     "Cancel" : "Отказ",
     "Post message" : "Публикуване на съобщение",
-    "Send message to all breakout rooms" : "Изпращане на съобщение до всички стаи за отделно събрание",
     "Send a message to \"{roomName}\"" : "Изпращане на съобщение до „{roomName}“",
     "The message was sent to all breakout rooms" : "Съобщението е изпратено до всички стаи за отделно събрание",
     "The message was sent to \"{roomName}\"" : "Съобщението е изпратено до „{roomName}“",

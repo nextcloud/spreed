@@ -752,7 +752,6 @@ OC.L10N.register(
     "Current breakout rooms and settings will be lost" : "Current breakout rooms and settings will be lost",
     "Cancel" : "Cancel",
     "Post message" : "Post message",
-    "Send message to all breakout rooms" : "Send message to all breakout rooms",
     "Send a message to \"{roomName}\"" : "Send a message to \"{roomName}\"",
     "The message was sent to all breakout rooms" : "The message was sent to all breakout rooms",
     "The message was sent to \"{roomName}\"" : "The message was sent to \"{roomName}\"",

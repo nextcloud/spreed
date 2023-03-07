@@ -744,7 +744,6 @@
     "Room {roomNumber}" : "聊天室 {roomNumber}",
     "Cancel" : "取消",
     "Post message" : "張貼訊息",
-    "Send message to all breakout rooms" : "傳送訊息給所有分組討論室",
     "Send a message to \"{roomName}\"" : "傳送訊息給「{roomName}」",
     "The message was sent to all breakout rooms" : "訊息已傳送至所有分組討論室",
     "The message was sent to \"{roomName}\"" : "訊息已傳送至「{roomName}」",

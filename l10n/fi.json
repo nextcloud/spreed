@@ -572,7 +572,6 @@
     "Current breakout rooms and settings will be lost" : "Nykyisen pienryhmätilat ja asetukset katoavat",
     "Cancel" : "Peruuta",
     "Post message" : "Lähetä viesti",
-    "Send message to all breakout rooms" : "Lähetä viesti kaikkiin pienryhmätiloihin",
     "Send a message to \"{roomName}\"" : "Lähetä viesti huoneeseen \"{roomName}\"",
     "The message was sent to all breakout rooms" : "Viesti lähetettiin kaikkiin pienryhmätiloihin.",
     "The message was sent to \"{roomName}\"" : "Viesti lähetettiin huoneeseen \"{roomName}\"",
