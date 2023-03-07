@@ -161,10 +161,7 @@ export default {
 		},
 
 		canFullModerate() {
-			if (this.isParticipantsEditor) {
-				return false
-			}
-			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
+			return !this.isParticipantsEditor && (this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR)
 		},
 
 		canModerate() {
