@@ -715,3 +715,21 @@ Feature: chat-2/poll
       | room | actorType | actorId      | actorDisplayName         | message                | messageParameters |
       | room | users     | participant2 | participant2-displayname | Message deleted by you | "IGNORE"          |
       | room | users     | participant2 | participant2-displayname | Message deleted by you | "IGNORE"          |
+
+  Scenario: Deleting the chat history also deletes polls
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant2" creates a poll in room "room" with 201
+      | question   | What is the question? |
+      | options    | ["Where are you?","How much is the fish?"] |
+      | resultMode | public |
+      | maxVotes   | unlimited |
+    And user "participant1" sees the following messages in room "room" with 200 (v1)
+      | room | actorType | actorId      | actorDisplayName         | message  | messageParameters |
+      | room | users     | participant2 | participant2-displayname | {object} | "IGNORE"          |
+    And user "participant1" deletes chat history for room "room" with 200
+    Then user "participant1" sees poll "What is the question?" in room "room" with 404
+    Then user "participant2" sees poll "What is the question?" in room "room" with 404
+    And user "participant1" sees the following messages in room "room" with 200 (v1)

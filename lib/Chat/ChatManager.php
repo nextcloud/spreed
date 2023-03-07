@@ -463,6 +463,8 @@ class ChatManager {
 
 		$this->participantService->resetChatDetails($chat);
 
+		$this->pollService->deleteByRoomId($chat->getId());
+
 		return $this->addSystemMessage(
 			$chat,
 			$actorType,
