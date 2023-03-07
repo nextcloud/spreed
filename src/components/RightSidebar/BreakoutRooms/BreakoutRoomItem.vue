@@ -21,19 +21,19 @@
 -->
 
 <template>
-	<Fragment>
-		<li :key="roomName"
-			class="breakout-room-item"
-			@mouseenter="elementHoveredOrFocused = true"
-			@mouseleave="elementHoveredOrFocused = false">
+	<li :key="roomName"
+		class="breakout-room-item"
+		@mouseenter="elementHoveredOrFocused = true"
+		@mouseleave="elementHoveredOrFocused = false">
+		<div class="breakout-room-item__wrapper">
 			<NcButton type="tertiary-no-background"
 				@focus="elementHoveredOrFocused = true"
 				@blur="elementHoveredOrFocused = false"
 				@click="toggleParticipantsVisibility">
 				<template #icon>
 					<DotsCircle v-if="!elementHoveredOrFocused" :size="20" />
-					<MenuRight v-else-if="elementHoveredOrFocused && !showParticipants" :size="20" />
-					<MenuDown v-else-if="elementHoveredOrFocused && showParticipants" :size="20" />
+					<MenuRight v-else-if="!showParticipants" :size="20" />
+					<MenuDown v-else :size="20" />
 				</template>
 			</NcButton>
 			{{ roomName }}
@@ -57,23 +57,21 @@
 					</NcActionButton>
 				</NcActions>
 			</div>
-			<!-- Send message dialog -->
-			<SendMessageDialog v-if="isDialogOpened"
-				:display-name="roomName"
-				:token="roomToken"
-				@close="closeSendMessageForm" />
-		</li>
+		</div>
 		<ul v-show="showParticipants">
 			<template v-for="participant in roomParticipants">
 				<Participant :key="participant.actorId" :participant="participant" />
 			</template>
 		</ul>
-	</Fragment>
+		<!-- Send message dialog -->
+		<SendMessageDialog v-if="isDialogOpened"
+			:display-name="roomName"
+			:token="roomToken"
+			@close="closeSendMessageForm" />
+	</li>
 </template>
 
 <script>
-import { Fragment } from 'vue-frag'
-
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import MenuDown from 'vue-material-design-icons/MenuDown.vue'
@@ -97,19 +95,18 @@ export default {
 
 	components: {
 		// Components
-		Participant,
 		NcActionButton,
-		SendMessageDialog,
-		NcButton,
 		NcActions,
-		Fragment,
+		NcButton,
+		Participant,
+		SendMessageDialog,
 
 		// Icons
 		DotsCircle,
 		HandBackLeft,
-		Send,
-		MenuRight,
 		MenuDown,
+		MenuRight,
+		Send,
 	},
 
 	props: {
@@ -219,11 +216,14 @@ export default {
 
 <style lang="scss" scoped>
 .breakout-room-item {
-	font-weight: bold;
-	display: flex;
-	align-items: center;
 	margin-top: calc(var(--default-grid-baseline)*5);
-	gap: var(--default-grid-baseline);
+	font-weight: bold;
+
+	&__wrapper {
+		display: flex;
+		align-items: center;
+		gap: var(--default-grid-baseline);
+	}
 
 	&__actions {
 		margin-left: auto;
