@@ -342,14 +342,6 @@ export default {
 		margin: calc(var(--default-grid-baseline) * 2) 0 var(--default-grid-baseline) 0;
 
 	}
-
-	&__participant {
-		display: flex;
-		align-items: center;
-		gap: var(--default-grid-baseline);
-		margin-left: 14px;
-	}
-
 	&__scroller {
 		height: 100%;
 		overflow: auto;
