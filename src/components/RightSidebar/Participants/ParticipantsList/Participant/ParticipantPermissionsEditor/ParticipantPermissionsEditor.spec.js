@@ -131,6 +131,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 				expect.anything(),
 				expect.objectContaining({
 					permissions: PARTICIPANT.PERMISSIONS.CALL_START
+						| PARTICIPANT.PERMISSIONS.CALL_JOIN
 						| PARTICIPANT.PERMISSIONS.LOBBY_IGNORE
 						| PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
 						| PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO
@@ -153,6 +154,7 @@ describe('ParticipantPermissionsEditor.vue', () => {
 				expect.anything(),
 				expect.objectContaining({
 					permissions: PARTICIPANT.PERMISSIONS.CALL_START
+						| PARTICIPANT.PERMISSIONS.CALL_JOIN
 						| PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO
 						| PARTICIPANT.PERMISSIONS.CUSTOM,
 				})

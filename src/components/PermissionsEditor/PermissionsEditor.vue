@@ -178,6 +178,7 @@ export default {
 		 */
 		formPermissions() {
 			return (this.callStart ? PERMISSIONS.CALL_START : 0)
+			| PERMISSIONS.CALL_JOIN // Currently not handled, just adding it, so that manually selecting all checkboxes goes to the "All" permissions state
 			| (this.lobbyIgnore ? PERMISSIONS.LOBBY_IGNORE : 0)
 			| (this.chatMessagesAndReactions ? PERMISSIONS.CHAT : 0)
 			| (this.publishAudio ? PERMISSIONS.PUBLISH_AUDIO : 0)
