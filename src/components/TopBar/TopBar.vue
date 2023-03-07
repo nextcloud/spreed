@@ -61,7 +61,8 @@
 
 		<!-- Participants counter -->
 		<NcButton v-if="isInCall && !isOneToOneConversation && isModeratorOrUser"
-			v-tooltip="t('spreed', 'Participants in call')"
+			:title="participantsInCallAriaLabel"
+			:aria-label="participantsInCallAriaLabel"
 			class="top-bar__button dark-hover"
 			type="tertiary"
 			@click="openSidebar('participants')">
@@ -289,6 +290,10 @@ export default {
 		participantsInCall() {
 			return this.$store.getters.participantsInCall(this.token) || ''
 		},
+
+		participantsInCallAriaLabel() {
+			return n('spreed', '%n participant in call', '%n participants in call', this.$store.getters.participantsInCall(this.token))
+		},
 	},
 
 	watch: {
@@ -373,11 +378,6 @@ export default {
 
 		openConversationSettings() {
 			emit('show-conversation-settings', { token: this.token })
-		},
-
-		// TODO: implement real method
-		stopRecording() {
-			console.debug('stop recording')
 		},
 	},
 }
