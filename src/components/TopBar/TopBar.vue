@@ -374,11 +374,6 @@ export default {
 		openConversationSettings() {
 			emit('show-conversation-settings', { token: this.token })
 		},
-
-		// TODO: implement real method
-		stopRecording() {
-			console.debug('stop recording')
-		},
 	},
 }
 </script>
