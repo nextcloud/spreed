@@ -224,6 +224,7 @@ export default {
 			case PERMISSIONS.MAX_CUSTOM:
 				return 'all'
 			case PERMISSIONS.CALL_JOIN:
+			case PERMISSIONS.CALL_JOIN | PERMISSIONS.CUSTOM:
 				return 'restricted'
 
 			default:
