@@ -38,26 +38,26 @@
 				</template>
 			</NcButton>
 			{{ roomName }}
-			<div class="breakout-room-item__actions">
-				<NcButton v-if="showJoinButton" @click="joinRoom">
-					{{ t('spreed', 'Join') }}
-				</NcButton>
-				<NcActions v-if="canModerate" :force-menu="true">
-					<NcActionButton v-if="showAssistanceButton"
-						@click="dismissRequestAssistance">
-						<template #icon>
-							<HandBackLeft :size="16" />
-						</template>
-						{{ t('spreed', 'Dismiss request for assistance') }}
-					</NcActionButton>
-					<NcActionButton @click="openSendMessageForm">
-						<template #icon>
-							<Send :size="16" />
-						</template>
-						{{ t('spreed', 'Send message to room') }}
-					</NcActionButton>
-				</NcActions>
-			</div>
+			<NcButton v-if="showJoinButton"
+				class="breakout-room-item__join-button"
+				@click="joinRoom">
+				{{ t('spreed', 'Join') }}
+			</NcButton>
+			<NcActions v-if="canModerate" :force-menu="true">
+				<NcActionButton v-if="showAssistanceButton"
+					@click="dismissRequestAssistance">
+					<template #icon>
+						<HandBackLeft :size="16" />
+					</template>
+					{{ t('spreed', 'Dismiss request for assistance') }}
+				</NcActionButton>
+				<NcActionButton @click="openSendMessageForm">
+					<template #icon>
+						<Send :size="16" />
+					</template>
+					{{ t('spreed', 'Send message to room') }}
+				</NcActionButton>
+			</NcActions>
 		</div>
 		<ul v-show="showParticipants">
 			<template v-for="participant in roomParticipants">
@@ -232,10 +232,8 @@ export default {
 		gap: var(--default-grid-baseline);
 	}
 
-	&__actions {
+	&__join-button {
 		margin-left: auto;
-		display: flex;
-		gap: var(--default-grid-baseline);
 	}
 }
 </style>
