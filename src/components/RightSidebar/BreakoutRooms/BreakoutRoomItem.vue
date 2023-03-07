@@ -37,10 +37,10 @@
 					<MenuDown v-else :size="20" />
 				</template>
 			</NcButton>
-			{{ roomName }}
-			<NcButton v-if="showJoinButton"
-				class="breakout-room-item__join-button"
-				@click="joinRoom">
+			<span class="breakout-room-item__room-name">
+				{{ roomName }}
+			</span>
+			<NcButton v-if="showJoinButton" @click="joinRoom">
 				{{ t('spreed', 'Join') }}
 			</NcButton>
 			<NcActions v-if="canModerate" :force-menu="true">
@@ -232,8 +232,8 @@ export default {
 		gap: var(--default-grid-baseline);
 	}
 
-	&__join-button {
-		margin-left: auto;
+	&__room-name {
+		margin-right: auto;
 	}
 }
 </style>
