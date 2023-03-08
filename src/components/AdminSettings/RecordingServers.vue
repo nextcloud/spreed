@@ -36,6 +36,9 @@
 				</template>
 			</NcButton>
 		</h2>
+		<NcNoteCard type="warning" v-if="warningUpload">
+			<p>{{ t('spreed', 'The PHP settings \'upload_max_filesize\' or \'post_max_size\' only will allow to upload files greater than {maxUpload} Mb.', {maxUpload}) }}</p>
+		</NcNoteCard>
 
 		<ul class="recording-servers">
 			<transition-group name="fade" tag="li">
@@ -73,7 +76,7 @@ import { showSuccess } from '@nextcloud/dialogs'
 import { loadState } from '@nextcloud/initial-state'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import RecordingServer from '../../components/AdminSettings/RecordingServer.vue'
 
 export default {
@@ -81,6 +84,7 @@ export default {
 
 	components: {
 		NcButton,
+		NcNoteCard,
 		Plus,
 		RecordingServer,
 	},
@@ -89,6 +93,8 @@ export default {
 		return {
 			servers: [],
 			secret: '',
+			maxUpload: 0,
+			warningUpload: false,
 			loading: false,
 			saved: false,
 		}
@@ -104,6 +110,9 @@ export default {
 		const state = loadState('spreed', 'recording_servers')
 		this.servers = state.servers
 		this.secret = state.secret
+		this.maxUpload = state.uploadLimit
+		console.log(state.uploadLimit)
+		this.warningUpload = state.uploadLimit < 512
 	},
 
 	methods: {
