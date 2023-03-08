@@ -21,7 +21,7 @@
 
 <template>
 	<div class="participants-editor">
-		<div class="participants-editor__scroller">
+		<ul class="participants-editor__scroller">
 			<BreakoutRoomItem class="participants-editor__section"
 				:name="t('spreed', 'Unassigned participants')">
 				<SelectableParticipant v-for="participant in unassignedParticipants"
@@ -41,7 +41,7 @@
 						:participant="attendeesById[attendeeId]" />
 				</BreakoutRoomItem>
 			</template>
-		</div>
+		</ul>
 		<div class="participants-editor__buttons">
 			<NcButton v-if="breakoutRoomsConfigured"
 				class="delete"
