@@ -40,35 +40,36 @@
 			<span class="breakout-room-item__room-name">
 				{{ roomName }}
 			</span>
-			<NcButton v-if="showJoinButton" @click="joinRoom">
-				{{ t('spreed', 'Join') }}
-			</NcButton>
-			<NcActions v-if="canModerate" :force-menu="true">
-				<NcActionButton v-if="showAssistanceButton"
-					@click="dismissRequestAssistance">
-					<template #icon>
-						<HandBackLeft :size="16" />
-					</template>
-					{{ t('spreed', 'Dismiss request for assistance') }}
-				</NcActionButton>
-				<NcActionButton @click="openSendMessageForm">
-					<template #icon>
-						<Send :size="16" />
-					</template>
-					{{ t('spreed', 'Send message to room') }}
-				</NcActionButton>
-			</NcActions>
+			<template v-if="!isParticipantsEditor">
+				<NcButton v-if="showJoinButton" @click="joinRoom">
+					{{ t('spreed', 'Join') }}
+				</NcButton>
+				<NcActions v-if="canModerate" :force-menu="true">
+					<NcActionButton v-if="showAssistanceButton"
+						@click="dismissRequestAssistance">
+						<template #icon>
+							<HandBackLeft :size="16" />
+						</template>
+						{{ t('spreed', 'Dismiss request for assistance') }}
+					</NcActionButton>
+					<NcActionButton @click="openSendMessageForm">
+						<template #icon>
+							<Send :size="16" />
+						</template>
+						{{ t('spreed', 'Send message to room') }}
+					</NcActionButton>
+				</NcActions>
+				<!-- Send message dialog -->
+				<SendMessageDialog v-if="isDialogOpened"
+					:display-name="roomName"
+					:token="roomToken"
+					@close="closeSendMessageForm" />
+			</template>
 		</div>
 		<ul v-show="showParticipants">
-			<template v-for="participant in roomParticipants">
-				<Participant :key="participant.actorId" :participant="participant" />
-			</template>
+			<!-- Participants slot -->
+			<slot />
 		</ul>
-		<!-- Send message dialog -->
-		<SendMessageDialog v-if="isDialogOpened"
-			:display-name="roomName"
-			:token="roomToken"
-			@close="closeSendMessageForm" />
 	</li>
 </template>
 
@@ -86,7 +87,6 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
-import Participant from '../Participants/ParticipantsList/Participant/Participant.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import { EventBus } from '../../../services/EventBus.js'
@@ -99,7 +99,6 @@ export default {
 		NcActionButton,
 		NcActions,
 		NcButton,
-		Participant,
 		SendMessageDialog,
 
 		// Icons
@@ -111,13 +110,28 @@ export default {
 	},
 
 	props: {
+		/**
+		 * This prop is only populated when the component is used in the participants editor
+		 */
+		name: {
+			type: String,
+			default: undefined,
+		},
+
+		/**
+		 * This prop is only populated when the component is used in the right sidebar
+		 */
 		breakoutRoom: {
 			type: Object,
-			required: true,
+			default: undefined,
 		},
+
+		/**
+		 * This prop is only populated when the component is used in the right sidebar
+		 */
 		mainConversation: {
 			type: Object,
-			required: true,
+			default: undefined,
 		},
 	},
 
@@ -135,7 +149,7 @@ export default {
 		},
 
 		roomName() {
-			return this.breakoutRoom.displayName
+			return this.isParticipantsEditor ? this.name : this.breakoutRoom.displayName
 		},
 
 		roomToken() {
@@ -146,19 +160,21 @@ export default {
 			return this.roomToken !== this.$store.getters.getToken()
 		},
 
-		roomParticipants() {
-			return this.$store.getters.participantsList(this.roomToken)
-		},
-
 		canFullModerate() {
-			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
+			return !this.isParticipantsEditor && (this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR)
 		},
 
 		canModerate() {
+			if (this.isParticipantsEditor) {
+				return false
+			}
 			return this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
 		},
 
 		showAssistanceButton() {
+			if (this.isParticipantsEditor) {
+				return false
+			}
 			return this.canModerate && this.breakoutRoom.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED
 		},
 
@@ -166,6 +182,11 @@ export default {
 			return this.showParticipants
 				? t('spreed', 'Hide list of participants')
 				: t('spreed', 'Show list of participants')
+		},
+
+		// True if this component is being used by the ParticipantsEditor component
+		isParticipantsEditor() {
+			return this.name !== undefined
 		},
 	},
 

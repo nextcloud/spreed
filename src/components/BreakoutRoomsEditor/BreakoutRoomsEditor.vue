@@ -157,7 +157,7 @@ export default {
 	}
 
 	&__participants-step {
-		height: calc(100% - 40px);
+		height: 100%;
 
 	}
 

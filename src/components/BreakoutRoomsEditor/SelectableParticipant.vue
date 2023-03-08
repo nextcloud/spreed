@@ -21,7 +21,7 @@
 
 <template>
 	<div tabindex="0"
-		class="participants-editor__participant">
+		class="selectable-participant">
 		<input id="participant.attendeeId"
 			v-model="modelProxy"
 			:value="participant.attendeeId"
@@ -82,5 +82,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.selectable-participant {
+	display: flex;
+	align-items: center;
+	gap: var(--default-grid-baseline);
+	margin: var(--default-grid-baseline) 0 var(--default-grid-baseline) 14px;
+}
 
 </style>
