@@ -60,9 +60,8 @@
 			</NcActions>
 		</div>
 		<ul v-show="showParticipants">
-			<template v-for="participant in roomParticipants">
-				<Participant :key="participant.actorId" :participant="participant" />
-			</template>
+			<!-- Participants slot -->
+			<slot />
 		</ul>
 		<!-- Send message dialog -->
 		<SendMessageDialog v-if="isDialogOpened"
@@ -86,7 +85,6 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
-import Participant from '../Participants/ParticipantsList/Participant/Participant.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import { EventBus } from '../../../services/EventBus.js'
@@ -99,7 +97,6 @@ export default {
 		NcActionButton,
 		NcActions,
 		NcButton,
-		Participant,
 		SendMessageDialog,
 
 		// Icons
@@ -144,10 +141,6 @@ export default {
 
 		showJoinButton() {
 			return this.roomToken !== this.$store.getters.getToken()
-		},
-
-		roomParticipants() {
-			return this.$store.getters.participantsList(this.roomToken)
 		},
 
 		canFullModerate() {

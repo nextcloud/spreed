@@ -31,7 +31,11 @@
 			<template v-for="breakoutRoom in breakoutRooms">
 				<BreakoutRoomItem :key="breakoutRoom.token"
 					:breakout-room="breakoutRoom"
-					:main-conversation="mainConversation" />
+					:main-conversation="mainConversation">
+					<template v-for="participant in $store.getters.participantsList(breakoutRoom.token)">
+						<Participant :key="participant.actorId" :participant="participant" />
+					</template>
+				</BreakoutRoomItem>
 			</template>
 		</ul>
 		<NcEmptyContent v-else :title="t('spreed', 'Breakout rooms are not started')">
@@ -47,6 +51,7 @@ import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
+import Participant from '../Participants/ParticipantsList/Participant/Participant.vue'
 import BreakoutRoomItem from './BreakoutRoomItem.vue'
 import BreakoutRoomsActions from './BreakoutRoomsActions.vue'
 
@@ -61,6 +66,7 @@ export default {
 		BreakoutRoomItem,
 		BreakoutRoomsActions,
 		NcEmptyContent,
+		Participant,
 
 		// Icons
 		DotsCircle,
