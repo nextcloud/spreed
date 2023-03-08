@@ -254,7 +254,6 @@ OC.L10N.register(
     "Messages in {conversation}" : "Mensaxes en {conversation}",
     "{user} in {conversation}" : "{user} en {conversation}",
     "Messages in other conversations" : "Mensaxes noutras conversas",
-    "One to one rooms always need to show the other users avatar" : "As salas individuais sempre deben mostrar o avatar dos outros usuarios",
     "Avatar image is not square" : "A imaxe do avatar non é un cadrado",
     "Room {number}" : "Sala {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Produciuse un fallo na solicitude de proba porque o servidor de proba non é accesíbel. Ténteo de novo máis tarde.",
@@ -1071,6 +1070,7 @@ OC.L10N.register(
     "Share from Files" : "Compartir dende «Ficheiros»",
     "Invitation was sent to {actorId}." : "Enviouse o convite a {actorId}.",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "A tarxeta do Deck foi publicada na <a href=\"{link}\">conversa</a> seleccionada.",
-    "An error occurred while posting deck card to conversation." : "Produciuse un erro ao publicar a tarxeta do deck na conversa."
+    "An error occurred while posting deck card to conversation." : "Produciuse un erro ao publicar a tarxeta do deck na conversa.",
+    "One to one rooms always need to show the other users avatar" : "As salas individuais sempre deben mostrar o avatar dos outros usuarios"
 },
 "nplurals=2; plural=(n != 1);");

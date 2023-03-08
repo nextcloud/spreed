@@ -294,7 +294,6 @@
     "Messages in {conversation}" : "Mensagens em {conversation}",
     "{user} in {conversation}" : "{user} em {conversation}",
     "Messages in other conversations" : "Mensagens em outras conversas",
-    "One to one rooms always need to show the other users avatar" : "Salas individuais sempre precisam mostrar o avatar dos outros usuários",
     "Avatar image is not square" : "A imagem do avatar não é quadrada",
     "Room {number}" : "Sala {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Falha ao solicitar a avaliação porque o servidor está inacessível. Tente novamente mais tarde.",
@@ -1239,9 +1238,8 @@
     "Start call" : "Iniciar chamada",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "O Nextcloud Talk foi atualizado. É necessário recarregar a página antes de iniciar ou participar de uma chamada.",
     "You will be able to join the call only after a moderator starts it." : "Você só poderá ingressar na chamada depois que um moderador a iniciar.",
-    "Recording" : "Gravação",
     "Stop recording" : "Pare de gravar",
-    "Participants in call" : "Participantes na chamada",
+    "Recording" : "Gravação",
     "You have new unread messages in the chat." : "Você tem novas mensagens não lidas no bate-papo.",
     "You have been mentioned in the chat." : "Você foi mencionado no bate-papo.",
     "Mute others" : "Silenciar outros",
@@ -1385,6 +1383,7 @@
     "Invitation was sent to {actorId}." : "O convite foi enviado para {actorId}.",
     "End meeting for all" : "Fim da reunião para todos",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Cartão do Deck enviado para a <a href=\"{link}\">conversation</a> selecionada.",
-    "An error occurred while posting deck card to conversation." : "Ocorreu um erro ao enviar um cartão do Deck para a conversa."
+    "An error occurred while posting deck card to conversation." : "Ocorreu um erro ao enviar um cartão do Deck para a conversa.",
+    "One to one rooms always need to show the other users avatar" : "Salas individuais sempre precisam mostrar o avatar dos outros usuários"
 },"pluralForm" :"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

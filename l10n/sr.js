@@ -463,6 +463,7 @@ OC.L10N.register(
     "Conversation settings" : "Подешавања разговора",
     "Description" : "Опис",
     "Personal" : "Лично",
+    "Meeting" : "Састанак",
     "Permissions" : "Дозволе",
     "Leave conversation" : "Напусти разговор",
     "Delete conversation" : "Обриши разовор",

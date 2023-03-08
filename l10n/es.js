@@ -299,7 +299,6 @@ OC.L10N.register(
     "Messages in {conversation}" : "Mensajes en {conversation}",
     "{user} in {conversation}" : "{user} en {conversation}",
     "Messages in other conversations" : "Mensajes en otras conversaciones",
-    "One to one rooms always need to show the other users avatar" : "Las salas uno a uno siempre mostrarán los avatars de los demás usuarios",
     "Avatar image is not square" : "La imagen de avatar no es cuadrada",
     "Room {number}" : "Sala {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "No ha sido posible solicitar la prueba porque el servidor de pruebas no está accesible. Inténtalo de nuevo más adelante.",
@@ -1252,11 +1251,10 @@ OC.L10N.register(
     "Start call" : "Comenzar llamada",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk se ha actualizado; debes recargar la página para poder iniciar una llamada o unirte a una.",
     "You will be able to join the call only after a moderator starts it." : "Podrás unirte a la llamada cuando la inicie un moderador.",
-    "Starting the recording" : "Empezar la grabación",
-    "Recording" : "Grabando",
     "Cancel recording start" : "Cancelar la grabación",
     "Stop recording" : "Detener grabación",
-    "Participants in call" : "Participantes en la llamada",
+    "Starting the recording" : "Empezar la grabación",
+    "Recording" : "Grabando",
     "You have new unread messages in the chat." : "Tienes nuevos mensajes sin leer en el chat.",
     "You have been mentioned in the chat." : "Se le ha mencionado en el chat.",
     "Mute others" : "Silenciar a los demás",
@@ -1406,6 +1404,7 @@ OC.L10N.register(
     "Invitation was sent to {actorId}." : "Se ha enviado la invitación a {actorId}.",
     "End meeting for all" : "Terminar reunión para todos",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "La tarjeta de Deck se ha publicado en la <a href=\"{link}\">conversación</a> seleccionada",
-    "An error occurred while posting deck card to conversation." : "Se ha producido un error al publicar la tarjeta de Deck en la conversación."
+    "An error occurred while posting deck card to conversation." : "Se ha producido un error al publicar la tarjeta de Deck en la conversación.",
+    "One to one rooms always need to show the other users avatar" : "Las salas uno a uno siempre mostrarán los avatars de los demás usuarios"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
