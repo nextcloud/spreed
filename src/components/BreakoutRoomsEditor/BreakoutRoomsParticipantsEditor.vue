@@ -22,36 +22,24 @@
 <template>
 	<div class="participants-editor">
 		<div class="participants-editor__scroller">
-			<NcAppNavigationItem v-if="hasUnassigned"
-				key="unassigned"
-				class="participants-editor__section"
-				:title="t('spreed', 'Unassigned participants')"
-				:allow-collapse="true"
-				:open="true">
-				<template #icon>
-					<DotsCircle :size="20" />
-				</template>
+			<BreakoutRoomItem class="participants-editor__section"
+				:name="t('spreed', 'Unassigned participants')">
 				<SelectableParticipant v-for="participant in unassignedParticipants"
 					:key="participant.attendeeId"
 					:value="participant.attendeeId"
 					:checked.sync="selectedParticipants"
 					:participant="participant" />
-			</NcAppNavigationItem>
+			</BreakoutRoomItem>
 			<template v-for="(item, index) in assignments">
-				<NcAppNavigationItem :key="index"
+				<BreakoutRoomItem :key="index"
 					class="participants-editor__section"
-					:name="roomName(index)"
-					:allow-collapse="true"
-					:open="true">
-					<template #icon>
-						<DotsCircle :size="20" />
-					</template>
+					:name="roomName(index)">
 					<SelectableParticipant v-for="attendeeId in item"
 						:key="attendeeId"
 						:value="assignments"
 						:checked.sync="selectedParticipants"
 						:participant="attendeesById[attendeeId]" />
-				</NcAppNavigationItem>
+				</BreakoutRoomItem>
 			</template>
 		</div>
 		<div class="participants-editor__buttons">
@@ -110,9 +98,9 @@ import Reload from 'vue-material-design-icons/Reload.vue'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
-import NcAppNavigationItem from '@nextcloud/vue/dist/Components/NcAppNavigationItem.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
+import BreakoutRoomItem from '../RightSidebar/BreakoutRooms/BreakoutRoomItem.vue'
 import SelectableParticipant from './SelectableParticipant.vue'
 
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../constants.js'
@@ -125,7 +113,7 @@ export default {
 		NcActionButton,
 		DotsCircle,
 		Reload,
-		NcAppNavigationItem,
+		BreakoutRoomItem,
 		SelectableParticipant,
 		NcButton,
 		ArrowLeft,
