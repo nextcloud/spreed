@@ -22,8 +22,7 @@
 <template>
 	<!-- Message Actions -->
 	<div v-click-outside="handleClickOutside"
-		class="message-buttons-bar"
-		:class="{ 'message-buttons-bar--last-read' : isLastRead }">
+		class="message-buttons-bar">
 		<template v-if="!isReactionsMenuOpen">
 			<NcButton v-if="canReact"
 				type="tertiary"
@@ -353,16 +352,6 @@ export default {
 			type: String,
 			required: true,
 		},
-
-		/**
-		 * If the MessageButtonsBar belongs to the last read message, we need
-		 * to raise it to compensate for the shift in position brought by the
-		 * last read marker that's added to the message component.
-		 */
-		isLastRead: {
-			type: Boolean,
-			required: true,
-		},
 	},
 
 	data() {
@@ -593,10 +582,6 @@ export default {
 
 	& h6 {
 		margin-left: auto;
-	}
-
-	&--last-read {
-		bottom: 36px;
 	}
 }
 
