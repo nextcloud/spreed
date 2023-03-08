@@ -474,11 +474,10 @@ class AdminSettings implements ISettings {
 	}
 
 	protected function initRecording(): void {
-		$uploadLimit = \OCP\Util::uploadLimit();
 		$this->initialState->provideInitialState('recording_servers', [
 			'servers' => $this->talkConfig->getRecordingServers(),
 			'secret' => $this->talkConfig->getRecordingSecret(),
-			'uploadLimit' => $uploadLimit !== 0 ? $uploadLimit / 1024 / 1024 : 0,
+			'uploadLimit' => Util::uploadLimit(),
 		]);
 	}
 
