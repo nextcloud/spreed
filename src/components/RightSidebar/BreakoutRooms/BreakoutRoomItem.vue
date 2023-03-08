@@ -21,59 +21,58 @@
 -->
 
 <template>
-	<Fragment>
-		<li :key="roomName"
-			class="breakout-room-item"
-			@mouseenter="elementHoveredOrFocused = true"
-			@mouseleave="elementHoveredOrFocused = false">
+	<li :key="roomName"
+		class="breakout-room-item"
+		@mouseenter="elementHoveredOrFocused = true"
+		@mouseleave="elementHoveredOrFocused = false">
+		<div class="breakout-room-item__wrapper">
 			<NcButton type="tertiary-no-background"
+				:aria-label="toggleParticipantsListLabel"
 				@focus="elementHoveredOrFocused = true"
 				@blur="elementHoveredOrFocused = false"
 				@click="toggleParticipantsVisibility">
 				<template #icon>
 					<DotsCircle v-if="!elementHoveredOrFocused" :size="20" />
-					<MenuRight v-else-if="elementHoveredOrFocused && !showParticipants" :size="20" />
-					<MenuDown v-else-if="elementHoveredOrFocused && showParticipants" :size="20" />
+					<MenuRight v-else-if="!showParticipants" :size="20" />
+					<MenuDown v-else :size="20" />
 				</template>
 			</NcButton>
-			{{ roomName }}
-			<div class="breakout-room-item__actions">
-				<NcButton v-if="showJoinButton" @click="joinRoom">
-					{{ t('spreed', 'Join') }}
-				</NcButton>
-				<NcActions v-if="canModerate" :force-menu="true">
-					<NcActionButton v-if="showAssistanceButton"
-						@click="dismissRequestAssistance">
-						<template #icon>
-							<HandBackLeft :size="16" />
-						</template>
-						{{ t('spreed', 'Dismiss request for assistance') }}
-					</NcActionButton>
-					<NcActionButton @click="openSendMessageForm">
-						<template #icon>
-							<Send :size="16" />
-						</template>
-						{{ t('spreed', 'Send message to room') }}
-					</NcActionButton>
-				</NcActions>
-			</div>
-			<!-- Send message dialog -->
-			<SendMessageDialog v-if="isDialogOpened"
-				:display-name="roomName"
-				:token="roomToken"
-				@close="closeSendMessageForm" />
-		</li>
+			<span class="breakout-room-item__room-name">
+				{{ roomName }}
+			</span>
+			<NcButton v-if="showJoinButton" @click="joinRoom">
+				{{ t('spreed', 'Join') }}
+			</NcButton>
+			<NcActions v-if="canModerate" :force-menu="true">
+				<NcActionButton v-if="showAssistanceButton"
+					@click="dismissRequestAssistance">
+					<template #icon>
+						<HandBackLeft :size="16" />
+					</template>
+					{{ t('spreed', 'Dismiss request for assistance') }}
+				</NcActionButton>
+				<NcActionButton @click="openSendMessageForm">
+					<template #icon>
+						<Send :size="16" />
+					</template>
+					{{ t('spreed', 'Send message to room') }}
+				</NcActionButton>
+			</NcActions>
+		</div>
 		<ul v-show="showParticipants">
 			<template v-for="participant in roomParticipants">
 				<Participant :key="participant.actorId" :participant="participant" />
 			</template>
 		</ul>
-	</Fragment>
+		<!-- Send message dialog -->
+		<SendMessageDialog v-if="isDialogOpened"
+			:display-name="roomName"
+			:token="roomToken"
+			@close="closeSendMessageForm" />
+	</li>
 </template>
 
 <script>
-import { Fragment } from 'vue-frag'
-
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import MenuDown from 'vue-material-design-icons/MenuDown.vue'
@@ -97,19 +96,18 @@ export default {
 
 	components: {
 		// Components
-		Participant,
 		NcActionButton,
-		SendMessageDialog,
-		NcButton,
 		NcActions,
-		Fragment,
+		NcButton,
+		Participant,
+		SendMessageDialog,
 
 		// Icons
 		DotsCircle,
 		HandBackLeft,
-		Send,
-		MenuRight,
 		MenuDown,
+		MenuRight,
+		Send,
 	},
 
 	props: {
@@ -162,6 +160,12 @@ export default {
 
 		showAssistanceButton() {
 			return this.canModerate && this.breakoutRoom.breakoutRoomStatus === CONVERSATION.BREAKOUT_ROOM_STATUS.STATUS_ASSISTANCE_REQUESTED
+		},
+
+		toggleParticipantsListLabel() {
+			return this.showParticipants
+				? t('spreed', 'Hide list of participants')
+				: t('spreed', 'Show list of participants')
 		},
 	},
 
@@ -219,16 +223,17 @@ export default {
 
 <style lang="scss" scoped>
 .breakout-room-item {
-	font-weight: bold;
-	display: flex;
-	align-items: center;
 	margin-top: calc(var(--default-grid-baseline)*5);
-	gap: var(--default-grid-baseline);
+	font-weight: bold;
 
-	&__actions {
-		margin-left: auto;
+	&__wrapper {
 		display: flex;
+		align-items: center;
 		gap: var(--default-grid-baseline);
+	}
+
+	&__room-name {
+		margin-right: auto;
 	}
 }
 </style>
