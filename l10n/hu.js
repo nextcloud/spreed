@@ -296,7 +296,6 @@ OC.L10N.register(
     "Messages in {conversation}" : "Üzenetek a(z) {beszélgetésben} beszélgetésben",
     "{user} in {conversation}" : "{user} csatlakozott a(z) {conversation} beszélgetéshez",
     "Messages in other conversations" : "Üzenetek más beszélgetésekben",
-    "One to one rooms always need to show the other users avatar" : "A négyszemközti beszélgetések szobáinak mindig a másik felhasználó profilképét kell megjelenítenie",
     "Avatar image is not square" : "A profilkép nem négyzetes",
     "Room {number}" : "{number}. szoba",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "A próbaverzió kérése nem sikerült, mert a próbakiszolgáló nem érhető el. Próbálja újra később.",
@@ -1231,8 +1230,8 @@ OC.L10N.register(
     "Start call" : "Hívás indítása",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "A Nextcloud Beszélgetés frissült, újra kell töltenie az oldalt, mielőtt hívást indíthatna vagy csatlakozhatna egyhez.",
     "You will be able to join the call only after a moderator starts it." : "Csak akkor csatlakozhat a híváshoz, ha azt egy moderátor elindítja.",
-    "Recording" : "Felvétel",
     "Stop recording" : "Felvétel leállítása",
+    "Recording" : "Felvétel",
     "You have new unread messages in the chat." : "Olvasatlan üzenetek vannak a csevegésben.",
     "You have been mentioned in the chat." : "Megemlítették a csevegésben.",
     "Mute others" : "Mások elnémítása",
@@ -1373,6 +1372,7 @@ OC.L10N.register(
     "Invitation was sent to {actorId}." : "Meghívó elküldve a következőnek: {actorId}.",
     "End meeting for all" : "Találkozó befejezése mindenki számára",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "A kártya elküldve a kiválasztott <a href=\"{link}\">beszélgetésbe</a>.",
-    "An error occurred while posting deck card to conversation." : "Hiba történt a kártya beszélgetésbe küldése során."
+    "An error occurred while posting deck card to conversation." : "Hiba történt a kártya beszélgetésbe küldése során.",
+    "One to one rooms always need to show the other users avatar" : "A négyszemközti beszélgetések szobáinak mindig a másik felhasználó profilképét kell megjelenítenie"
 },
 "nplurals=2; plural=(n != 1);");

@@ -299,7 +299,6 @@ OC.L10N.register(
     "Messages in {conversation}" : "Nachrichten in {conversation}",
     "{user} in {conversation}" : "{user} in {conversation}",
     "Messages in other conversations" : "Nachrichten in anderen Unterhaltungen",
-    "One to one rooms always need to show the other users avatar" : "Eins-zu-Eins-Räume müssen immer den Avatar des anderen Benutzers anzeigen.",
     "Avatar image is not square" : "Benutzerbild ist nicht quadratisch",
     "Room {number}" : "Raum {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Trial-Test konnte nicht angefordert werden, da der Testserver nicht erreichbar ist. Bitte versuche es später noch einmal.",
@@ -1252,11 +1251,10 @@ OC.L10N.register(
     "Start call" : "Anruf starten",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk wurde aktualisiert, du musst die Seite neu laden, bevor du einen Anruf starten oder einem Anruf beitreten kannst.",
     "You will be able to join the call only after a moderator starts it." : "Du kannst dem Anruf erst beitreten, nachdem ein Moderator ihn gestartet hat.",
-    "Starting the recording" : "Aufnahme wird gestartet",
-    "Recording" : "Aufnahme",
     "Cancel recording start" : "Start der Aufnahme abbrechen",
     "Stop recording" : "Aufnahme stoppen",
-    "Participants in call" : "Anrufteilnehmer",
+    "Starting the recording" : "Aufnahme wird gestartet",
+    "Recording" : "Aufnahme",
     "You have new unread messages in the chat." : "Du hast neue ungelesene Nachrichten im Chat.",
     "You have been mentioned in the chat." : "Du wurdest im Chat erwähnt.",
     "Mute others" : "Andere Stummschalten",
@@ -1406,6 +1404,7 @@ OC.L10N.register(
     "Invitation was sent to {actorId}." : "Einladung wurde an {actorId} gesendet.",
     "End meeting for all" : "Konferenz für alle beenden",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deckkarte wurde an die ausgewählte <a href=\"{link}\">Unterhaltung</a> gesendet.",
-    "An error occurred while posting deck card to conversation." : "Es ist ein Fehler beim Posten der Deckkarte an die Unterhaltung aufgetreten."
+    "An error occurred while posting deck card to conversation." : "Es ist ein Fehler beim Posten der Deckkarte an die Unterhaltung aufgetreten.",
+    "One to one rooms always need to show the other users avatar" : "Eins-zu-Eins-Räume müssen immer den Avatar des anderen Benutzers anzeigen."
 },
 "nplurals=2; plural=(n != 1);");

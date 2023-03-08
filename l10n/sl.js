@@ -296,7 +296,6 @@ OC.L10N.register(
     "Messages in {conversation}" : "Sporočila v pogovoru {conversation}",
     "{user} in {conversation}" : "{user} v pogovoru {conversation}",
     "Messages in other conversations" : "Sporočila v drugih pogovorih",
-    "One to one rooms always need to show the other users avatar" : "Skupine ena na ena vedno zahtevajo prikaz podob drugih uporabnikov",
     "Avatar image is not square" : "Slika podobe ni kvadratna",
     "Room {number}" : "Skupina {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Izdaja preizkusne zahteve je spodletela, ker preizkusni strežnik ni dosegljiv.",
@@ -1218,8 +1217,8 @@ OC.L10N.register(
     "Start call" : "Začni klic",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk je bil posodobljen, ponovno je treba naložiti stran, preden začnete pogovor.",
     "You will be able to join the call only after a moderator starts it." : "Pogovoru se je mogoče pridružiti šele, ko ga moderator začne.",
-    "Recording" : "Snemanje",
     "Stop recording" : "Ustavi snemanje",
+    "Recording" : "Snemanje",
     "You have new unread messages in the chat." : "V pogovoru imate neprebrana sporočila.",
     "You have been mentioned in the chat." : "Omenjeni ste bili v klepetu.",
     "Mute others" : "Utišaj ostale",
@@ -1360,6 +1359,7 @@ OC.L10N.register(
     "Invitation was sent to {actorId}." : "Poslano povabilo: {actorId}.",
     "End meeting for all" : "Končaj pogovor za vse",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Naloga Deck je dodana v izbran <a href=\"{link}\">pogovor</a>.",
-    "An error occurred while posting deck card to conversation." : "Prišlo je do napake med dodajanjem naloge v pogovor."
+    "An error occurred while posting deck card to conversation." : "Prišlo je do napake med dodajanjem naloge v pogovor.",
+    "One to one rooms always need to show the other users avatar" : "Skupine ena na ena vedno zahtevajo prikaz podob drugih uporabnikov"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

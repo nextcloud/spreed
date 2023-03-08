@@ -299,7 +299,6 @@ OC.L10N.register(
     "Messages in {conversation}" : "Съобщения в {conversation}",
     "{user} in {conversation}" : "{user} в {conversation}",
     "Messages in other conversations" : "Съобщения в други разговори",
-    "One to one rooms always need to show the other users avatar" : "В индивидуалните стаи винаги трябва да се показва аватарът на другия потребител",
     "Avatar image is not square" : "Изображението на аватара не е квадратно",
     "Room {number}" : "Стая {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Неуспешна заявка за изпробване, защото пробният сървър е недостъпен. Моля, опитайте отново по-късно.",
@@ -1246,11 +1245,10 @@ OC.L10N.register(
     "Start call" : "Започване на обаждане",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk беше актуализиран, трябва да презаредите страницата, преди да можете да започнете или да се присъедините към обаждане.",
     "You will be able to join the call only after a moderator starts it." : "Ще можете да се присъедините към разговора само след като го започне модератор.",
-    "Starting the recording" : "Започване на записа",
-    "Recording" : "Записване",
     "Cancel recording start" : "Отмяна на стартирането на записа",
     "Stop recording" : "Спиране на записването",
-    "Participants in call" : "Участници в разговора",
+    "Starting the recording" : "Започване на записа",
+    "Recording" : "Записване",
     "You have new unread messages in the chat." : "Имате нови непрочетени съобщения в чата.",
     "You have been mentioned in the chat." : "Споменаха ви в чата.",
     "Mute others" : "Заглушаване на другите",
@@ -1399,6 +1397,7 @@ OC.L10N.register(
     "Invitation was sent to {actorId}." : "Беше изпратена покана до {actorId}.",
     "End meeting for all" : "Край на срещата за всички",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deck картата е публикувана в избраният <a href=\"{link}\">разговор</a>.",
-    "An error occurred while posting deck card to conversation." : "Възникна грешка при публикуване на deck карта в разговор."
+    "An error occurred while posting deck card to conversation." : "Възникна грешка при публикуване на deck карта в разговор.",
+    "One to one rooms always need to show the other users avatar" : "В индивидуалните стаи винаги трябва да се показва аватарът на другия потребител"
 },
 "nplurals=2; plural=(n != 1);");
