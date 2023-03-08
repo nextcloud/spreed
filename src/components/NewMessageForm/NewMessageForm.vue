@@ -119,6 +119,7 @@
 						:auto-complete="autoComplete"
 						:disabled="disabled"
 						:user-data="userData"
+						:menu-container="containerElement"
 						:placeholder="placeholderText"
 						:aria-label="placeholderText"
 						@shortkey="focusInput"
@@ -169,7 +170,7 @@
 		<!-- Text file creation dialog -->
 		<NcModal v-if="showTextFileDialog !== false"
 			size="normal"
-			:container="$store.getters.getMainContainerSelector()"
+			:container="container"
 			class="templates-picker"
 			@close="dismissTextFileCreation">
 			<div class="new-text-file">
@@ -307,6 +308,15 @@ export default {
 		},
 
 		/**
+		 * When this component is used to send message to a breakout room we
+		 * pass an id of modal containing component to render properly.
+		 */
+		containerId: {
+			type: String,
+			default: null,
+		},
+
+		/**
 		 * Broadcast messages to all breakout rooms of a given conversation.
 		 */
 		broadcast: {
@@ -399,11 +409,13 @@ export default {
 		},
 
 		container() {
-			return this.$store.getters.getMainContainerSelector()
+			return this.containerId ?? this.$store.getters.getMainContainerSelector()
 		},
 
 		containerElement() {
-			return document.querySelector(this.container)
+			// TODO can't find DOM element by #content-vue. undefined is passed
+			//  for NcRichContenteditable to use 'document.body' by default
+			return document.querySelector(this.container) ?? undefined
 		},
 
 		isOneToOne() {
