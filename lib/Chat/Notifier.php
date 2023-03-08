@@ -319,14 +319,21 @@ class Notifier {
 		// @todo this should be in the Notifications\Hooks
 		$notification->setApp('spreed');
 
-		$notification->setObject('chat', $chat->getToken());
-		$this->notificationManager->markProcessed($notification);
-
+		$objectTypes = [
+			'chat',
+		];
 		if (!$chatOnly) {
-			$notification->setObject('room', $chat->getToken());
-			$this->notificationManager->markProcessed($notification);
-
-			$notification->setObject('call', $chat->getToken());
+			$objectTypes = [
+				'call',
+				'chat',
+				'room',
+				'recording',
+				'recording_information',
+				'remote_talk_share',
+			];
+		}
+		foreach ($objectTypes as $type) {
+			$notification->setObject($type, $chat->getToken());
 			$this->notificationManager->markProcessed($notification);
 		}
 

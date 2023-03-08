@@ -258,6 +258,9 @@ class Notifier implements INotifier {
 		if ($subject === 'record_file_stored') {
 			return $this->parseStoredRecording($notification, $room, $participant, $l);
 		}
+		if ($subject === 'record_file_store_fail') {
+			return $this->parseStoredRecordingFail($notification, $room, $participant, $l);
+		}
 		if ($subject === 'invitation') {
 			return $this->parseInvitation($notification, $room, $l);
 		}
@@ -295,6 +298,30 @@ class Notifier implements INotifier {
 			$temp = mb_substr($temp, 0, -5);
 		}
 		return $temp;
+	}
+
+	protected function parseStoredRecordingFail(
+		INotification $notification,
+		Room $room,
+		Participant $participant,
+		IL10N $l
+	): INotification {
+		$notification
+			->setRichSubject(
+				$l->t('Failed to upload call recording'),
+			)
+			->setRichMessage(
+				$l->t('The recording server failed to upload recording of call {call}. Please reach out to the adminstrators.'),
+				[
+					'call' => [
+						'type' => 'call',
+						'id' => $room->getId(),
+						'name' => $room->getDisplayName($participant->getAttendee()->getActorId()),
+						'call-type' => $this->getRoomType($room),
+					],
+				]
+			);
+		return $notification;
 	}
 
 	protected function parseStoredRecording(

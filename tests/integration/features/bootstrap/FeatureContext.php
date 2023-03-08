@@ -3254,18 +3254,35 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'TALK_RECORDING_RANDOM' => $validRandom,
 			'TALK_RECORDING_CHECKSUM' => $validChecksum,
 		];
-		$options = [
-			'multipart' => [
-				[
-					'name' => 'file',
-					'contents' => $file !== 'invalid' ? fopen(__DIR__ . '/../../../..' . $file, 'r') : '',
-				],
-				[
-					'name' => 'owner',
-					'contents' => $user,
-				],
-			],
-		];
+		$options = ['multipart' => [['name' => 'owner', 'contents' => $user]]];
+		if ($file === 'invalid') {
+			// Create invalid content
+			$options['multipart'][] = [
+				'name' => 'file',
+				'contents' => '',
+			];
+		} elseif ($file === 'big') {
+			// More details about MAX_FILE_SIZE follow the link:
+			// https://www.php.net/manual/en/features.file-upload.post-method.php
+			$options['multipart'][] = [
+				'name' => 'MAX_FILE_SIZE',
+				'contents' => 1, // Limit the max file size to 1
+			];
+			// Create file with big content
+			$contents = tmpfile();
+			fwrite($contents, 'fake content'); // Bigger than 1
+			$options['multipart'][] = [
+				'name' => 'file',
+				'contents' => $contents,
+				'filename' => 'audio.ogg', // to get the mimetype by extension and do the upload
+			];
+		} else {
+			// Upload a file
+			$options['multipart'][] = [
+				'name' => 'file',
+				'contents' => fopen(__DIR__ . '/../../../..' . $file, 'r'),
+			];
+		}
 		$this->sendRequest(
 			'POST',
 			'/apps/spreed/api/' . $apiVersion . '/recording/' . self::$identifierToToken[$identifier] . '/store',
