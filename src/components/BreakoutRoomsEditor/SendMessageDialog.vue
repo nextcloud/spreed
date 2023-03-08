@@ -20,14 +20,16 @@
 -->
 
 <template>
-	<NcModal v-on="$listeners">
+	<NcModal ref="modal" v-on="$listeners">
 		<div class="send-message-dialog">
 			<h2 class="send-message-dialog__title">
 				{{ dialogTitle }}
 			</h2>
-			<NewMessageForm role="region"
+			<NewMessageForm v-if="modalContainerId"
+				role="region"
 				:token="token"
 				:breakout-room="true"
+				:container-id="modalContainerId"
 				:aria-label="t('spreed', 'Post message')"
 				:broadcast="broadcast"
 				@sent="handleMessageSent"
@@ -79,12 +81,23 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			modalContainerId: null,
+		}
+	},
+
 	computed: {
 		dialogTitle() {
 			return this.broadcast
 				? t('spreed', 'Send a message to all breakout rooms')
 				: t('spreed', 'Send a message to "{roomName}"', { roomName: this.displayName })
 		},
+	},
+
+	mounted() {
+		// Postpone render of NewMessageForm until modal container is mounted
+		this.modalContainerId = `#modal-description-${this.$refs.modal.randId}`
 	},
 
 	methods: {
@@ -111,4 +124,10 @@ export default {
 		margin-bottom: 0;
 	}
 }
+
+:deep(.modal-container) {
+	// Fix visibility for popovers, like EmojiPicker
+	overflow: visible !important;
+}
+
 </style>
