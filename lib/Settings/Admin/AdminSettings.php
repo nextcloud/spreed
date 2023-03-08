@@ -89,7 +89,7 @@ class AdminSettings implements ISettings {
 		$this->initTurnServers();
 		$this->initSignalingServers();
 		$this->initRequestSignalingServerTrial();
-		$this->initRecordingServers();
+		$this->initRecording();
 		$this->initSIPBridge();
 
 
@@ -473,10 +473,11 @@ class AdminSettings implements ISettings {
 		]);
 	}
 
-	protected function initRecordingServers(): void {
+	protected function initRecording(): void {
 		$this->initialState->provideInitialState('recording_servers', [
 			'servers' => $this->talkConfig->getRecordingServers(),
 			'secret' => $this->talkConfig->getRecordingSecret(),
+			'uploadLimit' => Util::uploadLimit(),
 		]);
 	}
 
