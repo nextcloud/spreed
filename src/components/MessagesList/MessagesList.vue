@@ -41,7 +41,7 @@ get the messagesList array and loop through the list to generate the messages.
 			:key="item[0].id"
 			:style="{ height: item.height + 'px' }"
 			v-bind="item"
-			:last-read-message-id="visualLastReadMessageId"
+			:token="token"
 			:messages="item"
 			:next-message-id="(messagesGroupedByAuthor[index + 1] && messagesGroupedByAuthor[index + 1][0].id) || 0"
 			:previous-message-id="(index > 0 && messagesGroupedByAuthor[index - 1][messagesGroupedByAuthor[index - 1].length - 1].id) || 0" />

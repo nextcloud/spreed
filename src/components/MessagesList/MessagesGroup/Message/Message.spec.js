@@ -46,6 +46,7 @@ describe('Message.vue', () => {
 	let conversationProps
 	let injected
 	let getActorTypeMock
+	const getVisualLastReadMessageIdMock = jest.fn()
 
 	beforeEach(() => {
 		localVue = createLocalVue()
@@ -80,6 +81,8 @@ describe('Message.vue', () => {
 			= jest.fn().mockReturnValue((token) => conversationProps)
 		testStoreConfig.modules.actorStore.getters.getActorId
 			= jest.fn().mockReturnValue(() => 'user-id-1')
+		testStoreConfig.modules.messagesStore.getters.getVisualLastReadMessageId
+			= jest.fn().mockReturnValue(getVisualLastReadMessageIdMock)
 		getActorTypeMock = jest.fn().mockReturnValue(() => ATTENDEE.ACTOR_TYPE.USERS)
 		testStoreConfig.modules.actorStore.getters.getActorType = getActorTypeMock
 
@@ -476,7 +479,7 @@ describe('Message.vue', () => {
 		})
 
 		test('displays unread message marker that marks the message seen when visible', () => {
-			messageProps.lastReadMessageId = 123
+			getVisualLastReadMessageIdMock.mockReturnValue(123)
 			messageProps.nextMessageId = 333
 			const observeVisibility = jest.fn()
 

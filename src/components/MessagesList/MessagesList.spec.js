@@ -43,7 +43,6 @@ describe('MessagesList.vue', () => {
 
 	describe('message grouping', () => {
 		test('groups consecutive messages by author', () => {
-			getVisualLastReadMessageIdMock.mockReturnValue(110)
 			const messagesGroup1 = [{
 				id: 100,
 				token: TOKEN,
@@ -130,7 +129,6 @@ describe('MessagesList.vue', () => {
 			expect(group.props('messages')).toStrictEqual(messagesGroup1)
 			expect(group.props('previousMessageId')).toBe(0)
 			expect(group.props('nextMessageId')).toBe(200)
-			expect(group.props('lastReadMessageId')).toBe(110)
 			// using attributes to access v-bind props
 			expect(group.attributes('actorid')).toBe('alice')
 			expect(group.attributes('actortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
@@ -139,7 +137,6 @@ describe('MessagesList.vue', () => {
 			expect(group.props('messages')).toStrictEqual(messagesGroup2)
 			expect(group.props('previousMessageId')).toBe(110)
 			expect(group.props('nextMessageId')).toBe(300)
-			expect(group.props('lastReadMessageId')).toBe(110)
 			expect(group.attributes('actorid')).toBe('bob')
 			expect(group.attributes('actortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
 
@@ -147,12 +144,10 @@ describe('MessagesList.vue', () => {
 			expect(group.props('messages')).toStrictEqual(messagesGroup3)
 			expect(group.props('previousMessageId')).toBe(210)
 			expect(group.props('nextMessageId')).toBe(0)
-			expect(group.props('lastReadMessageId')).toBe(110)
 			expect(group.attributes('actorid')).toBe('alice')
 			expect(group.attributes('actortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
 
 			expect(messagesListMock).toHaveBeenCalledWith(TOKEN)
-			expect(getVisualLastReadMessageIdMock).toHaveBeenCalledWith(TOKEN)
 
 			const placeholder = wrapper.findAllComponents({ name: 'LoadingPlaceholder' })
 			expect(placeholder.exists()).toBe(false)
