@@ -299,7 +299,6 @@ OC.L10N.register(
     "Messages in {conversation}" : "Zprávy v {conversation}",
     "{user} in {conversation}" : "{user} v {conversation}",
     "Messages in other conversations" : "Zprávy v ostatních konverzacích",
-    "One to one rooms always need to show the other users avatar" : "Místnosti s jen dvěma komunikujícími vždy vyžadují zobrazení profilového obrázku druhého uživatele",
     "Avatar image is not square" : "Profilový obrázek není čtvercový",
     "Room {number}" : "Místnost {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Nepodařilo se zažádat o zkušební období, protože příslušný server není dosažitelný. Prosím zkuste to znovu později.",
@@ -1252,11 +1251,10 @@ OC.L10N.register(
     "Start call" : "Zavolat",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk bylo aktualizováno – abyste mohli začít hovor nebo se k němu připojit, je třeba stránku načíst znovu.",
     "You will be able to join the call only after a moderator starts it." : "K hovoru se budete moci připojit až poté, co ho moderátor zahájí.",
-    "Starting the recording" : "Zahájit nahrávání",
-    "Recording" : "Zaznamenávání",
     "Cancel recording start" : "Zrušit zahajování nahrávání",
     "Stop recording" : "Zastavit nahrávání",
-    "Participants in call" : "Účastníci v hovoru",
+    "Starting the recording" : "Zahájit nahrávání",
+    "Recording" : "Zaznamenávání",
     "You have new unread messages in the chat." : "Máte nové nepřečtené zprávy v chatu.",
     "You have been mentioned in the chat." : "Byli jste zmíněni v chatu.",
     "Mute others" : "Ztlumit ostatní",
@@ -1406,6 +1404,7 @@ OC.L10N.register(
     "Invitation was sent to {actorId}." : "Odeslána pozvánka pro {actorId}.",
     "End meeting for all" : "Ukončit schůzku pro všechny",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Karta aplikace Deck byla odeslána do vybrané <a href=\"{link}\">konverzace</a>.",
-    "An error occurred while posting deck card to conversation." : "Pri odesílání karty aplikace Deck došlo k chybě"
+    "An error occurred while posting deck card to conversation." : "Pri odesílání karty aplikace Deck došlo k chybě",
+    "One to one rooms always need to show the other users avatar" : "Místnosti s jen dvěma komunikujícími vždy vyžadují zobrazení profilového obrázku druhého uživatele"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

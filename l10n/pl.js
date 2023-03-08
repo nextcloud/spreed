@@ -296,7 +296,6 @@ OC.L10N.register(
     "Messages in {conversation}" : "Wiadomości w {conversation}",
     "{user} in {conversation}" : "{user} w {conversation}",
     "Messages in other conversations" : "Wiadomości w innych rozmowach",
-    "One to one rooms always need to show the other users avatar" : "Pokoje jeden na jeden zawsze muszą pokazywać awatary innych użytkowników",
     "Avatar image is not square" : "Obraz awatara nie jest kwadratowy",
     "Room {number}" : "Pokój {number}",
     "Failed to request trial because the trial server is unreachable. Please try again later." : "Nie można żądać wersji testowej, ponieważ serwer testowy jest nieosiągalny. Spróbuj ponownie później.",
@@ -1226,8 +1225,9 @@ OC.L10N.register(
     "Start call" : "Rozpocznij połączenie",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Usługa Nextcloud Talk została zaktualizowana, przeładuj stronę, aby rozpocząć lub dołączyć do rozmowy.",
     "You will be able to join the call only after a moderator starts it." : "Do rozmowy będziesz mógł dołączyć dopiero jako moderator.",
-    "Recording" : "Nagranie",
+    "Cancel recording start" : "Anuluj rozpoczęcie nagrywania",
     "Stop recording" : "Zatrzymaj nagrywanie",
+    "Recording" : "Nagranie",
     "You have new unread messages in the chat." : "Masz nowe nieprzeczytane wiadomości na czacie.",
     "You have been mentioned in the chat." : "Zostałeś wspomniany na czacie.",
     "Mute others" : "Wycisz innych",
@@ -1260,6 +1260,7 @@ OC.L10N.register(
     "An error occurred while posting deck card to conversation" : "Wystąpił błąd podczas dodawania karty do rozmowy",
     "Post to a conversation" : "Opublikuj w rozmowie",
     "Post to conversation" : "Opublikuj w rozmowie",
+    "The recording failed. Please contact your administrator." : "Nagrywanie nie powiodło się. Skontaktuj się z administratorem.",
     "Location has been posted to the selected <a href=\"{link}\">conversation</a>" : "Lokalizacja została opublikowana w wybranej <a href=\"{link}\">rozmowie</a>",
     "An error occurred while posting location to conversation" : "Wystąpił błąd podczas publikowania lokalizacji w rozmowie",
     "Share to a conversation" : "Udostępnij w rozmowie",
@@ -1367,6 +1368,7 @@ OC.L10N.register(
     "Invitation was sent to {actorId}." : "Zaproszenie zostało wysłane do {actorId}.",
     "End meeting for all" : "Zakończ spotkanie dla wszystkich",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Karta została umieszczona w wybranej <a href=\"{link}\">rozmowie</a>.",
-    "An error occurred while posting deck card to conversation." : "Wystąpił błąd podczas dodawania karty do rozmowy."
+    "An error occurred while posting deck card to conversation." : "Wystąpił błąd podczas dodawania karty do rozmowy.",
+    "One to one rooms always need to show the other users avatar" : "Pokoje jeden na jeden zawsze muszą pokazywać awatary innych użytkowników"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");
