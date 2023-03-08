@@ -38,7 +38,10 @@ namespace OCA\Talk\Tests\php\Service;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Manager;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Participant;
 use OCA\Talk\Recording\BackendNotifier;
+use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
@@ -144,7 +147,14 @@ class RecordingServiceTest extends TestCase {
 			$this->expectExceptionMessage($exceptionMessage);
 		}
 
-		$actual = $this->recordingService->getContentFromFileArray($file);
+		$room = $this->createMock(Room::class);
+		$attendee = Attendee::fromRow([
+			'actor_type' => Attendee::ACTOR_USERS,
+			'actor_id' => 'participant1',
+		]);
+		$participant = new Participant($room, $attendee, null);
+
+		$actual = $this->recordingService->getContentFromFileArray($file, $room, $participant);
 		$this->assertEquals($expected, $actual);
 		$this->assertFileDoesNotExist($file['tmp_name']);
 	}
@@ -153,8 +163,8 @@ class RecordingServiceTest extends TestCase {
 		$fileWithContent = tempnam(sys_get_temp_dir(), 'txt');
 		file_put_contents($fileWithContent, 'bla');
 		return [
-			[['error' => 0, 'tmp_name' => ''], '', 'invalid_file'],
-			[['error' => 0, 'tmp_name' => 'a'], '', 'invalid_file'],
+			[['error' => 1, 'tmp_name' => ''], '', 'invalid_file'],
+			[['error' => 1, 'tmp_name' => 'a'], '', 'invalid_file'],
 			# Empty file
 			[['error' => 0, 'tmp_name' => tempnam(sys_get_temp_dir(), 'txt')], '', 'empty_file'],
 			# file with content
