@@ -49,6 +49,7 @@
 
 <script>
 import moment from '@nextcloud/moment'
+
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import Lobby from './missingMaterialDesignIcons/Lobby.vue'
