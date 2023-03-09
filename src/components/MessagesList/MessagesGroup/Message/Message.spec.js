@@ -626,12 +626,6 @@ describe('Message.vue', () => {
 			await wrapper.find('.message').trigger('mouseover')
 			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(true)
 
-			// position of MessageButtonsBar is calculated correctly, to be in visible area
-			expect(wrapper.vm.getButtonsBarPositionStyle()).toBeUndefined()
-
-			injected.scrollerBoundingClientRect.bottom = -100
-			expect(wrapper.vm.getButtonsBarPositionStyle()).toBeTruthy()
-
 			// actions are present and rendered when the MessageButtonsBar is rendered
 			const actions = wrapper.findAllComponents({ name: 'NcActions' })
 			expect(actions.length).toBe(2)
