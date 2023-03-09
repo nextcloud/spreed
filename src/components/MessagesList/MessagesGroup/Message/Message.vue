@@ -173,21 +173,27 @@ the main body of the message as well as a quote.
 		</div>
 
 		<!-- Message actions -->
-		<MessageButtonsBar v-if="showMessageButtonsBar"
-			ref="messageButtonsBar"
-			:is-action-menu-open.sync="isActionMenuOpen"
-			:is-emoji-picker-open.sync="isEmojiPickerOpen"
-			:is-reactions-menu-open.sync="isReactionsMenuOpen"
-			:is-forwarder-open.sync="isForwarderOpen"
-			:message-api-data="messageApiData"
-			:message-object="messageObject"
-			:is-last-read="isLastReadMessage"
-			:can-react="canReact"
-			v-bind="$props"
-			:previous-message-id="previousMessageId"
-			:participant="participant"
-			:style="messageButtonsBarStyle"
-			@delete="handleDelete" />
+		<div class="message-body__scroll">
+			<MessageButtonsBar v-if="showMessageButtonsBar"
+				ref="messageButtonsBar"
+				:is-action-menu-open.sync="isActionMenuOpen"
+				:is-emoji-picker-open.sync="isEmojiPickerOpen"
+				:is-reactions-menu-open.sync="isReactionsMenuOpen"
+				:is-forwarder-open.sync="isForwarderOpen"
+				:message-api-data="messageApiData"
+				:message-object="messageObject"
+				:is-last-read="isLastReadMessage"
+				:can-react="canReact"
+				v-bind="$props"
+				:previous-message-id="previousMessageId"
+				:participant="participant"
+				:show-common-read-icon="showCommonReadIcon"
+				:common-read-icon-tooltip="commonReadIconTooltip"
+				:show-sent-icon="showSentIcon"
+				:sent-icon-tooltip="sentIconTooltip"
+				@delete="handleDelete" />
+		</div>
+
 		<div v-if="isLastReadMessage"
 			v-observe-visibility="lastReadMessageVisibilityChanged">
 			<div class="new-message-marker">
@@ -208,11 +214,11 @@ import Reload from 'vue-material-design-icons/Reload.vue'
 
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
-import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
+import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import Quote from '../../../Quote.vue'
 import CallButton from '../../../TopBar/CallButton.vue'
@@ -237,19 +243,20 @@ export default {
 	name: 'Message',
 
 	components: {
-		NcButton,
 		CallButton,
-		Quote,
+		MessageButtonsBar,
+		NcButton,
+		NcEmojiPicker,
+		NcPopover,
 		NcRichText,
+		Poll,
+		Quote,
+		// Icons
 		AlertCircle,
 		Check,
 		CheckAll,
-		Reload,
-		MessageButtonsBar,
-		NcEmojiPicker,
 		EmoticonOutline,
-		NcPopover,
-		Poll,
+		Reload,
 	},
 
 	mixins: [
@@ -414,7 +421,6 @@ export default {
 			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
 			detailedReactionsLoading: false,
-			messageButtonsBarStyle: undefined,
 		}
 	},
 
@@ -913,6 +919,16 @@ export default {
 			padding: 0 8px 0 8px;
 		}
 	}
+
+	&__scroll {
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: fit-content;
+		height: 100%;
+		padding-top: 8px;
+	}
+
 	&__reactions {
 		display: flex;
 		flex-wrap: wrap;
