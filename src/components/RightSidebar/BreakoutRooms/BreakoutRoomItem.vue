@@ -251,7 +251,7 @@ export default {
 		display: flex;
 		align-items: center;
 		gap: var(--default-grid-baseline);
-		margin : 0 var(--default-grid-baseline) 0 calc(var(--default-grid-baseline) + calc(var(--default-grid-baseline)/2));
+		margin : 0 var(--default-grid-baseline);
 	}
 
 	&__room-name {
