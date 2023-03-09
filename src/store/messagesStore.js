@@ -995,6 +995,8 @@ const actions = {
 		}
 
 		const conversation = context.getters.conversation(token)
+		const actorId = context.getters.getActorId()
+		const actorType = context.getters.getActorType()
 		let countNewMessages = 0
 		let hasNewMention = conversation.unreadMention
 		let lastMessage = null
@@ -1009,7 +1011,9 @@ const actions = {
 			context.dispatch('processMessage', message)
 			if (!lastMessage || message.id > lastMessage.id) {
 				if (!message.systemMessage) {
-					countNewMessages++
+					if (actorId !== message.actorId || actorType !== message.actorType) {
+						countNewMessages++
+					}
 
 					// parse mentions data to update "conversation.unreadMention",
 					// if needed
