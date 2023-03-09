@@ -62,9 +62,8 @@ components.
 <script>
 import Close from 'vue-material-design-icons/Close.vue'
 
-import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
-
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
 import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
