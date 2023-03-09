@@ -339,6 +339,7 @@ export default {
 			// Check empty template by default
 			checked: -1,
 			userData: {},
+			clipboardTimeStamp: null,
 		}
 	},
 
@@ -684,6 +685,12 @@ export default {
 		 */
 		async handlePastedFiles(e) {
 			e.preventDefault()
+			// Prevent a new call of this.handleFiles if already called
+			if (this.clipboardTimeStamp === e.timeStamp) {
+				return
+			}
+
+			this.clipboardTimeStamp = e.timeStamp
 			const content = fetchClipboardContent(e)
 			if (content.kind === 'file') {
 				this.handleFiles(content.files, true)
