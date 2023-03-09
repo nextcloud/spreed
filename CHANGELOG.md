@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.0-rc.3 – 2023-03-09
+### Fixed
+- Correctly handle `<` and `>` in chat messages
+  [#8977](https://github.com/nextcloud/spreed/pull/8977)
+- Improve the position of the message button bar for single line and very long messages
+  [#9009](https://github.com/nextcloud/spreed/pull/9009)
+- Remove space on call-time button
+  [#8979](https://github.com/nextcloud/spreed/pull/8979)
+- Fix displaying of restricted and full permissions selection when manually configuring them
+  [#8982](https://github.com/nextcloud/spreed/pull/8982)
+- Fix dashboard widget API returning breakout rooms
+  [#8976](https://github.com/nextcloud/spreed/pull/8976)
+- Improve breakout room API documentation
+  [#8994](https://github.com/nextcloud/spreed/pull/8994)
+- Also remove polls when purging the chat history
+  [#8991](https://github.com/nextcloud/spreed/pull/8991)
+- Fix mention and emoji autocomplete when broadcasting to breakout rooms
+  [#8999](https://github.com/nextcloud/spreed/pull/8999)
+- Notify the moderator when uploading a recording failed
+  [#9000](https://github.com/nextcloud/spreed/pull/9000)
+- Add a warning in the admin settings when the file upload limits are lower than 512 MB
+  [#9002](https://github.com/nextcloud/spreed/pull/9002)
+- Fix unread message count improving when receiving own messages
+  [#9011](https://github.com/nextcloud/spreed/pull/9011)
+- Fix duplicate attachment upload with Safari and Chrome on MacOS
+  [#9012](https://github.com/nextcloud/spreed/pull/9012)
+
 ## 16.0.0-rc.2 – 2023-03-06
 ### Changed
 - Update several dependencies
