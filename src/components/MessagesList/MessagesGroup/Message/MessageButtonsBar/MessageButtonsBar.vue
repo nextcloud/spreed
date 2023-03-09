@@ -48,6 +48,23 @@
 				:boundaries-element="containerElement"
 				@open="onMenuOpen"
 				@close="onMenuClose">
+				<NcActionButton>
+					<template #icon>
+						<span v-if="showCommonReadIcon"
+							:title="commonReadIconTooltip"
+							:aria-label="commonReadIconTooltip">
+							<CheckAll :size="16" />
+						</span>
+						<span v-else-if="showSentIcon"
+							:title="sentIconTooltip"
+							:aria-label="sentIconTooltip">
+							<Check :size="16" />
+						</span>
+						<ClockOutline v-else :size="16" />
+					</template>
+					{{ messageDateTime }}
+				</NcActionButton>
+				<NcActionSeparator />
 				<NcActionButton v-if="isPrivateReplyable"
 					icon="icon-user"
 					:close-after-click="true"
@@ -142,6 +159,9 @@ import { frequently, EmojiIndex as EmojiIndexFactory } from 'emoji-mart-vue-fast
 import data from 'emoji-mart-vue-fast/data/all.json'
 
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import Check from 'vue-material-design-icons/Check.vue'
+import CheckAll from 'vue-material-design-icons/CheckAll.vue'
+import ClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import File from 'vue-material-design-icons/File.vue'
@@ -149,10 +169,7 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 import Reply from 'vue-material-design-icons/Reply.vue'
 import Share from 'vue-material-design-icons/Share.vue'
 
-import {
-	showError,
-	showSuccess,
-} from '@nextcloud/dialogs'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 import { generateUrl } from '@nextcloud/router'
 
@@ -176,20 +193,24 @@ export default {
 	name: 'MessageButtonsBar',
 
 	components: {
-		NcActions,
+		Forwarder,
 		NcActionButton,
 		NcActionLink,
+		NcActionSeparator,
+		NcActions,
+		NcButton,
+		NcEmojiPicker,
+		// Icons
+		ArrowLeft,
+		Check,
+		CheckAll,
+		ClockOutline,
+		EmoticonOutline,
 		EyeOffOutline,
 		File,
-		Share,
-		NcActionSeparator,
-		Forwarder,
-		NcButton,
-		EmoticonOutline,
-		ArrowLeft,
 		Plus,
 		Reply,
-		NcEmojiPicker,
+		Share,
 	},
 	props: {
 		token: {
@@ -313,6 +334,25 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+		/**
+		 * Message read information
+		 */
+		showCommonReadIcon: {
+			type: Boolean,
+			required: true,
+		},
+		showSentIcon: {
+			type: Boolean,
+			required: true,
+		},
+		commonReadIconTooltip: {
+			type: String,
+			required: true,
+		},
+		sentIconTooltip: {
+			type: String,
+			required: true,
+		},
 
 		/**
 		 * If the MessageButtonsBar belongs to the last read message, we need
@@ -407,6 +447,10 @@ export default {
 				&& !this.isFileShare
 				&& !this.isDeletedMessage
 				&& !this.isPollMessage
+		},
+
+		messageDateTime() {
+			return moment(this.timestamp * 1000).format('lll')
 		},
 	},
 
@@ -539,8 +583,8 @@ export default {
 .message-buttons-bar {
 	display: flex;
 	right: 14px;
-	bottom: calc(8px - var(--default-clickable-area)); // 36px offset
-	position: absolute;
+	top: 8px;
+	position: sticky;
 	background-color: var(--color-main-background);
 	border-radius: calc(var(--default-clickable-area) / 2);
 	box-shadow: 0 0 4px 0 var(--color-box-shadow);
