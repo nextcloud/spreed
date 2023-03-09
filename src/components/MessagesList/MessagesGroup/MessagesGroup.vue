@@ -41,7 +41,6 @@
 					:is-first-message="index === 0"
 					:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
 					:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId"
-					:last-read-message-id="lastReadMessageId"
 					:actor-type="actorType"
 					:actor-id="actorId"
 					:actor-display-name="actorDisplayName"
@@ -69,14 +68,6 @@ export default {
 
 	props: {
 		/**
-		 * The message id.
-		 */
-		// FIXME: looks unused
-		id: {
-			type: [String, Number],
-			required: true,
-		},
-		/**
 		 * The conversation token.
 		 */
 		token: {
@@ -97,12 +88,6 @@ export default {
 		},
 
 		nextMessageId: {
-			type: [String, Number],
-			default: 0,
-		},
-
-		// FIXME: read from messagesStore as this is the same value for all
-		lastReadMessageId: {
 			type: [String, Number],
 			default: 0,
 		},

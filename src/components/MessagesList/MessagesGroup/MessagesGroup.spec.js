@@ -38,7 +38,6 @@ describe('MessagesGroup.vue', () => {
 				token: TOKEN,
 				previousMessageId: 90,
 				nextMessageId: 200,
-				lastReadMessageId: 110,
 				messages: [{
 					id: 100,
 					token: TOKEN,
@@ -97,7 +96,6 @@ describe('MessagesGroup.vue', () => {
 		expect(message.attributes('previousmessageid')).toBe('90')
 		expect(message.attributes('nextmessageid')).toBe('110')
 		expect(message.attributes('isfirstmessage')).toBe('true')
-		expect(message.attributes('lastreadmessageid')).toBe('110')
 		expect(message.attributes('showauthor')).toBe('true')
 		expect(message.attributes('istemporary')).not.toBeDefined()
 
@@ -109,7 +107,6 @@ describe('MessagesGroup.vue', () => {
 		expect(message.attributes('previousmessageid')).toBe('100')
 		expect(message.attributes('nextmessageid')).toBe('120')
 		expect(message.attributes('isfirstmessage')).not.toBeDefined()
-		expect(message.attributes('lastreadmessageid')).toBe('110')
 		expect(message.attributes('showauthor')).toBe('true')
 		expect(message.attributes('istemporary')).not.toBeDefined()
 
@@ -121,7 +118,6 @@ describe('MessagesGroup.vue', () => {
 		expect(message.attributes('previousmessageid')).toBe('110')
 		expect(message.attributes('nextmessageid')).toBe('200')
 		expect(message.attributes('isfirstmessage')).not.toBeDefined()
-		expect(message.attributes('lastreadmessageid')).toBe('110')
 		expect(message.attributes('showauthor')).toBe('true')
 		expect(message.attributes('istemporary')).toBe('true')
 	})
@@ -135,7 +131,6 @@ describe('MessagesGroup.vue', () => {
 				token: TOKEN,
 				previousMessageId: 90,
 				nextMessageId: 200,
-				lastReadMessageId: 110,
 				messages: [{
 					id: 100,
 					token: TOKEN,
@@ -181,7 +176,6 @@ describe('MessagesGroup.vue', () => {
 		expect(message.attributes('previousmessageid')).toBe('90')
 		expect(message.attributes('nextmessageid')).toBe('110')
 		expect(message.attributes('isfirstmessage')).toBe('true')
-		expect(message.attributes('lastreadmessageid')).toBe('110')
 		expect(message.attributes('showauthor')).not.toBeDefined()
 
 		message = messagesEl.at(1)
@@ -192,7 +186,6 @@ describe('MessagesGroup.vue', () => {
 		expect(message.attributes('previousmessageid')).toBe('100')
 		expect(message.attributes('nextmessageid')).toBe('200')
 		expect(message.attributes('isfirstmessage')).not.toBeDefined()
-		expect(message.attributes('lastreadmessageid')).toBe('110')
 		expect(message.attributes('showauthor')).not.toBeDefined()
 	})
 
@@ -206,7 +199,6 @@ describe('MessagesGroup.vue', () => {
 				token: TOKEN,
 				previousMessageId: 90,
 				nextMessageId: 200,
-				lastReadMessageId: 110,
 				messages: [{
 					id: 100,
 					token: TOKEN,
@@ -258,7 +250,7 @@ describe('MessagesGroup.vue', () => {
 		expect(getGuestNameMock).toHaveBeenCalledWith(TOKEN, 'actor-1')
 	})
 
-	test('renders guest display name', () => {
+	test('renders deleted guest display name', () => {
 		const wrapper = shallowMount(MessagesGroup, {
 			localVue,
 			store,
@@ -267,7 +259,6 @@ describe('MessagesGroup.vue', () => {
 				token: TOKEN,
 				previousMessageId: 90,
 				nextMessageId: 200,
-				lastReadMessageId: 110,
 				messages: [{
 					id: 100,
 					token: TOKEN,
