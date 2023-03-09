@@ -82,7 +82,7 @@ the main body of the message as well as a quote.
 						:autolink="true"
 						:reference-limit="1" />
 				</div>
-				<div v-if="!isDeletedMessage" ref="messageInfo" class="message-body__main__right">
+				<div v-if="!isDeletedMessage" class="message-body__main__right">
 					<span :title="messageDate"
 						class="date"
 						:style="{'visibility': hasDate ? 'visible' : 'hidden'}"
@@ -645,11 +645,6 @@ export default {
 		detailedReactionsLoaded() {
 			return this.$store.getters.reactionsLoaded(this.token, this.id)
 		},
-
-		messageButtonsBarHeight() {
-			return parseInt(getComputedStyle(this.$refs.message)
-				.getPropertyValue('--default-clickable-area'), 10) || 0
-		},
 	},
 
 	watch: {
@@ -702,7 +697,6 @@ export default {
 		handleMouseover() {
 			if (!this.isHovered) {
 				this.isHovered = true
-				this.messageButtonsBarStyle = this.getButtonsBarPositionStyle()
 			}
 		},
 
@@ -835,18 +829,6 @@ export default {
 			}
 
 			return displayName
-		},
-
-		getButtonsBarPositionStyle() {
-			if (!this.showMessageButtonsBar) {
-				return
-			}
-
-			// Check if the bottom of messageButtonsBar is outside visible area (36px offset from message bottom)
-			const messageButtonsBarBottom = this.$refs.message.getBoundingClientRect().bottom + this.messageButtonsBarHeight - 8
-			if (this.scrollerBoundingClientRect.bottom < messageButtonsBarBottom) {
-				return `bottom: calc(100% - ${this.$refs.messageInfo.offsetTop}px)`
-			}
 		},
 	},
 }
