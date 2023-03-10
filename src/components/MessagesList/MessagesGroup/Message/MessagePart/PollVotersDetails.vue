@@ -100,6 +100,7 @@ export default {
 <style lang="scss" scoped>
 
 .poll-voters-details {
+	max-width: 30%;
 	margin-right: 8px;
 
 	& &__button,
@@ -108,6 +109,10 @@ export default {
 		height: auto;
 		min-width: auto;
 		width: auto !important;
+		flex-wrap: wrap;
+		justify-content: flex-start;
+		border-radius: 0;
+		overflow: visible;
 	}
 
 	&__popover {
