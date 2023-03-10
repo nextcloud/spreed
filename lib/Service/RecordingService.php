@@ -112,7 +112,7 @@ class RecordingService {
 			// If the recording to be stopped is not known to the recording
 			// server it will never notify that the recording was stopped, so
 			// the status needs to be explicitly changed here.
-			$this->roomService->setCallRecording($room, Room::RECORDING_FAILED);
+			$this->roomService->setCallRecording($room, Room::RECORDING_NONE);
 		}
 	}
 
