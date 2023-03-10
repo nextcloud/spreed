@@ -20,10 +20,10 @@
 -->
 
 <template>
-	<NcPopover trigger="hover">
+	<NcPopover class="poll-voters-details" trigger="hover">
 		<template #trigger>
 			<NcButton type="tertiary-no-background"
-				class="poll-voters-details">
+				class="poll-voters-details__button">
 				<template #icon>
 					<AvatarWrapperSmall v-for="(item, index) in details.slice(0, 8)"
 						:id="item.actorId"
@@ -102,8 +102,8 @@ export default {
 .poll-voters-details {
 	margin-right: 8px;
 
-	&,
-	& :deep(.button-vue__icon) {
+	& &__button,
+	&__button :deep(.button-vue__icon) {
 		min-height: auto;
 		height: auto;
 		min-width: auto;
