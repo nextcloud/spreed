@@ -676,6 +676,11 @@ export default {
 		},
 
 		toggleScreenSharingMenu() {
+			if (IS_DESKTOP) {
+				alert('Unfortunately, Screen sharing is not supported by Nextcloud Talk Preview')
+				return
+			}
+
 			if (!this.isScreensharingAllowed) {
 				return
 			}
