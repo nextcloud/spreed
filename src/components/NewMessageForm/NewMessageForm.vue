@@ -872,25 +872,28 @@ export default {
 				// Set icon for candidate mentions that are not for users.
 				if (possibleMention.source === 'calls') {
 					possibleMention.icon = 'icon-group-forced-white'
+					possibleMention.subline = t('spreed', 'Everyone')
 				} else if (possibleMention.source === 'groups') {
 					possibleMention.icon = 'icon-group-forced-white'
+					possibleMention.subline = t('spreed', 'Group')
 				} else if (possibleMention.source === 'guests') {
 					possibleMention.icon = 'icon-user-forced-white'
+					possibleMention.subline = t('spreed', 'Guest')
 				} else {
 					// The avatar is automatically shown for users, but an icon
 					// is nevertheless required as fallback.
 					possibleMention.icon = 'icon-user-forced-white'
+
+					// Convert status properties to an object.
+					if (possibleMention.status) {
+						possibleMention.status = {
+							status: possibleMention.status,
+							icon: possibleMention.statusIcon,
+						}
+						possibleMention.subline = possibleMention.statusMessage
+					}
 				}
 
-				// Convert status properties to an object.
-				if (possibleMention.status) {
-					const status = {
-						status: possibleMention.status,
-						icon: possibleMention.statusIcon,
-					}
-					possibleMention.status = status
-					possibleMention.subline = possibleMention.statusMessage
-				}
 				// Caching the user id data for each possible mention
 				this.userData[possibleMention.id] = possibleMention
 			})
