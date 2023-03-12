@@ -34,15 +34,11 @@
 					{{ t('spreed', 'All set') }}
 				</p>
 				<NcButton id="copy-link"
-					slot="trigger"
 					type="secondary"
 					class="confirmation__copy-link"
 					@click="onClickCopyLink">
 					{{ t('spreed', 'Copy conversation link') }}
 				</NcButton>
-				<p class="confirmation__warning">
-					{{ confirmationText }}
-				</p>
 			</template>
 		</template>
 		<template v-else>
@@ -57,12 +53,18 @@
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
+import { copyLinkToConversation } from '../../../../services/urlService.js'
+
 export default {
 	name: 'Confirmation',
 	components: {
 		NcButton,
 	},
 	props: {
+		token: {
+			type: String,
+			required: true,
+		},
 		conversationName: {
 			type: String,
 			required: true,
@@ -83,42 +85,11 @@ export default {
 			type: Boolean,
 			required: true,
 		},
-		linkToConversation: {
-			type: String,
-			required: true,
-		},
-	},
-
-	data() {
-		return {
-			showTooltip: false,
-			confirmationText: '',
-			showConfirmationText: false,
-		}
 	},
 
 	methods: {
-		async onClickCopyLink() {
-			try {
-				await navigator.clipboard.writeText(this.linkToConversation)
-				this.onCopy()
-			} catch (error) {
-				this.onError()
-			}
-		},
-		onCopy() {
-			this.confirmationText = t('spreed', 'Link copied to the clipboard!')
-			this.showConfirmationText = true
-			setTimeout(function() {
-				this.showConfirmationText = false
-			}, 800)
-		},
-		onError() {
-			this.confirmationText = t('spreed', 'Error')
-			this.showConfirmationText = true
-			setTimeout(function() {
-				this.showConfirmationText = false
-			}, 800)
+		onClickCopyLink() {
+			copyLinkToConversation(this.token)
 		},
 	},
 
@@ -130,13 +101,16 @@ export default {
 .confirmation {
 	display: flex;
 	flex-direction: column;
-	&__icon{
+
+	&__icon {
 		padding-top: 80px;
 	}
-	&__warning{
+
+	&__warning {
 		margin-top: 10px;
 		text-align: center;
 	}
+
 	&__copy-link {
 		margin: 50px auto 0 auto;
 	}
