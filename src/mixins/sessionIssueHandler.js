@@ -48,21 +48,27 @@ const sessionIssueHandler = {
 			SessionStorage.removeItem('joined_conversation')
 			// Need to delay until next tick, otherwise the PreventUnload is still being triggered
 			// Putting the window in front with the warning and irritating the user
-			this.$nextTick(() => {
-				// FIXME: can't use router push as it somehow doesn't clean up
-				// fully and leads the other instance where "Join here" was clicked
-				// to redirect to "not found"
-				window.location = url
-			})
+			if (!IS_DESKTOP) {
+				this.$nextTick(() => {
+					// FIXME: can't use router push as it somehow doesn't clean up
+					// fully and leads the other instance where "Join here" was clicked
+					// to redirect to "not found"
+					window.location = generateUrl(url)
+				})
+			} else {
+				// TODO: DESKTOP: to not hard-code the address?
+				window.location = `/talk_window/#${url}`
+			}
 		},
 
 		duplicateSessionTriggered() {
-			this.redirectTo(generateUrl('/apps/spreed/duplicate-session'))
+			// TODO: DESKTOP: should close the duplicated window instead of redirect
+			this.redirectTo('/apps/spreed/duplicate-session')
 		},
 
 		deletedSessionTriggered() {
 			// workaround: force page refresh to kill stray WebRTC connections
-			this.redirectTo(generateUrl('/apps/spreed/not-found'))
+			this.redirectTo('/apps/spreed/not-found')
 		},
 	},
 }
