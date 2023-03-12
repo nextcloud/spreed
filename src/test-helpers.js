@@ -21,6 +21,7 @@
  */
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 // helpers
 const findNcActionButton = function(wrapper, text) {
@@ -34,6 +35,18 @@ const findNcActionButton = function(wrapper, text) {
 	return items.at(0)
 }
 
+const findNcButton = function(wrapper, text) {
+	const buttons = wrapper.findAllComponents(NcButton)
+	const items = buttons.filter(button => {
+		return button.text() === text || button.vm.ariaLabel === text
+	})
+	if (!items.exists()) {
+		return items
+	}
+	return items.at(0)
+}
+
 export {
 	findNcActionButton,
+	findNcButton,
 }
