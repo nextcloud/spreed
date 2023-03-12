@@ -32,6 +32,7 @@ the main body of the message as well as a quote.
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
 		class="message"
+		:class="{'message__last': isLastMessage}"
 		tabindex="0"
 		@mouseover="handleMouseover"
 		@mouseleave="handleMouseleave">
@@ -419,13 +420,13 @@ export default {
 	},
 
 	computed: {
-		isLastReadMessage() {
-			if (!this.nextMessageId || this.id === this.conversation?.lastMessage?.id) {
-				// never display indicator on the very last message
-				return false
-			}
+		isLastMessage() {
+			// never displayed for the very last message
+			return !this.nextMessageId || this.id === this.conversation?.lastMessage?.id
+		},
 
-			return this.id === this.$store.getters.getVisualLastReadMessageId(this.token)
+		isLastReadMessage() {
+			return !this.isLastMessage && this.id === this.$store.getters.getVisualLastReadMessageId(this.token)
 		},
 
 		messageObject() {
@@ -841,6 +842,10 @@ export default {
 
 .message {
 	position: relative;
+
+	&__last {
+		margin-bottom: 12px;
+	}
 }
 
 .message-body {
@@ -917,7 +922,7 @@ export default {
 		right: 0;
 		width: fit-content;
 		height: 100%;
-		padding-top: 8px;
+		padding: 8px 8px 0 0;
 	}
 
 	&__reactions {
