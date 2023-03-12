@@ -161,7 +161,7 @@ class UserMention {
 				}
 
 				$messageParameters[$mentionParameterId] = [
-					'type' => $mention['type'],
+					'type' => 'user-group',
 					'id' => $mention['id'],
 					'name' => $displayName,
 				];
