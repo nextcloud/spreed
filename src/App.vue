@@ -430,8 +430,10 @@ export default {
 	},
 
 	async mounted() {
-		// see browserCheck mixin
-		this.checkBrowser()
+		if (!IS_DESKTOP) {
+			// see browserCheck mixin
+			this.checkBrowser()
+		}
 		// Check sidebar status in previous sessions
 		if (BrowserStorage.getItem('sidebarOpen') === 'false') {
 			this.$store.dispatch('hideSidebar')
