@@ -156,10 +156,6 @@ class Message {
 	 * Specifies whether a message can be replied to
 	 */
 	public function isReplyable(): bool {
-		if ($this->getRoom()->getReadOnly() === Room::READ_ONLY) {
-			return false;
-		}
-
 		return $this->getMessageType() !== ChatManager::VERB_SYSTEM &&
 			$this->getMessageType() !== ChatManager::VERB_COMMAND &&
 			$this->getMessageType() !== ChatManager::VERB_MESSAGE_DELETED &&

@@ -139,7 +139,7 @@ describe('MessageButtonsBar.vue', () => {
 				})
 
 				const replyButton = findNcButton(wrapper, 'Reply')
-				expect(replyButton.isVisible()).toBe(false)
+				expect(replyButton.exists()).toBe(false)
 			})
 		})
 
