@@ -20,30 +20,30 @@
 -->
 
 <template>
-	<div ref="description"
+	<div ref="editable-text-field"
 		:key="forceReRenderKey"
-		class="description">
+		class="editable-text-field">
 		<NcRichContenteditable ref="contenteditable"
-			:value.sync="descriptionText"
+			:value.sync="text"
 			:auto-complete="()=>{}"
 			:maxlength="maxLength"
 			:contenteditable="editing && !loading"
 			:placeholder="placeholder"
-			@submit="handleSubmitDescription"
+			@submit="handleSubmitText"
 			@keydown.esc="handleCancelEditing" />
 		<template v-if="!loading">
 			<template v-if="editing">
 				<NcButton type="tertiary"
-					:aria-label="t('spreed', 'Cancel editing description')"
+					:aria-label="t('spreed', 'Cancel editing')"
 					@click="handleCancelEditing">
 					<template #icon>
 						<Close :size="20" />
 					</template>
 				</NcButton>
 				<NcButton type="primary"
-					:aria-label="t('spreed', 'Submit conversation description')"
+					:aria-label="t('spreed', 'Submit')"
 					:disabled="!canSubmit"
-					@click="handleSubmitDescription">
+					@click="handleSubmitText">
 					<template #icon>
 						<Check :size="20" />
 					</template>
@@ -58,9 +58,9 @@
 			</template>
 			<NcButton v-if="!editing && editable"
 				type="tertiary"
-				class="description__edit"
-				:aria-label="t('spreed', 'Edit conversation description')"
-				@click="handleEditDescription">
+				class="editable-text-field__edit"
+				:aria-label="editButtonAriaLabel"
+				@click="handleEditText">
 				<template #icon>
 					<Pencil :size="20" />
 				</template>
@@ -80,7 +80,7 @@ import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContente
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 export default {
-	name: 'Description',
+	name: 'EditableTextField',
 	components: {
 		Pencil,
 		Check,
@@ -95,17 +95,10 @@ export default {
 
 	props: {
 		/**
-		 * The description (An editable paragraph just above the sidebar tabs)
+		 * The "outer" value of the text, coming from the store. Every time this changes,
+		 * the text value in this component is overwritten.
 		 */
-		descriptionTitle: {
-			type: String,
-			default: t('spreed', 'Description'),
-		},
-
-		/**
-		 * A paragraph below the title.
-		 */
-		description: {
+		initialText: {
 			type: String,
 			default: '',
 		},
@@ -119,7 +112,7 @@ export default {
 		},
 
 		/**
-		 * Toggles the description editing state on and off.
+		 * Toggles the text editing state on and off.
 		 */
 		editing: {
 			type: Boolean,
@@ -143,17 +136,22 @@ export default {
 		},
 
 		/**
-		 * Maximum description length in characters
+		 * Maximum text length in characters
 		 */
 		maxLength: {
 			type: Number,
 			default: 500,
 		},
+
+		editButtonAriaLabel: {
+			type: String,
+			required: true,
+		},
 	},
 
 	data() {
 		return {
-			descriptionText: this.description,
+			text: this.initialText,
 			forceReRenderKey: 0,
 			overflows: null,
 		}
@@ -162,11 +160,11 @@ export default {
 	computed: {
 
 		canSubmit() {
-			return this.charactersCount <= this.maxLength && this.descriptionText !== this.description
+			return this.charactersCount <= this.maxLength && this.text !== this.initialText
 		},
 
 		charactersCount() {
-			return this.descriptionText.length
+			return this.text.length
 		},
 
 		charactersCountDown() {
@@ -178,7 +176,7 @@ export default {
 		},
 
 		countDownWarningText() {
-			return t('spreed', 'The description must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long.', {
+			return t('spreed', 'The text must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long.', {
 				maxLength: this.maxLength,
 				charactersCount: this.charactersCount,
 			})
@@ -187,39 +185,39 @@ export default {
 
 	watch: {
 		// Each time the prop changes, reflect the changes in the value stored in this component
-		description(newValue) {
-			this.descriptionText = newValue
+		initialText(newValue) {
+			this.text = newValue
 		},
 		editing(newValue) {
 			if (!newValue) {
-				this.descriptionText = this.description
+				this.text = this.initialText
 			}
 		},
 	},
 
 	methods: {
-		handleEditDescription() {
+		handleEditText() {
 			const contenteditable = this.$refs.contenteditable.$refs.contenteditable
 			this.$emit('update:editing', true)
 			this.$nextTick(() => {
-				// Focus and select the text in the description
+				// Focus and select the text
 				contenteditable.focus()
 				document.execCommand('selectAll', false, null)
 			})
 		},
 
-		handleSubmitDescription() {
+		handleSubmitText() {
 			if (!this.canSubmit) {
 				return
 			}
 			// Remove leading/trailing whitespaces.
 			// FIXME: remove after issue is resolved: https://github.com/nextcloud/nextcloud-vue/issues/3264
 			const temp = document.createElement('textarea')
-			temp.innerHTML = this.descriptionText
-			this.descriptionText = temp.value.replace(/\r\n|\n|\r/gm, '\n').trim()
+			temp.innerHTML = this.text
+			this.text = temp.value.replace(/\r\n|\n|\r/gm, '\n').trim()
 
-			// Submit description
-			this.$emit('submit-description', this.descriptionText)
+			// Submit text
+			this.$emit('submit-text', this.text)
 			/**
 			 * Change the NcRichContenteditable key in order to trigger a re-render
 			 * without this all the trimmed new lines and whitespaces would
@@ -229,16 +227,16 @@ export default {
 		},
 
 		handleCancelEditing() {
-			this.descriptionText = this.description
+			this.text = this.initialText
 			this.$emit('update:editing', false)
-			// Deselect all the text that's been selected in `handleEditDescription`
+			// Deselect all the text that's been selected in `handleEditText`
 			window.getSelection().removeAllRanges()
 		},
 
 		checkOverflow() {
-			const descriptionHeight = this.$refs.description.clientHeight
+			const textHeight = this.$refs['editable-text-field'].clientHeight
 			const contenteditableHeight = this.$refs.contenteditable.$refs.contenteditable.scrollHeight
-			this.overflows = descriptionHeight < contenteditableHeight
+			this.overflows = textHeight < contenteditableHeight
 		},
 	},
 }
@@ -248,7 +246,7 @@ export default {
 <style lang="scss" scoped>
 @import '../../assets/variables';
 
-.description {
+.editable-text-field {
 	display: flex;
 	width: 100%;
 	overflow: hidden;
@@ -256,32 +254,15 @@ export default {
 	min-height: $clickable-area;
 	align-items: flex-end;
 
-	&__header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		height: 44px;
-	}
-	&__title {
-		color: var(--color-primary);
-		font-weight: bold;
-		font-size: var(--default-font-size);
-		line-height: var(--default-line-height);
-	}
-
 	&__edit {
-		margin-left: 44px;
-	}
-
-	&__action {
-		margin: 0 0 4px 4px;
+		margin-left: var(--default-clickable-area);
 	}
 }
 
 .spinner {
 	width: $clickable-area;
 	height: $clickable-area;
-	margin: 0 0 4px 44px;
+	margin: 0 0 0 44px;
 }
 
 .counter {

@@ -57,7 +57,7 @@
 			</NcActionButton>
 
 			<!-- Mute others -->
-			<template v-if="showModerationOptions && canFullModerate">
+			<template v-if="!isOneToOneConversation && canFullModerate">
 				<NcActionButton :close-after-click="true"
 					@click="forceMuteOthers">
 					<template #icon>
@@ -107,14 +107,6 @@
 			</template>
 			{{ t('spreed', 'Go to file') }}
 		</NcActionLink>
-		<NcActionSeparator v-if="showModerationOptions" />
-		<template v-if="showModerationOptions">
-			<NcActionButton :close-after-click="true"
-				icon="icon-rename"
-				@click="handleRenameConversation">
-				{{ t('spreed', 'Rename conversation') }}
-			</NcActionButton>
-		</template>
 		<!-- Call recording -->
 		<template v-if="canModerateRecording">
 			<NcActionButton v-if="!isRecording && !isStartingRecording && isInCall"
@@ -282,10 +274,6 @@ export default {
 			return t('spreed', 'Fullscreen (F)')
 		},
 
-		showModerationOptions() {
-			return !this.isOneToOneConversation && this.canModerate
-		},
-
 		isFileConversation() {
 			return this.conversation.objectType === 'file' && this.conversation.objectId
 		},
@@ -397,10 +385,6 @@ export default {
 	},
 
 	methods: {
-		handleRenameConversation() {
-			this.$store.dispatch('isRenamingConversation', true)
-			this.$store.dispatch('showSidebar')
-		},
 		forceMuteOthers() {
 			callParticipantCollection.callParticipantModels.forEach(callParticipantModel => {
 				callParticipantModel.forceMute()

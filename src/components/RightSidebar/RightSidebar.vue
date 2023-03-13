@@ -24,25 +24,19 @@
 	<NcAppSidebar v-show="opened"
 		:title="title"
 		:title-tooltip="title"
-		:starred="isFavorited"
 		:active="activeTab"
-		:title-editable="canModerate && isRenamingConversation"
 		:class="'active-tab-' + activeTab"
 		@update:active="handleUpdateActive"
-		@update:starred="onFavoriteChange"
-		@update:title="handleUpdateTitle"
-		@submit-title="handleSubmitTitle"
-		@dismiss-editing="dismissEditing"
 		@closed="handleClosed"
 		@close="handleClose">
-		<template slot="description">
+		<template #description>
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
 		<NcAppSidebarTab v-if="showChatInSidebar"
 			id="chat"
 			:order="1"
 			:name="t('spreed', 'Chat')">
-			<template slot="icon">
+			<template #icon>
 				<Message :size="20" />
 			</template>
 			<ChatView :is-visible="opened" />
@@ -52,7 +46,7 @@
 			ref="participantsTab"
 			:order="2"
 			:name="participantsText">
-			<template slot="icon">
+			<template #icon>
 				<AccountMultiple :size="20" />
 			</template>
 			<ParticipantsTab :is-active="activeTab === 'participants'"
@@ -64,7 +58,7 @@
 			ref="breakout-rooms"
 			:order="3"
 			:name="breakoutRoomsText">
-			<template slot="icon">
+			<template #icon>
 				<DotsCircle :size="20" />
 			</template>
 			<BreakoutRoomsTab :main-token="mainConversationToken"
@@ -75,7 +69,7 @@
 			id="details-tab"
 			:order="4"
 			:name="t('spreed', 'Details')">
-			<template slot="icon">
+			<template #icon>
 				<InformationOutline :size="20" />
 			</template>
 			<SetGuestUsername v-if="!getUserId" />
@@ -98,7 +92,7 @@
 			ref="sharedItemsTab"
 			:order="5"
 			:name="t('spreed', 'Shared items')">
-			<template slot="icon">
+			<template #icon>
 				<FolderMultipleImage :size="20" />
 			</template>
 			<SharedItemsTab :active="activeTab === 'shared-items'" />
@@ -168,10 +162,6 @@ export default {
 		return {
 			activeTab: 'participants',
 			contactsLoading: false,
-			// The conversation name (while editing)
-			conversationName: '',
-			// Sidebar status before starting editing operation
-			sidebarOpenBeforeEditingName: '',
 		}
 	},
 
@@ -203,14 +193,6 @@ export default {
 
 		getUserId() {
 			return this.$store.getters.getUserId()
-		},
-
-		isFavorited() {
-			if (!this.getUserId) {
-				return null
-			}
-
-			return this.conversation.isFavorite
 		},
 
 		canAddParticipants() {
@@ -348,52 +330,20 @@ export default {
 
 	methods: {
 		handleClose() {
-			this.dismissEditing()
 			this.$store.dispatch('hideSidebar')
 			BrowserStorage.setItem('sidebarOpen', 'false')
-		},
-
-		async onFavoriteChange() {
-			this.$store.dispatch('toggleFavorite', this.conversation)
 		},
 
 		handleUpdateActive(active) {
 			this.activeTab = active
 		},
 
-		/**
-		 * Updates the conversationName value while editing the conversation's title.
-		 *
-		 * @param {string} title the conversation title emitted by the AppSidebar vue
-		 * component.
-		 */
-		handleUpdateTitle(title) {
-			this.conversationName = title
-		},
-
-		async handleSubmitTitle(event) {
-			const name = event.target[0].value.trim()
-			try {
-				await this.$store.dispatch('setConversationName', {
-					token: this.token,
-					name,
-				})
-				this.dismissEditing()
-			} catch (exception) {
-				console.debug(exception)
-			}
-		},
-
-		dismissEditing() {
-			this.$store.dispatch('isRenamingConversation', false)
-		},
-
 		showSettings() {
-			emit('show-settings')
+			emit('show-settings', {})
 		},
 
 		handleClosed() {
-			emit('files:sidebar:closed')
+			emit('files:sidebar:closed', {})
 		},
 	},
 }

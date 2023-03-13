@@ -28,16 +28,10 @@
 		:container="container">
 		<!-- description -->
 		<NcAppSettingsSection v-if="showDescription"
-			id="description"
-			:title="t('spreed', 'Description')">
-			<!-- Rename to "Basic info" when Name is moved over -->
-			<Description :editable="canFullModerate"
-				:description="description"
-				:editing="isEditingDescription"
-				:loading="isDescriptionLoading"
-				:placeholder="t('spreed', 'Enter a description for this conversation')"
-				@submit-description="handleUpdateDescription"
-				@update:editing="handleEditDescription" />
+			id="basic-info"
+			:title="t('spreed', 'Basic Info')">
+			<BasicInfo :conversation="conversation"
+				:can-full-moderate="canFullModerate" />
 		</NcAppSettingsSection>
 
 		<template v-if="!isBreakoutRoom">
@@ -105,7 +99,6 @@
 
 <script>
 import { getCapabilities } from '@nextcloud/capabilities'
-import { showError } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 
@@ -113,7 +106,7 @@ import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDia
 import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
-import Description from '../Description/Description.vue'
+import BasicInfo from './BasicInfo.vue'
 import BreakoutRoomsSettings from './BreakoutRoomsSettings.vue'
 import ConversationPermissionsSettings from './ConversationPermissionsSettings.vue'
 import DangerZone from './DangerZone.vue'
@@ -144,18 +137,16 @@ export default {
 		MatterbridgeSettings,
 		DangerZone,
 		NotificationsSettings,
-		Description,
 		NcCheckboxRadioSwitch,
 		ConversationPermissionsSettings,
 		BreakoutRoomsSettings,
+		BasicInfo,
 	},
 
 	data() {
 		return {
 			showSettings: false,
 			matterbridgeEnabled: loadState('spreed', 'enable_matterbridge'),
-			isEditingDescription: false,
-			isDescriptionLoading: false,
 			showDeviceChecker: false,
 		}
 	},
@@ -195,10 +186,6 @@ export default {
 
 		canLeaveConversation() {
 			return this.conversation.canLeaveConversation
-		},
-
-		description() {
-			return this.conversation.description
 		},
 
 		showDescription() {
@@ -260,25 +247,6 @@ export default {
 			unsubscribe('show-conversation-settings', this.handleShowSettings)
 			unsubscribe('hide-conversation-settings', this.handleHideSettings)
 		},
-
-		async handleUpdateDescription(description) {
-			this.isDescriptionLoading = true
-			try {
-				await this.$store.dispatch('setConversationDescription', {
-					token: this.token,
-					description,
-				})
-				this.isEditingDescription = false
-			} catch (error) {
-				console.error('Error while setting conversation description', error)
-				showError(t('spreed', 'Error while updating conversation description'))
-			}
-			this.isDescriptionLoading = false
-		},
-
-		handleEditDescription(payload) {
-			this.isEditingDescription = payload
-		},
 	},
 }
 </script>
@@ -305,6 +273,7 @@ export default {
 .app-settings-section__subtitle {
 	font-weight: bold;
 	font-size: var(--default-font-size);
+	margin: calc(var(--default-grid-baseline) * 4) 0 var(--default-grid-baseline) 0;
 }
 
 ::v-deep .app-settings-subsection {
