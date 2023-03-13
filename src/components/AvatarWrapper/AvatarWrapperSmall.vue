@@ -39,7 +39,7 @@
 			:menu-container="menuContainer"
 			menu-position="left"
 			:disable-tooltip="disableTooltip"
-			:disable-menu="disableMenu"
+			:disable-menu="isDisabledMenu"
 			:show-user-status="showUserStatus"
 			:size="size" />
 		<div v-else
@@ -128,6 +128,11 @@ export default {
 		// Takes the the size prop and makes it a string for the classes
 		sizeToString() {
 			return this.size.toString()
+		},
+		isDisabledMenu() {
+			// NcAvatarMenu doesn't work on Desktop
+			// See: issue#34
+			return IS_DESKTOP || this.disableMenu
 		},
 	},
 }
