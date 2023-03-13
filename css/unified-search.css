@@ -1,25 +1,31 @@
+.reference-picker .conversation-icon,
 .unified-search .conversation-icon {
 	background-color: var(--color-background-darker);
 	background-size: 22px !important;
 }
 
 /* We always want to use the white icons, this is why we don't use var(--color-white) here.*/
+.reference-picker .conversation-icon.icon-public-white,
 .unified-search .conversation-icon.icon-public-white {
 	background-image: url(../img/icon-public-white.svg);
 }
 
+.reference-picker .conversation-icon.icon-contacts-white,
 .unified-search .conversation-icon.icon-contacts-white {
 	background-image: url(../img/icon-contacts-white.svg);
 }
 
+.reference-picker .conversation-icon.icon-password-white,
 .unified-search .conversation-icon.icon-password-white {
 	background-image: url(../img/icon-password-white.svg);
 }
 
+.reference-picker .conversation-icon.icon-text-white,
 .unified-search .conversation-icon.icon-text-white {
 	background-image: url(../img/icon-text-white.svg);
 }
 
+.reference-picker .conversation-icon.icon-mail-white,
 .unified-search .conversation-icon.icon-mail-white {
 	background-image: url(../img/icon-mail-white.svg);
 }
