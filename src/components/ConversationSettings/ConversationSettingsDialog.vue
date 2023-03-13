@@ -273,6 +273,7 @@ export default {
 .app-settings-section__subtitle {
 	font-weight: bold;
 	font-size: var(--default-font-size);
+	margin: calc(var(--default-grid-baseline) * 4) 0 var(--default-grid-baseline) 0;
 }
 
 ::v-deep .app-settings-subsection {

@@ -20,16 +20,33 @@
 -->
 
 <template>
-	<Description :editable="canFullModerate"
-		:description="description"
-		:editing="isEditingDescription"
-		:loading="isDescriptionLoading"
-		:placeholder="t('spreed', 'Enter a description for this conversation')"
-		@submit-description="handleUpdateDescription"
-		@update:editing="handleEditDescription" />
+	<Fragment>
+		<h4 class="app-settings-section__subtitle">
+			{{ t('spreed', 'Name') }}
+		</h4>
+		<Description :editable="canFullModerate"
+			:description="conversationName"
+			:editing="isEditingName"
+			:loading="isNameLoading"
+			:placeholder="t('spreed', 'Enter a name for this conversation')"
+			@submit-description="handleUpdateName"
+			@update:editing="handleEditName" />
+		<h4 class="app-settings-section__subtitle">
+			{{ t('spreed', 'Description') }}
+		</h4>
+		<Description :editable="canFullModerate"
+			:description="description"
+			:editing="isEditingDescription"
+			:loading="isDescriptionLoading"
+			:placeholder="t('spreed', 'Enter a description for this conversation')"
+			@submit-description="handleUpdateDescription"
+			@update:editing="handleEditDescription" />
+	</Fragment>
 </template>
 
 <script>
+import { Fragment } from 'vue-frag'
+
 import { showError } from '@nextcloud/dialogs'
 
 import Description from '../Description/Description.vue'
@@ -39,6 +56,7 @@ export default {
 
 	components: {
 		Description,
+		Fragment,
 	},
 
 	props: {
@@ -57,10 +75,16 @@ export default {
 		return {
 			isEditingDescription: false,
 			isDescriptionLoading: false,
+			isEditingName: false,
+			isNameLoading: false,
 		}
 	},
 
 	computed: {
+		conversationName() {
+			return this.conversation.displayName
+		},
+
 		description() {
 			return this.conversation.description
 		},
@@ -71,6 +95,25 @@ export default {
 	},
 
 	methods: {
+		async handleUpdateName(name) {
+			this.isNameLoading = true
+			try {
+				await this.$store.dispatch('setConversationName', {
+					token: this.token,
+					name,
+				})
+				this.isEditingName = false
+			} catch (error) {
+				console.error('Error while setting conversation name', error)
+				showError(t('spreed', 'Error while updating conversation name'))
+			}
+			this.isNameLoading = false
+		},
+
+		handleEditName(payload) {
+			this.isEditingName = payload
+		},
+
 		async handleUpdateDescription(description) {
 			this.isDescriptionLoading = true
 			try {

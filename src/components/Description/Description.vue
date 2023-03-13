@@ -281,7 +281,7 @@ export default {
 .spinner {
 	width: $clickable-area;
 	height: $clickable-area;
-	margin: 0 0 4px 44px;
+	margin: 0 0 0 44px;
 }
 
 .counter {
