@@ -89,9 +89,9 @@ class Notifier {
 	 * @param Room $chat
 	 * @param IComment $comment
 	 * @param array[] $alreadyNotifiedUsers
-	 * @psalm-param array<int, array{id: string, type: string}> $alreadyNotifiedUsers
+	 * @psalm-param array<int, array{id: string, type: string, reason: string}> $alreadyNotifiedUsers
 	 * @return string[] Users that were mentioned
-	 * @psalm-return array<int, array{id: string, type: string, ?attendee: Attendee}>
+	 * @psalm-return array<int, array{id: string, type: string, reason: string, sourceId?: string, attendee?: Attendee}>
 	 */
 	public function notifyMentionedUsers(Room $chat, IComment $comment, array $alreadyNotifiedUsers, bool $silent): array {
 		$usersToNotify = $this->getUsersToNotify($chat, $comment, $alreadyNotifiedUsers);
@@ -136,9 +136,9 @@ class Notifier {
 	 * @param Room $chat
 	 * @param IComment $comment
 	 * @param array $alreadyNotifiedUsers
-	 * @psalm-param array<int, array{id: string, type: string}> $alreadyNotifiedUsers
+	 * @psalm-param array<int, array{id: string, type: string, reason?: string}> $alreadyNotifiedUsers
 	 * @return array
-	 * @psalm-return array<int, array{id: string, type: string, ?attendee: Attendee}>
+	 * @psalm-return array<int, array{id: string, type: string, reason?: string, sourceId?: string, attendee?: Attendee}>
 	 */
 	private function getUsersToNotify(Room $chat, IComment $comment, array $alreadyNotifiedUsers): array {
 		$usersToNotify = $this->getMentionedUsers($comment);
@@ -151,11 +151,11 @@ class Notifier {
 
 	/**
 	 * @param array $usersToNotify
-	 * @psalm-param array<int, array{id: string, type: string}> $usersToNotify
+	 * @psalm-param array<int, array{id: string, type: string, reason?: string, sourceId?: string, attendee?: Attendee}> $usersToNotify
 	 * @param array $alreadyNotifiedUsers
-	 * @psalm-param array<int, array{id: string, type: string}> $alreadyNotifiedUsers
+	 * @psalm-param array<int, array{id: string, type: string, reason?: string}> $alreadyNotifiedUsers
 	 * @return array
-	 * @psalm-return array<int, array{id: string, type: string}>
+	 * @psalm-return array<int, array{id: string, type: string, reason?: string, sourceId?: string, attendee?: Attendee}>
 	 */
 	private function removeAlreadyNotifiedUsers(array $usersToNotify, array $alreadyNotifiedUsers): array {
 		return array_filter($usersToNotify, static function (array $userToNotify) use ($alreadyNotifiedUsers): bool {
@@ -171,9 +171,9 @@ class Notifier {
 	/**
 	 * @param Room $chat
 	 * @param array $list
-	 * @psalm-param array<int, array{id: string, type: string, reason: string, ?string: sourceId}> $list
+	 * @psalm-param array<int, array{id: string, type: string, reason: string, sourceId?: string}> $list
 	 * @return array
-	 * @psalm-return array<int, array{id: string, type: string, reason: string, ?string: sourceId, ?Attendee: attendee}>
+	 * @psalm-return array<int, array{id: string, type: string, reason: string, sourceId?: string, attendee?: Attendee}>
 	 */
 	private function addMentionAllToList(Room $chat, array $list): array {
 		$usersToNotify = array_filter($list, static function (array $user): bool {
@@ -258,7 +258,7 @@ class Notifier {
 	 * @param IComment $comment
 	 * @param array[] $alreadyNotifiedUsers
 	 * @param bool $silent
-	 * @psalm-param array<int, array{id: string, type: string, ?attendee: Attendee}> $alreadyNotifiedUsers
+	 * @psalm-param array<int, array{id: string, type: string, reason: string, sourceId?: string, attendee?: Attendee}> $alreadyNotifiedUsers
 	 */
 	public function notifyOtherParticipant(Room $chat, IComment $comment, array $alreadyNotifiedUsers, bool $silent): void {
 		if ($silent) {
@@ -277,7 +277,7 @@ class Notifier {
 			$this->notificationManager->notify($notification);
 		}
 
-		// Also notify default participants in one2one chats or when the admin default is "always"
+		// Also notify default participants in one-to-one chats or when the admin default is "always"
 		if ($this->getDefaultGroupNotification() === Participant::NOTIFY_ALWAYS || $chat->getType() === Room::TYPE_ONE_TO_ONE) {
 			$participants = $this->participantService->getParticipantsByNotificationLevel($chat, Participant::NOTIFY_DEFAULT);
 			foreach ($participants as $participant) {
@@ -363,7 +363,7 @@ class Notifier {
 	 * Removes all the pending mention notifications for the room
 	 *
 	 * @param Room $chat
-	 * @param string $userId
+	 * @param ?string $userId
 	 */
 	public function markMentionNotificationsRead(Room $chat, ?string $userId): void {
 		if ($userId === null || $userId === '') {
@@ -429,7 +429,7 @@ class Notifier {
 	 * @param array $list
 	 * @psalm-param array<int, array{id: string, type: string, reason: string}> $list
 	 * @return array[]
-	 * @psalm-return array<int, array{type: string, id: string, reason: string, sourceId: ?string}>
+	 * @psalm-return array<int, array{type: string, id: string, reason: string, sourceId?: string}>
 	 */
 	private function getMentionedGroupMembers(IComment $comment, array $list): array {
 		$mentions = $comment->getMentions();
@@ -579,7 +579,7 @@ class Notifier {
 	 * @param Participant $participant
 	 * @param IComment $comment
 	 * @param array $alreadyNotifiedUsers
-	 * @psalm-param array<int, array{type: string, id: string}> $alreadyNotifiedUsers
+	 * @psalm-param array<int, array{type: string, id: string, reason: string, sourceId?: string, attendee?: Attendee}> $alreadyNotifiedUsers
 	 * @return bool
 	 */
 	protected function shouldParticipantBeNotified(Participant $participant, IComment $comment, array $alreadyNotifiedUsers): bool {
