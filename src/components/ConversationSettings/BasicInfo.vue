@@ -24,22 +24,24 @@
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Name') }}
 		</h4>
-		<Description :editable="canFullModerate"
-			:description="conversationName"
+		<EditableTextField :editable="canFullModerate"
+			:initial-text="conversationName"
 			:editing="isEditingName"
 			:loading="isNameLoading"
 			:placeholder="t('spreed', 'Enter a name for this conversation')"
-			@submit-description="handleUpdateName"
+			:edit-button-aria-label="t('spreed', 'Edit conversation name')"
+			@submit-text="handleUpdateName"
 			@update:editing="handleEditName" />
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Description') }}
 		</h4>
-		<Description :editable="canFullModerate"
-			:description="description"
+		<EditableTextField :editable="canFullModerate"
+			:initial-text="description"
 			:editing="isEditingDescription"
 			:loading="isDescriptionLoading"
+			:edit-button-aria-label="t('spreed', 'Edit conversation description')"
 			:placeholder="t('spreed', 'Enter a description for this conversation')"
-			@submit-description="handleUpdateDescription"
+			@submit-text="handleUpdateDescription"
 			@update:editing="handleEditDescription" />
 	</Fragment>
 </template>
@@ -49,13 +51,13 @@ import { Fragment } from 'vue-frag'
 
 import { showError } from '@nextcloud/dialogs'
 
-import Description from '../Description/Description.vue'
+import EditableTextField from './EditableTextField.vue'
 
 export default {
 	name: 'BasicInfo',
 
 	components: {
-		Description,
+		EditableTextField,
 		Fragment,
 	},
 
