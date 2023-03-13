@@ -24,7 +24,6 @@
 	<NcAppSidebar v-show="opened"
 		:title="title"
 		:title-tooltip="title"
-		:starred="isFavorite"
 		:active="activeTab"
 		:class="'active-tab-' + activeTab"
 		@update:active="handleUpdateActive"
@@ -194,14 +193,6 @@ export default {
 
 		getUserId() {
 			return this.$store.getters.getUserId()
-		},
-
-		isFavorite() {
-			if (!this.getUserId) {
-				return null
-			}
-
-			return this.conversation.isFavorite
 		},
 
 		canAddParticipants() {
