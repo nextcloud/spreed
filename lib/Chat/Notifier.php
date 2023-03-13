@@ -142,9 +142,9 @@ class Notifier {
 	 */
 	private function getUsersToNotify(Room $chat, IComment $comment, array $alreadyNotifiedUsers): array {
 		$usersToNotify = $this->getMentionedUsers($comment);
-		$usersToNotify = $this->removeAlreadyNotifiedUsers($usersToNotify, $alreadyNotifiedUsers);
 		$usersToNotify = $this->getMentionedGroupMembers($comment, $usersToNotify);
 		$usersToNotify = $this->addMentionAllToList($chat, $usersToNotify);
+		$usersToNotify = $this->removeAlreadyNotifiedUsers($usersToNotify, $alreadyNotifiedUsers);
 
 		return $usersToNotify;
 	}
@@ -160,7 +160,7 @@ class Notifier {
 	private function removeAlreadyNotifiedUsers(array $usersToNotify, array $alreadyNotifiedUsers): array {
 		return array_filter($usersToNotify, static function (array $userToNotify) use ($alreadyNotifiedUsers): bool {
 			foreach ($alreadyNotifiedUsers as $alreadyNotified) {
-				if ($alreadyNotified === $userToNotify) {
+				if ($alreadyNotified['id'] === $userToNotify['id'] && $alreadyNotified['type'] === $userToNotify['type']) {
 					return false;
 				}
 			}

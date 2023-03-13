@@ -621,7 +621,7 @@ class Notifier implements INotifier {
 					'name' => $groupName,
 				];
 
-				$subject = $l->t('{user} mentioned {group} in conversation {call}');
+				$subject = $l->t('{user} mentioned group {group} in conversation {call}');
 			} elseif ($notification->getSubject() === 'mention_all') {
 				$subject = $l->t('{user} mentioned everyone in conversation {call}');
 			} else {
@@ -636,7 +636,7 @@ class Notifier implements INotifier {
 					'name' => $groupName,
 				];
 
-				$subject = $l->t('A deleted user mentioned {group} in conversation {call}');
+				$subject = $l->t('A deleted user mentioned group {group} in conversation {call}');
 			} elseif ($notification->getSubject() === 'mention_all') {
 				$subject = $l->t('A deleted user mentioned everyone in conversation {call}');
 			} else {
@@ -653,7 +653,7 @@ class Notifier implements INotifier {
 						'name' => $groupName,
 					];
 
-					$subject = $l->t('{guest} (guest) mentioned {group} in conversation {call}');
+					$subject = $l->t('{guest} (guest) mentioned group {group} in conversation {call}');
 				} elseif ($notification->getSubject() === 'mention_all') {
 					$subject = $l->t('{guest} (guest) mentioned everyone in conversation {call}');
 				} else {
@@ -668,7 +668,7 @@ class Notifier implements INotifier {
 						'name' => $groupName,
 					];
 
-					$subject = $l->t('A guest mentioned {group} in conversation {call}');
+					$subject = $l->t('A guest mentioned group {group} in conversation {call}');
 				} elseif ($notification->getSubject() === 'mention_all') {
 					$subject = $l->t('A guest mentioned everyone in conversation {call}');
 				} else {
