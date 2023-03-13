@@ -4,12 +4,13 @@ import vOutsideEvents from 'vue-outside-events'
 import Vuex, { Store } from 'vuex'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import MessageButtonsBar from './../MessageButtonsBar/MessageButtonsBar.vue'
 
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
 import storeConfig from '../../../../../store/storeConfig.js'
-import { findNcActionButton } from '../../../../../test-helpers.js'
+import { findNcActionButton, findNcButton } from '../../../../../test-helpers.js'
 
 describe('MessageButtonsBar.vue', () => {
 	const TOKEN = 'XXTOKENXX'
@@ -70,6 +71,10 @@ describe('MessageButtonsBar.vue', () => {
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				participantType: PARTICIPANT.TYPE.USER,
 			},
+			showCommonReadIcon: true,
+			showSentIcon: true,
+			commonReadIconTooltip: '',
+			sentIconTooltip: '',
 		}
 	})
 
@@ -94,14 +99,15 @@ describe('MessageButtonsBar.vue', () => {
 					store,
 					stubs: {
 						NcActionButton,
+						NcButton,
 					},
 					propsData: messageProps,
 				})
 
-				const actionButton = findNcActionButton(wrapper, 'Reply')
-				expect(actionButton.exists()).toBe(true)
-				expect(actionButton.isVisible()).toBe(true)
-				await actionButton.find('button').trigger('click')
+				const replyButton = findNcButton(wrapper, 'Reply')
+				expect(replyButton.exists()).toBe(true)
+				expect(replyButton.isVisible()).toBe(true)
+				await replyButton.trigger('click')
 
 				expect(replyAction).toHaveBeenCalledWith(expect.anything(), {
 					id: 123,
@@ -127,12 +133,13 @@ describe('MessageButtonsBar.vue', () => {
 					store,
 					stubs: {
 						NcActionButton,
+						NcButton,
 					},
 					propsData: messageProps,
 				})
 
-				const actionButton = findNcActionButton(wrapper, 'Reply')
-				expect(actionButton.isVisible()).toBe(false)
+				const replyButton = findNcButton(wrapper, 'Reply')
+				expect(replyButton.isVisible()).toBe(false)
 			})
 		})
 
