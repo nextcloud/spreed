@@ -69,7 +69,6 @@
 	"devDependencies": {
 		"@babel/core": "^7.21.0",
 		"@babel/preset-env": "^7.20.2",
-		"@babel/preset-typescript": "^7.21.0",
 		"@nextcloud/babel-config": "^1.0.0",
 		"@nextcloud/browserslist-config": "^2.3.0",
 		"@nextcloud/eslint-config": "^8.2.1",
@@ -88,8 +87,6 @@
 		"jest-transform-stub": "^2.0.0",
 		"regenerator-runtime": "^0.13.11",
 		"terser-webpack-plugin": "^5.3.7",
-		"ts-loader": "^9.4.2",
-		"typescript": "^4.9.5",
 		"vue-template-compiler": "^2.7.14",
 		"wasm-check": "^2.1.2",
 		"webpack-node-externals": "^3.0.0",
