@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Collaboration\Reference;
 
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -35,8 +36,9 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
+use OCP\Collaboration\Reference\ADiscoverableReferenceProvider;
 use OCP\Collaboration\Reference\IReference;
-use OCP\Collaboration\Reference\IReferenceProvider;
+use OCP\Collaboration\Reference\ISearchableReferenceProvider;
 use OCP\Collaboration\Reference\Reference;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -44,7 +46,7 @@ use OCP\IURLGenerator;
 /**
  * @psalm-type ReferenceMatch = array{token: string, message: int|null}
  */
-class TalkReferenceProvider implements IReferenceProvider {
+class TalkReferenceProvider extends ADiscoverableReferenceProvider implements ISearchableReferenceProvider {
 	protected IURLGenerator $urlGenerator;
 	protected Manager $roomManager;
 	protected ParticipantService $participantService;
@@ -286,5 +288,37 @@ class TalkReferenceProvider implements IReferenceProvider {
 			default:
 				return 'unknown';
 		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getId(): string {
+		return Application::APP_ID;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getTitle(): string {
+		return $this->l->t('Talk');
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getOrder(): int {
+		return 0;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getIconUrl(): string {
+		return $this->urlGenerator->imagePath(Application::APP_ID, 'app-dark.svg');
+	}
+
+	public function getSupportedSearchProviderIds(): array {
+		return ['talk-conversations'];
 	}
 }
