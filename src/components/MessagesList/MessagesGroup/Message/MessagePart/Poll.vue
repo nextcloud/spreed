@@ -549,7 +549,7 @@ export default {
 
 	&__details {
 		display: flex;
-		height: 32px;
+		margin-bottom: 8px;
 	}
 
 	&-subtitle {
