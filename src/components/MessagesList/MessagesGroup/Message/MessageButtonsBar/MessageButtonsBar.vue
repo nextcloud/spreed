@@ -33,7 +33,7 @@
 					<EmoticonOutline :size="20" />
 				</template>
 			</NcButton>
-			<NcButton v-show="isReplyable"
+			<NcButton v-if="isReplyable && !isConversationReadOnly"
 				type="tertiary"
 				:aria-label="t('spreed', 'Reply')"
 				:title="t('spreed', 'Reply')"
