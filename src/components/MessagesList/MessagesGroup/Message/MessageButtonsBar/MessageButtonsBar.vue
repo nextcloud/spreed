@@ -33,14 +33,15 @@
 					<EmoticonOutline :size="20" />
 				</template>
 			</NcButton>
-			<NcActions v-show="isReplyable">
-				<NcActionButton @click.stop="handleReply">
-					<template #icon>
-						<Reply :size="16" />
-					</template>
-					{{ t('spreed', 'Reply') }}
-				</NcActionButton>
-			</NcActions>
+			<NcButton v-show="isReplyable"
+				type="tertiary"
+				:aria-label="t('spreed', 'Reply')"
+				:title="t('spreed', 'Reply')"
+				@click="handleReply">
+				<template #icon>
+					<Reply :size="16" />
+				</template>
+			</NcButton>
 			<NcActions :force-menu="true"
 				:container="`#message_${id}`"
 				placement="bottom-end"
@@ -115,7 +116,7 @@
 			</NcActions>
 		</template>
 
-		<template v-if="isReactionsMenuOpen">
+		<template v-else>
 			<NcButton type="tertiary"
 				:aria-label="t('spreed', 'Close reactions menu')"
 				@click="closeReactionsMenu">

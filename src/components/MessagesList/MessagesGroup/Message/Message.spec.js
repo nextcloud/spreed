@@ -629,9 +629,8 @@ describe('Message.vue', () => {
 			await wrapper.find('.message').trigger('mouseover')
 			expect(wrapper.findComponent(MessageButtonsBar).exists()).toBe(true)
 
-			// actions are present and rendered when the MessageButtonsBar is rendered
-			const actions = wrapper.findAllComponents({ name: 'NcActions' })
-			expect(actions.length).toBe(2)
+			// Actions are rendered with MessageButtonsBar
+			expect(wrapper.findComponent({ name: 'NcActions' }).exists()).toBe(true)
 
 			// Mouseleave
 			await wrapper.find('.message').trigger('mouseleave')
