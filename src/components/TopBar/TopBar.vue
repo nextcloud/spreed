@@ -25,6 +25,7 @@
 			class="conversation-icon"
 			:offline="isPeerOffline"
 			:item="conversation"
+			:disable-menu="isAvatarMenuDisabled"
 			:hide-favorite="false"
 			:hide-call="false" />
 		<!-- conversation header -->
@@ -284,6 +285,12 @@ export default {
 
 		participantsInCallAriaLabel() {
 			return n('spreed', '%n participant in call', '%n participants in call', this.$store.getters.participantsInCall(this.token))
+		},
+
+		isAvatarMenuDisabled() {
+			// NcAvatarMenu doesn't work on Desktop
+			// See: issue#34
+			return IS_DESKTOP
 		},
 	},
 
