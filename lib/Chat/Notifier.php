@@ -176,8 +176,8 @@ class Notifier {
 	 * @psalm-return array<int, array{id: string, type: string, reason: string, sourceId?: string, attendee?: Attendee}>
 	 */
 	private function addMentionAllToList(Room $chat, array $list): array {
-		$usersToNotify = array_filter($list, static function (array $user): bool {
-			return $user['id'] !== 'all';
+		$usersToNotify = array_filter($list, static function (array $entry): bool {
+			return $entry['type'] !== Attendee::ACTOR_USERS || $entry['id'] !== 'all';
 		});
 
 		if (count($list) === count($usersToNotify)) {
@@ -439,7 +439,7 @@ class Notifier {
 		}
 
 		$alreadyMentionedUserIds = array_filter(
-			array_map(static fn (array $entry) => $entry['type'] === 'users' ? $entry['id'] : null, $list),
+			array_map(static fn (array $entry) => $entry['type'] === Attendee::ACTOR_USERS ? $entry['id'] : null, $list),
 			static fn ($userId) => $userId !== null
 		);
 		$alreadyMentionedUserIds = array_flip($alreadyMentionedUserIds);
@@ -462,7 +462,7 @@ class Notifier {
 
 				$list[] = [
 					'id' => $member->getUID(),
-					'type' => 'users',
+					'type' => Attendee::ACTOR_USERS,
 					'reason' => 'group',
 					'sourceId' => $group->getGID(),
 				];

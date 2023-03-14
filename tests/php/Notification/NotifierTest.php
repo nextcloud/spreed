@@ -38,6 +38,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Files\IRootFolder;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -60,6 +61,8 @@ class NotifierTest extends TestCase {
 	protected $config;
 	/** @var IUserManager|MockObject */
 	protected $userManager;
+	/** @var IGroupManager|MockObject */
+	protected $groupManager;
 	/** @var GuestManager|MockObject */
 	protected $guestManager;
 	/** @var IShareManager|MockObject */
@@ -93,6 +96,7 @@ class NotifierTest extends TestCase {
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->config = $this->createMock(Config::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->shareManager = $this->createMock(IShareManager::class);
 		$this->manager = $this->createMock(Manager::class);
@@ -111,6 +115,7 @@ class NotifierTest extends TestCase {
 			$this->url,
 			$this->config,
 			$this->userManager,
+			$this->groupManager,
 			$this->guestManager,
 			$this->shareManager,
 			$this->manager,

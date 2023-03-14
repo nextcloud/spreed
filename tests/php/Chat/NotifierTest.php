@@ -36,6 +36,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\IUserManager;
@@ -47,6 +48,8 @@ class NotifierTest extends TestCase {
 	protected $notificationManager;
 	/** @var IUserManager|MockObject */
 	protected $userManager;
+	/** @var IGroupManager|MockObject */
+	protected $groupManager;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
 	/** @var Manager|MockObject */
@@ -69,6 +72,7 @@ class NotifierTest extends TestCase {
 			->willReturnCallback(function ($userId) {
 				return $userId !== 'unknownUser';
 			});
+		$this->groupManager = $this->createMock(IGroupManager::class);
 
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->manager = $this->createMock(Manager::class);
@@ -87,6 +91,7 @@ class NotifierTest extends TestCase {
 				->setConstructorArgs([
 					$this->notificationManager,
 					$this->userManager,
+					$this->groupManager,
 					$this->participantService,
 					$this->manager,
 					$this->config,
@@ -99,6 +104,7 @@ class NotifierTest extends TestCase {
 		return new Notifier(
 			$this->notificationManager,
 			$this->userManager,
+			$this->groupManager,
 			$this->participantService,
 			$this->manager,
 			$this->config,
@@ -164,18 +170,6 @@ class NotifierTest extends TestCase {
 		$room = $this->getRoom();
 		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
 		$notifier = $this->getNotifier([]);
-		$alreadyNotifiedUsers = array_map(function ($user): array {
-			return [
-				'id' => $user,
-				'type' => Attendee::ACTOR_USERS,
-			];
-		}, $alreadyNotifiedUsers);
-		$expectedReturn = array_map(function ($user): array {
-			return [
-				'id' => $user,
-				'type' => Attendee::ACTOR_USERS,
-			];
-		}, $expectedReturn);
 		$actual = $notifier->notifyMentionedUsers($room, $comment, $alreadyNotifiedUsers, false);
 
 		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
@@ -186,20 +180,20 @@ class NotifierTest extends TestCase {
 			'no notifications' => [
 				'No mentions', [], [], [],
 			],
-			'notify an unotified user' => [
-				'Mention @anotherUser', [], ['anotherUser'], ['anotherUser'],
+			'notify a mentioned user' => [
+				'Mention @anotherUser', [], [['id' => 'anotherUser', 'type' => 'users', 'reason' => 'direct']], [['id' => 'anotherUser', 'type' => 'users', 'reason' => 'direct']],
 			],
 			'not notify mentioned user if already notified' => [
-				'Mention @anotherUser', ['anotherUser'], [], ['anotherUser'],
+				'Mention @anotherUser', [['id' => 'anotherUser', 'type' => 'users', 'reason' => 'reply']], [], [['id' => 'anotherUser', 'type' => 'users', 'reason' => 'reply']],
 			],
 			'notify mentioned Users With Long Message Start Mention' => [
-				'123456789 @anotherUserWithOddLengthName 123456789-123456789-123456789-123456789-123456789-123456789', [], ['anotherUserWithOddLengthName'], ['anotherUserWithOddLengthName'],
+				'123456789 @anotherUserWithOddLengthName 123456789-123456789-123456789-123456789-123456789-123456789', [], [['id' => 'anotherUserWithOddLengthName', 'type' => 'users', 'reason' => 'direct']], [['id' => 'anotherUserWithOddLengthName', 'type' => 'users', 'reason' => 'direct']],
 			],
 			'notify mentioned users with long message middle mention' => [
-				'123456789-123456789-123456789-1234 @anotherUserWithOddLengthName 6789-123456789-123456789-123456789', [], ['anotherUserWithOddLengthName'], ['anotherUserWithOddLengthName'],
+				'123456789-123456789-123456789-1234 @anotherUserWithOddLengthName 6789-123456789-123456789-123456789', [], [['id' => 'anotherUserWithOddLengthName', 'type' => 'users', 'reason' => 'direct']], [['id' => 'anotherUserWithOddLengthName', 'type' => 'users', 'reason' => 'direct']],
 			],
 			'notify mentioned users with long message end mention' => [
-				'123456789-123456789-123456789-123456789-123456789-123456789 @anotherUserWithOddLengthName 123456789', [], ['anotherUserWithOddLengthName'], ['anotherUserWithOddLengthName'],
+				'123456789-123456789-123456789-123456789-123456789-123456789 @anotherUserWithOddLengthName 123456789', [], [['id' => 'anotherUserWithOddLengthName', 'type' => 'users', 'reason' => 'direct']], [['id' => 'anotherUserWithOddLengthName', 'type' => 'users', 'reason' => 'direct']],
 			],
 			'mention herself' => [
 				'Mention @testUser', [], [], [],
@@ -208,7 +202,9 @@ class NotifierTest extends TestCase {
 				'Mention @unknownUser', [], [], [],
 			],
 			'notify mentioned users several mentions' => [
-				'Mention @anotherUser, and @unknownUser, and @testUser, and @userAbleToJoin', [], ['anotherUser', 'userAbleToJoin'], ['anotherUser', 'userAbleToJoin'],
+				'Mention @anotherUser, and @unknownUser, and @testUser, and @userAbleToJoin', [],
+				[['id' => 'anotherUser', 'type' => 'users', 'reason' => 'direct'], ['id' => 'userAbleToJoin', 'type' => 'users', 'reason' => 'direct']],
+				[['id' => 'anotherUser', 'type' => 'users', 'reason' => 'direct'], ['id' => 'userAbleToJoin', 'type' => 'users', 'reason' => 'direct']],
 			],
 			'notify mentioned users to user not invited to chat' => [
 				'Mention @userNotInOneToOneChat', [], [], [],
@@ -332,7 +328,7 @@ class NotifierTest extends TestCase {
 			->method('getActorsByType')
 			->willReturn($participants);
 
-		$actual = $this->invokePrivate($this->getNotifier(), 'addMentionAllToList', [$room, $usersToNotify]);
+		$actual = self::invokePrivate($this->getNotifier(), 'addMentionAllToList', [$room, $usersToNotify]);
 		$this->assertCount(count($return), $actual);
 		foreach ($actual as $key => $value) {
 			$this->assertIsArray($value);
@@ -353,25 +349,25 @@ class NotifierTest extends TestCase {
 			],
 			'preserve notify list and do not notify all' => [
 				[
-					['id' => 'user1', 'type' => Attendee::ACTOR_USERS],
+					['id' => 'user1', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 				],
 				[],
 				[
-					['id' => 'user1', 'type' => Attendee::ACTOR_USERS],
+					['id' => 'user1', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 				],
 			],
 			'mention all' => [
 				[
-					['id' => 'user1', 'type' => Attendee::ACTOR_USERS],
-					['id' => 'all'],
+					['id' => 'user1', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
+					['id' => 'all', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 				],
 				[
 					Attendee::fromRow(['actor_id' => 'user1', 'actor_type' => Attendee::ACTOR_USERS]),
 					Attendee::fromRow(['actor_id' => 'user2', 'actor_type' => Attendee::ACTOR_USERS]),
 				],
 				[
-					['id' => 'user1', 'type' => Attendee::ACTOR_USERS],
-					['id' => 'user2', 'type' => Attendee::ACTOR_USERS],
+					['id' => 'user1', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
+					['id' => 'user2', 'type' => Attendee::ACTOR_USERS, 'reason' => 'all'],
 				],
 			],
 		];
@@ -420,7 +416,7 @@ class NotifierTest extends TestCase {
 	 */
 	public function testGetMentionedUsers(string $message, array $expectedReturn): void {
 		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
-		$actual = $this->invokePrivate($this->getNotifier(), 'getMentionedUsers', [$comment]);
+		$actual = self::invokePrivate($this->getNotifier(), 'getMentionedUsers', [$comment]);
 		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
 	}
 
@@ -429,27 +425,27 @@ class NotifierTest extends TestCase {
 			'mention one user' => [
 				'Mention @anotherUser',
 				[
-					['id' => 'anotherUser', 'type' => 'users'],
+					['id' => 'anotherUser', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 				],
 			],
 			'mention two user' => [
 				'Mention @anotherUser, and @unknownUser',
 				[
-					['id' => 'anotherUser', 'type' => 'users'],
-					['id' => 'unknownUser', 'type' => 'users'],
+					['id' => 'anotherUser', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
+					['id' => 'unknownUser', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 				],
 			],
 			'mention all' => [
 				'Mention @all',
 				[
-					['id' => 'all', 'type' => 'users'],
+					['id' => 'all', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 				],
 			],
 			'mention user, all, guest and group' => [
 				'mention @test, @all, @"guest/1" @"group/1"',
 				[
-					['id' => 'test', 'type' => 'users'],
-					['id' => 'all', 'type' => 'users'],
+					['id' => 'test', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
+					['id' => 'all', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 				],
 			],
 		];
@@ -460,7 +456,7 @@ class NotifierTest extends TestCase {
 	 */
 	public function testGetMentionedUserIds(string $message, array $expectedReturn): void {
 		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
-		$actual = $this->invokePrivate($this->getNotifier(), 'getMentionedUserIds', [$comment]);
+		$actual = self::invokePrivate($this->getNotifier(), 'getMentionedUserIds', [$comment]);
 		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
 	}
 
