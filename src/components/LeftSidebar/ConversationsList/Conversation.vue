@@ -110,6 +110,8 @@
 
 <script>
 
+import { isNavigationFailure, NavigationFailureType } from 'vue-router'
+
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
@@ -306,7 +308,12 @@ export default {
 		},
 
 		to() {
-			return this.item?.token ? { name: 'conversation', params: { token: this.item.token } } : ''
+			return this.item?.token
+				? {
+					name: 'conversation',
+					params: { token: this.item.token },
+				}
+				: ''
 		},
 
 		isActive() {
@@ -364,11 +371,14 @@ export default {
 
 					try {
 						await this.$store.dispatch('deleteConversationFromServer', { token: this.item.token })
+						await this.$store.dispatch('leaveConversation', { token: this.item.token })
+						await this.$router.push({ name: 'root' })
+							.catch((failure) => !isNavigationFailure(failure, NavigationFailureType.duplicated) && Promise.reject(failure))
 					} catch (error) {
 						console.debug(`error while deleting conversation ${error}`)
 						showError(t('spreed', 'Error while deleting conversation'))
 					}
-				}.bind(this)
+				}.bind(this),
 			)
 		},
 
@@ -378,6 +388,8 @@ export default {
 		async leaveConversation() {
 			try {
 				await this.$store.dispatch('removeCurrentUserFromConversation', { token: this.item.token })
+				await this.$store.dispatch('leaveConversation', { token: this.item.token })
+				await this.$router.push({ name: 'root' })
 			} catch (error) {
 				if (error?.response?.status === 400) {
 					showError(t('spreed', 'You need to promote a new moderator before you can leave the conversation.'))
@@ -396,7 +408,10 @@ export default {
 		 * @param {number} level The notification level to set.
 		 */
 		async setNotificationLevel(level) {
-			await this.$store.dispatch('setNotificationLevel', { token: this.item.token, notificationLevel: level })
+			await this.$store.dispatch('setNotificationLevel', {
+				token: this.item.token,
+				notificationLevel: level,
+			})
 		},
 
 		// forward click event
