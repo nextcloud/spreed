@@ -142,7 +142,7 @@ class Notifier {
 	 */
 	private function getUsersToNotify(Room $chat, IComment $comment, array $alreadyNotifiedUsers): array {
 		$usersToNotify = $this->getMentionedUsers($comment);
-		$usersToNotify = $this->getMentionedGroupMembers($comment, $usersToNotify);
+		$usersToNotify = $this->getMentionedGroupMembers($chat, $comment, $usersToNotify);
 		$usersToNotify = $this->addMentionAllToList($chat, $usersToNotify);
 		$usersToNotify = $this->removeAlreadyNotifiedUsers($usersToNotify, $alreadyNotifiedUsers);
 
@@ -425,13 +425,14 @@ class Notifier {
 	}
 
 	/**
+	 * @param Room $chat
 	 * @param IComment $comment
 	 * @param array $list
 	 * @psalm-param array<int, array{id: string, type: string, reason: string}> $list
 	 * @return array[]
 	 * @psalm-return array<int, array{type: string, id: string, reason: string, sourceId?: string}>
 	 */
-	private function getMentionedGroupMembers(IComment $comment, array $list): array {
+	private function getMentionedGroupMembers(Room $chat, IComment $comment, array $list): array {
 		$mentions = $comment->getMentions();
 
 		if (empty($mentions)) {
@@ -451,6 +452,12 @@ class Notifier {
 
 			$group = $this->groupManager->get($mention['id']);
 			if (!$group instanceof IGroup) {
+				continue;
+			}
+
+			try {
+				$this->participantService->getParticipantByActor($chat, Attendee::ACTOR_GROUPS, $group->getGID());
+			} catch (ParticipantNotFoundException $e) {
 				continue;
 			}
 

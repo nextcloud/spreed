@@ -283,17 +283,29 @@ Feature: chat/notifications
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds group "attendees1" to room "room" with 200 (v4)
     Given user "participant2" joins room "room" with 200 (v4)
     When user "participant1" sends message 'Hi @"group/attendees1" bye' to room "room" with 201
     Then user "participant2" has the following notifications
       | app    | object_type | object_id        | subject                                                     |
       | spreed | chat        | room/Hi @"group/attendees1" bye | participant1-displayname mentioned group attendees1 in conversation room |
 
+  Scenario: Group-mention when group is not a member of the room
+    When user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    Given user "participant2" joins room "room" with 200 (v4)
+    When user "participant1" sends message 'Hi @"group/attendees1" bye' to room "room" with 201
+    Then user "participant2" has the following notifications
+      | app | object_type | object_id | subject |
+
   Scenario: Group-mention when recipient is offline in the group room
     When user "participant1" creates room "room" (v4)
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds group "attendees1" to room "room" with 200 (v4)
     # Join and leave to clear the invite notification
     Given user "participant2" joins room "room" with 200 (v4)
     Given user "participant2" leaves room "room" with 200 (v4)
@@ -307,6 +319,7 @@ Feature: chat/notifications
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds group "attendees1" to room "room" with 200 (v4)
     # Join and leave to clear the invite notification
     Given user "participant2" joins room "room" with 200 (v4)
     Given user "participant2" leaves room "room" with 200 (v4)
@@ -319,6 +332,7 @@ Feature: chat/notifications
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds group "attendees1" to room "room" with 200 (v4)
     # Join and leave to clear the invite notification
     Given user "participant2" joins room "room" with 200 (v4)
     Given user "participant2" leaves room "room" with 200 (v4)
@@ -332,6 +346,7 @@ Feature: chat/notifications
       | roomType | 2 |
       | roomName | room |
     And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant1" adds group "attendees1" to room "room" with 200 (v4)
     # Join and leave to clear the invite notification
     Given user "participant2" joins room "room" with 200 (v4)
     Given user "participant2" leaves room "room" with 200 (v4)
