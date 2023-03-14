@@ -21,8 +21,11 @@ BUILD_DIR ?= build
 
 NEXTCLOUD_TALK_RECORDING_VERSION := $(shell cd ../src && python3 -c "from nextcloud.talk.recording import __version__; print(__version__)")
 
-build-package-deb: $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/deb_dist/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-1_all.deb
-$(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/deb_dist/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-1_all.deb:
+$(BUILD_DIR)/deb:
+	mkdir --parents $(BUILD_DIR)/deb
+
+build-package-deb: $(BUILD_DIR)/deb/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-1_all.deb
+$(BUILD_DIR)/deb/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-1_all.deb: | $(BUILD_DIR)/deb
 	python3 -m pip install "setuptools >= 61.0"
 
 	# Build a source Python package
@@ -55,3 +58,6 @@ $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/deb_di
 	# distutils; this copy does not seem to work with stdeb, so it needs to be
 	# disabled with "SETUPTOOLS_USE_DISTUTILS=stdlib".
 	cd $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/ && SETUPTOOLS_USE_DISTUTILS=stdlib python3 setup.py --command-packages=stdeb.command sdist_dsc bdist_deb
+
+	# Copy package to main build directory
+	cp $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/deb_dist/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-1_all.deb $(BUILD_DIR)/deb/
