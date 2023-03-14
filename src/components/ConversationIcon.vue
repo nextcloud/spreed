@@ -18,15 +18,17 @@
   - You should have received a copy of the GNU Affero General Public License
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
-
 <template>
-	<div class="conversation-icon"
+	<div ref="conversation-icon"
+		class="conversation-icon"
+		:style="iconStyle"
 		:class="{'offline': offline}">
 		<div v-if="iconClass"
 			class="avatar icon"
+			:style="iconStyle"
 			:class="iconClass" />
 		<NcAvatar v-else
-			:size="44"
+			:size="size"
 			:user="item.name"
 			:disable-menu="disableMenu"
 			:display-name="item.displayName"
@@ -60,11 +62,13 @@ import { CONVERSATION } from '../constants.js'
 
 export default {
 	name: 'ConversationIcon',
+
 	components: {
 		NcAvatar,
 		Star,
 		VideoIcon,
 	},
+
 	props: {
 		/**
 		 * Allow to hide the favorite icon, e.g. on mentions
@@ -73,14 +77,17 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+
 		hideCall: {
 			type: Boolean,
 			default: true,
 		},
-		disableMenu: {
+
+		 disableMenu: {
 			type: Boolean,
 			default: false,
 		},
+
 		item: {
 			type: Object,
 			default() {
@@ -100,6 +107,21 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		/**
+		 * Passing in true will make this component fill all the available space in its container.
+		 * This is not reactive as it will take the size of the container once mounted.
+		 */
+		isBig: {
+			type: Boolean,
+			default: false,
+		},
+	},
+
+	data() {
+		return {
+			parentElement: undefined,
+		}
 	},
 
 	computed: {
@@ -125,9 +147,9 @@ export default {
 			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
 				return 'icon-public'
 			}
-
 			return ''
 		},
+
 		preloadedUserStatus() {
 			if (Object.prototype.hasOwnProperty.call(this.item, 'statusMessage')) {
 				// We preloaded the status
@@ -139,6 +161,7 @@ export default {
 			}
 			return undefined
 		},
+
 		menuContainer() {
 			// The store may not be defined in the RoomSelector if used from
 			// the Collaboration menu outside Talk.
@@ -148,6 +171,26 @@ export default {
 
 			return this.$store.getters.getMainContainerSelector()
 		},
+
+		size() {
+			if (!this.isBig || (this.isBig && !this.parentElement)) {
+				return 44
+			} else {
+				return Math.min(this.parentElement.clientHeight, this.parentElement.clientWidth)
+			}
+		},
+
+		iconStyle() {
+			return {
+				height: this.size.toString() + 'px',
+				width: this.size.toString() + 'px',
+			}
+		},
+	},
+
+	mounted() {
+		// Get the size of the parent once the component is mounted
+		this.parentElement = this.$refs?.['conversation-icon']?.parentElement
 	},
 }
 </script>
@@ -156,13 +199,9 @@ export default {
 $icon-size: 44px;
 
 .conversation-icon {
-	width: $icon-size;
-	height: $icon-size;
 	position: relative;
 
 	.avatar.icon {
-		width: $icon-size;
-		height: $icon-size;
 		line-height: $icon-size;
 		font-size: calc($icon-size / 2);
 		background-color: var(--color-background-darker);
