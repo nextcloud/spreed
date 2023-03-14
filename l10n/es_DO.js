@@ -75,12 +75,13 @@ OC.L10N.register(
     "You" : "Tú",
     "Show screen" : "Mostrar pantalla",
     "Favorite" : "Hacer favorito",
-    "Restricted" : "Restringido",
     "Description" : "Descripción",
+    "Restricted" : "Restringido",
     "Personal" : "Personal",
     "Permissions" : "Permisos",
     "Leave conversation" : "Dejar la conversación",
     "Delete conversation" : "Borrar conversación",
+    "Submit" : "Enviar",
     "Password protection" : "Protección con contraseña",
     "Save" : "Guardar",
     "Edit" : "Editar",
@@ -120,7 +121,6 @@ OC.L10N.register(
     "Privacy" : "Privacidad",
     "Keyboard shortcuts" : "Atajos del teclado",
     "Search" : "Buscar",
-    "Rename conversation" : "Renombrar conversación",
     "Grid view" : "Vista de cuadrícula",
     "Send" : "Enviar",
     "Join a conversation or start a new one" : "Únete a la conversación o incia una nueva",
@@ -146,6 +146,7 @@ OC.L10N.register(
     "Saved" : "Guardado",
     "More actions" : "Más acciones",
     "Enter a password" : "Ingresa una contraseña",
-    "Calls" : "Llamadas"
+    "Calls" : "Llamadas",
+    "Rename conversation" : "Renombrar conversación"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

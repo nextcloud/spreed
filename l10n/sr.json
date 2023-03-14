@@ -457,15 +457,17 @@
     "Show screen" : "Прикажи екран",
     "Drop your files to upload" : "Отпустите фајлове за отпремање",
     "Favorite" : "Омиљени",
+    "Description" : "Опис",
     "Restricted" : "Ограничена",
     "Conversation settings" : "Подешавања разговора",
-    "Description" : "Опис",
     "Personal" : "Лично",
     "Meeting" : "Састанак",
     "Permissions" : "Дозволе",
+    "Danger zone" : "Зона опасности",
     "Leave conversation" : "Напусти разговор",
     "Delete conversation" : "Обриши разовор",
     "You need to promote a new moderator before you can leave the conversation." : "Морате унапредити новог модератора пре него што напустите разговор.",
+    "Submit" : "Пошаљи",
     "Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation." : "Чет поруке могу да истекну након одређеног времена. Напомена: фајлови који су подељени у чету се неће обрисати за власника, али више неће бити дељени у разговору.",
     "Guest access" : "Приступ госта",
     "Password protection" : "Заштита лозинком",
@@ -520,6 +522,7 @@
     "Record voice message" : "Сними гласовну поруку",
     "Upload from device" : "Отпреми са уређаја",
     "Create new poll" : "Направи ново гласање",
+    "Add emoji" : "Додај емођи",
     "Send without notification" : "Пошаљи без обавештења",
     "Send message" : "Пошаљи поруку",
     "File to share" : "Фајл за дељење",
@@ -558,7 +561,6 @@
     "Cancel recording start" : "Откажи почетак снимања",
     "Stop recording" : "Заустави снимање",
     "Recording" : "Снимање",
-    "Rename conversation" : "Преименуј разговор",
     "Start recording" : "Почни снимање",
     "Grid view" : "Приказ мреже",
     "Raise hand" : "Подигни руку",
@@ -608,6 +610,7 @@
     "Enable lobby" : "Омогући лоби",
     "Calls" : "Позиви",
     "Upload new files" : "Отпреми нове фајлове",
-    "Share from Files" : "Подели из Фајлова"
+    "Share from Files" : "Подели из Фајлова",
+    "Rename conversation" : "Преименуј разговор"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }

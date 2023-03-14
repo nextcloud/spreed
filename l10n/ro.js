@@ -303,6 +303,7 @@ OC.L10N.register(
     "Favorite" : "Favorite",
     "Description" : "Descriere",
     "Personal" : "Personal",
+    "Submit" : "Trimite",
     "Password protection" : "Password protection",
     "Save" : "Salvează",
     "Edit" : "Editează",

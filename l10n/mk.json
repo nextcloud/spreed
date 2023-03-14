@@ -631,14 +631,14 @@
     "This conversation is read-only" : "Разговорот е само за читање",
     "Drop your files to upload" : "Повлечи датотеки за да прикачите",
     "Favorite" : "Омилен",
+    "Description" : "Опис",
+    "Enter a description for this conversation" : "Внесете опис за овој разговор",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "Уреди ги стандардните дозволи за учесниците во овој разговор. Овие параметри не влијаат на модераторите.",
     "All permissions" : "Сите дозволи",
     "Participants have permissions to start a call, join a call, enable audio and video, and share screen." : "Учесниците имаат дозвола да започнат повик, да се придружуваат на повик, да овозможат аудио и видео и да споделуваат екран.",
     "Restricted" : "Ограничена",
     "Participants can join calls, but cannot enable audio nor video nor share screen until a moderator manually grants them permissions." : "Учесниците може да се придружуваат на повици, но не можат да овозможат аудио или видео, ниту да споделуваат екран додека модераторот рачно не им даде дозвола.",
     "Conversation settings" : "Параметри за разговор",
-    "Description" : "Опис",
-    "Enter a description for this conversation" : "Внесете опис за овој разговор",
     "Personal" : "Лично",
     "Always show the device preview screen before joining a call in this conversation." : "Секогаш прикажувај го екранот за преглед на уредот пред да се придружите на повик во овој разговор. ",
     "Meeting" : "Средба",
@@ -653,6 +653,7 @@
     "You need to promote a new moderator before you can leave the conversation." : "Треба да промовирате нов модератор пред да го напуштите разговорот.",
     "Do you really want to delete \"{displayName}\"?" : "Дали навистина сакате да го избришете \"{displayName}\"?",
     "Delete all chat messages" : "Избришете ги сите пораки од разгоровот",
+    "Submit" : "Испрати",
     "Password protection" : "Заштитено со лозинка",
     "Save password" : "Зачувај лозинка",
     "Copy conversation link" : "копирај линк од разговорот",
@@ -857,7 +858,6 @@
     "You have been mentioned in the chat." : "Бевте споменати во разговор.",
     "Mute others" : "Занеми ги останатите",
     "Toggle fullscreen" : "Вклучи на цел екран",
-    "Rename conversation" : "Преименувај разговор",
     "Exit fullscreen (F)" : "Излез од цел екран (F)",
     "Fullscreen (F)" : "Приказ на цел екран (F)",
     "Speaker view" : "Поглед на тој што зборува",
@@ -954,6 +954,7 @@
     "Upload new files" : "Прикачи нови датотеки",
     "Share from Files" : "Сподели од датотеките",
     "Invitation was sent to {actorId}." : "Покана е испратена до {actorId}.",
-    "End meeting for all" : "Заврши состанокот за сите"
+    "End meeting for all" : "Заврши состанокот за сите",
+    "Rename conversation" : "Преименувај разговор"
 },"pluralForm" :"nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;"
 }

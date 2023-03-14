@@ -609,9 +609,9 @@ OC.L10N.register(
     "You need to be logged in to upload files" : "Heu d'iniciar la sessió per carregar fitxers",
     "Drop your files to upload" : "Deixeu anar els fitxers per penjar-los",
     "Favorite" : "Preferit",
+    "Description" : "Descripció",
     "Restricted" : "Restringit",
     "Conversation settings" : "Configuració de la conversa",
-    "Description" : "Descripció",
     "Personal" : "Personal",
     "Meeting" : "Reunió",
     "Permissions" : "Permisos",
@@ -796,7 +796,6 @@ OC.L10N.register(
     "Recording" : "Enregistrament",
     "Mute others" : "Silenciar els altres",
     "Toggle fullscreen" : "Commuta la pantalla completa",
-    "Rename conversation" : "Reanomena la conversa",
     "Start recording" : "Inici de l'enregistrament",
     "Speaker view" : "Visualització de qui parla",
     "Grid view" : "Vista de graella",
@@ -875,6 +874,7 @@ OC.L10N.register(
     "Calls" : "Trucades",
     "Choose a password" : "Establiu una contrasenya",
     "Upload new files" : "Pujar arxius nous",
-    "Share from Files" : "Comparteix des de fitxers"
+    "Share from Files" : "Comparteix des de fitxers",
+    "Rename conversation" : "Reanomena la conversa"
 },
 "nplurals=2; plural=(n != 1);");
