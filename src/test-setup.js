@@ -77,6 +77,7 @@ global.OCP = {
 		disableKeyboardShortcuts: () => false,
 	},
 }
+global.IS_DESKTOP = false
 
 // Work around missing "URL.createObjectURL" (which is used in the code but not
 // relevant for the tests) in jsdom: https://github.com/jsdom/jsdom/issues/1721

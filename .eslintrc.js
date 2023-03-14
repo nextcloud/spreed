@@ -2,6 +2,13 @@ module.exports = {
 	extends: [
 		'@nextcloud',
 	],
+	globals: {
+		// @nextcloud/webpack-vue-config globals
+		appName: 'readonly',
+		appVersion: 'readonly',
+		// Desktop build globals
+		IS_DESKTOP: 'readonly',
+	},
 	rules: {
 		'import/newline-after-import': 1,
 		'import/order': [
