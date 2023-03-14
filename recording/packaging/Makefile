@@ -35,6 +35,10 @@ TRIO_VERSION := 0.21.0
 TRIO_WEBSOCKET_VERSION := 0.9.2
 URLLIB3_VERSION := 1.26.14
 
+timestamp-from-git = git log -1 --pretty=%ct $(1)
+
+timestamp-from-source-python-package = tar --list --verbose --full-time --gzip --file $(1) | head --lines 1 | sed 's/ \+/ /g' | cut --delimiter " " --fields 4-5 | date --file - +%s
+
 build-source-python-package = python3 -m build --sdist --outdir $(1) $(2)
 
 download-source-python-package = python3 -m pip download --dest $(BUILD_DIR) --no-binary :all: --no-deps "$(1) == $(2)"
@@ -44,14 +48,14 @@ extract-source-python-package = cd $(BUILD_DIR) && tar --extract --gzip --file $
 # Since the 60.0.0 release, Setuptools includes a local, vendored copy of
 # distutils; this copy does not seem to work with stdeb, so it needs to be
 # disabled with "SETUPTOOLS_USE_DISTUTILS=stdlib".
-build-deb-package = cd $(BUILD_DIR)/$(1)-$(2)/ && SETUPTOOLS_USE_DISTUTILS=stdlib python3 setup.py --command-packages=stdeb.command sdist_dsc --debian-version $(DEBIAN_VERSION) bdist_deb
+build-deb-package = cd $(BUILD_DIR)/$(1)-$(2)/ && SOURCE_DATE_EPOCH=$(3) SETUPTOOLS_USE_DISTUTILS=stdlib python3 setup.py --command-packages=stdeb.command sdist_dsc --debian-version $(DEBIAN_VERSION) bdist_deb
 
 copy-binary-deb-package = cp $(BUILD_DIR)/$(1)-$(2)/deb_dist/$(3)_$(2)-$(DEBIAN_VERSION)_all.deb $(BUILD_DIR)/deb/
 
 define build-deb-python-package-full
 $(call download-source-python-package,$(1),$(2))
 $(call extract-source-python-package,$(1),$(2))
-$(call build-deb-package,$(1),$(2))
+$(call build-deb-package,$(1),$(2),$$($(call timestamp-from-source-python-package,../$(1)-$(2).tar.gz)))
 $(call copy-binary-deb-package,$(1),$(2),python3-$(3))
 endef
 
@@ -82,7 +86,7 @@ $(BUILD_DIR)/deb/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VER
 	#   uncompressed source Python package).
 	cp --recursive nextcloud-talk-recording/. $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
 
-	$(call build-deb-package,nextcloud-talk-recording,$(NEXTCLOUD_TALK_RECORDING_VERSION))
+	$(call build-deb-package,nextcloud-talk-recording,$(NEXTCLOUD_TALK_RECORDING_VERSION),$$($(call timestamp-from-git,../../../../)))
 
 	$(call copy-binary-deb-package,nextcloud-talk-recording,$(NEXTCLOUD_TALK_RECORDING_VERSION),python3-nextcloud-talk-recording)
 
@@ -127,7 +131,7 @@ $(BUILD_DIR)/deb/python3-selenium_$(SELENIUM_VERSION)-$(DEBIAN_VERSION)_all.deb:
 	# appended rather than just copied.
 	cat selenium/MANIFEST.in >> $(BUILD_DIR)/selenium-$(SELENIUM_VERSION)/MANIFEST.in
 
-	$(call build-deb-package,selenium,$(SELENIUM_VERSION))
+	$(call build-deb-package,selenium,$(SELENIUM_VERSION),$$($(call timestamp-from-source-python-package,../selenium-$(SELENIUM_VERSION).tar.gz)))
 
 	$(call copy-binary-deb-package,selenium,$(SELENIUM_VERSION),python3-selenium)
 
