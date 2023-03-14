@@ -54,8 +54,8 @@ OC.L10N.register(
     "Dismiss" : "Batal",
     "Drop your files to upload" : "Lepas berkas Anda untuk mengunggah",
     "Favorite" : "Favorit",
-    "Restricted" : "Terbatas",
     "Description" : "Deskrisi",
+    "Restricted" : "Terbatas",
     "Personal" : "Pribadi",
     "Meeting" : "Rapat",
     "Password protection" : "Password protection",
@@ -100,7 +100,6 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Pintasan keyboard",
     "Search" : "Cari",
     "You have new unread messages in the chat." : "Anda memiliki pesan baru yang belum dibaca dalam obrolan.",
-    "Rename conversation" : "Ganti nama percakapan",
     "Grid view" : "Tampilan kotak",
     "Send" : "Kirim",
     "Say hi to your friends and colleagues!" : "Katakan halo kepada teman dan kolega Anda!",
@@ -119,6 +118,7 @@ OC.L10N.register(
     "An error occurred. Please contact your admin." : "Terjadi kesalahan. Silakan hubungi admin Anda.",
     "Saved" : "Disimpan",
     "Enter a password" : "Masukkan kata sandi",
-    "Open conversation to registered users" : "Buka percakapan untuk pengguna terdaftar"
+    "Open conversation to registered users" : "Buka percakapan untuk pengguna terdaftar",
+    "Rename conversation" : "Ganti nama percakapan"
 },
 "nplurals=1; plural=0;");

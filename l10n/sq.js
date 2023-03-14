@@ -189,12 +189,13 @@ OC.L10N.register(
     "An error occurred while starting screensharing." : "Ndodhi një gabim gjatë fillimit të ndarjes së ekranit.",
     "You" : "Ju",
     "Favorite" : "I/E Preferuar",
-    "Restricted" : "I/E kufizuar",
     "Description" : "Përshkrim",
+    "Restricted" : "I/E kufizuar",
     "Personal" : "Personale",
     "Permissions" : "Lejet",
     "Leave conversation" : "Largohuni nga biseda",
     "Delete conversation" : "Fshijeni bisedën",
+    "Submit" : "Dërgo",
     "Password protection" : "Password protection",
     "Save" : "Ruaj",
     "Edit" : "Përpuno",
@@ -232,7 +233,6 @@ OC.L10N.register(
     "Privacy" : "Privatësia",
     "Keyboard shortcuts" : "Shkurtoret e tastierës",
     "Search" : "Kërko",
-    "Rename conversation" : "Riemërtojeni bisedën",
     "Grid view" : "Pamje galeri",
     "Send" : "Dërgo",
     "Start a conversation" : "Filloni një bisedë",
@@ -256,6 +256,7 @@ OC.L10N.register(
     "Saved" : "U ruajt",
     "More actions" : "Më tepër veprime ",
     "Enter a password" : "Fusni një fjalëkalim",
-    "Calls" : "Thirrjet"
+    "Calls" : "Thirrjet",
+    "Rename conversation" : "Riemërtojeni bisedën"
 },
 "nplurals=2; plural=(n != 1);");

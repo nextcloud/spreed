@@ -482,14 +482,15 @@
     "You need to be logged in to upload files" : "Для завантаження файлів потрібно авторизуватися",
     "Drop your files to upload" : "Пересуньте файли сюди для завантаження",
     "Favorite" : "Улюблений",
-    "Restricted" : "Обмежена",
     "Description" : "Опис",
+    "Restricted" : "Обмежена",
     "Personal" : "Особисте",
     "Meeting" : "Зустріч",
     "Permissions" : "Дозволи ",
     "Leave conversation" : "Залишити спілкування",
     "Delete conversation" : "Вилучити розмову",
     "Do you really want to delete \"{displayName}\"?" : "Дійсно вилучити \"{displayName}\"?",
+    "Submit" : "Гаразд",
     "Password protection" : "Password protection",
     "Save" : "Зберегти",
     "Edit" : "Редагувати",
@@ -576,7 +577,6 @@
     "Start call" : "Почати виклик",
     "Recording" : "Запис",
     "Toggle fullscreen" : "Перемкнути на весь екран",
-    "Rename conversation" : "Перейменувати розмову",
     "Grid view" : "Упорядкування у формі сітки",
     "Send" : "Надіслати",
     "Say hi to your friends and colleagues!" : "Привітайтеся з вашими друзями та колегами!",
@@ -609,6 +609,7 @@
     "Enable lobby" : "Увімкнути схвалення входу",
     "Calls" : "Виклики",
     "Upload new files" : "Додати файл",
-    "Share from Files" : "Відкрити Файли"
+    "Share from Files" : "Відкрити Файли",
+    "Rename conversation" : "Перейменувати розмову"
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);"
 }
