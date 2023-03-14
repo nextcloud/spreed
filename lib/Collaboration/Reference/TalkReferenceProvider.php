@@ -301,7 +301,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 	 * @inheritDoc
 	 */
 	public function getTitle(): string {
-		return $this->l->t('Talk');
+		return $this->l->t('Talk conversations');
 	}
 
 	/**
