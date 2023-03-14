@@ -21,5 +21,8 @@ dynamic = ["version"]
 [project.urls]
 repository = "https://github.com/nextcloud/spreed"
 
+[project.scripts]
+nextcloud-talk-recording = "nextcloud.talk.recording.__main__:main"
+
 [tool.setuptools.dynamic]
 version = {attr = "nextcloud.talk.recording.__version__"}

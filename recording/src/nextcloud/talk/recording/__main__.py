@@ -23,16 +23,20 @@ import logging
 from .Config import config
 from .Server import app
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-c", "--config", help="path to configuration file", default="server.conf")
-args = parser.parse_args()
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--config", help="path to configuration file", default="server.conf")
+    args = parser.parse_args()
 
-config.load(args.config)
+    config.load(args.config)
 
-logging.basicConfig(level=config.getLogLevel())
-logging.getLogger('werkzeug').setLevel(config.getLogLevel())
+    logging.basicConfig(level=config.getLogLevel())
+    logging.getLogger('werkzeug').setLevel(config.getLogLevel())
 
-listen = config.getListen()
-host, port = listen.split(':')
+    listen = config.getListen()
+    host, port = listen.split(':')
 
-app.run(host, port, threaded=True)
+    app.run(host, port, threaded=True)
+
+if __name__ == '__main__':
+    main()
