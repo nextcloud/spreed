@@ -425,14 +425,15 @@ OC.L10N.register(
     "Show screen" : "Birta skjá",
     "This conversation is read-only" : "This conversation is read-only",
     "Favorite" : "Eftirlæti",
-    "Restricted" : "Takmarkað",
     "Description" : "Lýsing",
+    "Restricted" : "Takmarkað",
     "Personal" : "Persónulegt",
     "Meeting" : "Fundur",
     "Permissions" : "Heimildir",
     "Leave conversation" : "Hætta í samtali",
     "Delete conversation" : "Eyða samtali",
     "You need to promote a new moderator before you can leave the conversation." : "Þú þarft að uppfæra einhvern í stöðu umsjónarmanna áður en þú getur hætt í samtalinu.",
+    "Submit" : "Senda inn",
     "Password protection" : "Verndun með lykilorði",
     "Start time (optional)" : "Upphafstími (valfrjálst)",
     "Save" : "Vista",
@@ -499,7 +500,6 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Flýtileiðir á lyklaborði",
     "Search" : "Search",
     "Start call" : "Hefja samtal",
-    "Rename conversation" : "Endurnefna samtal",
     "Grid view" : "Reitasýn",
     "Send" : "Senda",
     "Say hi to your friends and colleagues!" : "Segðu hæ við vini þína og samstarfsmenn!",
@@ -539,6 +539,7 @@ OC.L10N.register(
     "Allow guests" : "Leyfa gesti",
     "Enter a password" : "Settu inn lykilorð",
     "Calls" : "Samtöl",
-    "Message link copied to clipboard." : "Skilaboðatengill afritaður á klippispjald."
+    "Message link copied to clipboard." : "Skilaboðatengill afritaður á klippispjald.",
+    "Rename conversation" : "Endurnefna samtal"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

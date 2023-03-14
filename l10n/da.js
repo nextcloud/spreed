@@ -390,9 +390,9 @@ OC.L10N.register(
     "You need to be logged in to upload files" : "Du skal være logget ind for at kunne uploade filer",
     "Drop your files to upload" : "Drop dine filer for at uploade",
     "Favorite" : "Foretrukken",
+    "Description" : "Beskrivelse",
     "Restricted" : "Begrænset",
     "Conversation settings" : "Samtale indstillinger",
-    "Description" : "Beskrivelse",
     "Personal" : "Personlig",
     "Meeting" : "Møde",
     "Permissions" : "Rettigheder",
@@ -518,7 +518,6 @@ OC.L10N.register(
     "Select location for attachments" : "Select location for attachments",
     "Error while setting attachment folder" : "Fejl under indstilling af mappe til vedhæftninger",
     "Start call" : "Start opkald",
-    "Rename conversation" : "Omdøb samtale",
     "Grid view" : "Grid visning",
     "Send" : "Send",
     "No unread mentions" : "Ingen ulæste samtaler",
@@ -574,6 +573,7 @@ OC.L10N.register(
     "Calls" : "Opkald",
     "Choose a password" : "Vælg en adgangskode",
     "Upload new files" : "Upload nye filer",
-    "Share from Files" : "Del fra Filer"
+    "Share from Files" : "Del fra Filer",
+    "Rename conversation" : "Omdøb samtale"
 },
 "nplurals=2; plural=(n != 1);");

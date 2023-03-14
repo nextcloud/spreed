@@ -455,9 +455,9 @@ OC.L10N.register(
     "You need to be logged in to upload files" : "Du må være på logget for å laste opp filer",
     "Drop your files to upload" : "Dropp filer for å laste opp",
     "Favorite" : "Merk som favoritt",
+    "Description" : "Beskrivelse",
     "Restricted" : "Begrenset",
     "Conversation settings" : "Samtale innstillinger",
-    "Description" : "Beskrivelse",
     "Personal" : "Personlig",
     "Meeting" : "Møte",
     "Permissions" : "Rettigheter",
@@ -467,6 +467,7 @@ OC.L10N.register(
     "Do you really want to delete \"{displayName}\"?" : "Vil du virkelig slette \"{displayName}\"?",
     "Delete all chat messages" : "Slett alle meldinger",
     "Error while clearing chat history" : "Det oppsto en feil. Kan ikke slette meldingslogg",
+    "Submit" : "Send inn",
     "Guest access" : "Gjestetilgang",
     "Password protection" : "Passordbeskyttelse",
     "Save password" : "Lagre passord",
@@ -569,7 +570,6 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Tastatursnarveier",
     "Search" : "Søk",
     "Start call" : "Start samtale",
-    "Rename conversation" : "Endre navn på samtale",
     "Grid view" : "Rutenett-visning",
     "Raise hand" : "Løft hånden",
     "Send" : "Send",
@@ -609,6 +609,7 @@ OC.L10N.register(
     "Calls" : "Samtaler",
     "Choose a password" : "Velg et passord",
     "Upload new files" : "Last opp nye filer",
-    "Share from Files" : "Del fra Filer"
+    "Share from Files" : "Del fra Filer",
+    "Rename conversation" : "Endre navn på samtale"
 },
 "nplurals=2; plural=(n != 1);");

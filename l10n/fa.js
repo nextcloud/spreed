@@ -286,6 +286,7 @@ OC.L10N.register(
     "Permissions" : "مجوزها",
     "Leave conversation" : "ترک صحبت",
     "Delete conversation" : "مکالمه را حذف کنید",
+    "Submit" : "ارسال",
     "Password protection" : "Password protection",
     "Save" : "ذخیره",
     "Edit" : "ویرایش",
@@ -338,7 +339,6 @@ OC.L10N.register(
     "Keyboard shortcuts" : "میان بر صفحه ی کلید",
     "Search" : "جستجو کردن",
     "Recording" : "ضبط جلسه",
-    "Rename conversation" : "تغییر نام مکالمه",
     "Grid view" : "نمایش گرید",
     "Send" : "ارسال",
     "Say hi to your friends and colleagues!" : "به رفقا و همدرس‌هایتان سلام کنید!",
@@ -363,6 +363,7 @@ OC.L10N.register(
     "Allow guests" : "اجازه میهمانان",
     "Enter a password" : "یک گذرواژه وارد کنید",
     "Upload new files" : "فایل‌های جدید را آپلود کنید",
-    "Share from Files" : "اشتراک‌گذاری از فایل‌ها"
+    "Share from Files" : "اشتراک‌گذاری از فایل‌ها",
+    "Rename conversation" : "تغییر نام مکالمه"
 },
 "nplurals=2; plural=(n > 1);");

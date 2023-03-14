@@ -50,12 +50,13 @@
     "An error occurred while starting screensharing." : "Se presentó un error al comenzar a compartir la pantalla. ",
     "You" : "Usted",
     "Favorite" : "Favorito",
-    "Restricted" : "Restringido",
     "Description" : "Descripción",
+    "Restricted" : "Restringido",
     "Personal" : "Personal",
     "Permissions" : "Permisos",
     "Leave conversation" : "Dejar la conversación",
     "Delete conversation" : "Eliminar conversación",
+    "Submit" : "Enviar",
     "Password protection" : "Protección con contraseña",
     "Save" : "Guardar",
     "Edit" : "Editar",
@@ -91,7 +92,6 @@
     "Privacy" : "Privacidad",
     "Keyboard shortcuts" : "Atajos de teclado",
     "Search" : "Buscar",
-    "Rename conversation" : "Renombrar conversación",
     "Grid view" : "Vista de cuadrícula",
     "Send" : "Enviar",
     "Start a conversation" : "Iniciar una conversación",
@@ -115,6 +115,7 @@
     "iOS app" : "Aplicación iOS",
     "An error occurred. Please contact your admin." : "Se presentó un error. Favor de contactar a su adminsitrador. ",
     "Saved" : "Guardado",
-    "Enter a password" : "Ingrese una contraseña"
+    "Enter a password" : "Ingrese una contraseña",
+    "Rename conversation" : "Renombrar conversación"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }
