@@ -17,16 +17,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+BUILD_DIR ?= build
+
 NEXTCLOUD_TALK_RECORDING_VERSION := $(shell cd ../src && python3 -c "from nextcloud.talk.recording import __version__; print(__version__)")
 
 build-package-deb:
 	python3 -m pip install "setuptools >= 61.0"
 
 	# Build a source Python package
-	python3 -m build --sdist --outdir . ../
+	python3 -m build --sdist --outdir $(BUILD_DIR) ../
 
 	# Extract source Python package
-	tar --extract --gzip --file nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION).tar.gz
+	cd $(BUILD_DIR) && tar --extract --gzip --file nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION).tar.gz
 
 	# Add extra files needed to create Debian packages:
 	# - debian/py3dist-overrides: Python dependencies to Debian dependencies for
@@ -42,13 +44,13 @@ build-package-deb:
 	# - stdeb.cfg: additional configuration for stdeb (not needed in the
 	#   regenerated Python package, as stdeb loads it before changing to the
 	#   uncompressed source Python package).
-	cp --recursive debian nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
-	cp MANIFEST.in nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
-	cp setup.py nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
-	cp stdeb.cfg nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
+	cp --recursive debian $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
+	cp MANIFEST.in $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
+	cp setup.py $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
+	cp stdeb.cfg $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
 
 	# Build a source Debian package and then, from it, a binary Debian package
 	# Since the 60.0.0 release, Setuptools includes a local, vendored copy of
 	# distutils; this copy does not seem to work with stdeb, so it needs to be
 	# disabled with "SETUPTOOLS_USE_DISTUTILS=stdlib".
-	cd nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/ && SETUPTOOLS_USE_DISTUTILS=stdlib python3 setup.py --command-packages=stdeb.command sdist_dsc bdist_deb
+	cd $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/ && SETUPTOOLS_USE_DISTUTILS=stdlib python3 setup.py --command-packages=stdeb.command sdist_dsc bdist_deb
