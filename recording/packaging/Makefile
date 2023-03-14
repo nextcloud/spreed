@@ -17,15 +17,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-BUILD_DIR ?= build
+OS_VERSION ?= $(shell . /etc/os-release 2> /dev/null && echo $$ID$$VERSION_ID)
+RELEASE ?= 1
+DEBIAN_VERSION ?= $(RELEASE)~$(OS_VERSION)
+
+BUILD_DIR ?= build/$(OS_VERSION)
 
 NEXTCLOUD_TALK_RECORDING_VERSION := $(shell cd ../src && python3 -c "from nextcloud.talk.recording import __version__; print(__version__)")
 
 $(BUILD_DIR)/deb:
 	mkdir --parents $(BUILD_DIR)/deb
 
-build-package-deb: $(BUILD_DIR)/deb/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-1_all.deb
-$(BUILD_DIR)/deb/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-1_all.deb: | $(BUILD_DIR)/deb
+build-package-deb: $(BUILD_DIR)/deb/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-$(DEBIAN_VERSION)_all.deb
+$(BUILD_DIR)/deb/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-$(DEBIAN_VERSION)_all.deb: | $(BUILD_DIR)/deb
 	python3 -m pip install "setuptools >= 61.0"
 
 	# Build a source Python package
@@ -57,7 +61,7 @@ $(BUILD_DIR)/deb/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VER
 	# Since the 60.0.0 release, Setuptools includes a local, vendored copy of
 	# distutils; this copy does not seem to work with stdeb, so it needs to be
 	# disabled with "SETUPTOOLS_USE_DISTUTILS=stdlib".
-	cd $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/ && SETUPTOOLS_USE_DISTUTILS=stdlib python3 setup.py --command-packages=stdeb.command sdist_dsc bdist_deb
+	cd $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/ && SETUPTOOLS_USE_DISTUTILS=stdlib python3 setup.py --command-packages=stdeb.command sdist_dsc --debian-version $(DEBIAN_VERSION) bdist_deb
 
 	# Copy package to main build directory
-	cp $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/deb_dist/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-1_all.deb $(BUILD_DIR)/deb/
+	cp $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/deb_dist/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-$(DEBIAN_VERSION)_all.deb $(BUILD_DIR)/deb/
