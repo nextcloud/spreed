@@ -4,6 +4,7 @@ module.exports = {
 	],
 	rules: {
 		'import/newline-after-import': 1,
+		'import/no-named-as-default-member': 0,
 		'import/order': [
 			'warn',
 			{

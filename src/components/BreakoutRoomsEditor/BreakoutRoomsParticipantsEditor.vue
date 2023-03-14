@@ -220,7 +220,7 @@ export default {
 		/**
 		 * Initialise the assignments array.
 		 *
-		 * @param forceReset {boolean} If true, the assignments array will be reset if the breakoutRooms prop is populated.
+		 * @param {boolean} forceReset If true, the assignments array will be reset if the breakoutRooms prop is populated.
 		 */
 		initialiseAssignments(forceReset) {
 			if (this.isReorganizingAttendees && !forceReset) {
