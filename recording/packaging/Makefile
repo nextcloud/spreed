@@ -21,7 +21,8 @@ BUILD_DIR ?= build
 
 NEXTCLOUD_TALK_RECORDING_VERSION := $(shell cd ../src && python3 -c "from nextcloud.talk.recording import __version__; print(__version__)")
 
-build-package-deb:
+build-package-deb: $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/deb_dist/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-1_all.deb
+$(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/deb_dist/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-1_all.deb:
 	python3 -m pip install "setuptools >= 61.0"
 
 	# Build a source Python package
