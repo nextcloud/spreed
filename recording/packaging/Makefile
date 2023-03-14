@@ -52,10 +52,7 @@ $(BUILD_DIR)/deb/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VER
 	# - stdeb.cfg: additional configuration for stdeb (not needed in the
 	#   regenerated Python package, as stdeb loads it before changing to the
 	#   uncompressed source Python package).
-	cp --recursive debian $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
-	cp MANIFEST.in $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
-	cp setup.py $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
-	cp stdeb.cfg $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
+	cp --recursive nextcloud-talk-recording/. $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
 
 	# Build a source Debian package and then, from it, a binary Debian package
 	# Since the 60.0.0 release, Setuptools includes a local, vendored copy of
