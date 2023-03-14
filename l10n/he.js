@@ -422,14 +422,15 @@ OC.L10N.register(
     "Show screen" : "הצגת מסך",
     "Drop your files to upload" : "יש לגרור לכאן קבצים כדי להעלות",
     "Favorite" : "סימון כמועדף",
+    "Description" : "תיאור",
     "Restricted" : "מוגבלת",
     "Conversation settings" : "הגדרות דיון",
-    "Description" : "תיאור",
     "Personal" : "אישי",
     "Meeting" : "מפגש",
     "Permissions" : "הרשאות",
     "Leave conversation" : "יציאה מהדיון",
     "Delete conversation" : "מחיקת דיון",
+    "Submit" : "שליחה",
     "Password protection" : "הגנה בססמה",
     "Copy conversation link" : "העתקת קישור דיון",
     "Start time (optional)" : "מועד התחלה (רשות)",
@@ -543,7 +544,6 @@ OC.L10N.register(
     "Select location for attachments" : "בחירת מיקום לקבצים מצורפים",
     "Start call" : "התחלת שיחה",
     "Mute others" : "השתקה של אחרים",
-    "Rename conversation" : "שינוי שם הדיון",
     "Exit fullscreen (F)" : "יציאה ממסך מלא (F)",
     "Speaker view" : "תצוגת דובר",
     "Grid view" : "תצוגת טבלה",
@@ -596,6 +596,7 @@ OC.L10N.register(
     "Calls" : "שיחות",
     "Choose a password" : "בחירת ססמה",
     "Upload new files" : "העלאת קבצים חדשים",
-    "Share from Files" : "שיתוף מקבצים"
+    "Share from Files" : "שיתוף מקבצים",
+    "Rename conversation" : "שינוי שם הדיון"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

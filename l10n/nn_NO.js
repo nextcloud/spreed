@@ -70,7 +70,6 @@ OC.L10N.register(
     "Privacy" : "Personvern",
     "Keyboard shortcuts" : "Tastatursnarvegar",
     "Search" : "Search",
-    "Rename conversation" : "Eksterne samtalar ",
     "Grid view" : "Rutenett visning",
     "Send" : "Send",
     "Say hi to your friends and colleagues!" : "Sei hei til dine venner og kollegar!",
@@ -84,6 +83,7 @@ OC.L10N.register(
     "Saved" : "Lagra",
     "Allow guests" : "Tillat gjester",
     "Enter a password" : "Skriv inn eit passord",
-    "Calls" : "Samtalar"
+    "Calls" : "Samtalar",
+    "Rename conversation" : "Eksterne samtalar "
 },
 "nplurals=2; plural=(n != 1);");
