@@ -1,0 +1,2 @@
+#!/usr/bin/dh-exec
+server.conf.in => /etc/nextcloud-talk-recording/server.conf

@@ -1,1 +1,2 @@
 graft debian
+include server.conf.in
