@@ -1,82 +1,40 @@
-const path = require('path')
-const webpackConfig = require('@nextcloud/webpack-vue-config')
-const webpackRules = require('@nextcloud/webpack-vue-config/rules')
-const BabelLoaderExcludeNodeModulesExcept = require('babel-loader-exclude-node-modules-except')
+const path = require('node:path')
 
-webpackConfig.entry = {
-	'admin-settings': path.join(__dirname, 'src', 'mainAdminSettings.js'),
-	collections: path.join(__dirname, 'src', 'collections.js'),
-	main: path.join(__dirname, 'src', 'main.js'),
-	recording: path.join(__dirname, 'src', 'mainRecording.js'),
-	'files-sidebar': [
-		path.join(__dirname, 'src', 'mainFilesSidebar.js'),
-		path.join(__dirname, 'src', 'mainFilesSidebarLoader.js'),
-	],
-	'public-share-auth-sidebar': path.join(__dirname, 'src', 'mainPublicShareAuthSidebar.js'),
-	'public-share-sidebar': path.join(__dirname, 'src', 'mainPublicShareSidebar.js'),
-	flow: path.join(__dirname, 'src', 'flow.js'),
-	dashboard: path.join(__dirname, 'src', 'dashboard.js'),
-	deck: path.join(__dirname, 'src', 'deck.js'),
-	maps: path.join(__dirname, 'src', 'maps.js'),
-}
+const webpack = require('webpack')
+const { merge } = require('webpack-merge')
 
-webpackConfig.output.assetModuleFilename = '[name][ext]?v=[contenthash]'
+const nextcloudWebpackConfig = require('@nextcloud/webpack-vue-config')
 
-// Edit JS rule
-webpackRules.RULE_JS.exclude = BabelLoaderExcludeNodeModulesExcept([
-	'@nextcloud/event-bus',
-	'ansi-regex',
-	'color.js',
-	'fast-xml-parser',
-	'hot-patcher',
-	'nextcloud-vue-collections',
-	'semver',
-	'strip-ansi',
-	'tributejs',
-	'vue-resize',
-	'webdav',
-])
+const commonWebpackConfig = require('./webpack.common.config.js')
 
-// Replaces rules array
-webpackConfig.module.rules = Object.values(webpackRules)
+// Rules from @nextcloud/webpack-vue-config/rules already added by commonWebpackConfig
+nextcloudWebpackConfig.module.rules = []
 
-webpackConfig.module.rules.push({
-	/**
-	 * webrtc-adapter main module does no longer provide
-	 * "module.exports", which is expected by some elements using it
-	 * (like "attachmediastream"), so it needs to be added back with
-	 * a plugin.
-	 */
-	test: /node_modules\/webrtc-adapter\/.*\.js$/,
-	loader: 'babel-loader',
-	options: {
-		plugins: ['add-module-exports'],
-		presets: [
-			/**
-			 * From "add-module-exports" documentation:
-			 * "webpack doesn't perform commonjs transformation for
-			 * codesplitting. Need to set commonjs conversion."
-			 */
-			['@babel/env', { modules: 'commonjs' }],
+module.exports = merge(nextcloudWebpackConfig, commonWebpackConfig, {
+	entry: {
+		'admin-settings': path.join(__dirname, 'src', 'mainAdminSettings.js'),
+		collections: path.join(__dirname, 'src', 'collections.js'),
+		main: path.join(__dirname, 'src', 'main.js'),
+		recording: path.join(__dirname, 'src', 'mainRecording.js'),
+		'files-sidebar': [
+			path.join(__dirname, 'src', 'mainFilesSidebar.js'),
+			path.join(__dirname, 'src', 'mainFilesSidebarLoader.js'),
 		],
+		'public-share-auth-sidebar': path.join(__dirname, 'src', 'mainPublicShareAuthSidebar.js'),
+		'public-share-sidebar': path.join(__dirname, 'src', 'mainPublicShareSidebar.js'),
+		flow: path.join(__dirname, 'src', 'flow.js'),
+		dashboard: path.join(__dirname, 'src', 'dashboard.js'),
+		deck: path.join(__dirname, 'src', 'deck.js'),
+		maps: path.join(__dirname, 'src', 'maps.js'),
 	},
+
+	output: {
+		assetModuleFilename: '[name][ext]?v=[contenthash]',
+	},
+
+	plugins: [
+		new webpack.DefinePlugin({ IS_DESKTOP: false }),
+	],
+
+	cache: true,
 })
-
-webpackConfig.module.rules.push({
-	test: /\.wasm$/i,
-	type: 'asset/resource',
-})
-
-webpackConfig.module.rules.push({
-	test: /\.tflite$/i,
-	type: 'asset/resource',
-})
-
-webpackConfig.module.rules.push({
-	test: /\.worker\.js$/,
-	use: { loader: 'worker-loader' },
-})
-
-webpackConfig.cache = true
-
-module.exports = webpackConfig
