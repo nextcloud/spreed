@@ -20,7 +20,7 @@
  *
  */
 import debounce from 'debounce'
-import { set } from 'vue'
+import Vue from 'vue'
 
 import { showError } from '@nextcloud/dialogs'
 
@@ -39,20 +39,20 @@ const getters = {
 const mutations = {
 	addPoll(state, { token, poll }) {
 		if (!state.polls[token]) {
-			set(state.polls, token, {})
+			Vue.set(state.polls, token, {})
 		}
-		set(state.polls[token], poll.id, poll)
+		Vue.set(state.polls[token], poll.id, poll)
 	},
 
 	// Add debounce function for getting the poll data
 	addDebounceGetPollDataFunction(state, { token, pollId, debounceGetPollDataFunction }) {
 		if (!state.polls?.pollDebounceFunctions) {
-			set(state.polls, 'pollDebounceFunctions', {})
+			Vue.set(state.polls, 'pollDebounceFunctions', {})
 		}
 		if (!state.polls.pollDebounceFunctions?.[token]) {
-			set(state.polls.pollDebounceFunctions, [token], {})
+			Vue.set(state.polls.pollDebounceFunctions, [token], {})
 		}
-		set(state.polls.pollDebounceFunctions[token], pollId, debounceGetPollDataFunction)
+		Vue.set(state.polls.pollDebounceFunctions[token], pollId, debounceGetPollDataFunction)
 	},
 }
 
