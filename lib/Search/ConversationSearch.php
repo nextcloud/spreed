@@ -130,7 +130,7 @@ class ConversationSearch implements IProvider {
 					}
 				}
 			} elseif ($room->getObjectType() === 'file') {
-				$iconClass = 'conversation-icon icon-file-white';
+				$iconClass = 'conversation-icon icon-text-white';
 			} elseif ($room->getObjectType() === 'share:password') {
 				$iconClass = 'conversation-icon icon-password-white';
 			} elseif ($room->getObjectType() === 'emails') {
