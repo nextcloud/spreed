@@ -44,7 +44,7 @@
 						<Folder :size="20" />
 					</template>
 				</NcButton>
-				<NcButton v-if="hasPicture"
+				<NcButton v-if="hasAvatar"
 					:aria-label="t('settings', 'Remove profile picture')"
 					@click="removeAvatar">
 					<template #icon>
@@ -130,8 +130,6 @@ export default {
 	data() {
 		return {
 			// Todo: get real value here
-			// This represents whether the conversation already has a picture
-			hasPicture: true,
 			showCropper: false,
 			loading: false,
 			validMimeTypes: VALID_MIME_TYPES,
@@ -151,6 +149,10 @@ export default {
 	computed: {
 		inputId() {
 			return `account-property-${this.conversation.displayName}`
+		},
+
+		hasAvatar() {
+			return !!this.conversation.avatarVersion
 		},
 	},
 
