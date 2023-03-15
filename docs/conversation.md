@@ -424,7 +424,7 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
         + `403 Forbidden` When the current user is not a moderator/owner or the conversation is not a public conversation
         + `404 Not Found` When the conversation could not be found for the participant
 
-## Handle the avatar of conversation
+## Set conversations avatar
 
 * ⚠️ Preview - Might be modified before the capability is added
 * Required capability: `avatar`
@@ -433,16 +433,21 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
 * Data:
 
 | field  | type   | Description                                                                                                                         |
-| ------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+|--------|--------|-------------------------------------------------------------------------------------------------------------------------------------|
 | `file` | string | Blob of image in a multipart/form-data request. Only accept images with mimetype equal to PNG or JPEG and need to be squared image. |
 
 * Response:
     - Status code:
         + `200 OK`
-        + `400 Bad Request` When: is one2one, no image, file is too big, invalid mimetype or resource, isn't square, unknown error
+        + `400 Bad Request` When: is one-to-one, no image, file is too big, invalid mimetype or resource, isn't square, unknown error
         + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
         + `404 Not Found` When the conversation could not be found for the participant
 
+	- Data: See array definition in `Get user´s conversations`
+
+## Delete conversations avatar
+
+* ⚠️ Preview - Might be modified before the capability is added
 * Required capability: `avatar`
 * Method: `DELETE`
 * Endpoint: `/room/{token}/avatar`
@@ -453,6 +458,11 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
         + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
         + `404 Not Found` When the conversation could not be found for the participant
 
+	- Data: See array definition in `Get user´s conversations`
+
+## Get conversations avatar (binary)
+
+* ⚠️ Preview - Might be modified before the capability is added
 * Required capability: `avatar`
 * Method: `GET`
 * Endpoint: `/room/{token}/avatar`
@@ -461,7 +471,11 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
     - Status code:
         + `200 OK`
         + `404 Not Found` When the conversation could not be found for the participant
+    - Body: the image file
 
+## Get dark mode conversations avatar (binary)
+
+* ⚠️ Preview - Might be modified before the capability is added
 * Required capability: `avatar`
 * Method: `GET`
 * Endpoint: `/room/{token}/avatar/dark`
@@ -470,3 +484,4 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
     - Status code:
         + `200 OK`
         + `404 Not Found` When the conversation could not be found for the participant
+	- Body: the image file
