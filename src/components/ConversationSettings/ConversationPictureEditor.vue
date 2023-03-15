@@ -29,14 +29,6 @@
 					:item="conversation"
 					:is-big="true"
 					:disable-menu="true" />
-				<!--
-				<NcAvatar v-if="!loading"
-					:aria-label="t('settings', 'Your profile picture')"
-					:disabled-menu="true"
-					:disabled-tooltip="true"
-					:show-user-status="false"
-					:size="180" />
-					-->
 				<div v-else class="icon-loading" />
 			</div>
 			<div class="avatar__buttons">
@@ -192,7 +184,7 @@ export default {
 			try {
 				const { data } = await axios.post(generateUrl('/avatar'), { path })
 				if (data.status === 'success') {
-					this.handlePictureUpdate(false)
+					this.loading = false
 				} else if (data.data === 'notsquare') {
 					const tempAvatar = generateUrl('/avatar/tmp') + '?requesttoken=' + encodeURIComponent(OC.requestToken) + '#' + Math.floor(Math.random() * 1000)
 					this.$refs.cropper.replace(tempAvatar)
@@ -222,14 +214,14 @@ export default {
 				formData.append('file', blob)
 
 				try {
-					this.$store.dispatch('setConversationPictureAction', {
+					await this.$store.dispatch('setConversationPictureAction', {
 						token: this.conversation.token,
 						file: formData,
 					})
-					this.handlePictureUpdate(false)
+					this.loading = false
 				} catch (e) {
 					showError(t('spreed', 'Error saving profile picture'))
-					this.handlePictureUpdate(this.hasPicture)
+					this.loading = false
 				}
 			})
 		},
@@ -240,21 +232,15 @@ export default {
 				await this.$store.dispatch('deleteConversationPictureAction', {
 					token: this.conversation.token,
 				})
-				this.handlePictureUpdate(true)
+				this.loading = false
 			} catch (e) {
 				showError(t('spreed', 'Error removing profile picture'))
-				this.handlePictureUpdate(this.hasPicture)
+				this.loading = false
 			}
 		},
 
 		cancel() {
 			this.showCropper = false
-			this.loading = false
-		},
-
-		handlePictureUpdate() {
-			// Update the avatar version so that avatar update handlers refresh correctly
-
 			this.loading = false
 		},
 	},
