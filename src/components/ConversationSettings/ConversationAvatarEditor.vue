@@ -52,7 +52,7 @@
 					</template>
 				</NcButton>
 			</div>
-			<span>{{ t('spreed', 'png or jpg, max. 20 MB') }}</span>
+			<span>{{ fileTypeWarning }}</span>
 			<input :id="inputId"
 				ref="input"
 				type="file"
@@ -154,6 +154,10 @@ export default {
 		hasAvatar() {
 			return !!this.conversation.avatarVersion
 		},
+
+		fileTypeWarning() {
+			return t('spreed', 'png or jpg.')
+		},
 	},
 
 	methods: {
@@ -204,8 +208,9 @@ export default {
 		saveAvatar() {
 			this.showCropper = false
 			this.loading = true
-
-			this.$refs.cropper.getCroppedCanvas().toBlob(async (blob) => {
+			const canvasData = this.$refs.cropper.getCroppedCanvas()
+			const scaleFactor = canvasData.width > 512 ? 512 / canvasData.width : 1
+			this.$refs.cropper.scale(scaleFactor, scaleFactor).getCroppedCanvas().toBlob(async (blob) => {
 				if (blob === null) {
 					showError(t('spreed', 'Error cropping profile picture'))
 					this.cancel()
