@@ -380,6 +380,7 @@ class ChatController extends AEnvironmentAwareController {
 	 *                           if your client does this itself via chat/{token}/read set to 0
 	 * @param int $includeLastKnown Include the $lastKnownMessageId in the messages when 1 (default 0)
 	 * @param int $noStatusUpdate When the user status should not be automatically set to online set to 1 (default 0)
+	 * @param int $markNotificationsAsRead Set to 0 when notifications should not be marked as read (default 1)
 	 * @return DataResponse an array of chat messages, "404 Not found" if the
 	 *         room token was not valid or "304 Not modified" if there were no messages;
 	 *         each chat message is an array with
@@ -394,7 +395,8 @@ class ChatController extends AEnvironmentAwareController {
 									int $timeout = 30,
 									int $setReadMarker = 1,
 									int $includeLastKnown = 0,
-									int $noStatusUpdate = 0): DataResponse {
+									int $noStatusUpdate = 0,
+									int $markNotificationsAsRead = 1): DataResponse {
 		$limit = min(200, $limit);
 		$timeout = min(30, $timeout);
 
@@ -443,7 +445,7 @@ class ChatController extends AEnvironmentAwareController {
 
 		$currentUser = $this->userManager->get($this->userId);
 		if ($lookIntoFuture) {
-			$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, $timeout, $currentUser, (bool)$includeLastKnown);
+			$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, $timeout, $currentUser, (bool)$includeLastKnown, (bool)$markNotificationsAsRead);
 		} else {
 			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit, (bool)$includeLastKnown);
 		}
