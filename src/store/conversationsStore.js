@@ -22,7 +22,7 @@
 import Vue from 'vue'
 
 import { getCurrentUser } from '@nextcloud/auth'
-import { showInfo, showSuccess, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+import { showInfo, showSuccess, showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
 import {
 	CALL,
@@ -52,6 +52,7 @@ import {
 	setCallPermissions,
 	setMessageExpiration,
 	setConversationPassword,
+	setConversationPicture,
 } from '../services/conversationsService.js'
 import {
 	startCallRecording,
@@ -709,6 +710,18 @@ const actions = {
 			})
 		}
 		context.commit('setCallRecording', { token, callRecording: CALL.RECORDING.OFF })
+	},
+
+	async setConversationPictureAction(context, { token, file }) {
+		try {
+			const response = await setConversationPicture(token, file)
+			const conversation = response.data.ocs.data
+			context.commit('addConversation', conversation)
+		} catch (error) {
+			console.error(error)
+			showError(t('spreed', 'Could not set the conversation picture.'))
+		}
+
 	},
 }
 

@@ -27,6 +27,9 @@
 			class="avatar icon"
 			:style="iconStyle"
 			:class="iconClass" />
+		<NcAvatar v-else-if="hasPicture"
+			:url="pictureUrl"
+			:size="size" />
 		<NcAvatar v-else
 			:size="size"
 			:user="item.name"
@@ -55,6 +58,8 @@
 <script>
 import Star from 'vue-material-design-icons/Star.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
+
+import { generateOcsUrl } from '@nextcloud/router'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
@@ -128,10 +133,15 @@ export default {
 		showCall() {
 			return !this.hideCall && this.item.hasCall
 		},
+
 		showFavorite() {
 			return !this.hideFavorite && this.item.isFavorite
 		},
+
 		iconClass() {
+			if (this.hasPicture) {
+				return ''
+			}
 			if (this.item.objectType === 'file') {
 				return 'icon-file'
 			} else if (this.item.objectType === 'share:password') {
@@ -185,6 +195,14 @@ export default {
 				height: this.size.toString() + 'px',
 				width: this.size.toString() + 'px',
 			}
+		},
+
+		hasPicture() {
+			return !!this.item.avatarVersion
+		},
+
+		pictureUrl() {
+			return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token: this.item.token })
 		},
 	},
 

@@ -116,7 +116,7 @@ const picker = getFilePickerBuilder(t('spreed', 'Choose your profile picture'))
 	.build()
 
 export default {
-	name: 'ConversationPictureEditor',
+	name: '`ConversationPictureEditor`',
 
 	components: {
 		Delete,
@@ -219,9 +219,13 @@ export default {
 				}
 
 				const formData = new FormData()
-				formData.append('files[]', blob)
+				formData.append('file', blob)
+
 				try {
-					await axios.post(generateUrl('/avatar'), formData)
+					this.$store.dispatch('setConversationPictureAction', {
+						token: this.conversation.token,
+						file: formData,
+					})
 					this.handlePictureUpdate(false)
 				} catch (e) {
 					showError(t('spreed', 'Error saving profile picture'))
