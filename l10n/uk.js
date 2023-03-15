@@ -156,6 +156,7 @@ OC.L10N.register(
     "{actor} removed the Matterbridge configuration" : "{actor} видалив конфігурацію Matterbridge ",
     "You removed the Matterbridge configuration" : "Ви видалили конфігурацію Matterbridge",
     "You missed a call from {user}" : "Ви пропустили виклик від {user}",
+    "Talk conversations" : "Розмови",
     "Talk to %s" : "Спілкуватися з %s",
     "File is too big" : "Файл занадто великий",
     "Invalid file provided" : "Надано невірний файл",

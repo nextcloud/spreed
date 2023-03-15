@@ -179,6 +179,7 @@
     "{actor} ended the call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "{actor} さんが {user1} さん、 {user2} さん、 {user3} さん、 {user4} さんとの通話を終了しました (通話時間 {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "{user1} さんと {user2} さんと {user3} さんと {user4} さんと {user5} さんとの通話(通話時間 {duration})",
     "{actor} ended the call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "{actor} さんが {user1} さん、 {user2} さん、 {user3} さん、 {user4} さん、{user5} さんとの通話を終了しました (通話時間 {duration})",
+    "Talk conversations" : "会話",
     "Talk to %s" : "%s と通話",
     "File is not shared, or shared but not with the user" : "ファイルが共有されていないか、対象ユーザーを除いて共有されています",
     "No account available to delete." : "削除するアカウントがありません。",

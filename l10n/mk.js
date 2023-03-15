@@ -155,6 +155,7 @@ OC.L10N.register(
     "{actor} ended the call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "{actor} го заврши повикот со {user1}, {user2}, {user3} и {user4} (Времетраење {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Повик со {user1}, {user2}, {user3}, {user4} и {user5} (Времетраење {duration})",
     "{actor} ended the call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "{actor} го заврши повикот со {user1}, {user2}, {user3}, {user4} и {user5} (Времетраење {duration})",
+    "Talk conversations" : "Talk разговори",
     "Talk to %s" : "Разговор со %s",
     "File is not shared, or shared but not with the user" : "Датотеката не е споделена, или е споделена но не со корисници",
     "No account available to delete." : "Нема сметка достапна за бришење.",

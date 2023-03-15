@@ -165,6 +165,7 @@ OC.L10N.register(
     "Message of {user} in {conversation}" : "Käyttäjän {user} viesti keskustelussa {conversation}",
     "Message of {user}" : "Käyttäjän {user} viesti",
     "Message of a deleted user in {conversation}" : "Poistetun käyttäjän viesti keskustelussa {conversation}",
+    "Talk conversations" : "Talk-keskustelut",
     "An error occurred. Please contact your administrator." : "Tapahtui virhe. Ole yhteydessä ylläpitäjään.",
     "File is not shared, or shared but not with the user" : "Tiedosto ei ole jaettu, tai jaettu mutta ei kyseisen käyttäjän kanssa",
     "No image file provided" : "Kuvatiedostoa ei määritetty",

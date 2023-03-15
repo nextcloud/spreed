@@ -62,6 +62,7 @@ OC.L10N.register(
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Saruna ar {user1}, {user2} un {user3} ( Ilgums {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Saruna ar {user1}, {user2}, {user3} un {user4} ( Ilgums {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Saruna ar {user1}, {user2}, {user3}, {user4} un {user5} ( Ilgums {duration})",
+    "Talk conversations" : "Sarunas",
     "Talk to %s" : "Runāt ar %s",
     "File is not shared, or shared but not with the user" : "Datne nav koplietota vai koplietots, bet nav koplietots ar lietotāju",
     "File is too big" : "Datne ir par lielu",
