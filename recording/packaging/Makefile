@@ -87,7 +87,9 @@ $(BUILD_DIR)/deb/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VER
 	cp --recursive nextcloud-talk-recording/. $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
 	cp ../server.conf.in $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/
 
-	$(call build-deb-package,nextcloud-talk-recording,$(NEXTCLOUD_TALK_RECORDING_VERSION),$$($(call timestamp-from-git,../../../../)))
+	# Build a source Debian package (with the systemd addon for dh) and then,
+	# from it, a binary Debian package.
+	cd $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/ && SOURCE_DATE_EPOCH=$$($(call timestamp-from-git,../../../../)) SETUPTOOLS_USE_DISTUTILS=stdlib python3 setup.py --command-packages=stdeb.command sdist_dsc --with-dh-systemd --debian-version $(DEBIAN_VERSION) bdist_deb
 
 	$(call copy-binary-deb-package,nextcloud-talk-recording,$(NEXTCLOUD_TALK_RECORDING_VERSION),python3-nextcloud-talk-recording)
 

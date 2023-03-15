@@ -1,0 +1,12 @@
+[Unit]
+Description=Recording server for Nextcloud Talk
+After=network.target
+
+[Service]
+User=nextcloud-talk-recording
+WorkingDirectory=~
+ExecStart=/usr/bin/nextcloud-talk-recording --config /etc/nextcloud-talk-recording/server.conf
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
