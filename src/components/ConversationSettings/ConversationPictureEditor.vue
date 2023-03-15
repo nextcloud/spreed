@@ -52,7 +52,7 @@
 						<Folder :size="20" />
 					</template>
 				</NcButton>
-				<NcButton v-if="!hasPicture"
+				<NcButton v-if="hasPicture"
 					:aria-label="t('settings', 'Remove profile picture')"
 					@click="removeAvatar">
 					<template #icon>
@@ -116,7 +116,7 @@ const picker = getFilePickerBuilder(t('spreed', 'Choose your profile picture'))
 	.build()
 
 export default {
-	name: '`ConversationPictureEditor`',
+	name: 'ConversationPictureEditor',
 
 	components: {
 		Delete,
@@ -237,7 +237,9 @@ export default {
 		async removeAvatar() {
 			this.loading = true
 			try {
-				await axios.delete(generateUrl('/avatar'))
+				await this.$store.dispatch('deleteConversationPictureAction', {
+					token: this.conversation.token,
+				})
 				this.handlePictureUpdate(true)
 			} catch (e) {
 				showError(t('spreed', 'Error removing profile picture'))

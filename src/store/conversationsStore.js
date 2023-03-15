@@ -53,6 +53,7 @@ import {
 	setMessageExpiration,
 	setConversationPassword,
 	setConversationPicture,
+	deleteConversationPicture,
 } from '../services/conversationsService.js'
 import {
 	startCallRecording,
@@ -722,6 +723,17 @@ const actions = {
 			showError(t('spreed', 'Could not set the conversation picture.'))
 		}
 
+	},
+
+	async deleteConversationPictureAction(context, { token, file }) {
+		try {
+			const response = await deleteConversationPicture(token, file)
+			const conversation = response.data.ocs.data
+			context.commit('addConversation', conversation)
+		} catch (error) {
+			console.error(error)
+			showError(t('spreed', 'Could not delete the conversation picture.'))
+		}
 	},
 }
 

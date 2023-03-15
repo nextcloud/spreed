@@ -418,7 +418,7 @@ const getConversationPicture = async function(token) {
 }
 
 const deleteConversationPicture = async function(token) {
-	return axios.get(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token }))
+	return axios.delete(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token }))
 }
 
 export {
