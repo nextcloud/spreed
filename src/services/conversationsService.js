@@ -413,10 +413,6 @@ const setConversationPicture = async function(token, file) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token }), file,)
 }
 
-const getConversationPicture = async function(token) {
-	return axios.get(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token }))
-}
-
 const deleteConversationPicture = async function(token) {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token }))
 }
@@ -450,6 +446,5 @@ export {
 	setMessageExpiration,
 	validatePassword,
 	setConversationPicture,
-	getConversationPicture,
 	deleteConversationPicture,
 }
