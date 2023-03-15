@@ -218,6 +218,7 @@ OC.L10N.register(
     "Message of {user} in {conversation}" : "Mensaxe de {user} en {conversation}",
     "Message of {user}" : "Mensaxe de {user}",
     "Message of a deleted user in {conversation}" : "Mensaxe dun usuario eliminado en {conversation}",
+    "Talk conversations" : "Conversas co Talk",
     "Talk to %s" : "Falar con %s",
     "An error occurred. Please contact your administrator." : "Houbo un erro. Póñase en contacto co seu administrador.",
     "File is not shared, or shared but not with the user" : "O ficheiro non está compartido, ou compartido, pero non co usuario",
@@ -1239,7 +1240,6 @@ OC.L10N.register(
     "Invitation was sent to {actorId}." : "Enviouse o convite a {actorId}.",
     "Rename conversation" : "Renomear a conversa",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "A tarxeta do Deck foi publicada na <a href=\"{link}\">conversa</a> seleccionada.",
-    "An error occurred while posting deck card to conversation." : "Produciuse un erro ao publicar a tarxeta do deck na conversa.",
-    "One to one rooms always need to show the other users avatar" : "As salas individuais sempre deben mostrar o avatar dos outros usuarios"
+    "An error occurred while posting deck card to conversation." : "Produciuse un erro ao publicar a tarxeta do deck na conversa."
 },
 "nplurals=2; plural=(n != 1);");

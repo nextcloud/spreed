@@ -883,6 +883,7 @@ OC.L10N.register(
     "Do you really want to delete all messages in \"{displayName}\"?" : "Наистина ли искате да изтриете всички съобщения в „{displayName}“?",
     "Delete all chat messages" : "Изтриване на всички съобщенията в чата",
     "Error while clearing chat history" : "Грешка при изчистване на историята на чата",
+    "Submit" : "Изпращане",
     "Message expiration" : "Изтичане на съобщението",
     "Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation." : "Съобщенията в чата могат да изтекат след определено време. Забележка: Файловете, споделени в чата, няма да бъдат изтрити за собственика, но повече няма да бъдат споделяни в разговора.",
     "Custom expiration time" : "Персонализиране на времето на изтичане",
@@ -1416,7 +1417,6 @@ OC.L10N.register(
     "End meeting for all" : "Край на срещата за всички",
     "Rename conversation" : "Преименуване на разговор",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deck картата е публикувана в избраният <a href=\"{link}\">разговор</a>.",
-    "An error occurred while posting deck card to conversation." : "Възникна грешка при публикуване на deck карта в разговор.",
-    "One to one rooms always need to show the other users avatar" : "В индивидуалните стаи винаги трябва да се показва аватарът на другия потребител"
+    "An error occurred while posting deck card to conversation." : "Възникна грешка при публикуване на deck карта в разговор."
 },
 "nplurals=2; plural=(n != 1);");

@@ -76,6 +76,7 @@ OC.L10N.register(
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Llamada con {user1}, {user2} y {user3} (Duración {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Llamada con {user1}, {user2}, {user3} y {user4} (Duración {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Llamada con {user1}, {user2}, {user3}, {user4} y {user5} (Duración {duration})",
+    "Talk conversations" : "Conversaciones de Talk",
     "Talk to %s" : "Hablar con %s",
     "File is not shared, or shared but not with the user" : "Archivo no compartido, o compartido pero no con el usuario.",
     "File is too big" : "El archivo es demasiado grande",

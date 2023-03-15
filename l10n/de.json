@@ -216,6 +216,7 @@
     "Message of {user} in {conversation}" : "Nachricht von {user} in {conversation}",
     "Message of {user}" : "Nachricht von {user}",
     "Message of a deleted user in {conversation}" : "Nachricht eines gelöschten Benutzers in {conversation}",
+    "Talk conversations" : "Talk Unterhaltungen",
     "Talk to %s" : "Mit %s sprechen",
     "An error occurred. Please contact your administrator." : "Es ist ein Fehler aufgetreten. Bitte kontaktiere deinen Administrator.",
     "File is not shared, or shared but not with the user" : "Datei ist nicht geteilt oder nicht mit dem Benutzer geteilt",
@@ -875,6 +876,7 @@
     "Do you really want to delete all messages in \"{displayName}\"?" : "Willst du wirklich alle Nachrichten in \"{displayName}\" löschen?",
     "Delete all chat messages" : "Alle Chatnachrichten löschen",
     "Error while clearing chat history" : "Fehler beim Löschen des Chatverlaufs",
+    "Submit" : "Übermitteln",
     "Message expiration" : "Nachrichtenablauf",
     "Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation." : "Chatnachrichten können nach einer bestimmten Zeit gelöscht werden. Hinweis: Im Chat freigegebene Dateien werden für den Besitzer nicht gelöscht, aber sie werden nicht mehr in der Unterhaltung freigegeben.",
     "Custom expiration time" : "Benutzerdefinierte Ablaufzeit",
@@ -1402,7 +1404,6 @@
     "End meeting for all" : "Konferenz für alle beenden",
     "Rename conversation" : "Unterhaltung umbenennen",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deckkarte wurde an die ausgewählte <a href=\"{link}\">Unterhaltung</a> gesendet.",
-    "An error occurred while posting deck card to conversation." : "Es ist ein Fehler beim Posten der Deckkarte an die Unterhaltung aufgetreten.",
-    "One to one rooms always need to show the other users avatar" : "Eins-zu-Eins-Räume müssen immer den Avatar des anderen Benutzers anzeigen."
+    "An error occurred while posting deck card to conversation." : "Es ist ein Fehler beim Posten der Deckkarte an die Unterhaltung aufgetreten."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -691,6 +691,7 @@
     "You need to promote a new moderator before you can leave the conversation." : "يجب عليك ترقية مشرف لاحد المشاركين قبل مغادرة المحادثة.",
     "Do you really want to delete \"{displayName}\"?" : "هل تريد حقا حذف \"{displayName}\" ؟",
     "Error while deleting conversation" : "حدث خطأ أثناء حذف المحادثة ",
+    "Submit" : "إرسال ",
     "Password protection" : "الحماية بكلمة السر",
     "Save password" : "حفظ كلمة المرور",
     "Copy conversation link" : "نسخ رابط المحادثة",

@@ -119,6 +119,7 @@
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "통화를 {user1}, {user2} 그리고 {user3} (지속시간 {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "통화를 {user1}, {user2}, {user3} 그리고 {user4} (지속시간 {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "통화를 {user1}, {user2}, {user3}, {user4} 그리고 {user5} (지속시간 {duration})",
+    "Talk conversations" : "토크 대화",
     "Talk to %s" : "%s 님과 대화",
     "File is not shared, or shared but not with the user" : "파일이 공유 되지 않았거나 파일이 유저를 포함하지 않고 공유됨",
     "No account available to delete." : "삭제할 수 있는 계정이 없습니다.",

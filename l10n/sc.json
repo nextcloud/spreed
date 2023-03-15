@@ -149,6 +149,7 @@
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Mutida cun {user1}, {user2} e {user3} (Durada {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Mutida cun {user1}, {user2}, {user3} e {user4} (Durada {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Mutida cun {user1}, {user2}, {user3}, {user4} e {user5} (Durada {duration})",
+    "Talk conversations" : "Resonadas de Talk",
     "Talk to %s" : "Faedda cun %s",
     "File is not shared, or shared but not with the user" : "S'archìviu no est cumpartzidu, o est cumpartzidu ma no cun s'utente",
     "No account available to delete." : "Perunu contu disponìbile de cantzellare.",

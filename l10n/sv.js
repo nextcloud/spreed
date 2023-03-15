@@ -144,6 +144,7 @@ OC.L10N.register(
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Samtal med {user1}, {user2} och {user3} (Varade {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Samtal med {user1}, {user2}, {user3} och {user4} (Varade {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Samtal med {user1}, {user2}, {user3}, {user4} och {user5} (Varade {duration})",
+    "Talk conversations" : "Talk-konversationer",
     "Talk to %s" : "Prata med %s",
     "File is not shared, or shared but not with the user" : "Filen delas inte eller delas men inte med användaren",
     "File is too big" : "Filen är för stor",

@@ -217,6 +217,7 @@ OC.L10N.register(
     "Message of {user} in {conversation}" : "{user} üzenete a(z) {conversation} beszélgetésben",
     "Message of {user}" : "{user} üzenete",
     "Message of a deleted user in {conversation}" : "Egy törölt felhasználó üzenete a(z) {conversation} beszélgetésben",
+    "Talk conversations" : "Beszélgetések",
     "Talk to %s" : "Beszélgetés vele: %s",
     "An error occurred. Please contact your administrator." : "Hiba történt. Lépjen kapcsolatba a rendszergazdával.",
     "File is not shared, or shared but not with the user" : "A fájl nincs megosztva, vagy meg van, de nem a felhasználóval",
@@ -1373,7 +1374,6 @@ OC.L10N.register(
     "End meeting for all" : "Találkozó befejezése mindenki számára",
     "Rename conversation" : "Beszélgetés átnevezése",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "A kártya elküldve a kiválasztott <a href=\"{link}\">beszélgetésbe</a>.",
-    "An error occurred while posting deck card to conversation." : "Hiba történt a kártya beszélgetésbe küldése során.",
-    "One to one rooms always need to show the other users avatar" : "A négyszemközti beszélgetések szobáinak mindig a másik felhasználó profilképét kell megjelenítenie"
+    "An error occurred while posting deck card to conversation." : "Hiba történt a kártya beszélgetésbe küldése során."
 },
 "nplurals=2; plural=(n != 1);");
