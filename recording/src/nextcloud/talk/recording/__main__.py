@@ -20,13 +20,20 @@
 import argparse
 import logging
 
+from nextcloud.talk import recording
 from .Config import config
 from .Server import app
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", help="path to configuration file", default="server.conf")
+    parser.add_argument("-v", "--version", help="show version and quit", action="store_true")
     args = parser.parse_args()
+
+    if args.version:
+        print(recording.__version__)
+
+        return
 
     config.load(args.config)
 
