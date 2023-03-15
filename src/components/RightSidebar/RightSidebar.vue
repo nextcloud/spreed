@@ -29,14 +29,14 @@
 		@update:active="handleUpdateActive"
 		@closed="handleClosed"
 		@close="handleClose">
-		<template #description>
+		<template slot="description">
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
 		<NcAppSidebarTab v-if="showChatInSidebar"
 			id="chat"
 			:order="1"
 			:name="t('spreed', 'Chat')">
-			<template #icon>
+			<template slot="icon">
 				<Message :size="20" />
 			</template>
 			<ChatView :is-visible="opened" />
@@ -46,7 +46,7 @@
 			ref="participantsTab"
 			:order="2"
 			:name="participantsText">
-			<template #icon>
+			<template slot="icon">
 				<AccountMultiple :size="20" />
 			</template>
 			<ParticipantsTab :is-active="activeTab === 'participants'"
@@ -58,7 +58,7 @@
 			ref="breakout-rooms"
 			:order="3"
 			:name="breakoutRoomsText">
-			<template #icon>
+			<template slot="icon">
 				<DotsCircle :size="20" />
 			</template>
 			<BreakoutRoomsTab :main-token="mainConversationToken"
@@ -69,7 +69,7 @@
 			id="details-tab"
 			:order="4"
 			:name="t('spreed', 'Details')">
-			<template #icon>
+			<template slot="icon">
 				<InformationOutline :size="20" />
 			</template>
 			<SetGuestUsername v-if="!getUserId" />
@@ -79,7 +79,7 @@
 			<div v-if="!getUserId" id="app-settings">
 				<div id="app-settings-header">
 					<NcButton type="tertiary" @click="showSettings">
-						<template #icon>
+						<template slot="icon">
 							<CogIcon :size="20" />
 						</template>
 						{{ t('spreed', 'Settings') }}
@@ -92,7 +92,7 @@
 			ref="sharedItemsTab"
 			:order="5"
 			:name="t('spreed', 'Shared items')">
-			<template #icon>
+			<template slot="icon">
 				<FolderMultipleImage :size="20" />
 			</template>
 			<SharedItemsTab :active="activeTab === 'shared-items'" />
