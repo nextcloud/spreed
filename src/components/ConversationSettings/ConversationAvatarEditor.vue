@@ -156,7 +156,7 @@ export default {
 		},
 
 		fileTypeWarning() {
-			return t('spreed', 'png or jpg.')
+			return t('spreed', 'The file must be a PNG or JPG')
 		},
 	},
 
