@@ -24,7 +24,7 @@
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Picture') }}
 		</h4>
-		<ConversationPictureEditor :conversation="conversation" />
+		<ConversationAvatarEditor :conversation="conversation" />
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Name') }}
 		</h4>
@@ -55,7 +55,7 @@ import { Fragment } from 'vue-frag'
 
 import { showError } from '@nextcloud/dialogs'
 
-import ConversationPictureEditor from './ConversationPictureEditor.vue'
+import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import EditableTextField from './EditableTextField.vue'
 
 export default {
@@ -64,7 +64,7 @@ export default {
 	components: {
 		EditableTextField,
 		Fragment,
-		ConversationPictureEditor,
+		ConversationAvatarEditor,
 	},
 
 	props: {

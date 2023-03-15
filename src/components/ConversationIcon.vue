@@ -27,8 +27,8 @@
 			class="avatar icon"
 			:style="iconStyle"
 			:class="iconClass" />
-		<NcAvatar v-else-if="hasPicture"
-			:url="pictureUrl"
+		<NcAvatar v-else-if="hasAvatar"
+			:url="avatarUrl"
 			:size="size" />
 		<NcAvatar v-else
 			:size="size"
@@ -139,7 +139,7 @@ export default {
 		},
 
 		iconClass() {
-			if (this.hasPicture) {
+			if (this.hasAvatar) {
 				return ''
 			}
 			if (this.item.objectType === 'file') {
@@ -197,11 +197,11 @@ export default {
 			}
 		},
 
-		hasPicture() {
+		hasAvatar() {
 			return !!this.item.avatarVersion
 		},
 
-		pictureUrl() {
+		avatarUrl() {
 			return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar?v={avatarVersion}', {
 				token: this.item.token,
 				avatarVersion: this.item.avatarVersion,

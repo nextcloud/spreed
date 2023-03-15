@@ -108,7 +108,7 @@ const picker = getFilePickerBuilder(t('spreed', 'Choose your profile picture'))
 	.build()
 
 export default {
-	name: 'ConversationPictureEditor',
+	name: 'ConversationAvatarEditor',
 
 	components: {
 		Delete,
