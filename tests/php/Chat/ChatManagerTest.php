@@ -347,7 +347,7 @@ class ChatManagerTest extends TestCase {
 			->method('getUID')
 			->willReturn('userId');
 
-		$comments = $this->chatManager->waitForNewMessages($chat, $offset, $limit, $timeout, $user, false);
+		$comments = $this->chatManager->waitForNewMessages($chat, $offset, $limit, $timeout, $user, false, true);
 
 		$this->assertEquals($expected, $comments);
 	}
@@ -385,7 +385,7 @@ class ChatManagerTest extends TestCase {
 			->method('getUID')
 			->willReturn('userId');
 
-		$comments = $this->chatManager->waitForNewMessages($chat, $offset, $limit, $timeout, $user, false);
+		$comments = $this->chatManager->waitForNewMessages($chat, $offset, $limit, $timeout, $user, false, true);
 
 		$this->assertEquals($expected, $comments);
 	}

@@ -598,12 +598,13 @@ class ChatManager {
 	 * @param int $timeout
 	 * @param IUser|null $user
 	 * @param bool $includeLastKnown
+	 * @param bool $markNotificationsAsRead (defaults to true)
 	 * @return IComment[] the messages found (only the id, actor type and id,
 	 *         creation date and message are relevant), or an empty array if the
 	 *         timeout expired.
 	 */
-	public function waitForNewMessages(Room $chat, int $offset, int $limit, int $timeout, ?IUser $user, bool $includeLastKnown): array {
-		if ($user instanceof IUser) {
+	public function waitForNewMessages(Room $chat, int $offset, int $limit, int $timeout, ?IUser $user, bool $includeLastKnown, bool $markNotificationsAsRead = true): array {
+		if ($markNotificationsAsRead && $user instanceof IUser) {
 			$this->notifier->markMentionNotificationsRead($chat, $user->getUID());
 		}
 
