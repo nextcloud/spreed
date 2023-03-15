@@ -191,6 +191,7 @@ OC.L10N.register(
     "{actor} ended the call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "{actor} завершил разговор с {user1}, {user2}, {user3} и {user4} (Продолжительность {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Вызов пользователей {user1}, {user2}, {user3}, {user4} и {user5} (Продолжительность: {duration})",
     "{actor} ended the call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "{actor} завершил разговор с {user1}, {user2}, {user3}, {user4} и {user5} (Продолжительность {duration})",
+    "Talk conversations" : "Обсуждения",
     "Talk to %s" : "Начать обсуждение с %s",
     "An error occurred. Please contact your administrator." : "Произошла ошибка. Пожалуйста, свяжитесь с администратором.",
     "File is not shared, or shared but not with the user" : "Файл не имеет общего доступа, либо имеет, но не с пользователем",

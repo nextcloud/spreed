@@ -79,6 +79,7 @@ OC.L10N.register(
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Позив са корисницима {user1}, {user2} и {user3} (трајање {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Позив са корисницима {user1}, {user2},  {user3} и {user4} (трајање {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Позив са корисницима {user1}, {user2} {user3}, {user4} и {user5} (трајање {duration})",
+    "Talk conversations" : "Talk разговори",
     "Talk to %s" : "Причај са %s",
     "File is not shared, or shared but not with the user" : "Фајл није дељен, или је дељен али не са корисником",
     "File is too big" : "Фајл је превелики",

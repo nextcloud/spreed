@@ -4,6 +4,7 @@ OC.L10N.register(
     "Other activities" : "Alia aktivado",
     "Talk" : "Paroli",
     "Guest" : "Gasto",
+    "Talk conversations" : "Buŝaj konversacioj",
     "Talk to %s" : "Paroli al %s",
     "File is too big" : "Dosiero tro grandas",
     "Invalid file provided" : "Nevalida dosiero provizita",

@@ -76,6 +76,7 @@ OC.L10N.register(
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "تماس با {user1} ، {user2} و {user3} (مدت زمان {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "تماس با {user1} ، {user2} ، {user3} و {user4} (مدت زمان {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "تماس با {user1} ، {user2} ، {user3} ، {user4} و {user5} (مدت زمان {duration})",
+    "Talk conversations" : "مکالمات صحبت کنید",
     "Talk to %s" : "صحبت کردن %s",
     "File is not shared, or shared but not with the user" : "پرونده به اشتراک گذاشته نمی شود ، یا به اشتراک گذاشته اما با کاربر به اشتراک گذاشته نمی شود",
     "File is too big" : "فایل خیلی بزرگ است",

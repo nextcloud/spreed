@@ -62,6 +62,7 @@ OC.L10N.register(
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Samtal við {user1}, {user2} og {user3} (tímalengd {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Samtal við {user1}, {user2}, {user3} og {user4} (tímalengd {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Samtal við {user1}, {user2}, {user3}, {user4} og {user5} (tímalengd {duration})",
+    "Talk conversations" : "Samtöl",
     "Talk to %s" : "Tala við %s",
     "File is not shared, or shared but not with the user" : "Skránni er ekki deilt, eða henni er deilt en ekki með notandanum",
     "File is too big" : "Skrá er of stór",

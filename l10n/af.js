@@ -274,6 +274,7 @@ OC.L10N.register(
     "Personal" : "Persoonlik",
     "Leave conversation" : "verlaat gesprek",
     "Delete conversation" : "Skrap gesprek",
+    "Submit" : "Dien in",
     "Save" : "Stoor",
     "Edit" : "Wysig",
     "Delete" : "Skrap",

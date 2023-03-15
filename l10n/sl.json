@@ -215,6 +215,7 @@
     "Message of {user} in {conversation}" : "Sporočilo osebe {user} v pogovoru {conversation}",
     "Message of {user}" : "Sporočilo osebe {user}",
     "Message of a deleted user in {conversation}" : "Sporočilo izbrisane osebe v pogovoru {conversation}",
+    "Talk conversations" : "Pogovori Talk",
     "Talk to %s" : "Pogovor: %s",
     "An error occurred. Please contact your administrator." : "Prišlo je do napake. Stopite v stik s skrbnikom sistema.",
     "File is not shared, or shared but not with the user" : "Datoteka ni v uporabi, ali pa ni v uporabi z uporabnikom",
@@ -1358,7 +1359,6 @@
     "End meeting for all" : "Končaj pogovor za vse",
     "Rename conversation" : "Preimenuj pogovor",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Naloga Deck je dodana v izbran <a href=\"{link}\">pogovor</a>.",
-    "An error occurred while posting deck card to conversation." : "Prišlo je do napake med dodajanjem naloge v pogovor.",
-    "One to one rooms always need to show the other users avatar" : "Skupine ena na ena vedno zahtevajo prikaz podob drugih uporabnikov"
+    "An error occurred while posting deck card to conversation." : "Prišlo je do napake med dodajanjem naloge v pogovor."
 },"pluralForm" :"nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);"
 }

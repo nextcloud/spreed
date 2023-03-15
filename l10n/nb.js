@@ -72,6 +72,7 @@ OC.L10N.register(
     "You shared a file which is no longer available" : "Du delte en fil som ikke lenger er tilgjengelig",
     "%s (guest)" : "%s (gjest)",
     "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Samtale med %n gjest (Varighet {duration})","Samtale med %n gjester (Varighet {duration})"],
+    "Talk conversations" : "Talk-samtaler",
     "Talk to %s" : "Snakk med %s",
     "File is too big" : "Filen er for stor",
     "Invalid file provided" : "Ugyldig fil oppgitt",

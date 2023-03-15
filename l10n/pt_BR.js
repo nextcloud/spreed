@@ -217,6 +217,7 @@ OC.L10N.register(
     "Message of {user} in {conversation}" : "Mensagem de {user} em {conversation}",
     "Message of {user}" : "Mensagem de {user}",
     "Message of a deleted user in {conversation}" : "Mensagem de um usuário deletado em {conversation}",
+    "Talk conversations" : "Conversas",
     "Talk to %s" : "Falar com %s",
     "An error occurred. Please contact your administrator." : "Um erro ocorreu. Entre em contato com seu administrador.",
     "File is not shared, or shared but not with the user" : "O arquivo não é compartilhado com o usuário ou nem é compartilhado",
@@ -1386,7 +1387,6 @@ OC.L10N.register(
     "End meeting for all" : "Fim da reunião para todos",
     "Rename conversation" : "Renomear conversa",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Cartão do Deck enviado para a <a href=\"{link}\">conversation</a> selecionada.",
-    "An error occurred while posting deck card to conversation." : "Ocorreu um erro ao enviar um cartão do Deck para a conversa.",
-    "One to one rooms always need to show the other users avatar" : "Salas individuais sempre precisam mostrar o avatar dos outros usuários"
+    "An error occurred while posting deck card to conversation." : "Ocorreu um erro ao enviar um cartão do Deck para a conversa."
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

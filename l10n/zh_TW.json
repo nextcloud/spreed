@@ -216,6 +216,7 @@
     "Message of {user} in {conversation}" : "{conversation} 中來自 {user} 的訊息",
     "Message of {user}" : "{user} 的訊息",
     "Message of a deleted user in {conversation}" : "{conversation} 中已刪除使用者的訊息",
+    "Talk conversations" : "Talk 交談",
     "Talk to %s" : "與 %s 交談",
     "An error occurred. Please contact your administrator." : "發生錯誤，請聯絡管理員。",
     "File is not shared, or shared but not with the user" : "檔案未被分享，或未與使用者分享",
@@ -843,9 +844,12 @@
     "This conversation is read-only" : "此對話唯讀",
     "Drop your files to upload" : "拖曳您的檔案以上傳",
     "Favorite" : "我的最愛",
+    "Enter a name for this conversation" : "輸入此對話名稱",
+    "Edit conversation name" : "編輯對話名稱",
     "Description" : "描述",
     "Edit conversation description" : "編輯對話描述",
     "Enter a description for this conversation" : "輸入此對話的描述",
+    "Error while updating conversation name" : "更新對話名稱時發生錯誤",
     "Error while updating conversation description" : "更新對話描述時發生錯誤",
     "Set up breakout rooms for this conversation" : "為此對話設定分組討論室",
     "Breakout rooms" : "分組討論室",
@@ -860,6 +864,7 @@
     "Default permissions modified for {conversationName}" : "為 {conversationName} 修改了預設權限",
     "Could not modify default permissions for {conversationName}" : "無法修改 {conversationName} 的預設權限",
     "Conversation settings" : "對話設定",
+    "Basic Info" : "基本資訊",
     "Personal" : "個人",
     "Always show the device preview screen before joining a call in this conversation." : "在此對話中加入通話之前，一律顯示裝置預覽畫面。",
     "Moderation" : "主持",
@@ -881,7 +886,9 @@
     "Do you really want to delete all messages in \"{displayName}\"?" : "您真的想要刪除「{displayName}」中的所有訊息嗎？",
     "Delete all chat messages" : "刪除所有聊天訊息",
     "Error while clearing chat history" : "清除聊天歷史紀錄時發生錯誤",
+    "Cancel editing" : "取消編輯",
     "Submit" : "遞交",
+    "The text must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "文字的長度必須小於或等於 {maxLength} 個字元。您目前的文字長度為 {charactersCount} 個字元。",
     "Message expiration" : "訊息過期",
     "Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation." : "聊天訊息可能會在一定時間後過期。注意：在聊天中分享的檔案不會為所有者刪除，但將不再於對話中被分享。",
     "Custom expiration time" : "自訂過期時間",
@@ -1415,7 +1422,6 @@
     "End meeting for all" : "為大家結束會議",
     "Rename conversation" : "重新命名對話",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "看板卡片已發佈到選定的<a href=\"{link}\">對話</a>。",
-    "An error occurred while posting deck card to conversation." : "將看板卡片傳送到對話時發生了錯誤。",
-    "One to one rooms always need to show the other users avatar" : "一對一的聊天室一律必須顯示其他使用者的大頭照"
+    "An error occurred while posting deck card to conversation." : "將看板卡片傳送到對話時發生了錯誤。"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

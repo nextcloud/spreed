@@ -67,6 +67,7 @@ OC.L10N.register(
     "{actor} deleted a message" : "הודעה נמחקה על ידי {actor}",
     "You deleted a message" : "מחקת הודעה",
     "You missed a call from {user}" : "החמצת שיחה עם {user}",
+    "Talk conversations" : "דיוני שיח",
     "File is too big" : "הקובץ גדול מדי",
     "Invalid file provided" : "הקובץ שסופק שגוי",
     "Invalid image" : "תמונה לא חוקית",
