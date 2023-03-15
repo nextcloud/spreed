@@ -533,22 +533,22 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('You ended the poll {poll}');
 			}
 		} elseif ($message === 'recording_started') {
-			$parsedMessage = $this->l->t('{actor} started the video recording');
+			$parsedMessage = $this->l->t('Call recording started');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You started the video recording');
 			}
 		} elseif ($message === 'recording_stopped') {
-			$parsedMessage = $this->l->t('{actor} stopped the video recording');
+			$parsedMessage = $this->l->t('Call recording stopped');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You stopped the video recording');
 			}
 		} elseif ($message === 'audio_recording_started') {
-			$parsedMessage = $this->l->t('{actor} started the audio recording');
+			$parsedMessage = $this->l->t('Call recording started');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You started the audio recording');
 			}
 		} elseif ($message === 'audio_recording_stopped') {
-			$parsedMessage = $this->l->t('{actor} stopped the audio recording');
+			$parsedMessage = $this->l->t('Call recording stopped');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You stopped the audio recording');
 			}

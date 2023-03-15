@@ -85,6 +85,76 @@ Feature: callapi/recording
       | type | name  | callRecording |
       | 2    | room1 | 0             |
 
+  Scenario: Non moderators need to receive the notification Start and stop audio recording
+    Given recording server is started
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    And user "participant1" joins call "room1" with 200 (v4)
+    And user "participant1" adds user "participant2" to room "room1" with 200 (v4)
+    And user "participant2" joins room "room1" with 200 (v4)
+    When user "participant1" starts "audio" recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data                                                         |
+      | room1 | {"type":"start","start":{"status":2,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 4             |
+    And user "participant2" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 4             |
+    And recording server sent started request for "audio" recording in room "room1" as "participant1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | systemMessage           |
+      | room1 | users     | participant1 | participant1-displayname | audio_recording_started |
+      | room1 | users     | participant1 | participant1-displayname | user_added              |
+      | room1 | users     | participant1 | participant1-displayname | call_started            |
+      | room1 | users     | participant1 | participant1-displayname | conversation_created    |
+    Then user "participant2" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | systemMessage           |
+      | room1 | users     | participant1 | participant1-displayname | audio_recording_started |
+      | room1 | users     | participant1 | participant1-displayname | user_added              |
+      | room1 | users     | participant1 | participant1-displayname | call_started            |
+      | room1 | users     | participant1 | participant1-displayname | conversation_created    |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 2             |
+    And user "participant2" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 2             |
+    When user "participant1" stops recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data             |
+      | room1 | {"type":"stop","stop":{"actor":{"type":"users","id":"participant1"}}} |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 2             |
+    And user "participant2" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 2             |
+    And recording server sent stopped request for recording in room "room1" as "participant1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | systemMessage           |
+      | room1 | users     | participant1 | participant1-displayname | audio_recording_stopped |
+      | room1 | users     | participant1 | participant1-displayname | audio_recording_started |
+      | room1 | users     | participant1 | participant1-displayname | user_added              |
+      | room1 | users     | participant1 | participant1-displayname | call_started            |
+      | room1 | users     | participant1 | participant1-displayname | conversation_created    |
+    Then user "participant2" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | systemMessage           |
+      | room1 | users     | participant1 | participant1-displayname | audio_recording_stopped |
+      | room1 | users     | participant1 | participant1-displayname | audio_recording_started |
+      | room1 | users     | participant1 | participant1-displayname | user_added              |
+      | room1 | users     | participant1 | participant1-displayname | call_started            |
+      | room1 | users     | participant1 | participant1-displayname | conversation_created    |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
+    And user "participant2" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
+
   Scenario: Recording failed to start
     Given recording server is started
     And user "participant1" creates room "room1" (v4)
