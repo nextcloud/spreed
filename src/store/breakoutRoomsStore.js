@@ -66,10 +66,8 @@ const mutations = {
 	 *
 	 * @param {object} state current store state;
 	 * @param {object} conversation the conversation;
-	 * @param conversation.parentRoomToken
-	 * @param parentRoomToken the parent room token;
-	 * @param breakoutRoom
-	 * @param conversation.breakoutRoom
+	 * @param {string} conversation.parentRoomToken the parent room token;
+	 * @param {object} conversation.breakoutRoom the breakout room;
 	 */
 	addBreakoutRoom(state, { parentRoomToken, breakoutRoom }) {
 		if (!state.breakoutRooms[parentRoomToken]) {
@@ -90,9 +88,9 @@ const mutations = {
  * The breakout rooms api return an array with mixed breakout rooms and "parent" conversations, we want to add the
  * breakout rooms to this store and update the parent conversations in the conversations store.
  *
- * @param conversationsList the array of mixed breakout rooms and "parent" conversation
- * @param parentRoomToken
- * @param context the context object
+ * @param {Array} conversationsList the array of mixed breakout rooms and "parent" conversation
+ * @param {string }parentRoomToken the parent room token;
+ * @param {object} context the context object
  */
 const processConversations = (conversationsList, parentRoomToken, context) => {
 

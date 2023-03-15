@@ -21,6 +21,10 @@
 
 import Axios from '@nextcloud/axios'
 
+import { PARTICIPANT } from '../../constants.js'
+import { fetchSignalingSettings } from '../../services/signalingService.js'
+import CancelableRequest from '../cancelableRequest.js'
+import Signaling from '../signaling.js'
 import CallAnalyzer from './analyzers/CallAnalyzer.js'
 import MediaDevicesManager from './MediaDevicesManager.js'
 import CallParticipantCollection from './models/CallParticipantCollection.js'
@@ -30,10 +34,6 @@ import SentVideoQualityThrottler from './SentVideoQualityThrottler.js'
 import './shims/MediaStream.js'
 import './shims/MediaStreamTrack.js'
 import initWebRtc from './webrtc.js'
-import { PARTICIPANT } from '../../constants.js'
-import { fetchSignalingSettings } from '../../services/signalingService.js'
-import CancelableRequest from '../cancelableRequest.js'
-import Signaling from '../signaling.js'
 
 let webRtc = null
 const callParticipantCollection = new CallParticipantCollection()
