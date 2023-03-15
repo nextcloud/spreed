@@ -718,6 +718,7 @@ const actions = {
 			const response = await setConversationPicture(token, file)
 			const conversation = response.data.ocs.data
 			context.commit('addConversation', conversation)
+			showSuccess(t('spreed', 'You\'ve set the conversation picture.'))
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'Could not set the conversation picture.'))
@@ -730,6 +731,7 @@ const actions = {
 			const response = await deleteConversationPicture(token, file)
 			const conversation = response.data.ocs.data
 			context.commit('addConversation', conversation)
+			showSuccess(t('spreed', 'You\'ve deleted the conversation picture.'))
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'Could not delete the conversation picture.'))
