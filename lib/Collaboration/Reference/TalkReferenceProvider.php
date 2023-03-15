@@ -231,7 +231,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 		$reference->setTitle($title);
 		$reference->setDescription($description);
 		$reference->setUrl($this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]));
-		$reference->setImageUrl($this->getRoomIconUrl($room, $this->userId));
+		$reference->setImageUrl($this->avatarService->getAvatarUrl($room));
 
 		$reference->setRichObject('call', [
 			'id' => $room->getToken(),
@@ -263,19 +263,6 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 		}
 
 		return ($this->userId ?? '') . '#' . ($referenceMatch['message'] ?? 0);
-	}
-	protected function getRoomIconUrl(Room $room, string $userId): string {
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
-			return $this->urlGenerator->linkToRouteAbsolute(
-				'core.avatar.getAvatar',
-				[
-					'userId' => $room->getSecondParticipant($userId),
-					'size' => 64,
-				]
-			);
-		}
-
-		return $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'changelog.svg'));
 	}
 
 	protected function getRoomType(Room $room): string {
