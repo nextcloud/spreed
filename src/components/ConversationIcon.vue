@@ -194,6 +194,7 @@ export default {
 			return {
 				height: this.size.toString() + 'px',
 				width: this.size.toString() + 'px',
+				'background-size': (this.size / 2).toString() + 'px',
 			}
 		},
 
@@ -224,7 +225,6 @@ $icon-size: 44px;
 
 	.avatar.icon {
 		line-height: $icon-size;
-		font-size: calc($icon-size / 2);
 		background-color: var(--color-background-darker);
 
 		&.icon-changelog {
