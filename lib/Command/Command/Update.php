@@ -119,7 +119,7 @@ class Update extends Base {
 
 		$output->writeln('<info>Command updated</info>');
 		$output->writeln('');
-		$this->renderCommands(Base::OUTPUT_FORMAT_PLAIN, $output, [$command]);
+		$this->renderCommands($input, $output, [$command]);
 		return 0;
 	}
 }
