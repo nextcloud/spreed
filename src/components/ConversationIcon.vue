@@ -202,7 +202,10 @@ export default {
 		},
 
 		pictureUrl() {
-			return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token: this.item.token })
+			return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar?v={avatarVersion}', {
+				token: this.item.token,
+				avatarVersion: this.item.avatarVersion,
+			})
 		},
 	},
 
