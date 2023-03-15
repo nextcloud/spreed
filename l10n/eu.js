@@ -204,6 +204,7 @@ OC.L10N.register(
     "Message of {user} in {conversation}" : "{user}-ren mezua {conversation}-n",
     "Message of {user}" : "{user} erabiltzailearen mezua",
     "Message of a deleted user in {conversation}" : "Ezabatutako erabiltzaile baten mezua {elkarrizketa} atalean",
+    "Talk conversations" : "Talk elkarrizketak",
     "Talk to %s" : "Hitz egin %s erabiltzailearekin",
     "An error occurred. Please contact your administrator." : "Errore bat gertatu da. Jarri zure administratzailearekin harremanetan mesedez.",
     "File is not shared, or shared but not with the user" : "Fitxategia ez dago partekatua, edo partekatu da baina ez erabiltzailearekin",

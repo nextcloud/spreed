@@ -201,6 +201,7 @@ OC.L10N.register(
     "Message of {user} in {conversation}" : "{conversation} 中来自 {user} 的讯息",
     "Message of {user}" : "{user} 的讯息",
     "Message of a deleted user in {conversation}" : "{conversation} 中已刪除用戶的讯息",
+    "Talk conversations" : "Talk 会话",
     "Talk to %s" : "和 %s 说话",
     "An error occurred. Please contact your administrator." : "发生了一个错误。请联系你的管理员。",
     "File is not shared, or shared but not with the user" : "文件未共享，或没有共享给用户",

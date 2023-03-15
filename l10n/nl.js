@@ -190,6 +190,7 @@ OC.L10N.register(
     "{actor} ended the call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "{actor} beëindigde het gesprek met {user1}, {user2}, {user3} en {user4} (Looptijd {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Telefoongesprek met {user1}, {user2}, {user3}, {user4} en {user5} (Duur {duration})",
     "{actor} ended the call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "{actor} beëindigde het gesprek met {user1}, {user2}, {user3}, {user4} en {user5} (Looptijd {duration})",
+    "Talk conversations" : "Talk-gesprekken",
     "Talk to %s" : "Spreek met %s",
     "File is not shared, or shared but not with the user" : "Bestand is niet gedeeld, of wel gedeeld maar niet met de gebruiker",
     "No account available to delete." : "Geen account beschikbaar om te verwijderen.",

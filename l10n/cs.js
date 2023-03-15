@@ -218,6 +218,7 @@ OC.L10N.register(
     "Message of {user} in {conversation}" : "Zpráva {user} v {conversation}",
     "Message of {user}" : "Zpráva uživatele {user}",
     "Message of a deleted user in {conversation}" : "Zpráva smazaného uživatele v {conversation}",
+    "Talk conversations" : "Konverzace v Talk",
     "Talk to %s" : "Talk s %s",
     "An error occurred. Please contact your administrator." : "Došlo k chybě. Obraťte se na svého správce.",
     "File is not shared, or shared but not with the user" : "Soubor není sdílen, nebo je sdílený s jiným uživatelem",
@@ -883,6 +884,7 @@ OC.L10N.register(
     "Do you really want to delete all messages in \"{displayName}\"?" : "Opravdu chcete smazat všechny zprávy v „{displayName}“?",
     "Delete all chat messages" : "Smazat všechny zprávy chatu",
     "Error while clearing chat history" : "Chyba při mazání historie konverzace",
+    "Submit" : "Odeslat",
     "Message expiration" : "Skončení platnosti zprávy",
     "Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation." : "Platnost zpráv v chatu je možné ukončit po uplynutí zadané doby. Pozn.: Soubory nasdílené v chatu nebudou vlastníkovi smazány, ale už nadále nebudou sdíleny v konverzaci.",
     "Custom expiration time" : "Uživatelsky určený okamžik skončení platnosti",
@@ -1416,7 +1418,6 @@ OC.L10N.register(
     "End meeting for all" : "Ukončit schůzku pro všechny",
     "Rename conversation" : "Přejmenovat konverzaci",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Karta aplikace Deck byla odeslána do vybrané <a href=\"{link}\">konverzace</a>.",
-    "An error occurred while posting deck card to conversation." : "Pri odesílání karty aplikace Deck došlo k chybě",
-    "One to one rooms always need to show the other users avatar" : "Místnosti s jen dvěma komunikujícími vždy vyžadují zobrazení profilového obrázku druhého uživatele"
+    "An error occurred while posting deck card to conversation." : "Pri odesílání karty aplikace Deck došlo k chybě"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

@@ -168,6 +168,7 @@ OC.L10N.register(
     "{actor} ended the call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "{actor} ha terminato la chiamata con {user1}, {user2}, {user3} e {user4} (Durata {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Chiamata con {user1}, {user2}, {user3}, {user4} e {user5} (Durata {duration})",
     "{actor} ended the call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "{actor} ha terminato la chiamata con {user1}, {user2}, {user3}, {user4} e {user5} (Durata {duration})",
+    "Talk conversations" : "Conversazioni di Talk",
     "Talk to %s" : "Parla con %s",
     "File is not shared, or shared but not with the user" : "Il file non è condiviso, o condiviso ma non con l'utente",
     "No account available to delete." : "Nessun account disponibile da eliminare.",

@@ -591,6 +591,7 @@ OC.L10N.register(
     "Delete conversation" : "Lemel an diviz",
     "You need to promote a new moderator before you can leave the conversation." : "Ret eo deoc'h lakaat unan bennak da moderatour a-rao kuitaat an diviz.",
     "Do you really want to delete \"{displayName}\"?" : "Sur oc'h da lemel  \"{displayName}\" ?",
+    "Submit" : "Kinnig",
     "Password protection" : "Gwareziñ gant ur ger-tremen",
     "Copy conversation link" : "Eilañ al liamm diviz",
     "Conversation link copied to clipboard." : "Liamm diviz eilet er golver",

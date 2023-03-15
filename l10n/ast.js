@@ -59,6 +59,7 @@ OC.L10N.register(
     "Description" : "Descripción",
     "Personal" : "Personal",
     "Permissions" : "Permisos",
+    "Submit" : "Unviar",
     "Password protection" : "Password protection",
     "Save" : "Guardar",
     "Edit" : "Editar",

@@ -163,6 +163,7 @@
     "{actor} ended the call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "{actor} je završio poziv s {user1}, {user2}, {user3} i {user4} (Trajanje {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Poziv u kojem sudjeluju {user1}, {user2}, {user3}, {user4} i {user5} (trajanje {duration})",
     "{actor} ended the call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "{actor} je završio poziv s {user1}, {user2}, {user3}, {user4} i {user5} (Trajanje {duration})",
+    "Talk conversations" : "Razgovori u alatu Talk",
     "Talk to %s" : "Razgovarajte s %s",
     "File is not shared, or shared but not with the user" : "Datoteka se ne dijeli ili se ne dijeli samo s korisnikom",
     "No account available to delete." : "Nema računa za brisanje.",

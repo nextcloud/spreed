@@ -125,6 +125,7 @@
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Κλήση με {user1}, {user2} και {user3} (Διάρκεια {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Κλήση με {user1}, {user2}, {user3} και {user4} (Διάρκεια {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Κλήση με {user1}, {user2}, {user3}, {user4} και {user5} (Διάρκεια {duration})",
+    "Talk conversations" : "Συνομιλίες με Talk",
     "Talk to %s" : "Talk σε %s",
     "File is not shared, or shared but not with the user" : "Το αρχείο δεν είναι κοινόχρηστο, ή δεν μοιράζεται με τον χρήστη",
     "No account available to delete." : "Δεν υπάρχει διαθέσιμος λογαριασμός για διαγραφή.",

@@ -160,6 +160,7 @@ OC.L10N.register(
     "{actor} ended the call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "{actor} acabèt la sonada amb {user1}, {user2}, {user3} e {user4} (Durada {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Sonada amb {user1}, {user2}, {user3}, {user4} e {user5} (Durada {duration})",
     "{actor} ended the call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "{actor} acabèt la sonada amb {user1}, {user2}, {user3}, {user4} {user5} (Durada {duration})",
+    "Talk conversations" : "Conversacions Talk",
     "Talk to %s" : "Parlar a %s",
     "File is not shared, or shared but not with the user" : "Fichièr pas partejat, o partejat mas pas a l’utilizaire",
     "No account available to delete." : "Cap de compte pas disponible per la supression.",
