@@ -208,7 +208,8 @@ class NotifierTest extends TestCase {
 					'type' => 'call',
 					'id' => 1234,
 					'name' => $displayName,
-					'call-type' => 'one2one'
+					'call-type' => 'one2one',
+					'icon-url' => '',
 				],
 			])
 			->willReturnSelf();
@@ -322,7 +323,8 @@ class NotifierTest extends TestCase {
 					'type' => 'call',
 					'id' => 1234,
 					'name' => $displayName,
-					'call-type' => 'one2one'
+					'call-type' => 'one2one',
+					'icon-url' => '',
 				],
 			])
 			->willReturnSelf();
@@ -431,6 +433,7 @@ class NotifierTest extends TestCase {
 						'id' => $roomId,
 						'name' => $name,
 						'call-type' => 'group',
+						'icon-url' => '',
 					],
 				])
 				->willReturnSelf();
@@ -448,6 +451,7 @@ class NotifierTest extends TestCase {
 						'id' => $roomId,
 						'name' => $name,
 						'call-type' => 'public',
+						'icon-url' => '',
 					],
 				])
 				->willReturnSelf();
@@ -482,7 +486,7 @@ class NotifierTest extends TestCase {
 					'{user} mentioned you in a private conversation',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Test user', 'call-type' => 'one2one'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Test user', 'call-type' => 'one2one', 'icon-url' => ''],
 					],
 				],
 			],
@@ -493,7 +497,7 @@ class NotifierTest extends TestCase {
 					'{user} mentioned you in conversation {call}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group', 'icon-url' => ''],
 					],
 				],
 			],
@@ -503,7 +507,7 @@ class NotifierTest extends TestCase {
 				[
 					'A deleted user mentioned you in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group', 'icon-url' => ''],
 					],
 				],
 				$deletedUser = true,
@@ -515,7 +519,7 @@ class NotifierTest extends TestCase {
 					'{user} mentioned you in conversation {call}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 					],
 				],
 			],
@@ -525,7 +529,7 @@ class NotifierTest extends TestCase {
 				[
 					'A deleted user mentioned you in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 					],
 				],
 				$deletedUser = true,
@@ -536,7 +540,7 @@ class NotifierTest extends TestCase {
 				[
 					'A guest mentioned you in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 					],
 				],
 				$deletedUser = false, $guestName = null,
@@ -547,7 +551,7 @@ class NotifierTest extends TestCase {
 				[
 					'{guest} (guest) mentioned you in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 						'guest' => ['type' => 'guest', 'id' => 'random-hash', 'name' => 'MyNameIs'],
 					]
 				],
@@ -559,7 +563,7 @@ class NotifierTest extends TestCase {
 				[
 					'A guest mentioned you in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 					],
 				],
 				$deletedUser = false, $guestName = '',
@@ -573,7 +577,7 @@ class NotifierTest extends TestCase {
 					'{user} sent you a private message',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Test user', 'call-type' => 'one2one'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Test user', 'call-type' => 'one2one', 'icon-url' => ''],
 					],
 				],
 			],
@@ -584,7 +588,7 @@ class NotifierTest extends TestCase {
 					'{user} sent a message in conversation {call}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group', 'icon-url' => ''],
 					],
 				],
 			],
@@ -594,7 +598,7 @@ class NotifierTest extends TestCase {
 				[
 					'A deleted user sent a message in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group', 'icon-url' => ''],
 					],
 				],
 				$deletedUser = true,
@@ -606,7 +610,7 @@ class NotifierTest extends TestCase {
 					'{user} sent a message in conversation {call}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 					]
 				],
 			],
@@ -616,7 +620,7 @@ class NotifierTest extends TestCase {
 				[
 					'A deleted user sent a message in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 					],
 				],
 				$deletedUser = true
@@ -626,7 +630,7 @@ class NotifierTest extends TestCase {
 				'A guest sent a message in conversation Room name',
 				['A guest sent a message in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 					],
 				],
 				$deletedUser = false, $guestName = null,
@@ -637,7 +641,7 @@ class NotifierTest extends TestCase {
 				[
 					'{guest} (guest) sent a message in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 						'guest' => ['type' => 'guest', 'id' => 'random-hash', 'name' => 'MyNameIs'],
 					],
 				],
@@ -649,7 +653,7 @@ class NotifierTest extends TestCase {
 				[
 					'A guest sent a message in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 					],
 				],
 				$deletedUser = false, $guestName = '',
@@ -663,7 +667,7 @@ class NotifierTest extends TestCase {
 					'{user} replied to your private message',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Test user', 'call-type' => 'one2one'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Test user', 'call-type' => 'one2one', 'icon-url' => ''],
 					],
 				],
 			],
@@ -674,7 +678,7 @@ class NotifierTest extends TestCase {
 					'{user} replied to your message in conversation {call}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group', 'icon-url' => ''],
 					],
 				],
 			],
@@ -684,7 +688,7 @@ class NotifierTest extends TestCase {
 				[
 					'A deleted user replied to your message in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group', 'icon-url' => ''],
 					],
 				],
 				$deletedUser = true,
@@ -696,7 +700,7 @@ class NotifierTest extends TestCase {
 					'{user} replied to your message in conversation {call}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 					]
 				],
 			],
@@ -706,7 +710,7 @@ class NotifierTest extends TestCase {
 				[
 					'A deleted user replied to your message in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 					],
 				],
 				$deletedUser = true
@@ -716,7 +720,7 @@ class NotifierTest extends TestCase {
 				'A guest replied to your message in conversation Room name',
 				['A guest replied to your message in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 					],
 				],
 				$deletedUser = false, $guestName = null,
@@ -727,7 +731,7 @@ class NotifierTest extends TestCase {
 				[
 					'{guest} (guest) replied to your message in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 						'guest' => ['type' => 'guest', 'id' => 'random-hash', 'name' => 'MyNameIs'],
 					],
 				],
@@ -739,7 +743,7 @@ class NotifierTest extends TestCase {
 				[
 					'A guest replied to your message in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 					],
 				],
 				$deletedUser = false, $guestName = '',
@@ -753,7 +757,7 @@ class NotifierTest extends TestCase {
 					'{user}' . "\n" . '{message}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Test user', 'call-type' => 'one2one'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Test user', 'call-type' => 'one2one', 'icon-url' => ''],
 						'message' => ['type' => 'highlight', 'id' => '123456789', 'name' => 'Hi @Administrator'],
 					],
 				],
@@ -766,7 +770,7 @@ class NotifierTest extends TestCase {
 					'{user} in {call}' . "\n" . '{message}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group', 'icon-url' => ''],
 						'message' => ['type' => 'highlight', 'id' => '123456789', 'name' => 'Hi @Administrator'],
 					],
 				],
@@ -778,7 +782,7 @@ class NotifierTest extends TestCase {
 				[
 					'Deleted user in {call}' . "\n" . '{message}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group', 'icon-url' => ''],
 						'message' => ['type' => 'highlight', 'id' => '123456789', 'name' => 'Hi @Administrator'],
 					],
 				],
@@ -791,7 +795,7 @@ class NotifierTest extends TestCase {
 					'{user} in {call}' . "\n" . '{message}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 						'message' => ['type' => 'highlight', 'id' => '123456789', 'name' => 'Hi @Administrator'],
 					],
 				],
@@ -803,7 +807,7 @@ class NotifierTest extends TestCase {
 				[
 					'Deleted user in {call}' . "\n" . '{message}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 						'message' => ['type' => 'highlight', 'id' => '123456789', 'name' => 'Hi @Administrator'],
 					],
 				],
@@ -815,7 +819,7 @@ class NotifierTest extends TestCase {
 				[
 					'Guest in {call}' . "\n" . '{message}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 						'message' => ['type' => 'highlight', 'id' => '123456789', 'name' => 'Hi @Administrator'],
 					],
 				],
@@ -827,7 +831,7 @@ class NotifierTest extends TestCase {
 				[
 					'{guest} (guest) in {call}' . "\n" . '{message}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 						'guest' => ['type' => 'guest', 'id' => 'random-hash', 'name' => 'MyNameIs'],
 						'message' => ['type' => 'highlight', 'id' => '123456789', 'name' => 'Hi @Administrator'],
 					],
@@ -840,7 +844,7 @@ class NotifierTest extends TestCase {
 				[
 					'Guest in {call}' . "\n" . '{message}',
 					[
-						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public', 'icon-url' => ''],
 						'message' => ['type' => 'highlight', 'id' => '123456789', 'name' => 'Hi @Administrator'],
 					],
 				],

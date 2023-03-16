@@ -637,6 +637,7 @@ class ChatControllerTest extends TestCase {
 			'call-type' => 'one2one',
 			'type' => 'call',
 			'id' => 'R4nd0mToken',
+			'icon-url' => '',
 		];
 
 		$date = new \DateTime();
@@ -659,6 +660,7 @@ class ChatControllerTest extends TestCase {
 							'call-type' => 'one2one',
 							'type' => 'call',
 							'id' => 'R4nd0mToken',
+							'icon-url' => '',
 						],
 					],
 				]),

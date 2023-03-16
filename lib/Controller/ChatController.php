@@ -270,6 +270,7 @@ class ChatController extends AEnvironmentAwareController {
 		}
 		$data['type'] = $objectType;
 		$data['id'] = $objectId;
+		$data['icon-url'] = $this->room->getAvatar();
 
 		if (isset($data['link']) && !$this->trustedDomainHelper->isTrustedUrl($data['link'])) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);

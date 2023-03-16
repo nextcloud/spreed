@@ -138,6 +138,7 @@ class UserMention {
 					'id' => $chatMessage->getRoom()->getToken(),
 					'name' => $chatMessage->getRoom()->getDisplayName($userId),
 					'call-type' => $this->getRoomType($chatMessage->getRoom()),
+					'icon-url' => $chatMessage->getRoom()->getAvatar(),
 				];
 			} elseif ($mention['type'] === 'guest') {
 				try {

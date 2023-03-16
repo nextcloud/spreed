@@ -67,7 +67,7 @@ Feature: chat-2/rich-object-share
     When user "participant1" shares rich-object "call" "R4nd0mT0k3n" '{"name":"Another room","call-type":"group"}' to room "public room" with 201 (v1)
     Then user "participant1" sees the following shared other in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
-      | public room | users     | participant1 | participant1-displayname | {object} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"object":{"name":"Another room","call-type":"group","type":"call","id":"R4nd0mT0k3n"}} |
+      | public room | users     | participant1 | participant1-displayname | {object} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"object":{"name":"Another room","call-type":"group","type":"call","id":"R4nd0mT0k3n","icon-url":""}} |
     When user "participant1" shares "welcome.txt" with room "public room" with OCS 100
     Then user "participant1" sees the following shared file in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |

@@ -439,6 +439,7 @@ class UserMentionTest extends TestCase {
 				'id' => 'token',
 				'name' => 'name',
 				'call-type' => 'group',
+				'icon-url' => '',
 			]
 		];
 

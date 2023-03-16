@@ -322,6 +322,7 @@ class Notifier implements INotifier {
 						'id' => $room->getId(),
 						'name' => $room->getDisplayName($participant->getAttendee()->getActorId()),
 						'call-type' => $this->getRoomType($room),
+						'icon-url' => $room->getAvatar(),
 					],
 				]
 			);
@@ -385,6 +386,7 @@ class Notifier implements INotifier {
 						'id' => $room->getId(),
 						'name' => $room->getDisplayName($participant->getAttendee()->getActorId()),
 						'call-type' => $this->getRoomType($room),
+						'icon-url' => $room->getAvatar(),
 					],
 					'file' => [
 						'type' => 'file',
@@ -481,6 +483,7 @@ class Notifier implements INotifier {
 			'id' => $room->getId(),
 			'name' => $room->getDisplayName($notification->getUser()),
 			'call-type' => $this->getRoomType($room),
+			'icon-url' => $room->getAvatar(),
 		];
 
 		$messageParameters = $notification->getMessageParameters();
@@ -777,6 +780,7 @@ class Notifier implements INotifier {
 							'id' => $room->getId(),
 							'name' => $roomName,
 							'call-type' => $this->getRoomType($room),
+							'icon-url' => $room->getAvatar(),
 						],
 					]
 				);
@@ -802,6 +806,7 @@ class Notifier implements INotifier {
 							'id' => $room->getId(),
 							'name' => $roomName,
 							'call-type' => $this->getRoomType($room),
+							'icon-url' => $room->getAvatar(),
 						],
 					]
 				);
@@ -853,6 +858,7 @@ class Notifier implements INotifier {
 								'id' => $room->getId(),
 								'name' => $roomName,
 								'call-type' => $this->getRoomType($room),
+								'icon-url' => $room->getAvatar(),
 							],
 						]
 					);
@@ -877,6 +883,7 @@ class Notifier implements INotifier {
 							'id' => $room->getId(),
 							'name' => $roomName,
 							'call-type' => $this->getRoomType($room),
+							'icon-url' => $room->getAvatar(),
 						],
 					]
 				);
