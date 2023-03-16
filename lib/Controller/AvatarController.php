@@ -28,6 +28,7 @@ namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
 use OCA\Talk\Service\AvatarService;
+use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
@@ -38,24 +39,16 @@ use OCP\IUserSession;
 use Psr\Log\LoggerInterface;
 
 class AvatarController extends AEnvironmentAwareController {
-	private AvatarService $avatarService;
-	private IUserSession $userSession;
-	private IL10N $l;
-	private LoggerInterface $logger;
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		AvatarService $avatarService,
-		IUserSession $userSession,
-		IL10N $l10n,
-		LoggerInterface $logger
+		protected RoomFormatter $roomFormatter,
+		protected AvatarService $avatarService,
+		protected IUserSession $userSession,
+		protected IL10N $l,
+		protected LoggerInterface $logger
 	) {
 		parent::__construct($appName, $request);
-		$this->avatarService = $avatarService;
-		$this->userSession = $userSession;
-		$this->l = $l10n;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -66,9 +59,12 @@ class AvatarController extends AEnvironmentAwareController {
 		try {
 			$file = $this->request->getUploadedFile('file');
 			$this->avatarService->setAvatarFromRequest($this->getRoom(), $file);
-			return new DataResponse([
-				'avatar' => $this->avatarService->getAvatarUrl($this->getRoom()),
-			]);
+			return new DataResponse($this->roomFormatter->formatRoom(
+				$this->getResponseFormat(),
+				[],
+				$this->getRoom(),
+				$this->participant,
+			));
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		} catch (\Exception $e) {
@@ -110,6 +106,11 @@ class AvatarController extends AEnvironmentAwareController {
 	 */
 	public function deleteAvatar(): DataResponse {
 		$this->avatarService->deleteAvatar($this->getRoom());
-		return new DataResponse([]);
+		return new DataResponse($this->roomFormatter->formatRoom(
+			$this->getResponseFormat(),
+			[],
+			$this->getRoom(),
+			$this->participant,
+		));
 	}
 }
