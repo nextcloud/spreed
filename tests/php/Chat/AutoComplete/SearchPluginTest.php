@@ -21,6 +21,7 @@
 
 namespace OCA\Talk\Tests\php\Chat\AutoComplete;
 
+use OC\Collaboration\Collaborators\SearchResult;
 use OCA\Talk\Chat\AutoComplete\SearchPlugin;
 use OCA\Talk\Files\Util;
 use OCA\Talk\GuestManager;
@@ -31,6 +32,8 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchResult;
+use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -42,6 +45,8 @@ class SearchPluginTest extends TestCase {
 	protected $userManager;
 	/** @var GuestManager|MockObject */
 	protected $guestManager;
+	/** @var IGroupManager|MockObject */
+	protected $groupManager;
 	/** @var TalkSession|MockObject */
 	protected $talkSession;
 	/** @var ParticipantService|MockObject */
@@ -57,6 +62,7 @@ class SearchPluginTest extends TestCase {
 		parent::setUp();
 
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->talkSession = $this->createMock(TalkSession::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
@@ -78,6 +84,7 @@ class SearchPluginTest extends TestCase {
 		if (empty($methods)) {
 			return new SearchPlugin(
 				$this->userManager,
+				$this->groupManager,
 				$this->guestManager,
 				$this->talkSession,
 				$this->participantService,
@@ -90,6 +97,7 @@ class SearchPluginTest extends TestCase {
 		return $this->getMockBuilder(SearchPlugin::class)
 			->setConstructorArgs([
 				$this->userManager,
+				$this->groupManager,
 				$this->guestManager,
 				$this->talkSession,
 				$this->participantService,
@@ -312,5 +320,55 @@ class SearchPluginTest extends TestCase {
 	public function testCreateGuestResult(string $actorId, string $name, array $expected): void {
 		$plugin = $this->getPlugin();
 		$this->assertEquals($expected, self::invokePrivate($plugin, 'createGuestResult', [$actorId, $name]));
+	}
+
+	/**
+	 * @dataProvider dataSearchGroups
+	 */
+	public function testSearchGroups($search, $groupIds, $isGroup, $displayName, $totalMatches, $totalExactMatches): void {
+		$this->groupManager
+			->method('get')
+			->willReturnCallback(function ($groupId) use ($isGroup, $displayName) {
+				if ($isGroup) {
+					$group = $this->createMock(IGroup::class);
+					$group
+						->method('getDisplayName')
+						->willReturn($displayName);
+					$group
+						->method('getGID')
+						->willReturn($groupId);
+					return $group;
+				}
+			});
+		$plugin = $this->getPlugin(['createGroupResult']);
+		$plugin->expects($this->any())
+			->method('createGroupResult')
+			->willReturnCallback(function ($groupId) {
+				return [
+					'label' => $groupId,
+					'value' => [
+						'shareType' => 'group',
+						'shareWith' => 'group/' . $groupId,
+					],
+				];
+			});
+		$searchResult = new SearchResult();
+		self::invokePrivate($plugin, 'searchGroups', [$search, $groupIds, $searchResult]);
+		$actual = $searchResult->asArray();
+		$this->assertCount($totalMatches, $actual['groups']);
+		$this->assertCount($totalExactMatches, $actual['exact']['groups']);
+	}
+
+	public function dataSearchGroups(): array {
+		return [
+			// $search, $groupIds, $isGroup, $displayName, $totalMatches, $totalExactMatches
+			['',        ['groupid'], true,  'group', 1, 0],
+			['groupid', ['groupid'], true,  'group', 0, 1],
+			['gro',     ['groupid'], true,  'group', 1, 0],
+			['not',     ['groupid'], false, 'group', 0, 0],
+			['name',    ['groupid'], true,  'name',  0, 1],
+			['na',      ['groupid'], true,  'name',  1, 0],
+			['not',     ['groupid'], true,  'group', 0, 0],
+		];
 	}
 }

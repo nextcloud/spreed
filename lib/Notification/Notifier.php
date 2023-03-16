@@ -43,6 +43,7 @@ use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\Files\IRootFolder;
 use OCP\HintException;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -63,6 +64,7 @@ class Notifier implements INotifier {
 	protected IURLGenerator $url;
 	protected Config $config;
 	protected IUserManager $userManager;
+	protected IGroupManager $groupManager;
 	protected GuestManager $guestManager;
 	private IShareManager $shareManager;
 	protected Manager $manager;
@@ -85,6 +87,7 @@ class Notifier implements INotifier {
 								IURLGenerator $url,
 								Config $config,
 								IUserManager $userManager,
+								IGroupManager $groupManager,
 								GuestManager $guestManager,
 								IShareManager $shareManager,
 								Manager $manager,
@@ -101,6 +104,7 @@ class Notifier implements INotifier {
 		$this->url = $url;
 		$this->config = $config;
 		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
 		$this->guestManager = $guestManager;
 		$this->shareManager = $shareManager;
 		$this->manager = $manager;
@@ -277,7 +281,7 @@ class Notifier implements INotifier {
 			}
 			return $this->parseCall($notification, $room, $l);
 		}
-		if ($subject === 'reply' || $subject === 'mention' || $subject === 'chat' || $subject === 'reaction') {
+		if ($subject === 'reply' || $subject === 'mention' || $subject === 'mention_direct' || $subject === 'mention_group' || $subject === 'mention_all' || $subject === 'chat' || $subject === 'reaction') {
 			if ($room->getLobbyState() !== Webinary::LOBBY_NONE &&
 				$participant instanceof Participant &&
 				!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
@@ -609,15 +613,67 @@ class Notifier implements INotifier {
 		} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			$subject = $l->t('{user} mentioned you in a private conversation');
 		} elseif ($richSubjectUser) {
-			$subject = $l->t('{user} mentioned you in conversation {call}');
+			if ($notification->getSubject() === 'mention_group') {
+				$groupName = $this->groupManager->getDisplayName($subjectParameters['sourceId']) ?? $subjectParameters['sourceId'];
+				$richSubjectParameters['group'] = [
+					'type' => 'user-group',
+					'id' => $subjectParameters['sourceId'],
+					'name' => $groupName,
+				];
+
+				$subject = $l->t('{user} mentioned group {group} in conversation {call}');
+			} elseif ($notification->getSubject() === 'mention_all') {
+				$subject = $l->t('{user} mentioned everyone in conversation {call}');
+			} else {
+				$subject = $l->t('{user} mentioned you in conversation {call}');
+			}
 		} elseif (!$isGuest) {
-			$subject = $l->t('A deleted user mentioned you in conversation {call}');
+			if ($notification->getSubject() === 'mention_group') {
+				$groupName = $this->groupManager->getDisplayName($subjectParameters['sourceId']) ?? $subjectParameters['sourceId'];
+				$richSubjectParameters['group'] = [
+					'type' => 'user-group',
+					'id' => $subjectParameters['sourceId'],
+					'name' => $groupName,
+				];
+
+				$subject = $l->t('A deleted user mentioned group {group} in conversation {call}');
+			} elseif ($notification->getSubject() === 'mention_all') {
+				$subject = $l->t('A deleted user mentioned everyone in conversation {call}');
+			} else {
+				$subject = $l->t('A deleted user mentioned you in conversation {call}');
+			}
 		} else {
 			try {
 				$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
-				$subject = $l->t('{guest} (guest) mentioned you in conversation {call}');
+				if ($notification->getSubject() === 'mention_group') {
+					$groupName = $this->groupManager->getDisplayName($subjectParameters['sourceId']) ?? $subjectParameters['sourceId'];
+					$richSubjectParameters['group'] = [
+						'type' => 'user-group',
+						'id' => $subjectParameters['sourceId'],
+						'name' => $groupName,
+					];
+
+					$subject = $l->t('{guest} (guest) mentioned group {group} in conversation {call}');
+				} elseif ($notification->getSubject() === 'mention_all') {
+					$subject = $l->t('{guest} (guest) mentioned everyone in conversation {call}');
+				} else {
+					$subject = $l->t('{guest} (guest) mentioned you in conversation {call}');
+				}
 			} catch (ParticipantNotFoundException $e) {
-				$subject = $l->t('A guest mentioned you in conversation {call}');
+				if ($notification->getSubject() === 'mention_group') {
+					$groupName = $this->groupManager->getDisplayName($subjectParameters['sourceId']) ?? $subjectParameters['sourceId'];
+					$richSubjectParameters['group'] = [
+						'type' => 'user-group',
+						'id' => $subjectParameters['sourceId'],
+						'name' => $groupName,
+					];
+
+					$subject = $l->t('A guest mentioned group {group} in conversation {call}');
+				} elseif ($notification->getSubject() === 'mention_all') {
+					$subject = $l->t('A guest mentioned everyone in conversation {call}');
+				} else {
+					$subject = $l->t('A guest mentioned you in conversation {call}');
+				}
 			}
 		}
 		$notification = $this->addActionButton($notification, $l->t('View chat'), false);

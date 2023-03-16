@@ -1638,7 +1638,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" (silent sends|sends) message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 * @Then /^user "([^"]*)" (silent sends|sends) message ("[^"]*"|'[^']*') to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $sendingMode
@@ -1648,6 +1648,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 */
 	public function userSendsMessageToRoom(string $user, string $sendingMode, string $message, string $identifier, string $statusCode, string $apiVersion = 'v1') {
+		$message = substr($message, 1, -1);
 		if ($sendingMode === 'silent sends') {
 			$body = new TableNode([['message', $message], ['silent', true]]);
 		} else {
@@ -1696,6 +1697,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
 			self::$textToMessageId['shared::' . $type . '::' . $id] = $response['id'];
+			self::$messageIdToText[$response['id']] = 'shared::' . $type . '::' . $id;
 		}
 	}
 
@@ -2026,13 +2028,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
 			self::$textToMessageId[$message] = $response['id'];
+			self::$messageIdToText[$response['id']] = $message;
 		}
 
 		Assert::assertStringStartsWith($response['referenceId'], $referenceId);
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sends reply "([^"]*)" on message "([^"]*)" to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 * @Then /^user "([^"]*)" sends reply ("[^"]*"|'[^']*') on message ("[^"]*"|'[^']*') to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
 	 * @param string $reply
@@ -2042,6 +2045,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $apiVersion
 	 */
 	public function userSendsReplyToRoom($user, $reply, $message, $identifier, $statusCode, $apiVersion = 'v1') {
+		$reply = substr($reply, 1, -1);
+		$message = substr($message, 1, -1);
 		$replyTo = self::$textToMessageId[$message];
 
 		$this->setCurrentUser($user);
@@ -2055,6 +2060,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$response = $this->getDataFromResponse($this->response);
 		if (isset($response['id'])) {
 			self::$textToMessageId[$reply] = $response['id'];
+			self::$messageIdToText[$response['id']] = $reply;
 		}
 	}
 
@@ -2196,6 +2202,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			self::$textToMessageId[$message['message']] = $message['id'];
 			if ($message['message'] === '{file}' && isset($message['messageParameters']['file']['name'])) {
 				self::$textToMessageId['shared::file::' . $message['messageParameters']['file']['name']] = $message['id'];
+				self::$messageIdToText[$message['id']] = 'shared::file::' . $message['messageParameters']['file']['name'];
 			}
 		}
 
@@ -2308,6 +2315,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// Include the received system messages in the list of messages used
 			// for replies.
 			self::$textToMessageId[$systemMessage['systemMessage']] = $systemMessage['id'];
+			self::$messageIdToText[$systemMessage['id']] = $systemMessage['systemMessage'];
 		}
 
 		if ($formData === null) {

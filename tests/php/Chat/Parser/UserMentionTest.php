@@ -34,6 +34,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUserManager;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -44,6 +45,8 @@ class UserMentionTest extends TestCase {
 	protected $commentsManager;
 	/** @var IUserManager|MockObject */
 	protected $userManager;
+	/** @var IGroupManager */
+	protected $groupManager;
 	/** @var GuestManager|MockObject */
 	protected $guestManager;
 	/** @var ParticipantService|MockObject */
@@ -58,6 +61,7 @@ class UserMentionTest extends TestCase {
 
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->l = $this->createMock(IL10N::class);
@@ -65,6 +69,7 @@ class UserMentionTest extends TestCase {
 		$this->parser = new UserMention(
 			$this->commentsManager,
 			$this->userManager,
+			$this->groupManager,
 			$this->guestManager,
 			$this->participantService,
 			$this->l);
