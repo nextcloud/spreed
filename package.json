@@ -50,6 +50,7 @@
 		"url-parse": "^1.5.10",
 		"util": "^0.12.5",
 		"vue": "^2.7.14",
+		"vue-drag-resize": "^1.5.4",
 		"vue-frag": "^1.4.2",
 		"vue-material-design-icons": "^5.2.0",
 		"vue-observe-visibility": "^1.0.0",

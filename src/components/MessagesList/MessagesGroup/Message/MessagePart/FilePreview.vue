@@ -66,10 +66,34 @@
 		<div v-if="shouldShowFileDetail" class="name-container">
 			{{ fileDetail }}
 		</div>
+
+		<VueDragResize v-show="isViewerVisible"
+			ref="modal"
+			content-class="drag-window"
+			drag-handle=".drag-window__handler"
+			:is-active="isViewerActive"
+			:w="800"
+			:h="600"
+			:minw="750"
+			:minh="550"
+			:x="100"
+			:y="100"
+			:z="2000"
+			:sticks="['mr', 'br', 'bm', 'bl', 'ml']"
+			@activated="isViewerActive = true"
+			@deactivated="isViewerActive = false"
+			@resizing="resizeViewer"
+			@dragging="dragViewer"
+			@dragstop="isViewerDragging = false">
+			<div class="drag-window__handler"
+				:class="{['drag-window__handler-dragging']: isViewerDragging}" />
+		</VueDragResize>
 	</div>
 </template>
 
 <script>
+import VueDragResize from 'vue-drag-resize'
+
 import Close from 'vue-material-design-icons/Close.vue'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 
@@ -98,6 +122,7 @@ export default {
 		Close,
 		PlayCircleOutline,
 		NcButton,
+		VueDragResize,
 	},
 
 	directives: {
@@ -235,6 +260,15 @@ export default {
 		return {
 			isLoading: true,
 			failed: false,
+			isViewerVisible: false,
+			isViewerActive: false,
+			isViewerDragging: false,
+			viewerRect: {
+				width: 0,
+				height: 0,
+				top: 0,
+				left: 0,
+			},
 		}
 	},
 	computed: {
@@ -433,6 +467,16 @@ export default {
 			return t('spreed', 'Remove {fileName}', { fileName: this.name })
 		},
 	},
+	watch: {
+		isViewerVisible(newValue) {
+			if (!newValue) {
+				return
+			}
+			this.$nextTick(() => {
+				this.openViewer()
+			})
+		},
+	},
 
 	mounted() {
 		const img = new Image()
@@ -458,9 +502,17 @@ export default {
 				return
 			}
 
+			if (this.isViewerVisible) {
+				// Prevent from opening logic to be called again
+				return
+			}
+
 			event.stopPropagation()
 			event.preventDefault()
+			this.isViewerVisible = true
+		},
 
+		openViewer() {
 			// The Viewer expects a file to be set in the sidebar if the sidebar
 			// is open.
 			if (this.$store.getters.getSidebarStatus) {
@@ -502,18 +554,29 @@ export default {
 				],
 			})
 
-			// FIXME Remove this hack once it is possible to set the parent
-			// element of the viewer.
-			// By default the viewer is a sibling of the fullscreen element, so
-			// it is not visible when in fullscreen mode. It is not possible to
-			// specify the parent nor to know when the viewer was actually
-			// opened, so for the time being it is reparented if needed shortly
-			// after calling it.
-			setTimeout(() => {
-				if (this.$store.getters.isFullscreen()) {
-					document.getElementById('content-vue').appendChild(document.getElementById('viewer'))
-				}
-			}, 1000)
+			this.$nextTick(() => {
+				const viewer = document.getElementById('viewer')
+				document.getElementById('content-vue').appendChild(this.$refs.modal.$el)
+				this.$refs.modal.$refs.container.appendChild(viewer)
+				// FIXME There should be a way to follow after Viewer 'is open' flag
+				viewer.querySelector('button.header-close').addEventListener('click', (event) => {
+					event.stopPropagation()
+					event.preventDefault()
+					this.isViewerVisible = false
+				})
+			})
+		},
+
+		dragViewer(newRect) {
+			this.isViewerDragging = true
+			this.resizeViewer(newRect)
+		},
+
+		resizeViewer(newRect) {
+			this.viewerRect.width = newRect.width
+			this.viewerRect.height = newRect.height
+			this.viewerRect.top = newRect.top
+			this.viewerRect.left = newRect.left
 		},
 	},
 }
@@ -521,6 +584,37 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../../../assets/variables';
+
+.drag-window {
+	$handler-height: 40px;
+	filter: drop-shadow(0 0 10px var(--color-box-shadow));
+	&::before {
+		outline: none;
+	}
+	&__handler {
+		width: 100%;
+		height: $handler-height;
+		border-radius: 20px 20px 0 0;
+		background-color: var(--color-primary-element);
+		cursor: grab;
+
+		&-dragging {
+			cursor: grabbing;
+		}
+	}
+	:deep(#viewer) {
+		box-sizing: border-box;
+		position: relative;
+		width: 100% !important;
+		height: calc(100% - $handler-height) !important;
+	}
+	:deep(.modal-container) {
+		bottom: 0 !important;
+	}
+	:deep(#editor-container) {
+		height: 100%;
+	}
+}
 
 .file-preview {
 	position: relative;
