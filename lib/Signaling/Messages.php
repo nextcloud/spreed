@@ -129,7 +129,8 @@ class Messages {
 		$query->select('*')
 			->from('talk_internalsignaling')
 			->where($query->expr()->eq('recipient', $query->createNamedParameter($sessionId)))
-			->andWhere($query->expr()->lte('timestamp', $query->createNamedParameter($time)));
+			->andWhere($query->expr()->lte('timestamp', $query->createNamedParameter($time)))
+			->orderBy('id', 'ASC');
 
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_internalsignaling')
