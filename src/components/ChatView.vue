@@ -163,6 +163,7 @@ export default {
 	box-shadow: 0 0 36px var(--color-box-shadow);
 	border-radius: var(--border-radius);
 	opacity: 90%;
+	pointer-events: none;
 }
 
 .drop-hint {
