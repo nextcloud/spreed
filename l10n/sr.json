@@ -470,6 +470,8 @@
     "You need to promote a new moderator before you can leave the conversation." : "Морате унапредити новог модератора пре него што напустите разговор.",
     "Submit" : "Пошаљи",
     "Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation." : "Чет поруке могу да истекну након одређеног времена. Напомена: фајлови који су подељени у чету се неће обрисати за власника, али више неће бити дељени у разговору.",
+    "_%n day_::_%n days_" : ["%n дан","%n дана","%n дана"],
+    "_%n week_::_%n weeks_" : ["%n седмица","%n седмице","%n седмица"],
     "Guest access" : "Приступ госта",
     "Password protection" : "Заштита лозинком",
     "Resend invitations" : "Поново пошаљи позивнице",
