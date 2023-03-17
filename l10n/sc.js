@@ -899,6 +899,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Iscrie messàgiu, @ pro mentovare sa zente ...",
     "Blank" : "Isbòidu",
     "Invalid path selected" : "Percursu seletzionadu non bàlidu",
+    "Group" : "Grupu",
     "Settings" : "Impostatziones",
     "Join" : "Intra",
     "Disable lobby" : "Disativa intrada",

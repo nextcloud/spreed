@@ -59,6 +59,7 @@ OC.L10N.register(
     "New file" : "ไฟล์ใหม่",
     "Blank" : "ว่าง",
     "Invalid path selected" : "เลือกเส้นทางไม่ถูกต้อง",
+    "Group" : "กลุ่ม",
     "Settings" : "การตั้งค่า",
     "bot" : "บอต",
     "guest" : "ผู้เยี่ยมชม",

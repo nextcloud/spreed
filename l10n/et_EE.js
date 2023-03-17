@@ -63,6 +63,7 @@ OC.L10N.register(
     "Yesterday" : "Eile",
     "Create new poll" : "Loo uus küsitlus",
     "New file" : "Uus fail",
+    "Group" : "Grupp",
     "Settings" : "Seaded",
     "Create poll" : "Loo küsitlus",
     "guest" : "külaline",

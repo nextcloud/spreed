@@ -193,6 +193,7 @@ OC.L10N.register(
     "New file" : "Archivo nuevo",
     "Blank" : "Vacío",
     "Invalid path selected" : "Ruta seleccionada no válida.",
+    "Group" : "Grupo",
     "Settings" : "Configuraciones ",
     "Create poll" : "Crear encuesta",
     "moderator" : "moderador",

@@ -1018,6 +1018,7 @@ OC.L10N.register(
     "The participants will not be notified about this message" : "De deelnemers zullen niet ingelicht worden over dit bericht",
     "Blank" : "Blanco",
     "Invalid path selected" : "Ongeldig pad geselecteerd",
+    "Group" : "Groep",
     "Settings" : "Instellingen",
     "Private poll" : "Privé peiling",
     "Create poll" : "Peiling aanmaken",

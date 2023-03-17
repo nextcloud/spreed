@@ -84,6 +84,7 @@ OC.L10N.register(
     "Yesterday" : "Ayer",
     "Send message" : "Enviar mensaje",
     "New file" : "Nuevo archivo",
+    "Group" : "Grupo",
     "Settings" : "Ajustes",
     "Searching …" : "Buscando ...",
     "No results" : "Sin resultados",

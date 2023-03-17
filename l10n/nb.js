@@ -545,6 +545,7 @@ OC.L10N.register(
     "New file" : "Ny fil",
     "Blank" : "Blank",
     "Invalid path selected" : "Ugyldig angitt sti",
+    "Group" : "Gruppe",
     "Settings" : "Innstillinger",
     "Create poll" : "Opprett avstemning",
     "Join" : "Bli med",

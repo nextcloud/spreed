@@ -224,6 +224,7 @@ OC.L10N.register(
     "Create new poll" : "Krijo sondazh të ri",
     "Send message" : "Dërgo mesazh",
     "New file" : "Skedë e re",
+    "Group" : "Grup",
     "Settings" : "Rregullimet",
     "Create poll" : "Krijo sondazh",
     "guest" : "vizitor",

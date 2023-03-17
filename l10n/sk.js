@@ -1069,6 +1069,7 @@ OC.L10N.register(
     "Blank" : "Prázdne",
     "Invalid path selected" : "Bola vybraná neplatná cesta",
     "Error while creating file" : "Chyba pri vytváraní súboru",
+    "Group" : "Skupina",
     "Question" : "Otázka",
     "Ask a question" : "Opýtať sa otázku",
     "Answers" : "Odpovede",

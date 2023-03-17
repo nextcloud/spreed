@@ -303,6 +303,7 @@ OC.L10N.register(
     "Today" : "Hodiaŭ",
     "Yesterday" : "Hieraŭ",
     "Create new poll" : "Krei novan enketon",
+    "Group" : "Grupo",
     "Settings" : "Agordoj",
     "Join" : "Aliĝi",
     "guest" : "gasto",

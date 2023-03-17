@@ -515,6 +515,7 @@ OC.L10N.register(
     "New file" : "קובץ חדש",
     "Write message, @ to mention someone …" : "כתבו תגובה, השתמשו ב-@ לתיוג משתמש",
     "Invalid path selected" : "הנתיב שנבחר שגוי",
+    "Group" : "קבוצה",
     "Settings" : "הגדרות",
     "Create poll" : "יצירת סקר",
     "Join" : "הצטרף",
