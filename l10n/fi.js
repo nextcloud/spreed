@@ -897,6 +897,7 @@ OC.L10N.register(
     "Blank" : "Tyhjä",
     "Invalid path selected" : "Valittu virheellinen polku",
     "Error while creating file" : "Virhe tiedostoa luotaessa",
+    "Group" : "Ryhmä",
     "Question" : "Kysymys",
     "Ask a question" : "Esitä kysymys",
     "Answers" : "Vastaukset",

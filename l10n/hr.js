@@ -936,6 +936,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Napiši poruku, @ za spominjanje drugog korisnika…",
     "Blank" : "Prazno",
     "Invalid path selected" : "Odabran nevažeći put",
+    "Group" : "Grupa",
     "Settings" : "Postavke",
     "Start a call" : "Uputi poziv",
     "Skip the lobby" : "Preskoči predvorje",

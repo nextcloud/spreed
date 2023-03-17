@@ -305,6 +305,7 @@ OC.L10N.register(
     "New file" : "File baru",
     "Blank" : "Kosong",
     "Invalid path selected" : "Jalur terpilih invalid",
+    "Group" : "Grup",
     "Settings" : "Setelan",
     "Join" : "Gabung",
     "guest" : "pengunjung",

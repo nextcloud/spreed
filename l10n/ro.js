@@ -333,6 +333,7 @@ OC.L10N.register(
     "New file" : "Fișier nou",
     "Blank" : "Gol",
     "Invalid path selected" : "Calea selectată este invalidă",
+    "Group" : "Grup",
     "Settings" : "Setări",
     "guest" : "invitat",
     "No results" : "Niciun rezultat",

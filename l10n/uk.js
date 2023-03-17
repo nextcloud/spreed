@@ -554,6 +554,7 @@ OC.L10N.register(
     "Blank" : "Порожньо",
     "Invalid path selected" : "Вибрано неправильний шлях",
     "Error while creating file" : "Помилка під час створення файлу",
+    "Group" : "Група",
     "Settings" : "Налаштування",
     "Create poll" : "Створити опитування",
     "Join" : "Приєднатися",

@@ -856,6 +856,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Γράφοντας μήνυμα προσθέστε το @ για να αναφερθείτε σε κάποιον ...",
     "Blank" : "Κενό",
     "Invalid path selected" : "Επιλέχθηκε μη έγκυρη διαδρομή",
+    "Group" : "Ομάδα",
     "Settings" : "Ρυθμίσεις",
     "Private poll" : "Ιδιωτική δημοσκόπηση",
     "Create poll" : "Δημιουργία ψηφοφορίας",

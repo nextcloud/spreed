@@ -600,6 +600,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Viết tin nhắn, @ để nhắc đến ai đó…",
     "Blank" : "‎Trống‎",
     "Invalid path selected" : "Đường dẫn đã chọn không hợp lệ",
+    "Group" : "Nhóm",
     "Settings" : "Thiết lập",
     "Join" : "Tham gia",
     "Disable lobby" : "Vô hiệu hóa sảnh đợi",
