@@ -1110,6 +1110,7 @@ OC.L10N.register(
     "Blank" : "Üres",
     "Invalid path selected" : "Érvénytelen útvonal kiválasztva",
     "Error while creating file" : "Hiba a fájl létrehozása során",
+    "Group" : "Csoport",
     "Question" : "Kérdés",
     "Ask a question" : "Kérdés feltevése",
     "Answers" : "Válaszok",

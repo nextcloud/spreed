@@ -58,6 +58,7 @@ OC.L10N.register(
     "Yesterday" : "i går",
     "Record voice message" : "Ta opp lyd melding ",
     "Send message" : "Send melding",
+    "Group" : "Gruppe",
     "Settings" : "Instillingar",
     "Demote from moderator" : "Nedrykk frå moderator",
     "Promote to moderator" : "Fremje til moderator",

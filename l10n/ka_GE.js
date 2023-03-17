@@ -104,6 +104,7 @@ OC.L10N.register(
     "Yesterday" : "გუშინ",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Create new poll" : "ახალი გამოკითხვის შექმნა",
+    "Group" : "ჯგუფი",
     "Settings" : "პარამეტრები",
     "Create poll" : "გამოკითხვის შექმნა",
     "moderator" : "მოდერატორი",

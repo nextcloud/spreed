@@ -1128,6 +1128,7 @@ OC.L10N.register(
     "Blank" : "Vacío",
     "Invalid path selected" : "Ruta de archivo seleccionada no válida.",
     "Error while creating file" : "Ha ocurrido un error al crear el archivo",
+    "Group" : "Grupo",
     "Question" : "Pregunta",
     "Ask a question" : "Hacer una pregunta",
     "Answers" : "Respuestas",

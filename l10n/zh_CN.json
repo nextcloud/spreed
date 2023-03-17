@@ -993,6 +993,7 @@
     "Write message, @ to mention someone …" : "输入消息，用 @ 提及某人…",
     "Blank" : "空白",
     "Invalid path selected" : "选择的路径无效",
+    "Group" : "群组",
     "Settings" : "设置",
     "Private poll" : "私密投票",
     "Create poll" : "创建投票",

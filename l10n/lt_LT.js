@@ -667,6 +667,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Rašykite žinutę, naudokite @ norėdami kažką paminėti…",
     "Invalid path selected" : "Pasirinktas neteisingas kelias",
     "Error while creating file" : "Klaida kuriant failą",
+    "Group" : "Grupė",
     "Question" : "Klausimas",
     "Answers" : "Atsakymai",
     "Add answer" : "Pridėti atsakymą",

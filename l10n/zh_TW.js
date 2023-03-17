@@ -1134,6 +1134,7 @@ OC.L10N.register(
     "Blank" : "空白",
     "Invalid path selected" : "所選的路徑無效",
     "Error while creating file" : "建立檔案時發生錯誤",
+    "Group" : "群組",
     "Question" : "問題",
     "Ask a question" : "詢問問題",
     "Answers" : "答案",

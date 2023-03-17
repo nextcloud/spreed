@@ -98,6 +98,7 @@ OC.L10N.register(
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "Create new poll" : "Crear nueva encuesta",
+    "Group" : "Grupo",
     "Settings" : "Configuraciones ",
     "Create poll" : "Crear encuesta",
     "moderator" : "moderador",

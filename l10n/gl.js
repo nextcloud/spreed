@@ -1070,6 +1070,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Escriba a mensaxe, empregue a @ para mencionar a alguén…",
     "Blank" : "Baleiro",
     "Invalid path selected" : "Seleccionou unha ruta incorrecta.",
+    "Group" : "Grupo",
     "Settings" : "Axustes",
     "Create poll" : "Crear enquisa",
     "Join" : "Unirse",

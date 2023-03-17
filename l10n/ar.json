@@ -137,6 +137,7 @@
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "مكالمة مع {user1} و {user2} و {user3} (المدة الزمنية {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "مكالمة مع {user1} و {user2} و {user3} و {user4} (المدة الزمنية {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "مكالمة مع {user1} و {user2} و {user3} و {user4} و {user5} (المدة الزمنية {duration})",
+    "Talk conversations" : "محادثات",
     "Talk to %s" : "تحدث إلى %s",
     "File is not shared, or shared but not with the user" : "الملف لم يتم مشاركته أو ليس مع المستخدم صلاحية للإطلاع على الملف",
     "No account available to delete." : "لا يوجد حساب متاح للحذف",
