@@ -290,6 +290,7 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Send message" : "Enviar mensagem",
     "New file" : "Ficheiro novo",
+    "Group" : "Grupo",
     "Settings" : "Definições",
     "Join" : "Aderir",
     "moderator" : "moderador",

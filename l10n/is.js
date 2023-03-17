@@ -481,6 +481,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Write message, @ to mention someone …",
     "Blank" : "Tóm",
     "Invalid path selected" : "Ógild slóð valin",
+    "Group" : "Hópur",
     "Settings" : "Stillingar",
     "Create poll" : "Búa til könnun",
     "Join" : "Taka þátt",

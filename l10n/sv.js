@@ -662,6 +662,7 @@ OC.L10N.register(
     "Share from {nextcloud}" : "Dela från {nextcloud}",
     "Blank" : "Tom",
     "Invalid path selected" : "Ogiltig sökväg vald",
+    "Group" : "Grupp",
     "Settings" : "Inställningar",
     "Private poll" : "Privat omröstning",
     "Create poll" : "Skapa omröstning",

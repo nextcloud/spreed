@@ -1134,6 +1134,7 @@ OC.L10N.register(
     "Blank" : "Boş",
     "Invalid path selected" : "Seçilen yol geçersiz",
     "Error while creating file" : "Dosya oluşturulurken sorun çıktı",
+    "Group" : "Grup",
     "Question" : "Soru",
     "Ask a question" : "Bir soru sorun",
     "Answers" : "Yanıtlar",

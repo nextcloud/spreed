@@ -534,6 +534,7 @@ OC.L10N.register(
     "New file" : "Нови фајл",
     "Blank" : "Празно",
     "Invalid path selected" : "Одабрана неисправна путања",
+    "Group" : "Група",
     "Question" : "Питање",
     "Settings" : "Поставке",
     "Private poll" : "Приватно гласање",

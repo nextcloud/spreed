@@ -1080,6 +1080,7 @@ OC.L10N.register(
     "Blank" : "Hutsik",
     "Invalid path selected" : "Bide baliogabea hautatuta",
     "Error while creating file" : "Errorea fitxategia sortzen",
+    "Group" : "Taldea",
     "Question" : "Galdera",
     "Ask a question" : "Egin galdera bat",
     "Answers" : "Erantzunak",

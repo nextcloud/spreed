@@ -864,6 +864,7 @@ OC.L10N.register(
     "This conversation has been locked" : "Aquesta conversacion foguèt clavada",
     "Write message, @ to mention someone …" : "Escriure un messatge, @ per mencionar qualqu’un…",
     "Invalid path selected" : "Camin seleccionat invalid",
+    "Group" : "Grop",
     "Settings" : "Paramètres",
     "Start a call" : "Començar una sonada",
     "Skip the lobby" : "Passar la sala d’espèra",

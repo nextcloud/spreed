@@ -753,6 +753,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Напиши порака, @ за да спомнете некој ...",
     "Blank" : "Празно",
     "Invalid path selected" : "Избрана невалидна патека",
+    "Group" : "Група",
     "Settings" : "Параметри",
     "Start a call" : "Повик",
     "Skip the lobby" : "Прескокни го лобито",

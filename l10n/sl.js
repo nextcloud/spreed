@@ -1107,6 +1107,7 @@ OC.L10N.register(
     "Blank" : "Prazno",
     "Invalid path selected" : "Izbrana je neveljavna pot",
     "Error while creating file" : "Prišlo je do napake med ustvarjanjem datoteke",
+    "Group" : "Skupina",
     "Question" : "Vprašanje",
     "Ask a question" : "Zastavite vprašanje",
     "Answers" : "Dogovori",

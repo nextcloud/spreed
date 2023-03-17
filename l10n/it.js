@@ -963,6 +963,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Scrivi messaggio, @ per menzionare qualcuno…",
     "Blank" : "Vuoto",
     "Invalid path selected" : "Percorso selezionato non valido",
+    "Group" : "Gruppo",
     "Settings" : "Impostazioni",
     "Create poll" : "Crea sondaggio",
     "Start a call" : "Inizia la chiamata",

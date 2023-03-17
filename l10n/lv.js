@@ -200,6 +200,7 @@ OC.L10N.register(
     "File to share" : "Kopīgojamā datne",
     "New file" : "Jauns fails",
     "Write message, @ to mention someone …" : "Rakstiet ziņu, @ lai pieminētu kādu …",
+    "Group" : "Grupa",
     "Settings" : "Iestatījumi",
     "Join" : "Pievienoties",
     "moderator" : "moderators",
