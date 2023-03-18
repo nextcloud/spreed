@@ -1134,6 +1134,7 @@ OC.L10N.register(
     "Blank" : "Празен",
     "Invalid path selected" : "Предоставен е невалиден път до файл.",
     "Error while creating file" : "Грешка при създаване на файл",
+    "Group" : "Група",
     "Question" : "Въпрос",
     "Ask a question" : "Задаване на въпрос",
     "Answers" : "Отговори",

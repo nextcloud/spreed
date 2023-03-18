@@ -863,6 +863,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "اكتب رسالة، منشن احدهم باستخدام @ …",
     "Blank" : "فارغ",
     "Invalid path selected" : "تم تحديد مسار غير صحيح",
+    "Group" : "المجموعة",
     "Settings" : "الإعدادات",
     "Disable lobby" : "تعطيل ساحة الإنتظار",
     "moderator" : "مشرف",
