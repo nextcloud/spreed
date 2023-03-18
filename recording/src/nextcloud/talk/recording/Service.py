@@ -124,12 +124,13 @@ def newAudioSink(baseSinkName):
 
     return moduleIndex, sinkIndex
 
-def recorderLog(loggerName, pipe):
+def processLog(loggerName, pipe, level = logging.INFO):
     """
-    Logs the recorder output.
+    Logs the process output.
 
     :param loggerName: the name of the logger.
-    :param pipe: Pipe to the recorder process output.
+    :param pipe: Pipe to the process output.
+    :param level: log level, INFO by default.
     """
     logger = logging.getLogger(loggerName)
 
@@ -137,7 +138,7 @@ def recorderLog(loggerName, pipe):
         for line in pipe:
             # Lines captured from the recorder have a trailing new line, so it
             # needs to be removed.
-            logger.info(line.rstrip('\n'))
+            logger.log(level, line.rstrip('\n'))
 
 class Service:
     """
@@ -253,7 +254,7 @@ class Service:
             self._process = subprocess.Popen(recorderArgs, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
 
             # Log recorder output.
-            Thread(target=recorderLog, args=[f"{__name__}.recorder-{self.backend}-{self.token}", self._process.stdout], daemon=True).start()
+            Thread(target=processLog, args=[f"{__name__}.recorder-{self.backend}-{self.token}", self._process.stdout], daemon=True).start()
 
             if self._stopped.is_set():
                 # Not strictly needed, as if the recorder is started after the
