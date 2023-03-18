@@ -76,7 +76,7 @@ def getRecorderArgs(status, displayId, audioSinkIndex, width, height, extensionl
 
     return ffmpegArgs + [outputFileName]
 
-def newAudioSink(sanitizedBackend, token):
+def newAudioSink(baseSinkName):
     """
     Start new audio sink for the audio output of the browser.
 
@@ -87,16 +87,15 @@ def newAudioSink(sanitizedBackend, token):
     The sink is created by loading a null sink module. This module needs to be
     unloaded once the sink is no longer needed to remove it.
 
-    :param sanitizedBackend: the backend of the call; it is expected to have
-           been sanitized and to contain only alpha-numeric characters.
-    :param token: the token of the call.
+    :param baseSinkName: the base name for the sink; it is expected to have been
+           sanitized and to contain only alpha-numeric characters.
     :return: a tuple with the module index and the sink index, both as ints.
     """
 
-    # A random value is appended to the backend and token to "ensure" that there
-    # will be no name clashes if a previous sink for that backend and module was
-    # not unloaded yet.
-    sinkName = f"{sanitizedBackend}-{token}-{token_urlsafe(32)}"
+    # A random value is appended to the base sink name to "ensure" that there
+    # will be no name clashes if a previous sink with that base name was not
+    # unloaded yet.
+    sinkName = f"{baseSinkName}-{token_urlsafe(32)}"
 
     # Module names can be, at most, 127 characters, so the name is truncated if
     # needed.
@@ -220,7 +219,7 @@ class Service:
                 raise Exception("Display started after recording was stopped")
 
             # Start new audio sink for the audio output of the browser.
-            self._audioModuleIndex, audioSinkIndex = newAudioSink(sanitizedBackend, self.token)
+            self._audioModuleIndex, audioSinkIndex = newAudioSink(f"{sanitizedBackend}-{self.token}")
             audioSinkIndex = str(audioSinkIndex)
 
             if self._stopped.is_set():
