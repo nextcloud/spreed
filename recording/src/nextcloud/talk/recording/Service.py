@@ -37,7 +37,7 @@ from .Participant import Participant
 RECORDING_STATUS_AUDIO_AND_VIDEO = 1
 RECORDING_STATUS_AUDIO_ONLY = 2
 
-def getRecorderArgs(status, displayId, audioSinkIndex, width, height, extensionlessOutputFileName):
+def getRecorderArguments(status, displayId, audioSinkIndex, width, height, extensionlessOutputFileName):
     """
     Returns the list of arguments to start the recorder process.
 
@@ -63,18 +63,18 @@ def getRecorderArgs(status, displayId, audioSinkIndex, width, height, extensionl
 
     outputFileName = extensionlessOutputFileName + extension
 
-    ffmpegArgs = ffmpegCommon
-    ffmpegArgs += ffmpegInputAudio
+    ffmpegArguments = ffmpegCommon
+    ffmpegArguments += ffmpegInputAudio
 
     if status == RECORDING_STATUS_AUDIO_AND_VIDEO:
-        ffmpegArgs += ffmpegInputVideo
+        ffmpegArguments += ffmpegInputVideo
 
-    ffmpegArgs += ffmpegOutputAudio
+    ffmpegArguments += ffmpegOutputAudio
 
     if status == RECORDING_STATUS_AUDIO_AND_VIDEO:
-        ffmpegArgs += ffmpegOutputVideo
+        ffmpegArguments += ffmpegOutputVideo
 
-    return ffmpegArgs + [outputFileName]
+    return ffmpegArguments + [outputFileName]
 
 def newAudioSink(baseSinkName):
     """
@@ -246,12 +246,12 @@ class Service:
 
             extensionlessFileName = f'{fullDirectory}/recording-{datetime.now().strftime("%Y%m%d-%H%M%S")}'
 
-            recorderArgs = getRecorderArgs(self.status, self._display.new_display_var, audioSinkIndex, width, height, extensionlessFileName)
+            recorderArguments = getRecorderArguments(self.status, self._display.new_display_var, audioSinkIndex, width, height, extensionlessFileName)
 
-            self._fileName = recorderArgs[-1]
+            self._fileName = recorderArguments[-1]
 
             self._logger.debug("Starting recorder")
-            self._process = subprocess.Popen(recorderArgs, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            self._process = subprocess.Popen(recorderArguments, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
 
             # Log recorder output.
             Thread(target=processLog, args=[f"{__name__}.recorder-{self.backend}-{self.token}", self._process.stdout], daemon=True).start()
