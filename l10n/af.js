@@ -296,6 +296,7 @@ OC.L10N.register(
     "Contact" : "Kontak",
     "Today" : "Vandag",
     "Yesterday" : "Gister",
+    "Group" : "Groep",
     "Settings" : "Instellings",
     "Join" : "Sluit aan",
     "guest" : "gas",

@@ -652,6 +652,7 @@ OC.L10N.register(
     "New file" : "Restr nevez",
     "Write message, @ to mention someone …" : "Skrivañ ur gemenadenn, @ evit menegiñ unan bennak ...",
     "Invalid path selected" : "An hent dibabet n'eus ket anezhañ",
+    "Group" : "Stollad",
     "Settings" : "Arventennoù",
     "Join" : "Kejañ",
     "moderator" : "habaskaer",
