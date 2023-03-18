@@ -25,8 +25,10 @@ class RecorderArgumentsBuilder:
     Helper class to get the arguments to start the recorder process.
 
     Some of the recorder arguments, like the arguments for the output video
-    codec, can be customized. Those values are got from the configuration,
-    either a specific value set in the configuration file or a default value.
+    codec, can be customized. By default they are got from the configuration,
+    either a specific value set in the configuration file or a default value,
+    but the configuration value can be overriden by explicitly setting it in
+    RecorderArgumentsBuilder.
     """
 
     def __init__(self):
@@ -51,12 +53,10 @@ class RecorderArgumentsBuilder:
         ffmpegCommon = ['ffmpeg', '-loglevel', 'level+warning', '-n']
         ffmpegInputAudio = ['-f', 'pulse', '-i', audioSinkIndex]
         ffmpegInputVideo = ['-f', 'x11grab', '-draw_mouse', '0', '-video_size', f'{width}x{height}', '-i', displayId]
-        ffmpegOutputAudio = config.getFfmpegOutputAudio()
-        ffmpegOutputVideo = config.getFfmpegOutputVideo()
+        ffmpegOutputAudio = self.getFfmpegOutputAudio()
+        ffmpegOutputVideo = self.getFfmpegOutputVideo()
 
-        extension = config.getFfmpegExtensionAudio()
-        if status == RECORDING_STATUS_AUDIO_AND_VIDEO:
-            extension = config.getFfmpegExtensionVideo()
+        extension = self.getExtension(status)
 
         outputFileName = extensionlessOutputFileName + extension
 
@@ -72,3 +72,33 @@ class RecorderArgumentsBuilder:
             ffmpegArguments += ffmpegOutputVideo
 
         return ffmpegArguments + [outputFileName]
+
+    def getFfmpegOutputAudio(self):
+        if self._ffmpegOutputAudio != None:
+            return self._ffmpegOutputAudio
+
+        return config.getFfmpegOutputAudio()
+
+    def getFfmpegOutputVideo(self):
+        if self._ffmpegOutputVideo != None:
+            return self._ffmpegOutputVideo
+
+        return config.getFfmpegOutputVideo()
+
+    def getExtension(self, status):
+        if self._extension:
+            return self._extension
+
+        if status == RECORDING_STATUS_AUDIO_AND_VIDEO:
+            return config.getFfmpegExtensionVideo()
+
+        return config.getFfmpegExtensionAudio()
+
+    def setFfmpegOutputAudio(self, ffmpegOutputAudio):
+        self._ffmpegOutputAudio = ffmpegOutputAudio
+
+    def setFfmpegOutputVideo(self, ffmpegOutputVideo):
+        self._ffmpegOutputVideo = ffmpegOutputVideo
+
+    def setExtension(self, extension):
+        self._extension = extension
