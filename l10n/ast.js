@@ -81,6 +81,7 @@ OC.L10N.register(
     "Contact" : "Contautu",
     "Today" : "Güei",
     "Yesterday" : "Ayeri",
+    "Group" : "Group",
     "Settings" : "Settings",
     "guest" : "invitáu",
     "No results" : "Ensin resultaos",
