@@ -204,4 +204,36 @@ class Config:
 
         return self._configParser.get('signaling', 'internalsecret', fallback=None)
 
+    def getFfmpegOutputAudio(self):
+        """
+        Returns the options given to FFmpeg to encode the audio output.
+
+        Defaults to ['-c:a', 'libopus'].
+        """
+        return self._configParser.get('ffmpeg', 'outputaudio', fallback='-c:a libopus').split()
+
+    def getFfmpegOutputVideo(self):
+        """
+        Returns the options given to FFmpeg to encode the video output.
+
+        Defaults to ['-c:v', 'libvpx', '-quality:v', 'realtime'].
+        """
+        return self._configParser.get('ffmpeg', 'outputvideo', fallback='-c:v libvpx -quality:v realtime').split()
+
+    def getFfmpegExtensionAudio(self):
+        """
+        Returns the extension of the output file for audio recordings.
+
+        Defaults to ".ogg".
+        """
+        return self._configParser.get('ffmpeg', 'extensionaudio', fallback='.ogg')
+
+    def getFfmpegExtensionVideo(self):
+        """
+        Returns the extension of the output file for video recordings.
+
+        Defaults to ".webm".
+        """
+        return self._configParser.get('ffmpeg', 'extensionvideo', fallback='.webm')
+
 config = Config()

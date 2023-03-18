@@ -94,3 +94,18 @@
 # This must be the same value as configured in the signaling server
 # configuration file.
 #internalsecret = the-shared-secret-for-internal-clients
+
+[ffmpeg]
+# The options given to FFmpeg to encode the audio output. The options given here
+# fully override the default options for the audio output.
+#outputaudio = -c:a libopus
+
+# The options given to FFmpeg to encode the video output. The options given here
+# fully override the default options for the video output.
+#outputvideo = -c:v libvpx -quality:v realtime
+
+# The extension of the file for audio only recordings.
+#extensionaudio = .ogg
+
+# The extension of the file for audio and video recordings.
+#extensionvideo = .webm

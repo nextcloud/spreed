@@ -54,12 +54,12 @@ def getRecorderArgs(status, displayId, audioSinkIndex, width, height, extensionl
     ffmpegCommon = ['ffmpeg', '-loglevel', 'level+warning', '-n']
     ffmpegInputAudio = ['-f', 'pulse', '-i', audioSinkIndex]
     ffmpegInputVideo = ['-f', 'x11grab', '-draw_mouse', '0', '-video_size', f'{width}x{height}', '-i', displayId]
-    ffmpegOutputAudio = ['-c:a', 'libopus']
-    ffmpegOutputVideo = ['-c:v', 'libvpx', '-quality:v', 'realtime']
+    ffmpegOutputAudio = config.getFfmpegOutputAudio()
+    ffmpegOutputVideo = config.getFfmpegOutputVideo()
 
-    extension = '.ogg'
+    extension = config.getFfmpegExtensionAudio()
     if status == RECORDING_STATUS_AUDIO_AND_VIDEO:
-        extension = '.webm'
+        extension = config.getFfmpegExtensionVideo()
 
     outputFileName = extensionlessOutputFileName + extension
 
