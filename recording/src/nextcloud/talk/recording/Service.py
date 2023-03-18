@@ -30,51 +30,11 @@ from pyvirtualdisplay import Display
 from secrets import token_urlsafe
 from threading import Event, Thread
 
+from nextcloud.talk.recording import RECORDING_STATUS_AUDIO_AND_VIDEO, RECORDING_STATUS_AUDIO_ONLY
 from . import BackendNotifier
 from .Config import config
 from .Participant import Participant
-
-RECORDING_STATUS_AUDIO_AND_VIDEO = 1
-RECORDING_STATUS_AUDIO_ONLY = 2
-
-def getRecorderArguments(status, displayId, audioSinkIndex, width, height, extensionlessOutputFileName):
-    """
-    Returns the list of arguments to start the recorder process.
-
-    :param status: whether to record audio and video or only audio.
-    :param displayId: the ID of the display that the browser is running in.
-    :param audioSinkIndex: the index of the sink for the browser audio output.
-    :param width: the width of the display and the recording.
-    :param height: the height of the display and the recording.
-    :param extensionlessOutputFileName: the file name for the recording, without
-           extension.
-    :returns: the file name for the recording, with extension.
-    """
-
-    ffmpegCommon = ['ffmpeg', '-loglevel', 'level+warning', '-n']
-    ffmpegInputAudio = ['-f', 'pulse', '-i', audioSinkIndex]
-    ffmpegInputVideo = ['-f', 'x11grab', '-draw_mouse', '0', '-video_size', f'{width}x{height}', '-i', displayId]
-    ffmpegOutputAudio = config.getFfmpegOutputAudio()
-    ffmpegOutputVideo = config.getFfmpegOutputVideo()
-
-    extension = config.getFfmpegExtensionAudio()
-    if status == RECORDING_STATUS_AUDIO_AND_VIDEO:
-        extension = config.getFfmpegExtensionVideo()
-
-    outputFileName = extensionlessOutputFileName + extension
-
-    ffmpegArguments = ffmpegCommon
-    ffmpegArguments += ffmpegInputAudio
-
-    if status == RECORDING_STATUS_AUDIO_AND_VIDEO:
-        ffmpegArguments += ffmpegInputVideo
-
-    ffmpegArguments += ffmpegOutputAudio
-
-    if status == RECORDING_STATUS_AUDIO_AND_VIDEO:
-        ffmpegArguments += ffmpegOutputVideo
-
-    return ffmpegArguments + [outputFileName]
+from .RecorderArgumentsBuilder import RecorderArgumentsBuilder
 
 def newAudioSink(baseSinkName):
     """
@@ -246,7 +206,8 @@ class Service:
 
             extensionlessFileName = f'{fullDirectory}/recording-{datetime.now().strftime("%Y%m%d-%H%M%S")}'
 
-            recorderArguments = getRecorderArguments(self.status, self._display.new_display_var, audioSinkIndex, width, height, extensionlessFileName)
+            recorderArgumentsBuilder = RecorderArgumentsBuilder()
+            recorderArguments = recorderArgumentsBuilder.getRecorderArguments(self.status, self._display.new_display_var, audioSinkIndex, width, height, extensionlessFileName)
 
             self._fileName = recorderArguments[-1]
 
