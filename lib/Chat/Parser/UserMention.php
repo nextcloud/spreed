@@ -29,6 +29,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\ICommentsManager;
 use OCP\IGroup;
@@ -50,12 +51,14 @@ class UserMention {
 	protected IGroupManager $groupManager;
 	protected GuestManager $guestManager;
 	protected ParticipantService $participantService;
+	protected AvatarService $avatarService;
 	protected IL10N $l;
 
 	public function __construct(ICommentsManager $commentsManager,
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								GuestManager $guestManager,
+								AvatarService $avatarService,
 								ParticipantService $participantService,
 								IL10N $l) {
 		$this->commentsManager = $commentsManager;
@@ -63,6 +66,7 @@ class UserMention {
 		$this->groupManager = $groupManager;
 		$this->guestManager = $guestManager;
 		$this->participantService = $participantService;
+		$this->avatarService = $avatarService;
 		$this->l = $l;
 	}
 
@@ -138,7 +142,7 @@ class UserMention {
 					'id' => $chatMessage->getRoom()->getToken(),
 					'name' => $chatMessage->getRoom()->getDisplayName($userId),
 					'call-type' => $this->getRoomType($chatMessage->getRoom()),
-					'icon-url' => $chatMessage->getRoom()->getAvatar(),
+					'icon-url' => $this->avatarService->getAvatarUrl($chatMessage->getRoom()),
 				];
 			} elseif ($mention['type'] === 'guest') {
 				try {

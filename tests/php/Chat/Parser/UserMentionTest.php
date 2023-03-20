@@ -31,6 +31,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -49,6 +50,8 @@ class UserMentionTest extends TestCase {
 	protected $groupManager;
 	/** @var GuestManager|MockObject */
 	protected $guestManager;
+	/** @var AvatarService|MockObject */
+	protected $avatarService;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
 	/** @var IL10N|MockObject */
@@ -63,6 +66,7 @@ class UserMentionTest extends TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
+		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->l = $this->createMock(IL10N::class);
 
@@ -71,6 +75,7 @@ class UserMentionTest extends TestCase {
 			$this->userManager,
 			$this->groupManager,
 			$this->guestManager,
+			$this->avatarService,
 			$this->participantService,
 			$this->l);
 	}

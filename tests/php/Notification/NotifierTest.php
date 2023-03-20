@@ -34,6 +34,7 @@ use OCA\Talk\Model\Message;
 use OCA\Talk\Notification\Notifier;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -71,6 +72,8 @@ class NotifierTest extends TestCase {
 	protected $manager;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
+	/** @var AvatarService|MockObject */
+	protected $avatarService;
 	/** @var INotificationManager|MockObject */
 	protected $notificationManager;
 	/** @var CommentsManager|MockObject */
@@ -101,6 +104,7 @@ class NotifierTest extends TestCase {
 		$this->shareManager = $this->createMock(IShareManager::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
+		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->notificationManager = $this->createMock(INotificationManager::class);
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
@@ -120,6 +124,7 @@ class NotifierTest extends TestCase {
 			$this->shareManager,
 			$this->manager,
 			$this->participantService,
+			$this->avatarService,
 			$this->notificationManager,
 			$this->commentsManager,
 			$this->messageParser,

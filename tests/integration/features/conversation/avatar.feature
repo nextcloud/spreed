@@ -45,3 +45,13 @@ Feature: conversation/avatar
       | roomType | 1 |
       | invite   | participant2 |
     Then user "participant1" uploads file "/img/favicon.png" as avatar of room "one2one" with 400
+
+  Scenario: User should receive the room avatar when see a rich object at media tab
+    Given user "participant1" creates room "public room" (v4)
+      | roomType | 3 |
+      | roomName | public room |
+    And user "participant1" uploads file "/img/favicon.png" as avatar of room "public room" with 200
+    When user "participant1" shares rich-object "call" "R4nd0mT0k3n" '{"name":"Another room","call-type":"group"}' to room "public room" with 201 (v1)
+    Then user "participant1" sees the following shared other in room "public room" with 200
+      | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
+      | public room | users     | participant1 | participant1-displayname | {object} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"object":{"name":"Another room","call-type":"group","type":"call","id":"R4nd0mT0k3n","icon-url":"{VALIDATE_ICON_URL_PATTERN}"}} |

@@ -2227,6 +2227,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if ($result) {
 				$expected[$i]['messageParameters'] = str_replace($matches[0], '"' . self::$questionToPollId[$matches[1]] . '"', $expected[$i]['messageParameters']);
 			}
+			if (isset($messages[$i]['messageParameters']['object']['icon-url'])) {
+				$result = preg_match('/"\{VALIDATE_ICON_URL_PATTERN\}"/', $expected[$i]['messageParameters'], $matches);
+				if ($result) {
+					Assert::assertMatchesRegularExpression('/avatar\?v=\w+/', $messages[$i]['messageParameters']['object']['icon-url']);
+					$expected[$i]['messageParameters'] = str_replace($matches[0], json_encode($messages[$i]['messageParameters']['object']['icon-url']), $expected[$i]['messageParameters']);
+				}
+			}
 		}
 
 		Assert::assertEquals($expected, array_map(function ($message) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf) {
