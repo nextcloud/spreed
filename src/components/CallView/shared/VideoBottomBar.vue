@@ -20,13 +20,10 @@
 -->
 
 <template>
-	<div class="wrapper"
-		:class="{'wrapper--big': isBig}">
+	<div class="wrapper" :class="{'wrapper--big': isBig}">
 		<transition name="fade">
 			<div v-if="showRaiseHandIndicator" class="status-indicator">
-				<HandBackLeft class="handIndicator"
-					:size="18"
-					fill-color="#ffffff" />
+				<HandBackLeft :size="18" fill-color="#ffffff" />
 			</div>
 		</transition>
 		<div v-if="!isSidebar" class="bottom-bar">
@@ -44,49 +41,42 @@
 					<NcButton v-show="showAudioIndicator"
 						v-tooltip="audioButtonTooltip"
 						:aria-label="audioButtonTooltip"
-						class="muteIndicator"
+						class="audioIndicator"
 						type="tertiary-no-background"
 						:disabled="isAudioButtonDisabled"
 						@click.stop="forceMute">
 						<template #icon>
-							<Microphone v-if="model.attributes.audioAvailable"
-								:size="20"
-								fill-color="#ffffff" />
-							<MicrophoneOff v-else
-								:size="20"
-								fill-color="#ffffff" />
+							<Microphone v-if="model.attributes.audioAvailable" :size="20" fill-color="#ffffff" />
+							<MicrophoneOff v-else :size="20" fill-color="#ffffff" />
 						</template>
 					</NcButton>
+
 					<NcButton v-show="showVideoIndicator"
 						v-tooltip="videoButtonTooltip"
 						:aria-label="videoButtonTooltip"
-						class="hideRemoteVideo"
+						class="videoIndicator"
 						type="tertiary-no-background"
 						@click.stop="toggleVideo">
 						<template #icon>
-							<VideoIcon v-if="isRemoteVideoEnabled"
-								:size="20"
-								fill-color="#ffffff" />
-							<VideoOff v-else
-								:size="20"
-								fill-color="#ffffff" />
+							<VideoIcon v-if="isRemoteVideoEnabled" :size="20" fill-color="#ffffff" />
+							<VideoOff v-else :size="20" fill-color="#ffffff" />
 						</template>
 					</NcButton>
+
 					<NcButton v-show="showScreenSharingIndicator"
 						v-tooltip="t('spreed', 'Show screen')"
 						:aria-label="t('spreed', 'Show screen')"
-						type="tertiary-no-background"
 						:class="screenSharingButtonClass"
+						type="tertiary-no-background"
 						@click.stop="switchToScreen">
 						<template #icon>
-							<Monitor :size="20"
-								fill-color="#ffffff" />
+							<Monitor :size="20" fill-color="#ffffff" />
 						</template>
 					</NcButton>
+
 					<div v-if="connectionStateFailedNoRestart"
 						class="iceFailedIndicator status-indicator">
-						<AlertCircle :size="20"
-							fill-color="#ffffff" />
+						<AlertCircle :size="20" fill-color="#ffffff" />
 					</div>
 				</div>
 			</transition>
@@ -186,9 +176,16 @@ export default {
 	},
 
 	computed: {
+		connectionStateFailedNoRestart() {
+			return this.model.attributes.connectionState === ConnectionState.FAILED_NO_RESTART
+		},
+
 		// Common indicators
 		showRaiseHandIndicator() {
 			return !this.connectionStateFailedNoRestart && this.model.attributes.raisedHand.state
+		},
+		showStopFollowingButton() {
+			return this.isBig && this.$store.getters.selectedVideoPeerId !== null
 		},
 
 		// Audio indicator
@@ -201,17 +198,10 @@ export default {
 		isAudioButtonDisabled() {
 			return !this.model.attributes.audioAvailable || !this.canFullModerate
 		},
-
-		connectionStateFailedNoRestart() {
-			return this.model.attributes.connectionState === ConnectionState.FAILED_NO_RESTART
-		},
-
 		audioButtonTooltip() {
-			if (this.model.attributes.audioAvailable) {
-				return t('spreed', 'Mute')
-			}
-
-			return t('spreed', 'Muted')
+			return this.model.attributes.audioAvailable
+				? t('spreed', 'Mute')
+				: t('spreed', 'Muted')
 		},
 
 		// Video indicator
@@ -224,13 +214,10 @@ export default {
 		isRemoteVideoBlocked() {
 			return this.sharedData.remoteVideoBlocker && !this.sharedData.remoteVideoBlocker.isVideoEnabled()
 		},
-
 		videoButtonTooltip() {
-			if (this.sharedData.remoteVideoBlocker.isVideoEnabled()) {
-				return t('spreed', 'Disable video')
-			}
-
-			return t('spreed', 'Enable video')
+			return this.isRemoteVideoEnabled
+				? t('spreed', 'Disable video')
+				: t('spreed', 'Enable video')
 		},
 
 		// ScreenSharing indicator
@@ -247,18 +234,14 @@ export default {
 		isCurrentlyActive() {
 			return this.isSelected || this.model.attributes.speaking
 		},
-		participantNameClass() {
-			return {
-				'participant-name--promoted': this.isCurrentlyActive,
-				'participant-name--has-shadow': this.hasShadow,
-			}
-		},
 		showParticipantName() {
 			return !this.model.attributes.videoAvailable || this.isRemoteVideoBlocked || this.showVideoOverlay || this.isPromoted || this.isCurrentlyActive
 		},
-
-		showStopFollowingButton() {
-			return this.isBig && this.$store.getters.selectedVideoPeerId !== null
+		participantNameClass() {
+			return {
+				'participant-name--active': this.isCurrentlyActive,
+				'participant-name--has-shadow': this.hasShadow,
+			}
 		},
 
 		// Moderator rights
@@ -277,13 +260,12 @@ export default {
 	},
 
 	methods: {
-
 		forceMute() {
 			this.model.forceMute()
 		},
 
 		toggleVideo() {
-			this.sharedData.remoteVideoBlocker.setVideoEnabled(!this.sharedData.remoteVideoBlocker.isVideoEnabled())
+			this.sharedData.remoteVideoBlocker.setVideoEnabled(!this.isRemoteVideoEnabled)
 		},
 
 		switchToScreen() {
@@ -301,7 +283,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 @import '../../../assets/variables';
 
 .wrapper {
@@ -328,27 +309,40 @@ export default {
 	align-items: center;
 	height: 40px;
 	z-index: 1;
-	.participant-name {
-		color: white;
-		margin: 0 4px 0 8px;
-		position: relative;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
-		&--promoted {
-			font-weight: bold;
-		}
-		&--has-shadow {
-			text-shadow: 0 0 4px rgba(0, 0, 0,.8);
+
+	& &__button {
+		opacity: 0.8;
+		background-color: var(--color-background-dark);
+
+		&:hover,
+		&:focus {
+			opacity: 1;
 		}
 	}
-	.status-indicator {
-		width: 44px;
-		height: 44px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+}
+
+.participant-name {
+	color: white;
+		margin: 0 4px 0 8px;
+	position: relative;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+	&--active {
+		font-weight: bold;
+	}
+	&--has-shadow {
+		text-shadow: 0 0 4px rgba(0, 0, 0, .8);
+	}
+}
+
+.status-indicator {
+	width: 44px;
+	height: 44px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	}
 	&__mediaIndicator {
 		position: relative;
@@ -357,14 +351,6 @@ export default {
 		margin: 0 4px;
 		display: flex;
 		flex-wrap: nowrap;
-	}
-	& &__button {
-		opacity: 0.8;
-		background-color: var(--color-background-dark);
-		&:hover,
-		&:focus {
-			opacity: 1;
-		}
 	}
 }
 
@@ -376,12 +362,12 @@ export default {
 	opacity: .8 !important;
 }
 
-.muteIndicator[disabled],
-.hideRemoteVideo {
+.audioIndicator[disabled],
+.videoIndicator {
 	opacity: .7;
 }
 
-.hideRemoteVideo {
+.videoIndicator {
 	&:hover,
 	&:focus {
 		opacity: 1;
