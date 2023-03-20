@@ -2,6 +2,7 @@
   - @copyright Copyright (c) 2020 Marco Ambrosini <marcoambrosini@icloud.com>
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
+  - @author Maksim Sukharev <antreesy.web@gmail.com>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -26,6 +27,7 @@
 				<HandBackLeft :size="18" fill-color="#ffffff" />
 			</div>
 		</transition>
+
 		<div v-if="!isSidebar" class="bottom-bar">
 			<transition name="fade">
 				<div v-show="showParticipantName"
@@ -34,11 +36,11 @@
 					{{ participantName }}
 				</div>
 			</transition>
-			<transition name="fade">
-				<div v-if="!isScreen"
-					v-show="showVideoOverlay"
-					class="bottom-bar__mediaIndicator">
+
+			<transition-group class="media-indicators" name="fade">
+				<template v-if="!isScreen && showVideoOverlay">
 					<NcButton v-show="showAudioIndicator"
+						key="audioIndicator"
 						v-tooltip="audioButtonTooltip"
 						:aria-label="audioButtonTooltip"
 						class="audioIndicator"
@@ -52,6 +54,7 @@
 					</NcButton>
 
 					<NcButton v-show="showVideoIndicator"
+						key="videoIndicator"
 						v-tooltip="videoButtonTooltip"
 						:aria-label="videoButtonTooltip"
 						class="videoIndicator"
@@ -64,6 +67,7 @@
 					</NcButton>
 
 					<NcButton v-show="showScreenSharingIndicator"
+						key="screenSharingIndicator"
 						v-tooltip="t('spreed', 'Show screen')"
 						:aria-label="t('spreed', 'Show screen')"
 						:class="screenSharingButtonClass"
@@ -75,13 +79,15 @@
 					</NcButton>
 
 					<div v-if="connectionStateFailedNoRestart"
+						key="iceFailedIndicator"
 						class="iceFailedIndicator status-indicator">
 						<AlertCircle :size="20" fill-color="#ffffff" />
 					</div>
-				</div>
-			</transition>
+				</template>
+			</transition-group>
+
 			<NcButton v-if="showStopFollowingButton"
-				class="bottom-bar__button"
+				class="following-button"
 				type="tertiary"
 				@click="handleStopFollowing">
 				{{ t('spreed', 'Stop following') }}
@@ -287,30 +293,36 @@ export default {
 
 .wrapper {
 	display: flex;
+	align-items: center;
 	position: absolute;
 	bottom: 0;
 	width: 100%;
 	padding: 0 12px 8px 12px;
-	align-items: center;
+	z-index: 1;
+
 	&--big {
 		justify-content: center;
 		& .bottom-bar {
-			justify-content: center;
-			height: 48px;
 			width: unset;
+		}
+		& .participant-name {
+			margin-right: 0;
 		}
 	}
 }
 
 .bottom-bar {
 	display: flex;
-	width: 100%;
-	justify-content: space-between;
 	align-items: center;
-	height: 40px;
-	z-index: 1;
+	gap: 8px;
+	width: 100%;
+	height: 44px;
 
-	& &__button {
+	& .media-indicators {
+		display: flex;
+	}
+
+	& .following-button {
 		opacity: 0.8;
 		background-color: var(--color-background-dark);
 
@@ -323,7 +335,7 @@ export default {
 
 .participant-name {
 	color: white;
-		margin: 0 4px 0 8px;
+	margin: 0 auto 0 8px;
 	position: relative;
 	white-space: nowrap;
 	overflow: hidden;
@@ -343,19 +355,6 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	}
-	&__mediaIndicator {
-		position: relative;
-		background-size: 22px;
-		text-align: center;
-		margin: 0 4px;
-		display: flex;
-		flex-wrap: nowrap;
-	}
-}
-
-.handIndicator {
-	margin-top: 8px;
 }
 
 .iceFailedIndicator {
