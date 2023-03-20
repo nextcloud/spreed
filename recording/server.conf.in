@@ -102,7 +102,7 @@
 
 # The options given to FFmpeg to encode the video output. The options given here
 # fully override the default options for the video output.
-#outputvideo = -c:v libvpx -deadline:v realtime
+#outputvideo = -c:v libvpx -deadline:v realtime -crf 10 -b:v 1M
 
 # The extension of the file for audio only recordings.
 #extensionaudio = .ogg
