@@ -23,20 +23,17 @@
 	<div class="wrapper"
 		:class="{'wrapper--big': isBig}">
 		<transition name="fade">
-			<div v-if="!connectionStateFailedNoRestart && model.attributes.raisedHand.state"
-				class="bottom-bar__statusIndicator">
+			<div v-if="showRaiseHandIndicator" class="status-indicator">
 				<HandBackLeft class="handIndicator"
 					:size="18"
 					fill-color="#ffffff" />
 			</div>
 		</transition>
-		<div v-if="!isSidebar"
-			class="bottom-bar"
-			:class="{'bottom-bar--video-on' : hasShadow, 'bottom-bar--big': isBig }">
+		<div v-if="!isSidebar" class="bottom-bar">
 			<transition name="fade">
-				<div v-show="showNameIndicator"
-					class="bottom-bar__nameIndicator"
-					:class="{'bottom-bar__nameIndicator--promoted': boldenNameIndicator}">
+				<div v-show="showParticipantName"
+					class="participant-name"
+					:class="participantNameClass">
 					{{ participantName }}
 				</div>
 			</transition>
@@ -44,42 +41,40 @@
 				<div v-if="!isScreen"
 					v-show="showVideoOverlay"
 					class="bottom-bar__mediaIndicator">
-					<NcButton v-show="!connectionStateFailedNoRestart"
-						v-if="showMicrophone || showMicrophoneOff"
+					<NcButton v-show="showAudioIndicator"
 						v-tooltip="audioButtonTooltip"
 						:aria-label="audioButtonTooltip"
 						class="muteIndicator"
 						type="tertiary-no-background"
-						:disabled="!model.attributes.audioAvailable || !selfIsModerator"
+						:disabled="isAudioButtonDisabled"
 						@click.stop="forceMute">
 						<template #icon>
-							<Microphone v-if="showMicrophone"
+							<Microphone v-if="model.attributes.audioAvailable"
 								:size="20"
 								fill-color="#ffffff" />
-							<MicrophoneOff v-if="showMicrophoneOff"
+							<MicrophoneOff v-else
 								:size="20"
 								fill-color="#ffffff" />
 						</template>
 					</NcButton>
-					<NcButton v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
+					<NcButton v-show="showVideoIndicator"
 						v-tooltip="videoButtonTooltip"
 						:aria-label="videoButtonTooltip"
 						class="hideRemoteVideo"
 						type="tertiary-no-background"
 						@click.stop="toggleVideo">
 						<template #icon>
-							<VideoIcon v-if="showVideoButton"
+							<VideoIcon v-if="isRemoteVideoEnabled"
 								:size="20"
 								fill-color="#ffffff" />
-							<VideoOff v-if="!showVideoButton"
+							<VideoOff v-else
 								:size="20"
 								fill-color="#ffffff" />
 						</template>
 					</NcButton>
-					<NcButton v-show="!connectionStateFailedNoRestart"
+					<NcButton v-show="showScreenSharingIndicator"
 						v-tooltip="t('spreed', 'Show screen')"
 						:aria-label="t('spreed', 'Show screen')"
-						class="screensharingIndicator"
 						type="tertiary-no-background"
 						:class="screenSharingButtonClass"
 						@click.stop="switchToScreen">
@@ -88,19 +83,18 @@
 								fill-color="#ffffff" />
 						</template>
 					</NcButton>
-					<div v-show="connectionStateFailedNoRestart"
-						class="iceFailedIndicator bottom-bar__statusIndicator"
-						:class="{ 'not-failed': !connectionStateFailedNoRestart }">
+					<div v-if="connectionStateFailedNoRestart"
+						class="iceFailedIndicator status-indicator">
 						<AlertCircle :size="20"
 							fill-color="#ffffff" />
 					</div>
 				</div>
 			</transition>
-			<NcButton v-if="hasSelectedVideo && isBig"
+			<NcButton v-if="showStopFollowingButton"
 				class="bottom-bar__button"
 				type="tertiary"
 				@click="handleStopFollowing">
-				{{ stopFollowingLabel }}
+				{{ t('spreed', 'Stop following') }}
 			</NcButton>
 		</div>
 	</div>
@@ -179,15 +173,33 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		// The current promoted participant
+		isPromoted: {
+			type: Boolean,
+			default: false,
+		},
+		// Is the current selected participant
+		isSelected: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	computed: {
-		showMicrophone() {
-			return this.model.attributes.audioAvailable && this.selfIsModerator
+		// Common indicators
+		showRaiseHandIndicator() {
+			return !this.connectionStateFailedNoRestart && this.model.attributes.raisedHand.state
 		},
 
-		showMicrophoneOff() {
-			return !this.model.attributes.audioAvailable && this.model.attributes.audioAvailable !== undefined
+		// Audio indicator
+		showAudioIndicator() {
+			return !this.connectionStateFailedNoRestart && !this.isAudioButtonHidden
+		},
+		isAudioButtonHidden() {
+			return this.model.attributes.audioAvailable && !this.canFullModerate
+		},
+		isAudioButtonDisabled() {
+			return !this.model.attributes.audioAvailable || !this.canFullModerate
 		},
 
 		connectionStateFailedNoRestart() {
@@ -202,8 +214,15 @@ export default {
 			return t('spreed', 'Muted')
 		},
 
-		showVideoButton() {
-			return this.sharedData.remoteVideoBlocker.isVideoEnabled()
+		// Video indicator
+		showVideoIndicator() {
+			return !this.connectionStateFailedNoRestart && this.model.attributes.videoAvailable
+		},
+		isRemoteVideoEnabled() {
+			return this.sharedData.remoteVideoBlocker?.isVideoEnabled()
+		},
+		isRemoteVideoBlocked() {
+			return this.sharedData.remoteVideoBlocker && !this.sharedData.remoteVideoBlocker.isVideoEnabled()
 		},
 
 		videoButtonTooltip() {
@@ -214,40 +233,46 @@ export default {
 			return t('spreed', 'Enable video')
 		},
 
+		// ScreenSharing indicator
+		showScreenSharingIndicator() {
+			return !this.connectionStateFailedNoRestart && this.model.attributes.screen
+		},
 		screenSharingButtonClass() {
 			return {
-				'screen-on': this.model.attributes.screen,
-				'screen-off': !this.model.attributes.screen,
 				'screen-visible': this.sharedData.screenVisible,
 			}
 		},
 
-		showNameIndicator() {
-			return !this.model.attributes.videoAvailable || (this.sharedData.remoteVideoBlocker && !this.sharedData.remoteVideoBlocker.isVideoEnabled()) || this.showVideoOverlay || this.isSelected || this.isPromoted || this.isSpeaking
+		// Name indicator
+		isCurrentlyActive() {
+			return this.isSelected || this.model.attributes.speaking
 		},
-
-		boldenNameIndicator() {
-			return this.isSpeaking || this.isSelected
-		},
-
-		hasSelectedVideo() {
-			return this.$store.getters.selectedVideoPeerId !== null
-		},
-
-		stopFollowingLabel() {
-			return t('spreed', 'Stop following')
-		},
-
-		currentParticipant() {
-			return this.$store.getters.conversation(this.token) || {
-				sessionId: '0',
-				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
+		participantNameClass() {
+			return {
+				'participant-name--promoted': this.isCurrentlyActive,
+				'participant-name--has-shadow': this.hasShadow,
 			}
 		},
+		showParticipantName() {
+			return !this.model.attributes.videoAvailable || this.isRemoteVideoBlocked || this.showVideoOverlay || this.isPromoted || this.isCurrentlyActive
+		},
 
-		selfIsModerator() {
-			return this.currentParticipant.participantType === PARTICIPANT.TYPE.OWNER
-				|| this.currentParticipant.participantType === PARTICIPANT.TYPE.MODERATOR
+		showStopFollowingButton() {
+			return this.isBig && this.$store.getters.selectedVideoPeerId !== null
+		},
+
+		// Moderator rights
+		participantType() {
+			return this.$store.getters.conversation(this.token)?.participantType
+				|| (this.$store.getters.getUserId() !== null
+					? PARTICIPANT.TYPE.USER
+					: PARTICIPANT.TYPE.GUEST)
+		},
+		canFullModerate() {
+			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
+		},
+		canModerate() {
+			return this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
 		},
 	},
 
@@ -288,6 +313,11 @@ export default {
 	align-items: center;
 	&--big {
 		justify-content: center;
+		& .bottom-bar {
+			justify-content: center;
+			height: 48px;
+			width: unset;
+		}
 	}
 }
 
@@ -298,15 +328,7 @@ export default {
 	align-items: center;
 	height: 40px;
 	z-index: 1;
-	&--big {
-		justify-content: center;
-		height: 48px;
-		width: unset;
-	}
-	&--video-on {
-		text-shadow: 0 0 4px rgba(0, 0, 0,.8);
-	}
-	&__nameIndicator {
+	.participant-name {
 		color: white;
 		margin: 0 4px 0 8px;
 		position: relative;
@@ -317,8 +339,11 @@ export default {
 		&--promoted {
 			font-weight: bold;
 		}
+		&--has-shadow {
+			text-shadow: 0 0 4px rgba(0, 0, 0,.8);
+		}
 	}
-	&__statusIndicator {
+	.status-indicator {
 		width: 44px;
 		height: 44px;
 		display: flex;
@@ -349,11 +374,6 @@ export default {
 
 .iceFailedIndicator {
 	opacity: .8 !important;
-}
-
-.screensharingIndicator.screen-off,
-.iceFailedIndicator.not-failed {
-	display: none;
 }
 
 .muteIndicator[disabled],
