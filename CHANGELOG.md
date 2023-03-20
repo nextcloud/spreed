@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.0 – 2023-03-20
+### Fixed
+- Fix flickering when dragging a file over the window with Safari on MacOS
+  [#9076](https://github.com/nextcloud/spreed/pull/9076)
+- Fix flickering with message buttons bar of the last message
+  [#9043](https://github.com/nextcloud/spreed/pull/9043)
+- Fix conditions for showing "Reply" and "Reply privately"
+  [#9052](https://github.com/nextcloud/spreed/pull/9052)
+
 ## 16.0.0-rc.3 – 2023-03-09
 ### Fixed
 - Correctly handle `<` and `>` in chat messages
