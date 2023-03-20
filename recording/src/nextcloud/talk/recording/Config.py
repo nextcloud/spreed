@@ -216,9 +216,9 @@ class Config:
         """
         Returns the options given to FFmpeg to encode the video output.
 
-        Defaults to ['-c:v', 'libvpx', '-quality:v', 'realtime'].
+        Defaults to ['-c:v', 'libvpx', '-deadline:v', 'realtime'].
         """
-        return self._configParser.get('ffmpeg', 'outputvideo', fallback='-c:v libvpx -quality:v realtime').split()
+        return self._configParser.get('ffmpeg', 'outputvideo', fallback='-c:v libvpx -deadline:v realtime').split()
 
     def getFfmpegExtensionAudio(self):
         """
