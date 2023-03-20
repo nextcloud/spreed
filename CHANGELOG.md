@@ -1,7 +1,44 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 16.0.0 – 2023-03-20
+## 16.0.0 – 2023-03-21
+### Added for users
+- Breakout rooms can be used to split a group call into temporary working groups (Requires the High-performance backend)
+  [#8337](https://github.com/nextcloud/spreed/pull/8337)
+- Calls can now be recorded (Requires the High-performance backend)
+  [#8324](https://github.com/nextcloud/spreed/pull/8324)
+- The top bar now shows useful information like participant count, call duration and title while in a call.
+  [#8341](https://github.com/nextcloud/spreed/pull/8341)
+- Chat input now allows to autocomplete emojis
+  [#4333](https://github.com/nextcloud/spreed/pull/4333)
+
+### Added for administrators
+- Administrators can now define the default conversation permissions via the `default_permissions` app config
+  [#8457](https://github.com/nextcloud/spreed/pull/8457)
+- Administrators can now define the default name of the Talk/ attachments folder via the `default_attachment_folder` app config
+  [#8465](https://github.com/nextcloud/spreed/pull/8465)
+- OCC command to transfer-ownership of conversations was added allowing to hand over conversations during off-boarding
+  [#8479](https://github.com/nextcloud/spreed/pull/8479)
+- All available app configurations have been documented in the [settings documentation](https://nextcloud-talk.readthedocs.io/en/latest/settings/#app-configuration)
+
+### Added for developers
+- Chat API now allows to get the context (older and newer messages) for a message
+  [#8717](https://github.com/nextcloud/spreed/pull/8717)
+- Conversation list is now being instantly updated with information from notifications
+  [#8723](https://github.com/nextcloud/spreed/pull/8723)
+- Conversations API now supports a "modified since" parameter to only get changed conversations
+  [#8726](https://github.com/nextcloud/spreed/pull/8726)
+- Chats are opened now without a page reload when interacting with notifications
+  [#8713](https://github.com/nextcloud/spreed/pull/8713)
+- Introduced a new conversation type to indicate that a conversation was a one-to-one conversation
+  [#8600](https://github.com/nextcloud/spreed/pull/8600)
+
+### Changed
+- Version 1.1.0 of the signaling server of the High-performance backend is now required
+- Update several dependencies
+
+
+## 16.0.0-rc.4 – 2023-03-20
 ### Fixed
 - Fix flickering when dragging a file over the window with Safari on MacOS
   [#9076](https://github.com/nextcloud/spreed/pull/9076)
