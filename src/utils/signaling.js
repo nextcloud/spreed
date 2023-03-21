@@ -282,10 +282,16 @@ Signaling.Base.prototype.joinCall = function(token, flags, silent) {
 			}.bind(this))
 			.catch(function() {
 				reject(new Error())
-				// Server maintenance, lobby kicked in, or room not found.
-				// We first redirect to the conversation again and that
-				// will then show the proper error message to the user.
-				window.location = generateUrl('call/' + token)
+				if (!IS_DESKTOP) {
+					// Server maintenance, lobby kicked in, or room not found.
+					// We first redirect to the conversation again and that
+					// will then show the proper error message to the user.
+					window.location = generateUrl('call/' + token)
+				} else {
+					// TODO: Is it true, reload is equal to generateUrl('call/' + token) here?
+					// Or can we always just reload the page?
+					window.location.reload()
+				}
 			})
 	})
 }

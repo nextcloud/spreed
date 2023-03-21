@@ -33,21 +33,33 @@ import WelcomeView from '../views/WelcomeView.vue'
 
 Vue.use(Router)
 
-const webRootWithIndexPHP = getRootUrl() + '/index.php'
-const doesURLContainIndexPHP = window.location.pathname.startsWith(webRootWithIndexPHP)
-const base = generateUrl('/', {}, {
-	noRewrite: doesURLContainIndexPHP,
-})
-
-export default new Router({
-	mode: 'history',
+/**
+ * Generate base url for Talk Web app based on server's root
+ *
+ * @return {string} Vue Router base url
+ */
+function generateTalkWebBasePath() {
 	// if index.php is in the url AND we got this far, then it's working:
 	// let's keep using index.php in the url
-	base,
+	const webRootWithIndexPHP = getRootUrl() + '/index.php'
+	const doesURLContainIndexPHP = window.location.pathname.startsWith(webRootWithIndexPHP)
+	return generateUrl('/', {}, {
+		noRewrite: doesURLContainIndexPHP,
+	})
+}
+
+export default new Router({
+	// On desktop (Electron) app is open via file:// protocol - History API is not available and no base path
+	mode: !IS_DESKTOP ? 'history' : 'hash',
+	base: !IS_DESKTOP ? generateTalkWebBasePath() : '',
+
 	linkActiveClass: 'active',
+
 	routes: [
 		{
 			path: '/apps/spreed',
+			// On desktop add index path as root page
+			alias: IS_DESKTOP ? '/' : undefined,
 			name: 'root',
 			component: WelcomeView,
 			props: true,
