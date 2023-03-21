@@ -104,7 +104,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
 import { CONVERSATION } from '../../constants.js'
-import { copyLinkToConversation } from '../../services/urlService.js'
+import { copyConversationLinkToClipboard } from '../../services/urlService.js'
 
 export default {
 	name: 'LinkShareSettings',
@@ -232,7 +232,7 @@ export default {
 		},
 
 		async handleCopyLink() {
-			await copyLinkToConversation(this.token)
+			await copyConversationLinkToClipboard(this.token)
 		},
 
 		async handleResendInvitations() {
