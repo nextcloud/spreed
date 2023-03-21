@@ -31,7 +31,6 @@ use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\RoomService;
 use OCP\Files\IAppData;
 use OCP\IAvatarManager;
-use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Security\ISecureRandom;
@@ -44,8 +43,6 @@ class AvatarServiceTest extends TestCase {
 	private $appData;
 	/** @var IL10N|MockObject */
 	private $l;
-	/** @var IConfig|MockObject */
-	private $config;
 	/** @var IURLGenerator|MockObject */
 	private $url;
 	/** @var ISecureRandom|MockObject */
@@ -60,7 +57,6 @@ class AvatarServiceTest extends TestCase {
 
 		$this->appData = $this->createMock(IAppData::class);
 		$this->l = $this->createMock(IL10N::class);
-		$this->config = $this->createMock(IConfig::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->random = $this->createMock(ISecureRandom::class);
 		$this->roomService = $this->createMock(RoomService::class);
@@ -68,7 +64,6 @@ class AvatarServiceTest extends TestCase {
 		$this->service = new AvatarService(
 			$this->appData,
 			$this->l,
-			$this->config,
 			$this->url,
 			$this->random,
 			$this->roomService,
