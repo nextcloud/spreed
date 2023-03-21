@@ -146,7 +146,6 @@ import {
 } from '../../../services/conversationsService.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { addParticipant } from '../../../services/participantsService.js'
-import { generateFullConversationLink } from '../../../services/urlService.js'
 
 export default {
 

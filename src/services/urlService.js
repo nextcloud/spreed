@@ -26,7 +26,7 @@ import { generateUrl } from '@nextcloud/router'
  * Generate a full absolute link with @nextcloud/router.generateUrl
  *
  * @see @nextcloud/router.generateUrl
- * @param {string} url
+ * @param {string} url - Path
  * @param {object} [params] parameters to be replaced into the address
  * @param {import('@nextcloud/router').UrlOptions} [options] options for the parameter replacement
  * @param {boolean} options.noRewrite True if you want to force index.php being added
@@ -39,6 +39,7 @@ export function generateAbsoluteUrl(url, params, options) {
 	if (!IS_DESKTOP) {
 		return `${window.location.protocol}//${window.location.host}${fullPath}`
 	} else {
+		// On the Desktop generateUrl creates absolute url by default
 		return fullPath
 	}
 }
