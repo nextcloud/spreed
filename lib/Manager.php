@@ -791,7 +791,7 @@ class Manager {
 		$query->from('talk_rooms', 'r')
 			->where($query->expr()->eq('r.object_type', $query->createNamedParameter($objectType)))
 			->andWhere($query->expr()->eq('r.object_id', $query->createNamedParameter($objectId)))
-			->orderBy('r.id');
+			->orderBy('r.id', 'ASC');
 
 		$result = $query->executeQuery();
 		$row = $result->fetch();
