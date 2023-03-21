@@ -35,7 +35,6 @@ use OCP\Files\SimpleFS\InMemoryFile;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IAvatarManager;
-use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -44,7 +43,6 @@ use OCP\Security\ISecureRandom;
 class AvatarService {
 	private IAppData $appData;
 	private IL10N $l;
-	private IConfig $config;
 	private IURLGenerator $url;
 	private ISecureRandom $random;
 	private RoomService $roomService;
@@ -53,7 +51,6 @@ class AvatarService {
 	public function __construct(
 		IAppData $appData,
 		IL10N $l,
-		IConfig $config,
 		IURLGenerator $url,
 		ISecureRandom $random,
 		RoomService $roomService,
@@ -61,7 +58,6 @@ class AvatarService {
 	) {
 		$this->appData = $appData;
 		$this->l = $l;
-		$this->config = $config;
 		$this->url = $url;
 		$this->random = $random;
 		$this->roomService = $roomService;
