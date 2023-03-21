@@ -28,7 +28,7 @@ import subprocess
 from datetime import datetime
 from pyvirtualdisplay import Display
 from secrets import token_urlsafe
-from threading import Thread
+from threading import Event, Thread
 
 from . import BackendNotifier
 from .Config import config
@@ -169,6 +169,9 @@ class Service:
         self.status = status
         self.owner = owner
 
+        self._started = Event()
+        self._stopped = Event()
+
         self._display = None
         self._audioModuleIndex = None
         self._participant = None
@@ -226,6 +229,8 @@ class Service:
             self._logger.debug("Joining call")
             self._participant.joinCall(self.token)
 
+            self._started.set()
+
             BackendNotifier.started(self.backend, self.token, self.status, actorType, actorId)
 
             extensionlessFileName = f'{fullDirectory}/recording-{datetime.now().strftime("%Y%m%d-%H%M%S")}'
@@ -250,6 +255,14 @@ class Service:
         except Exception as exception:
             self._stopHelpers()
 
+            if self._stopped.is_set() and not self._started.is_set():
+                # If the service fails before being started but it was already
+                # stopped the error does not need to be notified; the error was
+                # probably caused by stopping the helpers, and even if it was
+                # something else it does not need to be notified either given
+                # that the recording was not started yet.
+                raise
+
             try:
                 BackendNotifier.failed(self.backend, self.token)
             except:
@@ -270,6 +283,8 @@ class Service:
                recording.
         :raise Exception: if the file could not be uploaded.
         """
+
+        self._stopped.set()
 
         self._stopHelpers()
 
