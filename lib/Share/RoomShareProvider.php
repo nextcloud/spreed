@@ -585,7 +585,7 @@ class RoomShareProvider implements IShareProvider {
 			$qb->andWhere($qb->expr()->like('f.path', $qb->createNamedParameter($this->dbConnection->escapeLikeParameter($node->getInternalPath()) . '/%')));
 		}
 
-		$qb->orderBy('s.id');
+		$qb->orderBy('s.id', 'ASC');
 
 		$cursor = $qb->executeQuery();
 		$shares = [];
@@ -638,7 +638,7 @@ class RoomShareProvider implements IShareProvider {
 		}
 
 		$qb->setFirstResult($offset);
-		$qb->orderBy('id');
+		$qb->orderBy('id', 'ASC');
 
 		$cursor = $qb->executeQuery();
 		$shares = [];
@@ -851,7 +851,7 @@ class RoomShareProvider implements IShareProvider {
 			)
 				->selectAlias('st.id', 'storage_string_id')
 				->from('share', 's')
-				->orderBy('s.id')
+				->orderBy('s.id', 'ASC')
 				->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
 				->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'));
 
@@ -1100,7 +1100,7 @@ class RoomShareProvider implements IShareProvider {
 			->from('share')
 			->where($qb->expr()->eq('parent', $qb->createNamedParameter($parent->getId())))
 			->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
-			->orderBy('id');
+			->orderBy('id', 'ASC');
 
 		$cursor = $qb->executeQuery();
 		while ($data = $cursor->fetch()) {
