@@ -67,7 +67,7 @@ export function generateFullConversationLink(token, messageId) {
  * @param {string} [messageId] - messageId for message in conversation link
  * @return {Promise<void>}
  */
-export async function copyLinkToConversation(token, messageId) {
+export async function copyConversationLinkToClipboard(token, messageId) {
 	try {
 		await navigator.clipboard.writeText(generateFullConversationLink(token, messageId))
 		showSuccess(t('spreed', 'Conversation link copied to clipboard'))

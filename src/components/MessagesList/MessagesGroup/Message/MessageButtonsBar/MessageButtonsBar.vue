@@ -182,7 +182,7 @@ import Forwarder from './Forwarder.vue'
 
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
 import { EventBus } from '../../../../../services/EventBus.js'
-import { copyLinkToConversation } from '../../../../../services/urlService.js'
+import { copyConversationLinkToClipboard } from '../../../../../services/urlService.js'
 
 // Keep version in sync with @nextcloud/vue in case of issues
 
@@ -469,7 +469,7 @@ export default {
 		},
 
 		async handleCopyMessageLink() {
-			await copyLinkToConversation(this.token, this.id)
+			await copyConversationLinkToClipboard(this.token, this.id)
 		},
 
 		async handleMarkAsUnread() {

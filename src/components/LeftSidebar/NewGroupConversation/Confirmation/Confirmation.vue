@@ -53,7 +53,7 @@
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
-import { copyLinkToConversation } from '../../../../services/urlService.js'
+import { copyConversationLinkToClipboard } from '../../../../services/urlService.js'
 
 export default {
 	name: 'Confirmation',
@@ -89,7 +89,7 @@ export default {
 
 	methods: {
 		onClickCopyLink() {
-			copyLinkToConversation(this.token)
+			copyConversationLinkToClipboard(this.token)
 		},
 	},
 

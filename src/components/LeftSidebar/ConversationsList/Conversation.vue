@@ -115,7 +115,7 @@ import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 import ConversationIcon from './../../ConversationIcon.vue'
 
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
-import { copyLinkToConversation } from '../../../services/urlService.js'
+import { copyConversationLinkToClipboard } from '../../../services/urlService.js'
 
 export default {
 	name: 'Conversation',
@@ -329,7 +329,7 @@ export default {
 
 	methods: {
 		async handleCopyLink() {
-			await copyLinkToConversation(this.item.token)
+			await copyConversationLinkToClipboard(this.item.token)
 		},
 
 		markConversationAsRead() {

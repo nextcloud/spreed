@@ -39,7 +39,7 @@
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
-import { copyLinkToConversation } from '../../../services/urlService.js'
+import { copyConversationLinkToClipboard } from '../../../services/urlService.js'
 
 export default {
 
@@ -163,7 +163,7 @@ export default {
 
 	methods: {
 		async handleCopyLink() {
-			await copyLinkToConversation(this.token)
+			await copyConversationLinkToClipboard(this.token)
 		},
 	},
 }
