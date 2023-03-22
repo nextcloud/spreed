@@ -170,7 +170,6 @@ import VideoIcon from 'vue-material-design-icons/Video.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { emit } from '@nextcloud/event-bus'
-import { generateUrl } from '@nextcloud/router'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
@@ -183,6 +182,7 @@ import PromotedView from '../missingMaterialDesignIcons/PromotedView.vue'
 
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import isInCall from '../../mixins/isInCall.js'
+import { generateAbsoluteUrl } from '../../services/urlService.js'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 
 export default {
@@ -280,7 +280,7 @@ export default {
 
 		linkToFile() {
 			if (this.isFileConversation) {
-				return window.location.protocol + '//' + window.location.host + generateUrl('/f/' + this.conversation.objectId)
+				return generateAbsoluteUrl('/f/{objectId}', { objectId: this.conversation.objectId })
 			} else {
 				return ''
 			}

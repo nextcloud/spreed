@@ -98,13 +98,13 @@ import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline
 import Email from 'vue-material-design-icons/Email.vue'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 
 import { CONVERSATION } from '../../constants.js'
+import { copyConversationLinkToClipboard } from '../../services/urlService.js'
 
 export default {
 	name: 'LinkShareSettings',
@@ -141,10 +141,6 @@ export default {
 
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
-		},
-
-		linkToConversation() {
-			return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
 		},
 	},
 
@@ -235,13 +231,8 @@ export default {
 			this.showPasswordField = false
 		},
 
-		async handleCopyLink() {
-			try {
-				await navigator.clipboard.writeText(this.linkToConversation)
-				showSuccess(t('spreed', 'Conversation link copied to clipboard.'))
-			} catch (error) {
-				showError(t('spreed', 'The link could not be copied.'))
-			}
+		handleCopyLink() {
+			copyConversationLinkToClipboard(this.token)
 		},
 
 		async handleResendInvitations() {
