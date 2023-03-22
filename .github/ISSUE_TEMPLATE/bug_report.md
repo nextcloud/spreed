@@ -1,6 +1,6 @@
 ---
-name: 🐛 Bug report
-about: Help us improving by reporting a bug
+name: 🐞 Bug report
+about: Help us to improve by reporting a bug
 labels: 0. Needs triage, bug
 ---
 
@@ -72,7 +72,7 @@ You can use the Issue Template application to prefill most of the required infor
 
 **Database:** MySQL/Maria/SQLite/PostgreSQL
 
-**PHP version:** 7.4/8.0/8.1
+**PHP version:** 8.0/8.1/8.2
 
 **Nextcloud Version:** (see admin page)
 
