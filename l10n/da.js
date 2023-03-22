@@ -475,6 +475,7 @@ OC.L10N.register(
     "Share from {nextcloud}" : "Del fra {nextcloud}",
     "Blank" : "Tom",
     "Invalid path selected" : "Ugyldig filsti valgt",
+    "Group" : "Gruppe",
     "Settings" : "Indstillinger",
     "Create poll" : "Opret afstemning",
     "Join" : "Deltag",
