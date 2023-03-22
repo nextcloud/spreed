@@ -369,7 +369,7 @@ export default {
 		},
 
 		canConfigureBreakoutRooms() {
-			if (!this.conversation.type === CONVERSATION.TYPE.GROUP || !this.canFullModerate) {
+			if (this.conversation.type !== CONVERSATION.TYPE.GROUP || !this.canFullModerate) {
 				return false
 			}
 
