@@ -24,7 +24,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 13
 | `setReadMarker`           | int  | `1` to automatically set the read timer after fetching the messages, use `0` when your client calls `Mark chat as read` manually. (Default: `1`)                                                                                        |
 | `includeLastKnown`        | int  | `1` to include the last known message as well (Default: `0`)                                                                                                                                                                            |
 | `noStatusUpdate`          | int  | Whether the "online" user status of the current user should be "kept-alive" (`1`) or not (`0`) (defaults to `0`)                                                                                                                        |
-| `markNotificationsAsRead` | int  | `0` to not mark notifications as read (Default: `1`, only available with `chat-read-status` capability)                                                                                                                                 |
+| `markNotificationsAsRead` | int  | `0` to not mark notifications as read (Default: `1`, only available with `chat-keep-notifications` capability)                                                                                                                          |
 
 * Response:
     - Status code:
