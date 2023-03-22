@@ -42,6 +42,11 @@
  * have video permissions). In that case the CallParticipantModel will block the
  * video if needed if it becomes available.
  *
+ * Once the CallParticipantModel is no longer used the associated
+ * RemoteVideoBlocker must be destroyed to ensure that the video will not be
+ * blocked or unblocked; calling any (modifier) method on the RemoteVideoBlocker
+ * once destroyed has no effect.
+ *
  * @param {object} callParticipantModel the model to block/unblock the video on.
  */
 export default function RemoteVideoBlocker(callParticipantModel) {
@@ -64,11 +69,21 @@ export default function RemoteVideoBlocker(callParticipantModel) {
 
 RemoteVideoBlocker.prototype = {
 
+	destroy() {
+		this._destroyed = true
+
+		clearTimeout(this._blockVideoTimeout)
+	},
+
 	isVideoEnabled() {
 		return this._enabled
 	},
 
 	setVideoEnabled(enabled) {
+		if (this._destroyed) {
+			return
+		}
+
 		this._enabled = enabled
 
 		const hadBlockVideoTimeout = this._blockVideoTimeout
@@ -84,6 +99,10 @@ RemoteVideoBlocker.prototype = {
 	},
 
 	increaseVisibleCounter() {
+		if (this._destroyed) {
+			return
+		}
+
 		this._visibleCounter++
 
 		clearTimeout(this._blockVideoTimeout)
@@ -97,6 +116,10 @@ RemoteVideoBlocker.prototype = {
 	},
 
 	decreaseVisibleCounter() {
+		if (this._destroyed) {
+			return
+		}
+
 		if (this._visibleCounter <= 0) {
 			console.error('Visible counter decreased when not visible')
 
