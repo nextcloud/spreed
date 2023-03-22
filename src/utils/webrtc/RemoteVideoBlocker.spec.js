@@ -333,4 +333,59 @@ describe('RemoteVideoBlocker', () => {
 			expect(remoteVideoBlocker.isVideoEnabled()).toBe(true)
 		})
 	})
+
+	describe('destroy', () => {
+		test('prevents the video from being blocked by default if not shown in some seconds', () => {
+			jest.advanceTimersByTime(4000)
+
+			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
+
+			remoteVideoBlocker.destroy()
+
+			jest.advanceTimersByTime(1000)
+
+			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
+		})
+
+		test('prevents the video from being blocked or unblocked if enabled or disabled', () => {
+			remoteVideoBlocker.increaseVisibleCounter()
+
+			remoteVideoBlocker.destroy()
+
+			remoteVideoBlocker.setVideoEnabled(false)
+			remoteVideoBlocker.setVideoEnabled(true)
+
+			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
+		})
+
+		test('prevents the video from being blocked after some seconds if hidden before destroying', () => {
+			remoteVideoBlocker.increaseVisibleCounter()
+			remoteVideoBlocker.decreaseVisibleCounter()
+
+			jest.advanceTimersByTime(4000)
+
+			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
+
+			remoteVideoBlocker.destroy()
+
+			jest.advanceTimersByTime(1000)
+
+			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
+		})
+
+		test('prevents the video from being blocked after some seconds if hidden after destroying', () => {
+			remoteVideoBlocker.destroy()
+
+			remoteVideoBlocker.increaseVisibleCounter()
+			remoteVideoBlocker.decreaseVisibleCounter()
+
+			jest.advanceTimersByTime(4000)
+
+			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
+
+			jest.advanceTimersByTime(1000)
+
+			expect(callParticipantModel.setVideoBlocked).toHaveBeenCalledTimes(0)
+		})
+	})
 })
