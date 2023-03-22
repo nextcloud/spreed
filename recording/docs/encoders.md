@@ -12,7 +12,7 @@ Nevertheless, please note that VP8 and Opus are just the default ones and that t
 
 A benchmark tool is provided to check the resources used by the recorder process as well as the quality of the output file using different configurations.
 
-The benchmark tool does not record an actual call; it plays a video file and records its audio and video (or, optionally, only its audio). This makes possible to easily compare the quality between different configurations, as they can be generated from the same input. There is no default input file, though; a specific file must be provided.
+The benchmark tool does not record an actual call; it plays a video file and records its audio and video (or, optionally, only its audio). This makes it possible to easily compare the quality between different configurations, as they can be generated from the same input. There is no default input file, though; a specific file must be provided.
 
 ### Usage example
 
