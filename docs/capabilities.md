@@ -111,3 +111,4 @@
 * `config => call => breakout-rooms` - Whether breakout rooms are enabled on this instance
 * `config => call => recording` - Whether calls can be recorded (requires the High-performance backend server)
 * `single-conversation-status` - When the response of a single conversation can also return the user status
+* `chat-keep-notifications` - Whether messages can be retrieved without marking notifications as read

@@ -116,6 +116,7 @@ class Capabilities implements IPublicCapability {
 				'recording-v1',
 				'chat-get-context',
 				'single-conversation-status',
+				'chat-keep-notifications',
 			],
 			'config' => [
 				'attachments' => [
