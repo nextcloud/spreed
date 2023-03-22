@@ -328,8 +328,8 @@ export default {
 	},
 
 	methods: {
-		async handleCopyLink() {
-			await copyConversationLinkToClipboard(this.item.token)
+		handleCopyLink() {
+			copyConversationLinkToClipboard(this.item.token)
 		},
 
 		markConversationAsRead() {

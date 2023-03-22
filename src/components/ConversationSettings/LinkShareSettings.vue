@@ -231,8 +231,8 @@ export default {
 			this.showPasswordField = false
 		},
 
-		async handleCopyLink() {
-			await copyConversationLinkToClipboard(this.token)
+		handleCopyLink() {
+			copyConversationLinkToClipboard(this.token)
 		},
 
 		async handleResendInvitations() {
