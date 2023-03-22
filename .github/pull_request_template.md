@@ -1,6 +1,6 @@
 ### ☑️ Resolves
 
-* Issue #…
+* Fix #…
 
 ### 🖼️ Screenshots
 
