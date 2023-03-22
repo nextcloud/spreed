@@ -746,6 +746,7 @@ OC.L10N.register(
     "Write message, @ to mention someone …" : "Escriure missatge, @ per esmentar a algú …",
     "Blank" : "En blanc",
     "Invalid path selected" : "Camí seleccionat invàlid",
+    "Group" : "Grup",
     "Question" : "Qüestió",
     "Settings" : "Paràmetres",
     "Private poll" : "Enquesta privada",

@@ -1122,6 +1122,7 @@ OC.L10N.register(
     "Blank" : "Leer",
     "Invalid path selected" : "Ungültiger Pfad ausgewählt",
     "Error while creating file" : "Fehler beim Erstellen der Datei",
+    "Group" : "Gruppe",
     "Question" : "Frage",
     "Ask a question" : "Eine Frage stellen",
     "Answers" : "Antworten",
