@@ -29,7 +29,7 @@
 
 | field            | type | Description                                                                                                                                                                     |
 |------------------|------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `noStatusUpdate` | int  | Whether the "online" user status of the current user should be "kept-alive" (`1`) or not (`0`) (defaults to `0`)                                                                |
+| `noStatusUpdate` | int  | When the user status should not be automatically set to online set to 1 (default 0)                                                                                             |
 | `includeStatus`  | bool | Whether the user status information of all one-to-one conversations should be loaded (default false)                                                                            |
 | `modifiedSince`  | int  | **Use with care as per note above.** When provided only conversations with a newer `lastActivity` (and one-to-one conversations when `includeStatus` is provided) are returned. |
 
