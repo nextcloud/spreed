@@ -131,7 +131,7 @@ export default {
 		},
 		isDisabledMenu() {
 			// NcAvatarMenu doesn't work on Desktop
-			// See: issue#34
+			// See: https://github.com/nextcloud/talk-desktop/issues/34
 			return IS_DESKTOP || this.disableMenu
 		},
 	},
