@@ -431,6 +431,8 @@ export default {
 			const removedModelIds = Object.keys(this.sharedDatas).filter(sharedDataId => models.find(model => model.attributes.peerId === sharedDataId) === undefined)
 
 			removedModelIds.forEach(removedModelId => {
+				this.sharedDatas[removedModelId].remoteVideoBlocker.destroy()
+
 				this.$delete(this.sharedDatas, removedModelId)
 
 				this.speakingUnwatchers[removedModelId]()
