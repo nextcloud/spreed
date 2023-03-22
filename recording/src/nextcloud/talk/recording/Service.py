@@ -28,7 +28,7 @@ import subprocess
 from datetime import datetime
 from pyvirtualdisplay import Display
 from secrets import token_urlsafe
-from threading import Thread
+from threading import Event, Thread
 
 from . import BackendNotifier
 from .Config import config
@@ -169,6 +169,9 @@ class Service:
         self.status = status
         self.owner = owner
 
+        self._started = Event()
+        self._stopped = Event()
+
         self._display = None
         self._audioModuleIndex = None
         self._participant = None
@@ -213,9 +216,15 @@ class Service:
             self._display = Display(size=(width, height), manage_global_env=False)
             self._display.start()
 
+            if self._stopped.is_set():
+                raise Exception("Display started after recording was stopped")
+
             # Start new audio sink for the audio output of the browser.
             self._audioModuleIndex, audioSinkIndex = newAudioSink(sanitizedBackend, self.token)
             audioSinkIndex = str(audioSinkIndex)
+
+            if self._stopped.is_set():
+                raise Exception("Audio sink started after recording was stopped")
 
             env = self._display.env()
             env['PULSE_SINK'] = audioSinkIndex
@@ -225,6 +234,14 @@ class Service:
 
             self._logger.debug("Joining call")
             self._participant.joinCall(self.token)
+
+            if self._stopped.is_set():
+                # Not strictly needed, as if the participant is started or the
+                # call is joined after the recording was stopped there will be
+                # no display and it will automatically fail, but just in case.
+                raise Exception("Call joined after recording was stopped")
+
+            self._started.set()
 
             BackendNotifier.started(self.backend, self.token, self.status, actorType, actorId)
 
@@ -240,6 +257,12 @@ class Service:
             # Log recorder output.
             Thread(target=recorderLog, args=[self.backend, self.token, self._process.stdout], daemon=True).start()
 
+            if self._stopped.is_set():
+                # Not strictly needed, as if the recorder is started after the
+                # recording was stopped there will be no display and it will
+                # automatically fail, but just in case.
+                raise Exception("Call joined after recording was stopped")
+
             returnCode = self._process.wait()
 
             # recorder process will be explicitly terminated when needed, which
@@ -249,6 +272,14 @@ class Service:
                 raise Exception("recorder ended unexpectedly")
         except Exception as exception:
             self._stopHelpers()
+
+            if self._stopped.is_set() and not self._started.is_set():
+                # If the service fails before being started but it was already
+                # stopped the error does not need to be notified; the error was
+                # probably caused by stopping the helpers, and even if it was
+                # something else it does not need to be notified either given
+                # that the recording was not started yet.
+                raise
 
             try:
                 BackendNotifier.failed(self.backend, self.token)
@@ -270,6 +301,8 @@ class Service:
                recording.
         :raise Exception: if the file could not be uploaded.
         """
+
+        self._stopped.set()
 
         self._stopHelpers()
 
