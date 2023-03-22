@@ -162,8 +162,8 @@ export default {
 	},
 
 	methods: {
-		async handleCopyLink() {
-			await copyConversationLinkToClipboard(this.token)
+		handleCopyLink() {
+			copyConversationLinkToClipboard(this.token)
 		},
 	},
 }

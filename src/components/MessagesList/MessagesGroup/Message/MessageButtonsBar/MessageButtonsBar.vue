@@ -468,8 +468,8 @@ export default {
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
-		async handleCopyMessageLink() {
-			await copyConversationLinkToClipboard(this.token, this.id)
+		handleCopyMessageLink() {
+			copyConversationLinkToClipboard(this.token, this.id)
 		},
 
 		async handleMarkAsUnread() {
