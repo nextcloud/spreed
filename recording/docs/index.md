@@ -1,6 +1,10 @@
 # Nextcloud Talk Recording Server Documentation
 
-## Configuration
+## Setup
+
+* [Installation](installation.md)
+
+### Configuration
 
 * [Encoders](encoders.md)
 
