@@ -552,6 +552,7 @@ OC.L10N.register(
     "Promote to moderator" : "Унапреди на модератора",
     "Remove group and members" : "Уклони групу и чланове",
     "Remove participant" : "Уклони учесника",
+    "Add users" : "Додај кориснике",
     "Add groups" : "Додај групе",
     "Integrations" : "Интеграције",
     "Searching …" : "Тражим…",
