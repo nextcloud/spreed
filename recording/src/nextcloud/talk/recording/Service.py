@@ -30,53 +30,13 @@ from pyvirtualdisplay import Display
 from secrets import token_urlsafe
 from threading import Event, Thread
 
+from nextcloud.talk.recording import RECORDING_STATUS_AUDIO_AND_VIDEO, RECORDING_STATUS_AUDIO_ONLY
 from . import BackendNotifier
 from .Config import config
 from .Participant import Participant
+from .RecorderArgumentsBuilder import RecorderArgumentsBuilder
 
-RECORDING_STATUS_AUDIO_AND_VIDEO = 1
-RECORDING_STATUS_AUDIO_ONLY = 2
-
-def getRecorderArgs(status, displayId, audioSinkIndex, width, height, extensionlessOutputFileName):
-    """
-    Returns the list of arguments to start the recorder process.
-
-    :param status: whether to record audio and video or only audio.
-    :param displayId: the ID of the display that the browser is running in.
-    :param audioSinkIndex: the index of the sink for the browser audio output.
-    :param width: the width of the display and the recording.
-    :param height: the height of the display and the recording.
-    :param extensionlessOutputFileName: the file name for the recording, without
-           extension.
-    :returns: the file name for the recording, with extension.
-    """
-
-    ffmpegCommon = ['ffmpeg', '-loglevel', 'level+warning', '-n']
-    ffmpegInputAudio = ['-f', 'pulse', '-i', audioSinkIndex]
-    ffmpegInputVideo = ['-f', 'x11grab', '-draw_mouse', '0', '-video_size', f'{width}x{height}', '-i', displayId]
-    ffmpegOutputAudio = config.getFfmpegOutputAudio()
-    ffmpegOutputVideo = config.getFfmpegOutputVideo()
-
-    extension = config.getFfmpegExtensionAudio()
-    if status == RECORDING_STATUS_AUDIO_AND_VIDEO:
-        extension = config.getFfmpegExtensionVideo()
-
-    outputFileName = extensionlessOutputFileName + extension
-
-    ffmpegArgs = ffmpegCommon
-    ffmpegArgs += ffmpegInputAudio
-
-    if status == RECORDING_STATUS_AUDIO_AND_VIDEO:
-        ffmpegArgs += ffmpegInputVideo
-
-    ffmpegArgs += ffmpegOutputAudio
-
-    if status == RECORDING_STATUS_AUDIO_AND_VIDEO:
-        ffmpegArgs += ffmpegOutputVideo
-
-    return ffmpegArgs + [outputFileName]
-
-def newAudioSink(sanitizedBackend, token):
+def newAudioSink(baseSinkName):
     """
     Start new audio sink for the audio output of the browser.
 
@@ -87,16 +47,15 @@ def newAudioSink(sanitizedBackend, token):
     The sink is created by loading a null sink module. This module needs to be
     unloaded once the sink is no longer needed to remove it.
 
-    :param sanitizedBackend: the backend of the call; it is expected to have
-           been sanitized and to contain only alpha-numeric characters.
-    :param token: the token of the call.
+    :param baseSinkName: the base name for the sink; it is expected to have been
+           sanitized and to contain only alpha-numeric characters.
     :return: a tuple with the module index and the sink index, both as ints.
     """
 
-    # A random value is appended to the backend and token to "ensure" that there
-    # will be no name clashes if a previous sink for that backend and module was
-    # not unloaded yet.
-    sinkName = f"{sanitizedBackend}-{token}-{token_urlsafe(32)}"
+    # A random value is appended to the base sink name to "ensure" that there
+    # will be no name clashes if a previous sink with that base name was not
+    # unloaded yet.
+    sinkName = f"{baseSinkName}-{token_urlsafe(32)}"
 
     # Module names can be, at most, 127 characters, so the name is truncated if
     # needed.
@@ -125,21 +84,21 @@ def newAudioSink(sanitizedBackend, token):
 
     return moduleIndex, sinkIndex
 
-def recorderLog(backend, token, pipe):
+def processLog(loggerName, pipe, level = logging.INFO):
     """
-    Logs the recorder output.
+    Logs the process output.
 
-    :param backend: the backend of the call.
-    :param token: the token of the call.
-    :param pipe: Pipe to the recorder process output.
+    :param loggerName: the name of the logger.
+    :param pipe: Pipe to the process output.
+    :param level: log level, INFO by default.
     """
-    logger = logging.getLogger(f"{__name__}.recorder-{backend}-{token}")
+    logger = logging.getLogger(loggerName)
 
     with pipe:
         for line in pipe:
             # Lines captured from the recorder have a trailing new line, so it
             # needs to be removed.
-            logger.info(line.rstrip('\n'))
+            logger.log(level, line.rstrip('\n'))
 
 class Service:
     """
@@ -220,7 +179,7 @@ class Service:
                 raise Exception("Display started after recording was stopped")
 
             # Start new audio sink for the audio output of the browser.
-            self._audioModuleIndex, audioSinkIndex = newAudioSink(sanitizedBackend, self.token)
+            self._audioModuleIndex, audioSinkIndex = newAudioSink(f"{sanitizedBackend}-{self.token}")
             audioSinkIndex = str(audioSinkIndex)
 
             if self._stopped.is_set():
@@ -247,15 +206,16 @@ class Service:
 
             extensionlessFileName = f'{fullDirectory}/recording-{datetime.now().strftime("%Y%m%d-%H%M%S")}'
 
-            recorderArgs = getRecorderArgs(self.status, self._display.new_display_var, audioSinkIndex, width, height, extensionlessFileName)
+            recorderArgumentsBuilder = RecorderArgumentsBuilder()
+            recorderArguments = recorderArgumentsBuilder.getRecorderArguments(self.status, self._display.new_display_var, audioSinkIndex, width, height, extensionlessFileName)
 
-            self._fileName = recorderArgs[-1]
+            self._fileName = recorderArguments[-1]
 
             self._logger.debug("Starting recorder")
-            self._process = subprocess.Popen(recorderArgs, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            self._process = subprocess.Popen(recorderArguments, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
 
             # Log recorder output.
-            Thread(target=recorderLog, args=[self.backend, self.token, self._process.stdout], daemon=True).start()
+            Thread(target=processLog, args=[f"{__name__}.recorder-{self.backend}-{self.token}", self._process.stdout], daemon=True).start()
 
             if self._stopped.is_set():
                 # Not strictly needed, as if the recorder is started after the
