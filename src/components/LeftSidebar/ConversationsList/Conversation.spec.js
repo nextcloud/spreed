@@ -1,4 +1,4 @@
-import { createLocalVue, shallowMount, mount, RouterLinkStub } from '@vue/test-utils'
+import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
@@ -16,6 +16,12 @@ jest.mock('@nextcloud/dialogs', () => ({
 	showSuccess: jest.fn(),
 	showError: jest.fn(),
 }))
+
+// TODO fix after RouterLinkStub can support slots https://github.com/vuejs/vue-test-utils/issues/1803
+const RouterLinkStub = {
+	name: 'RouterLinkStub',
+	template: '<ul><slot /></ul>',
+}
 
 describe('Conversation.vue', () => {
 	const TOKEN = 'XXTOKENXX'
