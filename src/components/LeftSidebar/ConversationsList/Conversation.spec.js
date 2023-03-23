@@ -18,10 +18,7 @@ jest.mock('@nextcloud/dialogs', () => ({
 }))
 
 // TODO fix after RouterLinkStub can support slots https://github.com/vuejs/vue-test-utils/issues/1803
-const RouterLinkStub = {
-	name: 'RouterLinkStub',
-	template: '<ul><slot /></ul>',
-}
+const RouterLinkStub = true
 
 describe('Conversation.vue', () => {
 	const TOKEN = 'XXTOKENXX'
