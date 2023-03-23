@@ -71,12 +71,12 @@
 					</template>
 					<!-- Third page -->
 					<template v-if="page === 2">
-						<Confirmation :conversation-name="conversationName"
+						<Confirmation :token="token"
+							:conversation-name="conversationName"
 							:error="error"
 							:is-loading="isLoading"
 							:success="success"
-							:is-public="isPublic"
-							:link-to-conversation="linkToConversation" />
+							:is-public="isPublic" />
 					</template>
 				</div>
 				<!-- Navigation: different buttons with different actions and
@@ -124,8 +124,6 @@
 <script>
 
 import Plus from 'vue-material-design-icons/Plus.vue'
-
-import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
@@ -197,12 +195,6 @@ export default {
 		// Trims whitespaces from the input string
 		conversationName() {
 			return this.conversationNameInput.trim()
-		},
-		// Generates the link to the current conversation
-		linkToConversation() {
-			if (this.token !== '') {
-				return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
-			} else return ''
 		},
 		// Controls the disabled/enabled state of the first page's button.
 		disabled() {
