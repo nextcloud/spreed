@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.5 – 2023-03-24
+### Fixed
+- fix(calls): Fix RemoteVideoBlocker still active after removing its associated model
+  [#9132](https://github.com/nextcloud/spreed/pull/9132)
+- fix(polls): Remove polls also when deleting the chat history
+  [#8992](https://github.com/nextcloud/spreed/pull/8992)
+- fix(reactions): Fix reacting to people that left
+  [#8886](https://github.com/nextcloud/spreed/pull/8886)
+
+## 14.0.10 – 2023-03-24
+### Fixed
+- fix(calls): Fix RemoteVideoBlocker still active after removing its associated model
+  [#9133](https://github.com/nextcloud/spreed/pull/9133)
+- fix(reactions): Fix reacting to people that left
+  [#8887](https://github.com/nextcloud/spreed/pull/8887)
+
 ## 15.0.4 – 2023-02-23
 ### Added
 - Make "End call for everyone" available for moderators all the time
