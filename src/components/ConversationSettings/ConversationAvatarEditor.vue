@@ -297,7 +297,7 @@ section {
 			justify-content: space-between;
 		}
 
-		&::v-deep .cropper-view-box {
+		&:deep(.cropper-view-box) {
 			border-radius: 50%;
 		}
 	}
