@@ -277,7 +277,7 @@ OC.L10N.register(
     "{user} mentioned everyone in conversation {call}" : "{user} hat jeden in der Unterhaltung erwähnt {call}",
     "{user} mentioned you in conversation {call}" : "{user} hat Sie in einer Unterhaltung erwähnt: {call}",
     "A deleted user mentioned group {group} in conversation {call}" : "Ein gelöschter Benutzer hat die Gruppe {group} in der Unterhaltung {call} erwähnt",
-    "A deleted user mentioned everyone in conversation {call}" : "Ein gelöschter Benutzer hat jeden in der Unterhaltung {call} erwähnt ",
+    "A deleted user mentioned everyone in conversation {call}" : "Ein gelöschter Benutzer hat jeden in der Unterhaltung {call} erwähnt",
     "A deleted user mentioned you in conversation {call}" : "Ein gelöschter Benutzer hat Sie in der Unterhaltung {call} erwähnt",
     "{guest} (guest) mentioned group {group} in conversation {call}" : "{guest} (Gast) erwähnte die Gruppe {group} in der Unterhaltung {call}",
     "{guest} (guest) mentioned everyone in conversation {call}" : "{guest} (Gast) hat jeden in der Unterhaltung {call} erwähnt ",
