@@ -18,14 +18,14 @@
   - You should have received a copy of the GNU Affero General Public License
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
+
 <template>
 	<div ref="conversation-icon"
 		class="conversation-icon"
-		:style="iconStyle"
+		:style="{'--icon-size': `${size}px`}"
 		:class="{'offline': offline}">
 		<div v-if="iconClass"
 			class="avatar icon"
-			:style="iconStyle"
 			:class="iconClass" />
 		<NcAvatar v-else-if="hasAvatar"
 			:url="avatarUrl"
@@ -64,6 +64,19 @@ import { generateOcsUrl } from '@nextcloud/router'
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { CONVERSATION } from '../constants.js'
+
+const ICON_CLASS_BY_OBJECT_TYPE = {
+	file: 'icon-file',
+	'share:password': 'icon-password',
+	emails: 'icon-mail',
+}
+
+const ICON_CLASS_BY_TYPE = {
+	[CONVERSATION.TYPE.CHANGELOG]: 'icon-changelog',
+	[CONVERSATION.TYPE.ONE_TO_ONE_FORMER]: 'icon-user',
+	[CONVERSATION.TYPE.GROUP]: 'icon-contacts',
+	[CONVERSATION.TYPE.PUBLIC]: 'icon-public',
+}
 
 export default {
 	name: 'ConversationIcon',
@@ -140,24 +153,11 @@ export default {
 
 		iconClass() {
 			if (this.hasAvatar) {
-				return ''
+				return undefined
 			}
-			if (this.item.objectType === 'file') {
-				return 'icon-file'
-			} else if (this.item.objectType === 'share:password') {
-				return 'icon-password'
-			} else if (this.item.objectType === 'emails') {
-				return 'icon-mail'
-			} else if (this.item.type === CONVERSATION.TYPE.CHANGELOG) {
-				return 'icon-changelog'
-			} else if (this.item.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
-				return 'icon-user'
-			} else if (this.item.type === CONVERSATION.TYPE.GROUP) {
-				return 'icon-contacts'
-			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
-				return 'icon-public'
-			}
-			return ''
+
+			return ICON_CLASS_BY_OBJECT_TYPE[this.item.objectType]
+				?? ICON_CLASS_BY_TYPE[this.item.type]
 		},
 
 		preloadedUserStatus() {
@@ -175,26 +175,14 @@ export default {
 		menuContainer() {
 			// The store may not be defined in the RoomSelector if used from
 			// the Collaboration menu outside Talk.
-			if (!this.$store) {
-				return undefined
-			}
-
-			return this.$store.getters.getMainContainerSelector()
+			return this.$store?.getters.getMainContainerSelector()
 		},
 
 		size() {
-			if (!this.isBig || (this.isBig && !this.parentElement)) {
-				return 44
-			} else {
+			if (this.isBig && this.parentElement) {
 				return Math.min(this.parentElement.clientHeight, this.parentElement.clientWidth)
-			}
-		},
-
-		iconStyle() {
-			return {
-				height: this.size.toString() + 'px',
-				width: this.size.toString() + 'px',
-				'background-size': (this.size / 2).toString() + 'px',
+			} else {
+				return 44
 			}
 		},
 
@@ -218,26 +206,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$icon-size: 44px;
+$icon-size: var(--icon-size, 44px);
 
 .conversation-icon {
+	width: $icon-size;
+	height: $icon-size;
 	position: relative;
 
 	.avatar.icon {
+		width: $icon-size;
+		height: $icon-size;
 		line-height: $icon-size;
+		background-size: calc($icon-size / 2);
 		background-color: var(--color-background-darker);
 
 		&.icon-changelog {
-			background-size: $icon-size;
-		}
-
-		&.icon-public,
-		&.icon-contacts,
-		&.icon-user,
-		&.icon-password,
-		&.icon-file,
-		&.icon-mail {
-			background-size: calc($icon-size / 2);
+			background-size: cover !important;
 		}
 	}
 
