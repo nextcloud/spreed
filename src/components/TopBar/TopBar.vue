@@ -59,20 +59,6 @@
 			:start="conversation.callStartTime"
 			class="top-bar__button dark-hover" />
 
-		<!-- Participants counter -->
-		<NcButton v-if="isInCall && !isOneToOneConversation && isModeratorOrUser"
-			:title="participantsInCallAriaLabel"
-			:aria-label="participantsInCallAriaLabel"
-			class="top-bar__button dark-hover"
-			type="tertiary"
-			@click="openSidebar('participants')">
-			<template #icon>
-				<AccountMultiple :size="20"
-					fill-color="#ffffff" />
-			</template>
-			{{ participantsInCall }}
-		</NcButton>
-
 		<!-- Local media controls -->
 		<LocalMediaControls v-if="isInCall"
 			class="local-media-controls dark-hover"
@@ -92,35 +78,46 @@
 
 		<CallButton class="top-bar__button" />
 
-		<!-- sidebar toggle -->
-		<template v-if="showOpenSidebarButton">
-			<!-- in chat: open last tab -->
-			<NcButton v-if="!isInCall"
-				class="top-bar__button dark-hover"
-				close-after-click="true"
-				type="tertiary"
-				@click="openSidebar">
-				<template #icon>
-					<MenuIcon :size="20" />
-				</template>
-			</NcButton>
+		<!-- in call: open chat tab -->
+		<NcButton v-if="isInCall"
+			class="top-bar__button chat-button dark-hover"
+			type="tertiary"
+			@click="openSidebar('chat')">
+			<template #icon>
+				<MessageText :size="20"
+					fill-color="#ffffff" />
+				<NcCounterBubble v-if="unreadMessagesCounter > 0"
+					class="chat-button__unread-messages-counter"
+					:highlighted="hasUnreadMentions">
+					{{ unreadMessagesCounter }}
+				</NcCounterBubble>
+			</template>
+		</NcButton>
 
-			<!-- in call: open chat tab -->
-			<NcButton v-else
-				class="top-bar__button chat-button dark-hover"
-				type="tertiary"
-				@click="openSidebar('chat')">
-				<template #icon>
-					<MessageText :size="20"
-						fill-color="#ffffff" />
-					<NcCounterBubble v-if="unreadMessagesCounter > 0"
-						class="chat-button__unread-messages-counter"
-						:highlighted="hasUnreadMentions">
-						{{ unreadMessagesCounter }}
-					</NcCounterBubble>
-				</template>
-			</NcButton>
-		</template>
+		<!-- Participants counter -->
+		<NcButton v-if="isInCall && !isOneToOneConversation && isModeratorOrUser"
+			:title="participantsInCallAriaLabel"
+			:aria-label="participantsInCallAriaLabel"
+			class="top-bar__button dark-hover"
+			type="tertiary"
+			@click="openSidebar('participants')">
+			<template #icon>
+				<AccountMultiple :size="20"
+					fill-color="#ffffff" />
+			</template>
+			{{ participantsInCall }}
+		</NcButton>
+
+		<!-- sidebar toggle -->
+		<NcButton class="top-bar__button dark-hover"
+			close-after-click="true"
+			type="tertiary"
+			@click="toggleSidebar">
+			<template #icon>
+				<MenuIcon v-if="showOpenSidebarButton" :size="20" />
+				<MenuOpenIcon v-else class="top-bar__button__toggle-icon" :size="20" />
+			</template>
+		</NcButton>
 
 		<!-- Breakout rooms editor -->
 		<BreakoutRoomsEditor v-if="showBreakoutRoomsEditor"
@@ -132,6 +129,7 @@
 <script>
 import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import MenuIcon from 'vue-material-design-icons/Menu.vue'
+import MenuOpenIcon from 'vue-material-design-icons/MenuOpen.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
 
 import { showMessage } from '@nextcloud/dialogs'
@@ -175,6 +173,7 @@ export default {
 		// Icons
 		AccountMultiple,
 		MenuIcon,
+		MenuOpenIcon,
 		MessageText,
 	},
 
@@ -275,7 +274,9 @@ export default {
 
 			if (peer) {
 				return !peer.sessionIds.length
-			} else return false
+			} else {
+				return false
+			}
 		},
 
 		participantsInCall() {
@@ -367,6 +368,15 @@ export default {
 			BrowserStorage.setItem('sidebarOpen', 'true')
 		},
 
+		toggleSidebar() {
+			if (BrowserStorage.getItem('sidebarOpen') === 'true') {
+				this.$store.dispatch('hideSidebar')
+				BrowserStorage.setItem('sidebarOpen', 'false')
+			} else {
+				this.openSidebar()
+			}
+		},
+
 		openConversationSettings() {
 			emit('show-conversation-settings', { token: this.token })
 		},
@@ -395,10 +405,11 @@ export default {
 		border: none;
 		position: absolute;
 		top: 0;
-		left:0;
+		left: 0;
 		background-color: transparent;
 		display: flex;
 		flex-wrap: wrap;
+
 		& * {
 			color: #fff;
 		}
@@ -417,8 +428,13 @@ export default {
 		display: flex;
 		align-items: center;
 		white-space: nowrap;
+
 		.icon {
 			margin-right: 4px !important;
+		}
+
+		&__toggle-icon {
+			transform: rotate(180deg);
 		}
 
 		&__force-white {
@@ -454,7 +470,7 @@ export default {
 	cursor: pointer;
 	&__text {
 		display: flex;
-		flex-direction:column;
+		flex-direction: column;
 		flex-grow: 1;
 		margin-left: 8px;
 		justify-content: center;
@@ -465,11 +481,13 @@ export default {
 			color: var(--color-text-maxcontrast);
 		}
 	}
+
 	.title {
 		font-weight: bold;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
+
 	.description {
 		overflow: hidden;
 		text-overflow: ellipsis;

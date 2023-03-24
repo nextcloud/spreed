@@ -28,7 +28,6 @@
 		<NcAppContent>
 			<router-view />
 		</NcAppContent>
-		<RightSidebar :show-chat-in-sidebar="isInCall" />
 		<PreventUnload :when="warnLeaving || isSendingMessages" />
 		<DeviceChecker :initialize-on-mounted="false" />
 		<UploadEditor />
@@ -52,7 +51,6 @@ import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog.vue'
 import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
 import LeftSidebar from './components/LeftSidebar/LeftSidebar.vue'
-import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 import UploadEditor from './components/UploadEditor.vue'
 
@@ -82,7 +80,6 @@ export default {
 		NcContent,
 		LeftSidebar,
 		PreventUnload,
-		RightSidebar,
 		UploadEditor,
 		SettingsDialog,
 		ConversationSettingsDialog,
@@ -320,7 +317,10 @@ export default {
 				})
 			}
 
-			this.$router.push({ name: 'conversation', params: { token: params.token, skipLeaveWarning: true } })
+			this.$router.push({
+				name: 'conversation',
+				params: { token: params.token, skipLeaveWarning: true },
+			})
 		})
 
 		EventBus.$on('conversations-received', (params) => {
@@ -331,7 +331,10 @@ export default {
 					this.refreshCurrentConversation()
 				} else {
 					console.info('Conversation received, but the current conversation is not in the list. Redirecting to not found page')
-					this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
+					this.$router.push({
+						name: 'notfound',
+						params: { skipLeaveWarning: true },
+					})
 					this.$store.dispatch('updateToken', '')
 				}
 			}
@@ -615,7 +618,10 @@ export default {
 				})
 			} catch (exception) {
 				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
-				this.$router.push({ name: 'notfound', params: { skipLeaveWarning: true } })
+				this.$router.push({
+					name: 'notfound',
+					params: { skipLeaveWarning: true },
+				})
 				this.$store.dispatch('updateToken', '')
 				this.$store.dispatch('hideSidebar')
 			} finally {

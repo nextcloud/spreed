@@ -22,17 +22,18 @@
 
 <template>
 	<NcAppSidebar v-show="opened"
+		:empty="true"
 		:title="title"
 		:title-tooltip="title"
 		:active="activeTab"
-		:class="'active-tab-' + activeTab"
+		:class="{ activeTabClass, 'in-call': isInCall }"
 		@update:active="handleUpdateActive"
 		@closed="handleClosed"
 		@close="handleClose">
 		<template slot="description">
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
-		<NcAppSidebarTab v-if="showChatInSidebar"
+		<NcAppSidebarTab v-if="isInCall"
 			id="chat"
 			:order="1"
 			:name="t('spreed', 'Chat')">
@@ -123,6 +124,7 @@ import SharedItemsTab from './SharedItems/SharedItemsTab.vue'
 import SipSettings from './SipSettings.vue'
 
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants.js'
+import isInCall from '../../mixins/isInCall.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 
@@ -148,15 +150,9 @@ export default {
 	},
 
 	mixins: [
+		isInCall,
 		isInLobby,
 	],
-
-	props: {
-		showChatInSidebar: {
-			type: Boolean,
-			required: true,
-		},
-	},
 
 	data() {
 		return {
@@ -201,7 +197,7 @@ export default {
 
 		canSearchParticipants() {
 			return (this.conversation.type === CONVERSATION.TYPE.GROUP
-					|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== 'share:password'))
+				|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== 'share:password'))
 		},
 
 		isSearching() {
@@ -269,6 +265,10 @@ export default {
 		breakoutRoomsText() {
 			return t('spreed', 'Breakout rooms')
 		},
+
+		activeTabClass() {
+			return 'active-tab-' + this.activeTab
+		},
 	},
 
 	watch: {
@@ -287,8 +287,8 @@ export default {
 			}
 		},
 
-		showChatInSidebar(chatInSidebar) {
-			if (chatInSidebar) {
+		isInCall(newValue) {
+			if (newValue) {
 				this.activeTab = 'chat'
 			} else if (this.activeTab === 'chat') {
 				if (this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
@@ -353,11 +353,21 @@ export default {
 
 /* Override style set in server for "#app-sidebar" to match the style set in
  * nextcloud-vue for ".app-sidebar". */
-#app-sidebar {
-	display: flex;
+#app-sidebar-vue {
+	position: relative;
+
+	&.in-call {
+		margin-top: 61px;
+		height: calc(100% - 61px);
+		border-top-left-radius: var(--body-container-radius);
+	}
 }
 
-::v-deep .app-sidebar-header__description {
+:deep(.app-sidebar__close) {
+	display: none;
+}
+
+:deep(.app-sidebar-header__description) {
 	flex-direction: column;
 }
 
