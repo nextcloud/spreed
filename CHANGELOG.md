@@ -1,6 +1,46 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.1 – 2023-03-24
+### Added
+- feat(chat): Allow to receive messages without marking notifications as unread
+  [#9103](https://github.com/nextcloud/spreed/pull/9103)
+
+### Changed
+- Update several dependencies
+
+### Fixed
+- fix(chat): Fix multiple issues with emoji and mention autocompletion
+- fix(chat): Fix pasting HTML and XML content into the chat input
+  [#9104](https://github.com/nextcloud/spreed/pull/9104)
+- fix(calls): Fix RemoteVideoBlocker still active after removing its associated model
+  [#9131](https://github.com/nextcloud/spreed/pull/9131)
+- fix(breakout-rooms): Fix breakout-room option shown for public conversations
+  [#9135](https://github.com/nextcloud/spreed/pull/9135)
+- fix(UI): Fix conditions when a reload of the UI is necessary
+  [#9123](https://github.com/nextcloud/spreed/pull/9123)
+- fix(recordings): Fix default quality of call recordings
+  [#9121](https://github.com/nextcloud/spreed/pull/9121)
+- fix(chat): Don't focus the chat input on mobile devices
+  [#8898](https://github.com/nextcloud/spreed/pull/8898)
+
+
+## 15.0.5 – 2023-03-24
+### Fixed
+- fix(calls): Fix RemoteVideoBlocker still active after removing its associated model
+  [#9132](https://github.com/nextcloud/spreed/pull/9132)
+- fix(polls): Remove polls also when deleting the chat history
+  [#8992](https://github.com/nextcloud/spreed/pull/8992)
+- fix(reactions): Fix reacting to people that left
+  [#8886](https://github.com/nextcloud/spreed/pull/8886)
+
+## 14.0.10 – 2023-03-24
+### Fixed
+- fix(calls): Fix RemoteVideoBlocker still active after removing its associated model
+  [#9133](https://github.com/nextcloud/spreed/pull/9133)
+- fix(reactions): Fix reacting to people that left
+  [#8887](https://github.com/nextcloud/spreed/pull/8887)
+
 ## 16.0.0 – 2023-03-21
 ### Added for users
 - Breakout rooms can be used to split a group call into temporary working groups (Requires the High-performance backend)
