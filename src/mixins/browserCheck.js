@@ -60,6 +60,9 @@ const browserCheck = {
 		isEdge() {
 			return this.browser.name === 'Edge'
 		},
+		isBrave() {
+			return this.browser.name === 'Brave'
+		},
 		isIE() {
 			return this.browser.name === 'IE' || this.browser.name === 'IEMobile'
 		},
