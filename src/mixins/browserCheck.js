@@ -97,6 +97,7 @@ const browserCheck = {
 			|| (this.isOpera && this.majorVersion >= 72)
 			|| (this.isSafari && this.majorVersion >= 12)
 			|| this.isEdge
+			|| this.isBrave
 		},
 		// Disable the call button and show the tooltip
 		blockCalls() {
