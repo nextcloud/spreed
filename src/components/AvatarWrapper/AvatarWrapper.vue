@@ -31,7 +31,7 @@
 			:menu-container="menuContainerWithFallback"
 			menu-position="left"
 			:disable-tooltip="disableTooltip"
-			:disable-menu="disableMenu"
+			:disable-menu="isDisabledMenu"
 			:show-user-status="showUserStatus"
 			:show-user-status-compact="showUserStatusCompact"
 			:preloaded-user-status="preloadedUserStatus"
@@ -128,6 +128,11 @@ export default {
 		// Takes the size prop and makes it a string for the classes
 		sizeToString() {
 			return this.size.toString()
+		},
+		isDisabledMenu() {
+			// NcAvatarMenu doesn't work on Desktop
+			// See: https://github.com/nextcloud/talk-desktop/issues/34
+			return IS_DESKTOP || this.disableMenu
 		},
 	},
 }
