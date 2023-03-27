@@ -28,6 +28,7 @@ import json
 import logging
 import os
 import ssl
+from nextcloud.talk import recording
 from secrets import token_urlsafe
 from urllib.request import Request, urlopen
 from urllib3 import encode_multipart_formdata
@@ -98,6 +99,7 @@ def backendRequest(backend, data):
         'OCS-ApiRequest': 'true',
         'Talk-Recording-Random': random,
         'Talk-Recording-Checksum': checksum,
+        'User-Agent': 'Mozilla/5.0 (Recording) Nextcloud-Talk v' + recording.__version__,
     }
 
     backendRequest = Request(url, data, headers)
