@@ -498,6 +498,11 @@ export default {
 			}
 
 			if (event.notification.objectType === 'chat') {
+				if (event.notification.subjectRichParameters?.reaction) {
+					// Ignore reaction notifications in case of one-to-one and always-notify
+					return
+				}
+
 				this.$store.dispatch('updateConversationLastMessageFromNotification', {
 					notification: event.notification,
 				})
