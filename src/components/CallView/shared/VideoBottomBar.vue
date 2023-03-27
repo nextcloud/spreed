@@ -23,7 +23,7 @@
 <template>
 	<div class="wrapper" :class="{'wrapper--big': isBig}">
 		<transition name="fade">
-			<div v-if="showRaiseHandIndicator" class="status-indicator">
+			<div v-if="showRaiseHandIndicator" class="status-indicator raiseHandIndicator">
 				<HandBackLeft :size="18" fill-color="#ffffff" />
 			</div>
 		</transition>
@@ -70,6 +70,7 @@
 						key="screenSharingIndicator"
 						v-tooltip="t('spreed', 'Show screen')"
 						:aria-label="t('spreed', 'Show screen')"
+						class="screenSharingIndicator"
 						:class="screenSharingButtonClass"
 						type="tertiary-no-background"
 						@click.stop="switchToScreen">
@@ -80,7 +81,7 @@
 
 					<div v-if="connectionStateFailedNoRestart"
 						key="iceFailedIndicator"
-						class="iceFailedIndicator status-indicator">
+						class="status-indicator iceFailedIndicator">
 						<AlertCircle :size="20" fill-color="#ffffff" />
 					</div>
 				</template>
@@ -241,7 +242,8 @@ export default {
 			return this.isSelected || this.model.attributes.speaking
 		},
 		showParticipantName() {
-			return !this.model.attributes.videoAvailable || this.isRemoteVideoBlocked || this.showVideoOverlay || this.isPromoted || this.isCurrentlyActive
+			return !this.model.attributes.videoAvailable || this.isRemoteVideoBlocked
+				|| this.showVideoOverlay || this.isPromoted || this.isCurrentlyActive
 		},
 		participantNameClass() {
 			return {
@@ -259,9 +261,6 @@ export default {
 		},
 		canFullModerate() {
 			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
-		},
-		canModerate() {
-			return this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR
 		},
 	},
 
