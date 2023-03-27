@@ -1,5 +1,6 @@
 #
 # @copyright Copyright (c) 2023, Daniel Calviño Sánchez (danxuliu@gmail.com)
+# @copyright Copyright (c) 2023, Elmer Miroslav Mosher Golovin (miroslav@mishamosher.com)
 #
 # @license GNU AGPL version 3 or any later version
 #
@@ -86,7 +87,7 @@ def backendRequest(backend, data):
     :param backend: the backend to send the data to.
     :param data: the data to send.
     """
-    url = backend + '/ocs/v2.php/apps/spreed/api/v1/recording/backend'
+    url = backend.rstrip('/') + '/ocs/v2.php/apps/spreed/api/v1/recording/backend'
 
     data = json.dumps(data).encode()
 
