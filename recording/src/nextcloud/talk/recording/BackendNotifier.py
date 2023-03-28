@@ -98,7 +98,7 @@ def backendRequest(backend, data):
         'OCS-ApiRequest': 'true',
         'Talk-Recording-Random': random,
         'Talk-Recording-Checksum': checksum,
-        'User-Agent': 'Mozilla/5.0 (Recording) Nextcloud-Talk v' + recording.__version__,
+        'User-Agent': recording.USER_AGENT,
     }
 
     backendRequest = Request(url, data, headers)
@@ -208,6 +208,7 @@ def uploadRecording(backend, token, fileName, owner):
         'OCS-ApiRequest': 'true',
         'Talk-Recording-Random': random,
         'Talk-Recording-Checksum': checksum,
+        'User-Agent': recording.USER_AGENT,
     }
 
     uploadRequest = Request(url, data, headers)
