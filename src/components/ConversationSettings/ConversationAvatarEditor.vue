@@ -129,7 +129,6 @@ export default {
 
 	data() {
 		return {
-			// Todo: get real value here
 			showCropper: false,
 			loading: false,
 			validMimeTypes: VALID_MIME_TYPES,
