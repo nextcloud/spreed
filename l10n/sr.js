@@ -434,6 +434,7 @@ OC.L10N.register(
     "TURN server protocols" : "TURN серверски протокол",
     "Test this server" : "Тестирај овај сервер",
     "TURN servers" : "TURN сервери",
+    "Failed" : "Није успело",
     "OK" : "У реду",
     "Checking …" : "Проверавам…",
     "Back" : "Назад",
