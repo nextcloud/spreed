@@ -731,7 +731,7 @@ const actions = {
 			const response = await deleteConversationAvatar(token, file)
 			const conversation = response.data.ocs.data
 			context.commit('addConversation', conversation)
-			showSuccess(t('spreed', 'You\'ve deleted the conversation picture.'))
+			showSuccess(t('spreed', 'Conversation picture deleted'))
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'Could not delete the conversation picture.'))
