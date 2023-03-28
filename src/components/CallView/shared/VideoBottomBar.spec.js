@@ -93,8 +93,8 @@ describe('VideoBottomBar.vue', () => {
 					store,
 					propsData: componentProps,
 				})
-				expect(wrapper.exists()).toBe(true)
-				expect(wrapper.classes()).toContain('wrapper')
+				expect(wrapper.exists()).toBeTruthy()
+				expect(wrapper.classes('wrapper')).toBeDefined()
 			})
 
 			test('component has class "wrapper--big" for main view', async () => {
@@ -104,8 +104,8 @@ describe('VideoBottomBar.vue', () => {
 					store,
 					propsData: componentProps,
 				})
-				expect(wrapper.exists()).toBe(true)
-				expect(wrapper.classes()).toContain('wrapper--big')
+				expect(wrapper.exists()).toBeTruthy()
+				expect(wrapper.classes('wrapper--big')).toBeDefined()
 			})
 
 			test('component renders all indicators by default', async () => {
@@ -116,7 +116,7 @@ describe('VideoBottomBar.vue', () => {
 				})
 
 				const indicators = wrapper.findAllComponents(NcButton)
-				expect(indicators.length).toBe(3)
+				expect(indicators).toHaveLength(3)
 			})
 
 			test('component does not render indicators for Screen.vue component', async () => {
@@ -128,10 +128,10 @@ describe('VideoBottomBar.vue', () => {
 				})
 
 				const indicators = wrapper.findAllComponents(NcButton)
-				expect(indicators.length).toBe(0)
+				expect(indicators).toHaveLength(0)
 			})
 
-			test('component does not render indicators after video overlay is off', async () => {
+			test('component does not show indicators after video overlay is off', async () => {
 				const wrapper = shallowMount(VideoBottomBar, {
 					localVue,
 					store,
@@ -142,7 +142,9 @@ describe('VideoBottomBar.vue', () => {
 				await wrapper.setProps(cloneDeep(componentProps))
 
 				const indicators = wrapper.findAllComponents(NcButton)
-				expect(indicators.length).toBe(0)
+				indicators.wrappers.forEach(indicator => {
+					expect(indicator.isVisible()).toBeFalsy()
+				})
 			})
 
 			test('component does not render anything when used in sidebar', async () => {
@@ -154,10 +156,10 @@ describe('VideoBottomBar.vue', () => {
 				})
 
 				const participantName = wrapper.findComponent('.participant-name')
-				expect(participantName.exists()).toBe(false)
+				expect(participantName.exists()).toBeFalsy()
 
 				const indicators = wrapper.findAllComponents(NcButton)
-				expect(indicators.length).toBe(0)
+				expect(indicators).toHaveLength(0)
 			})
 		})
 
@@ -170,7 +172,7 @@ describe('VideoBottomBar.vue', () => {
 				})
 
 				const participantName = wrapper.findComponent('.participant-name')
-				expect(participantName.isVisible()).toBe(true)
+				expect(participantName.isVisible()).toBeTruthy()
 				expect(participantName.text()).toBe(PARTICIPANT_NAME)
 			})
 
@@ -183,7 +185,7 @@ describe('VideoBottomBar.vue', () => {
 				})
 
 				const participantName = wrapper.findComponent('.participant-name')
-				expect(participantName.isVisible()).toBe(false)
+				expect(participantName.isVisible()).toBeFalsy()
 			})
 		})
 
@@ -198,14 +200,14 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const iceFailedIndicator = wrapper.findComponent('.iceFailedIndicator')
-					expect(iceFailedIndicator.exists()).toBe(false)
+					expect(iceFailedIndicator.exists()).toBeFalsy()
 
 					const raiseHandIndicator = wrapper.findComponent('.raiseHandIndicator')
-					expect(raiseHandIndicator.exists()).toBe(true)
+					expect(raiseHandIndicator.exists()).toBeTruthy()
 
 					const indicators = wrapper.findAllComponents(NcButton)
 					indicators.wrappers.forEach(indicator => {
-						expect(indicator.isVisible()).toBe(true)
+						expect(indicator.isVisible()).toBeTruthy()
 					})
 				})
 
@@ -219,14 +221,14 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const iceFailedIndicator = wrapper.findComponent('.iceFailedIndicator')
-					expect(iceFailedIndicator.exists()).toBe(true)
+					expect(iceFailedIndicator.exists()).toBeTruthy()
 
 					const raiseHandIndicator = wrapper.findComponent('.raiseHandIndicator')
-					expect(raiseHandIndicator.exists()).toBe(false)
+					expect(raiseHandIndicator.exists()).toBeFalsy()
 
 					const indicators = wrapper.findAllComponents(NcButton)
 					indicators.wrappers.forEach(indicator => {
-						expect(indicator.isVisible()).toBe(false)
+						expect(indicator.isVisible()).toBeFalsy()
 					})
 				})
 			})
@@ -240,7 +242,7 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const raiseHandIndicator = wrapper.findComponent('.raiseHandIndicator')
-					expect(raiseHandIndicator.exists()).toBe(false)
+					expect(raiseHandIndicator.exists()).toBeFalsy()
 				})
 
 				test('indicator is shown when model prop is true', () => {
@@ -252,7 +254,7 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const raiseHandIndicator = wrapper.findComponent('.raiseHandIndicator')
-					expect(raiseHandIndicator.exists()).toBe(true)
+					expect(raiseHandIndicator.exists()).toBeTruthy()
 				})
 			})
 		})
@@ -267,7 +269,7 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const audioIndicator = wrapper.findComponent('.audioIndicator')
-					expect(audioIndicator.exists()).toBe(true)
+					expect(audioIndicator.exists()).toBeTruthy()
 				})
 
 				test('button is visible for moderators when audio is available', () => {
@@ -278,10 +280,10 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const audioIndicator = wrapper.findComponent('.audioIndicator')
-					expect(audioIndicator.isVisible()).toBe(true)
+					expect(audioIndicator.isVisible()).toBeTruthy()
 				})
 
-				test('button is invisible for non-moderators when audio is available', () => {
+				test('button is not rendered for non-moderators when audio is available', () => {
 					conversationProps.participantType = PARTICIPANT.TYPE.USER
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
@@ -290,7 +292,7 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const audioIndicator = wrapper.findComponent('.audioIndicator')
-					expect(audioIndicator.isVisible()).toBe(false)
+					expect(audioIndicator.exists()).toBeFalsy()
 				})
 
 				test('button is visible for everyone when audio is unavailable', () => {
@@ -303,7 +305,7 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const audioIndicator = wrapper.findComponent('.audioIndicator')
-					expect(audioIndicator.isVisible()).toBe(true)
+					expect(audioIndicator.isVisible()).toBeTruthy()
 				})
 
 				test('button is enabled for moderators', () => {
@@ -314,10 +316,10 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const audioIndicator = wrapper.findComponent('.audioIndicator')
-					expect(audioIndicator.attributes()).not.toHaveProperty('disabled')
+					expect(audioIndicator.attributes('disabled')).toBeFalsy()
 				})
 
-				test('button is disabled for moderators when audio is unavailable', () => {
+				test('button is disabled when audio is unavailable', () => {
 					componentProps.model.attributes.audioAvailable = false
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
@@ -325,18 +327,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 					const audioIndicator = wrapper.findComponent('.audioIndicator')
-					expect(audioIndicator.attributes()).toHaveProperty('disabled')
-				})
-
-				test('button is disabled for non-moderators', () => {
-					conversationProps.participantType = PARTICIPANT.TYPE.USER
-					const wrapper = shallowMount(VideoBottomBar, {
-						localVue,
-						store,
-						propsData: componentProps,
-					})
-					const audioIndicator = wrapper.findComponent('.audioIndicator')
-					expect(audioIndicator.attributes()).toHaveProperty('disabled')
+					expect(audioIndicator.attributes('disabled')).toBeTruthy()
 				})
 
 				test('method is called after click', async () => {
@@ -365,7 +356,7 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const videoIndicator = wrapper.findComponent('.videoIndicator')
-					expect(videoIndicator.exists()).toBe(true)
+					expect(videoIndicator.exists()).toBeTruthy()
 				})
 
 				test('button is visible when video is available', () => {
@@ -376,10 +367,10 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const videoIndicator = wrapper.findComponent('.videoIndicator')
-					expect(videoIndicator.isVisible()).toBe(true)
+					expect(videoIndicator.isVisible()).toBeTruthy()
 				})
 
-				test('button is invisible when video is unavailable', () => {
+				test('button is not rendered when video is unavailable', () => {
 					componentProps.model.attributes.videoAvailable = false
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
@@ -388,7 +379,7 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const videoIndicator = wrapper.findComponent('.videoIndicator')
-					expect(videoIndicator.isVisible()).toBe(false)
+					expect(videoIndicator.exists()).toBeFalsy()
 				})
 
 				test('button shows proper icon if video is enabled', () => {
@@ -402,7 +393,7 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const videoOnIcon = wrapper.findComponent(VideoIcon)
-					expect(videoOnIcon.exists()).toBe(true)
+					expect(videoOnIcon.exists()).toBeTruthy()
 				})
 
 				test('button shows proper icon if video is blocked', () => {
@@ -417,7 +408,7 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const videoOffIcon = wrapper.findComponent(VideoOff)
-					expect(videoOffIcon.exists()).toBe(true)
+					expect(videoOffIcon.exists()).toBeTruthy()
 				})
 
 				test('method is called after click', async () => {
@@ -447,7 +438,7 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const screenSharingIndicator = wrapper.findComponent('.screenSharingIndicator')
-					expect(screenSharingIndicator.exists()).toBe(true)
+					expect(screenSharingIndicator.exists()).toBeTruthy()
 				})
 
 				test('button is visible when screen is available', () => {
@@ -458,10 +449,10 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const screenSharingIndicator = wrapper.findComponent('.screenSharingIndicator')
-					expect(screenSharingIndicator.isVisible()).toBe(true)
+					expect(screenSharingIndicator.isVisible()).toBeTruthy()
 				})
 
-				test('button is invisible when screen is unavailable', () => {
+				test('button is not rendered when screen is unavailable', () => {
 					componentProps.model.attributes.screen = false
 					const wrapper = shallowMount(VideoBottomBar, {
 						localVue,
@@ -470,7 +461,7 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const screenSharingIndicator = wrapper.findComponent('.screenSharingIndicator')
-					expect(screenSharingIndicator.isVisible()).toBe(false)
+					expect(screenSharingIndicator.exists()).toBeFalsy()
 				})
 
 				test('component emits peer id after click', async () => {
@@ -498,7 +489,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 					const followingButton = wrapper.findComponent('.following-button')
-					expect(followingButton.exists()).toBe(false)
+					expect(followingButton.exists()).toBeFalsy()
 				})
 
 				test('button is not rendered for main speaker by default', () => {
@@ -509,7 +500,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 					const followingButton = wrapper.findComponent('.following-button')
-					expect(followingButton.exists()).toBe(false)
+					expect(followingButton.exists()).toBeFalsy()
 				})
 
 				test('button is rendered when source is selected', () => {
@@ -525,7 +516,7 @@ describe('VideoBottomBar.vue', () => {
 					})
 
 					const followingButton = wrapper.findComponent('.following-button')
-					expect(followingButton.exists()).toBe(true)
+					expect(followingButton.exists()).toBeTruthy()
 				})
 
 				test('method is called after click', async () => {
