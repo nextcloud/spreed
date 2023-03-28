@@ -88,7 +88,7 @@ export default {
 			default: true,
 		},
 
-		 disableMenu: {
+		disableMenu: {
 			type: Boolean,
 			default: false,
 		},
