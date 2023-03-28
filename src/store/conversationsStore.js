@@ -718,7 +718,7 @@ const actions = {
 			const response = await setConversationAvatar(token, file)
 			const conversation = response.data.ocs.data
 			context.commit('addConversation', conversation)
-			showSuccess(t('spreed', 'You\'ve set the conversation picture.'))
+			showSuccess(t('spreed', 'Conversation picture set'))
 		} catch (error) {
 			console.error(error)
 			showError(t('spreed', 'Could not set the conversation picture.'))
