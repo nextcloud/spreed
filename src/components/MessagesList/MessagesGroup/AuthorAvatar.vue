@@ -94,6 +94,11 @@ export default {
 		},
 
 		disableMenu() {
+			// NcAvatarMenu doesn't work on Desktop
+			// See: https://github.com/nextcloud/talk-desktop/issues/34
+			if (IS_DESKTOP) {
+				return false
+			}
 			// disable the menu if accessing the conversation as guest
 			// or the message sender is a bridged user
 			return this.$store.getters.getActorType() === 'guests' || this.authorType === ATTENDEE.ACTOR_TYPE.BRIDGED
