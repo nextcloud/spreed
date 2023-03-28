@@ -83,6 +83,10 @@
 <script>
 import VueCropper from 'vue-cropperjs'
 
+import Delete from 'vue-material-design-icons/Delete.vue'
+import Folder from 'vue-material-design-icons/Folder.vue'
+import Upload from 'vue-material-design-icons/Upload.vue'
+
 import axios from '@nextcloud/axios'
 import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
@@ -93,10 +97,6 @@ import ConversationIcon from '../ConversationIcon.vue'
 
 // eslint-disable-next-line n/no-extraneous-import
 import 'cropperjs/dist/cropper.css'
-
-import Upload from 'vue-material-design-icons/Upload.vue'
-import Folder from 'vue-material-design-icons/Folder.vue'
-import Delete from 'vue-material-design-icons/Delete.vue'
 
 const VALID_MIME_TYPES = ['image/png', 'image/jpeg']
 
