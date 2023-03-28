@@ -1,5 +1,6 @@
 #
 # @copyright Copyright (c) 2023, Daniel Calviño Sánchez (danxuliu@gmail.com)
+# @copyright Copyright (c) 2023, Elmer Miroslav Mosher Golovin (miroslav@mishamosher.com)
 #
 # @license GNU AGPL version 3 or any later version
 #
@@ -21,3 +22,5 @@ __version__ = 0.1
 
 RECORDING_STATUS_AUDIO_AND_VIDEO = 1
 RECORDING_STATUS_AUDIO_ONLY = 2
+
+USER_AGENT = f'Mozilla/5.0 (Recording) Nextcloud-Talk v{__version__}'
