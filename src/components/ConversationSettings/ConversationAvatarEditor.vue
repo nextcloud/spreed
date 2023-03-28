@@ -52,7 +52,7 @@
 					</template>
 				</NcButton>
 			</div>
-			<span>{{ fileTypeWarning }}</span>
+			<span>{{ t('spreed', 'The file must be a PNG or JPG') }}</span>
 			<input :id="inputId"
 				ref="input"
 				type="file"
@@ -85,7 +85,6 @@ import axios from '@nextcloud/axios'
 import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 
-// import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import ConversationIcon from '../ConversationIcon.vue'
@@ -113,7 +112,6 @@ export default {
 	components: {
 		Delete,
 		Folder,
-		// NcAvatar,
 		NcButton,
 		Upload,
 		VueCropper,
@@ -152,10 +150,6 @@ export default {
 
 		hasAvatar() {
 			return !!this.conversation.avatarVersion
-		},
-
-		fileTypeWarning() {
-			return t('spreed', 'The file must be a PNG or JPG')
 		},
 	},
 
