@@ -24,7 +24,8 @@
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Picture') }}
 		</h4>
-		<ConversationAvatarEditor :conversation="conversation" />
+		<ConversationAvatarEditor :conversation="conversation"
+			:editable="canFullModerate" />
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Name') }}
 		</h4>

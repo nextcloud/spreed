@@ -31,39 +31,41 @@
 					:disable-menu="true" />
 				<div v-else class="icon-loading" />
 			</div>
-			<div class="avatar__buttons">
-				<NcButton :aria-label="t('settings', 'Upload profile picture')"
-					@click="activateLocalFilePicker">
-					<template #icon>
-						<Upload :size="20" />
-					</template>
-				</NcButton>
-				<NcButton :aria-label="t('settings', 'Choose profile picture from files')"
-					@click="openFilePicker">
-					<template #icon>
-						<Folder :size="20" />
-					</template>
-				</NcButton>
-				<NcButton v-if="hasAvatar"
-					:aria-label="t('settings', 'Remove profile picture')"
-					@click="removeAvatar">
-					<template #icon>
-						<Delete :size="20" />
-					</template>
-				</NcButton>
-			</div>
-			<span class="avatar__warning">
-				{{ t('spreed', 'The file must be a PNG or JPG') }}
-			</span>
-			<input :id="inputId"
-				ref="input"
-				type="file"
-				:accept="validMimeTypes.join(',')"
-				@change="onChange">
+			<template v-if="editable">
+				<div class="avatar__buttons">
+					<NcButton :aria-label="t('settings', 'Upload profile picture')"
+						@click="activateLocalFilePicker">
+						<template #icon>
+							<Upload :size="20" />
+						</template>
+					</NcButton>
+					<NcButton :aria-label="t('settings', 'Choose profile picture from files')"
+						@click="openFilePicker">
+						<template #icon>
+							<Folder :size="20" />
+						</template>
+					</NcButton>
+					<NcButton v-if="hasAvatar"
+						:aria-label="t('settings', 'Remove profile picture')"
+						@click="removeAvatar">
+						<template #icon>
+							<Delete :size="20" />
+						</template>
+					</NcButton>
+				</div>
+				<span class="avatar__warning">
+					{{ t('spreed', 'The file must be a PNG or JPG') }}
+				</span>
+				<input :id="inputId"
+					ref="input"
+					type="file"
+					:accept="validMimeTypes.join(',')"
+					@change="onChange">
+			</template>
 		</div>
 
 		<!-- Use v-show to ensure early cropper ref availability -->
-		<div v-show="showCropper" class="avatar__container">
+		<div v-if="editable" v-show="showCropper" class="avatar__container">
 			<VueCropper ref="cropper"
 				class="avatar__cropper"
 				v-bind="cropperOptions" />
@@ -124,6 +126,13 @@ export default {
 		conversation: {
 			type: Object,
 			required: true,
+		},
+		/**
+		 * Shows or hides the editing buttons.
+		 */
+		editable: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
