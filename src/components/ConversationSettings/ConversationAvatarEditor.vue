@@ -52,7 +52,9 @@
 					</template>
 				</NcButton>
 			</div>
-			<span>{{ t('spreed', 'The file must be a PNG or JPG') }}</span>
+			<span class="avatar__warning">
+				{{ t('spreed', 'The file must be a PNG or JPG') }}
+			</span>
 			<input :id="inputId"
 				ref="input"
 				type="file"
@@ -260,10 +262,10 @@ section {
 		align-items: center;
 		gap: 16px 0;
 		width: 300px;
+	}
 
-		span {
-			color: var(--color-text-lighter);
-		}
+	&__warning {
+		color: var(--color-text-lighter);
 	}
 
 	&__preview {
