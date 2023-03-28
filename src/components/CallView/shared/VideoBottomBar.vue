@@ -32,59 +32,63 @@
 			<transition name="fade">
 				<div v-show="showParticipantName"
 					class="participant-name"
-					:class="participantNameClass">
+					:class="{
+						'participant-name--active': isCurrentlyActive,
+						'participant-name--has-shadow': hasShadow,
+					}">
 					{{ participantName }}
 				</div>
 			</transition>
 
-			<transition-group class="media-indicators" name="fade">
-				<template v-if="!isScreen && showVideoOverlay">
-					<NcButton v-show="showAudioIndicator"
-						key="audioIndicator"
-						v-tooltip="audioButtonTooltip"
-						:aria-label="audioButtonTooltip"
-						class="audioIndicator"
-						type="tertiary-no-background"
-						:disabled="isAudioButtonDisabled"
-						@click.stop="forceMute">
-						<template #icon>
-							<Microphone v-if="model.attributes.audioAvailable" :size="20" fill-color="#ffffff" />
-							<MicrophoneOff v-else :size="20" fill-color="#ffffff" />
-						</template>
-					</NcButton>
+			<transition-group v-if="!isScreen"
+				v-show="showVideoOverlay"
+				class="media-indicators"
+				name="fade">
+				<NcButton v-if="showAudioIndicator"
+					key="audioIndicator"
+					v-tooltip="audioButtonTooltip"
+					:aria-label="audioButtonTooltip"
+					class="audioIndicator"
+					type="tertiary-no-background"
+					:disabled="isAudioButtonDisabled"
+					@click.stop="forceMute">
+					<template #icon>
+						<Microphone v-if="model.attributes.audioAvailable" :size="20" fill-color="#ffffff" />
+						<MicrophoneOff v-else :size="20" fill-color="#ffffff" />
+					</template>
+				</NcButton>
 
-					<NcButton v-show="showVideoIndicator"
-						key="videoIndicator"
-						v-tooltip="videoButtonTooltip"
-						:aria-label="videoButtonTooltip"
-						class="videoIndicator"
-						type="tertiary-no-background"
-						@click.stop="toggleVideo">
-						<template #icon>
-							<VideoIcon v-if="isRemoteVideoEnabled" :size="20" fill-color="#ffffff" />
-							<VideoOff v-else :size="20" fill-color="#ffffff" />
-						</template>
-					</NcButton>
+				<NcButton v-if="showVideoIndicator"
+					key="videoIndicator"
+					v-tooltip="videoButtonTooltip"
+					:aria-label="videoButtonTooltip"
+					class="videoIndicator"
+					type="tertiary-no-background"
+					@click.stop="toggleVideo">
+					<template #icon>
+						<VideoIcon v-if="isRemoteVideoEnabled" :size="20" fill-color="#ffffff" />
+						<VideoOff v-else :size="20" fill-color="#ffffff" />
+					</template>
+				</NcButton>
 
-					<NcButton v-show="showScreenSharingIndicator"
-						key="screenSharingIndicator"
-						v-tooltip="t('spreed', 'Show screen')"
-						:aria-label="t('spreed', 'Show screen')"
-						class="screenSharingIndicator"
-						:class="screenSharingButtonClass"
-						type="tertiary-no-background"
-						@click.stop="switchToScreen">
-						<template #icon>
-							<Monitor :size="20" fill-color="#ffffff" />
-						</template>
-					</NcButton>
+				<NcButton v-if="showScreenSharingIndicator"
+					key="screenSharingIndicator"
+					v-tooltip="t('spreed', 'Show screen')"
+					:aria-label="t('spreed', 'Show screen')"
+					class="screenSharingIndicator"
+					:class="{'screen-visible': sharedData.screenVisible}"
+					type="tertiary-no-background"
+					@click.stop="switchToScreen">
+					<template #icon>
+						<Monitor :size="20" fill-color="#ffffff" />
+					</template>
+				</NcButton>
 
-					<div v-if="connectionStateFailedNoRestart"
-						key="iceFailedIndicator"
-						class="status-indicator iceFailedIndicator">
-						<AlertCircle :size="20" fill-color="#ffffff" />
-					</div>
-				</template>
+				<div v-if="connectionStateFailedNoRestart"
+					key="iceFailedIndicator"
+					class="status-indicator iceFailedIndicator">
+					<AlertCircle :size="20" fill-color="#ffffff" />
+				</div>
 			</transition-group>
 
 			<NcButton v-if="showStopFollowingButton"
@@ -231,11 +235,6 @@ export default {
 		showScreenSharingIndicator() {
 			return !this.connectionStateFailedNoRestart && this.model.attributes.screen
 		},
-		screenSharingButtonClass() {
-			return {
-				'screen-visible': this.sharedData.screenVisible,
-			}
-		},
 
 		// Name indicator
 		isCurrentlyActive() {
@@ -244,12 +243,6 @@ export default {
 		showParticipantName() {
 			return !this.model.attributes.videoAvailable || this.isRemoteVideoBlocked
 				|| this.showVideoOverlay || this.isPromoted || this.isCurrentlyActive
-		},
-		participantNameClass() {
-			return {
-				'participant-name--active': this.isCurrentlyActive,
-				'participant-name--has-shadow': this.hasShadow,
-			}
 		},
 
 		// Moderator rights
