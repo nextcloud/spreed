@@ -188,7 +188,7 @@ def uploadRecording(backend, token, fileName, owner):
 
     logger.info(f"Upload recording {fileName} to {backend} in {token} as {owner}")
 
-    url = backend + '/ocs/v2.php/apps/spreed/api/v1/recording/' + token + '/store'
+    url = backend.rstrip('/') + '/ocs/v2.php/apps/spreed/api/v1/recording/' + token + '/store'
 
     fileContents = None
     with open(fileName, 'rb') as file:
