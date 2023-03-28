@@ -200,7 +200,7 @@ export default {
 
 	mounted() {
 		// Get the size of the parent once the component is mounted
-		this.parentElement = this.$refs?.['conversation-icon']?.parentElement
+		this.parentElement = this.$refs.['conversation-icon'].parentElement
 	},
 }
 </script>
