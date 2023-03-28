@@ -89,6 +89,7 @@ import Delete from 'vue-material-design-icons/Delete.vue'
 import Folder from 'vue-material-design-icons/Folder.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 
+import { getRequestToken } from '@nextcloud/auth'
 import axios from '@nextcloud/axios'
 import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
@@ -196,7 +197,7 @@ export default {
 				if (data.status === 'success') {
 					this.loading = false
 				} else if (data.data === 'notsquare') {
-					const tempAvatar = generateUrl('/avatar/tmp') + '?requesttoken=' + encodeURIComponent(OC.requestToken) + '#' + Math.floor(Math.random() * 1000)
+					const tempAvatar = generateUrl('/avatar/tmp') + '?requesttoken=' + encodeURIComponent(getRequestToken()) + '#' + Math.floor(Math.random() * 1000)
 					this.$refs.cropper.replace(tempAvatar)
 					this.showCropper = true
 				} else {
