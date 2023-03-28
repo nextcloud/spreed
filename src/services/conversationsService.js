@@ -409,11 +409,11 @@ const validatePassword = async (password) => {
 	})
 }
 
-const setConversationPicture = async function(token, file) {
+const setConversationAvatar = async function(token, file) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token }), file,)
 }
 
-const deleteConversationPicture = async function(token) {
+const deleteConversationAvatar = async function(token) {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token }))
 }
 
@@ -445,6 +445,6 @@ export {
 	setCallPermissions,
 	setMessageExpiration,
 	validatePassword,
-	setConversationPicture,
-	deleteConversationPicture,
+	setConversationAvatar,
+	deleteConversationAvatar,
 }

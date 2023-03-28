@@ -52,8 +52,8 @@ import {
 	setCallPermissions,
 	setMessageExpiration,
 	setConversationPassword,
-	setConversationPicture,
-	deleteConversationPicture,
+	setConversationAvatar,
+	deleteConversationAvatar,
 } from '../services/conversationsService.js'
 import {
 	startCallRecording,
@@ -713,9 +713,9 @@ const actions = {
 		context.commit('setCallRecording', { token, callRecording: CALL.RECORDING.OFF })
 	},
 
-	async setConversationPictureAction(context, { token, file }) {
+	async setConversationAvatarAction(context, { token, file }) {
 		try {
-			const response = await setConversationPicture(token, file)
+			const response = await setConversationAvatar(token, file)
 			const conversation = response.data.ocs.data
 			context.commit('addConversation', conversation)
 			showSuccess(t('spreed', 'You\'ve set the conversation picture.'))
@@ -726,9 +726,9 @@ const actions = {
 
 	},
 
-	async deleteConversationPictureAction(context, { token, file }) {
+	async deleteConversationAvatarAction(context, { token, file }) {
 		try {
-			const response = await deleteConversationPicture(token, file)
+			const response = await deleteConversationAvatar(token, file)
 			const conversation = response.data.ocs.data
 			context.commit('addConversation', conversation)
 			showSuccess(t('spreed', 'You\'ve deleted the conversation picture.'))

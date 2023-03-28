@@ -221,7 +221,7 @@ export default {
 				formData.append('file', blob)
 
 				try {
-					await this.$store.dispatch('setConversationPictureAction', {
+					await this.$store.dispatch('setConversationAvatarAction', {
 						token: this.conversation.token,
 						file: formData,
 					})
@@ -236,7 +236,7 @@ export default {
 		async removeAvatar() {
 			this.loading = true
 			try {
-				await this.$store.dispatch('deleteConversationPictureAction', {
+				await this.$store.dispatch('deleteConversationAvatarAction', {
 					token: this.conversation.token,
 				})
 				this.loading = false
