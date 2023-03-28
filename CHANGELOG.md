@@ -1,6 +1,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.2 – 2023-03-28
+### Added
+- feat: Allow Chromium-based browser Brave
+  [#9166](https://github.com/nextcloud/spreed/pull/9166)
+- feat(smart-picker): Add conversation search to the smart-picker integration
+  [#9105](https://github.com/nextcloud/spreed/pull/9105)
+
+### Changed
+- Update several dependencies
+
+### Fixed
+- fix(chat): Fix lost message text when autocomplete triggers after pasting text inside the @nextcloud/vue library
+  [#9191](https://github.com/nextcloud/spreed/pull/9191)
+- fix(chat): Fix visual regression with links inside the @nextcloud/vue library
+  [#9191](https://github.com/nextcloud/spreed/pull/9191)
+- fix(reactions): Don't update last message when someone reacted
+  [#9186](https://github.com/nextcloud/spreed/pull/9186)
+- fix(recordings): Set a dedicated user-agent for the recording backend
+  [#9184](https://github.com/nextcloud/spreed/pull/9184)
+  [#9194](https://github.com/nextcloud/spreed/pull/9194)
+- fix(desktop): Hide some features inside the desktop client
+  [#9171](https://github.com/nextcloud/spreed/pull/9171)
+
 ## 16.0.1 – 2023-03-24
 ### Added
 - feat(chat): Allow to receive messages without marking notifications as unread
@@ -23,7 +46,6 @@ All notable changes to this project will be documented in this file.
   [#9121](https://github.com/nextcloud/spreed/pull/9121)
 - fix(chat): Don't focus the chat input on mobile devices
   [#8898](https://github.com/nextcloud/spreed/pull/8898)
-
 
 ## 15.0.5 – 2023-03-24
 ### Fixed
