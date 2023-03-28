@@ -1,5 +1,6 @@
 #
 # @copyright Copyright (c) 2023, Daniel Calviño Sánchez (danxuliu@gmail.com)
+# @copyright Copyright (c) 2023, Elmer Miroslav Mosher Golovin (miroslav@mishamosher.com)
 #
 # @license GNU AGPL version 3 or any later version
 #
