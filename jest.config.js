@@ -77,6 +77,7 @@ module.exports = {
 
 	moduleNameMapper: {
 		'\\.(css|scss)$': '<rootDir>/src/__mocks__/styles.js',
+		'vendor/tflite/(.*).wasm$': '<rootDir>/src/utils/media/effects/virtual-background/vendor/tflite/$1.js',
 	},
 
 	transform: {
