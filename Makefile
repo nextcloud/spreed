@@ -39,7 +39,7 @@ watch-js:
 	npm run watch
 
 test:
-	npm run test:unit
+	npm run test
 
 lint:
 	npm run lint
