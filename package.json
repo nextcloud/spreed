@@ -9,7 +9,7 @@
 		"dev": "webpack --node-env development --progress",
 		"watch": "webpack --node-env development --progress --watch",
 		"test": "TZ=UTC jest",
-		"test:watch": "TZ=UTC jest --watchAll",
+		"test:watch": "TZ=UTC jest --watch",
 		"test:coverage": "TZ=UTC jest --coverage",
 		"lint": "eslint --ext .js,.vue src",
 		"lint:fix": "eslint --ext .js,.vue src --fix",
