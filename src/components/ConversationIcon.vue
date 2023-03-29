@@ -24,22 +24,21 @@
 		class="conversation-icon"
 		:style="{'--icon-size': `${size}px`}"
 		:class="{'offline': offline}">
-		<div v-if="iconClass"
-			class="avatar icon"
-			:class="iconClass" />
-		<NcAvatar v-else-if="hasAvatar"
-			:url="avatarUrl"
-			:size="size" />
-		<NcAvatar v-else
-			:size="size"
-			:user="item.name"
-			:disable-menu="disableMenu"
-			:display-name="item.displayName"
-			:preloaded-user-status="preloadedUserStatus"
-			:show-user-status-compact="disableMenu"
-			:menu-container="menuContainer"
-			menu-position="left"
-			class="conversation-icon__avatar" />
+		<template v-if="item.token">
+			<NcAvatar v-if="!isOneToOne"
+				:url="avatarUrl"
+				:size="size" />
+			<NcAvatar v-else
+				:size="size"
+				:user="item.name"
+				:disable-menu="disableMenu"
+				:display-name="item.displayName"
+				:preloaded-user-status="preloadedUserStatus"
+				:show-user-status-compact="disableMenu"
+				:menu-container="menuContainer"
+				menu-position="left"
+				class="conversation-icon__avatar" />
+		</template>
 		<div v-if="showCall"
 			class="overlap-icon">
 			<VideoIcon :size="20"
@@ -64,19 +63,6 @@ import { generateOcsUrl } from '@nextcloud/router'
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { CONVERSATION } from '../constants.js'
-
-const ICON_CLASS_BY_OBJECT_TYPE = {
-	file: 'icon-file',
-	'share:password': 'icon-password',
-	emails: 'icon-mail',
-}
-
-const ICON_CLASS_BY_TYPE = {
-	[CONVERSATION.TYPE.CHANGELOG]: 'icon-changelog',
-	[CONVERSATION.TYPE.ONE_TO_ONE_FORMER]: 'icon-user',
-	[CONVERSATION.TYPE.GROUP]: 'icon-contacts',
-	[CONVERSATION.TYPE.PUBLIC]: 'icon-public',
-}
 
 export default {
 	name: 'ConversationIcon',
@@ -151,15 +137,6 @@ export default {
 			return !this.hideFavorite && this.item.isFavorite
 		},
 
-		iconClass() {
-			if (this.hasAvatar) {
-				return undefined
-			}
-
-			return ICON_CLASS_BY_OBJECT_TYPE[this.item.objectType]
-				?? ICON_CLASS_BY_TYPE[this.item.type]
-		},
-
 		preloadedUserStatus() {
 			if (Object.prototype.hasOwnProperty.call(this.item, 'statusMessage')) {
 				// We preloaded the status
@@ -186,8 +163,8 @@ export default {
 			}
 		},
 
-		hasAvatar() {
-			return !!this.item.avatarVersion
+		isOneToOne() {
+			return this.item.type === CONVERSATION.TYPE.ONE_TO_ONE
 		},
 
 		avatarUrl() {
@@ -200,7 +177,7 @@ export default {
 
 	mounted() {
 		// Get the size of the parent once the component is mounted
-		this.parentElement = this.$refs.['conversation-icon'].parentElement
+		this.parentElement = this.$refs['conversation-icon'].parentElement
 	},
 }
 </script>
