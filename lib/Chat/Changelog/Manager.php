@@ -124,6 +124,11 @@ class Manager {
 			$this->l->t('- Configure an expiration time for chat messages'),
 			$this->l->t('- Start calls without notifying others in big conversations. You can send individual call notifications once the call has started.'),
 			$this->l->t('- Send chat messages without notifying the recipients in case it is not urgent'),
+			$this->l->t('New in Talk %s', ['16']),
+			$this->l->t('- Emojis can now be now be autocompleted by typing a :'),
+			$this->l->t('- Link various items using the new smart-picker by typing a /'),
+			$this->l->t('- Moderators can now create breakout rooms (Requires the external signaling server)'),
+			$this->l->t('- Calls can now be recorded (Requires the external signaling server)'),
 		];
 	}
 }
