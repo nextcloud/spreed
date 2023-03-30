@@ -28,7 +28,7 @@
 		<NcAppContent>
 			<router-view />
 		</NcAppContent>
-		<RightSidebar :show-chat-in-sidebar="isInCall" />
+		<RightSidebar :is-in-call="isInCall" />
 		<PreventUnload :when="warnLeaving || isSendingMessages" />
 		<DeviceChecker :initialize-on-mounted="false" />
 		<UploadEditor />
@@ -65,12 +65,8 @@ import talkHashCheck from './mixins/talkHashCheck.js'
 import Router from './router/router.js'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.js'
-import {
-	leaveConversationSync,
-} from './services/participantsService.js'
-import {
-	signalingKill,
-} from './utils/webrtc/index.js'
+import { leaveConversationSync } from './services/participantsService.js'
+import { signalingKill } from './utils/webrtc/index.js'
 
 // Styles
 import '@nextcloud/dialogs/dist/index.css'
