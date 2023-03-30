@@ -287,17 +287,28 @@ export default {
 			}
 		},
 
-		showChatInSidebar(chatInSidebar) {
-			if (chatInSidebar) {
-				this.activeTab = 'chat'
-			} else if (this.activeTab === 'chat') {
+		showChatInSidebar(newValue) {
+			// Waiting for chat tab to mount / destroy
+			this.$nextTick(() => {
+				if (newValue) {
+				// Set 'chat' tab as active, and switch to it if sidebar is open
+					this.activeTab = 'chat'
+					return
+				}
+
+				// If 'chat' tab wasn't active, leave it as is
+				if (this.activeTab !== 'chat') {
+					return
+				}
+
+				// In other case switch to other tabs
 				if (this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
 					|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
 					this.activeTab = 'shared-items'
 				} else {
 					this.activeTab = 'participants'
 				}
-			}
+			})
 		},
 
 		token() {
