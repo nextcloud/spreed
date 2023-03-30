@@ -201,7 +201,7 @@ export default {
 
 		canSearchParticipants() {
 			return (this.conversation.type === CONVERSATION.TYPE.GROUP
-					|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== 'share:password'))
+				|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== 'share:password'))
 		},
 
 		isSearching() {
@@ -277,13 +277,26 @@ export default {
 				this.conversationName = this.conversation.displayName
 			}
 
-			if (newConversation.token !== oldConversation.token) {
-				if (newConversation.type === CONVERSATION.TYPE.ONE_TO_ONE
-					|| newConversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
-					this.activeTab = 'shared-items'
-				} else {
-					this.activeTab = 'participants'
-				}
+			if (newConversation.token === oldConversation.token) {
+				return
+			}
+
+			if (newConversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+				|| newConversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
+				this.activeTab = 'shared-items'
+				return
+			}
+
+			// Remain on "breakout-rooms" tab, when switching back to main room
+			if (this.breakoutRoomsConfigured && this.activeTab === 'breakout-rooms') {
+				return
+			}
+
+			// In other case switch to other tabs
+			if (this.showChatInSidebar) {
+				this.activeTab = 'chat'
+			} else {
+				this.activeTab = 'participants'
 			}
 		},
 
