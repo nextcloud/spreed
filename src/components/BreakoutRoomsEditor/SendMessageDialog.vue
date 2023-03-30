@@ -26,6 +26,7 @@
 				{{ dialogTitle }}
 			</h2>
 			<NewMessageForm v-if="modalContainerId"
+				ref="messageForm"
 				role="region"
 				:token="token"
 				:breakout-room="true"
@@ -98,6 +99,9 @@ export default {
 	mounted() {
 		// Postpone render of NewMessageForm until modal container is mounted
 		this.modalContainerId = `#modal-description-${this.$refs.modal.randId}`
+		this.$nextTick(() => {
+			this.$refs.messageForm.focusInput()
+		})
 	},
 
 	methods: {
