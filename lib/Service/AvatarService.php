@@ -160,9 +160,13 @@ class AvatarService {
 			} catch (NotFoundException $e) {
 			}
 		}
+
+
 		// Fallback
 		if (!isset($file)) {
-			if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+			$colorTone = $darkTheme ? 'dark' : 'bright';
+
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
 				$users = json_decode($room->getName(), true);
 				foreach ($users as $participantId) {
 					if ($user instanceof IUser && $participantId !== $user->getUID()) {
@@ -170,16 +174,20 @@ class AvatarService {
 						$file = $avatar->getFile(512, $darkTheme);
 					}
 				}
+			} elseif ($room->getType() === Room::TYPE_CHANGELOG) {
+				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/changelog.svg'));
 			} elseif ($room->getObjectType() === 'file') {
-				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-text-white.svg'));
+				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-conversation-text-' . $colorTone . '.svg'));
 			} elseif ($room->getObjectType() === 'share:password') {
-				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-password-white.svg'));
+				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-conversation-password-' . $colorTone . '.svg'));
 			} elseif ($room->getObjectType() === 'emails') {
-				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-mail-white.svg'));
+				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-conversation-mail-' . $colorTone . '.svg'));
 			} elseif ($room->getType() === Room::TYPE_PUBLIC) {
-				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-public-white.svg'));
+				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-conversation-public-' . $colorTone . '.svg'));
+			} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-conversation-user-' . $colorTone . '.svg'));
 			} else {
-				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-contacts-white.svg'));
+				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-conversation-group-' . $colorTone . '.svg'));
 			}
 		}
 		return $file;

@@ -20,21 +20,25 @@
 -->
 
 <template>
-	<div class="conversation-icon"
+	<div ref="conversation-icon"
+		class="conversation-icon"
+		:style="{'--icon-size': `${size}px`}"
 		:class="{'offline': offline}">
-		<div v-if="iconClass"
-			class="avatar icon"
-			:class="iconClass" />
-		<NcAvatar v-else
-			:size="44"
-			:user="item.name"
-			:disable-menu="disableMenu"
-			:display-name="item.displayName"
-			:preloaded-user-status="preloadedUserStatus"
-			:show-user-status-compact="disableMenu"
-			:menu-container="menuContainer"
-			menu-position="left"
-			class="conversation-icon__avatar" />
+		<template v-if="item.token">
+			<NcAvatar v-if="!isOneToOne"
+				:url="avatarUrl"
+				:size="size" />
+			<NcAvatar v-else
+				:size="size"
+				:user="item.name"
+				:disable-menu="disableMenu"
+				:display-name="item.displayName"
+				:preloaded-user-status="preloadedUserStatus"
+				:show-user-status-compact="disableMenu"
+				:menu-container="menuContainer"
+				menu-position="left"
+				class="conversation-icon__avatar" />
+		</template>
 		<div v-if="showCall"
 			class="overlap-icon">
 			<VideoIcon :size="20"
@@ -54,17 +58,21 @@
 import Star from 'vue-material-design-icons/Star.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 
+import { generateOcsUrl } from '@nextcloud/router'
+
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { CONVERSATION } from '../constants.js'
 
 export default {
 	name: 'ConversationIcon',
+
 	components: {
 		NcAvatar,
 		Star,
 		VideoIcon,
 	},
+
 	props: {
 		/**
 		 * Allow to hide the favorite icon, e.g. on mentions
@@ -73,14 +81,17 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+
 		hideCall: {
 			type: Boolean,
 			default: true,
 		},
+
 		disableMenu: {
 			type: Boolean,
 			default: false,
 		},
+
 		item: {
 			type: Object,
 			default() {
@@ -100,34 +111,32 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		/**
+		 * Passing in true will make this component fill all the available space in its container.
+		 * This is not reactive as it will take the size of the container once mounted.
+		 */
+		isBig: {
+			type: Boolean,
+			default: false,
+		},
+	},
+
+	data() {
+		return {
+			parentElement: undefined,
+		}
 	},
 
 	computed: {
 		showCall() {
 			return !this.hideCall && this.item.hasCall
 		},
+
 		showFavorite() {
 			return !this.hideFavorite && this.item.isFavorite
 		},
-		iconClass() {
-			if (this.item.objectType === 'file') {
-				return 'icon-file'
-			} else if (this.item.objectType === 'share:password') {
-				return 'icon-password'
-			} else if (this.item.objectType === 'emails') {
-				return 'icon-mail'
-			} else if (this.item.type === CONVERSATION.TYPE.CHANGELOG) {
-				return 'icon-changelog'
-			} else if (this.item.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
-				return 'icon-user'
-			} else if (this.item.type === CONVERSATION.TYPE.GROUP) {
-				return 'icon-contacts'
-			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
-				return 'icon-public'
-			}
 
-			return ''
-		},
 		preloadedUserStatus() {
 			if (Object.prototype.hasOwnProperty.call(this.item, 'statusMessage')) {
 				// We preloaded the status
@@ -139,21 +148,46 @@ export default {
 			}
 			return undefined
 		},
+
 		menuContainer() {
 			// The store may not be defined in the RoomSelector if used from
 			// the Collaboration menu outside Talk.
-			if (!this.$store) {
-				return undefined
-			}
-
-			return this.$store.getters.getMainContainerSelector()
+			return this.$store?.getters.getMainContainerSelector()
 		},
+
+		size() {
+			if (this.isBig && this.parentElement) {
+				return Math.min(this.parentElement.clientHeight, this.parentElement.clientWidth)
+			} else {
+				return 44
+			}
+		},
+
+		isOneToOne() {
+			return this.item.type === CONVERSATION.TYPE.ONE_TO_ONE
+		},
+
+		avatarUrl() {
+			const darkTheme = window.getComputedStyle(document.body)
+				.getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
+			const avatarEndpoint = 'apps/spreed/api/v1/room/{token}/avatar' + (darkTheme ? '/dark' : '')
+
+			return generateOcsUrl(avatarEndpoint + '?v={avatarVersion}', {
+				token: this.item.token,
+				avatarVersion: this.item.avatarVersion,
+			})
+		},
+	},
+
+	mounted() {
+		// Get the size of the parent once the component is mounted
+		this.parentElement = this.$refs['conversation-icon'].parentElement
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-$icon-size: 44px;
+$icon-size: var(--icon-size, 44px);
 
 .conversation-icon {
 	width: $icon-size;
@@ -164,20 +198,11 @@ $icon-size: 44px;
 		width: $icon-size;
 		height: $icon-size;
 		line-height: $icon-size;
-		font-size: calc($icon-size / 2);
+		background-size: calc($icon-size / 2);
 		background-color: var(--color-background-darker);
 
 		&.icon-changelog {
-			background-size: $icon-size;
-		}
-
-		&.icon-public,
-		&.icon-contacts,
-		&.icon-user,
-		&.icon-password,
-		&.icon-file,
-		&.icon-mail {
-			background-size: calc($icon-size / 2);
+			background-size: cover !important;
 		}
 	}
 

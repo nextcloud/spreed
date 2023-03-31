@@ -516,14 +516,14 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('You cleared the history of the conversation');
 			}
 		} elseif ($message === 'avatar_set') {
-			$parsedMessage = $this->l->t('{actor} set the conversation avatar');
+			$parsedMessage = $this->l->t('{actor} set the conversation picture');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You set the conversation avatar');
+				$parsedMessage = $this->l->t('You set the conversation picture');
 			}
 		} elseif ($message === 'avatar_removed') {
-			$parsedMessage = $this->l->t('{actor} removed the conversation avatar');
+			$parsedMessage = $this->l->t('{actor} removed the conversation picture');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You removed the conversation avatar');
+				$parsedMessage = $this->l->t('You removed the conversation picture');
 			}
 		} elseif ($message === 'poll_closed') {
 			$parsedParameters['poll'] = $parameters['poll'];

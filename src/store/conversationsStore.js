@@ -22,7 +22,7 @@
 import Vue from 'vue'
 
 import { getCurrentUser } from '@nextcloud/auth'
-import { showInfo, showSuccess, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+import { showInfo, showSuccess, showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
 import {
 	CALL,
@@ -52,6 +52,8 @@ import {
 	setCallPermissions,
 	setMessageExpiration,
 	setConversationPassword,
+	setConversationAvatar,
+	deleteConversationAvatar,
 } from '../services/conversationsService.js'
 import {
 	startCallRecording,
@@ -709,6 +711,31 @@ const actions = {
 			})
 		}
 		context.commit('setCallRecording', { token, callRecording: CALL.RECORDING.OFF })
+	},
+
+	async setConversationAvatarAction(context, { token, file }) {
+		try {
+			const response = await setConversationAvatar(token, file)
+			const conversation = response.data.ocs.data
+			context.commit('addConversation', conversation)
+			showSuccess(t('spreed', 'Conversation picture set'))
+		} catch (error) {
+			console.error(error)
+			showError(t('spreed', 'Could not set the conversation picture.'))
+		}
+
+	},
+
+	async deleteConversationAvatarAction(context, { token, file }) {
+		try {
+			const response = await deleteConversationAvatar(token, file)
+			const conversation = response.data.ocs.data
+			context.commit('addConversation', conversation)
+			showSuccess(t('spreed', 'Conversation picture deleted'))
+		} catch (error) {
+			console.error(error)
+			showError(t('spreed', 'Could not delete the conversation picture.'))
+		}
 	},
 }
 

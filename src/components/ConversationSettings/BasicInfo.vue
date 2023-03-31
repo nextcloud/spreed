@@ -22,6 +22,11 @@
 <template>
 	<Fragment>
 		<h4 class="app-settings-section__subtitle">
+			{{ t('spreed', 'Picture') }}
+		</h4>
+		<ConversationAvatarEditor :conversation="conversation"
+			:editable="canFullModerate" />
+		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Name') }}
 		</h4>
 		<EditableTextField :editable="canFullModerate"
@@ -51,6 +56,7 @@ import { Fragment } from 'vue-frag'
 
 import { showError } from '@nextcloud/dialogs'
 
+import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import EditableTextField from './EditableTextField.vue'
 
 export default {
@@ -59,6 +65,7 @@ export default {
 	components: {
 		EditableTextField,
 		Fragment,
+		ConversationAvatarEditor,
 	},
 
 	props: {
