@@ -168,7 +168,11 @@ export default {
 		},
 
 		avatarUrl() {
-			return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar?v={avatarVersion}', {
+			const darkTheme = window.getComputedStyle(document.body)
+				.getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
+			const avatarEndpoint = 'apps/spreed/api/v1/room/{token}/avatar' + (darkTheme ? '/dark' : '')
+
+			return generateOcsUrl(avatarEndpoint + '?v={avatarVersion}', {
 				token: this.item.token,
 				avatarVersion: this.item.avatarVersion,
 			})
