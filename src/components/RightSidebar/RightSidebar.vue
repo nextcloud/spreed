@@ -38,7 +38,7 @@
 		<template slot="description">
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
-		<NcAppSidebarTab v-if="showChatInSidebar"
+		<NcAppSidebarTab v-if="isInCall"
 			id="chat"
 			:order="1"
 			:name="t('spreed', 'Chat')">
@@ -135,22 +135,23 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 export default {
 	name: 'RightSidebar',
 	components: {
+		BreakoutRoomsTab,
+		ChatView,
+		LobbyStatus,
 		NcAppSidebar,
 		NcAppSidebarTab,
-		SharedItemsTab,
-		ChatView,
+		NcButton,
 		ParticipantsTab,
 		SetGuestUsername,
+		SharedItemsTab,
 		SipSettings,
-		LobbyStatus,
-		NcButton,
+		// Icons
 		AccountMultiple,
 		CogIcon,
+		DotsCircle,
 		FolderMultipleImage,
 		InformationOutline,
 		Message,
-		DotsCircle,
-		BreakoutRoomsTab,
 	},
 
 	mixins: [
@@ -158,7 +159,7 @@ export default {
 	],
 
 	props: {
-		showChatInSidebar: {
+		isInCall: {
 			type: Boolean,
 			required: true,
 		},
@@ -219,7 +220,7 @@ export default {
 
 		canSearchParticipants() {
 			return (this.conversation.type === CONVERSATION.TYPE.GROUP
-					|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== 'share:password'))
+				|| (this.conversation.type === CONVERSATION.TYPE.PUBLIC && this.conversation.objectType !== 'share:password'))
 		},
 
 		isSearching() {
@@ -279,8 +280,7 @@ export default {
 		},
 
 		showBreakoutRoomsTab() {
-			return this.getUserId
-				&& !this.isOneToOne
+			return this.getUserId && !this.isOneToOne
 				&& (this.breakoutRoomsConfigured || this.conversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.FREE || this.conversation.objectType === 'room')
 		},
 
@@ -295,27 +295,49 @@ export default {
 				this.conversationName = this.conversation.displayName
 			}
 
-			if (newConversation.token !== oldConversation.token) {
-				if (newConversation.type === CONVERSATION.TYPE.ONE_TO_ONE
-					|| newConversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
-					this.activeTab = 'shared-items'
-				} else {
-					this.activeTab = 'participants'
-				}
+			if (newConversation.token === oldConversation.token) {
+				return
+			}
+
+			if (this.isOneToOne) {
+				this.activeTab = 'shared-items'
+				return
+			}
+
+			// Remain on "breakout-rooms" tab, when switching back to main room
+			if (this.breakoutRoomsConfigured && this.activeTab === 'breakout-rooms') {
+				return
+			}
+
+			// In other case switch to other tabs
+			if (this.isInCall) {
+				this.activeTab = 'chat'
+			} else {
+				this.activeTab = 'participants'
 			}
 		},
 
-		showChatInSidebar(chatInSidebar) {
-			if (chatInSidebar) {
-				this.activeTab = 'chat'
-			} else if (this.activeTab === 'chat') {
-				if (this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
-					|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
+		isInCall(newValue) {
+			// Waiting for chat tab to mount / destroy
+			this.$nextTick(() => {
+				if (newValue) {
+					// Set 'chat' tab as active, and switch to it if sidebar is open
+					this.activeTab = 'chat'
+					return
+				}
+
+				// If 'chat' tab wasn't active, leave it as is
+				if (this.activeTab !== 'chat') {
+					return
+				}
+
+				// In other case switch to other tabs
+				if (this.isOneToOne) {
 					this.activeTab = 'shared-items'
 				} else {
 					this.activeTab = 'participants'
 				}
-			}
+			})
 		},
 
 		token() {

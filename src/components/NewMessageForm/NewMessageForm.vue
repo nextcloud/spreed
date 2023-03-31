@@ -562,7 +562,7 @@ export default {
 				// Also remove the message to be replied for this conversation
 				await this.$store.dispatch('removeMessageToBeReplied', this.token)
 
-				this.breakoutRoom
+				this.broadcast
 					? await this.broadcastMessage(temporaryMessage, options)
 					: await this.postMessage(temporaryMessage, options)
 			}
