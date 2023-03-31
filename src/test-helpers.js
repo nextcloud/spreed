@@ -24,22 +24,34 @@ import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 // helpers
-const findNcActionButton = function(wrapper, text) {
+/**
+ *
+ * @param {import('@vue/test-utils').Wrapper} wrapper root wrapper to look for NcActionButton
+ * @param {string | Array<string>} text or array of possible texts to look for NcButtons
+ * @return {import('@vue/test-utils').Wrapper}
+ */
+function findNcActionButton(wrapper, text) {
 	const actionButtons = wrapper.findAllComponents(NcActionButton)
-	const items = actionButtons.filter(actionButton => {
-		return actionButton.text() === text
-	})
+	const items = (Array.isArray(text))
+		? actionButtons.filter(actionButton => text.includes(actionButton.text()))
+		: actionButtons.filter(actionButton => actionButton.text() === text)
 	if (!items.exists()) {
 		return items
 	}
 	return items.at(0)
 }
 
-const findNcButton = function(wrapper, text) {
+/**
+ *
+ * @param {import('@vue/test-utils').Wrapper} wrapper root wrapper to look for NcButton
+ * @param {string | Array<string>} text or array of possible texts to look for NcButtons
+ * @return {import('@vue/test-utils').Wrapper}
+ */
+function findNcButton(wrapper, text) {
 	const buttons = wrapper.findAllComponents(NcButton)
-	const items = buttons.filter(button => {
-		return button.text() === text || button.vm.ariaLabel === text
-	})
+	const items = (Array.isArray(text))
+		? buttons.filter(button => text.includes(button.text()) || text.includes(button.vm.ariaLabel))
+		: buttons.filter(button => button.text() === text || button.vm.ariaLabel === text)
 	if (!items.exists()) {
 		return items
 	}
