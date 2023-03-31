@@ -31,7 +31,6 @@
 		<AvatarWrapper :id="participant.id"
 			:disable-tooltip="true"
 			:disable-menu="true"
-			:size="44"
 			:show-user-status="true"
 			:name="participant.displayName"
 			:source="participant.source || participant.actorType" />

@@ -25,13 +25,13 @@
 			<NcButton type="tertiary-no-background"
 				class="poll-voters-details__button">
 				<template #icon>
-					<AvatarWrapperSmall v-for="(item, index) in details.slice(0, 8)"
+					<AvatarWrapper v-for="(item, index) in details.slice(0, 8)"
 						:id="item.actorId"
 						:key="index"
 						:source="item.actorType"
+						:small="true"
 						:disable-menu="true"
 						:disable-tooltip="true"
-						:show-user-status="false"
 						:name="getDisplayName(item)"
 						:condensed="true" />
 				</template>
@@ -41,11 +41,11 @@
 			<div v-for="(item, index) in details"
 				:key="index"
 				class="poll-voters-details__list-item">
-				<AvatarWrapperSmall :id="item.actorId"
+				<AvatarWrapper :id="item.actorId"
 					:key="index"
 					:source="item.actorType"
+					:small="true"
 					:disable-menu="true"
-					:show-user-status="false"
 					:name="getDisplayName(item)"
 					:condensed="true" />
 				<p class="poll-voters-details__display-name">
@@ -60,7 +60,7 @@
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
-import AvatarWrapperSmall from '../../../../AvatarWrapper/AvatarWrapperSmall.vue'
+import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 
 import { ATTENDEE } from '../../../../../constants.js'
 
@@ -69,7 +69,7 @@ export default {
 	name: 'PollVotersDetails',
 
 	components: {
-		AvatarWrapperSmall,
+		AvatarWrapper,
 		NcButton,
 		NcPopover,
 	},

@@ -21,11 +21,11 @@
 
 <template>
 	<div class="contact-selection-bubble">
-		<AvatarWrapperSmall :id="participant.id"
+		<AvatarWrapper :id="participant.id"
 			class="contact-selection-bubble__avatar"
 			:name="participant.label"
 			:source="participant.source"
-			:show-user-status="false"
+			:small="true"
 			:disable-menu="true"
 			:disable-tooltip="true" />
 		<span class="contact-selection-bubble__username">
@@ -46,13 +46,13 @@ import Close from 'vue-material-design-icons/Close.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
-import AvatarWrapperSmall from '../../../../AvatarWrapper/AvatarWrapperSmall.vue'
+import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 
 export default {
 	name: 'ContactSelectionBubble',
 
 	components: {
-		AvatarWrapperSmall,
+		AvatarWrapper,
 		NcButton,
 		Close,
 	},
