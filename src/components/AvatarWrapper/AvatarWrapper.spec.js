@@ -1,6 +1,8 @@
-import { shallowMount } from '@vue/test-utils'
+import { mount, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
+
+import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import AvatarWrapper from './AvatarWrapper.vue'
 
@@ -9,68 +11,146 @@ import storeConfig from '../../store/storeConfig.js'
 describe('AvatarWrapper.vue', () => {
 	let testStoreConfig
 	let store
+	const USER_ID = 'user-id'
+	const USER_NAME = 'John Doe'
+	const preloadedUserStatus = { status: 'online', message: null, icon: null }
 
 	beforeEach(() => {
 		testStoreConfig = cloneDeep(storeConfig)
-		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(testStoreConfig)
 	})
 
-	it('Renders user avatars properly', () => {
-		const wrapper = shallowMount(AvatarWrapper, {
-			store,
-			propsData: {
-				id: 'test-id',
-				source: 'users',
-				name: 'test-name',
-			},
+	describe('render user avatar', () => {
+		test('component renders NcAvatar with standard size by default', () => {
+			const wrapper = shallowMount(AvatarWrapper, {
+				store,
+				propsData: {
+					name: USER_NAME,
+				},
+			})
+
+			const avatar = wrapper.findComponent(NcAvatar)
+			expect(avatar.exists()).toBeTruthy()
+			expect(avatar.props('size')).toBe(44)
 		})
-		expect(wrapper.vm.iconClass).toBe('')
-		// Check that the first child is the avatar component
-		expect(wrapper.element.firstChild.nodeName).toBe('NCAVATAR-STUB')
-		expect(wrapper.props().size).toBe(32)
+
+		test('component does not render NcAvatar for non-users', () => {
+			const wrapper = shallowMount(AvatarWrapper, {
+				store,
+				propsData: {
+					name: 'emails',
+					source: 'emails',
+				},
+			})
+
+			const avatar = wrapper.findComponent(NcAvatar)
+			expect(avatar.exists()).toBeFalsy()
+		})
+
+		test('component renders NcAvatar with smaller size', () => {
+			const wrapper = shallowMount(AvatarWrapper, {
+				store,
+				propsData: {
+					name: USER_NAME,
+					small: true,
+				},
+			})
+
+			const avatar = wrapper.findComponent(NcAvatar)
+			expect(avatar.props('size')).toBe(22)
+		})
+
+		test('component renders user name and status with accepted properties', async () => {
+			const wrapper = mount(AvatarWrapper, {
+				store,
+				propsData: {
+					id: USER_ID,
+					name: USER_NAME,
+					showUserStatus: true,
+					preloadedUserStatus,
+				},
+			})
+
+			const avatar = wrapper.findComponent(NcAvatar)
+			await avatar.vm.$nextTick()
+
+			expect(avatar.attributes('title')).toBe(USER_NAME)
+			expect(avatar.attributes('aria-label')).toContain(USER_NAME)
+			const status = wrapper.findComponent('.avatardiv__user-status--online')
+			expect(status.exists()).toBeTruthy()
+		})
 	})
-	it('Renders group icons properly', () => {
-		const wrapper = shallowMount(AvatarWrapper, {
-			store,
-			propsData: {
-				id: '',
-				source: 'groups',
-				name: '',
-			},
+
+	describe('render specific icons', () => {
+		test('component render emails icon properly', () => {
+			const wrapper = shallowMount(AvatarWrapper, {
+				store,
+				propsData: {
+					name: 'emails',
+					source: 'emails',
+				},
+			})
+
+			const icon = wrapper.findComponent('.icon')
+			expect(icon.exists()).toBeTruthy()
+			expect(icon.classes('icon-mail')).toBeTruthy()
 		})
-		expect(wrapper.vm.iconClass).toBe('icon-contacts')
-		// Check that the first child is a div
-		expect(wrapper.element.firstChild.nodeName).toBe('DIV')
+
+		test('component render groups icon properly', () => {
+			const wrapper = shallowMount(AvatarWrapper, {
+				store,
+				propsData: {
+					name: 'groups',
+					source: 'groups',
+				},
+			})
+
+			const icon = wrapper.findComponent('.icon')
+			expect(icon.exists()).toBeTruthy()
+			expect(icon.classes('icon-contacts')).toBeTruthy()
+		})
 	})
-	it('Renders email icons properly', () => {
-		const wrapper = shallowMount(AvatarWrapper, {
-			store,
-			propsData: {
-				id: '',
-				source: 'emails',
-				name: '',
-			},
+
+	describe('render guests', () => {
+		test('component render icon of guest properly', () => {
+			const wrapper = shallowMount(AvatarWrapper, {
+				store,
+				propsData: {
+					name: t('spreed', 'Guest'),
+					source: 'guests',
+				},
+			})
+
+			const guest = wrapper.findComponent('.guest')
+			expect(guest.exists()).toBeTruthy()
+			expect(guest.text()).toBe('?')
 		})
-		expect(wrapper.vm.iconClass).toBe('icon-mail')
-		// Check that the first child is a div
-		expect(wrapper.element.firstChild.nodeName).toBe('DIV')
-		// proper size
-		expect(wrapper.element.firstChild.classList).toContain('avatar-32px')
-	})
-	it('Renders guests icons properly', () => {
-		const wrapper = shallowMount(AvatarWrapper, {
-			store,
-			propsData: {
-				id: 'random-sha1',
-				source: 'guests',
-				name: '',
-				size: 24,
-			},
+
+		test('component render icon of guest with name properly', () => {
+			const wrapper = shallowMount(AvatarWrapper, {
+				store,
+				propsData: {
+					name: USER_NAME,
+					source: 'guests',
+				},
+			})
+
+			const guest = wrapper.findComponent('.guest')
+			expect(guest.text()).toBe(USER_NAME.charAt(0))
 		})
-		expect(wrapper.element.firstChild.classList).toContain('guest')
-		expect(wrapper.element.firstChild.nodeName).toBe('DIV')
-		// proper size
-		expect(wrapper.element.firstChild.classList).toContain('avatar-24px')
+
+		test('component render icon of deleted user properly', () => {
+			const wrapper = shallowMount(AvatarWrapper, {
+				store,
+				propsData: {
+					name: USER_NAME,
+					source: 'deleted_users',
+				},
+			})
+
+			const deleted = wrapper.findComponent('.guest')
+			expect(deleted.exists()).toBeTruthy()
+			expect(deleted.text()).toBe('X')
+		})
 	})
 })
