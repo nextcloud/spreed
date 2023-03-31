@@ -21,11 +21,20 @@
 
 <template>
 	<div class="avatar-wrapper"
-		:class="{'offline': offline}">
+		:class="{
+			'avatar-wrapper--offline': offline,
+			'avatar-wrapper--small': small,
+			'avatar-wrapper--condensed': condensed,
+		}">
 		<div v-if="iconClass"
 			class="icon"
-			:class="[`avatar-${sizeToString}px`, iconClass]" />
-		<NcAvatar v-else-if="!isGuest"
+			:class="[`avatar-${size}px`, iconClass]" />
+		<div v-else-if="isGuest || isDeletedUser"
+			class="guest"
+			:class="`avatar-${size}px`">
+			{{ firstLetterOfGuestName }}
+		</div>
+		<NcAvatar v-else
 			:user="id"
 			:display-name="name"
 			:menu-container="menuContainerWithFallback"
@@ -36,11 +45,6 @@
 			:show-user-status-compact="showUserStatusCompact"
 			:preloaded-user-status="preloadedUserStatus"
 			:size="size" />
-		<div v-else
-			class="guest"
-			:class="`avatar-${sizeToString}px`">
-			{{ firstLetterOfGuestName }}
-		</div>
 	</div>
 </template>
 
@@ -58,7 +62,7 @@ export default {
 	props: {
 		name: {
 			type: String,
-			default: null,
+			required: true,
 		},
 		id: {
 			type: String,
@@ -68,13 +72,17 @@ export default {
 			type: String,
 			default: null,
 		},
-		offline: {
+		small: {
 			type: Boolean,
 			default: false,
 		},
-		size: {
-			type: Number,
-			default: 32,
+		condensed: {
+			type: Boolean,
+			default: false,
+		},
+		offline: {
+			type: Boolean,
+			default: false,
 		},
 		disableTooltip: {
 			type: Boolean,
@@ -84,29 +92,30 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-
 		showUserStatus: {
 			type: Boolean,
-			default: true,
+			default: false,
 		},
 		showUserStatusCompact: {
 			type: Boolean,
-			default: true,
+			default: false,
 		},
 		preloadedUserStatus: {
 			type: Object,
 			default: undefined,
 		},
-
 		menuContainer: {
 			type: String,
 			default: undefined,
 		},
 	},
 	computed: {
+		size() {
+			return this.small ? 22 : 44
+		},
 		// Determines which icon is displayed
 		iconClass() {
-			if (!this.source || this.source === 'users' || this.isGuest) {
+			if (!this.source || this.source === 'users' || this.isGuest || this.isDeletedUser) {
 				return ''
 			}
 			if (this.source === 'emails') {
@@ -118,16 +127,18 @@ export default {
 		isGuest() {
 			return this.source === 'guests'
 		},
+		isDeletedUser() {
+			return this.source === 'deleted_users'
+		},
 		firstLetterOfGuestName() {
+			if (this.isDeletedUser) {
+				return 'X'
+			}
 			const customName = this.name !== t('spreed', 'Guest') ? this.name : '?'
 			return customName.charAt(0)
 		},
 		menuContainerWithFallback() {
-			return this.menuContainer ? this.menuContainer : this.$store.getters.getMainContainerSelector()
-		},
-		// Takes the size prop and makes it a string for the classes
-		sizeToString() {
-			return this.size.toString()
+			return this.menuContainer ?? this.$store.getters.getMainContainerSelector()
 		},
 		isDisabledMenu() {
 			// NcAvatarMenu doesn't work on Desktop
@@ -142,17 +153,35 @@ export default {
 @import '../../assets/avatar.scss';
 
 .avatar-wrapper {
-	$avatar-size: 44px;
-	height: $avatar-size;
-	width: $avatar-size;
-	@include avatar-mixin($avatar-size);
-}
+	height: 44px;
+	width: 44px;
+	@include avatar-mixin(44px);
 
-.offline .avatar-wrapper .avatardiv {
-	background: rgba(var(--color-main-background-rgb), .4) !important;
+	&--small {
+		height: 22px;
+		width: 22px;
+		@include avatar-mixin(22px);
+	}
 
-	::v-deep > img {
-		opacity: .4 !important;
+	&--condensed {
+		width: unset;
+		height: unset;
+		margin-left: -2px;
+		display: flex;
+
+		& > .icon,
+		& > .guest,
+		:deep(img) {
+			outline: 2px solid var(--color-main-background);
+		}
+	}
+
+	&--offline {
+		opacity: .4;
+
+		& :deep(.avatardiv) {
+			background: rgba(var(--color-main-background-rgb), .4) !important;
+		}
 	}
 }
 
