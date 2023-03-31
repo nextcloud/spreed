@@ -28,12 +28,12 @@
 					<AvatarWrapper v-for="(item, index) in details.slice(0, 8)"
 						:id="item.actorId"
 						:key="index"
-						:source="item.actorType"
-						:small="true"
-						:disable-menu="true"
-						:disable-tooltip="true"
 						:name="getDisplayName(item)"
-						:condensed="true" />
+						:source="item.actorType"
+						small
+						condensed
+						disable-menu
+						disable-tooltip />
 				</template>
 			</NcButton>
 		</template>
@@ -42,12 +42,10 @@
 				:key="index"
 				class="poll-voters-details__list-item">
 				<AvatarWrapper :id="item.actorId"
-					:key="index"
-					:source="item.actorType"
-					:small="true"
-					:disable-menu="true"
 					:name="getDisplayName(item)"
-					:condensed="true" />
+					:source="item.actorType"
+					small
+					disable-menu />
 				<p class="poll-voters-details__display-name">
 					{{ getDisplayName(item) }}
 				</p>

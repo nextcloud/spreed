@@ -28,12 +28,13 @@
 			type="checkbox"
 			name="participant.attendeeId">
 		<!-- Participant's avatar -->
-		<AvatarWrapper :id="participant.id"
-			:disable-tooltip="true"
-			:disable-menu="true"
-			:show-user-status="true"
+		<AvatarWrapper :id="participant.actorId"
 			:name="participant.displayName"
-			:source="participant.source || participant.actorType" />
+			:source="participant.source || participant.actorType"
+			disable-menu
+			disable-tooltip
+			show-user-status
+			show-user-status-compact />
 		<div>
 			{{ participant.displayName }}
 		</div>

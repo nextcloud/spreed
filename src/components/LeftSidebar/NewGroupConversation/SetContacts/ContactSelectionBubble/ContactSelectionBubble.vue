@@ -25,9 +25,9 @@
 			class="contact-selection-bubble__avatar"
 			:name="participant.label"
 			:source="participant.source"
-			:small="true"
-			:disable-menu="true"
-			:disable-tooltip="true" />
+			small
+			disable-menu
+			disable-tooltip />
 		<span class="contact-selection-bubble__username">
 			{{ displayName }}
 		</span>
