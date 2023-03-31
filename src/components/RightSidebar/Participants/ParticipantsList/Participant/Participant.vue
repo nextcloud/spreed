@@ -36,14 +36,13 @@
 		<AvatarWrapper :id="computedId"
 			:disable-tooltip="true"
 			:disable-menu="isSearched"
-			:size="44"
 			:show-user-status="showUserStatus && !isSearched"
 			:show-user-status-compact="false"
 			:preloaded-user-status="preloadedUserStatus"
 			:name="computedName"
 			:source="participant.source || participant.actorType"
 			:offline="isOffline"
-			:menu-container="container" />
+			:container="container" />
 
 		<!-- Participant's data -->
 		<div class="participant-row__user-wrapper"
