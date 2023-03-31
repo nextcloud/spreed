@@ -37,7 +37,7 @@
 		<NcAvatar v-else
 			:user="id"
 			:display-name="name"
-			:menu-container="menuContainer"
+			:menu-container="menuContainerWithFallback"
 			menu-position="left"
 			:disable-tooltip="disableTooltip"
 			:disable-menu="isDisabledMenu"
@@ -98,13 +98,13 @@ export default {
 		},
 		showUserStatusCompact: {
 			type: Boolean,
-			default: true,
+			default: false,
 		},
 		preloadedUserStatus: {
 			type: Object,
 			default: undefined,
 		},
-		container: {
+		menuContainer: {
 			type: String,
 			default: undefined,
 		},
@@ -137,8 +137,8 @@ export default {
 			const customName = this.name !== t('spreed', 'Guest') ? this.name : '?'
 			return customName.charAt(0)
 		},
-		menuContainer() {
-			return this.container ?? this.$store.getters.getMainContainerSelector()
+		menuContainerWithFallback() {
+			return this.menuContainer ?? this.$store.getters.getMainContainerSelector()
 		},
 		isDisabledMenu() {
 			// NcAvatarMenu doesn't work on Desktop

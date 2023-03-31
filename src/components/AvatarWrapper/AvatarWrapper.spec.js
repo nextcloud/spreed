@@ -1,4 +1,4 @@
-import { mount, shallowMount } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
@@ -13,10 +13,12 @@ describe('AvatarWrapper.vue', () => {
 	let store
 	const USER_ID = 'user-id'
 	const USER_NAME = 'John Doe'
-	const preloadedUserStatus = { status: 'online', message: null, icon: null }
+	const PRELOADED_USER_STATUS = { status: 'online', message: null, icon: null }
+	const MENU_CONTAINER = '#menu-container'
 
 	beforeEach(() => {
 		testStoreConfig = cloneDeep(storeConfig)
+		testStoreConfig.modules.uiModeStore.getters.getMainContainerSelector = jest.fn().mockReturnValue(() => MENU_CONTAINER)
 		store = new Vuex.Store(testStoreConfig)
 	})
 
@@ -60,24 +62,27 @@ describe('AvatarWrapper.vue', () => {
 			expect(avatar.props('size')).toBe(22)
 		})
 
-		test('component renders user name and status with accepted properties', async () => {
-			const wrapper = mount(AvatarWrapper, {
+		test('component pass props to NcAvatar correctly', async () => {
+			const wrapper = shallowMount(AvatarWrapper, {
 				store,
 				propsData: {
 					id: USER_ID,
 					name: USER_NAME,
 					showUserStatus: true,
-					preloadedUserStatus,
+					preloadedUserStatus: PRELOADED_USER_STATUS,
 				},
 			})
 
 			const avatar = wrapper.findComponent(NcAvatar)
 			await avatar.vm.$nextTick()
 
-			expect(avatar.attributes('title')).toBe(USER_NAME)
-			expect(avatar.attributes('aria-label')).toContain(USER_NAME)
-			const status = wrapper.findComponent('.avatardiv__user-status--online')
-			expect(status.exists()).toBeTruthy()
+			expect(avatar.props('user')).toBe(USER_ID)
+			expect(avatar.props('displayName')).toBe(USER_NAME)
+			expect(avatar.props('menuContainer')).toBe(MENU_CONTAINER)
+			expect(avatar.props('showUserStatus')).toBe(true)
+			expect(avatar.props('showUserStatusCompact')).toBe(false)
+			expect(avatar.props('preloadedUserStatus')).toBe(PRELOADED_USER_STATUS)
+			expect(avatar.props('size')).toBe(44)
 		})
 	})
 
@@ -91,7 +96,7 @@ describe('AvatarWrapper.vue', () => {
 				},
 			})
 
-			const icon = wrapper.findComponent('.icon')
+			const icon = wrapper.find('.icon')
 			expect(icon.exists()).toBeTruthy()
 			expect(icon.classes('icon-mail')).toBeTruthy()
 		})
@@ -105,7 +110,7 @@ describe('AvatarWrapper.vue', () => {
 				},
 			})
 
-			const icon = wrapper.findComponent('.icon')
+			const icon = wrapper.find('.icon')
 			expect(icon.exists()).toBeTruthy()
 			expect(icon.classes('icon-contacts')).toBeTruthy()
 		})
@@ -121,7 +126,7 @@ describe('AvatarWrapper.vue', () => {
 				},
 			})
 
-			const guest = wrapper.findComponent('.guest')
+			const guest = wrapper.find('.guest')
 			expect(guest.exists()).toBeTruthy()
 			expect(guest.text()).toBe('?')
 		})
@@ -135,7 +140,7 @@ describe('AvatarWrapper.vue', () => {
 				},
 			})
 
-			const guest = wrapper.findComponent('.guest')
+			const guest = wrapper.find('.guest')
 			expect(guest.text()).toBe(USER_NAME.charAt(0))
 		})
 
@@ -148,7 +153,7 @@ describe('AvatarWrapper.vue', () => {
 				},
 			})
 
-			const deleted = wrapper.findComponent('.guest')
+			const deleted = wrapper.find('.guest')
 			expect(deleted.exists()).toBeTruthy()
 			expect(deleted.text()).toBe('X')
 		})
