@@ -34,16 +34,13 @@
 		@keydown.enter="handleClick">
 		<!-- Participant's avatar -->
 		<AvatarWrapper :id="computedId"
-			:disable-tooltip="true"
-			:disable-menu="isSearched"
-			:size="44"
-			:show-user-status="showUserStatus && !isSearched"
-			:show-user-status-compact="false"
-			:preloaded-user-status="preloadedUserStatus"
 			:name="computedName"
 			:source="participant.source || participant.actorType"
-			:offline="isOffline"
-			:menu-container="container" />
+			:disable-menu="isSearched"
+			disable-tooltip
+			:show-user-status="showUserStatus && !isSearched"
+			:preloaded-user-status="preloadedUserStatus"
+			:offline="isOffline" />
 
 		<!-- Participant's data -->
 		<div class="participant-row__user-wrapper"
