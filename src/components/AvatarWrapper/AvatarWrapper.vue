@@ -29,7 +29,12 @@
 		<div v-if="iconClass"
 			class="icon"
 			:class="[`avatar-${size}px`, iconClass]" />
-		<NcAvatar v-else-if="!isGuest && !isDeletedUser"
+		<div v-else-if="isGuest || isDeletedUser"
+			class="guest"
+			:class="`avatar-${size}px`">
+			{{ firstLetterOfGuestName }}
+		</div>
+		<NcAvatar v-else
 			:user="id"
 			:display-name="name"
 			:menu-container="menuContainer"
@@ -40,11 +45,6 @@
 			:show-user-status-compact="showUserStatusCompact"
 			:preloaded-user-status="preloadedUserStatus"
 			:size="size" />
-		<div v-else
-			class="guest"
-			:class="`avatar-${size}px`">
-			{{ firstLetterOfGuestName }}
-		</div>
 	</div>
 </template>
 
@@ -62,7 +62,7 @@ export default {
 	props: {
 		name: {
 			type: String,
-			default: null,
+			required: true,
 		},
 		id: {
 			type: String,
