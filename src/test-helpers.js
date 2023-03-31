@@ -20,17 +20,15 @@
  *
  */
 
-import Wrapper from '@vue/test-utils'
-
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 // helpers
 /**
  *
- * @param {Wrapper} wrapper root wrapper to look for NcActionButton
+ * @param {import('@vue/test-utils').Wrapper} wrapper root wrapper to look for NcActionButton
  * @param {string | Array<string>} text or array of possible texts to look for NcButtons
- * @return {Wrapper}
+ * @return {import('@vue/test-utils').Wrapper}
  */
 function findNcActionButton(wrapper, text) {
 	const actionButtons = wrapper.findAllComponents(NcActionButton)
@@ -45,9 +43,9 @@ function findNcActionButton(wrapper, text) {
 
 /**
  *
- * @param {Wrapper} wrapper root wrapper to look for NcButton
+ * @param {import('@vue/test-utils').Wrapper} wrapper root wrapper to look for NcButton
  * @param {string | Array<string>} text or array of possible texts to look for NcButtons
- * @return {Wrapper}
+ * @return {import('@vue/test-utils').Wrapper}
  */
 function findNcButton(wrapper, text) {
 	const buttons = wrapper.findAllComponents(NcButton)

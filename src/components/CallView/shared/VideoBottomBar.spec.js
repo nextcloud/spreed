@@ -163,7 +163,7 @@ describe('VideoBottomBar.vue', () => {
 					propsData: componentProps,
 				})
 
-				const participantName = wrapper.findComponent('.participant-name')
+				const participantName = wrapper.find('.participant-name')
 				expect(participantName.exists()).toBeFalsy()
 
 				const indicators = wrapper.findAllComponents(NcButton)
@@ -179,7 +179,7 @@ describe('VideoBottomBar.vue', () => {
 					propsData: componentProps,
 				})
 
-				const participantName = wrapper.findComponent('.participant-name')
+				const participantName = wrapper.find('.participant-name')
 				expect(participantName.isVisible()).toBeTruthy()
 				expect(participantName.text()).toBe(PARTICIPANT_NAME)
 			})
@@ -192,7 +192,7 @@ describe('VideoBottomBar.vue', () => {
 					propsData: componentProps,
 				})
 
-				const participantName = wrapper.findComponent('.participant-name')
+				const participantName = wrapper.find('.participant-name')
 				expect(participantName.isVisible()).toBeFalsy()
 			})
 		})
