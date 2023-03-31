@@ -2,6 +2,8 @@ import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
 import Vuex, { Store } from 'vuex'
 
+import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
+import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
@@ -13,6 +15,7 @@ import VideoBottomBar from './VideoBottomBar.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
 import storeConfig from '../../../store/storeConfig.js'
+import { findNcButton } from '../../../test-helpers.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 jest.mock('@nextcloud/event-bus', () => ({
@@ -31,6 +34,11 @@ describe('VideoBottomBar.vue', () => {
 	let componentProps
 	let conversationProps
 	let selectedVideoPeerIdMock
+
+	const audioIndicatorAriaLabels = [t('spreed', 'Mute'), t('spreed', 'Muted')]
+	const videoIndicatorAriaLabels = [t('spreed', 'Disable video'), t('spreed', 'Enable video')]
+	const screenSharingAriaLabel = t('spreed', 'Show screen')
+	const followingButtonAriaLabel = t('spreed', 'Stop following')
 
 	beforeEach(() => {
 		localVue = createLocalVue()
@@ -199,10 +207,10 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const iceFailedIndicator = wrapper.findComponent('.iceFailedIndicator')
+					const iceFailedIndicator = wrapper.findComponent(AlertCircle)
 					expect(iceFailedIndicator.exists()).toBeFalsy()
 
-					const raiseHandIndicator = wrapper.findComponent('.raiseHandIndicator')
+					const raiseHandIndicator = wrapper.findComponent(HandBackLeft)
 					expect(raiseHandIndicator.exists()).toBeTruthy()
 
 					const indicators = wrapper.findAllComponents(NcButton)
@@ -220,10 +228,10 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const iceFailedIndicator = wrapper.findComponent('.iceFailedIndicator')
+					const iceFailedIndicator = wrapper.findComponent(AlertCircle)
 					expect(iceFailedIndicator.exists()).toBeTruthy()
 
-					const raiseHandIndicator = wrapper.findComponent('.raiseHandIndicator')
+					const raiseHandIndicator = wrapper.findComponent(HandBackLeft)
 					expect(raiseHandIndicator.exists()).toBeFalsy()
 
 					const indicators = wrapper.findAllComponents(NcButton)
@@ -241,7 +249,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const raiseHandIndicator = wrapper.findComponent('.raiseHandIndicator')
+					const raiseHandIndicator = wrapper.findComponent(HandBackLeft)
 					expect(raiseHandIndicator.exists()).toBeFalsy()
 				})
 
@@ -253,7 +261,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const raiseHandIndicator = wrapper.findComponent('.raiseHandIndicator')
+					const raiseHandIndicator = wrapper.findComponent(HandBackLeft)
 					expect(raiseHandIndicator.exists()).toBeTruthy()
 				})
 			})
@@ -267,8 +275,7 @@ describe('VideoBottomBar.vue', () => {
 						store,
 						propsData: componentProps,
 					})
-
-					const audioIndicator = wrapper.findComponent('.audioIndicator')
+					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
 					expect(audioIndicator.exists()).toBeTruthy()
 				})
 
@@ -279,7 +286,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const audioIndicator = wrapper.findComponent('.audioIndicator')
+					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
 					expect(audioIndicator.isVisible()).toBeTruthy()
 				})
 
@@ -291,7 +298,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const audioIndicator = wrapper.findComponent('.audioIndicator')
+					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
 					expect(audioIndicator.exists()).toBeFalsy()
 				})
 
@@ -304,7 +311,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const audioIndicator = wrapper.findComponent('.audioIndicator')
+					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
 					expect(audioIndicator.isVisible()).toBeTruthy()
 				})
 
@@ -315,7 +322,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const audioIndicator = wrapper.findComponent('.audioIndicator')
+					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
 					expect(audioIndicator.attributes('disabled')).toBeFalsy()
 				})
 
@@ -326,7 +333,7 @@ describe('VideoBottomBar.vue', () => {
 						store,
 						propsData: componentProps,
 					})
-					const audioIndicator = wrapper.findComponent('.audioIndicator')
+					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
 					expect(audioIndicator.attributes('disabled')).toBeTruthy()
 				})
 
@@ -340,7 +347,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const audioIndicator = wrapper.findComponent('.audioIndicator')
+					const audioIndicator = findNcButton(wrapper, audioIndicatorAriaLabels)
 					await audioIndicator.trigger('click')
 
 					expect(wrapper.vm.$props.model.forceMute).toHaveBeenCalled()
@@ -354,8 +361,7 @@ describe('VideoBottomBar.vue', () => {
 						store,
 						propsData: componentProps,
 					})
-
-					const videoIndicator = wrapper.findComponent('.videoIndicator')
+					const videoIndicator = findNcButton(wrapper, videoIndicatorAriaLabels)
 					expect(videoIndicator.exists()).toBeTruthy()
 				})
 
@@ -366,7 +372,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const videoIndicator = wrapper.findComponent('.videoIndicator')
+					const videoIndicator = findNcButton(wrapper, videoIndicatorAriaLabels)
 					expect(videoIndicator.isVisible()).toBeTruthy()
 				})
 
@@ -378,7 +384,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const videoIndicator = wrapper.findComponent('.videoIndicator')
+					const videoIndicator = findNcButton(wrapper, videoIndicatorAriaLabels)
 					expect(videoIndicator.exists()).toBeFalsy()
 				})
 
@@ -421,7 +427,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const videoIndicator = wrapper.findComponent('.videoIndicator')
+					const videoIndicator = findNcButton(wrapper, videoIndicatorAriaLabels)
 					await videoIndicator.trigger('click')
 
 					expect(wrapper.vm.$props.sharedData.remoteVideoBlocker.setVideoEnabled).toHaveBeenCalled()
@@ -437,7 +443,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const screenSharingIndicator = wrapper.findComponent('.screenSharingIndicator')
+					const screenSharingIndicator = findNcButton(wrapper, screenSharingAriaLabel)
 					expect(screenSharingIndicator.exists()).toBeTruthy()
 				})
 
@@ -448,7 +454,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const screenSharingIndicator = wrapper.findComponent('.screenSharingIndicator')
+					const screenSharingIndicator = findNcButton(wrapper, screenSharingAriaLabel)
 					expect(screenSharingIndicator.isVisible()).toBeTruthy()
 				})
 
@@ -460,7 +466,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const screenSharingIndicator = wrapper.findComponent('.screenSharingIndicator')
+					const screenSharingIndicator = findNcButton(wrapper, screenSharingAriaLabel)
 					expect(screenSharingIndicator.exists()).toBeFalsy()
 				})
 
@@ -474,7 +480,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const screenSharingIndicator = wrapper.findComponent('.screenSharingIndicator')
+					const screenSharingIndicator = findNcButton(wrapper, screenSharingAriaLabel)
 					await screenSharingIndicator.trigger('click')
 
 					expect(emit).toHaveBeenCalledWith('switch-screen-to-id', PEER_ID)
@@ -488,7 +494,7 @@ describe('VideoBottomBar.vue', () => {
 						store,
 						propsData: componentProps,
 					})
-					const followingButton = wrapper.findComponent('.following-button')
+					const followingButton = findNcButton(wrapper, followingButtonAriaLabel)
 					expect(followingButton.exists()).toBeFalsy()
 				})
 
@@ -499,7 +505,7 @@ describe('VideoBottomBar.vue', () => {
 						store,
 						propsData: componentProps,
 					})
-					const followingButton = wrapper.findComponent('.following-button')
+					const followingButton = findNcButton(wrapper, followingButtonAriaLabel)
 					expect(followingButton.exists()).toBeFalsy()
 				})
 
@@ -515,7 +521,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const followingButton = wrapper.findComponent('.following-button')
+					const followingButton = findNcButton(wrapper, followingButtonAriaLabel)
 					expect(followingButton.exists()).toBeTruthy()
 				})
 
@@ -534,7 +540,7 @@ describe('VideoBottomBar.vue', () => {
 						propsData: componentProps,
 					})
 
-					const followingButton = wrapper.findComponent('.following-button')
+					const followingButton = findNcButton(wrapper, followingButtonAriaLabel)
 					await followingButton.trigger('click')
 
 					expect(testStoreConfig.modules.callViewStore.actions.stopPresentation).toHaveBeenCalled()
