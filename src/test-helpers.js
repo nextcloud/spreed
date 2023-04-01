@@ -22,6 +22,7 @@
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
 // helpers
 /**
@@ -58,7 +59,21 @@ function findNcButton(wrapper, text) {
 	return items.at(0)
 }
 
+/**
+ *
+ * @param {import('@vue/test-utils').Wrapper} wrapper root wrapper to look for NcListItem
+ * @param {string | Array<string>} text or array of possible texts to look for NcListItems
+ * @return {import('@vue/test-utils').Wrapper}
+ */
+function findNcListItems(wrapper, text) {
+	const listItems = wrapper.findAllComponents(NcListItem)
+	return (Array.isArray(text))
+		? listItems.filter(listItem => text.includes(listItem.vm.title))
+		: listItems.filter(listItem => listItem.vm.title === text)
+}
+
 export {
 	findNcActionButton,
 	findNcButton,
+	findNcListItems,
 }

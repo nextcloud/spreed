@@ -213,7 +213,10 @@ export default {
 
 			if (this.searchText !== '') {
 				const lowerSearchText = this.searchText.toLowerCase()
-				conversations = conversations.filter(conversation => conversation.displayName.toLowerCase().indexOf(lowerSearchText) !== -1 || conversation.name.toLowerCase().indexOf(lowerSearchText) !== -1)
+				conversations = conversations.filter(conversation =>
+					conversation.displayName.toLowerCase().indexOf(lowerSearchText) !== -1
+					|| conversation.name.toLowerCase().indexOf(lowerSearchText) !== -1
+				)
 			}
 
 			// FIXME: this modifies the original array,
@@ -236,41 +239,36 @@ export default {
 		},
 
 		sourcesWithoutResultsList() {
-			if (!this.searchResultsUsers.length) {
-				if (!this.searchResultsGroups.length) {
-					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
-						return t('spreed', 'Users, groups and circles')
-					} else {
-						return t('spreed', 'Users and groups')
-					}
+			const hasNoResultsUsers = !this.searchResultsUsers.length
+			const hasNoResultsGroups = !this.searchResultsGroups.length
+			const hasNoResultsCircles = this.isCirclesEnabled && !this.searchResultsCircles.length
+
+			if (hasNoResultsUsers) {
+				if (hasNoResultsGroups) {
+					return (hasNoResultsCircles)
+						? t('spreed', 'Users, groups and circles')
+						: t('spreed', 'Users and groups')
 				} else {
-					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
-						return t('spreed', 'Users and circles')
-					} else {
-						return t('spreed', 'Users')
-					}
+					return (hasNoResultsCircles)
+						? t('spreed', 'Users and circles')
+						: t('spreed', 'Users')
 				}
 			} else {
-				if (!this.searchResultsGroups.length) {
-					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
-						return t('spreed', 'Groups and circles')
-					} else {
-						return t('spreed', 'Groups')
-					}
+				if (hasNoResultsGroups) {
+					return (hasNoResultsCircles)
+						? t('spreed', 'Groups and circles')
+						: t('spreed', 'Groups')
 				} else {
-					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
-						return t('spreed', 'Circles')
-					}
+					return (hasNoResultsCircles)
+						? t('spreed', 'Circles')
+						: t('spreed', 'Other sources')
 				}
 			}
-			return t('spreed', 'Other sources')
 		},
 	},
 
 	beforeMount() {
-		/**
-		 * After a conversation was created, the search filter is reset
-		 */
+		// After a conversation was created, the search filter is reset
 		EventBus.$once('resetSearchFilter', () => {
 			this.abortSearch()
 		})
@@ -279,7 +277,7 @@ export default {
 	},
 
 	mounted() {
-		/** Refreshes the conversations every 30 seconds */
+		// Refreshes the conversations every 30 seconds
 		this.refreshTimer = window.setInterval(() => {
 			if (!this.isFetchingConversations) {
 				this.fetchConversations()
