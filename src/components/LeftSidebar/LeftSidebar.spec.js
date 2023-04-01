@@ -8,7 +8,7 @@ import { loadState } from '@nextcloud/initial-state'
 
 import LeftSidebar from './LeftSidebar.vue'
 
-import router from '../../router/router.js'
+import router from '../../__mocks__/router.js'
 import {
 	searchPossibleConversations,
 	searchListedConversations,
@@ -37,10 +37,7 @@ describe('LeftSidebar.vue', () => {
 	let addConversationAction
 	let createOneToOneConversationAction
 
-	/**
-	 *
-	 */
-	function mountComponent() {
+	const mountComponent = () => {
 		return mount(LeftSidebar, {
 			localVue,
 			router,
