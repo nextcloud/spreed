@@ -181,10 +181,6 @@ OC.L10N.register(
     "You disabled message expiration" : "Du hast den Ablauf von Nachrichten deaktiviert.",
     "{actor} cleared the history of the conversation" : "{actor} hat den Gesprächsverlauf gelöscht",
     "You cleared the history of the conversation" : "Du hast den Gesprächsverlauf gelöscht",
-    "{actor} set the conversation avatar" : "{actor} hat den Avatar für die Unterhaltung gesetzt.",
-    "You set the conversation avatar" : "Du hast den Avatar für die Unterhaltung festgelegt.",
-    "{actor} removed the conversation avatar" : "{actor} hat den Avatar für die Unterhaltung entfernt.",
-    "You removed the conversation avatar" : "Du hast den Avatar für die Unterhaltung entfernt.",
     "{actor} ended the poll {poll}" : "{actor} hat die Umfrage {poll} beendet",
     "You ended the poll {poll}" : "Du hast die Umfrage {poll} beendet",
     "{actor} started the video recording" : "{actor} hat die Videoaufnahme gestartet.",
@@ -839,9 +835,9 @@ OC.L10N.register(
     "You have been muted by a moderator" : "Du wurdest von einem Moderator stummgeschaltet",
     "You" : "Du",
     "Show screen" : "Bildschirm anzeigen",
+    "Stop following" : "Nicht mehr folgen",
     "Mute" : "Stummschalten",
     "Muted" : "Stummgeschaltet",
-    "Stop following" : "Nicht mehr folgen",
     "Connection could not be established …" : "Es konnte keine Verbindung hergestellt werden …",
     "Connection was lost and could not be re-established …" : "Die Verbindung wurde unterbrochen und konnte nicht wiederhergestellt werden …",
     "Connection could not be established. Trying again …" : "Es konnte keine Verbindung hergestellt werden. Versuche es erneut …",
@@ -1433,6 +1429,10 @@ OC.L10N.register(
     "Rename conversation" : "Unterhaltung umbenennen",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deckkarte wurde an die ausgewählte <a href=\"{link}\">Unterhaltung</a> gesendet.",
     "An error occurred while posting deck card to conversation." : "Es ist ein Fehler beim Posten der Deckkarte an die Unterhaltung aufgetreten.",
-    "Message link copied to clipboard" : "Nachrichtenlink in die Zwischenablage kopiert"
+    "Message link copied to clipboard" : "Nachrichtenlink in die Zwischenablage kopiert",
+    "{actor} set the conversation avatar" : "{actor} hat den Avatar für die Unterhaltung gesetzt.",
+    "You set the conversation avatar" : "Du hast den Avatar für die Unterhaltung festgelegt.",
+    "{actor} removed the conversation avatar" : "{actor} hat den Avatar für die Unterhaltung entfernt.",
+    "You removed the conversation avatar" : "Du hast den Avatar für die Unterhaltung entfernt."
 },
 "nplurals=2; plural=(n != 1);");
