@@ -181,10 +181,6 @@ OC.L10N.register(
     "You disabled message expiration" : "Деактивирахте изтичането на съобщението",
     "{actor} cleared the history of the conversation" : "{actor} изчисти историята на разговора",
     "You cleared the history of the conversation" : "Изчистихте историята на разговора",
-    "{actor} set the conversation avatar" : "{actor} зададе аватар на разговора",
-    "You set the conversation avatar" : "Вие зададохте аватар на разговора",
-    "{actor} removed the conversation avatar" : "{actor} премахна аватара на разговора",
-    "You removed the conversation avatar" : "Вие премахнахте аватара на разговора",
     "{actor} ended the poll {poll}" : "{actor} прекрати анкетата {poll}",
     "You ended the poll {poll}" : "Вие прекратихте анкетата {poll}",
     "{actor} started the video recording" : "{actor} стартира видеозапис",
@@ -839,9 +835,9 @@ OC.L10N.register(
     "You have been muted by a moderator" : "Бяхте заглушен от модератор",
     "You" : "Ти",
     "Show screen" : "Показване на екрана",
+    "Stop following" : "Спрете да следвате",
     "Mute" : "Заглушаване",
     "Muted" : "Заглушен",
-    "Stop following" : "Спрете да следвате",
     "Connection could not be established …" : "Връзката не можа да бъде установена …",
     "Connection was lost and could not be re-established …" : "Връзката се изгуби и не можа да бъде възстановена ...",
     "Connection could not be established. Trying again …" : "Връзката не можа да бъде установена. Повторен опит …",
@@ -1433,6 +1429,10 @@ OC.L10N.register(
     "Rename conversation" : "Преименуване на разговор",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Deck картата е публикувана в избраният <a href=\"{link}\">разговор</a>.",
     "An error occurred while posting deck card to conversation." : "Възникна грешка при публикуване на deck карта в разговор.",
-    "Message link copied to clipboard" : "Връзката към съобщението е копирана в клипборда"
+    "Message link copied to clipboard" : "Връзката към съобщението е копирана в клипборда",
+    "{actor} set the conversation avatar" : "{actor} зададе аватар на разговора",
+    "You set the conversation avatar" : "Вие зададохте аватар на разговора",
+    "{actor} removed the conversation avatar" : "{actor} премахна аватара на разговора",
+    "You removed the conversation avatar" : "Вие премахнахте аватара на разговора"
 },
 "nplurals=2; plural=(n != 1);");
