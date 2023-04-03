@@ -120,7 +120,5 @@ local PipelinePostgreSQL(test_set) = Pipeline(
 
 
 [
-	PipelinePostgreSQL("command/user-transfer-ownership.feature:90"),
-	PipelinePostgreSQL("command/user-transfer-ownership.feature"),
 	PipelinePostgreSQL("command"),
 ]
