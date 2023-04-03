@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.6.0@e784128902dfe01d489c4123d69918a9f3c1eac5">
+<files psalm-version="5.9.0@8b9ad1eb9e8b7d3101f949291da2b9f7767cd163">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass>
       <code>BeforeTemplateRenderedEvent</code>
@@ -193,9 +193,9 @@
   </file>
   <file src="lib/MatterbridgeManager.php">
     <UndefinedClass>
-      <code>$this-&gt;tokenProvider</code>
-      <code>$this-&gt;tokenProvider</code>
-      <code>$this-&gt;tokenProvider</code>
+      <code><![CDATA[$this->tokenProvider]]></code>
+      <code><![CDATA[$this->tokenProvider]]></code>
+      <code><![CDATA[$this->tokenProvider]]></code>
       <code>IAuthTokenProvider</code>
       <code>IAuthTokenProvider</code>
       <code>IToken</code>
@@ -214,9 +214,9 @@
   </file>
   <file src="lib/Notification/Notifier.php">
     <InvalidPropertyAssignmentValue>
-      <code>$this-&gt;participants</code>
-      <code>$this-&gt;rooms</code>
-      <code>$this-&gt;rooms</code>
+      <code><![CDATA[$this->participants]]></code>
+      <code><![CDATA[$this->rooms]]></code>
+      <code><![CDATA[$this->rooms]]></code>
     </InvalidPropertyAssignmentValue>
   </file>
   <file src="lib/PublicShare/TemplateLoader.php">
@@ -245,9 +245,9 @@
       <code>[self::class, 'listenPreShare']</code>
     </InvalidArgument>
     <UndefinedClass>
-      <code>$event-&gt;getView()</code>
-      <code>$event-&gt;getView()</code>
-      <code>$event-&gt;getView()</code>
+      <code><![CDATA[$event->getView()]]></code>
+      <code><![CDATA[$event->getView()]]></code>
+      <code><![CDATA[$event->getView()]]></code>
       <code>$view</code>
       <code>$view</code>
       <code>$view</code>
