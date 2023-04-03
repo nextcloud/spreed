@@ -41,14 +41,23 @@ jobs:
 
       - name: Composer update nextcloud/ocp
         run: composer require --dev nextcloud/ocp:dev-${{ matrix.branches }}
-        continue-on-error: true
 
-      - name: Reset checkout dirs
+      - name: Reset checkout 3rdparty
         run: |
           git clean -f 3rdparty
+          git checkout 3rdparty
+        continue-on-error: true
+
+      - name: Reset checkout vendor
+        run: |
           git clean -f vendor
+          git checkout vendor
+        continue-on-error: true
+
+      - name: Reset checkout vendor-bin
+        run: |
           git clean -f vendor-bin
-          git checkout 3rdparty vendor vendor-bin
+          git checkout vendor-bin
         continue-on-error: true
 
       - name: Create Pull Request
