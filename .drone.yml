@@ -32,7 +32,7 @@ steps:
   - bash run.sh features/command
   environment:
     APP_NAME: spreed
-    CORE_BRANCH: master
+    CORE_BRANCH: bugfix/noid/allow-to-opt-out-of-ratelimit-for-testing
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master

@@ -14,7 +14,7 @@ local Pipeline(test_set, database, services) = {
 			image: "ghcr.io/nextcloud/continuous-integration-php8.2:latest",
 			environment: {
 				APP_NAME: "spreed",
-				CORE_BRANCH: "master",
+				CORE_BRANCH: "bugfix/noid/allow-to-opt-out-of-ratelimit-for-testing",
 				GUESTS_BRANCH: "master",
 				NOTIFICATIONS_BRANCH: "master",
 				DATABASEHOST: database
