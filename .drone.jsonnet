@@ -38,7 +38,7 @@ local Pipeline(test_set, database, services) = {
 				] else []
 			) + [
 				"cd apps/$APP_NAME/tests/integration/",
-				"bash run.sh features/chat/mentions.feature:9"
+				"bash run.sh features/chat/mentions.feature"
 			]
 		}
 	],
