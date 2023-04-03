@@ -56,8 +56,8 @@ const sessionIssueHandler = {
 					window.location = generateUrl(url)
 				})
 			} else {
-				// TODO: DESKTOP: to not hard-code the address?
-				window.location = `/talk_window/#${url}`
+				window.location.hash = `#${url}`
+				window.location.reload()
 			}
 		},
 
