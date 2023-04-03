@@ -68,6 +68,8 @@ echo '# Optimizing configuration'
 echo '#'
 # Disable bruteforce protection because the integration tests do trigger them
 ${ROOT_DIR}/occ config:system:set auth.bruteforce.protection.enabled --value false --type bool
+# Disable rate limit protection because the integration tests do trigger them
+${ROOT_DIR}/occ config:system:set ratelimit.protection.enabled --value false --type bool
 # Allow local remote urls otherwise we can not share
 ${ROOT_DIR}/occ config:system:set allow_local_remote_servers --value true --type bool
 # Temporarily opt-out of storing crypted passwords, as they have a bug and make our tests time out
