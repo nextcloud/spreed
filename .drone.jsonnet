@@ -38,7 +38,7 @@ local Pipeline(test_set, database, services) = {
 				] else []
 			) + [
 				"cd apps/$APP_NAME/tests/integration/",
-				"bash run.sh features/chat/mentions.feature"
+				"bash run.sh features/"+test_set
 			]
 		}
 	],
@@ -120,5 +120,7 @@ local PipelinePostgreSQL(test_set) = Pipeline(
 
 
 [
-	PipelinePostgreSQL("chat"),
+	PipelinePostgreSQL("command/user-transfer-ownership.feature:90"),
+	PipelinePostgreSQL("command/user-transfer-ownership.feature"),
+	PipelinePostgreSQL("command"),
 ]
