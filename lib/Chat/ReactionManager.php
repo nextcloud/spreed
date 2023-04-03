@@ -32,14 +32,12 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
-use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\IL10N;
 
 class ReactionManager {
 	private ChatManager $chatManager;
-	/** @var ICommentsManager|CommentsManager */
-	private ICommentsManager $commentsManager;
+	private CommentsManager $commentsManager;
 	private IL10N $l;
 	private MessageParser $messageParser;
 	private Notifier $notifier;
