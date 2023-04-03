@@ -2889,12 +2889,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function assureUserExists($user) {
 		$response = $this->userExists($user);
+		var_dump('Initial: $response = $this->userExists($user)');
+		var_dump($response->getBody()->getContents());
+		var_dump($response->getStatusCode());
 		if ($response->getStatusCode() !== 200) {
 			$this->createUser($user);
 			// Set a display name different than the user ID to be able to
 			// ensure in the tests that the right value was returned.
 			$this->setUserDisplayName($user);
 			$response = $this->userExists($user);
+			var_dump('Final: $response = $this->userExists($user)');
+			var_dump($response->getBody()->getContents());
 			$this->assertStatusCode($response, 200);
 		}
 	}
@@ -2943,11 +2948,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'password' => self::TEST_PASSWORD,
 		]);
 		$this->assertStatusCode($this->response, 200, 'Failed to create user');
+		var_dump('Create user');
+		var_dump($this->response->getBody()->getContents());
 
 		//Quick hack to login once with the current user
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/cloud/users' . '/' . $user);
 		$this->assertStatusCode($this->response, 200, 'Failed to do first login');
+		var_dump('First login');
+		var_dump($this->response->getBody()->getContents());
 
 		$this->createdUsers[] = $user;
 
@@ -2989,6 +2998,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			'key' => 'displayname',
 			'value' => $user . '-displayname'
 		]);
+		var_dump('setUserDisplayName');
+		var_dump($this->response->getBody()->getContents());
 		$this->setCurrentUser($currentUser);
 	}
 
