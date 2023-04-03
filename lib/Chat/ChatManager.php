@@ -82,9 +82,7 @@ class ChatManager {
 	public const VERB_REACTION = 'reaction';
 	public const VERB_REACTION_DELETED = 'reaction_deleted';
 
-	/** @var ICommentsManager|CommentsManager
-	 */
-	private $commentsManager;
+	private CommentsManager $commentsManager;
 	private IEventDispatcher $dispatcher;
 	private IDBConnection $connection;
 	private INotificationManager $notificationManager;
