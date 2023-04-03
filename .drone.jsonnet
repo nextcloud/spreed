@@ -120,5 +120,36 @@ local PipelinePostgreSQL(test_set) = Pipeline(
 
 
 [
+	PipelineSQLite("callapi"),
+	PipelineSQLite("chat"),
+	PipelineSQLite("chat-2"),
+	PipelineSQLite("command"),
+	PipelineSQLite("conversation"),
+	PipelineSQLite("conversation-2"),
+	PipelineSQLite("federation"),
+	PipelineSQLite("integration"),
+	PipelineSQLite("sharing"),
+	PipelineSQLite("sharing-2"),
+
+	PipelineMySQL("callapi"),
+	PipelineMySQL("chat"),
+	PipelineMySQL("chat-2"),
+	PipelineMySQL("command"),
+	PipelineMySQL("conversation"),
+	PipelineMySQL("conversation-2"),
+	PipelineMySQL("federation"),
+	PipelineMySQL("integration"),
+	PipelineMySQL("sharing"),
+	PipelineMySQL("sharing-2"),
+
+	PipelinePostgreSQL("callapi"),
+	PipelinePostgreSQL("chat"),
+	PipelinePostgreSQL("chat-2"),
 	PipelinePostgreSQL("command"),
+	PipelinePostgreSQL("conversation"),
+	PipelinePostgreSQL("conversation-2"),
+	PipelinePostgreSQL("federation"),
+	PipelinePostgreSQL("integration"),
+	PipelinePostgreSQL("sharing"),
+	PipelinePostgreSQL("sharing-2"),
 ]
