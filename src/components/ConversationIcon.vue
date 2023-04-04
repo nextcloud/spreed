@@ -24,21 +24,22 @@
 		class="conversation-icon"
 		:style="{'--icon-size': `${size}px`}"
 		:class="{'offline': offline}">
-		<template v-if="item.token">
-			<NcAvatar v-if="!isOneToOne"
-				:url="avatarUrl"
-				:size="size" />
-			<NcAvatar v-else
-				:size="size"
-				:user="item.name"
-				:disable-menu="disableMenu"
-				:display-name="item.displayName"
-				:preloaded-user-status="preloadedUserStatus"
-				:show-user-status-compact="disableMenu"
-				:menu-container="menuContainer"
-				menu-position="left"
-				class="conversation-icon__avatar" />
-		</template>
+		<div v-if="iconClass"
+			class="avatar icon"
+			:class="iconClass" />
+		<NcAvatar v-else-if="!isOneToOne"
+			:url="avatarUrl"
+			:size="size" />
+		<NcAvatar v-else
+			:size="size"
+			:user="item.name"
+			:disable-menu="disableMenu"
+			:display-name="item.displayName"
+			:preloaded-user-status="preloadedUserStatus"
+			:show-user-status-compact="disableMenu"
+			:menu-container="menuContainer"
+			menu-position="left"
+			class="conversation-icon__avatar" />
 		<div v-if="showCall"
 			class="overlap-icon">
 			<VideoIcon :size="20"
@@ -153,6 +154,21 @@ export default {
 			// The store may not be defined in the RoomSelector if used from
 			// the Collaboration menu outside Talk.
 			return this.$store?.getters.getMainContainerSelector()
+		},
+
+		iconClass() {
+			if (this.item.token) {
+				// Existing conversations use the /avatar endpoint… Always!
+				return undefined
+			}
+
+			if (this.item.type === CONVERSATION.TYPE.GROUP) {
+				// Group icon for group conversation suggestions
+				return 'icon-contacts'
+			}
+
+			// Fall-through for other conversation suggestions to user-avatar handling
+			return undefined
 		},
 
 		size() {
