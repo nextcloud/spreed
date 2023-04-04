@@ -36,6 +36,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -69,6 +70,7 @@ class Notifier implements INotifier {
 	private IShareManager $shareManager;
 	protected Manager $manager;
 	protected ParticipantService $participantService;
+	protected AvatarService $avatarService;
 	protected INotificationManager $notificationManager;
 	protected ICommentsManager $commentManager;
 	protected MessageParser $messageParser;
@@ -92,6 +94,7 @@ class Notifier implements INotifier {
 								IShareManager $shareManager,
 								Manager $manager,
 								ParticipantService $participantService,
+								AvatarService $avatarService,
 								INotificationManager $notificationManager,
 								CommentsManager $commentManager,
 								MessageParser $messageParser,
@@ -109,6 +112,7 @@ class Notifier implements INotifier {
 		$this->shareManager = $shareManager;
 		$this->manager = $manager;
 		$this->participantService = $participantService;
+		$this->avatarService = $avatarService;
 		$this->notificationManager = $notificationManager;
 		$this->commentManager = $commentManager;
 		$this->messageParser = $messageParser;
@@ -322,6 +326,7 @@ class Notifier implements INotifier {
 						'id' => $room->getId(),
 						'name' => $room->getDisplayName($participant->getAttendee()->getActorId()),
 						'call-type' => $this->getRoomType($room),
+						'icon-url' => $this->avatarService->getAvatarUrl($room),
 					],
 				]
 			);
@@ -385,6 +390,7 @@ class Notifier implements INotifier {
 						'id' => $room->getId(),
 						'name' => $room->getDisplayName($participant->getAttendee()->getActorId()),
 						'call-type' => $this->getRoomType($room),
+						'icon-url' => $this->avatarService->getAvatarUrl($room),
 					],
 					'file' => [
 						'type' => 'file',
@@ -481,6 +487,7 @@ class Notifier implements INotifier {
 			'id' => $room->getId(),
 			'name' => $room->getDisplayName($notification->getUser()),
 			'call-type' => $this->getRoomType($room),
+			'icon-url' => $this->avatarService->getAvatarUrl($room),
 		];
 
 		$messageParameters = $notification->getMessageParameters();
@@ -777,6 +784,7 @@ class Notifier implements INotifier {
 							'id' => $room->getId(),
 							'name' => $roomName,
 							'call-type' => $this->getRoomType($room),
+							'icon-url' => $this->avatarService->getAvatarUrl($room),
 						],
 					]
 				);
@@ -802,6 +810,7 @@ class Notifier implements INotifier {
 							'id' => $room->getId(),
 							'name' => $roomName,
 							'call-type' => $this->getRoomType($room),
+							'icon-url' => $this->avatarService->getAvatarUrl($room),
 						],
 					]
 				);
@@ -853,6 +862,7 @@ class Notifier implements INotifier {
 								'id' => $room->getId(),
 								'name' => $roomName,
 								'call-type' => $this->getRoomType($room),
+								'icon-url' => $this->avatarService->getAvatarUrl($room),
 							],
 						]
 					);
@@ -877,6 +887,7 @@ class Notifier implements INotifier {
 							'id' => $room->getId(),
 							'name' => $roomName,
 							'call-type' => $this->getRoomType($room),
+							'icon-url' => $this->avatarService->getAvatarUrl($room),
 						],
 					]
 				);

@@ -35,6 +35,7 @@ use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Share\RoomShareProvider;
@@ -73,6 +74,8 @@ class ChatControllerTest extends TestCase {
 	protected $sessionService;
 	/** @var AttachmentService|MockObject */
 	protected $attachmentService;
+	/** @var AvatarService|MockObject */
+	protected $avatarService;
 	/** @var GuestManager|MockObject */
 	protected $guestManager;
 	/** @var MessageParser|MockObject */
@@ -119,6 +122,7 @@ class ChatControllerTest extends TestCase {
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->sessionService = $this->createMock(SessionService::class);
 		$this->attachmentService = $this->createMock(AttachmentService::class);
+		$this->avatarService = $this->createMock(AvatarService::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->roomShareProvider = $this->createMock(RoomShareProvider::class);
@@ -157,6 +161,7 @@ class ChatControllerTest extends TestCase {
 			$this->participantService,
 			$this->sessionService,
 			$this->attachmentService,
+			$this->avatarService,
 			$this->guestManager,
 			$this->messageParser,
 			$this->roomShareProvider,
@@ -633,10 +638,15 @@ class ChatControllerTest extends TestCase {
 	public function testShareObjectToChatByUser() {
 		$participant = $this->createMock(Participant::class);
 
+		$this->avatarService->method('getAvatarUrl')
+			->with($this->room)
+			->willReturn('getAvatarUrl');
+
 		$richData = [
 			'call-type' => 'one2one',
 			'type' => 'call',
 			'id' => 'R4nd0mToken',
+			'icon-url' => '',
 		];
 
 		$date = new \DateTime();
@@ -659,6 +669,7 @@ class ChatControllerTest extends TestCase {
 							'call-type' => 'one2one',
 							'type' => 'call',
 							'id' => 'R4nd0mToken',
+							'icon-url' => 'getAvatarUrl',
 						],
 					],
 				]),

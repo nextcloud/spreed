@@ -38,6 +38,7 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
+use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Share\RoomShareProvider;
@@ -71,6 +72,7 @@ class ChatController extends AEnvironmentAwareController {
 	private ParticipantService $participantService;
 	private SessionService $sessionService;
 	protected AttachmentService $attachmentService;
+	protected avatarService $avatarService;
 	private GuestManager $guestManager;
 	/** @var string[] */
 	protected array $guestNames;
@@ -97,6 +99,7 @@ class ChatController extends AEnvironmentAwareController {
 								ParticipantService $participantService,
 								SessionService $sessionService,
 								AttachmentService $attachmentService,
+								avatarService $avatarService,
 								GuestManager $guestManager,
 								MessageParser $messageParser,
 								RoomShareProvider $shareProvider,
@@ -120,6 +123,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->participantService = $participantService;
 		$this->sessionService = $sessionService;
 		$this->attachmentService = $attachmentService;
+		$this->avatarService = $avatarService;
 		$this->guestManager = $guestManager;
 		$this->messageParser = $messageParser;
 		$this->shareProvider = $shareProvider;
@@ -270,6 +274,7 @@ class ChatController extends AEnvironmentAwareController {
 		}
 		$data['type'] = $objectType;
 		$data['id'] = $objectId;
+		$data['icon-url'] = $this->avatarService->getAvatarUrl($this->room);
 
 		if (isset($data['link']) && !$this->trustedDomainHelper->isTrustedUrl($data['link'])) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
