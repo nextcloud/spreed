@@ -97,6 +97,8 @@
 		<template v-if="showOpenSidebarButton">
 			<!-- in chat: open last tab -->
 			<NcButton v-if="!isInCall"
+				:aria-label="t('spreed', 'Open sidebar')"
+				:title="t('spreed', 'Open sidebar')"
 				class="top-bar__button dark-hover"
 				close-after-click="true"
 				type="tertiary"
