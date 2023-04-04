@@ -42,7 +42,8 @@
 		<NcRelatedResourcesPanel class="related-resources"
 			provider-id="talk"
 			:item-id="conversation.token"
-			@has-resources="value => hasRelatedResources = value" />
+			@has-resources="value => isRelatedResourcesVisible = value"
+			@has-error="value => isRelatedResourcesVisible = value" />
 		<template v-if="projectsEnabled">
 			<NcAppNavigationCaption :title="t('spreed', 'Projects')" />
 			<CollectionList v-if="getUserId && token"
@@ -51,7 +52,7 @@
 				:name="conversation.displayName"
 				:is-active="active" />
 		</template>
-		<NcEmptyContent v-else-if="!hasSharedItems && !hasRelatedResources"
+		<NcEmptyContent v-else-if="!hasSharedItems && !isRelatedResourcesVisible"
 			:title="t('spreed', 'No shared items')">
 			<template #icon>
 				<FolderMultipleImage :size="20" />
@@ -114,7 +115,7 @@ export default {
 			showSharedItemsBrowser: false,
 			browserActiveTab: '',
 			projectsEnabled: loadState('core', 'projects_enabled', false),
-			hasRelatedResources: false,
+			isRelatedResourcesVisible: false,
 		}
 	},
 
