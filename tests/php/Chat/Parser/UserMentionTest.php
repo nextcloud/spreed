@@ -436,6 +436,10 @@ class UserMentionTest extends TestCase {
 		$chatMessage = new Message($room, $participant, $comment, $l);
 		$chatMessage->setMessage('Mention to @all', []);
 
+		$this->avatarService->method('getAvatarUrl')
+			->with($room)
+			->willReturn('getAvatarUrl');
+
 		$this->parser->parseMessage($chatMessage);
 
 		$expectedMessageParameters = [
@@ -444,7 +448,7 @@ class UserMentionTest extends TestCase {
 				'id' => 'token',
 				'name' => 'name',
 				'call-type' => 'group',
-				'icon-url' => '',
+				'icon-url' => 'getAvatarUrl',
 			]
 		];
 

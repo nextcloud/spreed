@@ -638,6 +638,10 @@ class ChatControllerTest extends TestCase {
 	public function testShareObjectToChatByUser() {
 		$participant = $this->createMock(Participant::class);
 
+		$this->avatarService->method('getAvatarUrl')
+			->with($this->room)
+			->willReturn('getAvatarUrl');
+
 		$richData = [
 			'call-type' => 'one2one',
 			'type' => 'call',
@@ -665,7 +669,7 @@ class ChatControllerTest extends TestCase {
 							'call-type' => 'one2one',
 							'type' => 'call',
 							'id' => 'R4nd0mToken',
-							'icon-url' => '',
+							'icon-url' => 'getAvatarUrl',
 						],
 					],
 				]),
