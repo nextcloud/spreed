@@ -157,6 +157,11 @@ export default {
 		},
 
 		iconClass() {
+			if (this.item.isDummyConversation) {
+				// Prevent a 404 when trying to load an avatar before the conversation data is actually loaded
+				return 'icon-contacts'
+			}
+
 			if (this.item.token) {
 				// Existing conversations use the /avatar endpoint… Always!
 				return undefined
