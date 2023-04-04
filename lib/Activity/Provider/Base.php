@@ -80,16 +80,10 @@ abstract class Base implements IProvider {
 			throw new \InvalidArgumentException('User can not user Talk');
 		}
 
-		try {
-			$room = $this->manager->getRoomForUser($event->getObjectId(), $uid);
-			$event->setIcon($this->avatarService->getAvatarUrl($room));
-		} catch (RoomNotFoundException $th) {
-			// When the room doesn't exist and to prevent an exception
-			if ($this->activityManager->getRequirePNG()) {
-				$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.png')));
-			} else {
-				$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.svg')));
-			}
+		if ($this->activityManager->getRequirePNG()) {
+			$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.png')));
+		} else {
+			$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.svg')));
 		}
 
 		return $event;
