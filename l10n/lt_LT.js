@@ -722,6 +722,7 @@ OC.L10N.register(
     "Error while setting attachment folder" : "Klaida nustatant priedų aplanką",
     "Your privacy setting has been saved" : "Jūsų privatumo nustatymas įrašytas",
     "Start call" : "Pradėti skambutį",
+    "Open sidebar" : "Atverti šoninę juostą",
     "Toggle fullscreen" : "Perjungti visą ekraną",
     "Exit fullscreen (F)" : "Išeiti iš viso ekrano (F)",
     "Fullscreen (F)" : "Visas ekranas (F)",

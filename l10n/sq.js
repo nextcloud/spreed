@@ -234,6 +234,7 @@ OC.L10N.register(
     "Privacy" : "Privatësia",
     "Keyboard shortcuts" : "Shkurtoret e tastierës",
     "Search" : "Kërko",
+    "Open sidebar" : "Hapni sidebar-in",
     "Grid view" : "Pamje galeri",
     "Send" : "Dërgo",
     "Start a conversation" : "Filloni një bisedë",

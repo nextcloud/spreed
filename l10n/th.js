@@ -71,6 +71,7 @@ OC.L10N.register(
     "Privacy" : "ความเป็นส่วนตัว",
     "Keyboard shortcuts" : "แป้นพิมพ์ลัด",
     "Search" : "ค้นหา",
+    "Open sidebar" : "เปิดแถบด้านข้าง",
     "Grid view" : "มุมมองแบบตาราง",
     "Send" : "ส่ง",
     "Media" : "สื่อ",

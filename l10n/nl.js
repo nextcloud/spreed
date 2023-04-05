@@ -1128,6 +1128,7 @@ OC.L10N.register(
     "You will be able to join the call only after a moderator starts it." : "Je kunt pas aan de oproep deelnemen als een moderator die gestart heeft.",
     "Stop recording" : "Beëindig opname",
     "Recording" : "Opnemen",
+    "Open sidebar" : "Open zijbalk",
     "You have new unread messages in the chat." : "Je hebt nieuwe ongelezen berichten in de chat.",
     "You have been mentioned in the chat." : "Je werd vermeld in een chat.",
     "Mute others" : "Anderen dempen",

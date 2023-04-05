@@ -74,6 +74,7 @@ OC.L10N.register(
     "Privacy" : "Privaatsus",
     "Keyboard shortcuts" : "Klaviatuuri otseteed",
     "Search" : "Otsi",
+    "Open sidebar" : "Ava külgriba",
     "Grid view" : "Ruudustikvaade",
     "Send" : "Saada",
     "Files" : "Failid",

@@ -589,6 +589,7 @@ OC.L10N.register(
     "Search" : "Пошук",
     "Start call" : "Почати виклик",
     "Recording" : "Запис",
+    "Open sidebar" : "Відкрити бічну панель",
     "Toggle fullscreen" : "Перемкнути на весь екран",
     "Grid view" : "Упорядкування у формі сітки",
     "Send" : "Надіслати",
