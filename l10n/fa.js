@@ -344,6 +344,7 @@ OC.L10N.register(
     "Keyboard shortcuts" : "میان بر صفحه ی کلید",
     "Search" : "جستجو کردن",
     "Recording" : "ضبط جلسه",
+    "Open sidebar" : "باز کردن نوار کناری",
     "Grid view" : "نمایش گرید",
     "Send" : "ارسال",
     "Say hi to your friends and colleagues!" : "به رفقا و همدرس‌هایتان سلام کنید!",

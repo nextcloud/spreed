@@ -803,6 +803,7 @@ OC.L10N.register(
     "You will be able to join the call only after a moderator starts it." : "Només podreu unir-vos a la trucada un cop s'inicii per un moderador.",
     "Stop recording" : "Aturar l'enregistrament",
     "Recording" : "Enregistrament",
+    "Open sidebar" : "Obre la barra lateral",
     "Mute others" : "Silenciar els altres",
     "Toggle fullscreen" : "Commuta la pantalla completa",
     "Start recording" : "Inici de l'enregistrament",

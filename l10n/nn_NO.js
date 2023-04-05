@@ -71,6 +71,7 @@ OC.L10N.register(
     "Privacy" : "Personvern",
     "Keyboard shortcuts" : "Tastatursnarvegar",
     "Search" : "Search",
+    "Open sidebar" : "Opne sidestolpe",
     "Grid view" : "Rutenett visning",
     "Send" : "Send",
     "Say hi to your friends and colleagues!" : "Sei hei til dine venner og kollegar!",

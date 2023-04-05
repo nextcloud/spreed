@@ -951,6 +951,7 @@ OC.L10N.register(
     "Start call" : "Començar sonada",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk foguèt mes a jorn, vos cal recargar la pagina abans de poder començar o participar a una sonada.",
     "You will be able to join the call only after a moderator starts it." : "Poiretz sonque participar a la sonada un còp qu'un moderator l'aja començada.",
+    "Open sidebar" : "Dobrir panèl lateral",
     "You have new unread messages in the chat." : "Avètz un messatge pas legit al chat.",
     "You have been mentioned in the chat." : "Qualqu’un vos a mencionat al chat.",
     "Mute others" : "Copar lo son dels autres",

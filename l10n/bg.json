@@ -241,7 +241,6 @@
     "Private conversation" : "Частен разговор",
     "Deleted user (%s)" : "Изтрит потребител (%s)",
     "Failed to upload call recording" : "Неуспешно качване на запис на обаждане/то/",
-    "The recording server failed to upload recording of call {call}. Please reach out to the adminstrators." : "Записващият сървър не успя да качи записа на обаждането {call}. Моля, свържете се с администраторите.",
     "Share to chat" : "Споделяне в чата",
     "Dismiss notification" : "Спри известията",
     "Call recording now available" : "Записването на обаждане е налично",

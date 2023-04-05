@@ -316,6 +316,7 @@ OC.L10N.register(
     "Privacy" : "Privacidade",
     "Keyboard shortcuts" : "Atalhos de teclado",
     "Search" : "Pesquisa sobre",
+    "Open sidebar" : "Abrir barra lateral",
     "Grid view" : "Vista em grelha",
     "Send" : "Enviar",
     "Start a conversation" : "Iniciar uma conversação",
