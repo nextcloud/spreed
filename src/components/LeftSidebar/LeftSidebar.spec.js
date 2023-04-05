@@ -1,4 +1,5 @@
 import { createLocalVue, mount } from '@vue/test-utils'
+import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
 import { cloneDeep } from 'lodash'
 import VueRouter from 'vue-router'
 import Vuex from 'vuex'
@@ -8,13 +9,11 @@ import { loadState } from '@nextcloud/initial-state'
 
 import LeftSidebar from './LeftSidebar.vue'
 
-import router from '../../router/router.js'
-import {
-	searchPossibleConversations,
-	searchListedConversations,
-} from '../../services/conversationsService.js'
+import router from '../../__mocks__/router.js'
+import { searchPossibleConversations, searchListedConversations } from '../../services/conversationsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import storeConfig from '../../store/storeConfig.js'
+import { findNcListItems } from '../../test-helpers.js'
 
 jest.mock('@nextcloud/initial-state', () => ({
 	loadState: jest.fn(),
@@ -37,10 +36,9 @@ describe('LeftSidebar.vue', () => {
 	let addConversationAction
 	let createOneToOneConversationAction
 
-	/**
-	 *
-	 */
-	function mountComponent() {
+	const SEARCH_TERM = 'search'
+
+	const mountComponent = () => {
 		return mount(LeftSidebar, {
 			localVue,
 			router,
@@ -135,25 +133,21 @@ describe('LeftSidebar.vue', () => {
 			expect(fetchConversationsAction).toHaveBeenCalledWith(expect.anything(), expect.anything())
 			expect(conversationsListMock).toHaveBeenCalled()
 
-			const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
-			const listEl = appNavEl.findComponent({ name: 'ConversationsList' })
+			const conversationListItems = wrapper.findAllComponents({ name: 'Conversation' })
+			expect(conversationListItems).toHaveLength(conversationsList.length)
 
-			expect(listEl.exists()).toBe(true)
-			expect(listEl.props('searchText')).toBe('')
-			expect(listEl.props('initialisedConversations')).toBe(false)
+			expect(wrapper.vm.searchText).toBe('')
+			expect(wrapper.vm.initialisedConversations).toBeFalsy()
 
 			expect(conversationsReceivedEvent).not.toHaveBeenCalled()
 
 			// move on past the fetchConversation call
-			await wrapper.vm.$nextTick()
-			await wrapper.vm.$nextTick()
+			await flushPromises()
 
-			expect(listEl.props('initialisedConversations')).toBe(true)
-			expect(listEl.props('conversationsList')).toStrictEqual([
-				conversationsList[2],
-				conversationsList[0],
-				conversationsList[1],
-			])
+			expect(wrapper.vm.initialisedConversations).toBeTruthy()
+			expect(conversationListItems.at(0).props('item')).toStrictEqual(conversationsList[2])
+			expect(conversationListItems.at(1).props('item')).toStrictEqual(conversationsList[0])
+			expect(conversationListItems.at(2).props('item')).toStrictEqual(conversationsList[1])
 
 			expect(conversationsReceivedEvent).toHaveBeenCalledWith({
 				singleConversation: false,
@@ -162,37 +156,31 @@ describe('LeftSidebar.vue', () => {
 
 		test('re-fetches conversations every 30 seconds', async () => {
 			const wrapper = mountComponent()
-
+			expect(wrapper.exists()).toBeTruthy()
 			expect(fetchConversationsAction).toHaveBeenCalled()
 
 			fetchConversationsAction.mockClear()
 
 			// move past async call
-			await wrapper.vm.$nextTick()
-			await wrapper.vm.$nextTick()
-
+			await flushPromises()
 			expect(fetchConversationsAction).not.toHaveBeenCalled()
 
 			jest.advanceTimersByTime(15000)
-
 			expect(fetchConversationsAction).not.toHaveBeenCalled()
 
 			jest.advanceTimersByTime(20000)
-
 			expect(fetchConversationsAction).toHaveBeenCalled()
 		})
 
 		test('re-fetches conversations when receiving bus event', async () => {
 			const wrapper = mountComponent()
-
+			expect(wrapper.exists()).toBeTruthy()
 			expect(fetchConversationsAction).toHaveBeenCalled()
 
 			fetchConversationsAction.mockClear()
 
 			// move past async call
-			await wrapper.vm.$nextTick()
-			await wrapper.vm.$nextTick()
-
+			await flushPromises()
 			expect(fetchConversationsAction).not.toHaveBeenCalled()
 
 			EventBus.$emit('should-refresh-conversations', {})
@@ -317,19 +305,16 @@ describe('LeftSidebar.vue', () => {
 			expect(fetchConversationsAction).toHaveBeenCalledWith(expect.anything(), expect.anything())
 			expect(conversationsListMock).toHaveBeenCalled()
 
-			const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
-			const searchBoxEl = appNavEl.findComponent({ name: 'SearchBox' })
-			expect(searchBoxEl.exists()).toBe(true)
+			const searchBox = wrapper.findComponent({ name: 'SearchBox' })
+			expect(searchBox.exists()).toBeTruthy()
 
 			// move past async call
-			await wrapper.vm.$nextTick()
-			await wrapper.vm.$nextTick()
+			await flushPromises()
 
-			await searchBoxEl.find('input[type="text"]').setValue(searchTerm)
-			expect(searchBoxEl.props('isSearching')).toBe(true)
+			await searchBox.find('input[type="text"]').setValue(searchTerm)
+			expect(searchBox.props('isSearching')).toBeTruthy()
 
-			await wrapper.vm.$nextTick()
-			await wrapper.vm.$nextTick()
+			await flushPromises()
 
 			return wrapper
 		}
@@ -337,135 +322,125 @@ describe('LeftSidebar.vue', () => {
 		describe('displaying search results', () => {
 			test('displays search results when search is active', async () => {
 				const wrapper = await testSearch(
-					'search',
+					SEARCH_TERM,
 					[...usersResults, ...groupsResults, ...circlesResults],
 					listedResults,
 					{
 						circles_enabled: true,
 						start_conversations: true,
-					}
+					},
 				)
 
-				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
+				// Check all captions
+				const captionList = ['Conversations', 'Open conversations', 'Users', 'Groups', 'Circles']
+				const captionListItems = wrapper.findAllComponents({ name: 'NcAppNavigationCaption' })
+				expect(captionListItems.exists()).toBeTruthy()
+				expect(captionListItems).toHaveLength(captionList.length)
+				captionList.forEach((caption, index) => {
+					expect(captionListItems.at(index).props('title')).toStrictEqual(caption)
+				})
 
-				const captionListEl = appNavEl.findAllComponents({ name: 'NcAppNavigationCaption' })
+				// Check all conversations
+				const conversationList = [...conversationsList, ...listedResults]
+					.filter(item => item.name.includes(SEARCH_TERM) || item.displayName.includes(SEARCH_TERM))
+				const conversationListItems = wrapper.findAllComponents({ name: 'Conversation' })
+				expect(conversationListItems.exists()).toBeTruthy()
+				expect(conversationListItems).toHaveLength(conversationList.length)
+				conversationList.forEach((conversation, index) => {
+					expect(conversationListItems.at(index).props('item')).toStrictEqual(conversation)
+				})
 
-				expect(captionListEl.exists()).toBe(true)
-				expect(captionListEl.length).toBe(5)
-				expect(captionListEl.at(0).props('title')).toStrictEqual('Conversations')
-				expect(captionListEl.at(1).props('title')).toStrictEqual('Open conversations')
-				expect(captionListEl.at(2).props('title')).toStrictEqual('Users')
-				expect(captionListEl.at(3).props('title')).toStrictEqual('Groups')
-				expect(captionListEl.at(4).props('title')).toStrictEqual('Circles')
-
-				const listEl = appNavEl.findComponent({ name: 'ConversationsList' })
-
-				expect(listEl.exists()).toBe(true)
-				expect(listEl.props('conversationsList')).toStrictEqual([
-					conversationsList[0],
-					conversationsList[1],
-				])
-
-				const listedEls = appNavEl.findAllComponents({ name: 'Conversation' })
-				expect(listedEls.exists()).toBe(true)
-				expect(listedEls.length).toBe(4)
-				expect(listedEls.at(0).props('item')).toStrictEqual(conversationsList[0])
-				expect(listedEls.at(1).props('item')).toStrictEqual(conversationsList[1])
-				expect(listedEls.at(2).props('item')).toStrictEqual(listedResults[0])
-				expect(listedEls.at(3).props('item')).toStrictEqual(listedResults[1])
-
-				const optionsEls = appNavEl.findAllComponents({ name: 'ConversationsOptionsList' })
-				expect(optionsEls.exists()).toBe(true)
-				expect(optionsEls.length).toBe(3)
-				expect(optionsEls.at(0).props('items')).toStrictEqual([usersResults[1], usersResults[2]])
-				expect(optionsEls.at(1).props('items')).toStrictEqual([groupsResults[0], groupsResults[1]])
-				expect(optionsEls.at(2).props('items')).toStrictEqual([circlesResults[0], circlesResults[1]])
+				// Check all other results
+				const resultsList = [...usersResults, ...groupsResults, ...circlesResults]
+					.filter(item => item.id !== 'current-user').map(item => item.label)
+				const resultsListItems = findNcListItems(wrapper, resultsList)
+				expect(resultsListItems.exists()).toBeTruthy()
+				expect(resultsListItems).toHaveLength(resultsList.length)
+				resultsList.forEach((result, index) => {
+					expect(resultsListItems.at(index).props('title')).toStrictEqual(result)
+				})
 			})
+
 			test('only shows user search results when cannot create conversations', async () => {
 				const wrapper = await testSearch(
-					'search',
+					SEARCH_TERM,
 					[...usersResults, ...groupsResults, ...circlesResults],
 					listedResults,
 					{
 						circles_enabled: true,
 						start_conversations: false,
-					}
+					},
 				)
 
-				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
+				// Check all captions
+				const captionList = ['Conversations', 'Open conversations', 'Users']
+				const captionListItems = wrapper.findAllComponents({ name: 'NcAppNavigationCaption' })
+				expect(captionListItems.exists()).toBeTruthy()
+				expect(captionListItems).toHaveLength(captionList.length)
+				captionList.forEach((caption, index) => {
+					expect(captionListItems.at(index).props('title')).toStrictEqual(caption)
+				})
 
-				const captionListEl = appNavEl.findAllComponents({ name: 'NcAppNavigationCaption' })
+				// Check all conversations
+				const conversationList = [...conversationsList, ...listedResults]
+					.filter(item => item.name.includes(SEARCH_TERM) || item.displayName.includes(SEARCH_TERM))
+				const conversationListItems = wrapper.findAllComponents({ name: 'Conversation' })
+				expect(conversationListItems.exists()).toBeTruthy()
+				expect(conversationListItems).toHaveLength(conversationList.length)
+				conversationList.forEach((conversation, index) => {
+					expect(conversationListItems.at(index).props('item')).toStrictEqual(conversation)
+				})
 
-				expect(captionListEl.exists()).toBe(true)
-				expect(captionListEl.length).toBe(3)
-				expect(captionListEl.at(0).props('title')).toStrictEqual('Conversations')
-				expect(captionListEl.at(1).props('title')).toStrictEqual('Open conversations')
-				expect(captionListEl.at(2).props('title')).toStrictEqual('Users')
-
-				const listEl = appNavEl.findComponent({ name: 'ConversationsList' })
-
-				expect(listEl.exists()).toBe(true)
-				expect(listEl.props('conversationsList')).toStrictEqual([
-					conversationsList[0],
-					conversationsList[1],
-				])
-
-				const listedEls = appNavEl.findAllComponents({ name: 'Conversation' })
-				expect(listedEls.exists()).toBe(true)
-				expect(listedEls.length).toBe(4)
-				expect(listedEls.at(0).props('item')).toStrictEqual(conversationsList[0])
-				expect(listedEls.at(1).props('item')).toStrictEqual(conversationsList[1])
-				expect(listedEls.at(2).props('item')).toStrictEqual(listedResults[0])
-				expect(listedEls.at(3).props('item')).toStrictEqual(listedResults[1])
-
-				const optionsEls = appNavEl.findAllComponents({ name: 'ConversationsOptionsList' })
-				expect(optionsEls.exists()).toBe(true)
-				expect(optionsEls.at(0).props('items')).toStrictEqual([usersResults[1], usersResults[2]])
-				expect(optionsEls.length).toBe(1)
+				// Check all other results
+				const resultsList = [...usersResults]
+					.filter(item => item.id !== 'current-user').map(item => item.label)
+				const resultsListItems = findNcListItems(wrapper, resultsList)
+				expect(resultsListItems.exists()).toBeTruthy()
+				expect(resultsListItems).toHaveLength(resultsList.length)
+				resultsList.forEach((result, index) => {
+					expect(resultsListItems.at(index).props('title')).toStrictEqual(result)
+				})
 			})
+
 			test('does not show circles results when circles are disabled', async () => {
 				const wrapper = await testSearch(
-					'search',
+					SEARCH_TERM,
 					[...usersResults, ...groupsResults],
 					listedResults,
 					{
 						circles_enabled: false,
 						start_conversations: true,
-					}
+					},
 				)
 
-				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
+				// Check all captions
+				const captionList = ['Conversations', 'Open conversations', 'Users', 'Groups']
+				const captionListItems = wrapper.findAllComponents({ name: 'NcAppNavigationCaption' })
+				expect(captionListItems.exists()).toBeTruthy()
+				expect(captionListItems).toHaveLength(captionList.length)
+				captionList.forEach((caption, index) => {
+					expect(captionListItems.at(index).props('title')).toStrictEqual(caption)
+				})
 
-				const captionListEl = appNavEl.findAllComponents({ name: 'NcAppNavigationCaption' })
+				// Check all conversations
+				const conversationList = [...conversationsList, ...listedResults]
+					.filter(item => item.name.includes(SEARCH_TERM) || item.displayName.includes(SEARCH_TERM))
+				const conversationListItems = wrapper.findAllComponents({ name: 'Conversation' })
+				expect(conversationListItems.exists()).toBeTruthy()
+				expect(conversationListItems).toHaveLength(conversationList.length)
+				conversationList.forEach((conversation, index) => {
+					expect(conversationListItems.at(index).props('item')).toStrictEqual(conversation)
+				})
 
-				expect(captionListEl.exists()).toBe(true)
-				expect(captionListEl.length).toBe(4)
-				expect(captionListEl.at(0).props('title')).toStrictEqual('Conversations')
-				expect(captionListEl.at(1).props('title')).toStrictEqual('Open conversations')
-				expect(captionListEl.at(2).props('title')).toStrictEqual('Users')
-				expect(captionListEl.at(3).props('title')).toStrictEqual('Groups')
-
-				const listEl = appNavEl.findComponent({ name: 'ConversationsList' })
-
-				expect(listEl.exists()).toBe(true)
-				expect(listEl.props('conversationsList')).toStrictEqual([
-					conversationsList[0],
-					conversationsList[1],
-				])
-
-				const listedEls = appNavEl.findAllComponents({ name: 'Conversation' })
-				expect(listedEls.exists()).toBe(true)
-				expect(listedEls.length).toBe(4)
-				expect(listedEls.at(0).props('item')).toStrictEqual(conversationsList[0])
-				expect(listedEls.at(1).props('item')).toStrictEqual(conversationsList[1])
-				expect(listedEls.at(2).props('item')).toStrictEqual(listedResults[0])
-				expect(listedEls.at(3).props('item')).toStrictEqual(listedResults[1])
-
-				const optionsEls = appNavEl.findAllComponents({ name: 'ConversationsOptionsList' })
-				expect(optionsEls.exists()).toBe(true)
-				expect(optionsEls.length).toBe(2)
-				expect(optionsEls.at(0).props('items')).toStrictEqual([usersResults[1], usersResults[2]])
-				expect(optionsEls.at(1).props('items')).toStrictEqual([groupsResults[0], groupsResults[1]])
+				// Check all other results
+				const resultsList = [...usersResults, ...groupsResults]
+					.filter(item => item.id !== 'current-user').map(item => item.label)
+				const resultsListItems = findNcListItems(wrapper, resultsList)
+				expect(resultsListItems.exists()).toBeTruthy()
+				expect(resultsListItems).toHaveLength(resultsList.length)
+				resultsList.forEach((result, index) => {
+					expect(resultsListItems.at(index).props('title')).toStrictEqual(result)
+				})
 			})
 		})
 
@@ -480,18 +455,15 @@ describe('LeftSidebar.vue', () => {
 			async function testSearchNotFound(searchTerm, possibleResults, listedResults, loadStateSettingsOverride, expectedCaption) {
 				const wrapper = await testSearch(searchTerm, possibleResults, listedResults, loadStateSettingsOverride)
 
-				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
-				const listEl = appNavEl.findComponent({ name: 'ConversationsList' })
-				expect(listEl.exists()).toBe(true)
-				const listedEls = appNavEl.findAllComponents({ name: 'Conversation' })
-				expect(listedEls.exists()).toBe(true)
-				expect(listedEls.length).toBe(2 + listedResults.length)
+				const conversationListItems = wrapper.findAllComponents({ name: 'Conversation' })
+				expect(conversationListItems.exists()).toBeTruthy()
+				expect(conversationListItems).toHaveLength(2 + listedResults.length)
 				// only filters the existing conversations in the list
-				expect(listedEls.at(0).props('item')).toStrictEqual(conversationsList[0])
-				expect(listedEls.at(1).props('item')).toStrictEqual(conversationsList[1])
+				expect(conversationListItems.at(0).props('item')).toStrictEqual(conversationsList[0])
+				expect(conversationListItems.at(1).props('item')).toStrictEqual(conversationsList[1])
 
-				const captionsEls = appNavEl.findAllComponents({ name: 'NcAppNavigationCaption' })
-				expect(captionsEls.exists()).toBe(true)
+				const captionsEls = wrapper.findAllComponents({ name: 'NcAppNavigationCaption' })
+				expect(captionsEls.exists()).toBeTruthy()
 				if (listedResults.length > 0) {
 					expect(captionsEls.length).toBeGreaterThan(2)
 					expect(captionsEls.at(0).props('title')).toBe('Conversations')
@@ -508,207 +480,211 @@ describe('LeftSidebar.vue', () => {
 
 			test('displays all types in caption when nothing was found', async () => {
 				await testSearchNotFound(
-					'search',
+					SEARCH_TERM,
 					[],
 					[],
 					{
 						circles_enabled: true,
 						start_conversations: true,
 					},
-					'Users, groups and circles'
+					'Users, groups and circles',
 				)
 			})
-
 			test('displays all types in caption when only listed conversations were found', async () => {
 				await testSearchNotFound(
-					'search',
+					SEARCH_TERM,
 					[],
 					listedResults,
 					{
 						circles_enabled: true,
 						start_conversations: true,
 					},
-					'Users, groups and circles'
+					'Users, groups and circles',
 				)
 			})
-
 			test('displays all types minus circles when nothing was found but circles is disabled', async () => {
 				await testSearchNotFound(
-					'search',
+					SEARCH_TERM,
 					[],
 					[],
 					{
 						circles_enabled: false,
 						start_conversations: true,
 					},
-					'Users and groups'
+					'Users and groups',
 				)
 			})
-
 			test('displays caption for users and groups not found', async () => {
 				await testSearchNotFound(
-					'search',
+					SEARCH_TERM,
 					[...circlesResults],
 					[],
 					{
 						circles_enabled: true,
 						start_conversations: true,
 					},
-					'Users and groups'
+					'Users and groups',
 				)
 			})
 			test('displays caption for users not found', async () => {
 				await testSearchNotFound(
-					'search',
+					SEARCH_TERM,
 					[...circlesResults, ...groupsResults],
 					[],
 					{
 						circles_enabled: true,
 						start_conversations: true,
 					},
-					'Users'
+					'Users',
 				)
 			})
 			test('displays caption for groups not found', async () => {
 				await testSearchNotFound(
-					'search',
+					SEARCH_TERM,
 					[...usersResults, ...circlesResults],
 					[],
 					{
 						circles_enabled: true,
 						start_conversations: true,
 					},
-					'Groups'
+					'Groups',
 				)
 			})
 			test('displays caption for groups and circles not found', async () => {
 				await testSearchNotFound(
-					'search',
+					SEARCH_TERM,
 					[...usersResults],
 					[],
 					{
 						circles_enabled: true,
 						start_conversations: true,
 					},
-					'Groups and circles'
+					'Groups and circles',
 				)
 			})
 			test('displays caption for users and circles not found', async () => {
 				await testSearchNotFound(
-					'search',
+					SEARCH_TERM,
 					[...groupsResults],
 					[],
 					{
 						circles_enabled: true,
 						start_conversations: true,
 					},
-					'Users and circles'
+					'Users and circles',
 				)
 			})
 		})
 
 		describe('clicking search results', () => {
 			test('joins listed conversation from search result', async () => {
-				const wrapper = await testSearch('search', [], listedResults)
+				const wrapper = await testSearch(SEARCH_TERM, [], listedResults)
+				// Check all conversations
+				const conversationList = [...conversationsList, ...listedResults]
+					.filter(item => item.name.includes(SEARCH_TERM) || item.displayName.includes(SEARCH_TERM))
+				const conversationListItems = wrapper.findAllComponents({ name: 'Conversation' })
+				expect(conversationListItems.exists()).toBeTruthy()
+				expect(conversationListItems).toHaveLength(conversationList.length)
 
-				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
-				const listedEls = appNavEl.findAllComponents({ name: 'Conversation' })
-				expect(listedEls.exists()).toBe(true)
-				expect(listedEls.length).toBe(4)
-				await listedEls.at(3).find('a').trigger('click')
-
-				expect(addConversationAction).toHaveBeenCalledWith(expect.anything(), listedResults[1])
+				await conversationListItems.at(3).find('a').trigger('click')
+				expect(addConversationAction).toHaveBeenCalledWith(expect.anything(), conversationList[3])
 				expect(wrapper.vm.$route.name).toBe('conversation')
-				expect(wrapper.vm.$route.params).toStrictEqual({ token: 'listed-token-2' })
+				expect(wrapper.vm.$route.params).toStrictEqual({ token: conversationList[3].token })
 			})
+
 			test('creates one to one conversation from user search result', async () => {
 				createOneToOneConversationAction.mockResolvedValue({
 					id: 9999,
 					token: 'new-conversation',
 				})
 
-				const wrapper = await testSearch('search', [...usersResults], [])
+				const wrapper = await testSearch(SEARCH_TERM, [...usersResults], [])
+				const resultsList = usersResults.filter(item => item.id !== 'current-user')
+				const resultsListItems = findNcListItems(wrapper, resultsList.map(item => item.label))
+				expect(resultsListItems.exists()).toBeTruthy()
+				expect(resultsListItems).toHaveLength(resultsList.length)
 
-				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
-				const optionsEls = appNavEl.findAllComponents({ name: 'ConversationsOptionsList' })
-				expect(optionsEls.exists()).toBe(true)
-				await optionsEls.at(0).findAll('a').at(1).trigger('click')
-
-				expect(createOneToOneConversationAction).toHaveBeenCalledWith(expect.anything(), 'two-user')
+				await resultsListItems.at(1).findAll('a').trigger('click')
+				expect(createOneToOneConversationAction).toHaveBeenCalledWith(expect.anything(), resultsList[1].id)
 				expect(wrapper.vm.$route.name).toBe('conversation')
 				expect(wrapper.vm.$route.params).toStrictEqual({ token: 'new-conversation' })
 			})
+
 			test('shows group conversation dialog when clicking search result', async () => {
 				const eventHandler = jest.fn()
 				EventBus.$once('new-group-conversation-dialog', eventHandler)
 
-				const wrapper = await testSearch('search', [...groupsResults], [])
+				const wrapper = await testSearch(SEARCH_TERM, [...groupsResults], [])
 
-				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
-				const optionsEls = appNavEl.findAllComponents({ name: 'ConversationsOptionsList' })
-				expect(optionsEls.exists()).toBe(true)
-				await optionsEls.at(0).findAll('a').at(1).trigger('click')
+				const resultsListItems = findNcListItems(wrapper, groupsResults.map(item => item.label))
+				expect(resultsListItems.exists()).toBeTruthy()
+				expect(resultsListItems).toHaveLength(groupsResults.length)
 
+				await resultsListItems.at(1).findAll('a').trigger('click')
 				expect(eventHandler).toHaveBeenCalledWith(groupsResults[1])
 
 				// nothing created yet
 				expect(createOneToOneConversationAction).not.toHaveBeenCalled()
 				expect(addConversationAction).not.toHaveBeenCalled()
 			})
+
 			test('shows circles conversation dialog when clicking search result', async () => {
 				const eventHandler = jest.fn()
 				EventBus.$once('new-group-conversation-dialog', eventHandler)
 
-				const wrapper = await testSearch('search', [...circlesResults], [])
+				const wrapper = await testSearch(SEARCH_TERM, [...circlesResults], [])
 
-				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
-				const optionsEls = appNavEl.findAllComponents({ name: 'ConversationsOptionsList' })
-				expect(optionsEls.exists()).toBe(true)
-				await optionsEls.at(0).findAll('a').at(1).trigger('click')
+				const resultsListItems = findNcListItems(wrapper, circlesResults.map(item => item.label))
+				expect(resultsListItems.exists()).toBeTruthy()
+				expect(resultsListItems).toHaveLength(circlesResults.length)
 
+				await resultsListItems.at(1).findAll('a').trigger('click')
 				expect(eventHandler).toHaveBeenCalledWith(circlesResults[1])
 
 				// nothing created yet
 				expect(createOneToOneConversationAction).not.toHaveBeenCalled()
 			})
+
 			test('clears search results when joining user chat', async () => {
 				createOneToOneConversationAction.mockResolvedValue({
 					id: 9999,
 					token: 'new-conversation',
 				})
 
-				const wrapper = await testSearch('search', [...usersResults], [])
+				const wrapper = await testSearch(SEARCH_TERM, [...usersResults], [])
 
-				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
-				const searchBoxEl = appNavEl.findComponent({ name: 'SearchBox' })
+				const searchBoxEl = wrapper.findComponent({ name: 'SearchBox' })
 				const input = searchBoxEl.find('input[type="text"]')
-				expect(input.element.value).toBe('search')
+				expect(input.element.value).toBe(SEARCH_TERM)
 
-				const optionsEls = appNavEl.findAllComponents({ name: 'ConversationsOptionsList' })
-				expect(optionsEls.exists()).toBe(true)
-				await optionsEls.at(0).findAll('a').at(1).trigger('click')
+				const resultsList = usersResults.filter(item => item.id !== 'current-user')
+				const resultsListItems = findNcListItems(wrapper, resultsList.map(item => item.label))
+				expect(resultsListItems.exists()).toBeTruthy()
+				expect(resultsListItems).toHaveLength(resultsList.length)
 
-				await wrapper.vm.$nextTick()
+				await resultsListItems.at(0).findAll('a').trigger('click')
+				await flushPromises()
 
-				expect(searchBoxEl.exists()).toBe(true)
+				expect(searchBoxEl.exists()).toBeTruthy()
 				expect(input.element.value).toBe('')
 			})
+
 			test('does not clear search results when clicking group chat', async () => {
-				const wrapper = await testSearch('search', [...groupsResults], [])
+				const wrapper = await testSearch(SEARCH_TERM, [...groupsResults], [])
 
-				const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
-				const searchBoxEl = appNavEl.findComponent({ name: 'SearchBox' })
+				const searchBoxEl = wrapper.findComponent({ name: 'SearchBox' })
 				const input = searchBoxEl.find('input[type="text"]')
-				expect(input.element.value).toBe('search')
+				expect(input.element.value).toBe(SEARCH_TERM)
 
-				const optionsEls = appNavEl.findAllComponents({ name: 'ConversationsOptionsList' })
-				expect(optionsEls.exists()).toBe(true)
-				await optionsEls.at(0).findAll('a').at(1).trigger('click')
+				const resultsListItems = findNcListItems(wrapper, groupsResults.map(item => item.label))
+				expect(resultsListItems.exists()).toBeTruthy()
+				expect(resultsListItems).toHaveLength(groupsResults.length)
 
-				await wrapper.vm.$nextTick()
+				await resultsListItems.at(1).find('a').trigger('click')
+				await flushPromises()
 
-				expect(searchBoxEl.exists()).toBe(true)
-				expect(input.element.value).toBe('search')
+				expect(searchBoxEl.exists()).toBeTruthy()
+				expect(input.element.value).toBe(SEARCH_TERM)
 			})
 		})
 	})
@@ -723,14 +699,14 @@ describe('LeftSidebar.vue', () => {
 
 			const wrapper = mountComponent()
 			const buttonEl = wrapper.findComponent({ name: 'NewGroupConversation' })
-			expect(buttonEl.exists()).toBe(true)
+			expect(buttonEl.exists()).toBeTruthy()
 		})
 		test('does not show new conversation button if user cannot start conversations', () => {
 			loadStateSettings.start_conversations = false
 
 			const wrapper = mountComponent()
 			const buttonEl = wrapper.findComponent({ name: 'NewGroupConversation' })
-			expect(buttonEl.exists()).toBe(false)
+			expect(buttonEl.exists()).toBeFalsy()
 		})
 	})
 
@@ -740,9 +716,8 @@ describe('LeftSidebar.vue', () => {
 		subscribe('show-settings', eventHandler)
 		const wrapper = mountComponent()
 
-		const appNavEl = wrapper.findComponent({ name: 'NcAppNavigation' })
-		const button = appNavEl.find('.settings-button')
-		expect(button.exists()).toBe(true)
+		const button = wrapper.find('.settings-button')
+		expect(button.exists()).toBeTruthy()
 
 		await button.trigger('click')
 
