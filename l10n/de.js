@@ -243,7 +243,6 @@ OC.L10N.register(
     "Private conversation" : "Private Unterhaltung",
     "Deleted user (%s)" : "Gelöschter Benutzer (%s)",
     "Failed to upload call recording" : "Fehler beim Hochladen der Aufnahme",
-    "The recording server failed to upload recording of call {call}. Please reach out to the adminstrators." : "Der Aufzeichnungsserver konnte die Aufzeichnung von Anruf {call} nicht hochladen. Bitte wende dich an die Administration.",
     "Share to chat" : "In Unterhaltung teilen",
     "Dismiss notification" : "Benachrichtigung verwerfen",
     "Call recording now available" : "Anrufaufzeichnung jetzt verfügbar",

@@ -219,6 +219,7 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Tastatūras saīsnes",
     "Search" : "Meklēt",
     "Start call" : "Sākt zvanu",
+    "Open sidebar" : "Atvērt sānjoslu",
     "Grid view" : "Režģa izkārtojums",
     "Send" : "Sūtīt",
     "Say hi to your friends and colleagues!" : "Sasveicinies ar saviem draugiem un kolēģiem!",

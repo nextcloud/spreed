@@ -940,6 +940,7 @@ OC.L10N.register(
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Το Nextcloud Talk ενημερώθηκε, ανανεώστε τη σελίδα πριν την έναρξη ή συμμετοχή σε μια κλήση.",
     "You will be able to join the call only after a moderator starts it." : "Μπορείτε να συμμετάσχετε στην κλήση μόνο μετά την εκκίνηση από τον συντονιστή.",
     "Recording" : "Καταγραφή",
+    "Open sidebar" : "Άνοιγμα πλευρικής στήλης",
     "Mute others" : "Σίγαση των άλλων",
     "Devices settings" : "Ρυθμίσεις συσκευών",
     "Toggle fullscreen" : "Εναλλαγή πλήρους οθόνης",

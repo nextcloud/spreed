@@ -314,6 +314,7 @@ OC.L10N.register(
     "Privacy" : "Privateco",
     "Keyboard shortcuts" : "Fulmoklavoj",
     "Search" : "Serĉi",
+    "Open sidebar" : "Malfermi flankopanelon",
     "Grid view" : "Krada vido",
     "Send" : "Sendi",
     "Files" : "Dosieroj",

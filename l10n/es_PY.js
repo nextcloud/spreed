@@ -113,6 +113,7 @@ OC.L10N.register(
     "Privacy" : "Privacidad",
     "Keyboard shortcuts" : "Atajos del teclado",
     "Search" : "Buscar",
+    "Open sidebar" : "Abrir barra lateral",
     "Grid view" : "Vista de cuadrícula",
     "Send" : "Enviar",
     "Files" : "Archivos",

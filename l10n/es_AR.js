@@ -95,6 +95,7 @@ OC.L10N.register(
     "Privacy" : "Privacidad",
     "Keyboard shortcuts" : "Atajos de teclado",
     "Search" : "Buscar",
+    "Open sidebar" : "Abrir barra lateral",
     "Grid view" : "Vista de cuadrícula",
     "Send" : "Enviar",
     "Start a conversation" : "Iniciar una conversación",

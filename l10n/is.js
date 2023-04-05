@@ -502,6 +502,7 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Flýtileiðir á lyklaborði",
     "Search" : "Search",
     "Start call" : "Hefja samtal",
+    "Open sidebar" : "Opna hliðarspjald",
     "Grid view" : "Reitasýn",
     "Send" : "Senda",
     "Say hi to your friends and colleagues!" : "Segðu hæ við vini þína og samstarfsmenn!",

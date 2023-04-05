@@ -583,6 +583,7 @@ OC.L10N.register(
     "Cancel recording start" : "Откажи почетак снимања",
     "Stop recording" : "Заустави снимање",
     "Recording" : "Снимање",
+    "Open sidebar" : "Отвори бочну траку",
     "Start recording" : "Почни снимање",
     "Grid view" : "Приказ мреже",
     "Raise hand" : "Подигни руку",

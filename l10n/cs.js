@@ -247,7 +247,6 @@ OC.L10N.register(
     "Private conversation" : "Soukromá konverzace",
     "Deleted user (%s)" : "Smazán uživatel (%s)",
     "Failed to upload call recording" : "Nahrávku se nepodařilo nahrát na server",
-    "The recording server failed to upload recording of call {call}. Please reach out to the adminstrators." : "Nahrávacímu serveru se nepodařilo nahrát záznam hovoru {call}. Obraťte se na správce.",
     "Share to chat" : "Nasdílet do chatu",
     "Dismiss notification" : "Zahodit upozornění",
     "Call recording now available" : "Nahrávání hovoru je nyní k dispozici",

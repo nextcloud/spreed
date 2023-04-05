@@ -344,6 +344,7 @@ OC.L10N.register(
     "Privacy" : "Confindențialitate",
     "Keyboard shortcuts" : "Scurtături din tastatură",
     "Search" : "Caută",
+    "Open sidebar" : "Deschide bara laterală",
     "Grid view" : "Afișare în grilă",
     "Send" : "Trimite",
     "Media" : "Media",
