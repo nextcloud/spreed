@@ -1203,6 +1203,7 @@ OC.L10N.register(
     "Cancel recording start" : "Utzi grabaketaren hasiera",
     "Stop recording" : "Utzi grabaketa",
     "Recording" : "Grabatzea",
+    "Open sidebar" : "Ireki alboko barra",
     "You have new unread messages in the chat." : "Irakurri gabeko mezu berriak dauzkazu txatean.",
     "You have been mentioned in the chat." : "Txatean aipatu egin zaituzte.",
     "Mute others" : "Mututu besteak",

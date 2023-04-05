@@ -581,6 +581,7 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Tastatursnarveier",
     "Search" : "Søk",
     "Start call" : "Start samtale",
+    "Open sidebar" : "Åpne sidepanel",
     "Grid view" : "Rutenett-visning",
     "Raise hand" : "Løft hånden",
     "Send" : "Send",

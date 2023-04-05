@@ -662,6 +662,7 @@ OC.L10N.register(
     "Start call" : "Bắt đầu cuộc gọi",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "vWorkspace Talk đã được cập nhật, bạn cần tải lại trang trước khi có thể bắt đầu hoặc tham gia cuộc gọi.",
     "You will be able to join the call only after a moderator starts it." : "Bạn sẽ chỉ có thể tham gia cuộc gọi sau khi người kiểm duyệt bắt đầu cuộc gọi.",
+    "Open sidebar" : "Mở thanh bên",
     "Mute others" : "Tắt tiếng người khác",
     "Toggle fullscreen" : "Bật chế độ toàn màn hình",
     "Speaker view" : "Chế độ xem người gọi điện",

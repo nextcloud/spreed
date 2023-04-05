@@ -1097,6 +1097,7 @@ OC.L10N.register(
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk已更新，您需要重新加载页面才能开始或加入一个通话。",
     "You will be able to join the call only after a moderator starts it." : "您只有在主持人开始一个通话之后才能加入通话。",
     "Recording" : "录音",
+    "Open sidebar" : "打开侧边栏",
     "You have new unread messages in the chat." : "你在聊天中有新的未读消息",
     "You have been mentioned in the chat." : "你在聊天中被提及",
     "Mute others" : "降低其他人的声音",

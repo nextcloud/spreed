@@ -863,6 +863,7 @@ OC.L10N.register(
     "Start call" : "Повик",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Разговорот беше ажуриран, треба повторно да ја вчитате страницата пред да започнете или да се придружите на повик.",
     "You will be able to join the call only after a moderator starts it." : "Ќе може да се придружите на повикот само откако модераторот ќе го започне.",
+    "Open sidebar" : "Отвори странична лента",
     "You have new unread messages in the chat." : "Имате непрочитана порака во разговор.",
     "You have been mentioned in the chat." : "Бевте споменати во разговор.",
     "Mute others" : "Занеми ги останатите",

@@ -1028,6 +1028,7 @@ OC.L10N.register(
     "Error while saving sounds setting" : "Virhe ääniasetuksia tallentaessa",
     "Start call" : "Aloita puhelu",
     "Stop recording" : "Lopeta tallennus",
+    "Open sidebar" : "Avaa sivupalkki",
     "You have new unread messages in the chat." : "Keskustelussa on uusia lukemattomia viestejä.",
     "You have been mentioned in the chat." : "Sinut on mainittu keskustelussa.",
     "Mute others" : "Mykistä muut",

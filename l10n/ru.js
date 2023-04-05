@@ -1160,6 +1160,7 @@ OC.L10N.register(
     "You will be able to join the call only after a moderator starts it." : "Вы сможете подключиться к звонку после того как его начнет модератор.",
     "Stop recording" : "Остановить запись",
     "Recording" : "Запись",
+    "Open sidebar" : "Открыть боковую панель",
     "You have new unread messages in the chat." : "В обсуждении имеются непрочитанные сообщения.",
     "You have been mentioned in the chat." : "Вы были упомянуты в обсуждении.",
     "Mute others" : "Отключить микрофоны других пользователей",

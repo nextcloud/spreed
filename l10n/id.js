@@ -323,6 +323,7 @@ OC.L10N.register(
     "Privacy" : "Privasi",
     "Keyboard shortcuts" : "Pintasan keyboard",
     "Search" : "Cari",
+    "Open sidebar" : "Buka jendela samping",
     "You have new unread messages in the chat." : "Anda memiliki pesan baru yang belum dibaca dalam obrolan.",
     "Grid view" : "Tampilan kotak",
     "Send" : "Kirim",
