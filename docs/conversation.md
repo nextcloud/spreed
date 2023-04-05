@@ -15,7 +15,7 @@
 
 !!! note
 
-    When `modifiedSince` is provided only conversations with a newer `lastActivity` are returned.
+    When `modifiedSince` is provided only conversations with a newer `lastActivity` are returned. If `includeStatus` is set to `true` this will also return all one-to-one conversations.
     Due to the nature of the data structure we can not return information that a conversation was deleted
     or the user removed from a conversation. Therefore it is recommended to do a full refresh:
     * Every 5 minutes
