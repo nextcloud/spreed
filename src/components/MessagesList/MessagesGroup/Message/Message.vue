@@ -499,9 +499,10 @@ export default {
 			let match
 			let emojiStrings = ''
 			let emojiCount = 0
+			const trimmedMessage = this.message.trim()
 
 			// eslint-disable-next-line no-cond-assign
-			while (match = regex.exec(this.message)) {
+			while (match = regex.exec(trimmedMessage)) {
 				if (emojiCount > 2) {
 					return false
 				}
@@ -510,7 +511,7 @@ export default {
 				emojiCount++
 			}
 
-			return emojiStrings === this.message
+			return emojiStrings === trimmedMessage
 		},
 
 		richParameters() {
