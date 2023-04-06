@@ -307,6 +307,7 @@ OC.L10N.register(
     "Privacy" : "Privaatheid",
     "Keyboard shortcuts" : "Sneltoetse",
     "Search" : "Soek",
+    "Open sidebar" : "Open kantbalk",
     "Send" : "Stuur",
     "Media" : "Media",
     "Files" : " Lêers",
