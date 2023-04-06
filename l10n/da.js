@@ -519,6 +519,7 @@ OC.L10N.register(
     "Select location for attachments" : "Select location for attachments",
     "Error while setting attachment folder" : "Fejl under indstilling af mappe til vedhæftninger",
     "Start call" : "Start opkald",
+    "Open sidebar" : "Åbn sidebar",
     "Grid view" : "Grid visning",
     "Send" : "Send",
     "No unread mentions" : "Ingen ulæste samtaler",

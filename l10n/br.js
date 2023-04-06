@@ -681,6 +681,7 @@ OC.L10N.register(
     "Start call" : "Kregiñ ar gemenadenn",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Adnevesaet e bet Nextcloud Talk, ret eo deoc'h freskaat ar bajenn a raok kregiñ pe mont en ut gamanadenn.",
     "You will be able to join the call only after a moderator starts it." : "Posupl vo deoc'h mont er gemenadenn goude ma vo bet groget gant ar modertator.",
+    "Open sidebar" : "Digori ar varenn gostez",
     "Mute others" : "Lakaat ar re all mut",
     "Toggle fullscreen" : "Lakat/Kuitaat ar skramm a bezh",
     "Grid view" : "Diskwell ar roued",
