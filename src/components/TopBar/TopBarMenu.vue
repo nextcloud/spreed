@@ -69,11 +69,11 @@
 
 			<!-- Device settings -->
 			<NcActionButton :close-after-click="true"
-				@click="showSettings">
+				@click="showMediaSettings">
 				<template #icon>
 					<VideoIcon :size="20" />
 				</template>
-				{{ t('spreed', 'Devices settings') }}
+				{{ t('spreed', 'Media settings') }}
 			</NcActionButton>
 			<NcActionSeparator />
 		</template>
@@ -447,8 +447,8 @@ export default {
 			this.$store.dispatch('selectedVideoPeerId', null)
 		},
 
-		showSettings() {
-			emit('show-settings', {})
+		showMediaSettings() {
+			emit('talk:media-settings:show')
 		},
 
 		toggleHandRaised() {
