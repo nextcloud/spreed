@@ -25,12 +25,12 @@
 		size="small"
 		:container="container"
 		@close="closeModal">
-		<div class="device-checker">
-			<h2 class="device-checker__title">
+		<div class="media-settings">
+			<h2 class="media-settings__title">
 				{{ t('spreed', 'Camera and microphone check') }}
 			</h2>
 			<!-- Preview -->
-			<div class="device-checker__preview">
+			<div class="media-settings__preview">
 				<!-- eslint-disable-next-line -->
 				<video v-show="showVideo"
 					ref="video"
@@ -59,7 +59,7 @@
 				Toggle audio and video on and off before starting or joining
 				a call.
 			-->
-			<div class="device-checker__call-preferences">
+			<div class="media-settings__call-preferences">
 				<!-- Audio toggle -->
 				<NcButton v-tooltip="audioButtonTooltip"
 					type="tertiary"
@@ -106,7 +106,7 @@
 			</div>
 
 			<!-- Device selection -->
-			<div class="device-checker__device-selection">
+			<div class="media-settings__device-selection">
 				<NcButton v-if="!showDeviceSelection"
 					type="tertiary"
 					class="select-devices"
@@ -127,7 +127,7 @@
 						@update:deviceId="videoInputId = $event" />
 				</template>
 			</div>
-			<NcCheckboxRadioSwitch :checked.sync="showDeviceChecker"
+			<NcCheckboxRadioSwitch :checked.sync="showMediaSettings"
 				class="checkbox">
 				<template v-if="canRecordingTakePlace">
 					{{ t('spreed', 'Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded.') }}
@@ -142,7 +142,7 @@
 				<p>{{ t('spreed', 'The call is being recorded.') }}</p>
 			</NcNoteCard>
 
-			<div class="device-checker__call-buttons">
+			<div class="media-settings__call-buttons">
 				<!-- Silent call -->
 				<NcActions v-if="showSilentCallOption"
 					:container="container"
@@ -210,7 +210,7 @@ import BrowserStorage from '../../services/BrowserStorage.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 
 export default {
-	name: 'DeviceChecker',
+	name: 'MediaSettings',
 
 	directives: {
 		Tooltip,
@@ -247,7 +247,7 @@ export default {
 			audioOn: undefined,
 			videoOn: undefined,
 			blurOn: undefined,
-			showDeviceChecker: true,
+			showMediaSettings: true,
 			silentCall: false,
 		}
 	},
@@ -347,11 +347,11 @@ export default {
 			}
 		},
 
-		showDeviceChecker(newValue) {
+		showMediaSettings(newValue) {
 			if (newValue) {
-				BrowserStorage.setItem('showDeviceChecker' + this.token, 'true')
+				BrowserStorage.setItem('showMediaSettings' + this.token, 'true')
 			} else {
-				BrowserStorage.setItem('showDeviceChecker' + this.token, 'false')
+				BrowserStorage.setItem('showMediaSettings' + this.token, 'false')
 			}
 		},
 
@@ -373,13 +373,13 @@ export default {
 	},
 
 	mounted() {
-		subscribe('talk:device-checker:show', this.showModal)
-		subscribe('talk:device-checker:hide', this.closeModal)
+		subscribe('talk:media-settings:show', this.showModal)
+		subscribe('talk:media-settings:hide', this.closeModal)
 	},
 
 	beforeDestroy() {
-		unsubscribe('talk:device-checker:show', this.showModal)
-		unsubscribe('talk:device-checker:hide', this.closeModal)
+		unsubscribe('talk:media-settings:show', this.showModal)
+		unsubscribe('talk:media-settings:hide', this.closeModal)
 	},
 
 	methods: {
@@ -431,7 +431,7 @@ export default {
 @include avatar-mixin(64px);
 @include avatar-mixin(128px);
 
-.device-checker {
+.media-settings {
 	padding: 20px;
 	background-color: var(--color-main-background);
 	overflow-y: auto;

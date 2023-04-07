@@ -30,7 +30,7 @@
 		</NcAppContent>
 		<RightSidebar :is-in-call="isInCall" />
 		<PreventUnload :when="warnLeaving || isSendingMessages" />
-		<DeviceChecker :initialize-on-mounted="false" />
+		<MediaSettings :initialize-on-mounted="false" />
 		<UploadEditor />
 		<SettingsDialog />
 		<ConversationSettingsDialog />
@@ -50,8 +50,8 @@ import NcContent from '@nextcloud/vue/dist/Components/NcContent.js'
 import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
 
 import ConversationSettingsDialog from './components/ConversationSettings/ConversationSettingsDialog.vue'
-import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
 import LeftSidebar from './components/LeftSidebar/LeftSidebar.vue'
+import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 import UploadEditor from './components/UploadEditor.vue'
@@ -82,7 +82,7 @@ export default {
 		UploadEditor,
 		SettingsDialog,
 		ConversationSettingsDialog,
-		DeviceChecker,
+		MediaSettings,
 	},
 
 	mixins: [

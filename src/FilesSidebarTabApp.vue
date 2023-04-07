@@ -42,7 +42,7 @@
 			<CallButton class="call-button" />
 			<ChatView />
 			<UploadEditor />
-			<DeviceChecker :initialize-on-mounted="false" />
+			<MediaSettings :initialize-on-mounted="false" />
 		</template>
 	</div>
 </template>
@@ -56,7 +56,7 @@ import { loadState } from '@nextcloud/initial-state'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import ChatView from './components/ChatView.vue'
-import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
+import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import CallButton from './components/TopBar/CallButton.vue'
 import UploadEditor from './components/UploadEditor.vue'
 
@@ -81,7 +81,7 @@ export default {
 		CallButton,
 		ChatView,
 		UploadEditor,
-		DeviceChecker,
+		MediaSettings,
 		NcButton,
 	},
 

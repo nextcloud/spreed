@@ -46,7 +46,7 @@
 				<PreventUnload :when="warnLeaving" />
 				<CallButton class="call-button" />
 				<ChatView />
-				<DeviceChecker :initialize-on-mounted="false" />
+				<MediaSettings :initialize-on-mounted="false" />
 			</template>
 		</aside>
 	</transition>
@@ -62,7 +62,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import CallView from './components/CallView/CallView.vue'
 import ChatView from './components/ChatView.vue'
-import DeviceChecker from './components/DeviceChecker/DeviceChecker.vue'
+import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import CallButton from './components/TopBar/CallButton.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 
@@ -91,7 +91,7 @@ export default {
 		CallView,
 		ChatView,
 		PreventUnload,
-		DeviceChecker,
+		MediaSettings,
 		TopBar,
 	},
 
