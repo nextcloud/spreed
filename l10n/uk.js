@@ -38,7 +38,7 @@ OC.L10N.register(
     "- See a read status and send failed messages again" : "- Перегляньте статус прочитання та знову надішліть повідомлення, які не вдалося надіслати",
     "- Raise your hand in a call with the R key" : "- Підніміть руку під час виклику за допомогою клавіші R",
     "- Join the same conversation and call from multiple devices" : "- Приєднуйтесь до однієї розмови та телефонуйте з кількох пристроїв",
-    "- Send voice messages, share your location or contact details" : "- Надсилайте голосові повідомлення, діліться своїм місцезнаходженням або контактними даними",
+    "- Send voice messages, share your location or contact details" : "- Надсилайте голосові повідомлення, діліться власним місцем розташування або контактними даними",
     "- Add groups to a conversation and new group members will automatically be added as participants" : "- Додайте групи до розмови, і нові учасники групи будуть автоматично додані як учасники",
     "- A preview of your audio and video is shown before joining a call" : "- Попередній перегляд аудіо та відео відображається перед приєднанням до виклику",
     "- You can now blur your background in the newly designed call view" : "- Тепер ви можете розмити фон у новому режимі перегляду викликів",
