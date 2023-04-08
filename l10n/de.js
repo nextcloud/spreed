@@ -743,7 +743,7 @@ OC.L10N.register(
     "Number of breakout rooms" : "Anzahl an Breakout-Räumen",
     "Assignment method" : "Zuweisungsmethode",
     "Automatically assign participants" : "Automatisch hinzugefügte Teilnehmer",
-    "Manually assign participants" : "Maunell hinzugefügte Teilnehmer",
+    "Manually assign participants" : "Manuell hinzugefügte Teilnehmer",
     "Allow participants to choose" : "Teilnehmern die Wahl lassen",
     "Assign participants to rooms" : "Teilnehmer Räumen zuweisen",
     "Create rooms" : "Räume erstellen",
