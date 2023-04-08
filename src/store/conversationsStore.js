@@ -721,7 +721,7 @@ const actions = {
 			showSuccess(t('spreed', 'Conversation picture set'))
 		} catch (error) {
 			console.error(error)
-			showError(t('spreed', 'Could not set the conversation picture.'))
+			showError(t('spreed', 'Could not set the conversation picture'))
 		}
 
 	},
@@ -734,7 +734,7 @@ const actions = {
 			showSuccess(t('spreed', 'Conversation picture deleted'))
 		} catch (error) {
 			console.error(error)
-			showError(t('spreed', 'Could not delete the conversation picture.'))
+			showError(t('spreed', 'Could not delete the conversation picture'))
 		}
 	},
 }
