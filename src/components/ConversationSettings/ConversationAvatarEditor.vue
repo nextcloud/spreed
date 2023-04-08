@@ -176,7 +176,7 @@ export default {
 			this.loading = true
 			const file = e.target.files[0]
 			if (!this.validMimeTypes.includes(file.type)) {
-				showError(t('spreed', 'Please select a valid png or jpg file'))
+				showError(t('spreed', 'Please select a valid PNG or JPG file'))
 				this.cancel()
 				return
 			}
