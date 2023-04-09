@@ -47,6 +47,7 @@
     "- Configure an expiration time for chat messages" : "- Sohbet iletileri için bir geçerlilik süresi yapılandırın",
     "- Start calls without notifying others in big conversations. You can send individual call notifications once the call has started." : "- Büyük sohbetlerde bildirim göndermeden çağrı başlatın. Çağrı başladıktan sonra bireysel çağrı bildirimleri gönderebilirsiniz.",
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Acil değilse sohbet iletilerine alıcılara bildirim olmadan gönderin",
+    "- Emojis can now be autocompleted by typing a \":\"" : "- \".\" yazarak emojiler otomatik olarak tamamlanabilir",
     "There are currently no commands available." : "Şu anda kullanılabilecek bir komut yok.",
     "The command does not exist" : "Komut bulunamadı",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Komut yürütülürken bir sorun çıktı. Lütfen BT yöneticinizden günlük kayıtlarına bakmasını isteyin.",

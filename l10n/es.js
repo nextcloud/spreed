@@ -251,6 +251,7 @@ OC.L10N.register(
     "Private conversation" : "Conversación privada",
     "Deleted user (%s)" : "Borrado el usuario (%s)",
     "Failed to upload call recording" : "Fallo al cargar la grabación de la llamada",
+    "The recording server failed to upload recording of call {call}. Please reach out to the administration." : "El servidor de grabación falló al cargar la grabación de la llamada {call}. Por favor, contacte a los administradores.",
     "Share to chat" : "Compartir al chat",
     "Dismiss notification" : "Descartar notificación",
     "Call recording now available" : "La grabación está disponible ahora",
