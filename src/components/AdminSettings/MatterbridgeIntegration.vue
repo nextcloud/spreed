@@ -146,7 +146,7 @@ export default {
 		async enableMatterbridgeApp() {
 			if (OC.PasswordConfirmation.requiresPasswordConfirmation()) {
 				OC.PasswordConfirmation.requirePasswordConfirmation(this.enableMatterbridgeAppCallback, {}, () => {
-					showError(t('spreed', 'An error occurred while installing the Matterbridge app.'))
+					showError(t('spreed', 'An error occurred while installing the Matterbridge app'))
 				})
 			}
 
@@ -158,7 +158,7 @@ export default {
 			try {
 				await enableMatterbridgeApp()
 			} catch (e) {
-				showError(t('spreed', 'An error occurred while installing the Talk Matterbridge. Please install it manually.'), {
+				showError(t('spreed', 'An error occurred while installing the Talk Matterbridge. Please install it manually'), {
 					onClick: () => {
 						window.open('https://apps.nextcloud.com/apps/talk_matterbridge', '_blank')
 					},

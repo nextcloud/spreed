@@ -430,7 +430,7 @@ Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
 		}.bind(this))
 		.catch(function(err) {
 			console.error(err)
-			showError(t('spreed', 'Sending signaling message has failed.'))
+			showError(t('spreed', 'Sending signaling message has failed'))
 		})
 }
 
@@ -1041,12 +1041,12 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 
 	if (!this.settings.helloAuthParams.internal && (!this.hasFeature('audio-video-permissions') || !this.hasFeature('incall-all') || !this.hasFeature('switchto'))) {
 		showError(
-			t('spreed', 'The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator.'),
+			t('spreed', 'The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration.'),
 			{
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			}
 		)
-		console.error('The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator.')
+		console.error('The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration.')
 	}
 
 	const messages = this.pendingMessages
