@@ -60,53 +60,51 @@
 				a call.
 			-->
 			<div class="media-settings__call-preferences">
-				<!-- Audio toggle -->
-				<NcButton v-tooltip="audioButtonTooltip"
-					type="tertiary"
-					:aria-label="audioButtonTooltip"
-					:disabled="!audioPreviewAvailable"
-					@click="toggleAudio">
-					<template #icon>
-						<VolumeIndicator :audio-preview-available="audioPreviewAvailable"
-							:audio-enabled="audioOn"
-							:current-volume="currentVolume"
-							:volume-threshold="volumeThreshold"
-							overlay-muted-color="#888888" />
-					</template>
-				</NcButton>
+				<div class="media-settings__toggles">
+					<!-- Audio toggle -->
+					<NcButton v-tooltip="audioButtonTooltip"
+						type="tertiary"
+						:aria-label="audioButtonTooltip"
+						:disabled="!audioPreviewAvailable"
+						@click="toggleAudio">
+						<template #icon>
+							<VolumeIndicator :audio-preview-available="audioPreviewAvailable"
+								:audio-enabled="audioOn"
+								:current-volume="currentVolume"
+								:volume-threshold="volumeThreshold"
+								overlay-muted-color="#888888" />
+						</template>
+					</NcButton>
 
-				<!-- Video toggle -->
-				<NcButton v-tooltip="videoButtonTooltip"
-					type="tertiary"
-					:aria-label="videoButtonTooltip"
-					:disabled="!videoPreviewAvailable"
-					@click="toggleVideo">
-					<template #icon>
-						<VideoIcon v-if="videoOn"
-							:size="20" />
-						<VideoOff v-else
-							:size="20" />
-					</template>
-				</NcButton>
+					<!-- Video toggle -->
+					<NcButton v-tooltip="videoButtonTooltip"
+						type="tertiary"
+						:aria-label="videoButtonTooltip"
+						:disabled="!videoPreviewAvailable"
+						@click="toggleVideo">
+						<template #icon>
+							<VideoIcon v-if="videoOn"
+								:size="20" />
+							<VideoOff v-else
+								:size="20" />
+						</template>
+					</NcButton>
 
-				<!-- Blur toggle -->
-				<NcButton v-if="videoPreviewAvailable && blurPreviewAvailable"
-					v-tooltip="blurButtonTooltip"
-					type="tertiary"
-					:aria-label="blurButtonTooltip"
-					:disabled="!blurPreviewAvailable"
-					@click="toggleBlur">
-					<template #icon>
-						<Blur v-if="blurOn"
-							:size="20" />
-						<BlurOff v-else
-							:size="20" />
-					</template>
-				</NcButton>
-			</div>
-
-			<!-- Device selection -->
-			<div class="media-settings__device-selection">
+					<!-- Blur toggle -->
+					<NcButton v-if="videoPreviewAvailable && blurPreviewAvailable"
+						v-tooltip="blurButtonTooltip"
+						type="tertiary"
+						:aria-label="blurButtonTooltip"
+						:disabled="!blurPreviewAvailable"
+						@click="toggleBlur">
+						<template #icon>
+							<Blur v-if="blurOn"
+								:size="20" />
+							<BlurOff v-else
+								:size="20" />
+						</template>
+					</NcButton>
+				</div>
 				<NcButton v-if="!showDeviceSelection"
 					type="tertiary"
 					class="select-devices"
@@ -116,6 +114,10 @@
 					</template>
 					{{ t('spreed', 'Choose devices') }}
 				</NcButton>
+			</div>
+
+			<!-- Device selection -->
+			<div class="media-settings__device-selection">
 				<template v-if="showDeviceSelection">
 					<MediaDevicesSelector kind="audioinput"
 						:devices="devices"
@@ -452,6 +454,10 @@ export default {
 		background-color: var(--color-loading-dark);
 	}
 
+	&__toggles {
+		display: flex;
+	}
+
 	&__device-selection {
 		width: 100%;
 	}
@@ -459,7 +465,7 @@ export default {
 	&__call-preferences {
 		height: $clickable-area;
 		display: flex;
-		justify-content: center;
+		justify-content: space-between;
 		align-items: center;
 	}
 
@@ -491,7 +497,6 @@ export default {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	margin: auto;
 }
 
 .call-button {
