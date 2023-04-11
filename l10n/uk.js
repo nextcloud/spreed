@@ -497,7 +497,6 @@ OC.L10N.register(
     "Choose profile picture from files" : "Виберіть зображення профілю з файлів",
     "Remove profile picture" : "Вилучити зображення профілю",
     "Choose your profile picture" : "Виберіть зображення профілю",
-    "Please select a valid png or jpg file" : "Виберіть дійсний файл png або jpg",
     "Error setting profile picture" : "Помилка налаштування зображення профілю",
     "Error cropping profile picture" : "Помилка кадрування зображення профілю",
     "Error saving profile picture" : "Помилка збереження зображення профілю",

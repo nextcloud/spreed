@@ -569,7 +569,6 @@ OC.L10N.register(
     "Choose profile picture from files" : "Välj profilbild från filer",
     "Remove profile picture" : "Ta bort profilbild",
     "Choose your profile picture" : "Välj din profilbild",
-    "Please select a valid png or jpg file" : "Välj en giltig png- eller jpg-fil",
     "Error setting profile picture" : "Fel vid inställning av profilbild",
     "Error cropping profile picture" : "Det gick inte att beskära profilbilden",
     "Error saving profile picture" : "Det gick inte att spara profilbilden",
@@ -581,7 +580,6 @@ OC.L10N.register(
     "Permissions" : "Behörigheter",
     "Leave conversation" : "Lämna konversationen",
     "Delete conversation" : "Ta bort konversationen",
-    "You need to promote a new moderator before you can leave the conversation." : "Du måste tilldela en ny moderator innan du kan lämna konversationen.",
     "Do you really want to delete \"{displayName}\"?" : "Vill du verkligen radera \"{displayName}\"?",
     "Submit" : "Skicka",
     "Password protection" : "Lösenordsskydd",
@@ -618,6 +616,7 @@ OC.L10N.register(
     "Add to favorites" : "Lägg till som favorit",
     "You: {lastMessage}" : "Du: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
+    "You need to promote a new moderator before you can leave the conversation." : "Du måste tilldela en ny moderator innan du kan lämna konversationen.",
     "No matches" : "Inga träffar",
     "Loading" : "Läser in",
     "No search results" : "Inga sökresultat",
@@ -737,7 +736,6 @@ OC.L10N.register(
     "Away" : "Iväg",
     "Error while sharing file" : "Fel vid delning av fil",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud är i underhållsläge, ladda om sidan igen",
-    "Sending signaling message has failed." : "Misslyckades skicka signalmeddelande.",
     "Establishing signaling connection is taking longer than expected …" : "Det tar längre tid än förväntat att upprätta signalanslutning ...",
     "Failed to establish signaling connection. Retrying …" : "Det gick inte att upprätta signalanslutning. Försöker igen ...",
     "Default" : "Standard",
@@ -784,6 +782,7 @@ OC.L10N.register(
     "Share from Files" : "Dela från Filer",
     "Invitation was sent to {actorId}." : "Inbjudan skickades till {actorId}.",
     "Rename conversation" : "Byt namn på konversation",
-    "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Ett Deck-kort har lagts till för den valda <a href=\"{link}\">konversationen</a>."
+    "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Ett Deck-kort har lagts till för den valda <a href=\"{link}\">konversationen</a>.",
+    "Sending signaling message has failed." : "Misslyckades skicka signalmeddelande."
 },
 "nplurals=2; plural=(n != 1);");

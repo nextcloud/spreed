@@ -401,7 +401,6 @@ OC.L10N.register(
     "Danger zone" : "Farezone",
     "Leave conversation" : "Forlad samtale",
     "Delete conversation" : "Slet samtale",
-    "You need to promote a new moderator before you can leave the conversation." : "Du skal udnævne en ny moderator før du kan forlade samtalen.",
     "Do you really want to delete \"{displayName}\"?" : "Er du sikker på at du vil slette \"{displayName}\"?",
     "Submit" : "Tilføj",
     "Password protection" : "Adgangskodebeskyttelse",
@@ -425,6 +424,7 @@ OC.L10N.register(
     "Add to favorites" : "Føj til favoritter",
     "You: {lastMessage}" : "Dig: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
+    "You need to promote a new moderator before you can leave the conversation." : "Du skal udnævne en ny moderator før du kan forlade samtalen.",
     "No matches" : "Ingen matches",
     "Loading" : "Indlæser",
     "No search results" : "Ingen søgeresultater",
@@ -543,7 +543,6 @@ OC.L10N.register(
     "Do not disturb" : "Forstyr ikke",
     "Away" : "Ikke tilstede",
     "Error while sharing file" : "Fejl ved deling af fil",
-    "Sending signaling message has failed." : "Kunne ikke sende signalerings-besked",
     "Default" : "Standard",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Det virker som om du snakker mens lyden er slået fra, slå den til hvis du vil have at andre skal høre dig",
     "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "Dette tager lidt længere end forventet. Er medie-rettigheder allerede givet (eller nægtet)? Hvis ja så prøv at genstarte din browser, for lyd og video virker ikke lige nu",
@@ -579,6 +578,7 @@ OC.L10N.register(
     "Choose a password" : "Vælg en adgangskode",
     "Upload new files" : "Upload nye filer",
     "Share from Files" : "Del fra Filer",
-    "Rename conversation" : "Omdøb samtale"
+    "Rename conversation" : "Omdøb samtale",
+    "Sending signaling message has failed." : "Kunne ikke sende signalerings-besked"
 },
 "nplurals=2; plural=(n != 1);");
