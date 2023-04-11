@@ -551,7 +551,6 @@ OC.L10N.register(
     "Downloading …" : "Telecargament…",
     "Install Talk Matterbridge" : "Installar Talk Matterbridge",
     "Installed version: {version}" : "Version installada : {version}",
-    "An error occurred while installing the Talk Matterbridge. Please install it manually." : "Una error s’es producha pendent l’installacion de Talk Matterbridge. Volgatz l’installar manualament.",
     "Validate SSL certificate" : "Validar lo certificat SSL",
     "Delete this server" : "Suprimir aqueste servidor",
     "Status: Checking connection" : "Estat : verificacion de la connexion",
@@ -1013,7 +1012,6 @@ OC.L10N.register(
     "Join here" : "Rejónher aquí",
     "Leave this page" : "Quitar aquesta pagina",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud es en mòde manteniment, volgatz recargar la pagina",
-    "Sending signaling message has failed." : "Lo mandadís de messatge de senhalament a pas reüssit.",
     "Lost connection to signaling server. Trying to reconnect." : "Connexion perduda al servidor de senhalament. Ensag de reconnexion.",
     "Lost connection to signaling server. Try to reload the page manually." : "Connexion perduda al servidor de senhalament. Ensajatz de recargar la pagina manualament.",
     "Establishing signaling connection is taking longer than expected …" : "L’establiment de la connexion de senhalizacion pren mai de temps que previst…",
@@ -1040,6 +1038,7 @@ OC.L10N.register(
     "Android app" : "Aplicacion Android",
     "iOS app" : "Aplicacion iOS",
     "An error occurred. Please contact your admin." : "Una error s’es producha. Contactatz l’administrator.",
+    "An error occurred while installing the Talk Matterbridge. Please install it manually." : "Una error s’es producha pendent l’installacion de Talk Matterbridge. Volgatz l’installar manualament.",
     "Saved" : "Enregistrat",
     "Add a new server" : "Apondre un servidor novèl",
     "Conversation link copied to clipboard." : "Ligam de conversacion copiat al quichapapièrs.",
@@ -1071,6 +1070,7 @@ OC.L10N.register(
     "Share from Files" : "Partejar a partir dels Fichièrs",
     "Invitation was sent to {actorId}." : "Invitacion enviada a {actorId}.",
     "End meeting for all" : "Acabar la conferéncia per totes",
-    "Rename conversation" : "Renomenar la conversacion"
+    "Rename conversation" : "Renomenar la conversacion",
+    "Sending signaling message has failed." : "Lo mandadís de messatge de senhalament a pas reüssit."
 },
 "nplurals=2; plural=(n > 1);");

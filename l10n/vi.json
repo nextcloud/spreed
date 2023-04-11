@@ -322,8 +322,6 @@
     "Matterbridge binary has incorrect permissions. Please make sure the Matterbridge binary file is owned by the correct user and can be executed. It can be found in \"/.../nextcloud/apps/talk_matterbridge/bin/\"." : "Nhị phân Matterbridge có quyền không chính xác. Hãy đảm bảo rằng tệp nhị phân Matterbridge thuộc sở hữu của đúng người dùng và có thể được thực thi.",
     "Matterbridge binary was not found or couldn't be executed." : "Nhị phân Matterbridge không được tìm thấy hoặc không thể được thực thi",
     "You can also set the path to the Matterbridge binary manually via the config. Check the {linkstart}Matterbridge integration documentation{linkend} for more information." : "Bạn cũng có thể đặt đường dẫn đến nhị phân Matterbridge theo cách thủ công thông qua cấu hình. Kiểm tra {linkstart} tài liệu tích hợp Matterbridge {linkend} để biết thêm thông tin.",
-    "An error occurred while installing the Matterbridge app." : "Đã xảy ra lỗi khi cài đặt ứng dụng Matterbridge.",
-    "An error occurred while installing the Talk Matterbridge. Please install it manually." : "Đã xảy ra lỗi khi cài đặt Talk Matterbridge. Vui lòng cài đặt nó theo cách thủ công.",
     "Failed to execute Matterbridge binary." : "Không thực thi được mã nhị phân Matterbridge.",
     "Validate SSL certificate" : "Xác thực chứng chỉ SSL",
     "Delete this server" : "Xóa máy chủ này",
@@ -433,7 +431,6 @@
     "Be careful, these actions cannot be undone." : "Hãy cẩn thận, không thể hoàn tác những hành động này.",
     "Leave conversation" : "Rời khỏi cuộc đàm thoại",
     "Delete conversation" : "Xóa cuộc trò chuyện",
-    "You need to promote a new moderator before you can leave the conversation." : "Bạn cần chọn người kiểm duyệt mới trước khi có thể rời khỏi cuộc trò chuyện.",
     "Do you really want to delete \"{displayName}\"?" : "Bạn có thực sự muốn xóa \"{displayName}\" không?",
     "Error while deleting conversation" : "Lỗi khi xóa cuộc trò chuyện",
     "Submit" : "Gửi đi",
@@ -529,6 +526,7 @@
     "Add to favorites" : "Thêm vào ưa thích",
     "Joining conversation …" : "Tham gia cuộc trò chuyện …",
     "You: {lastMessage}" : "Bạn: {lastMessage}",
+    "You need to promote a new moderator before you can leave the conversation." : "Bạn cần chọn người kiểm duyệt mới trước khi có thể rời khỏi cuộc trò chuyện.",
     "Conversation list" : "Danh sách cuộc trò chuyện",
     "No matches" : "Không phù hợp",
     "Open conversations" : "Mở cuộc trò chuyện",
@@ -707,7 +705,6 @@
     "Join here" : "Tham gia tại đây",
     "Leave this page" : "Rời khỏi trang này",
     "Nextcloud is in maintenance mode, please reload the page" : "vWorkspace đang ở chế độ bảo trì, vui lòng tải lại trang",
-    "Sending signaling message has failed." : "Gửi tin nhắn báo hiệu không thành công.",
     "Lost connection to signaling server. Trying to reconnect." : "Mất kết nối với máy chủ báo hiệu. Đang cố gắng kết nối lại.",
     "Lost connection to signaling server. Try to reload the page manually." : "Mất kết nối với máy chủ báo hiệu. Cố gắng tải lại trang theo cách thủ công.",
     "Establishing signaling connection is taking longer than expected …" : "Việc thiết lập kết nối báo hiệu mất nhiều thời gian hơn dự kiến…",
@@ -738,6 +735,8 @@
     "iOS app" : "Ứng dụng IOS",
     "An error occurred. Please contact your admin." : "Lỗi đã xảy ra. Liên hệ với quản trị viên",
     "You can install the Matterbridge to link Nextcloud Talk to some other services, visit their {linkstart1}GitHub page{linkend} for more details. Downloading and installing the app can take a while. In case it times out, please install it manually from the {linkstart2}appstore{linkend}." : "Bạn có thể cài đặt Matterbridge để liên kết vWorkspace Talk với một số dịch vụ khác. Quá trình tải xuống và cài đặt ứng dụng có thể mất một chút thời gian. Trong trường hợp hết thời gian, vui lòng cài đặt thủ công từ {linkstart2} appstore {linkend}.",
+    "An error occurred while installing the Matterbridge app." : "Đã xảy ra lỗi khi cài đặt ứng dụng Matterbridge.",
+    "An error occurred while installing the Talk Matterbridge. Please install it manually." : "Đã xảy ra lỗi khi cài đặt Talk Matterbridge. Vui lòng cài đặt nó theo cách thủ công.",
     "Saved" : "Đã lưu",
     "Add a new server" : "Thêm một máy chủ mới",
     "Conversation link copied to clipboard." : "Đã sao chép liên kết cuộc trò chuyện vào khay nhớ tạm.",
@@ -770,6 +769,7 @@
     "Invitation was sent to {actorId}." : "Lời mời đã được gửi đến {actorId}.",
     "Rename conversation" : "Đổi tên cuộc đàm thoại",
     "Deck card has been posted to the selected <a href=\"{link}\">conversation</a>." : "Bộ bài đã được đăng lên <a href=\"{link}\">cuộc đối thoại</a> đã chọn.",
-    "An error occurred while posting deck card to conversation." : "Đã xảy ra lỗi khi đăng bộ bài lên cuộc trò chuyện."
+    "An error occurred while posting deck card to conversation." : "Đã xảy ra lỗi khi đăng bộ bài lên cuộc trò chuyện.",
+    "Sending signaling message has failed." : "Gửi tin nhắn báo hiệu không thành công."
 },"pluralForm" :"nplurals=1; plural=0;"
 }
