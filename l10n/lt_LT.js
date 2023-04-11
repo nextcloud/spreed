@@ -538,7 +538,6 @@ OC.L10N.register(
     "Be careful, these actions cannot be undone." : "Būkite atsargūs, šių veiksmų nebegalėsite atšaukti.",
     "Leave conversation" : "Išeiti iš pokalbio",
     "Delete conversation" : "Ištrinti pokalbį",
-    "You need to promote a new moderator before you can leave the conversation." : "Prieš išeidami iš pokalbio, turite paaukštinti naują moderatorių.",
     "Do you really want to delete \"{displayName}\"?" : "Ar tikrai norite ištrinti \"{displayName}\"?",
     "Error while deleting conversation" : "Klaida ištrinant pokalbį",
     "Error while clearing chat history" : "Klaida išvalant pokalbio istoriją",
@@ -599,6 +598,7 @@ OC.L10N.register(
     "Joining conversation …" : "Prisijungiama prie pokalbio…",
     "You: {lastMessage}" : "Jūs: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
+    "You need to promote a new moderator before you can leave the conversation." : "Prieš išeidami iš pokalbio, turite paaukštinti naują moderatorių.",
     "Open conversations" : "Atverti pokalbius",
     "Loading" : "Įkeliama",
     "No search results" : "Nėra paieškos rezultatų",
@@ -765,7 +765,6 @@ OC.L10N.register(
     "Failed to join the conversation. Try to reload the page." : "Nepavyko prisijungti prie pokalbio. Pabandykite įkelti puslapį iš naujo.",
     "Leave this page" : "Išeiti iš šio puslapio",
     "Nextcloud is in maintenance mode, please reload the page" : "Nextcloud yra techninės priežiūros veiksenoje, įkelkite puslapį iš naujo",
-    "Sending signaling message has failed." : "Nepavyko išsiųsti signalinės žinutės.",
     "Establishing signaling connection is taking longer than expected …" : "Signalinio ryšio užmezgimas trunka ilgiau nei tikėtasi…",
     "Failed to establish signaling connection. Retrying …" : "Nepavyko užmegzti signalinio ryšio. Bandoma iš naujo…",
     "Default" : "Numatytoji",
@@ -809,6 +808,7 @@ OC.L10N.register(
     "Upload new files" : "Išsiųsti naujus failus",
     "Share from Files" : "Bendrinti iš Failų",
     "Rename conversation" : "Pervadinti pokalbį",
+    "Sending signaling message has failed." : "Nepavyko išsiųsti signalinės žinutės.",
     "Message link copied to clipboard" : "Žinutės nuoroda nukopijuota į iškarpinę"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

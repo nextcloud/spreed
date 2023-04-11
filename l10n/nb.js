@@ -461,7 +461,6 @@ OC.L10N.register(
     "Choose profile picture from files" : "Velg profilbilde blant filer",
     "Remove profile picture" : "Fjern profilbilde",
     "Choose your profile picture" : "Velg profilbildet ditt",
-    "Please select a valid png or jpg file" : "Velg en gyldig png- eller jpg-fil",
     "Error setting profile picture" : "Feil ved setting av profilbilde",
     "Error cropping profile picture" : "Feil under beskjæring av profilbilde",
     "Error saving profile picture" : "Feil under lagring av profilbilde",

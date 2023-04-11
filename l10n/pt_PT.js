@@ -263,7 +263,6 @@ OC.L10N.register(
     "Choose profile picture from files" : "Escolher imagem de perfil de Ficheiros",
     "Remove profile picture" : "Remover imagem de perfil",
     "Choose your profile picture" : "Escolher imagem de perfil",
-    "Please select a valid png or jpg file" : "Escolha ficheiro png ou jpg válido",
     "Error setting profile picture" : "Erro a definir imagem de perfil",
     "Error cropping profile picture" : "Erro a cortar imagem de perfil",
     "Error saving profile picture" : "Erro a guardar imagem de perfil",
