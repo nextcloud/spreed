@@ -37,7 +37,7 @@
 		</NcButton>
 		<transition :name="isStripe ? 'slide-down' : ''">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
-				<div :class="{'stripe-wrapper': isStripe, 'wrapper': !isStripe}">
+				<div :class="[isStripe ? 'stripe-wrapper' : 'grid-wrapper']">
 					<NcButton v-if="hasPreviousPage && gridWidth > 0"
 						type="tertiary-no-background"
 						class="grid-navigation grid-navigation__previous"
@@ -870,7 +870,6 @@ export default {
 	position: relative;
 	bottom: 0;
 	left: 0;
-	flex: 1 0 auto;
 }
 
 .grid {
@@ -889,6 +888,12 @@ export default {
 .empty-call-view {
 	position: relative;
 	padding: 16px;
+}
+
+.grid-wrapper {
+	width: 100%;
+	position: relative;
+	flex: 1 0 auto;
 }
 
 .stripe-wrapper {
@@ -956,7 +961,6 @@ export default {
 }
 
 .grid-navigation {
-	position: absolute;
 	z-index: 2;
 	background-color: rgba(0, 0, 0, 0.5);
 
@@ -965,7 +969,8 @@ export default {
 		background-color: rgba(0, 0, 0, 0.8) !important;
 	}
 
-	.wrapper & {
+	.grid-wrapper & {
+		position: absolute;
 		top: calc(50% - var(--default-clickable-area) / 2);
 		&__previous {
 			left: -4px;
@@ -976,6 +981,7 @@ export default {
 	}
 
 	.stripe-wrapper & {
+		position: absolute;
 		top: 16px;
 		&__previous {
 			left: 8px;
@@ -1011,7 +1017,7 @@ export default {
 }
 
 .stripe--collapse {
-	position: absolute;
+	position: absolute !important;
 	top: calc(-1 * var(--default-clickable-area));
 	right: 0;
 	z-index: 2;
