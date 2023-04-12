@@ -58,7 +58,7 @@ export default class JitsiStreamBackgroundEffect {
 			this._virtualImage.crossOrigin = 'anonymous'
 			this._virtualImage.src = this._options.virtualBackground.virtualSource
 		}
-		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.VIDEO_STREAM) {
 			this._virtualVideo = document.createElement('video')
 			this._virtualVideo.autoplay = true
 			this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream
@@ -193,7 +193,7 @@ export default class JitsiStreamBackgroundEffect {
 
 		this._outputCanvasCtx.globalCompositeOperation = 'destination-over'
 		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
-            || backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+            || backgroundType === VIRTUAL_BACKGROUND_TYPE.VIDEO_STREAM) {
 			this._outputCanvasCtx.drawImage(
 				backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
 					? this._virtualImage

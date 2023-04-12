@@ -5,6 +5,6 @@
  */
 export const VIRTUAL_BACKGROUND_TYPE = {
 	IMAGE: 'image',
-	DESKTOP_SHARE: 'desktop-share',
+	VIDEO_STREAM: 'video-stream',
 	BLUR: 'blur',
 }
