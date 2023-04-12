@@ -61,7 +61,7 @@ export default class JitsiStreamBackgroundEffect {
 		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.VIDEO_STREAM) {
 			this._virtualVideo = document.createElement('video')
 			this._virtualVideo.autoplay = true
-			this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource
+			this._virtualVideo.srcObject = this._options.virtualBackground.virtualSource
 		}
 		const segmentationPixelCount = this._options.width * this._options.height
 		this._segmentationPixelCount = segmentationPixelCount
