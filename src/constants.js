@@ -209,6 +209,7 @@ export const VIRTUAL_BACKGROUND = {
 	BACKGROUND_TYPE: {
 		BLUR: 'blur',
 		IMAGE: 'image',
+		VIDEO: 'video',
 		VIDEO_STREAM: 'video-stream',
 	},
 	BLUR_STRENGTH: {

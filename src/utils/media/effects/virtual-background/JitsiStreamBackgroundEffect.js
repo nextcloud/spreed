@@ -146,20 +146,20 @@ export default class JitsiStreamBackgroundEffect {
 	 *
 	 * The virtual background can be modified while the effect is running.
 	 *
-	 * If an image URL is given it can be any URL accepted by the "src"
-	 * attribute of HTML image elements, so it is possible to set a "real" URL
-	 * or, for example, one generated with "URL.createObjectURL()".
+	 * If an image or video URL is given it can be any URL accepted by the "src"
+	 * attribute of HTML image or video elements, so it is possible to set a
+	 * "real" URL or, for example, one generated with "URL.createObjectURL()".
 	 *
 	 * @param {object} virtualBackground an object with the virtual background
 	 *        properties.
-	 * @param {string} virtualBackground.backgroundType BLUR, IMAGE or
+	 * @param {string} virtualBackground.backgroundType BLUR, IMAGE, VIDEO or
 	 *        VIDEO_STREAM.
 	 * @param {number} virtualBackground.blurValue the blur to apply on a 720p
 	 *        video; it will be automatically scaled as needed.
 	 *        Optional, only needed when background type is BLUR.
 	 * @param {string|MediaStream} virtualBackground.virtualSource the URL to
-	 *        the image, or a video stream.
-	 *        Optional, only needed when background type is IMAGE or
+	 *        the image or video, or a video stream.
+	 *        Optional, only needed when background type is IMAGE, VIDEO or
 	 *        VIDEO_STREAM.
 	 */
 	setVirtualBackground(virtualBackground) {
@@ -173,6 +173,20 @@ export default class JitsiStreamBackgroundEffect {
 			this._virtualImage = document.createElement('img')
 			this._virtualImage.crossOrigin = 'anonymous'
 			this._virtualImage.src = this._options.virtualBackground.virtualSource
+
+			return
+		}
+
+		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO) {
+			this._virtualVideo = document.createElement('video')
+			this._virtualVideo.crossOrigin = 'anonymous'
+			this._virtualVideo.loop = true
+			this._virtualVideo.muted = true
+			this._virtualVideo.src = this._options.virtualBackground.virtualSource
+
+			if (this._running) {
+				this._virtualVideo.play()
+			}
 
 			return
 		}
@@ -232,6 +246,7 @@ export default class JitsiStreamBackgroundEffect {
 
 		this._outputCanvasCtx.globalCompositeOperation = 'destination-over'
 		if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
+			|| backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO
             || backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO_STREAM) {
 			this._outputCanvasCtx.drawImage(
 				backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
