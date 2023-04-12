@@ -150,7 +150,7 @@ export default class VirtualBackground extends TrackSinkSource {
 		const isSimd = VirtualBackground.isWasmSimd()
 
 		const virtualBackground = {
-			type: VIRTUAL_BACKGROUND_TYPE.NONE,
+			backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
 			blurValue: 10,
 		}
 		const options = {

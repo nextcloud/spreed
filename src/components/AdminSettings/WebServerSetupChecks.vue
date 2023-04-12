@@ -159,7 +159,7 @@ export default {
 			// loaded.
 			const options = {
 				virtualBackground: {
-					type: VIRTUAL_BACKGROUND_TYPE.NONE,
+					type: VIRTUAL_BACKGROUND_TYPE.BLUR,
 				},
 				simd: VirtualBackground.isWasmSimd(),
 			}
