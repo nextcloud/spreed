@@ -142,6 +142,15 @@ export default class JitsiStreamBackgroundEffect {
 	}
 
 	/**
+	 * Returns the virtual background properties.
+	 *
+	 * @return {object} the virtual background properties.
+	 */
+	getVirtualBackground() {
+		return this._options.virtualBackground
+	}
+
+	/**
 	 * Sets the virtual background properties to use.
 	 *
 	 * The virtual background can be modified while the effect is running.

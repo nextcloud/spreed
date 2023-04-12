@@ -293,6 +293,10 @@ export default class VirtualBackground extends TrackSinkSource {
 		this._outputStream = null
 	}
 
+	getVirtualBackground() {
+		return this._jitsiStreamBackgroundEffect.getVirtualBackground()
+	}
+
 	/**
 	 * @param {object} virtualBackground the virtual background properties; see
 	 *        JitsiStreamBackgroundEffect.setVirtualBackground().

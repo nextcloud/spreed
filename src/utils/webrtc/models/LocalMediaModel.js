@@ -19,6 +19,7 @@
  *
  */
 
+import { VIRTUAL_BACKGROUND } from '../../../constants.js'
 import store from '../../../store/index.js'
 import EmitterMixin from '../../EmitterMixin.js'
 
@@ -42,6 +43,9 @@ export default function LocalMediaModel() {
 		videoEnabled: false,
 		virtualBackgroundAvailable: false,
 		virtualBackgroundEnabled: false,
+		virtualBackgroundType: null,
+		virtualBackgroundBlurStrength: null,
+		virtualBackgroundUrl: null,
 		localScreen: null,
 		token: '',
 		raisedHand: false,
@@ -63,6 +67,7 @@ export default function LocalMediaModel() {
 	this._handleVideoDisallowedBound = this._handleVideoDisallowed.bind(this)
 	this._handleVirtualBackgroundLoadFailedBound = this._handleVirtualBackgroundLoadFailed.bind(this)
 	this._handleVirtualBackgroundOnBound = this._handleVirtualBackgroundOn.bind(this)
+	this._handleVirtualBackgroundSetBound = this._handleVirtualBackgroundSet.bind(this)
 	this._handleVirtualBackgroundOffBound = this._handleVirtualBackgroundOff.bind(this)
 	this._handleLocalScreenBound = this._handleLocalScreen.bind(this)
 	this._handleLocalScreenStoppedBound = this._handleLocalScreenStopped.bind(this)
@@ -107,6 +112,7 @@ LocalMediaModel.prototype = {
 			this._webRtc.webrtc.off('videoDisallowed', this._handleVideoDisallowedBound)
 			this._webRtc.webrtc.off('virtualBackgroundLoadFailed', this._handleVirtualBackgroundLoadFailedBound)
 			this._webRtc.webrtc.off('virtualBackgroundOn', this._handleVirtualBackgroundOnBound)
+			this._webRtc.webrtc.off('virtualBackgroundSet', this._handleVirtualBackgroundSetBound)
 			this._webRtc.webrtc.off('virtualBackgroundOff', this._handleVirtualBackgroundOffBound)
 			this._webRtc.webrtc.off('localScreen', this._handleLocalScreenBound)
 			this._webRtc.webrtc.off('localScreenStopped', this._handleLocalScreenStoppedBound)
@@ -125,6 +131,7 @@ LocalMediaModel.prototype = {
 		this.set('videoEnabled', false)
 		this.set('virtualBackgroundAvailable', this._webRtc.webrtc.isVirtualBackgroundAvailable())
 		this.set('virtualBackgroundEnabled', this._webRtc.webrtc.isVirtualBackgroundEnabled())
+		this._setVirtualBackgroundTypeAndParameters(this._webRtc.webrtc.getVirtualBackground())
 		this.set('localScreen', null)
 
 		this._webRtc.webrtc.on('localStreamRequested', this._handleLocalStreamRequestedBound)
@@ -143,6 +150,7 @@ LocalMediaModel.prototype = {
 		this._webRtc.webrtc.on('videoDisallowed', this._handleVideoDisallowedBound)
 		this._webRtc.webrtc.on('virtualBackgroundLoadFailed', this._handleVirtualBackgroundLoadFailedBound)
 		this._webRtc.webrtc.on('virtualBackgroundOn', this._handleVirtualBackgroundOnBound)
+		this._webRtc.webrtc.on('virtualBackgroundSet', this._handleVirtualBackgroundSetBound)
 		this._webRtc.webrtc.on('virtualBackgroundOff', this._handleVirtualBackgroundOffBound)
 		this._webRtc.webrtc.on('localScreen', this._handleLocalScreenBound)
 		this._webRtc.webrtc.on('localScreenStopped', this._handleLocalScreenStoppedBound)
@@ -307,6 +315,27 @@ LocalMediaModel.prototype = {
 		this.set('virtualBackgroundEnabled', true)
 	},
 
+	_setVirtualBackgroundTypeAndParameters(virtualBackground) {
+		this.set('virtualBackgroundType', virtualBackground.backgroundType)
+
+		if (virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
+			this.set('virtualBackgroundBlurStrength', virtualBackground.blurValue)
+			this.set('virtualBackgroundUrl', null)
+
+			return
+		}
+
+		if (virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
+			|| virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO) {
+			this.set('virtualBackgroundUrl', virtualBackground.virtualSource)
+			this.set('virtualBackgroundBlurStrength', null)
+		}
+	},
+
+	_handleVirtualBackgroundSet(virtualBackground) {
+		this._setVirtualBackgroundTypeAndParameters(virtualBackground)
+	},
+
 	_handleVirtualBackgroundOff() {
 		this.set('virtualBackgroundEnabled', false)
 	},
@@ -367,6 +396,43 @@ LocalMediaModel.prototype = {
 		localStorage.setItem('virtualBackgroundEnabled_' + this.get('token'), 'true')
 
 		this._webRtc.enableVirtualBackground()
+	},
+
+	setVirtualBackgroundBlur(blurStrength) {
+		if (!this._webRtc) {
+			throw new Error('WebRtc not initialized yet')
+		}
+
+		if (!blurStrength) {
+			blurStrength = VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT
+		}
+
+		this._webRtc.setVirtualBackground({
+			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
+			blurValue: blurStrength,
+		})
+	},
+
+	setVirtualBackgroundImage(imageUrl) {
+		if (!this._webRtc) {
+			throw new Error('WebRtc not initialized yet')
+		}
+
+		this._webRtc.setVirtualBackground({
+			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE,
+			virtualSource: imageUrl,
+		})
+	},
+
+	setVirtualBackgroundVideo(videoUrl) {
+		if (!this._webRtc) {
+			throw new Error('WebRtc not initialized yet')
+		}
+
+		this._webRtc.setVirtualBackground({
+			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO,
+			virtualSource: videoUrl,
+		})
 	},
 
 	disableVirtualBackground() {

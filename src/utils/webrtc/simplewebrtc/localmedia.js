@@ -388,6 +388,11 @@ LocalMedia.prototype.enableVirtualBackground = function() {
 	this.emit('virtualBackgroundOn')
 }
 
+LocalMedia.prototype.setVirtualBackground = function(virtualBackground) {
+	this._virtualBackground.setVirtualBackground(virtualBackground)
+	this.emit('virtualBackgroundSet', virtualBackground)
+}
+
 LocalMedia.prototype.disableVirtualBackground = function() {
 	this._virtualBackground.setEnabled(false)
 	this.emit('virtualBackgroundOff')
@@ -463,6 +468,10 @@ LocalMedia.prototype.isVirtualBackgroundAvailable = function() {
 
 LocalMedia.prototype.isVirtualBackgroundEnabled = function() {
 	return this._virtualBackground.isEnabled()
+}
+
+LocalMedia.prototype.getVirtualBackground = function() {
+	return this._virtualBackground.getVirtualBackground()
 }
 
 LocalMedia.prototype._removeStream = function(stream) {
