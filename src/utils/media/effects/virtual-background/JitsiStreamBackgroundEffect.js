@@ -171,14 +171,6 @@ export default class JitsiStreamBackgroundEffect {
 
 		// Smooth out the edges.
 		this._outputCanvasCtx.filter = `blur(${edgesBlurValue}px)`
-		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-			// Save current context before applying transformations.
-			this._outputCanvasCtx.save()
-
-			// Flip the canvas and prevent mirror behaviour.
-			this._outputCanvasCtx.scale(-1, 1)
-			this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0)
-		}
 		this._outputCanvasCtx.drawImage(
 			this._segmentationMaskCanvas,
 			0,
@@ -190,25 +182,12 @@ export default class JitsiStreamBackgroundEffect {
 			this._inputVideoElement.videoWidth,
 			this._inputVideoElement.videoHeight
 		)
-		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-			this._outputCanvasCtx.restore()
-		}
 		this._outputCanvasCtx.globalCompositeOperation = 'source-in'
 		this._outputCanvasCtx.filter = 'none'
 
 		// Draw the foreground video.
-		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-			// Save current context before applying transformations.
-			this._outputCanvasCtx.save()
 
-			// Flip the canvas and prevent mirror behaviour.
-			this._outputCanvasCtx.scale(-1, 1)
-			this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0)
-		}
 		this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
-		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-			this._outputCanvasCtx.restore()
-		}
 
 		// Draw the background.
 
