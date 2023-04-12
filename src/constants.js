@@ -211,4 +211,7 @@ export const VIRTUAL_BACKGROUND = {
 		IMAGE: 'image',
 		VIDEO_STREAM: 'video-stream',
 	},
+	BLUR_STRENGTH: {
+		DEFAULT: 10,
+	},
 }

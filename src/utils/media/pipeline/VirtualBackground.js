@@ -151,7 +151,7 @@ export default class VirtualBackground extends TrackSinkSource {
 
 		const virtualBackground = {
 			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
-			blurValue: 10,
+			blurValue: VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT,
 		}
 		const options = {
 			...segmentationDimensions.modelLandscape,
