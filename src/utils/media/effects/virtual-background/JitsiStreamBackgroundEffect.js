@@ -39,9 +39,18 @@ export default class JitsiStreamBackgroundEffect {
 	 * Represents a modified video MediaStream track.
 	 *
 	 * @class
-	 * @param {object} options - Segmentation dimensions.
+	 * @param {object} options object with the parameters.
+	 * @param {number} options.width segmentation width.
+	 * @param {number} options.height segmentation height.
+	 * @param {string} options.virtualBackground.backgroundType BLUR, IMAGE or
+	 *        VIDEO_STREAM.
 	 * @param {number} options.virtualBackground.blurValue the blur to apply on
-	 *                 a 720p video; it will be automatically scaled as needed.
+	 *        a 720p video; it will be automatically scaled as needed.
+	 *        Optional, only needed when background type is BLUR.
+	 * @param {string|MediaStream} options.virtualBackground.virtualSource the
+	 *        URL to the image, or a video stream.
+	 *        Optional, only needed when background type is IMAGE or
+	 *        VIDEO_STREAM.
 	 */
 	constructor(options) {
 		const isSimd = options.simd
