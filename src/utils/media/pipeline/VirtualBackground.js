@@ -51,6 +51,10 @@ import TrackSinkSource from './TrackSinkSource.js'
  * to refresh the data if the track constraints, like its width or height,
  * change.
  *
+ * The background can be the real background, but blurred, or an image or video
+ * that fully replaces the real background. By default a blurred background is
+ * used, but this can be changed by calling "setVirtualBackground()".
+ *
  *        -------------------
  *       |                   |
  *  ---> | VirtualBackground | --->
@@ -287,6 +291,14 @@ export default class VirtualBackground extends TrackSinkSource {
 
 		this._inputStream = null
 		this._outputStream = null
+	}
+
+	/**
+	 * @param {object} virtualBackground the virtual background properties; see
+	 *        JitsiStreamBackgroundEffect.setVirtualBackground().
+	 */
+	setVirtualBackground(virtualBackground) {
+		return this._jitsiStreamBackgroundEffect.setVirtualBackground(virtualBackground)
 	}
 
 }

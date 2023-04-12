@@ -42,15 +42,7 @@ export default class JitsiStreamBackgroundEffect {
 	 * @param {object} options object with the parameters.
 	 * @param {number} options.width segmentation width.
 	 * @param {number} options.height segmentation height.
-	 * @param {string} options.virtualBackground.backgroundType BLUR, IMAGE or
-	 *        VIDEO_STREAM.
-	 * @param {number} options.virtualBackground.blurValue the blur to apply on
-	 *        a 720p video; it will be automatically scaled as needed.
-	 *        Optional, only needed when background type is BLUR.
-	 * @param {string|MediaStream} options.virtualBackground.virtualSource the
-	 *        URL to the image, or a video stream.
-	 *        Optional, only needed when background type is IMAGE or
-	 *        VIDEO_STREAM.
+	 * @param {object} options.virtualBackground see "setVirtualBackground()".
 	 */
 	constructor(options) {
 		const isSimd = options.simd
@@ -62,16 +54,8 @@ export default class JitsiStreamBackgroundEffect {
 		this._loaded = false
 		this._loadFailed = false
 
-		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
-			this._virtualImage = document.createElement('img')
-			this._virtualImage.crossOrigin = 'anonymous'
-			this._virtualImage.src = this._options.virtualBackground.virtualSource
-		}
-		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO_STREAM) {
-			this._virtualVideo = document.createElement('video')
-			this._virtualVideo.autoplay = true
-			this._virtualVideo.srcObject = this._options.virtualBackground.virtualSource
-		}
+		this.setVirtualBackground(this._options.virtualBackground)
+
 		const segmentationPixelCount = this._options.width * this._options.height
 		this._segmentationPixelCount = segmentationPixelCount
 		this._model = new WebWorker()
@@ -155,6 +139,49 @@ export default class JitsiStreamBackgroundEffect {
 	 */
 	didLoadFail() {
 		return this._loadFailed
+	}
+
+	/**
+	 * Sets the virtual background properties to use.
+	 *
+	 * The virtual background can be modified while the effect is running.
+	 *
+	 * If an image URL is given it can be any URL accepted by the "src"
+	 * attribute of HTML image elements, so it is possible to set a "real" URL
+	 * or, for example, one generated with "URL.createObjectURL()".
+	 *
+	 * @param {object} virtualBackground an object with the virtual background
+	 *        properties.
+	 * @param {string} virtualBackground.backgroundType BLUR, IMAGE or
+	 *        VIDEO_STREAM.
+	 * @param {number} virtualBackground.blurValue the blur to apply on a 720p
+	 *        video; it will be automatically scaled as needed.
+	 *        Optional, only needed when background type is BLUR.
+	 * @param {string|MediaStream} virtualBackground.virtualSource the URL to
+	 *        the image, or a video stream.
+	 *        Optional, only needed when background type is IMAGE or
+	 *        VIDEO_STREAM.
+	 */
+	setVirtualBackground(virtualBackground) {
+		// Clear previous elements to allow them to be garbage collected
+		this._virtualImage = null
+		this._virtualVideo = null
+
+		this._options.virtualBackground = virtualBackground
+
+		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+			this._virtualImage = document.createElement('img')
+			this._virtualImage.crossOrigin = 'anonymous'
+			this._virtualImage.src = this._options.virtualBackground.virtualSource
+
+			return
+		}
+
+		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO_STREAM) {
+			this._virtualVideo = document.createElement('video')
+			this._virtualVideo.autoplay = true
+			this._virtualVideo.srcObject = this._options.virtualBackground.virtualSource
+		}
 	}
 
 	/**
