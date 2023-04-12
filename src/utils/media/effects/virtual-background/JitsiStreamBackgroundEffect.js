@@ -179,8 +179,11 @@ export default class JitsiStreamBackgroundEffect {
 
 		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO_STREAM) {
 			this._virtualVideo = document.createElement('video')
-			this._virtualVideo.autoplay = true
 			this._virtualVideo.srcObject = this._options.virtualBackground.virtualSource
+
+			if (this._running) {
+				this._virtualVideo.play()
+			}
 		}
 	}
 
@@ -335,6 +338,8 @@ export default class JitsiStreamBackgroundEffect {
 	 * @return {MediaStream} - The stream with the applied effect.
 	 */
 	startEffect(stream) {
+		this._running = true
+
 		this._stream = stream
 		this._maskFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Blur effect worker' })
 		this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer
@@ -362,6 +367,10 @@ export default class JitsiStreamBackgroundEffect {
 				message: 'this._maskFrameTimerWorker',
 			})
 			this._inputVideoElement.onloadeddata = null
+		}
+
+		if (this._virtualVideo) {
+			this._virtualVideo.play()
 		}
 
 		this._frameId = -1
@@ -393,12 +402,18 @@ export default class JitsiStreamBackgroundEffect {
 	 * @return {void}
 	 */
 	stopEffect() {
+		this._running = false
+
 		this._maskFrameTimerWorker.postMessage({
 			id: CLEAR_TIMEOUT,
 			message: 'stopEffect',
 		})
 
 		this._maskFrameTimerWorker.terminate()
+
+		if (this._virtualVideo) {
+			this._virtualVideo.pause()
+		}
 	}
 
 }
