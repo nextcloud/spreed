@@ -59,7 +59,7 @@
 				Toggle audio and video on and off before starting or joining
 				a call.
 			-->
-			<div class="media-settings__call-preferences">
+			<div class="media-settings__toggles-wrapper">
 				<div class="media-settings__toggles">
 					<!-- Audio toggle -->
 					<NcButton v-tooltip="audioButtonTooltip"
@@ -105,10 +105,12 @@
 						</template>
 					</NcButton>
 				</div>
-				<NcButton v-if="!showDeviceSelection"
-					type="tertiary"
+			</div>
+
+			<div class="media-settings__call-preferences">
+				<NcButton :type="showDeviceSelection ? 'secondary' : 'tertiary'"
 					class="select-devices"
-					@click="showDeviceSelection = true">
+					@click="toggleChooseDevices">
 					<template #icon>
 						<Cog :size="20" />
 					</template>
@@ -423,6 +425,10 @@ export default {
 				this.blurOn = false
 			}
 		},
+
+		toggleChooseDevices() {
+			this.showDeviceSelection = !this.showDeviceSelection
+		},
 	},
 }
 </script>
@@ -454,8 +460,21 @@ export default {
 		background-color: var(--color-loading-dark);
 	}
 
+	&__toggles-wrapper {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		position: relative;
+		height: calc(var(--default-grid-baseline) * 2);
+	}
+
 	&__toggles {
 		display: flex;
+		position: absolute;
+		top: calc(var(--default-grid-baseline) * -11);
+		background: var(--color-main-background);
+		border-radius: var(--border-radius-pill);
+		box-shadow: 0 0 var(--default-grid-baseline) var(--color-box-shadow);
 	}
 
 	&__device-selection {
