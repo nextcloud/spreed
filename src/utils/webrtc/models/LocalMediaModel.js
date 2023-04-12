@@ -407,6 +407,10 @@ LocalMediaModel.prototype = {
 			blurStrength = VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT
 		}
 
+		localStorage.setItem('virtualBackgroundType_' + this.get('token'), VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
+		localStorage.setItem('virtualBackgroundBlurStrength_' + this.get('token'), blurStrength)
+		localStorage.removeItem('virtualBackgroundUrl_' + this.get('token'))
+
 		this._webRtc.setVirtualBackground({
 			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
 			blurValue: blurStrength,
@@ -418,6 +422,10 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
+		localStorage.setItem('virtualBackgroundType_' + this.get('token'), VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
+		localStorage.setItem('virtualBackgroundUrl_' + this.get('token'), imageUrl)
+		localStorage.removeItem('virtualBackgroundBlurStrength_' + this.get('token'))
+
 		this._webRtc.setVirtualBackground({
 			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE,
 			virtualSource: imageUrl,
@@ -428,6 +436,10 @@ LocalMediaModel.prototype = {
 		if (!this._webRtc) {
 			throw new Error('WebRtc not initialized yet')
 		}
+
+		localStorage.setItem('virtualBackgroundType_' + this.get('token'), VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO)
+		localStorage.setItem('virtualBackgroundUrl_' + this.get('token'), videoUrl)
+		localStorage.removeItem('virtualBackgroundBlurStrength_' + this.get('token'))
 
 		this._webRtc.setVirtualBackground({
 			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO,

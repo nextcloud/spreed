@@ -21,7 +21,7 @@
 
 import Axios from '@nextcloud/axios'
 
-import { PARTICIPANT } from '../../constants.js'
+import { PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.js'
 import { fetchSignalingSettings } from '../../services/signalingService.js'
 import CancelableRequest from '../cancelableRequest.js'
 import Signaling from '../signaling.js'
@@ -221,6 +221,9 @@ async function signalingJoinCall(token, flags, silent) {
 			const enableAudio = !localStorage.getItem('audioDisabled_' + token)
 			const enableVideo = !localStorage.getItem('videoDisabled_' + token)
 			const enableVirtualBackground = !!localStorage.getItem('virtualBackgroundEnabled_' + token)
+			const virtualBackgroundType = localStorage.getItem('virtualBackgroundType_' + token)
+			const virtualBackgroundBlurStrength = localStorage.getItem('virtualBackgroundBlurStrength_' + token)
+			const virtualBackgroundUrl = localStorage.getItem('virtualBackgroundUrl_' + token)
 
 			if (enableAudio) {
 				localMediaModel.enableAudio()
@@ -236,6 +239,13 @@ async function signalingJoinCall(token, flags, silent) {
 				localMediaModel.enableVirtualBackground()
 			} else {
 				localMediaModel.disableVirtualBackground()
+			}
+			if (virtualBackgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+				localMediaModel.setVirtualBackgroundImage(virtualBackgroundUrl)
+			} else if (virtualBackgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO) {
+				localMediaModel.setVirtualBackgroundVideo(virtualBackgroundUrl)
+			} else {
+				localMediaModel.setVirtualBackgroundBlur(virtualBackgroundBlurStrength)
 			}
 
 			const startCallOnceLocalMediaStarted = (configuration) => {
