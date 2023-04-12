@@ -204,3 +204,11 @@ export const SIMULCAST = {
 	MEDIUM: 1,
 	HIGH: 2,
 }
+
+export const VIRTUAL_BACKGROUND = {
+	BACKGROUND_TYPE: {
+		BLUR: 'blur',
+		IMAGE: 'image',
+		VIDEO_STREAM: 'video-stream',
+	},
+}

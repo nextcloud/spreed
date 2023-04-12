@@ -60,7 +60,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
-import { VIRTUAL_BACKGROUND_TYPE } from '../../utils/media/effects/virtual-background/constants.js'
+import { VIRTUAL_BACKGROUND } from '../../constants.js'
 import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
 import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
 
@@ -159,7 +159,7 @@ export default {
 			// loaded.
 			const options = {
 				virtualBackground: {
-					type: VIRTUAL_BACKGROUND_TYPE.BLUR,
+					type: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
 				},
 				simd: VirtualBackground.isWasmSimd(),
 			}

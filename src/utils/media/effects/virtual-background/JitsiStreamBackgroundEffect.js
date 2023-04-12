@@ -1,6 +1,6 @@
 // @flow
 
-import { VIRTUAL_BACKGROUND_TYPE } from './constants.js'
+import { VIRTUAL_BACKGROUND } from '../../../../constants.js'
 import WebWorker from './JitsiStreamBackgroundEffect.worker.js'
 import {
 	CLEAR_TIMEOUT,
@@ -62,12 +62,12 @@ export default class JitsiStreamBackgroundEffect {
 		this._loaded = false
 		this._loadFailed = false
 
-		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
+		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
 			this._virtualImage = document.createElement('img')
 			this._virtualImage.crossOrigin = 'anonymous'
 			this._virtualImage.src = this._options.virtualBackground.virtualSource
 		}
-		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.VIDEO_STREAM) {
+		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO_STREAM) {
 			this._virtualVideo = document.createElement('video')
 			this._virtualVideo.autoplay = true
 			this._virtualVideo.srcObject = this._options.virtualBackground.virtualSource
@@ -170,7 +170,7 @@ export default class JitsiStreamBackgroundEffect {
 
 		const scaledBlurFactor = width / 720.0
 		const backgroundBlurValue = this._options.virtualBackground.blurValue * scaledBlurFactor
-		const edgesBlurValue = (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE ? 4 : 8) * scaledBlurFactor
+		const edgesBlurValue = (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE ? 4 : 8) * scaledBlurFactor
 
 		this._outputCanvasElement.height = height
 		this._outputCanvasElement.width = width
@@ -201,10 +201,10 @@ export default class JitsiStreamBackgroundEffect {
 		// Draw the background.
 
 		this._outputCanvasCtx.globalCompositeOperation = 'destination-over'
-		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
-            || backgroundType === VIRTUAL_BACKGROUND_TYPE.VIDEO_STREAM) {
+		if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
+            || backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO_STREAM) {
 			this._outputCanvasCtx.drawImage(
-				backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
+				backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
 					? this._virtualImage
 					: this._virtualVideo,
 				0,

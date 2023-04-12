@@ -21,7 +21,7 @@
  *
  */
 
-import { VIRTUAL_BACKGROUND_TYPE } from '../effects/virtual-background/constants.js'
+import { VIRTUAL_BACKGROUND } from '../../../constants.js'
 import JitsiStreamBackgroundEffect from '../effects/virtual-background/JitsiStreamBackgroundEffect.js'
 import TrackSinkSource from './TrackSinkSource.js'
 
@@ -150,7 +150,7 @@ export default class VirtualBackground extends TrackSinkSource {
 		const isSimd = VirtualBackground.isWasmSimd()
 
 		const virtualBackground = {
-			backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
+			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
 			blurValue: 10,
 		}
 		const options = {
