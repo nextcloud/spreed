@@ -42,8 +42,10 @@
 			:aria-label="t('spreed', 'Conversation messages')"
 			:token="token"
 			:is-visible="isVisible" />
-		<NewMessageForm role="region"
+		<NewMessageForm v-if="containerId"
+			role="region"
 			:token="token"
+			:container="containerId"
 			:aria-label="t('spreed', 'Post message')" />
 	</div>
 </template>
@@ -73,6 +75,7 @@ export default {
 	data() {
 		return {
 			isDraggingOver: false,
+			containerId: undefined,
 		}
 	},
 
@@ -100,6 +103,10 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
+	},
+	mounted() {
+		// Postpone render of NewMessageForm until application is mounted
+		this.containerId = this.$store.getters.getMainContainerSelector()
 	},
 
 	methods: {
