@@ -31,7 +31,7 @@ class ParticipantEvent extends RoomEvent {
 
 
 	public function __construct(Room $room,
-								Participant $participant) {
+		Participant $participant) {
 		parent::__construct($room);
 		$this->participant = $participant;
 	}

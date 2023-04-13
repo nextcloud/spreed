@@ -28,8 +28,8 @@ namespace OCA\Talk\Controller;
 use GuzzleHttp\Exception\ConnectException;
 use OCA\Talk\Config;
 use OCA\Talk\Events\SignalingEvent;
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
@@ -78,23 +78,23 @@ class SignalingController extends OCSController {
 	private ?string $userId;
 
 	public function __construct(string $appName,
-								IRequest $request,
-								IConfig $serverConfig,
-								Config $talkConfig,
-								\OCA\Talk\Signaling\Manager $signalingManager,
-								TalkSession $session,
-								Manager $manager,
-								ParticipantService $participantService,
-								SessionService $sessionService,
-								IDBConnection $connection,
-								Messages $messages,
-								IUserManager $userManager,
-								IEventDispatcher $dispatcher,
-								ITimeFactory $timeFactory,
-								IClientService $clientService,
-								IThrottler $throttler,
-								LoggerInterface $logger,
-								?string $UserId) {
+		IRequest $request,
+		IConfig $serverConfig,
+		Config $talkConfig,
+		\OCA\Talk\Signaling\Manager $signalingManager,
+		TalkSession $session,
+		Manager $manager,
+		ParticipantService $participantService,
+		SessionService $sessionService,
+		IDBConnection $connection,
+		Messages $messages,
+		IUserManager $userManager,
+		IEventDispatcher $dispatcher,
+		ITimeFactory $timeFactory,
+		IClientService $clientService,
+		IThrottler $throttler,
+		LoggerInterface $logger,
+		?string $UserId) {
 		parent::__construct($appName, $request);
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;

@@ -37,9 +37,9 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\IDBConnection;
-use OCP\Notification\IManager;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Notification\IManager;
 use OCP\Server;
 use Psr\Log\LoggerInterface;
 
@@ -58,12 +58,12 @@ class Listener implements IEventListener {
 	protected bool $shouldSendCallNotification = false;
 
 	public function __construct(IDBConnection $connection,
-								IManager $notificationManager,
-								ParticipantService $participantsService,
-								IEventDispatcher $dispatcher,
-								IUserSession $userSession,
-								ITimeFactory $timeFactory,
-								LoggerInterface $logger) {
+		IManager $notificationManager,
+		ParticipantService $participantsService,
+		IEventDispatcher $dispatcher,
+		IUserSession $userSession,
+		ITimeFactory $timeFactory,
+		LoggerInterface $logger) {
 		$this->connection = $connection;
 		$this->notificationManager = $notificationManager;
 		$this->participantsService = $participantsService;

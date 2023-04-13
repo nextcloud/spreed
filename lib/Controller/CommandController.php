@@ -36,8 +36,8 @@ class CommandController extends OCSController {
 	protected CommandService $commandService;
 
 	public function __construct(string $appName,
-								IRequest $request,
-								CommandService $commandService) {
+		IRequest $request,
+		CommandService $commandService) {
 		parent::__construct($appName, $request);
 		$this->commandService = $commandService;
 	}

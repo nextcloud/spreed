@@ -59,9 +59,9 @@ class Listener {
 	protected TalkSession $talkSession;
 
 	public function __construct(Util $util,
-								ParticipantService $participantService,
-								IUserManager $userManager,
-								TalkSession $talkSession) {
+		ParticipantService $participantService,
+		IUserManager $userManager,
+		TalkSession $talkSession) {
 		$this->util = $util;
 		$this->participantService = $participantService;
 		$this->userManager = $userManager;

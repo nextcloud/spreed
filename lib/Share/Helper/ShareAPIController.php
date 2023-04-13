@@ -50,12 +50,12 @@ class ShareAPIController {
 	protected IURLGenerator $urlGenerator;
 
 	public function __construct(
-			string $UserId,
-			Manager $manager,
-			ParticipantService $participantService,
-			ITimeFactory $timeFactory,
-			IL10N $l10n,
-			IURLGenerator $urlGenerator
+		string $UserId,
+		Manager $manager,
+		ParticipantService $participantService,
+		ITimeFactory $timeFactory,
+		IL10N $l10n,
+		IURLGenerator $urlGenerator
 	) {
 		$this->userId = $UserId;
 		$this->manager = $manager;

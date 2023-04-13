@@ -23,9 +23,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Command\Command;
 
+use OC\Core\Command\Base;
 use OCA\Talk\Model\Command;
 use OCA\Talk\Service\CommandService;
-use OC\Core\Command\Base;
 use OCP\App\AppPathNotFoundException;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Db\DoesNotExistException;

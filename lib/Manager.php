@@ -73,21 +73,21 @@ class Manager {
 	protected IL10N $l;
 
 	public function __construct(IDBConnection $db,
-								IConfig $config,
-								Config $talkConfig,
-								IAppManager $appManager,
-								AttendeeMapper $attendeeMapper,
-								SessionMapper $sessionMapper,
-								ParticipantService $participantService,
-								ISecureRandom $secureRandom,
-								IUserManager $userManager,
-								IGroupManager $groupManager,
-								CommentsManager $commentsManager,
-								TalkSession $talkSession,
-								IEventDispatcher $dispatcher,
-								ITimeFactory $timeFactory,
-								IHasher $hasher,
-								IL10N $l) {
+		IConfig $config,
+		Config $talkConfig,
+		IAppManager $appManager,
+		AttendeeMapper $attendeeMapper,
+		SessionMapper $sessionMapper,
+		ParticipantService $participantService,
+		ISecureRandom $secureRandom,
+		IUserManager $userManager,
+		IGroupManager $groupManager,
+		CommentsManager $commentsManager,
+		TalkSession $talkSession,
+		IEventDispatcher $dispatcher,
+		ITimeFactory $timeFactory,
+		IHasher $hasher,
+		IL10N $l) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->talkConfig = $talkConfig;

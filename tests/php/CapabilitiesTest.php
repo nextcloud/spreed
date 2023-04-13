@@ -30,11 +30,11 @@ use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\App\IAppManager;
 use OCP\Capabilities\IPublicCapability;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
-use OCP\App\IAppManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 

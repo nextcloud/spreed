@@ -36,8 +36,8 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Notification\IManager as INotificationManager;
 use OCP\IL10N;
+use OCP\Notification\IManager as INotificationManager;
 
 class BreakoutRoomService {
 	public function __construct(

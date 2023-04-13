@@ -90,29 +90,29 @@ class ChatController extends AEnvironmentAwareController {
 	private IL10N $l;
 
 	public function __construct(string $appName,
-								?string $UserId,
-								IRequest $request,
-								IUserManager $userManager,
-								IAppManager $appManager,
-								ChatManager $chatManager,
-								ReactionManager $reactionManager,
-								ParticipantService $participantService,
-								SessionService $sessionService,
-								AttachmentService $attachmentService,
-								avatarService $avatarService,
-								GuestManager $guestManager,
-								MessageParser $messageParser,
-								RoomShareProvider $shareProvider,
-								IManager $autoCompleteManager,
-								IUserStatusManager $statusManager,
-								MatterbridgeManager $matterbridgeManager,
-								SearchPlugin $searchPlugin,
-								ISearchResult $searchResult,
-								ITimeFactory $timeFactory,
-								IEventDispatcher $eventDispatcher,
-								IValidator $richObjectValidator,
-								ITrustedDomainHelper $trustedDomainHelper,
-								IL10N $l) {
+		?string $UserId,
+		IRequest $request,
+		IUserManager $userManager,
+		IAppManager $appManager,
+		ChatManager $chatManager,
+		ReactionManager $reactionManager,
+		ParticipantService $participantService,
+		SessionService $sessionService,
+		AttachmentService $attachmentService,
+		avatarService $avatarService,
+		GuestManager $guestManager,
+		MessageParser $messageParser,
+		RoomShareProvider $shareProvider,
+		IManager $autoCompleteManager,
+		IUserStatusManager $statusManager,
+		MatterbridgeManager $matterbridgeManager,
+		SearchPlugin $searchPlugin,
+		ISearchResult $searchResult,
+		ITimeFactory $timeFactory,
+		IEventDispatcher $eventDispatcher,
+		IValidator $richObjectValidator,
+		ITrustedDomainHelper $trustedDomainHelper,
+		IL10N $l) {
 		parent::__construct($appName, $request);
 
 		$this->userId = $UserId;
@@ -394,14 +394,14 @@ class ChatController extends AEnvironmentAwareController {
 	 *         'message'.
 	 */
 	public function receiveMessages(int $lookIntoFuture,
-									int $limit = 100,
-									int $lastKnownMessageId = 0,
-									int $lastCommonReadId = 0,
-									int $timeout = 30,
-									int $setReadMarker = 1,
-									int $includeLastKnown = 0,
-									int $noStatusUpdate = 0,
-									int $markNotificationsAsRead = 1): DataResponse {
+		int $limit = 100,
+		int $lastKnownMessageId = 0,
+		int $lastCommonReadId = 0,
+		int $timeout = 30,
+		int $setReadMarker = 1,
+		int $includeLastKnown = 0,
+		int $noStatusUpdate = 0,
+		int $markNotificationsAsRead = 1): DataResponse {
 		$limit = min(200, $limit);
 		$timeout = min(30, $timeout);
 

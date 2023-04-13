@@ -51,13 +51,13 @@ class SettingsController extends OCSController {
 	protected ?string $userId;
 
 	public function __construct(string $appName,
-								IRequest $request,
-								IRootFolder $rootFolder,
-								IConfig $config,
-								IGroupManager $groupManager,
-								ParticipantService $participantService,
-								LoggerInterface $logger,
-								?string $userId) {
+		IRequest $request,
+		IRootFolder $rootFolder,
+		IConfig $config,
+		IGroupManager $groupManager,
+		ParticipantService $participantService,
+		LoggerInterface $logger,
+		?string $userId) {
 		parent::__construct($appName, $request);
 		$this->rootFolder = $rootFolder;
 		$this->config = $config;

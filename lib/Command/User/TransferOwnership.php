@@ -46,8 +46,8 @@ class TransferOwnership extends Base {
 	private IUserManager $userManager;
 
 	public function __construct(ParticipantService $participantService,
-								Manager $manager,
-								IUserManager $userManager) {
+		Manager $manager,
+		IUserManager $userManager) {
 		parent::__construct();
 		$this->participantService = $participantService;
 		$this->manager = $manager;

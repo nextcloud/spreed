@@ -41,8 +41,8 @@ class Messages {
 	protected ITimeFactory $timeFactory;
 
 	public function __construct(IDBConnection $db,
-								ParticipantService $participantService,
-								ITimeFactory $timeFactory) {
+		ParticipantService $participantService,
+		ITimeFactory $timeFactory) {
 		$this->db = $db;
 		$this->participantService = $participantService;
 		$this->timeFactory = $timeFactory;

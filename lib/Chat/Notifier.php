@@ -60,13 +60,13 @@ class Notifier {
 	private Util $util;
 
 	public function __construct(INotificationManager $notificationManager,
-								IUserManager $userManager,
-								IGroupManager $groupManager,
-								ParticipantService $participantService,
-								Manager $manager,
-								IConfig $config,
-								ITimeFactory $timeFactory,
-								Util $util) {
+		IUserManager $userManager,
+		IGroupManager $groupManager,
+		ParticipantService $participantService,
+		Manager $manager,
+		IConfig $config,
+		ITimeFactory $timeFactory,
+		Util $util) {
 		$this->notificationManager = $notificationManager;
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;

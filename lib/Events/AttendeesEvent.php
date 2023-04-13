@@ -31,7 +31,7 @@ class AttendeesEvent extends RoomEvent {
 	protected array $attendees;
 
 	public function __construct(Room $room,
-								array $attendees) {
+		array $attendees) {
 		parent::__construct($room);
 		$this->attendees = $attendees;
 	}

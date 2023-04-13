@@ -23,10 +23,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\TimedJob;
 use OCA\Talk\Signaling\Messages;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
+use OCP\BackgroundJob\TimedJob;
 
 /**
  * Class ExpireSignalingMessage
@@ -37,7 +37,7 @@ class ExpireSignalingMessage extends TimedJob {
 	protected Messages $messages;
 
 	public function __construct(ITimeFactory $timeFactory,
-								Messages $messages) {
+		Messages $messages) {
 		parent::__construct($timeFactory);
 
 		// Every 5 minutes

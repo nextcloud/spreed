@@ -32,8 +32,8 @@ use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 
 class Version2001Date20171026134605 extends SimpleMigrationStep {
 	protected IDBConnection $connection;
@@ -41,7 +41,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	protected IConfig $config;
 
 	public function __construct(IDBConnection $connection,
-								IConfig $config) {
+		IConfig $config) {
 		$this->connection = $connection;
 		$this->config = $config;
 	}

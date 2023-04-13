@@ -61,10 +61,10 @@ trait TRoomCommand {
 	protected $groupManager;
 
 	public function __construct(Manager $manager,
-								RoomService $roomService,
-								ParticipantService $participantService,
-								IUserManager $userManager,
-								IGroupManager $groupManager) {
+		RoomService $roomService,
+		ParticipantService $participantService,
+		IUserManager $userManager,
+		IGroupManager $groupManager) {
 		parent::__construct();
 
 		$this->manager = $manager;

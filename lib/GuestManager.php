@@ -53,14 +53,14 @@ class GuestManager {
 	protected IEventDispatcher $dispatcher;
 
 	public function __construct(Config $talkConfig,
-								IMailer $mailer,
-								Defaults $defaults,
-								IUserSession $userSession,
-								ParticipantService $participantService,
-								PollService $pollService,
-								IURLGenerator $url,
-								IL10N $l,
-								IEventDispatcher $dispatcher) {
+		IMailer $mailer,
+		Defaults $defaults,
+		IUserSession $userSession,
+		ParticipantService $participantService,
+		PollService $pollService,
+		IURLGenerator $url,
+		IL10N $l,
+		IEventDispatcher $dispatcher) {
 		$this->talkConfig = $talkConfig;
 		$this->mailer = $mailer;
 		$this->defaults = $defaults;

@@ -57,13 +57,13 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 	protected ?string $userId;
 
 	public function __construct(IURLGenerator $urlGenerator,
-								Manager $manager,
-								ParticipantService $participantService,
-								ChatManager $chatManager,
-								AvatarService $avatarService,
-								MessageParser $messageParser,
-								IL10N $l,
-								?string $userId) {
+		Manager $manager,
+		ParticipantService $participantService,
+		ChatManager $chatManager,
+		AvatarService $avatarService,
+		MessageParser $messageParser,
+		IL10N $l,
+		?string $userId) {
 		$this->urlGenerator = $urlGenerator;
 		$this->roomManager = $manager;
 		$this->participantService = $participantService;

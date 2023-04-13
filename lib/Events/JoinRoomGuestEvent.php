@@ -32,8 +32,8 @@ class JoinRoomGuestEvent extends RoomEvent {
 
 
 	public function __construct(Room $room,
-								string $password,
-								bool $passedPasswordProtection) {
+		string $password,
+		bool $passedPasswordProtection) {
 		parent::__construct($room);
 		$this->cancelJoin = false;
 		$this->password = $password;

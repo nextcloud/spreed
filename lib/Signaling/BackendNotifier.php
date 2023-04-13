@@ -48,12 +48,12 @@ class BackendNotifier {
 	private IURLGenerator $urlGenerator;
 
 	public function __construct(Config $config,
-								LoggerInterface $logger,
-								IClientService $clientService,
-								ISecureRandom $secureRandom,
-								Manager $signalingManager,
-								ParticipantService $participantService,
-								IURLGenerator $urlGenerator) {
+		LoggerInterface $logger,
+		IClientService $clientService,
+		ISecureRandom $secureRandom,
+		Manager $signalingManager,
+		ParticipantService $participantService,
+		IURLGenerator $urlGenerator) {
 		$this->config = $config;
 		$this->logger = $logger;
 		$this->clientService = $clientService;

@@ -32,7 +32,7 @@ class CreateRoomTokenEvent extends Event {
 
 
 	public function __construct(int $entropy,
-								string $chars) {
+		string $chars) {
 		parent::__construct();
 		$this->entropy = $entropy;
 		$this->chars = $chars;

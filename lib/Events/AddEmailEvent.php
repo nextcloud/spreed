@@ -30,7 +30,7 @@ class AddEmailEvent extends RoomEvent {
 
 
 	public function __construct(Room $room,
-								string $email) {
+		string $email) {
 		parent::__construct($room);
 		$this->email = $email;
 	}

@@ -42,7 +42,7 @@ class RestrictStartingCalls {
 	protected ParticipantService $participantService;
 
 	public function __construct(IConfig $config,
-								ParticipantService $participantService) {
+		ParticipantService $participantService) {
 		$this->config = $config;
 		$this->participantService = $participantService;
 	}

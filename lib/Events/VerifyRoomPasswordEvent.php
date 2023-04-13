@@ -32,7 +32,7 @@ class VerifyRoomPasswordEvent extends RoomEvent {
 
 
 	public function __construct(Room $room,
-								string $password) {
+		string $password) {
 		parent::__construct($room);
 		$this->password = $password;
 	}

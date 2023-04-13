@@ -28,10 +28,10 @@ namespace OCA\Talk\Migration;
 use Closure;
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IDBConnection;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
-use OCP\IDBConnection;
-use OCP\DB\QueryBuilder\IQueryBuilder;
 
 class Version11000Date20200922161218 extends SimpleMigrationStep {
 	protected IDBConnection $connection;

@@ -38,10 +38,10 @@ class MatterbridgeController extends AEnvironmentAwareController {
 	protected MatterbridgeManager $bridgeManager;
 
 	public function __construct(string $appName,
-								?string $UserId,
-								IRequest $request,
-								Manager $manager,
-								MatterbridgeManager $bridgeManager) {
+		?string $UserId,
+		IRequest $request,
+		Manager $manager,
+		MatterbridgeManager $bridgeManager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->manager = $manager;

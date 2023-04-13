@@ -36,10 +36,10 @@ class ModifyRoomEvent extends RoomEvent {
 
 
 	public function __construct(Room $room,
-								string $parameter,
-								$newValue,
-								$oldValue = null,
-								?Participant $actor = null) {
+		string $parameter,
+		$newValue,
+		$oldValue = null,
+		?Participant $actor = null) {
 		parent::__construct($room);
 		$this->parameter = $parameter;
 		$this->newValue = $newValue;

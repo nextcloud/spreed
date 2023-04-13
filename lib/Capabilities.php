@@ -26,12 +26,12 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCA\Talk\Chat\ChatManager;
+use OCP\App\IAppManager;
 use OCP\Capabilities\IPublicCapability;
 use OCP\Comments\ICommentsManager;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
-use OCP\App\IAppManager;
 
 class Capabilities implements IPublicCapability {
 	protected IConfig $serverConfig;
@@ -41,10 +41,10 @@ class Capabilities implements IPublicCapability {
 	private IAppManager $appManager;
 
 	public function __construct(IConfig $serverConfig,
-								Config $talkConfig,
-								ICommentsManager $commentsManager,
-								IUserSession $userSession,
-								IAppManager $appManager) {
+		Config $talkConfig,
+		ICommentsManager $commentsManager,
+		IUserSession $userSession,
+		IAppManager $appManager) {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->commentsManager = $commentsManager;

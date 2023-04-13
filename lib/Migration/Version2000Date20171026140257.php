@@ -27,8 +27,8 @@ namespace OCA\Talk\Migration;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 use OCP\Security\ISecureRandom;
 
 class Version2000Date20171026140257 extends SimpleMigrationStep {
@@ -42,8 +42,8 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 	protected array $tokens;
 
 	public function __construct(IDBConnection $connection,
-								IConfig $config,
-								ISecureRandom $secureRandom) {
+		IConfig $config,
+		ISecureRandom $secureRandom) {
 		$this->connection = $connection;
 		$this->config = $config;
 		$this->secureRandom = $secureRandom;

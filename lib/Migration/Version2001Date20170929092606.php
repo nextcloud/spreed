@@ -25,8 +25,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Migration;
 
 use OCP\IConfig;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 
 class Version2001Date20170929092606 extends SimpleMigrationStep {
 	protected IConfig $config;
