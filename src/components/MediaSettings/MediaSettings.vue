@@ -137,14 +137,11 @@
 						@update:deviceId="videoInputId = $event" />
 				</template>
 			</div>
+
+			<!-- Always show setting -->
 			<NcCheckboxRadioSwitch :checked.sync="showMediaSettings"
 				class="checkbox">
-				<template v-if="canRecordingTakePlace">
-					{{ t('spreed', 'Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded.') }}
-				</template>
-				<template v-else>
-					{{ t('spreed', 'Always show this dialog before joining a call in this conversation.') }}
-				</template>
+				{{ t('spreed', 'Always show preview for this conversation.') }}
 			</NcCheckboxRadioSwitch>
 
 			<NcNoteCard v-if="isStartingRecording || isRecording"
@@ -339,10 +336,6 @@ export default {
 
 		showSilentCallOption() {
 			return !(this.hasCall && !this.isInLobby)
-		},
-
-		canRecordingTakePlace() {
-			return getCapabilities()?.spreed?.config?.call?.recording || false
 		},
 
 		showDeviceSelection() {
