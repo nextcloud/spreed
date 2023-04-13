@@ -67,7 +67,7 @@ class Operation implements IOperation {
 		TalkManager $talkManager,
 		ParticipantService $participantService,
 		IUserSession $session,
-		ChatManager $chatManager
+		ChatManager $chatManager,
 	) {
 		$this->l = $l;
 		$this->urlGenerator = $urlGenerator;

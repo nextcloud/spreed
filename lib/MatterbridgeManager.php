@@ -59,18 +59,20 @@ class MatterbridgeManager {
 	private LoggerInterface $logger;
 	private ITimeFactory $timeFactory;
 
-	public function __construct(IDBConnection $db,
-								IConfig $config,
-								IURLGenerator $urlGenerator,
-								IUserManager $userManager,
-								Manager $manager,
-								ParticipantService $participantService,
-								ChatManager $chatManager,
-								IAuthTokenProvider $tokenProvider,
-								ISecureRandom $random,
-								IAvatarManager $avatarManager,
-								LoggerInterface $logger,
-								ITimeFactory $timeFactory) {
+	public function __construct(
+		IDBConnection $db,
+		IConfig $config,
+		IURLGenerator $urlGenerator,
+		IUserManager $userManager,
+		Manager $manager,
+		ParticipantService $participantService,
+		ChatManager $chatManager,
+		IAuthTokenProvider $tokenProvider,
+		ISecureRandom $random,
+		IAvatarManager $avatarManager,
+		LoggerInterface $logger,
+		ITimeFactory $timeFactory,
+	) {
 		$this->avatarManager = $avatarManager;
 		$this->db = $db;
 		$this->config = $config;

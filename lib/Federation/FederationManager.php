@@ -68,7 +68,7 @@ class FederationManager {
 		Manager $manager,
 		ParticipantService $participantService,
 		InvitationMapper $invitationMapper,
-		Notifications $notifications
+		Notifications $notifications,
 	) {
 		$this->config = $config;
 		$this->manager = $manager;

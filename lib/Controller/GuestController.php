@@ -33,9 +33,11 @@ use OCP\IRequest;
 class GuestController extends AEnvironmentAwareController {
 	private GuestManager $guestManager;
 
-	public function __construct(string $appName,
-								IRequest $request,
-								GuestManager $guestManager) {
+	public function __construct(
+		string $appName,
+		IRequest $request,
+		GuestManager $guestManager,
+	) {
 		parent::__construct($appName, $request);
 
 		$this->guestManager = $guestManager;

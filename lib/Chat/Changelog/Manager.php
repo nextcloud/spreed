@@ -38,12 +38,14 @@ class Manager {
 	protected ITimeFactory $timeFactory;
 	protected IL10N $l;
 
-	public function __construct(IConfig $config,
-								IDBConnection $connection,
-								RoomManager $roomManager,
-								ChatManager $chatManager,
-								ITimeFactory $timeFactory,
-								IL10N $l) {
+	public function __construct(
+		IConfig $config,
+		IDBConnection $connection,
+		RoomManager $roomManager,
+		ChatManager $chatManager,
+		ITimeFactory $timeFactory,
+		IL10N $l,
+	) {
 		$this->config = $config;
 		$this->connection = $connection;
 		$this->roomManager = $roomManager;

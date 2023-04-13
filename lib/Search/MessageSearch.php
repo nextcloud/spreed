@@ -59,7 +59,7 @@ class MessageSearch implements IProvider {
 		MessageParser $messageParser,
 		ITimeFactory $timeFactory,
 		IURLGenerator $url,
-		IL10N $l
+		IL10N $l,
 	) {
 		$this->roomManager = $roomManager;
 		$this->participantService = $participantService;

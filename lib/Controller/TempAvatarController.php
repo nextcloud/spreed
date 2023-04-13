@@ -47,7 +47,7 @@ class TempAvatarController extends OCSController {
 		IAvatarManager $avatarManager,
 		IL10N $l,
 		LoggerInterface $logger,
-		string $userId
+		string $userId,
 	) {
 		parent::__construct($appName, $request);
 		$this->avatarManager = $avatarManager;

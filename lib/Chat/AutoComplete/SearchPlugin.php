@@ -49,14 +49,16 @@ class SearchPlugin implements ISearchPlugin {
 
 	protected ?Room $room = null;
 
-	public function __construct(IUserManager $userManager,
-								IGroupManager $groupManager,
-								GuestManager $guestManager,
-								TalkSession $talkSession,
-								ParticipantService $participantService,
-								Util $util,
-								?string $userId,
-								IL10N $l) {
+	public function __construct(
+		IUserManager $userManager,
+		IGroupManager $groupManager,
+		GuestManager $guestManager,
+		TalkSession $talkSession,
+		ParticipantService $participantService,
+		Util $util,
+		?string $userId,
+		IL10N $l,
+	) {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->guestManager = $guestManager;

@@ -49,9 +49,11 @@ class MessageParser {
 
 	protected array $guestNames = [];
 
-	public function __construct(IEventDispatcher $dispatcher,
-								IUserManager $userManager,
-								ParticipantService $participantService) {
+	public function __construct(
+		IEventDispatcher $dispatcher,
+		IUserManager $userManager,
+		ParticipantService $participantService,
+	) {
 		$this->dispatcher = $dispatcher;
 		$this->participantService = $participantService;
 		$this->userManager = $userManager;

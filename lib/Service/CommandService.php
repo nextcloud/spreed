@@ -33,7 +33,10 @@ class CommandService {
 
 	protected ShellExecutor $shellExecutor;
 
-	public function __construct(CommandMapper $mapper, ShellExecutor $shellExecutor) {
+	public function __construct(
+		CommandMapper $mapper,
+		ShellExecutor $shellExecutor,
+	) {
 		$this->mapper = $mapper;
 		$this->shellExecutor = $shellExecutor;
 	}

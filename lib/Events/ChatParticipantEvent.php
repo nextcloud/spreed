@@ -31,7 +31,12 @@ class ChatParticipantEvent extends ChatEvent {
 	protected Participant $participant;
 	protected bool $silent;
 
-	public function __construct(Room $room, IComment $message, Participant $participant, bool $silent) {
+	public function __construct(
+		Room $room,
+		IComment $message,
+		Participant $participant,
+		bool $silent,
+	) {
 		parent::__construct($room, $message);
 		$this->participant = $participant;
 		$this->silent = $silent;

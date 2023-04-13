@@ -50,7 +50,7 @@ class TalkAction implements ILinkAction {
 		Config $config,
 		IL10N $l,
 		IURLGenerator $urlGenerator,
-		IUserSession $userSession
+		IUserSession $userSession,
 	) {
 		$this->config = $config;
 		$this->l = $l;

@@ -42,16 +42,16 @@ class Call extends Base {
 			$l = $this->languageFactory->get('spreed', $language);
 			$parameters = $event->getSubjectParameters();
 
-//			$roomParameter = $this->getFormerRoom($l, (int) $parameters['room']);
-//			try {
-//				$room = $this->manager->getRoomById((int) $parameters['room']);
-//				$roomParameter = $this->getRoom($l, $room);
-//			} catch (RoomNotFoundException $e) {
-//			}
+			//			$roomParameter = $this->getFormerRoom($l, (int) $parameters['room']);
+			//			try {
+			//				$room = $this->manager->getRoomById((int) $parameters['room']);
+			//				$roomParameter = $this->getRoom($l, $room);
+			//			} catch (RoomNotFoundException $e) {
+			//			}
 
 			$result = $this->parseCall($event, $l);
 			$result['subject'] .= ' ' . $this->getDuration($l, (int) $parameters['duration']);
-//			$result['params']['call'] = $roomParameter;
+			//			$result['params']['call'] = $roomParameter;
 			$this->setSubjects($event, $result['subject'], $result['params']);
 		} else {
 			throw new \InvalidArgumentException('Wrong subject');

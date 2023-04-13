@@ -44,10 +44,12 @@ class Util {
 	/** @var bool[] */
 	private array $publicAccessLists = [];
 
-	public function __construct(IRootFolder $rootFolder,
-			ISession $session,
-			IShareManager $shareManager,
-			IUserMountCache $userMountCache) {
+	public function __construct(
+		IRootFolder $rootFolder,
+		ISession $session,
+		IShareManager $shareManager,
+		IUserMountCache $userMountCache,
+	) {
 		$this->rootFolder = $rootFolder;
 		$this->session = $session;
 		$this->shareManager = $shareManager;

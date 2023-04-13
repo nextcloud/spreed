@@ -25,8 +25,8 @@ declare(strict_types=1);
 
 namespace OCA\SpreedCheats\Controller;
 
-use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\OCSController;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\Share\IShare;
@@ -36,8 +36,8 @@ class ApiController extends OCSController {
 	private $db;
 
 	public function __construct(string $appName,
-								IRequest $request,
-								IDBConnection $db
+		IRequest $request,
+		IDBConnection $db
 	) {
 		parent::__construct($appName, $request);
 		$this->db = $db;

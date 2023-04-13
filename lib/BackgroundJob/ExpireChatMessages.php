@@ -33,8 +33,10 @@ use OCP\BackgroundJob\TimedJob;
 class ExpireChatMessages extends TimedJob {
 	private ChatManager $chatManager;
 
-	public function __construct(ITimeFactory $timeFactory,
-								ChatManager $chatManager) {
+	public function __construct(
+		ITimeFactory $timeFactory,
+		ChatManager $chatManager,
+	) {
 		parent::__construct($timeFactory);
 		$this->chatManager = $chatManager;
 

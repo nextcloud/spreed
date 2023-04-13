@@ -33,9 +33,11 @@ class AddParticipantsEvent extends RoomEvent {
 
 	protected ?IComment $lastMessage = null;
 
-	public function __construct(Room $room,
-								array $participants,
-								bool $skipLastMessageUpdate = false) {
+	public function __construct(
+		Room $room,
+		array $participants,
+		bool $skipLastMessageUpdate = false,
+	) {
 		parent::__construct($room);
 		$this->participants = $participants;
 		$this->skipLastMessageUpdate = $skipLastMessageUpdate;

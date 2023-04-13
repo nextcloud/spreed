@@ -38,9 +38,11 @@ class ClearResourceAccessCache implements IRepairStep {
 	protected IManager $manager;
 	protected ConversationProvider $provider;
 
-	public function __construct(IConfig $config,
-								IManager $manager,
-								ConversationProvider $provider) {
+	public function __construct(
+		IConfig $config,
+		IManager $manager,
+		ConversationProvider $provider,
+	) {
 		$this->config = $config;
 		$this->manager = $manager;
 		$this->provider = $provider;

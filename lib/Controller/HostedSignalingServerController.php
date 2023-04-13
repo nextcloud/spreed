@@ -46,13 +46,15 @@ class HostedSignalingServerController extends OCSController {
 	protected LoggerInterface $logger;
 	private HostedSignalingServerService $hostedSignalingServerService;
 
-	public function __construct(string $appName,
-								IRequest $request,
-								IClientService $clientService,
-								IL10N $l10n,
-								IConfig $config,
-								LoggerInterface $logger,
-								HostedSignalingServerService $hostedSignalingServerService) {
+	public function __construct(
+		string $appName,
+		IRequest $request,
+		IClientService $clientService,
+		IL10N $l10n,
+		IConfig $config,
+		LoggerInterface $logger,
+		HostedSignalingServerService $hostedSignalingServerService,
+	) {
 		parent::__construct($appName, $request);
 		$this->clientService = $clientService;
 		$this->l10n = $l10n;

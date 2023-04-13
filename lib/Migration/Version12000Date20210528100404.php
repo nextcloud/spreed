@@ -40,17 +40,17 @@ class Version12000Date20210528100404 extends SimpleMigrationStep {
 	 */
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		// Obsoleted by Version13000Date20210921142733
-//		/** @var ISchemaWrapper $schema */
-//		$schema = $schemaClosure();
-//
-//		$table = $schema->getTable('talk_attendees');
-//		if (!$table->hasColumn('publishing_permissions')) {
-//			$table->addColumn('publishing_permissions', Types::INTEGER, [
-//				'default' => 7,
-//			]);
-//
-//			return $schema;
-//		}
+		//		/** @var ISchemaWrapper $schema */
+		//		$schema = $schemaClosure();
+		//
+		//		$table = $schema->getTable('talk_attendees');
+		//		if (!$table->hasColumn('publishing_permissions')) {
+		//			$table->addColumn('publishing_permissions', Types::INTEGER, [
+		//				'default' => 7,
+		//			]);
+		//
+		//			return $schema;
+		//		}
 
 		return null;
 	}

@@ -32,7 +32,10 @@ class Section implements IIconSection {
 
 	private IURLGenerator $url;
 
-	public function __construct(IURLGenerator $url, IL10N $l) {
+	public function __construct(
+		IURLGenerator $url,
+		IL10N $l,
+	) {
 		$this->url = $url;
 		$this->l = $l;
 	}

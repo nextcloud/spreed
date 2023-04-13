@@ -25,8 +25,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use InvalidArgumentException;
 use GuzzleHttp\Exception\ConnectException;
+use InvalidArgumentException;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -52,7 +52,7 @@ class RecordingController extends AEnvironmentAwareController {
 		private ParticipantService $participantService,
 		private RecordingService $recordingService,
 		private RoomService $roomService,
-		private LoggerInterface $logger
+		private LoggerInterface $logger,
 	) {
 		parent::__construct($appName, $request);
 	}

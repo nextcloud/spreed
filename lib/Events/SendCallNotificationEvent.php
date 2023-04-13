@@ -30,7 +30,11 @@ class SendCallNotificationEvent extends RoomEvent {
 	protected Participant $actor;
 	protected Participant $target;
 
-	public function __construct(Room $room, Participant $actor, Participant $target) {
+	public function __construct(
+		Room $room,
+		Participant $actor,
+		Participant $target,
+	) {
 		parent::__construct($room);
 		$this->actor = $actor;
 		$this->target = $target;

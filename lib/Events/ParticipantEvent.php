@@ -30,8 +30,10 @@ class ParticipantEvent extends RoomEvent {
 	protected Participant $participant;
 
 
-	public function __construct(Room $room,
-								Participant $participant) {
+	public function __construct(
+		Room $room,
+		Participant $participant,
+	) {
 		parent::__construct($room);
 		$this->participant = $participant;
 	}

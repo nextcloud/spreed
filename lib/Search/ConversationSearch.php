@@ -45,7 +45,7 @@ class ConversationSearch implements IProvider {
 		AvatarService $avatarService,
 		Manager $manager,
 		IURLGenerator $url,
-		IL10N $l
+		IL10N $l,
 	) {
 		$this->avatarService = $avatarService;
 		$this->manager = $manager;

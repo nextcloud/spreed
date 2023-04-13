@@ -54,11 +54,13 @@ class Executor {
 
 	protected IL10N $l;
 
-	public function __construct(IEventDispatcher $dispatcher,
-								ShellExecutor $shellExecutor,
-								CommandService $commandService,
-								LoggerInterface $logger,
-								IL10N $l) {
+	public function __construct(
+		IEventDispatcher $dispatcher,
+		ShellExecutor $shellExecutor,
+		CommandService $commandService,
+		LoggerInterface $logger,
+		IL10N $l,
+	) {
 		$this->dispatcher = $dispatcher;
 		$this->shellExecutor = $shellExecutor;
 		$this->commandService = $commandService;

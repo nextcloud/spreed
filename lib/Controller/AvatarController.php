@@ -46,7 +46,7 @@ class AvatarController extends AEnvironmentAwareController {
 		protected AvatarService $avatarService,
 		protected IUserSession $userSession,
 		protected IL10N $l,
-		protected LoggerInterface $logger
+		protected LoggerInterface $logger,
 	) {
 		parent::__construct($appName, $request);
 	}

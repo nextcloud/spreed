@@ -28,8 +28,8 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 
 class Version2000Date20171026140256 extends SimpleMigrationStep {
 	protected IDBConnection $connection;
@@ -38,9 +38,11 @@ class Version2000Date20171026140256 extends SimpleMigrationStep {
 
 	protected IGroupManager $groupManager;
 
-	public function __construct(IDBConnection $connection,
-								IConfig $config,
-								IGroupManager $groupManager) {
+	public function __construct(
+		IDBConnection $connection,
+		IConfig $config,
+		IGroupManager $groupManager,
+	) {
 		$this->connection = $connection;
 		$this->config = $config;
 		$this->groupManager = $groupManager;
