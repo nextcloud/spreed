@@ -44,12 +44,14 @@ class CallController extends AEnvironmentAwareController {
 	private IUserManager $userManager;
 	private ITimeFactory $timeFactory;
 
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
 		ParticipantService $participantService,
 		RoomService $roomService,
 		IUserManager $userManager,
-		ITimeFactory $timeFactory) {
+		ITimeFactory $timeFactory,
+	) {
 		parent::__construct($appName, $request);
 		$this->participantService = $participantService;
 		$this->roomService = $roomService;

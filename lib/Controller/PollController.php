@@ -48,13 +48,15 @@ class PollController extends AEnvironmentAwareController {
 	protected ITimeFactory $timeFactory;
 	protected LoggerInterface $logger;
 
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
 		ChatManager $chatManager,
 		PollService $pollService,
 		AttachmentService $attachmentService,
 		ITimeFactory $timeFactory,
-		LoggerInterface $logger) {
+		LoggerInterface $logger,
+	) {
 		parent::__construct($appName, $request);
 		$this->pollService = $pollService;
 		$this->attachmentService = $attachmentService;

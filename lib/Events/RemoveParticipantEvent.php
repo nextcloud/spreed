@@ -33,10 +33,12 @@ class RemoveParticipantEvent extends ParticipantEvent {
 	/** @var Session[] */
 	protected array $sessions;
 
-	public function __construct(Room $room,
+	public function __construct(
+		Room $room,
 		Participant $participant,
 		string $reason,
-		array $sessions = []) {
+		array $sessions = [],
+	) {
 		parent::__construct($room, $participant);
 		$this->reason = $reason;
 		$this->sessions = $sessions;

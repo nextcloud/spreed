@@ -61,7 +61,7 @@ class Notifications {
 		LoggerInterface $logger,
 		ICloudFederationProviderManager $federationProviderManager,
 		IJobList $jobList,
-		IUserManager $userManager
+		IUserManager $userManager,
 	) {
 		$this->cloudFederationFactory = $cloudFederationFactory;
 		$this->logger = $logger;

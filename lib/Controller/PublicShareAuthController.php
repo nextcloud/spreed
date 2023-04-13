@@ -49,7 +49,7 @@ class PublicShareAuthController extends OCSController {
 		IUserManager $userManager,
 		IShareManager $shareManager,
 		IUserSession $userSession,
-		RoomService $roomService
+		RoomService $roomService,
 	) {
 		parent::__construct($appName, $request);
 		$this->userManager = $userManager;

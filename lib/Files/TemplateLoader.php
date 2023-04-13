@@ -52,13 +52,15 @@ class TemplateLoader implements IEventListener {
 	private IRootFolder $rootFolder;
 	private IUserSession $userSession;
 
-	public function __construct(IInitialState $initialState,
+	public function __construct(
+		IInitialState $initialState,
 		ICacheFactory $memcacheFactory,
 		Config $talkConfig,
 		IConfig $serverConfig,
 		IAppManager $appManager,
 		IRootFolder $rootFolder,
-		IUserSession $userSession) {
+		IUserSession $userSession,
+	) {
 		$this->initialState = $initialState;
 		$this->memcacheFactory = $memcacheFactory;
 		$this->talkConfig = $talkConfig;

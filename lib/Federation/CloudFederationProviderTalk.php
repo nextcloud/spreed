@@ -88,7 +88,7 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		Manager $manager,
 		ISession $session,
 		IEventDispatcher $dispatcher,
-		LoggerInterface $logger
+		LoggerInterface $logger,
 	) {
 		$this->userManager = $userManager;
 		$this->addressHandler = $addressHandler;

@@ -42,7 +42,7 @@ class DeletedShareAPIController {
 
 	public function __construct(
 		string $UserId,
-		Manager $manager
+		Manager $manager,
 	) {
 		$this->userId = $UserId;
 		$this->manager = $manager;

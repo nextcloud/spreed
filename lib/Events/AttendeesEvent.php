@@ -30,8 +30,10 @@ class AttendeesEvent extends RoomEvent {
 	/** @var Attendee[] */
 	protected array $attendees;
 
-	public function __construct(Room $room,
-		array $attendees) {
+	public function __construct(
+		Room $room,
+		array $attendees,
+	) {
 		parent::__construct($room);
 		$this->attendees = $attendees;
 	}

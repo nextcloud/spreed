@@ -60,7 +60,8 @@ class RoomService {
 	protected IEventDispatcher $dispatcher;
 	protected IJobList $jobList;
 
-	public function __construct(Manager $manager,
+	public function __construct(
+		Manager $manager,
 		ParticipantService $participantService,
 		IDBConnection $db,
 		ITimeFactory $timeFactory,
@@ -68,7 +69,8 @@ class RoomService {
 		Config $config,
 		IHasher $hasher,
 		IEventDispatcher $dispatcher,
-		IJobList $jobList) {
+		IJobList $jobList,
+	) {
 		$this->manager = $manager;
 		$this->participantService = $participantService;
 		$this->db = $db;

@@ -43,10 +43,12 @@ class CheckReferenceIdColumn extends TimedJob {
 	/** @var IDBConnection|ConnectionAdapter */
 	protected $connection;
 
-	public function __construct(ITimeFactory $timeFactory,
+	public function __construct(
+		ITimeFactory $timeFactory,
 		IJobList $jobList,
 		IConfig $serverConfig,
-		IDBConnection $connection) {
+		IDBConnection $connection,
+	) {
 		parent::__construct($timeFactory);
 		$this->jobList = $jobList;
 		$this->serverConfig = $serverConfig;

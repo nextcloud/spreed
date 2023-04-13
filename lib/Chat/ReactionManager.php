@@ -43,12 +43,14 @@ class ReactionManager {
 	private Notifier $notifier;
 	protected ITimeFactory $timeFactory;
 
-	public function __construct(ChatManager $chatManager,
+	public function __construct(
+		ChatManager $chatManager,
 		CommentsManager $commentsManager,
 		IL10N $l,
 		MessageParser $messageParser,
 		Notifier $notifier,
-		ITimeFactory $timeFactory) {
+		ITimeFactory $timeFactory,
+	) {
 		$this->chatManager = $chatManager;
 		$this->commentsManager = $commentsManager;
 		$this->l = $l;

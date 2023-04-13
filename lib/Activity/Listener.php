@@ -58,14 +58,16 @@ class Listener {
 
 	protected ITimeFactory $timeFactory;
 
-	public function __construct(IManager $activityManager,
+	public function __construct(
+		IManager $activityManager,
 		IUserSession $userSession,
 		ChatManager $chatManager,
 		ParticipantService $participantService,
 		RoomService $roomService,
 		RecordingService $recordingService,
 		LoggerInterface $logger,
-		ITimeFactory $timeFactory) {
+		ITimeFactory $timeFactory,
+	) {
 		$this->activityManager = $activityManager;
 		$this->userSession = $userSession;
 		$this->chatManager = $chatManager;

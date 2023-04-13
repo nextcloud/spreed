@@ -68,7 +68,7 @@ class FilesIntegrationController extends OCSController {
 		TalkSession $talkSession,
 		Util $util,
 		IConfig $config,
-		IL10N $l10n
+		IL10N $l10n,
 	) {
 		parent::__construct($appName, $request);
 		$this->manager = $manager;

@@ -47,12 +47,14 @@ class RemoveEmptyRooms extends TimedJob {
 
 	protected int $numDeletedRooms = 0;
 
-	public function __construct(ITimeFactory $timeFactory,
+	public function __construct(
+		ITimeFactory $timeFactory,
 		Manager $manager,
 		RoomService $roomService,
 		ParticipantService $participantService,
 		LoggerInterface $logger,
-		IUserMountCache $userMountCache) {
+		IUserMountCache $userMountCache,
+	) {
 		parent::__construct($timeFactory);
 
 		// Every 5 minutes

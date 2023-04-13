@@ -36,8 +36,10 @@ use OCP\BackgroundJob\TimedJob;
 class ExpireSignalingMessage extends TimedJob {
 	protected Messages $messages;
 
-	public function __construct(ITimeFactory $timeFactory,
-		Messages $messages) {
+	public function __construct(
+		ITimeFactory $timeFactory,
+		Messages $messages,
+	) {
 		parent::__construct($timeFactory);
 
 		// Every 5 minutes

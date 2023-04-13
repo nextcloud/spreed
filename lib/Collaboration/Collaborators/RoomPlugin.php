@@ -40,9 +40,11 @@ class RoomPlugin implements ISearchPlugin {
 	protected ParticipantService $participantService;
 	protected IUserSession $userSession;
 
-	public function __construct(Manager $manager,
+	public function __construct(
+		Manager $manager,
 		ParticipantService $participantService,
-		IUserSession $userSession) {
+		IUserSession $userSession,
+	) {
 		$this->manager = $manager;
 		$this->participantService = $participantService;
 		$this->userSession = $userSession;

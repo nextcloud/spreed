@@ -36,9 +36,11 @@ use OCP\IRequest;
 class MatterbridgeSettingsController extends OCSController {
 	protected MatterbridgeManager $bridgeManager;
 
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		MatterbridgeManager $bridgeManager) {
+		MatterbridgeManager $bridgeManager,
+	) {
 		parent::__construct($appName, $request);
 		$this->bridgeManager = $bridgeManager;
 	}

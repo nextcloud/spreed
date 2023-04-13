@@ -38,9 +38,11 @@ class Version2000Date20171026140256 extends SimpleMigrationStep {
 
 	protected IGroupManager $groupManager;
 
-	public function __construct(IDBConnection $connection,
+	public function __construct(
+		IDBConnection $connection,
 		IConfig $config,
-		IGroupManager $groupManager) {
+		IGroupManager $groupManager,
+	) {
 		$this->connection = $connection;
 		$this->config = $config;
 		$this->groupManager = $groupManager;

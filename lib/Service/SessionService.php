@@ -37,9 +37,11 @@ class SessionService {
 	protected IDBConnection $connection;
 	protected ISecureRandom $secureRandom;
 
-	public function __construct(SessionMapper $sessionMapper,
+	public function __construct(
+		SessionMapper $sessionMapper,
 		IDBConnection $connection,
-		ISecureRandom $secureRandom) {
+		ISecureRandom $secureRandom,
+	) {
 		$this->sessionMapper = $sessionMapper;
 		$this->connection = $connection;
 		$this->secureRandom = $secureRandom;

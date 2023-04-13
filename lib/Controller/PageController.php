@@ -80,7 +80,8 @@ class PageController extends Controller {
 	private IRootFolder $rootFolder;
 	private IThrottler $throttler;
 
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
 		IEventDispatcher $eventDispatcher,
 		RoomController $api,
@@ -99,7 +100,8 @@ class PageController extends Controller {
 		IRootFolder $rootFolder,
 		IThrottler $throttler,
 		Config $talkConfig,
-		IConfig $serverConfig) {
+		IConfig $serverConfig,
+	) {
 		parent::__construct($appName, $request);
 		$this->eventDispatcher = $eventDispatcher;
 		$this->api = $api;

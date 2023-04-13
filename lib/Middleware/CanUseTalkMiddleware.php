@@ -48,11 +48,13 @@ class CanUseTalkMiddleware extends Middleware {
 	private Config $talkConfig;
 	private IConfig $serverConfig;
 
-	public function __construct(IUserSession $userSession,
+	public function __construct(
+		IUserSession $userSession,
 		IGroupManager $groupManager,
 		IControllerMethodReflector $reflector,
 		Config $talkConfig,
-		IConfig $serverConfig) {
+		IConfig $serverConfig,
+	) {
 		$this->userSession = $userSession;
 		$this->groupManager = $groupManager;
 		$this->reflector = $reflector;

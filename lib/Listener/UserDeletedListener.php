@@ -37,7 +37,10 @@ class UserDeletedListener implements IEventListener {
 	private Manager $manager;
 	private PollService $pollService;
 
-	public function __construct(Manager $manager, PollService $pollService) {
+	public function __construct(
+		Manager $manager,
+		PollService $pollService,
+	) {
 		$this->manager = $manager;
 		$this->pollService = $pollService;
 	}

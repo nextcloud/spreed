@@ -57,13 +57,15 @@ class Listener implements IEventListener {
 
 	protected bool $shouldSendCallNotification = false;
 
-	public function __construct(IDBConnection $connection,
+	public function __construct(
+		IDBConnection $connection,
 		IManager $notificationManager,
 		ParticipantService $participantsService,
 		IEventDispatcher $dispatcher,
 		IUserSession $userSession,
 		ITimeFactory $timeFactory,
-		LoggerInterface $logger) {
+		LoggerInterface $logger,
+	) {
 		$this->connection = $connection;
 		$this->notificationManager = $notificationManager;
 		$this->participantsService = $participantsService;
