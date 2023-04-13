@@ -98,7 +98,8 @@ class ChatManager {
 	protected AttachmentService $attachmentService;
 	protected IReferenceManager $referenceManager;
 
-	public function __construct(CommentsManager $commentsManager,
+	public function __construct(
+		CommentsManager $commentsManager,
 		IEventDispatcher $dispatcher,
 		IDBConnection $connection,
 		INotificationManager $notificationManager,
@@ -111,7 +112,8 @@ class ChatManager {
 		ICacheFactory $cacheFactory,
 		ITimeFactory $timeFactory,
 		AttachmentService $attachmentService,
-		IReferenceManager $referenceManager) {
+		IReferenceManager $referenceManager,
+	) {
 		$this->commentsManager = $commentsManager;
 		$this->dispatcher = $dispatcher;
 		$this->connection = $connection;

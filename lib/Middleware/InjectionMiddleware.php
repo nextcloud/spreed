@@ -57,13 +57,15 @@ class InjectionMiddleware extends Middleware {
 	protected IThrottler $throttler;
 	protected ?string $userId;
 
-	public function __construct(IRequest $request,
+	public function __construct(
+		IRequest $request,
 		IControllerMethodReflector $reflector,
 		ParticipantService $participantService,
 		TalkSession $talkSession,
 		Manager $manager,
 		IThrottler $throttler,
-		?string $userId) {
+		?string $userId,
+	) {
 		$this->request = $request;
 		$this->reflector = $reflector;
 		$this->participantService = $participantService;

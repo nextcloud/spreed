@@ -77,7 +77,8 @@ class SignalingController extends OCSController {
 	private LoggerInterface $logger;
 	private ?string $userId;
 
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
 		IConfig $serverConfig,
 		Config $talkConfig,
@@ -94,7 +95,8 @@ class SignalingController extends OCSController {
 		IClientService $clientService,
 		IThrottler $throttler,
 		LoggerInterface $logger,
-		?string $UserId) {
+		?string $UserId,
+	) {
 		parent::__construct($appName, $request);
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;

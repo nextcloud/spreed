@@ -97,7 +97,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	protected array $commonReadMessages = [];
 
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		?string $UserId,
 		IRequest $request,
 		IAppManager $appManager,
@@ -119,7 +120,8 @@ class RoomController extends AEnvironmentAwareController {
 		Config $talkConfig,
 		ICloudIdManager $cloudIdManager,
 		IThrottler $throttler,
-		LoggerInterface $logger) {
+		LoggerInterface $logger,
+	) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
 		$this->appManager = $appManager;

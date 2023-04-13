@@ -52,7 +52,7 @@ class RecordingController extends AEnvironmentAwareController {
 		private ParticipantService $participantService,
 		private RecordingService $recordingService,
 		private RoomService $roomService,
-		private LoggerInterface $logger
+		private LoggerInterface $logger,
 	) {
 		parent::__construct($appName, $request);
 	}

@@ -37,8 +37,10 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 
 	protected IConfig $config;
 
-	public function __construct(IDBConnection $connection,
-		IConfig $config) {
+	public function __construct(
+		IDBConnection $connection,
+		IConfig $config,
+	) {
 		$this->connection = $connection;
 		$this->config = $config;
 	}

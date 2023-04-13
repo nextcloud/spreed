@@ -34,9 +34,11 @@ class ResetAssignedSignalingServer extends TimedJob {
 	protected Manager $manager;
 	protected ICache $cache;
 
-	public function __construct(ITimeFactory $time,
+	public function __construct(
+		ITimeFactory $time,
 		Manager $manager,
-		ICacheFactory $cacheFactory) {
+		ICacheFactory $cacheFactory,
+	) {
 		parent::__construct($time);
 
 		// Every 5 minutes

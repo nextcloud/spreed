@@ -95,7 +95,8 @@ class ParticipantService {
 	protected array $userCache;
 	protected array $sessionCache;
 
-	public function __construct(IConfig $serverConfig,
+	public function __construct(
+		IConfig $serverConfig,
 		Config $talkConfig,
 		AttendeeMapper $attendeeMapper,
 		SessionMapper $sessionMapper,
@@ -108,7 +109,8 @@ class ParticipantService {
 		MembershipService $membershipService,
 		Notifications $notifications,
 		ITimeFactory $timeFactory,
-		ICacheFactory $cacheFactory) {
+		ICacheFactory $cacheFactory,
+	) {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->attendeeMapper = $attendeeMapper;

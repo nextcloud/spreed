@@ -46,12 +46,14 @@ class CircleMembershipListener extends AMembershipListener {
 	private ISession $session;
 	private IUserManager $userManager;
 
-	public function __construct(Manager $manager,
+	public function __construct(
+		Manager $manager,
 		IAppManager $appManager,
 		IGroupManager $groupManager,
 		ParticipantService $participantService,
 		IUserManager $userManager,
-		ISession $session) {
+		ISession $session,
+	) {
 		parent::__construct(
 			$manager,
 			$appManager,

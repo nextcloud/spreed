@@ -60,11 +60,13 @@ trait TRoomCommand {
 	/** @var IGroupManager */
 	protected $groupManager;
 
-	public function __construct(Manager $manager,
+	public function __construct(
+		Manager $manager,
 		RoomService $roomService,
 		ParticipantService $participantService,
 		IUserManager $userManager,
-		IGroupManager $groupManager) {
+		IGroupManager $groupManager,
+	) {
 		parent::__construct();
 
 		$this->manager = $manager;

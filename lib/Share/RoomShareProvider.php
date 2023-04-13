@@ -96,7 +96,7 @@ class RoomShareProvider implements IShareProvider {
 		ParticipantService $participantService,
 		ITimeFactory $timeFactory,
 		IL10N $l,
-		IMimeTypeLoader $mimeTypeLoader
+		IMimeTypeLoader $mimeTypeLoader,
 	) {
 		$this->dbConnection = $connection;
 		$this->secureRandom = $secureRandom;

@@ -31,9 +31,11 @@ class SignalingEvent extends ParticipantEvent {
 	/** @var mixed */
 	protected $session;
 
-	public function __construct(Room $room,
+	public function __construct(
+		Room $room,
 		Participant $participant,
-		string $action) {
+		string $action,
+	) {
 		parent::__construct($room, $participant);
 		$this->action = $action;
 		$this->session = '';

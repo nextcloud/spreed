@@ -43,7 +43,7 @@ class MapsPluginLoader implements IEventListener {
 	public function __construct(
 		IRequest $request,
 		Config $talkConfig,
-		IUserSession $userSession
+		IUserSession $userSession,
 	) {
 		$this->request = $request;
 		$this->talkConfig = $talkConfig;

@@ -37,9 +37,11 @@ use OCP\IRequest;
 class ReactionController extends AEnvironmentAwareController {
 	private ReactionManager $reactionManager;
 
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		IRequest $request,
-		ReactionManager $reactionManager) {
+		ReactionManager $reactionManager,
+	) {
 		parent::__construct($appName, $request);
 		$this->reactionManager = $reactionManager;
 	}

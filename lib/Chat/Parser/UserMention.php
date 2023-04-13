@@ -54,13 +54,15 @@ class UserMention {
 	protected AvatarService $avatarService;
 	protected IL10N $l;
 
-	public function __construct(ICommentsManager $commentsManager,
+	public function __construct(
+		ICommentsManager $commentsManager,
 		IUserManager $userManager,
 		IGroupManager $groupManager,
 		GuestManager $guestManager,
 		AvatarService $avatarService,
 		ParticipantService $participantService,
-		IL10N $l) {
+		IL10N $l,
+	) {
 		$this->commentsManager = $commentsManager;
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;

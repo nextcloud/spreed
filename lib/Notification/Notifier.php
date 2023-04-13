@@ -85,7 +85,8 @@ class Notifier implements INotifier {
 	/** @var Participant[][] */
 	protected array $participants = [];
 
-	public function __construct(IFactory $lFactory,
+	public function __construct(
+		IFactory $lFactory,
 		IURLGenerator $url,
 		Config $config,
 		IUserManager $userManager,
@@ -102,7 +103,8 @@ class Notifier implements INotifier {
 		IRootFolder $rootFolder,
 		ITimeFactory $timeFactory,
 		Definitions $definitions,
-		AddressHandler $addressHandler) {
+		AddressHandler $addressHandler,
+	) {
 		$this->lFactory = $lFactory;
 		$this->url = $url;
 		$this->config = $config;

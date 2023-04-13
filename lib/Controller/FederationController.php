@@ -46,10 +46,12 @@ class FederationController extends OCSController {
 
 	private IUserSession $userSession;
 
-	public function __construct(IRequest $request,
+	public function __construct(
+		IRequest $request,
 		FederationManager $federationManager,
 		Manager $talkManager,
-		IUserSession $userSession) {
+		IUserSession $userSession,
+	) {
 		parent::__construct(Application::APP_ID, $request);
 		$this->federationManager = $federationManager;
 		$this->talkManager = $talkManager;

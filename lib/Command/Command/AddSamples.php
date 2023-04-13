@@ -40,7 +40,10 @@ class AddSamples extends Base {
 
 	protected array $commands = [];
 
-	public function __construct(CommandService $service, IAppManager $appManager) {
+	public function __construct(
+		CommandService $service,
+		IAppManager $appManager,
+	) {
 		parent::__construct();
 		$this->service = $service;
 		$this->appManager = $appManager;

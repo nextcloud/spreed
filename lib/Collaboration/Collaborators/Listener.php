@@ -52,12 +52,14 @@ class Listener {
 	protected ?Room $room = null;
 	protected ?string $userId;
 
-	public function __construct(Manager $manager,
+	public function __construct(
+		Manager $manager,
 		IUserManager $userManager,
 		ParticipantService $participantService,
 		Config $config,
 		TalkSession $talkSession,
-		?string $userId) {
+		?string $userId,
+	) {
 		$this->manager = $manager;
 		$this->userManager = $userManager;
 		$this->participantService = $participantService;

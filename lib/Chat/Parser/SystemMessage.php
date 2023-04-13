@@ -76,7 +76,8 @@ class SystemMessage {
 	/** @var string[] */
 	protected array $guestNames = [];
 
-	public function __construct(IUserManager $userManager,
+	public function __construct(
+		IUserManager $userManager,
 		IGroupManager $groupManager,
 		GuestManager $guestManager,
 		ParticipantService $participantService,
@@ -85,7 +86,8 @@ class SystemMessage {
 		PhotoCache $photoCache,
 		IRootFolder $rootFolder,
 		ICloudIdManager $cloudIdManager,
-		IURLGenerator $url) {
+		IURLGenerator $url,
+	) {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->guestManager = $guestManager;

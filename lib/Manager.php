@@ -72,7 +72,8 @@ class Manager {
 	protected IHasher $hasher;
 	protected IL10N $l;
 
-	public function __construct(IDBConnection $db,
+	public function __construct(
+		IDBConnection $db,
 		IConfig $config,
 		Config $talkConfig,
 		IAppManager $appManager,
@@ -87,7 +88,8 @@ class Manager {
 		IEventDispatcher $dispatcher,
 		ITimeFactory $timeFactory,
 		IHasher $hasher,
-		IL10N $l) {
+		IL10N $l,
+	) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->talkConfig = $talkConfig;

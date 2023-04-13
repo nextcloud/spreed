@@ -40,11 +40,13 @@ class Capabilities implements IPublicCapability {
 	protected IUserSession $userSession;
 	private IAppManager $appManager;
 
-	public function __construct(IConfig $serverConfig,
+	public function __construct(
+		IConfig $serverConfig,
 		Config $talkConfig,
 		ICommentsManager $commentsManager,
 		IUserSession $userSession,
-		IAppManager $appManager) {
+		IAppManager $appManager,
+	) {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->commentsManager = $commentsManager;

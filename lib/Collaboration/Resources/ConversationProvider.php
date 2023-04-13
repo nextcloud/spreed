@@ -44,11 +44,13 @@ class ConversationProvider implements IProvider {
 	protected IUserSession $userSession;
 	protected IURLGenerator $urlGenerator;
 
-	public function __construct(Manager $manager,
+	public function __construct(
+		Manager $manager,
 		AvatarService $avatarService,
 		ParticipantService $participantService,
 		IUserSession $userSession,
-		IURLGenerator $urlGenerator) {
+		IURLGenerator $urlGenerator,
+	) {
 		$this->manager = $manager;
 		$this->avatarService = $avatarService;
 		$this->participantService = $participantService;

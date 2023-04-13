@@ -201,7 +201,8 @@ class Room {
 	protected ?string $currentUser = null;
 	protected ?Participant $participant = null;
 
-	public function __construct(Manager $manager,
+	public function __construct(
+		Manager $manager,
 		IDBConnection $db,
 		IEventDispatcher $dispatcher,
 		ITimeFactory $timeFactory,
@@ -233,7 +234,8 @@ class Room {
 		string $objectId,
 		int $breakoutRoomMode,
 		int $breakoutRoomStatus,
-		int $callRecording) {
+		int $callRecording,
+	) {
 		$this->manager = $manager;
 		$this->db = $db;
 		$this->dispatcher = $dispatcher;

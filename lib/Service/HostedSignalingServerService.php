@@ -46,11 +46,13 @@ class HostedSignalingServerService {
 	private IL10N $l10n;
 	private ISecureRandom $secureRandom;
 
-	public function __construct(IConfig $config,
+	public function __construct(
+		IConfig $config,
 		IClientService $clientService,
 		LoggerInterface $logger,
 		IL10N $l10n,
-		ISecureRandom $secureRandom) {
+		ISecureRandom $secureRandom,
+	) {
 		$this->config = $config;
 		$this->clientService = $clientService;
 		$this->logger = $logger;

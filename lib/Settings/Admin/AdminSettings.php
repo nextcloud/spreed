@@ -55,7 +55,8 @@ class AdminSettings implements ISettings {
 	private IL10N $l10n;
 	private IFactory $l10nFactory;
 
-	public function __construct(Config $talkConfig,
+	public function __construct(
+		Config $talkConfig,
 		IConfig $serverConfig,
 		CommandService $commandService,
 		IInitialState $initialState,
@@ -64,7 +65,8 @@ class AdminSettings implements ISettings {
 		MatterbridgeManager $bridgeManager,
 		IUserSession $userSession,
 		IL10N $l10n,
-		IFactory $l10nFactory) {
+		IFactory $l10nFactory,
+	) {
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
 		$this->commandService = $commandService;

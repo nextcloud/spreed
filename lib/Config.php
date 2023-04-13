@@ -53,13 +53,15 @@ class Config {
 
 	protected array $canEnableSIP = [];
 
-	public function __construct(IConfig $config,
+	public function __construct(
+		IConfig $config,
 		ISecureRandom $secureRandom,
 		IGroupManager $groupManager,
 		IUserManager $userManager,
 		IURLGenerator $urlGenerator,
 		ITimeFactory $timeFactory,
-		IEventDispatcher $dispatcher) {
+		IEventDispatcher $dispatcher,
+	) {
 		$this->config = $config;
 		$this->secureRandom = $secureRandom;
 		$this->groupManager = $groupManager;

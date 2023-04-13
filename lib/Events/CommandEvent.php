@@ -33,7 +33,12 @@ class CommandEvent extends ChatEvent {
 	protected string $output = '';
 
 
-	public function __construct(Room $room, IComment $message, Command $command, string $arguments) {
+	public function __construct(
+		Room $room,
+		IComment $message,
+		Command $command,
+		string $arguments,
+	) {
 		parent::__construct($room, $message);
 		$this->command = $command;
 		$this->arguments = $arguments;

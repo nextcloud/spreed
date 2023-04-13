@@ -55,7 +55,7 @@ class ShareAPIController {
 		ParticipantService $participantService,
 		ITimeFactory $timeFactory,
 		IL10N $l10n,
-		IURLGenerator $urlGenerator
+		IURLGenerator $urlGenerator,
 	) {
 		$this->userId = $UserId;
 		$this->manager = $manager;

@@ -32,8 +32,10 @@ class EndCallForEveryoneEvent extends ModifyRoomEvent {
 	/** @var string[] */
 	protected array $userIds = [];
 
-	public function __construct(Room $room,
-		?Participant $actor = null) {
+	public function __construct(
+		Room $room,
+		?Participant $actor = null,
+	) {
 		parent::__construct($room, 'in_call', Participant::FLAG_DISCONNECTED, null, $actor);
 	}
 
