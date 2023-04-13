@@ -30,7 +30,7 @@
 				role="region"
 				:token="token"
 				:breakout-room="true"
-				:container-id="modalContainerId"
+				:container="modalContainerId"
 				:aria-label="t('spreed', 'Post message')"
 				:broadcast="broadcast"
 				@sent="handleMessageSent"

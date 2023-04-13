@@ -308,12 +308,12 @@ export default {
 		},
 
 		/**
-		 * When this component is used to send message to a breakout room we
-		 * pass an id of modal containing component to render properly.
+		 * Selector for popovers and pickers to be rendered inside container properly.
+		 * Container must be mounted before passing its ID as a prop
 		 */
-		containerId: {
+		container: {
 			type: String,
-			default: null,
+			required: true,
 		},
 
 		/**
@@ -409,14 +409,8 @@ export default {
 			return this.text !== ''
 		},
 
-		container() {
-			return this.containerId ?? this.$store.getters.getMainContainerSelector()
-		},
-
 		containerElement() {
-			// TODO can't find DOM element by #content-vue. undefined is passed
-			//  for NcRichContenteditable to use 'document.body' by default
-			return document.querySelector(this.container) ?? undefined
+			return document.querySelector(this.container)
 		},
 
 		isOneToOne() {
@@ -923,6 +917,20 @@ export default {
 	},
 }
 </script>
+
+<style lang="scss">
+// Enforce NcAutoCompleteResult to have proper box-sizing
+.tribute-container {
+	position: absolute;
+	box-sizing: content-box !important;
+
+	& *,
+	& *::before,
+	& *::after {
+		box-sizing: inherit !important;
+	}
+}
+</style>
 
 <style lang="scss" scoped>
 @import '../../assets/variables';
