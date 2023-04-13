@@ -35,7 +35,7 @@ class Conversation implements IConversation {
 	protected Room $room;
 
 	public function __construct(IURLGenerator $url,
-								Room $room) {
+		Room $room) {
 		$this->url = $url;
 		$this->room = $room;
 	}

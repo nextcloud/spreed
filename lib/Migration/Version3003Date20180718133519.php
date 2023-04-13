@@ -25,8 +25,8 @@ namespace OCA\Talk\Migration;
 use Doctrine\DBAL\Types\Types;
 use OCP\DB\ISchemaWrapper;
 use OCP\IDBConnection;
-use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
+use OCP\Migration\SimpleMigrationStep;
 
 class Version3003Date20180718133519 extends SimpleMigrationStep {
 	protected IDBConnection $connection;

@@ -25,11 +25,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Command\Signaling;
 
-use OCP\IConfig;
 use OC\Core\Command\Base;
+use OCP\IConfig;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Add extends Base {

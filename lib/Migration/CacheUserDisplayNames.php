@@ -35,7 +35,7 @@ class CacheUserDisplayNames implements IRepairStep {
 	protected IUserManager $userManager;
 
 	public function __construct(IDBConnection $connection,
-								IUserManager $userManager) {
+		IUserManager $userManager) {
 		$this->connection = $connection;
 		$this->userManager = $userManager;
 	}

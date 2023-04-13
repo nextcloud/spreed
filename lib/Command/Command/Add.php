@@ -23,8 +23,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Command\Command;
 
-use OCA\Talk\Service\CommandService;
 use OC\Core\Command\Base;
+use OCA\Talk\Service\CommandService;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

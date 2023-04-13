@@ -25,9 +25,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Exceptions\WrongPermissionsException;
+use OCA\Talk\MatterbridgeManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -37,8 +37,8 @@ class MatterbridgeSettingsController extends OCSController {
 	protected MatterbridgeManager $bridgeManager;
 
 	public function __construct(string $appName,
-								IRequest $request,
-								MatterbridgeManager $bridgeManager) {
+		IRequest $request,
+		MatterbridgeManager $bridgeManager) {
 		parent::__construct($appName, $request);
 		$this->bridgeManager = $bridgeManager;
 	}

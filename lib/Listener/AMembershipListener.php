@@ -49,9 +49,9 @@ abstract class AMembershipListener implements IEventListener {
 	protected ParticipantService $participantService;
 
 	public function __construct(Manager $manager,
-								IAppManager $appManager,
-								IGroupManager $groupManager,
-								ParticipantService $participantService) {
+		IAppManager $appManager,
+		IGroupManager $groupManager,
+		ParticipantService $participantService) {
 		$this->manager = $manager;
 		$this->appManager = $appManager;
 		$this->groupManager = $groupManager;

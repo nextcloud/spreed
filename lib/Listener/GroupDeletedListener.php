@@ -41,8 +41,8 @@ class GroupDeletedListener implements IEventListener {
 	private ParticipantService $participantService;
 
 	public function __construct(IConfig $config,
-								Manager $manager,
-								ParticipantService $participantService) {
+		Manager $manager,
+		ParticipantService $participantService) {
 		$this->config = $config;
 		$this->manager = $manager;
 		$this->participantService = $participantService;

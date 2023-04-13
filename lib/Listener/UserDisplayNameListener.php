@@ -38,7 +38,7 @@ class UserDisplayNameListener implements IEventListener {
 	private PollService $pollService;
 
 	public function __construct(ParticipantService $participantService,
-								PollService $pollService) {
+		PollService $pollService) {
 		$this->participantService = $participantService;
 		$this->pollService = $pollService;
 	}

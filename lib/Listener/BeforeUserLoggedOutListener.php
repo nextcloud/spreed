@@ -43,8 +43,8 @@ class BeforeUserLoggedOutListener implements IEventListener {
 	private TalkSession $talkSession;
 
 	public function __construct(Manager $manager,
-								ParticipantService $participantService,
-								TalkSession $talkSession) {
+		ParticipantService $participantService,
+		TalkSession $talkSession) {
 		$this->manager = $manager;
 		$this->participantService = $participantService;
 		$this->talkSession = $talkSession;

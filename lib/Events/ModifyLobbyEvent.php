@@ -30,11 +30,11 @@ class ModifyLobbyEvent extends ModifyRoomEvent {
 	protected bool $timerReached;
 
 	public function __construct(Room $room,
-								string $parameter,
-								int $newValue,
-								int $oldValue,
-								?\DateTime $lobbyTimer,
-								bool $timerReached) {
+		string $parameter,
+		int $newValue,
+		int $oldValue,
+		?\DateTime $lobbyTimer,
+		bool $timerReached) {
 		parent::__construct($room, $parameter, $newValue, $oldValue);
 		$this->lobbyTimer = $lobbyTimer;
 		$this->timerReached = $timerReached;

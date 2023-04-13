@@ -40,9 +40,9 @@ class Manager {
 	protected ICache $cache;
 
 	public function __construct(IConfig $serverConfig,
-								Config $talkConfig,
-								RoomService $roomService,
-								ICacheFactory $cacheFactory) {
+		Config $talkConfig,
+		RoomService $roomService,
+		ICacheFactory $cacheFactory) {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->roomService = $roomService;

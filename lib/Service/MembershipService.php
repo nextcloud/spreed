@@ -41,8 +41,8 @@ class MembershipService {
 	protected AttendeeMapper $attendeeMapper;
 
 	public function __construct(IAppManager $appManager,
-								IGroupManager $groupManager,
-								AttendeeMapper $attendeeMapper) {
+		IGroupManager $groupManager,
+		AttendeeMapper $attendeeMapper) {
 		$this->appManager = $appManager;
 		$this->groupManager = $groupManager;
 		$this->attendeeMapper = $attendeeMapper;

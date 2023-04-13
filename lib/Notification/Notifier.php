@@ -82,21 +82,21 @@ class Notifier implements INotifier {
 	protected array $participants = [];
 
 	public function __construct(IFactory $lFactory,
-								IURLGenerator $url,
-								Config $config,
-								IUserManager $userManager,
-								GuestManager $guestManager,
-								IShareManager $shareManager,
-								Manager $manager,
-								ParticipantService $participantService,
-								INotificationManager $notificationManager,
-								CommentsManager $commentManager,
-								MessageParser $messageParser,
-								IURLGenerator $urlGenerator,
-								IRootFolder $rootFolder,
-								ITimeFactory $timeFactory,
-								Definitions $definitions,
-								AddressHandler $addressHandler) {
+		IURLGenerator $url,
+		Config $config,
+		IUserManager $userManager,
+		GuestManager $guestManager,
+		IShareManager $shareManager,
+		Manager $manager,
+		ParticipantService $participantService,
+		INotificationManager $notificationManager,
+		CommentsManager $commentManager,
+		MessageParser $messageParser,
+		IURLGenerator $urlGenerator,
+		IRootFolder $rootFolder,
+		ITimeFactory $timeFactory,
+		Definitions $definitions,
+		AddressHandler $addressHandler) {
 		$this->lFactory = $lFactory;
 		$this->url = $url;
 		$this->config = $config;

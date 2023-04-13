@@ -99,19 +99,19 @@ class ChatManager {
 	protected IReferenceManager $referenceManager;
 
 	public function __construct(CommentsManager $commentsManager,
-								IEventDispatcher $dispatcher,
-								IDBConnection $connection,
-								INotificationManager $notificationManager,
-								IManager $shareManager,
-								RoomShareProvider $shareProvider,
-								ParticipantService $participantService,
-								RoomService $roomService,
-								PollService $pollService,
-								Notifier $notifier,
-								ICacheFactory $cacheFactory,
-								ITimeFactory $timeFactory,
-								AttachmentService $attachmentService,
-								IReferenceManager $referenceManager) {
+		IEventDispatcher $dispatcher,
+		IDBConnection $connection,
+		INotificationManager $notificationManager,
+		IManager $shareManager,
+		RoomShareProvider $shareProvider,
+		ParticipantService $participantService,
+		RoomService $roomService,
+		PollService $pollService,
+		Notifier $notifier,
+		ICacheFactory $cacheFactory,
+		ITimeFactory $timeFactory,
+		AttachmentService $attachmentService,
+		IReferenceManager $referenceManager) {
 		$this->commentsManager = $commentsManager;
 		$this->dispatcher = $dispatcher;
 		$this->connection = $connection;

@@ -60,8 +60,8 @@ class Participant {
 	protected ?Session $session;
 
 	public function __construct(Room $room,
-								Attendee $attendee,
-								?Session $session) {
+		Attendee $attendee,
+		?Session $session) {
 		$this->room = $room;
 		$this->attendee = $attendee;
 		$this->session = $session;

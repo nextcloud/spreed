@@ -23,13 +23,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Settings\Admin;
 
-use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Config;
+use OCA\Talk\Exceptions\WrongPermissionsException;
+use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Model\Command;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\CommandService;
-use OCA\Talk\Exceptions\WrongPermissionsException;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\ICacheFactory;
@@ -56,15 +56,15 @@ class AdminSettings implements ISettings {
 	private IFactory $l10nFactory;
 
 	public function __construct(Config $talkConfig,
-								IConfig $serverConfig,
-								CommandService $commandService,
-								IInitialState $initialState,
-								ICacheFactory $memcacheFactory,
-								IGroupManager $groupManager,
-								MatterbridgeManager $bridgeManager,
-								IUserSession $userSession,
-								IL10N $l10n,
-								IFactory $l10nFactory) {
+		IConfig $serverConfig,
+		CommandService $commandService,
+		IInitialState $initialState,
+		ICacheFactory $memcacheFactory,
+		IGroupManager $groupManager,
+		MatterbridgeManager $bridgeManager,
+		IUserSession $userSession,
+		IL10N $l10n,
+		IFactory $l10nFactory) {
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
 		$this->commandService = $commandService;

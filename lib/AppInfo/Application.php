@@ -24,10 +24,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\AppInfo;
 
-use OCA\Talk\Collaboration\Reference\ReferenceInvalidationListener;
-use OCA\Talk\Collaboration\Reference\TalkReferenceProvider;
-use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
-use OCP\Util;
 use OCA\Circles\Events\AddingCircleMemberEvent;
 use OCA\Circles\Events\CircleDestroyedEvent;
 use OCA\Circles\Events\RemovingCircleMemberEvent;
@@ -40,6 +36,8 @@ use OCA\Talk\Chat\Command\Listener as CommandListener;
 use OCA\Talk\Chat\Parser\Listener as ParserListener;
 use OCA\Talk\Chat\SystemMessage\Listener as SystemMessageListener;
 use OCA\Talk\Collaboration\Collaborators\Listener as CollaboratorsListener;
+use OCA\Talk\Collaboration\Reference\ReferenceInvalidationListener;
+use OCA\Talk\Collaboration\Reference\TalkReferenceProvider;
 use OCA\Talk\Collaboration\Resources\ConversationProvider;
 use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
 use OCA\Talk\Config;
@@ -89,6 +87,7 @@ use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\AppFramework\IAppContainer;
 use OCP\Collaboration\Resources\IProviderManager;
+use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudFederationProvider;
 use OCP\Federation\ICloudFederationProviderManager;
@@ -104,6 +103,7 @@ use OCP\Settings\IManager;
 use OCP\User\Events\BeforeUserLoggedOutEvent;
 use OCP\User\Events\UserChangedEvent;
 use OCP\User\Events\UserDeletedEvent;
+use OCP\Util;
 use OCP\WorkflowEngine\Events\RegisterOperationsEvent;
 
 class Application extends App implements IBootstrap {

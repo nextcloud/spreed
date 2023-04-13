@@ -36,7 +36,7 @@ class Listener {
 	protected Executor $executor;
 
 	public function __construct(CommandService $commandService,
-								Executor $executor) {
+		Executor $executor) {
 		$this->commandService = $commandService;
 		$this->executor = $executor;
 	}

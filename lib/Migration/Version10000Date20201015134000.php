@@ -47,7 +47,7 @@ class Version10000Date20201015134000 extends SimpleMigrationStep {
 	protected ITimeFactory $timeFactory;
 
 	public function __construct(IDBConnection $connection,
-								ITimeFactory $timeFactory) {
+		ITimeFactory $timeFactory) {
 		$this->connection = $connection;
 		$this->timeFactory = $timeFactory;
 	}

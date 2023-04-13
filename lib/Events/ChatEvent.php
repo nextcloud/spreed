@@ -32,8 +32,8 @@ class ChatEvent extends RoomEvent {
 	protected bool $skipLastActivityUpdate;
 
 	public function __construct(Room $room,
-								IComment $comment,
-								bool $skipLastActivityUpdate = false) {
+		IComment $comment,
+		bool $skipLastActivityUpdate = false) {
 		parent::__construct($room);
 		$this->comment = $comment;
 		$this->skipLastActivityUpdate = $skipLastActivityUpdate;

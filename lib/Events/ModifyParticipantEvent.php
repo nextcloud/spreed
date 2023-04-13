@@ -35,10 +35,10 @@ class ModifyParticipantEvent extends ParticipantEvent {
 
 
 	public function __construct(Room $room,
-								Participant $participant,
-								string $parameter,
-								$newValue,
-								$oldValue = null) {
+		Participant $participant,
+		string $parameter,
+		$newValue,
+		$oldValue = null) {
 		parent::__construct($room, $participant);
 		$this->parameter = $parameter;
 		$this->newValue = $newValue;

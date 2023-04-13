@@ -44,9 +44,9 @@ class TalkBackend implements ITalkBackend {
 	protected IURLGenerator $url;
 
 	public function __construct(Manager $manager,
-								ParticipantService $participantService,
-								RoomService $roomService,
-								IURLGenerator $url) {
+		ParticipantService $participantService,
+		RoomService $roomService,
+		IURLGenerator $url) {
 		$this->manager = $manager;
 		$this->participantService = $participantService;
 		$this->roomService = $roomService;

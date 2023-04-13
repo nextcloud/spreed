@@ -47,9 +47,9 @@ class TemplateLoader implements IEventListener {
 	use TInitialState;
 
 	public function __construct(IInitialState $initialState,
-								ICacheFactory $memcacheFactory,
-								Config $talkConfig,
-								IConfig $serverConfig) {
+		ICacheFactory $memcacheFactory,
+		Config $talkConfig,
+		IConfig $serverConfig) {
 		$this->initialState = $initialState;
 		$this->talkConfig = $talkConfig;
 		$this->memcacheFactory = $memcacheFactory;

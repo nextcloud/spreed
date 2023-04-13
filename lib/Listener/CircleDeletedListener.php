@@ -39,7 +39,7 @@ class CircleDeletedListener implements IEventListener {
 	private ParticipantService $participantService;
 
 	public function __construct(Manager $manager,
-								ParticipantService $participantService) {
+		ParticipantService $participantService) {
 		$this->manager = $manager;
 		$this->participantService = $participantService;
 	}

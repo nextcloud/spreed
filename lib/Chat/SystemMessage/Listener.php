@@ -69,11 +69,11 @@ class Listener implements IEventListener {
 	protected ITimeFactory $timeFactory;
 
 	public function __construct(IRequest $request,
-								ChatManager $chatManager,
-								TalkSession $talkSession,
-								ISession $session,
-								IUserSession $userSession,
-								ITimeFactory $timeFactory) {
+		ChatManager $chatManager,
+		TalkSession $talkSession,
+		ISession $session,
+		IUserSession $userSession,
+		ITimeFactory $timeFactory) {
 		$this->request = $request;
 		$this->chatManager = $chatManager;
 		$this->talkSession = $talkSession;

@@ -58,17 +58,17 @@ class FilesIntegrationController extends OCSController {
 	private IL10N $l;
 
 	public function __construct(
-			string $appName,
-			IRequest $request,
-			Manager $manager,
-			RoomService $roomService,
-			IShareManager $shareManager,
-			ISession $session,
-			IUserSession $userSession,
-			TalkSession $talkSession,
-			Util $util,
-			IConfig $config,
-			IL10N $l10n
+		string $appName,
+		IRequest $request,
+		Manager $manager,
+		RoomService $roomService,
+		IShareManager $shareManager,
+		ISession $session,
+		IUserSession $userSession,
+		TalkSession $talkSession,
+		Util $util,
+		IConfig $config,
+		IL10N $l10n
 	) {
 		parent::__construct($appName, $request);
 		$this->manager = $manager;

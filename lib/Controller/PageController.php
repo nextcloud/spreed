@@ -26,9 +26,9 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
-use OCA\Talk\Config;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
@@ -44,8 +44,8 @@ use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
-use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
+use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
@@ -81,25 +81,25 @@ class PageController extends Controller {
 	private IThrottler $throttler;
 
 	public function __construct(string $appName,
-								IRequest $request,
-								IEventDispatcher $eventDispatcher,
-								RoomController $api,
-								TalkSession $session,
-								IUserSession $userSession,
-								?string $UserId,
-								LoggerInterface $logger,
-								Manager $manager,
-								ParticipantService $participantService,
-								RoomService $roomService,
-								IURLGenerator $url,
-								INotificationManager $notificationManager,
-								IAppManager $appManager,
-								IInitialState $initialState,
-								ICacheFactory $memcacheFactory,
-								IRootFolder $rootFolder,
-								IThrottler $throttler,
-								Config $talkConfig,
-								IConfig $serverConfig) {
+		IRequest $request,
+		IEventDispatcher $eventDispatcher,
+		RoomController $api,
+		TalkSession $session,
+		IUserSession $userSession,
+		?string $UserId,
+		LoggerInterface $logger,
+		Manager $manager,
+		ParticipantService $participantService,
+		RoomService $roomService,
+		IURLGenerator $url,
+		INotificationManager $notificationManager,
+		IAppManager $appManager,
+		IInitialState $initialState,
+		ICacheFactory $memcacheFactory,
+		IRootFolder $rootFolder,
+		IThrottler $throttler,
+		Config $talkConfig,
+		IConfig $serverConfig) {
 		parent::__construct($appName, $request);
 		$this->eventDispatcher = $eventDispatcher;
 		$this->api = $api;

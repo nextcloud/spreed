@@ -45,9 +45,9 @@ class Util {
 	private array $publicAccessLists = [];
 
 	public function __construct(IRootFolder $rootFolder,
-			ISession $session,
-			IShareManager $shareManager,
-			IUserMountCache $userMountCache) {
+		ISession $session,
+		IShareManager $shareManager,
+		IUserMountCache $userMountCache) {
 		$this->rootFolder = $rootFolder;
 		$this->session = $session;
 		$this->shareManager = $shareManager;

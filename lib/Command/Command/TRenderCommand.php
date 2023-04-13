@@ -23,8 +23,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Command\Command;
 
-use OCA\Talk\Model\Command;
 use OC\Core\Command\Base;
+use OCA\Talk\Model\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\OutputInterface;
 

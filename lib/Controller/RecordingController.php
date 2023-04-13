@@ -25,8 +25,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use InvalidArgumentException;
 use GuzzleHttp\Exception\ConnectException;
+use InvalidArgumentException;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;

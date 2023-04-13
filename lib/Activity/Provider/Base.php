@@ -46,12 +46,12 @@ abstract class Base implements IProvider {
 	protected Manager $manager;
 
 	public function __construct(IFactory $languageFactory,
-								IURLGenerator $url,
-								Config $config,
-								IManager $activityManager,
-								IUserManager $userManager,
-								AvatarService $avatarService,
-								Manager $manager) {
+		IURLGenerator $url,
+		Config $config,
+		IManager $activityManager,
+		IUserManager $userManager,
+		AvatarService $avatarService,
+		Manager $manager) {
 		$this->languageFactory = $languageFactory;
 		$this->url = $url;
 		$this->config = $config;

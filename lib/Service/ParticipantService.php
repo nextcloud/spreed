@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Service;
 
-use OCA\Talk\Manager;
 use OCA\Circles\CirclesManager;
 use OCA\Circles\Model\Circle;
 use OCA\Circles\Model\Member;
@@ -51,6 +50,7 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Federation\Notifications;
+use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\BreakoutRoom;
@@ -96,19 +96,19 @@ class ParticipantService {
 	protected array $sessionCache;
 
 	public function __construct(IConfig $serverConfig,
-								Config $talkConfig,
-								AttendeeMapper $attendeeMapper,
-								SessionMapper $sessionMapper,
-								SessionService $sessionService,
-								ISecureRandom $secureRandom,
-								IDBConnection $connection,
-								IEventDispatcher $dispatcher,
-								IUserManager $userManager,
-								IGroupManager $groupManager,
-								MembershipService $membershipService,
-								Notifications $notifications,
-								ITimeFactory $timeFactory,
-								ICacheFactory $cacheFactory) {
+		Config $talkConfig,
+		AttendeeMapper $attendeeMapper,
+		SessionMapper $sessionMapper,
+		SessionService $sessionService,
+		ISecureRandom $secureRandom,
+		IDBConnection $connection,
+		IEventDispatcher $dispatcher,
+		IUserManager $userManager,
+		IGroupManager $groupManager,
+		MembershipService $membershipService,
+		Notifications $notifications,
+		ITimeFactory $timeFactory,
+		ICacheFactory $cacheFactory) {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->attendeeMapper = $attendeeMapper;
