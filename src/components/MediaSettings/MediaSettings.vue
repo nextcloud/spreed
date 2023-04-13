@@ -86,21 +86,6 @@
 								:size="20" />
 						</template>
 					</NcButton>
-
-					<!-- Blur toggle -->
-					<NcButton v-if="videoPreviewAvailable && blurPreviewAvailable"
-						v-tooltip="blurButtonTooltip"
-						type="tertiary"
-						:aria-label="blurButtonTooltip"
-						:disabled="!blurPreviewAvailable"
-						@click="toggleBlur">
-						<template #icon>
-							<Blur v-if="blurOn"
-								:size="20" />
-							<BlurOff v-else
-								:size="20" />
-						</template>
-					</NcButton>
 				</div>
 			</div>
 
@@ -135,12 +120,16 @@
 			</div>
 
 			<!-- Background selection -->
-			<VideoBackgroundEditor v-if="showBackgroundEditor" />
+			<VideoBackgroundEditor v-if="showBackgroundEditor"
+				:virtual-background="virtualBackground"
+				:token="token"
+				@clear="clearBackground"
+				@blur="blurBackground" />
 
 			<!-- "Always show" setting -->
 			<NcCheckboxRadioSwitch :checked.sync="showMediaSettings"
 				class="checkbox">
-				{{ t('spreed', 'Always show preview for this conversation.') }}
+				{{ t('spreed', 'Always show preview for this conversation') }}
 			</NcCheckboxRadioSwitch>
 
 			<!-- Recording warning -->
@@ -188,14 +177,11 @@
 <script>
 import Bell from 'vue-material-design-icons/Bell.vue'
 import BellOff from 'vue-material-design-icons/BellOff.vue'
-import Blur from 'vue-material-design-icons/Blur.vue'
-import BlurOff from 'vue-material-design-icons/BlurOff.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Creation from 'vue-material-design-icons/Creation.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
@@ -229,8 +215,6 @@ export default {
 	components: {
 		Bell,
 		BellOff,
-		Blur,
-		BlurOff,
 		CallButton,
 		Cog,
 		Creation,
@@ -297,10 +281,6 @@ export default {
 			return this.videoPreviewAvailable && this.videoOn
 		},
 
-		blurPreviewAvailable() {
-			return this.virtualBackground.isAvailable()
-		},
-
 		audioButtonTooltip() {
 			if (!this.audioPreviewAvailable) {
 				return t('spreed', 'No audio')
@@ -313,10 +293,6 @@ export default {
 				return t('spreed', 'No camera')
 			}
 			return this.videoOn ? t('spreed', 'Disable video') : t('spreed', 'Enable video')
-		},
-
-		blurButtonTooltip() {
-			return this.blurOn ? t('spreed', 'Disable background blur') : t('spreed', 'Blur background')
 		},
 
 		conversation() {
@@ -428,18 +404,14 @@ export default {
 			}
 		},
 
-		toggleBlur() {
-			if (!this.blurOn) {
-				localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
-				this.blurOn = true
-			} else {
-				localStorage.removeItem('virtualBackgroundEnabled_' + this.token)
-				this.blurOn = false
-			}
+		clearBackground() {
+			localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'false')
+			this.blurOn = false
 		},
 
-		toggleChooseDevices() {
-			this.showDeviceSelection = !this.showDeviceSelection
+		blurBackground() {
+			localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
+			this.blurOn = true
 		},
 
 		toggleTab(tab) {
@@ -504,7 +476,7 @@ export default {
 	&__call-preferences {
 		height: $clickable-area;
 		display: flex;
-		justify-content: space-between;
+		justify-content: space-evenly;
 		align-items: center;
 	}
 
