@@ -541,7 +541,7 @@ describe('Conversation.vue', () => {
 
 			expect(clearLastReadMessageAction).toHaveBeenCalledWith(expect.anything(), { token: item.token })
 		})
-		test('does not show actions for search result', () => {
+		test('does not show all actions for search result (open conversations)', () => {
 			const wrapper = shallowMount(Conversation, {
 				localVue,
 				store: new Vuex.Store(testStoreConfig),
@@ -558,7 +558,15 @@ describe('Conversation.vue', () => {
 			expect(el.exists()).toBe(true)
 
 			const actionButtons = wrapper.findAllComponents(NcActionButton)
-			expect(actionButtons.exists()).toBe(false)
+			expect(actionButtons.exists()).toBe(true)
+
+			// Join conversation and Copy link actions are intended
+			expect(findNcActionButton(el, 'Join conversation').exists()).toBe(true)
+			expect(findNcActionButton(el, 'Copy link').exists()).toBe(true)
+
+			// But not default conversation actions
+			expect(findNcActionButton(el, 'Add to favorites').exists()).toBe(false)
+			expect(findNcActionButton(el, 'Remove from favorites').exists()).toBe(false)
 		})
 	})
 })
