@@ -55,10 +55,7 @@
 				</div>
 			</div>
 
-			<!--
-				Toggle audio and video on and off before starting or joining
-				a call.
-			-->
+			<!-- Audio and video toggles -->
 			<div class="media-settings__toggles-wrapper">
 				<div class="media-settings__toggles">
 					<!-- Audio toggle -->
@@ -107,6 +104,7 @@
 				</div>
 			</div>
 
+			<!-- Tabs -->
 			<div class="media-settings__call-preferences">
 				<NcButton :type="showDeviceSelection ? 'secondary' : 'tertiary'"
 					@click="toggleTab('devices')">
@@ -115,7 +113,7 @@
 					</template>
 					{{ t('spreed', 'Devices') }}
 				</NcButton>
-				<NcButton :type="showBackgroundSelection ? 'secondary' : 'tertiary'"
+				<NcButton :type="showBackgroundEditor ? 'secondary' : 'tertiary'"
 					@click="toggleTab('backgrounds')">
 					<template #icon>
 						<Creation :size="20" />
@@ -125,30 +123,33 @@
 			</div>
 
 			<!-- Device selection -->
-			<div class="media-settings__device-selection">
-				<template v-if="showDeviceSelection">
-					<MediaDevicesSelector kind="audioinput"
-						:devices="devices"
-						:device-id="audioInputId"
-						@update:deviceId="audioInputId = $event" />
-					<MediaDevicesSelector kind="videoinput"
-						:devices="devices"
-						:device-id="videoInputId"
-						@update:deviceId="videoInputId = $event" />
-				</template>
+			<div v-if="showDeviceSelection" class="media-settings__device-selection">
+				<MediaDevicesSelector kind="audioinput"
+					:devices="devices"
+					:device-id="audioInputId"
+					@update:deviceId="audioInputId = $event" />
+				<MediaDevicesSelector kind="videoinput"
+					:devices="devices"
+					:device-id="videoInputId"
+					@update:deviceId="videoInputId = $event" />
 			</div>
 
-			<!-- Always show setting -->
+			<!-- Background selection -->
+			<VideoBackgroundEditor v-if="showBackgroundEditor" />
+
+			<!-- "Always show" setting -->
 			<NcCheckboxRadioSwitch :checked.sync="showMediaSettings"
 				class="checkbox">
 				{{ t('spreed', 'Always show preview for this conversation.') }}
 			</NcCheckboxRadioSwitch>
 
+			<!-- Recording warning -->
 			<NcNoteCard v-if="isStartingRecording || isRecording"
 				type="warning">
 				<p>{{ t('spreed', 'The call is being recorded.') }}</p>
 			</NcNoteCard>
 
+			<!-- buttons bar at the bottom -->
 			<div class="media-settings__call-buttons">
 				<!-- Silent call -->
 				<NcActions v-if="showSilentCallOption"
@@ -210,6 +211,7 @@ import VideoBackground from '../CallView/shared/VideoBackground.vue'
 import MediaDevicesSelector from '../MediaDevicesSelector.vue'
 import CallButton from '../TopBar/CallButton.vue'
 import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
+import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
 
 import { CALL } from '../../constants.js'
 import { devices } from '../../mixins/devices.js'
@@ -244,6 +246,7 @@ export default {
 		VideoIcon,
 		VideoOff,
 		VolumeIndicator,
+		VideoBackgroundEditor,
 	},
 
 	mixins: [devices, isInLobby],
@@ -342,7 +345,7 @@ export default {
 			return this.tabContent === 'devices'
 		},
 
-		showBackgroundSelection() {
+		showBackgroundEditor() {
 			return this.tabContent === 'backgrounds'
 		},
 	},
