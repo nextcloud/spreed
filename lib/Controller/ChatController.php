@@ -87,7 +87,8 @@ class ChatController extends AEnvironmentAwareController {
 	protected ITrustedDomainHelper $trustedDomainHelper;
 	private IL10N $l;
 
-	public function __construct(string $appName,
+	public function __construct(
+		string $appName,
 		?string $UserId,
 		IRequest $request,
 		IUserManager $userManager,
@@ -109,7 +110,8 @@ class ChatController extends AEnvironmentAwareController {
 		IEventDispatcher $eventDispatcher,
 		IValidator $richObjectValidator,
 		ITrustedDomainHelper $trustedDomainHelper,
-		IL10N $l) {
+		IL10N $l,
+	) {
 		parent::__construct($appName, $request);
 
 		$this->userId = $UserId;
