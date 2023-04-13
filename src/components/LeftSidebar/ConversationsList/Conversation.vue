@@ -93,6 +93,18 @@
 				{{ t('spreed', 'Delete conversation') }}
 			</NcActionButton>
 		</template>
+		<template v-else-if="item.token" slot="actions">
+			<NcActionButton @click.stop.prevent="onClick">
+				<template #icon>
+					<ArrowRight :size="16" />
+				</template>
+				{{ t('spreed', 'Join conversation') }}
+			</NcActionButton>
+			<NcActionButton icon="icon-clippy"
+				@click.stop.prevent="handleCopyLink">
+				{{ t('spreed', 'Copy link') }}
+			</NcActionButton>
+		</template>
 	</NcListItem>
 </template>
 
@@ -119,6 +131,7 @@ export default {
 	name: 'Conversation',
 
 	components: {
+		ArrowRight,
 		Cog,
 		ConversationIcon,
 		Delete,
