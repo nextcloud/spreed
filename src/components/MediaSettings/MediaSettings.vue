@@ -109,12 +109,18 @@
 
 			<div class="media-settings__call-preferences">
 				<NcButton :type="showDeviceSelection ? 'secondary' : 'tertiary'"
-					class="select-devices"
-					@click="toggleChooseDevices">
+					@click="toggleTab('devices')">
 					<template #icon>
 						<Cog :size="20" />
 					</template>
-					{{ t('spreed', 'Choose devices') }}
+					{{ t('spreed', 'Devices') }}
+				</NcButton>
+				<NcButton :type="showBackgroundSelection ? 'secondary' : 'tertiary'"
+					@click="toggleTab('backgrounds')">
+					<template #icon>
+						<Creation :size="20" />
+					</template>
+					{{ t('spreed', 'Backgrounds') }}
 				</NcButton>
 			</div>
 
@@ -187,6 +193,7 @@ import BellOff from 'vue-material-design-icons/BellOff.vue'
 import Blur from 'vue-material-design-icons/Blur.vue'
 import BlurOff from 'vue-material-design-icons/BlurOff.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
+import Creation from 'vue-material-design-icons/Creation.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
@@ -227,6 +234,7 @@ export default {
 		BlurOff,
 		CallButton,
 		Cog,
+		Creation,
 		NcActionButton,
 		NcActions,
 		NcAvatar,
@@ -247,7 +255,7 @@ export default {
 		return {
 			model: localMediaModel,
 			modal: false,
-			showDeviceSelection: false,
+			tabContent: 'none',
 			audioOn: undefined,
 			videoOn: undefined,
 			blurOn: undefined,
@@ -335,6 +343,14 @@ export default {
 
 		canRecordingTakePlace() {
 			return getCapabilities()?.spreed?.config?.call?.recording || false
+		},
+
+		showDeviceSelection() {
+			return this.tabContent === 'devices'
+		},
+
+		showBackgroundSelection() {
+			return this.tabContent === 'backgrounds'
 		},
 	},
 
@@ -429,6 +445,14 @@ export default {
 		toggleChooseDevices() {
 			this.showDeviceSelection = !this.showDeviceSelection
 		},
+
+		toggleTab(tab) {
+			if (this.tabContent !== tab) {
+				this.tabContent = tab
+			} else {
+				this.tabContent = 'none'
+			}
+		},
 	},
 }
 </script>
@@ -510,12 +534,6 @@ export default {
 		overflow: hidden;
 		width: 100%;
 	}
-}
-
-.select-devices {
-	display: flex;
-	align-items: center;
-	justify-content: center;
 }
 
 .call-button {
