@@ -93,6 +93,18 @@
 				{{ t('spreed', 'Delete conversation') }}
 			</NcActionButton>
 		</template>
+		<template v-else-if="item.token" slot="actions">
+			<NcActionButton close-after-click @click="onClick">
+				<template #icon>
+					<ArrowRight :size="16" />
+				</template>
+				{{ t('spreed', 'Join conversation') }}
+			</NcActionButton>
+			<NcActionButton icon="icon-clippy"
+				@click.stop.prevent="handleCopyLink">
+				{{ t('spreed', 'Copy link') }}
+			</NcActionButton>
+		</template>
 	</NcListItem>
 </template>
 
@@ -100,6 +112,7 @@
 
 import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 
+import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import ExitToApp from 'vue-material-design-icons/ExitToApp.vue'
@@ -121,6 +134,7 @@ export default {
 	name: 'Conversation',
 
 	components: {
+		ArrowRight,
 		Cog,
 		ConversationIcon,
 		Delete,
