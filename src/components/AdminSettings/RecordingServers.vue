@@ -110,7 +110,7 @@ export default {
 			return this.uploadLimit !== 0 && this.uploadLimit < 512 * (1024 ** 2)
 		},
 		uploadLimitWarning() {
-			return t('spreed', 'The PHP settings "upload_max_filesize" or "post_max_size" only will allow to upload files up to {maxUpload}.', {
+			return t('spreed', 'The PHP settings "upload_max_filesize" or "post_max_size" will allow to upload files up to {maxUpload} only.', {
 				maxUpload: formatFileSize(this.uploadLimit, true, true),
 			})
 		},
