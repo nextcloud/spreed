@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6fd982a6b22c1eff841480b5c73fd5ac",
+    "content-hash": "1482907d27e6894eea86dc6125805581",
     "packages": [],
     "packages-dev": [
         {
@@ -520,20 +520,20 @@
         },
         {
             "name": "nextcloud/coding-standard",
-            "version": "v1.0.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud/coding-standard.git",
-                "reference": "f3d1f9375e89c605deb1734f59a9f51ecbe80578"
+                "reference": "20efa30db5240a5f078e03b04c685735a89dfc9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud/coding-standard/zipball/f3d1f9375e89c605deb1734f59a9f51ecbe80578",
-                "reference": "f3d1f9375e89c605deb1734f59a9f51ecbe80578",
+                "url": "https://api.github.com/repos/nextcloud/coding-standard/zipball/20efa30db5240a5f078e03b04c685735a89dfc9e",
+                "reference": "20efa30db5240a5f078e03b04c685735a89dfc9e",
                 "shasum": ""
             },
             "require": {
-                "friendsofphp/php-cs-fixer": "^3.2",
+                "friendsofphp/php-cs-fixer": "^3.9",
                 "php": "^7.3|^8.0"
             },
             "type": "library",
@@ -555,9 +555,9 @@
             "description": "Nextcloud coding standards for the php cs fixer",
             "support": {
                 "issues": "https://github.com/nextcloud/coding-standard/issues",
-                "source": "https://github.com/nextcloud/coding-standard/tree/v1.0.0"
+                "source": "https://github.com/nextcloud/coding-standard/tree/v1.1.0"
             },
-            "time": "2021-11-10T08:44:10+00:00"
+            "time": "2023-04-13T10:52:46+00:00"
         },
         {
             "name": "psr/cache",
