@@ -110,6 +110,7 @@
 
 <script>
 
+import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import ExitToApp from 'vue-material-design-icons/ExitToApp.vue'
