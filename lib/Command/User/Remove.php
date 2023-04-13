@@ -36,8 +36,10 @@ class Remove extends Base {
 	private IUserManager $userManager;
 	private Manager $manager;
 
-	public function __construct(IUserManager $userManager,
-								Manager $manager) {
+	public function __construct(
+		IUserManager $userManager,
+		Manager $manager,
+	) {
 		parent::__construct();
 		$this->userManager = $userManager;
 		$this->manager = $manager;

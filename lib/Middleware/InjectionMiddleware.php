@@ -39,8 +39,8 @@ use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\RedirectToDefaultAppResponse;
+use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
@@ -57,13 +57,15 @@ class InjectionMiddleware extends Middleware {
 	protected IThrottler $throttler;
 	protected ?string $userId;
 
-	public function __construct(IRequest $request,
-								IControllerMethodReflector $reflector,
-								ParticipantService $participantService,
-								TalkSession $talkSession,
-								Manager $manager,
-								IThrottler $throttler,
-								?string $userId) {
+	public function __construct(
+		IRequest $request,
+		IControllerMethodReflector $reflector,
+		ParticipantService $participantService,
+		TalkSession $talkSession,
+		Manager $manager,
+		IThrottler $throttler,
+		?string $userId,
+	) {
 		$this->request = $request;
 		$this->reflector = $reflector;
 		$this->participantService = $participantService;

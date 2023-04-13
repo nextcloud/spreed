@@ -23,10 +23,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat;
 
-use OCP\DB\Exception;
 use OC\Comments\Comment;
 use OC\Comments\Manager;
 use OCP\Comments\IComment;
+use OCP\DB\Exception;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 
 class CommentsManager extends Manager {

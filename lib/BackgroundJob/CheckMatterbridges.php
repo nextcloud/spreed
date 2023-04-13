@@ -42,10 +42,12 @@ class CheckMatterbridges extends TimedJob {
 
 	protected LoggerInterface $logger;
 
-	public function __construct(ITimeFactory $time,
-								IConfig $serverConfig,
-								MatterbridgeManager $bridgeManager,
-								LoggerInterface $logger) {
+	public function __construct(
+		ITimeFactory $time,
+		IConfig $serverConfig,
+		MatterbridgeManager $bridgeManager,
+		LoggerInterface $logger,
+	) {
 		parent::__construct($time);
 
 		// Every 15 minutes

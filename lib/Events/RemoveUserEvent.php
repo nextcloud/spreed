@@ -30,11 +30,13 @@ use OCP\IUser;
 class RemoveUserEvent extends RemoveParticipantEvent {
 	protected IUser $user;
 
-	public function __construct(Room $room,
-								Participant $participant,
-								IUser $user,
-								string $reason,
-								array $sessions = []) {
+	public function __construct(
+		Room $room,
+		Participant $participant,
+		IUser $user,
+		string $reason,
+		array $sessions = [],
+	) {
 		parent::__construct($room, $participant, $reason, $sessions);
 		$this->user = $user;
 	}

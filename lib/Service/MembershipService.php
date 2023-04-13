@@ -40,9 +40,11 @@ class MembershipService {
 	protected IGroupManager $groupManager;
 	protected AttendeeMapper $attendeeMapper;
 
-	public function __construct(IAppManager $appManager,
-								IGroupManager $groupManager,
-								AttendeeMapper $attendeeMapper) {
+	public function __construct(
+		IAppManager $appManager,
+		IGroupManager $groupManager,
+		AttendeeMapper $attendeeMapper,
+	) {
 		$this->appManager = $appManager;
 		$this->groupManager = $groupManager;
 		$this->attendeeMapper = $attendeeMapper;

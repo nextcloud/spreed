@@ -56,13 +56,15 @@ class Notifier {
 	private ITimeFactory $timeFactory;
 	private Util $util;
 
-	public function __construct(INotificationManager $notificationManager,
-								IUserManager $userManager,
-								ParticipantService $participantService,
-								Manager $manager,
-								IConfig $config,
-								ITimeFactory $timeFactory,
-								Util $util) {
+	public function __construct(
+		INotificationManager $notificationManager,
+		IUserManager $userManager,
+		ParticipantService $participantService,
+		Manager $manager,
+		IConfig $config,
+		ITimeFactory $timeFactory,
+		Util $util,
+	) {
 		$this->notificationManager = $notificationManager;
 		$this->userManager = $userManager;
 		$this->participantService = $participantService;

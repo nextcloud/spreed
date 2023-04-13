@@ -88,15 +88,15 @@ class RoomShareProvider implements IShareProvider {
 	private CappedMemoryCache $sharesByIdCache;
 
 	public function __construct(
-			IDBConnection $connection,
-			ISecureRandom $secureRandom,
-			IShareManager $shareManager,
-			IEventDispatcher $dispatcher,
-			Manager $manager,
-			ParticipantService $participantService,
-			ITimeFactory $timeFactory,
-			IL10N $l,
-			IMimeTypeLoader $mimeTypeLoader
+		IDBConnection $connection,
+		ISecureRandom $secureRandom,
+		IShareManager $shareManager,
+		IEventDispatcher $dispatcher,
+		Manager $manager,
+		ParticipantService $participantService,
+		ITimeFactory $timeFactory,
+		IL10N $l,
+		IMimeTypeLoader $mimeTypeLoader,
 	) {
 		$this->dbConnection = $connection;
 		$this->secureRandom = $secureRandom;
@@ -217,15 +217,15 @@ class RoomShareProvider implements IShareProvider {
 	 * @return int
 	 */
 	private function addShareToDB(
-			string $shareWith,
-			string $sharedBy,
-			string $shareOwner,
-			string $itemType,
-			int $itemSource,
-			string $target,
-			int $permissions,
-			string $token,
-			?\DateTime $expirationDate
+		string $shareWith,
+		string $sharedBy,
+		string $shareOwner,
+		string $itemType,
+		int $itemSource,
+		string $target,
+		int $permissions,
+		string $token,
+		?\DateTime $expirationDate
 	): int {
 		$insert = $this->dbConnection->getQueryBuilder();
 		$insert->insert('share')

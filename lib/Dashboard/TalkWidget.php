@@ -69,7 +69,7 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 		AvatarService $avatarService,
 		ParticipantService $participantService,
 		MessageParser $messageParser,
-		ITimeFactory $timeFactory
+		ITimeFactory $timeFactory,
 	) {
 		$this->userSession = $userSession;
 		$this->talkConfig = $talkConfig;

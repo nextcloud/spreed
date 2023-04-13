@@ -27,8 +27,10 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
 class DuplicatedParticipantEvent extends ParticipantEvent {
-	public function __construct(Room $room,
-								Participant $participant) {
+	public function __construct(
+		Room $room,
+		Participant $participant,
+	) {
 		parent::__construct($room, $participant);
 	}
 }

@@ -39,10 +39,12 @@ class Manager {
 	protected RoomService $roomService;
 	protected ICache $cache;
 
-	public function __construct(IConfig $serverConfig,
-								Config $talkConfig,
-								RoomService $roomService,
-								ICacheFactory $cacheFactory) {
+	public function __construct(
+		IConfig $serverConfig,
+		Config $talkConfig,
+		RoomService $roomService,
+		ICacheFactory $cacheFactory,
+	) {
 		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->roomService = $roomService;

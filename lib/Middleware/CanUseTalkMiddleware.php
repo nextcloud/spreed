@@ -30,8 +30,8 @@ use OCA\Talk\Middleware\Exceptions\CanNotUseTalkException;
 use OCA\Talk\Room;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\RedirectToDefaultAppResponse;
+use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
@@ -48,11 +48,13 @@ class CanUseTalkMiddleware extends Middleware {
 	private Config $talkConfig;
 	private IConfig $serverConfig;
 
-	public function __construct(IUserSession $userSession,
-								IGroupManager $groupManager,
-								IControllerMethodReflector $reflector,
-								Config $talkConfig,
-								IConfig $serverConfig) {
+	public function __construct(
+		IUserSession $userSession,
+		IGroupManager $groupManager,
+		IControllerMethodReflector $reflector,
+		Config $talkConfig,
+		IConfig $serverConfig,
+	) {
 		$this->userSession = $userSession;
 		$this->groupManager = $groupManager;
 		$this->reflector = $reflector;

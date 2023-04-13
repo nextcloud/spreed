@@ -31,8 +31,10 @@ class VerifyRoomPasswordEvent extends RoomEvent {
 	protected string $redirectUrl = '';
 
 
-	public function __construct(Room $room,
-								string $password) {
+	public function __construct(
+		Room $room,
+		string $password,
+	) {
 		parent::__construct($room);
 		$this->password = $password;
 	}

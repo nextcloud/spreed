@@ -29,7 +29,11 @@ class SignalingRoomPropertiesEvent extends RoomEvent {
 	protected ?string $userId;
 	protected array $properties;
 
-	public function __construct(Room $room, ?string $userId, array $properties) {
+	public function __construct(
+		Room $room,
+		?string $userId,
+		array $properties,
+	) {
 		parent::__construct($room);
 		$this->userId = $userId;
 		$this->properties = $properties;

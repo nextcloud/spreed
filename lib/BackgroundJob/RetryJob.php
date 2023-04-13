@@ -51,8 +51,10 @@ class RetryJob extends Job {
 	private int $maxTry = 20;
 
 
-	public function __construct(Notifications $notifications,
-								ITimeFactory $timeFactory) {
+	public function __construct(
+		Notifications $notifications,
+		ITimeFactory $timeFactory,
+	) {
 		parent::__construct($timeFactory);
 		$this->notifications = $notifications;
 	}

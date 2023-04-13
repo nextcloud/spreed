@@ -23,9 +23,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Command\Command;
 
+use OC\Core\Command\Base;
 use OCA\Talk\Model\Command;
 use OCA\Talk\Service\CommandService;
-use OC\Core\Command\Base;
 use OCP\App\AppPathNotFoundException;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -40,7 +40,10 @@ class AddSamples extends Base {
 
 	protected array $commands = [];
 
-	public function __construct(CommandService $service, IAppManager $appManager) {
+	public function __construct(
+		CommandService $service,
+		IAppManager $appManager,
+	) {
 		parent::__construct();
 		$this->service = $service;
 		$this->appManager = $appManager;

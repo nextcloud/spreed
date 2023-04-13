@@ -46,13 +46,15 @@ class CheckHostedSignalingServer extends TimedJob {
 	private IURLGenerator $urlGenerator;
 	private LoggerInterface $logger;
 
-	public function __construct(ITimeFactory $timeFactory,
-								HostedSignalingServerService $hostedSignalingServerService,
-								IConfig $config,
-								IManager $notificationManager,
-								IGroupManager $groupManager,
-								IURLGenerator $urlGenerator,
-								LoggerInterface $logger) {
+	public function __construct(
+		ITimeFactory $timeFactory,
+		HostedSignalingServerService $hostedSignalingServerService,
+		IConfig $config,
+		IManager $notificationManager,
+		IGroupManager $groupManager,
+		IURLGenerator $urlGenerator,
+		LoggerInterface $logger,
+	) {
 		parent::__construct($timeFactory);
 
 		// Every hour

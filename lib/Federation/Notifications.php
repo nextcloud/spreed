@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Federation;
 
-use OCP\DB\Exception;
 use OCA\FederatedFileSharing\AddressHandler;
 use OCA\Talk\AppInfo\Application;
 use OCA\Talk\BackgroundJob\RetryJob;
@@ -33,6 +32,7 @@ use OCA\Talk\Exceptions\RoomHasNoModeratorException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Room;
 use OCP\BackgroundJob\IJobList;
+use OCP\DB\Exception;
 use OCP\Federation\ICloudFederationFactory;
 use OCP\Federation\ICloudFederationNotification;
 use OCP\Federation\ICloudFederationProviderManager;
@@ -61,7 +61,7 @@ class Notifications {
 		LoggerInterface $logger,
 		ICloudFederationProviderManager $federationProviderManager,
 		IJobList $jobList,
-		IUserManager $userManager
+		IUserManager $userManager,
 	) {
 		$this->cloudFederationFactory = $cloudFederationFactory;
 		$this->logger = $logger;
@@ -77,7 +77,7 @@ class Notifications {
 	 * @throws Exception
 	 */
 	public function sendRemoteShare(string $providerId, string $token, string $shareWith, string $sharedBy,
-									string $sharedByFederatedId, string $shareType, Room $room, Attendee $roomOwnerAttendee): bool {
+		string $sharedByFederatedId, string $shareType, Room $room, Attendee $roomOwnerAttendee): bool {
 		[$user, $remote] = $this->addressHandler->splitUserRemote($shareWith);
 
 		$roomName = $room->getName();

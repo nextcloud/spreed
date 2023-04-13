@@ -41,9 +41,11 @@ class PollService {
 	protected PollMapper $pollMapper;
 	protected VoteMapper $voteMapper;
 
-	public function __construct(IDBConnection $connection,
-								PollMapper $pollMapper,
-								VoteMapper $voteMapper) {
+	public function __construct(
+		IDBConnection $connection,
+		PollMapper $pollMapper,
+		VoteMapper $voteMapper,
+	) {
 		$this->connection = $connection;
 		$this->pollMapper = $pollMapper;
 		$this->voteMapper = $voteMapper;

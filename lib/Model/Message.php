@@ -67,9 +67,9 @@ class Message {
 	protected $actorDisplayName = '';
 
 	public function __construct(Room $room,
-								Participant $participant,
-								IComment $comment,
-								IL10N $l) {
+		Participant $participant,
+		IComment $comment,
+		IL10N $l) {
 		$this->room = $room;
 		$this->participant = $participant;
 		$this->comment = $comment;

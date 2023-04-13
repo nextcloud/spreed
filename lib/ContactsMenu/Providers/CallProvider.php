@@ -42,11 +42,13 @@ class CallProvider implements IProvider {
 	private IL10N $l10n;
 	private Config $config;
 
-	public function __construct(IActionFactory $actionFactory,
-								IURLGenerator $urlGenerator,
-								IL10N $l10n,
-								IUserManager $userManager,
-								Config $config) {
+	public function __construct(
+		IActionFactory $actionFactory,
+		IURLGenerator $urlGenerator,
+		IL10N $l10n,
+		IUserManager $userManager,
+		Config $config,
+	) {
 		$this->actionFactory = $actionFactory;
 		$this->urlGenerator = $urlGenerator;
 		$this->userManager = $userManager;

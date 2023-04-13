@@ -23,13 +23,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\BackgroundJob;
 
+use OCA\Talk\Manager;
+use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\TimedJob;
-use OCA\Talk\Manager;
-use OCA\Talk\Room;
 use OCP\BackgroundJob\IJob;
+use OCP\BackgroundJob\TimedJob;
 use OCP\Files\Config\IUserMountCache;
 use Psr\Log\LoggerInterface;
 
@@ -47,12 +47,14 @@ class RemoveEmptyRooms extends TimedJob {
 
 	protected int $numDeletedRooms = 0;
 
-	public function __construct(ITimeFactory $timeFactory,
-								Manager $manager,
-								RoomService $roomService,
-								ParticipantService $participantService,
-								LoggerInterface $logger,
-								IUserMountCache $userMountCache) {
+	public function __construct(
+		ITimeFactory $timeFactory,
+		Manager $manager,
+		RoomService $roomService,
+		ParticipantService $participantService,
+		LoggerInterface $logger,
+		IUserMountCache $userMountCache,
+	) {
 		parent::__construct($timeFactory);
 
 		// Every 5 minutes

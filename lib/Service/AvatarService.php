@@ -54,7 +54,7 @@ class AvatarService {
 		IURLGenerator $url,
 		ISecureRandom $random,
 		RoomService $roomService,
-		IAvatarManager $avatarManager
+		IAvatarManager $avatarManager,
 	) {
 		$this->appData = $appData;
 		$this->l = $l;
