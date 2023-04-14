@@ -118,6 +118,10 @@ function SimpleWebRTC(opts) {
 			// "nickChanged" can be received from a participant without a Peer
 			// object if that participant is not sending audio nor video.
 			self.emit('nick', { id: message.from, name: message.payload.name })
+		} else if (message.type === 'reaction') {
+			// "reaction" can be received from a participant without a Peer
+			// object if that participant is not sending audio nor video.
+			self.emit('reaction', { id: message.from, reaction: message.payload.reaction })
 		} else if (message.type === 'raiseHand') {
 			// "raisedHand" can be received from a participant without a Peer
 			// object if that participant is not sending audio nor video.

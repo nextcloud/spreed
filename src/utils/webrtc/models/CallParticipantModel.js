@@ -93,6 +93,7 @@ export default function CallParticipantModel(options) {
 	this._handleChannelMessageBound = this._handleChannelMessage.bind(this)
 	this._handleRaisedHandBound = this._handleRaisedHand.bind(this)
 	this._handleRemoteVideoBlockedBound = this._handleRemoteVideoBlocked.bind(this)
+	this._handleReactionBound = this._handleReaction.bind(this)
 
 	this._webRtc.on('peerStreamAdded', this._handlePeerStreamAddedBound)
 	this._webRtc.on('peerStreamRemoved', this._handlePeerStreamRemovedBound)
@@ -101,6 +102,7 @@ export default function CallParticipantModel(options) {
 	this._webRtc.on('unmute', this._handleUnmuteBound)
 	this._webRtc.on('channelMessage', this._handleChannelMessageBound)
 	this._webRtc.on('raisedHand', this._handleRaisedHandBound)
+	this._webRtc.on('reaction', this._handleReactionBound)
 }
 
 CallParticipantModel.prototype = {
@@ -119,6 +121,7 @@ CallParticipantModel.prototype = {
 		this._webRtc.off('unmute', this._handleUnmuteBound)
 		this._webRtc.off('channelMessage', this._handleChannelMessageBound)
 		this._webRtc.off('raisedHand', this._handleRaisedHandBound)
+		this._webRtc.off('reaction', this._handleReactionBound)
 	},
 
 	get(key) {
@@ -433,6 +436,15 @@ CallParticipantModel.prototype = {
 
 		// Use same quality for simulcast and temporal layer.
 		this.get('screenPeer').selectSimulcastStream(simulcastScreenQuality, simulcastScreenQuality)
+	},
+
+	_handleReaction(data) {
+		// A reaction could be sent even if there is no Peer object.
+		if (this.get('peerId') !== data.id) {
+			return
+		}
+
+		this._trigger('reaction', [data.reaction])
 	},
 
 }
