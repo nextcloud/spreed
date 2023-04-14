@@ -24,7 +24,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Activity\Provider;
 
 use OCA\Talk\Config;
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;

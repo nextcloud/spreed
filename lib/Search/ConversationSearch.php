@@ -113,7 +113,7 @@ class ConversationSearch implements IProvider {
 					// Neither name nor displayname (one-to-one) match, skip
 					continue;
 				}
-			} else if (stripos($room->getName(), $query->getTerm()) === false) {
+			} elseif (stripos($room->getName(), $query->getTerm()) === false) {
 				continue;
 			}
 
