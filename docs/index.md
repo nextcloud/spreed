@@ -13,6 +13,7 @@
 * [Constants](constants.md)
 * [Capabilities](capabilities.md)
 * [Conversation API](conversation.md)
+* [Conversation avatar API](avatar.md)
 * [Participant API](participant.md)
 * [Call API](call.md)
 * [Call recording API](recording.md)

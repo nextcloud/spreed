@@ -1,0 +1,61 @@
+# Conversation avatar API
+
+* API v1: Base endpoint `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 27
+
+## Set conversations avatar
+
+* Required capability: `avatar`
+* Method: `POST`
+* Endpoint: `/room/{token}/avatar`
+* Data:
+
+| field  | type   | Description                                                                                                                         |
+|--------|--------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `file` | string | Blob of image in a multipart/form-data request. Only accept images with mimetype equal to PNG or JPEG and need to be squared image. |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When: is one-to-one, no image, file is too big, invalid mimetype or resource, isn't square, unknown error
+        + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
+        + `404 Not Found` When the conversation could not be found for the participant
+
+    - Data: See array definition in `Get user´s conversations`
+
+## Delete conversations avatar
+
+* Required capability: `avatar`
+* Method: `DELETE`
+* Endpoint: `/room/{token}/avatar`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
+        + `404 Not Found` When the conversation could not be found for the participant
+
+    - Data: See array definition in `Get user´s conversations`
+
+## Get conversations avatar (binary)
+
+* Required capability: `avatar`
+* Method: `GET`
+* Endpoint: `/room/{token}/avatar`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `404 Not Found` When the conversation could not be found for the participant
+    - Body: the image file
+
+## Get dark mode conversations avatar (binary)
+
+* Required capability: `avatar`
+* Method: `GET`
+* Endpoint: `/room/{token}/avatar/dark`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `404 Not Found` When the conversation could not be found for the participant
+    - Body: the image file
