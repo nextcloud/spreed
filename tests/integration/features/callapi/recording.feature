@@ -85,6 +85,65 @@ Feature: callapi/recording
       | type | name  | callRecording |
       | 2    | room1 | 0             |
 
+  Scenario: No system message should be shown when the call was just ended for everyone
+    Given recording server is started
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    And user "participant1" joins call "room1" with 200 (v4)
+    When user "participant1" starts "video" recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data                                                         |
+      | room1 | {"type":"start","start":{"status":1,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And recording server sent started request for "video" recording in room "room1" as "participant1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room1 | users     | participant1 | participant1-displayname | recording_started    |
+      | room1 | users     | participant1 | participant1-displayname | call_started         |
+      | room1 | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant1" ends call "room1" with 200 (v4)
+    And recording server received the following requests
+      | token | data             |
+      | room1 | {"type":"stop","stop":[]} |
+    And recording server sent stopped request for recording in room "room1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room1 | users     | participant1 | participant1-displayname | call_ended_everyone  |
+      | room1 | users     | participant1 | participant1-displayname | recording_started    |
+      | room1 | users     | participant1 | participant1-displayname | call_started         |
+      | room1 | users     | participant1 | participant1-displayname | conversation_created |
+
+  Scenario: No system message should be shown when the call was ended by the last one leaving
+    Given recording server is started
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    And user "participant1" joins call "room1" with 200 (v4)
+    When user "participant1" starts "video" recording in room "room1" with 200 (v1)
+    And recording server received the following requests
+      | token | data                                                         |
+      | room1 | {"type":"start","start":{"status":1,"owner":"participant1","actor":{"type":"users","id":"participant1"}}} |
+    And recording server sent started request for "video" recording in room "room1" as "participant1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room1 | users     | participant1 | participant1-displayname | recording_started    |
+      | room1 | users     | participant1 | participant1-displayname | call_started         |
+      | room1 | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant1" leaves call "room1" with 200 (v4)
+    And recording server received the following requests
+      | token | data             |
+      | room1 | {"type":"stop","stop":[]} |
+    And recording server sent stopped request for recording in room "room1" with 200
+    Then user "participant1" sees the following system messages in room "room1" with 200 (v1)
+      | room  | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | room1 | users     | participant1 | participant1-displayname | call_ended           |
+      | room1 | users     | participant1 | participant1-displayname | call_left            |
+      | room1 | users     | participant1 | participant1-displayname | recording_started    |
+      | room1 | users     | participant1 | participant1-displayname | call_started         |
+      | room1 | users     | participant1 | participant1-displayname | conversation_created |
+
   Scenario: Recording failed to start
     Given recording server is started
     And user "participant1" creates room "room1" (v4)
@@ -417,7 +476,7 @@ Feature: callapi/recording
     When user "participant1" ends call "room1" with 200 (v4)
     Then recording server received the following requests
       | token | data             |
-      | room1 | {"type":"stop","stop":{"actor":{"type":"users","id":"participant1"}}} |
+      | room1 | {"type":"stop","stop":[]} |
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 2             |
@@ -426,7 +485,7 @@ Feature: callapi/recording
       | type | name  | callRecording |
       | 2    | room1 | 0             |
 
-  Scenario: Stop recording automatically when the last participant go out
+  Scenario: Stop recording automatically when the last participant leaves the call
     Given recording server is started
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
@@ -441,7 +500,7 @@ Feature: callapi/recording
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 2             |
-    When user "participant1" leaves room "room1" with 200 (v4)
+    When user "participant1" leaves call "room1" with 200 (v4)
     Then recording server received the following requests
       | token | data             |
       | room1 | {"type":"stop","stop":[]} |

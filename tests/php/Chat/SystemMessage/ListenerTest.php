@@ -424,7 +424,7 @@ class ListenerTest extends TestCase {
 				Room::RECORDING_VIDEO,
 				null,
 				null,
-				['message' => 'recording_stopped', 'parameters' => []],
+				null,
 			],
 			[
 				Room::RECORDING_NONE,
@@ -452,7 +452,7 @@ class ListenerTest extends TestCase {
 				Room::RECORDING_AUDIO,
 				null,
 				null,
-				['message' => 'audio_recording_stopped', 'parameters' => []],
+				null,
 			],
 			[
 				Room::RECORDING_NONE,
@@ -555,7 +555,7 @@ class ListenerTest extends TestCase {
 	 * @param int $oldStatus
 	 * @param string|null $actorType
 	 * @param string|null $actorId
-	 * @param array $expectedMessage
+	 * @param array|null $expectedMessage
 	 */
 	public function testAfterCallRecordingSet(int $newStatus, int $oldStatus, ?string $actorType, ?string $actorId, ?array $expectedMessage): void {
 		$this->mockLoggedInUser('logged_in_user');
@@ -594,7 +594,7 @@ class ListenerTest extends TestCase {
 					json_encode($expectedMessage),
 					$this->dummyTime,
 					false,
-					SELF::DUMMY_REFERENCE_ID,
+					self::DUMMY_REFERENCE_ID,
 					null,
 					false
 				);
