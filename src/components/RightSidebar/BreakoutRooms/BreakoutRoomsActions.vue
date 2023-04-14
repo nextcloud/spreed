@@ -61,7 +61,9 @@
 				</template>
 				{{ backToBreakoutRoomLabel }}
 			</NcButton>
-			<NcActions v-if="canModerate" class="right">
+			<NcActions v-if="canModerate"
+				class="right"
+				:container="container">
 				<NcActionButton v-if="canModerate && isInBreakoutRoom"
 					:title="sendMessageLabel"
 					:aria-label="sendMessageLabel"

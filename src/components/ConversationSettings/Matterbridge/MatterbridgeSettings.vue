@@ -86,6 +86,7 @@
 						:type="types[part.type]"
 						:editing="part.editing"
 						:editable="!enabled"
+						:container="container"
 						@edit-clicked="onEditClicked(i)"
 						@delete-part="onDelete(i)" />
 				</li>
