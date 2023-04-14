@@ -796,6 +796,7 @@ OC.L10N.register(
     "This conversation is read-only" : "Elkarrizketa hau irakurtzeko soilik da",
     "Drop your files to upload" : "Jaregin zure fitxategiak kargatzeko",
     "Favorite" : "Gogokoa",
+    "Picture" : "Irudia",
     "Description" : "Deskribapena",
     "Edit conversation description" : "Editatu elkarrizketaren deskribapena",
     "Enter a description for this conversation" : "Sartu deskribapen bat elkarrrizketa honentzat",
