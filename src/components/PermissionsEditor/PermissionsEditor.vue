@@ -21,7 +21,7 @@
 
 <template>
 	<NcModal size="small"
-		:container="$store.getters.getMainContainerSelector()"
+		:container="container"
 		v-on="$listeners">
 		<div class="wrapper">
 			<template v-if="!loading">
@@ -146,6 +146,10 @@ export default {
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+
 		modalTitle() {
 			if (this.displayName) {
 				return t('spreed', 'In this conversation <strong>{user}</strong> can:', {

@@ -83,6 +83,7 @@
 
 		<!-- Participants editor -->
 		<NcModal v-if="showParticipantsEditor"
+			:container="container"
 			@close="closeParticipantsEditor">
 			<div class="breakout-rooms-actions__editor">
 				<h2> {{ manageBreakoutRoomsTitle }} </h2>
@@ -189,6 +190,10 @@ export default {
 
 		isInBreakoutRoom() {
 			return this.mainToken !== this.$store.getters.getToken()
+		},
+
+		container() {
+			return this.$store.getters.getMainContainerSelector()
 		},
 
 		manageBreakoutRoomsTitle() {

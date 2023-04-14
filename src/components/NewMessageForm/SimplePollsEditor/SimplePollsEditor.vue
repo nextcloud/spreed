@@ -22,7 +22,7 @@
 
 <template>
 	<NcModal size="small"
-		:container="$store.getters.getMainContainerSelector()"
+		:container="container"
 		v-on="$listeners">
 		<div class="simple-polls-editor">
 			<h2>{{ t('spreed', 'Create new poll') }}</h2>
@@ -117,6 +117,12 @@ export default {
 		}
 	},
 
+	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+	},
+
 	methods: {
 		// Remove a previously added option
 		deleteOption(index) {
@@ -166,7 +172,6 @@ export default {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	align-items: left;
 
 	&__caption {
 		padding: 16px 0 4px 0;
