@@ -130,6 +130,10 @@ export default {
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+
 		participantType() {
 			return this.breakoutRoom.participantType
 		},
