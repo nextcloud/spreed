@@ -33,20 +33,21 @@
 			<NewGroupConversation v-if="canStartConversations" />
 		</div>
 		<template #list>
-			<li ref="container"
-				class="left-sidebar__list"
-				@scroll="debounceHandleScroll">
-				<ul class="scroller">
+			<li class="left-sidebar__list">
+				<ul ref="scroller"
+					class="scroller"
+					@scroll="debounceHandleScroll">
 					<NcAppNavigationCaption :class="{'hidden-visually': !isSearching}"
 						:title="t('spreed', 'Conversations')" />
-					<li role="presentation">
-						<ConversationsList ref="conversationsList"
-							:conversations-list="conversationsList"
-							:initialised-conversations="initialisedConversations"
-							:search-text="searchText"
-							@click-search-result="handleClickSearchResult"
-							@focus="setFocusedIndex" />
-					</li>
+					<Conversation v-for="item of conversationsList"
+						:key="item.id"
+						:item="item"
+						@click="handleClickSearchResult(item)" />
+					<template v-if="!initialisedConversations">
+						<LoadingPlaceholder type="conversations" />
+					</template>
+					<Hint v-else-if="searchText && !conversationsList.length"
+						:hint="t('spreed', 'No matches')" />
 					<template v-if="isSearching">
 						<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
 							<NcAppNavigationCaption :title="t('spreed', 'Open conversations')" />
@@ -58,10 +59,15 @@
 						</template>
 						<template v-if="searchResultsUsers.length !== 0">
 							<NcAppNavigationCaption :title="t('spreed', 'Users')" />
-							<li v-if="searchResultsUsers.length !== 0" role="presentation">
-								<ConversationsOptionsList :items="searchResultsUsers"
-									@click="createAndJoinConversation" />
-							</li>
+							<NcListItem v-for="item of searchResultsUsers"
+								:key="item.id"
+								:title="item.label"
+								@click="createAndJoinConversation(item)">
+								<template #icon>
+									<ConversationIcon :item="iconData(item)"
+										:disable-menu="true" />
+								</template>
+							</NcListItem>
 						</template>
 						<template v-if="!showStartConversationsOptions">
 							<NcAppNavigationCaption v-if="searchResultsUsers.length === 0"
@@ -73,18 +79,28 @@
 					<template v-if="showStartConversationsOptions">
 						<template v-if="searchResultsGroups.length !== 0">
 							<NcAppNavigationCaption :title="t('spreed', 'Groups')" />
-							<li v-if="searchResultsGroups.length !== 0" role="presentation">
-								<ConversationsOptionsList :items="searchResultsGroups"
-									@click="createAndJoinConversation" />
-							</li>
+							<NcListItem v-for="item of searchResultsGroups"
+								:key="item.id"
+								:title="item.label"
+								@click="createAndJoinConversation(item)">
+								<template #icon>
+									<ConversationIcon :item="iconData(item)"
+										:disable-menu="true" />
+								</template>
+							</NcListItem>
 						</template>
 
 						<template v-if="searchResultsCircles.length !== 0">
 							<NcAppNavigationCaption :title="t('spreed', 'Circles')" />
-							<li v-if="searchResultsCircles.length !== 0" role="presentation">
-								<ConversationsOptionsList :items="searchResultsCircles"
-									@click="createAndJoinConversation" />
-							</li>
+							<NcListItem v-for="item of searchResultsCircles"
+								:key="item.id"
+								:title="item.label"
+								@click="createAndJoinConversation(item)">
+								<template #icon>
+									<ConversationIcon :item="iconData(item)"
+										:disable-menu="true" />
+								</template>
+							</NcListItem>
 						</template>
 
 						<NcAppNavigationCaption v-if="sourcesWithoutResults"
@@ -124,11 +140,13 @@ import { loadState } from '@nextcloud/initial-state'
 import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
+import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
 
-import ConversationsOptionsList from '../ConversationsOptionsList.vue'
+import ConversationIcon from '../ConversationIcon.vue'
 import Hint from '../Hint.vue'
+import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 import Conversation from './ConversationsList/Conversation.vue'
-import ConversationsList from './ConversationsList/ConversationsList.vue'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation.vue'
 import SearchBox from './SearchBox/SearchBox.vue'
 
@@ -148,17 +166,19 @@ export default {
 	components: {
 		NcAppNavigation,
 		NcAppNavigationCaption,
-		ConversationsList,
 		NcButton,
-		ConversationsOptionsList,
 		Hint,
 		SearchBox,
 		NewGroupConversation,
 		Conversation,
+		LoadingPlaceholder,
+		NcListItem,
+		ConversationIcon,
 	},
 
 	mixins: [
 		arrowNavigation,
+		isMobile,
 	],
 
 	data() {
@@ -193,7 +213,10 @@ export default {
 
 			if (this.searchText !== '') {
 				const lowerSearchText = this.searchText.toLowerCase()
-				conversations = conversations.filter(conversation => conversation.displayName.toLowerCase().indexOf(lowerSearchText) !== -1 || conversation.name.toLowerCase().indexOf(lowerSearchText) !== -1)
+				conversations = conversations.filter(conversation =>
+					conversation.displayName.toLowerCase().indexOf(lowerSearchText) !== -1
+					|| conversation.name.toLowerCase().indexOf(lowerSearchText) !== -1
+				)
 			}
 
 			// FIXME: this modifies the original array,
@@ -216,41 +239,36 @@ export default {
 		},
 
 		sourcesWithoutResultsList() {
-			if (!this.searchResultsUsers.length) {
-				if (!this.searchResultsGroups.length) {
-					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
-						return t('spreed', 'Users, groups and circles')
-					} else {
-						return t('spreed', 'Users and groups')
-					}
+			const hasNoResultsUsers = !this.searchResultsUsers.length
+			const hasNoResultsGroups = !this.searchResultsGroups.length
+			const hasNoResultsCircles = this.isCirclesEnabled && !this.searchResultsCircles.length
+
+			if (hasNoResultsUsers) {
+				if (hasNoResultsGroups) {
+					return (hasNoResultsCircles)
+						? t('spreed', 'Users, groups and circles')
+						: t('spreed', 'Users and groups')
 				} else {
-					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
-						return t('spreed', 'Users and circles')
-					} else {
-						return t('spreed', 'Users')
-					}
+					return (hasNoResultsCircles)
+						? t('spreed', 'Users and circles')
+						: t('spreed', 'Users')
 				}
 			} else {
-				if (!this.searchResultsGroups.length) {
-					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
-						return t('spreed', 'Groups and circles')
-					} else {
-						return t('spreed', 'Groups')
-					}
+				if (hasNoResultsGroups) {
+					return (hasNoResultsCircles)
+						? t('spreed', 'Groups and circles')
+						: t('spreed', 'Groups')
 				} else {
-					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
-						return t('spreed', 'Circles')
-					}
+					return (hasNoResultsCircles)
+						? t('spreed', 'Circles')
+						: t('spreed', 'Other sources')
 				}
 			}
-			return t('spreed', 'Other sources')
 		},
 	},
 
 	beforeMount() {
-		/**
-		 * After a conversation was created, the search filter is reset
-		 */
+		// After a conversation was created, the search filter is reset
 		EventBus.$once('resetSearchFilter', () => {
 			this.abortSearch()
 		})
@@ -259,7 +277,7 @@ export default {
 	},
 
 	mounted() {
-		/** Refreshes the conversations every 30 seconds */
+		// Refreshes the conversations every 30 seconds
 		this.refreshTimer = window.setInterval(() => {
 			if (!this.isFetchingConversations) {
 				this.fetchConversations()
@@ -268,13 +286,17 @@ export default {
 
 		EventBus.$on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.$once('conversations-received', this.handleUnreadMention)
-
+		EventBus.$on('route-change', this.onRouteChange)
+		EventBus.$once('joined-conversation', ({ token }) => {
+			this.scrollToConversation(token)
+		})
 		this.mountArrowNavigation()
 	},
 
 	beforeDestroy() {
 		EventBus.$off('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.$off('conversations-received', this.handleUnreadMention)
+		EventBus.$off('route-change', this.onRouteChange)
 
 		this.cancelSearchPossibleConversations()
 		this.cancelSearchPossibleConversations = null
@@ -388,9 +410,12 @@ export default {
 				const conversation = await this.$store.dispatch('createOneToOneConversation', item.id)
 				this.abortSearch()
 				EventBus.$once('joined-conversation', ({ token }) => {
-					this.$refs.conversationsList.scrollToConversation(token)
+					this.scrollToConversation(token)
 				})
-				this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+				this.$router.push({
+					name: 'conversation',
+					params: { token: conversation.token },
+				}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			} else {
 				// For other types we start the conversation creation dialog
 				EventBus.$emit('new-group-conversation-dialog', item)
@@ -400,11 +425,14 @@ export default {
 		async joinListedConversation(conversation) {
 			this.abortSearch()
 			EventBus.$once('joined-conversation', ({ token }) => {
-				this.$refs.conversationsList.scrollToConversation(token)
+				this.scrollToConversation(token)
 			})
 			// add as temporary item that will refresh after the joining process is complete
 			this.$store.dispatch('addConversation', conversation)
-			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			this.$router.push({
+				name: 'conversation',
+				params: { token: conversation.token },
+			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
 		hasOneToOneConversationWith(userId) {
@@ -427,10 +455,15 @@ export default {
 			emit('show-settings')
 		},
 
-		handleClickSearchResult(selectedConversationToken) {
+		handleClickSearchResult(conversation) {
 			if (this.searchText !== '') {
 				EventBus.$once('joined-conversation', ({ token }) => {
-					this.$refs.conversationsList.scrollToConversation(token)
+					if (this.isMobile) {
+						emit('toggle-navigation', {
+							open: false,
+						})
+					}
+					this.scrollToConversation(token)
 				})
 			}
 			// End the search operation
@@ -547,6 +580,57 @@ export default {
 			}
 			this.handleClickSearchResult()
 		},
+
+		scrollToConversation(token) {
+			// FIXME: not sure why we can't scroll earlier even when the element exists already
+			// when too early, Firefox only scrolls a few pixels towards the element but
+			// not enough to make it visible
+			setTimeout(() => {
+				const conversation = document.getElementById(`conversation_${token}`)
+				if (!conversation) {
+					return
+				}
+				this.$nextTick(() => {
+					conversation.scrollIntoView({
+						behavior: 'smooth',
+						block: 'start',
+						inline: 'nearest',
+					})
+				})
+			}, 500)
+		},
+
+		onRouteChange({ from, to }) {
+			if (from.name === 'conversation'
+				&& to.name === 'conversation'
+				&& from.params.token === to.params.token) {
+				// this is triggered when the hash in the URL changes
+				return
+			}
+			if (from.name === 'conversation') {
+				this.$store.dispatch('leaveConversation', { token: from.params.token })
+				if (to.name !== 'conversation') {
+					this.$store.dispatch('updateToken', '')
+				}
+			}
+			if (to.name === 'conversation') {
+				this.$store.dispatch('joinConversation', { token: to.params.token })
+			}
+		},
+
+		iconData(item) {
+			if (item.source === 'users') {
+				return {
+					type: CONVERSATION.TYPE.ONE_TO_ONE,
+					displayName: item.label,
+					name: item.id,
+				}
+			}
+			return {
+				type: CONVERSATION.TYPE.GROUP,
+				objectType: item.source,
+			}
+		},
 	},
 }
 </script>
@@ -554,6 +638,7 @@ export default {
 <style lang="scss" scoped>
 
 @import '../../assets/variables';
+
 .scroller {
 	padding: 0 4px 0 6px;
 }
@@ -562,6 +647,7 @@ export default {
 	display: flex;
 	padding: 8px 0 8px 12px;
 	align-items: center;
+
 	&--scrolled-down {
 		border-bottom: 1px solid var(--color-placeholder-dark);
 	}
@@ -587,6 +673,7 @@ export default {
 
 .conversations-search {
 	flex-grow: 1;
+
 	::v-deep .input-field__input {
 		border-radius: var(--border-radius-pill);
 	}
