@@ -514,12 +514,19 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		$actor = $event->getActor();
+		if ($recordingHasStopped && $actor === null) {
+			// No actor means the recording was stopped by the end of the call.
+			// So we are not generating a system message
+			return;
+		}
+
 		$prefix = self::getCallRecordingPrefix($event);
 		$suffix = self::getCallRecordingSuffix($event);
 		$systemMessage = $prefix . 'recording_' . $suffix;
 
 		$listener = Server::get(self::class);
-		$listener->sendSystemMessage($event->getRoom(), $systemMessage, [], $event->getActor());
+		$listener->sendSystemMessage($event->getRoom(), $systemMessage, [], $actor);
 	}
 
 	private static function getCallRecordingSuffix(ModifyRoomEvent $event): string {
