@@ -226,36 +226,8 @@ class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidge
 			$room->getDisplayName($userId),
 			$subtitle,
 			$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
-			$this->getRoomIconUrl($room, $userId)
+			$this->avatarService->getAvatarUrl($room)
 		);
-	}
-
-	protected function getRoomIconUrl(Room $room, string $userId): string {
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
-			$participants = json_decode($room->getName(), true);
-
-			foreach ($participants as $p) {
-				if ($p !== $userId) {
-					return $this->url->linkToRouteAbsolute(
-						'core.avatar.getAvatar',
-						[
-							'userId' => $p,
-							'size' => 64,
-						]
-					);
-				}
-			}
-		} elseif ($room->getObjectType() === 'file') {
-			return $this->url->getAbsoluteURL($this->url->imagePath('core', 'filetypes/file.svg'));
-		} elseif ($room->getObjectType() === 'share:password') {
-			return $this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/password.svg'));
-		} elseif ($room->getObjectType() === 'emails') {
-			return $this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/mail.svg'));
-		} elseif ($room->getType() === Room::TYPE_PUBLIC) {
-			return $this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/public.svg'));
-		}
-
-		return $this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/group.svg'));
 	}
 
 	protected function sortRooms(Room $roomA, Room $roomB): int {

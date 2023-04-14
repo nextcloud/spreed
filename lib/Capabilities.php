@@ -116,6 +116,7 @@ class Capabilities implements IPublicCapability {
 				'talk-polls',
 				'breakout-rooms-v1',
 				'recording-v1',
+				'avatar',
 				'chat-get-context',
 				'single-conversation-status',
 				'chat-keep-notifications',

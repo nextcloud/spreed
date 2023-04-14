@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
  *
+ * @author Joas Schilling <coding@schilljs.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -111,42 +113,16 @@ class ConversationSearch implements IProvider {
 					// Neither name nor displayname (one-to-one) match, skip
 					continue;
 				}
-			} else {
-				if (stripos($room->getName(), $query->getTerm()) === false) {
-					continue;
-				}
-			}
-
-			$icon = '';
-			$iconClass = '';
-			if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
-				$users = json_decode($room->getName(), true);
-				foreach ($users as $participantId) {
-					if ($participantId !== $user->getUID()) {
-						$icon = $this->url->linkToRouteAbsolute('core.avatar.getAvatar', [
-							'userId' => $participantId,
-							'size' => 512,
-						]);
-					}
-				}
-			} elseif ($room->getObjectType() === 'file') {
-				$iconClass = 'conversation-icon icon-text-white';
-			} elseif ($room->getObjectType() === 'share:password') {
-				$iconClass = 'conversation-icon icon-password-white';
-			} elseif ($room->getObjectType() === 'emails') {
-				$iconClass = 'conversation-icon icon-mail-white';
-			} elseif ($room->getType() === Room::TYPE_PUBLIC) {
-				$iconClass = 'conversation-icon icon-public-white';
-			} else {
-				$iconClass = 'conversation-icon icon-contacts-white';
+			} elseif (stripos($room->getName(), $query->getTerm()) === false) {
+				continue;
 			}
 
 			$entry = new SearchResultEntry(
-				$icon,
+				$this->avatarService->getAvatarUrl($room),
 				$room->getDisplayName($user->getUID()),
 				'',
 				$this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]),
-				$iconClass,
+				'',
 				true
 			);
 
