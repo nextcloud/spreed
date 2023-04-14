@@ -31,6 +31,7 @@ nav:
       - 'PHP events': 'events.md'
   - 'API documentation':
       - 'Conversations management': 'conversation.md'
+      - 'Conversation avatars management': 'avatar.md'
       - 'Participants management': 'participant.md'
       - 'Call management': 'call.md'
       - 'Call recording management': 'recording.md'
