@@ -43,7 +43,9 @@
 			<NcButton v-if="showJoinButton" @click="joinRoom">
 				{{ t('spreed', 'Join') }}
 			</NcButton>
-			<NcActions v-if="canModerate" :force-menu="true">
+			<NcActions v-if="canModerate"
+				:container="container"
+				:force-menu="true">
 				<NcActionButton v-if="showAssistanceButton"
 					@click="dismissRequestAssistance">
 					<template #icon>
