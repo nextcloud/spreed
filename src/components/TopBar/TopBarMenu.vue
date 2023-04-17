@@ -43,19 +43,6 @@
 				{{ raiseHandButtonLabel }}
 			</NcActionButton>
 
-			<!-- Blur background -->
-			<NcActionButton v-if="isVirtualBackgroundAvailable"
-				:close-after-click="true"
-				@click="toggleVirtualBackground">
-				<template #icon>
-					<BlurOff v-if="isVirtualBackgroundEnabled"
-						:size="20" />
-					<Blur v-else
-						:size="20" />
-				</template>
-				{{ toggleVirtualBackgroundButtonLabel }}
-			</NcActionButton>
-
 			<!-- Mute others -->
 			<template v-if="!isOneToOneConversation && canFullModerate">
 				<NcActionButton :close-after-click="true"
@@ -157,8 +144,6 @@
 </template>
 
 <script>
-import Blur from 'vue-material-design-icons/Blur.vue'
-import BlurOff from 'vue-material-design-icons/BlurOff.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
@@ -199,8 +184,6 @@ export default {
 		DotsHorizontal,
 		GridView,
 		HandBackLeft,
-		Blur,
-		BlurOff,
 		VideoIcon,
 		MicrophoneOff,
 		RecordCircle,
@@ -291,13 +274,6 @@ export default {
 				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 		},
 
-		toggleVirtualBackgroundButtonLabel() {
-			if (!this.isVirtualBackgroundEnabled) {
-				return t('spreed', 'Blur background')
-			}
-			return t('spreed', 'Disable background blur')
-		},
-
 		container() {
 			return this.$store.getters.getMainContainerSelector()
 		},
@@ -375,7 +351,7 @@ export default {
 				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
 		},
 
-		// True if current conversation is a breakout room and the brekour room has started
+		// True if current conversation is a breakout room and the breakout room has started
 		// And a call is in progress
 		userIsInBreakoutRoomAndInCall() {
 			return this.conversation.breakoutRoomMode === CONVERSATION.BREAKOUT_ROOM_MODE.NOT_CONFIGURED
