@@ -23,7 +23,7 @@
 	<NcModal v-if="modal"
 		class="talk-modal"
 		size="small"
-		:container="$store.getters.getMainContainerSelector()"
+		:container="container"
 		@close="closeModal">
 		<div class="device-checker">
 			<h2 class="device-checker__title">
@@ -144,7 +144,9 @@
 
 			<div class="device-checker__call-buttons">
 				<!-- Silent call -->
-				<NcActions v-if="showSilentCallOption" :force-menu="true">
+				<NcActions v-if="showSilentCallOption"
+					:container="container"
+					:force-menu="true">
 					<template v-if="!silentCall">
 						<NcActionButton :close-after-click="true"
 							icon="icon-upload"
@@ -251,6 +253,10 @@ export default {
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+
 		displayName() {
 			return this.$store.getters.getDisplayName()
 		},
