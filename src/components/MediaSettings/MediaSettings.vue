@@ -165,9 +165,13 @@
 					</template>
 				</NcActions>
 				<!-- Join call -->
-				<CallButton class="call-button"
+				<CallButton v-if="!isInCall"
+					class="call-button"
 					:force-join-call="true"
 					:silent-call="silentCall" />
+				<NcButton v-else @click="closeModal">
+					{{ t('spreed', 'Done') }}
+				</NcButton>
 			</div>
 		</div>
 	</NcModal>
