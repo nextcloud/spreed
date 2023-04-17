@@ -36,6 +36,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Recording\BackendNotifier;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IMimeTypeDetector;
@@ -43,8 +44,10 @@ use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\Notification\IManager;
+use OCP\PreConditionNotMetException;
 use OCP\Share\IManager as ShareManager;
 use OCP\Share\IShare;
+use OCP\SpeechToText\ISpeechToTextManager;
 use Psr\Log\LoggerInterface;
 
 class RecordingService {
@@ -76,7 +79,8 @@ class RecordingService {
 		protected ShareManager $shareManager,
 		protected ChatManager $chatManager,
 		protected LoggerInterface $logger,
-		protected BackendNotifier $backendNotifier
+		protected BackendNotifier $backendNotifier,
+		protected ISpeechToTextManager $speechToTextManager,
 	) {
 	}
 
@@ -137,6 +141,66 @@ class RecordingService {
 		} catch (NotPermittedException $e) {
 			throw new InvalidArgumentException('owner_permission');
 		}
+
+		try {
+			$this->speechToTextManager->scheduleFileTranscription($fileNode);
+		} catch (PreConditionNotMetException $e) {
+			// No Speech-to-text provider installed
+			$this->logger->debug('Could not generate transcript of call recording', ['exception' => $e]);
+		} catch (InvalidArgumentException $e) {
+			$this->logger->warning('Could not generate transcript of call recording', ['exception' => $e]);
+		}
+	}
+
+	public function storeTranscript(string $owner, File $recording, string $transcript): void {
+		$recordingFolder = $recording->getParent();
+		$roomToken = $recordingFolder->getName();
+
+		try {
+			$room = $this->roomManager->getRoomForUserByToken($roomToken, $owner);
+			$participant = $this->participantService->getParticipant($room, $owner);
+		} catch (ParticipantNotFoundException) {
+			$this->logger->warning('Could not determinate conversation when trying to store transcription of call recording');
+			throw new InvalidArgumentException('owner_participant');
+		}
+
+		$transcriptFileName = pathinfo($recording->getName(), PATHINFO_FILENAME) . '.txt';
+
+		try {
+			$fileNode = $recordingFolder->newFile($transcriptFileName, $transcript);
+			$this->notifyStoredTranscript($room, $participant, $fileNode);
+		} catch (NoUserException) {
+			throw new InvalidArgumentException('owner_invalid');
+		} catch (NotPermittedException) {
+			throw new InvalidArgumentException('owner_permission');
+		}
+	}
+
+	public function notifyAboutFailedTranscript(string $owner, File $recording): void {
+		$recordingFolder = $recording->getParent();
+		$roomToken = $recordingFolder->getName();
+
+		try {
+			$room = $this->roomManager->getRoomForUserByToken($roomToken, $owner);
+			$participant = $this->participantService->getParticipant($room, $owner);
+		} catch (ParticipantNotFoundException) {
+			$this->logger->warning('Could not determinate conversation when trying to notify about failed transcription of call recording');
+			throw new InvalidArgumentException('owner_participant');
+		}
+
+		$attendee = $participant->getAttendee();
+
+		$notification = $this->notificationManager->createNotification();
+
+		$notification
+			->setApp('spreed')
+			->setDateTime($this->timeFactory->getDateTime())
+			->setObject('recording', $room->getToken())
+			->setUser($attendee->getActorId())
+			->setSubject('transcript_failed', [
+				'objectId' => $recording->getId(),
+			]);
+		$this->notificationManager->notify($notification);
 	}
 
 	public function getContentFromFileArray(array $file, Room $room, Participant $participant): string {
@@ -213,6 +277,23 @@ class RecordingService {
 			->setObject('recording', $room->getToken())
 			->setUser($attendee->getActorId())
 			->setSubject('record_file_stored', [
+				'objectId' => $file->getId(),
+			]);
+		$this->notificationManager->notify($notification);
+	}
+
+
+	public function notifyStoredTranscript(Room $room, Participant $participant, File $file): void {
+		$attendee = $participant->getAttendee();
+
+		$notification = $this->notificationManager->createNotification();
+
+		$notification
+			->setApp('spreed')
+			->setDateTime($this->timeFactory->getDateTime())
+			->setObject('recording', $room->getToken())
+			->setUser($attendee->getActorId())
+			->setSubject('transcript_file_stored', [
 				'objectId' => $file->getId(),
 			]);
 		$this->notificationManager->notify($notification);
