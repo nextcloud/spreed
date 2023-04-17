@@ -403,23 +403,49 @@ export default {
 
 		handleUpdateBackground(background) {
 			if (background === 'clear') {
+				this.clearVirtualBackground()
 				this.clearBackground()
 			} else if (background === 'blur') {
+				this.blurVirtualBackground()
 				this.blurBackground()
 			} else {
+				this.setVirtualBackgroundImage(background)
 				this.setBackgroundImage(background)
 			}
 		},
 
+		/**
+		 * Clears the virtualBackground: the background used in the MediaSettings preview
+		 */
+		clearVirtualBackground() {
+			this.virtualBackground.setEnabled(false)
+		},
+
+		/**
+		 * Clears the background of the participants in current or future call
+		 */
 		clearBackground() {
 			if (this.isInCall) {
 				localMediaModel.disableVirtualBackground()
 			} else {
 				localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'false')
 			}
-			this.virtualBackground.setEnabled(false)
 		},
 
+		/**
+		 * Blurs the virtualBackground: the background used in the MediaSettings preview
+		 */
+		blurVirtualBackground() {
+			this.virtualBackground.setEnabled(true)
+			this.virtualBackground.setVirtualBackground({
+				backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
+				blurValue: VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT,
+			})
+		},
+
+		/**
+		 * Blurs the background of the participants in current or future call
+		 */
 		blurBackground() {
 			if (this.isInCall) {
 				localMediaModel.enableVirtualBackground()
@@ -429,13 +455,26 @@ export default {
 				localStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
 				localStorage.setItem('virtualBackgroundBlurStrength_' + this.token, VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
 			}
+		},
+
+		/**
+		 * Sets an image as background in virtualBackground: the background used in the MediaSettings preview
+		 *
+		 * @param background
+		 */
+		setVirtualBackgroundImage(background) {
 			this.virtualBackground.setEnabled(true)
 			this.virtualBackground.setVirtualBackground({
-				backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
-				blurValue: VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT,
+				backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE,
+				virtualSource: background,
 			})
 		},
 
+		/**
+		 * Sets an image as background of the participants in current or future call
+		 *
+		 * @param background the image's url
+		 */
 		setBackgroundImage(background) {
 			if (this.isInCall) {
 				localMediaModel.enableVirtualBackground()
@@ -445,11 +484,6 @@ export default {
 				localStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
 				localStorage.setItem('virtualBackgroundUrl_' + this.token, background)
 			}
-			this.virtualBackground.setEnabled(true)
-			this.virtualBackground.setVirtualBackground({
-				backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE,
-				virtualSource: background,
-			})
 		},
 
 		toggleTab(tab) {
