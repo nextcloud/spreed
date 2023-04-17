@@ -21,7 +21,7 @@
  *
  */
 
-import { VIRTUAL_BACKGROUND_TYPE } from '../effects/virtual-background/constants.js'
+import { VIRTUAL_BACKGROUND } from '../../../constants.js'
 import JitsiStreamBackgroundEffect from '../effects/virtual-background/JitsiStreamBackgroundEffect.js'
 import TrackSinkSource from './TrackSinkSource.js'
 
@@ -50,6 +50,10 @@ import TrackSinkSource from './TrackSinkSource.js'
  * virtual background will be restarted whenever an input track is set in order
  * to refresh the data if the track constraints, like its width or height,
  * change.
+ *
+ * The background can be the real background, but blurred, or an image or video
+ * that fully replaces the real background. By default a blurred background is
+ * used, but this can be changed by calling "setVirtualBackground()".
  *
  *        -------------------
  *       |                   |
@@ -150,8 +154,8 @@ export default class VirtualBackground extends TrackSinkSource {
 		const isSimd = VirtualBackground.isWasmSimd()
 
 		const virtualBackground = {
-			type: VIRTUAL_BACKGROUND_TYPE.NONE,
-			blurValue: 10,
+			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
+			blurValue: VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT,
 		}
 		const options = {
 			...segmentationDimensions.modelLandscape,
@@ -287,6 +291,18 @@ export default class VirtualBackground extends TrackSinkSource {
 
 		this._inputStream = null
 		this._outputStream = null
+	}
+
+	getVirtualBackground() {
+		return this._jitsiStreamBackgroundEffect.getVirtualBackground()
+	}
+
+	/**
+	 * @param {object} virtualBackground the virtual background properties; see
+	 *        JitsiStreamBackgroundEffect.setVirtualBackground().
+	 */
+	setVirtualBackground(virtualBackground) {
+		return this._jitsiStreamBackgroundEffect.setVirtualBackground(virtualBackground)
 	}
 
 }

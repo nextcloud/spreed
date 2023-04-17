@@ -30,17 +30,17 @@
 		</NcNoteCard>
 
 		<ul class="web-server-setup-checks">
-			<li class="background-blur">
-				{{ t('spreed', 'Files required for background blur can be loaded') }}
-				<NcButton v-tooltip="backgroundBlurAvailableToolTip"
+			<li class="virtual-background">
+				{{ t('spreed', 'Files required for virtual background can be loaded') }}
+				<NcButton v-tooltip="virtualBackgroundAvailableToolTip"
 					type="tertiary"
 					class="vue-button-inline"
-					:class="{'success-button': backgroundBlurAvailable === true, 'error-button': backgroundBlurAvailable === false}"
-					:aria-label="backgroundBlurAvailableAriaLabel"
-					@click="checkBackgroundBlur">
+					:class="{'success-button': virtualBackgroundAvailable === true, 'error-button': virtualBackgroundAvailable === false}"
+					:aria-label="virtualBackgroundAvailableAriaLabel"
+					@click="checkVirtualBackground">
 					<template #icon>
-						<AlertCircle v-if="backgroundBlurAvailable === false" :size="20" />
-						<Check v-else-if="backgroundBlurAvailable === true" :size="20" />
+						<AlertCircle v-if="virtualBackgroundAvailable === false" :size="20" />
+						<Check v-else-if="virtualBackgroundAvailable === true" :size="20" />
 						<span v-else class="icon icon-loading-small" />
 					</template>
 				</NcButton>
@@ -60,7 +60,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
-import { VIRTUAL_BACKGROUND_TYPE } from '../../utils/media/effects/virtual-background/constants.js'
+import { VIRTUAL_BACKGROUND } from '../../constants.js'
 import JitsiStreamBackgroundEffect from '../../utils/media/effects/virtual-background/JitsiStreamBackgroundEffect.js'
 import VirtualBackground from '../../utils/media/pipeline/VirtualBackground.js'
 
@@ -80,38 +80,38 @@ export default {
 
 	data() {
 		return {
-			backgroundBlurLoaded: undefined,
+			virtualBackgroundLoaded: undefined,
 			apachePHPConfiguration: '',
 		}
 	},
 
 	computed: {
-		backgroundBlurAvailable() {
-			return this.backgroundBlurLoaded
+		virtualBackgroundAvailable() {
+			return this.virtualBackgroundLoaded
 		},
 
-		backgroundBlurAvailableAriaLabel() {
-			if (this.backgroundBlurAvailable === false) {
+		virtualBackgroundAvailableAriaLabel() {
+			if (this.virtualBackgroundAvailable === false) {
 				return t('spreed', 'Failed')
 			}
 
-			if (this.backgroundBlurAvailable === true) {
+			if (this.virtualBackgroundAvailable === true) {
 				return t('spreed', 'OK')
 			}
 
 			return t('spreed', 'Checking …')
 		},
 
-		backgroundBlurAvailableToolTip() {
-			if (this.backgroundBlurAvailable === false && !VirtualBackground.isWasmSupported()) {
+		virtualBackgroundAvailableToolTip() {
+			if (this.virtualBackgroundAvailable === false && !VirtualBackground.isWasmSupported()) {
 				return t('spreed', 'Failed: WebAssembly is disabled or not supported in this browser. Please enable WebAssembly or use a browser with support for it to do the check.')
 			}
 
-			if (this.backgroundBlurAvailable === false) {
+			if (this.virtualBackgroundAvailable === false) {
 				return t('spreed', 'Failed: ".wasm" and ".tflite" files were not properly returned by the web server. Please check "System requirements" section in Talk documentation.')
 			}
 
-			if (this.backgroundBlurAvailable === true) {
+			if (this.virtualBackgroundAvailable === true) {
 				return t('spreed', 'OK: ".wasm" and ".tflite" files were properly returned by the web server.')
 			}
 
@@ -142,24 +142,24 @@ export default {
 	},
 
 	beforeMount() {
-		this.checkBackgroundBlur()
+		this.checkVirtualBackground()
 	},
 
 	methods: {
-		checkBackgroundBlur() {
+		checkVirtualBackground() {
 			if (!VirtualBackground.isWasmSupported()) {
-				this.backgroundBlurLoaded = false
+				this.virtualBackgroundLoaded = false
 
 				return
 			}
 
-			this.backgroundBlurLoaded = undefined
+			this.virtualBackgroundLoaded = undefined
 
 			// Pass only the essential options to check if the files can be
 			// loaded.
 			const options = {
 				virtualBackground: {
-					type: VIRTUAL_BACKGROUND_TYPE.NONE,
+					type: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
 				},
 				simd: VirtualBackground.isWasmSimd(),
 			}
@@ -187,9 +187,9 @@ export default {
 			/* eslint-enable no-undef, camelcase */
 
 			jitsiStreamBackgroundEffect.load().then(() => {
-				this.backgroundBlurLoaded = true
+				this.virtualBackgroundLoaded = true
 			}).catch(() => {
-				this.backgroundBlurLoaded = false
+				this.virtualBackgroundLoaded = false
 			})
 		},
 	},

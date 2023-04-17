@@ -1,6 +1,6 @@
 // @flow
 
-import { VIRTUAL_BACKGROUND_TYPE } from './constants.js'
+import { VIRTUAL_BACKGROUND } from '../../../../constants.js'
 import WebWorker from './JitsiStreamBackgroundEffect.worker.js'
 import {
 	CLEAR_TIMEOUT,
@@ -39,9 +39,10 @@ export default class JitsiStreamBackgroundEffect {
 	 * Represents a modified video MediaStream track.
 	 *
 	 * @class
-	 * @param {object} options - Segmentation dimensions.
-	 * @param {number} options.virtualBackground.blurValue the blur to apply on
-	 *                 a 720p video; it will be automatically scaled as needed.
+	 * @param {object} options object with the parameters.
+	 * @param {number} options.width segmentation width.
+	 * @param {number} options.height segmentation height.
+	 * @param {object} options.virtualBackground see "setVirtualBackground()".
 	 */
 	constructor(options) {
 		const isSimd = options.simd
@@ -53,16 +54,8 @@ export default class JitsiStreamBackgroundEffect {
 		this._loaded = false
 		this._loadFailed = false
 
-		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
-			this._virtualImage = document.createElement('img')
-			this._virtualImage.crossOrigin = 'anonymous'
-			this._virtualImage.src = this._options.virtualBackground.virtualSource
-		}
-		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-			this._virtualVideo = document.createElement('video')
-			this._virtualVideo.autoplay = true
-			this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream
-		}
+		this.setVirtualBackground(this._options.virtualBackground)
+
 		const segmentationPixelCount = this._options.width * this._options.height
 		this._segmentationPixelCount = segmentationPixelCount
 		this._model = new WebWorker()
@@ -149,6 +142,75 @@ export default class JitsiStreamBackgroundEffect {
 	}
 
 	/**
+	 * Returns the virtual background properties.
+	 *
+	 * @return {object} the virtual background properties.
+	 */
+	getVirtualBackground() {
+		return this._options.virtualBackground
+	}
+
+	/**
+	 * Sets the virtual background properties to use.
+	 *
+	 * The virtual background can be modified while the effect is running.
+	 *
+	 * If an image or video URL is given it can be any URL accepted by the "src"
+	 * attribute of HTML image or video elements, so it is possible to set a
+	 * "real" URL or, for example, one generated with "URL.createObjectURL()".
+	 *
+	 * @param {object} virtualBackground an object with the virtual background
+	 *        properties.
+	 * @param {string} virtualBackground.backgroundType BLUR, IMAGE, VIDEO or
+	 *        VIDEO_STREAM.
+	 * @param {number} virtualBackground.blurValue the blur to apply on a 720p
+	 *        video; it will be automatically scaled as needed.
+	 *        Optional, only needed when background type is BLUR.
+	 * @param {string|MediaStream} virtualBackground.virtualSource the URL to
+	 *        the image or video, or a video stream.
+	 *        Optional, only needed when background type is IMAGE, VIDEO or
+	 *        VIDEO_STREAM.
+	 */
+	setVirtualBackground(virtualBackground) {
+		// Clear previous elements to allow them to be garbage collected
+		this._virtualImage = null
+		this._virtualVideo = null
+
+		this._options.virtualBackground = virtualBackground
+
+		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+			this._virtualImage = document.createElement('img')
+			this._virtualImage.crossOrigin = 'anonymous'
+			this._virtualImage.src = this._options.virtualBackground.virtualSource
+
+			return
+		}
+
+		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO) {
+			this._virtualVideo = document.createElement('video')
+			this._virtualVideo.crossOrigin = 'anonymous'
+			this._virtualVideo.loop = true
+			this._virtualVideo.muted = true
+			this._virtualVideo.src = this._options.virtualBackground.virtualSource
+
+			if (this._running) {
+				this._virtualVideo.play()
+			}
+
+			return
+		}
+
+		if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO_STREAM) {
+			this._virtualVideo = document.createElement('video')
+			this._virtualVideo.srcObject = this._options.virtualBackground.virtualSource
+
+			if (this._running) {
+				this._virtualVideo.play()
+			}
+		}
+	}
+
+	/**
 	 * Represents the run post processing.
 	 *
 	 * @return {void}
@@ -161,7 +223,7 @@ export default class JitsiStreamBackgroundEffect {
 
 		const scaledBlurFactor = width / 720.0
 		const backgroundBlurValue = this._options.virtualBackground.blurValue * scaledBlurFactor
-		const edgesBlurValue = (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE ? 4 : 8) * scaledBlurFactor
+		const edgesBlurValue = (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE ? 4 : 8) * scaledBlurFactor
 
 		this._outputCanvasElement.height = height
 		this._outputCanvasElement.width = width
@@ -171,14 +233,6 @@ export default class JitsiStreamBackgroundEffect {
 
 		// Smooth out the edges.
 		this._outputCanvasCtx.filter = `blur(${edgesBlurValue}px)`
-		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-			// Save current context before applying transformations.
-			this._outputCanvasCtx.save()
-
-			// Flip the canvas and prevent mirror behaviour.
-			this._outputCanvasCtx.scale(-1, 1)
-			this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0)
-		}
 		this._outputCanvasCtx.drawImage(
 			this._segmentationMaskCanvas,
 			0,
@@ -190,33 +244,21 @@ export default class JitsiStreamBackgroundEffect {
 			this._inputVideoElement.videoWidth,
 			this._inputVideoElement.videoHeight
 		)
-		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-			this._outputCanvasCtx.restore()
-		}
 		this._outputCanvasCtx.globalCompositeOperation = 'source-in'
 		this._outputCanvasCtx.filter = 'none'
 
 		// Draw the foreground video.
-		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-			// Save current context before applying transformations.
-			this._outputCanvasCtx.save()
 
-			// Flip the canvas and prevent mirror behaviour.
-			this._outputCanvasCtx.scale(-1, 1)
-			this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0)
-		}
 		this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
-		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-			this._outputCanvasCtx.restore()
-		}
 
 		// Draw the background.
 
 		this._outputCanvasCtx.globalCompositeOperation = 'destination-over'
-		if (backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
-            || backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+		if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
+			|| backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO
+            || backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO_STREAM) {
 			this._outputCanvasCtx.drawImage(
-				backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE
+				backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
 					? this._virtualImage
 					: this._virtualVideo,
 				0,
@@ -320,6 +362,8 @@ export default class JitsiStreamBackgroundEffect {
 	 * @return {MediaStream} - The stream with the applied effect.
 	 */
 	startEffect(stream) {
+		this._running = true
+
 		this._stream = stream
 		this._maskFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Blur effect worker' })
 		this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer
@@ -347,6 +391,10 @@ export default class JitsiStreamBackgroundEffect {
 				message: 'this._maskFrameTimerWorker',
 			})
 			this._inputVideoElement.onloadeddata = null
+		}
+
+		if (this._virtualVideo) {
+			this._virtualVideo.play()
 		}
 
 		this._frameId = -1
@@ -378,12 +426,18 @@ export default class JitsiStreamBackgroundEffect {
 	 * @return {void}
 	 */
 	stopEffect() {
+		this._running = false
+
 		this._maskFrameTimerWorker.postMessage({
 			id: CLEAR_TIMEOUT,
 			message: 'stopEffect',
 		})
 
 		this._maskFrameTimerWorker.terminate()
+
+		if (this._virtualVideo) {
+			this._virtualVideo.pause()
+		}
 	}
 
 }

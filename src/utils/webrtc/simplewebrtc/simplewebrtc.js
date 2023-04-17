@@ -148,7 +148,7 @@ function SimpleWebRTC(opts) {
 	this.webrtc = new WebRTC(opts);
 
 	// attach a few methods from underlying lib to simple.
-	['mute', 'unmute', 'pauseVideo', 'resumeVideo', 'enableVirtualBackground', 'disableVirtualBackground', 'isVirtualBackgroundEnabled', 'pause', 'resume', 'sendToAll', 'sendDirectlyToAll', 'getPeers', 'createPeer', 'removePeers'].forEach(function(method) {
+	['mute', 'unmute', 'pauseVideo', 'resumeVideo', 'enableVirtualBackground', 'setVirtualBackground', 'disableVirtualBackground', 'isVirtualBackgroundEnabled', 'getVirtualBackground', 'pause', 'resume', 'sendToAll', 'sendDirectlyToAll', 'getPeers', 'createPeer', 'removePeers'].forEach(function(method) {
 		self[method] = self.webrtc[method].bind(self.webrtc)
 	})
 

@@ -77,6 +77,8 @@ describe('VirtualBackground', () => {
 
 		jest.spyOn(VirtualBackground.prototype, '_initJitsiStreamBackgroundEffect').mockImplementation(function() {
 			this._jitsiStreamBackgroundEffect = {
+				setVirtualBackground: jest.fn(() => {
+				}),
 				startEffect: jest.fn((inputStream) => {
 					effectOutputTrackCount++
 					const effectOutputTrackLocal = newMediaStreamTrackMock('output' + effectOutputTrackCount)
@@ -114,6 +116,17 @@ describe('VirtualBackground', () => {
 
 	afterAll(() => {
 		jest.restoreAllMocks()
+	})
+
+	test('set virtual background type and parameters', () => {
+		virtualBackground.setVirtualBackground({
+			objectWithoutValidation: true,
+		})
+
+		expect(virtualBackground._jitsiStreamBackgroundEffect.setVirtualBackground).toHaveBeenCalledTimes(1)
+		expect(virtualBackground._jitsiStreamBackgroundEffect.setVirtualBackground).toHaveBeenNthCalledWith(1, {
+			objectWithoutValidation: true,
+		})
 	})
 
 	test('is enabled by default', () => {
