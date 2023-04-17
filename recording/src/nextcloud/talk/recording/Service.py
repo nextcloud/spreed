@@ -204,7 +204,7 @@ class Service:
 
             BackendNotifier.started(self.backend, self.token, self.status, actorType, actorId)
 
-            extensionlessFileName = f'{fullDirectory}/recording-{datetime.now().strftime("%Y%m%d-%H%M%S")}'
+            extensionlessFileName = f'{fullDirectory}/Recording {datetime.now().strftime("%Y-%m-%d %H-%M-%S")}'
 
             recorderArgumentsBuilder = RecorderArgumentsBuilder()
             recorderArguments = recorderArgumentsBuilder.getRecorderArguments(self.status, self._display.new_display_var, audioSinkIndex, width, height, extensionlessFileName)
