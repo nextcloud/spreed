@@ -21,20 +21,36 @@
 
 <template>
 	<div class="background-editor">
-		<button class="background-editor__element"
-			@click="clearBackground">
+		<button key="clear"
+			class="background-editor__element"
+			:class="{'background-editor__element--selected': selectedBackground === 'clear'}"
+			@click="handleSelectBackground('clear')">
 			<Cancel :size="20" />
 			{{ t('spreed', 'clear') }}
 		</button>
-		<button :disabled="!blurPreviewAvailable"
+		<button key="blur"
+			:disabled="!blurPreviewAvailable"
 			class="background-editor__element"
-			@click="blurBackground">
+			:class="{'background-editor__element--selected': selectedBackground === 'blur'}"
+			@click="handleSelectBackground('blur')">
 			<Blur :size="20" />
 			{{ t('spreed', 'blur') }}
 		</button>
-		<button class="background-editor__element">
+		<button key="upload" class="background-editor__element">
 			<ImagePlus :size="20" />
 			{{ t('spreed', 'upload') }}
+		</button>
+		<button v-for="path in backgrounds"
+			:key="path"
+			class="background-editor__element"
+			:class="{'background-editor__element--selected': selectedBackground === path}"
+			:style="{
+				'background-image': 'url(' + path + ')'
+			}"
+			@click="handleSelectBackground(path)">
+			<CheckBold v-if="selectedBackground === path"
+				:size="40"
+				fill-color="#fff" />
 		</button>
 	</div>
 </template>
@@ -42,7 +58,10 @@
 <script>
 import Blur from 'vue-material-design-icons/Blur.vue'
 import Cancel from 'vue-material-design-icons/Cancel.vue'
+import CheckBold from 'vue-material-design-icons/CheckBold.vue'
 import ImagePlus from 'vue-material-design-icons/ImagePlus.vue'
+
+import { imagePath } from '@nextcloud/router'
 
 export default {
 	name: 'VideoBackgroundEditor',
@@ -51,6 +70,7 @@ export default {
 		Cancel,
 		Blur,
 		ImagePlus,
+		CheckBold,
 	},
 
 	props: {
@@ -65,19 +85,33 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			selectedBackground: undefined,
+		}
+	},
+
 	computed: {
 		blurPreviewAvailable() {
 			return this.virtualBackground.isAvailable()
 		},
+
+		backgrounds() {
+			return [
+				imagePath('spreed', 'backgrounds/1.jpg'),
+				imagePath('spreed', 'backgrounds/2.jpg'),
+				imagePath('spreed', 'backgrounds/3.jpg'),
+				imagePath('spreed', 'backgrounds/4.jpg'),
+				imagePath('spreed', 'backgrounds/5.jpg'),
+				imagePath('spreed', 'backgrounds/6.jpg'),
+			]
+		},
 	},
 
 	methods: {
-		clearBackground() {
-			this.$emit('clear')
-		},
-
-		blurBackground() {
-			this.$emit('blur')
+		handleSelectBackground(background) {
+			this.$emit('update-background', background)
+			this.selectedBackground = background
 		},
 	},
 }
@@ -99,7 +133,12 @@ export default {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		align-content: center;
+		align-items: center;
+		background-size: cover;
+
+		&--selected {
+			box-shadow: inset 0 0 calc(var(--default-grid-baseline) * 4) var(--color-main-background);
+		}
 	 }
 }
 </style>

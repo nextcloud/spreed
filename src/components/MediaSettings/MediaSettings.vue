@@ -123,8 +123,7 @@
 			<VideoBackgroundEditor v-if="showBackgroundEditor"
 				:virtual-background="virtualBackground"
 				:token="token"
-				@clear="clearBackground"
-				@blur="blurBackground" />
+				@update-background="handleUpdateBackground" />
 
 			<!-- "Always show" setting -->
 			<NcCheckboxRadioSwitch :checked.sync="showMediaSettings"
@@ -401,6 +400,14 @@ export default {
 			} else {
 				localStorage.setItem('videoDisabled_' + this.token, 'true')
 				this.videoOn = false
+			}
+		},
+
+		handleUpdateBackground(background) {
+			if (background === 'clear') {
+				this.clearBackground()
+			} else if (background === 'blur') {
+				this.blurBackground()
 			}
 		},
 
