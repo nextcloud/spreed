@@ -202,8 +202,9 @@ import CallButton from '../TopBar/CallButton.vue'
 import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
 
-import { CALL } from '../../constants.js'
+import { CALL, VIRTUAL_BACKGROUND } from '../../constants.js'
 import { devices } from '../../mixins/devices.js'
+import isInCall from '../../mixins/isInCall.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
@@ -236,7 +237,7 @@ export default {
 		VideoBackgroundEditor,
 	},
 
-	mixins: [devices, isInLobby],
+	mixins: [devices, isInLobby, isInCall],
 
 	data() {
 		return {
@@ -245,7 +246,6 @@ export default {
 			tabContent: 'none',
 			audioOn: undefined,
 			videoOn: undefined,
-			blurOn: undefined,
 			showMediaSettings: true,
 			silentCall: false,
 		}
@@ -334,7 +334,6 @@ export default {
 			if (newValue) {
 				this.audioOn = !localStorage.getItem('audioDisabled_' + this.token)
 				this.videoOn = !localStorage.getItem('videoDisabled_' + this.token)
-				this.blurOn = !!localStorage.getItem('virtualBackgroundEnabled_' + this.token)
 
 				this.initializeDevicesMixin()
 			} else {
@@ -361,10 +360,6 @@ export default {
 				this.toggleVideo()
 			}
 		},
-
-		blurOn() {
-			this.virtualBackground.setEnabled(this.blurOn)
-		},
 	},
 
 	mounted() {
@@ -384,7 +379,6 @@ export default {
 
 		closeModal() {
 			this.modal = false
-			this.showDeviceSelection = false
 		},
 
 		toggleAudio() {
@@ -412,17 +406,50 @@ export default {
 				this.clearBackground()
 			} else if (background === 'blur') {
 				this.blurBackground()
+			} else {
+				this.setBackgroundImage(background)
 			}
 		},
 
 		clearBackground() {
-			localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'false')
-			this.blurOn = false
+			if (this.isInCall) {
+				localMediaModel.disableVirtualBackground()
+			} else {
+				localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'false')
+			}
+			this.virtualBackground.setEnabled(false)
 		},
 
 		blurBackground() {
-			localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
-			this.blurOn = true
+			if (this.isInCall) {
+				localMediaModel.enableVirtualBackground()
+				localMediaModel.setVirtualBackgroundBlur(VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
+			} else {
+				localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
+				localStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
+				localStorage.setItem('virtualBackgroundBlurStrength_' + this.token, VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
+			}
+			this.virtualBackground.setEnabled(true)
+			this.virtualBackground.setVirtualBackground({
+				backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
+				blurValue: VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT,
+			})
+		},
+
+		setBackgroundImage(background) {
+			if (this.isInCall) {
+				localMediaModel.enableVirtualBackground()
+				localMediaModel.setVirtualBackgroundImage(background)
+			} else {
+				localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
+				localStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
+				localStorage.setItem('virtualBackgroundUrl_' + this.token, background)
+			}
+			this.virtualBackground.setEnabled(true)
+			this.virtualBackground.setVirtualBackground({
+				backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE,
+				virtualSource: background,
+			})
 		},
 
 		toggleTab(tab) {
