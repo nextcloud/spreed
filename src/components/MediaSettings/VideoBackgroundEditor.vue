@@ -36,7 +36,8 @@
 			<Blur :size="20" />
 			{{ t('spreed', 'blur') }}
 		</button>
-		<button key="upload" class="background-editor__element">
+		<!-- hide custom background for now -->
+		<button v-if="false" key="upload" class="background-editor__element">
 			<ImagePlus :size="20" />
 			{{ t('spreed', 'upload') }}
 		</button>
