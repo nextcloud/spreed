@@ -28,7 +28,8 @@
 			<span>
 				{{ type.name }}
 			</span>
-			<NcActions :force-menu="false">
+			<NcActions :container="container"
+				:force-menu="false">
 				<NcActionButton v-if="editable"
 					:icon="editing ? 'icon-checkmark' : 'icon-rename'"
 					@click="onEditClick">
@@ -36,6 +37,7 @@
 				</NcActionButton>
 			</NcActions>
 			<NcActions class="actions"
+				:container="container"
 				:force-menu="true"
 				placement="bottom">
 				<NcActionLink icon="icon-info"
@@ -114,6 +116,10 @@ export default {
 		},
 		type: {
 			type: Object,
+			required: true,
+		},
+		container: {
+			type: String,
 			required: true,
 		},
 		editing: {

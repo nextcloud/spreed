@@ -50,7 +50,7 @@
 		<!-- voting and results dialog -->
 		<NcModal v-if="vote !== undefined && showModal"
 			size="small"
-			:container="$store.getters.getMainContainerSelector()"
+			:container="container"
 			@close="dismissModal">
 			<div class="poll__modal">
 				<!-- First screen, displayed while voting-->
@@ -226,6 +226,9 @@ export default {
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
 
 		poll() {
 			return this.$store.getters.getPoll(this.token, this.id)

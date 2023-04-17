@@ -51,6 +51,7 @@
 		<NcActions v-else-if="showLeaveCallButton && (canEndForAll || isBreakoutRoom)"
 			:disabled="loading"
 			:menu-title="leaveCallCombinedLabel"
+			:container="container"
 			type="error">
 			<template #icon>
 				<VideoOff v-if="!isBreakoutRoom" :size="20" />
@@ -159,7 +160,9 @@ export default {
 		isNextcloudTalkHashDirty() {
 			return this.$store.getters.isNextcloudTalkHashDirty
 		},
-
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
 		conversation() {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
