@@ -48,6 +48,7 @@
 		the possibility to directly route to the conversation to which the
 		message has been forwarded -->
 		<NcModal v-else
+			:container="container"
 			@close="handleClose">
 			<NcEmptyContent :description="t('spreed', 'The message has been forwarded to {selectedConversationName}', { selectedConversationName })">
 				<template #icon>

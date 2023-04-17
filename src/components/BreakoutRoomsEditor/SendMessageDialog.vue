@@ -20,7 +20,9 @@
 -->
 
 <template>
-	<NcModal ref="modal" v-on="$listeners">
+	<NcModal ref="modal"
+		:container="container"
+		v-on="$listeners">
 		<div class="send-message-dialog">
 			<h2 class="send-message-dialog__title">
 				{{ dialogTitle }}
@@ -89,6 +91,10 @@ export default {
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+
 		dialogTitle() {
 			return this.broadcast
 				? t('spreed', 'Send a message to all breakout rooms')

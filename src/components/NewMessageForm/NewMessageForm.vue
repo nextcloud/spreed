@@ -137,6 +137,7 @@
 				<!-- Send buttons -->
 				<template v-else>
 					<NcActions v-if="!broadcast"
+						:container="container"
 						:force-menu="true">
 						<!-- Silent send -->
 						<NcActionButton :close-after-click="true"

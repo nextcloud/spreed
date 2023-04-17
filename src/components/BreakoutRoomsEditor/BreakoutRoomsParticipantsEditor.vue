@@ -82,6 +82,7 @@
 			</NcButton>
 			<NcActions v-if="hasSelected"
 				type="primary"
+				:container="container"
 				:menu-title="t('spreed', 'Assign')">
 				<NcActionButton v-for="(item, index) in assignments"
 					:key="index"
@@ -157,6 +158,10 @@ export default {
 	},
 
 	computed: {
+		container() {
+			return this.$store.getters.getMainContainerSelector()
+		},
+
 		participants() {
 			return this.$store.getters.participantsList(this.token).filter(participant => {
 				return (participant.participantType === PARTICIPANT.TYPE.USER
