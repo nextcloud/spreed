@@ -335,6 +335,15 @@ export default {
 				this.audioOn = !localStorage.getItem('audioDisabled_' + this.token)
 				this.videoOn = !localStorage.getItem('videoDisabled_' + this.token)
 
+				// Set virtual background depending on localstorage's settings
+				if (localStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
+					if (localStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
+						this.blurVirtualBackground()
+					} else if (localStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+						this.setVirtualBackgroundImage(localStorage.getItem('virtualBackgroundUrl_' + this.token))
+					}
+				}
+
 				this.initializeDevicesMixin()
 			} else {
 				this.stopDevicesMixin()
