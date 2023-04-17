@@ -115,3 +115,4 @@
 
 ## 17
 * `avatar` - Avatar of conversation
+* `config => chat => translations` - List of translations tuples, JSON encoded sample `{"from":"de","fromLabel":"German","to":"en","toLabel":"English"}`. Those tuples should be provided as options when translating chat messages.

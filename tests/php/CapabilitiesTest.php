@@ -35,20 +35,18 @@ use OCP\Capabilities\IPublicCapability;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Translation\ITranslationManager;
+use OCP\Translation\LanguageTuple;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class CapabilitiesTest extends TestCase {
-	/** @var IConfig|MockObject */
-	protected $serverConfig;
-	/** @var Config|MockObject */
-	protected $talkConfig;
-	/** @var CommentsManager|MockObject */
-	protected $commentsManager;
-	/** @var IUserSession|MockObject */
-	protected $userSession;
-	/** @var IAppManager|MockObject */
-	protected $appManager;
+	protected IConfig|MockObject $serverConfig;
+	protected Config|MockObject $talkConfig;
+	protected CommentsManager|MockObject $commentsManager;
+	protected IUserSession|MockObject $userSession;
+	protected IAppManager|MockObject $appManager;
+	protected ITranslationManager|MockObject $translationManager;
 	protected ?array $baseFeatures = null;
 
 	public function setUp(): void {
@@ -58,6 +56,7 @@ class CapabilitiesTest extends TestCase {
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->appManager = $this->createMock(IAppManager::class);
+		$this->translationManager = $this->createMock(ITranslationManager::class);
 
 		$this->commentsManager->expects($this->any())
 			->method('supportReactions')
@@ -138,7 +137,8 @@ class CapabilitiesTest extends TestCase {
 			$this->talkConfig,
 			$this->commentsManager,
 			$this->userSession,
-			$this->appManager
+			$this->appManager,
+			$this->translationManager,
 		);
 
 		$this->userSession->expects($this->once())
@@ -178,6 +178,7 @@ class CapabilitiesTest extends TestCase {
 					'chat' => [
 						'max-length' => 32000,
 						'read-privacy' => 0,
+						'translations' => [],
 					],
 					'conversations' => [
 						'can-create' => false,
@@ -213,7 +214,8 @@ class CapabilitiesTest extends TestCase {
 			$this->talkConfig,
 			$this->commentsManager,
 			$this->userSession,
-			$this->appManager
+			$this->appManager,
+			$this->translationManager,
 		);
 
 		$user = $this->createMock(IUser::class);
@@ -280,6 +282,7 @@ class CapabilitiesTest extends TestCase {
 					'chat' => [
 						'max-length' => 32000,
 						'read-privacy' => $readPrivacy,
+						'translations' => [],
 					],
 					'conversations' => [
 						'can-create' => $canCreate,
@@ -317,7 +320,8 @@ class CapabilitiesTest extends TestCase {
 			$this->talkConfig,
 			$this->commentsManager,
 			$this->userSession,
-			$this->appManager
+			$this->appManager,
+			$this->translationManager,
 		);
 
 		$user = $this->createMock(IUser::class);
@@ -340,7 +344,8 @@ class CapabilitiesTest extends TestCase {
 			$this->talkConfig,
 			$this->commentsManager,
 			$this->userSession,
-			$this->appManager
+			$this->appManager,
+			$this->translationManager,
 		);
 
 		$this->talkConfig->expects($this->once())
@@ -360,7 +365,8 @@ class CapabilitiesTest extends TestCase {
 			$this->talkConfig,
 			$this->commentsManager,
 			$this->userSession,
-			$this->appManager
+			$this->appManager,
+			$this->translationManager,
 		);
 
 		$this->talkConfig->expects($this->once())
@@ -376,5 +382,29 @@ class CapabilitiesTest extends TestCase {
 			[true],
 			[false],
 		];
+	}
+
+	public function testCapabilitiesTranslations(): void {
+		$capabilities = new Capabilities(
+			$this->serverConfig,
+			$this->talkConfig,
+			$this->commentsManager,
+			$this->userSession,
+			$this->appManager,
+			$this->translationManager,
+		);
+
+		$translations = [];
+		$translations[] = new LanguageTuple('de', 'de Label', 'en', 'en Label');
+		$translations[] = new LanguageTuple('de_DE', 'de_DE Label', 'en', 'en Label');
+
+		$this->translationManager->method('getLanguages')
+			->willReturn($translations);
+
+		$data = json_decode(json_encode($capabilities->getCapabilities(), JSON_THROW_ON_ERROR), true);
+		$this->assertEquals([
+			['from' => 'de', 'fromLabel' => 'de Label', 'to' => 'en', 'toLabel' => 'en Label'],
+			['from' => 'de_DE', 'fromLabel' => 'de_DE Label', 'to' => 'en', 'toLabel' => 'en Label'],
+		], $data['spreed']['config']['chat']['translations']);
 	}
 }
