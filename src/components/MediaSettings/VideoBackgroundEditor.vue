@@ -26,7 +26,7 @@
 			:class="{'background-editor__element--selected': selectedBackground === 'clear'}"
 			@click="handleSelectBackground('clear')">
 			<Cancel :size="20" />
-			{{ t('spreed', 'clear') }}
+			{{ t('spreed', 'Clear') }}
 		</button>
 		<button key="blur"
 			:disabled="!blurPreviewAvailable"
@@ -34,12 +34,12 @@
 			:class="{'background-editor__element--selected': selectedBackground === 'blur'}"
 			@click="handleSelectBackground('blur')">
 			<Blur :size="20" />
-			{{ t('spreed', 'blur') }}
+			{{ t('spreed', 'Blur') }}
 		</button>
 		<!-- hide custom background for now -->
 		<button v-if="false" key="upload" class="background-editor__element">
 			<ImagePlus :size="20" />
-			{{ t('spreed', 'upload') }}
+			{{ t('spreed', 'Custom') }}
 		</button>
 		<button v-for="path in backgrounds"
 			:key="path"
