@@ -486,7 +486,8 @@ export default {
 		justify-content: center;
 		overflow: hidden;
 		border-radius: 12px;
-		height: 263px;
+		height: 256px;
+		width: 342px;
 		background-color: var(--color-loading-dark);
 	}
 
@@ -495,13 +496,13 @@ export default {
 		display: flex;
 		justify-content: center;
 		position: relative;
-		height: calc(var(--default-grid-baseline) * 2);
+		height: calc(var(--default-grid-baseline) * 4);
 	}
 
 	&__toggles {
 		display: flex;
 		position: absolute;
-		top: calc(var(--default-grid-baseline) * -11);
+		top: calc(var(--default-grid-baseline) * -9);
 		background: var(--color-main-background);
 		border-radius: var(--border-radius-pill);
 		box-shadow: 0 0 var(--default-grid-baseline) var(--color-box-shadow);
