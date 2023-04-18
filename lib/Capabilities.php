@@ -29,12 +29,16 @@ use OCA\Talk\Chat\ChatManager;
 use OCP\App\IAppManager;
 use OCP\Capabilities\IPublicCapability;
 use OCP\Comments\ICommentsManager;
+use OCP\ICache;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Translation\ITranslationManager;
+use OCP\Util;
 
 class Capabilities implements IPublicCapability {
+	protected ICache $talkCache;
 
 	public function __construct(
 		protected IConfig $serverConfig,
@@ -43,7 +47,9 @@ class Capabilities implements IPublicCapability {
 		protected IUserSession $userSession,
 		protected IAppManager $appManager,
 		protected ITranslationManager $translationManager,
+		ICacheFactory $cacheFactory,
 	) {
+		$this->talkCache = $cacheFactory->createLocal('talk::');
 	}
 
 	public function getCapabilities(): array {
@@ -161,6 +167,46 @@ class Capabilities implements IPublicCapability {
 
 		if ($this->serverConfig->getAppValue('spreed', 'has_reference_id', 'no') === 'yes') {
 			$capabilities['features'][] = 'chat-reference-id';
+		}
+
+		$predefinedBackgrounds = $this->talkCache->get('predefined_backgrounds');
+		if ($predefinedBackgrounds !== null) {
+			// Try using cached value
+			$predefinedBackgrounds = json_decode($predefinedBackgrounds, true);
+		}
+
+		if (!is_array($predefinedBackgrounds)) {
+			// Cache was empty or invalid, regenerate
+			$predefinedBackgrounds = [];
+			if (file_exists(__DIR__ . '/../img/backgrounds')) {
+				$directoryIterator = new \DirectoryIterator(__DIR__ . '/../img/backgrounds');
+				foreach ($directoryIterator as $file) {
+					if (!$file->isFile()) {
+						continue;
+					}
+					if ($file->isDot()) {
+						continue;
+					}
+					if ($file->getFilename() === 'COPYING') {
+						continue;
+					}
+					$predefinedBackgrounds[] = $file->getFilename();
+				}
+				sort($predefinedBackgrounds);
+			}
+
+			$this->talkCache->set('predefined_backgrounds', json_encode($predefinedBackgrounds), 300);
+		}
+
+		$capabilities['config']['call']['predefined-backgrounds'] = $predefinedBackgrounds;
+		if ($user instanceof IUser) {
+			$quota = $user->getQuota();
+			if ($quota !== 'none') {
+				$quota = Util::computerFileSize($quota);
+			}
+			$capabilities['config']['call']['can-upload-background'] = $quota === 'none' || $quota > 0;
+		} else {
+			$capabilities['config']['call']['can-upload-background'] = false;
 		}
 
 		return [

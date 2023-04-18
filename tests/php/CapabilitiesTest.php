@@ -32,6 +32,8 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\App\IAppManager;
 use OCP\Capabilities\IPublicCapability;
+use OCP\ICache;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
@@ -47,6 +49,8 @@ class CapabilitiesTest extends TestCase {
 	protected IUserSession|MockObject $userSession;
 	protected IAppManager|MockObject $appManager;
 	protected ITranslationManager|MockObject $translationManager;
+	protected ICacheFactory|MockObject $cacheFactory;
+	protected ICache|MockObject $talkCache;
 	protected ?array $baseFeatures = null;
 
 	public function setUp(): void {
@@ -57,6 +61,12 @@ class CapabilitiesTest extends TestCase {
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->appManager = $this->createMock(IAppManager::class);
 		$this->translationManager = $this->createMock(ITranslationManager::class);
+		$this->cacheFactory = $this->createMock(ICacheFactory::class);
+		$this->talkCache = $this->createMock(ICache::class);
+
+		$this->cacheFactory->method('createLocal')
+			->with('talk::')
+			->willReturn($this->talkCache);
 
 		$this->commentsManager->expects($this->any())
 			->method('supportReactions')
@@ -139,6 +149,7 @@ class CapabilitiesTest extends TestCase {
 			$this->userSession,
 			$this->appManager,
 			$this->translationManager,
+			$this->cacheFactory,
 		);
 
 		$this->userSession->expects($this->once())
@@ -174,6 +185,15 @@ class CapabilitiesTest extends TestCase {
 						'enabled' => true,
 						'breakout-rooms' => false,
 						'recording' => false,
+						'predefined-backgrounds' => [
+							'1.jpg',
+							'2.jpg',
+							'3.jpg',
+							'4.jpg',
+							'5.jpg',
+							'6.jpg',
+						],
+						'can-upload-background' => false,
 					],
 					'chat' => [
 						'max-length' => 32000,
@@ -197,8 +217,9 @@ class CapabilitiesTest extends TestCase {
 
 	public function dataGetCapabilitiesUserAllowed(): array {
 		return [
-			[true, false, Participant::PRIVACY_PRIVATE],
-			[false, true, Participant::PRIVACY_PUBLIC],
+			[true, false, 'none', true, Participant::PRIVACY_PRIVATE],
+			[false, true, '1 MB', true, Participant::PRIVACY_PUBLIC],
+			[false, true, '0 B', false, Participant::PRIVACY_PUBLIC],
 		];
 	}
 
@@ -206,9 +227,11 @@ class CapabilitiesTest extends TestCase {
 	 * @dataProvider dataGetCapabilitiesUserAllowed
 	 * @param bool $isNotAllowed
 	 * @param bool $canCreate
+	 * @param string $quota
+	 * @param bool $canUpload
 	 * @param int $readPrivacy
 	 */
-	public function testGetCapabilitiesUserAllowed(bool $isNotAllowed, bool $canCreate, int $readPrivacy): void {
+	public function testGetCapabilitiesUserAllowed(bool $isNotAllowed, bool $canCreate, string $quota, bool $canUpload, int $readPrivacy): void {
 		$capabilities = new Capabilities(
 			$this->serverConfig,
 			$this->talkConfig,
@@ -216,6 +239,7 @@ class CapabilitiesTest extends TestCase {
 			$this->userSession,
 			$this->appManager,
 			$this->translationManager,
+			$this->cacheFactory,
 		);
 
 		$user = $this->createMock(IUser::class);
@@ -250,6 +274,9 @@ class CapabilitiesTest extends TestCase {
 			->with('uid')
 			->willReturn($readPrivacy);
 
+		$user->method('getQuota')
+			->willReturn($quota);
+
 		$this->serverConfig->expects($this->any())
 			->method('getAppValue')
 			->willReturnMap([
@@ -278,6 +305,15 @@ class CapabilitiesTest extends TestCase {
 						'enabled' => false,
 						'breakout-rooms' => true,
 						'recording' => false,
+						'predefined-backgrounds' => [
+							'1.jpg',
+							'2.jpg',
+							'3.jpg',
+							'4.jpg',
+							'5.jpg',
+							'6.jpg',
+						],
+						'can-upload-background' => $canUpload,
 					],
 					'chat' => [
 						'max-length' => 32000,
@@ -322,6 +358,7 @@ class CapabilitiesTest extends TestCase {
 			$this->userSession,
 			$this->appManager,
 			$this->translationManager,
+			$this->cacheFactory,
 		);
 
 		$user = $this->createMock(IUser::class);
@@ -346,6 +383,7 @@ class CapabilitiesTest extends TestCase {
 			$this->userSession,
 			$this->appManager,
 			$this->translationManager,
+			$this->cacheFactory,
 		);
 
 		$this->talkConfig->expects($this->once())
@@ -367,6 +405,7 @@ class CapabilitiesTest extends TestCase {
 			$this->userSession,
 			$this->appManager,
 			$this->translationManager,
+			$this->cacheFactory,
 		);
 
 		$this->talkConfig->expects($this->once())
@@ -392,6 +431,7 @@ class CapabilitiesTest extends TestCase {
 			$this->userSession,
 			$this->appManager,
 			$this->translationManager,
+			$this->cacheFactory,
 		);
 
 		$translations = [];
