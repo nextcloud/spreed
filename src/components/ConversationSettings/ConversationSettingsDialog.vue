@@ -38,7 +38,7 @@
 			<!-- Notifications settings and devices preview screen -->
 			<NcAppSettingsSection id="notifications"
 				:title="t('spreed', 'Personal')">
-				<NcCheckboxRadioSwitch :checked.sync="showDeviceChecker"
+				<NcCheckboxRadioSwitch :checked.sync="showMediaSettings"
 					type="switch">
 					{{ t('spreed', 'Always show the device preview screen before joining a call in this conversation.') }}
 				</NcCheckboxRadioSwitch>
@@ -147,7 +147,7 @@ export default {
 		return {
 			showSettings: false,
 			matterbridgeEnabled: loadState('spreed', 'enable_matterbridge'),
-			showDeviceChecker: false,
+			showMediaSettings: false,
 		}
 	},
 
@@ -210,9 +210,9 @@ export default {
 	},
 
 	watch: {
-		showDeviceChecker(newValue) {
+		showMediaSettings(newValue) {
 			const browserValue = newValue ? 'true' : 'false'
-			BrowserStorage.setItem('showDeviceChecker' + this.token, browserValue)
+			BrowserStorage.setItem('showMediaSettings' + this.token, browserValue)
 		},
 	},
 
@@ -221,10 +221,10 @@ export default {
 		subscribe('hide-conversation-settings', this.handleHideSettings)
 
 		/**
-		 * Get the deviceChecker value from the browser storage.
+		 * Get the MediaSettings value from the browser storage.
 		 */
-		this.showDeviceChecker = BrowserStorage.getItem('showDeviceChecker' + this.token) === null
-			|| BrowserStorage.getItem('showDeviceChecker' + this.token) === 'true'
+		this.showMediaSettings = BrowserStorage.getItem('showMediaSettings' + this.token) === null
+			|| BrowserStorage.getItem('showMediaSettings' + this.token) === 'true'
 	},
 
 	methods: {

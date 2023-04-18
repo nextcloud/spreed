@@ -128,7 +128,7 @@ export default {
 
 	props: {
 		/**
-		 * Skips the device checker dialog and joins or starts the call
+		 * Skips the media settings dialog and joins or starts the call
 		 * upon clicking the button
 		 */
 		forceJoinCall: {
@@ -328,13 +328,13 @@ export default {
 		},
 
 		handleClick() {
-			const shouldShowDeviceCheckerScreen = (BrowserStorage.getItem('showDeviceChecker' + this.token) === null
-				|| BrowserStorage.getItem('showDeviceChecker' + this.token) === 'true') && !this.forceJoinCall
-			console.debug(shouldShowDeviceCheckerScreen)
-			if (((this.isStartingRecording || this.isRecording) && !this.forceJoinCall) || shouldShowDeviceCheckerScreen) {
-				emit('talk:device-checker:show')
+			const shouldShowMediaSettingsScreen = (BrowserStorage.getItem('showMediaSettings' + this.token) === null
+				|| BrowserStorage.getItem('showMediaSettings' + this.token) === 'true') && !this.forceJoinCall
+			console.debug(shouldShowMediaSettingsScreen)
+			if (((this.isStartingRecording || this.isRecording) && !this.forceJoinCall) || shouldShowMediaSettingsScreen) {
+				emit('talk:media-settings:show')
 			} else {
-				emit('talk:device-checker:hide')
+				emit('talk:media-settings:hide')
 				this.joinCall()
 			}
 		},
