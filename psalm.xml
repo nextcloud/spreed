@@ -52,6 +52,7 @@
 				<referencedClass name="Doctrine\DBAL\Schema\SchemaException" />
 				<referencedClass name="Doctrine\DBAL\Schema\Table" />
 				<referencedClass name="OC\DB\ConnectionAdapter" />
+				<referencedClass name="OC\User\NoUserException" />
 				<referencedClass name="OCA\Circles\CirclesManager" />
 				<referencedClass name="OCA\Circles\Model\Member" />
 				<referencedClass name="OCA\DAV\CardDAV\PhotoCache" />
