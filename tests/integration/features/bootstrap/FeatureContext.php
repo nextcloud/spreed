@@ -3309,6 +3309,24 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^run transcript background jobs$/
+	 */
+	public function runTranscriptBackgroundJobs(): void {
+		$this->runOcc(['background-job:list', '--output=json_pretty', '--class=OC\SpeechToText\TranscriptionJob']);
+		$list = json_decode($this->lastStdOut, true, 512, JSON_THROW_ON_ERROR);
+
+		Assert::assertNotEmpty($list, 'List of OC\SpeechToText\TranscriptionJob should not be empty');
+
+		foreach ($list as $job) {
+			$this->runOcc(['background-job:execute', (string) $job['id']]);
+
+			if ($this->lastStdErr) {
+				throw new \RuntimeException($this->lastStdErr);
+			}
+		}
+	}
+
+	/**
 	 * @When /^user "([^"]*)" set status to "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
 	public function setUserStatus(string $user, string $status, int $statusCode, string $apiVersion = 'v1'): void {

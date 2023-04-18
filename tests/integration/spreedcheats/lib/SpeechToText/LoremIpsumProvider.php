@@ -1,8 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
 /**
- * @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
+ *
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -21,25 +24,22 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\SpreedCheats\AppInfo;
+namespace OCA\SpreedCheats\SpeechToText;
 
-use OCA\SpreedCheats\SpeechToText\LoremIpsumProvider;
-use OCP\AppFramework\App;
-use OCP\AppFramework\Bootstrap\IBootContext;
-use OCP\AppFramework\Bootstrap\IBootstrap;
-use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\Files\File;
+use OCP\SpeechToText\ISpeechToTextProvider;
 
-class Application extends App implements IBootstrap {
-	public const APP_ID = 'spreedcheats';
+class LoremIpsumProvider implements ISpeechToTextProvider {
 
-	public function __construct() {
-		parent::__construct(self::APP_ID);
+	public function getName(): string {
+		return 'Lorem ipsum - Talk Integrationtests';
 	}
 
-	public function register(IRegistrationContext $context): void {
-		$context->registerSpeechToTextProvider(LoremIpsumProvider::class);
-	}
+	public function transcribeFile(File $file): string {
+		if (str_contains($file->getName(), 'leave')) {
+			throw new \RuntimeException('Transcription failed by name');
+		}
 
-	public function boot(IBootContext $context): void {
+		return 'Lorem ipsum';
 	}
 }
