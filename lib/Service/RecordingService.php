@@ -82,7 +82,7 @@ class RecordingService {
 
 	public function start(Room $room, int $status, string $owner, Participant $participant): void {
 		$availableRecordingTypes = [Room::RECORDING_VIDEO, Room::RECORDING_AUDIO];
-		if (!in_array($status, $availableRecordingTypes)) {
+		if (!in_array($status, $availableRecordingTypes, true)) {
 			throw new InvalidArgumentException('status');
 		}
 		if ($room->getCallRecording() !== Room::RECORDING_NONE && $room->getCallRecording() !== Room::RECORDING_FAILED) {
@@ -97,7 +97,7 @@ class RecordingService {
 
 		$this->backendNotifier->start($room, $status, $owner, $participant);
 
-		$startingStatus = $status == Room::RECORDING_VIDEO ? Room::RECORDING_VIDEO_STARTING : Room::RECORDING_AUDIO_STARTING;
+		$startingStatus = $status === Room::RECORDING_VIDEO ? Room::RECORDING_VIDEO_STARTING : Room::RECORDING_AUDIO_STARTING;
 		$this->roomService->setCallRecording($room, $startingStatus);
 	}
 
@@ -130,8 +130,8 @@ class RecordingService {
 
 		try {
 			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
-			$file = $recordingFolder->newFile($fileName, $content);
-			$this->notifyStoredRecording($room, $participant, $file);
+			$fileNode = $recordingFolder->newFile($fileName, $content);
+			$this->notifyStoredRecording($room, $participant, $fileNode);
 		} catch (NoUserException $e) {
 			throw new InvalidArgumentException('owner_invalid');
 		} catch (NotPermittedException $e) {
@@ -180,6 +180,10 @@ class RecordingService {
 		}
 	}
 
+	/**
+	 * @throws NotPermittedException
+	 * @throws NoUserException
+	 */
 	private function getRecordingFolder(string $owner, string $token): Folder {
 		$userFolder = $this->rootFolder->getUserFolder($owner);
 		$recordingRootFolderName = $this->config->getRecordingFolder($owner);
@@ -265,7 +269,7 @@ class RecordingService {
 					'messageType' => $this->getTypeOfShare($file->getMimeType()),
 				],
 			],
-		]);
+		], JSON_THROW_ON_ERROR);
 
 		try {
 			$this->chatManager->addSystemMessage(
