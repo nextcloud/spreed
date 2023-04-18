@@ -32,26 +32,18 @@ use OCP\Comments\ICommentsManager;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Translation\ITranslationManager;
 
 class Capabilities implements IPublicCapability {
-	protected IConfig $serverConfig;
-	protected Config $talkConfig;
-	protected ICommentsManager $commentsManager;
-	protected IUserSession $userSession;
-	private IAppManager $appManager;
 
 	public function __construct(
-		IConfig $serverConfig,
-		Config $talkConfig,
-		ICommentsManager $commentsManager,
-		IUserSession $userSession,
-		IAppManager $appManager,
+		protected IConfig $serverConfig,
+		protected Config $talkConfig,
+		protected ICommentsManager $commentsManager,
+		protected IUserSession $userSession,
+		protected IAppManager $appManager,
+		protected ITranslationManager $translationManager,
 	) {
-		$this->serverConfig = $serverConfig;
-		$this->talkConfig = $talkConfig;
-		$this->commentsManager = $commentsManager;
-		$this->userSession = $userSession;
-		$this->appManager = $appManager;
 	}
 
 	public function getCapabilities(): array {
@@ -134,6 +126,7 @@ class Capabilities implements IPublicCapability {
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
 					'read-privacy' => Participant::PRIVACY_PUBLIC,
 					//'legacy' => true, // Temporary A-B switch to opt-out of the new context loading
+					'translations' => $this->translationManager->getLanguages(),
 				],
 				'conversations' => [
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user)
