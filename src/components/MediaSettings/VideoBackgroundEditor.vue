@@ -43,6 +43,7 @@
 		</button>
 		<button v-for="path in backgrounds"
 			:key="path"
+			aria-label="TODO: add image names as aria labels"
 			class="background-editor__element"
 			:class="{'background-editor__element--selected': selectedBackground === path}"
 			:style="{
