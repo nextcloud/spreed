@@ -120,6 +120,10 @@
 				:shared-datas="sharedDatas"
 				@select-video="handleSelectVideo"
 				@click-local-video="handleClickLocalVideo" />
+
+			<ReactionToaster :token="token"
+				:call-participant-models="callParticipantModels" />
+
 			<!-- Local video if sidebar -->
 			<LocalVideo v-if="isSidebar && !showLocalVideo"
 				ref="localVideo"
@@ -148,6 +152,7 @@ import { loadState } from '@nextcloud/initial-state'
 import Grid from './Grid/Grid.vue'
 import EmptyCallView from './shared/EmptyCallView.vue'
 import LocalVideo from './shared/LocalVideo.vue'
+import ReactionToaster from './shared/ReactionToaster.vue'
 import Screen from './shared/Screen.vue'
 import VideoVue from './shared/VideoVue.vue'
 
@@ -161,11 +166,12 @@ export default {
 	name: 'CallView',
 
 	components: {
-		Grid,
 		EmptyCallView,
-		VideoVue,
+		Grid,
 		LocalVideo,
+		ReactionToaster,
 		Screen,
+		VideoVue,
 	},
 
 	props: {
