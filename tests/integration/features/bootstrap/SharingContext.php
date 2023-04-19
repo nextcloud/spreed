@@ -55,6 +55,16 @@ class SharingContext implements Context {
 		}
 	}
 
+	private \FeatureContext $featureContext;
+
+	/** @BeforeScenario */
+	public function gatherContexts(\Behat\Behat\Hook\Scope\BeforeScenarioScope $scope)
+	{
+		$environment = $scope->getEnvironment();
+
+		$this->featureContext = $environment->getContext('FeatureContext');
+	}
+
 	/**
 	 * @Given user :user creates folder :destination
 	 *
@@ -177,6 +187,10 @@ class SharingContext implements Context {
 	 * @param TableNode|null $body
 	 */
 	public function userSharesWithRoom(string $user, string $path, string $room, TableNode $body = null) {
+		if (str_contains($path, '{{TOKEN}}')) {
+			$path = str_replace('{{TOKEN}}', $this->featureContext->getLastConversationToken(), $path);
+		}
+
 		$this->userSharesWith($user, $path, 10 /*IShare::TYPE_ROOM*/, FeatureContext::getTokenForIdentifier($room), $body);
 	}
 

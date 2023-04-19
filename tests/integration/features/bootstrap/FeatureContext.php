@@ -62,6 +62,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static $inviteIdToRemote;
 	/** @var int[] */
 	protected static $questionToPollId;
+	/** @var array[] */
+	protected static $lastNotifications;
 
 
 	protected static $permissionsMap = [
@@ -94,6 +96,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var string */
 	protected $lastEtag;
 
+	/** @var string */
+	protected $lastToken;
+
 	/** @var array */
 	protected $createdUsers = [];
 
@@ -120,6 +125,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	public static function getTokenForIdentifier(string $identifier) {
 		return self::$identifierToToken[$identifier];
+	}
+
+	public function getLastConversationToken(): ?string {
+		return $this->lastToken;
 	}
 
 	public function getAttendeeId(string $type, string $id, string $room, string $user = null) {
@@ -160,6 +169,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$textToMessageId = [];
 		self::$messageIdToText = [];
 		self::$questionToPollId = [];
+		self::$lastNotifications = [];
 
 		$this->createdUsers = [];
 		$this->createdGroups = [];
@@ -282,10 +292,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		});
 
 		if ($formData === null) {
+			$this->lastToken = null;
 			Assert::assertEmpty($rooms);
 			return;
 		}
 
+		$this->lastToken = end($rooms)['token'];
 		$this->assertRooms($rooms, $formData, $shouldOrder !== '');
 	}
 
@@ -2752,11 +2764,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$data = $this->getDataFromResponse($this->response);
 
 		if ($body === null) {
+			self::$lastNotifications = [];
 			Assert::assertCount(0, $data);
 			return;
 		}
 
 		$this->assertNotifications($data, $body);
+		self::$lastNotifications = $data;
 	}
 
 	private function assertNotifications($notifications, TableNode $formData) {
@@ -3306,6 +3320,41 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$options
 		);
 		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" shares file from the (first|last) notification to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $firstLast
+	 * @param string $identifier
+	 * @param int $status
+	 * @param string $apiVersion
+	 */
+	public function userShareLastNotificationFile(string $user, string $firstLast, string $identifier, int $status, string $apiVersion): void {
+		$this->setCurrentUser($user);
+
+		if (empty(self::$lastNotifications)) {
+			throw new \RuntimeException('No notification data loaded, call userNotifications() before');
+		}
+
+		if ($firstLast === 'last') {
+			$lastNotification = end(self::$lastNotifications);
+		} else {
+			$lastNotification = reset(self::$lastNotifications);
+		}
+
+		$data = [
+			'fileId' => $lastNotification['messageRichParameters']['file']['id'],
+			'timestamp' => (new \DateTime($lastNotification['datetime']))->getTimestamp(),
+		];
+
+		$this->sendRequest(
+			'POST',
+			'/apps/spreed/api/' . $apiVersion . '/recording/' . self::$identifierToToken[$identifier] . '/share-chat',
+			$data
+		);
+		$this->assertStatusCode($this->response, $status);
 	}
 
 	/**

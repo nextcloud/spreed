@@ -449,6 +449,13 @@ Feature: callapi/recording
       | app    | object_type | object_id | subject                      | message                                                                                       |
       | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/{{TOKEN}}/join_call.txt. |
       | spreed | recording   | room1     | Call recording now available | The recording for the call in room1 was uploaded to /Talk/Recording/{{TOKEN}}/join_call.ogg.  |
+    When user "participant1" shares file from the last notification to room "room1" with 200 (v1)
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                      | message                                                                                       |
+      | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/{{TOKEN}}/join_call.txt. |
+    When user "participant1" shares file from the first notification to room "room1" with 200 (v1)
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                      | message                                                                                       |
 
   Scenario: Store recording with success but fail to transcript
     Given user "participant1" creates room "room1" (v4)

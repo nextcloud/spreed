@@ -303,10 +303,14 @@ class RecordingService {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp('spreed')
 			->setObject('recording', $room->getToken())
-			->setSubject('record_file_stored')
 			->setDateTime($this->timeFactory->getDateTime('@' . $timestamp))
 			->setUser($participant->getAttendee()->getActorId());
 		$this->notificationManager->markProcessed($notification);
+
+		foreach (['record_file_stored', 'transcript_file_stored'] as $subject) {
+			$notification->setSubject($subject);
+			$this->notificationManager->markProcessed($notification);
+		}
 	}
 
 	private function getTypeOfShare(string $mimetype): string {
