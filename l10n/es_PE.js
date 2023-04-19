@@ -93,6 +93,8 @@ OC.L10N.register(
     "Circles" : "Círculos",
     "Password protect" : "Proteger con contraseña",
     "Close" : "Cerrar",
+    "Devices" : "Dispositivos",
+    "Custom" : "Personalizado",
     "Reply" : "Responder",
     "Contact" : "Contacto",
     "Today" : "Hoy",
