@@ -313,6 +313,7 @@ OC.L10N.register(
     "Add participants" : "افزودن عضو",
     "Close" : "بستن",
     "Conversation name" : "نام مکالمه",
+    "Clear" : "پاک کردن",
     "Unread messages" : "پیام‌های خوانده نشده",
     "Message sent" : "پیام ارسال شد",
     "Reply" : "پاسخ",
