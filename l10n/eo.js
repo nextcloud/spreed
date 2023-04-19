@@ -298,6 +298,8 @@ OC.L10N.register(
     "Circles" : "Rondoj",
     "Password protect" : "Protekti per pasvorto",
     "Close" : "Malfermi",
+    "Done" : "Farita",
+    "Clear" : "Viŝi",
     "Reply" : "Respondi",
     "Contact" : "Kontakto",
     "Today" : "Hodiaŭ",
