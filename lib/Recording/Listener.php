@@ -26,13 +26,12 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Recording;
 
-use OCA\Talk\Model\Attendee;
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Service\RecordingService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
-use OCP\IUser;
 use OCP\SpeechToText\Events\AbstractTranscriptionEvent;
 use OCP\SpeechToText\Events\TranscriptionFailedEvent;
 use OCP\SpeechToText\Events\TranscriptionSuccessfulEvent;
@@ -53,36 +52,38 @@ class Listener implements IEventListener {
 			return;
 		}
 
+		if ($event->getAppId() !== Application::APP_ID) {
+			return;
+		}
+
 		if ($event instanceof TranscriptionSuccessfulEvent) {
-			$this->successfulTranscript($event->getFile(), $event->getTranscript());
+			$this->successfulTranscript($event->getUserId(), $event->getFile(), $event->getTranscript());
 		} else if ($event instanceof TranscriptionFailedEvent) {
-			$this->failedTranscript($event->getFile());
+			$this->failedTranscript($event->getUserId(), $event->getFile());
 		}
 	}
 
-	protected function successfulTranscript(?File $fileNode, string $transcript): void {
+	protected function successfulTranscript(?string $owner, ?File $fileNode, string $transcript): void {
 		if (!$fileNode instanceof File) {
 			return;
 		}
 
-		$owner = $fileNode->getOwner();
-		if (!$owner instanceof IUser) {
+		if ($owner === null) {
 			return;
 		}
 
-		$this->recordingService->storeTranscript($owner->getUID(), $fileNode, $transcript);
+		$this->recordingService->storeTranscript($owner, $fileNode, $transcript);
 	}
 
-	protected function failedTranscript(?File $fileNode): void {
+	protected function failedTranscript(?string $owner, ?File $fileNode): void {
 		if (!$fileNode instanceof File) {
 			return;
 		}
 
-		$owner = $fileNode->getOwner();
-		if (!$owner instanceof IUser) {
+		if ($owner === null) {
 			return;
 		}
 
-		$this->recordingService->notifyAboutFailedTranscript($owner->getUID(), $fileNode);
+		$this->recordingService->notifyAboutFailedTranscript($owner, $fileNode);
 	}
 }

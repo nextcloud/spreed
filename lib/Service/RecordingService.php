@@ -27,6 +27,7 @@ namespace OCA\Talk\Service;
 
 use InvalidArgumentException;
 use OC\User\NoUserException;
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -143,7 +144,7 @@ class RecordingService {
 		}
 
 		try {
-			$this->speechToTextManager->scheduleFileTranscription($fileNode);
+			$this->speechToTextManager->scheduleFileTranscription($fileNode, $owner, Application::APP_ID);
 		} catch (PreConditionNotMetException $e) {
 			// No Speech-to-text provider installed
 			$this->logger->debug('Could not generate transcript of call recording', ['exception' => $e]);
