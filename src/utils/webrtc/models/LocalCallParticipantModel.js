@@ -162,6 +162,16 @@ LocalCallParticipantModel.prototype = {
 		}
 	},
 
+	sendReaction(reaction) {
+		if (!this._webRtc) {
+			throw new Error('WebRtc not initialized yet')
+		}
+
+		this._webRtc.sendToAll('reaction', {
+			reaction,
+		})
+	},
+
 }
 
 EmitterMixin.apply(LocalCallParticipantModel.prototype)
