@@ -185,6 +185,7 @@ class CapabilitiesTest extends TestCase {
 						'enabled' => true,
 						'breakout-rooms' => false,
 						'recording' => false,
+						'supported-reactions' => ['❤️', '🎉', '👏', '👍', '👎', '😂', '🤩', '🤔', '😲', '😥'],
 						'predefined-backgrounds' => [
 							'1.jpg',
 							'2.jpg',
@@ -305,6 +306,7 @@ class CapabilitiesTest extends TestCase {
 						'enabled' => false,
 						'breakout-rooms' => true,
 						'recording' => false,
+						'supported-reactions' => ['❤️', '🎉', '👏', '👍', '👎', '😂', '🤩', '🤔', '😲', '😥'],
 						'predefined-backgrounds' => [
 							'1.jpg',
 							'2.jpg',
