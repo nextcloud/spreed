@@ -118,3 +118,5 @@
 * `config => chat => translations` - List of translations tuples, JSON encoded sample `{"from":"de","fromLabel":"German","to":"en","toLabel":"English"}`. Those tuples should be provided as options when translating chat messages.
 * `config => call => predefined-backgrounds` - List of predefined virtual backgrounds. The files are in Talks img/ folder, accessible via the normal image path methods. The list is cached for 5 minutes.
 * `config => call => can-upload-background` - Boolean flag whether the user can upload a custom virtual background (requires an account and non-zero quota). Uploads should be done to Talk/Backgrounds/ (respecting the user's attachment directory setting).
+* `config => call => supported-reactions` - A list of emojis supported as call reactions. If the list is absent or empty, clients should not show the emoji reaction option in calls.
+* 
