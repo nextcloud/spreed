@@ -292,6 +292,8 @@ OC.L10N.register(
     "Add participants" : "Voeg deelnemers toe",
     "Close" : "Sluit",
     "You are currently waiting in the lobby" : "U wag tans in die voorportaal",
+    "Devices" : "Toestelle",
+    "Custom" : "Eie",
     "Reply" : "Antwoord",
     "Contact" : "Kontak",
     "Today" : "Vandag",

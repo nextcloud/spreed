@@ -77,6 +77,8 @@ OC.L10N.register(
     "Circles" : "Círculos",
     "Password protect" : "Protexer con contraseña",
     "Close" : "Zarrar",
+    "Devices" : "Preseos",
+    "Custom" : "Personalizáu",
     "Reply" : "Rempuesta",
     "Contact" : "Contautu",
     "Today" : "Güei",
