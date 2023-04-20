@@ -58,8 +58,7 @@ class SharingContext implements Context {
 	private \FeatureContext $featureContext;
 
 	/** @BeforeScenario */
-	public function gatherContexts(\Behat\Behat\Hook\Scope\BeforeScenarioScope $scope)
-	{
+	public function gatherContexts(\Behat\Behat\Hook\Scope\BeforeScenarioScope $scope) {
 		$environment = $scope->getEnvironment();
 
 		$this->featureContext = $environment->getContext('FeatureContext');

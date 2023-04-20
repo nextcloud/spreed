@@ -37,7 +37,6 @@ use OCA\Talk\Participant;
 use OCA\Talk\Recording\BackendNotifier;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IMimeTypeDetector;

@@ -385,7 +385,7 @@ class Notifier implements INotifier {
 		if ($notification->getSubject() === 'record_file_stored') {
 			$subject = $l->t('Call recording now available');
 			$message = $l->t('The recording for the call in {call} was uploaded to {file}.');
-		} else if ($notification->getSubject() === 'transcript_file_stored') {
+		} elseif ($notification->getSubject() === 'transcript_file_stored') {
 			$subject = $l->t('Transcript now available');
 			$message = $l->t('The transcript for the call in {call} was uploaded to {file}.');
 		} else {

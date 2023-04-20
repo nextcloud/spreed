@@ -58,7 +58,7 @@ class Listener implements IEventListener {
 
 		if ($event instanceof TranscriptionSuccessfulEvent) {
 			$this->successfulTranscript($event->getUserId(), $event->getFile(), $event->getTranscript());
-		} else if ($event instanceof TranscriptionFailedEvent) {
+		} elseif ($event instanceof TranscriptionFailedEvent) {
 			$this->failedTranscript($event->getUserId(), $event->getFile());
 		}
 	}
