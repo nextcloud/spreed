@@ -78,7 +78,7 @@
 		<ReactionMenu v-if="hasReactionSupport"
 			class="top-bar__button dark-hover"
 			:token="token"
-			:reactions="reactions"
+			:supported-reactions="supportedReactions"
 			:local-call-participant-model="localCallParticipantModel" />
 
 		<!-- Local media controls -->
@@ -305,12 +305,12 @@ export default {
 			return IS_DESKTOP
 		},
 
-		reactions() {
+		supportedReactions() {
 			return getCapabilities()?.spreed?.config?.call?.['supported-reactions']
 		},
 
 		hasReactionSupport() {
-			return this.isInCall && this.reactions?.length > 0
+			return this.isInCall && this.supportedReactions?.length > 0
 		},
 	},
 

@@ -54,6 +54,16 @@ export default {
 			type: String,
 			required: true,
 		},
+
+		/**
+		 * Supported reactions
+		 */
+		supportedReactions: {
+			type: Array,
+			validator: (prop) => prop.every(e => typeof e === 'string'),
+			required: true,
+		},
+
 		callParticipantModels: {
 			type: Array,
 			required: true,
@@ -110,6 +120,11 @@ export default {
 		},
 
 		handleReaction(model, reaction) {
+			// prevent receiving anything rather than defined reactions in capabilities
+			if (!this.supportedReactions.includes(reaction)) {
+				return
+			}
+
 			this.reactionsQueue.push({
 				reaction,
 				name: this.getParticipantName(model),

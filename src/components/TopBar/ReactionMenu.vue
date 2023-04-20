@@ -31,7 +31,7 @@
 
 		<NcActionButtonGroup class="reaction__group"
 			:style="{'--reactions-in-single-row': reactionsInSingleRow}">
-			<NcActionButton v-for="(reaction, index) in reactions"
+			<NcActionButton v-for="(reaction, index) in supportedReactions"
 				:key="index"
 				:aria-label="t('spreed', 'React with {reaction}', { reaction })"
 				class="reaction__button"
@@ -88,7 +88,7 @@ export default {
 		/**
 		 * Supported reactions
 		 */
-		reactions: {
+		supportedReactions: {
 			type: Array,
 			validator: (prop) => prop.every(e => typeof e === 'string'),
 			required: true,
@@ -109,7 +109,7 @@ export default {
 		},
 
 		reactionsInSingleRow() {
-			return Math.ceil(this.reactions.length / 2)
+			return Math.ceil(this.supportedReactions.length / 2)
 		},
 	},
 

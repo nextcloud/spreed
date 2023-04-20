@@ -121,7 +121,9 @@
 				@select-video="handleSelectVideo"
 				@click-local-video="handleClickLocalVideo" />
 
-			<ReactionToaster :token="token"
+			<ReactionToaster v-if="supportedReactions?.length"
+				:token="token"
+				:supported-reactions="supportedReactions"
 				:call-participant-models="callParticipantModels" />
 
 			<!-- Local video if sidebar -->
@@ -145,6 +147,7 @@
 <script>
 import debounce from 'debounce'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showMessage } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
@@ -342,6 +345,10 @@ export default {
 			}
 
 			return null
+		},
+
+		supportedReactions() {
+			return getCapabilities()?.spreed?.config?.call?.['supported-reactions']
 		},
 	},
 	watch: {
