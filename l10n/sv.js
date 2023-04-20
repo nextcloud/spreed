@@ -569,6 +569,7 @@ OC.L10N.register(
     "Upload profile picture" : "Ladda upp profilbild",
     "Choose profile picture from files" : "Välj profilbild från filer",
     "Remove profile picture" : "Ta bort profilbild",
+    "The file must be a PNG or JPG" : "Filen måste vara en PNG eller JPG",
     "Choose your profile picture" : "Välj din profilbild",
     "Error setting profile picture" : "Fel vid inställning av profilbild",
     "Error cropping profile picture" : "Det gick inte att beskära profilbilden",
