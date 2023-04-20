@@ -46,6 +46,7 @@
 			role="region"
 			:token="token"
 			:container="containerId"
+			has-typing-indicator
 			:aria-label="t('spreed', 'Post message')" />
 	</div>
 </template>

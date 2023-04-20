@@ -21,7 +21,10 @@
 -->
 
 <template>
-	<div class="wrapper">
+	<div class="wrapper" :class="{'wrapper--has-typing-indicator': hasTypingIndicator}">
+		<TypingIndicator v-if="hasTypingIndicator"
+			:token="token" />
+
 		<!--native file picker, hidden -->
 		<input id="file-upload"
 			ref="fileUploadInput"
@@ -244,6 +247,7 @@ import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContente
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import Quote from '../Quote.vue'
+import TypingIndicator from '../TypingIndicator/TypingIndicator.vue'
 import AudioRecorder from './AudioRecorder/AudioRecorder.vue'
 import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
 import TemplatePreview from './TemplatePreview.vue'
@@ -285,6 +289,7 @@ export default {
 		Quote,
 		SimplePollsEditor,
 		TemplatePreview,
+		TypingIndicator,
 		// Icons
 		BellOff,
 		EmoticonOutline,
@@ -326,6 +331,14 @@ export default {
 		 * Broadcast messages to all breakout rooms of a given conversation.
 		 */
 		broadcast: {
+			type: Boolean,
+			default: false,
+		},
+
+		/**
+		 * Show an indicator if someone is currently typing a message.
+		 */
+		hasTypingIndicator: {
 			type: Boolean,
 			default: false,
 		},
@@ -930,10 +943,15 @@ export default {
 @import '../../assets/variables';
 
 .wrapper {
+	position: relative;
 	display: flex;
 	justify-content: center;
-	padding: 12px 0;
+	padding: 12px 0 12px;
 	min-height: 69px;
+
+	&--has-typing-indicator {
+		padding: 30px 0 12px;
+	}
 }
 
 .new-message {
