@@ -37,7 +37,7 @@ use OCP\SpeechToText\Events\TranscriptionFailedEvent;
 use OCP\SpeechToText\Events\TranscriptionSuccessfulEvent;
 
 /**
- * @template-implements IEventListener<AbstractTranscriptionEvent>
+ * @template-implements IEventListener<Event>
  */
 class Listener implements IEventListener {
 	public function __construct(

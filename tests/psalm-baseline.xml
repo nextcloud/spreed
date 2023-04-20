@@ -209,7 +209,7 @@
   </file>
   <file src="lib/Migration/Version2001Date20170707115443.php">
     <InvalidArrayAccess>
-      <code>$return['num_rooms']</code>
+      <code><![CDATA[$return['num_rooms']]]></code>
     </InvalidArrayAccess>
   </file>
   <file src="lib/Notification/Notifier.php">
@@ -238,11 +238,12 @@
   <file src="lib/Service/RecordingService.php">
     <UndefinedClass>
       <code>NoUserException</code>
+      <code>NoUserException</code>
     </UndefinedClass>
   </file>
   <file src="lib/Share/Listener.php">
     <InvalidArgument>
-      <code>[self::class, 'listenPreShare']</code>
+      <code><![CDATA[[self::class, 'listenPreShare']]]></code>
     </InvalidArgument>
     <UndefinedClass>
       <code><![CDATA[$event->getView()]]></code>
