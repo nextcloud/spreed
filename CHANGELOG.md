@@ -1,6 +1,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.3 – 2023-04-20
+### Added
+- feat: Add missing "New in Talk 16" section
+  [#9205](https://github.com/nextcloud/spreed/pull/9205)
+
+### Changed
+- Update several dependencies
+
+### Fixed
+- fix(chat): Fix missing popups and modals in fullscreen mode
+  [#9323](https://github.com/nextcloud/spreed/pull/9323)
+- fix(chat): Fix squeezed mention suggestions after library update
+  [#9302](https://github.com/nextcloud/spreed/pull/9302)
+- fix(conversation): Change redirect when the conversation is left or deleted
+  [#9242](https://github.com/nextcloud/spreed/pull/9242)
+  [#9058](https://github.com/nextcloud/spreed/pull/9058)
+- fix(sidebar): Improve handling of the sidebar
+  [#9212](https://github.com/nextcloud/spreed/pull/9212)
+- fix(settings): Fix admin settings page when upload limit is infinite
+  [#9247](https://github.com/nextcloud/spreed/pull/9247)
+
 ## 16.0.2 – 2023-03-28
 ### Added
 - feat: Allow Chromium-based browser Brave
