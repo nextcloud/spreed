@@ -274,24 +274,25 @@ export default {
 	disableKeyboardShortcuts,
 
 	components: {
-		Quote,
-		NcActions,
-		NcActionButton,
-		NcButton,
-		Paperclip,
-		NcEmojiPicker,
-		NcRichContenteditable,
-		EmoticonOutline,
-		Send,
 		AudioRecorder,
-		BellOff,
-		SimplePollsEditor,
-		Poll,
+		NcActionButton,
+		NcActions,
+		NcButton,
+		NcEmojiPicker,
 		NcModal,
-		Folder,
-		Upload,
-		TemplatePreview,
+		NcRichContenteditable,
 		NcTextField,
+		Quote,
+		SimplePollsEditor,
+		TemplatePreview,
+		// Icons
+		BellOff,
+		EmoticonOutline,
+		Folder,
+		Paperclip,
+		Poll,
+		Send,
+		Upload,
 	},
 
 	props: {
@@ -939,12 +940,14 @@ export default {
 	width: 100%;
 	display: flex;
 	justify-content: center;
+
 	&-form {
 		align-items: flex-end;
 		display: flex;
-		position:relative;
+		position: relative;
 		flex: 0 1 700px;
 		margin: 0 4px;
+
 		&__emoji-picker {
 			position: absolute;
 			bottom: 1px;
@@ -963,6 +966,7 @@ export default {
 			border-radius: calc(var(--default-clickable-area) / 2);
 			padding: 8px 16px 8px 44px;
 			max-height: 180px;
+
 			&:hover,
 			&:focus,
 			&:active {
@@ -994,10 +998,12 @@ export default {
 // Targeting two classess for specificity
 :deep(.action-item__menutoggle.action-item__menutoggle--with-icon-slot) {
 	opacity: 1 !important;
+
 	&:hover,
 	&:focus {
 		background-color: var(--color-background-hover) !important;
 	}
+
 	&:disabled {
 		opacity: .5 !important;
 	}
