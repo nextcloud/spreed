@@ -41,11 +41,6 @@
 				</template>
 			</NcActionButton>
 		</NcActionButtonGroup>
-
-		<!-- TODO for development purposes, remove before release -->
-		<NcActionButton @click="spamReaction">
-			{{ spammer ? 'Stop spamming' : 'Spam reactions' }}
-		</NcActionButton>
 	</NcActions>
 </template>
 
@@ -98,8 +93,6 @@ export default {
 	data() {
 		return {
 			throttleTimer: null,
-			// TODO for development purposes, remove before release
-			spammer: null,
 		}
 	},
 
@@ -134,26 +127,6 @@ export default {
 				model: this.localCallParticipantModel,
 				reaction,
 			})
-		},
-
-		// TODO for development purposes, remove before release
-		spamReaction() {
-			if (this.spammer) {
-				clearInterval(this.spammer)
-				this.spammer = null
-				return
-			}
-
-			this.spammer = setInterval(() => {
-				const reactionRand = this.reactions[Math.floor(Math.random() * 10)]
-				this.localCallParticipantModel.sendReaction(reactionRand)
-
-				// show reaction to yourself
-				emit('send-reaction', {
-					model: this.localCallParticipantModel,
-					reaction: reactionRand,
-				})
-			}, 1000)
 		},
 	},
 }

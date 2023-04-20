@@ -96,10 +96,10 @@ export default {
 			})
 
 			// unsubscribe disconnected models
-			const removedModels = Object.keys(this.registeredModels).filter(registeredModelId => !models.find(model => model.attributes.peerId === registeredModelId))
-			removedModels.forEach(removedModel => {
-				this.registeredModels[removedModel].off('reaction', this.handleReaction)
-				delete this.registeredModels[removedModel]
+			const removedModelIds = Object.keys(this.registeredModels).filter(registeredModelId => !models.find(model => model.attributes.peerId === registeredModelId))
+			removedModelIds.forEach(removedModelId => {
+				this.registeredModels[removedModelId].off('reaction', this.handleReaction)
+				delete this.registeredModels[removedModelId]
 			})
 		},
 	},
@@ -112,6 +112,10 @@ export default {
 	beforeDestroy() {
 		clearInterval(this.intervalId)
 		unsubscribe('send-reaction', this.handleOwnReaction)
+		Object.keys(this.registeredModels).forEach(modelId => {
+			this.registeredModels[modelId].off('reaction', this.handleReaction)
+			delete this.registeredModels[modelId]
+		})
 	},
 
 	methods: {
@@ -120,12 +124,18 @@ export default {
 		},
 
 		handleReaction(model, reaction) {
+			// prevent spamming to queue from a single account
+			if (this.reactionsQueue.some(item => item.id === model.attributes.peerId)) {
+				return
+			}
+
 			// prevent receiving anything rather than defined reactions in capabilities
 			if (!this.supportedReactions.includes(reaction)) {
 				return
 			}
 
 			this.reactionsQueue.push({
+				id: model.attributes.peerId,
 				reaction,
 				name: this.getParticipantName(model),
 				seed: Math.random(),
