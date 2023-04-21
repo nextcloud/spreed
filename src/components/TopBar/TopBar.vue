@@ -74,6 +74,13 @@
 			{{ participantsInCall }}
 		</NcButton>
 
+		<!-- Reactions menu -->
+		<ReactionMenu v-if="hasReactionSupport"
+			class="top-bar__button dark-hover"
+			:token="token"
+			:supported-reactions="supportedReactions"
+			:local-call-participant-model="localCallParticipantModel" />
+
 		<!-- Local media controls -->
 		<LocalMediaControls v-if="isInCall"
 			class="local-media-controls dark-hover"
@@ -137,6 +144,7 @@ import AccountMultiple from 'vue-material-design-icons/AccountMultiple.vue'
 import MenuIcon from 'vue-material-design-icons/Menu.vue'
 import MessageText from 'vue-material-design-icons/MessageText.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 
@@ -150,6 +158,7 @@ import LocalMediaControls from '../CallView/shared/LocalMediaControls.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 import CallButton from './CallButton.vue'
 import CallTime from './CallTime.vue'
+import ReactionMenu from './ReactionMenu.vue'
 import TopBarMenu from './TopBarMenu.vue'
 
 import { CONVERSATION } from '../../constants.js'
@@ -175,6 +184,7 @@ export default {
 		NcButton,
 		NcCounterBubble,
 		TopBarMenu,
+		ReactionMenu,
 		// Icons
 		AccountMultiple,
 		MenuIcon,
@@ -293,6 +303,14 @@ export default {
 			// NcAvatarMenu doesn't work on Desktop
 			// See: https://github.com/nextcloud/talk-desktop/issues/34
 			return IS_DESKTOP
+		},
+
+		supportedReactions() {
+			return getCapabilities()?.spreed?.config?.call?.['supported-reactions']
+		},
+
+		hasReactionSupport() {
+			return this.isInCall && this.supportedReactions?.length > 0
 		},
 	},
 
