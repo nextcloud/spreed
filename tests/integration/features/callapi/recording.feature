@@ -432,7 +432,7 @@ Feature: callapi/recording
       | type | name  | callRecording |
       | 2    | room1 | 0             |
 
-  Scenario: Store recording with success
+  Scenario: Store recording with success and create transcript
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -444,6 +444,37 @@ Feature: callapi/recording
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 0             |
+    When run transcript background jobs
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                      | message                                                                                       |
+      | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/{{TOKEN}}/join_call.txt. |
+      | spreed | recording   | room1     | Call recording now available | The recording for the call in room1 was uploaded to /Talk/Recording/{{TOKEN}}/join_call.ogg.  |
+    When user "participant1" shares file from the last notification to room "room1" with 200 (v1)
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                      | message                                                                                       |
+      | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/{{TOKEN}}/join_call.txt. |
+    When user "participant1" shares file from the first notification to room "room1" with 200 (v1)
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                      | message                                                                                       |
+
+  Scenario: Store recording with success but fail to transcript
+    Given user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" joins room "room1" with 200 (v4)
+    # "leave" is used here as the file name makes the fake transcript provider fail
+    When user "participant1" store recording file "/img/leave_call.ogg" in room "room1" with 200 (v1)
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                      | message                                                                                      |
+      | spreed | recording   | room1     | Call recording now available | The recording for the call in room1 was uploaded to /Talk/Recording/{{TOKEN}}/leave_call.ogg. |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | type | name  | callRecording |
+      | 2    | room1 | 0             |
+    When run transcript background jobs
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id | subject                             | message                                                                                        |
+      | spreed | recording   | room1     | Failed to transcript call recording | The server failed to transcript the recording at /Talk/Recording/{{TOKEN}}/leave_call.ogg for the call in room1. Please reach out to the administration. |
+      | spreed | recording   | room1     | Call recording now available        | The recording for the call in room1 was uploaded to /Talk/Recording/{{TOKEN}}/leave_call.ogg.  |
 
   Scenario: Store recording with failure
     Given user "participant1" creates room "room1" (v4)

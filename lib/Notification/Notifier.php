@@ -265,7 +265,7 @@ class Notifier implements INotifier {
 			->setLink($this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]));
 
 		$subject = $notification->getSubject();
-		if ($subject === 'record_file_stored') {
+		if ($subject === 'record_file_stored' || $subject === 'transcript_file_stored' || $subject === 'transcript_failed') {
 			return $this->parseStoredRecording($notification, $room, $participant, $l);
 		}
 		if ($subject === 'record_file_store_fail') {
@@ -382,10 +382,21 @@ class Notifier implements INotifier {
 				IAction::TYPE_DELETE
 			);
 
+		if ($notification->getSubject() === 'record_file_stored') {
+			$subject = $l->t('Call recording now available');
+			$message = $l->t('The recording for the call in {call} was uploaded to {file}.');
+		} elseif ($notification->getSubject() === 'transcript_file_stored') {
+			$subject = $l->t('Transcript now available');
+			$message = $l->t('The transcript for the call in {call} was uploaded to {file}.');
+		} else {
+			$subject = $l->t('Failed to transcript call recording');
+			$message = $l->t('The server failed to transcript the recording at {file} for the call in {call}. Please reach out to the administration.');
+		}
+
 		$notification
-			->setRichSubject($l->t('Call recording now available'))
+			->setRichSubject($subject)
 			->setRichMessage(
-				$l->t('The recording for the call in {call} was uploaded to {file}.'),
+				$message,
 				[
 					'call' => [
 						'type' => 'call',
@@ -401,9 +412,13 @@ class Notifier implements INotifier {
 						'path' => $path,
 						'link' => $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', ['fileid' => $file->getId()]),
 					],
-				])
-			->addParsedAction($shareAction)
-			->addParsedAction($dismissAction);
+				]);
+
+		if ($notification->getSubject() !== 'transcript_failed') {
+			$notification->addParsedAction($shareAction);
+			$notification->addParsedAction($dismissAction);
+		}
+
 		return $notification;
 	}
 

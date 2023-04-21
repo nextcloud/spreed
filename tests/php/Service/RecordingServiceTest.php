@@ -50,6 +50,7 @@ use OCP\Files\IMimeTypeDetector;
 use OCP\Files\IRootFolder;
 use OCP\Notification\IManager;
 use OCP\Share\IManager as ShareManager;
+use OCP\SpeechToText\ISpeechToTextManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -79,6 +80,7 @@ class RecordingServiceTest extends TestCase {
 	private $logger;
 	/** @var BackendNotifier|MockObject */
 	private $backendNotifier;
+	private ISpeechToTextManager|MockObject $speechToTextManager;
 	/** @var RecordingService */
 	protected $recordingService;
 
@@ -97,6 +99,7 @@ class RecordingServiceTest extends TestCase {
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->backendNotifier = $this->createMock(BackendNotifier::class);
+		$this->speechToTextManager = $this->createMock(ISpeechToTextManager::class);
 
 		$this->recordingService = new RecordingService(
 			$this->mimeTypeDetector,
@@ -111,6 +114,7 @@ class RecordingServiceTest extends TestCase {
 			$this->chatManager,
 			$this->logger,
 			$this->backendNotifier,
+			$this->speechToTextManager,
 		);
 	}
 

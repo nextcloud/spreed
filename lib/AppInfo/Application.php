@@ -71,6 +71,7 @@ use OCA\Talk\Profile\TalkAction;
 use OCA\Talk\PublicShare\TemplateLoader as PublicShareTemplateLoader;
 use OCA\Talk\PublicShareAuth\Listener as PublicShareAuthListener;
 use OCA\Talk\PublicShareAuth\TemplateLoader as PublicShareAuthTemplateLoader;
+use OCA\Talk\Recording\Listener as RecordingListener;
 use OCA\Talk\Room;
 use OCA\Talk\Search\ConversationSearch;
 use OCA\Talk\Search\CurrentMessageSearch;
@@ -100,6 +101,8 @@ use OCP\IUser;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 use OCP\Settings\IManager;
+use OCP\SpeechToText\Events\TranscriptionFailedEvent;
+use OCP\SpeechToText\Events\TranscriptionSuccessfulEvent;
 use OCP\User\Events\BeforeUserLoggedOutEvent;
 use OCP\User\Events\UserChangedEvent;
 use OCP\User\Events\UserDeletedEvent;
@@ -139,6 +142,9 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(CircleDestroyedEvent::class, CircleDeletedListener::class);
 		$context->registerEventListener(AddingCircleMemberEvent::class, CircleMembershipListener::class);
 		$context->registerEventListener(RemovingCircleMemberEvent::class, CircleMembershipListener::class);
+
+		$context->registerEventListener(TranscriptionSuccessfulEvent::class, RecordingListener::class);
+		$context->registerEventListener(TranscriptionFailedEvent::class, RecordingListener::class);
 
 		$context->registerSearchProvider(ConversationSearch::class);
 		$context->registerSearchProvider(CurrentMessageSearch::class);
