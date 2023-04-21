@@ -62,12 +62,21 @@
 				@click.stop.prevent="handleCopyLink">
 				{{ t('spreed', 'Copy link') }}
 			</NcActionButton>
-			<NcActionButton :close-after-click="true"
+			<NcActionButton v-if="item.unreadMessages"
+				:close-after-click="true"
 				@click.prevent.exact="markConversationAsRead">
 				<template #icon>
 					<EyeOutline :size="16" />
 				</template>
 				{{ t('spreed', 'Mark as read') }}
+			</NcActionButton>
+			<NcActionButton v-else
+				:close-after-click="true"
+				@click.prevent.exact="markConversationAsUnread">
+				<template #icon>
+					<EyeOffOutline :size="16" />
+				</template>
+				{{ t('spreed', 'Mark as unread') }}
 			</NcActionButton>
 			<NcActionButton :close-after-click="true"
 				@click.prevent.exact="showConversationSettings">
@@ -116,6 +125,7 @@ import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import Cog from 'vue-material-design-icons/Cog.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 import ExitToApp from 'vue-material-design-icons/ExitToApp.vue'
+import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import EyeOutline from 'vue-material-design-icons/EyeOutline.vue'
 import Star from 'vue-material-design-icons/Star.vue'
 
@@ -134,14 +144,16 @@ export default {
 	name: 'Conversation',
 
 	components: {
-		ArrowRight,
-		Cog,
 		ConversationIcon,
-		Delete,
-		ExitToApp,
-		EyeOutline,
 		NcActionButton,
 		NcListItem,
+		// Icons
+		ArrowRight,
+		Cog,
+		Delete,
+		ExitToApp,
+		EyeOffOutline,
+		EyeOutline,
 		Star,
 	},
 
@@ -348,6 +360,10 @@ export default {
 
 		markConversationAsRead() {
 			this.$store.dispatch('clearLastReadMessage', { token: this.item.token })
+		},
+
+		markConversationAsUnread() {
+			this.$store.dispatch('markConversationUnread', { token: this.item.token })
 		},
 
 		showConversationSettings() {

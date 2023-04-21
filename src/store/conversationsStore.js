@@ -46,6 +46,7 @@ import {
 	setConversationDescription,
 	deleteConversation,
 	clearConversationHistory,
+	setConversationUnread,
 	setNotificationLevel,
 	setNotificationCalls,
 	setConversationPermissions,
@@ -127,7 +128,7 @@ const mutations = {
 		Vue.delete(state.conversations, token)
 	},
 	/**
-	 * Resets the store to it's original state
+	 * Resets the store to its original state
 	 *
 	 * @param {object} state current store state;
 	 */
@@ -426,15 +427,25 @@ const actions = {
 	},
 
 	async markConversationRead({ commit, getters }, token) {
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (!conversation) {
+		if (!getters.conversations[token]) {
 			return
 		}
 
-		conversation.unreadMessages = 0
-		conversation.unreadMention = false
+		commit('updateUnreadMessages', { token, unreadMessages: 0, unreadMention: false })
+	},
 
-		commit('addConversation', conversation)
+	async markConversationUnread({ commit, dispatch, getters }, { token }) {
+		if (!getters.conversations[token]) {
+			return
+		}
+
+		try {
+			await setConversationUnread(token)
+			commit('updateUnreadMessages', { token, unreadMessages: 1 })
+			await dispatch('fetchConversation', { token })
+		} catch (error) {
+			console.debug('Error while marking conversation as unread: ', error)
+		}
 	},
 
 	async updateLastCommonReadMessage({ commit, getters }, { token, lastCommonReadMessage }) {
