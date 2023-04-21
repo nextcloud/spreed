@@ -853,6 +853,7 @@ OC.L10N.register(
     "Upload profile picture" : "Subir imaxe de perfil",
     "Choose profile picture from files" : "Escolle a imaxe de perfil dende Ficheiros",
     "Remove profile picture" : "Eliminar a imaxe de perfil",
+    "The file must be a PNG or JPG" : "O ficheiro debe ser PNG ou JPG",
     "Choose your profile picture" : "Escolle a túa imaxe de perfil",
     "Error setting profile picture" : "Produciuse un erro ao configurar a imaxe de perfil",
     "Error cropping profile picture" : "Produciuse un erro ao recortar a imaxe de perfil",
