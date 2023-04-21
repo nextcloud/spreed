@@ -27,7 +27,7 @@
 		@close="closeModal">
 		<div class="media-settings">
 			<h2 class="media-settings__title">
-				{{ t('spreed', 'Camera and microphone check') }}
+				{{ t('spreed', 'Media settings') }}
 			</h2>
 			<!-- Preview -->
 			<div class="media-settings__preview">

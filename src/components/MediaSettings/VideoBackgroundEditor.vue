@@ -37,7 +37,9 @@
 			{{ t('spreed', 'Blur') }}
 		</button>
 		<!-- hide custom background for now -->
-		<button v-if="false" key="upload" class="background-editor__element">
+		<button key="upload"
+			class="background-editor__element"
+			@click="showCustomBackgroundModal = true">
 			<ImagePlus :size="20" />
 			{{ t('spreed', 'Custom') }}
 		</button>
@@ -54,6 +56,38 @@
 				:size="40"
 				fill-color="#fff" />
 		</button>
+
+		<!-- custom background dialog -->
+		<NcModal v-if="showCustomBackgroundModal"
+			class="custom-background-modal"
+			size="small"
+			@close="showCustomBackgroundModal = false">
+			<div class="custom-background-modal__wrapper">
+				<h2>{{ t('spreed', 'Choose custom background') }}</h2>
+				<div class="custom-background-modal__buttons">
+					<button class="background-editor__element"
+						@click="clickImportInput">
+						<Upload :size="20" />
+						{{ t('spreed', 'Upload') }}
+					</button>
+					<button class="background-editor__element"
+						@click="openPicker">
+						<Folder :size="20" />
+						{{ t('spreed', 'Choose from files') }}
+					</button>
+				</div>
+			</div>
+		</NcModal>
+
+		<!--native file picker, hidden -->
+		<input v-show="false"
+			id="file-upload"
+			ref="fileUploadInput"
+			multiple
+			type="file"
+			tabindex="-1"
+			aria-hidden="true"
+			@change="handleFileInput">
 	</div>
 </template>
 
@@ -61,9 +95,19 @@
 import Blur from 'vue-material-design-icons/Blur.vue'
 import Cancel from 'vue-material-design-icons/Cancel.vue'
 import CheckBold from 'vue-material-design-icons/CheckBold.vue'
+import Folder from 'vue-material-design-icons/Folder.vue'
 import ImagePlus from 'vue-material-design-icons/ImagePlus.vue'
+import Upload from 'vue-material-design-icons/Upload.vue'
 
-import { imagePath } from '@nextcloud/router'
+import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
+import { imagePath, generateUrl } from '@nextcloud/router'
+
+import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+
+import client from '../../services/DavClient.js'
+import { findUniquePath } from '../../utils/fileUpload.js'
+
+let picker
 
 export default {
 	name: 'VideoBackgroundEditor',
@@ -73,6 +117,9 @@ export default {
 		Blur,
 		ImagePlus,
 		CheckBold,
+		NcModal,
+		Upload,
+		Folder,
 	},
 
 	props: {
@@ -90,6 +137,7 @@ export default {
 	data() {
 		return {
 			selectedBackground: undefined,
+			showCustomBackgroundModal: false,
 		}
 	},
 
@@ -110,10 +158,98 @@ export default {
 		},
 	},
 
+	async mounted() {
+		// userRoot path
+		const userRoot = '/files/' + this.$store.getters.getUserId()
+
+		// Relative background folder path
+		const relativeBackgroundsFolderPath = this.$store.getters.getAttachmentFolder() + '/Backgrounds'
+
+		// Absolute backgrounds folder path
+		const absoluteBackgroundsFolderPath = userRoot + relativeBackgroundsFolderPath
+
+		// Create the backgrounds folder if it doesn't exist
+		if (await client.exists(absoluteBackgroundsFolderPath) === false) {
+			await client.createDirectory(absoluteBackgroundsFolderPath)
+		}
+
+		// Create picker
+		picker = getFilePickerBuilder(t('spreed', 'File to share'))
+			.setMultiSelect(false)
+			.setModal(true)
+			.startAt(relativeBackgroundsFolderPath)
+			.setType(1)
+			.allowDirectories(false)
+			.build()
+	},
+
 	methods: {
 		handleSelectBackground(background) {
 			this.$emit('update-background', background)
 			this.selectedBackground = background
+		},
+
+		/**
+		 * Clicks the hidden file input and opens the file-picker
+		 */
+		clickImportInput() {
+			this.$refs.fileUploadInput.click()
+		},
+
+		async handleFileInput(event) {
+			this.showCustomBackgroundModal = false
+
+			// Make file path
+			const file = Object.values(event.target.files)[0]
+
+			// Clear input to ensure that the change event will be emitted if
+			// the same file is picked again.
+			event.target.value = ''
+
+			const fileName = file.name
+
+			// userRoot path
+			const userRoot = '/files/' + this.$store.getters.getUserId()
+
+			const filePath = this.$store.getters.getAttachmentFolder() + '/Backgrounds/' + fileName
+
+			// Get a unique relative path based on the previous path variable
+			const uniquePath = await findUniquePath(client, userRoot, filePath)
+
+			try {
+				// Upload the file
+				await client.putFileContents(userRoot + uniquePath, file, {
+					contentLength: file.size,
+				})
+
+				const previewURL = await generateUrl('/core/preview.png?file={path}&x=-1&y={height}&a=1', {
+					path: filePath,
+					height: 1080,
+				})
+				this.$emit('update-background', previewURL)
+
+			} catch (error) {
+				console.debug(error)
+				showError(t('spreed', 'Error while uploading the file'))
+			}
+
+		},
+
+		openPicker() {
+			this.showCustomBackgroundModal = false
+			picker.pick()
+				.then((path) => {
+					if (!path.startsWith('/')) {
+						throw new Error(t('files', 'Invalid path selected'))
+					}
+
+					const previewURL = generateUrl('/core/preview.png?file={path}&x=-1&y={height}&a=1', {
+						path,
+						height: 1080,
+					})
+
+					this.$emit('update-background', previewURL)
+				})
 		},
 	},
 }
@@ -143,4 +279,17 @@ export default {
 		}
 	 }
 }
+.custom-background-modal {
+	width: 350px;
+	&__wrapper {
+		padding: calc(var(--default-grid-baseline) * 3);
+	}
+
+	&__buttons {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: calc(var(--default-grid-baseline) * 2);
+	}
+}
+
 </style>
