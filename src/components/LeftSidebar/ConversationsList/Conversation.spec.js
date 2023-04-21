@@ -530,10 +530,22 @@ describe('Conversation.vue', () => {
 
 			expect(toggleFavoriteAction).toHaveBeenCalledWith(expect.anything(), item)
 		})
+		test('marks conversation as unread', async () => {
+			const markConversationUnreadAction = jest.fn().mockResolvedValueOnce()
+			testStoreConfig.modules.conversationsStore.actions.markConversationUnread = markConversationUnreadAction
+
+			const action = shallowMountAndGetAction('Mark as unread')
+			expect(action.exists()).toBe(true)
+
+			await action.find('button').trigger('click')
+
+			expect(markConversationUnreadAction).toHaveBeenCalledWith(expect.anything(), { token: item.token })
+		})
 		test('marks conversation as read', async () => {
 			const clearLastReadMessageAction = jest.fn().mockResolvedValueOnce()
 			testStoreConfig.modules.conversationsStore.actions.clearLastReadMessage = clearLastReadMessageAction
 
+			item.unreadMessages = 1
 			const action = shallowMountAndGetAction('Mark as read')
 			expect(action.exists()).toBe(true)
 
