@@ -27,6 +27,8 @@ namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
+use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomFormatter;
@@ -49,13 +51,8 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
-	 *
-	 * @param int $mode
-	 * @param int $amount
-	 * @param string $attendeeMap
-	 * @return DataResponse
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function configureBreakoutRooms(int $mode, int $amount, string $attendeeMap = '[]'): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->setupBreakoutRooms($this->room, $mode, $amount, $attendeeMap);
@@ -69,8 +66,8 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function removeBreakoutRooms(): DataResponse {
 		$this->breakoutRoomService->removeBreakoutRooms($this->room);
 
@@ -84,8 +81,8 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function broadcastChatMessage(string $message): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->broadcastChatMessage($this->room, $this->participant, $message);
@@ -100,8 +97,8 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function applyAttendeeMap(string $attendeeMap): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->applyAttendeeMap($this->room, $attendeeMap);
@@ -114,8 +111,8 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInParticipant
 	 */
+	#[RequireLoggedInParticipant]
 	public function requestAssistance(): DataResponse {
 		try {
 			$this->breakoutRoomService->requestAssistance($this->room);
@@ -133,8 +130,8 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInParticipant
 	 */
+	#[RequireLoggedInParticipant]
 	public function resetRequestForAssistance(): DataResponse {
 		try {
 			$this->breakoutRoomService->resetRequestForAssistance($this->room);
@@ -152,8 +149,8 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function startBreakoutRooms(): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->startBreakoutRooms($this->room);
@@ -167,8 +164,8 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function stopBreakoutRooms(): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->stopBreakoutRooms($this->room);
@@ -182,8 +179,8 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInParticipant
 	 */
+	#[RequireLoggedInParticipant]
 	public function switchBreakoutRoom(string $target): DataResponse {
 		try {
 			$room = $this->breakoutRoomService->switchBreakoutRoom($this->room, $this->participant, $target);

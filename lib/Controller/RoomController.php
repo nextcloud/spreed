@@ -38,6 +38,12 @@ use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
+use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
+use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
+use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
+use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
+use OCA\Talk\Middleware\Attribute\RequireParticipant;
+use OCA\Talk\Middleware\Attribute\RequireRoom;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\BreakoutRoom;
 use OCA\Talk\Model\Session;
@@ -284,11 +290,9 @@ class RoomController extends AEnvironmentAwareController {
 	 * Get all (for moderators and in case of "free selection) or the assigned breakout room
 	 *
 	 * @NoAdminRequired
-	 * @RequireLoggedInParticipant
-	 *
-	 * @return DataResponse
 	 */
 	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[RequireLoggedInParticipant]
 	public function getBreakoutRooms(): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->getBreakoutRooms($this->room, $this->participant);
@@ -614,10 +618,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInParticipant
-	 *
-	 * @return DataResponse
 	 */
+	#[RequireLoggedInParticipant]
 	public function addToFavorites(): DataResponse {
 		$this->participantService->updateFavoriteStatus($this->participant, true);
 		return new DataResponse([]);
@@ -625,10 +627,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInParticipant
-	 *
-	 * @return DataResponse
 	 */
+	#[RequireLoggedInParticipant]
 	public function removeFromFavorites(): DataResponse {
 		$this->participantService->updateFavoriteStatus($this->participant, false);
 		return new DataResponse([]);
@@ -636,11 +636,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInParticipant
-	 *
-	 * @param int $level
-	 * @return DataResponse
 	 */
+	#[RequireLoggedInParticipant]
 	public function setNotificationLevel(int $level): DataResponse {
 		try {
 			$this->participantService->updateNotificationLevel($this->participant, $level);
@@ -653,11 +650,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInParticipant
-	 *
-	 * @param int $level
-	 * @return DataResponse
 	 */
+	#[RequireLoggedInParticipant]
 	public function setNotificationCalls(int $level): DataResponse {
 		try {
 			$this->participantService->updateNotificationCalls($this->participant, $level);
@@ -670,11 +664,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireModeratorParticipant
-	 *
-	 * @param string $roomName
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function renameRoom(string $roomName): DataResponse {
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -692,11 +683,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireModeratorParticipant
-	 *
-	 * @param string $description
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function setDescription(string $description): DataResponse {
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -713,10 +701,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireModeratorParticipant
-	 *
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function deleteRoom(): DataResponse {
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -729,12 +715,9 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
-	 *
-	 * @param bool $includeStatus
-	 * @return DataResponse
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
 	public function getParticipants(bool $includeStatus = false): DataResponse {
 		if ($this->participant->getAttendee()->getParticipantType() === Participant::GUEST) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
@@ -747,12 +730,9 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
-	 *
-	 * @param bool $includeStatus
-	 * @return DataResponse
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
 	public function getBreakoutRoomParticipants(bool $includeStatus = false): DataResponse {
 		if ($this->participant->getAttendee()->getParticipantType() === Participant::GUEST) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
@@ -903,12 +883,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
-	 *
-	 * @param string $newParticipant
-	 * @param string $source
-	 * @return DataResponse
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function addParticipantToRoom(string $newParticipant, string $source = 'users'): DataResponse {
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE
 			|| $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
@@ -1054,10 +1030,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInParticipant
-	 *
-	 * @return DataResponse
 	 */
+	#[RequireLoggedInParticipant]
 	public function removeSelfFromRoom(): DataResponse {
 		return $this->removeSelfFromRoomLogic($this->room, $this->participant);
 	}
@@ -1095,11 +1069,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireModeratorParticipant
-	 *
-	 * @param int $attendeeId
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function removeAttendeeFromRoom(int $attendeeId): DataResponse {
 		try {
 			$targetParticipant = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
@@ -1130,10 +1101,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
-	 *
-	 * @return DataResponse
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function makePublic(): DataResponse {
 		if (!$this->roomService->setType($this->room, Room::TYPE_PUBLIC)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -1144,10 +1113,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
-	 *
-	 * @return DataResponse
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function makePrivate(): DataResponse {
 		if (!$this->roomService->setType($this->room, Room::TYPE_GROUP)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -1158,11 +1125,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireModeratorParticipant
-	 *
-	 * @param int $state
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function setReadOnly(int $state): DataResponse {
 		if (!$this->roomService->setReadOnly($this->room, $state)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -1182,11 +1146,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireModeratorParticipant
-	 *
-	 * @param int $scope
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function setListable(int $scope): DataResponse {
 		if (!$this->roomService->setListable($this->room, $scope)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -1197,11 +1158,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireModeratorParticipant
-	 *
-	 * @param string $password
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function setPassword(string $password): DataResponse {
 		if ($this->room->getType() !== Room::TYPE_PUBLIC) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
@@ -1305,12 +1263,9 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireRoom
-	 *
-	 * @param string $pin
-	 * @return DataResponse
 	 */
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
+	#[RequireRoom]
 	public function getParticipantByDialInPin(string $pin): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
@@ -1335,11 +1290,9 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireRoom
-	 *
-	 * @return DataResponse
 	 */
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
+	#[RequireRoom]
 	public function createGuestByDialIn(): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
@@ -1385,22 +1338,16 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireModeratorParticipant
-	 *
-	 * @param int $attendeeId
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function promoteModerator(int $attendeeId): DataResponse {
 		return $this->changeParticipantType($attendeeId, true);
 	}
 
 	/**
 	 * @PublicPage
-	 * @RequireModeratorParticipant
-	 *
-	 * @param int $attendeeId
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function demoteModerator(int $attendeeId): DataResponse {
 		return $this->changeParticipantType($attendeeId, false);
 	}
@@ -1461,11 +1408,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireModeratorParticipant
-	 *
-	 * @param int $permissions
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function setPermissions(string $mode, int $permissions): DataResponse {
 		if (!$this->roomService->setPermissions($this->room, $mode, Attendee::PERMISSIONS_MODIFY_SET, $permissions, true)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -1476,13 +1420,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireModeratorParticipant
-	 *
-	 * @param int $attendeeId
-	 * @param string $method
-	 * @param int $permissions
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function setAttendeePermissions(int $attendeeId, string $method, int $permissions): DataResponse {
 		try {
 			$targetParticipant = $this->participantService->getParticipantByAttendeeId($this->room, $attendeeId);
@@ -1505,12 +1444,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireModeratorParticipant
-	 *
-	 * @param string $method
-	 * @param int $permissions
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function setAllAttendeesPermissions(string $method, int $permissions): DataResponse {
 		if (!$this->roomService->setPermissions($this->room, 'call', $method, $permissions, false)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -1521,12 +1456,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireModeratorParticipant
-	 *
-	 * @param int $state
-	 * @param int|null $timer
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function setLobby(int $state, ?int $timer = null): DataResponse {
 		$timerDateTime = null;
 		if ($timer !== null && $timer > 0) {
@@ -1563,11 +1494,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireModeratorParticipant
-	 *
-	 * @param int $state
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function setSIPEnabled(int $state): DataResponse {
 		$user = $this->userManager->get($this->userId);
 		if (!$user instanceof IUser) {
@@ -1591,11 +1519,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireModeratorParticipant
-	 *
-	 * @param int|null $attendeeId attendee id
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
 	public function resendInvitations(?int $attendeeId): DataResponse {
 		$participants = [];
 
@@ -1622,8 +1547,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireModeratorParticipant
 	 */
+	#[RequireModeratorParticipant]
 	public function setMessageExpiration(int $seconds): DataResponse {
 		if ($seconds < 0) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);

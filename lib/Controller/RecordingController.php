@@ -31,6 +31,9 @@ use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
+use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
+use OCA\Talk\Middleware\Attribute\RequireRoom;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
@@ -266,8 +269,8 @@ class RecordingController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function start(int $status): DataResponse {
 		try {
 			$this->recordingService->start($this->room, $status, $this->userId, $this->participant);
@@ -279,8 +282,8 @@ class RecordingController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function stop(): DataResponse {
 		try {
 			$this->recordingService->stop($this->room, $this->participant);
@@ -292,9 +295,9 @@ class RecordingController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireRoom
 	 */
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
+	#[RequireRoom]
 	public function store(string $owner): DataResponse {
 		$data = $this->room->getToken();
 		if (!$this->validateBackendRequest($data)) {
@@ -320,8 +323,8 @@ class RecordingController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireModeratorParticipant
 	 */
+	#[RequireModeratorParticipant]
 	public function notificationDismiss(int $timestamp): DataResponse {
 		try {
 			$this->recordingService->notificationDismiss(
@@ -337,8 +340,8 @@ class RecordingController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireModeratorParticipant
 	 */
+	#[RequireModeratorParticipant]
 	public function shareToChat(int $fileId, int $timestamp): DataResponse {
 		try {
 			$this->recordingService->shareToChat(

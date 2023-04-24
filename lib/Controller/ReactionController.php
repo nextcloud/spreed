@@ -29,6 +29,10 @@ use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
 use OCA\Talk\Exceptions\ReactionNotSupportedException;
 use OCA\Talk\Exceptions\ReactionOutOfContextException;
+use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
+use OCA\Talk\Middleware\Attribute\RequireParticipant;
+use OCA\Talk\Middleware\Attribute\RequirePermission;
+use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Comments\NotFoundException;
@@ -48,15 +52,11 @@ class ReactionController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireReadWriteConversation
-	 * @RequirePermissions(permissions=chat)
-	 * @RequireModeratorOrNoLobby
-	 *
-	 * @param int $messageId for reaction
-	 * @param string $reaction the reaction emoji
-	 * @return DataResponse
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
 	public function react(int $messageId, string $reaction): DataResponse {
 		try {
 			$this->reactionManager->addReactionMessage(
@@ -79,15 +79,11 @@ class ReactionController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireReadWriteConversation
-	 * @RequirePermissions(permissions=chat)
-	 * @RequireModeratorOrNoLobby
-	 *
-	 * @param int $messageId for reaction
-	 * @param string $reaction the reaction emoji
-	 * @return DataResponse
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
 	public function delete(int $messageId, string $reaction): DataResponse {
 		try {
 			$this->reactionManager->deleteReactionMessage(
@@ -108,13 +104,9 @@ class ReactionController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
-	 *
-	 * @param int $messageId for reaction
-	 * @param string|null $reaction the reaction emoji
-	 * @return DataResponse
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
 	public function getReactions(int $messageId, ?string $reaction): DataResponse {
 		try {
 			// Verify that messageId is part of the room

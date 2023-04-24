@@ -31,6 +31,11 @@ use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\GuestManager;
 use OCA\Talk\MatterbridgeManager;
+use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
+use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
+use OCA\Talk\Middleware\Attribute\RequireParticipant;
+use OCA\Talk\Middleware\Attribute\RequirePermission;
+use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\Model\Attachment;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Message;
@@ -188,10 +193,6 @@ class ChatController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireReadWriteConversation
-	 * @RequirePermissions(permissions=chat)
-	 * @RequireModeratorOrNoLobby
 	 *
 	 * Sends a new chat message to the given room.
 	 *
@@ -207,6 +208,10 @@ class ChatController extends AEnvironmentAwareController {
 	 *         "404 Not found" if the room or session for a guest user was not
 	 *         found".
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
 	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
 		[$actorType, $actorId] = $this->getActorInfo($actorDisplayName);
 		if (!$actorId) {
@@ -245,10 +250,6 @@ class ChatController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireReadWriteConversation
-	 * @RequirePermissions(permissions=chat)
-	 * @RequireModeratorOrNoLobby
 	 *
 	 * Sends a rich-object to the given room.
 	 *
@@ -264,6 +265,10 @@ class ChatController extends AEnvironmentAwareController {
 	 *         "404 Not found" if the room or session for a guest user was not
 	 *         found".
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
 	public function shareObjectToChat(string $objectType, string $objectId, string $metaData = '', string $actorDisplayName = '', string $referenceId = ''): DataResponse {
 		[$actorType, $actorId] = $this->getActorInfo($actorDisplayName);
 		if (!$actorId) {
@@ -345,8 +350,6 @@ class ChatController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
 	 *
 	 * Receives chat messages from the given room.
 	 *
@@ -374,7 +377,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * will be 0, yet the status will still be 200. Also note that
 	 * `X-Chat-Last-Given` may reference a message not visible and thus not
 	 * returned, but it should be used nevertheless as the $lastKnownMessageId
-	 * for the follow up query.
+	 * for the follow-up query.
 	 *
 	 * @param int $lookIntoFuture Polling for new messages (1) or getting the history of the chat (0)
 	 * @param int $limit Number of chat messages to receive (100 by default, 200 at most)
@@ -395,6 +398,8 @@ class ChatController extends AEnvironmentAwareController {
 	 *         'actorDisplayName', 'timestamp' (in seconds and UTC timezone) and
 	 *         'message'.
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
 	public function receiveMessages(int $lookIntoFuture,
 		int $limit = 100,
 		int $lastKnownMessageId = 0,
@@ -591,13 +596,13 @@ class ChatController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
 	 *
 	 * @param int $messageId The focused message which should be in the "middle" of the returned context
 	 * @param int $limit Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)
 	 * @return DataResponse
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
 	public function getMessageContext(
 		int $messageId,
 		int $limit = 50): DataResponse {
@@ -657,14 +662,11 @@ class ChatController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireParticipant
-	 * @RequireReadWriteConversation
-	 * @RequirePermissions(permissions=chat)
-	 * @RequireModeratorOrNoLobby
-	 *
-	 * @param int $messageId
-	 * @return DataResponse
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
 	public function deleteMessage(int $messageId): DataResponse {
 		try {
 			$message = $this->chatManager->getComment($this->room, (string) $messageId);
@@ -730,11 +732,9 @@ class ChatController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireModeratorParticipant
-	 * @RequireReadWriteConversation
-	 *
-	 * @return DataResponse
 	 */
+	#[RequireModeratorParticipant]
+	#[RequireReadWriteConversation]
 	public function clearHistory(): DataResponse {
 		$attendee = $this->participant->getAttendee();
 		if (!$this->participant->hasModeratorPermissions(false)
@@ -767,11 +767,8 @@ class ChatController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireParticipant
-	 *
-	 * @param int $lastReadMessage
-	 * @return DataResponse
 	 */
+	#[RequireParticipant]
 	public function setReadMarker(int $lastReadMessage): DataResponse {
 		$this->participantService->updateLastReadMessage($this->participant, $lastReadMessage);
 		$response = new DataResponse();
@@ -783,10 +780,8 @@ class ChatController extends AEnvironmentAwareController {
 
 	/**
 	 * @NoAdminRequired
-	 * @RequireParticipant
-	 *
-	 * @return DataResponse
 	 */
+	#[RequireParticipant]
 	public function markUnread(): DataResponse {
 		$message = $this->room->getLastMessage();
 		$unreadId = 0;
@@ -811,12 +806,9 @@ class ChatController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
-	 *
-	 * @param int $limit
-	 * @return DataResponse
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
 	public function getObjectsSharedInRoomOverview(int $limit = 7): DataResponse {
 		$limit = min(20, $limit);
 
@@ -859,14 +851,9 @@ class ChatController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
-	 *
-	 * @param string $objectType
-	 * @param int $lastKnownMessageId
-	 * @param int $limit
-	 * @return DataResponse
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
 	public function getObjectsSharedInRoom(string $objectType, int $lastKnownMessageId = 0, int $limit = 100): DataResponse {
 		$offset = max(0, $lastKnownMessageId);
 		$limit = min(200, $limit);
@@ -915,16 +902,11 @@ class ChatController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireReadWriteConversation
-	 * @RequirePermissions(permissions=chat)
-	 * @RequireModeratorOrNoLobby
-	 *
-	 * @param string $search
-	 * @param int $limit
-	 * @param bool $includeStatus
-	 * @return DataResponse
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
 	public function mentions(string $search, int $limit = 20, bool $includeStatus = false): DataResponse {
 		$this->searchPlugin->setContext([
 			'itemType' => 'chat',

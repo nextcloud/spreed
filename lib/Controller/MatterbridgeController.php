@@ -28,6 +28,7 @@ namespace OCA\Talk\Controller;
 use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
+use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
@@ -54,10 +55,8 @@ class MatterbridgeController extends AEnvironmentAwareController {
 	 * Get bridge information of one room
 	 *
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
-	 *
-	 * @return DataResponse
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function getBridgeOfRoom(): DataResponse {
 		$pid = $this->bridgeManager->checkBridge($this->room);
 		$logContent = $this->bridgeManager->getBridgeLog($this->room);
@@ -71,10 +70,8 @@ class MatterbridgeController extends AEnvironmentAwareController {
 	 * Get bridge process information
 	 *
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
-	 *
-	 * @return DataResponse
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function getBridgeProcessState(): DataResponse {
 		$state = $this->bridgeManager->getBridgeProcessState($this->room);
 		return new DataResponse($state);
@@ -84,12 +81,8 @@ class MatterbridgeController extends AEnvironmentAwareController {
 	 * Edit bridge information of one room
 	 *
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
-	 *
-	 * @param bool $enabled
-	 * @param array $parts
-	 * @return DataResponse
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function editBridgeOfRoom(bool $enabled, array $parts = []): DataResponse {
 		try {
 			$state = $this->bridgeManager->editBridgeOfRoom($this->room, $this->userId, $enabled, $parts);
@@ -103,10 +96,8 @@ class MatterbridgeController extends AEnvironmentAwareController {
 	 * Delete bridge of one room
 	 *
 	 * @NoAdminRequired
-	 * @RequireLoggedInModeratorParticipant
-	 *
-	 * @return DataResponse
 	 */
+	#[RequireLoggedInModeratorParticipant]
 	public function deleteBridgeOfRoom(): DataResponse {
 		try {
 			$success = $this->bridgeManager->deleteBridgeOfRoom($this->room);

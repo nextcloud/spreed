@@ -28,6 +28,10 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\WrongPermissionsException;
+use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
+use OCA\Talk\Middleware\Attribute\RequireParticipant;
+use OCA\Talk\Middleware\Attribute\RequirePermission;
+use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\Model\Poll;
 use OCA\Talk\Model\Vote;
 use OCA\Talk\Room;
@@ -67,17 +71,11 @@ class PollController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireReadWriteConversation
-	 * @RequirePermissions(permissions=chat)
-	 * @RequireModeratorOrNoLobby
-	 *
-	 * @param string $question
-	 * @param array $options
-	 * @param int $resultMode
-	 * @param int $maxVotes
-	 * @return DataResponse
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
 	public function createPoll(string $question, array $options, int $resultMode, int $maxVotes): DataResponse {
 		if ($this->room->getType() !== Room::TYPE_GROUP
 			&& $this->room->getType() !== Room::TYPE_PUBLIC) {
@@ -125,12 +123,9 @@ class PollController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
-	 *
-	 * @param int $pollId
-	 * @return DataResponse
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
 	public function showPoll(int $pollId): DataResponse {
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
@@ -149,13 +144,13 @@ class PollController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
 	 *
 	 * @param int $pollId
 	 * @param int[] $optionIds
 	 * @return DataResponse
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
 	public function votePoll(int $pollId, array $optionIds = []): DataResponse {
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
@@ -197,12 +192,9 @@ class PollController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 * @RequireModeratorOrNoLobby
-	 *
-	 * @param int $pollId
-	 * @return DataResponse
 	 */
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
 	public function closePoll(int $pollId): DataResponse {
 		try {
 			$poll = $this->pollService->getPoll($this->room->getId(), $pollId);
