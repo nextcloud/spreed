@@ -112,7 +112,7 @@ export default {
 
 	methods: {
 		userStatusUpdated(state) {
-			if (this.token) {
+			if (this.token && this.participantsList.find(participant => participant.actorId === state.userId)) {
 				this.$store.dispatch('updateUser', {
 					token: this.token,
 					participantIdentifier: {
