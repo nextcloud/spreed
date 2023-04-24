@@ -1,4 +1,5 @@
 import { createLocalVue } from '@vue/test-utils'
+import flushPromises from 'flush-promises'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
@@ -26,6 +27,7 @@ import {
 	deleteConversation,
 	setConversationPermissions,
 	setCallPermissions,
+	setConversationUnread,
 } from '../services/conversationsService.js'
 import storeConfig from './storeConfig.js'
 
@@ -47,6 +49,7 @@ jest.mock('../services/conversationsService', () => ({
 	deleteConversation: jest.fn(),
 	setConversationPermissions: jest.fn(),
 	setCallPermissions: jest.fn(),
+	setConversationUnread: jest.fn(),
 }))
 
 describe('conversationsStore', () => {
@@ -581,6 +584,31 @@ describe('conversationsStore', () => {
 			const changedConversation = store.getters.conversation(testToken)
 			expect(changedConversation.unreadMessages).toBe(0)
 			expect(changedConversation.unreadMention).toBe(false)
+		})
+
+		test('marks conversation as unread', async () => {
+			testConversation.unreadMessages = 0
+
+			const response = {
+				data: {
+					ocs: {
+						data: { ...testConversation, unreadMessages: 1 },
+					},
+				},
+			}
+			fetchConversation.mockResolvedValue(response)
+
+			store.dispatch('addConversation', testConversation)
+
+			store.dispatch('markConversationUnread', { token: testToken })
+
+			await flushPromises()
+
+			expect(setConversationUnread).toHaveBeenCalled()
+			expect(fetchConversation).toHaveBeenCalled()
+
+			const changedConversation = store.getters.conversation(testToken)
+			expect(changedConversation.unreadMessages).toBe(1)
 		})
 
 		test('updates last common read message', () => {
