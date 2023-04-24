@@ -1068,6 +1068,7 @@ OC.L10N.register(
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Record voice message" : "Gravar mensaxe de voz",
     "Share files to the conversation" : "Compartir ficheiros na conversa",
+    "Upload from device" : "Cargar desde o dispositivo",
     "Create new poll" : "Crear unha enquisa nova",
     "Add emoji" : "Engadir un «emoji»",
     "Send message" : "Enviar a mensaxe",
