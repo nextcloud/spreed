@@ -36,6 +36,7 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Http\Client\IClientService;
 use OCP\IRequest;
@@ -132,10 +133,10 @@ class RecordingController extends AEnvironmentAwareController {
 	 * Backend API to update recording status by backends.
 	 *
 	 * @PublicPage
-	 * @BruteForceProtection(action=talkRecordingSecret)
 	 *
 	 * @return DataResponse
 	 */
+	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	public function backend(): DataResponse {
 		$json = $this->getInputStream();
 		if (!$this->validateBackendRequest($json)) {
@@ -292,10 +293,8 @@ class RecordingController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireRoom
-	 * @BruteForceProtection(action=talkRecordingSecret)
-	 *
-	 * @return DataResponse
 	 */
+	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	public function store(string $owner): DataResponse {
 		$data = $this->room->getToken();
 		if (!$this->validateBackendRequest($data)) {

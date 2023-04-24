@@ -31,6 +31,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSException;
@@ -149,7 +150,6 @@ class FilesIntegrationController extends OCSController {
 
 	/**
 	 * @PublicPage
-	 * @BruteForceProtection(action=shareinfo)
 	 *
 	 * Returns the token of the room associated to the file id of the given
 	 * share token.
@@ -180,6 +180,7 @@ class FilesIntegrationController extends OCSController {
 	 *         or "404 Not found" if the given share token was invalid.
 	 */
 	#[UseSession]
+	#[BruteForceProtection(action: 'shareinfo')]
 	public function getRoomByShareToken(string $shareToken): DataResponse {
 		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1' ||
 			$this->config->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {

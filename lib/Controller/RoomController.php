@@ -53,6 +53,7 @@ use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -284,10 +285,10 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @NoAdminRequired
 	 * @RequireLoggedInParticipant
-	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @return DataResponse
 	 */
+	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function getBreakoutRooms(): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->getBreakoutRooms($this->room, $this->participant);
@@ -312,11 +313,11 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @param string $token
 	 * @return DataResponse
 	 */
+	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function getSingleRoom(string $token): DataResponse {
 		try {
 			$isSIPBridgeRequest = $this->validateSIPBridgeRequest($token);
@@ -1222,13 +1223,13 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @BruteForceProtection(action=talkRoomPassword)
 	 *
 	 * @param string $token
 	 * @param string $password
 	 * @param bool $force
 	 * @return DataResponse
 	 */
+	#[BruteForceProtection(action: 'talkRoomPassword')]
 	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
 		$sessionId = $this->session->getSessionForRoom($token);
 		try {
@@ -1305,11 +1306,11 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireRoom
-	 * @BruteForceProtection(action=talkSipBridgeSecret)
 	 *
 	 * @param string $pin
 	 * @return DataResponse
 	 */
+	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	public function getParticipantByDialInPin(string $pin): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
@@ -1335,10 +1336,10 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireRoom
-	 * @BruteForceProtection(action=talkSipBridgeSecret)
 	 *
 	 * @return DataResponse
 	 */
+	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	public function createGuestByDialIn(): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {

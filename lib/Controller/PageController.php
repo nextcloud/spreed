@@ -40,6 +40,7 @@ use OCA\Viewer\Event\LoadViewer;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\NotFoundResponse;
@@ -127,13 +128,13 @@ class PageController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @param string $token
 	 * @return Response
 	 * @throws HintException
 	 */
 	#[UseSession]
+	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function showCall(string $token): Response {
 		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
 		return $this->index($token);
@@ -142,7 +143,6 @@ class PageController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @BruteForceProtection(action=talkRoomPassword)
 	 *
 	 * @param string $token
 	 * @param string $password
@@ -150,6 +150,7 @@ class PageController extends Controller {
 	 * @throws HintException
 	 */
 	#[UseSession]
+	#[BruteForceProtection(action: 'talkRoomPassword')]
 	public function authenticatePassword(string $token, string $password = ''): Response {
 		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
 		return $this->index($token, '', $password);
@@ -178,7 +179,6 @@ class PageController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @param string $token
 	 * @param string $callUser
@@ -186,6 +186,7 @@ class PageController extends Controller {
 	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
+	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[UseSession]
 	public function index(string $token = '', string $callUser = '', string $password = ''): Response {
 		$bruteForceToken = $token;
@@ -309,11 +310,11 @@ class PageController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @param string $token
 	 * @return TemplateResponse|NotFoundResponse
 	 */
+	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function recording(string $token): Response {
 		try {
 			$room = $this->manager->getRoomByToken($token);
