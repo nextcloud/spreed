@@ -541,7 +541,7 @@ class SignalingController extends OCSController {
 					'message' => 'The request could not be authenticated.',
 				],
 			]);
-			$response->throttle();
+			$response->throttle(['action' => 'talkSignalingSecret']);
 			return $response;
 		}
 

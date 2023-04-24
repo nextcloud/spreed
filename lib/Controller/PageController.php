@@ -258,7 +258,7 @@ class PageController extends Controller {
 							$response = new RedirectResponse($passwordVerification['url']);
 						}
 
-						$response->throttle(['token' => $token]);
+						$response->throttle(['token' => $token, 'action' => 'talkRoomPassword']);
 						return $response;
 					}
 				}
@@ -302,7 +302,7 @@ class PageController extends Controller {
 		$response->setContentSecurityPolicy($csp);
 		if ($throttle) {
 			// Logged-in user tried to access a chat they can not access
-			$response->throttle(['token' => $bruteForceToken]);
+			$response->throttle(['token' => $bruteForceToken, 'action' => 'talkRoomToken']);
 		}
 		return $response;
 	}
@@ -320,7 +320,7 @@ class PageController extends Controller {
 			$room = $this->manager->getRoomByToken($token);
 		} catch (RoomNotFoundException $e) {
 			$response = new NotFoundResponse();
-			$response->throttle(['token' => $token]);
+			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
 
 			return $response;
 		}
@@ -377,7 +377,7 @@ class PageController extends Controller {
 			$response = new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
 				'redirect_url' => $redirectUrl,
 			]));
-			$response->throttle(['token' => $token]);
+			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
 			return $response;
 		}
 
@@ -401,7 +401,7 @@ class PageController extends Controller {
 				} else {
 					$response = new RedirectResponse($passwordVerification['url']);
 				}
-				$response->throttle(['token' => $token]);
+				$response->throttle(['token' => $token, 'action' => 'talkRoomPassword']);
 				return $response;
 			}
 		}

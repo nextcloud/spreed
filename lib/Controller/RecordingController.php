@@ -147,7 +147,7 @@ class RecordingController extends AEnvironmentAwareController {
 					'message' => 'The request could not be authenticated.',
 				],
 			], Http::STATUS_FORBIDDEN);
-			$response->throttle();
+			$response->throttle(['action' => 'talkRecordingSecret']);
 			return $response;
 		}
 
@@ -305,7 +305,7 @@ class RecordingController extends AEnvironmentAwareController {
 					'message' => 'The request could not be authenticated.',
 				],
 			], Http::STATUS_UNAUTHORIZED);
-			$response->throttle();
+			$response->throttle(['action' => 'talkRecordingSecret']);
 			return $response;
 		}
 

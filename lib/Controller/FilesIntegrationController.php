@@ -197,7 +197,7 @@ class FilesIntegrationController extends OCSController {
 			}
 		} catch (ShareNotFound $e) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
-			$response->throttle(['token' => $shareToken]);
+			$response->throttle(['token' => $shareToken, 'action' => 'shareinfo']);
 			return $response;
 		}
 
