@@ -31,6 +31,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCS\OCSNotFoundException;
@@ -148,7 +149,6 @@ class FilesIntegrationController extends OCSController {
 
 	/**
 	 * @PublicPage
-	 * @UseSession
 	 * @BruteForceProtection(action=shareinfo)
 	 *
 	 * Returns the token of the room associated to the file id of the given
@@ -173,12 +173,13 @@ class FilesIntegrationController extends OCSController {
 	 * Besides the token of the room this also returns the current user ID and
 	 * display name, if any; this is needed by the Talk sidebar to know the
 	 * actual current user, as the public share page uses the incognito mode and
-	 * thus logged in users as seen as guests.
+	 * thus logged-in users as seen as guests.
 	 *
 	 * @param string $shareToken
 	 * @return DataResponse the status code is "200 OK" if a room is returned,
 	 *         or "404 Not found" if the given share token was invalid.
 	 */
+	#[UseSession]
 	public function getRoomByShareToken(string $shareToken): DataResponse {
 		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1' ||
 			$this->config->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {

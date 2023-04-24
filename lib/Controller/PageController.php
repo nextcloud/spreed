@@ -40,6 +40,7 @@ use OCA\Viewer\Event\LoadViewer;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\AppFramework\Http\RedirectResponse;
@@ -126,13 +127,13 @@ class PageController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @UseSession
 	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @param string $token
 	 * @return Response
 	 * @throws HintException
 	 */
+	#[UseSession]
 	public function showCall(string $token): Response {
 		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
 		return $this->index($token);
@@ -141,7 +142,6 @@ class PageController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @UseSession
 	 * @BruteForceProtection(action=talkRoomPassword)
 	 *
 	 * @param string $token
@@ -149,6 +149,7 @@ class PageController extends Controller {
 	 * @return Response
 	 * @throws HintException
 	 */
+	#[UseSession]
 	public function authenticatePassword(string $token, string $password = ''): Response {
 		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
 		return $this->index($token, '', $password);
@@ -177,7 +178,6 @@ class PageController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @UseSession
 	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @param string $token
@@ -186,6 +186,7 @@ class PageController extends Controller {
 	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
+	#[UseSession]
 	public function index(string $token = '', string $callUser = '', string $password = ''): Response {
 		$bruteForceToken = $token;
 		$user = $this->userSession->getUser();
