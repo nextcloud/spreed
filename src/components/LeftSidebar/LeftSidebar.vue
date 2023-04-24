@@ -33,7 +33,7 @@
 			<NewGroupConversation v-if="canStartConversations" />
 		</div>
 		<template #list>
-			<li class="left-sidebar__list">
+			<li ref="container" class="left-sidebar__list">
 				<ul ref="scroller"
 					class="scroller"
 					@scroll="debounceHandleScroll">
@@ -556,17 +556,15 @@ export default {
 		},
 		handleUnreadMention() {
 			this.unreadNum = 0
-			const unreadMentions = document.getElementsByClassName('unread-mention-conversation')
-			if (unreadMentions.length) {
-				unreadMentions.forEach(x => {
-					if (this.elementIsBelowViewpoint(this.$refs.container, x)) {
-						if (this.unreadNum === 0) {
-							this.firstUnreadPos = x.offsetTop
-						}
-						this.unreadNum += 1
+			const unreadMentions = document.querySelectorAll('.unread-mention-conversation')
+			unreadMentions.forEach(x => {
+				if (this.elementIsBelowViewpoint(this.$refs.container, x)) {
+					if (this.unreadNum === 0) {
+						this.firstUnreadPos = x.offsetTop
 					}
-				})
-			}
+					this.unreadNum += 1
+				}
+			})
 		},
 		debounceHandleScroll: debounce(function() {
 			this.handleScroll()
