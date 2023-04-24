@@ -2793,8 +2793,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 			if (isset($expectedNotification['message'])) {
 				$data['message'] = (string) $notification['message'];
-				if (str_contains($expectedNotification['message'], '{{TOKEN}}')) {
-					$data['message'] = str_replace($notification['object_id'], '{{TOKEN}}', $data['message']);
+				$result = preg_match('/ROOM\(([^)]+)\)/', $expectedNotification['message'], $matches);
+				if ($result && isset(self::$identifierToToken[$matches[1]])) {
+					$data['message'] = str_replace(self::$identifierToToken[$matches[1]], $matches[0], $data['message']);
 				}
 			}
 			if (isset($expectedNotification['object_type'])) {
