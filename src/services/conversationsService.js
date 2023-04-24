@@ -207,6 +207,20 @@ const clearConversationHistory = async function(token) {
 }
 
 /**
+ * Set conversation as unread
+ *
+ * @param {string} token The token of the conversation to be set as unread
+ */
+const setConversationUnread = async function(token) {
+	try {
+		const response = axios.delete(generateOcsUrl('apps/spreed/api/v1/chat/{token}/read', { token }))
+		return response
+	} catch (error) {
+		console.debug('Error while setting the conversation as unread: ', error)
+	}
+}
+
+/**
  * Add a conversation to the favorites
  *
  * @param {string} token The token of the conversation to be favorites
@@ -433,6 +447,7 @@ export {
 	setConversationName,
 	setConversationDescription,
 	clearConversationHistory,
+	setConversationUnread,
 	setConversationPermissions,
 	setCallPermissions,
 	setMessageExpiration,
