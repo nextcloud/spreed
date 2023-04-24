@@ -122,7 +122,7 @@ const mutations = {
 	 * Deletes a conversation from the store.
 	 *
 	 * @param {object} state current store state;
-	 * @param {object} token the token of the conversation to delete;
+	 * @param {string} token the token of the conversation to delete;
 	 */
 	deleteConversation(state, token) {
 		Vue.delete(state.conversations, token)
@@ -199,7 +199,7 @@ const mutations = {
 
 const actions = {
 	/**
-	 * Add a conversation to the store and index the displayname.
+	 * Add a conversation to the store and index the displayName.
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} conversation the conversation;
@@ -212,8 +212,8 @@ const actions = {
 			displayName: context.getters.getDisplayName(),
 		}
 
-		// Fallback to getCurrentUser() only if if has not been set yet (as
-		// getCurrentUser() needs to be overriden in public share pages as it
+		// Fallback to getCurrentUser() only if it has not been set yet (as
+		// getCurrentUser() needs to be overridden in public share pages as it
 		// always returns an anonymous user).
 		if (!currentUser.uid) {
 			currentUser = getCurrentUser()
@@ -251,7 +251,7 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} data the wrapping object;
-	 * @param {object} data.token the token of the conversation to be deleted;
+	 * @param {string} data.token the token of the conversation to be deleted;
 	 */
 	async deleteConversationFromServer(context, { token }) {
 		await deleteConversation(token)
@@ -264,7 +264,7 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} data the wrapping object;
-	 * @param {object} data.token the token of the conversation whose history is
+	 * @param {string} data.token the token of the conversation whose history is
 	 * to be cleared;
 	 */
 	async clearConversationHistory(context, { token }) {
@@ -280,7 +280,7 @@ const actions = {
 	},
 
 	/**
-	 * Resets the store to it's original state.
+	 * Resets the store to its original state.
 	 *
 	 * @param {object} context default store context;
 	 */
@@ -290,11 +290,11 @@ const actions = {
 	},
 
 	async toggleGuests({ commit, getters }, { token, allowGuests }) {
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (!conversation) {
+		if (!getters.conversations[token]) {
 			return
 		}
 
+		const conversation = Object.assign({}, getters.conversations[token])
 		if (allowGuests) {
 			await makePublic(token)
 			conversation.type = CONVERSATION.TYPE.PUBLIC
@@ -307,8 +307,7 @@ const actions = {
 	},
 
 	async toggleFavorite({ commit, getters }, { token, isFavorite }) {
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (!conversation) {
+		if (!getters.conversations[token]) {
 			return
 		}
 
@@ -318,17 +317,18 @@ const actions = {
 		} else {
 			await addToFavorites(token)
 		}
-		conversation.isFavorite = !isFavorite
+
+		const conversation = Object.assign({}, getters.conversations[token], { isFavorite: !isFavorite })
 
 		commit('addConversation', conversation)
 	},
 
 	async toggleLobby({ commit, getters }, { token, enableLobby }) {
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (!conversation) {
+		if (!getters.conversations[token]) {
 			return
 		}
 
+		const conversation = Object.assign({}, getters.conversations[token])
 		if (enableLobby) {
 			await changeLobbyState(token, WEBINAR.LOBBY.NON_MODERATORS)
 			conversation.lobbyState = WEBINAR.LOBBY.NON_MODERATORS
@@ -341,13 +341,13 @@ const actions = {
 	},
 
 	async setConversationName({ commit, getters }, { token, name }) {
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (!conversation) {
+		if (!getters.conversations[token]) {
 			return
 		}
 
 		await setConversationName(token, name)
-		conversation.displayName = name
+
+		const conversation = Object.assign({}, getters.conversations[token], { displayName: name })
 
 		commit('addConversation', conversation)
 	},
@@ -367,61 +367,60 @@ const actions = {
 	},
 
 	async setReadOnlyState({ commit, getters }, { token, readOnly }) {
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (!conversation) {
+		if (!getters.conversations[token]) {
 			return
 		}
 
 		await changeReadOnlyState(token, readOnly)
-		conversation.readOnly = readOnly
+
+		const conversation = Object.assign({}, getters.conversations[token], { readOnly })
 
 		commit('addConversation', conversation)
 	},
 
 	async setListable({ commit, getters }, { token, listable }) {
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (!conversation) {
+		if (!getters.conversations[token]) {
 			return
 		}
 
 		await changeListable(token, listable)
-		conversation.listable = listable
+
+		const conversation = Object.assign({}, getters.conversations[token], { listable })
 
 		commit('addConversation', conversation)
 	},
 
 	async setLobbyTimer({ commit, getters }, { token, timestamp }) {
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (!conversation) {
+		if (!getters.conversations[token]) {
 			return
 		}
 
+		const conversation = Object.assign({}, getters.conversations[token], { lobbyTimer: timestamp })
+
 		// The backend requires the state and timestamp to be set together.
 		await changeLobbyState(token, conversation.lobbyState, timestamp)
-		conversation.lobbyTimer = timestamp
 
 		commit('addConversation', conversation)
 	},
 
 	async setSIPEnabled({ commit, getters }, { token, state }) {
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (!conversation) {
+		if (!getters.conversations[token]) {
 			return
 		}
 
 		await setSIPEnabled(token, state)
-		conversation.sipEnabled = state
+
+		const conversation = Object.assign({}, getters.conversations[token], { sipEnabled: state })
 
 		commit('addConversation', conversation)
 	},
 
 	async setConversationProperties({ commit, getters }, { token, properties }) {
-		let conversation = Object.assign({}, getters.conversations[token])
-		if (!conversation) {
+		if (!getters.conversations[token]) {
 			return
 		}
 
-		conversation = Object.assign(conversation, properties)
+		const conversation = Object.assign({}, getters.conversations[token], properties)
 
 		commit('addConversation', conversation)
 	},
@@ -439,40 +438,36 @@ const actions = {
 			return
 		}
 
-		try {
-			await setConversationUnread(token)
-			commit('updateUnreadMessages', { token, unreadMessages: 1 })
-			await dispatch('fetchConversation', { token })
-		} catch (error) {
-			console.debug('Error while marking conversation as unread: ', error)
-		}
+		await setConversationUnread(token)
+		commit('updateUnreadMessages', { token, unreadMessages: 1 })
+		await dispatch('fetchConversation', { token })
 	},
 
 	async updateLastCommonReadMessage({ commit, getters }, { token, lastCommonReadMessage }) {
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (!conversation) {
+		if (!getters.conversations[token]) {
 			return
 		}
 
-		conversation.lastCommonReadMessage = lastCommonReadMessage
+		const conversation = Object.assign({}, getters.conversations[token], { lastCommonReadMessage })
 
 		commit('addConversation', conversation)
 	},
 
 	async updateConversationLastActive({ commit, getters }, token) {
-		const conversation = Object.assign({}, getters.conversations[token])
-		if (!conversation) {
+		if (!getters.conversations[token]) {
 			return
 		}
 
-		conversation.lastActivity = (new Date().getTime()) / 1000
+		const conversation = Object.assign({}, getters.conversations[token], {
+			lastActivity: (new Date().getTime()) / 1000,
+		})
 
 		commit('addConversation', conversation)
 	},
 
 	async updateConversationLastMessage({ commit }, { token, lastMessage }) {
 		/**
-		 * Only use the last message as lastmessage when:
+		 * Only use the last message as lastMessage when:
 		 * 1. It's not a command reply
 		 * 2. It's not a temporary message starting with "/" which is a user posting a command
 		 * 3. It's not a reaction or deletion of a reaction
@@ -494,12 +489,13 @@ const actions = {
 
 	async updateConversationLastMessageFromNotification({ getters, commit }, { notification }) {
 		const [token, messageId] = notification.objectId.split('/')
-		const conversation = { ...getters.conversation(token) }
 
-		if (!conversation) {
+		if (!getters.conversations[token]) {
 			// Conversation not loaded yet, skipping
 			return
 		}
+
+		const conversation = Object.assign({}, getters.conversations[token])
 
 		const actor = notification.subjectRichParameters.user || notification.subjectRichParameters.guest || {
 			type: 'guest',
@@ -558,29 +554,32 @@ const actions = {
 
 	async updateCallStateFromNotification({ getters, commit }, { notification }) {
 		const token = notification.objectId
-		const conversation = { ...getters.conversation(token) }
 
-		if (!conversation) {
+		if (!getters.conversations[token]) {
 			// Conversation not loaded yet, skipping
 			return
 		}
 
-		conversation.hasCall = true
-		conversation.callFlag = PARTICIPANT.CALL_FLAG.WITH_VIDEO
-		conversation.activeSince = (new Date(notification.datetime)).getTime() / 1000
-		conversation.lastActivity = conversation.activeSince
-		conversation.callStartTime = conversation.activeSince
+		const activeSince = (new Date(notification.datetime)).getTime() / 1000
+
+		const conversation = Object.assign({}, getters.conversations[token], {
+			hasCall: true,
+			callFlag: PARTICIPANT.CALL_FLAG.WITH_VIDEO,
+			activeSince,
+			lastActivity: activeSince,
+			callStartTime: activeSince,
+		})
 
 		// Inaccurate but best effort from here on:
 		const lastMessage = {
 			token,
-			id: 'temp' + conversation.activeSince,
+			id: 'temp' + activeSince,
 			actorType: 'guests',
 			actorId: 'unknown',
 			actorDisplayName: t('spreed', 'Guest'),
 			message: notification.subjectRich,
 			messageParameters: notification.subjectRichParameters,
-			timestamp: conversation.activeSince,
+			timestamp: activeSince,
 			messageType: 'system',
 			systemMessage: 'call_started',
 			expirationTimestamp: 0,
