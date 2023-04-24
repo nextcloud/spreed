@@ -603,6 +603,10 @@ export default {
 		},
 
 		actionIcon() {
+			if (this.isModerator) {
+				return ''
+			}
+
 			if (this.attendeePermissions === PARTICIPANT.PERMISSIONS.MAX_CUSTOM) {
 				return 'LockOpenVariant'
 			} else if (this.attendeePermissions === PARTICIPANT.PERMISSIONS.CUSTOM) {
