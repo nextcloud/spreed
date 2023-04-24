@@ -26,6 +26,7 @@ namespace OCA\Talk\Middleware;
 use OCA\Talk\Config;
 use OCA\Talk\Controller\SignalingController;
 use OCA\Talk\Exceptions\ForbiddenException;
+use OCA\Talk\Middleware\Attribute\RequireCallEnabled;
 use OCA\Talk\Middleware\Exceptions\CanNotUseTalkException;
 use OCA\Talk\Room;
 use OCP\AppFramework\Controller;
@@ -35,7 +36,6 @@ use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
-use OCP\AppFramework\Utility\IControllerMethodReflector;
 use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IUser;
@@ -44,31 +44,25 @@ use OCP\IUserSession;
 class CanUseTalkMiddleware extends Middleware {
 	private IUserSession $userSession;
 	private IGroupManager $groupManager;
-	private IControllerMethodReflector $reflector;
 	private Config $talkConfig;
 	private IConfig $serverConfig;
 
 	public function __construct(
 		IUserSession $userSession,
 		IGroupManager $groupManager,
-		IControllerMethodReflector $reflector,
 		Config $talkConfig,
 		IConfig $serverConfig,
 	) {
 		$this->userSession = $userSession;
 		$this->groupManager = $groupManager;
-		$this->reflector = $reflector;
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
 	}
 
 	/**
-	 * @param Controller $controller
-	 * @param string $methodName
-	 *
 	 * @throws CanNotUseTalkException
 	 */
-	public function beforeController($controller, $methodName): void {
+	public function beforeController(Controller $controller, string $methodName): void {
 		$user = $this->userSession->getUser();
 		if ($user instanceof IUser && $this->talkConfig->isDisabledForUser($user)) {
 			if ($methodName === 'getWelcomeMessage'
@@ -80,7 +74,10 @@ class CanUseTalkMiddleware extends Middleware {
 			throw new CanNotUseTalkException();
 		}
 
-		if ($this->reflector->hasAnnotation('RequireCallEnabled')
+		$reflectionMethod = new \ReflectionMethod($controller, $methodName);
+		$hasAttribute = !empty($reflectionMethod->getAttributes(RequireCallEnabled::class));
+
+		if ($hasAttribute
 			&& ((int) $this->serverConfig->getAppValue('spreed', 'start_calls')) === Room::START_CALL_NOONE) {
 			throw new CanNotUseTalkException();
 		}
