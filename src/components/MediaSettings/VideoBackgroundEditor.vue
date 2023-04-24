@@ -21,62 +21,44 @@
 
 <template>
 	<div class="background-editor">
-		<template v-if="!showCustomBackgroundPage">
-			<button key="clear"
-				class="background-editor__element"
-				:class="{'background-editor__element--selected': selectedBackground === 'clear'}"
-				@click="handleSelectBackground('clear')">
-				<Cancel :size="20" />
-				{{ t('spreed', 'Clear') }}
-			</button>
-			<button key="blur"
-				:disabled="!blurPreviewAvailable"
-				class="background-editor__element"
-				:class="{'background-editor__element--selected': selectedBackground === 'blur'}"
-				@click="handleSelectBackground('blur')">
-				<Blur :size="20" />
-				{{ t('spreed', 'Blur') }}
-			</button>
-			<!-- hide custom background for now -->
-			<button key="upload"
-				class="background-editor__element"
-				@click="showCustomBackgroundPage = true">
-				<ImagePlus :size="20" />
-				{{ t('spreed', 'Custom') }}
-			</button>
-			<button v-for="path in backgrounds"
-				:key="path"
-				aria-label="TODO: add image names as aria labels"
-				class="background-editor__element"
-				:class="{'background-editor__element--selected': selectedBackground === path}"
-				:style="{
-					'background-image': 'url(' + path + ')'
-				}"
-				@click="handleSelectBackground(path)">
-				<CheckBold v-if="selectedBackground === path"
-					:size="40"
-					fill-color="#fff" />
-			</button>
-		</template>
-		<template v-else>
-			<button key="clear"
-				class="background-editor__element"
-				@click="showCustomBackgroundPage = false">
-				<ArrowLeft :size="20" />
-				{{ t('spreed', 'Back') }}
-			</button>
-			<button class="background-editor__element"
-				@click="clickImportInput">
-				<Upload :size="20" />
-				{{ t('spreed', 'Upload') }}
-			</button>
-			<button class="background-editor__element"
-				@click="openPicker">
-				<Folder :size="20" />
-				{{ t('spreed', 'Choose from files') }}
-			</button>
-		</template>
-
+		<button key="clear"
+			class="background-editor__element"
+			:class="{'background-editor__element--selected': selectedBackground === 'clear'}"
+			@click="handleSelectBackground('clear')">
+			<Cancel :size="20" />
+			{{ t('spreed', 'Clear') }}
+		</button>
+		<button key="blur"
+			:disabled="!blurPreviewAvailable"
+			class="background-editor__element"
+			:class="{'background-editor__element--selected': selectedBackground === 'blur'}"
+			@click="handleSelectBackground('blur')">
+			<Blur :size="20" />
+			{{ t('spreed', 'Blur') }}
+		</button>
+		<button class="background-editor__element"
+			@click="clickImportInput">
+			<Upload :size="20" />
+			{{ t('spreed', 'Upload') }}
+		</button>
+		<button class="background-editor__element"
+			@click="openPicker">
+			<Folder :size="20" />
+			{{ t('spreed', 'Choose from files') }}
+		</button>
+		<button v-for="path in backgrounds"
+			:key="path"
+			aria-label="TODO: add image names as aria labels"
+			class="background-editor__element"
+			:class="{'background-editor__element--selected': selectedBackground === path}"
+			:style="{
+				'background-image': 'url(' + path + ')'
+			}"
+			@click="handleSelectBackground(path)">
+			<CheckBold v-if="selectedBackground === path"
+				:size="40"
+				fill-color="#fff" />
+		</button>
 		<!--native file picker, hidden -->
 		<input v-show="false"
 			id="file-upload"
@@ -90,12 +72,10 @@
 </template>
 
 <script>
-import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import Blur from 'vue-material-design-icons/Blur.vue'
 import Cancel from 'vue-material-design-icons/Cancel.vue'
 import CheckBold from 'vue-material-design-icons/CheckBold.vue'
 import Folder from 'vue-material-design-icons/Folder.vue'
-import ImagePlus from 'vue-material-design-icons/ImagePlus.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 
 import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
@@ -112,11 +92,9 @@ export default {
 	components: {
 		Cancel,
 		Blur,
-		ImagePlus,
 		CheckBold,
 		Upload,
 		Folder,
-		ArrowLeft,
 	},
 
 	props: {
@@ -134,7 +112,6 @@ export default {
 	data() {
 		return {
 			selectedBackground: undefined,
-			showCustomBackgroundPage: false,
 		}
 	},
 
@@ -194,7 +171,6 @@ export default {
 		},
 
 		async handleFileInput(event) {
-			this.showCustomBackgroundPage = false
 
 			// Make file path
 			const file = Object.values(event.target.files)[0]
@@ -233,7 +209,6 @@ export default {
 		},
 
 		openPicker() {
-			this.showCustomBackgroundPage = false
 			picker.pick()
 				.then((path) => {
 					if (!path.startsWith('/')) {
