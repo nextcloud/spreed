@@ -318,15 +318,14 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	public function getSingleRoom(string $token): DataResponse {
 		try {
 			$isSIPBridgeRequest = $this->validateSIPBridgeRequest($token);
 		} catch (UnauthorizedException $e) {
-			$ip = $this->request->getRemoteAddress();
-			$action = 'talkSipBridgeSecret';
-			$this->throttler->sleepDelay($ip, $action);
-			$this->throttler->registerAttempt($action, $ip);
-			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response->throttle(['action' => 'talkSipBridgeSecret']);
+			return $response;
 		}
 
 		// The SIP bridge only needs room details (public, sip enabled, lobby state, etc)

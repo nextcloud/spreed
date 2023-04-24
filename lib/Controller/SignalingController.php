@@ -61,7 +61,6 @@ class SignalingController extends OCSController {
 
 	public const EVENT_BACKEND_SIGNALING_ROOMS = self::class . '::signalingBackendRoom';
 
-	private IConfig $serverConfig;
 	private Config $talkConfig;
 	private \OCA\Talk\Signaling\Manager $signalingManager;
 	private TalkSession $session;
@@ -74,7 +73,6 @@ class SignalingController extends OCSController {
 	private IEventDispatcher $dispatcher;
 	private ITimeFactory $timeFactory;
 	private IClientService $clientService;
-	private IThrottler $throttler;
 	private LoggerInterface $logger;
 	private ?string $userId;
 
@@ -99,7 +97,6 @@ class SignalingController extends OCSController {
 		?string $UserId,
 	) {
 		parent::__construct($appName, $request);
-		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->signalingManager = $signalingManager;
 		$this->session = $session;
@@ -112,7 +109,6 @@ class SignalingController extends OCSController {
 		$this->dispatcher = $dispatcher;
 		$this->timeFactory = $timeFactory;
 		$this->clientService = $clientService;
-		$this->throttler = $throttler;
 		$this->logger = $logger;
 		$this->userId = $UserId;
 	}
@@ -151,16 +147,15 @@ class SignalingController extends OCSController {
 	 * @return DataResponse
 	 */
 	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	public function getSettings(string $token = ''): DataResponse {
 		$isRecordingRequest = false;
 
 		if (!empty($this->request->getHeader('Talk-Recording-Random')) || !empty($this->request->getHeader('Talk-Recording-Checksum'))) {
 			if (!$this->validateRecordingBackendRequest('')) {
-				$ip = $this->request->getRemoteAddress();
-				$action = 'talkRecordingSecret';
-				$this->throttler->sleepDelay($ip, $action);
-				$this->throttler->registerAttempt($action, $ip);
-				return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response->throttle(['action' => 'talkRecordingSecret']);
+				return $response;
 			}
 
 			$isRecordingRequest = true;

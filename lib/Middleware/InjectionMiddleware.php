@@ -39,6 +39,7 @@ use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\RedirectToDefaultAppResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
@@ -263,15 +264,24 @@ class InjectionMiddleware extends Middleware {
 		if ($exception instanceof RoomNotFoundException ||
 			$exception instanceof ParticipantNotFoundException) {
 			if ($controller instanceof OCSController) {
-				$isBruteForceProtected = $this->reflector->hasAnnotation('BruteForceProtection');
-				if ($isBruteForceProtected) {
-					$ip = $this->request->getRemoteAddress();
-					$action = 'talkRoomToken';
-					$this->throttler->sleepDelay($ip, $action);
-					$this->throttler->registerAttempt($action, $ip, [
-						'token' => $this->request->getParam('token') ?? '',
-					]);
+				$reflectionMethod = new \ReflectionMethod($controller, $methodName);
+				$attributes = $reflectionMethod->getAttributes(BruteForceProtection::class);
+
+				if (!empty($attributes)) {
+					foreach ($attributes as $attribute) {
+						/** @var BruteForceProtection $protection */
+						$protection = $attribute->newInstance();
+						$action = $protection->getAction();
+
+						if ('talkRoomToken' === $action) {
+							$this->throttler->sleepDelay($this->request->getRemoteAddress(), $action);
+							$this->throttler->registerAttempt($action, $this->request->getRemoteAddress(), [
+								'token' => $this->request->getParam('token') ?? '',
+							]);
+						}
+					}
 				}
+
 				throw new OCSException('', Http::STATUS_NOT_FOUND);
 			}
 
