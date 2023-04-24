@@ -93,12 +93,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var string */
 	protected $baseRemoteUrl;
 
-	/** @var string */
-	protected $lastEtag;
-
-	/** @var string */
-	protected $lastToken;
-
 	/** @var array */
 	protected $createdUsers = [];
 
@@ -125,10 +119,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	public static function getTokenForIdentifier(string $identifier) {
 		return self::$identifierToToken[$identifier];
-	}
-
-	public function getLastConversationToken(): ?string {
-		return $this->lastToken;
 	}
 
 	public function getAttendeeId(string $type, string $id, string $room, string $user = null) {
@@ -292,12 +282,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		});
 
 		if ($formData === null) {
-			$this->lastToken = null;
 			Assert::assertEmpty($rooms);
 			return;
 		}
 
-		$this->lastToken = end($rooms)['token'];
 		$this->assertRooms($rooms, $formData, $shouldOrder !== '');
 	}
 
