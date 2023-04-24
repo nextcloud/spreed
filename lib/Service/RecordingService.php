@@ -305,7 +305,6 @@ class RecordingService {
 			->setObject('recording', $room->getToken())
 			->setDateTime($this->timeFactory->getDateTime('@' . $timestamp))
 			->setUser($participant->getAttendee()->getActorId());
-		$this->notificationManager->markProcessed($notification);
 
 		foreach (['record_file_stored', 'transcript_file_stored'] as $subject) {
 			$notification->setSubject($subject);
