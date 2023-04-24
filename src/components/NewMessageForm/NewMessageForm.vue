@@ -231,6 +231,7 @@ import Upload from 'vue-material-design-icons/Upload.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
+import { generateOcsUrl } from '@nextcloud/router'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -866,7 +867,12 @@ export default {
 
 				// Set icon for candidate mentions that are not for users.
 				if (possibleMention.source === 'calls') {
-					possibleMention.icon = 'icon-group-forced-white'
+					possibleMention.icon = 'icon-user-forced-white'
+					const darkTheme = window.getComputedStyle(document.body)
+						.getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
+					possibleMention.iconUrl = generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (darkTheme ? '/dark' : ''), {
+						token: this.token,
+					})
 					possibleMention.subline = t('spreed', 'Everyone')
 				} else if (possibleMention.source === 'groups') {
 					possibleMention.icon = 'icon-group-forced-white'
