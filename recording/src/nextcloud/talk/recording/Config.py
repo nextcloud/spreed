@@ -1,5 +1,6 @@
 #
 # @copyright Copyright (c) 2023, Daniel Calviño Sánchez (danxuliu@gmail.com)
+# @copyright Copyright (c) 2023, Elmer Miroslav Mosher Golovin (miroslav@mishamosher.com)
 #
 # @license GNU AGPL version 3 or any later version
 #
@@ -235,5 +236,13 @@ class Config:
         Defaults to ".webm".
         """
         return self._configParser.get('ffmpeg', 'extensionvideo', fallback='.webm')
+
+    def getBrowserForRecording(self):
+        """
+        Returns the browser identifier that will be used for recordings.
+
+        Defaults to "firefox".
+        """
+        return self._configParser.get('recording', 'browser', fallback='firefox')
 
 config = Config()
