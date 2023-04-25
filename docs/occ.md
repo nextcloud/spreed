@@ -95,7 +95,7 @@ Allows you to check if calls are currently in process
 
 ## talk:monitor:room
 
-Prints a list with conversations that have an active call as well as their participant count
+Prints the number of attendees, active sessions and participant in the call.
 
 ### Usage
 

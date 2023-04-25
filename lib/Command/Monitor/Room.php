@@ -46,7 +46,7 @@ class Room extends Base {
 
 		$this
 			->setName('talk:monitor:room')
-			->setDescription('Prints a list with conversations that have an active call as well as their participant count')
+			->setDescription('Prints the number of attendees, active sessions and participant in the call.')
 			->addArgument(
 				'token',
 				InputArgument::REQUIRED,
