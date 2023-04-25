@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2022 Vitor Mattos <vitor@php.rio>
+ * @copyright Copyright (c) 2022, Vitor Mattos <vitor@php.rio>
+ * @copyright Copyright (c) 2023, Elmer Miroslav Mosher Golovin (miroslav@mishamosher.com)
  *
  * @author Vitor Mattos <vitor@php.rio>
  *
@@ -127,14 +128,16 @@ class RecordingService {
 			throw new InvalidArgumentException('owner_participant');
 		}
 
-		$content = $this->getContentFromFileArray($file, $room, $participant);
+		$resource = $this->getResourceFromFileArray($file, $room, $participant);
 
 		$fileName = basename($file['name']);
-		$this->validateFileFormat($fileName, $content);
+		$fileRealPath = realpath($file['tmp_name']);
+
+		$this->validateFileFormat($fileName, $fileRealPath);
 
 		try {
 			$recordingFolder = $this->getRecordingFolder($owner, $room->getToken());
-			$fileNode = $recordingFolder->newFile($fileName, $content);
+			$fileNode = $recordingFolder->newFile($fileName, $resource);
 			$this->notifyStoredRecording($room, $participant, $fileNode);
 		} catch (NoUserException $e) {
 			throw new InvalidArgumentException('owner_invalid');
@@ -203,7 +206,15 @@ class RecordingService {
 		$this->notificationManager->notify($notification);
 	}
 
-	public function getContentFromFileArray(array $file, Room $room, Participant $participant): string {
+	/**
+	 * Gets a resource that represents the file contents of the file array.
+	 *
+	 * @param array $file File array from which a resource will be returned
+	 * @param Room $room The Talk room that requests the resource
+	 * @param Participant $participant The Talk participant that requests the resource
+	 * @return resource Resource representing the file contents of the file array
+	 */
+	public function getResourceFromFileArray(array $file, Room $room, Participant $participant) {
 		if ($file['error'] !== 0) {
 			$error = self::UPLOAD_ERRORS[$file['error']];
 			$this->logger->error($error);
@@ -220,17 +231,30 @@ class RecordingService {
 			throw new InvalidArgumentException('invalid_file');
 		}
 
-		$content = file_get_contents($file['tmp_name']);
-		unlink($file['tmp_name']);
+		$resource = fopen($file['tmp_name'], 'r');
+		if ($resource === false) {
+			throw new InvalidArgumentException('fopen_failed');
+		}
 
-		if (!$content) {
+		$resourceStat = fstat($resource);
+		if ($resourceStat === false) {
+			throw new InvalidArgumentException('fstat_failed');
+		}
+
+		if ($resourceStat['size'] === 0) {
 			throw new InvalidArgumentException('empty_file');
 		}
-		return $content;
+
+		return $resource;
 	}
 
-	public function validateFileFormat(string $fileName, $content): void {
-		$mimeType = $this->mimeTypeDetector->detectString($content);
+	public function validateFileFormat(string $fileName, string $fileRealPath): void {
+		if (!is_file($fileRealPath)) {
+			$this->logger->warning("An invalid file path ($fileRealPath) was provided");
+			throw new InvalidArgumentException('file_invalid_path');
+		}
+
+		$mimeType = $this->mimeTypeDetector->detectContent($fileRealPath);
 		$allowed = self::DEFAULT_ALLOWED_RECORDING_FORMATS;
 		if (!array_key_exists($mimeType, $allowed)) {
 			$this->logger->warning("Uploaded file detected mime type ($mimeType) is not allowed");
