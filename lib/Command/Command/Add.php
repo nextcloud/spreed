@@ -40,6 +40,7 @@ class Add extends Base {
 	}
 
 	protected function configure(): void {
+		parent::configure();
 		$this
 			->setName('talk:command:add')
 			->setDescription('Add a new command')
