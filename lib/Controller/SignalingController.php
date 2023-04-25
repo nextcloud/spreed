@@ -41,6 +41,7 @@ use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -140,12 +141,7 @@ class SignalingController extends OCSController {
 		return hash_equals($hash, strtolower($checksum));
 	}
 
-	/**
-	 * @PublicPage
-	 *
-	 * @param string $token
-	 * @return DataResponse
-	 */
+	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	public function getSettings(string $token = ''): DataResponse {
@@ -233,7 +229,7 @@ class SignalingController extends OCSController {
 	}
 
 	/**
-	 * Only available for logged in users because guests can not use the apps
+	 * Only available for logged-in users because guests can not use the apps
 	 * right now.
 	 *
 	 * @param int $serverId
@@ -295,13 +291,7 @@ class SignalingController extends OCSController {
 		}
 	}
 
-	/**
-	 * @PublicPage
-	 *
-	 * @param string $token
-	 * @param string $messages
-	 * @return DataResponse
-	 */
+	#[PublicPage]
 	public function signaling(string $token, string $messages): DataResponse {
 		if ($this->talkConfig->getSignalingMode() !== Config::SIGNALING_INTERNAL) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
@@ -341,12 +331,7 @@ class SignalingController extends OCSController {
 		return new DataResponse($response);
 	}
 
-	/**
-	 * @PublicPage
-	 *
-	 * @param string $token
-	 * @return DataResponse
-	 */
+	#[PublicPage]
 	public function pullMessages(string $token): DataResponse {
 		if ($this->talkConfig->getSignalingMode() !== Config::SIGNALING_INTERNAL) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
@@ -437,7 +422,7 @@ class SignalingController extends OCSController {
 
 	/**
 	 * @param Room $room
-	 * @param int pingTimestamp
+	 * @param int $pingTimestamp
 	 * @return array[]
 	 */
 	protected function getUsersInRoom(Room $room, int $pingTimestamp): array {
@@ -521,10 +506,9 @@ class SignalingController extends OCSController {
 	 * See sections "Backend validation" in
 	 * https://nextcloud-spreed-signaling.readthedocs.io/en/latest/standalone-signaling-api-v1/#backend-requests
 	 *
-	 * @PublicPage
-	 *
 	 * @return DataResponse
 	 */
+	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSignalingSecret')]
 	public function backend(): DataResponse {
 		$json = $this->getInputStream();

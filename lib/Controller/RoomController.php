@@ -60,6 +60,8 @@ use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -186,12 +188,11 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Get all currently existent rooms which the user has joined
 	 *
-	 * @NoAdminRequired
-	 *
 	 * @param int $noStatusUpdate When the user status should not be automatically set to online set to 1 (default 0)
 	 * @param bool $includeStatus
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function getRooms(int $noStatusUpdate = 0, bool $includeStatus = false, int $modifiedSince = 0): DataResponse {
 		$nextModifiedSince = $this->timeFactory->getTime();
 
@@ -270,11 +271,10 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Get listed rooms with optional search term
 	 *
-	 * @NoAdminRequired
-	 *
 	 * @param string $searchTerm search term
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function getListedRooms(string $searchTerm = ''): DataResponse {
 		$rooms = $this->manager->getListedRoomsForUser($this->userId, $searchTerm);
 
@@ -288,9 +288,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * Get all (for moderators and in case of "free selection) or the assigned breakout room
-	 *
-	 * @NoAdminRequired
 	 */
+	#[NoAdminRequired]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[RequireLoggedInParticipant]
 	public function getBreakoutRooms(): DataResponse {
@@ -315,12 +314,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse($return);
 	}
 
-	/**
-	 * @PublicPage
-	 *
-	 * @param string $token
-	 * @return DataResponse
-	 */
+	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	public function getSingleRoom(string $token): DataResponse {
@@ -409,14 +403,13 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Initiates a one-to-one video call from the current user to the recipient
 	 *
-	 * @NoAdminRequired
-	 *
 	 * @param int $roomType
 	 * @param string $invite
 	 * @param string $roomName
 	 * @param string $source
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function createRoom(int $roomType, string $invite = '', string $roomName = '', string $source = '', string $objectType = '', string $objectId = ''): DataResponse {
 		if ($roomType !== Room::TYPE_ONE_TO_ONE) {
 			/** @var IUser $user */
@@ -448,11 +441,10 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Initiates a one-to-one video call from the current user to the recipient
 	 *
-	 * @NoAdminRequired
-	 *
 	 * @param string $targetUserId
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	protected function createOneToOneRoom(string $targetUserId): DataResponse {
 		$currentUser = $this->userManager->get($this->userId);
 		if (!$currentUser instanceof IUser) {
@@ -497,11 +489,10 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Initiates a group video call from the selected group
 	 *
-	 * @NoAdminRequired
-	 *
 	 * @param string $targetGroupName
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	protected function createGroupRoom(string $targetGroupName): DataResponse {
 		$currentUser = $this->userManager->get($this->userId);
 		if (!$currentUser instanceof IUser) {
@@ -524,11 +515,10 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * Initiates a group video call from the selected circle
 	 *
-	 * @NoAdminRequired
-	 *
 	 * @param string $targetCircleId
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	protected function createCircleRoom(string $targetCircleId): DataResponse {
 		if (!$this->appManager->isEnabledForUser('circles')) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -553,9 +543,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatRoom($room, $this->participantService->getParticipant($room, $currentUser->getUID(), false)), Http::STATUS_CREATED);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	protected function createEmptyRoom(string $roomName, bool $public = true, string $objectType = '', string $objectId = ''): DataResponse {
 		$currentUser = $this->userManager->get($this->userId);
 		if (!$currentUser instanceof IUser) {
@@ -616,27 +604,21 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatRoom($room, $currentParticipant), Http::STATUS_CREATED);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	public function addToFavorites(): DataResponse {
 		$this->participantService->updateFavoriteStatus($this->participant, true);
 		return new DataResponse([]);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	public function removeFromFavorites(): DataResponse {
 		$this->participantService->updateFavoriteStatus($this->participant, false);
 		return new DataResponse([]);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	public function setNotificationLevel(int $level): DataResponse {
 		try {
@@ -648,9 +630,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	public function setNotificationCalls(int $level): DataResponse {
 		try {
@@ -662,9 +642,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function renameRoom(string $roomName): DataResponse {
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
@@ -681,9 +659,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setDescription(string $description): DataResponse {
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
@@ -699,9 +675,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function deleteRoom(): DataResponse {
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE || $this->room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
@@ -713,9 +687,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse([]);
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function getParticipants(bool $includeStatus = false): DataResponse {
@@ -728,9 +700,7 @@ class RoomController extends AEnvironmentAwareController {
 		return $this->formatParticipantList($participants, $includeStatus);
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function getBreakoutRoomParticipants(bool $includeStatus = false): DataResponse {
@@ -881,9 +851,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse(array_values($results), Http::STATUS_OK, $headers);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function addParticipantToRoom(string $newParticipant, string $source = 'users'): DataResponse {
 		if ($this->room->getType() === Room::TYPE_ONE_TO_ONE
@@ -1028,9 +996,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse([]);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	public function removeSelfFromRoom(): DataResponse {
 		return $this->removeSelfFromRoomLogic($this->room, $this->participant);
@@ -1067,9 +1033,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function removeAttendeeFromRoom(int $attendeeId): DataResponse {
 		try {
@@ -1099,9 +1063,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse([]);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function makePublic(): DataResponse {
 		if (!$this->roomService->setType($this->room, Room::TYPE_PUBLIC)) {
@@ -1111,9 +1073,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function makePrivate(): DataResponse {
 		if (!$this->roomService->setType($this->room, Room::TYPE_GROUP)) {
@@ -1123,9 +1083,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
 	public function setReadOnly(int $state): DataResponse {
 		if (!$this->roomService->setReadOnly($this->room, $state)) {
@@ -1144,9 +1102,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
 	public function setListable(int $scope): DataResponse {
 		if (!$this->roomService->setListable($this->room, $scope)) {
@@ -1156,9 +1112,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setPassword(string $password): DataResponse {
 		if ($this->room->getType() !== Room::TYPE_PUBLIC) {
@@ -1178,14 +1132,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @PublicPage
-	 *
-	 * @param string $token
-	 * @param string $password
-	 * @param bool $force
-	 * @return DataResponse
-	 */
+	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomPassword')]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
@@ -1261,9 +1208,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatRoom($room, $participant));
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[RequireRoom]
 	public function getParticipantByDialInPin(string $pin): DataResponse {
@@ -1288,9 +1233,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatRoom($this->room, $participant));
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	#[RequireRoom]
 	public function createGuestByDialIn(): DataResponse {
@@ -1315,12 +1258,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatRoom($this->room, $participant));
 	}
 
-	/**
-	 * @PublicPage
-	 *
-	 * @param string $token
-	 * @return DataResponse
-	 */
+	#[PublicPage]
 	public function leaveRoom(string $token): DataResponse {
 		$sessionId = $this->session->getSessionForRoom($token);
 		$this->session->removeSessionForRoom($token);
@@ -1336,17 +1274,13 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function promoteModerator(int $attendeeId): DataResponse {
 		return $this->changeParticipantType($attendeeId, true);
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function demoteModerator(int $attendeeId): DataResponse {
 		return $this->changeParticipantType($attendeeId, false);
@@ -1406,9 +1340,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setPermissions(string $mode, int $permissions): DataResponse {
 		if (!$this->roomService->setPermissions($this->room, $mode, Attendee::PERMISSIONS_MODIFY_SET, $permissions, true)) {
@@ -1418,9 +1350,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setAttendeePermissions(int $attendeeId, string $method, int $permissions): DataResponse {
 		try {
@@ -1442,9 +1372,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setAllAttendeesPermissions(string $method, int $permissions): DataResponse {
 		if (!$this->roomService->setPermissions($this->room, 'call', $method, $permissions, false)) {
@@ -1454,9 +1382,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
 	public function setLobby(int $state, ?int $timer = null): DataResponse {
 		$timerDateTime = null;
@@ -1492,9 +1418,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
 	public function setSIPEnabled(int $state): DataResponse {
 		$user = $this->userManager->get($this->userId);
@@ -1517,9 +1441,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatRoom($this->room, $this->participant));
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
 	public function resendInvitations(?int $attendeeId): DataResponse {
 		$participants = [];
@@ -1545,9 +1467,7 @@ class RoomController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function setMessageExpiration(int $seconds): DataResponse {
 		if ($seconds < 0) {

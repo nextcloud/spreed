@@ -34,6 +34,7 @@ use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Comments\NotFoundException;
 use OCP\IRequest;
@@ -50,9 +51,7 @@ class ReactionController extends AEnvironmentAwareController {
 		$this->reactionManager = $reactionManager;
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
@@ -77,9 +76,7 @@ class ReactionController extends AEnvironmentAwareController {
 		return new DataResponse($reactions, $status);
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
@@ -102,9 +99,7 @@ class ReactionController extends AEnvironmentAwareController {
 		return new DataResponse($reactions, Http::STATUS_OK);
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function getReactions(int $messageId, ?string $reaction): DataResponse {

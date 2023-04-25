@@ -41,6 +41,8 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\NotFoundResponse;
@@ -126,13 +128,12 @@ class PageController extends Controller {
 	}
 
 	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 *
 	 * @param string $token
 	 * @return Response
 	 * @throws HintException
 	 */
+	#[NoCSRFRequired]
+	#[PublicPage]
 	#[UseSession]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function showCall(string $token): Response {
@@ -141,14 +142,13 @@ class PageController extends Controller {
 	}
 
 	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 *
 	 * @param string $token
 	 * @param string $password
 	 * @return Response
 	 * @throws HintException
 	 */
+	#[NoCSRFRequired]
+	#[PublicPage]
 	#[UseSession]
 	#[BruteForceProtection(action: 'talkRoomPassword')]
 	public function authenticatePassword(string $token, string $password = ''): Response {
@@ -156,36 +156,27 @@ class PageController extends Controller {
 		return $this->index($token, '', $password);
 	}
 
-	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 *
-	 * @return Response
-	 */
+	#[NoCSRFRequired]
+	#[PublicPage]
 	public function notFound(): Response {
 		return $this->index();
 	}
 
-	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 *
-	 * @return Response
-	 */
+	#[NoCSRFRequired]
+	#[PublicPage]
 	public function duplicateSession(): Response {
 		return $this->index();
 	}
 
 	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 *
 	 * @param string $token
 	 * @param string $callUser
 	 * @param string $password
 	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
+	#[NoCSRFRequired]
+	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	#[UseSession]
 	public function index(string $token = '', string $callUser = '', string $password = ''): Response {
@@ -308,12 +299,11 @@ class PageController extends Controller {
 	}
 
 	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 *
 	 * @param string $token
 	 * @return TemplateResponse|NotFoundResponse
 	 */
+	#[NoCSRFRequired]
+	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function recording(string $token): Response {
 		try {
@@ -432,12 +422,11 @@ class PageController extends Controller {
 	}
 
 	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 *
 	 * @param string $token
 	 * @return RedirectResponse
 	 */
+	#[NoCSRFRequired]
+	#[PublicPage]
 	protected function redirectToConversation(string $token): RedirectResponse {
 		// These redirects are already done outside of this method
 		if ($this->userId === null) {

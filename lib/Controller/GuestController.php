@@ -28,6 +28,7 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Participant;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
@@ -44,9 +45,7 @@ class GuestController extends AEnvironmentAwareController {
 		$this->guestManager = $guestManager;
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireParticipant]
 	public function setDisplayName(string $displayName): DataResponse {
 		$participant = $this->getParticipant();

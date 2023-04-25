@@ -28,6 +28,7 @@ namespace OCA\Talk\Controller;
 use OC\Files\Filesystem;
 use OC\NotSquareException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IAvatarManager;
@@ -56,11 +57,7 @@ class TempAvatarController extends OCSController {
 		$this->userId = $userId;
 	}
 
-	/**
-	 * @NoAdminRequired
-	 *
-	 * @return DataResponse
-	 */
+	#[NoAdminRequired]
 	public function postAvatar(): DataResponse {
 		$files = $this->request->getUploadedFile('files');
 
@@ -126,12 +123,7 @@ class TempAvatarController extends OCSController {
 		}
 	}
 
-
-	/**
-	 * @NoAdminRequired
-	 *
-	 * @return DataResponse
-	 */
+	#[NoAdminRequired]
 	public function deleteAvatar(): DataResponse {
 		try {
 			$avatar = $this->avatarManager->getAvatar($this->userId);

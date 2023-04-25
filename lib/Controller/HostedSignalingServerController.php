@@ -31,6 +31,7 @@ use OCA\Talk\Exceptions\HostedSignalingServerAPIException;
 use OCA\Talk\Exceptions\HostedSignalingServerInputException;
 use OCA\Talk\Service\HostedSignalingServerService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\Http\Client\IClientService;
@@ -63,9 +64,7 @@ class HostedSignalingServerController extends OCSController {
 		$this->hostedSignalingServerService = $hostedSignalingServerService;
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	public function auth(): DataResponse {
 		$storedNonce = $this->config->getAppValue('spreed', 'hosted-signaling-server-nonce', '');
 		// reset nonce after one request

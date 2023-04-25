@@ -33,6 +33,7 @@ use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Comments\MessageTooLongException;
 use OCP\IRequest;
@@ -49,9 +50,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 		parent::__construct($appName, $request);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function configureBreakoutRooms(int $mode, int $amount, string $attendeeMap = '[]'): DataResponse {
 		try {
@@ -64,9 +63,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatMultipleRooms($rooms), Http::STATUS_OK);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function removeBreakoutRooms(): DataResponse {
 		$this->breakoutRoomService->removeBreakoutRooms($this->room);
@@ -79,9 +76,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 		));
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function broadcastChatMessage(string $message): DataResponse {
 		try {
@@ -95,9 +90,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatMultipleRooms($rooms), Http::STATUS_CREATED);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function applyAttendeeMap(string $attendeeMap): DataResponse {
 		try {
@@ -109,9 +102,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatMultipleRooms($rooms), Http::STATUS_OK);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	public function requestAssistance(): DataResponse {
 		try {
@@ -128,9 +119,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 		));
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	public function resetRequestForAssistance(): DataResponse {
 		try {
@@ -147,9 +136,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 		));
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function startBreakoutRooms(): DataResponse {
 		try {
@@ -162,9 +149,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatMultipleRooms($rooms), Http::STATUS_OK);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function stopBreakoutRooms(): DataResponse {
 		try {
@@ -177,9 +162,7 @@ class BreakoutRoomController extends AEnvironmentAwareController {
 		return new DataResponse($this->formatMultipleRooms($rooms), Http::STATUS_OK);
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInParticipant]
 	public function switchBreakoutRoom(string $target): DataResponse {
 		try {

@@ -30,6 +30,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
@@ -53,9 +54,8 @@ class MatterbridgeController extends AEnvironmentAwareController {
 
 	/**
 	 * Get bridge information of one room
-	 *
-	 * @NoAdminRequired
 	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function getBridgeOfRoom(): DataResponse {
 		$pid = $this->bridgeManager->checkBridge($this->room);
@@ -68,9 +68,8 @@ class MatterbridgeController extends AEnvironmentAwareController {
 
 	/**
 	 * Get bridge process information
-	 *
-	 * @NoAdminRequired
 	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function getBridgeProcessState(): DataResponse {
 		$state = $this->bridgeManager->getBridgeProcessState($this->room);
@@ -79,9 +78,8 @@ class MatterbridgeController extends AEnvironmentAwareController {
 
 	/**
 	 * Edit bridge information of one room
-	 *
-	 * @NoAdminRequired
 	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function editBridgeOfRoom(bool $enabled, array $parts = []): DataResponse {
 		try {
@@ -94,9 +92,8 @@ class MatterbridgeController extends AEnvironmentAwareController {
 
 	/**
 	 * Delete bridge of one room
-	 *
-	 * @NoAdminRequired
 	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function deleteBridgeOfRoom(): DataResponse {
 		try {
