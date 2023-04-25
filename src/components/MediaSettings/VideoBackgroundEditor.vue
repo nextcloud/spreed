@@ -44,7 +44,7 @@
 		<button class="background-editor__element"
 			@click="openPicker">
 			<Folder :size="20" />
-			{{ t('spreed', 'Choose from files') }}
+			{{ t('spreed', 'Files') }}
 		</button>
 		<button v-for="path in backgrounds"
 			:key="path"
@@ -230,7 +230,7 @@ export default {
 <style scoped lang="scss">
 .background-editor {
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-columns: 1fr 1fr 1fr 1fr;
 	gap: calc(var(--default-grid-baseline) * 2);
 	margin-top: calc(var(--default-grid-baseline) * 4);
 
