@@ -42,6 +42,7 @@
 			{{ t('spreed', 'Upload') }}
 		</button>
 		<button class="background-editor__element"
+			:class="{'background-editor__element--selected': isCustomBackground }"
 			@click="openPicker">
 			<Folder :size="20" />
 			{{ t('spreed', 'Files') }}
@@ -81,6 +82,7 @@ import Upload from 'vue-material-design-icons/Upload.vue'
 import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { imagePath, generateUrl } from '@nextcloud/router'
 
+import { VIRTUAL_BACKGROUND } from '../../constants.js'
 import client from '../../services/DavClient.js'
 import { findUniquePath } from '../../utils/fileUpload.js'
 
@@ -120,6 +122,12 @@ export default {
 			return this.virtualBackground.isAvailable()
 		},
 
+		isCustomBackground() {
+			return !this.backgrounds.includes(this.selectedBackground)
+				&& this.selectedBackground !== 'none'
+				&& this.selectedBackground !== 'blur'
+		},
+
 		backgrounds() {
 			return [
 				imagePath('spreed', 'backgrounds/1.jpg'),
@@ -155,12 +163,14 @@ export default {
 			.setType(1)
 			.allowDirectories(false)
 			.build()
+
+		this.loadBackground()
 	},
 
 	methods: {
-		handleSelectBackground(background) {
-			this.$emit('update-background', background)
-			this.selectedBackground = background
+		handleSelectBackground(path) {
+			this.$emit('update-background', path)
+			this.selectedBackground = path
 		},
 
 		/**
@@ -199,13 +209,13 @@ export default {
 					path: filePath,
 					height: 1080,
 				})
-				this.$emit('update-background', previewURL)
+
+				this.handleSelectBackground(previewURL)
 
 			} catch (error) {
 				console.debug(error)
 				showError(t('spreed', 'Error while uploading the file'))
 			}
-
 		},
 
 		openPicker() {
@@ -220,8 +230,21 @@ export default {
 						height: 1080,
 					})
 
-					this.$emit('update-background', previewURL)
+					this.handleSelectBackground(previewURL)
 				})
+		},
+
+		loadBackground() {
+			// Set virtual background depending on localstorage's settings
+			if (localStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
+				if (localStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
+					this.selectedBackground = 'blur'
+				} else if (localStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+					this.selectedBackground = localStorage.getItem('virtualBackgroundUrl_' + this.token)
+				}
+			} else {
+				this.selectedBackground = 'none'
+			}
 		},
 	},
 }
@@ -248,7 +271,7 @@ export default {
 		background-position: center;
 
 		&--selected {
-			box-shadow: inset 0 0 calc(var(--default-grid-baseline) * 4) var(--color-main-background);
+			box-shadow: inset 0 0 0 var(--default-grid-baseline) var(--color-primary);
 		}
 	 }
 }
