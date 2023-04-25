@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\GuestManager;
+use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Participant;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -45,11 +46,8 @@ class GuestController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 *
-	 * @param string $displayName
-	 * @return DataResponse
 	 */
+	#[RequireParticipant]
 	public function setDisplayName(string $displayName): DataResponse {
 		$participant = $this->getParticipant();
 		if (!$participant instanceof Participant) {

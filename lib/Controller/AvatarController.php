@@ -27,6 +27,8 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
+use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
+use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
@@ -53,8 +55,8 @@ class AvatarController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireModeratorParticipant
 	 */
+	#[RequireModeratorParticipant]
 	public function uploadAvatar(): DataResponse {
 		try {
 			$file = $this->request->getUploadedFile('file');
@@ -79,8 +81,8 @@ class AvatarController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @RequireParticipant
 	 */
+	#[RequireParticipant]
 	public function getAvatar(bool $darkTheme = false): Response {
 		$file = $this->avatarService->getAvatar($this->getRoom(), $this->userSession->getUser(), $darkTheme);
 
@@ -94,16 +96,16 @@ class AvatarController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @RequireParticipant
 	 */
+	#[RequireParticipant]
 	public function getAvatarDark(): Response {
 		return $this->getAvatar(true);
 	}
 
 	/**
 	 * @PublicPage
-	 * @RequireModeratorParticipant
 	 */
+	#[RequireModeratorParticipant]
 	public function deleteAvatar(): DataResponse {
 		$this->avatarService->deleteAvatar($this->getRoom());
 		return new DataResponse($this->roomFormatter->formatRoom(

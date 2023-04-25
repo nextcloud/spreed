@@ -27,6 +27,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Talk\Middleware\Attribute\RequireCallEnabled;
+use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
+use OCA\Talk\Middleware\Attribute\RequireParticipant;
+use OCA\Talk\Middleware\Attribute\RequirePermission;
+use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
@@ -61,13 +66,11 @@ class CallController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireCallEnabled
-	 * @RequireParticipant
-	 * @RequireReadWriteConversation
-	 * @RequireModeratorOrNoLobby
-	 *
-	 * @return DataResponse
 	 */
+	#[RequireCallEnabled]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequireReadWriteConversation]
 	public function getPeersForCall(): DataResponse {
 		$timeout = $this->timeFactory->getTime() - Session::SESSION_TIMEOUT;
 		$result = [];
@@ -103,15 +106,11 @@ class CallController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireCallEnabled
-	 * @RequireParticipant
-	 * @RequireReadWriteConversation
-	 * @RequireModeratorOrNoLobby
-	 *
-	 * @param int|null $flags
-	 * @param int|null $forcePermissions
-	 * @return DataResponse
 	 */
+	#[RequireCallEnabled]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequireReadWriteConversation]
 	public function joinCall(?int $flags = null, ?int $forcePermissions = null, bool $silent = false): DataResponse {
 		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
 
@@ -136,13 +135,10 @@ class CallController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireCallEnabled
-	 * @RequireParticipant
-	 * @RequirePermissions(permissions=call-start)
-	 *
-	 * @param int $attendeeId
-	 * @return DataResponse
 	 */
+	#[RequireCallEnabled]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::START_CALL)]
 	public function ringAttendee(int $attendeeId): DataResponse {
 		if ($this->room->getCallFlag() === Participant::FLAG_DISCONNECTED) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -161,11 +157,8 @@ class CallController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
-	 *
-	 * @param int flags
-	 * @return DataResponse
 	 */
+	#[RequireParticipant]
 	public function updateCallFlags(int $flags): DataResponse {
 		$session = $this->participant->getSession();
 		if (!$session instanceof Session) {
@@ -183,11 +176,11 @@ class CallController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireParticipant
 	 *
 	 * @param bool $all whether to also terminate the call for all participants
 	 * @return DataResponse
 	 */
+	#[RequireParticipant]
 	public function leaveCall(bool $all = false): DataResponse {
 		$session = $this->participant->getSession();
 		if (!$session instanceof Session) {

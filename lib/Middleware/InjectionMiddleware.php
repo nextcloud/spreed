@@ -28,6 +28,14 @@ use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\PermissionsException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
+use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
+use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
+use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
+use OCA\Talk\Middleware\Attribute\RequireParticipant;
+use OCA\Talk\Middleware\Attribute\RequirePermission;
+use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
+use OCA\Talk\Middleware\Attribute\RequireRoom;
 use OCA\Talk\Middleware\Exceptions\LobbyException;
 use OCA\Talk\Middleware\Exceptions\NotAModeratorException;
 use OCA\Talk\Middleware\Exceptions\ReadOnlyException;
@@ -45,13 +53,11 @@ use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
-use OCP\AppFramework\Utility\IControllerMethodReflector;
 use OCP\IRequest;
 use OCP\Security\Bruteforce\IThrottler;
 
 class InjectionMiddleware extends Middleware {
 	protected IRequest $request;
-	protected IControllerMethodReflector $reflector;
 	protected ParticipantService $participantService;
 	protected TalkSession $talkSession;
 	protected Manager $manager;
@@ -60,7 +66,6 @@ class InjectionMiddleware extends Middleware {
 
 	public function __construct(
 		IRequest $request,
-		IControllerMethodReflector $reflector,
 		ParticipantService $participantService,
 		TalkSession $talkSession,
 		Manager $manager,
@@ -68,7 +73,6 @@ class InjectionMiddleware extends Middleware {
 		?string $userId,
 	) {
 		$this->request = $request;
-		$this->reflector = $reflector;
 		$this->participantService = $participantService;
 		$this->talkSession = $talkSession;
 		$this->manager = $manager;
@@ -79,51 +83,58 @@ class InjectionMiddleware extends Middleware {
 	/**
 	 * @param Controller $controller
 	 * @param string $methodName
-	 * @throws RoomNotFoundException
-	 * @throws ParticipantNotFoundException
-	 * @throws NotAModeratorException
-	 * @throws ReadOnlyException
 	 * @throws LobbyException
+	 * @throws NotAModeratorException
+	 * @throws ParticipantNotFoundException
+	 * @throws PermissionsException
+	 * @throws ReadOnlyException
+	 * @throws RoomNotFoundException
 	 */
-	public function beforeController($controller, $methodName): void {
+	public function beforeController(Controller $controller, string $methodName): void {
 		if (!$controller instanceof AEnvironmentAwareController) {
 			return;
 		}
 
+		$reflectionMethod = new \ReflectionMethod($controller, $methodName);
+
 		$apiVersion = $this->request->getParam('apiVersion');
 		$controller->setAPIVersion((int) substr($apiVersion, 1));
 
-		if ($this->reflector->hasAnnotation('RequireLoggedInParticipant')) {
+		if (!empty($reflectionMethod->getAttributes(RequireLoggedInParticipant::class))) {
 			$this->getLoggedIn($controller, false);
 		}
 
-		if ($this->reflector->hasAnnotation('RequireLoggedInModeratorParticipant')) {
+		if (!empty($reflectionMethod->getAttributes(RequireLoggedInModeratorParticipant::class))) {
 			$this->getLoggedIn($controller, true);
 		}
 
-		if ($this->reflector->hasAnnotation('RequireParticipant')) {
+		if (!empty($reflectionMethod->getAttributes(RequireParticipant::class))) {
 			$this->getLoggedInOrGuest($controller, false);
 		}
 
-		if ($this->reflector->hasAnnotation('RequireModeratorParticipant')) {
+		if (!empty($reflectionMethod->getAttributes(RequireModeratorParticipant::class))) {
 			$this->getLoggedInOrGuest($controller, true);
 		}
 
-		if ($this->reflector->hasAnnotation('RequireRoom')) {
+		if (!empty($reflectionMethod->getAttributes(RequireRoom::class))) {
 			$this->getRoom($controller);
 		}
 
-		if ($this->reflector->hasAnnotation('RequireReadWriteConversation')) {
+		if (!empty($reflectionMethod->getAttributes(RequireReadWriteConversation::class))) {
 			$this->checkReadOnlyState($controller);
 		}
 
-		if ($this->reflector->hasAnnotation('RequireModeratorOrNoLobby')) {
+		if (!empty($reflectionMethod->getAttributes(RequireModeratorOrNoLobby::class))) {
 			$this->checkLobbyState($controller);
 		}
 
-		$requiredPermissions = $this->reflector->getAnnotationParameter('RequirePermissions', 'permissions');
+		$requiredPermissions = $reflectionMethod->getAttributes(RequirePermission::class);
 		if ($requiredPermissions) {
-			$this->checkPermissions($controller, $requiredPermissions);
+			foreach ($requiredPermissions as $attribute) {
+				/** @var RequirePermission $requirement */
+				$requirement = $attribute->newInstance();
+				$this->checkPermission($controller, $requirement->getPermission());
+			}
 		}
 	}
 
@@ -212,20 +223,17 @@ class InjectionMiddleware extends Middleware {
 	 * @param AEnvironmentAwareController $controller
 	 * @throws PermissionsException
 	 */
-	protected function checkPermissions(AEnvironmentAwareController $controller, string $permissions): void {
-		$textPermissions = explode(',', $permissions);
+	protected function checkPermission(AEnvironmentAwareController $controller, string $permission): void {
 		$participant = $controller->getParticipant();
 		if (!$participant instanceof Participant) {
 			throw new PermissionsException();
 		}
 
-		foreach ($textPermissions as $textPermission) {
-			if ($textPermission === 'chat' && !($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
-				throw new PermissionsException();
-			}
-			if ($textPermission === 'call-start' && !($participant->getPermissions() & Attendee::PERMISSIONS_CALL_START)) {
-				throw new PermissionsException();
-			}
+		if ($permission === RequirePermission::CHAT && !($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
+			throw new PermissionsException();
+		}
+		if ($permission === RequirePermission::START_CALL && !($participant->getPermissions() & Attendee::PERMISSIONS_CALL_START)) {
+			throw new PermissionsException();
 		}
 	}
 
