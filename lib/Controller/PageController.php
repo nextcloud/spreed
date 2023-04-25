@@ -40,6 +40,8 @@ use OCA\Viewer\Event\LoadViewer;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\AppFramework\Http\RedirectResponse;
@@ -126,13 +128,13 @@ class PageController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @UseSession
-	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @param string $token
 	 * @return Response
 	 * @throws HintException
 	 */
+	#[UseSession]
+	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function showCall(string $token): Response {
 		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
 		return $this->index($token);
@@ -141,14 +143,14 @@ class PageController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @UseSession
-	 * @BruteForceProtection(action=talkRoomPassword)
 	 *
 	 * @param string $token
 	 * @param string $password
 	 * @return Response
 	 * @throws HintException
 	 */
+	#[UseSession]
+	#[BruteForceProtection(action: 'talkRoomPassword')]
 	public function authenticatePassword(string $token, string $password = ''): Response {
 		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
 		return $this->index($token, '', $password);
@@ -177,8 +179,6 @@ class PageController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @UseSession
-	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @param string $token
 	 * @param string $callUser
@@ -186,6 +186,8 @@ class PageController extends Controller {
 	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
+	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[UseSession]
 	public function index(string $token = '', string $callUser = '', string $password = ''): Response {
 		$bruteForceToken = $token;
 		$user = $this->userSession->getUser();
@@ -256,7 +258,7 @@ class PageController extends Controller {
 							$response = new RedirectResponse($passwordVerification['url']);
 						}
 
-						$response->throttle(['token' => $token]);
+						$response->throttle(['token' => $token, 'action' => 'talkRoomPassword']);
 						return $response;
 					}
 				}
@@ -300,7 +302,7 @@ class PageController extends Controller {
 		$response->setContentSecurityPolicy($csp);
 		if ($throttle) {
 			// Logged-in user tried to access a chat they can not access
-			$response->throttle(['token' => $bruteForceToken]);
+			$response->throttle(['token' => $bruteForceToken, 'action' => 'talkRoomToken']);
 		}
 		return $response;
 	}
@@ -308,17 +310,17 @@ class PageController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
-	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @param string $token
 	 * @return TemplateResponse|NotFoundResponse
 	 */
+	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function recording(string $token): Response {
 		try {
 			$room = $this->manager->getRoomByToken($token);
 		} catch (RoomNotFoundException $e) {
 			$response = new NotFoundResponse();
-			$response->throttle(['token' => $token]);
+			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
 
 			return $response;
 		}
@@ -375,7 +377,7 @@ class PageController extends Controller {
 			$response = new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
 				'redirect_url' => $redirectUrl,
 			]));
-			$response->throttle(['token' => $token]);
+			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
 			return $response;
 		}
 
@@ -399,7 +401,7 @@ class PageController extends Controller {
 				} else {
 					$response = new RedirectResponse($passwordVerification['url']);
 				}
-				$response->throttle(['token' => $token]);
+				$response->throttle(['token' => $token, 'action' => 'talkRoomPassword']);
 				return $response;
 			}
 		}

@@ -40,6 +40,7 @@ use OCA\Talk\Service\SessionService;
 use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -60,7 +61,6 @@ class SignalingController extends OCSController {
 
 	public const EVENT_BACKEND_SIGNALING_ROOMS = self::class . '::signalingBackendRoom';
 
-	private IConfig $serverConfig;
 	private Config $talkConfig;
 	private \OCA\Talk\Signaling\Manager $signalingManager;
 	private TalkSession $session;
@@ -73,7 +73,6 @@ class SignalingController extends OCSController {
 	private IEventDispatcher $dispatcher;
 	private ITimeFactory $timeFactory;
 	private IClientService $clientService;
-	private IThrottler $throttler;
 	private LoggerInterface $logger;
 	private ?string $userId;
 
@@ -98,7 +97,6 @@ class SignalingController extends OCSController {
 		?string $UserId,
 	) {
 		parent::__construct($appName, $request);
-		$this->serverConfig = $serverConfig;
 		$this->talkConfig = $talkConfig;
 		$this->signalingManager = $signalingManager;
 		$this->session = $session;
@@ -111,7 +109,6 @@ class SignalingController extends OCSController {
 		$this->dispatcher = $dispatcher;
 		$this->timeFactory = $timeFactory;
 		$this->clientService = $clientService;
-		$this->throttler = $throttler;
 		$this->logger = $logger;
 		$this->userId = $UserId;
 	}
@@ -145,21 +142,20 @@ class SignalingController extends OCSController {
 
 	/**
 	 * @PublicPage
-	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @param string $token
 	 * @return DataResponse
 	 */
+	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	public function getSettings(string $token = ''): DataResponse {
 		$isRecordingRequest = false;
 
 		if (!empty($this->request->getHeader('Talk-Recording-Random')) || !empty($this->request->getHeader('Talk-Recording-Checksum'))) {
 			if (!$this->validateRecordingBackendRequest('')) {
-				$ip = $this->request->getRemoteAddress();
-				$action = 'talkRecordingSecret';
-				$this->throttler->sleepDelay($ip, $action);
-				$this->throttler->registerAttempt($action, $ip);
-				return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+				$response->throttle(['action' => 'talkRecordingSecret']);
+				return $response;
 			}
 
 			$isRecordingRequest = true;
@@ -176,7 +172,7 @@ class SignalingController extends OCSController {
 			}
 		} catch (RoomNotFoundException $e) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
-			$response->throttle(['token' => $token]);
+			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
 			return $response;
 		}
 
@@ -526,10 +522,10 @@ class SignalingController extends OCSController {
 	 * https://nextcloud-spreed-signaling.readthedocs.io/en/latest/standalone-signaling-api-v1/#backend-requests
 	 *
 	 * @PublicPage
-	 * @BruteForceProtection(action=talkSignalingSecret)
 	 *
 	 * @return DataResponse
 	 */
+	#[BruteForceProtection(action: 'talkSignalingSecret')]
 	public function backend(): DataResponse {
 		$json = $this->getInputStream();
 		if (!$this->validateBackendRequest($json)) {
@@ -540,7 +536,7 @@ class SignalingController extends OCSController {
 					'message' => 'The request could not be authenticated.',
 				],
 			]);
-			$response->throttle();
+			$response->throttle(['action' => 'talkSignalingSecret']);
 			return $response;
 		}
 

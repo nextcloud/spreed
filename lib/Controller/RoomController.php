@@ -53,6 +53,7 @@ use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -284,10 +285,10 @@ class RoomController extends AEnvironmentAwareController {
 	 *
 	 * @NoAdminRequired
 	 * @RequireLoggedInParticipant
-	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @return DataResponse
 	 */
+	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function getBreakoutRooms(): DataResponse {
 		try {
 			$rooms = $this->breakoutRoomService->getBreakoutRooms($this->room, $this->participant);
@@ -312,20 +313,19 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @BruteForceProtection(action=talkRoomToken)
 	 *
 	 * @param string $token
 	 * @return DataResponse
 	 */
+	#[BruteForceProtection(action: 'talkRoomToken')]
+	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	public function getSingleRoom(string $token): DataResponse {
 		try {
 			$isSIPBridgeRequest = $this->validateSIPBridgeRequest($token);
 		} catch (UnauthorizedException $e) {
-			$ip = $this->request->getRemoteAddress();
-			$action = 'talkSipBridgeSecret';
-			$this->throttler->sleepDelay($ip, $action);
-			$this->throttler->registerAttempt($action, $ip);
-			return new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
+			$response->throttle(['action' => 'talkSipBridgeSecret']);
+			return $response;
 		}
 
 		// The SIP bridge only needs room details (public, sip enabled, lobby state, etc)
@@ -365,7 +365,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse($this->formatRoom($room, $participant, $statuses, $isSIPBridgeRequest), Http::STATUS_OK, $this->getTalkHashHeader());
 		} catch (RoomNotFoundException $e) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
-			$response->throttle(['token' => $token]);
+			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
 			return $response;
 		}
 	}
@@ -1222,13 +1222,14 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @BruteForceProtection(action=talkRoomPassword)
 	 *
 	 * @param string $token
 	 * @param string $password
 	 * @param bool $force
 	 * @return DataResponse
 	 */
+	#[BruteForceProtection(action: 'talkRoomPassword')]
+	#[BruteForceProtection(action: 'talkRoomToken')]
 	public function joinRoom(string $token, string $password = '', bool $force = true): DataResponse {
 		$sessionId = $this->session->getSessionForRoom($token);
 		try {
@@ -1284,11 +1285,11 @@ class RoomController extends AEnvironmentAwareController {
 			$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomToken', ['token' => $token]);
 		} catch (InvalidPasswordException $e) {
 			$response = new DataResponse([], Http::STATUS_FORBIDDEN);
-			$response->throttle(['token' => $token]);
+			$response->throttle(['token' => $token, 'action' => 'talkRoomPassword']);
 			return $response;
 		} catch (UnauthorizedException $e) {
 			$response = new DataResponse([], Http::STATUS_NOT_FOUND);
-			$response->throttle(['token' => $token]);
+			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
 			return $response;
 		}
 
@@ -1305,21 +1306,21 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireRoom
-	 * @BruteForceProtection(action=talkSipBridgeSecret)
 	 *
 	 * @param string $pin
 	 * @return DataResponse
 	 */
+	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	public function getParticipantByDialInPin(string $pin): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
 				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
-				$response->throttle();
+				$response->throttle(['action' => 'talkSipBridgeSecret']);
 				return $response;
 			}
 		} catch (UnauthorizedException $e) {
 			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
-			$response->throttle();
+			$response->throttle(['action' => 'talkSipBridgeSecret']);
 			return $response;
 		}
 
@@ -1335,20 +1336,20 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireRoom
-	 * @BruteForceProtection(action=talkSipBridgeSecret)
 	 *
 	 * @return DataResponse
 	 */
+	#[BruteForceProtection(action: 'talkSipBridgeSecret')]
 	public function createGuestByDialIn(): DataResponse {
 		try {
 			if (!$this->validateSIPBridgeRequest($this->room->getToken())) {
 				$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
-				$response->throttle();
+				$response->throttle(['action' => 'talkSipBridgeSecret']);
 				return $response;
 			}
 		} catch (UnauthorizedException $e) {
 			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
-			$response->throttle();
+			$response->throttle(['action' => 'talkSipBridgeSecret']);
 			return $response;
 		}
 
