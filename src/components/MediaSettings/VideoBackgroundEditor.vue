@@ -23,10 +23,10 @@
 	<div class="background-editor">
 		<button key="clear"
 			class="background-editor__element"
-			:class="{'background-editor__element--selected': selectedBackground === 'clear'}"
-			@click="handleSelectBackground('clear')">
+			:class="{'background-editor__element--selected': selectedBackground === 'none'}"
+			@click="handleSelectBackground('none')">
 			<Cancel :size="20" />
-			{{ t('spreed', 'Clear') }}
+			{{ t('spreed', 'None') }}
 		</button>
 		<button key="blur"
 			:disabled="!blurPreviewAvailable"

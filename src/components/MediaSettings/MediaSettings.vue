@@ -416,7 +416,7 @@ export default {
 		},
 
 		handleUpdateBackground(background) {
-			if (background === 'clear') {
+			if (background === 'none') {
 				this.clearVirtualBackground()
 				this.clearBackground()
 			} else if (background === 'blur') {
