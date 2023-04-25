@@ -245,6 +245,7 @@ export default {
 		justify-content: center;
 		align-items: center;
 		background-size: cover;
+		background-position: center;
 
 		&--selected {
 			box-shadow: inset 0 0 calc(var(--default-grid-baseline) * 4) var(--color-main-background);
