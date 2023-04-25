@@ -31,24 +31,26 @@
 			<p class="simple-polls-editor__caption">
 				{{ t('spreed', 'Question') }}
 			</p>
-			<NcTextField :value.sync="pollQuestion" :placeholder="t('spreed', 'Ask a question')" v-on="$listeners" />
+			<NcTextField :value.sync="pollQuestion" :label="t('spreed', 'Ask a question')" v-on="$listeners" />
 
 			<!-- Poll options -->
 			<p class="simple-polls-editor__caption">
 				{{ t('spreed', 'Answers') }}
 			</p>
-			<PollOption v-for="option, index in pollOptions"
+			<PollOption v-for="(option, index) in pollOptions"
 				:key="index"
 				:ref="`pollOption${index}`"
 				class="simple-polls-editor__option"
 				:value.sync="pollOptions[index]"
-				:placeholder="t('spreed', 'Answer {option}', {option: index + 1})"
+				:label="t('spreed', 'Answer {option}', {option: index + 1})"
 				:can-delete="pollOptions.length > 2"
 				@delete-option="deleteOption(index)" />
 
 			<!-- Add options -->
 			<NcButton class="simple-polls-editor__add-more" type="tertiary-no-background" @click="addOption">
-				<Plus slot="icon" />
+				<template #icon>
+					<Plus />
+				</template>
 				{{ t('spreed', 'Add answer') }}
 			</NcButton>
 

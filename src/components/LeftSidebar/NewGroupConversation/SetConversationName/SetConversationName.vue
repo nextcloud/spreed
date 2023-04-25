@@ -25,7 +25,7 @@
 			v-observe-visibility="visibilityChanged"
 			type="text"
 			:value="value"
-			:placeholder="t('spreed', 'Conversation name')"
+			:label="t('spreed', 'Conversation name')"
 			@input="handleInput"
 			@keydown.enter="handleKeydown" />
 	</div>

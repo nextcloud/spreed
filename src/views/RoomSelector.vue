@@ -35,6 +35,7 @@
 				<NcTextField :value.sync="searchText"
 					trailing-button-icon="close"
 					class="search-form"
+					:label="t('spreed', 'Search conversations or users')"
 					:show-trailing-button="searchText !==''"
 					@trailing-button-click="clearText">
 					<Magnify :size="16" />

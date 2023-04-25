@@ -26,10 +26,11 @@
 		<NcButton v-if="canDelete"
 			type="tertiary-no-background"
 			@click="deleteOption">
-			<Close slot="icon"
-				decorative
-				title=""
-				:size="20" />
+			<template #icon>
+				<Close decorative
+					title=""
+					:size="20" />
+			</template>
 		</NcButton>
 	</form>
 </template>

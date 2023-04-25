@@ -26,7 +26,7 @@
 			v-observe-visibility="visibilityChanged"
 			:value.sync="searchText"
 			type="text"
-			:placeholder="t('spreed', 'Search participants')"
+			:label="t('spreed', 'Search participants')"
 			@input="handleInput">
 			<Magnify :size="16" />
 		</NcTextField>
