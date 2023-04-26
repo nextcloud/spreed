@@ -22,7 +22,7 @@
 <template>
 	<NcModal v-if="modal"
 		class="talk-modal"
-		size="small"
+		size="normal"
 		:container="container"
 		@close="closeModal">
 		<div class="media-settings">
@@ -518,25 +518,27 @@ export default {
 @include avatar-mixin(128px);
 
 .media-settings {
-	padding: 20px;
+	padding: calc(var(--default-grid-baseline)*4);
 	background-color: var(--color-main-background);
 	overflow-y: auto;
 	overflow-x: hidden;
 	margin: auto;
+	width: 100%;
+
 	&__title {
 		text-align: center;
 	}
 	&__preview {
 		position: relative;
-		margin: 0 auto 12px auto;
+		margin: 0 auto calc(var(--default-grid-baseline)*3) auto;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
-		border-radius: 12px;
-		height: 256px;
-		width: 342px;
+		border-radius: calc(var(--default-grid-baseline)*3);
 		background-color: var(--color-loading-dark);
+		height: 300px;
+		width: 400px;
 	}
 
 	&__toggles-wrapper {
@@ -563,15 +565,16 @@ export default {
 	&__call-preferences {
 		height: $clickable-area;
 		display: flex;
-		justify-content: space-evenly;
+		justify-content: center;
 		align-items: center;
+		gap: calc(var(--default-grid-baseline)*2);
 	}
 
 	&__call-buttons {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 4px;
+		gap: var(--default-grid-baseline);
 	}
 }
 
@@ -600,10 +603,11 @@ export default {
 .checkbox {
 	display: flex;
 	justify-content: center;
-	margin: 14px;
+	margin: calc(var(--default-grid-baseline)*2);
 }
 
 :deep(.modal-container) {
 	display: flex !important;
+	max-width: 500px !important;
 }
 </style>

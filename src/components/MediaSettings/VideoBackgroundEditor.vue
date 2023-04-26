@@ -252,10 +252,10 @@ export default {
 
 <style scoped lang="scss">
 .background-editor {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr 1fr;
+	display: flex;
+	flex-wrap: wrap;
 	gap: calc(var(--default-grid-baseline) * 2);
-	margin-top: calc(var(--default-grid-baseline) * 4);
+	margin-top: calc(var(--default-grid-baseline) * 2);
 
 	&__element {
 		border: none;
@@ -269,6 +269,7 @@ export default {
 		align-items: center;
 		background-size: cover;
 		background-position: center;
+		flex: 1 0 108px;
 
 		&--selected {
 			box-shadow: inset 0 0 0 var(--default-grid-baseline) var(--color-primary);
