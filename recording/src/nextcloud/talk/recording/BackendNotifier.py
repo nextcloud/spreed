@@ -27,11 +27,12 @@ import hmac
 import json
 import logging
 import os
+import requests
 import ssl
 from nextcloud.talk import recording
+from requests import Request, Session
+from requests_toolbelt import MultipartEncoder
 from secrets import token_urlsafe
-from urllib.request import Request, urlopen
-from urllib3 import encode_multipart_formdata
 
 from .Config import config
 
@@ -62,13 +63,12 @@ def doRequest(backend, request, retries=3):
     """
     context = None
 
-    if config.getBackendSkipVerify(backend):
-        context = ssl.create_default_context()
-        context.check_hostname = False
-        context.verify_mode = ssl.CERT_NONE
+    backendSkipVerify = config.getBackendSkipVerify(backend)
 
     try:
-        urlopen(request, context=context)
+        session = Session()
+        preparedRequest = session.prepare_request(request)
+        session.send(preparedRequest, verify=not backendSkipVerify)
     except Exception as exception:
         if retries > 1:
             logger.exception(f"Failed to send message to backend, {retries} retries left!")
@@ -102,7 +102,7 @@ def backendRequest(backend, data):
         'User-Agent': recording.USER_AGENT,
     }
 
-    backendRequest = Request(url, data, headers)
+    backendRequest = Request('POST', url, headers, data=data)
 
     doRequest(backend, backendRequest)
 
@@ -200,18 +200,19 @@ def uploadRecording(backend, token, fileName, owner):
         'owner': owner,
         'file': (os.path.basename(fileName), fileContents),
     }
-    data, contentType = encode_multipart_formdata(data)
+
+    multipartEncoder = MultipartEncoder(data)
 
     random, checksum = getRandomAndChecksum(backend, token.encode())
 
     headers = {
-        'Content-Type': contentType,
+        'Content-Type': multipartEncoder.content_type,
         'OCS-ApiRequest': 'true',
         'Talk-Recording-Random': random,
         'Talk-Recording-Checksum': checksum,
         'User-Agent': recording.USER_AGENT,
     }
 
-    uploadRequest = Request(url, data, headers)
+    uploadRequest = Request('POST', url, headers, data=multipartEncoder)
 
     doRequest(backend, uploadRequest)
