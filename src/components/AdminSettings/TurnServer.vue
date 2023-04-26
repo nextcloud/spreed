@@ -99,6 +99,7 @@
 import Base64 from 'crypto-js/enc-base64.js'
 import hmacSHA1 from 'crypto-js/hmac-sha1.js'
 import debounce from 'debounce'
+import webrtcSupport from 'webrtcsupport'
 
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
@@ -256,6 +257,12 @@ export default {
 			}.bind(this), 10000)
 			pc.onicecandidate = this.iceCallback.bind(this, pc, candidates, timeout)
 			pc.onicegatheringstatechange = this.gatheringStateChange.bind(this, pc, candidates, timeout)
+
+			// This test will always fail without a data channel on Safari
+			if (webrtcSupport.supportDataChannel) {
+				pc.createDataChannel('status')
+			}
+
 			pc.createOffer(
 				offerOptions
 			).then(
