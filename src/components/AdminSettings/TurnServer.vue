@@ -21,57 +21,50 @@
  -->
 
 <template>
-	<div class="turn-server">
-		<select class="schemes"
-			:value="schemes"
+	<li class="turn-server">
+		<NcSelect class="turn-server__select"
+			name="turn_schemes"
+			:value="schemesOptions.find(i => i.value === schemes)"
 			:disabled="loading"
 			:aria-label="t('spreed', 'TURN server schemes')"
-			@input="updateSchemes">
-			<option value="turn,turns">
-				{{ t('spreed', '{option1} and {option2}', { option1: 'turn:', option2: 'turns:' }) }}
-			</option>
-			<option value="turn">
-				{{ t('spreed', '{option} only', { option: 'turn:' }) }}
-			</option>
-			<option value="turns">
-				{{ t('spreed', '{option} only', { option: 'turns:' }) }}
-			</option>
-		</select>
+			:options="schemesOptions"
+			:clearable="false"
+			label="label"
+			track-by="value"
+			no-wrap
+			@input="updateSchemes" />
 
-		<input ref="turn_server"
+		<NcTextField ref="turn_server"
 			v-tooltip.auto="turnServerError"
-			type="text"
 			name="turn_server"
 			placeholder="turnserver:port"
-			:class="turnServerClasses"
+			class="turn-server__textfield"
+			:class="{ error: turnServerError }"
 			:value="server"
 			:disabled="loading"
-			:aria-label="t('spreed', 'TURN server URL')"
-			@input="updateServer">
-		<input ref="turn_secret"
-			type="text"
+			:label="t('spreed', 'TURN server URL')"
+			@update:value="updateServer" />
+
+		<NcTextField ref="turn_secret"
 			name="turn_secret"
 			placeholder="secret"
+			class="turn-server__textfield"
 			:value="secret"
 			:disabled="loading"
-			:aria-label="t('spreed', 'TURN server secret')"
-			@input="updateSecret">
+			:label="t('spreed', 'TURN server secret')"
+			@update:value="updateSecret" />
 
-		<select class="protocols"
-			:value="protocols"
+		<NcSelect class="turn-server__select"
+			name="turn_protocols"
+			:value="protocolOptions.find(i => i.value === protocols)"
 			:disabled="loading"
 			:aria-label="t('spreed', 'TURN server protocols')"
-			@input="updateProtocols">
-			<option value="udp,tcp">
-				{{ t('spreed', '{option1} and {option2}', { option1: 'UDP', option2: 'TCP' }) }}
-			</option>
-			<option value="udp">
-				{{ t('spreed', '{option} only', { option: 'UDP' }) }}
-			</option>
-			<option value="tcp">
-				{{ t('spreed', '{option} only', { option: 'TCP' }) }}
-			</option>
-		</select>
+			:options="protocolOptions"
+			:clearable="false"
+			label="label"
+			track-by="value"
+			no-wrap
+			@input="updateProtocols" />
 
 		<NcButton v-show="!loading"
 			type="tertiary-no-background"
@@ -92,7 +85,7 @@
 				<Delete :size="20" />
 			</template>
 		</NcButton>
-	</div>
+	</li>
 </template>
 
 <script>
@@ -105,6 +98,8 @@ import Check from 'vue-material-design-icons/Check.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import CategoryMonitoring from '../missingMaterialDesignIcons/CategoryMonitoring.vue'
@@ -117,11 +112,13 @@ export default {
 	},
 
 	components: {
-		NcButton,
 		AlertCircle,
 		CategoryMonitoring,
 		Check,
 		Delete,
+		NcButton,
+		NcSelect,
+		NcTextField,
 	},
 
 	props: {
@@ -172,10 +169,19 @@ export default {
 
 			return false
 		},
-		turnServerClasses() {
-			return {
-				error: this.turnServerError,
-			}
+		protocolOptions() {
+			return [
+				{ value: 'udp,tcp', label: t('spreed', '{option1} and {option2}', { option1: 'UDP', option2: 'TCP' }) },
+				{ value: 'udp', label: t('spreed', '{option} only', { option: 'UDP' }) },
+				{ value: 'tcp', label: t('spreed', '{option} only', { option: 'TCP' }) },
+			]
+		},
+		schemesOptions() {
+			return [
+				{ value: 'turn,turns', label: t('spreed', '{option1} and {option2}', { option1: 'turn:', option2: 'turns:' }) },
+				{ value: 'turn', label: t('spreed', '{option} only', { option: 'turn:' }) },
+				{ value: 'turns', label: t('spreed', '{option} only', { option: 'turns:' }) },
+			]
 		},
 		testIconClasses() {
 			return {
@@ -329,19 +335,19 @@ export default {
 			this.$emit('remove-server', this.index)
 		},
 		updateSchemes(event) {
-			this.$emit('update:schemes', event.target.value)
+			this.$emit('update:schemes', event.value)
 			this.debounceTestServer()
 		},
-		updateServer(event) {
-			this.$emit('update:server', event.target.value)
+		updateServer(value) {
+			this.$emit('update:server', value)
 			this.debounceTestServer()
 		},
-		updateSecret(event) {
-			this.$emit('update:secret', event.target.value)
+		updateSecret(value) {
+			this.$emit('update:secret', value)
 			this.debounceTestServer()
 		},
 		updateProtocols(event) {
-			this.$emit('update:protocols', event.target.value)
+			this.$emit('update:protocols', event.value)
 			this.debounceTestServer()
 		},
 	},
@@ -350,12 +356,27 @@ export default {
 
 <style lang="scss" scoped>
 .turn-server {
-	height: 44px;
 	display: flex;
 	align-items: center;
+	gap: 4px;
+	min-height: 48px;
+	margin-bottom: 4px;
 
-	&.error {
-		border: solid 1px var(--color-error);
+	&__textfield {
+		height: 48px;
+		& :deep(.input-field__input) {
+			height: 48px !important;
+		}
+		&.error :deep(.input-field__input) {
+			border: 2px solid var(--color-error);
+		}
+	}
+
+	&__select {
+		min-width: unset;
+		:deep(.vs__search) {
+			width: 100%;
+		}
 	}
 }
 </style>

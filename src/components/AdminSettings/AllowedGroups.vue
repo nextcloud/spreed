@@ -21,7 +21,7 @@
  -->
 
 <template>
-	<div id="allowed_groups" class="videocalls section">
+	<section id="allowed_groups" class="videocalls section">
 		<h2>{{ t('spreed', 'Limit to groups') }}</h2>
 		<p class="settings-hint">
 			{{ t('spreed', 'When at least one group is selected, only people of the listed groups can be part of conversations.') }}
@@ -33,10 +33,15 @@
 			{{ t('spreed', 'Users that cannot use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept.') }}
 		</p>
 
-		<div class="allowed-groups-settings-content">
-			<NcMultiselect v-model="allowedGroups"
+		<label for="allow_groups_use_talk"
+			class="form__label">
+			{{ t('spreed', 'Limit using Talk') }}
+		</label>
+		<div class="form">
+			<NcSelect v-model="allowedGroups"
+				input-id="allow_groups_use_talk"
 				name="allow_groups_use_talk"
-				class="allowed-groups-select"
+				class="form__select"
 				:options="groups"
 				:placeholder="t('spreed', 'Limit using Talk')"
 				:disabled="loading"
@@ -48,6 +53,7 @@
 				:close-on-select="false"
 				track-by="id"
 				label="displayname"
+				no-wrap
 				@search-change="searchGroup" />
 
 			<NcButton type="primary"
@@ -57,11 +63,15 @@
 			</NcButton>
 		</div>
 
-		<h3>{{ t('spreed', 'Limit creating a public and group conversation') }}</h3>
-		<div class="allowed-groups-settings-content">
-			<NcMultiselect v-model="canStartConversations"
+		<label for="allow_groups_start_conversation"
+			class="form__label">
+			{{ t('spreed', 'Limit creating a public and group conversation') }}
+		</label>
+		<div class="form">
+			<NcSelect v-model="canStartConversations"
+				input-id="allow_groups_start_conversation"
 				name="allow_groups_start_conversation"
-				class="allowed-groups-select"
+				class="form__select"
 				:options="groups"
 				:placeholder="t('spreed', 'Limit creating conversations')"
 				:disabled="loading"
@@ -73,6 +83,7 @@
 				:close-on-select="false"
 				track-by="id"
 				label="displayname"
+				no-wrap
 				@search-change="searchGroup" />
 
 			<NcButton type="primary"
@@ -82,22 +93,28 @@
 			</NcButton>
 		</div>
 
-		<h3>{{ t('spreed', 'Limit starting a call') }}</h3>
-		<div class="allowed-groups-settings-content">
-			<NcMultiselect id="start_calls"
-				v-model="startCalls"
+		<label for="start_calls"
+			class="form__label">
+			{{ t('spreed', 'Limit starting a call') }}
+		</label>
+		<div class="form">
+			<NcSelect v-model="startCalls"
+				input-id="start_calls"
 				name="allow_groups_start_calls"
+				class="form__select"
 				:options="startCallOptions"
 				:placeholder="t('spreed', 'Limit starting calls')"
 				label="label"
 				track-by="value"
+				:clearable="false"
+				no-wrap
 				:disabled="loading || loadingStartCalls"
 				@input="saveStartCalls" />
 		</div>
 		<p>
 			<em>{{ t('spreed', 'When a call has started, everyone with access to the conversation can join the call.') }}</em>
 		</p>
-	</div>
+	</section>
 </template>
 
 <script>
@@ -108,7 +125,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
 const startCallOptions = [
 	{ value: 0, label: t('spreed', 'Everyone') },
@@ -121,8 +138,8 @@ export default {
 	name: 'AllowedGroups',
 
 	components: {
-		NcMultiselect,
 		NcButton,
+		NcSelect,
 	},
 
 	data() {
@@ -244,20 +261,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.allowed-groups-settings-content {
+.form {
 	display: flex;
 	align-items: center;
+	gap: 10px;
 
-	.allowed-groups-select {
+	&__select {
 		width: 300px;
+		:deep(.vs__search) {
+			width: 100%;
+		}
 	}
-	button {
-		margin-left: 10px;
-	}
-}
 
-.multiselect {
-	flex-grow: 1;
-	max-width: 300px;
+	&__label {
+		display: block;
+		padding: 4px 0;
+	}
 }
 </style>

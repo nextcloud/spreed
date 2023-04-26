@@ -21,37 +21,35 @@
  -->
 
 <template>
-	<div id="stun_server" class="videocalls section stun-server">
+	<section id="stun_server" class="videocalls section">
 		<h2>
 			{{ t('spreed', 'STUN servers') }}
-
-			<NcButton v-if="!loading"
-				class="stun-server__add-icon"
-				type="tertiary-no-background"
-				:aria-label="t('spreed', 'Add a new STUN server')"
-				@click="newServer">
-				<template #icon>
-					<Plus :size="20" />
-				</template>
-			</NcButton>
 		</h2>
 
 		<p class="settings-hint">
 			{{ t('spreed', 'A STUN server is used to determine the public IP address of participants behind a router.') }}
 		</p>
 
-		<ul class="stun-servers">
-			<transition-group name="fade" tag="li">
-				<StunServer v-for="(server, index) in servers"
-					:key="`server${index}`"
-					:server.sync="servers[index]"
-					:index="index"
-					:loading="loading"
-					@remove-server="removeServer"
-					@update:server="debounceUpdateServers" />
-			</transition-group>
-		</ul>
-	</div>
+		<transition-group name="fade" class="stun-servers" tag="ul">
+			<StunServer v-for="(server, index) in servers"
+				:key="`server${index}`"
+				:server.sync="servers[index]"
+				:index="index"
+				:loading="loading"
+				@remove-server="removeServer"
+				@update:server="debounceUpdateServers" />
+		</transition-group>
+
+		<NcButton class="additional-top-margin"
+			:disabled="loading"
+			@click="newServer">
+			<template #icon>
+				<span v-if="loading" class="icon icon-loading-small" />
+				<Plus v-else :size="20" />
+			</template>
+			{{ t('spreed', 'Add a new STUN server') }}
+		</NcButton>
+	</section>
 </template>
 
 <script>
@@ -150,14 +148,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../../assets/variables';
-
-.stun-server {
-	h2 {
-		height: 44px;
-		display: flex;
-		align-items: center;
-	}
+.additional-top-margin {
+	margin-top: 10px;
 }
 
 </style>

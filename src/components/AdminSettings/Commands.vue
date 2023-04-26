@@ -21,12 +21,10 @@
  -->
 
 <template>
-	<div id="chat_commands" class="commands section">
+	<section id="chat_commands" class="commands section">
 		<h2>
 			{{ t('spreed', 'Commands') }}
-			<small>
-				{{ t('spreed', 'Beta') }}
-			</small>
+			<small>{{ t('spreed', 'Beta') }}</small>
 		</h2>
 
 		<!-- eslint-disable-next-line vue/no-v-html -->
@@ -48,21 +46,38 @@
 			<div class="head enabled">
 				{{ t('spreed', 'Enabled for') }}
 			</div>
-			<CommandVue v-for="command in commands" :key="command.id" v-bind="command" />
+
+			<Fragment v-for="command in commands" :key="command.id">
+				<div class="name">
+					{{ command.name }}
+				</div>
+				<div class="command">
+					{{ command.command }}
+				</div>
+				<div class="script">
+					{{ command.script }}
+				</div>
+				<div class="response">
+					{{ translateResponse(command.response) }}
+				</div>
+				<div class="enabled">
+					{{ translateEnabled(command.enabled) }}
+				</div>
+			</Fragment>
 		</div>
-	</div>
+	</section>
 </template>
 
 <script>
-import { loadState } from '@nextcloud/initial-state'
+import { Fragment } from 'vue-frag'
 
-import CommandVue from '../../components/AdminSettings/CommandVue.vue'
+import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'Commands',
 
 	components: {
-		CommandVue,
+		Fragment,
 	},
 
 	data() {
@@ -81,6 +96,31 @@ export default {
 
 	mounted() {
 		this.commands = loadState('spreed', 'commands')
+	},
+
+	methods: {
+		translateResponse(response) {
+			switch (response) {
+			case 0:
+				return t('spreed', 'None')
+			case 1:
+				return t('spreed', 'User')
+			default:
+				return t('spreed', 'Everyone')
+			}
+		},
+		translateEnabled(enabled) {
+			switch (enabled) {
+			case 0:
+				return t('spreed', 'Disabled')
+			case 1:
+				return t('spreed', 'Moderators')
+			case 2:
+				return t('spreed', 'Users')
+			default:
+				return t('spreed', 'Everyone')
+			}
+		},
 	},
 }
 </script>

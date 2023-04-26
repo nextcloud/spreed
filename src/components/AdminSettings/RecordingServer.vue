@@ -22,17 +22,18 @@
  -->
 
 <template>
-	<div class="recording-server">
-		<input ref="recording_server"
-			type="text"
+	<li class="recording-server">
+		<NcTextField ref="recording_server"
+			class="recording-server__textfield"
 			name="recording_server"
 			placeholder="https://recording.example.org"
 			:value="server"
 			:disabled="loading"
-			:aria-label="t('spreed', 'Recording backend URL')"
-			@input="updateServer">
+			:label="t('spreed', 'Recording backend URL')"
+			@update:value="updateServer" />
 
 		<NcCheckboxRadioSwitch :checked="verify"
+			class="recording-server__checkbox"
 			@update:checked="updateVerify">
 			{{ t('spreed', 'Validate SSL certificate') }}
 		</NcCheckboxRadioSwitch>
@@ -46,17 +47,13 @@
 			</template>
 		</NcButton>
 
-		<div v-if="server">
-			<div class="testing-icon">
-				<NcLoadingIcon v-if="!checked" :size="20" />
-				<AlertCircle v-else-if="errorMessage" :size="20" :fill-color="'#E9322D'" />
-				<Check v-else :size="20" :fill-color="'#46BA61'" />
-			</div>
-			<div class="testing-label">
-				{{ connectionState }}
-			</div>
-		</div>
-	</div>
+		<span v-if="server" class="test-connection">
+			<NcLoadingIcon v-if="!checked" :size="20" />
+			<AlertCircle v-else-if="errorMessage" :size="20" :fill-color="'#E9322D'" />
+			<Check v-else :size="20" :fill-color="'#46BA61'" />
+			{{ connectionState }}
+		</span>
+	</li>
 </template>
 
 <script>
@@ -67,6 +64,7 @@ import Delete from 'vue-material-design-icons/Delete.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { getWelcomeMessage } from '../../services/recordingService.js'
 
@@ -74,12 +72,13 @@ export default {
 	name: 'RecordingServer',
 
 	components: {
-		NcButton,
-		NcCheckboxRadioSwitch,
-		NcLoadingIcon,
 		AlertCircle,
 		Check,
 		Delete,
+		NcButton,
+		NcCheckboxRadioSwitch,
+		NcLoadingIcon,
+		NcTextField,
 	},
 
 	props: {
@@ -144,8 +143,8 @@ export default {
 		removeServer() {
 			this.$emit('remove-server', this.index)
 		},
-		updateServer(event) {
-			this.$emit('update:server', event.target.value)
+		updateServer(value) {
+			this.$emit('update:server', value)
 		},
 		updateVerify(checked) {
 			this.$emit('update:verify', checked)
@@ -180,27 +179,22 @@ export default {
 
 <style lang="scss" scoped>
 .recording-server {
-	height: 44px;
 	display: flex;
 	align-items: center;
 
-	label {
-		margin: 0 20px;
-		display: inline-block;
+	&__textfield {
+		width: 300px;
 	}
 
-	.testing-icon{
-		display: inline-block;
-		height: 20px;
-		line-height: 44px;
-		vertical-align: middle;
+	&__checkbox {
+		margin: 0 18px;
 	}
+}
 
-	.testing-label {
-		display: inline-block;
-		height: 44px;
-		line-height: 44px;
-		vertical-align: middle;
-	}
+.test-connection {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	height: 44px;
 }
 </style>
