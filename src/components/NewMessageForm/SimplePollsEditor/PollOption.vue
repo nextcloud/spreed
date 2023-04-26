@@ -25,11 +25,11 @@
 		<NcTextField class="poll-option__input" v-bind="$attrs" v-on="$listeners" />
 		<NcButton v-if="canDelete"
 			type="tertiary-no-background"
+			:aria-label="t('spreed', 'Delete poll option')"
 			@click="deleteOption">
-			<Close slot="icon"
-				decorative
-				title=""
-				:size="20" />
+			<template #icon>
+				<Close :size="20" />
+			</template>
 		</NcButton>
 	</form>
 </template>

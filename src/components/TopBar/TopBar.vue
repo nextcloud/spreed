@@ -117,6 +117,8 @@
 
 			<!-- in call: open chat tab -->
 			<NcButton v-else
+				:aria-label="t('spreed', 'Open chat')"
+				:title="t('spreed', 'Open chat')"
 				class="top-bar__button chat-button dark-hover"
 				type="tertiary"
 				@click="openSidebar('chat')">
