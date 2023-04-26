@@ -190,15 +190,11 @@ def uploadRecording(backend, token, fileName, owner):
 
     url = backend.rstrip('/') + '/ocs/v2.php/apps/spreed/api/v1/recording/' + token + '/store'
 
-    fileContents = None
-    with open(fileName, 'rb') as file:
-        fileContents = file.read()
-
     # Plain values become arguments, while tuples become files; the body used to
     # calculate the checksum is empty.
     data = {
         'owner': owner,
-        'file': (os.path.basename(fileName), fileContents),
+        'file': (os.path.basename(fileName), open(fileName, 'rb')),
     }
 
     multipartEncoder = MultipartEncoder(data)
