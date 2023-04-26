@@ -21,19 +21,9 @@
  -->
 
 <template>
-	<div id="signaling_server" class="videocalls section signaling-server">
+	<section id="signaling_server" class="videocalls section">
 		<h2>
 			{{ t('spreed', 'High-performance backend') }}
-
-			<NcButton v-if="!loading && showAddServerButton"
-				class="signaling-server__add-icon"
-				type="tertiary-no-background"
-				:aria-label="t('spreed', 'Add a new high-performance backend server')"
-				@click="newServer">
-				<template #icon>
-					<Plus :size="20" />
-				</template>
-			</NcButton>
 		</h2>
 
 		<p class="settings-hint">
@@ -46,41 +36,46 @@
 			{{ t('spreed', 'It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end.') }}
 		</p>
 
-		<div v-if="!servers.length" class="signaling-warning">
-			<NcCheckboxRadioSwitch :checked.sync="hideWarning"
-				name="hide_warning"
-				:disabled="loading"
-				type="switch"
-				@update:checked="updateHideWarning">
-				{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 4 participants') }}
-			</NcCheckboxRadioSwitch>
-		</div>
+		<NcCheckboxRadioSwitch v-if="!servers.length"
+			class="additional-top-margin"
+			:checked.sync="hideWarning"
+			:disabled="loading"
+			@update:checked="updateHideWarning">
+			{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 4 participants') }}
+		</NcCheckboxRadioSwitch>
 
-		<ul class="signaling-servers">
-			<transition-group name="fade" tag="li">
-				<SignalingServer v-for="(server, index) in servers"
-					:key="`server${index}`"
-					:server.sync="servers[index].server"
-					:verify.sync="servers[index].verify"
-					:index="index"
-					:loading="loading"
-					@remove-server="removeServer"
-					@update:server="debounceUpdateServers"
-					@update:verify="debounceUpdateServers" />
-			</transition-group>
-		</ul>
+		<transition-group name="fade" tag="ul">
+			<SignalingServer v-for="(server, index) in servers"
+				:key="`server${index}`"
+				:server.sync="servers[index].server"
+				:verify.sync="servers[index].verify"
+				:index="index"
+				:loading="loading"
+				@remove-server="removeServer"
+				@update:server="debounceUpdateServers"
+				@update:verify="debounceUpdateServers" />
+		</transition-group>
 
-		<div class="signaling-secret">
-			<h4>{{ t('spreed', 'Shared secret') }}</h4>
-			<input v-model="secret"
-				type="text"
-				name="signaling_secret"
-				:disabled="loading"
-				:placeholder="t('spreed', 'Shared secret')"
-				:aria-label="t('spreed', 'Shared secret')"
-				@input="debounceUpdateServers">
-		</div>
-	</div>
+		<NcTextField class="form__textfield additional-top-margin"
+			:value="secret"
+			name="signaling_secret"
+			:disabled="loading"
+			:placeholder="t('spreed', 'Shared secret')"
+			:label="t('spreed', 'Shared secret')"
+			label-visible
+			@update:value="updateSecret" />
+
+		<NcButton v-if="showAddServerButton"
+			class="additional-top-margin"
+			:disabled="loading"
+			@click="newServer">
+			<template #icon>
+				<span v-if="loading" class="icon icon-loading-small" />
+				<Plus v-else :size="20" />
+			</template>
+			{{ t('spreed', 'Add a new high-performance backend server') }}
+		</NcButton>
+	</section>
 </template>
 
 <script>
@@ -93,6 +88,7 @@ import { loadState } from '@nextcloud/initial-state'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
 
@@ -104,8 +100,9 @@ export default {
 	components: {
 		NcButton,
 		NcCheckboxRadioSwitch,
-		SignalingServer,
+		NcTextField,
 		Plus,
+		SignalingServer,
 	},
 
 	data() {
@@ -159,6 +156,11 @@ export default {
 			})
 		},
 
+		updateSecret(value) {
+			this.secret = value
+			this.debounceUpdateServers()
+		},
+
 		debounceUpdateServers: debounce(function() {
 			this.updateServers()
 		}, 1000),
@@ -192,22 +194,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
-
-.signaling-server {
-	h2 {
-		height: 44px;
-		display: flex;
-		align-items: center;
-	}
+.form__textfield {
+	width: 300px;
 }
 
-.signaling-warning label {
-	margin: 0;
-}
-
-.signaling-warning,
-.signaling-secret {
-	margin-top: 20px;
+.additional-top-margin {
+	margin-top: 10px;
 }
 </style>

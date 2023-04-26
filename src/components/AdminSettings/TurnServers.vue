@@ -21,42 +21,40 @@
  -->
 
 <template>
-	<div id="turn_server" class="videocalls section turn-server">
+	<section id="turn_server" class="videocalls section">
 		<h2>
 			{{ t('spreed', 'TURN servers') }}
-
-			<NcButton v-if="!loading"
-				class="turn-server__add-icon"
-				type="tertiary-no-background"
-				:aria-label="t('spreed', 'Add a new TURN server')"
-				@click="newServer">
-				<template #icon>
-					<Plus :size="20" />
-				</template>
-			</NcButton>
 		</h2>
 
 		<!-- eslint-disable-next-line vue/no-v-html -->
 		<p class="settings-hint" v-html="documentationHint" />
 
-		<ul class="turn-servers">
-			<transition-group name="fade" tag="li">
-				<TurnServer v-for="(server, index) in servers"
-					:key="`server${index}`"
-					:schemes.sync="servers[index].schemes"
-					:server.sync="servers[index].server"
-					:secret.sync="servers[index].secret"
-					:protocols.sync="servers[index].protocols"
-					:index="index"
-					:loading="loading"
-					@remove-server="removeServer"
-					@update:schemes="debounceUpdateServers"
-					@update:server="debounceUpdateServers"
-					@update:secret="debounceUpdateServers"
-					@update:protocols="debounceUpdateServers" />
-			</transition-group>
-		</ul>
-	</div>
+		<transition-group name="fade" class="turn-servers" tag="ul">
+			<TurnServer v-for="(server, index) in servers"
+				:key="`server${index}`"
+				:schemes.sync="servers[index].schemes"
+				:server.sync="servers[index].server"
+				:secret.sync="servers[index].secret"
+				:protocols.sync="servers[index].protocols"
+				:index="index"
+				:loading="loading"
+				@remove-server="removeServer"
+				@update:schemes="debounceUpdateServers"
+				@update:server="debounceUpdateServers"
+				@update:secret="debounceUpdateServers"
+				@update:protocols="debounceUpdateServers" />
+		</transition-group>
+
+		<NcButton class="additional-top-margin"
+			:disabled="loading"
+			@click="newServer">
+			<template #icon>
+				<span v-if="loading" class="icon icon-loading-small" />
+				<Plus v-else :size="20" />
+			</template>
+			{{ t('spreed', 'Add a new TURN server') }}
+		</NcButton>
+	</section>
 </template>
 
 <script>
@@ -167,14 +165,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../../assets/variables';
-
-.turn-server {
-	h2 {
-		height: 44px;
-		display: flex;
-		align-items: center;
-	}
+.additional-top-margin {
+	margin-top: 10px;
 }
 
 </style>

@@ -24,8 +24,7 @@
 	<div id="sip-bridge" class="section">
 		<h2>{{ t('spreed', 'SIP configuration') }}</h2>
 
-		<p v-if="!showForm"
-			class="settings-hint">
+		<p v-if="!showForm" class="settings-hint">
 			{{ t('spreed', 'SIP configuration is only possible with a high-performance backend.') }}
 		</p>
 		<template v-else>
@@ -35,8 +34,8 @@
 				{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
 			</p>
 
-			<NcMultiselect v-model="sipGroups"
-				class="sip-bridge__sip-groups-select"
+			<NcSelect v-model="sipGroups"
+				class="form__select"
 				:options="groups"
 				:placeholder="t('spreed', 'Enable SIP configuration')"
 				:disabled="loading"
@@ -48,17 +47,17 @@
 				:close-on-select="false"
 				track-by="id"
 				label="displayname"
+				no-wrap
 				@search-change="searchGroup" />
 
-			<h3>{{ t('spreed', 'Shared secret') }}</h3>
-
-			<input v-model="sharedSecret"
-				type="text"
+			<NcTextField :value="sharedSecret"
 				name="shared-secret"
-				class="sip-bridge__shared-secret"
+				class="form__textfield additional-top-margin"
 				:disabled="loading"
 				:placeholder="t('spreed', 'Shared secret')"
-				:aria-label="t('spreed', 'Shared secret')">
+				:label="t('spreed', 'Shared secret')"
+				label-visible
+				@update:value="updateSecret" />
 
 			<h3>{{ t('spreed', 'Dial-in information') }}</h3>
 
@@ -68,7 +67,7 @@
 
 			<textarea v-model="dialInInfo"
 				name="message"
-				class="sip-bridge__dialin-info"
+				class="form__textfield"
 				rows="4"
 				:disabled="loading"
 				:placeholder="t('spreed', 'Phone number (Country)')" />
@@ -91,7 +90,8 @@ import { loadState } from '@nextcloud/initial-state'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { setSIPSettings } from '../../services/settingsService.js'
 
@@ -100,7 +100,8 @@ export default {
 
 	components: {
 		NcButton,
-		NcMultiselect,
+		NcSelect,
+		NcTextField,
 	},
 
 	data() {
@@ -162,18 +163,31 @@ export default {
 			this.loading = false
 			showSuccess(t('spreed', 'SIP configuration saved!'))
 		},
+
+		updateSecret(value) {
+			this.secret = value
+		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
+h3 {
+	margin-top: 24px;
+	font-weight: 600;
+}
 
-.sip-bridge {
-	&__sip-groups-select,
-	&__shared-secret,
-	&__dialin-info {
-		width: 480px;
+.form {
+	&__textfield,
+	&__select {
+		width: 300px;
+		:deep(.vs__search) {
+			width: 100%;
+		}
 	}
 }
 
+.additional-top-margin {
+	margin-top: 10px;
+}
 </style>
