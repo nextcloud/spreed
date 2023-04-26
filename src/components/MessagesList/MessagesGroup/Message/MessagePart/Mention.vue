@@ -72,7 +72,7 @@ export default {
 			return this.type === 'call'
 		},
 		isGroupMention() {
-			return this.type === 'group'
+			return this.type === 'user-group' || this.type === 'group'
 		},
 		isMentionToGuest() {
 			return this.type === 'guest'

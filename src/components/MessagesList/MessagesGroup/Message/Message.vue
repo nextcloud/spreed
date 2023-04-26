@@ -519,7 +519,7 @@ export default {
 			Object.keys(this.messageParameters).forEach(function(p) {
 				const type = this.messageParameters[p].type
 				const mimetype = this.messageParameters[p].mimetype
-				if (type === 'user' || type === 'call' || type === 'guest' || type === 'group') {
+				if (type === 'user' || type === 'call' || type === 'guest' || type === 'user-group' || type === 'group') {
 					richParameters[p] = {
 						component: Mention,
 						props: this.messageParameters[p],
