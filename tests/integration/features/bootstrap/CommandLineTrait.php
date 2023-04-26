@@ -148,6 +148,7 @@ trait CommandLineTrait {
 	}
 
 	/**
+	 * @Then /^the command output contains the text:$/
 	 * @Then /^the command output contains the text "([^"]*)"$/
 	 */
 	public function theCommandOutputContainsTheText($text) {
