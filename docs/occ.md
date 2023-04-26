@@ -6,7 +6,7 @@ Add a new command
 
 ### Usage
 
-* `talk:command:add <cmd> <name> <script> <response> <enabled>`
+* `talk:command:add [--output [OUTPUT]] [--] <cmd> <name> <script> <response> <enabled>`
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -15,6 +15,10 @@ Add a new command
 | `script` | Script to execute (Must be using absolute paths only) | yes | no | `NULL` |
 | `response` | Who should see the response: 0 - No one, 1 - User, 2 - All | yes | no | `NULL` |
 | `enabled` | Who can use this command: 0 - Disabled, 1 - Moderators, 2 - Users, 3 - Guests | yes | no | `NULL` |
+
+| Options | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 
 ## talk:command:add-samples
 
@@ -58,7 +62,7 @@ Add a new command
 
 ### Usage
 
-* `talk:command:update <command-id> <cmd> <name> <script> <response> <enabled>`
+* `talk:command:update [--output [OUTPUT]] [--] <command-id> <cmd> <name> <script> <response> <enabled>`
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -68,6 +72,10 @@ Add a new command
 | `script` | Script to execute (Must be using absolute paths only) | yes | no | `NULL` |
 | `response` | Who should see the response: 0 - No one, 1 - User, 2 - All | yes | no | `NULL` |
 | `enabled` | Who can use this command: 0 - Disabled, 1 - Moderators, 2 - Users, 3 - Guests | yes | no | `NULL` |
+
+| Options | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 
 ## talk:monitor:calls
 
