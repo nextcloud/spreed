@@ -27,6 +27,7 @@ namespace OCA\Talk\Controller;
 use OCA\Talk\Room;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IRequest;
@@ -59,8 +60,6 @@ class PublicShareAuthController extends OCSController {
 	}
 
 	/**
-	 * @PublicPage
-	 *
 	 * Creates a new room for requesting the password of a share.
 	 *
 	 * The new room is a public room associated with a "share:password" object
@@ -77,6 +76,7 @@ class PublicShareAuthController extends OCSController {
 	 *         created, "200 OK" if an existing room is returned, or "404 Not
 	 *         found" if the given share was invalid.
 	 */
+	#[PublicPage]
 	public function createRoom(string $shareToken): DataResponse {
 		try {
 			$share = $this->shareManager->getShareByToken($shareToken);

@@ -30,6 +30,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Participant;
 use OCA\Talk\Service\ParticipantService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\Files\Folder;
@@ -70,12 +71,11 @@ class SettingsController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * @param string $key
 	 * @param string|int|null $value
 	 * @return DataResponse
 	 */
+	#[NoAdminRequired]
 	public function setUserSetting(string $key, $value): DataResponse {
 		if (!$this->validateUserSetting($key, $value)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);

@@ -32,6 +32,8 @@ use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\RoomFormatter;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\FileDisplayResponse;
 use OCP\AppFramework\Http\Response;
@@ -53,9 +55,7 @@ class AvatarController extends AEnvironmentAwareController {
 		parent::__construct($appName, $request);
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function uploadAvatar(): DataResponse {
 		try {
@@ -78,10 +78,8 @@ class AvatarController extends AEnvironmentAwareController {
 		}
 	}
 
-	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 */
+	#[PublicPage]
+	#[NoCSRFRequired]
 	#[RequireParticipant]
 	public function getAvatar(bool $darkTheme = false): Response {
 		$file = $this->avatarService->getAvatar($this->getRoom(), $this->userSession->getUser(), $darkTheme);
@@ -93,18 +91,14 @@ class AvatarController extends AEnvironmentAwareController {
 		return $response;
 	}
 
-	/**
-	 * @PublicPage
-	 * @NoCSRFRequired
-	 */
+	#[PublicPage]
+	#[NoCSRFRequired]
 	#[RequireParticipant]
 	public function getAvatarDark(): Response {
 		return $this->getAvatar(true);
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorParticipant]
 	public function deleteAvatar(): DataResponse {
 		$this->avatarService->deleteAvatar($this->getRoom());

@@ -32,6 +32,8 @@ use OCA\Talk\Service\RoomService;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\UseSession;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSException;
@@ -85,8 +87,6 @@ class FilesIntegrationController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * Returns the token of the room associated to the given file id.
 	 *
 	 * This is the counterpart of self::getRoomByShareToken() for file ids
@@ -114,6 +114,7 @@ class FilesIntegrationController extends OCSController {
 	 *         or "404 Not found" if the given file id was invalid.
 	 * @throws OCSNotFoundException
 	 */
+	#[NoAdminRequired]
 	public function getRoomByFileId(string $fileId): DataResponse {
 		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1') {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -149,8 +150,6 @@ class FilesIntegrationController extends OCSController {
 	}
 
 	/**
-	 * @PublicPage
-	 *
 	 * Returns the token of the room associated to the file id of the given
 	 * share token.
 	 *
@@ -179,6 +178,7 @@ class FilesIntegrationController extends OCSController {
 	 * @return DataResponse the status code is "200 OK" if a room is returned,
 	 *         or "404 Not found" if the given share token was invalid.
 	 */
+	#[PublicPage]
 	#[UseSession]
 	#[BruteForceProtection(action: 'shareinfo')]
 	public function getRoomByShareToken(string $shareToken): DataResponse {

@@ -39,6 +39,7 @@ use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\PollService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
@@ -69,9 +70,7 @@ class PollController extends AEnvironmentAwareController {
 		$this->logger = $logger;
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
@@ -121,9 +120,7 @@ class PollController extends AEnvironmentAwareController {
 		return new DataResponse($this->renderPoll($poll, []), Http::STATUS_CREATED);
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function showPoll(int $pollId): DataResponse {
@@ -143,12 +140,11 @@ class PollController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @PublicPage
-	 *
 	 * @param int $pollId
 	 * @param int[] $optionIds
 	 * @return DataResponse
 	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function votePoll(int $pollId, array $optionIds = []): DataResponse {
@@ -190,9 +186,7 @@ class PollController extends AEnvironmentAwareController {
 		return new DataResponse($this->renderPoll($poll, $votedSelf));
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function closePoll(int $pollId): DataResponse {

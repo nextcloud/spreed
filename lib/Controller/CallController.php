@@ -38,6 +38,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
@@ -64,9 +65,7 @@ class CallController extends AEnvironmentAwareController {
 		$this->timeFactory = $timeFactory;
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireCallEnabled]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
@@ -104,9 +103,7 @@ class CallController extends AEnvironmentAwareController {
 		return new DataResponse($result);
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireCallEnabled]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
@@ -133,9 +130,7 @@ class CallController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireCallEnabled]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::START_CALL)]
@@ -155,9 +150,7 @@ class CallController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireParticipant]
 	public function updateCallFlags(int $flags): DataResponse {
 		$session = $this->participant->getSession();
@@ -175,11 +168,10 @@ class CallController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @PublicPage
-	 *
 	 * @param bool $all whether to also terminate the call for all participants
 	 * @return DataResponse
 	 */
+	#[PublicPage]
 	#[RequireParticipant]
 	public function leaveCall(bool $all = false): DataResponse {
 		$session = $this->participant->getSession();

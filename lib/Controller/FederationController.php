@@ -32,6 +32,7 @@ use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Invitation;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\DB\Exception as DBException;
@@ -59,14 +60,13 @@ class FederationController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * @param int $id
 	 * @return DataResponse
 	 * @throws UnauthorizedException
 	 * @throws DBException
 	 * @throws MultipleObjectsReturnedException
 	 */
+	#[NoAdminRequired]
 	public function acceptShare(int $id): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
@@ -77,14 +77,13 @@ class FederationController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
-	 *
 	 * @param int $id
 	 * @return DataResponse
 	 * @throws UnauthorizedException
 	 * @throws DBException
 	 * @throws MultipleObjectsReturnedException
 	 */
+	#[NoAdminRequired]
 	public function rejectShare(int $id): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
@@ -94,11 +93,7 @@ class FederationController extends OCSController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @NoAdminRequired
-	 *
-	 * @return DataResponse
-	 */
+	#[NoAdminRequired]
 	public function getShares(): DataResponse {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {

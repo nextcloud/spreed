@@ -40,6 +40,8 @@ use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Http\Client\IClientService;
 use OCP\IRequest;
@@ -135,10 +137,9 @@ class RecordingController extends AEnvironmentAwareController {
 	/**
 	 * Backend API to update recording status by backends.
 	 *
-	 * @PublicPage
-	 *
 	 * @return DataResponse
 	 */
+	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	public function backend(): DataResponse {
 		$json = $this->getInputStream();
@@ -267,9 +268,7 @@ class RecordingController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function start(int $status): DataResponse {
 		try {
@@ -280,9 +279,7 @@ class RecordingController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function stop(): DataResponse {
 		try {
@@ -293,9 +290,7 @@ class RecordingController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[BruteForceProtection(action: 'talkRecordingSecret')]
 	#[RequireRoom]
 	public function store(string $owner): DataResponse {
@@ -321,9 +316,7 @@ class RecordingController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
 	public function notificationDismiss(int $timestamp): DataResponse {
 		try {
@@ -338,9 +331,7 @@ class RecordingController extends AEnvironmentAwareController {
 		return new DataResponse();
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
 	public function shareToChat(int $fileId, int $timestamp): DataResponse {
 		try {

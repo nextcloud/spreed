@@ -49,6 +49,8 @@ use OCA\Talk\Service\SessionService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\AutoComplete\IManager;
@@ -192,8 +194,6 @@ class ChatController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @PublicPage
-	 *
 	 * Sends a new chat message to the given room.
 	 *
 	 * The author and timestamp are automatically set to the current user/guest
@@ -208,6 +208,7 @@ class ChatController extends AEnvironmentAwareController {
 	 *         "404 Not found" if the room or session for a guest user was not
 	 *         found".
 	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
@@ -249,8 +250,6 @@ class ChatController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @PublicPage
-	 *
 	 * Sends a rich-object to the given room.
 	 *
 	 * The author and timestamp are automatically set to the current user/guest
@@ -265,6 +264,7 @@ class ChatController extends AEnvironmentAwareController {
 	 *         "404 Not found" if the room or session for a guest user was not
 	 *         found".
 	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
@@ -349,8 +349,6 @@ class ChatController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @PublicPage
-	 *
 	 * Receives chat messages from the given room.
 	 *
 	 * - Receiving the history ($lookIntoFuture=0):
@@ -398,6 +396,7 @@ class ChatController extends AEnvironmentAwareController {
 	 *         'actorDisplayName', 'timestamp' (in seconds and UTC timezone) and
 	 *         'message'.
 	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function receiveMessages(int $lookIntoFuture,
@@ -595,12 +594,11 @@ class ChatController extends AEnvironmentAwareController {
 	}
 
 	/**
-	 * @PublicPage
-	 *
 	 * @param int $messageId The focused message which should be in the "middle" of the returned context
 	 * @param int $limit Number of chat messages to receive in both directions (50 by default, 100 at most, might return 201 messages)
 	 * @return DataResponse
 	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function getMessageContext(
@@ -660,9 +658,7 @@ class ChatController extends AEnvironmentAwareController {
 		return $messages;
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
@@ -730,9 +726,7 @@ class ChatController extends AEnvironmentAwareController {
 		return $response;
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
 	#[RequireReadWriteConversation]
 	public function clearHistory(): DataResponse {
@@ -765,9 +759,7 @@ class ChatController extends AEnvironmentAwareController {
 		return $response;
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireParticipant]
 	public function setReadMarker(int $lastReadMessage): DataResponse {
 		$this->participantService->updateLastReadMessage($this->participant, $lastReadMessage);
@@ -778,9 +770,7 @@ class ChatController extends AEnvironmentAwareController {
 		return $response;
 	}
 
-	/**
-	 * @NoAdminRequired
-	 */
+	#[NoAdminRequired]
 	#[RequireParticipant]
 	public function markUnread(): DataResponse {
 		$message = $this->room->getLastMessage();
@@ -804,9 +794,7 @@ class ChatController extends AEnvironmentAwareController {
 		return $this->setReadMarker($unreadId);
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function getObjectsSharedInRoomOverview(int $limit = 7): DataResponse {
@@ -849,9 +837,7 @@ class ChatController extends AEnvironmentAwareController {
 		return new DataResponse($messagesByType, Http::STATUS_OK);
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	public function getObjectsSharedInRoom(string $objectType, int $lastKnownMessageId = 0, int $limit = 100): DataResponse {
@@ -900,9 +886,7 @@ class ChatController extends AEnvironmentAwareController {
 		return $messages;
 	}
 
-	/**
-	 * @PublicPage
-	 */
+	#[PublicPage]
 	#[RequireModeratorOrNoLobby]
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
