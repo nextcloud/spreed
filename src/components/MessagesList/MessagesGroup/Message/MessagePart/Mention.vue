@@ -23,7 +23,7 @@
 	<div class="mention">
 		<NcUserBubble v-if="isMentionToAll"
 			:display-name="name"
-			:avatar-image="'icon-group-forced-white'"
+			:avatar-image="avatarUrl"
 			:primary="true" />
 		<NcUserBubble v-else-if="isGroupMention"
 			:display-name="name"
@@ -40,6 +40,8 @@
 </template>
 
 <script>
+
+import { generateOcsUrl } from '@nextcloud/router'
 
 import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
 
@@ -87,6 +89,15 @@ export default {
 		isCurrentUser() {
 			return this.$store.getters.getActorType() === 'users'
 				&& this.id === this.$store.getters.getUserId()
+		},
+		isDarkTheme() {
+			return window.getComputedStyle(document.body)
+				.getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
+		},
+		avatarUrl() {
+			return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (this.darkTheme ? '/dark' : ''), {
+				token: this.id,
+			})
 		},
 	},
 }
