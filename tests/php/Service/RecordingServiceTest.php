@@ -3,6 +3,7 @@
 declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2022, Vitor Mattos <vitor@php.rio>
+ * @copyright Copyright (c) 2023, Elmer Miroslav Mosher Golovin (miroslav@mishamosher.com)
  *
  * @author Vitor Mattos <vitor@php.rio>
  *
@@ -119,34 +120,35 @@ class RecordingServiceTest extends TestCase {
 	}
 
 	/** @dataProvider dataValidateFileFormat */
-	public function testValidateFileFormat(string $fileName, string $content, string $exceptionMessage):void {
+	public function testValidateFileFormat(string $fileName, string $fileRealPath, string $exceptionMessage): void {
 		if ($exceptionMessage) {
 			$this->expectExceptionMessage($exceptionMessage);
 		} else {
 			$this->expectNotToPerformAssertions();
 		}
-		$this->recordingService->validateFileFormat($fileName, $content);
+		$this->recordingService->validateFileFormat($fileName, $fileRealPath);
 	}
 
 	public function dataValidateFileFormat(): array {
 		return [
+			# file_invalid_path
+			['', '', 'file_invalid_path'],
 			# file_mimetype
-			['', '', 'file_mimetype'],
-			['', file_get_contents(__DIR__ . '/../../../img/app.svg'), 'file_mimetype'],
-			['name.ogg', file_get_contents(__DIR__ . '/../../../img/app.svg'), 'file_mimetype'],
+			['', realpath(__DIR__ . '/../../../img/app.svg'), 'file_mimetype'],
+			['name.ogg', realpath(__DIR__ . '/../../../img/app.svg'), 'file_mimetype'],
 			# file_extension
-			['', file_get_contents(__DIR__ . '/../../../img/join_call.ogg'), 'file_extension'],
-			['name', file_get_contents(__DIR__ . '/../../../img/join_call.ogg'), 'file_extension'],
-			['name.mp3', file_get_contents(__DIR__ . '/../../../img/join_call.ogg'), 'file_extension'],
+			['', realpath(__DIR__ . '/../../../img/join_call.ogg'), 'file_extension'],
+			['name', realpath(__DIR__ . '/../../../img/join_call.ogg'), 'file_extension'],
+			['name.mp3', realpath(__DIR__ . '/../../../img/join_call.ogg'), 'file_extension'],
 			# Success
-			['name.ogg', file_get_contents(__DIR__ . '/../../../img/join_call.ogg'), ''],
+			['name.ogg', realpath(__DIR__ . '/../../../img/join_call.ogg'), ''],
 		];
 	}
 
 	/**
-	 * @dataProvider dataGetContentFromFileArray
+	 * @dataProvider dataGetResourceFromFileArray
 	 */
-	public function testGetContentFromFileArray(array $file, $expected, string $exceptionMessage): void {
+	public function testGetResourceFromFileArray(array $file, $expected, string $exceptionMessage): void {
 		if ($exceptionMessage) {
 			$this->expectExceptionMessage($exceptionMessage);
 		}
@@ -158,12 +160,11 @@ class RecordingServiceTest extends TestCase {
 		]);
 		$participant = new Participant($room, $attendee, null);
 
-		$actual = $this->recordingService->getContentFromFileArray($file, $room, $participant);
+		$actual = stream_get_contents($this->recordingService->getResourceFromFileArray($file, $room, $participant));
 		$this->assertEquals($expected, $actual);
-		$this->assertFileDoesNotExist($file['tmp_name']);
 	}
 
-	public function dataGetContentFromFileArray(): array {
+	public function dataGetResourceFromFileArray(): array {
 		$fileWithContent = tempnam(sys_get_temp_dir(), 'txt');
 		file_put_contents($fileWithContent, 'bla');
 		return [

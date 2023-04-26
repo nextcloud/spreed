@@ -9,8 +9,8 @@ dependencies = [
     "flask",
     "pulsectl",
     "pyvirtualdisplay>=2.0",
+    "requests-toolbelt",
     "selenium>=4.6.0",
-    "urllib3",
     "websocket-client",
 ]
 dynamic = ["version"]
