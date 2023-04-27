@@ -68,6 +68,7 @@
 				:aria-label="t('spreed', 'Language')"
 				:placeholder="t('spreed', 'Language')"
 				:options="languages"
+				:clearable="false"
 				label="name"
 				track-by="code"
 				no-wrap />
@@ -83,6 +84,7 @@
 				:aria-label="t('spreed', 'Country')"
 				:placeholder="t('spreed', 'Country')"
 				:options="countries"
+				:clearable="false"
 				label="name"
 				track-by="code"
 				no-wrap />
