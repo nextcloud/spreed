@@ -186,7 +186,7 @@ export default {
 		async handleFileInput(event) {
 
 			// Make file path
-			const file = Object.values(event.target.files)[0]
+			const file = event.target.files[0]
 
 			// Clear input to ensure that the change event will be emitted if
 			// the same file is picked again.
