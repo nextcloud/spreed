@@ -145,6 +145,8 @@ export default {
 	},
 
 	async mounted() {
+		this.loadBackground()
+
 		const userRoot = '/files/' + this.$store.getters.getUserId()
 		const relativeBackgroundsFolderPath = this.$store.getters.getAttachmentFolder() + '/Backgrounds'
 		const absoluteBackgroundsFolderPath = userRoot + relativeBackgroundsFolderPath
@@ -166,8 +168,6 @@ export default {
 				console.debug(error)
 			}
 		}
-
-		this.loadBackground()
 	},
 
 	methods: {
