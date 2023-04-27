@@ -145,13 +145,8 @@ export default {
 	},
 
 	async mounted() {
-		// userRoot path
 		const userRoot = '/files/' + this.$store.getters.getUserId()
-
-		// Relative background folder path
 		const relativeBackgroundsFolderPath = this.$store.getters.getAttachmentFolder() + '/Backgrounds'
-
-		// Absolute backgrounds folder path
 		const absoluteBackgroundsFolderPath = userRoot + relativeBackgroundsFolderPath
 
 		// Create the backgrounds folder if it doesn't exist
