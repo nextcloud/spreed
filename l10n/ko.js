@@ -991,6 +991,7 @@ OC.L10N.register(
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk가 업데이트 되었습니다. 통화를 시작하거나 참여하려면 현재 페이지를 새로고침 해야합니다.",
     "You will be able to join the call only after a moderator starts it." : "진행자가 전화를 시작한 후에만 통화에 참여할 수 있습니다.",
     "Open sidebar" : "사이드바 열기",
+    "Open chat" : "대화방 열기",
     "You have new unread messages in the chat." : "채팅에 읽지 않은 새 메시지가 있습니다.",
     "You have been mentioned in the chat." : "채팅에서 언급되었습니다.",
     "Mute others" : "다른 사람 음소거",

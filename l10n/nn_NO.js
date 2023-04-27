@@ -72,6 +72,7 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Tastatursnarvegar",
     "Search" : "Search",
     "Open sidebar" : "Opne sidestolpe",
+    "Open chat" : "Start lynmelding",
     "Grid view" : "Rutenett visning",
     "Send" : "Send",
     "Say hi to your friends and colleagues!" : "Sei hei til dine venner og kollegar!",

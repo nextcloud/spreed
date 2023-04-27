@@ -1303,6 +1303,7 @@ OC.L10N.register(
     "Send a reaction" : "Reaktion senden",
     "React with {reaction}" : "Reagieren mit {reaction}",
     "Open sidebar" : "Seitenleiste öffnen",
+    "Open chat" : "Chat öffnen",
     "You have new unread messages in the chat." : "Sie haben neue ungelesene Nachrichten im Chat.",
     "You have been mentioned in the chat." : "Sie wurden im Chat erwähnt.",
     "_%n participant in call_::_%n participants in call_" : ["%n Anrufteilnehmer","%n Anrufteilnehmer"],

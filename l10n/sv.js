@@ -716,6 +716,7 @@ OC.L10N.register(
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk uppdaterades, du måste ladda om sidan innan du kan starta eller gå med i ett samtal.",
     "You will be able to join the call only after a moderator starts it." : "Du kommer att kunna gå med i samtalet först när en moderator startar det.",
     "Open sidebar" : "Öppna sidofältet",
+    "Open chat" : "Öppna chatt",
     "Toggle fullscreen" : "Växla helskärm",
     "Grid view" : "Rutnätsvy",
     "Send" : "Skicka",
