@@ -726,6 +726,7 @@ OC.L10N.register(
     "Your privacy setting has been saved" : "Jūsų privatumo nustatymas įrašytas",
     "Start call" : "Pradėti skambutį",
     "Open sidebar" : "Atverti šoninę juostą",
+    "Open chat" : "Atverti pokalbį",
     "Toggle fullscreen" : "Perjungti visą ekraną",
     "Exit fullscreen (F)" : "Išeiti iš viso ekrano (F)",
     "Fullscreen (F)" : "Visas ekranas (F)",

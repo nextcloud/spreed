@@ -1103,6 +1103,7 @@ OC.L10N.register(
     "Stop recording" : "停止录制",
     "Recording" : "录音",
     "Open sidebar" : "打开侧边栏",
+    "Open chat" : "开启聊天",
     "You have new unread messages in the chat." : "你在聊天中有新的未读消息",
     "You have been mentioned in the chat." : "你在聊天中被提及",
     "Mute others" : "降低其他人的声音",

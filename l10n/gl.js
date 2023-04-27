@@ -1145,6 +1145,7 @@ OC.L10N.register(
     "You will be able to join the call only after a moderator starts it." : "Só poderá unirse á chamada após que a inicie un moderador.",
     "Recording" : "Gravando",
     "Open sidebar" : "Abrir a barra lateral",
+    "Open chat" : "Abrir unha conversa",
     "Mute others" : "Silenciar aos outros",
     "Toggle fullscreen" : "Alternar a pantalla completa",
     "Speaker view" : "Vista do falante",

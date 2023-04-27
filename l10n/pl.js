@@ -1290,6 +1290,7 @@ OC.L10N.register(
     "Starting the recording" : "Rozpoczęcie nagrywania",
     "Recording" : "Nagranie",
     "Open sidebar" : "Otwórz pasek boczny",
+    "Open chat" : "Otwórz rozmowę",
     "You have new unread messages in the chat." : "Masz nowe nieprzeczytane wiadomości na czacie.",
     "You have been mentioned in the chat." : "Zostałeś wspomniany na czacie.",
     "_%n participant in call_::_%n participants in call_" : ["%n uczestnik rozmowy","%n uczestników rozmowy","%n uczestników rozmowy","%n uczestników rozmowy"],

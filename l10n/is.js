@@ -507,6 +507,7 @@ OC.L10N.register(
     "Search" : "Search",
     "Start call" : "Hefja samtal",
     "Open sidebar" : "Opna hliðarspjald",
+    "Open chat" : "Opna spjall",
     "Grid view" : "Reitasýn",
     "Send" : "Senda",
     "Say hi to your friends and colleagues!" : "Segðu hæ við vini þína og samstarfsmenn!",

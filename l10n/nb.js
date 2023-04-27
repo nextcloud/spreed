@@ -586,6 +586,7 @@ OC.L10N.register(
     "Search" : "Søk",
     "Start call" : "Start samtale",
     "Open sidebar" : "Åpne sidepanel",
+    "Open chat" : "Åpne Chat",
     "Grid view" : "Rutenett-visning",
     "Raise hand" : "Løft hånden",
     "Send" : "Send",

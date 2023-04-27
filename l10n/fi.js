@@ -1031,6 +1031,7 @@ OC.L10N.register(
     "Start call" : "Aloita puhelu",
     "Stop recording" : "Lopeta tallennus",
     "Open sidebar" : "Avaa sivupalkki",
+    "Open chat" : "Avaa keskustelu",
     "You have new unread messages in the chat." : "Keskustelussa on uusia lukemattomia viestejä.",
     "You have been mentioned in the chat." : "Sinut on mainittu keskustelussa.",
     "Mute others" : "Mykistä muut",
