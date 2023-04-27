@@ -65,7 +65,7 @@
 		</button>
 		<!--native file picker, hidden -->
 		<input v-show="false"
-			id="file-upload"
+			id="custom-background-file"
 			ref="fileUploadInput"
 			multiple
 			type="file"
