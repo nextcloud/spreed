@@ -151,17 +151,21 @@ export default {
 
 		// Create the backgrounds folder if it doesn't exist
 		if (await client.exists(absoluteBackgroundsFolderPath) === false) {
-			await client.createDirectory(absoluteBackgroundsFolderPath)
-		}
+			try {
+				await client.createDirectory(absoluteBackgroundsFolderPath)
 
-		// Create picker
-		picker = getFilePickerBuilder(t('spreed', 'File to share'))
-			.setMultiSelect(false)
-			.setModal(true)
-			.startAt(relativeBackgroundsFolderPath)
-			.setType(1)
-			.allowDirectories(false)
-			.build()
+				// Create picker
+				picker = getFilePickerBuilder(t('spreed', 'File to share'))
+					.setMultiSelect(false)
+					.setModal(true)
+					.startAt(relativeBackgroundsFolderPath)
+					.setType(1)
+					.allowDirectories(false)
+					.build()
+			} catch (error) {
+				console.debug(error)
+			}
+		}
 
 		this.loadBackground()
 	},
