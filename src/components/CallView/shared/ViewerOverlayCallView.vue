@@ -20,90 +20,96 @@
   -->
 
 <template>
-	<div class="viewer-overlay">
-		<div class="viewer-overlay__collapse" :class="{ collapsed: isCollapsed }">
-			<NcButton type="tertiary"
-				class="viewer-overlay__button"
-				:aria-label="isCollapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
-				@click.stop="isCollapsed = !isCollapsed">
-				<template #icon>
-					<ChevronDown v-if="!isCollapsed" :size="20" />
-					<ChevronUp v-else :size="20" />
-				</template>
-			</NcButton>
-		</div>
-
-		<Transition name="slide-down">
-			<div v-show="!isCollapsed" class="viewer-overlay__video-container">
-				<div class="video-overlay__top-bar">
+	<div ref="ghost" class="viewer-overlay-ghost">
+		<Portal>
+			<div class="viewer-overlay" :style="{ right: position.right + 'px', bottom: position.bottom + 'px' }">
+				<div class="viewer-overlay__collapse" :class="{ collapsed: isCollapsed }">
 					<NcButton type="tertiary"
 						class="viewer-overlay__button"
-						:aria-label="t('spreed', 'Expand')"
-						@click.stop="maximize">
+						:aria-label="isCollapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
+						@click.stop="isCollapsed = !isCollapsed">
 						<template #icon>
-							<ArrowExpand :size="20" />
+							<ChevronDown v-if="!isCollapsed" :size="20" />
+							<ChevronUp v-else :size="20" />
 						</template>
 					</NcButton>
 				</div>
 
-				<LocalVideo v-if="localModel.attributes.videoEnabled"
-					class="viewer-overlay__local-video"
-					:token="token"
-					:show-controls="false"
-					:local-media-model="localModel"
-					:local-call-participant-model="localCallParticipantModel"
-					un-selectable />
-
-				<VideoVue class="viewer-overlay__video"
-					:token="token"
-					:model="model"
-					:shared-data="sharedData"
-					is-grid
-					un-selectable
-					@click-video="maximize">
-					<template #bottom-bar>
-						<div class="viewer-overlay__bottom-bar">
-							<NcButton v-tooltip="audioButtonTooltip"
-								type="tertiary"
+				<Transition name="slide-down">
+					<div v-show="!isCollapsed" class="viewer-overlay__video-container">
+						<div class="video-overlay__top-bar">
+							<NcButton type="tertiary"
 								class="viewer-overlay__button"
-								:aria-label="audioButtonAriaLabel"
-								:class="{
-									'audio-enabled': isAudioAllowed && localModel.attributes.audioAvailable && localModel.attributes.audioEnabled,
-									'no-audio-available': !isAudioAllowed || !localModel.attributes.audioAvailable,
-								}"
-								@click.stop="toggleAudio">
+								:aria-label="t('spreed', 'Expand')"
+								@click.stop="maximize">
 								<template #icon>
-									<VolumeIndicator :audio-preview-available="localModel.attributes.audioAvailable"
-										:audio-enabled="showMicrophoneOn"
-										:current-volume="localModel.attributes.currentVolume"
-										:volume-threshold="localModel.attributes.volumeThreshold"
-										primary-color="currentColor"
-										overlay-muted-color="#888888" />
-								</template>
-							</NcButton>
-							<NcButton v-tooltip="videoButtonTooltip"
-								type="tertiary"
-								class="viewer-overlay__button"
-								:aria-label="videoButtonAriaLabel"
-								:class="{
-									'video-enabled': isVideoAllowed && localModel.attributes.videoAvailable && localModel.attributes.videoEnabled,
-									'no-video-available': !isVideoAllowed || !localModel.attributes.videoAvailable,
-								}"
-								@click.stop="toggleVideo">
-								<template #icon>
-									<VideoIcon v-if="showVideoOn" :size="20" />
-									<VideoOff v-else :size="20" />
+									<ArrowExpand :size="20" />
 								</template>
 							</NcButton>
 						</div>
-					</template>
-				</VideoVue>
+
+						<LocalVideo v-if="localModel.attributes.videoEnabled"
+							class="viewer-overlay__local-video"
+							:token="token"
+							:show-controls="false"
+							:local-media-model="localModel"
+							:local-call-participant-model="localCallParticipantModel"
+							un-selectable />
+
+						<VideoVue class="viewer-overlay__video"
+							:token="token"
+							:model="model"
+							:shared-data="sharedData"
+							is-grid
+							un-selectable
+							@click-video="maximize">
+							<template #bottom-bar>
+								<div class="viewer-overlay__bottom-bar">
+									<NcButton v-tooltip="audioButtonTooltip"
+										type="tertiary"
+										class="viewer-overlay__button"
+										:aria-label="audioButtonAriaLabel"
+										:class="{
+											'audio-enabled': isAudioAllowed && localModel.attributes.audioAvailable && localModel.attributes.audioEnabled,
+											'no-audio-available': !isAudioAllowed || !localModel.attributes.audioAvailable,
+										}"
+										@click.stop="toggleAudio">
+										<template #icon>
+											<VolumeIndicator :audio-preview-available="localModel.attributes.audioAvailable"
+												:audio-enabled="showMicrophoneOn"
+												:current-volume="localModel.attributes.currentVolume"
+												:volume-threshold="localModel.attributes.volumeThreshold"
+												primary-color="currentColor"
+												overlay-muted-color="#888888" />
+										</template>
+									</NcButton>
+									<NcButton v-tooltip="videoButtonTooltip"
+										type="tertiary"
+										class="viewer-overlay__button"
+										:aria-label="videoButtonAriaLabel"
+										:class="{
+											'video-enabled': isVideoAllowed && localModel.attributes.videoAvailable && localModel.attributes.videoEnabled,
+											'no-video-available': !isVideoAllowed || !localModel.attributes.videoAvailable,
+										}"
+										@click.stop="toggleVideo">
+										<template #icon>
+											<VideoIcon v-if="showVideoOn" :size="20" />
+											<VideoOff v-else :size="20" />
+										</template>
+									</NcButton>
+								</div>
+							</template>
+						</VideoVue>
+					</div>
+				</Transition>
 			</div>
-		</Transition>
+		</Portal>
 	</div>
 </template>
 
 <script>
+import { Portal } from '@linusborg/vue-simple-portal'
+
 import ArrowExpand from 'vue-material-design-icons/ArrowExpand.vue'
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
@@ -125,6 +131,7 @@ export default {
 	name: 'ViewerOverlayCallView',
 
 	components: {
+		Portal,
 		LocalVideo,
 		ChevronUp,
 		ChevronDown,
@@ -179,6 +186,11 @@ export default {
 	data() {
 		return {
 			isCollapsed: false,
+			observer: null,
+			position: {
+				right: 0,
+				bottom: 0,
+			},
 		}
 	},
 
@@ -296,6 +308,16 @@ export default {
 
 	},
 
+	mounted() {
+		this.updatePosition()
+		this.observer = new ResizeObserver(this.updatePosition)
+		this.observer.observe(this.$refs.ghost)
+	},
+
+	beforeDestroy() {
+		this.observer.disconnect()
+	},
+
 	methods: {
 		toggleVideo() {
 			if (!this.localModel.attributes.videoAvailable) {
@@ -330,6 +352,11 @@ export default {
 			this.$store.dispatch('setCallViewMode', { isViewerOverlay: false })
 		},
 
+		updatePosition() {
+			const { right, bottom } = this.$refs.ghost.getBoundingClientRect()
+			this.position.right = window.innerWidth - right
+			this.position.bottom = window.innerHeight - bottom
+		},
 	},
 }
 </script>
@@ -337,14 +364,19 @@ export default {
 <style lang="scss" scoped>
 @import '../../../assets/variables';
 
+.viewer-overlay-ghost {
+	position: absolute;
+	bottom: 8px;
+	right: 8px;
+	left: 0;
+}
+
 .viewer-overlay {
 	--aspect-ratio: calc(3 / 4);
 	--width: 20vw;
 	--min-width: 250px;
 	--max-width: 400px;
 	position: absolute;
-	bottom: 8px;
-	right: 8px;
 	width: var(--width);
 	min-width: var(--min-width);
 	max-width: var(--max-width);
