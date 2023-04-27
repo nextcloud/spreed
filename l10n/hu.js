@@ -1294,6 +1294,7 @@ OC.L10N.register(
     "Starting the recording" : "A felvétel indítása",
     "Recording" : "Felvétel",
     "Open sidebar" : "Oldalsáv megnyitása",
+    "Open chat" : "Csevegés megnyitása",
     "You have new unread messages in the chat." : "Olvasatlan üzenetek vannak a csevegésben.",
     "You have been mentioned in the chat." : "Megemlítették a csevegésben.",
     "_%n participant in call_::_%n participants in call_" : ["%n résztvevő a hívásban","%n résztvevő a hívásban"],

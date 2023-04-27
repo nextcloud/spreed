@@ -1303,6 +1303,7 @@ OC.L10N.register(
     "Send a reaction" : "傳送反應",
     "React with {reaction}" : "使用 {reaction} 反應",
     "Open sidebar" : "開啟側邊攔",
+    "Open chat" : "開啟聊天",
     "You have new unread messages in the chat." : "您在聊天中有新的未讀訊息。",
     "You have been mentioned in the chat." : "您已在聊天中被提及。",
     "_%n participant in call_::_%n participants in call_" : ["通話中有 %n 位參與者"],

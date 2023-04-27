@@ -1296,6 +1296,7 @@ OC.L10N.register(
     "Starting the recording" : "Zahájit nahrávání",
     "Recording" : "Zaznamenávání",
     "Open sidebar" : "Otevřít postranní panel",
+    "Open chat" : "Otevřít chat",
     "You have new unread messages in the chat." : "Máte nové nepřečtené zprávy v chatu.",
     "You have been mentioned in the chat." : "Byli jste zmíněni v chatu.",
     "_%n participant in call_::_%n participants in call_" : ["%n účastník v hovoru","%n účastníci v hovoru","%n účastníků v hovoru","%n účastníci v hovoru"],

@@ -970,6 +970,7 @@ OC.L10N.register(
     "You will be able to join the call only after a moderator starts it." : "As a pòdere intrare in una mutida isceti a pustis chi una persone chi moderat dda cumintzet.",
     "Recording" : "Registratzione",
     "Open sidebar" : "Aberi s'istanca laterale",
+    "Open chat" : "Aberi tzarrada",
     "You have new unread messages in the chat." : "Tenes messàgios non lèghidos noos in sa tzarrada.",
     "You have been mentioned in the chat." : "T'ant mentovadu in sa tzarrada.",
     "Mute others" : "Tira s'àudio a àtere",
