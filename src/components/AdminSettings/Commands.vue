@@ -47,38 +47,32 @@
 				{{ t('spreed', 'Enabled for') }}
 			</div>
 
-			<Fragment v-for="command in commands" :key="command.id">
-				<div class="name">
+			<template v-for="command in commands">
+				<div :key="`${command.id}_name`" class="name">
 					{{ command.name }}
 				</div>
-				<div class="command">
+				<div :key="`${command.id}_command`" class="command">
 					{{ command.command }}
 				</div>
-				<div class="script">
+				<div :key="`${command.id}_script`" class="script">
 					{{ command.script }}
 				</div>
-				<div class="response">
+				<div :key="`${command.id}_response`" class="response">
 					{{ translateResponse(command.response) }}
 				</div>
-				<div class="enabled">
+				<div :key="`${command.id}_enabled`" class="enabled">
 					{{ translateEnabled(command.enabled) }}
 				</div>
-			</Fragment>
+			</template>
 		</div>
 	</section>
 </template>
 
 <script>
-import { Fragment } from 'vue-frag'
-
 import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'Commands',
-
-	components: {
-		Fragment,
-	},
 
 	data() {
 		return {
@@ -132,12 +126,14 @@ export default {
 		grid-template-columns: minmax(100px, 200px) minmax(100px, 200px)  1fr minmax(100px, 200px)  minmax(100px, 200px);
 		grid-column-gap: 5px;
 		grid-row-gap: 10px;
+
 		.head {
 			padding-bottom: 5px;
 			border-bottom: 1px solid var(--color-border);
 			font-weight: bold;
 		}
 	}
+
 	small {
 		color: var(--color-warning);
 		border: 1px solid var(--color-warning);

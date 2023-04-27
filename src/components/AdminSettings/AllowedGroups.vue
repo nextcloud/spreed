@@ -174,8 +174,8 @@ export default {
 		const mergedGroups = Array.from(
 			new Set(
 				this.allowedGroups.concat(this.canStartConversations)
-					.map(g => JSON.stringify(g))
-			)
+					.map(g => JSON.stringify(g)),
+			),
 		).map(g => JSON.parse(g))
 
 		this.groups = mergedGroups.sort(function(a, b) {
@@ -268,6 +268,7 @@ export default {
 
 	&__select {
 		width: 300px;
+
 		:deep(.vs__search) {
 			width: 100%;
 		}

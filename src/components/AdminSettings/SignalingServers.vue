@@ -28,23 +28,13 @@
 
 		<p class="settings-hint">
 			{{ t('spreed', 'An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server.') }}
-			<span v-if="!servers.length">{{ t('spreed', 'Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices.') }}</span>
 		</p>
 
-		<p v-if="!isCacheConfigured"
-			class="settings-hint warning">
+		<NcNoteCard v-if="!isCacheConfigured" type="warning">
 			{{ t('spreed', 'It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end.') }}
-		</p>
+		</NcNoteCard>
 
-		<NcCheckboxRadioSwitch v-if="!servers.length"
-			class="additional-top-margin"
-			:checked.sync="hideWarning"
-			:disabled="loading"
-			@update:checked="updateHideWarning">
-			{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 4 participants') }}
-		</NcCheckboxRadioSwitch>
-
-		<transition-group name="fade" tag="ul">
+		<transition-group v-if="servers.length" name="fade" tag="ul">
 			<SignalingServer v-for="(server, index) in servers"
 				:key="`server${index}`"
 				:server.sync="servers[index].server"
@@ -56,16 +46,7 @@
 				@update:verify="debounceUpdateServers" />
 		</transition-group>
 
-		<NcTextField class="form__textfield additional-top-margin"
-			:value="secret"
-			name="signaling_secret"
-			:disabled="loading"
-			:placeholder="t('spreed', 'Shared secret')"
-			:label="t('spreed', 'Shared secret')"
-			label-visible
-			@update:value="updateSecret" />
-
-		<NcButton v-if="showAddServerButton"
+		<NcButton v-if="!servers.length || isClusteredMode"
 			class="additional-top-margin"
 			:disabled="loading"
 			@click="newServer">
@@ -75,6 +56,26 @@
 			</template>
 			{{ t('spreed', 'Add a new high-performance backend server') }}
 		</NcButton>
+
+		<template v-if="!servers.length">
+			<p class="settings-hint additional-top-margin">
+				{{ t('spreed', 'Please note that in calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices.') }}
+			</p>
+			<NcCheckboxRadioSwitch :checked.sync="hideWarning"
+				:disabled="loading"
+				@update:checked="updateHideWarning">
+				{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 4 participants') }}
+			</NcCheckboxRadioSwitch>
+		</template>
+
+		<NcTextField class="form__textfield additional-top-margin"
+			:value="secret"
+			name="signaling_secret"
+			:disabled="loading"
+			:placeholder="t('spreed', 'Shared secret')"
+			:label="t('spreed', 'Shared secret')"
+			label-visible
+			@update:value="updateSecret" />
 	</section>
 </template>
 
@@ -88,6 +89,7 @@ import { loadState } from '@nextcloud/initial-state'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
@@ -100,6 +102,7 @@ export default {
 	components: {
 		NcButton,
 		NcCheckboxRadioSwitch,
+		NcNoteCard,
 		NcTextField,
 		Plus,
 		SignalingServer,
@@ -115,12 +118,6 @@ export default {
 			isCacheConfigured: loadState('spreed', 'has_cache_configured'),
 			isClusteredMode: loadState('spreed', 'signaling_mode') === SIGNALING.MODE.CLUSTER_CONVERSATION,
 		}
-	},
-
-	computed: {
-		showAddServerButton() {
-			return this.isClusteredMode || this.servers.length === 0
-		},
 	},
 
 	beforeMount() {

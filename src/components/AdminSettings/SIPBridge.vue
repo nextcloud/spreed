@@ -28,13 +28,11 @@
 			{{ t('spreed', 'SIP configuration is only possible with a high-performance backend.') }}
 		</p>
 		<template v-else>
-			<h3>{{ t('spreed', 'Restrict SIP configuration') }}</h3>
-
-			<p class="settings-hint">
-				{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
-			</p>
-
+			<label for="sip-group-enabled" class="form__label">
+				{{ t('spreed', 'Restrict SIP configuration') }}
+			</label>
 			<NcSelect v-model="sipGroups"
+				input-id="sip-group-enabled"
 				class="form__select"
 				:options="groups"
 				:placeholder="t('spreed', 'Enable SIP configuration')"
@@ -49,6 +47,9 @@
 				label="displayname"
 				no-wrap
 				@search-change="searchGroup" />
+			<p class="settings-hint">
+				{{ t('spreed', 'Only users of the following groups can enable SIP in conversations they moderate') }}
+			</p>
 
 			<NcTextField :value="sharedSecret"
 				name="shared-secret"
@@ -59,18 +60,19 @@
 				label-visible
 				@update:value="updateSecret" />
 
-			<h3>{{ t('spreed', 'Dial-in information') }}</h3>
-
-			<p class="settings-hint">
-				{{ t('spreed', 'This information is sent in invitation emails as well as displayed in the sidebar to all participants.') }}
-			</p>
-
-			<textarea v-model="dialInInfo"
+			<label for="dial-in-info" class="form__label additional-top-margin">
+				{{ t('spreed', 'Dial-in information') }}
+			</label>
+			<textarea id="dial-in-info"
+				v-model="dialInInfo"
 				name="message"
 				class="form__textfield"
 				rows="4"
 				:disabled="loading"
 				:placeholder="t('spreed', 'Phone number (Country)')" />
+			<p class="settings-hint">
+				{{ t('spreed', 'This information is sent in invitation emails as well as displayed in the sidebar to all participants.') }}
+			</p>
 
 			<NcButton type="primary"
 				:disabled="loading"
@@ -178,12 +180,22 @@ h3 {
 }
 
 .form {
-	&__textfield,
+	&__textfield {
+		width: 300px;
+	}
+
 	&__select {
 		width: 300px;
+		margin-bottom: 9px;
+
 		:deep(.vs__search) {
 			width: 100%;
 		}
+	}
+
+	&__label {
+		display: block;
+		padding: 4px 0;
 	}
 }
 
