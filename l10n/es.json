@@ -1295,6 +1295,7 @@
     "Starting the recording" : "Empezar la grabación",
     "Recording" : "Grabando",
     "Open sidebar" : "Abrir barra lateral",
+    "Open chat" : "Abrir chat",
     "You have new unread messages in the chat." : "Tienes nuevos mensajes sin leer en el chat.",
     "You have been mentioned in the chat." : "Se le ha mencionado en el chat.",
     "_%n participant in call_::_%n participants in call_" : ["%n participante en la llamada","%n participantes en la llamada","%n participantes en la llamada"],

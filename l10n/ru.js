@@ -1248,6 +1248,7 @@ OC.L10N.register(
     "Stop recording" : "Остановить запись",
     "Recording" : "Запись",
     "Open sidebar" : "Открыть боковую панель",
+    "Open chat" : "Открытый чат",
     "You have new unread messages in the chat." : "В обсуждении имеются непрочитанные сообщения.",
     "You have been mentioned in the chat." : "Вы были упомянуты в обсуждении.",
     "_%n participant in call_::_%n participants in call_" : ["%n участник в вызове","%n участника в вызове","%n участников в вызове","%n участников в вызове"],

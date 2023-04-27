@@ -1220,6 +1220,7 @@ OC.L10N.register(
     "Stop recording" : "Ustavi snemanje",
     "Recording" : "Snemanje",
     "Open sidebar" : "Odpri bočno okno",
+    "Open chat" : "Odpri klepet",
     "You have new unread messages in the chat." : "V pogovoru imate neprebrana sporočila.",
     "You have been mentioned in the chat." : "Omenjeni ste bili v klepetu.",
     "Mute others" : "Utišaj ostale",

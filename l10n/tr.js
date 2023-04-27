@@ -1303,6 +1303,7 @@ OC.L10N.register(
     "Send a reaction" : "Tepki ver",
     "React with {reaction}" : "{reaction} ile tepki ver",
     "Open sidebar" : "Yan çubuğu aç",
+    "Open chat" : "Sohbeti aç",
     "You have new unread messages in the chat." : "Sohbette okumadığınız yeni iletiler var.",
     "You have been mentioned in the chat." : "Sohbette anıldınız.",
     "_%n participant in call_::_%n participants in call_" : ["Çağrıda %n katılımcı var","Çağrıda %n katılımcı var"],

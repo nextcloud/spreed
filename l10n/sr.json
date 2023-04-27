@@ -1301,6 +1301,7 @@
     "Send a reaction" : "Пошаљи реакцију",
     "React with {reaction}" : "Реагуј са {reaction}",
     "Open sidebar" : "Отвори бочну траку",
+    "Open chat" : "Отвори ћаскање",
     "You have new unread messages in the chat." : "Имате нове непрочитане поруке у чету.",
     "You have been mentioned in the chat." : "Поменути сте у чету.",
     "_%n participant in call_::_%n participants in call_" : ["У позиву је %n учесник","У позиву је %n учесника","У позиву је %n учесника"],

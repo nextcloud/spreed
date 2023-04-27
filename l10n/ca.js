@@ -1294,6 +1294,7 @@ OC.L10N.register(
     "Starting the recording" : "Iniciant la gravació",
     "Recording" : "Enregistrament",
     "Open sidebar" : "Obre la barra lateral",
+    "Open chat" : "Xat obert",
     "You have new unread messages in the chat." : "Tens missatges nous sense llegir al xat.",
     "You have been mentioned in the chat." : "Has estat esmentat al xat.",
     "_%n participant in call_::_%n participants in call_" : ["%n participant a la trucada","%n participants a la trucada"],

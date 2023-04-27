@@ -1130,6 +1130,7 @@ OC.L10N.register(
     "Stop recording" : "Beëindig opname",
     "Recording" : "Opnemen",
     "Open sidebar" : "Open zijbalk",
+    "Open chat" : "Openen gesprek",
     "You have new unread messages in the chat." : "Je hebt nieuwe ongelezen berichten in de chat.",
     "You have been mentioned in the chat." : "Je werd vermeld in een chat.",
     "Mute others" : "Anderen dempen",

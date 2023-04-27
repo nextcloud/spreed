@@ -942,6 +942,7 @@ OC.L10N.register(
     "You will be able to join the call only after a moderator starts it." : "Μπορείτε να συμμετάσχετε στην κλήση μόνο μετά την εκκίνηση από τον συντονιστή.",
     "Recording" : "Καταγραφή",
     "Open sidebar" : "Άνοιγμα πλευρικής στήλης",
+    "Open chat" : "Άνοιγμα συνομιλίας",
     "Mute others" : "Σίγαση των άλλων",
     "Toggle fullscreen" : "Εναλλαγή πλήρους οθόνης",
     "Start recording" : "Έναρξη εγγραφής",
