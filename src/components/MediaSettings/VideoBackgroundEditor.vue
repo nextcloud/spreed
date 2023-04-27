@@ -26,7 +26,10 @@
 			:class="{'background-editor__element--selected': selectedBackground === 'none'}"
 			@click="handleSelectBackground('none')">
 			<Cancel :size="20" />
-			{{ t('spreed', 'None') }}
+			{{
+				// TRANSLATORS: "None" refers to "No background effect applied" in videos, for context, other options are "blur" or "image"
+				t('spreed', 'None')
+			}}
 		</button>
 		<button key="blur"
 			:disabled="!blurPreviewAvailable"
