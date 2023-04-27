@@ -31,7 +31,7 @@
 			{{ uploadLimitWarning }}
 		</NcNoteCard>
 
-		<transition-group name="fade" tag="ul">
+		<transition-group v-if="servers.length" name="fade" tag="ul">
 			<RecordingServer v-for="(server, index) in servers"
 				:key="`server${index}`"
 				:server.sync="servers[index].server"
@@ -43,16 +43,7 @@
 				@update:verify="debounceUpdateServers" />
 		</transition-group>
 
-		<NcTextField class="form__textfield additional-top-margin"
-			:value="secret"
-			name="recording_secret"
-			:disabled="loading"
-			:placeholder="t('spreed', 'Shared secret')"
-			:label="t('spreed', 'Shared secret')"
-			label-visible
-			@update:value="updateSecret" />
-
-		<NcButton v-if="showAddServerButton"
+		<NcButton v-else
 			class="additional-top-margin"
 			:disabled="loading"
 			@click="newServer">
@@ -62,6 +53,15 @@
 			</template>
 			{{ t('spreed', 'Add a new recording backend server') }}
 		</NcButton>
+
+		<NcTextField class="form__textfield additional-top-margin"
+			:value="secret"
+			name="recording_secret"
+			:disabled="loading"
+			:placeholder="t('spreed', 'Shared secret')"
+			:label="t('spreed', 'Shared secret')"
+			label-visible
+			@update:value="updateSecret" />
 	</section>
 </template>
 
@@ -102,9 +102,6 @@ export default {
 	},
 
 	computed: {
-		showAddServerButton() {
-			return this.servers.length === 0
-		},
 		showUploadLimitWarning() {
 			return this.uploadLimit !== 0 && this.uploadLimit < 512 * (1024 ** 2)
 		},

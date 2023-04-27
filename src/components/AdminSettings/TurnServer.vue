@@ -29,6 +29,7 @@
 			:aria-label="t('spreed', 'TURN server schemes')"
 			:options="schemesOptions"
 			:clearable="false"
+			:searchable="false"
 			label="label"
 			track-by="value"
 			no-wrap
@@ -61,6 +62,7 @@
 			:aria-label="t('spreed', 'TURN server protocols')"
 			:options="protocolOptions"
 			:clearable="false"
+			:searchable="false"
 			label="label"
 			track-by="value"
 			no-wrap
@@ -263,7 +265,7 @@ export default {
 			pc.onicecandidate = this.iceCallback.bind(this, pc, candidates, timeout)
 			pc.onicegatheringstatechange = this.gatheringStateChange.bind(this, pc, candidates, timeout)
 			pc.createOffer(
-				offerOptions
+				offerOptions,
 			).then(
 				function(description) {
 					pc.setLocalDescription(description)
@@ -272,7 +274,7 @@ export default {
 					console.error('Error creating offer', error)
 					this.notifyTurnResult(candidates, timeout)
 					pc.close()
-				}.bind(this)
+				}.bind(this),
 			)
 		},
 
@@ -356,17 +358,18 @@ export default {
 
 <style lang="scss" scoped>
 .turn-server {
-	display: flex;
-	align-items: center;
-	gap: 4px;
-	min-height: 48px;
+	display: grid;
+	grid-template-columns: minmax(100px, 180px) 1fr 1fr minmax(100px, 180px) 44px 44px;
+	grid-column-gap: 4px;
 	margin-bottom: 4px;
 
 	&__textfield {
 		height: 48px;
+
 		& :deep(.input-field__input) {
 			height: 48px !important;
 		}
+
 		&.error :deep(.input-field__input) {
 			border: 2px solid var(--color-error);
 		}
@@ -374,8 +377,9 @@ export default {
 
 	&__select {
 		min-width: unset;
+
 		:deep(.vs__search) {
-			width: 100%;
+			width: 0;
 		}
 	}
 }
