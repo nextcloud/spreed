@@ -337,15 +337,15 @@ export default {
 	watch: {
 		modal(newValue) {
 			if (newValue) {
-				this.audioOn = !localStorage.getItem('audioDisabled_' + this.token)
-				this.videoOn = !localStorage.getItem('videoDisabled_' + this.token)
+				this.audioOn = !BrowserStorage.getItem('audioDisabled_' + this.token)
+				this.videoOn = !BrowserStorage.getItem('videoDisabled_' + this.token)
 
-				// Set virtual background depending on localstorage's settings
-				if (localStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
-					if (localStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
+				// Set virtual background depending on BrowserStorage's settings
+				if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
+					if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
 						this.blurVirtualBackground()
-					} else if (localStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
-						this.setVirtualBackgroundImage(localStorage.getItem('virtualBackgroundUrl_' + this.token))
+					} else if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+						this.setVirtualBackgroundImage(BrowserStorage.getItem('virtualBackgroundUrl_' + this.token))
 					}
 				}
 
@@ -397,20 +397,20 @@ export default {
 
 		toggleAudio() {
 			if (!this.audioOn) {
-				localStorage.removeItem('audioDisabled_' + this.token)
+				BrowserStorage.removeItem('audioDisabled_' + this.token)
 				this.audioOn = true
 			} else {
-				localStorage.setItem('audioDisabled_' + this.token, 'true')
+				BrowserStorage.setItem('audioDisabled_' + this.token, 'true')
 				this.audioOn = false
 			}
 		},
 
 		toggleVideo() {
 			if (!this.videoOn) {
-				localStorage.removeItem('videoDisabled_' + this.token)
+				BrowserStorage.removeItem('videoDisabled_' + this.token)
 				this.videoOn = true
 			} else {
-				localStorage.setItem('videoDisabled_' + this.token, 'true')
+				BrowserStorage.setItem('videoDisabled_' + this.token, 'true')
 				this.videoOn = false
 			}
 		},
@@ -442,7 +442,7 @@ export default {
 			if (this.isInCall) {
 				localMediaModel.disableVirtualBackground()
 			} else {
-				localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'false')
+				BrowserStorage.setItem('virtualBackgroundEnabled_' + this.token, 'false')
 			}
 		},
 
@@ -465,9 +465,9 @@ export default {
 				localMediaModel.enableVirtualBackground()
 				localMediaModel.setVirtualBackgroundBlur(VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
 			} else {
-				localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
-				localStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
-				localStorage.setItem('virtualBackgroundBlurStrength_' + this.token, VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
+				BrowserStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
+				BrowserStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
+				BrowserStorage.setItem('virtualBackgroundBlurStrength_' + this.token, VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
 			}
 		},
 
@@ -494,9 +494,9 @@ export default {
 				localMediaModel.enableVirtualBackground()
 				localMediaModel.setVirtualBackgroundImage(background)
 			} else {
-				localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
-				localStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
-				localStorage.setItem('virtualBackgroundUrl_' + this.token, background)
+				BrowserStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
+				BrowserStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
+				BrowserStorage.setItem('virtualBackgroundUrl_' + this.token, background)
 			}
 		},
 

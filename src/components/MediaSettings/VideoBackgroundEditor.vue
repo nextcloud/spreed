@@ -86,6 +86,7 @@ import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { imagePath, generateUrl } from '@nextcloud/router'
 
 import { VIRTUAL_BACKGROUND } from '../../constants.js'
+import BrowserStorage from '../../services/BrowserStorage.js'
 import client from '../../services/DavClient.js'
 import { findUniquePath } from '../../utils/fileUpload.js'
 
@@ -238,12 +239,12 @@ export default {
 		},
 
 		loadBackground() {
-			// Set virtual background depending on localstorage's settings
-			if (localStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
-				if (localStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
+			// Set virtual background depending on browser storage's settings
+			if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
+				if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
 					this.selectedBackground = 'blur'
-				} else if (localStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
-					this.selectedBackground = localStorage.getItem('virtualBackgroundUrl_' + this.token)
+				} else if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+					this.selectedBackground = BrowserStorage.getItem('virtualBackgroundUrl_' + this.token)
 				}
 			} else {
 				this.selectedBackground = 'none'
