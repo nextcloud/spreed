@@ -1162,6 +1162,7 @@ OC.L10N.register(
     "Invalid path selected" : "Ungültiger Pfad ausgewählt",
     "Error while creating file" : "Fehler beim Erstellen der Datei",
     "Group" : "Gruppe",
+    "Delete poll option" : "Umfrage-Option löschen",
     "Question" : "Frage",
     "Ask a question" : "Eine Frage stellen",
     "Answers" : "Antworten",
