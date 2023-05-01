@@ -57,7 +57,7 @@ class ListCommand extends Base {
 			$commands = $this->service->findByApp($app === 'custom' ? '' : $app);
 		}
 
-		$this->renderCommands($input->getOption('output'), $output, $commands, true);
+		$this->renderCommands($input, $output, $commands, true);
 		return 0;
 	}
 }

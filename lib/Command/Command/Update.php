@@ -41,6 +41,7 @@ class Update extends Base {
 	}
 
 	protected function configure(): void {
+		parent::configure();
 		$this
 			->setName('talk:command:update')
 			->setDescription('Add a new command')
@@ -119,7 +120,7 @@ class Update extends Base {
 
 		$output->writeln('<info>Command updated</info>');
 		$output->writeln('');
-		$this->renderCommands(Base::OUTPUT_FORMAT_PLAIN, $output, [$command]);
+		$this->renderCommands($input, $output, [$command]);
 		return 0;
 	}
 }

@@ -26,15 +26,17 @@ namespace OCA\Talk\Command\Command;
 use OC\Core\Command\Base;
 use OCA\Talk\Model\Command;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 trait TRenderCommand {
-	protected function renderCommands(string $outputFormat, OutputInterface $output, array $commands, bool $showHelp = false): void {
+	protected function renderCommands(InputInterface $input, OutputInterface $output, array $commands, bool $showHelp = false): void {
 		$result = array_map(function (Command $command) {
 			return $command->asArray();
 		}, $commands);
 
-		if ($outputFormat === Base::OUTPUT_FORMAT_PLAIN) {
+		$plainText = $input->getOption('output') ?? Base::OUTPUT_FORMAT_PLAIN;
+		if ($plainText === Base::OUTPUT_FORMAT_PLAIN) {
 			if ($showHelp) {
 				$output->writeln('Response values: 0 - No one,   1 - User,       2 - All');
 				$output->writeln('Enabled values:  0 - Disabled, 1 - Moderators, 2 - Users, 3 - Guests');
