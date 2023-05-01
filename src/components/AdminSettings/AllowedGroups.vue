@@ -272,6 +272,7 @@ export default {
 
 	&__label {
 		display: block;
+		margin-top: 10px;
 		padding: 4px 0;
 	}
 }
