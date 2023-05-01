@@ -23,6 +23,7 @@ import Vue from 'vue'
 
 import { getCurrentUser } from '@nextcloud/auth'
 import { showInfo, showSuccess, showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
 
 import {
 	CALL,
@@ -208,6 +209,16 @@ const actions = {
 	 */
 	addConversation(context, conversation) {
 		context.commit('addConversation', conversation)
+
+		if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.status) {
+			emit('user_status:status.updated', {
+				status: conversation.status,
+				message: conversation.statusMessage,
+				icon: conversation.statusIcon,
+				clearAt: conversation.statusClearAt,
+				userId: conversation.name,
+			})
+		}
 
 		let currentUser = {
 			uid: context.getters.getUserId(),
