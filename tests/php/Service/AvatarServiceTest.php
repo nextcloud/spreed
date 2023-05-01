@@ -83,16 +83,19 @@ class AvatarServiceTest extends TestCase {
 	public function testGetAvatarVersion(string $avatar, string $expected): void {
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);
-		$room->expects($this->once())
-			->method('getAvatar')
+		$room->method('getAvatar')
 			->willReturn($avatar);
 		$actual = $this->service->getAvatarVersion($room);
-		$this->assertEquals($expected, $actual);
+		if ($expected === 'STRING WITH 8 CHARS') {
+			$this->assertEquals(8, strlen($actual));
+		} else {
+			$this->assertEquals($expected, $actual);
+		}
 	}
 
 	public function dataGetAvatarVersion(): array {
 		return [
-			['', ''],
+			['', 'STRING WITH 8 CHARS'],
 			['1', '1'],
 			['1.png', '1'],
 		];

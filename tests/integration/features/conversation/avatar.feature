@@ -17,6 +17,8 @@ Feature: conversation/avatar
       | roomName | room2 |
     When user "participant1" uploads file "/img/favicon.png" as avatar of room "room2" with 200
     Then the room "room2" has an avatar with 200
+    And The following headers should be set
+      | X-NC-IsCustomAvatar | 1 |
     And user "participant1" sees the following system messages in room "room2" with 200
       | room  | actorType     | actorId      | systemMessage        | message                          |
       | room2 | users         | participant1 | avatar_set           | You set the conversation picture |
@@ -27,6 +29,12 @@ Feature: conversation/avatar
       | room2 | users         | participant1 | avatar_removed       | You removed the conversation picture |
       | room2 | users         | participant1 | avatar_set           | You set the conversation picture     |
       | room2 | users         | participant1 | conversation_created | You created the conversation         |
+    And user "participant1" gets room "room2" with 200 (v4)
+      | avatarVersion |
+      | NOT_EMPTY |
+    Then the room "room2" has an avatar with 200
+    And The following headers should be set
+      | X-NC-IsCustomAvatar | 0 |
 
   Scenario: Get avatar of conversation without custom avatar (fallback)
     Given user "participant1" creates room "room3" (v4)

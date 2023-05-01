@@ -1200,6 +1200,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$xpectedAttributes = $formData->getColumnsHash()[0];
 			$actual = $this->getDataFromResponse($this->response);
 			foreach ($xpectedAttributes as $attribute => $expectedValue) {
+				if ($expectedValue === 'NOT_EMPTY') {
+					Assert::assertNotEmpty($actual[$attribute]);
+					continue;
+				}
 				Assert::assertEquals($expectedValue, $actual[$attribute]);
 			}
 		}
@@ -3483,6 +3487,29 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			);
 		} else {
 			Assert::assertEquals($statusCode, $response->getStatusCode(), $message);
+		}
+	}
+
+	/**
+	 * @Then The following headers should be set
+	 * @param TableNode $table
+	 * @throws \Exception
+	 */
+	public function theFollowingHeadersShouldBeSet(TableNode $table) {
+		foreach ($table->getTable() as $header) {
+			$headerName = $header[0];
+			$expectedHeaderValue = $header[1];
+			$returnedHeader = $this->response->getHeader($headerName)[0];
+			if ($returnedHeader !== $expectedHeaderValue) {
+				throw new \Exception(
+					sprintf(
+						"Expected value '%s' for header '%s', got '%s'",
+						$expectedHeaderValue,
+						$headerName,
+						$returnedHeader
+					)
+				);
+			}
 		}
 	}
 }

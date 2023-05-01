@@ -86,6 +86,7 @@ class AvatarController extends AEnvironmentAwareController {
 
 		$response = new FileDisplayResponse($file);
 		$response->addHeader('Content-Type', $file->getMimeType());
+		$response->addHeader('X-NC-IsCustomAvatar', $this->avatarService->isCustomAvatar($this->getRoom()) ? '1' : '0');
 		// Cache for 1 day
 		$response->cacheFor(60 * 60 * 24, false, true);
 		return $response;

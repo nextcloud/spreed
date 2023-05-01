@@ -185,19 +185,26 @@ class AvatarService {
 			} elseif ($this->emojiHelper->isValidSingleEmoji(mb_substr($room->getName(), 0, 1))) {
 				$file = new InMemoryFile($token, $this->getEmojiAvatar($room->getName(), $darkTheme));
 			} elseif ($room->getType() === Room::TYPE_CHANGELOG) {
-				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/changelog.svg'));
+				$fileName = 'changelog.svg';
+				$file = new InMemoryFile($fileName, file_get_contents(__DIR__ . '/../../img/' . $fileName));
 			} elseif ($room->getObjectType() === 'file') {
-				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-conversation-text-' . $colorTone . '.svg'));
+				$fileName = 'icon-conversation-text-' . $colorTone . '.svg';
+				$file = new InMemoryFile($fileName, file_get_contents(__DIR__ . '/../../img/' . $fileName));
 			} elseif ($room->getObjectType() === 'share:password') {
-				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-conversation-password-' . $colorTone . '.svg'));
+				$fileName = 'icon-conversation-password-' . $colorTone . '.svg';
+				$file = new InMemoryFile($fileName, file_get_contents(__DIR__ . '/../../img/' . $fileName));
 			} elseif ($room->getObjectType() === 'emails') {
-				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-conversation-mail-' . $colorTone . '.svg'));
+				$fileName = 'icon-conversation-mail-' . $colorTone . '.svg';
+				$file = new InMemoryFile($fileName, file_get_contents(__DIR__ . '/../../img/' . $fileName));
 			} elseif ($room->getType() === Room::TYPE_PUBLIC) {
-				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-conversation-public-' . $colorTone . '.svg'));
+				$fileName = 'icon-conversation-public-' . $colorTone . '.svg';
+				$file = new InMemoryFile($fileName, file_get_contents(__DIR__ . '/../../img/' . $fileName));
 			} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-conversation-user-' . $colorTone . '.svg'));
+				$fileName = 'icon-conversation-user-' . $colorTone . '.svg';
+				$file = new InMemoryFile($fileName, file_get_contents(__DIR__ . '/../../img/' . $fileName));
 			} else {
-				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/icon-conversation-group-' . $colorTone . '.svg'));
+				$fileName = 'icon-conversation-group-' . $colorTone . '.svg';
+				$file = new InMemoryFile($fileName, file_get_contents(__DIR__ . '/../../img/' . $fileName));
 			}
 		}
 		return $file;
@@ -245,6 +252,11 @@ class AvatarService {
 		return '';
 	}
 
+	public function isCustomAvatar(Room $room): bool {
+		return $room->getAvatar() !== ''
+			|| $this->getFirstCombinedEmoji($room->getName());
+	}
+
 	public function deleteAvatar(Room $room): void {
 		try {
 			$folder = $this->appData->getFolder('room-avatar');
@@ -270,7 +282,11 @@ class AvatarService {
 
 	public function getAvatarVersion(Room $room): string {
 		$avatarVersion = $room->getAvatar();
-		[$version] = explode('.', $avatarVersion);
-		return $version;
+		if ($avatarVersion) {
+			[$version] = explode('.', $avatarVersion);
+			return $version;
+		}
+		$file = $this->getAvatar($room, null);
+		return substr(md5($file->getName()), 0, 8);
 	}
 }
