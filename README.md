@@ -79,12 +79,20 @@ If you need to use Talk in an enterprise environment, [contact our sales team](h
 1. 🗂️ Simply clone this repository into the `apps` folder of your Nextcloud development instance.
 2. 📦 Run `make dev-setup` to install the dependencies.
 3. 🏗️ Run `make build-js`.
-4. 🔌 Then activate it through the apps management. :tada:
+4. 🔌 Then activate it through the apps management. 🎉
 5. 📘 To build the docs locally, install mkdocs locally: `apt install mkdocs mkdocs-bootstrap`.
+
+### Faster frontend developing with HMR
+
+You can enable HMR (Hot module replacement) to avoid page reloads when working on the frontend:
+
+1. ☑️ Install and enable [`hmr_enabler` app](https://github.com/nextcloud/hmr_enabler)
+2. 🏁 Run `npm run serve`
+3. 🌍 Open the normal Nextcloud server URL (not the URL given by above command)
 
 We are also available on [our public Talk team conversation](https://cloud.nextcloud.com/call/c7fz9qpr), if you want to join the discussion.
 
-### Useful tricks for testing
+### Useful tricks for testing video calls
 
 * Disable camera until reboot: `sudo modprobe -r uvcvideo`
 * Re-enable camera: `sudo modprobe uvcvideo`
