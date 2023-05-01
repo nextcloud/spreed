@@ -859,12 +859,6 @@ export default {
 			const possibleMentions = response.data.ocs.data
 
 			possibleMentions.forEach(possibleMention => {
-				// Wrap mention ids with spaces in quotes.
-				if (possibleMention.id.indexOf(' ') !== -1
-					|| possibleMention.id.indexOf('/') !== -1) {
-					possibleMention.id = '"' + possibleMention.id + '"'
-				}
-
 				// Set icon for candidate mentions that are not for users.
 				if (possibleMention.source === 'calls') {
 					possibleMention.icon = 'icon-user-forced-white'
