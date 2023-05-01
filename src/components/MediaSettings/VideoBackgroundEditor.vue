@@ -39,33 +39,34 @@
 			<Blur :size="20" />
 			{{ t('spreed', 'Blur') }}
 		</button>
-		<template v-if="canUploadBackgrounds">
-			<button class="background-editor__element"
-				@click="clickImportInput">
-				<Upload :size="20" />
-				{{ t('spreed', 'Upload') }}
-			</button>
-			<button class="background-editor__element"
-				:class="{'background-editor__element--selected': isCustomBackground }"
-				@click="openPicker">
-				<Folder :size="20" />
-				{{ t('spreed', 'Files') }}
+		<template v-if="hasBackgroundsCapability">
+			<template v-if="canUploadBackgrounds">
+				<button class="background-editor__element"
+					@click="clickImportInput">
+					<Upload :size="20" />
+					{{ t('spreed', 'Upload') }}
+				</button>
+				<button class="background-editor__element"
+					:class="{'background-editor__element--selected': isCustomBackground }"
+					@click="openPicker">
+					<Folder :size="20" />
+					{{ t('spreed', 'Files') }}
+				</button>
+			</template>
+			<button v-for="path in predefinedBackgroundsURLs"
+				:key="path"
+				aria-label="TODO: add image names as aria labels"
+				class="background-editor__element"
+				:class="{'background-editor__element--selected': selectedBackground === path}"
+				:style="{
+					'background-image': 'url(' + path + ')'
+				}"
+				@click="handleSelectBackground(path)">
+				<CheckBold v-if="selectedBackground === path"
+					:size="40"
+					fill-color="#fff" />
 			</button>
 		</template>
-		<button v-for="path in predefinedBackgroundsURLs"
-			:key="path"
-			aria-label="TODO: add image names as aria labels"
-			class="background-editor__element"
-			:class="{'background-editor__element--selected': selectedBackground === path}"
-			:style="{
-				'background-image': 'url(' + path + ')'
-			}"
-			@click="handleSelectBackground(path)">
-			<CheckBold v-if="selectedBackground === path"
-				:size="40"
-				fill-color="#fff" />
-		</button>
-
 		<!--native file picker, hidden -->
 		<input v-show="false"
 			id="custom-background-file"
@@ -146,6 +147,10 @@ export default {
 			return predefinedBackgrounds.map(fileName => {
 				return imagePath('spreed', 'backgrounds/' + fileName)
 			})
+		},
+
+		hasBackgroundsCapability() {
+			return !!predefinedBackgrounds
 		},
 	},
 
