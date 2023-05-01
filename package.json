@@ -8,12 +8,12 @@
 		"build": "webpack --node-env production --progress",
 		"dev": "webpack --node-env development --progress",
 		"watch": "webpack --node-env development --progress --watch",
+		"serve": "npx webpack serve --node-env development --progress --config webpack.config.js --env dev_server --allowed-hosts all",
 		"test": "TZ=UTC jest",
 		"test:watch": "TZ=UTC jest --watch",
 		"test:coverage": "TZ=UTC jest --coverage",
 		"lint": "eslint --ext .js,.vue src",
 		"lint:fix": "eslint --ext .js,.vue src --fix",
-		"serve": "npx webpack serve --node-env development --progress --config webpack.config.js --env dev_server --allowed-hosts all",
 		"stylelint": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue",
 		"stylelint:fix": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --fix"
 	},
