@@ -268,10 +268,6 @@ export default {
 
 	&__select {
 		width: 300px;
-
-		:deep(.vs__search) {
-			width: 100%;
-		}
 	}
 
 	&__label {

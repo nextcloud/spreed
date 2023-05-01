@@ -187,10 +187,6 @@ h3 {
 	&__select {
 		width: 300px;
 		margin-bottom: 9px;
-
-		:deep(.vs__search) {
-			width: 100%;
-		}
 	}
 
 	&__label {
