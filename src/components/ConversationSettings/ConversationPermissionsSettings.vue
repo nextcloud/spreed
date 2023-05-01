@@ -253,7 +253,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .mx-input {
+:deep(.mx-input) {
 	margin: 0;
 }
 

@@ -298,7 +298,7 @@ export default {
 }
 
 // Restyle NcRichContenteditable component from our library.
-::v-deep .rich-contenteditable__input {
+:deep(.rich-contenteditable__input) {
 	align-self: flex-start;
 	min-height: var(--default-line-height);
 	max-height: unset;

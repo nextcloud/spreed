@@ -380,7 +380,7 @@ export default {
 }
 
 // TODO: upstream collapse icon position fix
-::v-deep .icon-collapse {
+:deep(.icon-collapse) {
 	position: absolute !important;
 	left: 0;
 }

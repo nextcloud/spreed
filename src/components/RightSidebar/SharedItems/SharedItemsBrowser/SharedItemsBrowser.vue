@@ -167,11 +167,11 @@ export default {
 	}
 }
 
-::v-deep .modal-container {
+:deep(.modal-container) {
 	height: 700px;
 }
 
-::v-deep .button-vue {
+:deep(.button-vue) {
 	border-radius: var(--border-radius-large);
 	&.active {
 		background-color: var(--color-primary-light);

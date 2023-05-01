@@ -244,7 +244,7 @@ input {
 }
 
 // Force action buttons to be 44px tall;
-::v-deep .action-item__menutoggle {
+:deep(.action-item__menutoggle) {
 	height: $clickable-area !important;
 }
 

@@ -213,7 +213,7 @@ export default {
 	font-weight: bold;
 }
 
-::v-deep .button-vue {
+:deep(.button-vue) {
 	justify-content: left !important;
 	color: #fff !important;
 

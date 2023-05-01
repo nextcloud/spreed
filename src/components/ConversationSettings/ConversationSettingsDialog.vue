@@ -284,7 +284,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep button.icon {
+:deep(button.icon) {
 	height: 32px;
 	width: 32px;
 	display: inline-block;
@@ -292,22 +292,22 @@ export default {
 	vertical-align: middle;
 }
 
-::v-deep .modal-container {
+:deep(.modal-container) {
 	display: flex !important;
 }
 
-::v-deep .app-settings-section__hint {
+:deep(.app-settings-section__hint) {
 	color: var(--color-text-lighter);
 	padding: 8px 0;
 }
 
-::v-deep .app-settings-section__subtitle,
+:deep(.app-settings-section__subtitle),
 .app-settings-section__subtitle {
 	font-weight: bold;
 	font-size: var(--default-font-size);
 }
 
-::v-deep .app-settings-subsection {
+:deep(.app-settings-subsection) {
 	margin-top: 25px;
 
 	&:first-child {

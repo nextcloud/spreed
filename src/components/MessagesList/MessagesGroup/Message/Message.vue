@@ -899,7 +899,7 @@ export default {
 				align-items: center;
 			}
 
-			::v-deep .rich-text--wrapper {
+			:deep(.rich-text--wrapper) {
 				white-space: pre-wrap;
 				word-break: break-word;
 			}
@@ -997,7 +997,7 @@ export default {
 .reaction-button {
 	// Clear server rules
 	min-height: 0 !important;
-	::v-deep .button-vue__text {
+	:deep(.button-vue__text) {
 		font-weight: normal !important;
 	}
 
