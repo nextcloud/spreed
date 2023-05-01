@@ -5,10 +5,7 @@
 		<p class="emptycontent-additional">
 			{{ t('spreed', 'Say hi to your friends and colleagues!') }}
 		</p>
-		<div id="shareRoomContainer">
-			<!--  <input id="shareRoomInput" class="share-room-input hidden" readonly="readonly" type="text"/>
-            <div id="shareRoomClipboardButton" class="shareRoomClipboard icon-clippy hidden" data-clipboard-target="#shareRoomInput"></div> -->
-		</div>
+		<div id="shareRoomContainer" />
 	</div>
 </template>
 
