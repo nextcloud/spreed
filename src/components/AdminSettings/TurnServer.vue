@@ -377,10 +377,6 @@ export default {
 
 	&__select {
 		min-width: unset;
-
-		:deep(.vs__search) {
-			width: 0;
-		}
 	}
 }
 </style>
