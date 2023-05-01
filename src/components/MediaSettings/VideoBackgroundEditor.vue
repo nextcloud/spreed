@@ -39,18 +39,20 @@
 			<Blur :size="20" />
 			{{ t('spreed', 'Blur') }}
 		</button>
-		<button class="background-editor__element"
-			@click="clickImportInput">
-			<Upload :size="20" />
-			{{ t('spreed', 'Upload') }}
-		</button>
-		<button class="background-editor__element"
-			:class="{'background-editor__element--selected': isCustomBackground }"
-			@click="openPicker">
-			<Folder :size="20" />
-			{{ t('spreed', 'Files') }}
-		</button>
-		<button v-for="path in backgrounds"
+		<template v-if="canUploadBackgrounds">
+			<button class="background-editor__element"
+				@click="clickImportInput">
+				<Upload :size="20" />
+				{{ t('spreed', 'Upload') }}
+			</button>
+			<button class="background-editor__element"
+				:class="{'background-editor__element--selected': isCustomBackground }"
+				@click="openPicker">
+				<Folder :size="20" />
+				{{ t('spreed', 'Files') }}
+			</button>
+		</template>
+		<button v-for="path in predefinedBackgroundsURLs"
 			:key="path"
 			aria-label="TODO: add image names as aria labels"
 			class="background-editor__element"
@@ -63,6 +65,7 @@
 				:size="40"
 				fill-color="#fff" />
 		</button>
+
 		<!--native file picker, hidden -->
 		<input v-show="false"
 			id="custom-background-file"
@@ -82,6 +85,7 @@ import CheckBold from 'vue-material-design-icons/CheckBold.vue'
 import Folder from 'vue-material-design-icons/Folder.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { imagePath, generateUrl } from '@nextcloud/router'
 
@@ -89,6 +93,9 @@ import { VIRTUAL_BACKGROUND } from '../../constants.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import client from '../../services/DavClient.js'
 import { findUniquePath } from '../../utils/fileUpload.js'
+
+const canUploadBackgrounds = getCapabilities()?.spreed?.config?.call?.['can-upload-background']
+const predefinedBackgrounds = getCapabilities()?.spreed?.config?.call?.['predefined-backgrounds']
 
 let picker
 
@@ -118,6 +125,9 @@ export default {
 	data() {
 		return {
 			selectedBackground: undefined,
+			predefinedBackgrounds,
+			canUploadBackgrounds,
+			getCapabilities,
 		}
 	},
 
@@ -127,20 +137,15 @@ export default {
 		},
 
 		isCustomBackground() {
-			return !this.backgrounds.includes(this.selectedBackground)
+			return !this.predefinedBackgroundsURLs.includes(this.selectedBackground)
 				&& this.selectedBackground !== 'none'
 				&& this.selectedBackground !== 'blur'
 		},
 
-		backgrounds() {
-			return [
-				imagePath('spreed', 'backgrounds/1.jpg'),
-				imagePath('spreed', 'backgrounds/2.jpg'),
-				imagePath('spreed', 'backgrounds/3.jpg'),
-				imagePath('spreed', 'backgrounds/4.jpg'),
-				imagePath('spreed', 'backgrounds/5.jpg'),
-				imagePath('spreed', 'backgrounds/6.jpg'),
-			]
+		predefinedBackgroundsURLs() {
+			return predefinedBackgrounds.map(fileName => {
+				return imagePath('spreed', 'backgrounds/' + fileName)
+			})
 		},
 	},
 
