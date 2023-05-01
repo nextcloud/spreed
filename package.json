@@ -8,7 +8,7 @@
 		"build": "webpack --node-env production --progress",
 		"dev": "webpack --node-env development --progress",
 		"watch": "webpack --node-env development --progress --watch",
-		"serve": "npx webpack serve --node-env development --progress --config webpack.config.js --env dev_server --allowed-hosts all",
+		"serve": "webpack serve --node-env development --progress --allowed-hosts all",
 		"test": "TZ=UTC jest",
 		"test:watch": "TZ=UTC jest --watch",
 		"test:coverage": "TZ=UTC jest --coverage",
