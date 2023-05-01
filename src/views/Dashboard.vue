@@ -221,7 +221,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-	::v-deep .item-list__entry {
+	:deep(.item-list__entry) {
 		position: relative;
 	}
 

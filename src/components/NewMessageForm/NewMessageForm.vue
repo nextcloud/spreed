@@ -1011,7 +1011,7 @@ export default {
 
 // Override actions styles TODO: upstream this change
 // Targeting two classess for specificity
-::v-deep .action-item__menutoggle.action-item__menutoggle--with-icon-slot {
+:deep(.action-item__menutoggle.action-item__menutoggle--with-icon-slot) {
 	opacity: 1 !important;
 	&:hover,
 	&:focus {

@@ -598,7 +598,7 @@ export default {
 	margin: 14px;
 }
 
-::v-deep .modal-container {
+:deep(.modal-container) {
 	display: flex !important;
 }
 </style>

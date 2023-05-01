@@ -672,7 +672,7 @@ export default {
 .conversations-search {
 	flex-grow: 1;
 
-	::v-deep .input-field__input {
+	:deep(.input-field__input) {
 		border-radius: var(--border-radius-pill);
 	}
 }
@@ -681,16 +681,16 @@ export default {
 	justify-content: flex-start !important;
 }
 
-::v-deep .app-navigation ul {
+:deep(.app-navigation ul) {
 	padding: 0 !important;
 }
 
-::v-deep .app-navigation-toggle {
+:deep(.app-navigation-toggle) {
 	top: 8px !important;
 	right: -6px !important;
 }
 
-::v-deep .app-navigation__list {
+:deep(.app-navigation__list) {
 	padding: 0 !important;
 }
 </style>

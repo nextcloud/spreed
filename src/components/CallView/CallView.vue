@@ -761,7 +761,7 @@ export default {
 	display: none;
 }
 
-::v-deep video {
+:deep(video) {
 	z-index: 0;
 	/* default filter for slightly better look */
 	/* Disabled for now as it causes a huuuuge performance drop.
@@ -772,30 +772,30 @@ export default {
 	vertical-align: top; /* fix white line below video */
 }
 
-#videos .videoContainer ::v-deep .avatardiv {
+#videos .videoContainer :deep(.avatardiv) {
 	box-shadow: 0 0 15px var(--color-box-shadow);
 }
 
-.participants-1 #videos .videoContainer ::v-deep video,
-.participants-2 #videos .videoContainer ::v-deep video {
+.participants-1 #videos .videoContainer :deep(video),
+.participants-2 #videos .videoContainer :deep(video) {
 	padding: 0;
 }
 
-.videoContainer ::v-deep .avatar-container .avatardiv {
+.videoContainer :deep(.avatar-container .avatardiv) {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
 }
 
-.videoContainer.promoted ::v-deep .avatar-container {
+.videoContainer.promoted :deep(.avatar-container) {
 	top: 30%;
 }
 
-.videoContainer.promoted ::v-deep .avatar-container + .nameIndicator {
+.videoContainer.promoted :deep(.avatar-container + .nameIndicator) {
 	display: none;
 }
 
-.videoContainer.promoted ::v-deep .mediaIndicator {
+.videoContainer.promoted :deep(.mediaIndicator) {
 	display: none !important;
 }
 
@@ -806,8 +806,8 @@ export default {
 	}
 }
 
-.participants-1 .videoView ::v-deep video,
-.participants-2 .videoView ::v-deep video {
+.participants-1 .videoView :deep(video),
+.participants-2 .videoView :deep(video) {
 	position: absolute;
 	max-height: 100% !important;
 	bottom: 0;
@@ -822,7 +822,7 @@ export default {
 	overflow: hidden;
 }
 
-::v-deep .nameIndicator {
+:deep(.nameIndicator) {
 	position: absolute;
 	bottom: 0;
 	left: 0;
@@ -837,30 +837,30 @@ export default {
 	text-overflow: ellipsis;
 }
 
-::v-deep .videoView .nameIndicator {
+:deep(.videoView .nameIndicator) {
 	padding: 0;
 	overflow: visible;
 }
 
-.participants-1 .videoView ::v-deep .nameIndicator,
-.participants-2 .videoView ::v-deep .nameIndicator {
+.participants-1 .videoView :deep(.nameIndicator),
+.participants-2 .videoView :deep(.nameIndicator) {
 	left: initial;
 	right: 0;
 }
 
-.participants-1 .videoView ::v-deep .avatar-container,
-.participants-2 .videoView ::v-deep .avatar-container {
+.participants-1 .videoView :deep(.avatar-container),
+.participants-2 .videoView :deep(.avatar-container) {
 	left: initial;
 	right: 0;
 }
 
 /* ellipsize name in 1on1 calls */
-.participants-2 ::v-deep .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
+.participants-2 :deep(.videoContainer.promoted + .videoContainer-dummy .nameIndicator) {
 	padding: 12px 35%;
 }
 
-#videos .videoContainer.speaking:not(.videoView) ::v-deep .nameIndicator,
-#videos .videoContainer.videoView.speaking ::v-deep .nameIndicator .microphone-icon {
+#videos .videoContainer.speaking:not(.videoView) :deep(.nameIndicator),
+#videos .videoContainer.videoView.speaking :deep(.nameIndicator .microphone-icon) {
 	animation: pulse 1s;
 	animation-iteration-count: infinite;
 }

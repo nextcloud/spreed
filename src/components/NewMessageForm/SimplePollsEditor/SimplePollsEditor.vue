@@ -193,17 +193,15 @@ export default {
 }
 
 // Upstream
-::v-deep .checkbox-radio-switch {
-	&__label {
-		align-items: unset;
-		height: unset;
-		margin: 4px 0;
-		padding: 8px;
-		width: 100%;
-		border-radius: var(--border-radius-large);
-		span {
-			align-self: flex-start;
-		}
+:deep(.checkbox-radio-switch__label) {
+	align-items: unset;
+	height: unset;
+	margin: 4px 0;
+	padding: 8px;
+	width: 100%;
+	border-radius: var(--border-radius-large);
+	:deep(span) {
+		align-self: flex-start;
 	}
 }
 
