@@ -21,24 +21,26 @@
  -->
 
 <template>
-	<div class="stun-server">
+	<li class="stun-server">
 		<!-- "stun:" scheme is untranslated -->
-		<span class="scheme">stun:</span>
-		<input ref="stun_server"
-			type="text"
-			name="stun_server"
-			placeholder="stunserver:port"
-			:value="server"
-			:disabled="loading"
-			:aria-label="t('spreed', 'STUN server URL')"
-			@input="update">
-		<NcButton v-show="!isValidServer"
-			type="tertiary-no-background"
-			:aria-label="t('spreed', 'The server address is invalid')">
-			<template #icon>
-				<AlertCircle :fill-color="'#E9322D'" />
-			</template>
-		</NcButton>
+		<div class="stun-server__wrapper">
+			<label :for="`stun_server_${index}`">stun:</label>
+
+			<NcTextField ref="stun_server"
+				:input-id="`stun_server_${index}`"
+				name="stun_server"
+				placeholder="stunserver:port"
+				:value="server"
+				:disabled="loading"
+				:aria-label="t('spreed', 'STUN server URL')"
+				@update:value="update" />
+		</div>
+
+		<AlertCircle v-show="!isValidServer"
+			class="stun-server__alert"
+			:title="t('spreed', 'The server address is invalid')"
+			fill-color="#E9322D" />
+
 		<NcButton v-show="!loading"
 			type="tertiary-no-background"
 			:aria-label="t('spreed', 'Delete this server')"
@@ -47,7 +49,7 @@
 				<Delete :size="20" />
 			</template>
 		</NcButton>
-	</div>
+	</li>
 </template>
 
 <script>
@@ -55,14 +57,16 @@ import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Delete from 'vue-material-design-icons/Delete.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 export default {
 	name: 'StunServer',
 
 	components: {
-		NcButton,
 		AlertCircle,
 		Delete,
+		NcButton,
+		NcTextField,
 	},
 
 	props: {
@@ -105,22 +109,28 @@ export default {
 		removeServer() {
 			this.$emit('remove-server', this.index)
 		},
-		update(event) {
-			this.$emit('update:server', event.target.value)
+		update(value) {
+			this.$emit('update:server', value)
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-.scheme {
-	/* Same margin as inputs to keep the style. */
-	margin: 3px 3px 3px 0;
-}
-
 .stun-server {
-	height: 44px;
 	display: flex;
 	align-items: center;
+
+	&__wrapper {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		width: 300px;
+	}
+
+	&__alert {
+		width: 44px;
+		height: 44px;
+	}
 }
 </style>

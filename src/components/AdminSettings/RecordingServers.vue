@@ -22,50 +22,47 @@
  -->
 
 <template>
-	<div id="recording_server" class="videocalls section recording-server">
+	<section id="recording_server" class="videocalls section">
 		<h2>
 			{{ t('spreed', 'Recording backend') }}
-
-			<NcButton v-if="!loading && showAddServerButton"
-				class="recording-server__add-icon"
-				type="tertiary-no-background"
-				:aria-label="t('spreed', 'Add a new recording backend server')"
-				@click="newServer">
-				<template #icon>
-					<Plus :size="20" />
-				</template>
-			</NcButton>
 		</h2>
-		<NcNoteCard v-if="showUploadLimitWarning"
-			type="warning">
-			<p>{{ uploadLimitWarning }}</p>
+
+		<NcNoteCard v-if="showUploadLimitWarning" type="warning">
+			{{ uploadLimitWarning }}
 		</NcNoteCard>
 
-		<ul class="recording-servers">
-			<transition-group name="fade" tag="li">
-				<RecordingServer v-for="(server, index) in servers"
-					:key="`server${index}`"
-					:server.sync="servers[index].server"
-					:verify.sync="servers[index].verify"
-					:index="index"
-					:loading="loading"
-					@remove-server="removeServer"
-					@update:server="debounceUpdateServers"
-					@update:verify="debounceUpdateServers" />
-			</transition-group>
-		</ul>
+		<transition-group v-if="servers.length" name="fade" tag="ul">
+			<RecordingServer v-for="(server, index) in servers"
+				:key="`server${index}`"
+				:server.sync="servers[index].server"
+				:verify.sync="servers[index].verify"
+				:index="index"
+				:loading="loading"
+				@remove-server="removeServer"
+				@update:server="debounceUpdateServers"
+				@update:verify="debounceUpdateServers" />
+		</transition-group>
 
-		<div class="recording-secret">
-			<h4>{{ t('spreed', 'Shared secret') }}</h4>
-			<input v-model="secret"
-				type="text"
-				name="recording_secret"
-				:disabled="loading"
-				:placeholder="t('spreed', 'Shared secret')"
-				:aria-label="t('spreed', 'Shared secret')"
-				@input="debounceUpdateServers">
-		</div>
-	</div>
+		<NcButton v-else
+			class="additional-top-margin"
+			:disabled="loading"
+			@click="newServer">
+			<template #icon>
+				<span v-if="loading" class="icon icon-loading-small" />
+				<Plus v-else :size="20" />
+			</template>
+			{{ t('spreed', 'Add a new recording backend server') }}
+		</NcButton>
+
+		<NcTextField class="form__textfield additional-top-margin"
+			:value="secret"
+			name="recording_secret"
+			:disabled="loading"
+			:placeholder="t('spreed', 'Shared secret')"
+			:label="t('spreed', 'Shared secret')"
+			label-visible
+			@update:value="updateSecret" />
+	</section>
 </template>
 
 <script>
@@ -79,6 +76,7 @@ import { loadState } from '@nextcloud/initial-state'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import RecordingServer from '../../components/AdminSettings/RecordingServer.vue'
 
@@ -88,6 +86,7 @@ export default {
 	components: {
 		NcButton,
 		NcNoteCard,
+		NcTextField,
 		Plus,
 		RecordingServer,
 	},
@@ -103,9 +102,6 @@ export default {
 	},
 
 	computed: {
-		showAddServerButton() {
-			return this.servers.length === 0
-		},
 		showUploadLimitWarning() {
 			return this.uploadLimit !== 0 && this.uploadLimit < 512 * (1024 ** 2)
 		},
@@ -134,6 +130,11 @@ export default {
 				server: '',
 				verify: false,
 			})
+		},
+
+		updateSecret(value) {
+			this.secret = value
+			this.debounceUpdateServers()
 		},
 
 		debounceUpdateServers: debounce(function() {
@@ -169,17 +170,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables';
-
-.recording-server {
-	h2 {
-		height: 44px;
-		display: flex;
-		align-items: center;
-	}
+.form__textfield {
+	width: 300px;
 }
 
-.recording-secret {
-	margin-top: 20px;
+.additional-top-margin {
+	margin-top: 10px;
 }
 </style>

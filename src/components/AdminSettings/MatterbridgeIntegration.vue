@@ -21,12 +21,10 @@
  -->
 
 <template>
-	<div id="matterbridge_settings" class="matterbridge section">
+	<section id="matterbridge_settings" class="matterbridge section">
 		<h2>
 			{{ t('spreed', 'Matterbridge integration') }}
-			<small>
-				{{ t('spreed', 'Beta') }}
-			</small>
+			<small>{{ t('spreed', 'Beta') }}</small>
 		</h2>
 
 		<template v-if="matterbridgeVersion">
@@ -34,12 +32,10 @@
 				{{ installedVersion }}
 			</p>
 
-			<p v-if="matterbridgeVersion">
-				<NcCheckboxRadioSwitch :checked="isEnabled"
-					@update:checked="saveMatterbridgeEnabled">
-					{{ t('spreed', 'Enable Matterbridge integration') }}
-				</NcCheckboxRadioSwitch>
-			</p>
+			<NcCheckboxRadioSwitch :checked="isEnabled"
+				@update:checked="saveMatterbridgeEnabled">
+				{{ t('spreed', 'Enable Matterbridge integration') }}
+			</NcCheckboxRadioSwitch>
 		</template>
 
 		<template v-else>
@@ -53,20 +49,15 @@
 				{{ errorText }}
 			</p>
 
-			<p>
-				<NcButton v-if="isInstalling">
-					<template #icon>
-						<span class="icon icon-loading-small" />
-					</template>
-					{{ t('spreed', 'Downloading …') }}
-				</NcButton>
-				<NcButton v-else
-					@click="enableMatterbridgeApp">
-					{{ t('spreed', 'Install Talk Matterbridge') }}
-				</NcButton>
-			</p>
+			<NcButton :disabled="isInstalling"
+				@click="enableMatterbridgeApp">
+				<template v-if="isInstalling" #icon>
+					<span class="icon icon-loading-small" />
+				</template>
+				{{ installButtonText }}
+			</NcButton>
 		</template>
-	</div>
+	</section>
 </template>
 
 <script>
@@ -103,7 +94,6 @@ export default {
 		isEnabled() {
 			return this.matterbridgeEnabled
 		},
-
 		installedVersion() {
 			return t('spreed', 'Installed version: {version}', {
 				version: this.matterbridgeVersion,
@@ -128,6 +118,11 @@ export default {
 			return t('spreed', 'You can also set the path to the Matterbridge binary manually via the config. Check the {linkstart}Matterbridge integration documentation{linkend} for more information.')
 				.replace('{linkstart}', '<a  target="_blank" rel="noreferrer nofollow" class="external" href="https://nextcloud-talk.readthedocs.io/en/latest/matterbridge/">')
 				.replace(/{linkend}/g, ' ↗</a>')
+		},
+		installButtonText() {
+			return this.isInstalling
+				? t('spreed', 'Downloading …')
+				: t('spreed', 'Install Talk Matterbridge')
 		},
 	},
 
@@ -187,7 +182,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 h2 {
 	small {
 		color: var(--color-warning);
@@ -196,20 +191,4 @@ h2 {
 		padding: 0 9px;
 	}
 }
-
-p {
-	display: block;
-	align-items: center;
-
-	.icon {
-		width: 16px;
-		height: 16px;
-	}
-
-	label {
-		display: block;
-		margin-right: 10px;
-	}
-}
-
 </style>
