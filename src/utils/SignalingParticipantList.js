@@ -31,6 +31,7 @@ import EmitterMixin from './EmitterMixin.js'
  *
  * The following events are emitted:
  * - participantsJoined(participants)
+ * - participantsLeft(participants)
  */
 export default function SignalingParticipantList() {
 	this._superEmitterMixin()
@@ -86,12 +87,17 @@ SignalingParticipantList.prototype = {
 	},
 
 	_handleLeaveRoom(token) {
+		if (this._participants.length > 0) {
+			this._trigger('participantsLeft', [this._participants])
+		}
+
 		this._participants = []
 	},
 
 	_handleUsersInRoom(users) {
 		const participants = []
 		const participantsJoined = []
+		const participantsLeft = []
 
 		for (const user of users) {
 			const participant = {
@@ -109,10 +115,19 @@ SignalingParticipantList.prototype = {
 			}
 		}
 
+		for (const oldParticipant of this._participants) {
+			if (!participants.find(participant => participant.signalingSessionId === oldParticipant.signalingSessionId)) {
+				participantsLeft.push(oldParticipant)
+			}
+		}
+
 		this._participants = participants
 
 		if (participantsJoined.length > 0) {
 			this._trigger('participantsJoined', [participantsJoined])
+		}
+		if (participantsLeft.length > 0) {
+			this._trigger('participantsLeft', [participantsLeft])
 		}
 	},
 
@@ -139,8 +154,19 @@ SignalingParticipantList.prototype = {
 	},
 
 	_handleUsersLeft(sessionIds) {
+		const participantsLeft = []
+
 		for (const sessionId of sessionIds) {
-			this._participants = this._participants.filter(participant => participant.signalingSessionId != sessionId)
+			const index = this._participants.findIndex(participant => participant.signalingSessionId === sessionId)
+			if (index >= 0) {
+				participantsLeft.push(this._participants[index])
+
+				this._participants.splice(index, 1)
+			}
+		}
+
+		if (participantsLeft.length > 0) {
+			this._trigger('participantsLeft', [participantsLeft])
 		}
 	},
 

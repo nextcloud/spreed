@@ -25,6 +25,7 @@ describe('SignalingParticipantList', () => {
 	let signaling
 	let signalingParticipantList
 	let participantsJoinedHandler
+	let participantsLeftHandler
 
 	const expectedInternalLocalParticipant = {
 		nextcloudSessionId: 'localSignalingSessionId',
@@ -115,8 +116,10 @@ describe('SignalingParticipantList', () => {
 		signalingParticipantList.setSignaling(signaling)
 
 		participantsJoinedHandler = jest.fn()
+		participantsLeftHandler = jest.fn()
 
 		signalingParticipantList.on('participantsJoined', participantsJoinedHandler)
+		signalingParticipantList.on('participantsLeft', participantsLeftHandler)
 	})
 
 	describe('local participant joins empty room', () => {
@@ -266,6 +269,12 @@ describe('SignalingParticipantList', () => {
 				expectedInternalUser2,
 				expectedInternalLocalParticipant,
 			])
+			expect(participantsLeftHandler).toHaveBeenCalledTimes(1)
+			expect(participantsJoinedHandler).toHaveBeenNthCalledWith(1, signalingParticipantList, [
+				expectedInternalUser1,
+				expectedInternalGuest1,
+				expectedInternalLocalParticipant,
+			])
 			expect(signalingParticipantList.getParticipants()).toEqual([
 				expectedInternalUser2,
 				expectedInternalLocalParticipant,
@@ -342,6 +351,12 @@ describe('SignalingParticipantList', () => {
 				expectedExternalUser2,
 			])
 			expect(participantsJoinedHandler).toHaveBeenNthCalledWith(4, signalingParticipantList, [
+				expectedExternalLocalParticipant,
+			])
+			expect(participantsLeftHandler).toHaveBeenCalledTimes(1)
+			expect(participantsLeftHandler).toHaveBeenNthCalledWith(1, signalingParticipantList, [
+				expectedExternalUser1,
+				expectedExternalGuest1,
 				expectedExternalLocalParticipant,
 			])
 			expect(signalingParticipantList.getParticipants()).toEqual([
@@ -468,6 +483,10 @@ describe('SignalingParticipantList', () => {
 				expectedInternalGuest1,
 				expectedInternalLocalParticipant,
 			])
+			expect(participantsLeftHandler).toHaveBeenCalledTimes(1)
+			expect(participantsLeftHandler).toHaveBeenNthCalledWith(1, signalingParticipantList, [
+				expectedInternalGuest1,
+			])
 			expect(signalingParticipantList.getParticipants()).toEqual([
 				expectedInternalUser1,
 				expectedInternalLocalParticipant,
@@ -505,6 +524,10 @@ describe('SignalingParticipantList', () => {
 			])
 			expect(participantsJoinedHandler).toHaveBeenNthCalledWith(2, signalingParticipantList, [
 				expectedExternalLocalParticipant,
+			])
+			expect(participantsLeftHandler).toHaveBeenCalledTimes(1)
+			expect(participantsLeftHandler).toHaveBeenNthCalledWith(1, signalingParticipantList, [
+				expectedExternalGuest1,
 			])
 			expect(signalingParticipantList.getParticipants()).toEqual([
 				expectedExternalUser1,
@@ -593,6 +616,12 @@ describe('SignalingParticipantList', () => {
 			expect(participantsJoinedHandler).toHaveBeenNthCalledWith(3, signalingParticipantList, [
 				expectedInternalUser1,
 			])
+			expect(participantsLeftHandler).toHaveBeenCalledTimes(1)
+			expect(participantsLeftHandler).toHaveBeenNthCalledWith(1, signalingParticipantList, [
+				expectedInternalUser1,
+				expectedInternalGuest1,
+				expectedInternalUser2,
+			])
 			expect(signalingParticipantList.getParticipants()).toEqual([
 				expectedInternalGuest2,
 				expectedInternalLocalParticipant,
@@ -659,6 +688,12 @@ describe('SignalingParticipantList', () => {
 			])
 			expect(participantsJoinedHandler).toHaveBeenNthCalledWith(4, signalingParticipantList, [
 				expectedExternalUser1,
+			])
+			expect(participantsLeftHandler).toHaveBeenCalledTimes(1)
+			expect(participantsLeftHandler).toHaveBeenNthCalledWith(1, signalingParticipantList, [
+				expectedExternalUser1,
+				expectedExternalGuest1,
+				expectedExternalUser2,
 			])
 			expect(signalingParticipantList.getParticipants()).toEqual([
 				expectedExternalGuest2,
@@ -730,6 +765,77 @@ describe('SignalingParticipantList', () => {
 				expect(participantsJoinedHandler).toHaveBeenNthCalledWith(1, signalingParticipantList, [
 					expectedExternalLocalParticipant,
 				])
+				expect(signalingParticipantList.getParticipants()).toEqual([])
+			})
+		})
+
+		describe('prevents updating the list when other participants leave', () => {
+			test('with internal signaling', () => {
+				signaling._trigger('usersInRoom', [[
+					{
+						sessionId: 'localSignalingSessionId',
+						userId: 'localUserId',
+					},
+					{
+						sessionId: 'user1SignalingSessionId',
+						userId: 'user1UserId',
+					},
+					{
+						sessionId: 'guest1SignalingSessionId',
+						userId: '',
+					},
+				]])
+
+				signalingParticipantList.destroy()
+
+				signaling._trigger('usersInRoom', [[
+					{
+						sessionId: 'localSignalingSessionId',
+						userId: 'localUserId',
+					},
+				]])
+
+				expect(participantsLeftHandler).toHaveBeenCalledTimes(0)
+				expect(signalingParticipantList.getParticipants()).toEqual([])
+			})
+
+			test('with external signaling', () => {
+				signaling._trigger('usersJoined', [[
+					{
+						roomsessionid: 'localNextcloudSessionId',
+						sessionid: 'localSignalingSessionId',
+						userid: 'localUserId',
+					},
+				]])
+				signaling._trigger('usersJoined', [[
+					{
+						roomsessionid: 'user1NextcloudSessionId',
+						sessionid: 'user1SignalingSessionId',
+						userid: 'user1UserId',
+					},
+					{
+						roomsessionid: 'guest1NextcloudSessionId',
+						sessionid: 'guest1SignalingSessionId',
+						userid: '',
+					},
+				]])
+
+				signalingParticipantList.destroy()
+
+				signaling._trigger('usersLeft', [[
+					{
+						roomsessionid: 'user1NextcloudSessionId',
+						sessionid: 'user1SignalingSessionId',
+						userid: 'user1UserId',
+					},
+					{
+						roomsessionid: 'guest1NextcloudSessionId',
+						sessionid: 'guest1SignalingSessionId',
+						userid: '',
+					},
+				]])
+
+				expect(participantsLeftHandler).toHaveBeenCalledTimes(0)
 				expect(signalingParticipantList.getParticipants()).toEqual([])
 			})
 		})
