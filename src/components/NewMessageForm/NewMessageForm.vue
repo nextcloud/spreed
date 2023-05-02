@@ -3,8 +3,9 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   - @author Grigorii Shartsev <me@shgk.me>
+  - @author Maksim Sukharev <antreesy.web@gmail.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -134,10 +135,12 @@
 						@submit="handleSubmit({ silent: false })" />
 				</div>
 
-				<AudioRecorder v-if="showAudioRecorder"
+				<!-- Audio recorder -->
+				<NewMessageFormAudioRecorder v-if="showAudioRecorder"
 					:disabled="disabled"
 					@recording="handleRecording"
 					@audio-file="handleAudioFile" />
+
 				<!-- Send buttons -->
 				<template v-else>
 					<NcActions v-if="!broadcast"
@@ -169,9 +172,13 @@
 			</form>
 		</div>
 
-		<SimplePollsEditor v-if="showSimplePollsEditor"
+		<!-- File upload dialog -->
+		<NewMessageFormUploadEditor />
+
+		<!-- Poll creation dialog -->
+		<NewMessageFormPollEditor v-if="showPollEditor"
 			:token="token"
-			@close="toggleSimplePollsEditor(false)" />
+			@close="togglePollEditor" />
 
 		<!-- Text file creation dialog -->
 		<NcModal v-if="showTextFileDialog !== false"
@@ -196,11 +203,11 @@
 
 					<template v-if="fileTemplate.templates.length">
 						<ul class="templates-picker__list">
-							<TemplatePreview v-bind="emptyTemplate"
+							<NewMessageFormTemplatePreview v-bind="emptyTemplate"
 								:checked="checked === emptyTemplate.fileid"
 								@check="onCheck" />
 
-							<TemplatePreview v-for="template in fileTemplate.templates"
+							<NewMessageFormTemplatePreview v-for="template in fileTemplate.templates"
 								:key="template.fileid"
 								v-bind="template"
 								:checked="checked === template.fileid"
@@ -247,10 +254,11 @@ import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContente
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import Quote from '../Quote.vue'
-import AudioRecorder from './AudioRecorder/AudioRecorder.vue'
+import NewMessageFormAudioRecorder from './NewMessageFormAudioRecorder.vue'
+import NewMessageFormPollEditor from './NewMessageFormPollEditor.vue'
+import NewMessageFormTemplatePreview from './NewMessageFormTemplatePreview.vue'
 import NewMessageFormTypingIndicator from './NewMessageFormTypingIndicator.vue'
-import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
-import TemplatePreview from './TemplatePreview.vue'
+import NewMessageFormUploadEditor from './NewMessageFormUploadEditor.vue'
 
 import { useViewer } from '../../composables/useViewer.js'
 import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
@@ -279,7 +287,6 @@ export default {
 	disableKeyboardShortcuts,
 
 	components: {
-		AudioRecorder,
 		NcActionButton,
 		NcActions,
 		NcButton,
@@ -287,10 +294,12 @@ export default {
 		NcModal,
 		NcRichContenteditable,
 		NcTextField,
+		NewMessageFormAudioRecorder,
+		NewMessageFormPollEditor,
+		NewMessageFormTemplatePreview,
 		NewMessageFormTypingIndicator,
+		NewMessageFormUploadEditor,
 		Quote,
-		SimplePollsEditor,
-		TemplatePreview,
 		// Icons
 		BellOff,
 		EmoticonOutline,
@@ -308,15 +317,6 @@ export default {
 		token: {
 			type: String,
 			required: true,
-		},
-
-		/**
-		 * When this component is used to send message to a breakout room we
-		 * adapt the layout and remove some functionality.
-		 */
-		breakoutRoom: {
-			type: Boolean,
-			default: false,
 		},
 
 		/**
@@ -363,7 +363,7 @@ export default {
 			conversationIsFirstInList: false,
 			// True when the audiorecorder component is recording
 			isRecordingAudio: false,
-			showSimplePollsEditor: false,
+			showPollEditor: false,
 			showTextFileDialog: false,
 			textFileTitle: t('spreed', 'New file'),
 			newFileError: '',
@@ -571,8 +571,7 @@ export default {
 
 	methods: {
 		handleUploadStart() {
-			// refocus on upload start as the user might want to type again
-			// while the upload is running
+			// refocus on upload start as the user might want to type again while the upload is running
 			this.focusInput()
 		},
 
@@ -641,13 +640,13 @@ export default {
 		async handleSubmitSpam(numberOfMessages) {
 			console.debug('Sending ' + numberOfMessages + ' lorem ipsum messages')
 			for (let i = 0; i < numberOfMessages; i++) {
-				const randomNumber = parseInt(Math.random() * 500, 10)
+				const randomNumber = parseInt((Math.random() * 500).toString(), 10)
 				console.debug('[' + i + '/' + numberOfMessages + '] Sleeping ' + randomNumber + 'ms')
 				await this.sleep(randomNumber)
 
 				const loremIpsum = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\n\nDuis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.'
 				this.text = loremIpsum.slice(0, 25 + randomNumber)
-				await this.handleSubmit()
+				await this.handleSubmit({ silent: false })
 			}
 		},
 
@@ -752,9 +751,9 @@ export default {
 		 *
 		 * @param {File[] | FileList} files pasted files list
 		 * @param {boolean} rename whether to rename the files
-		 * @param {boolean} isVoiceMessage indicates whether the file is a vooicemessage
+		 * @param {boolean} isVoiceMessage indicates whether the file is a voice message
 		 */
-		async handleFiles(files, rename = false, isVoiceMessage) {
+		async handleFiles(files, rename = false, isVoiceMessage = false) {
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files
@@ -793,8 +792,7 @@ export default {
 			}
 
 			// Although due to legacy reasons the API allows several ranges the
-			// specification requires the selection to always have a single
-			// range.
+			// specification requires the selection to always have a single range.
 			// https://developer.mozilla.org/en-US/docs/Web/API/Selection#Multiple_ranges_in_a_selection
 			const range = selection.getRangeAt(0)
 
@@ -817,8 +815,8 @@ export default {
 			this.isRecordingAudio = payload
 		},
 
-		toggleSimplePollsEditor(value) {
-			this.showSimplePollsEditor = value
+		togglePollEditor() {
+			this.showPollEditor = !this.showPollEditor
 		},
 
 		/**
@@ -880,8 +878,7 @@ export default {
 		async autoComplete(search, callback) {
 			const response = await searchPossibleMentions(this.token, search)
 			if (!response) {
-				// It was not possible to get the candidate mentions, so just
-				// keep the previous ones.
+				// It was not possible to get the candidate mentions, so just keep the previous ones.
 				return
 			}
 
@@ -954,7 +951,7 @@ export default {
 </script>
 
 <style lang="scss">
-// Enforce NcAutoCompleteResult to have proper box-sizing
+// FIXME upstream: Enforce NcAutoCompleteResult to have proper box-sizing
 .tribute-container {
 	position: absolute;
 	box-sizing: content-box !important;
@@ -1027,8 +1024,7 @@ export default {
 			border-radius: var(--border-radius-large);
 		}
 
-		// put a grey round background when popover is opened
-		// or hover-focused
+		// put a grey round background when popover is opened or hover-focused
 		&__icon:hover,
 		&__icon:focus,
 		&__icon:active {
@@ -1041,7 +1037,7 @@ export default {
 }
 
 // Override actions styles TODO: upstream this change
-// Targeting two classess for specificity
+// Targeting two classes for specificity
 :deep(.action-item__menutoggle.action-item__menutoggle--with-icon-slot) {
 	opacity: 1 !important;
 

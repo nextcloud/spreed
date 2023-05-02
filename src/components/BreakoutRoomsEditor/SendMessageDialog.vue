@@ -31,7 +31,6 @@
 				ref="messageForm"
 				role="region"
 				:token="token"
-				:breakout-room="true"
 				:container="modalContainerId"
 				:aria-label="t('spreed', 'Post message')"
 				:broadcast="broadcast"

@@ -79,11 +79,11 @@ import Plus from 'vue-material-design-icons/Plus.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
-import AudioPlayer from './MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
-import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
+import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
+import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 
 export default {
-	name: 'UploadEditor',
+	name: 'NewMessageFormUploadEditor',
 
 	components: {
 		NcModal,
@@ -192,7 +192,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/variables';
+@import '../../assets/variables';
 
 .upload-editor {
 	height: 100%;
