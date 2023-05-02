@@ -315,3 +315,53 @@ External signaling only
     },
 }
 ```
+
+## Call reactions
+
+### External signaling
+
+| field      | type   | Description                               |
+| ---------- | ------ | ----------------------------------------- |
+| `roomType` | string | "video" or "screen"                       |
+| `reaction` | string | Single emoji which is shown as a reaction |
+| `sid`      | string | external signaling server >= 0.5.0        |
+
+```
+{
+    "type": "message",
+    "message": {
+        "sender": {
+            ...
+        },
+        "data": {
+            "to": #STRING#,
+            "sid": #STRING#,
+            "roomType": #STRING#,
+            "type": "reaction",
+            "payload" :{
+                "reaction": #STRING#
+            }
+        }
+    }
+}
+```
+
+### Internal signaling
+
+| field      | type   | Description                               |
+| ---------- | ------ | ----------------------------------------- |
+| `roomType` | string | "video" or "screen"                       |
+| `reaction` | string | Single emoji which is shown as a reaction |
+
+```
+{
+    "to": #STRING#,
+    "sid": #STRING#,
+    "roomType": #STRING#,
+    "type": "reaction",
+    "payload": {
+        "reaction": #STRING#
+    },
+    "from": #STRING#
+}
+```
