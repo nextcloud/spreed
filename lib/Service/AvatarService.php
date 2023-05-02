@@ -35,33 +35,22 @@ use OCP\Files\SimpleFS\InMemoryFile;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IAvatarManager;
+use OCP\IEmojiHelper;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
 
 class AvatarService {
-	private IAppData $appData;
-	private IL10N $l;
-	private IURLGenerator $url;
-	private ISecureRandom $random;
-	private RoomService $roomService;
-	private IAvatarManager $avatarManager;
-
 	public function __construct(
-		IAppData $appData,
-		IL10N $l,
-		IURLGenerator $url,
-		ISecureRandom $random,
-		RoomService $roomService,
-		IAvatarManager $avatarManager,
+		private IAppData $appData,
+		private IL10N $l,
+		private IURLGenerator $url,
+		private ISecureRandom $random,
+		private RoomService $roomService,
+		private IAvatarManager $avatarManager,
+		private IEmojiHelper $emojiHelper,
 	) {
-		$this->appData = $appData;
-		$this->l = $l;
-		$this->url = $url;
-		$this->random = $random;
-		$this->roomService = $roomService;
-		$this->avatarManager = $avatarManager;
 	}
 
 	public function setAvatarFromRequest(Room $room, ?array $file): void {
@@ -148,6 +137,22 @@ class AvatarService {
 		return $avatarFolder;
 	}
 
+	/**
+	 * https://github.com/sebdesign/cap-height -- for 500px height
+	 * Automated check: https://codepen.io/skjnldsv/pen/PydLBK/
+	 * Noto Sans cap-height is 0.715 and we want a 200px caps height size
+	 * (0.4 letter-to-total-height ratio, 500*0.4=200), so: 200/0.715 = 280px.
+	 * Since we start from the baseline (text-anchor) we need to
+	 * shift the y axis by 100px (half the caps height): 500/2+100=350
+	 *
+	 * Copied from @see \OC\Avatar\Avatar::$svgTemplate with only `{font}` being modified
+	 */
+	private string $svgTemplate = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+		<svg width="{size}" height="{size}" version="1.1" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+			<rect width="100%" height="100%" fill="#{fill}"></rect>
+			<text x="50%" y="350" style="font-weight:normal;font-size:280px;font-family:{font};text-anchor:middle;fill:#{fgFill}">{letter}</text>
+		</svg>';
+
 	public function getAvatar(Room $room, ?IUser $user, bool $darkTheme = false): ISimpleFile {
 		$token = $room->getToken();
 		$avatar = $room->getAvatar();
@@ -161,7 +166,6 @@ class AvatarService {
 			}
 		}
 
-
 		// Fallback
 		if (!isset($file)) {
 			$colorTone = $darkTheme ? 'dark' : 'bright';
@@ -174,6 +178,20 @@ class AvatarService {
 						$file = $avatar->getFile(512, $darkTheme);
 					}
 				}
+			} elseif ($this->emojiHelper->isValidSingleEmoji(mb_substr($room->getName(), 0, 1))) {
+				$file = new InMemoryFile($token, str_replace([
+					'{letter}',
+					'{size}',
+					'{fill}',
+					'{font}',
+					'{fgFill}',
+				], [
+					$this->getFirstCombinedEmoji($room->getName()),
+					512,
+					$darkTheme ? '3B3B3B' : 'DBDBDB',
+					"'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif, 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Sans'",
+					'000',
+				], $this->svgTemplate));
 			} elseif ($room->getType() === Room::TYPE_CHANGELOG) {
 				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/changelog.svg'));
 			} elseif ($room->getObjectType() === 'file') {
@@ -191,6 +209,22 @@ class AvatarService {
 			}
 		}
 		return $file;
+	}
+
+	/**
+	 * Get the first combined full emoji (including gender, skin tone, job, …)
+	 *
+	 * @param string $roomName
+	 * @param int $length
+	 * @return string
+	 */
+	protected function getFirstCombinedEmoji(string $roomName, int $length = 0): string {
+		$attempt = mb_substr($roomName, 0, $length + 1);
+		if ($this->emojiHelper->isValidSingleEmoji($attempt)) {
+			$longerAttempt = $this->getFirstCombinedEmoji($roomName, $length + 1);
+			return $longerAttempt ?: $attempt;
+		}
+		return '';
 	}
 
 	public function deleteAvatar(Room $room): void {

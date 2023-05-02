@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Tests\php\Service;
 
+use OC\EmojiHelper;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\RoomService;
@@ -61,13 +62,15 @@ class AvatarServiceTest extends TestCase {
 		$this->random = $this->createMock(ISecureRandom::class);
 		$this->roomService = $this->createMock(RoomService::class);
 		$this->avatarManager = $this->createMock(IAvatarManager::class);
+		$this->emojiHelper = \OCP\Server::get(EmojiHelper::class);
 		$this->service = new AvatarService(
 			$this->appData,
 			$this->l,
 			$this->url,
 			$this->random,
 			$this->roomService,
-			$this->avatarManager
+			$this->avatarManager,
+			$this->emojiHelper,
 		);
 	}
 
@@ -90,5 +93,20 @@ class AvatarServiceTest extends TestCase {
 			['1', '1'],
 			['1.png', '1'],
 		];
+	}
+
+	public function dataGetFirstCombinedEmoji(): array {
+		return [
+			['👋 Hello', '👋'],
+			['Only leading emojis 🚀', ''],
+			['👩🏽‍💻👩🏻‍💻👨🏿‍💻 Only one, but with all attributes', '👩🏽‍💻'],
+		];
+	}
+
+	/**
+	 * @dataProvider dataGetFirstCombinedEmoji
+	 */
+	public function testGetFirstCombinedEmoji(string $roomName, string $avatarEmoji): void {
+		$this->assertSame($avatarEmoji, self::invokePrivate($this->service, 'getFirstCombinedEmoji', [$roomName]));
 	}
 }
