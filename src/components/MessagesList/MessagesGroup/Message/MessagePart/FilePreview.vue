@@ -84,7 +84,7 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import AudioPlayer from './AudioPlayer.vue'
 
-import isInCall from '../../../../../mixins/isInCall.js'
+import { openViewer } from '../../../../../mixins/openViewer.js'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,
@@ -107,7 +107,7 @@ export default {
 		tooltip: Tooltip,
 	},
 
-	mixins: [isInCall],
+	mixins: [openViewer],
 
 	props: {
 		/**
@@ -466,12 +466,6 @@ export default {
 			event.stopPropagation()
 			event.preventDefault()
 
-			// The Viewer expects a file to be set in the sidebar if the sidebar
-			// is open.
-			if (this.$store.getters.getSidebarStatus) {
-				OCA.Files.Sidebar.state.file = this.internalAbsolutePath
-			}
-
 			let permissions = ''
 			if (this.permissions) {
 				if (this.permissions & OC.PERMISSION_CREATE) {
@@ -491,41 +485,17 @@ export default {
 				}
 			}
 
-			if (this.isInCall) {
-				this.$store.dispatch('setCallViewMode', { isViewerOverlay: true })
-			}
-
-			OCA.Viewer.open({
-				// Viewer expects an internal absolute path starting with "/".
-				path: this.internalAbsolutePath,
-				list: [
-					{
-						fileid: parseInt(this.id, 10),
-						filename: this.internalAbsolutePath,
-						basename: this.name,
-						mime: this.mimetype,
-						hasPreview: this.previewAvailable === 'yes',
-						etag: this.etag,
-						permissions,
-					},
-				],
-				onClose: () => {
-					this.$store.dispatch('setCallViewMode', { isViewerOverlay: false })
+			this.openViewer(this.internalAbsolutePath, [
+				{
+					fileid: parseInt(this.id, 10),
+					filename: this.internalAbsolutePath,
+					basename: this.name,
+					mime: this.mimetype,
+					hasPreview: this.previewAvailable === 'yes',
+					etag: this.etag,
+					permissions,
 				},
-			})
-
-			// FIXME Remove this hack once it is possible to set the parent
-			// element of the viewer.
-			// By default the viewer is a sibling of the fullscreen element, so
-			// it is not visible when in fullscreen mode. It is not possible to
-			// specify the parent nor to know when the viewer was actually
-			// opened, so for the time being it is reparented if needed shortly
-			// after calling it.
-			setTimeout(() => {
-				if (this.$store.getters.isFullscreen()) {
-					document.getElementById('content-vue').appendChild(document.getElementById('viewer'))
-				}
-			}, 1000)
+			])
 		},
 	},
 }

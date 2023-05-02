@@ -248,7 +248,7 @@ import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
 import TemplatePreview from './TemplatePreview.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../constants.js'
-import isInCall from '../../mixins/isInCall.js'
+import { openViewer } from '../../mixins/openViewer.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile, createTextFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
@@ -293,7 +293,7 @@ export default {
 		NcTextField,
 	},
 
-	mixins: [isInCall],
+	mixins: [openViewer],
 
 	props: {
 		/**
@@ -810,39 +810,7 @@ export default {
 
 			await shareFile(filePath, this.token, '', '')
 
-			// The Viewer expects a file to be set in the sidebar if the sidebar
-			// is open.
-			if (this.$store.getters.getSidebarStatus) {
-				OCA.Files.Sidebar.state.file = filePath
-			}
-
-			if (this.isInCall) {
-				this.$store.dispatch('setCallViewMode', { isViewerOverlay: true })
-			}
-
-			OCA.Viewer.open({
-				// Viewer expects an internal absolute path starting with "/".
-				path: filePath,
-				list: [
-					fileData,
-				],
-				onClose: () => {
-					this.$store.dispatch('setCallViewMode', { isViewerOverlay: false })
-				},
-			})
-
-			// FIXME Remove this hack once it is possible to set the parent
-			// element of the viewer.
-			// By default the viewer is a sibling of the fullscreen element, so
-			// it is not visible when in fullscreen mode. It is not possible to
-			// specify the parent nor to know when the viewer was actually
-			// opened, so for the time being it is reparented if needed shortly
-			// after calling it.
-			setTimeout(() => {
-				if (this.$store.getters.isFullscreen()) {
-					document.getElementById('content-vue').appendChild(document.getElementById('viewer'))
-				}
-			}, 1000)
+			this.openViewer(filePath, [fileData])
 
 			this.dismissTextFileCreation()
 		},
