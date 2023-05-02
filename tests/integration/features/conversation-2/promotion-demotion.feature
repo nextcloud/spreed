@@ -33,14 +33,33 @@ Feature: conversation-2/promotion-demotion
       | room | 3    | 3               |
     And user "participant1" loads attendees attendee ids in room "room" (v4)
     And user "participant1" promotes "participant2" in room "room" with 200 (v4)
+    And user "participant1" sets permissions for "participant3" in room "room" to "L" with 200 (v4)
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId      | permissions |
+      | users      | participant1 | SJLAVPM     |
+      | users      | participant2 | SJLAVPM     |
+      | users      | participant3 | CL           |
+    Then user "participant3" is participant of the following rooms (v4)
+      | id   | type | participantType |
+      | room | 3    | 3               |
     When user "participant2" promotes "participant3" in room "room" with 200 (v4)
     Then user "participant3" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 2               |
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId      | permissions |
+      | users      | participant1 | SJLAVPM     |
+      | users      | participant2 | SJLAVPM     |
+      | users      | participant3 | SJLAVPM     |
     When user "participant2" demotes "participant3" in room "room" with 200 (v4)
     Then user "participant3" is participant of the following rooms (v4)
       | id   | type | participantType |
       | room | 3    | 3               |
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId      | permissions |
+      | users      | participant1 | SJLAVPM     |
+      | users      | participant2 | SJLAVPM     |
+      | users      | participant3 | SJAVPM      |
 
   Scenario: User promotes/demotes moderator
     Given user "participant1" creates room "room" (v4)
