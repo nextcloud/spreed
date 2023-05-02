@@ -148,54 +148,12 @@
 			@close="togglePollEditor" />
 
 		<!-- Text file creation dialog -->
-		<NcModal v-if="showTextFileDialog !== false"
-			size="normal"
+		<NewMessageFormTextCreateDialog v-if="showTextFileDialog !== -1"
+			ref="textFileCreateDialog"
+			:token="token"
 			:container="container"
-			class="templates-picker"
-			@close="dismissTextFileCreation">
-			<div class="new-text-file">
-				<h2>
-					{{ t('spreed', 'Create and share a new file') }}
-				</h2>
-				<form class="new-text-file__form templates-picker__form"
-					:style="style"
-					@submit.prevent="handleCreateTextFile">
-					<NcTextField id="new-file-form-name"
-						ref="textFileTitleInput"
-						:error="!!newFileError"
-						:helper-text="newFileError"
-						:label="t('spreed', 'Name of the new file')"
-						:placeholder="textFileTitle"
-						:value.sync="textFileTitle" />
-
-					<template v-if="fileTemplate.templates.length">
-						<ul class="templates-picker__list">
-							<NewMessageFormTemplatePreview v-bind="emptyTemplate"
-								:checked="checked === emptyTemplate.fileid"
-								@check="onCheck" />
-
-							<NewMessageFormTemplatePreview v-for="template in fileTemplate.templates"
-								:key="template.fileid"
-								v-bind="template"
-								:checked="checked === template.fileid"
-								:ratio="fileTemplate.ratio"
-								@check="onCheck" />
-						</ul>
-					</template>
-
-					<div class="new-text-file__buttons">
-						<NcButton type="tertiary"
-							@click="dismissTextFileCreation">
-							{{ t('spreed', 'Close') }}
-						</NcButton>
-						<NcButton type="primary"
-							@click="handleCreateTextFile">
-							{{ t('spreed', 'Create file') }}
-						</NcButton>
-					</div>
-				</form>
-			</div>
-		</NcModal>
+			:show-text-file-dialog="showTextFileDialog"
+			@dismiss-text-file-creation="showTextFileDialog = -1" />
 	</div>
 </template>
 
@@ -205,29 +163,27 @@ import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Send from 'vue-material-design-icons/Send.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
+import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import Quote from '../Quote.vue'
 import NewMessageFormAttachments from './NewMessageFormAttachments.vue'
 import NewMessageFormAudioRecorder from './NewMessageFormAudioRecorder.vue'
 import NewMessageFormPollEditor from './NewMessageFormPollEditor.vue'
-import NewMessageFormTemplatePreview from './NewMessageFormTemplatePreview.vue'
+import NewMessageFormTextCreateDialog from './NewMessageFormTextCreateDialog.vue'
 import NewMessageFormTypingIndicator from './NewMessageFormTypingIndicator.vue'
 import NewMessageFormUploadEditor from './NewMessageFormUploadEditor.vue'
 
 import { useViewer } from '../../composables/useViewer.js'
 import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
-import { shareFile, createTextFile } from '../../services/filesSharingServices.js'
+import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 
@@ -237,10 +193,6 @@ const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setType(1)
 	.allowDirectories()
 	.build()
-
-const border = 2
-const margin = 8
-const width = margin * 20
 
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined
@@ -255,13 +207,11 @@ export default {
 		NcActions,
 		NcButton,
 		NcEmojiPicker,
-		NcModal,
 		NcRichContenteditable,
-		NcTextField,
 		NewMessageFormAttachments,
 		NewMessageFormAudioRecorder,
 		NewMessageFormPollEditor,
-		NewMessageFormTemplatePreview,
+		NewMessageFormTextCreateDialog,
 		NewMessageFormTypingIndicator,
 		NewMessageFormUploadEditor,
 		Quote,
@@ -322,15 +272,12 @@ export default {
 		return {
 			text: '',
 			conversationIsFirstInList: false,
-			// True when the audiorecorder component is recording
+			// True when the audio recorder component is recording
 			isRecordingAudio: false,
 			showPollEditor: false,
-			showTextFileDialog: false,
-			textFileTitle: t('spreed', 'New file'),
-			newFileError: '',
+			showTextFileDialog: -1,
 			isTributePickerActive: false,
 			// Check empty template by default
-			checked: -1,
 			userData: {},
 			clipboardTimeStamp: null,
 			typingTimeout: null,
@@ -415,38 +362,6 @@ export default {
 			}
 		},
 
-		fileTemplateOptions() {
-			return this.$store.getters.getFileTemplates()
-		},
-
-		fileTemplate() {
-			return this.fileTemplateOptions[this.showTextFileDialog]
-		},
-
-		emptyTemplate() {
-			return {
-				basename: t('files', 'Blank'),
-				fileid: -1,
-				filename: t('files', 'Blank'),
-				hasPreview: false,
-				mime: this.fileTemplate?.mimetypes[0] || this.fileTemplate?.mimetypes,
-			}
-		},
-
-		selectedTemplate() {
-			return this.fileTemplate.templates.find(template => template.fileid === this.checked)
-		},
-
-		style() {
-			return {
-				'--margin': margin + 'px',
-				'--width': width + 'px',
-				'--border': border + 'px',
-				'--fullwidth': width + 2 * margin + 2 * border + 'px',
-				'--height': this.fileTemplate.ratio ? Math.round(width / this.fileTemplate.ratio) + 'px' : null,
-			}
-		},
-
 		showAttachmentsMenu() {
 			return this.canShareFiles && !this.broadcast
 		},
@@ -491,16 +406,6 @@ export default {
 				this.text = ''
 			}
 			this.$store.dispatch('setTyping', { typing: false })
-		},
-
-		showTextFileDialog(newValue) {
-			if (newValue !== false) {
-				const fileTemplate = this.fileTemplateOptions[newValue]
-				this.textFileTitle = fileTemplate.label + fileTemplate.extension
-				this.$nextTick(() => {
-					this.focusTextDialogInput()
-				})
-			}
 		},
 	},
 
@@ -548,6 +453,7 @@ export default {
 				const temp = document.createElement('textarea')
 				temp.innerHTML = this.text
 				this.text = temp.value
+
 				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', {
 					text: this.text.trim(),
 					token: this.token,
@@ -775,62 +681,6 @@ export default {
 			this.showPollEditor = !this.showPollEditor
 		},
 
-		/**
-		 * Manages the radio template picker change
-		 *
-		 * @param {number} fileid the selected template file id
-		 */
-		onCheck(fileid) {
-			this.checked = fileid
-		},
-
-		// Create text file and share it to a conversation
-		async handleCreateTextFile() {
-			this.newFileError = ''
-			let filePath = this.$store.getters.getAttachmentFolder() + '/' + this.textFileTitle.replace('/', '')
-
-			if (!filePath.endsWith(this.fileTemplate.extension)) {
-				filePath += this.fileTemplate.extension
-			}
-
-			let fileData
-			try {
-				const response = await createTextFile(
-					filePath,
-					this.selectedTemplate?.filename,
-					this.selectedTemplate?.templateType,
-				)
-				fileData = response.data.ocs.data
-			} catch (error) {
-				console.error('Error while creating file', error)
-				if (error?.response?.data?.ocs?.meta?.message) {
-					showError(error.response.data.ocs.meta.message)
-					this.newFileError = error.response.data.ocs.meta.message
-				} else {
-					showError(t('spreed', 'Error while creating file'))
-				}
-				return
-			}
-
-			await shareFile(filePath, this.token, '', '')
-
-			this.openViewer(filePath, [fileData])
-
-			this.dismissTextFileCreation()
-		},
-
-		dismissTextFileCreation() {
-			this.showTextFileDialog = false
-			this.textFileTitle = t('spreed', 'New file')
-			this.newFileError = ''
-		},
-
-		// Focus and select the text within the input field
-		focusTextDialogInput() {
-			// FIXME upstream: add support of native input methods: focus, select, etc
-			this.$refs.textFileTitleInput.$refs.inputField.$refs.input.select()
-		},
-
 		async autoComplete(search, callback) {
 			const response = await searchPossibleMentions(this.token, search)
 			if (!response) {
@@ -1004,40 +854,6 @@ export default {
 
 	&:disabled {
 		opacity: .5 !important;
-	}
-}
-
-.new-text-file {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
-	gap: 28px;
-	padding: 20px;
-
-	&__buttons {
-		display: flex;
-		gap: 4px;
-		justify-content: center;
-		margin-top: 20px;
-	}
-
-	&__form {
-		width: 100%;
-
-		.templates-picker__list {
-			margin-top: 20px;
-			display: grid;
-			grid-gap: calc(var(--margin) * 2);
-			grid-auto-columns: 1fr;
-			// We want maximum 5 columns. Putting 6 as we don't count the grid gap. So it will always be lower than 6
-			max-width: calc(var(--fullwidth) * 6);
-			grid-template-columns: repeat(auto-fit, var(--fullwidth));
-			// Make sure all rows are the same height
-			grid-auto-rows: 1fr;
-			// Center the columns set
-			justify-content: center;
-		}
 	}
 }
 </style>
