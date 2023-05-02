@@ -232,9 +232,6 @@ class AvatarService {
 
 	private function getAvatarPath(Room $room, bool $darkTheme = false): string {
 		$colorTone = $darkTheme ? 'dark' : 'bright';
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
-			return '';
-		}
 		if ($room->getType() === Room::TYPE_CHANGELOG) {
 			return __DIR__ . '/../../img/changelog.svg';
 		}
@@ -250,7 +247,9 @@ class AvatarService {
 		if ($room->getType() === Room::TYPE_PUBLIC) {
 			return __DIR__ . '/../../img/icon-conversation-public-' . $colorTone . '.svg';
 		}
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
+			|| $room->getType() === Room::TYPE_ONE_TO_ONE
+		) {
 			return __DIR__ . '/../../img/icon-conversation-user-' . $colorTone . '.svg';
 		}
 		return __DIR__ . '/../../img/icon-conversation-group-' . $colorTone . '.svg';
