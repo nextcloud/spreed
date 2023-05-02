@@ -144,7 +144,6 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_TYPE_SET, $event);
 
 		$attendee->setParticipantType($participantType);
-		$this->attendeeMapper->update($attendee);
 
 		$promotedToModerator = in_array($participantType, [
 			Participant::OWNER,
@@ -154,6 +153,13 @@ class ParticipantService {
 			Participant::OWNER,
 			Participant::MODERATOR,
 		], true);
+
+		if ($promotedToModerator) {
+			// Reset permissions on promotion
+			$attendee->setPermissions(Attendee::PERMISSIONS_DEFAULT);
+		}
+
+		$this->attendeeMapper->update($attendee);
 
 		// XOR so we don't move the participant in and out when they are changed from moderator to owner or vice-versa
 		if (($promotedToModerator xor $demotedFromModerator) && $room->getBreakoutRoomMode() !== BreakoutRoom::MODE_NOT_CONFIGURED) {
