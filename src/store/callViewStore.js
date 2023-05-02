@@ -2,6 +2,7 @@
  * @copyright Copyright (c) 2020 Marco Ambrosini <marcoambrosini@icloud.com>
  *
  * @author Marco Ambrosini <marcoambrosini@icloud.com>
+ * @author Grigorii Shartsev <me@shgk.me>
  *
  * @license AGPL-3.0-or-later
  *
@@ -29,6 +30,7 @@ import BrowserStorage from '../services/BrowserStorage.js'
 
 const state = {
 	forceCallView: false,
+	isViewerOverlay: false,
 	isGrid: false,
 	isStripeOpen: true,
 	lastIsGrid: null,
@@ -42,6 +44,7 @@ const state = {
 
 const getters = {
 	forceCallView: (state) => state.forceCallView,
+	isViewerOverlay: (state) => state.isViewerOverlay,
 	isGrid: (state) => state.isGrid,
 	isStripeOpen: (state) => state.isStripeOpen,
 	lastIsGrid: (state) => state.lastIsGrid,
@@ -70,6 +73,9 @@ const mutations = {
 
 	setForceCallView(state, value) {
 		state.forceCallView = value
+	},
+	isViewerOverlay(state, value) {
+		state.isViewerOverlay = value
 	},
 	isGrid(state, value) {
 		state.isGrid = value
@@ -151,11 +157,17 @@ const actions = {
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} data the wrapping object;
-	 * @param {boolean|null} data.isGrid true for enabled grid mode, false for speaker view;
-	 * @param {boolean|null} data.isStripeOpen true for visible stripel mode, false for speaker view;
-	 * @param {boolean} data.clearLast set to false to not reset last temporary remembered state;
+	 * @param {boolean|null} [data.isViewerOverlay=null] true viewer overlay mode;
+	 * @param {boolean|null} [data.isGrid=null] true for enabled grid mode, false for speaker view;
+	 * @param {boolean|null} [data.isStripeOpen=null] true for visible striped mode, false for speaker view;
+	 * @param {boolean} [data.clearLast=true] set false to not reset last temporary remembered state;
 	 */
-	setCallViewMode(context, { isGrid = null, isStripeOpen = null, clearLast = true }) {
+	setCallViewMode(context, { isGrid = null, isStripeOpen = null, isViewerOverlay = null, clearLast = true }) {
+		if (isViewerOverlay !== null) {
+			context.commit('isViewerOverlay', isViewerOverlay)
+			return
+		}
+
 		if (clearLast) {
 			context.commit('lastIsGrid', null)
 			context.commit('lastIsStripeOpen', null)
