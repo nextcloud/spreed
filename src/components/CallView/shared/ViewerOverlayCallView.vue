@@ -22,11 +22,18 @@
 <template>
 	<div ref="ghost" class="viewer-overlay-ghost">
 		<Portal>
-			<div class="viewer-overlay" :style="{ right: position.right + 'px', bottom: position.bottom + 'px' }">
-				<div class="viewer-overlay__collapse" :class="{ collapsed: isCollapsed }">
+			<div class="viewer-overlay"
+				:style="{
+					right: position.right + 'px',
+					bottom: position.bottom + 'px'
+				}">
+				<div class="viewer-overlay__collapse"
+					:class="{ collapsed: isCollapsed }">
 					<NcButton type="tertiary"
 						class="viewer-overlay__button"
-						:aria-label="isCollapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')"
+						:aria-label="
+							isCollapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')
+						"
 						@click.stop="isCollapsed = !isCollapsed">
 						<template #icon>
 							<ChevronDown v-if="!isCollapsed" :size="20" />
@@ -65,38 +72,16 @@
 							@click-video="maximize">
 							<template #bottom-bar>
 								<div class="viewer-overlay__bottom-bar">
-									<NcButton v-tooltip="audioButtonTooltip"
-										type="tertiary"
-										class="viewer-overlay__button"
-										:aria-label="audioButtonAriaLabel"
-										:class="{
-											'audio-enabled': isAudioAllowed && localModel.attributes.audioAvailable && localModel.attributes.audioEnabled,
-											'no-audio-available': !isAudioAllowed || !localModel.attributes.audioAvailable,
-										}"
-										@click.stop="toggleAudio">
-										<template #icon>
-											<VolumeIndicator :audio-preview-available="localModel.attributes.audioAvailable"
-												:audio-enabled="showMicrophoneOn"
-												:current-volume="localModel.attributes.currentVolume"
-												:volume-threshold="localModel.attributes.volumeThreshold"
-												primary-color="currentColor"
-												overlay-muted-color="#888888" />
-										</template>
-									</NcButton>
-									<NcButton v-tooltip="videoButtonTooltip"
-										type="tertiary"
-										class="viewer-overlay__button"
-										:aria-label="videoButtonAriaLabel"
-										:class="{
-											'video-enabled': isVideoAllowed && localModel.attributes.videoAvailable && localModel.attributes.videoEnabled,
-											'no-video-available': !isVideoAllowed || !localModel.attributes.videoAvailable,
-										}"
-										@click.stop="toggleVideo">
-										<template #icon>
-											<VideoIcon v-if="showVideoOn" :size="20" />
-											<VideoOff v-else :size="20" />
-										</template>
-									</NcButton>
+									<LocalAudioControlButton class="viewer-overlay__button"
+										:conversation="conversation"
+										:model="localModel"
+										nc-button-type="tertiary"
+										disable-keyboard-shortcuts />
+									<LocalVideoControlButton class="viewer-overlay__button"
+										:conversation="conversation"
+										:model="localModel"
+										nc-button-type="tertiary"
+										disable-keyboard-shortcuts />
 								</div>
 							</template>
 						</VideoVue>
@@ -113,32 +98,27 @@ import { Portal } from '@linusborg/vue-simple-portal'
 import ArrowExpand from 'vue-material-design-icons/ArrowExpand.vue'
 import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-import VideoOff from 'vue-material-design-icons/VideoOff.vue'
-
-import { emit } from '@nextcloud/event-bus'
 
 import { NcButton, Tooltip } from '@nextcloud/vue'
 
-import VolumeIndicator from '../../VolumeIndicator/VolumeIndicator.vue'
+import LocalAudioControlButton from './LocalAudioControlButton.vue'
 import LocalVideo from './LocalVideo.vue'
+import LocalVideoControlButton from './LocalVideoControlButton.vue'
 import VideoVue from './VideoVue.vue'
 
-import { PARTICIPANT } from '../../../constants.js'
 import { localCallParticipantModel, localMediaModel } from '../../../utils/webrtc/index.js'
 
 export default {
 	name: 'ViewerOverlayCallView',
 
 	components: {
+		LocalAudioControlButton,
+		LocalVideoControlButton,
 		Portal,
 		LocalVideo,
 		ChevronUp,
 		ChevronDown,
-		VolumeIndicator,
 		NcButton,
-		VideoOff,
-		VideoIcon,
 		VideoVue,
 		ArrowExpand,
 	},
@@ -176,13 +156,6 @@ export default {
 		},
 	},
 
-	setup() {
-		return {
-			// TODO: temp for refactoring to make the code similar to the original
-			disableKeyboardShortcuts: true,
-		}
-	},
-
 	data() {
 		return {
 			isCollapsed: false,
@@ -198,114 +171,6 @@ export default {
 		conversation() {
 			return this.$store.getters.conversation(this.token)
 		},
-
-		// COPY FROM LOCAL VIDEO CONTROLS
-
-		isAudioAllowed() {
-			return this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
-		},
-
-		isVideoAllowed() {
-			return this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO
-		},
-
-		videoButtonAriaLabel() {
-			if (!this.localModel.attributes.videoAvailable) {
-				return t('spreed', 'No video. Click to select device')
-			}
-
-			if (this.localModel.attributes.videoEnabled) {
-				return t('spreed', 'Disable video')
-			}
-
-			if (!this.localModel.getWebRtc() || !this.localModel.getWebRtc().connection || this.localModel.getWebRtc().connection.getSendVideoIfAvailable()) {
-				return t('spreed', 'Enable video')
-			}
-
-			return t('spreed', 'Enable video. Your connection will be briefly interrupted when enabling the video for the first time')
-		},
-
-		videoButtonTooltip() {
-			if (!this.isVideoAllowed) {
-				return t('spreed', 'You are not allowed to enable video')
-			}
-
-			if (!this.localModel.attributes.videoAvailable) {
-				return t('spreed', 'No video. Click to select device')
-			}
-
-			if (this.localModel.attributes.videoEnabled) {
-				return this.disableKeyboardShortcuts
-					? t('spreed', 'Disable video')
-					: t('spreed', 'Disable video (V)')
-			}
-
-			if (!this.localModel.getWebRtc() || !this.localModel.getWebRtc().connection || this.localModel.getWebRtc().connection.getSendVideoIfAvailable()) {
-				return this.disableKeyboardShortcuts
-					? t('spreed', 'Enable video')
-					: t('spreed', 'Enable video (V)')
-			}
-
-			return this.disableKeyboardShortcuts
-				? t('spreed', 'Enable video - Your connection will be briefly interrupted when enabling the video for the first time')
-				: t('spreed', 'Enable video (V) - Your connection will be briefly interrupted when enabling the video for the first time')
-		},
-
-		showVideoOn() {
-			return this.localModel.attributes.videoAvailable && this.localModel.attributes.videoEnabled
-		},
-
-		showMicrophoneOn() {
-			return this.localModel.attributes.audioAvailable && this.localModel.attributes.audioEnabled
-		},
-
-		audioButtonTooltip() {
-			if (!this.isAudioAllowed) {
-				return t('spreed', 'You are not allowed to enable audio')
-			}
-
-			if (!this.localModel.attributes.audioAvailable) {
-				return {
-					content: t('spreed', 'No audio. Click to select device'),
-					show: false,
-				}
-			}
-
-			if (this.speakingWhileMutedNotification && !this.screenSharingMenuOpen) {
-				return {
-					content: this.speakingWhileMutedNotification,
-					show: true,
-				}
-			}
-
-			let content = ''
-			if (this.localModel.attributes.audioEnabled) {
-				content = this.disableKeyboardShortcuts
-					? t('spreed', 'Mute audio')
-					: t('spreed', 'Mute audio (M)')
-			} else {
-				content = this.disableKeyboardShortcuts
-					? t('spreed', 'Unmute audio')
-					: t('spreed', 'Unmute audio (M)')
-			}
-
-			return {
-				content,
-				show: false,
-			}
-		},
-
-		audioButtonAriaLabel() {
-			if (!this.localModel.attributes.audioAvailable) {
-				return t('spreed', 'No audio. Click to select device')
-			}
-
-			return this.localModel.attributes.audioEnabled
-				? t('spreed', 'Mute audio')
-				: t('spreed', 'Unmute audio')
-		},
-		// END COPY FROM LOCAL VIDEO CONTROLS
-
 	},
 
 	mounted() {
@@ -319,32 +184,6 @@ export default {
 	},
 
 	methods: {
-		toggleVideo() {
-			if (!this.localModel.attributes.videoAvailable) {
-				emit('show-settings', {})
-				return
-			}
-
-			if (this.localModel.attributes.videoEnabled) {
-				this.localModel.disableVideo()
-			} else {
-				this.localModel.enableVideo()
-			}
-		},
-
-		toggleAudio() {
-			if (!this.localModel.attributes.audioAvailable) {
-				emit('show-settings', {})
-				return
-			}
-
-			if (this.localModel.attributes.audioEnabled) {
-				this.localModel.disableAudio()
-			} else {
-				this.localModel.enableAudio()
-			}
-		},
-
 		maximize() {
 			if (OCA.Viewer) {
 				OCA.Viewer.close()
@@ -362,13 +201,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/variables';
+@import "../../../assets/variables";
 
 .viewer-overlay-ghost {
-	position: absolute;
-	bottom: 8px;
-	right: 8px;
-	left: 0;
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  left: 0;
 }
 
 .viewer-overlay {
@@ -385,10 +224,10 @@ export default {
 }
 
 .viewer-overlay__collapse {
-	position: absolute;
-	top: 8px;
-	right: 8px;
-	z-index: 100;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 100;
 }
 
 .viewer-overlay__button {
@@ -401,22 +240,22 @@ export default {
 }
 
 .video-overlay__top-bar {
-	position: absolute;
-	top: 8px;
-	left: 8px;
-	z-index: 100;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
 }
 
 .viewer-overlay__bottom-bar {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 8px;
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	padding: 0 12px 8px 12px;
-	z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 0 12px 8px 12px;
+  z-index: 1;
 }
 
 .viewer-overlay__video-container {
@@ -430,12 +269,12 @@ export default {
 }
 
 .viewer-overlay__local-video {
-	position: absolute;
-	bottom: 10%;
-	right: 5%;
-	width: 25%;
-	height: 25%;
-	overflow: hidden;
+  position: absolute;
+  bottom: 10%;
+  right: 5%;
+  width: 25%;
+  height: 25%;
+  overflow: hidden;
 }
 
 .viewer-overlay__video {

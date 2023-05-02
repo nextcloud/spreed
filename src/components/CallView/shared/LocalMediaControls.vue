@@ -35,8 +35,7 @@
 							:aria-label="qualityWarningAriaLabel"
 							@click="mouseover = !mouseover">
 							<template #icon>
-								<NetworkStrength2Alert fill-color="#e9322d"
-									:size="20" />
+								<NetworkStrength2Alert fill-color="#e9322d" :size="20" />
 							</template>
 						</NcButton>
 					</template>
@@ -59,38 +58,11 @@
 					</div>
 				</NcPopover>
 			</div>
-			<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['m']"
-				v-tooltip="audioButtonTooltip"
-				type="tertiary-no-background"
-				:aria-label="audioButtonAriaLabel"
-				:class="audioButtonClass"
-				@shortkey="toggleAudio"
-				@click.stop="toggleAudio">
-				<template #icon>
-					<VolumeIndicator :audio-preview-available="model.attributes.audioAvailable"
-						:audio-enabled="showMicrophoneOn"
-						:current-volume="model.attributes.currentVolume"
-						:volume-threshold="model.attributes.volumeThreshold"
-						primary-color="#ffffff"
-						overlay-muted-color="#888888" />
-				</template>
-			</NcButton>
-			<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['v']"
-				v-tooltip="videoButtonTooltip"
-				type="tertiary-no-background"
-				:aria-label="videoButtonAriaLabel"
-				:class="videoButtonClass"
-				@shortkey="toggleVideo"
-				@click.stop="toggleVideo">
-				<template #icon>
-					<VideoIcon v-if="showVideoOn"
-						:size="20"
-						fill-color="#ffffff" />
-					<VideoOff v-else
-						:size="20"
-						fill-color="#ffffff" />
-				</template>
-			</NcButton>
+
+			<LocalAudioControlButton :conversation="conversation" :model="model" color="#ffffff" />
+
+			<LocalVideoControlButton :conversation="conversation" :model="model" color="#ffffff" />
+
 			<NcButton v-if="isVirtualBackgroundAvailable && !showActions"
 				v-tooltip="toggleVirtualBackgroundButtonLabel"
 				type="tertiary-no-background"
@@ -98,14 +70,11 @@
 				:class="blurButtonClass"
 				@click.stop="toggleVirtualBackground">
 				<template #icon>
-					<Blur v-if="isVirtualBackgroundEnabled"
-						:size="20"
-						fill-color="#ffffff" />
-					<BlurOff v-else
-						:size="20"
-						fill-color="#ffffff" />
+					<Blur v-if="isVirtualBackgroundEnabled" :size="20" fill-color="#ffffff" />
+					<BlurOff v-else :size="20" fill-color="#ffffff" />
 				</template>
 			</NcButton>
+
 			<NcActions v-if="!screenSharingButtonHidden"
 				id="screensharing-button"
 				v-tooltip="screenSharingButtonTooltip"
@@ -119,20 +88,15 @@
 				@update:close="screenSharingMenuOpen = false">
 				<!-- Actions button icon -->
 				<template #icon>
-					<CancelPresentation v-if="model.attributes.localScreen"
-						:size="20"
-						fill-color="#ffffff" />
-					<PresentToAll v-else
-						:size="20"
-						fill-color="#ffffff" />
+					<CancelPresentation v-if="model.attributes.localScreen" :size="20" fill-color="#ffffff" />
+					<PresentToAll v-else :size="20" fill-color="#ffffff" />
 				</template>
 				<!-- /Actions button icon -->
 				<!-- Actions -->
 				<NcActionButton v-if="!screenSharingMenuOpen"
 					@click.stop="toggleScreenSharingMenu">
 					<template #icon>
-						<PresentToAll :size="20"
-							fill-color="#ffffff" />
+						<PresentToAll :size="20" fill-color="#ffffff" />
 					</template>
 					{{ screenSharingButtonTooltip }}
 				</NcActionButton>
@@ -163,8 +127,7 @@
 				<template #icon>
 					<!-- The following icon is much bigger than all the others
 						so we reduce its size -->
-					<HandBackLeft :size="18"
-						fill-color="#ffffff" />
+					<HandBackLeft :size="18" fill-color="#ffffff" />
 				</template>
 			</NcButton>
 		</div>
@@ -179,8 +142,6 @@ import BlurOff from 'vue-material-design-icons/BlurOff.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Monitor from 'vue-material-design-icons/Monitor.vue'
 import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
-import VideoIcon from 'vue-material-design-icons/Video.vue'
-import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
 import { showMessage } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -193,7 +154,8 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import CancelPresentation from '../../missingMaterialDesignIcons/CancelPresentation.vue'
 import PresentToAll from '../../missingMaterialDesignIcons/PresentToAll.vue'
-import VolumeIndicator from '../../VolumeIndicator/VolumeIndicator.vue'
+import LocalAudioControlButton from './LocalAudioControlButton.vue'
+import LocalVideoControlButton from './LocalVideoControlButton.vue'
 
 import { PARTICIPANT } from '../../../constants.js'
 import isInCall from '../../../mixins/isInCall.js'
@@ -209,6 +171,8 @@ export default {
 		tooltip: Tooltip,
 	},
 	components: {
+		LocalAudioControlButton,
+		LocalVideoControlButton,
 		Blur,
 		BlurOff,
 		CancelPresentation,
@@ -220,9 +184,6 @@ export default {
 		NcPopover,
 		NetworkStrength2Alert,
 		PresentToAll,
-		VideoIcon,
-		VideoOff,
-		VolumeIndicator,
 	},
 
 	mixins: [
@@ -292,73 +253,8 @@ export default {
 			return this.$store.getters.conversation(this.token) || this.$store.getters.dummyConversation
 		},
 
-		isAudioAllowed() {
-			return this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_AUDIO
-		},
-
-		isVideoAllowed() {
-			return this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_VIDEO
-		},
-
 		isScreensharingAllowed() {
 			return this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_SCREEN
-		},
-
-		audioButtonClass() {
-			return {
-				'audio-enabled': this.isAudioAllowed && this.model.attributes.audioAvailable && this.model.attributes.audioEnabled,
-				'no-audio-available': !this.isAudioAllowed || !this.model.attributes.audioAvailable,
-			}
-		},
-
-		showMicrophoneOn() {
-			return this.model.attributes.audioAvailable && this.model.attributes.audioEnabled
-		},
-
-		audioButtonTooltip() {
-			if (!this.isAudioAllowed) {
-				return t('spreed', 'You are not allowed to enable audio')
-			}
-
-			if (!this.model.attributes.audioAvailable) {
-				return {
-					content: t('spreed', 'No audio. Click to select device'),
-					show: false,
-				}
-			}
-
-			if (this.speakingWhileMutedNotification && !this.screenSharingMenuOpen) {
-				return {
-					content: this.speakingWhileMutedNotification,
-					show: true,
-				}
-			}
-
-			let content = ''
-			if (this.model.attributes.audioEnabled) {
-				content = this.disableKeyboardShortcuts
-					? t('spreed', 'Mute audio')
-					: t('spreed', 'Mute audio (M)')
-			} else {
-				content = this.disableKeyboardShortcuts
-					? t('spreed', 'Unmute audio')
-					: t('spreed', 'Unmute audio (M)')
-			}
-
-			return {
-				content,
-				show: false,
-			}
-		},
-
-		audioButtonAriaLabel() {
-			if (!this.model.attributes.audioAvailable) {
-				return t('spreed', 'No audio. Click to select device')
-			}
-
-			return this.model.attributes.audioEnabled
-				? t('spreed', 'Mute audio')
-				: t('spreed', 'Unmute audio')
 		},
 
 		lowerHandAriaLabel() {
@@ -367,63 +263,10 @@ export default {
 				: t('spreed', 'Lower hand (R)')
 		},
 
-		videoButtonClass() {
-			return {
-				'video-enabled': this.isVideoAllowed && this.model.attributes.videoAvailable && this.model.attributes.videoEnabled,
-				'no-video-available': !this.isVideoAllowed || !this.model.attributes.videoAvailable,
-			}
-		},
-
 		blurButtonClass() {
 			return {
 				'blur-disabled': this.isVirtualBackgroundEnabled,
 			}
-		},
-
-		showVideoOn() {
-			return this.model.attributes.videoAvailable && this.model.attributes.videoEnabled
-		},
-
-		videoButtonTooltip() {
-			if (!this.isVideoAllowed) {
-				return t('spreed', 'You are not allowed to enable video')
-			}
-
-			if (!this.model.attributes.videoAvailable) {
-				return t('spreed', 'No video. Click to select device')
-			}
-
-			if (this.model.attributes.videoEnabled) {
-				return this.disableKeyboardShortcuts
-					? t('spreed', 'Disable video')
-					: t('spreed', 'Disable video (V)')
-			}
-
-			if (!this.model.getWebRtc() || !this.model.getWebRtc().connection || this.model.getWebRtc().connection.getSendVideoIfAvailable()) {
-				return this.disableKeyboardShortcuts
-					? t('spreed', 'Enable video')
-					: t('spreed', 'Enable video (V)')
-			}
-
-			return this.disableKeyboardShortcuts
-				? t('spreed', 'Enable video - Your connection will be briefly interrupted when enabling the video for the first time')
-				: t('spreed', 'Enable video (V) - Your connection will be briefly interrupted when enabling the video for the first time')
-		},
-
-		videoButtonAriaLabel() {
-			if (!this.model.attributes.videoAvailable) {
-				return t('spreed', 'No video. Click to select device')
-			}
-
-			if (this.model.attributes.videoEnabled) {
-				return t('spreed', 'Disable video')
-			}
-
-			if (!this.model.getWebRtc() || !this.model.getWebRtc().connection || this.model.getWebRtc().connection.getSendVideoIfAvailable()) {
-				return t('spreed', 'Enable video')
-			}
-
-			return t('spreed', 'Enable video. Your connection will be briefly interrupted when enabling the video for the first time')
 		},
 
 		screenSharingButtonClass() {
@@ -646,27 +489,6 @@ export default {
 			this.speakingWhileMutedNotification = message
 		},
 
-		toggleVideo() {
-			/**
-			 * Abort toggling the video if the 'v' key is lifted when pasting an
-			 * image in the new message form.
-			 */
-			if (document.getElementsByClassName('upload-editor').length !== 0) {
-				return
-			}
-
-			if (!this.model.attributes.videoAvailable) {
-				emit('show-settings', {})
-				return
-			}
-
-			if (this.model.attributes.videoEnabled) {
-				this.model.disableVideo()
-			} else {
-				this.model.enableVideo()
-			}
-		},
-
 		toggleVirtualBackground() {
 			if (this.model.attributes.virtualBackgroundEnabled) {
 				this.model.disableVirtualBackground()
@@ -813,14 +635,10 @@ export default {
 }
 
 /* Highlight the media buttons when enabled */
-.buttons-bar button.audio-enabled,
-.buttons-bar button.video-enabled,
 .buttons-bar button.screensharing-enabled {
 	opacity: 1;
 }
 
-.buttons-bar button.no-audio-available,
-.buttons-bar button.no-video-available,
 .buttons-bar button.no-screensharing-available {
 	&, & * {
 		opacity: .7;
