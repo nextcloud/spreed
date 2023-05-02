@@ -34,7 +34,6 @@
 			<template v-if="!isGrid">
 				<!-- Selected video override mode -->
 				<div v-if="showSelectedVideo"
-					ref="videoContainer"
 					class="video__promoted selected-video"
 					:class="{'full-page': isOneToOne}">
 					<template v-for="callParticipantModel in reversedCallParticipantModels">
@@ -72,7 +71,6 @@
 				</div>
 				<!-- Local Video Override mode (following own video) -->
 				<div v-else-if="showLocalVideo"
-					ref="videoContainer"
 					class="video__promoted selected-video--local"
 					:class="{'full-page': isOneToOne}">
 					<LocalVideo ref="localVideo"
@@ -82,13 +80,11 @@
 						:is-big="true"
 						:token="token"
 						:local-media-model="localMediaModel"
-						:video-container-aspect-ratio="videoContainerAspectRatio"
 						:local-call-participant-model="localCallParticipantModel"
 						:is-sidebar="false" />
 				</div>
 				<!-- Promoted "autopilot" mode -->
 				<div v-else
-					ref="videoContainer"
 					class="video__promoted autopilot"
 					:class="{'full-page': isOneToOne}">
 					<VideoVue v-if="promotedParticipantModel"
@@ -141,7 +137,6 @@
 				:is-stripe="true"
 				:token="token"
 				:local-media-model="localMediaModel"
-				:video-container-aspect-ratio="videoContainerAspectRatio"
 				:local-call-participant-model="localCallParticipantModel"
 				:is-sidebar="isSidebar"
 				@click-video="handleClickLocalVideo" />
@@ -216,7 +211,6 @@ export default {
 				screenVisible: true,
 			},
 			callParticipantCollection,
-			videoContainerAspectRatio: 0,
 		}
 	},
 	computed: {
@@ -643,12 +637,6 @@ export default {
 			this.sharedDatas[this.screens[0]].screenVisible = true
 		},
 
-		// Get the aspect ratio of the incoming stream
-		getVideoContainerAspectRatio() {
-			const videoContainerWidth = this.$refs.videoContainer.clientWidth
-			const VideoContainerHeight = this.$refs.videoContainer.clientHeight
-			this.videoContainerAspectRatio = videoContainerWidth / VideoContainerHeight
-		},
 		handleSelectVideo(peerId) {
 			if (this.isSidebar) {
 				return
