@@ -35,57 +35,24 @@
 			aria-hidden="true"
 			class="hidden-visually"
 			@change="handleFileInput">
+
 		<div class="new-message">
 			<form class="new-message-form"
 				@submit.prevent>
 				<!-- Attachments menu -->
-				<div v-if="showAttachmentsMenu"
-					class="new-message-form__upload-menu">
-					<NcActions ref="attachmentsMenu"
-						:container="container"
-						:boundaries-element="containerElement"
-						:disabled="disabled"
-						:aria-label="t('spreed', 'Share files to the conversation')"
-						:aria-haspopup="true">
-						<template #icon>
-							<Paperclip :size="16" />
-						</template>
+				<NewMessageFormAttachments v-if="showAttachmentsMenu"
+					:token="token"
+					:container="container"
+					:boundaries-element="containerElement"
+					:disabled="disabled"
+					:can-upload-files="canUploadFiles"
+					:can-share-files="canShareFiles"
+					:can-create-poll="canCreatePoll"
+					@open-file-upload="openFileUploadWindow"
+					@handle-file-share="handleFileShare"
+					@toggle-poll-editor="togglePollEditor"
+					@update-text-file-dialog="updateTextFileDialog" />
 
-						<NcActionButton v-if="canUploadFiles"
-							:close-after-click="true"
-							@click.prevent="clickImportInput">
-							<template #icon>
-								<Upload :size="20" />
-							</template>
-							{{ t('spreed', 'Upload from device') }}
-						</NcActionButton>
-						<NcActionButton v-if="canShareFiles"
-							:close-after-click="true"
-							@click.prevent="handleFileShare">
-							<template #icon>
-								<Folder :size="20" />
-							</template>
-							{{ shareFromNextcloudLabel }}
-						</NcActionButton>
-						<template v-if="canShareFiles">
-							<NcActionButton v-for="(provider, i) in fileTemplateOptions"
-								:key="i"
-								:close-after-click="true"
-								:icon="provider.iconClass"
-								@click.prevent="showTextFileDialog = i">
-								{{ provider.label }}
-							</NcActionButton>
-						</template>
-						<NcActionButton v-if="canCreatePoll"
-							:close-after-click="true"
-							@click.prevent="toggleSimplePollsEditor(true)">
-							<template #icon>
-								<Poll :size="20" />
-							</template>
-							{{ t('spreed', 'Create new poll') }}
-						</NcActionButton>
-					</NcActions>
-				</div>
 				<!-- Input area -->
 				<div class="new-message-form__input">
 					<div class="new-message-form__emoji-picker">
@@ -235,11 +202,7 @@
 <script>
 import BellOff from 'vue-material-design-icons/BellOff.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-import Folder from 'vue-material-design-icons/Folder.vue'
-import Paperclip from 'vue-material-design-icons/Paperclip.vue'
-import Poll from 'vue-material-design-icons/Poll.vue'
 import Send from 'vue-material-design-icons/Send.vue'
-import Upload from 'vue-material-design-icons/Upload.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
@@ -254,6 +217,7 @@ import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContente
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import Quote from '../Quote.vue'
+import NewMessageFormAttachments from './NewMessageFormAttachments.vue'
 import NewMessageFormAudioRecorder from './NewMessageFormAudioRecorder.vue'
 import NewMessageFormPollEditor from './NewMessageFormPollEditor.vue'
 import NewMessageFormTemplatePreview from './NewMessageFormTemplatePreview.vue'
@@ -294,6 +258,7 @@ export default {
 		NcModal,
 		NcRichContenteditable,
 		NcTextField,
+		NewMessageFormAttachments,
 		NewMessageFormAudioRecorder,
 		NewMessageFormPollEditor,
 		NewMessageFormTemplatePreview,
@@ -303,11 +268,7 @@ export default {
 		// Icons
 		BellOff,
 		EmoticonOutline,
-		Folder,
-		Paperclip,
-		Poll,
 		Send,
-		Upload,
 	},
 
 	props: {
@@ -420,18 +381,13 @@ export default {
 		},
 
 		canUploadFiles() {
-			const allowed = getCapabilities()?.spreed?.config?.attachments?.allowed
-			return allowed
-				&& this.attachmentFolderFreeSpace !== 0
+			return getCapabilities()?.spreed?.config?.attachments?.allowed
+				&& this.$store.getters.getAttachmentFolderFreeSpace() !== 0
 				&& this.canShareFiles
 		},
 
 		canCreatePoll() {
 			return !this.isOneToOne && !this.noChatPermission
-		},
-
-		attachmentFolderFreeSpace() {
-			return this.$store.getters.getAttachmentFolderFreeSpace()
 		},
 
 		currentConversationIsJoined() {
@@ -457,10 +413,6 @@ export default {
 			} else {
 				return t('spreed', 'The participants will not be notified about this message')
 			}
-		},
-
-		shareFromNextcloudLabel() {
-			return t('spreed', 'Share from {nextcloud}', { nextcloud: OC.theme.productName })
 		},
 
 		fileTemplateOptions() {
@@ -496,7 +448,7 @@ export default {
 		},
 
 		showAttachmentsMenu() {
-			return (this.canUploadFiles || this.canShareFiles) && !this.broadcast
+			return this.canShareFiles && !this.broadcast
 		},
 
 		showAudioRecorder() {
@@ -713,8 +665,12 @@ export default {
 		 * Clicks the hidden file input when clicking the correspondent NcActionButton,
 		 * thus opening the file-picker
 		 */
-		clickImportInput() {
+		openFileUploadWindow() {
 			this.$refs.fileUploadInput.click()
+		},
+
+		updateTextFileDialog(value) {
+			this.showTextFileDialog = value
 		},
 
 		handleFileInput(event) {
