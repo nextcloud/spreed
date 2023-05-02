@@ -24,7 +24,8 @@
 
 ## Delete conversations avatar
 
-> **Note**: To determine if a delete option should be presented to the user, it's recommended to check the `isCustomAvatar` property from [conversation](conversation.md).
+!!! note
+    To determine if a delete option should be presented to the user, it's recommended to check the `isCustomAvatar` property from [conversation](conversation.md).
 
 * Required capability: `avatar`
 * Method: `DELETE`
