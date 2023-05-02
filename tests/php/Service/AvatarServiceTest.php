@@ -35,6 +35,7 @@ use OCP\IAvatarManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Security\ISecureRandom;
+use OCP\Server;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -52,6 +53,8 @@ class AvatarServiceTest extends TestCase {
 	private $roomService;
 	/** @var IAvatarManager|MockObject */
 	private $avatarManager;
+	/** @var EmojiHelper|MockObject */
+	private $emojiHelper;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -62,7 +65,7 @@ class AvatarServiceTest extends TestCase {
 		$this->random = $this->createMock(ISecureRandom::class);
 		$this->roomService = $this->createMock(RoomService::class);
 		$this->avatarManager = $this->createMock(IAvatarManager::class);
-		$this->emojiHelper = \OCP\Server::get(EmojiHelper::class);
+		$this->emojiHelper = Server::get(EmojiHelper::class);
 		$this->service = new AvatarService(
 			$this->appData,
 			$this->l,
