@@ -40,6 +40,7 @@ class Add extends Base {
 	}
 
 	protected function configure(): void {
+		parent::configure();
 		$this
 			->setName('talk:command:add')
 			->setDescription('Add a new command')
@@ -110,7 +111,7 @@ class Add extends Base {
 
 		$output->writeln('<info>Command added</info>');
 		$output->writeln('');
-		$this->renderCommands(Base::OUTPUT_FORMAT_PLAIN, $output, [$command]);
+		$this->renderCommands($input, $output, [$command]);
 
 		$output->writeln('');
 		$output->writeln("<comment>If you think your command makes sense for other users as well, feel free to share it in the following github issue:\n https://github.com/nextcloud/spreed/issues/1566</comment>");

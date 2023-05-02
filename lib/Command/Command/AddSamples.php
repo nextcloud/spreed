@@ -107,7 +107,7 @@ class AddSamples extends Base {
 
 		$output->writeln('<info>Commands added</info>');
 		$output->writeln('');
-		$this->renderCommands(Base::OUTPUT_FORMAT_PLAIN, $output, $this->commands);
+		$this->renderCommands($input, $output, $this->commands);
 		return 0;
 	}
 
