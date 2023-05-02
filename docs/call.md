@@ -5,6 +5,11 @@
 * API v3: 🏁 Removed with API v4: Nextcloud 21 only
 * API v4: Base endpoint `/ocs/v2.php/apps/spreed/api/v4`: since Nextcloud 22
 
+!!! note
+
+    At the moment, joining a room is only possible with cookies, as you need a
+    session.
+
 ## Get list of connected participants
 
 * Method: `GET`
