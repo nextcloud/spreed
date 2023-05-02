@@ -205,6 +205,15 @@ class Config:
 
         return self._configParser.get('signaling', 'internalsecret', fallback=None)
 
+    def getFfmpegCommon(self):
+        """
+        Returns the ffmpeg executable (name or full path) and the global options
+        given to ffmpeg.
+
+        Defaults to ['ffmpeg', '-loglevel', 'level+warning', '-n'].
+        """
+        return self._configParser.get('ffmpeg', 'common', fallback='ffmpeg -loglevel level+warning -n').split()
+
     def getFfmpegOutputAudio(self):
         """
         Returns the options given to ffmpeg to encode the audio output.

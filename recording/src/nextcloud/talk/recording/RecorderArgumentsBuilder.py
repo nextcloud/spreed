@@ -32,6 +32,7 @@ class RecorderArgumentsBuilder:
     """
 
     def __init__(self):
+        self._ffmpegCommon = None
         self._ffmpegOutputAudio = None
         self._ffmpegOutputVideo = None
         self._extension = None
@@ -51,7 +52,7 @@ class RecorderArgumentsBuilder:
         :returns: the file name for the recording, with extension.
         """
 
-        ffmpegCommon = ['ffmpeg', '-loglevel', 'level+warning', '-n']
+        ffmpegCommon = self.getFfmpegCommon()
         ffmpegInputAudio = ['-f', 'pulse', '-i', audioSourceIndex]
         ffmpegInputVideo = ['-f', 'x11grab', '-draw_mouse', '0', '-video_size', f'{width}x{height}', '-i', displayId]
         ffmpegOutputAudio = self.getFfmpegOutputAudio()
@@ -73,6 +74,12 @@ class RecorderArgumentsBuilder:
             ffmpegArguments += ffmpegOutputVideo
 
         return ffmpegArguments + [outputFileName]
+
+    def getFfmpegCommon(self):
+        if self._ffmpegCommon != None:
+            return self._ffmpegCommon
+
+        return config.getFfmpegCommon()
 
     def getFfmpegOutputAudio(self):
         if self._ffmpegOutputAudio != None:
