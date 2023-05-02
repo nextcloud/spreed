@@ -30,8 +30,7 @@ Feature: conversation/avatar
       | room2 | users         | participant1 | avatar_set           | You set the conversation picture     |
       | room2 | users         | participant1 | conversation_created | You created the conversation         |
     And user "participant1" gets room "room2" with 200 (v4)
-      | avatarVersion |
-      | NOT_EMPTY |
+      | avatarVersion | NOT_EMPTY |
     Then the room "room2" has an avatar with 200
     And The following headers should be set
       | X-NC-IsCustomAvatar | 0 |

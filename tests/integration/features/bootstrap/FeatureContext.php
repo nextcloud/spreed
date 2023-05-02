@@ -1197,7 +1197,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 
 		if ($formData instanceof TableNode) {
-			$xpectedAttributes = $formData->getColumnsHash()[0];
+			$xpectedAttributes = $formData->getRowsHash();
 			$actual = $this->getDataFromResponse($this->response);
 			foreach ($xpectedAttributes as $attribute => $expectedValue) {
 				if ($expectedValue === 'NOT_EMPTY') {

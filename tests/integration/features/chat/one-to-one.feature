@@ -74,13 +74,10 @@ Feature: chat/one-to-one
       | invite   | participant2 |
     When user "participant2" set status to "online" with 200 (v1)
     Then user "participant1" gets room "one-to-one room" with 200 (v4)
-      | status |
-      | online |
+      | status | online |
     When user "participant2" set status to "offline" with 200 (v1)
     Then user "participant1" gets room "one-to-one room" with 200 (v4)
-      | status  |
-      | offline |
+      | status | offline |
     Then user "participant2" set status to "away" with 200 (v1)
     Then user "participant1" gets room "one-to-one room" with 200 (v4)
-      | status |
-      | away   |
+      | status | away |
