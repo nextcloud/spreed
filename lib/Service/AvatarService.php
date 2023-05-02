@@ -180,24 +180,6 @@ class AvatarService {
 				}
 			}
 		}
-		if ($room->getType() === Room::TYPE_CHANGELOG) {
-			return new InMemoryFile($token, $this->getAvatarPath($room, $darkTheme));
-		}
-		if ($room->getObjectType() === 'file') {
-			return new InMemoryFile($token, $this->getAvatarPath($room, $darkTheme));
-		}
-		if ($room->getObjectType() === 'share:password') {
-			return new InMemoryFile($token, $this->getAvatarPath($room, $darkTheme));
-		}
-		if ($room->getObjectType() === 'emails') {
-			return new InMemoryFile($token, $this->getAvatarPath($room, $darkTheme));
-		}
-		if ($room->getType() === Room::TYPE_PUBLIC) {
-			return new InMemoryFile($token, $this->getAvatarPath($room, $darkTheme));
-		}
-		if ($room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-			return new InMemoryFile($token, $this->getAvatarPath($room, $darkTheme));
-		}
 		return new InMemoryFile($token, $this->getAvatarPath($room, $darkTheme));
 	}
 
