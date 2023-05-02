@@ -995,6 +995,18 @@ class ParticipantService {
 		$attendees = [];
 		$result = $query->executeQuery();
 		while ($row = $result->fetch()) {
+			if ($row['display_name'] !== '' && $row['display_name'] !== null) {
+				// Keep guests with a non-empty display name, so we can still
+				// render the guest display name on chat messages.
+				continue;
+			}
+
+			if ($row['permissions'] !== Attendee::PERMISSIONS_DEFAULT
+				|| $row['participant_type'] === Participant::GUEST_MODERATOR) {
+				// Keep guests with non-default permissions in case they just reconnect
+				continue;
+			}
+
 			$attendeeIds[] = (int) $row['a_id'];
 			$attendees[] = $this->attendeeMapper->createAttendeeFromRow($row);
 		}

@@ -130,6 +130,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}
 
+		if (!isset(self::$userToAttendeeId[$room][$type][$id])) {
+			throw new \Exception('Attendee id unknown, please call userLoadsAttendeeIdsInRoom with a user that has access before');
+		}
+
 		return self::$userToAttendeeId[$room][$type][$id];
 	}
 
@@ -1051,6 +1055,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// in chat messages is a hashed version instead.
 			self::$sessionIdToUser[sha1($response['sessionId'])] = $user;
 			self::$userToSessionId[$user] = $response['sessionId'];
+			if (!isset(self::$userToAttendeeId[$identifier][$response['actorType']])) {
+				self::$userToAttendeeId[$identifier][$response['actorType']] = [];
+			}
+			self::$userToAttendeeId[$identifier][$response['actorType']][$response['actorId']] = $response['attendeeId'];
 		}
 	}
 
