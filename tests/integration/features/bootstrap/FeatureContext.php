@@ -3490,26 +3490,4 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 	}
 
-	/**
-	 * @Then The following headers should be set
-	 * @param TableNode $table
-	 * @throws \Exception
-	 */
-	public function theFollowingHeadersShouldBeSet(TableNode $table) {
-		foreach ($table->getTable() as $header) {
-			$headerName = $header[0];
-			$expectedHeaderValue = $header[1];
-			$returnedHeader = $this->response->getHeader($headerName)[0];
-			if ($returnedHeader !== $expectedHeaderValue) {
-				throw new \Exception(
-					sprintf(
-						"Expected value '%s' for header '%s', got '%s'",
-						$expectedHeaderValue,
-						$headerName,
-						$returnedHeader
-					)
-				);
-			}
-		}
-	}
 }
