@@ -24,6 +24,8 @@
 
 ## Delete conversations avatar
 
+> **PS**: To check if need to delete when is customized, you need to verify the property `isCustomAvatar` from [conversation](conversation.md).
+
 * Required capability: `avatar`
 * Method: `DELETE`
 * Endpoint: `/room/{token}/avatar`
@@ -46,12 +48,6 @@
     - Status code:
         + `200 OK`
         + `404 Not Found` When the conversation could not be found for the participant
-    - Header:
-
-| field               | type   | Description                                                       |
-| ------------------- | ------ | ----------------------------------------------------------------- |
-| X-NC-IsCustomAvatar | string | Return 1 when is custom avatar and 0 when is not a custom a vatar |
-
     - Body: the image file
 
 ## Get dark mode conversations avatar (binary)
