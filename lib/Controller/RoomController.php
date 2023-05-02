@@ -818,11 +818,10 @@ class RoomController extends AEnvironmentAwareController {
 				}
 
 				if (isset($statuses[$userId])) {
-					$clearAt = $statuses[$userId]->getClearAt();
 					$result['status'] = $statuses[$userId]->getStatus();
 					$result['statusIcon'] = $statuses[$userId]->getIcon();
 					$result['statusMessage'] = $statuses[$userId]->getMessage();
-					$result['statusClearAt'] = $clearAt ? $clearAt->getTimestamp() : null;
+					$result['statusClearAt'] = $statuses[$userId]->getClearAt()?->getTimestamp();
 				} elseif (isset($headers['X-Nextcloud-Has-User-Statuses'])) {
 					$result['status'] = IUserStatus::OFFLINE;
 					$result['statusIcon'] = null;

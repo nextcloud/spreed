@@ -324,11 +324,10 @@ class RoomFormatter {
 					}
 
 					if (isset($statuses[$participant])) {
-						$clearAt = $statuses[$participant]->getClearAt();
 						$roomData['status'] = $statuses[$participant]->getStatus();
 						$roomData['statusIcon'] = $statuses[$participant]->getIcon();
 						$roomData['statusMessage'] = $statuses[$participant]->getMessage();
-						$roomData['statusClearAt'] = $clearAt ? $clearAt->getTimestamp() : null;
+						$roomData['statusClearAt'] = $statuses[$participant]->getClearAt()?->getTimestamp();
 					} elseif (!empty($statuses)) {
 						$roomData['status'] = IUserStatus::OFFLINE;
 						$roomData['statusIcon'] = null;
