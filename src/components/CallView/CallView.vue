@@ -2,6 +2,7 @@
   - @copyright Copyright (c) 2020 Marco Ambrosini <marcoambrosini@icloud.com>
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
+  - @author Grigorii Shartsev <me@shgk.me>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -23,7 +24,13 @@
 	<div id="call-container">
 		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid"
 			:is-sidebar="isSidebar" />
-		<div id="videos">
+
+		<ViewerOverlayCallView v-else-if="isViewerOverlay && promotedParticipantModel"
+			:token="token"
+			:model="promotedParticipantModel"
+			:shared-data="sharedDatas[promotedParticipantModel.attributes.peerId]" />
+
+		<div v-else-if="!isViewerOverlay" id="videos">
 			<template v-if="!isGrid">
 				<!-- Selected video override mode -->
 				<div v-if="showSelectedVideo"
@@ -84,19 +91,17 @@
 					ref="videoContainer"
 					class="video__promoted autopilot"
 					:class="{'full-page': isOneToOne}">
-					<template v-for="callParticipantModel in reversedCallParticipantModels">
-						<VideoVue v-if="sharedDatas[callParticipantModel.attributes.peerId].promoted"
-							:key="callParticipantModel.attributes.peerId"
-							:token="token"
-							:model="callParticipantModel"
-							:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
-							:show-talking-highlight="false"
-							:is-grid="true"
-							:fit-video="true"
-							:is-big="true"
-							:is-one-to-one="isOneToOne"
-							:is-sidebar="isSidebar" />
-					</template>
+					<VideoVue v-if="promotedParticipantModel"
+						:key="promotedParticipantModel.attributes.peerId"
+						:token="token"
+						:model="promotedParticipantModel"
+						:shared-data="sharedDatas[promotedParticipantModel.attributes.peerId]"
+						:show-talking-highlight="false"
+						:is-grid="true"
+						:fit-video="true"
+						:is-big="true"
+						:is-one-to-one="isOneToOne"
+						:is-sidebar="isSidebar" />
 				</div>
 			</template>
 
@@ -158,6 +163,7 @@ import LocalVideo from './shared/LocalVideo.vue'
 import ReactionToaster from './shared/ReactionToaster.vue'
 import Screen from './shared/Screen.vue'
 import VideoVue from './shared/VideoVue.vue'
+import ViewerOverlayCallView from './shared/ViewerOverlayCallView.vue'
 
 import { SIMULCAST } from '../../constants.js'
 import { fetchPeers } from '../../services/callsService.js'
@@ -170,6 +176,7 @@ export default {
 
 	components: {
 		EmptyCallView,
+		ViewerOverlayCallView,
 		Grid,
 		LocalVideo,
 		ReactionToaster,
@@ -213,6 +220,10 @@ export default {
 		}
 	},
 	computed: {
+		promotedParticipantModel() {
+			return this.callParticipantModels.find((callParticipantModel) => this.sharedDatas[callParticipantModel.attributes.peerId].promoted)
+		},
+
 		callParticipantModels() {
 			return callParticipantCollection.callParticipantModels.filter(callParticipantModel => !callParticipantModel.attributes.internal)
 		},
@@ -247,6 +258,10 @@ export default {
 
 		screenSharingActive() {
 			return this.screens.length > 0
+		},
+
+		isViewerOverlay() {
+			return this.$store.getters.isViewerOverlay
 		},
 
 		isGrid() {

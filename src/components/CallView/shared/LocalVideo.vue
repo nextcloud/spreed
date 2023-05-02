@@ -124,6 +124,10 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+		unSelectable: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	data() {
@@ -226,7 +230,7 @@ export default {
 		},
 
 		isSelectable() {
-			return !this.isSidebar && this.hasLocalVideo && this.$store.getters.selectedVideoPeerId !== 'local'
+			return !this.unSelectable && !this.isSidebar && this.hasLocalVideo && this.$store.getters.selectedVideoPeerId !== 'local'
 		},
 	},
 
