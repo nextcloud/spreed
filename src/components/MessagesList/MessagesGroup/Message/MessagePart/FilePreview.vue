@@ -4,6 +4,7 @@
   -
   - @author Joas Schilling <coding@schilljs.com>
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
+  - @author Grigorii Shartsev <me@shgk.me>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -83,6 +84,8 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import AudioPlayer from './AudioPlayer.vue'
 
+import isInCall from '../../../../../mixins/isInCall.js'
+
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,
 	MIME_ICON: 1,
@@ -103,6 +106,8 @@ export default {
 	directives: {
 		tooltip: Tooltip,
 	},
+
+	mixins: [isInCall],
 
 	props: {
 		/**
@@ -486,6 +491,10 @@ export default {
 				}
 			}
 
+			if (this.isInCall) {
+				this.$store.dispatch('setCallViewMode', { isViewerOverlay: true })
+			}
+
 			OCA.Viewer.open({
 				// Viewer expects an internal absolute path starting with "/".
 				path: this.internalAbsolutePath,
@@ -500,6 +509,9 @@ export default {
 						permissions,
 					},
 				],
+				onClose: () => {
+					this.$store.dispatch('setCallViewMode', { isViewerOverlay: false })
+				},
 			})
 
 			// FIXME Remove this hack once it is possible to set the parent

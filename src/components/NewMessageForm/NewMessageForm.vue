@@ -2,6 +2,7 @@
   - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@icloud.com>
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
+  - @author Grigorii Shartsev <me@shgk.me>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -247,6 +248,7 @@ import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
 import TemplatePreview from './TemplatePreview.vue'
 
 import { CONVERSATION, PARTICIPANT } from '../../constants.js'
+import isInCall from '../../mixins/isInCall.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile, createTextFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
@@ -290,6 +292,8 @@ export default {
 		TemplatePreview,
 		NcTextField,
 	},
+
+	mixins: [isInCall],
 
 	props: {
 		/**
@@ -812,12 +816,19 @@ export default {
 				OCA.Files.Sidebar.state.file = filePath
 			}
 
+			if (this.isInCall) {
+				this.$store.dispatch('setCallViewMode', { isViewerOverlay: true })
+			}
+
 			OCA.Viewer.open({
 				// Viewer expects an internal absolute path starting with "/".
 				path: filePath,
 				list: [
 					fileData,
 				],
+				onClose: () => {
+					this.$store.dispatch('setCallViewMode', { isViewerOverlay: false })
+				},
 			})
 
 			// FIXME Remove this hack once it is possible to set the parent
