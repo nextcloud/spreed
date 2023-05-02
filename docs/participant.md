@@ -210,6 +210,8 @@
 
 ## Set permissions for an attendee
 
+Setting custom permissions for a self-joined user will also make them a permanent user to the conversation.
+
 * Method: `PUT`
 * Endpoint: `/room/{token}/attendees/permissions`
 * Data:
