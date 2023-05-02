@@ -96,6 +96,10 @@
 #internalsecret = the-shared-secret-for-internal-clients
 
 [ffmpeg]
+# The ffmpeg executable (name or full path) and the global options given to
+# ffmpeg. The options given here fully override the default global options.
+#common = ffmpeg -loglevel level+warning -n
+
 # The options given to ffmpeg to encode the audio output. The options given here
 # fully override the default options for the audio output.
 #outputaudio = -c:a libopus
