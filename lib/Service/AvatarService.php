@@ -145,12 +145,16 @@ class AvatarService {
 	 * Since we start from the baseline (text-anchor) we need to
 	 * shift the y axis by 100px (half the caps height): 500/2+100=350
 	 *
-	 * Copied from @see \OC\Avatar\Avatar::$svgTemplate with only `{font}` being modified
+	 * Copied from @see \OC\Avatar\Avatar::$svgTemplate with some changes:
+	 * - {font} is injected
+	 * - size fixed to 512
+	 * - font-size reduced to 240
+	 * - font-weight and fill color are removed as they are not applicable
 	 */
 	private string $svgTemplate = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-		<svg width="{size}" height="{size}" version="1.1" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+		<svg width="512" height="512" version="1.1" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
 			<rect width="100%" height="100%" fill="#{fill}"></rect>
-			<text x="50%" y="350" style="font-weight:normal;font-size:280px;font-family:{font};text-anchor:middle;fill:#{fgFill}">{letter}</text>
+			<text x="50%" y="330" style="font-size:240px;font-family:{font};text-anchor:middle;">{letter}</text>
 		</svg>';
 
 	public function getAvatar(Room $room, ?IUser $user, bool $darkTheme = false): ISimpleFile {
@@ -179,19 +183,7 @@ class AvatarService {
 					}
 				}
 			} elseif ($this->emojiHelper->isValidSingleEmoji(mb_substr($room->getName(), 0, 1))) {
-				$file = new InMemoryFile($token, str_replace([
-					'{letter}',
-					'{size}',
-					'{fill}',
-					'{font}',
-					'{fgFill}',
-				], [
-					$this->getFirstCombinedEmoji($room->getName()),
-					512,
-					$darkTheme ? '3B3B3B' : 'DBDBDB',
-					"'Segoe UI', Roboto, Oxygen-Sans, Cantarell, Ubuntu, 'Helvetica Neue', Arial, sans-serif, 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Sans'",
-					'000',
-				], $this->svgTemplate));
+				$file = new InMemoryFile($token, $this->getEmojiAvatar($room->getName(), $darkTheme));
 			} elseif ($room->getType() === Room::TYPE_CHANGELOG) {
 				$file = new InMemoryFile($token, file_get_contents(__DIR__ . '/../../img/changelog.svg'));
 			} elseif ($room->getObjectType() === 'file') {
@@ -209,6 +201,32 @@ class AvatarService {
 			}
 		}
 		return $file;
+	}
+
+	protected function getEmojiAvatar(string $roomName, bool $darkTheme): string {
+		return str_replace([
+			'{letter}',
+			'{fill}',
+			'{font}',
+		], [
+			$this->getFirstCombinedEmoji($roomName),
+			$darkTheme ? '3B3B3B' : 'DBDBDB',
+			implode(',', [
+				"'Segoe UI'",
+				'Roboto',
+				'Oxygen-Sans',
+				'Cantarell',
+				'Ubuntu',
+				"'Helvetica Neue'",
+				'Arial',
+				'sans-serif',
+				"'Noto Color Emoji'",
+				"'Apple Color Emoji'",
+				"'Segoe UI Emoji'",
+				"'Segoe UI Symbol'",
+				"'Noto Sans'",
+			]),
+		], $this->svgTemplate);
 	}
 
 	/**
