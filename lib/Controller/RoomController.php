@@ -829,9 +829,18 @@ class RoomController extends AEnvironmentAwareController {
 					$result['statusClearAt'] = null;
 				}
 			} elseif ($participant->getAttendee()->getActorType() === Attendee::ACTOR_GUESTS) {
-				if ($result['lastPing'] <= $maxPingAge) {
-					$cleanGuests = true;
-					continue;
+				if ($participant->getAttendee()->getParticipantType() === Participant::GUEST
+					&& ($participant->getAttendee()->getPermissions() === Attendee::PERMISSIONS_DEFAULT
+						|| $participant->getAttendee()->getPermissions() === Attendee::PERMISSIONS_CUSTOM)) {
+					// Guests without an up-to-date session are filtered out. We
+					// only keep there attendees in the database, so that the
+					// comments show the display name. Only when they have
+					// non-default permissions we show them, so permissions can
+					// be reset or removed
+					if ($result['lastPing'] <= $maxPingAge) {
+						$cleanGuests = true;
+						continue;
+					}
 				}
 
 				$result['displayName'] = $participant->getAttendee()->getDisplayName();
