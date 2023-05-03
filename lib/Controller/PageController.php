@@ -58,6 +58,7 @@ use OCP\Files\IRootFolder;
 use OCP\HintException;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -105,6 +106,7 @@ class PageController extends Controller {
 		IThrottler $throttler,
 		Config $talkConfig,
 		IConfig $serverConfig,
+		IGroupManager $groupManager,
 	) {
 		parent::__construct($appName, $request);
 		$this->eventDispatcher = $eventDispatcher;
@@ -125,6 +127,7 @@ class PageController extends Controller {
 		$this->throttler = $throttler;
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
+		$this->groupManager = $groupManager;
 	}
 
 	/**
