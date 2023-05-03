@@ -54,6 +54,8 @@ const state = {
 	},
 	connecting: {
 	},
+	typing: {
+	},
 }
 
 const getters = {
@@ -76,6 +78,31 @@ const getters = {
 			return Object.values(state.attendees[token])
 		}
 		return []
+	},
+
+	/**
+	 * Gets the participants array filtered to include only those that are
+	 * currently typing.
+	 *
+	 * @param {object} state - the state object.
+	 * @param {object} getters - the getters object.
+	 * @return {Array} the participants array (if there are participants in the
+	 * store).
+	 */
+	participantsListTyping: (state, getters) => (token) => {
+		if (!state.typing[token]) {
+			return []
+		}
+
+		return getters.participantsList(token).filter(attendee => {
+			for (const sessionId of state.typing[token]) {
+				if (attendee.sessionIds.includes(sessionId)) {
+					return true
+				}
+			}
+
+			return false
+		})
 	},
 
 	/**
@@ -223,6 +250,41 @@ const mutations = {
 	finishedConnecting(state, { token, sessionId }) {
 		if (state.connecting[token] && state.connecting[token][sessionId]) {
 			Vue.delete(state.connecting[token], sessionId)
+		}
+	},
+
+	/**
+	 * Sets the typing status of a participant in a conversation.
+	 *
+	 * Note that "updateParticipant" should not be called to add a "typing"
+	 * property to an existing participant, as the participant would be reset
+	 * when the participants are purged whenever they are fetched again.
+	 * Similarly, "addParticipant" can not be called either to add a participant
+	 * if it was not fetched yet but the signaling reported it as being typing,
+	 * as the attendeeId would be unknown.
+	 *
+	 * @param {object} state - current store state.
+	 * @param {object} data - the wrapping object.
+	 * @param {string} data.token - the conversation that the participant is
+	 *        typing in.
+	 * @param {string} data.sessionId - the Nextcloud session ID of the
+	 *        participant.
+	 * @param {boolean} data.typing - whether the participant is typing or not.
+	 */
+	setTyping(state, { token, sessionId, typing }) {
+		if (!typing) {
+			if (state.typing[token] && state.typing[token].indexOf(sessionId) >= 0) {
+				state.typing[token].splice(state.typing[token].indexOf(sessionId), 1)
+			}
+
+			return
+		}
+
+		if (!state.typing[token]) {
+			Vue.set(state.typing, token, [])
+		}
+		if (!state.typing[token].includes(sessionId)) {
+			state.typing[token].push(sessionId)
 		}
 	},
 
