@@ -61,6 +61,7 @@
 							:show-controls="false"
 							:local-media-model="localModel"
 							:local-call-participant-model="localCallParticipantModel"
+							is-small
 							un-selectable />
 
 						<VideoVue class="viewer-overlay__video"
