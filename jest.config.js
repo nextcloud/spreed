@@ -20,6 +20,8 @@
  *
  */
 
+const { resolve } = require('node:path')
+
 // TODO: find a way to consolidate this in one place, with webpack.common.js
 const ignorePatterns = [
 	'(vue-material-design-icons)',
@@ -64,6 +66,8 @@ module.exports = {
 		'<rootDir>/src/test-setup.js',
 		'jest-mock-console/dist/setupTestFramework.js',
 	],
+	globalSetup: resolve(__dirname, 'jest.global.setup.js'),
+
 	collectCoverageFrom: [
 		'<rootDir>/src/**/*.{js,vue}',
 	],
@@ -76,14 +80,13 @@ module.exports = {
 	],
 
 	moduleNameMapper: {
-		'\\.(css|scss)$': '<rootDir>/src/__mocks__/styles.js',
 		'vendor/tflite/(.*).wasm$': '<rootDir>/src/utils/media/effects/virtual-background/vendor/tflite/$1.js',
 	},
 
 	transform: {
-		// process `*.js` files with `babel-jest`
-		'.*\\.(js)$': 'babel-jest',
-		'^.+\\.vue$': '@vue/vue2-jest',
-		'src/utils/media/effects/virtual-background/vendor/*': 'jest-transform-stub',
+		'\\.js$': 'babel-jest',
+		'\\.vue$': '@vue/vue2-jest',
+		'\\.tflite$': 'jest-transform-stub',
+		'\\.(css|scss)$': 'jest-transform-stub',
 	},
 }
