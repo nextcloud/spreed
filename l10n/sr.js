@@ -717,6 +717,7 @@ OC.L10N.register(
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Спољни сигнализациони сервер би требало опционо користити за веће инсталације. Оставите празним да бисте користили интерни сигнализациони сервер.",
     "It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end." : "Снашно се препоручује да се подеси дистрибуирани кеш када се Nextcloud Talk користи заједно са позадинским механизмом високих перформанси.",
     "Add a new high-performance backend server" : "Додај нови сервер позадинског механизма високих перформанси",
+    "Please note that in calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Уколико се не користе спољни сигнализациони сервер, у позивима са више од 4 учесника учесници могу да искусе проблеме са везом и да изазову велико оптерећење уређаја осталих учесника.",
     "Don't warn about connectivity issues in calls with more than 4 participants" : "Не упозоравај на проблеме са конекцијом у разговорима са више од 4 учесника",
     "Missing high-performance backend warning hidden" : "Сакривено је упозорење о недостајућем позадинском механизму високих перформанси",
     "High-performance backend settings saved" : "Сачувана су подешавања позадинског механизма високих перформанси",
