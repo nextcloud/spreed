@@ -236,6 +236,9 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_BEFORE_PARTICIPANT_PERMISSIONS_SET, $event);
 
 		$attendee->setPermissions($newPermissions);
+		if ($attendee->getParticipantType() === Participant::USER_SELF_JOINED) {
+			$attendee->setParticipantType(Participant::USER);
+		}
 		$this->attendeeMapper->update($attendee);
 
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_PARTICIPANT_PERMISSIONS_SET, $event);
