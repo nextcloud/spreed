@@ -226,8 +226,7 @@ class AvatarService {
 	}
 
 	public function isCustomAvatar(Room $room): bool {
-		return $room->getAvatar() !== ''
-			|| $this->getFirstCombinedEmoji($room->getName());
+		return $room->getAvatar() !== '';
 	}
 
 	private function getAvatarPath(Room $room, bool $darkTheme = false): string {

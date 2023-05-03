@@ -62,7 +62,7 @@ Feature: conversation/avatar
       | avatarVersion | NOT_EMPTY |
       | isCustomAvatar | 0 |
 
-  Scenario: Conversation that the name start with emoji need to have custom avatar
+  Scenario: Conversation that the name start with emoji dont need to have custom avatar
     Given user "participant1" creates room "room1" (v4)
       | roomType | 3 |
       | roomName | room1 |
@@ -79,7 +79,7 @@ Feature: conversation/avatar
     And user "participant1" renames room "room1" to "💙room2" with 200 (v4)
     And user "participant1" gets room "room1" with 200 (v4)
       | avatarVersion | NOT_EMPTY |
-      | isCustomAvatar | 1 |
+      | isCustomAvatar | 0 |
       | displayName | 💙room2 |
     Then the room "room1" has an avatar with 200
     And user "participant1" renames room "room1" to "room1" with 200 (v4)
