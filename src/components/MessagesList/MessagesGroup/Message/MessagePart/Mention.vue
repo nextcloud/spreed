@@ -27,7 +27,8 @@
 			:primary="true" />
 		<NcUserBubble v-else-if="isGroupMention"
 			:display-name="name"
-			:avatar-image="'icon-group-forced-white'" />
+			:avatar-image="'icon-group-forced-white'"
+			:primary="isCurrentUserGroup" />
 		<NcUserBubble v-else-if="isMentionToGuest"
 			:display-name="name"
 			:avatar-image="'icon-user-forced-white'"
@@ -41,6 +42,7 @@
 
 <script>
 
+import { loadState } from '@nextcloud/initial-state'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
@@ -89,6 +91,10 @@ export default {
 		isCurrentUser() {
 			return this.$store.getters.getActorType() === 'users'
 				&& this.id === this.$store.getters.getUserId()
+		},
+		isCurrentUserGroup() {
+			return this.isGroupMention
+				&& loadState('spreed', 'user_group_ids', []).includes(this.id)
 		},
 		isDarkTheme() {
 			return window.getComputedStyle(document.body)

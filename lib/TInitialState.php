@@ -32,6 +32,7 @@ use OCP\Files\NotPermittedException;
 use OCP\HintException;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\Util;
 
@@ -44,6 +45,7 @@ trait TInitialState {
 	protected $initialState;
 	/** @var ICacheFactory */
 	protected $memcacheFactory;
+	protected IGroupManager $groupManager;
 
 	protected function publishInitialStateShared(): void {
 		// Needed to enable the screensharing extension in Chromium < 72
@@ -122,6 +124,12 @@ trait TInitialState {
 		$this->initialState->provideInitialState(
 			'play_sounds',
 			$this->serverConfig->getUserValue($user->getUID(), 'spreed', 'play_sounds', 'yes') === 'yes'
+		);
+
+
+		$this->initialState->provideInitialState(
+			'user_group_ids',
+			$this->groupManager->getUserGroupIds($user)
 		);
 
 		$attachmentFolder = $this->talkConfig->getAttachmentFolder($user->getUID());

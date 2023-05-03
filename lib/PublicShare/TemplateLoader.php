@@ -35,6 +35,7 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\Files\FileInfo;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\Util;
 
 /**
@@ -52,11 +53,13 @@ class TemplateLoader implements IEventListener {
 		ICacheFactory $memcacheFactory,
 		Config $talkConfig,
 		IConfig $serverConfig,
+		IGroupManager $groupManager,
 	) {
 		$this->initialState = $initialState;
 		$this->talkConfig = $talkConfig;
 		$this->memcacheFactory = $memcacheFactory;
 		$this->serverConfig = $serverConfig;
+		$this->groupManager = $groupManager;
 	}
 
 	/**

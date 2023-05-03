@@ -36,6 +36,7 @@ use OCP\EventDispatcher\IEventListener;
 use OCP\Files\IRootFolder;
 use OCP\ICacheFactory;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Util;
@@ -60,6 +61,7 @@ class TemplateLoader implements IEventListener {
 		IAppManager $appManager,
 		IRootFolder $rootFolder,
 		IUserSession $userSession,
+		IGroupManager $groupManager,
 	) {
 		$this->initialState = $initialState;
 		$this->memcacheFactory = $memcacheFactory;
@@ -68,6 +70,7 @@ class TemplateLoader implements IEventListener {
 		$this->appManager = $appManager;
 		$this->rootFolder = $rootFolder;
 		$this->userSession = $userSession;
+		$this->groupManager = $groupManager;
 	}
 
 
