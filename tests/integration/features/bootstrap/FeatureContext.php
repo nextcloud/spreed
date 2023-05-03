@@ -3234,14 +3234,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @When /^the room "([^"]*)" has an svg as avatar with (\d+)(?: \((v1)\))?$/
 	 */
-	public function theRoomNeedToHaveAnAsvAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
-		$this->theRoomNeedToHavetAnAsvAvatarWithStatusCode($identifier, $statusCode, $apiVersion, true);
+	public function theRoomNeedsToHaveASvgAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->theRoomNeedsToHaveASvgAvatarWithStatusCode($identifier, $statusCode, $apiVersion, true);
 	}
 
 	/**
 	 * @When /^the room "([^"]*)" has not an svg as avatar with (\d+)(?: \((v1)\))?$/
 	 */
-	public function theRoomNeedToHavetAnAsvAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1', bool $expectedToBeSvg = false): void {
+	public function theRoomNeedsToHaveASvgAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1', bool $expectedToBeSvg = false): void {
 		$this->theRoomNeedToHaveAnAvatarWithStatusCode($identifier, $statusCode, $apiVersion);
 		$content = $this->response->getBody()->getContents();
 		try {
@@ -3251,7 +3251,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$actualIsSvg = false;
 		}
 		if ($expectedToBeSvg) {
-			Assert::assertEquals($expectedToBeSvg, $actualIsSvg, 'The room avatar need to be a XML file');
+			Assert::assertEquals($expectedToBeSvg, $actualIsSvg, 'The room avatar needs to be a XML file');
 		} else {
 			Assert::assertEquals($expectedToBeSvg, $actualIsSvg, 'The room avatar can not be a XML file');
 		}
@@ -3266,7 +3266,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		try {
 			simplexml_load_string($content);
 		} catch (\Throwable $th) {
-			throw new Exception('The avatar need to be a XML');
+			throw new Exception('The avatar needs to be a XML');
 		}
 		Assert::stringContains($content, $string);
 	}
