@@ -423,7 +423,7 @@ class Config {
 
 	/**
 	 * @param int $version
-	 * @param string $userId
+	 * @param string|null $userId
 	 * @return string
 	 */
 	public function getSignalingTicket(int $version, ?string $userId): string {
@@ -438,7 +438,7 @@ class Config {
 	}
 
 	/**
-	 * @param string $userId
+	 * @param string|null $userId
 	 * @return string
 	 */
 	private function getSignalingTicketV1(?string $userId): string {
@@ -539,7 +539,7 @@ class Config {
 	}
 
 	/**
-	 * @param string $userId
+	 * @param string|null $userId
 	 * @return string
 	 */
 	private function getSignalingTicketV2(?string $userId): string {
@@ -562,7 +562,7 @@ class Config {
 	}
 
 	/**
-	 * @param string $userId
+	 * @param string|null $userId
 	 * @param string $ticket
 	 * @return bool
 	 */
