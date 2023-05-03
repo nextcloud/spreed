@@ -77,7 +77,7 @@ Feature: conversation/avatar
       | isCustomAvatar | 0 |
       | displayName | 💙room2 |
     And the room "room1" has an svg as avatar with 200
-    And the avatar svg of room "room1" contais the string "💙"
+    And the avatar svg of room "room1" contains the string "💙"
     When user "participant1" renames room "room1" to "room1" with 200 (v4)
     Then user "participant1" gets room "room1" with 200 (v4)
       | avatarVersion | NOT_EMPTY |

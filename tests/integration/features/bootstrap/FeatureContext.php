@@ -3258,7 +3258,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^the avatar svg of room "([^"]*)" contais the string "([^"]*)"(?: \((v1)\))?$/
+	 * @When /^the avatar svg of room "([^"]*)" contains the string "([^"]*)"(?: \((v1)\))?$/
 	 */
 	public function theAvatarSvgOfRoomContainsTheString(string $identifier, string $string, string $apiVersion = 'v1'): void {
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar');
