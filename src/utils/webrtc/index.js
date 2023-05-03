@@ -23,8 +23,10 @@ import Axios from '@nextcloud/axios'
 
 import { PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.js'
 import { fetchSignalingSettings } from '../../services/signalingService.js'
+import store from '../../store/index.js'
 import CancelableRequest from '../cancelableRequest.js'
 import Signaling from '../signaling.js'
+import SignalingTypingHandler from '../SignalingTypingHandler.js'
 import CallAnalyzer from './analyzers/CallAnalyzer.js'
 import MediaDevicesManager from './MediaDevicesManager.js'
 import CallParticipantCollection from './models/CallParticipantCollection.js'
@@ -42,6 +44,10 @@ const localMediaModel = new LocalMediaModel()
 const mediaDevicesManager = new MediaDevicesManager()
 let callAnalyzer = null
 let sentVideoQualityThrottler = null
+
+// This does not really belongs here, as it is unrelated to WebRTC, but it is
+// included here for the time being until signaling and WebRTC are split.
+const signalingTypingHandler = new SignalingTypingHandler(store)
 
 let cancelFetchSignalingSettings = null
 let signaling = null
@@ -126,6 +132,7 @@ async function connectSignaling(token) {
 			signaling.settings = settings
 		})
 
+		signalingTypingHandler.setSignaling(signaling)
 	}
 
 	tokensInSignaling[token] = true
@@ -436,6 +443,15 @@ function signalingKill() {
 	}
 }
 
+/**
+ * Sets whether the current participant is typing.
+ *
+ * @param {boolean} typing whether the current participant is typing.
+ */
+function signalingSetTyping(typing) {
+	signalingTypingHandler.setTyping(typing)
+}
+
 export {
 	callParticipantCollection,
 	localCallParticipantModel,
@@ -452,4 +468,6 @@ export {
 	signalingLeaveCall,
 	signalingLeaveConversation,
 	signalingKill,
+
+	signalingSetTyping,
 }

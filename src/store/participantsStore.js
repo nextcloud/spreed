@@ -42,6 +42,7 @@ import {
 	grantAllPermissionsToParticipant,
 	removeAllPermissionsFromParticipant,
 	setPermissions,
+	setTyping,
 } from '../services/participantsService.js'
 import SessionStorage from '../services/SessionStorage.js'
 
@@ -696,6 +697,14 @@ const actions = {
 			attendeePermissions: permissions,
 		}
 		context.commit('updateParticipant', { token, attendeeId, updatedData })
+	},
+
+	async setTyping(context, { typing }) {
+		if (!context.getters.currentConversationIsJoined) {
+			return
+		}
+
+		await setTyping(typing)
 	},
 }
 
