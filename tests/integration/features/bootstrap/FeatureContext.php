@@ -3226,7 +3226,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @When /^the room "([^"]*)" has an avatar with (\d+)(?: \((v1)\))?$/
 	 */
-	public function theRoomNeedToHaveAnAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+	public function theRoomHasAnAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar');
 		$this->assertStatusCode($this->response, $statusCode);
 	}
@@ -3234,15 +3234,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @When /^the room "([^"]*)" has an svg as avatar with (\d+)(?: \((v1)\))?$/
 	 */
-	public function theRoomNeedsToHaveASvgAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
-		$this->theRoomNeedsToHaveASvgAvatarWithStatusCode($identifier, $statusCode, $apiVersion, true);
+	public function theRoomHasASvgAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->theRoomHasNoSvgAvatarWithStatusCode($identifier, $statusCode, $apiVersion, true);
 	}
 
 	/**
 	 * @When /^the room "([^"]*)" has not an svg as avatar with (\d+)(?: \((v1)\))?$/
 	 */
-	public function theRoomNeedsToHaveASvgAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1', bool $expectedToBeSvg = false): void {
-		$this->theRoomNeedToHaveAnAvatarWithStatusCode($identifier, $statusCode, $apiVersion);
+	public function theRoomHasNoSvgAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1', bool $expectedToBeSvg = false): void {
+		$this->theRoomHasAnAvatarWithStatusCode($identifier, $statusCode, $apiVersion);
 		$content = $this->response->getBody()->getContents();
 		try {
 			simplexml_load_string($content);
