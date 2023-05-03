@@ -24,22 +24,28 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\SpreedCheats\SpeechToText;
+namespace OCA\SpreedCheats\Translation;
 
-use OCP\Files\File;
-use OCP\SpeechToText\ISpeechToTextProvider;
+use OCP\Translation\ITranslationProvider;
+use OCP\Translation\LanguageTuple;
 
-class LoremIpsumProvider implements ISpeechToTextProvider {
-
+class LoremIpsumTranslationProvider implements ITranslationProvider {
 	public function getName(): string {
 		return 'Lorem ipsum - Talk Integrationtests';
 	}
 
-	public function transcribeFile(File $file): string {
-		if (str_contains($file->getName(), 'leave')) {
-			throw new \RuntimeException('Transcription failed by name');
-		}
+	public function getAvailableLanguages(): array {
+		return [
+			new LanguageTuple(
+				'en',
+				'English',
+				'lorem',
+				'Lorem ipsum',
+			)
+		];
+	}
 
+	public function translate(?string $fromLanguage, string $toLanguage, string $text): string {
 		return 'Lorem ipsum';
 	}
 }

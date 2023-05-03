@@ -2710,7 +2710,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * Parses the xml answer to get the array of users returned.
+	 * Parses the JSON answer to get the array of users returned.
 	 * @param ResponseInterface $response
 	 * @return array
 	 */
@@ -3147,16 +3147,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When wait for :seconds second
+	 * @When wait for :seconds (second|seconds)
 	 */
 	public function waitForXSecond($seconds): void {
-		sleep($seconds);
-	}
-
-	/**
-	 * @When wait for :seconds seconds
-	 */
-	public function waitForXSeconds($seconds): void {
 		sleep($seconds);
 	}
 
@@ -3402,6 +3395,26 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^last response body (contains|does not contain|starts with|starts not with|ends with|ends not with) "([^"]*)"$/
+	 * @param string $needle
+	 */
+	public function lastResponseBodyContains(string $comparison, string $needle) {
+		if ($comparison === 'contains') {
+			Assert::assertStringContainsString($needle, $this->response->getBody()->getContents());
+		} elseif ($comparison === 'does not contain') {
+			Assert::assertStringNotContainsString($needle, $this->response->getBody()->getContents());
+		} elseif ($comparison === 'starts with') {
+			Assert::assertStringStartsWith($needle, $this->response->getBody()->getContents());
+		} elseif ($comparison === 'starts not with') {
+			Assert::assertStringStartsNotWith($needle, $this->response->getBody()->getContents());
+		} elseif ($comparison === 'ends with') {
+			Assert::assertStringEndsWith($needle, $this->response->getBody()->getContents());
+		} elseif ($comparison === 'ends not with') {
+			Assert::assertStringEndsNotWith($needle, $this->response->getBody()->getContents());
+		}
+	}
+
+	/**
 	 * @When /^sending "([^"]*)" to "([^"]*)" with$/
 	 * @param string $verb
 	 * @param string $url
@@ -3410,6 +3423,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function sendRequest($verb, $url, $body = null, array $headers = [], array $options = []) {
 		$fullUrl = $this->baseUrl . 'ocs/v2.php' . $url;
+		$this->sendRequestFullUrl($verb, $fullUrl, $body, $headers, $options);
+	}
+
+	/**
+	 * @When /^sending "([^"]*)" to "([^"]*)" for xml with$/
+	 * @param string $verb
+	 * @param string $url
+	 * @param TableNode|array|null $body
+	 * @param array $headers
+	 */
+	public function sendXMLRequest($verb, $url, $body = null, array $headers = [], array $options = []) {
+		$fullUrl = $this->baseUrl . 'ocs/v2.php' . $url;
+
+		$headers = array_merge([
+			'Accept' => 'application/xml',
+		], $headers);
+
 		$this->sendRequestFullUrl($verb, $fullUrl, $body, $headers, $options);
 	}
 
@@ -3447,10 +3477,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$options['body'] = $body;
 		}
 
-		$options['headers'] = array_merge($headers, [
+		$options['headers'] = array_merge([
 			'OCS-ApiRequest' => 'true',
 			'Accept' => 'application/json',
-		]);
+		], $headers);
 
 		try {
 			$this->response = $client->{$verb}($fullUrl, $options);
