@@ -271,8 +271,8 @@ export default {
 
 .viewer-overlay__local-video {
   position: absolute;
-  bottom: 10%;
-  right: 5%;
+  bottom: 8px;
+  right: 8px;
   width: 25%;
   height: 25%;
   overflow: hidden;
