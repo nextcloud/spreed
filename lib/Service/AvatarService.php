@@ -180,10 +180,13 @@ class AvatarService {
 				}
 			}
 		}
-		return new InMemoryFile($token, $this->getAvatarPath($room, $darkTheme));
+		if ($this->emojiHelper->isValidSingleEmoji(mb_substr($room->getName(), 0, 1))) {
+			return new InMemoryFile($token, $this->getEmojiAvatar($room->getName(), $darkTheme));
+		}
+		return new InMemoryFile($token, file_get_contents($this->getAvatarPath($room, $darkTheme)));
 	}
 
-	protected function getEmojiAvatar(string $roomName, bool $darkTheme): string {
+	protected function getEmojiAvatar(string $roomName, bool $darkTheme = false): string {
 		return str_replace([
 			'{letter}',
 			'{fill}',
@@ -282,6 +285,9 @@ class AvatarService {
 		if ($avatarVersion) {
 			[$version] = explode('.', $avatarVersion);
 			return $version;
+		}
+		if ($this->emojiHelper->isValidSingleEmoji(mb_substr($room->getName(), 0, 1))) {
+			return substr(md5($this->getEmojiAvatar($room->getName())), 0, 8);
 		}
 		$avatarPath = $this->getAvatarPath($room);
 		return substr(md5($avatarPath), 0, 8);

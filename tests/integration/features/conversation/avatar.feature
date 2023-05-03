@@ -16,16 +16,16 @@ Feature: conversation/avatar
       | roomType | 3 |
       | roomName | room2 |
     When user "participant1" uploads file "/img/favicon.png" as avatar of room "room2" with 200
-    And user "participant1" gets room "room2" with 200 (v4)
+    Then user "participant1" gets room "room2" with 200 (v4)
       | avatarVersion | NOT_EMPTY |
       | isCustomAvatar | 1 |
-    Then the room "room2" has an avatar with 200
+    And the room "room2" has not an svg as avatar with 200
     And user "participant1" sees the following system messages in room "room2" with 200
       | room  | actorType     | actorId      | systemMessage        | message                          |
       | room2 | users         | participant1 | avatar_set           | You set the conversation picture |
       | room2 | users         | participant1 | conversation_created | You created the conversation     |
-    And user "participant1" delete the avatar of room "room2" with 200
-    And user "participant1" sees the following system messages in room "room2" with 200
+    When user "participant1" delete the avatar of room "room2" with 200
+    Then user "participant1" sees the following system messages in room "room2" with 200
       | room  | actorType     | actorId      | systemMessage        | message                              |
       | room2 | users         | participant1 | avatar_removed       | You removed the conversation picture |
       | room2 | users         | participant1 | avatar_set           | You set the conversation picture     |
@@ -66,27 +66,24 @@ Feature: conversation/avatar
     Given user "participant1" creates room "room1" (v4)
       | roomType | 3 |
       | roomName | room1 |
+    And the room "room1" has an svg as avatar with 200
     And user "participant1" gets room "room1" with 200 (v4)
       | avatarVersion | NOT_EMPTY |
       | isCustomAvatar | 0 |
       | displayName | room1 |
-    And user "participant1" renames room "room1" to "room2" with 200 (v4)
-    And user "participant1" gets room "room1" with 200 (v4)
-      | avatarVersion | NOT_EMPTY |
-      | isCustomAvatar | 0 |
-      | displayName | room2 |
-    Then the room "room1" has an avatar with 200
     And user "participant1" renames room "room1" to "💙room2" with 200 (v4)
-    And user "participant1" gets room "room1" with 200 (v4)
+    Then user "participant1" gets room "room1" with 200 (v4)
       | avatarVersion | NOT_EMPTY |
       | isCustomAvatar | 0 |
       | displayName | 💙room2 |
-    Then the room "room1" has an avatar with 200
-    And user "participant1" renames room "room1" to "room1" with 200 (v4)
-    And user "participant1" gets room "room1" with 200 (v4)
+    And the room "room1" has an svg as avatar with 200
+    And the avatar svg of room "room1" contais the string "💙"
+    When user "participant1" renames room "room1" to "room1" with 200 (v4)
+    Then user "participant1" gets room "room1" with 200 (v4)
       | avatarVersion | NOT_EMPTY |
       | isCustomAvatar | 0 |
       | displayName | room1 |
+    And the room "room1" has an svg as avatar with 200
 
   Scenario: User should receive the room avatar when see a rich object at media tab
     Given user "participant1" creates room "public room" (v4)
