@@ -136,7 +136,7 @@ class RoomFormatter {
 			'callFlag' => Participant::FLAG_DISCONNECTED,
 			'messageExpiration' => 0,
 			'avatarVersion' => $this->avatarService->getAvatarVersion($room),
-			'isCustomAvatar' => $room->getAvatar() ? true : false,
+			'isCustomAvatar' => $this->avatarService->isCustomAvatar($room),
 			'breakoutRoomMode' => BreakoutRoom::MODE_NOT_CONFIGURED,
 			'breakoutRoomStatus' => BreakoutRoom::STATUS_STOPPED,
 		];
