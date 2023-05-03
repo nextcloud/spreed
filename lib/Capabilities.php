@@ -132,8 +132,8 @@ class Capabilities implements IPublicCapability {
 				'chat' => [
 					'max-length' => ChatManager::MAX_CHAT_LENGTH,
 					'read-privacy' => Participant::PRIVACY_PUBLIC,
-					//'legacy' => true, // Temporary A-B switch to opt-out of the new context loading
-					'translations' => $this->translationManager->getLanguages(),
+					// Transform the JsonSerializable language tuples to arrays
+					'translations' => json_decode(json_encode($this->translationManager->getLanguages()), true),
 				],
 				'conversations' => [
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user)
