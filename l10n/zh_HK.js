@@ -717,6 +717,7 @@ OC.L10N.register(
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "大型安裝應選擇使用外部信令伺服器。留空以使用內部信令伺服器。",
     "It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end." : "強烈建議在將 Nextcloud Talk 與高性能後端一起使用時設置分布式緩存。",
     "Add a new high-performance backend server" : "添加高性能後端伺服器",
+    "Please note that in calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "請注意，對於具有四位以上參與者且沒有外部訊號伺服器的通話，參與者可能會遇到連線問題，並為參與裝置帶來高負載。",
     "Don't warn about connectivity issues in calls with more than 4 participants" : "對於參與人數超過4人的通話，請勿發出有關連接問題的警告",
     "Missing high-performance backend warning hidden" : "隱藏缺少高性能後端系統警告",
     "High-performance backend settings saved" : "高性能後端設定已保存",
