@@ -29,7 +29,7 @@
 				}">
 				<div class="viewer-overlay__collapse"
 					:class="{ collapsed: isCollapsed }">
-					<NcButton type="tertiary"
+					<NcButton type="secondary"
 						class="viewer-overlay__button"
 						:aria-label="
 							isCollapsed ? t('spreed', 'Collapse') : t('spreed', 'Expand')
@@ -45,7 +45,7 @@
 				<Transition name="slide-down">
 					<div v-show="!isCollapsed" class="viewer-overlay__video-container">
 						<div class="video-overlay__top-bar">
-							<NcButton type="tertiary"
+							<NcButton type="secondary"
 								class="viewer-overlay__button"
 								:aria-label="t('spreed', 'Expand')"
 								@click.stop="maximize">
@@ -76,12 +76,12 @@
 									<LocalAudioControlButton class="viewer-overlay__button"
 										:conversation="conversation"
 										:model="localModel"
-										nc-button-type="tertiary"
+										nc-button-type="secondary"
 										disable-keyboard-shortcuts />
 									<LocalVideoControlButton class="viewer-overlay__button"
 										:conversation="conversation"
 										:model="localModel"
-										nc-button-type="tertiary"
+										nc-button-type="secondary"
 										disable-keyboard-shortcuts />
 								</div>
 							</template>
@@ -232,11 +232,11 @@ export default {
 }
 
 .viewer-overlay__button {
-	background-color: rgb(var(--color-main-background-rgb), 0.7) !important;
+	opacity: 0.8;
 	&:active,
 	&:hover,
 	&:focus {
-		background-color: rgb(var(--color-main-background-rgb), 0.9) !important;
+		opacity: 0.9;
 	}
 }
 
