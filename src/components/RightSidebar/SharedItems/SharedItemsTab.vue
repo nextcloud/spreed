@@ -211,7 +211,7 @@ export default {
 
 // Override default NcRelatedResourcesPanel styles
 .related-resources {
-	&::v-deep .related-resources__header {
+	&:deep(.related-resources__header) {
 		margin: 14px 0 !important;
 		padding: 0 8px 0 math.div($clickable-area, 2) !important;
 		h5 {

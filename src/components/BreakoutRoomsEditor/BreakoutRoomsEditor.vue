@@ -178,7 +178,7 @@ export default {
 }
 
 .modal-mask__participants-step {
-	::v-deep .modal-container {
+	:deep(.modal-container) {
 		overflow: hidden !important;
 		height: 100% !important;
 	}

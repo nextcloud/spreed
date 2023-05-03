@@ -352,14 +352,14 @@ export default {
 	height: unset;
 }
 
-#talk-sidebar #call-container ::v-deep .videoContainer {
+#talk-sidebar #call-container :deep(.videoContainer) {
 	/* The video container has some small padding to prevent the video from
 	 * reaching the edges, but it also uses "width: 100%", so the padding should
 	 * be included in the full width of the element. */
 	box-sizing: border-box;
 }
 
-#talk-sidebar #call-container ::v-deep .videoContainer.promoted video {
+#talk-sidebar #call-container :deep(.videoContainer.promoted video) {
 	/* Base the size of the video on its width instead of on its height;
 	 * otherwise the video could appear in full height but cropped on the sides
 	 * due to the space available in the sidebar being typically larger in
@@ -368,7 +368,7 @@ export default {
 	height: auto;
 }
 
-#talk-sidebar #call-container ::v-deep .nameIndicator {
+#talk-sidebar #call-container :deep(.nameIndicator) {
 	/* The name indicator has some small padding to prevent the name from
 	 * reaching the edges, but it also uses "width: 100%", so the padding should
 	 * be included in the full width of the element. */

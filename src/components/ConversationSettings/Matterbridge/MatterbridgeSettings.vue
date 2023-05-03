@@ -642,14 +642,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .icon-multiselect-service {
+:deep(.icon-multiselect-service) {
 	width: 16px !important;
 	height: 16px !important;
 	margin-right: 10px;
 	filter: var(--background-invert-if-dark);
 }
 
-::v-deep .modal-container {
+:deep(.modal-container) {
 	height: 700px;
 }
 
