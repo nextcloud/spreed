@@ -247,8 +247,8 @@ import AudioRecorder from './AudioRecorder/AudioRecorder.vue'
 import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
 import TemplatePreview from './TemplatePreview.vue'
 
+import { useViewer } from '../../composables/useViewer.js'
 import { CONVERSATION, PARTICIPANT } from '../../constants.js'
-import { openViewer } from '../../mixins/openViewer.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile, createTextFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
@@ -293,8 +293,6 @@ export default {
 		NcTextField,
 	},
 
-	mixins: [openViewer],
-
 	props: {
 		/**
 		 * The current conversation token or the breakout room token.
@@ -329,6 +327,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+	},
+
+	setup() {
+		const { openViewer } = useViewer()
+		return { openViewer }
 	},
 
 	data() {

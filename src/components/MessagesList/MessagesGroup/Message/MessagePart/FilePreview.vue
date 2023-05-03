@@ -84,7 +84,7 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import AudioPlayer from './AudioPlayer.vue'
 
-import { openViewer } from '../../../../../mixins/openViewer.js'
+import { useViewer } from '../../../../../composables/useViewer.js'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,
@@ -106,8 +106,6 @@ export default {
 	directives: {
 		tooltip: Tooltip,
 	},
-
-	mixins: [openViewer],
 
 	props: {
 		/**
@@ -236,6 +234,12 @@ export default {
 			default: false,
 		},
 	},
+
+	setup() {
+		const { openViewer } = useViewer()
+		return { openViewer }
+	},
+
 	data() {
 		return {
 			isLoading: true,

@@ -165,8 +165,8 @@ import NcLoadingIcon from '@nextcloud/vue/dist/Components/NcLoadingIcon.js'
 import GridView from '../missingMaterialDesignIcons/GridView.vue'
 import PromotedView from '../missingMaterialDesignIcons/PromotedView.vue'
 
+import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
-import isInCall from '../../mixins/isInCall.js'
 import { generateAbsoluteUrl } from '../../services/urlService.js'
 import { callParticipantCollection } from '../../utils/webrtc/index.js'
 
@@ -190,10 +190,6 @@ export default {
 		StopIcon,
 		DotsCircle,
 	},
-
-	mixins: [
-		isInCall,
-	],
 
 	props: {
 		/**
@@ -227,6 +223,11 @@ export default {
 	},
 
 	emits: ['open-breakout-rooms-editor'],
+
+	setup() {
+		const isInCall = useIsInCall()
+		return { isInCall }
+	},
 
 	data() {
 		return {

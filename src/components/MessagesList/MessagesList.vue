@@ -89,8 +89,8 @@ import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
 
+import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CHAT } from '../../constants.js'
-import isInCall from '../../mixins/isInCall.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import { EventBus } from '../../services/EventBus.js'
 
@@ -105,10 +105,7 @@ export default {
 		NcEmptyContent,
 	},
 
-	mixins: [
-		isInLobby,
-		isInCall,
-	],
+	mixins: [isInLobby],
 
 	provide() {
 		return {
@@ -129,6 +126,11 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+	},
+
+	setup() {
+		const isInCall = useIsInCall()
+		return { isInCall }
 	},
 
 	data() {

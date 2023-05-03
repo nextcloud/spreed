@@ -157,8 +157,8 @@ import PresentToAll from '../../missingMaterialDesignIcons/PresentToAll.vue'
 import LocalAudioControlButton from './LocalAudioControlButton.vue'
 import LocalVideoControlButton from './LocalVideoControlButton.vue'
 
+import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { PARTICIPANT } from '../../../constants.js'
-import isInCall from '../../../mixins/isInCall.js'
 import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer.js'
 import { callAnalyzer } from '../../../utils/webrtc/index.js'
 import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
@@ -185,10 +185,6 @@ export default {
 		NetworkStrength2Alert,
 		PresentToAll,
 	},
-
-	mixins: [
-		isInCall,
-	],
 
 	props: {
 		token: {
@@ -219,6 +215,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+	},
+
+	setup() {
+		const isInCall = useIsInCall()
+		return { isInCall }
 	},
 
 	data() {
