@@ -717,6 +717,7 @@ OC.L10N.register(
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server.",
     "It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end." : "It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end.",
     "Add a new high-performance backend server" : "Add a new high-performance backend server",
+    "Please note that in calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Please note that in calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices.",
     "Don't warn about connectivity issues in calls with more than 4 participants" : "Don't warn about connectivity issues in calls with more than 4 participants",
     "Missing high-performance backend warning hidden" : "Missing high-performance backend warning hidden",
     "High-performance backend settings saved" : "High-performance backend settings saved",
