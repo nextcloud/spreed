@@ -237,7 +237,7 @@ class AvatarService {
 		return new InMemoryFile($token, file_get_contents($this->getAvatarPath($room, $darkTheme)));
 	}
 
-	protected function getEmojiAvatar(string $emoji, ?string $fillColor): string {
+	protected function getEmojiAvatar(string $emoji, string $fillColor): string {
 		return str_replace([
 			'{letter}',
 			'{fill}',

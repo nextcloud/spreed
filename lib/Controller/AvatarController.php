@@ -27,7 +27,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
-use OCA\Mail\Service\Avatar\Avatar;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Service\AvatarService;
