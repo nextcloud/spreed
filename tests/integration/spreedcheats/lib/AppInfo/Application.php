@@ -23,7 +23,8 @@ declare(strict_types=1);
 
 namespace OCA\SpreedCheats\AppInfo;
 
-use OCA\SpreedCheats\SpeechToText\LoremIpsumProvider;
+use OCA\SpreedCheats\SpeechToText\LoremIpsumSpeechToTextProvider;
+use OCA\SpreedCheats\Translation\LoremIpsumTranslationProvider;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -37,7 +38,8 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function register(IRegistrationContext $context): void {
-		$context->registerSpeechToTextProvider(LoremIpsumProvider::class);
+		$context->registerSpeechToTextProvider(LoremIpsumSpeechToTextProvider::class);
+		$context->registerTranslationProvider(LoremIpsumTranslationProvider::class);
 	}
 
 	public function boot(IBootContext $context): void {
