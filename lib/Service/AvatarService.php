@@ -42,6 +42,10 @@ use OCP\IUser;
 use OCP\Security\ISecureRandom;
 
 class AvatarService {
+	public const THEMING_PLACEHOLDER = '{{THEMING}}';
+	public const THEMING_DARK_BACKGROUND = '3B3B3B';
+	public const THEMING_BRIGHT_BACKGROUND = 'DBDBDB';
+
 	public function __construct(
 		private IAppData $appData,
 		private IL10N $l,
@@ -79,6 +83,36 @@ class AvatarService {
 		$image->loadFromData($content);
 		$image->readExif($content);
 		$this->setAvatar($room, $image);
+	}
+
+	public function setAvatarFromEmoji(Room $room, string $emoji, ?string $color): void {
+		if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+			throw new InvalidArgumentException($this->l->t('One-to-one rooms always need to show the other users avatar'));
+		}
+
+		if ($this->getFirstCombinedEmoji($emoji) !== $emoji) {
+			throw new InvalidArgumentException($this->l->t('Invalid emoji character'));
+		}
+
+		if ($color === null) {
+			$color = self::THEMING_PLACEHOLDER;
+		} elseif (!preg_match('/^[a-fA-F0-9]{6}$/', $color)) {
+			throw new InvalidArgumentException($this->l->t('Invalid background color'));
+		}
+
+		$content = $this->getEmojiAvatar($emoji, $color);
+
+		$token = $room->getToken();
+		$avatarFolder = $this->getAvatarFolder($token);
+
+		// Delete previous avatars
+		foreach ($avatarFolder->getDirectoryListing() as $file) {
+			$file->delete();
+		}
+
+		$avatarName = $this->random->generate(16, ISecureRandom::CHAR_HUMAN_READABLE) . '.svg';
+		$avatarFolder->newFile($avatarName, $content);
+		$this->roomService->setAvatar($room, $avatarName);
 	}
 
 	public function setAvatar(Room $room, \OC_Image $image): void {
@@ -164,7 +198,17 @@ class AvatarService {
 			try {
 				$folder = $this->appData->getFolder('room-avatar');
 				if ($folder->fileExists($token)) {
-					return $folder->getFolder($token)->getFile($avatar);
+					$file = $folder->getFolder($token)->getFile($avatar);
+
+					if ($file->getMimeType() === 'image/svg+xml' && str_contains($file->getContent(), self::THEMING_PLACEHOLDER)) {
+						$color = $darkTheme ? self::THEMING_DARK_BACKGROUND : self::THEMING_BRIGHT_BACKGROUND;
+						return new InMemoryFile(
+							$file->getName(),
+							str_replace(self::THEMING_PLACEHOLDER, $color, $file->getContent()),
+						);
+					}
+
+					return $file;
 				}
 			} catch (NotFoundException $e) {
 			}
@@ -181,19 +225,26 @@ class AvatarService {
 			}
 		}
 		if ($this->emojiHelper->isValidSingleEmoji(mb_substr($room->getName(), 0, 1))) {
-			return new InMemoryFile($token, $this->getEmojiAvatar($room->getName(), $darkTheme));
+			return new InMemoryFile(
+				$token,
+				$this->getEmojiAvatar(
+					$this->getFirstCombinedEmoji(
+						$room->getName()),
+					$darkTheme ? self::THEMING_DARK_BACKGROUND : self::THEMING_BRIGHT_BACKGROUND
+				)
+			);
 		}
 		return new InMemoryFile($token, file_get_contents($this->getAvatarPath($room, $darkTheme)));
 	}
 
-	protected function getEmojiAvatar(string $roomName, bool $darkTheme = false): string {
+	protected function getEmojiAvatar(string $emoji, ?string $fillColor): string {
 		return str_replace([
 			'{letter}',
 			'{fill}',
 			'{font}',
 		], [
-			$this->getFirstCombinedEmoji($roomName),
-			$darkTheme ? '3B3B3B' : 'DBDBDB',
+			$emoji,
+			$fillColor,
 			implode(',', [
 				"'Segoe UI'",
 				'Roboto',
@@ -220,6 +271,10 @@ class AvatarService {
 	 * @return string
 	 */
 	protected function getFirstCombinedEmoji(string $roomName, int $length = 0): string {
+		if (mb_strlen($roomName) === $length) {
+			return '';
+		}
+
 		$attempt = mb_substr($roomName, 0, $length + 1);
 		if ($this->emojiHelper->isValidSingleEmoji($attempt)) {
 			$longerAttempt = $this->getFirstCombinedEmoji($roomName, $length + 1);
@@ -287,7 +342,7 @@ class AvatarService {
 			return $version;
 		}
 		if ($this->emojiHelper->isValidSingleEmoji(mb_substr($room->getName(), 0, 1))) {
-			return substr(md5($this->getEmojiAvatar($room->getName())), 0, 8);
+			return substr(md5($this->getEmojiAvatar($this->getFirstCombinedEmoji($room->getName()), self::THEMING_BRIGHT_BACKGROUND)), 0, 8);
 		}
 		$avatarPath = $this->getAvatarPath($room);
 		return substr(md5($avatarPath), 0, 8);

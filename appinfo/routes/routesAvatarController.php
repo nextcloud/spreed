@@ -32,6 +32,8 @@ return [
 	'ocs' => [
 		/** @see \OCA\Talk\Controller\AvatarController::uploadAvatar() */
 		['name' => 'Avatar#uploadAvatar', 'url' => '/api/{apiVersion}/room/{token}/avatar', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\AvatarController::emojiAvatar() */
+		['name' => 'Avatar#emojiAvatar', 'url' => '/api/{apiVersion}/room/{token}/avatar/emoji', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\AvatarController::getAvatar() */
 		['name' => 'Avatar#getAvatar', 'url' => '/api/{apiVersion}/room/{token}/avatar', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\AvatarController::getAvatarDark() */
