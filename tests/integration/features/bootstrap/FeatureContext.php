@@ -1197,9 +1197,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 
 		if ($formData instanceof TableNode) {
-			$xpectedAttributes = $formData->getColumnsHash()[0];
+			$xpectedAttributes = $formData->getRowsHash();
 			$actual = $this->getDataFromResponse($this->response);
 			foreach ($xpectedAttributes as $attribute => $expectedValue) {
+				if ($expectedValue === 'NOT_EMPTY') {
+					Assert::assertNotEmpty($actual[$attribute]);
+					continue;
+				}
 				Assert::assertEquals($expectedValue, $actual[$attribute]);
 			}
 		}
@@ -1941,6 +1945,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$item['link'] = $this->baseUrl . 'index.php/call/' . $token;
 			$item['iconUrl'] = str_replace('{$BASE_URL}', $this->baseUrl, $item['iconUrl']);
 			$item['iconUrl'] = str_replace('{token}', $token, $item['iconUrl']);
+
+			Assert::assertMatchesRegularExpression('/\?v=\w{8}$/', $data[$widgetId][$key]['iconUrl']);
+			preg_match('/(?<version>\?v=\w{8})$/', $data[$widgetId][$key]['iconUrl'], $matches);
+			$item['iconUrl'] = str_replace('{version}', $matches['version'], $item['iconUrl']);
 
 			Assert::assertEquals($item, $data[$widgetId][$key], 'Wrong details for item #' . $key);
 		}
@@ -3222,9 +3230,49 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @When /^the room "([^"]*)" has an avatar with (\d+)(?: \((v1)\))?$/
 	 */
-	public function theRoomNeedToHaveAnAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+	public function theRoomHasAnAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
 		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar');
 		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When /^the room "([^"]*)" has an svg as avatar with (\d+)(?: \((v1)\))?$/
+	 */
+	public function theRoomHasASvgAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->theRoomHasNoSvgAvatarWithStatusCode($identifier, $statusCode, $apiVersion, true);
+	}
+
+	/**
+	 * @When /^the room "([^"]*)" has not an svg as avatar with (\d+)(?: \((v1)\))?$/
+	 */
+	public function theRoomHasNoSvgAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1', bool $expectedToBeSvg = false): void {
+		$this->theRoomHasAnAvatarWithStatusCode($identifier, $statusCode, $apiVersion);
+		$content = $this->response->getBody()->getContents();
+		try {
+			simplexml_load_string($content);
+			$actualIsSvg = true;
+		} catch (\Throwable $th) {
+			$actualIsSvg = false;
+		}
+		if ($expectedToBeSvg) {
+			Assert::assertEquals($expectedToBeSvg, $actualIsSvg, 'The room avatar needs to be a XML file');
+		} else {
+			Assert::assertEquals($expectedToBeSvg, $actualIsSvg, 'The room avatar can not be a XML file');
+		}
+	}
+
+	/**
+	 * @When /^the avatar svg of room "([^"]*)" contains the string "([^"]*)"(?: \((v1)\))?$/
+	 */
+	public function theAvatarSvgOfRoomContainsTheString(string $identifier, string $string, string $apiVersion = 'v1'): void {
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar');
+		$content = $this->response->getBody()->getContents();
+		try {
+			simplexml_load_string($content);
+		} catch (\Throwable $th) {
+			throw new Exception('The avatar needs to be a XML');
+		}
+		Assert::stringContains($content, $string);
 	}
 
 	/**
@@ -3485,4 +3533,5 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			Assert::assertEquals($statusCode, $response->getStatusCode(), $message);
 		}
 	}
+
 }

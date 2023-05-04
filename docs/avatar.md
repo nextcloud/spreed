@@ -24,6 +24,10 @@
 
 ## Delete conversations avatar
 
+!!! note
+    To determine if the delete option should be presented to the user, it's recommended to check the `isCustomAvatar` property of the [Get user´s conversations](conversation.md#get-user-s-conversations) API.
+
+
 * Required capability: `avatar`
 * Method: `DELETE`
 * Endpoint: `/room/{token}/avatar`
