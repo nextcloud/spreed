@@ -214,8 +214,8 @@ export default {
 			if (this.searchText !== '') {
 				const lowerSearchText = this.searchText.toLowerCase()
 				conversations = conversations.filter(conversation =>
-					conversation.displayName.toLowerCase().indexOf(lowerSearchText) !== -1
-					|| conversation.name.toLowerCase().indexOf(lowerSearchText) !== -1
+					conversation.displayName.toLowerCase().includes(lowerSearchText)
+					|| conversation.name.toLowerCase().includes(lowerSearchText)
 				)
 			}
 

@@ -76,7 +76,7 @@ export default {
 		 * Whether the participant is a guest or not.
 		 */
 		isGuest() {
-			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participant.participantType) !== -1
+			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].includes(this.participant.participantType)
 		},
 
 		/**

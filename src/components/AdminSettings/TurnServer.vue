@@ -293,10 +293,10 @@ export default {
 			const types = candidates.map((cand) => cand.type)
 
 			this.testing = false
-			if (types.indexOf('relay') === -1) {
-				this.testingError = true
-			} else {
+			if (types.includes('relay')) {
 				this.testingSuccess = true
+			} else {
+				this.testingError = true
 			}
 
 			setTimeout(() => {

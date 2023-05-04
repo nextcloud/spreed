@@ -513,7 +513,7 @@ export default {
 		},
 
 		isSelf() {
-			return this.sessionIds.length && this.sessionIds.indexOf(this.currentParticipant.sessionId) >= 0
+			return this.sessionIds.length && this.sessionIds.includes(this.currentParticipant.sessionId)
 		},
 
 		selfIsModerator() {
@@ -530,7 +530,7 @@ export default {
 		},
 
 		isGuest() {
-			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
+			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].includes(this.participantType)
 		},
 
 		isGroup() {
@@ -551,7 +551,7 @@ export default {
 
 		showModeratorLabel() {
 			return this.isModerator
-				&& [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER, CONVERSATION.TYPE.CHANGELOG].indexOf(this.conversation.type) === -1
+				&& ![CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.ONE_TO_ONE_FORMER, CONVERSATION.TYPE.CHANGELOG].includes(this.conversation.type)
 		},
 
 		canBeModerated() {
@@ -563,7 +563,7 @@ export default {
 
 		canBeDemoted() {
 			return this.canBeModerated
-				&& [PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
+				&& [PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].includes(this.participantType)
 		},
 
 		canBePromoted() {
@@ -635,7 +635,7 @@ export default {
 		},
 
 		participantTypeIsModerator(participantType) {
-			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1
+			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].includes(participantType)
 		},
 
 		async promoteToModerator() {

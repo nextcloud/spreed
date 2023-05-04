@@ -541,7 +541,7 @@ export default {
 
 		// Making sure that the click is outside the MessageButtonsBar
 		handleClickOutside(event) {
-			if (event.composedPath().indexOf(this.$el) !== -1) {
+			if (event.composedPath().includes(this.$el)) {
 				return
 			}
 			this.closeReactionsMenu()

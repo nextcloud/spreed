@@ -76,9 +76,9 @@ export default {
 			if (this.searchText !== '') {
 				const lowerSearchText = this.searchText.toLowerCase()
 				participants = participants.filter(participant => {
-					return participant.displayName.toLowerCase().indexOf(lowerSearchText) !== -1
+					return participant.displayName.toLowerCase().includes(lowerSearchText)
 						|| (participant.actorType !== 'guests'
-							&& participant.actorId.toLowerCase().indexOf(lowerSearchText) !== -1)
+							&& participant.actorId.toLowerCase().includes(lowerSearchText))
 				})
 			}
 
@@ -98,7 +98,7 @@ export default {
 
 		currentParticipantIsModerator() {
 			const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
-			return this.currentParticipant && moderatorTypes.indexOf(this.currentParticipant.participantType) !== -1
+			return this.currentParticipant && moderatorTypes.includes(this.currentParticipant.participantType)
 		},
 	},
 
@@ -215,8 +215,8 @@ export default {
 			}
 
 			const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
-			const moderator1 = moderatorTypes.indexOf(participant1.participantType) !== -1
-			const moderator2 = moderatorTypes.indexOf(participant2.participantType) !== -1
+			const moderator1 = moderatorTypes.includes(participant1.participantType)
+			const moderator2 = moderatorTypes.includes(participant2.participantType)
 
 			if (moderator1 !== moderator2) {
 				return moderator1 ? -1 : 1

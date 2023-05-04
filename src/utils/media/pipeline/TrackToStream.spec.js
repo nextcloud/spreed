@@ -51,8 +51,7 @@ describe('TrackToStream', () => {
 			this._tracks = []
 
 			this.addTrack = jest.fn((track) => {
-				const index = this._tracks.indexOf(track)
-				if (index >= 0) {
+				if (this._tracks.includes(track)) {
 					console.error('Tried to add again track already added to stream')
 					return
 				}

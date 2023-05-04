@@ -59,7 +59,7 @@ export default {
 	props: {
 		kind: {
 			validator(value) {
-				return ['audioinput', 'videoinput'].indexOf(value) !== -1
+				return ['audioinput', 'videoinput'].includes(value)
 			},
 			required: true,
 		},
