@@ -136,8 +136,8 @@ import Confirmation from './Confirmation/Confirmation.vue'
 import SetContacts from './SetContacts/SetContacts.vue'
 import SetConversationName from './SetConversationName/SetConversationName.vue'
 
+import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { CONVERSATION } from '../../../constants.js'
-import isInCall from '../../../mixins/isInCall.js'
 import participant from '../../../mixins/participant.js'
 import {
 	createPublicConversation,
@@ -167,10 +167,12 @@ export default {
 		Plus,
 	},
 
-	mixins: [
-		isInCall,
-		participant,
-	],
+	mixins: [participant],
+
+	setup() {
+		const isInCall = useIsInCall()
+		return { isInCall }
+	},
 
 	data() {
 		return {

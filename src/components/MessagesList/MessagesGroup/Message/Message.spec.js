@@ -20,6 +20,7 @@ import FilePreview from './MessagePart/FilePreview.vue'
 import Location from './MessagePart/Location.vue'
 import Mention from './MessagePart/Mention.vue'
 
+import * as useIsInCallModule from '../../../../composables/useIsInCall.js'
 import { CONVERSATION, ATTENDEE, PARTICIPANT } from '../../../../constants.js'
 import { EventBus } from '../../../../services/EventBus.js'
 import storeConfig from '../../../../store/storeConfig.js'
@@ -231,17 +232,13 @@ describe('Message.vue', () => {
 				messageProps.message = 'message two'
 				conversationProps.hasCall = true
 
+				jest.spyOn(useIsInCallModule, 'useIsInCall').mockReturnValue(() => true)
+
 				const wrapper = shallowMount(Message, {
 					localVue,
 					store,
 					propsData: messageProps,
 					provide: injected,
-					mixins: [{
-						// mock the isInCall mixin
-						computed: {
-							isInCall: () => true,
-						},
-					}],
 				})
 
 				const callButton = wrapper.findComponent({ name: 'CallButton' })

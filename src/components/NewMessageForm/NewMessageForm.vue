@@ -2,6 +2,7 @@
   - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@icloud.com>
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
+  - @author Grigorii Shartsev <me@shgk.me>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -246,6 +247,7 @@ import AudioRecorder from './AudioRecorder/AudioRecorder.vue'
 import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
 import TemplatePreview from './TemplatePreview.vue'
 
+import { useViewer } from '../../composables/useViewer.js'
 import { CONVERSATION, PARTICIPANT } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile, createTextFile } from '../../services/filesSharingServices.js'
@@ -325,6 +327,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+	},
+
+	setup() {
+		const { openViewer } = useViewer()
+		return { openViewer }
 	},
 
 	data() {
@@ -806,32 +813,7 @@ export default {
 
 			await shareFile(filePath, this.token, '', '')
 
-			// The Viewer expects a file to be set in the sidebar if the sidebar
-			// is open.
-			if (this.$store.getters.getSidebarStatus) {
-				OCA.Files.Sidebar.state.file = filePath
-			}
-
-			OCA.Viewer.open({
-				// Viewer expects an internal absolute path starting with "/".
-				path: filePath,
-				list: [
-					fileData,
-				],
-			})
-
-			// FIXME Remove this hack once it is possible to set the parent
-			// element of the viewer.
-			// By default the viewer is a sibling of the fullscreen element, so
-			// it is not visible when in fullscreen mode. It is not possible to
-			// specify the parent nor to know when the viewer was actually
-			// opened, so for the time being it is reparented if needed shortly
-			// after calling it.
-			setTimeout(() => {
-				if (this.$store.getters.isFullscreen()) {
-					document.getElementById('content-vue').appendChild(document.getElementById('viewer'))
-				}
-			}, 1000)
+			this.openViewer(filePath, [fileData])
 
 			this.dismissTextFileCreation()
 		},

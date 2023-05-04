@@ -38,13 +38,14 @@ import PreventUnload from 'vue-prevent-unload'
 import CallView from './components/CallView/CallView.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 
-import isInCall from './mixins/isInCall.js'
 import participant from './mixins/participant.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
 
 // Styles
 import '@nextcloud/dialogs/dist/index.css'
+
+import { useIsInCall } from './composables/useIsInCall.js'
 
 export default {
 
@@ -58,10 +59,13 @@ export default {
 
 	mixins: [
 		sessionIssueHandler,
-		isInCall,
 		participant,
 		talkHashCheck,
 	],
+
+	setup() {
+		return { isInCall: useIsInCall() }
+	},
 
 	data() {
 		return {

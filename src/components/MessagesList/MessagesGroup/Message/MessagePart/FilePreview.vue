@@ -4,6 +4,7 @@
   -
   - @author Joas Schilling <coding@schilljs.com>
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
+  - @author Grigorii Shartsev <me@shgk.me>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -82,6 +83,8 @@ import NcProgressBar from '@nextcloud/vue/dist/Components/NcProgressBar.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import AudioPlayer from './AudioPlayer.vue'
+
+import { useViewer } from '../../../../../composables/useViewer.js'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,
@@ -231,6 +234,12 @@ export default {
 			default: false,
 		},
 	},
+
+	setup() {
+		const { openViewer } = useViewer()
+		return { openViewer }
+	},
+
 	data() {
 		return {
 			isLoading: true,
@@ -461,12 +470,6 @@ export default {
 			event.stopPropagation()
 			event.preventDefault()
 
-			// The Viewer expects a file to be set in the sidebar if the sidebar
-			// is open.
-			if (this.$store.getters.getSidebarStatus) {
-				OCA.Files.Sidebar.state.file = this.internalAbsolutePath
-			}
-
 			let permissions = ''
 			if (this.permissions) {
 				if (this.permissions & OC.PERMISSION_CREATE) {
@@ -486,34 +489,17 @@ export default {
 				}
 			}
 
-			OCA.Viewer.open({
-				// Viewer expects an internal absolute path starting with "/".
-				path: this.internalAbsolutePath,
-				list: [
-					{
-						fileid: parseInt(this.id, 10),
-						filename: this.internalAbsolutePath,
-						basename: this.name,
-						mime: this.mimetype,
-						hasPreview: this.previewAvailable === 'yes',
-						etag: this.etag,
-						permissions,
-					},
-				],
-			})
-
-			// FIXME Remove this hack once it is possible to set the parent
-			// element of the viewer.
-			// By default the viewer is a sibling of the fullscreen element, so
-			// it is not visible when in fullscreen mode. It is not possible to
-			// specify the parent nor to know when the viewer was actually
-			// opened, so for the time being it is reparented if needed shortly
-			// after calling it.
-			setTimeout(() => {
-				if (this.$store.getters.isFullscreen()) {
-					document.getElementById('content-vue').appendChild(document.getElementById('viewer'))
-				}
-			}, 1000)
+			this.openViewer(this.internalAbsolutePath, [
+				{
+					fileid: parseInt(this.id, 10),
+					filename: this.internalAbsolutePath,
+					basename: this.name,
+					mime: this.mimetype,
+					hasPreview: this.previewAvailable === 'yes',
+					etag: this.etag,
+					permissions,
+				},
+			])
 		},
 	},
 }

@@ -56,9 +56,9 @@ import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
 import UploadEditor from './components/UploadEditor.vue'
 
+import { useIsInCall } from './composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT } from './constants.js'
 import browserCheck from './mixins/browserCheck.js'
-import isInCall from './mixins/isInCall.js'
 import participant from './mixins/participant.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
@@ -89,10 +89,14 @@ export default {
 		browserCheck,
 		talkHashCheck,
 		sessionIssueHandler,
-		isInCall,
 		participant,
 		isMobile,
 	],
+
+	setup() {
+		const isInCall = useIsInCall()
+		return { isInCall }
+	},
 
 	data() {
 		return {

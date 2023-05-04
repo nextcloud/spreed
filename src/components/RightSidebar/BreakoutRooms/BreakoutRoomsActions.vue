@@ -121,8 +121,8 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import BreakoutRoomsParticipantsEditor from '../../BreakoutRoomsEditor/BreakoutRoomsParticipantsEditor.vue'
 import SendMessageDialog from '../../BreakoutRoomsEditor/SendMessageDialog.vue'
 
+import { useIsInCall } from '../../../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT } from '../../../constants.js'
-import isInCall from '../../../mixins/isInCall.js'
 import { EventBus } from '../../../services/EventBus.js'
 
 export default {
@@ -146,8 +146,6 @@ export default {
 		Send,
 	},
 
-	mixins: [isInCall],
-
 	props: {
 		mainToken: {
 			type: String,
@@ -168,6 +166,11 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+	},
+
+	setup() {
+		const isInCall = useIsInCall()
+		return { isInCall }
 	},
 
 	data() {

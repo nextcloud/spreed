@@ -19,7 +19,7 @@ import ChatView from '../components/ChatView.vue'
 import LobbyScreen from '../components/LobbyScreen.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
 
-import isInCall from '../mixins/isInCall.js'
+import { useIsInCall } from '../composables/useIsInCall.js'
 import isInLobby from '../mixins/isInLobby.js'
 import participant from '../mixins/participant.js'
 
@@ -34,7 +34,6 @@ export default {
 
 	mixins: [
 		isInLobby,
-		isInCall,
 		participant,
 	],
 
@@ -43,6 +42,11 @@ export default {
 			type: String,
 			required: true,
 		},
+	},
+
+	setup() {
+		const isInCall = useIsInCall()
+		return { isInCall }
 	},
 
 	computed: {

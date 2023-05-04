@@ -202,9 +202,9 @@ import CallButton from '../TopBar/CallButton.vue'
 import VolumeIndicator from '../VolumeIndicator/VolumeIndicator.vue'
 import VideoBackgroundEditor from './VideoBackgroundEditor.vue'
 
+import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, VIRTUAL_BACKGROUND } from '../../constants.js'
 import { devices } from '../../mixins/devices.js'
-import isInCall from '../../mixins/isInCall.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
@@ -237,7 +237,12 @@ export default {
 		VideoBackgroundEditor,
 	},
 
-	mixins: [devices, isInLobby, isInCall],
+	mixins: [devices, isInLobby],
+
+	setup() {
+		const isInCall = useIsInCall()
+		return { isInCall }
+	},
 
 	data() {
 		return {

@@ -370,7 +370,7 @@ describe('FilePreview.vue', () => {
 
 				await wrapper.find('a').trigger('click')
 
-				expect(OCA.Viewer.open).toHaveBeenCalledWith({
+				expect(OCA.Viewer.open).toHaveBeenCalledWith(expect.objectContaining({
 					list: [{
 						basename: 'test.jpg',
 						etag: '1872ade88f3013edeb33decd74a4f947',
@@ -381,7 +381,7 @@ describe('FilePreview.vue', () => {
 						permissions: 'CKGWD',
 					}],
 					path: '/path/to/test.jpg',
-				})
+				}))
 
 				expect(OCA.Files.Sidebar.state.file).toBe('/path/to/test.jpg')
 			})

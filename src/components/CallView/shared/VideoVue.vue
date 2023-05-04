@@ -82,11 +82,13 @@
 			class="connection-message">
 			{{ connectionMessage }}
 		</div>
-		<VideoBottomBar v-bind="$props"
-			:has-shadow="hasVideo"
-			:participant-name="participantName" />
+		<slot name="bottom-bar">
+			<VideoBottomBar v-bind="$props"
+				:has-shadow="hasVideo"
+				:participant-name="participantName" />
+		</slot>
 		<div v-if="isSpeaking && !isStripe && !isBig" class="speaking-shadow" />
-		<div v-if="mouseover && !isBig" class="hover-shadow" />
+		<div v-if="!unSelectable && mouseover && !isBig" class="hover-shadow" />
 	</div>
 </template>
 
@@ -166,6 +168,11 @@ export default {
 
 		// True when this video component is used in one to one conversations
 		isOneToOne: {
+			type: Boolean,
+			default: false,
+		},
+
+		unSelectable: {
 			type: Boolean,
 			default: false,
 		},
@@ -684,5 +691,4 @@ export default {
 	cursor: pointer;
 	border-radius: calc(var(--default-clickable-area)/2);
 }
-
 </style>

@@ -94,9 +94,9 @@ import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
+import { useIsInCall } from '../../composables/useIsInCall.js'
 import { CALL, CONVERSATION, PARTICIPANT } from '../../constants.js'
 import browserCheck from '../../mixins/browserCheck.js'
-import isInCall from '../../mixins/isInCall.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import participant from '../../mixins/participant.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
@@ -121,7 +121,6 @@ export default {
 
 	mixins: [
 		browserCheck,
-		isInCall,
 		isInLobby,
 		participant,
 	],
@@ -144,6 +143,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+	},
+
+	setup() {
+		const isInCall = useIsInCall()
+		return { isInCall }
 	},
 
 	data() {

@@ -66,8 +66,8 @@ import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import CallButton from './components/TopBar/CallButton.vue'
 import TopBar from './components/TopBar/TopBar.vue'
 
+import { useIsInCall } from './composables/useIsInCall.js'
 import browserCheck from './mixins/browserCheck.js'
-import isInCall from './mixins/isInCall.js'
 import participant from './mixins/participant.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
@@ -98,7 +98,6 @@ export default {
 	mixins: [
 		browserCheck,
 		sessionIssueHandler,
-		isInCall,
 		participant,
 		talkHashCheck,
 	],
@@ -113,6 +112,11 @@ export default {
 			type: Object,
 			required: true,
 		},
+	},
+
+	setup() {
+		const isInCall = useIsInCall()
+		return { isInCall }
 	},
 
 	data() {

@@ -1,6 +1,8 @@
 <!--
   - @copyright Copyright (c) 2019, Daniel Calviño Sánchez (danxuliu@gmail.com)
   -
+  - @author Grigorii Shartsev <me@shgk.me>
+  -
   - @license GNU AGPL version 3 or any later version
   -
   - This program is free software: you can redistribute it and/or modify
@@ -19,9 +21,8 @@
   -->
 
 <template>
-	<div id="localVideoContainer"
-		ref="videoContainer"
-		class="videoContainer videoView"
+	<div ref="videoContainer"
+		class="localVideoContainer videoContainer videoView"
 		:class="videoContainerClass"
 		@mouseover="showShadow"
 		@mouseleave="hideShadow"
@@ -124,6 +125,14 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+		unSelectable: {
+			type: Boolean,
+			default: false,
+		},
+		isSmall: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	data() {
@@ -155,6 +164,7 @@ export default {
 				'video-container-grid': this.isGrid,
 				'video-container-stripe': this.isStripe,
 				'video-container-big': this.isBig,
+				'video-container-small': this.isSmall,
 			}
 		},
 
@@ -226,7 +236,7 @@ export default {
 		},
 
 		isSelectable() {
-			return !this.isSidebar && this.hasLocalVideo && this.$store.getters.selectedVideoPeerId !== 'local'
+			return !this.unSelectable && !this.isSidebar && this.hasLocalVideo && this.$store.getters.selectedVideoPeerId !== 'local'
 		},
 	},
 
@@ -360,6 +370,13 @@ export default {
 	}
 }
 
+// Always display the local video in the last row
+.localVideoContainer {
+	grid-row-end: -1;
+	border-radius: calc(var(--default-clickable-area)/2);
+	z-index: 1;
+}
+
 .video-container-grid {
 	position:relative;
 	height: 100%;
@@ -392,6 +409,10 @@ export default {
 	& .videoWrapper {
 		margin: auto;
 	}
+}
+
+.video-container-small {
+	border-radius: var(--border-radius-large);
 }
 
 .videoWrapper,
@@ -453,12 +474,4 @@ export default {
 		}
 	}
 }
-
-// Always display the local video in the last row
-#localVideoContainer {
-	grid-row-end: -1;
-	border-radius: calc(var(--default-clickable-area)/2);
-	z-index: 1;
-}
-
 </style>

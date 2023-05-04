@@ -231,8 +231,8 @@ import Location from './MessagePart/Location.vue'
 import Mention from './MessagePart/Mention.vue'
 import Poll from './MessagePart/Poll.vue'
 
+import { useIsInCall } from '../../../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
-import isInCall from '../../../../mixins/isInCall.js'
 import participant from '../../../../mixins/participant.js'
 import { EventBus } from '../../../../services/EventBus.js'
 
@@ -261,7 +261,6 @@ export default {
 
 	mixins: [
 		participant,
-		isInCall,
 	],
 
 	inject: ['scrollerBoundingClientRect'],
@@ -399,6 +398,11 @@ export default {
 			type: Array,
 			default: () => { return [] },
 		},
+	},
+
+	setup() {
+		const isInCall = useIsInCall()
+		return { isInCall }
 	},
 
 	data() {
