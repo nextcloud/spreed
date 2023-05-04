@@ -131,6 +131,14 @@ class Manager {
 			$this->l->t('- Link various items using the new smart-picker by typing a "/"'),
 			$this->l->t('- Moderators can now create breakout rooms (requires the external signaling server)'),
 			$this->l->t('- Calls can now be recorded (requires the external signaling server)'),
+			$this->l->t('New in Talk %s', ['17']) . "\n"
+			. $this->l->t('- Conversations can now have an avatar or emoji as icon') . "\n"
+			. $this->l->t('- Virtual backgrounds are now available in addition to the blurred background in video calls') . "\n"
+			. $this->l->t('- Reactions are now available during calls') . "\n"
+			. $this->l->t('- Typing indicators show which users are currently typing a message') . "\n"
+			. $this->l->t('- Groups can now be mentioned in chats') . "\n"
+			. $this->l->t('- Call recordings are automatically transcript if a transcription provider app is registered') . "\n"
+			. $this->l->t('- Chat message can be translated if a translation provider app is registered'),
 		];
 	}
 }
