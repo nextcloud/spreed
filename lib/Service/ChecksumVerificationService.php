@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * @copyright Copyright (c) 2022 Vitor Mattos <vitor@php.rio>
  *
@@ -24,24 +26,24 @@ namespace OCA\Talk\Service;
 
 use OCA\Talk\Exceptions\UnauthorizedException;
 
-class SIPBridgeService {
+class ChecksumVerificationService {
 	/**
 	 * Check if the current request is coming from an allowed backend.
 	 *
-	 * The SIP bridge is sending the custom header "Talk-SIPBridge-Random"
+	 * The backend servers are sending custom headers "Talk-…-Random"
 	 * containing at least 32 bytes random data, and the header
-	 * "Talk-SIPBridge-Checksum", which is the SHA256-HMAC of the random data
+	 * "Talk-…-Checksum", which is the SHA256-HMAC of the random data
 	 * and the body of the request, calculated with the shared secret from the
 	 * configuration.
 	 *
 	 * @param string $random
 	 * @param string $checksum
 	 * @param string $secret
-	 * @param string $token
-	 * @return bool True if the request is from the SIP bridge and valid, false if not from SIP bridge
-	 * @throws UnauthorizedException when the request tried to sign as SIP bridge but is not valid
+	 * @param string $data
+	 * @return bool True if the request is from the backend and valid, false if not from SIP bridge
+	 * @throws UnauthorizedException when the request tried to authenticate as backend but is not valid
 	 */
-	public function validateSIPBridgeRequest(string $random, string $checksum, string $secret, string $token): bool {
+	public function validateRequest(string $random, string $checksum, string $secret, string $data): bool {
 		if ($random === '' && $checksum === '') {
 			return false;
 		}
@@ -50,14 +52,15 @@ class SIPBridgeService {
 			throw new UnauthorizedException('Invalid random provided');
 		}
 
-		if (empty($checksum)) {
+		if ($checksum === '') {
 			throw new UnauthorizedException('Invalid checksum provided');
 		}
 
-		if (empty($secret)) {
+		if ($secret === '') {
 			throw new UnauthorizedException('No shared SIP secret provided');
 		}
-		$hash = hash_hmac('sha256', $random . $token, $secret);
+
+		$hash = hash_hmac('sha256', $random . $data, $secret);
 
 		if (hash_equals($hash, strtolower($checksum))) {
 			return true;
