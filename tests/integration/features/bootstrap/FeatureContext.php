@@ -3155,6 +3155,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Given /^user "([^"]*)" set can mention everyone to (all|moderators) of room "([^"]*)" with (\d+)(?: \((v4)\))?$/
+	 */
+	public function userSetMentionEveryoneOfRoomWithStatus(string $user, string $who, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		if ($who === 'all') {
+			$config = 1;
+		} elseif ($who === 'moderators') {
+			$config = 0;
+		}
+		$this->setCurrentUser($user);
+		$this->sendRequest('PUT', '/apps/spreed/api/' .  $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/can-mention-everyone', [
+			'config' => $config,
+		]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @When wait for :seconds (second|seconds)
 	 */
 	public function waitForXSecond($seconds): void {

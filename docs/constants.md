@@ -30,6 +30,10 @@
 * `0` No lobby
 * `1` Lobby for non moderators
 
+### Can mention everyone
+* `0` Moderators only
+* `1` Everyone (default)
+
 ### SIP states
 * `0` Disabled
 * `1` Enabled (Each participant needs a unique PIN)

@@ -107,6 +107,7 @@
 | `isCustomAvatar`        | bool    | v4    |         | Flag if the conversation has a custom avatar (only available with `avatar` capability)                                                                                                                                                                                                                                                                                                            |
 | `callStartTime`         | int     | v4    |         | Timestamp when the call was started (only available with `recording-v1` capability)                                                                                                                                                                                                                                                                                                               |
 | `callRecording`         | int     | v4    |         | Type of call recording (see [Constants - Call recording status](constants.md#call-recording-status)) (only available with `recording-v1` capability)                                                                                                                                                                                                                                              |
+| `canMentionEveryone`    | int     | v4    |         | Flag if non moderators can mention everyone (see [Constants - Can mention everyone](constants.md#can-mention-everyone)) (only available with `can-mention-everyone` capability)                                                                                                                                                                                                                   |
 
 ## Creating a new conversation
 
@@ -424,4 +425,22 @@ Get all (for moderators and in case of "free selection") or the assigned breakou
         + `400 Bad Request` When the conversation type does not support making it listable (only group and public conversation)
         + `400 Bad Request` When the conversation is a breakout room
         + `403 Forbidden` When the current user is not a moderator/owner or the conversation is not a public conversation
+        + `404 Not Found` When the conversation could not be found for the participant
+
+## Change the permission to mention everyone using `@all`
+* Required capability: `can-mention-everyone`
+* Method: `PUT`
+* Endpoint: `/room/{token}/can-mention-everyone`
+* Data:
+
+| field    | type | Description                                                               |
+|----------|------|---------------------------------------------------------------------------|
+| `config` | int  | See [Constants - Can mention everyone](constants.md#can-mention-everyone) |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` Error: `config`: When the provided config value is invalid
+        + `400 Bad Request` Error: `room`: When the conversation is a one-to-one conversation
+        + `403 Forbidden` When the current user is not a moderator/owner or the conversation is not a one-to-one conversation
         + `404 Not Found` When the conversation could not be found for the participant

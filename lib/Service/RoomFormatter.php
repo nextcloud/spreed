@@ -139,6 +139,7 @@ class RoomFormatter {
 			'isCustomAvatar' => $this->avatarService->isCustomAvatar($room),
 			'breakoutRoomMode' => BreakoutRoom::MODE_NOT_CONFIGURED,
 			'breakoutRoomStatus' => BreakoutRoom::STATUS_STOPPED,
+			'canMentionEveryone' => Room::CAN_MENTION_EVERYONE_ALL,
 		];
 
 		$lastActivity = $room->getLastActivity();
@@ -215,6 +216,7 @@ class RoomFormatter {
 			'messageExpiration' => $room->getMessageExpiration(),
 			'breakoutRoomMode' => $room->getBreakoutRoomMode(),
 			'breakoutRoomStatus' => $room->getBreakoutRoomStatus(),
+			'canMentionEveryone' => $room->getCanMentionEveryone(),
 		]);
 
 		if ($currentParticipant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {

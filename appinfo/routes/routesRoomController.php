@@ -108,5 +108,7 @@ return [
 		['name' => 'Room#setSIPEnabled', 'url' => '/api/{apiVersion}/room/{token}/webinar/sip', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
 		/** @see \OCA\Talk\Controller\RoomController::setMessageExpiration() */
 		['name' => 'Room#setMessageExpiration', 'url' => '/api/{apiVersion}/room/{token}/message-expiration', 'verb' => 'POST', 'requirements' => $requirementsWithToken],
+		/** @see \OCA\Talk\Controller\RoomController::setCanMentionEveryone() */
+		['name' => 'Room#setCanMentionEveryone', 'url' => '/api/{apiVersion}/room/{token}/can-mention-everyone', 'verb' => 'PUT', 'requirements' => $requirementsWithToken],
 	],
 ];

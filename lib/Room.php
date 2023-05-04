@@ -101,6 +101,9 @@ class Room {
 	public const PARTICIPANT_REMOVED_ALL = 'remove_all';
 	public const PARTICIPANT_LEFT = 'leave';
 
+	public const CAN_MENTION_EVERYONE_MODERATORS = 0;
+	public const CAN_MENTION_EVERYONE_ALL = 1;
+
 	public const EVENT_AFTER_ROOM_CREATE = self::class . '::createdRoom';
 	public const EVENT_BEFORE_ROOM_DELETE = self::class . '::preDeleteRoom';
 	public const EVENT_AFTER_ROOM_DELETE = self::class . '::postDeleteRoom';
@@ -160,6 +163,8 @@ class Room {
 	public const EVENT_AFTER_SET_CALL_RECORDING = self::class . '::afterSetCallRecording';
 	public const EVENT_BEFORE_AVATAR_SET = self::class . '::preSetAvatar';
 	public const EVENT_AFTER_AVATAR_SET = self::class . '::postSetAvatar';
+	public const EVENT_BEFORE_SET_CAN_MENTION_EVERYONE = self::class . '::preCanMentionEveryone';
+	public const EVENT_AFTER_SET_CAN_MENTION_EVERYONE = self::class . '::postCanMentionEveryone';
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
@@ -197,6 +202,7 @@ class Room {
 	private int $breakoutRoomMode;
 	private int $breakoutRoomStatus;
 	private int $callRecording;
+	private int $canMentionEveryone;
 
 	protected ?string $currentUser = null;
 	protected ?Participant $participant = null;
@@ -235,6 +241,7 @@ class Room {
 		int $breakoutRoomMode,
 		int $breakoutRoomStatus,
 		int $callRecording,
+		int $canMentionEveryone,
 	) {
 		$this->manager = $manager;
 		$this->db = $db;
@@ -269,6 +276,7 @@ class Room {
 		$this->breakoutRoomMode = $breakoutRoomMode;
 		$this->breakoutRoomStatus = $breakoutRoomStatus;
 		$this->callRecording = $callRecording;
+		$this->canMentionEveryone = $canMentionEveryone;
 	}
 
 	public function getId(): int {
@@ -655,5 +663,13 @@ class Room {
 
 	public function setCallRecording(int $callRecording): void {
 		$this->callRecording = $callRecording;
+	}
+
+	public function setCanMentionEveryone(int $canMentionEveryone): void {
+		$this->canMentionEveryone = $canMentionEveryone;
+	}
+
+	public function getCanMentionEveryone(): int {
+		return $this->canMentionEveryone;
 	}
 }

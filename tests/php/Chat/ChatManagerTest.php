@@ -707,7 +707,7 @@ class ChatManagerTest extends TestCase {
 			],
 			[
 				'',
-				['getDisplayName' => 'test'],
+				['getDisplayName' => 'test', 'getCanMentionEveryone' => 1],
 				['getAttendee' => Attendee::fromRow([
 					'actor_type' => Attendee::ACTOR_USERS,
 					'actor_id' => 'user',
@@ -716,7 +716,7 @@ class ChatManagerTest extends TestCase {
 			],
 			[
 				'all',
-				['getDisplayName' => 'test'],
+				['getDisplayName' => 'test', 'getCanMentionEveryone' => 1],
 				['getAttendee' => Attendee::fromRow([
 					'actor_type' => Attendee::ACTOR_USERS,
 					'actor_id' => 'user',
@@ -725,12 +725,21 @@ class ChatManagerTest extends TestCase {
 			],
 			[
 				'here',
-				['getDisplayName' => 'test'],
+				['getDisplayName' => 'test', 'getCanMentionEveryone' => 1],
 				['getAttendee' => Attendee::fromRow([
 					'actor_type' => Attendee::ACTOR_GUESTS,
 					'actor_id' => 'guest',
 				])],
 				[['id' => 'all', 'label' => 'test', 'source' => 'calls']]
+			],
+			[
+				'here',
+				['getDisplayName' => 'test', 'getCanMentionEveryone' => 0],
+				['getAttendee' => Attendee::fromRow([
+					'actor_type' => Attendee::ACTOR_GUESTS,
+					'actor_id' => 'guest',
+				])],
+				[]
 			]
 		];
 	}

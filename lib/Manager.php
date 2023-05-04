@@ -162,6 +162,7 @@ class Manager {
 			'breakout_room_mode' => 0,
 			'breakout_room_status' => 0,
 			'call_recording' => 0,
+			'can_mention_everyone' => 1,
 		], $data));
 	}
 
@@ -228,7 +229,8 @@ class Manager {
 			(string) $row['object_id'],
 			(int) $row['breakout_room_mode'],
 			(int) $row['breakout_room_status'],
-			(int) $row['call_recording']
+			(int) $row['call_recording'],
+			(int) $row['can_mention_everyone'],
 		);
 	}
 

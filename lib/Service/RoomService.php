@@ -851,4 +851,37 @@ class RoomService {
 			));
 		}
 	}
+
+	public function setCanMentionEveryone(Room $room, int $config): void {
+		$allowedValues = [
+			Room::CAN_MENTION_EVERYONE_MODERATORS,
+			Room::CAN_MENTION_EVERYONE_ALL
+		];
+		if (!in_array($config, $allowedValues)) {
+			throw new InvalidArgumentException('config');
+		}
+		if ($room->getType() !== Room::TYPE_GROUP
+			&& $room->getType() !== Room::TYPE_PUBLIC
+		) {
+			throw new InvalidArgumentException('room');
+		}
+
+		$old = $room->getCanMentionEveryone();
+		if ($old === $config) {
+			return;
+		}
+
+		$event = new ModifyRoomEvent($room, 'canMentionEveryone', $config, $old);
+		$this->dispatcher->dispatch(Room::EVENT_BEFORE_SET_CAN_MENTION_EVERYONE, $event);
+
+		$update = $this->db->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('can_mention_everyone', $update->createNamedParameter($config, IQueryBuilder::PARAM_INT))
+			->where($update->expr()->eq('id', $update->createNamedParameter($room->getId(), IQueryBuilder::PARAM_INT)));
+		$update->executeStatement();
+
+		$room->setCanMentionEveryone($config);
+
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_SET_CAN_MENTION_EVERYONE, $event);
+	}
 }

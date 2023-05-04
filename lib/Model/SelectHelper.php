@@ -58,6 +58,7 @@ class SelectHelper {
 			->addSelect($alias . 'breakout_room_mode')
 			->addSelect($alias . 'breakout_room_status')
 			->addSelect($alias . 'call_recording')
+			->addSelect($alias . 'can_mention_everyone')
 			->selectAlias($alias . 'id', 'r_id');
 	}
 

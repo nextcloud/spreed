@@ -396,7 +396,8 @@ class RoomServiceTest extends TestCase {
 			'',
 			0,
 			0,
-			0
+			0,
+			0,
 		);
 
 		$verificationResult = $service->verifyPassword($room, '1234');

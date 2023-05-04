@@ -623,3 +623,22 @@ Feature: chat/mentions
     And user "participant3" is participant of the following rooms (v4)
       | id         | unreadMention | unreadMentionDirect |
       | group room | 0             | 0                   |
+
+  Scenario: Toggle the usage of @all and try to use mentions
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant2" joins room "room" with 200 (v4)
+    # default
+    Then user "participant2" gets the following candidate mentions in room "room" for "all" with 200
+      | id  | label | source |
+      | all | room  | calls  |
+    # moderators
+    When user "participant1" set can mention everyone to moderators of room "room" with 200 (v4)
+    Then user "participant2" gets the following candidate mentions in room "room" for "all" with 200
+    # all
+    When user "participant1" set can mention everyone to all of room "room" with 200 (v4)
+    Then user "participant2" gets the following candidate mentions in room "room" for "all" with 200
+      | id  | label | source |
+      | all | room  | calls  |

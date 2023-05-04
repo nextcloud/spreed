@@ -479,3 +479,19 @@ Feature: chat/notifications
     When user "participant1" sets lobby state for room "room" to "non moderators" with 200 (v4)
     Then user "participant2" has the following notifications
       | app | object_type | object_id | subject |
+
+  Scenario: Toggle the usage of @all in a group by non moderators
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" set can mention everyone to moderators of room "room" with 200 (v4)
+    And user "participant1" adds user "participant2" to room "room" with 200 (v4)
+    And user "participant2" joins room "room" with 200 (v4)
+    When user "participant2" sends message "Hi @all" to room "room" with 201
+    Then user "participant1" has the following notifications
+      | app | object_type | object_id | subject |
+    And user "participant1" set can mention everyone to all of room "room" with 200 (v4)
+    And user "participant2" sends message "Bye @all" to room "room" with 201
+    Then user "participant1" has the following notifications
+      | app    | object_type | object_id     | subject                                                          |
+      | spreed | chat        | room/Bye @all | participant2-displayname mentioned everyone in conversation room |

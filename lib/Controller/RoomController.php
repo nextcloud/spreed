@@ -1491,4 +1491,15 @@ class RoomController extends AEnvironmentAwareController {
 
 		return new DataResponse();
 	}
+
+	#[NoAdminRequired]
+	#[RequireLoggedInModeratorParticipant]
+	public function setCanMentionEveryone(int $config): DataResponse {
+		try {
+			$this->roomService->setCanMentionEveryone($this->room, $config);
+		} catch (\InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		}
+		return new DataResponse();
+	}
 }

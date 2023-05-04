@@ -170,7 +170,8 @@ class NotifierTest extends TestCase {
 		$room = $this->getRoom();
 		$comment = $this->newComment('108', 'users', 'testUser', new \DateTime('@' . 1000000016), $message);
 		$notifier = $this->getNotifier([]);
-		$actual = $notifier->notifyMentionedUsers($room, $comment, $alreadyNotifiedUsers, false);
+		$participant = $this->createMock(Participant::class);
+		$actual = $notifier->notifyMentionedUsers($room, $comment, $alreadyNotifiedUsers, false, $participant);
 
 		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
 	}
@@ -322,13 +323,20 @@ class NotifierTest extends TestCase {
 	/**
 	 * @dataProvider dataAddMentionAllToList
 	 */
-	public function testAddMentionAllToList(array $usersToNotify, array $participants, array $return): void {
+	public function testAddMentionAllToList(array $usersToNotify, array $participants, $canNotifyAll, array $return): void {
 		$room = $this->createMock(Room::class);
 		$this->participantService
 			->method('getActorsByType')
 			->willReturn($participants);
+		$participant = $this->createMock(Participant::class);
+		$participant->expects($this->any())
+			->method('hasModeratorPermissions')
+			->willReturn($canNotifyAll);
+		$room->expects($this->any())
+			->method('getCanMentionEveryone')
+			->willReturn($canNotifyAll ? 1 : 0);
 
-		$actual = self::invokePrivate($this->getNotifier(), 'addMentionAllToList', [$room, $usersToNotify]);
+		$actual = self::invokePrivate($this->getNotifier(), 'addMentionAllToList', [$room, $usersToNotify, $participant]);
 		$this->assertCount(count($return), $actual);
 		foreach ($actual as $key => $value) {
 			$this->assertIsArray($value);
@@ -345,6 +353,7 @@ class NotifierTest extends TestCase {
 			'not notify' => [
 				[],
 				[],
+				false,
 				[],
 			],
 			'preserve notify list and do not notify all' => [
@@ -352,6 +361,7 @@ class NotifierTest extends TestCase {
 					['id' => 'user1', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 				],
 				[],
+				false,
 				[
 					['id' => 'user1', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 				],
@@ -365,9 +375,24 @@ class NotifierTest extends TestCase {
 					Attendee::fromRow(['actor_id' => 'user1', 'actor_type' => Attendee::ACTOR_USERS]),
 					Attendee::fromRow(['actor_id' => 'user2', 'actor_type' => Attendee::ACTOR_USERS]),
 				],
+				true,
 				[
 					['id' => 'user1', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 					['id' => 'user2', 'type' => Attendee::ACTOR_USERS, 'reason' => 'all'],
+				],
+			],
+			'can not mention all' => [
+				[
+					['id' => 'user1', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
+					['id' => 'all', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
+				],
+				[
+					Attendee::fromRow(['actor_id' => 'user1', 'actor_type' => Attendee::ACTOR_USERS]),
+					Attendee::fromRow(['actor_id' => 'user2', 'actor_type' => Attendee::ACTOR_USERS]),
+				],
+				false,
+				[
+					['id' => 'user1', 'type' => Attendee::ACTOR_USERS, 'reason' => 'direct'],
 				],
 			],
 		];
