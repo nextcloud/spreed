@@ -120,10 +120,6 @@ WebRTC.prototype.getPeers = function(sessionId, type) {
 
 // sends message to all
 WebRTC.prototype.sendToAll = function(message, payload) {
-	this.peers.forEach(function(peer) {
-		peer.send(message, payload)
-	})
-
 	this.emit('sendToAll', message, payload)
 }
 
