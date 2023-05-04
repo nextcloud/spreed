@@ -3221,25 +3221,43 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^the room "([^"]*)" has an avatar with (\d+)(?: \((v1)\))?$/
+	 * @When /^user "([^"]*)" sets emoji "([^"]*)" with color "([^"]*)" as avatar of room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
-	public function theRoomHasAnAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar');
+	public function userSetsEmojiAsAvatarOfRoom(string $user, string $emoji, string $color, string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
+		$this->setCurrentUser($user);
+		$options = [
+			'emoji' => $emoji,
+			'color' => $color,
+		];
+
+		if ($color === 'null') {
+			unset($options['color']);
+		}
+		$this->sendRequest('POST', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar/emoji', $options);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/**
-	 * @When /^the room "([^"]*)" has an svg as avatar with (\d+)(?: \((v1)\))?$/
+	 * @When /^the room "([^"]*)" has an avatar with (\d+)(?: \((v1)\))?$/
 	 */
-	public function theRoomHasASvgAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1'): void {
-		$this->theRoomHasNoSvgAvatarWithStatusCode($identifier, $statusCode, $apiVersion, true);
+	public function theRoomHasAnAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1', bool $darkTheme = false): void {
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar' . ($darkTheme ? '/dark' : ''));
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @When /^the room "([^"]*)" has an svg as (dark avatar|avatar) with (\d+)(?: \((v1)\))?$/
+	 */
+	public function theRoomHasASvgAvatarWithStatusCode(string $identifier, string $darkOrBright, int $statusCode, string $apiVersion = 'v1'): void {
+		$darkTheme = $darkOrBright === 'dark avatar';
+		$this->theRoomHasNoSvgAvatarWithStatusCode($identifier, $statusCode, $apiVersion, true, $darkTheme);
 	}
 
 	/**
 	 * @When /^the room "([^"]*)" has not an svg as avatar with (\d+)(?: \((v1)\))?$/
 	 */
-	public function theRoomHasNoSvgAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1', bool $expectedToBeSvg = false): void {
-		$this->theRoomHasAnAvatarWithStatusCode($identifier, $statusCode, $apiVersion);
+	public function theRoomHasNoSvgAvatarWithStatusCode(string $identifier, int $statusCode, string $apiVersion = 'v1', bool $expectedToBeSvg = false, bool $darkTheme = false): void {
+		$this->theRoomHasAnAvatarWithStatusCode($identifier, $statusCode, $apiVersion, $darkTheme);
 		$content = $this->response->getBody()->getContents();
 		try {
 			simplexml_load_string($content);
@@ -3255,17 +3273,24 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^the avatar svg of room "([^"]*)" contains the string "([^"]*)"(?: \((v1)\))?$/
+	 * @When /^the (dark avatar|avatar) svg of room "([^"]*)" (not contains|contains) the string "([^"]*)"(?: \((v1)\))?$/
 	 */
-	public function theAvatarSvgOfRoomContainsTheString(string $identifier, string $string, string $apiVersion = 'v1'): void {
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar');
+	public function theAvatarSvgOfRoomContainsTheString(string $darkOrBright, string $identifier, string $contains, string $string, string $apiVersion = 'v1'): void {
+		$darkTheme = $darkOrBright === 'dark avatar';
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room/' . self::$identifierToToken[$identifier] . '/avatar' . ($darkTheme ? '/dark' : ''));
 		$content = $this->response->getBody()->getContents();
+
 		try {
 			simplexml_load_string($content);
 		} catch (\Throwable $th) {
 			throw new Exception('The avatar needs to be a XML');
 		}
-		Assert::stringContains($content, $string);
+
+		if ($contains === 'contains') {
+			Assert::assertStringContainsString($string, $content);
+		} else {
+			Assert::assertStringNotContainsString($string, $content);
+		}
 	}
 
 	/**

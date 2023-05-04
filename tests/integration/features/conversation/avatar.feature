@@ -61,6 +61,10 @@ Feature: conversation/avatar
     And user "participant1" gets room "one2one" with 200 (v4)
       | avatarVersion | NOT_EMPTY |
       | isCustomAvatar | 0 |
+    Then user "participant1" sets emoji "👋" with color "123456" as avatar of room "one2one" with 400 (v1)
+    And user "participant1" gets room "one2one" with 200 (v4)
+      | avatarVersion | NOT_EMPTY |
+      | isCustomAvatar | 0 |
 
   Scenario: Conversation that the name start with emoji dont need to have custom avatar
     Given user "participant1" creates room "room1" (v4)
@@ -94,3 +98,27 @@ Feature: conversation/avatar
     Then user "participant1" sees the following shared other in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message  | messageParameters |
       | public room | users     | participant1 | participant1-displayname | {object} | {"actor":{"type":"user","id":"participant1","name":"participant1-displayname"},"object":{"name":"Another room","call-type":"group","type":"call","id":"R4nd0mT0k3n","icon-url":"{VALIDATE_ICON_URL_PATTERN}"}} |
+
+  Scenario: User sets emoji as avatar
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | public room |
+    Then user "participant1" sets emoji "👋🚀" with color "123456" as avatar of room "room" with 400 (v1)
+    Then user "participant1" sets emoji "👋" with color "1234567" as avatar of room "room" with 400 (v1)
+    And user "participant1" gets room "room" with 200 (v4)
+      | avatarVersion | NOT_EMPTY |
+      | isCustomAvatar | 0 |
+    Then user "participant1" sets emoji "👩🏽‍🚀" with color "123456" as avatar of room "room" with 200 (v1)
+    And user "participant1" gets room "room" with 200 (v4)
+      | avatarVersion | NOT_EMPTY |
+      | isCustomAvatar | 1 |
+    And the room "room" has an svg as avatar with 200
+    And the avatar svg of room "room" contains the string "👩🏽‍🚀"
+    And the avatar svg of room "room" contains the string "123456"
+    Then user "participant1" sets emoji "🍏" with color "null" as avatar of room "room" with 200 (v1)
+    And the avatar svg of room "room" contains the string "🍏"
+    And the avatar svg of room "room" contains the string "DBDBDB"
+    And the avatar svg of room "room" not contains the string "3B3B3B"
+    And the dark avatar svg of room "room" contains the string "🍏"
+    And the dark avatar svg of room "room" not contains the string "DBDBDB"
+    And the dark avatar svg of room "room" contains the string "3B3B3B"
