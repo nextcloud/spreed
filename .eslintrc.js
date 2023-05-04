@@ -10,8 +10,8 @@ module.exports = {
 		IS_DESKTOP: 'readonly',
 	},
 	rules: {
-		'import/newline-after-import': 1,
-		'import/no-named-as-default-member': 0,
+		'import/newline-after-import': 'warn',
+		'import/no-named-as-default-member': 'off',
 		'import/order': [
 			'warn',
 			{
@@ -59,12 +59,26 @@ module.exports = {
 				warnOnUnassignedImports: true,
 			},
 		],
+		// Prepare for Vue 3 Migration
+		'vue/no-deprecated-data-object-declaration': 'warn',
+		'vue/no-deprecated-events-api': 'warn',
+		'vue/no-deprecated-filter': 'warn',
+		'vue/no-deprecated-functional-template': 'warn',
+		'vue/no-deprecated-html-element-is': 'warn',
+		'vue/no-deprecated-props-default-this': 'warn',
+		'vue/no-deprecated-router-link-tag-prop': 'warn',
+		'vue/no-deprecated-scope-attribute': 'warn',
+		'vue/no-deprecated-slot-attribute': 'warn',
+		'vue/no-deprecated-slot-scope-attribute': 'warn',
+		'vue/no-deprecated-v-is': 'warn',
+		'vue/no-deprecated-v-on-number-modifiers': 'warn',
+		'vue/require-explicit-emits': 'warn',
 	},
 	overrides: [
 		{
 			files: ['**/*.spec.js'],
 			rules: {
-				'node/no-unpublished-import': 0,
+				'node/no-unpublished-import': 'off',
 			},
 		},
 	],
