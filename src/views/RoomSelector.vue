@@ -117,6 +117,7 @@ export default {
 			default: false,
 		},
 	},
+	emits: ['close', 'select'],
 	data() {
 		return {
 			rooms: [],

@@ -123,6 +123,8 @@ export default {
 		},
 	},
 
+	emits: ['update-background'],
+
 	setup() {
 		return {
 			canUploadBackgrounds,

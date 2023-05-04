@@ -132,6 +132,8 @@ export default {
 		},
 	},
 
+	emits: ['delete-part', 'edit-clicked'],
+
 	data() {
 		return {
 			readonly: true,

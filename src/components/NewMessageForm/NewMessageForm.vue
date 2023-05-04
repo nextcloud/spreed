@@ -330,6 +330,8 @@ export default {
 		},
 	},
 
+	emits: ['sent', 'failure'],
+
 	setup() {
 		const { openViewer } = useViewer()
 		return { openViewer }

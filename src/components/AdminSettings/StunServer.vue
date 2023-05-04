@@ -86,6 +86,8 @@ export default {
 		},
 	},
 
+	emits: ['remove-server', 'update:server'],
+
 	computed: {
 		isValidServer() {
 			let server = this.server

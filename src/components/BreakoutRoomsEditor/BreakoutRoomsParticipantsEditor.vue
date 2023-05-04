@@ -138,6 +138,8 @@ export default {
 		},
 	},
 
+	emits: ['back', 'close'],
+
 	data() {
 		return {
 			selectedParticipants: [],

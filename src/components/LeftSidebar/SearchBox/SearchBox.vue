@@ -70,6 +70,9 @@ export default {
 			default: false,
 		},
 	},
+
+	emits: ['update:value', 'input', 'submit', 'abort-search'],
+
 	data() {
 		return {
 			localValue: '',

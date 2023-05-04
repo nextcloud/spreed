@@ -356,6 +356,8 @@ export default {
 		},
 	},
 
+	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen'],
+
 	data() {
 		return {
 			frequentlyUsedEmojis: [],

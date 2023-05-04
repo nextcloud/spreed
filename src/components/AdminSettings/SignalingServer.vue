@@ -102,6 +102,8 @@ export default {
 		},
 	},
 
+	emits: ['remove-server', 'update:server', 'update:verify'],
+
 	data() {
 		return {
 			checked: false,

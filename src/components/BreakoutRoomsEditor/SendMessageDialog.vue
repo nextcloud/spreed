@@ -84,6 +84,8 @@ export default {
 		},
 	},
 
+	emits: ['close'],
+
 	data() {
 		return {
 			modalContainerId: null,

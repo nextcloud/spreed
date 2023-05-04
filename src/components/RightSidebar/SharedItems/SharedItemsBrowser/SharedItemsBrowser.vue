@@ -74,6 +74,8 @@ export default {
 		},
 	},
 
+	emits: ['update:active-tab'],
+
 	data() {
 		return {
 			firstItemsLoaded: {},

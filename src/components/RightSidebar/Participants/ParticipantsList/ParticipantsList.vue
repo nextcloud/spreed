@@ -63,6 +63,8 @@ export default {
 		},
 	},
 
+	emits: ['click'],
+
 	computed: {
 		token() {
 			return this.$store.getters.getToken()

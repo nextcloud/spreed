@@ -180,6 +180,8 @@ export default {
 		},
 	},
 
+	emits: ['click'],
+
 	computed: {
 		counterType() {
 			if (this.item.unreadMentionDirect || (this.item.unreadMessages !== 0 && (

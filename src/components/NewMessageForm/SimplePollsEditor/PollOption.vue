@@ -58,6 +58,8 @@ export default {
 		},
 	},
 
+	emits: ['delete-option'],
+
 	methods: {
 		deleteOption() {
 			this.$emit('delete-option')

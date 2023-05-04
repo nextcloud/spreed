@@ -102,6 +102,8 @@ export default {
 		},
 	},
 
+	emits: ['recording', 'audio-file'],
+
 	data() {
 		return {
 			// The audio stream object

@@ -31,6 +31,9 @@ export default {
 			type: String,
 		},
 	},
+
+	emits: ['input'],
+
 	data() {
 		return {
 			modeOptions: [
