@@ -122,6 +122,11 @@ trait TInitialState {
 		);
 
 		$this->initialState->provideInitialState(
+			'typing_privacy',
+			$this->talkConfig->getUserTypingPrivacy($user->getUID())
+		);
+
+		$this->initialState->provideInitialState(
 			'play_sounds',
 			$this->serverConfig->getUserValue($user->getUID(), 'spreed', 'play_sounds', 'yes') === 'yes'
 		);
@@ -188,6 +193,11 @@ trait TInitialState {
 		$this->initialState->provideInitialState(
 			'read_status_privacy',
 			Participant::PRIVACY_PUBLIC
+		);
+
+		$this->initialState->provideInitialState(
+			'typing_privacy',
+			'0'
 		);
 
 		$this->initialState->provideInitialState(
