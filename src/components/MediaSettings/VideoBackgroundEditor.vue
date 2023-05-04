@@ -68,9 +68,9 @@
 			</button>
 		</template>
 		<!--native file picker, hidden -->
-		<input class="hidden-visually"
-			id="custom-background-file"
+		<input id="custom-background-file"
 			ref="fileUploadInput"
+			class="hidden-visually"
 			multiple
 			type="file"
 			tabindex="-1"
@@ -123,11 +123,16 @@ export default {
 		},
 	},
 
+	setup() {
+		return {
+			canUploadBackgrounds,
+			predefinedBackgrounds,
+		}
+	},
+
 	data() {
 		return {
 			selectedBackground: undefined,
-			predefinedBackgrounds,
-			canUploadBackgrounds,
 			getCapabilities,
 		}
 	},
@@ -138,7 +143,7 @@ export default {
 		},
 
 		isCustomBackground() {
-			return this.selectedBackground !== 'none
+			return this.selectedBackground !== 'none'
 			    && this.selectedBackground !== 'blur'
 			    && !this.predefinedBackgroundsURLs.includes(this.selectedBackground)
 		},
