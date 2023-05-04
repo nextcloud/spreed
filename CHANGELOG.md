@@ -13,9 +13,9 @@ All notable changes to this project will be documented in this file.
   [#9248](https://github.com/nextcloud/spreed/issues/9248)
 - Groups can now be mentioned in chats
   [#6339](https://github.com/nextcloud/spreed/issues/6339)
-- Call recordings are automatically transcript if a transcription provider app is registered
+- Call recordings are automatically transcribed if a transcription provider app is registered
   [#9274](https://github.com/nextcloud/spreed/issues/9274)
-- Chat message can be translated if a translation provider app is registered
+- Chat messages can be translated if a translation provider app is registered
   [#9273](https://github.com/nextcloud/spreed/issues/9273)
 
 ### Changed

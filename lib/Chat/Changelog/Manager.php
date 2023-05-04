@@ -137,8 +137,8 @@ class Manager {
 			. $this->l->t('- Reactions are now available during calls') . "\n"
 			. $this->l->t('- Typing indicators show which users are currently typing a message') . "\n"
 			. $this->l->t('- Groups can now be mentioned in chats') . "\n"
-			. $this->l->t('- Call recordings are automatically transcript if a transcription provider app is registered') . "\n"
-			. $this->l->t('- Chat message can be translated if a translation provider app is registered'),
+			. $this->l->t('- Call recordings are automatically transcribed if a transcription provider app is registered') . "\n"
+			. $this->l->t('- Chat messages can be translated if a translation provider app is registered'),
 		];
 	}
 }
