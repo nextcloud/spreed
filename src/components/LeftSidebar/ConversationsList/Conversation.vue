@@ -45,17 +45,14 @@
 				{{ conversationInformation }}
 			</template>
 		</template>
-		<template v-if="!isSearchResult" slot="actions">
+		<template v-if="!isSearchResult" #actions>
 			<NcActionButton v-if="canFavorite"
 				:close-after-click="true"
 				@click.prevent.exact="toggleFavoriteConversation">
-				<Star v-if="item.isFavorite"
-					slot="icon"
-					:size="20" />
-				<Star v-else
-					slot="icon"
-					:size="20"
-					:fill-color="'#FFCC00'" />
+				<template #icon>
+					<Star v-if="item.isFavorite" :size="20" />
+					<Star v-else :size="20" :fill-color="'#FFCC00'" />
+				</template>
 				{{ labelFavorite }}
 			</NcActionButton>
 			<NcActionButton icon="icon-clippy"
@@ -80,8 +77,9 @@
 			</NcActionButton>
 			<NcActionButton :close-after-click="true"
 				@click.prevent.exact="showConversationSettings">
-				<Cog slot="icon"
-					:size="20" />
+				<template #icon>
+					<Cog :size="20" />
+				</template>
 				{{ t('spreed', 'Conversation settings') }}
 			</NcActionButton>
 			<NcActionButton v-if="canLeaveConversation"
@@ -102,7 +100,7 @@
 				{{ t('spreed', 'Delete conversation') }}
 			</NcActionButton>
 		</template>
-		<template v-else-if="item.token" slot="actions">
+		<template v-else-if="item.token" #actions>
 			<NcActionButton close-after-click @click="onClick">
 				<template #icon>
 					<ArrowRight :size="16" />

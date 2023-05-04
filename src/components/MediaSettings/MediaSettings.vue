@@ -148,8 +148,9 @@
 							:title="t('spreed', 'Call without notification')"
 							@click="silentCall= true">
 							{{ t('spreed', 'The conversation participants will not be notified about this call') }}
-							<BellOff slot="icon"
-								:size="16" />
+							<template #icon>
+								<BellOff :size="16" />
+							</template>
 						</NcActionButton>
 					</template>
 					<template v-else>
@@ -158,8 +159,9 @@
 							:title="t('spreed', 'Normal call')"
 							@click="silentCall= false">
 							{{ t('spreed', 'The conversation participants will be notified about this call') }}
-							<Bell slot="icon"
-								:size="16" />
+							<template #icon>
+								<Bell :size="16" />
+							</template>
 						</NcActionButton>
 					</template>
 				</NcActions>

@@ -21,8 +21,7 @@
 
 <template>
 	<div class="wrapper">
-		<NcButton slot="trigger"
-			v-tooltip.bottom="t('spreed', 'Create a new group conversation')"
+		<NcButton v-tooltip.bottom="t('spreed', 'Create a new group conversation')"
 			type="tertiary"
 			class="toggle"
 			:aria-label="t('spreed', 'Create a new group conversation')"

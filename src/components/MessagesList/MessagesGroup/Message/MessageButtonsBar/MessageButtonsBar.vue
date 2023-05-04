@@ -85,8 +85,9 @@
 				</NcActionButton>
 				<NcActionLink v-if="linkToFile"
 					:href="linkToFile">
-					<File slot="icon"
-						:size="20" />
+					<template #icon>
+						<File :size="20" />
+					</template>
 					{{ t('spreed', 'Go to file') }}
 				</NcActionLink>
 				<NcActionButton v-if="canForwardMessage"

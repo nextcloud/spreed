@@ -146,8 +146,9 @@
 							:title="t('spreed', 'Send without notification')"
 							@click.prevent="handleSubmit({ silent: true })">
 							{{ silentSendInfo }}
-							<BellOff slot="icon"
-								:size="16" />
+							<template #icon>
+								<BellOff :size="16" />
+							</template>
 						</NcActionButton>
 					</NcActions>
 					<!-- Send -->
