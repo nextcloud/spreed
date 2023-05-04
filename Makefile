@@ -83,6 +83,7 @@ appstore:
 	--exclude=.github \
 	--exclude=.gitignore \
 	--exclude=jest.config.js \
+	--exclude=jest.global.setup.js \
 	--exclude=.l10nignore \
 	--exclude=mkdocs.yml \
 	--exclude=Makefile \
@@ -96,6 +97,7 @@ appstore:
 	--exclude=psalm.xml \
 	--exclude=README.md \
 	--exclude=/recording \
+	--exclude=/site \
 	--exclude=/src \
 	--exclude=.stylelintignore \
 	--exclude=stylelint.config.js \
@@ -105,6 +107,7 @@ appstore:
 	--exclude=vendor/bamarni \
 	--exclude=vendor/bin \
 	--exclude=vendor-bin \
+	--exclude=webpack.common.config.js \
 	--exclude=webpack.config.js \
 	$(project_dir)/  $(sign_dir)/$(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
