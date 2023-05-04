@@ -37,6 +37,6 @@ Feature: integration/dashboard
     And user "participant2" broadcasts message "@participant1 hello" to room "breakout room parent" with 201 (v1)
     Then user "participant1" sees the following entries for dashboard widgets "spreed" (v1)
       | title                    | subtitle            | link            | iconUrl                                                      | sinceId |
-      | call room                |  Call in progress   | call room       | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar |         |
-      | group room               |  You were mentioned | group room      | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar |         |
-      | participant2-displayname |  Hello              | one-to-one room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar |         |
+      | call room                |  Call in progress   | call room       | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |
+      | group room               |  You were mentioned | group room      | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |
+      | participant2-displayname |  Hello              | one-to-one room | {$BASE_URL}ocs/v2.php/apps/spreed/api/v1/room/{token}/avatar{version} |         |

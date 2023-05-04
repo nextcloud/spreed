@@ -1946,6 +1946,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$item['iconUrl'] = str_replace('{$BASE_URL}', $this->baseUrl, $item['iconUrl']);
 			$item['iconUrl'] = str_replace('{token}', $token, $item['iconUrl']);
 
+			Assert::assertMatchesRegularExpression('/\?v=\w{8}$/', $data[$widgetId][$key]['iconUrl']);
+			preg_match('/(?<version>\?v=\w{8})$/', $data[$widgetId][$key]['iconUrl'], $matches);
+			$item['iconUrl'] = str_replace('{version}', $matches['version'], $item['iconUrl']);
+
 			Assert::assertEquals($item, $data[$widgetId][$key], 'Wrong details for item #' . $key);
 		}
 	}
