@@ -25,7 +25,12 @@
 	<section id="vue-avatar-section">
 		<div v-if="!showCropper" class="avatar__container">
 			<div class="avatar__preview">
-				<ConversationIcon v-if="!loading"
+				<div v-if="emojiAvatar"
+					class="avatar__preview-emoji"
+					:style="{'background-color': backgroundColor}">
+					{{ emojiAvatar }}
+				</div>
+				<ConversationIcon v-else-if="!loading"
 					:item="conversation"
 					:is-big="true"
 					:disable-menu="true" />
@@ -33,6 +38,21 @@
 			</div>
 			<template v-if="editable">
 				<div class="avatar__buttons">
+					<NcEmojiPicker :per-line="5"
+						@select="setEmoji">
+						<NcButton :aria-label="t('spreed', 'Set emoji as profile picture')">
+							<template #icon>
+								<EmoticonOutline :size="20" />
+							</template>
+						</NcButton>
+					</NcEmojiPicker>
+					<NcColorPicker v-if="emojiAvatar" v-model="backgroundColor">
+						<NcButton :aria-label="t('spreed', 'Set background color for profile picture')">
+							<template #icon>
+								<Palette :size="20" />
+							</template>
+						</NcButton>
+					</NcColorPicker>
 					<NcButton :aria-label="t('settings', 'Upload profile picture')"
 						@click="activateLocalFilePicker">
 						<template #icon>
@@ -65,11 +85,12 @@
 		</div>
 
 		<!-- Use v-show to ensure early cropper ref availability -->
-		<div v-if="editable" v-show="showCropper" class="avatar__container">
-			<VueCropper ref="cropper"
+		<div v-if="editable" class="avatar__container">
+			<VueCropper v-show="showCropper"
+				ref="cropper"
 				class="avatar__cropper"
 				v-bind="cropperOptions" />
-			<div class="avatar__cropper-buttons">
+			<div v-show="isEdited" class="avatar__buttons">
 				<NcButton @click="cancel">
 					{{ t('spreed', 'Cancel') }}
 				</NcButton>
@@ -86,7 +107,9 @@
 import VueCropper from 'vue-cropperjs'
 
 import Delete from 'vue-material-design-icons/Delete.vue'
+import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Folder from 'vue-material-design-icons/Folder.vue'
+import Palette from 'vue-material-design-icons/Palette.vue'
 import Upload from 'vue-material-design-icons/Upload.vue'
 
 import { getRequestToken } from '@nextcloud/auth'
@@ -95,6 +118,8 @@ import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
 import { generateUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcColorPicker from '@nextcloud/vue/dist/Components/NcColorPicker.js'
+import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 
 import ConversationIcon from '../ConversationIcon.vue'
 
@@ -115,12 +140,17 @@ export default {
 	name: 'ConversationAvatarEditor',
 
 	components: {
-		Delete,
-		Folder,
-		NcButton,
-		Upload,
-		VueCropper,
 		ConversationIcon,
+		NcButton,
+		NcColorPicker,
+		NcEmojiPicker,
+		VueCropper,
+		// Icons
+		Delete,
+		EmoticonOutline,
+		Folder,
+		Palette,
+		Upload,
 	},
 
 	props: {
@@ -143,7 +173,7 @@ export default {
 			loading: false,
 			validMimeTypes: VALID_MIME_TYPES,
 			cropperOptions: {
-				aspectRatio: 1 / 1,
+				aspectRatio: 1,
 				viewMode: 1,
 				guides: false,
 				center: false,
@@ -152,6 +182,8 @@ export default {
 				minContainerWidth: 300,
 				minContainerHeight: 300,
 			},
+			backgroundColor: '',
+			emojiAvatar: '',
 		}
 	},
 
@@ -162,6 +194,10 @@ export default {
 
 		hasAvatar() {
 			return !!this.conversation.avatarVersion
+		},
+
+		isEdited() {
+			return this.showCropper || this.emojiAvatar
 		},
 	},
 
@@ -210,9 +246,38 @@ export default {
 			}
 		},
 
+		setEmoji(emoji) {
+			this.emojiAvatar = emoji
+		},
+
 		saveAvatar() {
 			this.showCropper = false
 			this.loading = true
+
+			if (this.emojiAvatar) {
+				this.saveEmojiAvatar()
+			} else {
+				this.savePictureAvatar()
+			}
+		},
+
+		async saveEmojiAvatar() {
+			try {
+				await this.$store.dispatch('setConversationEmojiAvatarAction', {
+					token: this.conversation.token,
+					emoji: this.emojiAvatar,
+					color: this.backgroundColor ? this.backgroundColor.slice(1) : null,
+				})
+				this.loading = false
+				this.emojiAvatar = ''
+				this.backgroundColor = ''
+			} catch (e) {
+				showError(t('spreed', 'Error saving profile picture'))
+				this.loading = false
+			}
+		},
+
+		savePictureAvatar() {
 			const canvasData = this.$refs.cropper.getCroppedCanvas()
 			const scaleFactor = canvasData.width > 512 ? 512 / canvasData.width : 1
 			this.$refs.cropper.scale(scaleFactor, scaleFactor).getCroppedCanvas().toBlob(async (blob) => {
@@ -254,6 +319,8 @@ export default {
 		cancel() {
 			this.showCropper = false
 			this.loading = false
+			this.emojiAvatar = ''
+			this.backgroundColor = ''
 		},
 	},
 }
@@ -284,6 +351,19 @@ section {
 		align-items: center;
 		width: 180px;
 		height: 180px;
+
+		&-emoji {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 100%;
+			height: 100%;
+			padding-bottom: 6px;
+			border-radius: 100%;
+			background-color: var(--color-background-darker);
+			font-size: 575%;
+			line-height: 100%;
+		}
 	}
 
 	&__buttons {
@@ -295,12 +375,6 @@ section {
 		width: 300px;
 		height: 300px;
 		overflow: hidden;
-
-		&-buttons {
-			width: 100%;
-			display: flex;
-			justify-content: space-between;
-		}
 
 		&:deep(.cropper-view-box) {
 			border-radius: 50%;

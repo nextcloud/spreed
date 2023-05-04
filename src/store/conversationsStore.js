@@ -55,6 +55,7 @@ import {
 	setMessageExpiration,
 	setConversationPassword,
 	setConversationAvatar,
+	setConversationEmojiAvatar,
 	deleteConversationAvatar,
 } from '../services/conversationsService.js'
 import {
@@ -744,7 +745,18 @@ const actions = {
 			console.error(error)
 			showError(t('spreed', 'Could not set the conversation picture'))
 		}
+	},
 
+	async setConversationEmojiAvatarAction(context, { token, emoji, color }) {
+		try {
+			const response = await setConversationEmojiAvatar(token, emoji, color)
+			const conversation = response.data.ocs.data
+			context.commit('addConversation', conversation)
+			showSuccess(t('spreed', 'Conversation picture set'))
+		} catch (error) {
+			console.error(error)
+			showError(t('spreed', 'Could not set the conversation picture'))
+		}
 	},
 
 	async deleteConversationAvatarAction(context, { token, file }) {
