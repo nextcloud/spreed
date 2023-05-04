@@ -826,7 +826,7 @@ export default {
 
 		// Focus and select the text within the input field
 		focusTextDialogInput() {
-			// this.$refs.textFileTitleInput.$refs.inputField.$refs.input.focus()
+			// FIXME upstream: add support of native input methods: focus, select, etc
 			this.$refs.textFileTitleInput.$refs.inputField.$refs.input.select()
 		},
 

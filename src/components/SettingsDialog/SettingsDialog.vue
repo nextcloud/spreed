@@ -37,11 +37,16 @@
 			<h3 class="app-settings-section__hint">
 				{{ locationHint }}
 			</h3>
-			<input type="text"
-				class="app-settings-section__input"
-				:value="attachmentFolder"
-				:disabled="attachmentFolderLoading"
-				@click="selectAttachmentFolder">
+			<div class="app-settings-section__wrapper">
+				<NcTextField class="app-settings-section__input"
+					:value="attachmentFolder"
+					:disabled="true"
+					@click="selectAttachmentFolder" />
+				<NcButton type="primary"
+					@click="selectAttachmentFolder">
+					{{ t('spreed', 'Browse…') }}
+				</NcButton>
+			</div>
 		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!isGuest"
 			id="privacy"
@@ -146,7 +151,9 @@ import { generateUrl } from '@nextcloud/router'
 
 import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDialog.js'
 import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import MediaDevicesPreview from '../MediaDevicesPreview.vue'
 
@@ -159,7 +166,9 @@ export default {
 		MediaDevicesPreview,
 		NcAppSettingsDialog,
 		NcAppSettingsSection,
+		NcButton,
 		NcCheckboxRadioSwitch,
+		NcTextField,
 	},
 
 	data() {
@@ -247,7 +256,7 @@ export default {
 			try {
 				await this.$store.dispatch(
 					'updateReadStatusPrivacy',
-					this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
+					this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC,
 				)
 				showSuccess(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
@@ -298,8 +307,19 @@ export default {
 		color: var(--color-text-lighter);
 		padding: 8px 0;
 	}
-	&__input {
-		width: 100%;
+	&__wrapper {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	& &__input {
+		width: 300px;
+		height: var(--default-clickable-area);
+		:deep(input) {
+			height: var(--default-clickable-area) !important;
+			cursor: default;
+		}
 	}
 
 	.shortcut-description {

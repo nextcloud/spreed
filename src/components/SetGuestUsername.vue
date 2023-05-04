@@ -20,43 +20,39 @@
 -->
 
 <template>
-	<!-- Guest username setting form -->
-	<form class="username-form"
-		@submit.prevent="handleChooseUserName">
+	<div class="username-form">
 		<!-- eslint-disable-next-line vue/no-v-html -->
 		<h3 v-html="displayNameLabel" />
-		<NcButton @click.prevent="handleEditUsername">
+
+		<NcButton v-if="!isEditingUsername"
+			@click.prevent="handleEditUsername">
 			{{ t('spreed', 'Edit') }}
 			<template #icon>
 				<Pencil :size="20" />
 			</template>
 		</NcButton>
-		<div v-if="isEditingUsername"
-			class="username-form__wrapper">
-			<input ref="usernameInput"
-				v-model="guestUserName"
-				:placeholder="t('spreed', 'Guest')"
-				class="username-form__input"
-				type="text"
-				@keydown.enter="handleChooseUserName"
-				@keydown.esc="isEditingUsername = !isEditingUsername">
-			<NcButton class="username-form__button"
-				native-type="submit"
-				:aria-label="t('spreed', 'Save name')"
-				type="tertiary">
-				<template #icon>
-					<ArrowRight :size="20" />
-				</template>
-			</NcButton>
-		</div>
-	</form>
+
+		<NcTextField v-else
+			ref="usernameInput"
+			:value.sync="guestUserName"
+			:placeholder="t('spreed', 'Guest')"
+			class="username-form__input"
+			:show-trailing-button="!!guestUserName"
+			trailing-button-icon="arrowRight"
+			:trailing-button-label="t('spreed', 'Save name')"
+			@trailing-button-click="handleChooseUserName"
+			@keydown.enter="handleChooseUserName"
+			@keydown.esc="handleEditUsername" />
+	</div>
 </template>
 
 <script>
-import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
+import escapeHtml from 'escape-html'
+
 import Pencil from 'vue-material-design-icons/Pencil.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { setGuestUserName } from '../services/participantsService.js'
 
@@ -65,8 +61,8 @@ export default {
 
 	components: {
 		NcButton,
+		NcTextField,
 		Pencil,
-		ArrowRight,
 	},
 
 	data() {
@@ -79,12 +75,12 @@ export default {
 
 	computed: {
 		actorDisplayName() {
-			return this.$store.getters.getDisplayName()
+			return this.$store.getters.getDisplayName() || t('spreed', 'Guest')
 		},
 		displayNameLabel() {
-			return t('spreed', 'Display name: <strong>{name}</strong>', {
-				name: this.actorDisplayName ? this.actorDisplayName : t('spreed', 'Guest'),
-			})
+			return t('spreed', 'Display name: {name}', {
+				name: `<strong>${escapeHtml(this.actorDisplayName)}</strong>`,
+			}, undefined, { escape: false })
 		},
 		actorId() {
 			return this.$store.getters.getActorId()
@@ -107,7 +103,7 @@ export default {
 	mounted() {
 		// FIXME use @nextcloud/browser-storage or OCP when decided
 		// https://github.com/nextcloud/nextcloud-browser-storage/issues/3
-		this.guestUserName = localStorage.getItem('nick')
+		this.guestUserName = localStorage.getItem('nick') || ''
 		if (this.guestUserName && this.actorDisplayName !== this.guestUserName) {
 			// Browser storage has a name, so we use that.
 			if (this.actorId) {
@@ -152,7 +148,8 @@ export default {
 			this.isEditingUsername = !this.isEditingUsername
 			if (this.isEditingUsername) {
 				this.$nextTick(() => {
-					this.$refs.usernameInput.focus()
+					// FIXME upstream: add support of native input methods: focus, select, etc
+					this.$refs.usernameInput.$refs.inputField.$refs.input.focus()
 				})
 			}
 		},
@@ -162,21 +159,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-/** Username form for guest users */
 .username-form {
 	padding: 0 12px;
-	margin:auto;
-	&__wrapper {
-		display: flex;
-		margin-top: 16px;
-	}
-	&__input {
-		padding-right: var(--clickable-area);
-		width: 230px;
-	}
-	&__button {
-		margin-left: -52px;
+	margin: 0 auto 12px;
+
+	& &__input {
+		width: 300px;
+		height: var(--default-clickable-area);
 	}
 }
 

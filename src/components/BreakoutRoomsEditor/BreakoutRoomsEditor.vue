@@ -30,12 +30,13 @@
 			<template v-if="!isEditingParticipants">
 				<div class="breakout-rooms-editor__main">
 					<label class="breakout-rooms-editor__caption" for="room-number">{{ t('spreed', 'Number of breakout rooms') }} </label>
-					<input id="room-number"
-						v-model.number="amount"
+					<NcInputField id="room-number"
+						:value="amount.toString()"
 						class="breakout-rooms-editor__number-input"
 						type="number"
 						min="1"
-						max="20">
+						max="20"
+						@update:value="setAmount" />
 
 					<label class="breakout-rooms-editor__caption">{{ t('spreed', 'Assignment method') }}</label>
 					<fieldset>
@@ -82,6 +83,7 @@
 <script>
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
+import NcInputField from '@nextcloud/vue/dist/Components/NcInputField.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
 import BreakoutRoomsParticipantsEditor from './BreakoutRoomsParticipantsEditor.vue'
@@ -90,10 +92,11 @@ export default {
 	name: 'BreakoutRoomsEditor',
 
 	components: {
-		NcModal,
-		NcCheckboxRadioSwitch,
-		NcButton,
 		BreakoutRoomsParticipantsEditor,
+		NcButton,
+		NcCheckboxRadioSwitch,
+		NcInputField,
+		NcModal,
 	},
 
 	props: {
@@ -136,6 +139,12 @@ export default {
 			} catch (error) {
 				console.debug(error)
 			}
+		},
+
+		// FIXME upstream: support of value type as Number should be added to NcInputField,
+		// now it breaks validation. Another option: Create NcNumberField component
+		setAmount(value) {
+			this.amount = parseFloat(value)
 		},
 	},
 }
