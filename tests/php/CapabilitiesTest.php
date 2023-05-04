@@ -202,6 +202,7 @@ class CapabilitiesTest extends TestCase {
 						'max-length' => 32000,
 						'read-privacy' => 0,
 						'translations' => [],
+						'typing-privacy' => 0,
 					],
 					'conversations' => [
 						'can-create' => false,
@@ -325,6 +326,7 @@ class CapabilitiesTest extends TestCase {
 						'max-length' => 32000,
 						'read-privacy' => $readPrivacy,
 						'translations' => [],
+						'typing-privacy' => 0,
 					],
 					'conversations' => [
 						'can-create' => $canCreate,
