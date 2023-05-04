@@ -22,12 +22,11 @@
 <template>
 	<NcModal v-if="modal"
 		class="talk-modal"
-		size="small"
 		:container="container"
 		@close="closeModal">
 		<div class="media-settings">
 			<h2 class="media-settings__title">
-				{{ t('spreed', 'Camera and microphone check') }}
+				{{ t('spreed', 'Media settings') }}
 			</h2>
 			<!-- Preview -->
 			<div class="media-settings__preview">
@@ -337,15 +336,15 @@ export default {
 	watch: {
 		modal(newValue) {
 			if (newValue) {
-				this.audioOn = !localStorage.getItem('audioDisabled_' + this.token)
-				this.videoOn = !localStorage.getItem('videoDisabled_' + this.token)
+				this.audioOn = !BrowserStorage.getItem('audioDisabled_' + this.token)
+				this.videoOn = !BrowserStorage.getItem('videoDisabled_' + this.token)
 
-				// Set virtual background depending on localstorage's settings
-				if (localStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
-					if (localStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
+				// Set virtual background depending on BrowserStorage's settings
+				if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
+					if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
 						this.blurVirtualBackground()
-					} else if (localStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
-						this.setVirtualBackgroundImage(localStorage.getItem('virtualBackgroundUrl_' + this.token))
+					} else if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+						this.setVirtualBackgroundImage(BrowserStorage.getItem('virtualBackgroundUrl_' + this.token))
 					}
 				}
 
@@ -397,26 +396,26 @@ export default {
 
 		toggleAudio() {
 			if (!this.audioOn) {
-				localStorage.removeItem('audioDisabled_' + this.token)
+				BrowserStorage.removeItem('audioDisabled_' + this.token)
 				this.audioOn = true
 			} else {
-				localStorage.setItem('audioDisabled_' + this.token, 'true')
+				BrowserStorage.setItem('audioDisabled_' + this.token, 'true')
 				this.audioOn = false
 			}
 		},
 
 		toggleVideo() {
 			if (!this.videoOn) {
-				localStorage.removeItem('videoDisabled_' + this.token)
+				BrowserStorage.removeItem('videoDisabled_' + this.token)
 				this.videoOn = true
 			} else {
-				localStorage.setItem('videoDisabled_' + this.token, 'true')
+				BrowserStorage.setItem('videoDisabled_' + this.token, 'true')
 				this.videoOn = false
 			}
 		},
 
 		handleUpdateBackground(background) {
-			if (background === 'clear') {
+			if (background === 'none') {
 				this.clearVirtualBackground()
 				this.clearBackground()
 			} else if (background === 'blur') {
@@ -442,7 +441,7 @@ export default {
 			if (this.isInCall) {
 				localMediaModel.disableVirtualBackground()
 			} else {
-				localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'false')
+				BrowserStorage.setItem('virtualBackgroundEnabled_' + this.token, 'false')
 			}
 		},
 
@@ -465,9 +464,9 @@ export default {
 				localMediaModel.enableVirtualBackground()
 				localMediaModel.setVirtualBackgroundBlur(VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
 			} else {
-				localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
-				localStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
-				localStorage.setItem('virtualBackgroundBlurStrength_' + this.token, VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
+				BrowserStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
+				BrowserStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
+				BrowserStorage.setItem('virtualBackgroundBlurStrength_' + this.token, VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT)
 			}
 		},
 
@@ -494,9 +493,9 @@ export default {
 				localMediaModel.enableVirtualBackground()
 				localMediaModel.setVirtualBackgroundImage(background)
 			} else {
-				localStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
-				localStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
-				localStorage.setItem('virtualBackgroundUrl_' + this.token, background)
+				BrowserStorage.setItem('virtualBackgroundEnabled_' + this.token, 'true')
+				BrowserStorage.setItem('virtualBackgroundType_' + this.token, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
+				BrowserStorage.setItem('virtualBackgroundUrl_' + this.token, background)
 			}
 		},
 
@@ -518,25 +517,27 @@ export default {
 @include avatar-mixin(128px);
 
 .media-settings {
-	padding: 20px;
+	padding: calc(var(--default-grid-baseline)*4);
 	background-color: var(--color-main-background);
 	overflow-y: auto;
 	overflow-x: hidden;
 	margin: auto;
+	width: 100%;
+
 	&__title {
 		text-align: center;
 	}
 	&__preview {
 		position: relative;
-		margin: 0 auto 12px auto;
+		margin: 0 auto calc(var(--default-grid-baseline)*3) auto;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
-		border-radius: 12px;
-		height: 256px;
-		width: 342px;
+		border-radius: calc(var(--default-grid-baseline)*3);
 		background-color: var(--color-loading-dark);
+		height: 300px;
+		width: 400px;
 	}
 
 	&__toggles-wrapper {
@@ -563,15 +564,16 @@ export default {
 	&__call-preferences {
 		height: $clickable-area;
 		display: flex;
-		justify-content: space-evenly;
+		justify-content: center;
 		align-items: center;
+		gap: calc(var(--default-grid-baseline)*2);
 	}
 
 	&__call-buttons {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: 4px;
+		gap: var(--default-grid-baseline);
 	}
 }
 
@@ -600,10 +602,11 @@ export default {
 .checkbox {
 	display: flex;
 	justify-content: center;
-	margin: 14px;
+	margin: calc(var(--default-grid-baseline)*2);
 }
 
 :deep(.modal-container) {
 	display: flex !important;
+	max-width: 500px !important;
 }
 </style>

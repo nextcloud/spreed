@@ -23,10 +23,13 @@
 	<div class="background-editor">
 		<button key="clear"
 			class="background-editor__element"
-			:class="{'background-editor__element--selected': selectedBackground === 'clear'}"
-			@click="handleSelectBackground('clear')">
+			:class="{'background-editor__element--selected': selectedBackground === 'none'}"
+			@click="handleSelectBackground('none')">
 			<Cancel :size="20" />
-			{{ t('spreed', 'Clear') }}
+			{{
+				// TRANSLATORS: "None" refers to "No background effect applied" in videos, for context, other options are "blur" or "image"
+				t('spreed', 'None')
+			}}
 		</button>
 		<button key="blur"
 			:disabled="!blurPreviewAvailable"
@@ -36,24 +39,43 @@
 			<Blur :size="20" />
 			{{ t('spreed', 'Blur') }}
 		</button>
-		<!-- hide custom background for now -->
-		<button v-if="false" key="upload" class="background-editor__element">
-			<ImagePlus :size="20" />
-			{{ t('spreed', 'Custom') }}
-		</button>
-		<button v-for="path in backgrounds"
-			:key="path"
-			aria-label="TODO: add image names as aria labels"
-			class="background-editor__element"
-			:class="{'background-editor__element--selected': selectedBackground === path}"
-			:style="{
-				'background-image': 'url(' + path + ')'
-			}"
-			@click="handleSelectBackground(path)">
-			<CheckBold v-if="selectedBackground === path"
-				:size="40"
-				fill-color="#fff" />
-		</button>
+		<template v-if="predefinedBackgrounds?.length">
+			<template v-if="canUploadBackgrounds">
+				<button class="background-editor__element"
+					@click="clickImportInput">
+					<Upload :size="20" />
+					{{ t('spreed', 'Upload') }}
+				</button>
+				<button class="background-editor__element"
+					:class="{'background-editor__element--selected': isCustomBackground }"
+					@click="openPicker">
+					<Folder :size="20" />
+					{{ t('spreed', 'Files') }}
+				</button>
+			</template>
+			<button v-for="path in predefinedBackgroundsURLs"
+				:key="path"
+				aria-label="TODO: add image names as aria labels"
+				class="background-editor__element"
+				:class="{'background-editor__element--selected': selectedBackground === path}"
+				:style="{
+					'background-image': 'url(' + path + ')'
+				}"
+				@click="handleSelectBackground(path)">
+				<CheckBold v-if="selectedBackground === path"
+					:size="40"
+					fill-color="#fff" />
+			</button>
+		</template>
+		<!--native file picker, hidden -->
+		<input id="custom-background-file"
+			ref="fileUploadInput"
+			class="hidden-visually"
+			multiple
+			type="file"
+			tabindex="-1"
+			aria-hidden="true"
+			@change="handleFileInput">
 	</div>
 </template>
 
@@ -61,9 +83,22 @@
 import Blur from 'vue-material-design-icons/Blur.vue'
 import Cancel from 'vue-material-design-icons/Cancel.vue'
 import CheckBold from 'vue-material-design-icons/CheckBold.vue'
-import ImagePlus from 'vue-material-design-icons/ImagePlus.vue'
+import Folder from 'vue-material-design-icons/Folder.vue'
+import Upload from 'vue-material-design-icons/Upload.vue'
 
-import { imagePath } from '@nextcloud/router'
+import { getCapabilities } from '@nextcloud/capabilities'
+import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
+import { imagePath, generateUrl } from '@nextcloud/router'
+
+import { VIRTUAL_BACKGROUND } from '../../constants.js'
+import BrowserStorage from '../../services/BrowserStorage.js'
+import client from '../../services/DavClient.js'
+import { findUniquePath } from '../../utils/fileUpload.js'
+
+const canUploadBackgrounds = getCapabilities()?.spreed?.config?.call?.['can-upload-background']
+const predefinedBackgrounds = getCapabilities()?.spreed?.config?.call?.['predefined-backgrounds']
+
+let picker
 
 export default {
 	name: 'VideoBackgroundEditor',
@@ -71,8 +106,9 @@ export default {
 	components: {
 		Cancel,
 		Blur,
-		ImagePlus,
 		CheckBold,
+		Upload,
+		Folder,
 	},
 
 	props: {
@@ -87,9 +123,17 @@ export default {
 		},
 	},
 
+	setup() {
+		return {
+			canUploadBackgrounds,
+			predefinedBackgrounds,
+		}
+	},
+
 	data() {
 		return {
 			selectedBackground: undefined,
+			getCapabilities,
 		}
 	},
 
@@ -98,22 +142,127 @@ export default {
 			return this.virtualBackground.isAvailable()
 		},
 
-		backgrounds() {
-			return [
-				imagePath('spreed', 'backgrounds/1.jpg'),
-				imagePath('spreed', 'backgrounds/2.jpg'),
-				imagePath('spreed', 'backgrounds/3.jpg'),
-				imagePath('spreed', 'backgrounds/4.jpg'),
-				imagePath('spreed', 'backgrounds/5.jpg'),
-				imagePath('spreed', 'backgrounds/6.jpg'),
-			]
+		isCustomBackground() {
+			return this.selectedBackground !== 'none'
+			    && this.selectedBackground !== 'blur'
+			    && !this.predefinedBackgroundsURLs.includes(this.selectedBackground)
+		},
+
+		predefinedBackgroundsURLs() {
+			return predefinedBackgrounds.map(fileName => {
+				return imagePath('spreed', 'backgrounds/' + fileName)
+			})
+		},
+
+		hasBackgroundsCapability() {
+			return !!predefinedBackgrounds
 		},
 	},
 
+	async mounted() {
+		this.loadBackground()
+
+		const userRoot = '/files/' + this.$store.getters.getUserId()
+		const relativeBackgroundsFolderPath = this.$store.getters.getAttachmentFolder() + '/Backgrounds'
+		const absoluteBackgroundsFolderPath = userRoot + relativeBackgroundsFolderPath
+
+		// Create the backgrounds folder if it doesn't exist
+		if (await client.exists(absoluteBackgroundsFolderPath) === false) {
+			try {
+				await client.createDirectory(absoluteBackgroundsFolderPath)
+
+				// Create picker
+				picker = getFilePickerBuilder(t('spreed', 'File to share'))
+					.setMultiSelect(false)
+					.setModal(true)
+					.startAt(relativeBackgroundsFolderPath)
+					.setType(1)
+					.allowDirectories(false)
+					.build()
+			} catch (error) {
+				console.debug(error)
+			}
+		}
+	},
+
 	methods: {
-		handleSelectBackground(background) {
-			this.$emit('update-background', background)
-			this.selectedBackground = background
+		handleSelectBackground(path) {
+			this.$emit('update-background', path)
+			this.selectedBackground = path
+		},
+
+		/**
+		 * Clicks the hidden file input and opens the file-picker
+		 */
+		clickImportInput() {
+			this.$refs.fileUploadInput.click()
+		},
+
+		async handleFileInput(event) {
+
+			// Make file path
+			const file = event.target.files[0]
+
+			// Clear input to ensure that the change event will be emitted if
+			// the same file is picked again.
+			event.target.value = ''
+
+			// userRoot path
+			const userRoot = '/files/' + this.$store.getters.getUserId()
+
+			const filePath = this.$store.getters.getAttachmentFolder() + '/Backgrounds/' + file.name
+
+			// Get a unique relative path based on the previous path variable
+			const uniquePath = await findUniquePath(client, userRoot, filePath)
+
+			try {
+				// Upload the file
+				await client.putFileContents(userRoot + uniquePath, file, {
+					contentLength: file.size,
+				})
+
+				const previewURL = await generateUrl('/core/preview.png?file={path}&x=-1&y={height}&a=1', {
+					path: filePath,
+					height: 1080,
+				})
+
+				this.handleSelectBackground(previewURL)
+
+			} catch (error) {
+				console.debug(error)
+				showError(t('spreed', 'Error while uploading the file'))
+			}
+		},
+
+		openPicker() {
+			picker.pick()
+				.then((path) => {
+					if (!path.startsWith('/')) {
+						throw new Error(t('files', 'Invalid path selected'))
+					}
+
+					const previewURL = generateUrl('/core/preview.png?file={path}&x=-1&y={height}&a=1', {
+						path,
+						height: 1080,
+					})
+
+					this.handleSelectBackground(previewURL)
+				})
+		},
+
+		loadBackground() {
+			// Set virtual background depending on browser storage's settings
+			if (BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token) === 'true') {
+				if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR) {
+					this.selectedBackground = 'blur'
+				} else if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+					this.selectedBackground = BrowserStorage.getItem('virtualBackgroundUrl_' + this.token)
+				} else {
+				  this.selectedBackground = 'none'
+			  }
+			} else {
+				this.selectedBackground = 'none'
+			}
 		},
 	},
 }
@@ -121,8 +270,8 @@ export default {
 
 <style scoped lang="scss">
 .background-editor {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
+	display: flex;
+	flex-wrap: wrap;
 	gap: calc(var(--default-grid-baseline) * 2);
 	margin-top: calc(var(--default-grid-baseline) * 2);
 
@@ -137,10 +286,13 @@ export default {
 		justify-content: center;
 		align-items: center;
 		background-size: cover;
+		background-position: center;
+		flex: 1 0 108px;
 
 		&--selected {
-			box-shadow: inset 0 0 calc(var(--default-grid-baseline) * 4) var(--color-main-background);
+			box-shadow: inset 0 0 0 var(--default-grid-baseline) var(--color-primary);
 		}
 	 }
 }
+
 </style>
