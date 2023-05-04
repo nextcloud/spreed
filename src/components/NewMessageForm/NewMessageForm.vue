@@ -368,6 +368,7 @@ export default {
 			checked: -1,
 			userData: {},
 			clipboardTimeStamp: null,
+			typingTimeout: null,
 		}
 	},
 
@@ -506,6 +507,18 @@ export default {
 
 		text(newValue) {
 			this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: newValue })
+
+			clearTimeout(this.typingTimeout)
+
+			if (!newValue) {
+				this.$store.dispatch('setTyping', { typing: false })
+				return
+			}
+
+			this.typingTimeout = setTimeout(() => {
+				this.$store.dispatch('setTyping', { typing: false })
+			}, 5000)
+			this.$store.dispatch('setTyping', { typing: true })
 		},
 
 		token(token) {
@@ -514,6 +527,7 @@ export default {
 			} else {
 				this.text = ''
 			}
+			this.$store.dispatch('setTyping', { typing: false })
 		},
 
 		showTextFileDialog(newValue) {

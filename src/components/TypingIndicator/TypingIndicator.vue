@@ -59,15 +59,10 @@ export default {
 	},
 
 	computed: {
-		participants() {
-			return this.$store.getters.participantsList(this.token).filter(participant => {
+		typingParticipants() {
+			return this.$store.getters.participantsListTyping(this.token).filter(participant => {
 				return participant.actorId !== this.$store.getters.getActorId()
 			})
-		},
-
-		typingParticipants() {
-			// TODO implement signal receiving here
-			return this.participants
 		},
 
 		visibleParticipants() {
