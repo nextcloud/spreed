@@ -20,7 +20,34 @@
         + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
         + `404 Not Found` When the conversation could not be found for the participant
 
-    - Data: See array definition in `Get user´s conversations`
+    - Data:
+        + `200 OK`: See array definition in `Get user´s conversations`
+        + `400 Bad Request`: Array with a `message` field contain the error in user language
+
+## Set emoji as avatar
+
+* Required capability: `avatar`
+* Method: `POST`
+* Endpoint: `/room/{token}/avatar/emoji`
+* Data:
+
+| field   | type        | Description                                                                                                                                |
+|---------|-------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| `emoji` | string      | A single emoji being used as avatar (can contain properties like gender, skin color, age, job, etc.)                                       |
+| `color` | string/null | HEX color code (6 times 0-9A-F) without the leading `#` character (omit to fallback to the default bright/dark mode icon background color) |
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `400 Bad Request` When the conversation is a one-to-one conversation
+        + `400 Bad Request` When the emoji is not a single emoji
+        + `400 Bad Request` When color was provided but is not matching the expected pattern
+        + `403 Forbidden` When the current user is not a moderator, owner or guest moderator
+        + `404 Not Found` When the conversation could not be found for the participant
+
+    - Data:
+        + `200 OK`: See array definition in `Get user´s conversations`
+        + `400 Bad Request`: Array with a `message` field contain the error in user language
 
 ## Delete conversations avatar
 

@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
+use OCA\Mail\Service\Avatar\Avatar;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
 use OCA\Talk\Service\AvatarService;
@@ -61,6 +62,28 @@ class AvatarController extends AEnvironmentAwareController {
 		try {
 			$file = $this->request->getUploadedFile('file');
 			$this->avatarService->setAvatarFromRequest($this->getRoom(), $file);
+			return new DataResponse($this->roomFormatter->formatRoom(
+				$this->getResponseFormat(),
+				[],
+				$this->getRoom(),
+				$this->participant,
+			));
+		} catch (InvalidArgumentException $e) {
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+		} catch (\Exception $e) {
+			$this->logger->error('Failed to post avatar', [
+				'exception' => $e,
+			]);
+
+			return new DataResponse(['message' => $this->l->t('An error occurred. Please contact your administrator.')], Http::STATUS_BAD_REQUEST);
+		}
+	}
+
+	#[PublicPage]
+	#[RequireModeratorParticipant]
+	public function emojiAvatar(string $emoji, ?string $color): DataResponse {
+		try {
+			$this->avatarService->setAvatarFromEmoji($this->getRoom(), $emoji, $color);
 			return new DataResponse($this->roomFormatter->formatRoom(
 				$this->getResponseFormat(),
 				[],
