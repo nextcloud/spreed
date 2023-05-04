@@ -104,7 +104,8 @@ Feature: conversation/avatar
       | roomType | 3 |
       | roomName | public room |
     Then user "participant1" sets emoji "👋🚀" with color "123456" as avatar of room "room" with 400 (v1)
-    Then user "participant1" sets emoji "👋" with color "1234567" as avatar of room "room" with 400 (v1)
+    And user "participant1" sets emoji "👋" with color "1234567" as avatar of room "room" with 400 (v1)
+    And user "participant1" sets emoji "👋" with color "GGGGGG" as avatar of room "room" with 400 (v1)
     And user "participant1" gets room "room" with 200 (v4)
       | avatarVersion | NOT_EMPTY |
       | isCustomAvatar | 0 |
