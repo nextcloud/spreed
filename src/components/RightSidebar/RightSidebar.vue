@@ -29,14 +29,14 @@
 		@update:active="handleUpdateActive"
 		@closed="handleClosed"
 		@close="handleClose">
-		<template slot="description">
+		<template #description>
 			<LobbyStatus v-if="canFullModerate && hasLobbyEnabled" :token="token" />
 		</template>
 		<NcAppSidebarTab v-if="isInCall"
 			id="chat"
 			:order="1"
 			:name="t('spreed', 'Chat')">
-			<template slot="icon">
+			<template #icon>
 				<Message :size="20" />
 			</template>
 			<ChatView :is-visible="opened" />
@@ -46,7 +46,7 @@
 			ref="participantsTab"
 			:order="2"
 			:name="participantsText">
-			<template slot="icon">
+			<template #icon>
 				<AccountMultiple :size="20" />
 			</template>
 			<ParticipantsTab :is-active="activeTab === 'participants'"
@@ -58,7 +58,7 @@
 			ref="breakout-rooms"
 			:order="3"
 			:name="breakoutRoomsText">
-			<template slot="icon">
+			<template #icon>
 				<DotsCircle :size="20" />
 			</template>
 			<BreakoutRoomsTab :main-token="mainConversationToken"
@@ -69,7 +69,7 @@
 			id="details-tab"
 			:order="4"
 			:name="t('spreed', 'Details')">
-			<template slot="icon">
+			<template #icon>
 				<InformationOutline :size="20" />
 			</template>
 			<SetGuestUsername v-if="!getUserId" />
@@ -79,7 +79,7 @@
 			<div v-if="!getUserId" id="app-settings">
 				<div id="app-settings-header">
 					<NcButton type="tertiary" @click="showSettings">
-						<template slot="icon">
+						<template #icon>
 							<CogIcon :size="20" />
 						</template>
 						{{ t('spreed', 'Settings') }}
@@ -92,7 +92,7 @@
 			ref="sharedItemsTab"
 			:order="5"
 			:name="t('spreed', 'Shared items')">
-			<template slot="icon">
+			<template #icon>
 				<FolderMultipleImage :size="20" />
 			</template>
 			<SharedItemsTab :active="activeTab === 'shared-items'" />
@@ -300,37 +300,29 @@ export default {
 		},
 
 		isInCall(newValue) {
-			// Waiting for chat tab to mount / destroy
-			this.$nextTick(() => {
-				if (newValue) {
-					// Set 'chat' tab as active, and switch to it if sidebar is open
-					this.activeTab = 'chat'
-					return
-				}
+			if (newValue) {
+				// Set 'chat' tab as active, and switch to it if sidebar is open
+				this.activeTab = 'chat'
+				return
+			}
 
-				// If 'chat' tab wasn't active, leave it as is
-				if (this.activeTab !== 'chat') {
-					return
-				}
+			// If 'chat' tab wasn't active, leave it as is
+			if (this.activeTab !== 'chat') {
+				return
+			}
 
-				// In other case switch to other tabs
-				if (this.isOneToOne) {
-					this.activeTab = 'shared-items'
-				} else {
-					this.activeTab = 'participants'
-				}
-			})
+			// In other case switch to other tabs
+			if (this.isOneToOne) {
+				this.activeTab = 'shared-items'
+			} else {
+				this.activeTab = 'participants'
+			}
 		},
 
 		token() {
 			if (this.$refs.participantsTab) {
 				this.$refs.participantsTab.$el.scrollTop = 0
 			}
-		},
-
-		$slots() {
-			console.debug('Sidebar slots changed, re rendering')
-			this.$forceUpdate()
 		},
 
 		// Switch tab for guest if he is demoted from moderators
@@ -381,6 +373,24 @@ export default {
 
 :deep(.app-sidebar-header__description) {
 	flex-direction: column;
+}
+
+// FIXME upstream: move styles to nextcloud-vue library
+:deep(.app-sidebar-tabs__nav) {
+	padding: 0 10px;
+
+	.checkbox-radio-switch__label {
+		text-align: center;
+		justify-content: flex-start;
+	}
+
+	.checkbox-radio-switch__icon {
+		flex-basis: auto;
+
+		span {
+			margin: 0;
+		}
+	}
 }
 
 .app-sidebar-tabs__content #tab-chat {
