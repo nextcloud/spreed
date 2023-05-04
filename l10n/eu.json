@@ -254,6 +254,7 @@
     "Dismiss notification" : "Baztertu jakinarazpena",
     "Call recording now available" : "Deien grabaketa ez dago erabilgarri",
     "The recording for the call in {call} was uploaded to {file}." : "{deia} deiaren grabazioa {file} -ra kargatu da.",
+    "Transcript now available" : "Transkripzioa eskuragarri dago",
     "{user1} shared room {roomName} on {remoteServer} with you" : "{user1}-(e)k {roomName} gela partekatu du zurekin {remoteServer} zerbitzuan",
     "{user} in {call}" : "{user} erabiltzailea {call} deian",
     "Deleted user in {call}" : "Erabiltzailea ezabatu da {call} deian",
