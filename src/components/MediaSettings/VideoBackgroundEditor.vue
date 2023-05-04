@@ -39,7 +39,7 @@
 			<Blur :size="20" />
 			{{ t('spreed', 'Blur') }}
 		</button>
-		<template v-if="hasBackgroundsCapability">
+		<template v-if="predefinedBackgrounds?.length">
 			<template v-if="canUploadBackgrounds">
 				<button class="background-editor__element"
 					@click="clickImportInput">
@@ -68,7 +68,7 @@
 			</button>
 		</template>
 		<!--native file picker, hidden -->
-		<input v-show="false"
+		<input class="hidden-visually"
 			id="custom-background-file"
 			ref="fileUploadInput"
 			multiple
@@ -138,9 +138,9 @@ export default {
 		},
 
 		isCustomBackground() {
-			return !this.predefinedBackgroundsURLs.includes(this.selectedBackground)
-				&& this.selectedBackground !== 'none'
-				&& this.selectedBackground !== 'blur'
+			return this.selectedBackground !== 'none
+			    && this.selectedBackground !== 'blur'
+			    && !this.predefinedBackgroundsURLs.includes(this.selectedBackground)
 		},
 
 		predefinedBackgroundsURLs() {
@@ -202,12 +202,10 @@ export default {
 			// the same file is picked again.
 			event.target.value = ''
 
-			const fileName = file.name
-
 			// userRoot path
 			const userRoot = '/files/' + this.$store.getters.getUserId()
 
-			const filePath = this.$store.getters.getAttachmentFolder() + '/Backgrounds/' + fileName
+			const filePath = this.$store.getters.getAttachmentFolder() + '/Backgrounds/' + file.name
 
 			// Get a unique relative path based on the previous path variable
 			const uniquePath = await findUniquePath(client, userRoot, filePath)
@@ -254,7 +252,9 @@ export default {
 					this.selectedBackground = 'blur'
 				} else if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
 					this.selectedBackground = BrowserStorage.getItem('virtualBackgroundUrl_' + this.token)
-				}
+				} else {
+				  this.selectedBackground = 'none'
+			  }
 			} else {
 				this.selectedBackground = 'none'
 			}

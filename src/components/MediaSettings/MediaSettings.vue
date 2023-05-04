@@ -22,7 +22,6 @@
 <template>
 	<NcModal v-if="modal"
 		class="talk-modal"
-		size="normal"
 		:container="container"
 		@close="closeModal">
 		<div class="media-settings">
