@@ -386,6 +386,10 @@ export default {
 
 	.checkbox-radio-switch__icon {
 		flex-basis: auto;
+
+		span {
+			margin: 0;
+		}
 	}
 }
 
