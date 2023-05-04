@@ -375,6 +375,20 @@ export default {
 	flex-direction: column;
 }
 
+// FIXME upstream: move styles to nextcloud-vue library
+:deep(.app-sidebar-tabs__nav) {
+	padding: 0 10px;
+
+	.checkbox-radio-switch__label {
+		text-align: center;
+		justify-content: flex-start;
+	}
+
+	.checkbox-radio-switch__icon {
+		flex-basis: auto;
+	}
+}
+
 .app-sidebar-tabs__content #tab-chat {
 	/* Remove padding to maximize the space for the chat view. */
 	padding: 0;
