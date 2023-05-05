@@ -249,6 +249,16 @@ export default {
 		},
 	},
 
+	watch: {
+		isPublic(value) {
+			if (value) {
+				this.newConversation.type = CONVERSATION.TYPE.PUBLIC
+			} else {
+				this.newConversation.type = CONVERSATION.TYPE.GROUP
+			}
+		},
+	},
+
 	mounted() {
 		EventBus.$on('new-group-conversation-dialog', this.showModalForItem)
 	},
