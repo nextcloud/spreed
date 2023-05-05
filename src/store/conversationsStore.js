@@ -742,8 +742,7 @@ const actions = {
 			context.commit('addConversation', conversation)
 			showSuccess(t('spreed', 'Conversation picture set'))
 		} catch (error) {
-			console.error(error)
-			showError(t('spreed', 'Could not set the conversation picture'))
+			throw new Error(error.response?.data?.ocs?.data?.message ?? error.message)
 		}
 	},
 
@@ -754,8 +753,7 @@ const actions = {
 			context.commit('addConversation', conversation)
 			showSuccess(t('spreed', 'Conversation picture set'))
 		} catch (error) {
-			console.error(error)
-			showError(t('spreed', 'Could not set the conversation picture'))
+			throw new Error(error.response?.data?.ocs?.data?.message ?? error.message)
 		}
 	},
 
@@ -766,7 +764,6 @@ const actions = {
 			context.commit('addConversation', conversation)
 			showSuccess(t('spreed', 'Conversation picture deleted'))
 		} catch (error) {
-			console.error(error)
 			showError(t('spreed', 'Could not delete the conversation picture'))
 		}
 	},

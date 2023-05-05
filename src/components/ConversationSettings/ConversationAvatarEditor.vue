@@ -251,7 +251,6 @@ export default {
 		},
 
 		saveAvatar() {
-			this.showCropper = false
 			this.loading = true
 
 			if (this.emojiAvatar) {
@@ -268,16 +267,19 @@ export default {
 					emoji: this.emojiAvatar,
 					color: this.backgroundColor ? this.backgroundColor.slice(1) : null,
 				})
-				this.loading = false
 				this.emojiAvatar = ''
 				this.backgroundColor = ''
-			} catch (e) {
-				showError(t('spreed', 'Error saving profile picture'))
+			} catch (error) {
+				showError(t('spreed', 'Could not set the conversation picture: {error}',
+					{ error: error.message },
+				))
+			} finally {
 				this.loading = false
 			}
 		},
 
 		savePictureAvatar() {
+			this.showCropper = false
 			const canvasData = this.$refs.cropper.getCroppedCanvas()
 			const scaleFactor = canvasData.width > 512 ? 512 / canvasData.width : 1
 			this.$refs.cropper.scale(scaleFactor, scaleFactor).getCroppedCanvas().toBlob(async (blob) => {
@@ -295,9 +297,11 @@ export default {
 						token: this.conversation.token,
 						file: formData,
 					})
-					this.loading = false
-				} catch (e) {
-					showError(t('spreed', 'Error saving profile picture'))
+				} catch (error) {
+					showError(t('spreed', 'Could not set the conversation picture: {error}',
+						{ error: error.message },
+					))
+				} finally {
 					this.loading = false
 				}
 			})
@@ -309,9 +313,9 @@ export default {
 				await this.$store.dispatch('deleteConversationAvatarAction', {
 					token: this.conversation.token,
 				})
-				this.loading = false
 			} catch (e) {
 				showError(t('spreed', 'Error removing profile picture'))
+			} finally {
 				this.loading = false
 			}
 		},
@@ -330,6 +334,7 @@ export default {
 section {
 	grid-row: 1/3;
 }
+
 .avatar {
 	&__container {
 		margin: 0 auto;
