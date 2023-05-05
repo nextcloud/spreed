@@ -427,6 +427,10 @@ const setConversationAvatar = async function(token, file) {
 	return axios.post(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token }), file,)
 }
 
+const setConversationEmojiAvatar = async function(token, emoji, color) {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar/emoji', { token }), { emoji, color })
+}
+
 const deleteConversationAvatar = async function(token) {
 	return axios.delete(generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar', { token }))
 }
@@ -461,5 +465,6 @@ export {
 	setMessageExpiration,
 	validatePassword,
 	setConversationAvatar,
+	setConversationEmojiAvatar,
 	deleteConversationAvatar,
 }
