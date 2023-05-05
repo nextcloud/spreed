@@ -702,7 +702,7 @@ describe('Participant.vue', () => {
 				const wrapper = mountParticipant(participant)
 				let actionTexts = wrapper.findAllComponents(NcActionText)
 				actionTexts = actionTexts.filter((actionText) => {
-					return actionText.props('title').indexOf('PIN') >= 0
+					return actionText.props('title').includes('PIN')
 				})
 
 				expect(actionTexts.exists()).toBe(true)
@@ -727,7 +727,7 @@ describe('Participant.vue', () => {
 				const wrapper = mountParticipant(participant)
 				let actionTexts = wrapper.findAllComponents(NcActionText)
 				actionTexts = actionTexts.filter((actionText) => {
-					return actionText.props('title').indexOf('PIN') >= 0
+					return actionText.props('title').includes('PIN')
 				})
 
 				expect(actionTexts.exists()).toBe(false)
@@ -739,7 +739,7 @@ describe('Participant.vue', () => {
 				const wrapper = mountParticipant(participant)
 				let actionTexts = wrapper.findAllComponents(NcActionText)
 				actionTexts = actionTexts.filter((actionText) => {
-					return actionText.props('title').indexOf('PIN') >= 0
+					return actionText.props('title').includes('PIN')
 				})
 
 				expect(actionTexts.exists()).toBe(false)

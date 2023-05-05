@@ -66,9 +66,7 @@ let sendCurrentStateWithRepetitionTimeout = null
  * @param {Array} b Object to find all items in
  */
 function arrayDiff(a, b) {
-	return a.filter(function(i) {
-		return b.indexOf(i) < 0
-	})
+	return a.filter(i => !b.includes(i))
 }
 
 /**
@@ -290,8 +288,8 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 
 		// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
 		const sessionId = user.sessionId || user.sessionid
-		if (!sessionId || sessionId === currentSessionId || previousUsersInRoom.indexOf(sessionId) !== -1) {
-			if (sessionId === currentSessionId && previousUsersInRoom.indexOf(sessionId) !== -1) {
+		if (!sessionId || sessionId === currentSessionId || previousUsersInRoom.includes(sessionId)) {
+			if (sessionId === currentSessionId && previousUsersInRoom.includes(sessionId)) {
 				Sounds.playJoin(true, newUsers.length === 1)
 			}
 			return
@@ -1562,7 +1560,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		if ((error.name === 'NotSupportedError'
 				&& webrtc.capabilities.supportRTCPeerConnection)
 			|| (error.name === 'NotAllowedError'
-				&& error.message && error.message.indexOf('Only secure origins') !== -1)) {
+				&& error.message && error.message.includes('Only secure origins'))) {
 			message = t('spreed', 'Access to microphone & camera is only possible with HTTPS')
 			message += ': ' + t('spreed', 'Please move your setup to HTTPS')
 		} else if (error.name === 'NotAllowedError') {

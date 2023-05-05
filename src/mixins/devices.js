@@ -386,7 +386,7 @@ export const devices = {
 			// insecure contexts; in older browser versions it is, but getting
 			// the user media fails with "NotAllowedError".
 			const isInsecureContext = 'isSecureContext' in window && !window.isSecureContext
-			const isInsecureContextAccordingToErrorMessage = this.audioStreamError.message && this.audioStreamError.message.indexOf('Only secure origins') !== -1
+			const isInsecureContextAccordingToErrorMessage = this.audioStreamError.message && this.audioStreamError.message.includes('Only secure origins')
 			if ((this.audioStreamError.name === 'NotSupportedError' && isInsecureContext)
 				|| (this.audioStreamError.name === 'NotAllowedError' && isInsecureContextAccordingToErrorMessage)) {
 				return t('spreed', 'Access to microphone is only possible with HTTPS')
@@ -412,7 +412,7 @@ export const devices = {
 			// insecure contexts; in older browser versions it is, but getting
 			// the user media fails with "NotAllowedError".
 			const isInsecureContext = 'isSecureContext' in window && !window.isSecureContext
-			const isInsecureContextAccordingToErrorMessage = this.videoStreamError.message && this.videoStreamError.message.indexOf('Only secure origins') !== -1
+			const isInsecureContextAccordingToErrorMessage = this.videoStreamError.message && this.videoStreamError.message.includes('Only secure origins')
 			if ((this.videoStreamError.name === 'NotSupportedError' && isInsecureContext)
 				|| (this.videoStreamError.name === 'NotAllowedError' && isInsecureContextAccordingToErrorMessage)) {
 				return t('spreed', 'Access to camera is only possible with HTTPS')

@@ -127,7 +127,7 @@ export default {
 		 * @return {string}
 		 */
 		nameWithoutExt() {
-			return this.basename.indexOf('.') > -1 ? this.basename.split('.').slice(0, -1).join('.') : this.basename
+			return this.basename.includes('.') ? this.basename.split('.').slice(0, -1).join('.') : this.basename
 		},
 
 		id() {

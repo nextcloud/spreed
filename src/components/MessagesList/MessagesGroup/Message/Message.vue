@@ -674,7 +674,7 @@ export default {
 
 	methods: {
 		userHasReacted(reaction) {
-			return this.reactionsSelf && this.reactionsSelf.indexOf(reaction) !== -1
+			return this.reactionsSelf && this.reactionsSelf.includes(reaction)
 		},
 
 		lastReadMessageVisibilityChanged(isVisible) {
