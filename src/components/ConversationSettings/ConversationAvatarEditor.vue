@@ -46,14 +46,16 @@
 					<template v-if="!showCropper">
 						<NcEmojiPicker :per-line="5"
 							@select="setEmoji">
-						<NcButton :aria-label="t('spreed', 'Set emoji as profile picture')">
+							<NcButton :title="t('spreed', 'Set emoji as conversation picture')"
+								:aria-label="t('spreed', 'Set emoji as conversation picture')">
 								<template #icon>
 									<EmoticonOutline :size="20" />
 								</template>
 							</NcButton>
 						</NcEmojiPicker>
 						<NcColorPicker v-if="emojiAvatar" v-model="backgroundColor">
-						<NcButton :aria-label="t('spreed', 'Set background color for profile picture')">
+							<NcButton :title="t('spreed', 'Set background color for conversation picture')"
+								:aria-label="t('spreed', 'Set background color for conversation picture')">
 								<template #icon>
 									<Palette :size="20" />
 								</template>
@@ -62,13 +64,15 @@
 					</template>
 
 					<!-- Set picture as avatar -->
-					<NcButton :aria-label="t('settings', 'Upload profile picture')"
+					<NcButton :title="t('settings', 'Upload conversation picture')"
+						:aria-label="t('settings', 'Upload conversation picture')"
 						@click="activateLocalFilePicker">
 						<template #icon>
 							<Upload :size="20" />
 						</template>
 					</NcButton>
-					<NcButton :aria-label="t('settings', 'Choose profile picture from files')"
+					<NcButton :title="t('settings', 'Choose conversation picture from files')"
+						:aria-label="t('settings', 'Choose conversation picture from files')"
 						@click="openFilePicker">
 						<template #icon>
 							<Folder :size="20" />
@@ -77,7 +81,8 @@
 
 					<!-- Remove existing avatar -->
 					<NcButton v-if="hasAvatar"
-						:aria-label="t('settings', 'Remove profile picture')"
+						:title="t('settings', 'Remove conversation picture')"
+						:aria-label="t('settings', 'Remove conversation picture')"
 						@click="removeAvatar">
 						<template #icon>
 							<Delete :size="20" />
@@ -131,7 +136,7 @@ import 'cropperjs/dist/cropper.css'
 
 const VALID_MIME_TYPES = ['image/png', 'image/jpeg']
 
-const picker = getFilePickerBuilder(t('spreed', 'Choose your profile picture'))
+const picker = getFilePickerBuilder(t('spreed', 'Choose your conversation picture'))
 	.setMultiSelect(false)
 	.setMimeTypeFilter(VALID_MIME_TYPES)
 	.setModal(true)
@@ -244,7 +249,7 @@ export default {
 					this.cancel()
 				}
 			} catch (e) {
-				showError(t('spreed', 'Error setting profile picture'))
+				showError(t('spreed', 'Error setting conversation picture'))
 				this.cancel()
 			}
 		},
@@ -287,7 +292,7 @@ export default {
 			const scaleFactor = canvasData.width > 512 ? 512 / canvasData.width : 1
 			this.$refs.cropper.scale(scaleFactor, scaleFactor).getCroppedCanvas().toBlob(async (blob) => {
 				if (blob === null) {
-					showError(t('spreed', 'Error cropping profile picture'))
+					showError(t('spreed', 'Error cropping conversation picture'))
 					this.cancel()
 					return
 				}
@@ -317,7 +322,7 @@ export default {
 					token: this.conversation.token,
 				})
 			} catch (e) {
-				showError(t('spreed', 'Error removing profile picture'))
+				showError(t('spreed', 'Error removing conversation picture'))
 			} finally {
 				this.loading = false
 			}
