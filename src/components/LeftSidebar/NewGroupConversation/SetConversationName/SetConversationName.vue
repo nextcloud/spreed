@@ -46,6 +46,8 @@ export default {
 		},
 	},
 
+	emits: ['input', 'click-enter'],
+
 	methods: {
 		handleInput(event) {
 			this.$emit('input', event.target.value)

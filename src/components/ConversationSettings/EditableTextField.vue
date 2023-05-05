@@ -149,6 +149,8 @@ export default {
 		},
 	},
 
+	emits: ['update:editing', 'submit-text'],
+
 	data() {
 		return {
 			text: this.initialText,

@@ -296,6 +296,8 @@ export default {
 		},
 	},
 
+	emits: ['click-participant'],
+
 	data() {
 		return {
 			isUserNameTooltipVisible: false,

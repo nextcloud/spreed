@@ -165,6 +165,8 @@ export default {
 		},
 	},
 
+	emits: ['click', 'click-search-hint'],
+
 	computed: {
 		sourcesWithoutResults() {
 			return !this.addableUsers.length

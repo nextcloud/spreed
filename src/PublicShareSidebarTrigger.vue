@@ -51,6 +51,8 @@ export default {
 		},
 	},
 
+	emits: ['click'],
+
 	computed: {
 		ariaLabel() {
 			if (this.sidebarState.isOpen) {

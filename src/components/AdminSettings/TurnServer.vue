@@ -156,6 +156,8 @@ export default {
 		},
 	},
 
+	emits: ['remove-server', 'update:schemes', 'update:server', 'update:secret', 'update:protocols'],
+
 	data() {
 		return {
 			testing: false,

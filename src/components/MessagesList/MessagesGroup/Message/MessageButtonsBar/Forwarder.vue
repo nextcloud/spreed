@@ -101,6 +101,8 @@ export default {
 		},
 	},
 
+	emits: ['close'],
+
 	data() {
 		return {
 			selectedConversationToken: null,

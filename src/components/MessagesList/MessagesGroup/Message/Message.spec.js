@@ -38,6 +38,10 @@ const RichTextStub = {
 	template: '<div/>',
 }
 
+const NcPopoverStub = {
+	template: '<slot name="trigger" /><slot/>',
+}
+
 describe('Message.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let localVue
@@ -842,6 +846,9 @@ describe('Message.vue', () => {
 				store,
 				propsData: messageProps,
 				provide: injected,
+				stubs: {
+					NcPopover: NcPopoverStub,
+				},
 			})
 
 			const reactionsBar = wrapper.find('.message-body__reactions')
@@ -875,6 +882,9 @@ describe('Message.vue', () => {
 				store,
 				propsData: messageProps,
 				provide: injected,
+				stubs: {
+					NcPopover: NcPopoverStub,
+				},
 			})
 
 			const reactionsBar = wrapper.find('.message-body__reactions')
@@ -972,6 +982,9 @@ describe('Message.vue', () => {
 				store,
 				propsData: messagePropsWithReactions,
 				provide: injected,
+				stubs: {
+					NcPopover: NcPopoverStub,
+				},
 			})
 
 			// Click reaction button upon having already reacted

@@ -235,6 +235,8 @@ export default {
 		},
 	},
 
+	emits: ['remove-file'],
+
 	setup() {
 		const { openViewer } = useViewer()
 		return { openViewer }

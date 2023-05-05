@@ -60,6 +60,8 @@ export default {
 		},
 	},
 
+	emits: ['close'],
+
 	computed: {
 		/**
 		 * The participant's name.

@@ -77,6 +77,8 @@ export default {
 		},
 	},
 
+	emits: ['update:deviceId'],
+
 	data() {
 		return {
 			deviceSelectedOption: null,

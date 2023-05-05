@@ -290,6 +290,8 @@ export default {
 		},
 	},
 
+	emits: ['select-video', 'click-local-video'],
+
 	data() {
 		return {
 			gridWidth: 0,
