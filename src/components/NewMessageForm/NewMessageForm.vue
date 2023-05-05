@@ -21,8 +21,8 @@
 -->
 
 <template>
-	<div class="wrapper" :class="{'wrapper--has-typing-indicator': hasTypingIndicator}">
-		<TypingIndicator v-if="hasTypingIndicator"
+	<div class="wrapper" :class="{'wrapper--has-typing-indicator': showTypingStatus}">
+		<NewMessageFormTypingIndicator v-if="showTypingStatus"
 			:token="token" />
 
 		<!--native file picker, hidden -->
@@ -253,7 +253,7 @@ import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
 import TemplatePreview from './TemplatePreview.vue'
 
 import { useViewer } from '../../composables/useViewer.js'
-import { CONVERSATION, PARTICIPANT } from '../../constants.js'
+import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile, createTextFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
@@ -271,6 +271,7 @@ const margin = 8
 const width = margin * 20
 
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
+const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined
 
 export default {
 	name: 'NewMessageForm',
@@ -350,7 +351,10 @@ export default {
 
 	setup() {
 		const { openViewer } = useViewer()
-		return { openViewer }
+		return {
+			openViewer,
+			supportTypingStatus,
+		}
 	},
 
 	data() {
@@ -498,6 +502,10 @@ export default {
 		showAudioRecorder() {
 			return !this.hasText && this.canUploadFiles && !this.broadcast
 		},
+		showTypingStatus() {
+			return this.hasTypingIndicator && this.supportTypingStatus
+				&& this.$store.getters.getTypingStatusPrivacy() === PRIVACY.PUBLIC
+		},
 	},
 
 	watch: {
@@ -508,17 +516,20 @@ export default {
 		text(newValue) {
 			this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: newValue })
 
-			clearTimeout(this.typingTimeout)
+			// Enable signal sending, only if indicator for this input is on
+			if (this.showTypingStatus) {
+				clearTimeout(this.typingTimeout)
 
-			if (!newValue) {
-				this.$store.dispatch('setTyping', { typing: false })
-				return
+				if (!newValue) {
+					this.$store.dispatch('setTyping', { typing: false })
+					return
+				}
+
+				this.typingTimeout = setTimeout(() => {
+					this.$store.dispatch('setTyping', { typing: false })
+				}, 5000)
+				this.$store.dispatch('setTyping', { typing: true })
 			}
-
-			this.typingTimeout = setTimeout(() => {
-				this.$store.dispatch('setTyping', { typing: false })
-			}, 5000)
-			this.$store.dispatch('setTyping', { typing: true })
 		},
 
 		token(token) {

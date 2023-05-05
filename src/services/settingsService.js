@@ -52,6 +52,19 @@ const setReadStatusPrivacy = async function(privacy) {
 }
 
 /**
+ * Sets the typing status privacy setting for the user
+ *
+ * @param {number} privacy The selected value, either 0 or 1
+ * @return {object} The axios response
+ */
+const setTypingStatusPrivacy = async function(privacy) {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/settings/user'), {
+		key: 'typing_privacy',
+		value: privacy,
+	})
+}
+
+/**
  * Save the SIP settings
  *
  * @param {Array<string>} sipGroups The groups allowed to enable SIP on a conversation
@@ -82,6 +95,7 @@ const setPlaySounds = async function(isGuest, enabled) {
 export {
 	setAttachmentFolder,
 	setReadStatusPrivacy,
+	setTypingStatusPrivacy,
 	setSIPSettings,
 	setPlaySounds,
 }

@@ -60,6 +60,15 @@
 				@update:checked="toggleReadStatusPrivacy">
 				{{ t('spreed', 'Share my read-status and show the read-status of others') }}
 			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch v-if="supportTypingStatus"
+				id="typing_status_privacy"
+				:checked="typingStatusPrivacyIsPublic"
+				:disabled="privacyLoading"
+				type="switch"
+				class="checkbox"
+				@update:checked="toggleTypingStatusPrivacy">
+				{{ t('spreed', 'Share my typing-status and show the typing-status of others') }}
+			</NcCheckboxRadioSwitch>
 		</NcAppSettingsSection>
 		<NcAppSettingsSection id="sounds"
 			:title="t('spreed', 'Sounds')"
@@ -145,6 +154,7 @@
 </template>
 
 <script>
+import { getCapabilities } from '@nextcloud/capabilities'
 import { getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
@@ -159,6 +169,8 @@ import MediaDevicesPreview from '../MediaDevicesPreview.vue'
 
 import { PRIVACY } from '../../constants.js'
 
+const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined
+
 export default {
 	name: 'SettingsDialog',
 
@@ -169,6 +181,12 @@ export default {
 		NcButton,
 		NcCheckboxRadioSwitch,
 		NcTextField,
+	},
+
+	setup() {
+		return {
+			supportTypingStatus,
+		}
 	},
 
 	data() {
@@ -207,6 +225,14 @@ export default {
 
 		readStatusPrivacy() {
 			return this.$store.getters.getReadStatusPrivacy()
+		},
+
+		typingStatusPrivacyIsPublic() {
+			return this.typingStatusPrivacy === PRIVACY.PUBLIC
+		},
+
+		typingStatusPrivacy() {
+			return this.$store.getters.getTypingStatusPrivacy()
 		},
 
 		settingsUrl() {
@@ -261,6 +287,20 @@ export default {
 				showSuccess(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
 				showError(t('spreed', 'Error while setting read status privacy'))
+			}
+			this.privacyLoading = false
+		},
+
+		async toggleTypingStatusPrivacy() {
+			this.privacyLoading = true
+			try {
+				await this.$store.dispatch(
+					'updateTypingStatusPrivacy',
+					this.typingStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
+				)
+				showSuccess(t('spreed', 'Your privacy setting has been saved'))
+			} catch (exception) {
+				showError(t('spreed', 'Error while setting typing status privacy'))
 			}
 			this.privacyLoading = false
 		},

@@ -21,15 +21,19 @@
 import { loadState } from '@nextcloud/initial-state'
 
 import { PRIVACY } from '../constants.js'
-import { setReadStatusPrivacy } from '../services/settingsService.js'
+import { setReadStatusPrivacy, setTypingStatusPrivacy } from '../services/settingsService.js'
 
 const state = {
 	readStatusPrivacy: loadState('spreed', 'read_status_privacy', PRIVACY.PRIVATE),
+	typingStatusPrivacy: loadState('spreed', 'typing_privacy', PRIVACY.PRIVATE),
 }
 
 const getters = {
 	getReadStatusPrivacy: (state) => () => {
 		return state.readStatusPrivacy
+	},
+	getTypingStatusPrivacy: (state) => () => {
+		return state.typingStatusPrivacy
 	},
 }
 
@@ -42,6 +46,9 @@ const mutations = {
 	 */
 	updateReadStatusPrivacy(state, privacy) {
 		state.readStatusPrivacy = privacy
+	},
+	updateTypingStatusPrivacy(state, privacy) {
+		state.typingStatusPrivacy = privacy
 	},
 }
 
@@ -56,6 +63,17 @@ const actions = {
 	async updateReadStatusPrivacy(context, privacy) {
 		await setReadStatusPrivacy(privacy)
 		context.commit('updateReadStatusPrivacy', privacy)
+	},
+
+	/**
+	 * Update the typing status privacy for the user
+	 *
+	 * @param {object} context default store context;
+	 * @param {number} privacy The new selected privacy
+	 */
+	async updateTypingStatusPrivacy(context, privacy) {
+		await setTypingStatusPrivacy(privacy)
+		context.commit('updateTypingStatusPrivacy', privacy)
 	},
 }
 
