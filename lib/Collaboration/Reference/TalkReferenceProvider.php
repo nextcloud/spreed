@@ -177,6 +177,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 		$roomName = $room->getDisplayName($this->userId);
 		$title = $roomName;
 		$description = '';
+		$messageId = null;
 
 		if ($participant instanceof Participant
 			|| $this->roomManager->isRoomListableByUser($room, $this->userId)) {
@@ -190,7 +191,8 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 		 * Description is the plain text chat message
 		 */
 		if ($participant && !empty($referenceMatch['message'])) {
-			$comment = $this->chatManager->getComment($room, (string) $referenceMatch['message']);
+			$messageId = (string) $referenceMatch['message'];
+			$comment = $this->chatManager->getComment($room, $messageId);
 			$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
 
@@ -233,12 +235,18 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 		$reference->setUrl($this->urlGenerator->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]));
 		$reference->setImageUrl($this->avatarService->getAvatarUrl($room));
 
-		$reference->setRichObject('call', [
+		$referenceData = [
 			'id' => $room->getToken(),
 			'name' => $roomName,
 			'link' => $reference->getUrl(),
 			'call-type' => $this->getRoomType($room),
-		]);
+		];
+
+		if ($messageId) {
+			$referenceData['message-id'] = $messageId;
+		}
+
+		$reference->setRichObject('call', $referenceData);
 	}
 
 	/**
