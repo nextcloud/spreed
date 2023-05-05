@@ -76,6 +76,10 @@
 * `0` Read status is public
 * `1` Read status is private
 
+### Participant typing privacy
+* `0` Typing status is public
+* `1` Typing status is private
+
 ### Attendee types
 * `users` - Logged-in users
 * `groups` - Groups

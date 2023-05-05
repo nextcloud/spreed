@@ -136,6 +136,7 @@ class CapabilitiesTest extends TestCase {
 			'chat-get-context',
 			'single-conversation-status',
 			'chat-keep-notifications',
+			'typing-privacy',
 			'message-expiration',
 			'reactions',
 		];
@@ -202,6 +203,7 @@ class CapabilitiesTest extends TestCase {
 						'max-length' => 32000,
 						'read-privacy' => 0,
 						'translations' => [],
+						'typing-privacy' => 0,
 					],
 					'conversations' => [
 						'can-create' => false,
@@ -325,6 +327,7 @@ class CapabilitiesTest extends TestCase {
 						'max-length' => 32000,
 						'read-privacy' => $readPrivacy,
 						'translations' => [],
+						'typing-privacy' => 0,
 					],
 					'conversations' => [
 						'can-create' => $canCreate,

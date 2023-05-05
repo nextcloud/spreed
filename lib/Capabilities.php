@@ -118,6 +118,7 @@ class Capabilities implements IPublicCapability {
 				'chat-get-context',
 				'single-conversation-status',
 				'chat-keep-notifications',
+				'typing-privacy',
 			],
 			'config' => [
 				'attachments' => [
@@ -134,6 +135,7 @@ class Capabilities implements IPublicCapability {
 					'read-privacy' => Participant::PRIVACY_PUBLIC,
 					// Transform the JsonSerializable language tuples to arrays
 					'translations' => json_decode(json_encode($this->translationManager->getLanguages()), true),
+					'typing-privacy' => Participant::PRIVACY_PUBLIC,
 				],
 				'conversations' => [
 					'can-create' => $user instanceof IUser && !$this->talkConfig->isNotAllowedToCreateConversations($user)
@@ -159,6 +161,7 @@ class Capabilities implements IPublicCapability {
 		if ($user instanceof IUser) {
 			$capabilities['config']['attachments']['folder'] = $this->talkConfig->getAttachmentFolder($user->getUID());
 			$capabilities['config']['chat']['read-privacy'] = $this->talkConfig->getUserReadPrivacy($user->getUID());
+			$capabilities['config']['chat']['typing-privacy'] = $this->talkConfig->getUserTypingPrivacy($user->getUID());
 		}
 
 		$pubKey = $this->talkConfig->getSignalingTokenPublicKey();
