@@ -120,3 +120,4 @@
 * `config => call => can-upload-background` - Boolean flag whether the user can upload a custom virtual background (requires an account and non-zero quota). Uploads should be done to Talk/Backgrounds/ (respecting the user's attachment directory setting).
 * `config => call => supported-reactions` - A list of emojis supported as call reactions. If the list is absent or empty, clients should not show the emoji reaction option in calls.
 * `config => chat => typing-privacy` - User defined numeric value to enable 1 or disable 0 the typing indicator to other users
+* `typing-privacy` - Support toggle typing privacy
