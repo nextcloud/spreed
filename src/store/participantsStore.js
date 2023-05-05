@@ -82,6 +82,22 @@ const getters = {
 	},
 
 	/**
+	 * Gets the array of external session ids.
+	 *
+	 * @param {object} state - the state object.
+	 * @param {object} rootState - the root state object.
+	 * @return {Array} the typing session IDs array.
+	 */
+	externalTypingSignals: (state, rootState) => (token) => {
+		if (state.typing[token]) {
+			return Object.values(state.typing[token]).filter(id => {
+				return rootState.getSessionId() !== id
+			})
+		}
+		return []
+	},
+
+	/**
 	 * Gets the participants array filtered to include only those that are
 	 * currently typing.
 	 *
@@ -91,7 +107,7 @@ const getters = {
 	 * store).
 	 */
 	participantsListTyping: (state, getters) => (token) => {
-		if (!state.typing[token]) {
+		if (!state.typing[token]?.length) {
 			return []
 		}
 

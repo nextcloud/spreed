@@ -44,7 +44,7 @@
 					@click="selectAttachmentFolder" />
 				<NcButton type="primary"
 					@click="selectAttachmentFolder">
-					{{ t('spreed', 'Browse…') }}
+					{{ t('spreed', 'Browse …') }}
 				</NcButton>
 			</div>
 		</NcAppSettingsSection>

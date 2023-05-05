@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div v-show="typingParticipants.length" class="indicator">
+	<div v-show="showIndicatorMessage" class="indicator">
 		<div class="indicator__wrapper">
 			<div class="indicator__avatars">
 				<AvatarWrapper v-for="(participant, index) in visibleParticipants"
@@ -59,6 +59,14 @@ export default {
 	},
 
 	computed: {
+		isGuest() {
+			return this.$store.getters.getActorType() === 'guests'
+		},
+
+		externalTypingSignals() {
+			return this.$store.getters.externalTypingSignals(this.token)
+		},
+
 		typingParticipants() {
 			return this.$store.getters.participantsListTyping(this.token).filter(participant => {
 				return participant.actorId !== this.$store.getters.getActorId()
@@ -73,7 +81,17 @@ export default {
 			return this.typingParticipants.slice(3).length
 		},
 
+		showIndicatorMessage() {
+			return this.isGuest
+				? !!this.externalTypingSignals.length
+				: !!this.typingParticipants.length
+		},
+
 		indicatorMessage() {
+			if (this.isGuest) {
+				return t('spreed', 'Someone is typing …')
+			}
+
 			if (!this.typingParticipants) {
 				return ''
 			}
@@ -81,22 +99,22 @@ export default {
 			const [user1, user2, user3] = this.prepareNamesList()
 
 			if (this.typingParticipants.length === 1) {
-				return t('spreed', '{user1} is typing...',
+				return t('spreed', '{user1} is typing …',
 					{ user1 }, undefined, { escape: false })
 			}
 
 			if (this.typingParticipants.length === 2) {
-				return t('spreed', '{user1} and {user2} are typing...',
+				return t('spreed', '{user1} and {user2} are typing …',
 					{ user1, user2 }, undefined, { escape: false })
 			}
 
 			if (this.typingParticipants.length === 3) {
-				return t('spreed', '{user1}, {user2} and {user3} are typing...',
+				return t('spreed', '{user1}, {user2} and {user3} are typing …',
 					{ user1, user2, user3 }, undefined, { escape: false })
 			}
 
-			return n('spreed', '{user1}, {user2}, {user3} and %n other are typing...',
-				'{user1}, {user2}, {user3} and %n others are typing...',
+			return n('spreed', '{user1}, {user2}, {user3} and %n other are typing …',
+				'{user1}, {user2}, {user3} and %n others are typing …',
 				this.hiddenParticipantsCount, { user1, user2, user3 }, { escape: false })
 		},
 	},
