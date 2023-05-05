@@ -332,6 +332,8 @@ export default {
 
 	emits: ['sent', 'failure'],
 
+	expose: ['focusInput'],
+
 	setup() {
 		const { openViewer } = useViewer()
 		return { openViewer }
