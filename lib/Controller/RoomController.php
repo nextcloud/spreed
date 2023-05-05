@@ -50,11 +50,11 @@ use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BreakoutRoomService;
+use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
-use OCA\Talk\Service\SIPBridgeService;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\App\IAppManager;
@@ -97,7 +97,7 @@ class RoomController extends AEnvironmentAwareController {
 	protected IUserStatusManager $statusManager;
 	protected IEventDispatcher $dispatcher;
 	protected ITimeFactory $timeFactory;
-	protected SIPBridgeService $SIPBridgeService;
+	protected ChecksumVerificationService $checksumVerificationService;
 	protected RoomFormatter $roomFormatter;
 	protected IConfig $config;
 	protected Config $talkConfig;
@@ -123,7 +123,7 @@ class RoomController extends AEnvironmentAwareController {
 		IUserStatusManager $statusManager,
 		IEventDispatcher $dispatcher,
 		ITimeFactory $timeFactory,
-		SIPBridgeService $SIPBridgeService,
+		ChecksumVerificationService $checksumVerificationService,
 		RoomFormatter $roomFormatter,
 		IConfig $config,
 		Config $talkConfig,
@@ -146,7 +146,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->statusManager = $statusManager;
 		$this->dispatcher = $dispatcher;
 		$this->timeFactory = $timeFactory;
-		$this->SIPBridgeService = $SIPBridgeService;
+		$this->checksumVerificationService = $checksumVerificationService;
 		$this->config = $config;
 		$this->talkConfig = $talkConfig;
 		$this->cloudIdManager = $cloudIdManager;
@@ -385,7 +385,7 @@ class RoomController extends AEnvironmentAwareController {
 		$random = $this->request->getHeader('TALK_SIPBRIDGE_RANDOM');
 		$checksum = $this->request->getHeader('TALK_SIPBRIDGE_CHECKSUM');
 		$secret = $this->talkConfig->getSIPSharedSecret();
-		return $this->SIPBridgeService->validateSIPBridgeRequest($random, $checksum, $secret, $token);
+		return $this->checksumVerificationService->validateRequest($random, $checksum, $secret, $token);
 	}
 
 	protected function formatRoom(Room $room, ?Participant $currentParticipant, ?array $statuses = null, bool $isSIPBridgeRequest = false, bool $isListingBreakoutRooms = false): array {
