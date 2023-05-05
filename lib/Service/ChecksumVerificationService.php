@@ -30,9 +30,9 @@ class ChecksumVerificationService {
 	/**
 	 * Check if the current request is coming from an allowed backend.
 	 *
-	 * The backend servers are sending custom headers "Talk-…-Random"
+	 * The backend servers are sending custom headers "Talk-{{FEATURE}}-Random"
 	 * containing at least 32 bytes random data, and the header
-	 * "Talk-…-Checksum", which is the SHA256-HMAC of the random data
+	 * "Talk-{{FEATURE}}-Checksum", which is the SHA256-HMAC of the random data
 	 * and the body of the request, calculated with the shared secret from the
 	 * configuration.
 	 *
