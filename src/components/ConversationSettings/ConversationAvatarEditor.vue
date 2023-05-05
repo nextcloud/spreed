@@ -101,7 +101,8 @@
 					<NcButton @click="cancel">
 						{{ t('spreed', 'Cancel') }}
 					</NcButton>
-					<NcButton type="primary"
+					<NcButton v-if="!controlled"
+						type="primary"
 						@click="saveAvatar">
 						{{ t('spreed', 'Set picture') }}
 					</NcButton>
@@ -173,7 +174,16 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		/**
+		 * Force component to emit signals and be used from parent components
+		 */
+		controlled: {
+			type: Boolean,
+			default: false,
 		},
+	},
+
+	emits: ['avatar-edited'],
 
 	data() {
 		return {
@@ -206,6 +216,19 @@ export default {
 
 		showControls() {
 			return this.editable && (this.showCropper || this.emojiAvatar)
+		},
+	},
+
+	watch: {
+		showCropper(value) {
+			if (this.controlled) {
+				this.$emit('avatar-edited', value)
+			}
+		},
+		emojiAvatar(value) {
+			if (this.controlled) {
+				this.$emit('avatar-edited', !!value)
+			}
 		},
 	},
 
