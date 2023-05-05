@@ -247,8 +247,8 @@ import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContente
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import Quote from '../Quote.vue'
-import TypingIndicator from '../TypingIndicator/TypingIndicator.vue'
 import AudioRecorder from './AudioRecorder/AudioRecorder.vue'
+import NewMessageFormTypingIndicator from './NewMessageFormTypingIndicator.vue'
 import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
 import TemplatePreview from './TemplatePreview.vue'
 
@@ -287,10 +287,10 @@ export default {
 		NcModal,
 		NcRichContenteditable,
 		NcTextField,
+		NewMessageFormTypingIndicator,
 		Quote,
 		SimplePollsEditor,
 		TemplatePreview,
-		TypingIndicator,
 		// Icons
 		BellOff,
 		EmoticonOutline,

@@ -45,7 +45,7 @@ import escapeHtml from 'escape-html'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
 export default {
-	name: 'TypingIndicator',
+	name: 'NewMessageFormTypingIndicator',
 	components: { AvatarWrapper },
 
 	props: {
