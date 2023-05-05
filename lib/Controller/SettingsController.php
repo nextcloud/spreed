@@ -114,11 +114,7 @@ class SettingsController extends OCSController {
 			return false;
 		}
 
-		if ($setting === 'typing_privacy') {
-			return $value === '1' || $value === '0';
-		}
-
-		if ($setting === 'read_status_privacy') {
+		if ($setting === 'typing_privacy' || $setting === 'read_status_privacy') {
 			return (int) $value === Participant::PRIVACY_PUBLIC ||
 				(int) $value === Participant::PRIVACY_PRIVATE;
 		}

@@ -77,8 +77,8 @@
 * `1` Read status is private
 
 ### Participant typing privacy
-* `0` Make visible the typing status
-* `1` Hide the typing status
+* `0` Typing status is public
+* `1` Typing status is private
 
 ### Attendee types
 * `users` - Logged-in users

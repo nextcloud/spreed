@@ -197,7 +197,7 @@ trait TInitialState {
 
 		$this->initialState->provideInitialState(
 			'typing_privacy',
-			'0'
+			Participant::PRIVACY_PUBLIC
 		);
 
 		$this->initialState->provideInitialState(
