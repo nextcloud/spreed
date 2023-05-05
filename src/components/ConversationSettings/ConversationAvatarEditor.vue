@@ -23,8 +23,8 @@
 
 <template>
 	<section id="vue-avatar-section">
-		<div v-if="!showCropper" class="avatar__container">
-			<div class="avatar__preview">
+		<div class="avatar__container avatar__container--horizontal">
+			<div v-if="!showCropper" class="avatar__preview">
 				<div v-if="emojiAvatar"
 					class="avatar__preview-emoji"
 					:style="{'background-color': backgroundColor}">
@@ -36,23 +36,32 @@
 					:disable-menu="true" />
 				<div v-else class="icon-loading" />
 			</div>
-			<template v-if="editable">
+			<VueCropper v-show="showCropper"
+				ref="cropper"
+				class="avatar__cropper"
+				v-bind="cropperOptions" />
+			<div v-if="editable" class="avatar__container">
 				<div class="avatar__buttons">
-					<NcEmojiPicker :per-line="5"
-						@select="setEmoji">
+					<!-- Set emoji as avatar -->
+					<template v-if="!showCropper">
+						<NcEmojiPicker :per-line="5"
+							@select="setEmoji">
 						<NcButton :aria-label="t('spreed', 'Set emoji as profile picture')">
-							<template #icon>
-								<EmoticonOutline :size="20" />
-							</template>
-						</NcButton>
-					</NcEmojiPicker>
-					<NcColorPicker v-if="emojiAvatar" v-model="backgroundColor">
+								<template #icon>
+									<EmoticonOutline :size="20" />
+								</template>
+							</NcButton>
+						</NcEmojiPicker>
+						<NcColorPicker v-if="emojiAvatar" v-model="backgroundColor">
 						<NcButton :aria-label="t('spreed', 'Set background color for profile picture')">
-							<template #icon>
-								<Palette :size="20" />
-							</template>
-						</NcButton>
-					</NcColorPicker>
+								<template #icon>
+									<Palette :size="20" />
+								</template>
+							</NcButton>
+						</NcColorPicker>
+					</template>
+
+					<!-- Set picture as avatar -->
 					<NcButton :aria-label="t('settings', 'Upload profile picture')"
 						@click="activateLocalFilePicker">
 						<template #icon>
@@ -65,6 +74,8 @@
 							<Folder :size="20" />
 						</template>
 					</NcButton>
+
+					<!-- Remove existing avatar -->
 					<NcButton v-if="hasAvatar"
 						:aria-label="t('settings', 'Remove profile picture')"
 						@click="removeAvatar">
@@ -81,23 +92,15 @@
 					type="file"
 					:accept="validMimeTypes.join(',')"
 					@change="onChange">
-			</template>
-		</div>
-
-		<!-- Use v-show to ensure early cropper ref availability -->
-		<div v-if="editable" class="avatar__container">
-			<VueCropper v-show="showCropper"
-				ref="cropper"
-				class="avatar__cropper"
-				v-bind="cropperOptions" />
-			<div v-show="isEdited" class="avatar__buttons">
-				<NcButton @click="cancel">
-					{{ t('spreed', 'Cancel') }}
-				</NcButton>
-				<NcButton type="primary"
-					@click="saveAvatar">
-					{{ t('spreed', 'Set as conversation picture') }}
-				</NcButton>
+				<div v-if="showControls" class="avatar__buttons">
+					<NcButton @click="cancel">
+						{{ t('spreed', 'Cancel') }}
+					</NcButton>
+					<NcButton type="primary"
+						@click="saveAvatar">
+						{{ t('spreed', 'Set picture') }}
+					</NcButton>
+				</div>
 			</div>
 		</div>
 	</section>
@@ -165,7 +168,7 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-	},
+		},
 
 	data() {
 		return {
@@ -193,11 +196,11 @@ export default {
 		},
 
 		hasAvatar() {
-			return !!this.conversation.avatarVersion
+			return this.conversation.isCustomAvatar
 		},
 
-		isEdited() {
-			return this.showCropper || this.emojiAvatar
+		showControls() {
+			return this.editable && (this.showCropper || this.emojiAvatar)
 		},
 	},
 
@@ -340,10 +343,13 @@ section {
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
 		align-items: center;
-		gap: 16px 0;
-		width: 300px;
+		gap: 16px;
+
+		&--horizontal {
+			flex-direction: row;
+			align-items: flex-start;
+		}
 	}
 
 	&__warning {
@@ -354,8 +360,10 @@ section {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		width: 180px;
+		flex-shrink: 0;
+		width: 300px;
 		height: 180px;
+		padding: 0 60px;
 
 		&-emoji {
 			display: flex;
@@ -373,7 +381,7 @@ section {
 
 	&__buttons {
 		display: flex;
-		gap: 0 10px;
+		gap: 10px;
 	}
 
 	&__cropper {
