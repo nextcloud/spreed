@@ -79,10 +79,13 @@
 		</NcActionButton>
 
 		<!-- Fullscreen -->
-		<NcActionButton :icon="iconFullscreen"
-			:aria-label="t('spreed', 'Toggle fullscreen')"
+		<NcActionButton :aria-label="t('spreed', 'Toggle fullscreen')"
 			:close-after-click="true"
 			@click="toggleFullscreen">
+			<template #icon>
+				<Fullscreen v-if="!isFullscreen" :size="20" />
+				<FullscreenExit v-else :size="20" />
+			</template>
 			{{ labelFullscreen }}
 		</NcActionButton>
 
@@ -147,6 +150,8 @@
 import Cog from 'vue-material-design-icons/Cog.vue'
 import DotsCircle from 'vue-material-design-icons/DotsCircle.vue'
 import DotsHorizontal from 'vue-material-design-icons/DotsHorizontal.vue'
+import Fullscreen from 'vue-material-design-icons/Fullscreen.vue'
+import FullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import MicrophoneOff from 'vue-material-design-icons/MicrophoneOff.vue'
 import RecordCircle from 'vue-material-design-icons/RecordCircle.vue'
@@ -182,6 +187,8 @@ export default {
 		PromotedView,
 		Cog,
 		DotsHorizontal,
+		Fullscreen,
+		FullscreenExit,
 		GridView,
 		HandBackLeft,
 		VideoIcon,
