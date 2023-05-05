@@ -21,10 +21,10 @@
 
 <template>
 	<div class="wrapper">
-		<NcButton v-tooltip.bottom="t('spreed', 'Create a new group conversation')"
-			type="tertiary"
+		<NcButton type="tertiary"
 			class="toggle"
 			:aria-label="t('spreed', 'Create a new group conversation')"
+			:title="t('spreed', 'Create a new group conversation')"
 			@click="showModal">
 			<template #icon>
 				<Plus :size="20" />
@@ -146,7 +146,6 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadi
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import ConversationAvatarEditor from '../../ConversationSettings/ConversationAvatarEditor.vue'
 import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
@@ -154,7 +153,7 @@ import Confirmation from './Confirmation/Confirmation.vue'
 import SetContacts from './SetContacts/SetContacts.vue'
 
 import { useIsInCall } from '../../../composables/useIsInCall.js'
-import { CONVERSATION } from '../../../constants.js'
+import { CONVERSATION, PRIVACY } from '../../../constants.js'
 import participant from '../../../mixins/participant.js'
 import {
 	createPublicConversation,
@@ -176,10 +175,6 @@ const NEW_CONVERSATION = {
 export default {
 
 	name: 'NewGroupConversation',
-
-	directives: {
-		tooltip: Tooltip,
-	},
 
 	components: {
 		ConversationAvatarEditor,
@@ -287,7 +282,7 @@ export default {
 		},
 		/**
 		 * Reinitialise the component to it's initial state. This is necessary
-		 * because once the component is mounted it's data would persist even if
+		 * because once the component is mounted its data would persist even if
 		 * the modal closes
 		 */
 		closeModal() {
@@ -313,7 +308,7 @@ export default {
 			this.page = 0
 		},
 		/**
-		 * Handles the creation of the group conversation, adds the seleced
+		 * Handles the creation of the group conversation, adds the selected
 		 * participants to it and routes to it
 		 */
 		async handleCreateConversation() {
@@ -321,29 +316,21 @@ export default {
 
 			// TODO: move all operations to a single store action
 			// and commit + addConversation only once at the very end
-			if (this.isPublic) {
-				try {
-					await this.createPublicConversation()
+			try {
+				if (this.isPublic) {
+					await this.createConversation(PRIVACY.PUBLIC)
 					if (this.password && this.passwordProtect) {
 						await setConversationPassword(this.newConversation.token, this.password)
 					}
-				} catch (exception) {
-					console.debug(exception)
-					this.isLoading = false
-					this.error = true
-					// Stop the execution of the method on exceptions.
-					return
+				} else {
+					await this.createConversation(PRIVACY.PRIVATE)
 				}
-			} else {
-				try {
-					await this.createPrivateConversation()
-				} catch (exception) {
-					console.debug(exception)
-					this.isLoading = false
-					this.error = true
-					// Stop the execution of the method on exceptions.
-					return
-				}
+			} catch (exception) {
+				console.debug(exception)
+				this.isLoading = false
+				this.error = true
+				// Stop the execution of the method on exceptions.
+				return
 			}
 
 			try {
@@ -384,27 +371,18 @@ export default {
 			}
 		},
 		/**
-		 * Creates a new private conversation, adds it to the store and sets
+		 * Creates a new private or public conversation, adds it to the store and sets
 		 * the local token value to the newly created conversation's token
+		 *
+		 * @param {number} flag choose to send a request with private or public flag
 		 */
-		async createPrivateConversation() {
-			const response = await createPrivateConversation(this.conversationNameTrimmed)
-			const conversation = response.data.ocs.data
-			this.$store.dispatch('addConversation', conversation)
-			this.newConversation.token = conversation.token
-			if (this.isAvatarEdited) {
-				this.$refs.conversationAvatar.saveAvatar()
+		async createConversation(flag) {
+			let response
+			if (flag === PRIVACY.PRIVATE) {
+				response = await createPrivateConversation(this.conversationNameTrimmed)
+			} else if (flag === PRIVACY.PUBLIC) {
+				response = await createPublicConversation(this.conversationNameTrimmed)
 			}
-			if (this.newConversation.description) {
-				this.handleUpdateDescription()
-			}
-		},
-		/**
-		 * Creates a new public conversation, adds it to the store and sets
-		 * the local token value to the newly created conversation's token
-		 */
-		async createPublicConversation() {
-			const response = await createPublicConversation(this.conversationNameTrimmed)
 			const conversation = response.data.ocs.data
 			this.$store.dispatch('addConversation', conversation)
 			this.newConversation.token = conversation.token
