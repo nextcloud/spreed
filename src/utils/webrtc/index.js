@@ -20,8 +20,9 @@
  */
 
 import Axios from '@nextcloud/axios'
+import { getCapabilities } from '@nextcloud/capabilities'
 
-import { PARTICIPANT, VIRTUAL_BACKGROUND } from '../../constants.js'
+import { PARTICIPANT, PRIVACY, VIRTUAL_BACKGROUND } from '../../constants.js'
 import { fetchSignalingSettings } from '../../services/signalingService.js'
 import store from '../../store/index.js'
 import CancelableRequest from '../cancelableRequest.js'
@@ -47,7 +48,8 @@ let sentVideoQualityThrottler = null
 
 // This does not really belongs here, as it is unrelated to WebRTC, but it is
 // included here for the time being until signaling and WebRTC are split.
-const signalingTypingHandler = new SignalingTypingHandler(store)
+const enableTypingIndicators = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] === PRIVACY.PUBLIC
+const signalingTypingHandler = enableTypingIndicators ? new SignalingTypingHandler(store) : null
 
 let cancelFetchSignalingSettings = null
 let signaling = null
@@ -132,7 +134,7 @@ async function connectSignaling(token) {
 			signaling.settings = settings
 		})
 
-		signalingTypingHandler.setSignaling(signaling)
+		signalingTypingHandler?.setSignaling(signaling)
 	}
 
 	tokensInSignaling[token] = true
@@ -449,7 +451,7 @@ function signalingKill() {
  * @param {boolean} typing whether the current participant is typing.
  */
 function signalingSetTyping(typing) {
-	signalingTypingHandler.setTyping(typing)
+	signalingTypingHandler?.setTyping(typing)
 }
 
 export {
