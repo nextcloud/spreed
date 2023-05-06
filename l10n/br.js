@@ -635,6 +635,7 @@ OC.L10N.register(
     "Done" : "Graet",
     "No audio" : "Audio ebet",
     "No camera" : "Kamera ebet",
+    "Upload" : "Pellkas",
     "Files" : "Restroù",
     "File to share" : "Restr da rannañ",
     "Invalid path selected" : "An hent dibabet n'eus ket anezhañ",

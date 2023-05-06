@@ -828,7 +828,6 @@ OC.L10N.register(
     "Choose your profile picture" : "Izbor slike profila",
     "Error setting profile picture" : "Napaka nastavljanja slike profila",
     "Error cropping profile picture" : "Napaka obrezovanja slike profila",
-    "Error saving profile picture" : "Napaka shranjevanja slike profila",
     "Error removing profile picture" : "Napaka odstranjevanja slike profila",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "Nastavitve določajo privzeta dovoljenja udeležencev tega pogovora. Te ne posegajo v dovoljenja moderatorjev.",
     "Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Po vsaki spremembi dovoljenj v tem odseku se dovoljenja po meri, predhodno dodeljena posameznim udeležencem, samodejno odstranijo.",
