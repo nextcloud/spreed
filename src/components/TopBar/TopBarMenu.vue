@@ -260,9 +260,9 @@ export default {
 
 		labelFullscreen() {
 			if (this.isFullscreen) {
-				return t('spreed', 'Exit fullscreen (F)')
+				return t('spreed', 'Exit full screen (F)')
 			}
-			return t('spreed', 'Fullscreen (F)')
+			return t('spreed', 'Full screen (F)')
 		},
 
 		isFileConversation() {
