@@ -868,7 +868,6 @@
     "Choose your profile picture" : "Escolha sua foto de perfil",
     "Error setting profile picture" : "Erro ao definir a foto do perfil",
     "Error cropping profile picture" : "Erro ao recortar a foto do perfil",
-    "Error saving profile picture" : "Erro ao salvar a foto do perfil",
     "Error removing profile picture" : "Erro ao remover a foto do perfil",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "Edite as permissões padrão para os participantes desta conversa. Essas configurações não afetam os moderadores.",
     "Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Toda vez que as permissões são modificadas nesta seção, as permissões personalizadas anteriormente atribuídas a participantes individuais serão perdidas.",
