@@ -856,7 +856,6 @@ OC.L10N.register(
     "Choose your profile picture" : "Escolle a túa imaxe de perfil",
     "Error setting profile picture" : "Produciuse un erro ao configurar a imaxe de perfil",
     "Error cropping profile picture" : "Produciuse un erro ao recortar a imaxe de perfil",
-    "Error saving profile picture" : "Produciuse un erro ao gardar a imaxe de perfil",
     "Error removing profile picture" : "Produciuse un erro ao eliminar a imaxe de perfil",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "Edita os permisos predeterminados dos participantes nesta conversa. Esta configuración non afecta aos moderadores.",
     "Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Cada vez que se modifiquen os permisos nesta sección, perderanse os permisos personalizados previamente asignados aos participantes individuais.",

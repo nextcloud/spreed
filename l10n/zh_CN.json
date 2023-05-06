@@ -775,7 +775,6 @@
     "Choose your profile picture" : "选择您的个人资料图片",
     "Error setting profile picture" : "设置个人资料图片出错 ",
     "Error cropping profile picture" : "剪裁个人资料图片出错",
-    "Error saving profile picture" : "保存个人资料图片出错",
     "Error removing profile picture" : "移除个人资料图片出错",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "编辑此对话中参与者的默认权限。这些设置不会影响版主。",
     "All permissions" : "所有权限",

@@ -797,7 +797,6 @@ OC.L10N.register(
     "Choose your profile picture" : "Vyberte si váš profilový obrázok",
     "Error setting profile picture" : "Chyba pri nastavovaní profilového obrázku",
     "Error cropping profile picture" : "Chyba pri orezávaní profilového obrázku",
-    "Error saving profile picture" : "Chyba pri ukladaní profilového obrázku",
     "Error removing profile picture" : "Chyba pri odstraňovaní profilového obrázku",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "Upravte predvolené práva pre účastníkov tejto konverzácie. Tieto nastavenia neovplyvňujú moderátorov.",
     "Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Zakaždým, keď sa v tejto sekcii upravia oprávnenia, vlastné oprávnenia, ktoré boli predtým pridelené jednotlivým účastníkom, sa stratia.",

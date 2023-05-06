@@ -527,7 +527,6 @@ OC.L10N.register(
     "Remove profile picture" : "Šalinti profilio paveikslėlį",
     "Error setting profile picture" : "Klaida nustatant profilio paveikslėlį",
     "Error cropping profile picture" : "Klaida apkerpant profilio paveikslėlį",
-    "Error saving profile picture" : "Klaida įrašant profilio paveikslėlį",
     "Error removing profile picture" : "Klaida šalinant profilio paveikslėlį",
     "Restricted" : "Apribota",
     "Conversation settings" : "Pokalbio nustatymai",
