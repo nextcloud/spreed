@@ -79,7 +79,7 @@
 		</NcActionButton>
 
 		<!-- Fullscreen -->
-		<NcActionButton :aria-label="t('spreed', 'Toggle fullscreen')"
+		<NcActionButton :aria-label="t('spreed', 'Toggle full screen')"
 			:close-after-click="true"
 			@click="toggleFullscreen">
 			<template #icon>
