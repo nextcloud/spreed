@@ -251,13 +251,6 @@ export default {
 			return this.$store.getters.isFullscreen()
 		},
 
-		iconFullscreen() {
-			if (this.isInCall) {
-				return 'forced-white icon-fullscreen'
-			}
-			return 'icon-fullscreen'
-		},
-
 		labelFullscreen() {
 			if (this.isFullscreen) {
 				return t('spreed', 'Exit full screen (F)')
