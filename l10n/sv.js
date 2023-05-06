@@ -574,7 +574,6 @@ OC.L10N.register(
     "Choose your profile picture" : "Välj din profilbild",
     "Error setting profile picture" : "Fel vid inställning av profilbild",
     "Error cropping profile picture" : "Det gick inte att beskära profilbilden",
-    "Error saving profile picture" : "Det gick inte att spara profilbilden",
     "Error removing profile picture" : "Det gick inte att ta bort profilbilden",
     "Restricted" : "Begränsad",
     "Conversation settings" : "Konversationsinställningar",

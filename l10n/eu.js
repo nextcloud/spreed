@@ -875,7 +875,6 @@ OC.L10N.register(
     "Please select a valid PNG or JPG file" : "Mesedez, hautatu baliozko PNG edo JPG fitxategi bat",
     "Error setting profile picture" : "Errorea profil-irudia ezartzean",
     "Error cropping profile picture" : "Errorea profil-irudia moztean",
-    "Error saving profile picture" : "Errorea profil-irudia gordetzean",
     "Error removing profile picture" : "Errorea profil-irudia kentzean",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "Editatu elkarrizketa honen baimen lehenetsiak parte-hartzaileentzat. Ezarpen hauek ez dituzte moderatzaileen baimenak aldatzen.",
     "Every time permissions are modified in this section, custom permissions previously assigned to individual participants will be lost." : "Atal honetako baimenak aldatzen diren bakoitzean, parte-hartzaileei esleitutako baimen pertsonalizatuak galduko dira.",
