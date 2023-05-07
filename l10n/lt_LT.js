@@ -627,6 +627,7 @@ OC.L10N.register(
     "No camera available" : "Nėra prieinamos kameros",
     "Select camera" : "Pasirinkti kamerą",
     "Devices" : "Įrenginiai",
+    "Done" : "Atlikta",
     "No audio" : "Nėra jokio garso",
     "No camera" : "Nėra kameros",
     "Upload" : "Įkelti",
