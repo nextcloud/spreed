@@ -939,7 +939,7 @@ OC.L10N.register(
     "Error occurred while disallowing guests" : "Konuklar reddedilirken sorun çıktı",
     "Invitations sent" : "Çağrılar gönderildi",
     "Error occurred when sending invitations" : "Çağrılar gönderilirken sorun çıktı",
-    "Open conversation to registered users, showing it in search results" : "Görüşmeyi kayıtlı kullanıcılara açarak arama sonuçlarında görüntülenmesini sağlayın",
+    "Open conversation to registered users, showing it in search results" : "Görüşme kayıtlı kullanıcılara açılarak arama sonuçlarında görüntülensin",
     "Also open to guest app users" : "Ayrıca konuk uygulama kullanıcılarına da açılsın",
     "Error occurred when opening or limiting the conversation" : "Görüşme açılır ya da kısıtlanırken sorun çıktı",
     "Enabling the lobby will remove non-moderators from the ongoing call." : "Giriş etkinleştirildiğinde sorumlu olmayanlar sürmekte olan çağrıdan çıkarılır.",

@@ -51,6 +51,7 @@
     "- Link various items using the new smart-picker by typing a \"/\"" : "- Enlace varios ítems utilizando el nuevo seleccionador inteligente escribiendo una \"/\"",
     "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Los moderadores ahora pueden crear salas de grupos (requiere el servidor externo de señalización)",
     "- Calls can now be recorded (requires the external signaling server)" : "- Las llamadas ahora pueden ser grabadas (requiere el servidor externo de señalización)",
+    "- Conversations can now have an avatar or emoji as icon" : "- Ahora, las conversaciones pueden tener como icono un avatar o emoji",
     "There are currently no commands available." : "Actualmente no hay comandos disponibles.",
     "The command does not exist" : "El comando no existe",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Se ha producido un error al ejecutar el comando. Por favor, contacte con el administrador para que compruebe los registros.",
