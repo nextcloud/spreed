@@ -59,11 +59,14 @@
 import Star from 'vue-material-design-icons/Star.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { CONVERSATION } from '../constants.js'
+
+const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
 
 export default {
 	name: 'ConversationIcon',
@@ -162,6 +165,25 @@ export default {
 				return 'icon-contacts'
 			}
 
+			if (!supportsAvatar) {
+				if (this.item.objectType === 'file') {
+					return 'icon-file'
+				} else if (this.item.objectType === 'share:password') {
+					return 'icon-password'
+				} else if (this.item.objectType === 'emails') {
+					return 'icon-mail'
+				} else if (this.item.type === CONVERSATION.TYPE.CHANGELOG) {
+					return 'icon-changelog'
+				} else if (this.item.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER) {
+					return 'icon-user'
+				} else if (this.item.type === CONVERSATION.TYPE.GROUP) {
+					return 'icon-contacts'
+				} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
+					return 'icon-public'
+				}
+				return undefined
+			}
+
 			if (this.item.token) {
 				// Existing conversations use the /avatar endpoint… Always!
 				return undefined
@@ -194,6 +216,10 @@ export default {
 		},
 
 		avatarUrl() {
+			if (!supportsAvatar) {
+				return undefined
+			}
+
 			const darkTheme = window.getComputedStyle(document.body)
 				.getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
 			const avatarEndpoint = 'apps/spreed/api/v1/room/{token}/avatar' + (darkTheme ? '/dark' : '')
