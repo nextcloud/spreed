@@ -51,14 +51,16 @@
 						:label="t('spreed', 'Description')"
 						label-visible />
 
-					<label class="avatar-editor__label">
-						{{ t('spreed', 'Picture') }}
-					</label>
-					<ConversationAvatarEditor ref="conversationAvatar"
-						:conversation="newConversation"
-						controlled
-						editable
-						@avatar-edited="setIsAvatarEdited" />
+					<template v-if="supportsAvatar">
+						<label class="avatar-editor__label">
+							{{ t('spreed', 'Picture') }}
+						</label>
+						<ConversationAvatarEditor ref="conversationAvatar"
+							:conversation="newConversation"
+							controlled
+							editable
+							@avatar-edited="setIsAvatarEdited" />
+					</template>
 
 					<label class="new-group-conversation__label">
 						{{ t('spreed', 'Conversation visibility') }}
@@ -144,6 +146,7 @@
 
 import Plus from 'vue-material-design-icons/Plus.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -214,6 +217,7 @@ export default {
 			passwordProtect: false,
 			listable: CONVERSATION.LISTABLE.NONE,
 			isAvatarEdited: false,
+			supportsAvatar: getCapabilities()?.spreed?.features?.includes('avatar'),
 		}
 	},
 

@@ -21,11 +21,13 @@
 
 <template>
 	<Fragment>
-		<h4 class="app-settings-section__subtitle">
-			{{ t('spreed', 'Picture') }}
-		</h4>
-		<ConversationAvatarEditor :conversation="conversation"
-			:editable="canFullModerate" />
+		<template v-if="supportsAvatar">
+			<h4 class="app-settings-section__subtitle">
+				{{ t('spreed', 'Picture') }}
+			</h4>
+			<ConversationAvatarEditor :conversation="conversation"
+				:editable="canFullModerate" />
+		</template>
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Name') }}
 		</h4>
@@ -54,6 +56,7 @@
 <script>
 import { Fragment } from 'vue-frag'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 
 import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
@@ -86,6 +89,7 @@ export default {
 			isDescriptionLoading: false,
 			isEditingName: false,
 			isNameLoading: false,
+			supportsAvatar: getCapabilities()?.spreed?.features?.includes('avatar'),
 		}
 	},
 
