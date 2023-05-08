@@ -21,10 +21,10 @@
 
 <template>
 	<div class="wrapper">
-		<NcButton v-tooltip.bottom="t('spreed', 'Create a new group conversation')"
-			type="tertiary"
+		<NcButton type="tertiary"
 			class="toggle"
 			:aria-label="t('spreed', 'Create a new group conversation')"
+			:title="t('spreed', 'Create a new group conversation')"
 			@click="showModal">
 			<template #icon>
 				<Plus :size="20" />
@@ -39,44 +39,64 @@
 			<div class="new-group-conversation talk-modal">
 				<h2>{{ t('spreed', 'Create a new group conversation') }}</h2>
 				<!-- Content -->
-				<div class="new-group-conversation__content">
-					<!-- First page -->
-					<template v-if="page === 0">
-						<SetConversationName v-model="conversationNameInput"
-							@click-enter="handleEnter" />
-						<NcCheckboxRadioSwitch :checked.sync="isPublic"
-							type="switch">
-							{{ t('spreed', 'Allow guests to join via link') }}
+				<div v-show="page === 0" class="new-group-conversation__content">
+					<NcTextField ref="conversationName"
+						v-model="conversationName"
+						:placeholder="t('spreed', 'Enter a name for this conversation')"
+						:label="t('spreed', 'Name')"
+						label-visible
+						@keydown.enter="handleEnter" />
+					<NcTextField v-model="conversationDescription"
+						:placeholder="t('spreed', 'Enter a description for this conversation')"
+						:label="t('spreed', 'Description')"
+						label-visible />
+
+					<label class="avatar-editor__label">
+						{{ t('spreed', 'Picture') }}
+					</label>
+					<ConversationAvatarEditor ref="conversationAvatar"
+						:conversation="newConversation"
+						controlled
+						editable
+						@avatar-edited="setIsAvatarEdited" />
+
+					<label class="new-group-conversation__label">
+						{{ t('spreed', 'Conversation visibility') }}
+					</label>
+					<NcCheckboxRadioSwitch :checked.sync="isPublic"
+						type="switch">
+						{{ t('spreed', 'Allow guests to join via link') }}
+					</NcCheckboxRadioSwitch>
+					<div class="new-group-conversation__wrapper">
+						<NcCheckboxRadioSwitch :checked.sync="passwordProtect"
+							type="switch"
+							:disabled="!isPublic"
+							@checked="handleCheckboxInput">
+							{{ t('spreed', 'Password protect') }}
 						</NcCheckboxRadioSwitch>
-						<!-- Password protection -->
-						<template v-if="isPublic">
-							<NcCheckboxRadioSwitch :checked.sync="passwordProtect"
-								type="switch"
-								@checked="handleCheckboxInput">
-								{{ t('spreed', 'Password protect') }}
-							</NcCheckboxRadioSwitch>
-							<NcPasswordField v-if="passwordProtect"
-								autocomplete="new-password"
-								:check-password-strength="true"
-								:label-visible="true"
-								:label="t('spreed', 'Enter password')"
-								:value.sync="password" />
-						</template>
-						<ListableSettings v-model="listable" />
-					</template>
-					<!-- Second page -->
-					<template v-if="page === 1">
-						<SetContacts :conversation-name="conversationName" />
-					</template>
-					<!-- Third page -->
-					<template v-if="page === 2">
-						<Confirmation :token="token"
-							:conversation-name="conversationName"
-							:error="error"
-							:is-loading="isLoading"
-							:success="success"
-							:is-public="isPublic" />
-					</template>
+						<NcPasswordField v-if="passwordProtect"
+							autocomplete="new-password"
+							check-password-strength
+							:placeholder="t('spreed', 'Enter password')"
+							:aria-label="t('spreed', 'Enter password')"
+							:value.sync="password" />
+					</div>
+					<ListableSettings v-model="listable" />
+				</div>
+
+				<!-- Second page -->
+				<div v-if="page === 1" class="new-group-conversation__content">
+					<SetContacts :conversation-name="conversationNameTrimmed" />
+				</div>
+
+				<!-- Third page -->
+				<div v-else-if="page === 2" class="new-group-conversation__content">
+					<Confirmation :token="newConversation.token"
+						:conversation-name="conversationNameTrimmed"
+						:error="error"
+						:is-loading="isLoading"
+						:success="success"
+						:is-public="isPublic" />
 				</div>
 				<!-- Navigation: different buttons with different actions and
 				placement are rendered depending on the current page -->
@@ -124,19 +144,21 @@
 
 import Plus from 'vue-material-design-icons/Plus.vue'
 
+import { showError } from '@nextcloud/dialogs'
+
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
-import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
+import ConversationAvatarEditor from '../../ConversationSettings/ConversationAvatarEditor.vue'
 import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
 import Confirmation from './Confirmation/Confirmation.vue'
 import SetContacts from './SetContacts/SetContacts.vue'
-import SetConversationName from './SetConversationName/SetConversationName.vue'
 
 import { useIsInCall } from '../../../composables/useIsInCall.js'
-import { CONVERSATION } from '../../../constants.js'
+import { CONVERSATION, PRIVACY } from '../../../constants.js'
 import participant from '../../../mixins/participant.js'
 import {
 	createPublicConversation,
@@ -146,24 +168,30 @@ import {
 import { EventBus } from '../../../services/EventBus.js'
 import { addParticipant } from '../../../services/participantsService.js'
 
+const NEW_CONVERSATION = {
+	token: '',
+	displayName: '',
+	description: '',
+	hasPassword: false,
+	type: CONVERSATION.TYPE.GROUP,
+	readOnly: CONVERSATION.STATE.READ_ONLY,
+}
+
 export default {
 
 	name: 'NewGroupConversation',
 
-	directives: {
-		tooltip: Tooltip,
-	},
-
 	components: {
-		NcModal,
-		NcPasswordField,
-		SetContacts,
-		SetConversationName,
-		NcButton,
-		NcCheckboxRadioSwitch,
+		ConversationAvatarEditor,
 		Confirmation,
 		ListableSettings,
+		NcButton,
+		NcCheckboxRadioSwitch,
+		NcModal,
+		NcPasswordField,
+		NcTextField,
 		Plus,
+		SetContacts,
 	},
 
 	mixins: [participant],
@@ -175,17 +203,17 @@ export default {
 
 	data() {
 		return {
+			newConversation: Object.assign({}, NEW_CONVERSATION),
 			modal: false,
 			page: 0,
-			conversationNameInput: '',
 			isPublic: false,
 			isLoading: true,
-			token: '',
 			success: false,
 			error: false,
 			password: '',
 			passwordProtect: false,
 			listable: CONVERSATION.LISTABLE.NONE,
+			isAvatarEdited: false,
 		}
 	},
 
@@ -193,16 +221,42 @@ export default {
 		container() {
 			return this.$store.getters.getMainContainerSelector()
 		},
-		// Trims whitespaces from the input string
-		conversationName() {
-			return this.conversationNameInput.trim()
+		conversationName: {
+			get() {
+				return this.newConversation.displayName
+			},
+			set(event) {
+				this.newConversation.displayName = event.target.value
+			},
+		},
+		conversationDescription: {
+			get() {
+				return this.newConversation.description
+			},
+			set(event) {
+				this.newConversation.description = event.target.value
+			},
+		},
+		conversationNameTrimmed() {
+			return this.conversationName.trim()
 		},
 		// Controls the disabled/enabled state of the first page's button.
 		disabled() {
-			return this.conversationName === '' || (this.passwordProtect && this.password === '')
+			return this.conversationNameTrimmed === '' || (this.passwordProtect && this.password === '')
 		},
 		selectedParticipants() {
 			return this.$store.getters.selectedParticipants
+		},
+	},
+
+	watch: {
+		isPublic(value) {
+			if (value) {
+				this.newConversation.type = CONVERSATION.TYPE.PUBLIC
+			} else {
+				this.newConversation.type = CONVERSATION.TYPE.GROUP
+				this.passwordProtect = false
+			}
 		},
 	},
 
@@ -219,10 +273,14 @@ export default {
 			this.modal = true
 		},
 
+		setIsAvatarEdited(value) {
+			this.isAvatarEdited = value
+		},
+
 		showModalForItem(item) {
 			if (item) {
 				// Preload the conversation name from group selection
-				this.conversationNameInput = item.label
+				this.conversation.displayName = item.label
 				this.$store.dispatch('updateSelectedParticipants', item)
 			}
 
@@ -230,16 +288,16 @@ export default {
 		},
 		/**
 		 * Reinitialise the component to it's initial state. This is necessary
-		 * because once the component is mounted it's data would persist even if
+		 * because once the component is mounted its data would persist even if
 		 * the modal closes
 		 */
 		closeModal() {
 			this.modal = false
 			this.page = 0
-			this.conversationNameInput = ''
 			this.isPublic = false
 			this.isLoading = true
-			this.token = ''
+			this.newConversation = Object.assign({}, NEW_CONVERSATION)
+			this.isAvatarEdited = false
 			this.success = false
 			this.error = false
 			this.passwordProtect = false
@@ -256,7 +314,7 @@ export default {
 			this.page = 0
 		},
 		/**
-		 * Handles the creation of the group conversation, adds the seleced
+		 * Handles the creation of the group conversation, adds the selected
 		 * participants to it and routes to it
 		 */
 		async handleCreateConversation() {
@@ -264,34 +322,26 @@ export default {
 
 			// TODO: move all operations to a single store action
 			// and commit + addConversation only once at the very end
-			if (this.isPublic) {
-				try {
-					await this.createPublicConversation()
+			try {
+				if (this.isPublic) {
+					await this.createConversation(PRIVACY.PUBLIC)
 					if (this.password && this.passwordProtect) {
-						await setConversationPassword(this.token, this.password)
+						await setConversationPassword(this.newConversation.token, this.password)
 					}
-				} catch (exception) {
-					console.debug(exception)
-					this.isLoading = false
-					this.error = true
-					// Stop the execution of the method on exceptions.
-					return
+				} else {
+					await this.createConversation(PRIVACY.PRIVATE)
 				}
-			} else {
-				try {
-					await this.createPrivateConversation()
-				} catch (exception) {
-					console.debug(exception)
-					this.isLoading = false
-					this.error = true
-					// Stop the execution of the method on exceptions.
-					return
-				}
+			} catch (exception) {
+				console.debug(exception)
+				this.isLoading = false
+				this.error = true
+				// Stop the execution of the method on exceptions.
+				return
 			}
 
 			try {
 				await this.$store.dispatch('setListable', {
-					token: this.token,
+					token: this.newConversation.token,
 					listable: this.listable,
 				})
 			} catch (exception) {
@@ -304,7 +354,7 @@ export default {
 
 			for (const participant of this.selectedParticipants) {
 				try {
-					await addParticipant(this.token, participant.id, participant.source)
+					await addParticipant(this.newConversation.token, participant.id, participant.source)
 				} catch (exception) {
 					console.debug(exception)
 					this.isLoading = false
@@ -327,27 +377,30 @@ export default {
 			}
 		},
 		/**
-		 * Creates a new private conversation, adds it to the store and sets
+		 * Creates a new private or public conversation, adds it to the store and sets
 		 * the local token value to the newly created conversation's token
+		 *
+		 * @param {number} flag choose to send a request with private or public flag
 		 */
-		async createPrivateConversation() {
-			const response = await createPrivateConversation(this.conversationName)
+		async createConversation(flag) {
+			let response
+			if (flag === PRIVACY.PRIVATE) {
+				response = await createPrivateConversation(this.conversationNameTrimmed)
+			} else if (flag === PRIVACY.PUBLIC) {
+				response = await createPublicConversation(this.conversationNameTrimmed)
+			}
 			const conversation = response.data.ocs.data
 			this.$store.dispatch('addConversation', conversation)
-			this.token = conversation.token
-		},
-		/**
-		 * Creates a new public conversation, adds it to the store and sets
-		 * the local token value to the newly created conversation's token
-		 */
-		async createPublicConversation() {
-			const response = await createPublicConversation(this.conversationName)
-			const conversation = response.data.ocs.data
-			this.$store.dispatch('addConversation', conversation)
-			this.token = conversation.token
+			this.newConversation.token = conversation.token
+			if (this.isAvatarEdited) {
+				this.$refs.conversationAvatar.saveAvatar()
+			}
+			if (this.newConversation.description) {
+				this.handleUpdateDescription()
+			}
 		},
 		pushNewRoute() {
-			this.$router.push({ name: 'conversation', params: { token: this.token } })
+			this.$router.push({ name: 'conversation', params: { token: this.newConversation.token } })
 				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 		handleCheckboxInput(event) {
@@ -357,6 +410,18 @@ export default {
 				this.password = ''
 			}
 		},
+		async handleUpdateDescription() {
+			try {
+				await this.$store.dispatch('setConversationDescription', {
+					token: this.newConversation.token,
+					description: this.newConversation.description,
+				})
+			} catch (error) {
+				console.error('Error while setting conversation description', error)
+				showError(t('spreed', 'Error while updating conversation description'))
+			}
+		},
+
 		/** Handles the press of the enter key */
 		handleEnter() {
 			if (!this.disabled) {
@@ -392,6 +457,7 @@ export default {
 	flex-direction: column;
 	justify-content: space-between;
 	position: relative;
+
 	&__content {
 		/**
 		 * Top: 30px line height header + 12px margin
@@ -403,13 +469,26 @@ export default {
 		flex-direction: column;
 		gap: 0.5rem;
 	}
+
+	&__wrapper {
+		display: grid;
+		grid-template-columns: 1fr 2fr;
+		gap: var(--default-grid-baseline);
+		align-items: center;
+	}
+
+	&__label {
+		display: block;
+		margin-top: 10px;
+		padding: 4px 0;
+	}
 }
 
 /** Size full in the modal component doesn't have border radius, this adds
 it back */
 :deep(.modal-container) {
 	border-radius: var(--border-radius-large) !important;
-	height: 700px;
+	height: 900px;
 }
 
 .navigation {
@@ -417,12 +496,13 @@ it back */
 	justify-content: space-between;
 	flex: 0 0 40px;
 	height: 50px;
+	background-color: var(--color-main-background);
 	box-shadow: 0 -10px 5px var(--color-main-background);
 	z-index: 1;
 	width: 100%;
 
 	&__button-right {
-		margin-left:auto;
+		margin-left: auto;
 	}
 }
 

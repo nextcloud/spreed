@@ -172,6 +172,11 @@ export default {
 				return 'icon-contacts'
 			}
 
+			if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
+				// Public icon for new conversation dialog
+				return 'icon-public'
+			}
+
 			// Fall-through for other conversation suggestions to user-avatar handling
 			return undefined
 		},

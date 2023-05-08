@@ -23,8 +23,8 @@
 
 <template>
 	<section id="vue-avatar-section">
-		<div v-if="!showCropper" class="avatar__container">
-			<div class="avatar__preview">
+		<div class="avatar__container avatar__container--horizontal">
+			<div v-if="!showCropper" class="avatar__preview">
 				<div v-if="emojiAvatar"
 					class="avatar__preview-emoji"
 					:style="{'background-color': backgroundColor}">
@@ -36,37 +36,53 @@
 					:disable-menu="true" />
 				<div v-else class="icon-loading" />
 			</div>
-			<template v-if="editable">
+			<VueCropper v-show="showCropper"
+				ref="cropper"
+				class="avatar__cropper"
+				v-bind="cropperOptions" />
+			<div v-if="editable" class="avatar__container">
 				<div class="avatar__buttons">
-					<NcEmojiPicker :per-line="5"
-						@select="setEmoji">
-						<NcButton :aria-label="t('spreed', 'Set emoji as profile picture')">
-							<template #icon>
-								<EmoticonOutline :size="20" />
-							</template>
-						</NcButton>
-					</NcEmojiPicker>
-					<NcColorPicker v-if="emojiAvatar" v-model="backgroundColor">
-						<NcButton :aria-label="t('spreed', 'Set background color for profile picture')">
-							<template #icon>
-								<Palette :size="20" />
-							</template>
-						</NcButton>
-					</NcColorPicker>
-					<NcButton :aria-label="t('settings', 'Upload profile picture')"
+					<!-- Set emoji as avatar -->
+					<template v-if="!showCropper">
+						<NcEmojiPicker :per-line="5"
+							@select="setEmoji">
+							<NcButton :title="t('spreed', 'Set emoji as conversation picture')"
+								:aria-label="t('spreed', 'Set emoji as conversation picture')">
+								<template #icon>
+									<EmoticonOutline :size="20" />
+								</template>
+							</NcButton>
+						</NcEmojiPicker>
+						<NcColorPicker v-if="emojiAvatar" v-model="backgroundColor">
+							<NcButton :title="t('spreed', 'Set background color for conversation picture')"
+								:aria-label="t('spreed', 'Set background color for conversation picture')">
+								<template #icon>
+									<Palette :size="20" />
+								</template>
+							</NcButton>
+						</NcColorPicker>
+					</template>
+
+					<!-- Set picture as avatar -->
+					<NcButton :title="t('settings', 'Upload conversation picture')"
+						:aria-label="t('settings', 'Upload conversation picture')"
 						@click="activateLocalFilePicker">
 						<template #icon>
 							<Upload :size="20" />
 						</template>
 					</NcButton>
-					<NcButton :aria-label="t('settings', 'Choose profile picture from files')"
+					<NcButton :title="t('settings', 'Choose conversation picture from files')"
+						:aria-label="t('settings', 'Choose conversation picture from files')"
 						@click="openFilePicker">
 						<template #icon>
 							<Folder :size="20" />
 						</template>
 					</NcButton>
+
+					<!-- Remove existing avatar -->
 					<NcButton v-if="hasAvatar"
-						:aria-label="t('settings', 'Remove profile picture')"
+						:title="t('settings', 'Remove conversation picture')"
+						:aria-label="t('settings', 'Remove conversation picture')"
 						@click="removeAvatar">
 						<template #icon>
 							<Delete :size="20" />
@@ -81,23 +97,16 @@
 					type="file"
 					:accept="validMimeTypes.join(',')"
 					@change="onChange">
-			</template>
-		</div>
-
-		<!-- Use v-show to ensure early cropper ref availability -->
-		<div v-if="editable" class="avatar__container">
-			<VueCropper v-show="showCropper"
-				ref="cropper"
-				class="avatar__cropper"
-				v-bind="cropperOptions" />
-			<div v-show="isEdited" class="avatar__buttons">
-				<NcButton @click="cancel">
-					{{ t('spreed', 'Cancel') }}
-				</NcButton>
-				<NcButton type="primary"
-					@click="saveAvatar">
-					{{ t('spreed', 'Set as conversation picture') }}
-				</NcButton>
+				<div v-if="showControls" class="avatar__buttons">
+					<NcButton @click="cancel">
+						{{ t('spreed', 'Cancel') }}
+					</NcButton>
+					<NcButton v-if="!controlled"
+						type="primary"
+						@click="saveAvatar">
+						{{ t('spreed', 'Set picture') }}
+					</NcButton>
+				</div>
 			</div>
 		</div>
 	</section>
@@ -128,7 +137,7 @@ import 'cropperjs/dist/cropper.css'
 
 const VALID_MIME_TYPES = ['image/png', 'image/jpeg']
 
-const picker = getFilePickerBuilder(t('spreed', 'Choose your profile picture'))
+const picker = getFilePickerBuilder(t('spreed', 'Choose your conversation picture'))
 	.setMultiSelect(false)
 	.setMimeTypeFilter(VALID_MIME_TYPES)
 	.setModal(true)
@@ -165,7 +174,16 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		/**
+		 * Force component to emit signals and be used from parent components
+		 */
+		controlled: {
+			type: Boolean,
+			default: false,
+		},
 	},
+
+	emits: ['avatar-edited'],
 
 	data() {
 		return {
@@ -193,11 +211,24 @@ export default {
 		},
 
 		hasAvatar() {
-			return !!this.conversation.avatarVersion
+			return this.conversation.isCustomAvatar
 		},
 
-		isEdited() {
-			return this.showCropper || this.emojiAvatar
+		showControls() {
+			return this.editable && (this.showCropper || this.emojiAvatar)
+		},
+	},
+
+	watch: {
+		showCropper(value) {
+			if (this.controlled) {
+				this.$emit('avatar-edited', value)
+			}
+		},
+		emojiAvatar(value) {
+			if (this.controlled) {
+				this.$emit('avatar-edited', !!value)
+			}
 		},
 	},
 
@@ -241,7 +272,7 @@ export default {
 					this.cancel()
 				}
 			} catch (e) {
-				showError(t('spreed', 'Error setting profile picture'))
+				showError(t('spreed', 'Error setting conversation picture'))
 				this.cancel()
 			}
 		},
@@ -284,7 +315,7 @@ export default {
 			const scaleFactor = canvasData.width > 512 ? 512 / canvasData.width : 1
 			this.$refs.cropper.scale(scaleFactor, scaleFactor).getCroppedCanvas().toBlob(async (blob) => {
 				if (blob === null) {
-					showError(t('spreed', 'Error cropping profile picture'))
+					showError(t('spreed', 'Error cropping conversation picture'))
 					this.cancel()
 					return
 				}
@@ -314,7 +345,7 @@ export default {
 					token: this.conversation.token,
 				})
 			} catch (e) {
-				showError(t('spreed', 'Error removing profile picture'))
+				showError(t('spreed', 'Error removing conversation picture'))
 			} finally {
 				this.loading = false
 			}
@@ -340,10 +371,13 @@ section {
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
 		align-items: center;
-		gap: 16px 0;
-		width: 300px;
+		gap: 16px;
+
+		&--horizontal {
+			flex-direction: row;
+			align-items: flex-start;
+		}
 	}
 
 	&__warning {
@@ -354,8 +388,10 @@ section {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		width: 180px;
+		flex-shrink: 0;
+		width: 300px;
 		height: 180px;
+		padding: 0 60px;
 
 		&-emoji {
 			display: flex;
@@ -373,7 +409,7 @@ section {
 
 	&__buttons {
 		display: flex;
-		gap: 0 10px;
+		gap: 10px;
 	}
 
 	&__cropper {

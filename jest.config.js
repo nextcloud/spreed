@@ -80,6 +80,7 @@ module.exports = {
 	],
 
 	moduleNameMapper: {
+		'\\.(css|scss)$': 'jest-transform-stub',
 		'vendor/tflite/(.*).wasm$': '<rootDir>/src/utils/media/effects/virtual-background/vendor/tflite/$1.js',
 	},
 
