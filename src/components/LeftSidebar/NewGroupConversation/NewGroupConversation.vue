@@ -180,6 +180,8 @@ const NEW_CONVERSATION = {
 	readOnly: CONVERSATION.STATE.READ_ONLY,
 }
 
+const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
+
 export default {
 
 	name: 'NewGroupConversation',
@@ -201,7 +203,7 @@ export default {
 
 	setup() {
 		const isInCall = useIsInCall()
-		return { isInCall }
+		return { isInCall, supportsAvatar }
 	},
 
 	data() {
@@ -217,7 +219,6 @@ export default {
 			passwordProtect: false,
 			listable: CONVERSATION.LISTABLE.NONE,
 			isAvatarEdited: false,
-			supportsAvatar: getCapabilities()?.spreed?.features?.includes('avatar'),
 		}
 	},
 

@@ -62,6 +62,8 @@ import { showError } from '@nextcloud/dialogs'
 import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import EditableTextField from './EditableTextField.vue'
 
+const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
+
 export default {
 	name: 'BasicInfo',
 
@@ -83,13 +85,16 @@ export default {
 		},
 	},
 
+	setup() {
+		return { supportsAvatar }
+	},
+
 	data() {
 		return {
 			isEditingDescription: false,
 			isDescriptionLoading: false,
 			isEditingName: false,
 			isNameLoading: false,
-			supportsAvatar: getCapabilities()?.spreed?.features?.includes('avatar'),
 		}
 	},
 
