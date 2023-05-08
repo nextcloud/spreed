@@ -94,12 +94,20 @@ We are also available on [our public Talk team conversation](https://cloud.nextc
 
 ### Useful tricks for testing video calls
 
-* Disable camera until reboot: `sudo modprobe -r uvcvideo`
-* Re-enable camera: `sudo modprobe uvcvideo`
+#### Joining a test call with multiple users
+
 * Send fake-stream (audio and video) in Firefox:
 	1. Open `about:config`
 	2. Search for `fake`
 	3. Toggle `media.navigator.streams.fake` to **true**
+	4. Set `media.navigator.audio.fake_frequency` to **60** for more pleasant sound experience
+* Afterwards install the [Firefox Multi-Account Containers](https://addons.mozilla.org/en-US/firefox/addon/multi-account-containers/) addon
+* Now you can create multiple account containers, log in with a different Nextcloud account on each of them and join the same call with multiple different users
+
+#### Modifying available media devices
+
+* Disable camera until reboot: `sudo modprobe -r uvcvideo`
+* Re-enable camera: `sudo modprobe uvcvideo`
 
 ### API documentation
 
