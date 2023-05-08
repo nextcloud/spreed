@@ -44,7 +44,7 @@ const getters = {
 	getFileIdForToken: (state) => () => {
 		return state.fileIdForToken
 	},
-	currentConversationIsJoined() {
+	currentConversationIsJoined: (state) => {
 		return state.lastJoinedConversationToken === state.token
 	},
 }

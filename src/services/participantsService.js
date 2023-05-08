@@ -29,6 +29,7 @@ import { PARTICIPANT } from '../constants.js'
 import {
 	signalingJoinConversation,
 	signalingLeaveConversation,
+	signalingSetTyping,
 } from '../utils/webrtc/index.js'
 
 const PERMISSIONS = PARTICIPANT.PERMISSIONS
@@ -220,6 +221,15 @@ const setPermissions = async (token, attendeeId, permission) => {
 		})
 }
 
+/**
+ * Sets whether the current participant is typing or not.
+ *
+ * @param {boolean} typing whether the current participant is typing.
+ */
+const setTyping = (typing) => {
+	signalingSetTyping(typing)
+}
+
 export {
 	joinConversation,
 	rejoinConversation,
@@ -237,4 +247,5 @@ export {
 	grantAllPermissionsToParticipant,
 	removeAllPermissionsFromParticipant,
 	setPermissions,
+	setTyping,
 }
