@@ -21,13 +21,6 @@
 
 <template>
 	<Fragment>
-		<template v-if="supportsAvatar">
-			<h4 class="app-settings-section__subtitle">
-				{{ t('spreed', 'Picture') }}
-			</h4>
-			<ConversationAvatarEditor :conversation="conversation"
-				:editable="canFullModerate" />
-		</template>
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Name') }}
 		</h4>
@@ -50,6 +43,13 @@
 			:placeholder="t('spreed', 'Enter a description for this conversation')"
 			@submit-text="handleUpdateDescription"
 			@update:editing="handleEditDescription" />
+		<template v-if="supportsAvatar">
+			<h4 class="app-settings-section__subtitle">
+				{{ t('spreed', 'Picture') }}
+			</h4>
+			<ConversationAvatarEditor :conversation="conversation"
+				:editable="canFullModerate" />
+		</template>
 	</Fragment>
 </template>
 
