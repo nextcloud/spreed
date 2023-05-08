@@ -50,6 +50,7 @@
 						:placeholder="t('spreed', 'Enter a description for this conversation')"
 						:label="t('spreed', 'Description')"
 						label-visible />
+
 					<label class="avatar-editor__label">
 						{{ t('spreed', 'Picture') }}
 					</label>
@@ -58,24 +59,28 @@
 						controlled
 						editable
 						@avatar-edited="setIsAvatarEdited" />
+
+					<label class="new-group-conversation__label">
+						{{ t('spreed', 'Conversation visibility') }}
+					</label>
 					<NcCheckboxRadioSwitch :checked.sync="isPublic"
 						type="switch">
 						{{ t('spreed', 'Allow guests to join via link') }}
 					</NcCheckboxRadioSwitch>
-					<!-- Password protection -->
-					<template v-if="isPublic">
+					<div class="new-group-conversation__wrapper">
 						<NcCheckboxRadioSwitch :checked.sync="passwordProtect"
 							type="switch"
+							:disabled="!isPublic"
 							@checked="handleCheckboxInput">
 							{{ t('spreed', 'Password protect') }}
 						</NcCheckboxRadioSwitch>
 						<NcPasswordField v-if="passwordProtect"
 							autocomplete="new-password"
-							:check-password-strength="true"
-							:label-visible="true"
-							:label="t('spreed', 'Enter password')"
+							check-password-strength
+							:placeholder="t('spreed', 'Enter password')"
+							:aria-label="t('spreed', 'Enter password')"
 							:value.sync="password" />
-					</template>
+					</div>
 					<ListableSettings v-model="listable" />
 				</div>
 
@@ -250,6 +255,7 @@ export default {
 				this.newConversation.type = CONVERSATION.TYPE.PUBLIC
 			} else {
 				this.newConversation.type = CONVERSATION.TYPE.GROUP
+				this.passwordProtect = false
 			}
 		},
 	},
@@ -451,6 +457,7 @@ export default {
 	flex-direction: column;
 	justify-content: space-between;
 	position: relative;
+
 	&__content {
 		/**
 		 * Top: 30px line height header + 12px margin
@@ -461,6 +468,19 @@ export default {
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
+	}
+
+	&__wrapper {
+		display: grid;
+		grid-template-columns: 1fr 2fr;
+		gap: var(--default-grid-baseline);
+		align-items: center;
+	}
+
+	&__label {
+		display: block;
+		margin-top: 10px;
+		padding: 4px 0;
 	}
 }
 
@@ -482,14 +502,8 @@ it back */
 	width: 100%;
 
 	&__button-right {
-		margin-left:auto;
+		margin-left: auto;
 	}
-}
-
-.avatar-editor__label {
-	display: block;
-	margin-top: 10px;
-	padding: 4px 0;
 }
 
 :deep(.app-settings-section__hint) {
