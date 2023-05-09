@@ -844,9 +844,10 @@ class SystemMessage {
 	protected function parseCall(string $message, array $parameters, array $params): array {
 		if ($message === 'call_ended_everyone') {
 			if ($params['actor']['type'] === 'user') {
-				$flipped = array_flip($parameters['users']);
-				unset($flipped[$params['actor']['id']]);
-				$parameters['users'] = array_flip($flipped);
+				$entry = array_keys($parameters['users'], $params['actor']['id'], true);
+				foreach ($entry as $i) {
+					unset($parameters['users'][$i]);
+				}
 			} else {
 				$parameters['guests']--;
 			}
