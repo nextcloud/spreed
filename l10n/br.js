@@ -684,7 +684,6 @@ OC.L10N.register(
     "You will be able to join the call only after a moderator starts it." : "Posupl vo deoc'h mont er gemenadenn goude ma vo bet groget gant ar modertator.",
     "Open sidebar" : "Digori ar varenn gostez",
     "Mute others" : "Lakaat ar re all mut",
-    "Toggle fullscreen" : "Lakat/Kuitaat ar skramm a bezh",
     "Grid view" : "Diskwell ar roued",
     "Send" : "Kas",
     "Add more files" : "Ouzhpennañ muioc'h a restroù",
@@ -758,6 +757,7 @@ OC.L10N.register(
     "Choose a password" : "Choaz ur get-trmenn",
     "Upload new files" : "Pelkas ur restr nevez",
     "Share from Files" : "Rannañ diouzh Restroù",
+    "Toggle fullscreen" : "Lakat/Kuitaat ar skramm a bezh",
     "Rename conversation" : "Adenvel an diviz",
     "Sending signaling message has failed." : "Kasadenn ar gemenadenn arhentañ a zo c'hwitet."
 },
