@@ -22,11 +22,6 @@
 <template>
 	<Fragment>
 		<h4 class="app-settings-section__subtitle">
-			{{ t('spreed', 'Picture') }}
-		</h4>
-		<ConversationAvatarEditor :conversation="conversation"
-			:editable="canFullModerate" />
-		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Name') }}
 		</h4>
 		<EditableTextField :editable="canFullModerate"
@@ -48,16 +43,26 @@
 			:placeholder="t('spreed', 'Enter a description for this conversation')"
 			@submit-text="handleUpdateDescription"
 			@update:editing="handleEditDescription" />
+		<template v-if="supportsAvatar">
+			<h4 class="app-settings-section__subtitle">
+				{{ t('spreed', 'Picture') }}
+			</h4>
+			<ConversationAvatarEditor :conversation="conversation"
+				:editable="canFullModerate" />
+		</template>
 	</Fragment>
 </template>
 
 <script>
 import { Fragment } from 'vue-frag'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 
 import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import EditableTextField from './EditableTextField.vue'
+
+const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
 
 export default {
 	name: 'BasicInfo',
@@ -78,6 +83,10 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+	},
+
+	setup() {
+		return { supportsAvatar }
 	},
 
 	data() {
