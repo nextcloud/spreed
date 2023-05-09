@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.9.0@8b9ad1eb9e8b7d3101f949291da2b9f7767cd163">
+<files psalm-version="5.11.0@c9b192ab8400fdaf04b2b13d110575adc879aa90">
   <file src="lib/AppInfo/Application.php">
     <UndefinedClass>
       <code>BeforeTemplateRenderedEvent</code>
@@ -169,11 +169,6 @@
       <code>null</code>
     </NullArgument>
   </file>
-  <file src="lib/Controller/SettingsController.php">
-    <InvalidArgument>
-      <code>SharedStorage::class</code>
-    </InvalidArgument>
-  </file>
   <file src="lib/Controller/TempAvatarController.php">
     <UndefinedClass>
       <code>Filesystem</code>
@@ -188,7 +183,6 @@
   <file src="lib/Files/Util.php">
     <InvalidArgument>
       <code>$fileId</code>
-      <code>SharedStorage::class</code>
     </InvalidArgument>
   </file>
   <file src="lib/MatterbridgeManager.php">
