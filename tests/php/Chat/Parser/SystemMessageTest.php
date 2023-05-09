@@ -1355,6 +1355,15 @@ class SystemMessageTest extends TestCase {
 					['user1' => ['data' => 'user2'], 'user2' => ['data' => 'user3'], 'user3' => ['data' => 'user4'], 'user4' => ['data' => 'user5']],
 				],
 			],
+			'numeric users only' => [
+				'call_ended_everyone',
+				['users' => ['123', '234', '345', '456', '576', '678'], 'guests' => 2, 'duration' => 42],
+				['type' => 'user', 'id' => '123', 'name' => '123'],
+				[
+					'{actor} ended the call with {user1}, {user2}, {user3}, {user4} and 3 others (Duration "duration")',
+					['user1' => ['data' => '234'], 'user2' => ['data' => '345'], 'user3' => ['data' => '456'], 'user4' => ['data' => '576']],
+				],
+			],
 		];
 	}
 
