@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.0.0-beta.2 – 2023-05-09
+### Added
+- Typing indicators frontend and settings
+  [#9455](https://github.com/nextcloud/spreed/issues/9455)
+  [#9431](https://github.com/nextcloud/spreed/issues/9431)
+
+### Changed
+- Update several dependencies
+
+### Fixed
+- Show empty call view on viewer overlay
+  [#9460](https://github.com/nextcloud/spreed/issues/9460)
+- Fix avatar handling when interacting with non-supporting backends
+  [#9492](https://github.com/nextcloud/spreed/issues/9492)
+
 ## 17.0.0-beta.1 – 2023-05-04
 ### Added
 - Conversations can now have an avatar or emoji as icon
