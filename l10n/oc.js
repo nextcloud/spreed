@@ -954,9 +954,6 @@ OC.L10N.register(
     "You have new unread messages in the chat." : "Avètz un messatge pas legit al chat.",
     "You have been mentioned in the chat." : "Qualqu’un vos a mencionat al chat.",
     "Mute others" : "Copar lo son dels autres",
-    "Toggle fullscreen" : "Bascular en mòde ecran complèt",
-    "Exit fullscreen (F)" : "Quitar plen ecran (F)",
-    "Fullscreen (F)" : "Plen ecran (F)",
     "Speaker view" : "Vista parlaire",
     "Grid view" : "Vista en grasilha",
     "Raise hand" : "Levar la man",
@@ -1072,7 +1069,10 @@ OC.L10N.register(
     "Invitation was sent to {actorId}." : "Invitacion enviada a {actorId}.",
     "Display name: <strong>{name}</strong>" : "Nom d’afichatge : <strong>{name}</strong>",
     "End meeting for all" : "Acabar la conferéncia per totes",
+    "Toggle fullscreen" : "Bascular en mòde ecran complèt",
     "Rename conversation" : "Renomenar la conversacion",
+    "Exit fullscreen (F)" : "Quitar plen ecran (F)",
+    "Fullscreen (F)" : "Plen ecran (F)",
     "Sending signaling message has failed." : "Lo mandadís de messatge de senhalament a pas reüssit."
 },
 "nplurals=2; plural=(n > 1);");

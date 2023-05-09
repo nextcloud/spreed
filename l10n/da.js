@@ -393,7 +393,6 @@ OC.L10N.register(
     "Drop your files to upload" : "Drop dine filer for at uploade",
     "Favorite" : "Foretrukken",
     "Description" : "Beskrivelse",
-    "Upload profile picture" : "Upload profil billede",
     "Restricted" : "Begrænset",
     "Conversation settings" : "Samtale indstillinger",
     "Personal" : "Personlig",
