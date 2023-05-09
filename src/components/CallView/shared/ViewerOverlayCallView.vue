@@ -20,7 +20,8 @@
 <template>
 	<div ref="ghost" class="viewer-overlay-ghost">
 		<Portal>
-			<div class="viewer-overlay"
+			<!-- Add .app-talk to use Talk icon classes outside of #content-vue -->
+			<div class="viewer-overlay app-talk"
 				:style="{
 					right: position.right + 'px',
 					bottom: position.bottom + 'px'
@@ -41,7 +42,10 @@
 				</div>
 
 				<Transition name="slide-down">
-					<div v-show="!isCollapsed" class="viewer-overlay__video-container">
+					<div v-show="!isCollapsed"
+						class="viewer-overlay__video-container"
+						tabindex="0"
+						@click="maximize">
 						<div class="video-overlay__top-bar">
 							<NcButton type="secondary"
 								class="viewer-overlay__button"
@@ -53,6 +57,20 @@
 							</NcButton>
 						</div>
 
+						<VideoVue v-if="model"
+							class="viewer-overlay__video"
+							:token="token"
+							:model="model"
+							:shared-data="sharedData"
+							is-grid
+							un-selectable
+							hide-bottom-bar
+							@click-video="maximize">
+							<template #bottom-bar />
+						</VideoVue>
+
+						<EmptyCallView v-else is-small />
+
 						<LocalVideo v-if="localModel.attributes.videoEnabled"
 							class="viewer-overlay__local-video"
 							:token="token"
@@ -62,28 +80,18 @@
 							is-small
 							un-selectable />
 
-						<VideoVue class="viewer-overlay__video"
-							:token="token"
-							:model="model"
-							:shared-data="sharedData"
-							is-grid
-							un-selectable
-							@click-video="maximize">
-							<template #bottom-bar>
-								<div class="viewer-overlay__bottom-bar">
-									<LocalAudioControlButton class="viewer-overlay__button"
-										:conversation="conversation"
-										:model="localModel"
-										nc-button-type="secondary"
-										disable-keyboard-shortcuts />
-									<LocalVideoControlButton class="viewer-overlay__button"
-										:conversation="conversation"
-										:model="localModel"
-										nc-button-type="secondary"
-										disable-keyboard-shortcuts />
-								</div>
-							</template>
-						</VideoVue>
+						<div class="viewer-overlay__bottom-bar">
+							<LocalAudioControlButton class="viewer-overlay__button"
+								:conversation="conversation"
+								:model="localModel"
+								nc-button-type="secondary"
+								disable-keyboard-shortcuts />
+							<LocalVideoControlButton class="viewer-overlay__button"
+								:conversation="conversation"
+								:model="localModel"
+								nc-button-type="secondary"
+								disable-keyboard-shortcuts />
+						</div>
 					</div>
 				</Transition>
 			</div>
@@ -100,6 +108,7 @@ import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
 import { NcButton, Tooltip } from '@nextcloud/vue'
 
+import EmptyCallView from './EmptyCallView.vue'
 import LocalAudioControlButton from './LocalAudioControlButton.vue'
 import LocalVideo from './LocalVideo.vue'
 import LocalVideoControlButton from './LocalVideoControlButton.vue'
@@ -111,6 +120,7 @@ export default {
 	name: 'ViewerOverlayCallView',
 
 	components: {
+		EmptyCallView,
 		LocalAudioControlButton,
 		LocalVideoControlButton,
 		Portal,
@@ -134,12 +144,14 @@ export default {
 
 		model: {
 			type: Object,
-			required: true,
+			required: false,
+			default: null,
 		},
 
 		sharedData: {
 			type: Object,
-			required: true,
+			required: false,
+			default: null,
 		},
 
 		localModel: {
@@ -203,10 +215,10 @@ export default {
 @import "../../../assets/variables";
 
 .viewer-overlay-ghost {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  left: 0;
+	position: absolute;
+	bottom: 8px;
+	right: 8px;
+	left: 0;
 }
 
 .viewer-overlay {
@@ -222,11 +234,15 @@ export default {
 	z-index: 11000;
 }
 
+.viewer-overlay * {
+	box-sizing: border-box;
+}
+
 .viewer-overlay__collapse {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 100;
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 100;
 }
 
 .viewer-overlay__button {
@@ -239,22 +255,22 @@ export default {
 }
 
 .video-overlay__top-bar {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  z-index: 100;
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	z-index: 100;
 }
 
 .viewer-overlay__bottom-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  padding: 0 12px 8px 12px;
-  z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	padding: 0 12px 8px 12px;
+	z-index: 1;
 }
 
 .viewer-overlay__video-container {
@@ -268,12 +284,12 @@ export default {
 }
 
 .viewer-overlay__local-video {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  width: 25%;
-  height: 25%;
-  overflow: hidden;
+	position: absolute;
+	bottom: 8px;
+	right: 8px;
+	width: 25%;
+	height: 25%;
+	overflow: hidden;
 }
 
 .viewer-overlay__video {

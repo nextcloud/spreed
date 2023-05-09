@@ -82,7 +82,7 @@
 			class="connection-message">
 			{{ connectionMessage }}
 		</div>
-		<slot name="bottom-bar">
+		<slot v-if="!hideBottomBar" name="bottom-bar">
 			<VideoBottomBar v-bind="$props"
 				:has-shadow="hasVideo"
 				:participant-name="participantName" />
@@ -173,6 +173,11 @@ export default {
 		},
 
 		unSelectable: {
+			type: Boolean,
+			default: false,
+		},
+
+		hideBottomBar: {
 			type: Boolean,
 			default: false,
 		},

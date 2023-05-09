@@ -22,13 +22,13 @@
 
 <template>
 	<div id="call-container">
-		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid"
-			:is-sidebar="isSidebar" />
-
-		<ViewerOverlayCallView v-else-if="isViewerOverlay && promotedParticipantModel"
+		<ViewerOverlayCallView v-if="isViewerOverlay"
 			:token="token"
 			:model="promotedParticipantModel"
-			:shared-data="sharedDatas[promotedParticipantModel.attributes.peerId]" />
+			:shared-data="promotedParticipantModel && sharedDatas[promotedParticipantModel.attributes.peerId]" />
+
+		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid"
+			:is-sidebar="isSidebar" />
 
 		<div v-else-if="!isViewerOverlay" id="videos">
 			<template v-if="!isGrid">

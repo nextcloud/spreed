@@ -19,19 +19,23 @@
   -->
 
 <template>
-	<div class="empty-call-view" :class="{'empty-call-view--sidebar': isSidebar}">
+	<div class="empty-call-view"
+		:class="{
+			'empty-call-view--sidebar': isSidebar,
+			'empty-call-view--small': isSmall
+		}">
 		<div class="icon" :class="iconClass" />
-		<h2>
-			{{ title }}
-		</h2>
-		<p v-if="message" class="emptycontent-additional">
-			{{ message }}
-		</p>
-		<NcButton v-if="showLink"
-			type="primary"
-			@click.stop.prevent="handleCopyLink">
-			{{ t('spreed', 'Copy link') }}
-		</NcButton>
+		<h2>{{ title }}</h2>
+		<template v-if="!isSmall">
+			<p v-if="message" class="emptycontent-additional">
+				{{ message }}
+			</p>
+			<NcButton v-if="showLink"
+				type="primary"
+				@click.stop.prevent="handleCopyLink">
+				{{ t('spreed', 'Copy link') }}
+			</NcButton>
+		</template>
 	</div>
 </template>
 
@@ -56,6 +60,11 @@ export default {
 		},
 
 		isSidebar: {
+			type: Boolean,
+			default: false,
+		},
+
+		isSmall: {
 			type: Boolean,
 			default: false,
 		},
@@ -208,6 +217,25 @@ export default {
 			transform: scale(0.7);
 			margin-top: 0;
 			margin-bottom: 0;
+		}
+	}
+
+	&--small {
+		border-radius: calc(var(--default-clickable-area) / 2);
+		background-color: rgba(34, 34, 34, 0.8); /* Copy from the call view */
+		padding: 8px;
+
+		h2 {
+			font-size: 1rem;
+			font-weight: normal;
+		}
+
+		.icon {
+			transform: none;
+			margin-bottom: 0;
+			background-size: 32px;
+			height: 32px;
+			width: 32px;
 		}
 	}
 }
