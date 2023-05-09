@@ -21,7 +21,10 @@
 -->
 
 <template>
-	<div class="wrapper">
+	<div class="wrapper" :class="{'wrapper--has-typing-indicator': showTypingStatus}">
+		<NewMessageFormTypingIndicator v-if="showTypingStatus"
+			:token="token" />
+
 		<!--native file picker, hidden -->
 		<input id="file-upload"
 			ref="fileUploadInput"
@@ -245,11 +248,12 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import Quote from '../Quote.vue'
 import AudioRecorder from './AudioRecorder/AudioRecorder.vue'
+import NewMessageFormTypingIndicator from './NewMessageFormTypingIndicator.vue'
 import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
 import TemplatePreview from './TemplatePreview.vue'
 
 import { useViewer } from '../../composables/useViewer.js'
-import { CONVERSATION, PARTICIPANT } from '../../constants.js'
+import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile, createTextFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
@@ -267,6 +271,7 @@ const margin = 8
 const width = margin * 20
 
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
+const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined
 
 export default {
 	name: 'NewMessageForm',
@@ -274,24 +279,26 @@ export default {
 	disableKeyboardShortcuts,
 
 	components: {
-		Quote,
-		NcActions,
-		NcActionButton,
-		NcButton,
-		Paperclip,
-		NcEmojiPicker,
-		NcRichContenteditable,
-		EmoticonOutline,
-		Send,
 		AudioRecorder,
-		BellOff,
-		SimplePollsEditor,
-		Poll,
+		NcActionButton,
+		NcActions,
+		NcButton,
+		NcEmojiPicker,
 		NcModal,
-		Folder,
-		Upload,
-		TemplatePreview,
+		NcRichContenteditable,
 		NcTextField,
+		NewMessageFormTypingIndicator,
+		Quote,
+		SimplePollsEditor,
+		TemplatePreview,
+		// Icons
+		BellOff,
+		EmoticonOutline,
+		Folder,
+		Paperclip,
+		Poll,
+		Send,
+		Upload,
 	},
 
 	props: {
@@ -328,6 +335,14 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		/**
+		 * Show an indicator if someone is currently typing a message.
+		 */
+		hasTypingIndicator: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	emits: ['sent', 'failure'],
@@ -336,7 +351,10 @@ export default {
 
 	setup() {
 		const { openViewer } = useViewer()
-		return { openViewer }
+		return {
+			openViewer,
+			supportTypingStatus,
+		}
 	},
 
 	data() {
@@ -354,6 +372,7 @@ export default {
 			checked: -1,
 			userData: {},
 			clipboardTimeStamp: null,
+			typingTimeout: null,
 		}
 	},
 
@@ -483,6 +502,10 @@ export default {
 		showAudioRecorder() {
 			return !this.hasText && this.canUploadFiles && !this.broadcast
 		},
+		showTypingStatus() {
+			return this.hasTypingIndicator && this.supportTypingStatus
+				&& this.$store.getters.getTypingStatusPrivacy() === PRIVACY.PUBLIC
+		},
 	},
 
 	watch: {
@@ -492,6 +515,21 @@ export default {
 
 		text(newValue) {
 			this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: newValue })
+
+			// Enable signal sending, only if indicator for this input is on
+			if (this.showTypingStatus) {
+				clearTimeout(this.typingTimeout)
+
+				if (!newValue) {
+					this.$store.dispatch('setTyping', { typing: false })
+					return
+				}
+
+				this.typingTimeout = setTimeout(() => {
+					this.$store.dispatch('setTyping', { typing: false })
+				}, 5000)
+				this.$store.dispatch('setTyping', { typing: true })
+			}
 		},
 
 		token(token) {
@@ -500,6 +538,7 @@ export default {
 			} else {
 				this.text = ''
 			}
+			this.$store.dispatch('setTyping', { typing: false })
 		},
 
 		showTextFileDialog(newValue) {
@@ -929,22 +968,29 @@ export default {
 @import '../../assets/variables';
 
 .wrapper {
+	position: relative;
 	display: flex;
 	justify-content: center;
-	padding: 12px 0;
+	padding: 12px 0 12px;
 	min-height: 69px;
+
+	&--has-typing-indicator {
+		padding: 30px 0 12px;
+	}
 }
 
 .new-message {
 	width: 100%;
 	display: flex;
 	justify-content: center;
+
 	&-form {
 		align-items: flex-end;
 		display: flex;
-		position:relative;
+		position: relative;
 		flex: 0 1 700px;
 		margin: 0 4px;
+
 		&__emoji-picker {
 			position: absolute;
 			bottom: 1px;
@@ -963,6 +1009,7 @@ export default {
 			border-radius: calc(var(--default-clickable-area) / 2);
 			padding: 8px 16px 8px 44px;
 			max-height: 180px;
+
 			&:hover,
 			&:focus,
 			&:active {
@@ -994,10 +1041,12 @@ export default {
 // Targeting two classess for specificity
 :deep(.action-item__menutoggle.action-item__menutoggle--with-icon-slot) {
 	opacity: 1 !important;
+
 	&:hover,
 	&:focus {
 		background-color: var(--color-background-hover) !important;
 	}
+
 	&:disabled {
 		opacity: .5 !important;
 	}

@@ -25,7 +25,8 @@
 			'avatar-wrapper--offline': offline,
 			'avatar-wrapper--small': small,
 			'avatar-wrapper--condensed': condensed,
-		}">
+		}"
+		:style="{'--condensed-overlap': condensedOverlap}">
 		<div v-if="iconClass"
 			class="icon"
 			:class="[`avatar-${size}px`, iconClass]" />
@@ -79,6 +80,10 @@ export default {
 		condensed: {
 			type: Boolean,
 			default: false,
+		},
+		condensedOverlap: {
+			type: Number,
+			default: 2,
 		},
 		offline: {
 			type: Boolean,
@@ -134,7 +139,7 @@ export default {
 			if (this.isDeletedUser) {
 				return 'X'
 			}
-			const customName = this.name !== t('spreed', 'Guest') ? this.name : '?'
+			const customName = this.name?.trim() && this.name !== t('spreed', 'Guest') ? this.name : '?'
 			return customName.charAt(0)
 		},
 		menuContainerWithFallback() {
@@ -166,7 +171,7 @@ export default {
 	&--condensed {
 		width: unset;
 		height: unset;
-		margin-left: -2px;
+		margin-left: calc(var(--condensed-overlap) * -1px);
 		display: flex;
 
 		& > .icon,
