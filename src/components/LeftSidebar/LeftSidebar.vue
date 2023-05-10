@@ -285,9 +285,7 @@ export default {
 		EventBus.$on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.$once('conversations-received', this.handleUnreadMention)
 		EventBus.$on('route-change', this.onRouteChange)
-		EventBus.$once('joined-conversation', ({ token }) => {
-			this.scrollToConversation(token)
-		})
+		EventBus.$on('joined-conversation', this.handleJoinedConversation)
 		this.mountArrowNavigation()
 	},
 
@@ -406,10 +404,6 @@ export default {
 			if (item.source === 'users') {
 				// Create one-to-one conversation directly
 				const conversation = await this.$store.dispatch('createOneToOneConversation', item.id)
-				this.abortSearch()
-				EventBus.$once('joined-conversation', ({ token }) => {
-					this.scrollToConversation(token)
-				})
 				this.$router.push({
 					name: 'conversation',
 					params: { token: conversation.token },
@@ -583,6 +577,16 @@ export default {
 			}
 			if (to.name === 'conversation') {
 				this.$store.dispatch('joinConversation', { token: to.params.token })
+			}
+		},
+
+		handleJoinedConversation({ token }) {
+			this.abortSearch()
+			this.scrollToConversation(token)
+			if (this.isMobile) {
+				emit('toggle-navigation', {
+					open: false,
+				})
 			}
 		},
 

@@ -663,6 +663,9 @@ describe('LeftSidebar.vue', () => {
 				expect(resultsListItems).toHaveLength(resultsList.length)
 
 				await resultsListItems.at(0).findAll('a').trigger('click')
+				// FIXME Real router and store should work at this place to execute following:
+				//  click => route-change => participantsStore.joinConversation() => joined-conversation
+				EventBus.$emit('joined-conversation', { token: 'new-conversation' })
 				await flushPromises()
 
 				expect(searchBoxEl.exists()).toBeTruthy()
