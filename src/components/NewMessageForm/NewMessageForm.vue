@@ -407,7 +407,7 @@ export default {
 		},
 
 		hasText() {
-			return this.text !== ''
+			return this.text.trim() !== ''
 		},
 
 		containerElement() {
@@ -540,12 +540,15 @@ export default {
 				}
 			}
 
-			if (this.text !== '') {
+			if (this.hasText) {
 				// FIXME: remove after issue is resolved: https://github.com/nextcloud/nextcloud-vue/issues/3264
 				const temp = document.createElement('textarea')
 				temp.innerHTML = this.text
 				this.text = temp.value
-				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', { text: this.text, token: this.token })
+				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', {
+					text: this.text.trim(),
+					token: this.token,
+				})
 				// FIXME: move "addTemporaryMessage" into "postNewMessage" as it's a pre-requisite anyway ?
 				if (!this.broadcast) {
 					await this.$store.dispatch('addTemporaryMessage', temporaryMessage)
