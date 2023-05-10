@@ -101,7 +101,7 @@
 			</NcActionButton>
 		</template>
 		<template v-else-if="item.token" #actions>
-			<NcActionButton close-after-click @click="onClick">
+			<NcActionButton close-after-click @click="onActionClick">
 				<template #icon>
 					<ArrowRight :size="16" />
 				</template>
@@ -179,8 +179,6 @@ export default {
 			},
 		},
 	},
-
-	emits: ['click'],
 
 	computed: {
 		counterType() {
@@ -430,9 +428,20 @@ export default {
 			})
 		},
 
-		// forward click event
-		onClick(event) {
-			this.$emit('click', event)
+		onClick() {
+			// add as temporary item that will refresh after the joining process is complete
+			if (this.isSearchResult) {
+				this.$store.dispatch('addConversation', this.item)
+			}
+		},
+
+		onActionClick() {
+			this.onClick()
+			// NcActionButton is not a RouterLink, so we should route user manually
+			this.$router.push({
+				name: 'conversation',
+				params: { token: this.item.token },
+			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 	},
 }
