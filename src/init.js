@@ -25,7 +25,8 @@
 
 import { showError } from '@nextcloud/dialogs'
 
-import { CALL, PARTICIPANT } from './constants.js'
+import { CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from './constants.js'
+import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.js'
 import store from './store/index.js'
 
@@ -84,3 +85,50 @@ EventBus.$on('signaling-recording-status-changed', (token, status) => {
 		showError(t('spreed', 'The recording failed. Please contact your administrator.'))
 	}
 })
+
+/**
+ * Migrate localStorage to @nextcloud/browser-storage
+ *
+ * In order to preserve the user settings while migrating to the abstraction,
+ * we loop over the localStorage entries and add the matching ones to the
+ * BrowserStorage
+ */
+const migrateDirectLocalStorageToNextcloudBrowserStorage = () => {
+	if (BrowserStorage.getItem('localStorageMigrated') !== null) {
+		return
+	}
+
+	const storageKeys = Array.from(Array(localStorage.length), (_, i) => localStorage.key(i)).filter(key => key.startsWith('audioDisabled_')
+		|| key.startsWith('videoDisabled_')
+		|| key.startsWith('virtualBackgroundEnabled_')
+		|| key.startsWith('virtualBackgroundType_')
+		|| key.startsWith('virtualBackgroundBlurStrength_')
+		|| key.startsWith('virtualBackgroundUrl_')
+	)
+
+	if (storageKeys.length) {
+		console.debug('Migrating localStorage keys to BrowserStorage', storageKeys)
+
+		storageKeys.forEach(key => {
+			BrowserStorage.setItem(key, localStorage.getItem(key))
+			localStorage.removeItem(key)
+
+			if (key.startsWith('virtualBackgroundEnabled_')) {
+				// Before Talk 17 there was only a boolean
+				// `virtualBackgroundEnabled_{token}` (stored as string).
+				// Now we also need to have a type and the default type
+				// is "none". So when migrating the data for
+				// conversations the user had previously enabled the
+				// background blur we also add the type with value blur.
+				const typeKey = key.replace('virtualBackgroundEnabled_', 'virtualBackgroundType_')
+				if (localStorage.getItem(typeKey) === null) {
+					BrowserStorage.setItem(typeKey, VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
+				}
+			}
+		})
+	}
+
+	BrowserStorage.setItem('localStorageMigrated', 'done')
+}
+
+migrateDirectLocalStorageToNextcloudBrowserStorage()
