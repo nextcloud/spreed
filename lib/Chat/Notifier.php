@@ -191,7 +191,7 @@ class Notifier {
 			$alreadyAddedToNotify = array_filter($list, static function ($user) use ($attendee): bool {
 				return $user['id'] === $attendee->getActorId();
 			});
-			if (!empty($alreadyAddedToNotify)) {
+			if ($alreadyAddedToNotify !== []) {
 				continue;
 			}
 

@@ -99,7 +99,7 @@ class Listener {
 
 	public static function revertUserStatusOnEndCallForEveryone(EndCallForEveryoneEvent $event): void {
 		$userIds = $event->getUserIds();
-		if (!empty($userIds)) {
+		if ($userIds !== []) {
 			/** @var self $listener */
 			$listener = Server::get(self::class);
 			$listener->statusManager->revertMultipleUserStatus($userIds, 'call', IUserStatus::AWAY);

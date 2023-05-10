@@ -65,7 +65,7 @@ class Delete extends Base {
 		});
 		$servers = array_values($servers); // reindex
 
-		if (empty($servers)) {
+		if ($servers === []) {
 			$servers = ['stun.nextcloud.com:443'];
 			$this->config->setAppValue('spreed', 'stun_servers', json_encode($servers));
 			$output->writeln('<info>You deleted all STUN servers. A default STUN server was added.</info>');

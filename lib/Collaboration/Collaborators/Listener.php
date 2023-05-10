@@ -89,7 +89,7 @@ class Listener {
 
 	protected function filterUsersAndGroupsWithoutTalk(array $results): array {
 		$this->allowedGroupIds = $this->config->getAllowedTalkGroupIds();
-		if (empty($this->allowedGroupIds)) {
+		if ($this->allowedGroupIds === []) {
 			return $results;
 		}
 

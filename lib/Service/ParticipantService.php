@@ -431,7 +431,7 @@ class ParticipantService {
 	 * @throws \Exception thrown if $addedBy is not set when adding a federated user
 	 */
 	public function addUsers(Room $room, array $participants, ?IUser $addedBy = null): void {
-		if (empty($participants)) {
+		if ($participants === []) {
 			return;
 		}
 		$event = new AddParticipantsEvent($room, $participants, true);
@@ -519,7 +519,7 @@ class ParticipantService {
 		try {
 			$roomOwners = $this->attendeeMapper->getActorsByParticipantTypes($room->getId(), [Participant::OWNER]);
 
-			if (!empty($roomOwners)) {
+			if ($roomOwners !== []) {
 				foreach ($roomOwners as $owner) {
 					if ($owner->getActorType() === Attendee::ACTOR_USERS) {
 						return $owner;
@@ -527,7 +527,7 @@ class ParticipantService {
 				}
 			}
 			$roomModerators = $this->attendeeMapper->getActorsByParticipantTypes($room->getId(), [Participant::MODERATOR]);
-			if (!empty($roomOwners)) {
+			if ($roomOwners !== []) {
 				foreach ($roomModerators as $moderator) {
 					if ($moderator->getActorType() === Attendee::ACTOR_USERS) {
 						return $moderator;
@@ -547,7 +547,7 @@ class ParticipantService {
 	public function addGroup(Room $room, IGroup $group, array $existingParticipants = []): void {
 		$usersInGroup = $group->getUsers();
 
-		if (empty($existingParticipants)) {
+		if ($existingParticipants === []) {
 			$existingParticipants = $this->getParticipantsForRoom($room);
 		}
 
@@ -632,7 +632,7 @@ class ParticipantService {
 	public function addCircle(Room $room, Circle $circle, array $existingParticipants = []): void {
 		$membersInCircle = $circle->getInheritedMembers();
 
-		if (empty($existingParticipants)) {
+		if ($existingParticipants === []) {
 			$existingParticipants = $this->getParticipantsForRoom($room);
 		}
 
@@ -908,7 +908,7 @@ class ParticipantService {
 
 		$users = array_filter($users);
 
-		if (empty($users)) {
+		if ($users === []) {
 			return;
 		}
 
@@ -1170,7 +1170,7 @@ class ParticipantService {
 			->andWhere($update->expr()->in('actor_id', $update->createNamedParameter($userIds, IQueryBuilder::PARAM_STR_ARRAY)));
 		$update->executeStatement();
 
-		if (!empty($usersDirectlyMentioned)) {
+		if ($usersDirectlyMentioned !== []) {
 			$update = $this->connection->getQueryBuilder();
 			$update->update('talk_attendees')
 				->set('last_mention_direct', $update->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))

@@ -242,7 +242,7 @@ class PollController extends AEnvironmentAwareController {
 		$data = $poll->asArray();
 		unset($data['roomId']);
 
-		$canSeeSummary = !empty($votedSelf) && $poll->getResultMode() === Poll::MODE_PUBLIC;
+		$canSeeSummary = $votedSelf !== [] && $poll->getResultMode() === Poll::MODE_PUBLIC;
 
 		if (!$canSeeSummary && $poll->getStatus() === Poll::STATUS_OPEN) {
 			$data['votes'] = [];

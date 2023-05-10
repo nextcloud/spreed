@@ -191,7 +191,7 @@ class Operation implements IOperation {
 		 */
 
 		$opConfig = \json_decode($raw, true);
-		if (!is_array($opConfig) || empty($opConfig)) {
+		if (!is_array($opConfig) || $opConfig === []) {
 			throw new UnexpectedValueException('Cannot decode operation details');
 		}
 

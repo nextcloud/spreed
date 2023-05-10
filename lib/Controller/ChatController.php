@@ -340,7 +340,7 @@ class ChatController extends AEnvironmentAwareController {
 				}
 			}
 		}
-		if (!empty($shareIds)) {
+		if ($shareIds !== []) {
 			// Ignore the result for now. Retrieved Share objects will be cached by
 			// the RoomShareProvider and returned from the cache to
 			// the Parser\SystemMessage without additional database queries.
@@ -465,7 +465,7 @@ class ChatController extends AEnvironmentAwareController {
 	}
 
 	protected function prepareCommentsAsDataResponse(array $comments, int $lastCommonReadId = 0): DataResponse {
-		if (empty($comments)) {
+		if ($comments === []) {
 			$response = new DataResponse([], Http::STATUS_NOT_MODIFIED);
 			if ($lastCommonReadId && $this->participant->getAttendee()->getReadPrivacy() === Participant::PRIVACY_PUBLIC) {
 				$newLastCommonRead = $this->chatManager->getLastCommonReadMessage($this->room);
@@ -851,7 +851,7 @@ class ChatController extends AEnvironmentAwareController {
 
 		$response = new DataResponse($messages, Http::STATUS_OK);
 
-		if (!empty($messages)) {
+		if ($messages !== []) {
 			$newLastKnown = min(array_keys($messages));
 			$response->addHeader('X-Chat-Last-Given', $newLastKnown);
 		}

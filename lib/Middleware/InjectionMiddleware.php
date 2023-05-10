@@ -275,7 +275,7 @@ class InjectionMiddleware extends Middleware {
 				$reflectionMethod = new \ReflectionMethod($controller, $methodName);
 				$attributes = $reflectionMethod->getAttributes(BruteForceProtection::class);
 
-				if (!empty($attributes)) {
+				if ($attributes !== []) {
 					foreach ($attributes as $attribute) {
 						/** @var BruteForceProtection $protection */
 						$protection = $attribute->newInstance();

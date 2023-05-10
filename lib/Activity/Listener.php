@@ -171,7 +171,7 @@ class Listener {
 			],
 		]), $this->timeFactory->getDateTime(), false);
 
-		if (empty($userIds)) {
+		if ($userIds === []) {
 			return false;
 		}
 

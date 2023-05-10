@@ -298,7 +298,7 @@ class ChatManager {
 			}
 
 			$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $alreadyNotifiedUsers, $silent);
-			if (!empty($alreadyNotifiedUsers)) {
+			if ($alreadyNotifiedUsers !== []) {
 				$userIds = array_column($alreadyNotifiedUsers, 'id');
 				$this->participantService->markUsersAsMentioned($chat, $userIds, (int) $comment->getId(), $usersDirectlyMentioned);
 			}
@@ -631,7 +631,7 @@ class ChatManager {
 
 		$comments = $this->checkCacheOrDatabase($chat, $offset, $limit, $includeLastKnown);
 
-		while (empty($comments) && $elapsedTime < $timeout) {
+		while ($comments === [] && $elapsedTime < $timeout) {
 			$this->connection->close();
 			sleep(1);
 			$elapsedTime++;

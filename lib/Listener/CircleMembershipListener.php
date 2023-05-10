@@ -95,7 +95,7 @@ class CircleMembershipListener extends AMembershipListener {
 		}
 
 
-		if (empty($roomsToAdd)) {
+		if ($roomsToAdd === []) {
 			// The circle is not in any room => bye!
 			return;
 		}
@@ -171,7 +171,7 @@ class CircleMembershipListener extends AMembershipListener {
 		}
 
 		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_CIRCLES, $circle->getSingleId());
-		if (empty($rooms)) {
+		if ($rooms === []) {
 			return;
 		}
 

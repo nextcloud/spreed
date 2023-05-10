@@ -596,7 +596,7 @@ class RoomController extends AEnvironmentAwareController {
 				return $participant->hasModeratorPermissions()
 					&& $participant->getAttendee()->getId() !== $currentParticipant->getAttendee()->getId();
 			});
-			if (!empty($moderators)) {
+			if ($moderators !== []) {
 				$this->breakoutRoomService->addModeratorsToBreakoutRooms([$room], $moderators);
 			}
 		}

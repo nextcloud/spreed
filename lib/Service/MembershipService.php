@@ -72,7 +72,7 @@ class MembershipService {
 			return $attendee->getActorId();
 		}, $groupAttendees);
 
-		if (empty($groupIds)) {
+		if ($groupIds === []) {
 			return $users;
 		}
 
@@ -89,7 +89,7 @@ class MembershipService {
 	 * @return IUser[]
 	 */
 	protected function filterUsersWithOtherCircleMemberships(Room $room, array $users): array {
-		if (empty($users)) {
+		if ($users === []) {
 			return $users;
 		}
 		$anyUser = reset($users);
@@ -103,7 +103,7 @@ class MembershipService {
 			return $attendee->getActorId();
 		}, $circleAttendees);
 
-		if (empty($circleIds)) {
+		if ($circleIds === []) {
 			return $users;
 		}
 

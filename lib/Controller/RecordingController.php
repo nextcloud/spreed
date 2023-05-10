@@ -65,7 +65,7 @@ class RecordingController extends AEnvironmentAwareController {
 
 	public function getWelcomeMessage(int $serverId): DataResponse {
 		$recordingServers = $this->talkConfig->getRecordingServers();
-		if (empty($recordingServers) || !isset($recordingServers[$serverId])) {
+		if ($recordingServers === [] || !isset($recordingServers[$serverId])) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 

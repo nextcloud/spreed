@@ -101,7 +101,7 @@ class AddSamples extends Base {
 			'php ' . $appPath . '/sample-commands/hackernews.php {ARGUMENTS}'
 		);
 
-		if (empty($this->commands)) {
+		if ($this->commands === []) {
 			return 1;
 		}
 

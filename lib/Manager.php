@@ -363,7 +363,7 @@ class Manager {
 			))
 			->where($query->expr()->isNotNull('a.id'));
 
-		if (!empty($sessionIds)) {
+		if ($sessionIds !== []) {
 			$helper->selectSessionsTable($query);
 			$query->leftJoin('a', 'talk_sessions', 's', $query->expr()->andX(
 				$query->expr()->eq('a.id', 's.attendee_id'),

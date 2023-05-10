@@ -179,7 +179,7 @@ class Version14000Date20220330141647 extends SimpleMigrationStep {
 		}
 		$result->closeCursor();
 
-		if (empty($attachments)) {
+		if ($attachments === []) {
 			return 0;
 		}
 

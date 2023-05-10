@@ -154,7 +154,7 @@ class Executor {
 			}
 		}
 
-		if (empty($helps)) {
+		if ($helps === []) {
 			return $this->l->t('There are currently no commands available.');
 		}
 

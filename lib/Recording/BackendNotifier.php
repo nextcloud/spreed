@@ -99,7 +99,7 @@ class BackendNotifier {
 	 */
 	private function backendRequest(Room $room, array $data): void {
 		$recordingServers = $this->config->getRecordingServers();
-		if (empty($recordingServers)) {
+		if ($recordingServers === []) {
 			$this->logger->error('No configured recording server');
 			return;
 		}

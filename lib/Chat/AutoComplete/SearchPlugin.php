@@ -84,7 +84,7 @@ class SearchPlugin implements ISearchPlugin {
 	public function search($search, $limit, $offset, ISearchResult $searchResult) {
 		if ($this->room->getObjectType() === 'file') {
 			$usersWithFileAccess = $this->util->getUsersWithAccessFile($this->room->getObjectId());
-			if (!empty($usersWithFileAccess)) {
+			if ($usersWithFileAccess !== []) {
 				$this->searchUsers($search, $usersWithFileAccess, $searchResult);
 			}
 		}
@@ -218,7 +218,7 @@ class SearchPlugin implements ISearchPlugin {
 	 * @param ISearchResult $searchResult
 	 */
 	protected function searchGuests(string $search, array $attendees, ISearchResult $searchResult): void {
-		if (empty($attendees)) {
+		if ($attendees === []) {
 			$type = new SearchResultType('guests');
 			$searchResult->addResultSet($type, [], []);
 			return;

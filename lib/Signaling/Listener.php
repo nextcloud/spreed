@@ -237,7 +237,7 @@ class Listener {
 			$sessionIds[] = $session->getSessionId();
 		}
 
-		if (!empty($sessionIds)) {
+		if ($sessionIds !== []) {
 			$notifier->roomSessionsRemoved($event->getRoom(), $sessionIds);
 		}
 	}
@@ -300,7 +300,7 @@ class Listener {
 
 		$sessionIds = $event->getSessionIds();
 
-		if (empty($sessionIds)) {
+		if ($sessionIds === []) {
 			return;
 		}
 
@@ -361,7 +361,7 @@ class Listener {
 				}
 			}
 
-			if (!empty($sessionIds)) {
+			if ($sessionIds !== []) {
 				$notifier->switchToRoom($room, $breakoutRoom->getToken(), $sessionIds);
 			}
 		}
@@ -403,7 +403,7 @@ class Listener {
 				}
 			}
 
-			if (!empty($sessionIds)) {
+			if ($sessionIds !== []) {
 				$notifier->switchToRoom($breakoutRoom, $room->getToken(), $sessionIds);
 			}
 		}
@@ -424,7 +424,7 @@ class Listener {
 			$sessionIds[] = $session->getSessionId();
 		}
 
-		if (!empty($sessionIds)) {
+		if ($sessionIds !== []) {
 			$notifier->participantsModified($event->getRoom(), $sessionIds);
 		}
 	}

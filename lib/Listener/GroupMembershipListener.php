@@ -67,7 +67,7 @@ class GroupMembershipListener extends AMembershipListener {
 
 	protected function removeFormerMemberFromRooms(IGroup $group, IUser $user): void {
 		$rooms = $this->manager->getRoomsForActor(Attendee::ACTOR_GROUPS, $group->getGID());
-		if (empty($rooms)) {
+		if ($rooms === []) {
 			return;
 		}
 

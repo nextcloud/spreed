@@ -107,7 +107,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 		}
 		$result->closeCursor();
 
-		if (!empty($one2oneRooms)) {
+		if ($one2oneRooms !== []) {
 			$owners = $this->makeOne2OneParticipantsOwners($one2oneRooms);
 			$output->info('Made ' . $owners . ' users owner of their one2one calls');
 		}
@@ -155,7 +155,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 				->where($update->expr()->nonEmptyString('userId'));
 		}
 
-		if (!empty($one2oneRooms)) {
+		if ($one2oneRooms !== []) {
 			$update->andWhere($update->expr()->notIn('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
 		}
 

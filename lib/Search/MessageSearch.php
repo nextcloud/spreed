@@ -139,7 +139,7 @@ class MessageSearch implements IProvider {
 			$roomMap[(string) $room->getId()] = $room;
 		}
 
-		if (empty($roomMap)) {
+		if ($roomMap === []) {
 			return SearchResult::complete(
 				$this->l->t('Messages'),
 				[]

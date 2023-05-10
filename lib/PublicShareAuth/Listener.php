@@ -140,7 +140,7 @@ class Listener {
 			return;
 		}
 
-		if (empty($participants)) {
+		if ($participants === []) {
 			return;
 		}
 

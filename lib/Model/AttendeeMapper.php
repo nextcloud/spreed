@@ -128,7 +128,7 @@ class AttendeeMapper extends QBMapper {
 			->from($this->getTableName())
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
-		if (!empty($participantType)) {
+		if ($participantType !== []) {
 			$query->andWhere($query->expr()->in('participant_type', $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT_ARRAY)));
 		}
 
@@ -174,7 +174,7 @@ class AttendeeMapper extends QBMapper {
 				Attendee::ACTOR_GROUPS,
 			], IQueryBuilder::PARAM_STR_ARRAY)));
 
-		if (!empty($participantType)) {
+		if ($participantType !== []) {
 			$query->andWhere($query->expr()->in('participant_type', $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT_ARRAY)));
 		}
 

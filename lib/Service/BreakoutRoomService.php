@@ -72,7 +72,7 @@ class BreakoutRoomService {
 			throw new InvalidArgumentException('attendeeMap');
 		}
 
-		if (empty($attendeeMap)) {
+		if ($attendeeMap === []) {
 			return [];
 		}
 
@@ -82,7 +82,7 @@ class BreakoutRoomService {
 			throw new InvalidArgumentException('attendeeMap');
 		}
 
-		if (empty($attendeeMap)) {
+		if ($attendeeMap === []) {
 			return [];
 		}
 
@@ -300,7 +300,7 @@ class BreakoutRoomService {
 				];
 			}
 
-			if (empty($toAdd)) {
+			if ($toAdd === []) {
 				continue;
 			}
 

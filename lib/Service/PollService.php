@@ -178,7 +178,7 @@ class PollService {
 			throw new \OverflowException();
 		}
 
-		if (!empty($optionIds)) {
+		if ($optionIds !== []) {
 			foreach ($optionIds as $optionId) {
 				if (!is_numeric($optionId)) {
 					throw new \RangeException();
@@ -220,7 +220,7 @@ class PollService {
 				$participant->getAttendee()->getActorId()
 			);
 
-			if (!empty($optionIds)) {
+			if ($optionIds !== []) {
 				$numVoters++;
 			}
 

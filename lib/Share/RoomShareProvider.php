@@ -663,7 +663,7 @@ class RoomShareProvider implements IShareProvider {
 			$share = $this->sharesByIdCache[$id];
 		} else {
 			$shares = $this->getSharesByIds([$id], $recipientId);
-			if (empty($shares)) {
+			if ($shares === []) {
 				throw new ShareNotFound();
 			}
 			$share = $shares[0];
@@ -1144,7 +1144,7 @@ class RoomShareProvider implements IShareProvider {
 		}
 		$cursor->closeCursor();
 
-		if (!empty($ids)) {
+		if ($ids !== []) {
 			$chunks = array_chunk($ids, 100);
 			foreach ($chunks as $chunk) {
 				$qb->delete('share')
@@ -1181,7 +1181,7 @@ class RoomShareProvider implements IShareProvider {
 			}
 			$cursor->closeCursor();
 
-			if (!empty($ids)) {
+			if ($ids !== []) {
 				$chunks = array_chunk($ids, 100);
 				foreach ($chunks as $chunk) {
 					$delete->delete('share')

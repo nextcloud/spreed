@@ -78,7 +78,7 @@ class Calls extends Base {
 			$numCalls = count($data);
 			$numParticipants = array_sum($data);
 
-			if (empty($data)) {
+			if ($data === []) {
 				$output->writeln('<info>No calls in progress</info>');
 			} else {
 				$output->writeln(sprintf('<error>There are currently %1$d calls in progress with %2$d participants</error>', $numCalls, $numParticipants));

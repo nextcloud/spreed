@@ -137,7 +137,7 @@ class Config {
 		$this->canEnableSIP[$user->getUID()] = false;
 
 		$allowedGroups = $this->getSIPGroups();
-		if (empty($allowedGroups)) {
+		if ($allowedGroups === []) {
 			$this->canEnableSIP[$user->getUID()] = true;
 		} else {
 			$userGroups = $this->groupManager->getUserGroupIds($user);
@@ -183,7 +183,7 @@ class Config {
 		}
 
 		$recordingServers = $this->getRecordingServers();
-		if (empty($recordingServers)) {
+		if ($recordingServers === []) {
 			return false;
 		}
 
@@ -201,7 +201,7 @@ class Config {
 
 	public function isDisabledForUser(IUser $user): bool {
 		$allowedGroups = $this->getAllowedTalkGroupIds();
-		if (empty($allowedGroups)) {
+		if ($allowedGroups === []) {
 			return false;
 		}
 
@@ -220,7 +220,7 @@ class Config {
 
 	public function isNotAllowedToCreateConversations(IUser $user): bool {
 		$allowedGroups = $this->getAllowedConversationsGroupIds();
-		if (empty($allowedGroups)) {
+		if ($allowedGroups === []) {
 			return false;
 		}
 
@@ -298,7 +298,7 @@ class Config {
 		$config = $this->config->getAppValue('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']));
 		$servers = json_decode($config, true);
 
-		if (!is_array($servers) || empty($servers)) {
+		if (!is_array($servers) || $servers === []) {
 			$servers = ['stun.nextcloud.com:443'];
 		}
 
@@ -345,7 +345,7 @@ class Config {
 	public function getTurnSettings(): array {
 		$servers = $this->getTurnServers();
 
-		if (empty($servers)) {
+		if ($servers === []) {
 			return [];
 		}
 

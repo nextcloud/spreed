@@ -91,7 +91,7 @@ class Version11000Date20200922161218 extends SimpleMigrationStep {
 		}
 		$result->closeCursor();
 
-		if (empty($bridges)) {
+		if ($bridges === []) {
 			return;
 		}
 

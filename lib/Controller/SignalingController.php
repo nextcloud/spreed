@@ -237,7 +237,7 @@ class SignalingController extends OCSController {
 	 */
 	public function getWelcomeMessage(int $serverId): DataResponse {
 		$signalingServers = $this->talkConfig->getSignalingServers();
-		if (empty($signalingServers) || !isset($signalingServers[$serverId])) {
+		if ($signalingServers === [] || !isset($signalingServers[$serverId])) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -375,7 +375,7 @@ class SignalingController extends OCSController {
 			}
 
 			$this->dbConnection->close();
-			if (empty($data)) {
+			if ($data === []) {
 				$seconds--;
 			} else {
 				break;

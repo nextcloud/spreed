@@ -737,7 +737,7 @@ class MatterbridgeManager {
 			}
 		}
 
-		if (empty($runningPidList)) {
+		if ($runningPidList === []) {
 			// No processes running, so also no zombies
 			return;
 		}

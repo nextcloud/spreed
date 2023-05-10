@@ -61,7 +61,7 @@ class TalkBackend implements ITalkBackend {
 			$name
 		);
 
-		if (!empty($moderators)) {
+		if ($moderators !== []) {
 			$users = [];
 			foreach ($moderators as $moderator) {
 				$users[] = [
