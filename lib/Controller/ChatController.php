@@ -204,6 +204,10 @@ class ChatController extends AEnvironmentAwareController {
 	 *         found".
 	 */
 	public function sendMessage(string $message, string $actorDisplayName = '', string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
+		if (trim($message) === '') {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		[$actorType, $actorId] = $this->getActorInfo($actorDisplayName);
 		if (!$actorId) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
