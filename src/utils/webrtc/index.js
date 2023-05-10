@@ -23,6 +23,7 @@ import Axios from '@nextcloud/axios'
 import { getCapabilities } from '@nextcloud/capabilities'
 
 import { PARTICIPANT, PRIVACY, VIRTUAL_BACKGROUND } from '../../constants.js'
+import BrowserStorage from '../../services/BrowserStorage.js'
 import { fetchSignalingSettings } from '../../services/signalingService.js'
 import store from '../../store/index.js'
 import CancelableRequest from '../cancelableRequest.js'
@@ -227,12 +228,12 @@ async function signalingJoinCall(token, flags, silent) {
 
 			// The previous state might be wiped after the media is started, so
 			// it should be saved now.
-			const enableAudio = !localStorage.getItem('audioDisabled_' + token)
-			const enableVideo = !localStorage.getItem('videoDisabled_' + token)
-			const enableVirtualBackground = !!localStorage.getItem('virtualBackgroundEnabled_' + token)
-			const virtualBackgroundType = localStorage.getItem('virtualBackgroundType_' + token)
-			const virtualBackgroundBlurStrength = localStorage.getItem('virtualBackgroundBlurStrength_' + token)
-			const virtualBackgroundUrl = localStorage.getItem('virtualBackgroundUrl_' + token)
+			const enableAudio = !BrowserStorage.getItem('audioDisabled_' + token)
+			const enableVideo = !BrowserStorage.getItem('videoDisabled_' + token)
+			const enableVirtualBackground = !!BrowserStorage.getItem('virtualBackgroundEnabled_' + token)
+			const virtualBackgroundType = BrowserStorage.getItem('virtualBackgroundType_' + token)
+			const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength_' + token)
+			const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl_' + token)
 
 			if (enableAudio) {
 				localMediaModel.enableAudio()

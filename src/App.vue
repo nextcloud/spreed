@@ -275,12 +275,12 @@ export default {
 			if (this.isInCall) {
 				this.$store.dispatch('setForceCallView', true)
 
-				const enableAudio = !localStorage.getItem('audioDisabled_' + this.token)
-				const enableVideo = !localStorage.getItem('videoDisabled_' + this.token)
-				const enableVirtualBackground = !!localStorage.getItem('virtualBackgroundEnabled_' + this.token)
-				const virtualBackgroundType = localStorage.getItem('virtualBackgroundType_' + this.token)
-				const virtualBackgroundBlurStrength = localStorage.getItem('virtualBackgroundBlurStrength_' + this.token)
-				const virtualBackgroundUrl = localStorage.getItem('virtualBackgroundUrl_' + this.token)
+				const enableAudio = !BrowserStorage.getItem('audioDisabled_' + this.token)
+				const enableVideo = !BrowserStorage.getItem('videoDisabled_' + this.token)
+				const enableVirtualBackground = !!BrowserStorage.getItem('virtualBackgroundEnabled_' + this.token)
+				const virtualBackgroundType = BrowserStorage.getItem('virtualBackgroundType_' + this.token)
+				const virtualBackgroundBlurStrength = BrowserStorage.getItem('virtualBackgroundBlurStrength_' + this.token)
+				const virtualBackgroundUrl = BrowserStorage.getItem('virtualBackgroundUrl_' + this.token)
 
 				EventBus.$once('joined-conversation', async ({ token }) => {
 					if (params.token !== token) {
@@ -288,34 +288,34 @@ export default {
 					}
 
 					if (enableAudio) {
-						localStorage.removeItem('audioDisabled_' + token)
+						BrowserStorage.removeItem('audioDisabled_' + token)
 					} else {
-						localStorage.setItem('audioDisabled_' + token, 'true')
+						BrowserStorage.setItem('audioDisabled_' + token, 'true')
 					}
 					if (enableVideo) {
-						localStorage.removeItem('videoDisabled_' + token)
+						BrowserStorage.removeItem('videoDisabled_' + token)
 					} else {
-						localStorage.setItem('videoDisabled_' + token, 'true')
+						BrowserStorage.setItem('videoDisabled_' + token, 'true')
 					}
 					if (enableVirtualBackground) {
-						localStorage.setItem('virtualBackgroundEnabled_' + token, 'true')
+						BrowserStorage.setItem('virtualBackgroundEnabled_' + token, 'true')
 					} else {
-						localStorage.removeItem('virtualBackgroundEnabled_' + token)
+						BrowserStorage.removeItem('virtualBackgroundEnabled_' + token)
 					}
 					if (virtualBackgroundType) {
-						localStorage.setItem('virtualBackgroundType_' + token, virtualBackgroundType)
+						BrowserStorage.setItem('virtualBackgroundType_' + token, virtualBackgroundType)
 					} else {
-						localStorage.removeItem('virtualBackgroundType_' + token)
+						BrowserStorage.removeItem('virtualBackgroundType_' + token)
 					}
 					if (virtualBackgroundBlurStrength) {
-						localStorage.setItem('virtualBackgroundBlurStrength' + token, virtualBackgroundBlurStrength)
+						BrowserStorage.setItem('virtualBackgroundBlurStrength' + token, virtualBackgroundBlurStrength)
 					} else {
-						localStorage.removeItem('virtualBackgroundBlurStrength' + token)
+						BrowserStorage.removeItem('virtualBackgroundBlurStrength' + token)
 					}
 					if (virtualBackgroundUrl) {
-						localStorage.setItem('virtualBackgroundUrl_' + token, virtualBackgroundUrl)
+						BrowserStorage.setItem('virtualBackgroundUrl_' + token, virtualBackgroundUrl)
 					} else {
-						localStorage.removeItem('virtualBackgroundUrl_' + token)
+						BrowserStorage.removeItem('virtualBackgroundUrl_' + token)
 					}
 
 					const conversation = this.$store.getters.conversation(token)
