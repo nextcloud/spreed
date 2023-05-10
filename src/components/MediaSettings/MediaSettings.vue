@@ -475,7 +475,7 @@ export default {
 		/**
 		 * Sets an image as background in virtualBackground: the background used in the MediaSettings preview
 		 *
-		 * @param background
+		 * @param {string} background the image's url
 		 */
 		setVirtualBackgroundImage(background) {
 			this.virtualBackground.setEnabled(true)
@@ -488,7 +488,7 @@ export default {
 		/**
 		 * Sets an image as background of the participants in current or future call
 		 *
-		 * @param background the image's url
+		 * @param {string} background the image's url
 		 */
 		setBackgroundImage(background) {
 			if (this.isInCall) {
