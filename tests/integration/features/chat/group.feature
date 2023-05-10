@@ -59,6 +59,7 @@ Feature: chat/group
       | invite   | attendees1 |
     When user "participant1" sends message "Message 1" to room "group room" with 201
     And user "participant2" sends message "Message 2" to room "group room" with 201
+    And user "participant2" sends message "" to room "group room" with 400
     Then user "participant1" sees the following messages in room "group room" with 200
       | room       | actorType | actorId      | actorDisplayName         | message   | messageParameters |
       | group room | users     | participant2 | participant2-displayname | Message 2 | []                |
