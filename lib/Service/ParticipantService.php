@@ -1022,6 +1022,10 @@ class ParticipantService {
 		}
 		$result->closeCursor();
 
+		if (empty($attendeeIds)) {
+			return;
+		}
+
 		$this->attendeeMapper->deleteByIds($attendeeIds);
 
 		$attendeeEvent = new AttendeesRemovedEvent($room, $attendees);
