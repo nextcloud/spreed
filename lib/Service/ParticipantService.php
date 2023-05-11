@@ -1010,8 +1010,9 @@ class ParticipantService {
 				continue;
 			}
 
-			if ($row['permissions'] !== Attendee::PERMISSIONS_DEFAULT
-				|| $row['participant_type'] === Participant::GUEST_MODERATOR) {
+			if ((int) $row['participant_type'] !== Participant::GUEST
+				|| ((int) $row['permissions'] !== Attendee::PERMISSIONS_DEFAULT
+					&& (int) $row['permissions'] !== Attendee::PERMISSIONS_CUSTOM)) {
 				// Keep guests with non-default permissions in case they just reconnect
 				continue;
 			}
