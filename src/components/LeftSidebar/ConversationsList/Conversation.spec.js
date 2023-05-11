@@ -1,14 +1,17 @@
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
 import { cloneDeep } from 'lodash'
+import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 
 import { showSuccess, showError } from '@nextcloud/dialogs'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcListItem from '@nextcloud/vue/dist/Components/NcListItem.js'
 
 import Conversation from './Conversation.vue'
 
+import router from '../../../__mocks__/router.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
 import storeConfig from '../../../store/storeConfig.js'
 
@@ -274,7 +277,36 @@ describe('Conversation.vue', () => {
 		})
 	})
 
-	describe('actions', () => {
+	describe('actions (real router)', () => {
+		beforeEach(() => {
+			localVue.use(VueRouter)
+		})
+
+		test('change route on click event', async () => {
+			const wrapper = mount(Conversation, {
+				localVue,
+				router,
+				store,
+				stubs: {
+					NcListItem,
+				},
+				propsData: {
+					isSearchResult: false,
+					item,
+				},
+			})
+
+			const el = wrapper.findComponent({ name: 'NcListItem' })
+			expect(el.exists()).toBe(true)
+
+			await el.find('a').trigger('click')
+
+			expect(wrapper.vm.$route.name).toBe('conversation')
+			expect(wrapper.vm.$route.params).toStrictEqual({ token: TOKEN })
+		})
+	})
+
+	describe('actions (mock router)', () => {
 		let $router
 
 		beforeEach(() => {
@@ -320,27 +352,6 @@ describe('Conversation.vue', () => {
 
 			return findNcActionButton(el, actionName)
 		}
-
-		test('forwards click event on list item', async () => {
-			const wrapper = mount(Conversation, {
-				localVue,
-				store,
-				stubs: {
-					RouterLink: RouterLinkStub,
-				},
-				propsData: {
-					isSearchResult: false,
-					item,
-				},
-			})
-
-			const el = wrapper.findComponent({ name: 'NcListItem' })
-			expect(el.exists()).toBe(true)
-
-			await el.find('a').trigger('click')
-
-			expect(wrapper.emitted().click).toBeTruthy()
-		})
 
 		describe('leaving conversation', () => {
 			test('leaves conversation', async () => {

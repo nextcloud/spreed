@@ -41,8 +41,7 @@
 						:title="t('spreed', 'Conversations')" />
 					<Conversation v-for="item of conversationsList"
 						:key="item.id"
-						:item="item"
-						@click="handleClickSearchResult(item)" />
+						:item="item" />
 					<template v-if="!initialisedConversations">
 						<LoadingPlaceholder type="conversations" />
 					</template>
@@ -54,8 +53,7 @@
 							<Conversation v-for="item of searchResultsListedConversations"
 								:key="item.id"
 								:item="item"
-								:is-search-result="true"
-								@click="joinListedConversation(item)" />
+								is-search-result />
 						</template>
 						<template v-if="searchResultsUsers.length !== 0">
 							<NcAppNavigationCaption :title="t('spreed', 'Users')" />
@@ -287,9 +285,7 @@ export default {
 		EventBus.$on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.$once('conversations-received', this.handleUnreadMention)
 		EventBus.$on('route-change', this.onRouteChange)
-		EventBus.$once('joined-conversation', ({ token }) => {
-			this.scrollToConversation(token)
-		})
+		EventBus.$on('joined-conversation', this.handleJoinedConversation)
 		this.mountArrowNavigation()
 	},
 
@@ -408,10 +404,6 @@ export default {
 			if (item.source === 'users') {
 				// Create one-to-one conversation directly
 				const conversation = await this.$store.dispatch('createOneToOneConversation', item.id)
-				this.abortSearch()
-				EventBus.$once('joined-conversation', ({ token }) => {
-					this.scrollToConversation(token)
-				})
 				this.$router.push({
 					name: 'conversation',
 					params: { token: conversation.token },
@@ -420,19 +412,6 @@ export default {
 				// For other types we start the conversation creation dialog
 				EventBus.$emit('new-group-conversation-dialog', item)
 			}
-		},
-
-		async joinListedConversation(conversation) {
-			this.abortSearch()
-			EventBus.$once('joined-conversation', ({ token }) => {
-				this.scrollToConversation(token)
-			})
-			// add as temporary item that will refresh after the joining process is complete
-			this.$store.dispatch('addConversation', conversation)
-			this.$router.push({
-				name: 'conversation',
-				params: { token: conversation.token },
-			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
 		hasOneToOneConversationWith(userId) {
@@ -453,21 +432,6 @@ export default {
 		showSettings() {
 			// FIXME: use local EventBus service instead of the global one
 			emit('show-settings')
-		},
-
-		handleClickSearchResult(conversation) {
-			if (this.searchText !== '') {
-				EventBus.$once('joined-conversation', ({ token }) => {
-					if (this.isMobile) {
-						emit('toggle-navigation', {
-							open: false,
-						})
-					}
-					this.scrollToConversation(token)
-				})
-			}
-			// End the search operation
-			this.abortSearch()
 		},
 
 		sortConversations(conversation1, conversation2) {
@@ -613,6 +577,16 @@ export default {
 			}
 			if (to.name === 'conversation') {
 				this.$store.dispatch('joinConversation', { token: to.params.token })
+			}
+		},
+
+		handleJoinedConversation({ token }) {
+			this.abortSearch()
+			this.scrollToConversation(token)
+			if (this.isMobile) {
+				emit('toggle-navigation', {
+					open: false,
+				})
 			}
 		},
 
