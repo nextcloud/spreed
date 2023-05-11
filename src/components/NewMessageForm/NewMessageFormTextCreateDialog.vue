@@ -22,7 +22,7 @@
   -->
 
 <template>
-	<NcModal size="normal"
+	<NcModal size="large"
 		:container="container"
 		class="templates-picker"
 		@close="closeModal">
@@ -58,10 +58,6 @@
 				</template>
 
 				<div class="new-text-file__buttons">
-					<NcButton type="tertiary"
-						@click="closeModal">
-						{{ t('spreed', 'Close') }}
-					</NcButton>
 					<NcButton type="primary"
 						@click="handleCreateTextFile">
 						{{ t('spreed', 'Create file') }}
@@ -150,7 +146,11 @@ export default {
 		style() {
 			const border = 2
 			const margin = 8
-			const width = margin * 20
+			// Fallback to 16:9 landscape ratio
+			const ratio = this.fileTemplate.ratio ? this.fileTemplate.ratio : 1.77
+			// Landscape templates should be wider than tall ones
+			// We fit 3 templates per row at max for landscape and 4 for portrait
+			const width = ratio > 1 ? margin * 30 : margin * 20
 
 			return {
 				'--margin': margin + 'px',
@@ -239,9 +239,8 @@ export default {
 
 	&__buttons {
 		display: flex;
-		gap: 4px;
-		justify-content: center;
-		margin-top: 20px;
+		justify-content: end;
+		padding-top: calc(var(--margin) * 2);
 	}
 
 	&__form {
