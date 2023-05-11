@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.0.0-beta.3 – 2023-05-12
+### Added
+- Allow translating chat messages
+  [#9512](https://github.com/nextcloud/spreed/issues/9512)
+
+### Changed
+- Update several dependencies
+
+### Fixed
+- Media settings or not respected
+  [#9513](https://github.com/nextcloud/spreed/issues/9513)
+- Fix clearing guests over and over again on MySQL and Oracle
+  [#9517](https://github.com/nextcloud/spreed/issues/9517)
+- Prevent empty chat messages
+  [#9509](https://github.com/nextcloud/spreed/issues/9509)
+
 ## 17.0.0-beta.2 – 2023-05-09
 ### Added
 - Typing indicators frontend and settings
