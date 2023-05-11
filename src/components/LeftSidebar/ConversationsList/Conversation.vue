@@ -103,7 +103,7 @@
 			</NcActionButton>
 		</template>
 		<template v-else-if="item.token" slot="actions">
-			<NcActionButton close-after-click @click="onClick">
+			<NcActionButton close-after-click @click="onActionClick">
 				<template #icon>
 					<ArrowRight :size="16" />
 				</template>
