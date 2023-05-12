@@ -27,7 +27,7 @@
 			:show-trailing-button="isSearching"
 			trailing-button-icon="close"
 			@trailing-button-click="abortSearch"
-			@keypress.enter.prevent="handleSubmit">
+			@keypress.enter="handleSubmit">
 			<Magnify :size="16" />
 		</NcTextField>
 	</form>

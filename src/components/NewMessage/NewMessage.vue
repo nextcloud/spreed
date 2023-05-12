@@ -95,7 +95,7 @@
 						:placeholder="placeholderText"
 						:aria-label="placeholderText"
 						@shortkey="focusInput"
-						@keydown.esc.prevent="handleInputEsc"
+						@keydown.esc="handleInputEsc"
 						@tribute-active-true.native="isTributePickerActive = true"
 						@tribute-active-false.native="isTributePickerActive = false"
 						@paste="handlePastedFiles"

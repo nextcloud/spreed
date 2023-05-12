@@ -48,7 +48,7 @@
 		<template v-if="!isSearchResult" #actions>
 			<NcActionButton v-if="canFavorite"
 				:close-after-click="true"
-				@click.prevent.exact="toggleFavoriteConversation">
+				@click="toggleFavoriteConversation">
 				<template #icon>
 					<Star v-if="item.isFavorite" :size="20" />
 					<Star v-else :size="20" :fill-color="'#FFCC00'" />
@@ -56,12 +56,12 @@
 				{{ labelFavorite }}
 			</NcActionButton>
 			<NcActionButton icon="icon-clippy"
-				@click.stop.prevent="handleCopyLink">
+				@click.stop="handleCopyLink">
 				{{ t('spreed', 'Copy link') }}
 			</NcActionButton>
 			<NcActionButton v-if="item.unreadMessages"
 				:close-after-click="true"
-				@click.prevent.exact="markConversationAsRead">
+				@click="markConversationAsRead">
 				<template #icon>
 					<EyeOutline :size="16" />
 				</template>
@@ -69,14 +69,14 @@
 			</NcActionButton>
 			<NcActionButton v-else
 				:close-after-click="true"
-				@click.prevent.exact="markConversationAsUnread">
+				@click="markConversationAsUnread">
 				<template #icon>
 					<EyeOffOutline :size="16" />
 				</template>
 				{{ t('spreed', 'Mark as unread') }}
 			</NcActionButton>
 			<NcActionButton :close-after-click="true"
-				@click.prevent.exact="showConversationSettings">
+				@click="showConversationSettings">
 				<template #icon>
 					<Cog :size="20" />
 				</template>
@@ -84,7 +84,7 @@
 			</NcActionButton>
 			<NcActionButton v-if="canLeaveConversation"
 				:close-after-click="true"
-				@click.prevent.exact="leaveConversation">
+				@click="leaveConversation">
 				<template #icon>
 					<ExitToApp :size="16" />
 				</template>
@@ -93,7 +93,7 @@
 			<NcActionButton v-if="canDeleteConversation"
 				:close-after-click="true"
 				class="critical"
-				@click.prevent.exact="deleteConversation">
+				@click="deleteConversation">
 				<template #icon>
 					<Delete :size="16" />
 				</template>
@@ -108,7 +108,7 @@
 				{{ t('spreed', 'Join conversation') }}
 			</NcActionButton>
 			<NcActionButton icon="icon-clippy"
-				@click.stop.prevent="handleCopyLink">
+				@click.stop="handleCopyLink">
 				{{ t('spreed', 'Copy link') }}
 			</NcActionButton>
 		</template>

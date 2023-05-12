@@ -540,7 +540,6 @@ export default {
 			if (this?.conversationsList[0]?.token) {
 				this.$router.push({ name: 'conversation', params: { token: this.conversationsList[0].token } })
 			}
-			this.handleClickSearchResult()
 		},
 
 		scrollToConversation(token) {
