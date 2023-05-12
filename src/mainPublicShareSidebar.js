@@ -63,6 +63,8 @@ Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
 Vue.use(VueObserveVisibility)
 
+store.dispatch('setMainContainerSelector', '#talk-sidebar')
+
 /**
  *
  */
