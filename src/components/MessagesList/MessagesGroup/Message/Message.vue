@@ -199,7 +199,7 @@ the main body of the message as well as a quote.
 		</div>
 
 		<MessageTranslateDialog v-if="isTranslateDialogOpen"
-			:text="message"
+			:message="message"
 			:rich-parameters="richParameters"
 			@close="isTranslateDialogOpen = false" />
 

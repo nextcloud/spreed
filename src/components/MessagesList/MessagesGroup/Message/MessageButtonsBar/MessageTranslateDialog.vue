@@ -55,7 +55,7 @@
 			</div>
 
 			<NcRichText class="translate-dialog__message translate-dialog__message-source"
-				:text="text"
+				:text="message"
 				:arguments="richParameters"
 				:reference-limit="0" />
 
@@ -69,7 +69,7 @@
 					<template #icon>
 						<ContentCopy />
 					</template>
-					{{ t('spreed', 'Copy translation') }}
+					{{ t('spreed', 'Copy translated text') }}
 				</NcButton>
 			</template>
 		</div>
@@ -107,7 +107,7 @@ export default {
 	},
 
 	props: {
-		text: {
+		message: {
 			type: String,
 			required: true,
 		},
@@ -223,11 +223,11 @@ export default {
 		async translateMessage(sourceLanguage = null) {
 			try {
 				this.isLoading = true
-				const response = await translateText(this.text, sourceLanguage, this.selectedTo?.id)
+				const response = await translateText(this.message, sourceLanguage, this.selectedTo?.id)
 				this.translatedMessage = response.data.ocs.data.text
 			} catch (error) {
 				console.error(error)
-				showError(t('spreed', 'The message could not be translated'))
+				showError(error.response?.data?.ocs?.data?.message ?? t('spreed', 'The message could not be translated'))
 			} finally {
 				this.isLoading = false
 			}
@@ -253,13 +253,13 @@ export default {
 	flex-direction: column;
 	min-height: 400px;
 	padding: calc(var(--default-grid-baseline) * 3);
+	background-color: var(--color-main-background);
 
 	&__wrapper {
 		display: flex;
 		align-items: center;
 		gap: calc(var(--default-grid-baseline) * 4);
 		padding: calc(var(--default-grid-baseline) * 2);
-		border-bottom: 1px solid var(--color-border);
 	}
 
 	& &__select {
@@ -274,15 +274,16 @@ export default {
 	&__message {
 		padding: calc(var(--default-grid-baseline) * 2);
 		flex-grow: 1;
+		border-radius: var(--border-radius-large);
 
 		&-source {
 			color: var(--color-text-lighter);
 			margin-bottom: calc(var(--default-grid-baseline) * 2);
+			border: 2px solid var(--color-border);
 		}
 
 		&-translation {
-			background-color: var(--color-background-dark);
-			border-radius: var(--border-radius-large);
+			border: 2px solid var(--color-primary-element);
 		}
 	}
 
