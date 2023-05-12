@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Middleware;
 
 use OCA\Talk\Config;
+use OCA\Talk\Controller\RecordingController;
 use OCA\Talk\Controller\SignalingController;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Middleware\Exceptions\CanNotUseTalkException;
@@ -72,7 +73,8 @@ class CanUseTalkMiddleware extends Middleware {
 		$user = $this->userSession->getUser();
 		if ($user instanceof IUser && $this->talkConfig->isDisabledForUser($user)) {
 			if ($methodName === 'getWelcomeMessage'
-				&& $controller instanceof SignalingController
+				&& ($controller instanceof SignalingController
+					|| $controller instanceof RecordingController)
 				&& $this->groupManager->isAdmin($user->getUID())) {
 				return;
 			}
