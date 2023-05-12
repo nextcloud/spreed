@@ -20,6 +20,7 @@
  */
 
 import { VIRTUAL_BACKGROUND } from '../../../constants.js'
+import BrowserStorage from '../../../services/BrowserStorage.js'
 import store from '../../../store/index.js'
 import EmitterMixin from '../../EmitterMixin.js'
 
@@ -353,7 +354,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		localStorage.removeItem('audioDisabled_' + this.get('token'))
+		BrowserStorage.removeItem('audioDisabled_' + this.get('token'))
 
 		this._webRtc.unmute()
 	},
@@ -363,7 +364,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		localStorage.setItem('audioDisabled_' + this.get('token'), 'true')
+		BrowserStorage.setItem('audioDisabled_' + this.get('token'), 'true')
 
 		this._webRtc.mute()
 	},
@@ -373,7 +374,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		localStorage.removeItem('videoDisabled_' + this.get('token'))
+		BrowserStorage.removeItem('videoDisabled_' + this.get('token'))
 
 		this._webRtc.resumeVideo()
 	},
@@ -383,7 +384,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		localStorage.setItem('videoDisabled_' + this.get('token'), 'true')
+		BrowserStorage.setItem('videoDisabled_' + this.get('token'), 'true')
 
 		this._webRtc.pauseVideo()
 	},
@@ -393,7 +394,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		localStorage.setItem('virtualBackgroundEnabled_' + this.get('token'), 'true')
+		BrowserStorage.setItem('virtualBackgroundEnabled_' + this.get('token'), 'true')
 
 		this._webRtc.enableVirtualBackground()
 	},
@@ -407,9 +408,9 @@ LocalMediaModel.prototype = {
 			blurStrength = VIRTUAL_BACKGROUND.BLUR_STRENGTH.DEFAULT
 		}
 
-		localStorage.setItem('virtualBackgroundType_' + this.get('token'), VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
-		localStorage.setItem('virtualBackgroundBlurStrength_' + this.get('token'), blurStrength)
-		localStorage.removeItem('virtualBackgroundUrl_' + this.get('token'))
+		BrowserStorage.setItem('virtualBackgroundType_' + this.get('token'), VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR)
+		BrowserStorage.setItem('virtualBackgroundBlurStrength_' + this.get('token'), blurStrength)
+		BrowserStorage.removeItem('virtualBackgroundUrl_' + this.get('token'))
 
 		this._webRtc.setVirtualBackground({
 			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.BLUR,
@@ -422,9 +423,9 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		localStorage.setItem('virtualBackgroundType_' + this.get('token'), VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
-		localStorage.setItem('virtualBackgroundUrl_' + this.get('token'), imageUrl)
-		localStorage.removeItem('virtualBackgroundBlurStrength_' + this.get('token'))
+		BrowserStorage.setItem('virtualBackgroundType_' + this.get('token'), VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE)
+		BrowserStorage.setItem('virtualBackgroundUrl_' + this.get('token'), imageUrl)
+		BrowserStorage.removeItem('virtualBackgroundBlurStrength_' + this.get('token'))
 
 		this._webRtc.setVirtualBackground({
 			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE,
@@ -437,9 +438,9 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		localStorage.setItem('virtualBackgroundType_' + this.get('token'), VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO)
-		localStorage.setItem('virtualBackgroundUrl_' + this.get('token'), videoUrl)
-		localStorage.removeItem('virtualBackgroundBlurStrength_' + this.get('token'))
+		BrowserStorage.setItem('virtualBackgroundType_' + this.get('token'), VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO)
+		BrowserStorage.setItem('virtualBackgroundUrl_' + this.get('token'), videoUrl)
+		BrowserStorage.removeItem('virtualBackgroundBlurStrength_' + this.get('token'))
 
 		this._webRtc.setVirtualBackground({
 			backgroundType: VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO,
@@ -452,7 +453,7 @@ LocalMediaModel.prototype = {
 			throw new Error('WebRtc not initialized yet')
 		}
 
-		localStorage.removeItem('virtualBackgroundEnabled_' + this.get('token'))
+		BrowserStorage.removeItem('virtualBackgroundEnabled_' + this.get('token'))
 
 		this._webRtc.disableVirtualBackground()
 	},

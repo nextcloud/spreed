@@ -260,8 +260,8 @@ export default {
 				} else if (BrowserStorage.getItem('virtualBackgroundType_' + this.token) === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
 					this.selectedBackground = BrowserStorage.getItem('virtualBackgroundUrl_' + this.token)
 				} else {
-				  this.selectedBackground = 'none'
-			  }
+					this.selectedBackground = 'none'
+				}
 			} else {
 				this.selectedBackground = 'none'
 			}
