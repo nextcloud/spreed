@@ -208,7 +208,7 @@ export default {
 					groups.push([message])
 					lastMessage = message
 				} else {
-					groups[groups.length - 1].push(message)
+					groups.at(-1).push(message)
 				}
 			}
 			return groups

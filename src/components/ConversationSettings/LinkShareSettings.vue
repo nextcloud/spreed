@@ -68,7 +68,7 @@
 		<div class="app-settings-subsection app-settings-subsection__buttons">
 			<NcButton ref="copyLinkButton"
 				:wide="true"
-				@click.prevent="handleCopyLink"
+				@click="handleCopyLink"
 				@keydown.enter="handleCopyLink">
 				<template #icon>
 					<ClipboardTextOutline />
@@ -78,7 +78,7 @@
 			<NcButton v-if="isSharedPublicly"
 				:disabled="isSendingInvitations"
 				:wide="true"
-				@click.prevent="handleResendInvitations"
+				@click="handleResendInvitations"
 				@keydown.enter="handleResendInvitations">
 				<template #icon>
 					<Email />

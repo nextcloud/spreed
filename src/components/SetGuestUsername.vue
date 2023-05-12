@@ -25,7 +25,7 @@
 		<h3 v-html="displayNameLabel" />
 
 		<NcButton v-if="!isEditingUsername"
-			@click.prevent="handleEditUsername">
+			@click="handleEditUsername">
 			{{ t('spreed', 'Edit') }}
 			<template #icon>
 				<Pencil :size="20" />

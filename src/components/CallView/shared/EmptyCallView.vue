@@ -32,7 +32,7 @@
 			</p>
 			<NcButton v-if="showLink"
 				type="primary"
-				@click.stop.prevent="handleCopyLink">
+				@click.stop="handleCopyLink">
 				{{ t('spreed', 'Copy link') }}
 			</NcButton>
 		</template>

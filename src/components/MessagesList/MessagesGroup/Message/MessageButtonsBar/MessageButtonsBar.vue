@@ -73,7 +73,7 @@
 				</NcActionButton>
 				<NcActionButton icon="icon-external"
 					:close-after-click="true"
-					@click.stop.prevent="handleCopyMessageLink">
+					@click.stop="handleCopyMessageLink">
 					{{ t('spreed', 'Copy message link') }}
 				</NcActionButton>
 				<NcActionButton :close-after-click="true"

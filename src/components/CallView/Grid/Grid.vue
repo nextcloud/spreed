@@ -438,7 +438,7 @@ export default {
 		// Hides or displays the `grid-navigation next` button
 		hasNextPage() {
 			if (this.displayedVideos.length !== 0 && this.hasPagination) {
-				return this.displayedVideos[this.displayedVideos.length - 1] !== this.videos[this.videos.length - 1]
+				return this.displayedVideos.at(-1) !== this.videos.at(-1)
 			} else {
 				return false
 			}

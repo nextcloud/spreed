@@ -88,7 +88,7 @@ AverageStatValue.prototype = {
 		if (this._type === STAT_VALUE_TYPE.CUMULATIVE) {
 			// The first added value will be meaningless as it will be 0 and
 			// used as the base for the rest of values.
-			const lastRawValue = this._rawValues.length ? this._rawValues[this._rawValues.length - 1] : value
+			const lastRawValue = this._rawValues.length ? this._rawValues.at(-1) : value
 			relativeValue = value - lastRawValue
 		}
 
@@ -101,7 +101,7 @@ AverageStatValue.prototype = {
 			return NaN
 		}
 
-		return this._rawValues[this._rawValues.length - 1]
+		return this._rawValues.at(-1)
 	},
 
 	getLastRelativeValue() {
@@ -109,7 +109,7 @@ AverageStatValue.prototype = {
 			return NaN
 		}
 
-		return this._relativeValues[this._relativeValues.length - 1]
+		return this._relativeValues.at(-1)
 	},
 
 	hasEnoughData() {

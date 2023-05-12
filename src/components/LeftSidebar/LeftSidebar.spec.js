@@ -473,7 +473,7 @@ describe('LeftSidebar.vue', () => {
 					expect(captionsEls.at(0).props('title')).toBe('Conversations')
 				}
 				// last dynamic caption for "No search results"
-				expect(captionsEls.at(captionsEls.length - 1).props('title')).toBe(expectedCaption)
+				expect(captionsEls.at(-1).props('title')).toBe(expectedCaption)
 
 				return wrapper
 			}

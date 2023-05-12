@@ -39,7 +39,7 @@ describe('Participant.vue', () => {
 		})
 
 		if (filteredCalls.length) {
-			return filteredCalls[filteredCalls.length - 1][1].value
+			return filteredCalls.at(-1)[1].value
 		}
 
 		return null

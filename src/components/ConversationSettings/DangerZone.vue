@@ -32,7 +32,7 @@
 				<p class="danger-zone__hint">
 					{{ t('spreed', 'Once a conversation is left, to rejoin a closed conversation, an invite is needed. An open conversation can be rejoined at any time.') }}
 				</p>
-				<NcButton type="warning" @click.prevent.exact="leaveConversation">
+				<NcButton type="warning" @click="leaveConversation">
 					{{ t('spreed', 'Leave conversation') }}
 				</NcButton>
 			</div>
@@ -44,7 +44,7 @@
 					{{ t('spreed', 'Permanently delete this conversation.') }}
 				</p>
 				<NcButton type="error"
-					@click.prevent.exact="deleteConversation">
+					@click="deleteConversation">
 					{{ t('spreed', 'Delete conversation') }}
 				</NcButton>
 			</div>
@@ -56,7 +56,7 @@
 					{{ t('spreed', 'Permanently delete all the messages in this conversation.') }}
 				</p>
 				<NcButton type="error"
-					@click.prevent.exact="clearChatHistory">
+					@click="clearChatHistory">
 					{{ t('spreed', 'Delete chat messages') }}
 				</NcButton>
 			</div>
