@@ -233,7 +233,7 @@ li {
 	}
 
 	&.selected {
-		background-color: var(--color-primary-light);
+		background-color: var(--color-primary-element-light);
 		border-radius: var(--border-radius-pill);
 	}
 

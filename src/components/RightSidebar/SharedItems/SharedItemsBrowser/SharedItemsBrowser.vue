@@ -176,7 +176,7 @@ export default {
 :deep(.button-vue) {
 	border-radius: var(--border-radius-large);
 	&.active {
-		background-color: var(--color-primary-light);
+		background-color: var(--color-primary-element-light);
 	}
 }
 </style>

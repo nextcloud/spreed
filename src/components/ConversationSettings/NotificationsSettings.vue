@@ -165,7 +165,7 @@ export default {
 		background-color: var(--color-background-hover);
 	}
 	&--active{
-		background-color: var(--color-primary-light) !important;
+		background-color: var(--color-primary-element-light) !important;
 	}
 	&__icon {
 		display: flex;
