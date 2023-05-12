@@ -42,7 +42,7 @@
 			:aria-label="t('spreed', 'Conversation messages')"
 			:token="token"
 			:is-visible="isVisible" />
-		<NewMessageForm v-if="containerId"
+		<NewMessage v-if="containerId"
 			role="region"
 			:token="token"
 			:container="containerId"
@@ -53,7 +53,7 @@
 
 <script>
 import MessagesList from './MessagesList/MessagesList.vue'
-import NewMessageForm from './NewMessageForm/NewMessageForm.vue'
+import NewMessage from './NewMessage/NewMessage.vue'
 
 import { CONVERSATION } from '../constants.js'
 
@@ -63,7 +63,7 @@ export default {
 
 	components: {
 		MessagesList,
-		NewMessageForm,
+		NewMessage,
 	},
 
 	props: {
@@ -106,7 +106,7 @@ export default {
 		},
 	},
 	mounted() {
-		// Postpone render of NewMessageForm until application is mounted
+		// Postpone render of NewMessage until application is mounted
 		this.containerId = this.$store.getters.getMainContainerSelector()
 	},
 

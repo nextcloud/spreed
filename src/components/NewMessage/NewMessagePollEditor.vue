@@ -99,7 +99,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import pollService from '../../services/pollService.js'
 
 export default {
-	name: 'NewMessageFormPollEditor',
+	name: 'NewMessagePollEditor',
 
 	components: {
 		NcCheckBoxRadioSwitch,

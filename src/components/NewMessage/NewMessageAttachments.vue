@@ -91,7 +91,7 @@ const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.build()
 
 export default {
-	name: 'NewMessageFormAttachments',
+	name: 'NewMessageAttachments',
 
 	components: {
 		NcActionButton,

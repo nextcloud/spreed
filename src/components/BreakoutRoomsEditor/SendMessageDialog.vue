@@ -27,8 +27,8 @@
 			<h2 class="send-message-dialog__title">
 				{{ dialogTitle }}
 			</h2>
-			<NewMessageForm v-if="modalContainerId"
-				ref="messageForm"
+			<NewMessage v-if="modalContainerId"
+				ref="newMessage"
 				role="region"
 				:token="token"
 				:container="modalContainerId"
@@ -45,14 +45,14 @@ import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
-import NewMessageForm from '../NewMessageForm/NewMessageForm.vue'
+import NewMessage from '../NewMessage/NewMessage.vue'
 
 export default {
 	name: 'SendMessageDialog',
 
 	components: {
 		NcModal,
-		NewMessageForm,
+		NewMessage,
 	},
 
 	props: {
@@ -104,10 +104,10 @@ export default {
 	},
 
 	mounted() {
-		// Postpone render of NewMessageForm until modal container is mounted
+		// Postpone render of NewMessage until modal container is mounted
 		this.modalContainerId = `#modal-description-${this.$refs.modal.randId}`
 		this.$nextTick(() => {
-			this.$refs.messageForm.focusInput()
+			this.$refs.newMessage.focusInput()
 		})
 	},
 

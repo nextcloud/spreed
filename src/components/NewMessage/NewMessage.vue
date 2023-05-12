@@ -23,7 +23,7 @@
 
 <template>
 	<div class="wrapper" :class="{'wrapper--has-typing-indicator': showTypingStatus}">
-		<NewMessageFormTypingIndicator v-if="showTypingStatus"
+		<NewMessageTypingIndicator v-if="showTypingStatus"
 			:token="token" />
 
 		<!--native file picker, hidden -->
@@ -40,7 +40,7 @@
 			<form class="new-message-form"
 				@submit.prevent>
 				<!-- Attachments menu -->
-				<NewMessageFormAttachments v-if="showAttachmentsMenu"
+				<NewMessageAttachments v-if="showAttachmentsMenu"
 					:token="token"
 					:container="container"
 					:boundaries-element="containerElement"
@@ -80,7 +80,7 @@
 						</NcButton>
 					</div>
 					<div v-if="messageToBeReplied" class="new-message-form__quote">
-						<Quote :is-new-message-form-quote="true"
+						<Quote is-new-message-quote
 							:parent-id="messageToBeReplied.id"
 							v-bind="messageToBeReplied" />
 					</div>
@@ -103,7 +103,7 @@
 				</div>
 
 				<!-- Audio recorder -->
-				<NewMessageFormAudioRecorder v-if="showAudioRecorder"
+				<NewMessageAudioRecorder v-if="showAudioRecorder"
 					:disabled="disabled"
 					@recording="handleRecording"
 					@audio-file="handleAudioFile" />
@@ -140,15 +140,15 @@
 		</div>
 
 		<!-- File upload dialog -->
-		<NewMessageFormUploadEditor />
+		<NewMessageUploadEditor />
 
 		<!-- Poll creation dialog -->
-		<NewMessageFormPollEditor v-if="showPollEditor"
+		<NewMessagePollEditor v-if="showPollEditor"
 			:token="token"
 			@close="togglePollEditor" />
 
-		<!-- Text file creation dialog -->
-		<NewMessageFormTextCreateDialog v-if="showNewFileDialog !== -1"
+		<!-- New file creation dialog -->
+		<NewMessageNewFileDialog v-if="showNewFileDialog !== -1"
 			:token="token"
 			:container="container"
 			:show-new-file-dialog="showNewFileDialog"
@@ -172,12 +172,12 @@ import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
 
 import Quote from '../Quote.vue'
-import NewMessageFormAttachments from './NewMessageFormAttachments.vue'
-import NewMessageFormAudioRecorder from './NewMessageFormAudioRecorder.vue'
-import NewMessageFormPollEditor from './NewMessageFormPollEditor.vue'
-import NewMessageFormTextCreateDialog from './NewMessageFormTextCreateDialog.vue'
-import NewMessageFormTypingIndicator from './NewMessageFormTypingIndicator.vue'
-import NewMessageFormUploadEditor from './NewMessageFormUploadEditor.vue'
+import NewMessageAttachments from './NewMessageAttachments.vue'
+import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
+import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
+import NewMessagePollEditor from './NewMessagePollEditor.vue'
+import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
+import NewMessageUploadEditor from './NewMessageUploadEditor.vue'
 
 import { useViewer } from '../../composables/useViewer.js'
 import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
@@ -197,7 +197,7 @@ const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined
 
 export default {
-	name: 'NewMessageForm',
+	name: 'NewMessage',
 
 	disableKeyboardShortcuts,
 
@@ -207,12 +207,12 @@ export default {
 		NcButton,
 		NcEmojiPicker,
 		NcRichContenteditable,
-		NewMessageFormAttachments,
-		NewMessageFormAudioRecorder,
-		NewMessageFormPollEditor,
-		NewMessageFormTextCreateDialog,
-		NewMessageFormTypingIndicator,
-		NewMessageFormUploadEditor,
+		NewMessageAttachments,
+		NewMessageAudioRecorder,
+		NewMessageNewFileDialog,
+		NewMessagePollEditor,
+		NewMessageTypingIndicator,
+		NewMessageUploadEditor,
 		Quote,
 		// Icons
 		BellOff,

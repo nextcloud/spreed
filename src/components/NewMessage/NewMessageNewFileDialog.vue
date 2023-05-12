@@ -43,7 +43,7 @@
 					@update:value="updateNewFileTitle" />
 
 				<ul v-if="templates.length > 1" class="templates-picker__list">
-					<NewMessageFormTemplatePreview v-for="template in templates"
+					<NewMessageTemplatePreview v-for="template in templates"
 						:key="template.fileid"
 						:basename="template.basename"
 						:checked="checked === template.fileid"
@@ -74,17 +74,17 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import NewMessageFormTemplatePreview from './NewMessageFormTemplatePreview.vue'
+import NewMessageTemplatePreview from './NewMessageTemplatePreview.vue'
 
 import { useViewer } from '../../composables/useViewer.js'
 import { createNewFile, shareFile } from '../../services/filesSharingServices.js'
 
 export default {
-	name: 'NewMessageFormTextCreateDialog',
+	name: 'NewMessageNewFileDialog',
 
 	components: {
 		NcButton,
-		NewMessageFormTemplatePreview,
+		NewMessageTemplatePreview,
 		NcModal,
 		NcTextField,
 	},

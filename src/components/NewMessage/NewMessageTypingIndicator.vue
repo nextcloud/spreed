@@ -3,7 +3,7 @@
   -
   - @author Maksim Sukharev <antreesy.web@gmail.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -34,6 +34,7 @@
 					disable-menu
 					disable-tooltip />
 			</div>
+			<!-- eslint-disable-next-line vue/no-v-html -->
 			<p class="indicator__main" v-html="indicatorMessage" />
 		</div>
 	</div>
@@ -45,7 +46,7 @@ import escapeHtml from 'escape-html'
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
 export default {
-	name: 'NewMessageFormTypingIndicator',
+	name: 'NewMessageTypingIndicator',
 	components: { AvatarWrapper },
 
 	props: {

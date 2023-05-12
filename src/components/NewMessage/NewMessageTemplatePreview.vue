@@ -74,7 +74,7 @@ const getToken = function() {
 const previewWidth = 256
 
 export default {
-	name: 'NewMessageFormTemplatePreview',
+	name: 'NewMessageTemplatePreview',
 	inheritAttrs: false,
 
 	props: {

@@ -82,7 +82,7 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
 export default {
-	name: 'NewMessageFormAudioRecorder',
+	name: 'NewMessageAudioRecorder',
 
 	components: {
 		Microphone,
@@ -255,7 +255,7 @@ export default {
 				}
 				this.recordTime.seconds++
 			}, 1000)
-			// Forward an event to let the parent NewMessageForm component
+			// Forward an event to let the parent NewMessage component
 			// that there's an undergoing recording operation
 			this.$emit('recording', true)
 		},
