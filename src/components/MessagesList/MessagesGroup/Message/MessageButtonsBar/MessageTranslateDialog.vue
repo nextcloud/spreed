@@ -80,6 +80,7 @@
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -89,6 +90,8 @@ import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
 import { translateText } from '../../../../../services/messagesService.js'
+
+const availableLanguages = getCapabilities()?.spreed?.config?.chat?.translations
 
 export default {
 	name: 'MessageTranslateDialog',
@@ -116,6 +119,10 @@ export default {
 
 	emits: ['close'],
 
+	setup() {
+		return { availableLanguages }
+	},
+
 	data() {
 		return {
 			isMounted: false,
@@ -127,14 +134,6 @@ export default {
 	},
 
 	computed: {
-		hasTranslationLanguageDetection() {
-			return this.$store.getters.hasTranslationLanguageDetection()
-		},
-
-		availableLanguages() {
-			return this.$store.getters.getTranslationAvailableLanguages()
-		},
-
 		userLanguage() {
 			return navigator.language.substring(0, 2)
 		},
@@ -206,7 +205,7 @@ export default {
 	mounted() {
 		this.selectedTo = this.optionsTo.find(language => language.id === this.userLanguage) || null
 
-		if (this.hasTranslationLanguageDetection && this.selectedTo) {
+		if (this.selectedTo) {
 			this.translateMessage()
 		}
 

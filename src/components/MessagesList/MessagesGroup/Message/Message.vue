@@ -221,6 +221,7 @@ import CheckAll from 'vue-material-design-icons/CheckAll.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 
@@ -245,6 +246,8 @@ import { useIsInCall } from '../../../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import participant from '../../../../mixins/participant.js'
 import { EventBus } from '../../../../services/EventBus.js'
+
+const isTranslationAvailable = getCapabilities()?.spreed?.config?.chat?.translations?.length > 0
 
 /**
  * @property {object} scrollerBoundingClientRect provided by MessageList.vue
@@ -413,7 +416,7 @@ export default {
 
 	setup() {
 		const isInCall = useIsInCall()
-		return { isInCall }
+		return { isInCall, isTranslationAvailable }
 	},
 
 	data() {
@@ -661,10 +664,6 @@ export default {
 
 		detailedReactionsLoaded() {
 			return this.$store.getters.reactionsLoaded(this.token, this.id)
-		},
-
-		isTranslationAvailable() {
-			return this.$store.getters.getTranslationAvailableLanguages()?.length !== 0
 		},
 	},
 
