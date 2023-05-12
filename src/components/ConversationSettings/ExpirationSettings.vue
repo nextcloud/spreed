@@ -100,7 +100,7 @@ export default {
 				return option
 			}
 
-			return this.expirationOptions[this.expirationOptions.length - 1]
+			return this.expirationOptions.at(-1)
 		},
 	},
 
