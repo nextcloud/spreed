@@ -67,7 +67,7 @@ const getFileTemplates = async () => {
  * @param {string} templateType The template type e.g 'user'
  * @return { object } the file object
  */
-const createTextFile = async function(filePath, templatePath, templateType) {
+const createNewFile = async function(filePath, templatePath, templateType) {
 	return await axios.post(generateOcsUrl('apps/files/api/v1/templates/create'), {
 		filePath,
 		templatePath,
@@ -78,5 +78,5 @@ const createTextFile = async function(filePath, templatePath, templateType) {
 export {
 	shareFile,
 	getFileTemplates,
-	createTextFile,
+	createNewFile,
 }

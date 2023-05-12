@@ -34,7 +34,7 @@
 
 		<NcActionButton v-if="canUploadFiles"
 			close-after-click
-			@click.prevent="$emit('open-file-upload')">
+			@click="$emit('open-file-upload')">
 			<template #icon>
 				<Upload :size="20" />
 			</template>
@@ -43,7 +43,7 @@
 
 		<template v-if="canShareFiles">
 			<NcActionButton close-after-click
-				@click.prevent="handleFileShare">
+				@click="handleFileShare">
 				<template #icon>
 					<Folder :size="20" />
 				</template>
@@ -54,14 +54,14 @@
 				:key="index"
 				close-after-click
 				:icon="provider.iconClass"
-				@click.prevent="$emit('update-text-file-dialog', index)">
+				@click="$emit('update-new-file-dialog', index)">
 				{{ provider.label }}
 			</NcActionButton>
 		</template>
 
 		<NcActionButton v-if="canCreatePoll"
 			close-after-click
-			@click.prevent="$emit('toggle-poll-editor')">
+			@click="$emit('toggle-poll-editor')">
 			<template #icon>
 				<Poll :size="20" />
 			</template>
@@ -139,6 +139,8 @@ export default {
 			required: true,
 		},
 	},
+
+	emits: ['update-new-file-dialog', 'toggle-poll-editor', 'open-file-upload'],
 
 	computed: {
 		fileTemplateOptions() {

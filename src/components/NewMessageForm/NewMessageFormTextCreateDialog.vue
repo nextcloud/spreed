@@ -32,34 +32,33 @@
 			</h2>
 			<form class="new-text-file__form templates-picker__form"
 				:style="style"
-				@submit.prevent="handleCreateTextFile">
+				@submit.prevent="handleCreateNewFile">
 				<NcTextField id="new-file-form-name"
 					ref="textField"
 					:error="!!newFileError"
 					:helper-text="newFileError"
 					:label="t('spreed', 'Name of the new file')"
-					:placeholder="textFileTitle"
-					:value="textFileTitle"
-					@update:value="updateTextFileTitle" />
+					:placeholder="newFileTitle"
+					:value="newFileTitle"
+					@update:value="updateNewFileTitle" />
 
-				<template v-if="fileTemplate.templates.length">
-					<ul class="templates-picker__list">
-						<NewMessageFormTemplatePreview v-bind="emptyTemplate"
-							:checked="checked === emptyTemplate.fileid"
-							@check="onCheck" />
-
-						<NewMessageFormTemplatePreview v-for="template in fileTemplate.templates"
-							:key="template.fileid"
-							v-bind="template"
-							:checked="checked === template.fileid"
-							:ratio="fileTemplate.ratio"
-							@check="onCheck" />
-					</ul>
-				</template>
+				<ul v-if="templates.length > 1" class="templates-picker__list">
+					<NewMessageFormTemplatePreview v-for="template in templates"
+						:key="template.fileid"
+						:basename="template.basename"
+						:checked="checked === template.fileid"
+						:fileid="template.fileid"
+						:filename="template.filename"
+						:preview-url="template.previewUrl"
+						:has-preview="template.hasPreview"
+						:mime="template.mime"
+						:ratio="fileTemplate.ratio"
+						@check="onCheck" />
+				</ul>
 
 				<div class="new-text-file__buttons">
 					<NcButton type="primary"
-						@click="handleCreateTextFile">
+						@click="handleCreateNewFile">
 						{{ t('spreed', 'Create file') }}
 					</NcButton>
 				</div>
@@ -78,7 +77,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import NewMessageFormTemplatePreview from './NewMessageFormTemplatePreview.vue'
 
 import { useViewer } from '../../composables/useViewer.js'
-import { createTextFile, shareFile } from '../../services/filesSharingServices.js'
+import { createNewFile, shareFile } from '../../services/filesSharingServices.js'
 
 export default {
 	name: 'NewMessageFormTextCreateDialog',
@@ -101,11 +100,13 @@ export default {
 			required: true,
 		},
 
-		showTextFileDialog: {
+		showNewFileDialog: {
 			type: Number,
 			required: true,
 		},
 	},
+
+	emits: ['dismiss'],
 
 	setup() {
 		const { openViewer } = useViewer()
@@ -114,7 +115,7 @@ export default {
 
 	data() {
 		return {
-			textFileTitle: t('spreed', 'New file'),
+			newFileTitle: t('spreed', 'New file'),
 			newFileError: '',
 			checked: -1,
 		}
@@ -126,21 +127,26 @@ export default {
 		},
 
 		fileTemplate() {
-			return this.fileTemplateOptions[this.showTextFileDialog]
+			return this.fileTemplateOptions[this.showNewFileDialog]
 		},
 
-		emptyTemplate() {
-			return {
+		templates() {
+			const emptyTemplate = {
 				basename: t('files', 'Blank'),
 				fileid: -1,
 				filename: t('files', 'Blank'),
 				hasPreview: false,
 				mime: this.fileTemplate?.mimetypes[0] || this.fileTemplate?.mimetypes,
 			}
+
+			return [
+				emptyTemplate,
+				...this.fileTemplate.templates,
+			]
 		},
 
 		selectedTemplate() {
-			return this.fileTemplate.templates.find(template => template.fileid === this.checked)
+			return this.templates.find(template => template.fileid === this.checked)
 		},
 
 		style() {
@@ -162,23 +168,41 @@ export default {
 		},
 	},
 
+	watch: {
+		fileTemplate: {
+			deep: true,
+			immediate: true,
+			handler(value) {
+				this.newFileTitle = value.label + value.extension
+			},
+		},
+		selectedTemplate: {
+			deep: true,
+			handler(value) {
+				if (value.fileid === -1) {
+					this.newFileTitle = this.fileTemplate.label + this.fileTemplate.extension
+				} else {
+					this.newFileTitle = value.basename
+				}
+			},
+		},
+	},
+
 	mounted() {
-		const fileTemplate = this.fileTemplateOptions[this.showTextFileDialog]
-		this.textFileTitle = fileTemplate.label + fileTemplate.extension
 		this.$nextTick(() => {
 			this.$refs.textField.$refs.inputField.$refs.input.select()
 		})
 	},
 
 	methods: {
-		updateTextFileTitle(value) {
-			this.textFileTitle = value
+		updateNewFileTitle(value) {
+			this.newFileTitle = value
 		},
 
 		// Create text file and share it to a conversation
-		async handleCreateTextFile() {
+		async handleCreateNewFile() {
 			this.newFileError = ''
-			let filePath = this.$store.getters.getAttachmentFolder() + '/' + this.textFileTitle.replace('/', '')
+			let filePath = this.$store.getters.getAttachmentFolder() + '/' + this.newFileTitle.replace('/', '')
 
 			if (!filePath.endsWith(this.fileTemplate.extension)) {
 				filePath += this.fileTemplate.extension
@@ -186,7 +210,7 @@ export default {
 
 			let fileData
 			try {
-				const response = await createTextFile(
+				const response = await createNewFile(
 					filePath,
 					this.selectedTemplate?.filename,
 					this.selectedTemplate?.templateType,
@@ -212,8 +236,8 @@ export default {
 
 		closeModal() {
 			this.newFileError = ''
-			this.textFileTitle = t('spreed', 'New file')
-			this.$emit('dismiss-text-file-creation')
+			this.newFileTitle = t('spreed', 'New file')
+			this.$emit('dismiss')
 		},
 
 		/**

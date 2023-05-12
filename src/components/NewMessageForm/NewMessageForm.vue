@@ -51,7 +51,7 @@
 					@open-file-upload="openFileUploadWindow"
 					@handle-file-share="handleFileShare"
 					@toggle-poll-editor="togglePollEditor"
-					@update-text-file-dialog="updateTextFileDialog" />
+					@update-new-file-dialog="updateNewFileDialog" />
 
 				<!-- Input area -->
 				<div class="new-message-form__input">
@@ -117,7 +117,7 @@
 						<NcActionButton :close-after-click="true"
 							icon="icon-upload"
 							:title="t('spreed', 'Send without notification')"
-							@click.prevent="handleSubmit({ silent: true })">
+							@click="handleSubmit({ silent: true })">
 							{{ silentSendInfo }}
 							<template #icon>
 								<BellOff :size="16" />
@@ -130,7 +130,7 @@
 						native-type="submit"
 						:title="t('spreed', 'Send message')"
 						:aria-label="t('spreed', 'Send message')"
-						@click.prevent="handleSubmit({ silent: false })">
+						@click="handleSubmit({ silent: false })">
 						<template #icon>
 							<Send :size="16" />
 						</template>
@@ -148,12 +148,11 @@
 			@close="togglePollEditor" />
 
 		<!-- Text file creation dialog -->
-		<NewMessageFormTextCreateDialog v-if="showTextFileDialog !== -1"
-			ref="textFileCreateDialog"
+		<NewMessageFormTextCreateDialog v-if="showNewFileDialog !== -1"
 			:token="token"
 			:container="container"
-			:show-text-file-dialog="showTextFileDialog"
-			@dismiss-text-file-creation="showTextFileDialog = -1" />
+			:show-new-file-dialog="showNewFileDialog"
+			@dismiss="showNewFileDialog = -1" />
 	</div>
 </template>
 
@@ -275,7 +274,7 @@ export default {
 			// True when the audio recorder component is recording
 			isRecordingAudio: false,
 			showPollEditor: false,
-			showTextFileDialog: -1,
+			showNewFileDialog: -1,
 			isTributePickerActive: false,
 			// Check empty template by default
 			userData: {},
@@ -498,7 +497,7 @@ export default {
 		async handleSubmitSpam(numberOfMessages) {
 			console.debug('Sending ' + numberOfMessages + ' lorem ipsum messages')
 			for (let i = 0; i < numberOfMessages; i++) {
-				const randomNumber = parseInt((Math.random() * 500).toString(), 10)
+				const randomNumber = Math.floor(Math.random() * 500)
 				console.debug('[' + i + '/' + numberOfMessages + '] Sleeping ' + randomNumber + 'ms')
 				await this.sleep(randomNumber)
 
@@ -575,8 +574,8 @@ export default {
 			this.$refs.fileUploadInput.click()
 		},
 
-		updateTextFileDialog(value) {
-			this.showTextFileDialog = value
+		updateNewFileDialog(value) {
+			this.showNewFileDialog = value
 		},
 
 		handleFileInput(event) {

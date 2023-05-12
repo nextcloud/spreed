@@ -41,7 +41,7 @@
 			<div v-for="(option, index) in pollOptions"
 				:key="index"
 				class="poll-editor__option">
-				<NcTextField :ref="`pollOption${index}`"
+				<NcTextField ref="pollOption"
 					:value.sync="pollOptions[index]"
 					:label="t('spreed', 'Answer {option}', {option: index + 1})" />
 				<NcButton v-if="pollOptions.length > 2"
@@ -148,9 +148,7 @@ export default {
 		addOption() {
 			this.pollOptions.push('')
 			this.$nextTick(() => {
-				const indexOfNewPollOption = this.pollOptions.length - 1
-				const refOfNewPollOption = `pollOption${indexOfNewPollOption}`
-				this.$refs[refOfNewPollOption][0].$el.querySelector('.input-field__input').focus()
+				this.$refs.pollOption[this.pollOptions.length - 1].$el.querySelector('.input-field__input').focus()
 			})
 		},
 
@@ -211,7 +209,7 @@ export default {
 		gap: 4px;
 	}
 
-	// Upstream
+	// FIXME Upstream
 	:deep(.checkbox-radio-switch__label) {
 			min-height: unset;
 			margin: 0;
