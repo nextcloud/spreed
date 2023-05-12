@@ -41,7 +41,6 @@
 		<template v-else>
 			<CallButton class="call-button" />
 			<ChatView />
-			<UploadEditor />
 			<MediaSettings :initialize-on-mounted="false" />
 		</template>
 	</div>
@@ -58,7 +57,6 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import ChatView from './components/ChatView.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import CallButton from './components/TopBar/CallButton.vue'
-import UploadEditor from './components/UploadEditor.vue'
 
 import browserCheck from './mixins/browserCheck.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
@@ -80,7 +78,6 @@ export default {
 	components: {
 		CallButton,
 		ChatView,
-		UploadEditor,
 		MediaSettings,
 		NcButton,
 	},

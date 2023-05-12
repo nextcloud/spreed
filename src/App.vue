@@ -31,7 +31,6 @@
 		<RightSidebar :is-in-call="isInCall" />
 		<PreventUnload :when="warnLeaving || isSendingMessages" />
 		<MediaSettings :initialize-on-mounted="false" />
-		<UploadEditor />
 		<SettingsDialog />
 		<ConversationSettingsDialog />
 	</NcContent>
@@ -54,7 +53,6 @@ import LeftSidebar from './components/LeftSidebar/LeftSidebar.vue'
 import MediaSettings from './components/MediaSettings/MediaSettings.vue'
 import RightSidebar from './components/RightSidebar/RightSidebar.vue'
 import SettingsDialog from './components/SettingsDialog/SettingsDialog.vue'
-import UploadEditor from './components/UploadEditor.vue'
 
 import { useIsInCall } from './composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT } from './constants.js'
@@ -79,7 +77,6 @@ export default {
 		LeftSidebar,
 		PreventUnload,
 		RightSidebar,
-		UploadEditor,
 		SettingsDialog,
 		ConversationSettingsDialog,
 		MediaSettings,

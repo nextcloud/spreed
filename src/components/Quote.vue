@@ -20,7 +20,7 @@
 -->
 
 <docs>
-This component is intended to be used both in `NewMessageForm` and `Message`
+This component is intended to be used both in `NewMessage` and `Message`
 components.
 </docs>
 
@@ -47,7 +47,7 @@ components.
 				<p>{{ shortenedQuoteMessage }}</p>
 			</blockquote>
 		</div>
-		<div v-if="isNewMessageFormQuote" class="quote__main__right">
+		<div v-if="isNewMessageQuote" class="quote__main__right">
 			<NcButton type="tertiary"
 				:aria-label="cancelQuoteLabel"
 				@click="handleAbortReply">
@@ -125,10 +125,10 @@ export default {
 			default: '',
 		},
 		/**
-		 * If the quote component is used in the `NewMessageForm` component we display
+		 * If the quote component is used in the `NewMessage` component we display
 		 * the remove button.
 		 */
-		isNewMessageFormQuote: {
+		isNewMessageQuote: {
 			type: Boolean,
 			default: false,
 		},

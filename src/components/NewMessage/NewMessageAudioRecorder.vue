@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -79,10 +79,10 @@ import { showError } from '@nextcloud/dialogs'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
-import { mediaDevicesManager } from '../../../utils/webrtc/index.js'
+import { mediaDevicesManager } from '../../utils/webrtc/index.js'
 
 export default {
-	name: 'AudioRecorder',
+	name: 'NewMessageAudioRecorder',
 
 	components: {
 		Microphone,
@@ -211,7 +211,7 @@ export default {
 				return
 			}
 
-			// Create a mediarecorder to capture the stream
+			// Create a media recorder to capture the stream
 			try {
 				this.mediaRecorder = new MediaRecorder(this.audioStream, {
 					mimeType: 'audio/wav',
@@ -255,7 +255,7 @@ export default {
 				}
 				this.recordTime.seconds++
 			}, 1000)
-			// Forward an event to let the parent NewMessageForm component
+			// Forward an event to let the parent NewMessage component
 			// that there's an undergoing recording operation
 			this.$emit('recording', true)
 		},
@@ -304,7 +304,6 @@ export default {
 			this.chunks = []
 			this.blob = null
 			this.aborted = false
-			this.isAudiorecorderActive = false
 			this.recordTime = {
 				minutes: 0,
 				seconds: 0,

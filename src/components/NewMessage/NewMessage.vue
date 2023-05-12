@@ -3,8 +3,9 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   - @author Grigorii Shartsev <me@shgk.me>
+  - @author Maksim Sukharev <antreesy.web@gmail.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -22,7 +23,7 @@
 
 <template>
 	<div class="wrapper" :class="{'wrapper--has-typing-indicator': showTypingStatus}">
-		<NewMessageFormTypingIndicator v-if="showTypingStatus"
+		<NewMessageTypingIndicator v-if="showTypingStatus"
 			:token="token" />
 
 		<!--native file picker, hidden -->
@@ -34,57 +35,24 @@
 			aria-hidden="true"
 			class="hidden-visually"
 			@change="handleFileInput">
+
 		<div class="new-message">
 			<form class="new-message-form"
 				@submit.prevent>
 				<!-- Attachments menu -->
-				<div v-if="showAttachmentsMenu"
-					class="new-message-form__upload-menu">
-					<NcActions ref="attachmentsMenu"
-						:container="container"
-						:boundaries-element="containerElement"
-						:disabled="disabled"
-						:aria-label="t('spreed', 'Share files to the conversation')"
-						:aria-haspopup="true">
-						<template #icon>
-							<Paperclip :size="16" />
-						</template>
+				<NewMessageAttachments v-if="showAttachmentsMenu"
+					:token="token"
+					:container="container"
+					:boundaries-element="containerElement"
+					:disabled="disabled"
+					:can-upload-files="canUploadFiles"
+					:can-share-files="canShareFiles"
+					:can-create-poll="canCreatePoll"
+					@open-file-upload="openFileUploadWindow"
+					@handle-file-share="handleFileShare"
+					@toggle-poll-editor="togglePollEditor"
+					@update-new-file-dialog="updateNewFileDialog" />
 
-						<NcActionButton v-if="canUploadFiles"
-							:close-after-click="true"
-							@click.prevent="clickImportInput">
-							<template #icon>
-								<Upload :size="20" />
-							</template>
-							{{ t('spreed', 'Upload from device') }}
-						</NcActionButton>
-						<NcActionButton v-if="canShareFiles"
-							:close-after-click="true"
-							@click.prevent="handleFileShare">
-							<template #icon>
-								<Folder :size="20" />
-							</template>
-							{{ shareFromNextcloudLabel }}
-						</NcActionButton>
-						<template v-if="canShareFiles">
-							<NcActionButton v-for="(provider, i) in fileTemplateOptions"
-								:key="i"
-								:close-after-click="true"
-								:icon="provider.iconClass"
-								@click.prevent="showTextFileDialog = i">
-								{{ provider.label }}
-							</NcActionButton>
-						</template>
-						<NcActionButton v-if="canCreatePoll"
-							:close-after-click="true"
-							@click.prevent="toggleSimplePollsEditor(true)">
-							<template #icon>
-								<Poll :size="20" />
-							</template>
-							{{ t('spreed', 'Create new poll') }}
-						</NcActionButton>
-					</NcActions>
-				</div>
 				<!-- Input area -->
 				<div class="new-message-form__input">
 					<div class="new-message-form__emoji-picker">
@@ -112,7 +80,7 @@
 						</NcButton>
 					</div>
 					<div v-if="messageToBeReplied" class="new-message-form__quote">
-						<Quote :is-new-message-form-quote="true"
+						<Quote is-new-message-quote
 							:parent-id="messageToBeReplied.id"
 							v-bind="messageToBeReplied" />
 					</div>
@@ -134,10 +102,12 @@
 						@submit="handleSubmit({ silent: false })" />
 				</div>
 
-				<AudioRecorder v-if="showAudioRecorder"
+				<!-- Audio recorder -->
+				<NewMessageAudioRecorder v-if="showAudioRecorder"
 					:disabled="disabled"
 					@recording="handleRecording"
 					@audio-file="handleAudioFile" />
+
 				<!-- Send buttons -->
 				<template v-else>
 					<NcActions v-if="!broadcast"
@@ -147,7 +117,7 @@
 						<NcActionButton :close-after-click="true"
 							icon="icon-upload"
 							:title="t('spreed', 'Send without notification')"
-							@click.prevent="handleSubmit({ silent: true })">
+							@click="handleSubmit({ silent: true })">
 							{{ silentSendInfo }}
 							<template #icon>
 								<BellOff :size="16" />
@@ -160,7 +130,7 @@
 						native-type="submit"
 						:title="t('spreed', 'Send message')"
 						:aria-label="t('spreed', 'Send message')"
-						@click.prevent="handleSubmit({ silent: false })">
+						@click="handleSubmit({ silent: false })">
 						<template #icon>
 							<Send :size="16" />
 						</template>
@@ -169,93 +139,50 @@
 			</form>
 		</div>
 
-		<SimplePollsEditor v-if="showSimplePollsEditor"
+		<!-- File upload dialog -->
+		<NewMessageUploadEditor />
+
+		<!-- Poll creation dialog -->
+		<NewMessagePollEditor v-if="showPollEditor"
 			:token="token"
-			@close="toggleSimplePollsEditor(false)" />
+			@close="togglePollEditor" />
 
-		<!-- Text file creation dialog -->
-		<NcModal v-if="showTextFileDialog !== false"
-			size="normal"
+		<!-- New file creation dialog -->
+		<NewMessageNewFileDialog v-if="showNewFileDialog !== -1"
+			:token="token"
 			:container="container"
-			class="templates-picker"
-			@close="dismissTextFileCreation">
-			<div class="new-text-file">
-				<h2>
-					{{ t('spreed', 'Create and share a new file') }}
-				</h2>
-				<form class="new-text-file__form templates-picker__form"
-					:style="style"
-					@submit.prevent="handleCreateTextFile">
-					<NcTextField id="new-file-form-name"
-						ref="textFileTitleInput"
-						:error="!!newFileError"
-						:helper-text="newFileError"
-						:label="t('spreed', 'Name of the new file')"
-						:placeholder="textFileTitle"
-						:value.sync="textFileTitle" />
-
-					<template v-if="fileTemplate.templates.length">
-						<ul class="templates-picker__list">
-							<TemplatePreview v-bind="emptyTemplate"
-								:checked="checked === emptyTemplate.fileid"
-								@check="onCheck" />
-
-							<TemplatePreview v-for="template in fileTemplate.templates"
-								:key="template.fileid"
-								v-bind="template"
-								:checked="checked === template.fileid"
-								:ratio="fileTemplate.ratio"
-								@check="onCheck" />
-						</ul>
-					</template>
-
-					<div class="new-text-file__buttons">
-						<NcButton type="tertiary"
-							@click="dismissTextFileCreation">
-							{{ t('spreed', 'Close') }}
-						</NcButton>
-						<NcButton type="primary"
-							@click="handleCreateTextFile">
-							{{ t('spreed', 'Create file') }}
-						</NcButton>
-					</div>
-				</form>
-			</div>
-		</NcModal>
+			:show-new-file-dialog="showNewFileDialog"
+			@dismiss="showNewFileDialog = -1" />
 	</div>
 </template>
 
 <script>
 import BellOff from 'vue-material-design-icons/BellOff.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
-import Folder from 'vue-material-design-icons/Folder.vue'
-import Paperclip from 'vue-material-design-icons/Paperclip.vue'
-import Poll from 'vue-material-design-icons/Poll.vue'
 import Send from 'vue-material-design-icons/Send.vue'
-import Upload from 'vue-material-design-icons/Upload.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
-import { getFilePickerBuilder, showError } from '@nextcloud/dialogs'
+import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
-import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import Quote from '../Quote.vue'
-import AudioRecorder from './AudioRecorder/AudioRecorder.vue'
-import NewMessageFormTypingIndicator from './NewMessageFormTypingIndicator.vue'
-import SimplePollsEditor from './SimplePollsEditor/SimplePollsEditor.vue'
-import TemplatePreview from './TemplatePreview.vue'
+import NewMessageAttachments from './NewMessageAttachments.vue'
+import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
+import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
+import NewMessagePollEditor from './NewMessagePollEditor.vue'
+import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
+import NewMessageUploadEditor from './NewMessageUploadEditor.vue'
 
 import { useViewer } from '../../composables/useViewer.js'
 import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
-import { shareFile, createTextFile } from '../../services/filesSharingServices.js'
+import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 
@@ -266,39 +193,31 @@ const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.allowDirectories()
 	.build()
 
-const border = 2
-const margin = 8
-const width = margin * 20
-
 const disableKeyboardShortcuts = OCP.Accessibility.disableKeyboardShortcuts()
 const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined
 
 export default {
-	name: 'NewMessageForm',
+	name: 'NewMessage',
 
 	disableKeyboardShortcuts,
 
 	components: {
-		AudioRecorder,
 		NcActionButton,
 		NcActions,
 		NcButton,
 		NcEmojiPicker,
-		NcModal,
 		NcRichContenteditable,
-		NcTextField,
-		NewMessageFormTypingIndicator,
+		NewMessageAttachments,
+		NewMessageAudioRecorder,
+		NewMessageNewFileDialog,
+		NewMessagePollEditor,
+		NewMessageTypingIndicator,
+		NewMessageUploadEditor,
 		Quote,
-		SimplePollsEditor,
-		TemplatePreview,
 		// Icons
 		BellOff,
 		EmoticonOutline,
-		Folder,
-		Paperclip,
-		Poll,
 		Send,
-		Upload,
 	},
 
 	props: {
@@ -308,15 +227,6 @@ export default {
 		token: {
 			type: String,
 			required: true,
-		},
-
-		/**
-		 * When this component is used to send message to a breakout room we
-		 * adapt the layout and remove some functionality.
-		 */
-		breakoutRoom: {
-			type: Boolean,
-			default: false,
 		},
 
 		/**
@@ -361,15 +271,12 @@ export default {
 		return {
 			text: '',
 			conversationIsFirstInList: false,
-			// True when the audiorecorder component is recording
+			// True when the audio recorder component is recording
 			isRecordingAudio: false,
-			showSimplePollsEditor: false,
-			showTextFileDialog: false,
-			textFileTitle: t('spreed', 'New file'),
-			newFileError: '',
+			showPollEditor: false,
+			showNewFileDialog: -1,
 			isTributePickerActive: false,
 			// Check empty template by default
-			checked: -1,
 			userData: {},
 			clipboardTimeStamp: null,
 			typingTimeout: null,
@@ -420,18 +327,13 @@ export default {
 		},
 
 		canUploadFiles() {
-			const allowed = getCapabilities()?.spreed?.config?.attachments?.allowed
-			return allowed
-				&& this.attachmentFolderFreeSpace !== 0
+			return getCapabilities()?.spreed?.config?.attachments?.allowed
+				&& this.$store.getters.getAttachmentFolderFreeSpace() !== 0
 				&& this.canShareFiles
 		},
 
 		canCreatePoll() {
 			return !this.isOneToOne && !this.noChatPermission
-		},
-
-		attachmentFolderFreeSpace() {
-			return this.$store.getters.getAttachmentFolderFreeSpace()
 		},
 
 		currentConversationIsJoined() {
@@ -459,44 +361,8 @@ export default {
 			}
 		},
 
-		shareFromNextcloudLabel() {
-			return t('spreed', 'Share from {nextcloud}', { nextcloud: OC.theme.productName })
-		},
-
-		fileTemplateOptions() {
-			return this.$store.getters.getFileTemplates()
-		},
-
-		fileTemplate() {
-			return this.fileTemplateOptions[this.showTextFileDialog]
-		},
-
-		emptyTemplate() {
-			return {
-				basename: t('files', 'Blank'),
-				fileid: -1,
-				filename: t('files', 'Blank'),
-				hasPreview: false,
-				mime: this.fileTemplate?.mimetypes[0] || this.fileTemplate?.mimetypes,
-			}
-		},
-
-		selectedTemplate() {
-			return this.fileTemplate.templates.find(template => template.fileid === this.checked)
-		},
-
-		style() {
-			return {
-				'--margin': margin + 'px',
-				'--width': width + 'px',
-				'--border': border + 'px',
-				'--fullwidth': width + 2 * margin + 2 * border + 'px',
-				'--height': this.fileTemplate.ratio ? Math.round(width / this.fileTemplate.ratio) + 'px' : null,
-			}
-		},
-
 		showAttachmentsMenu() {
-			return (this.canUploadFiles || this.canShareFiles) && !this.broadcast
+			return this.canShareFiles && !this.broadcast
 		},
 
 		showAudioRecorder() {
@@ -540,16 +406,6 @@ export default {
 			}
 			this.$store.dispatch('setTyping', { typing: false })
 		},
-
-		showTextFileDialog(newValue) {
-			if (newValue !== false) {
-				const fileTemplate = this.fileTemplateOptions[newValue]
-				this.textFileTitle = fileTemplate.label + fileTemplate.extension
-				this.$nextTick(() => {
-					this.focusTextDialogInput()
-				})
-			}
-		},
 	},
 
 	mounted() {
@@ -571,8 +427,7 @@ export default {
 
 	methods: {
 		handleUploadStart() {
-			// refocus on upload start as the user might want to type again
-			// while the upload is running
+			// refocus on upload start as the user might want to type again while the upload is running
 			this.focusInput()
 		},
 
@@ -597,6 +452,7 @@ export default {
 				const temp = document.createElement('textarea')
 				temp.innerHTML = this.text
 				this.text = temp.value
+
 				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', {
 					text: this.text.trim(),
 					token: this.token,
@@ -641,13 +497,13 @@ export default {
 		async handleSubmitSpam(numberOfMessages) {
 			console.debug('Sending ' + numberOfMessages + ' lorem ipsum messages')
 			for (let i = 0; i < numberOfMessages; i++) {
-				const randomNumber = parseInt(Math.random() * 500, 10)
+				const randomNumber = Math.floor(Math.random() * 500)
 				console.debug('[' + i + '/' + numberOfMessages + '] Sleeping ' + randomNumber + 'ms')
 				await this.sleep(randomNumber)
 
 				const loremIpsum = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.\n\nDuis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.'
 				this.text = loremIpsum.slice(0, 25 + randomNumber)
-				await this.handleSubmit()
+				await this.handleSubmit({ silent: false })
 			}
 		},
 
@@ -714,8 +570,12 @@ export default {
 		 * Clicks the hidden file input when clicking the correspondent NcActionButton,
 		 * thus opening the file-picker
 		 */
-		clickImportInput() {
+		openFileUploadWindow() {
 			this.$refs.fileUploadInput.click()
+		},
+
+		updateNewFileDialog(value) {
+			this.showNewFileDialog = value
 		},
 
 		handleFileInput(event) {
@@ -752,9 +612,9 @@ export default {
 		 *
 		 * @param {File[] | FileList} files pasted files list
 		 * @param {boolean} rename whether to rename the files
-		 * @param {boolean} isVoiceMessage indicates whether the file is a vooicemessage
+		 * @param {boolean} isVoiceMessage indicates whether the file is a voice message
 		 */
-		async handleFiles(files, rename = false, isVoiceMessage) {
+		async handleFiles(files, rename = false, isVoiceMessage = false) {
 			// Create a unique id for the upload operation
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files
@@ -772,6 +632,9 @@ export default {
 		 * @param {string} emoji Emoji object
 		 */
 		addEmoji(emoji) {
+			// FIXME: remove after issue is resolved: https://github.com/nextcloud/nextcloud-vue/issues/3264
+			const temp = document.createElement('textarea')
+
 			const selection = document.getSelection()
 
 			const contentEditable = this.$refs.richContenteditable.$refs.contenteditable
@@ -784,17 +647,16 @@ export default {
 				// is added the div content will be "<br><br>"), so the emoji
 				// has to be added before the last "<br>" (if any).
 				if (this.text.endsWith('<br>')) {
-					this.text = this.text.slice(0, this.text.lastIndexOf('<br>')) + emoji + '<br>'
+					temp.innerHTML = this.text.slice(0, this.text.lastIndexOf('<br>')) + emoji + '<br>'
 				} else {
-					this.text += emoji
+					temp.innerHTML = this.text + emoji
 				}
-
+				this.text = temp.value
 				return
 			}
 
 			// Although due to legacy reasons the API allows several ranges the
-			// specification requires the selection to always have a single
-			// range.
+			// specification requires the selection to always have a single range.
 			// https://developer.mozilla.org/en-US/docs/Web/API/Selection#Multiple_ranges_in_a_selection
 			const range = selection.getRangeAt(0)
 
@@ -817,71 +679,14 @@ export default {
 			this.isRecordingAudio = payload
 		},
 
-		toggleSimplePollsEditor(value) {
-			this.showSimplePollsEditor = value
-		},
-
-		/**
-		 * Manages the radio template picker change
-		 *
-		 * @param {number} fileid the selected template file id
-		 */
-		onCheck(fileid) {
-			this.checked = fileid
-		},
-
-		// Create text file and share it to a conversation
-		async handleCreateTextFile() {
-			this.newFileError = ''
-			let filePath = this.$store.getters.getAttachmentFolder() + '/' + this.textFileTitle.replace('/', '')
-
-			if (!filePath.endsWith(this.fileTemplate.extension)) {
-				filePath += this.fileTemplate.extension
-			}
-
-			let fileData
-			try {
-				const response = await createTextFile(
-					filePath,
-					this.selectedTemplate?.filename,
-					this.selectedTemplate?.templateType,
-				)
-				fileData = response.data.ocs.data
-			} catch (error) {
-				console.error('Error while creating file', error)
-				if (error?.response?.data?.ocs?.meta?.message) {
-					showError(error.response.data.ocs.meta.message)
-					this.newFileError = error.response.data.ocs.meta.message
-				} else {
-					showError(t('spreed', 'Error while creating file'))
-				}
-				return
-			}
-
-			await shareFile(filePath, this.token, '', '')
-
-			this.openViewer(filePath, [fileData])
-
-			this.dismissTextFileCreation()
-		},
-
-		dismissTextFileCreation() {
-			this.showTextFileDialog = false
-			this.textFileTitle = t('spreed', 'New file')
-			this.newFileError = ''
-		},
-
-		// Focus and select the text within the input field
-		focusTextDialogInput() {
-			// FIXME upstream: add support of native input methods: focus, select, etc
-			this.$refs.textFileTitleInput.$refs.inputField.$refs.input.select()
+		togglePollEditor() {
+			this.showPollEditor = !this.showPollEditor
 		},
 
 		async autoComplete(search, callback) {
 			const response = await searchPossibleMentions(this.token, search)
 			if (!response) {
-				// It was not possible to get the candidate mentions, so just
-				// keep the previous ones.
+				// It was not possible to get the candidate mentions, so just keep the previous ones.
 				return
 			}
 
@@ -954,7 +759,7 @@ export default {
 </script>
 
 <style lang="scss">
-// Enforce NcAutoCompleteResult to have proper box-sizing
+// FIXME upstream: Enforce NcAutoCompleteResult to have proper box-sizing
 .tribute-container {
 	position: absolute;
 	box-sizing: content-box !important;
@@ -1027,8 +832,7 @@ export default {
 			border-radius: var(--border-radius-large);
 		}
 
-		// put a grey round background when popover is opened
-		// or hover-focused
+		// put a grey round background when popover is opened or hover-focused
 		&__icon:hover,
 		&__icon:focus,
 		&__icon:active {
@@ -1041,7 +845,7 @@ export default {
 }
 
 // Override actions styles TODO: upstream this change
-// Targeting two classess for specificity
+// Targeting two classes for specificity
 :deep(.action-item__menutoggle.action-item__menutoggle--with-icon-slot) {
 	opacity: 1 !important;
 
@@ -1052,40 +856,6 @@ export default {
 
 	&:disabled {
 		opacity: .5 !important;
-	}
-}
-
-.new-text-file {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: column;
-	gap: 28px;
-	padding: 20px;
-
-	&__buttons {
-		display: flex;
-		gap: 4px;
-		justify-content: center;
-		margin-top: 20px;
-	}
-
-	&__form {
-		width: 100%;
-
-		.templates-picker__list {
-			margin-top: 20px;
-			display: grid;
-			grid-gap: calc(var(--margin) * 2);
-			grid-auto-columns: 1fr;
-			// We want maximum 5 columns. Putting 6 as we don't count the grid gap. So it will always be lower than 6
-			max-width: calc(var(--fullwidth) * 6);
-			grid-template-columns: repeat(auto-fit, var(--fullwidth));
-			// Make sure all rows are the same height
-			grid-auto-rows: 1fr;
-			// Center the columns set
-			justify-content: center;
-		}
 	}
 }
 </style>
