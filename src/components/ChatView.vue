@@ -108,6 +108,8 @@ export default {
 	mounted() {
 		// Postpone render of NewMessageForm until application is mounted
 		this.containerId = this.$store.getters.getMainContainerSelector()
+
+		this.$store.dispatch('getTranslationConfiguration')
 	},
 
 	methods: {

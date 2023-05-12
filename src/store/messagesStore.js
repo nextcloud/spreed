@@ -39,6 +39,7 @@ import {
 	postRichObjectToConversation,
 	addReactionToMessage,
 	removeReactionFromMessage,
+	getTranslationLanguages,
 } from '../services/messagesService.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 
@@ -129,6 +130,10 @@ const state = {
 	 * Array of temporary message id to cancel function for the "postNewMessage" action
 	 */
 	cancelPostNewMessage: {},
+
+	translationLanguageDetection: false,
+
+	translationAvailableLanguages: [],
 }
 
 const getters = {
@@ -247,6 +252,14 @@ const getters = {
 	// Returns true if the message has reactions
 	hasReactions: (state) => (token, messageId) => {
 		return Object.keys(state.messages[token][messageId].reactions).length !== 0
+	},
+
+	hasTranslationLanguageDetection: (state) => () => {
+		return state.translationLanguageDetection
+	},
+
+	getTranslationAvailableLanguages: (state) => () => {
+		return state.translationAvailableLanguages
 	},
 }
 
@@ -465,6 +478,14 @@ const mutations = {
 		if (state.firstKnown[token] && messagesToRemove.includes(state.firstKnown[token])) {
 			Vue.set(state.firstKnown, token, newFirstKnown)
 		}
+	},
+
+	setTranslationLanguageDetection(state, { payload }) {
+		Vue.set(state, 'translationLanguageDetection', payload)
+	},
+
+	setTranslationAvailableLanguages(state, { payload }) {
+		Vue.set(state, 'translationAvailableLanguages', payload)
 	},
 }
 
@@ -1312,6 +1333,18 @@ const actions = {
 
 	async easeMessageList(context, { token }) {
 		context.commit('easeMessageList', { token })
+	},
+
+	async getTranslationConfiguration(context) {
+		try {
+			const response = await getTranslationLanguages()
+			const { languages, languageDetection } = response.data.ocs.data
+			context.commit('setTranslationLanguageDetection', { payload: languageDetection })
+			context.commit('setTranslationAvailableLanguages', { payload: languages })
+		} catch (error) {
+			console.error(error)
+			showError(t('spreed', 'Failed to load translation configuration'))
+		}
 	},
 }
 

@@ -179,6 +179,7 @@ the main body of the message as well as a quote.
 		<div class="message-body__scroll">
 			<MessageButtonsBar v-if="showMessageButtonsBar"
 				ref="messageButtonsBar"
+				:is-translation-available="isTranslationAvailable"
 				:is-action-menu-open.sync="isActionMenuOpen"
 				:is-emoji-picker-open.sync="isEmojiPickerOpen"
 				:is-reactions-menu-open.sync="isReactionsMenuOpen"
@@ -193,8 +194,14 @@ the main body of the message as well as a quote.
 				:common-read-icon-tooltip="commonReadIconTooltip"
 				:show-sent-icon="showSentIcon"
 				:sent-icon-tooltip="sentIconTooltip"
+				@show-translate-dialog="isTranslateDialogOpen = true"
 				@delete="handleDelete" />
 		</div>
+
+		<MessageTranslateDialog v-if="isTranslateDialogOpen"
+			:text="message"
+			:rich-parameters="richParameters"
+			@close="isTranslateDialogOpen = false" />
 
 		<div v-if="isLastReadMessage"
 			v-observe-visibility="lastReadMessageVisibilityChanged">
@@ -225,6 +232,7 @@ import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 import Quote from '../../../Quote.vue'
 import CallButton from '../../../TopBar/CallButton.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
+import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
 import Contact from './MessagePart/Contact.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
@@ -245,6 +253,7 @@ export default {
 	name: 'Message',
 
 	components: {
+		MessageTranslateDialog,
 		CallButton,
 		MessageButtonsBar,
 		NcButton,
@@ -422,6 +431,7 @@ export default {
 			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
 			detailedReactionsLoading: false,
+			isTranslateDialogOpen: false,
 		}
 	},
 
@@ -580,7 +590,9 @@ export default {
 		},
 
 		showMessageButtonsBar() {
-			return !this.isSystemMessage && !this.isDeletedMessage && !this.isTemporary && (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isFollowUpEmojiPickerOpen || this.isReactionsMenuOpen || this.isForwarderOpen)
+			return !this.isSystemMessage && !this.isDeletedMessage && !this.isTemporary
+				&& (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isFollowUpEmojiPickerOpen
+					|| this.isReactionsMenuOpen || this.isForwarderOpen || this.isTranslateDialogOpen)
 		},
 
 		isTemporaryUpload() {
@@ -649,6 +661,10 @@ export default {
 
 		detailedReactionsLoaded() {
 			return this.$store.getters.reactionsLoaded(this.token, this.id)
+		},
+
+		isTranslationAvailable() {
+			return this.$store.getters.getTranslationAvailableLanguages()?.length !== 0
 		},
 	},
 
