@@ -179,6 +179,7 @@ the main body of the message as well as a quote.
 		<div class="message-body__scroll">
 			<MessageButtonsBar v-if="showMessageButtonsBar"
 				ref="messageButtonsBar"
+				:is-translation-available="isTranslationAvailable"
 				:is-action-menu-open.sync="isActionMenuOpen"
 				:is-emoji-picker-open.sync="isEmojiPickerOpen"
 				:is-reactions-menu-open.sync="isReactionsMenuOpen"
@@ -193,8 +194,14 @@ the main body of the message as well as a quote.
 				:common-read-icon-tooltip="commonReadIconTooltip"
 				:show-sent-icon="showSentIcon"
 				:sent-icon-tooltip="sentIconTooltip"
+				@show-translate-dialog="isTranslateDialogOpen = true"
 				@delete="handleDelete" />
 		</div>
+
+		<MessageTranslateDialog v-if="isTranslateDialogOpen"
+			:message="message"
+			:rich-parameters="richParameters"
+			@close="isTranslateDialogOpen = false" />
 
 		<div v-if="isLastReadMessage"
 			v-observe-visibility="lastReadMessageVisibilityChanged">
@@ -214,6 +221,7 @@ import CheckAll from 'vue-material-design-icons/CheckAll.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 
@@ -225,6 +233,7 @@ import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 import Quote from '../../../Quote.vue'
 import CallButton from '../../../TopBar/CallButton.vue'
 import MessageButtonsBar from './MessageButtonsBar/MessageButtonsBar.vue'
+import MessageTranslateDialog from './MessageButtonsBar/MessageTranslateDialog.vue'
 import Contact from './MessagePart/Contact.vue'
 import DeckCard from './MessagePart/DeckCard.vue'
 import DefaultParameter from './MessagePart/DefaultParameter.vue'
@@ -238,6 +247,8 @@ import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import participant from '../../../../mixins/participant.js'
 import { EventBus } from '../../../../services/EventBus.js'
 
+const isTranslationAvailable = getCapabilities()?.spreed?.config?.chat?.translations?.length > 0
+
 /**
  * @property {object} scrollerBoundingClientRect provided by MessageList.vue
  */
@@ -245,6 +256,7 @@ export default {
 	name: 'Message',
 
 	components: {
+		MessageTranslateDialog,
 		CallButton,
 		MessageButtonsBar,
 		NcButton,
@@ -404,7 +416,7 @@ export default {
 
 	setup() {
 		const isInCall = useIsInCall()
-		return { isInCall }
+		return { isInCall, isTranslationAvailable }
 	},
 
 	data() {
@@ -422,6 +434,7 @@ export default {
 			isReactionsMenuOpen: false,
 			isForwarderOpen: false,
 			detailedReactionsLoading: false,
+			isTranslateDialogOpen: false,
 		}
 	},
 
@@ -580,7 +593,9 @@ export default {
 		},
 
 		showMessageButtonsBar() {
-			return !this.isSystemMessage && !this.isDeletedMessage && !this.isTemporary && (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isFollowUpEmojiPickerOpen || this.isReactionsMenuOpen || this.isForwarderOpen)
+			return !this.isSystemMessage && !this.isDeletedMessage && !this.isTemporary
+				&& (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isFollowUpEmojiPickerOpen
+					|| this.isReactionsMenuOpen || this.isForwarderOpen || this.isTranslateDialogOpen)
 		},
 
 		isTemporaryUpload() {

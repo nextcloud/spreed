@@ -175,6 +175,18 @@ const getReactionsDetails = async function(token, messageId) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/reaction/{token}/{messageId}', { token, messageId }))
 }
 
+const getTranslationLanguages = async function() {
+	return axios.get(generateOcsUrl('/translation/languages'))
+}
+
+const translateText = async function(text, fromLanguage, toLanguage) {
+	return axios.post(generateOcsUrl('/translation/translate'), {
+		text,
+		fromLanguage,
+		toLanguage,
+	})
+}
+
 export {
 	fetchMessages,
 	lookForNewMessages,
@@ -186,4 +198,6 @@ export {
 	addReactionToMessage,
 	removeReactionFromMessage,
 	getReactionsDetails,
+	getTranslationLanguages,
+	translateText,
 }

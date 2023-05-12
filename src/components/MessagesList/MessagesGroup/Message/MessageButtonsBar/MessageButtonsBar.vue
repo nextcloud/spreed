@@ -106,6 +106,15 @@
 					@click="action.callback(messageApiData)">
 					{{ action.label }}
 				</NcActionButton>
+				<NcActionButton v-if="isTranslationAvailable"
+					:close-after-click="true"
+					@click.stop="$emit('show-translate-dialog', true)"
+					@close="$emit('show-translate-dialog', false)">
+					<template #icon>
+						<Translate :size="16" />
+					</template>
+					{{ t('spreed', 'Translate') }}
+				</NcActionButton>
 				<template v-if="isDeleteable">
 					<NcActionSeparator />
 					<NcActionButton icon="icon-delete"
@@ -169,6 +178,7 @@ import File from 'vue-material-design-icons/File.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Reply from 'vue-material-design-icons/Reply.vue'
 import Share from 'vue-material-design-icons/Share.vue'
+import Translate from 'vue-material-design-icons/Translate.vue'
 
 import moment from '@nextcloud/moment'
 
@@ -211,6 +221,7 @@ export default {
 		Plus,
 		Reply,
 		Share,
+		Translate,
 	},
 
 	props: {
@@ -354,9 +365,14 @@ export default {
 			type: String,
 			required: true,
 		},
+
+		isTranslationAvailable: {
+			type: Boolean,
+			required: true,
+		},
 	},
 
-	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen'],
+	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog'],
 
 	data() {
 		return {
