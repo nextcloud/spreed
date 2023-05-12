@@ -262,7 +262,7 @@ export default {
 	max-width: $messages-list-max-width - $message-utils-width;
 
 	&.quote-own-message {
-		border-left: 4px solid var(--color-primary);
+		border-left: 4px solid var(--color-primary-element);
 	}
 
 	&__main {

@@ -165,7 +165,7 @@ export default {
 	left: 10%;
 	width: 80%;
 	height: 80%;
-	background: var(--color-primary-light);
+	background: var(--color-primary-element-light);
 	z-index: 11;
 	display: flex;
 	box-shadow: 0 0 36px var(--color-box-shadow);

@@ -730,7 +730,7 @@ export default {
 
 <style lang="scss" scoped>
 .selected {
-	background-color: var(--color-primary-light);
+	background-color: var(--color-primary-element-light);
 	border-radius: 5px;
 }
 

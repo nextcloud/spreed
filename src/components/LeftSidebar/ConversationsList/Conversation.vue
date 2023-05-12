@@ -468,6 +468,6 @@ export default {
 }
 
 .forced-active {
-	background-color: var(--color-primary-light) !important //Overrides gray hover feedback;
+	background-color: var(--color-primary-element-light) !important //Overrides gray hover feedback;
 }
 </style>

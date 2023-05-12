@@ -93,7 +93,7 @@ $bubble-height: 24px;
 	display: flex;
 	align-items: center;
 	margin: 4px;
-	background-color: var(--color-primary-light);
+	background-color: var(--color-primary-element-light);
 	border-radius: $bubble-height;
 	height: $bubble-height;
 	&__avatar {

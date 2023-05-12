@@ -880,7 +880,7 @@ export default {
 			}
 
 			&.call-started {
-				background-color: var(--color-primary-light);
+				background-color: var(--color-primary-element-light);
 				padding: 10px;
 				border-radius: var(--border-radius-large);
 				text-align: center;
@@ -906,7 +906,7 @@ export default {
 			}
 
 			&--quote {
-				border-left: 4px solid var(--color-primary);
+				border-left: 4px solid var(--color-primary-element);
 				padding: 4px 0 0 8px;
 			}
 		}

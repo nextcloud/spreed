@@ -292,7 +292,7 @@ export default {
 		flex: 1 0 108px;
 
 		&--selected {
-			box-shadow: inset 0 0 0 var(--default-grid-baseline) var(--color-primary);
+			box-shadow: inset 0 0 0 var(--default-grid-baseline) var(--color-primary-element);
 		}
 	 }
 }
