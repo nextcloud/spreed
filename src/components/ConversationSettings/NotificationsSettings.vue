@@ -24,45 +24,19 @@
 		<h4 class="app-settings-section__subtitle">
 			{{ t('spreed', 'Notifications') }}
 		</h4>
-		<a href="#"
-			class="radio-element"
-			:class="{'radio-element--active': isNotifyAlways}"
-			@click.prevent.exact="setNotificationLevel(1)">
-			<VolumeHigh :size="20"
-				class="radio-element__icon" />
-			<label class="radio-element__label">
-				{{ t('spreed', 'All messages') }}
-			</label>
-			<Check v-if="isNotifyAlways"
-				class="check"
-				:size="20" />
-		</a>
-		<a href="#"
-			class="radio-element"
-			:class="{'radio-element--active': isNotifyMention}"
-			@click.prevent.exact="setNotificationLevel(2)">
-			<Account :size="20"
-				class="radio-element__icon" />
-			<label class="radio-element__label">
-				{{ t('spreed', '@-mentions only') }}
-			</label>
-			<Check v-if="isNotifyMention"
-				class="check"
-				:size="20" />
-		</a>
-		<a href="#"
-			class="radio-element"
-			:class="{'radio-element--active': isNotifyNever}"
-			@click.prevent.exact="setNotificationLevel(3)">
-			<VolumeOff :size="20"
-				class="radio-element__icon" />
-			<label class="radio-element__label">
-				{{ t('spreed', 'Off') }}
-			</label>
-			<Check v-if="isNotifyNever"
-				class="check"
-				:size="20" />
-		</a>
+
+		<NcCheckboxRadioSwitch v-for="level in notificationLevels"
+			:key="level.value"
+			:value="level.value.toString()"
+			:checked.sync="notificationLevel"
+			name="notification_level"
+			type="radio"
+			@update:checked="setNotificationLevel">
+			<VolumeHigh v-if="level.value === PARTICIPANT.NOTIFY.ALWAYS" class="radio__icon" />
+			<Account v-else-if="level.value === PARTICIPANT.NOTIFY.MENTION" class="radio__icon" />
+			<VolumeOff v-else class="radio__icon" />
+			{{ level.label }}
+		</NcCheckboxRadioSwitch>
 
 		<NcCheckboxRadioSwitch id="notification_calls"
 			type="switch"
@@ -75,13 +49,18 @@
 
 <script>
 import Account from 'vue-material-design-icons/Account.vue'
-import Check from 'vue-material-design-icons/Check.vue'
 import VolumeHigh from 'vue-material-design-icons/VolumeHigh.vue'
 import VolumeOff from 'vue-material-design-icons/VolumeOff.vue'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
 import { PARTICIPANT } from '../../constants.js'
+
+const notificationLevels = [
+	{ value: PARTICIPANT.NOTIFY.ALWAYS, label: t('spreed', 'All messages') },
+	{ value: PARTICIPANT.NOTIFY.MENTION, label: t('spreed', '@-mentions only') },
+	{ value: PARTICIPANT.NOTIFY.NEVER, label: t('spreed', 'Off') },
+]
 
 export default {
 	name: 'NotificationsSettings',
@@ -91,7 +70,6 @@ export default {
 		VolumeHigh,
 		Account,
 		VolumeOff,
-		Check,
 	},
 
 	props: {
@@ -101,32 +79,18 @@ export default {
 		},
 	},
 
-	data() {
+	setup() {
 		return {
-			notifyCalls: true,
+			PARTICIPANT,
+			notificationLevels,
 		}
 	},
 
-	computed: {
-		token() {
-			return this.conversation.token
-		},
-
-		isNotifyAlways() {
-			return this.conversation.notificationLevel === PARTICIPANT.NOTIFY.ALWAYS
-		},
-
-		isNotifyMention() {
-			return this.conversation.notificationLevel === PARTICIPANT.NOTIFY.MENTION
-		},
-
-		isNotifyNever() {
-			return this.conversation.notificationLevel === PARTICIPANT.NOTIFY.NEVER
-		},
-	},
-
-	mounted() {
-		this.notifyCalls = this.conversation.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON
+	data() {
+		return {
+			notifyCalls: this.conversation.notificationCalls === PARTICIPANT.NOTIFY_CALLS.ON,
+			notificationLevel: this.conversation.notificationLevel.toString(),
+		}
 	},
 
 	methods: {
@@ -136,7 +100,7 @@ export default {
 		 * @param {number} notificationLevel The notification level to set.
 		 */
 		async setNotificationLevel(notificationLevel) {
-			await this.$store.dispatch('setNotificationLevel', { token: this.token, notificationLevel })
+			await this.$store.dispatch('setNotificationLevel', { token: this.conversation.token, notificationLevel })
 		},
 
 		/**
@@ -146,41 +110,17 @@ export default {
 		 */
 		async setNotificationCalls(isChecked) {
 			const notificationCalls = isChecked ? PARTICIPANT.NOTIFY_CALLS.ON : PARTICIPANT.NOTIFY_CALLS.OFF
-			await this.$store.dispatch('setNotificationCalls', { token: this.token, notificationCalls })
+			await this.$store.dispatch('setNotificationCalls', { token: this.conversation.token, notificationCalls })
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-.radio-element {
+.radio__icon {
 	display: flex;
-	align-items: center;
-	height: 44px;
-	padding: 0 12px;
-	margin: 4px 0;
-	border-radius: var(--border-radius-pill);
-	&:hover,
-	&:focus {
-		background-color: var(--color-background-hover);
-	}
-	&--active{
-		background-color: var(--color-primary-element-light) !important;
-	}
-	&__icon {
-		display: flex;
-	}
-	&__label {
-		margin-left: 12px;
-	}
-}
-
-h4 {
-	font-weight: bold;
-}
-
-.check {
-	display: flex;
-	margin: 0 8px 0 auto;
+	width: var(--default-clickable-area);
+	height: var(--default-clickable-area);
+	margin-right: var(--default-grid-baseline);
 }
 </style>
