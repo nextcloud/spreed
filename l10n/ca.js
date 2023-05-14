@@ -1094,6 +1094,7 @@ OC.L10N.register(
     "Reply privately" : "Respon en privat",
     "Copy message link" : "Copia l'enllaç del missatge",
     "Go to file" : "Vés al fitxer",
+    "Translate" : "Traducció",
     "Close reactions menu" : "Tanca el menú de reaccions",
     "React with {emoji}" : "Reacciona amb {emoji}",
     "React with another emoji" : "Reacciona amb un altre emoji",

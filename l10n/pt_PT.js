@@ -287,6 +287,7 @@ OC.L10N.register(
     "Upload" : "Enviar",
     "Files" : "Ficheiros",
     "Reply" : "Resposta",
+    "Translate" : "Traduzir",
     "Contact" : "Contacto",
     "No messages" : "Sem mensagens",
     "Today" : "Hoje",

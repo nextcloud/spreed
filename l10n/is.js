@@ -473,6 +473,7 @@ OC.L10N.register(
     "Reply" : "Svara",
     "Copy message link" : "Afrita skilaboðatengil",
     "Go to file" : "Fara í skrá",
+    "Translate" : "Þýða",
     "Contact" : "Tengiliður",
     "Poll" : "Poll",
     "End poll" : "End poll",

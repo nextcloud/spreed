@@ -903,6 +903,7 @@ OC.L10N.register(
     "Reply privately" : "Odgovori privatno",
     "Copy message link" : "Kopiraj poveznicu poruke",
     "Go to file" : "Idi na datoteku",
+    "Translate" : "Prevedi",
     "Your browser does not support playing audio files" : "Vaš preglednik ne podržava reprodukciju zvučnih datoteka",
     "Contact" : "Kontakt",
     "{stack} in {board}" : "{stack} u {board}",

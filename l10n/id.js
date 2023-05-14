@@ -304,6 +304,7 @@ OC.L10N.register(
     "Invalid path selected" : "Jalur terpilih invalid",
     "Unread messages" : "Pesan belum dibaca",
     "Reply" : "Balas",
+    "Translate" : "Terjemahkan",
     "Today" : "Hari ini",
     "Yesterday" : "Kemarin",
     "Group" : "Grup",

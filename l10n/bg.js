@@ -1102,6 +1102,7 @@ OC.L10N.register(
     "Reply privately" : "Отговаряне на лично ",
     "Copy message link" : "Копиране на връзката към съобщението",
     "Go to file" : "Отидете до файла",
+    "Translate" : "Превод",
     "Close reactions menu" : "Затваряне на менюто за действия",
     "React with {emoji}" : "Реагирайте с {emoji}",
     "React with another emoji" : "Реагирайте с друг емотикон",

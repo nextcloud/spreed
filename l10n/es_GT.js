@@ -106,6 +106,7 @@ OC.L10N.register(
     "Upload" : "Cargar",
     "Files" : "Archivos",
     "Reply" : "Responder",
+    "Translate" : "Traducir",
     "Contact" : "Contacto",
     "No messages" : "No hay mensajes",
     "Today" : "Hoy",

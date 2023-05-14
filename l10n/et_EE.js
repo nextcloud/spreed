@@ -63,6 +63,7 @@ OC.L10N.register(
     "Upload" : "Lae üles",
     "Files" : "Failid",
     "Reply" : "Vasta",
+    "Translate" : "Tõlgi",
     "Contact" : "Kontakt",
     "Today" : "Täna",
     "Yesterday" : "Eile",

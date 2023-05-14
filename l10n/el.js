@@ -834,6 +834,7 @@ OC.L10N.register(
     "Reply privately" : "Απάντηση ιδιωτικά",
     "Copy message link" : "Αντιγραφή συνδέσμου μηνύματος",
     "Go to file" : "Μετάβαση στο αρχείο",
+    "Translate" : "Μετάφραση",
     "Your browser does not support playing audio files" : "Το πρόγραμμα περιήγησής σας δεν υποστηρίζει την αναπαραγωγή αρχείων ήχου",
     "Contact" : "Επικοινωνία",
     "{stack} in {board}" : "{stack} στο {board}",

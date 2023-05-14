@@ -334,6 +334,7 @@ OC.L10N.register(
     "Files" : "Fișiere",
     "Invalid path selected" : "Calea selectată este invalidă",
     "Reply" : "Răspunde",
+    "Translate" : "Tradu",
     "Contact" : "Contact",
     "Today" : "Azi",
     "Yesterday" : "Ieri",
