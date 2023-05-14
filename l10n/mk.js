@@ -739,6 +739,7 @@ OC.L10N.register(
     "Reply" : "Одговор",
     "Copy message link" : "Копирај линк на пораката",
     "Go to file" : "Оди до датотеката",
+    "Translate" : "Преведи",
     "Contact" : "Контакт",
     "No messages" : "Нема пораки",
     "Scroll to bottom" : "Скролај до долу",

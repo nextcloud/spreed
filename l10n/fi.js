@@ -879,6 +879,7 @@ OC.L10N.register(
     "Reply privately" : "Vastaa yksityisesti",
     "Copy message link" : "Kopioi viestin linkki",
     "Go to file" : "Siirry tiedostoon",
+    "Translate" : "Käännä",
     "Close reactions menu" : "Sulje reaktiovalikko",
     "React with {emoji}" : "Reagoi emojilla {emoji}",
     "React with another emoji" : "Reagoi toisella emojilla",

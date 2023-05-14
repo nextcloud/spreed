@@ -191,6 +191,7 @@ OC.L10N.register(
     "Files" : "Archivos",
     "Invalid path selected" : "Ruta seleccionada no válida.",
     "Reply" : "Responder",
+    "Translate" : "Traducir",
     "Contact" : "Contacto",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",

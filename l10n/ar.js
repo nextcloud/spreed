@@ -843,6 +843,7 @@ OC.L10N.register(
     "Reply privately" : "الرد على الخاص",
     "Copy message link" : "نسخ رابط الرسالة ",
     "Go to file" : "الذهاب إلى ملف",
+    "Translate" : "ترجم",
     "Contact" : "التواصل",
     "{stack} in {board}" : "{stack} في  {board}",
     "Deck Card" : "بطاقة Deck",

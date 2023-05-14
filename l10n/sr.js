@@ -1125,6 +1125,7 @@ OC.L10N.register(
     "Reply privately" : "Одговори приватно",
     "Copy message link" : "Копирај линк поруке",
     "Go to file" : "Иди на фајл",
+    "Translate" : "Превођење",
     "Close reactions menu" : "Затвори мени реакција",
     "React with {emoji}" : "Реагуј са {emoji}",
     "React with another emoji" : "Реагуј са другим емођијем",

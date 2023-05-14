@@ -304,6 +304,7 @@ OC.L10N.register(
     "Upload" : "Alŝuti",
     "Files" : "Dosieroj",
     "Reply" : "Respondi",
+    "Translate" : "Traduku",
     "Contact" : "Kontakto",
     "Today" : "Hodiaŭ",
     "Yesterday" : "Hieraŭ",

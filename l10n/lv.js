@@ -198,6 +198,7 @@ OC.L10N.register(
     "File to share" : "Kopīgojamā datne",
     "Reply" : "Atbildēt",
     "Go to file" : "Doties uz datni",
+    "Translate" : "Tulkot",
     "Contact" : "Kontakts",
     "Today" : "Šodien",
     "Yesterday" : "Vakar",

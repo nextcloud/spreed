@@ -641,6 +641,7 @@ OC.L10N.register(
     "Invalid path selected" : "An hent dibabet n'eus ket anezhañ",
     "Reply" : "Respont",
     "Go to file" : "Mont d'ar restr",
+    "Translate" : "Treiñ",
     "Today" : "Hiziv",
     "Yesterday" : "Dec'h",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

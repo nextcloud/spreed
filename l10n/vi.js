@@ -581,6 +581,7 @@ OC.L10N.register(
     "Reply privately" : "Trả lời riêng tư",
     "Copy message link" : "Sao chép liên kết tin nhắn",
     "Go to file" : "Tới tập tin",
+    "Translate" : "Dịch",
     "Contact" : "Liên hệ",
     "{stack} in {board}" : "{stack} trong {board}",
     "Deck Card" : "Thẻ bài",

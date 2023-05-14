@@ -1051,6 +1051,7 @@ OC.L10N.register(
     "Reply privately" : "Responder en privado",
     "Copy message link" : "Copiar a ligazón da mensaxe",
     "Go to file" : "Ir ao ficheiro",
+    "Translate" : "Traducir",
     "Contact" : "Contacto",
     "{stack} in {board}" : "{stack} en {board}",
     "Deck Card" : "Tarxeta do Deck",

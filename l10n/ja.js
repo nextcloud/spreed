@@ -952,6 +952,7 @@ OC.L10N.register(
     "Reply privately" : "個人的に返信する",
     "Copy message link" : "メッセージリンクのコピー",
     "Go to file" : "ファイルへ移動",
+    "Translate" : "翻訳",
     "Your browser does not support playing audio files" : "このブラウザーはオーディオファイルの再生をサポートしていません。",
     "Contact" : "連絡先",
     "{stack} in {board}" : "{board} 内の {stack}",
