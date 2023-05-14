@@ -837,6 +837,7 @@ OC.L10N.register(
     "Reply privately" : "Відповісти у приватній розмові",
     "Copy message link" : "Скопіювати посилання на повідомлення",
     "Go to file" : "Перейти до файлу",
+    "Translate" : "Перекласти",
     "React with {emoji}" : "Відреагувати з {emoji}",
     "React with another emoji" : "Відреагувати з іншою {emoji}",
     "Contact" : "Контакт",

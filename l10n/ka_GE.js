@@ -104,6 +104,7 @@ OC.L10N.register(
     "Files" : "ფაილები",
     "Message sent" : "წერილი გაგზავნილია",
     "Reply" : "პასუხი",
+    "Translate" : "გადათარგმნეთ",
     "Contact" : "კონტაქტი",
     "Today" : "დღეს",
     "Yesterday" : "გუშინ",

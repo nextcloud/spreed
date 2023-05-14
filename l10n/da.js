@@ -463,6 +463,7 @@ OC.L10N.register(
     "Reply privately" : "Svar privat",
     "Copy message link" : "Kopier besked link",
     "Go to file" : "Gå til fil",
+    "Translate" : "Oversæt",
     "Contact" : "Kontakt",
     "No messages" : "Ingen beskeder",
     "Today" : "I dag",

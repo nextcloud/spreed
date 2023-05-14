@@ -1096,6 +1096,7 @@ OC.L10N.register(
     "Reply privately" : "Erantzun pribatuki",
     "Copy message link" : "Kopiatu mezuaren esteka",
     "Go to file" : "Joan fitxategira",
+    "Translate" : "Itzuli",
     "Close reactions menu" : "Itxi erreakzio menua",
     "React with {emoji}" : "Erreakzionatu {emoji}-(r)ekin",
     "React with another emoji" : "Erreakzionatu beste emoji batekin",

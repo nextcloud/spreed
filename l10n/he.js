@@ -507,6 +507,7 @@ OC.L10N.register(
     "Deleting message" : "ההודעה נמחקה",
     "Reply" : "תגובה",
     "Go to file" : "מעבר לקובץ",
+    "Translate" : "תרגום",
     "Contact" : "איש/אשת קשר",
     "No messages" : "אין הודעות",
     "Today" : "היום",

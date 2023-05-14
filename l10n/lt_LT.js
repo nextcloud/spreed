@@ -641,6 +641,7 @@ OC.L10N.register(
     "Reply privately" : "Atsakyti privačiai",
     "Copy message link" : "Kopijuoti žinutės nuorodą",
     "Go to file" : "Pereiti į failą",
+    "Translate" : "Verskite",
     "React with {emoji}" : "Reaguoti naudojant {emoji}",
     "React with another emoji" : "Reaguoti kita šypsenėle",
     "Your browser does not support playing audio files" : "Jūsų naršyklė nepalaiko garso įrašo failų atkūrimo",

@@ -870,6 +870,7 @@ OC.L10N.register(
     "Reply privately" : "Risponde in privadu",
     "Copy message link" : "Còpia su ligòngiu de su messàgiu",
     "Go to file" : "Bae a s'archìviu",
+    "Translate" : "Borta",
     "Your browser does not support playing audio files" : "Su serbidore tuo non suportat sa riprodutzione de archìvios àudio",
     "Contact" : "Cuntata",
     "{stack} in {board}" : "{stack} in {board}",

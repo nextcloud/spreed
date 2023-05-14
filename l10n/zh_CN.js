@@ -986,6 +986,7 @@ OC.L10N.register(
     "Reply privately" : "私下回复",
     "Copy message link" : "复制消息链接",
     "Go to file" : "前往文件",
+    "Translate" : "翻译",
     "Your browser does not support playing audio files" : "你的浏览器不支持播放音频文件",
     "Contact" : "联系人",
     "{stack} in {board}" : "{stack} 于 {board}",

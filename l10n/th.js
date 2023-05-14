@@ -59,6 +59,7 @@ OC.L10N.register(
     "Files" : "ไฟล์",
     "Invalid path selected" : "เลือกเส้นทางไม่ถูกต้อง",
     "Reply" : "ตอบกลับ",
+    "Translate" : "แปลภาษา",
     "Today" : "วันนี้",
     "Yesterday" : "เมื่อวาน",
     "Group" : "กลุ่ม",

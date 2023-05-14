@@ -934,6 +934,7 @@ OC.L10N.register(
     "Reply privately" : "Rispondi privatamente",
     "Copy message link" : "Copia collegamento del messaggio",
     "Go to file" : "Vai al file",
+    "Translate" : "Traduci",
     "Your browser does not support playing audio files" : "Il tuo browser non supporta la riproduzione di file audio",
     "Contact" : "Contatto",
     "{stack} in {board}" : "{stack} in {board}",
