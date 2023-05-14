@@ -223,6 +223,7 @@ OC.L10N.register(
     "Files" : "Skedarët",
     "Message sent" : "Mesazhi u dërgua",
     "Reply" : "Përgjigju",
+    "Translate" : "Përkthe",
     "Contact" : "Kontakt",
     "Today" : "Sot",
     "Yesterday" : "Dje",

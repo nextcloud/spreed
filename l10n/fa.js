@@ -319,6 +319,7 @@ OC.L10N.register(
     "Unread messages" : "پیام‌های خوانده نشده",
     "Message sent" : "پیام ارسال شد",
     "Reply" : "پاسخ",
+    "Translate" : "ترجمه",
     "Contact" : "مخاطب",
     "Today" : "Today",
     "Yesterday" : "دیروز",

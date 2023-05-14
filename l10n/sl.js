@@ -1045,6 +1045,7 @@ OC.L10N.register(
     "Reply privately" : "Odgovori zasebno",
     "Copy message link" : "Kopiraj povezavo sporočila",
     "Go to file" : "Pojdi na datoteko",
+    "Translate" : "Prevodi",
     "Close reactions menu" : "Zapri meni odzivov",
     "React with {emoji}" : "Odzovi se z {emoji}",
     "React with another emoji" : "Odzovi se z novo izrazno ikono",
