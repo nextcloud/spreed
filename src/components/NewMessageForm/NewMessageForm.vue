@@ -720,6 +720,9 @@ export default {
 		 * @param {string} emoji Emoji object
 		 */
 		addEmoji(emoji) {
+			// FIXME: remove after issue is resolved: https://github.com/nextcloud/nextcloud-vue/issues/3264
+			const temp = document.createElement('textarea')
+
 			const selection = document.getSelection()
 
 			const contentEditable = this.$refs.richContenteditable.$refs.contenteditable
@@ -732,11 +735,11 @@ export default {
 				// is added the div content will be "<br><br>"), so the emoji
 				// has to be added before the last "<br>" (if any).
 				if (this.text.endsWith('<br>')) {
-					this.text = this.text.slice(0, this.text.lastIndexOf('<br>')) + emoji + '<br>'
+					temp.innerHTML = this.text.slice(0, this.text.lastIndexOf('<br>')) + emoji + '<br>'
 				} else {
-					this.text += emoji
+					temp.innerHTML = this.text + emoji
 				}
-
+				this.text = temp.value
 				return
 			}
 
