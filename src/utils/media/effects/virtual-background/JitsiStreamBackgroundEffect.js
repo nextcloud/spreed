@@ -257,19 +257,78 @@ export default class JitsiStreamBackgroundEffect {
 		if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
 			|| backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO
             || backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.VIDEO_STREAM) {
+			let source
+			let sourceWidthOriginal
+			let sourceHeightOriginal
+
+			if (backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE) {
+				source = this._virtualImage
+				sourceWidthOriginal = source.naturalWidth
+				sourceHeightOriginal = source.naturalHeight
+			} else {
+				source = this._virtualVideo
+				sourceWidthOriginal = source.videoWidth
+				sourceHeightOriginal = source.videoHeight
+			}
+
+			const destinationWidth = this._outputCanvasElement.width
+			const destinationHeight = this._outputCanvasElement.height
+
+			const [sourceX, sourceY, sourceWidth, sourceHeight] = JitsiStreamBackgroundEffect.getSourcePropertiesForDrawingBackgroundImage(sourceWidthOriginal, sourceHeightOriginal, destinationWidth, destinationHeight)
+
 			this._outputCanvasCtx.drawImage(
-				backgroundType === VIRTUAL_BACKGROUND.BACKGROUND_TYPE.IMAGE
-					? this._virtualImage
-					: this._virtualVideo,
+				source,
+				sourceX,
+				sourceY,
+				sourceWidth,
+				sourceHeight,
 				0,
 				0,
-				this._outputCanvasElement.width,
-				this._outputCanvasElement.height
+				destinationWidth,
+				destinationHeight
 			)
 		} else {
 			this._outputCanvasCtx.filter = `blur(${backgroundBlurValue}px)`
 			this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
 		}
+	}
+
+	/**
+	 * Returns the coordinates, width and height to draw the background image
+	 * onto the canvas.
+	 *
+	 * The background image is cropped and centered as needed to cover the whole
+	 * canvas while maintaining the original aspect ratio of the background.
+	 *
+	 * @param {number} sourceWidth the width of the source image
+	 * @param {number} sourceHeight the height of the source image
+	 * @param {number} destinationWidth the width of the destination canvas
+	 * @param {number} destinationHeight the height of the destination canvas
+	 * @return {Array} the X and Y coordinates, width and height of the source
+	 *         image after cropping and centering
+	 */
+	static getSourcePropertiesForDrawingBackgroundImage(sourceWidth, sourceHeight, destinationWidth, destinationHeight) {
+		let croppedSourceX = 0
+		let croppedSourceY = 0
+		let croppedSourceWidth = sourceWidth
+		let croppedSourceHeight = sourceHeight
+
+		if (sourceWidth <= 0 || sourceHeight <= 0 || destinationWidth <= 0 || destinationHeight <= 0) {
+			return [croppedSourceX, croppedSourceY, croppedSourceWidth, croppedSourceHeight]
+		}
+
+		const sourceAspectRatio = sourceWidth / sourceHeight
+		const destinationAspectRatio = destinationWidth / destinationHeight
+
+		if (sourceAspectRatio > destinationAspectRatio) {
+			croppedSourceWidth = sourceHeight * destinationAspectRatio
+			croppedSourceX = (sourceWidth - croppedSourceWidth) / 2
+		} else {
+			croppedSourceHeight = sourceWidth / destinationAspectRatio
+			croppedSourceY = (sourceHeight - croppedSourceHeight) / 2
+		}
+
+		return [croppedSourceX, croppedSourceY, croppedSourceWidth, croppedSourceHeight]
 	}
 
 	/**
