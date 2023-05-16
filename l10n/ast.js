@@ -97,6 +97,7 @@ OC.L10N.register(
     "_%n day_::_%n days_" : ["%n día","%n díes"],
     "_%n week_::_%n weeks_" : ["%n selmana","%n selmanes"],
     "Error occurred when locking the conversation" : "Prodúxose un error mentanto se bloquiaba la conversación",
+    "Delete" : "Desaniciar",
     "Password" : "Contraseña",
     "Nickname" : "Nomatu",
     "Groups" : "Grupos",
