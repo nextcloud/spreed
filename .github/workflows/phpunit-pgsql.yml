@@ -39,7 +39,7 @@ jobs:
     strategy:
       matrix:
         php-versions: ['8.0']
-        server-versions: ['master']
+        server-versions: ['stable27']
 
     services:
       postgres:
