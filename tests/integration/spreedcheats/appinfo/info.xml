@@ -14,6 +14,6 @@
 	</types>
 
 	<dependencies>
-		<nextcloud min-version="27" max-version="27" />
+		<nextcloud min-version="28" max-version="28" />
 	</dependencies>
 </info>
