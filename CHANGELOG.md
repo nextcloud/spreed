@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.0.0-rc.1 – 2023-05-17
+### Changed
+- Update dependencies
+
+### Fixed
+- Fix virtual background image being stretched instead of cropped
+  [#9549](https://github.com/nextcloud/spreed/issues/9549)
+
 ## 17.0.0-beta.3 – 2023-05-12
 ### Added
 - Allow translating chat messages
