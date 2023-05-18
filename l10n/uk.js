@@ -1011,6 +1011,7 @@ OC.L10N.register(
     "Rename conversation" : "Перейменувати розмову",
     "Exit fullscreen (F)" : "Вийти з повного екрану (F)",
     "Fullscreen (F)" : "На весь екран (F)",
+    "You set the conversation avatar" : "Ви встановили аватар розмови",
     "You removed the conversation avatar" : "Ви видалили аватар розмови",
     "Always show this dialog before joining a call in this conversation. The dialog will always be shown when the call is being recorded." : "Завжди показуйте це діалогове вікно перед тим, як приєднатися до виклику в цій розмові. Діалогове вікно завжди відображатиметься під час запису розмови."
 },
