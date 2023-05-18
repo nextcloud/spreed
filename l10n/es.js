@@ -50,7 +50,7 @@ OC.L10N.register(
     "- Start calls without notifying others in big conversations. You can send individual call notifications once the call has started." : "- Inicie llamadas sin notificar a otros en conversaciones numerosas. Puede enviar notificaciones de llamada individules una vez que la llamada ha iniciado.",
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Enviar mensajes de chat sin notificar a los recipientes en caso de que no sea urgente",
     "- Emojis can now be autocompleted by typing a \":\"" : "- Los emojis pueden ser autocompletados escribiendo \":\"",
-    "- Link various items using the new smart-picker by typing a \"/\"" : "- Enlace varios ítems utilizando el nuevo seleccionador inteligente escribiendo una \"/\"",
+    "- Link various items using the new smart-picker by typing a \"/\"" : "- Enlace varios ítems utilizando el nuevo selector inteligente escribiendo una \"/\"",
     "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Los moderadores ahora pueden crear salas de grupos (requiere el servidor externo de señalización)",
     "- Calls can now be recorded (requires the external signaling server)" : "- Las llamadas ahora pueden ser grabadas (requiere el servidor externo de señalización)",
     "- Conversations can now have an avatar or emoji as icon" : "- Ahora, las conversaciones pueden tener como icono un avatar o emoji",
