@@ -653,6 +653,7 @@ OC.L10N.register(
     "You are not allowed to share files" : "Du tillåẗs inte dela filer",
     "Reply" : "Svara",
     "Go to file" : "Gå till fil",
+    "Translate" : "Översätt",
     "Contact" : "Kontakt",
     "{stack} in {board}" : "{stack} i {board}",
     "No messages" : "Inga meddelanden",
