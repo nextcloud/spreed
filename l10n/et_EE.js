@@ -64,6 +64,7 @@ OC.L10N.register(
     "Files" : "Failid",
     "Reply" : "Vasta",
     "Translate" : "Tõlgi",
+    "Copy translated text" : "Kopeeri tõlgitud tekst",
     "Contact" : "Kontakt",
     "Today" : "Täna",
     "Yesterday" : "Eile",
