@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.6 – 2023-05-25
+### Changed
+- Allow Brave browser without unsupported warning
+  [#9167](https://github.com/nextcloud/spreed/issues/9167)
+- Update dependencies
+
+### Fixed
+- Fix call summary when a user has a full numeric user ID
+  [#9504](https://github.com/nextcloud/spreed/issues/9504)
+
+## 14.0.11 – 2023-05-25
+### Changed
+- Allow Brave browser without unsupported warning
+  [#9172](https://github.com/nextcloud/spreed/issues/9172)
+- Update dependencies
+
+### Fixed
+- Fix call summary when a user has a full numeric user ID
+  [#9503](https://github.com/nextcloud/spreed/issues/9503)
+
 ## 15.0.5 – 2023-03-24
 ### Fixed
 - fix(calls): Fix RemoteVideoBlocker still active after removing its associated model
