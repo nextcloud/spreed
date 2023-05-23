@@ -120,10 +120,10 @@ export default {
 
 	methods: {
 		handleOwnReaction({ model, reaction }) {
-			this.handleReaction(model, reaction)
+			this.handleReaction(model, reaction, true)
 		},
 
-		handleReaction(model, reaction) {
+		handleReaction(model, reaction, isLocalModel = false) {
 			// prevent spamming to queue from a single account
 			if (this.reactionsQueue.some(item => item.id === model.attributes.peerId)) {
 				return
@@ -137,7 +137,9 @@ export default {
 			this.reactionsQueue.push({
 				id: model.attributes.peerId,
 				reaction,
-				name: this.getParticipantName(model),
+				name: isLocalModel
+					? this.$store.getters.getDisplayName()
+					: this.getParticipantName(model),
 				seed: Math.random(),
 			})
 		},
