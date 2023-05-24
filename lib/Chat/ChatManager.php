@@ -29,6 +29,7 @@ use OC\Memcache\ArrayCache;
 use OC\Memcache\NullCache;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Poll;
 use OCA\Talk\Participant;
@@ -199,6 +200,17 @@ class ChatManager {
 				$this->notifier->notifyOtherParticipant($chat, $comment, [], false);
 			}
 
+			if (!$shouldSkipLastMessageUpdate && $sendNotifications) {
+				// Update the read-marker for the author when it is a "relevant" system message,
+				// e.g. sharing an item to the chat
+				try {
+					$participant = $this->participantService->getParticipantByActor($chat, $actorType, $actorId);
+					$this->participantService->updateLastReadMessage($participant, (int) $comment->getId());
+				} catch (ParticipantNotFoundException) {
+					// Participant not found => No read-marker update needed
+				}
+			}
+
 			$this->dispatcher->dispatch(self::EVENT_AFTER_SYSTEM_MESSAGE_SEND, $event);
 		} catch (NotFoundException $e) {
 		}
@@ -279,6 +291,8 @@ class ChatManager {
 		$shouldFlush = $this->notificationManager->defer();
 		try {
 			$this->commentsManager->save($comment);
+
+			$this->participantService->updateLastReadMessage($participant, (int) $comment->getId());
 
 			// Update last_message
 			if ($comment->getActorType() !== 'bots' || $comment->getActorId() === 'changelog') {
