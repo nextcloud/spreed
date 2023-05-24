@@ -28,7 +28,8 @@
 			- Use full version of the Portal library (doesn't solve the same problem with Viewer)
 			- Use a new child of #content-vue as Talk Vue app
 		-->
-		<Portal :selector="isFullscreen ? '#content-vue' : 'body'">
+		<!-- Also Portal's selector is not reactive. We need to re-mount the node on selector change using key -->
+		<Portal :selector="portalSelector" :key="portalSelector">
 			<!-- Add .app-talk to use Talk icon classes outside of #content-vue -->
 			<div class="viewer-overlay app-talk"
 				:style="{
@@ -192,8 +193,8 @@ export default {
 			return this.$store.getters.conversation(this.token)
 		},
 
-		isFullscreen() {
-			return this.$store.getters.isFullscreen()
+		portalSelector() {
+			return this.$store.getters.isFullscreen() ? '#content-vue' : 'body'
 		},
 	},
 
