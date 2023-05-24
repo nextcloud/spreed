@@ -109,12 +109,12 @@ Feature: chat-2/unread-messages
       | roomName | room |
     And user "participant1" adds user "participant2" to room "group room" with 200 (v4)
     When user "participant1" shares "welcome.txt" with room "group room"
-    # Unread counter for sender is not cleared in this case, as it is not
+    # Unread counter for sender is cleared in this case, as it is not
     # possible to know whether the file was shared from Talk, which could clear
     # the counter, or from the Files app, which should not clear it.
     Then user "participant1" is participant of room "group room" (v4)
       | unreadMessages |
-      | 1              |
+      | 0              |
     And user "participant2" is participant of room "group room" (v4)
       | unreadMessages |
       | 1              |
