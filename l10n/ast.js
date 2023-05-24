@@ -256,6 +256,7 @@ OC.L10N.register(
     "Yesterday" : "Ayeri",
     "Question" : "Entruga",
     "Settings" : "Configuración",
+    "Searching …" : "Buscando…",
     "Participants" : "Participantes",
     "Details" : "Detalles",
     "Privacy" : "Privacidá",
