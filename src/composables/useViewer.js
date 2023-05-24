@@ -17,6 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { nextTick, watch } from 'vue'
+
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
 
@@ -71,11 +73,26 @@ export function useViewer() {
 		// opened, so for the time being it is reparented if needed shortly
 		// after calling it.
 		// @see https://github.com/nextcloud/viewer/issues/995
-		setTimeout(() => {
-			if (store.getters.isFullscreen()) {
-				document.getElementById('content-vue').appendChild(document.getElementById('viewer'))
-			}
-		}, 1000)
+		watch(
+			() => store.getters.isFullscreen(),
+			async (newIsFullscreen, oldIsFullscreen) => {
+				// Wait viewer to be mounted
+				await nextTick()
+
+				const viewerElement = document.getElementById('viewer')
+				const talkVueApp = document.getElementById('content-vue')
+
+				if (newIsFullscreen) {
+					// When changed to the fullscreen mode, Viewer should be moved to the talk app
+					talkVueApp.appendChild(viewerElement)
+				} else if (oldIsFullscreen) {
+					// In normal mode if it was in fullscreen before, move back to body
+					// Otherwise it will be overlapped by web-page's header
+					document.body.appendChild(viewerElement)
+				}
+			},
+			{ immediate: true },
+		)
 	}
 
 	return {
