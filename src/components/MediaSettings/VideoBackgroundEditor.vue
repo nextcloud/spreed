@@ -32,7 +32,6 @@
 			}}
 		</button>
 		<button key="blur"
-			:disabled="!blurPreviewAvailable"
 			class="background-editor__element"
 			:class="{'background-editor__element--selected': selectedBackground === 'blur'}"
 			@click="handleSelectBackground('blur')">
@@ -116,11 +115,6 @@ export default {
 			type: String,
 			required: true,
 		},
-
-		virtualBackground: {
-			type: Object,
-			required: true,
-		},
 	},
 
 	emits: ['update-background'],
@@ -140,10 +134,6 @@ export default {
 	},
 
 	computed: {
-		blurPreviewAvailable() {
-			return this.virtualBackground.isAvailable()
-		},
-
 		isCustomBackground() {
 			return this.selectedBackground !== 'none'
 			    && this.selectedBackground !== 'blur'
