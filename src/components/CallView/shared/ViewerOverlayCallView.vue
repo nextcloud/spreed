@@ -19,7 +19,17 @@
 
 <template>
 	<div ref="ghost" class="viewer-overlay-ghost">
-		<Portal>
+		<!--
+			Viewer Overlay should be teleported to be to the top of DOM to be on top of the Viewer,
+			because by default Viewer is on top of an entire Talk (#content-vue).
+			In the fullscreen mode Viewer is manually moved to #content-vue which is top layer by Fullscreen API.
+			FIXME: this is not correct to use Portal/Teleport to move something inside the Vue app.
+			Alternative solutions could be:
+			- Use full version of the Portal library (doesn't solve the same problem with Viewer)
+			- Use a new child of #content-vue as Talk Vue app
+		-->
+		<!-- Also Portal's selector is not reactive. We need to re-mount the node on selector change using key -->
+		<Portal :key="portalSelector" :selector="portalSelector">
 			<!-- Add .app-talk to use Talk icon classes outside of #content-vue -->
 			<div class="viewer-overlay app-talk"
 				:style="{
@@ -181,6 +191,10 @@ export default {
 	computed: {
 		conversation() {
 			return this.$store.getters.conversation(this.token)
+		},
+
+		portalSelector() {
+			return this.$store.getters.isFullscreen() ? '#content-vue' : 'body'
 		},
 	},
 
