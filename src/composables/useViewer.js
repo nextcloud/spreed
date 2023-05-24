@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { nextTick, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 
 import { useIsInCall } from './useIsInCall.js'
 import { useStore } from './useStore.js'
@@ -32,18 +32,58 @@ import { useStore } from './useStore.js'
  */
 
 /**
+ * FIXME Remove this hack once it is possible to set the parent
+ * element of the viewer.
+ * By default the viewer is a sibling of the fullscreen element, so
+ * it is not visible when in fullscreen mode. It is not possible to
+ * specify the parent nor to know when the viewer was actually
+ * opened, so for the time being it is reparented if needed shortly
+ * after calling it.
+ *
+ * @see https://github.com/nextcloud/viewer/issues/995
+ *
+ * @param {boolean} isFullscreen - is currently in fullscreen mode
+ */
+function reparentViewer(isFullscreen) {
+	const viewerElement = document.getElementById('viewer')
+
+	if (isFullscreen) {
+		// When changed to the fullscreen mode, Viewer should be moved to the talk app
+		document.getElementById('content-vue').appendChild(viewerElement)
+	} else {
+		// In normal mode if it was in fullscreen before, move back to body
+		// Otherwise it will be overlapped by web-page's header
+		document.body.appendChild(viewerElement)
+	}
+}
+
+/**
+ * Is Viewer currently opened
+ *
+ * @type {import('vue').Ref<boolean>}
+ */
+const isViewerOpen = ref(false)
+
+/**
  * Composable with OCA.Viewer helpers
  *
- * @return {{ openViewer: OpenViewer }}
+ * @return {{ openViewer: OpenViewer, isViewerOpen: import('vue').Ref<boolean> }}
  */
 export function useViewer() {
 	const store = useStore()
 	const isInCall = useIsInCall()
+	const isFullscreen = computed(() => store.getters.isFullscreen())
+
+	watch(isFullscreen, () => {
+		if (isViewerOpen.value) {
+			reparentViewer(isFullscreen.value)
+		}
+	})
 
 	/**
 	 * @type {OpenViewer}
 	 */
-	const openViewer = (path, list) => {
+	const openViewer = async (path, list) => {
 		if (!OCA.Viewer) {
 			return false
 		}
@@ -61,41 +101,23 @@ export function useViewer() {
 			path,
 			list,
 			onClose: () => {
+				isViewerOpen.value = false
 				store.dispatch('setCallViewMode', { isViewerOverlay: false })
 			},
 		})
 
-		// FIXME Remove this hack once it is possible to set the parent
-		// element of the viewer.
-		// By default the viewer is a sibling of the fullscreen element, so
-		// it is not visible when in fullscreen mode. It is not possible to
-		// specify the parent nor to know when the viewer was actually
-		// opened, so for the time being it is reparented if needed shortly
-		// after calling it.
-		// @see https://github.com/nextcloud/viewer/issues/995
-		watch(
-			() => store.getters.isFullscreen(),
-			async (newIsFullscreen, oldIsFullscreen) => {
-				// Wait viewer to be mounted
-				await nextTick()
+		// Wait Viewer to be mounted
+		await nextTick()
 
-				const viewerElement = document.getElementById('viewer')
-				const talkVueApp = document.getElementById('content-vue')
+		isViewerOpen.value = true
 
-				if (newIsFullscreen) {
-					// When changed to the fullscreen mode, Viewer should be moved to the talk app
-					talkVueApp.appendChild(viewerElement)
-				} else if (oldIsFullscreen) {
-					// In normal mode if it was in fullscreen before, move back to body
-					// Otherwise it will be overlapped by web-page's header
-					document.body.appendChild(viewerElement)
-				}
-			},
-			{ immediate: true },
-		)
+		if (isFullscreen.value) {
+			reparentViewer(true)
+		}
 	}
 
 	return {
+		isViewerOpen,
 		openViewer,
 	}
 }
