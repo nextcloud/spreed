@@ -384,17 +384,18 @@ export default {
 
 			// Enable signal sending, only if indicator for this input is on
 			if (this.showTypingStatus) {
-				clearTimeout(this.typingTimeout)
-
 				if (!newValue) {
-					this.$store.dispatch('setTyping', { typing: false })
+					this.resetTypingIndicator()
 					return
 				}
 
-				this.typingTimeout = setTimeout(() => {
-					this.$store.dispatch('setTyping', { typing: false })
-				}, 5000)
-				this.$store.dispatch('setTyping', { typing: true })
+				if (!this.typingTimeout) {
+					this.typingTimeout = setTimeout(() => {
+						this.resetTypingIndicator()
+					}, 5000)
+					this.$store.dispatch('setTyping', { typing: true })
+				}
+
 			}
 		},
 
@@ -404,7 +405,7 @@ export default {
 			} else {
 				this.text = ''
 			}
-			this.$store.dispatch('setTyping', { typing: false })
+			this.resetTypingIndicator()
 		},
 	},
 
@@ -426,6 +427,13 @@ export default {
 	},
 
 	methods: {
+		resetTypingIndicator() {
+			if (this.typingTimeout) {
+				clearTimeout(this.typingTimeout)
+			}
+			this.$store.dispatch('setTyping', { typing: false })
+		},
+
 		handleUploadStart() {
 			// refocus on upload start as the user might want to type again while the upload is running
 			this.focusInput()
