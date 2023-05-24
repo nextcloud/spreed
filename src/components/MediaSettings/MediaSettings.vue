@@ -97,7 +97,8 @@
 					</template>
 					{{ t('spreed', 'Devices') }}
 				</NcButton>
-				<NcButton :type="showBackgroundEditor ? 'secondary' : 'tertiary'"
+				<NcButton v-if="isVirtualBackgroundAvailable"
+					:type="showBackgroundEditor ? 'secondary' : 'tertiary'"
 					@click="toggleTab('backgrounds')">
 					<template #icon>
 						<Creation :size="20" />
@@ -120,7 +121,6 @@
 
 			<!-- Background selection -->
 			<VideoBackgroundEditor v-if="showBackgroundEditor"
-				:virtual-background="virtualBackground"
 				:token="token"
 				@update-background="handleUpdateBackground" />
 
@@ -333,6 +333,11 @@ export default {
 		showBackgroundEditor() {
 			return this.tabContent === 'backgrounds'
 		},
+
+		isVirtualBackgroundAvailable() {
+			return this.virtualBackground.isAvailable()
+		},
+
 	},
 
 	watch: {
