@@ -54,7 +54,7 @@
 			</template>
 			<button v-for="path in predefinedBackgroundsURLs"
 				:key="path"
-				aria-label="TODO: add image names as aria labels"
+				:aria-label="ariaLabelForPredefinedBackground(path)"
 				class="background-editor__element"
 				:class="{'background-editor__element--selected': selectedBackground === path}"
 				:style="{
@@ -255,6 +255,15 @@ export default {
 			} else {
 				this.selectedBackground = 'none'
 			}
+		},
+
+		ariaLabelForPredefinedBackground(path) {
+			const removeFolders = (name) => name.includes('/') ? name.slice(name.lastIndexOf('/') + 1) : name
+			const removePositionNumber = (name) => name.includes('_') ? name.slice(name.indexOf('_') + 1) : name
+			const removeFileType = (name) => name.includes('.') ? name.slice(0, name.lastIndexOf('.')) : name
+			return t('spreed', 'Select virtual {atmosphere} background', {
+				atmosphere: removeFileType(removePositionNumber(removeFolders(path))).replaceAll('_', ' '),
+			})
 		},
 	},
 }
