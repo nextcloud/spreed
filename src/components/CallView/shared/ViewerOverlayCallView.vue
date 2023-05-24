@@ -29,7 +29,7 @@
 			- Use a new child of #content-vue as Talk Vue app
 		-->
 		<!-- Also Portal's selector is not reactive. We need to re-mount the node on selector change using key -->
-		<Portal :selector="portalSelector" :key="portalSelector">
+		<Portal :key="portalSelector" :selector="portalSelector">
 			<!-- Add .app-talk to use Talk icon classes outside of #content-vue -->
 			<div class="viewer-overlay app-talk"
 				:style="{
