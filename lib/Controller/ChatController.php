@@ -179,8 +179,6 @@ class ChatController extends AEnvironmentAwareController {
 			return $response;
 		}
 
-		$this->participantService->updateLastReadMessage($this->participant, (int) $comment->getId());
-
 		$data = $chatMessage->toArray($this->getResponseFormat());
 		if ($parentMessage instanceof Message) {
 			$data['parent'] = $parentMessage->toArray($this->getResponseFormat());
