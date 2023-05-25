@@ -15,7 +15,7 @@ local Pipeline(test_set, database, services) = {
 			environment: {
 				APP_NAME: "spreed",
 				CORE_BRANCH: "stable27",
-				GUESTS_BRANCH: "stable27",
+				GUESTS_BRANCH: "master",
 				NOTIFICATIONS_BRANCH: "stable27",
 				DATABASEHOST: database
 			},

@@ -1,6 +1,68 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.0.0-rc.2 – 2023-05-25
+### Fixed
+- fix(reactions): Fix own call reactions when the high-performance backend is used
+  [#9586](https://github.com/nextcloud/spreed/issues/9586)
+- fix(mediasettings): Hide virtual background options when not supported
+  [#9611](https://github.com/nextcloud/spreed/issues/9611)
+- fix(mediasettings): Fix broken aria-label
+  [#9617](https://github.com/nextcloud/spreed/issues/9617)
+- fix(CallView): Fix Fullscreen mode support in ViewerOverlay
+  [#9613](https://github.com/nextcloud/spreed/issues/9613)
+  [#9618](https://github.com/nextcloud/spreed/issues/9618)
+- fix(CallView): fix no local video on empty call in not grid mode
+  [#9584](https://github.com/nextcloud/spreed/issues/9584)
+- fix(chat): Update own read marker before triggering events when posting
+  [#9612](https://github.com/nextcloud/spreed/issues/9612)
+- fix(chat): Don't send startTyping signaling message for each keystroke
+  [#9614](https://github.com/nextcloud/spreed/issues/9614)
+
+## 16.0.4 – 2023-05-25
+### Added
+- Allow to mark conversations unread in the sidebar
+  [#9366](https://github.com/nextcloud/spreed/issues/9366)
+
+### Changed
+- Make self-joined users persistent members when assigning permissions
+  [#9434](https://github.com/nextcloud/spreed/issues/9434)
+- Update dependencies
+
+### Fixed
+- Special characters are HTML encoded when selecting an Emoji from the picker
+  [#9545](https://github.com/nextcloud/spreed/issues/9545)
+- Fix missing "New message" form on share and files app integration
+  [#9532](https://github.com/nextcloud/spreed/issues/9532)
+- Fix diverging user status between top bar and conversation list
+  [#9419](https://github.com/nextcloud/spreed/issues/9419)
+- Fix call summary when a user has a full numeric user ID
+  [#9502](https://github.com/nextcloud/spreed/issues/9502)
+- Fix mentions of groups with spaces in the ID and guests
+  [#9420](https://github.com/nextcloud/spreed/issues/9420)
+- Prevent sending empty chat messages
+  [#9515](https://github.com/nextcloud/spreed/issues/9515)
+
+## 15.0.6 – 2023-05-25
+### Changed
+- Allow Brave browser without unsupported warning
+  [#9167](https://github.com/nextcloud/spreed/issues/9167)
+- Update dependencies
+
+### Fixed
+- Fix call summary when a user has a full numeric user ID
+  [#9504](https://github.com/nextcloud/spreed/issues/9504)
+
+## 14.0.11 – 2023-05-25
+### Changed
+- Allow Brave browser without unsupported warning
+  [#9172](https://github.com/nextcloud/spreed/issues/9172)
+- Update dependencies
+
+### Fixed
+- Fix call summary when a user has a full numeric user ID
+  [#9503](https://github.com/nextcloud/spreed/issues/9503)
+
 ## 17.0.0-rc.1 – 2023-05-17
 ### Changed
 - Update dependencies
