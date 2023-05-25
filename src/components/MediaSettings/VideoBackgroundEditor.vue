@@ -154,6 +154,11 @@ export default {
 	async mounted() {
 		this.loadBackground()
 
+		if (this.$store.getters.getUserId() === null) {
+			console.debug('Skip Talk backgrounds folder check and setup for participants that are not logged in')
+			return
+		}
+
 		const userRoot = '/files/' + this.$store.getters.getUserId()
 		const relativeBackgroundsFolderPath = this.$store.getters.getAttachmentFolder() + '/Backgrounds'
 		const absoluteBackgroundsFolderPath = userRoot + relativeBackgroundsFolderPath

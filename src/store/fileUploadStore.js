@@ -203,6 +203,10 @@ const mutations = {
 		state.fileTemplates.push(template)
 		state.fileTemplatesInitialised = true
 	},
+
+	markFileTemplatesInitialisedForGuests(state) {
+		state.fileTemplatesInitialised = true
+	},
 }
 
 const actions = {
@@ -427,7 +431,13 @@ const actions = {
 		commit('removeFileFromSelection', temporaryMessageId)
 	},
 
-	async getFileTemplates({ commit }) {
+	async getFileTemplates({ commit, getters }) {
+		if (getters.getUserId() === null) {
+			console.debug('Skip file templates setup for participants that are not logged in')
+			commit('markFileTemplatesInitialisedForGuests')
+			return
+		}
+
 		try {
 			const response = await getFileTemplates()
 
