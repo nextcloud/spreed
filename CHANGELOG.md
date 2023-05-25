@@ -11,8 +11,11 @@ All notable changes to this project will be documented in this file.
   [#9617](https://github.com/nextcloud/spreed/issues/9617)
 - fix(CallView): Fix Fullscreen mode support in ViewerOverlay
   [#9613](https://github.com/nextcloud/spreed/issues/9613)
+  [#9618](https://github.com/nextcloud/spreed/issues/9618)
 - fix(CallView): fix no local video on empty call in not grid mode
   [#9584](https://github.com/nextcloud/spreed/issues/9584)
+- fix(chat): Update own read marker before triggering events when posting
+  [#9612](https://github.com/nextcloud/spreed/issues/9612)
 - fix(chat): Don't send startTyping signaling message for each keystroke
   [#9614](https://github.com/nextcloud/spreed/issues/9614)
 
