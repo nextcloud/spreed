@@ -22,6 +22,7 @@ nav:
   - 'Administration documentation':
       - 'Server system requirements': 'system-requirements.md'
       - 'Configuring coTURN': 'TURN.md'
+      - 'Scalability': 'scalability.md'
       - 'Occ commands': 'occ.md'
       - 'Commands': 'commands.md'
       - 'Matterbridge integration': 'matterbridge.md'
