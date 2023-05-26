@@ -1318,6 +1318,7 @@
     "An error occurred while posting deck card to conversation" : "Prišlo je do napake med dodajanjem naloge v pogovor.",
     "Post to a conversation" : "Dodaj v pogovor",
     "Post to conversation" : "Dodaj v pogovor",
+    "The recording failed. Please contact your administrator." : "Snemanje je spodletelo. Stopite v stik s skrbnikom sistema.",
     "Location has been posted to the selected <a href=\"{link}\">conversation</a>" : "Trenutno mesto je poslano za izbran <a href=\"{link}\">pogovor</a>",
     "An error occurred while posting location to conversation" : "Prišlo je do napake med pošiljanjem podatkom o trenutnem mestu v pogovor.",
     "Share to a conversation" : "Objavi v pogovor",
