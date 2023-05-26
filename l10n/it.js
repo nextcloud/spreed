@@ -907,6 +907,7 @@ OC.L10N.register(
     "Done" : "Completato",
     "No audio" : "Nessun audio",
     "No camera" : "Nessuna fotocamera",
+    "Blur" : "Sfocatura",
     "Upload" : "Carica",
     "Files" : "File",
     "File to share" : "File da condividere",
