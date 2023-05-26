@@ -29,6 +29,7 @@ use OCA\Talk\Controller\SignalingController;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Middleware\Attribute\RequireCallEnabled;
 use OCA\Talk\Middleware\Exceptions\CanNotUseTalkException;
+use OCA\Talk\Middleware\Exceptions\UnsupportedClientVersionException;
 use OCA\Talk\Room;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -39,31 +40,61 @@ use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
 use OCP\IConfig;
 use OCP\IGroupManager;
+use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
 
 class CanUseTalkMiddleware extends Middleware {
-	private IUserSession $userSession;
-	private IGroupManager $groupManager;
-	private Config $talkConfig;
-	private IConfig $serverConfig;
+	/**
+	 * Talk Desktop user agent but with a regex match for the version
+	 * @see IRequest::USER_AGENT_TALK_DESKTOP
+	 */
+	public const USER_AGENT_TALK_DESKTOP = '/^Mozilla\/5\.0 \((?!Android|iOS)[A-Za-z ]+\) Nextcloud-Talk v([^ ]*).*$/';
+	public const TALK_DESKTOP_MIN_VERSION = '0.6.0';
+
+	/**
+	 * Talk Android user agent but with a regex match for the version
+	 * @see IRequest::USER_AGENT_TALK_ANDROID
+	 */
+	public const USER_AGENT_TALK_ANDROID = '/^Mozilla\/5\.0 \(Android\) Nextcloud\-Talk v([^ ]*).*$/';
+	public const TALK_ANDROID_MIN_VERSION = '15.0.0';
+
+	/**
+	 * Talk iOS user agent but with a regex match for the version
+	 * @see IRequest::USER_AGENT_TALK_IOS
+	 */
+	public const USER_AGENT_TALK_IOS = '/^Mozilla\/5\.0 \(iOS\) Nextcloud\-Talk v([^ ]*).*$/';
+	public const TALK_IOS_MIN_VERSION = '15.0.0';
+
 
 	public function __construct(
-		IUserSession $userSession,
-		IGroupManager $groupManager,
-		Config $talkConfig,
-		IConfig $serverConfig,
+		protected IUserSession $userSession,
+		protected IGroupManager $groupManager,
+		protected Config $talkConfig,
+		protected IConfig $serverConfig,
+		protected IRequest $request,
 	) {
-		$this->userSession = $userSession;
-		$this->groupManager = $groupManager;
-		$this->talkConfig = $talkConfig;
-		$this->serverConfig = $serverConfig;
 	}
 
 	/**
 	 * @throws CanNotUseTalkException
+	 * @throws UnsupportedClientVersionException
 	 */
 	public function beforeController(Controller $controller, string $methodName): void {
+		if ($this->request->isUserAgent([
+			IRequest::USER_AGENT_TALK_DESKTOP,
+			IRequest::USER_AGENT_TALK_ANDROID,
+			IRequest::USER_AGENT_TALK_IOS,
+		])) {
+			if ($this->request->isUserAgent([IRequest::USER_AGENT_TALK_DESKTOP])) {
+				$this->throwIfUnsupportedClientVersion('desktop', $this->request->getHeader('USER_AGENT'));
+			} elseif ($this->request->isUserAgent([IRequest::USER_AGENT_TALK_ANDROID])) {
+				$this->throwIfUnsupportedClientVersion('android', $this->request->getHeader('USER_AGENT'));
+			} elseif ($this->request->isUserAgent([IRequest::USER_AGENT_TALK_IOS])) {
+				$this->throwIfUnsupportedClientVersion('ios', $this->request->getHeader('USER_AGENT'));
+			}
+		}
+
 		$user = $this->userSession->getUser();
 		if ($user instanceof IUser && $this->talkConfig->isDisabledForUser($user)) {
 			if ($methodName === 'getWelcomeMessage'
@@ -93,6 +124,14 @@ class CanUseTalkMiddleware extends Middleware {
 	 * @return Response
 	 */
 	public function afterException($controller, $methodName, \Exception $exception): Response {
+		if ($exception instanceof UnsupportedClientVersionException) {
+			if ($controller instanceof OCSController) {
+				throw new OCSException($exception->getMinVersion(), Http::STATUS_UPGRADE_REQUIRED);
+			}
+
+			return new RedirectToDefaultAppResponse();
+		}
+
 		if ($exception instanceof CanNotUseTalkException ||
 			$exception instanceof ForbiddenException) {
 			if ($controller instanceof OCSController) {
@@ -103,5 +142,43 @@ class CanUseTalkMiddleware extends Middleware {
 		}
 
 		throw $exception;
+	}
+
+	/**
+	 * @param string $client
+	 * @param string $userAgent
+	 * @throws UnsupportedClientVersionException
+	 */
+	protected function throwIfUnsupportedClientVersion(string $client, string $userAgent): void {
+		$configMinVersion = $this->serverConfig->getAppValue('spreed', 'minimum.supported.' . $client . '.version');
+
+		if ($client === 'desktop') {
+			$versionRegex = self::USER_AGENT_TALK_DESKTOP;
+			$minVersion = self::TALK_DESKTOP_MIN_VERSION;
+		} elseif ($client === 'android') {
+			$versionRegex = self::USER_AGENT_TALK_ANDROID;
+			$minVersion = self::TALK_ANDROID_MIN_VERSION;
+		} elseif ($client === 'ios') {
+			$versionRegex = self::USER_AGENT_TALK_IOS;
+			$minVersion = self::TALK_IOS_MIN_VERSION;
+		} else {
+			return;
+		}
+
+		preg_match($versionRegex, $userAgent, $matches);
+
+		if (isset($matches[1])) {
+			$clientVersion = $matches[1];
+
+			// API requirement and safety net
+			if (version_compare($clientVersion, $minVersion, '<')) {
+				throw new UnsupportedClientVersionException($minVersion);
+			}
+
+			// Admin option to be more pushy
+			if ($configMinVersion && version_compare($clientVersion, $configMinVersion, '<')) {
+				throw new UnsupportedClientVersionException($configMinVersion);
+			}
+		}
 	}
 }
