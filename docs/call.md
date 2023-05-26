@@ -99,6 +99,12 @@
 
 * Method: `DELETE`
 * Endpoint: `/call/{token}`
+* Data:
+
+| field | type | Description                                                                 |
+|-------|------|-----------------------------------------------------------------------------|
+| `all` | bool | If sent as a moderator, end the meeting and all participants leave the call |
+
 
 * Response:
     - Status code:
