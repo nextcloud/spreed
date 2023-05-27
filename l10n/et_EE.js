@@ -91,9 +91,6 @@ OC.L10N.register(
     "Default" : "Vaikeväärtus",
     "The password is wrong. Try again." : "Parool on vale. Proovi uuesti.",
     "Android app" : "Androidi rakendus",
-    "iOS app" : "iOS-i rakendus",
-    "An error occurred. Please contact your admin." : "Tekkis tõrge. Palun võta ühendust administraatoriga.",
-    "Saved" : "Salvestatud",
-    "Enter a password" : "Enter a password"
+    "iOS app" : "iOS-i rakendus"
 },
 "nplurals=2; plural=(n != 1);");

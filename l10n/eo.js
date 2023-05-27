@@ -330,9 +330,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "La pasvorto malĝustas. Provu denove.",
     "Android app" : "Android-aplikaĵo",
     "iOS app" : "iOS-aplikaĵo",
-    "An error occurred. Please contact your admin." : "Eraro okazis. Bonvolu kontakti vian administranton.",
-    "Saved" : "Konservita",
-    "More actions" : "Pliaj agoj",
-    "Enter a password" : "Entajpu pasvorton"
+    "More actions" : "Pliaj agoj"
 },
 "nplurals=2; plural=(n != 1);");

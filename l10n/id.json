@@ -339,10 +339,6 @@
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
     "iOS app" : "Aplikasi iOS",
-    "An error occurred. Please contact your admin." : "Terjadi kesalahan. Silakan hubungi admin Anda.",
-    "Saved" : "Disimpan",
-    "Enter a password" : "Masukkan kata sandi",
-    "Open conversation to registered users" : "Buka percakapan untuk pengguna terdaftar",
     "Rename conversation" : "Ganti nama percakapan"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
