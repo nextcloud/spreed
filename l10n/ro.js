@@ -364,10 +364,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Parola este incorectă. Încercaţi din nou.",
     "Android app" : "Aplicație Android",
     "iOS app" : "Aplicație iOS",
-    "An error occurred. Please contact your admin." : "A apărut o eroare. Te rugăm să contactezi administratorul.",
-    "Saved" : "Salvat",
-    "More actions" : "Mai multe acțiuni",
-    "Enter a password" : "Enter a password",
-    "Calls" : "Apeluri"
+    "More actions" : "Mai multe acțiuni"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");
