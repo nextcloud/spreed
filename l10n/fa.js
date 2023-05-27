@@ -363,13 +363,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "رمزعبور اشتباه می باشد. دوباره امتحان کنید.",
     "Android app" : "اپ اندروید",
     "iOS app" : "اپ iOS",
-    "An error occurred. Please contact your admin." : "یک خطا رخ داده است. لطفا با مدیر سیستم تماس بگیرید.",
-    "Saved" : "ذخیره شد",
     "More actions" : "اقدامات بیشتر",
-    "Allow guests" : "اجازه میهمانان",
-    "Enter a password" : "یک گذرواژه وارد کنید",
-    "Upload new files" : "فایل‌های جدید را آپلود کنید",
-    "Share from Files" : "اشتراک‌گذاری از فایل‌ها",
     "Rename conversation" : "تغییر نام مکالمه"
 },
 "nplurals=2; plural=(n > 1);");

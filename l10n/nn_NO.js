@@ -83,11 +83,6 @@ OC.L10N.register(
     "Away" : "Borte",
     "Default" : "Standard",
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
-    "An error occurred. Please contact your admin." : "Det oppstod ein feil. Ver venleg og kontakt systemadministrator.",
-    "Saved" : "Lagra",
-    "Allow guests" : "Tillat gjester",
-    "Enter a password" : "Skriv inn eit passord",
-    "Calls" : "Samtalar",
     "Rename conversation" : "Eksterne samtalar "
 },
 "nplurals=2; plural=(n != 1);");

@@ -605,19 +605,7 @@
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signalserver kan alternativt brukes for større installasjoner. La stå tom for å bruke intern signalserver.",
     "Android app" : "Android-app",
     "iOS app" : "iOS-app",
-    "An error occurred. Please contact your admin." : "Det oppsto en feil. Kontakt din administrator.",
-    "Saved" : "Lagret",
     "More actions" : "Flere handlinger",
-    "Guests access" : "Gjeste tilgang",
-    "Meeting settings" : "Møte innstillinger",
-    "Allow guests" : "Tillat gjester",
-    "Enter a password" : "Skriv inn et passord",
-    "Enable lobby" : "Aktiver lobby",
-    "Chat messages" : "Samtalemeldinger",
-    "Calls" : "Samtaler",
-    "Choose a password" : "Velg et passord",
-    "Upload new files" : "Last opp nye filer",
-    "Share from Files" : "Del fra Filer",
     "Rename conversation" : "Endre navn på samtale"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
