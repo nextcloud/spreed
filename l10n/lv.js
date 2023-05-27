@@ -251,10 +251,6 @@ OC.L10N.register(
     "%s Talk on your mobile devices" : "%s Sarunas mobilajās ierīcēs",
     "Android app" : "Android lietotne",
     "iOS app" : "iOS lietotne",
-    "An error occurred. Please contact your admin." : "Notika kļūda. Lūdzu sazinies ar savu administratoru.",
-    "Saved" : "Saglabāts",
-    "Add a new server" : "Pievienot jaunu serveri",
-    "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Zvani, kuros ir vairāk nekā 4 dalībnieki bez ārējā paraksta servera, var saskarties ar savienojamības problēmām un radīt lielu slodzi iesaistītajām ierīcēm.",
-    "Enter a password" : "Enter a password"
+    "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Zvani, kuros ir vairāk nekā 4 dalībnieki bez ārējā paraksta servera, var saskarties ar savienojamības problēmām un radīt lielu slodzi iesaistītajām ierīcēm."
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

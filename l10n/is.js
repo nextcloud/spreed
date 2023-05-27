@@ -540,15 +540,8 @@ OC.L10N.register(
     "%s Talk on your mobile devices" : "%s Talaðu á snjalltækjunum þínum",
     "Android app" : "Android-forrit",
     "iOS app" : "iOS-forrit",
-    "An error occurred. Please contact your admin." : "Villa kom upp. Hafðu samband við kerfisstjóra.",
-    "Saved" : "Vistað",
-    "Add a new server" : "Bæta við nýjum þjóni",
     "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Athugaðu að samtöl með fleiri en 4 þátttakendum og án merkjasendingaþjóns geta orðið fyrir truflunum í tengingum ásamt því að valda miklu álagi á tengdum tækjum.",
     "More actions" : "Fleiri aðgerðir",
-    "Allow guests" : "Leyfa gesti",
-    "Enter a password" : "Settu inn lykilorð",
-    "Calls" : "Samtöl",
-    "Message link copied to clipboard." : "Skilaboðatengill afritaður á klippispjald.",
     "Rename conversation" : "Endurnefna samtal"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

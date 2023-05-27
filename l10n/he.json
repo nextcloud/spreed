@@ -590,18 +590,8 @@
     "Signaling servers" : "שרתי איתות",
     "Android app" : "יישומון ל־Android",
     "iOS app" : "יישומון ל־iOS",
-    "An error occurred. Please contact your admin." : "אירעה שגיאה. יש ליצור קשר עם המנהל שלך.",
-    "Saved" : "נשמר",
-    "Add a new server" : "הוספת שרת חדש",
     "More actions" : "פעולות נוספות",
-    "Allow guests" : "לאפשר אורחים",
-    "Enter a password" : "נא להקליד ססמה",
-    "Enable lobby" : "הפעלת לובי",
-    "Calls" : "שיחות",
     "Link copied to the clipboard!" : "הקישור הועתק ללוח הגזירים!",
-    "Choose a password" : "בחירת ססמה",
-    "Upload new files" : "העלאת קבצים חדשים",
-    "Share from Files" : "שיתוף מקבצים",
     "Rename conversation" : "שינוי שם הדיון",
     "Exit fullscreen (F)" : "יציאה ממסך מלא (F)"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;"
