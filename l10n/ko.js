@@ -225,7 +225,7 @@ OC.L10N.register(
     "Failed to request trial because the trial server behaved wrongly. Please try again later." : "평가판 서버의 동작이 잘못되어 평가판을 요청하지 못했습니다. 나중에 다시 시도해 주십시오.",
     "Trial requested but failed to get account information. Please check back later." : "평가판이 요청되었지만 계정 정보를 가져오지 못했습니다. 나중에 다시 확인하십시오.",
     "There is a problem with the authentication of this request. Maybe it is not reachable from the outside to verify it's URL." : "이 요청을 인증하는 데 문제가 있습니다. URL을 확인하기 위해 외부에서 연결할 수 없을 수 있습니다.",
-    "Failed to fetch account information because the trial server behaved wrongly. Please check back later." : "평가판 서버의 오류 떄문에 계정 정보를 가져오는데 실패했습니다. 나중에 다시 확인해 주세요.",
+    "Failed to fetch account information because the trial server behaved wrongly. Please check back later." : "평가판 서버의 오류 때문에 계정 정보를 가져오는데 실패했습니다. 나중에 다시 확인해 주세요.",
     "There is a problem with fetching the account information. Please check your logs for further information." : "계정 정보를 가져오는 데 문제가 있습니다. 자세한 내용은 로그를 확인하십시오.",
     "There is no such account registered." : "등록된 계정이 없습니다.",
     "Failed to fetch account information because the trial server is unreachable. Please check back later." : "평가판 서버에 연결할 수 없기 때문에 계정 정보를 가져오지 못했습니다. 나중에 다시 확인하십시오.",

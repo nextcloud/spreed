@@ -668,6 +668,8 @@
     "Failed" : "Не вдалося",
     "OK" : "Гаразд",
     "Checking …" : "Перевірка...",
+    "Failed: \".wasm\" and \".tflite\" files were not properly returned by the web server. Please check \"System requirements\" section in Talk documentation." : "Не вдалося: Файли \".wasm\" і \".tflite\" некоректно повернуто веб-сервером. Будь ласка, перевірте розділ \"Системні вимоги\" в документації Talk.",
+    "OK: \".wasm\" and \".tflite\" files were properly returned by the web server." : "OK: файли \".wasm\" і \".tflite\" коректно повернуто веб-сервером.",
     "Assignment method" : "Метод призначення",
     "Create rooms" : "Створити кімнати",
     "Back" : "Назад",
