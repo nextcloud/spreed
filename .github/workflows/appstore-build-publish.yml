@@ -32,7 +32,7 @@ jobs:
           echo "APP_VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         with:
           path: ${{ env.APP_NAME }}
 
@@ -83,7 +83,7 @@ jobs:
         if: steps.check_composer.outputs.files_exists == 'true'
         run: |
           cd ${{ env.APP_NAME }}
-          composer install --no-dev --classmap-authoritative
+          composer install --no-dev
 
       - name: Build ${{ env.APP_NAME }}
         # Skip if no package.json
@@ -126,9 +126,10 @@ jobs:
           unzip latest-$NCVERSION.zip
 
       - name: Checkout server master fallback
-        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         if: ${{ steps.server-checkout.outcome != 'success' }}
         with:
+          submodules: true
           repository: nextcloud/server
           path: nextcloud
 
