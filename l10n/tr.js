@@ -1099,6 +1099,7 @@ OC.L10N.register(
     "File to share" : "Paylaşılacak dosya",
     "Error while uploading the file" : "Dosya yüklenirken sorun çıktı",
     "Invalid path selected" : "Seçilen yol geçersiz",
+    "Select virtual {atmosphere} background" : "Sanal {atmosphere} arka planını seçin",
     "Add more reactions" : "Başka tepkiler ekle",
     "Unread messages" : "Okunmamış iletiler",
     "Sending message" : "İleti gönderiliyor",
