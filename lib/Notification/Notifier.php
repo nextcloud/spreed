@@ -239,6 +239,10 @@ class Notifier implements INotifier {
 			return $this->parseRemoteInvitationMessage($notification, $l);
 		}
 
+		if ($notification->getObjectType() === 'turn_certificate_expiration') {
+			return $this->parseTurnCertificateExpiration($notification, $l);
+		}
+
 		try {
 			$room = $this->getRoom($notification->getObjectId(), $userId);
 		} catch (RoomNotFoundException $e) {
@@ -1029,5 +1033,28 @@ class Notifier implements INotifier {
 			->setParsedSubject($subject)
 			->setIcon($notification->getIcon())
 			->addParsedAction($action);
+	}
+
+	protected function parseTurnCertificateExpiration(INotification $notification, IL10N $l): INotification {
+		$subjectParameters = $notification->getSubjectParameters();
+
+		$host = $subjectParameters['host'];
+		$daysToExpire = $subjectParameters['days_to_expire'];
+
+		if ($daysToExpire > 0) {
+			$subject = $l->t('The certificate of {host} expires in {days} days');
+		} else {
+			$subject = $l->t('The certificate of {host} expired');
+		}
+
+		$subject = str_replace(
+			['{host}', '{days}'],
+			[$host, $daysToExpire],
+			$subject
+		);
+
+		$notification->setParsedSubject($subject);
+
+		return $notification;
 	}
 }
