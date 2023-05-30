@@ -99,7 +99,7 @@ no-multicast-peers
 
 - Support for TLS connections to the TURN server has been added in Talk 11. In some cases clients can be behind very restrictive firewalls that only allow TLS connections; in those cases the clients would be able to connect with other clients or the High Performance Backend only through a TURN server and a TLS connection. However, please note that TLS connections do not provide any additional security, as media streams are always end-to-end* encrypted in WebRTC; enabling TLS is just a matter of providing the maximum compatibility.
 
-  *When the High Performance Backend is used the High Performance Backend is one of the ends; in that case the media streams are not end-to-end encrypted between the participants but only between participants and the High Performance Backend.
+  * When the High Performance Backend is used the High Performance Backend is one of the ends; in that case the media streams are not end-to-end encrypted between the participants but only between participants and the High Performance Backend.
 
   Also note that even with TURN over TLS a client may not be able to connect with the TURN server if the firewall performs deep packet inspection and drops packets to port 443 that are not really HTTPS packets. This would be a corner case, though, as given that the connection is encrypted in order to inspect the packets that means that the firewall acts as a man-in-the-middle and the connection is not actually encrypted end-to-end. There is nothing that can be done in that case, but it should be rather uncommon.
 
