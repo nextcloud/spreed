@@ -29,9 +29,9 @@ If you have suggestions or problems, please [open an issue](https://github.com/n
 ## 📚 Documentation
 
 * **[👤 User system requirements](https://nextcloud-talk.readthedocs.io/en/latest/user-requirements/)**
-* **[📖 User documentation](https://docs.nextcloud.com/server/latest/user_manual/en/talk/index.html)**
-* **[📖 User documentation](https://docs.nextcloud.com/server/latest/user_manual/en/talk/index.html)**
+* **[📙 User documentation](https://docs.nextcloud.com/server/latest/user_manual/en/talk/index.html)**
 * **[💻 Server system requirements](https://nextcloud-talk.readthedocs.io/en/latest/system-requirements/)**
+* **[📗 Administration documentation](https://nextcloud-talk.readthedocs.io/en/latest/#administration-documentation)**
 * **[⚙️ API documentation](https://nextcloud-talk.readthedocs.io/en/latest/#talk-api)**
 
 ### 📦 Installing for Production
