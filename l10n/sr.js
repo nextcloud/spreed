@@ -1099,6 +1099,7 @@ OC.L10N.register(
     "File to share" : "Фајл за дељење",
     "Error while uploading the file" : "Грешка приликом отпремања фајла",
     "Invalid path selected" : "Одабрана неисправна путања",
+    "Select virtual {atmosphere} background" : "Изаберите виртуелну {atmosphere} позадину",
     "Add more reactions" : "Додај још реакција",
     "Unread messages" : "Непрочитане поруке",
     "Sending message" : "Слање поруке",
