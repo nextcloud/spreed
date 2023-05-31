@@ -32,6 +32,7 @@ nav:
       - 'Capabilities': 'capabilities.md'
       - 'PHP events': 'events.md'
   - 'API documentation':
+      - 'Global API status and headers': 'global.md'
       - 'Conversations management': 'conversation.md'
       - 'Conversation avatars management': 'avatar.md'
       - 'Participants management': 'participant.md'
