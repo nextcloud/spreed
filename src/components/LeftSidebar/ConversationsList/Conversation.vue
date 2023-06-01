@@ -38,7 +38,8 @@
 				:disable-menu="true" />
 		</template>
 		<template #subtitle>
-			<strong v-if="item.unreadMessages">
+			<strong v-if="item.unreadMessages"
+				class="subtitle">
 				{{ conversationInformation }}
 			</strong>
 			<template v-else>
@@ -448,6 +449,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.subtitle {
+	font-weight: bold;
+}
 
 :deep(.action-text__title) {
 	margin-left: 12px;
