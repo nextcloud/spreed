@@ -47,9 +47,10 @@ local Pipeline(test_set, database, services) = {
 			"master",
 			"stable*"
 		],
-		event: (
-			if database == "pgsql" then ["pull_request", "push"] else ["push"]
-		)
+		event: [
+			"pull_request",
+			"push"
+		]
 	}
 };
 
