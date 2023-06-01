@@ -3452,6 +3452,20 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^client "([^"]*)" requests room list with (\d+) \((v4)\)$/
+	 *
+	 * @param string $userAgent
+	 * @param int $statusCode
+	 * @param string $apiVersion
+	 */
+	public function getRoomListWithSpecificUserAgent(string $userAgent, int $statusCode, string $apiVersion): void {
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/room', null, [
+			'USER_AGENT' => $userAgent,
+		]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then the response error matches with :error
 	 */
 	public function assertResponseErrorMatchesWith(string $error): void {

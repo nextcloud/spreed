@@ -25,6 +25,7 @@
 
 ## API documentation
 
+* [Global API status and headers](global.md)
 * [Conversation management](conversation.md)
 * [Conversation avatar management](avatar.md)
 * [Participant management](participant.md)
