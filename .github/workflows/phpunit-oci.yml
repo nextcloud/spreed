@@ -43,7 +43,7 @@ jobs:
 
     services:
       oracle:
-        image: deepdiver/docker-oracle-xe-11g # 'wnameless/oracle-xe-11g-r2'
+        image: ghcr.io/nextcloud/continuous-integration-oracle-11g:latest
         ports:
           - 1521:1521/tcp
 
