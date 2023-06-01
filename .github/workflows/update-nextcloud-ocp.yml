@@ -28,7 +28,7 @@ jobs:
           submodules: true
 
       - name: Set up php8.1
-        uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4 # v2
+        uses: shivammathur/setup-php@c5fc0d8281aba02c7fda07d3a70cc5371548067d # v2
         with:
           php-version: 8.1
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
@@ -67,7 +67,7 @@ jobs:
         continue-on-error: true
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@18f7dc018cc2cd597073088f7c7591b9d1c02672 # v3
+        uses: peter-evans/create-pull-request@284f54f989303d2699d373481a0cfa13ad5a6666 # v3
         with:
           token: ${{ secrets.COMMAND_BOT_PAT }}
           commit-message: "chore(dev-deps): Bump nextcloud/ocp package"

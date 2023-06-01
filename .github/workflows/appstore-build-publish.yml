@@ -44,7 +44,7 @@ jobs:
           expression: "//info//dependencies//nextcloud/@min-version"
 
       - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@1bdcee71fa343c46b18dc6aceffb4cd1e35209c6 # v1.2
+        uses: skjnldsv/read-package-engines-version-actions@0ce2ed60f6df073a62a77c0a4958dd0fc68e32e7 # v2.1
         id: versions
         # Continue if no package.json
         continue-on-error: true
@@ -56,7 +56,7 @@ jobs:
       - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
         # Skip if no package.json
         if: ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516 # v3
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
 
@@ -66,7 +66,7 @@ jobs:
         run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
 
       - name: Set up php ${{ env.PHP_VERSION }}
-        uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4 # v2
+        uses: shivammathur/setup-php@c5fc0d8281aba02c7fda07d3a70cc5371548067d # v2
         with:
           php-version: ${{ env.PHP_VERSION }}
           coverage: none
@@ -149,7 +149,7 @@ jobs:
           tar -zcvf ${{ env.APP_NAME }}.tar.gz ${{ env.APP_NAME }}
 
       - name: Attach tarball to github release
-        uses: svenstaro/upload-release-action@133984371c30d34e38222a64855679a414cb7575 # v2
+        uses: svenstaro/upload-release-action@2b9d2847a97b04d02ad5c3df2d3a27baa97ce689 # v2
         id: attach_to_release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
