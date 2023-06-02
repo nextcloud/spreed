@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.0.0-rc.3 – 2023-06-02
+### Fixed
+
+- fix(MediaSettings): Fix guests being prompted with login window when blurring background
+  [#9620](https://github.com/nextcloud/spreed/issues/9620)
+- fix(TypingIndicator): Actors are only unique by type and id
+  [#9625](https://github.com/nextcloud/spreed/pull/9625)
+
 ## 17.0.0-rc.2 – 2023-05-25
 ### Fixed
 - fix(reactions): Fix own call reactions when the high-performance backend is used
