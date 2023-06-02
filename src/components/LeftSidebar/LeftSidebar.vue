@@ -30,8 +30,39 @@
 				@submit="onInputEnter"
 				@keydown.enter.native="handleEnter"
 				@abort-search="abortSearch" />
-			<NewGroupConversation v-if="canStartConversations" />
+
+			<!-- Options -->
+			<NcActions>
+				<NcActionButton close-after-click
+					@click="insertValue(t('spreed','is:unread'))">
+					<template #icon>
+						<MessageBadge :size="20" />
+					</template>
+					{{ t('spreed','Filter unread messages') }}
+				</NcActionButton>
+				<NcActionButton close-after-click
+					@click="insertValue(t('spreed','is:mentioned'))">
+					<template #icon>
+						<AtIcon :size="20" />
+					</template>
+					{{ t('spreed','Filter unread mentions') }}
+				</NcActionButton>
+				<NcActionButton v-if="canStartConversations"
+					close-after-click
+					@click="toggleNewGroupConversation(true)">
+					<template #icon>
+						<PlusIcon :size="20" />
+					</template>
+					{{ t('spreed','Create a new conversation') }}
+				</NcActionButton>
+			</NcActions>
+
+			<!-- New Conversation -->
+			<NewGroupConversation :show-modal="isNewGroupConversationOpen"
+				@open-modal="toggleNewGroupConversation(true)"
+				@close-modal="toggleNewGroupConversation(false)" />
 		</div>
+
 		<template #list>
 			<li ref="container" class="left-sidebar__list">
 				<ul ref="scroller"
@@ -132,10 +163,16 @@
 <script>
 import debounce from 'debounce'
 
+import AtIcon from 'vue-material-design-icons/At.vue'
+import MessageBadge from 'vue-material-design-icons/MessageBadge.vue'
+import PlusIcon from 'vue-material-design-icons/Plus.vue'
+
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -173,6 +210,11 @@ export default {
 		LoadingPlaceholder,
 		NcListItem,
 		ConversationIcon,
+		NcActions,
+		NcActionButton,
+		PlusIcon,
+		AtIcon,
+		MessageBadge,
 	},
 
 	mixins: [
@@ -203,6 +245,7 @@ export default {
 			preventFindingUnread: false,
 			roomListModifiedBefore: 0,
 			forceFullRoomListRefreshAfterXLoops: 0,
+			isNewGroupConversationOpen: false,
 		}
 	},
 
@@ -212,10 +255,20 @@ export default {
 
 			if (this.searchText !== '') {
 				const lowerSearchText = this.searchText.toLowerCase()
-				conversations = conversations.filter(conversation =>
-					conversation.displayName.toLowerCase().includes(lowerSearchText)
-					|| conversation.name.toLowerCase().includes(lowerSearchText)
-				)
+				switch (this.searchText) {
+				case t('spreed', 'is:unread'):
+					conversations = conversations.filter(conversation => conversation.unreadMessages > 0)
+					break
+				case t('spreed', 'is:mentioned'):
+					conversations = conversations.filter(conversation => conversation.unreadMention)
+					break
+				default:
+					conversations = conversations.filter(conversation =>
+						conversation.displayName.toLowerCase().includes(lowerSearchText)
+							|| conversation.name.toLowerCase().includes(lowerSearchText)
+					)
+					break
+				}
 			}
 
 			// FIXME: this modifies the original array,
@@ -333,6 +386,14 @@ export default {
 				this.fetchSearchResults()
 			}
 		}, 250),
+
+		toggleNewGroupConversation(value) {
+			this.isNewGroupConversationOpen = value
+		},
+
+		insertValue(value) {
+			this.searchText = value
+		},
 
 		async fetchPossibleConversations() {
 			this.contactsLoading = true
@@ -618,7 +679,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 @import '../../assets/variables';
 
 .scroller {
