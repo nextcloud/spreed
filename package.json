@@ -70,7 +70,7 @@
 		"workbox-webpack-plugin": "^6.5.4"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.21.8",
+		"@babel/core": "^7.22.1",
 		"@babel/preset-env": "^7.22.4",
 		"@nextcloud/babel-config": "^1.0.0",
 		"@nextcloud/browserslist-config": "^2.3.0",
