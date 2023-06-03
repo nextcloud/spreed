@@ -67,7 +67,7 @@
 		"webrtc-adapter": "^8.2.2",
 		"webrtcsupport": "^2.2.0",
 		"wildemitter": "^1.2.1",
-		"workbox-webpack-plugin": "^6.5.4"
+		"workbox-webpack-plugin": "^7.0.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.22.1",
