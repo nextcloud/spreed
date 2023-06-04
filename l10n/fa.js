@@ -305,6 +305,7 @@ OC.L10N.register(
     "Add to favorites" : "Add to favorites",
     "Open conversations" : "مکالمه جدید",
     "Loading" : "در حال بار گزاری",
+    "No search results" : "جستجو نتیجه‌ای نداشت",
     "Groups" : "گروه ها",
     "Circles" : "حلقه ها",
     "Create a new group conversation" : "ساخت گفتگوی گروهی جدید",
