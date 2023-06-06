@@ -23,7 +23,7 @@
 
 <template>
 	<section id="vue-avatar-section">
-		<div class="avatar__container avatar__container--horizontal">
+		<div class="avatar__container">
 			<div v-if="!showCropper" class="avatar__preview">
 				<div v-if="emojiAvatar"
 					class="avatar__preview-emoji"
@@ -40,7 +40,7 @@
 				ref="cropper"
 				class="avatar__cropper"
 				v-bind="cropperOptions" />
-			<div v-if="editable" class="avatar__container">
+			<div v-if="editable" class="avatar__controls">
 				<div class="avatar__buttons">
 					<!-- Set emoji as avatar -->
 					<template v-if="!showCropper">
@@ -368,16 +368,18 @@ section {
 
 .avatar {
 	&__container {
-		margin: 0 auto;
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: center;
+		align-items: flex-start;
+		gap: 16px;
+	}
+
+	&__controls {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: 16px;
-
-		&--horizontal {
-			flex-direction: row;
-			align-items: flex-start;
-		}
 	}
 
 	&__warning {
