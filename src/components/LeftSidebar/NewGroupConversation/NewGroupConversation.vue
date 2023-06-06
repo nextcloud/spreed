@@ -285,7 +285,7 @@ export default {
 		showModalForItem(item) {
 			if (item) {
 				// Preload the conversation name from group selection
-				this.conversation.displayName = item.label
+				this.newConversation.displayName = item.label
 				this.$store.dispatch('updateSelectedParticipants', item)
 			}
 
