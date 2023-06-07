@@ -55,6 +55,7 @@
 			<button v-for="path in predefinedBackgroundsURLs"
 				:key="path"
 				:aria-label="ariaLabelForPredefinedBackground(path)"
+				:title="ariaLabelForPredefinedBackground(path)"
 				class="background-editor__element"
 				:class="{'background-editor__element--selected': selectedBackground === path}"
 				:style="{
@@ -96,6 +97,16 @@ import { findUniquePath } from '../../utils/fileUpload.js'
 
 const canUploadBackgrounds = getCapabilities()?.spreed?.config?.call?.['can-upload-background']
 const predefinedBackgrounds = getCapabilities()?.spreed?.config?.call?.['predefined-backgrounds']
+const predefinedBackgroundLabels = {
+	'1_office': t('spreed', 'Select virtual office background'),
+	'2_home': t('spreed', 'Select virtual home background'),
+	'3_abstract': t('spreed', 'Select virtual abstract background'),
+	'4_beach': t('spreed', 'Select virtual beach background'),
+	'5_park': t('spreed', 'Select virtual park background'),
+	'6_theater': t('spreed', 'Select virtual theater background'),
+	'7_library': t('spreed', 'Select virtual library background'),
+	'8_space_station': t('spreed', 'Select virtual space station background'),
+}
 
 let picker
 
@@ -263,12 +274,9 @@ export default {
 		},
 
 		ariaLabelForPredefinedBackground(path) {
-			const removeFolders = (name) => name.includes('/') ? name.slice(name.lastIndexOf('/') + 1) : name
-			const removePositionNumber = (name) => name.includes('_') ? name.slice(name.indexOf('_') + 1) : name
-			const removeFileType = (name) => name.includes('.') ? name.slice(0, name.lastIndexOf('.')) : name
-			return t('spreed', 'Select virtual {atmosphere} background', {
-				atmosphere: removeFileType(removePositionNumber(removeFolders(path))).replaceAll('_', ' '),
-			})
+			const fileName = path.split('/').pop().split('.').shift()
+
+			return predefinedBackgroundLabels[fileName]
 		},
 	},
 }
