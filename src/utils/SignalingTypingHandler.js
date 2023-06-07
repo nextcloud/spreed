@@ -37,8 +37,6 @@ export default function SignalingTypingHandler(store) {
 	this._signaling = null
 	this._signalingParticipantList = new SignalingParticipantList()
 
-	this._typing = false
-
 	this._handleMessageBound = this._handleMessage.bind(this)
 	this._handleParticipantsJoinedBound = this._handleParticipantsJoined.bind(this)
 	this._handleParticipantsLeftBound = this._handleParticipantsLeft.bind(this)
@@ -92,8 +90,6 @@ SignalingTypingHandler.prototype = {
 			return
 		}
 
-		this._typing = typing
-
 		const currentNextcloudSessionId = this._store.getters.getSessionId()
 
 		for (const participant of this._signalingParticipantList.getParticipants()) {
@@ -132,7 +128,7 @@ SignalingTypingHandler.prototype = {
 	},
 
 	_handleParticipantsJoined(SignalingParticipantList, participants) {
-		if (!this._typing) {
+		if (!this._store.getters.actorIsTyping()) {
 			return
 		}
 
