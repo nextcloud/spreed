@@ -99,6 +99,23 @@ const getters = {
 	},
 
 	/**
+	 * Gets the array of external session ids.
+	 *
+	 * @param {object} state - the state object.
+	 * @param {object} getters - the getters object.
+	 * @param {object} rootState - the rootState object.
+	 * @param {object} rootGetters - the rootGetters object.
+	 * @return {Array} the typing session IDs array.
+	 */
+	actorIsTyping: (state, getters, rootState, rootGetters) => () => {
+		if (!state.typing[rootGetters.getToken()]) {
+			return false
+		}
+
+		return Object.keys(state.typing[rootGetters.getToken()]).some(sessionId => rootGetters.getSessionId() === sessionId)
+	},
+
+	/**
 	 * Gets the participants array filtered to include only those that are
 	 * currently typing.
 	 *
