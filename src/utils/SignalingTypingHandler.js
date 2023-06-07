@@ -107,7 +107,7 @@ SignalingTypingHandler.prototype = {
 			})
 		}
 
-		this._store.commit('setTyping', {
+		this._store.dispatch('setTyping', {
 			token: this._store.getters.getToken(),
 			sessionId: this._store.getters.getSessionId(),
 			typing,
@@ -124,7 +124,7 @@ SignalingTypingHandler.prototype = {
 			return
 		}
 
-		this._store.commit('setTyping', {
+		this._store.dispatch('setTyping', {
 			token: this._store.getters.getToken(),
 			sessionId: participant.nextcloudSessionId,
 			typing: data.type === 'startedTyping',
@@ -146,7 +146,7 @@ SignalingTypingHandler.prototype = {
 
 	_handleParticipantsLeft(SignalingParticipantList, participants) {
 		for (const participant of participants) {
-			this._store.commit('setTyping', {
+			this._store.dispatch('setTyping', {
 				token: this._store.getters.getToken(),
 				sessionId: participant.nextcloudSessionId,
 				typing: false,
