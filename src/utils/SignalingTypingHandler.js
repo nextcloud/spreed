@@ -128,7 +128,7 @@ SignalingTypingHandler.prototype = {
 	},
 
 	_handleParticipantsJoined(SignalingParticipantList, participants) {
-		if (!this._store.getters.actorIsTyping()) {
+		if (!this._store.getters.actorIsTyping) {
 			return
 		}
 
