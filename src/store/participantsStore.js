@@ -105,9 +105,9 @@ const getters = {
 	 * @param {object} getters - the getters object.
 	 * @param {object} rootState - the rootState object.
 	 * @param {object} rootGetters - the rootGetters object.
-	 * @return {Array} the typing session IDs array.
+	 * @return {boolean} the typing status of actor.
 	 */
-	actorIsTyping: (state, getters, rootState, rootGetters) => () => {
+	actorIsTyping: (state, getters, rootState, rootGetters) => {
 		if (!state.typing[rootGetters.getToken()]) {
 			return false
 		}
@@ -121,17 +121,20 @@ const getters = {
 	 *
 	 * @param {object} state - the state object.
 	 * @param {object} getters - the getters object.
-	 * @return {Array} the participants array (if there are participants in the
-	 * store).
+	 * @param {object} rootState - the rootState object.
+	 * @param {object} rootGetters - the rootGetters object.
+	 * @return {Array} the participants array (for registered users only).
 	 */
-	participantsListTyping: (state, getters) => (token) => {
+	participantsListTyping: (state, getters, rootState, rootGetters) => (token) => {
 		if (!getters.externalTypingSignals(token).length) {
 			return []
 		}
 
-		// Check if participant's sessionId matches with any of sessionIds from signaling
 		return getters.participantsList(token).filter(attendee => {
+			// Check if participant's sessionId matches with any of sessionIds from signaling...
 			return getters.externalTypingSignals(token).some((sessionId) => attendee.sessionIds.includes(sessionId))
+				// ... and it's not the participant with same actorType and actorId as yourself
+				&& (attendee.actorType !== rootGetters.getActorType() || attendee.actorId !== rootGetters.getActorId())
 		})
 	},
 
