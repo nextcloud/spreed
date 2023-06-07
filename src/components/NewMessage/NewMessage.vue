@@ -380,6 +380,11 @@ export default {
 		},
 
 		text(newValue) {
+			// Do nothing if join a conversation with pre-filled input
+			if (this.text === this.$store.getters.currentMessageInput(this.token) || this.text === '') {
+				return
+			}
+
 			this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: newValue })
 
 			// Enable signal sending, only if indicator for this input is on
@@ -401,7 +406,7 @@ export default {
 
 		token(token) {
 			if (token) {
-				this.text = this.$store.getters.currentMessageInput(token) || ''
+				this.text = this.$store.getters.currentMessageInput(token)
 			} else {
 				this.text = ''
 			}
@@ -413,7 +418,7 @@ export default {
 		EventBus.$on('focus-chat-input', this.focusInput)
 		EventBus.$on('upload-start', this.handleUploadStart)
 		EventBus.$on('retry-message', this.handleRetryMessage)
-		this.text = this.$store.getters.currentMessageInput(this.token) || ''
+		this.text = this.$store.getters.currentMessageInput(this.token)
 
 		if (!this.$store.getters.areFileTemplatesInitialised) {
 			this.$store.dispatch('getFileTemplates')
