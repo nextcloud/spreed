@@ -724,6 +724,7 @@ OC.L10N.register(
     "Connection lost. Trying to reconnect …" : "З'єднання втрачено. Спроба повторного підключення ...",
     "Connection problems …" : "Проблеми з підключенням ...",
     "Collapse" : "Згорнути",
+    "Expand" : "Розгорнути",
     "You need to be logged in to upload files" : "Для завантаження файлів потрібно авторизуватися",
     "Drop your files to upload" : "Пересуньте файли сюди для завантаження",
     "Favorite" : "Улюблений",
