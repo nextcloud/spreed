@@ -279,7 +279,8 @@ export default {
 			// Check empty template by default
 			userData: {},
 			clipboardTimeStamp: null,
-			typingTimeout: null,
+			typingInterval: null,
+			wasTypingWithinInterval: false,
 		}
 	},
 
@@ -389,18 +390,22 @@ export default {
 
 			// Enable signal sending, only if indicator for this input is on
 			if (this.showTypingStatus) {
-				if (!newValue) {
-					this.resetTypingIndicator()
-					return
-				}
-
-				if (!this.typingTimeout) {
-					this.typingTimeout = setTimeout(() => {
-						this.resetTypingIndicator()
-					}, 5000)
+				if (!this.typingInterval) {
+					// Send first signal after first keystroke
 					this.$store.dispatch('sendTypingSignal', { typing: true })
-				}
 
+					// Continuously send signals with 10s interval if still typing
+					this.typingInterval = setInterval(() => {
+						if (this.wasTypingWithinInterval) {
+							this.$store.dispatch('sendTypingSignal', { typing: true })
+							this.wasTypingWithinInterval = false
+						} else {
+							this.clearTypingInterval()
+						}
+					}, 10000)
+				} else {
+					this.wasTypingWithinInterval = true
+				}
 			}
 		},
 
@@ -410,7 +415,7 @@ export default {
 			} else {
 				this.text = ''
 			}
-			this.resetTypingIndicator()
+			this.clearTypingInterval()
 		},
 	},
 
@@ -432,11 +437,17 @@ export default {
 	},
 
 	methods: {
+		clearTypingInterval() {
+			clearInterval(this.typingInterval)
+			this.typingInterval = null
+			this.wasTypingWithinInterval = false
+		},
+
 		resetTypingIndicator() {
-			if (this.typingTimeout) {
-				clearTimeout(this.typingTimeout)
-			}
 			this.$store.dispatch('sendTypingSignal', { typing: false })
+			if (this.typingInterval) {
+				this.clearTypingInterval()
+			}
 		},
 
 		handleUploadStart() {
@@ -475,6 +486,7 @@ export default {
 					await this.$store.dispatch('addTemporaryMessage', temporaryMessage)
 				}
 				this.text = ''
+				this.resetTypingIndicator()
 				this.userData = {}
 				// Scrolls the message list to the last added message
 				EventBus.$emit('smooth-scroll-chat-to-bottom')
