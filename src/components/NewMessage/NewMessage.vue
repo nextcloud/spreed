@@ -98,6 +98,7 @@
 						@keydown.esc="handleInputEsc"
 						@tribute-active-true.native="isTributePickerActive = true"
 						@tribute-active-false.native="isTributePickerActive = false"
+						@input="handleTyping"
 						@paste="handlePastedFiles"
 						@submit="handleSubmit({ silent: false })" />
 				</div>
@@ -381,32 +382,7 @@ export default {
 		},
 
 		text(newValue) {
-			// Do nothing if join a conversation with pre-filled input
-			if (this.text === this.$store.getters.currentMessageInput(this.token) || this.text === '') {
-				return
-			}
-
 			this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: newValue })
-
-			// Enable signal sending, only if indicator for this input is on
-			if (this.showTypingStatus) {
-				if (!this.typingInterval) {
-					// Send first signal after first keystroke
-					this.$store.dispatch('sendTypingSignal', { typing: true })
-
-					// Continuously send signals with 10s interval if still typing
-					this.typingInterval = setInterval(() => {
-						if (this.wasTypingWithinInterval) {
-							this.$store.dispatch('sendTypingSignal', { typing: true })
-							this.wasTypingWithinInterval = false
-						} else {
-							this.clearTypingInterval()
-						}
-					}, 10000)
-				} else {
-					this.wasTypingWithinInterval = true
-				}
-			}
 		},
 
 		token(token) {
@@ -437,6 +413,30 @@ export default {
 	},
 
 	methods: {
+		handleTyping() {
+			// Enable signal sending, only if indicator for this input is on
+			if (!this.showTypingStatus) {
+				return
+			}
+
+			if (!this.typingInterval) {
+				// Send first signal after first keystroke
+				this.$store.dispatch('sendTypingSignal', { typing: true })
+
+				// Continuously send signals with 10s interval if still typing
+				this.typingInterval = setInterval(() => {
+					if (this.wasTypingWithinInterval) {
+						this.$store.dispatch('sendTypingSignal', { typing: true })
+						this.wasTypingWithinInterval = false
+					} else {
+						this.clearTypingInterval()
+					}
+				}, 10000)
+			} else {
+				this.wasTypingWithinInterval = true
+			}
+		},
+
 		clearTypingInterval() {
 			clearInterval(this.typingInterval)
 			this.typingInterval = null
@@ -629,6 +629,9 @@ export default {
 			const content = fetchClipboardContent(e)
 			if (content.kind === 'file') {
 				this.handleFiles(content.files, true)
+			} else {
+				// FIXME NcRichContenteditable prevents trigger input event on pasting text
+				this.handleTyping()
 			}
 		},
 
