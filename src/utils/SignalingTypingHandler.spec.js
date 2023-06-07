@@ -79,10 +79,6 @@ describe('SignalingTypingHandler', () => {
 		signalingSessionId: 'guest2SignalingSessionId',
 	}
 
-	const expectedLocalParticipant = {
-		sessionIds: ['localNextcloudSessionId'],
-		attendeeId: 'localAttendeeId',
-	}
 	const expectedUser1Participant = {
 		sessionIds: ['user1NextcloudSessionId'],
 		attendeeId: 'user1AttendeeId',
@@ -157,9 +153,7 @@ describe('SignalingTypingHandler', () => {
 
 			signalingTypingHandler.setTyping(true)
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([
-				expectedLocalParticipant,
-			])
+			expect(store.getters.participantsListTyping('theToken')).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(0)
 		})
 
@@ -179,9 +173,7 @@ describe('SignalingTypingHandler', () => {
 
 			signalingTypingHandler.setTyping(true)
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([
-				expectedLocalParticipant,
-			])
+			expect(store.getters.participantsListTyping('theToken')).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(1)
 			expect(signaling.emit).toHaveBeenCalledWith('message', { type: 'startedTyping', to: 'user1SignalingSessionId' })
 		})
@@ -204,9 +196,7 @@ describe('SignalingTypingHandler', () => {
 
 			signalingTypingHandler.setTyping(true)
 
-			expect(store.getters.participantsListTyping('theToken')).toEqual([
-				expectedLocalParticipant,
-			])
+			expect(store.getters.participantsListTyping('theToken')).toEqual([])
 			expect(signaling.emit).toHaveBeenCalledTimes(2)
 			expect(signaling.emit).toHaveBeenNthCalledWith(1, 'message', { type: 'startedTyping', to: 'user1SignalingSessionId' })
 			expect(signaling.emit).toHaveBeenNthCalledWith(2, 'message', { type: 'startedTyping', to: 'guest1SignalingSessionId' })
@@ -509,9 +499,7 @@ describe('SignalingTypingHandler', () => {
 			user1ParticipantInSignalingParticipantList,
 		]])
 
-		expect(store.getters.participantsListTyping('theToken')).toEqual([
-			expectedLocalParticipant,
-		])
+		expect(store.getters.participantsListTyping('theToken')).toEqual([])
 		expect(signaling.emit).toHaveBeenCalledTimes(2)
 		expect(signaling.emit).toHaveBeenNthCalledWith(1, 'message', { type: 'startedTyping', to: 'guest1SignalingSessionId' })
 		expect(signaling.emit).toHaveBeenNthCalledWith(2, 'message', { type: 'startedTyping', to: 'user1SignalingSessionId' })

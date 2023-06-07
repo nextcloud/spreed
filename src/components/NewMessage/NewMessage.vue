@@ -398,7 +398,7 @@ export default {
 					this.typingTimeout = setTimeout(() => {
 						this.resetTypingIndicator()
 					}, 5000)
-					this.$store.dispatch('setTyping', { typing: true })
+					this.$store.dispatch('sendTypingSignal', { typing: true })
 				}
 
 			}
@@ -436,7 +436,7 @@ export default {
 			if (this.typingTimeout) {
 				clearTimeout(this.typingTimeout)
 			}
-			this.$store.dispatch('setTyping', { typing: false })
+			this.$store.dispatch('sendTypingSignal', { typing: false })
 		},
 
 		handleUploadStart() {
