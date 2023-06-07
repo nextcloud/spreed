@@ -277,6 +277,7 @@ export default {
 			const fileName = path.split('/').pop().split('.').shift()
 
 			return predefinedBackgroundLabels[fileName]
+				?? t('spreed', 'Select virtual background from file {fileName}', { fileName })
 		},
 	},
 }
