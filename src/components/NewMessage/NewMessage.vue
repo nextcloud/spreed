@@ -98,6 +98,7 @@
 						@keydown.esc="handleInputEsc"
 						@tribute-active-true.native="isTributePickerActive = true"
 						@tribute-active-false.native="isTributePickerActive = false"
+						@input="handleTyping"
 						@paste="handlePastedFiles"
 						@submit="handleSubmit({ silent: false })" />
 				</div>
@@ -279,7 +280,8 @@ export default {
 			// Check empty template by default
 			userData: {},
 			clipboardTimeStamp: null,
-			typingTimeout: null,
+			typingInterval: null,
+			wasTypingWithinInterval: false,
 		}
 	},
 
@@ -381,31 +383,15 @@ export default {
 
 		text(newValue) {
 			this.$store.dispatch('setCurrentMessageInput', { token: this.token, text: newValue })
-
-			// Enable signal sending, only if indicator for this input is on
-			if (this.showTypingStatus) {
-				if (!newValue) {
-					this.resetTypingIndicator()
-					return
-				}
-
-				if (!this.typingTimeout) {
-					this.typingTimeout = setTimeout(() => {
-						this.resetTypingIndicator()
-					}, 5000)
-					this.$store.dispatch('setTyping', { typing: true })
-				}
-
-			}
 		},
 
 		token(token) {
 			if (token) {
-				this.text = this.$store.getters.currentMessageInput(token) || ''
+				this.text = this.$store.getters.currentMessageInput(token)
 			} else {
 				this.text = ''
 			}
-			this.resetTypingIndicator()
+			this.clearTypingInterval()
 		},
 	},
 
@@ -413,7 +399,7 @@ export default {
 		EventBus.$on('focus-chat-input', this.focusInput)
 		EventBus.$on('upload-start', this.handleUploadStart)
 		EventBus.$on('retry-message', this.handleRetryMessage)
-		this.text = this.$store.getters.currentMessageInput(this.token) || ''
+		this.text = this.$store.getters.currentMessageInput(this.token)
 
 		if (!this.$store.getters.areFileTemplatesInitialised) {
 			this.$store.dispatch('getFileTemplates')
@@ -427,11 +413,41 @@ export default {
 	},
 
 	methods: {
-		resetTypingIndicator() {
-			if (this.typingTimeout) {
-				clearTimeout(this.typingTimeout)
+		handleTyping() {
+			// Enable signal sending, only if indicator for this input is on
+			if (!this.showTypingStatus) {
+				return
 			}
-			this.$store.dispatch('setTyping', { typing: false })
+
+			if (!this.typingInterval) {
+				// Send first signal after first keystroke
+				this.$store.dispatch('sendTypingSignal', { typing: true })
+
+				// Continuously send signals with 10s interval if still typing
+				this.typingInterval = setInterval(() => {
+					if (this.wasTypingWithinInterval) {
+						this.$store.dispatch('sendTypingSignal', { typing: true })
+						this.wasTypingWithinInterval = false
+					} else {
+						this.clearTypingInterval()
+					}
+				}, 10000)
+			} else {
+				this.wasTypingWithinInterval = true
+			}
+		},
+
+		clearTypingInterval() {
+			clearInterval(this.typingInterval)
+			this.typingInterval = null
+			this.wasTypingWithinInterval = false
+		},
+
+		resetTypingIndicator() {
+			this.$store.dispatch('sendTypingSignal', { typing: false })
+			if (this.typingInterval) {
+				this.clearTypingInterval()
+			}
 		},
 
 		handleUploadStart() {
@@ -470,6 +486,7 @@ export default {
 					await this.$store.dispatch('addTemporaryMessage', temporaryMessage)
 				}
 				this.text = ''
+				this.resetTypingIndicator()
 				this.userData = {}
 				// Scrolls the message list to the last added message
 				EventBus.$emit('smooth-scroll-chat-to-bottom')
@@ -612,6 +629,9 @@ export default {
 			const content = fetchClipboardContent(e)
 			if (content.kind === 'file') {
 				this.handleFiles(content.files, true)
+			} else {
+				// FIXME NcRichContenteditable prevents trigger input event on pasting text
+				this.handleTyping()
 			}
 		},
 
