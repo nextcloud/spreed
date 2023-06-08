@@ -1099,7 +1099,6 @@ OC.L10N.register(
     "File to share" : "Archivo que compartir",
     "Error while uploading the file" : "Ocurrió un error mientras se cargaba el archivo",
     "Invalid path selected" : "Ruta de archivo seleccionada no válida.",
-    "Select virtual {atmosphere} background" : "Seleccionar fondo {atmosphere} virtual",
     "Add more reactions" : "Añadir más reacciones",
     "Unread messages" : "Mensajes no leídos",
     "Sending message" : "Enviando mensaje",

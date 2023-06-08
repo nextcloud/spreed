@@ -1099,7 +1099,6 @@ OC.L10N.register(
     "File to share" : "Soubor ke sdílení",
     "Error while uploading the file" : "Chyba při nahrávání souboru",
     "Invalid path selected" : "Vybrán neplatný popis umístění",
-    "Select virtual {atmosphere} background" : "Vybrat virtuální {atmosphere} pozadí",
     "Add more reactions" : "Přidat další reakce",
     "Unread messages" : "Nepřečtené zprávy",
     "Sending message" : "Odesílání zprávy",
