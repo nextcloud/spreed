@@ -96,10 +96,6 @@ export default {
 			return this.isGroupMention
 				&& loadState('spreed', 'user_group_ids', []).includes(this.id)
 		},
-		isDarkTheme() {
-			return window.getComputedStyle(document.body)
-				.getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
-		},
 		avatarUrl() {
 			return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (this.darkTheme ? '/dark' : ''), {
 				token: this.id,
