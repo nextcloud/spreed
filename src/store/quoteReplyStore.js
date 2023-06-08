@@ -39,9 +39,7 @@ const getters = {
 	},
 
 	currentMessageInput: (state) => (token) => {
-		if (state.currentMessageInput[token]) {
-			return state.currentMessageInput[token]
-		}
+		return state.currentMessageInput[token] ?? ''
 	},
 }
 

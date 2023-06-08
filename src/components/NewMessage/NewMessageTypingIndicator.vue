@@ -69,10 +69,7 @@ export default {
 		},
 
 		typingParticipants() {
-			return this.$store.getters.participantsListTyping(this.token).filter(participant => {
-				return participant.actorType !== this.$store.getters.getActorType()
-					|| participant.actorId !== this.$store.getters.getActorId()
-			})
+			return this.$store.getters.participantsListTyping(this.token)
 		},
 
 		visibleParticipants() {
@@ -143,7 +140,7 @@ export default {
 <style lang="scss" scoped>
 .indicator {
 	position: absolute;
-	top: 4px;
+	bottom: calc(100% - 2em);
 	left: 0;
 	width: 100%;
 	padding-right: 12px;
