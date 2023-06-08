@@ -65,6 +65,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { CONVERSATION } from '../constants.js'
+import { isDarkTheme } from '../utils/isDarkTheme.js'
 
 const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
 
@@ -220,9 +221,7 @@ export default {
 				return undefined
 			}
 
-			const darkTheme = window.getComputedStyle(document.body)
-				.getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
-			const avatarEndpoint = 'apps/spreed/api/v1/room/{token}/avatar' + (darkTheme ? '/dark' : '')
+			const avatarEndpoint = 'apps/spreed/api/v1/room/{token}/avatar' + (isDarkTheme ? '/dark' : '')
 
 			return generateOcsUrl(avatarEndpoint + '?v={avatarVersion}', {
 				token: this.item.token,
