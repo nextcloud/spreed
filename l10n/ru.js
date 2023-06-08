@@ -1099,7 +1099,6 @@ OC.L10N.register(
     "File to share" : "Поделиться файлом",
     "Error while uploading the file" : "Ошибка при загрузке файла",
     "Invalid path selected" : "Указан некорректный путь",
-    "Select virtual {atmosphere} background" : "Выбрать виртуальный фон {atmosphere}",
     "Add more reactions" : "Добавить больше реакций",
     "Unread messages" : "Непрочитанные сообщения",
     "Sending message" : "Сообщение отправляется",
