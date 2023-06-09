@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.0.0-rc.4 – 2023-06-09
+### Fixed
+
+- fix(chat): Fix dark/light theme in messages loading placeholder
+  [#9720](https://github.com/nextcloud/spreed/issues/9720)
+- fix(TypingIndicator): Signaling messages wrong when conversation is switched
+  [#9615](https://github.com/nextcloud/spreed/issues/9615)
+- fix(TypingIndicator): Typing indicator does not "expire"
+  [#9604](https://github.com/nextcloud/spreed/issues/9604)
+- fix(TypingIndicator): Typing indicator distorted on small sidebar during call when 3 or more people are typing
+  [#9589](https://github.com/nextcloud/spreed/issues/9589)
+- fix(mediasettings): Aria label keywords of virtual backgrounds are not translatable
+  [#9610](https://github.com/nextcloud/spreed/issues/9610)
+- fix(mediasettings): Conversation picture picker does not work well on mobile
+  [#9565](https://github.com/nextcloud/spreed/issues/9565)
+- fix(conversations): Do not scroll to conversations that are already visible in the conversations list
+  [#9582](https://github.com/nextcloud/spreed/issues/9582)
+- fix(conversations): Fix error when creating a conversation from search results
+  [#9709](https://github.com/nextcloud/spreed/pull/9709)
+
 ## 17.0.0-rc.3 – 2023-06-02
 ### Fixed
 
