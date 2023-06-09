@@ -82,7 +82,7 @@
 			:local-call-participant-model="localCallParticipantModel" />
 
 		<!-- Local media controls -->
-		<LocalMediaControls v-if="isInCall"
+		<TopBarMediaControls v-if="isInCall"
 			class="local-media-controls dark-hover"
 			:token="token"
 			:model="localMediaModel"
@@ -156,11 +156,11 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import richEditor from '@nextcloud/vue/dist/Mixins/richEditor.js'
 
 import BreakoutRoomsEditor from '../BreakoutRoomsEditor/BreakoutRoomsEditor.vue'
-import LocalMediaControls from '../CallView/shared/LocalMediaControls.vue'
 import ConversationIcon from '../ConversationIcon.vue'
 import CallButton from './CallButton.vue'
 import CallTime from './CallTime.vue'
 import ReactionMenu from './ReactionMenu.vue'
+import TopBarMediaControls from './TopBarMediaControls.vue'
 import TopBarMenu from './TopBarMenu.vue'
 
 import { CONVERSATION } from '../../constants.js'
@@ -182,7 +182,7 @@ export default {
 		CallButton,
 		CallTime,
 		ConversationIcon,
-		LocalMediaControls,
+		TopBarMediaControls,
 		NcButton,
 		NcCounterBubble,
 		TopBarMenu,

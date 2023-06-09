@@ -152,20 +152,20 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
-import CancelPresentation from '../../missingMaterialDesignIcons/CancelPresentation.vue'
-import PresentToAll from '../../missingMaterialDesignIcons/PresentToAll.vue'
-import LocalAudioControlButton from './LocalAudioControlButton.vue'
-import LocalVideoControlButton from './LocalVideoControlButton.vue'
+import LocalAudioControlButton from '../CallView/shared/LocalAudioControlButton.vue'
+import LocalVideoControlButton from '../CallView/shared/LocalVideoControlButton.vue'
+import CancelPresentation from '../missingMaterialDesignIcons/CancelPresentation.vue'
+import PresentToAll from '../missingMaterialDesignIcons/PresentToAll.vue'
 
-import { useIsInCall } from '../../../composables/useIsInCall.js'
-import { PARTICIPANT } from '../../../constants.js'
-import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer.js'
-import { callAnalyzer } from '../../../utils/webrtc/index.js'
-import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
+import { useIsInCall } from '../../composables/useIsInCall.js'
+import { PARTICIPANT } from '../../constants.js'
+import { CONNECTION_QUALITY } from '../../utils/webrtc/analyzers/PeerConnectionAnalyzer.js'
+import { callAnalyzer } from '../../utils/webrtc/index.js'
+import SpeakingWhileMutedWarner from '../../utils/webrtc/SpeakingWhileMutedWarner.js'
 
 export default {
 
-	name: 'LocalMediaControls',
+	name: 'TopBarMediaControls',
 
 	directives: {
 		tooltip: Tooltip,
@@ -614,7 +614,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/variables';
+@import '../../assets/variables';
 
 .buttons-bar {
 	display: flex;
