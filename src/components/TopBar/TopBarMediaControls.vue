@@ -84,8 +84,7 @@
 			:boundaries-element="boundaryElement"
 			:container="container"
 			:open="screenSharingMenuOpen"
-			@update:open="screenSharingMenuOpen = true"
-			@update:close="screenSharingMenuOpen = false">
+			@update:open="setScreenSharingMenuOpen">
 			<!-- Actions button icon -->
 			<template #icon>
 				<CancelPresentation v-if="model.attributes.localScreen" :size="20" fill-color="#ffffff" />
@@ -100,20 +99,20 @@
 				</template>
 				{{ screenSharingButtonTooltip }}
 			</NcActionButton>
-			<NcActionButton v-if="model.attributes.localScreen"
-				@click="showScreen">
-				<template #icon>
-					<Monitor :size="20" />
-				</template>
-				{{ t('spreed', 'Show your screen') }}
-			</NcActionButton>
-			<NcActionButton v-if="model.attributes.localScreen"
-				@click="stopScreen">
-				<template #icon>
-					<CancelPresentation :size="20" />
-				</template>
-				{{ t('spreed', 'Stop screensharing') }}
-			</NcActionButton>
+			<template v-if="model.attributes.localScreen">
+				<NcActionButton close-after-click @click="showScreen">
+					<template #icon>
+						<Monitor :size="20" />
+					</template>
+					{{ t('spreed', 'Show your screen') }}
+				</NcActionButton>
+				<NcActionButton close-after-click @click="stopScreen">
+					<template #icon>
+						<CancelPresentation :size="20" />
+					</template>
+					{{ t('spreed', 'Stop screensharing') }}
+				</NcActionButton>
+			</template>
 		</NcActions>
 	</div>
 </template>
@@ -474,6 +473,10 @@ export default {
 			}
 		},
 
+		setScreenSharingMenuOpen(value) {
+			this.screenSharingMenuOpen = value
+		},
+
 		toggleScreenSharingMenu() {
 			if (IS_DESKTOP) {
 				alert('Unfortunately, Screen sharing is not supported by Nextcloud Talk Preview')
@@ -494,7 +497,7 @@ export default {
 			}
 
 			if (this.model.attributes.localScreen) {
-				this.screenSharingMenuOpen = !this.screenSharingMenuOpen
+				this.setScreenSharingMenuOpen(!this.screenSharingMenuOpen)
 			} else {
 				this.startShareScreen()
 			}
@@ -504,14 +507,10 @@ export default {
 			if (this.model.attributes.localScreen) {
 				emit('switch-screen-to-id', this.localCallParticipantModel.attributes.peerId)
 			}
-
-			this.screenSharingMenuOpen = false
 		},
 
 		stopScreen() {
 			this.model.stopSharingScreen()
-
-			this.screenSharingMenuOpen = false
 		},
 
 		startShareScreen(mode) {
