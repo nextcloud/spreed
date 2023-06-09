@@ -22,7 +22,7 @@ jobs:
     name: update-nextcloud-ocp-${{ matrix.branches }}
 
     steps:
-      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         with:
           ref: ${{ matrix.branches }}
           submodules: true
@@ -31,7 +31,8 @@ jobs:
         uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4 # v2
         with:
           php-version: 8.1
-          extensions: ctype,curl,dom,fileinfo,gd,intl,json,mbstring,openssl,pdo_sqlite,posix,sqlite,xml,zip
+          # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
+          extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, sqlite, pdo_sqlite
           coverage: none
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -40,7 +41,12 @@ jobs:
         run: composer install
 
       - name: Composer update nextcloud/ocp
+        if: matrix.branches != 'main'
         run: composer require --dev nextcloud/ocp:dev-${{ matrix.branches }}
+
+      - name: Composer update nextcloud/ocp
+        if: matrix.branches == 'main'
+        run: composer require --dev nextcloud/ocp:dev-master
 
       - name: Reset checkout 3rdparty
         run: |
