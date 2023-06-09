@@ -33,20 +33,6 @@
 
 			<!-- Options -->
 			<NcActions>
-				<NcActionButton close-after-click
-					@click="insertValue(t('spreed','is:unread'))">
-					<template #icon>
-						<MessageBadge :size="20" />
-					</template>
-					{{ t('spreed','Filter unread messages') }}
-				</NcActionButton>
-				<NcActionButton close-after-click
-					@click="insertValue(t('spreed','is:mentioned'))">
-					<template #icon>
-						<AtIcon :size="20" />
-					</template>
-					{{ t('spreed','Filter unread mentions') }}
-				</NcActionButton>
 				<NcActionButton v-if="canStartConversations"
 					close-after-click
 					@click="toggleNewGroupConversation(true)">
@@ -55,10 +41,27 @@
 					</template>
 					{{ t('spreed','Create a new conversation') }}
 				</NcActionButton>
+
+				<NcActionButton close-after-click
+					@click="insertValue(t('spreed','is:mentioned'))">
+					<template #icon>
+						<AtIcon :size="20" />
+					</template>
+					{{ t('spreed','Filter unread mentions') }}
+				</NcActionButton>
+
+				<NcActionButton close-after-click
+					@click="insertValue(t('spreed','is:unread'))">
+					<template #icon>
+						<MessageBadge :size="20" />
+					</template>
+					{{ t('spreed','Filter unread messages') }}
+				</NcActionButton>
 			</NcActions>
 
 			<!-- New Conversation -->
-			<NewGroupConversation :show-modal="isNewGroupConversationOpen"
+			<NewGroupConversation ref="newGroupConversation"
+				:show-modal="isNewGroupConversationOpen"
 				@open-modal="toggleNewGroupConversation(true)"
 				@close-modal="toggleNewGroupConversation(false)" />
 		</div>
@@ -471,8 +474,9 @@ export default {
 					params: { token: conversation.token },
 				}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			} else {
-				// For other types we start the conversation creation dialog
-				EventBus.$emit('new-group-conversation-dialog', item)
+				// For other types, show the modal directly
+				this.$refs.newGroupConversation.showModalForItem(item)
+				this.toggleNewGroupConversation(true)
 			}
 		},
 
