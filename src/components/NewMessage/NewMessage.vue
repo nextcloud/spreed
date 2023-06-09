@@ -186,6 +186,7 @@ import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
+import { isDarkTheme } from '../../utils/isDarkTheme.js'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -724,9 +725,7 @@ export default {
 				// Set icon for candidate mentions that are not for users.
 				if (possibleMention.source === 'calls') {
 					possibleMention.icon = 'icon-user-forced-white'
-					const darkTheme = window.getComputedStyle(document.body)
-						.getPropertyValue('--background-invert-if-dark') === 'invert(100%)'
-					possibleMention.iconUrl = generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (darkTheme ? '/dark' : ''), {
+					possibleMention.iconUrl = generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (isDarkTheme ? '/dark' : ''), {
 						token: this.token,
 					})
 					possibleMention.subline = t('spreed', 'Everyone')

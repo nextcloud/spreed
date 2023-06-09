@@ -36,8 +36,8 @@ each other by animating the opacities.
 			<svg :key="'gradient' + suffix" :class="'placeholder-gradient placeholder-gradient' + suffix">
 				<defs>
 					<linearGradient :id="'placeholder-gradient' + suffix">
-						<stop offset="0%" :stop-color="(gradientIndex == 0) ? light : dark" />
-						<stop offset="100%" :stop-color="(gradientIndex == 0) ? dark : light" />
+						<stop offset="0%" :stop-color="(gradientIndex === 0) ? colorPlaceholderLight : colorPlaceholderDark" />
+						<stop offset="100%" :stop-color="(gradientIndex === 0) ? colorPlaceholderDark : colorPlaceholderLight" />
 					</linearGradient>
 				</defs>
 			</svg>
@@ -69,6 +69,10 @@ each other by animating the opacities.
 </template>
 
 <script>
+const bodyStyles = window.getComputedStyle(document.body)
+const colorPlaceholderDark = bodyStyles.getPropertyValue('--color-placeholder-dark')
+const colorPlaceholderLight = bodyStyles.getPropertyValue('--color-placeholder-light')
+
 export default {
 	name: 'LoadingPlaceholder',
 
@@ -83,10 +87,10 @@ export default {
 		},
 	},
 
-	data() {
+	setup() {
 		return {
-			light: null,
-			dark: null,
+			colorPlaceholderDark,
+			colorPlaceholderLight,
 		}
 	},
 
@@ -99,12 +103,6 @@ export default {
 			}
 			return data
 		},
-	},
-
-	mounted() {
-		const styles = getComputedStyle(document.documentElement)
-		this.dark = styles.getPropertyValue('--color-placeholder-dark')
-		this.light = styles.getPropertyValue('--color-placeholder-light')
 	},
 }
 </script>
