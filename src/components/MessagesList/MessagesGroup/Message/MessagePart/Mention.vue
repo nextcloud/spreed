@@ -47,6 +47,8 @@ import { generateOcsUrl } from '@nextcloud/router'
 
 import NcUserBubble from '@nextcloud/vue/dist/Components/NcUserBubble.js'
 
+import { isDarkTheme } from '../../../../../utils/isDarkTheme.js'
+
 export default {
 	name: 'Mention',
 
@@ -97,7 +99,7 @@ export default {
 				&& loadState('spreed', 'user_group_ids', []).includes(this.id)
 		},
 		avatarUrl() {
-			return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (this.darkTheme ? '/dark' : ''), {
+			return generateOcsUrl('apps/spreed/api/v1/room/{token}/avatar' + (isDarkTheme ? '/dark' : ''), {
 				token: this.id,
 			})
 		},
