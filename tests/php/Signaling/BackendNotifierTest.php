@@ -104,6 +104,7 @@ class BackendNotifierTest extends TestCase {
 	private ?BreakoutRoomService $breakoutRoomService = null;
 
 	private ?string $userId = null;
+	private ?string $displayName = null;
 	private ?string $signalingSecret = null;
 	private ?string $baseUrl = null;
 
@@ -117,6 +118,7 @@ class BackendNotifierTest extends TestCase {
 		parent::setUp();
 
 		$this->userId = 'testUser';
+		$this->displayName = 'testUserDisplayName';
 		$this->secureRandom = \OC::$server->getSecureRandom();
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->urlGenerator = $this->createMock(IURLGenerator::class);
@@ -982,6 +984,7 @@ class BackendNotifierTest extends TestCase {
 		$this->participantService->addUsers($room, [[
 			'actorType' => 'users',
 			'actorId' => $this->userId,
+			'displayName' => $this->displayName,
 		]]);
 
 		/** @var IUser|MockObject $testUser */
@@ -1012,6 +1015,7 @@ class BackendNotifierTest extends TestCase {
 						'participantType' => Participant::MODERATOR,
 						'participantPermissions' => Attendee::PERMISSIONS_MAX_DEFAULT,
 						'userId' => $this->userId,
+						'displayName' => $this->displayName,
 					],
 				],
 				'users' => [
@@ -1022,6 +1026,7 @@ class BackendNotifierTest extends TestCase {
 						'participantType' => Participant::MODERATOR,
 						'participantPermissions' => Attendee::PERMISSIONS_MAX_DEFAULT,
 						'userId' => $this->userId,
+						'displayName' => $this->displayName,
 					],
 				],
 			],
@@ -1032,6 +1037,9 @@ class BackendNotifierTest extends TestCase {
 		$guestParticipant = $this->participantService->joinRoomAsNewGuest($roomService, $room, '');
 		$guestSession = $guestParticipant->getSession()->getSessionId();
 		$guestParticipant = $this->participantService->getParticipantBySession($room, $guestSession);
+
+		$guestDisplayName = 'GuestDisplayName';
+		$guestParticipant->getAttendee()->setDisplayName($guestDisplayName);
 
 		$this->participantService->updateParticipantType($room, $guestParticipant, Participant::GUEST_MODERATOR);
 
@@ -1046,6 +1054,7 @@ class BackendNotifierTest extends TestCase {
 						'sessionId' => $guestSession,
 						'participantType' => Participant::GUEST_MODERATOR,
 						'participantPermissions' => Attendee::PERMISSIONS_MAX_DEFAULT,
+						'displayName' => $guestDisplayName,
 					],
 				],
 				'users' => [
@@ -1056,6 +1065,7 @@ class BackendNotifierTest extends TestCase {
 						'participantType' => Participant::MODERATOR,
 						'participantPermissions' => Attendee::PERMISSIONS_MAX_DEFAULT,
 						'userId' => $this->userId,
+						'displayName' => $this->displayName,
 					],
 					[
 						'inCall' => 0,
@@ -1063,6 +1073,7 @@ class BackendNotifierTest extends TestCase {
 						'sessionId' => $guestSession,
 						'participantType' => Participant::GUEST_MODERATOR,
 						'participantPermissions' => Attendee::PERMISSIONS_MAX_DEFAULT,
+						'displayName' => $guestDisplayName,
 					],
 				],
 			],
@@ -1070,9 +1081,11 @@ class BackendNotifierTest extends TestCase {
 
 		$this->controller->clearRequests();
 		$notJoinedUserId = 'not-joined-user-id';
+		$notJoinedDisplayName = 'not-joined-display-name';
 		$this->participantService->addUsers($room, [[
 			'actorType' => 'users',
 			'actorId' => $notJoinedUserId,
+			'displayName' => $notJoinedDisplayName,
 		]]);
 
 		$notJoinedParticipant = $this->participantService->getParticipant($room, $notJoinedUserId);
@@ -1091,6 +1104,7 @@ class BackendNotifierTest extends TestCase {
 						'participantType' => Participant::MODERATOR,
 						'participantPermissions' => Attendee::PERMISSIONS_MAX_DEFAULT,
 						'userId' => $this->userId,
+						'displayName' => $this->displayName,
 					],
 					[
 						'inCall' => 0,
@@ -1099,6 +1113,7 @@ class BackendNotifierTest extends TestCase {
 						'participantType' => Participant::MODERATOR,
 						'participantPermissions' => Attendee::PERMISSIONS_CUSTOM,
 						'userId' => $notJoinedUserId,
+						'displayName' => $notJoinedDisplayName,
 					],
 					[
 						'inCall' => 0,
@@ -1106,6 +1121,7 @@ class BackendNotifierTest extends TestCase {
 						'sessionId' => $guestSession,
 						'participantType' => Participant::GUEST_MODERATOR,
 						'participantPermissions' => Attendee::PERMISSIONS_MAX_DEFAULT,
+						'displayName' => $guestDisplayName,
 					],
 				],
 			],
@@ -1126,6 +1142,7 @@ class BackendNotifierTest extends TestCase {
 						'participantType' => Participant::USER,
 						'participantPermissions' => (Attendee::PERMISSIONS_MAX_DEFAULT ^ Attendee::PERMISSIONS_LOBBY_IGNORE),
 						'userId' => $this->userId,
+						'displayName' => $this->displayName,
 					],
 				],
 				'users' => [
@@ -1136,6 +1153,7 @@ class BackendNotifierTest extends TestCase {
 						'participantType' => Participant::USER,
 						'participantPermissions' => (Attendee::PERMISSIONS_MAX_DEFAULT ^ Attendee::PERMISSIONS_LOBBY_IGNORE),
 						'userId' => $this->userId,
+						'displayName' => $this->displayName,
 					],
 					[
 						'inCall' => 0,
@@ -1144,6 +1162,7 @@ class BackendNotifierTest extends TestCase {
 						'participantType' => Participant::MODERATOR,
 						'participantPermissions' => Attendee::PERMISSIONS_CUSTOM,
 						'userId' => $notJoinedUserId,
+						'displayName' => $notJoinedDisplayName,
 					],
 					[
 						'inCall' => 0,
@@ -1151,6 +1170,7 @@ class BackendNotifierTest extends TestCase {
 						'sessionId' => $guestSession,
 						'participantType' => Participant::GUEST_MODERATOR,
 						'participantPermissions' => Attendee::PERMISSIONS_MAX_DEFAULT,
+						'displayName' => $guestDisplayName,
 					],
 				],
 			],
@@ -1170,6 +1190,7 @@ class BackendNotifierTest extends TestCase {
 						'sessionId' => $guestSession,
 						'participantType' => Participant::GUEST,
 						'participantPermissions' => (Attendee::PERMISSIONS_MAX_DEFAULT ^ Attendee::PERMISSIONS_LOBBY_IGNORE),
+						'displayName' => $guestDisplayName,
 					],
 				],
 				'users' => [
@@ -1180,6 +1201,7 @@ class BackendNotifierTest extends TestCase {
 						'participantType' => Participant::USER,
 						'participantPermissions' => (Attendee::PERMISSIONS_MAX_DEFAULT ^ Attendee::PERMISSIONS_LOBBY_IGNORE),
 						'userId' => $this->userId,
+						'displayName' => $this->displayName,
 					],
 					[
 						'inCall' => 0,
@@ -1188,6 +1210,7 @@ class BackendNotifierTest extends TestCase {
 						'participantType' => Participant::MODERATOR,
 						'participantPermissions' => Attendee::PERMISSIONS_CUSTOM,
 						'userId' => $notJoinedUserId,
+						'displayName' => $notJoinedDisplayName,
 					],
 					[
 						'inCall' => 0,
@@ -1195,6 +1218,7 @@ class BackendNotifierTest extends TestCase {
 						'sessionId' => $guestSession,
 						'participantType' => Participant::GUEST,
 						'participantPermissions' => (Attendee::PERMISSIONS_MAX_DEFAULT ^ Attendee::PERMISSIONS_LOBBY_IGNORE),
+						'displayName' => $guestDisplayName,
 					],
 				],
 			],
@@ -1214,6 +1238,7 @@ class BackendNotifierTest extends TestCase {
 						'sessionId' => $guestSession,
 						'participantType' => Participant::GUEST,
 						'participantPermissions' => Attendee::PERMISSIONS_CUSTOM,
+						'displayName' => $guestDisplayName,
 					],
 				],
 				'users' => [
@@ -1224,6 +1249,7 @@ class BackendNotifierTest extends TestCase {
 						'participantType' => Participant::USER,
 						'participantPermissions' => (Attendee::PERMISSIONS_MAX_DEFAULT ^ Attendee::PERMISSIONS_LOBBY_IGNORE),
 						'userId' => $this->userId,
+						'displayName' => $this->displayName,
 					],
 					[
 						'inCall' => 0,
@@ -1232,6 +1258,7 @@ class BackendNotifierTest extends TestCase {
 						'participantType' => Participant::MODERATOR,
 						'participantPermissions' => Attendee::PERMISSIONS_CUSTOM,
 						'userId' => $notJoinedUserId,
+						'displayName' => $notJoinedDisplayName,
 					],
 					[
 						'inCall' => 0,
@@ -1239,6 +1266,7 @@ class BackendNotifierTest extends TestCase {
 						'sessionId' => $guestSession,
 						'participantType' => Participant::GUEST,
 						'participantPermissions' => Attendee::PERMISSIONS_CUSTOM,
+						'displayName' => $guestDisplayName,
 					],
 				],
 			],
