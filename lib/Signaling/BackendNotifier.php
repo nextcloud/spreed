@@ -333,6 +333,7 @@ class BackendNotifier {
 				'sessionId' => '0',
 				'participantType' => $attendee->getParticipantType(),
 				'participantPermissions' => Attendee::PERMISSIONS_CUSTOM,
+				'displayName' => $attendee->getDisplayName(),
 			];
 			if ($attendee->getActorType() === Attendee::ACTOR_USERS) {
 				$data['userId'] = $attendee->getActorId();
