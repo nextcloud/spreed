@@ -24,4 +24,4 @@
 ## Mobile apps
 
 * Android: 6 or later
-* iOS: 14 or later
+* iOS: 15 or later
