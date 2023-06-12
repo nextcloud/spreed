@@ -83,8 +83,7 @@
 			class="app-navigation-entry-utils-menu-button"
 			:boundaries-element="boundaryElement"
 			:container="container"
-			:open="screenSharingMenuOpen"
-			@update:open="setScreenSharingMenuOpen">
+			:open.sync="screenSharingMenuOpen">
 			<!-- Actions button icon -->
 			<template #icon>
 				<CancelPresentation v-if="model.attributes.localScreen" :size="20" fill-color="#ffffff" />
@@ -473,10 +472,6 @@ export default {
 			}
 		},
 
-		setScreenSharingMenuOpen(value) {
-			this.screenSharingMenuOpen = value
-		},
-
 		toggleScreenSharingMenu() {
 			if (IS_DESKTOP) {
 				alert('Unfortunately, Screen sharing is not supported by Nextcloud Talk Preview')
@@ -496,9 +491,7 @@ export default {
 				return
 			}
 
-			if (this.model.attributes.localScreen) {
-				this.setScreenSharingMenuOpen(!this.screenSharingMenuOpen)
-			} else {
+			if (!this.model.attributes.localScreen) {
 				this.startShareScreen()
 			}
 		},
