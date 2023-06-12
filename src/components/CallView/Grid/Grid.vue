@@ -963,14 +963,6 @@ export default {
 }
 
 .grid-navigation {
-	z-index: 2;
-	background-color: rgba(0, 0, 0, 0.5);
-
-	&:hover,
-	&:focus {
-		background-color: rgba(0, 0, 0, 0.8) !important;
-	}
-
 	.grid-wrapper & {
 		position: absolute;
 		top: calc(50% - var(--default-clickable-area) / 2);
@@ -1022,10 +1014,14 @@ export default {
 	position: absolute !important;
 	top: calc(-1 * var(--default-clickable-area));
 	right: 0;
+}
+
+.stripe--collapse,
+.grid-navigation {
 	z-index: 2;
 	opacity: .7;
 
-	.app-content:hover & {
+	#call-container:hover & {
 		background-color: rgba(0, 0, 0, 0.1) !important;
 
 		&:hover,
