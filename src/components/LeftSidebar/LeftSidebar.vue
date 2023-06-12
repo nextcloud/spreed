@@ -578,16 +578,16 @@ export default {
 			if (to.name === 'conversation') {
 				this.$store.dispatch('joinConversation', { token: to.params.token })
 			}
-		},
-
-		handleJoinedConversation({ token }) {
-			this.abortSearch()
-			this.scrollToConversation(token)
 			if (this.isMobile) {
 				emit('toggle-navigation', {
 					open: false,
 				})
 			}
+		},
+
+		handleJoinedConversation({ token }) {
+			this.abortSearch()
+			this.scrollToConversation(token)
 		},
 
 		iconData(item) {
