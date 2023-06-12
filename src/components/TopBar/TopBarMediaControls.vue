@@ -19,118 +19,100 @@
   -->
 <template>
 	<div v-shortkey.push="disableKeyboardShortcuts ? null : ['space']"
+		class="buttons-bar"
 		@shortkey="handleShortkey">
-		<div class="buttons-bar">
-			<div class="network-connection-state">
-				<NcPopover v-if="qualityWarningTooltip"
-					:boundary="boundaryElement"
-					:aria-label="qualityWarningAriaLabel"
-					trigger="hover"
-					:auto-hide="false"
-					:shown="showQualityWarningTooltip">
-					<template #trigger>
-						<NcButton id="quality_warning_button"
-							type="tertiary-no-background"
-							class="trigger"
-							:aria-label="qualityWarningAriaLabel"
-							@click="mouseover = !mouseover">
-							<template #icon>
-								<NetworkStrength2Alert fill-color="#e9322d" :size="20" />
-							</template>
+		<div class="network-connection-state">
+			<NcPopover v-if="qualityWarningTooltip"
+				:boundary="boundaryElement"
+				:aria-label="qualityWarningAriaLabel"
+				trigger="hover"
+				:auto-hide="false"
+				:shown="showQualityWarningTooltip">
+				<template #trigger>
+					<NcButton id="quality_warning_button"
+						type="tertiary-no-background"
+						class="trigger"
+						:aria-label="qualityWarningAriaLabel"
+						@click="mouseover = !mouseover">
+						<template #icon>
+							<NetworkStrength2Alert fill-color="#e9322d" :size="20" />
+						</template>
+					</NcButton>
+				</template>
+				<div class="hint">
+					<span>{{ qualityWarningTooltip.content }}</span>
+					<div class="hint__actions">
+						<NcButton v-if="qualityWarningTooltip.action"
+							type="primary"
+							class="hint__button"
+							@click="executeQualityWarningTooltipAction">
+							{{ qualityWarningTooltip.actionLabel }}
 						</NcButton>
-					</template>
-					<div class="hint">
-						<span>{{ qualityWarningTooltip.content }}</span>
-						<div class="hint__actions">
-							<NcButton v-if="qualityWarningTooltip.action"
-								type="primary"
-								class="hint__button"
-								@click="executeQualityWarningTooltipAction">
-								{{ qualityWarningTooltip.actionLabel }}
-							</NcButton>
-							<NcButton v-if="!isQualityWarningTooltipDismissed"
-								type="tertiary"
-								class="hint__button"
-								@click="dismissQualityWarningTooltip">
-								{{ t('spreed', 'Dismiss') }}
-							</NcButton>
-						</div>
+						<NcButton v-if="!isQualityWarningTooltipDismissed"
+							type="tertiary"
+							class="hint__button"
+							@click="dismissQualityWarningTooltip">
+							{{ t('spreed', 'Dismiss') }}
+						</NcButton>
 					</div>
-				</NcPopover>
-			</div>
+				</div>
+			</NcPopover>
+		</div>
 
-			<LocalAudioControlButton :conversation="conversation" :model="model" color="#ffffff" />
+		<LocalAudioControlButton :conversation="conversation" :model="model" color="#ffffff" />
 
-			<LocalVideoControlButton :conversation="conversation" :model="model" color="#ffffff" />
+		<LocalVideoControlButton :conversation="conversation" :model="model" color="#ffffff" />
 
-			<NcButton v-if="isVirtualBackgroundAvailable && !showActions"
-				v-tooltip="toggleVirtualBackgroundButtonLabel"
-				type="tertiary-no-background"
-				:aria-label="toggleVirtualBackgroundButtonLabel"
-				:class="blurButtonClass"
-				@click.stop="toggleVirtualBackground">
+		<NcButton v-if="isVirtualBackgroundAvailable && !showActions"
+			v-tooltip="toggleVirtualBackgroundButtonLabel"
+			type="tertiary-no-background"
+			:aria-label="toggleVirtualBackgroundButtonLabel"
+			:class="blurButtonClass"
+			@click.stop="toggleVirtualBackground">
+			<template #icon>
+				<Blur v-if="isVirtualBackgroundEnabled" :size="20" fill-color="#ffffff" />
+				<BlurOff v-else :size="20" fill-color="#ffffff" />
+			</template>
+		</NcButton>
+
+		<NcActions v-if="!screenSharingButtonHidden"
+			id="screensharing-button"
+			v-tooltip="screenSharingButtonTooltip"
+			:aria-label="screenSharingButtonAriaLabel"
+			:class="screenSharingButtonClass"
+			class="app-navigation-entry-utils-menu-button"
+			:boundaries-element="boundaryElement"
+			:container="container"
+			:open.sync="screenSharingMenuOpen">
+			<!-- Actions button icon -->
+			<template #icon>
+				<CancelPresentation v-if="model.attributes.localScreen" :size="20" fill-color="#ffffff" />
+				<PresentToAll v-else :size="20" fill-color="#ffffff" />
+			</template>
+			<!-- /Actions button icon -->
+			<!-- Actions -->
+			<NcActionButton v-if="!screenSharingMenuOpen"
+				@click.stop="toggleScreenSharingMenu">
 				<template #icon>
-					<Blur v-if="isVirtualBackgroundEnabled" :size="20" fill-color="#ffffff" />
-					<BlurOff v-else :size="20" fill-color="#ffffff" />
+					<PresentToAll :size="20" fill-color="#ffffff" />
 				</template>
-			</NcButton>
-
-			<NcActions v-if="!screenSharingButtonHidden"
-				id="screensharing-button"
-				v-tooltip="screenSharingButtonTooltip"
-				:aria-label="screenSharingButtonAriaLabel"
-				:class="screenSharingButtonClass"
-				class="app-navigation-entry-utils-menu-button"
-				:boundaries-element="boundaryElement"
-				:container="container"
-				:open="screenSharingMenuOpen"
-				@update:open="screenSharingMenuOpen = true"
-				@update:close="screenSharingMenuOpen = false">
-				<!-- Actions button icon -->
-				<template #icon>
-					<CancelPresentation v-if="model.attributes.localScreen" :size="20" fill-color="#ffffff" />
-					<PresentToAll v-else :size="20" fill-color="#ffffff" />
-				</template>
-				<!-- /Actions button icon -->
-				<!-- Actions -->
-				<NcActionButton v-if="!screenSharingMenuOpen"
-					@click.stop="toggleScreenSharingMenu">
-					<template #icon>
-						<PresentToAll :size="20" fill-color="#ffffff" />
-					</template>
-					{{ screenSharingButtonTooltip }}
-				</NcActionButton>
-				<NcActionButton v-if="model.attributes.localScreen"
-					@click="showScreen">
+				{{ screenSharingButtonTooltip }}
+			</NcActionButton>
+			<template v-if="model.attributes.localScreen">
+				<NcActionButton close-after-click @click="showScreen">
 					<template #icon>
 						<Monitor :size="20" />
 					</template>
 					{{ t('spreed', 'Show your screen') }}
 				</NcActionButton>
-				<NcActionButton v-if="model.attributes.localScreen"
-					@click="stopScreen">
+				<NcActionButton close-after-click @click="stopScreen">
 					<template #icon>
 						<CancelPresentation :size="20" />
 					</template>
 					{{ t('spreed', 'Stop screensharing') }}
 				</NcActionButton>
-			</NcActions>
-			<NcButton v-shortkey.once="disableKeyboardShortcuts ? null : ['r']"
-				v-tooltip="lowerHandAriaLabel"
-				:aria-label="lowerHandAriaLabel"
-				type="tertiary-no-background"
-				class="lower-hand"
-				:class="model.attributes.raisedHand.state ? '' : 'hidden-visually'"
-				:tabindex="model.attributes.raisedHand.state ? 0 : -1"
-				@shortkey="toggleHandRaised"
-				@click.stop="toggleHandRaised">
-				<template #icon>
-					<!-- The following icon is much bigger than all the others
-						so we reduce its size -->
-					<HandBackLeft :size="18" fill-color="#ffffff" />
-				</template>
-			</NcButton>
-		</div>
+			</template>
+		</NcActions>
 	</div>
 </template>
 
@@ -139,7 +121,6 @@ import escapeHtml from 'escape-html'
 
 import Blur from 'vue-material-design-icons/Blur.vue'
 import BlurOff from 'vue-material-design-icons/BlurOff.vue'
-import HandBackLeft from 'vue-material-design-icons/HandBackLeft.vue'
 import Monitor from 'vue-material-design-icons/Monitor.vue'
 import NetworkStrength2Alert from 'vue-material-design-icons/NetworkStrength2Alert.vue'
 
@@ -152,20 +133,20 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
-import CancelPresentation from '../../missingMaterialDesignIcons/CancelPresentation.vue'
-import PresentToAll from '../../missingMaterialDesignIcons/PresentToAll.vue'
-import LocalAudioControlButton from './LocalAudioControlButton.vue'
-import LocalVideoControlButton from './LocalVideoControlButton.vue'
+import LocalAudioControlButton from '../CallView/shared/LocalAudioControlButton.vue'
+import LocalVideoControlButton from '../CallView/shared/LocalVideoControlButton.vue'
+import CancelPresentation from '../missingMaterialDesignIcons/CancelPresentation.vue'
+import PresentToAll from '../missingMaterialDesignIcons/PresentToAll.vue'
 
-import { useIsInCall } from '../../../composables/useIsInCall.js'
-import { PARTICIPANT } from '../../../constants.js'
-import { CONNECTION_QUALITY } from '../../../utils/webrtc/analyzers/PeerConnectionAnalyzer.js'
-import { callAnalyzer } from '../../../utils/webrtc/index.js'
-import SpeakingWhileMutedWarner from '../../../utils/webrtc/SpeakingWhileMutedWarner.js'
+import { useIsInCall } from '../../composables/useIsInCall.js'
+import { PARTICIPANT } from '../../constants.js'
+import { CONNECTION_QUALITY } from '../../utils/webrtc/analyzers/PeerConnectionAnalyzer.js'
+import { callAnalyzer } from '../../utils/webrtc/index.js'
+import SpeakingWhileMutedWarner from '../../utils/webrtc/SpeakingWhileMutedWarner.js'
 
 export default {
 
-	name: 'LocalMediaControls',
+	name: 'TopBarMediaControls',
 
 	directives: {
 		tooltip: Tooltip,
@@ -176,7 +157,6 @@ export default {
 		Blur,
 		BlurOff,
 		CancelPresentation,
-		HandBackLeft,
 		Monitor,
 		NcActions,
 		NcActionButton,
@@ -256,12 +236,6 @@ export default {
 
 		isScreensharingAllowed() {
 			return this.conversation.permissions & PARTICIPANT.PERMISSIONS.PUBLISH_SCREEN
-		},
-
-		lowerHandAriaLabel() {
-			return this.disableKeyboardShortcuts
-				? t('spreed', 'Lower hand')
-				: t('spreed', 'Lower hand (R)')
 		},
 
 		blurButtonClass() {
@@ -517,37 +491,19 @@ export default {
 				return
 			}
 
-			if (this.model.attributes.localScreen) {
-				this.screenSharingMenuOpen = !this.screenSharingMenuOpen
-			} else {
+			if (!this.model.attributes.localScreen) {
 				this.startShareScreen()
 			}
-		},
-
-		toggleHandRaised() {
-			const state = !this.model.attributes.raisedHand?.state
-			this.model.toggleHandRaised(state)
-			this.$store.dispatch(
-				'setParticipantHandRaised',
-				{
-					sessionId: this.$store.getters.getSessionId(),
-					raisedHand: this.model.attributes.raisedHand,
-				}
-			)
 		},
 
 		showScreen() {
 			if (this.model.attributes.localScreen) {
 				emit('switch-screen-to-id', this.localCallParticipantModel.attributes.peerId)
 			}
-
-			this.screenSharingMenuOpen = false
 		},
 
 		stopScreen() {
 			this.model.stopSharingScreen()
-
-			this.screenSharingMenuOpen = false
 		},
 
 		startShareScreen(mode) {
@@ -614,20 +570,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/variables';
+@import '../../assets/variables';
 
 .buttons-bar {
 	display: flex;
 	align-items: center;
-}
-
-.buttons-bar button.lower-hand.hidden-visually {
-	position: absolute;
-	left: -10000px;
-	top: -10000px;
-	width: 1px;
-	height: 1px;
-	overflow: hidden;
 }
 
 .buttons-bar #screensharing-menu button {
