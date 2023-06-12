@@ -1,6 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.0.0 – 2023-06-12
+### Added
+
+- Conversations can now have an avatar or emoji as icon
+  [#927](https://github.com/nextcloud/spreed/issues/927)
+- Virtual backgrounds are now available in addition to the blurred background in video calls
+  [#9251](https://github.com/nextcloud/spreed/issues/9251)
+- Reactions are now available during calls
+  [#9249](https://github.com/nextcloud/spreed/issues/9249)
+- Typing indicators show which users are currently typing a message
+  [#9248](https://github.com/nextcloud/spreed/issues/9248)
+- Groups can now be mentioned in chats
+  [#6339](https://github.com/nextcloud/spreed/issues/6339)
+- Call recordings are automatically transcribed if a transcription provider app is registered
+  [#9274](https://github.com/nextcloud/spreed/issues/9274)
+- Chat messages can be translated if a translation provider app is registered
+  [#9273](https://github.com/nextcloud/spreed/issues/9273)
+
 ## 17.0.0-rc.4 – 2023-06-09
 ### Fixed
 
