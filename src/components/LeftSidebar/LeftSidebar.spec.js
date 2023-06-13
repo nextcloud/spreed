@@ -626,8 +626,8 @@ describe('LeftSidebar.vue', () => {
 				const ncModalComponent = wrapper.findComponent(NcModal)
 				expect(ncModalComponent.exists()).toBeTruthy()
 
-				const input = ncModalComponent.find('input[placeholder="Enter a name for this conversation"]')
-				expect(input.element.value).toBe(groupsResults[1].label)
+				const input = ncModalComponent.findComponent({name: 'NcTextField', ref: 'conversationName'})
+				expect(input.props('value')).toBe(groupsResults[1].label)
 
 				// nothing created yet
 				expect(createOneToOneConversationAction).not.toHaveBeenCalled()
@@ -648,9 +648,9 @@ describe('LeftSidebar.vue', () => {
 				await wrapper.vm.$nextTick()
 				const ncModalComponent = wrapper.findComponent(NcModal)
 				expect(ncModalComponent.exists()).toBeTruthy()
-
-				const input = ncModalComponent.find('input[placeholder="Enter a name for this conversation"]')
-				expect(input.element.value).toBe(circlesResults[1].label)
+				console.log(wrapper.html())
+				const input = ncModalComponent.findComponent({name: 'NcTextField', ref: 'conversationName'})
+				expect(input.props('value')).toBe(circlesResults[1].label)
 
 				// nothing created yet
 				expect(createOneToOneConversationAction).not.toHaveBeenCalled()
