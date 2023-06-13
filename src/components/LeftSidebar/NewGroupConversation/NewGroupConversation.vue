@@ -456,12 +456,12 @@ export default {
 	the margin applied to the content is added to the total modal width,
 	so here we subtract it to the width and height of the content.
 	*/
-	height: 100%;
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	position: relative;
+	gap: 10px;
 
 	&__content {
 		/**
