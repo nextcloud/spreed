@@ -476,7 +476,6 @@ export default {
 			} else {
 				// For other types, show the modal directly
 				this.$refs.newGroupConversation.showModalForItem(item)
-				this.toggleNewGroupConversation(true)
 			}
 		},
 
