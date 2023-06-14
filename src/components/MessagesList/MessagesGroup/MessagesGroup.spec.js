@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
 import MessagesGroup from './MessagesGroup.vue'
+import MessagesSystemGroup from './MessagesSystemGroup.vue'
 
 import { ATTENDEE } from '../../../constants.js'
 import storeConfig from '../../../store/storeConfig.js'
@@ -123,7 +124,33 @@ describe('MessagesGroup.vue', () => {
 	})
 
 	test('renders grouped system messages', () => {
-		const wrapper = shallowMount(MessagesGroup, {
+		const MESSAGES = [{
+			id: 100,
+			token: TOKEN,
+			actorId: 'actor-1',
+			actorDisplayName: 'actor one',
+			actorType: ATTENDEE.ACTOR_TYPE.USERS,
+			message: 'Actor entered the scene',
+			messageType: 'comment',
+			messageParameters: {},
+			systemMessage: 'call_started',
+			timestamp: 100,
+			isReplyable: false,
+		}, {
+			id: 110,
+			token: TOKEN,
+			actorId: 'actor-1',
+			actorDisplayName: 'actor one',
+			actorType: ATTENDEE.ACTOR_TYPE.USERS,
+			message: 'Actor left the scene',
+			messageType: 'comment',
+			messageParameters: {},
+			systemMessage: 'call_stopped',
+			timestamp: 200,
+			isReplyable: false,
+		}]
+
+		const wrapper = shallowMount(MessagesSystemGroup, {
 			localVue,
 			store,
 			propsData: {
@@ -132,31 +159,7 @@ describe('MessagesGroup.vue', () => {
 				dateSeparator: '<date separator>',
 				previousMessageId: 90,
 				nextMessageId: 200,
-				messages: [{
-					id: 100,
-					token: TOKEN,
-					actorId: 'actor-1',
-					actorDisplayName: 'actor one',
-					actorType: ATTENDEE.ACTOR_TYPE.USERS,
-					message: 'Actor entered the scene',
-					messageType: 'comment',
-					messageParameters: {},
-					systemMessage: 'call_started',
-					timestamp: 100,
-					isReplyable: false,
-				}, {
-					id: 110,
-					token: TOKEN,
-					actorId: 'actor-1',
-					actorDisplayName: 'actor one',
-					actorType: ATTENDEE.ACTOR_TYPE.USERS,
-					message: 'Actor left the scene',
-					messageType: 'comment',
-					messageParameters: {},
-					systemMessage: 'call_stopped',
-					timestamp: 200,
-					isReplyable: false,
-				}],
+				messages: MESSAGES,
 			},
 		})
 
@@ -169,24 +172,24 @@ describe('MessagesGroup.vue', () => {
 		const messagesEl = wrapper.findAllComponents({ name: 'Message' })
 		// TODO: date separator
 		let message = messagesEl.at(0)
-		expect(message.attributes('id')).toBe('100')
-		expect(message.attributes('message')).toBe('Actor entered the scene')
-		expect(message.attributes('actorid')).toBe('actor-1')
-		expect(message.attributes('actordisplayname')).toBe('actor one')
-		expect(message.attributes('previousmessageid')).toBe('90')
-		expect(message.attributes('nextmessageid')).toBe('110')
-		expect(message.attributes('isfirstmessage')).toBe('true')
-		expect(message.attributes('showauthor')).not.toBeDefined()
+		expect(message.props('id')).toBe(MESSAGES[0].id)
+		expect(message.props('message')).toBe(MESSAGES[0].message)
+		expect(message.props('actorid')).toBe(MESSAGES[0].actorid)
+		expect(message.props('actordisplayname')).toBe(MESSAGES[0].actordisplayname)
+		expect(message.props('previousmessageid')).toBe(MESSAGES[0].previousmessageid)
+		expect(message.props('nextmessageid')).toBe(MESSAGES[0].nextmessageid)
+		expect(message.props('isfirstmessage')).toBe(MESSAGES[0].isfirstmessage)
+		expect(message.props('showauthor')).not.toBeDefined()
 
 		message = messagesEl.at(1)
-		expect(message.attributes('id')).toBe('110')
-		expect(message.attributes('message')).toBe('Actor left the scene')
-		expect(message.attributes('actorid')).toBe('actor-1')
-		expect(message.attributes('actordisplayname')).toBe('actor one')
-		expect(message.attributes('previousmessageid')).toBe('100')
-		expect(message.attributes('nextmessageid')).toBe('200')
-		expect(message.attributes('isfirstmessage')).not.toBeDefined()
-		expect(message.attributes('showauthor')).not.toBeDefined()
+		expect(message.props('id')).toBe(MESSAGES[1].id)
+		expect(message.props('message')).toBe(MESSAGES[1].message)
+		expect(message.props('actorid')).toBe(MESSAGES[1].actorid)
+		expect(message.props('actordisplayname')).toBe(MESSAGES[1].actordisplayname)
+		expect(message.props('previousmessageid')).toBe(MESSAGES[1].previousmessageid)
+		expect(message.props('nextmessageid')).toBe(MESSAGES[1].nextmessageid)
+		expect(message.props('isfirstmessage')).not.toBeDefined()
+		expect(message.props('showauthor')).not.toBeDefined()
 	})
 
 	test('renders guest display name', () => {
