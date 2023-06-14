@@ -541,6 +541,7 @@ describe('Message.vue', () => {
 
 		test('renders author if first message', async () => {
 			messageProps.isFirstMessage = true
+			messageProps.showAuthor = true
 			const wrapper = shallowMount(Message, {
 				localVue,
 				store,
