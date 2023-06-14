@@ -341,7 +341,7 @@ export default {
 		 */
 		showAuthor: {
 			type: Boolean,
-			default: true,
+			default: false,
 		},
 		/**
 		 * Specifies if the message is temporary in order to display the spinner instead
@@ -349,14 +349,14 @@ export default {
 		 */
 		isTemporary: {
 			type: Boolean,
-			required: true,
+			default: false,
 		},
 		/**
 		 * Specifies if the message is the first of a group of same-author messages.
 		 */
 		isFirstMessage: {
 			type: Boolean,
-			required: true,
+			default: false,
 		},
 		/**
 		 * Specifies if the message can be replied to.
