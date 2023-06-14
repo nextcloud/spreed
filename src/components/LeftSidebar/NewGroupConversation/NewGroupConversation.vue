@@ -100,43 +100,43 @@
 						:success="success"
 						:is-public="isPublic" />
 				</div>
-				<!-- Navigation: different buttons with different actions and
+			</div>
+			<!-- Navigation: different buttons with different actions and
 				placement are rendered depending on the current page -->
-				<div class="navigation">
-					<!-- First page -->
-					<NcButton v-if="page===0 && isPublic"
-						:disabled="disabled"
-						type="tertiary"
-						@click="handleCreateConversation">
-						{{ t('spreed', 'Create conversation') }}
-					</NcButton>
-					<NcButton v-if="page===0"
-						type="primary"
-						:disabled="disabled"
-						class="navigation__button-right"
-						@click="handleSetConversationName">
-						{{ t('spreed', 'Add participants') }}
-					</NcButton>
-					<!-- Second page -->
-					<NcButton v-if="page===1"
-						type="tertiary"
-						@click="handleClickBack">
-						{{ t('spreed', 'Back') }}
-					</NcButton>
-					<NcButton v-if="page===1"
-						type="primary"
-						class="navigation__button-right"
-						@click="handleCreateConversation">
-						{{ t('spreed', 'Create conversation') }}
-					</NcButton>
-					<!-- Third page -->
-					<NcButton v-if="page===2 && (error || isPublic)"
-						type="primary"
-						class="navigation__button-right"
-						@click="closeModal">
-						{{ t('spreed', 'Close') }}
-					</NcButton>
-				</div>
+			<div class="navigation">
+				<!-- First page -->
+				<NcButton v-if="page===0 && isPublic"
+					:disabled="disabled"
+					type="tertiary"
+					@click="handleCreateConversation">
+					{{ t('spreed', 'Create conversation') }}
+				</NcButton>
+				<NcButton v-if="page===0"
+					type="primary"
+					:disabled="disabled"
+					class="navigation__button-right"
+					@click="handleSetConversationName">
+					{{ t('spreed', 'Add participants') }}
+				</NcButton>
+				<!-- Second page -->
+				<NcButton v-if="page===1"
+					type="tertiary"
+					@click="handleClickBack">
+					{{ t('spreed', 'Back') }}
+				</NcButton>
+				<NcButton v-if="page===1"
+					type="primary"
+					class="navigation__button-right"
+					@click="handleCreateConversation">
+					{{ t('spreed', 'Create conversation') }}
+				</NcButton>
+				<!-- Third page -->
+				<NcButton v-if="page===2 && (error || isPublic)"
+					type="primary"
+					class="navigation__button-right"
+					@click="closeModal">
+					{{ t('spreed', 'Close') }}
+				</NcButton>
 			</div>
 		</NcModal>
 	</div>
@@ -456,6 +456,7 @@ export default {
 	the margin applied to the content is added to the total modal width,
 	so here we subtract it to the width and height of the content.
 	*/
+	height: auto;
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
@@ -496,15 +497,26 @@ it back */
 	height: 900px;
 }
 
+:deep(){
+	.modal-wrapper--normal{
+		.modal-container {
+			height: max-content;
+		}
+	}
+}
+
 .navigation {
+	position: sticky;
+    bottom: 0;
 	display: flex;
 	justify-content: space-between;
 	flex: 0 0 40px;
-	height: 50px;
 	background-color: var(--color-main-background);
-	box-shadow: 0 -10px 5px var(--color-main-background);
+	box-shadow:0 -2px 5px var(--color-background-darker);
 	z-index: 1;
-	width: 100%;
+	width: 600px;
+	padding: 10px;
+	height: auto;
 
 	&__button-right {
 		margin-left: auto;
