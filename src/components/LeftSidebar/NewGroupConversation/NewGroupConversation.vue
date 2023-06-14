@@ -462,7 +462,6 @@ export default {
 	flex-direction: column;
 	justify-content: space-between;
 	position: relative;
-	gap: 10px;
 
 	&__content {
 		/**
@@ -470,7 +469,6 @@ export default {
 		 * Bottom: 44px buttons + 12 px margin
 		 * Total: 98px
 		 */
-		height: calc(100% - 98px);
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
@@ -497,26 +495,20 @@ it back */
 	height: 900px;
 }
 
-:deep(){
-	.modal-wrapper--normal{
-		.modal-container {
+:deep(.modal-wrapper .modal-container) {
 			height: max-content;
-		}
-	}
 }
 
 .navigation {
 	position: sticky;
-    bottom: 0;
+    bottom: -1px;
 	display: flex;
 	justify-content: space-between;
 	flex: 0 0 40px;
 	background-color: var(--color-main-background);
-	box-shadow:0 -2px 5px var(--color-background-darker);
+	box-shadow: 0 -10px 5px var(--color-main-background);
 	z-index: 1;
-	width: 600px;
-	padding: 10px;
-	height: auto;
+	padding: 10px 20px;
 
 	&__button-right {
 		margin-left: auto;
