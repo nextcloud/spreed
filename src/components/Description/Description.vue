@@ -317,6 +317,7 @@ export default {
 		border-color: transparent;
 		opacity: 1;
 		border-radius: 0;
+		user-select: text;
 	}
 }
 
