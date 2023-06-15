@@ -41,6 +41,7 @@
 						:title="t('spreed', 'Conversations')" />
 					<Conversation v-for="item of conversationsList"
 						:key="item.id"
+						ref="conversations"
 						:item="item" />
 					<template v-if="!initialisedConversations">
 						<LoadingPlaceholder type="conversations" />
@@ -515,8 +516,11 @@ export default {
 		handleScroll() {
 			this.isScrolledToTop = this.$refs.container.scrollTop === 0
 		},
+		elementIsAboveViewpoint(container, element) {
+			return element.offsetTop < container.scrollTop
+		},
 		elementIsBelowViewpoint(container, element) {
-			return element.offsetTop > container.scrollTop + container.clientHeight
+			return element.offsetTop + element.offsetHeight > container.scrollTop + container.clientHeight
 		},
 		handleUnreadMention() {
 			this.unreadNum = 0
@@ -544,22 +548,24 @@ export default {
 		},
 
 		scrollToConversation(token) {
-			// FIXME: not sure why we can't scroll earlier even when the element exists already
-			// when too early, Firefox only scrolls a few pixels towards the element but
-			// not enough to make it visible
-			setTimeout(() => {
-				const conversation = document.getElementById(`conversation_${token}`)
+			this.$nextTick(() => {
+				const conversation = this.$refs.conversations[this.conversationsList.findIndex(item => item.token === token)].$el
 				if (!conversation) {
 					return
 				}
-				this.$nextTick(() => {
-					conversation.scrollIntoView({
+
+				if (this.elementIsBelowViewpoint(this.$refs.container, conversation)) {
+					this.$refs.container.scrollTo({
+						top: conversation.offsetTop + conversation.offsetHeight * 2 - this.$refs.container.clientHeight,
 						behavior: 'smooth',
-						block: 'start',
-						inline: 'nearest',
 					})
-				})
-			}, 500)
+				} else if (this.elementIsAboveViewpoint(this.$refs.container, conversation)) {
+					this.$refs.container.scrollTo({
+						top: conversation.offsetTop - conversation.offsetHeight,
+						behavior: 'smooth',
+					})
+				}
+			})
 		},
 
 		onRouteChange({ from, to }) {
