@@ -967,10 +967,10 @@ export default {
 		position: absolute;
 		top: calc(50% - var(--default-clickable-area) / 2);
 		&__previous {
-			left: -4px;
+			left: 8px;
 		}
 		&__next {
-			right: -4px;
+			right: 8px;
 		}
 	}
 
