@@ -452,10 +452,6 @@ export default {
 }
 
 .new-group-conversation {
-	/** This next 2 rules are pretty hacky, with the modal component somehow
-	the margin applied to the content is added to the total modal width,
-	so here we subtract it to the width and height of the content.
-	*/
 	height: auto;
 	padding: 20px;
 	display: flex;
@@ -464,11 +460,6 @@ export default {
 	position: relative;
 
 	&__content {
-		/**
-		 * Top: 30px line height header + 12px margin
-		 * Bottom: 44px buttons + 12 px margin
-		 * Total: 98px
-		 */
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
@@ -496,19 +487,19 @@ it back */
 }
 
 :deep(.modal-wrapper .modal-container) {
-			height: max-content;
+	height: max-content;
 }
 
 .navigation {
 	position: sticky;
-    bottom: -1px;
+	bottom: -1px;
 	display: flex;
 	justify-content: space-between;
 	flex: 0 0 40px;
 	background-color: var(--color-main-background);
 	box-shadow: 0 -10px 5px var(--color-main-background);
 	z-index: 1;
-	padding: 10px 20px;
+	padding: 0 20px 20px;
 
 	&__button-right {
 		margin-left: auto;
