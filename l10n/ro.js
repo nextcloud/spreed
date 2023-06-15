@@ -320,6 +320,7 @@ OC.L10N.register(
     "Remove from favorites" : "Șterge din favorite",
     "Add to favorites" : "Adăugați la favorite",
     "Loading" : "Loading",
+    "No search results" : "Căutarea nu are rezultate",
     "Groups" : "Grupuri",
     "Circles" : "Cercuri",
     "Create a new group conversation" : "Creați o nouă conversație de grup",
