@@ -138,7 +138,7 @@ export default {
 				id: model.attributes.peerId,
 				reaction,
 				name: isLocalModel
-					? this.$store.getters.getDisplayName()
+					? this.$store.getters.getDisplayName() || this.$store.getters.getGuestName()
 					: this.getParticipantName(model),
 				seed: Math.random(),
 			})
