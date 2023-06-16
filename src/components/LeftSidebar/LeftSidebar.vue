@@ -41,7 +41,7 @@
 						:title="t('spreed', 'Conversations')" />
 					<Conversation v-for="item of conversationsList"
 						:key="item.id"
-						ref="conversations"
+						:ref="`conversation-${item.token}`"
 						:item="item" />
 					<template v-if="!initialisedConversations">
 						<LoadingPlaceholder type="conversations" />
@@ -548,7 +548,12 @@ export default {
 
 		scrollToConversation(token) {
 			this.$nextTick(() => {
-				const conversation = this.$refs.conversations[this.conversationsList.findIndex(item => item.token === token)].$el
+				// In Vue 2 ref on v-for is always an array and its order is not guaranteed to match the order of v-for source
+				// See https://github.com/vuejs/vue/issues/4952#issuecomment-280661367
+				// Fixed in Vue 3
+				// Temp solution - use unique ref name for each v-for element. The value is still array but with one element
+				// TODO: Vue3: remove [0] here or use object for template refs
+				const conversation = this.$refs[`conversation-${token}`]?.[0].$el
 				if (!conversation) {
 					return
 				}
