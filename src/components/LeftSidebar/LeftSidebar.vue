@@ -23,42 +23,62 @@
 	<NcAppNavigation :aria-label="t('spreed', 'Conversation list')">
 		<div class="new-conversation"
 			:class="{ 'new-conversation--scrolled-down': !isScrolledToTop }">
+
+			<!-- Options -->
+			<div class="options">
+				<NcActions class ='filters-button'>
+					<template #icon>
+						<FilterIcon :size="15" />
+					</template>
+					<NcActionButton close-after-click
+						@click="insertValue(t('spreed','is:mentioned'))">
+						<template #icon>
+							<AtIcon :size="20" />
+						</template>
+						{{ t('spreed','Filter unread mentions') }}
+					</NcActionButton>
+
+					<NcActionButton close-after-click
+						@click="insertValue(t('spreed','is:unread'))">
+						<template #icon>
+							<MessageBadge :size="20" />
+						</template>
+						{{ t('spreed','Filter unread messages') }}
+					</NcActionButton>
+				</NcActions>
+
+				<NcActions >
+					<template #icon>
+						<PlusIcon :size="20" />
+					</template>
+					<NcActionButton v-if="canStartConversations"
+						close-after-click
+						@click="toggleNewGroupConversation(true)">
+						<template #icon>
+							<PlusIcon :size="20" />
+						</template>
+						{{ t('spreed','Create a new conversation') }}
+					</NcActionButton>
+					<NcActionButton close-after-click>
+						<template #icon>
+							<ListIcon :size="20" />
+						</template>
+						{{ t('spreed','List of open conversations') }}
+					</NcActionButton>
+				</NcActions>
+			</div>
+
 			<SearchBox v-model="searchText"
 				class="conversations-search"
+				:class="{ 'conversations-search--expanded': isFocused }"
 				:is-searching="isSearching"
+				@focus="isFocused = true"
+				@focusCancel ="isFocused = false"
 				@input="debounceFetchSearchResults"
 				@submit="onInputEnter"
 				@keydown.enter.native="handleEnter"
 				@abort-search="abortSearch" />
-
-			<!-- Options -->
-			<NcActions>
-				<NcActionButton v-if="canStartConversations"
-					close-after-click
-					@click="toggleNewGroupConversation(true)">
-					<template #icon>
-						<PlusIcon :size="20" />
-					</template>
-					{{ t('spreed','Create a new conversation') }}
-				</NcActionButton>
-
-				<NcActionButton close-after-click
-					@click="insertValue(t('spreed','is:mentioned'))">
-					<template #icon>
-						<AtIcon :size="20" />
-					</template>
-					{{ t('spreed','Filter unread mentions') }}
-				</NcActionButton>
-
-				<NcActionButton close-after-click
-					@click="insertValue(t('spreed','is:unread'))">
-					<template #icon>
-						<MessageBadge :size="20" />
-					</template>
-					{{ t('spreed','Filter unread messages') }}
-				</NcActionButton>
-			</NcActions>
-
+			
 			<!-- New Conversation -->
 			<NewGroupConversation ref="newGroupConversation"
 				:show-modal="isNewGroupConversationOpen"
@@ -169,6 +189,9 @@ import debounce from 'debounce'
 import AtIcon from 'vue-material-design-icons/At.vue'
 import MessageBadge from 'vue-material-design-icons/MessageBadge.vue'
 import PlusIcon from 'vue-material-design-icons/Plus.vue'
+import FilterIcon from 'vue-material-design-icons/Filter.vue'
+import ListIcon from 'vue-material-design-icons/FormatListBulleted.vue'
+import Pencil from 'vue-material-design-icons/Pencil.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -218,6 +241,8 @@ export default {
 		PlusIcon,
 		AtIcon,
 		MessageBadge,
+		FilterIcon,
+		ListIcon,
 	},
 
 	mixins: [
@@ -249,6 +274,7 @@ export default {
 			roomListModifiedBefore: 0,
 			forceFullRoomListRefreshAfterXLoops: 0,
 			isNewGroupConversationOpen: false,
+			isFocused: false
 		}
 	},
 
@@ -370,9 +396,7 @@ export default {
 		focusCancel() {
 			return this.abortSearch()
 		},
-		isFocused() {
-			return this.isSearching
-		},
+
 		scrollBottomUnread() {
 			this.preventFindingUnread = true
 			this.$refs.container.scrollTo({
@@ -718,10 +742,25 @@ export default {
 
 .conversations-search {
 	flex-grow: 1;
+	transition: all 0.7s ease;
+	width: 65%;
+	position : absolute;
+	left: 8px; //padding
 
 	:deep(.input-field__input) {
 		border-radius: var(--border-radius-pill);
 	}
+	&--expanded {
+		width: 95%;
+	}
+}
+
+
+.options{
+	position: relative;
+	left : calc(65% + 7px);
+	display: flex;
+	gap: 0.5px;
 }
 
 .settings-button {
