@@ -22,7 +22,6 @@
 <template>
 	<NcModal v-if="modal"
 		class="talk-modal"
-		:container="container"
 		@close="closeModal">
 		<div class="media-settings">
 			<h2 class="media-settings__title">
@@ -616,4 +615,5 @@ export default {
 	display: flex !important;
 	max-width: 500px !important;
 }
+
 </style>
