@@ -13,6 +13,7 @@ OC.L10N.register(
     "Limit to groups" : "Luba gruppidele",
     "Everyone" : "Igaüks",
     "Save changes" : "Salvesta muudatused",
+    "Saving …" : "Salvestamine …",
     "Saved!" : "Salvestatud!",
     "Name" : "Nimi",
     "None" : "Pole",
