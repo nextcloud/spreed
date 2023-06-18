@@ -34,80 +34,108 @@
 		</div>
 		<template #list>
 			<li ref="container" class="left-sidebar__list">
-				<ul ref="scroller"
-					class="scroller"
-					@scroll="debounceHandleScroll">
+				<template v-if="PERF_TEST.USE_VIRTUAL_SCROLLING">
 					<NcAppNavigationCaption :class="{'hidden-visually': !isSearching}"
 						:title="t('spreed', 'Conversations')" />
-					<Conversation v-for="item of conversationsList"
-						:key="item.id"
-						ref="conversations"
-						:item="item" />
-					<template v-if="!initialisedConversations">
-						<LoadingPlaceholder type="conversations" />
-					</template>
-					<Hint v-else-if="searchText && !conversationsList.length"
-						:hint="t('spreed', 'No matches')" />
-					<template v-if="isSearching">
-						<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
-							<NcAppNavigationCaption :title="t('spreed', 'Open conversations')" />
-							<Conversation v-for="item of searchResultsListedConversations"
-								:key="item.id"
-								:item="item"
-								is-search-result />
+					<RecycleScroller ref="scroller"
+						class="scroller"
+						list-tag="ul"
+						item-tag="li"
+						:items="conversationsList"
+						:item-size="64"
+						key-field="token"
+						@scroll="debounceHandleScroll">
+						<template #default="{ item }">
+							<Conversation :ref="`conversation-${item.token}`" :item="item" />
 						</template>
-						<template v-if="searchResultsUsers.length !== 0">
-							<NcAppNavigationCaption :title="t('spreed', 'Users')" />
-							<NcListItem v-for="item of searchResultsUsers"
+					</RecycleScroller>
+				</template>
+				<template v-else>
+					<ul ref="scroller"
+						class="scroller"
+						@scroll="debounceHandleScroll">
+						<NcAppNavigationCaption :class="{'hidden-visually': !isSearching}"
+							:title="t('spreed', 'Conversations')" />
+						<template v-if="PERF_TEST.USE_DUMMY_CONVERSATION">
+							<div v-for="item of conversationsList"
 								:key="item.id"
-								:title="item.label"
-								@click="createAndJoinConversation(item)">
-								<template #icon>
-									<ConversationIcon :item="iconData(item)"
-										:disable-menu="true" />
-								</template>
-							</NcListItem>
+								ref="conversations"
+								:item="item">
+								{{ item.displayName }}
+							</div>
 						</template>
-						<template v-if="!showStartConversationsOptions">
-							<NcAppNavigationCaption v-if="searchResultsUsers.length === 0"
-								:title="t('spreed', 'Users')" />
+						<template v-else>
+							<Conversation v-for="item of conversationsList"
+								:key="item.id"
+								ref="conversations"
+								:item="item" />
+						</template>
+						<template v-if="!initialisedConversations">
+							<LoadingPlaceholder type="conversations" />
+						</template>
+						<Hint v-else-if="searchText && !conversationsList.length"
+							:hint="t('spreed', 'No matches')" />
+						<template v-if="isSearching">
+							<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
+								<NcAppNavigationCaption :title="t('spreed', 'Open conversations')" />
+								<Conversation v-for="item of searchResultsListedConversations"
+									:key="item.id"
+									:item="item"
+									is-search-result />
+							</template>
+							<template v-if="searchResultsUsers.length !== 0">
+								<NcAppNavigationCaption :title="t('spreed', 'Users')" />
+								<NcListItem v-for="item of searchResultsUsers"
+									:key="item.id"
+									:title="item.label"
+									@click="createAndJoinConversation(item)">
+									<template #icon>
+										<ConversationIcon :item="iconData(item)"
+											:disable-menu="true" />
+									</template>
+								</NcListItem>
+							</template>
+							<template v-if="!showStartConversationsOptions">
+								<NcAppNavigationCaption v-if="searchResultsUsers.length === 0"
+									:title="t('spreed', 'Users')" />
+								<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+								<Hint v-else :hint="t('spreed', 'No search results')" />
+							</template>
+						</template>
+						<template v-if="showStartConversationsOptions">
+							<template v-if="searchResultsGroups.length !== 0">
+								<NcAppNavigationCaption :title="t('spreed', 'Groups')" />
+								<NcListItem v-for="item of searchResultsGroups"
+									:key="item.id"
+									:title="item.label"
+									@click="createAndJoinConversation(item)">
+									<template #icon>
+										<ConversationIcon :item="iconData(item)"
+											:disable-menu="true" />
+									</template>
+								</NcListItem>
+							</template>
+
+							<template v-if="searchResultsCircles.length !== 0">
+								<NcAppNavigationCaption :title="t('spreed', 'Circles')" />
+								<NcListItem v-for="item of searchResultsCircles"
+									:key="item.id"
+									:title="item.label"
+									@click="createAndJoinConversation(item)">
+									<template #icon>
+										<ConversationIcon :item="iconData(item)"
+											:disable-menu="true" />
+									</template>
+								</NcListItem>
+							</template>
+
+							<NcAppNavigationCaption v-if="sourcesWithoutResults"
+								:title="sourcesWithoutResultsList" />
 							<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 							<Hint v-else :hint="t('spreed', 'No search results')" />
 						</template>
-					</template>
-					<template v-if="showStartConversationsOptions">
-						<template v-if="searchResultsGroups.length !== 0">
-							<NcAppNavigationCaption :title="t('spreed', 'Groups')" />
-							<NcListItem v-for="item of searchResultsGroups"
-								:key="item.id"
-								:title="item.label"
-								@click="createAndJoinConversation(item)">
-								<template #icon>
-									<ConversationIcon :item="iconData(item)"
-										:disable-menu="true" />
-								</template>
-							</NcListItem>
-						</template>
-
-						<template v-if="searchResultsCircles.length !== 0">
-							<NcAppNavigationCaption :title="t('spreed', 'Circles')" />
-							<NcListItem v-for="item of searchResultsCircles"
-								:key="item.id"
-								:title="item.label"
-								@click="createAndJoinConversation(item)">
-								<template #icon>
-									<ConversationIcon :item="iconData(item)"
-										:disable-menu="true" />
-								</template>
-							</NcListItem>
-						</template>
-
-						<NcAppNavigationCaption v-if="sourcesWithoutResults"
-							:title="sourcesWithoutResultsList" />
-						<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-						<Hint v-else :hint="t('spreed', 'No search results')" />
-					</template>
-				</ul>
+					</ul>
+				</template>
 			</li>
 			<NcButton v-if="!preventFindingUnread && unreadNum > 0"
 				class="unread-mention-button"
@@ -131,6 +159,7 @@
 
 <script>
 import debounce from 'debounce'
+import { RecycleScroller } from 'vue-virtual-scroller'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -158,6 +187,8 @@ import {
 import { EventBus } from '../../services/EventBus.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
 
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+
 export default {
 
 	name: 'LeftSidebar',
@@ -173,6 +204,7 @@ export default {
 		LoadingPlaceholder,
 		NcListItem,
 		ConversationIcon,
+		RecycleScroller,
 	},
 
 	mixins: [
@@ -277,11 +309,22 @@ export default {
 
 	mounted() {
 		// Refreshes the conversations every 30 seconds
-		this.refreshTimer = window.setInterval(() => {
+		window.PERF_TEST.START = () => {
 			if (!this.isFetchingConversations) {
-				this.fetchConversations()
+				window.PERF_TEST.isStarted = true
+				console.log('🔥 START TEST - Sever performance/CPU issue with at least firefox due to Talk page rendering')
+				this.fetchConversations().then(() => {
+					this.$nextTick(() => {
+						console.timeEnd('🚫 BLOCKING state update with reactivity trigger and VDOM update')
+					})
+				})
 			}
-		}, 30000)
+		}
+		// this.refreshTimer = window.setInterval(() => {
+		// 	if (!this.isFetchingConversations) {
+		// 		this.fetchConversations()
+		// 	}
+		// }, 30000)
 
 		EventBus.$on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.$once('conversations-received', this.handleUnreadMention)
@@ -548,7 +591,7 @@ export default {
 
 		scrollToConversation(token) {
 			this.$nextTick(() => {
-				const conversation = this.$refs.conversations[this.conversationsList.findIndex(item => item.token === token)].$el
+				const conversation = null// this.$refs.conversations[this.conversationsList.findIndex(item => item.token === token)].$el
 				if (!conversation) {
 					return
 				}
@@ -617,6 +660,7 @@ export default {
 @import '../../assets/variables';
 
 .scroller {
+	height: 100%;
 	padding: 0 4px 0 6px;
 }
 

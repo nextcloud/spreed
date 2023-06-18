@@ -20,100 +20,127 @@
 -->
 
 <template>
-	<NcListItem ref="listItem"
+	<RouterLink v-if="PERF_TEST.USE_SIMPLE_CONVERSATION"
+		ref="listItem"
 		:title="item.displayName"
 		:class="{'unread-mention-conversation': item.unreadMention}"
-		:anchor-id="`conversation_${item.token}`"
-		:actions-aria-label="t('spreed', 'Conversation actions')"
-		:active="isActive"
+		:aria-label="t('spreed', 'Conversation actions')"
 		:to="to"
 		:bold="!!item.unreadMessages"
 		:counter-number="item.unreadMessages"
 		:counter-type="counterType"
+		:active="isActive"
 		@click="onClick">
-		<template #icon>
-			<ConversationIcon :item="item"
-				:hide-favorite="false"
-				:hide-call="false"
-				:disable-menu="true" />
+		<ConversationIcon :item="item"
+			:hide-favorite="false"
+			:hide-call="false"
+			:disable-menu="true" />
+		{{ item.displayName }}
+		{{ isActive }}
+		<strong v-if="item.unreadMessages">
+			class="subtitle">
+			{{ conversationInformation }}
+		</strong>
+		<template v-else>
+			{{ conversationInformation }}
 		</template>
-		<template #subtitle>
-			<strong v-if="item.unreadMessages"
-				class="subtitle">
-				{{ conversationInformation }}
-			</strong>
-			<template v-else>
-				{{ conversationInformation }}
+	</RouterLink>
+	<ul v-else>
+		<NcListItem ref="listItem"
+			:title="item.displayName"
+			:class="{'unread-mention-conversation': item.unreadMention}"
+			:anchor-id="`conversation_${item.token}`"
+			:actions-aria-label="t('spreed', 'Conversation actions')"
+			:active="isActive"
+			:to="to"
+			:bold="!!item.unreadMessages"
+			:counter-number="item.unreadMessages"
+			:counter-type="counterType"
+			@click="onClick">
+			<template v-if="!PERF_TEST.HIDE_CONVERSATION_ICON" #icon>
+				<ConversationIcon :item="item"
+					:hide-favorite="false"
+					:hide-call="false"
+					:disable-menu="true" />
 			</template>
-		</template>
-		<template v-if="!isSearchResult" #actions>
-			<NcActionButton v-if="canFavorite"
-				:close-after-click="true"
-				@click="toggleFavoriteConversation">
-				<template #icon>
-					<Star v-if="item.isFavorite" :size="20" />
-					<Star v-else :size="20" :fill-color="'#FFCC00'" />
+			<template #subtitle>
+				<strong v-if="item.unreadMessages"
+					class="subtitle">
+					{{ conversationInformation }}
+				</strong>
+				<template v-else>
+					{{ conversationInformation }}
 				</template>
-				{{ labelFavorite }}
-			</NcActionButton>
-			<NcActionButton icon="icon-clippy"
-				@click.stop="handleCopyLink">
-				{{ t('spreed', 'Copy link') }}
-			</NcActionButton>
-			<NcActionButton v-if="item.unreadMessages"
-				:close-after-click="true"
-				@click="markConversationAsRead">
-				<template #icon>
-					<EyeOutline :size="16" />
-				</template>
-				{{ t('spreed', 'Mark as read') }}
-			</NcActionButton>
-			<NcActionButton v-else
-				:close-after-click="true"
-				@click="markConversationAsUnread">
-				<template #icon>
-					<EyeOffOutline :size="16" />
-				</template>
-				{{ t('spreed', 'Mark as unread') }}
-			</NcActionButton>
-			<NcActionButton :close-after-click="true"
-				@click="showConversationSettings">
-				<template #icon>
-					<Cog :size="20" />
-				</template>
-				{{ t('spreed', 'Conversation settings') }}
-			</NcActionButton>
-			<NcActionButton v-if="canLeaveConversation"
-				:close-after-click="true"
-				@click="leaveConversation">
-				<template #icon>
-					<ExitToApp :size="16" />
-				</template>
-				{{ t('spreed', 'Leave conversation') }}
-			</NcActionButton>
-			<NcActionButton v-if="canDeleteConversation"
-				:close-after-click="true"
-				class="critical"
-				@click="deleteConversation">
-				<template #icon>
-					<Delete :size="16" />
-				</template>
-				{{ t('spreed', 'Delete conversation') }}
-			</NcActionButton>
-		</template>
-		<template v-else-if="item.token" #actions>
-			<NcActionButton close-after-click @click="onActionClick">
-				<template #icon>
-					<ArrowRight :size="16" />
-				</template>
-				{{ t('spreed', 'Join conversation') }}
-			</NcActionButton>
-			<NcActionButton icon="icon-clippy"
-				@click.stop="handleCopyLink">
-				{{ t('spreed', 'Copy link') }}
-			</NcActionButton>
-		</template>
-	</NcListItem>
+			</template>
+			<template v-if="!PERF_TEST.HIDE_NC_ACTION_BUTTON && !isSearchResult" #actions>
+				<NcActionButton v-if="canFavorite"
+					:close-after-click="true"
+					@click="toggleFavoriteConversation">
+					<template #icon>
+						<Star v-if="item.isFavorite" :size="20" />
+						<Star v-else :size="20" :fill-color="'#FFCC00'" />
+					</template>
+					{{ labelFavorite }}
+				</NcActionButton>
+				<NcActionButton icon="icon-clippy"
+					@click.stop="handleCopyLink">
+					{{ t('spreed', 'Copy link') }}
+				</NcActionButton>
+				<NcActionButton v-if="item.unreadMessages"
+					:close-after-click="true"
+					@click="markConversationAsRead">
+					<template #icon>
+						<EyeOutline :size="16" />
+					</template>
+					{{ t('spreed', 'Mark as read') }}
+				</NcActionButton>
+				<NcActionButton v-else
+					:close-after-click="true"
+					@click="markConversationAsUnread">
+					<template #icon>
+						<EyeOffOutline :size="16" />
+					</template>
+					{{ t('spreed', 'Mark as unread') }}
+				</NcActionButton>
+				<NcActionButton :close-after-click="true"
+					@click="showConversationSettings">
+					<template #icon>
+						<Cog :size="20" />
+					</template>
+					{{ t('spreed', 'Conversation settings') }}
+				</NcActionButton>
+				<NcActionButton v-if="canLeaveConversation"
+					:close-after-click="true"
+					@click="leaveConversation">
+					<template #icon>
+						<ExitToApp :size="16" />
+					</template>
+					{{ t('spreed', 'Leave conversation') }}
+				</NcActionButton>
+				<NcActionButton v-if="canDeleteConversation"
+					:close-after-click="true"
+					class="critical"
+					@click="deleteConversation">
+					<template #icon>
+						<Delete :size="16" />
+					</template>
+					{{ t('spreed', 'Delete conversation') }}
+				</NcActionButton>
+			</template>
+			<template v-else-if="!PERF_TEST.HIDE_NC_ACTION_BUTTON && item.token" #actions>
+				<NcActionButton close-after-click @click="onActionClick">
+					<template #icon>
+						<ArrowRight :size="16" />
+					</template>
+					{{ t('spreed', 'Join conversation') }}
+				</NcActionButton>
+				<NcActionButton icon="icon-clippy"
+					@click.stop="handleCopyLink">
+					{{ t('spreed', 'Copy link') }}
+				</NcActionButton>
+			</template>
+		</NcListItem>
+	</ul>
 </template>
 
 <script>

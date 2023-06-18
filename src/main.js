@@ -52,6 +52,38 @@ import 'leaflet/dist/leaflet.css'
 // eslint-disable-next-line
 import 'leaflet-defaulticon-compatibility'
 
+window.PERF_TEST = {
+	isStarted: false,
+	START: () => {},
+	_TRY_FLAG(flag) {
+		window.PERF_TEST.USE_SMART_UPDATE = false
+		window.PERF_TEST.USE_VIRTUAL_SCROLLING = false
+		window.PERF_TEST.USE_DUMMY_CONVERSATION = false
+		window.PERF_TEST.USE_SIMPLE_CONVERSATION = false
+		window.PERF_TEST.HIDE_CONVERSATION_ICON = false
+		window.PERF_TEST.HIDE_NC_ACTION_BUTTON = false
+		if (flag) {
+			window.PERF_TEST[flag] = true
+		}
+		Vue.prototype.$forceUpdate()
+	},
+	USE_SMART_UPDATE: false,
+	USE_VIRTUAL_SCROLLING: false,
+	USE_DUMMY_CONVERSATION: false,
+	USE_SIMPLE_CONVERSATION: false,
+	HIDE_CONVERSATION_ICON: false,
+	HIDE_NC_ACTION_BUTTON: false,
+	TRY_USE_SMART_UPDATE: () => window.PERF_TEST._TRY_FLAG('USE_SMART_UPDATE'),
+	TRY_USE_VIRTUAL_SCROLLING: () => window.PERF_TEST._TRY_FLAG('USE_VIRTUAL_SCROLLING'),
+	TRY_USE_DUMMY_CONVERSATION: () => window.PERF_TEST._TRY_FLAG('USE_DUMMY_CONVERSATION'),
+	TRY_USE_SIMPLE_CONVERSATION: () => window.PERF_TEST._TRY_FLAG('USE_SIMPLE_CONVERSATION'),
+	TRY_HIDE_CONVERSATION_ICON: () => window.PERF_TEST._TRY_FLAG('HIDE_CONVERSATION_ICON'),
+	TRY_HIDE_NC_ACTION_BUTTON: () => window.PERF_TEST._TRY_FLAG('HIDE_NC_ACTION_BUTTON'),
+	TRY_RESET: () => window.PERF_TEST._TRY_FLAG(false),
+}
+
+Vue.prototype.PERF_TEST = window.PERF_TEST
+
 if (!IS_DESKTOP) {
 	// CSP config for webpack dynamic chunk loading
 	// eslint-disable-next-line

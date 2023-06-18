@@ -19,7 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import Vue from 'vue'
+import Vue, { set, del } from 'vue'
 
 import { getCurrentUser } from '@nextcloud/auth'
 import { showInfo, showSuccess, showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
@@ -122,6 +122,45 @@ const mutations = {
 	addConversation(state, conversation) {
 		Vue.set(state.conversations, conversation.token, conversation)
 	},
+
+	addConversations(state, conversations) {
+		const applyUpdatesToObject = (oldObject, newObject) => {
+			// Delete removed properties
+			for (const oldObjectKey of Object.keys(oldObject)) {
+				if (!Object.hasOwn(newObject, oldObjectKey)) {
+					del(oldObject, oldObjectKey)
+					console.log('DELETED', oldObjectKey, newObject, oldObject)
+				}
+			}
+			// Add new properties and update old ones
+			for (const newObjectKey of Object.keys(newObject)) {
+				if (!Object.hasOwn(oldObject, newObjectKey)) {
+					// Add new property
+					set(oldObject, newObjectKey, newObject[newObjectKey])
+					console.log('SET NEW', oldObject, newObjectKey, newObject[newObjectKey])
+				} else if (typeof newObject[newObjectKey] === 'object' && typeof oldObject[newObjectKey] === 'object') {
+					// This property is an object in both - update recursively
+					applyUpdatesToObject(oldObject[newObjectKey], newObject[newObjectKey])
+				} else {
+					// Update the property
+					// If new value is the same - no problem, Vue ignores them
+					if (newObject[newObjectKey] !== oldObject[newObjectKey]) {
+						set(oldObject, newObjectKey, newObject[newObjectKey])
+						console.log('SET OLD')
+					}
+				}
+			}
+		}
+
+		// Create a new conversation-By-Token object
+		const newConversations = {}
+		for (const conversation of conversations) {
+			newConversations[conversation.token] = conversation
+		}
+
+		applyUpdatesToObject(state.conversations, newConversations)
+	},
+
 	/**
 	 * Deletes a conversation from the store.
 	 *
@@ -629,7 +668,7 @@ const actions = {
 		}
 	},
 
-	async fetchConversations({ dispatch }, { modifiedSince }) {
+	async fetchConversations({ dispatch, commit }, { modifiedSince }) {
 		try {
 			dispatch('clearMaintenanceMode')
 			modifiedSince = modifiedSince || 0
@@ -643,14 +682,21 @@ const actions = {
 				}
 			}
 
+			window.PERF_TEST.isStarted && console.time('📥 REQUEST - re-fetching conversations')
 			const response = await fetchConversations(options)
+			window.PERF_TEST.isStarted && console.timeEnd('📥 REQUEST - re-fetching conversations')
+			window.PERF_TEST.isStarted && console.time('🚫 BLOCKING state update with reactivity trigger and VDOM update')
 			dispatch('updateTalkVersionHash', response)
-			if (modifiedSince === 0) {
-				dispatch('purgeConversationsStore')
+			if (window.PERF_TEST.USE_SMART_UPDATE) {
+				commit('addConversations', response.data.ocs.data)
+			} else {
+				if (modifiedSince === 0) {
+					dispatch('purgeConversationsStore')
+				}
+				response.data.ocs.data.forEach(conversation => {
+					dispatch('addConversation', conversation)
+				})
 			}
-			response.data.ocs.data.forEach(conversation => {
-				dispatch('addConversation', conversation)
-			})
 			return response
 		} catch (error) {
 			if (error?.response) {

@@ -27,6 +27,13 @@
 		<div v-if="iconClass"
 			class="avatar icon"
 			:class="iconClass" />
+		<!-- img is used here instead of NcAvatar to explicitly set key required to avoid glitching in virtual scrolling  -->
+		<!--		<img v-else-if="!isOneToOne"-->
+		<!--			:key="avatarUrl"-->
+		<!--			:src="avatarUrl"-->
+		<!--			:width="size"-->
+		<!--			:height="size"-->
+		<!--			class="conversation-icon__img">-->
 		<NcAvatar v-else-if="!isOneToOne"
 			:url="avatarUrl"
 			:size="size" />
@@ -244,6 +251,10 @@ $icon-size: var(--icon-size, 44px);
 	width: $icon-size;
 	height: $icon-size;
 	position: relative;
+
+	.img {
+		border-radius: 100%;
+	}
 
 	.avatar.icon {
 		width: $icon-size;
