@@ -978,6 +978,7 @@
     "Establishing signaling connection is taking longer than expected …" : "Встановлення сигнального з'єднання триває довше, ніж очікувалося ...",
     "Failed to establish signaling connection. Retrying …" : "Не вдалося встановити сигнальне з'єднання. Повторна спроба ...",
     "Failed to establish signaling connection. Something might be wrong in the signaling server configuration" : "Не вдалося встановити сигнальне з'єднання. Можливо, щось не так у конфігурації сигнального сервера",
+    "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administration." : "Встановлений сиґнальний сервер потрібно оновити, щоби його версія була сумісною з версією Talk. Будь ласка, сконтактуйте з адміністратором.",
     "Default" : "За замовчуванням",
     "Microphone {number}" : "Мікрофон {number}",
     "Camera {number}" : "Камера {number}",
