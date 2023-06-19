@@ -26,8 +26,7 @@
 			:label="placeholderText"
 			:show-trailing-button="isSearching"
 			trailing-button-icon="close"
-			@blur="isFocused(false)"
-			@focus="isFocused(true)"
+			v-on="$listeners"
 			@trailing-button-click="abortSearch"
 			@keypress.enter="handleSubmit">
 			<Magnify :size="16" />
@@ -105,19 +104,6 @@ export default {
 		EventBus.$off('route-change', this.focusInputIfRoot)
 	},
 	methods: {
-		isFocused(value){
-			if (value){
-				if (this.localValue != t('spreed','is:mentioned') & this.localValue != t('spreed','is:unread')){
-				this.$emit('focus')
-				}
-			}
-			else {
-				this.$emit('focusCancel')
-			}
-
-			
-		},
-
 		// Focus the input field of the searchbox component.
 		focusInput() {
 			this.$refs.searchConversations.$el.focus()
