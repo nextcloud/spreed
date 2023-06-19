@@ -39,4 +39,4 @@ jobs:
         run: composer i
 
       - name: Run coding standards check
-        run: composer run psalm
+        run: composer run psalm:ci
