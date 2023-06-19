@@ -24,6 +24,18 @@
 		<div class="new-conversation"
 			:class="{ 'new-conversation--scrolled-down': !isScrolledToTop }">
 
+			<SearchBox v-model="searchText"
+				class="conversations-search"
+				:class="{ 'conversations-search--expanded': isFocused }"
+				:is-searching="isSearching"
+				@blur="isFocused(false)"
+				@focus="isFocused(true)"
+				@focusCancel ="isFocused = false"
+				@input="debounceFetchSearchResults"
+				@submit="onInputEnter"
+				@keydown.enter.native="handleEnter"
+				@abort-search="abortSearch" />
+
 			<!-- Options -->
 			<div class="options">
 				<NcActions class ='filters-button'>
@@ -67,23 +79,11 @@
 					</NcActionButton>
 				</NcActions>
 			</div>
-
-			<SearchBox v-model="searchText"
-				class="conversations-search"
-				:class="{ 'conversations-search--expanded': isFocused }"
-				:is-searching="isSearching"
-				@focus="isFocused = true"
-				@focusCancel ="isFocused = false"
-				@input="debounceFetchSearchResults"
-				@submit="onInputEnter"
-				@keydown.enter.native="handleEnter"
-				@abort-search="abortSearch" />
 			
 			<!-- New Conversation -->
 			<NewGroupConversation ref="newGroupConversation"
 				:show-modal="isNewGroupConversationOpen"
-				@open-modal="toggleNewGroupConversation(true)"
-				@close-modal="toggleNewGroupConversation(false)" />
+				@update-modal="toggleNewGroupConversation" />
 		</div>
 
 		<template #list>
@@ -392,6 +392,9 @@ export default {
 	methods: {
 		getFocusableList() {
 			return this.$el.querySelectorAll('li.acli_wrapper .acli')
+		},
+		isFocused(value){
+			this.isFocused = value
 		},
 		focusCancel() {
 			return this.abortSearch()
@@ -742,22 +745,24 @@ export default {
 
 .conversations-search {
 	flex-grow: 1;
-	transition: all 0.7s ease;
+	transition: all 0.3s ease;
 	width: 65%;
+	z-index: 1;
 	position : absolute;
-	left: 8px; //padding
+	padding: 0 8px ;
 
 	:deep(.input-field__input) {
 		border-radius: var(--border-radius-pill);
 	}
 	&--expanded {
-		width: 95%;
+		width: 100%;
 	}
 }
 
 
 .options{
 	position: relative;
+	z-index: 2;
 	left : calc(65% + 7px);
 	display: flex;
 	gap: 0.5px;
