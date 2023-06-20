@@ -63,9 +63,7 @@
 						</h2>
 					</div>
 					<div class="poll__summary">
-						<template v-if="currentUserIsPollCreator || currentUserIsModerator || pollIsPublic">
-							{{ n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', votersNumber) }}
-						</template>
+						{{ pollSummaryText }}
 					</div>
 
 					<!-- options -->
@@ -108,7 +106,7 @@
 				</template>
 
 				<!-- Results page -->
-				<template v-if="modalPage === 'results'">
+				<template v-else-if="modalPage === 'results'">
 					<!-- Title -->
 					<div class="poll__header">
 						<PollIcon :size="20" />
@@ -117,12 +115,7 @@
 						</h2>
 					</div>
 					<div class="poll__summary">
-						<template v-if="currentUserIsPollCreator || currentUserIsModerator || pollIsPublic">
-							{{ n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', votersNumber) }}
-						</template>
-						<template v-else-if="selfHasVoted">
-							{{ t('spreed', 'Poll ・ You voted already') }}
-						</template>
+						{{ pollSummaryText }}
 					</div>
 					<div class="results__options">
 						<div v-for="(option, index) in options"
@@ -141,7 +134,7 @@
 								<PollVotersDetails v-if="details"
 									:details="getFilteredDetails(index)" />
 								<p v-if="selfHasVotedOption(index)" class="results__option-subtitle">
-									{{ t('spreed','You voted for this option') }}
+									{{ t('spreed', 'You voted for this option') }}
 								</p>
 							</div>
 							<NcProgressBar class="results__option-progress"
@@ -149,7 +142,7 @@
 								size="medium" />
 						</div>
 					</div>
-					<div v-if="pollIsOpen"
+					<div v-if="isPollOpen"
 						class="poll__modal-actions">
 						<!-- Vote again-->
 						<NcButton type="secondary"
@@ -238,7 +231,7 @@ export default {
 			return !!this.poll
 		},
 
-		votersNumber() {
+		numVoters() {
 			return this.pollLoaded ? this.poll.numVoters : undefined
 		},
 
@@ -250,7 +243,7 @@ export default {
 			return this.pollLoaded ? this.poll.options : undefined
 		},
 
-		pollVotes() {
+		votes() {
 			return this.pollLoaded ? this.poll.votes : undefined
 		},
 
@@ -275,7 +268,7 @@ export default {
 			return this.pollLoaded ? this.poll.resultMode : undefined
 		},
 
-		pollIsPublic() {
+		isPollPublic() {
 			return this.resultMode === 0
 		},
 
@@ -283,16 +276,16 @@ export default {
 			return this.pollLoaded ? this.poll.status : undefined
 		},
 
-		pollIsOpen() {
+		isPollOpen() {
 			return this.status === 0
 		},
 
-		pollIsClosed() {
+		isPollClosed() {
 			return this.status === 1
 		},
 
 		details() {
-			if (!this.pollLoaded || this.pollIsOpen) {
+			if (!this.pollLoaded || this.isPollOpen) {
 				return undefined
 			} else {
 				return this.poll.details
@@ -315,61 +308,46 @@ export default {
 			}
 		},
 
-		getVotePercentage() {
-			return (index) => {
-				if (this.pollVotes[`option-${index}`] === undefined) {
-					return 0
-				}
-				return parseInt(this.pollVotes[`option-${index}`] / this.votersNumber * 100)
-			}
-		},
-
-		/**
-		 * Current actor id
-		 */
-		actorId() {
-			return this.$store.getters.getActorId()
-		},
-
-		/**
-		 * Current actor type
-		 */
-		actorType() {
-			return this.$store.getters.getActorType()
-		},
-
-		currentUserIsPollCreator() {
-			return this.poll.actorType === this.actorType && this.poll.actorId === this.actorId
-		},
-
-		conversation() {
-			return this.$store.getters.conversation(this.token)
-		},
-
 		participantType() {
-			return this.conversation.participantType
+			return this.$store.getters.conversation(this.token).participantType
 		},
 
-		currentUserIsModerator() {
-			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].includes(this.participantType)
+		selfIsOwnerOrModerator() {
+			return (this.poll.actorType === this.$store.getters.getActorType() && this.poll.actorId === this.$store.getters.getActorId())
+				|| [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].includes(this.participantType)
+		},
+
+		pollSummaryText() {
+			if (this.isPollClosed) {
+				return n('spreed', 'Poll results • %n vote', 'Poll results • %n votes', this.numVoters)
+			}
+
+			if (this.selfIsOwnerOrModerator || (this.isPollPublic && this.selfHasVoted)) {
+				return n('spreed', 'Poll • %n vote', 'Poll • %n votes', this.numVoters)
+			}
+
+			if (!this.isPollPublic && this.selfHasVoted) {
+				return t('spreed', 'Poll • You voted already')
+			}
+
+			return t('spreed', 'Poll')
 		},
 
 		canEndPoll() {
-			return (this.currentUserIsPollCreator || this.currentUserIsModerator) && this.pollIsOpen
+			return this.isPollOpen && this.selfIsOwnerOrModerator
 		},
 
 		pollFooterText() {
-			if (this.pollIsOpen) {
-				return this.selfHasVoted ? t('spreed', 'Poll ・ You voted already') : t('spreed', 'Poll ・ Click to vote')
-			} else if (this.pollIsClosed) {
-				return t('spreed', 'Poll ・ Ended')
+			if (this.isPollOpen) {
+				return this.selfHasVoted ? t('spreed', 'Poll • You voted already') : t('spreed', 'Poll • Click to vote')
+			} else if (this.isPollClosed) {
+				return t('spreed', 'Poll • Ended')
 			}
-			return ''
+			return t('spreed', 'Poll')
 		},
 	},
 
 	watch: {
-
 		pollLoaded() {
 			this.setVoteData()
 		},
@@ -411,7 +389,7 @@ export default {
 		},
 
 		openPoll() {
-			if (this.selfHasVoted || this.pollIsClosed) {
+			if (this.selfHasVoted || this.isPollClosed) {
 				this.modalPage = 'results'
 			} else {
 				this.modalPage = 'voting'
@@ -427,7 +405,7 @@ export default {
 
 		submitVote() {
 			let voteToSubmit = this.vote
-			// If its a radio, we add the selected index to the array
+			// If it's a radio, we add the selected index to the array
 			if (!Array.isArray(this.vote)) {
 				voteToSubmit = [this.vote]
 			}
@@ -448,11 +426,7 @@ export default {
 		},
 
 		selfHasVotedOption(index) {
-			if (this.votedSelf.includes(index)) {
-				return true
-			} else {
-				return false
-			}
+			return this.votedSelf.includes(index)
 		},
 
 		getFilteredDetails(index) {
@@ -463,6 +437,13 @@ export default {
 				return item.optionId === index
 			})
 		},
+
+		getVotePercentage(index) {
+			if (this.votes[`option-${index}`] === undefined) {
+				return 0
+			}
+			return parseInt(this.votes[`option-${index}`] / this.numVoters * 100)
+		},
 	},
 }
 </script>
@@ -471,6 +452,7 @@ export default {
 .wrapper {
 	display: contents;
 }
+
 .poll {
 	display: flex;
 	transition: box-shadow 0.1s ease-in-out;
@@ -491,15 +473,15 @@ export default {
 		white-space: normal;
 		align-items: flex-start;
 		top: 0;
-		padding: 0 0 8px 0;
+		padding: 20px 0 8px;
 		word-wrap: anywhere;
-		padding-top: 20px;
 
 		span {
 			margin-bottom: auto;
 		}
 
 	}
+
 	&__footer {
 		color: var(--color-text-lighter);
 		white-space: normal;
@@ -528,9 +510,8 @@ export default {
 		display: flex;
 		justify-content: center;
 		gap: 8px;
-		padding: 12px 0 0 0;
+		padding: 12px 0 20px;
 		background-color: var(--color-main-background);
-		padding-bottom: 20px;
 	}
 
 	&__summary {
@@ -546,6 +527,7 @@ export default {
 	word-wrap: anywhere;
 	margin: 8px 0 20px 0;
 }
+
 .results__option {
 	display: flex;
 	flex-direction: column;
@@ -569,6 +551,7 @@ export default {
 	justify-content: space-between;
 	align-items: flex-start;
 	margin-bottom: 4px;
+
 	.percentage {
 		white-space: nowrap;
 		margin-left: 16px;
@@ -589,6 +572,7 @@ export default {
 	padding: 8px;
 	width: 100%;
 	border-radius: var(--border-radius-large);
+
 	:deep(span) {
 		align-self: flex-start;
 	}
