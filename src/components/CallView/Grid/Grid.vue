@@ -405,12 +405,15 @@ export default {
 
 		// Max number of columns possible
 		columnsMax() {
-			if (Math.floor(this.gridWidth / this.dpiAwareMinWidth) < 1) {
-				// Return at least 1 column
-				return 1
-			} else {
-				return Math.floor(this.gridWidth / this.dpiAwareMinWidth)
-			}
+			// Max amount of columns that fits on screen, including gaps and paddings (8px)
+			const calculatedApproxColumnsMax = Math.floor((this.gridWidth - 8 * this.columns) / this.dpiAwareMinWidth)
+			// Max amount of columns that fits on screen (with one more gap, as if we try to fit one more column)
+			const calculatedHypotheticalColumnsMax = Math.floor((this.gridWidth - 8 * (this.columns + 1)) / this.dpiAwareMinWidth)
+			// If we about to change current columns amount, check if one more column could fit the screen
+			// This helps to avoid flickering, when resize within 8px from minimal gridWidth for current amount of columns
+			const calculatedColumnsMax = calculatedApproxColumnsMax === this.columns ? calculatedApproxColumnsMax : calculatedHypotheticalColumnsMax
+			// Return at least 1 column
+			return calculatedColumnsMax <= 1 ? 1 : calculatedColumnsMax
 		},
 
 		// Max number of rows possible
@@ -675,7 +678,7 @@ export default {
 			// currently if the user is not on the 'first page', upon resize the
 			// current position in the videos array is lost (first element
 			// in the grid goes back to be first video)
-			debounce(this.makeGrid(), 200)
+				debounce(this.makeGrid(), 200)
 		},
 
 		// Find the right size if the grid in rows and columns (we already know
@@ -894,12 +897,14 @@ export default {
 
 .grid-wrapper {
 	width: 100%;
+	min-width: 0;
 	position: relative;
 	flex: 1 0 auto;
 }
 
 .stripe-wrapper {
 	width: 100%;
+	min-width: 0;
 	position: relative;
 }
 
