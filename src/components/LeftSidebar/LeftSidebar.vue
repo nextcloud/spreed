@@ -26,7 +26,8 @@
 			<SearchBox ref="searchbox"
 				v-model="searchText"
 				class="conversations-search"
-				:class="{ 'conversations-search--expanded': isFocused }"
+				:class="{'conversations-search--expanded': isFocused,
+					'conversations-search--filter' : isFiltered }"
 				:is-searching="isSearching"
 				@blur="setIsFocused(false)"
 				@focus="setIsFocused(true)"
@@ -41,7 +42,7 @@
 					class="filters-button">
 					<template #icon>
 						<FilterIcon v-if="!isFiltered" :size="15" />
-						<UnFilterIcon v-else-if="isFiltered" :size="15" />
+						<FilterCheckIcon v-else-if="isFiltered" :size="15" />
 					</template>
 					<NcActionButton close-after-click
 						class="filterButton--Option"
@@ -59,6 +60,16 @@
 							<MessageBadge :size="20" />
 						</template>
 						{{ t('spreed','Filter unread messages') }}
+					</NcActionButton>
+
+					<NcActionButton v-if="isFiltered"
+						close-after-click
+						class="filterButton--Clear"
+						@click="clearFilter">
+						<template #icon>
+							<FilterRemoveIcon :size="20" />
+						</template>
+						{{ t('spreed','Clear filter :') }} {{ filterText }}
 					</NcActionButton>
 				</NcActions>
 
@@ -97,7 +108,7 @@
 					<template v-if="!initialisedConversations">
 						<LoadingPlaceholder type="conversations" />
 					</template>
-					<Hint v-else-if="searchText && !conversationsList.length"
+					<Hint v-else-if="(searchText && !conversationsList.length) || (!conversationsList.length && isFiltered)"
 						:hint="t('spreed', 'No matches')" />
 					<template v-if="isSearching">
 						<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
@@ -185,7 +196,8 @@ import debounce from 'debounce'
 
 import AtIcon from 'vue-material-design-icons/At.vue'
 import FilterIcon from 'vue-material-design-icons/Filter.vue'
-import UnFilterIcon from 'vue-material-design-icons/FilterRemove.vue'
+import FilterCheckIcon from 'vue-material-design-icons/FilterCheck.vue'
+import FilterRemoveIcon from 'vue-material-design-icons/FilterRemove.vue'
 import MessageBadge from 'vue-material-design-icons/MessageBadge.vue'
 import PlusIcon from 'vue-material-design-icons/Plus.vue'
 
@@ -238,7 +250,8 @@ export default {
 		AtIcon,
 		MessageBadge,
 		FilterIcon,
-		UnFilterIcon,
+		FilterCheckIcon,
+		FilterRemoveIcon,
 	},
 
 	mixins: [
@@ -397,13 +410,14 @@ export default {
 		handleFilter(filter) {
 			this.isFiltered = true
 			this.filterText = filter
-			const divElement = document.querySelector('.filters-button')
 
-			divElement.addEventListener('click', function(event) {
-				this.filterText = ''
-				this.isFiltered = false
-			}.bind(this))
+		},
 
+		clearFilter() {
+			// clear the status filter
+			this.isFiltered = false
+			// clear the filter
+			this.filterText = ''
 		},
 
 		focusCancel() {
@@ -762,6 +776,13 @@ export default {
 	&--expanded {
 		width: 95%;
 	}
+
+	&--filter{
+		pointer-events: none;
+		:deep(.input-field__input) {
+		background-color: var(--color-background-dark);
+	}
+	}
 }
 
 .options{
@@ -770,6 +791,11 @@ export default {
 	left : calc(65% + 10px);
 	display: flex;
 	gap: 0.25px;
+}
+
+.filterButton--Clear{
+	font-style: italic;
+	background-color: var(--color-background-dark);
 }
 
 .settings-button {

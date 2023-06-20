@@ -53,7 +53,7 @@ export default {
 		 */
 		placeholderText: {
 			type: String,
-			default: t('spreed', 'Search...'),
+			default: t('spreed', 'Search…'),
 		},
 		/**
 		 * The value of the input field, when receiving it as a prop the localValue
@@ -72,7 +72,7 @@ export default {
 		},
 	},
 
-	emits: ['update:value', 'input', 'submit', 'abort-search', 'focus', 'focusCancel'],
+	emits: ['update:value', 'input', 'submit', 'abort-search'],
 
 	data() {
 		return {
