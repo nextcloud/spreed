@@ -21,30 +21,30 @@ jobs:
 
     steps:
       - name: Check actor permission
-        uses: skjnldsv/check-actor-permission@v2
+        uses: skjnldsv/check-actor-permission@e591dbfe838300c007028e1219ca82cc26e8d7c5 # v2.1
         with:
           require: write
 
       - name: Set app env
         run: |
-          # Split and keep last 
+          # Split and keep last
           echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
           echo "APP_VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         with:
           path: ${{ env.APP_NAME }}
 
       - name: Get appinfo data
         id: appinfo
-        uses: skjnldsv/xpath-action@master
+        uses: skjnldsv/xpath-action@7e6a7c379d0e9abc8acaef43df403ab4fc4f770c # master
         with:
           filename: ${{ env.APP_NAME }}/appinfo/info.xml
           expression: "//info//dependencies//nextcloud/@min-version"
 
       - name: Read package.json node and npm engines version
-        uses: skjnldsv/read-package-engines-version-actions@v1.2
+        uses: skjnldsv/read-package-engines-version-actions@0ce2ed60f6df073a62a77c0a4958dd0fc68e32e7 # v2.1
         id: versions
         # Continue if no package.json
         continue-on-error: true
@@ -56,7 +56,7 @@ jobs:
       - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
         # Skip if no package.json
         if: ${{ steps.versions.outputs.nodeVersion }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c # v3
         with:
           node-version: ${{ steps.versions.outputs.nodeVersion }}
 
@@ -66,14 +66,16 @@ jobs:
         run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
 
       - name: Set up php ${{ env.PHP_VERSION }}
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@c5fc0d8281aba02c7fda07d3a70cc5371548067d # v2
         with:
           php-version: ${{ env.PHP_VERSION }}
           coverage: none
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check composer.json
         id: check_composer
-        uses: andstor/file-existence-action@v1
+        uses: andstor/file-existence-action@20b4d2e596410855db8f9ca21e96fbe18e12930b # v2
         with:
           files: "${{ env.APP_NAME }}/composer.json"
 
@@ -93,15 +95,15 @@ jobs:
 
       - name: Check Krankerl config
         id: krankerl
-        uses: andstor/file-existence-action@v1
+        uses: andstor/file-existence-action@20b4d2e596410855db8f9ca21e96fbe18e12930b # v2
         with:
           files: ${{ env.APP_NAME }}/krankerl.toml
 
       - name: Install Krankerl
         if: steps.krankerl.outputs.files_exists == 'true'
         run: |
-          wget https://github.com/ChristophWurst/krankerl/releases/download/v0.13.0/krankerl_0.13.0_amd64.deb
-          sudo dpkg -i krankerl_0.13.0_amd64.deb
+          wget https://github.com/ChristophWurst/krankerl/releases/download/v0.14.0/krankerl_0.14.0_amd64.deb
+          sudo dpkg -i krankerl_0.14.0_amd64.deb
 
       - name: Package ${{ env.APP_NAME }} ${{ env.APP_VERSION }} with krankerl
         if: steps.krankerl.outputs.files_exists == 'true'
@@ -124,9 +126,10 @@ jobs:
           unzip latest-$NCVERSION.zip
 
       - name: Checkout server master fallback
-        uses: actions/checkout@v3
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         if: ${{ steps.server-checkout.outcome != 'success' }}
         with:
+          submodules: true
           repository: nextcloud/server
           path: nextcloud
 
@@ -146,7 +149,7 @@ jobs:
           tar -zcvf ${{ env.APP_NAME }}.tar.gz ${{ env.APP_NAME }}
 
       - name: Attach tarball to github release
-        uses: svenstaro/upload-release-action@v2
+        uses: svenstaro/upload-release-action@2b9d2847a97b04d02ad5c3df2d3a27baa97ce689 # v2
         id: attach_to_release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -156,7 +159,7 @@ jobs:
           overwrite: true
 
       - name: Upload app to Nextcloud appstore
-        uses: nextcloud-releases/nextcloud-appstore-push-action@v1
+        uses: nextcloud-releases/nextcloud-appstore-push-action@a011fe619bcf6e77ddebc96f9908e1af4071b9c1 # v1
         with:
           app_name: ${{ env.APP_NAME }}
           appstore_token: ${{ secrets.APPSTORE_TOKEN }}
