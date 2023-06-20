@@ -3,7 +3,7 @@
 # https://github.com/nextcloud/.github
 # https://docs.github.com/en/actions/learn-github-actions/sharing-workflows-with-your-organization
 
-name: Lint
+name: Lint info.xml
 
 on:
   pull_request:
@@ -27,13 +27,13 @@ jobs:
     name: info.xml lint
     steps:
       - name: Checkout
-        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
 
       - name: Download schema
         run: wget https://raw.githubusercontent.com/nextcloud/appstore/master/nextcloudappstore/api/v1/release/info.xsd
 
       - name: Lint info.xml
-        uses: ChristophWurst/xmllint-action@d18a551aab4728e4af449617638600634d7a48cb # v1
+        uses: ChristophWurst/xmllint-action@39155a91429af431d65fafc21fa52ba5c4f5cb71 # v1.1
         with:
           xml-file: ./appinfo/info.xml
           xml-schema-file: ./info.xsd
