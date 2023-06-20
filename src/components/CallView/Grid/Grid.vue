@@ -678,7 +678,7 @@ export default {
 			// currently if the user is not on the 'first page', upon resize the
 			// current position in the videos array is lost (first element
 			// in the grid goes back to be first video)
-				debounce(this.makeGrid(), 200)
+			debounce(this.makeGrid(), 200)
 		},
 
 		// Find the right size if the grid in rows and columns (we already know
@@ -832,7 +832,9 @@ export default {
 				clearTimeout(this.showVideoOverlayTimer)
 			}
 			this.showVideoOverlay = true
-			this.showVideoOverlayTimer = setTimeout(() => { this.showVideoOverlay = false }, 5000)
+			this.showVideoOverlayTimer = setTimeout(() => {
+				this.showVideoOverlay = false
+			}, 5000)
 		},
 
 		handleClickVideo(event, peerId) {
@@ -913,6 +915,7 @@ export default {
 		border: 1px solid #00FF41;
 		color: #00FF41;
 	}
+
 	position: relative;
 
 	&--self {
@@ -924,7 +927,7 @@ export default {
 		object-fit: cover;
 		height: 100%;
 		width: 100%;
-		border-radius: calc(var(--default-clickable-area)/2);
+		border-radius: calc(var(--default-clickable-area) / 2);
 	}
 
 	.wrapper {
@@ -951,11 +954,12 @@ export default {
 	left: 20px;
 	bottom: 50%;
 	padding: 20px;
-	background: rgba(0,0,0,0.8);
+	background: rgba(0, 0, 0, 0.8);
 	border: 1px solid #00FF41;
 	width: 212px;
 	font-size: 12px;
 	z-index: 999999999999999;
+
 	& p {
 		text-overflow: ellipsis;
 		overflow: hidden;
@@ -971,9 +975,11 @@ export default {
 	.grid-wrapper & {
 		position: absolute;
 		top: calc(50% - var(--default-clickable-area) / 2);
+
 		&__previous {
 			left: 8px;
 		}
+
 		&__next {
 			right: 8px;
 		}
@@ -982,9 +988,11 @@ export default {
 	.stripe-wrapper & {
 		position: absolute;
 		top: 16px;
+
 		&__previous {
 			left: 8px;
 		}
+
 		&__next {
 			right: 16px;
 		}
@@ -1000,6 +1008,7 @@ export default {
 	height: 44px;
 	padding: 0 22px;
 	border-radius: 22px;
+
 	&__dot {
 		width: 8px;
 		height: 8px;
