@@ -323,14 +323,14 @@ export default {
 			}
 
 			if (this.selfIsOwnerOrModerator || (this.isPollPublic && this.selfHasVoted)) {
-				return n('spreed', 'Poll • %n vote', 'Poll • %n votes', this.numVoters)
+				return n('spreed', 'Open poll • %n vote', 'Open poll • %n votes', this.numVoters)
 			}
 
 			if (!this.isPollPublic && this.selfHasVoted) {
-				return t('spreed', 'Poll • You voted already')
+				return t('spreed', 'Open poll • You voted already')
 			}
 
-			return t('spreed', 'Poll')
+			return t('spreed', 'Open poll')
 		},
 
 		canEndPoll() {
@@ -339,7 +339,7 @@ export default {
 
 		pollFooterText() {
 			if (this.isPollOpen) {
-				return this.selfHasVoted ? t('spreed', 'Poll • You voted already') : t('spreed', 'Poll • Click to vote')
+				return this.selfHasVoted ? t('spreed', 'Open poll • You voted already') : t('spreed', 'Open poll • Click to vote')
 			} else if (this.isPollClosed) {
 				return t('spreed', 'Poll • Ended')
 			}
