@@ -23,14 +23,13 @@
 	<NcAppNavigation :aria-label="t('spreed', 'Conversation list')">
 		<div class="new-conversation"
 			:class="{ 'new-conversation--scrolled-down': !isScrolledToTop }">
-
-			<SearchBox v-model="searchText"
+			<SearchBox ref="searchbox"
+				v-model="searchText"
 				class="conversations-search"
 				:class="{ 'conversations-search--expanded': isFocused }"
 				:is-searching="isSearching"
-				@blur="isFocused(false)"
-				@focus="isFocused(true)"
-				@focusCancel ="isFocused = false"
+				@blur="setIsFocused(false)"
+				@focus="setIsFocused(true)"
 				@input="debounceFetchSearchResults"
 				@submit="onInputEnter"
 				@keydown.enter.native="handleEnter"
@@ -38,12 +37,15 @@
 
 			<!-- Options -->
 			<div class="options">
-				<NcActions class ='filters-button'>
+				<NcActions ref="filterMainBtn"
+					class="filters-button">
 					<template #icon>
-						<FilterIcon :size="15" />
+						<FilterIcon v-if="!isFiltered" :size="15" />
+						<UnFilterIcon v-else-if="isFiltered" :size="15" />
 					</template>
 					<NcActionButton close-after-click
-						@click="insertValue(t('spreed','is:mentioned'))">
+						class="filterButton--Option"
+						@click="handleFilter('is:mentioned')">
 						<template #icon>
 							<AtIcon :size="20" />
 						</template>
@@ -51,7 +53,8 @@
 					</NcActionButton>
 
 					<NcActionButton close-after-click
-						@click="insertValue(t('spreed','is:unread'))">
+						class="filterButton--Option"
+						@click="handleFilter('is:unread')">
 						<template #icon>
 							<MessageBadge :size="20" />
 						</template>
@@ -59,7 +62,7 @@
 					</NcActionButton>
 				</NcActions>
 
-				<NcActions >
+				<NcActions>
 					<template #icon>
 						<PlusIcon :size="20" />
 					</template>
@@ -71,15 +74,9 @@
 						</template>
 						{{ t('spreed','Create a new conversation') }}
 					</NcActionButton>
-					<NcActionButton close-after-click>
-						<template #icon>
-							<ListIcon :size="20" />
-						</template>
-						{{ t('spreed','List of open conversations') }}
-					</NcActionButton>
 				</NcActions>
 			</div>
-			
+
 			<!-- New Conversation -->
 			<NewGroupConversation ref="newGroupConversation"
 				:show-modal="isNewGroupConversationOpen"
@@ -187,11 +184,10 @@
 import debounce from 'debounce'
 
 import AtIcon from 'vue-material-design-icons/At.vue'
+import FilterIcon from 'vue-material-design-icons/Filter.vue'
+import UnFilterIcon from 'vue-material-design-icons/FilterRemove.vue'
 import MessageBadge from 'vue-material-design-icons/MessageBadge.vue'
 import PlusIcon from 'vue-material-design-icons/Plus.vue'
-import FilterIcon from 'vue-material-design-icons/Filter.vue'
-import ListIcon from 'vue-material-design-icons/FormatListBulleted.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -242,7 +238,7 @@ export default {
 		AtIcon,
 		MessageBadge,
 		FilterIcon,
-		ListIcon,
+		UnFilterIcon,
 	},
 
 	mixins: [
@@ -274,27 +270,28 @@ export default {
 			roomListModifiedBefore: 0,
 			forceFullRoomListRefreshAfterXLoops: 0,
 			isNewGroupConversationOpen: false,
-			isFocused: false
+			isFocused: false,
+			filterText: '',
+			isFiltered: false,
 		}
 	},
 
 	computed: {
 		conversationsList() {
 			let conversations = this.$store.getters.conversationsList
-
-			if (this.searchText !== '') {
-				const lowerSearchText = this.searchText.toLowerCase()
-				switch (this.searchText) {
-				case t('spreed', 'is:unread'):
-					conversations = conversations.filter(conversation => conversation.unreadMessages > 0)
-					break
-				case t('spreed', 'is:mentioned'):
-					conversations = conversations.filter(conversation => conversation.unreadMention)
-					break
-				default:
+			switch (this.filterText) {
+			case ('is:unread'):
+				conversations = conversations.filter(conversation => conversation.unreadMessages > 0)
+				break
+			case ('is:mentioned'):
+				conversations = conversations.filter(conversation => conversation.unreadMention)
+				break
+			default:
+				if (this.searchText !== '') {
+					const lowerSearchText = this.searchText.toLowerCase()
 					conversations = conversations.filter(conversation =>
 						conversation.displayName.toLowerCase().includes(lowerSearchText)
-							|| conversation.name.toLowerCase().includes(lowerSearchText)
+								|| conversation.name.toLowerCase().includes(lowerSearchText)
 					)
 					break
 				}
@@ -393,9 +390,22 @@ export default {
 		getFocusableList() {
 			return this.$el.querySelectorAll('li.acli_wrapper .acli')
 		},
-		isFocused(value){
+		setIsFocused(value) {
 			this.isFocused = value
 		},
+
+		handleFilter(filter) {
+			this.isFiltered = true
+			this.filterText = filter
+			const divElement = document.querySelector('.filters-button')
+
+			divElement.addEventListener('click', function(event) {
+				this.filterText = ''
+				this.isFiltered = false
+			}.bind(this))
+
+		},
+
 		focusCancel() {
 			return this.abortSearch()
 		},
@@ -419,10 +429,6 @@ export default {
 
 		toggleNewGroupConversation(value) {
 			this.isNewGroupConversationOpen = value
-		},
-
-		insertValue(value) {
-			this.searchText = value
 		},
 
 		async fetchPossibleConversations() {
@@ -747,25 +753,23 @@ export default {
 	flex-grow: 1;
 	transition: all 0.3s ease;
 	width: 65%;
-	z-index: 1;
+	z-index: 2;
 	position : absolute;
-	padding: 0 8px ;
 
 	:deep(.input-field__input) {
 		border-radius: var(--border-radius-pill);
 	}
 	&--expanded {
-		width: 100%;
+		width: 95%;
 	}
 }
 
-
 .options{
 	position: relative;
-	z-index: 2;
-	left : calc(65% + 7px);
+	z-index: 1;
+	left : calc(65% + 10px);
 	display: flex;
-	gap: 0.5px;
+	gap: 0.25px;
 }
 
 .settings-button {

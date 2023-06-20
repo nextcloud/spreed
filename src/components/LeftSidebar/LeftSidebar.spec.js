@@ -626,7 +626,7 @@ describe('LeftSidebar.vue', () => {
 				const ncModalComponent = wrapper.findComponent(NcModal)
 				expect(ncModalComponent.exists()).toBeTruthy()
 
-				const input = ncModalComponent.findComponent({name: 'NcTextField', ref: 'conversationName'})
+				const input = ncModalComponent.findComponent({ name: 'NcTextField', ref: 'conversationName' })
 				expect(input.props('value')).toBe(groupsResults[1].label)
 
 				// nothing created yet
@@ -648,8 +648,7 @@ describe('LeftSidebar.vue', () => {
 				await wrapper.vm.$nextTick()
 				const ncModalComponent = wrapper.findComponent(NcModal)
 				expect(ncModalComponent.exists()).toBeTruthy()
-				console.log(wrapper.html())
-				const input = ncModalComponent.findComponent({name: 'NcTextField', ref: 'conversationName'})
+				const input = ncModalComponent.findComponent({ name: 'NcTextField', ref: 'conversationName' })
 				expect(input.props('value')).toBe(circlesResults[1].label)
 
 				// nothing created yet
