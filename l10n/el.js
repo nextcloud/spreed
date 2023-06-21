@@ -811,6 +811,7 @@ OC.L10N.register(
     "Your browser does not support playing audio files" : "Το πρόγραμμα περιήγησής σας δεν υποστηρίζει την αναπαραγωγή αρχείων ήχου",
     "Contact" : "Επικοινωνία",
     "{stack} in {board}" : "{stack} στο {board}",
+    "Open poll" : "Ανοιχτή δημοσκόπηση",
     "No messages" : "Κανένα μήνυμα",
     "Scroll to bottom" : "Μετακινηθείτε προς τα κάτω",
     "Today" : "Σήμερα",
