@@ -39,7 +39,7 @@
 			"\"vendor/bin/mozart\" compose",
 			"composer dump-autoload"
 		],
-		"test": "cd tests/php/ && phpunit -c phpunit.xml"
+		"test:unit": "vendor/bin/phpunit -c tests/php/phpunit.xml --color --fail-on-warning --fail-on-risky"
 	},
 	"require-dev": {
 		"nextcloud/ocp": "dev-stable25",
