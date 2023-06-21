@@ -139,11 +139,9 @@ export default {
 
 <style lang="scss" scoped>
 .indicator {
-	position: absolute;
-	bottom: calc(100% - 2em);
-	left: 0;
 	width: 100%;
 	padding-right: 12px;
+	margin-bottom: 4px;
 
 	&__wrapper {
 		max-width: 800px;
