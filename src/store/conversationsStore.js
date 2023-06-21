@@ -203,7 +203,7 @@ const mutations = {
 
 const actions = {
 	/**
-	 * Add a conversation to the store and index the displayName.
+	 * Add a conversation to the store and index the displayName
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} conversation the conversation;
@@ -211,6 +211,34 @@ const actions = {
 	addConversation(context, conversation) {
 		context.commit('addConversation', conversation)
 
+		context.dispatch('postAddConversation', conversation)
+	},
+
+	/**
+	 * Add conversation to the store only, if it was changed according to lastActivity and modifiedSince
+	 *
+	 * @param {object} context dispatch context
+	 * @param {object} payload mutation payload
+	 * @param {object} payload.conversation the conversation
+	 * @param {number|0} payload.modifiedSince timestamp of last state or 0 if unknown
+	 */
+	addConversationIfChanged(context, { conversation, modifiedSince }) {
+		if (conversation.lastActivity >= modifiedSince) {
+			context.commit('addConversation', conversation)
+		}
+
+		context.dispatch('postAddConversation', conversation)
+	},
+
+	/**
+	 * Post-actions after adding a conversation:
+	 * - Get user status from 1-1 conversations
+	 * - Add current user to the new conversation's participants
+	 *
+	 * @param {object} context dispatch context
+	 * @param {object} conversation the conversation
+	 */
+	postAddConversation(context, conversation) {
 		if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.status) {
 			emit('user_status:status.updated', {
 				status: conversation.status,
@@ -649,7 +677,7 @@ const actions = {
 				dispatch('purgeConversationsStore')
 			}
 			response.data.ocs.data.forEach(conversation => {
-				dispatch('addConversation', conversation)
+				dispatch('addConversationIfChanged', { conversation, modifiedSince })
 			})
 			return response
 		} catch (error) {
