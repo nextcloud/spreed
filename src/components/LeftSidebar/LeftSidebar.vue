@@ -37,7 +37,8 @@
 				@abort-search="abortSearch" />
 
 			<!-- Options -->
-			<div class="options">
+			<div class="options"
+				:class="{'options--hidden': isFocused}">
 				<NcActions ref="filterMainBtn"
 					class="filters-button">
 					<template #icon>
@@ -69,7 +70,7 @@
 						<template #icon>
 							<FilterRemoveIcon :size="20" />
 						</template>
-						{{ t('spreed','Clear filter :') }} {{ filterText }}
+						{{ t('spreed', 'Clear filters: {filterText}', { filterText: filterText }) }}
 					</NcActionButton>
 				</NcActions>
 
@@ -87,7 +88,6 @@
 					</NcActionButton>
 				</NcActions>
 			</div>
-
 			<!-- New Conversation -->
 			<NewGroupConversation ref="newGroupConversation"
 				:show-modal="isNewGroupConversationOpen"
@@ -297,7 +297,8 @@ export default {
 				conversations = conversations.filter(conversation => conversation.unreadMessages > 0)
 				break
 			case ('is:mentioned'):
-				conversations = conversations.filter(conversation => conversation.unreadMention)
+				conversations = conversations.filter(conversation => conversation.unreadMention || (conversation.unreadMessages > 0
+				 && (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER)))
 				break
 			default:
 				if (this.searchText !== '') {
@@ -764,7 +765,6 @@ export default {
 }
 
 .conversations-search {
-	flex-grow: 1;
 	transition: all 0.3s ease;
 	width: 65%;
 	z-index: 2;
@@ -774,7 +774,7 @@ export default {
 		border-radius: var(--border-radius-pill);
 	}
 	&--expanded {
-		width: 95%;
+		width: 90%;
 	}
 
 	&--filter{
@@ -791,6 +791,10 @@ export default {
 	left : calc(65% + 10px);
 	display: flex;
 	gap: 0.25px;
+
+	&--hidden{
+		visibility: hidden;
+	}
 }
 
 .filterButton--Clear{
