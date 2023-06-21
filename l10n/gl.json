@@ -1009,7 +1009,7 @@
     "Message deleted successfully, but Matterbridge is configured and the message might already be distributed to other services" : "A mensaxe foi eliminada correctamente, mais está configurado Matterbridge e é posíbel que a mensaxe podería estar xa distribuído a outros servizos",
     "Message deleted successfully" : "A mensaxe foi eliminada satisfactoriamente",
     "Message could not be deleted because it is too old" : "Non foi posíbel eliminar a mensaxe porque é demasiado antiga",
-    "Only normal chat messages can be deleted" : "Só é posíbel poden eliminar as mensaxes normais da conversa",
+    "Only normal chat messages can be deleted" : "Só é posíbel eliminar as mensaxes normais da conversa",
     "An error occurred while deleting the message" : "Produciuse un erro ao eliminar a mensaxe",
     "The message has been forwarded to {selectedConversationName}" : "A mensaxe foi reenviada a {selectedConversationName}",
     "Dismiss" : "Rexeitar",
