@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\BackgroundJob;
 
 use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Service\CertificateService;
 use OCA\Talk\Config;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
@@ -35,26 +36,16 @@ use OCP\IGroupManager;
 use OCP\Notification\IManager;
 use Psr\Log\LoggerInterface;
 
-class CheckTurnCertificate extends TimedJob {
-	private Config $talkConfig;
-	private ITimeFactory $timeFactory;
-	private IGroupManager $groupManager;
-	private IManager $notificationManager;
-	private LoggerInterface $logger;
-
+class CheckCertificates extends TimedJob {
 	public function __construct(
-		ITimeFactory $timeFactory,
-		Config $talkConfig,
-		IGroupManager $groupManager,
-		IManager $notificationManager,
-		LoggerInterface $logger,
+		protected CertificateService $certService,
+		protected Config $talkConfig,
+		protected ITimeFactory $timeFactory,
+		protected IGroupManager $groupManager,
+		protected IManager $notificationManager,
+		protected LoggerInterface $logger,
 	) {
 		parent::__construct($timeFactory);
-		$this->talkConfig = $talkConfig;
-		$this->timeFactory = $timeFactory;
-		$this->groupManager = $groupManager;
-		$this->notificationManager = $notificationManager;
-		$this->logger = $logger;
 
 		// Run once a week
 		$this->setInterval(60 * 60 * 24 * 7);
@@ -80,19 +71,19 @@ class CheckTurnCertificate extends TimedJob {
 	/**
 	 * Create a notification and inform admins about the certificate which is about to expire
 	 *
-	 * @param string $turnHost The host which was checked
+	 * @param string $host The host which was checked
 	 * @param int $days Number of days until the certificate expires
 	 */
-	private function createNotifications(string $turnHost, int $days): void {
+	private function createNotifications(string $host, int $days): void {
 		$notification = $this->notificationManager->createNotification();
 
 		try {
 			$notification->setApp(Application::APP_ID)
 				->setDateTime(new \DateTime())
-				->setObject('turn_certificate_expiration', $turnHost);
+				->setObject('certificate_expiration', $host);
 
-			$notification->setSubject('turn_certificate_expiration', [
-				'host' => $turnHost,
+			$notification->setSubject('certificate_expiration', [
+				'host' => $host,
 				'days_to_expire' => $days,
 			]);
 
@@ -106,55 +97,23 @@ class CheckTurnCertificate extends TimedJob {
 	}
 
 	/**
-	 * Check the certificate of the specified TURN host
+	 * Check the certificate of the specified host
 	 *
-	 * @param string $turnHost The TURN host to check the certificate
+	 * @param string $host The host to check the certificate of without scheme
 	 */
-	private function checkTurnServerCertificate(string $turnHost): void {
-		// We need to disable verification here to also get an expired certificate
-		$streamContext = stream_context_create([
-			'ssl' => [
-				'capture_peer_cert' => true,
-				'verify_peer' => false,
-				'verify_peer_name' => false,
-				'allow_self_signed' => true,
-			],
-		]);
+	private function checkServerCertificate(string $host): void {
+		$expirationInDays = $this->certService->getCertificateExpirationInDays($host);
 
-		$this->logger->debug('Checking certificate of ' . $turnHost);
-
-		// In case no port was specified, use port 443 for the check
-		if (!str_contains($turnHost, ':')) {
-			$turnHost .= ':443';
-		}
-
-		$streamClient = stream_socket_client('ssl://' . $turnHost, $errorNumber, $errorString, 30, STREAM_CLIENT_CONNECT, $streamContext);
-
-		if ($errorNumber !== 0) {
-			// Unable to connect or invalid server address
-			$this->logger->debug('Unable to check certificate of ' . $turnHost);
+		if ($expirationInDays == null) {
 			return;
 		}
 
-		$streamCertificate = stream_context_get_params($streamClient);
-		$certificateInfo = openssl_x509_parse($streamCertificate['options']['ssl']['peer_certificate']);
-		$certificateValidTo = $this->timeFactory->getDateTime('@' . $certificateInfo['validTo_time_t']);
+		if ($expirationInDays < 10) {
+			$this->logger->warning('Certificate of ' . $host . ' expires in less than ' . $expirationInDays . ' days');
 
-		$now = $this->timeFactory->getDateTime();
-		$diff = $now->diff($certificateValidTo);
-		$days = $diff->days;
-
-		// $days will always be positive -> invert it, when the end date of the certificate is in the past
-		if ($diff->invert) {
-			$days *= -1;
-		}
-
-		if ($days < 10) {
-			$this->logger->warning('Certificate of ' . $turnHost . ' expires in less than ' . $days . ' days');
-
-			$this->createNotifications($turnHost, $days);
+			$this->createNotifications($host, $expirationInDays);
 		} else {
-			$this->logger->debug('Certificate of ' . $turnHost . ' is valid for ' . $days . ' days');
+			$this->logger->debug('Certificate of ' . $host . ' is valid for ' . $expirationInDays . ' days');
 		}
 	}
 
@@ -170,7 +129,19 @@ class CheckTurnCertificate extends TimedJob {
 				continue;
 			}
 
-			$this->checkTurnServerCertificate($turnServer['server']);
+			$this->checkServerCertificate($turnServer['server']);
+		}
+
+		$signalingServers = $this->talkConfig->getSignalingServers();
+
+		foreach ($signalingServers as $signalingServer) {
+			$this->checkServerCertificate($signalingServer['server']);
+		}
+
+		$recordingServers = $this->talkConfig->getRecordingServers();
+
+		foreach ($recordingServers as $recordingServer) {
+			$this->checkServerCertificate($recordingServer['server']);
 		}
 	}
 }

@@ -239,8 +239,8 @@ class Notifier implements INotifier {
 			return $this->parseRemoteInvitationMessage($notification, $l);
 		}
 
-		if ($notification->getObjectType() === 'turn_certificate_expiration') {
-			return $this->parseTurnCertificateExpiration($notification, $l);
+		if ($notification->getObjectType() === 'certificate_expiration') {
+			return $this->parseCertificateExpiration($notification, $l);
 		}
 
 		try {
@@ -1035,7 +1035,7 @@ class Notifier implements INotifier {
 			->addParsedAction($action);
 	}
 
-	protected function parseTurnCertificateExpiration(INotification $notification, IL10N $l): INotification {
+	protected function parseCertificateExpiration(INotification $notification, IL10N $l): INotification {
 		$subjectParameters = $notification->getSubjectParameters();
 
 		$host = $subjectParameters['host'];
