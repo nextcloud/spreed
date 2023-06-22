@@ -24,22 +24,27 @@
 		class="conversation-icon"
 		:style="{'--icon-size': `${size}px`}"
 		:class="{'offline': offline}">
-		<div v-if="iconClass"
-			class="avatar icon"
-			:class="iconClass" />
-		<NcAvatar v-else-if="!isOneToOne"
-			:url="avatarUrl"
-			:size="size" />
-		<NcAvatar v-else
-			:size="size"
-			:user="item.name"
-			:disable-menu="disableMenu"
-			:display-name="item.displayName"
-			:preloaded-user-status="preloadedUserStatus"
-			:show-user-status-compact="disableMenu"
-			:menu-container="menuContainer"
-			menu-position="left"
-			class="conversation-icon__avatar" />
+		<template v-if="FEATURE_FLAGS.CONVERSATIONS_LIST__HIDDEN_AVATARS">
+			<div style="width: var(--icon-size); height: var(--icon-size); background-color: #3b3b3b; border-radius: 100%" />
+		</template>
+		<template v-else>
+			<div v-if="iconClass"
+				class="avatar icon"
+				:class="iconClass" />
+			<NcAvatar v-else-if="!isOneToOne"
+				:url="avatarUrl"
+				:size="size" />
+			<NcAvatar v-else
+				:size="size"
+				:user="item.name"
+				:disable-menu="disableMenu"
+				:display-name="item.displayName"
+				:preloaded-user-status="preloadedUserStatus"
+				:show-user-status-compact="disableMenu"
+				:menu-container="menuContainer"
+				menu-position="left"
+				class="conversation-icon__avatar" />
+		</template>
 		<div v-if="showCall"
 			class="overlap-icon">
 			<VideoIcon :size="20"
