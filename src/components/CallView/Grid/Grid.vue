@@ -403,12 +403,15 @@ export default {
 
 		// Max number of columns possible
 		columnsMax() {
-			if (Math.floor(this.gridWidth / this.dpiAwareMinWidth) < 1) {
-				// Return at least 1 column
-				return 1
-			} else {
-				return Math.floor(this.gridWidth / this.dpiAwareMinWidth)
-			}
+			// Max amount of columns that fits on screen, including gaps and paddings (8px)
+			const calculatedApproxColumnsMax = Math.floor((this.gridWidth - 8 * this.columns) / this.dpiAwareMinWidth)
+			// Max amount of columns that fits on screen (with one more gap, as if we try to fit one more column)
+			const calculatedHypotheticalColumnsMax = Math.floor((this.gridWidth - 8 * (this.columns + 1)) / this.dpiAwareMinWidth)
+			// If we about to change current columns amount, check if one more column could fit the screen
+			// This helps to avoid flickering, when resize within 8px from minimal gridWidth for current amount of columns
+			const calculatedColumnsMax = calculatedApproxColumnsMax === this.columns ? calculatedApproxColumnsMax : calculatedHypotheticalColumnsMax
+			// Return at least 1 column
+			return calculatedColumnsMax <= 1 ? 1 : calculatedColumnsMax
 		},
 
 		// Max number of rows possible
@@ -827,7 +830,9 @@ export default {
 				clearTimeout(this.showVideoOverlayTimer)
 			}
 			this.showVideoOverlay = true
-			this.showVideoOverlayTimer = setTimeout(() => { this.showVideoOverlay = false }, 5000)
+			this.showVideoOverlayTimer = setTimeout(() => {
+				this.showVideoOverlay = false
+			}, 5000)
 		},
 
 		handleClickVideo(event, peerId) {
@@ -892,12 +897,14 @@ export default {
 
 .grid-wrapper {
 	width: 100%;
+	min-width: 0;
 	position: relative;
 	flex: 1 0 auto;
 }
 
 .stripe-wrapper {
 	width: 100%;
+	min-width: 0;
 	position: relative;
 }
 
@@ -906,6 +913,7 @@ export default {
 		border: 1px solid #00FF41;
 		color: #00FF41;
 	}
+
 	position: relative;
 
 	&--self {
@@ -917,7 +925,7 @@ export default {
 		object-fit: cover;
 		height: 100%;
 		width: 100%;
-		border-radius: calc(var(--default-clickable-area)/2);
+		border-radius: calc(var(--default-clickable-area) / 2);
 	}
 
 	.wrapper {
@@ -944,11 +952,12 @@ export default {
 	left: 20px;
 	bottom: 50%;
 	padding: 20px;
-	background: rgba(0,0,0,0.8);
+	background: rgba(0, 0, 0, 0.8);
 	border: 1px solid #00FF41;
 	width: 212px;
 	font-size: 12px;
 	z-index: 999999999999999;
+
 	& p {
 		text-overflow: ellipsis;
 		overflow: hidden;
@@ -972,9 +981,11 @@ export default {
 	.grid-wrapper & {
 		position: absolute;
 		top: calc(50% - var(--default-clickable-area) / 2);
+
 		&__previous {
 			left: -4px;
 		}
+
 		&__next {
 			right: -4px;
 		}
@@ -983,9 +994,11 @@ export default {
 	.stripe-wrapper & {
 		position: absolute;
 		top: 16px;
+
 		&__previous {
 			left: 8px;
 		}
+
 		&__next {
 			right: 16px;
 		}
@@ -1001,6 +1014,7 @@ export default {
 	height: 44px;
 	padding: 0 22px;
 	border-radius: 22px;
+
 	&__dot {
 		width: 8px;
 		height: 8px;
