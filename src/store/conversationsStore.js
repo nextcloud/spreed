@@ -99,10 +99,24 @@ const state = {
 
 const getters = {
 	conversations: state => state.conversations,
-	conversationsList: state => Object.values(state.conversations).filter(conversation => {
-		// Filter out breakout rooms from left sidebar
-		return conversation.objectType !== 'room'
-	}),
+	/**
+	 * List of all conversations sorted by isFavorite and lastActivity without breakout rooms
+	 *
+	 * @param {object} state state
+	 * @return {object[]} - Sorted conversations list
+	 */
+	conversationsList: state => {
+		return Object.values(state.conversations)
+			// Filter out breakout rooms from left sidebar
+			.filter(conversation => conversation.objectType !== 'room')
+			// Sort by isFavorite and lastActivity
+			.sort((conversation1, conversation2) => {
+				if (conversation1.isFavorite !== conversation2.isFavorite) {
+					return conversation1.isFavorite ? -1 : 1
+				}
+				return conversation2.lastActivity - conversation1.lastActivity
+			})
+	},
 	/**
 	 * Get a conversation providing its token
 	 *
