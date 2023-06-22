@@ -92,3 +92,4 @@ Vue.prototype.t = global.t
 Vue.prototype.n = global.n
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
+Vue.prototype.FEATURE_FLAGS = {}

@@ -42,6 +42,7 @@ import App from './App.vue'
 
 import './init.js'
 import router from './router/router.js'
+import { initFeatureFlags } from './services/localFeatureFlagsService.js'
 import store from './store/index.js'
 
 import '@nextcloud/dialogs/dist/index.css'
@@ -75,6 +76,8 @@ Vue.use(VueRouter)
 Vue.use(VueObserveVisibility)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
+
+Vue.use(initFeatureFlags())
 
 TooltipOptions.container = '#content-vue'
 store.dispatch('setMainContainerSelector', '#content-vue')
