@@ -20,6 +20,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
+	<author>Dorra Jaouad</author>
 	<author>Grigorii Shartsev</author>
 	<author>Ivan Sein</author>
 	<author>Jan-Christoph Borchardt</author>
@@ -28,7 +29,6 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<author>Marcel Hibbe</author>
 	<author>Marcel Müller</author>
 	<author>Marco Ambrosini</author>
-	<author>Vitor Mattos</author>
 
 	<namespace>Talk</namespace>
 
