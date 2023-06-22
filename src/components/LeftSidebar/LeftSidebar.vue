@@ -26,8 +26,8 @@
 			<SearchBox ref="searchbox"
 				v-model="searchText"
 				class="conversations-search"
-				:class="{'conversations-search--expanded': isFocused,
-					'conversations-search--filter' : isFiltered }"
+				:class="{'conversations-search--expanded': isFocused}"
+				:disabled="isFiltered"
 				:is-searching="isSearching"
 				@blur="setIsFocused(false)"
 				@focus="setIsFocused(true)"
@@ -38,16 +38,16 @@
 
 			<!-- Options -->
 			<div class="options"
-				:class="{'options--hidden': isFocused}">
-				<NcActions ref="filterMainBtn"
-					class="filters-button">
+				:class="{'hidden-visually': isFocused}">
+				<NcActions class="filter-actions"
+					:primary="isFiltered !== null">
 					<template #icon>
-						<FilterIcon v-if="!isFiltered" :size="15" />
-						<FilterCheckIcon v-else-if="isFiltered" :size="15" />
+						<FilterIcon :size="15" />
 					</template>
 					<NcActionButton close-after-click
-						class="filterButton--Option"
-						@click="handleFilter('is:mentioned')">
+						class="filter-actions__button"
+						:primary="isFiltered === 'mentions'"
+						@click="handleFilter('mentions')">
 						<template #icon>
 							<AtIcon :size="20" />
 						</template>
@@ -55,8 +55,9 @@
 					</NcActionButton>
 
 					<NcActionButton close-after-click
-						class="filterButton--Option"
-						@click="handleFilter('is:unread')">
+						class="filter-actions__button"
+						:class="{'filter-actions__button--active': isFiltered === 'unread'}"
+						@click="handleFilter('unread')">
 						<template #icon>
 							<MessageBadge :size="20" />
 						</template>
@@ -65,33 +66,18 @@
 
 					<NcActionButton v-if="isFiltered"
 						close-after-click
-						class="filterButton--Clear"
-						@click="clearFilter">
+						class="filter-actions__clearbutton"
+						@click="handleFilter(null)">
 						<template #icon>
 							<FilterRemoveIcon :size="20" />
 						</template>
-						{{ t('spreed', 'Clear filters: {filterText}', { filterText: filterText }) }}
+						{{ t('spreed', 'Clear filters') }}
 					</NcActionButton>
 				</NcActions>
-
-				<NcActions>
-					<template #icon>
-						<PlusIcon :size="20" />
-					</template>
-					<NcActionButton v-if="canStartConversations"
-						close-after-click
-						@click="toggleNewGroupConversation(true)">
-						<template #icon>
-							<PlusIcon :size="20" />
-						</template>
-						{{ t('spreed','Create a new conversation') }}
-					</NcActionButton>
-				</NcActions>
+				<!-- New Conversation -->
+				<NewGroupConversation v-if="canStartConversations"
+					ref="newGroupConversation" />
 			</div>
-			<!-- New Conversation -->
-			<NewGroupConversation ref="newGroupConversation"
-				:show-modal="isNewGroupConversationOpen"
-				@update-modal="toggleNewGroupConversation" />
 		</div>
 
 		<template #list>
@@ -108,7 +94,7 @@
 					<template v-if="!initialisedConversations">
 						<LoadingPlaceholder type="conversations" />
 					</template>
-					<Hint v-else-if="(searchText && !conversationsList.length) || (!conversationsList.length && isFiltered)"
+					<Hint v-else-if="noMatchFound"
 						:hint="t('spreed', 'No matches')" />
 					<template v-if="isSearching">
 						<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
@@ -196,10 +182,8 @@ import debounce from 'debounce'
 
 import AtIcon from 'vue-material-design-icons/At.vue'
 import FilterIcon from 'vue-material-design-icons/Filter.vue'
-import FilterCheckIcon from 'vue-material-design-icons/FilterCheck.vue'
 import FilterRemoveIcon from 'vue-material-design-icons/FilterRemove.vue'
 import MessageBadge from 'vue-material-design-icons/MessageBadge.vue'
-import PlusIcon from 'vue-material-design-icons/Plus.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -246,11 +230,9 @@ export default {
 		ConversationIcon,
 		NcActions,
 		NcActionButton,
-		PlusIcon,
 		AtIcon,
 		MessageBadge,
 		FilterIcon,
-		FilterCheckIcon,
 		FilterRemoveIcon,
 	},
 
@@ -284,19 +266,18 @@ export default {
 			forceFullRoomListRefreshAfterXLoops: 0,
 			isNewGroupConversationOpen: false,
 			isFocused: false,
-			filterText: '',
-			isFiltered: false,
+			isFiltered: null,
 		}
 	},
 
 	computed: {
 		conversationsList() {
 			let conversations = this.$store.getters.conversationsList
-			switch (this.filterText) {
-			case ('is:unread'):
+			switch (this.isFiltered) {
+			case ('unread'):
 				conversations = conversations.filter(conversation => conversation.unreadMessages > 0)
 				break
-			case ('is:mentioned'):
+			case ('mentions'):
 				conversations = conversations.filter(conversation => conversation.unreadMention || (conversation.unreadMessages > 0
 				 && (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER)))
 				break
@@ -318,6 +299,10 @@ export default {
 
 		isSearching() {
 			return this.searchText !== ''
+		},
+
+		noMatchFound() {
+			return (this.searchText || this.isFiltered) && !this.conversationsList.length
 		},
 
 		showStartConversationsOptions() {
@@ -409,16 +394,7 @@ export default {
 		},
 
 		handleFilter(filter) {
-			this.isFiltered = true
-			this.filterText = filter
-
-		},
-
-		clearFilter() {
-			// clear the status filter
-			this.isFiltered = false
-			// clear the filter
-			this.filterText = ''
+			this.isFiltered = filter
 		},
 
 		focusCancel() {
@@ -766,8 +742,8 @@ export default {
 
 .conversations-search {
 	transition: all 0.3s ease;
-	width: 65%;
-	z-index: 2;
+	width: calc(65% - 8px);
+	z-index: 1;
 	position : absolute;
 
 	:deep(.input-field__input) {
@@ -777,29 +753,31 @@ export default {
 		width: 90%;
 	}
 
-	&--filter{
-		pointer-events: none;
-		:deep(.input-field__input) {
-		background-color: var(--color-background-dark);
-	}
-	}
+}
+
+//FIXME : this should be changed once the disabled style for input is added
+:deep(.input-field__input[disabled="disabled"]){
+	background-color: var(--color-background-dark);
 }
 
 .options{
 	position: relative;
-	z-index: 1;
-	left : calc(65% + 10px);
+	transition: all 0.3s ease; //gets hidden once the search box is expanded
+	left : calc(65% + 4px);
 	display: flex;
-	gap: 0.25px;
-
-	&--hidden{
-		visibility: hidden;
-	}
 }
 
-.filterButton--Clear{
-	font-style: italic;
-	background-color: var(--color-background-dark);
+.filter-actions__button--active{
+	background-color: var(--color-primary-element-light);
+	border-radius: 6px;
+	:deep(.action-button__longtext){
+		font-weight: bold;
+	}
+
+}
+
+.hidden-visually{
+	height:100%;
 }
 
 .settings-button {
