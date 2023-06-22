@@ -99,9 +99,6 @@ export default {
 
 <style lang="scss" scoped>
 .confirmation {
-	display: flex;
-	flex-direction: column;
-
 	&__icon {
 		padding-top: 80px;
 	}

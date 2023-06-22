@@ -35,10 +35,12 @@
 			:container="container"
 			size="normal"
 			@close="closeModal">
-			<!-- Wrapper for content & navigation -->
-			<div class="new-group-conversation talk-modal">
-				<h2>{{ t('spreed', 'Create a new group conversation') }}</h2>
-				<!-- Content -->
+			<h2 class="new-group-conversation__header">
+				{{ t('spreed', 'Create a new group conversation') }}
+			</h2>
+
+			<div class="new-group-conversation__main">
+				<!-- First page -->
 				<div v-show="page === 0" class="new-group-conversation__content">
 					<NcTextField ref="conversationName"
 						v-model="conversationName"
@@ -87,23 +89,24 @@
 				</div>
 
 				<!-- Second page -->
-				<div v-if="page === 1" class="new-group-conversation__content">
-					<SetContacts :conversation-name="conversationNameTrimmed" />
-				</div>
+				<SetContacts v-if="page === 1"
+					class="new-group-conversation__content"
+					:conversation-name="conversationNameTrimmed" />
 
 				<!-- Third page -->
-				<div v-else-if="page === 2" class="new-group-conversation__content">
-					<Confirmation :token="newConversation.token"
-						:conversation-name="conversationNameTrimmed"
-						:error="error"
-						:is-loading="isLoading"
-						:success="success"
-						:is-public="isPublic" />
-				</div>
+				<Confirmation v-else-if="page === 2"
+					class="new-group-conversation__content"
+					:token="newConversation.token"
+					:conversation-name="conversationNameTrimmed"
+					:error="error"
+					:is-loading="isLoading"
+					:success="success"
+					:is-public="isPublic" />
 			</div>
+
 			<!-- Navigation: different buttons with different actions and
 				placement are rendered depending on the current page -->
-			<div class="navigation">
+			<div class="new-group-conversation__footer">
 				<!-- First page -->
 				<NcButton v-if="page===0 && isPublic"
 					:disabled="disabled"
@@ -114,7 +117,7 @@
 				<NcButton v-if="page===0"
 					type="primary"
 					:disabled="disabled"
-					class="navigation__button-right"
+					class="new-group-conversation__button"
 					@click="handleSetConversationName">
 					{{ t('spreed', 'Add participants') }}
 				</NcButton>
@@ -126,14 +129,14 @@
 				</NcButton>
 				<NcButton v-if="page===1"
 					type="primary"
-					class="navigation__button-right"
+					class="new-group-conversation__button"
 					@click="handleCreateConversation">
 					{{ t('spreed', 'Create conversation') }}
 				</NcButton>
 				<!-- Third page -->
 				<NcButton v-if="page===2 && (error || isPublic)"
 					type="primary"
-					class="navigation__button-right"
+					class="new-group-conversation__button"
 					@click="closeModal">
 					{{ t('spreed', 'Close') }}
 				</NcButton>
@@ -452,17 +455,22 @@ export default {
 }
 
 .new-group-conversation {
-	height: auto;
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	position: relative;
+	&__header {
+		flex-shrink: 0;
+		margin: 0;
+		padding: 10px 20px;
+	}
+
+	&__main {
+		flex-grow: 1;
+		overflow: auto;
+	}
 
 	&__content {
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
+		padding: 10px 20px;
 	}
 
 	&__wrapper {
@@ -477,33 +485,25 @@ export default {
 		margin-top: 10px;
 		padding: 4px 0;
 	}
-}
 
-/** Size full in the modal component doesn't have border radius, this adds
-it back */
-:deep(.modal-container) {
-	border-radius: var(--border-radius-large) !important;
-	height: 900px;
+	&__footer {
+		flex-shrink: 0;
+		display: flex;
+		justify-content: space-between;
+		padding: 10px 20px;
+		box-shadow: 0 -10px 5px var(--color-main-background);
+	}
+
+	&__button {
+		margin-left: auto;
+	}
 }
 
 :deep(.modal-wrapper .modal-container) {
-	height: max-content;
-}
-
-.navigation {
-	position: sticky;
-	bottom: -1px;
-	display: flex;
-	justify-content: space-between;
-	flex: 0 0 40px;
-	background-color: var(--color-main-background);
-	box-shadow: 0 -10px 5px var(--color-main-background);
-	z-index: 1;
-	padding: 0 20px 20px;
-
-	&__button-right {
-		margin-left: auto;
-	}
+	display: flex !important;
+	flex-direction: column;
+	height: 90%;
+	overflow: hidden !important;
 }
 
 :deep(.app-settings-section__hint) {
