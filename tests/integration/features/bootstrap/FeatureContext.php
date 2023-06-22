@@ -652,6 +652,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				if (isset($expectedKeys['attendeePermissions'])) {
 					$data['attendeePermissions'] = (string) $attendee['attendeePermissions'];
 				}
+				if (isset($expectedKeys['displayName'])) {
+					$data['displayName'] = (string) $attendee['displayName'];
+				}
 
 				if (!isset(self::$userToAttendeeId[$identifier][$attendee['actorType']])) {
 					self::$userToAttendeeId[$identifier][$attendee['actorType']] = [];
@@ -3045,6 +3048,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($currentUser);
 
 		$this->createdGroups[] = $group;
+	}
+
+	/**
+	 * @Given /^set display name of group "([^"]*)" to "([^"]*)"$/
+	 * @param string $groupId
+	 * @param string $displayName
+	 */
+	public function renameGroup(string $groupId, string $displayName): void {
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('PUT', '/cloud/groups/' . urlencode($groupId), [
+			'key' => 'displayname',
+			'value' => $displayName,
+		]);
+
+		$this->assertStatusCode($this->response, 200);
 	}
 
 	private function deleteGroup($group) {
