@@ -28,12 +28,13 @@ use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\PollService;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\Group\Events\GroupChangedEvent;
 use OCP\User\Events\UserChangedEvent;
 
 /**
  * @template-implements IEventListener<Event>
  */
-class UserDisplayNameListener implements IEventListener {
+class DisplayNameListener implements IEventListener {
 	private ParticipantService $participantService;
 	private PollService $pollService;
 
@@ -46,26 +47,25 @@ class UserDisplayNameListener implements IEventListener {
 	}
 
 	public function handle(Event $event): void {
-		if (!($event instanceof UserChangedEvent)) {
-			// Unrelated
-			return;
+		if ($event instanceof UserChangedEvent && $event->getFeature() === 'displayName') {
+			$this->updateCachedName(Attendee::ACTOR_USERS, $event->getUser()->getUID(), (string) $event->getValue());
 		}
-
-		if ($event->getFeature() !== 'displayName') {
-			// Unrelated
-			return;
+		if ($event instanceof GroupChangedEvent && $event->getFeature() === 'displayName') {
+			$this->updateCachedName(Attendee::ACTOR_GROUPS, $event->getGroup()->getGID(), (string) $event->getValue());
 		}
+	}
 
+	protected function updateCachedName(string $actorType, string $actorId, string $newName): void {
 		$this->participantService->updateDisplayNameForActor(
-			Attendee::ACTOR_USERS,
-			$event->getUser()->getUID(),
-			(string) $event->getValue()
+			$actorType,
+			$actorId,
+			$newName
 		);
 
 		$this->pollService->updateDisplayNameForActor(
-			Attendee::ACTOR_USERS,
-			$event->getUser()->getUID(),
-			(string) $event->getValue()
+			$actorType,
+			$actorId,
+			$newName
 		);
 	}
 }
