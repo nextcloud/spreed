@@ -25,6 +25,7 @@
 			:value.sync="localValue"
 			:label="placeholderText"
 			:show-trailing-button="isSearching"
+			:disabled="disabled"
 			trailing-button-icon="close"
 			v-on="$listeners"
 			@trailing-button-click="abortSearch"
@@ -53,7 +54,7 @@ export default {
 		 */
 		placeholderText: {
 			type: String,
-			default: t('spreed', 'Search…'),
+			default: t('spreed', 'Search …'),
 		},
 		/**
 		 * The value of the input field, when receiving it as a prop the localValue
@@ -67,6 +68,10 @@ export default {
 		 * If true, this component displays an 'x' button to abort the search
 		 */
 		isSearching: {
+			type: Boolean,
+			default: false,
+		},
+		disabled: {
 			type: Boolean,
 			default: false,
 		},

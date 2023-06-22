@@ -7,15 +7,13 @@ import Vuex from 'vuex'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 
-import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-
 import LeftSidebar from './LeftSidebar.vue'
 
 import router from '../../__mocks__/router.js'
 import { searchPossibleConversations, searchListedConversations } from '../../services/conversationsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import storeConfig from '../../store/storeConfig.js'
-import { findNcListItems, findNcActionButton } from '../../test-helpers.js'
+import { findNcListItems } from '../../test-helpers.js'
 
 jest.mock('@nextcloud/initial-state', () => ({
 	loadState: jest.fn(),
@@ -623,7 +621,7 @@ describe('LeftSidebar.vue', () => {
 				await resultsListItems.at(1).findAll('a').trigger('click')
 				// Wait for the component to render
 				await wrapper.vm.$nextTick()
-				const ncModalComponent = wrapper.findComponent(NcModal)
+				const ncModalComponent = wrapper.findComponent({ name: 'NcModal' })
 				expect(ncModalComponent.exists()).toBeTruthy()
 
 				const input = ncModalComponent.findComponent({ name: 'NcTextField', ref: 'conversationName' })
@@ -646,7 +644,7 @@ describe('LeftSidebar.vue', () => {
 
 				// Wait for the component to render
 				await wrapper.vm.$nextTick()
-				const ncModalComponent = wrapper.findComponent(NcModal)
+				const ncModalComponent = wrapper.findComponent({ name: 'NcModal' })
 				expect(ncModalComponent.exists()).toBeTruthy()
 				const input = ncModalComponent.findComponent({ name: 'NcTextField', ref: 'conversationName' })
 				expect(input.props('value')).toBe(circlesResults[1].label)
@@ -711,7 +709,7 @@ describe('LeftSidebar.vue', () => {
 			loadStateSettings.start_conversations = true
 
 			const wrapper = mountComponent()
-			const buttonEl = findNcActionButton(wrapper, 'Create a new conversation')
+			const buttonEl = wrapper.findComponent({ name: 'NewGroupConversation' })
 			expect(buttonEl.exists()).toBeTruthy()
 
 		})
@@ -719,7 +717,7 @@ describe('LeftSidebar.vue', () => {
 			loadStateSettings.start_conversations = false
 
 			const wrapper = mountComponent()
-			const buttonEl = findNcActionButton(wrapper, 'Create a new conversation')
+			const buttonEl = wrapper.findComponent({ name: 'NewGroupConversation' })
 			expect(buttonEl.exists()).toBeFalsy()
 		})
 	})
