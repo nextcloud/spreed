@@ -77,6 +77,7 @@ describe('conversationsStore', () => {
 			participantFlags: PARTICIPANT.CALL_FLAG.DISCONNECTED,
 			participantType: PARTICIPANT.TYPE.USER,
 			lastPing: 600,
+			lastActivity: 1672531200, // 2023-01-01T00:00:00.000Z
 			sessionId: 'session-id-1',
 			attendeeId: 'attendee-id-1',
 			actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -242,10 +243,12 @@ describe('conversationsStore', () => {
 				{
 					token: 'one_token',
 					attendeeId: 'attendee-id-1',
+					lastActivity: 1675209600, // 2023-02-01T00:00:00.000Z
 				},
 				{
 					token: 'another_token',
 					attendeeId: 'attendee-id-2',
+					lastActivity: 1675209600, // 2023-02-01T00:00:00.000Z
 				},
 			]
 
@@ -269,6 +272,57 @@ describe('conversationsStore', () => {
 
 			expect(clearMaintenanceModeAction).toHaveBeenCalled()
 			expect(updateTalkVersionHashAction).toHaveBeenCalledWith(expect.anything(), response)
+		})
+
+		test('fetches all conversations and update only new without purging when modifiedSince is present', async () => {
+			const oldConversation1 = {
+				token: 'tokenOne',
+				attendeeId: 'attendee-id-1',
+				lastActivity: 1672531200, // 2023-01-01T00:00:00.000Z
+			}
+			const oldConversation2 = {
+				token: 'tokenTwo',
+				attendeeId: 'attendee-id-2',
+				lastActivity: 1672531200, // 2023-01-01T00:00:00.000Z
+			}
+
+			// Add initial conversations
+			store.dispatch('addConversation', oldConversation1)
+			store.dispatch('addConversation', oldConversation2)
+
+			// Fetch new conversation
+			// The same lastActivity, as oldConversation
+			const newConversation1 = {
+				token: 'tokenOne',
+				attendeeId: 'attendee-id-1',
+				lastActivity: 1672531200, // 2023-01-01T00:00:00.000Z
+			}
+			// Has new activity
+			const newConversation2 = {
+				token: 'tokenTwo',
+				attendeeId: 'attendee-id-2',
+				lastActivity: 1675209600, // 2023-02-01T00:00:00.000Z
+			}
+			const modifiedSince = 1675209600 // 2023-02-01T00:00:00.000Z
+
+			const response = {
+				data: {
+					ocs: {
+						data: [newConversation1, newConversation2],
+					},
+				},
+			}
+
+			fetchConversations.mockResolvedValue(response)
+
+			await store.dispatch('fetchConversations', { modifiedSince })
+
+			expect(fetchConversations).toHaveBeenCalledWith({ params: { modifiedSince } })
+			// conversationsList is actual to the response
+			expect(store.getters.conversationsList).toEqual([newConversation1, newConversation2])
+			// Only old conversation with new activity should be actually replaced with new objects
+			expect(store.state.conversationsStore.conversations[oldConversation1.token]).toStrictEqual(oldConversation1)
+			expect(store.state.conversationsStore.conversations[oldConversation2.token]).toStrictEqual(newConversation2)
 		})
 
 		test('fetch conversation failure checks for maintenance mode', async () => {
