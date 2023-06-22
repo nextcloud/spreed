@@ -5,6 +5,7 @@ Feature: conversation/group-participants
     Given user "participant3" exists
     And group "group1" exists
     And group "group2" exists
+    And group "rename-group" exists
     And user "participant2" is member of group "group1"
 
   Scenario: Owner invites a group
@@ -262,3 +263,18 @@ Feature: conversation/group-participants
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
       | groups     | group1       | 3               |
+
+  Scenario: Renaming a group reflects in the participant list
+    Given user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds group "rename-group" to room "room" with 200 (v4)
+    And user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId      | participantType | displayName              |
+      | users      | participant1 | 1               | participant1-displayname |
+      | groups     | rename-group | 3               | rename-group             |
+    When set display name of group "rename-group" to "rename-group-displayname"
+    Then user "participant1" sees the following attendees in room "room" with 200 (v4)
+      | actorType  | actorId      | participantType | displayName              |
+      | users      | participant1 | 1               | participant1-displayname |
+      | groups     | rename-group | 3               | rename-group-displayname |
