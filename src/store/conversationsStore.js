@@ -289,14 +289,16 @@ const actions = {
 	 * @param {object} conversation the conversation
 	 */
 	postAddConversation(context, conversation) {
-		if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.status) {
-			emit('user_status:status.updated', {
-				status: conversation.status,
-				message: conversation.statusMessage,
-				icon: conversation.statusIcon,
-				clearAt: conversation.statusClearAt,
-				userId: conversation.name,
-			})
+		if (!FEATURE_FLAGS.CONVERSATIONS_LIST__REVERT_USER_STATUS_SYNC) {
+			if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.status) {
+				emit('user_status:status.updated', {
+					status: conversation.status,
+					message: conversation.statusMessage,
+					icon: conversation.statusIcon,
+					clearAt: conversation.statusClearAt,
+					userId: conversation.name,
+				})
+			}
 		}
 
 		let currentUser = {

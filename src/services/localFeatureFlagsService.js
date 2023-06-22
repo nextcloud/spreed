@@ -23,6 +23,7 @@ import BrowserStorage from './BrowserStorage.js'
 
 export const FEATURE_FLAGS = {
 	CONVERSATIONS_LIST__SOFT_CONVERSATIONS_UPDATE: false,
+	CONVERSATIONS_LIST__REVERT_USER_STATUS_SYNC: false,
 }
 
 /**
