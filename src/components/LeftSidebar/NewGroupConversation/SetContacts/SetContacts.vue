@@ -201,9 +201,6 @@ export default {
 <style lang="scss" scoped>
 .set-contacts {
 	height: 100%;
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
 	&__icon {
 		margin-top: 40px;
 	}
