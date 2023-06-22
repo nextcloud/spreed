@@ -44,15 +44,18 @@
 					<LoadingPlaceholder v-if="!initialisedConversations" type="conversations" />
 
 					<!-- Conversations List -->
-					<template v-if="!isSearching">
-						<Conversation v-for="item of conversationsList"
-							:key="item.id"
-							:ref="`conversation-${item.token}`"
-							:item="item" />
-					</template>
+					<li>
+						<!-- Cache the conversation list to fast switch from search to conversations list -->
+						<KeepAlive include="ConversationList">
+							<ConversationList v-if="!isSearching"
+								ref="conversationsList"
+								key="conversationsList"
+								:conversations="conversationsList" />
+						</KeepAlive>
+					</li>
 
 					<!-- Search results -->
-					<template v-else-if="isSearching">
+					<template v-if="isSearching">
 						<!-- Search results: user's conversations -->
 						<Conversation v-for="item of searchResultsConversationList"
 							:key="item.id"
@@ -157,6 +160,7 @@ import ConversationIcon from '../ConversationIcon.vue'
 import Hint from '../Hint.vue'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 import Conversation from './ConversationsList/Conversation.vue'
+import ConversationList from './ConversationsList/ConversationList.vue'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation.vue'
 import SearchBox from './SearchBox/SearchBox.vue'
 
@@ -174,6 +178,7 @@ export default {
 	name: 'LeftSidebar',
 
 	components: {
+		ConversationList,
 		NcAppNavigation,
 		NcAppNavigationCaption,
 		NcButton,
@@ -556,7 +561,7 @@ export default {
 				// Fixed in Vue 3
 				// Temp solution - use unique ref name for each v-for element. The value is still array but with one element
 				// TODO: Vue3: remove [0] here or use object for template refs
-				const conversation = this.$refs[`conversation-${token}`]?.[0].$el
+				const conversation = this.$refs.conversationsList?.$refs[`conversation-${token}`]?.[0].$el
 				if (!conversation) {
 					return
 				}
