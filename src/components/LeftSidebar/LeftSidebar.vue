@@ -34,8 +34,9 @@
 		</div>
 		<template #list>
 			<li ref="container" class="left-sidebar__list">
-				<ul ref="scroller"
+				<ul :ref="FEATURE_FLAGS.CONVERSATIONS_LIST__VIRTUAL_SCROLLING ? null : 'scroller'"
 					class="scroller"
+					:style="FEATURE_FLAGS.CONVERSATIONS_LIST__VIRTUAL_SCROLLING && 'height: 100%'"
 					@scroll="debounceHandleScroll">
 					<NcAppNavigationCaption :class="{'hidden-visually': !isSearching}"
 						:title="t('spreed', 'Conversations')" />
@@ -45,10 +46,25 @@
 
 					<!-- Conversations List -->
 					<template v-if="!isSearching">
-						<Conversation v-for="item of conversationsList"
-							:key="item.id"
-							:ref="`conversation-${item.token}`"
-							:item="item" />
+						<RecycleScroller v-if="FEATURE_FLAGS.CONVERSATIONS_LIST__VIRTUAL_SCROLLING"
+							ref="scroller"
+							style="height: 100%"
+							list-tag="li"
+							item-tag="ul"
+							:items="conversationsList"
+							:item-size="64"
+							key-field="token"
+							@scroll="debounceHandleScroll">
+							<template #default="{ item }">
+								<Conversation :ref="`conversation-${item.token}`" :item="item" />
+							</template>
+						</RecycleScroller>
+						<template v-else>
+							<Conversation v-for="item of conversationsList"
+								:key="item.id"
+								:ref="`conversation-${item.token}`"
+								:item="item" />
+						</template>
 					</template>
 
 					<!-- Search results -->
@@ -142,6 +158,7 @@
 
 <script>
 import debounce from 'debounce'
+import { RecycleScroller } from 'vue-virtual-scroller'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -167,7 +184,10 @@ import {
 	searchListedConversations,
 } from '../../services/conversationsService.js'
 import { EventBus } from '../../services/EventBus.js'
+import { FEATURE_FLAGS } from '../../services/localFeatureFlagsService.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
+
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 export default {
 
@@ -184,6 +204,7 @@ export default {
 		LoadingPlaceholder,
 		NcListItem,
 		ConversationIcon,
+		RecycleScroller,
 	},
 
 	mixins: [
@@ -551,26 +572,39 @@ export default {
 
 		scrollToConversation(token) {
 			this.$nextTick(() => {
-				// In Vue 2 ref on v-for is always an array and its order is not guaranteed to match the order of v-for source
-				// See https://github.com/vuejs/vue/issues/4952#issuecomment-280661367
-				// Fixed in Vue 3
-				// Temp solution - use unique ref name for each v-for element. The value is still array but with one element
-				// TODO: Vue3: remove [0] here or use object for template refs
-				const conversation = this.$refs[`conversation-${token}`]?.[0].$el
-				if (!conversation) {
-					return
-				}
+				if (FEATURE_FLAGS.CONVERSATIONS_LIST__VIRTUAL_SCROLLING) {
+					(async () => {
+						// FIXME
+						await this.$nextTick()
+						await this.$nextTick()
+						await this.$nextTick()
+						const index = this.conversationsList.findIndex((conversation) => conversation.token === token)
+						if (index !== null) {
+							this.$refs.scroller.scrollToPosition(index * 64)
+						}
+					})()
+				} else {
+					// In Vue 2 ref on v-for is always an array and its order is not guaranteed to match the order of v-for source
+					// See https://github.com/vuejs/vue/issues/4952#issuecomment-280661367
+					// Fixed in Vue 3
+					// Temp solution - use unique ref name for each v-for element. The value is still array but with one element
+					// TODO: Vue3: remove [0] here or use object for template refs
+					const conversation = this.$refs[`conversation-${token}`]?.[0].$el
+					if (!conversation) {
+						return
+					}
 
-				if (this.elementIsBelowViewpoint(this.$refs.container, conversation)) {
-					this.$refs.container.scrollTo({
-						top: conversation.offsetTop + conversation.offsetHeight * 2 - this.$refs.container.clientHeight,
-						behavior: 'smooth',
-					})
-				} else if (this.elementIsAboveViewpoint(this.$refs.container, conversation)) {
-					this.$refs.container.scrollTo({
-						top: conversation.offsetTop - conversation.offsetHeight,
-						behavior: 'smooth',
-					})
+					if (this.elementIsBelowViewpoint(this.$refs.container, conversation)) {
+						this.$refs.container.scrollTo({
+							top: conversation.offsetTop + conversation.offsetHeight * 2 - this.$refs.container.clientHeight,
+							behavior: 'smooth',
+						})
+					} else if (this.elementIsAboveViewpoint(this.$refs.container, conversation)) {
+						this.$refs.container.scrollTo({
+							top: conversation.offsetTop - conversation.offsetHeight,
+							behavior: 'smooth',
+						})
+					}
 				}
 			})
 		},
