@@ -145,9 +145,9 @@ describe('LeftSidebar.vue', () => {
 			await flushPromises()
 
 			expect(wrapper.vm.initialisedConversations).toBeTruthy()
-			expect(conversationListItems.at(0).props('item')).toStrictEqual(conversationsList[2])
-			expect(conversationListItems.at(1).props('item')).toStrictEqual(conversationsList[0])
-			expect(conversationListItems.at(2).props('item')).toStrictEqual(conversationsList[1])
+			expect(conversationListItems.at(0).props('item')).toStrictEqual(conversationsList[0])
+			expect(conversationListItems.at(1).props('item')).toStrictEqual(conversationsList[1])
+			expect(conversationListItems.at(2).props('item')).toStrictEqual(conversationsList[2])
 
 			expect(conversationsReceivedEvent).toHaveBeenCalledWith({
 				singleConversation: false,
