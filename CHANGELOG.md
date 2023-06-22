@@ -1,9 +1,35 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.0.1 – 2023-06-12
+### Changed
+- Include display name in participant update signaling message
+  [#9822](https://github.com/nextcloud/spreed/issues/9822)
+- Update dependencies
+
+### Fixed
+- Improve frontend responsiveness with many conversations
+  [#9841](https://github.com/nextcloud/spreed/issues/9841)
+- Don't make the conversation list scroll when the selected conversation is already visible
+  [#9782](https://github.com/nextcloud/spreed/issues/9782)
+  [#9796](https://github.com/nextcloud/spreed/issues/9796)
+- Fix creating files from the "Blank" template option
+  [#9818](https://github.com/nextcloud/spreed/issues/9818)
+- Make conversation description and name selectable
+  [#9780](https://github.com/nextcloud/spreed/issues/9780)
+- Hide poll voting details when not filled
+  [#9821](https://github.com/nextcloud/spreed/issues/9821)
+  [#9819](https://github.com/nextcloud/spreed/issues/9819)
+- Fix visibility issue in the create conversation dialog on small screens
+  [#9794](https://github.com/nextcloud/spreed/issues/9794)
+  [#9843](https://github.com/nextcloud/spreed/issues/9843)
+- Include display name in participant update signaling message
+  [#9822](https://github.com/nextcloud/spreed/issues/9822)
+- Update group displayname cache when the group was renamed
+  [#9839](https://github.com/nextcloud/spreed/issues/9839)
+
 ## 17.0.0 – 2023-06-12
 ### Added
-
 - Conversations can now have an avatar or emoji as icon
   [#927](https://github.com/nextcloud/spreed/issues/927)
 - Virtual backgrounds are now available in addition to the blurred background in video calls
