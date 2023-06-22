@@ -28,13 +28,15 @@
 			class="avatar icon"
 			:class="iconClass" />
 		<!-- img is used here instead of NcAvatar to explicitly set key required to avoid glitching in virtual scrolling  -->
-		<!--		<img v-else-if="!isOneToOne"-->
-		<!--			:key="avatarUrl"-->
-		<!--			:src="avatarUrl"-->
-		<!--			:width="size"-->
-		<!--			:height="size"-->
-		<!--			class="conversation-icon__img">-->
-		<NcAvatar v-else-if="!isOneToOne"
+
+		<img v-else-if="!isOneToOne && PERF_TEST.USE_LAZY_LOADING"
+			:key="avatarUrl"
+			:src="avatarUrl"
+			:width="size"
+			:height="size"
+			loading="lazy"
+			class="conversation-icon__img">
+		<NcAvatar v-else-if="!isOneToOne && !PERF_TEST.USE_LAZY_LOADING"
 			:url="avatarUrl"
 			:size="size" />
 		<NcAvatar v-else
