@@ -29,6 +29,7 @@ use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\ReactionManager;
+use OCA\Talk\Config;
 use OCA\Talk\GuestManager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
@@ -59,6 +60,9 @@ use OCP\Comments\IComment;
 use OCP\Comments\MessageTooLongException;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\IRootFolder;
+use OCP\Files\NotPermittedException;
+use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
@@ -249,6 +253,62 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		return $this->parseCommentToResponse($comment, $parentMessage);
+	}
+
+	#[NoAdminRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	public function prepareSharingFile(string $fileName): DataResponse {
+		$rootFolder = \OCP\Server::get(IRootFolder::class);
+		$talkConfig = \OCP\Server::get(Config::class);
+		$serverConfig = \OCP\Server::get(IConfig::class);
+
+		$attachmentFolderName = $talkConfig->getAttachmentFolder($this->userId);
+		$userFolder = $rootFolder->getUserFolder($this->userId);
+		$attendee = $this->participant->getAttendee();
+
+		/**
+		 * Create Talk/ folder
+		 */
+		try {
+			try {
+				$attachmentFolder = $userFolder->get($attachmentFolderName);
+			} catch (NotFoundException $e) {
+				$attachmentFolder = $userFolder->newFolder($attachmentFolderName);
+			}
+
+			$freeSpace = $attachmentFolder->getFreeSpace();
+		} catch (NotPermittedException $e) {
+			$attachmentFolder = '/';
+			$serverConfig->setUserValue($this->userId, 'spreed', 'attachment_folder', '/');
+			$attachmentFolder = $userFolder;
+		}
+
+		/**
+		 * Create Talk/ folder
+		 */
+		try {
+			try {
+				$folder = $attachmentFolder->getBy($attachmentFolder);
+			} catch (NotFoundException $e) {
+				$folder = $userFolder->newFolder($attachmentFolder);
+			}
+
+			$freeSpace = $folder->getFreeSpace();
+		} catch (NotPermittedException $e) {
+			$attachmentFolder = '/';
+			$serverConfig->setUserValue($this->userId, 'spreed', 'attachment_folder', '/');
+			$freeSpace = $userFolder->getFreeSpace();
+		}
+
+		$this->room;
+
+		return new DataResponse([
+			'freeSpace' => $freeSpace,
+			'uploadPath' => $uploadPath,
+		]);
 	}
 
 	/**
