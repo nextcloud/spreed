@@ -22,7 +22,7 @@
 import BrowserStorage from './BrowserStorage.js'
 
 export const FEATURE_FLAGS = {
-	// FLAG_KEY: false,
+	CONVERSATIONS_LIST__SOFT_CONVERSATIONS_UPDATE: false,
 }
 
 /**

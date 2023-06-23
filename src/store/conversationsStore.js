@@ -58,6 +58,7 @@ import {
 	setConversationEmojiAvatar,
 	deleteConversationAvatar,
 } from '../services/conversationsService.js'
+import { FEATURE_FLAGS } from '../services/localFeatureFlagsService.js'
 import {
 	startCallRecording,
 	stopCallRecording,
@@ -122,6 +123,55 @@ const mutations = {
 	addConversation(state, conversation) {
 		Vue.set(state.conversations, conversation.token, conversation)
 	},
+
+	/**
+	 * Add new conversations
+	 *
+	 * @param {object} state the state
+	 * @param {object[]} conversations new conversations list
+	 */
+	addConversations(state, conversations) {
+		/**
+		 * Apply mutations to object based on new object:
+		 *
+		 * @param {object} target target object
+		 * @param {object} newObject new object to get changes from
+		 */
+		const applySoftObjectUpdates = (target, newObject) => {
+			const isObject = (value) => typeof value === 'object' && !Array.isArray(value)
+
+			// Delete removed properties
+			for (const key of Object.keys(target)) {
+				if (!Object.hasOwn(newObject, key)) {
+					Vue.delete(target, key)
+				}
+			}
+
+			// Add new properties and update old ones
+			for (const key of Object.keys(newObject)) {
+				if (!Object.hasOwn(target, key)) {
+					// Add new property
+					Vue.set(target, key, newObject[key])
+				} else if (isObject(target[key]) && isObject(newObject[key])) {
+					// This property is an object in both - update recursively
+					applySoftObjectUpdates(target[key], newObject[key])
+				} else {
+					// Update the property
+					Vue.set(target, key, newObject[key])
+				}
+			}
+		}
+
+		// Create a new conversation-by-Token object
+		const newConversations = {}
+		for (const conversation of conversations) {
+			newConversations[conversation.token] = conversation
+		}
+
+		// Update the store
+		applySoftObjectUpdates(state.conversations, newConversations)
+	},
+
 	/**
 	 * Deletes a conversation from the store.
 	 *
@@ -657,7 +707,7 @@ const actions = {
 		}
 	},
 
-	async fetchConversations({ dispatch }, { modifiedSince }) {
+	async fetchConversations({ dispatch, commit }, { modifiedSince }) {
 		try {
 			dispatch('clearMaintenanceMode')
 			modifiedSince = modifiedSince || 0
@@ -673,12 +723,17 @@ const actions = {
 
 			const response = await fetchConversations(options)
 			dispatch('updateTalkVersionHash', response)
-			if (modifiedSince === 0) {
-				dispatch('purgeConversationsStore')
+
+			if (FEATURE_FLAGS.CONVERSATIONS_LIST__SOFT_CONVERSATIONS_UPDATE) {
+				commit('addConversations', response.data.ocs.data)
+			} else {
+				if (modifiedSince === 0) {
+					dispatch('purgeConversationsStore')
+				}
+				response.data.ocs.data.forEach(conversation => {
+					dispatch('addConversationIfChanged', { conversation, modifiedSince })
+				})
 			}
-			response.data.ocs.data.forEach(conversation => {
-				dispatch('addConversationIfChanged', { conversation, modifiedSince })
-			})
 			return response
 		} catch (error) {
 			if (error?.response) {
