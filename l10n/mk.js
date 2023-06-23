@@ -608,6 +608,7 @@ OC.L10N.register(
     "Favorite" : "Омилен",
     "Description" : "Опис",
     "Enter a description for this conversation" : "Внесете опис за овој разговор",
+    "The file must be a PNG or JPG" : "Датотеката мора да биде PNG или JPG",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "Уреди ги стандардните дозволи за учесниците во овој разговор. Овие параметри не влијаат на модераторите.",
     "All permissions" : "Сите дозволи",
     "Participants have permissions to start a call, join a call, enable audio and video, and share screen." : "Учесниците имаат дозвола да започнат повик, да се придружуваат на повик, да овозможат аудио и видео и да споделуваат екран.",
