@@ -35,6 +35,7 @@ use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireRoom;
 use OCA\Talk\Room;
+use OCA\Talk\Service\CertificateService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RecordingService;
 use OCA\Talk\Service\RoomService;
@@ -55,6 +56,7 @@ class RecordingController extends AEnvironmentAwareController {
 		private Config $talkConfig,
 		private IClientService $clientService,
 		private Manager $manager,
+		private CertificateService $certificateService,
 		private ParticipantService $participantService,
 		private RecordingService $recordingService,
 		private RoomService $roomService,
@@ -70,11 +72,22 @@ class RecordingController extends AEnvironmentAwareController {
 		}
 
 		$url = rtrim($recordingServers[$serverId]['server'], '/');
+		$url = strtolower($url);
+
+		$verifyServer = (bool) $recordingServers[$serverId]['verify'];
+
+		if ($verifyServer && str_contains($url, 'https://')) {
+			$expiration = $this->certificateService->getCertificateExpirationInDays($url);
+
+			if ($expiration < 0) {
+				return new DataResponse(['error' => 'CERTIFICATE_EXPIRED'], Http::STATUS_INTERNAL_SERVER_ERROR);
+			}
+		}
 
 		$client = $this->clientService->newClient();
 		try {
 			$response = $client->get($url . '/api/v1/welcome', [
-				'verify' => (bool) $recordingServers[$serverId]['verify'],
+				'verify' => $verifyServer,
 				'nextcloud' => [
 					'allow_local_address' => true,
 				],
