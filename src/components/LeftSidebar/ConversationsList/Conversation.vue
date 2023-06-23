@@ -25,7 +25,6 @@
 		:class="{'unread-mention-conversation': item.unreadMention}"
 		:anchor-id="`conversation_${item.token}`"
 		:actions-aria-label="t('spreed', 'Conversation actions')"
-		:active="isActive"
 		:to="to"
 		:bold="!!item.unreadMessages"
 		:counter-number="item.unreadMessages"
@@ -325,14 +324,6 @@ export default {
 					params: { token: this.item.token },
 				}
 				: ''
-		},
-
-		isActive() {
-			if (!this.isSearchResult) {
-				return this.$store.getters.getToken() === this.to.params.token
-			} else {
-				return false
-			}
 		},
 	},
 
