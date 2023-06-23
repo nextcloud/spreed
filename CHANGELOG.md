@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 17.0.1 – 2023-06-12
+## 17.0.1 – 2023-06-23
 ### Changed
 - Include display name in participant update signaling message
   [#9822](https://github.com/nextcloud/spreed/issues/9822)
