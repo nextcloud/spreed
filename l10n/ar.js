@@ -821,6 +821,7 @@ OC.L10N.register(
     "Contact" : "التواصل",
     "{stack} in {board}" : "{stack} في  {board}",
     "Deck Card" : "بطاقة Deck",
+    "Open poll" : "إبدأ اقتراع",
     "No messages" : "لاتوجد رسائل",
     "Scroll to bottom" : "انتقل للاسفل",
     "Today" : "اليوم",
