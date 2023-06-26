@@ -22,7 +22,7 @@
 -->
 
 <template>
-	<div class="wrapper" :class="{'wrapper--has-typing-indicator': showTypingStatus}">
+	<div class="wrapper">
 		<NewMessageTypingIndicator v-if="showTypingStatus"
 			:token="token" />
 
@@ -36,109 +36,107 @@
 			class="hidden-visually"
 			@change="handleFileInput">
 
-		<div class="new-message">
-			<form class="new-message-form"
-				@submit.prevent>
-				<!-- Attachments menu -->
-				<NewMessageAttachments v-if="showAttachmentsMenu"
-					:token="token"
-					:container="container"
-					:boundaries-element="containerElement"
-					:disabled="disabled"
-					:can-upload-files="canUploadFiles"
-					:can-share-files="canShareFiles"
-					:can-create-poll="canCreatePoll"
-					@open-file-upload="openFileUploadWindow"
-					@handle-file-share="handleFileShare"
-					@toggle-poll-editor="togglePollEditor"
-					@update-new-file-dialog="updateNewFileDialog" />
+		<form class="new-message-form"
+			@submit.prevent>
+			<!-- Attachments menu -->
+			<NewMessageAttachments v-if="showAttachmentsMenu"
+				:token="token"
+				:container="container"
+				:boundaries-element="containerElement"
+				:disabled="disabled"
+				:can-upload-files="canUploadFiles"
+				:can-share-files="canShareFiles"
+				:can-create-poll="canCreatePoll"
+				@open-file-upload="openFileUploadWindow"
+				@handle-file-share="handleFileShare"
+				@toggle-poll-editor="togglePollEditor"
+				@update-new-file-dialog="updateNewFileDialog" />
 
-				<!-- Input area -->
-				<div class="new-message-form__input">
-					<div class="new-message-form__emoji-picker">
-						<NcEmojiPicker v-if="!disabled"
-							:container="container"
-							:close-on-select="false"
-							@select="addEmoji">
-							<NcButton :disabled="disabled"
-								:aria-label="t('spreed', 'Add emoji')"
-								type="tertiary-no-background"
-								:aria-haspopup="true">
-								<template #icon>
-									<EmoticonOutline :size="16" />
-								</template>
-							</NcButton>
-						</NcEmojiPicker>
-						<!-- Disabled emoji picker placeholder button -->
-						<NcButton v-else
-							type="tertiary"
+			<!-- Input area -->
+			<div class="new-message-form__input">
+				<div class="new-message-form__emoji-picker">
+					<NcEmojiPicker v-if="!disabled"
+						:container="container"
+						:close-on-select="false"
+						@select="addEmoji">
+						<NcButton :disabled="disabled"
 							:aria-label="t('spreed', 'Add emoji')"
-							:disabled="true">
+							type="tertiary-no-background"
+							:aria-haspopup="true">
 							<template #icon>
 								<EmoticonOutline :size="16" />
 							</template>
 						</NcButton>
-					</div>
-					<div v-if="messageToBeReplied" class="new-message-form__quote">
-						<Quote is-new-message-quote
-							:parent-id="messageToBeReplied.id"
-							v-bind="messageToBeReplied" />
-					</div>
-					<NcRichContenteditable ref="richContenteditable"
-						v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
-						class="new-message-form__richContenteditable"
-						:value.sync="text"
-						:auto-complete="autoComplete"
-						:disabled="disabled"
-						:user-data="userData"
-						:menu-container="containerElement"
-						:placeholder="placeholderText"
-						:aria-label="placeholderText"
-						@shortkey="focusInput"
-						@keydown.esc="handleInputEsc"
-						@tribute-active-true.native="isTributePickerActive = true"
-						@tribute-active-false.native="isTributePickerActive = false"
-						@input="handleTyping"
-						@paste="handlePastedFiles"
-						@submit="handleSubmit({ silent: false })" />
-				</div>
-
-				<!-- Audio recorder -->
-				<NewMessageAudioRecorder v-if="showAudioRecorder"
-					:disabled="disabled"
-					@recording="handleRecording"
-					@audio-file="handleAudioFile" />
-
-				<!-- Send buttons -->
-				<template v-else>
-					<NcActions v-if="!broadcast"
-						:container="container"
-						:force-menu="true">
-						<!-- Silent send -->
-						<NcActionButton :close-after-click="true"
-							icon="icon-upload"
-							:title="t('spreed', 'Send without notification')"
-							@click="handleSubmit({ silent: true })">
-							{{ silentSendInfo }}
-							<template #icon>
-								<BellOff :size="16" />
-							</template>
-						</NcActionButton>
-					</NcActions>
-					<!-- Send -->
-					<NcButton :disabled="disabled"
+					</NcEmojiPicker>
+					<!-- Disabled emoji picker placeholder button -->
+					<NcButton v-else
 						type="tertiary"
-						native-type="submit"
-						:title="t('spreed', 'Send message')"
-						:aria-label="t('spreed', 'Send message')"
-						@click="handleSubmit({ silent: false })">
+						:aria-label="t('spreed', 'Add emoji')"
+						:disabled="true">
 						<template #icon>
-							<Send :size="16" />
+							<EmoticonOutline :size="16" />
 						</template>
 					</NcButton>
-				</template>
-			</form>
-		</div>
+				</div>
+				<div v-if="messageToBeReplied" class="new-message-form__quote">
+					<Quote is-new-message-quote
+						:parent-id="messageToBeReplied.id"
+						v-bind="messageToBeReplied" />
+				</div>
+				<NcRichContenteditable ref="richContenteditable"
+					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
+					class="new-message-form__richContenteditable"
+					:value.sync="text"
+					:auto-complete="autoComplete"
+					:disabled="disabled"
+					:user-data="userData"
+					:menu-container="containerElement"
+					:placeholder="placeholderText"
+					:aria-label="placeholderText"
+					@shortkey="focusInput"
+					@keydown.esc="handleInputEsc"
+					@tribute-active-true.native="isTributePickerActive = true"
+					@tribute-active-false.native="isTributePickerActive = false"
+					@input="handleTyping"
+					@paste="handlePastedFiles"
+					@submit="handleSubmit({ silent: false })" />
+			</div>
+
+			<!-- Audio recorder -->
+			<NewMessageAudioRecorder v-if="showAudioRecorder"
+				:disabled="disabled"
+				@recording="handleRecording"
+				@audio-file="handleAudioFile" />
+
+			<!-- Send buttons -->
+			<template v-else>
+				<NcActions v-if="!broadcast"
+					:container="container"
+					:force-menu="true">
+					<!-- Silent send -->
+					<NcActionButton :close-after-click="true"
+						icon="icon-upload"
+						:title="t('spreed', 'Send without notification')"
+						@click="handleSubmit({ silent: true })">
+						{{ silentSendInfo }}
+						<template #icon>
+							<BellOff :size="16" />
+						</template>
+					</NcActionButton>
+				</NcActions>
+				<!-- Send -->
+				<NcButton :disabled="disabled"
+					type="tertiary"
+					native-type="submit"
+					:title="t('spreed', 'Send message')"
+					:aria-label="t('spreed', 'Send message')"
+					@click="handleSubmit({ silent: false })">
+					<template #icon>
+						<Send :size="16" />
+					</template>
+				</NcButton>
+			</template>
+		</form>
 
 		<!-- File upload dialog -->
 		<NewMessageUploadEditor />
@@ -803,71 +801,57 @@ export default {
 @import '../../assets/variables';
 
 .wrapper {
-	position: relative;
-	display: flex;
-	justify-content: center;
-	padding: 12px 0 12px;
+	padding: 12px 0;
 	min-height: 69px;
-
-	&--has-typing-indicator {
-		padding: 30px 0 12px;
-	}
 }
 
-.new-message {
-	width: 100%;
+.new-message-form {
+	align-items: flex-end;
 	display: flex;
-	justify-content: center;
+	position: relative;
+	max-width: 700px;
+	margin: 0 auto;
 
-	&-form {
-		align-items: flex-end;
-		display: flex;
+	&__emoji-picker {
+		position: absolute;
+		bottom: 1px;
+		z-index: 1;
+	}
+
+	&__input {
+		flex-grow: 1;
+		overflow: hidden;
 		position: relative;
-		flex: 0 1 700px;
-		margin: 0 4px;
+	}
 
-		&__emoji-picker {
-			position: absolute;
-			bottom: 1px;
-			z-index: 1;
+	// Override NcRichContenteditable styles
+	& &__richContenteditable {
+		border: 1px solid var(--color-border-dark);
+		border-radius: calc(var(--default-clickable-area) / 2);
+		padding: 8px 16px 8px 44px;
+		max-height: 180px;
+
+		&:hover,
+		&:focus,
+		&:active {
+			border: 1px solid var(--color-primary-element);
 		}
+	}
 
-		&__input {
-			flex-grow: 1;
-			overflow: hidden;
-			position: relative;
-		}
+	&__quote {
+		margin: 0 16px 12px 24px;
+		background-color: var(--color-background-hover);
+		padding: 8px;
+		border-radius: var(--border-radius-large);
+	}
 
-		// Override NcRichContenteditable styles
-		& &__richContenteditable {
-			border: 1px solid var(--color-border-dark);
-			border-radius: calc(var(--default-clickable-area) / 2);
-			padding: 8px 16px 8px 44px;
-			max-height: 180px;
-
-			&:hover,
-			&:focus,
-			&:active {
-				border: 1px solid var(--color-primary-element);
-			}
-		}
-
-		&__quote {
-			margin: 0 16px 12px 24px;
-			background-color: var(--color-background-hover);
-			padding: 8px;
-			border-radius: var(--border-radius-large);
-		}
-
-		// put a grey round background when popover is opened or hover-focused
-		&__icon:hover,
-		&__icon:focus,
-		&__icon:active {
-			opacity: $opacity_full;
-			// good looking on dark AND white bg
-			background-color: $icon-focus-bg;
-		}
-
+	// put a grey round background when popover is opened or hover-focused
+	&__icon:hover,
+	&__icon:focus,
+	&__icon:active {
+		opacity: $opacity_full;
+		// good looking on dark AND white bg
+		background-color: $icon-focus-bg;
 	}
 }
 
