@@ -163,8 +163,8 @@ export default {
 				this.versionFound = response.data.ocs.data.version
 			} catch (exception) {
 				this.checked = true
-				let data = exception.response.data.ocs.data
-				let error = data.error
+				const data = exception.response.data.ocs.data
+				const error = data.error
 
 				if (error === 'CAN_NOT_CONNECT') {
 					this.errorMessage = t('spreed', 'Error: Cannot connect to server')

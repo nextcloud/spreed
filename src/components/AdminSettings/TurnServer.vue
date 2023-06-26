@@ -106,6 +106,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import CategoryMonitoring from '../missingMaterialDesignIcons/CategoryMonitoring.vue'
+
 import { isCertificateValid } from '../../services/certificateService.js'
 
 export default {
@@ -290,7 +291,7 @@ export default {
 
 		iceCallback(pc, candidates, timeout, e) {
 			if (e.candidate) {
-				let parseCandidate = this.parseCandidate(e.candidate.candidate)
+				const parseCandidate = this.parseCandidate(e.candidate.candidate)
 				candidates.push(parseCandidate)
 
 				// We received a relay candidate, no need to wait any longer
@@ -320,7 +321,7 @@ export default {
 						this.testing = false
 						this.testingSuccess = isValid
 						this.testingError = !isValid
-					});
+					})
 				}
 			} else {
 				this.testing = false
