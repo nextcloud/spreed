@@ -13,13 +13,13 @@ Feature: chat-2/reply
     And user "participant1" sends message "Message 1" to room "group room" with 201
     When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               | 0         |
     And user "participant2" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               | 0         |
 
   Scenario: user can reply to other's messages
     Given user "participant1" creates room "group room" (v4)
@@ -28,13 +28,13 @@ Feature: chat-2/reply
     And user "participant1" sends message "Message 1" to room "group room" with 201
     When user "participant2" sends reply "Message 1-1" on message "Message 1" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | group room | users     | participant2 | participant2-displayname | Message 1-1 | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1 | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               | 0         |
     And user "participant2" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | group room | users     | participant2 | participant2-displayname | Message 1-1 | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1 | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               | 0         |
 
   Scenario: several users can reply to the same message several times
     Given user "participant1" creates room "group room" (v4)
@@ -46,19 +46,19 @@ Feature: chat-2/reply
     And user "participant1" sends reply "Message 1-3" on message "Message 1" to room "group room" with 201
     And user "participant2" sends reply "Message 1-4" on message "Message 1" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | group room | users     | participant2 | participant2-displayname | Message 1-4 | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1-3 | []                | Message 1     |
-      | group room | users     | participant2 | participant2-displayname | Message 1-2 | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant2 | participant2-displayname | Message 1-4 | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1-3 | []                | Message 1     | Message 1 |
+      | group room | users     | participant2 | participant2-displayname | Message 1-2 | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               | 0         |
     And user "participant2" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | group room | users     | participant2 | participant2-displayname | Message 1-4 | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1-3 | []                | Message 1     |
-      | group room | users     | participant2 | participant2-displayname | Message 1-2 | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant2 | participant2-displayname | Message 1-4 | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1-3 | []                | Message 1     | Message 1 |
+      | group room | users     | participant2 | participant2-displayname | Message 1-2 | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               | 0         |
 
 
 
@@ -72,23 +72,23 @@ Feature: chat-2/reply
     # The file message parameters are not relevant for this test and are quite
     # large, so they are simply ignored.
     And user "participant1" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message | messageParameters | parentMessage |
-      | group room | users     | participant1 | participant1-displayname | {file}  | "IGNORE"          |               |
+      | room       | actorType | actorId      | actorDisplayName         | message | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant1 | participant1-displayname | {file}  | "IGNORE"          |               | 0         |
     And user "participant2" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message | messageParameters | parentMessage |
-      | group room | users     | participant1 | participant1-displayname | {file}  | "IGNORE"          |               |
+      | room       | actorType | actorId      | actorDisplayName         | message | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant1 | participant1-displayname | {file}  | "IGNORE"          |               | 0         |
     When user "participant1" sends reply "Message X-1" on message "{file}" to room "group room" with 201
     And user "participant2" sends reply "Message X-2" on message "{file}" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | group room | users     | participant2 | participant2-displayname | Message X-2 | []                | {file}        |
-      | group room | users     | participant1 | participant1-displayname | Message X-1 | []                | {file}        |
-      | group room | users     | participant1 | participant1-displayname | {file}      | "IGNORE"          |               |
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant2 | participant2-displayname | Message X-2 | []                | {file}        | {file}    |
+      | group room | users     | participant1 | participant1-displayname | Message X-1 | []                | {file}        | {file}    |
+      | group room | users     | participant1 | participant1-displayname | {file}      | "IGNORE"          |               | 0         |
     And user "participant2" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
-      | group room | users     | participant2 | participant2-displayname | Message X-2 | []                | {file}        |
-      | group room | users     | participant1 | participant1-displayname | Message X-1 | []                | {file}        |
-      | group room | users     | participant1 | participant1-displayname | {file}      | "IGNORE"          |               |
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant2 | participant2-displayname | Message X-2 | []                | {file}        | {file}    |
+      | group room | users     | participant1 | participant1-displayname | Message X-1 | []                | {file}        | {file}    |
+      | group room | users     | participant1 | participant1-displayname | {file}      | "IGNORE"          |               | 0         |
 
   Scenario: user can not reply to commands
     Given user "participant1" creates room "group room" (v4)
@@ -128,15 +128,15 @@ Feature: chat-2/reply
     And user "participant1" sends reply "Message 1-1" on message "Message 1" to room "group room" with 201
     When user "participant1" sends reply "Message 1-1-1" on message "Message 1-1" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage |
-      | group room | users     | participant1 | participant1-displayname | Message 1-1-1 | []                | Message 1-1   |
-      | group room | users     | participant1 | participant1-displayname | Message 1-1   | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               |
+      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-1 | []                | Message 1-1   | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1   | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               | 0         |
     And user "participant2" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage |
-      | group room | users     | participant1 | participant1-displayname | Message 1-1-1 | []                | Message 1-1   |
-      | group room | users     | participant1 | participant1-displayname | Message 1-1   | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               |
+      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-1 | []                | Message 1-1   | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1   | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               | 0         |
 
   Scenario: user can reply to other's replies
     Given user "participant1" creates room "group room" (v4)
@@ -147,17 +147,17 @@ Feature: chat-2/reply
     When user "participant1" sends reply "Message 1-1-1" on message "Message 1-1" to room "group room" with 201
     And user "participant2" sends reply "Message 1-1-1-1" on message "Message 1-1-1" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message         | messageParameters | parentMessage |
-      | group room | users     | participant2 | participant2-displayname | Message 1-1-1-1 | []                | Message 1-1-1 |
-      | group room | users     | participant1 | participant1-displayname | Message 1-1-1   | []                | Message 1-1   |
-      | group room | users     | participant2 | participant2-displayname | Message 1-1     | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1       | []                |               |
+      | room       | actorType | actorId      | actorDisplayName         | message         | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1-1-1 | []                | Message 1-1-1 | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-1   | []                | Message 1-1   | Message 1 |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1     | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1       | []                |               | 0         |
     And user "participant2" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message         | messageParameters | parentMessage |
-      | group room | users     | participant2 | participant2-displayname | Message 1-1-1-1 | []                | Message 1-1-1 |
-      | group room | users     | participant1 | participant1-displayname | Message 1-1-1   | []                | Message 1-1   |
-      | group room | users     | participant2 | participant2-displayname | Message 1-1     | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1       | []                |               |
+      | room       | actorType | actorId      | actorDisplayName         | message         | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1-1-1 | []                | Message 1-1-1 | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-1   | []                | Message 1-1   | Message 1 |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1     | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1       | []                |               | 0         |
 
   Scenario: several users can reply to the same reply several times
     Given user "participant1" creates room "group room" (v4)
@@ -170,21 +170,21 @@ Feature: chat-2/reply
     And user "participant1" sends reply "Message 1-1-3" on message "Message 1-1" to room "group room" with 201
     And user "participant2" sends reply "Message 1-1-4" on message "Message 1-1" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage |
-      | group room | users     | participant2 | participant2-displayname | Message 1-1-4 | []                | Message 1-1   |
-      | group room | users     | participant1 | participant1-displayname | Message 1-1-3 | []                | Message 1-1   |
-      | group room | users     | participant2 | participant2-displayname | Message 1-1-2 | []                | Message 1-1   |
-      | group room | users     | participant1 | participant1-displayname | Message 1-1-1 | []                | Message 1-1   |
-      | group room | users     | participant2 | participant2-displayname | Message 1-1   | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               |
+      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1-4 | []                | Message 1-1   | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-3 | []                | Message 1-1   | Message 1 |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1-2 | []                | Message 1-1   | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-1 | []                | Message 1-1   | Message 1 |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1   | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               | 0         |
     And user "participant2" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage |
-      | group room | users     | participant2 | participant2-displayname | Message 1-1-4 | []                | Message 1-1   |
-      | group room | users     | participant1 | participant1-displayname | Message 1-1-3 | []                | Message 1-1   |
-      | group room | users     | participant2 | participant2-displayname | Message 1-1-2 | []                | Message 1-1   |
-      | group room | users     | participant1 | participant1-displayname | Message 1-1-1 | []                | Message 1-1   |
-      | group room | users     | participant2 | participant2-displayname | Message 1-1   | []                | Message 1     |
-      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               |
+      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1-4 | []                | Message 1-1   | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-3 | []                | Message 1-1   | Message 1 |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1-2 | []                | Message 1-1   | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-1 | []                | Message 1-1   | Message 1 |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1   | []                | Message 1     | Message 1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               | 0         |
 
   Scenario: getting parent and quote works
     Given user "participant1" creates room "group room" (v4)
@@ -194,14 +194,14 @@ Feature: chat-2/reply
     And user "participant1" sends message "Message 2" to room "group room" with 201
     And user "participant2" sends reply "Message 2-1" on message "Message 2" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" starting with "Message 1" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage |
-      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               |
-      | group room | users     | participant1 | participant1-displayname | Message 2     | []                |               |
-      | group room | users     | participant2 | participant2-displayname | Message 2-1   | []                | Message 2     |
+      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               | 0         |
+      | group room | users     | participant1 | participant1-displayname | Message 2     | []                |               | 0         |
+      | group room | users     | participant2 | participant2-displayname | Message 2-1   | []                | Message 2     | Message 2 |
     Then user "participant1" sees the following messages in room "group room" starting with "Message 2" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage |
-      | group room | users     | participant1 | participant1-displayname | Message 2     | []                |               |
-      | group room | users     | participant2 | participant2-displayname | Message 2-1   | []                | Message 2     |
+      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage | threadId  |
+      | group room | users     | participant1 | participant1-displayname | Message 2     | []                |               | 0         |
+      | group room | users     | participant2 | participant2-displayname | Message 2-1   | []                | Message 2     | Message 2 |
 
 
 
