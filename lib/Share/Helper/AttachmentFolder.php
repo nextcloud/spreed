@@ -30,11 +30,14 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\Constants;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\NotPermittedException;
 use OCP\IConfig;
+use OCP\Share\IManager;
+use OCP\Share\IShare;
 use Psr\Log\LoggerInterface;
 
 class AttachmentFolder {
@@ -43,11 +46,12 @@ class AttachmentFolder {
 		protected IConfig $serverConfig,
 		protected Config $talkConfig,
 		protected AttendeeMapper $attendeeMapper,
+		protected IManager $shareManager,
 		protected LoggerInterface $logger,
 	) {
 	}
 
-	protected function prepareSharingFile(Room $room, Participant $participant, string $fileName): array {
+	public function prepareUploadingFile(Room $room, Participant $participant, string $fileName): array {
 		$attendee = $participant->getAttendee();
 		if ($attendee->getActorType() !== Attendee::ACTOR_USERS) {
 			throw new \InvalidArgumentException('participant');
@@ -56,6 +60,7 @@ class AttachmentFolder {
 		$userId = $attendee->getActorId();
 		$userFolder = $this->rootFolder->getUserFolder($userId);
 
+		$conversationFolder = null;
 		$conversationFolderId = 0; // $attendee->getAttachmentFolderId();
 		if ($conversationFolderId !== 0) {
 			try {
@@ -64,15 +69,51 @@ class AttachmentFolder {
 			}
 		}
 
+		$needsClientSharing = false;
 		if (!$conversationFolder instanceof Folder) {
 			$talkFolder = $this->ensureTalkFolderExists($userFolder, $userId);
 			$conversationFolder = $this->createConversationFolderExists($talkFolder, $room, $attendee);
+			$needsSharing = $conversationFolder->getId() === $userFolder->getId()
+				|| $conversationFolder->getId() === $talkFolder->getId();
+
+			if (!$needsSharing) {
+				$share = $this->shareManager->newShare();
+				$share->setSharedWith($room->getToken());
+				$share->setShareType(IShare::TYPE_ROOM);
+				$share->setNode($conversationFolder);
+				$share->setShareOwner($attendee->getActorId());
+				$share->setSharedBy($attendee->getActorId());
+				$share->setPermissions(Constants::PERMISSION_READ | Constants::PERMISSION_SHARE | Constants::PERMISSION_UPDATE);
+				$this->shareManager->createShare($share);
+			}
 		}
 
-		// FIXME when root or talk folder is used, we need to tell the clients that the individual file still needs sharing
+		$uniqueFileName = $this->findUniqueName($conversationFolder, $fileName);
+		$uploadPath = $conversationFolder->getPath() . '/' . $uniqueFileName;
 
 
-//			$freeSpace = $attachmentFolder->getFreeSpace();
+		return [
+			'freeSpace' => $conversationFolder->getFreeSpace(),
+			'needsSharing' => $needsClientSharing,
+			'uploadPath' => $uploadPath,
+		];
+	}
+
+	protected function findUniqueName(Folder $conversationFolder, string $fileName): string {
+		$pathinfo = pathinfo($fileName);
+		$name = $pathinfo['filename'];
+		$ext = isset($pathinfo['extension']) ? '.' . $pathinfo['extension'] : '';
+
+		$i = 0;
+		while (true) {
+			$tempName = $i === 0 ? $fileName : $name . ' (' . $i . ')' . $ext;
+			try {
+				$conversationFolder->get($tempName);
+			} catch (NotFoundException $e) {
+				return $tempName;
+			}
+			$i++;
+		}
 	}
 
 	protected function ensureTalkFolderExists(Folder $userFolder, string $userId): Folder {

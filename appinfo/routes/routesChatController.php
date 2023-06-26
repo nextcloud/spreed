@@ -52,6 +52,8 @@ return [
 		['name' => 'Chat#markUnread', 'url' => '/api/{apiVersion}/chat/{token}/read', 'verb' => 'DELETE', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\ChatController::mentions() */
 		['name' => 'Chat#mentions', 'url' => '/api/{apiVersion}/chat/{token}/mentions', 'verb' => 'GET', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\ChatController::prepareUploadingFile() */
+		['name' => 'Chat#prepareUploadingFile', 'url' => '/api/{apiVersion}/chat/{token}/upload-prepare', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\ChatController::shareObjectToChat() */
 		['name' => 'Chat#shareObjectToChat', 'url' => '/api/{apiVersion}/chat/{token}/share', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\ChatController::getObjectsSharedInRoomOverview() */

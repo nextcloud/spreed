@@ -47,6 +47,7 @@ use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
+use OCA\Talk\Share\Helper\AttachmentFolder;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
@@ -260,55 +261,9 @@ class ChatController extends AEnvironmentAwareController {
 	#[RequireParticipant]
 	#[RequirePermission(permission: RequirePermission::CHAT)]
 	#[RequireReadWriteConversation]
-	public function prepareSharingFile(string $fileName): DataResponse {
-		$rootFolder = \OCP\Server::get(IRootFolder::class);
-		$talkConfig = \OCP\Server::get(Config::class);
-		$serverConfig = \OCP\Server::get(IConfig::class);
-
-		$attachmentFolderName = $talkConfig->getAttachmentFolder($this->userId);
-		$userFolder = $rootFolder->getUserFolder($this->userId);
-		$attendee = $this->participant->getAttendee();
-
-		/**
-		 * Create Talk/ folder
-		 */
-		try {
-			try {
-				$attachmentFolder = $userFolder->get($attachmentFolderName);
-			} catch (NotFoundException $e) {
-				$attachmentFolder = $userFolder->newFolder($attachmentFolderName);
-			}
-
-			$freeSpace = $attachmentFolder->getFreeSpace();
-		} catch (NotPermittedException $e) {
-			$attachmentFolder = '/';
-			$serverConfig->setUserValue($this->userId, 'spreed', 'attachment_folder', '/');
-			$attachmentFolder = $userFolder;
-		}
-
-		/**
-		 * Create Talk/ folder
-		 */
-		try {
-			try {
-				$folder = $attachmentFolder->getBy($attachmentFolder);
-			} catch (NotFoundException $e) {
-				$folder = $userFolder->newFolder($attachmentFolder);
-			}
-
-			$freeSpace = $folder->getFreeSpace();
-		} catch (NotPermittedException $e) {
-			$attachmentFolder = '/';
-			$serverConfig->setUserValue($this->userId, 'spreed', 'attachment_folder', '/');
-			$freeSpace = $userFolder->getFreeSpace();
-		}
-
-		$this->room;
-
-		return new DataResponse([
-			'freeSpace' => $freeSpace,
-			'uploadPath' => $uploadPath,
-		]);
+	public function prepareUploadingFile(string $fileName): DataResponse {
+		$attachmentHelper = \OCP\Server::get(AttachmentFolder::class);
+		return new DataResponse($attachmentHelper->prepareUploadingFile($this->room, $this->participant, $fileName));
 	}
 
 	/**

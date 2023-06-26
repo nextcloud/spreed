@@ -388,6 +388,9 @@ class Listener implements IEventListener {
 		if ($request->getParam('_route') === 'ocs.spreed.Recording.shareToChat') {
 			return;
 		}
+		if ($request->getParam('_route') === 'ocs.spreed.Chat.prepareUploadingFile') {
+			return;
+		}
 		$room = $manager->getRoomByToken($share->getSharedWith());
 		$metaData = Server::get(IRequest::class)->getParam('talkMetaData') ?? '';
 		$metaData = json_decode($metaData, true);
