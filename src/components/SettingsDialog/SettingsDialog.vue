@@ -81,6 +81,7 @@
 				@update:checked="togglePlaySounds">
 				{{ t('spreed', 'Play sounds when participants join or leave a call') }}
 			</NcCheckboxRadioSwitch>
+			<em>{{ t('spreed', 'Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer.') }}</em>
 
 			<a :href="settingsUrl"
 				target="_blank"
