@@ -120,6 +120,10 @@ class CertificateService {
 		$diff = $now->diff($certificateValidTo);
 		$days = $diff->days;
 
+		if ($days === false) {
+			return null;
+		}
+
 		// $days will always be positive -> invert it, when the end date of the certificate is in the past
 		if ($diff->invert) {
 			$days *= -1;

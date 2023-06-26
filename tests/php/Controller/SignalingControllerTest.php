@@ -34,6 +34,7 @@ use OCA\Talk\Model\AttendeeMapper;
 use OCA\Talk\Model\SessionMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\CertificateService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Service\SessionService;
@@ -82,6 +83,8 @@ class SignalingControllerTest extends TestCase {
 	private $signalingManager;
 	/** @var Manager|MockObject */
 	protected $manager;
+	/** @var CertificateService|MockObject */
+	protected $certificateService;
 	/** @var ParticipantService|MockObject */
 	protected $participantService;
 	/** @var SessionService|MockObject */
@@ -127,6 +130,7 @@ class SignalingControllerTest extends TestCase {
 		$this->dbConnection = \OC::$server->getDatabaseConnection();
 		$this->signalingManager = $this->createMock(\OCA\Talk\Signaling\Manager::class);
 		$this->manager = $this->createMock(Manager::class);
+		$this->certificateService = $this->createMock(CertificateService::class);
 		$this->participantService = $this->createMock(ParticipantService::class);
 		$this->sessionService = $this->createMock(SessionService::class);
 		$this->messages = $this->createMock(Messages::class);
@@ -146,6 +150,7 @@ class SignalingControllerTest extends TestCase {
 			$this->signalingManager,
 			$this->session,
 			$this->manager,
+			$this->certificateService,
 			$this->participantService,
 			$this->sessionService,
 			$this->dbConnection,

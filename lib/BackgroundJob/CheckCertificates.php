@@ -26,8 +26,8 @@ declare(strict_types=1);
 namespace OCA\Talk\BackgroundJob;
 
 use OCA\Talk\AppInfo\Application;
-use OCA\Talk\Service\CertificateService;
 use OCA\Talk\Config;
+use OCA\Talk\Service\CertificateService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;

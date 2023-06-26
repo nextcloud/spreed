@@ -30,8 +30,8 @@ use OCA\Talk\Service\CertificateService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
-use OCP\IRequest;
 use OCP\IL10N;
+use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
 class CertificateController extends OCSController {
