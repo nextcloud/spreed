@@ -332,6 +332,9 @@ export default {
 		},
 
 		handleClick() {
+			// Create audio objects as a result of a user interaction to allow playing sounds in Safari
+			this.$store.dispatch('createAudioObjects')
+
 			const shouldShowMediaSettingsScreen = (BrowserStorage.getItem('showMediaSettings' + this.token) === null
 				|| BrowserStorage.getItem('showMediaSettings' + this.token) === 'true') && !this.forceJoinCall
 			console.debug(shouldShowMediaSettingsScreen)

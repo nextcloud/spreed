@@ -18,8 +18,6 @@
  *
  */
 
-import { generateFilePath } from '@nextcloud/router'
-
 import store from '../store/index.js'
 
 export const Sounds = {
@@ -29,22 +27,11 @@ export const Sounds = {
 	lastPlayedJoin: 0,
 	lastPlayedLeave: 0,
 	playedWaiting: 0,
-	backgroundAudio: null,
 	backgroundInterval: null,
-
-	_playSoundOnce(soundFile) {
-		const file = generateFilePath('spreed', 'img', soundFile)
-		const audio = new Audio(file)
-		audio.volume = 0.75
-		audio.play()
-	},
 
 	_stopWaiting() {
 		console.debug('Stop waiting sound')
-		if (this.backgroundAudio) {
-			this.backgroundAudio.pause()
-			this.backgroundAudio = null
-		}
+		store.dispatch('pauseWaitAudio')
 		clearInterval(this.backgroundInterval)
 	},
 
@@ -53,15 +40,8 @@ export const Sounds = {
 			return
 		}
 
-		if (!this.backgroundAudio) {
-			console.debug('Loading waiting sound')
-			const file = generateFilePath('spreed', 'img', 'LibremPhoneCall.ogg')
-			this.backgroundAudio = new Audio(file)
-			this.backgroundAudio.volume = 0.5
-		}
-
 		console.debug('Playing waiting sound')
-		this.backgroundAudio.play()
+		store.dispatch('playWaitAudio')
 
 		this.playedWaiting = 0
 		this.backgroundInterval = setInterval(() => {
@@ -77,7 +57,7 @@ export const Sounds = {
 			}
 
 			console.debug('Playing waiting sound')
-			this.backgroundAudio.play()
+			store.dispatch('playWaitAudio')
 			this.playedWaiting++
 
 		}, 15000)
@@ -114,7 +94,7 @@ export const Sounds = {
 		if (playWaitingSound) {
 			await this.playWaiting()
 		} else {
-			this._playSoundOnce('join_call.ogg')
+			store.dispatch('playJoinAudio')
 		}
 	},
 
@@ -145,7 +125,7 @@ export const Sounds = {
 		}
 		this.lastPlayedLeave = currentTime
 
-		this._playSoundOnce('leave_call.ogg')
+		store.dispatch('playLeaveAudio')
 
 		if (playWaitingSound) {
 			this.playWaiting()
