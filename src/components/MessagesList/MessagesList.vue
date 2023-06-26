@@ -56,17 +56,6 @@ get the messagesList array and loop through the list to generate the messages.
 				<Message :size="64" />
 			</template>
 		</NcEmptyContent>
-		<transition name="fade">
-			<NcButton v-show="!isChatScrolledToBottom"
-				type="secondary"
-				:aria-label="scrollToBottomAriaLabel"
-				class="scroll-to-bottom"
-				@click="smoothScrollToBottom">
-				<template #icon>
-					<ChevronDown :size="20" />
-				</template>
-			</NcButton>
-		</transition>
 	</div>
 </template>
 
@@ -75,7 +64,6 @@ import debounce from 'debounce'
 import uniqueId from 'lodash/uniqueId.js'
 import { computed } from 'vue'
 
-import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
 import Message from 'vue-material-design-icons/Message.vue'
 
 import Axios from '@nextcloud/axios'
@@ -83,7 +71,6 @@ import { getCapabilities } from '@nextcloud/capabilities'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import moment from '@nextcloud/moment'
 
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
@@ -99,9 +86,7 @@ export default {
 	components: {
 		LoadingPlaceholder,
 		MessagesGroup,
-		ChevronDown,
 		Message,
-		NcButton,
 		NcEmptyContent,
 	},
 
@@ -122,11 +107,18 @@ export default {
 			required: true,
 		},
 
+		isChatScrolledToBottom: {
+			type: Boolean,
+			default: true,
+		},
+
 		isVisible: {
 			type: Boolean,
 			default: true,
 		},
 	},
+
+	emits: ['update:is-chat-scrolled-to-bottom'],
 
 	setup() {
 		const isInCall = useIsInCall()
@@ -156,7 +148,6 @@ export default {
 
 			isFocusingMessage: false,
 
-			isChatScrolledToBottom: true,
 			/**
 			 * Quick edit option to fall back to the loading history and then new messages
 			 */
@@ -258,10 +249,6 @@ export default {
 		chatIdentifier() {
 			return this.token + ':' + this.isParticipant + ':' + this.isInLobby + ':' + this.viewId
 		},
-
-		scrollToBottomAriaLabel() {
-			return t('spreed', 'Scroll to bottom')
-		},
 	},
 
 	watch: {
@@ -276,7 +263,7 @@ export default {
 				if (oldValue) {
 					this.$store.dispatch('cancelLookForNewMessages', { requestId: oldValue })
 				}
-				this.isChatScrolledToBottom = true
+				this.$emit('update:is-chat-scrolled-to-bottom', true)
 				this.handleStartGettingMessagesPreconditions()
 
 				// Remove expired messages when joining a room
@@ -374,9 +361,9 @@ export default {
 
 			if (!message1IsSystem // System messages are grouped independently of author
 				&& ((message1.actorType !== message2.actorType // Otherwise the type and id need to match
-					|| message1.actorId !== message2.actorId)
-				|| (message1.actorType === ATTENDEE.ACTOR_TYPE.BRIDGED // Or, if the message is bridged, display names also need to match
-					&& message1.actorDisplayName !== message2.actorDisplayName))) {
+						|| message1.actorId !== message2.actorId)
+					|| (message1.actorType === ATTENDEE.ACTOR_TYPE.BRIDGED // Or, if the message is bridged, display names also need to match
+						&& message1.actorDisplayName !== message2.actorDisplayName))) {
 				return false
 			}
 
@@ -1037,7 +1024,7 @@ export default {
 		},
 
 		setChatScrolledToBottom(boolean) {
-			this.isChatScrolledToBottom = boolean
+			this.$emit('update:is-chat-scrolled-to-bottom', boolean)
 			if (boolean) {
 				// mark as read if marker was seen
 				// we have to do this early because unfocusing the window will remove the stickiness
@@ -1071,13 +1058,6 @@ export default {
 		display: flex;
 		justify-content: center;
 	}
-}
-
-.scroll-to-bottom {
-	position: absolute !important;
-	bottom: 140px;
-	right: 24px;
-	z-index: 2;
 }
 
 </style>
