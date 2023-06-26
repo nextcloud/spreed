@@ -56,11 +56,6 @@ jobs:
           # Split and keep last
           echo "APP_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
 
-      - name: Enable ONLY_FULL_GROUP_BY MySQL option
-        run: |
-          echo "SET GLOBAL sql_mode=(SELECT CONCAT(@@sql_mode,',ONLY_FULL_GROUP_BY'));" | mysql -h 127.0.0.1 -P 4444 -u root -prootpassword
-          echo "SELECT @@sql_mode;" | mysql -h 127.0.0.1 -P 4444 -u root -prootpassword
-
       - name: Checkout server
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
         with:
@@ -83,6 +78,11 @@ jobs:
           ini-file: development
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable ONLY_FULL_GROUP_BY MySQL option
+        run: |
+          echo "SET GLOBAL sql_mode=(SELECT CONCAT(@@sql_mode,',ONLY_FULL_GROUP_BY'));" | mysql -h 127.0.0.1 -P 4444 -u root -prootpassword
+          echo "SELECT @@sql_mode;" | mysql -h 127.0.0.1 -P 4444 -u root -prootpassword
 
       - name: Check composer file existence
         id: check_composer
