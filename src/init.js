@@ -28,11 +28,14 @@ import { showError } from '@nextcloud/dialogs'
 import { CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from './constants.js'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.js'
+import { initFeatureFlags } from './services/localFeatureFlagsService.js'
 import store from './store/index.js'
 
 if (!window.OCA.Talk) {
 	window.OCA.Talk = {}
 }
+
+initFeatureFlags()
 
 /**
  * Frontend message API for adding actions to talk messages.
