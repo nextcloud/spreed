@@ -497,7 +497,6 @@ OC.L10N.register(
     "Share my read-status and show the read-status of others" : "Del min læsestatus og vis andres læsestatus",
     "Sounds" : "Lyde",
     "Play sounds when participants join or leave a call" : "Afspil lyde, når deltagere tilslutter sig eller forlader et opkald",
-    "Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer." : "Lyde kan i øjeblikket ikke afspilles i Safari-browseren og iPad- og iPhone-enheder på grund af tekniske begrænsninger fra producenten.",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "Lyde til chat og opkaldsmeddelelser kan justeres i de personlige indstillinger.",
     "Keyboard shortcuts" : "Tastaturgenveje",
     "Speed up your Talk experience with these quick shortcuts." : "Optimer din Talk-oplevelse med disse tastaturgenveje.",
@@ -572,6 +571,7 @@ OC.L10N.register(
     "Conversation link copied to clipboard." : "Samtalelink kopieret til udklipsholder",
     "The link could not be copied." : "Linket kunne ikke kopieres.",
     "Link copied to the clipboard!" : "Link kopieret til udklipsholderen!",
+    "Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer." : "Lyde kan i øjeblikket ikke afspilles i Safari-browseren og iPad- og iPhone-enheder på grund af tekniske begrænsninger fra producenten.",
     "Rename conversation" : "Omdøb samtale",
     "Sending signaling message has failed." : "Kunne ikke sende signalerings-besked"
 },
