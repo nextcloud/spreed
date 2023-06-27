@@ -31,6 +31,13 @@
 			<div v-if="iconClass"
 				class="avatar icon"
 				:class="iconClass" />
+			<!-- img is used here instead of NcAvatar to explicitly set key required to avoid glitching in virtual scrolling  -->
+			<img v-else-if="FEATURE_FLAGS.CONVERSATIONS_LIST__VIRTUAL_SCROLLING && !isOneToOne"
+				:key="avatarUrl"
+				:src="avatarUrl"
+				:width="size"
+				:height="size"
+				style="border-radius: 100%">
 			<NcAvatar v-else-if="!isOneToOne"
 				:url="avatarUrl"
 				:size="size" />
