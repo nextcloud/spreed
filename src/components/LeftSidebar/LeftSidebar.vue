@@ -24,13 +24,13 @@
 		<div class="new-conversation"
 			:class="{ 'new-conversation--scrolled-down': !isScrolledToTop }">
 			<SearchBox ref="searchbox"
-				v-model="searchText"
+				:value.sync="searchText"
 				class="conversations-search"
 				:class="{'conversations-search--expanded': isFocused}"
-				:disabled="isFiltered"
+				:disabled="isFiltered !== null"
 				:is-searching="isSearching"
-				@blur="setIsFocused(false)"
-				@focus="setIsFocused(true)"
+				@focus="setIsFocused"
+				@blur="setIsFocused"
 				@input="debounceFetchSearchResults"
 				@submit="onInputEnter"
 				@keydown.enter.native="handleEnter"
@@ -46,7 +46,7 @@
 					</template>
 					<NcActionButton close-after-click
 						class="filter-actions__button"
-						:primary="isFiltered === 'mentions'"
+						:class="{'filter-actions__button--active': isFiltered === 'mentions'}"
 						@click="handleFilter('mentions')">
 						<template #icon>
 							<AtIcon :size="20" />
@@ -264,7 +264,6 @@ export default {
 			preventFindingUnread: false,
 			roomListModifiedBefore: 0,
 			forceFullRoomListRefreshAfterXLoops: 0,
-			isNewGroupConversationOpen: false,
 			isFocused: false,
 			isFiltered: null,
 		}
@@ -389,12 +388,18 @@ export default {
 		getFocusableList() {
 			return this.$el.querySelectorAll('li.acli_wrapper .acli')
 		},
-		setIsFocused(value) {
-			this.isFocused = value
+		setIsFocused(event) {
+			if (event.relatedTarget?.className.includes('input-field__clear-button')) {
+				return
+			}
+			this.isFocused = event.type === 'focus'
+
 		},
 
 		handleFilter(filter) {
 			this.isFiltered = filter
+			// Clear the search input once a filter is active
+			this.searchText = ''
 		},
 
 		focusCancel() {
@@ -417,10 +422,6 @@ export default {
 				this.fetchSearchResults()
 			}
 		}, 250),
-
-		toggleNewGroupConversation(value) {
-			this.isNewGroupConversationOpen = value
-		},
 
 		async fetchPossibleConversations() {
 			this.contactsLoading = true
@@ -510,6 +511,7 @@ export default {
 		// Reset the search text, therefore end the search operation.
 		abortSearch() {
 			this.searchText = ''
+			this.isFocused = false
 			if (this.cancelSearchPossibleConversations) {
 				this.cancelSearchPossibleConversations()
 			}
@@ -755,16 +757,16 @@ export default {
 
 }
 
-//FIXME : this should be changed once the disabled style for input is added
+//FIXME : upstream: this should be changed once the disabled style for NcInputField is added
 :deep(.input-field__input[disabled="disabled"]){
 	background-color: var(--color-background-dark);
 }
 
 .options{
 	position: relative;
-	transition: all 0.3s ease; //gets hidden once the search box is expanded
 	left : calc(65% + 4px);
 	display: flex;
+	height: var(--default-clickable-area);
 }
 
 .filter-actions__button--active{
@@ -774,10 +776,6 @@ export default {
 		font-weight: bold;
 	}
 
-}
-
-.hidden-visually{
-	height:100%;
 }
 
 .settings-button {

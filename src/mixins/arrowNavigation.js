@@ -43,7 +43,7 @@ const arrowNavigation = {
 		mountArrowNavigation() {
 			document.addEventListener('keydown', (event) => {
 				// https://www.w3.org/WAI/GL/wiki/Using_ARIA_menus
-				if (this.isFocused()) {
+				if (this.isSearching) {
 					// If arrow down, focus next result
 					if (event.key === 'ArrowDown') {
 						this.focusNext(event)
