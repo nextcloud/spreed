@@ -212,6 +212,12 @@ export default {
 		isMobile,
 	],
 
+	setup() {
+		return {
+			FEATURE_FLAGS,
+		}
+	},
+
 	data() {
 		return {
 			searchText: '',

@@ -90,13 +90,11 @@ export function disableFeatureFlag(flag, value = false) {
 }
 
 /**
- * Init feature flags: restore, add global variable and Vue plugin
+ * Init feature flags: restore, add global variable
  * To use in the console:
  * - __TALK__.FEATURE_FLAGS.enableFeatureFlag('FLAG_NAME')
  * - __TALK__.FEATURE_FLAGS.disableFeatureFlag('FLAG_NAME')
  * - __TALK__.FEATURE_FLAGS.resetFeatureFlags('FLAG_NAME')
- *
- * @return {object} Vue plugin to inject global property $FEATURE_FLAGS to components
  */
 export function initFeatureFlags() {
 	restoreFeatureFlags()
@@ -107,10 +105,5 @@ export function initFeatureFlags() {
 			disableFeatureFlag,
 			resetFeatureFlags,
 		}
-	}
-	return {
-		install(Vue) {
-			Vue.prototype.FEATURE_FLAGS = FEATURE_FLAGS
-		},
 	}
 }

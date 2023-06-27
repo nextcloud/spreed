@@ -77,6 +77,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
 import { CONVERSATION } from '../constants.js'
+import { FEATURE_FLAGS } from '../services/localFeatureFlagsService.js'
 import { isDarkTheme } from '../utils/isDarkTheme.js'
 
 const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
@@ -137,6 +138,12 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+	},
+
+	setup() {
+		return {
+			FEATURE_FLAGS,
+		}
 	},
 
 	data() {
