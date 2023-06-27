@@ -152,7 +152,7 @@ const mutations = {
 		 * @param {object} newObject new object to get changes from
 		 */
 		const applySoftObjectUpdates = (target, newObject) => {
-			const isObject = (value) => typeof value === 'object' && !Array.isArray(value)
+			const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value)
 
 			// Delete removed properties
 			for (const key of Object.keys(target)) {
