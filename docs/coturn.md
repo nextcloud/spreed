@@ -150,4 +150,4 @@ Alternatively you could of course prevent access to that internal network from t
 
 ##### Continue with the integration into Nextcloud Talk
 
-Now you can go back to the [TURN overview page](TURN/#4-configure-nextcloud-talk-to-use-your-turn-server). 
+Now you can go back to the [TURN overview page](TURN.md#4-configure-nextcloud-talk-to-use-your-turn-server). 
