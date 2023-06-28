@@ -1281,6 +1281,7 @@ OC.L10N.register(
     "Share my typing-status and show the typing-status of others" : "分享我的打字狀態並顯示其他人的打字狀態",
     "Sounds" : "音訊",
     "Play sounds when participants join or leave a call" : "參與者加入或離開通話時播放音訊",
+    "Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer." : "由於製造商的技術限制，目前無法在 iPad 與 iPhone 裝置中播放音訊。",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "可以在個人設定中調整聊天和通話通知的音訊。",
     "Keyboard shortcuts" : "鍵盤快速鍵",
     "Speed up your Talk experience with these quick shortcuts." : "使用這些快速鍵加快您的 Talk 體驗。",
