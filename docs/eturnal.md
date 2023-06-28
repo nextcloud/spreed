@@ -87,7 +87,7 @@ eturnal:
   ...
 ```
   
-  Besides that in [Talk settings](TURN.md/#4-configure-nextcloud-talk-to-use-your-turn-server) you must set the TURN server scheme as `turns:` or `turn: and turns:`.
+  Besides that in [Talk settings](TURN.md#4-configure-nextcloud-talk-to-use-your-turn-server) you must set the TURN server scheme as `turns:` or `turn: and turns:`.
 
   Note that, even if TLS provides the maximum compatibility, using a domain can cause problems with Firefox on a very specific scenario: [currently Firefox does not perform DNS requests through HTTP tunnels](https://bugzilla.mozilla.org/show_bug.cgi?id=1239006), so even if the WebRTC connection would work through the TURN server the TURN server may not be reachable.
 
