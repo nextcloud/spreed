@@ -10,7 +10,9 @@
 ## Administration documentation
 
 * [Server system requirements](system-requirements.md)
-* [Configuring coTURN](TURN.md)
+* [Configuring a TURN server](TURN.md)
+	* [Configuring coTURN](coturn.md)
+	* [Configuring eturnal](eturnal.md)
 * [Scalability](scalability.md)
 * [Call experience](call-experience.md)
 * [Occ commands](occ.md)
