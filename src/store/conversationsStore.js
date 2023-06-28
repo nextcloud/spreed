@@ -142,22 +142,27 @@ const mutations = {
 	 * Add new conversations
 	 *
 	 * @param {object} state the state
-	 * @param {object[]} conversations new conversations list
+	 * @param {object} payload payload
+	 * @param {object[]} payload.conversations new conversations list
+	 * @param {boolean} [payload.skipRemoval=false] only add new properties and update existing, do not remove deleted
 	 */
-	addConversations(state, conversations) {
+	addConversations(state, { conversations, skipRemoval = false }) {
 		/**
 		 * Apply mutations to object based on new object:
 		 *
 		 * @param {object} target target object
 		 * @param {object} newObject new object to get changes from
+		 * @param {boolean} [skipRemoval=false] only add new properties and update existing, do not remove deleted
 		 */
-		const applySoftObjectUpdates = (target, newObject) => {
+		const applySoftObjectUpdates = (target, newObject, skipRemoval = false) => {
 			const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value)
 
 			// Delete removed properties
-			for (const key of Object.keys(target)) {
-				if (!Object.hasOwn(newObject, key)) {
-					Vue.delete(target, key)
+			if (!skipRemoval) {
+				for (const key of Object.keys(target)) {
+					if (!Object.hasOwn(newObject, key)) {
+						Vue.delete(target, key)
+					}
 				}
 			}
 
@@ -183,7 +188,7 @@ const mutations = {
 		}
 
 		// Update the store
-		applySoftObjectUpdates(state.conversations, newConversations)
+		applySoftObjectUpdates(state.conversations, newConversations, skipRemoval)
 	},
 
 	/**
@@ -741,7 +746,11 @@ const actions = {
 			dispatch('updateTalkVersionHash', response)
 
 			if (FEATURE_FLAGS.CONVERSATIONS_LIST__SOFT_CONVERSATIONS_UPDATE) {
-				commit('addConversations', response.data.ocs.data)
+				commit('addConversations', {
+					conversations: response.data.ocs.data,
+					// With modifiedSince we don't receive not-updated group conversations, but they are not removed
+					skipRemoval: modifiedSince !== 0,
+				})
 			} else {
 				if (modifiedSince === 0) {
 					dispatch('purgeConversationsStore')
