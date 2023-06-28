@@ -61,7 +61,7 @@ If you need to retain the previous behaviour you should now do it by external me
 
 For _coTURN_:
 
-Install _coTURN_ on your client. Please [refer above for details](coturn/#1-download-and-install). Note that in the case of the client you only need to install it, you do not need to perform any configuration after that.
+Install _coTURN_ on your client. Please [refer above for details](coturn.md#1-download-and-install). Note that in the case of the client you only need to install it, you do not need to perform any configuration after that.
 
 Run `turnutils_uclient -p <port> -W <static-auth-secret> -v -y turn.example.com` where
 
