@@ -23,15 +23,64 @@
 	<NcAppNavigation :aria-label="t('spreed', 'Conversation list')">
 		<div class="new-conversation"
 			:class="{ 'new-conversation--scrolled-down': !isScrolledToTop }">
-			<SearchBox v-model="searchText"
+			<SearchBox ref="searchbox"
+				:value.sync="searchText"
 				class="conversations-search"
+				:class="{'conversations-search--expanded': isFocused}"
 				:is-searching="isSearching"
+				@focus="setIsFocused"
+				@blur="setIsFocused"
 				@input="debounceFetchSearchResults"
 				@submit="onInputEnter"
 				@keydown.enter.native="handleEnter"
 				@abort-search="abortSearch" />
-			<NewGroupConversation v-if="canStartConversations" />
+
+			<!-- Options -->
+			<div class="options"
+				:class="{'hidden-visually': isFocused}">
+				<NcActions class="filter-actions"
+					:primary="isFiltered !== null">
+					<template #icon>
+						<FilterIcon :size="15" />
+					</template>
+					<NcActionButton close-after-click
+						class="filter-actions__button"
+						:class="{'filter-actions__button--active': isFiltered === 'mentions'}"
+						@click="handleFilter('mentions')">
+						<template #icon>
+							<AtIcon :size="20" />
+						</template>
+						{{ t('spreed','Filter unread mentions') }}
+					</NcActionButton>
+
+					<NcActionButton close-after-click
+						class="filter-actions__button"
+						:class="{'filter-actions__button--active': isFiltered === 'unread'}"
+						@click="handleFilter('unread')">
+						<template #icon>
+							<MessageBadge :size="20" />
+						</template>
+						{{ t('spreed','Filter unread messages') }}
+					</NcActionButton>
+
+					<NcActionButton v-if="isFiltered"
+						close-after-click
+						class="filter-actions__clearbutton"
+						@click="handleFilter(null)">
+						<template #icon>
+							<FilterRemoveIcon :size="20" />
+						</template>
+						{{ t('spreed', 'Clear filters') }}
+					</NcActionButton>
+				</NcActions>
+			</div>
+
+			<!-- New Conversation -->
+			<NewGroupConversation v-if="canStartConversations"
+				ref="newGroupConversation"
+				class="new-conversation__button" />
 		</div>
+
 		<template #list>
 			<li ref="container" class="left-sidebar__list">
 				<ul ref="scroller"
@@ -46,7 +95,7 @@
 					<template v-if="!initialisedConversations">
 						<LoadingPlaceholder type="conversations" />
 					</template>
-					<Hint v-else-if="searchText && !conversationsList.length"
+					<Hint v-else-if="noMatchFound"
 						:hint="t('spreed', 'No matches')" />
 					<template v-if="isSearching">
 						<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
@@ -132,10 +181,17 @@
 <script>
 import debounce from 'debounce'
 
+import AtIcon from 'vue-material-design-icons/At.vue'
+import FilterIcon from 'vue-material-design-icons/Filter.vue'
+import FilterRemoveIcon from 'vue-material-design-icons/FilterRemove.vue'
+import MessageBadge from 'vue-material-design-icons/MessageBadge.vue'
+
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 
+import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcAppNavigation from '@nextcloud/vue/dist/Components/NcAppNavigation.js'
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -173,6 +229,12 @@ export default {
 		LoadingPlaceholder,
 		NcListItem,
 		ConversationIcon,
+		NcActions,
+		NcActionButton,
+		AtIcon,
+		MessageBadge,
+		FilterIcon,
+		FilterRemoveIcon,
 	},
 
 	mixins: [
@@ -203,19 +265,25 @@ export default {
 			preventFindingUnread: false,
 			roomListModifiedBefore: 0,
 			forceFullRoomListRefreshAfterXLoops: 0,
+			isFocused: false,
+			isFiltered: null,
 		}
 	},
 
 	computed: {
 		conversationsList() {
 			let conversations = this.$store.getters.conversationsList
-
 			if (this.searchText !== '') {
 				const lowerSearchText = this.searchText.toLowerCase()
 				conversations = conversations.filter(conversation =>
 					conversation.displayName.toLowerCase().includes(lowerSearchText)
-					|| conversation.name.toLowerCase().includes(lowerSearchText)
+							|| conversation.name.toLowerCase().includes(lowerSearchText)
 				)
+			} else if (this.isFiltered === 'unread') {
+				conversations = conversations.filter(conversation => conversation.unreadMessages > 0)
+			} else if (this.isFiltered === 'mentions') {
+				conversations = conversations.filter(conversation => conversation.unreadMention || (conversation.unreadMessages > 0
+					&& (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER)))
 			}
 
 			// FIXME: this modifies the original array,
@@ -225,6 +293,10 @@ export default {
 
 		isSearching() {
 			return this.searchText !== ''
+		},
+
+		noMatchFound() {
+			return (this.searchText || this.isFiltered) && !this.conversationsList.length
 		},
 
 		showStartConversationsOptions() {
@@ -311,12 +383,24 @@ export default {
 		getFocusableList() {
 			return this.$el.querySelectorAll('li.acli_wrapper .acli')
 		},
+		setIsFocused(event) {
+			if (event.relatedTarget?.className.includes('input-field__clear-button') || this.searchText !== '') {
+				return
+			}
+			this.isFocused = event.type === 'focus'
+
+		},
+
+		handleFilter(filter) {
+			this.isFiltered = filter
+			// Clear the search input once a filter is active
+			this.searchText = ''
+		},
+
 		focusCancel() {
 			return this.abortSearch()
 		},
-		isFocused() {
-			return this.isSearching
-		},
+
 		scrollBottomUnread() {
 			this.preventFindingUnread = true
 			this.$refs.container.scrollTo({
@@ -410,8 +494,8 @@ export default {
 					params: { token: conversation.token },
 				}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			} else {
-				// For other types we start the conversation creation dialog
-				EventBus.$emit('new-group-conversation-dialog', item)
+				// For other types, show the modal directly
+				this.$refs.newGroupConversation.showModalForItem(item)
 			}
 		},
 
@@ -422,6 +506,7 @@ export default {
 		// Reset the search text, therefore end the search operation.
 		abortSearch() {
 			this.searchText = ''
+			this.isFocused = false
 			if (this.cancelSearchPossibleConversations) {
 				this.cancelSearchPossibleConversations()
 			}
@@ -618,7 +703,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 @import '../../assets/variables';
 
 .scroller {
@@ -654,11 +738,44 @@ export default {
 }
 
 .conversations-search {
-	flex-grow: 1;
-
+	transition: all 0.3s ease;
+	z-index: 1;
+	// New conversation button width : 52 px
+	// Filters button width : 44 px
+	// Spacing : 3px + 1px
+	// Total : 100 px
+	width : calc(100% - 100px);
+	display : flex;
 	:deep(.input-field__input) {
 		border-radius: var(--border-radius-pill);
 	}
+	&--expanded {
+
+		// Gets expanded : 100 % - (52px + 1px)
+		width : calc(100% - 53px );
+	}
+
+}
+
+.options{
+	position: absolute;
+	right : 52px; // New conversation button's width
+	display: flex;
+	height: var(--default-clickable-area);
+}
+
+.new-conversation__button{
+	position: absolute;
+	right: 1px;
+}
+
+.filter-actions__button--active{
+	background-color: var(--color-primary-element-light);
+	border-radius: 6px;
+	:deep(.action-button__longtext){
+		font-weight: bold;
+	}
+
 }
 
 .settings-button {

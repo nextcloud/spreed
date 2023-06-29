@@ -22,10 +22,12 @@
 <template>
 	<form @submit.prevent="handleSubmit">
 		<NcTextField ref="searchConversations"
-			:value.sync="localValue"
+			:value="value"
 			:label="placeholderText"
 			:show-trailing-button="isSearching"
 			trailing-button-icon="close"
+			v-on="$listeners"
+			@update:value="updateValue"
 			@trailing-button-click="abortSearch"
 			@keypress.enter="handleSubmit">
 			<Magnify :size="16" />
@@ -52,11 +54,10 @@ export default {
 		 */
 		placeholderText: {
 			type: String,
-			default: t('spreed', 'Search conversations or users'),
+			default: t('spreed', 'Search …'),
 		},
 		/**
-		 * The value of the input field, when receiving it as a prop the localValue
-		 * is updated.
+		 * The value of the input field.
 		 */
 		value: {
 			type: String,
@@ -73,25 +74,12 @@ export default {
 
 	emits: ['update:value', 'input', 'submit', 'abort-search'],
 
-	data() {
-		return {
-			localValue: '',
-		}
-	},
 	computed: {
 		cancelSearchLabel() {
 			return t('spreed', 'Cancel search')
 		},
 	},
-	watch: {
-		localValue(localValue) {
-			this.$emit('update:value', localValue)
-			this.$emit('input', localValue)
-		},
-		value(value) {
-			this.localValue = value
-		},
-	},
+
 	mounted() {
 		this.focusInputIfRoot()
 		/**
@@ -103,6 +91,10 @@ export default {
 		EventBus.$off('route-change', this.focusInputIfRoot)
 	},
 	methods: {
+		updateValue(value) {
+			this.$emit('update:value', value)
+			this.$emit('input', value)
+		},
 		// Focus the input field of the searchbox component.
 		focusInput() {
 			this.$refs.searchConversations.$el.focus()

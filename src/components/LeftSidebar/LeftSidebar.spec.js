@@ -47,7 +47,8 @@ describe('LeftSidebar.vue', () => {
 				// to prevent user status fetching
 				NcAvatar: true,
 				// to prevent complex dialog logic
-				NewGroupConversation: true,
+				NcActions: true,
+				NcModal: true,
 			},
 		})
 	}
@@ -611,9 +612,6 @@ describe('LeftSidebar.vue', () => {
 			})
 
 			test('shows group conversation dialog when clicking search result', async () => {
-				const eventHandler = jest.fn()
-				EventBus.$once('new-group-conversation-dialog', eventHandler)
-
 				const wrapper = await testSearch(SEARCH_TERM, [...groupsResults], [])
 
 				const resultsListItems = findNcListItems(wrapper, groupsResults.map(item => item.label))
@@ -621,7 +619,13 @@ describe('LeftSidebar.vue', () => {
 				expect(resultsListItems).toHaveLength(groupsResults.length)
 
 				await resultsListItems.at(1).findAll('a').trigger('click')
-				expect(eventHandler).toHaveBeenCalledWith(groupsResults[1])
+				// Wait for the component to render
+				await wrapper.vm.$nextTick()
+				const ncModalComponent = wrapper.findComponent({ name: 'NcModal' })
+				expect(ncModalComponent.exists()).toBeTruthy()
+
+				const input = ncModalComponent.findComponent({ name: 'NcTextField', ref: 'conversationName' })
+				expect(input.props('value')).toBe(groupsResults[1].label)
 
 				// nothing created yet
 				expect(createOneToOneConversationAction).not.toHaveBeenCalled()
@@ -629,8 +633,6 @@ describe('LeftSidebar.vue', () => {
 			})
 
 			test('shows circles conversation dialog when clicking search result', async () => {
-				const eventHandler = jest.fn()
-				EventBus.$once('new-group-conversation-dialog', eventHandler)
 
 				const wrapper = await testSearch(SEARCH_TERM, [...circlesResults], [])
 
@@ -639,7 +641,13 @@ describe('LeftSidebar.vue', () => {
 				expect(resultsListItems).toHaveLength(circlesResults.length)
 
 				await resultsListItems.at(1).findAll('a').trigger('click')
-				expect(eventHandler).toHaveBeenCalledWith(circlesResults[1])
+
+				// Wait for the component to render
+				await wrapper.vm.$nextTick()
+				const ncModalComponent = wrapper.findComponent({ name: 'NcModal' })
+				expect(ncModalComponent.exists()).toBeTruthy()
+				const input = ncModalComponent.findComponent({ name: 'NcTextField', ref: 'conversationName' })
+				expect(input.props('value')).toBe(circlesResults[1].label)
 
 				// nothing created yet
 				expect(createOneToOneConversationAction).not.toHaveBeenCalled()
@@ -703,6 +711,7 @@ describe('LeftSidebar.vue', () => {
 			const wrapper = mountComponent()
 			const buttonEl = wrapper.findComponent({ name: 'NewGroupConversation' })
 			expect(buttonEl.exists()).toBeTruthy()
+
 		})
 		test('does not show new conversation button if user cannot start conversations', () => {
 			loadStateSettings.start_conversations = false
