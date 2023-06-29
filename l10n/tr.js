@@ -1281,6 +1281,7 @@ OC.L10N.register(
     "Share my typing-status and show the typing-status of others" : "Yazıyor durumumu paylaş ve diğerlerinin yazıyor durumunu görüntüle",
     "Sounds" : "Sesler",
     "Play sounds when participants join or leave a call" : "Katılımcılar çağrıya katıldığında ya da ayrıldığında ses çalınsın",
+    "Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer." : "Üreticinin teknik sınırlamaları nedeniyle sesler şu anda iPad ve iPhone aygıtlarında çalınamıyor.",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "Sohbet ve çağrı bildirimlerinin kişisel ayarlar bölümünden belirlenebilen sesleri.",
     "Keyboard shortcuts" : "Kısayol tuşları",
     "Speed up your Talk experience with these quick shortcuts." : "Şu kısayol tuşlarını kullanarak Talk deneyiminizi hızlandırabilirsiniz.",
