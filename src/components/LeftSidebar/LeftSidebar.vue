@@ -27,7 +27,6 @@
 				:value.sync="searchText"
 				class="conversations-search"
 				:class="{'conversations-search--expanded': isFocused}"
-				:disabled="isFiltered !== null"
 				:is-searching="isSearching"
 				@focus="setIsFocused"
 				@blur="setIsFocused"
@@ -74,10 +73,12 @@
 						{{ t('spreed', 'Clear filters') }}
 					</NcActionButton>
 				</NcActions>
-				<!-- New Conversation -->
-				<NewGroupConversation v-if="canStartConversations"
-					ref="newGroupConversation" />
 			</div>
+
+			<!-- New Conversation -->
+			<NewGroupConversation v-if="canStartConversations"
+				ref="newGroupConversation"
+				class="new-conversation__button" />
 		</div>
 
 		<template #list>
@@ -272,23 +273,17 @@ export default {
 	computed: {
 		conversationsList() {
 			let conversations = this.$store.getters.conversationsList
-			switch (this.isFiltered) {
-			case ('unread'):
+			if (this.searchText !== '') {
+				const lowerSearchText = this.searchText.toLowerCase()
+				conversations = conversations.filter(conversation =>
+					conversation.displayName.toLowerCase().includes(lowerSearchText)
+							|| conversation.name.toLowerCase().includes(lowerSearchText)
+				)
+			} else if (this.isFiltered === 'unread') {
 				conversations = conversations.filter(conversation => conversation.unreadMessages > 0)
-				break
-			case ('mentions'):
+			} else if (this.isFiltered === 'mentions') {
 				conversations = conversations.filter(conversation => conversation.unreadMention || (conversation.unreadMessages > 0
-				 && (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER)))
-				break
-			default:
-				if (this.searchText !== '') {
-					const lowerSearchText = this.searchText.toLowerCase()
-					conversations = conversations.filter(conversation =>
-						conversation.displayName.toLowerCase().includes(lowerSearchText)
-								|| conversation.name.toLowerCase().includes(lowerSearchText)
-					)
-					break
-				}
+					&& (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER)))
 			}
 
 			// FIXME: this modifies the original array,
@@ -389,7 +384,7 @@ export default {
 			return this.$el.querySelectorAll('li.acli_wrapper .acli')
 		},
 		setIsFocused(event) {
-			if (event.relatedTarget?.className.includes('input-field__clear-button')) {
+			if (event.relatedTarget?.className.includes('input-field__clear-button') || this.searchText !== '') {
 				return
 			}
 			this.isFocused = event.type === 'focus'
@@ -744,29 +739,34 @@ export default {
 
 .conversations-search {
 	transition: all 0.3s ease;
-	width: calc(65% - 8px);
 	z-index: 1;
-	position : absolute;
-
+	// New conversation button width : 52 px
+	// Filters button width : 44 px
+	// Spacing : 3px + 1px
+	// Total : 100 px
+	width : calc(100% - 100px);
+	display : flex;
 	:deep(.input-field__input) {
 		border-radius: var(--border-radius-pill);
 	}
 	&--expanded {
-		width: 90%;
+
+		// Gets expanded : 100 % - (52px + 1px)
+		width : calc(100% - 53px );
 	}
 
 }
 
-//FIXME : upstream: this should be changed once the disabled style for NcInputField is added
-:deep(.input-field__input[disabled="disabled"]){
-	background-color: var(--color-background-dark);
-}
-
 .options{
-	position: relative;
-	left : calc(65% + 4px);
+	position: absolute;
+	right : 52px; // New conversation button's width
 	display: flex;
 	height: var(--default-clickable-area);
+}
+
+.new-conversation__button{
+	position: absolute;
+	right: 1px;
 }
 
 .filter-actions__button--active{

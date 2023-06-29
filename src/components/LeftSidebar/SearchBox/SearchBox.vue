@@ -25,7 +25,6 @@
 			:value="value"
 			:label="placeholderText"
 			:show-trailing-button="isSearching"
-			:disabled="disabled"
 			trailing-button-icon="close"
 			v-on="$listeners"
 			@update:value="updateValue"
@@ -68,10 +67,6 @@ export default {
 		 * If true, this component displays an 'x' button to abort the search
 		 */
 		isSearching: {
-			type: Boolean,
-			default: false,
-		},
-		disabled: {
 			type: Boolean,
 			default: false,
 		},
