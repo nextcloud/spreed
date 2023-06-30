@@ -41,27 +41,48 @@
 		<MessagesList role="region"
 			:aria-label="t('spreed', 'Conversation messages')"
 			:token="token"
+			:is-chat-scrolled-to-bottom.sync="isChatScrolledToBottom"
 			:is-visible="isVisible" />
 		<NewMessage v-if="containerId"
+			ref="newMessage"
 			role="region"
 			:token="token"
 			:container="containerId"
 			has-typing-indicator
 			:aria-label="t('spreed', 'Post message')" />
+		<transition name="fade">
+			<NcButton v-show="!isChatScrolledToBottom"
+				type="secondary"
+				:aria-label="t('spreed', 'Scroll to bottom')"
+				class="scroll-to-bottom"
+				:style="`bottom: ${scrollButtonOffset}px`"
+				@click="smoothScrollToBottom">
+				<template #icon>
+					<ChevronDoubleDown :size="20" />
+				</template>
+			</NcButton>
+		</transition>
 	</div>
 </template>
 
 <script>
+import ChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
 import MessagesList from './MessagesList/MessagesList.vue'
 import NewMessage from './NewMessage/NewMessage.vue'
 
 import { CONVERSATION } from '../constants.js'
+import { EventBus } from '../services/EventBus.js'
 
 export default {
 
 	name: 'ChatView',
 
 	components: {
+		NcButton,
+		ChevronDoubleDown,
 		MessagesList,
 		NewMessage,
 	},
@@ -75,6 +96,8 @@ export default {
 
 	data() {
 		return {
+			isChatScrolledToBottom: true,
+			scrollButtonOffset: undefined,
 			isDraggingOver: false,
 			containerId: undefined,
 		}
@@ -104,7 +127,24 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
+
+		typingParticipants() {
+			return this.$store.getters.participantsListTyping(this.token)
+		},
 	},
+
+	watch: {
+		typingParticipants: {
+			immediate: true,
+			handler() {
+				this.$nextTick(() => {
+					// offset from NewMessage component by 8px, with its min-height: 69px as a fallback
+					this.scrollButtonOffset = (this.$refs.newMessage?.$el?.clientHeight ?? 69) + 8
+				})
+			},
+		},
+	},
+
 	mounted() {
 		// Postpone render of NewMessage until application is mounted
 		this.containerId = this.$store.getters.getMainContainerSelector()
@@ -141,6 +181,10 @@ export default {
 			const uploadId = new Date().getTime()
 			// Uploads and shares the files
 			this.$store.dispatch('initialiseUpload', { files, token: this.token, uploadId })
+		},
+
+		smoothScrollToBottom() {
+			EventBus.$emit('smooth-scroll-chat-to-bottom')
 		},
 	},
 
@@ -181,6 +225,11 @@ export default {
 		height: 48px;
 		margin-bottom: 16px;
 	}
+}
+
+.scroll-to-bottom {
+	position: absolute !important;
+	right: 24px;
 }
 
 .slide {
