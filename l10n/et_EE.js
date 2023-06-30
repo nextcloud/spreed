@@ -87,6 +87,7 @@ OC.L10N.register(
     "Open sidebar" : "Ava külgriba",
     "Screensharing requires the page to be loaded through HTTPS." : "Ekraanijagamiseks tuleb leht laadida üle HTTPS protokolli.",
     "Grid view" : "Ruudustikvaade",
+    "Media" : "Meedia",
     "Polls" : "Küsitlused",
     "Locations" : "Asukohad",
     "Audio" : "Helid",
