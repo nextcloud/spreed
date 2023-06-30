@@ -58,7 +58,7 @@
 				:style="`bottom: ${scrollButtonOffset}px`"
 				@click="smoothScrollToBottom">
 				<template #icon>
-					<ChevronDown :size="20" />
+					<ChevronDoubleDown :size="20" />
 				</template>
 			</NcButton>
 		</transition>
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import ChevronDown from 'vue-material-design-icons/ChevronDown.vue'
+import ChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
@@ -82,7 +82,7 @@ export default {
 
 	components: {
 		NcButton,
-		ChevronDown,
+		ChevronDoubleDown,
 		MessagesList,
 		NewMessage,
 	},
@@ -138,8 +138,8 @@ export default {
 			immediate: true,
 			handler() {
 				this.$nextTick(() => {
-					// overlap NewMessage component by 8px, set its min-height: 69px as a fallback
-					this.scrollButtonOffset = (this.$refs.newMessage?.$el?.clientHeight ?? 69) - 8
+					// offset from NewMessage component by 8px, with its min-height: 69px as a fallback
+					this.scrollButtonOffset = (this.$refs.newMessage?.$el?.clientHeight ?? 69) + 8
 				})
 			},
 		},
