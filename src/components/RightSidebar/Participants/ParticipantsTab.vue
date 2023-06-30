@@ -22,7 +22,7 @@
 <template>
 	<div>
 		<SearchBox v-if="canSearch"
-			v-model="searchText"
+			:value.sync="searchText"
 			:placeholder-text="searchBoxPlaceholder"
 			:is-searching="isSearching"
 			@input="handleInput"
