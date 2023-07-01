@@ -248,6 +248,7 @@ OC.L10N.register(
     "Groups" : "Grupos",
     "Circles" : "Círculos",
     "An error occurred while performing the search" : "Prodúxose un error mentanto se facía la busca",
+    "Search …" : "Buscar…",
     "Devices" : "Preseos",
     "The message could not be translated" : "Nun se pudo traducir el mensaxe",
     "Translation copied to clipboard" : "La traducción copióse al cartafueyu",
