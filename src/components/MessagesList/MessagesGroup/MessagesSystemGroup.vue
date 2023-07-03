@@ -70,6 +70,22 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import Message from './Message/Message.vue'
 
+// List only sortable messages with order, in which they should be sorted
+const MESSAGES = {
+	user_added: 1,
+	user_removed: 1,
+	moderator_promoted: 11,
+	guest_moderator_promoted: 11,
+	moderator_demoted: 11,
+	guest_moderator_demoted: 11,
+	call_started: 20,
+	recording_started: 21,
+	call_joined: 22,
+	call_left: 22,
+	call_ended: 23,
+	call_ended_everyone: 23,
+}
+
 export default {
 	name: 'MessagesSystemGroup',
 
@@ -126,9 +142,10 @@ export default {
 
 	watch: {
 		messages: {
+			deep: true,
 			immediate: true,
 			handler(value) {
-				this.messagesGroupedBySystemMessage = this.groupMessages(value)
+				this.messagesGroupedBySystemMessage = this.groupMessages(this.sortMessages(value))
 			},
 		},
 	},
@@ -198,6 +215,18 @@ export default {
 			}
 
 			return ''
+		},
+
+		sortMessages(messages) {
+			return messages.slice().sort((message1, message2) => {
+				// Don't sort messages if they're not intended to be sorted
+				if (!MESSAGES[message1.systemMessage] || !MESSAGES[message2.systemMessage]) {
+					return 0
+				}
+
+				// Don't sort related system messages (call join - call left) between each other
+				return MESSAGES[message1.systemMessage] - MESSAGES[message2.systemMessage]
+			})
 		},
 
 		groupMessages(messages) {
