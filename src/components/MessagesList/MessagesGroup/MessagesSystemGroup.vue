@@ -185,6 +185,18 @@ export default {
 				return 'call_left'
 			}
 
+			// Group users promoted one by one
+			if ((message1.systemMessage === 'moderator_promoted' || message1.systemMessage === 'guest_moderator_promoted')
+				&& (message2.systemMessage === 'moderator_promoted' || message2.systemMessage === 'guest_moderator_promoted')) {
+				return 'moderator_promoted'
+			}
+
+			// Group users demoted one by one
+			if ((message1.systemMessage === 'moderator_demoted' || message1.systemMessage === 'guest_moderator_demoted')
+				&& (message2.systemMessage === 'moderator_demoted' || message2.systemMessage === 'guest_moderator_demoted')) {
+				return 'moderator_demoted'
+			}
+
 			return ''
 		},
 
@@ -373,6 +385,112 @@ export default {
 						combinedMessage.message = n('spreed',
 							'{user0}, {user1} and %n more participant left the call',
 							'{user0}, {user1} and %n more participants left the call', usersCounter - 2)
+					}
+				}
+			}
+
+			// Handle cases when actor promoted several users to moderators
+			if (type === 'moderator_promoted') {
+				const selfIsActor = combinedMessage.actorId === this.$store.getters.getActorId()
+					&& combinedMessage.actorType === this.$store.getters.getActorType()
+				messages.forEach(message => {
+					if (this.checkIfSelfIsUser(message)) {
+						selfIsUser = true
+					} else {
+						combinedMessage.messageParameters[`user${referenceIndex}`] = message.messageParameters.user
+						referenceIndex++
+					}
+					usersCounter++
+				})
+
+				if (selfIsActor) {
+					if (usersCounter === 2) {
+						combinedMessage.message = t('spreed', 'You promoted {user0} and {user1} to moderators')
+					} else {
+						combinedMessage.message = n('spreed',
+							'You promoted {user0}, {user1} and %n more participant to moderators',
+							'You promoted {user0}, {user1} and %n more participants to moderators', usersCounter - 2)
+					}
+				} else if (selfIsUser) {
+					if (usersCounter === 2) {
+						combinedMessage.message = actorIsAdministrator
+							? t('spreed', 'An administrator promoted you and {user0} to moderators')
+							: t('spreed', '{actor} promoted you and {user0} to moderators')
+					} else {
+						combinedMessage.message = actorIsAdministrator
+							? n('spreed',
+								'An administrator promoted you, {user0} and %n more participant to moderators',
+								'An administrator promoted you, {user0} and %n more participants to moderators', usersCounter - 2)
+							: n('spreed',
+								'{actor} promoted you, {user0} and %n more participant to moderators',
+								'{actor} promoted you, {user0} and %n more participants to moderators', usersCounter - 2)
+					}
+				} else {
+					if (usersCounter === 2) {
+						combinedMessage.message = actorIsAdministrator
+							? t('spreed', 'An administrator promoted {user0} and {user1} to moderators')
+							: t('spreed', '{actor} promoted {user0} and {user1} to moderators')
+					} else {
+						combinedMessage.message = actorIsAdministrator
+							? n('spreed',
+								'An administrator promoted {user0}, {user1} and %n more participant to moderators',
+								'An administrator promoted {user0}, {user1} and %n more participants to moderators', usersCounter - 2)
+							: n('spreed',
+								'{actor} promoted {user0}, {user1} and %n more participant to moderators',
+								'{actor} promoted {user0}, {user1} and %n more participants to moderators', usersCounter - 2)
+					}
+				}
+			}
+
+			// Handle cases when actor demoted several users from moderators
+			if (type === 'moderator_demoted') {
+				const selfIsActor = combinedMessage.actorId === this.$store.getters.getActorId()
+					&& combinedMessage.actorType === this.$store.getters.getActorType()
+				messages.forEach(message => {
+					if (this.checkIfSelfIsUser(message)) {
+						selfIsUser = true
+					} else {
+						combinedMessage.messageParameters[`user${referenceIndex}`] = message.messageParameters.user
+						referenceIndex++
+					}
+					usersCounter++
+				})
+
+				if (selfIsActor) {
+					if (usersCounter === 2) {
+						combinedMessage.message = t('spreed', 'You demoted {user0} and {user1} from moderators')
+					} else {
+						combinedMessage.message = n('spreed',
+							'You demoted {user0}, {user1} and %n more participant from moderators',
+							'You demoted {user0}, {user1} and %n more participants from moderators', usersCounter - 2)
+					}
+				} else if (selfIsUser) {
+					if (usersCounter === 2) {
+						combinedMessage.message = actorIsAdministrator
+							? t('spreed', 'An administrator demoted you and {user0} from moderators')
+							: t('spreed', '{actor} demoted you and {user0} from moderators')
+					} else {
+						combinedMessage.message = actorIsAdministrator
+							? n('spreed',
+								'An administrator demoted you, {user0} and %n more participant from moderators',
+								'An administrator demoted you, {user0} and %n more participants from moderators', usersCounter - 2)
+							: n('spreed',
+								'{actor} demoted you, {user0} and %n more participant from moderators',
+								'{actor} demoted you, {user0} and %n more participants from moderators', usersCounter - 2)
+					}
+				} else {
+					if (usersCounter === 2) {
+						combinedMessage.message = actorIsAdministrator
+							? t('spreed', 'An administrator demoted {user0} and {user1} from moderators')
+							: t('spreed', '{actor} demoted {user0} and {user1} from moderators')
+					} else {
+						combinedMessage.message = actorIsAdministrator
+							? n('spreed',
+								'An administrator demoted {user0}, {user1} and %n more participant from moderators',
+								'An administrator demoted {user0}, {user1} and %n more participants from moderators', usersCounter - 2)
+							: n('spreed',
+								'{actor} demoted {user0}, {user1} and %n more participant from moderators',
+								'{actor} demoted {user0}, {user1} and %n more participants from moderators', usersCounter - 2)
 					}
 				}
 			}
