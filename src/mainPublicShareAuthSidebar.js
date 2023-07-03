@@ -18,6 +18,7 @@
  *
  */
 
+import { createPinia, PiniaVuePlugin } from 'pinia'
 import Vue from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
 import vOutsideEvents from 'vue-outside-events'
@@ -58,11 +59,13 @@ Vue.prototype.n = translatePlural
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 
+Vue.use(PiniaVuePlugin)
 Vue.use(Vuex)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
 Vue.use(VueObserveVisibility)
 
+const pinia = createPinia()
 store.dispatch('setMainContainerSelector', '#talk-sidebar')
 
 /**
@@ -127,6 +130,7 @@ function getShareToken() {
 
 const requestPasswordVm = new Vue({
 	store,
+	pinia,
 	id: 'talk-video-verification',
 	propsData: {
 		shareToken: getShareToken(),
@@ -137,6 +141,7 @@ requestPasswordVm.$mount('#request-password')
 
 const talkSidebarVm = new Vue({
 	store,
+	pinia,
 	...PublicShareAuthSidebar,
 })
 talkSidebarVm.$mount(document.querySelector('#talk-sidebar'))

@@ -25,6 +25,7 @@
  *
  */
 
+import { createPinia, PiniaVuePlugin } from 'pinia'
 import Vue from 'vue'
 import VueObserveVisibility from 'vue-observe-visibility'
 import vOutsideEvents from 'vue-outside-events'
@@ -72,11 +73,14 @@ Vue.prototype.n = translatePlural
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 
+Vue.use(PiniaVuePlugin)
 Vue.use(Vuex)
 Vue.use(VueRouter)
 Vue.use(VueObserveVisibility)
 Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 Vue.use(vOutsideEvents)
+
+const pinia = createPinia()
 
 TooltipOptions.container = '#call-container'
 store.dispatch('setMainContainerSelector', '#call-container')
@@ -90,6 +94,7 @@ if (!window.OCA.Talk) {
 const instance = new Vue({
 	el: '#content',
 	store,
+	pinia,
 	router,
 	render: h => h(Recording),
 })
