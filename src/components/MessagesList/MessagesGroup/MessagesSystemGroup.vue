@@ -164,6 +164,27 @@ export default {
 				return 'user_added'
 			}
 
+			// Group users reconnected in a minute
+			if (message1.systemMessage === 'call_joined'
+				&& message2.systemMessage === 'call_left'
+				&& message1.timestamp - message2.timestamp < 60 * 1000
+				&& message1.actorId === message2.actorId
+				&& message1.actorType === message2.actorType) {
+				return 'call_reconnected'
+			}
+
+			// Group users joined call one by one
+			if (message1.systemMessage === 'call_joined'
+				&& message1.systemMessage === message2.systemMessage) {
+				return 'call_joined'
+			}
+
+			// Group users left call one by one
+			if (message1.systemMessage === 'call_left'
+				&& message1.systemMessage === message2.systemMessage) {
+				return 'call_left'
+			}
+
 			return ''
 		},
 
@@ -177,12 +198,21 @@ export default {
 					groups.push({ messages: [message], type: '', collapsed: true })
 					forceNextGroup = false
 				} else {
+					if (groupingType === 'call_reconnected') {
+						groups.push({ messages: [groups.at(-1).messages.pop()], type: '', collapsed: true })
+						forceNextGroup = true
+					}
 					groups.at(-1).messages.push(message)
 					groups.at(-1).type = groupingType
 				}
 				lastMessage = message
 			}
 			return groups
+		},
+
+		checkIfSelfIsActor(message) {
+			return message.messageParameters.actor.id === this.$store.getters.getActorId()
+				&& message.messageParameters.actor.type + 's' === this.$store.getters.getActorType()
 		},
 
 		checkIfSelfIsUser(message) {
@@ -192,6 +222,17 @@ export default {
 
 		createCombinedSystemMessage({ messages, type }) {
 			const combinedMessage = cloneDeep(messages[0])
+
+			// Handle cases when users reconnected to the call
+			if (type === 'call_reconnected') {
+				if (this.checkIfSelfIsActor(combinedMessage)) {
+					combinedMessage.message = t('spreed', 'You reconnected to the call')
+				} else {
+					combinedMessage.message = t('spreed', '{actor} reconnected to the call')
+				}
+
+				return combinedMessage
+			}
 
 			// clear messageParameters to be filled later
 			const actor = messages[0].messageParameters.actor
@@ -252,6 +293,86 @@ export default {
 							: n('spreed',
 								'{actor} added {user0}, {user1} and %n more participant',
 								'{actor} added {user0}, {user1} and %n more participants', usersCounter - 2)
+					}
+				}
+			}
+
+			// Used to hide duplicates from system message headers,
+			// when the same user joins or leaves call several times
+			const storedUniqueUsers = []
+
+			// Handle cases when users joined the call
+			if (type === 'call_joined') {
+				messages.forEach(message => {
+					const actorReference = `${message.messageParameters.actor.id}_${message.messageParameters.actor.type}`
+					if (storedUniqueUsers.includes(actorReference)) {
+						return
+					}
+					if (this.checkIfSelfIsActor(message)) {
+						selfIsUser = true
+					} else {
+						combinedMessage.messageParameters[`user${referenceIndex}`] = message.messageParameters.actor
+						storedUniqueUsers.push(actorReference)
+						referenceIndex++
+					}
+					usersCounter++
+				})
+
+				if (usersCounter === 1) {
+					combinedMessage.message = messages[0].message
+				} else if (selfIsUser) {
+					if (usersCounter === 2) {
+						combinedMessage.message = t('spreed', 'You and {user0} joined the call')
+					} else {
+						combinedMessage.message = n('spreed',
+							'You, {user0} and %n more participant joined the call',
+							'You, {user0} and %n more participants joined the call', usersCounter - 2)
+					}
+				} else {
+					if (usersCounter === 2) {
+						combinedMessage.message = t('spreed', '{user0} and {user1} joined the call')
+					} else {
+						combinedMessage.message = n('spreed',
+							'{user0}, {user1} and %n more participant joined the call',
+							'{user0}, {user1} and %n more participants joined the call', usersCounter - 2)
+					}
+				}
+			}
+
+			// Handle cases when users left the call
+			if (type === 'call_left') {
+				messages.forEach(message => {
+					const actorReference = `${message.messageParameters.actor.id}_${message.messageParameters.actor.type}`
+					if (storedUniqueUsers.includes(actorReference)) {
+						return
+					}
+					if (this.checkIfSelfIsActor(message)) {
+						selfIsUser = true
+					} else {
+						combinedMessage.messageParameters[`user${referenceIndex}`] = message.messageParameters.actor
+						storedUniqueUsers.push(actorReference)
+						referenceIndex++
+					}
+					usersCounter++
+				})
+
+				if (usersCounter === 1) {
+					combinedMessage.message = messages[0].message
+				} else if (selfIsUser) {
+					 if (usersCounter === 2) {
+						combinedMessage.message = t('spreed', 'You and {user0} left the call')
+					} else {
+						combinedMessage.message = n('spreed',
+							'You, {user0} and %n more participant left the call',
+							'You, {user0} and %n more participants left the call', usersCounter - 2)
+					}
+				} else {
+					if (usersCounter === 2) {
+						combinedMessage.message = t('spreed', '{user0} and {user1} left the call')
+					} else {
+						combinedMessage.message = n('spreed',
+							'{user0}, {user1} and %n more participant left the call',
+							'{user0}, {user1} and %n more participants left the call', usersCounter - 2)
 					}
 				}
 			}
