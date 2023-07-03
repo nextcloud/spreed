@@ -27,42 +27,57 @@
 				role="heading"
 				aria-level="3">{{ dateSeparator }}</span>
 		</div>
-		<div class="wrapper"
-			:class="{'wrapper--system': isSystemMessage}">
-			<div v-if="!isSystemMessage" class="messages__avatar">
-				<AuthorAvatar :author-type="actorType"
-					:author-id="actorId"
-					:display-name="actorDisplayName" />
+		<div class="wrapper wrapper--system">
+			<div v-for="messagesCollapsed in messagesGroupedBySystemMessage"
+				:key="messagesCollapsed.id"
+				class="message-group__system">
+				<ul v-if="messagesCollapsed.messages?.length > 1"
+					class="messages messages--header">
+					<Message v-bind="createCombinedSystemMessage(messagesCollapsed)"
+						:next-message-id="getNextMessageId(messagesCollapsed.messages.at(-1))"
+						:previous-message-id="getPrevMessageId(messagesCollapsed.messages.at(0))" />
+					<NcButton type="tertiary"
+						class="messages--header__toggle"
+						:aria-label="t('spreed', 'Show or collapse system messages')"
+						@click="toggleCollapsed(messagesCollapsed)">
+						<template #icon>
+							<UnfoldMore v-if="messagesCollapsed.collapsed" />
+							<UnfoldLess v-else />
+						</template>
+					</NcButton>
+				</ul>
+				<ul v-show="messagesCollapsed.messages?.length === 1 || !messagesCollapsed.collapsed"
+					class="messages"
+					:class="{'messages--collapsed': messagesCollapsed.messages?.length > 1}">
+					<Message v-for="message in messagesCollapsed.messages"
+						:key="message.id"
+						v-bind="message"
+						:next-message-id="getNextMessageId(message)"
+						:previous-message-id="getPrevMessageId(message)" />
+				</ul>
 			</div>
-			<ul class="messages">
-				<Message v-for="(message, index) of messages"
-					:key="message.id"
-					v-bind="message"
-					:is-first-message="index === 0"
-					:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
-					:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId"
-					:actor-type="actorType"
-					:actor-id="actorId"
-					:actor-display-name="actorDisplayName"
-					:show-author="!isSystemMessage"
-					:is-temporary="message.timestamp === 0" />
-			</ul>
 		</div>
 	</div>
 </template>
 
 <script>
-import AuthorAvatar from './AuthorAvatar.vue'
-import Message from './Message/Message.vue'
+import cloneDeep from 'lodash/cloneDeep.js'
 
-import { ATTENDEE } from '../../../constants.js'
+import UnfoldLess from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
+import UnfoldMore from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
+import Message from './Message/Message.vue'
 
 export default {
 	name: 'MessagesSystemGroup',
 
 	components: {
-		AuthorAvatar,
 		Message,
+		NcButton,
+		UnfoldLess,
+		UnfoldMore,
 	},
 	inheritAttrs: false,
 
@@ -102,52 +117,162 @@ export default {
 
 	expose: ['highlightMessage'],
 
-	computed: {
-		/**
-		 * The message actor type.
-		 *
-		 * @return {string}
-		 */
-		actorType() {
-			return this.messages[0].actorType
-		},
-		/**
-		 * The message actor id.
-		 *
-		 * @return {string}
-		 */
-		actorId() {
-			return this.messages[0].actorId
-		},
-		/**
-		 * The message actor display name.
-		 *
-		 * @return {string}
-		 */
-		actorDisplayName() {
-			const displayName = this.messages[0].actorDisplayName.trim()
+	data() {
+		return {
+			groupIsCollapsed: {},
+			messagesGroupedBySystemMessage: [],
+		}
+	},
 
-			if (this.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
-				return this.$store.getters.getGuestName(this.token, this.actorId)
-			}
-
-			if (displayName === '') {
-				return t('spreed', 'Deleted user')
-			}
-
-			return displayName
-		},
-		/**
-		 * Whether the given message is a system message
-		 *
-		 * @return {boolean}
-		 */
-		isSystemMessage() {
-			return this.messages[0].systemMessage.length !== 0
+	watch: {
+		messages: {
+			immediate: true,
+			handler(value) {
+				this.messagesGroupedBySystemMessage = this.groupMessages(value)
+			},
 		},
 	},
 
 	methods: {
+		/**
+		 * Compare two messages to decide if they should be grouped
+		 *
+		 * @param {object} message1 The new message
+		 * @param {string} message1.id The ID of the new message
+		 * @param {string} message1.actorType Actor type of the new message
+		 * @param {string} message1.actorId Actor id of the new message
+		 * @param {string} message1.systemMessage System message of the new message
+		 * @param {number} message1.timestamp Timestamp of the new message
+		 * @param {null|object} message2 The previous message
+		 * @param {string} message2.id The ID of the second message
+		 * @param {string} message2.actorType Actor type of the previous message
+		 * @param {string} message2.actorId Actor id of the previous message
+		 * @param {string} message2.systemMessage System message of the second message
+		 * @param {number} message2.timestamp Timestamp of the second message
+		 * @return {string} Type of grouping if the messages should be grouped
+		 */
+		messagesShouldBeGrouped(message1, message2) {
+			if (!message2) {
+				return '' // No previous message
+			}
+
+			// Group users added by one actor
+			if (message1.systemMessage === 'user_added'
+				&& message1.systemMessage === message2.systemMessage
+				&& message1.actorId === message2.actorId
+				&& message1.actorType === message2.actorType) {
+				return 'user_added'
+			}
+
+			return ''
+		},
+
+		groupMessages(messages) {
+			const groups = []
+			let lastMessage = null
+			let forceNextGroup = false
+			for (const message of messages) {
+				const groupingType = this.messagesShouldBeGrouped(message, lastMessage)
+				if (!groupingType || forceNextGroup) {
+					groups.push({ messages: [message], type: '', collapsed: true })
+					forceNextGroup = false
+				} else {
+					groups.at(-1).messages.push(message)
+					groups.at(-1).type = groupingType
+				}
+				lastMessage = message
+			}
+			return groups
+		},
+
+		checkIfSelfIsUser(message) {
+			return message.messageParameters.user.id === this.$store.getters.getActorId()
+				&& message.messageParameters.user.type + 's' === this.$store.getters.getActorType()
+		},
+
+		createCombinedSystemMessage({ messages, type }) {
+			const combinedMessage = cloneDeep(messages[0])
+
+			// clear messageParameters to be filled later
+			const actor = messages[0].messageParameters.actor
+			combinedMessage.messageParameters = { actor }
+			const actorIsAdministrator = actor.id === 'guest/cli' && actor.type === 'guest'
+
+			// usersCounter should be equal at least 2, as we're using this method only for groups
+			let usersCounter = 0
+			let selfIsUser = false
+			let referenceIndex = 0
+
+			// Handle cases when actor added users to conversation (when populate on creation, for example)
+			if (type === 'user_added') {
+				const selfIsActor = combinedMessage.actorId === this.$store.getters.getActorId()
+					&& combinedMessage.actorType === this.$store.getters.getActorType()
+				messages.forEach(message => {
+					if (this.checkIfSelfIsUser(message)) {
+						selfIsUser = true
+					} else {
+						combinedMessage.messageParameters[`user${referenceIndex}`] = message.messageParameters.user
+						referenceIndex++
+					}
+					usersCounter++
+				})
+
+				if (selfIsActor) {
+					if (usersCounter === 2) {
+						combinedMessage.message = t('spreed', 'You added {user0} and {user1}')
+					} else {
+						combinedMessage.message = n('spreed',
+							'You added {user0}, {user1} and %n more participant',
+							'You added {user0}, {user1} and %n more participants', usersCounter - 2)
+					}
+				} else if (selfIsUser) {
+					if (usersCounter === 2) {
+						combinedMessage.message = actorIsAdministrator
+							? t('spreed', 'An administrator added you and {user0}')
+							: t('spreed', '{actor} added you and {user0}')
+					} else {
+						combinedMessage.message = actorIsAdministrator
+							? n('spreed',
+								'An administrator added you, {user0} and %n more participant',
+								'An administrator added you, {user0} and %n more participants', usersCounter - 2)
+							: n('spreed',
+								'{actor} added you, {user0} and %n more participant',
+								'{actor} added you, {user0} and %n more participants', usersCounter - 2)
+					}
+				} else {
+					if (usersCounter === 2) {
+						combinedMessage.message = actorIsAdministrator
+							? t('spreed', 'An administrator added {user0} and {user1}')
+							: t('spreed', '{actor} added {user0} and {user1}')
+					} else {
+						combinedMessage.message = actorIsAdministrator
+							? n('spreed',
+								'An administrator added {user0}, {user1} and %n more participant',
+								'An administrator added {user0}, {user1} and %n more participants', usersCounter - 2)
+							: n('spreed',
+								'{actor} added {user0}, {user1} and %n more participant',
+								'{actor} added {user0}, {user1} and %n more participants', usersCounter - 2)
+					}
+				}
+			}
+
+			return combinedMessage
+		},
+
+		toggleCollapsed(messages) {
+			this.$set(messages, 'collapsed', !messages.collapsed)
+		},
+
+		getNextMessageId(message) {
+			const nextMessage = this.messages[this.messages.findIndex(searchedMessage => searchedMessage.id === message.id) + 1]
+			return nextMessage?.id || this.nextMessageId
+		},
+
+		getPrevMessageId(message) {
+			const prevMessage = this.messages[this.messages.findIndex(searchedMessage => searchedMessage.id === message.id) - 1]
+			return prevMessage?.id || this.previousMessageId
+		},
+
 		highlightMessage(messageId) {
 			for (const message of this.$refs.message) {
 				if (message.id === messageId) {
@@ -180,6 +305,11 @@ export default {
 			border-radius: var(--border-radius-pill);
 		}
 	}
+
+	&__system {
+		display: flex;
+		flex-direction: column;
+	}
 }
 
 .wrapper {
@@ -188,6 +318,7 @@ export default {
 	margin: auto;
 	padding: 0;
 	&--system {
+		flex-direction: column;
 		padding-left: $clickable-area + 8px;
 	}
 	&:focus {
@@ -198,16 +329,22 @@ export default {
 .messages {
 	flex: auto;
 	display: flex;
-	padding: 8px 0 8px 0;
 	flex-direction: column;
 	width: 100%;
 	min-width: 0;
-	&__avatar {
-		position: sticky;
-		top: 0;
-		height: 52px;
-		width: 52px;
-		padding: 18px 10px 10px 10px;
+
+	&--header {
+		position: relative;
+		& &__toggle {
+			position: absolute;
+			top: 50%;
+			right: 0;
+			transform: translateY(-50%);
+		}
+	}
+	&--collapsed {
+		border-radius: var(--border-radius-large);
+		background-color: var(--color-background-hover);
 	}
 }
 </style>
