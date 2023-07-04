@@ -671,6 +671,11 @@ export default {
 		showJoinCallButton() {
 			EventBus.$emit('scroll-chat-to-bottom')
 		},
+
+		// Scroll list to the bottom if reaction to the message was added, as it expands the list
+		simpleReactions() {
+			EventBus.$emit('scroll-chat-to-bottom-if-sticky')
+		},
 	},
 
 	mounted() {
