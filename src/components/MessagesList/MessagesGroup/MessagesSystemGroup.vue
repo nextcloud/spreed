@@ -236,11 +236,11 @@ export default {
 			for (const message of messages) {
 				const groupingType = this.messagesShouldBeGrouped(message, lastMessage)
 				if (!groupingType || forceNextGroup) {
-					groups.push({ messages: [message], type: '', collapsed: true })
+					groups.push({ id: message.id, messages: [message], type: '', collapsed: this.groupIsCollapsed[message.id] ?? true })
 					forceNextGroup = false
 				} else {
 					if (groupingType === 'call_reconnected') {
-						groups.push({ messages: [groups.at(-1).messages.pop()], type: '', collapsed: true })
+						groups.push({ id: message.id, messages: [groups.at(-1).messages.pop()], type: '', collapsed: this.groupIsCollapsed[message.id] ?? true })
 						forceNextGroup = true
 					}
 					groups.at(-1).messages.push(message)
@@ -248,6 +248,12 @@ export default {
 				}
 				lastMessage = message
 			}
+
+			groups.forEach(group => {
+				if (this.groupIsCollapsed[group.id] === undefined) {
+					this.groupIsCollapsed[group.id] = true
+				}
+			})
 			return groups
 		},
 
@@ -529,6 +535,7 @@ export default {
 
 		toggleCollapsed(messages) {
 			this.$set(messages, 'collapsed', !messages.collapsed)
+			this.groupIsCollapsed[messages.id] = !this.groupIsCollapsed[messages.id]
 		},
 
 		getNextMessageId(message) {
@@ -605,9 +612,8 @@ export default {
 		position: relative;
 		& &__toggle {
 			position: absolute;
-			top: 50%;
+			top: -6px;
 			right: 0;
-			transform: translateY(-50%);
 		}
 	}
 	&--collapsed {
