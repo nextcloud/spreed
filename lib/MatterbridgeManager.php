@@ -424,7 +424,7 @@ class MatterbridgeManager {
 				$content .= sprintf('	Login = "%s"', $part['login']) . "\n";
 				$content .= sprintf('	Password = "%s"', $part['password']) . "\n";
 				if ($part['skiptls']) {
-					$content .= sprintf('	SkipTLSVerify = true') . "\n";
+					$content .= '	SkipTLSVerify = true' . "\n";
 				}
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
@@ -474,13 +474,13 @@ class MatterbridgeManager {
 					$content .= sprintf('	NickServPassword = "%s"', $part['nickservpassword']) . "\n";
 				}
 				if ($part['usetls']) {
-					$content .= sprintf('	UseTLS = true') . "\n";
+					$content .= '	UseTLS = true' . "\n";
 				}
 				if ($part['usesasl']) {
-					$content .= sprintf('	UseSASL = true') . "\n";
+					$content .= '	UseSASL = true' . "\n";
 				}
 				if ($part['skiptls']) {
-					$content .= sprintf('	SkipTLSVerify = true') . "\n";
+					$content .= '	SkipTLSVerify = true' . "\n";
 				}
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";
@@ -499,7 +499,7 @@ class MatterbridgeManager {
 				$content .= sprintf('	Muc = "%s"', $part['muc']) . "\n";
 				$content .= sprintf('	Nick = "%s"', $part['nick']) . "\n";
 				if ($part['skiptls']) {
-					$content .= sprintf('	SkipTLSVerify = true') . "\n";
+					$content .= '	SkipTLSVerify = true' . "\n";
 				}
 				$content .= '	PrefixMessagesWithNick = true' . "\n";
 				$content .= '	RemoteNickFormat = "[{PROTOCOL}] <{NICK}> "' . "\n\n";

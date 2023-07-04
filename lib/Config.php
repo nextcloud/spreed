@@ -392,7 +392,7 @@ class Config {
 			return self::SIGNALING_EXTERNAL;
 		}
 
-		return \in_array($mode, $validModes, true) ? $mode : self::SIGNALING_EXTERNAL;
+		return \in_array($mode, $validModes) ? $mode : self::SIGNALING_EXTERNAL;
 	}
 
 	/**
