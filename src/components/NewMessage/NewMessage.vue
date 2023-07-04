@@ -137,9 +137,6 @@
 			</template>
 		</form>
 
-		<!-- File upload dialog -->
-		<NewMessageUploadEditor />
-
 		<!-- Poll creation dialog -->
 		<NewMessagePollEditor v-if="showPollEditor"
 			:token="token"
@@ -175,7 +172,6 @@ import NewMessageAudioRecorder from './NewMessageAudioRecorder.vue'
 import NewMessageNewFileDialog from './NewMessageNewFileDialog.vue'
 import NewMessagePollEditor from './NewMessagePollEditor.vue'
 import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
-import NewMessageUploadEditor from './NewMessageUploadEditor.vue'
 
 import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
@@ -211,7 +207,6 @@ export default {
 		NewMessageNewFileDialog,
 		NewMessagePollEditor,
 		NewMessageTypingIndicator,
-		NewMessageUploadEditor,
 		Quote,
 		// Icons
 		BellOff,

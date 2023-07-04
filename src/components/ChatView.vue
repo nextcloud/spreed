@@ -51,6 +51,10 @@
 			:container="containerId"
 			has-typing-indicator
 			:aria-label="t('spreed', 'Post message')" />
+
+		<!-- File upload dialog -->
+		<NewMessageUploadEditor />
+
 		<TransitionWrapper name="fade">
 			<NcButton v-show="!isChatScrolledToBottom"
 				type="secondary"
@@ -74,6 +78,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import MessagesList from './MessagesList/MessagesList.vue'
 import NewMessage from './NewMessage/NewMessage.vue'
+import NewMessageUploadEditor from './NewMessage/NewMessageUploadEditor.vue'
 import TransitionWrapper from './TransitionWrapper.vue'
 
 import { CONVERSATION } from '../constants.js'
@@ -88,6 +93,7 @@ export default {
 		ChevronDoubleDown,
 		MessagesList,
 		NewMessage,
+		NewMessageUploadEditor,
 		TransitionWrapper,
 		GuestWelcomeWindow,
 	},

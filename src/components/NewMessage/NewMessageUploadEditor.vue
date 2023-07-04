@@ -139,14 +139,14 @@ export default {
 		},
 
 		voiceMessageName() {
-			if (!this.firstFile.file.name) {
+			if (!this.firstFile?.file?.name) {
 				return ''
 			}
 			return this.firstFile.file.name
 		},
 
 		voiceMessageLocalURL() {
-			if (!this.firstFile.file.localURL) {
+			if (!this.firstFile?.file?.localURL) {
 				return ''
 			}
 			return this.firstFile.file.localURL
