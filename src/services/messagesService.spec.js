@@ -1,8 +1,10 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
+import { CHAT } from '../constants.js'
 import {
 	fetchMessages,
+	getMessageContext,
 	lookForNewMessages,
 	postNewMessage,
 	deleteMessage,
@@ -39,7 +41,7 @@ describe('messagesService', () => {
 					setReadMarker: 0,
 					lookIntoFuture: 0,
 					lastKnownMessageId: 1234,
-					limit: 100,
+					limit: CHAT.FETCH_LIMIT,
 					includeLastKnown: 0,
 				},
 			}
@@ -63,8 +65,27 @@ describe('messagesService', () => {
 					setReadMarker: 0,
 					lookIntoFuture: 0,
 					lastKnownMessageId: 1234,
-					limit: 100,
+					limit: CHAT.FETCH_LIMIT,
 					includeLastKnown: 1,
+				},
+			}
+		)
+	})
+
+	test('getMessageContext calls the chat API endpoint within specific messageId', () => {
+		getMessageContext({
+			token: 'XXTOKENXX',
+			messageId: 1234,
+		}, {
+			dummyOption: true,
+		})
+
+		expect(axios.get).toHaveBeenCalledWith(
+			generateOcsUrl('apps/spreed/api/v1/chat/XXTOKENXX/1234/context'),
+			{
+				dummyOption: true,
+				params: {
+					limit: CHAT.FETCH_LIMIT / 2,
 				},
 			}
 		)
@@ -86,6 +107,7 @@ describe('messagesService', () => {
 					setReadMarker: 0,
 					lookIntoFuture: 1,
 					lastKnownMessageId: 1234,
+					limit: CHAT.FETCH_LIMIT,
 					includeLastKnown: 0,
 				},
 			}

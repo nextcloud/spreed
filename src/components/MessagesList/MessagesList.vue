@@ -590,21 +590,20 @@ export default {
 		},
 
 		async getMessageContext(messageId) {
+			// Make the request
+			this.loadingOldMessages = true
 			try {
-				this.loadingOldMessages = true
 				await this.$store.dispatch('getMessageContext', {
 					token: this.token,
 					messageId,
 					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
-
-				this.loadingOldMessages = false
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
 				}
-				this.loadingOldMessages = false
 			}
+			this.loadingOldMessages = false
 		},
 
 		/**
@@ -614,8 +613,8 @@ export default {
 		 */
 		async getOldMessages(includeLastKnown) {
 			// Make the request
+			this.loadingOldMessages = true
 			try {
-				this.loadingOldMessages = true
 				await this.$store.dispatch('fetchMessages', {
 					token: this.token,
 					lastKnownMessageId: this.$store.getters.getFirstKnownMessageId(this.token),
@@ -623,13 +622,12 @@ export default {
 					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
 
-				this.loadingOldMessages = false
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
 				}
-				this.loadingOldMessages = false
 			}
+			this.loadingOldMessages = false
 		},
 
 		/**
