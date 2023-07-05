@@ -34,16 +34,16 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @param {string} data.token the conversation token;
  * @param {string} data.lastKnownMessageId last known message id;
  * @param {boolean} data.includeLastKnown whether to include the last known message in the response;
- * @param {number} data.limit Number of messages to load (default: 100)
+ * @param {number} [data.limit=100] Number of messages to load
  * @param {object} options options;
  */
-const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown, limit }, options) {
+const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown, limit = 100 }, options) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), Object.assign(options, {
 		params: {
 			setReadMarker: 0,
 			lookIntoFuture: 0,
 			lastKnownMessageId,
-			limit: limit || 100,
+			limit,
 			includeLastKnown: includeLastKnown ? 1 : 0,
 		},
 	}))
@@ -56,14 +56,16 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
  * @param {object} data the wrapping object;
  * @param {number} data.lastKnownMessageId The id of the last message in the store.
  * @param {string} data.token The conversation token;
+ * @param {number} [data.limit=100] Number of messages to load
  * @param {object} options options
  */
-const lookForNewMessages = async ({ token, lastKnownMessageId }, options) => {
+const lookForNewMessages = async ({ token, lastKnownMessageId, limit = 100 }, options) => {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}', { token }), Object.assign(options, {
 		params: {
 			setReadMarker: 0,
 			lookIntoFuture: 1,
 			lastKnownMessageId,
+			limit,
 			includeLastKnown: 0,
 		},
 	}))
@@ -77,13 +79,13 @@ const lookForNewMessages = async ({ token, lastKnownMessageId }, options) => {
  * @param {object} data the wrapping object;
  * @param {string} data.token the conversation token;
  * @param {number} data.messageId last known message id;
- * @param {number} data.limit Number of messages to load (default: 50)
+ * @param {number} [data.limit=50] Number of messages to load
  * @param {object} options options;
  */
-const getMessageContext = async function({ token, messageId, limit }, options) {
+const getMessageContext = async function({ token, messageId, limit = 50 }, options) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/chat/{token}/{messageId}/context', { token, messageId }), Object.assign(options, {
 		params: {
-			limit: limit || 50,
+			limit,
 		},
 	}))
 }
