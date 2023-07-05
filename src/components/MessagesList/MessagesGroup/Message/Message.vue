@@ -136,6 +136,7 @@ the main body of the message as well as a quote.
 				<NcPopover v-for="reaction in Object.keys(simpleReactions)"
 					:key="reaction"
 					:delay="200"
+					:focus-trap="false"
 					:triggers="['hover']">
 					<template #trigger>
 						<NcButton v-if="simpleReactions[reaction] !== 0"

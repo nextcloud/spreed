@@ -246,7 +246,7 @@ const getters = {
 
 	// Returns true if the message has reactions
 	hasReactions: (state) => (token, messageId) => {
-		return Object.keys(state.messages[token][messageId].reactions).length !== 0
+		return Object.keys(Object(state.messages[token]?.[messageId]?.reactions)).length !== 0
 	},
 }
 
