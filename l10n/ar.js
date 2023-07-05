@@ -800,6 +800,7 @@ OC.L10N.register(
     "Done" : "أُنجز",
     "No audio" : "بدون صوت",
     "No camera" : "بدون كاميرا",
+    "Blur" : "تضبيب Blur",
     "Upload" : "تحميل",
     "Files" : "الملفات",
     "Select virtual office background" : "اختر الخلفية الافتراضية للمكتب",
