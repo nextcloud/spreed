@@ -50,7 +50,7 @@ class TalkReferenceProvider extends ADiscoverableReferenceProvider implements IS
 
 	public function __construct(
 		protected IURLGenerator $urlGenerator,
-		protected Manager $manager,
+		protected Manager $roomManager,
 		protected ParticipantService $participantService,
 		protected ChatManager $chatManager,
 		protected AvatarService $avatarService,
