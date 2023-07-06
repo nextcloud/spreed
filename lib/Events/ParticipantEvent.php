@@ -27,15 +27,13 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
 class ParticipantEvent extends RoomEvent {
-	protected Participant $participant;
 
 
 	public function __construct(
 		Room $room,
-		Participant $participant,
+		protected Participant $participant,
 	) {
 		parent::__construct($room);
-		$this->participant = $participant;
 	}
 
 	public function getParticipant(): Participant {

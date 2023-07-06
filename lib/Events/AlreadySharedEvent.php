@@ -29,9 +29,9 @@ namespace OCA\Talk\Events;
 use OCP\EventDispatcher\Event;
 
 class AlreadySharedEvent extends Event {
-	private $subject;
-	public function __construct($subject = null) {
-		$this->subject = $subject;
+	public function __construct(
+		private $subject = null,
+	) {
 	}
 
 	/**

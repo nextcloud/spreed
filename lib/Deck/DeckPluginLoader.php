@@ -33,10 +33,10 @@ use OCP\Util;
  * @template-implements IEventListener<Event>
  */
 class DeckPluginLoader implements IEventListener {
-	private IRequest $request;
 
-	public function __construct(IRequest $request) {
-		$this->request = $request;
+	public function __construct(
+		private IRequest $request,
+	) {
 	}
 
 	public function handle(Event $event): void {

@@ -27,18 +27,12 @@ use OCA\Talk\Room;
 use OCP\Comments\IComment;
 
 class ChatEvent extends RoomEvent {
-	protected IComment $comment;
-
-	protected bool $skipLastActivityUpdate;
-
 	public function __construct(
 		Room $room,
-		IComment $comment,
-		bool $skipLastActivityUpdate = false,
+		protected IComment $comment,
+		protected bool $skipLastActivityUpdate = false,
 	) {
 		parent::__construct($room);
-		$this->comment = $comment;
-		$this->skipLastActivityUpdate = $skipLastActivityUpdate;
 	}
 
 	public function getComment(): IComment {

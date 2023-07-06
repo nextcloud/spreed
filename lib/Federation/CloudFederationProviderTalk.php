@@ -55,53 +55,21 @@ use OCP\Share\Exceptions\ShareNotFound;
 use Psr\Log\LoggerInterface;
 
 class CloudFederationProviderTalk implements ICloudFederationProvider {
-	private IUserManager $userManager;
-
-	private AddressHandler $addressHandler;
-
-	private FederationManager $federationManager;
-
-	private Config $config;
-
-	private INotificationManager $notificationManager;
-
-	private IURLGenerator $urlGenerator;
-
-	private ParticipantService $participantService;
-
-	private AttendeeMapper $attendeeMapper;
-
-	private Manager $manager;
-	private ISession $session;
-	private IEventDispatcher $dispatcher;
-	private LoggerInterface $logger;
 
 	public function __construct(
-		IUserManager $userManager,
-		AddressHandler $addressHandler,
-		FederationManager $federationManager,
-		Config $config,
-		INotificationManager $notificationManager,
-		IURLGenerator $urlGenerator,
-		ParticipantService $participantService,
-		AttendeeMapper $attendeeMapper,
-		Manager $manager,
-		ISession $session,
-		IEventDispatcher $dispatcher,
-		LoggerInterface $logger,
+		private IUserManager $userManager,
+		private AddressHandler $addressHandler,
+		private FederationManager $federationManager,
+		private Config $config,
+		private INotificationManager $notificationManager,
+		private IURLGenerator $urlGenerator,
+		private ParticipantService $participantService,
+		private AttendeeMapper $attendeeMapper,
+		private Manager $manager,
+		private ISession $session,
+		private IEventDispatcher $dispatcher,
+		private LoggerInterface $logger,
 	) {
-		$this->userManager = $userManager;
-		$this->addressHandler = $addressHandler;
-		$this->federationManager = $federationManager;
-		$this->config = $config;
-		$this->notificationManager = $notificationManager;
-		$this->urlGenerator = $urlGenerator;
-		$this->participantService = $participantService;
-		$this->attendeeMapper = $attendeeMapper;
-		$this->manager = $manager;
-		$this->session = $session;
-		$this->dispatcher = $dispatcher;
-		$this->logger = $logger;
 	}
 
 	/**

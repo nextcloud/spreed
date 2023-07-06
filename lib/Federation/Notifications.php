@@ -42,33 +42,15 @@ use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 
 class Notifications {
-	private ICloudFederationFactory $cloudFederationFactory;
-
-	private LoggerInterface $logger;
-
-	private ICloudFederationProviderManager $federationProviderManager;
-
-	private IJobList $jobList;
-
-	private IUserManager $userManager;
-
-	/** @var AddressHandler */
-	private $addressHandler;
 
 	public function __construct(
-		ICloudFederationFactory $cloudFederationFactory,
-		AddressHandler $addressHandler,
-		LoggerInterface $logger,
-		ICloudFederationProviderManager $federationProviderManager,
-		IJobList $jobList,
-		IUserManager $userManager,
+		private ICloudFederationFactory $cloudFederationFactory,
+		private AddressHandler $addressHandler,
+		private LoggerInterface $logger,
+		private ICloudFederationProviderManager $federationProviderManager,
+		private IJobList $jobList,
+		private IUserManager $userManager,
 	) {
-		$this->cloudFederationFactory = $cloudFederationFactory;
-		$this->logger = $logger;
-		$this->federationProviderManager = $federationProviderManager;
-		$this->jobList = $jobList;
-		$this->userManager = $userManager;
-		$this->addressHandler = $addressHandler;
 	}
 
 	/**

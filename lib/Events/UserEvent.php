@@ -26,12 +26,12 @@ namespace OCA\Talk\Events;
 use OCP\EventDispatcher\Event;
 
 class UserEvent extends Event {
-	protected string $userId;
 
 
-	public function __construct(string $userId) {
+	public function __construct(
+		protected string $userId,
+	) {
 		parent::__construct();
-		$this->userId = $userId;
 	}
 
 	public function getUserId(): string {

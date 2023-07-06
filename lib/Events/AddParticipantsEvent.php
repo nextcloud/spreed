@@ -27,20 +27,15 @@ use OCA\Talk\Room;
 use OCP\Comments\IComment;
 
 class AddParticipantsEvent extends RoomEvent {
-	protected array $participants;
-
-	protected bool $skipLastMessageUpdate;
 
 	protected ?IComment $lastMessage = null;
 
 	public function __construct(
 		Room $room,
-		array $participants,
-		bool $skipLastMessageUpdate = false,
+		protected array $participants,
+		protected bool $skipLastMessageUpdate = false,
 	) {
 		parent::__construct($room);
-		$this->participants = $participants;
-		$this->skipLastMessageUpdate = $skipLastMessageUpdate;
 	}
 
 	/**

@@ -27,12 +27,12 @@ use OCA\Talk\Room;
 use OCP\EventDispatcher\Event;
 
 class RoomEvent extends Event {
-	protected Room $room;
 
 
-	public function __construct(Room $room) {
+	public function __construct(
+		protected Room $room,
+	) {
 		parent::__construct();
-		$this->room = $room;
 	}
 
 	/**
