@@ -201,6 +201,10 @@ export default {
 			return this.isChatScrolledToBottom && !this.isInitialisingMessages
 		},
 
+		hasMoreMessagesToLoad() {
+			return this.$store.getters.hasMoreMessagesToLoad(this.token)
+		},
+
 		/**
 		 * Returns whether the current participant is a participant of the
 		 * current conversation or not.
@@ -577,7 +581,7 @@ export default {
 				if (this.loadChatInLegacyMode || focusMessageId === null) {
 					// if lookForNewMessages will long poll instead of returning existing messages,
 					// scroll right away to avoid delays
-					if (!this.$store.getters.hasMoreMessagesToLoad(this.token)) {
+					if (!this.hasMoreMessagesToLoad) {
 						hasScrolled = true
 						this.$nextTick(() => {
 							this.scrollToFocusedMessage()
@@ -751,7 +755,7 @@ export default {
 			const tolerance = 10
 
 			// For chats, scrolled to bottom or / and fitted in one screen
-			if (scrollOffset < clientHeight + tolerance && scrollOffset > clientHeight - tolerance) {
+			if (scrollOffset < clientHeight + tolerance && scrollOffset > clientHeight - tolerance && !this.hasMoreMessagesToLoad) {
 				this.setChatScrolledToBottom(true)
 				this.displayMessagesLoader = false
 				this.previousScrollTopValue = scrollTop
@@ -761,7 +765,7 @@ export default {
 
 			this.setChatScrolledToBottom(false)
 
-			if (scrollHeight > clientHeight && scrollTop < 800 && scrollTop <= this.previousScrollTopValue) {
+			if (scrollHeight > clientHeight && scrollTop < 800 && scrollTop < this.previousScrollTopValue) {
 				if (this.loadingOldMessages) {
 					// already loading, don't do it twice
 					return
@@ -771,9 +775,15 @@ export default {
 				}
 				await this.getOldMessages(false)
 				this.displayMessagesLoader = false
+
+				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
+					this.$refs.scroller.scrollTo({
+						top: this.$refs.scroller.scrollTop + this.$refs.scroller.scrollHeight - scrollHeight,
+					})
+				}
 			}
 
-			this.previousScrollTopValue = scrollTop
+			this.previousScrollTopValue = this.$refs.scroller.scrollTop
 			this.debounceUpdateReadMarkerPosition()
 		},
 
@@ -881,7 +891,7 @@ export default {
 			}
 
 			// if we're at bottom of the chat with no more new messages to load, then simply clear the marker
-			if (this.isSticky && !this.$store.getters.hasMoreMessagesToLoad(this.token)) {
+			if (this.isSticky && !this.hasMoreMessagesToLoad) {
 				console.debug('clearLastReadMessage because of isSticky token=' + this.token)
 				this.$store.dispatch('clearLastReadMessage', { token: this.token })
 				return
@@ -1090,7 +1100,9 @@ export default {
 @import '../../assets/variables';
 
 .scroller {
+	position: relative;
 	flex: 1 0;
+	padding-top: 20px;
 	overflow-y: auto;
 	overflow-x: hidden;
 	border-bottom: 1px solid var(--color-border);
@@ -1101,9 +1113,12 @@ export default {
 	}
 
 	&__loading {
-		height: 50px;
-		display: flex;
-		justify-content: center;
+		position: absolute;
+		top: 10px;
+		left: 50%;
+		height: 40px;
+		width: 40px;
+		transform: translatex(-64px);
 	}
 }
 
