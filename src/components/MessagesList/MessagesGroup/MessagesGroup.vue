@@ -81,6 +81,13 @@ export default {
 			type: Array,
 			required: true,
 		},
+		/**
+		 * The message date separator.
+		 */
+		dateSeparator: {
+			type: String,
+			required: true,
+		},
 
 		previousMessageId: {
 			type: [String, Number],
@@ -109,14 +116,6 @@ export default {
 		 */
 		actorId() {
 			return this.messages[0].actorId
-		},
-		/**
-		 * The message date.
-		 *
-		 * @return {string}
-		 */
-		dateSeparator() {
-			return this.messages[0].dateSeparator || ''
 		},
 		/**
 		 * The message actor display name.

@@ -32,19 +32,15 @@ get the messagesList array and loop through the list to generate the messages.
 		class="scroller messages-list__scroller"
 		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom}"
 		@scroll="debounceHandleScroll">
-		<div v-if="displayMessagesLoader"
-			class="scroller__loading"
-			disabled>
-			<div class="icon-loading" />
-		</div>
-		<MessagesGroup v-for="(item, index) of messagesGroupedByAuthor"
-			:key="item[0].id"
-			:style="{ height: item.height + 'px' }"
-			v-bind="item"
+		<div v-if="displayMessagesLoader" class="scroller__loading icon-loading" />
+		<MessagesGroup v-for="item of messagesGroupedByAuthor"
+			:key="item.id"
+			v-bind="item.messages"
 			:token="token"
-			:messages="item"
-			:next-message-id="(messagesGroupedByAuthor[index + 1] && messagesGroupedByAuthor[index + 1][0].id) || 0"
-			:previous-message-id="(index > 0 && messagesGroupedByAuthor[index - 1][messagesGroupedByAuthor[index - 1].length - 1].id) || 0" />
+			:messages="item.messages"
+			:date-separator="item.dateSeparator"
+			:previous-message-id="item.previousMessageId"
+			:next-message-id="item.nextMessageId" />
 		<template v-if="showLoadingAnimation">
 			<LoadingPlaceholder type="messages"
 				:count="15" />
@@ -127,6 +123,11 @@ export default {
 
 	data() {
 		return {
+			/**
+			 * An array of messages grouped in nested arrays by same author.
+			 */
+			messagesGroupedByAuthor: [],
+
 			viewId: null,
 
 			/**
@@ -176,33 +177,6 @@ export default {
 		 */
 		messagesList() {
 			return this.$store.getters.messagesList(this.token)
-		},
-		/**
-		 * Creates an array of messages grouped in nested arrays by same author.
-		 *
-		 * @return {Array}
-		 */
-		messagesGroupedByAuthor() {
-			const groups = []
-			let lastMessage = null
-			for (const message of this.messagesList) {
-				if (message.systemMessage === 'message_deleted') {
-					continue
-				}
-
-				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
-					// Add the date separator for different days
-					if (this.messagesHaveDifferentDate(message, lastMessage)) {
-						message.dateSeparator = this.generateDateSeparator(message)
-					}
-
-					groups.push([message])
-					lastMessage = message
-				} else {
-					groups.at(-1).push(message)
-				}
-			}
-			return groups
 		},
 
 		showLoadingAnimation() {
@@ -275,6 +249,14 @@ export default {
 			// Expire older messages when navigating to another conversation
 			this.$store.dispatch('easeMessageList', { token: oldToken })
 		},
+
+		messagesList: {
+			immediate: true,
+			handler(messages) {
+				const groups = this.prepareMessagesGroups(messages)
+				this.messagesGroupedByAuthor = this.softUpdateMessagesGroups(this.messagesGroupedByAuthor, groups)
+			},
+		},
 	},
 
 	mounted() {
@@ -318,6 +300,49 @@ export default {
 	},
 
 	methods: {
+		prepareMessagesGroups(messages) {
+			const groups = []
+			let lastMessage = null
+			for (const message of messages) {
+				if (message.systemMessage === 'message_deleted') {
+					continue
+				}
+
+				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
+					if (groups.at(-1)) {
+						groups.at(-1).nextMessageId = message.id
+					}
+
+					groups.push({
+						id: message.id,
+						messages: [message],
+						dateSeparator: this.generateDateSeparator(message, lastMessage),
+						previousMessageId: groups.at(-1)?.messages.at(-1).id ?? 0,
+						nextMessageId: 0,
+					})
+				} else {
+					groups.at(-1).messages.push(message)
+				}
+				lastMessage = message
+			}
+
+			return groups
+		},
+
+		softUpdateMessagesGroups(oldGroups, newGroups) {
+			const oldGroupsMap = new Map(oldGroups.map(group => [group.id, group]))
+
+			// Check if we have this group in the old list already and it is unchanged
+			return newGroups.map(newGroup => oldGroupsMap.has(newGroup.id)
+				&& newGroup.messages.length === oldGroupsMap.get(newGroup.id).messages.length
+				&& newGroup.dateSeparator === oldGroupsMap.get(newGroup.id).dateSeparator
+				&& newGroup.previousMessageId === oldGroupsMap.get(newGroup.id).previousMessageId
+				&& newGroup.nextMessageId === oldGroupsMap.get(newGroup.id).nextMessageId
+				? oldGroupsMap.get(newGroup.id)
+				: newGroup
+			).sort((a, b) => a.id - b.id)
+		},
+
 		removeExpiredMessagesFromStore() {
 			this.$store.dispatch('removeExpiredMessages', {
 				token: this.token,
@@ -400,9 +425,14 @@ export default {
 		 * @param {object} message The message object
 		 * @param {string} message.id The ID of the message
 		 * @param {number} message.timestamp Timestamp of the message
+		 * @param {object} lastMessage The previous message object
 		 * @return {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
 		 */
-		generateDateSeparator(message) {
+		generateDateSeparator(message, lastMessage) {
+			if (!this.messagesHaveDifferentDate(message, lastMessage)) {
+				return ''
+			}
+
 			const date = this.getDateOfMessage(message)
 			const dayOfYear = date.format('YYYY-DDD')
 			let relativePrefix = date.fromNow()
