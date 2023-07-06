@@ -478,9 +478,10 @@ export default {
 			return moment.unix(message.timestamp)
 		},
 
-		getMessageIdFromHash() {
-			if (this.$route?.hash?.startsWith('#message_')) {
-				// scroll to message in URL anchor
+		getMessageIdFromHash(hash = undefined) {
+			if (hash) {
+				return parseInt(hash.slice(9), 10)
+			} else if (this.$route?.hash?.startsWith('#message_')) {
 				return parseInt(this.$route.hash.slice(9), 10)
 			}
 			return null
@@ -562,17 +563,17 @@ export default {
 
 					} else {
 						// Get chat messages before last read message and after it
-						const startingMessage = this.$store.getters.getFirstKnownMessageId(this.token)
-						await this.getMessageContext(startingMessage)
-						const startingMessageFound = this.focusMessage(startingMessage, false, focusMessageId !== null)
+						const startingMessageId = this.$store.getters.getFirstKnownMessageId(this.token)
+						await this.getMessageContext(startingMessageId)
+						const startingMessageFound = this.focusMessage(startingMessageId, false, focusMessageId !== null)
 
 						if (!startingMessageFound) {
-							const fallbackStartingMessage = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, startingMessage)
+							const fallbackStartingMessageId = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, startingMessageId)
 							this.$store.dispatch('setVisualLastReadMessageId', {
 								token: this.token,
-								id: fallbackStartingMessage,
+								id: fallbackStartingMessageId,
 							})
-							this.focusMessage(fallbackStartingMessage, false, false)
+							this.focusMessage(fallbackStartingMessageId, false, false)
 						}
 					}
 				}
@@ -978,7 +979,7 @@ export default {
 		/**
 		 * Temporarily highlight the given message id with a fade out effect.
 		 *
-		 * @param {string} messageId message id
+		 * @param {number} messageId message id
 		 * @param {boolean} smooth true to smooth scroll, false to jump directly
 		 * @param {boolean} highlightAnimation true to highlight and set focus to the message
 		 * @return {boolean} true if element was found, false otherwise
@@ -1053,7 +1054,7 @@ export default {
 			this.getNewMessages()
 		},
 
-		onRouteChange({ from, to }) {
+		async onRouteChange({ from, to }) {
 			if (from.name === 'conversation'
 				&& to.name === 'conversation'
 				&& from.token === to.token
@@ -1061,13 +1062,28 @@ export default {
 
 				// the hash changed, need to focus/highlight another message
 				if (to.hash && to.hash.startsWith('#message_')) {
-					// need some delay (next tick is too short) to be able to run
-					// after the browser's native "scroll to anchor" from
-					// the hash
-					window.setTimeout(() => {
-						// scroll to message in URL anchor
-						this.focusMessage(to.hash.slice(9), true)
-					}, 2)
+					const focusedId = this.getMessageIdFromHash(to.hash)
+					if (this.messagesList.find(m => m.id === focusedId)) {
+						// need some delay (next tick is too short) to be able to run
+						// after the browser's native "scroll to anchor" from
+						// the hash
+						window.setTimeout(() => {
+							// scroll to message in URL anchor
+							this.focusMessage(focusedId, true)
+						}, 2)
+					} else {
+						// Update environment around context to fill the gaps
+						this.$store.dispatch('setFirstKnownMessageId', {
+							token: this.token,
+							id: focusedId,
+						})
+						this.$store.dispatch('setLastKnownMessageId', {
+							token: this.token,
+							id: focusedId,
+						})
+						await this.getMessageContext(focusedId)
+						this.focusMessage(focusedId, true)
+					}
 				}
 			}
 		},
