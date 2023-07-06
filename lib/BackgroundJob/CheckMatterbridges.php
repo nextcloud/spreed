@@ -36,17 +36,12 @@ use Psr\Log\LoggerInterface;
  * @package OCA\Talk\BackgroundJob
  */
 class CheckMatterbridges extends TimedJob {
-	protected IConfig $serverConfig;
-
-	protected MatterbridgeManager $bridgeManager;
-
-	protected LoggerInterface $logger;
 
 	public function __construct(
 		ITimeFactory $time,
-		IConfig $serverConfig,
-		MatterbridgeManager $bridgeManager,
-		LoggerInterface $logger,
+		protected IConfig $serverConfig,
+		protected MatterbridgeManager $bridgeManager,
+		protected LoggerInterface $logger,
 	) {
 		parent::__construct($time);
 
@@ -54,9 +49,6 @@ class CheckMatterbridges extends TimedJob {
 		$this->setInterval(60 * 15);
 		$this->setTimeSensitivity(IJob::TIME_SENSITIVE);
 
-		$this->serverConfig = $serverConfig;
-		$this->bridgeManager = $bridgeManager;
-		$this->logger = $logger;
 	}
 
 	protected function run($argument): void {

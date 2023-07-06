@@ -61,27 +61,15 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @template-implements IEventListener<Event>
  */
 class Listener implements IEventListener {
-	protected IRequest $request;
-	protected ChatManager $chatManager;
-	protected TalkSession $talkSession;
-	protected ISession $session;
-	protected IUserSession $userSession;
-	protected ITimeFactory $timeFactory;
 
 	public function __construct(
-		IRequest $request,
-		ChatManager $chatManager,
-		TalkSession $talkSession,
-		ISession $session,
-		IUserSession $userSession,
-		ITimeFactory $timeFactory,
+		protected IRequest $request,
+		protected ChatManager $chatManager,
+		protected TalkSession $talkSession,
+		protected ISession $session,
+		protected IUserSession $userSession,
+		protected ITimeFactory $timeFactory,
 	) {
-		$this->request = $request;
-		$this->chatManager = $chatManager;
-		$this->talkSession = $talkSession;
-		$this->session = $session;
-		$this->userSession = $userSession;
-		$this->timeFactory = $timeFactory;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {

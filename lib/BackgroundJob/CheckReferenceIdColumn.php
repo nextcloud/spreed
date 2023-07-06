@@ -38,20 +38,22 @@ use OCP\IDBConnection;
  * @package OCA\Talk\BackgroundJob
  */
 class CheckReferenceIdColumn extends TimedJob {
-	protected IJobList $jobList;
-	protected IConfig $serverConfig;
 	/** @var IDBConnection|ConnectionAdapter */
 	protected $connection;
 
+	/**
+	 * @param ITimeFactory $timeFactory
+	 * @param IJobList $jobList
+	 * @param IConfig $serverConfig
+	 * @param IDBConnection $connection
+	 */
 	public function __construct(
 		ITimeFactory $timeFactory,
-		IJobList $jobList,
-		IConfig $serverConfig,
+		protected IJobList $jobList,
+		protected IConfig $serverConfig,
 		IDBConnection $connection,
 	) {
 		parent::__construct($timeFactory);
-		$this->jobList = $jobList;
-		$this->serverConfig = $serverConfig;
 		$this->connection = $connection;
 
 		// Every hour

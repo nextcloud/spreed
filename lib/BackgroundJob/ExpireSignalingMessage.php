@@ -34,11 +34,10 @@ use OCP\BackgroundJob\TimedJob;
  * @package OCA\Talk\BackgroundJob
  */
 class ExpireSignalingMessage extends TimedJob {
-	protected Messages $messages;
 
 	public function __construct(
 		ITimeFactory $timeFactory,
-		Messages $messages,
+		protected Messages $messages,
 	) {
 		parent::__construct($timeFactory);
 
@@ -46,7 +45,6 @@ class ExpireSignalingMessage extends TimedJob {
 		$this->setInterval(60 * 5);
 		$this->setTimeSensitivity(IJob::TIME_SENSITIVE);
 
-		$this->messages = $messages;
 	}
 
 	protected function run($argument): void {

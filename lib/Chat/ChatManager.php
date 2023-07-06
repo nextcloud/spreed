@@ -83,53 +83,27 @@ class ChatManager {
 	public const VERB_REACTION = 'reaction';
 	public const VERB_REACTION_DELETED = 'reaction_deleted';
 
-	private CommentsManager $commentsManager;
-	private IEventDispatcher $dispatcher;
-	private IDBConnection $connection;
-	private INotificationManager $notificationManager;
-	private IManager $shareManager;
-	private RoomShareProvider $shareProvider;
-	private ParticipantService $participantService;
-	private RoomService $roomService;
-	private PollService $pollService;
-	private Notifier $notifier;
-	protected ITimeFactory $timeFactory;
 	protected ICache $cache;
 	protected ICache $unreadCountCache;
-	protected AttachmentService $attachmentService;
-	protected IReferenceManager $referenceManager;
 
 	public function __construct(
-		CommentsManager $commentsManager,
-		IEventDispatcher $dispatcher,
-		IDBConnection $connection,
-		INotificationManager $notificationManager,
-		IManager $shareManager,
-		RoomShareProvider $shareProvider,
-		ParticipantService $participantService,
-		RoomService $roomService,
-		PollService $pollService,
-		Notifier $notifier,
+		private CommentsManager $commentsManager,
+		private IEventDispatcher $dispatcher,
+		private IDBConnection $connection,
+		private INotificationManager $notificationManager,
+		private IManager $shareManager,
+		private RoomShareProvider $shareProvider,
+		private ParticipantService $participantService,
+		private RoomService $roomService,
+		private PollService $pollService,
+		private Notifier $notifier,
 		ICacheFactory $cacheFactory,
-		ITimeFactory $timeFactory,
-		AttachmentService $attachmentService,
-		IReferenceManager $referenceManager,
+		protected ITimeFactory $timeFactory,
+		protected AttachmentService $attachmentService,
+		protected IReferenceManager $referenceManager,
 	) {
-		$this->commentsManager = $commentsManager;
-		$this->dispatcher = $dispatcher;
-		$this->connection = $connection;
-		$this->notificationManager = $notificationManager;
-		$this->shareManager = $shareManager;
-		$this->shareProvider = $shareProvider;
-		$this->participantService = $participantService;
-		$this->roomService = $roomService;
-		$this->pollService = $pollService;
-		$this->notifier = $notifier;
 		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
 		$this->unreadCountCache = $cacheFactory->createDistributed('talk/unreadcount');
-		$this->timeFactory = $timeFactory;
-		$this->attachmentService = $attachmentService;
-		$this->referenceManager = $referenceManager;
 	}
 
 	/**

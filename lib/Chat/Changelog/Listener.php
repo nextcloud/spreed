@@ -33,10 +33,9 @@ class Listener {
 		$dispatcher->addListener(RoomController::EVENT_BEFORE_ROOMS_GET, [self::class, 'updateChangelog'], -100);
 	}
 
-	protected Manager $manager;
-
-	public function __construct(Manager $manager) {
-		$this->manager = $manager;
+	public function __construct(
+		protected Manager $manager,
+	) {
 	}
 
 	public static function updateChangelog(UserEvent $event): void {

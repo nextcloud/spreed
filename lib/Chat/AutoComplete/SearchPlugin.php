@@ -38,35 +38,19 @@ use OCP\IL10N;
 use OCP\IUserManager;
 
 class SearchPlugin implements ISearchPlugin {
-	protected IUserManager $userManager;
-	protected IGroupManager $groupManager;
-	protected GuestManager $guestManager;
-	protected TalkSession $talkSession;
-	protected ParticipantService $participantService;
-	protected Util $util;
-	protected ?string $userId;
-	protected IL10N $l;
 
 	protected ?Room $room = null;
 
 	public function __construct(
-		IUserManager $userManager,
-		IGroupManager $groupManager,
-		GuestManager $guestManager,
-		TalkSession $talkSession,
-		ParticipantService $participantService,
-		Util $util,
-		?string $userId,
-		IL10N $l,
+		protected IUserManager $userManager,
+		protected IGroupManager $groupManager,
+		protected GuestManager $guestManager,
+		protected TalkSession $talkSession,
+		protected ParticipantService $participantService,
+		protected Util $util,
+		protected ?string $userId,
+		protected IL10N $l,
 	) {
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->guestManager = $guestManager;
-		$this->talkSession = $talkSession;
-		$this->participantService = $participantService;
-		$this->util = $util;
-		$this->userId = $userId;
-		$this->l = $l;
 	}
 
 	public function setContext(array $context): void {

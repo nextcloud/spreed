@@ -31,12 +31,16 @@ use OCP\ICache;
 use OCP\ICacheFactory;
 
 class ResetAssignedSignalingServer extends TimedJob {
-	protected Manager $manager;
 	protected ICache $cache;
 
+	/**
+	 * @param ITimeFactory $time
+	 * @param Manager $manager
+	 * @param ICacheFactory $cacheFactory
+	 */
 	public function __construct(
 		ITimeFactory $time,
-		Manager $manager,
+		protected Manager $manager,
 		ICacheFactory $cacheFactory,
 	) {
 		parent::__construct($time);
@@ -45,7 +49,6 @@ class ResetAssignedSignalingServer extends TimedJob {
 		$this->setInterval(60 * 5);
 		$this->setTimeSensitivity(IJob::TIME_SENSITIVE);
 
-		$this->manager = $manager;
 		$this->cache = $cacheFactory->createDistributed('hpb_servers');
 	}
 

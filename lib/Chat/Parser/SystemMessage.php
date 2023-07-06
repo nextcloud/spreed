@@ -51,16 +51,6 @@ use OCP\Share\Exceptions\ShareNotFound;
 use Sabre\VObject\Reader;
 
 class SystemMessage {
-	protected IUserManager $userManager;
-	protected IGroupManager $groupManager;
-	protected GuestManager $guestManager;
-	protected ParticipantService $participantService;
-	protected IPreviewManager $previewManager;
-	protected RoomShareProvider $shareProvider;
-	protected PhotoCache $photoCache;
-	protected IRootFolder $rootFolder;
-	protected ICloudIdManager $cloudIdManager;
-	protected IURLGenerator $url;
 	protected ?IL10N $l = null;
 
 	/**
@@ -77,27 +67,17 @@ class SystemMessage {
 	protected array $guestNames = [];
 
 	public function __construct(
-		IUserManager $userManager,
-		IGroupManager $groupManager,
-		GuestManager $guestManager,
-		ParticipantService $participantService,
-		IPreviewManager $previewManager,
-		RoomShareProvider $shareProvider,
-		PhotoCache $photoCache,
-		IRootFolder $rootFolder,
-		ICloudIdManager $cloudIdManager,
-		IURLGenerator $url,
+		protected IUserManager $userManager,
+		protected IGroupManager $groupManager,
+		protected GuestManager $guestManager,
+		protected ParticipantService $participantService,
+		protected IPreviewManager $previewManager,
+		protected RoomShareProvider $shareProvider,
+		protected PhotoCache $photoCache,
+		protected IRootFolder $rootFolder,
+		protected ICloudIdManager $cloudIdManager,
+		protected IURLGenerator $url,
 	) {
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->guestManager = $guestManager;
-		$this->participantService = $participantService;
-		$this->previewManager = $previewManager;
-		$this->shareProvider = $shareProvider;
-		$this->photoCache = $photoCache;
-		$this->rootFolder = $rootFolder;
-		$this->cloudIdManager = $cloudIdManager;
-		$this->url = $url;
 	}
 
 	/**

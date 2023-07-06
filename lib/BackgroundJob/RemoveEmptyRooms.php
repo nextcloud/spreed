@@ -39,21 +39,16 @@ use Psr\Log\LoggerInterface;
  * @package OCA\Talk\BackgroundJob
  */
 class RemoveEmptyRooms extends TimedJob {
-	protected Manager $manager;
-	protected RoomService $roomService;
-	protected ParticipantService $participantService;
-	protected LoggerInterface $logger;
-	protected IUserMountCache $userMountCache;
 
 	protected int $numDeletedRooms = 0;
 
 	public function __construct(
 		ITimeFactory $timeFactory,
-		Manager $manager,
-		RoomService $roomService,
-		ParticipantService $participantService,
-		LoggerInterface $logger,
-		IUserMountCache $userMountCache,
+		protected Manager $manager,
+		protected RoomService $roomService,
+		protected ParticipantService $participantService,
+		protected LoggerInterface $logger,
+		protected IUserMountCache $userMountCache,
 	) {
 		parent::__construct($timeFactory);
 
@@ -61,11 +56,6 @@ class RemoveEmptyRooms extends TimedJob {
 		$this->setInterval(60 * 5);
 		$this->setTimeSensitivity(IJob::TIME_INSENSITIVE);
 
-		$this->manager = $manager;
-		$this->roomService = $roomService;
-		$this->participantService = $participantService;
-		$this->logger = $logger;
-		$this->userMountCache = $userMountCache;
 	}
 
 	protected function run($argument): void {

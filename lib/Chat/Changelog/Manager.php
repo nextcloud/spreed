@@ -31,27 +31,15 @@ use OCP\IDBConnection;
 use OCP\IL10N;
 
 class Manager {
-	protected IConfig $config;
-	protected IDBConnection $connection;
-	protected RoomManager $roomManager;
-	protected ChatManager $chatManager;
-	protected ITimeFactory $timeFactory;
-	protected IL10N $l;
 
 	public function __construct(
-		IConfig $config,
-		IDBConnection $connection,
-		RoomManager $roomManager,
-		ChatManager $chatManager,
-		ITimeFactory $timeFactory,
-		IL10N $l,
+		protected IConfig $config,
+		protected IDBConnection $connection,
+		protected RoomManager $roomManager,
+		protected ChatManager $chatManager,
+		protected ITimeFactory $timeFactory,
+		protected IL10N $l,
 	) {
-		$this->config = $config;
-		$this->connection = $connection;
-		$this->roomManager = $roomManager;
-		$this->chatManager = $chatManager;
-		$this->timeFactory = $timeFactory;
-		$this->l = $l;
 	}
 
 	public function getChangelogForUser(string $userId): int {

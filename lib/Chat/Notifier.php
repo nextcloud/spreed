@@ -50,33 +50,17 @@ use OCP\Notification\INotification;
  * prepares the notifications for display.
  */
 class Notifier {
-	private INotificationManager $notificationManager;
-	private IUserManager $userManager;
-	private IGroupManager $groupManager;
-	private ParticipantService $participantService;
-	private Manager $manager;
-	private IConfig $config;
-	private ITimeFactory $timeFactory;
-	private Util $util;
 
 	public function __construct(
-		INotificationManager $notificationManager,
-		IUserManager $userManager,
-		IGroupManager $groupManager,
-		ParticipantService $participantService,
-		Manager $manager,
-		IConfig $config,
-		ITimeFactory $timeFactory,
-		Util $util,
+		private INotificationManager $notificationManager,
+		private IUserManager $userManager,
+		private IGroupManager $groupManager,
+		private ParticipantService $participantService,
+		private Manager $manager,
+		private IConfig $config,
+		private ITimeFactory $timeFactory,
+		private Util $util,
 	) {
-		$this->notificationManager = $notificationManager;
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->participantService = $participantService;
-		$this->manager = $manager;
-		$this->config = $config;
-		$this->timeFactory = $timeFactory;
-		$this->util = $util;
 	}
 
 	/**
