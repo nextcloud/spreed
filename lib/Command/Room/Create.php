@@ -168,26 +168,18 @@ class Create extends Base {
 	}
 
 	public function completeOptionValues($optionName, CompletionContext $context) {
-		switch ($optionName) {
-			case 'user':
-				return $this->completeUserValues($context);
+		return match ($optionName) {
+			'user' => $this->completeUserValues($context),
+			'group' => $this->completeGroupValues($context),
+			'owner', 'moderator' => $this->completeParticipantValues($context),
+			'readonly' => [(string)Room::READ_ONLY, (string)Room::READ_WRITE],
+			'listable' => [
+				(string)Room::LISTABLE_ALL,
+				(string)Room::LISTABLE_USERS,
+				(string)Room::LISTABLE_NONE,
+			],
+			default => parent::completeOptionValues($optionName, $context),
+		};
 
-			case 'group':
-				return $this->completeGroupValues($context);
-
-			case 'owner':
-			case 'moderator':
-				return $this->completeParticipantValues($context);
-			case 'readonly':
-				return [(string)Room::READ_ONLY, (string)Room::READ_WRITE];
-			case 'listable':
-				return [
-					(string)Room::LISTABLE_ALL,
-					(string)Room::LISTABLE_USERS,
-					(string)Room::LISTABLE_NONE,
-				];
-		}
-
-		return parent::completeOptionValues($optionName, $context);
 	}
 }

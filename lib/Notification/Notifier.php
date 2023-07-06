@@ -744,17 +744,12 @@ class Notifier implements INotifier {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function getRoomType(Room $room): string {
-		switch ($room->getType()) {
-			case Room::TYPE_ONE_TO_ONE:
-			case Room::TYPE_ONE_TO_ONE_FORMER:
-				return 'one2one';
-			case Room::TYPE_GROUP:
-				return 'group';
-			case Room::TYPE_PUBLIC:
-				return 'public';
-			default:
-				throw new \InvalidArgumentException('Unknown room type');
-		}
+		return match ($room->getType()) {
+			Room::TYPE_ONE_TO_ONE, Room::TYPE_ONE_TO_ONE_FORMER => 'one2one',
+			Room::TYPE_GROUP => 'group',
+			Room::TYPE_PUBLIC => 'public',
+			default => throw new \InvalidArgumentException('Unknown room type'),
+		};
 	}
 
 	/**

@@ -106,19 +106,11 @@ abstract class Base implements IProvider {
 	}
 
 	protected function getRoom(Room $room, string $userId): array {
-		switch ($room->getType()) {
-			case Room::TYPE_ONE_TO_ONE:
-			case Room::TYPE_ONE_TO_ONE_FORMER:
-				$stringType = 'one2one';
-				break;
-			case Room::TYPE_GROUP:
-				$stringType = 'group';
-				break;
-			case Room::TYPE_PUBLIC:
-			default:
-				$stringType = 'public';
-				break;
-		}
+		$stringType = match ($room->getType()) {
+			Room::TYPE_ONE_TO_ONE, Room::TYPE_ONE_TO_ONE_FORMER => 'one2one',
+			Room::TYPE_GROUP => 'group',
+			default => 'public',
+		};
 
 		return [
 			'type' => 'call',

@@ -176,21 +176,15 @@ class CloudFederationProviderTalk implements ICloudFederationProvider {
 		if (!is_numeric($providerId)) {
 			throw new BadRequestException(['providerId']);
 		}
-		switch ($notificationType) {
-			case 'SHARE_ACCEPTED':
-				return $this->shareAccepted((int) $providerId, $notification);
-			case 'SHARE_DECLINED':
-				return $this->shareDeclined((int) $providerId, $notification);
-			case 'SHARE_UNSHARED':
-				return $this->shareUnshared((int) $providerId, $notification);
-			case 'REQUEST_RESHARE':
-				return []; // TODO: Implement
-			case 'RESHARE_UNDO':
-				return []; // TODO: Implement
-			case 'RESHARE_CHANGE_PERMISSION':
-				return []; // TODO: Implement
-		}
-		return [];
+		return match ($notificationType) {
+			'SHARE_ACCEPTED' => $this->shareAccepted((int)$providerId, $notification),
+			'SHARE_DECLINED' => $this->shareDeclined((int)$providerId, $notification),
+			'SHARE_UNSHARED' => $this->shareUnshared((int)$providerId, $notification),
+			'REQUEST_RESHARE' => [],
+			'RESHARE_UNDO' => [],
+			'RESHARE_CHANGE_PERMISSION' => [],
+			default => [],
+		};
 		// TODO: Implement notificationReceived() method.
 	}
 

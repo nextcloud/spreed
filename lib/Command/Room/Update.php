@@ -178,30 +178,24 @@ class Update extends Base {
 	}
 
 	public function completeOptionValues($optionName, CompletionContext $context) {
-		switch ($optionName) {
-			case 'public':
-			case 'readonly':
-				return [(string)Room::READ_ONLY, (string)Room::READ_WRITE];
-			case 'listable':
-				return [
-					(string)Room::LISTABLE_ALL,
-					(string)Room::LISTABLE_USERS,
-					(string)Room::LISTABLE_NONE,
-				];
+		return match ($optionName) {
+			'public', 'readonly' => [(string)Room::READ_ONLY, (string)Room::READ_WRITE],
+			'listable' => [
+				(string)Room::LISTABLE_ALL,
+				(string)Room::LISTABLE_USERS,
+				(string)Room::LISTABLE_NONE,
+			],
+			'owner' => $this->completeParticipantValues($context),
+			default => parent::completeOptionValues($optionName, $context),
+		};
 
-			case 'owner':
-				return $this->completeParticipantValues($context);
-		}
-
-		return parent::completeOptionValues($optionName, $context);
 	}
 
 	public function completeArgumentValues($argumentName, CompletionContext $context) {
-		switch ($argumentName) {
-			case 'token':
-				return $this->completeTokenValues($context);
-		}
+		return match ($argumentName) {
+			'token' => $this->completeTokenValues($context),
+			default => parent::completeArgumentValues($argumentName, $context),
+		};
 
-		return parent::completeArgumentValues($argumentName, $context);
 	}
 }

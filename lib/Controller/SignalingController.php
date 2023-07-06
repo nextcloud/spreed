@@ -525,25 +525,18 @@ class SignalingController extends OCSController {
 		}
 
 		$message = json_decode($json, true);
-		switch ($message['type'] ?? '') {
-			case 'auth':
-				// Query authentication information about a user.
-				return $this->backendAuth($message['auth']);
-			case 'room':
-				// Query information about a room.
-				return $this->backendRoom($message['room']);
-			case 'ping':
-				// Ping sessions connected to a room.
-				return $this->backendPing($message['ping']);
-			default:
-				return new DataResponse([
-					'type' => 'error',
-					'error' => [
-						'code' => 'unknown_type',
-						'message' => 'The given type ' . json_encode($message) . ' is not supported.',
-					],
-				]);
-		}
+		return match ($message['type'] ?? '') {
+			'auth' => $this->backendAuth($message['auth']),
+			'room' => $this->backendRoom($message['room']),
+			'ping' => $this->backendPing($message['ping']),
+			default => new DataResponse([
+				'type' => 'error',
+				'error' => [
+					'code' => 'unknown_type',
+					'message' => 'The given type ' . json_encode($message) . ' is not supported.',
+				],
+			]),
+		};
 	}
 
 	private function backendAuth(array $auth): DataResponse {

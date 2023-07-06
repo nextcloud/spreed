@@ -69,11 +69,10 @@ class Delete extends Base {
 	}
 
 	public function completeArgumentValues($argumentName, CompletionContext $context) {
-		switch ($argumentName) {
-			case 'token':
-				return $this->completeTokenValues($context);
-		}
+		return match ($argumentName) {
+			'token' => $this->completeTokenValues($context),
+			default => parent::completeArgumentValues($argumentName, $context),
+		};
 
-		return parent::completeArgumentValues($argumentName, $context);
 	}
 }

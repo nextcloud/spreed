@@ -156,22 +156,18 @@ class RecordingController extends AEnvironmentAwareController {
 		}
 
 		$message = json_decode($json, true);
-		switch ($message['type'] ?? '') {
-			case 'started':
-				return $this->backendStarted($message['started']);
-			case 'stopped':
-				return $this->backendStopped($message['stopped']);
-			case 'failed':
-				return $this->backendFailed($message['failed']);
-			default:
-				return new DataResponse([
-					'type' => 'error',
-					'error' => [
-						'code' => 'unknown_type',
-						'message' => 'The given type ' . json_encode($message) . ' is not supported.',
-					],
-				], Http::STATUS_BAD_REQUEST);
-		}
+		return match ($message['type'] ?? '') {
+			'started' => $this->backendStarted($message['started']),
+			'stopped' => $this->backendStopped($message['stopped']),
+			'failed' => $this->backendFailed($message['failed']),
+			default => new DataResponse([
+				'type' => 'error',
+				'error' => [
+					'code' => 'unknown_type',
+					'message' => 'The given type ' . json_encode($message) . ' is not supported.',
+				],
+			], Http::STATUS_BAD_REQUEST),
+		};
 	}
 
 	private function backendStarted(array $started): DataResponse {

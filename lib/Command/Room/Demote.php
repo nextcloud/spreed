@@ -80,14 +80,11 @@ class Demote extends Base {
 	}
 
 	public function completeArgumentValues($argumentName, CompletionContext $context) {
-		switch ($argumentName) {
-			case 'token':
-				return $this->completeTokenValues($context);
+		return match ($argumentName) {
+			'token' => $this->completeTokenValues($context),
+			'participant' => $this->completeParticipantValues($context),
+			default => parent::completeArgumentValues($argumentName, $context),
+		};
 
-			case 'participant':
-				return $this->completeParticipantValues($context);
-		}
-
-		return parent::completeArgumentValues($argumentName, $context);
 	}
 }

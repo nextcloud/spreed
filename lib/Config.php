@@ -435,14 +435,11 @@ class Config {
 	 * @return string
 	 */
 	public function getSignalingTicket(int $version, ?string $userId): string {
-		switch ($version) {
-			case self::SIGNALING_TICKET_V1:
-				return $this->getSignalingTicketV1($userId);
-			case self::SIGNALING_TICKET_V2:
-				return $this->getSignalingTicketV2($userId);
-			default:
-				return $this->getSignalingTicketV1($userId);
-		}
+		return match ($version) {
+			self::SIGNALING_TICKET_V1 => $this->getSignalingTicketV1($userId),
+			self::SIGNALING_TICKET_V2 => $this->getSignalingTicketV2($userId),
+			default => $this->getSignalingTicketV1($userId),
+		};
 	}
 
 	/**
