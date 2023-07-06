@@ -26,18 +26,14 @@ declare(strict_types=1);
 namespace OCA\Talk\DataObjects;
 
 class RegisterAccountData {
-	private string $url;
-	private string $name;
-	private string $email;
-	private string $language;
-	private string $country;
 
-	public function __construct(string $url, string $name, string $email, string $language, string $country) {
-		$this->url = $url;
-		$this->name = $name;
-		$this->email = $email;
-		$this->language = $language;
-		$this->country = $country;
+	public function __construct(
+		private string $url,
+		private string $name,
+		private string $email,
+		private string $language,
+		private string $country,
+	) {
 	}
 
 	public function getUrl(): string {

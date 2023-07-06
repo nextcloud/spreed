@@ -33,15 +33,13 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
 class CommandController extends OCSController {
-	protected CommandService $commandService;
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		CommandService $commandService,
+		protected CommandService $commandService,
 	) {
 		parent::__construct($appName, $request);
-		$this->commandService = $commandService;
 	}
 
 	public function index(): DataResponse {

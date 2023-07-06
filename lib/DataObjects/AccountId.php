@@ -26,10 +26,10 @@ declare(strict_types=1);
 namespace OCA\Talk\DataObjects;
 
 class AccountId {
-	private string $accountId;
 
-	public function __construct(string $accountId) {
-		$this->accountId = $accountId;
+	public function __construct(
+		private string $accountId,
+	) {
 	}
 
 	public function get(): string {

@@ -39,24 +39,16 @@ use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
 
 class PublicShareAuthController extends OCSController {
-	private IUserManager $userManager;
-	private IShareManager $shareManager;
-	private IUserSession $userSession;
-	private RoomService $roomService;
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		IUserManager $userManager,
-		IShareManager $shareManager,
-		IUserSession $userSession,
-		RoomService $roomService,
+		private IUserManager $userManager,
+		private IShareManager $shareManager,
+		private IUserSession $userSession,
+		private RoomService $roomService,
 	) {
 		parent::__construct($appName, $request);
-		$this->userManager = $userManager;
-		$this->shareManager = $shareManager;
-		$this->userSession = $userSession;
-		$this->roomService = $roomService;
 	}
 
 	/**

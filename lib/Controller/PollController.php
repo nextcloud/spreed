@@ -47,27 +47,17 @@ use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
 class PollController extends AEnvironmentAwareController {
-	protected ChatManager $chatManager;
-	protected PollService $pollService;
-	protected AttachmentService $attachmentService;
-	protected ITimeFactory $timeFactory;
-	protected LoggerInterface $logger;
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		ChatManager $chatManager,
-		PollService $pollService,
-		AttachmentService $attachmentService,
-		ITimeFactory $timeFactory,
-		LoggerInterface $logger,
+		protected ChatManager $chatManager,
+		protected PollService $pollService,
+		protected AttachmentService $attachmentService,
+		protected ITimeFactory $timeFactory,
+		protected LoggerInterface $logger,
 	) {
 		parent::__construct($appName, $request);
-		$this->pollService = $pollService;
-		$this->attachmentService = $attachmentService;
-		$this->chatManager = $chatManager;
-		$this->timeFactory = $timeFactory;
-		$this->logger = $logger;
 	}
 
 	#[PublicPage]

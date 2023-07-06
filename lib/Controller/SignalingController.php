@@ -62,56 +62,27 @@ class SignalingController extends OCSController {
 
 	public const EVENT_BACKEND_SIGNALING_ROOMS = self::class . '::signalingBackendRoom';
 
-	private Config $talkConfig;
-	private \OCA\Talk\Signaling\Manager $signalingManager;
-	private TalkSession $session;
-	private Manager $manager;
-	private ParticipantService $participantService;
-	private SessionService $sessionService;
-	private IDBConnection $dbConnection;
-	private Messages $messages;
-	private IUserManager $userManager;
-	private IEventDispatcher $dispatcher;
-	private ITimeFactory $timeFactory;
-	private IClientService $clientService;
-	private LoggerInterface $logger;
-	private ?string $userId;
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
 		IConfig $serverConfig,
-		Config $talkConfig,
-		\OCA\Talk\Signaling\Manager $signalingManager,
-		TalkSession $session,
-		Manager $manager,
-		ParticipantService $participantService,
-		SessionService $sessionService,
-		IDBConnection $connection,
-		Messages $messages,
-		IUserManager $userManager,
-		IEventDispatcher $dispatcher,
-		ITimeFactory $timeFactory,
-		IClientService $clientService,
+		private Config $talkConfig,
+		private \OCA\Talk\Signaling\Manager $signalingManager,
+		private TalkSession $session,
+		private Manager $manager,
+		private ParticipantService $participantService,
+		private SessionService $sessionService,
+		private IDBConnection $dbConnection,
+		private Messages $messages,
+		private IUserManager $userManager,
+		private IEventDispatcher $dispatcher,
+		private ITimeFactory $timeFactory,
+		private IClientService $clientService,
 		IThrottler $throttler,
-		LoggerInterface $logger,
-		?string $UserId,
+		private LoggerInterface $logger,
+		private ?string $userId,
 	) {
 		parent::__construct($appName, $request);
-		$this->talkConfig = $talkConfig;
-		$this->signalingManager = $signalingManager;
-		$this->session = $session;
-		$this->dbConnection = $connection;
-		$this->manager = $manager;
-		$this->participantService = $participantService;
-		$this->sessionService = $sessionService;
-		$this->messages = $messages;
-		$this->userManager = $userManager;
-		$this->dispatcher = $dispatcher;
-		$this->timeFactory = $timeFactory;
-		$this->clientService = $clientService;
-		$this->logger = $logger;
-		$this->userId = $UserId;
 	}
 
 	/**
