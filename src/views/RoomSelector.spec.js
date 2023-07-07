@@ -1,4 +1,5 @@
 import { shallowMount } from '@vue/test-utils'
+import flushPromises from 'flush-promises'
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
@@ -85,10 +86,12 @@ describe('RoomSelector.vue', () => {
 		const wrapper = shallowMount(RoomSelector)
 
 		expect(axios.get).toHaveBeenCalledWith(
-			generateOcsUrl('/apps/spreed/api/v4/room')
+			generateOcsUrl('/apps/spreed/api/v4/room'),
+			{ params: { includeStatus: true } }
 		)
 
 		// need to wait for re-render, otherwise the list is not rendered yet
+		await flushPromises()
 		await wrapper.vm.$nextTick()
 
 		const list = wrapper.findAll('li')
@@ -103,12 +106,13 @@ describe('RoomSelector.vue', () => {
 				showPostableOnly: true,
 			},
 		})
-
 		expect(axios.get).toHaveBeenCalledWith(
-			generateOcsUrl('/apps/spreed/api/v4/room')
+			generateOcsUrl('/apps/spreed/api/v4/room'),
+			{ params: { includeStatus: true } }
 		)
 
 		// need to wait for re-render, otherwise the list is not rendered yet
+		await flushPromises()
 		await wrapper.vm.$nextTick()
 
 		const list = wrapper.findAll('li')
@@ -120,9 +124,10 @@ describe('RoomSelector.vue', () => {
 		const wrapper = shallowMount(RoomSelector)
 
 		expect(axios.get).toHaveBeenCalledWith(
-			generateOcsUrl('/apps/spreed/api/v4/room')
+			generateOcsUrl('/apps/spreed/api/v4/room'),
+			{ params: { includeStatus: true } }
 		)
-
+		await flushPromises()
 		await wrapper.vm.$nextTick()
 
 		const eventHandler = jest.fn()
