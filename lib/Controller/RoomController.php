@@ -82,77 +82,34 @@ use Psr\Log\LoggerInterface;
 class RoomController extends AEnvironmentAwareController {
 	public const EVENT_BEFORE_ROOMS_GET = self::class . '::preGetRooms';
 
-	protected ?string $userId;
-	protected IAppManager $appManager;
-	protected TalkSession $session;
-	protected IUserManager $userManager;
-	protected IGroupManager $groupManager;
-	protected Manager $manager;
-	protected ICloudIdManager $cloudIdManager;
-	protected RoomService $roomService;
-	protected BreakoutRoomService $breakoutRoomService;
-	protected ParticipantService $participantService;
-	protected SessionService $sessionService;
-	protected GuestManager $guestManager;
-	protected IUserStatusManager $statusManager;
-	protected IEventDispatcher $dispatcher;
-	protected ITimeFactory $timeFactory;
-	protected ChecksumVerificationService $checksumVerificationService;
-	protected RoomFormatter $roomFormatter;
-	protected IConfig $config;
-	protected Config $talkConfig;
-	protected IThrottler $throttler;
-	protected LoggerInterface $logger;
-
 	protected array $commonReadMessages = [];
 
 	public function __construct(
 		string $appName,
-		?string $UserId,
+		protected ?string $userId,
 		IRequest $request,
-		IAppManager $appManager,
-		TalkSession $session,
-		IUserManager $userManager,
-		IGroupManager $groupManager,
-		Manager $manager,
-		RoomService $roomService,
-		BreakoutRoomService $breakoutRoomService,
-		ParticipantService $participantService,
-		SessionService $sessionService,
-		GuestManager $guestManager,
-		IUserStatusManager $statusManager,
-		IEventDispatcher $dispatcher,
-		ITimeFactory $timeFactory,
-		ChecksumVerificationService $checksumVerificationService,
-		RoomFormatter $roomFormatter,
-		IConfig $config,
-		Config $talkConfig,
-		ICloudIdManager $cloudIdManager,
-		IThrottler $throttler,
-		LoggerInterface $logger,
+		protected IAppManager $appManager,
+		protected TalkSession $session,
+		protected IUserManager $userManager,
+		protected IGroupManager $groupManager,
+		protected Manager $manager,
+		protected RoomService $roomService,
+		protected BreakoutRoomService $breakoutRoomService,
+		protected ParticipantService $participantService,
+		protected SessionService $sessionService,
+		protected GuestManager $guestManager,
+		protected IUserStatusManager $statusManager,
+		protected IEventDispatcher $dispatcher,
+		protected ITimeFactory $timeFactory,
+		protected ChecksumVerificationService $checksumVerificationService,
+		protected RoomFormatter $roomFormatter,
+		protected IConfig $config,
+		protected Config $talkConfig,
+		protected ICloudIdManager $cloudIdManager,
+		protected IThrottler $throttler,
+		protected LoggerInterface $logger,
 	) {
 		parent::__construct($appName, $request);
-		$this->session = $session;
-		$this->appManager = $appManager;
-		$this->userId = $UserId;
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->manager = $manager;
-		$this->roomService = $roomService;
-		$this->breakoutRoomService = $breakoutRoomService;
-		$this->participantService = $participantService;
-		$this->sessionService = $sessionService;
-		$this->guestManager = $guestManager;
-		$this->statusManager = $statusManager;
-		$this->dispatcher = $dispatcher;
-		$this->timeFactory = $timeFactory;
-		$this->checksumVerificationService = $checksumVerificationService;
-		$this->config = $config;
-		$this->talkConfig = $talkConfig;
-		$this->cloudIdManager = $cloudIdManager;
-		$this->throttler = $throttler;
-		$this->logger = $logger;
-		$this->roomFormatter = $roomFormatter;
 	}
 
 	protected function getTalkHashHeader(): array {

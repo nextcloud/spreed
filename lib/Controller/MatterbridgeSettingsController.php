@@ -34,15 +34,13 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
 class MatterbridgeSettingsController extends OCSController {
-	protected MatterbridgeManager $bridgeManager;
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		MatterbridgeManager $bridgeManager,
+		protected MatterbridgeManager $bridgeManager,
 	) {
 		parent::__construct($appName, $request);
-		$this->bridgeManager = $bridgeManager;
 	}
 
 	/**

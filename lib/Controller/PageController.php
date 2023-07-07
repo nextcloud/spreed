@@ -70,61 +70,32 @@ use Psr\Log\LoggerInterface;
 class PageController extends Controller {
 	use TInitialState;
 
-	private ?string $userId;
-	private IEventDispatcher $eventDispatcher;
-	private RoomController $api;
-	private TalkSession $talkSession;
-	private IUserSession $userSession;
-	private LoggerInterface $logger;
-	private Manager $manager;
-	private ParticipantService $participantService;
-	private RoomService $roomService;
-	private IURLGenerator $url;
-	private INotificationManager $notificationManager;
-	private IAppManager $appManager;
-	private IRootFolder $rootFolder;
-	private IThrottler $throttler;
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		IEventDispatcher $eventDispatcher,
-		RoomController $api,
-		TalkSession $session,
-		IUserSession $userSession,
-		?string $UserId,
-		LoggerInterface $logger,
-		Manager $manager,
-		ParticipantService $participantService,
-		RoomService $roomService,
-		IURLGenerator $url,
-		INotificationManager $notificationManager,
-		IAppManager $appManager,
+		private IEventDispatcher $eventDispatcher,
+		private RoomController $api,
+		private TalkSession $talkSession,
+		private IUserSession $userSession,
+		private ?string $userId,
+		private LoggerInterface $logger,
+		private Manager $manager,
+		private ParticipantService $participantService,
+		private RoomService $roomService,
+		private IURLGenerator $url,
+		private INotificationManager $notificationManager,
+		private IAppManager $appManager,
 		IInitialState $initialState,
 		ICacheFactory $memcacheFactory,
-		IRootFolder $rootFolder,
-		IThrottler $throttler,
+		private IRootFolder $rootFolder,
+		private IThrottler $throttler,
 		Config $talkConfig,
 		IConfig $serverConfig,
 		IGroupManager $groupManager,
 	) {
 		parent::__construct($appName, $request);
-		$this->eventDispatcher = $eventDispatcher;
-		$this->api = $api;
-		$this->talkSession = $session;
-		$this->userSession = $userSession;
-		$this->userId = $UserId;
-		$this->logger = $logger;
-		$this->manager = $manager;
-		$this->participantService = $participantService;
-		$this->roomService = $roomService;
-		$this->url = $url;
-		$this->notificationManager = $notificationManager;
-		$this->appManager = $appManager;
 		$this->initialState = $initialState;
 		$this->memcacheFactory = $memcacheFactory;
-		$this->rootFolder = $rootFolder;
-		$this->throttler = $throttler;
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
 		$this->groupManager = $groupManager;

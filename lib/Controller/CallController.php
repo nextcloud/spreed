@@ -45,24 +45,16 @@ use OCP\IRequest;
 use OCP\IUserManager;
 
 class CallController extends AEnvironmentAwareController {
-	private ParticipantService $participantService;
-	private RoomService $roomService;
-	private IUserManager $userManager;
-	private ITimeFactory $timeFactory;
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		ParticipantService $participantService,
-		RoomService $roomService,
-		IUserManager $userManager,
-		ITimeFactory $timeFactory,
+		private ParticipantService $participantService,
+		private RoomService $roomService,
+		private IUserManager $userManager,
+		private ITimeFactory $timeFactory,
 	) {
 		parent::__construct($appName, $request);
-		$this->participantService = $participantService;
-		$this->roomService = $roomService;
-		$this->userManager = $userManager;
-		$this->timeFactory = $timeFactory;
 	}
 
 	#[PublicPage]

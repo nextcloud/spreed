@@ -71,81 +71,36 @@ use OCP\UserStatus\IManager as IUserStatusManager;
 use OCP\UserStatus\IUserStatus;
 
 class ChatController extends AEnvironmentAwareController {
-	private ?string $userId;
-	private IUserManager $userManager;
-	private IAppManager $appManager;
-	private ChatManager $chatManager;
-	private ReactionManager $reactionManager;
-	private ParticipantService $participantService;
-	private SessionService $sessionService;
-	protected AttachmentService $attachmentService;
-	protected avatarService $avatarService;
-	private GuestManager $guestManager;
 	/** @var string[] */
 	protected array $guestNames;
-	private MessageParser $messageParser;
-	protected RoomShareProvider $shareProvider;
-	private IManager $autoCompleteManager;
-	private IUserStatusManager $statusManager;
-	protected MatterbridgeManager $matterbridgeManager;
-	private SearchPlugin $searchPlugin;
-	private ISearchResult $searchResult;
-	protected ITimeFactory $timeFactory;
-	protected IEventDispatcher $eventDispatcher;
-	protected IValidator $richObjectValidator;
-	protected ITrustedDomainHelper $trustedDomainHelper;
-	private IL10N $l;
 
 	public function __construct(
 		string $appName,
-		?string $UserId,
+		private ?string $userId,
 		IRequest $request,
-		IUserManager $userManager,
-		IAppManager $appManager,
-		ChatManager $chatManager,
-		ReactionManager $reactionManager,
-		ParticipantService $participantService,
-		SessionService $sessionService,
-		AttachmentService $attachmentService,
-		avatarService $avatarService,
-		GuestManager $guestManager,
-		MessageParser $messageParser,
-		RoomShareProvider $shareProvider,
-		IManager $autoCompleteManager,
-		IUserStatusManager $statusManager,
-		MatterbridgeManager $matterbridgeManager,
-		SearchPlugin $searchPlugin,
-		ISearchResult $searchResult,
-		ITimeFactory $timeFactory,
-		IEventDispatcher $eventDispatcher,
-		IValidator $richObjectValidator,
-		ITrustedDomainHelper $trustedDomainHelper,
-		IL10N $l,
+		private IUserManager $userManager,
+		private IAppManager $appManager,
+		private ChatManager $chatManager,
+		private ReactionManager $reactionManager,
+		private ParticipantService $participantService,
+		private SessionService $sessionService,
+		protected AttachmentService $attachmentService,
+		protected avatarService $avatarService,
+		private GuestManager $guestManager,
+		private MessageParser $messageParser,
+		protected RoomShareProvider $shareProvider,
+		private IManager $autoCompleteManager,
+		private IUserStatusManager $statusManager,
+		protected MatterbridgeManager $matterbridgeManager,
+		private SearchPlugin $searchPlugin,
+		private ISearchResult $searchResult,
+		protected ITimeFactory $timeFactory,
+		protected IEventDispatcher $eventDispatcher,
+		protected IValidator $richObjectValidator,
+		protected ITrustedDomainHelper $trustedDomainHelper,
+		private IL10N $l,
 	) {
 		parent::__construct($appName, $request);
-
-		$this->userId = $UserId;
-		$this->userManager = $userManager;
-		$this->appManager = $appManager;
-		$this->chatManager = $chatManager;
-		$this->reactionManager = $reactionManager;
-		$this->participantService = $participantService;
-		$this->sessionService = $sessionService;
-		$this->attachmentService = $attachmentService;
-		$this->avatarService = $avatarService;
-		$this->guestManager = $guestManager;
-		$this->messageParser = $messageParser;
-		$this->shareProvider = $shareProvider;
-		$this->autoCompleteManager = $autoCompleteManager;
-		$this->statusManager = $statusManager;
-		$this->matterbridgeManager = $matterbridgeManager;
-		$this->searchPlugin = $searchPlugin;
-		$this->searchResult = $searchResult;
-		$this->timeFactory = $timeFactory;
-		$this->eventDispatcher = $eventDispatcher;
-		$this->richObjectValidator = $richObjectValidator;
-		$this->trustedDomainHelper = $trustedDomainHelper;
-		$this->l = $l;
 	}
 
 	protected function getActorInfo(string $actorDisplayName = ''): array {

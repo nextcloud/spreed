@@ -33,16 +33,13 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
 class GuestController extends AEnvironmentAwareController {
-	private GuestManager $guestManager;
 
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		GuestManager $guestManager,
+		private GuestManager $guestManager,
 	) {
 		parent::__construct($appName, $request);
-
-		$this->guestManager = $guestManager;
 	}
 
 	#[PublicPage]

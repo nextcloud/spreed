@@ -50,36 +50,18 @@ use OCP\IUserSession;
 use OCP\Util;
 
 class TalkWidget implements IAPIWidget, IIconWidget, IButtonWidget, IOptionWidget, IConditionalWidget {
-	protected IUserSession $userSession;
-	protected Config $talkConfig;
-	protected IURLGenerator $url;
-	protected IL10N $l10n;
-	protected Manager $manager;
-	protected AvatarService $avatarService;
-	protected ParticipantService $participantService;
-	protected MessageParser $messageParser;
-	protected ITimeFactory $timeFactory;
 
 	public function __construct(
-		IUserSession $userSession,
-		Config $talkConfig,
-		IURLGenerator $url,
-		IL10N $l10n,
-		Manager $manager,
-		AvatarService $avatarService,
-		ParticipantService $participantService,
-		MessageParser $messageParser,
-		ITimeFactory $timeFactory,
+		protected IUserSession $userSession,
+		protected Config $talkConfig,
+		protected IURLGenerator $url,
+		protected IL10N $l10n,
+		protected Manager $manager,
+		protected AvatarService $avatarService,
+		protected ParticipantService $participantService,
+		protected MessageParser $messageParser,
+		protected ITimeFactory $timeFactory,
 	) {
-		$this->userSession = $userSession;
-		$this->talkConfig = $talkConfig;
-		$this->url = $url;
-		$this->l10n = $l10n;
-		$this->manager = $manager;
-		$this->avatarService = $avatarService;
-		$this->participantService = $participantService;
-		$this->messageParser = $messageParser;
-		$this->timeFactory = $timeFactory;
 	}
 
 	/**
