@@ -57,27 +57,15 @@ use OCP\IRequest;
 use OCP\Security\Bruteforce\IThrottler;
 
 class InjectionMiddleware extends Middleware {
-	protected IRequest $request;
-	protected ParticipantService $participantService;
-	protected TalkSession $talkSession;
-	protected Manager $manager;
-	protected IThrottler $throttler;
-	protected ?string $userId;
 
 	public function __construct(
-		IRequest $request,
-		ParticipantService $participantService,
-		TalkSession $talkSession,
-		Manager $manager,
-		IThrottler $throttler,
-		?string $userId,
+		protected IRequest $request,
+		protected ParticipantService $participantService,
+		protected TalkSession $talkSession,
+		protected Manager $manager,
+		protected IThrottler $throttler,
+		protected ?string $userId,
 	) {
-		$this->request = $request;
-		$this->participantService = $participantService;
-		$this->talkSession = $talkSession;
-		$this->manager = $manager;
-		$this->throttler = $throttler;
-		$this->userId = $userId;
 	}
 
 	/**

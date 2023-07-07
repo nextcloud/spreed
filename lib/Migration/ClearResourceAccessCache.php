@@ -34,18 +34,11 @@ use OCP\Migration\IRepairStep;
 class ClearResourceAccessCache implements IRepairStep {
 	protected const INVALIDATIONS = 1;
 
-	protected IConfig $config;
-	protected IManager $manager;
-	protected ConversationProvider $provider;
-
 	public function __construct(
-		IConfig $config,
-		IManager $manager,
-		ConversationProvider $provider,
+		protected IConfig $config,
+		protected IManager $manager,
+		protected ConversationProvider $provider,
 	) {
-		$this->config = $config;
-		$this->manager = $manager;
-		$this->provider = $provider;
 	}
 
 	public function getName(): string {

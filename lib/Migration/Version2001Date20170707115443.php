@@ -36,16 +36,11 @@ use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 class Version2001Date20170707115443 extends SimpleMigrationStep {
-	protected IDBConnection $db;
-
-	protected IConfig $config;
 
 	public function __construct(
-		IDBConnection $db,
-		IConfig $config,
+		protected IDBConnection $db,
+		protected IConfig $config,
 	) {
-		$this->db = $db;
-		$this->config = $config;
 	}
 
 	/**
