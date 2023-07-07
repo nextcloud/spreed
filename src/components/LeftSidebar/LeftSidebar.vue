@@ -35,8 +35,8 @@
 				@keydown.enter.native="handleEnter"
 				@abort-search="abortSearch" />
 
-			<!-- Options -->
-			<div class="options"
+			<!-- Filters -->
+			<div class="filters"
 				:class="{'hidden-visually': isFocused}">
 				<NcActions class="filter-actions"
 					:primary="isFiltered !== null">
@@ -75,10 +75,36 @@
 				</NcActions>
 			</div>
 
-			<!-- New Conversation -->
-			<NewGroupConversation v-if="canStartConversations"
-				ref="newGroupConversation"
-				class="new-conversation__button" />
+			<!-- Actions -->
+			<div class="actions">
+				<NcActions class="conversations-actions">
+					<template #icon>
+						<DotsVertical :size="20" />
+					</template>
+					<NcActionButton close-after-click
+						@click="showModalListConversations">
+						<template #icon>
+							<List :size="20" />
+						</template>
+						{{ t('spreed','Join open conversations') }}
+					</NcActionButton>
+
+					<NcActionButton v-if="canStartConversations"
+						close-after-click
+						@click="showModalNewConversation">
+						<template #icon>
+							<Plus :size="20" />
+						</template>
+						{{ t('spreed','Create a new conversation') }}
+					</NcActionButton>
+				</NcActions>
+			</div>
+
+			<!-- All open conversations list -->
+			<OpenConversationsList ref="openConversationsList" />
+
+			<!-- New Conversation dialog-->
+			<NewGroupConversation ref="newGroupConversation" />
 		</div>
 
 		<template #list>
@@ -96,7 +122,7 @@
 						<LoadingPlaceholder type="conversations" />
 					</template>
 					<Hint v-else-if="noMatchFound"
-						:hint="t('spreed', 'No matches')" />
+						:hint="t('spreed', 'No matches found')" />
 					<template v-if="isSearching">
 						<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
 							<NcAppNavigationCaption :title="t('spreed', 'Open conversations')" />
@@ -182,9 +208,12 @@
 import debounce from 'debounce'
 
 import AtIcon from 'vue-material-design-icons/At.vue'
+import DotsVertical from 'vue-material-design-icons/DotsVertical.vue'
 import FilterIcon from 'vue-material-design-icons/Filter.vue'
 import FilterRemoveIcon from 'vue-material-design-icons/FilterRemove.vue'
+import List from 'vue-material-design-icons/FormatListBulleted.vue'
 import MessageBadge from 'vue-material-design-icons/MessageBadge.vue'
+import Plus from 'vue-material-design-icons/Plus.vue'
 
 import { showError } from '@nextcloud/dialogs'
 import { emit } from '@nextcloud/event-bus'
@@ -203,6 +232,7 @@ import Hint from '../Hint.vue'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 import Conversation from './ConversationsList/Conversation.vue'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation.vue'
+import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
 import SearchBox from './SearchBox/SearchBox.vue'
 
 import { CONVERSATION } from '../../constants.js'
@@ -225,6 +255,7 @@ export default {
 		Hint,
 		SearchBox,
 		NewGroupConversation,
+		OpenConversationsList,
 		Conversation,
 		LoadingPlaceholder,
 		NcListItem,
@@ -235,6 +266,9 @@ export default {
 		MessageBadge,
 		FilterIcon,
 		FilterRemoveIcon,
+		Plus,
+		List,
+		DotsVertical,
 	},
 
 	mixins: [
@@ -383,6 +417,15 @@ export default {
 		getFocusableList() {
 			return this.$el.querySelectorAll('li.acli_wrapper .acli')
 		},
+
+		showModalNewConversation() {
+			this.$refs.newGroupConversation.showModal()
+		},
+
+		showModalListConversations() {
+			this.$refs.openConversationsList.showModal()
+		},
+
 		setIsFocused(event) {
 			if (event.relatedTarget?.className.includes('input-field__clear-button') || this.searchText !== '') {
 				return
@@ -757,19 +800,19 @@ export default {
 
 }
 
-.options{
+.filters {
 	position: absolute;
 	right : 52px; // New conversation button's width
 	display: flex;
 	height: var(--default-clickable-area);
 }
 
-.new-conversation__button{
+.actions {
 	position: absolute;
-	right: 1px;
+	right: 5px;
 }
 
-.filter-actions__button--active{
+.filter-actions__button--active {
 	background-color: var(--color-primary-element-light);
 	border-radius: 6px;
 	:deep(.action-button__longtext){
