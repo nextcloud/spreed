@@ -27,17 +27,15 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 
 class SignalingEvent extends ParticipantEvent {
-	protected string $action;
 	/** @var mixed */
 	protected $session;
 
 	public function __construct(
 		Room $room,
 		Participant $participant,
-		string $action,
+		protected string $action,
 	) {
 		parent::__construct($room, $participant);
-		$this->action = $action;
 		$this->session = '';
 	}
 
