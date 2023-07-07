@@ -47,33 +47,17 @@ use OCP\IURLGenerator;
  * @psalm-type ReferenceMatch = array{token: string, message: int|null}
  */
 class TalkReferenceProvider extends ADiscoverableReferenceProvider implements ISearchableReferenceProvider {
-	protected IURLGenerator $urlGenerator;
-	protected Manager $roomManager;
-	protected ParticipantService $participantService;
-	protected ChatManager $chatManager;
-	protected AvatarService $avatarService;
-	protected MessageParser $messageParser;
-	protected IL10N $l;
-	protected ?string $userId;
 
 	public function __construct(
-		IURLGenerator $urlGenerator,
-		Manager $manager,
-		ParticipantService $participantService,
-		ChatManager $chatManager,
-		AvatarService $avatarService,
-		MessageParser $messageParser,
-		IL10N $l,
-		?string $userId,
+		protected IURLGenerator $urlGenerator,
+		protected Manager $roomManager,
+		protected ParticipantService $participantService,
+		protected ChatManager $chatManager,
+		protected AvatarService $avatarService,
+		protected MessageParser $messageParser,
+		protected IL10N $l,
+		protected ?string $userId,
 	) {
-		$this->urlGenerator = $urlGenerator;
-		$this->roomManager = $manager;
-		$this->participantService = $participantService;
-		$this->chatManager = $chatManager;
-		$this->avatarService = $avatarService;
-		$this->messageParser = $messageParser;
-		$this->l = $l;
-		$this->userId = $userId;
 	}
 
 

@@ -41,31 +41,19 @@ use OCP\IUserManager;
 use OCP\Server;
 
 class Listener {
-	protected Manager $manager;
-	protected IUserManager $userManager;
-	protected ParticipantService $participantService;
-	protected Config $config;
-	protected TalkSession $talkSession;
 	/** @var string[] */
 	protected array $allowedGroupIds = [];
 	protected string $roomToken;
 	protected ?Room $room = null;
-	protected ?string $userId;
 
 	public function __construct(
-		Manager $manager,
-		IUserManager $userManager,
-		ParticipantService $participantService,
-		Config $config,
-		TalkSession $talkSession,
-		?string $userId,
+		protected Manager $manager,
+		protected IUserManager $userManager,
+		protected ParticipantService $participantService,
+		protected Config $config,
+		protected TalkSession $talkSession,
+		protected ?string $userId,
 	) {
-		$this->manager = $manager;
-		$this->userManager = $userManager;
-		$this->participantService = $participantService;
-		$this->talkSession = $talkSession;
-		$this->config = $config;
-		$this->userId = $userId;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {

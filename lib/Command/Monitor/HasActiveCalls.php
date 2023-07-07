@@ -30,12 +30,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class HasActiveCalls extends Base {
-	protected IDBConnection $connection;
 
-	public function __construct(IDBConnection $connection) {
+	public function __construct(
+		protected IDBConnection $connection,
+	) {
 		parent::__construct();
-
-		$this->connection = $connection;
 	}
 
 	protected function configure(): void {

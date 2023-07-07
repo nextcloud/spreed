@@ -33,12 +33,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateDocs extends Base {
-	private IConfig $config;
 	private IAppManager $appManager;
 
-	public function __construct(IConfig $config) {
-		$this->config = $config;
-
+	public function __construct(
+		private IConfig $config,
+	) {
 		parent::__construct();
 	}
 

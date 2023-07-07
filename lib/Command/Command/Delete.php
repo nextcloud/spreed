@@ -31,11 +31,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Delete extends Base {
-	private CommandService $service;
 
-	public function __construct(CommandService $service) {
+	public function __construct(
+		private CommandService $service,
+	) {
 		parent::__construct();
-		$this->service = $service;
 	}
 
 	protected function configure():void {

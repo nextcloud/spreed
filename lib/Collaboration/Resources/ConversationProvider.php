@@ -38,24 +38,14 @@ use OCP\IUser;
 use OCP\IUserSession;
 
 class ConversationProvider implements IProvider {
-	protected Manager $manager;
-	protected ParticipantService $participantService;
-	protected AvatarService $avatarService;
-	protected IUserSession $userSession;
-	protected IURLGenerator $urlGenerator;
 
 	public function __construct(
-		Manager $manager,
-		AvatarService $avatarService,
-		ParticipantService $participantService,
-		IUserSession $userSession,
-		IURLGenerator $urlGenerator,
+		protected Manager $manager,
+		protected AvatarService $avatarService,
+		protected ParticipantService $participantService,
+		protected IUserSession $userSession,
+		protected IURLGenerator $urlGenerator,
 	) {
-		$this->manager = $manager;
-		$this->avatarService = $avatarService;
-		$this->participantService = $participantService;
-		$this->userSession = $userSession;
-		$this->urlGenerator = $urlGenerator;
 	}
 
 	public function getResourceRichObject(IResource $resource): array {

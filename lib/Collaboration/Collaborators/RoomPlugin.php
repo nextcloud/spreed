@@ -36,18 +36,12 @@ use OCP\IUserSession;
 use OCP\Share\IShare;
 
 class RoomPlugin implements ISearchPlugin {
-	protected Manager $manager;
-	protected ParticipantService $participantService;
-	protected IUserSession $userSession;
 
 	public function __construct(
-		Manager $manager,
-		ParticipantService $participantService,
-		IUserSession $userSession,
+		protected Manager $manager,
+		protected ParticipantService $participantService,
+		protected IUserSession $userSession,
 	) {
-		$this->manager = $manager;
-		$this->participantService = $participantService;
-		$this->userSession = $userSession;
 	}
 
 	/**

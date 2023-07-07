@@ -32,11 +32,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Add extends Base {
-	private IConfig $config;
 
-	public function __construct(IConfig $config) {
+	public function __construct(
+		private IConfig $config,
+	) {
 		parent::__construct();
-		$this->config = $config;
 	}
 
 	protected function configure(): void {
