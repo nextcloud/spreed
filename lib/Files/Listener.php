@@ -53,21 +53,13 @@ use OCP\Server;
  * events.
  */
 class Listener {
-	protected Util $util;
-	protected ParticipantService $participantService;
-	protected IUserManager $userManager;
-	protected TalkSession $talkSession;
 
 	public function __construct(
-		Util $util,
-		ParticipantService $participantService,
-		IUserManager $userManager,
-		TalkSession $talkSession,
+		protected Util $util,
+		protected ParticipantService $participantService,
+		protected IUserManager $userManager,
+		protected TalkSession $talkSession,
 	) {
-		$this->util = $util;
-		$this->participantService = $participantService;
-		$this->userManager = $userManager;
-		$this->talkSession = $talkSession;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {

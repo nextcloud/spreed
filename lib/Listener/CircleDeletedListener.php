@@ -35,15 +35,11 @@ use OCP\EventDispatcher\IEventListener;
  * @template-implements IEventListener<Event>
  */
 class CircleDeletedListener implements IEventListener {
-	private Manager $manager;
-	private ParticipantService $participantService;
 
 	public function __construct(
-		Manager $manager,
-		ParticipantService $participantService,
+		private Manager $manager,
+		private ParticipantService $participantService,
 	) {
-		$this->manager = $manager;
-		$this->participantService = $participantService;
 	}
 
 	public function handle(Event $event): void {

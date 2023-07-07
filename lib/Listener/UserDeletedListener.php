@@ -34,15 +34,11 @@ use OCP\User\Events\UserDeletedEvent;
  * @template-implements IEventListener<Event>
  */
 class UserDeletedListener implements IEventListener {
-	private Manager $manager;
-	private PollService $pollService;
 
 	public function __construct(
-		Manager $manager,
-		PollService $pollService,
+		private Manager $manager,
+		private PollService $pollService,
 	) {
-		$this->manager = $manager;
-		$this->pollService = $pollService;
 	}
 
 	public function handle(Event $event): void {

@@ -35,25 +35,17 @@ use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 
 class Util {
-	private IRootFolder $rootFolder;
-	private ISession $session;
-	private IShareManager $shareManager;
-	private IUserMountCache $userMountCache;
 	/** @var array[] */
 	private array $accessLists = [];
 	/** @var bool[] */
 	private array $publicAccessLists = [];
 
 	public function __construct(
-		IRootFolder $rootFolder,
-		ISession $session,
-		IShareManager $shareManager,
-		IUserMountCache $userMountCache,
+		private IRootFolder $rootFolder,
+		private ISession $session,
+		private IShareManager $shareManager,
+		private IUserMountCache $userMountCache,
 	) {
-		$this->rootFolder = $rootFolder;
-		$this->session = $session;
-		$this->shareManager = $shareManager;
-		$this->userMountCache = $userMountCache;
 	}
 
 	public function getUsersWithAccessFile(string $fileId): array {

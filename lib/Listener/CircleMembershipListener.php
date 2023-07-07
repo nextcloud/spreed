@@ -43,16 +43,14 @@ use OCP\IUserManager;
  * @template-implements IEventListener<Event>
  */
 class CircleMembershipListener extends AMembershipListener {
-	private ISession $session;
-	private IUserManager $userManager;
 
 	public function __construct(
 		Manager $manager,
 		IAppManager $appManager,
 		IGroupManager $groupManager,
 		ParticipantService $participantService,
-		IUserManager $userManager,
-		ISession $session,
+		private IUserManager $userManager,
+		private ISession $session,
 	) {
 		parent::__construct(
 			$manager,
@@ -60,8 +58,6 @@ class CircleMembershipListener extends AMembershipListener {
 			$groupManager,
 			$participantService
 		);
-		$this->userManager = $userManager;
-		$this->session = $session;
 	}
 
 	public function handle(Event $event): void {
