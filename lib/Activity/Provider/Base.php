@@ -37,30 +37,16 @@ use OCP\IUserManager;
 use OCP\L10N\IFactory;
 
 abstract class Base implements IProvider {
-	protected IFactory $languageFactory;
-	protected IURLGenerator $url;
-	protected Config $config;
-	protected IManager $activityManager;
-	protected AvatarService $avatarService;
-	protected IUserManager $userManager;
-	protected Manager $manager;
 
 	public function __construct(
-		IFactory $languageFactory,
-		IURLGenerator $url,
-		Config $config,
-		IManager $activityManager,
-		IUserManager $userManager,
-		AvatarService $avatarService,
-		Manager $manager,
+		protected IFactory $languageFactory,
+		protected IURLGenerator $url,
+		protected Config $config,
+		protected IManager $activityManager,
+		protected IUserManager $userManager,
+		protected AvatarService $avatarService,
+		protected Manager $manager,
 	) {
-		$this->languageFactory = $languageFactory;
-		$this->url = $url;
-		$this->config = $config;
-		$this->activityManager = $activityManager;
-		$this->userManager = $userManager;
-		$this->avatarService = $avatarService;
-		$this->manager = $manager;
 	}
 
 	/**

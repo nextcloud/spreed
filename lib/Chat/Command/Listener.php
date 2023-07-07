@@ -32,15 +32,11 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Server;
 
 class Listener {
-	protected CommandService $commandService;
-	protected Executor $executor;
 
 	public function __construct(
-		CommandService $commandService,
-		Executor $executor,
+		protected CommandService $commandService,
+		protected Executor $executor,
 	) {
-		$this->commandService = $commandService;
-		$this->executor = $executor;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {

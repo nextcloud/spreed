@@ -39,21 +39,15 @@ use OCP\Notification\IManager;
 use Psr\Log\LoggerInterface;
 
 class CheckHostedSignalingServer extends TimedJob {
-	private HostedSignalingServerService $hostedSignalingServerService;
-	private IConfig $config;
-	private IManager $notificationManager;
-	private IGroupManager $groupManager;
-	private IURLGenerator $urlGenerator;
-	private LoggerInterface $logger;
 
 	public function __construct(
 		ITimeFactory $timeFactory,
-		HostedSignalingServerService $hostedSignalingServerService,
-		IConfig $config,
-		IManager $notificationManager,
-		IGroupManager $groupManager,
-		IURLGenerator $urlGenerator,
-		LoggerInterface $logger,
+		private HostedSignalingServerService $hostedSignalingServerService,
+		private IConfig $config,
+		private IManager $notificationManager,
+		private IGroupManager $groupManager,
+		private IURLGenerator $urlGenerator,
+		private LoggerInterface $logger,
 	) {
 		parent::__construct($timeFactory);
 
@@ -61,12 +55,6 @@ class CheckHostedSignalingServer extends TimedJob {
 		$this->setInterval(3600);
 		$this->setTimeSensitivity(IJob::TIME_SENSITIVE);
 
-		$this->hostedSignalingServerService = $hostedSignalingServerService;
-		$this->config = $config;
-		$this->notificationManager = $notificationManager;
-		$this->groupManager = $groupManager;
-		$this->urlGenerator = $urlGenerator;
-		$this->logger = $logger;
 	}
 
 	protected function run($argument): void {

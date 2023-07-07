@@ -41,35 +41,16 @@ use OCP\IUserManager;
  * Helper class to get a rich message from a plain text message.
  */
 class UserMention {
-	/**
-	 * Do NOT inject OCA\Talk\Chat\CommentsManager here
-	 * otherwise the display name resolvers are lost
-	 * and mentions are not replaced anymore.
-	 */
-	protected ICommentsManager $commentsManager;
-	protected IUserManager $userManager;
-	protected IGroupManager $groupManager;
-	protected GuestManager $guestManager;
-	protected ParticipantService $participantService;
-	protected AvatarService $avatarService;
-	protected IL10N $l;
 
 	public function __construct(
-		ICommentsManager $commentsManager,
-		IUserManager $userManager,
-		IGroupManager $groupManager,
-		GuestManager $guestManager,
-		AvatarService $avatarService,
-		ParticipantService $participantService,
-		IL10N $l,
+		protected ICommentsManager $commentsManager,
+		protected IUserManager $userManager,
+		protected IGroupManager $groupManager,
+		protected GuestManager $guestManager,
+		protected AvatarService $avatarService,
+		protected ParticipantService $participantService,
+		protected IL10N $l,
 	) {
-		$this->commentsManager = $commentsManager;
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->guestManager = $guestManager;
-		$this->participantService = $participantService;
-		$this->avatarService = $avatarService;
-		$this->l = $l;
 	}
 
 	/**

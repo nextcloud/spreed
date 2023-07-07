@@ -44,28 +44,13 @@ class Executor {
 	public const PLACEHOLDER_ARGUMENTS = '{ARGUMENTS}';
 	public const PLACEHOLDER_ARGUMENTS_DOUBLEQUOTE_ESCAPED = '{ARGUMENTS_DOUBLEQUOTE_ESCAPED}';
 
-	protected IEventDispatcher $dispatcher;
-
-	protected ShellExecutor $shellExecutor;
-
-	protected CommandService $commandService;
-
-	protected LoggerInterface $logger;
-
-	protected IL10N $l;
-
 	public function __construct(
-		IEventDispatcher $dispatcher,
-		ShellExecutor $shellExecutor,
-		CommandService $commandService,
-		LoggerInterface $logger,
-		IL10N $l,
+		protected IEventDispatcher $dispatcher,
+		protected ShellExecutor $shellExecutor,
+		protected CommandService $commandService,
+		protected LoggerInterface $logger,
+		protected IL10N $l,
 	) {
-		$this->dispatcher = $dispatcher;
-		$this->shellExecutor = $shellExecutor;
-		$this->commandService = $commandService;
-		$this->logger = $logger;
-		$this->l = $l;
 	}
 
 	public function isCommandAvailableForParticipant(Command $command, Participant $participant): bool {

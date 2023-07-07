@@ -31,14 +31,12 @@ use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
 
 class ExpireChatMessages extends TimedJob {
-	private ChatManager $chatManager;
 
 	public function __construct(
 		ITimeFactory $timeFactory,
-		ChatManager $chatManager,
+		private ChatManager $chatManager,
 	) {
 		parent::__construct($timeFactory);
-		$this->chatManager = $chatManager;
 
 		// Every 5 minutes
 		$this->setInterval(5 * 60);

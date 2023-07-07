@@ -44,38 +44,17 @@ use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 class Listener {
-	protected IManager $activityManager;
-
-	protected IUserSession $userSession;
-
-	protected ChatManager $chatManager;
-
-	protected ParticipantService $participantService;
-	protected RoomService $roomService;
-	protected RecordingService $recordingService;
-
-	protected LoggerInterface $logger;
-
-	protected ITimeFactory $timeFactory;
 
 	public function __construct(
-		IManager $activityManager,
-		IUserSession $userSession,
-		ChatManager $chatManager,
-		ParticipantService $participantService,
-		RoomService $roomService,
-		RecordingService $recordingService,
-		LoggerInterface $logger,
-		ITimeFactory $timeFactory,
+		protected IManager $activityManager,
+		protected IUserSession $userSession,
+		protected ChatManager $chatManager,
+		protected ParticipantService $participantService,
+		protected RoomService $roomService,
+		protected RecordingService $recordingService,
+		protected LoggerInterface $logger,
+		protected ITimeFactory $timeFactory,
 	) {
-		$this->activityManager = $activityManager;
-		$this->userSession = $userSession;
-		$this->chatManager = $chatManager;
-		$this->participantService = $participantService;
-		$this->roomService = $roomService;
-		$this->recordingService = $recordingService;
-		$this->logger = $logger;
-		$this->timeFactory = $timeFactory;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
