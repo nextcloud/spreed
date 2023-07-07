@@ -652,6 +652,7 @@
     "Edit conversation description" : "تحرير وصف المحادثة",
     "Enter a description for this conversation" : "ادخل وصفًا لهذه المحادثة ",
     "Error while updating conversation description" : "حدث خطأ أثناء تحديث وصف المحادثة",
+    "The file must be a PNG or JPG" : "يحب أن يكون الملف PNG أو JPG",
     "Restricted" : "مقيدة",
     "Conversation settings" : "اعدادات المحادثة",
     "Personal" : "شخصي",
