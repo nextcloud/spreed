@@ -1129,7 +1129,7 @@
     "Change your vote" : "Ihre Stimmabgabe ändern",
     "Open poll • You voted already" : "Offene Umfrage • Sie haben bereits abgestimmt",
     "Open poll" : "Offene Umfrage",
-    "Open poll • Click to vote" : "Offene Umfrage ・ Zur Abstimmung klicken",
+    "Open poll • Click to vote" : "Offene Umfrage • Zur Abstimmung klicken",
     "Poll • Ended" : "Umfrage・Beendet",
     "_Poll results • %n vote_::_Poll results • %n votes_" : ["Umfrageergebnisse • %n Stimme","Umfrageergebnisse • %n Stimmen"],
     "_Open poll • %n vote_::_Open poll • %n votes_" : ["Offene Umfrage • %n Stimme","Offene Umfrage • %n Stimmen"],
