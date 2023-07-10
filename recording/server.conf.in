@@ -109,3 +109,11 @@
 
 # The extension of the file for audio and video recordings.
 #extensionvideo = .webm
+
+[recording]
+# Browser to use for recordings. Please note that the "chrome" value does not
+# refer to the web browser, but to the Selenium WebDriver. In practice, "chrome"
+# will use Google Chrome, or Chromium if Google Chrome is not installed.
+# Allowed values: firefox, chrome
+# Defaults to firefox
+# browser = firefox
