@@ -1,9 +1,13 @@
+import axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 import { generateOcsUrl } from '@nextcloud/router'
 
-import mockAxios from '../__mocks__/axios.js'
 import { SHARE } from '../constants.js'
 import { searchPossibleConversations } from './conversationsService.js'
+
+jest.mock('@nextcloud/axios', () => ({
+	get: jest.fn(),
+}))
 
 jest.mock('@nextcloud/initial-state', () => ({
 	loadState: jest.fn(),
@@ -27,7 +31,7 @@ describe('conversationsService', () => {
 
 	afterEach(() => {
 		// cleaning up the mess left behind the previous test
-		mockAxios.reset()
+		jest.clearAllMocks()
 	})
 
 	/**
@@ -46,7 +50,7 @@ describe('conversationsService', () => {
 				dummyOption: true,
 			}
 		)
-		expect(mockAxios.get).toHaveBeenCalledWith(
+		expect(axios.get).toHaveBeenCalledWith(
 			generateOcsUrl('core/autocomplete/get'),
 			{
 				dummyOption: true,
