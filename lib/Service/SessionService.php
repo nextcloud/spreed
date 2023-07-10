@@ -33,18 +33,12 @@ use OCP\IDBConnection;
 use OCP\Security\ISecureRandom;
 
 class SessionService {
-	protected SessionMapper $sessionMapper;
-	protected IDBConnection $connection;
-	protected ISecureRandom $secureRandom;
 
 	public function __construct(
-		SessionMapper $sessionMapper,
-		IDBConnection $connection,
-		ISecureRandom $secureRandom,
+		protected SessionMapper $sessionMapper,
+		protected IDBConnection $connection,
+		protected ISecureRandom $secureRandom,
 	) {
-		$this->sessionMapper = $sessionMapper;
-		$this->connection = $connection;
-		$this->secureRandom = $secureRandom;
 	}
 
 	/**

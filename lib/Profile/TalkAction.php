@@ -37,25 +37,12 @@ use OCP\Profile\ILinkAction;
 class TalkAction implements ILinkAction {
 	private ?IUser $targetUser = null;
 
-	private Config $config;
-
-	private IL10N $l;
-
-	/** @var IUrlGenerator */
-	private $urlGenerator;
-
-	private IUserSession $userSession;
-
 	public function __construct(
-		Config $config,
-		IL10N $l,
-		IURLGenerator $urlGenerator,
-		IUserSession $userSession,
+		private Config $config,
+		private IL10N $l,
+		private IURLGenerator $urlGenerator,
+		private IUserSession $userSession,
 	) {
-		$this->config = $config;
-		$this->l = $l;
-		$this->urlGenerator = $urlGenerator;
-		$this->userSession = $userSession;
 	}
 
 	public function preload(IUser $targetUser): void {

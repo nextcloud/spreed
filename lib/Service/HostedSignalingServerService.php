@@ -38,26 +38,16 @@ use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
 class HostedSignalingServerService {
-	private IConfig $config;
 	/** @var mixed */
 	private $apiServerUrl;
-	private IClientService $clientService;
-	private LoggerInterface $logger;
-	private IL10N $l10n;
-	private ISecureRandom $secureRandom;
 
 	public function __construct(
-		IConfig $config,
-		IClientService $clientService,
-		LoggerInterface $logger,
-		IL10N $l10n,
-		ISecureRandom $secureRandom,
+		private IConfig $config,
+		private IClientService $clientService,
+		private LoggerInterface $logger,
+		private IL10N $l10n,
+		private ISecureRandom $secureRandom,
 	) {
-		$this->config = $config;
-		$this->clientService = $clientService;
-		$this->logger = $logger;
-		$this->l10n = $l10n;
-		$this->secureRandom = $secureRandom;
 
 		$this->apiServerUrl = $this->config->getSystemValue('talk_hardcoded_hpb_service', 'https://api.spreed.cloud');
 	}

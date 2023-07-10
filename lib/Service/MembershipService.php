@@ -36,18 +36,12 @@ use OCP\Server;
 use Psr\Log\LoggerInterface;
 
 class MembershipService {
-	protected IAppManager $appManager;
-	protected IGroupManager $groupManager;
-	protected AttendeeMapper $attendeeMapper;
 
 	public function __construct(
-		IAppManager $appManager,
-		IGroupManager $groupManager,
-		AttendeeMapper $attendeeMapper,
+		protected IAppManager $appManager,
+		protected IGroupManager $groupManager,
+		protected AttendeeMapper $attendeeMapper,
 	) {
-		$this->appManager = $appManager;
-		$this->groupManager = $groupManager;
-		$this->attendeeMapper = $attendeeMapper;
 	}
 
 	/**

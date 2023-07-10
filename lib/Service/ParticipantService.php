@@ -77,54 +77,26 @@ use OCP\Security\ISecureRandom;
 use OCP\Server;
 
 class ParticipantService {
-	protected IConfig $serverConfig;
-	protected Config $talkConfig;
-	protected AttendeeMapper $attendeeMapper;
-	protected SessionMapper $sessionMapper;
-	protected SessionService $sessionService;
-	private ISecureRandom $secureRandom;
-	protected IDBConnection $connection;
-	private IEventDispatcher $dispatcher;
-	private IUserManager $userManager;
-	private IGroupManager $groupManager;
-	private MembershipService $membershipService;
-	private Notifications $notifications;
-	private ITimeFactory $timeFactory;
-	private ICacheFactory $cacheFactory;
 
 	protected array $userCache;
 	protected array $sessionCache;
 
 	public function __construct(
-		IConfig $serverConfig,
-		Config $talkConfig,
-		AttendeeMapper $attendeeMapper,
-		SessionMapper $sessionMapper,
-		SessionService $sessionService,
-		ISecureRandom $secureRandom,
-		IDBConnection $connection,
-		IEventDispatcher $dispatcher,
-		IUserManager $userManager,
-		IGroupManager $groupManager,
-		MembershipService $membershipService,
-		Notifications $notifications,
-		ITimeFactory $timeFactory,
-		ICacheFactory $cacheFactory,
+		protected IConfig $serverConfig,
+		protected Config $talkConfig,
+		protected AttendeeMapper $attendeeMapper,
+		protected SessionMapper $sessionMapper,
+		protected SessionService $sessionService,
+		private ISecureRandom $secureRandom,
+		protected IDBConnection $connection,
+		private IEventDispatcher $dispatcher,
+		private IUserManager $userManager,
+		private IGroupManager $groupManager,
+		private MembershipService $membershipService,
+		private Notifications $notifications,
+		private ITimeFactory $timeFactory,
+		private ICacheFactory $cacheFactory,
 	) {
-		$this->serverConfig = $serverConfig;
-		$this->talkConfig = $talkConfig;
-		$this->attendeeMapper = $attendeeMapper;
-		$this->sessionMapper = $sessionMapper;
-		$this->sessionService = $sessionService;
-		$this->secureRandom = $secureRandom;
-		$this->connection = $connection;
-		$this->dispatcher = $dispatcher;
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->membershipService = $membershipService;
-		$this->timeFactory = $timeFactory;
-		$this->cacheFactory = $cacheFactory;
-		$this->notifications = $notifications;
 	}
 
 	public function updateParticipantType(Room $room, Participant $participant, int $participantType): void {

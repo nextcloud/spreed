@@ -32,10 +32,10 @@ use OCA\Talk\Room;
 use OCP\Comments\IComment;
 
 class AttachmentService {
-	public AttachmentMapper $attachmentMapper;
 
-	public function __construct(AttachmentMapper $attachmentMapper) {
-		$this->attachmentMapper = $attachmentMapper;
+	public function __construct(
+		public AttachmentMapper $attachmentMapper,
+	) {
 	}
 
 	public function createAttachmentEntry(Room $room, IComment $comment, string $messageType, array $parameters): void {

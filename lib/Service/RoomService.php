@@ -50,36 +50,18 @@ use OCP\Security\IHasher;
 use OCP\Share\IManager as IShareManager;
 
 class RoomService {
-	protected Manager $manager;
-	protected ParticipantService $participantService;
-	protected IDBConnection $db;
-	protected ITimeFactory $timeFactory;
-	protected IShareManager $shareManager;
-	protected Config $config;
-	protected IHasher $hasher;
-	protected IEventDispatcher $dispatcher;
-	protected IJobList $jobList;
 
 	public function __construct(
-		Manager $manager,
-		ParticipantService $participantService,
-		IDBConnection $db,
-		ITimeFactory $timeFactory,
-		IShareManager $shareManager,
-		Config $config,
-		IHasher $hasher,
-		IEventDispatcher $dispatcher,
-		IJobList $jobList,
+		protected Manager $manager,
+		protected ParticipantService $participantService,
+		protected IDBConnection $db,
+		protected ITimeFactory $timeFactory,
+		protected IShareManager $shareManager,
+		protected Config $config,
+		protected IHasher $hasher,
+		protected IEventDispatcher $dispatcher,
+		protected IJobList $jobList,
 	) {
-		$this->manager = $manager;
-		$this->participantService = $participantService;
-		$this->db = $db;
-		$this->timeFactory = $timeFactory;
-		$this->shareManager = $shareManager;
-		$this->config = $config;
-		$this->hasher = $hasher;
-		$this->dispatcher = $dispatcher;
-		$this->jobList = $jobList;
 	}
 
 	/**

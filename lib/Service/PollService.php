@@ -37,18 +37,12 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class PollService {
-	protected IDBConnection $connection;
-	protected PollMapper $pollMapper;
-	protected VoteMapper $voteMapper;
 
 	public function __construct(
-		IDBConnection $connection,
-		PollMapper $pollMapper,
-		VoteMapper $voteMapper,
+		protected IDBConnection $connection,
+		protected PollMapper $pollMapper,
+		protected VoteMapper $voteMapper,
 	) {
-		$this->connection = $connection;
-		$this->pollMapper = $pollMapper;
-		$this->voteMapper = $voteMapper;
 	}
 
 	public function createPoll(int $roomId, string $actorType, string $actorId, string $displayName, string $question, array $options, int $resultMode, int $maxVotes): Poll {

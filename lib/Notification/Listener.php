@@ -47,32 +47,18 @@ use Psr\Log\LoggerInterface;
  * @template-implements IEventListener<Event>
  */
 class Listener implements IEventListener {
-	protected IDBConnection $connection;
-	protected IManager $notificationManager;
-	protected ParticipantService $participantsService;
-	protected IEventDispatcher $dispatcher;
-	protected IUserSession $userSession;
-	protected ITimeFactory $timeFactory;
-	protected LoggerInterface $logger;
 
 	protected bool $shouldSendCallNotification = false;
 
 	public function __construct(
-		IDBConnection $connection,
-		IManager $notificationManager,
-		ParticipantService $participantsService,
-		IEventDispatcher $dispatcher,
-		IUserSession $userSession,
-		ITimeFactory $timeFactory,
-		LoggerInterface $logger,
+		protected IDBConnection $connection,
+		protected IManager $notificationManager,
+		protected ParticipantService $participantsService,
+		protected IEventDispatcher $dispatcher,
+		protected IUserSession $userSession,
+		protected ITimeFactory $timeFactory,
+		protected LoggerInterface $logger,
 	) {
-		$this->connection = $connection;
-		$this->notificationManager = $notificationManager;
-		$this->participantsService = $participantsService;
-		$this->dispatcher = $dispatcher;
-		$this->userSession = $userSession;
-		$this->timeFactory = $timeFactory;
-		$this->logger = $logger;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {

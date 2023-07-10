@@ -61,24 +61,6 @@ use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
 
 class Notifier implements INotifier {
-	protected IFactory $lFactory;
-	protected IURLGenerator $url;
-	protected Config $config;
-	protected IUserManager $userManager;
-	protected IGroupManager $groupManager;
-	protected GuestManager $guestManager;
-	private IShareManager $shareManager;
-	protected Manager $manager;
-	protected ParticipantService $participantService;
-	protected AvatarService $avatarService;
-	protected INotificationManager $notificationManager;
-	protected ICommentsManager $commentManager;
-	protected MessageParser $messageParser;
-	protected IURLGenerator $urlGenerator;
-	protected IRootFolder $rootFolder;
-	protected ITimeFactory $timeFactory;
-	protected Definitions $definitions;
-	protected AddressHandler $addressHandler;
 
 	/** @var Room[] */
 	protected array $rooms = [];
@@ -86,43 +68,25 @@ class Notifier implements INotifier {
 	protected array $participants = [];
 
 	public function __construct(
-		IFactory $lFactory,
-		IURLGenerator $url,
-		Config $config,
-		IUserManager $userManager,
-		IGroupManager $groupManager,
-		GuestManager $guestManager,
-		IShareManager $shareManager,
-		Manager $manager,
-		ParticipantService $participantService,
-		AvatarService $avatarService,
-		INotificationManager $notificationManager,
-		CommentsManager $commentManager,
-		MessageParser $messageParser,
-		IURLGenerator $urlGenerator,
-		IRootFolder $rootFolder,
-		ITimeFactory $timeFactory,
-		Definitions $definitions,
-		AddressHandler $addressHandler,
+		protected IFactory $lFactory,
+		protected IURLGenerator $url,
+		protected Config $config,
+		protected IUserManager $userManager,
+		protected IGroupManager $groupManager,
+		protected GuestManager $guestManager,
+		private IShareManager $shareManager,
+		protected Manager $manager,
+		protected ParticipantService $participantService,
+		protected AvatarService $avatarService,
+		protected INotificationManager $notificationManager,
+		protected CommentsManager $commentManager,
+		protected MessageParser $messageParser,
+		protected IURLGenerator $urlGenerator,
+		protected IRootFolder $rootFolder,
+		protected ITimeFactory $timeFactory,
+		protected Definitions $definitions,
+		protected AddressHandler $addressHandler,
 	) {
-		$this->lFactory = $lFactory;
-		$this->url = $url;
-		$this->config = $config;
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
-		$this->guestManager = $guestManager;
-		$this->shareManager = $shareManager;
-		$this->manager = $manager;
-		$this->participantService = $participantService;
-		$this->avatarService = $avatarService;
-		$this->notificationManager = $notificationManager;
-		$this->commentManager = $commentManager;
-		$this->messageParser = $messageParser;
-		$this->urlGenerator = $urlGenerator;
-		$this->rootFolder = $rootFolder;
-		$this->timeFactory = $timeFactory;
-		$this->definitions = $definitions;
-		$this->addressHandler = $addressHandler;
 	}
 
 	/**

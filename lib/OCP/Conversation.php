@@ -31,15 +31,11 @@ use OCP\IURLGenerator;
 use OCP\Talk\IConversation;
 
 class Conversation implements IConversation {
-	protected IURLGenerator $url;
-	protected Room $room;
 
 	public function __construct(
-		IURLGenerator $url,
-		Room $room,
+		protected IURLGenerator $url,
+		protected Room $room,
 	) {
-		$this->url = $url;
-		$this->room = $room;
 	}
 
 	public function getId(): string {
