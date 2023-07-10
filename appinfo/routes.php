@@ -28,6 +28,7 @@ return array_merge_recursive(
 	include(__DIR__ . '/routes/routesAvatarController.php'),
 	include(__DIR__ . '/routes/routesBreakoutRoomController.php'),
 	include(__DIR__ . '/routes/routesCallController.php'),
+	include(__DIR__ . '/routes/routesCertificateController.php'),
 	include(__DIR__ . '/routes/routesChatController.php'),
 	include(__DIR__ . '/routes/routesCommandController.php'),
 	include(__DIR__ . '/routes/routesFederationController.php'),

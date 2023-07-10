@@ -35,6 +35,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Session;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCA\Talk\Service\CertificateService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Signaling\Messages;
@@ -70,6 +71,7 @@ class SignalingController extends OCSController {
 		private \OCA\Talk\Signaling\Manager $signalingManager,
 		private TalkSession $session,
 		private Manager $manager,
+		private CertificateService $certificateService,
 		private ParticipantService $participantService,
 		private SessionService $sessionService,
 		private IDBConnection $dbConnection,
@@ -213,6 +215,7 @@ class SignalingController extends OCSController {
 		}
 
 		$url = rtrim($signalingServers[$serverId]['server'], '/');
+		$url = strtolower($url);
 
 		if (strpos($url, 'wss://') === 0) {
 			$url = 'https://' . substr($url, 6);
@@ -222,10 +225,20 @@ class SignalingController extends OCSController {
 			$url = 'http://' . substr($url, 5);
 		}
 
+		$verifyServer = (bool) $signalingServers[$serverId]['verify'];
+
+		if ($verifyServer && str_contains($url, 'https://')) {
+			$expiration = $this->certificateService->getCertificateExpirationInDays($url);
+
+			if ($expiration < 0) {
+				return new DataResponse(['error' => 'CERTIFICATE_EXPIRED'], Http::STATUS_INTERNAL_SERVER_ERROR);
+			}
+		}
+
 		$client = $this->clientService->newClient();
 		try {
 			$response = $client->get($url . '/api/v1/welcome', [
-				'verify' => (bool) $signalingServers[$serverId]['verify'],
+				'verify' => $verifyServer,
 				'nextcloud' => [
 					'allow_local_address' => true,
 				],

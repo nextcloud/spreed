@@ -107,6 +107,8 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import CategoryMonitoring from '../missingMaterialDesignIcons/CategoryMonitoring.vue'
 
+import { isCertificateValid } from '../../services/certificateService.js'
+
 export default {
 	name: 'TurnServer',
 
@@ -289,7 +291,14 @@ export default {
 
 		iceCallback(pc, candidates, timeout, e) {
 			if (e.candidate) {
-				candidates.push(this.parseCandidate(e.candidate.candidate))
+				const parseCandidate = this.parseCandidate(e.candidate.candidate)
+				candidates.push(parseCandidate)
+
+				// We received a relay candidate, no need to wait any longer
+				if (parseCandidate.type.includes('relay')) {
+					pc.close()
+					this.notifyTurnResult(candidates, timeout)
+				}
 			} else if (!('onicegatheringstatechange' in RTCPeerConnection.prototype)) {
 				pc.close()
 				this.notifyTurnResult(candidates, timeout)
@@ -301,10 +310,21 @@ export default {
 
 			const types = candidates.map((cand) => cand.type)
 
-			this.testing = false
 			if (types.includes('relay')) {
-				this.testingSuccess = true
+				if (!this.schemes.includes('turns')) {
+					// No 'turns' is used and we received relay candidates -> TURN is working
+					this.testing = false
+					this.testingSuccess = true
+				} else {
+					// We received relay candidates, but since 'turns' is used, we check the certificate additionally
+					isCertificateValid(this.server).then((isValid) => {
+						this.testing = false
+						this.testingSuccess = isValid
+						this.testingError = !isValid
+					})
+				}
 			} else {
+				this.testing = false
 				this.testingError = true
 			}
 

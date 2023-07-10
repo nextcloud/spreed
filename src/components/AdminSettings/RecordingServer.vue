@@ -164,12 +164,17 @@ export default {
 				this.versionFound = response.data.ocs.data.version
 			} catch (exception) {
 				this.checked = true
-				if (exception.response.data.ocs.data.error === 'CAN_NOT_CONNECT') {
+				const data = exception.response.data.ocs.data
+				const error = data.error
+
+				if (error === 'CAN_NOT_CONNECT') {
 					this.errorMessage = t('spreed', 'Error: Cannot connect to server')
-				} else if (exception.response.data.ocs.data.error === 'JSON_INVALID') {
+				} else if (error === 'JSON_INVALID') {
 					this.errorMessage = t('spreed', 'Error: Server did not respond with proper JSON')
-				} else if (exception.response.data.ocs.data.error) {
-					this.errorMessage = t('spreed', 'Error: Server responded with: {error}', exception.response.data.ocs.data)
+				} else if (error === 'CERTIFICATE_EXPIRED') {
+					this.errorMessage = t('spreed', 'Error: Certificate expired')
+				} else if (error) {
+					this.errorMessage = t('spreed', 'Error: Server responded with: {error}', data)
 				} else {
 					this.errorMessage = t('spreed', 'Error: Unknown error occurred')
 				}
