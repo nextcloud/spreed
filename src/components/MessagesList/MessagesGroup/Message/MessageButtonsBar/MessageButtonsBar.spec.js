@@ -53,6 +53,7 @@ describe('MessageButtonsBar.vue', () => {
 			isTemporary: false,
 			isFirstMessage: true,
 			isReplyable: true,
+			isTranslationAvailable: false,
 			canReact: true,
 			isReactionsMenuOpen: false,
 			isLastRead: false,
