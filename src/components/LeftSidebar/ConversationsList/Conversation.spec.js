@@ -13,11 +13,16 @@ import Conversation from './Conversation.vue'
 
 import router from '../../../__mocks__/router.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../constants.js'
+import { leaveConversation } from '../../../services/participantsService.js'
 import storeConfig from '../../../store/storeConfig.js'
 
 jest.mock('@nextcloud/dialogs', () => ({
 	showSuccess: jest.fn(),
 	showError: jest.fn(),
+}))
+
+jest.mock('../../../services/participantsService', () => ({
+	leaveConversation: jest.fn(),
 }))
 
 // TODO fix after RouterLinkStub can support slots https://github.com/vuejs/vue-test-utils/issues/1803
@@ -357,11 +362,12 @@ describe('Conversation.vue', () => {
 			test('leaves conversation', async () => {
 				const actionHandler = jest.fn()
 				testStoreConfig.modules.participantsStore.actions.removeCurrentUserFromConversation = actionHandler
-
+				leaveConversation.mockResolvedValue()
 				const action = shallowMountAndGetAction('Leave conversation')
 				expect(action.exists()).toBe(true)
 
 				await action.find('button').trigger('click')
+				await flushPromises()
 
 				expect(actionHandler).toHaveBeenCalledWith(expect.anything(), { token: TOKEN })
 			})

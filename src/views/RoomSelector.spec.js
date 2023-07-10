@@ -1,13 +1,17 @@
 import { shallowMount } from '@vue/test-utils'
 
+import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import RoomSelector from './RoomSelector.vue'
 
-import mockAxios from '../__mocks__/axios.js'
 import { CONVERSATION } from '../constants.js'
+
+jest.mock('@nextcloud/axios', () => ({
+	get: jest.fn(),
+}))
 
 describe('RoomSelector.vue', () => {
 	let conversations
@@ -64,26 +68,25 @@ describe('RoomSelector.vue', () => {
 				},
 			},
 		}
-	})
-	afterEach(() => {
-		mockAxios.reset()
-		jest.clearAllMocks()
-	})
 
-	test('renders sorted conversation list fetched from server', async () => {
-		const wrapper = shallowMount(RoomSelector)
-
-		expect(mockAxios.get).toHaveBeenCalledWith(
-			generateOcsUrl('/apps/spreed/api/v4/room')
-		)
-
-		mockAxios.mockResponse({
+		axios.get.mockResolvedValue({
 			data: {
 				ocs: {
 					data: conversations,
 				},
 			},
 		})
+	})
+	afterEach(() => {
+		jest.clearAllMocks()
+	})
+
+	test('renders sorted conversation list fetched from server', async () => {
+		const wrapper = shallowMount(RoomSelector)
+
+		expect(axios.get).toHaveBeenCalledWith(
+			generateOcsUrl('/apps/spreed/api/v4/room')
+		)
 
 		// need to wait for re-render, otherwise the list is not rendered yet
 		await wrapper.vm.$nextTick()
@@ -101,17 +104,9 @@ describe('RoomSelector.vue', () => {
 			},
 		})
 
-		expect(mockAxios.get).toHaveBeenCalledWith(
+		expect(axios.get).toHaveBeenCalledWith(
 			generateOcsUrl('/apps/spreed/api/v4/room')
 		)
-
-		mockAxios.mockResponse({
-			data: {
-				ocs: {
-					data: conversations,
-				},
-			},
-		})
 
 		// need to wait for re-render, otherwise the list is not rendered yet
 		await wrapper.vm.$nextTick()
@@ -124,17 +119,9 @@ describe('RoomSelector.vue', () => {
 	test('emits select event on select', async () => {
 		const wrapper = shallowMount(RoomSelector)
 
-		expect(mockAxios.get).toHaveBeenCalledWith(
+		expect(axios.get).toHaveBeenCalledWith(
 			generateOcsUrl('/apps/spreed/api/v4/room')
 		)
-
-		mockAxios.mockResponse({
-			data: {
-				ocs: {
-					data: conversations,
-				},
-			},
-		})
 
 		await wrapper.vm.$nextTick()
 
