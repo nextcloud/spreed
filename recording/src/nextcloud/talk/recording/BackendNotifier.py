@@ -68,7 +68,8 @@ def doRequest(backend, request, retries=3):
     try:
         session = Session()
         preparedRequest = session.prepare_request(request)
-        session.send(preparedRequest, verify=not backendSkipVerify)
+        response = session.send(preparedRequest, verify=not backendSkipVerify)
+        response.raise_for_status()
     except Exception as exception:
         if retries > 1:
             logger.exception(f"Failed to send message to backend, {retries} retries left!")
