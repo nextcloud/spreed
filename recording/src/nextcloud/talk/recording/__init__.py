@@ -23,4 +23,4 @@ __version__ = 0.1
 RECORDING_STATUS_AUDIO_AND_VIDEO = 1
 RECORDING_STATUS_AUDIO_ONLY = 2
 
-USER_AGENT = f'Mozilla/5.0 (Recording) Nextcloud-Talk v{__version__}'
+USER_AGENT = f'Nextcloud-Talk-Recording/{__version__}'
