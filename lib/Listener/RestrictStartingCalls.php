@@ -37,16 +37,11 @@ use OCP\Server;
  * @template-implements IEventListener<Event>
  */
 class RestrictStartingCalls {
-	protected IConfig $config;
-
-	protected ParticipantService $participantService;
 
 	public function __construct(
-		IConfig $config,
-		ParticipantService $participantService,
+		protected IConfig $config,
+		protected ParticipantService $participantService,
 	) {
-		$this->config = $config;
-		$this->participantService = $participantService;
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {

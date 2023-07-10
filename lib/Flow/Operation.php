@@ -54,27 +54,14 @@ class Operation implements IOperation {
 		'ROOM_MENTION' => 3,
 	];
 
-	protected IL10N $l;
-	protected IURLGenerator $urlGenerator;
-	protected TalkManager $talkManager;
-	protected ParticipantService $participantService;
-	protected IUserSession $session;
-	protected ChatManager $chatManager;
-
 	public function __construct(
-		IL10N $l,
-		IURLGenerator $urlGenerator,
-		TalkManager $talkManager,
-		ParticipantService $participantService,
-		IUserSession $session,
-		ChatManager $chatManager,
+		protected IL10N $l,
+		protected IURLGenerator $urlGenerator,
+		protected TalkManager $talkManager,
+		protected ParticipantService $participantService,
+		protected IUserSession $session,
+		protected ChatManager $chatManager,
 	) {
-		$this->l = $l;
-		$this->urlGenerator = $urlGenerator;
-		$this->talkManager = $talkManager;
-		$this->participantService = $participantService;
-		$this->session = $session;
-		$this->chatManager = $chatManager;
 	}
 
 	public function getDisplayName(): string {

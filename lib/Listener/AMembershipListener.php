@@ -43,21 +43,13 @@ use Psr\Log\LoggerInterface;
  * @template-implements IEventListener<Event>
  */
 abstract class AMembershipListener implements IEventListener {
-	protected Manager $manager;
-	protected IAppManager $appManager;
-	protected IGroupManager $groupManager;
-	protected ParticipantService $participantService;
 
 	public function __construct(
-		Manager $manager,
-		IAppManager $appManager,
-		IGroupManager $groupManager,
-		ParticipantService $participantService,
+		protected Manager $manager,
+		protected IAppManager $appManager,
+		protected IGroupManager $groupManager,
+		protected ParticipantService $participantService,
 	) {
-		$this->manager = $manager;
-		$this->appManager = $appManager;
-		$this->groupManager = $groupManager;
-		$this->participantService = $participantService;
 	}
 
 	protected function removeFromRoomsUnlessStillLinked(array $rooms, IUser $user): void {

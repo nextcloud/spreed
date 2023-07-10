@@ -38,18 +38,12 @@ use OCP\User\Events\BeforeUserLoggedOutEvent;
  * @template-implements IEventListener<Event>
  */
 class BeforeUserLoggedOutListener implements IEventListener {
-	private Manager $manager;
-	private ParticipantService $participantService;
-	private TalkSession $talkSession;
 
 	public function __construct(
-		Manager $manager,
-		ParticipantService $participantService,
-		TalkSession $talkSession,
+		private Manager $manager,
+		private ParticipantService $participantService,
+		private TalkSession $talkSession,
 	) {
-		$this->manager = $manager;
-		$this->participantService = $participantService;
-		$this->talkSession = $talkSession;
 	}
 
 	public function handle(Event $event): void {

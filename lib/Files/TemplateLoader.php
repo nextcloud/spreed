@@ -49,27 +49,20 @@ use OCP\Util;
 class TemplateLoader implements IEventListener {
 	use TInitialState;
 
-	private IAppManager $appManager;
-	private IRootFolder $rootFolder;
-	private IUserSession $userSession;
-
 	public function __construct(
 		IInitialState $initialState,
 		ICacheFactory $memcacheFactory,
 		Config $talkConfig,
 		IConfig $serverConfig,
-		IAppManager $appManager,
-		IRootFolder $rootFolder,
-		IUserSession $userSession,
+		private IAppManager $appManager,
+		private IRootFolder $rootFolder,
+		private IUserSession $userSession,
 		IGroupManager $groupManager,
 	) {
 		$this->initialState = $initialState;
 		$this->memcacheFactory = $memcacheFactory;
 		$this->talkConfig = $talkConfig;
 		$this->serverConfig = $serverConfig;
-		$this->appManager = $appManager;
-		$this->rootFolder = $rootFolder;
-		$this->userSession = $userSession;
 		$this->groupManager = $groupManager;
 	}
 

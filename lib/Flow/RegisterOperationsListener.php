@@ -32,10 +32,10 @@ use OCP\WorkflowEngine\Events\RegisterOperationsEvent;
  * @template-implements IEventListener<Event>
  */
 class RegisterOperationsListener implements IEventListener {
-	private Operation $operation;
 
-	public function __construct(Operation $operation) {
-		$this->operation = $operation;
+	public function __construct(
+		private Operation $operation,
+	) {
 	}
 
 	public function handle(Event $event): void {

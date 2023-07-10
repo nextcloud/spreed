@@ -36,18 +36,12 @@ use OCP\Util;
  * @template-implements IEventListener<Event>
  */
 class MapsPluginLoader implements IEventListener {
-	protected IRequest $request;
-	protected Config $talkConfig;
-	protected IUserSession $userSession;
 
 	public function __construct(
-		IRequest $request,
-		Config $talkConfig,
-		IUserSession $userSession,
+		protected IRequest $request,
+		protected Config $talkConfig,
+		protected IUserSession $userSession,
 	) {
-		$this->request = $request;
-		$this->talkConfig = $talkConfig;
-		$this->userSession = $userSession;
 	}
 
 	public function handle(Event $event): void {

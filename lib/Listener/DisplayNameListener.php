@@ -35,15 +35,11 @@ use OCP\User\Events\UserChangedEvent;
  * @template-implements IEventListener<Event>
  */
 class DisplayNameListener implements IEventListener {
-	private ParticipantService $participantService;
-	private PollService $pollService;
 
 	public function __construct(
-		ParticipantService $participantService,
-		PollService $pollService,
+		private ParticipantService $participantService,
+		private PollService $pollService,
 	) {
-		$this->participantService = $participantService;
-		$this->pollService = $pollService;
 	}
 
 	public function handle(Event $event): void {
