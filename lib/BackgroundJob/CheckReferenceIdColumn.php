@@ -39,7 +39,7 @@ use OCP\IDBConnection;
  */
 class CheckReferenceIdColumn extends TimedJob {
 	/** @var IDBConnection|ConnectionAdapter */
-	protected IDBConnection|ConnectionAdapter $connection;
+	protected $connection;
 
 	/**
 	 * @param ITimeFactory $timeFactory
