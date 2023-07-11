@@ -65,7 +65,7 @@ class SearchPlugin implements ISearchPlugin {
 	 * @return bool whether the plugin has more results
 	 * @since 13.0.0
 	 */
-	public function search($search, $limit, $offset, ISearchResult $searchResult) {
+	public function search($search, $limit, $offset, ISearchResult $searchResult): bool {
 		if ($this->room->getObjectType() === 'file') {
 			$usersWithFileAccess = $this->util->getUsersWithAccessFile($this->room->getObjectId());
 			if (!empty($usersWithFileAccess)) {

@@ -59,7 +59,7 @@ class Setting extends ActivitySettings {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function getGroupName() {
+	public function getGroupName(): string {
 		return $this->l->t('Other activities');
 	}
 

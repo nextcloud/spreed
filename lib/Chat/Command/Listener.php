@@ -52,7 +52,7 @@ class Listener {
 		 */
 		$listener = Server::get(self::class);
 
-		if (strpos($message->getMessage(), '//') === 0) {
+		if (str_starts_with($message->getMessage(), '//')) {
 			return;
 		}
 
@@ -99,7 +99,7 @@ class Listener {
 	}
 
 	protected function matchesCommand(string $message): array {
-		if (strpos($message, '/') !== 0) {
+		if (!str_starts_with($message, '/')) {
 			return ['', '', ''];
 		}
 

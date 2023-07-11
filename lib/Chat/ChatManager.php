@@ -758,10 +758,10 @@ class ChatManager {
 		if (stripos($roomDisplayName, $search) !== false) {
 			return true;
 		}
-		if (strpos('all', $search) === 0) {
+		if (str_starts_with('all', $search)) {
 			return true;
 		}
-		if (strpos('here', $search) === 0) {
+		if (str_starts_with('here', $search)) {
 			return true;
 		}
 		return false;

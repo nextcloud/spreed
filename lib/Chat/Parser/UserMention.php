@@ -108,9 +108,9 @@ class UserMention {
 			$mentionParameterId = 'mention-' . $mention['type'] . $mentionTypeCount[$mention['type']];
 
 			$message = str_replace('@"' . $search . '"', '{' . $mentionParameterId . '}', $message);
-			if (strpos($search, ' ') === false
-				&& strpos($search, 'guest/') !== 0
-				&& strpos($search, 'group/') !== 0) {
+			if (!str_contains($search, ' ')
+				&& !str_starts_with($search, 'guest/')
+				&& !str_starts_with($search, 'group/')) {
 				$message = str_replace('@' . $search, '{' . $mentionParameterId . '}', $message);
 			}
 
@@ -170,7 +170,7 @@ class UserMention {
 			}
 		}
 
-		if (strpos($message, '//') === 0) {
+		if (str_starts_with($message, '//')) {
 			$message = substr($message, 1);
 		}
 

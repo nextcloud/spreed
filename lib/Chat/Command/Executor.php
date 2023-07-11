@@ -114,7 +114,7 @@ class Executor {
 			if ($command->getApp() !== '') {
 				$response = $this->execHelpSingleCommand($room, $message, $command->getApp() . ' ' . $command->getCommand());
 			} else {
-				if ($command->getCommand() === 'help' || strpos($command->getScript(), 'alias:') !== false ||
+				if ($command->getCommand() === 'help' || str_contains($command->getScript(), 'alias:') ||
 						!$this->isCommandAvailableForParticipant($command, $participant)) {
 					continue;
 				}
@@ -154,7 +154,7 @@ class Executor {
 				$command = $this->commandService->find('', $arguments);
 				$response = $this->execShell($room, $message, $command, '--help');
 
-				if (strpos($response, 'Description:') === 0) {
+				if (str_starts_with($response, 'Description:')) {
 					$hasHelpSection = strpos($response, "\nHelp:\n");
 					if ($hasHelpSection !== false) {
 						// Symfony console command with --help detected

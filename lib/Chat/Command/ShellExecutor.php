@@ -40,7 +40,7 @@ class ShellExecutor {
 	 * @throws \InvalidArgumentException
 	 */
 	public function execShell(string $cmd, string $arguments, string $room = '', string $user = ''): string {
-		if (strpos($cmd, self::PLACEHOLDER_ARGUMENTS_DOUBLEQUOTE_ESCAPED) !== false) {
+		if (str_contains($cmd, self::PLACEHOLDER_ARGUMENTS_DOUBLEQUOTE_ESCAPED)) {
 			throw new \InvalidArgumentException('Talk commands using the {ARGUMENTS_DOUBLEQUOTE_ESCAPED} are not supported anymore.');
 		}
 
