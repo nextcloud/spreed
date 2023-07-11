@@ -192,7 +192,8 @@ export default {
 			}
 		},
 		focusInput() {
-			this.$refs.setContacts.$el.focus()
+			// TODO : revert this to call this.$refs.setContacts.$el.focus() after the release
+			this.$refs.setContacts.$refs.inputField.$refs.input.focus()
 		},
 	},
 }
