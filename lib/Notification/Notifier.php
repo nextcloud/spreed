@@ -40,6 +40,7 @@ use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\Files\IRootFolder;
 use OCP\HintException;
@@ -65,6 +66,7 @@ class Notifier implements INotifier {
 	protected array $rooms = [];
 	/** @var Participant[][] */
 	protected array $participants = [];
+	protected ICommentsManager $commentManager;
 
 	public function __construct(
 		protected IFactory $lFactory,
@@ -78,7 +80,7 @@ class Notifier implements INotifier {
 		protected ParticipantService $participantService,
 		protected AvatarService $avatarService,
 		protected INotificationManager $notificationManager,
-		protected CommentsManager $commentManager,
+		CommentsManager $commentManager,
 		protected MessageParser $messageParser,
 		protected IURLGenerator $urlGenerator,
 		protected IRootFolder $rootFolder,
@@ -86,6 +88,7 @@ class Notifier implements INotifier {
 		protected Definitions $definitions,
 		protected AddressHandler $addressHandler,
 	) {
+		$this->commentManager = $commentManager;
 	}
 
 	/**
