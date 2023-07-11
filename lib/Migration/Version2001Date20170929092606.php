@@ -29,10 +29,10 @@ use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 class Version2001Date20170929092606 extends SimpleMigrationStep {
-	protected IConfig $config;
 
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		protected IConfig $config,
+	) {
 	}
 
 	/**
