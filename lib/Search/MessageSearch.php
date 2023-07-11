@@ -44,30 +44,16 @@ use OCP\Search\SearchResult;
 use OCP\Search\SearchResultEntry;
 
 class MessageSearch implements IProvider {
-	protected RoomManager $roomManager;
-	protected ParticipantService $participantService;
-	protected ChatManager $chatManager;
-	protected MessageParser $messageParser;
-	protected ITimeFactory $timeFactory;
-	protected IURLGenerator $url;
-	protected IL10N $l;
 
 	public function __construct(
-		RoomManager $roomManager,
-		ParticipantService $participantService,
-		ChatManager $chatManager,
-		MessageParser $messageParser,
-		ITimeFactory $timeFactory,
-		IURLGenerator $url,
-		IL10N $l,
+		protected RoomManager $roomManager,
+		protected ParticipantService $participantService,
+		protected ChatManager $chatManager,
+		protected MessageParser $messageParser,
+		protected ITimeFactory $timeFactory,
+		protected IURLGenerator $url,
+		protected IL10N $l,
 	) {
-		$this->roomManager = $roomManager;
-		$this->participantService = $participantService;
-		$this->chatManager = $chatManager;
-		$this->messageParser = $messageParser;
-		$this->timeFactory = $timeFactory;
-		$this->url = $url;
-		$this->l = $l;
 	}
 
 	/**

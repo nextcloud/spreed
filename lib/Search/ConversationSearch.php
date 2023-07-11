@@ -38,21 +38,13 @@ use OCP\Search\SearchResult;
 use OCP\Search\SearchResultEntry;
 
 class ConversationSearch implements IProvider {
-	protected AvatarService $avatarService;
-	protected Manager $manager;
-	protected IURLGenerator $url;
-	protected IL10N $l;
 
 	public function __construct(
-		AvatarService $avatarService,
-		Manager $manager,
-		IURLGenerator $url,
-		IL10N $l,
+		protected AvatarService $avatarService,
+		protected Manager $manager,
+		protected IURLGenerator $url,
+		protected IL10N $l,
 	) {
-		$this->avatarService = $avatarService;
-		$this->manager = $manager;
-		$this->url = $url;
-		$this->l = $l;
 	}
 
 	/**

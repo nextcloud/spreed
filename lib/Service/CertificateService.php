@@ -29,10 +29,10 @@ namespace OCA\Talk\Service;
 use Psr\Log\LoggerInterface;
 
 class CertificateService {
-	private LoggerInterface $logger;
 
-	public function __construct(LoggerInterface $logger) {
-		$this->logger = $logger;
+	public function __construct(
+		private LoggerInterface $logger,
+	) {
 	}
 
 	/**

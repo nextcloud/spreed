@@ -38,24 +38,14 @@ use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
 class BackendNotifier {
-	private Config $config;
-	private LoggerInterface $logger;
-	private IClientService $clientService;
-	private ISecureRandom $secureRandom;
-	private IURLGenerator $urlGenerator;
 
 	public function __construct(
-		Config $config,
-		LoggerInterface $logger,
-		IClientService $clientService,
-		ISecureRandom $secureRandom,
-		IURLGenerator $urlGenerator,
+		private Config $config,
+		private LoggerInterface $logger,
+		private IClientService $clientService,
+		private ISecureRandom $secureRandom,
+		private IURLGenerator $urlGenerator,
 	) {
-		$this->config = $config;
-		$this->logger = $logger;
-		$this->clientService = $clientService;
-		$this->secureRandom = $secureRandom;
-		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**

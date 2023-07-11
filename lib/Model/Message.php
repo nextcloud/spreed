@@ -30,17 +30,6 @@ use OCP\Comments\IComment;
 use OCP\IL10N;
 
 class Message {
-	/** @var Room */
-	protected $room;
-
-	/** @var IComment */
-	protected $comment;
-
-	/** @var IL10N */
-	protected $l;
-
-	/** @var Participant */
-	protected $participant;
 
 	/** @var bool */
 	protected $visible = true;
@@ -66,14 +55,12 @@ class Message {
 	/** @var string */
 	protected $actorDisplayName = '';
 
-	public function __construct(Room $room,
-		Participant $participant,
-		IComment $comment,
-		IL10N $l) {
-		$this->room = $room;
-		$this->participant = $participant;
-		$this->comment = $comment;
-		$this->l = $l;
+	public function __construct(
+		protected Room $room,
+		protected Participant $participant,
+		protected IComment $comment,
+		protected IL10N $l,
+	) {
 	}
 
 	/*

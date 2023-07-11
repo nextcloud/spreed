@@ -38,21 +38,13 @@ use OCP\Talk\IConversationOptions;
 use OCP\Talk\ITalkBackend;
 
 class TalkBackend implements ITalkBackend {
-	protected Manager $manager;
-	protected ParticipantService $participantService;
-	protected RoomService $roomService;
-	protected IURLGenerator $url;
 
 	public function __construct(
-		Manager $manager,
-		ParticipantService $participantService,
-		RoomService $roomService,
-		IURLGenerator $url,
+		protected Manager $manager,
+		protected ParticipantService $participantService,
+		protected RoomService $roomService,
+		protected IURLGenerator $url,
 	) {
-		$this->manager = $manager;
-		$this->participantService = $participantService;
-		$this->roomService = $roomService;
-		$this->url = $url;
 	}
 
 	public function createConversation(string $name, array $moderators, IConversationOptions $options): IConversation {
