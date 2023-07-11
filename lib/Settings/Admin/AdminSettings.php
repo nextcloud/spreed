@@ -44,39 +44,21 @@ use OCP\Settings\ISettings;
 use OCP\Util;
 
 class AdminSettings implements ISettings {
-	private Config $talkConfig;
-	private IConfig $serverConfig;
-	private CommandService $commandService;
-	private IInitialState $initialState;
-	private ICacheFactory $memcacheFactory;
-	private IGroupManager $groupManager;
-	private MatterbridgeManager $bridgeManager;
 	private ?IUser $currentUser = null;
-	private IL10N $l10n;
-	private IFactory $l10nFactory;
 
 	public function __construct(
-		Config $talkConfig,
-		IConfig $serverConfig,
-		CommandService $commandService,
-		IInitialState $initialState,
-		ICacheFactory $memcacheFactory,
-		IGroupManager $groupManager,
-		MatterbridgeManager $bridgeManager,
+		private Config $talkConfig,
+		private IConfig $serverConfig,
+		private CommandService $commandService,
+		private IInitialState $initialState,
+		private ICacheFactory $memcacheFactory,
+		private IGroupManager $groupManager,
+		private MatterbridgeManager $bridgeManager,
 		IUserSession $userSession,
-		IL10N $l10n,
-		IFactory $l10nFactory,
+		private IL10N $l10n,
+		private IFactory $l10nFactory,
 	) {
-		$this->talkConfig = $talkConfig;
-		$this->serverConfig = $serverConfig;
-		$this->commandService = $commandService;
-		$this->initialState = $initialState;
-		$this->memcacheFactory = $memcacheFactory;
-		$this->groupManager = $groupManager;
-		$this->bridgeManager = $bridgeManager;
 		$this->currentUser = $userSession->getUser();
-		$this->l10n = $l10n;
-		$this->l10nFactory = $l10nFactory;
 	}
 
 	/**

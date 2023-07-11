@@ -42,27 +42,15 @@ use OCP\Share\IShare;
  * actions or checks specific to room shares.
  */
 class ShareAPIController {
-	protected string $userId;
-	protected Manager $manager;
-	protected ParticipantService $participantService;
-	protected ITimeFactory $timeFactory;
-	protected IL10N $l;
-	protected IURLGenerator $urlGenerator;
 
 	public function __construct(
-		string $UserId,
-		Manager $manager,
-		ParticipantService $participantService,
-		ITimeFactory $timeFactory,
-		IL10N $l10n,
-		IURLGenerator $urlGenerator,
+		protected string $userId,
+		protected Manager $manager,
+		protected ParticipantService $participantService,
+		protected ITimeFactory $timeFactory,
+		protected IL10N $l,
+		protected IURLGenerator $urlGenerator,
 	) {
-		$this->userId = $UserId;
-		$this->manager = $manager;
-		$this->participantService = $participantService;
-		$this->timeFactory = $timeFactory;
-		$this->l = $l10n;
-		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**

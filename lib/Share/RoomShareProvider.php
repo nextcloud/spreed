@@ -75,38 +75,19 @@ class RoomShareProvider implements IShareProvider {
 
 	public const EVENT_SHARE_FILE_AGAIN = self::class . '::shareFileAgain';
 
-	private IDBConnection $dbConnection;
-	private ISecureRandom $secureRandom;
-	private IShareManager $shareManager;
-	private IEventDispatcher $dispatcher;
-	private Manager $manager;
-	private ParticipantService $participantService;
-	protected ITimeFactory $timeFactory;
-	private IL10N $l;
-	private IMimeTypeLoader $mimeTypeLoader;
-
 	private CappedMemoryCache $sharesByIdCache;
 
 	public function __construct(
-		IDBConnection $connection,
-		ISecureRandom $secureRandom,
-		IShareManager $shareManager,
-		IEventDispatcher $dispatcher,
-		Manager $manager,
-		ParticipantService $participantService,
-		ITimeFactory $timeFactory,
-		IL10N $l,
-		IMimeTypeLoader $mimeTypeLoader,
+		private IDBConnection $dbConnection,
+		private ISecureRandom $secureRandom,
+		private IShareManager $shareManager,
+		private IEventDispatcher $dispatcher,
+		private Manager $manager,
+		private ParticipantService $participantService,
+		protected ITimeFactory $timeFactory,
+		private IL10N $l,
+		private IMimeTypeLoader $mimeTypeLoader,
 	) {
-		$this->dbConnection = $connection;
-		$this->secureRandom = $secureRandom;
-		$this->shareManager = $shareManager;
-		$this->dispatcher = $dispatcher;
-		$this->manager = $manager;
-		$this->participantService = $participantService;
-		$this->timeFactory = $timeFactory;
-		$this->l = $l;
-		$this->mimeTypeLoader = $mimeTypeLoader;
 		$this->sharesByIdCache = new CappedMemoryCache();
 	}
 

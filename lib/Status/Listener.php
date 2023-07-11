@@ -37,10 +37,10 @@ use OCP\UserStatus\IManager;
 use OCP\UserStatus\IUserStatus;
 
 class Listener {
-	public IManager $statusManager;
 
-	public function __construct(IManager $statusManager) {
-		$this->statusManager = $statusManager;
+	public function __construct(
+		public IManager $statusManager,
+	) {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
