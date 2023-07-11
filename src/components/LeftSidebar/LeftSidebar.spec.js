@@ -282,14 +282,14 @@ describe('LeftSidebar.vue', () => {
 		 * @param {object} loadStateSettingsOverride Allows to override some properties
 		 */
 		async function testSearch(searchTerm, possibleResults, listedResults, loadStateSettingsOverride) {
-			searchPossibleConversations.mockResolvedValueOnce({
+			searchPossibleConversations.mockResolvedValue({
 				data: {
 					ocs: {
 						data: possibleResults,
 					},
 				},
 			})
-			searchListedConversations.mockResolvedValueOnce({
+			searchListedConversations.mockResolvedValue({
 				data: {
 					ocs: {
 						data: listedResults,
