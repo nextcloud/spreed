@@ -42,36 +42,17 @@ class GuestManager {
 	public const EVENT_AFTER_EMAIL_INVITE = self::class . '::postInviteByEmail';
 	public const EVENT_AFTER_NAME_UPDATE = self::class . '::updateName';
 
-	protected Config $talkConfig;
-	protected IMailer $mailer;
-	protected Defaults $defaults;
-	protected IUserSession $userSession;
-	protected ParticipantService $participantService;
-	protected PollService $pollService;
-	protected IURLGenerator $url;
-	protected IL10N $l;
-	protected IEventDispatcher $dispatcher;
-
 	public function __construct(
-		Config $talkConfig,
-		IMailer $mailer,
-		Defaults $defaults,
-		IUserSession $userSession,
-		ParticipantService $participantService,
-		PollService $pollService,
-		IURLGenerator $url,
-		IL10N $l,
-		IEventDispatcher $dispatcher,
+		protected Config $talkConfig,
+		protected IMailer $mailer,
+		protected Defaults $defaults,
+		protected IUserSession $userSession,
+		protected ParticipantService $participantService,
+		protected PollService $pollService,
+		protected IURLGenerator $url,
+		protected IL10N $l,
+		protected IEventDispatcher $dispatcher,
 	) {
-		$this->talkConfig = $talkConfig;
-		$this->mailer = $mailer;
-		$this->defaults = $defaults;
-		$this->userSession = $userSession;
-		$this->participantService = $participantService;
-		$this->pollService = $pollService;
-		$this->url = $url;
-		$this->l = $l;
-		$this->dispatcher = $dispatcher;
 	}
 
 	/**

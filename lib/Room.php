@@ -163,112 +163,44 @@ class Room {
 
 	public const DESCRIPTION_MAXIMUM_LENGTH = 500;
 
-	private Manager $manager;
-	private IDBConnection $db;
-	private IEventDispatcher $dispatcher;
-	private ITimeFactory $timeFactory;
-
-	private int $id;
-	private int $type;
-	private int $readOnly;
-	private int $listable;
-	private int $messageExpiration;
-	private int $lobbyState;
-	private int $sipEnabled;
-	private ?int $assignedSignalingServer;
-	private ?\DateTime $lobbyTimer;
-	private string $token;
-	private string $name;
-	private string $description;
-	private string $password;
-	private string $avatar;
-	private string $remoteServer;
-	private string $remoteToken;
-	private int $activeGuests;
-	private int $defaultPermissions;
-	private int $callPermissions;
-	private int $callFlag;
-	private ?\DateTime $activeSince;
-	private ?\DateTime $lastActivity;
-	private int $lastMessageId;
-	private ?IComment $lastMessage;
-	private string $objectType;
-	private string $objectId;
-	private int $breakoutRoomMode;
-	private int $breakoutRoomStatus;
-	private int $callRecording;
-
 	protected ?string $currentUser = null;
 	protected ?Participant $participant = null;
 
 	public function __construct(
-		Manager $manager,
-		IDBConnection $db,
-		IEventDispatcher $dispatcher,
-		ITimeFactory $timeFactory,
-		int $id,
-		int $type,
-		int $readOnly,
-		int $listable,
-		int $messageExpiration,
-		int $lobbyState,
-		int $sipEnabled,
-		?int $assignedSignalingServer,
-		string $token,
-		string $name,
-		string $description,
-		string $password,
-		string $avatar,
-		string $remoteServer,
-		string $remoteToken,
-		int $activeGuests,
-		int $defaultPermissions,
-		int $callPermissions,
-		int $callFlag,
-		?\DateTime $activeSince,
-		?\DateTime $lastActivity,
-		int $lastMessageId,
-		?IComment $lastMessage,
-		?\DateTime $lobbyTimer,
-		string $objectType,
-		string $objectId,
-		int $breakoutRoomMode,
-		int $breakoutRoomStatus,
-		int $callRecording,
+		private Manager $manager,
+		private IDBConnection $db,
+		private IEventDispatcher $dispatcher,
+		private ITimeFactory $timeFactory,
+		private int $id,
+		private int $type,
+		private int $readOnly,
+		private int $listable,
+		private int $messageExpiration,
+		private int $lobbyState,
+		private int $sipEnabled,
+		private ?int $assignedSignalingServer,
+		private string $token,
+		private string $name,
+		private string $description,
+		private string $password,
+		private string $avatar,
+		private string $remoteServer,
+		private string $remoteToken,
+		private int $activeGuests,
+		private int $defaultPermissions,
+		private int $callPermissions,
+		private int $callFlag,
+		private ?\DateTime $activeSince,
+		private ?\DateTime $lastActivity,
+		private int $lastMessageId,
+		private ?IComment $lastMessage,
+		private ?\DateTime $lobbyTimer,
+		private string $objectType,
+		private string $objectId,
+		private int $breakoutRoomMode,
+		private int $breakoutRoomStatus,
+		private int $callRecording,
 	) {
-		$this->manager = $manager;
-		$this->db = $db;
-		$this->dispatcher = $dispatcher;
-		$this->timeFactory = $timeFactory;
-		$this->id = $id;
-		$this->type = $type;
-		$this->readOnly = $readOnly;
-		$this->listable = $listable;
-		$this->messageExpiration = $messageExpiration;
-		$this->lobbyState = $lobbyState;
-		$this->sipEnabled = $sipEnabled;
-		$this->assignedSignalingServer = $assignedSignalingServer;
-		$this->token = $token;
-		$this->name = $name;
-		$this->description = $description;
-		$this->password = $password;
-		$this->avatar = $avatar;
-		$this->remoteServer = $remoteServer;
-		$this->remoteToken = $remoteToken;
-		$this->activeGuests = $activeGuests;
-		$this->defaultPermissions = $defaultPermissions;
-		$this->callPermissions = $callPermissions;
-		$this->callFlag = $callFlag;
-		$this->activeSince = $activeSince;
-		$this->lastActivity = $lastActivity;
-		$this->lastMessageId = $lastMessageId;
-		$this->lastMessage = $lastMessage;
-		$this->lobbyTimer = $lobbyTimer;
-		$this->objectType = $objectType;
-		$this->objectId = $objectId;
-		$this->breakoutRoomMode = $breakoutRoomMode;
-		$this->breakoutRoomStatus = $breakoutRoomStatus;
-		$this->callRecording = $callRecording;
 	}
 
 	public function getId(): int {

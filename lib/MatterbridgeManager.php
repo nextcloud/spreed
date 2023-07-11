@@ -46,45 +46,20 @@ use Psr\Log\LoggerInterface;
 class MatterbridgeManager {
 	public const BRIDGE_BOT_USERID = 'bridge-bot';
 
-	private IDBConnection $db;
-	private IConfig $config;
-	private IURLGenerator $urlGenerator;
-	private IUserManager $userManager;
-	private Manager $manager;
-	private ParticipantService $participantService;
-	private ChatManager $chatManager;
-	private IAuthTokenProvider $tokenProvider;
-	private ISecureRandom $random;
-	private IAvatarManager $avatarManager;
-	private LoggerInterface $logger;
-	private ITimeFactory $timeFactory;
-
 	public function __construct(
-		IDBConnection $db,
-		IConfig $config,
-		IURLGenerator $urlGenerator,
-		IUserManager $userManager,
-		Manager $manager,
-		ParticipantService $participantService,
-		ChatManager $chatManager,
-		IAuthTokenProvider $tokenProvider,
-		ISecureRandom $random,
-		IAvatarManager $avatarManager,
-		LoggerInterface $logger,
-		ITimeFactory $timeFactory,
+		private IDBConnection $db,
+		private IConfig $config,
+		private IURLGenerator $urlGenerator,
+		private IUserManager $userManager,
+		private Manager $manager,
+		private ParticipantService $participantService,
+		private ChatManager $chatManager,
+		private IAuthTokenProvider $tokenProvider,
+		private ISecureRandom $random,
+		private IAvatarManager $avatarManager,
+		private LoggerInterface $logger,
+		private ITimeFactory $timeFactory,
 	) {
-		$this->avatarManager = $avatarManager;
-		$this->db = $db;
-		$this->config = $config;
-		$this->urlGenerator = $urlGenerator;
-		$this->userManager = $userManager;
-		$this->manager = $manager;
-		$this->participantService = $participantService;
-		$this->chatManager = $chatManager;
-		$this->tokenProvider = $tokenProvider;
-		$this->random = $random;
-		$this->logger = $logger;
-		$this->timeFactory = $timeFactory;
 	}
 
 	/**

@@ -43,32 +43,17 @@ class Config {
 	public const SIGNALING_TICKET_V1 = 1;
 	public const SIGNALING_TICKET_V2 = 2;
 
-	protected IConfig $config;
-	protected ITimeFactory $timeFactory;
-	private IGroupManager $groupManager;
-	private IUserManager $userManager;
-	private IURLGenerator $urlGenerator;
-	private ISecureRandom $secureRandom;
-	private IEventDispatcher $dispatcher;
-
 	protected array $canEnableSIP = [];
 
 	public function __construct(
-		IConfig $config,
-		ISecureRandom $secureRandom,
-		IGroupManager $groupManager,
-		IUserManager $userManager,
-		IURLGenerator $urlGenerator,
-		ITimeFactory $timeFactory,
-		IEventDispatcher $dispatcher,
+		protected IConfig $config,
+		private ISecureRandom $secureRandom,
+		private IGroupManager $groupManager,
+		private IUserManager $userManager,
+		private IURLGenerator $urlGenerator,
+		protected ITimeFactory $timeFactory,
+		private IEventDispatcher $dispatcher,
 	) {
-		$this->config = $config;
-		$this->secureRandom = $secureRandom;
-		$this->groupManager = $groupManager;
-		$this->userManager = $userManager;
-		$this->urlGenerator = $urlGenerator;
-		$this->timeFactory = $timeFactory;
-		$this->dispatcher = $dispatcher;
 	}
 
 	/**
