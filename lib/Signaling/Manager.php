@@ -34,20 +34,14 @@ use OCP\IConfig;
 class Manager {
 	public const FEATURE_HEADER = 'X-Spreed-Signaling-Features';
 
-	protected IConfig $serverConfig;
-	protected Config $talkConfig;
-	protected RoomService $roomService;
 	protected ICache $cache;
 
 	public function __construct(
-		IConfig $serverConfig,
-		Config $talkConfig,
-		RoomService $roomService,
+		protected IConfig $serverConfig,
+		protected Config $talkConfig,
+		protected RoomService $roomService,
 		ICacheFactory $cacheFactory,
 	) {
-		$this->serverConfig = $serverConfig;
-		$this->talkConfig = $talkConfig;
-		$this->roomService = $roomService;
 		$this->cache = $cacheFactory->createDistributed('hpb_servers');
 	}
 

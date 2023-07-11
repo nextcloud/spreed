@@ -50,10 +50,9 @@ class Listener {
 		$listener->overwriteMountPoint($event);
 	}
 
-	protected Config $config;
-
-	public function __construct(Config $config) {
-		$this->config = $config;
+	public function __construct(
+		protected Config $config,
+	) {
 	}
 
 	public function overwriteShareTarget(GenericEvent $event): void {

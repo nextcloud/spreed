@@ -34,20 +34,11 @@ use OCP\IDBConnection;
 class Messages {
 	use TTransactional;
 
-	protected IDBConnection $db;
-
-	protected ParticipantService $participantService;
-
-	protected ITimeFactory $timeFactory;
-
 	public function __construct(
-		IDBConnection $db,
-		ParticipantService $participantService,
-		ITimeFactory $timeFactory,
+		protected IDBConnection $db,
+		protected ParticipantService $participantService,
+		protected ITimeFactory $timeFactory,
 	) {
-		$this->db = $db;
-		$this->participantService = $participantService;
-		$this->timeFactory = $timeFactory;
 	}
 
 	/**
