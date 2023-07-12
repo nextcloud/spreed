@@ -293,6 +293,7 @@ export default {
 		this.scrollToBottom()
 		EventBus.$on('scroll-chat-to-bottom', this.handleScrollChatToBottomEvent)
 		EventBus.$on('smooth-scroll-chat-to-bottom', this.smoothScrollToBottom)
+		EventBus.$on('scroll-chat-to-bottom-if-sticky', this.scrollToBottomIfSticky)
 		EventBus.$on('focus-message', this.focusMessage)
 		EventBus.$on('route-change', this.onRouteChange)
 		subscribe('networkOffline', this.handleNetworkOffline)
@@ -311,6 +312,7 @@ export default {
 		window.removeEventListener('focus', this.onWindowFocus)
 		EventBus.$off('scroll-chat-to-bottom', this.handleScrollChatToBottomEvent)
 		EventBus.$off('smooth-scroll-chat-to-bottom', this.smoothScrollToBottom)
+		EventBus.$on('scroll-chat-to-bottom-if-sticky', this.scrollToBottomIfSticky)
 		EventBus.$off('focus-message', this.focusMessage)
 		EventBus.$off('route-change', this.onRouteChange)
 
@@ -897,6 +899,15 @@ export default {
 		 */
 		handleScrollChatToBottomEvent(options) {
 			if ((options && options.force) || this.isChatScrolledToBottom) {
+				this.scrollToBottom()
+			}
+		},
+
+		/**
+		 * Scrolls to the bottom of the list (to show reaction to the last message).
+		 */
+		scrollToBottomIfSticky() {
+			if (this.isSticky) {
 				this.scrollToBottom()
 			}
 		},
