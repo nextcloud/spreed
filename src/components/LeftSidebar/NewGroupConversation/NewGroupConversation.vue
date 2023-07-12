@@ -94,14 +94,35 @@
 					:conversation-name="conversationNameTrimmed" />
 
 				<!-- Third page -->
-				<Confirmation v-else-if="page === 2"
-					class="new-group-conversation__content"
-					:token="newConversation.token"
-					:conversation-name="conversationNameTrimmed"
-					:error="error"
-					:is-loading="isLoading"
-					:success="success"
-					:is-public="isPublic" />
+				<div v-else-if="page === 2" class="new-group-conversation__content">
+					<template v-if="isLoading && !error">
+						<template v-if="!success">
+							<div class="icon-loading confirmation__icon" />
+							<p class="confirmation__warning">
+								{{ t('spreed', 'Creating your conversation') }}
+							</p>
+						</template>
+						<template v-if="success && isPublic">
+							<div class="icon-checkmark confirmation__icon" />
+							<p class="confirmation__warning">
+								{{ t('spreed', 'All set') }}
+							</p>
+							<NcButton id="copy-link"
+								ref="copyLink"
+								type="secondary"
+								class="confirmation__copy-link"
+								@click="onClickCopyLink">
+								{{ t('spreed', 'Copy conversation link') }}
+							</NcButton>
+						</template>
+					</template>
+					<template v-else>
+						<div class="icon-error confirmation__icon" />
+						<p class="confirmation__warning">
+							{{ t('spreed', 'Error while creating the conversation') }}
+						</p>
+					</template>
+				</div>
 			</div>
 
 			<!-- Navigation: different buttons with different actions and
@@ -135,6 +156,7 @@
 				</NcButton>
 				<!-- Third page -->
 				<NcButton v-if="page===2 && (error || isPublic)"
+					ref="closeButton"
 					type="primary"
 					class="new-group-conversation__button"
 					@click="closeModal">
@@ -160,7 +182,6 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import ConversationAvatarEditor from '../../ConversationSettings/ConversationAvatarEditor.vue'
 import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
-import Confirmation from './Confirmation/Confirmation.vue'
 import SetContacts from './SetContacts/SetContacts.vue'
 
 import { useIsInCall } from '../../../composables/useIsInCall.js'
@@ -173,6 +194,7 @@ import {
 } from '../../../services/conversationsService.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { addParticipant } from '../../../services/participantsService.js'
+import { copyConversationLinkToClipboard } from '../../../services/urlService.js'
 
 const NEW_CONVERSATION = {
 	token: '',
@@ -191,7 +213,6 @@ export default {
 
 	components: {
 		ConversationAvatarEditor,
-		Confirmation,
 		ListableSettings,
 		NcButton,
 		NcCheckboxRadioSwitch,
@@ -265,6 +286,24 @@ export default {
 				this.newConversation.type = CONVERSATION.TYPE.GROUP
 				this.passwordProtect = false
 			}
+		},
+
+		success(value) {
+			if (!value) {
+				return
+			}
+			this.$nextTick(() => {
+				this.$refs.copyLink.$el.focus()
+			})
+		},
+
+		error(value) {
+			if (!value) {
+				return
+			}
+			this.$nextTick(() => {
+				this.$refs.closeButton.$el.focus()
+			})
 		},
 	},
 
@@ -437,6 +476,10 @@ export default {
 				this.page = 1
 			}
 		},
+
+		onClickCopyLink() {
+			copyConversationLinkToClipboard(this.newConversation.token)
+		},
 	},
 
 }
@@ -444,6 +487,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.confirmation {
+	&__icon {
+		padding-top: 80px;
+	}
+
+	&__warning {
+		margin-top: 10px;
+		text-align: center;
+	}
+
+	&__copy-link {
+		margin: 50px auto 0 auto;
+	}
+}
 .toggle {
 	height: 44px;
 	width: 44px;
