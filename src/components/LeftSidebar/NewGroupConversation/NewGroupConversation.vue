@@ -71,12 +71,35 @@
 					</template>
 					<!-- Third page -->
 					<template v-if="page === 2">
-						<Confirmation :token="token"
-							:conversation-name="conversationName"
-							:error="error"
-							:is-loading="isLoading"
-							:success="success"
-							:is-public="isPublic" />
+						<div class="confirmation">
+							<template v-if="isLoading && !error">
+								<template v-if="!success">
+									<div class="icon-loading confirmation__icon" />
+									<p class="confirmation__warning">
+										{{ t('spreed', 'Creating your conversation') }}
+									</p>
+								</template>
+								<template v-if="success && isPublic">
+									<div class="icon-checkmark confirmation__icon" />
+									<p class="confirmation__warning">
+										{{ t('spreed', 'All set') }}
+									</p>
+									<NcButton id="copy-link"
+										ref="copyLink"
+										type="secondary"
+										class="confirmation__copy-link"
+										@click="onClickCopyLink">
+										{{ t('spreed', 'Copy conversation link') }}
+									</NcButton>
+								</template>
+							</template>
+							<template v-else>
+								<div class="icon-error confirmation__icon" />
+								<p class="confirmation__warning">
+									{{ t('spreed', 'Error while creating the conversation') }}
+								</p>
+							</template>
+						</div>
 					</template>
 				</div>
 				<!-- Navigation: different buttons with different actions and
@@ -110,6 +133,7 @@
 					</NcButton>
 					<!-- Third page -->
 					<NcButton v-if="page===2 && (error || isPublic)"
+						ref="closeButton"
 						type="primary"
 						class="navigation__button-right"
 						@click="closeModal">
@@ -132,7 +156,6 @@ import NcPasswordField from '@nextcloud/vue/dist/Components/NcPasswordField.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import ListableSettings from '../../ConversationSettings/ListableSettings.vue'
-import Confirmation from './Confirmation/Confirmation.vue'
 import SetContacts from './SetContacts/SetContacts.vue'
 import SetConversationName from './SetConversationName/SetConversationName.vue'
 
@@ -146,6 +169,7 @@ import {
 } from '../../../services/conversationsService.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { addParticipant } from '../../../services/participantsService.js'
+import { copyConversationLinkToClipboard } from '../../../services/urlService.js'
 
 export default {
 
@@ -162,7 +186,6 @@ export default {
 		SetConversationName,
 		NcButton,
 		NcCheckboxRadioSwitch,
-		Confirmation,
 		ListableSettings,
 		Plus,
 	},
@@ -202,6 +225,26 @@ export default {
 		},
 		selectedParticipants() {
 			return this.$store.getters.selectedParticipants
+		},
+	},
+
+	watch: {
+		success(value) {
+			if (!value) {
+				return
+			}
+			this.$nextTick(() => {
+				this.$refs.copyLink.$el.focus()
+			})
+		},
+
+		error(value) {
+			if (!value) {
+				return
+			}
+			this.$nextTick(() => {
+				this.$refs.closeButton.$el.focus()
+			})
 		},
 	},
 
@@ -363,6 +406,9 @@ export default {
 				this.page = 1
 			}
 		},
+		onClickCopyLink() {
+			copyConversationLinkToClipboard(this.token)
+		},
 	},
 
 }
@@ -378,6 +424,24 @@ export default {
 	align-items: center;
 	justify-content: center;
 	margin: 0 var(--default-grid-baseline);
+}
+
+.confirmation {
+	display: flex;
+	flex-direction: column;
+
+	&__icon {
+		padding-top: 80px;
+	}
+
+	&__warning {
+		margin-top: 10px;
+		text-align: center;
+	}
+
+	&__copy-link {
+		margin: 50px auto 0 auto;
+	}
 }
 
 .new-group-conversation {

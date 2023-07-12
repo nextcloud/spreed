@@ -193,7 +193,7 @@ export default {
 			}
 		},
 		focusInput() {
-			this.$refs.setContacts.$el.focus()
+			this.$refs.setContacts.$refs.inputField.$refs.input.focus()
 		},
 	},
 }
