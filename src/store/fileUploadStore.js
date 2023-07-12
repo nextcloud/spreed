@@ -316,7 +316,8 @@ const actions = {
 			const uniquePath = await findUniquePath(client, userRoot, path)
 			try {
 				// Upload the file
-				await client.putFileContents(userRoot + uniquePath, currentFile, {
+				const currentFileBuffer = await new Blob([currentFile]).arrayBuffer()
+				await client.putFileContents(userRoot + uniquePath, currentFileBuffer, {
 					onUploadProgress: progress => {
 						const uploadedSize = progress.loaded
 						commit('setUploadedSize', { state, uploadId, index, uploadedSize })

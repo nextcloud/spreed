@@ -225,7 +225,8 @@ export default {
 
 			try {
 				// Upload the file
-				await client.putFileContents(userRoot + uniquePath, file, {
+				const fileBuffer = await new Blob([file]).arrayBuffer()
+				await client.putFileContents(userRoot + uniquePath, fileBuffer, {
 					contentLength: file.size,
 				})
 
