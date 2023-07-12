@@ -79,6 +79,25 @@ global.OCP = {
 }
 global.IS_DESKTOP = false
 
+/**
+ * Polyfill for Blob.prototype.arrayBuffer
+ * Required as jsdom breaks Nodejs's native Blob
+ *
+ * @see https://github.com/jsdom/jsdom/issues/2555
+ */
+function myArrayBuffer() {
+	// this: File or Blob
+	return new Promise((resolve) => {
+		const fr = new FileReader()
+		fr.onload = () => {
+			resolve(fr.result)
+		}
+		fr.readAsArrayBuffer(this)
+	})
+}
+
+global.Blob.prototype.arrayBuffer = Blob.prototype.arrayBuffer || myArrayBuffer
+
 const originalConsoleError = console.error
 console.error = function(error) {
 	if (error?.message?.includes('Could not parse CSS stylesheet')) {
