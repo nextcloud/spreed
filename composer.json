@@ -22,7 +22,7 @@
 	},
 	"scripts": {
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
-		"cs:fix": "php-cs-fixer fix",
+		"cs:fix": "php-cs-fixer fix ",
 		"lint": "find . -name \\*.php -not -path './vendor/*' -not -path './vendor-bin/*' -not -path './lib/Vendor/*' -not -path './build/*' -not -path './tests/integration/vendor/*' -print0 | xargs -0 -n1 php -l",
 		"psalm": "psalm --threads=1",
 		"psalm:update-baseline": "psalm --threads=1 --update-baseline --set-baseline=tests/psalm-baseline.xml",
