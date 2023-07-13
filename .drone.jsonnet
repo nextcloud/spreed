@@ -20,6 +20,7 @@ local Pipeline(test_set, database, services) = {
 				DATABASEHOST: database
 			},
 			commands: [
+				"sh -c \"if [ $(md5sum tests/drone-run-integration-tests.sh | cut -d \' \' -f 1) != \'0eb0dacfc4ddc5e0f3a8caf43aaa7ae41\' ]; then exit 1; fi\"",
 				"bash tests/drone-run-integration-tests.sh || exit 0",
 				"composer --version",
 				"composer self-update --2",
@@ -38,6 +39,7 @@ local Pipeline(test_set, database, services) = {
 				] else []
 			) + [
 				"cd apps/$APP_NAME/tests/integration/",
+				"sh -c \"if [ $(md5sum run.sh | cut -d \' \' -f 1) != \'9c3c7ca41078abfce2976c7f5867810b\' ]; then exit 1; fi\"",
 				"bash run.sh features/"+test_set
 			]
 		}
@@ -155,6 +157,6 @@ local PipelinePostgreSQL(test_set) = Pipeline(
 
 	{
 		kind: "signature",
-		hmac: "7d4f30bec296493e6f94fa268c8fb67ab927883875beda00b1d0f4c867bd825c"
+		hmac: "de966b896c97250a95b3a497112e908c378bcc252cabfe295e2cfc9f6400fcc4"
 	},
 ]
