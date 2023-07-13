@@ -82,7 +82,8 @@ global.IS_DESKTOP = false
 /**
  * Polyfill for Blob.prototype.arrayBuffer
  * Required as jsdom breaks Nodejs's native Blob
- * @see: https://github.com/jsdom/jsdom/issues/2555
+ *
+ * @see https://github.com/jsdom/jsdom/issues/2555
  */
 function myArrayBuffer() {
 	// this: File or Blob
