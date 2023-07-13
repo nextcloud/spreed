@@ -11,7 +11,9 @@ import { setAttachmentFolder } from '../services/settingsService.js'
 import { findUniquePath, getFileExtension } from '../utils/fileUpload.js'
 import fileUploadStore from './fileUploadStore.js'
 
-jest.mock('../services/DavClient')
+jest.mock('../services/DavClient', () => ({
+	putFileContents: jest.fn(),
+}))
 jest.mock('../utils/fileUpload', () => ({
 	findUniquePath: jest.fn(),
 	getFileExtension: jest.fn(),
@@ -132,19 +134,22 @@ describe('fileUploadStore', () => {
 		})
 
 		test('performs upload by uploading then sharing', async () => {
-			const files = [
-				{
-					name: 'pngimage.png',
-					type: 'image/png',
-					size: 123,
-					lastModified: Date.UTC(2021, 3, 27, 15, 30, 0),
-				},
-				{
-					name: 'textfile.txt',
-					type: 'text/plain',
-					size: 111,
-					lastModified: Date.UTC(2021, 3, 25, 15, 30, 0),
-				},
+			const file1 = {
+				name: 'pngimage.png',
+				type: 'image/png',
+				size: 123,
+				lastModified: Date.UTC(2021, 3, 27, 15, 30, 0),
+			}
+			const file2 = {
+				name: 'textfile.txt',
+				type: 'text/plain',
+				size: 111,
+				lastModified: Date.UTC(2021, 3, 25, 15, 30, 0),
+			}
+			const files = [file1, file2]
+			const fileBuffers = [
+				await new Blob([file1]).arrayBuffer(),
+				await new Blob([file2]).arrayBuffer(),
 			]
 
 			await store.dispatch('initialiseUpload', {
@@ -169,7 +174,7 @@ describe('fileUploadStore', () => {
 			for (let i = 0; i < files.length; i++) {
 				expect(findUniquePath).toHaveBeenCalledWith(client, '/files/current-user', '/Talk/' + files[i].name)
 				expect(client.putFileContents.mock.calls[i][0]).toBe('/files/current-user/Talk/' + files[i].name + 'uniq')
-				expect(client.putFileContents.mock.calls[i][1]).toBe(files[i])
+				expect(client.putFileContents.mock.calls[i][1]).toStrictEqual(fileBuffers[i])
 
 				expect(shareFile.mock.calls[i][0]).toBe('//Talk/' + files[i].name + 'uniq')
 				expect(shareFile.mock.calls[i][1]).toBe('XXTOKENXX')
