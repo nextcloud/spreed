@@ -17,6 +17,10 @@
 		</ignoreFiles>
 	</projectFiles>
 	<issueHandlers>
+		<LessSpecificReturnStatement errorLevel="error"/>
+		<LessSpecificReturnType errorLevel="error"/>
+		<LessSpecificImplementedReturnType errorLevel="error"/>
+		<MoreSpecificReturnType errorLevel="error"/>
 		<UndefinedClass>
 			<errorLevel type="suppress">
 				<referencedClass name="Doctrine\DBAL\Exception" />
