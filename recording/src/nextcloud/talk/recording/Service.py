@@ -42,15 +42,18 @@ def newAudioSink(baseSinkName):
     Start new audio sink for the audio output of the browser.
 
     Each browser instance uses its own sink that will then be captured by the
-    recorder. Otherwise several browsers would use the same default sink, and
-    their audio output would be mixed.
+    recorder (using the monitor of that sink as the source). Otherwise several
+    browsers would use the same default sink, and their audio output would be
+    mixed.
 
     The sink is created by loading a null sink module. This module needs to be
-    unloaded once the sink is no longer needed to remove it.
+    unloaded once the sink is no longer needed to remove it (which also removes
+    the monitor of that sink).
 
     :param baseSinkName: the base name for the sink; it is expected to have been
            sanitized and to contain only alpha-numeric characters.
-    :return: a tuple with the module index and the sink index, both as ints.
+    :return: a tuple with the module index, the sink index and the source index
+             (the monitor of the sink), all as ints.
     """
 
     # A random value is appended to the base sink name to "ensure" that there
@@ -83,7 +86,16 @@ def newAudioSink(baseSinkName):
         if not sinkIndex:
             raise Exception(f"New audio sink {sinkName} not found ({sinkList})")
 
-    return moduleIndex, sinkIndex
+        sourceIndex = None
+        sourceList = pacmd.source_list()
+        for source in sourceList:
+            if source.monitor_of_sink == sinkIndex:
+                sourceIndex = source.index
+
+        if not sourceIndex:
+            raise Exception(f"Audio source (monitor) of sink {sinkName} not found ({sourceList})")
+
+    return moduleIndex, sinkIndex, sourceIndex
 
 def processLog(loggerName, pipe, level = logging.INFO):
     """
@@ -180,8 +192,9 @@ class Service:
                 raise Exception("Display started after recording was stopped")
 
             # Start new audio sink for the audio output of the browser.
-            self._audioModuleIndex, audioSinkIndex = newAudioSink(f"{sanitizedBackend}-{self.token}")
+            self._audioModuleIndex, audioSinkIndex, audioSourceIndex = newAudioSink(f"{sanitizedBackend}-{self.token}")
             audioSinkIndex = str(audioSinkIndex)
+            audioSourceIndex = str(audioSourceIndex)
 
             if self._stopped.is_set():
                 raise Exception("Audio sink started after recording was stopped")
@@ -210,7 +223,7 @@ class Service:
             extensionlessFileName = f'{fullDirectory}/Recording {datetime.now().strftime("%Y-%m-%d %H-%M-%S")}'
 
             recorderArgumentsBuilder = RecorderArgumentsBuilder()
-            recorderArguments = recorderArgumentsBuilder.getRecorderArguments(self.status, self._display.new_display_var, audioSinkIndex, width, height, extensionlessFileName)
+            recorderArguments = recorderArgumentsBuilder.getRecorderArguments(self.status, self._display.new_display_var, audioSourceIndex, width, height, extensionlessFileName)
 
             self._fileName = recorderArguments[-1]
 

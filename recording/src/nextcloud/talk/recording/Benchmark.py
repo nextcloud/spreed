@@ -145,8 +145,9 @@ class BenchmarkService:
             self._display.start()
 
             # Start new audio sink for the audio output of the player.
-            self._audioModuleIndex, audioSinkIndex = newAudioSink("nextcloud-talk-recording-benchmark")
+            self._audioModuleIndex, audioSinkIndex, audioSourceIndex = newAudioSink("nextcloud-talk-recording-benchmark")
             audioSinkIndex = str(audioSinkIndex)
+            audioSourceIndex = str(audioSourceIndex)
 
             env = self._display.env()
             env['PULSE_SINK'] = audioSinkIndex
@@ -166,7 +167,7 @@ class BenchmarkService:
             recorderArgumentsBuilder.setFfmpegOutputAudio(args.audio_args.split())
             recorderArgumentsBuilder.setFfmpegOutputVideo(args.video_args.split())
             recorderArgumentsBuilder.setExtension(f".{extension}")
-            self._recorderArguments = recorderArgumentsBuilder.getRecorderArguments(status, self._display.new_display_var, audioSinkIndex, args.width, args.height, extensionlessFileName)
+            self._recorderArguments = recorderArgumentsBuilder.getRecorderArguments(status, self._display.new_display_var, audioSourceIndex, args.width, args.height, extensionlessFileName)
 
             self._fileName = self._recorderArguments[-1]
 
