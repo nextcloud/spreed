@@ -119,7 +119,6 @@ class Capabilities implements IPublicCapability {
 				'single-conversation-status',
 				'chat-keep-notifications',
 				'typing-privacy',
-				// FIXME Publish once the API is approved by the clients 'threads',
 			],
 			'config' => [
 				'attachments' => [

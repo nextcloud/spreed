@@ -2233,7 +2233,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$includeReferenceId = in_array('referenceId', $formData->getRow(0), true);
 		$includeReactions = in_array('reactions', $formData->getRow(0), true);
 		$includeReactionsSelf = in_array('reactionsSelf', $formData->getRow(0), true);
-		$includeThreadId = in_array('threadId', $formData->getRow(0), true);
 
 		$expected = $formData->getHash();
 		$count = count($expected);
@@ -2241,10 +2240,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		for ($i = 0; $i < $count; $i++) {
 			if ($expected[$i]['messageParameters'] === '"IGNORE"') {
 				$messages[$i]['messageParameters'] = 'IGNORE';
-			}
-
-			if ($includeThreadId && !is_numeric($expected[$i]['threadId'])) {
-				$expected[$i]['threadId'] = self::$textToMessageId[$expected[$i]['threadId']];
 			}
 
 			$result = preg_match('/POLL_ID\(([^)]+)\)/', $expected[$i]['messageParameters'], $matches);
@@ -2260,7 +2255,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}
 
-		Assert::assertEquals($expected, array_map(function ($message) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf, $includeThreadId) {
+		Assert::assertEquals($expected, array_map(function ($message) use ($includeParents, $includeReferenceId, $includeReactions, $includeReactionsSelf) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],
@@ -2286,9 +2281,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				} else {
 					$data['reactionsSelf'] = null;
 				}
-			}
-			if ($includeThreadId) {
-				$data['threadId'] = $message['threadId'];
 			}
 			return $data;
 		}, $messages));
