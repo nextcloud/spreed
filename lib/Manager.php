@@ -55,57 +55,27 @@ use OCP\Server;
 class Manager {
 	public const EVENT_TOKEN_GENERATE = self::class . '::generateNewToken';
 
-	protected IDBConnection $db;
-	protected IConfig $config;
-	protected Config $talkConfig;
-	protected IAppManager $appManager;
-	protected AttendeeMapper $attendeeMapper;
-	protected SessionMapper $sessionMapper;
-	protected ParticipantService $participantService;
-	protected ISecureRandom $secureRandom;
-	protected IUserManager $userManager;
-	protected IGroupManager $groupManager;
 	protected ICommentsManager $commentsManager;
-	protected TalkSession $talkSession;
-	protected IEventDispatcher $dispatcher;
-	protected ITimeFactory $timeFactory;
-	protected IHasher $hasher;
-	protected IL10N $l;
 
 	public function __construct(
-		IDBConnection $db,
-		IConfig $config,
-		Config $talkConfig,
-		IAppManager $appManager,
-		AttendeeMapper $attendeeMapper,
-		SessionMapper $sessionMapper,
-		ParticipantService $participantService,
-		ISecureRandom $secureRandom,
-		IUserManager $userManager,
-		IGroupManager $groupManager,
+		protected IDBConnection $db,
+		protected IConfig $config,
+		protected Config $talkConfig,
+		protected IAppManager $appManager,
+		protected AttendeeMapper $attendeeMapper,
+		protected SessionMapper $sessionMapper,
+		protected ParticipantService $participantService,
+		protected ISecureRandom $secureRandom,
+		protected IUserManager $userManager,
+		protected IGroupManager $groupManager,
 		CommentsManager $commentsManager,
-		TalkSession $talkSession,
-		IEventDispatcher $dispatcher,
-		ITimeFactory $timeFactory,
-		IHasher $hasher,
-		IL10N $l,
+		protected TalkSession $talkSession,
+		protected IEventDispatcher $dispatcher,
+		protected ITimeFactory $timeFactory,
+		protected IHasher $hasher,
+		protected IL10N $l,
 	) {
-		$this->db = $db;
-		$this->config = $config;
-		$this->talkConfig = $talkConfig;
-		$this->appManager = $appManager;
-		$this->attendeeMapper = $attendeeMapper;
-		$this->sessionMapper = $sessionMapper;
-		$this->participantService = $participantService;
-		$this->secureRandom = $secureRandom;
-		$this->userManager = $userManager;
-		$this->groupManager = $groupManager;
 		$this->commentsManager = $commentsManager;
-		$this->talkSession = $talkSession;
-		$this->dispatcher = $dispatcher;
-		$this->timeFactory = $timeFactory;
-		$this->hasher = $hasher;
-		$this->l = $l;
 	}
 
 	public function forAllRooms(callable $callback): void {

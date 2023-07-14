@@ -55,18 +55,11 @@ class Participant {
 	public const PRIVACY_PUBLIC = 0;
 	public const PRIVACY_PRIVATE = 1;
 
-	protected Room $room;
-	protected Attendee $attendee;
-	protected ?Session $session;
-
 	public function __construct(
-		Room $room,
-		Attendee $attendee,
-		?Session $session,
+		protected Room $room,
+		protected Attendee $attendee,
+		protected ?Session $session,
 	) {
-		$this->room = $room;
-		$this->attendee = $attendee;
-		$this->session = $session;
 	}
 
 	public function getRoom(): Room {

@@ -26,10 +26,10 @@ namespace OCA\Talk;
 use OCP\ISession;
 
 class TalkSession {
-	protected ISession $session;
 
-	public function __construct(ISession $session) {
-		$this->session = $session;
+	public function __construct(
+		protected ISession $session,
+	) {
 	}
 
 	/**
