@@ -259,6 +259,7 @@ OC.L10N.register(
     "Created at" : "Geskep om",
     "Pending" : "Hangend",
     "Error" : "Fout",
+    "Active" : "Aktief",
     "OK" : "Goed",
     "Checking …" : "Gaan tans na …",
     "Back" : "Terug",
