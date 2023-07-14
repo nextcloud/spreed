@@ -27,14 +27,12 @@ const nextcloudWebpackRules = require('@nextcloud/webpack-vue-config/rules')
 nextcloudWebpackRules.RULE_JS.exclude = BabelLoaderExcludeNodeModulesExcept([
 	'@nextcloud/event-bus',
 	'ansi-regex',
-	'color.js',
 	'fast-xml-parser',
 	'hot-patcher',
 	'nextcloud-vue-collections',
 	'semver',
 	'strip-ansi',
 	'tributejs',
-	'vue-resize',
 	'webdav',
 ])
 
