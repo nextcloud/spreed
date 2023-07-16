@@ -167,7 +167,7 @@ class Create extends Base {
 		return 0;
 	}
 
-	public function completeOptionValues($optionName, CompletionContext $context) {
+	public function completeOptionValues($optionName, CompletionContext $context): array {
 		switch ($optionName) {
 			case 'user':
 				return $this->completeUserValues($context);

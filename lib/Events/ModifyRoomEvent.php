@@ -45,14 +45,14 @@ class ModifyRoomEvent extends RoomEvent {
 	/**
 	 * @return int|string|bool
 	 */
-	public function getNewValue() {
+	public function getNewValue(): bool|int|string {
 		return $this->newValue;
 	}
 
 	/**
 	 * @return int|string|bool|null
 	 */
-	public function getOldValue() {
+	public function getOldValue(): bool|int|string|null {
 		return $this->oldValue;
 	}
 

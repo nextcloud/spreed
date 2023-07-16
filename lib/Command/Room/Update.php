@@ -177,7 +177,7 @@ class Update extends Base {
 		return 0;
 	}
 
-	public function completeOptionValues($optionName, CompletionContext $context) {
+	public function completeOptionValues($optionName, CompletionContext $context): array {
 		switch ($optionName) {
 			case 'public':
 			case 'readonly':
@@ -196,7 +196,7 @@ class Update extends Base {
 		return parent::completeOptionValues($optionName, $context);
 	}
 
-	public function completeArgumentValues($argumentName, CompletionContext $context) {
+	public function completeArgumentValues($argumentName, CompletionContext $context): array {
 		switch ($argumentName) {
 			case 'token':
 				return $this->completeTokenValues($context);

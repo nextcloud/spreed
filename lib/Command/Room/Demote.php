@@ -79,7 +79,7 @@ class Demote extends Base {
 		return 0;
 	}
 
-	public function completeArgumentValues($argumentName, CompletionContext $context) {
+	public function completeArgumentValues($argumentName, CompletionContext $context): array {
 		switch ($argumentName) {
 			case 'token':
 				return $this->completeTokenValues($context);

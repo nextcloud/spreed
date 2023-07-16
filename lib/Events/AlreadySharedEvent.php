@@ -39,7 +39,7 @@ class AlreadySharedEvent extends Event {
 	 *
 	 * @return mixed
 	 */
-	public function getSubject() {
+	public function getSubject(): mixed {
 		return $this->subject;
 	}
 }
