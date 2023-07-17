@@ -183,6 +183,7 @@ import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
 import { searchPossibleMentions } from '../../services/mentionsService.js'
+import { useSettingsStore } from '../../stores/settings.js'
 import { fetchClipboardContent } from '../../utils/clipboard.js'
 import { isDarkTheme } from '../../utils/isDarkTheme.js'
 
@@ -261,8 +262,11 @@ export default {
 
 	setup() {
 		const { openViewer } = useViewer()
+		const settingsStore = useSettingsStore()
+
 		return {
 			openViewer,
+			settingsStore,
 			supportTypingStatus,
 		}
 	},
@@ -371,7 +375,7 @@ export default {
 		},
 		showTypingStatus() {
 			return this.hasTypingIndicator && this.supportTypingStatus
-				&& this.$store.getters.getTypingStatusPrivacy() === PRIVACY.PUBLIC
+				&& this.settingsStore.typingStatusPrivacy === PRIVACY.PUBLIC
 		},
 	},
 

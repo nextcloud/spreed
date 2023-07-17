@@ -34,7 +34,6 @@ import participantsStore from './participantsStore.js'
 import pollStore from './pollStore.js'
 import quoteReplyStore from './quoteReplyStore.js'
 import reactionsStore from './reactionsStore.js'
-import settingsStore from './settingsStore.js'
 import sharedItemStore from './sharedItemsStore.js'
 import sidebarStore from './sidebarStore.js'
 import soundsStore from './soundsStore.js'
@@ -55,7 +54,6 @@ export default {
 		newGroupConversationStore,
 		participantsStore,
 		quoteReplyStore,
-		settingsStore,
 		sidebarStore,
 		soundsStore,
 		talkHashStore,
