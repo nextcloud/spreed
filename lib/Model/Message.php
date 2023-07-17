@@ -168,7 +168,6 @@ class Message {
 
 		$data = [
 			'id' => (int) $this->getComment()->getId(),
-			'threadId' => (int) $this->getComment()->getTopmostParentId(),
 			'token' => $this->getRoom()->getToken(),
 			'actorType' => $this->getActorType(),
 			'actorId' => $this->getActorId(),

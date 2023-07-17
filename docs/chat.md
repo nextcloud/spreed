@@ -46,7 +46,6 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 13
 | field                 | type     | Description                                                                                                                                                            |
 |-----------------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `id`                  | int      | ID of the comment                                                                                                                                                      |
-| `threadId`            | int      | ID of the top most parent comment, indicating the thread of this message (`0` for the messages without a parent) (only available with `threads` capability)            |
 | `token`               | string   | Conversation token                                                                                                                                                     |
 | `actorType`           | string   | See [Constants - Actor types of chat messages](constants.md#actor-types-of-chat-messages)                                                                              |
 | `actorId`             | string   | Actor id of the message author                                                                                                                                         |

@@ -123,4 +123,3 @@
 * `typing-privacy` - Support toggle typing privacy
 
 ## 18
-* `threads` - Chat messages have a thread ID exposed which allows clients to only list chat messages of a dedicated messages stream
