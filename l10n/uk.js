@@ -50,7 +50,7 @@ OC.L10N.register(
     "- Start calls without notifying others in big conversations. You can send individual call notifications once the call has started." : "- Починайте дзвінки без сповіщення інших під час великих розмов. Ви можете надсилати індивідуальні сповіщення про виклик, щойно він розпочався.",
     "- Send chat messages without notifying the recipients in case it is not urgent" : "- Надсилайте повідомлення в чаті без сповіщення одержувачів, якщо це не є терміновим",
     "- Emojis can now be autocompleted by typing a \":\"" : "- Емодзі тепер можна автозаповнювати, ввівши \":\"",
-    "- Link various items using the new smart-picker by typing a \"/\"" : "- Пов'язуйте різні елементи за допомогою нового smart-picker, вводячи \"/\"",
+    "- Link various items using the new smart-picker by typing a \"/\"" : "- Пов'язуйте різні об'єкти з використанням асистенту розумного вибору, для цього просто введіть \"/\"",
     "- Moderators can now create breakout rooms (requires the external signaling server)" : "- Модератори тепер можуть створювати кімнати для переговорів (потрібен зовнішній сервер сигналізації)",
     "- Calls can now be recorded (requires the external signaling server)" : "- Дзвінки тепер можна записувати (потрібен зовнішній сервер сигналізації)",
     "- Conversations can now have an avatar or emoji as icon" : "- Тепер у розмовах можна поставити аватарку або емодзі як іконку",
