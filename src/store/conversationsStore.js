@@ -240,13 +240,21 @@ const actions = {
 	 */
 	postAddConversation(context, conversation) {
 		if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.status) {
-			emit('user_status:status.updated', {
-				status: conversation.status,
-				message: conversation.statusMessage,
-				icon: conversation.statusIcon,
-				clearAt: conversation.statusClearAt,
-				userId: conversation.name,
-			})
+			const prevStatus = context.state.conversations[conversation.token] || {}
+
+			// Only emit the event when something actually changed
+			if (prevStatus?.status !== conversation.status
+				|| prevStatus?.statusMessage !== conversation.statusMessage
+				|| prevStatus?.statusIcon !== conversation.statusIcon
+				|| prevStatus?.statusClearAt !== conversation.statusClearAt) {
+				emit('user_status:status.updated', {
+					status: conversation.status,
+					message: conversation.statusMessage,
+					icon: conversation.statusIcon,
+					clearAt: conversation.statusClearAt,
+					userId: conversation.name,
+				})
+			}
 		}
 
 		let currentUser = {
