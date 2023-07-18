@@ -85,13 +85,6 @@ const DUMMY_CONVERSATION = {
 	isDummyConversation: true,
 }
 
-const getDefaultState = () => {
-	return {
-		conversations: {
-		},
-	}
-}
-
 const state = {
 	conversations: {
 	},
@@ -145,14 +138,6 @@ const mutations = {
 	 */
 	deleteConversation(state, token) {
 		Vue.delete(state.conversations, token)
-	},
-	/**
-	 * Resets the store to its original state
-	 *
-	 * @param {object} state current store state;
-	 */
-	purgeConversationsStore(state) {
-		Object.assign(state, getDefaultState())
 	},
 
 	setConversationDescription(state, { token, description }) {
@@ -375,16 +360,6 @@ const actions = {
 				t('spreed', 'Error while clearing conversation history'),
 				error)
 		}
-	},
-
-	/**
-	 * Resets the store to its original state.
-	 *
-	 * @param {object} context default store context;
-	 */
-	purgeConversationsStore(context) {
-		// TODO: also purge messages ??
-		context.commit('purgeConversationsStore')
 	},
 
 	async toggleGuests({ commit, getters }, { token, allowGuests }) {
