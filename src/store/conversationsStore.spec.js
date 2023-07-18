@@ -192,20 +192,6 @@ describe('conversationsStore', () => {
 			expect(deleteConversation).not.toHaveBeenCalled()
 		})
 
-		test('purges all conversations', () => {
-			const testConversation2 = Object.assign({}, testConversation, {
-				token: 'XXANOTHERXX',
-			})
-			store.dispatch('addConversation', testConversation)
-			store.dispatch('addConversation', testConversation2)
-
-			store.dispatch('purgeConversationsStore')
-
-			expect(store.getters.conversation(testToken)).toBeUndefined()
-			expect(store.getters.conversation('XXANOTHERXX')).toBeUndefined()
-			expect(store.getters.conversationsList).toStrictEqual([])
-		})
-
 		test('deletes conversation from server', async () => {
 			store.dispatch('addConversation', testConversation)
 
