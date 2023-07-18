@@ -35,6 +35,7 @@ get the messagesList array and loop through the list to generate the messages.
 		<div v-if="displayMessagesLoader" class="scroller__loading icon-loading" />
 		<MessagesGroup v-for="item of messagesGroupedByAuthor"
 			:key="item.id"
+			ref="messagesGroup"
 			v-bind="item.messages"
 			:token="token"
 			:messages="item.messages"
@@ -1007,8 +1008,12 @@ export default {
 					this.$refs.scroller.scrollTop += this.$refs.scroller.offsetHeight / 4
 				}
 				if (highlightAnimation) {
-					element.focus()
-					element.highlightAnimation()
+					for (const group of this.$refs.messagesGroup) {
+						if (group.messages.some(message => message.id === messageId)) {
+							group.highlightMessage(messageId)
+							break
+						}
+					}
 				}
 				this.isFocusingMessage = false
 				await this.handleScroll()
