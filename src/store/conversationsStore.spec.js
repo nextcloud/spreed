@@ -138,7 +138,7 @@ describe('conversationsStore', () => {
 					lastPing: 600,
 					participantType: PARTICIPANT.TYPE.USER,
 					sessionIds: [
-					  'session-id-1',
+						'session-id-1',
 					],
 					userId: 'current-user',
 				},
@@ -169,7 +169,7 @@ describe('conversationsStore', () => {
 					lastPing: 600,
 					participantType: PARTICIPANT.TYPE.USER,
 					sessionIds: [
-					  'session-id-1',
+						'session-id-1',
 					],
 					userId: '',
 				},
@@ -238,7 +238,7 @@ describe('conversationsStore', () => {
 			expect(updateTalkVersionHashAction).toHaveBeenCalledWith(expect.anything(), response)
 		})
 
-		test('fetches all conversations and adds them after purging', async () => {
+		test('fetches all conversations and set initial', async () => {
 			const testConversations = [
 				{
 					token: 'one_token',
@@ -252,7 +252,37 @@ describe('conversationsStore', () => {
 				},
 			]
 
-			// add conversation that should be purged
+			const response = {
+				data: {
+					ocs: {
+						data: testConversations,
+					},
+				},
+			}
+
+			fetchConversations.mockResolvedValue(response)
+
+			await store.dispatch('fetchConversations', {})
+
+			expect(fetchConversations).toHaveBeenCalledWith({})
+			expect(store.getters.conversationsList).toStrictEqual(testConversations)
+		})
+
+		test('fetches all conversations and remove deleted conversations', async () => {
+			const testConversations = [
+				{
+					token: 'one_token',
+					attendeeId: 'attendee-id-1',
+					lastActivity: 1675209600, // 2023-02-01T00:00:00.000Z
+				},
+				{
+					token: 'another_token',
+					attendeeId: 'attendee-id-2',
+					lastActivity: 1675209600, // 2023-02-01T00:00:00.000Z
+				},
+			]
+
+			// add conversation that should be removed
 			store.dispatch('addConversation', testConversation)
 
 			const response = {
@@ -269,9 +299,43 @@ describe('conversationsStore', () => {
 
 			expect(fetchConversations).toHaveBeenCalledWith({})
 			expect(store.getters.conversationsList).toStrictEqual(testConversations)
+		})
 
-			expect(clearMaintenanceModeAction).toHaveBeenCalled()
-			expect(updateTalkVersionHashAction).toHaveBeenCalledWith(expect.anything(), response)
+		test('fetches all conversations and add new conversations', async () => {
+			const oldConversation = {
+				token: 'tokenOne',
+				attendeeId: 'attendee-id-1',
+				lastActivity: 1672531200, // 2023-01-01T00:00:00.000Z
+			}
+
+			// Add initial conversations
+			store.dispatch('addConversation', oldConversation)
+
+			// Fetch new conversation
+			const newConversation = {
+				token: 'tokenTwo',
+				attendeeId: 'attendee-id-2',
+				lastActivity: 1675209600, // 2023-02-01T00:00:00.000Z
+			}
+
+			const response = {
+				data: {
+					ocs: {
+						data: [{ ...oldConversation }, newConversation],
+					},
+				},
+			}
+
+			fetchConversations.mockResolvedValue(response)
+
+			await store.dispatch('fetchConversations', { })
+
+			expect(fetchConversations).toHaveBeenCalledWith({ })
+			// conversationsList is actual to the response
+			expect(store.getters.conversationsList).toEqual([oldConversation, newConversation])
+			// Only old conversation with new activity should be actually replaced with new objects
+			expect(store.state.conversationsStore.conversations[oldConversation.token]).toStrictEqual(oldConversation)
+			expect(store.state.conversationsStore.conversations[newConversation.token]).toStrictEqual(newConversation)
 		})
 
 		test('fetches all conversations and update only new without purging when modifiedSince is present', async () => {
@@ -343,6 +407,18 @@ describe('conversationsStore', () => {
 			expect(checkMaintenanceModeAction).toHaveBeenCalledWith(expect.anything(), response)
 		})
 
+		test('fetch conversations should update talkVersion', async () => {
+			const response = {
+				data: {
+					ocs: {
+						data: [],
+					},
+				},
+			}
+			fetchConversations.mockResolvedValue(response)
+			await store.dispatch('fetchConversations', {})
+			expect(updateTalkVersionHashAction).toHaveBeenCalledWith(expect.anything(), response)
+		})
 	})
 
 	describe('conversation settings', () => {
