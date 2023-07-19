@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.7 – 2023-07-20
+### Fixed
+- Make conversation name and description selectable
+  [#9784](https://github.com/nextcloud/spreed/issues/9784)
+
 ## 15.0.6 – 2023-05-25
 ### Changed
 - Allow Brave browser without unsupported warning
