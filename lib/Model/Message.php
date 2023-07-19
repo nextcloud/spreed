@@ -39,7 +39,7 @@ class Message {
 	/** @var IL10N */
 	protected $l;
 
-	/** @var Participant */
+	/** @var null|Participant */
 	protected $participant;
 
 	/** @var bool */
@@ -67,7 +67,7 @@ class Message {
 	protected $actorDisplayName = '';
 
 	public function __construct(Room $room,
-		Participant $participant,
+		?Participant $participant,
 		IComment $comment,
 		IL10N $l) {
 		$this->room = $room;
@@ -92,7 +92,7 @@ class Message {
 		return $this->l;
 	}
 
-	public function getParticipant(): Participant {
+	public function getParticipant(): ?Participant {
 		return $this->participant;
 	}
 

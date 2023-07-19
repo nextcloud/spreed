@@ -63,7 +63,7 @@ class MessageParser {
 		$this->userManager = $userManager;
 	}
 
-	public function createMessage(Room $room, Participant $participant, IComment $comment, IL10N $l): Message {
+	public function createMessage(Room $room, ?Participant $participant, IComment $comment, IL10N $l): Message {
 		return new Message($room, $participant, $comment, $l);
 	}
 
