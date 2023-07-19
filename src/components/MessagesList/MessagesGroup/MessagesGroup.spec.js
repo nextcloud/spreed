@@ -36,6 +36,7 @@ describe('MessagesGroup.vue', () => {
 			propsData: {
 				id: 123,
 				token: TOKEN,
+				dateSeparator: '<date separator>',
 				previousMessageId: 90,
 				nextMessageId: 200,
 				messages: [{
@@ -50,7 +51,6 @@ describe('MessagesGroup.vue', () => {
 					systemMessage: '',
 					timestamp: 100,
 					isReplyable: true,
-					dateSeparator: '<date separator>',
 				}, {
 					id: 110,
 					token: TOKEN,
@@ -129,6 +129,7 @@ describe('MessagesGroup.vue', () => {
 			propsData: {
 				id: 123,
 				token: TOKEN,
+				dateSeparator: '<date separator>',
 				previousMessageId: 90,
 				nextMessageId: 200,
 				messages: [{
@@ -143,7 +144,6 @@ describe('MessagesGroup.vue', () => {
 					systemMessage: 'call_started',
 					timestamp: 100,
 					isReplyable: false,
-					dateSeparator: '<date separator>',
 				}, {
 					id: 110,
 					token: TOKEN,
@@ -197,6 +197,7 @@ describe('MessagesGroup.vue', () => {
 			propsData: {
 				id: 123,
 				token: TOKEN,
+				dateSeparator: '<date separator>',
 				previousMessageId: 90,
 				nextMessageId: 200,
 				messages: [{
@@ -211,7 +212,6 @@ describe('MessagesGroup.vue', () => {
 					systemMessage: '',
 					timestamp: 100,
 					isReplyable: true,
-					dateSeparator: '<date separator>',
 				}, {
 					id: 110,
 					token: TOKEN,
@@ -257,6 +257,7 @@ describe('MessagesGroup.vue', () => {
 			propsData: {
 				id: 123,
 				token: TOKEN,
+				dateSeparator: '<date separator>',
 				previousMessageId: 90,
 				nextMessageId: 200,
 				messages: [{
@@ -271,7 +272,6 @@ describe('MessagesGroup.vue', () => {
 					systemMessage: '',
 					timestamp: 100,
 					isReplyable: true,
-					dateSeparator: '<date separator>',
 				}, {
 					id: 110,
 					token: TOKEN,

@@ -6,12 +6,13 @@ import Vuex from 'vuex'
 import { showError } from '@nextcloud/dialogs'
 
 import {
-	ATTENDEE,
+	ATTENDEE, CHAT,
 } from '../constants.js'
 import {
 	deleteMessage,
 	updateLastReadMessage,
 	fetchMessages,
+	getMessageContext,
 	lookForNewMessages,
 	postNewMessage,
 } from '../services/messagesService.js'
@@ -22,6 +23,7 @@ jest.mock('../services/messagesService', () => ({
 	deleteMessage: jest.fn(),
 	updateLastReadMessage: jest.fn(),
 	fetchMessages: jest.fn(),
+	getMessageContext: jest.fn(),
 	lookForNewMessages: jest.fn(),
 	postNewMessage: jest.fn(),
 }))
@@ -770,7 +772,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				lastKnownMessageId: 100,
 				includeLastKnown: true,
-				limit: 100,
+				limit: CHAT.FETCH_LIMIT,
 			}, {
 				dummyOption: true,
 			})
@@ -823,7 +825,7 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				lastKnownMessageId: 100,
 				includeLastKnown: false,
-				limit: 100,
+				limit: CHAT.FETCH_LIMIT,
 			}, {
 				dummyOption: true,
 			})
@@ -869,6 +871,161 @@ describe('messagesStore', () => {
 			}).catch(() => {})
 
 			expect(cancelFunctionMock).toHaveBeenCalledWith('canceled')
+		})
+	})
+
+	describe('get message context', () => {
+		let updateLastCommonReadMessageAction
+		let setGuestNameIfEmptyAction
+		let cancelFunctionMock
+
+		beforeEach(() => {
+			testStoreConfig = cloneDeep(messagesStore)
+
+			updateLastCommonReadMessageAction = jest.fn()
+			setGuestNameIfEmptyAction = jest.fn()
+			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
+			testStoreConfig.actions.setGuestNameIfEmpty = setGuestNameIfEmptyAction
+
+			cancelFunctionMock = jest.fn()
+			CancelableRequest.mockImplementation((request) => {
+				return {
+					request,
+					cancel: cancelFunctionMock,
+				}
+			})
+
+			store = new Vuex.Store(testStoreConfig)
+		})
+
+		test('get context around specified message id', async () => {
+			const messages = [{
+				id: 1,
+				token: TOKEN,
+				actorType: ATTENDEE.ACTOR_TYPE.USERS,
+			}, {
+				id: 2,
+				token: TOKEN,
+				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
+			}]
+			const response = {
+				headers: {
+					'x-chat-last-common-read': '1',
+					'x-chat-last-given': '2',
+				},
+				data: {
+					ocs: {
+						data: messages,
+					},
+				},
+			}
+
+			getMessageContext.mockResolvedValueOnce(response)
+
+			await store.dispatch('getMessageContext', {
+				token: TOKEN,
+				messageId: 1,
+				requestOptions: {
+					dummyOption: true,
+				},
+				minimumVisible: 0,
+			})
+
+			expect(getMessageContext).toHaveBeenCalledWith({
+				token: TOKEN,
+				messageId: 1,
+				limit: CHAT.FETCH_LIMIT / 2,
+			}, {
+				dummyOption: true,
+			})
+
+			expect(updateLastCommonReadMessageAction)
+				.toHaveBeenCalledWith(expect.anything(), { token: TOKEN, lastCommonReadMessage: 1 })
+
+			expect(setGuestNameIfEmptyAction).toHaveBeenCalledWith(expect.anything(), messages[1])
+
+			expect(store.getters.messagesList(TOKEN)).toStrictEqual(messages)
+			expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(1)
+			expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(2)
+		})
+
+		test('fetch additional messages around context', async () => {
+			const messagesContext = [{
+				id: 3,
+				token: TOKEN,
+				actorType: ATTENDEE.ACTOR_TYPE.USERS,
+			}, {
+				id: 4,
+				token: TOKEN,
+				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
+			}]
+			const messagesFetch = [{
+				id: 1,
+				token: TOKEN,
+				actorType: ATTENDEE.ACTOR_TYPE.USERS,
+			}, {
+				id: 2,
+				token: TOKEN,
+				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
+			}]
+			const responseContext = {
+				headers: {
+					'x-chat-last-common-read': '2',
+					'x-chat-last-given': '4',
+				},
+				data: {
+					ocs: {
+						data: messagesContext,
+					},
+				},
+			}
+			const responseFetch = {
+				headers: {
+					'x-chat-last-common-read': '2',
+					'x-chat-last-given': '1',
+				},
+				data: {
+					ocs: {
+						data: messagesFetch,
+					},
+				},
+			}
+
+			getMessageContext.mockResolvedValueOnce(responseContext)
+			fetchMessages.mockResolvedValueOnce(responseFetch)
+
+			await store.dispatch('getMessageContext', {
+				token: TOKEN,
+				messageId: 3,
+				requestOptions: {
+					dummyOption: true,
+				},
+				minimumVisible: 2,
+			})
+
+			expect(getMessageContext).toHaveBeenCalledWith({
+				token: TOKEN,
+				messageId: 3,
+				limit: CHAT.FETCH_LIMIT / 2,
+			}, {
+				dummyOption: true,
+			})
+			expect(fetchMessages).toHaveBeenCalledWith({
+				token: TOKEN,
+				lastKnownMessageId: 3,
+				includeLastKnown: false,
+				limit: CHAT.FETCH_LIMIT,
+			}, undefined)
+
+			expect(updateLastCommonReadMessageAction).toHaveBeenCalledTimes(2)
+			expect(updateLastCommonReadMessageAction).toHaveBeenNthCalledWith(1, expect.anything(), { token: TOKEN, lastCommonReadMessage: 2 })
+			expect(updateLastCommonReadMessageAction).toHaveBeenNthCalledWith(2, expect.anything(), { token: TOKEN, lastCommonReadMessage: 2 })
+
+			expect(setGuestNameIfEmptyAction).toHaveBeenCalledWith(expect.anything(), messagesContext[1])
+
+			expect(store.getters.messagesList(TOKEN)).toStrictEqual([...messagesFetch, ...messagesContext])
+			expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(1)
+			expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(4)
 		})
 	})
 
@@ -957,6 +1114,7 @@ describe('messagesStore', () => {
 			expect(lookForNewMessages).toHaveBeenCalledWith({
 				token: TOKEN,
 				lastKnownMessageId: 100,
+				limit: CHAT.FETCH_LIMIT,
 			}, {
 				dummyOption: true,
 			})

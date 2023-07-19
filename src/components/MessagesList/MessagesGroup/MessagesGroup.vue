@@ -37,6 +37,7 @@
 			<ul class="messages">
 				<Message v-for="(message, index) of messages"
 					:key="message.id"
+					ref="message"
 					v-bind="message"
 					:is-first-message="index === 0"
 					:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
@@ -81,6 +82,13 @@ export default {
 			type: Array,
 			required: true,
 		},
+		/**
+		 * The message date separator.
+		 */
+		dateSeparator: {
+			type: String,
+			required: true,
+		},
 
 		previousMessageId: {
 			type: [String, Number],
@@ -92,6 +100,8 @@ export default {
 			default: 0,
 		},
 	},
+
+	expose: ['highlightMessage'],
 
 	computed: {
 		/**
@@ -109,14 +119,6 @@ export default {
 		 */
 		actorId() {
 			return this.messages[0].actorId
-		},
-		/**
-		 * The message date.
-		 *
-		 * @return {string}
-		 */
-		dateSeparator() {
-			return this.messages[0].dateSeparator || ''
 		},
 		/**
 		 * The message actor display name.
@@ -143,6 +145,17 @@ export default {
 		 */
 		isSystemMessage() {
 			return this.messages[0].systemMessage.length !== 0
+		},
+	},
+
+	methods: {
+		highlightMessage(messageId) {
+			for (const message of this.$refs.message) {
+				if (message.id === messageId) {
+					message.highlightMessage()
+					break
+				}
+			}
 		},
 	},
 }

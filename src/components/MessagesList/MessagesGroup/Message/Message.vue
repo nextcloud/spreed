@@ -32,8 +32,10 @@ the main body of the message as well as a quote.
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
 		class="message"
-		:class="{'message__last': isLastMessage}"
+		:class="{'message__last': isLastMessage,
+			'message--highlighted': isHighlighted}"
 		tabindex="0"
+		@animationend="isHighlighted = false"
 		@mouseover="handleMouseover"
 		@mouseleave="handleMouseleave">
 		<div :class="{'normal-message-body': !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
@@ -136,6 +138,7 @@ the main body of the message as well as a quote.
 				<NcPopover v-for="reaction in Object.keys(simpleReactions)"
 					:key="reaction"
 					:delay="200"
+					:focus-trap="false"
 					:triggers="['hover']">
 					<template #trigger>
 						<NcButton v-if="simpleReactions[reaction] !== 0"
@@ -419,11 +422,14 @@ export default {
 		return { isInCall, isTranslationAvailable }
 	},
 
+	expose: ['highlightMessage'],
+
 	data() {
 		return {
 			isHovered: false,
 			showReloadButton: false,
 			isDeleting: false,
+			isHighlighted: false,
 			// whether the message was seen, only used if this was marked as last read message
 			seen: false,
 			isActionMenuOpen: false,
@@ -678,20 +684,6 @@ export default {
 		},
 	},
 
-	mounted() {
-		// define a function, so it can be triggered directly on the DOM element
-		// which can be found with document.getElementById()
-		this.$refs.message.highlightAnimation = () => {
-			this.highlightAnimation()
-		}
-
-		this.$refs.message.addEventListener('animationend', this.highlightAnimationStop)
-	},
-
-	beforeDestroy() {
-		this.$refs.message.removeEventListener('animationend', this.highlightAnimationStop)
-	},
-
 	methods: {
 		userHasReacted(reaction) {
 			return this.reactionsSelf && this.reactionsSelf.includes(reaction)
@@ -703,13 +695,8 @@ export default {
 			}
 		},
 
-		highlightAnimation() {
-			// trigger CSS highlight animation by setting a class
-			this.$refs.message.classList.add('highlight-animation')
-		},
-		highlightAnimationStop() {
-			// when the animation ended, remove the class, so we can trigger it again another time
-			this.$refs.message.classList.remove('highlight-animation')
+		highlightMessage() {
+			this.isHighlighted = true
 		},
 
 		handleRetry() {
@@ -972,7 +959,7 @@ export default {
 	padding: 4px 4px 4px 8px;
 }
 
-.highlight-animation {
+.message--highlighted {
 	animation: highlight-animation 5s 1;
 	border-radius: 8px;
 }
@@ -1003,9 +990,8 @@ export default {
 }
 
 .message-status {
-	margin: -8px 0;
 	width: $clickable-area;
-	height: $clickable-area;
+	height: 24px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
