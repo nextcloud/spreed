@@ -37,6 +37,7 @@ use OCP\Server;
 class BotListener {
 	public static function register(IEventDispatcher $dispatcher): void {
 		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND, [self::class, 'afterMessageSendStatic']);
+		$dispatcher->addListener(ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND, [self::class, 'afterSystemMessageSendStatic']);
 	}
 
 	public static function afterMessageSendStatic(ChatEvent $event): void {
@@ -49,5 +50,12 @@ class BotListener {
 		$service = Server::get(BotService::class);
 		$messageParser = Server::get(MessageParser::class);
 		$service->afterChatMessageSent($event, $messageParser);
+	}
+
+	public static function afterSystemMessageSendStatic(ChatEvent $event): void {
+		/** @var BotService $service */
+		$service = Server::get(BotService::class);
+		$messageParser = Server::get(MessageParser::class);
+		$service->afterSystemMessageSent($event, $messageParser);
 	}
 }
