@@ -36,13 +36,14 @@ class RecorderArgumentsBuilder:
         self._ffmpegOutputVideo = None
         self._extension = None
 
-    def getRecorderArguments(self, status, displayId, audioSinkIndex, width, height, extensionlessOutputFileName):
+    def getRecorderArguments(self, status, displayId, audioSourceIndex, width, height, extensionlessOutputFileName):
         """
         Returns the list of arguments to start the recorder process.
 
         :param status: whether to record audio and video or only audio.
         :param displayId: the ID of the display that the browser is running in.
-        :param audioSinkIndex: the index of the sink for the browser audio output.
+        :param audioSourceIndex: the index of the source for the browser audio
+               output.
         :param width: the width of the display and the recording.
         :param height: the height of the display and the recording.
         :param extensionlessOutputFileName: the file name for the recording, without
@@ -51,7 +52,7 @@ class RecorderArgumentsBuilder:
         """
 
         ffmpegCommon = ['ffmpeg', '-loglevel', 'level+warning', '-n']
-        ffmpegInputAudio = ['-f', 'pulse', '-i', audioSinkIndex]
+        ffmpegInputAudio = ['-f', 'pulse', '-i', audioSourceIndex]
         ffmpegInputVideo = ['-f', 'x11grab', '-draw_mouse', '0', '-video_size', f'{width}x{height}', '-i', displayId]
         ffmpegOutputAudio = self.getFfmpegOutputAudio()
         ffmpegOutputVideo = self.getFfmpegOutputVideo()
