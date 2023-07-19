@@ -160,6 +160,7 @@ class BotService {
 				'X-Nextcloud-Talk-Random' => $random,
 				'X-Nextcloud-Talk-Signature' => $hash,
 				'X-Nextcloud-Talk-Backend' => $this->urlGenerator->getAbsoluteURL(''),
+				'OCS-APIRequest' => 'true', // FIXME optional?
 			];
 
 			$data = [
