@@ -24,5 +24,11 @@
 /js
 
 # VScode settings
-.vscode
+/.vscode
 *.code-workspace
+
+# JetBrains IDEs settings
+/.idea
+
+# JetBrains Fleet settings
+/.fleet
