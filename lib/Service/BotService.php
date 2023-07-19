@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Service;
 
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Bot;
@@ -91,7 +92,49 @@ class BotService {
 			'object' => [
 				'type' => 'Note',
 				'id' => $event->getComment()->getId(),
-				'name' => json_encode($messageData),
+				'name' => 'message',
+				'content' => json_encode($messageData),
+				'mediaType' => 'text/markdown', // FIXME or text/plain when markdown is disabled
+			],
+			'target' => [
+				'type' => 'Collection',
+				'id' => $event->getRoom()->getToken(),
+				'name' => $event->getRoom()->getName(),
+			]
+		]);
+	}
+
+	public function afterSystemMessageSent(ChatEvent $event, MessageParser $messageParser): void {
+		$bots = $this->getBotsForToken($event->getRoom()->getToken());
+		if (empty($bots)) {
+			return;
+		}
+
+		$message = $messageParser->createMessage(
+			$event->getRoom(),
+			null,
+			$event->getComment(),
+			$this->l10nFactory->get('spreed', 'en', 'en')
+		);
+		$messageParser->parseMessage($message);
+		$messageData = [
+			'message' => $message->getMessage(),
+			'parameters' => $message->getMessageParameters(),
+		];
+
+		$this->sendAsyncRequests($bots, [
+			'type' => 'Activity',
+			'actor' => [
+				'type' => 'Person',
+				'id' => $message->getActorType() . '/' . $message->getActorId(),
+				'name' => $message->getActorDisplayName(),
+			],
+			'object' => [
+				'type' => 'Note',
+				'id' => $event->getComment()->getId(),
+				'name' => $message->getMessageRaw(),
+				'content' => json_encode($messageData),
+				'mediaType' => 'text/markdown',
 			],
 			'target' => [
 				'type' => 'Collection',
