@@ -98,7 +98,10 @@ class SystemMessage {
 		$parsedParameters = ['actor' => $this->getActorFromComment($room, $comment)];
 
 		$participant = $chatMessage->getParticipant();
-		if (!$participant->isGuest()) {
+		if ($participant === null) {
+			$currentActorId = null;
+			$currentUserIsActor = false;
+		} elseif (!$participant->isGuest()) {
 			$currentActorId = $participant->getAttendee()->getActorId();
 			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user' &&
 				$participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS &&
@@ -563,12 +566,14 @@ class SystemMessage {
 		$parsedParameters = ['actor' => $this->getActor($room, $data['deleted_by_type'], $data['deleted_by_id'])];
 
 		$participant = $chatMessage->getParticipant();
-		$currentActorId = $participant->getAttendee()->getActorId();
+		$currentActorId = $participant?->getAttendee()->getActorId();
 
 		$authorIsActor = $data['deleted_by_type'] === $chatMessage->getComment()->getActorType()
 			&& $data['deleted_by_id'] === $chatMessage->getComment()->getActorId();
 
-		if (!$participant->isGuest()) {
+		if ($participant === null) {
+			$currentUserIsActor = false;
+		} elseif (!$participant->isGuest()) {
 			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user' &&
 				$participant->getAttendee()->getActorType() === Attendee::ACTOR_USERS &&
 				$currentActorId === $parsedParameters['actor']['id'];
