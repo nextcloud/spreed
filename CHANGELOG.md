@@ -1,6 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.5 – 2023-07-20
+### Changed
+- Close sidebar on mobile resolution after changing the route
+  [#9764](https://github.com/nextcloud/spreed/issues/9764)
+
+### Fixed
+- Make chat stay scrolling when the last message receives its first reaction
+  [#9957](https://github.com/nextcloud/spreed/issues/9957)
+- Improve call view video size calculation
+  [#9836](https://github.com/nextcloud/spreed/issues/9836)
+- Update group displayname when a group is renamed
+  [#9840](https://github.com/nextcloud/spreed/issues/9840)
+- Don't make the conversation list scroll when the selected conversation is already visible
+  [#9785](https://github.com/nextcloud/spreed/issues/9785)
+- Make conversation name and description selectable
+  [#9781](https://github.com/nextcloud/spreed/issues/9781)
+
+## 15.0.7 – 2023-07-20
+### Fixed
+- Make conversation name and description selectable
+  [#9784](https://github.com/nextcloud/spreed/issues/9784)
+
 ## 16.0.4 – 2023-05-25
 ### Added
 - Allow to mark conversations unread in the sidebar
