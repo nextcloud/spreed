@@ -41,10 +41,11 @@ export function useArrowNavigation() {
 	 * @param {import('vue').Ref} defaultElementRef component ref to return focus to
 	 */
 	function mountArrowNavigation(listElementRef, defaultElementRef) {
-		listRef.value = listElementRef
+		// depending on ref, listElementRef could be either a component or a DOM element
+		listRef.value = listElementRef?.$el ?? listElementRef
 		defaultRef.value = defaultElementRef
 
-		listRef.value.$el.addEventListener('keydown', (event) => {
+		listRef.value.addEventListener('keydown', (event) => {
 			if (itemElements.value?.length) {
 				if (event.key === 'ArrowDown') {
 					focusNextElement(event)
@@ -65,7 +66,7 @@ export function useArrowNavigation() {
 	 * @param {string} selector selector to look for
 	 */
 	function initializeNavigation(selector) {
-		itemElements.value = Array.from(listRef.value.$el.querySelectorAll(selector))
+		itemElements.value = Array.from(listRef.value.querySelectorAll(selector))
 		focusedIndex.value = null
 
 		itemElements.value.forEach((item, index) => {
@@ -99,8 +100,13 @@ export function useArrowNavigation() {
 	function focusDefaultElement(event) {
 		if (focusedIndex.value !== null) {
 			event.preventDefault()
+			event.stopImmediatePropagation()
 			focusedIndex.value = null
-			defaultRef.value.focus()
+			// TODO setTimeout hacks NcModal behaviour, which removes focus-trap
+			// and focuses last clicked element before Modal (NcActions in case of NewGroupConversation)
+			setTimeout(() => {
+				defaultRef.value.focus()
+			}, 0)
 		}
 	}
 

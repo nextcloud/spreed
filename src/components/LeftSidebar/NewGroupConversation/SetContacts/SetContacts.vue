@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div class="set-contacts">
+	<div ref="wrapper" class="set-contacts">
 		<!-- Search -->
 		<NcTextField ref="setContacts"
 			v-observe-visibility="visibilityChanged"
@@ -68,6 +68,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
 import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble.vue'
 
+import { useArrowNavigation } from '../../../../composables/useArrowNavigation.js'
 import { searchPossibleConversations } from '../../../../services/conversationsService.js'
 import CancelableRequest from '../../../../utils/cancelableRequest.js'
 
@@ -86,6 +87,15 @@ export default {
 			type: String,
 			required: true,
 		},
+	},
+
+	setup() {
+		const { initializeNavigation, mountArrowNavigation } = useArrowNavigation()
+
+		return {
+			initializeNavigation,
+			mountArrowNavigation,
+		}
 	},
 
 	data() {
@@ -127,11 +137,14 @@ export default {
 		},
 	},
 
-	async mounted() {
-		// Focus the input field of the current component.
-		this.focusInput()
-		// Perform a search with an empty string
-		await this.fetchSearchResults()
+	mounted() {
+		this.$nextTick(() => {
+			this.mountArrowNavigation(this.$refs.wrapper, this.$refs.setContacts)
+			// Focus the input field of the current component.
+			this.focusInput()
+			// Perform a search with an empty string
+			this.fetchSearchResults()
+		})
 	},
 
 	beforeDestroy() {
@@ -175,6 +188,9 @@ export default {
 				if (!this.searchText) {
 					this.cachedFullSearchResults = this.searchResults
 				}
+				this.$nextTick(() => {
+					this.initializeNavigation('.participant-row')
+				})
 			} catch (exception) {
 				if (CancelableRequest.isCancel(exception)) {
 					return
