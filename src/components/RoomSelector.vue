@@ -82,7 +82,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import ConversationIcon from '../components/ConversationIcon.vue'
+import ConversationIcon from './ConversationIcon.vue'
 
 import { CONVERSATION } from '../constants.js'
 import { searchListedConversations, fetchConversations } from '../services/conversationsService.js'
@@ -164,8 +164,8 @@ export default {
 				: t('spreed', 'Check spelling or use complete words.')
 		},
 	},
-	async beforeMount() {
-		await this.fetchRooms()
+	beforeMount() {
+		this.fetchRooms()
 		const $store = OCA.Talk?.instance?.$store
 		if ($store) {
 			this.currentRoom = $store.getters.getToken()

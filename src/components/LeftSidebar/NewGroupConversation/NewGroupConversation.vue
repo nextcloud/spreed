@@ -293,7 +293,7 @@ export default {
 			})
 		},
 	},
-	expose: ['showModalForItem','showModal'],
+	expose: ['showModalForItem', 'showModal'],
 
 	methods: {
 		showModal() {
@@ -481,15 +481,6 @@ export default {
 	&__copy-link {
 		margin: 50px auto 0 auto;
 	}
-}
-.toggle {
-	height: 44px;
-	width: 44px;
-	padding: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin: 0 var(--default-grid-baseline);
 }
 
 .new-group-conversation {

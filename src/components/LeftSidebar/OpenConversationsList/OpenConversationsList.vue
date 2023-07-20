@@ -29,7 +29,7 @@
 
 <script>
 
-import RoomSelector from '../../../views/RoomSelector.vue'
+import RoomSelector from '../../RoomSelector.vue'
 
 export default {
 
@@ -51,10 +51,12 @@ export default {
 		},
 
 		dialogTitle() {
-			return t('spreed', 'Open conversations')
+			return t('spreed', 'Join open conversations')
 		},
 
 	},
+
+	expose: ['showModal'],
 
 	methods: {
 		showModal() {
@@ -66,13 +68,8 @@ export default {
 		},
 
 		openConversation(token) {
-			this.$router.push({
-				name: 'conversation',
-				params: {
-					token: `${token}`,
-				},
-			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
-
+			this.$router.push({ name: 'conversation', params: { token } })
+				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			this.closeModal()
 		},
 	},
