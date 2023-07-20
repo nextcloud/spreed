@@ -27,7 +27,7 @@ import { showSuccess, showError } from '@nextcloud/dialogs'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import { generateFilePath, generateUrl } from '@nextcloud/router'
 
-import RoomSelector from './views/RoomSelector.vue'
+import RoomSelector from './components/RoomSelector.vue'
 
 import { postRichObjectToConversation } from './services/messagesService.js'
 

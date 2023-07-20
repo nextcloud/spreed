@@ -92,7 +92,6 @@ describe('RoomSelector.vue', () => {
 
 		// need to wait for re-render, otherwise the list is not rendered yet
 		await flushPromises()
-		await wrapper.vm.$nextTick()
 
 		const list = wrapper.findAll('li')
 		expect(list.length).toBe(3)
@@ -113,7 +112,6 @@ describe('RoomSelector.vue', () => {
 
 		// need to wait for re-render, otherwise the list is not rendered yet
 		await flushPromises()
-		await wrapper.vm.$nextTick()
 
 		const list = wrapper.findAll('li')
 		expect(list.length).toBe(2)
@@ -128,7 +126,6 @@ describe('RoomSelector.vue', () => {
 			{ params: { includeStatus: true } }
 		)
 		await flushPromises()
-		await wrapper.vm.$nextTick()
 
 		const eventHandler = jest.fn()
 		wrapper.vm.$root.$on('select', eventHandler)

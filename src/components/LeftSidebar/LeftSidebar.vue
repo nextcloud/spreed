@@ -81,14 +81,6 @@
 					<template #icon>
 						<DotsVertical :size="20" />
 					</template>
-					<NcActionButton close-after-click
-						@click="showModalListConversations">
-						<template #icon>
-							<List :size="20" />
-						</template>
-						{{ t('spreed','Join open conversations') }}
-					</NcActionButton>
-
 					<NcActionButton v-if="canStartConversations"
 						close-after-click
 						@click="showModalNewConversation">
@@ -96,6 +88,14 @@
 							<Plus :size="20" />
 						</template>
 						{{ t('spreed','Create a new conversation') }}
+					</NcActionButton>
+
+					<NcActionButton close-after-click
+						@click="showModalListConversations">
+						<template #icon>
+							<List :size="20" />
+						</template>
+						{{ t('spreed','Join open conversations') }}
 					</NcActionButton>
 				</NcActions>
 			</div>

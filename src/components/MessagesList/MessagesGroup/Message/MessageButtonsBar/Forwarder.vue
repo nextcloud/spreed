@@ -78,7 +78,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
-import RoomSelector from '../../../../../views/RoomSelector.vue'
+import RoomSelector from '../../../../RoomSelector.vue'
 
 export default {
 	name: 'Forwarder',
