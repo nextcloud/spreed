@@ -1,6 +1,47 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.0.2 – 2023-07-20
+### Changed
+- Automatic transcription of call recordings is now opt-in
+  [#9971](https://github.com/nextcloud/spreed/issues/9971)
+- Update dependencies
+
+### Fixed
+- Fix position of "Scroll to bottom" button in the chat view
+  [#9871](https://github.com/nextcloud/spreed/issues/9871)
+  [#9858](https://github.com/nextcloud/spreed/issues/9858)
+- Improve accessibility of conversation creation dialog
+  [#9954](https://github.com/nextcloud/spreed/issues/9954)
+- Make chat stay scrolling when the last message receives its first reaction
+  [#9956](https://github.com/nextcloud/spreed/issues/9956)
+- Don't emit event when the user status did not change on refetching
+  [#10005](https://github.com/nextcloud/spreed/issues/10005)
+- Attempt to further improve the performance of conversation list updates with hundreds of conversations 
+  [#10016](https://github.com/nextcloud/spreed/issues/10016)
+
+## 16.0.5 – 2023-07-20
+### Changed
+- Close sidebar on mobile resolution after changing the route
+  [#9764](https://github.com/nextcloud/spreed/issues/9764)
+
+### Fixed
+- Make chat stay scrolling when the last message receives its first reaction
+  [#9957](https://github.com/nextcloud/spreed/issues/9957)
+- Improve call view video size calculation
+  [#9836](https://github.com/nextcloud/spreed/issues/9836)
+- Update group displayname when a group is renamed
+  [#9840](https://github.com/nextcloud/spreed/issues/9840)
+- Don't make the conversation list scroll when the selected conversation is already visible
+  [#9785](https://github.com/nextcloud/spreed/issues/9785)
+- Make conversation name and description selectable
+  [#9781](https://github.com/nextcloud/spreed/issues/9781)
+
+## 15.0.7 – 2023-07-20
+### Fixed
+- Make conversation name and description selectable
+  [#9784](https://github.com/nextcloud/spreed/issues/9784)
+
 ## 17.0.1 – 2023-06-23
 ### Changed
 - Include display name in participant update signaling message
