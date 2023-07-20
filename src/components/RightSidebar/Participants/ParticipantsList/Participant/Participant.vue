@@ -804,6 +804,12 @@ export default {
 		display: flex;
 		align-items: center;
 	}
+
+	&:focus,
+	&:focus-visible {
+		z-index: 1;
+		outline: 2px solid var(--color-primary-element);
+	}
 }
 
 .participant-row.isSearched .participant-row__user-name {
