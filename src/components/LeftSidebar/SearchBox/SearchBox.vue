@@ -20,19 +20,17 @@
 -->
 
 <template>
-	<form @submit.prevent="handleSubmit">
-		<NcTextField ref="searchConversations"
-			:value="value"
-			:label="placeholderText"
-			:show-trailing-button="isSearching"
-			trailing-button-icon="close"
-			v-on="$listeners"
-			@update:value="updateValue"
-			@trailing-button-click="abortSearch"
-			@keypress.enter="handleSubmit">
-			<Magnify :size="16" />
-		</NcTextField>
-	</form>
+	<NcTextField ref="searchConversations"
+		:value="value"
+		:label="placeholderText"
+		:show-trailing-button="isSearching"
+		trailing-button-icon="close"
+		v-on="$listeners"
+		@update:value="updateValue"
+		@trailing-button-click="abortSearch"
+		@keydown.esc="abortSearch">
+		<Magnify :size="16" />
+	</NcTextField>
 </template>
 
 <script>
@@ -72,6 +70,8 @@ export default {
 		},
 	},
 
+	expose: ['focus'],
+
 	emits: ['update:value', 'input', 'submit', 'abort-search'],
 
 	computed: {
@@ -95,29 +95,22 @@ export default {
 			this.$emit('update:value', value)
 			this.$emit('input', value)
 		},
-		// Focus the input field of the searchbox component.
-		focusInput() {
-			this.$refs.searchConversations.$el.focus()
+		// Focuses the input.
+		focus() {
+			this.$refs.searchConversations.focus()
 		},
 		// Focuses the input if the current route is root.
 		focusInputIfRoot() {
 			if (this.$route.name === 'root') {
-				this.focusInput()
+				this.focus()
 			}
-		},
-		/**
-		 * When the form is submitted we send this event up in order to allow for example
-		 * to select the first search result and trigger a route change in the main view.
-		 */
-		handleSubmit() {
-			this.$emit('submit')
 		},
 		/**
 		 * Emits the abort-search event and re-focuses the input
 		 */
 		abortSearch() {
 			this.$emit('abort-search')
-			this.focusInput()
+			this.focus()
 		},
 	},
 }
