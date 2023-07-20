@@ -23,17 +23,16 @@
 	<NcAppNavigation :aria-label="t('spreed', 'Conversation list')">
 		<div class="new-conversation"
 			:class="{ 'new-conversation--scrolled-down': !isScrolledToTop }">
-			<SearchBox ref="searchbox"
-				:value.sync="searchText"
-				class="conversations-search"
-				:class="{'conversations-search--expanded': isFocused}"
-				:is-searching="isSearching"
-				@focus="setIsFocused"
-				@blur="setIsFocused"
-				@input="debounceFetchSearchResults"
-				@submit="onInputEnter"
-				@keydown.enter.native="handleEnter"
-				@abort-search="abortSearch" />
+			<div class="conversations-search"
+				:class="{'conversations-search--expanded': isFocused}">
+				<SearchBox ref="searchBox"
+					:value.sync="searchText"
+					:is-searching="isSearching"
+					@focus="setIsFocused"
+					@blur="setIsFocused"
+					@input="debounceFetchSearchResults"
+					@abort-search="abortSearch" />
+			</div>
 
 			<!-- Filters -->
 			<div class="filters"
@@ -666,13 +665,6 @@ export default {
 			this.handleScroll()
 			this.handleUnreadMention()
 		}, 50),
-
-		// Route to the first search result
-		handleEnter() {
-			if (this?.conversationsList[0]?.token) {
-				this.$router.push({ name: 'conversation', params: { token: this.conversationsList[0].token } })
-			}
-		},
 
 		scrollToConversation(token) {
 			this.$nextTick(() => {
