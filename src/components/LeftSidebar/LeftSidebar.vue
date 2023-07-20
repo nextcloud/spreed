@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<NcAppNavigation :aria-label="t('spreed', 'Conversation list')">
+	<NcAppNavigation ref="leftSidebar" :aria-label="t('spreed', 'Conversation list')">
 		<div class="new-conversation"
 			:class="{ 'new-conversation--scrolled-down': !isScrolledToTop }">
 			<div class="conversations-search"
@@ -234,8 +234,8 @@ import NewGroupConversation from './NewGroupConversation/NewGroupConversation.vu
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
 import SearchBox from './SearchBox/SearchBox.vue'
 
+import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
 import { CONVERSATION } from '../../constants.js'
-import arrowNavigation from '../../mixins/arrowNavigation.js'
 import {
 	searchPossibleConversations,
 	searchListedConversations,
@@ -271,14 +271,22 @@ export default {
 	},
 
 	mixins: [
-		arrowNavigation,
 		isMobile,
 	],
+
+	setup() {
+		const { initializeNavigation, mountArrowNavigation } = useArrowNavigation()
+
+		return {
+			initializeNavigation,
+			mountArrowNavigation,
+		}
+	},
 
 	data() {
 		return {
 			searchText: '',
-			searchResults: {},
+			searchResults: [],
 			searchResultsUsers: [],
 			searchResultsGroups: [],
 			searchResultsCircles: [],
@@ -392,7 +400,7 @@ export default {
 		EventBus.$once('conversations-received', this.handleUnreadMention)
 		EventBus.$on('route-change', this.onRouteChange)
 		EventBus.$on('joined-conversation', this.handleJoinedConversation)
-		this.mountArrowNavigation()
+		this.mountArrowNavigation(this.$refs.leftSidebar, this.$refs.searchBox)
 	},
 
 	beforeDestroy() {
@@ -413,10 +421,6 @@ export default {
 	},
 
 	methods: {
-		getFocusableList() {
-			return this.$el.querySelectorAll('li.acli_wrapper .acli')
-		},
-
 		showModalNewConversation() {
 			this.$refs.newGroupConversation.showModal()
 		},
@@ -437,10 +441,6 @@ export default {
 			this.isFiltered = filter
 			// Clear the search input once a filter is active
 			this.searchText = ''
-		},
-
-		focusCancel() {
-			return this.abortSearch()
 		},
 
 		scrollBottomUnread() {
@@ -484,6 +484,9 @@ export default {
 				this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
 				this.searchResultsCircles = this.searchResults.filter((match) => match.source === 'circles')
 				this.contactsLoading = false
+				this.$nextTick(() => {
+					this.initializeNavigation('.list-item')
+				})
 			} catch (exception) {
 				if (CancelableRequest.isCancel(exception)) {
 					return
@@ -505,6 +508,9 @@ export default {
 				const response = await request({ searchText: this.searchText })
 				this.searchResultsListedConversations = response.data.ocs.data
 				this.listedConversationsLoading = false
+				this.$nextTick(() => {
+					this.initializeNavigation('.list-item')
+				})
 			} catch (exception) {
 				if (CancelableRequest.isCancel(exception)) {
 					return
@@ -828,5 +834,10 @@ export default {
 
 :deep(.app-navigation__list) {
 	padding: 0 !important;
+}
+
+:deep(.list-item:focus, .list-item:focus-visible) {
+	z-index: 1;
+	outline: 2px solid var(--color-primary-element);
 }
 </style>
