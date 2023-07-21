@@ -13,7 +13,7 @@ import router from '../../__mocks__/router.js'
 import { searchPossibleConversations, searchListedConversations } from '../../services/conversationsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import storeConfig from '../../store/storeConfig.js'
-import { findNcListItems } from '../../test-helpers.js'
+import { findNcListItems, findNcActionButton } from '../../test-helpers.js'
 
 jest.mock('@nextcloud/initial-state', () => ({
 	loadState: jest.fn(),
@@ -709,16 +709,16 @@ describe('LeftSidebar.vue', () => {
 			loadStateSettings.start_conversations = true
 
 			const wrapper = mountComponent()
-			const buttonEl = wrapper.findComponent({ name: 'NewGroupConversation' })
-			expect(buttonEl.exists()).toBeTruthy()
+			const newConversationbutton = findNcActionButton(wrapper, 'Create a new conversation')
+			expect(newConversationbutton.exists()).toBeTruthy()
 
 		})
 		test('does not show new conversation button if user cannot start conversations', () => {
 			loadStateSettings.start_conversations = false
 
 			const wrapper = mountComponent()
-			const buttonEl = wrapper.findComponent({ name: 'NewGroupConversation' })
-			expect(buttonEl.exists()).toBeFalsy()
+			const newConversationbutton = findNcActionButton(wrapper, 'Create a new conversation')
+			expect(newConversationbutton.exists()).toBeFalsy()
 		})
 	})
 

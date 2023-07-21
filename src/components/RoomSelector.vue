@@ -53,8 +53,13 @@
 							<span>{{ room.displayName }}</span>
 						</li>
 					</ul>
-					<div v-else-if="!loading">
-						{{ t('spreed', 'No conversations found') }}
+					<div v-else-if="!loading" class="no-match-message">
+						<h2 class="no-match-title">
+							{{ noMatchFoundTitle }}
+						</h2>
+						<p v-if="noMatchFoundSubtitle" class="subtitle">
+							{{ noMatchFoundSubtitle }}
+						</p>
 					</div>
 				</div>
 				<div id="modal-buttons">
@@ -73,16 +78,14 @@
 <script>
 import Magnify from 'vue-material-design-icons/Magnify.vue'
 
-import axios from '@nextcloud/axios'
-import { generateOcsUrl } from '@nextcloud/router'
-
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import ConversationIcon from '../components/ConversationIcon.vue'
+import ConversationIcon from './ConversationIcon.vue'
 
 import { CONVERSATION } from '../constants.js'
+import { searchListedConversations, fetchConversations } from '../services/conversationsService.js'
 
 export default {
 	name: 'RoomSelector',
@@ -108,11 +111,17 @@ export default {
 			type: String,
 			default: '',
 		},
+
 		/**
 		 * Whether to only show conversations to which
 		 * the user can post messages.
 		 */
 		showPostableOnly: {
+			type: Boolean,
+			default: false,
+		},
+
+		listOpenConversations: {
 			type: Boolean,
 			default: false,
 		},
@@ -142,6 +151,18 @@ export default {
 				return roomsTemp.filter(room => room.displayName.toLowerCase().includes(this.searchText.toLowerCase()))
 			}
 		},
+
+		noMatchFoundTitle() {
+			return this.listOpenConversations
+				? t('spreed', 'No open conversations found')
+				: t('spreed', 'No conversations found')
+		},
+
+		noMatchFoundSubtitle() {
+			return this.listOpenConversations
+				? t('spreed', 'Either there are no open conversations or you joined all of them.')
+				: t('spreed', 'Check spelling or use complete words.')
+		},
 	},
 	beforeMount() {
 		this.fetchRooms()
@@ -151,11 +172,13 @@ export default {
 		}
 	},
 	methods: {
-		fetchRooms() {
-			axios.get(generateOcsUrl('/apps/spreed/api/v4/room')).then((response) => {
-				this.rooms = response.data.ocs.data.sort(this.sortConversations)
-				this.loading = false
-			})
+		async fetchRooms() {
+			const response = this.listOpenConversations
+				? await searchListedConversations({ searchText: '' }, {})
+				: await fetchConversations({})
+
+			this.rooms = response.data.ocs.data.sort(this.sortConversations)
+			this.loading = false
 		},
 		sortConversations(conversation1, conversation2) {
 			if (conversation1.isFavorite !== conversation2.isFavorite) {
@@ -219,6 +242,16 @@ export default {
 	overflow-y: auto;
 	flex: 0 1 auto;
 	height: 100%;
+}
+
+.no-match-message{
+	padding: 40px 0;
+	text-align: center;
+
+}
+
+.no-match-title{
+	font-weight: normal;
 }
 
 li {

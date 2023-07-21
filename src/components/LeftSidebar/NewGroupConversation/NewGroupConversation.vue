@@ -21,15 +21,6 @@
 
 <template>
 	<div class="wrapper">
-		<NcButton type="tertiary"
-			class="toggle"
-			:aria-label="t('spreed', 'Create a new group conversation')"
-			:title="t('spreed', 'Create a new group conversation')"
-			@click="showModal">
-			<template #icon>
-				<Plus :size="20" />
-			</template>
-		</NcButton>
 		<!-- New group form -->
 		<NcModal v-if="modal"
 			:container="container"
@@ -169,8 +160,6 @@
 
 <script>
 
-import Plus from 'vue-material-design-icons/Plus.vue'
-
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError } from '@nextcloud/dialogs'
 
@@ -218,7 +207,6 @@ export default {
 		NcModal,
 		NcPasswordField,
 		NcTextField,
-		Plus,
 		SetContacts,
 	},
 
@@ -305,7 +293,7 @@ export default {
 			})
 		},
 	},
-	expose: ['showModalForItem'],
+	expose: ['showModalForItem', 'showModal'],
 
 	methods: {
 		showModal() {
@@ -493,15 +481,6 @@ export default {
 	&__copy-link {
 		margin: 50px auto 0 auto;
 	}
-}
-.toggle {
-	height: 44px;
-	width: 44px;
-	padding: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin: 0 var(--default-grid-baseline);
 }
 
 .new-group-conversation {
