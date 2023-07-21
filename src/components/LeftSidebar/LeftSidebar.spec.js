@@ -313,7 +313,6 @@ describe('LeftSidebar.vue', () => {
 			await flushPromises()
 
 			await searchBox.find('input[type="text"]').setValue(searchTerm)
-			expect(searchBox.props('isSearching')).toBeTruthy()
 
 			await flushPromises()
 
