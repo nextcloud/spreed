@@ -126,7 +126,7 @@ class Config:
 
         Defaults to None.
         """
-        if self._configParser.get('backend', 'allowall', fallback=None):
+        if self._configParser.get('backend', 'allowall', fallback=None) == 'true':
             return self._configParser.get('backend', 'secret')
 
         backendUrl = backendUrl.rstrip('/')
