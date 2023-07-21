@@ -64,7 +64,7 @@ export default {
 		/**
 		 * If true, this component displays an 'x' button to abort the search
 		 */
-		isSearching: {
+		isFocused: {
 			type: Boolean,
 			default: false,
 		},
