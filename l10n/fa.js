@@ -305,6 +305,7 @@ OC.L10N.register(
     "Mark as unread" : "علامت به عنوان خوانده‌نشده",
     "Remove from favorites" : "حذف از برگزیده‌ها",
     "Add to favorites" : "افزودن به برگزیده‌ها",
+    "No matches found" : "جستجو حاصلی دربرنداشت",
     "Open conversations" : "مکالمه جدید",
     "Loading" : "در حال بار گزاری",
     "No search results" : "جستجو نتیجه‌ای نداشت",
