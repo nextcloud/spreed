@@ -489,7 +489,6 @@ OC.L10N.register(
     "You: {lastMessage}" : "Du: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "Conversation list" : "Samtaleliste",
-    "No matches" : "Ingen treff",
     "Loading" : "Laster",
     "No search results" : "Ingen søkeresultater",
     "Groups" : "Grupper",
@@ -566,6 +565,7 @@ OC.L10N.register(
     "Details" : "Detaljer",
     "Projects" : "Prosjekter",
     "Show all files" : "Vis alle filer",
+    "Search conversations or users" : "Søk etter samtaler eller brukere",
     "Privacy" : "Personvern",
     "Keyboard shortcuts" : "Tastatursnarveier",
     "Search" : "Søk",
@@ -585,7 +585,6 @@ OC.L10N.register(
     "Raise hand" : "Løft hånden",
     "Lower hand" : "Senk hånden",
     "Start a conversation" : "Start en samtale",
-    "Search conversations or users" : "Søk etter samtaler eller brukere",
     "Join a conversation or start a new one" : "Ta del i en samtale eller start en ny",
     "Media" : "Media",
     "Polls" : "Avstemninger",
@@ -609,6 +608,7 @@ OC.L10N.register(
     "Android app" : "Android-app",
     "iOS app" : "iOS-app",
     "More actions" : "Flere handlinger",
+    "No matches" : "Ingen treff",
     "Rename conversation" : "Endre navn på samtale"
 },
 "nplurals=2; plural=(n != 1);");
