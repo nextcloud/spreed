@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 /**
  * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
  *
@@ -24,29 +23,33 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Talk\Model;
+namespace OCA\Talk\Events;
 
-class Bot {
-	public const STATE_DISABLED = 0;
-	public const STATE_ENABLED = 1;
-	public const STATE_NO_SETUP = 2;
+use OCP\EventDispatcher\Event;
 
+class BotInstallEvent extends Event {
 	public function __construct(
-		protected BotServer $botServer,
-		protected BotConversation $botConversation,
+		protected string $name,
+		protected string $secret,
+		protected string $url,
+		protected string $description = '',
 	) {
+		parent::__construct();
 	}
 
-	public function getBotServer(): BotServer {
-		return $this->botServer;
+	public function getName(): string {
+		return $this->name;
 	}
 
-	public function getBotConversation(): BotConversation {
-		return $this->botConversation;
+	public function getSecret(): string {
+		return $this->secret;
 	}
 
-	public function isEnabled(): bool {
-		return $this->botServer->getState() !== self::STATE_DISABLED
-			&& $this->botConversation->getState() !== self::STATE_DISABLED;
+	public function getUrl(): string {
+		return $this->url;
+	}
+
+	public function getDescription(): string {
+		return $this->description;
 	}
 }
