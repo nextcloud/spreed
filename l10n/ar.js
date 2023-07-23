@@ -1015,6 +1015,7 @@ OC.L10N.register(
     "Filter unread mentions" : "تصفية الإشارات غير المقروءة",
     "Filter unread messages" : "تصفية الرسائل الغير مقروءة",
     "Clear filters" : "إزالة التصفية",
+    "No matches found" : "لم يٌمكن إيجاد أي تطابقات",
     "Open conversations" : "فتح المحادثات ",
     "Loading" : "جاري التحميل",
     "No search results" : "لا توجد نتائج",
