@@ -43,6 +43,9 @@ class BotConversationMapper extends QBMapper {
 		parent::__construct($db, 'talk_bots_conversation', BotConversation::class);
 	}
 
+	/**
+	 * @return BotConversation[]
+	 */
 	public function findForToken(string $token): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
@@ -50,5 +53,22 @@ class BotConversationMapper extends QBMapper {
 			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
 
 		return $this->findEntities($query);
+	}
+
+	public function deleteByBotId(int $botId): int {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('bot_id', $query->createNamedParameter($botId, IQueryBuilder::PARAM_INT)));
+
+		return $query->executeStatement();
+	}
+
+	public function deleteByBotIdAndTokens(int $botId, array $tokens): int {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('bot_id', $query->createNamedParameter($botId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->in('token', $query->createNamedParameter($tokens, IQueryBuilder::PARAM_STR_ARRAY)));
+
+		return $query->executeStatement();
 	}
 }

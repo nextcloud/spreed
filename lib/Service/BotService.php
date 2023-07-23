@@ -268,10 +268,14 @@ class BotService {
 				continue;
 			}
 
-			$bots[] = new Bot(
+			$bot = new Bot(
 				$serversMap[$botConversation->getBotId()],
 				$botConversation,
 			);
+
+			if ($bot->isEnabled()) {
+				$bots[] = $bot;
+			}
 		}
 
 		return $bots;

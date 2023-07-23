@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\AppFramework\Db\TTransactional;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -43,11 +44,45 @@ class BotServerMapper extends QBMapper {
 		parent::__construct($db, 'talk_bots_server', BotServer::class);
 	}
 
+	/**
+	 * @throws DoesNotExistException
+	 */
+	public function findById(int $botId): BotServer {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('id', $query->createNamedParameter($botId, IQueryBuilder::PARAM_INT)));
+
+		return $this->findEntity($query);
+	}
+
+	public function deleteById(int $botId): int {
+		$query = $this->db->getQueryBuilder();
+		$query->delete($this->getTableName())
+			->where($query->expr()->eq('id', $query->createNamedParameter($botId, IQueryBuilder::PARAM_INT)));
+
+		return $query->executeStatement();
+	}
+
+	/**
+	 * @return BotServer[]
+	 */
 	public function findByIds(array $botIds): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())
 			->where($query->expr()->in('id', $query->createNamedParameter($botIds, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		return $this->findEntities($query);
+	}
+
+	/**
+	 * @return BotServer[]
+	 */
+	public function getAllBots(): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName());
 
 		return $this->findEntities($query);
 	}

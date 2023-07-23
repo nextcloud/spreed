@@ -28,13 +28,24 @@ namespace OCA\Talk\Listener;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
+use OCA\Talk\Model\Bot;
+use OCA\Talk\Model\BotServer;
+use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Service\BotService;
+use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\EventDispatcher\IEventListener;
 use OCP\Server;
 
-class BotListener {
+class BotListener implements IEventListener {
+	public function __construct(
+		protected BotServerMapper $botServerMapper,
+	) {
+	}
+
 	public static function register(IEventDispatcher $dispatcher): void {
 		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND, [self::class, 'afterMessageSendStatic']);
 		$dispatcher->addListener(ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND, [self::class, 'afterSystemMessageSendStatic']);
@@ -57,5 +68,17 @@ class BotListener {
 		$service = Server::get(BotService::class);
 		$messageParser = Server::get(MessageParser::class);
 		$service->afterSystemMessageSent($event, $messageParser);
+	}
+
+	public function handle(Event $event): void {
+		if ($event instanceof BotInstallEvent) {
+			$bot = new BotServer();
+			$bot->setName($event->getName());
+			$bot->setSecret($event->getSecret());
+			$bot->setUrl($event->getUrl());
+			$bot->setUrlHash(sha1($event->getUrl()));
+			$bot->setState(Bot::STATE_ENABLED);
+			$this->botServerMapper->insert($bot);
+		}
 	}
 }

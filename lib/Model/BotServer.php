@@ -26,7 +26,7 @@ namespace OCA\Talk\Model;
 use OCP\AppFramework\Db\Entity;
 
 /**
- * @method void seName(string $name)
+ * @method void setName(string $name)
  * @method string getName()
  * @method void setUrl(string $url)
  * @method string getUrl()
