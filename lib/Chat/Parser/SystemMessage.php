@@ -409,6 +409,10 @@ class SystemMessage {
 				} else {
 					$chatMessage->setMessageType(ChatManager::VERB_MESSAGE);
 				}
+
+				if (isset($metaData['caption']) && $metaData['caption'] !== '') {
+					$parsedMessage = $metaData['caption'];
+				}
 			} catch (\Exception $e) {
 				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
 				if ($currentUserIsActor) {
