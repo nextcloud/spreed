@@ -23,27 +23,33 @@ import { ref } from 'vue'
 
 /**
  * Mount navigation according to https://www.w3.org/WAI/GL/wiki/Using_ARIA_menus
- * ArrowDown or ArrowUp keys to move through the itemElements list
- * Enter key to select focused element
+ * ArrowDown or ArrowUp keys - to move through the itemElements list
+ * Enter key - to focus first element and click it
+ * (if confirmEnter = true) first Enter keydown to focus first element, second - to click selected
  * Escape key - to return focus to the default element, if one of the items is focused already
  * Backspace key - to return focus to the default element, if one of the items is focused already
+ *
  */
 export function useArrowNavigation() {
 	const listRef = ref(null)
 	const defaultRef = ref(null)
 	const itemElements = ref([])
 	const focusedIndex = ref(null)
+	const isConfirmationEnabled = ref(null)
 
 	/**
 	 * Add event listeners for navigation list and set a default focus element
 	 *
 	 * @param {import('vue').Ref} listElementRef component ref to mount navigation
 	 * @param {import('vue').Ref} defaultElementRef component ref to return focus to
+	 * @param {object} options navigation options
+	 * @param {boolean} [options.confirmEnter=false] flag to confirm Enter click
 	 */
-	function mountArrowNavigation(listElementRef, defaultElementRef) {
+	function mountArrowNavigation(listElementRef, defaultElementRef, options = { confirmEnter: false }) {
 		// depending on ref, listElementRef could be either a component or a DOM element
 		listRef.value = listElementRef?.$el ?? listElementRef
 		defaultRef.value = defaultElementRef
+		isConfirmationEnabled.value = options.confirmEnter
 
 		listRef.value.addEventListener('keydown', (event) => {
 			if (itemElements.value?.length) {
@@ -122,6 +128,11 @@ export function useArrowNavigation() {
 		if (isFirstElementNotFocused) {
 			event?.preventDefault()
 			nativelyFocusElement(0)
+
+			// if confirmEnter = false, first Enter keydown clicks on item, otherwise only focuses it
+			if (!isConfirmationEnabled.value && event?.key === 'Enter') {
+				itemElements.value[0].click()
+			}
 		}
 		return isFirstElementNotFocused
 	}
