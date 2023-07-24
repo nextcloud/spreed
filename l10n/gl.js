@@ -1059,7 +1059,7 @@ OC.L10N.register(
     "Backgrounds" : "Fondos",
     "Always show preview for this conversation" : "Amosar sempre a vista previa desta conversa",
     "The call is being recorded." : "Estase a gravar a chamada.",
-    "Call without notification" : "Chaman sen avisar",
+    "Call without notification" : "Chamar sen notificación",
     "The conversation participants will not be notified about this call" : "Os participantes na conversa non serán notificados desta chamada",
     "Normal call" : "Chamada normal",
     "The conversation participants will be notified about this call" : "Os participantes na conversa recibirán unha notificación sobre esta chamada",

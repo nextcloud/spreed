@@ -1282,6 +1282,7 @@
     "Link to a conversation" : "連結對話",
     "No open conversations found" : "沒有找到公開對話",
     "No conversations found" : "找不到對話",
+    "Either there are no open conversations or you joined all of them." : "要不然就是沒有公開的對話，要不然就是你已經參與了所有的對話。",
     "Check spelling or use complete words." : "檢查拼寫或使用完整的單詞。",
     "Save name" : "保存名字",
     "Display name: {name}" : "顯示名稱：{name}",
