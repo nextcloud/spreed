@@ -281,6 +281,7 @@ OC.L10N.register(
     "Share this link to invite others!" : "این پیوند را به اشتراک بگذارید تا دیگران را دعوت کنید!",
     "You" : "شما",
     "Collapse" : "فروکش  کردن",
+    "Expand" : "بسط دادن",
     "Drop your files to upload" : "برای بارگذاری، پرونده‌ها را اینجا رها کنید",
     "Favorite" : "برگزیده",
     "Description" : "توضیحات",
