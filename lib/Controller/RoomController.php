@@ -220,9 +220,10 @@ class RoomController extends AEnvironmentAwareController {
 			}
 		}
 
-		$response = new DataResponse($return, Http::STATUS_OK, $this->getTalkHashHeader());
-		$response->addHeader('X-Nextcloud-Talk-Modified-Before', (string) $nextModifiedSince);
-		return $response;
+		$headers = $this->getTalkHashHeader();
+		$headers['X-Nextcloud-Talk-Modified-Before'] = (string) $nextModifiedSince;
+
+		return new DataResponse($return, Http::STATUS_OK, $headers);
 	}
 
 	/**
