@@ -354,10 +354,7 @@ export default {
 			}
 
 			// Check for temporary messages, replaced with messages from server
-			const array1 = group1.messages.map(message => message.id)
-			const array2 = group2.messages.map(message => message.id)
-
-			return array1.every(item => array2.includes(item))
+			return group1.messages.every((message, index) => group2.messages[index].id === message.id)
 		},
 
 		removeExpiredMessagesFromStore() {
