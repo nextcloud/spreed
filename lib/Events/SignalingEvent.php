@@ -28,7 +28,7 @@ use OCA\Talk\Room;
 
 class SignalingEvent extends ParticipantEvent {
 	/** @var mixed */
-	protected mixed $session;
+	protected ?string $session;
 
 	public function __construct(
 		Room $room,
