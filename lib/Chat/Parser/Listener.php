@@ -86,7 +86,7 @@ class Listener {
 
 		try {
 			$parser->parseMessage($message);
-			$event->stopPropagation();
+			// Disabled so we can parse mentions in captions: $event->stopPropagation();
 		} catch (\OutOfBoundsException $e) {
 			// Unknown message, ignore
 		}
