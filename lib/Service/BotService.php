@@ -38,6 +38,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
+use OCP\IConfig;
 use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -51,6 +52,7 @@ class BotService {
 		protected BotServerMapper       $botServerMapper,
 		protected BotConversationMapper $botConversationMapper,
 		protected IClientService        $clientService,
+		protected IConfig               $serverConfig,
 		protected IUserSession          $userSession,
 		protected TalkSession           $talkSession,
 		protected ISession              $session,
@@ -159,7 +161,7 @@ class BotService {
 				'Content-Type' => 'application/json',
 				'X-Nextcloud-Talk-Random' => $random,
 				'X-Nextcloud-Talk-Signature' => $hash,
-				'X-Nextcloud-Talk-Backend' => $this->urlGenerator->getAbsoluteURL(''),
+				'X-Nextcloud-Talk-Backend' => rtrim($this->serverConfig->getSystemValueString('overwrite.cli.url'), '/') . '/',
 				'OCS-APIRequest' => 'true', // FIXME optional?
 			];
 

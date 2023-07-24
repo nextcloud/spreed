@@ -32,8 +32,8 @@ use OCP\AppFramework\Db\Entity;
  * @method string getUrl()
  * @method void setUrlHash(string $urlHash)
  * @method string getUrlHash()
- * @method void setDescription(string $description)
- * @method string getDescription()
+ * @method void setDescription(?string $description)
+ * @method null|string getDescription()
  * @method void setSecret(string $secret)
  * @method string getSecret()
  * @method void setErrorCount(int $errorCount)
@@ -49,7 +49,7 @@ class BotServer extends Entity implements \JsonSerializable {
 	protected string $name = '';
 	protected string $url = '';
 	protected string $urlHash = '';
-	protected string $description = '';
+	protected ?string $description = null;
 	protected string $secret = '';
 	protected int $errorCount = 0;
 	protected ?\DateTimeImmutable $lastErrorDate = null;
