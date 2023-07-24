@@ -82,8 +82,6 @@ module.exports = {
 	moduleNameMapper: {
 		'\\.(css|scss)$': 'jest-transform-stub',
 		'vendor/tflite/(.*).wasm$': '<rootDir>/src/utils/media/effects/virtual-background/vendor/tflite/$1.js',
-		// Axios using ESM since v1.0.0, so we need to replace it with CJS for tests
-		axios: '<rootDir>/node_modules/@nextcloud/axios/node_modules/axios/dist/node/axios.cjs',
 	},
 
 	transform: {
