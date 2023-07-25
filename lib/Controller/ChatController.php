@@ -132,7 +132,7 @@ class ChatController extends AEnvironmentAwareController {
 			}
 			return [Attendee::ACTOR_GUESTS, $this->participant->getAttendee()->getActorId()];
 		}
-		
+
 		if ($this->userId === MatterbridgeManager::BRIDGE_BOT_USERID && $actorDisplayName) {
 			return [Attendee::ACTOR_BRIDGED, str_replace(['/', '"'], '', $actorDisplayName)];
 		}
@@ -299,6 +299,71 @@ class ChatController extends AEnvironmentAwareController {
 		} catch (MessageTooLongException $e) {
 			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception $e) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return $this->parseCommentToResponse($comment);
+	}
+
+	/**
+	 * Share multiple files and a caption into the chat
+	 *
+	 * @param int[] $shareIds The share IDs that should be shown with this message
+	 * @param string $caption The message to send
+	 * @param string $actorDisplayName for guests
+	 * @param string $referenceId for the message to be able to later identify it again
+	 * @return DataResponse<Http::STATUS_CREATED, ?TalkChatMessageWithParent, array{X-Chat-Last-Common-Read?: numeric-string}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND|Http::STATUS_REQUEST_ENTITY_TOO_LARGE, array<empty>, array{}>
+	 *
+	 *  201: Files shared successfully
+	 *  400: Sharing files is not possible
+	 *  404: Actor not found
+	 *  404: Shares not found for actor
+	 *  413: Message too long
+	 */
+	#[NoAdminRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	#[RequirePermission(permission: RequirePermission::CHAT)]
+	#[RequireReadWriteConversation]
+	public function shareMultipleFilesToChat(array $shareIds, string $caption, string $actorDisplayName = '', string $referenceId = ''): DataResponse {
+		[$actorType, $actorId] = $this->getActorInfo($actorDisplayName);
+		if (!$actorId) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$numShares = count($shareIds);
+		if ($numShares > 64) {
+			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+		}
+
+		$shares = $this->shareProvider->getSharesByIds($shareIds);
+		if (count($shares) !== $numShares) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		foreach ($shares as $share) {
+			// Only allowed to share your own shares
+			if ($share->getShareOwner() !== $actorId) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+		}
+
+		$this->participantService->ensureOneToOneRoomIsFilled($this->room);
+		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
+
+		$message = json_encode([
+			'message' => 'multiple_files_shared',
+			'parameters' => [
+				'shares' => $shareIds,
+				'caption' => $caption,
+			],
+		]);
+
+		try {
+			$comment = $this->chatManager->addSystemMessage($this->room, $actorType, $actorId, $message, $creationDateTime, true, $referenceId);
+		} catch (MessageTooLongException) {
+			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+		} catch (\Exception) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
