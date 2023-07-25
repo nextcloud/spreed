@@ -27,9 +27,10 @@
 				:class="{'conversations-search--expanded': isFocused}">
 				<SearchBox ref="searchBox"
 					:value.sync="searchText"
-					:is-searching="isSearching"
+					:is-focused="isFocused"
 					@focus="setIsFocused"
 					@blur="setIsFocused"
+					@trailing-blur="setIsFocused"
 					@input="debounceFetchSearchResults"
 					@abort-search="abortSearch" />
 			</div>
@@ -75,7 +76,8 @@
 			</div>
 
 			<!-- Actions -->
-			<div class="actions">
+			<div class="actions"
+				:class="{'hidden-visually': isFocused}">
 				<NcActions class="conversations-actions">
 					<template #icon>
 						<DotsVertical :size="20" />
@@ -219,6 +221,7 @@ import debounce from 'debounce'
 import { ref } from 'vue'
 
 import AtIcon from 'vue-material-design-icons/At.vue'
+import ChatPlus from 'vue-material-design-icons/ChatPlus.vue'
 import DotsVertical from 'vue-material-design-icons/DotsVertical.vue'
 import FilterIcon from 'vue-material-design-icons/Filter.vue'
 import FilterRemoveIcon from 'vue-material-design-icons/FilterRemove.vue'
@@ -279,6 +282,7 @@ export default {
 		FilterIcon,
 		FilterRemoveIcon,
 		Plus,
+		ChatPlus,
 		List,
 		DotsVertical,
 	},
@@ -446,7 +450,6 @@ export default {
 		},
 
 		setIsFocused(event) {
-			console.log(event.type)
 			if (this.searchText !== '') {
 				return
 			}
