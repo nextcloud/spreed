@@ -128,6 +128,7 @@
 * `markdown-messages` - Chat messages support markdown and are rendered automatically
 
 ## 18
+* `media-caption` - Whether media caption can be added to shared files and the endpoint to share multiple files in one message exists
 * `session-state` - Sessions can mark themselves as inactive, so the participant receives notifications again
 * `note-to-self` - Support for "Note-to-self" conversation exists
 * `recording-consent` - Whether admins and moderators can require recording consent before joining a call
