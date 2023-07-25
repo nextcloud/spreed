@@ -57,6 +57,7 @@
 
 <script>
 import debounce from 'debounce'
+import { ref } from 'vue'
 
 import Close from 'vue-material-design-icons/Close.vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
@@ -90,11 +91,15 @@ export default {
 	},
 
 	setup() {
-		const { initializeNavigation, mountArrowNavigation } = useArrowNavigation()
+		const wrapper = ref(null)
+		const setContacts = ref(null)
+
+		const { initializeNavigation } = useArrowNavigation(wrapper, setContacts)
 
 		return {
 			initializeNavigation,
-			mountArrowNavigation,
+			wrapper,
+			setContacts,
 		}
 	},
 
@@ -139,7 +144,6 @@ export default {
 
 	mounted() {
 		this.$nextTick(() => {
-			this.mountArrowNavigation(this.$refs.wrapper, this.$refs.setContacts)
 			// Focus the input field of the current component.
 			this.focusInput()
 			// Perform a search with an empty string
@@ -208,8 +212,7 @@ export default {
 			}
 		},
 		focusInput() {
-			// TODO : revert this to call this.$refs.setContacts.$el.focus() after the release
-			this.$refs.setContacts.$refs.inputField.$refs.input.focus()
+			this.setContacts.focus()
 		},
 	},
 }
