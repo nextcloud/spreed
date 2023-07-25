@@ -74,12 +74,11 @@ export default {
 
 	expose: ['focus'],
 
-	emits: ['update:value', 'input', 'submit', 'abort-search'],
+	emits: ['update:value', 'input', 'submit', 'abort-search', 'blur', 'trailing-blur'],
 
 	computed: {
 		listeners() {
 			return Object.assign({}, this.$listeners, {
-				focus: this.handleFocus,
 				blur: this.handleBlur,
 			})
 		},
@@ -150,6 +149,17 @@ export default {
 					console.log('trailing blur')
 					console.log(event)
 					// check if focus goes back to native input or outside, and proceed accordingly
+				})
+			} else {
+				this.$emit('blur', event)
+			}
+		},
+
+		handleBlur(event) {
+			if ((event.relatedTarget) && (Array.from(event.relatedTarget.classList).includes('input-field__clear-button'))) {
+				event.preventDefault()
+				this.$refs.searchConversations.$el.querySelector('.input-field__clear-button').addEventListener('blur', (event) => {
+					this.$emit('trailing-blur', event)
 				})
 			} else {
 				this.$emit('blur', event)
