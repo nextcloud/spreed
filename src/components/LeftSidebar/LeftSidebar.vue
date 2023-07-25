@@ -205,6 +205,7 @@
 
 <script>
 import debounce from 'debounce'
+import { ref } from 'vue'
 
 import AtIcon from 'vue-material-design-icons/At.vue'
 import DotsVertical from 'vue-material-design-icons/DotsVertical.vue'
@@ -275,11 +276,15 @@ export default {
 	],
 
 	setup() {
-		const { initializeNavigation, mountArrowNavigation } = useArrowNavigation()
+		const leftSidebar = ref(null)
+		const searchBox = ref(null)
+
+		const { initializeNavigation } = useArrowNavigation(leftSidebar, searchBox)
 
 		return {
 			initializeNavigation,
-			mountArrowNavigation,
+			leftSidebar,
+			searchBox,
 		}
 	},
 
@@ -400,7 +405,6 @@ export default {
 		EventBus.$once('conversations-received', this.handleUnreadMention)
 		EventBus.$on('route-change', this.onRouteChange)
 		EventBus.$on('joined-conversation', this.handleJoinedConversation)
-		this.mountArrowNavigation(this.$refs.leftSidebar, this.$refs.searchBox)
 	},
 
 	beforeDestroy() {

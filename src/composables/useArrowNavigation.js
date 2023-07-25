@@ -19,7 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ref } from 'vue'
+import { onMounted, ref, unref } from 'vue'
 
 /**
  * Mount navigation according to https://www.w3.org/WAI/GL/wiki/Using_ARIA_menus
@@ -29,26 +29,23 @@ import { ref } from 'vue'
  * Escape key - to return focus to the default element, if one of the items is focused already
  * Backspace key - to return focus to the default element, if one of the items is focused already
  *
+ * @param {import('vue').Ref | HTMLElement} listElementRef component ref to mount navigation
+ * @param {import('vue').Ref} defaultElementRef component ref to return focus to // Vue component
+ * @param {object} options navigation options
+ * @param {boolean} [options.confirmEnter=false] flag to confirm Enter click
  */
-export function useArrowNavigation() {
+export function useArrowNavigation(listElementRef, defaultElementRef, options = { confirmEnter: false }) {
 	const listRef = ref(null)
 	const defaultRef = ref(null)
 	const itemElements = ref([])
 	const focusedIndex = ref(null)
 	const isConfirmationEnabled = ref(null)
 
-	/**
-	 * Add event listeners for navigation list and set a default focus element
-	 *
-	 * @param {import('vue').Ref} listElementRef component ref to mount navigation
-	 * @param {import('vue').Ref} defaultElementRef component ref to return focus to
-	 * @param {object} options navigation options
-	 * @param {boolean} [options.confirmEnter=false] flag to confirm Enter click
-	 */
-	function mountArrowNavigation(listElementRef, defaultElementRef, options = { confirmEnter: false }) {
+	// Add event listeners for navigation list and set a default focus element
+	onMounted(() => {
 		// depending on ref, listElementRef could be either a component or a DOM element
-		listRef.value = listElementRef?.$el ?? listElementRef
-		defaultRef.value = defaultElementRef
+		listRef.value = unref(listElementRef)?.$el ?? unref(listElementRef)
+		defaultRef.value = unref(defaultElementRef)
 		isConfirmationEnabled.value = options.confirmEnter
 
 		listRef.value.addEventListener('keydown', (event) => {
@@ -64,7 +61,7 @@ export function useArrowNavigation() {
 				}
 			}
 		})
-	}
+	})
 
 	/**
 	 * Collect all DOM elements specified by selector
@@ -175,6 +172,5 @@ export function useArrowNavigation() {
 
 	return {
 		initializeNavigation,
-		mountArrowNavigation,
 	}
 }
