@@ -289,6 +289,8 @@ export default {
 }
 
 .participants-search-results {
+	padding: 0 2px;
+
 	&__icon {
 		margin-top: 40px;
 	}

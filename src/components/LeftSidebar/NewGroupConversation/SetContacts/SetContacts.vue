@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div class="set-contacts">
+	<div ref="wrapper" class="set-contacts">
 		<!-- Search -->
 		<NcTextField ref="setContacts"
 			v-observe-visibility="visibilityChanged"
@@ -57,6 +57,7 @@
 
 <script>
 import debounce from 'debounce'
+import { ref } from 'vue'
 
 import Close from 'vue-material-design-icons/Close.vue'
 import Magnify from 'vue-material-design-icons/Magnify.vue'
@@ -68,6 +69,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
 import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble.vue'
 
+import { useArrowNavigation } from '../../../../composables/useArrowNavigation.js'
 import { searchPossibleConversations } from '../../../../services/conversationsService.js'
 import CancelableRequest from '../../../../utils/cancelableRequest.js'
 
@@ -86,6 +88,19 @@ export default {
 			type: String,
 			required: true,
 		},
+	},
+
+	setup() {
+		const wrapper = ref(null)
+		const setContacts = ref(null)
+
+		const { initializeNavigation } = useArrowNavigation(wrapper, setContacts)
+
+		return {
+			initializeNavigation,
+			wrapper,
+			setContacts,
+		}
 	},
 
 	data() {
@@ -127,11 +142,13 @@ export default {
 		},
 	},
 
-	async mounted() {
-		// Focus the input field of the current component.
-		this.focusInput()
-		// Perform a search with an empty string
-		await this.fetchSearchResults()
+	mounted() {
+		this.$nextTick(() => {
+			// Focus the input field of the current component.
+			this.focusInput()
+			// Perform a search with an empty string
+			this.fetchSearchResults()
+		})
 	},
 
 	beforeDestroy() {
@@ -175,6 +192,9 @@ export default {
 				if (!this.searchText) {
 					this.cachedFullSearchResults = this.searchResults
 				}
+				this.$nextTick(() => {
+					this.initializeNavigation('.participant-row')
+				})
 			} catch (exception) {
 				if (CancelableRequest.isCancel(exception)) {
 					return
@@ -192,8 +212,7 @@ export default {
 			}
 		},
 		focusInput() {
-			// TODO : revert this to call this.$refs.setContacts.$el.focus() after the release
-			this.$refs.setContacts.$refs.inputField.$refs.input.focus()
+			this.setContacts.focus()
 		},
 	},
 }
