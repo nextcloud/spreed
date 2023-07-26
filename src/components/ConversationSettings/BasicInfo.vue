@@ -32,17 +32,19 @@
 			:edit-button-aria-label="t('spreed', 'Edit conversation name')"
 			@submit-text="handleUpdateName"
 			@update:editing="handleEditName" />
-		<h4 class="app-settings-section__subtitle">
-			{{ t('spreed', 'Description') }}
-		</h4>
-		<EditableTextField :editable="canFullModerate"
-			:initial-text="description"
-			:editing="isEditingDescription"
-			:loading="isDescriptionLoading"
-			:edit-button-aria-label="t('spreed', 'Edit conversation description')"
-			:placeholder="t('spreed', 'Enter a description for this conversation')"
-			@submit-text="handleUpdateDescription"
-			@update:editing="handleEditDescription" />
+		<template v-if="!isOneToOne">
+			<h4 class="app-settings-section__subtitle">
+				{{ t('spreed', 'Description') }}
+			</h4>
+			<EditableTextField :editable="canFullModerate"
+				:initial-text="description"
+				:editing="isEditingDescription"
+				:loading="isDescriptionLoading"
+				:edit-button-aria-label="t('spreed', 'Edit conversation description')"
+				:placeholder="t('spreed', 'Enter a description for this conversation')"
+				@submit-text="handleUpdateDescription"
+				@update:editing="handleEditDescription" />
+		</template>
 		<template v-if="supportsAvatar">
 			<h4 class="app-settings-section__subtitle">
 				{{ t('spreed', 'Picture') }}
@@ -61,6 +63,8 @@ import { showError } from '@nextcloud/dialogs'
 
 import ConversationAvatarEditor from './ConversationAvatarEditor.vue'
 import EditableTextField from './EditableTextField.vue'
+
+import { CONVERSATION } from '../../constants.js'
 
 const supportsAvatar = getCapabilities()?.spreed?.features?.includes('avatar')
 
@@ -99,6 +103,11 @@ export default {
 	},
 
 	computed: {
+		isOneToOne() {
+			return this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+				|| this.conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER
+		},
+
 		conversationName() {
 			return this.conversation.displayName
 		},

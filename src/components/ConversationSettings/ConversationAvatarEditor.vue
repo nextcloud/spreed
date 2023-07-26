@@ -33,6 +33,7 @@
 				<ConversationIcon v-else-if="!loading"
 					:item="conversation"
 					:is-big="true"
+					:show-user-status="false"
 					:disable-menu="true" />
 				<div v-else class="icon-loading" />
 			</div>
