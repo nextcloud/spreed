@@ -28,9 +28,21 @@ $requirements = [
 	'token' => '[a-z0-9]{4,30}',
 ];
 
+$requirementsWithBotId = [
+	'apiVersion' => 'v1',
+	'token' => '[a-z0-9]{4,30}',
+	'botId' => '[0-9]+',
+];
+
 return [
 	'ocs' => [
 		/** @see \OCA\Talk\Controller\BotController::sendMessage() */
 		['name' => 'Bot#sendMessage', 'url' => '/api/{apiVersion}/bot/{token}/message', 'verb' => 'POST', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\BotController::listBots() */
+		['name' => 'Bot#listBots', 'url' => '/api/{apiVersion}/bot/{token}', 'verb' => 'GET', 'requirements' => $requirements],
+		/** @see \OCA\Talk\Controller\BotController::enableBot() */
+		['name' => 'Bot#enableBot', 'url' => '/api/{apiVersion}/bot/{token}/{botId}', 'verb' => 'POST', 'requirements' => $requirementsWithBotId],
+		/** @see \OCA\Talk\Controller\BotController::disableBot() */
+		['name' => 'Bot#disableBot', 'url' => '/api/{apiVersion}/bot/{token}/{botId}', 'verb' => 'DELETE', 'requirements' => $requirementsWithBotId],
 	],
 ];
