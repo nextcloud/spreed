@@ -36,6 +36,7 @@
 			:disable-menu="disableMenu"
 			:display-name="item.displayName"
 			:preloaded-user-status="preloadedUserStatus"
+			:show-user-status="showUserStatus"
 			:show-user-status-compact="disableMenu"
 			:menu-container="menuContainer"
 			menu-position="left"
@@ -97,6 +98,11 @@ export default {
 			default: false,
 		},
 
+		showUserStatus: {
+			type: Boolean,
+			default: true,
+		},
+
 		item: {
 			type: Object,
 			default() {
@@ -143,7 +149,7 @@ export default {
 		},
 
 		preloadedUserStatus() {
-			if (Object.prototype.hasOwnProperty.call(this.item, 'statusMessage')) {
+			if (this.showUserStatus && Object.prototype.hasOwnProperty.call(this.item, 'statusMessage')) {
 				// We preloaded the status
 				return {
 					status: this.item.status || null,
