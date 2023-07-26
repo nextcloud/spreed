@@ -29,13 +29,19 @@ namespace OCA\Talk\Controller;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Manager;
+use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
 use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Bot;
+use OCA\Talk\Model\BotConversation;
+use OCA\Talk\Model\BotConversationMapper;
+use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Service\BotService;
 use OCA\Talk\Service\ChecksumVerificationService;
 use OCA\Talk\Service\ParticipantService;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -52,9 +58,11 @@ class BotController extends AEnvironmentAwareController {
 		protected ParticipantService $participantService,
 		protected ITimeFactory $timeFactory,
 		protected ChecksumVerificationService $checksumVerificationService,
-		protected BotService                  $botService,
-		protected Manager                     $manager,
-		protected LoggerInterface             $logger,
+		protected BotConversationMapper $botConversationMapper,
+		protected BotServerMapper $botServerMapper,
+		protected BotService $botService,
+		protected Manager $manager,
+		protected LoggerInterface $logger,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -138,5 +146,89 @@ class BotController extends AEnvironmentAwareController {
 		}
 
 		return new DataResponse([], Http::STATUS_CREATED);
+	}
+
+	#[NoAdminRequired]
+	#[RequireLoggedInModeratorParticipant]
+	public function listBots(): DataResponse {
+		$alreadyInstalled = array_map(static function (BotConversation $bot): int {
+			return $bot->getBotId();
+		}, $this->botConversationMapper->findForToken($this->room->getToken()));
+
+		$bots = $this->botServerMapper->getAllBots();
+		foreach ($bots as $bot) {
+			$state = in_array($bot->getId(), $alreadyInstalled, true) ? Bot::STATE_ENABLED : Bot::STATE_DISABLED;
+
+			if ($bot->getState() === Bot::STATE_NO_SETUP) {
+				if ($state === Bot::STATE_DISABLED) {
+					continue;
+				}
+				$state = Bot::STATE_NO_SETUP;
+			}
+
+			$data[] = [
+				'id' => $bot->getId(),
+				'name' => $bot->getName(),
+				'description' => $bot->getDescription(),
+				'state' => $state ,
+			];
+		}
+
+		return new DataResponse($data);
+	}
+
+	#[NoAdminRequired]
+	#[RequireLoggedInModeratorParticipant]
+	public function enableBot(int $botId): DataResponse {
+		try {
+			$bot = $this->botServerMapper->findById($botId);
+		} catch (DoesNotExistException) {
+			return new DataResponse([
+				'error' => 'bot',
+			], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($bot->getState() !== Bot::STATE_ENABLED) {
+			return new DataResponse([
+				'error' => 'bot',
+			], Http::STATUS_BAD_REQUEST);
+		}
+
+		$alreadyInstalled = array_map(static function (BotConversation $bot): int {
+			return $bot->getBotId();
+		}, $this->botConversationMapper->findForToken($this->room->getToken()));
+
+		if (in_array($botId, $alreadyInstalled)) {
+			return new DataResponse([], Http::STATUS_OK);
+		}
+
+		$conversationBot = new BotConversation();
+		$conversationBot->setBotId($botId);
+		$conversationBot->setToken($this->room->getToken());
+		$conversationBot->setState(Bot::STATE_ENABLED);
+
+		$this->botConversationMapper->insert($conversationBot);
+		return new DataResponse([], Http::STATUS_CREATED);
+	}
+
+	#[NoAdminRequired]
+	#[RequireLoggedInModeratorParticipant]
+	public function disableBot(int $botId): DataResponse {
+		try {
+			$bot = $this->botServerMapper->findById($botId);
+		} catch (DoesNotExistException) {
+			return new DataResponse([
+				'error' => 'bot',
+			], Http::STATUS_BAD_REQUEST);
+		}
+
+		if ($bot->getState() !== Bot::STATE_ENABLED) {
+			return new DataResponse([
+				'error' => 'bot',
+			], Http::STATUS_BAD_REQUEST);
+		}
+
+		$this->botConversationMapper->deleteByBotIdAndTokens($botId, [$this->room->getToken()]);
+		return new DataResponse([], Http::STATUS_OK);
 	}
 }
