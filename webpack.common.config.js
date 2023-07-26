@@ -20,28 +20,48 @@
  */
 
 const BabelLoaderExcludeNodeModulesExcept = require('babel-loader-exclude-node-modules-except')
+const { mergeWithRules } = require('webpack-merge')
 
 const nextcloudWebpackRules = require('@nextcloud/webpack-vue-config/rules')
 
-// Edit JS rule
-nextcloudWebpackRules.RULE_JS.exclude = BabelLoaderExcludeNodeModulesExcept([
-	'@nextcloud/event-bus',
-	'ansi-regex',
-	'fast-xml-parser',
-	'hot-patcher',
-	'nextcloud-vue-collections',
-	'semver',
-	'strip-ansi',
-	'tributejs',
-	'webdav',
-])
-
-module.exports = {
+// Replace rules with the same modules
+module.exports = mergeWithRules({
+	module: {
+		rules: {
+			test: 'match',
+			loader: 'replace',
+			options: 'replace',
+		},
+	},
+})({
+	module: {
+		// Reuse @nextcloud/webpack-vue-config/rules
+		rules: Object.values(nextcloudWebpackRules),
+	},
+},
+{
 	module: {
 		rules: [
-			// Reuse @nextcloud/webpack-vue-config/rules
-			...Object.values(nextcloudWebpackRules),
-
+			{
+				test: /\.js$/,
+				loader: 'esbuild-loader',
+				options: {
+					// Implicitly set as JS loader for only JS parts of Vue SFCs will be transpiled
+					loader: 'js',
+					target: 'es2020',
+				},
+				exclude: BabelLoaderExcludeNodeModulesExcept([
+					'@nextcloud/event-bus',
+					'ansi-regex',
+					'fast-xml-parser',
+					'hot-patcher',
+					'nextcloud-vue-collections',
+					'semver',
+					'strip-ansi',
+					'tributejs',
+					'webdav',
+				]),
+			},
 			{
 				test: /\.wasm$/i,
 				type: 'asset/resource',
@@ -56,4 +76,4 @@ module.exports = {
 			},
 		],
 	},
-}
+})
