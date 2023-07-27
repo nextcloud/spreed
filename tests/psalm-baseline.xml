@@ -29,6 +29,36 @@
       <code>\OC_Util</code>
     </UndefinedClass>
   </file>
+  <file src="lib/Command/Bot/Install.php">
+    <UndefinedClass>
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Bot/ListBots.php">
+    <UndefinedClass>
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Bot/Remove.php">
+    <UndefinedClass>
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Bot/Setup.php">
+    <UndefinedClass>
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Bot/State.php">
+    <UndefinedClass>
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Command/Bot/Uninstall.php">
+    <UndefinedClass>
+      <code>Base</code>
+    </UndefinedClass>
+  </file>
   <file src="lib/Command/Command/Add.php">
     <UndefinedClass>
       <code>Base</code>
