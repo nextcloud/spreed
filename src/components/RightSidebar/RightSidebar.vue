@@ -239,7 +239,7 @@ export default {
 		},
 
 		showSIPSettings() {
-			return this.conversation.sipEnabled === WEBINAR.SIP.ENABLED
+			return this.conversation.sipEnabled !== WEBINAR.SIP.DISABLED
 				&& this.conversation.attendeePin
 		},
 
