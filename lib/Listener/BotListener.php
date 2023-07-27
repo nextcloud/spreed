@@ -35,6 +35,7 @@ use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\BotServer;
 use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Service\BotService;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
@@ -75,8 +76,21 @@ class BotListener implements IEventListener {
 
 	public function handle(Event $event): void {
 		if ($event instanceof BotInstallEvent) {
+			$this->handleBotInstallEvent($event);
+		}
+	}
+
+	protected function handleBotInstallEvent(BotInstallEvent $event): void {
+		try {
+			$bot = $this->botServerMapper->findByUrlAndSecret($event->getUrl(), $event->getSecret());
+
+			$bot->setName($event->getName());
+			$bot->setDescription($event->getDescription());
+			$this->botServerMapper->update($bot);
+		} catch (DoesNotExistException) {
 			$bot = new BotServer();
 			$bot->setName($event->getName());
+			$bot->setDescription($event->getDescription());
 			$bot->setSecret($event->getSecret());
 			$bot->setUrl($event->getUrl());
 			$bot->setUrlHash(sha1($event->getUrl()));
