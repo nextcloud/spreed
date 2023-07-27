@@ -61,6 +61,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 13
 | `parent`              | array    | **Optional:** See `Parent data` below                                                                                                                                  |
 | `reactions`           | int[]    | **Optional:** An array map with relation between reaction emoji and total count of reactions with this emoji                                                           |
 | `reactionsSelf`       | string[] | **Optional:** When the user reacted this is the list of emojis the user reacted with                                                                                   |
+| `markdown`            | bool     | **Optional:** Whether the message should be rendered as markdown or shown as plain text                                                                                |
 
 #### Parent data
 
