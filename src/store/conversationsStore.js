@@ -62,7 +62,6 @@ import {
 	startCallRecording,
 	stopCallRecording,
 } from '../services/recordingService.js'
-import { patchObject } from '../utils/objectUtils.js'
 
 const DUMMY_CONVERSATION = {
 	token: '',
@@ -83,6 +82,21 @@ const DUMMY_CONVERSATION = {
 	lobbyTimer: 0,
 	attendeePin: '',
 	isDummyConversation: true,
+}
+
+/**
+ * Emit global event for user status update with the status from a 1-1 conversation
+ *
+ * @param {object} conversation - a 1-1 conversation
+ */
+function emitUserStatusUpdated(conversation) {
+	emit('user_status:status.updated', {
+		status: conversation.status,
+		message: conversation.statusMessage,
+		icon: conversation.statusIcon,
+		clearAt: conversation.statusClearAt,
+		userId: conversation.name,
+	})
 }
 
 const state = {
@@ -118,16 +132,42 @@ const mutations = {
 	},
 
 	/**
-	 * Patch a conversation object:
-	 * - add new properties
-	 * - update existing properties recursively
-	 * - delete properties
+	 * Update stored conversation if a new one has changes
 	 *
 	 * @param {object} state the state
 	 * @param {object} conversation the new conversation object
 	 */
-	patchConversation(state, conversation) {
-		patchObject(state.conversations[conversation.token], conversation)
+	updateConversationIfHasChanged(state, conversation) {
+		const oldConversation = state.conversations[conversation.token]
+
+		// Update 1-1 conversation, if its status was changed
+		if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+			&& (oldConversation.status !== conversation.status
+				|| oldConversation.statusMessage !== conversation.statusMessage
+				|| oldConversation.statusIcon !== conversation.statusIcon
+				|| oldConversation.statusClearAt !== conversation.statusClearAt
+			)
+		) {
+			emitUserStatusUpdated(conversation)
+			state.conversations[conversation.token] = conversation
+			return
+		}
+
+		// Update conversation if lastActivity updated (e.g. new message came up, call state changed)
+		if (oldConversation.lastActivity !== conversation.lastActivity) {
+			state.conversations[conversation.token] = conversation
+			return
+		}
+
+		// Check if any property were changed (no properties except status-related supposed to be added or deleted)
+		for (const key of Object.keys(conversation)) {
+			// "lastMessage" is the only property with non-primitive (object) value and cannot be compared by ===
+			// If "lastMessage" was actually changed, it is already checked by "lastActivity"
+			if (key !== 'lastMessage' && oldConversation[key] !== conversation[key]) {
+				state.conversations[conversation.token] = conversation
+				return
+			}
+		}
 	},
 
 	/**
@@ -209,7 +249,9 @@ const actions = {
 	 * @param {object} conversation the conversation;
 	 */
 	addConversation(context, conversation) {
-		context.dispatch('emitUserStatusUpdatedWhenChanged', conversation)
+		if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE) {
+			emitUserStatusUpdated(conversation)
+		}
 
 		context.commit('addConversation', conversation)
 
@@ -242,43 +284,13 @@ const actions = {
 	},
 
 	/**
-	 * Patch a conversation object and emit user status changes when needed
+	 * Update conversation in store according to a new conversation object
 	 *
 	 * @param {object} context store context
 	 * @param {object} newConversation the new conversation object
 	 */
-	patchConversation(context, newConversation) {
-		context.dispatch('emitUserStatusUpdatedWhenChanged', newConversation)
-
-		// TODO: We can also check if lastActivity >= modifiedSince and skip the update
-		context.commit('patchConversation', newConversation)
-	},
-
-	/**
-	 * Emits an event when the user status changed in a new conversation data
-	 *
-	 * @param {object} context the store context
-	 * @param {object} conversation the new conversation
-	 */
-	emitUserStatusUpdatedWhenChanged(context, conversation) {
-		if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.status) {
-			const prevStatus = context.state.conversations[conversation.token]
-
-			// Only emit the event when something actually changed
-			if (!prevStatus
-				|| prevStatus.status !== conversation.status
-				|| prevStatus.statusMessage !== conversation.statusMessage
-				|| prevStatus.statusIcon !== conversation.statusIcon
-				|| prevStatus.statusClearAt !== conversation.statusClearAt) {
-				emit('user_status:status.updated', {
-					status: conversation.status,
-					message: conversation.statusMessage,
-					icon: conversation.statusIcon,
-					clearAt: conversation.statusClearAt,
-					userId: conversation.name,
-				})
-			}
-		}
+	updateConversationIfHasChanged(context, newConversation) {
+		context.commit('updateConversationIfHasChanged', newConversation)
 	},
 
 	/**
@@ -297,7 +309,7 @@ const actions = {
 	 * Patch conversations:
 	 * - Add new conversations
 	 * - Remove conversations that are not in the new list
-	 * - Patch existing conversations
+	 * - Update existing conversations
 	 *
 	 * @param {object} context default store context
 	 * @param {object} payload the payload
@@ -324,7 +336,7 @@ const actions = {
 			if (currentConversations[token] === undefined) {
 				context.dispatch('addConversation', newConversation)
 			} else {
-				context.dispatch('patchConversation', newConversation)
+				context.dispatch('updateConversationIfHasChanged', newConversation)
 			}
 		}
 	},
