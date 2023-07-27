@@ -55,32 +55,34 @@ the main body of the message as well as a quote.
 				<div v-else-if="showJoinCallButton" class="message-body__main__text call-started">
 					<NcRichText :text="message"
 						:arguments="richParameters"
-						:autolink="true"
+						autolink
 						:reference-limit="0" />
 					<CallButton />
 				</div>
-				<div v-else-if="showResultsButton" class="message-body__main__text system-message">
+				<div v-else-if="showResultsButton || isSystemMessage" class="message-body__main__text system-message">
 					<NcRichText :text="message"
 						:arguments="richParameters"
-						:autolink="true"
+						autolink
 						:reference-limit="0" />
 					<!-- Displays only the "see results" button with the results modal -->
-					<Poll :id="messageParameters.poll.id"
+					<Poll v-if="showResultsButton"
+						:id="messageParameters.poll.id"
 						:poll-name="messageParameters.poll.name"
 						:token="token"
-						:show-as-button="true" />
+						show-as-button />
 				</div>
 				<div v-else-if="isDeletedMessage" class="message-body__main__text deleted-message">
 					<NcRichText :text="message"
 						:arguments="richParameters"
-						:autolink="true"
+						autolink
 						:reference-limit="0" />
 				</div>
-				<div v-else class="message-body__main__text" :class="{'system-message': isSystemMessage}">
+				<div v-else class="message-body__main__text message-body__main__text--markdown">
 					<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
 					<NcRichText :text="message"
 						:arguments="richParameters"
-						:autolink="true"
+						autolink
+						:use-markdown="markdown"
 						:reference-limit="1" />
 				</div>
 				<div v-if="!isDeletedMessage" class="message-body__main__right">
@@ -387,6 +389,13 @@ export default {
 		parent: {
 			type: Number,
 			default: 0,
+		},
+		/**
+		 * Is message allowed to render in markdown
+		 */
+		markdown: {
+			type: Boolean,
+			default: true,
 		},
 		sendingFailure: {
 			type: String,
@@ -920,11 +929,6 @@ export default {
 				align-items: center;
 			}
 
-			:deep(.rich-text--wrapper) {
-				white-space: pre-wrap;
-				word-break: break-word;
-			}
-
 			&--quote {
 				border-left: 4px solid var(--color-primary-element);
 				padding: 4px 0 0 8px;
@@ -1033,5 +1037,44 @@ export default {
 
 .reaction-details {
 	padding: 8px;
+}
+
+.message-body__main__text--markdown {
+	:deep(.rich-text--wrapper) {
+		h1 {
+			font-weight: bold;
+			font-size: 32px;
+			margin-bottom: 12px;
+			line-height: 36px;
+			color: var(--color-text-light);
+		}
+
+		em {
+			font-style: italic;
+		}
+
+		ul {
+			padding-left: 20px;
+			list-style-type: disc;
+		}
+
+		ol {
+			padding-left: 20px;
+			list-style-type: decimal;
+		}
+
+		pre,
+		code,
+		blockquote {
+			padding: 6px;
+			margin: 2px;
+			border-radius: var(--border-radius);
+			background-color: var(--color-background-dark);
+		}
+
+		pre {
+			overflow-x: auto;
+		}
+	}
 }
 </style>
