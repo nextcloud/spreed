@@ -40,6 +40,9 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Server;
 
+/**
+ * @template-implements IEventListener<Event>
+ */
 class BotListener implements IEventListener {
 	public function __construct(
 		protected BotServerMapper $botServerMapper,
