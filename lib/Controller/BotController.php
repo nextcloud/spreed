@@ -34,6 +34,7 @@ use OCA\Talk\Model\Attendee;
 use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\BotConversation;
 use OCA\Talk\Model\BotConversationMapper;
+use OCA\Talk\Model\BotServer;
 use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Service\BotService;
 use OCA\Talk\Service\ChecksumVerificationService;
@@ -155,23 +156,13 @@ class BotController extends AEnvironmentAwareController {
 			return $bot->getBotId();
 		}, $this->botConversationMapper->findForToken($this->room->getToken()));
 
+		$data = [];
 		$bots = $this->botServerMapper->getAllBots();
 		foreach ($bots as $bot) {
-			$state = in_array($bot->getId(), $alreadyInstalled, true) ? Bot::STATE_ENABLED : Bot::STATE_DISABLED;
-
-			if ($bot->getState() === Bot::STATE_NO_SETUP) {
-				if ($state === Bot::STATE_DISABLED) {
-					continue;
-				}
-				$state = Bot::STATE_NO_SETUP;
+			$botData = $this->formatBot($bot, in_array($bot->getId(), $alreadyInstalled, true));
+			if ($botData !== null) {
+				$data[] = $this->formatBot($bot, in_array($bot->getId(), $alreadyInstalled, true));
 			}
-
-			$data[] = [
-				'id' => $bot->getId(),
-				'name' => $bot->getName(),
-				'description' => $bot->getDescription(),
-				'state' => $state ,
-			];
 		}
 
 		return new DataResponse($data);
@@ -199,7 +190,7 @@ class BotController extends AEnvironmentAwareController {
 		}, $this->botConversationMapper->findForToken($this->room->getToken()));
 
 		if (in_array($botId, $alreadyInstalled)) {
-			return new DataResponse([], Http::STATUS_OK);
+			return new DataResponse($this->formatBot($bot, true), Http::STATUS_OK);
 		}
 
 		$conversationBot = new BotConversation();
@@ -208,7 +199,7 @@ class BotController extends AEnvironmentAwareController {
 		$conversationBot->setState(Bot::STATE_ENABLED);
 
 		$this->botConversationMapper->insert($conversationBot);
-		return new DataResponse([], Http::STATUS_CREATED);
+		return new DataResponse($this->formatBot($bot, true), Http::STATUS_CREATED);
 	}
 
 	#[NoAdminRequired]
@@ -229,6 +220,30 @@ class BotController extends AEnvironmentAwareController {
 		}
 
 		$this->botConversationMapper->deleteByBotIdAndTokens($botId, [$this->room->getToken()]);
-		return new DataResponse([], Http::STATUS_OK);
+		return new DataResponse($this->formatBot($bot, false), Http::STATUS_OK);
+	}
+
+	/**
+	 * @param BotServer $bot
+	 * @param bool $conversationEnabled
+	 * @return array|null
+	 * @psalm-return array{id: int, name: string, description: null|string, state: int}
+	 */
+	protected function formatBot(BotServer $bot, bool $conversationEnabled): ?array {
+		$state = $conversationEnabled ? Bot::STATE_ENABLED : Bot::STATE_DISABLED;
+
+		if ($bot->getState() === Bot::STATE_NO_SETUP) {
+			if ($state === Bot::STATE_DISABLED) {
+				return null;
+			}
+			$state = Bot::STATE_NO_SETUP;
+		}
+
+		return [
+			'id' => $bot->getId(),
+			'name' => $bot->getName(),
+			'description' => $bot->getDescription(),
+			'state' => $state,
+		];
 	}
 }
