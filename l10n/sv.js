@@ -642,6 +642,7 @@ OC.L10N.register(
     "Reply" : "Svara",
     "Go to file" : "Gå till fil",
     "Translate" : "Översätt",
+    "Translate from" : "Översätt från",
     "Contact" : "Kontakt",
     "{stack} in {board}" : "{stack} i {board}",
     "No messages" : "Inga meddelanden",
