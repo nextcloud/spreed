@@ -39,7 +39,7 @@
 						:size="20"
 						fill-color="var(--color-loading-light)" />
 				</template>
-				{{ formattedTime }}
+				{{ formattedTime(callTime) }}
 			</NcButton>
 		</template>
 
@@ -83,6 +83,7 @@ import NcPopover from '@nextcloud/vue/dist/Components/NcPopover.js'
 
 import { CALL } from '../../constants.js'
 import isInLobby from '../../mixins/isInLobby.js'
+import { formattedTime } from '../../utils/formattedTime.js'
 
 export default {
 	name: 'CallTime',
@@ -129,30 +130,6 @@ export default {
 		 */
 		callStart() {
 			return new Date(this.start * 1000)
-		},
-
-		/**
-		 * Calculates the stopwatch string given the callTime (ms)
-		 *
-		 * @return {string} The formatted time
-		 */
-		formattedTime() {
-			if (!this.callTime) {
-				return '-- : --'
-			}
-			let seconds = Math.floor((this.callTime / 1000) % 60)
-			if (seconds < 10) {
-				seconds = '0' + seconds
-			}
-			let minutes = Math.floor((this.callTime / (1000 * 60)) % 60)
-			if (minutes < 10) {
-				minutes = '0' + minutes
-			}
-			const hours = Math.floor((this.callTime / (1000 * 60 * 60)) % 24)
-			if (hours === 0) {
-				return minutes + ' : ' + seconds
-			}
-			return hours + ' : ' + minutes + ' : ' + seconds
 		},
 
 		token() {
@@ -213,6 +190,12 @@ export default {
 	},
 
 	methods: {
+		/**
+		 * Calculates the stopwatch string given the callTime (ms)
+		 *
+		 */
+		formattedTime,
+
 		stopRecording() {
 			this.$store.dispatch('stopCallRecording', {
 				token: this.token,
