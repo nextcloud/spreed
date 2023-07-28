@@ -3,6 +3,8 @@ import flushPromises from 'flush-promises'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
 
+import { emit } from '@nextcloud/event-bus'
+
 import {
 	CONVERSATION,
 	WEBINAR,
@@ -51,6 +53,8 @@ jest.mock('../services/conversationsService', () => ({
 	setCallPermissions: jest.fn(),
 	setConversationUnread: jest.fn(),
 }))
+
+jest.mock('@nextcloud/event-bus')
 
 describe('conversationsStore', () => {
 	const testToken = 'XXTOKENXX'
@@ -229,12 +233,12 @@ describe('conversationsStore', () => {
 				{
 					token: 'one_token',
 					attendeeId: 'attendee-id-1',
-					lastActivity: 1675209600, // 2023-02-01T00:00:00.000Z
+					lastActivity: Date.parse('2023-02-01T00:00:00.000Z') / 1000,
 				},
 				{
 					token: 'another_token',
 					attendeeId: 'attendee-id-2',
-					lastActivity: 1675209600, // 2023-02-01T00:00:00.000Z
+					lastActivity: Date.parse('2023-01-01T00:00:00.000Z') / 1000,
 				},
 			]
 
@@ -254,7 +258,253 @@ describe('conversationsStore', () => {
 			expect(store.getters.conversationsList).toStrictEqual(testConversations)
 		})
 
-		test('fetches all conversations and remove deleted conversations', async () => {
+		test('fetches all conversations and add new received conversations', async () => {
+			const oldConversation = {
+				token: 'tokenOne',
+				attendeeId: 'attendee-id-1',
+				lastActivity: Date.parse('2023-01-01T00:00:00.000Z') / 1000,
+			}
+
+			// Add initial conversations
+			store.dispatch('addConversation', oldConversation)
+
+			// Fetch new conversation
+			const newConversation = {
+				token: 'tokenTwo',
+				attendeeId: 'attendee-id-2',
+				lastActivity: Date.parse('2023-02-01T00:00:00.000Z') / 1000,
+			}
+
+			const response = {
+				data: {
+					ocs: {
+						data: [{ ...oldConversation }, newConversation],
+					},
+				},
+			}
+
+			fetchConversations.mockResolvedValue(response)
+
+			await store.dispatch('fetchConversations', { })
+
+			expect(fetchConversations).toHaveBeenCalledWith({ })
+			// conversationsList is actual to the response
+			expect(store.getters.conversationsList).toEqual([oldConversation, newConversation])
+			// Only old conversation with new activity should be actually replaced with new objects
+			expect(store.state.conversationsStore.conversations[oldConversation.token]).toStrictEqual(oldConversation)
+			expect(store.state.conversationsStore.conversations[newConversation.token]).toStrictEqual(newConversation)
+		})
+
+		test('fetches all conversations and emit user status update for new 1-1 conversations', async () => {
+			const oldConversations = [
+				{
+					token: 'one_token',
+					attendeeId: 'attendee-id-1',
+					lastActivity: Date.parse('2023-02-01T00:00:00.000Z') / 1000,
+					type: CONVERSATION.TYPE.ONE_TO_ONE,
+					status: 'online',
+					statusIcon: '🎉',
+					statusMessage: 'I am the test',
+					statusClearAt: null,
+				},
+			]
+			store.dispatch('addConversation', oldConversations[0])
+
+			const newConversations = [{
+				...oldConversations[0],
+			}, {
+				token: 'another_token',
+				attendeeId: 'attendee-id-2',
+				lastActivity: Date.parse('2023-01-01T00:00:00.000Z') / 1000,
+				type: CONVERSATION.TYPE.GROUP,
+			}, {
+				name: 'bob',
+				token: 'new_token',
+				attendeeId: 'attendee-id-3',
+				lastActivity: Date.parse('2023-02-01T00:00:00.000Z') / 1000,
+				type: CONVERSATION.TYPE.ONE_TO_ONE,
+				status: 'online',
+				statusIcon: '😃',
+				statusMessage: 'I am the test 2',
+				statusClearAt: null,
+			}]
+			const response = {
+				data: {
+					ocs: {
+						data: newConversations,
+					},
+				},
+			}
+			fetchConversations.mockResolvedValue(response)
+			emit.mockClear()
+			await store.dispatch('fetchConversations', { })
+			// Only new conversation emits event
+			expect(emit).toHaveBeenCalledTimes(1)
+			expect(emit.mock.calls.at(-1)).toEqual([
+				'user_status:status.updated',
+				{
+					userId: newConversations[2].name,
+					status: newConversations[2].status,
+					icon: newConversations[2].statusIcon,
+					message: newConversations[2].statusMessage,
+					clearAt: newConversations[2].statusClearAt,
+				},
+			])
+		})
+
+		test('fetches all conversations and emit user status update for changed statuses of 1-1 conversations', async () => {
+			const oldConversations = [
+				{
+					token: 'first_token',
+					name: 'alice',
+					attendeeId: 'attendee-id-1',
+					lastActivity: Date.parse('2023-02-01T00:00:00.000Z') / 1000,
+					type: CONVERSATION.TYPE.ONE_TO_ONE,
+					status: 'online',
+					statusIcon: '🎉',
+					statusMessage: 'I am the test',
+					statusClearAt: null,
+				},
+				{
+					token: 'second_token',
+					name: 'bob',
+					attendeeId: 'attendee-id-2',
+					lastActivity: Date.parse('2023-02-01T00:00:00.000Z') / 1000,
+					type: CONVERSATION.TYPE.ONE_TO_ONE,
+					status: 'away',
+					statusIcon: '🙄',
+					statusMessage: 'I am the test 2',
+					statusClearAt: null,
+				},
+			]
+			store.dispatch('addConversation', oldConversations[0])
+			store.dispatch('addConversation', oldConversations[1])
+
+			const newConversations = [{
+				// Not changed
+				...oldConversations[0],
+			}, {
+				// Updated status
+				...oldConversations[1],
+				status: 'online',
+				statusIcon: '👀',
+				statusMessage: 'I am the test 3',
+				statusClearAt: null,
+			}, {
+				token: 'another_token',
+				attendeeId: 'attendee-id-2',
+				lastActivity: Date.parse('2023-01-01T00:00:00.000Z') / 1000,
+				type: CONVERSATION.TYPE.GROUP,
+			}]
+			const response = {
+				data: {
+					ocs: {
+						data: newConversations,
+					},
+				},
+			}
+			fetchConversations.mockResolvedValue(response)
+			emit.mockClear()
+			await store.dispatch('fetchConversations', { })
+			// Only new conversation emits event
+			expect(emit).toHaveBeenCalledTimes(1)
+			expect(emit.mock.calls.at(-1)).toEqual([
+				'user_status:status.updated',
+				{
+					userId: newConversations[1].name,
+					status: newConversations[1].status,
+					icon: newConversations[1].statusIcon,
+					message: newConversations[1].statusMessage,
+					clearAt: newConversations[1].statusClearAt,
+				},
+			])
+		})
+
+		test('fetches all conversations and re-set conversations with new lastActivity', async () => {
+			const oldConversations = [
+				{
+					token: 'one_token',
+					attendeeId: 'attendee-id-1',
+					lastActivity: Date.parse('2023-02-01T00:00:00.000Z') / 1000,
+				},
+				{
+					token: 'another_token',
+					attendeeId: 'attendee-id-2',
+					lastActivity: Date.parse('2023-01-01T00:00:00.000Z') / 1000,
+				},
+			]
+			store.dispatch('addConversation', oldConversations[0])
+			store.dispatch('addConversation', oldConversations[1])
+
+			const newConversations = [{
+				...oldConversations[0],
+			}, {
+				...oldConversations[1],
+				lastActivity: oldConversations[1].lastActivity + 1000,
+			}]
+			const response = {
+				data: {
+					ocs: {
+						data: newConversations,
+					},
+				},
+			}
+			fetchConversations.mockResolvedValue(response)
+			await store.dispatch('fetchConversations', { })
+
+			// conversationsList is actual to the response
+			expect(store.getters.conversationsList).toEqual(newConversations)
+			// Only old conversation with new activity should be actually replaced with new objects
+			// Not updated
+			expect(store.state.conversationsStore.conversations[oldConversations[0].token]).toStrictEqual(newConversations[0])
+			// Updated because of new lastActivity
+			expect(store.state.conversationsStore.conversations[oldConversations[1].token]).toStrictEqual(newConversations[1])
+		})
+
+		test('fetches all conversations and re-set conversations when it has any property changed', async () => {
+			const oldConversations = [
+				{
+					token: 'one_token',
+					attendeeId: 'attendee-id-1',
+					unreadMention: false,
+					lastActivity: Date.parse('2023-02-01T00:00:00.000Z') / 1000,
+				},
+				{
+					token: 'another_token',
+					attendeeId: 'attendee-id-2',
+					unreadMention: false,
+					lastActivity: Date.parse('2023-01-01T00:00:00.000Z') / 1000,
+				},
+			]
+			store.dispatch('addConversation', oldConversations[0])
+			store.dispatch('addConversation', oldConversations[1])
+
+			const newConversations = [{
+				...oldConversations[0],
+			}, {
+				...oldConversations[1],
+				unreadMention: true,
+			}]
+			const response = {
+				data: {
+					ocs: {
+						data: newConversations,
+					},
+				},
+			}
+			fetchConversations.mockResolvedValue(response)
+			await store.dispatch('fetchConversations', { })
+
+			// conversationsList is actual to the response
+			expect(store.getters.conversationsList).toEqual(newConversations)
+			// Only old conversation with new activity should be actually replaced with new objects
+			// Not updated
+			expect(store.state.conversationsStore.conversations[oldConversations[0].token]).toStrictEqual(newConversations[0])
+			// Updated because unreadMention change
+			expect(store.state.conversationsStore.conversations[oldConversations[1].token]).toStrictEqual(newConversations[1])
+		})
+
+		test('fetches all conversations and remove deleted conversations if without modiviedSince', async () => {
 			const testConversations = [
 				{
 					token: 'one_token',
@@ -287,44 +537,7 @@ describe('conversationsStore', () => {
 			expect(store.getters.conversationsList).toStrictEqual(testConversations)
 		})
 
-		test('fetches all conversations and add new conversations', async () => {
-			const oldConversation = {
-				token: 'tokenOne',
-				attendeeId: 'attendee-id-1',
-				lastActivity: 1672531200, // 2023-01-01T00:00:00.000Z
-			}
-
-			// Add initial conversations
-			store.dispatch('addConversation', oldConversation)
-
-			// Fetch new conversation
-			const newConversation = {
-				token: 'tokenTwo',
-				attendeeId: 'attendee-id-2',
-				lastActivity: 1675209600, // 2023-02-01T00:00:00.000Z
-			}
-
-			const response = {
-				data: {
-					ocs: {
-						data: [{ ...oldConversation }, newConversation],
-					},
-				},
-			}
-
-			fetchConversations.mockResolvedValue(response)
-
-			await store.dispatch('fetchConversations', { })
-
-			expect(fetchConversations).toHaveBeenCalledWith({ })
-			// conversationsList is actual to the response
-			expect(store.getters.conversationsList).toEqual([oldConversation, newConversation])
-			// Only old conversation with new activity should be actually replaced with new objects
-			expect(store.state.conversationsStore.conversations[oldConversation.token]).toStrictEqual(oldConversation)
-			expect(store.state.conversationsStore.conversations[newConversation.token]).toStrictEqual(newConversation)
-		})
-
-		test('fetches all conversations and update only new without purging when modifiedSince is present', async () => {
+		test('fetches all conversations without purging not revieved conversations when modifiedSince is present', async () => {
 			const oldConversation1 = {
 				token: 'tokenOne',
 				attendeeId: 'attendee-id-1',
