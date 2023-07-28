@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.0.3 – 2023-07-28
+### Changed
+- Update dependencies
+
+### Fixed
+- Fix duplicate messages and improve performance
+  [#10070](https://github.com/nextcloud/spreed/issues/10070)
+- fix(SIP): Show SIP info also when enabled without user PIN
+  [#10064](https://github.com/nextcloud/spreed/issues/10064)
+- fix(settings): Hide description and status from 1-1 conversation settings
+  [#10057](https://github.com/nextcloud/spreed/issues/10057)
+
 ## 17.0.2 – 2023-07-20
 ### Changed
 - Automatic transcription of call recordings is now opt-in
