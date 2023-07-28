@@ -35,71 +35,73 @@
 					@abort-search="abortSearch" />
 			</div>
 
-			<!-- Filters -->
-			<div class="filters"
-				:class="{'hidden-visually': isFocused}">
-				<NcActions class="filter-actions"
-					:primary="isFiltered !== null">
-					<template #icon>
-						<FilterIcon :size="15" />
-					</template>
-					<NcActionButton close-after-click
-						class="filter-actions__button"
-						:class="{'filter-actions__button--active': isFiltered === 'mentions'}"
-						@click="handleFilter('mentions')">
+			<transition-group name="radial-reveal">
+				<!-- Filters -->
+				<div v-show="!isFocused" key="filters" class="filters">
+					<NcActions class="filter-actions"
+						:primary="isFiltered !== null">
 						<template #icon>
-							<AtIcon :size="20" />
+							<FilterIcon :size="15" />
 						</template>
-						{{ t('spreed','Filter unread mentions') }}
-					</NcActionButton>
+						<NcActionButton close-after-click
+							class="filter-actions__button"
+							:class="{'filter-actions__button--active': isFiltered === 'mentions'}"
+							@click="handleFilter('mentions')">
+							<template #icon>
+								<AtIcon :size="20" />
+							</template>
+							{{ t('spreed','Filter unread mentions') }}
+						</NcActionButton>
 
-					<NcActionButton close-after-click
-						class="filter-actions__button"
-						:class="{'filter-actions__button--active': isFiltered === 'unread'}"
-						@click="handleFilter('unread')">
-						<template #icon>
-							<MessageBadge :size="20" />
-						</template>
-						{{ t('spreed','Filter unread messages') }}
-					</NcActionButton>
+						<NcActionButton close-after-click
+							class="filter-actions__button"
+							:class="{'filter-actions__button--active': isFiltered === 'unread'}"
+							@click="handleFilter('unread')">
+							<template #icon>
+								<MessageBadge :size="20" />
+							</template>
+							{{ t('spreed','Filter unread messages') }}
+						</NcActionButton>
 
-					<NcActionButton v-if="isFiltered"
-						close-after-click
-						class="filter-actions__clearbutton"
-						@click="handleFilter(null)">
-						<template #icon>
-							<FilterRemoveIcon :size="20" />
-						</template>
-						{{ t('spreed', 'Clear filters') }}
-					</NcActionButton>
-				</NcActions>
-			</div>
+						<NcActionButton v-if="isFiltered"
+							close-after-click
+							class="filter-actions__clearbutton"
+							@click="handleFilter(null)">
+							<template #icon>
+								<FilterRemoveIcon :size="20" />
+							</template>
+							{{ t('spreed', 'Clear filters') }}
+						</NcActionButton>
+					</NcActions>
+				</div>
 
-			<!-- Actions -->
-			<div class="actions"
-				:class="{'hidden-visually': isFocused}">
-				<NcActions class="conversations-actions">
-					<template #icon>
-						<DotsVertical :size="20" />
-					</template>
-					<NcActionButton v-if="canStartConversations"
-						close-after-click
-						@click="showModalNewConversation">
+				<!-- Actions -->
+				<div v-show="!isFocused"
+					key="actions"
+					class="actions">
+					<NcActions class="conversations-actions">
 						<template #icon>
-							<Plus :size="20" />
+							<DotsVertical :size="20" />
 						</template>
-						{{ t('spreed','Create a new conversation') }}
-					</NcActionButton>
+						<NcActionButton v-if="canStartConversations"
+							close-after-click
+							@click="showModalNewConversation">
+							<template #icon>
+								<Plus :size="20" />
+							</template>
+							{{ t('spreed','Create a new conversation') }}
+						</NcActionButton>
 
-					<NcActionButton close-after-click
-						@click="showModalListConversations">
-						<template #icon>
-							<List :size="20" />
-						</template>
-						{{ t('spreed','Join open conversations') }}
-					</NcActionButton>
-				</NcActions>
-			</div>
+						<NcActionButton close-after-click
+							@click="showModalListConversations">
+							<template #icon>
+								<List :size="20" />
+							</template>
+							{{ t('spreed','Join open conversations') }}
+						</NcActionButton>
+					</NcActions>
+				</div>
+			</transition-group>
 
 			<!-- All open conversations list -->
 			<OpenConversationsList ref="openConversationsList" />
@@ -809,7 +811,7 @@ export default {
 }
 
 .conversations-search {
-	transition: all 0.3s ease;
+	transition: all 0.15s ease;
 	z-index: 1;
 	// New conversation button width : 52 px
 	// Filters button width : 44 px
@@ -830,6 +832,7 @@ export default {
 .filters {
 	position: absolute;
 	right : 52px; // New conversation button's width
+	top : 5px;
 	display: flex;
 	height: var(--default-clickable-area);
 }
@@ -837,6 +840,7 @@ export default {
 .actions {
 	position: absolute;
 	right: 5px;
+	top : 5px;
 }
 
 .filter-actions__button--active {
@@ -852,6 +856,24 @@ export default {
 	justify-content: flex-start !important;
 }
 
+  .radial-reveal-enter-active {
+    animation: radial-reveal 0.15s forwards;
+  }
+
+  @keyframes radial-reveal {
+      0% {
+        transform: scale(0); /* Start as a point */
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1); /* Expand to full size */
+        opacity: 1;
+      }
+    }
+
+:deep(.input-field__clear-button) {
+	border-radius: var(--border-radius-pill) !important;
+}
 :deep(.app-navigation ul) {
 	padding: 0 !important;
 }
