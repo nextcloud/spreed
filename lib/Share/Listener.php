@@ -27,20 +27,20 @@ use OC\Files\Filesystem;
 use OCA\Talk\Config;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Server;
+use OCP\Share\Events\BeforeShareCreatedEvent;
 use OCP\Share\Events\VerifyMountPointEvent;
 use OCP\Share\IShare;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Listener {
 	public static function register(IEventDispatcher $dispatcher): void {
 		/**
 		 * @psalm-suppress UndefinedClass
 		 */
-		$dispatcher->addListener('OCP\Share::preShare', [self::class, 'listenPreShare'], 1000);
+		$dispatcher->addListener(BeforeShareCreatedEvent::class, [self::class, 'listenPreShare'], 1000);
 		$dispatcher->addListener(VerifyMountPointEvent::class, [self::class, 'listenVerifyMountPointEvent'], 1000);
 	}
 
-	public static function listenPreShare(GenericEvent $event): void {
+	public static function listenPreShare(BeforeShareCreatedEvent $event): void {
 		$listener = Server::get(self::class);
 		$listener->overwriteShareTarget($event);
 	}
@@ -55,9 +55,8 @@ class Listener {
 	) {
 	}
 
-	public function overwriteShareTarget(GenericEvent $event): void {
-		/** @var IShare $share */
-		$share = $event->getSubject();
+	public function overwriteShareTarget(BeforeShareCreatedEvent $event): void {
+		$share = $event->getShare();
 
 		if ($share->getShareType() !== IShare::TYPE_ROOM
 			&& $share->getShareType() !== RoomShareProvider::SHARE_TYPE_USERROOM) {

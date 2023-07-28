@@ -206,7 +206,7 @@ class Application extends App implements IBootstrap {
 		/** @var IProviderManager $resourceManager */
 		$resourceManager = $server->get(IProviderManager::class);
 		$resourceManager->registerResourceProvider(ConversationProvider::class);
-		$server->getEventDispatcher()->addListener(LoadAdditionalScriptsEvent::class, static function () {
+		$server->get(IEventDispatcher::class)->addListener(LoadAdditionalScriptsEvent::class, static function () {
 			Util::addScript(self::APP_ID, 'talk-collections');
 		});
 	}
