@@ -26,7 +26,6 @@
 		:show-trailing-button="isFocused"
 		trailing-button-icon="close"
 		v-on="listeners"
-		@focus="handleFocus"
 		@blur="handleBlur"
 		@update:value="updateValue"
 		@trailing-button-click="abortSearch"
@@ -118,41 +117,6 @@ export default {
 		 */
 		abortSearch() {
 			this.$emit('abort-search')
-			this.focus()
-		},
-
-		handleFocus(event) {
-			this.$emit('focus', event)
-		},
-		handleBlur(event) {
-			console.log('inner blur')
-			if (Array.from(event.relatedTarget.classList).includes('input-field__clear-button')) {
-				event.preventDefault()
-				this.$refs.searchConversations.$el.querySelector('.input-field__clear-button').addEventListener('blur', (event) => {
-					console.log('trailing blur')
-					console.log(event)
-					// check if focus goes back to native input or outside, and proceed accordingly
-				})
-			} else {
-				this.$emit('blur', event)
-			}
-		},
-
-		handleFocus(event) {
-			this.$emit('focus', event)
-		},
-		handleBlur(event) {
-			console.log('inner blur')
-			if (Array.from(event.relatedTarget.classList).includes('input-field__clear-button')) {
-				event.preventDefault()
-				this.$refs.searchConversations.$el.querySelector('.input-field__clear-button').addEventListener('blur', (event) => {
-					console.log('trailing blur')
-					console.log(event)
-					// check if focus goes back to native input or outside, and proceed accordingly
-				})
-			} else {
-				this.$emit('blur', event)
-			}
 		},
 
 		handleBlur(event) {
@@ -165,6 +129,7 @@ export default {
 				this.$emit('blur', event)
 			}
 		},
+
 	},
 }
 </script>
