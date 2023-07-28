@@ -1,0 +1,14 @@
+{
+	"include": ["./src/**/*.ts"],
+	"exclude": ["node_modules", "vendor"],
+	"compilerOptions": {
+		"outDir": "./js",
+		"allowJs": true,
+		"module": "CommonJS",
+		"moduleResolution": "bundler",
+		"verbatimModuleSyntax": true,
+		"target": "ES2020",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+	}
+}
