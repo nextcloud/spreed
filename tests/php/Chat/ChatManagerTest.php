@@ -37,6 +37,7 @@ use OCA\Talk\Service\PollService;
 use OCA\Talk\Service\RoomService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJobList;
 use OCP\Collaboration\Reference\IReferenceManager;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -78,6 +79,8 @@ class ChatManagerTest extends TestCase {
 	protected $attachmentService;
 	/** @var IReferenceManager|MockObject */
 	protected $referenceManager;
+	/** @var IJobList|MockObject */
+	protected $jobList;
 	protected ?ChatManager $chatManager = null;
 
 	public function setUp(): void {
@@ -95,6 +98,7 @@ class ChatManagerTest extends TestCase {
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->attachmentService = $this->createMock(AttachmentService::class);
 		$this->referenceManager = $this->createMock(IReferenceManager::class);
+		$this->jobList = $this->createMock(IJobList::class);
 		$cacheFactory = $this->createMock(ICacheFactory::class);
 
 		$this->chatManager = new ChatManager(
@@ -111,7 +115,8 @@ class ChatManagerTest extends TestCase {
 			$cacheFactory,
 			$this->timeFactory,
 			$this->attachmentService,
-			$this->referenceManager
+			$this->referenceManager,
+			$this->jobList,
 		);
 	}
 
@@ -139,6 +144,7 @@ class ChatManagerTest extends TestCase {
 					$this->timeFactory,
 					$this->attachmentService,
 					$this->referenceManager,
+					$this->jobList,
 				])
 				->onlyMethods($methods)
 				->getMock();
@@ -158,7 +164,8 @@ class ChatManagerTest extends TestCase {
 			$cacheFactory,
 			$this->timeFactory,
 			$this->attachmentService,
-			$this->referenceManager
+			$this->referenceManager,
+			$this->jobList,
 		);
 	}
 

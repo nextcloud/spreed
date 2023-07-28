@@ -287,7 +287,7 @@ class Notifier implements INotifier {
 			}
 			return $this->parseCall($notification, $room, $l);
 		}
-		if ($subject === 'reply' || $subject === 'mention' || $subject === 'mention_direct' || $subject === 'mention_group' || $subject === 'mention_all' || $subject === 'chat' || $subject === 'reaction') {
+		if ($subject === 'reply' || $subject === 'mention' || $subject === 'mention_direct' || $subject === 'mention_group' || $subject === 'mention_all' || $subject === 'chat' || $subject === 'reaction' || $subject === 'reminder') {
 			if ($room->getLobbyState() !== Webinary::LOBBY_NONE &&
 				$participant instanceof Participant &&
 				!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
@@ -611,6 +611,29 @@ class Notifier implements INotifier {
 					$subject = $l->t('{guest} (guest) replied to your message in conversation {call}');
 				} catch (ParticipantNotFoundException $e) {
 					$subject = $l->t('A guest replied to your message in conversation {call}');
+				}
+			}
+		} elseif ($notification->getSubject() === 'reminder') {
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+				if ($comment->getActorId() === $notification->getUser()) {
+					$subject = $l->t('Reminder: You in private conversation {call}');
+				} else {
+					$subject = $l->t('Reminder: {user} in private conversation');
+				}
+			} elseif ($richSubjectUser) {
+				if ($comment->getActorId() === $notification->getUser()) {
+					$subject = $l->t('Reminder: You in conversation {call}');
+				} else {
+					$subject = $l->t('Reminder: {user} in conversation {call}');
+				}
+			} elseif (!$isGuest) {
+				$subject = $l->t('Reminder: A deleted user in conversation {call}');
+			} else {
+				try {
+					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+					$subject = $l->t('Reminder: {guest} (guest) in conversation {call}');
+				} catch (ParticipantNotFoundException) {
+					$subject = $l->t('Reminder: A guest in conversation {call}');
 				}
 			}
 		} elseif ($notification->getSubject() === 'reaction') {

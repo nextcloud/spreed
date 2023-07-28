@@ -27,6 +27,7 @@ namespace OCA\Talk\Chat;
 use DateInterval;
 use OC\Memcache\ArrayCache;
 use OC\Memcache\NullCache;
+use OCA\Talk\BackgroundJob\ChatMessageReminder;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -41,6 +42,7 @@ use OCA\Talk\Service\RoomService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJobList;
 use OCP\Collaboration\Reference\IReferenceManager;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -114,6 +116,7 @@ class ChatManager {
 		ITimeFactory $timeFactory,
 		AttachmentService $attachmentService,
 		IReferenceManager $referenceManager,
+		protected IJobList $jobList,
 	) {
 		$this->commentsManager = $commentsManager;
 		$this->dispatcher = $dispatcher;
@@ -744,6 +747,15 @@ class ChatManager {
 		});
 
 		return $comments;
+	}
+
+	public function queueRemindLaterBackgroundJob(Room $chat, IComment $comment, Attendee $attendee, int $timestamp): void {
+		$this->jobList->add(ChatMessageReminder::class, [
+			'execute-after' => $timestamp,
+			'token' => $chat->getToken(),
+			'message' => $comment->getId(),
+			'user' => $attendee->getActorId(),
+		]);
 	}
 
 	/**
