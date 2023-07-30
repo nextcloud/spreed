@@ -692,6 +692,7 @@
     "OK: Running version: {version}" : "Brez napak: zagnana različica: {version}",
     "Error: Cannot connect to server" : "Napaka: ni se mogoče povezati s strežnikom",
     "Error: Server did not respond with proper JSON" : "Napaka: odziv strežnika ni ustrezno oblikovan v zapisu JSON",
+    "Error: Certificate expired" : "Napaka: potrdilo je poteklo",
     "Error: Server responded with: {error}" : "Napaka: odziv strežnika: {error}",
     "Error: Unknown error occurred" : "Napak: prišlo je do neznane napake",
     "Recording backend" : "Ozadje posnetka",
