@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2020 Julien Veyssier <eneiluj@posteo.net>
  *
+ * @author Kate Döen <kate.doeen@nextcloud.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -43,6 +45,10 @@ use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @psalm-import-type SpreedMatterbridge from ResponseDefinitions
+ * @psalm-import-type SpreedMatterbridgeProcessState from ResponseDefinitions
+ */
 class MatterbridgeManager {
 	public const BRIDGE_BOT_USERID = 'bridge-bot';
 
@@ -66,7 +72,7 @@ class MatterbridgeManager {
 	 * Get bridge information for a specific room
 	 *
 	 * @param Room $room the room
-	 * @return array decoded json bridge information
+	 * @return SpreedMatterbridge
 	 */
 	public function getBridgeOfRoom(Room $room): array {
 		return $this->getBridgeFromDb($room);
@@ -76,7 +82,7 @@ class MatterbridgeManager {
 	 * Get bridge process information for a specific room
 	 *
 	 * @param Room $room the room
-	 * @return array process state and log
+	 * @return SpreedMatterbridgeProcessState process state and log
 	 */
 	public function getBridgeProcessState(Room $room): array {
 		$bridge = $this->getBridgeFromDb($room);
@@ -109,7 +115,7 @@ class MatterbridgeManager {
 	 * @param string $userId
 	 * @param bool $enabled desired state of the bridge
 	 * @param array $parts parts of the bridge (what it connects to)
-	 * @return array bridge state
+	 * @return SpreedMatterbridgeProcessState
 	 */
 	public function editBridgeOfRoom(Room $room, string $userId, bool $enabled, array $parts = []): array {
 		$currentBridge = $this->getBridgeOfRoom($room);
@@ -833,7 +839,7 @@ class MatterbridgeManager {
 	 * Get bridge information for one room
 	 *
 	 * @param Room $room the room
-	 * @return array decoded json array
+	 * @return SpreedMatterbridge
 	 */
 	private function getBridgeFromDb(Room $room): array {
 		$roomId = $room->getId();

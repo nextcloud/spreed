@@ -29,12 +29,17 @@ use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
 use OCA\Talk\Exceptions\ReactionNotSupportedException;
 use OCA\Talk\Exceptions\ReactionOutOfContextException;
 use OCA\Talk\Participant;
+use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\NotFoundException;
 use OCP\IL10N;
+use OCP\PreConditionNotMetException;
 
+/**
+ * @psalm-import-type SpreedReaction from ResponseDefinitions
+ */
 class ReactionManager {
 
 	public function __construct(
@@ -138,6 +143,10 @@ class ReactionManager {
 		return $comment;
 	}
 
+	/**
+	 * @return array<string, SpreedReaction[]>
+	 * @throws PreConditionNotMetException
+	 */
 	public function retrieveReactionMessages(Room $chat, Participant $participant, int $messageId, ?string $reaction = null): array {
 		if ($reaction) {
 			$comments = $this->commentsManager->retrieveAllReactionsWithSpecificReaction($messageId, $reaction);
