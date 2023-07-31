@@ -30,20 +30,36 @@ use OCA\Talk\AppInfo\Application;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJobList;
 use OCP\BackgroundJob\Job;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IDBConnection;
 use OCP\Notification\IManager;
+use Psr\Log\LoggerInterface;
 
 class ChatMessageReminder extends Job {
 	public function __construct(
 		ITimeFactory $time,
+		protected IDBConnection $connection,
 		protected IManager $notificationManager,
+		protected LoggerInterface $logger,
 	) {
 		parent::__construct($time);
 	}
 
 	public function start(IJobList $jobList): void {
-		$executeAfter = $this->argument['execute-after'] ?? 0;
-		if ($this->time->getTime() >= $executeAfter) {
+		$timeUntilExecution = $this->argument['execute-after'] - $this->time->getTime();
+
+		if ($timeUntilExecution <= 0) {
 			parent::start($jobList);
+			$jobList->remove($this, $this->argument);
+		} elseif ($timeUntilExecution > 900) {
+			// Execution is quite far in the future. In order to not check the
+			// job too often, we update it's test time to be closer to the execution
+			$this->setLastRunCloseToExecutionTime(
+				$this->argument['execute-after'],
+				$this->argument['token'],
+				$this->argument['user'],
+				$this->argument['message'],
+			);
 		}
 	}
 
@@ -60,5 +76,16 @@ class ChatMessageReminder extends Job {
 				'token' => $argument['token'],
 			]);
 		$this->notificationManager->notify($notification);
+	}
+
+	protected function setLastRunCloseToExecutionTime(int $timestamp, string $token, string $userId, string $message): void {
+		$query = $this->connection->getQueryBuilder();
+
+		$query->update('jobs')
+			->set('last_run', $query->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->executeStatement();
+
+		$this->logger->debug('Updated chat message reminder last_run to ' . $timestamp . ' for token "' . $token . '" user "' . $userId . '" message ' . $message);
 	}
 }
