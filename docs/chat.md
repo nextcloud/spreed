@@ -300,6 +300,24 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
         The parent message is the object of the deleted message with the replaced text "Message deleted by you".
         This message should **NOT** be displayed to the user but instead be used to remove the original message from any cache/storage of the device.
 
+## Remind me later
+
+* Required capability: `remind-me-later`
+* Method: `POST`
+* Endpoint: `/chat/{token}/{messageId}/reminder`
+* Data:
+
+| field       | type | Description                                                                                                                                         |
+|-------------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `timestamp` | int  | Timestamp when the notification should be triggered. Preferable options for 6pm today, 8am tomorrow, Saturday 8am and Monday 8am should be offered. |
+
+* Response:
+	- Status code:
+		+ `201 Created`
+		+ `401 Unauthorized` when the user is not logged in
+		+ `404 Not Found` When the message could not be found in the room
+		+ `404 Not Found` When the room could not be found for the participant,
+		  or the participant is a guest.
 
 ## Mark chat as read
 

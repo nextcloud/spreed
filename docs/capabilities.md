@@ -121,3 +121,6 @@
 * `config => call => supported-reactions` - A list of emojis supported as call reactions. If the list is absent or empty, clients should not show the emoji reaction option in calls.
 * `config => chat => typing-privacy` - User defined numeric value to enable 1 or disable 0 the typing indicator to other users
 * `typing-privacy` - Support toggle typing privacy
+
+## 17.1
+* `remind-me-later` - Support for "Remind me later" for chat messages exists
