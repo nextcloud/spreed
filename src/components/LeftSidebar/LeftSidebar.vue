@@ -27,77 +27,81 @@
 				:class="{'conversations-search--expanded': isFocused}">
 				<SearchBox ref="searchBox"
 					:value.sync="searchText"
-					:is-searching="isSearching"
+					:is-focused="isFocused"
 					@focus="setIsFocused"
 					@blur="setIsFocused"
+					@trailing-blur="setIsFocused"
 					@input="debounceFetchSearchResults"
 					@abort-search="abortSearch" />
 			</div>
 
-			<!-- Filters -->
-			<div class="filters"
-				:class="{'hidden-visually': isFocused}">
-				<NcActions class="filter-actions"
-					:primary="isFiltered !== null">
-					<template #icon>
-						<FilterIcon :size="15" />
-					</template>
-					<NcActionButton close-after-click
-						class="filter-actions__button"
-						:class="{'filter-actions__button--active': isFiltered === 'mentions'}"
-						@click="handleFilter('mentions')">
+			<transition-group name="radial-reveal">
+				<!-- Filters -->
+				<div v-show="!isFocused" key="filters" class="filters">
+					<NcActions class="filter-actions"
+						:primary="isFiltered !== null">
 						<template #icon>
-							<AtIcon :size="20" />
+							<FilterIcon :size="15" />
 						</template>
-						{{ t('spreed','Filter unread mentions') }}
-					</NcActionButton>
+						<NcActionButton close-after-click
+							class="filter-actions__button"
+							:class="{'filter-actions__button--active': isFiltered === 'mentions'}"
+							@click="handleFilter('mentions')">
+							<template #icon>
+								<AtIcon :size="20" />
+							</template>
+							{{ t('spreed','Filter unread mentions') }}
+						</NcActionButton>
 
-					<NcActionButton close-after-click
-						class="filter-actions__button"
-						:class="{'filter-actions__button--active': isFiltered === 'unread'}"
-						@click="handleFilter('unread')">
-						<template #icon>
-							<MessageBadge :size="20" />
-						</template>
-						{{ t('spreed','Filter unread messages') }}
-					</NcActionButton>
+						<NcActionButton close-after-click
+							class="filter-actions__button"
+							:class="{'filter-actions__button--active': isFiltered === 'unread'}"
+							@click="handleFilter('unread')">
+							<template #icon>
+								<MessageBadge :size="20" />
+							</template>
+							{{ t('spreed','Filter unread messages') }}
+						</NcActionButton>
 
-					<NcActionButton v-if="isFiltered"
-						close-after-click
-						class="filter-actions__clearbutton"
-						@click="handleFilter(null)">
-						<template #icon>
-							<FilterRemoveIcon :size="20" />
-						</template>
-						{{ t('spreed', 'Clear filters') }}
-					</NcActionButton>
-				</NcActions>
-			</div>
+						<NcActionButton v-if="isFiltered"
+							close-after-click
+							class="filter-actions__clearbutton"
+							@click="handleFilter(null)">
+							<template #icon>
+								<FilterRemoveIcon :size="20" />
+							</template>
+							{{ t('spreed', 'Clear filters') }}
+						</NcActionButton>
+					</NcActions>
+				</div>
 
-			<!-- Actions -->
-			<div class="actions">
-				<NcActions class="conversations-actions">
-					<template #icon>
-						<DotsVertical :size="20" />
-					</template>
-					<NcActionButton v-if="canStartConversations"
-						close-after-click
-						@click="showModalNewConversation">
+				<!-- Actions -->
+				<div v-show="!isFocused"
+					key="actions"
+					class="actions">
+					<NcActions class="conversations-actions">
 						<template #icon>
-							<Plus :size="20" />
+							<DotsVertical :size="20" />
 						</template>
-						{{ t('spreed','Create a new conversation') }}
-					</NcActionButton>
+						<NcActionButton v-if="canStartConversations"
+							close-after-click
+							@click="showModalNewConversation">
+							<template #icon>
+								<Plus :size="20" />
+							</template>
+							{{ t('spreed','Create a new conversation') }}
+						</NcActionButton>
 
-					<NcActionButton close-after-click
-						@click="showModalListConversations">
-						<template #icon>
-							<List :size="20" />
-						</template>
-						{{ t('spreed','Join open conversations') }}
-					</NcActionButton>
-				</NcActions>
-			</div>
+						<NcActionButton close-after-click
+							@click="showModalListConversations">
+							<template #icon>
+								<List :size="20" />
+							</template>
+							{{ t('spreed','Join open conversations') }}
+						</NcActionButton>
+					</NcActions>
+				</div>
+			</transition-group>
 
 			<!-- All open conversations list -->
 			<OpenConversationsList ref="openConversationsList" />
@@ -111,6 +115,17 @@
 				<ul ref="scroller"
 					class="scroller"
 					@scroll="debounceHandleScroll">
+					<NcListItem v-if="noMatchFound && searchText"
+						:title="t('spreed', 'Create a new conversation')"
+						@click="createConversation(searchText)">
+						<template #icon>
+							<ChatPlus :size="30" />
+						</template>
+						<template #subtitle>
+							{{ searchText }}
+						</template>
+					</NcListItem>
+
 					<NcAppNavigationCaption :class="{'hidden-visually': !isSearching}"
 						:title="t('spreed', 'Conversations')" />
 					<Conversation v-for="item of conversationsList"
@@ -146,7 +161,7 @@
 							<NcAppNavigationCaption v-if="searchResultsUsers.length === 0"
 								:title="t('spreed', 'Users')" />
 							<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-							<Hint v-else :hint="t('spreed', 'No search results')" />
+							<Hint v-else :hint="t('spreed', 'No matches found')" />
 						</template>
 					</template>
 					<template v-if="showStartConversationsOptions">
@@ -208,6 +223,7 @@ import debounce from 'debounce'
 import { ref } from 'vue'
 
 import AtIcon from 'vue-material-design-icons/At.vue'
+import ChatPlus from 'vue-material-design-icons/ChatPlus.vue'
 import DotsVertical from 'vue-material-design-icons/DotsVertical.vue'
 import FilterIcon from 'vue-material-design-icons/Filter.vue'
 import FilterRemoveIcon from 'vue-material-design-icons/FilterRemove.vue'
@@ -238,6 +254,7 @@ import SearchBox from './SearchBox/SearchBox.vue'
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
 import { CONVERSATION } from '../../constants.js'
 import {
+	createPrivateConversation,
 	searchPossibleConversations,
 	searchListedConversations,
 } from '../../services/conversationsService.js'
@@ -267,6 +284,7 @@ export default {
 		FilterIcon,
 		FilterRemoveIcon,
 		Plus,
+		ChatPlus,
 		List,
 		DotsVertical,
 	},
@@ -319,7 +337,7 @@ export default {
 	computed: {
 		conversationsList() {
 			let conversations = this.$store.getters.conversationsList
-			if (this.searchText !== '') {
+			if (this.searchText !== '' || this.isFocused) {
 				const lowerSearchText = this.searchText.toLowerCase()
 				conversations = conversations.filter(conversation =>
 					conversation.displayName.toLowerCase().includes(lowerSearchText)
@@ -434,11 +452,10 @@ export default {
 		},
 
 		setIsFocused(event) {
-			if (event.relatedTarget?.className.includes('input-field__clear-button') || this.searchText !== '') {
+			if (this.searchText !== '') {
 				return
 			}
 			this.isFocused = event.type === 'focus'
-
 		},
 
 		handleFilter(filter) {
@@ -549,6 +566,17 @@ export default {
 				// For other types, show the modal directly
 				this.$refs.newGroupConversation.showModalForItem(item)
 			}
+		},
+
+		async createConversation(name) {
+			const response = await createPrivateConversation(name)
+			const conversation = response.data.ocs.data
+			this.$store.dispatch('addConversation', conversation)
+			this.abortSearch()
+			this.$router.push({
+				name: 'conversation',
+				params: { token: conversation.token },
+			}).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 
 		hasOneToOneConversationWith(userId) {
@@ -783,7 +811,7 @@ export default {
 }
 
 .conversations-search {
-	transition: all 0.3s ease;
+	transition: all 0.15s ease;
 	z-index: 1;
 	// New conversation button width : 52 px
 	// Filters button width : 44 px
@@ -796,8 +824,7 @@ export default {
 	}
 	&--expanded {
 
-		// Gets expanded : 100 % - (52px + 1px)
-		width : calc(100% - 53px );
+		width : calc(100% - 8px);
 	}
 
 }
@@ -805,6 +832,7 @@ export default {
 .filters {
 	position: absolute;
 	right : 52px; // New conversation button's width
+	top : 5px;
 	display: flex;
 	height: var(--default-clickable-area);
 }
@@ -812,6 +840,7 @@ export default {
 .actions {
 	position: absolute;
 	right: 5px;
+	top : 5px;
 }
 
 .filter-actions__button--active {
@@ -827,6 +856,24 @@ export default {
 	justify-content: flex-start !important;
 }
 
+  .radial-reveal-enter-active {
+    animation: radial-reveal 0.15s forwards;
+  }
+
+  @keyframes radial-reveal {
+      0% {
+        transform: scale(0); /* Start as a point */
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1); /* Expand to full size */
+        opacity: 1;
+      }
+    }
+
+:deep(.input-field__clear-button) {
+	border-radius: var(--border-radius-pill) !important;
+}
 :deep(.app-navigation ul) {
 	padding: 0 !important;
 }

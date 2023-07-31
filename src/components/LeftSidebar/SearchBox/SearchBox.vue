@@ -23,9 +23,10 @@
 	<NcTextField ref="searchConversations"
 		:value="value"
 		:label="placeholderText"
-		:show-trailing-button="isSearching"
+		:show-trailing-button="isFocused"
 		trailing-button-icon="close"
-		v-on="$listeners"
+		v-on="listeners"
+		@blur="handleBlur"
 		@update:value="updateValue"
 		@trailing-button-click="abortSearch"
 		@keydown.esc="abortSearch">
@@ -64,7 +65,7 @@ export default {
 		/**
 		 * If true, this component displays an 'x' button to abort the search
 		 */
-		isSearching: {
+		isFocused: {
 			type: Boolean,
 			default: false,
 		},
@@ -72,9 +73,15 @@ export default {
 
 	expose: ['focus'],
 
-	emits: ['update:value', 'input', 'submit', 'abort-search'],
+	emits: ['update:value', 'input', 'submit', 'abort-search', 'blur', 'trailing-blur'],
 
 	computed: {
+		listeners() {
+			return Object.assign({}, this.$listeners, {
+				blur: this.handleBlur,
+			})
+		},
+
 		cancelSearchLabel() {
 			return t('spreed', 'Cancel search')
 		},
@@ -110,8 +117,19 @@ export default {
 		 */
 		abortSearch() {
 			this.$emit('abort-search')
-			this.focus()
 		},
+
+		handleBlur(event) {
+			if ((event.relatedTarget) && (Array.from(event.relatedTarget.classList).includes('input-field__clear-button'))) {
+				event.preventDefault()
+				this.$refs.searchConversations.$el.querySelector('.input-field__clear-button').addEventListener('blur', (event) => {
+					this.$emit('trailing-blur', event)
+				})
+			} else {
+				this.$emit('blur', event)
+			}
+		},
+
 	},
 }
 </script>
