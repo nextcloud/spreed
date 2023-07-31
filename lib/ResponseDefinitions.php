@@ -199,6 +199,8 @@ namespace OCA\Talk;
  *     running: bool,
  * }
  *
+ * @psalm-type SpreedMatterbridgeWithProcessState = SpreedMatterbridge&SpreedMatterbridgeProcessState
+ *
  * @psalm-type SpreedSignalingSettings = array{
  *     helloAuthParams: array{
  *         "1.0": array{

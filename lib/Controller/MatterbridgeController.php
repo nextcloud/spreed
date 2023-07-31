@@ -5,6 +5,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2020 Julien Veyssier <eneiluj@posteo.net>
  *
  * @author Julien Veyssier <eneiluj@posteo.net>
+ * @author Kate Döen <kate.doeen@nextcloud.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -29,11 +30,18 @@ use OCA\Talk\Exceptions\ImpossibleToKillException;
 use OCA\Talk\Manager;
 use OCA\Talk\MatterbridgeManager;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
+use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
 
+/**
+ * @psalm-import-type SpreedMatterbridge from ResponseDefinitions
+ * @psalm-import-type SpreedMatterbridgeParts from ResponseDefinitions
+ * @psalm-import-type SpreedMatterbridgeProcessState from ResponseDefinitions
+ * @psalm-import-type SpreedMatterbridgeWithProcessState from ResponseDefinitions
+ */
 class MatterbridgeController extends AEnvironmentAwareController {
 
 	public function __construct(
@@ -48,6 +56,10 @@ class MatterbridgeController extends AEnvironmentAwareController {
 
 	/**
 	 * Get bridge information of one room
+	 *
+	 * @return DataResponse<Http::STATUS_OK, SpreedMatterbridgeWithProcessState, array{}>
+	 *
+	 * 200: Return list of configured Matterbridges
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
@@ -62,6 +74,10 @@ class MatterbridgeController extends AEnvironmentAwareController {
 
 	/**
 	 * Get bridge process information
+	 *
+	 * @return DataResponse<Http::STATUS_OK, SpreedMatterbridgeProcessState, array{}>
+	 *
+	 * 200: Return list of running processes
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
@@ -72,6 +88,13 @@ class MatterbridgeController extends AEnvironmentAwareController {
 
 	/**
 	 * Edit bridge information of one room
+	 *
+	 * @param bool $enabled If the bridge should be enabled
+	 * @param SpreedMatterbridgeParts $parts New parts
+	 * @return DataResponse<Http::STATUS_OK, SpreedMatterbridgeProcessState, array{}>|DataResponse<Http::STATUS_NOT_ACCEPTABLE, array{error: string}, array{}>
+	 *
+	 * 200: Bridge edited successfully
+	 * 406: Editing bridge is not possible
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
@@ -86,6 +109,11 @@ class MatterbridgeController extends AEnvironmentAwareController {
 
 	/**
 	 * Delete bridge of one room
+	 *
+	 * @return DataResponse<Http::STATUS_OK, bool, array{}>|DataResponse<Http::STATUS_NOT_ACCEPTABLE, array{error: string}, array{}>
+	 *
+	 * 200: Bridge deleted successfully
+	 * 406: Deleting bridge is not possible
 	 */
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
