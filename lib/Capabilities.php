@@ -5,6 +5,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2018, Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
+ * @author Kate Döen <kate.doeen@nextcloud.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -52,6 +53,44 @@ class Capabilities implements IPublicCapability {
 		$this->talkCache = $cacheFactory->createLocal('talk::');
 	}
 
+	/**
+	 * @return array{
+	 *     spreed: array{
+	 *         features: string[],
+	 *         config: array{
+	 *             attachments: array{
+	 *                 allowed: bool,
+	 *                 folder?: string,
+	 *             },
+	 *             call: array{
+	 *                 enabled: bool,
+	 *                 breakout-rooms: bool,
+	 *                 recording: bool,
+	 *     			   supported-reactions: string[],
+	 *     			   predefined-backgrounds?: string[],
+	 *     			   can-upload-background?: bool,
+	 *             },
+	 *             chat: array{
+	 *                 max-length: int,
+	 *                 read-privacy: int,
+	 *                 translations: string,
+	 *     			   typing-privacy: int,
+	 *             },
+	 *             conversations: array{
+	 *                 can-create: bool,
+	 *             },
+	 *             previews: array{
+	 *                 max-gif-size: int,
+	 *             },
+	 *             signaling: array{
+	 *                 session-ping-limit: int,
+	 *                 hello-v2-token-key?: string,
+	 *             },
+	 *         },
+	 *         version: string,
+	 *	   },
+	 * }|array<empty>
+	 */
 	public function getCapabilities(): array {
 		$user = $this->userSession->getUser();
 		if ($user instanceof IUser && $this->talkConfig->isDisabledForUser($user)) {
