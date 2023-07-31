@@ -5,6 +5,8 @@ declare(strict_types=1);
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
  *
+ * @author Kate Döen <kate.doeen@nextcloud.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -69,7 +71,7 @@ class FilesIntegrationController extends OCSController {
 	}
 
 	/**
-	 * Returns the token of the room associated to the given file id.
+	 * Get the token of the room associated to the given file id
 	 *
 	 * This is the counterpart of self::getRoomByShareToken() for file ids
 	 * instead of share tokens, although both return the same room token if the
@@ -91,10 +93,11 @@ class FilesIntegrationController extends OCSController {
 	 * room share (but not through a link share, for example), or if she is the
 	 * owner of such a file.
 	 *
-	 * @param string $fileId
-	 * @return DataResponse the status code is "200 OK" if a room is returned,
-	 *         or "404 Not found" if the given file id was invalid.
-	 * @throws OCSNotFoundException
+	 * @param string $fileId ID of the file
+	 * @return DataResponse<Http::STATUS_OK, array{token: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 * 200: Room returned
+	 * 400: Rooms not allowed for shares
+	 * @throws OCSNotFoundException Share not found
 	 */
 	#[NoAdminRequired]
 	public function getRoomByFileId(string $fileId): DataResponse {
@@ -133,7 +136,7 @@ class FilesIntegrationController extends OCSController {
 
 	/**
 	 * Returns the token of the room associated to the file id of the given
-	 * share token.
+	 * share token
 	 *
 	 * This is the counterpart of self::getRoomByFileId() for share tokens
 	 * instead of file ids, although both return the same room token if the
@@ -156,9 +159,11 @@ class FilesIntegrationController extends OCSController {
 	 * actual current user, as the public share page uses the incognito mode and
 	 * thus logged-in users as seen as guests.
 	 *
-	 * @param string $shareToken
-	 * @return DataResponse the status code is "200 OK" if a room is returned,
-	 *         or "404 Not found" if the given share token was invalid.
+	 * @param string $shareToken Token of the share
+	 * @return DataResponse<Http::STATUS_OK, array{token: string, userId: string, userDisplayName: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST|Http::STATUS_NOT_FOUND, array<empty>, array{}>
+	 * 200: Room returned
+	 * 400: Rooms not allowed for shares
+	 * 404: Share not found
 	 */
 	#[PublicPage]
 	#[UseSession]
