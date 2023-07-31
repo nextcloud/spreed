@@ -5,6 +5,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2021, Gary Kim <gary@garykim.dev>
  *
  * @author Gary Kim <gary@garykim.dev>
+ * @author Kate Döen <kate.doeen@nextcloud.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -31,7 +32,9 @@ use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Federation\FederationManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Invitation;
+use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -40,6 +43,9 @@ use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
 
+/**
+ * @psalm-import-type SpreedRoomShare from ResponseDefinitions
+ */
 class FederationController extends OCSController {
 
 	public function __construct(
@@ -52,11 +58,15 @@ class FederationController extends OCSController {
 	}
 
 	/**
-	 * @param int $id
-	 * @return DataResponse
+	 * Accept a federated share
+	 *
+	 * @param int $id ID of the share
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
 	 * @throws UnauthorizedException
 	 * @throws DBException
 	 * @throws MultipleObjectsReturnedException
+	 *
+	 * 200: Share accepted successfully
 	 */
 	#[NoAdminRequired]
 	public function acceptShare(int $id): DataResponse {
@@ -69,11 +79,15 @@ class FederationController extends OCSController {
 	}
 
 	/**
-	 * @param int $id
-	 * @return DataResponse
+	 * Reject a federated share
+	 *
+	 * @param int $id ID of the share
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>
 	 * @throws UnauthorizedException
 	 * @throws DBException
 	 * @throws MultipleObjectsReturnedException
+	 *
+	 * 200: Share rejected successfully
 	 */
 	#[NoAdminRequired]
 	public function rejectShare(int $id): DataResponse {
@@ -85,6 +99,13 @@ class FederationController extends OCSController {
 		return new DataResponse();
 	}
 
+	/**
+	 * Get a list of federated shares
+	 *
+	 * @return DataResponse<Http::STATUS_OK, SpreedRoomShare[], array{}>
+	 *
+	 * 200: Get list of received shares successfully
+	 */
 	#[NoAdminRequired]
 	public function getShares(): DataResponse {
 		$user = $this->userSession->getUser();
