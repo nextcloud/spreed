@@ -5,6 +5,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
  * @author Lukas Reschke <lukas@statuscode.ch>
+ * @author Kate Döen <kate.doeen@nextcloud.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -49,6 +50,14 @@ class TempAvatarController extends OCSController {
 		parent::__construct($appName, $request);
 	}
 
+	/**
+	 * Upload a temporary avatar
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 *
+	 * 200: Avatar uploaded successfully
+	 * 400: Uploading avatar is not possible
+	 */
 	#[NoAdminRequired]
 	public function postAvatar(): DataResponse {
 		$files = $this->request->getUploadedFile('files');
@@ -115,6 +124,14 @@ class TempAvatarController extends OCSController {
 		}
 	}
 
+	/**
+	 * Delete a temporary avatar
+	 *
+	 * @return DataResponse<Http::STATUS_OK|Http::STATUS_BAD_REQUEST, array<empty>, array{}>
+	 *
+	 * 200: Avatar deleted successfully
+	 * 400: Deleting avatar is not possible
+	 */
 	#[NoAdminRequired]
 	public function deleteAvatar(): DataResponse {
 		try {
