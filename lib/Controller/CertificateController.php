@@ -45,6 +45,14 @@ class CertificateController extends OCSController {
 		parent::__construct($appName, $request);
 	}
 
+	/**
+	 * Get the certificate expiration for a host
+	 * @param string $host Host to check
+	 * @return DataResponse<Http::STATUS_OK, array{expiration_in_days: ?int}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 *
+	 * 200: Certificate expiration returned
+	 * 400: Getting certificate expiration is not possible
+	 */
 	public function getCertificateExpiration(string $host): DataResponse {
 		try {
 			$expirationInDays = $this->certificateService->getCertificateExpirationInDays($host);
