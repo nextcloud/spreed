@@ -993,6 +993,7 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Moderatzaile berri bat izendatu behar duzu elkarrizketa utzi ahal izateko.",
     "Conversation list" : "Elkarrizketa zerrenda",
     "Clear filters" : "Garbitu iragazkiak",
+    "Create a new conversation" : "Sortu elkarrizketa berri bat",
     "No matches found" : "Ez dira emaitzarik aurkitu",
     "Open conversations" : "Ireki elkarrizketak",
     "Loading" : "Kargatzen",
