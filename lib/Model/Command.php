@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
+ * @author Kate Döen <kate.doeen@nextcloud.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 
 /**
@@ -38,6 +41,8 @@ use OCP\AppFramework\Db\Entity;
  * @method int getResponse()
  * @method void setEnabled(int $enabled)
  * @method int getEnabled()
+ *
+ * @psalm-import-type SpreedCommand from ResponseDefinitions
  */
 class Command extends Entity {
 	public const RESPONSE_NONE = 0;
@@ -77,7 +82,7 @@ class Command extends Entity {
 	}
 
 	/**
-	 * @return array
+	 * @return SpreedCommand
 	 */
 	public function asArray(): array {
 		return [

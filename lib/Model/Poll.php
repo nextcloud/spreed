@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 
 /**
@@ -51,6 +52,8 @@ use OCP\AppFramework\Db\Entity;
  * @method int getResultMode()
  * @method void setMaxVotes(int $maxVotes)
  * @method int getMaxVotes()
+ *
+ * @psalm-import-type SpreedPollWithRoomId from ResponseDefinitions
  */
 class Poll extends Entity {
 	public const STATUS_OPEN = 0;
@@ -86,7 +89,7 @@ class Poll extends Entity {
 	}
 
 	/**
-	 * @return array
+	 * @return SpreedPollWithRoomId
 	 */
 	public function asArray(): array {
 		$votes = json_decode($this->getVotes(), true, 512, JSON_THROW_ON_ERROR);

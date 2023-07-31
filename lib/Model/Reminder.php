@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 
 /**
@@ -36,6 +37,8 @@ use OCP\AppFramework\Db\Entity;
  * @method int getMessageId()
  * @method void setDateTime(\DateTime $dateTime)
  * @method \DateTime getDateTime()
+ *
+ * @psalm-import-type SpreedReminder from ResponseDefinitions
  */
 class Reminder extends Entity implements \JsonSerializable {
 	protected string $userId = '';
@@ -50,6 +53,9 @@ class Reminder extends Entity implements \JsonSerializable {
 		$this->addType('dateTime', 'datetime');
 	}
 
+	/**
+	 * @return SpreedReminder
+	 */
 	public function jsonSerialize(): array {
 		return [
 			'userId' => $this->getUserId(),

@@ -6,6 +6,7 @@ declare(strict_types=1);
  * @copyright Copyright (c) 2022 Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
+ * @author Kate Döen <kate.doeen@nextcloud.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -26,6 +27,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Model;
 
+use OCA\Talk\ResponseDefinitions;
 use OCP\AppFramework\Db\Entity;
 
 /**
@@ -41,6 +43,8 @@ use OCP\AppFramework\Db\Entity;
  * @method string getDisplayName()
  * @method void setOptionId(int $optionId)
  * @method int getOptionId()
+ *
+ * @psalm-import-type SpreedPollVote from ResponseDefinitions
  */
 class Vote extends Entity {
 	protected int $pollId = 0;
@@ -60,7 +64,7 @@ class Vote extends Entity {
 	}
 
 	/**
-	 * @return array
+	 * @return SpreedPollVote
 	 */
 	public function asArray(): array {
 		return [

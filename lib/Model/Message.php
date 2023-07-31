@@ -4,6 +4,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
+ * @author Kate Döen <kate.doeen@nextcloud.com>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,10 +27,14 @@ namespace OCA\Talk\Model;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Participant;
+use OCA\Talk\ResponseDefinitions;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
 use OCP\IL10N;
 
+/**
+ * @psalm-import-type SpreedMessage from ResponseDefinitions
+ */
 class Message {
 
 	/** @var bool */
@@ -154,7 +160,7 @@ class Message {
 	/**
 	 * @param string $format
 	 * @psalm-param 'json'|'xml' $format
-	 * @return array
+	 * @return SpreedMessage
 	 */
 	public function toArray(string $format): array {
 		$expireDate = $this->getComment()->getExpireDate();
