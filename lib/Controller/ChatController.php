@@ -752,6 +752,25 @@ class ChatController extends AEnvironmentAwareController {
 	}
 
 	#[NoAdminRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	public function dismissReminder(int $messageId): DataResponse {
+		try {
+			$message = $this->chatManager->getComment($this->room, (string) $messageId);
+		} catch (NotFoundException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$this->chatManager->dismissReminderNotification(
+			$this->room,
+			$message,
+			$this->participant->getAttendee()
+		);
+
+		return new DataResponse([], Http::STATUS_OK);
+	}
+
+	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
 	#[RequireReadWriteConversation]
 	public function clearHistory(): DataResponse {

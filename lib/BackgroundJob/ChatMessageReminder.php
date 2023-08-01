@@ -58,22 +58,28 @@ class ChatMessageReminder extends Job {
 				$this->argument['execute-after'],
 				$this->argument['token'],
 				$this->argument['user'],
-				$this->argument['message'],
+				$this->argument['message_id'],
 			);
 		}
 	}
 
 	/**
-	 * @psalm-param array{token: string, message: string, user: string, execute-after: int} $argument
+	 * @psalm-param array{token: string, message_id: string, message_actor_type: string, message_actor_id: string, user: string, execute-after: int} $argument
 	 */
 	protected function run($argument): void {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp(Application::APP_ID)
 			->setUser($argument['user'])
-			->setObject('chat', $argument['message'])
+			->setObject('reminder', $argument['token'])
 			->setDateTime($this->time->getDateTime('@' . $this->argument['execute-after']))
 			->setSubject('reminder', [
 				'token' => $argument['token'],
+				'message' => $argument['message_id'],
+				'userType' => $argument['message_actor_type'],
+				'userId' => $argument['message_actor_id'],
+			])
+			->setMessage('reminder', [
+				'commentId' => $argument['message_id'],
 			]);
 		$this->notificationManager->notify($notification);
 	}
