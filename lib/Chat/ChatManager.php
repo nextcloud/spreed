@@ -27,6 +27,7 @@ namespace OCA\Talk\Chat;
 use DateInterval;
 use OC\Memcache\ArrayCache;
 use OC\Memcache\NullCache;
+use OCA\Talk\AppInfo\Application;
 use OCA\Talk\BackgroundJob\ChatMessageReminder;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
@@ -727,9 +728,22 @@ class ChatManager {
 		$this->jobList->add(ChatMessageReminder::class, [
 			'execute-after' => $timestamp,
 			'token' => $chat->getToken(),
-			'message' => $comment->getId(),
+			'message_id' => $comment->getId(),
+			'message_actor_type' => $comment->getActorType(),
+			'message_actor_id' => $comment->getActorId(),
 			'user' => $attendee->getActorId(),
 		]);
+	}
+
+	public function dismissReminderNotification(Room $chat, IComment $comment, Attendee $attendee): void {
+		$notification = $this->notificationManager->createNotification();
+		$notification->setApp(Application::APP_ID)
+			->setUser($attendee->getActorId())
+			->setObject('reminder', $chat->getToken())
+			->setMessage('reminder', [
+				'commentId' => $comment->getId(),
+			]);
+		$this->notificationManager->markProcessed($notification);
 	}
 
 	/**

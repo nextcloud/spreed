@@ -319,6 +319,20 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 		+ `404 Not Found` When the room could not be found for the participant,
 		  or the participant is a guest.
 
+## Delete reminder notification
+
+* Required capability: `remind-me-later`
+* Method: `DELETE`
+* Endpoint: `/chat/{token}/{messageId}/reminder`
+
+* Response:
+	- Status code:
+		+ `200 OK`
+		+ `401 Unauthorized` when the user is not logged in
+		+ `404 Not Found` When the message could not be found in the room
+		+ `404 Not Found` When the room could not be found for the participant,
+		  or the participant is a guest.
+
 ## Mark chat as read
 
 * Required capability: `chat-read-marker`
