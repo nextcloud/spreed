@@ -20,17 +20,17 @@
 
 <template>
 	<NcPopover class="call-time"
-		close-after-click="true"
 		:menu-title="callTime"
 		:shown.sync="showPopover"
+		:focus-trap="isShowRecordingStatus"
 		:triggers="[]"
 		:container="container">
 		<template #trigger>
-			<NcButton :disabled="!isShowRecordingStatus || !isModerator"
+			<NcButton :disabled="isButtonDisabled"
 				:wide="true"
 				:title="recordingButtonTitle"
 				type="tertiary"
-				@click="showPopover = true">
+				@click="showPopover = !showPopover">
 				<template v-if="isShowRecordingStatus" #icon>
 					<RecordCircle v-if="isRecording"
 						:size="20"
@@ -42,24 +42,34 @@
 				{{ formattedTime }}
 			</NcButton>
 		</template>
-		<NcButton v-if="isStartingRecording"
-			type="tertiary-no-background"
-			:wide="true"
-			@click="stopRecording">
-			<template #icon>
-				<NcLoadingIcon :size="20" />
-			</template>
-			{{ t('spreed', 'Cancel recording start') }}
-		</NcButton>
-		<NcButton v-else
-			type="tertiary-no-background"
-			:wide="true"
-			@click="stopRecording">
-			<template #icon>
-				<StopIcon :size="20" />
-			</template>
-			{{ t('spreed', 'Stop recording') }}
-		</NcButton>
+
+		<!--one hour hint-->
+		<span v-if="isCallDurationHintShown" class="call-duration-hint">
+			{{ t('spreed', 'The call has been running for one hour.') }}
+		</span>
+
+		<!--Moderator's buttons-->
+		<template v-if="isShowRecordingStatus">
+			<hr v-if="isCallDurationHintShown" class="solid">
+			<NcButton v-if="isStartingRecording"
+				type="tertiary-no-background"
+				:wide="true"
+				@click="stopRecording">
+				<template #icon>
+					<NcLoadingIcon :size="20" />
+				</template>
+				{{ t('spreed', 'Cancel recording start') }}
+			</NcButton>
+			<NcButton v-else
+				type="tertiary-no-background"
+				:wide="true"
+				@click="stopRecording">
+				<template #icon>
+					<StopIcon :size="20" />
+				</template>
+				{{ t('spreed', 'Stop recording') }}
+			</NcButton>
+		</template>
 	</NcPopover>
 </template>
 
@@ -101,7 +111,9 @@ export default {
 		return {
 			callTime: undefined,
 			showPopover: false,
+			isCallDurationHintShown: false,
 			timer: null,
+			untilCallDurationHintShown: null,
 		}
 	},
 
@@ -165,6 +177,10 @@ export default {
 			return this.isStartingRecording || this.isRecording
 		},
 
+		isButtonDisabled() {
+			return !this.isShowRecordingStatus && !this.isCallDurationHintShown
+		},
+
 		recordingButtonTitle() {
 			if (this.isStartingRecording) {
 				return t('spreed', 'Starting the recording')
@@ -173,6 +189,17 @@ export default {
 			}
 
 			return ''
+		},
+	},
+
+	watch: {
+		callTime(value) {
+			if (value && !this.untilCallDurationHintShown) {
+				this.untilCallDurationHintShown = (1000 * 60 * 60) - value + 1000
+				setTimeout(() => {
+					this.showCallDurationHint()
+				}, this.untilCallDurationHintShown)
+			}
 		},
 	},
 
@@ -199,12 +226,37 @@ export default {
 			}
 			this.callTime = new Date() - this.callStart
 		},
+
+		showCallDurationHint() {
+
+			this.showPopover = true
+			this.isCallDurationHintShown = true
+
+			// close the popover after 10 seconds
+			if (this.$store.getters.windowIsVisible()) {
+				setTimeout(() => {
+					this.showPopover = false
+				}, 10000)
+			} else {
+				// add event listener if the call view is not visible
+				window.onfocus = () => setTimeout(() => {
+					this.showPopover = false
+				}, 10000)
+			}
+		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
 
+.solid {
+	margin: 0;
+}
+.call-duration-hint {
+	display: flex;
+	padding: calc(var(--default-grid-baseline) * 2);
+}
 .call-time {
 	display: flex;
 	justify-content: center;

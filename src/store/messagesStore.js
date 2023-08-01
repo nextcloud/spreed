@@ -1032,12 +1032,20 @@ const actions = {
 						token,
 						hasCall: true,
 					})
+					context.dispatch('setConversationProperties', {
+						token: message.token,
+						properties: { callStartTime: message.timestamp },
+					})
 				} else if (message.systemMessage === 'call_ended'
 					|| message.systemMessage === 'call_ended_everyone'
 					|| message.systemMessage === 'call_missed') {
 					context.dispatch('overwriteHasCallByChat', {
 						token,
 						hasCall: false,
+					})
+					context.dispatch('setConversationProperties', {
+						token: message.token,
+						properties: { callStartTime: 0 },
 					})
 				}
 			}
