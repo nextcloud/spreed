@@ -609,6 +609,8 @@ class Notifier implements INotifier {
 			if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 				if ($comment->getActorId() === $notification->getUser()) {
 					$subject = $l->t('Reminder: You in private conversation {call}');
+				} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+					$subject = $l->t('Reminder: A deleted user in private conversation {call}');
 				} else {
 					$subject = $l->t('Reminder: {user} in private conversation');
 				}
