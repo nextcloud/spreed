@@ -194,6 +194,7 @@ class Message {
 			'referenceId' => (string) $this->getComment()->getReferenceId(),
 			'reactions' => $reactions,
 			'expirationTimestamp' => $expireDate ? $expireDate->getTimestamp() : 0,
+			'markdown' => $this->getMessageType() === ChatManager::VERB_SYSTEM ? false : true,
 		];
 
 		if ($this->getMessageType() === ChatManager::VERB_MESSAGE_DELETED) {
