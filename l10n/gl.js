@@ -1024,7 +1024,7 @@ OC.L10N.register(
     "Circles" : "Círculos",
     "No search results" : "Sen resultados de busca",
     "Unread mentions" : "Mencións sen ler",
-    "Talk settings" : "Axustes do Talk",
+    "Talk settings" : "Axustes de Talk",
     "Users, groups and circles" : "Usuarios, grupos e círculos",
     "Users and groups" : "Usuarios e grupos",
     "Users and circles" : "Usuarios e círculos",
