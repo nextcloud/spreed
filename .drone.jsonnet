@@ -1,8 +1,16 @@
 ## 1. Download/install drone binary:
-##    curl -L https://github.com/harness/drone-cli/releases/latest/download/drone_linux_amd64.tar.gz | tar zx
+##        curl -L https://github.com/harness/drone-cli/releases/latest/download/drone_linux_amd64.tar.gz | tar zx
 ## 2. Adjust the matrix as wished
-## 3. Run: ./drone  jsonnet --stream --format yml
-## 4. Commit the result
+## 3. Transform jsonnet to yml:
+##        ./drone  jsonnet --stream --format yml
+## 4. Export your drone token and the server:
+##        export DRONE_TOKEN=… export DRONE_SERVER=https://drone.nextcloud.com
+## 5. Sign off the changes:
+##        ./drone sign nextcloud/spreed --save
+## 6. Copy the new signature from .drone.yml to `hmac` field in this file
+## 7. Transform jsonnet to yml again (to transfer the signature correctly):
+##        ./drone  jsonnet --stream --format yml
+## 8. Commit the result
 
 local Pipeline(test_set, database, services) = {
 	kind: "pipeline",
@@ -16,6 +24,7 @@ local Pipeline(test_set, database, services) = {
 				APP_NAME: "spreed",
 				CORE_BRANCH: "master",
 				GUESTS_BRANCH: "master",
+				CSB_BRANCH: "main",
 				NOTIFICATIONS_BRANCH: "master",
 				DATABASEHOST: database
 			},
@@ -31,12 +40,11 @@ local Pipeline(test_set, database, services) = {
 				"cd ../..",
 				"./occ app:enable $APP_NAME",
 				"git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications apps/notifications",
-				"./occ app:enable notifications"
-			] + (
-				if test_set == "conversation" || test_set == "conversation-2" then [
-					"git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests"
-				] else []
-			) + [
+				"./occ app:enable --force notifications",
+				"git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests",
+				"./occ app:enable --force guests",
+				"git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot apps/call_summary_bot",
+				"./occ app:enable --force call_summary_bot",
 				"cd apps/$APP_NAME/tests/integration/",
 				"bash run.sh features/"+test_set
 			]
@@ -155,6 +163,6 @@ local PipelinePostgreSQL(test_set) = Pipeline(
 
 	{
 		kind: "signature",
-		hmac: "7d4f30bec296493e6f94fa268c8fb67ab927883875beda00b1d0f4c867bd825c"
+		hmac: "1f1f7e889531624fec63e4fa8b65abaa737acac57dd7aa01df34f40027fdef12"
 	},
 ]
