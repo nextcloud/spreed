@@ -147,7 +147,7 @@ class RecordingService {
 			throw new InvalidArgumentException('owner_permission');
 		}
 
-		if (!$this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'yes') {
+		if ($this->serverConfig->getAppValue('spreed', 'call_recording_transcription', 'no') === 'no') {
 			return;
 		}
 
