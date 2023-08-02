@@ -433,6 +433,8 @@ Feature: callapi/recording
       | 2    | room1 | 0             |
 
   Scenario: Store recording with success and create transcript
+    Given the following spreed app config is set
+      | call_recording_transcription | yes |
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
@@ -458,6 +460,8 @@ Feature: callapi/recording
       | app    | object_type | object_id | subject                      | message                                                                                       |
 
   Scenario: Store recording with success but fail to transcript
+    Given the following spreed app config is set
+      | call_recording_transcription | yes |
     Given user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
