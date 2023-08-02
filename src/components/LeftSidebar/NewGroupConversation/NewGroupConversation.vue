@@ -192,7 +192,6 @@ import {
 	createPrivateConversation,
 	setConversationPassword,
 } from '../../../services/conversationsService.js'
-import { EventBus } from '../../../services/EventBus.js'
 import { addParticipant } from '../../../services/participantsService.js'
 import { copyConversationLinkToClipboard } from '../../../services/urlService.js'
 
@@ -306,14 +305,7 @@ export default {
 			})
 		},
 	},
-
-	mounted() {
-		EventBus.$on('new-group-conversation-dialog', this.showModalForItem)
-	},
-
-	destroyed() {
-		EventBus.$off('new-group-conversation-dialog', this.showModalForItem)
-	},
+	expose: ['showModalForItem'],
 
 	methods: {
 		showModal() {
