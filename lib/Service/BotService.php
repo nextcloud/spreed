@@ -169,6 +169,7 @@ class BotService {
 					'allow_local_address' => true, // FIXME don't enforce
 				],
 				'headers' => $headers,
+				'timeout' => 5,
 				'body' => json_encode($body),
 			];
 
