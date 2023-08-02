@@ -1,18 +1,22 @@
+import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
-import mockAxios from '../__mocks__/axios.js'
 import { shareFile } from './filesSharingServices.js'
+
+jest.mock('@nextcloud/axios', () => ({
+	post: jest.fn(),
+}))
 
 describe('filesSharingServices', () => {
 	afterEach(() => {
 		// cleaning up the mess left behind the previous test
-		mockAxios.reset()
+		jest.clearAllMocks()
 	})
 
 	test('shareFile calls the sharing API endpoint', () => {
 		shareFile('path/to/file', 'XXTOKENXX', 'the-reference-id')
 
-		expect(mockAxios.post).toHaveBeenCalledWith(
+		expect(axios.post).toHaveBeenCalledWith(
 			generateOcsUrl('apps/files_sharing/api/v1/shares'),
 			{
 				shareType: 10,
