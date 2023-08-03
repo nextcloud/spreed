@@ -905,7 +905,11 @@ export default {
 		 * Scrolls to the bottom of the list smoothly.
 		 */
 		smoothScrollToBottom() {
-			this.$nextTick(function() {
+			this.$nextTick(() => {
+				if (!this.$refs.scroller) {
+					return
+				}
+
 				if (this.isWindowVisible && (document.hasFocus() || this.isInCall)) {
 					// scrollTo is used when the user is watching
 					this.$refs.scroller.scrollTo({
@@ -930,7 +934,11 @@ export default {
 		 * Scrolls to the bottom of the list.
 		 */
 		scrollToBottom() {
-			this.$nextTick(function() {
+			this.$nextTick(() => {
+				if (!this.$refs.scroller) {
+					return
+				}
+
 				this.$refs.scroller.scrollTop = this.$refs.scroller.scrollHeight
 				this.setChatScrolledToBottom(true)
 			})
