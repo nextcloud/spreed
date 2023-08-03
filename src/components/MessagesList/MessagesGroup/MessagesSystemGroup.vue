@@ -34,17 +34,11 @@
 				<ul v-if="messagesCollapsed.messages?.length > 1"
 					class="messages messages--header">
 					<Message v-bind="createCombinedSystemMessage(messagesCollapsed)"
+						is-combined-system-message
+						:is-combined-system-message-collapsed="messagesCollapsed.collapsed"
 						:next-message-id="getNextMessageId(messagesCollapsed.messages.at(-1))"
-						:previous-message-id="getPrevMessageId(messagesCollapsed.messages.at(0))" />
-					<NcButton type="tertiary"
-						class="messages--header__toggle"
-						:aria-label="t('spreed', 'Show or collapse system messages')"
-						@click="toggleCollapsed(messagesCollapsed)">
-						<template #icon>
-							<UnfoldMore v-if="messagesCollapsed.collapsed" />
-							<UnfoldLess v-else />
-						</template>
-					</NcButton>
+						:previous-message-id="getPrevMessageId(messagesCollapsed.messages.at(0))"
+						@toggle-combined-system-message="toggleCollapsed(messagesCollapsed)" />
 				</ul>
 				<ul v-show="messagesCollapsed.messages?.length === 1 || !messagesCollapsed.collapsed"
 					class="messages"
@@ -61,11 +55,6 @@
 </template>
 
 <script>
-import UnfoldLess from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
-import UnfoldMore from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
-
-import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
-
 import Message from './Message/Message.vue'
 
 import { useCombinedSystemMessage } from '../../../composables/useCombinedSystemMessage.js'
@@ -91,10 +80,8 @@ export default {
 
 	components: {
 		Message,
-		NcButton,
-		UnfoldLess,
-		UnfoldMore,
 	},
+
 	inheritAttrs: false,
 
 	props: {
@@ -341,12 +328,6 @@ export default {
 	min-width: 0;
 
 	&--header {
-		position: relative;
-		& &__toggle {
-			position: absolute;
-			top: -6px;
-			right: 0;
-		}
 	}
 	&--collapsed {
 		border-radius: var(--border-radius-large);

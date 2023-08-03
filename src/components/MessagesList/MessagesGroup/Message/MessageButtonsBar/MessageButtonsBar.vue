@@ -21,8 +21,7 @@
 
 <template>
 	<!-- Message Actions -->
-	<div v-click-outside="handleClickOutside"
-		class="message-buttons-bar">
+	<div v-click-outside="handleClickOutside">
 		<template v-if="!isReactionsMenuOpen">
 			<NcButton v-if="canReact"
 				type="tertiary"
@@ -578,24 +577,3 @@ export default {
 	},
 }
 </script>
-
-<style lang="scss" scoped>
-@import '../../../../../assets/variables';
-
-.message-buttons-bar {
-	display: flex;
-	right: 14px;
-	top: 8px;
-	position: sticky;
-	background-color: var(--color-main-background);
-	border-radius: calc(var(--default-clickable-area) / 2);
-	box-shadow: 0 0 4px 0 var(--color-box-shadow);
-	height: 44px;
-	z-index: 1;
-
-	& h6 {
-		margin-left: auto;
-	}
-}
-
-</style>
