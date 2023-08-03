@@ -137,6 +137,7 @@ class CapabilitiesTest extends TestCase {
 			'single-conversation-status',
 			'chat-keep-notifications',
 			'typing-privacy',
+			'remind-me-later',
 			'message-expiration',
 			'reactions',
 		];

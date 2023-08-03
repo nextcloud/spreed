@@ -1006,7 +1006,7 @@ class NotifierTest extends TestCase {
 		$notification->expects($this->once())
 			->method('setIcon')
 			->willReturnSelf();
-		$notification->expects($this->once())
+		$notification->expects($this->exactly(2))
 			->method('setLink')
 			->willReturnSelf();
 		$notification->expects($this->once())

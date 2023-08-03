@@ -446,7 +446,7 @@ Feature: callapi/recording
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 0             |
-    When run transcript background jobs
+    When run "OC\SpeechToText\TranscriptionJob" background jobs
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                      | message                                                                                       |
       | spreed | recording   | room1     | Transcript now available     | The transcript for the call in room1 was uploaded to /Talk/Recording/ROOM(room1)/join_call.txt. |
@@ -474,7 +474,7 @@ Feature: callapi/recording
     And user "participant1" is participant of the following unordered rooms (v4)
       | type | name  | callRecording |
       | 2    | room1 | 0             |
-    When run transcript background jobs
+    When run "OC\SpeechToText\TranscriptionJob" background jobs
     Then user "participant1" has the following notifications
       | app    | object_type | object_id | subject                             | message                                                                                        |
       | spreed | recording   | room1     | Failed to transcript call recording | The server failed to transcript the recording at /Talk/Recording/ROOM(room1)/leave_call.ogg for the call in room1. Please reach out to the administration. |

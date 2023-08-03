@@ -119,6 +119,7 @@ class Capabilities implements IPublicCapability {
 				'single-conversation-status',
 				'chat-keep-notifications',
 				'typing-privacy',
+				'remind-me-later',
 			],
 			'config' => [
 				'attachments' => [

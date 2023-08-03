@@ -1686,6 +1686,49 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" sets reminder for message ("[^"]*"|'[^']*') in room "([^"]*)" for time (\d+) with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $setOrDelete
+	 * @param string $message
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userSetsReminder(string $user, string $message, string $identifier, int $timestamp, int $statusCode, string $apiVersion = 'v1'): void {
+		$message = substr($message, 1, -1);
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST',
+			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/' . self::$textToMessageId[$message] . '/reminder',
+			new TableNode([['timestamp', $timestamp]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" deletes reminder for message ("[^"]*"|'[^']*') in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 *
+	 * @param string $user
+	 * @param string $setOrDelete
+	 * @param string $message
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param string $apiVersion
+	 */
+	public function userDeletesReminder(string $user, string $message, string $identifier, string $statusCode, string $apiVersion = 'v1'): void {
+		$message = substr($message, 1, -1);
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'DELETE',
+			'/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '/' . self::$textToMessageId[$message] . '/reminder'
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" shares rich-object "([^"]*)" "([^"]*)" '([^']*)' to room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 *
 	 * @param string $user
@@ -3440,13 +3483,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When /^run transcript background jobs$/
+	 * @When /^run "([^"]*)" background jobs$/
 	 */
-	public function runTranscriptBackgroundJobs(): void {
-		$this->runOcc(['background-job:list', '--output=json_pretty', '--class=OC\SpeechToText\TranscriptionJob']);
+	public function runReminderBackgroundJobs(string $class): void {
+		$this->runOcc(['background-job:list', '--output=json_pretty', '--class=' . $class]);
 		$list = json_decode($this->lastStdOut, true, 512, JSON_THROW_ON_ERROR);
 
-		Assert::assertNotEmpty($list, 'List of OC\SpeechToText\TranscriptionJob should not be empty');
+		Assert::assertNotEmpty($list, 'List of ' . $class . ' should not be empty');
 
 		foreach ($list as $job) {
 			$this->runOcc(['background-job:execute', (string) $job['id']]);

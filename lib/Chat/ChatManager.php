@@ -27,6 +27,8 @@ namespace OCA\Talk\Chat;
 use DateInterval;
 use OC\Memcache\ArrayCache;
 use OC\Memcache\NullCache;
+use OCA\Talk\AppInfo\Application;
+use OCA\Talk\BackgroundJob\ChatMessageReminder;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -41,6 +43,7 @@ use OCA\Talk\Service\RoomService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJobList;
 use OCP\Collaboration\Reference\IReferenceManager;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -101,6 +104,7 @@ class ChatManager {
 		protected ITimeFactory $timeFactory,
 		protected AttachmentService $attachmentService,
 		protected IReferenceManager $referenceManager,
+		protected IJobList $jobList,
 	) {
 		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
 		$this->unreadCountCache = $cacheFactory->createDistributed('talk/unreadcount');
@@ -718,6 +722,28 @@ class ChatManager {
 		});
 
 		return $comments;
+	}
+
+	public function queueRemindLaterBackgroundJob(Room $chat, IComment $comment, Attendee $attendee, int $timestamp): void {
+		$this->jobList->add(ChatMessageReminder::class, [
+			'execute-after' => $timestamp,
+			'token' => $chat->getToken(),
+			'message_id' => $comment->getId(),
+			'message_actor_type' => $comment->getActorType(),
+			'message_actor_id' => $comment->getActorId(),
+			'user' => $attendee->getActorId(),
+		]);
+	}
+
+	public function dismissReminderNotification(Room $chat, IComment $comment, Attendee $attendee): void {
+		$notification = $this->notificationManager->createNotification();
+		$notification->setApp(Application::APP_ID)
+			->setUser($attendee->getActorId())
+			->setObject('reminder', $chat->getToken())
+			->setMessage('reminder', [
+				'commentId' => $comment->getId(),
+			]);
+		$this->notificationManager->markProcessed($notification);
 	}
 
 	/**
