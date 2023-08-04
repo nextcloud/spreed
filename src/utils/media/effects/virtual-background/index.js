@@ -1,4 +1,4 @@
-// @flow
+import * as wasmCheck from 'wasm-check'
 
 import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect.js'
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd.js'
@@ -29,14 +29,11 @@ export async function createVirtualBackgroundEffect(virtualBackground, dispatch)
 		throw new Error('JitsiStreamBackgroundEffect not supported!')
 	}
 	let tflite
-	let wasmCheck
 
 	// Checks if WebAssembly feature is supported or enabled by/in the browser.
 	// Conditional import of wasm-check package is done to prevent
 	// the browser from crashing when the user opens the app.
-
 	try {
-		wasmCheck = require('wasm-check')
 		if (wasmCheck?.feature?.simd) {
 			tflite = await createTFLiteSIMDModule()
 		} else {

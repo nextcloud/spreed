@@ -21,6 +21,8 @@
  *
  */
 
+import * as wasmCheck from 'wasm-check'
+
 import { VIRTUAL_BACKGROUND } from '../../../constants.js'
 import JitsiStreamBackgroundEffect from '../effects/virtual-background/JitsiStreamBackgroundEffect.js'
 import TrackSinkSource from './TrackSinkSource.js'
@@ -72,8 +74,6 @@ export default class VirtualBackground extends TrackSinkSource {
 	}
 
 	static _checkWasmSupport() {
-		const wasmCheck = require('wasm-check')
-
 		if (!wasmCheck.support()) {
 			this._wasmSupported = false
 
