@@ -4,7 +4,7 @@
 
 It is recommended to install the latest _coTURN_ version; at the very minimum _coTURN_ 4.5.0.8 should be used. In previous versions there is a bug that causes [the IPv6 UDP sockets created by coTURN not to be freed](https://github.com/coturn/coturn/issues/217). Due to this the _turn_ process ends not being able to open new ports and thus not being able to serve new connections. Moreover, when that happens, even if there are no connections a high CPU load will be caused by the _turn_ process. Therefore, if you can not install _coTURN_ 4.5.0.8 or a later version you should restart the _turn_ process periodically to work around that issue.
 
-#### 1. Download and install
+## 1. Download and install
 
 - On **Debian and Ubuntu** there are official repository packages available:
     ```
@@ -14,7 +14,7 @@ It is recommended to install the latest _coTURN_ version; at the very minimum _c
 - For all **other** cases check out the [Downloads in the wiki of coTURN](https://github.com/coturn/coturn/wiki/Downloads)
 
 
-#### 2. Make coturn run as daemon on startup
+## 2. Make coturn run as daemon on startup
 
 - On **Debian and Ubuntu** you just need to enable the deployed sysvinit service by adjusting the related environment variable:
     ```
@@ -34,7 +34,7 @@ It is recommended to install the latest _coTURN_ version; at the very minimum _c
 - `-o` starts the server in daemon mode, `-c` defines the path to the config file.
 - There is also an official example available at [https://github.com/coturn/coturn/blob/master/examples/etc/coturn.service](https://github.com/coturn/coturn/blob/master/examples/etc/coturn.service)
 
-##### Running coTURN on privileged ports
+### Running coTURN on privileged ports
 
 On some GNU/Linux distributions (for example, **Ubuntu Focal and later**) when _coTURN_ is installed from the official package the _coturn_ service is executed as an unprivileged user like _turnserver_. Due to this by default _coTURN_ can not use privileged ports, like port 443.
 
@@ -54,7 +54,7 @@ User=root
 Group=root
 ```
 
-#### 3. Configure `turnserver.conf` for usage with Nextcloud Talk
+## 3. Configure `turnserver.conf` for usage with Nextcloud Talk
 
 - Next you need to adjust the coTURN configuration file to work with Nextcloud Talk.
 - Choose the listening port (default is _3478_) and an authentication secret, where a random hex is recommended
@@ -111,7 +111,7 @@ simple-log
 
 - `sudo systemctl restart coturn` or corresponding restart method
 
-##### Disabling UDP or TCP protocols
+### Disabling UDP or TCP protocols
 
 Unless you have some special need, you should always enable both UDP and TCP protocols in your TURN server, as that provides the maximum compatibility. However, if you must limit the connections from clients to the TURN server through UDP or TCP protocols you can do that by enabling one the following settings, depending on the case:
 ```
@@ -123,7 +123,7 @@ Please note that those settings only limit the protocols from the client to the 
 
 Also keep in mind that disabling the UDP protocol from clients to the TURN server with `no-udp` in practice disables STUN on that server, as neither Janus nor the clients currently support STUN over TCP.
 
-##### TURN server and internal networks
+### TURN server and internal networks
 
 If your TURN server has access to an internal network you should prevent access to the local/internal IPs from the TURN server, except those that are actually needed (like the High Performance Backend if you are using it) by setting the [`denied-peer-ip` and `allowed-peer-ip` parameters](https://github.com/coturn/coturn/blob/upstream/4.5.1.3/README.turnserver#L523-L537). For example:
 ```
@@ -148,6 +148,6 @@ Otherwise, [a malicious user could access services in that internal network thro
 
 Alternatively you could of course prevent access to that internal network from the TURN server by means of a firewall.
 
-##### Continue with the integration into Nextcloud Talk
+## Continue with the integration into Nextcloud Talk
 
 Now you can go back to the [TURN overview page](TURN.md#4-configure-nextcloud-talk-to-use-your-turn-server). 

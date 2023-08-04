@@ -1,6 +1,6 @@
 # TURN server configuration
 
-### Background
+## Background
 The configuration of Nextcloud Talk mainly depends on your desired usage:
 
 - As long as it shall be used only **within one local network**, besides the app, nothing else should be required. Just verify that all browsers support the underlying [WebRTC](https://en.wikipedia.org/wiki/WebRTC) protocol - most contemporary browsers do with current versions, though mobile browsers tend to lag behind a little - and you should be good to go. Browser support can be tested for example here: [https://test.webrtc.org/](https://test.webrtc.org/)
@@ -11,7 +11,7 @@ The configuration of Nextcloud Talk mainly depends on your desired usage:
 
 - Nextcloud Talk will try direct P2P in the first place, use STUN if needed and TURN as last resort fallback. Thus, to be most flexible and guarantee functionality of your Nextcloud Talk instance, in all possible connection cases, you would want to set up a TURN server.
 
-#### TURN server and Nextcloud Talk High Performance Backend
+### TURN server and Nextcloud Talk High Performance Backend
 
 A TURN server might be needed even if the Nextcloud Talk High Performance Backend is used and publicly accessible.
 
@@ -19,7 +19,7 @@ The High Performance Backend uses a certain range of ports for WebRTC media conn
 
 For maximum compatibility the TURN server should be configured to listen on port 443. Therefore, when both a TURN server and the High Performance Backend are used each one should run in its own server, or in the same server but each one with its own IP address, as the High Performance Backend will need to bind to port 443 too.
 
-## Install and setup your TURN server
+## Install and set up your TURN server
 
 This documentation provides two examples for TURN server implementations:
 

@@ -4,12 +4,12 @@
 
 Quick-Test instructions in a [Linux Shell](https://github.com/processone/eturnal/blob/master/QUICK-TEST.md) or with [Docker](https://github.com/processone/eturnal/blob/master/docker-k8s/QUICK-TEST.md) are available as well.
 
-#### 1. Download and install
+## 1. Download and install
 
 eturnal is available from a variety of sources such as native package managers, binary packages, installation from source or [container image](https://eturnal.net/documentation/code/docker.html). They are all described [here](https://github.com/processone/eturnal#installation).
 
 
-#### 2. Make eturnal run as daemon on startup
+## 2. Make eturnal run as daemon on startup
 
 - On Linux systems, the eturnal server is usually invoked by systemd. 
     ```
@@ -23,7 +23,7 @@ eturnal is available from a variety of sources such as native package managers, 
     eturnalctl help
     ```
 
-##### Running eturnal on privileged ports
+### Running eturnal on privileged ports
 
 On systemd-managed systems, the systemd unit grants `NET_BIND_SERVICE` capability to the [service](https://github.com/processone/eturnal/blob/29e82f260d369a39bd4a395cb981e914b141875b/config/eturnal.service#L23).
 
@@ -32,7 +32,7 @@ Depending on the system configuration Linux kernel capabilities could be used to
 setcap 'cap_net_bind_service=+ep' $(find /opt/eturnal -name beam.smp)
 ```
 
-#### 3. Configure `eturnal.yml` for usage with Nextcloud Talk
+## 3. Configure `eturnal.yml` for usage with Nextcloud Talk
 
 - Next you need to adjust eturnal's configuration file in `/etc/eturnal.yml` to work with Nextcloud Talk. This file uses the (indentation-sensitive!) YAML format. The shipped configuration file contains further explanations.
 - Choose the listening port (default is _3478_) and an authentication secret, where a random hex is recommended
@@ -99,7 +99,7 @@ eturnal:
 
 - `sudo systemctl restart eturnal` or corresponding restart method
 
-##### TURN server and internal networks
+### TURN server and internal networks
 
 If your TURN server has access to an internal network you should prevent access to the local/internal IPs from the TURN server, except those that are actually needed (like the High Performance Backend if you are using it) by setting the `blacklist`, [see also the official documentation](https://eturnal.net/documentation/#blacklist):
 
@@ -142,6 +142,6 @@ Alternatively you could of course prevent access to that internal network from t
 
 Hint: If `eturnalctl` is not part of your `$PATH`, consider either sym-linking it (e.g. ´ln -s /opt/eturnal/bin/eturnalctl /usr/local/bin/eturnalctl´) or call it from the default `eturnal` directory directly: e.g. `/opt/eturnal/bin/eturnalctl info`
 
-##### Continue with the integration into Nextcloud Talk
+## Continue with the integration into Nextcloud Talk
 
 Now you can go back to the [TURN overview page](TURN.md#4-configure-nextcloud-talk-to-use-your-turn-server). 
