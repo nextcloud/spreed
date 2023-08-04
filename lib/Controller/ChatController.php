@@ -31,6 +31,7 @@ use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\ReactionManager;
 use OCA\Talk\GuestManager;
 use OCA\Talk\MatterbridgeManager;
+use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
@@ -51,6 +52,7 @@ use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Attribute\UserRateLimit;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\AutoComplete\IManager;
@@ -726,6 +728,46 @@ class ChatController extends AEnvironmentAwareController {
 			$response->addHeader('X-Chat-Last-Common-Read', (string) $this->chatManager->getLastCommonReadMessage($this->room));
 		}
 		return $response;
+	}
+
+	#[NoAdminRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	#[UserRateLimit(limit: 60, period: 3600)]
+	public function remindLater(int $messageId, int $timestamp): DataResponse {
+		try {
+			$message = $this->chatManager->getComment($this->room, (string) $messageId);
+		} catch (NotFoundException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$this->chatManager->queueRemindLaterBackgroundJob(
+			$this->room,
+			$message,
+			$this->participant->getAttendee(),
+			$timestamp
+		);
+
+		return new DataResponse([], Http::STATUS_CREATED);
+	}
+
+	#[NoAdminRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	public function dismissReminder(int $messageId): DataResponse {
+		try {
+			$message = $this->chatManager->getComment($this->room, (string) $messageId);
+		} catch (NotFoundException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$this->chatManager->dismissReminderNotification(
+			$this->room,
+			$message,
+			$this->participant->getAttendee()
+		);
+
+		return new DataResponse([], Http::STATUS_OK);
 	}
 
 	#[NoAdminRequired]

@@ -287,7 +287,7 @@ class Notifier implements INotifier {
 			}
 			return $this->parseCall($notification, $room, $l);
 		}
-		if ($subject === 'reply' || $subject === 'mention' || $subject === 'mention_direct' || $subject === 'mention_group' || $subject === 'mention_all' || $subject === 'chat' || $subject === 'reaction') {
+		if ($subject === 'reply' || $subject === 'mention' || $subject === 'mention_direct' || $subject === 'mention_group' || $subject === 'mention_all' || $subject === 'chat' || $subject === 'reaction' || $subject === 'reminder') {
 			if ($room->getLobbyState() !== Webinary::LOBBY_NONE &&
 				$participant instanceof Participant &&
 				!($participant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
@@ -476,7 +476,7 @@ class Notifier implements INotifier {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function parseChatMessage(INotification $notification, Room $room, Participant $participant, IL10N $l): INotification {
-		if ($notification->getObjectType() !== 'chat') {
+		if ($notification->getObjectType() !== 'chat' && $notification->getObjectType() !== 'reminder') {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
 
@@ -525,6 +525,9 @@ class Notifier implements INotifier {
 			throw new AlreadyProcessedException();
 		}
 
+		// Set the link to the specific message
+		$notification->setLink($this->url->linkToRouteAbsolute('spreed.Page.showCall', ['token' => $room->getToken()]) . '#message_' . $comment->getId());
+
 		$now = $this->timeFactory->getDateTime();
 		$expireDate = $message->getComment()->getExpireDate();
 		if ($expireDate instanceof \DateTime && $expireDate < $now) {
@@ -551,7 +554,7 @@ class Notifier implements INotifier {
 			$notification->setRichMessage($message->getMessage(), $message->getMessageParameters());
 
 			// Forward the message ID as well to the clients, so they can quote the message on replies
-			$notification->setObject('chat', $notification->getObjectId() . '/' . $comment->getId());
+			$notification->setObject($notification->getObjectType(), $notification->getObjectId() . '/' . $comment->getId());
 		}
 
 		$richSubjectParameters = [
@@ -569,18 +572,37 @@ class Notifier implements INotifier {
 				'id' => $message->getComment()->getId(),
 				'name' => $shortenMessage,
 			];
-			if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
-				$subject = "{user}\n{message}";
-			} elseif ($richSubjectUser) {
-				$subject = $l->t('{user} in {call}') . "\n{message}";
-			} elseif (!$isGuest) {
-				$subject = $l->t('Deleted user in {call}') . "\n{message}";
+			if ($notification->getSubject() === 'reminder') {
+				if ($comment->getActorId() === $notification->getUser()) {
+					$subject = $l->t('Reminder: You in {call}') . "\n{message}";
+				} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+					$subject = $l->t('Reminder: {user} in {call}') . "\n{message}";
+				} elseif ($richSubjectUser) {
+					$subject = $l->t('Reminder: {user} in {call}') . "\n{message}";
+				} elseif (!$isGuest) {
+					$subject = $l->t('Reminder: Deleted user in {call}') . "\n{message}";
+				} else {
+					try {
+						$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+						$subject = $l->t('Reminder: {guest} (guest) in {call}') . "\n{message}";
+					} catch (ParticipantNotFoundException $e) {
+						$subject = $l->t('Reminder: Guest in {call}') . "\n{message}";
+					}
+				}
 			} else {
-				try {
-					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
-					$subject = $l->t('{guest} (guest) in {call}') . "\n{message}";
-				} catch (ParticipantNotFoundException $e) {
-					$subject = $l->t('Guest in {call}') . "\n{message}";
+				if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+					$subject = "{user}\n{message}";
+				} elseif ($richSubjectUser) {
+					$subject = $l->t('{user} in {call}') . "\n{message}";
+				} elseif (!$isGuest) {
+					$subject = $l->t('Deleted user in {call}') . "\n{message}";
+				} else {
+					try {
+						$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+						$subject = $l->t('{guest} (guest) in {call}') . "\n{message}";
+					} catch (ParticipantNotFoundException $e) {
+						$subject = $l->t('Guest in {call}') . "\n{message}";
+					}
 				}
 			}
 		} elseif ($notification->getSubject() === 'chat') {
@@ -611,6 +633,31 @@ class Notifier implements INotifier {
 					$subject = $l->t('{guest} (guest) replied to your message in conversation {call}');
 				} catch (ParticipantNotFoundException $e) {
 					$subject = $l->t('A guest replied to your message in conversation {call}');
+				}
+			}
+		} elseif ($notification->getSubject() === 'reminder') {
+			if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+				if ($comment->getActorId() === $notification->getUser()) {
+					$subject = $l->t('Reminder: You in private conversation {call}');
+				} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+					$subject = $l->t('Reminder: A deleted user in private conversation {call}');
+				} else {
+					$subject = $l->t('Reminder: {user} in private conversation');
+				}
+			} elseif ($richSubjectUser) {
+				if ($comment->getActorId() === $notification->getUser()) {
+					$subject = $l->t('Reminder: You in conversation {call}');
+				} else {
+					$subject = $l->t('Reminder: {user} in conversation {call}');
+				}
+			} elseif (!$isGuest) {
+				$subject = $l->t('Reminder: A deleted user in conversation {call}');
+			} else {
+				try {
+					$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+					$subject = $l->t('Reminder: {guest} (guest) in conversation {call}');
+				} catch (ParticipantNotFoundException) {
+					$subject = $l->t('Reminder: A guest in conversation {call}');
 				}
 			}
 		} elseif ($notification->getSubject() === 'reaction') {
@@ -700,7 +747,29 @@ class Notifier implements INotifier {
 				}
 			}
 		}
-		$notification = $this->addActionButton($notification, $l->t('View chat'), false);
+
+		if ($notification->getObjectType() === 'reminder') {
+			$notification = $this->addActionButton($notification, $l->t('View message'));
+
+			$action = $notification->createAction();
+			$action->setLabel($l->t('Dismiss reminder'))
+				->setParsedLabel($l->t('Dismiss reminder'))
+				->setLink(
+					$this->urlGenerator->linkToOCSRouteAbsolute(
+						'spreed.Chat.dismissReminder',
+						[
+							'apiVersion' => 'v1',
+							'token' => $room->getToken(),
+							'messageId' => $comment->getId(),
+						]
+					),
+					IAction::TYPE_DELETE
+				);
+
+			$notification->addParsedAction($action);
+		} else {
+			$notification = $this->addActionButton($notification, $l->t('View chat'), false);
+		}
 
 		if ($richSubjectParameters['user'] === null) {
 			unset($richSubjectParameters['user']);

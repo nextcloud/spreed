@@ -340,6 +340,7 @@ class Notifier {
 
 		$objectTypes = [
 			'chat',
+			'reminder',
 		];
 		if (!$chatOnly) {
 			$objectTypes = [

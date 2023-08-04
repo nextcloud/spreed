@@ -46,6 +46,10 @@ return [
 		['name' => 'Chat#deleteMessage', 'url' => '/api/{apiVersion}/chat/{token}/{messageId}', 'verb' => 'DELETE', 'requirements' => $requirementsWithMessageId],
 		/** @see \OCA\Talk\Controller\ChatController::getMessageContext() */
 		['name' => 'Chat#getMessageContext', 'url' => '/api/{apiVersion}/chat/{token}/{messageId}/context', 'verb' => 'GET', 'requirements' => $requirementsWithMessageId],
+		/** @see \OCA\Talk\Controller\ChatController::remindLater() */
+		['name' => 'Chat#remindLater', 'url' => '/api/{apiVersion}/chat/{token}/{messageId}/reminder', 'verb' => 'POST', 'requirements' => $requirementsWithMessageId],
+		/** @see \OCA\Talk\Controller\ChatController::dismissReminder() */
+		['name' => 'Chat#dismissReminder', 'url' => '/api/{apiVersion}/chat/{token}/{messageId}/reminder', 'verb' => 'DELETE', 'requirements' => $requirementsWithMessageId],
 		/** @see \OCA\Talk\Controller\ChatController::setReadMarker() */
 		['name' => 'Chat#setReadMarker', 'url' => '/api/{apiVersion}/chat/{token}/read', 'verb' => 'POST', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\ChatController::markUnread() */
