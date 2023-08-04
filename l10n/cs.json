@@ -1322,6 +1322,7 @@
     "Start call" : "Zavolat",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk bylo aktualizováno – abyste mohli začít hovor nebo se k němu připojit, je třeba stránku načíst znovu.",
     "You will be able to join the call only after a moderator starts it." : "K hovoru se budete moci připojit až poté, co ho moderátor zahájí.",
+    "The call has been running for one hour." : "Hovor trvá už hodinu.",
     "Cancel recording start" : "Zrušit zahajování nahrávání",
     "Stop recording" : "Zastavit nahrávání",
     "Starting the recording" : "Zahájit nahrávání",

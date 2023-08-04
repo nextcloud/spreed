@@ -1324,6 +1324,7 @@ OC.L10N.register(
     "Start call" : "Anruf starten",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk wurde aktualisiert, Sie müssen die Seite neu laden, bevor Sie einen Anruf starten oder einem Anruf beitreten können.",
     "You will be able to join the call only after a moderator starts it." : "Sie können dem Anruf erst beitreten, nachdem ein Moderator ihn gestartet hat.",
+    "The call has been running for one hour." : "Der Anruf läuft seit einer Stunde.",
     "Cancel recording start" : "Aufnahmestart abbrechen",
     "Stop recording" : "Aufnahme stoppen",
     "Starting the recording" : "Aufnahme wird gestartet",

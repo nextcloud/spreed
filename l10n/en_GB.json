@@ -1322,6 +1322,7 @@
     "Start call" : "Start call",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk was updated, you need to reload the page before you can start or join a call.",
     "You will be able to join the call only after a moderator starts it." : "You will be able to join the call only after a moderator starts it.",
+    "The call has been running for one hour." : "Note: the call has been going on for an hour already.",
     "Cancel recording start" : "Cancel recording start",
     "Stop recording" : "Stop recording",
     "Starting the recording" : "Starting the recording",
