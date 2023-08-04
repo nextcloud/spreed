@@ -1324,6 +1324,7 @@ OC.L10N.register(
     "Start call" : "開始通話",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "Nextcloud Talk已更新，您需要重新加載頁面才能開始或加入通話。",
     "You will be able to join the call only after a moderator starts it." : "只有主持人發起通話後，您才能加入該通話。",
+    "The call has been running for one hour." : "請注意，通話已經持續一個小時了。",
     "Cancel recording start" : "取消錄製開始",
     "Stop recording" : "停止錄音",
     "Starting the recording" : "開始錄製",

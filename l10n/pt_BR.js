@@ -1324,6 +1324,7 @@ OC.L10N.register(
     "Start call" : "Iniciar chamada",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "O Nextcloud Talk foi atualizado. É necessário recarregar a página antes de iniciar ou participar de uma chamada.",
     "You will be able to join the call only after a moderator starts it." : "Você só poderá ingressar na chamada depois que um moderador a iniciar.",
+    "The call has been running for one hour." : "A chamada está em execução há uma hora.",
     "Cancel recording start" : "Cancel recording start",
     "Stop recording" : "Pare de gravar",
     "Starting the recording" : "Starting the recording",

@@ -1324,6 +1324,7 @@ OC.L10N.register(
     "Start call" : "ابدء مكالمة",
     "Nextcloud Talk was updated, you need to reload the page before you can start or join a call." : "تم تحديث تطبيق نكست كلاود التحدث يرجى تحديث الصفحة قبل بدء مكالمة او الانضمام الى مكالمة.",
     "You will be able to join the call only after a moderator starts it." : "لن تتمكن من الانضمام إلى المكالمة إلا بعد أن يبدأها المشرف.",
+    "The call has been running for one hour." : "المكالمة ما زالت مستمرة منذ حوالي الساعة.",
     "Cancel recording start" : "إلغاء مباشرة التسجيل",
     "Stop recording" : "إيقاف التسجيل",
     "Starting the recording" : "بدء التسجيل",
