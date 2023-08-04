@@ -54,8 +54,9 @@ use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Server;
+use OCP\Share\Events\BeforeShareCreatedEvent;
+use OCP\Share\Events\ShareCreatedEvent;
 use OCP\Share\IShare;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * @template-implements IEventListener<Event>
@@ -86,8 +87,8 @@ class Listener implements IEventListener {
 		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, self::class . '::addSystemMessageUserAdded');
 		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, self::class . '::sendSystemMessageUserRemoved');
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, self::class . '::sendSystemMessageAboutPromoteOrDemoteModerator');
-		$dispatcher->addListener('OCP\Share::preShare', self::class . '::setShareExpiration');
-		$dispatcher->addListener('OCP\Share::postShare', self::class . '::fixMimeTypeOfVoiceMessage');
+		$dispatcher->addListener(BeforeShareCreatedEvent::class, self::class . '::setShareExpiration');
+		$dispatcher->addListener(ShareCreatedEvent::class, self::class . '::fixMimeTypeOfVoiceMessage');
 		$dispatcher->addListener(RoomShareProvider::EVENT_SHARE_FILE_AGAIN, self::class . '::fixMimeTypeOfVoiceMessage');
 		$dispatcher->addListener(Room::EVENT_AFTER_SET_MESSAGE_EXPIRATION, self::class . '::afterSetMessageExpiration');
 		$dispatcher->addListener(Room::EVENT_AFTER_SET_CALL_RECORDING, self::class . '::setCallRecording');
@@ -330,13 +331,8 @@ class Listener implements IEventListener {
 		}
 	}
 
-	/**
-	 * @param GenericEvent|Event $event
-	 * @return void
-	 */
-	public static function setShareExpiration($event): void {
-		/** @var IShare $share */
-		$share = $event->getSubject();
+	public static function setShareExpiration(BeforeShareCreatedEvent $event): void {
+		$share = $event->getShare();
 
 		if ($share->getShareType() !== IShare::TYPE_ROOM) {
 			return;
@@ -357,13 +353,8 @@ class Listener implements IEventListener {
 		$share->setExpirationDate($dateTime);
 	}
 
-	/**
-	 * @param GenericEvent|Event $event
-	 * @return void
-	 */
-	public static function fixMimeTypeOfVoiceMessage($event): void {
-		/** @var IShare $share */
-		$share = $event->getSubject();
+	public static function fixMimeTypeOfVoiceMessage(ShareCreatedEvent $event): void {
+		$share = $event->getShare();
 
 		if ($share->getShareType() !== IShare::TYPE_ROOM) {
 			return;

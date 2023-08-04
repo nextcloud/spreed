@@ -61,7 +61,6 @@
 				<referencedClass name="OCA\Circles\Model\Member" />
 				<referencedClass name="OCA\DAV\CardDAV\PhotoCache" />
 				<referencedClass name="OCA\FederatedFileSharing\AddressHandler" />
-				<referencedClass name="Symfony\Component\EventDispatcher\EventDispatcherInterface" />
 			</errorLevel>
 		</UndefinedDocblockClass>
 		<UndefinedInterfaceMethod>
@@ -87,6 +86,5 @@
 		<file name="tests/stubs/GuzzleHttp_Exception_ClientException.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ConnectException.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ServerException.php" />
-		<file name="tests/stubs/Symfony_Component_EventDispatcher_GenericEvent.php" />
 	</stubs>
 </psalm>
