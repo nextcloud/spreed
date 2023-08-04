@@ -168,6 +168,7 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 import MediaDevicesPreview from '../MediaDevicesPreview.vue'
 
 import { PRIVACY } from '../../constants.js'
+import { useSettingsStore } from '../../stores/settings.js'
 
 const supportTypingStatus = getCapabilities()?.spreed?.config?.chat?.['typing-privacy'] !== undefined
 
@@ -184,7 +185,10 @@ export default {
 	},
 
 	setup() {
+		const settingsStore = useSettingsStore()
+
 		return {
+			settingsStore,
 			supportTypingStatus,
 		}
 	},
@@ -220,19 +224,11 @@ export default {
 		},
 
 		readStatusPrivacyIsPublic() {
-			return this.readStatusPrivacy === PRIVACY.PUBLIC
-		},
-
-		readStatusPrivacy() {
-			return this.$store.getters.getReadStatusPrivacy()
+			return this.settingsStore.readStatusPrivacy === PRIVACY.PUBLIC
 		},
 
 		typingStatusPrivacyIsPublic() {
-			return this.typingStatusPrivacy === PRIVACY.PUBLIC
-		},
-
-		typingStatusPrivacy() {
-			return this.$store.getters.getTypingStatusPrivacy()
+			return this.settingsStore.typingStatusPrivacy === PRIVACY.PUBLIC
 		},
 
 		settingsUrl() {
@@ -280,9 +276,8 @@ export default {
 		async toggleReadStatusPrivacy() {
 			this.privacyLoading = true
 			try {
-				await this.$store.dispatch(
-					'updateReadStatusPrivacy',
-					this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC,
+				await this.settingsStore.updateReadStatusPrivacy(
+					this.readStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
 				)
 				showSuccess(t('spreed', 'Your privacy setting has been saved'))
 			} catch (exception) {
@@ -294,8 +289,7 @@ export default {
 		async toggleTypingStatusPrivacy() {
 			this.privacyLoading = true
 			try {
-				await this.$store.dispatch(
-					'updateTypingStatusPrivacy',
+				await this.settingsStore.updateTypingStatusPrivacy(
 					this.typingStatusPrivacyIsPublic ? PRIVACY.PRIVATE : PRIVACY.PUBLIC
 				)
 				showSuccess(t('spreed', 'Your privacy setting has been saved'))
