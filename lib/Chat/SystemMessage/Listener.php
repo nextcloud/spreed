@@ -26,6 +26,7 @@ namespace OCA\Talk\Chat\SystemMessage;
 use DateInterval;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Events\AddParticipantsEvent;
+use OCA\Talk\Events\AlreadySharedEvent;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\ModifyEveryoneEvent;
@@ -353,7 +354,7 @@ class Listener implements IEventListener {
 		$share->setExpirationDate($dateTime);
 	}
 
-	public static function fixMimeTypeOfVoiceMessage(ShareCreatedEvent $event): void {
+	public static function fixMimeTypeOfVoiceMessage(ShareCreatedEvent|AlreadySharedEvent $event): void {
 		$share = $event->getShare();
 
 		if ($share->getShareType() !== IShare::TYPE_ROOM) {
