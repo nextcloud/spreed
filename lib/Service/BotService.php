@@ -95,7 +95,7 @@ class BotService {
 				'type' => 'Note',
 				'id' => $event->getComment()->getId(),
 				'name' => 'message',
-				'content' => json_encode($messageData),
+				'content' => json_encode($messageData, JSON_THROW_ON_ERROR),
 				'mediaType' => 'text/markdown', // FIXME or text/plain when markdown is disabled
 			],
 			'target' => [

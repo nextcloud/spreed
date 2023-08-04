@@ -300,7 +300,7 @@ class ChatManager {
 		try {
 			$this->commentsManager->save($comment);
 
-			if ($participant !== null) {
+			if ($participant instanceof Participant) {
 				$this->participantService->updateLastReadMessage($participant, (int) $comment->getId());
 			}
 

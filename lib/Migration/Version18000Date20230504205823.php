@@ -66,6 +66,7 @@ class Version18000Date20230504205823 extends SimpleMigrationStep {
 			]);
 			$table->addColumn('error_count', Types::BIGINT, [
 				'default' => 0,
+				'unsigned' => true,
 			]);
 			$table->addColumn('last_error_date', Types::DATETIME, [
 				'notnull' => false,
@@ -77,6 +78,7 @@ class Version18000Date20230504205823 extends SimpleMigrationStep {
 			$table->addColumn('state', Types::SMALLINT, [
 				'default' => 0,
 				'notnull' => false,
+				'unsigned' => true,
 			]);
 
 			$table->setPrimaryKey(['id']);
@@ -90,6 +92,7 @@ class Version18000Date20230504205823 extends SimpleMigrationStep {
 			]);
 			$table->addColumn('bot_id', Types::BIGINT, [
 				'default' => 0,
+				'unsigned' => true,
 			]);
 			$table->addColumn('token', Types::STRING, [
 				'length' => 64,
@@ -98,6 +101,7 @@ class Version18000Date20230504205823 extends SimpleMigrationStep {
 			$table->addColumn('state', Types::SMALLINT, [
 				'default' => 0,
 				'notnull' => false,
+				'unsigned' => true,
 			]);
 
 			$table->setPrimaryKey(['id']);
