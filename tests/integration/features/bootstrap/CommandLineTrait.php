@@ -161,7 +161,6 @@ trait CommandLineTrait {
 			Assert::assertTrue(false, 'The command did not output the expected text on stdout but stderr');
 		}
 
-		var_dump($this->lastStdOut);
 		Assert::assertStringContainsString($text, $this->lastStdOut, 'The command did not output the expected text on stdout');
 	}
 
