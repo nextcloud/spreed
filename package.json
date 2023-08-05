@@ -49,7 +49,7 @@
     "pinia": "^2.1.6",
     "ua-parser-js": "^1.0.35",
     "util": "^0.12.5",
-    "vue": "^2.7.14",
+    "vue": "^3.3.4",
     "vue-cropperjs": "^4.2.0",
     "vue-frag": "^1.4.3",
     "vue-material-design-icons": "^5.2.0",
