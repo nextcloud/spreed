@@ -227,6 +227,7 @@ OC.L10N.register(
     "This conversation has ended" : "Esta conversación finó",
     "Everyone" : "Tol mundu",
     "Saving …" : "Guardando…",
+    "Beta" : "Beta",
     "Name" : "Nome",
     "General settings" : "Configuración xeneral",
     "Language" : "Llingua",
