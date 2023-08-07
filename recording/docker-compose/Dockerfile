@@ -16,11 +16,13 @@ RUN pip3 install --upgrade requests
 RUN apt-get --assume-yes install firefox firefox-geckodriver
 
 # chromium
-# The phd/chromium-browser PPA is used because since Ubuntu 20.04 Chromium is
-# provided as a snap package
-RUN add-apt-repository --yes ppa:phd/chromium-browser
-RUN printf "Package: *\nPin: release o=LP-PPA-phd-chromium-browser\nPin-Priority: 1001" > /etc/apt/preferences.d/phd-chromium-browser
-RUN apt-get --assume-yes install chromium-browser chromium-chromedriver
+# The phd/chromium repository for Ubuntu is used because since Ubuntu 20.04
+# Chromium is provided as a snap package, and the equivalent PPA has been
+# discontinued.
+RUN echo "deb https://freeshell.de/phd/chromium/focal /" > /etc/apt/sources.list.d/phd-chromium.list
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 869689FE09306074
+RUN apt-get update
+RUN apt-get --assume-yes install chromium
 
 COPY ./docker-compose/wrap_chromium_binary /opt/bin/wrap_chromium_binary
 RUN /opt/bin/wrap_chromium_binary
