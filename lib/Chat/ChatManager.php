@@ -279,7 +279,7 @@ class ChatManager {
 			}
 
 			// Update last_message
-			if ($comment->getActorType() !== 'bots' || $comment->getActorId() === 'changelog' || str_starts_with($comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)) {
+			if ($comment->getActorType() !== Attendee::ACTOR_BOTS || $comment->getActorId() === 'changelog' || str_starts_with($comment->getActorId(), Attendee::ACTOR_BOT_PREFIX)) {
 				$this->roomService->setLastMessage($chat, $comment);
 				$this->unreadCountCache->clear($chat->getId() . '-');
 			} else {
