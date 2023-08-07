@@ -339,13 +339,22 @@ export default {
 
 			// Check if we have this group in the old list already and it is unchanged
 			return newGroups.map(newGroup => oldGroupsMap.has(newGroup.id)
-				&& newGroup.messages.length === oldGroupsMap.get(newGroup.id).messages.length
-				&& newGroup.dateSeparator === oldGroupsMap.get(newGroup.id).dateSeparator
-				&& newGroup.previousMessageId === oldGroupsMap.get(newGroup.id).previousMessageId
-				&& newGroup.nextMessageId === oldGroupsMap.get(newGroup.id).nextMessageId
+				&& this.areGroupsIdentical(newGroup, oldGroupsMap.get(newGroup.id))
 				? oldGroupsMap.get(newGroup.id)
 				: newGroup
 			).sort((a, b) => a.id - b.id)
+		},
+
+		areGroupsIdentical(group1, group2) {
+			if (group1.messages.length !== group2.messages.length
+				|| group1.dateSeparator !== group2.dateSeparator
+				|| group1.previousMessageId !== group2.previousMessageId
+				|| group1.nextMessageId !== group2.nextMessageId) {
+				return false
+			}
+
+			// Check for temporary messages, replaced with messages from server
+			return group1.messages.every((message, index) => group2.messages[index].id === message.id)
 		},
 
 		removeExpiredMessagesFromStore() {
