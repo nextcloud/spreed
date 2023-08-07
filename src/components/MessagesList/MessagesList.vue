@@ -32,19 +32,16 @@ get the messagesList array and loop through the list to generate the messages.
 		class="scroller messages-list__scroller"
 		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom}"
 		@scroll="debounceHandleScroll">
-		<div v-if="displayMessagesLoader"
-			class="scroller__loading"
-			disabled>
-			<div class="icon-loading" />
-		</div>
-		<MessagesGroup v-for="(item, index) of messagesGroupedByAuthor"
-			:key="item[0].id"
-			:style="{ height: item.height + 'px' }"
-			v-bind="item"
+		<div v-if="displayMessagesLoader" class="scroller__loading icon-loading" />
+		<MessagesGroup v-for="item of messagesGroupedByAuthor"
+			:key="item.id"
+			ref="messagesGroup"
+			v-bind="item.messages"
 			:token="token"
-			:messages="item"
-			:next-message-id="(messagesGroupedByAuthor[index + 1] && messagesGroupedByAuthor[index + 1][0].id) || 0"
-			:previous-message-id="(index > 0 && messagesGroupedByAuthor[index - 1][messagesGroupedByAuthor[index - 1].length - 1].id) || 0" />
+			:messages="item.messages"
+			:date-separator="item.dateSeparator"
+			:previous-message-id="item.previousMessageId"
+			:next-message-id="item.nextMessageId" />
 		<template v-if="showLoadingAnimation">
 			<LoadingPlaceholder type="messages"
 				:count="15" />
@@ -127,6 +124,11 @@ export default {
 
 	data() {
 		return {
+			/**
+			 * An array of messages grouped in nested arrays by same author.
+			 */
+			messagesGroupedByAuthor: [],
+
 			viewId: null,
 
 			/**
@@ -177,33 +179,6 @@ export default {
 		messagesList() {
 			return this.$store.getters.messagesList(this.token)
 		},
-		/**
-		 * Creates an array of messages grouped in nested arrays by same author.
-		 *
-		 * @return {Array}
-		 */
-		messagesGroupedByAuthor() {
-			const groups = []
-			let lastMessage = null
-			for (const message of this.messagesList) {
-				if (message.systemMessage === 'message_deleted') {
-					continue
-				}
-
-				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
-					// Add the date separator for different days
-					if (this.messagesHaveDifferentDate(message, lastMessage)) {
-						message.dateSeparator = this.generateDateSeparator(message)
-					}
-
-					groups.push([message])
-					lastMessage = message
-				} else {
-					groups.at(-1).push(message)
-				}
-			}
-			return groups
-		},
 
 		showLoadingAnimation() {
 			return !this.$store.getters.isMessageListPopulated(this.token)
@@ -225,6 +200,10 @@ export default {
 		 */
 		isSticky() {
 			return this.isChatScrolledToBottom && !this.isInitialisingMessages
+		},
+
+		hasMoreMessagesToLoad() {
+			return this.$store.getters.hasMoreMessagesToLoad(this.token)
 		},
 
 		/**
@@ -275,6 +254,14 @@ export default {
 			// Expire older messages when navigating to another conversation
 			this.$store.dispatch('easeMessageList', { token: oldToken })
 		},
+
+		messagesList: {
+			immediate: true,
+			handler(messages) {
+				const groups = this.prepareMessagesGroups(messages)
+				this.messagesGroupedByAuthor = this.softUpdateMessagesGroups(this.messagesGroupedByAuthor, groups)
+			},
+		},
 	},
 
 	mounted() {
@@ -318,6 +305,49 @@ export default {
 	},
 
 	methods: {
+		prepareMessagesGroups(messages) {
+			const groups = []
+			let lastMessage = null
+			for (const message of messages) {
+				if (message.systemMessage === 'message_deleted') {
+					continue
+				}
+
+				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
+					if (groups.at(-1)) {
+						groups.at(-1).nextMessageId = message.id
+					}
+
+					groups.push({
+						id: message.id,
+						messages: [message],
+						dateSeparator: this.generateDateSeparator(message, lastMessage),
+						previousMessageId: groups.at(-1)?.messages.at(-1).id ?? 0,
+						nextMessageId: 0,
+					})
+				} else {
+					groups.at(-1).messages.push(message)
+				}
+				lastMessage = message
+			}
+
+			return groups
+		},
+
+		softUpdateMessagesGroups(oldGroups, newGroups) {
+			const oldGroupsMap = new Map(oldGroups.map(group => [group.id, group]))
+
+			// Check if we have this group in the old list already and it is unchanged
+			return newGroups.map(newGroup => oldGroupsMap.has(newGroup.id)
+				&& newGroup.messages.length === oldGroupsMap.get(newGroup.id).messages.length
+				&& newGroup.dateSeparator === oldGroupsMap.get(newGroup.id).dateSeparator
+				&& newGroup.previousMessageId === oldGroupsMap.get(newGroup.id).previousMessageId
+				&& newGroup.nextMessageId === oldGroupsMap.get(newGroup.id).nextMessageId
+				? oldGroupsMap.get(newGroup.id)
+				: newGroup
+			).sort((a, b) => a.id - b.id)
+		},
+
 		removeExpiredMessagesFromStore() {
 			this.$store.dispatch('removeExpiredMessages', {
 				token: this.token,
@@ -400,9 +430,14 @@ export default {
 		 * @param {object} message The message object
 		 * @param {string} message.id The ID of the message
 		 * @param {number} message.timestamp Timestamp of the message
+		 * @param {object} lastMessage The previous message object
 		 * @return {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
 		 */
-		generateDateSeparator(message) {
+		generateDateSeparator(message, lastMessage) {
+			if (!this.messagesHaveDifferentDate(message, lastMessage)) {
+				return ''
+			}
+
 			const date = this.getDateOfMessage(message)
 			const dayOfYear = date.format('YYYY-DDD')
 			let relativePrefix = date.fromNow()
@@ -444,9 +479,10 @@ export default {
 			return moment.unix(message.timestamp)
 		},
 
-		getMessageIdFromHash() {
-			if (this.$route?.hash?.startsWith('#message_')) {
-				// scroll to message in URL anchor
+		getMessageIdFromHash(hash = undefined) {
+			if (hash) {
+				return parseInt(hash.slice(9), 10)
+			} else if (this.$route?.hash?.startsWith('#message_')) {
 				return parseInt(this.$route.hash.slice(9), 10)
 			}
 			return null
@@ -528,17 +564,17 @@ export default {
 
 					} else {
 						// Get chat messages before last read message and after it
-						const startingMessage = this.$store.getters.getFirstKnownMessageId(this.token)
-						await this.getMessageContext(startingMessage)
-						const startingMessageFound = this.focusMessage(startingMessage, false, focusMessageId !== null)
+						const startingMessageId = this.$store.getters.getFirstKnownMessageId(this.token)
+						await this.getMessageContext(startingMessageId)
+						const startingMessageFound = this.focusMessage(startingMessageId, false, focusMessageId !== null)
 
 						if (!startingMessageFound) {
-							const fallbackStartingMessage = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, startingMessage)
+							const fallbackStartingMessageId = this.$store.getters.getFirstDisplayableMessageIdBeforeReadMarker(this.token, startingMessageId)
 							this.$store.dispatch('setVisualLastReadMessageId', {
 								token: this.token,
-								id: fallbackStartingMessage,
+								id: fallbackStartingMessageId,
 							})
-							this.focusMessage(fallbackStartingMessage, false, false)
+							this.focusMessage(fallbackStartingMessageId, false, false)
 						}
 					}
 				}
@@ -547,7 +583,7 @@ export default {
 				if (this.loadChatInLegacyMode || focusMessageId === null) {
 					// if lookForNewMessages will long poll instead of returning existing messages,
 					// scroll right away to avoid delays
-					if (!this.$store.getters.hasMoreMessagesToLoad(this.token)) {
+					if (!this.hasMoreMessagesToLoad) {
 						hasScrolled = true
 						this.$nextTick(() => {
 							this.scrollToFocusedMessage()
@@ -590,21 +626,20 @@ export default {
 		},
 
 		async getMessageContext(messageId) {
+			// Make the request
+			this.loadingOldMessages = true
 			try {
-				this.loadingOldMessages = true
 				await this.$store.dispatch('getMessageContext', {
 					token: this.token,
 					messageId,
 					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
-
-				this.loadingOldMessages = false
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
 				}
-				this.loadingOldMessages = false
 			}
+			this.loadingOldMessages = false
 		},
 
 		/**
@@ -614,8 +649,8 @@ export default {
 		 */
 		async getOldMessages(includeLastKnown) {
 			// Make the request
+			this.loadingOldMessages = true
 			try {
-				this.loadingOldMessages = true
 				await this.$store.dispatch('fetchMessages', {
 					token: this.token,
 					lastKnownMessageId: this.$store.getters.getFirstKnownMessageId(this.token),
@@ -623,13 +658,12 @@ export default {
 					minimumVisible: CHAT.MINIMUM_VISIBLE,
 				})
 
-				this.loadingOldMessages = false
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
 				}
-				this.loadingOldMessages = false
 			}
+			this.loadingOldMessages = false
 		},
 
 		/**
@@ -723,7 +757,7 @@ export default {
 			const tolerance = 10
 
 			// For chats, scrolled to bottom or / and fitted in one screen
-			if (scrollOffset < clientHeight + tolerance && scrollOffset > clientHeight - tolerance) {
+			if (scrollOffset < clientHeight + tolerance && scrollOffset > clientHeight - tolerance && !this.hasMoreMessagesToLoad) {
 				this.setChatScrolledToBottom(true)
 				this.displayMessagesLoader = false
 				this.previousScrollTopValue = scrollTop
@@ -733,7 +767,7 @@ export default {
 
 			this.setChatScrolledToBottom(false)
 
-			if (scrollHeight > clientHeight && scrollTop < 800 && scrollTop <= this.previousScrollTopValue) {
+			if (scrollHeight > clientHeight && scrollTop < 800 && scrollTop < this.previousScrollTopValue) {
 				if (this.loadingOldMessages) {
 					// already loading, don't do it twice
 					return
@@ -743,9 +777,15 @@ export default {
 				}
 				await this.getOldMessages(false)
 				this.displayMessagesLoader = false
+
+				if (this.$refs.scroller.scrollHeight !== scrollHeight) {
+					this.$refs.scroller.scrollTo({
+						top: this.$refs.scroller.scrollTop + this.$refs.scroller.scrollHeight - scrollHeight,
+					})
+				}
 			}
 
-			this.previousScrollTopValue = scrollTop
+			this.previousScrollTopValue = this.$refs.scroller.scrollTop
 			this.debounceUpdateReadMarkerPosition()
 		},
 
@@ -853,7 +893,7 @@ export default {
 			}
 
 			// if we're at bottom of the chat with no more new messages to load, then simply clear the marker
-			if (this.isSticky && !this.$store.getters.hasMoreMessagesToLoad(this.token)) {
+			if (this.isSticky && !this.hasMoreMessagesToLoad) {
 				console.debug('clearLastReadMessage because of isSticky token=' + this.token)
 				this.$store.dispatch('clearLastReadMessage', { token: this.token })
 				return
@@ -948,7 +988,7 @@ export default {
 		/**
 		 * Temporarily highlight the given message id with a fade out effect.
 		 *
-		 * @param {string} messageId message id
+		 * @param {number} messageId message id
 		 * @param {boolean} smooth true to smooth scroll, false to jump directly
 		 * @param {boolean} highlightAnimation true to highlight and set focus to the message
 		 * @return {boolean} true if element was found, false otherwise
@@ -976,8 +1016,12 @@ export default {
 					this.$refs.scroller.scrollTop += this.$refs.scroller.offsetHeight / 4
 				}
 				if (highlightAnimation) {
-					element.focus()
-					element.highlightAnimation()
+					for (const group of this.$refs.messagesGroup) {
+						if (group.messages.some(message => message.id === messageId)) {
+							group.highlightMessage(messageId)
+							break
+						}
+					}
 				}
 				this.isFocusingMessage = false
 				await this.handleScroll()
@@ -1023,7 +1067,7 @@ export default {
 			this.getNewMessages()
 		},
 
-		onRouteChange({ from, to }) {
+		async onRouteChange({ from, to }) {
 			if (from.name === 'conversation'
 				&& to.name === 'conversation'
 				&& from.token === to.token
@@ -1031,13 +1075,28 @@ export default {
 
 				// the hash changed, need to focus/highlight another message
 				if (to.hash && to.hash.startsWith('#message_')) {
-					// need some delay (next tick is too short) to be able to run
-					// after the browser's native "scroll to anchor" from
-					// the hash
-					window.setTimeout(() => {
-						// scroll to message in URL anchor
-						this.focusMessage(to.hash.slice(9), true)
-					}, 2)
+					const focusedId = this.getMessageIdFromHash(to.hash)
+					if (this.messagesList.find(m => m.id === focusedId)) {
+						// need some delay (next tick is too short) to be able to run
+						// after the browser's native "scroll to anchor" from
+						// the hash
+						window.setTimeout(() => {
+							// scroll to message in URL anchor
+							this.focusMessage(focusedId, true)
+						}, 2)
+					} else {
+						// Update environment around context to fill the gaps
+						this.$store.dispatch('setFirstKnownMessageId', {
+							token: this.token,
+							id: focusedId,
+						})
+						this.$store.dispatch('setLastKnownMessageId', {
+							token: this.token,
+							id: focusedId,
+						})
+						await this.getMessageContext(focusedId)
+						this.focusMessage(focusedId, true)
+					}
 				}
 			}
 		},
@@ -1062,7 +1121,9 @@ export default {
 @import '../../assets/variables';
 
 .scroller {
+	position: relative;
 	flex: 1 0;
+	padding-top: 20px;
 	overflow-y: auto;
 	overflow-x: hidden;
 	border-bottom: 1px solid var(--color-border);
@@ -1073,9 +1134,12 @@ export default {
 	}
 
 	&__loading {
-		height: 50px;
-		display: flex;
-		justify-content: center;
+		position: absolute;
+		top: 10px;
+		left: 50%;
+		height: 40px;
+		width: 40px;
+		transform: translatex(-64px);
 	}
 }
 

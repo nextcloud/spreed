@@ -246,7 +246,7 @@ const getters = {
 
 	// Returns true if the message has reactions
 	hasReactions: (state) => (token, messageId) => {
-		return Object.keys(state.messages[token][messageId].reactions).length !== 0
+		return Object.keys(Object(state.messages[token]?.[messageId]?.reactions)).length !== 0
 	},
 }
 
@@ -868,10 +868,11 @@ const actions = {
 		const response = await request({
 			token,
 			messageId,
-			limit: CHAT.FETCH_LIMIT,
+			limit: CHAT.FETCH_LIMIT / 2,
 		}, requestOptions)
 
-		let newestKnownMessageId = 0
+		let oldestKnownMessageId = messageId
+		let newestKnownMessageId = messageId
 
 		if ('x-chat-last-common-read' in response.headers) {
 			const lastCommonReadMessage = parseInt(response.headers['x-chat-last-common-read'], 10)
@@ -889,6 +890,7 @@ const actions = {
 			}
 			context.dispatch('processMessage', message)
 			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
+			oldestKnownMessageId = Math.min(oldestKnownMessageId, message.id)
 
 			if (message.id <= messageId
 				&& message.systemMessage !== 'reaction'
@@ -900,15 +902,14 @@ const actions = {
 			}
 		})
 
-		if ('x-chat-last-given' in response.headers) {
+		if (!context.getters.getFirstKnownMessageId(token) || oldestKnownMessageId < context.getters.getFirstKnownMessageId(token)) {
 			context.dispatch('setFirstKnownMessageId', {
 				token,
-				id: parseInt(response.headers['x-chat-last-given'], 10),
+				id: oldestKnownMessageId,
 			})
 		}
 
-		if (newestKnownMessageId
-			&& !context.getters.getLastKnownMessageId(token)) {
+		if (!context.getters.getLastKnownMessageId(token) || newestKnownMessageId > context.getters.getLastKnownMessageId(token)) {
 			context.dispatch('setLastKnownMessageId', {
 				token,
 				id: newestKnownMessageId,
@@ -983,7 +984,11 @@ const actions = {
 		// Assign the new cancel function to our data value
 		context.commit('setCancelLookForNewMessages', { cancelFunction: cancel, requestId })
 
-		const response = await request({ token, lastKnownMessageId }, requestOptions)
+		const response = await request({
+			token,
+			lastKnownMessageId,
+			limit: CHAT.FETCH_LIMIT,
+		}, requestOptions)
 		context.commit('setCancelLookForNewMessages', { requestId })
 
 		if ('x-chat-last-common-read' in response.headers) {
