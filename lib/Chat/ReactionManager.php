@@ -51,7 +51,8 @@ class ReactionManager {
 	 * Add reaction
 	 *
 	 * @param Room $chat
-	 * @param Participant $participant
+	 * @param string $actorType
+	 * @param string $actorId
 	 * @param integer $messageId
 	 * @param string $reaction
 	 * @return IComment
@@ -60,14 +61,14 @@ class ReactionManager {
 	 * @throws ReactionNotSupportedException
 	 * @throws ReactionOutOfContextException
 	 */
-	public function addReactionMessage(Room $chat, Participant $participant, int $messageId, string $reaction): IComment {
+	public function addReactionMessage(Room $chat, string $actorType, string $actorId, int $messageId, string $reaction): IComment {
 		$parentMessage = $this->getCommentToReact($chat, (string) $messageId);
 		try {
 			// Check if the user already reacted with the same reaction
 			$this->commentsManager->getReactionComment(
 				(int) $parentMessage->getId(),
-				$participant->getAttendee()->getActorType(),
-				$participant->getAttendee()->getActorId(),
+				$actorType,
+				$actorId,
 				$reaction
 			);
 			throw new ReactionAlreadyExistsException();
@@ -75,8 +76,8 @@ class ReactionManager {
 		}
 
 		$comment = $this->commentsManager->create(
-			$participant->getAttendee()->getActorType(),
-			$participant->getAttendee()->getActorId(),
+			$actorType,
+			$actorId,
 			'chat',
 			(string) $chat->getId()
 		);
@@ -93,7 +94,8 @@ class ReactionManager {
 	 * Delete reaction
 	 *
 	 * @param Room $chat
-	 * @param Participant $participant
+	 * @param string $actorType
+	 * @param string $actorId
 	 * @param integer $messageId
 	 * @param string $reaction
 	 * @return IComment
@@ -101,20 +103,20 @@ class ReactionManager {
 	 * @throws ReactionNotSupportedException
 	 * @throws ReactionOutOfContextException
 	 */
-	public function deleteReactionMessage(Room $chat, Participant $participant, int $messageId, string $reaction): IComment {
+	public function deleteReactionMessage(Room $chat, string $actorType, string $actorId, int $messageId, string $reaction): IComment {
 		// Just to verify that messageId is part of the room and throw error if not.
 		$this->getCommentToReact($chat, (string) $messageId);
 
 		$comment = $this->commentsManager->getReactionComment(
 			$messageId,
-			$participant->getAttendee()->getActorType(),
-			$participant->getAttendee()->getActorId(),
+			$actorType,
+			$actorId,
 			$reaction
 		);
 		$comment->setMessage(
 			json_encode([
-				'deleted_by_type' => $participant->getAttendee()->getActorType(),
-				'deleted_by_id' => $participant->getAttendee()->getActorId(),
+				'deleted_by_type' => $actorType,
+				'deleted_by_id' => $actorId,
 				'deleted_on' => $this->timeFactory->getDateTime()->getTimestamp(),
 			])
 		);
@@ -123,8 +125,8 @@ class ReactionManager {
 
 		$this->chatManager->addSystemMessage(
 			$chat,
-			$participant->getAttendee()->getActorType(),
-			$participant->getAttendee()->getActorId(),
+			$actorType,
+			$actorId,
 			json_encode(['message' => 'reaction_revoked', 'parameters' => ['message' => (int) $comment->getId()]]),
 			$this->timeFactory->getDateTime(),
 			false,
