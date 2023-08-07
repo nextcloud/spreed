@@ -1324,3 +1324,6 @@ trigger:
   - stable*
   event:
   - push
+---
+hmac: 84d0676d3e4c9aba8fd34cea87fcad71664bbe2e1a5c5f379bd3e9c0c07f2193
+kind: signature
