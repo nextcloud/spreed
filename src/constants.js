@@ -216,3 +216,11 @@ export const VIRTUAL_BACKGROUND = {
 		DEFAULT: 10,
 	},
 }
+
+export const BOT = {
+	STATE: {
+		DISABLED: 0,
+		ENABLED: 1,
+		FORCE_ENABLED: 2,
+	},
+}
