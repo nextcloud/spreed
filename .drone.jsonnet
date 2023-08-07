@@ -151,4 +151,9 @@ local PipelinePostgreSQL(test_set) = Pipeline(
 	PipelinePostgreSQL("integration"),
 	PipelinePostgreSQL("sharing"),
 	PipelinePostgreSQL("sharing-2"),
+
+	{
+		kind: "signature",
+		hmac: "84d0676d3e4c9aba8fd34cea87fcad71664bbe2e1a5c5f379bd3e9c0c07f2193"
+	},
 ]
