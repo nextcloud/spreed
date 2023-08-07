@@ -41,7 +41,7 @@ class BotConversation extends Entity implements \JsonSerializable {
 	public function __construct() {
 		$this->addType('bot_id', 'int');
 		$this->addType('token', 'string');
-		$this->addType('statue', 'int');
+		$this->addType('state', 'int');
 	}
 
 	public function jsonSerialize(): array {

@@ -65,7 +65,7 @@ class BotServer extends Entity implements \JsonSerializable {
 		$this->addType('error_count', 'int');
 		$this->addType('last_error_date', 'datetime');
 		$this->addType('last_error_message', 'string');
-		$this->addType('statue', 'int');
+		$this->addType('state', 'int');
 	}
 
 	public function jsonSerialize(): array {
