@@ -105,7 +105,8 @@ class CircleMembershipListener extends AMembershipListener {
 
 		$invitedBy = $newMember->getInvitedBy();
 		if ($invitedBy->getUserType() === Member::TYPE_USER && $invitedBy->getUserId() !== '') {
-			$this->session->set('talk-overwrite-actor', $invitedBy->getUserId());
+			$this->session->set('talk-overwrite-actor-id', $invitedBy->getUserId());
+			$this->session->set('talk-overwrite-actor-displayname', $invitedBy->getDisplayName());
 		} elseif ($invitedBy->getUserType() === Member::TYPE_APP && $invitedBy->getBasedOn()->getSource() === Member::APP_OCC) {
 			$this->session->set('talk-overwrite-actor-cli', 'cli');
 		}
@@ -113,7 +114,8 @@ class CircleMembershipListener extends AMembershipListener {
 		foreach ($userMembers as $userMember) {
 			$this->addNewMemberToRooms(array_values($roomsToAdd), $userMember);
 		}
-		$this->session->remove('talk-overwrite-actor');
+		$this->session->remove('talk-overwrite-actor-displayname');
+		$this->session->remove('talk-overwrite-actor-id');
 		$this->session->remove('talk-overwrite-actor-cli');
 	}
 
@@ -161,7 +163,8 @@ class CircleMembershipListener extends AMembershipListener {
 
 		$removedBy = $removedMember->getInvitedBy();
 		if ($removedBy->getUserType() === Member::TYPE_USER && $removedBy->getUserId() !== '') {
-			$this->session->set('talk-overwrite-actor', $removedBy->getUserId());
+			$this->session->set('talk-overwrite-actor-id', $removedBy->getUserId());
+			$this->session->set('talk-overwrite-actor-displayname', $removedBy->getDisplayName());
 		} elseif ($removedBy->getUserType() === Member::TYPE_APP && $removedBy->getUserId() === 'occ') {
 			$this->session->set('talk-overwrite-actor-cli', 'cli');
 		}
@@ -173,7 +176,8 @@ class CircleMembershipListener extends AMembershipListener {
 
 		$this->removeFromRoomsUnlessStillLinked($rooms, $user);
 
-		$this->session->remove('talk-overwrite-actor');
+		$this->session->remove('talk-overwrite-actor-displayname');
+		$this->session->remove('talk-overwrite-actor-id');
 		$this->session->remove('talk-overwrite-actor-cli');
 	}
 }

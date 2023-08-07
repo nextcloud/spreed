@@ -1,5 +1,108 @@
 # Talk occ commands
 
+## talk:bot:install
+
+Install a new bot on the server
+
+### Usage
+
+* `talk:bot:install [--output [OUTPUT]] [--no-setup] [--] <name> <secret> <url> [<description>]`
+
+| Arguments | Description | Is required | Is array | Default |
+|---|---|---|---|---|
+| `name` | The name under which the messages will be posted | yes | no | `NULL` |
+| `secret` | Secret used to validate API calls | yes | no | `NULL` |
+| `url` | Webhook endpoint to post messages to | yes | no | `NULL` |
+| `description` | Optional description shown in the admin settings | no | no | `NULL` |
+
+| Options | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
+| `--no-setup` | Prevent moderators from setting up the bot in a conversation | no | no | no | false` |
+
+## talk:bot:list
+
+List all installed bots of the server or a conversation
+
+### Usage
+
+* `talk:bot:list [--output [OUTPUT]] [--] [<token>]`
+
+| Arguments | Description | Is required | Is array | Default |
+|---|---|---|---|---|
+| `token` | Conversation token to limit the bot list for | no | no | `NULL` |
+
+| Options | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
+
+## talk:bot:remove
+
+Remove a bot from a conversation
+
+### Usage
+
+* `talk:bot:remove [--output [OUTPUT]] [--] <bot-id> [<token>...]`
+
+| Arguments | Description | Is required | Is array | Default |
+|---|---|---|---|---|
+| `bot-id` | The ID of the bot to remove in a conversation | yes | no | `NULL` |
+| `token` | Conversation tokens to remove bot up for | no | yes | `array ()` |
+
+| Options | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
+
+## talk:bot:state
+
+List all installed bots of the server or a conversation
+
+### Usage
+
+* `talk:bot:state [--output [OUTPUT]] [--] <bot-id> <state>`
+
+| Arguments | Description | Is required | Is array | Default |
+|---|---|---|---|---|
+| `bot-id` | Bot ID to change the state for | yes | no | `NULL` |
+| `state` | New state for the bot (0 = disabled, 1 = enabled, 2 = no setup via GUI) | yes | no | `NULL` |
+
+| Options | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
+
+## talk:bot:setup
+
+Add a bot to a conversation
+
+### Usage
+
+* `talk:bot:setup [--output [OUTPUT]] [--] <bot-id> [<token>...]`
+
+| Arguments | Description | Is required | Is array | Default |
+|---|---|---|---|---|
+| `bot-id` | The ID of the bot to set up in a conversation | yes | no | `NULL` |
+| `token` | Conversation tokens to set the bot up for | no | yes | `array ()` |
+
+| Options | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
+
+## talk:bot:uninstall
+
+Uninstall a bot from the server
+
+### Usage
+
+* `talk:bot:uninstall [--output [OUTPUT]] [--] <id>`
+
+| Arguments | Description | Is required | Is array | Default |
+|---|---|---|---|---|
+| `id` | The ID of the bot | yes | no | `NULL` |
+
+| Options | Accept value | Is value required | Is multiple | Default |
+|---|---|---|---|---|
+| `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
+
 ## talk:command:add
 
 Add a new command

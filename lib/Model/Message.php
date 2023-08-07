@@ -57,7 +57,7 @@ class Message {
 
 	public function __construct(
 		protected Room $room,
-		protected Participant $participant,
+		protected ?Participant $participant,
 		protected IComment $comment,
 		protected IL10N $l,
 	) {
@@ -79,7 +79,7 @@ class Message {
 		return $this->l;
 	}
 
-	public function getParticipant(): Participant {
+	public function getParticipant(): ?Participant {
 		return $this->participant;
 	}
 

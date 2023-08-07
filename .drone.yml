@@ -18,12 +18,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/callapi
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -55,12 +61,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/chat
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -92,12 +104,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/chat-2
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -129,12 +147,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/command
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -166,13 +190,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/conversation
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -204,13 +233,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/conversation-2
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -242,12 +276,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/federation
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -279,12 +319,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/integration
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -316,12 +362,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/sharing
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -353,12 +405,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/sharing-2
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: sqlite
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -404,12 +462,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/callapi
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -455,12 +519,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/chat
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -506,12 +576,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/chat-2
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -557,12 +633,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/command
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -608,13 +690,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/conversation
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -660,13 +747,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/conversation-2
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -712,12 +804,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/federation
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -763,12 +861,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/integration
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -814,12 +918,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/sharing
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -865,12 +975,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/sharing-2
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: mysql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -911,12 +1027,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/callapi
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -958,12 +1080,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/chat
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1005,12 +1133,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/chat-2
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1052,12 +1186,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/command
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1099,13 +1239,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/conversation
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1147,13 +1292,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
   - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/conversation-2
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1195,12 +1345,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/federation
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1242,12 +1398,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/integration
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1289,12 +1451,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/sharing
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1336,12 +1504,18 @@ steps:
   - ./occ app:enable $APP_NAME
   - git clone --depth 1 -b $NOTIFICATIONS_BRANCH https://github.com/nextcloud/notifications
     apps/notifications
-  - ./occ app:enable notifications
+  - ./occ app:enable --force notifications
+  - git clone --depth 1 -b $GUESTS_BRANCH https://github.com/nextcloud/guests apps/guests
+  - ./occ app:enable --force guests
+  - git clone --depth 1 -b $CSB_BRANCH https://github.com/nextcloud/call_summary_bot
+    apps/call_summary_bot
+  - ./occ app:enable --force call_summary_bot
   - cd apps/$APP_NAME/tests/integration/
   - bash run.sh features/sharing-2
   environment:
     APP_NAME: spreed
     CORE_BRANCH: master
+    CSB_BRANCH: main
     DATABASEHOST: pgsql
     GUESTS_BRANCH: master
     NOTIFICATIONS_BRANCH: master
@@ -1355,5 +1529,5 @@ trigger:
   - pull_request
   - push
 ---
-hmac: 7d4f30bec296493e6f94fa268c8fb67ab927883875beda00b1d0f4c867bd825c
+hmac: 1f1f7e889531624fec63e4fa8b65abaa737acac57dd7aa01df34f40027fdef12
 kind: signature

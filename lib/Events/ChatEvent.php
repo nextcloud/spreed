@@ -31,6 +31,7 @@ class ChatEvent extends RoomEvent {
 		Room $room,
 		protected IComment $comment,
 		protected bool $skipLastActivityUpdate = false,
+		protected bool $silent = false,
 	) {
 		parent::__construct($room);
 	}
@@ -52,5 +53,9 @@ class ChatEvent extends RoomEvent {
 	 */
 	public function shouldSkipLastActivityUpdate(): bool {
 		return $this->skipLastActivityUpdate;
+	}
+
+	public function isSilentMessage(): bool {
+		return $this->silent;
 	}
 }
