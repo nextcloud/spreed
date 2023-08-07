@@ -60,6 +60,14 @@ Feature: chat/bots
       | room | users     | participant1      | participant1-displayname | - Task 2\n-Task 3                          | []                |
       | room | users     | participant1      | participant1-displayname | * Task 1                                   | []                |
       | room | users     | participant1      | participant1-displayname | - Before call                              | []                |
+    Then user "participant1" retrieve reactions "👍" of message "- Before call" in room "room" with 200
+      | actorType | actorId           | actorDisplayName   | reaction |
+    Then user "participant1" retrieve reactions "👍" of message "* Task 1" in room "room" with 200
+      | actorType | actorId           | actorDisplayName   | reaction |
+      | bots      | BOT(Call summary) | Call summary (Bot) | 👍       |
+    Then user "participant1" retrieve reactions "👍" of message "- Task 2\n-Task 3" in room "room" with 200
+      | actorType | actorId           | actorDisplayName   | reaction |
+      | bots      | BOT(Call summary) | Call summary (Bot) | 👍       |
 
     # Different states bot
     # Already enabled
