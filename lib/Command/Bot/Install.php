@@ -29,6 +29,8 @@ use OC\Core\Command\Base;
 use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\BotServer;
 use OCA\Talk\Model\BotServerMapper;
+use OCP\Http\Client\IClientService;
+use OCP\Util;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -37,6 +39,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Install extends Base {
 	public function __construct(
 		private BotServerMapper $botServerMapper,
+		private IClientService $clientService,
 	) {
 		parent::__construct();
 	}
@@ -76,6 +79,12 @@ class Install extends Base {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+		$client = $this->clientService->newClient();
+		if (!method_exists($client, 'postAsync')) {
+			$output->writeln('<error>You need Nextcloud Server version 27.1 or higher for Bot support (detected: ' . implode('.', Util::getVersion()) . ').</error>');
+			return 1;
+		}
+
 		$name = $input->getArgument('name');
 		$secret = $input->getArgument('secret');
 		$url = $input->getArgument('url');

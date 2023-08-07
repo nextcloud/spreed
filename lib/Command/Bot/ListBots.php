@@ -29,6 +29,8 @@ use OC\Core\Command\Base;
 use OCA\Talk\Model\BotConversation;
 use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BotServerMapper;
+use OCP\Http\Client\IClientService;
+use OCP\Util;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -37,6 +39,7 @@ class ListBots extends Base {
 	public function __construct(
 		private BotConversationMapper $botConversationMapper,
 		private BotServerMapper $botServerMapper,
+		private IClientService $clientService,
 	) {
 		parent::__construct();
 	}
@@ -55,6 +58,12 @@ class ListBots extends Base {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
+		$client = $this->clientService->newClient();
+		if (!method_exists($client, 'postAsync')) {
+			$output->writeln('<error>You need Nextcloud Server version 27.1 or higher for Bot support (detected: ' . implode('.', Util::getVersion()) . ').</error>');
+			return 1;
+		}
+
 		$bots = $this->botServerMapper->getAllBots();
 		$token = $input->getArgument('token');
 

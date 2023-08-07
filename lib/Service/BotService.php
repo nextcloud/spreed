@@ -45,6 +45,7 @@ use OCP\IUser;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use OCP\Security\ISecureRandom;
+use OCP\Util;
 use Psr\Log\LoggerInterface;
 
 class BotService {
@@ -65,6 +66,12 @@ class BotService {
 	}
 
 	public function afterChatMessageSent(ChatParticipantEvent $event, MessageParser $messageParser): void {
+		$client = $this->clientService->newClient();
+		if (!method_exists($client, 'postAsync')) {
+			$this->logger->error('You need Nextcloud Server version 27.1 or higher for Bot support (detected: ' . implode('.', Util::getVersion()) . ')');
+			return;
+		}
+
 		$bots = $this->getBotsForToken($event->getRoom()->getToken());
 		if (empty($bots)) {
 			return;
