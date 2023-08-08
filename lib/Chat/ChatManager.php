@@ -27,8 +27,6 @@ namespace OCA\Talk\Chat;
 use DateInterval;
 use OC\Memcache\ArrayCache;
 use OC\Memcache\NullCache;
-use OCA\Talk\AppInfo\Application;
-use OCA\Talk\BackgroundJob\ChatMessageReminder;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -43,10 +41,8 @@ use OCA\Talk\Service\RoomService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\BackgroundJob\IJobList;
 use OCP\Collaboration\Reference\IReferenceManager;
 use OCP\Comments\IComment;
-use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ICache;
@@ -104,7 +100,6 @@ class ChatManager {
 		protected ITimeFactory $timeFactory,
 		protected AttachmentService $attachmentService,
 		protected IReferenceManager $referenceManager,
-		protected IJobList $jobList,
 	) {
 		$this->cache = $cacheFactory->createDistributed('talk/lastmsgid');
 		$this->unreadCountCache = $cacheFactory->createDistributed('talk/unreadcount');
@@ -713,13 +708,13 @@ class ChatManager {
 	}
 
 	/**
-	 * Search for comments with a given content
+	 * Get messages for the given chat by ID
 	 *
 	 * @param Room $chat
 	 * @param int[] $commentIds
 	 * @return IComment[]
 	 */
-	public function getMessagesById(Room $chat, array $commentIds): array {
+	public function getMessagesForRoomById(Room $chat, array $commentIds): array {
 		$comments = $this->commentsManager->getCommentsById(array_map('strval', $commentIds));
 
 		$comments = array_filter($comments, static function (IComment $comment) use ($chat) {
@@ -730,26 +725,14 @@ class ChatManager {
 		return $comments;
 	}
 
-	public function queueRemindLaterBackgroundJob(Room $chat, IComment $comment, Attendee $attendee, int $timestamp): void {
-		$this->jobList->add(ChatMessageReminder::class, [
-			'execute-after' => $timestamp,
-			'token' => $chat->getToken(),
-			'message_id' => $comment->getId(),
-			'message_actor_type' => $comment->getActorType(),
-			'message_actor_id' => $comment->getActorId(),
-			'user' => $attendee->getActorId(),
-		]);
-	}
-
-	public function dismissReminderNotification(Room $chat, IComment $comment, Attendee $attendee): void {
-		$notification = $this->notificationManager->createNotification();
-		$notification->setApp(Application::APP_ID)
-			->setUser($attendee->getActorId())
-			->setObject('reminder', $chat->getToken())
-			->setMessage('reminder', [
-				'commentId' => $comment->getId(),
-			]);
-		$this->notificationManager->markProcessed($notification);
+	/**
+	 * Get messages by ID
+	 *
+	 * @param int[] $commentIds
+	 * @return IComment[] Key is the message id
+	 */
+	public function getMessagesById(array $commentIds): array {
+		return $this->commentsManager->getCommentsById(array_map('strval', $commentIds));
 	}
 
 	/**

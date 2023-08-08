@@ -94,12 +94,12 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: since Nextcloud 13
 | `limit`              | int  | Number of chat messages to receive into each direction (50 by default, 100 at most) |
 
 * Response:
-	- Status code:
-		+ `200 OK`
-		+ `404 Not Found` When the conversation could not be found for the participant
-		+ `412 Precondition Failed` When the lobby is active and the user is not a moderator
+    - Status code:
+        + `200 OK`
+        + `404 Not Found` When the conversation could not be found for the participant
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
 
-	- Header:
+    - Header:
 
 | field                     | type | Description                                                                                                                                                                                                                                        |
 |---------------------------|------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -300,7 +300,7 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
         The parent message is the object of the deleted message with the replaced text "Message deleted by you".
         This message should **NOT** be displayed to the user but instead be used to remove the original message from any cache/storage of the device.
 
-## Remind me later
+## Set reminder for chat message
 
 * Required capability: `remind-me-later`
 * Method: `POST`
@@ -312,26 +312,59 @@ See [OCP\RichObjectStrings\Definitions](https://github.com/nextcloud/server/blob
 | `timestamp` | int  | Timestamp when the notification should be triggered. Preferable options for 6pm today, 8am tomorrow, Saturday 8am and Monday 8am should be offered. |
 
 * Response:
-	- Status code:
-		+ `201 Created`
-		+ `401 Unauthorized` when the user is not logged in
-		+ `404 Not Found` When the message could not be found in the room
-		+ `404 Not Found` When the room could not be found for the participant,
-		  or the participant is a guest.
+    - Status code:
+        + `201 Created`
+        + `401 Unauthorized` when the user is not logged in
+        + `404 Not Found` When the message could not be found in the room
+        + `404 Not Found` When the room could not be found for the participant,
+          or the participant is a guest.
+    - Data:
+        Array with the details of the reminder
 
-## Delete reminder notification
+| field       | type   | Description                                  |
+|-------------|--------|----------------------------------------------|
+| `userId`    | string | The user id of the user                      |
+| `token`     | string | The token of the conversation of the message |
+| `messageId` | int    | The message id this reminder is for          |
+| `timestamp` | int    | The timestamp when the reminder is triggered |
+
+## Get reminder for chat message
+
+* Required capability: `remind-me-later`
+* Method: `GET`
+* Endpoint: `/chat/{token}/{messageId}/reminder`
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `401 Unauthorized` when the user is not logged in
+        + `404 Not Found` When the message could not be found in the room
+        + `404 Not Found` When the room could not be found for the participant,
+          or the participant is a guest.
+        + `404 Not Found` When the user has no reminder for this message
+    - Data:
+        Array with the details of the reminder
+
+| field       | type   | Description                                  |
+|-------------|--------|----------------------------------------------|
+| `userId`    | string | The user id of the user                      |
+| `token`     | string | The token of the conversation of the message |
+| `messageId` | int    | The message id this reminder is for          |
+| `timestamp` | int    | The timestamp when the reminder is triggered |
+
+## Delete reminder for chat message
 
 * Required capability: `remind-me-later`
 * Method: `DELETE`
 * Endpoint: `/chat/{token}/{messageId}/reminder`
 
 * Response:
-	- Status code:
-		+ `200 OK`
-		+ `401 Unauthorized` when the user is not logged in
-		+ `404 Not Found` When the message could not be found in the room
-		+ `404 Not Found` When the room could not be found for the participant,
-		  or the participant is a guest.
+    - Status code:
+        + `200 OK`
+        + `401 Unauthorized` when the user is not logged in
+        + `404 Not Found` When the message could not be found in the room
+        + `404 Not Found` When the room could not be found for the participant,
+          or the participant is a guest.
 
 ## Mark chat as read
 
