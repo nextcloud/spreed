@@ -33,7 +33,8 @@ get the messagesList array and loop through the list to generate the messages.
 		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom}"
 		@scroll="debounceHandleScroll">
 		<div v-if="displayMessagesLoader" class="scroller__loading icon-loading" />
-		<MessagesGroup v-for="item of messagesGroupedByAuthor"
+		<component :is="messagesGroupComponent(item)"
+			v-for="item of messagesGroupedByAuthor"
 			:key="item.id"
 			ref="messagesGroup"
 			v-bind="item.messages"
@@ -72,6 +73,7 @@ import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 import MessagesGroup from './MessagesGroup/MessagesGroup.vue'
+import MessagesSystemGroup from './MessagesGroup/MessagesSystemGroup.vue'
 
 import { useIsInCall } from '../../composables/useIsInCall.js'
 import { ATTENDEE, CHAT } from '../../constants.js'
@@ -82,7 +84,6 @@ export default {
 	name: 'MessagesList',
 	components: {
 		LoadingPlaceholder,
-		MessagesGroup,
 		Message,
 		NcEmptyContent,
 	},
@@ -324,6 +325,7 @@ export default {
 						dateSeparator: this.generateDateSeparator(message, lastMessage),
 						previousMessageId: groups.at(-1)?.messages.at(-1).id ?? 0,
 						nextMessageId: 0,
+						isSystemMessagesGroup: message.systemMessage.length !== 0,
 					})
 				} else {
 					groups.at(-1).messages.push(message)
@@ -1121,6 +1123,10 @@ export default {
 
 		onWindowFocus() {
 			this.refreshReadMarkerPosition()
+		},
+
+		messagesGroupComponent(group) {
+			return group.isSystemMessagesGroup ? MessagesSystemGroup : MessagesGroup
 		},
 	},
 }

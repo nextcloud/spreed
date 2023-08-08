@@ -27,9 +27,8 @@
 				role="heading"
 				aria-level="3">{{ dateSeparator }}</span>
 		</div>
-		<div class="wrapper"
-			:class="{'wrapper--system': isSystemMessage}">
-			<div v-if="!isSystemMessage" class="messages__avatar">
+		<div class="wrapper">
+			<div class="messages__avatar">
 				<AuthorAvatar :author-type="actorType"
 					:author-id="actorId"
 					:display-name="actorDisplayName" />
@@ -40,13 +39,13 @@
 					ref="message"
 					v-bind="message"
 					:is-first-message="index === 0"
+					:is-temporary="message.timestamp === 0"
 					:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
 					:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId"
 					:actor-type="actorType"
 					:actor-id="actorId"
 					:actor-display-name="actorDisplayName"
-					:show-author="!isSystemMessage"
-					:is-temporary="message.timestamp === 0" />
+					show-author />
 			</ul>
 		</div>
 	</div>
@@ -138,14 +137,6 @@ export default {
 
 			return displayName
 		},
-		/**
-		 * Whether the given message is a system message
-		 *
-		 * @return {boolean}
-		 */
-		isSystemMessage() {
-			return this.messages[0].systemMessage.length !== 0
-		},
 	},
 
 	methods: {
@@ -188,9 +179,6 @@ export default {
 	display: flex;
 	margin: auto;
 	padding: 0;
-	&--system {
-		padding-left: $clickable-area + 8px;
-	}
 	&:focus {
 		background-color: rgba(47, 47, 47, 0.068);
 	}
