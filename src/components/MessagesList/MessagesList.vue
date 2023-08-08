@@ -93,6 +93,7 @@ export default {
 	provide() {
 		return {
 			scrollerBoundingClientRect: computed(() => this.$refs.scroller.getBoundingClientRect()),
+			getMessagesListScroller: () => this.$refs.scroller,
 		}
 	},
 
