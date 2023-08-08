@@ -65,7 +65,8 @@
 						{{ messageDateTime }}
 					</NcActionButton>
 
-					<NcActionButton class="action--nested"
+					<NcActionButton v-if="supportReminders"
+						class="action--nested"
 						@click.stop="submenu = 'reminder'">
 						<template #icon>
 							<AlarmIcon :size="20" />
@@ -134,7 +135,7 @@
 					</template>
 				</template>
 
-				<template v-else-if="submenu === 'reminder'">
+				<template v-else-if="supportReminders && submenu === 'reminder'">
 					<NcActionButton :aria-label="t('spreed', 'Back')"
 						@click.stop="submenu = null">
 						<template #icon>
@@ -234,6 +235,7 @@ import Reply from 'vue-material-design-icons/Reply.vue'
 import Share from 'vue-material-design-icons/Share.vue'
 import Translate from 'vue-material-design-icons/Translate.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 
@@ -255,6 +257,7 @@ import { copyConversationLinkToClipboard } from '../../../../../services/urlServ
 // Keep version in sync with @nextcloud/vue in case of issues
 
 const EmojiIndex = new EmojiIndexFactory(data)
+const supportReminders = getCapabilities()?.spreed?.features?.includes('remind-me-later')
 
 export default {
 	name: 'MessageButtonsBar',
@@ -435,6 +438,12 @@ export default {
 	},
 
 	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog'],
+
+	setup() {
+		return {
+			supportReminders,
+		}
+	},
 
 	data() {
 		return {
