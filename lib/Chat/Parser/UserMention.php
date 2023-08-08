@@ -135,7 +135,7 @@ class UserMention {
 
 			if ($mention['type'] === 'call') {
 				$userId = '';
-				if ($chatMessage->getParticipant()->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
+				if ($chatMessage->getParticipant()?->getAttendee()->getActorType() === Attendee::ACTOR_USERS) {
 					$userId = $chatMessage->getParticipant()->getAttendee()->getActorId();
 				}
 

@@ -16,7 +16,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>17.0.3</version>
+	<version>17.1.0-dev.1</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -80,6 +80,12 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	</repair-steps>
 
 	<commands>
+		<command>OCA\Talk\Command\Bot\Install</command>
+		<command>OCA\Talk\Command\Bot\ListBots</command>
+		<command>OCA\Talk\Command\Bot\Remove</command>
+		<command>OCA\Talk\Command\Bot\State</command>
+		<command>OCA\Talk\Command\Bot\Setup</command>
+		<command>OCA\Talk\Command\Bot\Uninstall</command>
 		<command>OCA\Talk\Command\Command\Add</command>
 		<command>OCA\Talk\Command\Command\AddSamples</command>
 		<command>OCA\Talk\Command\Command\Delete</command>

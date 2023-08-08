@@ -3,7 +3,7 @@
   -
   - @author Vincent Petry <vincent@nextcloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -84,6 +84,13 @@
 				<MatterbridgeSettings />
 			</NcAppSettingsSection>
 
+			<!-- Bots settings -->
+			<NcAppSettingsSection v-if="selfIsOwnerOrModerator"
+				id="bots"
+				:title="t('spreed', 'Bots')">
+				<BotsSettings :token="token" />
+			</NcAppSettingsSection>
+
 			<!-- Destructive actions -->
 			<NcAppSettingsSection v-if="canLeaveConversation || canDeleteConversation"
 				id="dangerzone"
@@ -107,6 +114,7 @@ import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSe
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 
 import BasicInfo from './BasicInfo.vue'
+import BotsSettings from './BotsSettings.vue'
 import BreakoutRoomsSettings from './BreakoutRoomsSettings.vue'
 import ConversationPermissionsSettings from './ConversationPermissionsSettings.vue'
 import DangerZone from './DangerZone.vue'
@@ -126,21 +134,22 @@ export default {
 	name: 'ConversationSettingsDialog',
 
 	components: {
-		NcAppSettingsDialog,
-		NcAppSettingsSection,
+		BasicInfo,
+		BotsSettings,
+		BreakoutRoomsSettings,
+		ConversationPermissionsSettings,
+		DangerZone,
 		ExpirationSettings,
 		LinkShareSettings,
-		LobbySettings,
 		ListableSettings,
+		LobbySettings,
 		LockingSettings,
-		SipSettings,
 		MatterbridgeSettings,
-		DangerZone,
-		NotificationsSettings,
+		NcAppSettingsDialog,
+		NcAppSettingsSection,
 		NcCheckboxRadioSwitch,
-		ConversationPermissionsSettings,
-		BreakoutRoomsSettings,
-		BasicInfo,
+		NotificationsSettings,
+		SipSettings,
 	},
 
 	data() {
@@ -173,9 +182,12 @@ export default {
 			return this.conversation.participantType
 		},
 
+		selfIsOwnerOrModerator() {
+			return (this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR)
+		},
+
 		canFullModerate() {
-			return (this.participantType === PARTICIPANT.TYPE.OWNER
-				|| this.participantType === PARTICIPANT.TYPE.MODERATOR)
+			return this.selfIsOwnerOrModerator
 				&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE
 				&& this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE_FORMER
 		},

@@ -1,0 +1,183 @@
+<!--
+  - @copyright Copyright (c) 2023 Maksim Sukharev <antreesy.web@gmail.com>
+  -
+  - @author Maksim Sukharev <antreesy.web@gmail.com>
+  -
+  - @license AGPL-3.0-or-later
+  -
+  - This program is free software: you can redistribute it and/or modify
+  - it under the terms of the GNU Affero General Public License as
+  - published by the Free Software Foundation, either version 3 of the
+  - License, or (at your option) any later version.
+  -
+  - This program is distributed in the hope that it will be useful,
+  - but WITHOUT ANY WARRANTY; without even the implied warranty of
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  - GNU Affero General Public License for more details.
+  -
+  - You should have received a copy of the GNU Affero General Public License
+  - along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<template>
+	<div class="bots-settings">
+		<p class="bots-settings__hint">
+			{{ botsSettingsDescription }}
+		</p>
+
+		<ul v-if="bots.length">
+			<li v-for="bot in bots"
+				:key="bot.id"
+				class="bots-settings__item">
+				<div class="bots-settings__item-info">
+					<span class="bots-settings__item-name">
+						{{ bot.name }}
+					</span>
+					<span class="bots-settings__item-description">
+						{{ bot.description ?? t('spreed', 'Description is not provided') }}
+					</span>
+				</div>
+				<div v-if="isLoading[bot.id]" class="bots-settings__item-loader icon icon-loading-small" />
+				<NcButton class="bots-settings__item-button"
+					:type="bot.state ? 'primary' : 'secondary'"
+					:disabled="isBotForceEnabled(bot) || isLoading[bot.id]"
+					@click="toggleBotState(bot)">
+					{{ toggleButtonTitle(bot) }}
+				</NcButton>
+			</li>
+		</ul>
+	</div>
+</template>
+
+<script>
+
+import Vue from 'vue'
+
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
+import { BOT } from '../../constants.js'
+import { useBotsStore } from '../../stores/bots.js'
+
+export default {
+	name: 'BotsSettings',
+
+	components: {
+		NcButton,
+	},
+
+	props: {
+		/**
+		 * The conversation's token
+		 */
+		token: {
+			type: String,
+			required: true,
+		},
+	},
+
+	setup() {
+		const botsStore = useBotsStore()
+
+		return {
+			botsStore,
+		}
+	},
+
+	data() {
+		return {
+			isLoading: {},
+		}
+	},
+
+	computed: {
+		bots() {
+			return this.botsStore.getConversationBots(this.token)
+		},
+
+		botsSettingsDescription() {
+			return this.bots.length
+				? t('spreed', 'The following bots can be enabled in this conversation. Reach out to your administration to get more bots installed on this server.')
+				: t('spreed', 'No bots are installed on this server. Reach out to your administration to get bots installed on this server.')
+		},
+	},
+
+	async created() {
+		(await this.botsStore.loadConversationBots(this.token)).forEach(id => {
+			Vue.set(this.isLoading, id, false)
+		})
+	},
+
+	methods: {
+		isBotForceEnabled(bot) {
+			return bot.state === BOT.STATE.FORCE_ENABLED
+		},
+
+		async toggleBotState(bot) {
+			if (this.isBotForceEnabled(bot)) {
+				return
+			}
+			this.isLoading[bot.id] = true
+			await this.botsStore.toggleBotState(this.token, bot)
+			this.isLoading[bot.id] = false
+		},
+
+		toggleButtonTitle(bot) {
+			if (this.isBotForceEnabled(bot)) {
+				return t('spreed', 'Enabled')
+			}
+
+			return bot.state === BOT.STATE.ENABLED ? t('spreed', 'Disable') : t('spreed', 'Enable')
+		},
+	},
+}
+</script>
+
+<style lang="scss" scoped>
+.bots-settings {
+	&__hint {
+		margin-bottom: calc(var(--default-grid-baseline) * 4);
+		color: var(--color-text-lighter);
+	}
+
+	&__item {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+
+		&:not(:last-child) {
+			margin-bottom: calc(var(--default-grid-baseline) * 4);
+		}
+
+		&-info {
+			display: flex;
+			flex-direction: column;
+			max-width: 80%;
+		}
+
+		&-name {
+			font-size: var(--default-font-size);
+			font-weight: bold;
+			color: var(--color-main-text);
+		}
+
+		&-description {
+			font-size: var(--default-font-size);
+			color: var(--color-text-maxcontrast);
+		}
+
+		&-loader {
+			width: 44px;
+			height: 44px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin-left: auto;
+		}
+
+		&-button {
+			flex-shrink: 0;
+		}
+	}
+}
+
+</style>

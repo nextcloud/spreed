@@ -45,6 +45,7 @@ use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SendCallNotificationEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
@@ -52,6 +53,7 @@ use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\Flow\RegisterOperationsListener;
 use OCA\Talk\Listener\BeforeUserLoggedOutListener;
+use OCA\Talk\Listener\BotListener;
 use OCA\Talk\Listener\CircleDeletedListener;
 use OCA\Talk\Listener\CircleMembershipListener;
 use OCA\Talk\Listener\CSPListener;
@@ -124,6 +126,7 @@ class Application extends App implements IBootstrap {
 
 		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPListener::class);
 		$context->registerEventListener(AddFeaturePolicyEvent::class, FeaturePolicyListener::class);
+		$context->registerEventListener(BotInstallEvent::class, BotListener::class);
 		$context->registerEventListener(GroupDeletedEvent::class, GroupDeletedListener::class);
 		$context->registerEventListener(GroupChangedEvent::class, DisplayNameListener::class);
 		$context->registerEventListener(UserDeletedEvent::class, UserDeletedListener::class);
@@ -186,6 +189,7 @@ class Application extends App implements IBootstrap {
 		CollaboratorsListener::register($dispatcher);
 		ResourceListener::register($dispatcher);
 		ReferenceInvalidationListener::register($dispatcher);
+		BotListener::register($dispatcher);
 		// Register only when Talk Updates are not disabled
 		if ($server->getConfig()->getAppValue('spreed', 'changelog', 'yes') === 'yes') {
 			ChangelogListener::register($dispatcher);

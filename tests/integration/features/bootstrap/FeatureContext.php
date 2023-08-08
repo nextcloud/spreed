@@ -64,6 +64,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static $questionToPollId;
 	/** @var array[] */
 	protected static $lastNotifications;
+	/** @var array<int, string> */
+	protected static $botIdToName;
+	/** @var array<string, int> */
+	protected static $botNameToId;
+	/** @var array<string, string> */
+	protected static $botNameToHash;
 
 
 	protected static $permissionsMap = [
@@ -1664,6 +1670,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userSendsMessageToRoom(string $user, string $sendingMode, string $message, string $identifier, string $statusCode, string $apiVersion = 'v1') {
 		$message = substr($message, 1, -1);
+		$message = str_replace('\n', "\n", $message);
 		if ($sendingMode === 'silent sends') {
 			$body = new TableNode([['message', $message], ['silent', true]]);
 		} else {
@@ -2295,6 +2302,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 					Assert::assertMatchesRegularExpression('/avatar(\?v=\w+)?/', $messages[$i]['messageParameters']['object']['icon-url']);
 					$expected[$i]['messageParameters'] = str_replace($matches[0], json_encode($messages[$i]['messageParameters']['object']['icon-url']), $expected[$i]['messageParameters']);
 				}
+			}
+			$expected[$i]['message'] = str_replace('\n', "\n", $expected[$i]['message']);
+
+			if ($expected[$i]['actorType'] === 'bots') {
+				$result = preg_match('/BOT\(([^)]+)\)/', $expected[$i]['actorId'], $matches);
+				if ($result && isset(self::$botNameToHash[$matches[1]])) {
+					$expected[$i]['actorId'] = 'bot-' . self::$botNameToHash[$matches[1]];
+				}
+			}
+
+			// Replace the date/time line of the call summary because we can not know if we jumped a minute, hour or day on the execution.
+			if (str_contains($expected[$i]['message'], '{DATE}')) {
+				$messages[$i]['message'] = preg_replace(
+					'/[A-Za-z]+day, [A-Za-z]+ \d+, \d+ · \d+:\d+[  ][AP]M – \d+:\d+[  ][AP]M \(UTC\)/u',
+					'{DATE}',
+					$messages[$i]['message']
+				);
 			}
 		}
 
@@ -3167,6 +3191,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @Given /^user "([^"]*)" retrieve reactions "([^"]*)" of message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
 	public function userRetrieveReactionsOfMessageInRoomWith(string $user, string $reaction, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$message = str_replace('\n', "\n", $message);
 		$token = self::$identifierToToken[$identifier];
 		$messageId = self::$textToMessageId[$message];
 		$this->setCurrentUser($user);
@@ -3184,6 +3209,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		foreach ($formData->getHash() as $row) {
 			$reaction = $row['reaction'];
 			unset($row['reaction']);
+
+			if ($row['actorType'] === 'bots') {
+				$result = preg_match('/BOT\(([^)]+)\)/', $row['actorId'], $matches);
+				if ($result && isset(self::$botNameToHash[$matches[1]])) {
+					$row['actorId'] = 'bot-' . self::$botNameToHash[$matches[1]];
+				}
+			}
+
 			$expected[$reaction][] = $row;
 		}
 
@@ -3217,7 +3250,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @When wait for :seconds (second|seconds)
+	 * @When /^wait for ([0-9]+) (second|seconds)$/
 	 */
 	public function waitForXSecond($seconds): void {
 		sleep($seconds);
@@ -3445,6 +3478,59 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$options
 		);
 		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^read bot ids from OCC$/
+	 */
+	public function readBotIds(): void {
+		$this->invokingTheCommand('talk:bot:list -v --output json');
+		$this->theCommandWasSuccessful();
+		$json = $this->getLastStdOut();
+
+		$botData = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+		foreach ($botData as $bot) {
+			self::$botNameToId[$bot['name']] = $bot['id'];
+			self::$botNameToHash[$bot['name']] = $bot['url_hash'];
+			self::$botIdToName[$bot['id']] = $bot['name'];
+		}
+	}
+
+	/**
+	 * @Then /^(setup|remove) bot "([^"]*)" for room "([^"]*)" via OCC$/
+	 */
+	public function setupOrRemoveBotInRoom(string $action, string $botName, string $identifier): void {
+		$this->invokingTheCommand('talk:bot:' . $action . ' ' . self::$botNameToId[$botName] . ' ' . self::$identifierToToken[$identifier]);
+		$this->theCommandWasSuccessful();
+	}
+
+	/**
+	 * @Then /^set state (enabled|disabled|no-setup) for bot "([^"]*)" via OCC$/
+	 */
+	public function stateUpdateForBot(string $state, string $botName): void {
+		if ($state === 'enabled') {
+			$state = 1;
+		} elseif ($state === 'disabled') {
+			$state = 0;
+		} elseif ($state === 'no-setup') {
+			$state = 2;
+		}
+
+		$this->invokingTheCommand('talk:bot:state ' . self::$botNameToId[$botName] . ' ' . $state);
+		$this->theCommandWasSuccessful();
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" (sets up|removes) bot "([^"]*)" for room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function setupOrRemoveBotViaOCSAPI(string $user, string $action, string $botName, string $identifier, int $status, string $apiVersion): void {
+		$this->setCurrentUser($user);
+
+		$this->sendRequest(
+			$action === 'sets up' ? 'POST' : 'DELETE',
+			'/apps/spreed/api/' . $apiVersion . '/bot/' . self::$identifierToToken[$identifier] . '/' .self::$botNameToId[$botName]
+		);
+		$this->assertStatusCode($this->response, $status);
 	}
 
 	/**

@@ -1,0 +1,292 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @copyright Copyright (c) 2023, Joas Schilling <coding@schilljs.com>
+ *
+ * @license GNU AGPL version 3 or any later version
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+namespace OCA\Talk\Service;
+
+use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Events\ChatEvent;
+use OCA\Talk\Events\ChatParticipantEvent;
+use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\Bot;
+use OCA\Talk\Model\BotConversation;
+use OCA\Talk\Model\BotConversationMapper;
+use OCA\Talk\Model\BotServerMapper;
+use OCA\Talk\Room;
+use OCA\Talk\TalkSession;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Http\Client\IClientService;
+use OCP\Http\Client\IResponse;
+use OCP\IConfig;
+use OCP\ISession;
+use OCP\IURLGenerator;
+use OCP\IUser;
+use OCP\IUserSession;
+use OCP\L10N\IFactory;
+use OCP\Security\ISecureRandom;
+use OCP\Util;
+use Psr\Log\LoggerInterface;
+
+class BotService {
+	public function __construct(
+		protected BotServerMapper       $botServerMapper,
+		protected BotConversationMapper $botConversationMapper,
+		protected IClientService        $clientService,
+		protected IConfig               $serverConfig,
+		protected IUserSession          $userSession,
+		protected TalkSession           $talkSession,
+		protected ISession              $session,
+		protected ISecureRandom         $secureRandom,
+		protected IURLGenerator         $urlGenerator,
+		protected IFactory              $l10nFactory,
+		protected ITimeFactory          $timeFactory,
+		protected LoggerInterface       $logger,
+	) {
+	}
+
+	public function afterChatMessageSent(ChatParticipantEvent $event, MessageParser $messageParser): void {
+		$client = $this->clientService->newClient();
+		if (!method_exists($client, 'postAsync')) {
+			$this->logger->error('You need Nextcloud Server version 27.1 or higher for Bot support (detected: ' . implode('.', Util::getVersion()) . ')');
+			return;
+		}
+
+		$bots = $this->getBotsForToken($event->getRoom()->getToken());
+		if (empty($bots)) {
+			return;
+		}
+
+		$message = $messageParser->createMessage(
+			$event->getRoom(),
+			$event->getParticipant(),
+			$event->getComment(),
+			$this->l10nFactory->get('spreed', 'en', 'en')
+		);
+		$messageParser->parseMessage($message);
+		$messageData = [
+			'message' => $message->getMessage(),
+			'parameters' => $message->getMessageParameters(),
+		];
+
+		$attendee = $event->getParticipant()->getAttendee();
+
+		$this->sendAsyncRequests($bots, [
+			'type' => 'Create',
+			'actor' => [
+				'type' => 'Person',
+				'id' => $attendee->getActorType() . '/' . $attendee->getActorId(),
+				'name' => $attendee->getDisplayName(),
+			],
+			'object' => [
+				'type' => 'Note',
+				'id' => $event->getComment()->getId(),
+				'name' => 'message',
+				'content' => json_encode($messageData, JSON_THROW_ON_ERROR),
+				'mediaType' => 'text/markdown', // FIXME or text/plain when markdown is disabled
+			],
+			'target' => [
+				'type' => 'Collection',
+				'id' => $event->getRoom()->getToken(),
+				'name' => $event->getRoom()->getName(),
+			]
+		]);
+	}
+
+	public function afterSystemMessageSent(ChatEvent $event, MessageParser $messageParser): void {
+		$bots = $this->getBotsForToken($event->getRoom()->getToken());
+		if (empty($bots)) {
+			return;
+		}
+
+		$message = $messageParser->createMessage(
+			$event->getRoom(),
+			null,
+			$event->getComment(),
+			$this->l10nFactory->get('spreed', 'en', 'en')
+		);
+		$messageParser->parseMessage($message);
+		$messageData = [
+			'message' => $message->getMessage(),
+			'parameters' => $message->getMessageParameters(),
+		];
+
+		$this->sendAsyncRequests($bots, [
+			'type' => 'Activity',
+			'actor' => [
+				'type' => 'Person',
+				'id' => $message->getActorType() . '/' . $message->getActorId(),
+				'name' => $message->getActorDisplayName(),
+			],
+			'object' => [
+				'type' => 'Note',
+				'id' => $event->getComment()->getId(),
+				'name' => $message->getMessageRaw(),
+				'content' => json_encode($messageData),
+				'mediaType' => 'text/markdown',
+			],
+			'target' => [
+				'type' => 'Collection',
+				'id' => $event->getRoom()->getToken(),
+				'name' => $event->getRoom()->getName(),
+			]
+		]);
+	}
+
+	/**
+	 * @param Bot[] $bots
+	 * @param array $body
+	 */
+	protected function sendAsyncRequests(array $bots, array $body): void {
+		$jsonBody = json_encode($body, JSON_THROW_ON_ERROR);
+
+		foreach ($bots as $bot) {
+			$botServer = $bot->getBotServer();
+			$random = $this->secureRandom->generate(64);
+			$hash = hash_hmac('sha256', $random . $jsonBody, $botServer->getSecret());
+			$headers = [
+				'Content-Type' => 'application/json',
+				'X-Nextcloud-Talk-Random' => $random,
+				'X-Nextcloud-Talk-Signature' => $hash,
+				'X-Nextcloud-Talk-Backend' => rtrim($this->serverConfig->getSystemValueString('overwrite.cli.url'), '/') . '/',
+				'OCS-APIRequest' => 'true', // FIXME optional?
+			];
+
+			$data = [
+				'verify' => false,
+				'nextcloud' => [
+					'allow_local_address' => true, // FIXME don't enforce
+				],
+				'headers' => $headers,
+				'timeout' => 5,
+				'body' => json_encode($body),
+			];
+
+			$client = $this->clientService->newClient();
+			$promise = $client->postAsync($botServer->getUrl(), $data);
+
+			$promise->then(function (IResponse $response) use ($botServer) {
+				if ($response->getStatusCode() !== Http::STATUS_OK && $response->getStatusCode() !== Http::STATUS_ACCEPTED) {
+					$this->logger->error('Bot responded with unexpected status code (Received: ' . $response->getStatusCode() . '), increasing error count');
+					$botServer->setErrorCount($botServer->getErrorCount() + 1);
+					$botServer->setLastErrorDate($this->timeFactory->now());
+					$botServer->setLastErrorMessage('UnexpectedStatusCode: ' . $response->getStatusCode());
+					$this->botServerMapper->update($botServer);
+				}
+			}, function (\Exception $exception) use ($botServer) {
+				$this->logger->error('Bot error occurred, increasing error count', ['exception' => $exception]);
+				$botServer->setErrorCount($botServer->getErrorCount() + 1);
+				$botServer->setLastErrorDate($this->timeFactory->now());
+				$botServer->setLastErrorMessage(get_class($exception) . ': ' . $exception->getMessage());
+				$this->botServerMapper->update($botServer);
+			});
+		}
+	}
+
+	/**
+	 * @param Room $room
+	 * @return array
+	 * @psalm-return array{type: string, id: string, name: string}
+	 */
+	protected function getActor(Room $room): array {
+		if (\OC::$CLI || $this->session->exists('talk-overwrite-actor-cli')) {
+			return [
+				'type' => Attendee::ACTOR_GUESTS,
+				'id' => 'cli',
+				'name' => 'Administration',
+			];
+		}
+
+		if ($this->session->exists('talk-overwrite-actor-type')) {
+			return [
+				'type' => $this->session->get('talk-overwrite-actor-type'),
+				'id' => $this->session->get('talk-overwrite-actor-id'),
+				'name' => $this->session->get('talk-overwrite-actor-displayname'),
+			];
+		}
+
+		if ($this->session->exists('talk-overwrite-actor-id')) {
+			return [
+				'type' => Attendee::ACTOR_USERS,
+				'id' => $this->session->get('talk-overwrite-actor-id'),
+				'name' => $this->session->get('talk-overwrite-actor-displayname'),
+			];
+		}
+
+		$user = $this->userSession->getUser();
+		if ($user instanceof IUser) {
+			return [
+				'type' => Attendee::ACTOR_USERS,
+				'id' => $user->getUID(),
+				'name' => $user->getDisplayName(),
+			];
+		}
+
+		$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
+		$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
+		return [
+			'type' => Attendee::ACTOR_GUESTS,
+			'id' => $actorId,
+			'name' => $user->getDisplayName(),
+		];
+	}
+
+	/**
+	 * @param string $token
+	 * @return Bot[]
+	 */
+	public function getBotsForToken(string $token): array {
+		$botConversations = $this->botConversationMapper->findForToken($token);
+
+		if (empty($botConversations)) {
+			return [];
+		}
+
+		$botIds = array_map(static fn (BotConversation $bot): int => $bot->getBotId(), $botConversations);
+
+		$serversMap = [];
+		$botServers = $this->botServerMapper->findByIds($botIds);
+		foreach ($botServers as $botServer) {
+			$serversMap[$botServer->getId()] = $botServer;
+		}
+
+		$bots = [];
+		foreach ($botConversations as $botConversation) {
+			if (!isset($serversMap[$botConversation->getBotId()])) {
+				$this->logger->warning('Can not find bot by ID ' . $botConversation->getBotId() . ' for token ' . $botConversation->getToken());
+				continue;
+			}
+
+			$bot = new Bot(
+				$serversMap[$botConversation->getBotId()],
+				$botConversation,
+			);
+
+			if ($bot->isEnabled()) {
+				$bots[] = $bot;
+			}
+		}
+
+		return $bots;
+	}
+}

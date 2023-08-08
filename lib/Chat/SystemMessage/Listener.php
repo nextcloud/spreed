@@ -448,11 +448,11 @@ class Listener implements IEventListener {
 			} elseif (\OC::$CLI || $this->session->exists('talk-overwrite-actor-cli')) {
 				$actorType = Attendee::ACTOR_GUESTS;
 				$actorId = 'cli';
-			} elseif ($this->session->exists('talk-overwrite-actor')) {
-				$actorType = Attendee::ACTOR_USERS;
-				$actorId = $this->session->get('talk-overwrite-actor');
 			} elseif ($this->session->exists('talk-overwrite-actor-type')) {
 				$actorType = $this->session->get('talk-overwrite-actor-type');
+				$actorId = $this->session->get('talk-overwrite-actor-id');
+			} elseif ($this->session->exists('talk-overwrite-actor-id')) {
+				$actorType = Attendee::ACTOR_USERS;
 				$actorId = $this->session->get('talk-overwrite-actor-id');
 			} else {
 				$actorType = Attendee::ACTOR_GUESTS;

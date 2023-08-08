@@ -3,6 +3,7 @@
 APP_NAME=spreed
 NOTIFICATIONS_BRANCH="master"
 GUESTS_BRANCH="master"
+CSB_BRANCH="main"
 
 APP_INTEGRATION_DIR=$PWD
 ROOT_DIR=${APP_INTEGRATION_DIR}/../../../..
@@ -16,7 +17,7 @@ echo ''
 echo '#'
 echo '# Starting PHP webserver'
 echo '#'
-php -S localhost:8080 -t ${ROOT_DIR} &
+PHP_CLI_SERVER_WORKERS=3 php -S localhost:8080 -t ${ROOT_DIR} &
 PHPPID1=$!
 echo 'Running on process ID:'
 echo $PHPPID1
@@ -41,6 +42,9 @@ export NEXTCLOUD_ROOT_DIR
 export TEST_SERVER_URL="http://localhost:8080/"
 export TEST_REMOTE_URL="http://localhost:8180/"
 
+OVERWRITE_CLI_URL=$(${ROOT_DIR}/occ config:system:get overwrite.cli.url)
+${ROOT_DIR}/occ config:system:set overwrite.cli.url --value "http://localhost:8080/"
+
 echo ''
 echo '#'
 echo '# Setting up apps'
@@ -52,15 +56,18 @@ ${ROOT_DIR}/occ app:getpath spreedcheats
 # already there or in "apps").
 ${ROOT_DIR}/occ app:getpath notifications || (cd ../../../ && git clone --depth 1 --branch ${NOTIFICATIONS_BRANCH} https://github.com/nextcloud/notifications)
 ${ROOT_DIR}/occ app:getpath guests || (cd ../../../ && git clone --depth 1 --branch ${GUESTS_BRANCH} https://github.com/nextcloud/guests)
+${ROOT_DIR}/occ app:getpath call_summary_bot || (cd ../../../ && git clone --depth 1 --branch ${CSB_BRANCH} https://github.com/nextcloud/call_summary_bot)
 
 ${ROOT_DIR}/occ app:enable spreed || exit 1
 ${ROOT_DIR}/occ app:enable --force spreedcheats || exit 1
 ${ROOT_DIR}/occ app:enable --force notifications || exit 1
 ${ROOT_DIR}/occ app:enable --force guests || exit 1
+${ROOT_DIR}/occ app:enable --force call_summary_bot || exit 1
 
 ${ROOT_DIR}/occ app:list | grep spreed
 ${ROOT_DIR}/occ app:list | grep notifications
 ${ROOT_DIR}/occ app:list | grep guests
+${ROOT_DIR}/occ app:list | grep call_summary_bot
 
 echo ''
 echo '#'
@@ -88,6 +95,7 @@ kill $PHPPID1
 kill $PHPPID2
 
 ${ROOT_DIR}/occ app:disable spreedcheats
+${ROOT_DIR}/occ config:system:set overwrite.cli.url --value $OVERWRITE_CLI_URL
 rm -rf ../../../spreedcheats
 
 wait $PHPPID1

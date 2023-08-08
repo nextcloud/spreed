@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
+ *
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,24 +25,31 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Events;
 
-use OCA\Talk\Participant;
-use OCA\Talk\Room;
-use OCP\Comments\IComment;
+use OCP\EventDispatcher\Event;
 
-class ChatParticipantEvent extends ChatEvent {
-	protected Participant $participant;
-
+class BotInstallEvent extends Event {
 	public function __construct(
-		Room $room,
-		IComment $message,
-		Participant $participant,
-		bool $silent,
+		protected string $name,
+		protected string $secret,
+		protected string $url,
+		protected string $description = '',
 	) {
-		parent::__construct($room, $message, false, $silent);
-		$this->participant = $participant;
+		parent::__construct();
 	}
 
-	public function getParticipant(): Participant {
-		return $this->participant;
+	public function getName(): string {
+		return $this->name;
+	}
+
+	public function getSecret(): string {
+		return $this->secret;
+	}
+
+	public function getUrl(): string {
+		return $this->url;
+	}
+
+	public function getDescription(): string {
+		return $this->description;
 	}
 }

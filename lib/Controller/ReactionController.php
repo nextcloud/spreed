@@ -60,7 +60,8 @@ class ReactionController extends AEnvironmentAwareController {
 		try {
 			$this->reactionManager->addReactionMessage(
 				$this->getRoom(),
-				$this->getParticipant(),
+				$this->getParticipant()->getAttendee()->getActorType(),
+				$this->getParticipant()->getAttendee()->getActorId(),
 				$messageId,
 				$reaction
 			);
@@ -85,7 +86,8 @@ class ReactionController extends AEnvironmentAwareController {
 		try {
 			$this->reactionManager->deleteReactionMessage(
 				$this->getRoom(),
-				$this->getParticipant(),
+				$this->getParticipant()->getAttendee()->getActorType(),
+				$this->getParticipant()->getAttendee()->getActorId(),
 				$messageId,
 				$reaction
 			);

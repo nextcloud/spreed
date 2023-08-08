@@ -1,8 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
 /**
- * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
+ *
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -21,26 +24,29 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Talk\Events;
+namespace OCA\Talk\Model;
 
-use OCA\Talk\Participant;
-use OCA\Talk\Room;
-use OCP\Comments\IComment;
-
-class ChatParticipantEvent extends ChatEvent {
-	protected Participant $participant;
+class Bot {
+	public const STATE_DISABLED = 0;
+	public const STATE_ENABLED = 1;
+	public const STATE_NO_SETUP = 2;
 
 	public function __construct(
-		Room $room,
-		IComment $message,
-		Participant $participant,
-		bool $silent,
+		protected BotServer $botServer,
+		protected BotConversation $botConversation,
 	) {
-		parent::__construct($room, $message, false, $silent);
-		$this->participant = $participant;
 	}
 
-	public function getParticipant(): Participant {
-		return $this->participant;
+	public function getBotServer(): BotServer {
+		return $this->botServer;
+	}
+
+	public function getBotConversation(): BotConversation {
+		return $this->botConversation;
+	}
+
+	public function isEnabled(): bool {
+		return $this->botServer->getState() !== self::STATE_DISABLED
+			&& $this->botConversation->getState() !== self::STATE_DISABLED;
 	}
 }

@@ -86,6 +86,10 @@ trait CommandLineTrait {
 		$this->runOcc($args);
 	}
 
+	public function getLastStdOut(): string {
+		return $this->lastStdOut;
+	}
+
 	/**
 	 * Find exception texts in stderr
 	 */
@@ -158,6 +162,13 @@ trait CommandLineTrait {
 		}
 
 		Assert::assertStringContainsString($text, $this->lastStdOut, 'The command did not output the expected text on stdout');
+	}
+
+	/**
+	 * @Then /^the command output is empty$/
+	 */
+	public function theCommandOutputIsEmpty() {
+		Assert::assertEmpty($this->lastStdOut, 'The command did output unexpected text on stdout');
 	}
 
 	/**

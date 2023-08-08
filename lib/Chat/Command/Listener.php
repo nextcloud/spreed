@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Chat\Command;
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
 use OCA\Talk\Model\Command;
 use OCA\Talk\Service\CommandService;
@@ -47,7 +48,12 @@ class Listener {
 		$dispatcher->addListener(ChatManager::EVENT_BEFORE_MESSAGE_SEND, [self::class, 'executeCommand']);
 	}
 
-	public static function executeCommand(ChatParticipantEvent $event): void {
+	public static function executeCommand(ChatEvent $event): void {
+		if (!$event instanceof ChatParticipantEvent) {
+			// No commands for bots 🚓
+			return;
+		}
+
 		$message = $event->getComment();
 		$participant = $event->getParticipant();
 
