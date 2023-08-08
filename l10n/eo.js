@@ -278,6 +278,8 @@ OC.L10N.register(
     "Collapse" : "Maletendi",
     "Favorite" : "Pliŝatata",
     "Description" : "Priskribo",
+    "Disable" : "Malŝalti",
+    "Enable" : "Ŝalti",
     "Restricted" : "Limigita",
     "Personal" : "Persona",
     "Submit" : "Sendi",

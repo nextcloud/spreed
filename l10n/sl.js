@@ -831,6 +831,8 @@ OC.L10N.register(
     "Picture" : "Slika",
     "Error while updating conversation name" : "Prišlo je do napake med posodabljanjem imena pogovora",
     "Error while updating conversation description" : "Prišlo je do napake med posodabljanjem opisa pogovora",
+    "Enabled" : "Omogočeno",
+    "Disable" : "Onemogoči",
     "Set up breakout rooms for this conversation" : "Nastavitev ločenih skupin za ta pogovor",
     "Breakout rooms" : "Ločene skupine",
     "Set emoji as conversation picture" : "Nastavi izrazno ikono kot sliko pogovora",

@@ -719,6 +719,8 @@
     "Edit conversation description" : "会話の詳細を編集する",
     "Enter a description for this conversation" : "この会話の説明を入力",
     "Error while updating conversation description" : "会話の詳細の更新中にエラーが発生しました",
+    "Enabled" : "有効",
+    "Disable" : "無効",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "この会話での初期設定のパーミッションを編集できます。これらの設定はモデレーターには影響しません。",
     "All permissions" : "すべての権限",
     "Participants have permissions to start a call, join a call, enable audio and video, and share screen." : "参加者は、通話の開始、参加、音声とビデオの有効、画面共有の権限を持っています。",

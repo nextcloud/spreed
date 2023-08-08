@@ -633,6 +633,8 @@ OC.L10N.register(
     "Edit conversation description" : "Editar la descripcion de la conversacion",
     "Enter a description for this conversation" : "Picatz una descripcion per aquesta conversacion",
     "Error while updating conversation description" : "Error pendent l’actualizacion de la descripcion de la conversacion",
+    "Enabled" : "Activada",
+    "Disable" : "Desactivar",
     "All permissions" : "Totas las permissions",
     "Restricted" : "Restrencha",
     "Advanced permissions" : "Permissions avançadas",
