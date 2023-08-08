@@ -40,6 +40,7 @@
 			disable-tooltip
 			:show-user-status="showUserStatus && !isSearched"
 			:preloaded-user-status="preloadedUserStatus"
+			:highlighted="isParticipantSpeaking"
 			:offline="isOffline" />
 
 		<!-- Participant's data -->
@@ -67,6 +68,7 @@
 			<div v-else-if="statusMessage"
 				ref="statusMessage"
 				class="participant-row__status"
+				:class="{'participant-row__status--highlighted': isParticipantSpeaking}"
 				@mouseover="updateStatusNeedsTooltip()">
 				<span v-tooltip.auto="statusMessageTooltip">{{ statusMessage }}</span>
 			</div>
@@ -230,11 +232,11 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import AvatarWrapper from '../../../../AvatarWrapper/AvatarWrapper.vue'
 import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/ParticipantPermissionsEditor.vue'
 
+import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
 import readableNumber from '../../../../../mixins/readableNumber.js'
 import UserStatus from '../../../../../mixins/userStatus.js'
-
-// Material design icons
+import { formattedTime } from '../../../../../utils/formattedTime.js'
 
 export default {
 	name: 'Participant',
@@ -298,11 +300,18 @@ export default {
 
 	emits: ['click-participant'],
 
+	setup() {
+		const isInCall = useIsInCall()
+		return { isInCall }
+	},
+
 	data() {
 		return {
 			isUserNameTooltipVisible: false,
 			isStatusTooltipVisible: false,
 			permissionsEditor: false,
+			speakingInterval: null,
+			timeSpeaking: null,
 		}
 	},
 
@@ -341,7 +350,13 @@ export default {
 		},
 
 		statusMessage() {
-			return this.getStatusMessage(this.participant)
+			if (this.isInCall && this.participant.inCall && this.timeSpeaking) {
+				return this.isParticipantSpeaking
+					? '💬 ' + t('spreed', '{time} talking …', { time: formattedTime(this.timeSpeaking, true) })
+					: '💬 ' + t('spreed', '{time} talking time', { time: formattedTime(this.timeSpeaking, true) })
+			} else {
+				return this.getStatusMessage(this.participant)
+			}
 		},
 
 		statusMessageTooltip() {
@@ -483,6 +498,14 @@ export default {
 			return this.participant.sessionIds || []
 		},
 
+		participantSpeakingInformation() {
+			return this.$store.getters.getParticipantSpeakingInformation(this.token, this.sessionIds)
+		},
+
+		isParticipantSpeaking() {
+			return this.participantSpeakingInformation?.speaking
+		},
+
 		lastPing() {
 			return this.participant.lastPing
 		},
@@ -619,8 +642,25 @@ export default {
 			return ''
 		},
 	},
+	watch: {
+		isParticipantSpeaking(speaking) {
+			if (speaking) {
+				if (!this.speakingInterval) {
+					this.speakingInterval = setInterval(this.computeElapsedTime, 1000)
+				}
+			} else {
+				if (speaking === undefined) {
+					this.timeSpeaking = 0
+				}
+				clearInterval(this.speakingInterval)
+				this.speakingInterval = null
+			}
+		},
+	},
 
 	methods: {
+		formattedTime,
+
 		updateUserNameNeedsTooltip() {
 			// check if ellipsized
 			const e = this.$refs.userName
@@ -724,6 +764,20 @@ export default {
 				showError(t('spreed', 'Could not modify permissions for {displayName}', { displayName: this.computedName }))
 			}
 		},
+
+		computeElapsedTime() {
+			if (!this.participantSpeakingInformation) {
+				return null
+			}
+
+			const { speaking, lastTimestamp, totalCountedTime } = this.participantSpeakingInformation
+
+			if (!speaking) {
+				this.timeSpeaking = totalCountedTime
+			} else {
+				this.timeSpeaking = Date.now() - lastTimestamp + totalCountedTime
+			}
+		},
 	},
 }
 </script>
@@ -789,6 +843,9 @@ export default {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		&--highlighted {
+			font-weight: bold;
+		}
 	}
 	&__icon {
 		width: 44px;
