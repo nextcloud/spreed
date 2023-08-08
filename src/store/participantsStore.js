@@ -57,6 +57,8 @@ const state = {
 	},
 	typing: {
 	},
+	speaking: {
+	},
 }
 
 const getters = {
@@ -136,6 +138,24 @@ const getters = {
 				// ... and it's not the participant with same actorType and actorId as yourself
 				&& (attendee.actorType !== rootGetters.getActorType() || attendee.actorId !== rootGetters.getActorId())
 		})
+	},
+
+	/**
+	 * Gets the speaking information for the participant.
+	 *
+	 * @param {object} state - the state object.
+	 * param {string} token - the conversation token.
+	 * param {Array<string>} sessionIds - session identifiers for the participant.
+	 * @return {object|undefined}
+	 */
+	getParticipantSpeakingInformation: (state) => (token, sessionIds) => {
+		if (!state.speaking[token]) {
+			return undefined
+		}
+
+		// look for existing sessionId in the store
+		const sessionId = sessionIds.find(sessionId => state.speaking[token][sessionId])
+		return state.speaking[token][sessionId]
 	},
 
 	/**
@@ -319,6 +339,58 @@ const mutations = {
 		} else {
 			Vue.delete(state.typing[token], sessionId)
 		}
+	},
+
+	/**
+	 * Sets the speaking status of a participant in a conversation / call.
+	 *
+	 * Note that "updateParticipant" should not be called to add a "speaking"
+	 * property to an existing participant, as the participant would be reset
+	 * when the participants are purged whenever they are fetched again.
+	 * Similarly, "addParticipant" can not be called either to add a participant
+	 * if it was not fetched yet but the signaling reported it as being speaking,
+	 * as the attendeeId would be unknown.
+	 *
+	 * @param {object} state - current store state.
+	 * @param {object} data - the wrapping object.
+	 * @param {string} data.token - the conversation token participant is speaking in.
+	 * @param {string} data.sessionId - the Nextcloud session ID of the participant.
+	 * @param {boolean} data.speaking - whether the participant is speaking or not
+	 */
+	setSpeaking(state, { token, sessionId, speaking }) {
+		// create a dummy object for current call
+		if (!state.speaking[token]) {
+			Vue.set(state.speaking, token, {})
+		}
+		if (!state.speaking[token][sessionId]) {
+			Vue.set(state.speaking[token], sessionId, { speaking: null, lastTimestamp: 0, totalCountedTime: 0 })
+		}
+
+		const currentTimestamp = Date.now()
+		const currentSpeakingState = state.speaking[token][sessionId].speaking
+
+		// when speaking has stopped, update the total talking time
+		if (!speaking && state.speaking[token][sessionId].lastTimestamp) {
+			state.speaking[token][sessionId].totalCountedTime += (currentTimestamp - state.speaking[token][sessionId].lastTimestamp)
+		}
+
+		// don't change state for consecutive identical signals
+		if (currentSpeakingState !== speaking) {
+			state.speaking[token][sessionId].speaking = speaking
+			state.speaking[token][sessionId].lastTimestamp = currentTimestamp
+		}
+	},
+
+	/**
+	 * Purge the speaking information for recent call when local participant leaves call
+	 * (including cases when the call ends for everyone).
+	 *
+	 * @param {object} state - current store state.
+	 * @param {object} data - the wrapping object.
+	 * @param {string} data.token - the conversation token.
+	 */
+	purgeSpeakingStore(state, { token }) {
+		Vue.delete(state.speaking, token)
 	},
 
 	/**
@@ -749,6 +821,14 @@ const actions = {
 			}, 15000)
 			context.commit('setTyping', { token, sessionId, typing: true, expirationTimeout })
 		}
+	},
+
+	setSpeaking(context, { token, sessionId, speaking }) {
+		context.commit('setSpeaking', { token, sessionId, speaking })
+	},
+
+	purgeSpeakingStore(context, { token }) {
+		context.commit('purgeSpeakingStore', { token })
 	},
 }
 

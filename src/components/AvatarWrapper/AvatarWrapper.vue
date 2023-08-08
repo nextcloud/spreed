@@ -25,6 +25,7 @@
 			'avatar-wrapper--offline': offline,
 			'avatar-wrapper--small': small,
 			'avatar-wrapper--condensed': condensed,
+			'avatar-wrapper--highlighted': highlighted,
 		}"
 		:style="{'--condensed-overlap': condensedOverlap}">
 		<div v-if="iconClass"
@@ -86,6 +87,10 @@ export default {
 			default: 2,
 		},
 		offline: {
+			type: Boolean,
+			default: false,
+		},
+		highlighted: {
 			type: Boolean,
 			default: false,
 		},
@@ -160,11 +165,13 @@ export default {
 .avatar-wrapper {
 	height: 44px;
 	width: 44px;
+	border-radius: 44px;
 	@include avatar-mixin(44px);
 
 	&--small {
 		height: 22px;
 		width: 22px;
+		border-radius: 22px;
 		@include avatar-mixin(22px);
 	}
 
@@ -187,6 +194,10 @@ export default {
 		& :deep(.avatardiv) {
 			background: rgba(var(--color-main-background-rgb), .4) !important;
 		}
+	}
+
+	&--highlighted {
+		outline: 2px solid var(--color-primary-element);
 	}
 }
 

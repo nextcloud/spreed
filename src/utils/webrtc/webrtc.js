@@ -211,6 +211,12 @@ function sendCurrentMediaState() {
 		webrtc.webrtc.emit('audioOff')
 	} else {
 		webrtc.webrtc.emit('audioOn')
+
+		if (!webrtc.webrtc.isSpeaking()) {
+			webrtc.webrtc.emit('stoppedSpeaking')
+		} else {
+			webrtc.webrtc.emit('speaking')
+		}
 	}
 }
 
@@ -1601,7 +1607,7 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 				const name = typeof (data.payload) === 'string' ? data.payload : data.payload.name
 				webrtc.emit('nick', { id: peer.id, name })
 			} else if (data.type === 'speaking' || data.type === 'stoppedSpeaking') {
-				// Valid known messages, but handled elsewhere
+				// Valid known messages, handled by CallParticipantModel.js
 			} else {
 				console.debug('Unknown message type %s from %s datachannel', data.type, label, data, peer.id, peer)
 			}
@@ -1633,10 +1639,10 @@ export default function initWebRtc(signaling, _callParticipantCollection, _local
 		}
 	})
 
+	// Send the speaking status events via data channel
 	webrtc.on('speaking', function() {
 		sendDataChannelToAll('status', 'speaking')
 	})
-
 	webrtc.on('stoppedSpeaking', function() {
 		sendDataChannelToAll('status', 'stoppedSpeaking')
 	})
