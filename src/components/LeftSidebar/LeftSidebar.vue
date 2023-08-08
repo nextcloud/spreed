@@ -35,7 +35,7 @@
 					@abort-search="abortSearch" />
 			</div>
 
-			<transition-group name="radial-reveal">
+			<TransitionGroup name="radial-reveal">
 				<!-- Filters -->
 				<div v-show="!isFocused" key="filters" class="filters">
 					<NcActions class="filter-actions"
@@ -101,7 +101,7 @@
 						</NcActionButton>
 					</NcActions>
 				</div>
-			</transition-group>
+			</TransitionGroup>
 
 			<!-- All open conversations list -->
 			<OpenConversationsList ref="openConversationsList" />
@@ -823,7 +823,6 @@ export default {
 		border-radius: var(--border-radius-pill);
 	}
 	&--expanded {
-
 		width : calc(100% - 8px);
 	}
 
