@@ -3191,6 +3191,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @Given /^user "([^"]*)" retrieve reactions "([^"]*)" of message "([^"]*)" in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
 	public function userRetrieveReactionsOfMessageInRoomWith(string $user, string $reaction, string $message, string $identifier, int $statusCode, string $apiVersion = 'v1', ?TableNode $formData = null): void {
+		$message = str_replace('\n', "\n", $message);
 		$token = self::$identifierToToken[$identifier];
 		$messageId = self::$textToMessageId[$message];
 		$this->setCurrentUser($user);
@@ -3208,6 +3209,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		foreach ($formData->getHash() as $row) {
 			$reaction = $row['reaction'];
 			unset($row['reaction']);
+
+			if ($row['actorType'] === 'bots') {
+				$result = preg_match('/BOT\(([^)]+)\)/', $row['actorId'], $matches);
+				if ($result && isset(self::$botNameToHash[$matches[1]])) {
+					$row['actorId'] = 'bot-' . self::$botNameToHash[$matches[1]];
+				}
+			}
+
 			$expected[$reaction][] = $row;
 		}
 

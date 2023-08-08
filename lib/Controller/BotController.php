@@ -27,6 +27,10 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\ReactionManager;
+use OCA\Talk\Exceptions\ReactionAlreadyExistsException;
+use OCA\Talk\Exceptions\ReactionNotSupportedException;
+use OCA\Talk\Exceptions\ReactionOutOfContextException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Manager;
 use OCA\Talk\Middleware\Attribute\RequireLoggedInModeratorParticipant;
@@ -63,9 +67,46 @@ class BotController extends AEnvironmentAwareController {
 		protected BotServerMapper $botServerMapper,
 		protected BotService $botService,
 		protected Manager $manager,
+		protected ReactionManager $reactionManager,
 		protected LoggerInterface $logger,
 	) {
 		parent::__construct($appName, $request);
+	}
+
+	/**
+	 * @param string $token
+	 * @param string $message
+	 * @return Bot
+	 * @throws \InvalidArgumentException When the request could not be linked with a bot
+	 */
+	protected function getBotFromHeaders(string $token, string $message): Bot {
+		$random = $this->request->getHeader('X-Nextcloud-Talk-Bot-Random');
+		if (empty($random) || strlen($random) < 32) {
+			$this->logger->error('Invalid Random received from bot response');
+			throw new \InvalidArgumentException('Invalid Random received from bot response', Http::STATUS_BAD_REQUEST);
+		}
+		$checksum = $this->request->getHeader('X-Nextcloud-Talk-Bot-Signature');
+		if (empty($checksum)) {
+			$this->logger->error('Invalid Signature received from bot response');
+			throw new \InvalidArgumentException('Invalid Signature received from bot response', Http::STATUS_BAD_REQUEST);
+		}
+
+		$bots = $this->botService->getBotsForToken($token);
+		foreach ($bots as $botAttempt) {
+			try {
+				$this->checksumVerificationService->validateRequest(
+					$random,
+					$checksum,
+					$botAttempt->getBotServer()->getSecret(),
+					$message
+				);
+				return $botAttempt;
+			} catch (UnauthorizedException) {
+			}
+		}
+
+		$this->logger->debug('No valid Bot entry found');
+		throw new \InvalidArgumentException('No valid Bot entry found', Http::STATUS_UNAUTHORIZED);
 	}
 
 	/**
@@ -86,37 +127,13 @@ class BotController extends AEnvironmentAwareController {
 	#[BruteForceProtection(action: 'bot')]
 	#[PublicPage]
 	public function sendMessage(string $token, string $message, string $referenceId = '', int $replyTo = 0, bool $silent = false): DataResponse {
-		$random = $this->request->getHeader('X-Nextcloud-Talk-Bot-Random');
-		if (empty($random) || strlen($random) < 32) {
-			$this->logger->error('Invalid Random received from bot response');
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-		$checksum = $this->request->getHeader('X-Nextcloud-Talk-Bot-Signature');
-		if (empty($checksum)) {
-			$this->logger->error('Invalid Signature received from bot response');
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
-		$bots = $this->botService->getBotsForToken($token);
-		$bot = null;
-		foreach ($bots as $botAttempt) {
-			try {
-				$this->checksumVerificationService->validateRequest(
-					$random,
-					$checksum,
-					$botAttempt->getBotServer()->getSecret(),
-					$message
-				);
-				$bot = $botAttempt;
-				break;
-			} catch (UnauthorizedException) {
+		try {
+			$bot = $this->getBotFromHeaders($token, $message);
+		} catch (\InvalidArgumentException $e) {
+			$response = new DataResponse([], $e->getCode());
+			if ($e->getCode() === Http::STATUS_UNAUTHORIZED) {
+				$response->throttle(['action' => 'bot']);
 			}
-		}
-
-		if (!$bot instanceof Bot) {
-			$this->logger->debug('No valid Bot entry found');
-			$response = new DataResponse([], Http::STATUS_UNAUTHORIZED);
-			$response->throttle(['action' => 'bot']);
 			return $response;
 		}
 
@@ -147,6 +164,78 @@ class BotController extends AEnvironmentAwareController {
 		}
 
 		return new DataResponse([], Http::STATUS_CREATED);
+	}
+
+	#[BruteForceProtection(action: 'bot')]
+	#[PublicPage]
+	public function react(string $token, int $messageId, string $reaction): DataResponse {
+		try {
+			$bot = $this->getBotFromHeaders($token, $reaction);
+		} catch (\InvalidArgumentException $e) {
+			$response = new DataResponse([], $e->getCode());
+			if ($e->getCode() === Http::STATUS_UNAUTHORIZED) {
+				$response->throttle(['action' => 'bot']);
+			}
+			return $response;
+		}
+
+		$room = $this->manager->getRoomByToken($token);
+
+		$actorType = Attendee::ACTOR_BOTS;
+		$actorId = Attendee::ACTOR_BOT_PREFIX . $bot->getBotServer()->getUrlHash();
+
+		try {
+			$this->reactionManager->addReactionMessage(
+				$room,
+				$actorType,
+				$actorId,
+				$messageId,
+				$reaction
+			);
+		} catch (NotFoundException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (ReactionAlreadyExistsException) {
+			return new DataResponse([], Http::STATUS_OK);
+		} catch (ReactionNotSupportedException | ReactionOutOfContextException | \Exception) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse([], Http::STATUS_CREATED);
+	}
+
+	#[BruteForceProtection(action: 'bot')]
+	#[PublicPage]
+	public function deleteReaction(string $token, int $messageId, string $reaction): DataResponse {
+		try {
+			$bot = $this->getBotFromHeaders($token, $reaction);
+		} catch (\InvalidArgumentException $e) {
+			$response = new DataResponse([], $e->getCode());
+			if ($e->getCode() === Http::STATUS_UNAUTHORIZED) {
+				$response->throttle(['action' => 'bot']);
+			}
+			return $response;
+		}
+
+		$room = $this->manager->getRoomByToken($token);
+
+		$actorType = Attendee::ACTOR_BOTS;
+		$actorId = Attendee::ACTOR_BOT_PREFIX . $bot->getBotServer()->getUrlHash();
+
+		try {
+			$this->reactionManager->deleteReactionMessage(
+				$room,
+				$actorType,
+				$actorId,
+				$messageId,
+				$reaction
+			);
+		} catch (ReactionNotSupportedException | ReactionOutOfContextException | NotFoundException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\Exception) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse([], Http::STATUS_OK);
 	}
 
 	#[NoAdminRequired]
