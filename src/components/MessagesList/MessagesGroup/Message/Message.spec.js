@@ -77,6 +77,7 @@ describe('Message.vue', () => {
 				bottom: 0,
 				left: 0,
 			},
+			getMessagesListScroller: jest.fn(),
 		}
 
 		testStoreConfig = cloneDeep(storeConfig)

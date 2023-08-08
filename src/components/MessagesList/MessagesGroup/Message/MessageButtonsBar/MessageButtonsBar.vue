@@ -42,9 +42,9 @@
 				</template>
 			</NcButton>
 			<NcActions :force-menu="true"
-				:container="`#message_${id}`"
 				placement="bottom-end"
-				:boundaries-element="containerElement"
+				:container="messageContainer"
+				:boundaries-element="boundariesElement"
 				@open="onMenuOpen"
 				@close="onMenuClose">
 				<NcActionButton>
@@ -143,8 +143,8 @@
 				</template>
 			</NcButton>
 
-			<NcEmojiPicker :container="`#message_${id} .message-buttons-bar`"
-				:boundary="containerElement"
+			<NcEmojiPicker :container="`${messageContainer} .message-buttons-bar`"
+				:boundary="boundariesElement"
 				placement="auto"
 				@select="handleReactionClick"
 				@after-show="onEmojiPickerOpen"
@@ -222,6 +222,8 @@ export default {
 		Share,
 		Translate,
 	},
+
+	inject: ['getMessagesListScroller'],
 
 	props: {
 		token: {
@@ -384,8 +386,12 @@ export default {
 			return this.$store.getters.conversation(this.token)
 		},
 
-		containerElement() {
-			return document.querySelector('.messages-list__scroller')
+		messageContainer() {
+			return `#message_${this.id}`
+		},
+
+		boundariesElement() {
+			return this.getMessagesListScroller()
 		},
 
 		isDeleteable() {
