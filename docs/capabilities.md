@@ -124,3 +124,4 @@
 
 ## 17.1
 * `remind-me-later` - Support for "Remind me later" for chat messages exists
+* `bots-v1` - Support of the first version for Bots and Webhooks is available

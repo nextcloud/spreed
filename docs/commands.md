@@ -1,5 +1,11 @@
 # Chat commands
 
+!!! warning
+
+    **Deprecation:** Commands are deprecated in favor of [Bots](bots.md).
+
+---
+
 !!! note
 
     For security reasons commands can only be added via the

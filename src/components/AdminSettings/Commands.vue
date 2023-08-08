@@ -24,7 +24,7 @@
 	<section id="chat_commands" class="commands section">
 		<h2>
 			{{ t('spreed', 'Commands') }}
-			<small>{{ t('spreed', 'Beta') }}</small>
+			<small>{{ t('spreed', 'Deprecated') }}</small>
 		</h2>
 
 		<!-- eslint-disable-next-line vue/no-v-html -->
