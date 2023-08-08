@@ -35,7 +35,7 @@
 					@abort-search="abortSearch" />
 			</div>
 
-			<transition-group name="radial-reveal">
+			<TransitionGroup name="radial-reveal">
 				<!-- Filters -->
 				<div v-show="!isFocused" key="filters" class="filters">
 					<NcActions class="filter-actions"
@@ -101,7 +101,7 @@
 						</NcActionButton>
 					</NcActions>
 				</div>
-			</transition-group>
+			</TransitionGroup>
 
 			<!-- All open conversations list -->
 			<OpenConversationsList ref="openConversationsList" />
@@ -111,10 +111,8 @@
 		</div>
 
 		<template #list>
-			<li ref="container" class="left-sidebar__list">
-				<ul ref="scroller"
-					class="scroller"
-					@scroll="debounceHandleScroll">
+			<li ref="container" class="left-sidebar__list" @scroll="debounceHandleScroll">
+				<ul class="scroller">
 					<NcListItem v-if="noMatchFound && searchText"
 						:title="t('spreed', 'Create a new conversation')"
 						@click="createConversation(searchText)">
@@ -823,7 +821,6 @@ export default {
 		border-radius: var(--border-radius-pill);
 	}
 	&--expanded {
-
 		width : calc(100% - 8px);
 	}
 
