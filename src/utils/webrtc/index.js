@@ -37,6 +37,7 @@ import LocalMediaModel from './models/LocalMediaModel.js'
 import SentVideoQualityThrottler from './SentVideoQualityThrottler.js'
 import './shims/MediaStream.js'
 import './shims/MediaStreamTrack.js'
+import SpeakingStatusHandler from './SpeakingStatusHandler.js'
 import initWebRtc from './webrtc.js'
 
 let webRtc = null
@@ -46,6 +47,7 @@ const localMediaModel = new LocalMediaModel()
 const mediaDevicesManager = new MediaDevicesManager()
 let callAnalyzer = null
 let sentVideoQualityThrottler = null
+let speakingStatusHandler = null
 
 // This does not really belongs here, as it is unrelated to WebRTC, but it is
 // included here for the time being until signaling and WebRTC are split.
@@ -213,6 +215,7 @@ async function signalingJoinCall(token, flags, silent) {
 		setupWebRtc()
 
 		sentVideoQualityThrottler = new SentVideoQualityThrottler(localMediaModel, callParticipantCollection, webRtc.webrtc._videoTrackConstrainer)
+		speakingStatusHandler = new SpeakingStatusHandler(store, localMediaModel, callParticipantCollection)
 
 		if (signaling.hasFeature('mcu')) {
 			callAnalyzer = new CallAnalyzer(localMediaModel, localCallParticipantModel, callParticipantCollection)
@@ -415,6 +418,9 @@ async function signalingJoinCallForRecording(token, settings, internalClientAuth
 async function signalingLeaveCall(token, all = false) {
 	sentVideoQualityThrottler.destroy()
 	sentVideoQualityThrottler = null
+
+	speakingStatusHandler.destroy()
+	speakingStatusHandler = null
 
 	callAnalyzer.destroy()
 	callAnalyzer = null
