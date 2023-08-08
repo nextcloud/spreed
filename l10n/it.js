@@ -709,6 +709,8 @@ OC.L10N.register(
     "Edit conversation description" : "Modifica la descrizione della conversazione",
     "Enter a description for this conversation" : "Inserisci una descrizione per questa conversazione",
     "Error while updating conversation description" : "Errore durante l'aggiornamento della descrizione della conversazione",
+    "Enabled" : "Abilitata",
+    "Disable" : "Disabilita",
     "The file must be a PNG or JPG" : "Il file deve essere una PNG o JPG",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "Modifica i permessi predefiniti per i partecipanti di questa conversazione. Queste impostazioni non hanno effetto sui moderatori.",
     "All permissions" : "Tutti permessi",

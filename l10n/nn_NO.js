@@ -27,6 +27,8 @@ OC.L10N.register(
     "Copy link" : "Kopier lenkje",
     "Favorite" : "Favoritt",
     "Description" : "Skildring",
+    "Disable" : "Slå av",
+    "Enable" : "SLå på",
     "Personal" : "Personleg",
     "Leave conversation" : "Forlat samtalen",
     "Delete conversation" : "Slett samtale",

@@ -63,6 +63,8 @@ OC.L10N.register(
     "Collapse" : "Colapsar",
     "Favorite" : "Hacer favorito",
     "Description" : "Descripción",
+    "Enabled" : "Habilitado",
+    "Disable" : "Deshabilitar",
     "Restricted" : "Restringido",
     "Personal" : "Personal",
     "Permissions" : "Permisos",

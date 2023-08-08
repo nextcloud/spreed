@@ -34,6 +34,8 @@ OC.L10N.register(
     "Collapse" : "ย่อ",
     "Favorite" : "รายการโปรด",
     "Description" : "รายละเอียด",
+    "Enabled" : "เปิดใช้งาน",
+    "Disable" : "ปิดใช้งาน",
     "Restricted" : "ถูกจำกัด",
     "Personal" : "ส่วนตัว",
     "Submit" : "ส่ง",
