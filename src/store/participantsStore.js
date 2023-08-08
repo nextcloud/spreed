@@ -141,6 +141,24 @@ const getters = {
 	},
 
 	/**
+	 * Gets the speaking information for the participant.
+	 *
+	 * @param {object} state - the state object.
+	 * param {string} token - the conversation token.
+	 * param {Array<string>} sessionIds - session identifiers for the participant.
+	 * @return {object|undefined}
+	 */
+	getParticipantSpeakingInformation: (state) => (token, sessionIds) => {
+		if (!state.speaking[token]) {
+			return undefined
+		}
+
+		// look for existing sessionId in the store
+		const sessionId = sessionIds.find(sessionId => state.speaking[token][sessionId])
+		return state.speaking[token][sessionId]
+	},
+
+	/**
 	 * Replaces the legacy getParticipant getter. Returns a callback function in which you can
 	 * pass in the token and attendeeId as arguments to get the participant object.
 	 *
