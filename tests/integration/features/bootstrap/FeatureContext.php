@@ -2315,7 +2315,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// Replace the date/time line of the call summary because we can not know if we jumped a minute, hour or day on the execution.
 			if (str_contains($expected[$i]['message'], '{DATE}')) {
 				$messages[$i]['message'] = preg_replace(
-					'/[A-Za-z]+day, [A-Za-z]+ \d+, \d+ · \d+:\d+ [AP]M – \d+:\d+ [AP]M \(UTC\)/u',
+					'/[A-Za-z]+day, [A-Za-z]+ \d+, \d+ · \d+:\d+[  ][AP]M – \d+:\d+[  ][AP]M \(UTC\)/u',
 					'{DATE}',
 					$messages[$i]['message']
 				);
