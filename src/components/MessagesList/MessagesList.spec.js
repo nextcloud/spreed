@@ -270,7 +270,7 @@ describe('MessagesList.vue', () => {
 				},
 			})
 
-			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
+			const groups = wrapper.findAllComponents({ ref: 'messagesGroup' })
 
 			expect(groups.exists()).toBe(true)
 
@@ -298,7 +298,7 @@ describe('MessagesList.vue', () => {
 				},
 			})
 
-			const groups = wrapper.findAllComponents({ name: 'MessagesGroup' })
+			const groups = wrapper.findAllComponents({ ref: 'messagesGroup' })
 
 			expect(groups.exists()).toBe(true)
 

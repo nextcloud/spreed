@@ -38,7 +38,9 @@ the main body of the message as well as a quote.
 		@animationend="isHighlighted = false"
 		@mouseover="handleMouseover"
 		@mouseleave="handleMouseleave">
-		<div :class="{'normal-message-body': !isSystemMessage && !isDeletedMessage, 'system' : isSystemMessage}"
+		<div :class="{'normal-message-body': !isSystemMessage && !isDeletedMessage,
+			'system' : isSystemMessage,
+			'combined-system': isCombinedSystemMessage}"
 			class="message-body">
 			<div v-if="isFirstMessage && showAuthor"
 				class="message-body__author"
@@ -184,6 +186,7 @@ the main body of the message as well as a quote.
 		<div class="message-body__scroll">
 			<MessageButtonsBar v-if="showMessageButtonsBar"
 				ref="messageButtonsBar"
+				class="message-buttons-bar"
 				:is-translation-available="isTranslationAvailable"
 				:is-action-menu-open.sync="isActionMenuOpen"
 				:is-emoji-picker-open.sync="isEmojiPickerOpen"
@@ -201,6 +204,18 @@ the main body of the message as well as a quote.
 				:sent-icon-tooltip="sentIconTooltip"
 				@show-translate-dialog="isTranslateDialogOpen = true"
 				@delete="handleDelete" />
+			<div v-else-if="showCombinedSystemMessageToggle"
+				class="message-buttons-bar">
+				<NcButton type="tertiary"
+					:aria-label="t('spreed', 'Show or collapse system messages')"
+					:title="t('spreed', 'Show or collapse system messages')"
+					@click="toggleCombinedSystemMessage">
+					<template #icon>
+						<UnfoldMore v-if="isCombinedSystemMessageCollapsed" />
+						<UnfoldLess v-else />
+					</template>
+				</NcButton>
+			</div>
 		</div>
 
 		<MessageTranslateDialog v-if="isTranslateDialogOpen"
@@ -225,6 +240,8 @@ import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
+import UnfoldLess from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
+import UnfoldMore from 'vue-material-design-icons/UnfoldMoreHorizontal.vue'
 
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess, showWarning, TOAST_DEFAULT_TIMEOUT } from '@nextcloud/dialogs'
@@ -276,6 +293,8 @@ export default {
 		CheckAll,
 		EmoticonOutline,
 		Reload,
+		UnfoldLess,
+		UnfoldMore,
 	},
 
 	mixins: [
@@ -341,7 +360,7 @@ export default {
 		 */
 		showAuthor: {
 			type: Boolean,
-			default: true,
+			default: false,
 		},
 		/**
 		 * Specifies if the message is temporary in order to display the spinner instead
@@ -349,14 +368,14 @@ export default {
 		 */
 		isTemporary: {
 			type: Boolean,
-			required: true,
+			default: false,
 		},
 		/**
 		 * Specifies if the message is the first of a group of same-author messages.
 		 */
 		isFirstMessage: {
 			type: Boolean,
-			required: true,
+			default: false,
 		},
 		/**
 		 * Specifies if the message can be replied to.
@@ -378,6 +397,20 @@ export default {
 		systemMessage: {
 			type: String,
 			required: true,
+		},
+		/**
+		 * Specifies if the message is a combined system message.
+		 */
+		isCombinedSystemMessage: {
+			type: Boolean,
+			default: false,
+		},
+		/**
+		 * Specifies whether the combined system message is collapsed.
+		 */
+		isCombinedSystemMessageCollapsed: {
+			type: Boolean,
+			default: undefined,
 		},
 		/**
 		 * The type of the message.
@@ -425,6 +458,8 @@ export default {
 			default: () => { return [] },
 		},
 	},
+
+	emits: ['toggle-combined-system-message'],
 
 	setup() {
 		const isInCall = useIsInCall()
@@ -611,6 +646,11 @@ export default {
 			return !this.isSystemMessage && !this.isDeletedMessage && !this.isTemporary
 				&& (this.isHovered || this.isActionMenuOpen || this.isEmojiPickerOpen || this.isFollowUpEmojiPickerOpen
 					|| this.isReactionsMenuOpen || this.isForwarderOpen || this.isTranslateDialogOpen)
+		},
+
+		showCombinedSystemMessageToggle() {
+			return this.isSystemMessage && !this.isDeletedMessage && !this.isTemporary
+				&& this.isCombinedSystemMessage && (this.isHovered || !this.isCombinedSystemMessageCollapsed)
 		},
 
 		isTemporaryUpload() {
@@ -851,6 +891,10 @@ export default {
 
 			return displayName
 		},
+
+		toggleCombinedSystemMessage() {
+			this.$emit('toggle-combined-system-message')
+		},
 	},
 }
 </script>
@@ -858,16 +902,17 @@ export default {
 <style lang="scss" scoped>
 @import '../../../../assets/variables';
 
-.message:hover .normal-message-body {
-	border-radius: 8px;
-	background-color: var(--color-background-hover);
-}
-
 .message {
 	position: relative;
 
 	&__last {
 		margin-bottom: 12px;
+	}
+
+	&:hover .normal-message-body,
+	&:hover .combined-system {
+		border-radius: 8px;
+		background-color: var(--color-background-hover);
 	}
 }
 
@@ -1023,6 +1068,22 @@ export default {
 
 .reaction-details {
 	padding: 8px;
+}
+
+.message-buttons-bar {
+	display: flex;
+	right: 14px;
+	top: 8px;
+	position: sticky;
+	background-color: var(--color-main-background);
+	border-radius: calc(var(--default-clickable-area) / 2);
+	box-shadow: 0 0 4px 0 var(--color-box-shadow);
+	height: 44px;
+	z-index: 1;
+
+	& h6 {
+		margin-left: auto;
+	}
 }
 
 .message-body__main__text--markdown {
