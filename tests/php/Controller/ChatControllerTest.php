@@ -37,6 +37,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\App\IAppManager;
@@ -76,6 +77,8 @@ class ChatControllerTest extends TestCase {
 	protected $attachmentService;
 	/** @var AvatarService|MockObject */
 	protected $avatarService;
+	/** @var ReminderService|MockObject */
+	protected $reminderService;
 	/** @var GuestManager|MockObject */
 	protected $guestManager;
 	/** @var MessageParser|MockObject */
@@ -123,6 +126,7 @@ class ChatControllerTest extends TestCase {
 		$this->sessionService = $this->createMock(SessionService::class);
 		$this->attachmentService = $this->createMock(AttachmentService::class);
 		$this->avatarService = $this->createMock(AvatarService::class);
+		$this->reminderService = $this->createMock(ReminderService::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->roomShareProvider = $this->createMock(RoomShareProvider::class);
@@ -162,6 +166,7 @@ class ChatControllerTest extends TestCase {
 			$this->sessionService,
 			$this->attachmentService,
 			$this->avatarService,
+			$this->reminderService,
 			$this->guestManager,
 			$this->messageParser,
 			$this->roomShareProvider,

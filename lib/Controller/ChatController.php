@@ -46,9 +46,11 @@ use OCA\Talk\Room;
 use OCA\Talk\Service\AttachmentService;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
+use OCA\Talk\Service\ReminderService;
 use OCA\Talk\Service\SessionService;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -110,6 +112,7 @@ class ChatController extends AEnvironmentAwareController {
 		SessionService $sessionService,
 		AttachmentService $attachmentService,
 		avatarService $avatarService,
+		protected ReminderService $reminderService,
 		GuestManager $guestManager,
 		MessageParser $messageParser,
 		RoomShareProvider $shareProvider,
@@ -734,37 +737,58 @@ class ChatController extends AEnvironmentAwareController {
 	#[RequireModeratorOrNoLobby]
 	#[RequireLoggedInParticipant]
 	#[UserRateLimit(limit: 60, period: 3600)]
-	public function remindLater(int $messageId, int $timestamp): DataResponse {
+	public function setReminder(int $messageId, int $timestamp): DataResponse {
 		try {
-			$message = $this->chatManager->getComment($this->room, (string) $messageId);
+			$this->chatManager->getComment($this->room, (string) $messageId);
 		} catch (NotFoundException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$this->chatManager->queueRemindLaterBackgroundJob(
-			$this->room,
-			$message,
-			$this->participant->getAttendee(),
+		$reminder = $this->reminderService->setReminder(
+			$this->participant->getAttendee()->getActorId(),
+			$this->room->getToken(),
+			$messageId,
 			$timestamp
 		);
 
-		return new DataResponse([], Http::STATUS_CREATED);
+		return new DataResponse($reminder->jsonSerialize(), Http::STATUS_CREATED);
 	}
 
 	#[NoAdminRequired]
 	#[RequireModeratorOrNoLobby]
 	#[RequireLoggedInParticipant]
-	public function dismissReminder(int $messageId): DataResponse {
+	public function getReminder(int $messageId): DataResponse {
 		try {
-			$message = $this->chatManager->getComment($this->room, (string) $messageId);
+			$this->chatManager->getComment($this->room, (string) $messageId);
 		} catch (NotFoundException) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$this->chatManager->dismissReminderNotification(
-			$this->room,
-			$message,
-			$this->participant->getAttendee()
+		try {
+			$reminder = $this->reminderService->getReminder(
+				$this->participant->getAttendee()->getActorId(),
+				$messageId,
+			);
+			return new DataResponse($reminder->jsonSerialize(), Http::STATUS_OK);
+		} catch (DoesNotExistException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+	}
+
+	#[NoAdminRequired]
+	#[RequireModeratorOrNoLobby]
+	#[RequireLoggedInParticipant]
+	public function deleteReminder(int $messageId): DataResponse {
+		try {
+			$this->chatManager->getComment($this->room, (string) $messageId);
+		} catch (NotFoundException) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$this->reminderService->deleteReminder(
+			$this->participant->getAttendee()->getActorId(),
+			$this->room->getToken(),
+			$messageId,
 		);
 
 		return new DataResponse([], Http::STATUS_OK);
@@ -904,7 +928,7 @@ class ChatController extends AEnvironmentAwareController {
 	}
 
 	protected function getMessagesForRoom(array $messageIds): array {
-		$comments = $this->chatManager->getMessagesById($this->room, $messageIds);
+		$comments = $this->chatManager->getMessagesForRoomById($this->room, $messageIds);
 		$this->preloadShares($comments);
 
 		$messages = [];
