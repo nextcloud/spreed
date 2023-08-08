@@ -39,6 +39,8 @@ OC.L10N.register(
     "Collapse" : "Sulge",
     "Favorite" : "Lemmik",
     "Description" : "Kirjeldus",
+    "Enabled" : "Sisse lülitatud",
+    "Disable" : "Lülita välja",
     "Restricted" : "Piiratud",
     "Personal" : "Isiklik",
     "Submit" : "Saada",

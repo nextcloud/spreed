@@ -861,6 +861,8 @@ OC.L10N.register(
     "Picture" : "Picture",
     "Error while updating conversation name" : "Error while updating conversation name",
     "Error while updating conversation description" : "Error while updating conversation description",
+    "Disable" : "Disable",
+    "Enable" : "Enable",
     "Set up breakout rooms for this conversation" : "Set up breakout rooms for this conversation",
     "Breakout rooms" : "Breakout rooms",
     "Set emoji as conversation picture" : "Set emoji as conversation picture",

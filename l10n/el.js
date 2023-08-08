@@ -637,6 +637,7 @@ OC.L10N.register(
     "Edit conversation description" : "Επεξεργασία περιγραφής συνομιλίας",
     "Enter a description for this conversation" : "Πληκτρολογήστε μια περιγραφή για αυτήν τη συνομιλία",
     "Error while updating conversation description" : "Σφάλμα κατά την ενημέρωση της περιγραφής συνομιλίας",
+    "Disable" : "Απενεργοποίηση",
     "Participants have permissions to start a call, join a call, enable audio and video, and share screen." : "Οι συμμετέχοντες έχουν δικαιώματα για έναρξη κλήσης, συμμετοχή σε κλήση, ενεργοποίηση ήχου και βίντεο και κοινή χρήση οθόνης.",
     "Restricted" : "Περιορισμένο",
     "Participants can join calls, but cannot enable audio nor video nor share screen until a moderator manually grants them permissions." : "Οι συμμετέχοντες μπορούν να συμμετέχουν σε κλήσεις, αλλά δεν μπορούν να ενεργοποιήσουν τον ήχο ή το βίντεο ούτε να μοιραστούν την οθόνη έως ότου ένας συντονιστής τους εκχωρήσει αυτά τα δικαιώματα.",

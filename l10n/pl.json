@@ -824,6 +824,8 @@
     "Picture" : "Obraz",
     "Error while updating conversation name" : "Błąd podczas aktualizowania nazwy rozmowy",
     "Error while updating conversation description" : "Błąd podczas aktualizowania opisu rozmowy",
+    "Enabled" : "Włączone",
+    "Disable" : "Wyłącz",
     "Set up breakout rooms for this conversation" : "Skonfiguruj pokoje podgrup dla tej rozmowy",
     "Breakout rooms" : "Pokoje podgrup",
     "The file must be a PNG or JPG" : "Plik musi być w formacie PNG lub JPG",
