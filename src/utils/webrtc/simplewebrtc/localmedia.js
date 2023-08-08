@@ -63,15 +63,18 @@ function LocalMedia(opts) {
 
 	this._blackVideoEnforcer = new BlackVideoEnforcer()
 
+	this._speaking = undefined
 	this._speakingMonitor = new SpeakingMonitor()
 	this._speakingMonitor.on('speaking', () => {
 		this.emit('speaking')
+		this._speaking = true
 	})
 	this._speakingMonitor.on('speakingWhileMuted', () => {
 		this.emit('speakingWhileMuted')
 	})
 	this._speakingMonitor.on('stoppedSpeaking', () => {
 		this.emit('stoppedSpeaking')
+		this._speaking = false
 	})
 	this._speakingMonitor.on('stoppedSpeakingWhileMuted', () => {
 		this.emit('stoppedSpeakingWhileMuted')
@@ -414,6 +417,10 @@ LocalMedia.prototype._setAudioEnabled = function(bool) {
 }
 LocalMedia.prototype._setVideoEnabled = function(bool) {
 	this._videoTrackEnabler.setEnabled(bool)
+}
+
+LocalMedia.prototype.isSpeaking = function() {
+	return this._speaking
 }
 
 // check if all audio streams are enabled
