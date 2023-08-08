@@ -841,6 +841,8 @@
     "Picture" : "Изображение",
     "Error while updating conversation name" : "Ошибка при изменении названия обсуждения",
     "Error while updating conversation description" : "Не удалось изменить описание обсуждения",
+    "Enabled" : "Включено",
+    "Disable" : "Отключить",
     "Set up breakout rooms for this conversation" : "Настроить комнаты обсуждения для этого обсуждения",
     "Breakout rooms" : "Комнаты обсуждения",
     "Set emoji as conversation picture" : "Установить эмодзи в качестве аватара обсуждения",

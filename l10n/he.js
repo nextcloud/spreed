@@ -415,6 +415,8 @@ OC.L10N.register(
     "Drop your files to upload" : "יש לגרור לכאן קבצים כדי להעלות",
     "Favorite" : "סימון כמועדף",
     "Description" : "תיאור",
+    "Enabled" : "מופעל",
+    "Disable" : "השבתה",
     "Restricted" : "מוגבלת",
     "Conversation settings" : "הגדרות דיון",
     "Personal" : "אישי",

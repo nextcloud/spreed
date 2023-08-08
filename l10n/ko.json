@@ -841,6 +841,8 @@
     "Picture" : "사진",
     "Error while updating conversation name" : "대화 이름을 설정하는 중 오류 발생",
     "Error while updating conversation description" : "대화 설명을 업데이트하는 중 오류 발생",
+    "Enabled" : "활성화",
+    "Disable" : "사용 안함",
     "Set up breakout rooms for this conversation" : "이 대화에 소회의실을 구성",
     "Breakout rooms" : "소회의실",
     "Set emoji as conversation picture" : "이모지를 대화의 사진으로 설정",

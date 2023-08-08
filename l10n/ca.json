@@ -826,6 +826,8 @@
     "Picture" : "Imatge",
     "Error while updating conversation name" : "S'ha produït un error en actualitzar el nom de la conversa",
     "Error while updating conversation description" : "S'ha produït un error en actualitzar la descripció de la conversa",
+    "Disable" : "Inhabilita",
+    "Enable" : "Activa",
     "Set up breakout rooms for this conversation" : "Configura sales de treball per a aquesta conversa",
     "Breakout rooms" : "Sales de treball",
     "The file must be a PNG or JPG" : "El fitxer ha de ser PNG o JPG",

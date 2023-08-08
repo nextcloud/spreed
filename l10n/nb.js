@@ -448,6 +448,8 @@ OC.L10N.register(
     "Drop your files to upload" : "Dropp filer for å laste opp",
     "Favorite" : "Merk som favoritt",
     "Description" : "Beskrivelse",
+    "Enabled" : "Aktivert",
+    "Disable" : "Deaktiver",
     "Restricted" : "Begrenset",
     "Conversation settings" : "Samtale innstillinger",
     "Personal" : "Personlig",

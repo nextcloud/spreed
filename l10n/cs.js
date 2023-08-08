@@ -861,6 +861,8 @@ OC.L10N.register(
     "Picture" : "Obrázek",
     "Error while updating conversation name" : "Chyba při aktualizování názvu konverzace",
     "Error while updating conversation description" : "Při úpravě popisu konverzace se vyskytla chyba",
+    "Disable" : "Vypnout",
+    "Enable" : "Povolit",
     "Set up breakout rooms for this conversation" : "Vytvořte pro tuto konverzaci přestávkové místnosti",
     "Breakout rooms" : "Přestávkové místnosti",
     "Set emoji as conversation picture" : "Nastavit emotikonu jako obrázek konverzace",

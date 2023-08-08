@@ -417,6 +417,8 @@ OC.L10N.register(
     "This conversation is read-only" : "This conversation is read-only",
     "Favorite" : "Eftirlæti",
     "Description" : "Lýsing",
+    "Enabled" : "Virkt",
+    "Disable" : "Gera óvirkt",
     "Restricted" : "Takmarkað",
     "Personal" : "Persónulegt",
     "Meeting" : "Fundur",

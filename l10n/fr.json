@@ -844,6 +844,8 @@
     "Picture" : "Image",
     "Error while updating conversation name" : "Erreur lors de la mise à jour du nom de la conversation",
     "Error while updating conversation description" : "Erreur lors de la mise à jour de la description de la conversation",
+    "Enabled" : "Activé",
+    "Disable" : "Désactiver",
     "Set up breakout rooms for this conversation" : "Configurer les salles de sous-groupes pour cette conversation",
     "Breakout rooms" : "Salles de sous-groupes",
     "Set emoji as conversation picture" : "Définir l'emoji comme icône de la conversation",

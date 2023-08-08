@@ -64,6 +64,8 @@ OC.L10N.register(
     "Collapse" : "აკეცვა",
     "Favorite" : "რჩეული",
     "Description" : "აღწერილობა",
+    "Enabled" : "მოქმედია",
+    "Disable" : "გამორთვა",
     "Restricted" : "აკრძალული",
     "Personal" : "პირადი",
     "Permissions" : "უფლებები",
