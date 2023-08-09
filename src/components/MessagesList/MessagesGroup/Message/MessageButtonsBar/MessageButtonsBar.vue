@@ -144,6 +144,15 @@
 						{{ t('spreed', 'Back') }}
 					</NcActionButton>
 
+					<NcActionButton v-if="currentReminder"
+						close-after-click
+						@click.stop="removeReminder">
+						<template #icon>
+							<CloseCircleOutline :size="20" />
+						</template>
+						{{ clearReminderLabel }}
+					</NcActionButton>
+
 					<NcActionSeparator />
 
 					<NcActionButton v-for="option in reminderOptions"
@@ -227,6 +236,7 @@ import CalendarClock from 'vue-material-design-icons/CalendarClock.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
 import ClockOutline from 'vue-material-design-icons/ClockOutline.vue'
+import CloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import File from 'vue-material-design-icons/File.vue'
@@ -251,7 +261,7 @@ import Forwarder from './Forwarder.vue'
 
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
 import { EventBus } from '../../../../../services/EventBus.js'
-import { setMessageReminder } from '../../../../../services/remindersService.js'
+import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { copyConversationLinkToClipboard } from '../../../../../services/urlService.js'
 
 // Keep version in sync with @nextcloud/vue in case of issues
@@ -275,6 +285,7 @@ export default {
 		AlarmIcon,
 		ArrowLeft,
 		CalendarClock,
+		CloseCircleOutline,
 		Check,
 		CheckAll,
 		ClockOutline,
@@ -449,6 +460,7 @@ export default {
 		return {
 			frequentlyUsedEmojis: [],
 			submenu: null,
+			currentReminder: null,
 			customReminderDateTime: new Date(moment().add(2, 'hours').minute(0).second(0).valueOf()),
 		}
 	},
@@ -585,6 +597,18 @@ export default {
 				},
 			].filter(option => option.timestamp !== null)
 		},
+
+		clearReminderLabel() {
+			return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: moment(this.currentReminder.timestamp * 1000).format('ddd LT') })
+		},
+	},
+
+	watch: {
+		submenu(value) {
+			if (value === 'reminder') {
+				this.getReminder()
+			}
+		},
 	},
 
 	methods: {
@@ -702,6 +726,25 @@ export default {
 
 		getTimestamp(momentObject) {
 			return momentObject?.minute(0).second(0).millisecond(0).valueOf() || null
+		},
+
+		async getReminder() {
+			try {
+				const response = await getMessageReminder(this.token, this.id)
+				this.currentReminder = response.data.ocs.data
+			} catch (error) {
+				console.debug(error)
+			}
+		},
+
+		async removeReminder() {
+			try {
+				await removeMessageReminder(this.token, this.id)
+				showSuccess(t('spreed', 'A reminder was successfully removed'))
+			} catch (error) {
+				console.error(error)
+				showError(t('spreed', 'Error occurred when removing a reminder'))
+			}
 		},
 
 		async setReminder(timestamp) {
