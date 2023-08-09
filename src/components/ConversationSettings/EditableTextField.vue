@@ -234,12 +234,6 @@ export default {
 			// Deselect all the text that's been selected in `handleEditText`
 			window.getSelection().removeAllRanges()
 		},
-
-		checkOverflow() {
-			const textHeight = this.$refs['editable-text-field'].clientHeight
-			const contenteditableHeight = this.$refs.contenteditable.$refs.contenteditable.scrollHeight
-			this.overflows = textHeight < contenteditableHeight
-		},
 	},
 }
 
