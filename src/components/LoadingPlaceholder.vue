@@ -18,16 +18,6 @@
   - You should have received a copy of the GNU Affero General Public License
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
-<docs>
-
-Displays a loading placeholder for conversation messages.
-
-The gradient animation is achieved by having two placeholder elements,
-with opposite gradient directions (regular and reverse) displayed on top
-of each other (overlapped with position: absolute) and then fading between
-each other by animating the opacities.
-
-</docs>
 
 <template>
 	<div class="placeholder-main">
@@ -69,6 +59,15 @@ each other by animating the opacities.
 </template>
 
 <script>
+/**
+ * Displays a loading placeholder for conversation messages.
+ *
+ * The gradient animation is achieved by having two placeholder elements,
+ * with opposite gradient directions (regular and reverse) displayed on top
+ * of each other (overlapped with position: absolute) and then fading between
+ * each other by animating the opacities.
+ */
+
 const bodyStyles = window.getComputedStyle(document.body)
 const colorPlaceholderDark = bodyStyles.getPropertyValue('--color-placeholder-dark')
 const colorPlaceholderLight = bodyStyles.getPropertyValue('--color-placeholder-light')

@@ -176,13 +176,13 @@ export default {
 			// overriden at runtime before loading the worker and restored
 			// afterwards.
 			// https://github.com/webpack-contrib/worker-loader/issues/281
-			const __webpack_public_path__saved = __webpack_public_path__
+			//			const __webpack_public_path__saved = __webpack_public_path__
 
-			__webpack_public_path__ = generateFilePath('spreed', 'js', '')
+			//			__webpack_public_path__ = generateFilePath('spreed', 'js', '')
 
 			const jitsiStreamBackgroundEffect = new JitsiStreamBackgroundEffect(options)
 
-			__webpack_public_path__ = __webpack_public_path__saved
+			//			__webpack_public_path__ = __webpack_public_path__saved
 
 			/* eslint-enable no-undef, camelcase */
 

@@ -39,7 +39,7 @@
 <script>
 import { emit } from '@nextcloud/event-bus'
 
-import { NcButton } from '@nextcloud/vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import VolumeIndicator from '../../VolumeIndicator/VolumeIndicator.vue'
 

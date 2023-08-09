@@ -26,9 +26,9 @@ import Vue from 'vue'
 (function(OCP, OC) {
 
 	// eslint-disable-next-line
-	__webpack_nonce__ = btoa(OC.requestToken)
+	//__webpack_nonce__ = btoa(OC.requestToken)
 	// eslint-disable-next-line
-	__webpack_public_path__ = OC.linkTo('spreed', 'js/')
+	// __webpack_public_path__ = OC.linkTo('spreed', 'js/')
 
 	Vue.prototype.t = t
 	Vue.prototype.n = n

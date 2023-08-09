@@ -19,11 +19,6 @@
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<docs>
-This component is intended to be used both in `NewMessage` and `Message`
-components.
-</docs>
-
 <template>
 	<a href="#"
 		class="quote"
@@ -60,6 +55,11 @@ components.
 </template>
 
 <script>
+/**
+ * This component is intended to be used both in `NewMessage` and `Message`
+ * components.
+ */
+
 import Close from 'vue-material-design-icons/Close.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'

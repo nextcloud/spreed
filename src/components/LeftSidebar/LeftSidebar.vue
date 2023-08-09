@@ -407,6 +407,7 @@ export default {
 		})
 
 		this.fetchConversations()
+		window.fetchConversations = this.fetchConversations
 	},
 
 	mounted() {

@@ -23,7 +23,13 @@ const getUserMedia = function(constraints, callback) {
 // cache for constraints and callback
 const cache = {}
 
-module.exports = function(mode, constraints, cb) {
+/**
+ *
+ * @param mode
+ * @param constraints
+ * @param cb
+ */
+export default function(mode, constraints, cb) {
 	const hasConstraints = arguments.length === 3
 	const callback = hasConstraints ? cb : constraints
 	let error

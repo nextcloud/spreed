@@ -38,7 +38,7 @@ import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
 import { emit } from '@nextcloud/event-bus'
 
-import { NcButton } from '@nextcloud/vue'
+import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import { PARTICIPANT } from '../../../constants.js'
 

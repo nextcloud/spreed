@@ -1,12 +1,12 @@
 /* global module */
 
-const util = require('util')
+import util from 'util'
 
-const mockconsole = require('mockconsole')
-const webrtcSupport = require('webrtcsupport')
+import mockconsole from 'mockconsole'
+import webrtcSupport from 'webrtcsupport'
 
-const localMedia = require('./localmedia.js')
-const Peer = require('./peer.js')
+import localMedia from './localmedia.js'
+import Peer from './peer.js'
 
 /**
  * @param {object} opts the options object.
@@ -133,4 +133,4 @@ WebRTC.prototype.sendDirectlyToAll = function(channel, message, payload) {
 	})
 }
 
-module.exports = WebRTC
+export default WebRTC

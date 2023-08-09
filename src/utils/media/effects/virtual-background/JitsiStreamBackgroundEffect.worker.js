@@ -1,8 +1,14 @@
-import landscape from './vendor/models/selfie_segmentation_landscape.tflite'
+// TODO: FIXME configure eslint
+// eslint-disable-next-line import/no-unresolved
+import landscape from './vendor/models/selfie_segmentation_landscape.tflite?url'
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd.js'
-import withSIMD from './vendor/tflite/tflite-simd.wasm'
+// TODO: FIXME configure eslint
+// eslint-disable-next-line import/no-unresolved
+import withSIMD from './vendor/tflite/tflite-simd.wasm?url'
 import createTFLiteModule from './vendor/tflite/tflite.js'
-import withoutSIMD from './vendor/tflite/tflite.wasm'
+// TODO: FIXME configure eslint
+// eslint-disable-next-line import/no-unresolved
+import withoutSIMD from './vendor/tflite/tflite.wasm?url'
 
 const models = {
 	modelLandscape: landscape.split('/').pop(),

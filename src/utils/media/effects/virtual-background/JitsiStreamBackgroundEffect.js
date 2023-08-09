@@ -1,7 +1,9 @@
 // @flow
 
 import { VIRTUAL_BACKGROUND } from '../../../../constants.js'
-import WebWorker from './JitsiStreamBackgroundEffect.worker.js'
+// FIXME: configure ESLINT to handle this
+// eslint-disable-next-line import/no-unresolved
+import WebWorker from './JitsiStreamBackgroundEffect.worker.js?worker'
 import {
 	CLEAR_TIMEOUT,
 	TIMEOUT_TICK,

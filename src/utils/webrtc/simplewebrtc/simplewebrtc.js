@@ -1,10 +1,10 @@
 /* global module */
 
-const mockconsole = require('mockconsole')
-const webrtcSupport = require('webrtcsupport')
-const WildEmitter = require('wildemitter')
+import mockconsole from 'mockconsole'
+import webrtcSupport from 'webrtcsupport'
+import WildEmitter from 'wildemitter'
 
-const WebRTC = require('./webrtc.js')
+import WebRTC from './webrtc.js'
 
 /**
  * @param {object} opts the options object.
@@ -295,4 +295,4 @@ SimpleWebRTC.prototype.stopScreenShare = function() {
 	})
 }
 
-module.exports = SimpleWebRTC
+export default SimpleWebRTC

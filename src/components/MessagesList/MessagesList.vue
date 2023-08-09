@@ -18,12 +18,6 @@
   - You should have received a copy of the GNU Affero General Public License
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
-<docs>
-
-This component is a wrapper for the list of messages. It's main purpose it to
-get the messagesList array and loop through the list to generate the messages.
-
-</docs>
 
 <template>
 	<!-- size and remain refer to the amount and initial height of the items that
@@ -58,6 +52,11 @@ get the messagesList array and loop through the list to generate the messages.
 </template>
 
 <script>
+/**
+ * This component is a wrapper for the list of messages. It's main purpose it to
+ * get the messagesList array and loop through the list to generate the messages.
+ */
+
 import debounce from 'debounce'
 import uniqueId from 'lodash/uniqueId.js'
 import { computed } from 'vue'

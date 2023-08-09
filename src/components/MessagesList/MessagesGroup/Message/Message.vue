@@ -19,11 +19,6 @@
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<docs>
-This component displays the text inside the message component and can be used for
-the main body of the message as well as a quote.
-</docs>
-
 <template>
 	<li :id="`message_${id}`"
 		ref="message"
@@ -233,6 +228,11 @@ the main body of the message as well as a quote.
 </template>
 
 <script>
+/**
+ * This component displays the text inside the message component and can be used for
+ * the main body of the message as well as a quote.
+ */
+
 import emojiRegex from 'emoji-regex/index.js'
 
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
