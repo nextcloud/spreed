@@ -272,6 +272,7 @@ OC.L10N.register(
     "This conversation is read-only" : "Hierdie gesprek is leesalleen",
     "Favorite" : "Gunsteling",
     "Description" : "Beskrywing",
+    "Disable" : "Deaktiveer",
     "Personal" : "Persoonlik",
     "Leave conversation" : "verlaat gesprek",
     "Delete conversation" : "Skrap gesprek",
