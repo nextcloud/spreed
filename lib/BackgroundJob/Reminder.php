@@ -36,8 +36,8 @@ class Reminder extends TimedJob {
 		protected ReminderService $reminderService,
 	) {
 		parent::__construct($time);
-		// Every time (5 minutes minus 1 second)
-		$this->setInterval(5 * 60 - 1);
+		// Every minute
+		$this->setInterval(60);
 	}
 
 	/**
