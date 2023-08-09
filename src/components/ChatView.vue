@@ -134,14 +134,13 @@ export default {
 	},
 
 	watch: {
-		typingParticipants: {
+		isVisible: {
 			immediate: true,
-			handler() {
-				this.$nextTick(() => {
-					// offset from NewMessage component by 8px, with its min-height: 69px as a fallback
-					this.scrollButtonOffset = (this.$refs.newMessage?.$el?.clientHeight ?? 69) + 8
-				})
-			},
+			handler: 'setScrollToBottomPosition',
+		},
+
+		typingParticipants: {
+			handler: 'setScrollToBottomPosition',
 		},
 	},
 
@@ -185,6 +184,13 @@ export default {
 
 		smoothScrollToBottom() {
 			EventBus.$emit('smooth-scroll-chat-to-bottom')
+		},
+
+		setScrollToBottomPosition() {
+			this.$nextTick(() => {
+				// offset from NewMessage component by 8px, with its min-height: 69px as a fallback
+				this.scrollButtonOffset = (this.$refs.newMessage?.$el?.clientHeight ?? 69) + 8
+			})
 		},
 	},
 
