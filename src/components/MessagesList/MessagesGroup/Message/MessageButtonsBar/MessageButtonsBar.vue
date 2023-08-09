@@ -42,84 +42,147 @@
 				</template>
 			</NcButton>
 			<NcActions :force-menu="true"
-				:container="`#message_${id}`"
 				placement="bottom-end"
-				:boundaries-element="containerElement"
+				:container="messageContainer"
+				:boundaries-element="boundariesElement"
 				@open="onMenuOpen"
 				@close="onMenuClose">
-				<NcActionButton>
-					<template #icon>
-						<span v-if="showCommonReadIcon"
-							:title="commonReadIconTooltip"
-							:aria-label="commonReadIconTooltip">
-							<CheckAll :size="16" />
-						</span>
-						<span v-else-if="showSentIcon"
-							:title="sentIconTooltip"
-							:aria-label="sentIconTooltip">
-							<Check :size="16" />
-						</span>
-						<ClockOutline v-else :size="16" />
-					</template>
-					{{ messageDateTime }}
-				</NcActionButton>
-				<NcActionSeparator />
-				<NcActionButton v-if="isPrivateReplyable"
-					icon="icon-user"
-					:close-after-click="true"
-					@click.stop="handlePrivateReply">
-					{{ t('spreed', 'Reply privately') }}
-				</NcActionButton>
-				<NcActionButton icon="icon-external"
-					:close-after-click="true"
-					@click.stop="handleCopyMessageLink">
-					{{ t('spreed', 'Copy message link') }}
-				</NcActionButton>
-				<NcActionButton :close-after-click="true"
-					@click.stop="handleMarkAsUnread">
-					<template #icon>
-						<EyeOffOutline :size="16" />
-					</template>
-					{{ t('spreed', 'Mark as unread') }}
-				</NcActionButton>
-				<NcActionLink v-if="linkToFile"
-					:href="linkToFile">
-					<template #icon>
-						<File :size="20" />
-					</template>
-					{{ t('spreed', 'Go to file') }}
-				</NcActionLink>
-				<NcActionButton v-if="canForwardMessage"
-					:close-after-click="true"
-					@click.stop="openForwarder">
-					<template #icon>
-						<Share :size="16" />
-					</template>
-					{{ t('spreed', 'Forward message') }}
-				</NcActionButton>
-				<NcActionSeparator v-if="messageActions.length > 0" />
-				<NcActionButton v-for="action in messageActions"
-					:key="action.label"
-					:icon="action.icon"
-					:close-after-click="true"
-					@click="action.callback(messageApiData)">
-					{{ action.label }}
-				</NcActionButton>
-				<NcActionButton v-if="isTranslationAvailable"
-					:close-after-click="true"
-					@click.stop="$emit('show-translate-dialog', true)"
-					@close="$emit('show-translate-dialog', false)">
-					<template #icon>
-						<Translate :size="16" />
-					</template>
-					{{ t('spreed', 'Translate') }}
-				</NcActionButton>
-				<template v-if="isDeleteable">
+				<template v-if="submenu === null">
+					<NcActionButton>
+						<template #icon>
+							<span v-if="showCommonReadIcon"
+								:title="commonReadIconTooltip"
+								:aria-label="commonReadIconTooltip">
+								<CheckAll :size="16" />
+							</span>
+							<span v-else-if="showSentIcon"
+								:title="sentIconTooltip"
+								:aria-label="sentIconTooltip">
+								<Check :size="16" />
+							</span>
+							<ClockOutline v-else :size="16" />
+						</template>
+						{{ messageDateTime }}
+					</NcActionButton>
+
+					<NcActionButton v-if="supportReminders"
+						class="action--nested"
+						@click.stop="submenu = 'reminder'">
+						<template #icon>
+							<AlarmIcon :size="20" />
+						</template>
+						{{ t('spreed', 'Set reminder') }}
+					</NcActionButton>
+
 					<NcActionSeparator />
-					<NcActionButton icon="icon-delete"
-						:close-after-click="true"
-						@click.stop="handleDelete">
-						{{ t('spreed', 'Delete') }}
+					<NcActionButton v-if="isPrivateReplyable"
+						icon="icon-user"
+						close-after-click
+						@click.stop="handlePrivateReply">
+						{{ t('spreed', 'Reply privately') }}
+					</NcActionButton>
+					<NcActionButton icon="icon-external"
+						close-after-click
+						@click.stop="handleCopyMessageLink">
+						{{ t('spreed', 'Copy message link') }}
+					</NcActionButton>
+					<NcActionButton close-after-click
+						@click.stop="handleMarkAsUnread">
+						<template #icon>
+							<EyeOffOutline :size="16" />
+						</template>
+						{{ t('spreed', 'Mark as unread') }}
+					</NcActionButton>
+					<NcActionLink v-if="linkToFile"
+						:href="linkToFile">
+						<template #icon>
+							<File :size="20" />
+						</template>
+						{{ t('spreed', 'Go to file') }}
+					</NcActionLink>
+					<NcActionButton v-if="canForwardMessage"
+						close-after-click
+						@click.stop="openForwarder">
+						<template #icon>
+							<Share :size="16" />
+						</template>
+						{{ t('spreed', 'Forward message') }}
+					</NcActionButton>
+					<NcActionSeparator v-if="messageActions.length > 0" />
+					<NcActionButton v-for="action in messageActions"
+						:key="action.label"
+						:icon="action.icon"
+						close-after-click
+						@click="action.callback(messageApiData)">
+						{{ action.label }}
+					</NcActionButton>
+					<NcActionButton v-if="isTranslationAvailable"
+						close-after-click
+						@click.stop="$emit('show-translate-dialog', true)"
+						@close="$emit('show-translate-dialog', false)">
+						<template #icon>
+							<Translate :size="16" />
+						</template>
+						{{ t('spreed', 'Translate') }}
+					</NcActionButton>
+					<template v-if="isDeleteable">
+						<NcActionSeparator />
+						<NcActionButton icon="icon-delete"
+							close-after-click
+							@click.stop="handleDelete">
+							{{ t('spreed', 'Delete') }}
+						</NcActionButton>
+					</template>
+				</template>
+
+				<template v-else-if="supportReminders && submenu === 'reminder'">
+					<NcActionButton :aria-label="t('spreed', 'Back')"
+						@click.stop="submenu = null">
+						<template #icon>
+							<ArrowLeft />
+						</template>
+						{{ t('spreed', 'Back') }}
+					</NcActionButton>
+
+					<NcActionButton v-if="currentReminder"
+						close-after-click
+						@click.stop="removeReminder">
+						<template #icon>
+							<CloseCircleOutline :size="20" />
+						</template>
+						{{ clearReminderLabel }}
+					</NcActionButton>
+
+					<NcActionSeparator />
+
+					<NcActionButton v-for="option in reminderOptions"
+						:key="option.key"
+						:aria-label="option.ariaLabel"
+						close-after-click
+						@click.stop="setReminder(option.timestamp)">
+						{{ option.label }}
+					</NcActionButton>
+
+					<!-- Custom DateTime picker for the reminder -->
+					<NcActionSeparator />
+
+					<NcActionInput type="datetime-local"
+						is-native-picker
+						:value="customReminderDateTime"
+						:min="new Date()"
+						@change="setCustomReminderDateTime">
+						<template #icon>
+							<CalendarClock :size="20" />
+						</template>
+					</NcActionInput>
+
+					<NcActionButton :aria-label="t('spreed', 'Set custom reminder')"
+						close-after-click
+						@click.stop="setCustomReminder(customReminderDateTime)">
+						<template #icon>
+							<Check :size="20" />
+						</template>
+						{{ t('spreed', 'Set custom reminder') }}
 					</NcActionButton>
 				</template>
 			</NcActions>
@@ -143,8 +206,8 @@
 				</template>
 			</NcButton>
 
-			<NcEmojiPicker :container="`#message_${id} .message-buttons-bar`"
-				:boundary="containerElement"
+			<NcEmojiPicker :container="`${messageContainer} .message-buttons-bar`"
+				:boundary="boundariesElement"
 				placement="auto"
 				@select="handleReactionClick"
 				@after-show="onEmojiPickerOpen"
@@ -167,10 +230,13 @@
 import { frequently, EmojiIndex as EmojiIndexFactory } from 'emoji-mart-vue-fast'
 import data from 'emoji-mart-vue-fast/data/all.json'
 
+import AlarmIcon from 'vue-material-design-icons/Alarm.vue'
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
+import CalendarClock from 'vue-material-design-icons/CalendarClock.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
 import ClockOutline from 'vue-material-design-icons/ClockOutline.vue'
+import CloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import File from 'vue-material-design-icons/File.vue'
@@ -179,9 +245,12 @@ import Reply from 'vue-material-design-icons/Reply.vue'
 import Share from 'vue-material-design-icons/Share.vue'
 import Translate from 'vue-material-design-icons/Translate.vue'
 
+import { getCapabilities } from '@nextcloud/capabilities'
+import { showError, showSuccess } from '@nextcloud/dialogs'
 import moment from '@nextcloud/moment'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
+import NcActionInput from '@nextcloud/vue/dist/Components/NcActionInput.js'
 import NcActionLink from '@nextcloud/vue/dist/Components/NcActionLink.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
 import NcActionSeparator from '@nextcloud/vue/dist/Components/NcActionSeparator.js'
@@ -192,11 +261,13 @@ import Forwarder from './Forwarder.vue'
 
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
 import { EventBus } from '../../../../../services/EventBus.js'
+import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { copyConversationLinkToClipboard } from '../../../../../services/urlService.js'
 
 // Keep version in sync with @nextcloud/vue in case of issues
 
 const EmojiIndex = new EmojiIndexFactory(data)
+const supportReminders = getCapabilities()?.spreed?.features?.includes('remind-me-later')
 
 export default {
 	name: 'MessageButtonsBar',
@@ -204,13 +275,17 @@ export default {
 	components: {
 		Forwarder,
 		NcActionButton,
+		NcActionInput,
 		NcActionLink,
 		NcActionSeparator,
 		NcActions,
 		NcButton,
 		NcEmojiPicker,
 		// Icons
+		AlarmIcon,
 		ArrowLeft,
+		CalendarClock,
+		CloseCircleOutline,
 		Check,
 		CheckAll,
 		ClockOutline,
@@ -222,6 +297,8 @@ export default {
 		Share,
 		Translate,
 	},
+
+	inject: ['getMessagesListScroller'],
 
 	props: {
 		token: {
@@ -373,9 +450,18 @@ export default {
 
 	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog'],
 
+	setup() {
+		return {
+			supportReminders,
+		}
+	},
+
 	data() {
 		return {
 			frequentlyUsedEmojis: [],
+			submenu: null,
+			currentReminder: null,
+			customReminderDateTime: new Date(moment().add(2, 'hours').minute(0).second(0).valueOf()),
 		}
 	},
 
@@ -384,8 +470,12 @@ export default {
 			return this.$store.getters.conversation(this.token)
 		},
 
-		containerElement() {
-			return document.querySelector('.messages-list__scroller')
+		messageContainer() {
+			return `#message_${this.id}`
+		},
+
+		boundariesElement() {
+			return this.getMessagesListScroller()
 		},
 
 		isDeleteable() {
@@ -459,6 +549,65 @@ export default {
 
 		messageDateTime() {
 			return moment(this.timestamp * 1000).format('lll')
+		},
+
+		reminderOptions() {
+			const currentDateTime = moment()
+
+			// Same day 18:00 PM (or hidden)
+			const laterTodayTime = (currentDateTime.hour() < 18)
+				? moment().hour(18)
+				: null
+
+			// Tomorrow 08:00 AM
+			const tomorrowTime = moment().add(1, 'days').hour(8)
+
+			// Saturday 08:00 AM (or hidden)
+			const thisWeekendTime = (currentDateTime.day() !== 6 && currentDateTime.day() !== 0)
+				? moment().day(6).hour(8)
+				: null
+
+			// Next Monday 08:00 AM
+			const nextWeekTime = moment().add(1, 'weeks').day(1).hour(8)
+
+			return [
+				{
+					key: 'laterToday',
+					timestamp: this.getTimestamp(laterTodayTime),
+					label: t('spreed', 'Later today – {timeLocale}', { timeLocale: laterTodayTime?.format('LT') }),
+					ariaLabel: t('spreed', 'Set reminder for later today'),
+				},
+				{
+					key: 'tomorrow',
+					timestamp: this.getTimestamp(tomorrowTime),
+					label: t('spreed', 'Tomorrow – {timeLocale}', { timeLocale: tomorrowTime?.format('ddd LT') }),
+					ariaLabel: t('spreed', 'Set reminder for tomorrow'),
+				},
+				{
+					key: 'thisWeekend',
+					timestamp: this.getTimestamp(thisWeekendTime),
+					label: t('spreed', 'This weekend – {timeLocale}', { timeLocale: thisWeekendTime?.format('ddd LT') }),
+					ariaLabel: t('spreed', 'Set reminder for this weekend'),
+				},
+				{
+					key: 'nextWeek',
+					timestamp: this.getTimestamp(nextWeekTime),
+					label: t('spreed', 'Next week – {timeLocale}', { timeLocale: nextWeekTime?.format('ddd LT') }),
+					ariaLabel: t('spreed', 'Set reminder for next week'),
+				},
+			].filter(option => option.timestamp !== null)
+		},
+
+		clearReminderLabel() {
+			return t('spreed', 'Clear reminder – {timeLocale}', { timeLocale: moment(this.currentReminder.timestamp * 1000).format('ddd LT') })
+		},
+	},
+
+	watch: {
+		submenu(value) {
+			if (value === 'reminder') {
+				this.getReminder()
+			}
 		},
 	},
 
@@ -574,6 +723,61 @@ export default {
 				return EmojiIndex.emoji(emojiStrings).native
 			})
 		},
+
+		getTimestamp(momentObject) {
+			return momentObject?.minute(0).second(0).millisecond(0).valueOf() || null
+		},
+
+		async getReminder() {
+			try {
+				const response = await getMessageReminder(this.token, this.id)
+				this.currentReminder = response.data.ocs.data
+			} catch (error) {
+				console.debug(error)
+			}
+		},
+
+		async removeReminder() {
+			try {
+				await removeMessageReminder(this.token, this.id)
+				showSuccess(t('spreed', 'A reminder was successfully removed'))
+			} catch (error) {
+				console.error(error)
+				showError(t('spreed', 'Error occurred when removing a reminder'))
+			}
+		},
+
+		async setReminder(timestamp) {
+			try {
+				await setMessageReminder(this.token, this.id, timestamp / 1000)
+				showSuccess(t('spreed', 'A reminder was successfully set at {datetime}', {
+					datetime: moment(timestamp).format('LLL'),
+				}))
+			} catch (error) {
+				console.error(error)
+				showError(t('spreed', 'Error occurred when creating a reminder'))
+			}
+		},
+
+		setCustomReminderDateTime(event) {
+			this.customReminderDateTime = new Date(event.target.value)
+		},
+
+		setCustomReminder() {
+			this.setReminder(this.customReminderDateTime.valueOf())
+		},
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+.action--nested {
+	:deep(.action-button::after) {
+		content: " ";
+		width: 20px;
+		height: 44px;
+		margin-left: auto;
+		background: no-repeat center var(--icon-triangle-e-dark);
+	}
+}
+</style>
