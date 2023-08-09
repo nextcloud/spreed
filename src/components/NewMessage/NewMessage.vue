@@ -764,7 +764,7 @@ export default {
 				return
 			}
 			this.$nextTick().then(() => {
-				this.$refs.richContenteditable.$refs.contenteditable.focus()
+				this.$refs.richContenteditable.focus()
 			})
 		},
 

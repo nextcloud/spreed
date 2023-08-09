@@ -23,7 +23,7 @@
 	<div ref="editable-text-field"
 		:key="forceReRenderKey"
 		class="editable-text-field">
-		<NcRichContenteditable ref="contenteditable"
+		<NcRichContenteditable ref="richContenteditable"
 			:value.sync="text"
 			:auto-complete="()=>{}"
 			:maxlength="maxLength"
@@ -199,12 +199,16 @@ export default {
 
 	methods: {
 		handleEditText() {
-			const contenteditable = this.$refs.contenteditable.$refs.contenteditable
 			this.$emit('update:editing', true)
 			this.$nextTick(() => {
-				// Focus and select the text
-				contenteditable.focus()
-				document.execCommand('selectAll', false, null)
+				// Focus and select rich text
+				this.$refs.richContenteditable.focus()
+
+				// TODO upstream: declare as select() method for NcRichContenteditable
+				const range = document.createRange()
+				range.selectNodeContents(this.$refs.richContenteditable.$refs.contenteditable)
+				window.getSelection().removeAllRanges()
+				window.getSelection().addRange(range)
 			})
 		},
 
@@ -233,12 +237,6 @@ export default {
 			this.$emit('update:editing', false)
 			// Deselect all the text that's been selected in `handleEditText`
 			window.getSelection().removeAllRanges()
-		},
-
-		checkOverflow() {
-			const textHeight = this.$refs['editable-text-field'].clientHeight
-			const contenteditableHeight = this.$refs.contenteditable.$refs.contenteditable.scrollHeight
-			this.overflows = textHeight < contenteditableHeight
 		},
 	},
 }

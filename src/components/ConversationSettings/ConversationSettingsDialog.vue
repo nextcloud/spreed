@@ -243,11 +243,6 @@ export default {
 		handleShowSettings({ token }) {
 			this.$store.dispatch('updateConversationSettingsToken', token)
 			this.showSettings = true
-			this.$nextTick(() => {
-				if (this.$refs.linkShareSettings) {
-					this.$refs.linkShareSettings.$el.focus()
-				}
-			})
 		},
 
 		handleHideSettings() {
