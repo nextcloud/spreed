@@ -23,7 +23,7 @@
 	<div ref="editable-text-field"
 		:key="forceReRenderKey"
 		class="editable-text-field">
-		<NcRichContenteditable ref="contenteditable"
+		<NcRichContenteditable ref="richContenteditable"
 			:value.sync="text"
 			:auto-complete="()=>{}"
 			:maxlength="maxLength"
@@ -199,11 +199,10 @@ export default {
 
 	methods: {
 		handleEditText() {
-			const contenteditable = this.$refs.contenteditable.$refs.contenteditable
 			this.$emit('update:editing', true)
 			this.$nextTick(() => {
-				// Focus and select the text
-				contenteditable.focus()
+				// Focus and select rich text
+				this.$refs.richContenteditable.focus()
 				document.execCommand('selectAll', false, null)
 			})
 		},
