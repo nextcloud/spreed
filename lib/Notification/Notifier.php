@@ -574,18 +574,24 @@ class Notifier implements INotifier {
 			];
 			if ($notification->getSubject() === 'reminder') {
 				if ($comment->getActorId() === $notification->getUser()) {
+					// TRANSLATORS Reminder for a message you sent in the conversation {call}
 					$subject = $l->t('Reminder: You in {call}') . "\n{message}";
 				} elseif ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+					// TRANSLATORS Reminder for a message from {user} in conversation {call}
 					$subject = $l->t('Reminder: {user} in {call}') . "\n{message}";
 				} elseif ($richSubjectUser) {
+					// TRANSLATORS Reminder for a message from {user} in conversation {call}
 					$subject = $l->t('Reminder: {user} in {call}') . "\n{message}";
 				} elseif (!$isGuest) {
+					// TRANSLATORS Reminder for a message from a deleted user in conversation {call}
 					$subject = $l->t('Reminder: Deleted user in {call}') . "\n{message}";
 				} else {
 					try {
 						$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+						// TRANSLATORS Reminder for a message from a guest in conversation {call}
 						$subject = $l->t('Reminder: {guest} (guest) in {call}') . "\n{message}";
 					} catch (ParticipantNotFoundException $e) {
+						// TRANSLATORS Reminder for a message from a guest in conversation {call}
 						$subject = $l->t('Reminder: Guest in {call}') . "\n{message}";
 					}
 				}
