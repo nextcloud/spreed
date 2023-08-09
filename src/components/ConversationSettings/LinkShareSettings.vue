@@ -20,54 +20,53 @@
 -->
 
 <template>
-	<Fragment>
-		<div class="app-settings-subsection">
-			<h4 class="app-settings-section__subtitle">
-				{{ t('spreed', 'Guest access') }}
-			</h4>
+	<div class="app-settings-subsection">
+		<h4 class="app-settings-section__subtitle">
+			{{ t('spreed', 'Guest access') }}
+		</h4>
 
-			<NcCheckboxRadioSwitch :checked="isSharedPublicly"
-				:disabled="isSaving"
-				type="switch"
-				aria-describedby="link_share_settings_hint"
-				@update:checked="toggleGuests">
-				{{ t('spreed', 'Allow guests to join this conversation via link') }}
-			</NcCheckboxRadioSwitch>
+		<NcCheckboxRadioSwitch :checked="isSharedPublicly"
+			:disabled="isSaving"
+			type="switch"
+			aria-describedby="link_share_settings_hint"
+			@update:checked="toggleGuests">
+			{{ t('spreed', 'Allow guests to join this conversation via link') }}
+		</NcCheckboxRadioSwitch>
 
-			<NcCheckboxRadioSwitch v-show="isSharedPublicly"
-				:checked="conversation.hasPassword"
-				:disabled="isSaving"
-				type="switch"
-				aria-describedby="link_share_settings_password_hint"
-				@update:checked="togglePassword">
-				{{ t('spreed', 'Password protection') }}
-			</NcCheckboxRadioSwitch>
+		<NcCheckboxRadioSwitch v-show="isSharedPublicly"
+			:checked="conversation.hasPassword"
+			:disabled="isSaving"
+			type="switch"
+			aria-describedby="link_share_settings_password_hint"
+			@update:checked="togglePassword">
+			{{ t('spreed', 'Password protection') }}
+		</NcCheckboxRadioSwitch>
 
-			<template v-if="showPasswordField">
-				<form class="password-form"
-					@submit.prevent="handleSetNewPassword">
-					<NcPasswordField ref="passwordField"
-						:value.sync="password"
-						autocomplete="new-password"
-						:check-password-strength="true"
-						:disabled="isSaving"
-						class="password-form__input-field"
-						:label-visible="true"
-						:label="t('spreed', 'Enter new password')" />
-					<NcButton :disabled="isSaving"
-						type="primary"
-						native-type="submit">
-						<template #icon>
-							<ArrowRight />
-						</template>
-						{{ t('spreed', 'Save password') }}
-					</NcButton>
-				</form>
-			</template>
-		</div>
-		<div class="app-settings-subsection app-settings-subsection__buttons">
+		<template v-if="showPasswordField">
+			<form class="password-form"
+				@submit.prevent="handleSetNewPassword">
+				<NcPasswordField ref="passwordField"
+					:value.sync="password"
+					autocomplete="new-password"
+					check-password-strength
+					:disabled="isSaving"
+					class="password-form__input-field"
+					label-visible
+					:label="t('spreed', 'Enter new password')" />
+				<NcButton :disabled="isSaving"
+					type="primary"
+					native-type="submit">
+					<template #icon>
+						<ArrowRight />
+					</template>
+					{{ t('spreed', 'Save password') }}
+				</NcButton>
+			</form>
+		</template>
+
+		<div class="app-settings-subsection__buttons">
 			<NcButton ref="copyLinkButton"
-				:wide="true"
+				wide
 				@click="handleCopyLink"
 				@keydown.enter="handleCopyLink">
 				<template #icon>
@@ -77,7 +76,7 @@
 			</NcButton>
 			<NcButton v-if="isSharedPublicly"
 				:disabled="isSendingInvitations"
-				:wide="true"
+				wide
 				@click="handleResendInvitations"
 				@keydown.enter="handleResendInvitations">
 				<template #icon>
@@ -87,12 +86,10 @@
 			</NcButton>
 			<span v-if="isSendingInvitations" class="icon-loading-small spinner" />
 		</div>
-	</Fragment>
+	</div>
 </template>
 
 <script>
-import { Fragment } from 'vue-frag'
-
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import ClipboardTextOutline from 'vue-material-design-icons/ClipboardTextOutline.vue'
 import Email from 'vue-material-design-icons/Email.vue'
@@ -116,7 +113,6 @@ export default {
 		ArrowRight,
 		ClipboardTextOutline,
 		Email,
-		Fragment,
 	},
 
 	data() {
@@ -273,5 +269,6 @@ button > .material-design-icon {
 .app-settings-subsection__buttons {
 	display: flex;
 	gap: 8px;
+	margin-top: 25px;
 }
 </style>
