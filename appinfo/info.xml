@@ -62,8 +62,8 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<job>OCA\Talk\BackgroundJob\CheckTurnCertificate</job>
 		<job>OCA\Talk\BackgroundJob\ExpireChatMessages</job>
 		<job>OCA\Talk\BackgroundJob\ExpireSignalingMessage</job>
-		<job>OCA\Talk\BackgroundJob\RemoveEmptyRooms</job>
 		<job>OCA\Talk\BackgroundJob\Reminder</job>
+		<job>OCA\Talk\BackgroundJob\RemoveEmptyRooms</job>
 		<job>OCA\Talk\BackgroundJob\ResetAssignedSignalingServer</job>
 	</background-jobs>
 
