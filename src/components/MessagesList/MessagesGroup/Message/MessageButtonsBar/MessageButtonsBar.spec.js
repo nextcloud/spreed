@@ -18,6 +18,7 @@ describe('MessageButtonsBar.vue', () => {
 	let testStoreConfig
 	let store
 	let messageProps
+	let injected
 	let conversationProps
 	let getActorTypeMock
 
@@ -87,6 +88,20 @@ describe('MessageButtonsBar.vue', () => {
 
 		beforeEach(() => {
 			store = new Store(testStoreConfig)
+
+			injected = {
+				scrollerBoundingClientRect: {
+					x: 0,
+					y: 0,
+					width: 0,
+					height: 0,
+					top: 0,
+					right: 0,
+					bottom: 0,
+					left: 0,
+				},
+				getMessagesListScroller: jest.fn(),
+			}
 		})
 
 		describe('reply action', () => {
@@ -103,6 +118,7 @@ describe('MessageButtonsBar.vue', () => {
 						NcButton,
 					},
 					propsData: messageProps,
+					provide: injected,
 				})
 
 				const replyButton = findNcButton(wrapper, 'Reply')
@@ -137,6 +153,7 @@ describe('MessageButtonsBar.vue', () => {
 						NcButton,
 					},
 					propsData: messageProps,
+					provide: injected,
 				})
 
 				const replyButton = findNcButton(wrapper, 'Reply')
@@ -165,6 +182,7 @@ describe('MessageButtonsBar.vue', () => {
 						NcActionButton,
 					},
 					propsData: messageProps,
+					provide: injected,
 				})
 
 				const actionButton = findNcActionButton(wrapper, 'Reply privately')
@@ -199,6 +217,7 @@ describe('MessageButtonsBar.vue', () => {
 						NcActionButton,
 					},
 					propsData: messageProps,
+					provide: injected,
 				})
 
 				const actionButton = findNcActionButton(wrapper, 'Reply privately')
@@ -243,6 +262,7 @@ describe('MessageButtonsBar.vue', () => {
 						NcActionButton,
 					},
 					propsData: messageProps,
+					provide: injected,
 				})
 
 				const actionButton = findNcActionButton(wrapper, 'Delete')
@@ -278,6 +298,7 @@ describe('MessageButtonsBar.vue', () => {
 						NcActionButton,
 					},
 					propsData: messageProps,
+					provide: injected,
 				})
 
 				const actionButton = findNcActionButton(wrapper, 'Delete')
@@ -356,6 +377,7 @@ describe('MessageButtonsBar.vue', () => {
 				},
 
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			const actionButton = findNcActionButton(wrapper, 'Mark as unread')
@@ -397,6 +419,7 @@ describe('MessageButtonsBar.vue', () => {
 				},
 
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			Object.assign(navigator, {
@@ -435,6 +458,7 @@ describe('MessageButtonsBar.vue', () => {
 					NcActionButton,
 				},
 				propsData: messageProps,
+				provide: injected,
 			})
 
 			const actionButton = findNcActionButton(wrapper, 'first action')
