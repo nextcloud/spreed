@@ -756,7 +756,7 @@ class Notifier implements INotifier {
 				->setParsedLabel($l->t('Dismiss reminder'))
 				->setLink(
 					$this->urlGenerator->linkToOCSRouteAbsolute(
-						'spreed.Chat.dismissReminder',
+						'spreed.Chat.deleteReminder',
 						[
 							'apiVersion' => 'v1',
 							'token' => $room->getToken(),
