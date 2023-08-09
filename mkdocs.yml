@@ -23,6 +23,7 @@ nav:
       - 'Server system requirements': 'system-requirements.md'
       - 'Configuring coTURN': 'TURN.md'
       - 'Occ commands': 'occ.md'
+      - 'Bots': 'bot-list.md'
       - 'Commands (deprecated)': 'commands.md'
       - 'Matterbridge integration': 'matterbridge.md'
   - 'Developer documentation':
