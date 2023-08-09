@@ -16,7 +16,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>18.0.0-dev.2</version>
+	<version>18.0.0-dev.3</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -56,14 +56,15 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	</dependencies>
 
 	<background-jobs>
-		<job>OCA\Talk\BackgroundJob\ExpireSignalingMessage</job>
-		<job>OCA\Talk\BackgroundJob\RemoveEmptyRooms</job>
-		<job>OCA\Talk\BackgroundJob\ResetAssignedSignalingServer</job>
-		<job>OCA\Talk\BackgroundJob\CheckReferenceIdColumn</job>
 		<job>OCA\Talk\BackgroundJob\CheckHostedSignalingServer</job>
 		<job>OCA\Talk\BackgroundJob\CheckMatterbridges</job>
-		<job>OCA\Talk\BackgroundJob\ExpireChatMessages</job>
+		<job>OCA\Talk\BackgroundJob\CheckReferenceIdColumn</job>
 		<job>OCA\Talk\BackgroundJob\CheckTurnCertificate</job>
+		<job>OCA\Talk\BackgroundJob\ExpireChatMessages</job>
+		<job>OCA\Talk\BackgroundJob\ExpireSignalingMessage</job>
+		<job>OCA\Talk\BackgroundJob\RemoveEmptyRooms</job>
+		<job>OCA\Talk\BackgroundJob\Reminder</job>
+		<job>OCA\Talk\BackgroundJob\ResetAssignedSignalingServer</job>
 	</background-jobs>
 
 	<repair-steps>
