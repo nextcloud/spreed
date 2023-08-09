@@ -828,6 +828,7 @@ OC.L10N.register(
     "Picture" : "Imatge",
     "Error while updating conversation name" : "S'ha produït un error en actualitzar el nom de la conversa",
     "Error while updating conversation description" : "S'ha produït un error en actualitzar la descripció de la conversa",
+    "Enabled" : "Habilitat",
     "Disable" : "Inhabilita",
     "Enable" : "Activa",
     "Set up breakout rooms for this conversation" : "Configura sales de treball per a aquesta conversa",

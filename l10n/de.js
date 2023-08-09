@@ -833,6 +833,7 @@ OC.L10N.register(
     "Picture" : "Bild",
     "Error while updating conversation name" : "Fehler bei der Aktualisierung des Namens der Unterhaltung",
     "Error while updating conversation description" : "Fehler bei der Aktualisierung der Beschreibung der Unterhaltung",
+    "Enabled" : "Aktiviert",
     "Disable" : "Deaktivieren",
     "Enable" : "Aktivieren",
     "Set up breakout rooms for this conversation" : "Gruppenräume für diese Unterhaltung einrichten",

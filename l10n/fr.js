@@ -1223,7 +1223,7 @@ OC.L10N.register(
     "guest" : "invité",
     "Dial-in PIN" : "Code PIN",
     "Demote from moderator" : "Destituer de modérateur",
-    "Promote to moderator" : "Promouvoir en modérateur",
+    "Promote to moderator" : "Promouvoir comme modérateur",
     "Resend invitation" : "Renvoyer l'invitation",
     "Send call notification" : "Envoyer une notification d'appel",
     "Reset custom permissions" : "Réinitialiser les permissions particulières",

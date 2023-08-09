@@ -558,6 +558,8 @@ OC.L10N.register(
     "Drop your files to upload" : "Laoskit ho restroù evit pellkas",
     "Favorite" : "Pennroll",
     "Description" : "Deskrivadur",
+    "Disable" : "Disaotreañ",
+    "Enable" : "Aotreañ",
     "Conversation settings" : "Stummoù diviz",
     "Personal" : "Personel",
     "Leave conversation" : "Kuitaat an diviz",
