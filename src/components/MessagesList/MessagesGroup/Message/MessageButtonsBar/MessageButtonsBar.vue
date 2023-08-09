@@ -77,16 +77,16 @@
 					<NcActionSeparator />
 					<NcActionButton v-if="isPrivateReplyable"
 						icon="icon-user"
-						:close-after-click="true"
+						close-after-click
 						@click.stop="handlePrivateReply">
 						{{ t('spreed', 'Reply privately') }}
 					</NcActionButton>
 					<NcActionButton icon="icon-external"
-						:close-after-click="true"
+						close-after-click
 						@click.stop="handleCopyMessageLink">
 						{{ t('spreed', 'Copy message link') }}
 					</NcActionButton>
-					<NcActionButton :close-after-click="true"
+					<NcActionButton close-after-click
 						@click.stop="handleMarkAsUnread">
 						<template #icon>
 							<EyeOffOutline :size="16" />
@@ -101,7 +101,7 @@
 						{{ t('spreed', 'Go to file') }}
 					</NcActionLink>
 					<NcActionButton v-if="canForwardMessage"
-						:close-after-click="true"
+						close-after-click
 						@click.stop="openForwarder">
 						<template #icon>
 							<Share :size="16" />
@@ -112,12 +112,12 @@
 					<NcActionButton v-for="action in messageActions"
 						:key="action.label"
 						:icon="action.icon"
-						:close-after-click="true"
+						close-after-click
 						@click="action.callback(messageApiData)">
 						{{ action.label }}
 					</NcActionButton>
 					<NcActionButton v-if="isTranslationAvailable"
-						:close-after-click="true"
+						close-after-click
 						@click.stop="$emit('show-translate-dialog', true)"
 						@close="$emit('show-translate-dialog', false)">
 						<template #icon>
@@ -128,7 +128,7 @@
 					<template v-if="isDeleteable">
 						<NcActionSeparator />
 						<NcActionButton icon="icon-delete"
-							:close-after-click="true"
+							close-after-click
 							@click.stop="handleDelete">
 							{{ t('spreed', 'Delete') }}
 						</NcActionButton>
