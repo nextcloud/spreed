@@ -203,7 +203,12 @@ export default {
 			this.$nextTick(() => {
 				// Focus and select rich text
 				this.$refs.richContenteditable.focus()
-				document.execCommand('selectAll', false, null)
+
+				// TODO upstream: declare as select() method for NcRichContenteditable
+				const range = document.createRange()
+				range.selectNodeContents(this.$refs.richContenteditable.$refs.contenteditable)
+				window.getSelection().removeAllRanges()
+				window.getSelection().addRange(range)
 			})
 		},
 
