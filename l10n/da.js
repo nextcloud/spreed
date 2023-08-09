@@ -381,6 +381,7 @@ OC.L10N.register(
     "Drop your files to upload" : "Drop dine filer for at uploade",
     "Favorite" : "Foretrukken",
     "Description" : "Beskrivelse",
+    "Enabled" : "Aktiveret",
     "Disable" : "Deaktiver",
     "Enable" : "Aktiver",
     "Restricted" : "Begrænset",
