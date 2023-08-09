@@ -148,8 +148,7 @@ export default {
 			this.isEditingUsername = !this.isEditingUsername
 			if (this.isEditingUsername) {
 				this.$nextTick(() => {
-					// FIXME upstream: add support of native input methods: focus, select, etc
-					this.$refs.usernameInput.$refs.inputField.$refs.input.focus()
+					this.$refs.usernameInput.focus()
 				})
 			}
 		},

@@ -642,12 +642,12 @@ export default {
 				this.isRefreshingCurrentConversation = false
 			}
 		},
-		// Upon pressing ctrl+f, focus the search box in the left sidebar
+		// Upon pressing Ctrl+F, focus SearchBox native input in the LeftSidebar
 		handleAppSearch() {
 			emit('toggle-navigation', {
 				open: true,
 			})
-			document.querySelector('.conversations-search')[0].focus()
+			document.querySelector('.conversations-search input').focus()
 		},
 	},
 }
