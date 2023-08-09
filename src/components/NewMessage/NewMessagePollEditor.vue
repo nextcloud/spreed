@@ -148,7 +148,7 @@ export default {
 		addOption() {
 			this.pollOptions.push('')
 			this.$nextTick(() => {
-				this.$refs.pollOption.at(-1).$el.querySelector('.input-field__input').focus()
+				this.$refs.pollOption.at(-1).focus()
 			})
 		},
 
