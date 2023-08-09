@@ -113,7 +113,7 @@ describe('conversationsStore', () => {
 			checkMaintenanceModeAction = jest.fn()
 			clearMaintenanceModeAction = jest.fn()
 			updateTalkVersionHashAction = jest.fn()
-			testStoreConfig.modules.talkHashStore.actions.checkMaintenanceMode = checkMaintenanceModeAction
+			testStoreConfig.modules.talkHashStore.actions.checkForMaintenanceOrUpgrade = checkMaintenanceModeAction
 			testStoreConfig.modules.talkHashStore.actions.clearMaintenanceMode = clearMaintenanceModeAction
 			testStoreConfig.modules.talkHashStore.actions.updateTalkVersionHash = updateTalkVersionHashAction
 

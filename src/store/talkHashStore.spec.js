@@ -103,7 +103,7 @@ describe('talkHashStore', () => {
 
 			expect(store.state.maintenanceWarningToast).toBe(null)
 
-			store.dispatch('checkMaintenanceMode', {
+			store.dispatch('checkForMaintenanceOrUpgrade', {
 				status: 503,
 			})
 
@@ -116,8 +116,17 @@ describe('talkHashStore', () => {
 			expect(store.state.maintenanceWarningToast).toBe(null)
 		})
 
-		test('does not display toast if status is not 503', () => {
-			store.dispatch('checkMaintenanceMode', {
+		test('do not display toast (for web client) if status is 426', () => {
+			store.dispatch('checkForMaintenanceOrUpgrade', {
+				status: 426,
+			})
+
+			expect(store.state.upgradeWarningToast).toBe(null)
+			expect(showError).not.toHaveBeenCalled()
+		})
+
+		test('does not display toast if status is not 426 or 503', () => {
+			store.dispatch('checkForMaintenanceOrUpgrade', {
 				status: 200,
 			})
 
@@ -125,8 +134,8 @@ describe('talkHashStore', () => {
 			expect(showError).not.toHaveBeenCalled()
 		})
 
-		test('does not display toast if status is not 503', () => {
-			store.dispatch('checkMaintenanceMode', {
+		test('does not display toast if status is not 426 or 503', () => {
+			store.dispatch('checkForMaintenanceOrUpgrade', {
 				status: 200,
 			})
 

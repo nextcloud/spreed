@@ -694,7 +694,7 @@ const actions = {
 			return response
 		} catch (error) {
 			if (error?.response) {
-				dispatch('checkMaintenanceMode', error.response)
+				dispatch('checkForMaintenanceOrUpgrade', error.response)
 			}
 			throw error
 		}
@@ -726,7 +726,7 @@ const actions = {
 			return response
 		} catch (error) {
 			if (error?.response) {
-				dispatch('checkMaintenanceMode', error.response)
+				dispatch('checkForMaintenanceOrUpgrade', error.response)
 			}
 			throw error
 		}

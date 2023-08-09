@@ -20,12 +20,15 @@
  *
  */
 
-import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+import { showError, TOAST_DEFAULT_TIMEOUT, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
+
+import { EventBus } from '../services/EventBus.js'
 
 const state = {
 	initialNextcloudTalkHash: '',
 	isNextcloudTalkHashDirty: false,
 	maintenanceWarningToast: null,
+	upgradeWarningToast: null,
 }
 
 const getters = {
@@ -55,7 +58,7 @@ const mutations = {
 	},
 
 	/**
-	 * Mark the NextcloudTalkHash as dirty
+	 * Show a warning about maintenance mode
 	 *
 	 * @param {object} state current store state
 	 * @param {object} maintenanceWarningToast toast instance for the maintenance warning
@@ -64,6 +67,15 @@ const mutations = {
 		state.maintenanceWarningToast = maintenanceWarningToast
 	},
 
+	/**
+	 * Show a warning about required client update
+	 *
+	 * @param {object} state current store state
+	 * @param {object} upgradeWarningToast toast instance for the update warning
+	 */
+	setUpgradeWarningToast(state, upgradeWarningToast) {
+		state.upgradeWarningToast = upgradeWarningToast
+	},
 }
 
 const actions = {
@@ -96,11 +108,18 @@ const actions = {
 		context.dispatch('setNextcloudTalkHash', newTalkCacheBusterHash)
 	},
 
-	checkMaintenanceMode(context, response) {
+	checkForMaintenanceOrUpgrade(context, response) {
 		if (response?.status === 503 && !context.state.maintenanceWarningToast) {
 			context.commit('setMaintenanceWarningToast', showError(t('spreed', 'Nextcloud is in maintenance mode, please reload the page'), {
 				timeout: TOAST_PERMANENT_TIMEOUT,
 			}))
+		}
+
+		if (response?.status === 426 && !context.state.upgradeWarningToast && IS_DESKTOP) {
+			context.commit('setUpgradeWarningToast', showError(t('spreed', 'The app is too old and no longer supported by this server. Update is required.'), {
+				timeout: TOAST_DEFAULT_TIMEOUT,
+			}))
+			EventBus.$emit('navigate-to-upgrade-required')
 		}
 	},
 

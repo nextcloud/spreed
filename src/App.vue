@@ -268,6 +268,8 @@ export default {
 			}
 		})
 
+		EventBus.$on('navigate-to-upgrade-required', this.navigateToUpgradeRequired)
+
 		EventBus.$on('switch-to-conversation', (params) => {
 			if (this.isInCall) {
 				this.$store.dispatch('setForceCallView', true)
@@ -648,6 +650,10 @@ export default {
 				open: true,
 			})
 			document.querySelector('.conversations-search')[0].focus()
+		},
+
+		navigateToUpgradeRequired() {
+		  this.$router.push({ name: 'upgraderequired', params: { skipLeaveWarning: true } })
 		},
 	},
 }

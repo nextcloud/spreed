@@ -29,6 +29,7 @@ import CallView from '../components/CallView/CallView.vue'
 import MainView from '../views/MainView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 import SessionConflictView from '../views/SessionConflictView.vue'
+import UpgradeRequiredView from '../views/UpgradeRequiredView.vue'
 import WelcomeView from '../views/WelcomeView.vue'
 
 Vue.use(Router)
@@ -68,6 +69,12 @@ export default new Router({
 			path: '/apps/spreed/not-found',
 			name: 'notfound',
 			component: NotFoundView,
+			props: true,
+		},
+		{
+			path: '/apps/spreed/upgrade-required',
+			name: 'upgraderequired',
+			component: UpgradeRequiredView,
 			props: true,
 		},
 		{
