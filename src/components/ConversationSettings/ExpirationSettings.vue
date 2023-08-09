@@ -27,26 +27,25 @@
 		<div class="app-settings-section__hint">
 			{{ t('spreed', 'Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation.') }}
 		</div>
-		<NcMultiselect :value="selectedOption"
+		<NcSelect :value="selectedOption"
 			:options="expirationOptions"
-			:allow-empty="false"
-			track-by="id"
 			label="label"
-			:close-on-select="true"
-			@update:value="changeExpiration" />
+			close-on-select
+			:clearable="false"
+			@option:selected="changeExpiration" />
 	</div>
 </template>
 
 <script>
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
 export default {
 	name: 'ExpirationSettings',
 
 	components: {
-		NcMultiselect,
+		NcSelect,
 	},
 
 	props: {
