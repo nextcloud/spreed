@@ -452,7 +452,6 @@ OC.L10N.register(
     "Enter password" : "Enter password",
     "Add participants" : "Bæta við þátttakanda",
     "Close" : "Loka",
-    "Conversation name" : "Heiti samtals",
     "You are currently waiting in the lobby" : "You are currently waiting in the lobby",
     "Devices" : "Tæki",
     "Done" : "Lokið",
@@ -545,6 +544,7 @@ OC.L10N.register(
     "iOS app" : "iOS-forrit",
     "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Athugaðu að samtöl með fleiri en 4 þátttakendum og án merkjasendingaþjóns geta orðið fyrir truflunum í tengingum ásamt því að valda miklu álagi á tengdum tækjum.",
     "More actions" : "Fleiri aðgerðir",
+    "Conversation name" : "Heiti samtals",
     "Rename conversation" : "Endurnefna samtal"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

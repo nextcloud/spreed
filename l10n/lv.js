@@ -182,7 +182,6 @@ OC.L10N.register(
     "Groups" : "Grupas",
     "Password protect" : "Aizsargāt ar paroli",
     "Close" : "Aizvērt",
-    "Conversation name" : "Sarunas nosaukums",
     "Devices" : "Ierīces",
     "Done" : "Pabeigts",
     "No audio" : "Nav audio",
@@ -254,6 +253,7 @@ OC.L10N.register(
     "%s Talk on your mobile devices" : "%s Sarunas mobilajās ierīcēs",
     "Android app" : "Android lietotne",
     "iOS app" : "iOS lietotne",
-    "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Zvani, kuros ir vairāk nekā 4 dalībnieki bez ārējā paraksta servera, var saskarties ar savienojamības problēmām un radīt lielu slodzi iesaistītajām ierīcēm."
+    "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Zvani, kuros ir vairāk nekā 4 dalībnieki bez ārējā paraksta servera, var saskarties ar savienojamības problēmām un radīt lielu slodzi iesaistītajām ierīcēm.",
+    "Conversation name" : "Sarunas nosaukums"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

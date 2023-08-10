@@ -624,7 +624,6 @@ OC.L10N.register(
     "Close" : "Stäng",
     "Search participants" : "Sök deltagare",
     "Cancel search" : "Avbryt sökning",
-    "Conversation name" : "Konversationens namn",
     "Search …" : "Sök ...",
     "You are currently waiting in the lobby" : "Du väntar för närvarande i lobbyn",
     "No microphone available" : "Ingen mikrofon tillgänglig",
@@ -773,6 +772,7 @@ OC.L10N.register(
     "The link could not be copied." : "Länken kunde inte kopieras.",
     "No matches" : "Inga träffar",
     "Link copied to the clipboard!" : "Länken kopierad till urklipp!",
+    "Conversation name" : "Konversationens namn",
     "Toggle fullscreen" : "Växla helskärm",
     "Rename conversation" : "Byt namn på konversation",
     "Sending signaling message has failed." : "Misslyckades skicka signalmeddelande."
