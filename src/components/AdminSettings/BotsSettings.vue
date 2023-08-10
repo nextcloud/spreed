@@ -24,9 +24,8 @@
 	<section id="bots_settings" class="bots-settings section">
 		<h2>{{ t('spreed', 'Bots settings') }}</h2>
 
-		<p class="settings-hint">
-			{{ botsSettingsDescription }}
-		</p>
+		<!-- eslint-disable-next-line vue/no-v-html -->
+		<p class="settings-hint" v-html="botsSettingsDescription" />
 
 		<ul v-if="bots.length" class="bots-settings__list">
 			<li class="bots-settings__item bots-settings__item--head">
@@ -85,6 +84,13 @@
 				</div>
 			</li>
 		</ul>
+
+		<NcButton type="primary"
+			href="https://nextcloud-talk.readthedocs.io/en/latest/bot-list/"
+			target="_blank"
+			rel="noreferrer nofollow">
+			{{ t('spreed', 'Find more bots') }} ↗
+		</NcButton>
 	</section>
 </template>
 
@@ -120,9 +126,15 @@ export default {
 
 	computed: {
 		botsSettingsDescription() {
-			return this.bots.length
-				? t('spreed', 'The following bots can be enabled. Reach out to your administration to get more bots installed on this server.')
-				: t('spreed', 'No bots are installed on this server. Reach out to your administration to get bots installed on this server.')
+			let description = t('spreed', 'The following bots are installed on this server. In the documentation you can find details how to {linkstart1}build your own bot{linkend} or a {linkstart2}list of bots{linkend} to enable on your server.')
+			if (!this.bots.length) {
+				description = t('spreed', 'No bots are installed on this server. In the documentation you can find details how to {linkstart1}build your own bot{linkend} or a {linkstart2}list of bots{linkend} to enable on your server.')
+			}
+
+			return description
+				.replace('{linkstart1}', '<a target="_blank" rel="noreferrer nofollow" class="external" href="https://nextcloud-talk.readthedocs.io/en/latest/bots/">')
+				.replace('{linkstart2}', '<a target="_blank" rel="noreferrer nofollow" class="external" href="https://nextcloud-talk.readthedocs.io/en/latest/bot-list/">')
+				.replaceAll('{linkend}', ' ↗</a>')
 		},
 
 		botsExtended() {
@@ -150,12 +162,12 @@ export default {
 		getStateIcon(state) {
 			switch (state) {
 			case BOT.STATE.NO_SETUP:
-				return { state_icon_component: Lock, state_icon_label: t('spreed', 'Locked for moderators'), state_icon_color: 'var(--color-placeholder-dark)' }
+				return { state_icon_component: Lock, state_icon_label: t('spreed', 'Locked for moderators'), state_icon_color: 'var(--color-warning)' }
 			case BOT.STATE.ENABLED:
 				return { state_icon_component: Check, state_icon_label: t('spreed', 'Enabled'), state_icon_color: 'var(--color-success)' }
 			case BOT.STATE.DISABLED:
 			default:
-				return { state_icon_component: Cancel, state_icon_label: t('spreed', 'Disabled'), state_icon_color: 'var(--color-placeholder-dark)' }
+				return { state_icon_component: Cancel, state_icon_label: t('spreed', 'Disabled'), state_icon_color: 'var(--color-error)' }
 			}
 		},
 	},
@@ -163,10 +175,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-h3 {
-	margin-top: 24px;
-	font-weight: 600;
-}
 
 .bots-settings {
 	&__item {
@@ -191,6 +199,10 @@ h3 {
 		.last-error__popover-content {
 			margin: calc(var(--default-grid-baseline) * 2);
 		}
+	}
+
+	&__list {
+		margin-bottom: 30px;
 	}
 }
 

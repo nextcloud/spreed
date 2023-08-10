@@ -25,8 +25,8 @@
 		<GeneralSettings />
 		<MatterbridgeIntegration />
 		<AllowedGroups />
-		<Commands />
 		<BotsSettings />
+		<Commands />
 		<WebServerSetupChecks />
 		<StunServers />
 		<TurnServers />
