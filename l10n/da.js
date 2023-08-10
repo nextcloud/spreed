@@ -432,7 +432,6 @@ OC.L10N.register(
     "Add participants" : "Tilføj deltagere",
     "Close" : "Luk",
     "Search participants" : "Find deltagere",
-    "Conversation name" : "Samtalenavn",
     "You are currently waiting in the lobby" : "Du venter nu i lobbyen",
     "Devices" : "Enhed",
     "Done" : "Færdig",
@@ -575,6 +574,7 @@ OC.L10N.register(
     "The link could not be copied." : "Linket kunne ikke kopieres.",
     "No matches" : "Ingen matches",
     "Link copied to the clipboard!" : "Link kopieret til udklipsholderen!",
+    "Conversation name" : "Samtalenavn",
     "Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer." : "Lyde kan i øjeblikket ikke afspilles i Safari-browseren og iPad- og iPhone-enheder på grund af tekniske begrænsninger fra producenten.",
     "Rename conversation" : "Omdøb samtale",
     "Sending signaling message has failed." : "Kunne ikke sende signalerings-besked"

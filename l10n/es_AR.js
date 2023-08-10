@@ -73,7 +73,6 @@ OC.L10N.register(
     "Circles" : "Círculos",
     "Password protect" : "Proteger con contraseña",
     "Close" : "Cerrar",
-    "Conversation name" : "Nombre de conversación",
     "Devices" : "Dispositivos",
     "Done" : "Terminado",
     "Upload" : "Cargar",
@@ -125,6 +124,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
     "Android app" : "Aplicación android",
     "iOS app" : "Aplicación iOS",
+    "Conversation name" : "Nombre de conversación",
     "Rename conversation" : "Renombrar conversación"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

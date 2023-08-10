@@ -92,7 +92,6 @@ OC.L10N.register(
     "Circles" : "Círculos",
     "Password protect" : "Proteger con contraseña",
     "Close" : "Cerrar",
-    "Conversation name" : "Nombre de la conversación",
     "Devices" : "Dispositivos",
     "No audio" : "Sin audio",
     "Upload" : "Cargar",
@@ -150,6 +149,7 @@ OC.L10N.register(
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS",
     "More actions" : "Más acciones",
+    "Conversation name" : "Nombre de la conversación",
     "Rename conversation" : "Renombrar conversación"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

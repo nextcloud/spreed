@@ -277,7 +277,6 @@ OC.L10N.register(
     "Circles" : "Círculos",
     "Password protect" : "Proteger com palavra-passe",
     "Close" : "Fechar",
-    "Conversation name" : "Nome da conversação",
     "Done" : "Concluído",
     "Upload" : "Enviar",
     "Files" : "Ficheiros",
@@ -336,6 +335,7 @@ OC.L10N.register(
     "Android app" : "Aplicação Android",
     "iOS app" : "Aplicação iOS",
     "More actions" : "Mais acções",
+    "Conversation name" : "Nome da conversação",
     "Rename conversation" : "Renomear conversação"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -317,7 +317,6 @@
     "Password protect" : "محافظت با گذرواژه",
     "Add participants" : "افزودن عضو",
     "Close" : "بستن",
-    "Conversation name" : "نام مکالمه",
     "Upload" : "بارگذاری",
     "Files" : "فایل ها",
     "File to share" : "فایل برای اشتراک‌گذاری",
@@ -335,6 +334,7 @@
     "Create new poll" : "نظرسنجی جدید ایجاد کنید",
     "Record voice message" : "ضبط پیام صوتی",
     "New file" : "پروندهٔ تازه",
+    "Blank" : "جای خالی",
     "Settings" : "تنظیمات",
     "Send" : "ارسال",
     "Join" : "ملحق شدن",
@@ -372,6 +372,7 @@
     "Android app" : "اپ اندروید",
     "iOS app" : "اپ iOS",
     "More actions" : "اقدامات بیشتر",
+    "Conversation name" : "نام مکالمه",
     "Rename conversation" : "تغییر نام مکالمه"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
