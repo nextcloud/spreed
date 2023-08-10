@@ -1154,7 +1154,8 @@ class RoomController extends AEnvironmentAwareController {
 			} else {
 				$participant = $this->participantService->joinRoomAsNewGuest($this->roomService, $room, $password, $result['result'], $previousParticipant);
 			}
-			$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomToken', ['token' => $token]);
+			$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomPassword', ['token' => $token, 'action' => 'talkRoomPassword']);
+			$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomToken', ['token' => $token, 'action' => 'talkRoomToken']);
 		} catch (InvalidPasswordException $e) {
 			$response = new DataResponse([], Http::STATUS_FORBIDDEN);
 			$response->throttle(['token' => $token, 'action' => 'talkRoomPassword']);

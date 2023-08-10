@@ -209,7 +209,7 @@ class PageController extends Controller {
 					if ($passwordVerification['result']) {
 						$this->talkSession->renewSessionId();
 						$this->talkSession->setPasswordForRoom($token, $password);
-						$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomPassword', ['token' => $token]);
+						$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomPassword', ['token' => $token, 'action' => 'talkRoomPassword']);
 					} else {
 						$this->talkSession->removePasswordForRoom($token);
 						$showBruteForceWarning = $this->throttler->getDelay($this->request->getRemoteAddress(), 'talkRoomPassword') > 5000;
@@ -352,7 +352,7 @@ class PageController extends Controller {
 			if ($passwordVerification['result']) {
 				$this->talkSession->renewSessionId();
 				$this->talkSession->setPasswordForRoom($token, $password);
-				$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomPassword', ['token' => $token]);
+				$this->throttler->resetDelay($this->request->getRemoteAddress(), 'talkRoomPassword', ['token' => $token, 'action' => 'talkRoomPassword']);
 			} else {
 				$this->talkSession->removePasswordForRoom($token);
 				$showBruteForceWarning = $this->throttler->getDelay($this->request->getRemoteAddress(), 'talkRoomPassword') > 5000;
