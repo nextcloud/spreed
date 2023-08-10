@@ -40,7 +40,7 @@
 				<div v-if="isLoading[bot.id]" class="bots-settings__item-loader icon icon-loading-small" />
 				<NcButton class="bots-settings__item-button"
 					:type="bot.state ? 'primary' : 'secondary'"
-					:disabled="isBotForceEnabled(bot) || isLoading[bot.id]"
+					:disabled="isBotLocked(bot) || isLoading[bot.id]"
 					@click="toggleBotState(bot)">
 					{{ toggleButtonTitle(bot) }}
 				</NcButton>
@@ -108,12 +108,12 @@ export default {
 	},
 
 	methods: {
-		isBotForceEnabled(bot) {
-			return bot.state === BOT.STATE.FORCE_ENABLED
+		isBotLocked(bot) {
+			return bot.state === BOT.STATE.NO_SETUP
 		},
 
 		async toggleBotState(bot) {
-			if (this.isBotForceEnabled(bot)) {
+			if (this.isBotLocked(bot)) {
 				return
 			}
 			this.isLoading[bot.id] = true
@@ -122,7 +122,7 @@ export default {
 		},
 
 		toggleButtonTitle(bot) {
-			if (this.isBotForceEnabled(bot)) {
+			if (this.isBotLocked(bot)) {
 				return t('spreed', 'Enabled')
 			}
 
