@@ -1,14 +1,12 @@
 <template>
 	<div>
-		<NcMultiselect :value="currentRoom"
+		<NcSelect :value="currentRoom"
 			:options="roomOptions"
-			track-by="token"
 			label="displayName"
 			@input="(newValue) => newValue !== null && $emit('input', JSON.stringify({'m': currentMode.id, 't': newValue.token }))" />
 
-		<NcMultiselect :value="currentMode"
+		<NcSelect :value="currentMode"
 			:options="modeOptions"
-			track-by="id"
 			label="text"
 			@input="(newValue) => newValue !== null && $emit('input', JSON.stringify({'m': newValue.id, 't': currentRoom.token }))" />
 	</div>
@@ -18,13 +16,13 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
 import { FLOW, CONVERSATION, PARTICIPANT } from '../constants.js'
 
 export default {
 	name: 'FlowPostToConversation',
-	components: { NcMultiselect },
+	components: { NcSelect },
 	props: {
 		value: {
 			default: JSON.stringify({ m: '0', t: '' }),

@@ -29,12 +29,11 @@
 				:size="16" />
 		</div>
 
-		<NcMultiselect :id="deviceSelectorId"
-			v-model="deviceSelectedOption"
+		<NcSelect v-model="deviceSelectedOption"
+			:input-id="deviceSelectorId"
 			:options="deviceOptions"
-			track-by="id"
 			label="label"
-			:allow-empty="false"
+			:clearable="false"
 			:placeholder="deviceSelectorPlaceholder"
 			:disabled="!enabled || !deviceOptionsAvailable" />
 	</div>
@@ -44,14 +43,14 @@
 import Microphone from 'vue-material-design-icons/Microphone.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
 export default {
 
 	name: 'MediaDevicesSelector',
 
 	components: {
-		NcMultiselect,
+		NcSelect,
 		Microphone,
 		VideoIcon,
 	},
@@ -212,7 +211,7 @@ export default {
 		font-weight: bold;
 	}
 
-	.multiselect {
+	:deep(.v-select.select) {
 		width: 100%;
 	}
 }
