@@ -37,7 +37,10 @@
 
 			<TransitionGroup name="radial-reveal">
 				<!-- Filters -->
-				<div v-show="!isFocused" key="filters" class="filters">
+				<div v-show="searchText === ''"
+					key="filters"
+					class="filters"
+					:class="{'hidden-visually': isFocused}">
 					<NcActions class="filter-actions"
 						:primary="isFiltered !== null">
 						<template #icon>
@@ -76,9 +79,10 @@
 				</div>
 
 				<!-- Actions -->
-				<div v-show="!isFocused"
+				<div v-show="searchText === ''"
 					key="actions"
-					class="actions">
+					class="actions"
+					:class="{'hidden-visually': isFocused}">
 					<NcActions class="conversations-actions">
 						<template #icon>
 							<DotsVertical :size="20" />
