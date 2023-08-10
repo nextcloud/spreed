@@ -26,6 +26,7 @@
 		<MatterbridgeIntegration />
 		<AllowedGroups />
 		<Commands />
+		<BotsSettings />
 		<WebServerSetupChecks />
 		<StunServers />
 		<TurnServers />
@@ -38,6 +39,7 @@
 
 <script>
 import AllowedGroups from '../components/AdminSettings/AllowedGroups.vue'
+import BotsSettings from '../components/AdminSettings/BotsSettings.vue'
 import Commands from '../components/AdminSettings/Commands.vue'
 import GeneralSettings from '../components/AdminSettings/GeneralSettings.vue'
 import HostedSignalingServer from '../components/AdminSettings/HostedSignalingServer.vue'
@@ -54,6 +56,7 @@ export default {
 
 	components: {
 		AllowedGroups,
+		BotsSettings,
 		Commands,
 		GeneralSettings,
 		HostedSignalingServer,
