@@ -147,6 +147,13 @@
 * `0` - Public: Participants can see the result immediately and also who voted for which option
 * `1` - Hidden: The result is hidden until the poll is closed and then only the number of votes for each option are displayed
 
+## Bots
+
+### Bot states
+* `0` Disabled
+* `1` Enabled
+* `2` No setup - The bot can neither be enabled nor disabled by a moderator
+
 ## Signaling modes
 * `internal` - No external signaling server is used
 * `external` - A single external signaling server is used

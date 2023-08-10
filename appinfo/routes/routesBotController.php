@@ -48,6 +48,8 @@ return [
 		['name' => 'Bot#react', 'url' => '/api/{apiVersion}/bot/{token}/reaction/{messageId}', 'verb' => 'POST', 'requirements' => $requirementsWithMessageId],
 		/** @see \OCA\Talk\Controller\BotController::deleteReaction() */
 		['name' => 'Bot#deleteReaction', 'url' => '/api/{apiVersion}/bot/{token}/reaction/{messageId}', 'verb' => 'DELETE', 'requirements' => $requirementsWithMessageId],
+		/** @see \OCA\Talk\Controller\BotController::adminListBots() */
+		['name' => 'Bot#adminListBots', 'url' => '/api/{apiVersion}/bot/admin', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\BotController::listBots() */
 		['name' => 'Bot#listBots', 'url' => '/api/{apiVersion}/bot/{token}', 'verb' => 'GET', 'requirements' => $requirements],
 		/** @see \OCA\Talk\Controller\BotController::enableBot() */
