@@ -1,6 +1,36 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.1.0-rc.1 – 2023-08-11
+### Added
+- Add support for bots via webhooks
+  [#10139](https://github.com/nextcloud/spreed/issues/10139)
+  [#10151](https://github.com/nextcloud/spreed/issues/10151)
+- Add Markdown support for chat messages
+  [#10089](https://github.com/nextcloud/spreed/issues/10089)
+  [#10090](https://github.com/nextcloud/spreed/issues/10090)
+- Allow to filter the conversation list for unread mentions and messages
+  [#10093](https://github.com/nextcloud/spreed/issues/10093)
+- Provide an overview list of open conversations
+  [#10095](https://github.com/nextcloud/spreed/issues/10095)
+- Set a reminder to get notified about a chat messages at a later time
+  [#10104](https://github.com/nextcloud/spreed/issues/10104)
+  [#10152](https://github.com/nextcloud/spreed/issues/10152)
+  [#10155](https://github.com/nextcloud/spreed/issues/10155)
+- Show a hint when the call is running since one hour
+  [#10101](https://github.com/nextcloud/spreed/issues/10101)
+- Show the talking time of participants in the right sidebar
+  [#10145](https://github.com/nextcloud/spreed/issues/10145)
+
+### Changed
+- System messages of the same actions are now grouped
+  [#10143](https://github.com/nextcloud/spreed/issues/10143)
+- Update dependencies
+
+### Fixed
+- Fix resetting the bruteforce protection when joining a conversation
+  [#10165](https://github.com/nextcloud/spreed/issues/10165)
+
 ## 17.0.3 – 2023-07-28
 ### Changed
 - Update dependencies
