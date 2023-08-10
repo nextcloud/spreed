@@ -248,7 +248,7 @@ class PageController extends Controller {
 
 		$response = new TemplateResponse($this->appName, 'index', [
 			'app' => Application::APP_ID,
-			'id-app-content' => '#app-content-vue',
+			'id-app-content' => '#content-vue',
 			'id-app-navigation' => '#app-navigation-vue',
 		]);
 
@@ -299,7 +299,7 @@ class PageController extends Controller {
 		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
 
 		$response = new PublicTemplateResponse($this->appName, 'recording', [
-			'id-app-content' => '#app-content-vue',
+			'id-app-content' => '#content-vue',
 			'id-app-navigation' => null,
 		]);
 
@@ -374,7 +374,7 @@ class PageController extends Controller {
 		$this->eventDispatcher->dispatchTyped(new RenderReferenceEvent());
 
 		$response = new PublicTemplateResponse($this->appName, 'index', [
-			'id-app-content' => '#app-content-vue',
+			'id-app-content' => '#content-vue',
 			'id-app-navigation' => null,
 		]);
 
