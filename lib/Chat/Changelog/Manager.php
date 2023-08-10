@@ -139,6 +139,10 @@ class Manager {
 			. $this->l->t('- Groups can now be mentioned in chats') . "\n"
 			. $this->l->t('- Call recordings are automatically transcribed if a transcription provider app is registered') . "\n"
 			. $this->l->t('- Chat messages can be translated if a translation provider app is registered'),
+			$this->l->t('## New in Talk %s', ['17.1']) . "\n"
+			. $this->l->t('- **Markdown** can now be used in _chat_ messages') . "\n"
+			. $this->l->t('- Webhooks are now available to implement bots. See the documentation for more information https://nextcloud-talk.readthedocs.io/en/latest/bot-list/') . "\n"
+			. $this->l->t('- Set a reminder on a chat message to be notified later again'),
 		];
 	}
 }
