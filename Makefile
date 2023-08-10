@@ -76,6 +76,7 @@ appstore:
 	--exclude=docs \
 	--exclude=.drone.jsonnet \
 	--exclude=.drone.yml \
+	--exclude=.editorconfig \
 	--exclude=.eslintignore \
 	--exclude=.eslintrc.js \
 	--exclude=.git \
