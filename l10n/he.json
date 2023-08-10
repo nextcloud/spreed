@@ -484,7 +484,6 @@
     "Add participants" : "הוספת משתתפים",
     "Close" : "סגירה",
     "Search participants" : "חיפוש משתתפים",
-    "Conversation name" : "שם דיון",
     "You are currently waiting in the lobby" : "הנך בהמתנה בלובי",
     "Devices" : "מכשירים",
     "Done" : "הסתיים",
@@ -595,6 +594,7 @@
     "iOS app" : "יישומון ל־iOS",
     "More actions" : "פעולות נוספות",
     "Link copied to the clipboard!" : "הקישור הועתק ללוח הגזירים!",
+    "Conversation name" : "שם דיון",
     "Rename conversation" : "שינוי שם הדיון",
     "Exit fullscreen (F)" : "יציאה ממסך מלא (F)"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;"

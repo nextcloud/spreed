@@ -296,7 +296,6 @@
     "Create conversation" : "Buat percakapan",
     "Add participants" : "Tambahkan peserta",
     "Close" : "Tutup",
-    "Conversation name" : "Nama percakapan",
     "Done" : "Selesai",
     "Upload" : "Unggah",
     "Files" : "Berkas",
@@ -342,6 +341,7 @@
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
     "iOS app" : "Aplikasi iOS",
+    "Conversation name" : "Nama percakapan",
     "Rename conversation" : "Ganti nama percakapan"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

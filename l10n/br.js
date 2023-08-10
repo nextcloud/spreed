@@ -601,7 +601,6 @@ OC.L10N.register(
     "Add participants" : "Ouzhpennan tud",
     "Close" : "Serriñ",
     "Search participants" : "Klask implijer",
-    "Conversation name" : "Anv diviz",
     "You are currently waiting in the lobby" : "Ho gortoz er sal gortoz emaoc'h",
     "No microphone available" : "Mikro ebet kavet",
     "Select microphone" : "Choaz ur mikro",
@@ -752,6 +751,7 @@ OC.L10N.register(
     "The link could not be copied." : "Ne oa ket posupl eilañ al liamm.",
     "No matches" : "Kejadenn ebet",
     "Link copied to the clipboard!" : "Liamm eilet d'ar golver",
+    "Conversation name" : "Anv diviz",
     "Toggle fullscreen" : "Lakat/Kuitaat ar skramm a bezh",
     "Rename conversation" : "Adenvel an diviz",
     "Sending signaling message has failed." : "Kasadenn ar gemenadenn arhentañ a zo c'hwitet."

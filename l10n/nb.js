@@ -508,7 +508,6 @@ OC.L10N.register(
     "Add participants" : "Legg til deltager",
     "Close" : "Lukk",
     "Search participants" : "Søk etter deltakere",
-    "Conversation name" : "Samtalenavn",
     "Search …" : "Søk...",
     "You are currently waiting in the lobby" : "Du venter for øyeblikket i lobbyen",
     "No microphone available" : "Ingen mikrofon er tilgjengelig",
@@ -611,6 +610,7 @@ OC.L10N.register(
     "iOS app" : "iOS-app",
     "More actions" : "Flere handlinger",
     "No matches" : "Ingen treff",
+    "Conversation name" : "Samtalenavn",
     "Rename conversation" : "Endre navn på samtale"
 },
 "nplurals=2; plural=(n != 1);");
