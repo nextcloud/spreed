@@ -50,7 +50,6 @@ OC.L10N.register(
     "Password protect" : "Vern med passord",
     "Add participants" : "Legg til deltakarar",
     "Close" : "Lukk",
-    "Conversation name" : "Samtale namn",
     "Upload" : "Last opp",
     "Files" : "Filer",
     "Unread messages" : "Meldingar er ikkje lest",
@@ -85,6 +84,7 @@ OC.L10N.register(
     "Away" : "Borte",
     "Default" : "Standard",
     "The password is wrong. Try again." : "Passordet er gale. Prøv igjen.",
+    "Conversation name" : "Samtale namn",
     "Rename conversation" : "Eksterne samtalar "
 },
 "nplurals=2; plural=(n != 1);");

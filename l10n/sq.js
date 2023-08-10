@@ -211,7 +211,6 @@ OC.L10N.register(
     "Circles" : "Rrethet",
     "Password protect" : "Mbroje me fjalëkalim",
     "Close" : "Mbylleni",
-    "Conversation name" : "Emri i bisedës",
     "Devices" : "Pajisjet",
     "Done" : "U bë",
     "Upload" : "Ngarkoni",
@@ -263,6 +262,7 @@ OC.L10N.register(
     "Android app" : "Aplikacion Android",
     "iOS app" : "Aplikacion iOS",
     "More actions" : "Më tepër veprime ",
+    "Conversation name" : "Emri i bisedës",
     "Rename conversation" : "Riemërtojeni bisedën"
 },
 "nplurals=2; plural=(n != 1);");

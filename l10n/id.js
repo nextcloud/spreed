@@ -298,7 +298,6 @@ OC.L10N.register(
     "Create conversation" : "Buat percakapan",
     "Add participants" : "Tambahkan peserta",
     "Close" : "Tutup",
-    "Conversation name" : "Nama percakapan",
     "Done" : "Selesai",
     "Upload" : "Unggah",
     "Files" : "Berkas",
@@ -344,6 +343,7 @@ OC.L10N.register(
     "The password is wrong. Try again." : "Kata sandi salah. Coba lagi",
     "Android app" : "Aplikasi Android",
     "iOS app" : "Aplikasi iOS",
+    "Conversation name" : "Nama percakapan",
     "Rename conversation" : "Ganti nama percakapan"
 },
 "nplurals=1; plural=0;");

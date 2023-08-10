@@ -319,7 +319,6 @@ OC.L10N.register(
     "Password protect" : "محافظت با گذرواژه",
     "Add participants" : "افزودن عضو",
     "Close" : "بستن",
-    "Conversation name" : "نام مکالمه",
     "Upload" : "بارگذاری",
     "Files" : "فایل ها",
     "File to share" : "فایل برای اشتراک‌گذاری",
@@ -337,6 +336,7 @@ OC.L10N.register(
     "Create new poll" : "نظرسنجی جدید ایجاد کنید",
     "Record voice message" : "ضبط پیام صوتی",
     "New file" : "پروندهٔ تازه",
+    "Blank" : "جای خالی",
     "Settings" : "تنظیمات",
     "Send" : "ارسال",
     "Join" : "ملحق شدن",
@@ -374,6 +374,7 @@ OC.L10N.register(
     "Android app" : "اپ اندروید",
     "iOS app" : "اپ iOS",
     "More actions" : "اقدامات بیشتر",
+    "Conversation name" : "نام مکالمه",
     "Rename conversation" : "تغییر نام مکالمه"
 },
 "nplurals=2; plural=(n > 1);");

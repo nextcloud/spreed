@@ -176,7 +176,6 @@ OC.L10N.register(
     "Unread mentions" : "Menciones sin leer",
     "Password protect" : "Proteger con contraseña",
     "Close" : "Cerrar",
-    "Conversation name" : "Nombre de la conversación",
     "Devices" : "Dispositivos",
     "Done" : "Terminado",
     "No audio" : "Sin audio",
@@ -246,6 +245,7 @@ OC.L10N.register(
     "Android app" : "Aplicación Android",
     "iOS app" : "Aplicación iOS",
     "More actions" : "Más acciones",
+    "Conversation name" : "Nombre de la conversación",
     "Rename conversation" : "Renombrar conversación"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

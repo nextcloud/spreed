@@ -486,7 +486,6 @@ OC.L10N.register(
     "Add participants" : "הוספת משתתפים",
     "Close" : "סגירה",
     "Search participants" : "חיפוש משתתפים",
-    "Conversation name" : "שם דיון",
     "You are currently waiting in the lobby" : "הנך בהמתנה בלובי",
     "Devices" : "מכשירים",
     "Done" : "הסתיים",
@@ -597,6 +596,7 @@ OC.L10N.register(
     "iOS app" : "יישומון ל־iOS",
     "More actions" : "פעולות נוספות",
     "Link copied to the clipboard!" : "הקישור הועתק ללוח הגזירים!",
+    "Conversation name" : "שם דיון",
     "Rename conversation" : "שינוי שם הדיון",
     "Exit fullscreen (F)" : "יציאה ממסך מלא (F)"
 },
