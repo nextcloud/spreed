@@ -238,6 +238,21 @@ class BotController extends AEnvironmentAwareController {
 		return new DataResponse([], Http::STATUS_OK);
 	}
 
+	/**
+	 * Admin required
+	 */
+	public function adminListBots(): DataResponse {
+		$data = [];
+		$bots = $this->botServerMapper->getAllBots();
+		foreach ($bots as $bot) {
+			$botData = $bot->jsonSerialize();
+			unset($botData['secret']);
+			$data[] = $botData;
+		}
+
+		return new DataResponse($data);
+	}
+
 	#[NoAdminRequired]
 	#[RequireLoggedInModeratorParticipant]
 	public function listBots(): DataResponse {

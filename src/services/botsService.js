@@ -24,6 +24,15 @@ import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 
 /**
+ * Get information about available bots for this instance
+ *
+ * @return {object} The axios response
+ */
+const getAllBots = async function() {
+	return axios.get(generateOcsUrl('/apps/spreed/api/v1/bot/admin'))
+}
+
+/**
  * Get information about available bots for this conversation
  *
  * @param {string} token The conversation token
@@ -55,29 +64,9 @@ const disableBotForConversation = async function(token, id) {
 	return axios.delete(generateOcsUrl('/apps/spreed/api/v1/bot/{token}/{id}', { token, id }))
 }
 
-/**
- * Send a message to bot in conversation
- *
- * @param {string} token The conversation token
- * @param {object} object Object with arguments
- * @param {string} object.message The message to send
- * @param {string} object.referenceId for the message to be able to later identify it again
- * @param {number} object.replyTo Parent id which this message is a reply to
- * @param {boolean} object.silent If sent silent the chat message will not create any notifications
- * @return {object} The axios response
- */
-const sendMessageToBot = async function(token, { message, referenceId, replyTo, silent }) {
-	return axios.post(generateOcsUrl('/apps/spreed/api/v1/bot/{token}/message', { token }), {
-		message,
-		referenceId,
-		replyTo,
-		silent,
-	})
-}
-
 export {
+	getAllBots,
 	getConversationBots,
 	enableBotForConversation,
 	disableBotForConversation,
-	sendMessageToBot,
 }

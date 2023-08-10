@@ -221,6 +221,6 @@ export const BOT = {
 	STATE: {
 		DISABLED: 0,
 		ENABLED: 1,
-		FORCE_ENABLED: 2,
+		NO_SETUP: 2,
 	},
 }
