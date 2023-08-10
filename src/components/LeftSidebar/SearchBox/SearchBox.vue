@@ -39,8 +39,6 @@ import Magnify from 'vue-material-design-icons/Magnify.vue'
 
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import { EventBus } from '../../../services/EventBus.js'
-
 export default {
 	name: 'SearchBox',
 	components: {
@@ -87,16 +85,6 @@ export default {
 		},
 	},
 
-	mounted() {
-		this.focusInputIfRoot()
-		/**
-		 * Listen to routeChange global events and focus on the input
-		 */
-		EventBus.$on('route-change', this.focusInputIfRoot)
-	},
-	beforeDestroy() {
-		EventBus.$off('route-change', this.focusInputIfRoot)
-	},
 	methods: {
 		updateValue(value) {
 			this.$emit('update:value', value)
@@ -105,12 +93,6 @@ export default {
 		// Focuses the input.
 		focus() {
 			this.$refs.searchConversations.focus()
-		},
-		// Focuses the input if the current route is root.
-		focusInputIfRoot() {
-			if (this.$route.name === 'root') {
-				this.focus()
-			}
 		},
 		/**
 		 * Emits the abort-search event and re-focuses the input
