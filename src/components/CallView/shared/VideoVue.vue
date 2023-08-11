@@ -27,7 +27,7 @@
 		@mouseover="showShadow"
 		@mouseleave="hideShadow"
 		@click="handleClickVideo">
-		<transition name="fade">
+		<TransitionWrapper name="fade">
 			<div v-show="showVideo"
 				:class="videoWrapperClass"
 				class="videoWrapper"
@@ -38,14 +38,14 @@
 					class="video"
 					@playing="updateVideoAspectRatio" />
 			</div>
-		</transition>
-		<transition name="fade">
+		</TransitionWrapper>
+		<TransitionWrapper name="fade">
 			<Screen v-if="showSharedScreen"
 				:is-big="isBig"
 				:token="token"
 				:call-participant-model="model"
 				:shared-data="sharedData" />
-		</transition>
+		</TransitionWrapper>
 		<transition-group name="fade">
 			<div v-if="showBackgroundAndAvatar"
 				:key="'backgroundAvatar'"
@@ -101,6 +101,7 @@ import AccountCircle from 'vue-material-design-icons/AccountCircle.vue'
 
 import NcAvatar from '@nextcloud/vue/dist/Components/NcAvatar.js'
 
+import TransitionWrapper from '../../TransitionWrapper.vue'
 import Screen from './Screen.vue'
 import VideoBackground from './VideoBackground.vue'
 import VideoBottomBar from './VideoBottomBar.vue'
@@ -116,6 +117,7 @@ export default {
 
 	components: {
 		NcAvatar,
+		TransitionWrapper,
 		VideoBackground,
 		AccountCircle,
 		Screen,

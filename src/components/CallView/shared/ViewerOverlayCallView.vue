@@ -51,7 +51,7 @@
 					</NcButton>
 				</div>
 
-				<Transition name="slide-down">
+				<TransitionWrapper name="slide-down">
 					<div v-show="!isCollapsed"
 						class="viewer-overlay__video-container"
 						tabindex="0"
@@ -103,7 +103,7 @@
 								disable-keyboard-shortcuts />
 						</div>
 					</div>
-				</Transition>
+				</TransitionWrapper>
 			</div>
 		</Portal>
 	</div>
@@ -118,6 +118,7 @@ import ChevronUp from 'vue-material-design-icons/ChevronUp.vue'
 
 import { NcButton, Tooltip } from '@nextcloud/vue'
 
+import TransitionWrapper from '../../TransitionWrapper.vue'
 import EmptyCallView from './EmptyCallView.vue'
 import LocalAudioControlButton from './LocalAudioControlButton.vue'
 import LocalVideo from './LocalVideo.vue'
@@ -138,6 +139,7 @@ export default {
 		ChevronUp,
 		ChevronDown,
 		NcButton,
+		TransitionWrapper,
 		VideoVue,
 		ArrowExpand,
 	},
