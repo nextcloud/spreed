@@ -554,21 +554,23 @@ export default {
 		reminderOptions() {
 			const currentDateTime = moment()
 
-			// Same day 18:00 PM (or hidden)
-			const laterTodayTime = (currentDateTime.hour() < 18)
+			// Same day 18:00 PM (hidden if after 17:00 PM now)
+			const laterTodayTime = (currentDateTime.hour() < 17)
 				? moment().hour(18)
 				: null
 
 			// Tomorrow 08:00 AM
 			const tomorrowTime = moment().add(1, 'days').hour(8)
 
-			// Saturday 08:00 AM (or hidden)
-			const thisWeekendTime = (currentDateTime.day() !== 6 && currentDateTime.day() !== 0)
+			// Saturday 08:00 AM (hidden if Friday, Saturday or Sunday now)
+			const thisWeekendTime = (currentDateTime.day() > 0 && currentDateTime.day() < 5)
 				? moment().day(6).hour(8)
 				: null
 
-			// Next Monday 08:00 AM
-			const nextWeekTime = moment().add(1, 'weeks').day(1).hour(8)
+			// Next Monday 08:00 AM (hidden if Sunday now)
+			const nextWeekTime = (currentDateTime.day() !== 0)
+				? moment().add(1, 'weeks').day(1).hour(8)
+				: null
 
 			return [
 				{
