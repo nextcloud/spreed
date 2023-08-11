@@ -35,7 +35,7 @@
 					:size="20" />
 			</template>
 		</NcButton>
-		<TransitionWrapper :name="isStripe ? 'slide-down' : 'default'">
+		<TransitionWrapper :name="isStripe ? 'slide-down' : undefined">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
 				<div :class="[isStripe ? 'stripe-wrapper' : 'grid-wrapper']">
 					<NcButton v-if="hasPreviousPage && gridWidth > 0"
