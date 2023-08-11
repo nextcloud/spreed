@@ -20,7 +20,10 @@
 -->
 
 <template>
-	<transition-group name="toast" class="toaster" tag="ul">
+	<TransitionWrapper class="toaster"
+		name="toast"
+		tag="ul"
+		group>
 		<li v-for="toast in toasts"
 			:key="toast.seed"
 			class="toast"
@@ -32,7 +35,7 @@
 				{{ toast.name }}
 			</span>
 		</li>
-	</transition-group>
+	</TransitionWrapper>
 </template>
 
 <script>
@@ -43,8 +46,14 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor.js'
 
+import TransitionWrapper from '../../TransitionWrapper.vue'
+
 export default {
 	name: 'ReactionToaster',
+
+	components: {
+		TransitionWrapper,
+	},
 
 	props: {
 		/**
@@ -240,16 +249,5 @@ export default {
 		transform: translateY(calc(-1 * var(--vertical-offset) * 1vh));
 		opacity: 0;
 	}
-}
-
-.toast-move,
-.toast-enter-active,
-.toast-leave-active {
-	transition: opacity 0.3s linear;
-}
-
-.toast-enter-from,
-.toast-leave-to {
-	opacity: 0;
 }
 </style>

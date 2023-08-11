@@ -29,7 +29,10 @@
 		<!-- eslint-disable-next-line vue/no-v-html -->
 		<p class="settings-hint" v-html="documentationHint" />
 
-		<transition-group name="fade" class="turn-servers" tag="ul">
+		<TransitionWrapper class="turn-servers"
+			name="fade"
+			tag="ul"
+			group>
 			<TurnServer v-for="(server, index) in servers"
 				:key="`server${index}`"
 				:schemes.sync="servers[index].schemes"
@@ -43,7 +46,7 @@
 				@update:server="debounceUpdateServers"
 				@update:secret="debounceUpdateServers"
 				@update:protocols="debounceUpdateServers" />
-		</transition-group>
+		</TransitionWrapper>
 
 		<NcButton class="additional-top-margin"
 			:disabled="loading"
@@ -68,6 +71,7 @@ import { loadState } from '@nextcloud/initial-state'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import TurnServer from '../../components/AdminSettings/TurnServer.vue'
+import TransitionWrapper from '../TransitionWrapper.vue'
 
 export default {
 	name: 'TurnServers',
@@ -76,6 +80,7 @@ export default {
 		NcButton,
 		TurnServer,
 		Plus,
+		TransitionWrapper,
 	},
 
 	data() {

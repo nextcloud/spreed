@@ -35,7 +35,7 @@
 					@abort-search="abortSearch" />
 			</div>
 
-			<TransitionGroup name="radial-reveal">
+			<TransitionWrapper name="radial-reveal" group>
 				<!-- Filters -->
 				<div v-show="searchText === ''"
 					key="filters"
@@ -105,7 +105,7 @@
 						</NcActionButton>
 					</NcActions>
 				</div>
-			</TransitionGroup>
+			</TransitionWrapper>
 
 			<!-- All open conversations list -->
 			<OpenConversationsList ref="openConversationsList" />
@@ -248,6 +248,7 @@ import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
 import ConversationIcon from '../ConversationIcon.vue'
 import Hint from '../Hint.vue'
 import LoadingPlaceholder from '../LoadingPlaceholder.vue'
+import TransitionWrapper from '../TransitionWrapper.vue'
 import Conversation from './ConversationsList/Conversation.vue'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
@@ -281,6 +282,8 @@ export default {
 		ConversationIcon,
 		NcActions,
 		NcActionButton,
+		TransitionWrapper,
+		// Icons
 		AtIcon,
 		MessageBadge,
 		FilterIcon,
@@ -856,21 +859,6 @@ export default {
 .settings-button {
 	justify-content: flex-start !important;
 }
-
-  .radial-reveal-enter-active {
-    animation: radial-reveal 0.15s forwards;
-  }
-
-  @keyframes radial-reveal {
-      0% {
-        transform: scale(0); /* Start as a point */
-        opacity: 0;
-      }
-      100% {
-        transform: scale(1); /* Expand to full size */
-        opacity: 1;
-      }
-    }
 
 :deep(.input-field__clear-button) {
 	border-radius: var(--border-radius-pill) !important;
