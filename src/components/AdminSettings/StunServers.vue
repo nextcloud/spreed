@@ -30,7 +30,10 @@
 			{{ t('spreed', 'A STUN server is used to determine the public IP address of participants behind a router.') }}
 		</p>
 
-		<transition-group name="fade" class="stun-servers" tag="ul">
+		<TransitionWrapper name="fade"
+			class="stun-servers"
+			tag="ul"
+			group>
 			<StunServer v-for="(server, index) in servers"
 				:key="`server${index}`"
 				:server.sync="servers[index]"
@@ -38,7 +41,7 @@
 				:loading="loading"
 				@remove-server="removeServer"
 				@update:server="debounceUpdateServers" />
-		</transition-group>
+		</TransitionWrapper>
 
 		<NcButton class="additional-top-margin"
 			:disabled="loading"
@@ -63,6 +66,7 @@ import { loadState } from '@nextcloud/initial-state'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import StunServer from '../../components/AdminSettings/StunServer.vue'
+import TransitionWrapper from '../TransitionWrapper.vue'
 
 export default {
 	name: 'StunServers',
@@ -71,6 +75,7 @@ export default {
 		NcButton,
 		StunServer,
 		Plus,
+		TransitionWrapper,
 	},
 
 	data() {

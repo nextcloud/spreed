@@ -34,9 +34,10 @@
 					type="file"
 					class="hidden-visually"
 					@change="handleFileInput">
-				<transition-group class="upload-editor__previews"
+				<TransitionWrapper class="upload-editor__previews"
 					name="fade"
-					tag="div">
+					tag="div"
+					group>
 					<template v-for="file in files">
 						<FilePreview :key="file.temporaryMessage.id"
 							v-bind="file.temporaryMessage.messageParameters.file"
@@ -54,7 +55,7 @@
 							</template>
 						</NcButton>
 					</div>
-				</transition-group>
+				</TransitionWrapper>
 			</template>
 			<template v-else>
 				<AudioPlayer :name="voiceMessageName"
@@ -81,6 +82,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
 import AudioPlayer from '../MessagesList/MessagesGroup/Message/MessagePart/AudioPlayer.vue'
 import FilePreview from '../MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
+import TransitionWrapper from '../TransitionWrapper.vue'
 
 export default {
 	name: 'NewMessageUploadEditor',
@@ -91,6 +93,7 @@ export default {
 		Plus,
 		AudioPlayer,
 		NcButton,
+		TransitionWrapper,
 	},
 
 	computed: {

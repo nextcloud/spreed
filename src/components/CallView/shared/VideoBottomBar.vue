@@ -40,10 +40,11 @@
 				</div>
 			</TransitionWrapper>
 
-			<transition-group v-if="!isScreen"
+			<TransitionWrapper v-if="!isScreen"
 				v-show="showVideoOverlay"
 				class="media-indicators"
-				name="fade">
+				name="fade"
+				group>
 				<NcButton v-if="showAudioIndicator"
 					key="audioIndicator"
 					v-tooltip="audioButtonTooltip"
@@ -89,7 +90,7 @@
 					class="status-indicator iceFailedIndicator">
 					<AlertCircle :size="20" fill-color="#ffffff" />
 				</div>
-			</transition-group>
+			</TransitionWrapper>
 
 			<NcButton v-if="showStopFollowingButton"
 				class="following-button"

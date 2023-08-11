@@ -34,7 +34,10 @@
 			{{ t('spreed', 'It is highly recommended to set up a distributed cache when using Nextcloud Talk together with a High Performance Back-end.') }}
 		</NcNoteCard>
 
-		<transition-group v-if="servers.length" name="fade" tag="ul">
+		<TransitionWrapper v-if="servers.length"
+			name="fade"
+			tag="ul"
+			group>
 			<SignalingServer v-for="(server, index) in servers"
 				:key="`server${index}`"
 				:server.sync="servers[index].server"
@@ -44,7 +47,7 @@
 				@remove-server="removeServer"
 				@update:server="debounceUpdateServers"
 				@update:verify="debounceUpdateServers" />
-		</transition-group>
+		</TransitionWrapper>
 
 		<NcButton v-if="!servers.length || isClusteredMode"
 			class="additional-top-margin"
@@ -93,6 +96,7 @@ import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import SignalingServer from '../../components/AdminSettings/SignalingServer.vue'
+import TransitionWrapper from '../TransitionWrapper.vue'
 
 import { SIGNALING } from '../../constants.js'
 
@@ -106,6 +110,7 @@ export default {
 		NcTextField,
 		Plus,
 		SignalingServer,
+		TransitionWrapper,
 	},
 
 	data() {

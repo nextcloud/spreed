@@ -20,7 +20,10 @@
 -->
 
 <template>
-	<Transition v-bind="$attrs" :name="name">
+	<TransitionGroup v-if="group" v-bind="$attrs" :name="name">
+		<slot />
+	</TransitionGroup>
+	<Transition v-else v-bind="$attrs" :name="name">
 		<slot />
 	</Transition>
 </template>
@@ -36,11 +39,18 @@ export default {
 				return [
 					'default',
 					'fade',
+					'radial-reveal',
 					'slide-up',
 					'slide-right',
 					'slide-down',
+					'toast',
+					'zoom',
 				].includes(value)
 			},
+		},
+		group: {
+			type: Boolean,
+			default: false,
 		},
 	},
 }
@@ -63,6 +73,23 @@ export default {
 	&-enter-active,
 	&-leave-active {
 		transition: $fade-transition;
+	}
+}
+
+.radial-reveal {
+	&-enter-active {
+		animation: radial-reveal 0.15s forwards;
+	}
+}
+
+@keyframes radial-reveal {
+	0% {
+		transform: scale(0); /* Start as a point */
+		opacity: 0;
+	}
+	100% {
+		transform: scale(1); /* Expand to full size */
+		opacity: 1;
 	}
 }
 
@@ -124,6 +151,39 @@ export default {
 		transition: $fade-transition;
 		/* force top container to resize during animation */
 		position: absolute !important;
+	}
+}
+
+.toast {
+	&-enter-from,
+	&-leave-to {
+		opacity: 0;
+	}
+
+	&-move,
+	&-enter-active,
+	&-leave-active {
+		transition: opacity 0.3s linear;
+	}
+}
+
+.zoom {
+	&-enter-active {
+		animation: zoom-in var(--animation-quick);
+	}
+
+	&-leave-active {
+		animation: zoom-in var(--animation-quick) reverse;
+		will-change: transform;
+	}
+}
+
+@keyframes zoom-in {
+	0% {
+		transform: scale(0);
+	}
+	100% {
+		transform: scale(1);
 	}
 }
 </style>

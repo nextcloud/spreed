@@ -46,7 +46,7 @@
 				:call-participant-model="model"
 				:shared-data="sharedData" />
 		</TransitionWrapper>
-		<transition-group name="fade">
+		<TransitionWrapper name="fade">
 			<div v-if="showBackgroundAndAvatar"
 				:key="'backgroundAvatar'"
 				class="avatar-container">
@@ -69,6 +69,8 @@
 					</div>
 				</template>
 			</div>
+		</TransitionWrapper>
+		<TransitionWrapper name="fade">
 			<div v-if="showPlaceholderForPromoted"
 				:key="'placeholderForPromoted'"
 				class="placeholder-for-promoted">
@@ -76,7 +78,7 @@
 					fill-color="#FFFFFF"
 					:size="36" />
 			</div>
-		</transition-group>
+		</TransitionWrapper>
 		<div v-if="connectionMessage"
 			:class="connectionMessageClass"
 			class="connection-message">
