@@ -265,7 +265,7 @@ class BotController extends AEnvironmentAwareController {
 		foreach ($bots as $bot) {
 			$botData = $this->formatBot($bot, in_array($bot->getId(), $alreadyInstalled, true));
 			if ($botData !== null) {
-				$data[] = $this->formatBot($bot, in_array($bot->getId(), $alreadyInstalled, true));
+				$data[] = $botData;
 			}
 		}
 
