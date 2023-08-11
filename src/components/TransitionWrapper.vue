@@ -20,10 +20,16 @@
 -->
 
 <template>
-	<TransitionGroup v-if="group" v-bind="$attrs" :name="name">
+	<TransitionGroup v-if="group"
+		v-bind="$attrs"
+		:name="name"
+		v-on="$listeners">
 		<slot />
 	</TransitionGroup>
-	<Transition v-else v-bind="$attrs" :name="name">
+	<Transition v-else
+		v-bind="$attrs"
+		:name="name"
+		v-on="$listeners">
 		<slot />
 	</Transition>
 </template>
@@ -31,13 +37,15 @@
 <script>
 export default {
 	name: 'TransitionWrapper',
+
+	inheritAttrs: false,
+
 	props: {
 		name: {
 			type: String,
-			default: 'default', // could be undefined?
+			default: undefined,
 			validator(value) {
 				return [
-					'default',
 					'fade',
 					'radial-reveal',
 					'slide-up',
@@ -48,6 +56,7 @@ export default {
 				].includes(value)
 			},
 		},
+
 		group: {
 			type: Boolean,
 			default: false,
