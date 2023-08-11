@@ -36,22 +36,18 @@
 				<div v-show="!enabled"
 					class="add-part-wrapper">
 					<Plus class="icon" :size="20" />
-					<NcMultiselect ref="partNcMultiselect"
-						v-model="selectedType"
+					<NcSelect v-model="selectedType"
 						label="displayName"
-						track-by="type"
 						:placeholder="newPartPlaceholder"
 						:options="formatedTypes"
-						:user-select="true"
-						:internal-search="true"
 						@input="clickAddPart">
-						<template #option="{option}">
+						<template #option="option">
 							<img class="icon-multiselect-service"
 								:src="option.iconUrl"
 								alt="">
 							{{ option.displayName }}
 						</template>
-					</NcMultiselect>
+					</NcSelect>
 				</div>
 				<div v-show="parts.length > 0"
 					class="enable-switch-line">
@@ -107,7 +103,7 @@ import { imagePath } from '@nextcloud/router'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 import BridgePart from './BridgePart.vue'
@@ -125,7 +121,7 @@ export default {
 	components: {
 		NcButton,
 		NcCheckboxRadioSwitch,
-		NcMultiselect,
+		NcSelect,
 		BridgePart,
 		Message,
 		NcModal,
@@ -642,7 +638,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep(.icon-multiselect-service) {
+.icon-multiselect-service {
 	width: 16px !important;
 	height: 16px !important;
 	margin-right: 10px;
@@ -724,6 +720,7 @@ export default {
 		.enable-switch-line {
 			display: flex;
 			height: 44px;
+			margin-top: 5px;
 
 			label {
 				flex-grow: 1;
