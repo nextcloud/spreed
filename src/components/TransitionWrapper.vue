@@ -36,6 +36,8 @@ export default {
 				return [
 					'default',
 					'fade',
+					'slide-up',
+					'slide-right',
 					'slide-down',
 				].includes(value)
 			},
@@ -61,6 +63,46 @@ export default {
 	&-enter-active,
 	&-leave-active {
 		transition: $fade-transition;
+	}
+}
+
+.slide-up {
+	&-enter,
+	&-leave-to {
+		transform: translateY(-50%);
+		opacity: 0;
+	}
+
+	&-enter-to,
+	&-leave {
+		transform: translateY(0);
+		opacity: 1;
+	}
+
+	&-enter-active,
+	&-leave-active {
+		pointer-events: none;
+		transition: $fade-transition-slow;
+	}
+}
+
+.slide-right {
+	&-enter,
+	&-leave-to {
+		min-width: 0 !important;
+		max-width: 0 !important;
+	}
+
+	&-enter-to,
+	&-leave {
+		min-width: 300px;
+		max-width: 500px;
+	}
+
+	&-enter-active,
+	&-leave-active {
+		transition-duration: var(--animation-quick);
+		transition-property: min-width, max-width;
 	}
 }
 
