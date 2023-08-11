@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 return [
 	'ocs' => [
+		['name' => 'Api#bruteforceAttempts', 'url' => '/bruteforce-attempts', 'verb' => 'GET'],
 		['name' => 'Api#resetSpreed', 'url' => '/', 'verb' => 'DELETE'],
 	],
 ];

@@ -1072,6 +1072,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" views call-URL of room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param null|TableNode $formData
+	 */
+	public function userViewsCallURL(string $user, string $identifier, int $statusCode, TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendFrontpageRequest(
+			'GET', '/call/' . (self::$identifierToToken[$identifier] ?? $identifier)
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($formData instanceof TableNode) {
+			$content = $this->response->getBody()->getContents();
+			foreach ($formData->getRows() as $line) {
+				Assert::assertStringContainsString($line[0], $content);
+			}
+		}
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" sets notifications to (default|disabled|mention|all) for room "([^"]*)" \((v4)\)$/
 	 *
 	 * @param string $user
@@ -2937,6 +2961,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		$this->setCurrentUser($currentUser);
+		$this->enableDisableBruteForceProtection('disable');
 	}
 
 	/**
@@ -2976,8 +3001,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @Given /^as user "([^"]*)"$/
 	 * @param string $user
 	 */
-	public function setCurrentUser($user) {
+	public function setCurrentUser(?string $user): ?string {
+		$oldUser = $this->currentUser;
 		$this->currentUser = $user;
+		return $oldUser;
 	}
 
 	/**
@@ -2993,6 +3020,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->setUserDisplayName($user);
 			$response = $this->userExists($user);
 			$this->assertStatusCode($response, 200);
+		}
+	}
+
+	/**
+	 * @Given /^(enable|disable) brute force protection$/
+	 */
+	public function enableDisableBruteForceProtection(string $enable): void {
+		// config:system:get auth.bruteforce.protection.enabled
+		$exitCode = $this->runOcc(['config:system:set', 'auth.bruteforce.protection.enabled', '--type=boolean', '--value=' . ($enable === 'enable' ? 'true' : 'false')]);
+		$this->theCommandWasSuccessful();
+	}
+
+	/**
+	 * @Given /^the following brute force attempts are registered$/
+	 */
+	public function assertBruteforceAttempts(TableNode $tableNode = null): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendRequest('GET', '/apps/spreedcheats/bruteforce-attempts');
+		$data = $this->getDataFromResponse($this->response);
+		$this->setCurrentUser($currentUser);
+
+		if ($tableNode === null) {
+			Assert::assertEmpty($data);
+		} else {
+			Assert::assertEquals($tableNode->getRowsHash(), $data);
 		}
 	}
 
@@ -3669,6 +3721,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		} elseif ($comparison === 'ends not with') {
 			Assert::assertStringEndsNotWith($needle, $this->response->getBody()->getContents());
 		}
+	}
+
+	/**
+	 * @param string $verb
+	 * @param string $url
+	 * @param TableNode|array|null $body
+	 * @param array $headers
+	 */
+	public function sendFrontpageRequest($verb, $url, $body = null, array $headers = [], array $options = []) {
+		$fullUrl = $this->baseUrl . 'index.php' . $url;
+		$this->sendRequestFullUrl($verb, $fullUrl, $body, $headers, $options);
 	}
 
 	/**
