@@ -654,6 +654,7 @@ OC.L10N.register(
     "Save changes" : "Uložit změny",
     "Saving …" : "Ukládání…",
     "Saved!" : "Uloženo",
+    "State" : "Stav",
     "Name" : "Jméno",
     "Description" : "Popis",
     "Enabled" : "Zapnuto",

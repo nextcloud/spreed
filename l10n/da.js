@@ -311,6 +311,7 @@ OC.L10N.register(
     "Save changes" : "Gem ændringer",
     "Saving …" : "Gemmer…",
     "Saved!" : "Gemt!",
+    "State" : "Tilstand",
     "Name" : "Navn",
     "Description" : "Beskrivelse",
     "Enabled" : "Aktiveret",
