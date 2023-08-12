@@ -464,6 +464,7 @@ OC.L10N.register(
     "Save changes" : "Enrollañ ar cheñchamantoù",
     "Saving …" : "Orc'h enrolliñ",
     "Saved!" : "Enrollet !",
+    "State" : "Stad",
     "Name" : "Anv",
     "Description" : "Deskrivadur",
     "Disabled" : "Disaotreañ",
