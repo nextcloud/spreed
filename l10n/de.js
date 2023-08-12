@@ -628,7 +628,7 @@ OC.L10N.register(
     "Save changes" : "Änderungen speichern",
     "Saving …" : "Speichern …",
     "Saved!" : "Gespeichert!",
-    "State" : "Benötigt keine Übersetzung. Hier wird nur die formelle Übersetzung verwendet (de_DE).",
+    "State" : "Status",
     "Name" : "Name",
     "Description" : "Beschreibung",
     "Enabled" : "Aktiviert",
