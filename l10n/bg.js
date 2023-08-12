@@ -628,6 +628,7 @@ OC.L10N.register(
     "Save changes" : "Запиши промените",
     "Saving …" : "Записване …",
     "Saved!" : "Записано!",
+    "State" : "Състояние",
     "Name" : "Име",
     "Description" : "Описание",
     "Enabled" : "Включено",
