@@ -371,12 +371,10 @@ const mutations = {
 
 		// when speaking has stopped, update the total talking time
 		if (currentSpeakingState && !speaking && state.speaking[token][sessionId].lastTimestamp) {
+			state.speaking[token][sessionId].speaking = false
 			state.speaking[token][sessionId].totalCountedTime += (currentTimestamp - state.speaking[token][sessionId].lastTimestamp)
-		}
-
-		// don't change state for consecutive identical signals
-		if (currentSpeakingState !== speaking) {
-			state.speaking[token][sessionId].speaking = speaking
+		} else if (!currentSpeakingState && speaking) {
+			state.speaking[token][sessionId].speaking = true
 			state.speaking[token][sessionId].lastTimestamp = currentTimestamp
 		}
 	},
