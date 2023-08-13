@@ -370,7 +370,7 @@ const mutations = {
 		const currentSpeakingState = state.speaking[token][sessionId].speaking
 
 		// when speaking has stopped, update the total talking time
-		if (currentSpeakingState && !speaking && state.speaking[token][sessionId].lastTimestamp) {
+		if (currentSpeakingState && !speaking) {
 			state.speaking[token][sessionId].speaking = false
 			state.speaking[token][sessionId].totalCountedTime += (currentTimestamp - state.speaking[token][sessionId].lastTimestamp)
 		} else if (!currentSpeakingState && speaking) {
