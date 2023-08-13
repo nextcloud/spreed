@@ -348,8 +348,8 @@ const mutations = {
 	 * property to an existing participant, as the participant would be reset
 	 * when the participants are purged whenever they are fetched again.
 	 * Similarly, "addParticipant" can not be called either to add a participant
-	 * if it was not fetched yet but the signaling reported it as being speaking,
-	 * as the attendeeId would be unknown.
+	 * if it was not fetched yet but the call model reported it as being
+	 * speaking, as the attendeeId would be unknown.
 	 *
 	 * @param {object} state - current store state.
 	 * @param {object} data - the wrapping object.
