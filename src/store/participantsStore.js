@@ -369,13 +369,13 @@ const mutations = {
 		const currentTimestamp = Date.now()
 		const currentSpeakingState = state.speaking[token][sessionId].speaking
 
-		// when speaking has stopped, update the total talking time
-		if (currentSpeakingState && !speaking) {
-			state.speaking[token][sessionId].speaking = false
-			state.speaking[token][sessionId].totalCountedTime += (currentTimestamp - state.speaking[token][sessionId].lastTimestamp)
-		} else if (!currentSpeakingState && speaking) {
+		if (!currentSpeakingState && speaking) {
 			state.speaking[token][sessionId].speaking = true
 			state.speaking[token][sessionId].lastTimestamp = currentTimestamp
+		} else if (currentSpeakingState && !speaking) {
+			// when speaking has stopped, update the total talking time
+			state.speaking[token][sessionId].speaking = false
+			state.speaking[token][sessionId].totalCountedTime += (currentTimestamp - state.speaking[token][sessionId].lastTimestamp)
 		}
 	},
 
