@@ -932,7 +932,7 @@ OC.L10N.register(
     "Submit" : "Enviar",
     "The text must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "O texto debe ser menor ou igual a {maxLength} caracteres. O seu texto actual ten {charactersCount} caracteres.",
     "Message expiration" : "Caducidade da mensaxe",
-    "Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation." : "As mensaxes das parolas poden caducar após dun tempo determinado. Nota: os ficheiros compartidos na parola non se eliminarán para o propietario, mais xa non se compartirán na conversa.",
+    "Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation." : "As mensaxes das parolas poden caducar após dun tempo determinado. Nota: Os ficheiros compartidos na parola non se eliminarán para o propietario, mais xa non se compartirán na conversa.",
     "Custom expiration time" : "Tempo de caducidade personalizado",
     "Message expiration disabled" : "Foi desactivada a caducidade da mensaxe",
     "Message expiration set: {duration}" : "Estabelecemento da caducidade da mensaxe: {duration}",
