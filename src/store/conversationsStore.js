@@ -31,6 +31,7 @@ import {
 	PARTICIPANT,
 	WEBINAR,
 } from '../constants.js'
+import BrowserStorage from '../services/BrowserStorage.js'
 import {
 	makePublic,
 	makePrivate,
@@ -315,8 +316,9 @@ const actions = {
 	 * @param {object} payload the payload
 	 * @param {object[]} payload.conversations new conversations list
 	 * @param {boolean} payload.withRemoving whether to remove conversations that are not in the new list
+	 * @param {boolean} payload.withCaching whether to cache conversations to BrowserStorage with patch
 	 */
-	patchConversations(context, { conversations, withRemoving = false }) {
+	patchConversations(context, { conversations, withRemoving = false, withCaching = false }) {
 		const currentConversations = context.state.conversations
 		const newConversations = Object.fromEntries(
 			conversations.map((conversation) => [conversation.token, conversation])
@@ -339,6 +341,45 @@ const actions = {
 				context.dispatch('updateConversationIfHasChanged', newConversation)
 			}
 		}
+
+		if (withCaching) {
+			context.dispatch('cacheConversations')
+		}
+	},
+
+	/**
+	 * Restores conversations from BrowserStorage and add them to the store state
+	 *
+	 * @param {object} context default store context
+	 */
+	restoreConversations(context) {
+		const cachedConversations = BrowserStorage.getItem('cachedConversations')
+		if (!cachedConversations?.length) {
+			return
+		}
+
+		context.dispatch('patchConversations', {
+			conversations: JSON.parse(cachedConversations),
+			withRemoving: true,
+		})
+
+		console.debug('Conversations have been restored from BrowserStorage')
+	},
+
+	/**
+	 * Save conversations to BrowserStorage from the store state
+	 *
+	 * @param {object} context default store context
+	 */
+	cacheConversations(context) {
+		const conversations = context.getters.conversationsList
+		if (!conversations.length) {
+			return
+		}
+
+		const serializedConversations = JSON.stringify(conversations)
+		BrowserStorage.setItem('cachedConversations', serializedConversations)
+		console.debug(`Conversations were saved to BrowserStorage. Estimated object size: ${(serializedConversations.length / 1024).toFixed(2)} kB`)
 	},
 
 	/**
@@ -722,6 +763,8 @@ const actions = {
 				// Remove only when fetching a full list, not fresh updates
 				withRemoving: modifiedSince === 0,
 			})
+
+			dispatch('cacheConversations')
 
 			return response
 		} catch (error) {

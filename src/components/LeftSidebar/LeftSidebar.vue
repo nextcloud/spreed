@@ -409,6 +409,10 @@ export default {
 			this.abortSearch()
 		})
 
+		// Restore last fetched conversations from browser storage,
+		// before updated ones come from server
+		this.restoreConversations()
+
 		this.fetchConversations()
 	},
 
@@ -629,12 +633,14 @@ export default {
 		},
 
 		debounceFetchConversations: debounce(function() {
-			if (!this.isFetchingConversations) {
-				this.fetchConversations()
-			}
+			this.fetchConversations()
 		}, 3000),
 
 		async fetchConversations() {
+			if (this.isFetchingConversations) {
+				return
+			}
+
 			this.isFetchingConversations = true
 			if (this.forceFullRoomListRefreshAfterXLoops === 0) {
 				this.roomListModifiedBefore = 0
@@ -667,13 +673,21 @@ export default {
 				 * Emits a global event that is used in App.vue to update the page title once the
 				 * ( if the current route is a conversation and once the conversations are received)
 				 */
-				EventBus.$emit('conversations-received', {
-					singleConversation: false,
-				})
+				EventBus.$emit('conversations-received', { singleConversation: false })
 				this.isFetchingConversations = false
 			} catch (error) {
 				console.debug('Error while fetching conversations: ', error)
 				this.isFetchingConversations = false
+			}
+		},
+
+		async restoreConversations() {
+			try {
+				await this.$store.dispatch('restoreConversations')
+				this.initialisedConversations = true
+				EventBus.$emit('conversations-received', { singleConversation: false })
+			} catch (error) {
+				console.debug('Error while restoring conversations: ', error)
 			}
 		},
 

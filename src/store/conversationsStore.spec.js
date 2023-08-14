@@ -11,6 +11,7 @@ import {
 	PARTICIPANT,
 	ATTENDEE,
 } from '../constants.js'
+import BrowserStorage from '../services/BrowserStorage.js'
 import {
 	makePublic,
 	makePrivate,
@@ -55,6 +56,11 @@ jest.mock('../services/conversationsService', () => ({
 }))
 
 jest.mock('@nextcloud/event-bus')
+
+jest.mock('../services/BrowserStorage.js', () => ({
+	getItem: jest.fn(),
+	setItem: jest.fn(),
+}))
 
 describe('conversationsStore', () => {
 	const testToken = 'XXTOKENXX'
@@ -196,6 +202,31 @@ describe('conversationsStore', () => {
 			expect(deleteConversation).not.toHaveBeenCalled()
 		})
 
+		test('restores conversations cached in BrowserStorage', () => {
+			const testConversations = [
+				{
+					token: 'one_token',
+					attendeeId: 'attendee-id-1',
+					lastActivity: Date.parse('2023-02-01T00:00:00.000Z') / 1000,
+				},
+				{
+					token: 'another_token',
+					attendeeId: 'attendee-id-2',
+					lastActivity: Date.parse('2023-01-01T00:00:00.000Z') / 1000,
+				},
+			]
+
+			BrowserStorage.getItem.mockReturnValueOnce(
+				'[{"token":"one_token","attendeeId":"attendee-id-1","lastActivity":1675209600},{"token":"another_token","attendeeId":"attendee-id-2","lastActivity":1672531200}]'
+			)
+
+			store.dispatch('restoreConversations')
+
+			expect(BrowserStorage.getItem).toHaveBeenCalledWith('cachedConversations')
+			expect(store.getters.conversationsList).toHaveLength(2)
+			expect(store.getters.conversationsList).toEqual(testConversations)
+		})
+
 		test('deletes conversation from server', async () => {
 			store.dispatch('addConversation', testConversation)
 
@@ -256,6 +287,37 @@ describe('conversationsStore', () => {
 
 			expect(fetchConversations).toHaveBeenCalledWith({})
 			expect(store.getters.conversationsList).toStrictEqual(testConversations)
+		})
+
+		test('sets fetched conversations to BrowserStorage', async () => {
+			const testConversations = [
+				{
+					token: 'one_token',
+					attendeeId: 'attendee-id-1',
+					lastActivity: Date.parse('2023-02-01T00:00:00.000Z') / 1000,
+				},
+				{
+					token: 'another_token',
+					attendeeId: 'attendee-id-2',
+					lastActivity: Date.parse('2023-01-01T00:00:00.000Z') / 1000,
+				},
+			]
+
+			const response = {
+				data: {
+					ocs: {
+						data: testConversations,
+					},
+				},
+			}
+
+			fetchConversations.mockResolvedValue(response)
+
+			await store.dispatch('fetchConversations', {})
+
+			expect(BrowserStorage.setItem).toHaveBeenCalledWith('cachedConversations',
+				'[{"token":"one_token","attendeeId":"attendee-id-1","lastActivity":1675209600},{"token":"another_token","attendeeId":"attendee-id-2","lastActivity":1672531200}]'
+			)
 		})
 
 		test('fetches all conversations and add new received conversations', async () => {
