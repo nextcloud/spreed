@@ -3028,7 +3028,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function enableDisableBruteForceProtection(string $enable): void {
 		// config:system:get auth.bruteforce.protection.enabled
-		$exitCode = $this->runOcc(['config:system:set', 'auth.bruteforce.protection.enabled', '--type=boolean', '--value=' . ($enable === 'enable' ? 'true' : 'false')]);
+		$this->runOcc(['config:system:set', 'auth.bruteforce.protection.enabled', '--type=boolean', '--value=' . ($enable === 'enable' ? 'true' : 'false')]);
+		$this->theCommandWasSuccessful();
+
+		// config:system:get auth.bruteforce.protection.testing
+		if ($enable === 'enable') {
+			$this->runOcc(['config:system:set', 'auth.bruteforce.protection.testing', '--type=boolean', '--value=' . 'true']);
+		} else {
+			$this->runOcc(['config:system:delete', 'auth.bruteforce.protection.testing']);
+		}
 		$this->theCommandWasSuccessful();
 	}
 
