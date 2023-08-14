@@ -81,6 +81,9 @@ $chat-font-size: 15px;
 //chat line height
 $chat-line-height: 1.6em;
 
-// fade transition
-$fade-transition: all var(--animation-quick, 100ms) ease-in-out;
-$fade-transition-slow: all var(--animation-slow, 300ms) ease-in-out;
+// transition
+$transition-duration-quick: var(--animation-quick, 100ms);
+$transition-duration-slow: var(--animation-slow, 300ms);
+
+$fade-transition: all $transition-duration-quick ease-in-out;
+$fade-transition-slow: all $transition-duration-slow ease-in-out;
