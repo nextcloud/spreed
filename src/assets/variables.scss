@@ -85,5 +85,5 @@ $chat-line-height: 1.6em;
 $transition-duration-quick: var(--animation-quick, 100ms);
 $transition-duration-slow: var(--animation-slow, 300ms);
 
-$fade-transition: all $transition-duration-quick ease-in-out;
-$fade-transition-slow: all $transition-duration-slow ease-in-out;
+$transition: all $transition-duration-quick ease-in-out;
+$transition-slow: all $transition-duration-slow ease-in-out;
