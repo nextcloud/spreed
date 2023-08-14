@@ -776,8 +776,7 @@ Signaling.Standalone.prototype.connect = function() {
 				console.error('An error occurred processing the signaling message, please ask your server administrator to check the log file')
 				break
 			case 'token_expired':
-				console.info('The signaling token is expired, need to update settings')
-				this._trigger('updateSettings')
+				this.processErrorTokenExpired()
 				break
 			default:
 				console.error('Ignore unknown error', data)
@@ -1437,6 +1436,12 @@ Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
 		console.error('Unknown room participant event', data)
 		break
 	}
+}
+
+Signaling.Standalone.prototype.processErrorTokenExpired = function() {
+	console.info('The signaling token is expired, need to update settings')
+
+	this._trigger('updateSettings')
 }
 
 Signaling.Standalone.prototype.requestOffer = function(sessionid, roomType, sid = undefined) {
