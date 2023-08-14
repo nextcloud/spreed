@@ -288,7 +288,7 @@ export default {
 	overflow: visible;
 	width: 100% !important;
 	background-color: transparent;
-	transition: $fade-transition;
+	transition: $transition;
 	&::before {
 		position: relative;
 	}

@@ -72,7 +72,7 @@ export default {
 // Transition rules (inside mixins to be applied in two places)
 @mixin group-rules {
 	&-move {
-		transition: $fade-transition;
+		transition: $transition;
 	}
 	&-leave-active {
 		position: absolute;
@@ -90,7 +90,7 @@ export default {
 	}
 	&-enter-active,
 	&-leave-active {
-		transition: $fade-transition;
+		transition: $transition;
 		transition-property: opacity;
 	}
 }
@@ -108,7 +108,7 @@ export default {
 	}
 	&-enter-active,
 	&-leave-active {
-		transition: $fade-transition;
+		transition: $transition;
 		transition-property: transform, opacity;
 		transition-duration: 150ms;
 	}
@@ -128,7 +128,7 @@ export default {
 	&-enter-active,
 	&-leave-active {
 		pointer-events: none;
-		transition: $fade-transition-slow;
+		transition: $transition-slow;
 		transition-property: transform, opacity;
 	}
 }
@@ -147,7 +147,7 @@ export default {
 	}
 	&-enter-active,
 	&-leave-active {
-		transition: $fade-transition;
+		transition: $transition;
 		transition-property: min-width, max-width;
 	}
 }
@@ -165,7 +165,7 @@ export default {
 	}
 	&-enter-active,
 	&-leave-active {
-		transition: $fade-transition;
+		transition: $transition;
 		transition-property: transform, opacity;
 		/* force top container to resize during animation */
 		position: absolute !important;
@@ -183,7 +183,7 @@ export default {
 	}
 	&-enter-active,
 	&-leave-active {
-		transition: $fade-transition-slow;
+		transition: $transition-slow;
 		transition-property: opacity;
 		transition-timing-function: linear;
 	}
@@ -200,7 +200,7 @@ export default {
 	}
 	&-enter-active,
 	&-leave-active {
-		transition: $fade-transition;
+		transition: $transition;
 		transition-property: transform;
 	}
 }
