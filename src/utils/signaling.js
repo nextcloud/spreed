@@ -157,6 +157,7 @@ Signaling.Base.prototype.getCurrentCallFlags = function() {
 
 Signaling.Base.prototype.disconnect = function() {
 	this.sessionId = ''
+	this._trigger('sessionId', [this.sessionId])
 	this.currentCallToken = null
 	this.currentCallFlags = null
 }
@@ -446,6 +447,7 @@ Signaling.Internal.prototype._joinRoomSuccess = function(token, sessionId) {
 	this._joinCallAgainOnceDisconnected = false
 
 	this.sessionId = sessionId
+	this._trigger('sessionId', [this.sessionId])
 	this._startPullingMessages()
 }
 
@@ -1044,6 +1046,7 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 		return
 	}
 	this.sessionId = data.hello.sessionid
+	this._trigger('sessionId', [this.sessionId])
 	this.resumeId = data.hello.resumeid
 	this.features = {}
 	let i
