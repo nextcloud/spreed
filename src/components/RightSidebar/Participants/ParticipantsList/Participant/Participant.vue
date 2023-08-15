@@ -40,7 +40,7 @@
 			disable-tooltip
 			:show-user-status="showUserStatus && !isSearched"
 			:preloaded-user-status="preloadedUserStatus"
-			:highlighted="isParticipantSpeaking"
+			:highlighted="isSpeakingStatusAvailable && isParticipantSpeaking"
 			:offline="isOffline" />
 
 		<!-- Participant's data -->
@@ -349,8 +349,12 @@ export default {
 			return text
 		},
 
+		isSpeakingStatusAvailable() {
+			return this.isInCall && !!this.participant.inCall && !!this.timeSpeaking
+		},
+
 		statusMessage() {
-			if (this.isInCall && this.participant.inCall && this.timeSpeaking) {
+			if (this.isSpeakingStatusAvailable) {
 				return this.isParticipantSpeaking
 					? '💬 ' + t('spreed', '{time} talking …', { time: formattedTime(this.timeSpeaking, true) })
 					: '💬 ' + t('spreed', '{time} talking time', { time: formattedTime(this.timeSpeaking, true) })
