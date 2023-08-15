@@ -3027,6 +3027,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @Given /^(enable|disable) brute force protection$/
 	 */
 	public function enableDisableBruteForceProtection(string $enable): void {
+		if ($enable === 'disable') {
+			// Reset the attempts before disabling
+			$this->runOcc(['security:bruteforce:reset', '127.0.0.1']);
+			$this->theCommandWasSuccessful();
+		}
+
 		// config:system:get auth.bruteforce.protection.enabled
 		$this->runOcc(['config:system:set', 'auth.bruteforce.protection.enabled', '--type=boolean', '--value=' . ($enable === 'enable' ? 'true' : 'false')]);
 		$this->theCommandWasSuccessful();
@@ -3038,22 +3044,35 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->runOcc(['config:system:delete', 'auth.bruteforce.protection.testing']);
 		}
 		$this->theCommandWasSuccessful();
+
+		if ($enable === 'enable') {
+			// Reset the attempts after enabling
+			$this->runOcc(['security:bruteforce:reset', '127.0.0.1']);
+			$this->theCommandWasSuccessful();
+		}
 	}
 
 	/**
 	 * @Given /^the following brute force attempts are registered$/
 	 */
 	public function assertBruteforceAttempts(TableNode $tableNode = null): void {
-		$currentUser = $this->setCurrentUser('admin');
-		$this->sendRequest('GET', '/apps/spreedcheats/bruteforce-attempts');
-		$data = $this->getDataFromResponse($this->response);
-		$this->setCurrentUser($currentUser);
+		$totalCount = 0;
+		if ($tableNode instanceof TableNode) {
+			foreach ($tableNode->getRowsHash() as $action => $attempts) {
+				$this->runOcc(['security:bruteforce:attempts', '127.0.0.1', $action, '--output=json']);
+				$this->theCommandWasSuccessful();
+				$info = json_decode($this->getLastStdOut(), true);
 
-		if ($tableNode === null) {
-			Assert::assertEmpty($data);
-		} else {
-			Assert::assertEquals($tableNode->getRowsHash(), $data);
+				Assert::assertEquals($attempts, $info['attempts']);
+				$totalCount += $info['attempts'];
+			}
 		}
+
+		$this->runOcc(['security:bruteforce:attempts', '127.0.0.1', '--output=json']);
+		$this->theCommandWasSuccessful();
+		$info = json_decode($this->getLastStdOut(), true);
+
+		Assert::assertEquals($totalCount, $info['attempts'], 'IP has bruteforce attempts for other actions registered');
 	}
 
 	/**
