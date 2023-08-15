@@ -43,9 +43,11 @@ import {
 	generateUrl,
 } from '@nextcloud/router'
 
+import { PARTICIPANT } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
 import { rejoinConversation } from '../services/participantsService.js'
 import { pullSignalingMessages } from '../services/signalingService.js'
+import store from '../store/index.js'
 import CancelableRequest from './cancelableRequest.js'
 
 const Signaling = {
@@ -863,7 +865,20 @@ Signaling.Standalone.prototype.forceReconnect = function(newSession, flags) {
 
 		rejoinConversation(this.currentRoomToken)
 			.then(response => {
+				store.commit('setInCall', {
+					token: this.currentRoomToken,
+					sessionId: this.nextcloudSessionId,
+					flags: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+				})
+
 				this.nextcloudSessionId = response.data.ocs.data.sessionId
+
+				store.dispatch('setCurrentParticipant', response.data.ocs.data)
+				store.commit('setInCall', {
+					token: this.currentRoomToken,
+					sessionId: this.nextcloudSessionId,
+					flags: this.currentCallFlags,
+				})
 
 				this.sendBye()
 				if (this.socket) {
