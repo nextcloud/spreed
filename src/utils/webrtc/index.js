@@ -219,7 +219,7 @@ async function signalingJoinCall(token, flags, silent) {
 		setupWebRtc()
 
 		sentVideoQualityThrottler = new SentVideoQualityThrottler(localMediaModel, callParticipantCollection, webRtc.webrtc._videoTrackConstrainer)
-		speakingStatusHandler = new SpeakingStatusHandler(store, localMediaModel, callParticipantCollection)
+		speakingStatusHandler = new SpeakingStatusHandler(store, localMediaModel, localCallParticipantModel, callParticipantCollection)
 
 		if (signaling.hasFeature('mcu')) {
 			callAnalyzer = new CallAnalyzer(localMediaModel, localCallParticipantModel, callParticipantCollection)
