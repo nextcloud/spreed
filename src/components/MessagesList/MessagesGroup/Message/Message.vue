@@ -1088,12 +1088,20 @@ export default {
 
 .message-body__main__text--markdown {
 	:deep(.rich-text--wrapper) {
-		h1 {
+		h1, h2, h3, h4, h5, h6 {
 			font-weight: bold;
-			font-size: 32px;
-			margin-bottom: 12px;
-			line-height: 36px;
+			margin: 12px 0;
 			color: var(--color-text-light);
+		}
+
+		h1 {
+			font-size: 32px;
+			line-height: 36px;
+		}
+
+		// Overwrite core styles, otherwise h4 is lesser than default font-size
+		h4 {
+			font-size: 100%;
 		}
 
 		em {
