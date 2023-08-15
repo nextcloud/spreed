@@ -40,32 +40,32 @@ Feature: chat/bots
     # Call summary
     Given the following call_summary_bot app config is set
       | min-length | -1 |
-    And user "participant1" sends message "- Before call" to room "room" with 201
+    And user "participant1" sends message "- [ ] Before call" to room "room" with 201
     And wait for 2 seconds
     Then user "participant1" joins room "room" with 200 (v4)
     Then user "participant1" joins call "room" with 200 (v4)
       | flags | 1 |
-    And user "participant1" sends message "* Task 1" to room "room" with 201
-    And user "participant1" sends message "- Task 2\n-Task 3" to room "room" with 201
+    And user "participant1" sends message "- [ ] Task 1" to room "room" with 201
+    And user "participant1" sends message "- [ ] Task 2\n- [ ] Task 3" to room "room" with 201
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message                                    | messageParameters |
-      | room | users     | participant1 | participant1-displayname | - Task 2\n-Task 3                          | []                |
-      | room | users     | participant1 | participant1-displayname | * Task 1                                   | []                |
-      | room | users     | participant1 | participant1-displayname | - Before call                              | []                |
+      | room | users     | participant1 | participant1-displayname | - [ ] Task 2\n- [ ] Task 3                          | []                |
+      | room | users     | participant1 | participant1-displayname | - [ ] Task 1                                   | []                |
+      | room | users     | participant1 | participant1-displayname | - [ ] Before call                              | []                |
     Then user "participant1" leaves call "room" with 200 (v4)
     Then user "participant1" leaves room "room" with 200 (v4)
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId           | actorDisplayName         | message                                    | messageParameters |
-      | room | bots      | BOT(Call summary) | Call summary (Bot)       | # Call summary - room\n\n{DATE}\n\n## Attendees\n- participant1-displayname\n\n## Tasks\n- Task 1\n- Task 2\n- Task 3                         | []                |
-      | room | users     | participant1      | participant1-displayname | - Task 2\n-Task 3                          | []                |
-      | room | users     | participant1      | participant1-displayname | * Task 1                                   | []                |
-      | room | users     | participant1      | participant1-displayname | - Before call                              | []                |
-    Then user "participant1" retrieve reactions "👍" of message "- Before call" in room "room" with 200
+      | room | bots      | BOT(Call summary) | Call summary (Bot)       | # Call summary - room\n\n{DATE}\n\n## Attendees\n- participant1-displayname\n\n## Tasks\n- [ ] Task 1\n- [ ] Task 2\n- [ ] Task 3                         | []                |
+      | room | users     | participant1      | participant1-displayname | - [ ] Task 2\n- [ ] Task 3                          | []                |
+      | room | users     | participant1      | participant1-displayname | - [ ] Task 1                                   | []                |
+      | room | users     | participant1      | participant1-displayname | - [ ] Before call                              | []                |
+    Then user "participant1" retrieve reactions "👍" of message "- [ ] Before call" in room "room" with 200
       | actorType | actorId           | actorDisplayName   | reaction |
-    Then user "participant1" retrieve reactions "👍" of message "* Task 1" in room "room" with 200
+    Then user "participant1" retrieve reactions "👍" of message "- [ ] Task 1" in room "room" with 200
       | actorType | actorId           | actorDisplayName   | reaction |
       | bots      | BOT(Call summary) | Call summary (Bot) | 👍       |
-    Then user "participant1" retrieve reactions "👍" of message "- Task 2\n-Task 3" in room "room" with 200
+    Then user "participant1" retrieve reactions "👍" of message "- [ ] Task 2\n- [ ] Task 3" in room "room" with 200
       | actorType | actorId           | actorDisplayName   | reaction |
       | bots      | BOT(Call summary) | Call summary (Bot) | 👍       |
 
