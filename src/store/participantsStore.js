@@ -348,8 +348,8 @@ const mutations = {
 	 * property to an existing participant, as the participant would be reset
 	 * when the participants are purged whenever they are fetched again.
 	 * Similarly, "addParticipant" can not be called either to add a participant
-	 * if it was not fetched yet but the signaling reported it as being speaking,
-	 * as the attendeeId would be unknown.
+	 * if it was not fetched yet but the call model reported it as being
+	 * speaking, as the attendeeId would be unknown.
 	 *
 	 * @param {object} state - current store state.
 	 * @param {object} data - the wrapping object.
@@ -369,15 +369,13 @@ const mutations = {
 		const currentTimestamp = Date.now()
 		const currentSpeakingState = state.speaking[token][sessionId].speaking
 
-		// when speaking has stopped, update the total talking time
-		if (currentSpeakingState && !speaking && state.speaking[token][sessionId].lastTimestamp) {
-			state.speaking[token][sessionId].totalCountedTime += (currentTimestamp - state.speaking[token][sessionId].lastTimestamp)
-		}
-
-		// don't change state for consecutive identical signals
-		if (currentSpeakingState !== speaking) {
-			state.speaking[token][sessionId].speaking = speaking
+		if (!currentSpeakingState && speaking) {
+			state.speaking[token][sessionId].speaking = true
 			state.speaking[token][sessionId].lastTimestamp = currentTimestamp
+		} else if (currentSpeakingState && !speaking) {
+			// when speaking has stopped, update the total talking time
+			state.speaking[token][sessionId].speaking = false
+			state.speaking[token][sessionId].totalCountedTime += (currentTimestamp - state.speaking[token][sessionId].lastTimestamp)
 		}
 	},
 
