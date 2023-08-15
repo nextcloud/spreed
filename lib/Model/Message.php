@@ -148,7 +148,7 @@ class Message {
 			$this->getMessageType() !== ChatManager::VERB_MESSAGE_DELETED &&
 			$this->getMessageType() !== ChatManager::VERB_REACTION &&
 			$this->getMessageType() !== ChatManager::VERB_REACTION_DELETED &&
-			\in_array($this->getActorType(), [Attendee::ACTOR_USERS, Attendee::ACTOR_GUESTS]);
+			\in_array($this->getActorType(), [Attendee::ACTOR_USERS, Attendee::ACTOR_GUESTS, Attendee::ACTOR_BOTS]);
 	}
 
 	/**
