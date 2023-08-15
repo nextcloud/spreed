@@ -182,6 +182,10 @@ function setupWebRtc() {
 	webRtc = initWebRtc(signaling, callParticipantCollection, localCallParticipantModel)
 	localCallParticipantModel.setWebRtc(webRtc)
 	localMediaModel.setWebRtc(webRtc)
+
+	signaling.on('sessionId', sessionId => {
+		localCallParticipantModel.setPeerId(sessionId)
+	})
 }
 
 /**
