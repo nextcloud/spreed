@@ -48,28 +48,6 @@ class ApiController extends OCSController {
 	 *
 	 * @return DataResponse
 	 */
-	public function bruteforceAttempts(): DataResponse {
-		$query = $this->db->getQueryBuilder();
-		$query->select('action', $query->func()->count('*', 'attempts'))
-			->from('bruteforce_attempts')
-			->groupBy('action');
-		$result = $query->executeQuery();
-
-		$attempts = [];
-		while ($row = $result->fetch()) {
-			$attempts[$row['action']] = (int) $row['attempts'];
-		}
-
-		$result->closeCursor();
-
-		return new DataResponse($attempts);
-	}
-
-	/**
-	 * @NoCSRFRequired
-	 *
-	 * @return DataResponse
-	 */
 	public function resetSpreed(): DataResponse {
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_attachments')->executeStatement();
@@ -112,9 +90,6 @@ class ApiController extends OCSController {
 
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_sessions')->executeStatement();
-
-		$delete = $this->db->getQueryBuilder();
-		$delete->delete('bruteforce_attempts')->executeStatement();
 
 
 		$delete = $this->db->getQueryBuilder();
