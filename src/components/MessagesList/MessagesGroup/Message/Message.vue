@@ -1111,12 +1111,28 @@ export default {
 		}
 
 		pre,
-		code,
-		blockquote {
+		code {
 			padding: 6px;
 			margin: 2px;
 			border-radius: var(--border-radius);
 			background-color: var(--color-background-dark);
+		}
+
+		blockquote {
+			position: relative;
+			color: var(--color-text-lighter);
+			padding-left: 10px;
+
+			&::before {
+				content: ' ';
+				position: absolute;
+				top: 0;
+				left: 0;
+				height: 100%;
+				width: 4px;
+				border-radius: 2px;
+				background-color: var(--color-border);
+			}
 		}
 
 		pre {
