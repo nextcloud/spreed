@@ -2,6 +2,8 @@ Feature: conversation/avatar
   Background:
     Given user "participant1" exists
     Given user "participant2" exists
+    And guest accounts can be created
+    And user "user-guest@example.com" is a guest account user
 
   Scenario: Misteps
     Given user "participant1" creates room "room1" (v4)
@@ -43,6 +45,35 @@ Feature: conversation/avatar
     And user "participant1" gets room "room3" with 200 (v4)
       | avatarVersion | NOT_EMPTY |
       | isCustomAvatar | 0 |
+
+  Scenario: Get avatar of conversation without being a participant
+    Given user "participant1" creates room "room3" (v4)
+      | roomType | 3 |
+      | roomName | room3 |
+    Then the room "room3" has an avatar with 200
+    And user "participant1" gets room "room3" with 200 (v4)
+      | avatarVersion | NOT_EMPTY |
+      | isCustomAvatar | 0 |
+    And as user "participant2"
+    And the room "room3" has an avatar with 404
+    And as user "user-guest@example.com"
+    And the room "room3" has an avatar with 404
+    And as user "guest"
+    And the room "room3" has an avatar with 404
+    When user "participant1" allows listing room "room3" for "users" with 200 (v4)
+    And as user "participant2"
+    And the room "room3" has an avatar with 200
+    And as user "user-guest@example.com"
+    And the room "room3" has an avatar with 404
+    And as user "guest"
+    And the room "room3" has an avatar with 404
+    When user "participant1" allows listing room "room3" for "all" with 200 (v4)
+    And as user "participant2"
+    And the room "room3" has an avatar with 200
+    And as user "user-guest@example.com"
+    And the room "room3" has an avatar with 200
+    And as user "guest"
+    And the room "room3" has an avatar with 404
 
   Scenario: Get avatar of one2one without custom avatar (fallback)
     When user "participant1" creates room "one2one" (v4)
