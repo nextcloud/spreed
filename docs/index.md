@@ -16,11 +16,13 @@
 * [Scalability](scalability.md)
 * [Call experience](call-experience.md)
 * [Occ commands](occ.md)
-* [Commands](commands.md)
+* [Bots](bot-list.md)
+* [Commands (deprecated)](commands.md)
 * [Matterbridge integration](matterbridge.md)
 
 ## Developer documentation
 
+* [Bots and webhooks](bots.md)
 * [Constants](constants.md)
 * [Capabilities](capabilities.md)
 * [PHP Events](events.md)
@@ -37,6 +39,7 @@
 * [Reaction management](reaction.md)
 * [Poll management](poll.md)
 * [Breakout rooms management](breakout-rooms.md)
+* [Bots management](bot-management.md)
 * [Integration by other apps](integration.md)
 * [Webinar management](webinar.md)
 * [Settings management](settings.md)

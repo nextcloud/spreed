@@ -4,7 +4,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`: (requires the `bots-v1` capa
 
 ## Get list of bots installed on the server
 
-Lists the bots that are enabled and can be enabled for the conversation
+Lists the bots that are installed on the server.
 
 * Required capability: `bots-v1`
 * Method: `GET`
@@ -13,8 +13,7 @@ Lists the bots that are enabled and can be enabled for the conversation
 * Response:
     - Status code:
         + `200 OK`
-        + `403 Forbidden` When the current user is not a moderator/owner
-        + `404 Not Found` When the conversation could not be found for the participant
+        + `403 Forbidden` When the current user is not an administrator
     - Data:
       List of bots, each bot has at least:
 
