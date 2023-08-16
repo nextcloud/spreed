@@ -233,9 +233,7 @@ class HostedSignalingServerService {
 	/**
 	 * @throws HostedSignalingServerAPIException
 	 *
-	 * @return (\ArrayAccess|array|mixed)[]|\ArrayAccess
-	 *
-	 * @psalm-return \ArrayAccess|non-empty-array{created: mixed, owner: \ArrayAccess|array, status: mixed, signaling?: \ArrayAccess|array}
+	 * @return \ArrayAccess|array{created: mixed, owner: \ArrayAccess|array{country: mixed, email: mixed, language: mixed, name: mixed, url: mixed, ...<array-key, mixed>}, status: mixed, signaling?: array, ...<array-key, mixed>}
 	 */
 	public function fetchAccountInfo(AccountId $accountId) {
 		try {
@@ -346,7 +344,7 @@ class HostedSignalingServerService {
 		}
 
 		$body = $response->getBody();
-		$data = json_decode($body, true);
+		$data = (array) json_decode($body, true);
 
 		if (json_last_error() !== JSON_ERROR_NONE) {
 			$this->logger->error('Getting the account information failed: cannot parse JSON response - JSON error: '. json_last_error() . ' ' . json_last_error_msg() . ' HTTP status: ' . $status . ' Response body: ' . $body);

@@ -773,9 +773,15 @@ class ChatManager {
 		if (stripos($roomDisplayName, $search) !== false) {
 			return true;
 		}
+		/**
+		 * @psalm-suppress InvalidLiteralArgument
+		 */
 		if (str_starts_with('all', $search)) {
 			return true;
 		}
+		/**
+		 * @psalm-suppress InvalidLiteralArgument
+		 */
 		if (str_starts_with('here', $search)) {
 			return true;
 		}

@@ -75,12 +75,7 @@ class Notifications {
 		}
 
 		/** @var IUser|null $roomOwner */
-		$roomOwner = null;
-		if ($roomOwnerAttendee) {
-			$roomOwner = $this->userManager->get($roomOwnerAttendee->getActorId());
-		} else {
-			throw new RoomHasNoModeratorException();
-		}
+		$roomOwner = $this->userManager->get($roomOwnerAttendee->getActorId());
 
 		$remote = $this->prepareRemoteUrl($remote);
 

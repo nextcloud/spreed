@@ -129,11 +129,7 @@ class ShareAPIController {
 			throw new \Exception('Invalid date. Format must be YYYY-MM-DD');
 		}
 
-		if ($date === false) {
-			throw new \Exception('Invalid date. Format must be YYYY-MM-DD');
-		}
-
-		$date->setTime(0, 0, 0);
+		$date->setTime(0, 0);
 
 		return $date;
 	}

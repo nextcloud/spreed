@@ -26,7 +26,6 @@ namespace OCA\Talk\Collaboration\Collaborators;
 
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
-use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
 use OCP\Collaboration\Collaborators\ISearchPlugin;
@@ -64,7 +63,7 @@ class RoomPlugin implements ISearchPlugin {
 			}
 
 			$participant = $this->participantService->getParticipant($room, $userId, false);
-			if (!$participant instanceof Participant || !($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
+			if (!($participant->getPermissions() & Attendee::PERMISSIONS_CHAT)) {
 				// No chat permissions is like read-only
 				continue;
 			}

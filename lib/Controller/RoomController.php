@@ -192,8 +192,7 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$statuses = [];
-		if ($this->userId !== null
-			&& $includeStatus
+		if ($includeStatus
 			&& $this->appManager->isEnabledForUser('user_status')) {
 			$userIds = array_filter(array_map(function (Room $room) {
 				if ($room->getType() === Room::TYPE_ONE_TO_ONE) {

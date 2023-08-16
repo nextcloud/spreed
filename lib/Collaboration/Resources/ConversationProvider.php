@@ -54,7 +54,7 @@ class ConversationProvider implements IProvider {
 			$userId = $user instanceof IUser ? $user->getUID() : '';
 			$room = $this->manager->getRoomByToken($resource->getId(), $userId);
 
-			$iconURL = $this->avatarService->getAvatarUrl($room, $userId);
+			$iconURL = $this->avatarService->getAvatarUrl($room);
 			/**
 			 * Disabled for now, because it would show a square avatar
 			 * if ($room->getType() === Room::TYPE_ONE_TO_ONE) {
