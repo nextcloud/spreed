@@ -58,8 +58,16 @@ class Notifications {
 	 * @throws RoomHasNoModeratorException
 	 * @throws Exception
 	 */
-	public function sendRemoteShare(string $providerId, string $token, string $shareWith, string $sharedBy,
-		string $sharedByFederatedId, string $shareType, Room $room, Attendee $roomOwnerAttendee): bool {
+	public function sendRemoteShare(
+		string $providerId,
+		string $token,
+		string $shareWith,
+		string $sharedBy,
+		string $sharedByFederatedId,
+		string $shareType,
+		Room $room,
+		Attendee $roomOwnerAttendee,
+	): bool {
 		[$user, $remote] = $this->addressHandler->splitUserRemote($shareWith);
 
 		$roomName = $room->getName();
