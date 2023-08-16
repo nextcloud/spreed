@@ -1047,9 +1047,9 @@ class ParticipantService {
 
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
 			if ($silent) {
-				$event = new SilentModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall(), $silent);
+				$event = new SilentModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
 			} else {
-				$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall(), $silent);
+				$event = new ModifyParticipantEvent($room, $participant, 'inCall', $flags, $session->getInCall());
 			}
 			$this->dispatcher->dispatch(Room::EVENT_BEFORE_SESSION_JOIN_CALL, $event);
 		} else {
@@ -1666,12 +1666,10 @@ class ParticipantService {
 
 		$participant = $this->getParticipantFromQuery($query, $room);
 
-		$this->userCache ??= [];
 		$this->userCache[$room->getId()] ??= [];
 		$this->userCache[$room->getId()][$userId] = $participant;
 		if ($participant->getSession()) {
 			$participantSessionId = $participant->getSession()->getSessionId();
-			$this->sessionCache ??= [];
 			$this->sessionCache[$room->getId()] ??= [];
 			$this->sessionCache[$room->getId()][$participantSessionId] = $participant;
 		}

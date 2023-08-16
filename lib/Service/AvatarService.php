@@ -62,7 +62,7 @@ class AvatarService {
 			throw new InvalidArgumentException($this->l->t('One-to-one rooms always need to show the other users avatar'));
 		}
 
-		if (is_null($file) || !is_array($file)) {
+		if ($file === null) {
 			throw new InvalidArgumentException($this->l->t('No image file provided'));
 		}
 

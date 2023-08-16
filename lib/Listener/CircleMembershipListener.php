@@ -33,15 +33,11 @@ use OCA\Talk\Participant;
 use OCA\Talk\Service\ParticipantService;
 use OCP\App\IAppManager;
 use OCP\EventDispatcher\Event;
-use OCP\EventDispatcher\IEventListener;
 use OCP\IGroupManager;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
 
-/**
- * @template-implements IEventListener<Event>
- */
 class CircleMembershipListener extends AMembershipListener {
 
 	public function __construct(

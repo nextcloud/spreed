@@ -710,34 +710,26 @@ class SignalingController extends OCSController {
 			}
 		}
 
-		$permissions = [];
-		if ($participant instanceof Participant) {
-			$this->logger->debug('Room request to "{action}" room {token} by actor {actorType}/{actorId}', [
-				'token' => $token,
-				'action' => $action ?? 'null',
-				'actorType' => $participant->getAttendee()->getActorType(),
-				'actorId' => $participant->getAttendee()->getActorId(),
-				'app' => 'spreed-hpb',
-			]);
+		$this->logger->debug('Room request to "{action}" room {token} by actor {actorType}/{actorId}', [
+			'token' => $token,
+			'action' => $action ?? 'null',
+			'actorType' => $participant->getAttendee()->getActorType(),
+			'actorId' => $participant->getAttendee()->getActorId(),
+			'app' => 'spreed-hpb',
+		]);
 
-			if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_AUDIO) {
-				$permissions[] = 'publish-audio';
-			}
-			if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_VIDEO) {
-				$permissions[] = 'publish-video';
-			}
-			if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_SCREEN) {
-				$permissions[] = 'publish-screen';
-			}
-			if ($participant->hasModeratorPermissions(false)) {
-				$permissions[] = 'control';
-			}
-		} else {
-			$this->logger->debug('Room request to "{action}" room {token} without session', [
-				'token' => $token,
-				'action' => $action ?? 'null',
-				'app' => 'spreed-hpb',
-			]);
+		$permissions = [];
+		if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_AUDIO) {
+			$permissions[] = 'publish-audio';
+		}
+		if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_VIDEO) {
+			$permissions[] = 'publish-video';
+		}
+		if ($participant->getPermissions() & Attendee::PERMISSIONS_PUBLISH_SCREEN) {
+			$permissions[] = 'publish-screen';
+		}
+		if ($participant->hasModeratorPermissions(false)) {
+			$permissions[] = 'control';
 		}
 
 		$event = new SignalingEvent($room, $participant, $action);
