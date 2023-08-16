@@ -27,15 +27,10 @@ use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Room;
 use OCA\Talk\Service\ParticipantService;
-use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\EventDispatcher\IEventListener;
 use OCP\IConfig;
 use OCP\Server;
 
-/**
- * @template-implements IEventListener<Event>
- */
 class RestrictStartingCalls {
 
 	public function __construct(
