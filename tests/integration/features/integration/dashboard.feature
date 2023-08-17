@@ -6,7 +6,7 @@ Feature: integration/dashboard
   Scenario: User gets the available dashboard widgets
     When user "participant1" sees the following entry when loading the list of dashboard widgets (v1)
       | id     | title         | icon_class          | icon_url         | widget_url                       | item_icons_round | order | buttons | item_api_versions | reload_interval |
-      | spreed | Talk mentions | dashboard-talk-icon | img/app-dark.svg | {$BASE_URL}index.php/apps/spreed/ | true             | 10    | [{"type":"more","text":"More unread mentions","link":"{$BASE_URL}index.php/apps/spreed/"}] | [1] | 0 |
+      | spreed | Talk mentions | dashboard-talk-icon | img/app-dark.svg | {$BASE_URL}index.php/apps/spreed/ | true             | 10    | [{"type":"more","text":"More conversations","link":"{$BASE_URL}index.php/apps/spreed/"}] | [1,2] | 30 |
 
   Scenario: User gets the dashboard widget content
     When user "participant1" sees the following entries for dashboard widgets "spreed" (v1)
