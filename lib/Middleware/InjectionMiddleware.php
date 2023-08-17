@@ -33,6 +33,7 @@ use OCA\Talk\Middleware\Attribute\RequireLoggedInParticipant;
 use OCA\Talk\Middleware\Attribute\RequireModeratorOrNoLobby;
 use OCA\Talk\Middleware\Attribute\RequireModeratorParticipant;
 use OCA\Talk\Middleware\Attribute\RequireParticipant;
+use OCA\Talk\Middleware\Attribute\RequireParticipantOrLoggedInAndListedConversation;
 use OCA\Talk\Middleware\Attribute\RequirePermission;
 use OCA\Talk\Middleware\Attribute\RequireReadWriteConversation;
 use OCA\Talk\Middleware\Attribute\RequireRoom;
@@ -108,6 +109,10 @@ class InjectionMiddleware extends Middleware {
 			$this->getLoggedIn($controller, true);
 		}
 
+		if (!empty($reflectionMethod->getAttributes(RequireParticipantOrLoggedInAndListedConversation::class))) {
+			$this->getLoggedInOrGuest($controller, false, true);
+		}
+
 		if (!empty($reflectionMethod->getAttributes(RequireParticipant::class))) {
 			$this->getLoggedInOrGuest($controller, false);
 		}
@@ -169,10 +174,11 @@ class InjectionMiddleware extends Middleware {
 	/**
 	 * @param AEnvironmentAwareController $controller
 	 * @param bool $moderatorRequired
+	 * @param bool $requireListedWhenNoParticipant
 	 * @throws NotAModeratorException
 	 * @throws ParticipantNotFoundException
 	 */
-	protected function getLoggedInOrGuest(AEnvironmentAwareController $controller, bool $moderatorRequired): void {
+	protected function getLoggedInOrGuest(AEnvironmentAwareController $controller, bool $moderatorRequired, bool $requireListedWhenNoParticipant = false): void {
 		$room = $controller->getRoom();
 		if (!$room instanceof Room) {
 			$token = $this->request->getParam('token');
