@@ -193,6 +193,7 @@ class InjectionMiddleware extends Middleware {
 			if ($sessionId !== null) {
 				try {
 					$participant = $this->participantService->getParticipantBySession($room, $sessionId);
+					$controller->setParticipant($participant);
 				} catch (ParticipantNotFoundException $e) {
 					// ignore and fall back in case a concurrent request might have
 					// invalidated the session
@@ -201,9 +202,8 @@ class InjectionMiddleware extends Middleware {
 
 			if ($participant === null) {
 				$participant = $this->participantService->getParticipant($room, $this->userId);
+				$controller->setParticipant($participant);
 			}
-
-			$controller->setParticipant($participant);
 		}
 
 		if ($moderatorRequired && !$participant->hasModeratorPermissions()) {
