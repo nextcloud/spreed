@@ -42,11 +42,6 @@ the main body of the message as well as a quote.
 			'system' : isSystemMessage,
 			'combined-system': isCombinedSystemMessage}"
 			class="message-body">
-			<div v-if="isFirstMessage && showAuthor"
-				class="message-body__author"
-				aria-level="4">
-				{{ actorDisplayName }}
-			</div>
 			<div ref="messageMain"
 				class="message-body__main">
 				<div v-if="isSingleEmoji"
@@ -356,24 +351,10 @@ export default {
 			required: true,
 		},
 		/**
-		 * If true, it displays the message author on top of the message.
-		 */
-		showAuthor: {
-			type: Boolean,
-			default: false,
-		},
-		/**
 		 * Specifies if the message is temporary in order to display the spinner instead
 		 * of the message time.
 		 */
 		isTemporary: {
-			type: Boolean,
-			default: false,
-		},
-		/**
-		 * Specifies if the message is the first of a group of same-author messages.
-		 */
-		isFirstMessage: {
 			type: Boolean,
 			default: false,
 		},
@@ -921,9 +902,6 @@ export default {
 	font-size: $chat-font-size;
 	line-height: $chat-line-height;
 	position: relative;
-	&__author {
-		color: var(--color-text-maxcontrast);
-	}
 	&__main {
 		display: flex;
 		justify-content: space-between;

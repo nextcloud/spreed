@@ -534,40 +534,6 @@ describe('Message.vue', () => {
 		})
 	})
 
-	describe('author rendering', () => {
-		const AUTHOR_SELECTOR = '.message-body__author'
-		beforeEach(() => {
-			store = new Store(testStoreConfig)
-		})
-
-		test('renders author if first message', async () => {
-			messageProps.isFirstMessage = true
-			messageProps.showAuthor = true
-			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				propsData: messageProps,
-				provide: injected,
-			})
-
-			const displayName = wrapper.find(AUTHOR_SELECTOR)
-			expect(displayName.text()).toBe('user-display-name-1')
-		})
-
-		test('does not render author if not first message', async () => {
-			messageProps.isFirstMessage = false
-			const wrapper = shallowMount(Message, {
-				localVue,
-				store,
-				propsData: messageProps,
-				provide: injected,
-			})
-
-			const displayName = wrapper.find(AUTHOR_SELECTOR)
-			expect(displayName.exists()).toBe(false)
-		})
-	})
-
 	describe('actions', () => {
 
 		beforeEach(() => {
