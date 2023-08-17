@@ -132,7 +132,9 @@ LocalMediaModel.prototype = {
 		this.set('videoEnabled', false)
 		this.set('virtualBackgroundAvailable', this._webRtc.webrtc.isVirtualBackgroundAvailable())
 		this.set('virtualBackgroundEnabled', this._webRtc.webrtc.isVirtualBackgroundEnabled())
-		this._setVirtualBackgroundTypeAndParameters(this._webRtc.webrtc.getVirtualBackground())
+		if (this._webRtc.webrtc.isVirtualBackgroundAvailable()) {
+			this._setVirtualBackgroundTypeAndParameters(this._webRtc.webrtc.getVirtualBackground())
+		}
 		this.set('localScreen', null)
 
 		this._webRtc.webrtc.on('localStreamRequested', this._handleLocalStreamRequestedBound)
