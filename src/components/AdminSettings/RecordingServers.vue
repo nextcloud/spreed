@@ -31,7 +31,10 @@
 			{{ uploadLimitWarning }}
 		</NcNoteCard>
 
-		<transition-group v-if="servers.length" name="fade" tag="ul">
+		<TransitionWrapper v-if="servers.length"
+			name="fade"
+			tag="ul"
+			group>
 			<RecordingServer v-for="(server, index) in servers"
 				:key="`server${index}`"
 				:server.sync="servers[index].server"
@@ -41,7 +44,7 @@
 				@remove-server="removeServer"
 				@update:server="debounceUpdateServers"
 				@update:verify="debounceUpdateServers" />
-		</transition-group>
+		</TransitionWrapper>
 
 		<NcButton v-else
 			class="additional-top-margin"
@@ -79,6 +82,7 @@ import NcNoteCard from '@nextcloud/vue/dist/Components/NcNoteCard.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import RecordingServer from '../../components/AdminSettings/RecordingServer.vue'
+import TransitionWrapper from '../TransitionWrapper.vue'
 
 export default {
 	name: 'RecordingServers',
@@ -89,6 +93,7 @@ export default {
 		NcTextField,
 		Plus,
 		RecordingServer,
+		TransitionWrapper,
 	},
 
 	data() {

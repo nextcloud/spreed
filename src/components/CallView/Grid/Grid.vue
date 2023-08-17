@@ -35,7 +35,7 @@
 					:size="20" />
 			</template>
 		</NcButton>
-		<transition :name="isStripe ? 'slide-down' : ''">
+		<TransitionWrapper :name="isStripe ? 'slide-down' : undefined">
 			<div v-if="!isStripe || stripeOpen" class="wrapper" :style="wrapperStyle">
 				<div :class="[isStripe ? 'stripe-wrapper' : 'grid-wrapper']">
 					<NcButton v-if="hasPreviousPage && gridWidth > 0"
@@ -147,7 +147,7 @@
 					<p>Current page: {{ currentPage }}</p>
 				</div>
 			</div>
-		</transition>
+		</TransitionWrapper>
 	</div>
 </template>
 
@@ -165,6 +165,7 @@ import { generateFilePath } from '@nextcloud/router'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
+import TransitionWrapper from '../../TransitionWrapper.vue'
 import EmptyCallView from '../shared/EmptyCallView.vue'
 import LocalVideo from '../shared/LocalVideo.vue'
 import VideoBottomBar from '../shared/VideoBottomBar.vue'
@@ -178,6 +179,7 @@ export default {
 		LocalVideo,
 		EmptyCallView,
 		NcButton,
+		TransitionWrapper,
 		VideoBottomBar,
 		ChevronRight,
 		ChevronLeft,

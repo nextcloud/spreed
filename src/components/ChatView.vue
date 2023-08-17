@@ -23,7 +23,7 @@
 		@dragover.prevent="handleDragOver"
 		@dragleave.prevent="handleDragLeave"
 		@drop.prevent="handleDropFiles">
-		<transition name="slide" mode="out-in">
+		<TransitionWrapper name="slide-up" mode="out-in">
 			<div v-show="isDraggingOver"
 				class="dragover">
 				<div class="drop-hint">
@@ -37,7 +37,7 @@
 					</h2>
 				</div>
 			</div>
-		</transition>
+		</TransitionWrapper>
 		<MessagesList role="region"
 			:aria-label="t('spreed', 'Conversation messages')"
 			:token="token"
@@ -50,7 +50,7 @@
 			:container="containerId"
 			has-typing-indicator
 			:aria-label="t('spreed', 'Post message')" />
-		<transition name="fade">
+		<TransitionWrapper name="fade">
 			<NcButton v-show="!isChatScrolledToBottom"
 				type="secondary"
 				:aria-label="t('spreed', 'Scroll to bottom')"
@@ -61,7 +61,7 @@
 					<ChevronDoubleDown :size="20" />
 				</template>
 			</NcButton>
-		</transition>
+		</TransitionWrapper>
 	</div>
 </template>
 
@@ -72,6 +72,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
 import MessagesList from './MessagesList/MessagesList.vue'
 import NewMessage from './NewMessage/NewMessage.vue'
+import TransitionWrapper from './TransitionWrapper.vue'
 
 import { CONVERSATION } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
@@ -85,6 +86,7 @@ export default {
 		ChevronDoubleDown,
 		MessagesList,
 		NewMessage,
+		TransitionWrapper,
 	},
 
 	props: {
@@ -236,29 +238,5 @@ export default {
 .scroll-to-bottom {
 	position: absolute !important;
 	right: 24px;
-}
-
-.slide {
-	&-enter {
-		transform: translateY(-50%);
-		opacity: 0;
-	}
-	&-enter-to {
-		transform: translateY(0);
-		opacity: 1;
-	}
-	&-leave {
-		transform: translateY(0);
-		opacity: 1;
-	}
-	&-leave-to {
-		transform: translateY(-50%);
-		opacity: 0;
-	}
-	&-enter-active,
-	&-leave-active {
-		pointer-events: none;
-		transition: $fade-transition-slow;
-	}
 }
 </style>

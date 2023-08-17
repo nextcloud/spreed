@@ -36,14 +36,15 @@
 				<Close :size="20" />
 			</template>
 		</NcTextField>
-		<transition-group v-if="hasSelectedParticipants"
+		<TransitionWrapper v-if="hasSelectedParticipants"
+			class="selected-participants"
 			name="zoom"
 			tag="div"
-			class="selected-participants">
+			group>
 			<ContactSelectionBubble v-for="participant in selectedParticipants"
 				:key="participant.source + participant.id"
 				:participant="participant" />
-		</transition-group>
+		</TransitionWrapper>
 		<ParticipantSearchResults :add-on-click="false"
 			:search-results="searchResults"
 			:contacts-loading="contactsLoading"
@@ -67,6 +68,7 @@ import { showError } from '@nextcloud/dialogs'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import ParticipantSearchResults from '../../../RightSidebar/Participants/ParticipantsSearchResults/ParticipantsSearchResults.vue'
+import TransitionWrapper from '../../../TransitionWrapper.vue'
 import ContactSelectionBubble from './ContactSelectionBubble/ContactSelectionBubble.vue'
 
 import { useArrowNavigation } from '../../../../composables/useArrowNavigation.js'
@@ -81,6 +83,7 @@ export default {
 		ContactSelectionBubble,
 		NcTextField,
 		Magnify,
+		TransitionWrapper,
 	},
 
 	props: {
@@ -241,23 +244,4 @@ export default {
 	flex: 1 0 auto;
 	align-content: flex-start;
 }
-
-.zoom-enter-active {
-	animation: zoom-in var(--animation-quick);
-}
-
-.zoom-leave-active {
-	animation: zoom-in var(--animation-quick) reverse;
-	will-change: transform;
-}
-
-@keyframes zoom-in {
-	0% {
-		transform: scale(0);
-	}
-	100% {
-		transform: scale(1);
-	}
-}
-
 </style>
