@@ -77,6 +77,9 @@ describe('VirtualBackground', () => {
 
 		jest.spyOn(VirtualBackground.prototype, '_initJitsiStreamBackgroundEffect').mockImplementation(function() {
 			this._jitsiStreamBackgroundEffect = {
+				getVirtualBackground: jest.fn(() => {
+					return this._jitsiStreamBackgroundEffect.virtualBackground
+				}),
 				setVirtualBackground: jest.fn(() => {
 				}),
 				startEffect: jest.fn((inputStream) => {
@@ -118,14 +121,54 @@ describe('VirtualBackground', () => {
 		jest.restoreAllMocks()
 	})
 
-	test('set virtual background type and parameters', () => {
-		virtualBackground.setVirtualBackground({
-			objectWithoutValidation: true,
+	describe('get virtual background', () => {
+		beforeEach(() => {
+			virtualBackground._jitsiStreamBackgroundEffect.virtualBackground = {
+				objectWithoutValidation: true,
+			}
 		})
 
-		expect(virtualBackground._jitsiStreamBackgroundEffect.setVirtualBackground).toHaveBeenCalledTimes(1)
-		expect(virtualBackground._jitsiStreamBackgroundEffect.setVirtualBackground).toHaveBeenNthCalledWith(1, {
-			objectWithoutValidation: true,
+		test('gets virtual background', () => {
+			expect(virtualBackground.getVirtualBackground()).toEqual({
+				objectWithoutValidation: true,
+			})
+			expect(virtualBackground._jitsiStreamBackgroundEffect.getVirtualBackground).toHaveBeenCalledTimes(1)
+		})
+
+		test('returns null if get when not available', () => {
+			available = false
+
+			expect(virtualBackground.getVirtualBackground()).toBe(undefined)
+			// A real VirtualBackground object would not even have a
+			// _jitsiStreamBackgroundEffect object if not available, but the
+			// mock is kept to perform the assertion.
+			expect(virtualBackground._jitsiStreamBackgroundEffect.getVirtualBackground).toHaveBeenCalledTimes(0)
+		})
+	})
+
+	describe('set virtual background', () => {
+		test('sets virtual background type and parameters', () => {
+			virtualBackground.setVirtualBackground({
+				objectWithoutValidation: true,
+			})
+
+			expect(virtualBackground._jitsiStreamBackgroundEffect.setVirtualBackground).toHaveBeenCalledTimes(1)
+			expect(virtualBackground._jitsiStreamBackgroundEffect.setVirtualBackground).toHaveBeenNthCalledWith(1, {
+				objectWithoutValidation: true,
+			})
+		})
+
+		test('does nothing if set when not available', () => {
+			available = false
+
+			virtualBackground.setVirtualBackground({
+				objectWithoutValidation: true,
+			})
+
+			// A real VirtualBackground object would not even have a
+			// _jitsiStreamBackgroundEffect object if not available, but the
+			// mock is kept to perform the assertion.
+			expect(virtualBackground._jitsiStreamBackgroundEffect.setVirtualBackground).toHaveBeenCalledTimes(0)
 		})
 	})
 
