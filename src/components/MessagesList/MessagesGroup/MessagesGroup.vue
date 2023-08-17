@@ -34,18 +34,19 @@
 					:display-name="actorDisplayName" />
 			</div>
 			<ul class="messages">
+				<li class="messages__author" aria-level="4">
+					{{ actorDisplayName }}
+				</li>
 				<Message v-for="(message, index) of messages"
 					:key="message.id"
 					ref="message"
 					v-bind="message"
-					:is-first-message="index === 0"
 					:is-temporary="message.timestamp === 0"
 					:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
 					:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId"
 					:actor-type="actorType"
 					:actor-id="actorId"
-					:actor-display-name="actorDisplayName"
-					show-author />
+					:actor-display-name="actorDisplayName" />
 			</ul>
 		</div>
 	</div>
@@ -197,6 +198,11 @@ export default {
 		height: 52px;
 		width: 52px;
 		padding: 18px 10px 10px 10px;
+	}
+
+	&__author {
+		padding: 4px 0 0 8px;
+		color: var(--color-text-maxcontrast);
 	}
 }
 </style>

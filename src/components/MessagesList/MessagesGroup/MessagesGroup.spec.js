@@ -88,6 +88,9 @@ describe('MessagesGroup.vue', () => {
 		expect(avatarEl.attributes('authorid')).toBe('actor-1')
 		expect(avatarEl.attributes('displayname')).toBe('actor one')
 
+		const authorEl = wrapper.find('.messages__author')
+		expect(authorEl.text()).toBe('actor one')
+
 		const messagesEl = wrapper.findAllComponents({ name: 'Message' })
 		let message = messagesEl.at(0)
 		expect(message.attributes('id')).toBe('100')
@@ -96,8 +99,6 @@ describe('MessagesGroup.vue', () => {
 		expect(message.attributes('actordisplayname')).toBe('actor one')
 		expect(message.attributes('previousmessageid')).toBe('90')
 		expect(message.attributes('nextmessageid')).toBe('110')
-		expect(message.attributes('isfirstmessage')).toBe('true')
-		expect(message.attributes('showauthor')).toBe('true')
 		expect(message.attributes('istemporary')).not.toBeDefined()
 
 		message = messagesEl.at(1)
@@ -107,8 +108,6 @@ describe('MessagesGroup.vue', () => {
 		expect(message.attributes('actordisplayname')).toBe('actor one')
 		expect(message.attributes('previousmessageid')).toBe('100')
 		expect(message.attributes('nextmessageid')).toBe('120')
-		expect(message.attributes('isfirstmessage')).not.toBeDefined()
-		expect(message.attributes('showauthor')).toBe('true')
 		expect(message.attributes('istemporary')).not.toBeDefined()
 
 		message = messagesEl.at(2)
@@ -118,8 +117,6 @@ describe('MessagesGroup.vue', () => {
 		expect(message.attributes('actordisplayname')).toBe('actor one')
 		expect(message.attributes('previousmessageid')).toBe('110')
 		expect(message.attributes('nextmessageid')).toBe('200')
-		expect(message.attributes('isfirstmessage')).not.toBeDefined()
-		expect(message.attributes('showauthor')).toBe('true')
 		expect(message.attributes('istemporary')).toBe('true')
 	})
 
@@ -239,6 +236,9 @@ describe('MessagesGroup.vue', () => {
 		expect(avatarEl.attributes('authorid')).toBe('actor-1')
 		expect(avatarEl.attributes('displayname')).toBe('guest-one-display-name')
 
+		const authorEl = wrapper.find('.messages__author')
+		expect(authorEl.text()).toBe('guest-one-display-name')
+
 		const messagesEl = wrapper.findAllComponents({ name: 'Message' })
 		let message = messagesEl.at(0)
 		expect(message.attributes('id')).toBe('100')
@@ -295,6 +295,9 @@ describe('MessagesGroup.vue', () => {
 		expect(avatarEl.attributes('authortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
 		expect(avatarEl.attributes('authorid')).toBe('actor-1')
 		expect(avatarEl.attributes('displayname')).toBe('Deleted user')
+
+		const authorEl = wrapper.find('.messages__author')
+		expect(authorEl.text()).toBe('Deleted user')
 
 		const messagesEl = wrapper.findAllComponents({ name: 'Message' })
 		let message = messagesEl.at(0)
