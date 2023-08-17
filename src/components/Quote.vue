@@ -34,6 +34,11 @@ components.
 				class="quote__main__author"
 				role="heading"
 				aria-level="4">
+				<AvatarWrapper :id="actorId"
+					:name="getDisplayName"
+					:source="actorType"
+					small
+					disable-menu />
 				{{ getDisplayName }}
 			</div>
 			<div v-if="isFileShareMessage"
@@ -65,6 +70,7 @@ import Close from 'vue-material-design-icons/Close.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
+import AvatarWrapper from './AvatarWrapper/AvatarWrapper.vue'
 import DefaultParameter from './MessagesList/MessagesGroup/Message/MessagePart/DefaultParameter.vue'
 import FilePreview from './MessagesList/MessagesGroup/Message/MessagePart/FilePreview.vue'
 
@@ -73,6 +79,7 @@ import { EventBus } from '../services/EventBus.js'
 export default {
 	name: 'Quote',
 	components: {
+		AvatarWrapper,
 		NcButton,
 		Close,
 		NcRichText,
@@ -255,14 +262,28 @@ export default {
 @import '../assets/variables';
 
 .quote {
-	border-left: 4px solid var(--color-border-dark);
-	margin: 4px 0 4px 8px;
-	padding-left: 8px;
+	position: relative;
+	margin: 4px 0;
+	padding: 6px 6px 6px 24px;
 	display: flex;
 	max-width: $messages-list-max-width - $message-utils-width;
+	border-radius: var(--border-radius-large);
+	border: 2px solid var(--color-border);
+	background-color: var(--color-main-background);
 
-	&.quote-own-message {
-		border-left: 4px solid var(--color-primary-element);
+	&::before {
+		content: ' ';
+		position: absolute;
+		top: 8px;
+		left: 8px;
+		height: calc(100% - 16px);
+		width: 8px;
+		border-radius: var(--border-radius);
+		background-color: var(--color-border);
+	}
+
+	&.quote-own-message::before {
+		background-color: var(--color-primary-default);
 	}
 
 	&__main {
@@ -270,6 +291,9 @@ export default {
 		flex-direction: column;
 		flex: 1 1 auto;
 		&__author {
+			display: flex;
+			align-items: center;
+			gap: 4px;
 			color: var(--color-text-maxcontrast);
 		}
 		&__text {
@@ -279,9 +303,9 @@ export default {
 			& p {
 				text-overflow: ellipsis;
 				overflow: hidden;
-				// Allow 2 lines max and ellipsize the overflow;
+				// Allow 1 line max and ellipsize the overflow;
 				display: -webkit-box;
-				-webkit-line-clamp: 2;
+				-webkit-line-clamp: 1;
 				-webkit-box-orient: vertical;
 			}
 		}
