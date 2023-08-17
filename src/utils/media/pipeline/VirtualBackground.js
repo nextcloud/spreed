@@ -72,16 +72,19 @@ export default class VirtualBackground extends TrackSinkSource {
 	}
 
 	static _checkWasmSupport() {
-		try {
-			const wasmCheck = require('wasm-check')
-			this._wasmSupported = true
+		const wasmCheck = require('wasm-check')
 
-			this._wasmSimd = wasmCheck.feature.simd
-		} catch (error) {
+		if (!wasmCheck.support()) {
 			this._wasmSupported = false
 
 			console.error('Looks like WebAssembly is disabled or not supported on this browser, virtual background will not be available')
+
+			return
 		}
+
+		this._wasmSupported = true
+
+		this._wasmSimd = wasmCheck.feature.simd
 	}
 
 	static isWasmSupported() {
