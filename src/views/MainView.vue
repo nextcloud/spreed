@@ -3,12 +3,12 @@
 		<LobbyScreen v-if="isInLobby" />
 		<template v-else>
 			<TopBar :is-in-call="showChatInSidebar" />
-			<transition name="fade">
+			<TransitionWrapper name="fade">
 				<ChatView v-if="!showChatInSidebar" />
 				<template v-else>
 					<CallView :token="token" />
 				</template>
-			</transition>
+			</TransitionWrapper>
 		</template>
 	</div>
 </template>
@@ -18,6 +18,7 @@ import CallView from '../components/CallView/CallView.vue'
 import ChatView from '../components/ChatView.vue'
 import LobbyScreen from '../components/LobbyScreen.vue'
 import TopBar from '../components/TopBar/TopBar.vue'
+import TransitionWrapper from '../components/TransitionWrapper.vue'
 
 import { useIsInCall } from '../composables/useIsInCall.js'
 import isInLobby from '../mixins/isInLobby.js'
@@ -30,6 +31,7 @@ export default {
 		LobbyScreen,
 		TopBar,
 		CallView,
+		TransitionWrapper,
 	},
 
 	mixins: [

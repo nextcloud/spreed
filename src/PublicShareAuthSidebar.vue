@@ -21,7 +21,7 @@
   -->
 
 <template>
-	<transition name="slide-right">
+	<TransitionWrapper name="slide-right">
 		<aside v-if="isOpen" id="talk-sidebar">
 			<div v-if="!token" class="emptycontent">
 				<div class="icon icon-talk" />
@@ -34,7 +34,7 @@
 				<ChatView />
 			</template>
 		</aside>
-	</transition>
+	</TransitionWrapper>
 </template>
 
 <script>
@@ -44,6 +44,7 @@ import { loadState } from '@nextcloud/initial-state'
 import CallView from './components/CallView/CallView.vue'
 import ChatView from './components/ChatView.vue'
 import TopBar from './components/TopBar/TopBar.vue'
+import TransitionWrapper from './components/TransitionWrapper.vue'
 
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import talkHashCheck from './mixins/talkHashCheck.js'
@@ -61,6 +62,7 @@ export default {
 		CallView,
 		ChatView,
 		TopBar,
+		TransitionWrapper,
 	},
 
 	mixins: [
@@ -215,24 +217,6 @@ export default {
 
 	/* Unset conflicting rules from guest.css for the sidebar. */
 	text-align: left;
-}
-
-.slide-right-leave-active,
-.slide-right-enter-active {
-	transition-duration: var(--animation-quick);
-	transition-property: min-width, max-width;
-}
-
-.slide-right-enter-to,
-.slide-right-leave {
-	min-width: 300px;
-	max-width: 500px;
-}
-
-.slide-right-enter,
-.slide-right-leave-to {
-	min-width: 0 !important;
-	max-width: 0 !important;
 }
 
 #talk-sidebar > .emptycontent {
