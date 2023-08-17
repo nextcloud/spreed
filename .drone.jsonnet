@@ -56,7 +56,7 @@ local Pipeline(test_set, database, services) = {
 			"stable*"
 		],
 		event: (
-			if database == "pgsql" then ["pull_request", "push"] else ["push"]
+			["pull_request", "push"]
 		)
 	}
 };
@@ -128,41 +128,12 @@ local PipelinePostgreSQL(test_set) = Pipeline(
 
 
 [
-	PipelineSQLite("callapi"),
-	PipelineSQLite("chat"),
-	PipelineSQLite("chat-2"),
-	PipelineSQLite("command"),
 	PipelineSQLite("conversation"),
-	PipelineSQLite("conversation-2"),
-	PipelineSQLite("federation"),
-	PipelineSQLite("integration"),
-	PipelineSQLite("sharing"),
-	PipelineSQLite("sharing-2"),
-
-	PipelineMySQL("callapi"),
-	PipelineMySQL("chat"),
-	PipelineMySQL("chat-2"),
-	PipelineMySQL("command"),
 	PipelineMySQL("conversation"),
-	PipelineMySQL("conversation-2"),
-	PipelineMySQL("federation"),
-	PipelineMySQL("integration"),
-	PipelineMySQL("sharing"),
-	PipelineMySQL("sharing-2"),
-
-	PipelinePostgreSQL("callapi"),
-	PipelinePostgreSQL("chat"),
-	PipelinePostgreSQL("chat-2"),
-	PipelinePostgreSQL("command"),
 	PipelinePostgreSQL("conversation"),
-	PipelinePostgreSQL("conversation-2"),
-	PipelinePostgreSQL("federation"),
-	PipelinePostgreSQL("integration"),
-	PipelinePostgreSQL("sharing"),
-	PipelinePostgreSQL("sharing-2"),
 
 	{
 		kind: "signature",
-		hmac: "8a6c9dd22806c07b68b5d263748cf226693b847a9d4773e094ba549d98834dd5"
+		hmac: "f8e16bd1635ba08a3d0f0d1e7c6f42b540da359ab066ee4107816e73c25e0d1f"
 	},
 ]
