@@ -35,76 +35,72 @@
 					@abort-search="abortSearch" />
 			</div>
 
-			<TransitionWrapper name="radial-reveal" group>
+			<TransitionWrapper name="radial-reveal">
 				<!-- Filters -->
-				<div v-show="searchText === ''"
-					key="filters"
+				<NcActions v-show="searchText === ''"
+					:primary="isFiltered !== null"
 					class="filters"
 					:class="{'hidden-visually': isFocused}">
-					<NcActions class="filter-actions"
-						:primary="isFiltered !== null">
+					<template #icon>
+						<FilterIcon :size="15" />
+					</template>
+					<NcActionButton close-after-click
+						class="filter-actions__button"
+						:class="{'filter-actions__button--active': isFiltered === 'mentions'}"
+						@click="handleFilter('mentions')">
 						<template #icon>
-							<FilterIcon :size="15" />
+							<AtIcon :size="20" />
 						</template>
-						<NcActionButton close-after-click
-							class="filter-actions__button"
-							:class="{'filter-actions__button--active': isFiltered === 'mentions'}"
-							@click="handleFilter('mentions')">
-							<template #icon>
-								<AtIcon :size="20" />
-							</template>
-							{{ t('spreed','Filter unread mentions') }}
-						</NcActionButton>
+						{{ t('spreed','Filter unread mentions') }}
+					</NcActionButton>
 
-						<NcActionButton close-after-click
-							class="filter-actions__button"
-							:class="{'filter-actions__button--active': isFiltered === 'unread'}"
-							@click="handleFilter('unread')">
-							<template #icon>
-								<MessageBadge :size="20" />
-							</template>
-							{{ t('spreed','Filter unread messages') }}
-						</NcActionButton>
+					<NcActionButton close-after-click
+						class="filter-actions__button"
+						:class="{'filter-actions__button--active': isFiltered === 'unread'}"
+						@click="handleFilter('unread')">
+						<template #icon>
+							<MessageBadge :size="20" />
+						</template>
+						{{ t('spreed','Filter unread messages') }}
+					</NcActionButton>
 
-						<NcActionButton v-if="isFiltered"
-							close-after-click
-							class="filter-actions__clearbutton"
-							@click="handleFilter(null)">
-							<template #icon>
-								<FilterRemoveIcon :size="20" />
-							</template>
-							{{ t('spreed', 'Clear filters') }}
-						</NcActionButton>
-					</NcActions>
-				</div>
+					<NcActionButton v-if="isFiltered"
+						close-after-click
+						class="filter-actions__clearbutton"
+						@click="handleFilter(null)">
+						<template #icon>
+							<FilterRemoveIcon :size="20" />
+						</template>
+						{{ t('spreed', 'Clear filters') }}
+					</NcActionButton>
+				</NcActions>
+			</TransitionWrapper>
 
-				<!-- Actions -->
-				<div v-show="searchText === ''"
-					key="actions"
+			<!-- Actions -->
+			<TransitionWrapper name="radial-reveal">
+				<NcActions v-show="searchText === ''"
 					class="actions"
 					:class="{'hidden-visually': isFocused}">
-					<NcActions class="conversations-actions">
+					<template #icon>
+						<DotsVertical :size="20" />
+					</template>
+					<NcActionButton v-if="canStartConversations"
+						close-after-click
+						@click="showModalNewConversation">
 						<template #icon>
-							<DotsVertical :size="20" />
+							<Plus :size="20" />
 						</template>
-						<NcActionButton v-if="canStartConversations"
-							close-after-click
-							@click="showModalNewConversation">
-							<template #icon>
-								<Plus :size="20" />
-							</template>
-							{{ t('spreed','Create a new conversation') }}
-						</NcActionButton>
+						{{ t('spreed','Create a new conversation') }}
+					</NcActionButton>
 
-						<NcActionButton close-after-click
-							@click="showModalListConversations">
-							<template #icon>
-								<List :size="20" />
-							</template>
-							{{ t('spreed','Join open conversations') }}
-						</NcActionButton>
-					</NcActions>
-				</div>
+					<NcActionButton close-after-click
+						@click="showModalListConversations">
+						<template #icon>
+							<List :size="20" />
+						</template>
+						{{ t('spreed','Join open conversations') }}
+					</NcActionButton>
+				</NcActions>
 			</TransitionWrapper>
 
 			<!-- All open conversations list -->
@@ -788,13 +784,26 @@ export default {
 }
 
 .new-conversation {
+  position: relative;
 	display: flex;
-	padding: 8px 0 8px 12px;
+	padding: 8px 4px 8px 12px;
 	align-items: center;
 
 	&--scrolled-down {
 		border-bottom: 1px solid var(--color-placeholder-dark);
 	}
+
+  .filters {
+    position: absolute;
+    top : 8px;
+    right: 56px;
+  }
+
+  .actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
 }
 
 // Override vue overflow rules for <ul> elements within app-navigation
@@ -816,6 +825,7 @@ export default {
 }
 
 .conversations-search {
+  padding: 4px 0;
 	transition: all 0.15s ease;
 	z-index: 1;
 	// New conversation button width : 52 px
@@ -831,20 +841,6 @@ export default {
 		width : calc(100% - 8px);
 	}
 
-}
-
-.filters {
-	position: absolute;
-	right : 52px; // New conversation button's width
-	top : 5px;
-	display: flex;
-	height: var(--default-clickable-area);
-}
-
-.actions {
-	position: absolute;
-	right: 5px;
-	top : 5px;
 }
 
 .filter-actions__button--active {
