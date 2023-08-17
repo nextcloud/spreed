@@ -201,8 +201,10 @@ class InjectionMiddleware extends Middleware {
 			}
 
 			if ($participant === null) {
-				$participant = $this->participantService->getParticipant($room, $this->userId);
-				$controller->setParticipant($participant);
+				if (!$requireListedWhenNoParticipant || !$this->manager->isRoomListableByUser($room, $this->userId)) {
+					$participant = $this->participantService->getParticipant($room, $this->userId);
+					$controller->setParticipant($participant);
+				}
 			}
 		}
 
