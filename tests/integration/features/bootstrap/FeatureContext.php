@@ -196,7 +196,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->deleteGroup($group);
 		}
 		foreach ($this->createdGuestAccountUsers as $user) {
-			$this->deleteUser($user);
+			$this->deleteGuestUser($user);
 		}
 	}
 
@@ -3019,7 +3019,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		]);
 		Assert::assertEquals(0, $lastCode, 'Guest creation succeeded for ' . $email);
 
-		$this->createdGuestAccountUsers[] = $email;
+		$this->createdGuestAccountUsers[$email] = $email;
 		$this->setCurrentUser($currentUser);
 	}
 
@@ -3045,7 +3045,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/cloud/users' . '/' . $user);
 		$this->assertStatusCode($this->response, 200, 'Failed to do first login');
 
-		$this->createdUsers[] = $user;
+		$this->createdUsers[$user] = $user;
 
 		$this->setCurrentUser($currentUser);
 	}
@@ -3073,7 +3073,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('DELETE', '/cloud/users/' . $user);
 		$this->setCurrentUser($currentUser);
 
-		unset($this->createdUsers[array_search($user, $this->createdUsers, true)]);
+		unset($this->createdUsers[$user]);
+
+		return $this->response;
+	}
+
+	private function deleteGuestUser($user) {
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('DELETE', '/cloud/users/' . $user);
+		$this->setCurrentUser($currentUser);
+
+		unset($this->createdGuestAccountUsers[$user]);
 
 		return $this->response;
 	}
@@ -3114,7 +3125,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->setCurrentUser($currentUser);
 
-		$this->createdGroups[] = $group;
+		$this->createdGroups[$group] = $group;
 	}
 
 	/**
@@ -3139,7 +3150,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('DELETE', '/cloud/groups/' . $group);
 		$this->setCurrentUser($currentUser);
 
-		unset($this->createdGroups[array_search($group, $this->createdGroups, true)]);
+		unset($this->createdGroups[$group]);
 	}
 
 	/**
