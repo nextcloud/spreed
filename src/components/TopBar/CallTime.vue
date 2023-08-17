@@ -22,7 +22,7 @@
 	<NcPopover class="call-time"
 		:menu-title="callTime"
 		:shown.sync="showPopover"
-		:focus-trap="isShowRecordingStatus"
+		:focus-trap="isShowRecordingControls"
 		:triggers="[]"
 		:container="container">
 		<template #trigger>
@@ -31,7 +31,7 @@
 				:title="recordingButtonTitle"
 				type="tertiary"
 				@click="showPopover = !showPopover">
-				<template v-if="isShowRecordingStatus" #icon>
+				<template v-if="isRecording || isStartingRecording" #icon>
 					<RecordCircle v-if="isRecording"
 						:size="20"
 						fill-color="#e9322d" />
@@ -49,7 +49,7 @@
 		</span>
 
 		<!--Moderator's buttons-->
-		<template v-if="isShowRecordingStatus">
+		<template v-if="isShowRecordingControls">
 			<hr v-if="isCallDurationHintShown" class="solid">
 			<NcButton v-if="isStartingRecording"
 				type="tertiary-no-background"
@@ -150,12 +150,12 @@ export default {
 				|| this.conversation.callRecording === CALL.RECORDING.AUDIO
 		},
 
-		isShowRecordingStatus() {
-			return this.isStartingRecording || this.isRecording
+		isShowRecordingControls() {
+			return this.isModerator && (this.isStartingRecording || this.isRecording)
 		},
 
 		isButtonDisabled() {
-			return !this.isShowRecordingStatus && !this.isCallDurationHintShown
+			return !this.isShowRecordingControls && !this.isCallDurationHintShown
 		},
 
 		recordingButtonTitle() {
