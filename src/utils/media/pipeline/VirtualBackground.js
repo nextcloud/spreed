@@ -76,11 +76,7 @@ export default class VirtualBackground extends TrackSinkSource {
 			const wasmCheck = require('wasm-check')
 			this._wasmSupported = true
 
-			if (wasmCheck.feature.simd) {
-				this._wasmSimd = true
-			} else {
-				this._wasmSimd = false
-			}
+			this._wasmSimd = wasmCheck.feature.simd
 		} catch (error) {
 			this._wasmSupported = false
 
