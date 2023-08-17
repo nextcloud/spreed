@@ -109,10 +109,6 @@ class InjectionMiddleware extends Middleware {
 			$this->getLoggedIn($controller, true);
 		}
 
-		if (!empty($reflectionMethod->getAttributes(RequireParticipantOrLoggedInAndListedConversation::class))) {
-			$this->getLoggedInOrGuest($controller, false, true);
-		}
-
 		if (!empty($reflectionMethod->getAttributes(RequireParticipant::class))) {
 			$this->getLoggedInOrGuest($controller, false);
 		}
