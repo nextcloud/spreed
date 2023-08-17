@@ -580,7 +580,7 @@ const actions = {
 	 * @return {object} temporary message
 	 */
 	createTemporaryMessage(context, { text, token, uploadId, index, file, localUrl, isVoiceMessage }) {
-		const messageToBeReplied = context.getters.getMessageToBeReplied(token)
+		const parentId = context.getters.getMessageToBeReplied(token)
 		const date = new Date()
 		let tempId = 'temp-' + date.getTime()
 		const messageParameters = {}
@@ -599,7 +599,7 @@ const actions = {
 			}
 		}
 
-		const message = Object.assign({}, {
+		return Object.assign({}, {
 			id: tempId,
 			actorId: context.getters.getActorId(),
 			actorType: context.getters.getActorType(),
@@ -610,20 +610,12 @@ const actions = {
 			message: text,
 			messageParameters,
 			token,
+			parent: parentId ?? 0,
 			isReplyable: false,
 			sendingFailure: '',
 			reactions: {},
 			referenceId: Hex.stringify(SHA256(tempId)),
 		})
-
-		/**
-		 * If the current message is a quote-reply message, add the parent key to the
-		 * temporary message object.
-		 */
-		if (messageToBeReplied) {
-			message.parent = messageToBeReplied.id
-		}
-		return message
 	},
 
 	/**

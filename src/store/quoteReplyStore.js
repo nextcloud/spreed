@@ -49,10 +49,12 @@ const mutations = {
 	 * reply button is clicked.
 	 *
 	 * @param {object} state current store state;
-	 * @param {object} messageToBeReplied The message to be replied;
+	 * @param {object} message The message to be replied;
+	 * @param {string} message.token The conversation token;
+	 * @param {number} message.id The id of message;
 	 */
-	addMessageToBeReplied(state, messageToBeReplied) {
-		Vue.set(state.messagesToBeReplied, [messageToBeReplied.token], messageToBeReplied)
+	addMessageToBeReplied(state, { token, id }) {
+		Vue.set(state.messagesToBeReplied, token, id)
 	},
 	/**
 	 * Removes message to be replied from the store for the

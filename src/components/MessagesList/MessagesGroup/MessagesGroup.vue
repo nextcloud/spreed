@@ -45,8 +45,7 @@
 					:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
 					:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId"
 					:actor-type="actorType"
-					:actor-id="actorId"
-					:actor-display-name="actorDisplayName" />
+					:actor-id="actorId" />
 			</ul>
 		</div>
 	</div>

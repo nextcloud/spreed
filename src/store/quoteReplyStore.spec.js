@@ -25,18 +25,15 @@ describe('quoteReplyStore', () => {
 			store.dispatch('addMessageToBeReplied', { token: 'token-1', id: 101 })
 			store.dispatch('addMessageToBeReplied', { token: 'token-2', id: 201 })
 
-			expect(store.getters.getMessageToBeReplied('token-1'))
-				.toStrictEqual({ token: 'token-1', id: 101 })
-			expect(store.getters.getMessageToBeReplied('token-2'))
-				.toStrictEqual({ token: 'token-2', id: 201 })
+			expect(store.getters.getMessageToBeReplied('token-1')).toBe(101)
+			expect(store.getters.getMessageToBeReplied('token-2')).toBe(201)
 		})
 
 		test('override message to be replied to', () => {
 			store.dispatch('addMessageToBeReplied', { token: 'token-1', id: 101 })
 			store.dispatch('addMessageToBeReplied', { token: 'token-1', id: 201 })
 
-			expect(store.getters.getMessageToBeReplied('token-1'))
-				.toStrictEqual({ token: 'token-1', id: 201 })
+			expect(store.getters.getMessageToBeReplied('token-1')).toBe(201)
 		})
 
 		test('removes message to be replied to', () => {
@@ -47,8 +44,7 @@ describe('quoteReplyStore', () => {
 
 			expect(store.getters.getMessageToBeReplied('token-1'))
 				.not.toBeDefined()
-			expect(store.getters.getMessageToBeReplied('token-2'))
-				.toStrictEqual({ token: 'token-2', id: 201 })
+			expect(store.getters.getMessageToBeReplied('token-2')).toBe(201)
 		})
 	})
 

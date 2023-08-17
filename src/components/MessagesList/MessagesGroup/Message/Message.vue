@@ -317,13 +317,6 @@ export default {
 			required: true,
 		},
 		/**
-		 * The display name of the sender of the message.
-		 */
-		actorDisplayName: {
-			type: String,
-			required: true,
-		},
-		/**
 		 * The message or quote text.
 		 */
 		message: {
@@ -812,17 +805,8 @@ export default {
 
 		handleReply() {
 			this.$store.dispatch('addMessageToBeReplied', {
-				id: this.id,
-				actorId: this.actorId,
-				actorType: this.actorType,
-				actorDisplayName: this.actorDisplayName,
-				timestamp: this.timestamp,
-				systemMessage: this.systemMessage,
-				messageType: this.messageType,
-				message: this.message,
-				messageParameters: this.messageParameters,
 				token: this.token,
-				previousMessageId: this.previousMessageId,
+				id: this.id,
 			})
 			EventBus.$emit('focus-chat-input')
 		},
