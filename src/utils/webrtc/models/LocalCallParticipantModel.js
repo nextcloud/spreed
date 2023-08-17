@@ -75,6 +75,10 @@ LocalCallParticipantModel.prototype = {
 		this._unwatchDisplayNameChange = store.watch(state => state.actorStore.displayName, this.setGuestName.bind(this))
 	},
 
+	setPeerId(peerId) {
+		this.set('peerId', peerId)
+	},
+
 	setPeer(peer) {
 		if (peer && this.get('peerId') !== peer.id) {
 			console.warn('Mismatch between stored peer ID and ID of given peer: ', this.get('peerId'), peer.id)

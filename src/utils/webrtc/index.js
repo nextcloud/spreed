@@ -182,6 +182,10 @@ function setupWebRtc() {
 	webRtc = initWebRtc(signaling, callParticipantCollection, localCallParticipantModel)
 	localCallParticipantModel.setWebRtc(webRtc)
 	localMediaModel.setWebRtc(webRtc)
+
+	signaling.on('sessionId', sessionId => {
+		localCallParticipantModel.setPeerId(sessionId)
+	})
 }
 
 /**
@@ -215,7 +219,7 @@ async function signalingJoinCall(token, flags, silent) {
 		setupWebRtc()
 
 		sentVideoQualityThrottler = new SentVideoQualityThrottler(localMediaModel, callParticipantCollection, webRtc.webrtc._videoTrackConstrainer)
-		speakingStatusHandler = new SpeakingStatusHandler(store, localMediaModel, callParticipantCollection)
+		speakingStatusHandler = new SpeakingStatusHandler(store, localMediaModel, localCallParticipantModel, callParticipantCollection)
 
 		if (signaling.hasFeature('mcu')) {
 			callAnalyzer = new CallAnalyzer(localMediaModel, localCallParticipantModel, callParticipantCollection)

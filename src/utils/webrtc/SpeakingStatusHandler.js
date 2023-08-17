@@ -33,26 +33,32 @@ export default class SpeakingStatusHandler {
 	// Constants, properties
 	#store
 	#localMediaModel
+	#localCallParticipantModel
 	#callParticipantCollection
 
 	// Methods (bound to have access to 'this')
 	#handleAddParticipantBound
 	#handleRemoveParticipantBound
 	#handleLocalSpeakingBound
+	#handleLocalPeerIdBound
 	#handleSpeakingBound
 
-	constructor(store, localMediaModel, callParticipantCollection) {
+	constructor(store, localMediaModel, localCallParticipantModel, callParticipantCollection) {
 		this.#store = store
 		this.#localMediaModel = localMediaModel
+		this.#localCallParticipantModel = localCallParticipantModel
 		this.#callParticipantCollection = callParticipantCollection
 
 		this.#handleAddParticipantBound = this.#handleAddParticipant.bind(this)
 		this.#handleRemoveParticipantBound = this.#handleRemoveParticipant.bind(this)
 		this.#handleLocalSpeakingBound = this.#handleLocalSpeaking.bind(this)
+		this.#handleLocalPeerIdBound = this.#handleLocalPeerId.bind(this)
 		this.#handleSpeakingBound = this.#handleSpeaking.bind(this)
 
 		this.#localMediaModel.on('change:speaking', this.#handleLocalSpeakingBound)
 		this.#localMediaModel.on('change:stoppedSpeaking', this.#handleLocalSpeakingBound)
+
+		this.#localCallParticipantModel.on('change:peerId', this.#handleLocalPeerIdBound)
 
 		this.#callParticipantCollection.on('add', this.#handleAddParticipantBound)
 		this.#callParticipantCollection.on('remove', this.#handleRemoveParticipantBound)
@@ -64,6 +70,8 @@ export default class SpeakingStatusHandler {
 	destroy() {
 		this.#localMediaModel.off('change:speaking', this.#handleLocalSpeakingBound)
 		this.#localMediaModel.off('change:stoppedSpeaking', this.#handleLocalSpeakingBound)
+
+		this.#localCallParticipantModel.off('change:peerId', this.#handleLocalPeerIdBound)
 
 		this.#callParticipantCollection.off('add', this.#handleAddParticipantBound)
 		this.#callParticipantCollection.off('remove', this.#handleRemoveParticipantBound)
@@ -109,6 +117,18 @@ export default class SpeakingStatusHandler {
 			token: this.#store.getters.getToken(),
 			sessionId: this.#store.getters.getSessionId(),
 			speaking,
+		})
+	}
+
+	/**
+	 * Dispatch speaking status of local participant to the store on peer ID
+	 * changes.
+	 */
+	#handleLocalPeerId() {
+		this.#store.dispatch('setSpeaking', {
+			token: this.#store.getters.getToken(),
+			sessionId: this.#store.getters.getSessionId(),
+			speaking: this.#localMediaModel.attributes.speaking,
 		})
 	}
 
