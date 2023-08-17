@@ -198,6 +198,7 @@ the main body of the message as well as a quote.
 				:show-sent-icon="showSentIcon"
 				:sent-icon-tooltip="sentIconTooltip"
 				@show-translate-dialog="isTranslateDialogOpen = true"
+				@reply="handleReply"
 				@delete="handleDelete" />
 			<div v-else-if="showCombinedSystemMessageToggle"
 				class="message-buttons-bar">
@@ -807,6 +808,23 @@ export default {
 					actorId: this.actorId,
 				})
 			}
+		},
+
+		handleReply() {
+			this.$store.dispatch('addMessageToBeReplied', {
+				id: this.id,
+				actorId: this.actorId,
+				actorType: this.actorType,
+				actorDisplayName: this.actorDisplayName,
+				timestamp: this.timestamp,
+				systemMessage: this.systemMessage,
+				messageType: this.messageType,
+				message: this.message,
+				messageParameters: this.messageParameters,
+				token: this.token,
+				previousMessageId: this.previousMessageId,
+			})
+			EventBus.$emit('focus-chat-input')
 		},
 
 		async handleDelete() {

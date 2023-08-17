@@ -260,7 +260,6 @@ import NcEmojiPicker from '@nextcloud/vue/dist/Components/NcEmojiPicker.js'
 import Forwarder from './Forwarder.vue'
 
 import { PARTICIPANT, CONVERSATION, ATTENDEE } from '../../../../../constants.js'
-import { EventBus } from '../../../../../services/EventBus.js'
 import { getMessageReminder, removeMessageReminder, setMessageReminder } from '../../../../../services/remindersService.js'
 import { copyConversationLinkToClipboard } from '../../../../../services/urlService.js'
 
@@ -332,14 +331,6 @@ export default {
 		},
 
 		/**
-		 * The display name of the sender of the message.
-		 */
-		actorDisplayName: {
-			type: String,
-			required: true,
-		},
-
-		/**
 		 * The parameters of the rich object message
 		 */
 		messageParameters: {
@@ -364,25 +355,9 @@ export default {
 		},
 
 		/**
-		 * The parent message's id.
-		 */
-		parent: {
-			type: Number,
-			default: 0,
-		},
-
-		/**
 		 * The message or quote text.
 		 */
 		message: {
-			type: String,
-			required: true,
-		},
-
-		/**
-		 * The type of system message
-		 */
-		systemMessage: {
 			type: String,
 			required: true,
 		},
@@ -448,7 +423,7 @@ export default {
 		},
 	},
 
-	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog'],
+	emits: ['delete', 'update:isActionMenuOpen', 'update:isEmojiPickerOpen', 'update:isReactionsMenuOpen', 'update:isForwarderOpen', 'show-translate-dialog', 'reply'],
 
 	setup() {
 		return {
@@ -615,20 +590,7 @@ export default {
 
 	methods: {
 		handleReply() {
-			this.$store.dispatch('addMessageToBeReplied', {
-				id: this.id,
-				actorId: this.actorId,
-				actorType: this.actorType,
-				actorDisplayName: this.actorDisplayName,
-				timestamp: this.timestamp,
-				systemMessage: this.systemMessage,
-				messageType: this.messageType,
-				message: this.message,
-				messageParameters: this.messageParameters,
-				token: this.token,
-				previousMessageId: this.previousMessageId,
-			})
-			EventBus.$emit('focus-chat-input')
+			this.$emit('reply')
 		},
 
 		async handlePrivateReply() {
