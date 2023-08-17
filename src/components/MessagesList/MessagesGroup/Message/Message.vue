@@ -1118,10 +1118,22 @@ export default {
 			list-style-type: decimal;
 		}
 
-		pre,
+		pre {
+			padding: 4px;
+			margin: 2px 0;
+			border-radius: var(--border-radius);
+			background-color: var(--color-background-dark);
+
+			& code {
+				margin: 0;
+				padding: 0;
+			}
+		}
+
 		code {
-			padding: 6px;
-			margin: 2px;
+			display: inline-block;
+			padding: 2px 4px;
+			margin: 2px 0;
 			border-radius: var(--border-radius);
 			background-color: var(--color-background-dark);
 		}
