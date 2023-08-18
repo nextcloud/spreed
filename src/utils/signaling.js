@@ -141,6 +141,20 @@ Signaling.Base.prototype._trigger = function(ev, args) {
 	EventBus.$emit('signaling-' + kebabCase(ev), args)
 }
 
+Signaling.Base.prototype.setSettings = function(settings) {
+	if (!settings) {
+		// Signaling object is expected to always have a settings object
+		return
+	}
+
+	this.settings = settings
+
+	if (this._pendingUpdateSettingsPromise) {
+		this._pendingUpdateSettingsPromise.resolve()
+		delete this._pendingUpdateSettingsPromise
+	}
+}
+
 Signaling.Base.prototype.isNoMcuWarningEnabled = function() {
 	return !this.settings.hideWarning
 }
@@ -654,6 +668,19 @@ Signaling.Standalone.prototype.connect = function() {
 		}, 2000)
 	}
 
+	if (this._pendingUpdateSettingsPromise) {
+		console.info('Deferring establishing signaling connection until signaling settings are updated')
+
+		this._pendingUpdateSettingsPromise.then(() => {
+			// "reconnect()" is called instead of "connect()", even if that
+			// slightly delays the connection, as "reconnect()" prevents
+			// duplicated connection requests.
+			this.reconnect()
+		})
+
+		return
+	}
+
 	console.debug('Connecting to ' + this.url + ' for ' + this.settings.token)
 	this.callbacks = {}
 	this.id = 1
@@ -772,8 +799,7 @@ Signaling.Standalone.prototype.connect = function() {
 				console.error('An error occurred processing the signaling message, please ask your server administrator to check the log file')
 				break
 			case 'token_expired':
-				console.info('The signaling token is expired, need to update settings')
-				this._trigger('updateSettings')
+				this.processErrorTokenExpired()
 				break
 			default:
 				console.error('Ignore unknown error', data)
@@ -1419,6 +1445,23 @@ Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
 		console.error('Unknown room participant event', data)
 		break
 	}
+}
+
+Signaling.Standalone.prototype.processErrorTokenExpired = function() {
+	console.info('The signaling token is expired, need to update settings')
+
+	if (!this._pendingUpdateSettingsPromise) {
+		let pendingUpdateSettingsPromiseResolve
+		this._pendingUpdateSettingsPromise = new Promise((resolve, reject) => {
+			// The Promise executor is run even before the Promise constructor has
+			// finished, so "this._pendingUpdateSettingsPromise" is not available
+			// yet.
+			pendingUpdateSettingsPromiseResolve = resolve
+		})
+		this._pendingUpdateSettingsPromise.resolve = pendingUpdateSettingsPromiseResolve
+	}
+
+	this._trigger('updateSettings')
 }
 
 Signaling.Standalone.prototype.requestOffer = function(sessionid, roomType, sid = undefined) {
