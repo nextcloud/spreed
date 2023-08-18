@@ -98,6 +98,11 @@ function myArrayBuffer() {
 
 global.Blob.prototype.arrayBuffer = Blob.prototype.arrayBuffer || myArrayBuffer
 
+global.BroadcastChannel = jest.fn(() => ({
+	postMessage: jest.fn(),
+	addEventListener: jest.fn(),
+}))
+
 const originalConsoleError = console.error
 console.error = function(error) {
 	if (error?.message?.includes('Could not parse CSS stylesheet')) {
