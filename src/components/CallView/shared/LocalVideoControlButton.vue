@@ -36,11 +36,12 @@
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
-import { emit } from '@nextcloud/event-bus'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import { NcButton } from '@nextcloud/vue'
 
 import { PARTICIPANT } from '../../../constants.js'
+import BrowserStorage from '../../../services/BrowserStorage.js'
 
 export default {
 	name: 'LocalVideoControlButton',
@@ -75,6 +76,11 @@ export default {
 		color: {
 			type: String,
 			default: 'currentColor',
+		},
+
+		token: {
+			type: String,
+			required: true,
 		},
 	},
 
@@ -130,6 +136,14 @@ export default {
 		},
 	},
 
+	mounted() {
+		subscribe('local-video-control-button:toggle-video', this.updateDeviceState)
+	},
+
+	beforeDestroy() {
+		unsubscribe('local-video-control-button:toggle-video', this.updateDeviceState)
+	},
+
 	methods: {
 		toggleVideo() {
 			/**
@@ -146,6 +160,14 @@ export default {
 			}
 
 			if (this.model.attributes.videoEnabled) {
+				this.model.disableVideo()
+			} else {
+				this.model.enableVideo()
+			}
+		},
+
+		updateDeviceState() {
+			if (BrowserStorage.getItem('videoDisabled_' + this.token)) {
 				this.model.disableVideo()
 			} else {
 				this.model.enableVideo()

@@ -122,7 +122,7 @@
 			<!-- Background selection -->
 			<VideoBackgroundEditor v-if="showBackgroundEditor"
 				:token="token"
-				@update-background="handleUpdateBackground" />
+				@update-background="handleUpdateVirtualBackground" />
 
 			<!-- "Always show" setting -->
 			<NcCheckboxRadioSwitch :checked.sync="showMediaSettings"
@@ -170,8 +170,8 @@
 					class="call-button"
 					:force-join-call="true"
 					:silent-call="silentCall" />
-				<NcButton v-else @click="closeModal">
-					{{ t('spreed', 'Done') }}
+				<NcButton v-else-if="showUpdateChangesButton" @click="closeModalAndApplySettings">
+					{{ t('spreed', 'Apply settings') }}
 				</NcButton>
 			</div>
 		</div>
@@ -186,7 +186,7 @@ import Creation from 'vue-material-design-icons/Creation.vue'
 import VideoIcon from 'vue-material-design-icons/Video.vue'
 import VideoOff from 'vue-material-design-icons/VideoOff.vue'
 
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import NcActionButton from '@nextcloud/vue/dist/Components/NcActionButton.js'
 import NcActions from '@nextcloud/vue/dist/Components/NcActions.js'
@@ -254,6 +254,10 @@ export default {
 			videoOn: undefined,
 			showMediaSettings: true,
 			silentCall: false,
+			updatedBackground: undefined,
+			deviceIdChanged: false,
+			audioDeviceStateChanged: false,
+			videoDeviceStateChanged: false,
 		}
 	},
 
@@ -337,7 +341,10 @@ export default {
 		isVirtualBackgroundAvailable() {
 			return this.virtualBackground.isAvailable()
 		},
-
+		showUpdateChangesButton() {
+			return this.updatedBackground || this.deviceIdChanged || this.audioDeviceStateChanged
+			 || this.videoDeviceStateChanged
+		},
 	},
 
 	watch: {
@@ -370,12 +377,14 @@ export default {
 		},
 
 		audioInputId(audioInputId) {
+			this.deviceIdChanged = true
 			if (this.showDeviceSelection && audioInputId && !this.audioOn) {
 				this.toggleAudio()
 			}
 		},
 
 		videoInputId(videoInputId) {
+			this.deviceIdChanged = true
 			if (this.showDeviceSelection && videoInputId && !this.videoOn) {
 				this.toggleVideo()
 			}
@@ -384,12 +393,12 @@ export default {
 
 	mounted() {
 		subscribe('talk:media-settings:show', this.showModal)
-		subscribe('talk:media-settings:hide', this.closeModal)
+		subscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
 	},
 
 	beforeDestroy() {
 		unsubscribe('talk:media-settings:show', this.showModal)
-		unsubscribe('talk:media-settings:hide', this.closeModal)
+		unsubscribe('talk:media-settings:hide', this.closeModalAndApplySettings)
 	},
 
 	methods: {
@@ -399,6 +408,10 @@ export default {
 
 		closeModal() {
 			this.modal = false
+			this.updatedBackground = undefined
+			this.deviceIdChanged = false
+			this.audioDeviceStateChanged = false
+			this.videoDeviceStateChanged = false
 		},
 
 		toggleAudio() {
@@ -409,6 +422,7 @@ export default {
 				BrowserStorage.setItem('audioDisabled_' + this.token, 'true')
 				this.audioOn = false
 			}
+			this.audioDeviceStateChanged = !this.audioDeviceStateChanged
 		},
 
 		toggleVideo() {
@@ -419,18 +433,41 @@ export default {
 				BrowserStorage.setItem('videoDisabled_' + this.token, 'true')
 				this.videoOn = false
 			}
+			this.videoDeviceStateChanged = !this.videoDeviceStateChanged
+		},
+
+		closeModalAndApplySettings() {
+			if (this.updatedBackground) {
+				this.handleUpdateBackground(this.updatedBackground)
+			}
+			if (this.audioDeviceStateChanged) {
+				emit('local-audio-control-button:toggle-audio')
+			}
+			if (this.videoDeviceStateChanged) {
+				emit('local-video-control-button:toggle-video')
+			}
+
+			this.closeModal()
 		},
 
 		handleUpdateBackground(background) {
 			if (background === 'none') {
-				this.clearVirtualBackground()
 				this.clearBackground()
 			} else if (background === 'blur') {
-				this.blurVirtualBackground()
 				this.blurBackground()
 			} else {
-				this.setVirtualBackgroundImage(background)
 				this.setBackgroundImage(background)
+			}
+		},
+
+		handleUpdateVirtualBackground(background) {
+			this.updatedBackground = background
+			if (background === 'none') {
+				this.clearVirtualBackground()
+			} else if (background === 'blur') {
+				this.blurVirtualBackground()
+			} else {
+				this.setVirtualBackgroundImage(background)
 			}
 		},
 
@@ -448,7 +485,7 @@ export default {
 			if (this.isInCall) {
 				localMediaModel.disableVirtualBackground()
 			} else {
-				BrowserStorage.setItem('virtualBackgroundEnabled_' + this.token, 'false')
+				BrowserStorage.removeItem('virtualBackgroundEnabled_' + this.token)
 			}
 		},
 

@@ -37,13 +37,14 @@
 </template>
 
 <script>
-import { emit } from '@nextcloud/event-bus'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 
 import { NcButton } from '@nextcloud/vue'
 
 import VolumeIndicator from '../../VolumeIndicator/VolumeIndicator.vue'
 
 import { PARTICIPANT } from '../../../constants.js'
+import BrowserStorage from '../../../services/BrowserStorage.js'
 
 export default {
 	name: 'LocalAudioControlButton',
@@ -77,6 +78,11 @@ export default {
 		color: {
 			type: String,
 			default: 'currentColor',
+		},
+
+		token: {
+			type: String,
+			required: true,
 		},
 	},
 
@@ -136,6 +142,16 @@ export default {
 		},
 	},
 
+	mounted() {
+		subscribe('local-audio-control-button:toggle-audio', this.updateDeviceState)
+	},
+
+	beforeDestroy() {
+		unsubscribe('local-audio-control-button:toggle-audio', this.updateDeviceState)
+	},
+
+	expose: ['toggleAudio'],
+
 	methods: {
 		toggleAudio() {
 			if (!this.model.attributes.audioAvailable) {
@@ -144,6 +160,14 @@ export default {
 			}
 
 			if (this.model.attributes.audioEnabled) {
+				this.model.disableAudio()
+			} else {
+				this.model.enableAudio()
+			}
+		},
+
+		updateDeviceState() {
+			if (BrowserStorage.getItem('audioDisabled_' + this.token) === 'true') {
 				this.model.disableAudio()
 			} else {
 				this.model.enableAudio()
