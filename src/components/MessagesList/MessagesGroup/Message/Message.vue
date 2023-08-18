@@ -32,8 +32,7 @@ the main body of the message as well as a quote.
 		:data-next-message-id="nextMessageId"
 		:data-previous-message-id="previousMessageId"
 		class="message"
-		:class="{'message__last': isLastMessage,
-			'message--highlighted': isHighlighted}"
+		:class="{'message--highlighted': isHighlighted}"
 		tabindex="0"
 		@animationend="isHighlighted = false"
 		@mouseover="handleMouseover"
@@ -883,10 +882,6 @@ export default {
 
 .message {
 	position: relative;
-
-	&__last {
-		margin-bottom: 12px;
-	}
 
 	&:hover .normal-message-body,
 	&:hover .combined-system {
