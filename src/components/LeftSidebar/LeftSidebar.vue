@@ -267,7 +267,9 @@ import {
 	searchListedConversations,
 } from '../../services/conversationsService.js'
 import { EventBus } from '../../services/EventBus.js'
+import { talkBroadcastChannel } from '../../services/talkBroadcastChannel.js'
 import CancelableRequest from '../../utils/cancelableRequest.js'
+import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
 export default {
 
@@ -339,6 +341,8 @@ export default {
 			preventFindingUnread: false,
 			roomListModifiedBefore: 0,
 			forceFullRoomListRefreshAfterXLoops: 0,
+			isFetchingConversations: false,
+			isCurrentTabLeader: false,
 			isFocused: false,
 			isFiltered: null,
 		}
@@ -423,17 +427,44 @@ export default {
 			this.abortSearch()
 		})
 
-		this.fetchConversations()
+		// Restore last fetched conversations from browser storage,
+		// before updated ones come from server
+		this.restoreConversations()
+
+		requestTabLeadership().then(() => {
+			this.isCurrentTabLeader = true
+			this.fetchConversations()
+			// Refreshes the conversations list every 30 seconds
+			this.refreshTimer = window.setInterval(() => {
+				this.fetchConversations()
+			}, 30000)
+		})
+
+		talkBroadcastChannel.addEventListener('message', (event) => {
+			if (this.isCurrentTabLeader) {
+				switch (event.data.message) {
+				case 'force-fetch-all-conversations':
+					this.roomListModifiedBefore = 0
+					this.debounceFetchConversations()
+					break
+				}
+			} else {
+				switch (event.data.message) {
+				case 'update-conversations':
+					this.$store.dispatch('patchConversations', {
+						conversations: event.data.conversations,
+						withRemoving: event.data.withRemoving,
+					})
+					break
+				case 'update-nextcloud-talk-hash':
+					this.$store.dispatch('setNextcloudTalkHash', event.data.hash)
+					break
+				}
+			}
+		})
 	},
 
 	mounted() {
-		// Refreshes the conversations every 30 seconds
-		this.refreshTimer = window.setInterval(() => {
-			if (!this.isFetchingConversations) {
-				this.fetchConversations()
-			}
-		}, 30000)
-
 		EventBus.$on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.$once('conversations-received', this.handleUnreadMention)
 		EventBus.$on('route-change', this.onRouteChange)
@@ -623,7 +654,13 @@ export default {
 		 */
 		async handleShouldRefreshConversations(options) {
 			if (options?.all === true) {
-				this.roomListModifiedBefore = 0
+				if (this.isCurrentTabLeader) {
+					this.roomListModifiedBefore = 0
+				} else {
+					// Force leader tab to do a full fetch
+					talkBroadcastChannel.postMessage({ message: 'force-fetch-all-conversations' })
+					return
+				}
 			} else if (options?.token && options?.properties) {
 				await this.$store.dispatch('setConversationProperties', {
 					token: options.token,
@@ -635,12 +672,14 @@ export default {
 		},
 
 		debounceFetchConversations: debounce(function() {
-			if (!this.isFetchingConversations) {
-				this.fetchConversations()
-			}
+			this.fetchConversations()
 		}, 3000),
 
 		async fetchConversations() {
+			if (this.isFetchingConversations) {
+				return
+			}
+
 			this.isFetchingConversations = true
 			if (this.forceFullRoomListRefreshAfterXLoops === 0) {
 				this.roomListModifiedBefore = 0
@@ -673,13 +712,21 @@ export default {
 				 * Emits a global event that is used in App.vue to update the page title once the
 				 * ( if the current route is a conversation and once the conversations are received)
 				 */
-				EventBus.$emit('conversations-received', {
-					singleConversation: false,
-				})
+				EventBus.$emit('conversations-received', { singleConversation: false })
 				this.isFetchingConversations = false
 			} catch (error) {
 				console.debug('Error while fetching conversations: ', error)
 				this.isFetchingConversations = false
+			}
+		},
+
+		async restoreConversations() {
+			try {
+				await this.$store.dispatch('restoreConversations')
+				this.initialisedConversations = true
+				EventBus.$emit('conversations-received', { singleConversation: false })
+			} catch (error) {
+				console.debug('Error while restoring conversations: ', error)
 			}
 		},
 
