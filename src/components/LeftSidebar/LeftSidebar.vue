@@ -113,7 +113,7 @@
 		<template #list>
 			<li ref="container" class="left-sidebar__list" @scroll="debounceHandleScroll">
 				<ul class="scroller">
-					<NcListItem v-if="noMatchFound && searchText"
+					<NcListItem v-if="noMatchFound && searchText && canStartConversations"
 						:title="t('spreed', 'Create a new conversation')"
 						@click="createConversation(searchText)">
 						<template #icon>
