@@ -258,7 +258,7 @@ class SystemMessage {
 				}
 			} elseif ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You added {user}');
-			} elseif (!$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
+			} elseif ($participant && !$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} added you');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator added you');
@@ -278,7 +278,7 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('{actor} removed {user}');
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You removed {user}');
-				} elseif (!$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
+				} elseif ($participant && !$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
 					$parsedMessage = $this->l->t('{actor} removed you');
 					if ($cliIsActor) {
 						$parsedMessage = $this->l->t('An administrator removed you');
@@ -344,7 +344,7 @@ class SystemMessage {
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
-			} elseif (!$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
+			} elseif ($participant && !$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} promoted you to moderator');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator promoted you to moderator');
@@ -357,7 +357,7 @@ class SystemMessage {
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
-			} elseif (!$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
+			} elseif ($participant && !$participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator demoted you from moderator');
@@ -370,7 +370,7 @@ class SystemMessage {
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
-			} elseif ($participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
+			} elseif ($participant && $participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} promoted you to moderator');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator promoted you to moderator');
@@ -383,7 +383,7 @@ class SystemMessage {
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
-			} elseif ($participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
+			} elseif ($participant && $participant->isGuest() && $currentActorId === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
 				if ($cliIsActor) {
 					$parsedMessage = $this->l->t('An administrator demoted you from moderator');
@@ -603,17 +603,17 @@ class SystemMessage {
 	}
 
 	/**
-	 * @param Participant $participant
+	 * @param ?Participant $participant
 	 * @param string $shareId
 	 * @return array
 	 * @throws InvalidPathException
 	 * @throws NotFoundException
 	 * @throws ShareNotFound
 	 */
-	protected function getFileFromShare(Participant $participant, string $shareId): array {
+	protected function getFileFromShare(?Participant $participant, string $shareId): array {
 		$share = $this->shareProvider->getShareById((int) $shareId);
 
-		if (!$participant->isGuest()) {
+		if ($participant && !$participant->isGuest()) {
 			if ($share->getShareOwner() !== $participant->getAttendee()->getActorId()) {
 				$userFolder = $this->rootFolder->getUserFolder($participant->getAttendee()->getActorId());
 				if ($userFolder instanceof Node) {

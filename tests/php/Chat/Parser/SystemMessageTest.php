@@ -267,6 +267,14 @@ class SystemMessageTest extends TestCase {
 				'You removed {user}',
 				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			],
+			['user_added', ['user' => 'user'], null,
+				'{actor} added {user}',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
+			],
+			['user_removed', ['user' => 'user'], null,
+				'{actor} removed {user}',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
+			],
 			['group_added', ['group' => 'g1'], 'recipient',
 				'{actor} added group {group}',
 				['actor' => ['id' => 'actor', 'type' => 'user'], 'group' => ['id' => 'g1', 'type' => 'group']],
@@ -337,6 +345,22 @@ class SystemMessageTest extends TestCase {
 			],
 			['guest_moderator_demoted', ['session' => 'moderator'], 'actor',
 				'You demoted {user} from moderator',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'moderator', 'type' => 'guest']],
+			],
+			['moderator_promoted', ['user' => 'user'], null,
+				'{actor} promoted {user} to moderator',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
+			],
+			['moderator_demoted', ['user' => 'user'], null,
+				'{actor} demoted {user} from moderator',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
+			],
+			['guest_moderator_promoted', ['session' => 'moderator'], null,
+				'{actor} promoted {user} to moderator',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'moderator', 'type' => 'guest']],
+			],
+			['guest_moderator_demoted', ['session' => 'moderator'], null,
+				'{actor} demoted {user} from moderator',
 				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'moderator', 'type' => 'guest']],
 			],
 			['file_shared', ['share' => '42'], 'recipient',
@@ -430,14 +454,16 @@ class SystemMessageTest extends TestCase {
 	 * @dataProvider dataParseMessage
 	 * @param string $message
 	 * @param array $parameters
-	 * @param $recipientId
+	 * @param string|null $recipientId
 	 * @param string $expectedMessage
 	 * @param array $expectedParameters
 	 */
-	public function testParseMessage(string $message, array $parameters, $recipientId, string $expectedMessage, array $expectedParameters) {
+	public function testParseMessage(string $message, array $parameters, ?string $recipientId, string $expectedMessage, array $expectedParameters) {
 		/** @var Participant|MockObject $participant */
 		$participant = $this->createMock(Participant::class);
-		if ($recipientId && strpos($recipientId, 'guest::') !== false) {
+		if ($recipientId === null) {
+			$participant = null;
+		} elseif ($recipientId && strpos($recipientId, 'guest::') !== false) {
 			$attendee = Attendee::fromRow([
 				'actor_type' => 'guests',
 				'actor_id' => substr($recipientId, strlen('guest::')),
@@ -448,6 +474,12 @@ class SystemMessageTest extends TestCase {
 			$participant->expects($this->atLeastOnce())
 				->method('isGuest')
 				->willReturn(true);
+			$participant->expects($this->any())
+				->method('getAttendee')
+				->willReturn($attendee);
+			$participant->expects($this->any())
+				->method('getSession')
+				->willReturn($session);
 		} else {
 			$participant->expects($this->atLeastOnce())
 				->method('isGuest')
@@ -457,13 +489,13 @@ class SystemMessageTest extends TestCase {
 				'actor_id' => $recipientId,
 			]);
 			$session = null;
+			$participant->expects($this->any())
+				->method('getAttendee')
+				->willReturn($attendee);
+			$participant->expects($this->any())
+				->method('getSession')
+				->willReturn($session);
 		}
-		$participant->expects($this->any())
-			->method('getAttendee')
-			->willReturn($attendee);
-		$participant->expects($this->any())
-			->method('getSession')
-			->willReturn($session);
 
 		/** @var IComment|MockObject $comment */
 		$comment = $this->createMock(IComment::class);
