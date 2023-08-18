@@ -132,10 +132,6 @@ describe('LeftSidebar.vue', () => {
 			const wrapper = mountComponent()
 
 			expect(fetchConversationsAction).toHaveBeenCalledWith(expect.anything(), expect.anything())
-			expect(conversationsListMock).toHaveBeenCalled()
-
-			const conversationListItems = wrapper.findAllComponents({ name: 'Conversation' })
-			expect(conversationListItems).toHaveLength(conversationsList.length)
 
 			expect(wrapper.vm.searchText).toBe('')
 			expect(wrapper.vm.initialisedConversations).toBeFalsy()
@@ -146,9 +142,12 @@ describe('LeftSidebar.vue', () => {
 			await flushPromises()
 
 			expect(wrapper.vm.initialisedConversations).toBeTruthy()
-			expect(conversationListItems.at(0).props('item')).toStrictEqual(conversationsList[2])
-			expect(conversationListItems.at(1).props('item')).toStrictEqual(conversationsList[0])
-			expect(conversationListItems.at(2).props('item')).toStrictEqual(conversationsList[1])
+
+			const conversationListItems = wrapper.findAllComponents({ name: 'Conversation' })
+			expect(conversationListItems).toHaveLength(conversationsList.length)
+			expect(conversationListItems.at(0).props('item')).toStrictEqual(conversationsList[0])
+			expect(conversationListItems.at(1).props('item')).toStrictEqual(conversationsList[1])
+			expect(conversationListItems.at(2).props('item')).toStrictEqual(conversationsList[2])
 
 			expect(conversationsReceivedEvent).toHaveBeenCalledWith({
 				singleConversation: false,
@@ -304,7 +303,6 @@ describe('LeftSidebar.vue', () => {
 			const wrapper = mountComponent()
 
 			expect(fetchConversationsAction).toHaveBeenCalledWith(expect.anything(), expect.anything())
-			expect(conversationsListMock).toHaveBeenCalled()
 
 			const searchBox = wrapper.findComponent({ name: 'SearchBox' })
 			expect(searchBox.exists()).toBeTruthy()

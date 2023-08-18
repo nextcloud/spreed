@@ -113,89 +113,98 @@
 		<template #list>
 			<li ref="container" class="left-sidebar__list" @scroll="debounceHandleScroll">
 				<ul class="scroller">
-					<NcListItem v-if="noMatchFound && searchText && canStartConversations"
-						:title="t('spreed', 'Create a new conversation')"
-						@click="createConversation(searchText)">
-						<template #icon>
-							<ChatPlus :size="30" />
-						</template>
-						<template #subtitle>
-							{{ searchText }}
-						</template>
-					</NcListItem>
-
-					<NcAppNavigationCaption :class="{'hidden-visually': !isSearching}"
-						:title="t('spreed', 'Conversations')" />
-					<Conversation v-for="item of conversationsList"
-						:key="item.id"
-						:ref="`conversation-${item.token}`"
-						:item="item" />
-					<template v-if="!initialisedConversations">
-						<LoadingPlaceholder type="conversations" />
+					<!-- Conversations List -->
+					<template v-if="!isSearching">
+						<NcAppNavigationCaption :title="t('spreed', 'Conversations')" class="hidden-visually" />
+						<Conversation v-for="item of filteredConversationsList"
+							:key="`conversation_${item.id}`"
+							:ref="`conversation-${item.token}`"
+							:item="item" />
+						<LoadingPlaceholder v-if="!initialisedConversations" type="conversations" />
+						<Hint v-else-if="filteredConversationsList.length === 0" :hint="t('spreed', 'No matches found')" />
 					</template>
-					<Hint v-else-if="noMatchFound"
-						:hint="t('spreed', 'No matches found')" />
-					<template v-if="isSearching">
-						<template v-if="!listedConversationsLoading && searchResultsListedConversations.length > 0">
+
+					<!-- Search results -->
+					<template v-else-if="isSearching">
+						<!-- Create a new conversation -->
+						<NcListItem v-if="searchResultsConversationList.length === 0 && canStartConversations"
+							:title="t('spreed', 'Create a new conversation')"
+							@click="createConversation(searchText)">
+							<template #icon>
+								<ChatPlus :size="30" />
+							</template>
+							<template #subtitle>
+								{{ searchText }}
+							</template>
+						</NcListItem>
+
+						<!-- Search results: user's conversations -->
+						<NcAppNavigationCaption :title="t('spreed', 'Conversations')" />
+						<Conversation v-for="item of searchResultsConversationList"
+							:key="`conversation_${item.id}`"
+							:ref="`conversation-${item.token}`"
+							:item="item" />
+						<Hint v-if="searchResultsConversationList.length === 0" :hint="t('spreed', 'No matches found')" />
+
+						<!-- Search results: listed (open) conversations -->
+						<template v-if="!listedConversationsLoading && searchResultsListedConversations.length !== 0">
 							<NcAppNavigationCaption :title="t('spreed', 'Open conversations')" />
 							<Conversation v-for="item of searchResultsListedConversations"
-								:key="item.id"
+								:key="`open-conversation_${item.id}`"
 								:item="item"
 								is-search-result />
 						</template>
+
+						<!-- Search results: users -->
 						<template v-if="searchResultsUsers.length !== 0">
 							<NcAppNavigationCaption :title="t('spreed', 'Users')" />
 							<NcListItem v-for="item of searchResultsUsers"
-								:key="item.id"
+								:key="`user_${item.id}`"
 								:title="item.label"
 								@click="createAndJoinConversation(item)">
 								<template #icon>
-									<ConversationIcon :item="iconData(item)"
-										:disable-menu="true" />
-								</template>
-							</NcListItem>
-						</template>
-						<template v-if="!showStartConversationsOptions">
-							<NcAppNavigationCaption v-if="searchResultsUsers.length === 0"
-								:title="t('spreed', 'Users')" />
-							<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-							<Hint v-else :hint="t('spreed', 'No matches found')" />
-						</template>
-					</template>
-					<template v-if="showStartConversationsOptions">
-						<template v-if="searchResultsGroups.length !== 0">
-							<NcAppNavigationCaption :title="t('spreed', 'Groups')" />
-							<NcListItem v-for="item of searchResultsGroups"
-								:key="item.id"
-								:title="item.label"
-								@click="createAndJoinConversation(item)">
-								<template #icon>
-									<ConversationIcon :item="iconData(item)"
-										:disable-menu="true" />
+									<ConversationIcon :item="iconData(item)" disable-menu />
 								</template>
 							</NcListItem>
 						</template>
 
-						<template v-if="searchResultsCircles.length !== 0">
-							<NcAppNavigationCaption :title="t('spreed', 'Circles')" />
-							<NcListItem v-for="item of searchResultsCircles"
-								:key="item.id"
-								:title="item.label"
-								@click="createAndJoinConversation(item)">
-								<template #icon>
-									<ConversationIcon :item="iconData(item)"
-										:disable-menu="true" />
-								</template>
-							</NcListItem>
+						<!-- Search results: new conversations -->
+						<template v-if="canStartConversations">
+							<!-- New conversations: Groups -->
+							<template v-if="searchResultsGroups.length !== 0">
+								<NcAppNavigationCaption :title="t('spreed', 'Groups')" />
+								<NcListItem v-for="item of searchResultsGroups"
+									:key="`group_${item.id}`"
+									:title="item.label"
+									@click="createAndJoinConversation(item)">
+									<template #icon>
+										<ConversationIcon :item="iconData(item)" disable-menu />
+									</template>
+								</NcListItem>
+							</template>
+
+							<!-- New conversations: Circles -->
+							<template v-if="searchResultsCircles.length !== 0">
+								<NcAppNavigationCaption :title="t('spreed', 'Circles')" />
+								<NcListItem v-for="item of searchResultsCircles"
+									:key="`circle_${item.id}`"
+									:title="item.label"
+									@click="createAndJoinConversation(item)">
+									<template #icon>
+										<ConversationIcon :item="iconData(item)" disable-menu />
+									</template>
+								</NcListItem>
+							</template>
 						</template>
 
-						<NcAppNavigationCaption v-if="sourcesWithoutResults"
-							:title="sourcesWithoutResultsList" />
+						<!-- Search results: no results (yet) -->
+						<NcAppNavigationCaption v-if="sourcesWithoutResults" :title="sourcesWithoutResultsList" />
 						<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 						<Hint v-else :hint="t('spreed', 'No search results')" />
 					</template>
 				</ul>
 			</li>
+
 			<NcButton v-if="!preventFindingUnread && unreadNum > 0"
 				class="unread-mention-button"
 				type="primary"
@@ -337,35 +346,40 @@ export default {
 
 	computed: {
 		conversationsList() {
-			let conversations = this.$store.getters.conversationsList
+			return this.$store.getters.conversationsList
+		},
+
+		searchResultsConversationList() {
 			if (this.searchText !== '' || this.isFocused) {
 				const lowerSearchText = this.searchText.toLowerCase()
-				conversations = conversations.filter(conversation =>
+				return this.conversationsList.filter(conversation =>
 					conversation.displayName.toLowerCase().includes(lowerSearchText)
-							|| conversation.name.toLowerCase().includes(lowerSearchText)
+					|| conversation.name.toLowerCase().includes(lowerSearchText)
 				)
-			} else if (this.isFiltered === 'unread') {
-				conversations = conversations.filter(conversation => conversation.unreadMessages > 0)
-			} else if (this.isFiltered === 'mentions') {
-				conversations = conversations.filter(conversation => conversation.unreadMention || (conversation.unreadMessages > 0
+			} else {
+				return []
+			}
+		},
+
+		filteredConversationsList() {
+			if (this.isFocused) {
+				return this.conversationsList
+			}
+
+			if (this.isFiltered === 'unread') {
+				return this.conversationsList.filter(conversation => conversation.unreadMessages > 0)
+			}
+
+			if (this.isFiltered === 'mentions') {
+				return this.conversationsList.filter(conversation => conversation.unreadMention || (conversation.unreadMessages > 0
 					&& (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER)))
 			}
 
-			// FIXME: this modifies the original array,
-			// maybe should act on a copy or sort already within the store ?
-			return conversations.sort(this.sortConversations)
+			return this.conversationsList
 		},
 
 		isSearching() {
 			return this.searchText !== ''
-		},
-
-		noMatchFound() {
-			return (this.searchText || this.isFiltered) && !this.conversationsList.length
-		},
-
-		showStartConversationsOptions() {
-			return this.isSearching && this.canStartConversations
 		},
 
 		sourcesWithoutResults() {
@@ -601,14 +615,6 @@ export default {
 			emit('show-settings')
 		},
 
-		sortConversations(conversation1, conversation2) {
-			if (conversation1.isFavorite !== conversation2.isFavorite) {
-				return conversation1.isFavorite ? -1 : 1
-			}
-
-			return conversation2.lastActivity - conversation1.lastActivity
-		},
-
 		/**
 		 * @param {object} [options] Options for conversation refreshing
 		 * @param {string} [options.token] The conversation token that got update
@@ -784,7 +790,7 @@ export default {
 }
 
 .new-conversation {
-  position: relative;
+	position: relative;
 	display: flex;
 	padding: 8px 4px 8px 12px;
 	align-items: center;
@@ -793,17 +799,17 @@ export default {
 		border-bottom: 1px solid var(--color-placeholder-dark);
 	}
 
-  .filters {
-    position: absolute;
-    top : 8px;
-    right: 56px;
-  }
+	.filters {
+		position: absolute;
+		top : 8px;
+		right: 56px;
+	}
 
-  .actions {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-  }
+	.actions {
+		position: absolute;
+		top: 8px;
+		right: 8px;
+	}
 }
 
 // Override vue overflow rules for <ul> elements within app-navigation
@@ -825,7 +831,7 @@ export default {
 }
 
 .conversations-search {
-  padding: 4px 0;
+	padding: 4px 0;
 	transition: all 0.15s ease;
 	z-index: 1;
 	// New conversation button width : 52 px
@@ -859,6 +865,7 @@ export default {
 :deep(.input-field__clear-button) {
 	border-radius: var(--border-radius-pill) !important;
 }
+
 :deep(.app-navigation ul) {
 	padding: 0 !important;
 }
