@@ -905,7 +905,7 @@ Signaling.Standalone.prototype.forceReconnect = function(newSession, flags) {
 				store.commit('setInCall', {
 					token: this.currentRoomToken,
 					sessionId: this.nextcloudSessionId,
-					flags: this.currentCallFlags,
+					flags: this.currentCallFlags || PARTICIPANT.CALL_FLAG.DISCONNECTED,
 				})
 
 				this.sendBye()
