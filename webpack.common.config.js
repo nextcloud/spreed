@@ -1,9 +1,9 @@
 /*
- * @copyright Copyright (c) 2022 Grigorii Shartsev <grigorii.shartsev@nextcloud.com>
+ * @copyright Copyright (c) 2022 Grigorii Shartsev <me@shgk.me>
  *
- * @author Grigorii Shartsev <grigorii.shartsev@nextcloud.com>
+ * @author Grigorii Shartsev <me@shgk.me>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -20,48 +20,47 @@
  */
 
 const BabelLoaderExcludeNodeModulesExcept = require('babel-loader-exclude-node-modules-except')
+const { mergeWithRules } = require('webpack-merge')
 
 const nextcloudWebpackRules = require('@nextcloud/webpack-vue-config/rules')
 
-// Edit JS rule
-nextcloudWebpackRules.RULE_JS.exclude = BabelLoaderExcludeNodeModulesExcept([
-	'@nextcloud/event-bus',
-	'ansi-regex',
-	'fast-xml-parser',
-	'hot-patcher',
-	'nextcloud-vue-collections',
-	'semver',
-	'strip-ansi',
-	'tributejs',
-	'webdav',
-])
-
-module.exports = {
+// Replace rules with the same modules
+module.exports = mergeWithRules({
+	module: {
+		rules: {
+			test: 'match',
+			loader: 'replace',
+			options: 'replace',
+		},
+	},
+})({
+	module: {
+		// Reuse @nextcloud/webpack-vue-config/rules
+		rules: Object.values(nextcloudWebpackRules),
+	},
+},
+{
 	module: {
 		rules: [
-			// Reuse @nextcloud/webpack-vue-config/rules
-			...Object.values(nextcloudWebpackRules),
-
 			{
-				/**
-				 * webrtc-adapter main module does no longer provide
-				 * "module.exports", which is expected by some elements using it
-				 * (like "attachmediastream"), so it needs to be added back with
-				 * a plugin.
-				 */
-				test: /node_modules[\\/]webrtc-adapter[\\/].*\.js$/,
-				loader: 'babel-loader',
+				test: /\.js$/,
+				loader: 'esbuild-loader',
 				options: {
-					plugins: ['add-module-exports'],
-					presets: [
-						/**
-						 * From "add-module-exports" documentation:
-						 * "webpack doesn't perform commonjs transformation for
-						 * codesplitting. Need to set commonjs conversion."
-						 */
-						['@babel/env', { modules: 'commonjs' }],
-					],
+					// Implicitly set as JS loader for only JS parts of Vue SFCs will be transpiled
+					loader: 'js',
+					target: 'es2020',
 				},
+				exclude: BabelLoaderExcludeNodeModulesExcept([
+					'@nextcloud/event-bus',
+					'ansi-regex',
+					'fast-xml-parser',
+					'hot-patcher',
+					'nextcloud-vue-collections',
+					'semver',
+					'strip-ansi',
+					'tributejs',
+					'webdav',
+				]),
 			},
 			{
 				test: /\.wasm$/i,
@@ -77,4 +76,4 @@ module.exports = {
 			},
 		],
 	},
-}
+})

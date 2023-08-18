@@ -19,7 +19,7 @@
  *
  */
 
-import attachMediaStream from 'attachmediastream'
+import attachMediaStream from 'attachmediastream/attachmediastream.bundle.js'
 
 import EmitterMixin from '../../EmitterMixin.js'
 

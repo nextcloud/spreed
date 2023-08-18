@@ -1,16 +1,22 @@
 const path = require('node:path')
 
+const { EsbuildPlugin } = require('esbuild-loader')
 const webpack = require('webpack')
-const { merge } = require('webpack-merge')
+const { mergeWithRules } = require('webpack-merge')
 
 const nextcloudWebpackConfig = require('@nextcloud/webpack-vue-config')
 
 const commonWebpackConfig = require('./webpack.common.config.js')
 
-// Rules from @nextcloud/webpack-vue-config/rules already added by commonWebpackConfig
-nextcloudWebpackConfig.module.rules = []
-
-module.exports = merge(nextcloudWebpackConfig, commonWebpackConfig, {
+module.exports = mergeWithRules({
+	module: {
+		// Rules from @nextcloud/webpack-vue-config/rules already added by commonWebpackConfig
+		rules: 'replace',
+	},
+	optimization: {
+		minimizer: 'replace',
+	},
+})(nextcloudWebpackConfig, commonWebpackConfig, {
 	entry: {
 		'admin-settings': path.join(__dirname, 'src', 'mainAdminSettings.js'),
 		collections: path.join(__dirname, 'src', 'collections.js'),
@@ -30,6 +36,14 @@ module.exports = merge(nextcloudWebpackConfig, commonWebpackConfig, {
 
 	output: {
 		assetModuleFilename: '[name][ext]?v=[contenthash]',
+	},
+
+	optimization: {
+		minimizer: [
+			new EsbuildPlugin({
+				target: 'es2020',
+			}),
+		],
 	},
 
 	plugins: [

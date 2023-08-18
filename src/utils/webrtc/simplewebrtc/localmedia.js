@@ -1,26 +1,24 @@
-/* global module */
+import util from 'util'
 
-const util = require('util')
-
-const mockconsole = require('mockconsole')
-const WildEmitter = require('wildemitter')
+import mockconsole from 'mockconsole'
+import WildEmitter from 'wildemitter'
 
 // Only mediaDevicesManager is used, but it can not be assigned here due to not
 // being initialized yet.
-const BlackVideoEnforcer = require('../../media/pipeline/BlackVideoEnforcer.js').default
-const MediaDevicesSource = require('../../media/pipeline/MediaDevicesSource.js').default
-const SpeakingMonitor = require('../../media/pipeline/SpeakingMonitor.js').default
-const TrackConstrainer = require('../../media/pipeline/TrackConstrainer.js').default
-const TrackEnabler = require('../../media/pipeline/TrackEnabler.js').default
-const TrackToStream = require('../../media/pipeline/TrackToStream.js').default
-const VirtualBackground = require('../../media/pipeline/VirtualBackground.js').default
-const webrtcIndex = require('../index.js')
-const getScreenMedia = require('./getscreenmedia.js')
+import BlackVideoEnforcer from '../../media/pipeline/BlackVideoEnforcer.js'
+import MediaDevicesSource from '../../media/pipeline/MediaDevicesSource.js'
+import SpeakingMonitor from '../../media/pipeline/SpeakingMonitor.js'
+import TrackConstrainer from '../../media/pipeline/TrackConstrainer.js'
+import TrackEnabler from '../../media/pipeline/TrackEnabler.js'
+import TrackToStream from '../../media/pipeline/TrackToStream.js'
+import VirtualBackground from '../../media/pipeline/VirtualBackground.js'
+import { mediaDevicesManager } from '../index.js'
+import getScreenMedia from './getscreenmedia.js'
 
 /**
  * @param {object} opts the options object.
  */
-function LocalMedia(opts) {
+export default function LocalMedia(opts) {
 	WildEmitter.call(this)
 
 	const config = this.config = {
@@ -45,7 +43,7 @@ function LocalMedia(opts) {
 	this.sentStreams = []
 	this.localScreens = []
 
-	if (!webrtcIndex.mediaDevicesManager.isSupported()) {
+	if (!mediaDevicesManager.isSupported()) {
 		this._logerror('Your browser does not support local media capture.')
 	}
 
@@ -164,7 +162,7 @@ LocalMedia.prototype.start = function(mediaConstraints, cb, context) {
 		return
 	}
 
-	if (!webrtcIndex.mediaDevicesManager.isSupported()) {
+	if (!mediaDevicesManager.isSupported()) {
 		const error = new Error('MediaStreamError')
 		error.name = 'NotSupportedError'
 
@@ -511,5 +509,3 @@ Object.defineProperty(LocalMedia.prototype, 'localScreen', {
 		return this.localScreens.length > 0 ? this.localScreens[0] : null
 	},
 })
-
-module.exports = LocalMedia
