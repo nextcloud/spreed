@@ -14,6 +14,7 @@ import { searchPossibleConversations, searchListedConversations } from '../../se
 import { EventBus } from '../../services/EventBus.js'
 import storeConfig from '../../store/storeConfig.js'
 import { findNcListItems, findNcActionButton } from '../../test-helpers.js'
+import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
 jest.mock('@nextcloud/initial-state', () => ({
 	loadState: jest.fn(),
@@ -131,6 +132,8 @@ describe('LeftSidebar.vue', () => {
 
 			const wrapper = mountComponent()
 
+			await requestTabLeadership()
+
 			expect(fetchConversationsAction).toHaveBeenCalledWith(expect.anything(), expect.anything())
 			expect(conversationsListMock).toHaveBeenCalled()
 
@@ -157,6 +160,9 @@ describe('LeftSidebar.vue', () => {
 
 		test('re-fetches conversations every 30 seconds', async () => {
 			const wrapper = mountComponent()
+
+			await requestTabLeadership()
+
 			expect(wrapper.exists()).toBeTruthy()
 			expect(fetchConversationsAction).toHaveBeenCalled()
 
@@ -175,6 +181,9 @@ describe('LeftSidebar.vue', () => {
 
 		test('re-fetches conversations when receiving bus event', async () => {
 			const wrapper = mountComponent()
+
+			await requestTabLeadership()
+
 			expect(wrapper.exists()).toBeTruthy()
 			expect(fetchConversationsAction).toHaveBeenCalled()
 
@@ -302,6 +311,8 @@ describe('LeftSidebar.vue', () => {
 			}
 
 			const wrapper = mountComponent()
+
+			await requestTabLeadership()
 
 			expect(fetchConversationsAction).toHaveBeenCalledWith(expect.anything(), expect.anything())
 			expect(conversationsListMock).toHaveBeenCalled()
