@@ -59,9 +59,16 @@
 			</NcPopover>
 		</div>
 
-		<LocalAudioControlButton :conversation="conversation" :model="model" color="#ffffff" />
+		<LocalAudioControlButton ref="audioControl"
+			:token="token"
+			:conversation="conversation"
+			:model="model"
+			color="#ffffff" />
 
-		<LocalVideoControlButton :conversation="conversation" :model="model" color="#ffffff" />
+		<LocalVideoControlButton :token="token"
+			:conversation="conversation"
+			:model="model"
+			color="#ffffff" />
 
 		<NcButton v-if="isVirtualBackgroundAvailable && !showActions"
 			v-tooltip="toggleVirtualBackgroundButtonLabel"
@@ -434,7 +441,7 @@ export default {
 			if (!this.spacebarKeyDown) {
 				this.audioEnabledBeforeSpacebarKeydown = this.model.attributes.audioEnabled
 				this.spacebarKeyDown = true
-				this.toggleAudio()
+				this.$refs.audioControl.toggleAudio()
 			} else {
 				this.spacebarKeyDown = false
 				if (this.audioEnabledBeforeSpacebarKeydown) {
@@ -445,19 +452,6 @@ export default {
 				this.audioEnabledBeforeSpacebarKeydown = undefined
 			}
 
-		},
-
-		toggleAudio() {
-			if (!this.model.attributes.audioAvailable) {
-				emit('show-settings', {})
-				return
-			}
-
-			if (this.model.attributes.audioEnabled) {
-				this.model.disableAudio()
-			} else {
-				this.model.enableAudio()
-			}
 		},
 
 		setSpeakingWhileMutedNotification(message) {
