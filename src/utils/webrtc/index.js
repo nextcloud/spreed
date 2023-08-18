@@ -134,7 +134,7 @@ async function connectSignaling(token) {
 		signaling.on('updateSettings', async function() {
 			const settings = await getSignalingSettings(token)
 			console.debug('Received updated settings', settings)
-			signaling.settings = settings
+			signaling.setSettings(settings)
 		})
 
 		signalingTypingHandler?.setSignaling(signaling)
