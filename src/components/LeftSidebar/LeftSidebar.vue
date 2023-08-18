@@ -790,7 +790,7 @@ export default {
 }
 
 .new-conversation {
-  position: relative;
+	position: relative;
 	display: flex;
 	padding: 8px 4px 8px 12px;
 	align-items: center;
@@ -799,17 +799,17 @@ export default {
 		border-bottom: 1px solid var(--color-placeholder-dark);
 	}
 
-  .filters {
-    position: absolute;
-    top : 8px;
-    right: 56px;
-  }
+	.filters {
+		position: absolute;
+		top : 8px;
+		right: 56px;
+	}
 
-  .actions {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-  }
+	.actions {
+		position: absolute;
+		top: 8px;
+		right: 8px;
+	}
 }
 
 // Override vue overflow rules for <ul> elements within app-navigation
@@ -831,7 +831,7 @@ export default {
 }
 
 .conversations-search {
-  padding: 4px 0;
+	padding: 4px 0;
 	transition: all 0.15s ease;
 	z-index: 1;
 	// New conversation button width : 52 px
@@ -865,6 +865,7 @@ export default {
 :deep(.input-field__clear-button) {
 	border-radius: var(--border-radius-pill) !important;
 }
+
 :deep(.app-navigation ul) {
 	padding: 0 !important;
 }
