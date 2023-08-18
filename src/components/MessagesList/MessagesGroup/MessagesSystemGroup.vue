@@ -20,36 +20,28 @@
 -->
 
 <template>
-	<div class="message-group">
-		<div v-if="dateSeparator"
-			class="message-group__date-header">
-			<span class="date"
-				role="heading"
-				aria-level="3">{{ dateSeparator }}</span>
-		</div>
-		<div class="wrapper wrapper--system">
-			<div v-for="messagesCollapsed in messagesGroupedBySystemMessage"
-				:key="messagesCollapsed.id"
-				class="message-group__system">
-				<ul v-if="messagesCollapsed.messages?.length > 1"
-					class="messages messages--header">
-					<Message v-bind="createCombinedSystemMessage(messagesCollapsed)"
-						is-combined-system-message
-						:is-combined-system-message-collapsed="messagesCollapsed.collapsed"
-						:next-message-id="getNextMessageId(messagesCollapsed.messages.at(-1))"
-						:previous-message-id="getPrevMessageId(messagesCollapsed.messages.at(0))"
-						@toggle-combined-system-message="toggleCollapsed(messagesCollapsed)" />
-				</ul>
-				<ul v-show="messagesCollapsed.messages?.length === 1 || !messagesCollapsed.collapsed"
-					class="messages"
-					:class="{'messages--collapsed': messagesCollapsed.messages?.length > 1}">
-					<Message v-for="message in messagesCollapsed.messages"
-						:key="message.id"
-						v-bind="message"
-						:next-message-id="getNextMessageId(message)"
-						:previous-message-id="getPrevMessageId(message)" />
-				</ul>
-			</div>
+	<div class="wrapper wrapper--system">
+		<div v-for="messagesCollapsed in messagesGroupedBySystemMessage"
+			:key="messagesCollapsed.id"
+			class="messages-group__system">
+			<ul v-if="messagesCollapsed.messages?.length > 1"
+				class="messages messages--header">
+				<Message v-bind="createCombinedSystemMessage(messagesCollapsed)"
+					is-combined-system-message
+					:is-combined-system-message-collapsed="messagesCollapsed.collapsed"
+					:next-message-id="getNextMessageId(messagesCollapsed.messages.at(-1))"
+					:previous-message-id="getPrevMessageId(messagesCollapsed.messages.at(0))"
+					@toggle-combined-system-message="toggleCollapsed(messagesCollapsed)" />
+			</ul>
+			<ul v-show="messagesCollapsed.messages?.length === 1 || !messagesCollapsed.collapsed"
+				class="messages"
+				:class="{'messages--collapsed': messagesCollapsed.messages?.length > 1}">
+				<Message v-for="message in messagesCollapsed.messages"
+					:key="message.id"
+					v-bind="message"
+					:next-message-id="getNextMessageId(message)"
+					:previous-message-id="getPrevMessageId(message)" />
+			</ul>
 		</div>
 	</div>
 </template>
@@ -97,13 +89,6 @@ export default {
 		 */
 		messages: {
 			type: Array,
-			required: true,
-		},
-		/**
-		 * The message date separator.
-		 */
-		dateSeparator: {
-			type: String,
 			required: true,
 		},
 
@@ -282,28 +267,9 @@ export default {
 <style lang="scss" scoped>
 @import '../../../assets/variables';
 
-.message-group {
-	&__date-header {
-		display: block;
-		text-align: center;
-		padding-top: 20px;
-		position: relative;
-		margin: 20px 0;
-		.date {
-			margin-right: $clickable-area * 2;
-			content: attr(data-date);
-			padding: 4px 12px;
-			left: 50%;
-			color: var(--color-text-maxcontrast);
-			background-color: var(--color-background-dark);
-			border-radius: var(--border-radius-pill);
-		}
-	}
-
-	&__system {
-		display: flex;
-		flex-direction: column;
-	}
+.messages-group__system {
+	display: flex;
+	flex-direction: column;
 }
 
 .wrapper {
