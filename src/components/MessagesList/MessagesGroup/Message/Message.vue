@@ -42,11 +42,6 @@ the main body of the message as well as a quote.
 			'system' : isSystemMessage,
 			'combined-system': isCombinedSystemMessage}"
 			class="message-body">
-			<div v-if="isFirstMessage && showAuthor"
-				class="message-body__author"
-				aria-level="4">
-				{{ actorDisplayName }}
-			</div>
 			<div ref="messageMain"
 				class="message-body__main">
 				<div v-if="isSingleEmoji"
@@ -203,6 +198,7 @@ the main body of the message as well as a quote.
 				:show-sent-icon="showSentIcon"
 				:sent-icon-tooltip="sentIconTooltip"
 				@show-translate-dialog="isTranslateDialogOpen = true"
+				@reply="handleReply"
 				@delete="handleDelete" />
 			<div v-else-if="showCombinedSystemMessageToggle"
 				class="message-buttons-bar">
@@ -321,13 +317,6 @@ export default {
 			required: true,
 		},
 		/**
-		 * The display name of the sender of the message.
-		 */
-		actorDisplayName: {
-			type: String,
-			required: true,
-		},
-		/**
 		 * The message or quote text.
 		 */
 		message: {
@@ -356,24 +345,10 @@ export default {
 			required: true,
 		},
 		/**
-		 * If true, it displays the message author on top of the message.
-		 */
-		showAuthor: {
-			type: Boolean,
-			default: false,
-		},
-		/**
 		 * Specifies if the message is temporary in order to display the spinner instead
 		 * of the message time.
 		 */
 		isTemporary: {
-			type: Boolean,
-			default: false,
-		},
-		/**
-		 * Specifies if the message is the first of a group of same-author messages.
-		 */
-		isFirstMessage: {
 			type: Boolean,
 			default: false,
 		},
@@ -828,6 +803,14 @@ export default {
 			}
 		},
 
+		handleReply() {
+			this.$store.dispatch('addMessageToBeReplied', {
+				token: this.token,
+				id: this.id,
+			})
+			EventBus.$emit('focus-chat-input')
+		},
+
 		async handleDelete() {
 			this.isDeleting = true
 			try {
@@ -921,9 +904,6 @@ export default {
 	font-size: $chat-font-size;
 	line-height: $chat-line-height;
 	position: relative;
-	&__author {
-		color: var(--color-text-maxcontrast);
-	}
 	&__main {
 		display: flex;
 		justify-content: space-between;

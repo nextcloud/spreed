@@ -320,7 +320,8 @@ export default {
 		},
 
 		messageToBeReplied() {
-			return this.$store.getters.getMessageToBeReplied(this.token)
+			const parentId = this.$store.getters.getMessageToBeReplied(this.token)
+			return parentId && this.$store.getters.message(this.token, parentId)
 		},
 
 		currentUserIsGuest() {
@@ -550,17 +551,8 @@ export default {
 						const temporaryParent = this.$store.getters.message(this.token, temporaryMessage.parent)
 
 						this.$store.dispatch('addMessageToBeReplied', {
-							id: temporaryParent.id,
-							actorId: temporaryParent.actorId,
-							actorType: temporaryParent.actorType,
-							actorDisplayName: temporaryParent.actorDisplayName,
-							timestamp: temporaryParent.timestamp,
-							systemMessage: temporaryParent.systemMessage,
-							messageType: temporaryParent.messageType,
-							message: temporaryParent.message,
-							messageParameters: temporaryParent.messageParameters,
 							token: temporaryParent.token,
-							previousMessageId: temporaryParent.previousMessageId,
+							id: temporaryParent.id,
 						})
 					}
 
