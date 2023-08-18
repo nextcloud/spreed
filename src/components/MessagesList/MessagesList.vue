@@ -1181,5 +1181,9 @@ export default {
 		background-color: var(--color-background-dark);
 		border-radius: var(--border-radius-pill);
 	}
+
+	&:last-child {
+		margin-bottom: 16px;
+	}
 }
 </style>
