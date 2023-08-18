@@ -22,6 +22,8 @@
 
 import { showError, TOAST_PERMANENT_TIMEOUT } from '@nextcloud/dialogs'
 
+import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
+
 const state = {
 	initialNextcloudTalkHash: '',
 	isNextcloudTalkHashDirty: false,
@@ -94,6 +96,12 @@ const actions = {
 		}
 
 		context.dispatch('setNextcloudTalkHash', newTalkCacheBusterHash)
+
+		// Inform other tabs about changed hash
+		talkBroadcastChannel.postMessage({
+			message: 'update-nextcloud-talk-hash',
+			hash: newTalkCacheBusterHash,
+		})
 	},
 
 	checkMaintenanceMode(context, response) {

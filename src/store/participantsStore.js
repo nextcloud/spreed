@@ -45,6 +45,7 @@ import {
 	setTyping,
 } from '../services/participantsService.js'
 import SessionStorage from '../services/SessionStorage.js'
+import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 
 const state = {
 	attendees: {
@@ -742,6 +743,7 @@ const actions = {
 		await removeCurrentUserFromConversation(token)
 		// If successful, deletes the conversation from the store
 		await context.dispatch('deleteConversation', token)
+		talkBroadcastChannel.postMessage({ message: 'force-fetch-all-conversations' })
 	},
 
 	/**

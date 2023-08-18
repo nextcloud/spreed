@@ -63,6 +63,7 @@ import {
 	startCallRecording,
 	stopCallRecording,
 } from '../services/recordingService.js'
+import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
 
 const DUMMY_CONVERSATION = {
 	token: '',
@@ -393,6 +394,7 @@ const actions = {
 		await deleteConversation(token)
 		// upon success, also delete from store
 		await context.dispatch('deleteConversation', token)
+		talkBroadcastChannel.postMessage({ message: 'force-fetch-all-conversations' })
 	},
 
 	/**
@@ -766,6 +768,12 @@ const actions = {
 
 			dispatch('cacheConversations')
 
+			// Inform other tabs about successful fetch
+			talkBroadcastChannel.postMessage({
+				message: 'update-conversations',
+				conversations: response.data.ocs.data,
+				withRemoving: modifiedSince === 0,
+			})
 			return response
 		} catch (error) {
 			if (error?.response) {
