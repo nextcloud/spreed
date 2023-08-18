@@ -37,7 +37,6 @@ describe('MessagesGroup.vue', () => {
 			propsData: {
 				id: 123,
 				token: TOKEN,
-				dateSeparator: '<date separator>',
 				previousMessageId: 90,
 				nextMessageId: 200,
 				messages: [{
@@ -79,9 +78,6 @@ describe('MessagesGroup.vue', () => {
 				}],
 			},
 		})
-
-		const dateEl = wrapper.find('.message-group__date-header')
-		expect(dateEl.text()).toBe('<date separator>')
 
 		const avatarEl = wrapper.findComponent({ name: 'AuthorAvatar' })
 		expect(avatarEl.attributes('authortype')).toBe(ATTENDEE.ACTOR_TYPE.USERS)
@@ -150,21 +146,17 @@ describe('MessagesGroup.vue', () => {
 			propsData: {
 				id: 123,
 				token: TOKEN,
-				dateSeparator: '<date separator>',
 				previousMessageId: 90,
 				nextMessageId: 200,
 				messages: MESSAGES,
 			},
 		})
 
-		const dateEl = wrapper.find('.message-group__date-header')
-		expect(dateEl.text()).toBe('<date separator>')
-
 		const avatarEl = wrapper.findComponent({ name: 'AuthorAvatar' })
 		expect(avatarEl.exists()).toBe(false)
 
 		const messagesEl = wrapper.findAllComponents({ name: 'Message' })
-		// TODO: date separator
+
 		let message = messagesEl.at(0)
 		expect(message.props('id')).toBe(MESSAGES[0].id)
 		expect(message.props('message')).toBe(MESSAGES[0].message)
@@ -194,7 +186,6 @@ describe('MessagesGroup.vue', () => {
 			propsData: {
 				id: 123,
 				token: TOKEN,
-				dateSeparator: '<date separator>',
 				previousMessageId: 90,
 				nextMessageId: 200,
 				messages: [{
@@ -225,9 +216,6 @@ describe('MessagesGroup.vue', () => {
 			},
 		})
 
-		const dateEl = wrapper.find('.message-group__date-header')
-		expect(dateEl.text()).toBe('<date separator>')
-
 		const avatarEl = wrapper.findComponent({ name: 'AuthorAvatar' })
 		expect(avatarEl.attributes('authortype')).toBe(ATTENDEE.ACTOR_TYPE.GUESTS)
 		expect(avatarEl.attributes('authorid')).toBe('actor-1')
@@ -255,7 +243,6 @@ describe('MessagesGroup.vue', () => {
 			propsData: {
 				id: 123,
 				token: TOKEN,
-				dateSeparator: '<date separator>',
 				previousMessageId: 90,
 				nextMessageId: 200,
 				messages: [{
