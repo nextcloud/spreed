@@ -310,6 +310,7 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
+				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
@@ -319,9 +320,7 @@ describe('messagesStore', () => {
 
 		test('creates temporary message with message to be replied', async () => {
 			getMessageToBeRepliedMock.mockReset()
-			getMessageToBeRepliedMock.mockReturnValue(() => ({
-				id: 123,
-			}))
+			getMessageToBeRepliedMock.mockReturnValue(() => (123))
 
 			const temporaryMessage = await store.dispatch('createTemporaryMessage', {
 				text: 'blah',
@@ -343,11 +342,11 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
+				parent: 123,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
 				referenceId: expect.stringMatching(/^[a-zA-Z0-9]{64}$/),
-				parent: 123,
 			})
 		})
 
@@ -388,6 +387,7 @@ describe('messagesStore', () => {
 					},
 				},
 				token: TOKEN,
+				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
@@ -418,6 +418,7 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
+				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
@@ -441,6 +442,7 @@ describe('messagesStore', () => {
 				message: 'replaced',
 				messageParameters: {},
 				token: TOKEN,
+				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
@@ -475,6 +477,7 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
+				parent: 0,
 				isReplyable: false,
 				sendingFailure: 'failure-reason',
 				reactions: {},
@@ -521,6 +524,7 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
+				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},

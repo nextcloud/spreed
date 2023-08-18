@@ -126,19 +126,7 @@ describe('MessageButtonsBar.vue', () => {
 				expect(replyButton.isVisible()).toBe(true)
 				await replyButton.trigger('click')
 
-				expect(replyAction).toHaveBeenCalledWith(expect.anything(), {
-					id: 123,
-					actorId: 'user-id-1',
-					actorType: 'users',
-					actorDisplayName: 'user-display-name-1',
-					message: 'test message',
-					messageParameters: {},
-					messageType: 'comment',
-					systemMessage: '',
-					timestamp: new Date('2020-05-07 09:23:00').getTime() / 1000,
-					token: TOKEN,
-					previousMessageId: 100,
-				})
+				expect(wrapper.emitted('reply')).toBeTruthy()
 			})
 
 			test('hides reply button when not replyable', async () => {
