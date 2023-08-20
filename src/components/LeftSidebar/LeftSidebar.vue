@@ -445,6 +445,7 @@ export default {
 				switch (event.data.message) {
 				case 'force-fetch-all-conversations':
 					this.roomListModifiedBefore = 0
+					this.forceFullRoomListRefreshAfterXLoops = 10
 					this.debounceFetchConversations()
 					break
 				}
@@ -656,6 +657,7 @@ export default {
 			if (options?.all === true) {
 				if (this.isCurrentTabLeader) {
 					this.roomListModifiedBefore = 0
+					this.forceFullRoomListRefreshAfterXLoops = 10
 				} else {
 					// Force leader tab to do a full fetch
 					talkBroadcastChannel.postMessage({ message: 'force-fetch-all-conversations' })
