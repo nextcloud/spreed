@@ -1096,6 +1096,7 @@ OC.L10N.register(
     "The conversation participants will not be notified about this call" : "لن يتم إعلام المشاركين في المحادثة بشأن هذه المكالمة",
     "Normal call" : "مكالمة عادية",
     "The conversation participants will be notified about this call" : "سوف يتم إعلام المشاركين في المحادثة بشأن هذه المكالمة",
+    "Apply settings" : "طبِّق الإعدادات",
     "No audio" : "بدون صوت",
     "No camera" : "بدون كاميرا",
     "Blur" : "تضبيب Blur",
