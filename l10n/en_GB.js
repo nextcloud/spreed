@@ -1096,6 +1096,7 @@ OC.L10N.register(
     "The conversation participants will not be notified about this call" : "The conversation participants will not be notified about this call",
     "Normal call" : "Normal call",
     "The conversation participants will be notified about this call" : "The conversation participants will be notified about this call",
+    "Apply settings" : "Apply settings",
     "No audio" : "No audio",
     "No camera" : "No camera",
     "Blur" : "Blur",
