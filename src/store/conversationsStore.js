@@ -148,42 +148,13 @@ const mutations = {
 	},
 
 	/**
-	 * Update stored conversation if a new one has changes
+	 * Update stored conversation
 	 *
 	 * @param {object} state the state
 	 * @param {object} conversation the new conversation object
 	 */
-	updateConversationIfHasChanged(state, conversation) {
-		const oldConversation = state.conversations[conversation.token]
-
-		// Update 1-1 conversation, if its status was changed
-		if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
-			&& (oldConversation.status !== conversation.status
-				|| oldConversation.statusMessage !== conversation.statusMessage
-				|| oldConversation.statusIcon !== conversation.statusIcon
-				|| oldConversation.statusClearAt !== conversation.statusClearAt
-			)
-		) {
-			emitUserStatusUpdated(conversation)
-			state.conversations[conversation.token] = conversation
-			return
-		}
-
-		// Update conversation if lastActivity updated (e.g. new message came up, call state changed)
-		if (oldConversation.lastActivity !== conversation.lastActivity) {
-			state.conversations[conversation.token] = conversation
-			return
-		}
-
-		// Check if any property were changed (no properties except status-related supposed to be added or deleted)
-		for (const key of Object.keys(conversation)) {
-			// "lastMessage" is the only property with non-primitive (object) value and cannot be compared by ===
-			// If "lastMessage" was actually changed, it is already checked by "lastActivity"
-			if (key !== 'lastMessage' && oldConversation[key] !== conversation[key]) {
-				state.conversations[conversation.token] = conversation
-				return
-			}
-		}
+	updateConversation(state, conversation) {
+		state.conversations[conversation.token] = conversation
 	},
 
 	/**
@@ -303,10 +274,42 @@ const actions = {
 	 * Update conversation in store according to a new conversation object
 	 *
 	 * @param {object} context store context
-	 * @param {object} newConversation the new conversation object
+	 * @param {object} conversation the new conversation object
+	 * @return {boolean} whether the conversation was changed
 	 */
-	updateConversationIfHasChanged(context, newConversation) {
-		context.commit('updateConversationIfHasChanged', newConversation)
+	updateConversationIfHasChanged(context, conversation) {
+		const oldConversation = context.state.conversations[conversation.token]
+
+		// Update 1-1 conversation, if its status was changed
+		if (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE
+			&& (oldConversation.status !== conversation.status
+				|| oldConversation.statusMessage !== conversation.statusMessage
+				|| oldConversation.statusIcon !== conversation.statusIcon
+				|| oldConversation.statusClearAt !== conversation.statusClearAt
+			)
+		) {
+			emitUserStatusUpdated(conversation)
+			context.commit('updateConversation', conversation)
+			return true
+		}
+
+		// Update conversation if lastActivity updated (e.g. new message came up, call state changed)
+		if (oldConversation.lastActivity !== conversation.lastActivity) {
+			context.commit('updateConversation', conversation)
+			return true
+		}
+
+		// Check if any property were changed (no properties except status-related supposed to be added or deleted)
+		for (const key of Object.keys(conversation)) {
+			// "lastMessage" is the only property with non-primitive (object) value and cannot be compared by ===
+			// If "lastMessage" was actually changed, it is already checked by "lastActivity"
+			if (key !== 'lastMessage' && oldConversation[key] !== conversation[key]) {
+				context.commit('updateConversation', conversation)
+				return true
+			}
+		}
+
+		return false
 	},
 
 	/**
@@ -333,7 +336,9 @@ const actions = {
 	 * @param {boolean} payload.withRemoving whether to remove conversations that are not in the new list
 	 * @param {boolean} payload.withCaching whether to cache conversations to BrowserStorage with patch
 	 */
-	patchConversations(context, { conversations, withRemoving = false, withCaching = false }) {
+	async patchConversations(context, { conversations, withRemoving = false, withCaching = false }) {
+		let storeHasChanged = false
+
 		const currentConversations = context.state.conversations
 		const newConversations = Object.fromEntries(
 			conversations.map((conversation) => [conversation.token, conversation])
@@ -343,7 +348,8 @@ const actions = {
 		if (withRemoving) {
 			for (const token of Object.keys(currentConversations)) {
 				if (newConversations[token] === undefined) {
-					context.dispatch('deleteConversation', token)
+					await context.dispatch('deleteConversation', token)
+					storeHasChanged = true
 				}
 			}
 		}
@@ -351,13 +357,15 @@ const actions = {
 		// Add new conversations and patch existing ones
 		for (const [token, newConversation] of Object.entries(newConversations)) {
 			if (currentConversations[token] === undefined) {
-				context.dispatch('addConversation', newConversation)
+				await context.dispatch('addConversation', newConversation)
+				storeHasChanged = true
 			} else {
-				context.dispatch('updateConversationIfHasChanged', newConversation)
+				const conversationHasChanged = await context.dispatch('updateConversationIfHasChanged', newConversation)
+				storeHasChanged = conversationHasChanged || storeHasChanged
 			}
 		}
 
-		if (withCaching) {
+		if (withCaching && storeHasChanged) {
 			context.dispatch('cacheConversations')
 		}
 	},
@@ -778,9 +786,8 @@ const actions = {
 				conversations: response.data.ocs.data,
 				// Remove only when fetching a full list, not fresh updates
 				withRemoving: modifiedSince === 0,
+				withCaching: true,
 			})
-
-			dispatch('cacheConversations')
 
 			// Inform other tabs about successful fetch
 			talkBroadcastChannel.postMessage({
