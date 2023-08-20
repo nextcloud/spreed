@@ -202,7 +202,7 @@ describe('conversationsStore', () => {
 			expect(deleteConversation).not.toHaveBeenCalled()
 		})
 
-		test('restores conversations cached in BrowserStorage', () => {
+		test('restores conversations cached in BrowserStorage', async () => {
 			const testConversations = [
 				{
 					token: 'one_token',
@@ -220,7 +220,7 @@ describe('conversationsStore', () => {
 				'[{"token":"one_token","attendeeId":"attendee-id-1","lastActivity":1675209600},{"token":"another_token","attendeeId":"attendee-id-2","lastActivity":1672531200}]'
 			)
 
-			store.dispatch('restoreConversations')
+			await store.dispatch('restoreConversations')
 
 			expect(BrowserStorage.getItem).toHaveBeenCalledWith('cachedConversations')
 			expect(store.getters.conversationsList).toHaveLength(2)
@@ -313,7 +313,8 @@ describe('conversationsStore', () => {
 
 			fetchConversations.mockResolvedValue(response)
 
-			await store.dispatch('fetchConversations', {})
+			store.dispatch('fetchConversations', { })
+			await flushPromises()
 
 			expect(BrowserStorage.setItem).toHaveBeenCalledWith('cachedConversations',
 				'[{"token":"one_token","attendeeId":"attendee-id-1","lastActivity":1675209600},{"token":"another_token","attendeeId":"attendee-id-2","lastActivity":1672531200}]'
@@ -399,7 +400,10 @@ describe('conversationsStore', () => {
 			}
 			fetchConversations.mockResolvedValue(response)
 			emit.mockClear()
-			await store.dispatch('fetchConversations', { })
+
+			store.dispatch('fetchConversations', { })
+			await flushPromises()
+
 			// Only new conversation emits event
 			expect(emit).toHaveBeenCalledTimes(1)
 			expect(emit.mock.calls.at(-1)).toEqual([
@@ -593,7 +597,8 @@ describe('conversationsStore', () => {
 
 			fetchConversations.mockResolvedValue(response)
 
-			await store.dispatch('fetchConversations', {})
+			store.dispatch('fetchConversations', { })
+			await flushPromises()
 
 			expect(fetchConversations).toHaveBeenCalledWith({})
 			expect(store.getters.conversationsList).toStrictEqual(testConversations)
