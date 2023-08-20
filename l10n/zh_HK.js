@@ -1096,6 +1096,7 @@ OC.L10N.register(
     "The conversation participants will not be notified about this call" : "對話參與者將不會收到有關此通話的通知",
     "Normal call" : "正常通話",
     "The conversation participants will be notified about this call" : "對話參與者將會收到有關此通話的通知",
+    "Apply settings" : "運用設定",
     "No audio" : "沒有音訊",
     "No camera" : "沒有相機",
     "Blur" : "模糊",
