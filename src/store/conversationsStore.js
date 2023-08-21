@@ -336,7 +336,7 @@ const actions = {
 	 * @param {boolean} payload.withRemoving whether to remove conversations that are not in the new list
 	 * @param {boolean} payload.withCaching whether to cache conversations to BrowserStorage with patch
 	 */
-	async patchConversations(context, { conversations, withRemoving = false, withCaching = false }) {
+	patchConversations(context, { conversations, withRemoving = false, withCaching = false }) {
 		let storeHasChanged = false
 
 		const currentConversations = context.state.conversations
@@ -348,7 +348,7 @@ const actions = {
 		if (withRemoving) {
 			for (const token of Object.keys(currentConversations)) {
 				if (newConversations[token] === undefined) {
-					await context.dispatch('deleteConversation', token)
+					context.dispatch('deleteConversation', token)
 					storeHasChanged = true
 				}
 			}
@@ -357,10 +357,10 @@ const actions = {
 		// Add new conversations and patch existing ones
 		for (const [token, newConversation] of Object.entries(newConversations)) {
 			if (currentConversations[token] === undefined) {
-				await context.dispatch('addConversation', newConversation)
+				context.dispatch('addConversation', newConversation)
 				storeHasChanged = true
 			} else {
-				const conversationHasChanged = await context.dispatch('updateConversationIfHasChanged', newConversation)
+				const conversationHasChanged = context.dispatch('updateConversationIfHasChanged', newConversation)
 				storeHasChanged = conversationHasChanged || storeHasChanged
 			}
 		}
