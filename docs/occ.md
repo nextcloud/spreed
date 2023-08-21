@@ -6,7 +6,7 @@ Install a new bot on the server
 
 ### Usage
 
-* `talk:bot:install [--output [OUTPUT]] [--no-setup] [--] <name> <secret> <url> [<description>]`
+* `talk:bot:install [--output [OUTPUT]] [--no-setup] [-f|--features FEATURES] [--] <name> <secret> <url> [<description>]`
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -19,6 +19,7 @@ Install a new bot on the server
 |---|---|---|---|---|
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
 | `--no-setup` | Prevent moderators from setting up the bot in a conversation | no | no | no | false` |
+| `--features|-f` | Specify the list of features for the bot - webhook: The bot receives posted chat messages as webhooks - response: The bot can post messages and reactions as a response - none: When all features should be disabled for the bot | yes | yes | yes | array ()` |
 
 ## talk:bot:list
 
@@ -59,7 +60,7 @@ List all installed bots of the server or a conversation
 
 ### Usage
 
-* `talk:bot:state [--output [OUTPUT]] [--] <bot-id> <state>`
+* `talk:bot:state [--output [OUTPUT]] [-f|--feature FEATURE] [--] <bot-id> <state>`
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
@@ -69,6 +70,7 @@ List all installed bots of the server or a conversation
 | Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|
 | `--output` | Output format (plain, json or json_pretty, default is plain) | yes | no | no | 'plain'` |
+| `--feature|-f` | Specify the list of features for the bot - webhook: The bot receives posted chat messages as webhooks - response: The bot can post messages and reactions as a response - none: When all features should be disabled for the bot | yes | yes | yes | array ()` |
 
 ## talk:bot:setup
 
