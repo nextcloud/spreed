@@ -115,7 +115,7 @@ export default class SpeakingStatusHandler {
 	#handleLocalSpeaking(localMediaModel, speaking) {
 		this.#store.dispatch('setSpeaking', {
 			token: this.#store.getters.getToken(),
-			sessionId: this.#store.getters.getSessionId(),
+			attendeeId: this.#store.getters.getAttendeeId(),
 			speaking,
 		})
 	}
@@ -127,7 +127,7 @@ export default class SpeakingStatusHandler {
 	#handleLocalPeerId() {
 		this.#store.dispatch('setSpeaking', {
 			token: this.#store.getters.getToken(),
-			sessionId: this.#store.getters.getSessionId(),
+			attendeeId: this.#store.getters.getAttendeeId(),
 			speaking: this.#localMediaModel.attributes.speaking,
 		})
 	}
@@ -139,9 +139,18 @@ export default class SpeakingStatusHandler {
 	 * @param {boolean} speaking whether the participant is speaking or not
 	 */
 	#handleSpeaking(callParticipantModel, speaking) {
+		const attendeeId = this.#store.getters.findParticipant(
+			this.#store.getters.getToken(),
+			{ sessionId: callParticipantModel.attributes.nextcloudSessionId }
+		)?.attendeeId
+
+		if (!attendeeId) {
+			return
+		}
+
 		this.#store.dispatch('setSpeaking', {
 			token: this.#store.getters.getToken(),
-			sessionId: callParticipantModel.attributes.nextcloudSessionId,
+			attendeeId,
 			speaking,
 		})
 	}

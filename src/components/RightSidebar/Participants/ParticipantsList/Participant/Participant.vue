@@ -503,7 +503,7 @@ export default {
 		},
 
 		participantSpeakingInformation() {
-			return this.$store.getters.getParticipantSpeakingInformation(this.token, this.sessionIds)
+			return this.$store.getters.getParticipantSpeakingInformation(this.token, this.attendeeId)
 		},
 
 		isParticipantSpeaking() {

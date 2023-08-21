@@ -146,17 +146,15 @@ const getters = {
 	 *
 	 * @param {object} state - the state object.
 	 * param {string} token - the conversation token.
-	 * param {Array<string>} sessionIds - session identifiers for the participant.
+	 * param {number} attendeeId - attendee's ID for the participant in conversation.
 	 * @return {object|undefined}
 	 */
-	getParticipantSpeakingInformation: (state) => (token, sessionIds) => {
+	getParticipantSpeakingInformation: (state) => (token, attendeeId) => {
 		if (!state.speaking[token]) {
 			return undefined
 		}
 
-		// look for existing sessionId in the store
-		const sessionId = sessionIds.find(sessionId => state.speaking[token][sessionId])
-		return state.speaking[token][sessionId]
+		return state.speaking[token][attendeeId]
 	},
 
 	/**
@@ -203,7 +201,7 @@ const getters = {
 				&& state.attendees[token][attendeeId].actorId === participantIdentifier.actorId) {
 				foundAttendee = attendeeId
 			}
-			if (participantIdentifier.sessionId && state.attendees[token][attendeeId].sessionId === participantIdentifier.sessionId) {
+			if (participantIdentifier.sessionId && state.attendees[token][attendeeId].sessionIds.includes(participantIdentifier.sessionId)) {
 				foundAttendee = attendeeId
 			}
 		})
@@ -355,28 +353,28 @@ const mutations = {
 	 * @param {object} state - current store state.
 	 * @param {object} data - the wrapping object.
 	 * @param {string} data.token - the conversation token participant is speaking in.
-	 * @param {string} data.sessionId - the Nextcloud session ID of the participant.
+	 * @param {string} data.attendeeId - the attendee ID of the participant in conversation.
 	 * @param {boolean} data.speaking - whether the participant is speaking or not
 	 */
-	setSpeaking(state, { token, sessionId, speaking }) {
+	setSpeaking(state, { token, attendeeId, speaking }) {
 		// create a dummy object for current call
 		if (!state.speaking[token]) {
 			Vue.set(state.speaking, token, {})
 		}
-		if (!state.speaking[token][sessionId]) {
-			Vue.set(state.speaking[token], sessionId, { speaking: null, lastTimestamp: 0, totalCountedTime: 0 })
+		if (!state.speaking[token][attendeeId]) {
+			Vue.set(state.speaking[token], attendeeId, { speaking: null, lastTimestamp: 0, totalCountedTime: 0 })
 		}
 
 		const currentTimestamp = Date.now()
-		const currentSpeakingState = state.speaking[token][sessionId].speaking
+		const currentSpeakingState = state.speaking[token][attendeeId].speaking
 
 		if (!currentSpeakingState && speaking) {
-			state.speaking[token][sessionId].speaking = true
-			state.speaking[token][sessionId].lastTimestamp = currentTimestamp
+			state.speaking[token][attendeeId].speaking = true
+			state.speaking[token][attendeeId].lastTimestamp = currentTimestamp
 		} else if (currentSpeakingState && !speaking) {
 			// when speaking has stopped, update the total talking time
-			state.speaking[token][sessionId].speaking = false
-			state.speaking[token][sessionId].totalCountedTime += (currentTimestamp - state.speaking[token][sessionId].lastTimestamp)
+			state.speaking[token][attendeeId].speaking = false
+			state.speaking[token][attendeeId].totalCountedTime += (currentTimestamp - state.speaking[token][attendeeId].lastTimestamp)
 		}
 	},
 
@@ -823,8 +821,8 @@ const actions = {
 		}
 	},
 
-	setSpeaking(context, { token, sessionId, speaking }) {
-		context.commit('setSpeaking', { token, sessionId, speaking })
+	setSpeaking(context, { token, attendeeId, speaking }) {
+		context.commit('setSpeaking', { token, attendeeId, speaking })
 	},
 
 	purgeSpeakingStore(context, { token }) {
