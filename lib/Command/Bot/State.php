@@ -45,7 +45,7 @@ class State extends Base {
 		parent::configure();
 		$this
 			->setName('talk:bot:state')
-			->setDescription('List all installed bots of the server or a conversation')
+			->setDescription('Change the state or feature list for a bot')
 			->addArgument(
 				'bot-id',
 				InputArgument::REQUIRED,

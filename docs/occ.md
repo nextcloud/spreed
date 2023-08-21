@@ -56,7 +56,7 @@ Remove a bot from a conversation
 
 ## talk:bot:state
 
-List all installed bots of the server or a conversation
+Change the state or feature list for a bot
 
 ### Usage
 
