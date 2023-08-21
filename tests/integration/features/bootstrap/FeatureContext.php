@@ -3530,7 +3530,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$features = '';
 		if ($body) {
 			$features = array_map(static fn ($map) => $map['feature'], $body->getColumnsHash());
-			$features = ' -f ' . implode (' -f ', $features);
+			$features = ' -f ' . implode(' -f ', $features);
 		}
 
 		$this->invokingTheCommand('talk:bot:state ' . self::$botNameToId[$botName] . ' ' . $state . $features);

@@ -59,7 +59,7 @@ class State extends Base {
 			->addOption(
 				'feature',
 				'f',
-				InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY,
+				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
 				'Specify the list of features for the bot' . "\n"
 				. ' - webhook: The bot receives posted chat messages as webhooks' . "\n"
 				. ' - response: The bot can post messages and reactions as a response' . "\n"
