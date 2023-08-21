@@ -13,6 +13,11 @@ Feature: chat/bots
     When invoking occ with "talk:bot:list"
     Then the command was successful
     And the command output contains the text "Call summary"
+    And read bot ids from OCC
+    And set state no-setup for bot "Call summary" via OCC
+      | feature  |
+      | webhook  |
+      | response |
 
   Scenario: Simple call summary bot run
     # Populate default options again
@@ -47,17 +52,33 @@ Feature: chat/bots
       | flags | 1 |
     And user "participant1" sends message "- [ ] Task 1" to room "room" with 201
     And user "participant1" sends message "- [ ] Task 2\n- [ ] Task 3" to room "room" with 201
+    And set state enabled for bot "Call summary" via OCC
+      | feature  |
+      | webhook  |
+    And user "participant1" sends message "- [ ] Received but no reaction permission" to room "room" with 201
+    And set state enabled for bot "Call summary" via OCC
+      | feature  |
+      | none     |
+    And user "participant1" sends message "- [ ] Not received due to permission" to room "room" with 201
+    And set state enabled for bot "Call summary" via OCC
+      | feature  |
+      | webhook  |
+      | response |
     Then user "participant1" sees the following messages in room "room" with 200
-      | room | actorType | actorId      | actorDisplayName         | message                                    | messageParameters |
-      | room | users     | participant1 | participant1-displayname | - [ ] Task 2\n- [ ] Task 3                          | []                |
+      | room | actorType | actorId      | actorDisplayName         | message                                        | messageParameters |
+      | room | users     | participant1 | participant1-displayname | - [ ] Not received due to permission           | []                |
+      | room | users     | participant1 | participant1-displayname | - [ ] Received but no reaction permission      | []                |
+      | room | users     | participant1 | participant1-displayname | - [ ] Task 2\n- [ ] Task 3                     | []                |
       | room | users     | participant1 | participant1-displayname | - [ ] Task 1                                   | []                |
       | room | users     | participant1 | participant1-displayname | - [ ] Before call                              | []                |
     Then user "participant1" leaves call "room" with 200 (v4)
     Then user "participant1" leaves room "room" with 200 (v4)
     Then user "participant1" sees the following messages in room "room" with 200
-      | room | actorType | actorId           | actorDisplayName         | message                                    | messageParameters |
-      | room | bots      | BOT(Call summary) | Call summary (Bot)       | # Call summary - room\n\n{DATE}\n\n## Attendees\n- participant1-displayname\n\n## Tasks\n- [ ] Task 1\n- [ ] Task 2\n- [ ] Task 3                         | []                |
-      | room | users     | participant1      | participant1-displayname | - [ ] Task 2\n- [ ] Task 3                          | []                |
+      | room | actorType | actorId           | actorDisplayName         | message                                        | messageParameters |
+      | room | bots      | BOT(Call summary) | Call summary (Bot)       | # Call summary - room\n\n{DATE}\n\n## Attendees\n- participant1-displayname\n\n## Tasks\n- [ ] Task 1\n- [ ] Task 2\n- [ ] Task 3\n- [ ] Received but no reaction permission | []                |
+      | room | users     | participant1      | participant1-displayname | - [ ] Not received due to permission           | []                |
+      | room | users     | participant1      | participant1-displayname | - [ ] Received but no reaction permission      | []                |
+      | room | users     | participant1      | participant1-displayname | - [ ] Task 2\n- [ ] Task 3                     | []                |
       | room | users     | participant1      | participant1-displayname | - [ ] Task 1                                   | []                |
       | room | users     | participant1      | participant1-displayname | - [ ] Before call                              | []                |
     Then user "participant1" retrieve reactions "👍" of message "- [ ] Before call" in room "room" with 200
@@ -68,6 +89,10 @@ Feature: chat/bots
     Then user "participant1" retrieve reactions "👍" of message "- [ ] Task 2\n- [ ] Task 3" in room "room" with 200
       | actorType | actorId           | actorDisplayName   | reaction |
       | bots      | BOT(Call summary) | Call summary (Bot) | 👍       |
+    Then user "participant1" retrieve reactions "👍" of message "- [ ] Received but no reaction permission" in room "room" with 200
+      | actorType | actorId           | actorDisplayName   | reaction |
+    Then user "participant1" retrieve reactions "👍" of message "- [ ] Not received due to permission" in room "room" with 200
+      | actorType | actorId           | actorDisplayName   | reaction |
 
     # Different states bot
     # Already enabled

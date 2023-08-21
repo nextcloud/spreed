@@ -31,6 +31,7 @@ use OCA\Talk\Model\BotServerMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class State extends Base {
@@ -44,7 +45,7 @@ class State extends Base {
 		parent::configure();
 		$this
 			->setName('talk:bot:state')
-			->setDescription('List all installed bots of the server or a conversation')
+			->setDescription('Change the state or feature list for a bot')
 			->addArgument(
 				'bot-id',
 				InputArgument::REQUIRED,
@@ -55,12 +56,26 @@ class State extends Base {
 				InputArgument::REQUIRED,
 				'New state for the bot (0 = disabled, 1 = enabled, 2 = no setup via GUI)'
 			)
+			->addOption(
+				'feature',
+				'f',
+				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+				'Specify the list of features for the bot' . "\n"
+				. ' - webhook: The bot receives posted chat messages as webhooks' . "\n"
+				. ' - response: The bot can post messages and reactions as a response' . "\n"
+				. ' - none: When all features should be disabled for the bot'
+			)
 		;
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$botId = (int) $input->getArgument('bot-id');
-		$state = (int) $input->getArgument('state');
+		$botId = (int)$input->getArgument('bot-id');
+		$state = (int)$input->getArgument('state');
+
+		$featureFlags = null;
+		if (!empty($input->getOption('feature'))) {
+			$featureFlags = Bot::featureLabelsToFlags($input->getOption('feature'));
+		}
 
 		if (!in_array($state, [Bot::STATE_DISABLED, Bot::STATE_ENABLED, Bot::STATE_NO_SETUP], true)) {
 			$output->writeln('<error>Provided state is invalid</error>');
@@ -75,9 +90,16 @@ class State extends Base {
 		}
 
 		$bot->setState($state);
+		if ($featureFlags !== null) {
+			$bot->setFeatures($featureFlags);
+		}
 		$this->botServerMapper->update($bot);
 
-		$output->writeln('<info>Bot state set to ' . $state . '</info>');
+		if ($featureFlags !== null) {
+			$output->writeln('<info>Bot state set to ' . $state . ' with features: ' . Bot::featureFlagsToLabels($featureFlags) . '</info>');
+		} else {
+			$output->writeln('<info>Bot state set to ' . $state . '</info>');
+		}
 		return 0;
 	}
 }

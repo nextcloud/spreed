@@ -100,6 +100,12 @@ class BotController extends AEnvironmentAwareController {
 					$botAttempt->getBotServer()->getSecret(),
 					$message
 				);
+
+				if (!($botAttempt->getBotServer()->getFeatures() & Bot::FEATURE_RESPONSE)) {
+					$this->logger->debug('Not accepting response from bot ID ' . $botAttempt->getBotServer()->getId() . ' because the feature is disabled for it');
+					throw new \InvalidArgumentException('Feature not enabled for bot', Http::STATUS_BAD_REQUEST);
+				}
+
 				return $botAttempt;
 			} catch (UnauthorizedException) {
 			}
