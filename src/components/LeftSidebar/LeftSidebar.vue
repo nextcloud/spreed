@@ -111,17 +111,18 @@
 		</div>
 
 		<template #list>
-			<li ref="container" class="left-sidebar__list" @scroll="debounceHandleScroll">
-				<ul class="scroller">
+			<li ref="container" class="left-sidebar__list">
+				<ul class="scroller h-100">
 					<!-- Conversations List -->
 					<template v-if="!isSearching">
-						<NcAppNavigationCaption :title="t('spreed', 'Conversations')" class="hidden-visually" />
-						<Conversation v-for="item of filteredConversationsList"
-							:key="`conversation_${item.id}`"
-							:ref="`conversation-${item.token}`"
-							:item="item" />
-						<LoadingPlaceholder v-if="!initialisedConversations" type="conversations" />
-						<Hint v-else-if="filteredConversationsList.length === 0" :hint="t('spreed', 'No matches found')" />
+						<li class="h-100">
+							<ConversationsListVirtual ref="scroller"
+								:conversations="filteredConversationsList"
+								:loading="!initialisedConversations"
+								class="h-100"
+								@scroll.native="debounceHandleScroll" />
+						</li>
+						<Hint v-if="initialisedConversations && filteredConversationsList.length === 0" :hint="t('spreed', 'No matches found')" />
 					</template>
 
 					<!-- Search results -->
@@ -205,7 +206,7 @@
 				</ul>
 			</li>
 
-			<NcButton v-if="!preventFindingUnread && unreadNum > 0"
+			<NcButton v-if="!preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
 				class="unread-mention-button"
 				type="primary"
 				@click="scrollBottomUnread">
@@ -252,9 +253,9 @@ import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
 
 import ConversationIcon from '../ConversationIcon.vue'
 import Hint from '../Hint.vue'
-import LoadingPlaceholder from '../LoadingPlaceholder.vue'
 import TransitionWrapper from '../TransitionWrapper.vue'
 import Conversation from './ConversationsList/Conversation.vue'
+import ConversationsListVirtual from './ConversationsListVirtual.vue'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation.vue'
 import OpenConversationsList from './OpenConversationsList/OpenConversationsList.vue'
 import SearchBox from './SearchBox/SearchBox.vue'
@@ -284,12 +285,12 @@ export default {
 		NewGroupConversation,
 		OpenConversationsList,
 		Conversation,
-		LoadingPlaceholder,
 		NcListItem,
 		ConversationIcon,
 		NcActions,
 		NcActionButton,
 		TransitionWrapper,
+		ConversationsListVirtual,
 		// Icons
 		AtIcon,
 		MessageBadge,
@@ -336,8 +337,10 @@ export default {
 			// Keeps track of whether the conversation list is scrolled to the top or not
 			isScrolledToTop: true,
 			refreshTimer: null,
-			unreadNum: 0,
-			firstUnreadPos: 0,
+			/**
+			 * @type {number|null}
+			 */
+			lastUnreadMentionBelowViewportIndex: null,
 			preventFindingUnread: false,
 			roomListModifiedBefore: 0,
 			forceFullRoomListRefreshAfterXLoops: 0,
@@ -513,10 +516,7 @@ export default {
 
 		scrollBottomUnread() {
 			this.preventFindingUnread = true
-			this.$refs.container.scrollTo({
-				top: this.firstUnreadPos - 150,
-				behavior: 'smooth',
-			})
+			this.$refs.scroller.scrollToItem(this.lastUnreadMentionBelowViewportIndex)
 			setTimeout(() => {
 				this.handleUnreadMention()
 				this.preventFindingUnread = false
@@ -735,55 +735,38 @@ export default {
 		// Checks whether the conversations list is scrolled all the way to the top
 		// or not
 		handleScroll() {
-			this.isScrolledToTop = this.$refs.container.scrollTop === 0
+			this.isScrolledToTop = this.$refs.scroller.$el.scrollTop === 0
 		},
-		elementIsAboveViewpoint(container, element) {
-			return element.offsetTop < container.scrollTop
-		},
-		elementIsBelowViewpoint(container, element) {
-			return element.offsetTop + element.offsetHeight > container.scrollTop + container.clientHeight
-		},
-		handleUnreadMention() {
-			this.unreadNum = 0
-			const unreadMentions = document.querySelectorAll('.unread-mention-conversation')
-			unreadMentions.forEach(x => {
-				if (this.elementIsBelowViewpoint(this.$refs.container, x)) {
-					if (this.unreadNum === 0) {
-						this.firstUnreadPos = x.offsetTop
-					}
-					this.unreadNum += 1
+
+		/**
+		 * Find position of the last unread conversation below viewport
+		 */
+		async handleUnreadMention() {
+			await this.$nextTick()
+
+			this.lastUnreadMentionBelowViewportIndex = null
+			const lastConversationInViewport = this.$refs.scroller.getLastItemInViewportIndex()
+			for (let i = this.filteredConversationsList.length - 1; i > lastConversationInViewport; i--) {
+				if (this.filteredConversationsList[i].unreadMention) {
+					this.lastUnreadMentionBelowViewportIndex = i
+					return
 				}
-			})
+			}
 		},
+
 		debounceHandleScroll: debounce(function() {
 			this.handleScroll()
 			this.handleUnreadMention()
 		}, 50),
 
-		scrollToConversation(token) {
-			this.$nextTick(() => {
-				// In Vue 2 ref on v-for is always an array and its order is not guaranteed to match the order of v-for source
-				// See https://github.com/vuejs/vue/issues/4952#issuecomment-280661367
-				// Fixed in Vue 3
-				// Temp solution - use unique ref name for each v-for element. The value is still array but with one element
-				// TODO: Vue3: remove [0] here or use object for template refs
-				const conversation = this.$refs[`conversation-${token}`]?.[0].$el
-				if (!conversation) {
-					return
-				}
+		async scrollToConversation(token) {
+			await this.$nextTick()
 
-				if (this.elementIsBelowViewpoint(this.$refs.container, conversation)) {
-					this.$refs.container.scrollTo({
-						top: conversation.offsetTop + conversation.offsetHeight * 2 - this.$refs.container.clientHeight,
-						behavior: 'smooth',
-					})
-				} else if (this.elementIsAboveViewpoint(this.$refs.container, conversation)) {
-					this.$refs.container.scrollTo({
-						top: conversation.offsetTop - conversation.offsetHeight,
-						behavior: 'smooth',
-					})
-				}
-			})
+			if (!this.$refs.scroller) {
+				return
+			}
+
+			this.$refs.scroller.scrollToConversation(token)
 		},
 
 		onRouteChange({ from, to }) {
@@ -836,6 +819,10 @@ export default {
 
 .scroller {
 	padding: 0 4px 0 6px;
+}
+
+.h-100 {
+	height: 100%;
 }
 
 .new-conversation {
