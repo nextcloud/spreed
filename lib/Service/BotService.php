@@ -269,9 +269,15 @@ class BotService {
 				$this->logger->warning('Can not find bot by ID ' . $botConversation->getBotId() . ' for token ' . $botConversation->getToken());
 				continue;
 			}
+			$botServer = $serversMap[$botConversation->getBotId()];
+
+			if (!($botServer->getFeatures() & Bot::FEATURE_WEBHOOK)) {
+				$this->logger->debug('Not sending webhook to bot ID ' . $botConversation->getBotId() . ' because the feature is disabled for it');
+				continue;
+			}
 
 			$bot = new Bot(
-				$serversMap[$botConversation->getBotId()],
+				$botServer,
 				$botConversation,
 			);
 
