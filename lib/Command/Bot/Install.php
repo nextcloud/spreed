@@ -75,6 +75,15 @@ class Install extends Base {
 				InputOption::VALUE_NONE,
 				'Prevent moderators from setting up the bot in a conversation'
 			)
+			->addOption(
+				'features',
+				'f',
+				InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY,
+				'Specify the list of features for the bot' . "\n"
+				. ' - webhook: The bot receives posted chat messages as webhooks' . "\n"
+				. ' - response: The bot can post messages and reactions as a response' . "\n"
+				. ' - none: When all features should be disabled for the bot'
+			)
 		;
 	}
 
@@ -91,6 +100,12 @@ class Install extends Base {
 		$description = $input->getArgument('description');
 		$noSetup = $input->getOption('no-setup');
 
+		if (!empty($input->getOption('feature'))) {
+			$featureFlags = Bot::featureLabelsToFlags($input->getOption('feature'));
+		} else {
+			$featureFlags = Bot::FEATURE_WEBHOOK + Bot::FEATURE_RESPONSE;
+		}
+
 		$bot = new BotServer();
 		$bot->setName($name);
 		$bot->setSecret($secret);
@@ -98,6 +113,7 @@ class Install extends Base {
 		$bot->setUrlHash(sha1($url));
 		$bot->setDescription($description);
 		$bot->setState($noSetup ? Bot::STATE_NO_SETUP : Bot::STATE_ENABLED);
+		$bot->setFeatures($featureFlags);
 		try {
 			$this->botServerMapper->insert($bot);
 		} catch (\Exception $e) {
