@@ -164,7 +164,7 @@ describe('participantsStore', () => {
 		})
 
 		test('find participant by session', () => {
-			const attendee = { sessionId: '1234567890' }
+			const attendee = { sessionIds: ['1234567890'] }
 			store.dispatch('addParticipant', {
 				token: TOKEN,
 				participant: attendee,
