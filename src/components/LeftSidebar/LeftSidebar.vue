@@ -123,6 +123,13 @@
 								@scroll.native="debounceHandleScroll" />
 						</li>
 						<Hint v-if="initialisedConversations && filteredConversationsList.length === 0" :hint="t('spreed', 'No matches found')" />
+
+						<NcButton v-if="!preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
+							class="unread-mention-button"
+							type="primary"
+							@click="scrollBottomUnread">
+							{{ t('spreed', 'Unread mentions') }}
+						</NcButton>
 					</template>
 
 					<!-- Search results -->
@@ -205,13 +212,6 @@
 					</template>
 				</ul>
 			</li>
-
-			<NcButton v-if="!preventFindingUnread && lastUnreadMentionBelowViewportIndex !== null"
-				class="unread-mention-button"
-				type="primary"
-				@click="scrollBottomUnread">
-				{{ t('spreed', 'Unread mentions') }}
-			</NcButton>
 		</template>
 
 		<template #footer>
