@@ -27,9 +27,14 @@
 		<div v-if="iconClass"
 			class="avatar icon"
 			:class="iconClass" />
-		<NcAvatar v-else-if="!isOneToOne"
-			:url="avatarUrl"
-			:size="size" />
+		<!-- img is used here instead of NcAvatar to explicitly set key required to avoid glitching in virtual scrolling  -->
+		<img v-else-if="!isOneToOne"
+			:key="avatarUrl"
+			:src="avatarUrl"
+			:width="size"
+			:height="size"
+			:alt="item.displayName"
+			class="avatar icon">
 		<NcAvatar v-else
 			:size="size"
 			:user="item.name"
