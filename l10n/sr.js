@@ -1096,6 +1096,7 @@ OC.L10N.register(
     "The conversation participants will not be notified about this call" : "Учесници разговора се неће обавестити о овом позиву",
     "Normal call" : "Обичан позив",
     "The conversation participants will be notified about this call" : "Учесници разговора ће се обавестити о овом позиву",
+    "Apply settings" : "Примени подешавања",
     "No audio" : "Нема звука",
     "No camera" : "Без камере",
     "Blur" : "Замућење",

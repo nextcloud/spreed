@@ -1098,6 +1098,7 @@ OC.L10N.register(
     "Error while forwarding message" : "메시지를 전달하는 동안 오류가 발생했습니다.",
     "Add a reaction to this message" : "이 메시지에 반응 추가",
     "Reply" : "답장",
+    "Set reminder" : "알림 설정",
     "Reply privately" : "비공개로 답장",
     "Copy message link" : "메시지 링크 복사",
     "Go to file" : "파일로 이동",
