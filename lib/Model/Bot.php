@@ -31,6 +31,10 @@ class Bot {
 	public const STATE_ENABLED = 1;
 	public const STATE_NO_SETUP = 2;
 
+	public const FEATURE_NONE = 0;
+	public const FEATURE_WEBHOOK = 1;
+	public const FEATURE_RESPONSE = 2;
+
 	public function __construct(
 		protected BotServer $botServer,
 		protected BotConversation $botConversation,
