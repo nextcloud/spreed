@@ -151,7 +151,8 @@
 						<Conversation v-for="item of searchResultsConversationList"
 							:key="`conversation_${item.id}`"
 							:ref="`conversation-${item.token}`"
-							:item="item" />
+							:item="item"
+							@click="abortSearch" />
 						<Hint v-if="searchResultsConversationList.length === 0" :hint="t('spreed', 'No matches found')" />
 
 						<!-- Search results: listed (open) conversations -->
@@ -160,7 +161,8 @@
 							<Conversation v-for="item of searchResultsListedConversations"
 								:key="`open-conversation_${item.id}`"
 								:item="item"
-								is-search-result />
+								is-search-result
+								@click="abortSearch" />
 						</template>
 
 						<!-- Search results: users -->
@@ -425,11 +427,6 @@ export default {
 	},
 
 	beforeMount() {
-		// After a conversation was created, the search filter is reset
-		EventBus.$once('resetSearchFilter', () => {
-			this.abortSearch()
-		})
-
 		// Restore last fetched conversations from browser storage,
 		// before updated ones come from server
 		this.restoreConversations()
@@ -605,6 +602,7 @@ export default {
 			if (item.source === 'users') {
 				// Create one-to-one conversation directly
 				const conversation = await this.$store.dispatch('createOneToOneConversation', item.id)
+				this.abortSearch()
 				this.$router.push({
 					name: 'conversation',
 					params: { token: conversation.token },
