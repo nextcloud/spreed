@@ -31,6 +31,7 @@ use OCA\Talk\Model\BotServerMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class State extends Base {
@@ -55,12 +56,42 @@ class State extends Base {
 				InputArgument::REQUIRED,
 				'New state for the bot (0 = disabled, 1 = enabled, 2 = no setup via GUI)'
 			)
+			->addOption(
+				'feature',
+				'f',
+				InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY,
+				'Specify the list of features for the bot' . "\n"
+				. ' - webhook: The bot receives posted chat messages as webhooks' . "\n"
+				. ' - response: The bot can post messages and reactions as a response' . "\n"
+				. ' - none: When all features should be disabled for the bot'
+			)
 		;
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$botId = (int) $input->getArgument('bot-id');
-		$state = (int) $input->getArgument('state');
+		$botId = (int)$input->getArgument('bot-id');
+		$state = (int)$input->getArgument('state');
+		$features = $input->getOption('feature');
+
+		$featureFlags = null;
+		$clearFeatures = false;
+		foreach ($features as $feature) {
+			if ($feature === 'webhook') {
+				$featureFlags += Bot::FEATURE_WEBHOOK;
+			} elseif ($feature === 'response') {
+				$featureFlags += Bot::FEATURE_RESPONSE;
+			} elseif ($feature === 'none') {
+				$clearFeatures = true;
+			} else {
+				$output->writeln('<error>Feature "' . $feature . '" is not known for bots</error>');
+				return 1;
+			}
+		}
+
+		if ($clearFeatures) {
+			$featureFlags = Bot::FEATURE_NONE;
+			$features = ['none'];
+		}
 
 		if (!in_array($state, [Bot::STATE_DISABLED, Bot::STATE_ENABLED, Bot::STATE_NO_SETUP], true)) {
 			$output->writeln('<error>Provided state is invalid</error>');
@@ -75,9 +106,12 @@ class State extends Base {
 		}
 
 		$bot->setState($state);
+		if ($featureFlags !== null) {
+			$bot->setFeatures($featureFlags);
+		}
 		$this->botServerMapper->update($bot);
 
-		$output->writeln('<info>Bot state set to ' . $state . '</info>');
+		$output->writeln('<info>Bot state set to ' . $state . ' with features: ' . implode(', ', $features) . '</info>');
 		return 0;
 	}
 }
