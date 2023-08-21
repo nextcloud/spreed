@@ -467,9 +467,8 @@ export default {
 
 	mounted() {
 		EventBus.$on('should-refresh-conversations', this.handleShouldRefreshConversations)
-		EventBus.$once('conversations-received', this.handleUnreadMention)
+		EventBus.$once('conversations-received', this.handleConversationsReceived)
 		EventBus.$on('route-change', this.onRouteChange)
-		EventBus.$on('joined-conversation', this.handleJoinedConversation)
 	},
 
 	beforeDestroy() {
@@ -730,6 +729,13 @@ export default {
 			}
 		},
 
+		handleConversationsReceived() {
+			this.handleUnreadMention()
+			if (this.$route.params.token) {
+				this.scrollToConversation(this.$route.params.token)
+			}
+		},
+
 		// Checks whether the conversations list is scrolled all the way to the top
 		// or not
 		handleScroll() {
@@ -782,17 +788,13 @@ export default {
 			}
 			if (to.name === 'conversation') {
 				this.$store.dispatch('joinConversation', { token: to.params.token })
+				this.scrollToConversation(to.params.token)
 			}
 			if (this.isMobile) {
 				emit('toggle-navigation', {
 					open: false,
 				})
 			}
-		},
-
-		handleJoinedConversation({ token }) {
-			this.abortSearch()
-			this.scrollToConversation(token)
 		},
 
 		iconData(item) {
