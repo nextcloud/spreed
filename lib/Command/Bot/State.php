@@ -71,26 +71,10 @@ class State extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$botId = (int)$input->getArgument('bot-id');
 		$state = (int)$input->getArgument('state');
-		$features = $input->getOption('feature');
 
 		$featureFlags = null;
-		$clearFeatures = false;
-		foreach ($features as $feature) {
-			if ($feature === 'webhook') {
-				$featureFlags += Bot::FEATURE_WEBHOOK;
-			} elseif ($feature === 'response') {
-				$featureFlags += Bot::FEATURE_RESPONSE;
-			} elseif ($feature === 'none') {
-				$clearFeatures = true;
-			} else {
-				$output->writeln('<error>Feature "' . $feature . '" is not known for bots</error>');
-				return 1;
-			}
-		}
-
-		if ($clearFeatures) {
-			$featureFlags = Bot::FEATURE_NONE;
-			$features = ['none'];
+		if (!empty($input->getOption('feature'))) {
+			$featureFlags = Bot::featureLabelsToFlags($input->getOption('feature'));
 		}
 
 		if (!in_array($state, [Bot::STATE_DISABLED, Bot::STATE_ENABLED, Bot::STATE_NO_SETUP], true)) {
@@ -111,7 +95,11 @@ class State extends Base {
 		}
 		$this->botServerMapper->update($bot);
 
-		$output->writeln('<info>Bot state set to ' . $state . ' with features: ' . implode(', ', $features) . '</info>');
+		if ($featureFlags !== null) {
+			$output->writeln('<info>Bot state set to ' . $state . ' with features: ' . Bot::featureFlagsToLabels($featureFlags) . '</info>');
+		} else {
+			$output->writeln('<info>Bot state set to ' . $state . '</info>');
+		}
 		return 0;
 	}
 }

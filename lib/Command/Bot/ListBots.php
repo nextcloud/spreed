@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Command\Bot;
 
 use OC\Core\Command\Base;
+use OCA\Talk\Model\Bot;
 use OCA\Talk\Model\BotConversation;
 use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BotServerMapper;
@@ -71,6 +72,7 @@ class ListBots extends Base {
 			}
 
 			$botData = $bot->jsonSerialize();
+			$botData['features'] = Bot::featureFlagsToLabels($botData['features']);
 
 			if (!$output->isVerbose()) {
 				unset($botData['url']);
