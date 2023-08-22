@@ -227,6 +227,22 @@ export default {
 		},
 	},
 
+	beforeCreate() {
+		const authorizedUser = getCurrentUser()?.uid || null
+		const lastLoggedInUser = BrowserStorage.getItem('last_logged_in_user')
+
+		if (authorizedUser !== lastLoggedInUser) {
+			// TODO introduce helper/util to list and clear all sensitive data
+			// or create BrowserSensitiveStorage for this purposes,
+			// if we have more than one source
+			BrowserStorage.removeItem('cachedConversations')
+		}
+
+		if (authorizedUser) {
+			BrowserStorage.setItem('last_logged_in_user', authorizedUser)
+		}
+	},
+
 	beforeDestroy() {
 		if (!getCurrentUser()) {
 			EventBus.$off('should-refresh-conversations', this.debounceRefreshCurrentConversation)
