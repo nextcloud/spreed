@@ -180,6 +180,8 @@ export default {
 		},
 	},
 
+	emits: ['click'],
+
 	computed: {
 		counterType() {
 			if (this.item.unreadMentionDirect || (this.item.unreadMessages !== 0 && (
@@ -425,6 +427,7 @@ export default {
 			if (this.isSearchResult) {
 				this.$store.dispatch('addConversation', this.item)
 			}
+			this.$emit('click')
 		},
 
 		onActionClick() {
