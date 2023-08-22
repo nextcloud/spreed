@@ -366,6 +366,31 @@ const mutations = {
 		}
 	},
 
+	/**
+	 * Clears the messages entry from the store for the given conversation token
+	 * starting from defined id.
+	 *
+	 * @param {object} state current store state
+	 * @param {object} payload payload;
+	 * @param {string} payload.token the token of the conversation to be cleared;
+	 * @param {number} payload.id the id of the message to be the first one after clear;
+	 */
+	clearMessagesHistory(state, { token, id }) {
+		Vue.set(state.firstKnown, token, id)
+
+		if (state.visualLastReadMessageId[token] && state.visualLastReadMessageId[token] < id) {
+			Vue.set(state.visualLastReadMessageId, token, id)
+		}
+
+		if (state.messages[token]) {
+			for (const messageId of Object.keys(state.messages[token])) {
+				if (messageId < id) {
+					Vue.delete(state.messages[token], messageId)
+				}
+			}
+		}
+	},
+
 	// Increases reaction count for a particular reaction on a message
 	addReactionToMessage(state, { token, messageId, reaction }) {
 		if (!state.messages[token][messageId].reactions[reaction]) {
@@ -483,6 +508,13 @@ const actions = {
 			context.dispatch('getPollData', {
 				token: message.token,
 				pollId: message.messageParameters.poll.id,
+			})
+		}
+
+		if (message.systemMessage === 'history_cleared') {
+			context.commit('clearMessagesHistory', {
+				token: message.token,
+				id: message.id,
 			})
 		}
 
@@ -671,6 +703,18 @@ const actions = {
 	 */
 	deleteMessages(context, token) {
 		context.commit('deleteMessages', token)
+	},
+
+	/**
+	 * Clear all messages before defined id from the store only.
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} payload payload;
+	 * @param {string} payload.token the token of the conversation to be cleared;
+	 * @param {number} payload.id the id of the message to be the first one after clear;
+	 */
+	clearMessagesHistory(context, { token, id }) {
+		context.commit('clearMessagesHistory', { token, id })
 	},
 
 	/**
