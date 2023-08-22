@@ -467,11 +467,12 @@ Remove a user from all their rooms
 
 ### Usage
 
-* `talk:user:remove [--user USER]`
+* `talk:user:remove [--user USER] [--private-only]`
 
 | Options | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|
 | `--user` | Remove the given users from all rooms | yes | yes | yes | array ()` |
+| `--private-only` | Only remove the user from private rooms, retaining membership in public and open conversations as well as one-to-ones | no | no | no | false` |
 
 ## talk:user:transfer-ownership
 
