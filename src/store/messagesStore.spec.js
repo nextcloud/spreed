@@ -69,22 +69,38 @@ describe('messagesStore', () => {
 		})
 
 		test('doesn\'t add specific messages to the store', () => {
+			testStoreConfig = cloneDeep(storeConfig)
+			testStoreConfig.modules.pollStore.getters.debounceGetPollData = jest.fn()
+			testStoreConfig.modules.reactionsStore.actions.resetReactions = jest.fn()
+			store = new Vuex.Store(testStoreConfig)
+
 			const messages = [{
-				id: 1,
-				token: TOKEN,
-				systemMessage: 'message_deleted',
-			}, {
 				id: 2,
 				token: TOKEN,
-				systemMessage: 'reaction',
+				systemMessage: 'message_deleted',
+				parent: { id: 1 },
 			}, {
 				id: 3,
 				token: TOKEN,
-				systemMessage: 'reaction_deleted',
+				systemMessage: 'reaction',
+				parent: { id: 1 },
 			}, {
 				id: 4,
 				token: TOKEN,
+				systemMessage: 'reaction_deleted',
+				parent: { id: 1 },
+			}, {
+				id: 5,
+				token: TOKEN,
 				systemMessage: 'reaction_revoked',
+				parent: { id: 1 },
+			}, {
+				id: 6,
+				token: TOKEN,
+				systemMessage: 'poll_voted',
+				messageParameters: {
+					poll: { id: 1 },
+				},
 			}]
 
 			messages.forEach(message => {

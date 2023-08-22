@@ -520,6 +520,8 @@ const actions = {
 						messageId: message.parent,
 					})
 				}
+				// Quit processing
+				return
 			}
 			message.parent = message.parent.id
 		}
@@ -536,6 +538,8 @@ const actions = {
 				token: message.token,
 				pollId: message.messageParameters.poll.id,
 			})
+			// Quit processing
+			return
 		}
 
 		if (message.systemMessage === 'poll_closed') {
@@ -552,15 +556,7 @@ const actions = {
 			})
 		}
 
-		// Filter out some system messages
-		if (message.systemMessage !== 'reaction'
-			&& message.systemMessage !== 'reaction_deleted'
-			&& message.systemMessage !== 'reaction_revoked'
-			&& message.systemMessage !== 'poll_voted'
-			&& message.systemMessage !== 'message_deleted'
-		) {
-			context.commit('addMessage', message)
-		}
+		context.commit('addMessage', message)
 
 		 if ((message.messageType === 'comment' && message.message === '{file}' && message.messageParameters?.file)
 			|| (message.messageType === 'comment' && message.message === '{object}' && message.messageParameters?.object)) {
