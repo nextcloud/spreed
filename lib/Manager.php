@@ -422,9 +422,21 @@ class Manager {
 		return $rooms;
 	}
 
-	public function removeUserFromAllRooms(IUser $user): void {
+	public function removeUserFromAllRooms(IUser $user, bool $privateOnly = false): void {
 		$rooms = $this->getRoomsForUser($user->getUID());
 		foreach ($rooms as $room) {
+			if ($privateOnly) {
+				if ($room->getType() === Room::TYPE_ONE_TO_ONE
+					|| $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER
+					|| $room->getType() === Room::TYPE_PUBLIC) {
+					continue;
+				}
+
+				if ($this->isRoomListableByUser($room, $user->getUID())) {
+					continue;
+				}
+			}
+
 			if ($this->participantService->getNumberOfUsers($room) === 1) {
 				Server::get(RoomService::class)->deleteRoom($room);
 			} else {
@@ -432,15 +444,17 @@ class Manager {
 			}
 		}
 
-		$leftRooms = $this->getLeftOneToOneRoomsForUser($user->getUID());
-		foreach ($leftRooms as $room) {
-			// We are changing the room type and name so a potential follow-up
-			// user with the same user-id can not reopen the one-to-one conversation.
-			/** @var RoomService $roomService */
-			$roomService = Server::get(RoomService::class);
-			$roomService->setType($room, Room::TYPE_ONE_TO_ONE_FORMER, true);
-			$roomService->setName($room, $user->getDisplayName(), '');
-			$roomService->setReadOnly($room, Room::READ_ONLY);
+		if (!$privateOnly) {
+			$leftRooms = $this->getLeftOneToOneRoomsForUser($user->getUID());
+			foreach ($leftRooms as $room) {
+				// We are changing the room type and name so a potential follow-up
+				// user with the same user-id can not reopen the one-to-one conversation.
+				/** @var RoomService $roomService */
+				$roomService = Server::get(RoomService::class);
+				$roomService->setType($room, Room::TYPE_ONE_TO_ONE_FORMER, true);
+				$roomService->setName($room, $user->getDisplayName(), '');
+				$roomService->setReadOnly($room, Room::READ_ONLY);
+			}
 		}
 	}
 

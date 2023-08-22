@@ -5,29 +5,60 @@ Feature: command/user-remove
     Given user "participant2" exists
 
   Scenario: Remove a user from all their rooms
-    Given user "participant1" creates room "room1" (v4)
+    Given user "participant1" creates room "one-to-one" (v4)
       | roomType | 1 |
       | invite   | participant2 |
-    Given user "participant1" creates room "room2" (v4)
+    Given user "participant1" creates room "public room" (v4)
       | roomType | 3 |
-      | roomName | room |
-    And user "participant1" adds user "participant2" to room "room2" with 200 (v4)
+      | roomName | public room |
+    And user "participant1" adds user "participant2" to room "public room" with 200 (v4)
+    Given user "participant1" creates room "private room" (v4)
+      | roomType | 2 |
+      | roomName | private room |
+    And user "participant1" adds user "participant2" to room "private room" with 200 (v4)
+    Given user "participant1" creates room "listable room" (v4)
+      | roomType | 2 |
+      | roomName | listable room |
+    And user "participant1" allows listing room "listable room" for "users" with 200 (v4)
+    And user "participant1" adds user "participant2" to room "listable room" with 200 (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
+      | id            | name          | type | participantType | readOnly |
+      | one-to-one    | participant1  | 1    | 1               | 0        |
+      | public room   | public room   | 3    | 3               | 0        |
+      | private room  | private room  | 2    | 3               | 0        |
+      | listable room | listable room | 2    | 3               | 0        |
     And user "participant1" is participant of the following unordered rooms (v4)
-      | id    | name         | type | participantType | readOnly |
-      | room1 | participant2 | 1    | 1               | 0        |
-      | room2 | room         | 3    | 1               | 0        |
+      | id            | name          | type | participantType | readOnly |
+      | one-to-one    | participant2  | 1    | 1               | 0        |
+      | public room   | public room   | 3    | 1               | 0        |
+      | private room  | private room  | 2    | 1               | 0        |
+      | listable room | listable room | 2    | 1               | 0        |
+    And invoking occ with "talk:user:remove --user participant2 --private-only"
+    And the command output contains the text "Users successfully removed from all rooms"
+    Then the command was successful
+    And user "participant2" is participant of the following unordered rooms (v4)
+      | id            | name          | type | participantType | readOnly |
+      | one-to-one    | participant1  | 1    | 1               | 0        |
+      | public room   | public room   | 3    | 3               | 0        |
+      | listable room | listable room | 2    | 3               | 0        |
+    And user "participant1" is participant of the following unordered rooms (v4)
+      | id            | name          | type | participantType | readOnly |
+      | one-to-one    | participant2  | 1    | 1               | 0        |
+      | public room   | public room   | 3    | 1               | 0        |
+      | private room  | private room  | 2    | 1               | 0        |
+      | listable room | listable room | 2    | 1               | 0        |
     And invoking occ with "talk:user:remove --user participant2"
     And the command output contains the text "Users successfully removed from all rooms"
     Then the command was successful
     And user "participant2" is participant of the following rooms (v4)
+    And user "participant2" is participant of the following unordered rooms (v4)
     And user "participant1" is participant of the following unordered rooms (v4)
-      | id    | name                     | type | participantType | readOnly |
-      | room1 | participant2-displayname | 5    | 1               | 1        |
-      | room2 | room                     | 3    | 1               | 0        |
-    And user "participant1" sees the following attendees in room "room1" with 200 (v4)
-      | actorType  | actorId      | participantType |
-      | users      | participant1 | 1               |
-    And user "participant1" sees the following attendees in room "room2" with 200 (v4)
+      | id            | name          | type | participantType | readOnly |
+      | one-to-one    | participant2-displayname | 5    | 1               | 1        |
+      | public room   | public room   | 3    | 1               | 0        |
+      | private room  | private room  | 2    | 1               | 0        |
+      | listable room | listable room | 2    | 1               | 0        |
+    And user "participant1" sees the following attendees in room "one-to-one" with 200 (v4)
       | actorType  | actorId      | participantType |
       | users      | participant1 | 1               |
 
