@@ -98,7 +98,7 @@ const getMessageContext = async function({ token, messageId, limit = 50 }, optio
  * @param {string} param0.message The message object
  * @param {string} param0.actorDisplayName The display name of the actor
  * @param {string} param0.referenceId A reference id to identify the message later again
- * @param {number} param0.parent The id of the message to be replied to
+ * @param {object|undefined} param0.parent The message to be replied to
  * @param {object} options request options
  * @param {boolean} options.silent whether the message should trigger a notifications for the
  * recipients or not
@@ -108,7 +108,7 @@ const postNewMessage = async function({ token, message, actorDisplayName, refere
 		message,
 		actorDisplayName,
 		referenceId,
-		replyTo: parent,
+		replyTo: parent?.id,
 		silent: options.silent,
 	}, options)
 }

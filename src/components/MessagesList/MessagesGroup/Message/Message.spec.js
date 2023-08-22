@@ -295,10 +295,9 @@ describe('Message.vue', () => {
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
 				messageParameters: {},
 				token: TOKEN,
-				parentId: -1,
 				reactions: '',
 			}
-			messageProps.parent = 120
+			messageProps.parent = parentMessage
 
 			const messageGetterMock = jest.fn().mockReturnValue(parentMessage)
 			testStoreConfig.modules.messagesStore.getters.message = jest.fn(() => messageGetterMock)
@@ -310,9 +309,6 @@ describe('Message.vue', () => {
 				propsData: messageProps,
 				provide: injected,
 			})
-
-			// parent message got queried from the store
-			expect(messageGetterMock).toHaveBeenCalledWith(TOKEN, 120)
 
 			const quote = wrapper.findComponent(Quote)
 			expect(quote.exists()).toBe(true)

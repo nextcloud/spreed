@@ -46,7 +46,7 @@ the main body of the message as well as a quote.
 				class="message-body__main">
 				<div v-if="isSingleEmoji"
 					class="message-body__main__text">
-					<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
+					<Quote v-if="parent" v-bind="parent" />
 					<div class="single-emoji">
 						{{ message }}
 					</div>
@@ -77,7 +77,7 @@ the main body of the message as well as a quote.
 						:reference-limit="0" />
 				</div>
 				<div v-else class="message-body__main__text message-body__main__text--markdown">
-					<Quote v-if="parent" :parent-id="parent" v-bind="quote" />
+					<Quote v-if="parent" v-bind="parent" />
 					<NcRichText :text="message"
 						:arguments="richParameters"
 						autolink
@@ -395,11 +395,11 @@ export default {
 			required: true,
 		},
 		/**
-		 * The parent message's id.
+		 * The parent message.
 		 */
 		parent: {
-			type: Number,
-			default: 0,
+			type: Object,
+			default: undefined,
 		},
 		/**
 		 * Is message allowed to render in markdown
@@ -491,10 +491,6 @@ export default {
 
 		messageDate() {
 			return moment(this.timestamp * 1000).format('LL')
-		},
-
-		quote() {
-			return this.parent && this.$store.getters.message(this.token, this.parent)
 		},
 
 		conversation() {

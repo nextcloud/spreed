@@ -110,7 +110,7 @@ describe('messagesStore', () => {
 			expect(store.getters.messagesList(TOKEN)).toHaveLength(0)
 		})
 
-		test('adds message with its parent to the list', () => {
+		test('adds user\'s message with included parent to the store', () => {
 			const parentMessage = {
 				id: 1,
 				token: TOKEN,
@@ -119,15 +119,11 @@ describe('messagesStore', () => {
 				id: 2,
 				token: TOKEN,
 				parent: parentMessage,
+				messageType: 'comment',
 			}
 
 			store.dispatch('processMessage', message1)
-			expect(store.getters.messagesList(TOKEN)[0]).toBe(parentMessage)
-			expect(store.getters.messagesList(TOKEN)[1]).toStrictEqual({
-				id: 2,
-				token: TOKEN,
-				parent: 1,
-			})
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([message1])
 		})
 
 		test('deletes matching temporary message when referenced', () => {
@@ -358,7 +354,7 @@ describe('messagesStore', () => {
 			expect(getActorTypeMock).toHaveBeenCalled()
 			expect(getDisplayNameMock).toHaveBeenCalled()
 
-			expect(temporaryMessage).toStrictEqual({
+			expect(temporaryMessage).toMatchObject({
 				id: 'temp-1577908800000',
 				actorId: 'actor-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -369,7 +365,6 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
-				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
@@ -378,6 +373,14 @@ describe('messagesStore', () => {
 		})
 
 		test('creates temporary message with message to be replied', async () => {
+			const parent = {
+				id: 123,
+				token: TOKEN,
+				message: 'hello',
+			}
+
+			store.dispatch('processMessage', parent)
+
 			getMessageToBeRepliedMock.mockReset()
 			getMessageToBeRepliedMock.mockReturnValue(() => (123))
 
@@ -390,7 +393,7 @@ describe('messagesStore', () => {
 				localUrl: null,
 			})
 
-			expect(temporaryMessage).toStrictEqual({
+			expect(temporaryMessage).toMatchObject({
 				id: 'temp-1577908800000',
 				actorId: 'actor-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -401,7 +404,7 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
-				parent: 123,
+				parent,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
@@ -424,7 +427,7 @@ describe('messagesStore', () => {
 				localUrl: 'local-url://original-name.txt',
 			})
 
-			expect(temporaryMessage).toStrictEqual({
+			expect(temporaryMessage).toMatchObject({
 				id: expect.stringMatching(/^temp-1577908800000-upload-id-1-0\.[0-9]*$/),
 				actorId: 'actor-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -446,7 +449,6 @@ describe('messagesStore', () => {
 					},
 				},
 				token: TOKEN,
-				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
@@ -466,7 +468,7 @@ describe('messagesStore', () => {
 
 			store.dispatch('addTemporaryMessage', temporaryMessage)
 
-			expect(store.getters.messagesList(TOKEN)).toStrictEqual([{
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
 				id: 'temp-1577908800000',
 				actorId: 'actor-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -477,7 +479,6 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
-				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
@@ -490,7 +491,7 @@ describe('messagesStore', () => {
 			temporaryMessage.message = 'replaced'
 			store.dispatch('addTemporaryMessage', temporaryMessage)
 
-			expect(store.getters.messagesList(TOKEN)).toStrictEqual([{
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
 				id: 'temp-1577908800000',
 				actorId: 'actor-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -501,7 +502,6 @@ describe('messagesStore', () => {
 				message: 'replaced',
 				messageParameters: {},
 				token: TOKEN,
-				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
@@ -525,7 +525,7 @@ describe('messagesStore', () => {
 				reason: 'failure-reason',
 			})
 
-			expect(store.getters.messagesList(TOKEN)).toStrictEqual([{
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
 				id: 'temp-1577908800000',
 				actorId: 'actor-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -536,7 +536,6 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
-				parent: 0,
 				isReplyable: false,
 				sendingFailure: 'failure-reason',
 				reactions: {},
@@ -572,7 +571,7 @@ describe('messagesStore', () => {
 
 			store.dispatch('addTemporaryMessage', temporaryMessage)
 
-			expect(store.getters.getTemporaryReferences(TOKEN, temporaryMessage.referenceId)).toStrictEqual([{
+			expect(store.getters.getTemporaryReferences(TOKEN, temporaryMessage.referenceId)).toMatchObject([{
 				id: 'temp-1577908800000',
 				actorId: 'actor-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -583,7 +582,6 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
-				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
