@@ -507,11 +507,18 @@ const actions = {
 	processMessage(context, message) {
 		if (message.parent) {
 			// Handle cases for messages with replies and some system messages
-			if (message.systemMessage === 'message_deleted') {
+			if (message.systemMessage === 'message_deleted'
+				|| message.systemMessage === 'reaction'
+				|| message.systemMessage === 'reaction_deleted'
+				|| message.systemMessage === 'reaction_revoked') {
 				// If parent message is presented in store already, we update it
 				const parentInStore = context.getters.message(message.token, message.parent.id)
 				if (Object.keys(parentInStore).length !== 0) {
 					context.commit('addMessage', message.parent)
+					context.dispatch('resetReactions', {
+						token: message.token,
+						messageId: message.parent,
+					})
 				}
 			}
 			message.parent = message.parent.id
@@ -521,15 +528,6 @@ const actions = {
 			const tempMessages = context.getters.getTemporaryReferences(message.token, message.referenceId)
 			tempMessages.forEach(tempMessage => {
 				context.commit('deleteMessage', tempMessage)
-			})
-		}
-
-		if (message.systemMessage === 'reaction'
-			|| message.systemMessage === 'reaction_deleted'
-			|| message.systemMessage === 'reaction_revoked') {
-			context.commit('resetReactions', {
-				token: message.token,
-				messageId: message.parent,
 			})
 		}
 
