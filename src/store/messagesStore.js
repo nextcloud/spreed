@@ -505,25 +505,22 @@ const actions = {
 	 * @param {object} message the message;
 	 */
 	processMessage(context, message) {
-		if (message.parent) {
-			// Handle cases for messages with replies and some system messages
-			if (message.systemMessage === 'message_deleted'
+		if (message.parent && message.systemMessage
+				&& (message.systemMessage === 'message_deleted'
 				|| message.systemMessage === 'reaction'
 				|| message.systemMessage === 'reaction_deleted'
-				|| message.systemMessage === 'reaction_revoked') {
-				// If parent message is presented in store already, we update it
-				const parentInStore = context.getters.message(message.token, message.parent.id)
-				if (Object.keys(parentInStore).length !== 0) {
-					context.commit('addMessage', message.parent)
-					context.dispatch('resetReactions', {
-						token: message.token,
-						messageId: message.parent,
-					})
-				}
-				// Quit processing
-				return
+				|| message.systemMessage === 'reaction_revoked')) {
+			// If parent message is presented in store already, we update it
+			const parentInStore = context.getters.message(message.token, message.parent.id)
+			if (Object.keys(parentInStore).length !== 0) {
+				context.commit('addMessage', message.parent)
+				context.dispatch('resetReactions', {
+					token: message.token,
+					messageId: message.parent,
+				})
 			}
-			message.parent = message.parent.id
+			// Quit processing
+			return
 		}
 
 		if (message.referenceId) {
@@ -607,6 +604,7 @@ const actions = {
 	 */
 	createTemporaryMessage(context, { text, token, uploadId, index, file, localUrl, isVoiceMessage }) {
 		const parentId = context.getters.getMessageToBeReplied(token)
+		const parent = parentId && context.getters.message(token, parentId)
 		const date = new Date()
 		let tempId = 'temp-' + date.getTime()
 		const messageParameters = {}
@@ -636,7 +634,7 @@ const actions = {
 			message: text,
 			messageParameters,
 			token,
-			parent: parentId ?? 0,
+			parent,
 			isReplyable: false,
 			sendingFailure: '',
 			reactions: {},
