@@ -85,7 +85,7 @@
 			</NcAppSettingsSection>
 
 			<!-- Bots settings -->
-			<NcAppSettingsSection v-if="selfIsOwnerOrModerator"
+			<NcAppSettingsSection v-if="selfIsOwnerOrModerator && hasBotV1API"
 				id="bots"
 				:title="t('spreed', 'Bots')">
 				<BotsSettings :token="token" />
@@ -211,6 +211,10 @@ export default {
 
 		isBreakoutRoom() {
 			return this.conversation.objectType === 'room'
+		},
+
+		hasBotV1API() {
+			return getCapabilities()?.spreed?.features?.includes('bots-v1')
 		},
 
 		canConfigureBreakoutRooms() {
