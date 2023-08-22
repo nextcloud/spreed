@@ -3518,7 +3518,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @Then /^set state (enabled|disabled|no-setup) for bot "([^"]*)" via OCC$/
 	 */
-	public function stateUpdateForBot(string $state, string $botName): void {
+	public function stateUpdateForBot(string $state, string $botName, ?TableNode $body = null): void {
 		if ($state === 'enabled') {
 			$state = 1;
 		} elseif ($state === 'disabled') {
@@ -3527,7 +3527,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$state = 2;
 		}
 
-		$this->invokingTheCommand('talk:bot:state ' . self::$botNameToId[$botName] . ' ' . $state);
+		$features = '';
+		if ($body) {
+			$features = array_map(static fn ($map) => $map['feature'], $body->getColumnsHash());
+			$features = ' -f ' . implode(' -f ', $features);
+		}
+
+		$this->invokingTheCommand('talk:bot:state ' . self::$botNameToId[$botName] . ' ' . $state . $features);
 		$this->theCommandWasSuccessful();
 	}
 

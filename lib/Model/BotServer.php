@@ -44,6 +44,8 @@ use OCP\AppFramework\Db\Entity;
  * @method string getLastErrorMessage()
  * @method void setState(int $state)
  * @method int getState()
+ * @method void setFeatures(int $features)
+ * @method int getFeatures()
  */
 class BotServer extends Entity implements \JsonSerializable {
 	protected string $name = '';
@@ -55,6 +57,7 @@ class BotServer extends Entity implements \JsonSerializable {
 	protected ?\DateTimeImmutable $lastErrorDate = null;
 	protected ?string $lastErrorMessage = null;
 	protected int $state = Bot::STATE_DISABLED;
+	protected int $features = Bot::FEATURE_NONE;
 
 	public function __construct() {
 		$this->addType('name', 'string');
@@ -66,6 +69,7 @@ class BotServer extends Entity implements \JsonSerializable {
 		$this->addType('last_error_date', 'datetime');
 		$this->addType('last_error_message', 'string');
 		$this->addType('state', 'int');
+		$this->addType('features', 'int');
 	}
 
 	public function jsonSerialize(): array {
@@ -80,6 +84,7 @@ class BotServer extends Entity implements \JsonSerializable {
 			'last_error_date' => $this->getLastErrorDate() ? $this->getLastErrorDate()->getTimestamp() : 0,
 			'last_error_message' => $this->getLastErrorMessage(),
 			'state' => $this->getState(),
+			'features' => $this->getFeatures(),
 		];
 	}
 }
