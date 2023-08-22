@@ -29,3 +29,13 @@ The call summary bot posts an overview message after the call listing all partic
 * License: AGPL-3.0-or-later
 * [Link to source code](https://github.com/nextcloud/call_summary_bot)
 * [Link to installation documentation](https://github.com/nextcloud/call_summary_bot#readme)
+
+## Welcome bot
+
+A Golang sample bot that responds to "Good morning" and "Hello" and welcomes new attendees in the room.
+
+![Screenshot showing a welcome and hello response](botscreenshots/welcome-bot.png)
+
+* License: GPL-3.0-or-later
+* [Link to source code](https://github.com/nextcloud/welcome_bot)
+* [Link to installation documentation](https://github.com/nextcloud/welcome_bot#readme)
