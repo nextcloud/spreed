@@ -1962,6 +1962,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$widget['widget_url'] = str_replace('{$BASE_URL}', $this->baseUrl, $widget['widget_url']);
 			$widget['buttons'] = str_replace('{$BASE_URL}', $this->baseUrl, $widget['buttons']);
 			$widget['buttons'] = json_decode($widget['buttons'], true);
+			$widget['item_api_versions'] = json_decode($widget['item_api_versions'], true);
 
 			Assert::assertEquals($widget, $data[$id], 'Mismatch of data for widget ' . $id);
 			Assert::assertStringEndsWith($widgetIconUrl, $dataIconUrl, 'Mismatch of icon URL for widget ' . $id);
