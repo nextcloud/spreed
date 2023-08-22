@@ -57,7 +57,7 @@ describe('messagesStore', () => {
 	})
 
 	describe('processMessage', () => {
-		test('adds message to the list by token', () => {
+		test('adds message to the store by token', () => {
 			const message1 = {
 				id: 1,
 				token: TOKEN,
@@ -65,6 +65,32 @@ describe('messagesStore', () => {
 
 			store.dispatch('processMessage', message1)
 			expect(store.getters.messagesList(TOKEN)[0]).toBe(message1)
+		})
+
+		test('doesn\'t add specific messages to the store', () => {
+			const messages = [{
+				id: 1,
+				token: TOKEN,
+				systemMessage: 'message_deleted',
+			}, {
+				id: 2,
+				token: TOKEN,
+				systemMessage: 'reaction',
+			}, {
+				id: 3,
+				token: TOKEN,
+				systemMessage: 'reaction_deleted',
+			}, {
+				id: 4,
+				token: TOKEN,
+				systemMessage: 'reaction_revoked',
+			}]
+
+			messages.forEach(message => {
+				store.dispatch('processMessage', message)
+			})
+
+			expect(store.getters.messagesList(TOKEN)).toHaveLength(0)
 		})
 
 		test('adds message with its parent to the list', () => {
@@ -163,46 +189,21 @@ describe('messagesStore', () => {
 			store.dispatch('processMessage', message)
 		})
 
-		test('deletes from server and replaces with returned system message', async () => {
+		test('deletes from server and replaces deleted message with response', async () => {
 			deleteMessage.mockResolvedValueOnce({
 				status: 200,
 				data: {
 					ocs: {
 						data: {
-							id: 10,
+							id: 11,
 							token: TOKEN,
 							message: '(deleted)',
-						},
-					},
-				},
-			})
-
-			const status = await store.dispatch('deleteMessage', { message, placeholder: 'placeholder-text' })
-
-			expect(deleteMessage).toHaveBeenCalledWith(message)
-			expect(status).toBe(200)
-
-			expect(store.getters.messagesList(TOKEN)).toStrictEqual([{
-				id: 10,
-				token: TOKEN,
-				message: '(deleted)',
-				messageType: 'comment_deleted',
-			}])
-		})
-
-		test('deletes from server and replaces with returned system message including parent', async () => {
-			deleteMessage.mockResolvedValueOnce({
-				status: 200,
-				data: {
-					ocs: {
-						data: {
-							id: 10,
-							token: TOKEN,
-							message: '(deleted)',
+							systemMessage: 'message_deleted',
 							parent: {
-								id: 5,
+								id: 10,
 								token: TOKEN,
-								message: 'parent message',
+								message: 'parent message deleted',
+								messageType: 'comment_deleted',
 							},
 						},
 					},
@@ -214,17 +215,54 @@ describe('messagesStore', () => {
 			expect(deleteMessage).toHaveBeenCalledWith(message)
 			expect(status).toBe(200)
 
-			expect(store.getters.messagesList(TOKEN)).toStrictEqual([{
-				id: 5,
-				token: TOKEN,
-				message: 'parent message',
-			}, {
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
 				id: 10,
 				token: TOKEN,
-				message: '(deleted)',
+				message: 'parent message deleted',
 				messageType: 'comment_deleted',
-				parent: 5,
 			}])
+		})
+
+		test('deletes from server but doesn\'t replace if deleted message is not in the store', async () => {
+			deleteMessage.mockResolvedValueOnce({
+				status: 200,
+				data: {
+					ocs: {
+						data: {
+							id: 11,
+							token: TOKEN,
+							message: '(deleted)',
+							systemMessage: 'message_deleted',
+							parent: {
+								id: 9,
+								token: TOKEN,
+								message: 'parent message deleted',
+								messageType: 'comment_deleted',
+							},
+						},
+					},
+				},
+			})
+
+			const status = await store.dispatch('deleteMessage', { message, placeholder: 'placeholder-text' })
+
+			expect(deleteMessage).toHaveBeenCalledWith(message)
+			expect(status).toBe(200)
+
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([message])
+		})
+
+		test('keeps message in list if an error status comes from server', async () => {
+			deleteMessage.mockRejectedValueOnce({
+				status: 400,
+			})
+
+			await store.dispatch('deleteMessage', { message, placeholder: 'placeholder-text' })
+				.catch(error => {
+					expect(error.status).toBe(400)
+
+					expect(store.getters.messagesList(TOKEN)).toMatchObject([message])
+				})
 		})
 
 		test('shows placeholder while deletion is in progress', () => {
