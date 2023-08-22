@@ -83,13 +83,25 @@ const actions = {
 	 * Updates reactions for a given message.
 	 *
 	 * @param {*} context The context object
-	 * @param {*} param1 conversation token, message id
+	 * @param {*} param1 conversation token, message id, reactions details
 	 */
 	async updateReactions(context, { token, messageId, reactionsDetails }) {
 		context.commit('addReactions', {
 			token,
 			messageId,
 			reactions: reactionsDetails,
+		})
+	},
+	/**
+	 * Resets reactions for a given message.
+	 *
+	 * @param {*} context The context object
+	 * @param {*} param1 conversation token, message id
+	 */
+	async resetReactions(context, { token, messageId }) {
+		context.commit('resetReactions', {
+			token,
+			messageId,
 		})
 	},
 

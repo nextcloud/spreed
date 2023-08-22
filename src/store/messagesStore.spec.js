@@ -18,6 +18,7 @@ import {
 } from '../services/messagesService.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import messagesStore from './messagesStore.js'
+import storeConfig from './storeConfig.js'
 
 jest.mock('../services/messagesService', () => ({
 	deleteMessage: jest.fn(),
@@ -180,6 +181,10 @@ describe('messagesStore', () => {
 		let message
 
 		beforeEach(() => {
+			testStoreConfig = cloneDeep(storeConfig)
+			testStoreConfig.modules.reactionsStore.actions.resetReactions = jest.fn()
+			store = new Vuex.Store(testStoreConfig)
+
 			message = {
 				id: 10,
 				token: TOKEN,
