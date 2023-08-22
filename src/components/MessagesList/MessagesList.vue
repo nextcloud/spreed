@@ -311,10 +311,6 @@ export default {
 			const groups = []
 			let lastMessage = null
 			for (const message of messages) {
-				if (message.systemMessage === 'message_deleted') {
-					continue
-				}
-
 				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
 					if (groups.at(-1)) {
 						groups.at(-1).nextMessageId = message.id

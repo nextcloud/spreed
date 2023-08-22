@@ -167,7 +167,7 @@ const getters = {
 		return []
 	},
 	message: (state) => (token, id) => {
-		if (state.messages[token][id]) {
+		if (state.messages[token]?.[id]) {
 			return state.messages[token][id]
 		}
 		return {}
@@ -506,7 +506,14 @@ const actions = {
 	 */
 	processMessage(context, message) {
 		if (message.parent) {
-			context.commit('addMessage', message.parent)
+			// Handle cases for messages with replies and some system messages
+			if (message.systemMessage === 'message_deleted') {
+				// If parent message is presented in store already, we update it
+				const parentInStore = context.getters.message(message.token, message.parent.id)
+				if (Object.keys(parentInStore).length !== 0) {
+					context.commit('addMessage', message.parent)
+				}
+			}
 			message.parent = message.parent.id
 		}
 
@@ -552,6 +559,7 @@ const actions = {
 			&& message.systemMessage !== 'reaction_deleted'
 			&& message.systemMessage !== 'reaction_revoked'
 			&& message.systemMessage !== 'poll_voted'
+			&& message.systemMessage !== 'message_deleted'
 		) {
 			context.commit('addMessage', message)
 		}
@@ -579,21 +587,13 @@ const actions = {
 		let response
 		try {
 			response = await deleteMessage(message)
-		} catch (e) {
+			context.dispatch('processMessage', response.data.ocs.data)
+			return response.status
+		} catch (error) {
 			// Restore the previous message state
 			context.commit('addMessage', messageObject)
-			throw e
+			throw error
 		}
-
-		const systemMessage = response.data.ocs.data
-		if (systemMessage.parent) {
-			context.commit('addMessage', systemMessage.parent)
-			systemMessage.parent = systemMessage.parent.id
-		}
-
-		context.commit('addMessage', systemMessage)
-
-		return response.status
 	},
 
 	/**
