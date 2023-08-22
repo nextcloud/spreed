@@ -76,7 +76,7 @@ class Install extends Base {
 				'Prevent moderators from setting up the bot in a conversation'
 			)
 			->addOption(
-				'features',
+				'feature',
 				'f',
 				InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
 				'Specify the list of features for the bot' . "\n"
