@@ -80,7 +80,6 @@
 import ArrowRight from 'vue-material-design-icons/ArrowRight.vue'
 import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 
-import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
@@ -89,9 +88,7 @@ import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
-import { translateText } from '../../../../../services/messagesService.js'
-
-const availableLanguages = getCapabilities()?.spreed?.config?.chat?.translations
+import { getTranslationLanguages, translateText } from '../../../../../services/messagesService.js'
 
 export default {
 	name: 'MessageTranslateDialog',
@@ -119,13 +116,10 @@ export default {
 
 	emits: ['close'],
 
-	setup() {
-		return { availableLanguages }
-	},
-
 	data() {
 		return {
 			isMounted: false,
+			availableLanguages: null,
 			selectedFrom: null,
 			selectedTo: null,
 			isLoading: false,
@@ -140,13 +134,13 @@ export default {
 
 		sourceTree() {
 			const tree = {}
-			const uniqueSourceLanguages = Array.from(new Set(this.availableLanguages.map(element => element.from)))
+			const uniqueSourceLanguages = Array.from(new Set(this.availableLanguages?.map(element => element.from)))
 
 			uniqueSourceLanguages.forEach(language => {
 				tree[language] = {
 					id: language,
-					label: this.availableLanguages.find(element => element.from === language)?.fromLabel,
-					translations: this.availableLanguages.filter(element => element.from === language).map(model => ({
+					label: this.availableLanguages?.find(element => element.from === language)?.fromLabel,
+					translations: this.availableLanguages?.filter(element => element.from === language).map(model => ({
 						id: model.to,
 						label: model.toLabel,
 					})),
@@ -158,13 +152,13 @@ export default {
 
 		translationTree() {
 			const tree = {}
-			const uniqueTranslateLanguages = Array.from(new Set(this.availableLanguages.map(element => element.to)))
+			const uniqueTranslateLanguages = Array.from(new Set(this.availableLanguages?.map(element => element.to)))
 
 			uniqueTranslateLanguages.forEach(language => {
 				tree[language] = {
 					id: language,
-					label: this.availableLanguages.find(element => element.to === language)?.toLabel,
-					sources: this.availableLanguages.filter(element => element.to === language).map(model => ({
+					label: this.availableLanguages?.find(element => element.to === language)?.toLabel,
+					sources: this.availableLanguages?.filter(element => element.to === language).map(model => ({
 						id: model.from,
 						label: model.fromLabel,
 					})),
@@ -200,6 +194,11 @@ export default {
 		selectedFrom() {
 			this.translatedMessage = ''
 		},
+	},
+
+	async created() {
+		const response = await getTranslationLanguages()
+		this.availableLanguages = response.data.ocs.data.languages
 	},
 
 	mounted() {
