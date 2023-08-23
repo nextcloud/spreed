@@ -107,9 +107,9 @@ class UpdateDocs extends Base {
 			$text .= "| Arguments | Description | Is required | Is array | Default |\n";
 			$text .= '|---|---|---|---|---|';
 			foreach ($definition->getArguments() as $argument) {
-				$text .= "\n";
-				if (null !== $describeInputArgument = $this->describeInputArgument($argument)) {
-					$text .= $describeInputArgument;
+				$describeInputArgument = $this->describeInputArgument($argument);
+				if ($describeInputArgument) {
+					$text .= "\n" . $describeInputArgument;
 				}
 			}
 			$text .= "\n";
@@ -121,9 +121,9 @@ class UpdateDocs extends Base {
 			$text .= "| Options | Accept value | Is value required | Is multiple | Default |\n";
 			$text .= '|---|---|---|---|---|';
 			foreach ($definition->getOptions() as $option) {
-				$text .= "\n";
-				if (null !== $describeInputOption = $this->describeInputOption($option)) {
-					$text .= $describeInputOption;
+				$describeInputOption = $this->describeInputOption($option);
+				if ($describeInputOption) {
+					$text .= "\n" . $describeInputOption;
 				}
 			}
 			$text .= "\n";
