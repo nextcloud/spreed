@@ -243,6 +243,7 @@ trait TRoomCommand {
 			return;
 		}
 
+		/** @var array<string, array{actorType: string, actorId: string, displayName: string}> $participants */
 		$participants = [];
 		foreach ($userIds as $userId) {
 			if ($userId === MatterbridgeManager::BRIDGE_BOT_USERID) {
@@ -268,7 +269,7 @@ trait TRoomCommand {
 				// we expect the user not to be a participant yet
 			}
 
-			$participants[] = [
+			$participants[$user->getUID()] = [
 				'actorType' => Attendee::ACTOR_USERS,
 				'actorId' => $user->getUID(),
 				'displayName' => $user->getDisplayName(),
