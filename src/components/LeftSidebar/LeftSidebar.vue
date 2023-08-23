@@ -27,10 +27,7 @@
 				:class="{'conversations-search--expanded': isFocused}">
 				<SearchBox ref="searchBox"
 					:value.sync="searchText"
-					:is-focused="isFocused"
-					@focus="setIsFocused"
-					@blur="setIsFocused"
-					@trailing-blur="setIsFocused"
+					:is-focused.sync="isFocused"
 					@input="debounceFetchSearchResults"
 					@abort-search="abortSearch" />
 			</div>
@@ -495,13 +492,6 @@ export default {
 
 		showModalListConversations() {
 			this.$refs.openConversationsList.showModal()
-		},
-
-		setIsFocused(event) {
-			if (this.searchText !== '') {
-				return
-			}
-			this.isFocused = event.type === 'focus'
 		},
 
 		handleFilter(filter) {
