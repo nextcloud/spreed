@@ -85,6 +85,18 @@ export default {
 		},
 	},
 
+	watch: {
+		isFocused(value) {
+			if (value) {
+				this.$nextTick(() => {
+					this.getTrailingButton()?.addEventListener('keydown', this.handleTrailingKeyDown)
+				})
+			} else {
+				this.getTrailingButton()?.removeEventListener('keydown', this.handleTrailingKeyDown)
+			}
+		},
+	},
+
 	methods: {
 		updateValue(value) {
 			this.$emit('update:value', value)
@@ -94,6 +106,18 @@ export default {
 		focus() {
 			this.$refs.searchConversations.focus()
 		},
+
+		getTrailingButton() {
+			return this.$refs.searchConversations.$el.querySelector('.input-field__clear-button')
+		},
+
+		handleTrailingKeyDown(event) {
+			if (event.key === 'Enter') {
+				event.stopPropagation()
+				this.abortSearch()
+			}
+		},
+
 		/**
 		 * Emits the abort-search event and blurs the input
 		 */
@@ -113,7 +137,7 @@ export default {
 		handleBlur(event) {
 			if (event.relatedTarget?.classList.contains('input-field__clear-button')) {
 				event.preventDefault()
-				this.$refs.searchConversations.$el.querySelector('.input-field__clear-button').addEventListener('blur', (trailingEvent) => {
+				this.getTrailingButton()?.addEventListener('blur', (trailingEvent) => {
 					this.handleBlur(trailingEvent)
 				})
 			} else {
