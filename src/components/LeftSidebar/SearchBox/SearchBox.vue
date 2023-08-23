@@ -24,6 +24,7 @@
 		:value="value"
 		:label="placeholderText"
 		:show-trailing-button="isFocused"
+		class="search-box"
 		trailing-button-icon="close"
 		v-on="listeners"
 		@update:value="updateValue"
@@ -153,9 +154,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.search-box {
+	:deep(.input-field__input) {
+		border-radius: var(--border-radius-pill);
+	}
 
-:deep(.input-field__input) {
-	border-radius: var(--border-radius-pill);
+  :deep(.input-field__clear-button) {
+    border-radius: var(--border-radius-pill) !important;
+  }
 }
 
 </style>
