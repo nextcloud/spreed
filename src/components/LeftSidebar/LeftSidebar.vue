@@ -866,9 +866,6 @@ export default {
 	// Total : 100 px
 	width : calc(100% - 100px);
 	display : flex;
-	:deep(.input-field__input) {
-		border-radius: var(--border-radius-pill);
-	}
 	&--expanded {
 		width : calc(100% - 8px);
 	}
@@ -886,10 +883,6 @@ export default {
 
 .settings-button {
 	justify-content: flex-start !important;
-}
-
-:deep(.input-field__clear-button) {
-	border-radius: var(--border-radius-pill) !important;
 }
 
 :deep(.app-navigation ul) {
