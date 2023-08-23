@@ -44,6 +44,7 @@
 				<referencedClass name="OCA\DAV\CardDAV\PhotoCache" />
 				<referencedClass name="OCA\FederatedFileSharing\AddressHandler" />
 				<referencedClass name="OCA\Files_Sharing\SharedStorage" />
+				<referencedClass name="Stecman\Component\Symfony\Console\BashCompletion\CompletionContext" />
 			</errorLevel>
 		</UndefinedClass>
 		<UndefinedDocblockClass>
@@ -82,6 +83,7 @@
 	<stubs>
 		<file name="tests/stubs/oc_comments_comment.php" />
 		<file name="tests/stubs/oc_comments_manager.php" />
+		<file name="tests/stubs/oc_core_command_base.php" />
 		<file name="tests/stubs/oc_hooks_emitter.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ClientException.php" />
 		<file name="tests/stubs/GuzzleHttp_Exception_ConnectException.php" />
