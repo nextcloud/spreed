@@ -565,6 +565,27 @@ class Notifier implements INotifier {
 						$subject = $l->t('Reminder: Guest in {call}') . "\n{message}";
 					}
 				}
+			} elseif ($notification->getSubject() === 'reaction') {
+				$richSubjectParameters['reaction'] = [
+					'type' => 'highlight',
+					'id' => $subjectParameters['reaction'],
+					'name' => $subjectParameters['reaction'],
+				];
+
+				if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
+					$subject = $l->t('{user} reacted with {reaction}') . "\n{message}";
+				} elseif ($richSubjectUser) {
+					$subject = $l->t('{user} reacted with {reaction} in {call}') . "\n{message}";
+				} elseif (!$isGuest) {
+					$subject = $l->t('Deleted user reacted with {reaction} in {call}') . "\n{message}";
+				} else {
+					try {
+						$richSubjectParameters['guest'] = $this->getGuestParameter($room, $comment->getActorId());
+						$subject = $l->t('{guest} (guest) reacted with {reaction} in {call}') . "\n{message}";
+					} catch (ParticipantNotFoundException $e) {
+						$subject = $l->t('Guest reacted with {reaction} in {call}') . "\n{message}";
+					}
+				}
 			} else {
 				if ($room->getType() === Room::TYPE_ONE_TO_ONE || $room->getType() === Room::TYPE_ONE_TO_ONE_FORMER) {
 					$subject = "{user}\n{message}";
