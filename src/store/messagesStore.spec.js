@@ -18,6 +18,7 @@ import {
 } from '../services/messagesService.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import messagesStore from './messagesStore.js'
+import storeConfig from './storeConfig.js'
 
 jest.mock('../services/messagesService', () => ({
 	deleteMessage: jest.fn(),
@@ -57,7 +58,7 @@ describe('messagesStore', () => {
 	})
 
 	describe('processMessage', () => {
-		test('adds message to the list by token', () => {
+		test('adds message to the store by token', () => {
 			const message1 = {
 				id: 1,
 				token: TOKEN,
@@ -67,7 +68,49 @@ describe('messagesStore', () => {
 			expect(store.getters.messagesList(TOKEN)[0]).toBe(message1)
 		})
 
-		test('adds message with its parent to the list', () => {
+		test('doesn\'t add specific messages to the store', () => {
+			testStoreConfig = cloneDeep(storeConfig)
+			testStoreConfig.modules.pollStore.getters.debounceGetPollData = jest.fn()
+			testStoreConfig.modules.reactionsStore.actions.resetReactions = jest.fn()
+			store = new Vuex.Store(testStoreConfig)
+
+			const messages = [{
+				id: 2,
+				token: TOKEN,
+				systemMessage: 'message_deleted',
+				parent: { id: 1 },
+			}, {
+				id: 3,
+				token: TOKEN,
+				systemMessage: 'reaction',
+				parent: { id: 1 },
+			}, {
+				id: 4,
+				token: TOKEN,
+				systemMessage: 'reaction_deleted',
+				parent: { id: 1 },
+			}, {
+				id: 5,
+				token: TOKEN,
+				systemMessage: 'reaction_revoked',
+				parent: { id: 1 },
+			}, {
+				id: 6,
+				token: TOKEN,
+				systemMessage: 'poll_voted',
+				messageParameters: {
+					poll: { id: 1 },
+				},
+			}]
+
+			messages.forEach(message => {
+				store.dispatch('processMessage', message)
+			})
+
+			expect(store.getters.messagesList(TOKEN)).toHaveLength(0)
+		})
+
+		test('adds user\'s message with included parent to the store', () => {
 			const parentMessage = {
 				id: 1,
 				token: TOKEN,
@@ -76,15 +119,11 @@ describe('messagesStore', () => {
 				id: 2,
 				token: TOKEN,
 				parent: parentMessage,
+				messageType: 'comment',
 			}
 
 			store.dispatch('processMessage', message1)
-			expect(store.getters.messagesList(TOKEN)[0]).toBe(parentMessage)
-			expect(store.getters.messagesList(TOKEN)[1]).toStrictEqual({
-				id: 2,
-				token: TOKEN,
-				parent: 1,
-			})
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([message1])
 		})
 
 		test('deletes matching temporary message when referenced', () => {
@@ -154,6 +193,10 @@ describe('messagesStore', () => {
 		let message
 
 		beforeEach(() => {
+			testStoreConfig = cloneDeep(storeConfig)
+			testStoreConfig.modules.reactionsStore.actions.resetReactions = jest.fn()
+			store = new Vuex.Store(testStoreConfig)
+
 			message = {
 				id: 10,
 				token: TOKEN,
@@ -163,46 +206,21 @@ describe('messagesStore', () => {
 			store.dispatch('processMessage', message)
 		})
 
-		test('deletes from server and replaces with returned system message', async () => {
+		test('deletes from server and replaces deleted message with response', async () => {
 			deleteMessage.mockResolvedValueOnce({
 				status: 200,
 				data: {
 					ocs: {
 						data: {
-							id: 10,
+							id: 11,
 							token: TOKEN,
 							message: '(deleted)',
-						},
-					},
-				},
-			})
-
-			const status = await store.dispatch('deleteMessage', { message, placeholder: 'placeholder-text' })
-
-			expect(deleteMessage).toHaveBeenCalledWith(message)
-			expect(status).toBe(200)
-
-			expect(store.getters.messagesList(TOKEN)).toStrictEqual([{
-				id: 10,
-				token: TOKEN,
-				message: '(deleted)',
-				messageType: 'comment_deleted',
-			}])
-		})
-
-		test('deletes from server and replaces with returned system message including parent', async () => {
-			deleteMessage.mockResolvedValueOnce({
-				status: 200,
-				data: {
-					ocs: {
-						data: {
-							id: 10,
-							token: TOKEN,
-							message: '(deleted)',
+							systemMessage: 'message_deleted',
 							parent: {
-								id: 5,
+								id: 10,
 								token: TOKEN,
-								message: 'parent message',
+								message: 'parent message deleted',
+								messageType: 'comment_deleted',
 							},
 						},
 					},
@@ -214,17 +232,54 @@ describe('messagesStore', () => {
 			expect(deleteMessage).toHaveBeenCalledWith(message)
 			expect(status).toBe(200)
 
-			expect(store.getters.messagesList(TOKEN)).toStrictEqual([{
-				id: 5,
-				token: TOKEN,
-				message: 'parent message',
-			}, {
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
 				id: 10,
 				token: TOKEN,
-				message: '(deleted)',
+				message: 'parent message deleted',
 				messageType: 'comment_deleted',
-				parent: 5,
 			}])
+		})
+
+		test('deletes from server but doesn\'t replace if deleted message is not in the store', async () => {
+			deleteMessage.mockResolvedValueOnce({
+				status: 200,
+				data: {
+					ocs: {
+						data: {
+							id: 11,
+							token: TOKEN,
+							message: '(deleted)',
+							systemMessage: 'message_deleted',
+							parent: {
+								id: 9,
+								token: TOKEN,
+								message: 'parent message deleted',
+								messageType: 'comment_deleted',
+							},
+						},
+					},
+				},
+			})
+
+			const status = await store.dispatch('deleteMessage', { message, placeholder: 'placeholder-text' })
+
+			expect(deleteMessage).toHaveBeenCalledWith(message)
+			expect(status).toBe(200)
+
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([message])
+		})
+
+		test('keeps message in list if an error status comes from server', async () => {
+			deleteMessage.mockRejectedValueOnce({
+				status: 400,
+			})
+
+			await store.dispatch('deleteMessage', { message, placeholder: 'placeholder-text' })
+				.catch(error => {
+					expect(error.status).toBe(400)
+
+					expect(store.getters.messagesList(TOKEN)).toMatchObject([message])
+				})
 		})
 
 		test('shows placeholder while deletion is in progress', () => {
@@ -299,7 +354,7 @@ describe('messagesStore', () => {
 			expect(getActorTypeMock).toHaveBeenCalled()
 			expect(getDisplayNameMock).toHaveBeenCalled()
 
-			expect(temporaryMessage).toStrictEqual({
+			expect(temporaryMessage).toMatchObject({
 				id: 'temp-1577908800000',
 				actorId: 'actor-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -310,7 +365,6 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
-				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
@@ -319,6 +373,14 @@ describe('messagesStore', () => {
 		})
 
 		test('creates temporary message with message to be replied', async () => {
+			const parent = {
+				id: 123,
+				token: TOKEN,
+				message: 'hello',
+			}
+
+			store.dispatch('processMessage', parent)
+
 			getMessageToBeRepliedMock.mockReset()
 			getMessageToBeRepliedMock.mockReturnValue(() => (123))
 
@@ -331,7 +393,7 @@ describe('messagesStore', () => {
 				localUrl: null,
 			})
 
-			expect(temporaryMessage).toStrictEqual({
+			expect(temporaryMessage).toMatchObject({
 				id: 'temp-1577908800000',
 				actorId: 'actor-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -342,7 +404,7 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
-				parent: 123,
+				parent,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
@@ -365,7 +427,7 @@ describe('messagesStore', () => {
 				localUrl: 'local-url://original-name.txt',
 			})
 
-			expect(temporaryMessage).toStrictEqual({
+			expect(temporaryMessage).toMatchObject({
 				id: expect.stringMatching(/^temp-1577908800000-upload-id-1-0\.[0-9]*$/),
 				actorId: 'actor-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -387,7 +449,6 @@ describe('messagesStore', () => {
 					},
 				},
 				token: TOKEN,
-				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
@@ -407,7 +468,7 @@ describe('messagesStore', () => {
 
 			store.dispatch('addTemporaryMessage', temporaryMessage)
 
-			expect(store.getters.messagesList(TOKEN)).toStrictEqual([{
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
 				id: 'temp-1577908800000',
 				actorId: 'actor-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -418,7 +479,6 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
-				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
@@ -431,7 +491,7 @@ describe('messagesStore', () => {
 			temporaryMessage.message = 'replaced'
 			store.dispatch('addTemporaryMessage', temporaryMessage)
 
-			expect(store.getters.messagesList(TOKEN)).toStrictEqual([{
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
 				id: 'temp-1577908800000',
 				actorId: 'actor-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -442,7 +502,6 @@ describe('messagesStore', () => {
 				message: 'replaced',
 				messageParameters: {},
 				token: TOKEN,
-				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},
@@ -466,7 +525,7 @@ describe('messagesStore', () => {
 				reason: 'failure-reason',
 			})
 
-			expect(store.getters.messagesList(TOKEN)).toStrictEqual([{
+			expect(store.getters.messagesList(TOKEN)).toMatchObject([{
 				id: 'temp-1577908800000',
 				actorId: 'actor-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -477,7 +536,6 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
-				parent: 0,
 				isReplyable: false,
 				sendingFailure: 'failure-reason',
 				reactions: {},
@@ -513,7 +571,7 @@ describe('messagesStore', () => {
 
 			store.dispatch('addTemporaryMessage', temporaryMessage)
 
-			expect(store.getters.getTemporaryReferences(TOKEN, temporaryMessage.referenceId)).toStrictEqual([{
+			expect(store.getters.getTemporaryReferences(TOKEN, temporaryMessage.referenceId)).toMatchObject([{
 				id: 'temp-1577908800000',
 				actorId: 'actor-id-1',
 				actorType: ATTENDEE.ACTOR_TYPE.USERS,
@@ -524,7 +582,6 @@ describe('messagesStore', () => {
 				message: 'blah',
 				messageParameters: {},
 				token: TOKEN,
-				parent: 0,
 				isReplyable: false,
 				sendingFailure: '',
 				reactions: {},

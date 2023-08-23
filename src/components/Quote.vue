@@ -139,13 +139,6 @@ export default {
 			type: Boolean,
 			default: false,
 		},
-		/**
-		 * The parent message's id
-		 */
-		parentId: {
-			type: Number,
-			required: true,
-		},
 	},
 	computed: {
 		/**
@@ -251,7 +244,14 @@ export default {
 		},
 
 		handleQuoteClick() {
-			EventBus.$emit('focus-message', this.parentId)
+			const parentHash = '#message_' + this.id
+			if (this.$route.hash !== parentHash) {
+				// Change route to trigger message fetch, if not fetched yet
+				this.$router.replace(parentHash)
+			} else {
+				// Already on this message route, just trigger highlight
+				EventBus.$emit('focus-message', this.id)
+			}
 		},
 	},
 }

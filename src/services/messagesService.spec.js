@@ -120,7 +120,7 @@ describe('messagesService', () => {
 			message: 'hello world!',
 			actorDisplayName: 'actor-display-name',
 			referenceId: 'reference-id',
-			parent: 111,
+			parent: { id: 111 },
 		}, {
 			dummyOption: true,
 		})
