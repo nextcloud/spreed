@@ -26,7 +26,6 @@
 		:show-trailing-button="isFocused"
 		trailing-button-icon="close"
 		v-on="listeners"
-		@blur="handleBlur"
 		@update:value="updateValue"
 		@trailing-button-click="abortSearch"
 		@keydown.esc="abortSearch">
@@ -65,17 +64,18 @@ export default {
 		 */
 		isFocused: {
 			type: Boolean,
-			default: false,
+			required: true,
 		},
 	},
 
 	expose: ['focus'],
 
-	emits: ['update:value', 'input', 'submit', 'abort-search', 'blur', 'trailing-blur'],
+	emits: ['update:value', 'update:is-focused', 'input', 'abort-search', 'blur', 'focus'],
 
 	computed: {
 		listeners() {
 			return Object.assign({}, this.$listeners, {
+				focus: this.handleFocus,
 				blur: this.handleBlur,
 			})
 		},
@@ -95,20 +95,32 @@ export default {
 			this.$refs.searchConversations.focus()
 		},
 		/**
-		 * Emits the abort-search event and re-focuses the input
+		 * Emits the abort-search event and blurs the input
 		 */
 		abortSearch() {
+			this.updateValue('')
+			this.$emit('update:is-focused', false)
 			this.$emit('abort-search')
+
+			document.activeElement.blur()
+		},
+
+		handleFocus(event) {
+			this.$emit('update:is-focused', true)
+			this.$emit('focus', event)
 		},
 
 		handleBlur(event) {
-			if ((event.relatedTarget) && (Array.from(event.relatedTarget.classList).includes('input-field__clear-button'))) {
+			if (event.relatedTarget?.classList.contains('input-field__clear-button')) {
 				event.preventDefault()
-				this.$refs.searchConversations.$el.querySelector('.input-field__clear-button').addEventListener('blur', (event) => {
-					this.$emit('trailing-blur', event)
+				this.$refs.searchConversations.$el.querySelector('.input-field__clear-button').addEventListener('blur', (trailingEvent) => {
+					this.handleBlur(trailingEvent)
 				})
 			} else {
 				this.$emit('blur', event)
+				if (this.value === '') {
+					this.$emit('update:is-focused', false)
+				}
 			}
 		},
 
