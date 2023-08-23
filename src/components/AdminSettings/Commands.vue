@@ -21,12 +21,10 @@
  -->
 
 <template>
-	<div id="chat_commands" class="commands section">
+	<section id="chat_commands" class="commands section">
 		<h2>
 			{{ t('spreed', 'Commands') }}
-			<small>
-				{{ t('spreed', 'Beta') }}
-			</small>
+			<small>{{ t('spreed', 'Beta') }}</small>
 		</h2>
 
 		<!-- eslint-disable-next-line vue/no-v-html -->
@@ -48,22 +46,33 @@
 			<div class="head enabled">
 				{{ t('spreed', 'Enabled for') }}
 			</div>
-			<CommandVue v-for="command in commands" :key="command.id" v-bind="command" />
+
+			<template v-for="command in commands">
+				<div :key="`${command.id}_name`" class="name">
+					{{ command.name }}
+				</div>
+				<div :key="`${command.id}_command`" class="command">
+					{{ command.command }}
+				</div>
+				<div :key="`${command.id}_script`" class="script">
+					{{ command.script }}
+				</div>
+				<div :key="`${command.id}_response`" class="response">
+					{{ translateResponse(command.response) }}
+				</div>
+				<div :key="`${command.id}_enabled`" class="enabled">
+					{{ translateEnabled(command.enabled) }}
+				</div>
+			</template>
 		</div>
-	</div>
+	</section>
 </template>
 
 <script>
 import { loadState } from '@nextcloud/initial-state'
 
-import CommandVue from '../../components/AdminSettings/CommandVue.vue'
-
 export default {
 	name: 'Commands',
-
-	components: {
-		CommandVue,
-	},
 
 	data() {
 		return {
@@ -82,6 +91,31 @@ export default {
 	mounted() {
 		this.commands = loadState('spreed', 'commands')
 	},
+
+	methods: {
+		translateResponse(response) {
+			switch (response) {
+			case 0:
+				return t('spreed', 'None')
+			case 1:
+				return t('spreed', 'User')
+			default:
+				return t('spreed', 'Everyone')
+			}
+		},
+		translateEnabled(enabled) {
+			switch (enabled) {
+			case 0:
+				return t('spreed', 'Disabled')
+			case 1:
+				return t('spreed', 'Moderators')
+			case 2:
+				return t('spreed', 'Users')
+			default:
+				return t('spreed', 'Everyone')
+			}
+		},
+	},
 }
 </script>
 
@@ -92,12 +126,14 @@ export default {
 		grid-template-columns: minmax(100px, 200px) minmax(100px, 200px)  1fr minmax(100px, 200px)  minmax(100px, 200px);
 		grid-column-gap: 5px;
 		grid-row-gap: 10px;
+
 		.head {
 			padding-bottom: 5px;
 			border-bottom: 1px solid var(--color-border);
 			font-weight: bold;
 		}
 	}
+
 	small {
 		color: var(--color-warning);
 		border: 1px solid var(--color-warning);

@@ -647,11 +647,11 @@ export default {
 
 .content {
 	&.in-call {
-		::v-deep .app-content {
+		:deep(.app-content) {
 			background-color: transparent;
 		}
 
-		&:hover ::v-deep .app-navigation-toggle {
+		&:hover :deep(.app-navigation-toggle) {
 			background-color: rgba(0, 0, 0, .1) !important;
 
 			&:hover {
@@ -659,7 +659,7 @@ export default {
 			}
 		}
 
-		::v-deep .app-navigation-toggle {
+		:deep(.app-navigation-toggle) {
 			/* Force white handle when inside a call */
 			color: #D8D8D8;
 
@@ -673,7 +673,7 @@ export default {
 	&:fullscreen {
 		padding-top: 0;
 
-		::v-deep .app-sidebar {
+		:deep(.app-sidebar) {
 			height: 100vh !important;
 		}
 	}

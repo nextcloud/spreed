@@ -21,23 +21,27 @@
  -->
 
 <template>
-	<div id="general_settings" class="videocalls section">
+	<section id="general_settings" class="videocalls section">
 		<h2>{{ t('spreed', 'General settings') }}</h2>
 
 		<h3>{{ t('spreed', 'Default notification settings') }}</h3>
 
-		<div class="paragraph">
-			<label for="default_group_notification">{{ t('spreed', 'Default group notification') }}</label>
-			<NcMultiselect id="default_group_notification"
-				v-model="defaultGroupNotification"
-				name="default_group_notification"
-				:options="defaultGroupNotificationOptions"
-				:placeholder="t('spreed', 'Default group notification for new groups')"
-				label="label"
-				track-by="value"
-				:disabled="loading || loadingDefaultGroupNotification"
-				@input="saveDefaultGroupNotification" />
-		</div>
+		<label for="default_group_notification_input"
+			class="default-group-notification__label">
+			{{ t('spreed', 'Default group notification') }}
+		</label>
+		<NcSelect v-model="defaultGroupNotification"
+			input-id="default_group_notification_input"
+			class="default-group-notification__select"
+			name="default_group_notification"
+			:options="defaultGroupNotificationOptions"
+			:clearable="false"
+			:placeholder="t('spreed', 'Default group notification for new groups')"
+			label="label"
+			track-by="value"
+			no-wrap
+			:disabled="loading || loadingDefaultGroupNotification"
+			@input="saveDefaultGroupNotification" />
 
 		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
 
@@ -52,14 +56,14 @@
 			@update:checked="saveConversationsFilesPublicShares">
 			{{ t('spreed', 'Allow conversations on public shares for files') }}
 		</NcCheckboxRadioSwitch>
-	</div>
+	</section>
 </template>
 
 <script>
 import { loadState } from '@nextcloud/initial-state'
 
 import NcCheckboxRadioSwitch from '@nextcloud/vue/dist/Components/NcCheckboxRadioSwitch.js'
-import NcMultiselect from '@nextcloud/vue/dist/Components/NcMultiselect.js'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
 
 const defaultGroupNotificationOptions = [
 	{ value: 1, label: t('spreed', 'All messages') },
@@ -71,7 +75,7 @@ export default {
 
 	components: {
 		NcCheckboxRadioSwitch,
-		NcMultiselect,
+		NcSelect,
 	},
 
 	data() {
@@ -150,20 +154,17 @@ export default {
 
 h3 {
 	margin-top: 24px;
+	font-weight: 600;
 }
 
-div.paragraph {
-	display: flex;
-	align-items: center;
-
-	label {
-		display: block;
-		margin-right: 10px;
+.default-group-notification {
+	&__select {
+		width: 300px;
 	}
-}
 
-.multiselect {
-	flex-grow: 1;
-	max-width: 300px;
+	&__label {
+		display: block;
+		padding: 4px 0;
+	}
 }
 </style>

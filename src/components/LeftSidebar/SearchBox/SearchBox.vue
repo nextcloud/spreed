@@ -130,7 +130,7 @@ export default {
 
 <style lang="scss" scoped>
 
-::v-deep .input-field__input {
+:deep(.input-field__input) {
 	border-radius: var(--border-radius-pill);
 }
 

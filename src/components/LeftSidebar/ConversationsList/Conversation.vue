@@ -451,12 +451,12 @@ export default {
 
 <style lang="scss" scoped>
 
-::v-deep .action-text__title {
+:deep(.action-text__title) {
 	margin-left: 12px;
 }
 
 .critical {
-	::v-deep .action-button {
+	:deep(.action-button) {
 		color: var(--color-error) !important;
 	}
 }

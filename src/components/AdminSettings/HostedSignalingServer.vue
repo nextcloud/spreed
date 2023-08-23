@@ -21,7 +21,7 @@
  -->
 
 <template>
-	<div v-if="showForm"
+	<section v-if="showForm"
 		id="hosted_signaling_server"
 		class="videocalls section">
 		<h2>
@@ -32,70 +32,77 @@
 			{{ t('spreed', 'Our partner Struktur AG provides a service where a hosted signaling server can be requested. For this you only need to fill out the form below and your Nextcloud will request it. Once the server is set up for you the credentials will be filled automatically. This will overwrite the existing signaling server settings.') }}
 		</p>
 
-		<div v-if="!trialAccount.status">
-			<h4>{{ t('spreed', 'URL of this Nextcloud instance') }}</h4>
-			<input v-model="hostedHPBNextcloudUrl"
-				type="text"
+		<template v-if="!trialAccount.status">
+			<NcTextField v-model="hostedHPBNextcloudUrl"
+				class="form__textfield"
 				name="hosted_hpb_nextcloud_url"
 				placeholder="https://cloud.example.org/"
 				:disabled="loading"
-				:aria-label="t('spreed', 'URL of this Nextcloud instance')">
+				:label="t('spreed', 'URL of this Nextcloud instance')"
+				label-visible />
 
-			<h4>{{ t('spreed', 'Full name of the user requesting the trial') }}</h4>
-			<input v-model="hostedHPBFullName"
-				type="text"
+			<NcTextField v-model="hostedHPBFullName"
+				class="form__textfield"
 				name="full_name"
 				placeholder="Jane Doe"
 				:disabled="loading"
-				:aria-label="t('spreed', 'Name of the user requesting the trial')">
+				:label="t('spreed', 'Full name of the user requesting the trial')"
+				label-visible />
 
-			<h4>{{ t('spreed', 'Email of the user') }}</h4>
-			<input v-model="hostedHPBEmail"
-				type="text"
+			<NcTextField v-model="hostedHPBEmail"
+				class="form__textfield"
 				name="hosted_hpb_email"
 				placeholder="jane@example.org"
 				:disabled="loading"
-				:aria-label="t('spreed', 'Email of the user')">
+				:label="t('spreed', 'Email of the user')"
+				label-visible />
 
-			<h4>{{ t('spreed', 'Language') }}</h4>
-			<select v-model="hostedHPBLanguage"
+			<label for="hosted_hpb_language_input" class="form__label">
+				{{ t('spreed', 'Language') }}
+			</label>
+			<NcSelect v-model="hostedHPBLanguage"
+				input-id="hosted_hpb_language_input"
+				class="form__select"
 				name="hosted_hpb_language"
 				:disabled="loading"
-				:aria-label="t('spreed', 'Language')">
-				<option v-for="l in languages.commonLanguages" :key="l.code" :value="l.code">
-					{{ l.name }}
-				</option>
-				<optgroup label="––––––––––" />
-				<option v-for="l in languages.otherLanguages" :key="l.code" :value="l.code">
-					{{ l.name }}
-				</option>
-			</select>
+				:aria-label="t('spreed', 'Language')"
+				:placeholder="t('spreed', 'Language')"
+				:options="languages"
+				:clearable="false"
+				label="name"
+				track-by="code"
+				no-wrap />
 
-			<h4>{{ t('spreed', 'Country') }}</h4>
-			<select v-model="hostedHPBCountry"
+			<label for="hosted_hpb_country_input" class="form__label">
+				{{ t('spreed', 'Country') }}
+			</label>
+			<NcSelect v-model="hostedHPBCountry"
+				input-id="hosted_hpb_country_input"
+				class="form__select"
 				name="hosted_hpb_country"
 				:disabled="loading"
-				:aria-label="t('spreed', 'Country')">
-				<option v-for="c in countries" :key="c.code" :value="c.code">
-					{{ c.name }}
-				</option>
-			</select>
+				:aria-label="t('spreed', 'Country')"
+				:placeholder="t('spreed', 'Country')"
+				:options="countries"
+				:clearable="false"
+				label="name"
+				track-by="code"
+				no-wrap />
 
-			<NcButton type="primary"
+			<NcButton class="additional-top-margin"
 				:disabled="!hostedHPBFilled || loading"
 				@click="requestHPBTrial">
 				{{ t('spreed', 'Request signaling server trial') }}
 			</NcButton>
 
-			<p v-if="requestError !== ''"
-				class="warning">
+			<p v-if="requestError !== ''" class="warning">
 				{{ requestError }}
 			</p>
 
 			<!-- eslint-disable-next-line vue/no-v-html -->
 			<p class="settings-hint additional-top-margin" v-html="disclaimerHint" />
-		</div>
-		<div v-else>
+		</template>
+		<template v-else>
 			<p class="settings-hint additional-top-margin">
 				{{ t('spreed', 'You can see the current status of your hosted signaling server in the following table.') }}
 			</p>
@@ -123,12 +130,13 @@
 			</p>
 
 			<NcButton type="error"
+				class="additional-top-margin"
 				:disabled="loading"
 				@click="deleteAccount">
 				{{ t('spreed', 'Delete the signaling server account') }}
 			</NcButton>
-		</div>
-	</div>
+		</template>
+	</section>
 </template>
 
 <script>
@@ -138,12 +146,16 @@ import moment from '@nextcloud/moment'
 import { generateOcsUrl } from '@nextcloud/router'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+import NcSelect from '@nextcloud/vue/dist/Components/NcSelect.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 export default {
 	name: 'HostedSignalingServer',
 
 	components: {
 		NcButton,
+		NcSelect,
+		NcTextField,
 	},
 
 	data() {
@@ -204,14 +216,17 @@ export default {
 		this.hostedHPBNextcloudUrl = state.url
 		this.hostedHPBFullName = state.fullName
 		this.hostedHPBEmail = state.email
-		this.hostedHPBLanguage = state.language
-		this.hostedHPBCountry = state.country
 
 		this.trialAccount = loadState('spreed', 'hosted_signaling_server_trial_data')
 
 		const languagesAndCountries = loadState('spreed', 'hosted_signaling_server_language_data')
-		this.languages = languagesAndCountries.languages // two lists of {code: "es", name: "Español"} - one is in 'commonLanguages' and one in 'otherLanguages'
-		this.countries = languagesAndCountries.countries // list of {code: "France", name: "France"}
+		// two lists of {code: "es", name: "Español"} - one is in 'commonLanguages' and one in 'otherLanguages'
+		this.languages = [...languagesAndCountries.languages.commonLanguages, ...languagesAndCountries.languages.otherLanguages]
+		// list of {code: "France", name: "France"}
+		this.countries = languagesAndCountries.countries
+
+		this.hostedHPBLanguage = this.languages.find(language => language.code === state.language) ?? this.languages[0]
+		this.hostedHPBCountry = this.countries.find(country => country.code === state.country) ?? this.countries[0]
 
 		const signaling = loadState('spreed', 'signaling_servers')
 		this.showForm = this.trialAccount.length !== 0
@@ -227,8 +242,8 @@ export default {
 					url: this.hostedHPBNextcloudUrl,
 					name: this.hostedHPBFullName,
 					email: this.hostedHPBEmail,
-					language: this.hostedHPBLanguage,
-					country: this.hostedHPBCountry,
+					language: this.hostedHPBLanguage.code,
+					country: this.hostedHPBCountry.code,
 				})
 
 				this.trialAccount = res.data.ocs.data
@@ -258,6 +273,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.form {
+	&__textfield,
+	&__select {
+		width: 300px;
+	}
+
+	&__label {
+		display: block;
+		padding: 4px 0;
+	}
+}
+
 .additional-top-margin {
 	margin-top: 10px;
 }

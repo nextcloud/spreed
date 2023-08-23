@@ -172,12 +172,12 @@ export default {
 	justify-content: right;
 }
 
-::v-deep .app-navigation-entry__title {
+:deep(.app-navigation-entry__title) {
 	font-weight: bold !important;
 }
 
 // TODO: upstream collapse icon position fix
-::v-deep .icon-collapse {
+:deep(.icon-collapse) {
 	position: absolute !important;
 	left: 0;
 }

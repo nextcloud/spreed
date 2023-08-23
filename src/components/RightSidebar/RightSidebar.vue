@@ -429,7 +429,7 @@ export default {
 	display: flex;
 }
 
-::v-deep .app-sidebar-header__description {
+:deep(.app-sidebar-header__description) {
 	flex-direction: column;
 }
 

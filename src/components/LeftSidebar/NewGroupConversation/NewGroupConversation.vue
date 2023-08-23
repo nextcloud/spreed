@@ -406,7 +406,7 @@ export default {
 
 /** Size full in the modal component doesn't have border radius, this adds
 it back */
-::v-deep .modal-container {
+:deep(.modal-container) {
 	border-radius: var(--border-radius-large) !important;
 	height: 700px;
 }
@@ -425,12 +425,12 @@ it back */
 	}
 }
 
-::v-deep .app-settings-section__hint {
+:deep(.app-settings-section__hint) {
 	color: var(--color-text-lighter);
 	padding: 8px 0;
 }
 
-::v-deep .app-settings-subsection {
+:deep(.app-settings-subsection) {
 	&:first-child {
 		margin-top: 0;
 	}
