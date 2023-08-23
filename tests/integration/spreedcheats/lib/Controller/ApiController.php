@@ -91,6 +91,7 @@ class ApiController extends OCSController {
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('talk_sessions')->executeStatement();
 
+
 		$delete = $this->db->getQueryBuilder();
 		$delete->delete('share')
 			->where($delete->expr()->orX(

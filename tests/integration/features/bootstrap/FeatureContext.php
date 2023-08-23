@@ -1072,6 +1072,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" views call-URL of room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param null|TableNode $formData
+	 */
+	public function userViewsCallURL(string $user, string $identifier, int $statusCode, TableNode $formData = null): void {
+		$this->setCurrentUser($user);
+		$this->sendFrontpageRequest(
+			'GET', '/call/' . (self::$identifierToToken[$identifier] ?? $identifier)
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($formData instanceof TableNode) {
+			$content = $this->response->getBody()->getContents();
+			foreach ($formData->getRows() as $line) {
+				Assert::assertStringContainsString($line[0], $content);
+			}
+		}
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" sets notifications to (default|disabled|mention|all) for room "([^"]*)" \((v4)\)$/
 	 *
 	 * @param string $user
@@ -2937,6 +2961,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		$this->setCurrentUser($currentUser);
+		$this->enableDisableBruteForceProtection('disable');
 	}
 
 	/**
@@ -2976,8 +3001,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @Given /^as user "([^"]*)"$/
 	 * @param string $user
 	 */
-	public function setCurrentUser($user) {
+	public function setCurrentUser(?string $user): ?string {
+		$oldUser = $this->currentUser;
 		$this->currentUser = $user;
+		return $oldUser;
 	}
 
 	/**
@@ -2994,6 +3021,58 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$response = $this->userExists($user);
 			$this->assertStatusCode($response, 200);
 		}
+	}
+
+	/**
+	 * @Given /^(enable|disable) brute force protection$/
+	 */
+	public function enableDisableBruteForceProtection(string $enable): void {
+		if ($enable === 'disable') {
+			// Reset the attempts before disabling
+			$this->runOcc(['security:bruteforce:reset', '127.0.0.1']);
+			$this->theCommandWasSuccessful();
+		}
+
+		// config:system:get auth.bruteforce.protection.enabled
+		$this->runOcc(['config:system:set', 'auth.bruteforce.protection.enabled', '--type=boolean', '--value=' . ($enable === 'enable' ? 'true' : 'false')]);
+		$this->theCommandWasSuccessful();
+
+		// config:system:get auth.bruteforce.protection.testing
+		if ($enable === 'enable') {
+			$this->runOcc(['config:system:set', 'auth.bruteforce.protection.testing', '--type=boolean', '--value=' . 'true']);
+		} else {
+			$this->runOcc(['config:system:delete', 'auth.bruteforce.protection.testing']);
+		}
+		$this->theCommandWasSuccessful();
+
+		if ($enable === 'enable') {
+			// Reset the attempts after enabling
+			$this->runOcc(['security:bruteforce:reset', '127.0.0.1']);
+			$this->theCommandWasSuccessful();
+		}
+	}
+
+	/**
+	 * @Given /^the following brute force attempts are registered$/
+	 */
+	public function assertBruteforceAttempts(TableNode $tableNode = null): void {
+		$totalCount = 0;
+		if ($tableNode instanceof TableNode) {
+			foreach ($tableNode->getRowsHash() as $action => $attempts) {
+				$this->runOcc(['security:bruteforce:attempts', '127.0.0.1', $action, '--output=json']);
+				$this->theCommandWasSuccessful();
+				$info = json_decode($this->getLastStdOut(), true);
+
+				Assert::assertEquals($attempts, $info['attempts']);
+				$totalCount += $info['attempts'];
+			}
+		}
+
+		$this->runOcc(['security:bruteforce:attempts', '127.0.0.1', '--output=json']);
+		$this->theCommandWasSuccessful();
+		$info = json_decode($this->getLastStdOut(), true);
+
+		Assert::assertEquals($totalCount, $info['attempts'], 'IP has bruteforce attempts for other actions registered');
 	}
 
 	/**
@@ -3655,6 +3734,17 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		} elseif ($comparison === 'ends not with') {
 			Assert::assertStringEndsNotWith($needle, $this->response->getBody()->getContents());
 		}
+	}
+
+	/**
+	 * @param string $verb
+	 * @param string $url
+	 * @param TableNode|array|null $body
+	 * @param array $headers
+	 */
+	public function sendFrontpageRequest($verb, $url, $body = null, array $headers = [], array $options = []) {
+		$fullUrl = $this->baseUrl . 'index.php' . $url;
+		$this->sendRequestFullUrl($verb, $fullUrl, $body, $headers, $options);
 	}
 
 	/**
