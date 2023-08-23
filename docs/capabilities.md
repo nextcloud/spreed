@@ -115,7 +115,7 @@
 
 ## 17
 * `avatar` - Avatar of conversation
-* `config => chat => translations` - List of translations tuples, JSON encoded sample `{"from":"de","fromLabel":"German","to":"en","toLabel":"English"}`. Those tuples should be provided as options when translating chat messages.
+* ~~`config => chat => translations` - List of translations tuples, JSON encoded sample `{"from":"de","fromLabel":"German","to":"en","toLabel":"English"}`. Those tuples should be provided as options when translating chat messages.~~ Due to some providers the list was too big causing issues in various clients. So the capability was replaced by boolean `config => chat => has-translation-providers` in Talk 18.
 * `config => call => predefined-backgrounds` - List of predefined virtual backgrounds. The files are in Talks img/ folder, accessible via the normal image path methods. The list is cached for 5 minutes.
 * `config => call => can-upload-background` - Boolean flag whether the user can upload a custom virtual background (requires an account and non-zero quota). Uploads should be done to Talk/Backgrounds/ (respecting the user's attachment directory setting).
 * `config => call => supported-reactions` - A list of emojis supported as call reactions. If the list is absent or empty, clients should not show the emoji reaction option in calls.
@@ -129,3 +129,4 @@
 
 ## 18
 * `session-state` - Sessions can mark themselves as inactive, so the participant receives notifications again
+* `config => chat => has-translation-providers` - When true, translation tuples can be loaded from the [OCS Translation API](https://docs.nextcloud.com/server/latest/developer_manual/client_apis/OCS/ocs-translation-api.html#get-available-translation-options).
