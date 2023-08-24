@@ -41,7 +41,6 @@ import { options as TooltipOptions } from '@nextcloud/vue/dist/Directives/Toolti
 
 import App from './App.vue'
 
-import './init.js'
 import router from './router/router.js'
 import store from './store/index.js'
 
@@ -65,6 +64,8 @@ if (!IS_DESKTOP) {
 	// eslint-disable-next-line
 	__webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 }
+
+await import('./init.js')
 
 Vue.prototype.t = translate
 Vue.prototype.n = translatePlural
