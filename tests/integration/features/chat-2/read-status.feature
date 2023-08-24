@@ -54,6 +54,30 @@ Feature: chat-2/read-status
     When user "participant2" reads message "Message 3" in room "chatting" with 200
     Then last response has last common read message header set to "Message 3"
 
+    When next message request has the following parameters set
+      | lastCommonReadId         | Message 1 |
+      | lastKnownMessageId       | Message 1 |
+      | timeout                  | 0         |
+      | lookIntoFuture           | 1         |
+    Then user "participant1" sees the following messages in room "chatting" with 200
+      | room     | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | chatting | users     | participant2 | participant2-displayname | Message 2 | []                |
+      | chatting | users     | participant2 | participant2-displayname | Message 3 | []                |
+    Then last response has last common read message header set to "Message 3"
+    When next message request has the following parameters set
+      | lastCommonReadId         | Message 1 |
+      | lastKnownMessageId       | Message 3 |
+      | timeout                  | 0         |
+      | lookIntoFuture           | 1         |
+    Then user "participant1" sees the following messages in room "chatting" with 200
+    Then last response has last common read message header set to "Message 3"
+    When next message request has the following parameters set
+      | lastCommonReadId         | Message 3 |
+      | lastKnownMessageId       | Message 3 |
+      | timeout                  | 0         |
+      | lookIntoFuture           | 1         |
+    Then user "participant1" sees the following messages in room "chatting" with 304
+
 
   Scenario: User switching to private is not considered anymore
     Given user "participant1" creates room "chatting" (v4)
