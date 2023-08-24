@@ -23,8 +23,8 @@
 	<div>
 		<SearchBox v-if="canSearch"
 			:value.sync="searchText"
+			:is-focused.sync="isFocused"
 			:placeholder-text="searchBoxPlaceholder"
-			:is-searching="isSearching"
 			@input="handleInput"
 			@abort-search="abortSearch" />
 		<NcAppNavigationCaption v-if="isSearching && canAdd"
@@ -83,6 +83,7 @@ export default {
 	data() {
 		return {
 			searchText: '',
+			isFocused: false,
 			searchResults: [],
 			contactsLoading: false,
 			isCirclesEnabled: loadState('spreed', 'circles_enabled'),
