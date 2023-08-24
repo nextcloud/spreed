@@ -20,34 +20,26 @@
 -->
 
 <template>
-	<div class="message-group">
-		<div v-if="dateSeparator"
-			class="message-group__date-header">
-			<span class="date"
-				role="heading"
-				aria-level="3">{{ dateSeparator }}</span>
+	<div class="wrapper">
+		<div class="messages__avatar">
+			<AuthorAvatar :author-type="actorType"
+				:author-id="actorId"
+				:display-name="actorDisplayName" />
 		</div>
-		<div class="wrapper">
-			<div class="messages__avatar">
-				<AuthorAvatar :author-type="actorType"
-					:author-id="actorId"
-					:display-name="actorDisplayName" />
-			</div>
-			<ul class="messages">
-				<li class="messages__author" aria-level="4">
-					{{ actorDisplayName }}
-				</li>
-				<Message v-for="(message, index) of messages"
-					:key="message.id"
-					ref="message"
-					v-bind="message"
-					:is-temporary="message.timestamp === 0"
-					:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
-					:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId"
-					:actor-type="actorType"
-					:actor-id="actorId" />
-			</ul>
-		</div>
+		<ul class="messages">
+			<li class="messages__author" aria-level="4">
+				{{ actorDisplayName }}
+			</li>
+			<Message v-for="(message, index) of messages"
+				:key="message.id"
+				ref="message"
+				v-bind="message"
+				:is-temporary="message.timestamp === 0"
+				:next-message-id="(messages[index + 1] && messages[index + 1].id) || nextMessageId"
+				:previous-message-id="(index > 0 && messages[index - 1].id) || previousMessageId"
+				:actor-type="actorType"
+				:actor-id="actorId" />
+		</ul>
 	</div>
 </template>
 
@@ -79,13 +71,6 @@ export default {
 		 */
 		messages: {
 			type: Array,
-			required: true,
-		},
-		/**
-		 * The message date separator.
-		 */
-		dateSeparator: {
-			type: String,
 			required: true,
 		},
 
@@ -154,25 +139,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../assets/variables';
-
-.message-group {
-	&__date-header {
-		display: block;
-		text-align: center;
-		padding-top: 20px;
-		position: relative;
-		margin: 20px 0;
-		.date {
-			margin-right: $clickable-area * 2;
-			content: attr(data-date);
-			padding: 4px 12px;
-			left: 50%;
-			color: var(--color-text-maxcontrast);
-			background-color: var(--color-background-dark);
-			border-radius: var(--border-radius-pill);
-		}
-	}
-}
 
 .wrapper {
 	max-width: $messages-list-max-width;
