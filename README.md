@@ -32,6 +32,7 @@ If you have suggestions or problems, please [open an issue](https://github.com/n
 * **[📙 User documentation](https://docs.nextcloud.com/server/latest/user_manual/en/talk/index.html)**
 * **[💻 Server system requirements](https://nextcloud-talk.readthedocs.io/en/latest/system-requirements/)**
 * **[📗 Administration documentation](https://nextcloud-talk.readthedocs.io/en/latest/#administration-documentation)**
+* **[🤖 Bots/Webhooks documentation](https://nextcloud-talk.readthedocs.io/en/latest/bots/)**
 * **[⚙️ API documentation](https://nextcloud-talk.readthedocs.io/en/latest/#talk-api)**
 
 ### 📦 Installing for Production
