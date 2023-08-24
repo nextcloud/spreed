@@ -33,16 +33,24 @@ get the messagesList array and loop through the list to generate the messages.
 		:class="{'scroller--chatScrolledToBottom': isChatScrolledToBottom}"
 		@scroll="debounceHandleScroll">
 		<div v-if="displayMessagesLoader" class="scroller__loading icon-loading" />
-		<component :is="messagesGroupComponent(item)"
-			v-for="item of messagesGroupedByAuthor"
-			:key="item.id"
-			ref="messagesGroup"
-			v-bind="item.messages"
-			:token="token"
-			:messages="item.messages"
-			:date-separator="item.dateSeparator"
-			:previous-message-id="item.previousMessageId"
-			:next-message-id="item.nextMessageId" />
+
+		<template v-for="item of messagesGroupedByAuthor">
+			<div v-if="item.dateSeparator" :key="`date_${item.id}`" class="messages-group__date">
+				<span class="messages-group__date-text" role="heading" aria-level="3">
+					{{ item.dateSeparator }}
+				</span>
+			</div>
+			<component :is="messagesGroupComponent(item)"
+				:key="item.id"
+				ref="messagesGroup"
+				class="messages-group"
+				v-bind="item.messages"
+				:token="token"
+				:messages="item.messages"
+				:previous-message-id="item.previousMessageId"
+				:next-message-id="item.nextMessageId" />
+		</template>
+
 		<template v-if="showLoadingAnimation">
 			<LoadingPlaceholder type="messages"
 				:count="15" />
@@ -1155,4 +1163,27 @@ export default {
 	}
 }
 
+.messages-group {
+	&__date {
+		display: block;
+		text-align: center;
+		padding-top: 20px;
+		position: relative;
+		margin: 20px 0;
+	}
+
+	&__date-text {
+		margin-right: $clickable-area * 2;
+		content: attr(data-date);
+		padding: 4px 12px;
+		left: 50%;
+		color: var(--color-text-maxcontrast);
+		background-color: var(--color-background-dark);
+		border-radius: var(--border-radius-pill);
+	}
+
+	&:last-child {
+		margin-bottom: 16px;
+	}
+}
 </style>
