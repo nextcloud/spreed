@@ -27,10 +27,7 @@
 				:class="{'conversations-search--expanded': isFocused}">
 				<SearchBox ref="searchBox"
 					:value.sync="searchText"
-					:is-focused="isFocused"
-					@focus="setIsFocused"
-					@blur="setIsFocused"
-					@trailing-blur="setIsFocused"
+					:is-focused.sync="isFocused"
 					@input="debounceFetchSearchResults"
 					@abort-search="abortSearch" />
 			</div>
@@ -497,13 +494,6 @@ export default {
 			this.$refs.openConversationsList.showModal()
 		},
 
-		setIsFocused(event) {
-			if (this.searchText !== '') {
-				return
-			}
-			this.isFocused = event.type === 'focus'
-		},
-
 		handleFilter(filter) {
 			this.isFiltered = filter
 			// Clear the search input once a filter is active
@@ -876,9 +866,6 @@ export default {
 	// Total : 100 px
 	width : calc(100% - 100px);
 	display : flex;
-	:deep(.input-field__input) {
-		border-radius: var(--border-radius-pill);
-	}
 	&--expanded {
 		width : calc(100% - 8px);
 	}
@@ -896,10 +883,6 @@ export default {
 
 .settings-button {
 	justify-content: flex-start !important;
-}
-
-:deep(.input-field__clear-button) {
-	border-radius: var(--border-radius-pill) !important;
 }
 
 :deep(.app-navigation ul) {
