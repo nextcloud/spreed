@@ -35,7 +35,11 @@
 			:height="size"
 			:alt="item.displayName"
 			class="avatar icon">
+		<!-- NcAvatar doesn't fully support props update and works only for 1 user -->
+		<!-- Using key on NcAvatar forces NcAvatar re-mount and solve the problem, could not really optimal -->
+		<!-- TODO: Check if props update support in NcAvatar is more performant -->
 		<NcAvatar v-else
+			:key="item.token"
 			:size="size"
 			:user="item.name"
 			:disable-menu="disableMenu"
@@ -48,14 +52,12 @@
 			class="conversation-icon__avatar" />
 		<div v-if="showCall"
 			class="overlap-icon">
-			<VideoIcon :size="20"
-				:fill-color="'#E9322D'" />
+			<VideoIcon :size="20" :fill-color="'#E9322D'" />
 			<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
 		</div>
 		<div v-else-if="showFavorite"
 			class="overlap-icon">
-			<Star :size="20"
-				:fill-color="'#FFCC00'" />
+			<Star :size="20" :fill-color="'#FFCC00'" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
 		</div>
 	</div>
