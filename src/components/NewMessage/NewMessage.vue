@@ -79,9 +79,7 @@
 					</NcButton>
 				</div>
 				<div v-if="messageToBeReplied" class="new-message-form__quote">
-					<Quote is-new-message-quote
-						:parent-id="messageToBeReplied.id"
-						v-bind="messageToBeReplied" />
+					<Quote is-new-message-quote v-bind="messageToBeReplied" />
 				</div>
 				<NcRichContenteditable ref="richContenteditable"
 					v-shortkey.once="$options.disableKeyboardShortcuts ? null : ['c']"
@@ -548,11 +546,9 @@ export default {
 
 					// Restore the parent/quote message
 					if (temporaryMessage.parent) {
-						const temporaryParent = this.$store.getters.message(this.token, temporaryMessage.parent)
-
 						this.$store.dispatch('addMessageToBeReplied', {
-							token: temporaryParent.token,
-							id: temporaryParent.id,
+							token: this.token,
+							id: temporaryMessage.parent.id,
 						})
 					}
 

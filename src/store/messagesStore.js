@@ -167,7 +167,7 @@ const getters = {
 		return []
 	},
 	message: (state) => (token, id) => {
-		if (state.messages[token][id]) {
+		if (state.messages[token]?.[id]) {
 			return state.messages[token][id]
 		}
 		return {}
@@ -505,9 +505,22 @@ const actions = {
 	 * @param {object} message the message;
 	 */
 	processMessage(context, message) {
-		if (message.parent) {
-			context.commit('addMessage', message.parent)
-			message.parent = message.parent.id
+		if (message.parent && message.systemMessage
+				&& (message.systemMessage === 'message_deleted'
+				|| message.systemMessage === 'reaction'
+				|| message.systemMessage === 'reaction_deleted'
+				|| message.systemMessage === 'reaction_revoked')) {
+			// If parent message is presented in store already, we update it
+			const parentInStore = context.getters.message(message.token, message.parent.id)
+			if (Object.keys(parentInStore).length !== 0) {
+				context.commit('addMessage', message.parent)
+				context.dispatch('resetReactions', {
+					token: message.token,
+					messageId: message.parent,
+				})
+			}
+			// Quit processing
+			return
 		}
 
 		if (message.referenceId) {
@@ -517,20 +530,13 @@ const actions = {
 			})
 		}
 
-		if (message.systemMessage === 'reaction'
-			|| message.systemMessage === 'reaction_deleted'
-			|| message.systemMessage === 'reaction_revoked') {
-			context.commit('resetReactions', {
-				token: message.token,
-				messageId: message.parent,
-			})
-		}
-
 		if (message.systemMessage === 'poll_voted') {
 			context.dispatch('debounceGetPollData', {
 				token: message.token,
 				pollId: message.messageParameters.poll.id,
 			})
+			// Quit processing
+			return
 		}
 
 		if (message.systemMessage === 'poll_closed') {
@@ -547,14 +553,7 @@ const actions = {
 			})
 		}
 
-		// Filter out some system messages
-		if (message.systemMessage !== 'reaction'
-			&& message.systemMessage !== 'reaction_deleted'
-			&& message.systemMessage !== 'reaction_revoked'
-			&& message.systemMessage !== 'poll_voted'
-		) {
-			context.commit('addMessage', message)
-		}
+		context.commit('addMessage', message)
 
 		 if ((message.messageType === 'comment' && message.message === '{file}' && message.messageParameters?.file)
 			|| (message.messageType === 'comment' && message.message === '{object}' && message.messageParameters?.object)) {
@@ -579,21 +578,13 @@ const actions = {
 		let response
 		try {
 			response = await deleteMessage(message)
-		} catch (e) {
+			context.dispatch('processMessage', response.data.ocs.data)
+			return response.status
+		} catch (error) {
 			// Restore the previous message state
 			context.commit('addMessage', messageObject)
-			throw e
+			throw error
 		}
-
-		const systemMessage = response.data.ocs.data
-		if (systemMessage.parent) {
-			context.commit('addMessage', systemMessage.parent)
-			systemMessage.parent = systemMessage.parent.id
-		}
-
-		context.commit('addMessage', systemMessage)
-
-		return response.status
 	},
 
 	/**
@@ -613,6 +604,7 @@ const actions = {
 	 */
 	createTemporaryMessage(context, { text, token, uploadId, index, file, localUrl, isVoiceMessage }) {
 		const parentId = context.getters.getMessageToBeReplied(token)
+		const parent = parentId && context.getters.message(token, parentId)
 		const date = new Date()
 		let tempId = 'temp-' + date.getTime()
 		const messageParameters = {}
@@ -642,7 +634,7 @@ const actions = {
 			message: text,
 			messageParameters,
 			token,
-			parent: parentId ?? 0,
+			parent,
 			isReplyable: false,
 			sendingFailure: '',
 			reactions: {},
