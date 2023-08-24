@@ -71,7 +71,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var array<string, string> */
 	protected static $botNameToHash;
 	/** @var array<string, mixed>|null */
-	protected static ?array $nextChatRequestParameters;
+	protected static ?array $nextChatRequestParameters = null;
 
 
 	protected static $permissionsMap = [
