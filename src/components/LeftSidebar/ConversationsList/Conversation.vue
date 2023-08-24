@@ -462,16 +462,4 @@ export default {
 		color: var(--color-error) !important;
 	}
 }
-
-.scroller {
-	flex: 1 0;
-}
-
-.ellipsis {
-	text-overflow: ellipsis;
-}
-
-.forced-active {
-	background-color: var(--color-primary-element-light) !important //Overrides gray hover feedback;
-}
 </style>
