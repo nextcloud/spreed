@@ -62,7 +62,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static $inviteIdToRemote;
 	/** @var int[] */
 	protected static $questionToPollId;
-
+	/** @var array<string, mixed>|null */
+	protected static ?array $nextChatRequestParameters = null;
 
 	protected static $permissionsMap = [
 		'D' => 0, // PERMISSIONS_DEFAULT
@@ -2062,17 +2063,37 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" sees the following messages in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
-	 *
-	 * @param string $user
-	 * @param string $identifier
-	 * @param string $statusCode
-	 * @param string $apiVersion
+	 * @Then /^next message request has the following parameters set$/
 	 */
-	public function userSeesTheFollowingMessagesInRoom($user, $identifier, $statusCode, $apiVersion = 'v1', TableNode $formData = null) {
+	public function setChatParametersForNextRequest(TableNode $formData = null): void {
+		$parameters = [];
+		foreach ($formData->getRowsHash() as $key => $value) {
+			if (in_array($key, ['lastCommonReadId', 'lastKnownMessageId'], true)) {
+				$parameters[$key] = self::$textToMessageId[$value];
+			} else {
+				$parameters[$key] = $value;
+			}
+		}
+		self::$nextChatRequestParameters = $parameters;
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sees the following messages in room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function userSeesTheFollowingMessagesInRoom(string $user, string $identifier, int $statusCode, string $apiVersion = 'v1', TableNode $formData = null) {
+		$query = ['lookIntoFuture' => 0];
+		if (self::$nextChatRequestParameters !== null) {
+			$query = array_merge($query, self::$nextChatRequestParameters);
+			self::$nextChatRequestParameters = null;
+		}
+
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=0');
+		$this->sendRequest('GET', '/apps/spreed/api/' . $apiVersion . '/chat/' . self::$identifierToToken[$identifier] . '?' . http_build_query($query));
 		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode === 304) {
+			return;
+		}
 
 		$this->compareDataResponse($formData);
 	}

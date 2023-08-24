@@ -456,7 +456,7 @@ class ChatController extends AEnvironmentAwareController {
 			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit, (bool)$includeLastKnown);
 		}
 
-		return $this->prepareCommentsAsDataResponse($comments);
+		return $this->prepareCommentsAsDataResponse($comments, $lastCommonReadId);
 	}
 
 	protected function prepareCommentsAsDataResponse(array $comments, int $lastCommonReadId = 0): DataResponse {
