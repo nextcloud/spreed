@@ -42,7 +42,7 @@ import Conversation from './ConversationsList/Conversation.vue'
 
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
-const CONVERSATION_ITEM_SIZE = 64
+const CONVERSATION_ITEM_SIZE = 66
 
 export default {
 	name: 'ConversationsListVirtual',
