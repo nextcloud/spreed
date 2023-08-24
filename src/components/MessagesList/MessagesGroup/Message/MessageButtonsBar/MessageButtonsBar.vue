@@ -76,14 +76,25 @@
 
 					<NcActionSeparator />
 					<NcActionButton v-if="isPrivateReplyable"
-						icon="icon-user"
 						close-after-click
 						@click.stop="handlePrivateReply">
+						<template #icon>
+							<AccountIcon :size="20" />
+						</template>
 						{{ t('spreed', 'Reply privately') }}
 					</NcActionButton>
-					<NcActionButton icon="icon-external"
-						close-after-click
+					<NcActionButton close-after-click
+						@click.stop="handleCopyMessageText">
+						<template #icon>
+							<ContentCopy :size="20" />
+						</template>
+						{{ t('spreed', 'Copy formatted message') }}
+					</NcActionButton>
+					<NcActionButton close-after-click
 						@click.stop="handleCopyMessageLink">
+						<template #icon>
+							<OpenInNewIcon :size="20" />
+						</template>
 						{{ t('spreed', 'Copy message link') }}
 					</NcActionButton>
 					<NcActionButton close-after-click
@@ -127,9 +138,11 @@
 					</NcActionButton>
 					<template v-if="isDeleteable">
 						<NcActionSeparator />
-						<NcActionButton icon="icon-delete"
-							close-after-click
+						<NcActionButton close-after-click
 							@click.stop="handleDelete">
+							<template #icon>
+								<DeleteIcon :size="16" />
+							</template>
 							{{ t('spreed', 'Delete') }}
 						</NcActionButton>
 					</template>
@@ -230,6 +243,7 @@
 import { frequently, EmojiIndex as EmojiIndexFactory } from 'emoji-mart-vue-fast'
 import data from 'emoji-mart-vue-fast/data/all.json'
 
+import AccountIcon from 'vue-material-design-icons/Account.vue'
 import AlarmIcon from 'vue-material-design-icons/Alarm.vue'
 import ArrowLeft from 'vue-material-design-icons/ArrowLeft.vue'
 import CalendarClock from 'vue-material-design-icons/CalendarClock.vue'
@@ -237,9 +251,12 @@ import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
 import ClockOutline from 'vue-material-design-icons/ClockOutline.vue'
 import CloseCircleOutline from 'vue-material-design-icons/CloseCircleOutline.vue'
+import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
+import DeleteIcon from 'vue-material-design-icons/Delete.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import EyeOffOutline from 'vue-material-design-icons/EyeOffOutline.vue'
 import File from 'vue-material-design-icons/File.vue'
+import OpenInNewIcon from 'vue-material-design-icons/OpenInNew.vue'
 import Plus from 'vue-material-design-icons/Plus.vue'
 import Reply from 'vue-material-design-icons/Reply.vue'
 import Share from 'vue-material-design-icons/Share.vue'
@@ -281,6 +298,7 @@ export default {
 		NcButton,
 		NcEmojiPicker,
 		// Icons
+		AccountIcon,
 		AlarmIcon,
 		ArrowLeft,
 		CalendarClock,
@@ -288,9 +306,12 @@ export default {
 		Check,
 		CheckAll,
 		ClockOutline,
+		ContentCopy,
+		DeleteIcon,
 		EmoticonOutline,
 		EyeOffOutline,
 		File,
+		OpenInNewIcon,
 		Plus,
 		Reply,
 		Share,
@@ -597,6 +618,25 @@ export default {
 			// open the 1:1 conversation
 			const conversation = await this.$store.dispatch('createOneToOneConversation', this.actorId)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+		},
+
+		async handleCopyMessageText() {
+			let parsedText = this.messageObject.message
+
+			for (const [key, value] of Object.entries(this.messageObject.messageParameters)) {
+				if (value?.type === 'call') {
+					parsedText = parsedText.replace(new RegExp(`{${key}}`, 'g'), '@all')
+				} else if (value?.type === 'user') {
+					parsedText = parsedText.replace(new RegExp(`{${key}}`, 'g'), `@${value.id}`)
+				}
+			}
+
+			try {
+				await navigator.clipboard.writeText(parsedText)
+				showSuccess(t('spreed', 'Message text copied to clipboard'))
+			} catch (error) {
+				showError(t('spreed', 'Message text could not be copied'))
+			}
 		},
 
 		handleCopyMessageLink() {
