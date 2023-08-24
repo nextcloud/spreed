@@ -1,0 +1,56 @@
+name: 🤖 Add a Bot
+description: 🤖 Request to add an existing bot to the docs/bot-list
+title: "[🤖 Bot]: "
+labels: ["1. to develop", "enhancement", "feature: bots 🤖"]
+assignees:
+  - nickvergessen
+body:
+- type: input
+  id: botname
+  attributes:
+    label: Bot name
+    description: Should be the name users and moderators also see later on in the UI
+    placeholder: e.g. Call summary bot
+  validations:
+    required: true
+- type: textarea
+  id: description
+  attributes:
+    label: Description
+    description: Useful, but short description, best to keep it to 1-3 lines of text.
+    placeholder: "The call summary bot posts an overview message after the call listing all participants and outlining tasks."
+    value:
+  validations:
+    required: true
+- type: input
+  id: screenshot
+  attributes:
+    label: Screenshot URL
+    description: Max. width 700px, max. height 480px
+    placeholder: https://github.com/nextcloud/call_summary_bot/blob/main/docs/screenshot.png
+  validations:
+    required: true
+- type: input
+  id: license
+  attributes:
+    label: License
+    description: Identifier of the license (See [https://spdx.org/licenses/](https://spdx.org/licenses/))
+    placeholder: AGPL-3.0-or-later
+  validations:
+    required: true
+- type: input
+  id: source
+  attributes:
+    label: Source code URL
+    description: Link to source code / repository
+    placeholder: https://github.com/nextcloud/call_summary_bot
+  validations:
+    required: true
+- type: input
+  id: install
+  attributes:
+    label: Installation steps
+    description: Link to the readme or other docs how to install the bot
+    placeholder: https://github.com/nextcloud/call_summary_bot#readme
+  validations:
+    required: true
