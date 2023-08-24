@@ -1,6 +1,44 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.1.0-rc.2 – 2023-08-24
+### Added
+- Avatars of open conversations are now shown without being a participant
+  [#10229](https://github.com/nextcloud/spreed/issues/10229)
+- Added an option to only remove a user from private conversations
+  [#10310](https://github.com/nextcloud/spreed/issues/10310)
+- Added an option to copy the original message content
+  [#10335](https://github.com/nextcloud/spreed/issues/10335)
+
+### Changed
+- Use virtual scrolling for the conversation list to improve the performance
+  [#10297](https://github.com/nextcloud/spreed/issues/10297)
+- Cache the conversation list in the browser storage for better loading experience
+  [#10273](https://github.com/nextcloud/spreed/issues/10273)
+- Update dependencies
+
+### Fixed
+- Allow replying to messages of bots
+  [#10219](https://github.com/nextcloud/spreed/issues/10219)
+- Fix sending system messages to bots
+  [#10271](https://github.com/nextcloud/spreed/issues/10271)
+- Fix style of Markdown code blocks, headlines and quotes
+  [#10221](https://github.com/nextcloud/spreed/issues/10221)
+  [#10238](https://github.com/nextcloud/spreed/issues/10238)
+  [#10255](https://github.com/nextcloud/spreed/issues/10255)
+- Fix recording option shown for non moderators
+  [#10246](https://github.com/nextcloud/spreed/issues/10246)
+- Apply selected call background only once confirmed
+  [#10267](https://github.com/nextcloud/spreed/issues/10267)
+- Clear chat history for other participants that are live when the moderator performs the action
+  [#10302](https://github.com/nextcloud/spreed/issues/10302)
+- Add missing capability that indicates bots are supported
+  [#10314](https://github.com/nextcloud/spreed/issues/10314)
+- Don't add parent messages of quotes to the message list which could create gaps in the history
+  [#10318](https://github.com/nextcloud/spreed/issues/10318)
+- Fix missing `X-Chat-Last-Common-Read` header on chat requests
+  [#10337](https://github.com/nextcloud/spreed/issues/10337)
+
 ## 17.1.0-rc.1 – 2023-08-11
 ### Added
 - Add support for bots via webhooks
