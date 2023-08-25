@@ -71,6 +71,20 @@ class BotServerMapper extends QBMapper {
 		return $this->findEntity($query);
 	}
 
+	/**
+	 * @throws DoesNotExistException
+	 */
+	public function findByUrl(string $url): BotServer {
+		$urlHash = sha1($url);
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('url_hash', $query->createNamedParameter($urlHash)));
+
+		return $this->findEntity($query);
+	}
+
 	public function deleteById(int $botId): int {
 		$query = $this->db->getQueryBuilder();
 		$query->delete($this->getTableName())
