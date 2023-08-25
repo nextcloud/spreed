@@ -29,6 +29,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IL10N;
+use OCP\PreConditionNotMetException;
 
 class Manager {
 	protected IConfig $config;
@@ -68,14 +69,19 @@ class Manager {
 		$logs = $this->getChangelogs();
 		$hasReceivedLog = $this->getChangelogForUser($userId);
 
+		try {
+			$this->config->setUserValue($userId, 'spreed', 'changelog', (string) count($logs), (string) $hasReceivedLog);
+		} catch (PreConditionNotMetException $e) {
+			// Parallel request won the race
+			return;
+		}
+
 		foreach ($logs as $key => $changelog) {
 			if ($key < $hasReceivedLog || $changelog === '') {
 				continue;
 			}
 			$this->chatManager->addChangelogMessage($room, $changelog);
 		}
-
-		$this->config->setUserValue($userId, 'spreed', 'changelog', (string) count($this->getChangelogs()));
 	}
 
 	public function getChangelogs(): array {
