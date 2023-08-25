@@ -85,6 +85,8 @@ class Version18000Date20230504205823 extends SimpleMigrationStep {
 
 			$table->setPrimaryKey(['id']);
 			$table->addIndex(['state'], 'talk_bots_server_state');
+			$table->addUniqueIndex(['url_hash'], 'talk_bots_server_urlhash');
+			$table->addUniqueIndex(['secret'], 'talk_bots_server_secret');
 
 			$table = $schema->createTable('talk_bots_conversation');
 			$table->addColumn('id', Types::BIGINT, [
@@ -109,6 +111,7 @@ class Version18000Date20230504205823 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['id']);
 			$table->addIndex(['token', 'state'], 'talk_bots_convo_token');
 			$table->addIndex(['bot_id'], 'talk_bots_convo_id');
+			$table->addUniqueIndex(['bot_id', 'token'], 'talk_bots_convo_uniq');
 			return $schema;
 		}
 
