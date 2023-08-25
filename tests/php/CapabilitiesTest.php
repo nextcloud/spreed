@@ -139,6 +139,7 @@ class CapabilitiesTest extends TestCase {
 			'typing-privacy',
 			'remind-me-later',
 			'bots-v1',
+			'markdown-messages',
 			'message-expiration',
 			'reactions',
 		];
