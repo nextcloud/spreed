@@ -28,8 +28,10 @@ namespace OCA\Talk\Command\Bot;
 use OC\Core\Command\Base;
 use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BotServerMapper;
+use OCP\AppFramework\Db\DoesNotExistException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Uninstall extends Base {
@@ -47,8 +49,14 @@ class Uninstall extends Base {
 			->setDescription('Uninstall a bot from the server')
 			->addArgument(
 				'id',
-				InputArgument::REQUIRED,
+				InputArgument::OPTIONAL,
 				'The ID of the bot'
+			)
+			->addOption(
+				'url',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'The URL of the bot (required when no ID is given, ignored otherwise)'
 			)
 		;
 	}
@@ -56,8 +64,20 @@ class Uninstall extends Base {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$botId = (int) $input->getArgument('id');
 
-		$this->botConversationMapper->deleteByBotId($botId);
-		$this->botServerMapper->deleteById($botId);
+		try {
+			if ($botId === 0) {
+				$url = $input->getOption('url');
+				$bot = $this->botServerMapper->findByUrl($url);
+			} else {
+				$bot = $this->botServerMapper->findById($botId);
+			}
+		} catch (DoesNotExistException) {
+			$output->writeln('<error>Bot not found</error>');
+			return 1;
+		}
+
+		$this->botConversationMapper->deleteByBotId($bot->getId());
+		$this->botServerMapper->deleteById($bot->getId());
 
 		$output->writeln('<info>Bot uninstalled</info>');
 		return 0;
