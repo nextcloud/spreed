@@ -130,7 +130,7 @@ class CommandService {
 			throw new \InvalidArgumentException('name', 2);
 		}
 
-		if ($command->getApp() === '') {
+		if ($command->getApp() === '' || $command->getApp() === null) {
 			$script = $command->getScript();
 			if (strpos($script, 'alias:') === 0) {
 				try {
@@ -202,7 +202,7 @@ class CommandService {
 	public function delete(int $id): Command {
 		$command = $this->mapper->findById($id);
 
-		if ($command->getApp() !== '' || $command->getCommand() === 'help') {
+		if (($command->getApp() !== '' && $command->getApp() !== null) || $command->getCommand() === 'help') {
 			throw new \InvalidArgumentException('app', 0);
 		}
 
