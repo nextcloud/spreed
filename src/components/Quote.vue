@@ -283,7 +283,7 @@ export default {
 	}
 
 	&.quote-own-message::before {
-		background-color: var(--color-primary-default);
+		background-color: var(--color-primary-element);
 	}
 
 	&__main {
