@@ -271,7 +271,7 @@ li {
 	}
 
 	& > span {
-		padding: 5px 5px 5px 10px;
+		padding: 8px 5px 8px 10px;
 		vertical-align: middle;
 		text-overflow: ellipsis;
 		white-space: nowrap;
