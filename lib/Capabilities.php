@@ -121,6 +121,7 @@ class Capabilities implements IPublicCapability {
 				'typing-privacy',
 				'remind-me-later',
 				'bots-v1',
+				'markdown-messages',
 			],
 			'config' => [
 				'attachments' => [
