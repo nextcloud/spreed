@@ -1,6 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.1.0-rc.3 – 2023-08-25
+### Added
+- feat(capability): Add a capability for messages being markdown
+  [#10367](https://github.com/nextcloud/spreed/issues/10367)
+- feat(bots)!: Ensure bot uniqueness and allow removing by URL
+  [#10371](https://github.com/nextcloud/spreed/issues/10371)
+
+### Changed
+- Update dependencies
+
+### Fixed
+- fix(LeftSidebar): wrong user status after scrolling
+  [#10369](https://github.com/nextcloud/spreed/issues/10369)
+- fix(changelog): Prevent duplicated changelog message by parallel requests
+  [#10366](https://github.com/nextcloud/spreed/issues/10366)
+- fix(RoomSelector): Align text vertically for open conversation list
+  [#10363](https://github.com/nextcloud/spreed/issues/10363)
+- fix(chat): Fix primary color selection on quotes
+  [#10363](https://github.com/nextcloud/spreed/issues/10363)
+- fix(LeftSidebar): adjust conversation padding and size
+  [#10359](https://github.com/nextcloud/spreed/issues/10359)
+
 ## 17.1.0-rc.2 – 2023-08-24
 ### Added
 - Avatars of open conversations are now shown without being a participant
