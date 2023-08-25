@@ -3053,6 +3053,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// Reset the attempts before disabling
 			$this->runOcc(['security:bruteforce:reset', '127.0.0.1']);
 			$this->theCommandWasSuccessful();
+			$this->runOcc(['security:bruteforce:reset', '::1']);
+			$this->theCommandWasSuccessful();
 		}
 
 		// config:system:get auth.bruteforce.protection.enabled
@@ -3071,6 +3073,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// Reset the attempts after enabling
 			$this->runOcc(['security:bruteforce:reset', '127.0.0.1']);
 			$this->theCommandWasSuccessful();
+			$this->runOcc(['security:bruteforce:reset', '::1']);
+			$this->theCommandWasSuccessful();
 		}
 	}
 
@@ -3084,17 +3088,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$this->runOcc(['security:bruteforce:attempts', '127.0.0.1', $action, '--output=json']);
 				$this->theCommandWasSuccessful();
 				$info = json_decode($this->getLastStdOut(), true);
-
-				Assert::assertEquals($attempts, $info['attempts']);
 				$totalCount += $info['attempts'];
+				$ipv4Attempts = $info['attempts'];
+
+				$this->runOcc(['security:bruteforce:attempts', '::1', $action, '--output=json']);
+				$this->theCommandWasSuccessful();
+				$info = json_decode($this->getLastStdOut(), true);
+				$totalCount += $info['attempts'];
+				$ipv6Attempts = $info['attempts'];
+
+				Assert::assertEquals($attempts, $ipv4Attempts + $ipv6Attempts);
 			}
 		}
 
 		$this->runOcc(['security:bruteforce:attempts', '127.0.0.1', '--output=json']);
 		$this->theCommandWasSuccessful();
 		$info = json_decode($this->getLastStdOut(), true);
+		$ipv4Attempts = $info['attempts'];
 
-		Assert::assertEquals($totalCount, $info['attempts'], 'IP has bruteforce attempts for other actions registered');
+		$this->runOcc(['security:bruteforce:attempts', '::1', '--output=json']);
+		$this->theCommandWasSuccessful();
+		$info = json_decode($this->getLastStdOut(), true);
+		$ipv6Attempts = $info['attempts'];
+
+		Assert::assertEquals($totalCount, $ipv4Attempts + $ipv6Attempts, 'IP has bruteforce attempts for other actions registered');
 	}
 
 	/**
