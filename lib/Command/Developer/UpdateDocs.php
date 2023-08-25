@@ -118,8 +118,8 @@ class UpdateDocs extends Base {
 		if (\count($definition->getOptions()) > 0) {
 			$text .= "\n";
 
-			$text .= "| Options | Accept value | Is value required | Is multiple | Default |\n";
-			$text .= '|---|---|---|---|---|';
+			$text .= "| Options | Description | Accept value | Is value required | Is multiple | Default |\n";
+			$text .= '|---|---|---|---|---|---|';
 			foreach ($definition->getOptions() as $option) {
 				$describeInputOption = $this->describeInputOption($option);
 				if ($describeInputOption) {
@@ -135,26 +135,26 @@ class UpdateDocs extends Base {
 		$description = $argument->getDescription();
 
 		return
-			'| `'.($argument->getName() ?: '<none>')."` | " .
-			($description ? preg_replace('/\s*[\r\n]\s*/', " ", $description) : '') . ' | ' .
-			($argument->isRequired() ? 'yes' : 'no')." | " .
-			($argument->isArray() ? 'yes' : 'no')." | " .
-			'`' . str_replace("\n", '', var_export($argument->getDefault(), true)) . "` |";
+			'| `'.($argument->getName() ?: '<none>') . '` | ' .
+			($description ? preg_replace('/\s*[\r\n]\s*/', ' ', $description) : '') . ' | ' .
+			($argument->isRequired() ? 'yes' : 'no') . ' | ' .
+			($argument->isArray() ? 'yes' : 'no') . ' | ' .
+			($argument->isRequired() ? '*Required*' : '`' . str_replace("\n", '', var_export($argument->getDefault(), true)) . '`') . ' |';
 	}
 
 	protected function describeInputOption(InputOption $option): string {
 		$name = '--'.$option->getName();
 		if ($option->getShortcut()) {
-			$name .= '|-'.str_replace('|', '|-', $option->getShortcut()).'';
+			$name .= '\|-'.str_replace('|', '\|-', $option->getShortcut());
 		}
 		$description = $option->getDescription();
 
 		return
-			'| `'.$name.'` | ' .
+			'| `' . $name . '` | ' .
 			($description ? preg_replace('/\s*[\r\n]\s*/', " ", $description) : '') . ' | '.
-			($option->acceptValue() ? 'yes' : 'no')." | " .
-			($option->isValueRequired() ? 'yes' : 'no')." | " .
-			($option->isArray() ? 'yes' : 'no')." | " .
-			str_replace("\n", '', var_export($option->getDefault(), true)).'` |';
+			($option->acceptValue() ? 'yes' : 'no') . ' | ' .
+			($option->isValueRequired() ? 'yes' : 'no') . ' | ' .
+			($option->isArray() ? 'yes' : 'no') . ' | ' .
+			($option->isValueRequired() ? '*Required*' : '`' . str_replace("\n", '', var_export($option->getDefault(), true)) . '`') . ' |';
 	}
 }
