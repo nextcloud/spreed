@@ -22,6 +22,7 @@
 <template>
 	<NcListItem ref="listItem"
 		:title="item.displayName"
+		class="conversation-item"
 		:class="{'unread-mention-conversation': item.unreadMention}"
 		:anchor-id="`conversation_${item.token}`"
 		:actions-aria-label="t('spreed', 'Conversation actions')"
@@ -443,6 +444,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.conversation-item {
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
 .subtitle {
 	font-weight: bold;
 }
@@ -455,17 +461,5 @@ export default {
 	:deep(.action-button) {
 		color: var(--color-error) !important;
 	}
-}
-
-.scroller {
-	flex: 1 0;
-}
-
-.ellipsis {
-	text-overflow: ellipsis;
-}
-
-.forced-active {
-	background-color: var(--color-primary-element-light) !important //Overrides gray hover feedback;
 }
 </style>
