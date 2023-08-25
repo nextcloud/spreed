@@ -35,44 +35,7 @@ require __DIR__ . '/../../vendor/autoload.php';
  * Federation context.
  */
 class FederationContext implements Context, SnippetAcceptingContext {
-	/** @var string */
-	private $baseUrl = '';
-	/** @var string */
-	private $baseRemoteUrl = '';
-
-	/** @var ResponseInterface */
-	private $response = null;
-
-	/** @var string */
-	private $currentUser = '';
-
-	/** @var string */
-	private $regularUserPassword;
-
-	/** @var \SimpleXMLElement */
-	private $lastCreatedShareData = null;
-
-	public function __construct(string $baseUrl, array $admin, string $regularUserPassword) {
-		$this->baseUrl = $baseUrl;
-		$this->adminUser = $admin;
-		$this->regularUserPassword = $regularUserPassword;
-
-		// in case of ci deployment we take the server url from the environment
-		$testServerUrl = getenv('TEST_SERVER_URL');
-		if ($testServerUrl !== false) {
-			$this->baseUrl = $testServerUrl;
-		}
-		$testServerUrl = getenv('TEST_REMOTE_URL');
-		if ($testServerUrl !== false) {
-			$this->baseRemoteUrl = $testServerUrl;
-		}
-	}
-
-	/** @var string */
-	private static $phpFederatedServerPid = '';
-
-	/** @var string */
-	private $lastAcceptedRemoteShareId;
+	private static string $phpFederatedServerPid = '';
 
 	/**
 	 * @BeforeScenario

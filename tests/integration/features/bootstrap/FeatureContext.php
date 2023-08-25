@@ -37,44 +37,41 @@ use Psr\Http\Message\ResponseInterface;
 class FeatureContext implements Context, SnippetAcceptingContext {
 	public const TEST_PASSWORD = '123456';
 
-	/** @var string[] */
-	protected static $identifierToToken;
-	/** @var string[] */
-	protected static $identifierToId;
-	/** @var string[] */
-	protected static $tokenToIdentifier;
-	/** @var array[] */
-	protected static $identifierToAvatar;
-	/** @var string[] */
-	protected static $sessionIdToUser;
-	/** @var string[] */
-	protected static $userToSessionId;
-	/** @var int[] */
-	protected static $userToAttendeeId;
-	/** @var string[] */
-	protected static $messages;
-	protected static $textToMessageId;
-	/** @var array[] */
-	protected static $messageIdToText;
-	/** @var int[] */
-	protected static $remoteToInviteId;
-	/** @var string[] */
-	protected static $inviteIdToRemote;
-	/** @var int[] */
-	protected static $questionToPollId;
-	/** @var array[] */
-	protected static $lastNotifications;
-	/** @var array<int, string> */
-	protected static $botIdToName;
-	/** @var array<string, int> */
-	protected static $botNameToId;
 	/** @var array<string, string> */
-	protected static $botNameToHash;
+	protected static array $identifierToToken;
+	/** @var array<string, int> */
+	protected static array $identifierToId;
+	/** @var array<string, string> */
+	protected static array $tokenToIdentifier;
+	/** @var array<string, string> */
+	protected static array $sessionIdToUser;
+	/** @var array<string, string> */
+	protected static array $userToSessionId;
+	/** @var array<string, int> */
+	protected static array $userToAttendeeId;
+	/** @var array<string, int> */
+	protected static array $textToMessageId;
+	/** @var array<int, string> */
+	protected static array $messageIdToText;
+	/** @var array<string, int> */
+	protected static array $remoteToInviteId;
+	/** @var array<int, string> */
+	protected static array $inviteIdToRemote;
+	/** @var array<string, int> */
+	protected static array $questionToPollId;
+	/** @var array[] */
+	protected static array $lastNotifications;
+	/** @var array<int, string> */
+	protected static array $botIdToName;
+	/** @var array<string, int> */
+	protected static array $botNameToId;
+	/** @var array<string, string> */
+	protected static array $botNameToHash;
 	/** @var array<string, mixed>|null */
 	protected static ?array $nextChatRequestParameters = null;
 
 
-	protected static $permissionsMap = [
+	protected static array $permissionsMap = [
 		'D' => 0, // PERMISSIONS_DEFAULT
 		'C' => 1, // PERMISSIONS_CUSTOM
 		'S' => 2, // PERMISSIONS_CALL_START
@@ -86,41 +83,34 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		'M' => 128, // PERMISSIONS_CHAT
 	];
 
-	/** @var string */
-	protected $currentUser;
+	protected ?string $currentUser = '';
 
-	/** @var ResponseInterface */
-	private $response;
+	private ?ResponseInterface $response;
 
 	/** @var CookieJar[] */
-	private $cookieJars;
+	private array $cookieJars;
 
-	/** @var string */
-	protected $baseUrl;
+	protected string $baseUrl;
 
-	/** @var string */
-	protected $baseRemoteUrl;
+	protected string $baseRemoteUrl;
 
-	/** @var array */
-	protected $createdUsers = [];
+	/** @var string[] */
+	protected array $createdUsers = [];
 
-	/** @var array */
-	protected $createdGroups = [];
+	/** @var string[] */
+	protected array $createdGroups = [];
 
-	/** @var array */
-	protected $createdGuestAccountUsers = [];
+	/** @var string[] */
+	protected array $createdGuestAccountUsers = [];
 
 	/** @var array */
-	protected $changedConfigs = [];
+	protected array $changedConfigs = [];
 
-	/** @var SharingContext */
-	private $sharingContext;
+	private ?SharingContext $sharingContext;
 
-	/** @var null|bool */
-	private $guestsAppWasEnabled = null;
+	private ?bool $guestsAppWasEnabled = null;
 
-	/** @var string */
-	private $guestsOldWhitelist;
+	private string $guestsOldWhitelist;
 
 	use CommandLineTrait;
 	use RecordingTrait;
@@ -152,7 +142,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->cookieJars = [];
 		$this->baseUrl = getenv('TEST_SERVER_URL');
 		$this->baseRemoteUrl = getenv('TEST_REMOTE_URL');
-		$this->guestsAppWasEnabled = null;
 	}
 
 	/**
