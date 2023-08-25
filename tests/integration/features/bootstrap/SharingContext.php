@@ -28,20 +28,12 @@ use GuzzleHttp\Cookie\CookieJar;
 use Psr\Http\Message\ResponseInterface;
 
 class SharingContext implements Context {
-	/** @var string */
-	private $baseUrl = '';
-
-	/** @var ResponseInterface */
-	private $response = null;
-
-	/** @var string */
-	private $currentUser = '';
-
-	/** @var string */
-	private $regularUserPassword;
-
-	/** @var \SimpleXMLElement */
-	private $lastCreatedShareData = null;
+	private string $baseUrl;
+	private ?ResponseInterface $response = null;
+	private string $currentUser = '';
+	private array $adminUser;
+	private string $regularUserPassword;
+	private ?\SimpleXMLElement $lastCreatedShareData = null;
 
 	public function __construct(string $baseUrl, array $admin, string $regularUserPassword) {
 		$this->baseUrl = $baseUrl;
