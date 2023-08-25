@@ -46,6 +46,7 @@ use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
 use OCA\Talk\Events\BotInstallEvent;
+use OCA\Talk\Events\BotUninstallEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Events\SendCallNotificationEvent;
 use OCA\Talk\Federation\CloudFederationProviderTalk;
@@ -127,6 +128,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPListener::class);
 		$context->registerEventListener(AddFeaturePolicyEvent::class, FeaturePolicyListener::class);
 		$context->registerEventListener(BotInstallEvent::class, BotListener::class);
+		$context->registerEventListener(BotUninstallEvent::class, BotListener::class);
 		$context->registerEventListener(GroupDeletedEvent::class, GroupDeletedListener::class);
 		$context->registerEventListener(GroupChangedEvent::class, DisplayNameListener::class);
 		$context->registerEventListener(UserDeletedEvent::class, UserDeletedListener::class);

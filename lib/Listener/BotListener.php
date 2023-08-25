@@ -29,9 +29,11 @@ namespace OCA\Talk\Listener;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Events\BotInstallEvent;
+use OCA\Talk\Events\BotUninstallEvent;
 use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\ChatParticipantEvent;
 use OCA\Talk\Model\Bot;
+use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BotServer;
 use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Service\BotService;
@@ -47,6 +49,7 @@ use OCP\Server;
 class BotListener implements IEventListener {
 	public function __construct(
 		protected BotServerMapper $botServerMapper,
+		protected BotConversationMapper $botConversationMapper,
 	) {
 	}
 
@@ -78,6 +81,9 @@ class BotListener implements IEventListener {
 		if ($event instanceof BotInstallEvent) {
 			$this->handleBotInstallEvent($event);
 		}
+		if ($event instanceof BotUninstallEvent) {
+			$this->handleBotUninstallEvent($event);
+		}
 	}
 
 	protected function handleBotInstallEvent(BotInstallEvent $event): void {
@@ -96,6 +102,15 @@ class BotListener implements IEventListener {
 			$bot->setUrlHash(sha1($event->getUrl()));
 			$bot->setState(Bot::STATE_ENABLED);
 			$this->botServerMapper->insert($bot);
+		}
+	}
+
+	protected function handleBotUninstallEvent(BotUninstallEvent $event): void {
+		try {
+			$bot = $this->botServerMapper->findByUrlAndSecret($event->getUrl(), $event->getSecret());
+			$this->botConversationMapper->deleteByBotId($bot->getId());
+			$this->botServerMapper->delete($bot);
+		} catch (DoesNotExistException) {
 		}
 	}
 }
