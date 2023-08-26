@@ -1104,6 +1104,7 @@ OC.L10N.register(
     "Error while forwarding message" : "Erreur lors de la transmission du message",
     "Add a reaction to this message" : "Ajouter une réaction à ce message",
     "Reply" : "Répondre",
+    "Set reminder" : "Définir un rappel",
     "Reply privately" : "Répondre en privé",
     "Copy message link" : "Copier le lien du message",
     "Go to file" : "Ouvrir le fichier",
