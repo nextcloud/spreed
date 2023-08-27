@@ -33,6 +33,12 @@ jest.mock('extendable-media-recorder-wav-encoder', () => ({
 	connect: jest.fn(),
 }))
 
+window.IntersectionObserver = jest.fn(() => ({
+	observe: jest.fn(),
+	unobserve: jest.fn(),
+	disconnect: jest.fn(),
+}))
+
 global.appName = 'spreed'
 
 global.OC = {
