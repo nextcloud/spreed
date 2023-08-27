@@ -102,6 +102,17 @@ export function useArrowNavigation(listElementRef, defaultElementRef, selector, 
 	}
 
 	/**
+	 * Remove listeners from navigation area, reset list of elements
+	 * (to made navigation unavailable during fetching results)
+	 */
+	function resetNavigation() {
+		itemElements.value = []
+
+		listRef.value.removeEventListener('focus', handleFocusEvent, true)
+		listRef.value.removeEventListener('blur', handleBlurEvent, true)
+	}
+
+	/**
 	 * Focus natively the DOM element specified by index
 	 *
 	 * @param {object} index the item index
@@ -190,5 +201,6 @@ export function useArrowNavigation(listElementRef, defaultElementRef, selector, 
 
 	return {
 		initializeNavigation,
+		resetNavigation,
 	}
 }
