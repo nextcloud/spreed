@@ -20,6 +20,7 @@
  *
  */
 
+import escapeHtml from 'escape-html'
 import Vue from 'vue'
 
 import { getRequestToken } from '@nextcloud/auth'
@@ -29,6 +30,7 @@ import { generateFilePath, generateUrl } from '@nextcloud/router'
 
 import RoomSelector from './components/RoomSelector.vue'
 
+import { fetchConversation } from './services/conversationsService.js'
 import { postRichObjectToConversation } from './services/messagesService.js'
 
 (function(OC, OCA, t, n) {
@@ -38,16 +40,22 @@ import { postRichObjectToConversation } from './services/messagesService.js'
 	 */
 	async function postCardToRoom(card, token) {
 		try {
-			const response = await postRichObjectToConversation(token, {
-				objectType: 'deck-card',
-				objectId: card.id,
-				metaData: JSON.stringify(card),
-			})
-			const messageId = response.data.ocs.data.id
+			const [responsePostCard, responseGetConversation] = await Promise.allSettled([
+				postRichObjectToConversation(token, {
+					objectType: 'deck-card',
+					objectId: card.id,
+					metaData: JSON.stringify(card),
+				}),
+				fetchConversation(token),
+			])
+
+			const messageId = responsePostCard.value.data.ocs.data.id
+			const conversation = responseGetConversation.value.data.ocs.data.displayName
 			const targetUrl = generateUrl('/call/{token}#message_{messageId}', { token, messageId })
-			showSuccess(t('spreed', 'Deck card has been posted to the selected <a href="{link}">conversation</a>', {
-				link: targetUrl,
-			}), {
+
+			showSuccess(t('spreed', 'Deck card has been posted to {conversation}')
+				.replace(/\{conversation}/g, `<a target="_blank" class="external" href="${targetUrl}">${escapeHtml(conversation)} ↗</a>`),
+			{
 				isHTML: true,
 			})
 		} catch (exception) {
