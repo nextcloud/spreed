@@ -1,4 +1,5 @@
 import { createLocalVue } from '@vue/test-utils'
+import flushPromises from 'flush-promises'
 import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
 import Vuex from 'vuex'
@@ -16,6 +17,7 @@ import {
 	lookForNewMessages,
 	postNewMessage,
 } from '../services/messagesService.js'
+import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import messagesStore from './messagesStore.js'
 import storeConfig from './storeConfig.js'
@@ -207,25 +209,20 @@ describe('messagesStore', () => {
 		})
 
 		test('deletes from server and replaces deleted message with response', async () => {
-			deleteMessage.mockResolvedValueOnce({
-				status: 200,
-				data: {
-					ocs: {
-						data: {
-							id: 11,
-							token: TOKEN,
-							message: '(deleted)',
-							systemMessage: 'message_deleted',
-							parent: {
-								id: 10,
-								token: TOKEN,
-								message: 'parent message deleted',
-								messageType: 'comment_deleted',
-							},
-						},
-					},
+			const payload = {
+				id: 11,
+				token: TOKEN,
+				message: '(deleted)',
+				systemMessage: 'message_deleted',
+				parent: {
+					id: 10,
+					token: TOKEN,
+					message: 'parent message deleted',
+					messageType: 'comment_deleted',
 				},
-			})
+			}
+			const response = generateOCSResponse({ payload })
+			deleteMessage.mockResolvedValueOnce(response)
 
 			const status = await store.dispatch('deleteMessage', { message, placeholder: 'placeholder-text' })
 
@@ -241,25 +238,20 @@ describe('messagesStore', () => {
 		})
 
 		test('deletes from server but doesn\'t replace if deleted message is not in the store', async () => {
-			deleteMessage.mockResolvedValueOnce({
-				status: 200,
-				data: {
-					ocs: {
-						data: {
-							id: 11,
-							token: TOKEN,
-							message: '(deleted)',
-							systemMessage: 'message_deleted',
-							parent: {
-								id: 9,
-								token: TOKEN,
-								message: 'parent message deleted',
-								messageType: 'comment_deleted',
-							},
-						},
-					},
+			const payload = {
+				id: 11,
+				token: TOKEN,
+				message: '(deleted)',
+				systemMessage: 'message_deleted',
+				parent: {
+					id: 9,
+					token: TOKEN,
+					message: 'parent message deleted',
+					messageType: 'comment_deleted',
 				},
-			})
+			}
+			const response = generateOCSResponse({ payload })
+			deleteMessage.mockResolvedValueOnce(response)
 
 			const status = await store.dispatch('deleteMessage', { message, placeholder: 'placeholder-text' })
 
@@ -270,9 +262,8 @@ describe('messagesStore', () => {
 		})
 
 		test('keeps message in list if an error status comes from server', async () => {
-			deleteMessage.mockRejectedValueOnce({
-				status: 400,
-			})
+			const error = generateOCSErrorResponse({ payload: {}, status: 400 })
+			deleteMessage.mockRejectedValueOnce(error)
 
 			await store.dispatch('deleteMessage', { message, placeholder: 'placeholder-text' })
 				.catch(error => {
@@ -805,18 +796,13 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
 			}]
-			const response = {
+			const response = generateOCSResponse({
 				headers: {
 					'x-chat-last-common-read': '123',
 					'x-chat-last-given': '100',
 				},
-				data: {
-					ocs: {
-						data: messages,
-					},
-				},
-			}
-
+				payload: messages,
+			})
 			fetchMessages.mockResolvedValueOnce(response)
 
 			await store.dispatch('fetchMessages', {
@@ -858,18 +844,13 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
 			}]
-			const response = {
+			const response = generateOCSResponse({
 				headers: {
 					'x-chat-last-common-read': '123',
 					'x-chat-last-given': '100',
 				},
-				data: {
-					ocs: {
-						data: messages,
-					},
-				},
-			}
-
+				payload: messages,
+			})
 			fetchMessages.mockResolvedValueOnce(response)
 
 			await store.dispatch('fetchMessages', {
@@ -969,18 +950,13 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
 			}]
-			const response = {
+			const response = generateOCSResponse({
 				headers: {
 					'x-chat-last-common-read': '1',
 					'x-chat-last-given': '2',
 				},
-				data: {
-					ocs: {
-						data: messages,
-					},
-				},
-			}
-
+				payload: messages,
+			})
 			getMessageContext.mockResolvedValueOnce(response)
 
 			await store.dispatch('getMessageContext', {
@@ -1029,30 +1005,22 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
 			}]
-			const responseContext = {
+			const responseContext = generateOCSResponse({
 				headers: {
 					'x-chat-last-common-read': '2',
 					'x-chat-last-given': '4',
 				},
-				data: {
-					ocs: {
-						data: messagesContext,
-					},
-				},
-			}
-			const responseFetch = {
+				payload: messagesContext,
+			})
+			getMessageContext.mockResolvedValueOnce(responseContext)
+
+			const responseFetch = generateOCSResponse({
 				headers: {
 					'x-chat-last-common-read': '2',
 					'x-chat-last-given': '1',
 				},
-				data: {
-					ocs: {
-						data: messagesFetch,
-					},
-				},
-			}
-
-			getMessageContext.mockResolvedValueOnce(responseContext)
+				payload: messagesFetch,
+			})
 			fetchMessages.mockResolvedValueOnce(responseFetch)
 
 			await store.dispatch('getMessageContext', {
@@ -1145,18 +1113,13 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
 			}]
-			const response = {
+			const response = generateOCSResponse({
 				headers: {
 					'x-chat-last-common-read': '123',
 					'x-chat-last-given': '100',
 				},
-				data: {
-					ocs: {
-						data: messages,
-					},
-				},
-			}
-
+				payload: messages,
+			})
 			lookForNewMessages.mockResolvedValueOnce(response)
 
 			// smaller number to make it update
@@ -1205,15 +1168,9 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				actorType: ATTENDEE.ACTOR_TYPE.GUESTS,
 			}]
-			const response = {
-				headers: {},
-				data: {
-					ocs: {
-						data: messages,
-					},
-				},
-			}
-
+			const response = generateOCSResponse({
+				payload: messages,
+			})
 			lookForNewMessages.mockResolvedValueOnce(response)
 
 			// smaller number to make it update
@@ -1303,18 +1260,13 @@ describe('messagesStore', () => {
 			 * @param {object} expectedPayload The parameters that should be updated when receiving the messages
 			 */
 			async function testUpdateMessageCounters(messages, expectedPayload) {
-				const response = {
+				const response = generateOCSResponse({
 					headers: {
 						'x-chat-last-common-read': '123',
 						'x-chat-last-given': '100',
 					},
-					data: {
-						ocs: {
-							data: messages,
-						},
-					},
-				}
-
+					payload: messages,
+				})
 				lookForNewMessages.mockResolvedValueOnce(response)
 
 				// smaller number to make it update
@@ -1605,12 +1557,19 @@ describe('messagesStore', () => {
 		})
 
 		test('posts new message', async () => {
+			conversationMock.mockReturnValue({
+				token: TOKEN,
+				lastMessage: { id: 100 },
+				lastReadMessage: 50,
+			})
+
 			const temporaryMessage = {
 				id: 'temp-123',
 				message: 'blah',
 				token: TOKEN,
 				sendingFailure: '',
 			}
+			store.dispatch('addTemporaryMessage', temporaryMessage)
 
 			const messageResponse = {
 				id: 200,
@@ -1618,42 +1577,21 @@ describe('messagesStore', () => {
 				message: 'blah',
 			}
 
-			const response = {
+			const response = generateOCSResponse({
 				headers: {
 					'x-chat-last-common-read': '100',
 				},
-				data: {
-					ocs: {
-						data: messageResponse,
-					},
-				},
-			}
-
-			store.dispatch('addTemporaryMessage', temporaryMessage)
-
-			conversationMock.mockReturnValue({
-				token: TOKEN,
-				lastMessage: { id: 100 },
-				lastReadMessage: 50,
+				payload: messageResponse,
 			})
+			postNewMessage.mockResolvedValueOnce(response)
 
-			let resolvePromise
-			postNewMessage.mockReturnValueOnce(new Promise((resolve, reject) => {
-				resolvePromise = resolve
-			}))
-
-			const returnedPromise = store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } }).catch(() => {})
+			store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } }).catch(() => {
+			})
+			expect(postNewMessage).toHaveBeenCalledWith(temporaryMessage, { silent: false })
 			expect(store.getters.isSendingMessages).toBe(true)
 
-			resolvePromise(response)
-
-			const receivedResponse = await returnedPromise
-
+			await flushPromises()
 			expect(store.getters.isSendingMessages).toBe(false)
-
-			expect(receivedResponse).toBe(response)
-
-			expect(postNewMessage).toHaveBeenCalledWith(temporaryMessage, { silent: false })
 
 			expect(updateLastCommonReadMessageAction).toHaveBeenCalledWith(
 				expect.anything(),
@@ -1793,19 +1731,12 @@ describe('messagesStore', () => {
 				sendingFailure: '',
 			}
 
-			const response = {
-				headers: {},
-				data: {
-					ocs: {
-						data: {
-							id: 200,
-							token: TOKEN,
-							message: 'blah',
-						},
-					},
-				},
+			const payload = {
+				id: 200,
+				token: TOKEN,
+				message: 'blah',
 			}
-
+			const response = generateOCSResponse({ payload })
 			postNewMessage.mockResolvedValueOnce(response)
 
 			store.dispatch('addTemporaryMessage', temporaryMessage)
@@ -1832,6 +1763,7 @@ describe('messagesStore', () => {
 			store = new Vuex.Store(testStoreConfig)
 			store.dispatch('setLastKnownMessageId', { token: TOKEN, id: lastKnownMessageId })
 		}
+
 		test('returns true if more messages are available on the server', () => {
 			setupWithValues(100, 123)
 			expect(store.getters.hasMoreMessagesToLoad(TOKEN)).toBe(true)
