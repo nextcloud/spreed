@@ -97,10 +97,11 @@ export default {
 		const wrapper = ref(null)
 		const setContacts = ref(null)
 
-		const { initializeNavigation } = useArrowNavigation(wrapper, setContacts, '.participant-row')
+		const { initializeNavigation, resetNavigation } = useArrowNavigation(wrapper, setContacts, '.participant-row')
 
 		return {
 			initializeNavigation,
+			resetNavigation,
 			wrapper,
 			setContacts,
 		}
@@ -176,6 +177,7 @@ export default {
 		},
 
 		debounceFetchSearchResults: debounce(function() {
+			this.resetNavigation()
 			this.fetchSearchResults()
 		}, 250),
 

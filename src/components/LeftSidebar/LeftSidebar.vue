@@ -312,10 +312,11 @@ export default {
 		const leftSidebar = ref(null)
 		const searchBox = ref(null)
 
-		const { initializeNavigation } = useArrowNavigation(leftSidebar, searchBox, '.list-item')
+		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox, '.list-item')
 
 		return {
 			initializeNavigation,
+			resetNavigation,
 			leftSidebar,
 			searchBox,
 		}
@@ -513,6 +514,7 @@ export default {
 			}, 500)
 		},
 		debounceFetchSearchResults: debounce(function() {
+			this.resetNavigation()
 			if (this.isSearching) {
 				this.fetchSearchResults()
 			}
