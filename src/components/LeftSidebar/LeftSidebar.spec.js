@@ -16,9 +16,6 @@ import storeConfig from '../../store/storeConfig.js'
 import { findNcListItems, findNcActionButton } from '../../test-helpers.js'
 import { requestTabLeadership } from '../../utils/requestTabLeadership.js'
 
-jest.mock('@nextcloud/initial-state', () => ({
-	loadState: jest.fn(),
-}))
 jest.mock('../../services/conversationsService', () => ({
 	searchPossibleConversations: jest.fn(),
 	searchListedConversations: jest.fn(),

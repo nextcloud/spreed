@@ -33,6 +33,12 @@ jest.mock('extendable-media-recorder-wav-encoder', () => ({
 	connect: jest.fn(),
 }))
 
+jest.mock('@nextcloud/initial-state', () => ({
+	loadState: jest.fn().mockImplementation((app, key, fallback) => {
+		return fallback
+	}),
+}))
+
 window.IntersectionObserver = jest.fn(() => ({
 	observe: jest.fn(),
 	unobserve: jest.fn(),
