@@ -9,10 +9,6 @@ jest.mock('@nextcloud/axios', () => ({
 	get: jest.fn(),
 }))
 
-jest.mock('@nextcloud/initial-state', () => ({
-	loadState: jest.fn(),
-}))
-
 describe('conversationsService', () => {
 	let loadStateSettings
 

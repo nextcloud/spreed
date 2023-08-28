@@ -1,12 +1,9 @@
 import { setActivePinia, createPinia } from 'pinia'
 
+import { loadState } from '@nextcloud/initial-state'
+
 import { PRIVACY } from '../../constants.js'
 import { useSettingsStore } from '../settings.js'
-
-jest.mock('@nextcloud/initial-state',
-	() => ({
-		loadState: jest.fn().mockReturnValue(0),
-	}))
 
 jest.mock('../../services/settingsService',
 	() => ({
@@ -16,9 +13,7 @@ jest.mock('../../services/settingsService',
 
 describe('settingsStore', () => {
 	beforeEach(() => {
-		// creates a fresh pinia and make it active, so it's automatically picked
-		// up by any useStore() call without having to pass it to it:
-		// `useStore(pinia)`
+		loadState.mockImplementation(() => PRIVACY.PUBLIC)
 		setActivePinia(createPinia())
 	})
 
