@@ -29,14 +29,14 @@ require __DIR__ . '/../../vendor/autoload.php';
 
 trait CommandLineTrait {
 	/** @var int return code of last command */
-	private $lastCode;
+	private int $lastCode = 0;
 	/** @var string stdout of last command */
-	private $lastStdOut;
+	private string $lastStdOut = '';
 	/** @var string stderr of last command */
-	private $lastStdErr;
+	private string $lastStdErr = '';
 
 	/** @var string */
-	protected $ocPath = '../../../..';
+	protected string $ocPath = '../../../..';
 
 	/**
 	 * Invokes an OCC command
@@ -65,10 +65,6 @@ trait CommandLineTrait {
 		$this->lastStdOut = stream_get_contents($pipes[1]);
 		$this->lastStdErr = stream_get_contents($pipes[2]);
 		$this->lastCode = proc_close($process);
-
-		// Clean opcode cache
-		$client = new GuzzleHttp\Client();
-		$client->request('GET', 'http://localhost:8080/apps/testing/clean_opcode_cache.php');
 
 		return $this->lastCode;
 	}
