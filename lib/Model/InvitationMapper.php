@@ -108,7 +108,7 @@ class InvitationMapper extends QBMapper {
 		$row = $result->fetch();
 		$result->closeCursor();
 
-		return (int) ($row['num_invitations' ?? 0]);
+		return (int) ($row['num_invitations'] ?? 0);
 	}
 
 	public function createInvitationFromRow(array $row): Invitation {
