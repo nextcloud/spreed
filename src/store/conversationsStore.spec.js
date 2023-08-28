@@ -32,6 +32,7 @@ import {
 	setCallPermissions,
 	setConversationUnread,
 } from '../services/conversationsService.js'
+import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import storeConfig from './storeConfig.js'
 
 jest.mock('../services/conversationsService', () => ({
@@ -238,14 +239,7 @@ describe('conversationsStore', () => {
 		})
 
 		test('fetches a single conversation', async () => {
-			const response = {
-				data: {
-					ocs: {
-						data: testConversation,
-					},
-				},
-			}
-
+			const response = generateOCSResponse({ payload: testConversation })
 			fetchConversation.mockResolvedValue(response)
 
 			await store.dispatch('fetchConversation', { token: testToken })
@@ -253,7 +247,7 @@ describe('conversationsStore', () => {
 			expect(fetchConversation).toHaveBeenCalledWith(testToken)
 
 			const fetchedConversation = store.getters.conversation(testToken)
-			expect(fetchedConversation).toBe(testConversation)
+			expect(fetchedConversation).toStrictEqual(testConversation)
 
 			expect(clearMaintenanceModeAction).toHaveBeenCalled()
 			expect(updateTalkVersionHashAction).toHaveBeenCalledWith(expect.anything(), response)
@@ -273,14 +267,7 @@ describe('conversationsStore', () => {
 				},
 			]
 
-			const response = {
-				data: {
-					ocs: {
-						data: testConversations,
-					},
-				},
-			}
-
+			const response = generateOCSResponse({ payload: testConversations })
 			fetchConversations.mockResolvedValue(response)
 
 			await store.dispatch('fetchConversations', {})
@@ -303,22 +290,13 @@ describe('conversationsStore', () => {
 				},
 			]
 
-			const response = {
-				data: {
-					ocs: {
-						data: testConversations,
-					},
-				},
-			}
-
+			const response = generateOCSResponse({ payload: testConversations })
 			fetchConversations.mockResolvedValue(response)
 
 			store.dispatch('fetchConversations', { })
 			await flushPromises()
 
-			expect(BrowserStorage.setItem).toHaveBeenCalledWith('cachedConversations',
-				'[{"token":"one_token","attendeeId":"attendee-id-1","lastActivity":1675209600},{"token":"another_token","attendeeId":"attendee-id-2","lastActivity":1672531200}]'
-			)
+			expect(BrowserStorage.setItem).toHaveBeenCalledWith('cachedConversations', JSON.stringify(testConversations))
 		})
 
 		test('fetches all conversations and add new received conversations', async () => {
@@ -338,14 +316,7 @@ describe('conversationsStore', () => {
 				lastActivity: Date.parse('2023-02-01T00:00:00.000Z') / 1000,
 			}
 
-			const response = {
-				data: {
-					ocs: {
-						data: [{ ...oldConversation }, newConversation],
-					},
-				},
-			}
-
+			const response = generateOCSResponse({ payload: [oldConversation, newConversation] })
 			fetchConversations.mockResolvedValue(response)
 
 			await store.dispatch('fetchConversations', { })
@@ -391,13 +362,7 @@ describe('conversationsStore', () => {
 				statusMessage: 'I am the test 2',
 				statusClearAt: null,
 			}]
-			const response = {
-				data: {
-					ocs: {
-						data: newConversations,
-					},
-				},
-			}
+			const response = generateOCSResponse({ payload: newConversations })
 			fetchConversations.mockResolvedValue(response)
 			emit.mockClear()
 
@@ -462,13 +427,7 @@ describe('conversationsStore', () => {
 				lastActivity: Date.parse('2023-01-01T00:00:00.000Z') / 1000,
 				type: CONVERSATION.TYPE.GROUP,
 			}]
-			const response = {
-				data: {
-					ocs: {
-						data: newConversations,
-					},
-				},
-			}
+			const response = generateOCSResponse({ payload: newConversations })
 			fetchConversations.mockResolvedValue(response)
 			emit.mockClear()
 			await store.dispatch('fetchConversations', { })
@@ -508,13 +467,7 @@ describe('conversationsStore', () => {
 				...oldConversations[1],
 				lastActivity: oldConversations[1].lastActivity + 1000,
 			}]
-			const response = {
-				data: {
-					ocs: {
-						data: newConversations,
-					},
-				},
-			}
+			const response = generateOCSResponse({ payload: newConversations })
 			fetchConversations.mockResolvedValue(response)
 			await store.dispatch('fetchConversations', { })
 
@@ -551,13 +504,7 @@ describe('conversationsStore', () => {
 				...oldConversations[1],
 				unreadMention: true,
 			}]
-			const response = {
-				data: {
-					ocs: {
-						data: newConversations,
-					},
-				},
-			}
+			const response = generateOCSResponse({ payload: newConversations })
 			fetchConversations.mockResolvedValue(response)
 			await store.dispatch('fetchConversations', { })
 
@@ -659,31 +606,25 @@ describe('conversationsStore', () => {
 		})
 
 		test('fetch conversation failure checks for maintenance mode', async () => {
-			const response = { status: 503 }
-			fetchConversation.mockRejectedValue({ response })
+			const error = generateOCSErrorResponse({ payload: [], status: 503 })
+			fetchConversation.mockRejectedValue(error)
 
-			await expect(store.dispatch('fetchConversation', { token: testToken })).rejects.toMatchObject({ response })
+			await expect(store.dispatch('fetchConversation', { token: testToken })).rejects.toMatchObject(error)
 
-			expect(checkMaintenanceModeAction).toHaveBeenCalledWith(expect.anything(), response)
+			expect(checkMaintenanceModeAction).toHaveBeenCalledWith(expect.anything(), error.response)
 		})
 
 		test('fetch conversations failure checks for maintenance mode', async () => {
-			const response = { status: 503 }
-			fetchConversations.mockRejectedValue({ response })
+			const error = generateOCSErrorResponse({ payload: [], status: 503 })
+			fetchConversations.mockRejectedValue(error)
 
-			await expect(store.dispatch('fetchConversations', {})).rejects.toMatchObject({ response })
+			await expect(store.dispatch('fetchConversations', {})).rejects.toMatchObject(error)
 
-			expect(checkMaintenanceModeAction).toHaveBeenCalledWith(expect.anything(), response)
+			expect(checkMaintenanceModeAction).toHaveBeenCalledWith(expect.anything(), error.response)
 		})
 
 		test('fetch conversations should update talkVersion', async () => {
-			const response = {
-				data: {
-					ocs: {
-						data: [],
-					},
-				},
-			}
+			const response = generateOCSResponse({ payload: [] })
 			fetchConversations.mockResolvedValue(response)
 			await store.dispatch('fetchConversations', {})
 			expect(updateTalkVersionHashAction).toHaveBeenCalledWith(expect.anything(), response)
@@ -987,24 +928,16 @@ describe('conversationsStore', () => {
 
 		test('marks conversation as unread', async () => {
 			testConversation.unreadMessages = 0
-
-			const response = {
-				data: {
-					ocs: {
-						data: { ...testConversation, unreadMessages: 1 },
-					},
-				},
-			}
-			fetchConversation.mockResolvedValue(response)
-
 			store.dispatch('addConversation', testConversation)
 
+			const response = generateOCSResponse({ payload: { ...testConversation, unreadMessages: 1 } })
+			fetchConversation.mockResolvedValue(response)
 			store.dispatch('markConversationUnread', { token: testToken })
 
 			await flushPromises()
 
-			expect(setConversationUnread).toHaveBeenCalled()
-			expect(fetchConversation).toHaveBeenCalled()
+			expect(setConversationUnread).toHaveBeenCalledWith(testConversation.token)
+			expect(fetchConversation).toHaveBeenCalledWith(testConversation.token)
 
 			const changedConversation = store.getters.conversation(testToken)
 			expect(changedConversation.unreadMessages).toBe(1)
@@ -1279,14 +1212,7 @@ describe('conversationsStore', () => {
 				type: CONVERSATION.TYPE.ONE_TO_ONE,
 			}
 
-			const response = {
-				data: {
-					ocs: {
-						data: newConversation,
-					},
-				},
-			}
-
+			const response = generateOCSResponse({ payload: newConversation })
 			createOneToOneConversation.mockResolvedValueOnce(response)
 
 			await store.dispatch('createOneToOneConversation', 'target-actor-id')
@@ -1294,7 +1220,7 @@ describe('conversationsStore', () => {
 			expect(createOneToOneConversation).toHaveBeenCalledWith('target-actor-id')
 
 			const addedConversation = store.getters.conversation('new-token')
-			expect(addedConversation).toBe(newConversation)
+			expect(addedConversation).toStrictEqual(newConversation)
 		})
 	})
 
