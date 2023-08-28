@@ -1,43 +1,48 @@
 import { setActivePinia, createPinia } from 'pinia'
 
+import { loadState } from '@nextcloud/initial-state'
+
 import { PRIVACY } from '../../constants.js'
+import { setReadStatusPrivacy, setTypingStatusPrivacy } from '../../services/settingsService.js'
+import { generateOCSResponse } from '../../test-helpers.js'
 import { useSettingsStore } from '../settings.js'
 
-jest.mock('@nextcloud/initial-state',
-	() => ({
-		loadState: jest.fn().mockReturnValue(0),
-	}))
-
-jest.mock('../../services/settingsService',
-	() => ({
-		setReadStatusPrivacy: jest.fn().mockReturnValue('success'),
-		setTypingStatusPrivacy: jest.fn().mockReturnValue('success'),
-	}))
+jest.mock('../../services/settingsService', () => ({
+	setReadStatusPrivacy: jest.fn(),
+	setTypingStatusPrivacy: jest.fn(),
+}))
 
 describe('settingsStore', () => {
+	let settingsStore
+
 	beforeEach(() => {
-		// creates a fresh pinia and make it active, so it's automatically picked
-		// up by any useStore() call without having to pass it to it:
-		// `useStore(pinia)`
+		loadState.mockImplementation(() => PRIVACY.PUBLIC)
 		setActivePinia(createPinia())
+		settingsStore = useSettingsStore()
+	})
+
+	afterEach(async () => {
+		jest.clearAllMocks()
 	})
 
 	it('shows correct loaded values for statuses', () => {
-		const settingsStore = useSettingsStore()
-
+		// Assert
 		expect(settingsStore.readStatusPrivacy).toBe(PRIVACY.PUBLIC)
 		expect(settingsStore.typingStatusPrivacy).toBe(PRIVACY.PUBLIC)
 	})
 
-	it('toggles statuses correctly', async () => {
-		const settingsStore = useSettingsStore()
+	it('updates statuses correctly', async () => {
+		// Arrange
+		const response = generateOCSResponse({ payload: [] })
+		setReadStatusPrivacy.mockResolvedValueOnce(response)
+		setTypingStatusPrivacy.mockResolvedValueOnce(response)
 
-		expect(settingsStore.readStatusPrivacy).toBe(PRIVACY.PUBLIC)
+		// Act: update read status and typing status privacy
 		await settingsStore.updateReadStatusPrivacy(PRIVACY.PRIVATE)
-		expect(settingsStore.readStatusPrivacy).toBe(PRIVACY.PRIVATE)
-
-		expect(settingsStore.typingStatusPrivacy).toBe(PRIVACY.PUBLIC)
 		await settingsStore.updateTypingStatusPrivacy(PRIVACY.PRIVATE)
+
+		// Assert
+		expect(settingsStore.readStatusPrivacy).toBe(PRIVACY.PRIVATE)
 		expect(settingsStore.typingStatusPrivacy).toBe(PRIVACY.PRIVATE)
 	})
 })

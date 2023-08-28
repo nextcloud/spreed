@@ -20,6 +20,7 @@ import {
 	grantAllPermissionsToParticipant,
 	removeAllPermissionsFromParticipant,
 } from '../services/participantsService.js'
+import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import participantsStore from './participantsStore.js'
 
 jest.mock('../services/participantsService', () => ({
@@ -527,14 +528,7 @@ describe('participantsStore', () => {
 
 		test('joins conversation', async () => {
 			store = new Vuex.Store(testStoreConfig)
-			const response = {
-				status: 200,
-				data: {
-					ocs: {
-						data: participantData,
-					},
-				},
-			}
+			const response = generateOCSResponse({ payload: participantData })
 			joinConversation.mockResolvedValue(response)
 
 			const returnedResponse = await store.dispatch('joinConversation', { token: TOKEN })
@@ -556,14 +550,7 @@ describe('participantsStore', () => {
 		test('force join conversation', async () => {
 			store = new Vuex.Store(testStoreConfig)
 			const updatedParticipantData = Object.assign({}, participantData, { sessionId: 'another-session-id' })
-			const response = {
-				status: 200,
-				data: {
-					ocs: {
-						data: updatedParticipantData,
-					},
-				},
-			}
+			const response = generateOCSResponse({ payload: updatedParticipantData })
 			joinConversation.mockResolvedValue(response)
 
 			sessionStorage.getItem.mockReturnValueOnce(TOKEN)
@@ -613,15 +600,8 @@ describe('participantsStore', () => {
 				jest.spyOn(global, 'Date')
 					.mockImplementation(() => mockDate)
 
-				const response = {
-					status: 409,
-					data: {
-						ocs: {
-							data: participantData,
-						},
-					},
-				}
-				joinConversation.mockRejectedValue({ response })
+				const error = generateOCSErrorResponse({ payload: participantData, status: 409 })
+				joinConversation.mockRejectedValue(error)
 			}
 
 			describe('when not in call', () => {
