@@ -40,7 +40,7 @@ jobs:
       fail-fast: false
       matrix:
         test-suite: ['callapi', 'chat', 'chat-2', 'command', 'conversation', 'conversation-2', 'federation', 'integration', 'sharing', 'sharing-2']
-        php-versions: ['8.2']
+        php-versions: ['8.3']
         server-versions: ['master']
         guests-versions: ['master']
         call-summary-bot-versions: ['main']
@@ -69,6 +69,10 @@ jobs:
           submodules: true
           repository: nextcloud/server
           ref: ${{ matrix.server-versions }}
+
+      - name: Patch version check for nightly PHP
+        if: ${{ matrix.php-versions == '8.3' }}
+        run: echo "<?php" > lib/versioncheck.php
 
       - name: Checkout app
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
