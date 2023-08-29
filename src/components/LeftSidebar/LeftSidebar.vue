@@ -167,7 +167,7 @@
 							<NcAppNavigationCaption :title="t('spreed', 'Users')" />
 							<NcListItem v-for="item of searchResultsUsers"
 								:key="`user_${item.id}`"
-								:anchor-id="`user_${item.id}`"
+								:data-nav-id="`user_${item.id}`"
 								:title="item.label"
 								@click="createAndJoinConversation(item)">
 								<template #icon>
@@ -183,7 +183,7 @@
 								<NcAppNavigationCaption :title="t('spreed', 'Groups')" />
 								<NcListItem v-for="item of searchResultsGroups"
 									:key="`group_${item.id}`"
-									:anchor-id="`group_${item.id}`"
+									:data-nav-id="`group_${item.id}`"
 									:title="item.label"
 									@click="createAndJoinConversation(item)">
 									<template #icon>
@@ -197,7 +197,7 @@
 								<NcAppNavigationCaption :title="t('spreed', 'Circles')" />
 								<NcListItem v-for="item of searchResultsCircles"
 									:key="`circle_${item.id}`"
-									:anchor-id="`circle_${item.id}`"
+									:data-nav-id="`circle_${item.id}`"
 									:title="item.label"
 									@click="createAndJoinConversation(item)">
 									<template #icon>
