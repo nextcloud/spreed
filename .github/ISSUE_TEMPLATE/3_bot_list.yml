@@ -26,7 +26,7 @@ body:
   id: screenshot
   attributes:
     label: Screenshot URL
-    description: Max. width 700px, max. height 480px
+    description: Please use bright mode and crop to the chat view with, max. width 700px, max. height 480px
     placeholder: https://github.com/nextcloud/call_summary_bot/blob/main/docs/screenshot.png
   validations:
     required: true
