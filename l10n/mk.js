@@ -882,8 +882,6 @@ OC.L10N.register(
     "Join a conversation or start a new one!" : "Приклучи се кон разговор или започни нов!",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Се приклучивте на разговорот во друг прозорец или уред. Ова во моментов не е поддржано, па оваа сесија е затворена.",
     "Join a conversation or start a new one" : "Приклучи се кон разговор или започни нов",
-    "Post to a conversation" : "Објави во разговор",
-    "Post to conversation" : "Објава во разговор",
     "Location has been posted to the selected <a href=\"{link}\">conversation</a>" : "Локацијата е објавена во овој избраниот <a href=\"{link}\">разговор</a>",
     "An error occurred while posting location to conversation" : "Настана грешка при обид за објава на локација во разговор",
     "Share to a conversation" : "Сподели во разговор",
@@ -948,6 +946,8 @@ OC.L10N.register(
     "Toggle fullscreen" : "Вклучи на цел екран",
     "Rename conversation" : "Преименувај разговор",
     "Exit fullscreen (F)" : "Излез од цел екран (F)",
-    "Fullscreen (F)" : "Приказ на цел екран (F)"
+    "Fullscreen (F)" : "Приказ на цел екран (F)",
+    "Post to a conversation" : "Објави во разговор",
+    "Post to conversation" : "Објава во разговор"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

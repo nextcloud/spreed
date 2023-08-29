@@ -1045,8 +1045,6 @@ OC.L10N.register(
     "Join a conversation or start a new one!" : "Pridružite se razgovoru ili započnite novi!",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Pridružili ste se razgovoru u drugom prozoru ili na drugom uređaju. Nextcloud Talk trenutačno ne podržava tu radnju pa je ova sesija zatvorena.",
     "Join a conversation or start a new one" : "Pridružite se razgovoru ili započnite novi",
-    "Post to a conversation" : "Objavite u razgovoru",
-    "Post to conversation" : "Objavi u razgovoru",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome, Opera or Apple Safari." : "Nextcloud Talk ne podržava trenutni preglednik. Preuzmite najnoviju inačicu preglednika Mozilla Firefox, Microsoft Edge, Google Chrome, Opera ili Apple Safari.",
     "Calls are not supported in your browser" : "Vaš preglednik ne podržava pozive",
     "Access to microphone is only possible with HTTPS" : "Pristup mikrofonu moguć je samo putem HTTPS-a",
@@ -1123,6 +1121,8 @@ OC.L10N.register(
     "Rename conversation" : "Preimenuj razgovor",
     "Exit fullscreen (F)" : "Zatvori prikaz preko cijelog zaslona (F)",
     "Fullscreen (F)" : "Cijeli zaslon (F)",
+    "Post to a conversation" : "Objavite u razgovoru",
+    "Post to conversation" : "Objavi u razgovoru",
     "Sending signaling message has failed." : "Nije uspjelo slanje signalne poruke.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Potrebno je ažurirati konfigurirani signalni poslužitelj kako bi bio kompatibilan s ovom inačicom aplikacije Talk. Obratite se svom administratoru."
 },

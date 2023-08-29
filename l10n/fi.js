@@ -1136,8 +1136,6 @@ OC.L10N.register(
     "You reconnected to the call" : "Yhdistit uudelleen puheluun",
     "{actor} reconnected to the call" : "{actor} yhdisti uudelleen puheluun",
     "You added {user0} and {user1}" : "Lisäsit käyttäjät {user0} ja {user1}",
-    "Post to a conversation" : "Lähetä keskusteluun",
-    "Post to conversation" : "Lähetä keskusteluun",
     "The recording failed. Please contact your administrator." : "Tallennus epäonnistui. Ole yhteydessä ylläpitoon.",
     "Share to a conversation" : "Jaa keskusteluun",
     "Share to conversation" : "Jaa keskusteluun",
@@ -1222,6 +1220,8 @@ OC.L10N.register(
     "Toggle fullscreen" : "Koko näyttö päälle/pois",
     "Rename conversation" : "Nimeä keskustelu uudelleen",
     "Exit fullscreen (F)" : "Poistu koko näytön tilasta (F)",
-    "Fullscreen (F)" : "Koko näyttö (F)"
+    "Fullscreen (F)" : "Koko näyttö (F)",
+    "Post to a conversation" : "Lähetä keskusteluun",
+    "Post to conversation" : "Lähetä keskusteluun"
 },
 "nplurals=2; plural=(n != 1);");
