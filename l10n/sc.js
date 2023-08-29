@@ -993,8 +993,6 @@ OC.L10N.register(
     "Join a conversation or start a new one!" : "Intra in una resonada o cumintza•nde una noa!",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "As fatu s'atzessu in sa resonada in un'àtera ventana o dispositivu. In custu momentu cust'atzione no est suportada dae Nextcloud Talk tando sa sessione est istada serrada.",
     "Join a conversation or start a new one" : "Intra in una resonada o cumintza•nde una noa",
-    "Post to a conversation" : "Pùblica in una resonada",
-    "Post to conversation" : "Pùblica in sa resonada",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome, Opera or Apple Safari." : "Su navigadore chi ses impreende no est suportadu totu dae Nextcloud. Imprea s'ùrtima versione de Mozilla Firefox, Microsoft Edge, Google Chrome, Opera o Apple Safari.",
     "Calls are not supported in your browser" : "Is mutidas no sunt suportadas in su navigadore tuo",
     "Access to microphone is only possible with HTTPS" : "S'atzessu a su micròfonu si podet fàghere isceti cun HTTPS",
@@ -1069,6 +1067,8 @@ OC.L10N.register(
     "Rename conversation" : "Torra a numenare sa resonada",
     "Exit fullscreen (F)" : "Bessi dae sa modalidade a totu ischermu (F)",
     "Fullscreen (F)" : "Totu ischermu (F)",
+    "Post to a conversation" : "Pùblica in una resonada",
+    "Post to conversation" : "Pùblica in sa resonada",
     "Sending signaling message has failed." : "No at fatu a imbiare su messàgiu de signalatzione."
 },
 "nplurals=2; plural=(n != 1);");
