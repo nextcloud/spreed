@@ -108,8 +108,8 @@ jobs:
           extensions: apcu, bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, pgsql, pdo_pgsql
           coverage: none
           ini-file: development
-          ini-values:
-            apc.enable_cli=on
+          # Temporary workaround for missing pcntl_* in PHP 8.3: ini-values: apc.enable_cli=on
+          ini-values: apc.enable_cli=on, disable_functions=
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
