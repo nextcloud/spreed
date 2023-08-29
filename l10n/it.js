@@ -1092,8 +1092,6 @@ OC.L10N.register(
     "Join a conversation or start a new one!" : "Unisciti a una conversazione o avviane una nuova!",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Ti sei unito alla conversazione in un'altra finestra o dispositivo. Questo non è attualmente supportato da Nextcloud Talk, quindi questa sessione è stata chiusa.",
     "Join a conversation or start a new one" : "Unisciti a una conversazione o avviane una nuova",
-    "Post to a conversation" : "Pubblica in una conversazione",
-    "Post to conversation" : "Pubblica in conversazione",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome, Opera or Apple Safari." : "Il browser che stai utilizzando non è completamente supportato da Nextcloud Talk. Usa l'ultima versione di Mozilla Firefox, Microsoft Edge, Google Chrome, Opera o Apple Safari.",
     "Calls are not supported in your browser" : "Le chiamate non sono supportate dal tuo browser",
     "Access to microphone is only possible with HTTPS" : "L'accesso a microfono è possibile solo con HTTPS",
@@ -1176,6 +1174,8 @@ OC.L10N.register(
     "Rename conversation" : "Rinomina conversazione",
     "Exit fullscreen (F)" : "Esci da schermo intero (F)",
     "Fullscreen (F)" : "Schermo intero (t)",
+    "Post to a conversation" : "Pubblica in una conversazione",
+    "Post to conversation" : "Pubblica in conversazione",
     "Sending signaling message has failed." : "L'invio del messaggio di segnalazione non è riuscito.",
     "The configured signaling server needs to be updated to be compatible with this version of Talk. Please contact your administrator." : "Per essere compatibile con questa versione di Talk, è necessario aggiornare il server di segnalazione configurato. Si prega di contattare il proprio amministratore."
 },
