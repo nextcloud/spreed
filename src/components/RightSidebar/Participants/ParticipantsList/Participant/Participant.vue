@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<li :id="`${participant.source}_${participant.id}`"
+	<li :data-nav-id="`${participant.source}_${participant.id}`"
 		class="participant-row"
 		:class="{
 			'offline': isOffline,

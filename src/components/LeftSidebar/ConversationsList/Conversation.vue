@@ -24,7 +24,7 @@
 		:title="item.displayName"
 		class="conversation-item"
 		:class="{'unread-mention-conversation': item.unreadMention}"
-		:anchor-id="`conversation_${item.token}`"
+		:data-nav-id="`conversation_${item.token}`"
 		:actions-aria-label="t('spreed', 'Conversation actions')"
 		:to="to"
 		:bold="!!item.unreadMessages"

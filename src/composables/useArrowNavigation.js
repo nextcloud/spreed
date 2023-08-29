@@ -23,12 +23,16 @@ import { computed, onMounted, ref, unref } from 'vue'
 
 /**
  * Mount navigation according to https://www.w3.org/WAI/GL/wiki/Using_ARIA_menus
- * Item elements should have a specific selector and unique id
- * ArrowDown or ArrowUp keys - to move through the itemElements list
- * Enter key - to focus first element and click it
- * (if confirmEnter = true) first Enter keydown to focus first element, second - to click selected
- * Escape key - to return focus to the default element, if one of the items is focused already
- * Backspace key - to return focus to the default element, if one of the items is focused already
+ * Item elements should have:
+ * - specific valid CSS selector (tag, class or another attribute)
+ * - unique "data-nav-id" attribute (on element or its parent, if it's not possible to pass it through the wrapper)
+ *
+ * Controls:
+ * - ArrowDown or ArrowUp keys - to move through the itemElements list
+ * - Enter key - to focus first element and click it
+ *   (if confirmEnter = true) first Enter keydown to focus first element, second - to click selected
+ * - Escape key - to return focus to the default element, if one of the items is focused already
+ * - Backspace key - to return focus to the default element, if one of the items is focused already
  *
  * @param {import('vue').Ref | HTMLElement} listElementRef component ref to mount navigation
  * @param {import('vue').Ref} defaultElementRef component ref to return focus to // Vue component
@@ -40,8 +44,14 @@ export function useArrowNavigation(listElementRef, defaultElementRef, selector, 
 	const listRef = ref(null)
 	const defaultRef = ref(null)
 
+	/**
+	 * @constant
+	 * @type {import('vue').Ref<HTMLElement[]>}
+	 */
 	const itemElements = ref([])
-	const itemElementsIdMap = computed(() => itemElements.value.map(item => item.id))
+	const itemElementsIdMap = computed(() => itemElements.value.map(item => {
+		return item.getAttribute('data-nav-id') || item.parentElement.getAttribute('data-nav-id')
+	}))
 	const itemSelector = ref(selector)
 
 	const focusedIndex = ref(null)
@@ -49,7 +59,7 @@ export function useArrowNavigation(listElementRef, defaultElementRef, selector, 
 
 	// Set focused index according to selected element
 	const handleFocusEvent = (event) => {
-		const newIndex = itemElementsIdMap.value.indexOf(event.target?.id)
+		const newIndex = itemElementsIdMap.value.indexOf(event.target?.getAttribute('data-nav-id'))
 
 		// Quit if triggered by arrow navigation as already handled
 		// or if using Tab key to navigate, and going through NcActions
