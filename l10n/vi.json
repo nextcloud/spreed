@@ -680,8 +680,6 @@
     "Join a conversation or start a new one!" : "Tham gia một cuộc trò chuyện hoặc bắt đầu một cuộc trò chuyện mới!",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Bạn đã tham gia cuộc trò chuyện trong một cửa sổ hoặc thiết bị khác. Điều này hiện không được vWorkspace Talk hỗ trợ nên phiên này đã bị đóng.",
     "Join a conversation or start a new one" : "Tham gia cuộc trò chuyện hoặc bắt đầu một cuộc trò chuyện mới",
-    "Post to a conversation" : "Đăng lên một cuộc trò chuyện",
-    "Post to conversation" : "Đăng lên cuộc trò chuyện",
     "The browser you're using is not fully supported by Nextcloud Talk. Please use the latest version of Mozilla Firefox, Microsoft Edge, Google Chrome, Opera or Apple Safari." : "Trình duyệt bạn đang sử dụng không được vWorkspace Talk hỗ trợ đầy đủ. Vui lòng sử dụng phiên bản mới nhất của Mozilla Firefox, Microsoft Edge, Google Chrome, Opera hoặc Apple Safari.",
     "Calls are not supported in your browser" : "Cuộc gọi không được hỗ trợ trong trình duyệt của bạn",
     "Access to microphone is only possible with HTTPS" : "Chỉ có thể truy cập vào micrô với HTTPS",
@@ -751,6 +749,8 @@
     "Sounds can currently not be played in Safari browser and iPad and iPhone devices due to technical restrictions by the manufacturer." : "Âm thanh hiện không thể phát trong trình duyệt Safari và các thiết bị iPad và iPhone do các hạn chế kỹ thuật của nhà sản xuất.",
     "Toggle fullscreen" : "Bật chế độ toàn màn hình",
     "Rename conversation" : "Đổi tên cuộc đàm thoại",
+    "Post to a conversation" : "Đăng lên một cuộc trò chuyện",
+    "Post to conversation" : "Đăng lên cuộc trò chuyện",
     "Sending signaling message has failed." : "Gửi tin nhắn báo hiệu không thành công."
 },"pluralForm" :"nplurals=1; plural=0;"
 }

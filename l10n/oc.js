@@ -971,8 +971,6 @@ OC.L10N.register(
     "Join a conversation or start a new one!" : "Rejonhètz una conversacion o creatz-ne una !",
     "You joined the conversation in another window or device. This is currently not supported by Nextcloud Talk so this session was closed." : "Avètz rejonch la conversacion dins una autra fenèstra o periferic. Aquò es actualament pas pres en cargar per Nextcloud Talk doncas aquesta session es estada tampada.",
     "Join a conversation or start a new one" : "Rejónher una conversacion o ne crear una",
-    "Post to a conversation" : "Publicar dins una conversacion",
-    "Post to conversation" : "Publicar a la conversacion",
     "An error occurred while posting location to conversation" : "Error en publicant la localizacion dins la conversacion",
     "Share to a conversation" : "Partejar dins una conversacion",
     "Share to conversation" : "Partejar dins una conversacion",
@@ -1050,6 +1048,8 @@ OC.L10N.register(
     "Rename conversation" : "Renomenar la conversacion",
     "Exit fullscreen (F)" : "Quitar plen ecran (F)",
     "Fullscreen (F)" : "Plen ecran (F)",
+    "Post to a conversation" : "Publicar dins una conversacion",
+    "Post to conversation" : "Publicar a la conversacion",
     "Sending signaling message has failed." : "Lo mandadís de messatge de senhalament a pas reüssit."
 },
 "nplurals=2; plural=(n > 1);");
