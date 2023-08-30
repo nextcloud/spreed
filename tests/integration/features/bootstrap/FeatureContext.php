@@ -106,6 +106,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var array */
 	protected array $changedConfigs = [];
 
+	protected bool $changedBruteforceSetting = false;
+
 	private ?SharingContext $sharingContext;
 
 	private ?bool $guestsAppWasEnabled = null;
@@ -2972,7 +2974,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		$this->setCurrentUser($currentUser);
-		$this->enableDisableBruteForceProtection('disable');
+		if ($this->changedBruteforceSetting) {
+			$this->enableDisableBruteForceProtection('disable');
+		}
 	}
 
 	/**
@@ -3038,7 +3042,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @Given /^(enable|disable) brute force protection$/
 	 */
 	public function enableDisableBruteForceProtection(string $enable): void {
-		if ($enable === 'disable') {
+		if ($enable === 'enable') {
+			$this->changedBruteforceSetting = true;
+		} else {
 			// Reset the attempts before disabling
 			$this->runOcc(['security:bruteforce:reset', '127.0.0.1']);
 			$this->theCommandWasSuccessful();
@@ -3064,6 +3070,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->theCommandWasSuccessful();
 			$this->runOcc(['security:bruteforce:reset', '::1']);
 			$this->theCommandWasSuccessful();
+		} else {
+			$this->changedBruteforceSetting = false;
 		}
 	}
 
