@@ -1490,6 +1490,7 @@ OC.L10N.register(
     "{actor} demoted {user0} and {user1} from moderators" : "{actor} degradó a {user0} y a {user1} desde moderadores",
     "_An administrator demoted {user0}, {user1} and %n more participant from moderators_::_An administrator demoted {user0}, {user1} and %n more participants from moderators_" : ["Un administrador degradó a {user0}, {user1} y a %n participante más desde moderadores","Un administrador degradó a {user0}, {user1} y a %n participantes más desde moderadores","Un administrador degradó a {user0}, {user1} y a %n participantes más desde moderadores"],
     "_{actor} demoted {user0}, {user1} and %n more participant from moderators_::_{actor} demoted {user0}, {user1} and %n more participants from moderators_" : ["{actor} ha degradado a {user0}, {user1} y a %n participante más desde moderadores","{actor} ha degradado a {user0}, {user1} y a %n participantes más desde moderadores","{actor} ha degradado a {user0}, {user1} y a %n participantes más desde moderadores"],
+    "Deck card has been posted to {conversation}" : "La tarjeta del tablero ha sido publicada a {conversation}",
     "The recording failed. Please contact your administrator." : "La grabación falló. Por favor, contacta con tu administrador.",
     "Location has been posted to the selected <a href=\"{link}\">conversation</a>" : "La ubicación ha sido publicada en la conversación seleccionada",
     "An error occurred while posting location to conversation" : "Se ha producido un error al publicar la ubicación en la conversación",
