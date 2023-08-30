@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -97,10 +97,11 @@ export default {
 		const wrapper = ref(null)
 		const setContacts = ref(null)
 
-		const { initializeNavigation } = useArrowNavigation(wrapper, setContacts)
+		const { initializeNavigation, resetNavigation } = useArrowNavigation(wrapper, setContacts, '.participant-row')
 
 		return {
 			initializeNavigation,
+			resetNavigation,
 			wrapper,
 			setContacts,
 		}
@@ -176,6 +177,7 @@ export default {
 		},
 
 		debounceFetchSearchResults: debounce(function() {
+			this.resetNavigation()
 			this.fetchSearchResults()
 		}, 250),
 
@@ -196,7 +198,7 @@ export default {
 					this.cachedFullSearchResults = this.searchResults
 				}
 				this.$nextTick(() => {
-					this.initializeNavigation('.participant-row')
+					this.initializeNavigation()
 				})
 			} catch (exception) {
 				if (CancelableRequest.isCancel(exception)) {

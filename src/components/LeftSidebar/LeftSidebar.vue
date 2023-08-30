@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -167,6 +167,7 @@
 							<NcAppNavigationCaption :title="t('spreed', 'Users')" />
 							<NcListItem v-for="item of searchResultsUsers"
 								:key="`user_${item.id}`"
+								:data-nav-id="`user_${item.id}`"
 								:title="item.label"
 								@click="createAndJoinConversation(item)">
 								<template #icon>
@@ -182,6 +183,7 @@
 								<NcAppNavigationCaption :title="t('spreed', 'Groups')" />
 								<NcListItem v-for="item of searchResultsGroups"
 									:key="`group_${item.id}`"
+									:data-nav-id="`group_${item.id}`"
 									:title="item.label"
 									@click="createAndJoinConversation(item)">
 									<template #icon>
@@ -195,6 +197,7 @@
 								<NcAppNavigationCaption :title="t('spreed', 'Circles')" />
 								<NcListItem v-for="item of searchResultsCircles"
 									:key="`circle_${item.id}`"
+									:data-nav-id="`circle_${item.id}`"
 									:title="item.label"
 									@click="createAndJoinConversation(item)">
 									<template #icon>
@@ -310,10 +313,11 @@ export default {
 		const leftSidebar = ref(null)
 		const searchBox = ref(null)
 
-		const { initializeNavigation } = useArrowNavigation(leftSidebar, searchBox)
+		const { initializeNavigation, resetNavigation } = useArrowNavigation(leftSidebar, searchBox, '.list-item')
 
 		return {
 			initializeNavigation,
+			resetNavigation,
 			leftSidebar,
 			searchBox,
 		}
@@ -521,6 +525,7 @@ export default {
 			}, 500)
 		},
 		debounceFetchSearchResults: debounce(function() {
+			this.resetNavigation()
 			if (this.isSearching) {
 				this.fetchSearchResults()
 			}
@@ -550,9 +555,6 @@ export default {
 				this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
 				this.searchResultsCircles = this.searchResults.filter((match) => match.source === 'circles')
 				this.contactsLoading = false
-				this.$nextTick(() => {
-					this.initializeNavigation('.list-item')
-				})
 			} catch (exception) {
 				if (CancelableRequest.isCancel(exception)) {
 					return
@@ -574,9 +576,6 @@ export default {
 				const response = await request({ searchText: this.searchText })
 				this.searchResultsListedConversations = response.data.ocs.data
 				this.listedConversationsLoading = false
-				this.$nextTick(() => {
-					this.initializeNavigation('.list-item')
-				})
 			} catch (exception) {
 				if (CancelableRequest.isCancel(exception)) {
 					return
@@ -588,6 +587,7 @@ export default {
 
 		async fetchSearchResults() {
 			await Promise.all([this.fetchPossibleConversations(), this.fetchListedConversations()])
+			this.initializeNavigation()
 		},
 
 		/**
