@@ -40,6 +40,7 @@ class LoremIpsumSpeechToTextProvider implements ISpeechToTextProvider {
 			throw new \RuntimeException('Transcription failed by name');
 		}
 
+		sleep(1); // make sure Postgres manages the order of the messages
 		return 'Lorem ipsum';
 	}
 }
