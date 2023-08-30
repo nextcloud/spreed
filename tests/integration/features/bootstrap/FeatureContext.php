@@ -3655,6 +3655,49 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^Bot "([^"]*)" (sends|removes) a (message|reaction) for room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function botSendsRequest(string $botName, string $sends, string $action, string $identifier, int $status, string $apiVersion, TableNode $body): void {
+		$currentUser = $this->setCurrentUser(null);
+
+		$data = $body->getRowsHash();
+		$secret = $data['secret'];
+		unset($data['secret']);
+
+
+		if ($action === 'message') {
+			$url = '/message';
+			$toSign = $data['message'];
+
+			if (isset($data['replyTo'])) {
+				$data['replyTo'] = self::$textToMessageId[$data['replyTo']];
+			}
+		} else {
+			$url = '/reaction/' . self::$textToMessageId[$data['messageId']];
+			unset($data['messageId']);
+			$toSign = $data['reaction'];
+		}
+
+		$random = bin2hex(random_bytes(32));
+		$hash = hash_hmac('sha256', $random . $toSign, $secret);
+		$headers = [
+			'X-Nextcloud-Talk-Bot-Random' => $random,
+			'X-Nextcloud-Talk-Bot-Signature' => $hash,
+		];
+
+
+		$this->sendRequest(
+			$sends === 'sends' ? 'POST' : 'DELETE',
+			'/apps/spreed/api/' . $apiVersion . '/bot/' . self::$identifierToToken[$identifier] . $url,
+			$data,
+			$headers
+		);
+		$this->assertStatusCode($this->response, $status);
+
+		$this->setCurrentUser($currentUser);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" (sets up|removes) bot "([^"]*)" for room "([^"]*)" with (\d+)(?: \((v1)\))?$/
 	 */
 	public function setupOrRemoveBotViaOCSAPI(string $user, string $action, string $botName, string $identifier, int $status, string $apiVersion): void {

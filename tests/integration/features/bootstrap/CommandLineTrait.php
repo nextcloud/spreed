@@ -144,7 +144,10 @@ trait CommandLineTrait {
 
 			$msg = 'The command was not successful, exit code was ' . $this->lastCode . '.';
 			if (!empty($exceptions)) {
-				$msg .= ' Exceptions: ' . implode(', ', $exceptions);
+				$msg .= "\n" . ' Exceptions: ' . implode(', ', $exceptions);
+			} else {
+				$msg .= "\n" . ' ' . $this->lastStdOut;
+				$msg .= "\n" . ' ' . $this->lastStdErr;
 			}
 			throw new \Exception($msg);
 		} elseif (!empty($exceptions)) {
