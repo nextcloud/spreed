@@ -1089,6 +1089,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" views URL "([^"]*)" with query parameters and status code (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $page
+	 * @param int $statusCode
+	 * @param null|TableNode $formData
+	 */
+	public function userViewsURLWithQuery(string $user, string $page, int $statusCode, TableNode $formData = null): void {
+		$parameters = [];
+		if ($formData instanceof TableNode) {
+			foreach ($formData->getRowsHash() as $key => $value) {
+				$parameters[$key] = $key === 'token' ? (self::$identifierToToken[$value] ?? $value) : $value;
+			}
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendFrontpageRequest(
+			'GET', '/' . $page . '?' . http_build_query($parameters)
+		);
+
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" sets notifications to (default|disabled|mention|all) for room "([^"]*)" \((v4)\)$/
 	 *
 	 * @param string $user
