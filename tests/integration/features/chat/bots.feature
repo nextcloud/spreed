@@ -150,3 +150,22 @@ Feature: chat/bots
     When invoking occ with "talk:bot:install Bot Secret:1234567890123456789012345678901234567890 https://localhost/bot2"
     Then the command failed with exit code 3
     And the command output contains the text "Bot with the same secret is already registered"
+
+  Scenario: Set up conversation bot errors
+    Given invoking occ with "talk:bot:install ErrorBot Secret:1234567890123456789012345678901234567890 https://localhost/bot1"
+    And the command was successful
+    And read bot ids from OCC
+    And user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    When invoking occ with "talk:bot:setup 2147483647 invalid-token"
+    Then the command failed with exit code 1
+    And the command output contains the text "Bot could not be found by id: 2147483647"
+    When invoking occ with "talk:bot:setup BOT(ErrorBot) invalid-token"
+    Then the command failed with exit code 2
+    And the command output contains the text "Conversation could not be found by token: invalid-token"
+    When invoking occ with "talk:bot:setup BOT(ErrorBot) ROOM(room)"
+    And the command was successful
+    And invoking occ with "talk:bot:setup BOT(ErrorBot) ROOM(room)"
+    Then the command failed with exit code 3
+    And the command output contains the text "Bot is already set up for the conversation"

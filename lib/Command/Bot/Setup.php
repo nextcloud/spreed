@@ -33,6 +33,7 @@ use OCA\Talk\Model\BotConversation;
 use OCA\Talk\Model\BotConversationMapper;
 use OCA\Talk\Model\BotServerMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\DB\Exception;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -81,7 +82,7 @@ class Setup extends Base {
 				$this->roomManager->getRoomByToken($token);
 			} catch (RoomNotFoundException) {
 				$output->writeln('<error>Conversation could not be found by token: ' . $token . '</error>');
-				return 1;
+				$returnCode = 2;
 			}
 
 			$bot = new BotConversation();
@@ -93,8 +94,13 @@ class Setup extends Base {
 				$this->botConversationMapper->insert($bot);
 				$output->writeln('<info>Successfully set up for conversation ' . $token . '</info>');
 			} catch (\Exception $e) {
-				$output->writeln('<error>' . get_class($e) . ': ' . $e->getMessage() . '</error>');
-				$returnCode = 3;
+				if ($e instanceof Exception && $e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
+					$output->writeln('<error>Bot is already set up for the conversation ' . $token . '</error>');
+					$returnCode = 3;
+				} else {
+					$output->writeln('<error>' . get_class($e) . ': ' . $e->getMessage() . '</error>');
+					$returnCode = 4;
+				}
 			}
 		}
 
