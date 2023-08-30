@@ -3605,6 +3605,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$options
 		);
 		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
 	}
 
 	/**
