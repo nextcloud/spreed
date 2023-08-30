@@ -1490,6 +1490,7 @@ OC.L10N.register(
     "{actor} demoted {user0} and {user1} from moderators" : "{actor} demoted {user0} and {user1} from moderators",
     "_An administrator demoted {user0}, {user1} and %n more participant from moderators_::_An administrator demoted {user0}, {user1} and %n more participants from moderators_" : ["An administrator demoted {user0}, {user1} and %n more participant from moderators","An administrator demoted {user0}, {user1} and %n more participants from moderators"],
     "_{actor} demoted {user0}, {user1} and %n more participant from moderators_::_{actor} demoted {user0}, {user1} and %n more participants from moderators_" : ["{actor} demoted {user0}, {user1} and %n more participant from moderators","{actor} demoted {user0}, {user1} and %n more participants from moderators"],
+    "Deck card has been posted to {conversation}" : "Deck card has been posted to {conversation}",
     "The recording failed. Please contact your administrator." : "The recording failed. Please contact your administrator.",
     "Location has been posted to the selected <a href=\"{link}\">conversation</a>" : "Location has been posted to the selected <a href=\"{link}\">conversation</a>",
     "An error occurred while posting location to conversation" : "An error occurred while posting location to conversation",

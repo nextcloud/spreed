@@ -1488,6 +1488,7 @@
     "{actor} demoted {user0} and {user1} from moderators" : "{actor} hat {user0} und {user1} von den Moderatoren abberufen",
     "_An administrator demoted {user0}, {user1} and %n more participant from moderators_::_An administrator demoted {user0}, {user1} and %n more participants from moderators_" : ["Ein Administrator hat {Benutzer0}, {Benutzer1} und %n weiteren Teilnehmer von Moderatoren abberufen","Ein Administrator hat {Benutzer0}, {Benutzer1} und %n weitere Teilnehmer von Moderatoren abberufen"],
     "_{actor} demoted {user0}, {user1} and %n more participant from moderators_::_{actor} demoted {user0}, {user1} and %n more participants from moderators_" : ["{actor} hat {Benutzer0}, {Benutzer1} und %n weiteren Teilnehmer von Moderatoren abberufen","{actor} hat {Benutzer0}, {Benutzer1} und %n weitere Teilnehmer von Moderatoren abberufen"],
+    "Deck card has been posted to {conversation}" : "Deckkarte wurde nach {conversation} gepostet",
     "The recording failed. Please contact your administrator." : "Aufnahme fehlgeschlagen. Bitte wenden Sie sich an Ihre Administration.",
     "Location has been posted to the selected <a href=\"{link}\">conversation</a>" : "Ort wurde an die ausgewählte <a href=\"{link}\">Unterhaltung</a> gesendet.",
     "An error occurred while posting location to conversation" : "Es ist ein Fehler beim Posten des Ortes an die Unterhaltung aufgetreten.",
