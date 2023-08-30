@@ -1490,6 +1490,7 @@ OC.L10N.register(
     "{actor} demoted {user0} and {user1} from moderators" : "{actor} 已將 {user0} 與 {user1} 由主持人降級",
     "_An administrator demoted {user0}, {user1} and %n more participant from moderators_::_An administrator demoted {user0}, {user1} and %n more participants from moderators_" : ["管理員已將 {user0}、{user1} 與 %n 個其他參與者由主持人降級"],
     "_{actor} demoted {user0}, {user1} and %n more participant from moderators_::_{actor} demoted {user0}, {user1} and %n more participants from moderators_" : ["{actor} 已將 {user0}、{user1} 與 %n 個其他參與者由主持人降級"],
+    "Deck card has been posted to {conversation}" : "Deck 卡片已發佈至 {conversation}",
     "The recording failed. Please contact your administrator." : "錄製失敗。請聯絡管理員。",
     "Location has been posted to the selected <a href=\"{link}\">conversation</a>" : "位置已發佈到選定的 <a href=\"{link}\">對話</a>。",
     "An error occurred while posting location to conversation" : "將位置發佈到對話時發生錯誤。",
