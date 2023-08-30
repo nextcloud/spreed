@@ -50,6 +50,14 @@ trait CommandLineTrait {
 		// multibyte characters.
 		setlocale(LC_CTYPE, "C.UTF-8");
 
+		$clearOpcodeCache = in_array($args[0], [
+			'app:disable',
+			'app:enable',
+			'config:system:delete',
+			'config:system:set',
+			'maintenance:mode',
+		], true);
+
 		$args = array_map(function ($arg) {
 			return escapeshellarg($arg);
 		}, $args);
@@ -66,13 +74,7 @@ trait CommandLineTrait {
 		$this->lastStdErr = stream_get_contents($pipes[2]);
 		$this->lastCode = proc_close($process);
 
-		if (in_array($args[0], [
-			'app:disable',
-			'app:enable',
-			'config:system:delete',
-			'config:system:set',
-			'maintenance:mode',
-		], true)) {
+		if ($clearOpcodeCache) {
 			// Clean opcode cache
 			$client = new GuzzleHttp\Client();
 			$client->request('GET', 'http://localhost:8080/apps/testing/clean_opcode_cache.php');
