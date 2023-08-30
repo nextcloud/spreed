@@ -40,7 +40,7 @@ jobs:
       fail-fast: false
       matrix:
         test-suite: ['callapi', 'chat', 'chat-2', 'command', 'conversation', 'conversation-2', 'federation', 'integration', 'sharing', 'sharing-2']
-        php-versions: ['8.2']
+        php-versions: ['8.3']
         server-versions: ['master']
         guests-versions: ['master']
         call-summary-bot-versions: ['main']
@@ -69,6 +69,10 @@ jobs:
           submodules: true
           repository: nextcloud/server
           ref: ${{ matrix.server-versions }}
+
+      - name: Patch version check for nightly PHP
+        if: ${{ matrix.php-versions == '8.3' }}
+        run: echo "<?php" > lib/versioncheck.php
 
       - name: Checkout app
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
@@ -104,8 +108,8 @@ jobs:
           extensions: apcu, bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, pgsql, pdo_pgsql
           coverage: none
           ini-file: development
-          ini-values:
-            apc.enable_cli=on
+          # Temporary workaround for missing pcntl_* in PHP 8.3: ini-values: apc.enable_cli=on
+          ini-values: apc.enable_cli=on, disable_functions=
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
