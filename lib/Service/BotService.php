@@ -295,4 +295,27 @@ class BotService {
 
 		return $bots;
 	}
+
+	/**
+	 * @throws \InvalidArgumentException
+	 */
+	public function validateBotParameters(string $name, string $secret, string $url, string $description): void {
+		$nameLength = strlen($name);
+		if ($nameLength === 0 || $nameLength > 64) {
+			throw new \InvalidArgumentException('The provided name is too short or too long (min. 1 char, max. 64 chars)');
+		}
+		$secretLength = strlen($secret);
+		if ($secretLength < 40 || $secretLength > 128) {
+			throw new \InvalidArgumentException('The provided secret is too short (min. 40 chars, max. 128 chars)');
+		}
+
+		$url = filter_var($url);
+		if (!$url || strlen($url) > 4000 || !(str_starts_with($url, 'http://') || str_starts_with($url, 'https://'))) {
+			throw new \InvalidArgumentException('The provided URL is not a valid URL');
+		}
+
+		if (strlen($description) > 4000) {
+			throw new \InvalidArgumentException('The provided description is too long (max. 4000 chars)');
+		}
+	}
 }
