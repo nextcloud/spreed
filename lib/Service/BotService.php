@@ -72,7 +72,7 @@ class BotService {
 			return;
 		}
 
-		$bots = $this->getBotsForToken($event->getRoom()->getToken());
+		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK);
 		if (empty($bots)) {
 			return;
 		}
@@ -114,7 +114,7 @@ class BotService {
 	}
 
 	public function afterSystemMessageSent(ChatEvent $event, MessageParser $messageParser): void {
-		$bots = $this->getBotsForToken($event->getRoom()->getToken());
+		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK);
 		if (empty($bots)) {
 			return;
 		}
@@ -253,9 +253,10 @@ class BotService {
 
 	/**
 	 * @param string $token
+	 * @param int|null $requiredFeature
 	 * @return Bot[]
 	 */
-	public function getBotsForToken(string $token): array {
+	public function getBotsForToken(string $token, ?int $requiredFeature): array {
 		$botConversations = $this->botConversationMapper->findForToken($token);
 
 		if (empty($botConversations)) {
@@ -278,8 +279,8 @@ class BotService {
 			}
 			$botServer = $serversMap[$botConversation->getBotId()];
 
-			if (!($botServer->getFeatures() & Bot::FEATURE_WEBHOOK)) {
-				$this->logger->debug('Not sending webhook to bot ID ' . $botConversation->getBotId() . ' because the feature is disabled for it');
+			if ($requiredFeature && !($botServer->getFeatures() & $requiredFeature)) {
+				$this->logger->debug('Ignoring bot ID ' . $botConversation->getBotId() . ' because the feature (' . $requiredFeature . ') is disabled for it');
 				continue;
 			}
 
