@@ -91,7 +91,7 @@ class BotController extends AEnvironmentAwareController {
 			throw new \InvalidArgumentException('Invalid Signature received from bot response', Http::STATUS_BAD_REQUEST);
 		}
 
-		$bots = $this->botService->getBotsForToken($token);
+		$bots = $this->botService->getBotsForToken($token, Bot::FEATURE_RESPONSE);
 		foreach ($bots as $botAttempt) {
 			try {
 				$this->checksumVerificationService->validateRequest(
