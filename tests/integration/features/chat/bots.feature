@@ -129,3 +129,24 @@ Feature: chat/bots
     Given invoking occ with "talk:bot:list room-name:room"
     And the command was successful
     And the command output is empty
+
+  Scenario: Registering a bot with invalid parameters
+    When invoking occ with "talk:bot:install  S3CR3T U"
+    Then the command failed with exit code 1
+    And the command output contains the text "The provided name is too short"
+    When invoking occ with "talk:bot:install Bot S3CR3T U"
+    Then the command failed with exit code 1
+    And the command output contains the text "The provided secret is too short"
+    When invoking occ with "talk:bot:install Bot Secret:1234567890123456789012345678901234567890 U"
+    Then the command failed with exit code 1
+    And the command output contains the text "The provided URL is not a valid URL"
+
+  Scenario: Registering the same webhook or secret twice
+    Given invoking occ with "talk:bot:install Bot Secret:1234567890123456789012345678901234567890 https://localhost/bot1"
+    And the command was successful
+    When invoking occ with "talk:bot:install Bot Secret:1234567890123456789012345678901234567890 https://localhost/bot1"
+    Then the command failed with exit code 2
+    And the command output contains the text "Bot with the same URL is already registered"
+    When invoking occ with "talk:bot:install Bot Secret:1234567890123456789012345678901234567890 https://localhost/bot2"
+    Then the command failed with exit code 3
+    And the command output contains the text "Bot with the same secret is already registered"

@@ -143,7 +143,7 @@ trait CommandLineTrait {
 	/**
 	 * @Then /^the command failed with exit code ([0-9]+)$/
 	 */
-	public function theCommandFailedWithExitCode($exitCode) {
+	public function theCommandFailedWithExitCode(int $exitCode) {
 		Assert::assertEquals($exitCode, $this->lastCode, 'The commands exit code did not match');
 	}
 

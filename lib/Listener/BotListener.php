@@ -42,6 +42,7 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Server;
+use Psr\Log\LoggerInterface;
 
 /**
  * @template-implements IEventListener<Event>
@@ -50,6 +51,8 @@ class BotListener implements IEventListener {
 	public function __construct(
 		protected BotServerMapper $botServerMapper,
 		protected BotConversationMapper $botConversationMapper,
+		protected BotService $botService,
+		protected LoggerInterface $logger,
 	) {
 	}
 
@@ -88,12 +91,27 @@ class BotListener implements IEventListener {
 
 	protected function handleBotInstallEvent(BotInstallEvent $event): void {
 		try {
+			$this->botService->validateBotParameters($event->getName(), $event->getSecret(), $event->getUrl(), $event->getDescription());
+		} catch (\InvalidArgumentException $e) {
+			$this->logger->error('Invalid data in bot install event', ['exception' => $e]);
+			throw $e;
+		}
+
+		try {
 			$bot = $this->botServerMapper->findByUrlAndSecret($event->getUrl(), $event->getSecret());
 
 			$bot->setName($event->getName());
 			$bot->setDescription($event->getDescription());
 			$this->botServerMapper->update($bot);
 		} catch (DoesNotExistException) {
+			try {
+				$this->botServerMapper->findByUrl($event->getUrl());
+				$e = new \InvalidArgumentException('Bot with the same URL and a different secret is already registered');
+				$this->logger->error('Invalid data in bot install event', ['exception' => $e]);
+				throw $e;
+			} catch (DoesNotExistException) {
+			}
+
 			$bot = new BotServer();
 			$bot->setName($event->getName());
 			$bot->setDescription($event->getDescription());
