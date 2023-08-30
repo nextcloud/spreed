@@ -54,17 +54,29 @@ trait CommandLineTrait {
 			return escapeshellarg($arg);
 		}, $args);
 		$args[] = '--no-ansi';
-		$args = implode(' ', $args);
+		$argString = implode(' ', $args);
 
 		$descriptor = [
 			0 => ['pipe', 'r'],
 			1 => ['pipe', 'w'],
 			2 => ['pipe', 'w'],
 		];
-		$process = proc_open('php console.php ' . $args, $descriptor, $pipes, $this->ocPath, $env);
+		$process = proc_open('php console.php ' . $argString, $descriptor, $pipes, $this->ocPath, $env);
 		$this->lastStdOut = stream_get_contents($pipes[1]);
 		$this->lastStdErr = stream_get_contents($pipes[2]);
 		$this->lastCode = proc_close($process);
+
+		if (in_array($args[0], [
+			'app:disable',
+			'app:enable',
+			'config:system:delete',
+			'config:system:set',
+			'maintenance:mode',
+		], true)) {
+			// Clean opcode cache
+			$client = new GuzzleHttp\Client();
+			$client->request('GET', 'http://localhost:8080/apps/testing/clean_opcode_cache.php');
+		}
 
 		return $this->lastCode;
 	}
