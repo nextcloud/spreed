@@ -4,11 +4,6 @@
 			"OCA\\Talk\\": "lib/"
 		}
 	},
-	"autoload-dev": {
-		"psr-4": {
-			"OCP\\": "vendor/nextcloud/ocp/OCP"
-		}
-	},
 	"config": {
 		"allow-plugins": {
 			"bamarni/composer-bin-plugin": true
