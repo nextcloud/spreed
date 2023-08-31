@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+PROCESS_ID=$$
+
 APP_NAME=spreed
 NOTIFICATIONS_BRANCH="master"
 GUESTS_BRANCH="master"
@@ -17,23 +19,29 @@ echo ''
 echo -e "\033[0;36m#\033[0m"
 echo -e "\033[0;36m# Starting PHP webserver\033[0m"
 echo -e "\033[0;36m#\033[0m"
-PHP_CLI_SERVER_WORKERS=3 php -S localhost:8080 -t ${ROOT_DIR} &
+
+echo "" > phpserver.log
+PHP_CLI_SERVER_WORKERS=3 php -S localhost:8080 -t ${ROOT_DIR} &> phpserver.log &
 PHPPID1=$!
 echo -e "Running on process ID: \033[1;35m$PHPPID1\033[0m"
 
-# also kill php process in case of ctrl+c
-trap 'pkill -P $PHPPID1; kill -TERM $PHPPID1; wait $PHPPID1' TERM
+# Output filtered php server logs
+tail -f phpserver.log | grep --line-buffered -v -E ":[0-9]+ Accepted$" | grep --line-buffered -v -E ":[0-9]+ Closing$" &
 
 # The federated server is started and stopped by the tests themselves
 PORT_FED=8180
 export PORT_FED
 
-php -S localhost:${PORT_FED} -t ${ROOT_DIR} &
+echo "" > phpserver_fed.log
+php -S localhost:${PORT_FED} -t ${ROOT_DIR} &> phpserver_fed.log &
 PHPPID2=$!
 echo -e "Running on process ID: \033[1;35m$PHPPID2\033[0m"
 
-# also kill php process in case of ctrl+c
-trap 'pkill -P $PHPPID2; kill -TERM $PHPPID2; wait $PHPPID2' TERM
+# Output filtered federated php server logs
+tail -f phpserver_fed.log | grep --line-buffered -v -E ":[0-9]+ Accepted$" | grep --line-buffered -v -E ":[0-9]+ Closing$" &
+
+# Kill all sub-processes in case of ctrl+c
+trap 'pkill -P $PHPPID1; pkill -P $PHPPID2; pkill -P $PROCESS_ID; wait $PHPPID1; wait $PHPPID2;' INT TERM 
 
 NEXTCLOUD_ROOT_DIR=${ROOT_DIR}
 export NEXTCLOUD_ROOT_DIR
@@ -100,10 +108,17 @@ echo ''
 echo -e "\033[0;36m#\033[0m"
 echo -e "\033[0;36m# Stopping PHP webserver\033[0m"
 echo -e "\033[0;36m#\033[0m"
-pkill -P $PHPPID1
-kill $PHPPID1
-pkill -P $PHPPID2
-kill $PHPPID2
+
+# Kill parent PHP processes
+kill -TERM $PHPPID1; 
+kill -TERM $PHPPID2; 
+
+# Kill child PHP processes
+pkill -P $PHPPID1;
+pkill -P $PHPPID2;
+
+# Kill child processes of this script (e.g. tail)
+pkill -P $PROCESS_ID;
 
 echo ''
 echo -e "\033[0;36m#\033[0m"
