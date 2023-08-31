@@ -923,8 +923,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @return int
 	 */
 	private function getFileIdForPath($user, $path) {
-		$currentUser = $this->setCurrentUser($user);
-		$currentUser = $this->setCurrentUser($currentUser);
+		$this->setCurrentUser($user);
 
 		$url = "/$user/$path";
 
