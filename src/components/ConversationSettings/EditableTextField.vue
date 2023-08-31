@@ -217,10 +217,11 @@ export default {
 				return
 			}
 			// Remove leading/trailing whitespaces.
-			// FIXME: remove after issue is resolved: https://github.com/nextcloud/nextcloud-vue/issues/3264
+			// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
 			const temp = document.createElement('textarea')
-			temp.innerHTML = this.text
-			this.text = temp.value.replace(/\r\n|\n|\r/gm, '\n').trim()
+			temp.innerHTML = this.text.replace(/&/gmi, '&amp;')
+			this.text = temp.value.replace(/\r\n|\n|\r/gm, '\n').replace(/&amp;/gmi, '&')
+				.replace(/&lt;/gmi, '<').replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§').trim()
 
 			// Submit text
 			this.$emit('submit-text', this.text)
