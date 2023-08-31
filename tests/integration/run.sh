@@ -7,19 +7,18 @@ GUESTS_BRANCH="stable-2.5"
 APP_INTEGRATION_DIR=$PWD
 ROOT_DIR=${APP_INTEGRATION_DIR}/../../../..
 echo ''
-echo '#'
-echo '# Installing composer dependencies from tests/integration/'
-echo '#'
+echo -e "\033[0;36m#\033[0m"
+echo -e "\033[0;36m# Installing composer dependencies from tests/integration/\033[0m"
+echo -e "\033[0;36m#\033[0m"
 composer install
 
 echo ''
-echo '#'
-echo '# Starting PHP webserver'
-echo '#'
+echo -e "\033[0;36m#\033[0m"
+echo -e "\033[0;36m# Starting PHP webserver\033[0m"
+echo -e "\033[0;36m#\033[0m"
 PHP_CLI_SERVER_WORKERS=3 php -S localhost:8080 -t ${ROOT_DIR} &
 PHPPID1=$!
-echo 'Running on process ID:'
-echo $PHPPID1
+echo -e "Running on process ID: \033[1;35m$PHPPID1\033[0m"
 
 # also kill php process in case of ctrl+c
 trap 'pkill -P $PHPPID1; kill -TERM $PHPPID1; wait $PHPPID1' TERM
@@ -30,8 +29,7 @@ export PORT_FED
 
 php -S localhost:${PORT_FED} -t ${ROOT_DIR} &
 PHPPID2=$!
-echo 'Running on process ID:'
-echo $PHPPID2
+echo -e "Running on process ID: \033[1;35m$PHPPID2\033[0m"
 
 # also kill php process in case of ctrl+c
 trap 'pkill -P $PHPPID2; kill -TERM $PHPPID2; wait $PHPPID2' TERM
@@ -51,9 +49,9 @@ if [[ "$SKELETON_DIR" ]]; then
 fi
 
 echo ''
-echo '#'
-echo '# Setting up apps'
-echo '#'
+echo -e "\033[0;36m#\033[0m"
+echo -e "\033[0;36m# Setting up apps\033[0m"
+echo -e "\033[0;36m#\033[0m"
 cp -R ./spreedcheats ../../../spreedcheats
 ${ROOT_DIR}/occ app:getpath spreedcheats
 
@@ -72,9 +70,9 @@ ${ROOT_DIR}/occ app:list | grep notifications
 ${ROOT_DIR}/occ app:list | grep guests
 
 echo ''
-echo '#'
-echo '# Optimizing configuration'
-echo '#'
+echo -e "\033[0;36m#\033[0m"
+echo -e "\033[0;36m# Optimizing configuration\033[0m"
+echo -e "\033[0;36m#\033[0m"
 # Disable bruteforce protection because the integration tests do trigger them
 ${ROOT_DIR}/occ config:system:set auth.bruteforce.protection.enabled --value false --type bool
 # Disable rate limit protection because the integration tests do trigger them
@@ -83,21 +81,30 @@ ${ROOT_DIR}/occ config:system:set ratelimit.protection.enabled --value false --t
 ${ROOT_DIR}/occ config:system:set allow_local_remote_servers --value true --type bool
 
 echo ''
-echo '#'
-echo '# Running tests'
-echo '#'
+echo -e "\033[1;33m#\033[0m"
+echo -e "\033[1;33m# ██████╗ ██╗   ██╗███╗   ██╗    ████████╗███████╗███████╗████████╗███████╗\033[0m"
+echo -e "\033[1;33m# ██╔══██╗██║   ██║████╗  ██║    ╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝██╔════╝\033[0m"
+echo -e "\033[1;33m# ██████╔╝██║   ██║██╔██╗ ██║       ██║   █████╗  ███████╗   ██║   ███████╗\033[0m"
+echo -e "\033[1;33m# ██╔══██╗██║   ██║██║╚██╗██║       ██║   ██╔══╝  ╚════██║   ██║   ╚════██║\033[0m"
+echo -e "\033[1;33m# ██║  ██║╚██████╔╝██║ ╚████║       ██║   ███████╗███████║   ██║   ███████║\033[0m"
+echo -e "\033[1;33m# ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝       ╚═╝   ╚══════╝╚══════╝   ╚═╝   ╚══════╝\033[0m"
+echo -e "\033[1;33m#\033[0m"
 ${APP_INTEGRATION_DIR}/vendor/bin/behat --colors -f junit -f pretty $1 $2
 RESULT=$?
 
 echo ''
-echo '#'
-echo '# Stopping PHP webserver and disabling spreedcheats'
-echo '#'
+echo -e "\033[0;36m#\033[0m"
+echo -e "\033[0;36m# Stopping PHP webserver\033[0m"
+echo -e "\033[0;36m#\033[0m"
 pkill -P $PHPPID1
 kill $PHPPID1
 pkill -P $PHPPID2
 kill $PHPPID2
 
+echo ''
+echo -e "\033[0;36m#\033[0m"
+echo -e "\033[0;36m# Reverting configuration changes and disabling spreedcheats\033[0m"
+echo -e "\033[0;36m#\033[0m"
 ${ROOT_DIR}/occ app:disable spreedcheats
 ${ROOT_DIR}/occ config:system:set overwrite.cli.url --value $OVERWRITE_CLI_URL
 if [[ "$SKELETON_DIR" ]]; then
