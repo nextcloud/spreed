@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 17.1.0-rc.4 – 2023-08-31
+### Changed
+- chore(packaging): Ship dependencies lock files
+  [#10426](https://github.com/nextcloud/spreed/issues/10426)
+- Update dependencies
+
+### Fixed
+- fix(bots): Fix several problems with bots
+  [#10425](https://github.com/nextcloud/spreed/issues/10425)
+- feat(conversations): Persist the filter status after reload
+  [#10407](https://github.com/nextcloud/spreed/issues/10407)
+- fix(chat): Adjust parsing of NcRichContenteditable output before sending
+  [#10440](https://github.com/nextcloud/spreed/issues/10440)
+- fix(conversations): Fix arrow-key navigation in left sidebar
+  [#10418](https://github.com/nextcloud/spreed/issues/10418)
+- fix(deck): Show conversation name and highlight link in deck integration
+  [#10394](https://github.com/nextcloud/spreed/issues/10394)
+- fix(chat): Fix combined system message text with duplicated messages from yourself
+  [#10439](https://github.com/nextcloud/spreed/issues/10439)
+
 ## 17.1.0-rc.3 – 2023-08-25
 ### Added
 - feat(capability): Add a capability for messages being markdown
