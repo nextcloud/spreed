@@ -264,6 +264,7 @@ import SearchBox from './SearchBox/SearchBox.vue'
 
 import { useArrowNavigation } from '../../composables/useArrowNavigation.js'
 import { CONVERSATION } from '../../constants.js'
+import BrowserStorage from '../../services/BrowserStorage.js'
 import {
 	createPrivateConversation,
 	searchPossibleConversations,
@@ -471,6 +472,8 @@ export default {
 		EventBus.$on('should-refresh-conversations', this.handleShouldRefreshConversations)
 		EventBus.$once('conversations-received', this.handleConversationsReceived)
 		EventBus.$on('route-change', this.onRouteChange)
+		// Check filter status in previous sessions and apply if it exists
+		this.handleFilter(BrowserStorage.getItem('filterEnabled'))
 	},
 
 	beforeDestroy() {
@@ -501,6 +504,14 @@ export default {
 
 		handleFilter(filter) {
 			this.isFiltered = filter
+
+			// Store the active filter
+			if (filter) {
+				BrowserStorage.setItem('filterEnabled', filter)
+			} else {
+				BrowserStorage.removeItem('filterEnabled')
+			}
+
 			// Clear the search input once a filter is active
 			this.searchText = ''
 		},
