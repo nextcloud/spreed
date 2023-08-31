@@ -16,6 +16,10 @@
 			<directory name="vendor" />
 		</ignoreFiles>
 	</projectFiles>
+	<extraFiles>
+		<directory name="lib/Vendor" />
+		<directory name="vendor" />
+	</extraFiles>
 	<issueHandlers>
 		<LessSpecificReturnStatement errorLevel="error"/>
 		<LessSpecificReturnType errorLevel="error"/>
