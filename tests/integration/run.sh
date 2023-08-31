@@ -22,7 +22,7 @@ echo 'Running on process ID:'
 echo $PHPPID1
 
 # also kill php process in case of ctrl+c
-trap 'kill -TERM $PHPPID1; wait $PHPPID1' TERM
+trap 'pkill -P $PHPPID1; kill -TERM $PHPPID1; wait $PHPPID1' TERM
 
 # The federated server is started and stopped by the tests themselves
 PORT_FED=8180
@@ -34,7 +34,7 @@ echo 'Running on process ID:'
 echo $PHPPID2
 
 # also kill php process in case of ctrl+c
-trap 'kill -TERM $PHPPID2; wait $PHPPID2' TERM
+trap 'pkill -P $PHPPID2; kill -TERM $PHPPID2; wait $PHPPID2' TERM
 
 NEXTCLOUD_ROOT_DIR=${ROOT_DIR}
 export NEXTCLOUD_ROOT_DIR
@@ -84,7 +84,9 @@ echo ''
 echo '#'
 echo '# Stopping PHP webserver and disabling spreedcheats'
 echo '#'
+pkill -P $PHPPID1
 kill $PHPPID1
+pkill -P $PHPPID2
 kill $PHPPID2
 
 ${ROOT_DIR}/occ app:disable spreedcheats
