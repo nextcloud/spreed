@@ -13,6 +13,8 @@ echo '# Installing composer dependencies from tests/integration/'
 echo '#'
 composer install
 
+cp ConsoleOutputFactory.php vendor/behat/behat/src/Behat/Behat/Output/Printer/ConsoleOutputFactory.php
+
 echo ''
 echo '#'
 echo '# Starting PHP webserver'
