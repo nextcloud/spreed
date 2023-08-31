@@ -474,10 +474,11 @@ export default {
 			}
 
 			if (this.hasText) {
-				// FIXME: remove after issue is resolved: https://github.com/nextcloud/nextcloud-vue/issues/3264
+				// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
 				const temp = document.createElement('textarea')
-				temp.innerHTML = this.text
-				this.text = temp.value
+				temp.innerHTML = this.text.replace(/&/gmi, '&amp;')
+				this.text = temp.value.replace(/&amp;/gmi, '&').replace(/&lt;/gmi, '<')
+					.replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§')
 
 				const temporaryMessage = await this.$store.dispatch('createTemporaryMessage', {
 					text: this.text.trim(),
