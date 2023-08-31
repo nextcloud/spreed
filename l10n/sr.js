@@ -1490,6 +1490,7 @@ OC.L10N.register(
     "{actor} demoted {user0} and {user1} from moderators" : "{actor} је скинуо улогу модератора за кориснике {user0} и {user1}",
     "_An administrator demoted {user0}, {user1} and %n more participant from moderators_::_An administrator demoted {user0}, {user1} and %n more participants from moderators_" : ["Администратор је скинуо улогу модератора за кориснике {user0}, {user1} и за још %n учесника","Администратор је скинуо улогу модератора за кориснике {user0}, {user1} и за још %n учесника","Администратор је скинуо улогу модератора за кориснике {user0}, {user1} и за још %n учесника"],
     "_{actor} demoted {user0}, {user1} and %n more participant from moderators_::_{actor} demoted {user0}, {user1} and %n more participants from moderators_" : ["{actor} је скинуо улогу модератора за кориснике {user0}, {user1} и за још %n учесника","{actor} је скинуо улогу модератора за кориснике {user0}, {user1} и за још %n учесника","{actor} је скинуо улогу модератора за кориснике {user0}, {user1} и за још %n учесника"],
+    "Deck card has been posted to {conversation}" : "Шпил карата је објављен у {conversation}",
     "The recording failed. Please contact your administrator." : "Снимање није успело. Молимо вас да се обратите свом администратору.",
     "Location has been posted to the selected <a href=\"{link}\">conversation</a>" : "Локација је објављена у изабрани <a href=\"{link}\">разговор</a>",
     "An error occurred while posting location to conversation" : "Дошло је до грешке током објављивања локације у разговор",
