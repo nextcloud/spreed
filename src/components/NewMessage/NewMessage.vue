@@ -483,10 +483,6 @@ export default {
 					text: this.text.trim(),
 					token: this.token,
 				})
-				// FIXME: move "addTemporaryMessage" into "postNewMessage" as it's a pre-requisite anyway ?
-				if (!this.broadcast) {
-					await this.$store.dispatch('addTemporaryMessage', temporaryMessage)
-				}
 				this.text = ''
 				this.resetTypingIndicator()
 				this.userData = {}
