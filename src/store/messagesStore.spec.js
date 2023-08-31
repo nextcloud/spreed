@@ -1569,7 +1569,6 @@ describe('messagesStore', () => {
 				token: TOKEN,
 				sendingFailure: '',
 			}
-			store.dispatch('addTemporaryMessage', temporaryMessage)
 
 			const messageResponse = {
 				id: 200,
@@ -1662,8 +1661,6 @@ describe('messagesStore', () => {
 				status: statusCode,
 			}
 
-			store.dispatch('addTemporaryMessage', temporaryMessage)
-
 			postNewMessage.mockRejectedValueOnce({ isAxiosError: true, response })
 			await expect(
 				store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } })
@@ -1705,7 +1702,6 @@ describe('messagesStore', () => {
 				sendingFailure: '',
 			}
 
-			store.dispatch('addTemporaryMessage', temporaryMessage)
 			store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } }).catch(() => {})
 
 			jest.advanceTimersByTime(60000)
@@ -1739,7 +1735,6 @@ describe('messagesStore', () => {
 			const response = generateOCSResponse({ payload })
 			postNewMessage.mockResolvedValueOnce(response)
 
-			store.dispatch('addTemporaryMessage', temporaryMessage)
 			await store.dispatch('postNewMessage', { temporaryMessage, options: { silent: false } })
 
 			jest.advanceTimersByTime(60000)

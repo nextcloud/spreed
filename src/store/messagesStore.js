@@ -1145,6 +1145,8 @@ const actions = {
 	 * @param {object} data.options post request options.
 	 */
 	async postNewMessage(context, { temporaryMessage, options }) {
+		context.dispatch('addTemporaryMessage', temporaryMessage)
+
 		const { request, cancel } = CancelableRequest(postNewMessage)
 		context.commit('setCancelPostNewMessage', { messageId: temporaryMessage.id, cancelFunction: cancel })
 
