@@ -20,14 +20,18 @@
 -->
 
 <template>
-	<div ref="editable-text-field"
-		:key="forceReRenderKey"
-		class="editable-text-field">
-		<NcRichContenteditable ref="richContenteditable"
+	<div ref="editable-text-field" class="editable-text-field">
+		<NcRichText v-if="!editing"
+			class="editable-text-field__output"
+			:text="text"
+			autolink
+			:use-markdown="useMarkdown" />
+		<NcRichContenteditable v-else
+			ref="richContenteditable"
 			:value.sync="text"
 			:auto-complete="()=>{}"
 			:maxlength="maxLength"
-			:contenteditable="editing && !loading"
+			:contenteditable="!loading"
 			:placeholder="placeholder"
 			@submit="handleSubmitText"
 			@keydown.esc="handleCancelEditing" />
@@ -77,11 +81,13 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcRichContenteditable from '@nextcloud/vue/dist/Components/NcRichContenteditable.js'
+import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 
 export default {
 	name: 'EditableTextField',
 	components: {
+		NcRichText,
 		Pencil,
 		Check,
 		Close,
@@ -147,6 +153,11 @@ export default {
 			type: String,
 			required: true,
 		},
+
+		useMarkdown: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	emits: ['update:editing', 'submit-text'],
@@ -154,7 +165,6 @@ export default {
 	data() {
 		return {
 			text: this.initialText,
-			forceReRenderKey: 0,
 			overflows: null,
 		}
 	},
@@ -217,19 +227,14 @@ export default {
 				return
 			}
 			// Remove leading/trailing whitespaces.
-			// FIXME: remove after issue is resolved: https://github.com/nextcloud/nextcloud-vue/issues/3264
+			// FIXME upstream: https://github.com/nextcloud-libraries/nextcloud-vue/issues/4492
 			const temp = document.createElement('textarea')
-			temp.innerHTML = this.text
-			this.text = temp.value.replace(/\r\n|\n|\r/gm, '\n').trim()
+			temp.innerHTML = this.text.replace(/&/gmi, '&amp;')
+			this.text = temp.value.replace(/\r\n|\n|\r/gm, '\n').replace(/&amp;/gmi, '&')
+				.replace(/&lt;/gmi, '<').replace(/&gt;/gmi, '>').replace(/&sect;/gmi, '§').trim()
 
 			// Submit text
 			this.$emit('submit-text', this.text)
-			/**
-			 * Change the NcRichContenteditable key in order to trigger a re-render
-			 * without this all the trimmed new lines and whitespaces would
-			 * still be present in the contenteditable element.
-			 */
-			this.forceReRenderKey += 1
 		},
 
 		handleCancelEditing() {
@@ -257,6 +262,12 @@ export default {
 	&__edit {
 		margin-left: var(--default-clickable-area);
 	}
+
+  &__output {
+    width: 100%;
+    padding: 10px;
+    line-height: var(--default-line-height);
+  }
 }
 
 .spinner {
