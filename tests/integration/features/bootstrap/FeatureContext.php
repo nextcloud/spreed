@@ -37,44 +37,41 @@ use Psr\Http\Message\ResponseInterface;
 class FeatureContext implements Context, SnippetAcceptingContext {
 	public const TEST_PASSWORD = '123456';
 
-	/** @var string[] */
-	protected static $identifierToToken;
-	/** @var string[] */
-	protected static $identifierToId;
-	/** @var string[] */
-	protected static $tokenToIdentifier;
-	/** @var array[] */
-	protected static $identifierToAvatar;
-	/** @var string[] */
-	protected static $sessionIdToUser;
-	/** @var string[] */
-	protected static $userToSessionId;
-	/** @var int[] */
-	protected static $userToAttendeeId;
-	/** @var string[] */
-	protected static $messages;
-	protected static $textToMessageId;
-	/** @var array[] */
-	protected static $messageIdToText;
-	/** @var int[] */
-	protected static $remoteToInviteId;
-	/** @var string[] */
-	protected static $inviteIdToRemote;
-	/** @var int[] */
-	protected static $questionToPollId;
-	/** @var array[] */
-	protected static $lastNotifications;
-	/** @var array<int, string> */
-	protected static $botIdToName;
-	/** @var array<string, int> */
-	protected static $botNameToId;
 	/** @var array<string, string> */
-	protected static $botNameToHash;
+	protected static array $identifierToToken;
+	/** @var array<string, int> */
+	protected static array $identifierToId;
+	/** @var array<string, string> */
+	protected static array $tokenToIdentifier;
+	/** @var array<string, string> */
+	protected static array $sessionIdToUser;
+	/** @var array<string, string> */
+	protected static array $userToSessionId;
+	/** @var array<string, int> */
+	protected static array $userToAttendeeId;
+	/** @var array<string, int> */
+	protected static array $textToMessageId;
+	/** @var array<int, string> */
+	protected static array $messageIdToText;
+	/** @var array<string, int> */
+	protected static array $remoteToInviteId;
+	/** @var array<int, string> */
+	protected static array $inviteIdToRemote;
+	/** @var array<string, int> */
+	protected static array $questionToPollId;
+	/** @var array[] */
+	protected static array $lastNotifications;
+	/** @var array<int, string> */
+	protected static array $botIdToName;
+	/** @var array<string, int> */
+	protected static array $botNameToId;
+	/** @var array<string, string> */
+	protected static array $botNameToHash;
 	/** @var array<string, mixed>|null */
 	protected static ?array $nextChatRequestParameters = null;
 
 
-	protected static $permissionsMap = [
+	protected static array $permissionsMap = [
 		'D' => 0, // PERMISSIONS_DEFAULT
 		'C' => 1, // PERMISSIONS_CUSTOM
 		'S' => 2, // PERMISSIONS_CALL_START
@@ -86,41 +83,36 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		'M' => 128, // PERMISSIONS_CHAT
 	];
 
-	/** @var string */
-	protected $currentUser;
+	protected ?string $currentUser = null;
 
-	/** @var ResponseInterface */
-	private $response;
+	private ?ResponseInterface $response;
 
 	/** @var CookieJar[] */
-	private $cookieJars;
+	private array $cookieJars;
 
-	/** @var string */
-	protected $baseUrl;
+	protected string $baseUrl;
 
-	/** @var string */
-	protected $baseRemoteUrl;
+	protected string $baseRemoteUrl;
 
-	/** @var array */
-	protected $createdUsers = [];
+	/** @var string[] */
+	protected array $createdUsers = [];
 
-	/** @var array */
-	protected $createdGroups = [];
+	/** @var string[] */
+	protected array $createdGroups = [];
 
-	/** @var array */
-	protected $createdGuestAccountUsers = [];
+	/** @var string[] */
+	protected array $createdGuestAccountUsers = [];
 
 	/** @var array */
-	protected $changedConfigs = [];
+	protected array $changedConfigs = [];
 
-	/** @var SharingContext */
-	private $sharingContext;
+	protected bool $changedBruteforceSetting = false;
 
-	/** @var null|bool */
-	private $guestsAppWasEnabled = null;
+	private ?SharingContext $sharingContext;
 
-	/** @var string */
-	private $guestsOldWhitelist;
+	private ?bool $guestsAppWasEnabled = null;
+
+	private string $guestsOldWhitelist;
 
 	use CommandLineTrait;
 	use RecordingTrait;
@@ -152,7 +144,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->cookieJars = [];
 		$this->baseUrl = getenv('TEST_SERVER_URL');
 		$this->baseRemoteUrl = getenv('TEST_REMOTE_URL');
-		$this->guestsAppWasEnabled = null;
 	}
 
 	/**
@@ -932,7 +923,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @return int
 	 */
 	private function getFileIdForPath($user, $path) {
-		$this->currentUser = $user;
+		$this->setCurrentUser($user);
 
 		$url = "/$user/$path";
 
@@ -967,7 +958,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$options = [];
 		if ($this->currentUser === 'admin') {
 			$options['auth'] = 'admin';
-		} else {
+		} elseif ($this->currentUser !== null) {
 			$options['auth'] = [$this->currentUser, self::TEST_PASSWORD];
 		}
 		$options['headers'] = [
@@ -2859,8 +2850,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param TableNode $formData
 	 */
 	public function setAppConfig(string $appId, TableNode $formData): void {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 		foreach ($formData->getRows() as $row) {
 			$this->sendRequest('POST', '/apps/provisioning_api/api/v1/config/apps/' . $appId . '/' . $row[0], [
 				'value' => $row[1],
@@ -2936,8 +2926,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param TableNode $formData
 	 */
 	public function allowGuestAccountsCreation(): void {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 
 		// save old state and restore at the end
 		$this->sendRequest('GET', '/cloud/apps?filter=enabled');
@@ -2973,8 +2962,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @AfterScenario
 	 */
 	public function resetSpreedAppData() {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('DELETE', '/apps/spreedcheats/');
 		foreach ($this->changedConfigs as $appId => $configs) {
 			foreach ($configs as $config) {
@@ -2983,7 +2971,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		$this->setCurrentUser($currentUser);
-		$this->enableDisableBruteForceProtection('disable');
+		if ($this->changedBruteforceSetting) {
+			$this->enableDisableBruteForceProtection('disable');
+		}
 	}
 
 	/**
@@ -2995,8 +2985,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return;
 		}
 
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 
 		if ($this->guestsOldWhitelist) {
 			// restore old whitelist
@@ -3021,7 +3010,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	/**
 	 * @Given /^as user "([^"]*)"$/
-	 * @param string $user
 	 */
 	public function setCurrentUser(?string $user): ?string {
 		$oldUser = $this->currentUser;
@@ -3049,9 +3037,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @Given /^(enable|disable) brute force protection$/
 	 */
 	public function enableDisableBruteForceProtection(string $enable): void {
-		if ($enable === 'disable') {
+		if ($enable === 'enable') {
+			$this->changedBruteforceSetting = true;
+		} else {
 			// Reset the attempts before disabling
 			$this->runOcc(['security:bruteforce:reset', '127.0.0.1']);
+			$this->theCommandWasSuccessful();
+			$this->runOcc(['security:bruteforce:reset', '::1']);
 			$this->theCommandWasSuccessful();
 		}
 
@@ -3071,6 +3063,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// Reset the attempts after enabling
 			$this->runOcc(['security:bruteforce:reset', '127.0.0.1']);
 			$this->theCommandWasSuccessful();
+			$this->runOcc(['security:bruteforce:reset', '::1']);
+			$this->theCommandWasSuccessful();
+		} else {
+			$this->changedBruteforceSetting = false;
 		}
 	}
 
@@ -3084,17 +3080,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 				$this->runOcc(['security:bruteforce:attempts', '127.0.0.1', $action, '--output=json']);
 				$this->theCommandWasSuccessful();
 				$info = json_decode($this->getLastStdOut(), true);
-
-				Assert::assertEquals($attempts, $info['attempts']);
 				$totalCount += $info['attempts'];
+				$ipv4Attempts = $info['attempts'];
+
+				$this->runOcc(['security:bruteforce:attempts', '::1', $action, '--output=json']);
+				$this->theCommandWasSuccessful();
+				$info = json_decode($this->getLastStdOut(), true);
+				$totalCount += $info['attempts'];
+				$ipv6Attempts = $info['attempts'];
+
+				Assert::assertEquals($attempts, $ipv4Attempts + $ipv6Attempts);
 			}
 		}
 
 		$this->runOcc(['security:bruteforce:attempts', '127.0.0.1', '--output=json']);
 		$this->theCommandWasSuccessful();
 		$info = json_decode($this->getLastStdOut(), true);
+		$ipv4Attempts = $info['attempts'];
 
-		Assert::assertEquals($totalCount, $info['attempts'], 'IP has bruteforce attempts for other actions registered');
+		$this->runOcc(['security:bruteforce:attempts', '::1', '--output=json']);
+		$this->theCommandWasSuccessful();
+		$info = json_decode($this->getLastStdOut(), true);
+		$ipv6Attempts = $info['attempts'];
+
+		Assert::assertEquals($totalCount, $ipv4Attempts + $ipv6Attempts, 'IP has bruteforce attempts for other actions registered');
 	}
 
 	/**
@@ -3102,8 +3111,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $email email address
 	 */
 	public function createGuestUser($email) {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 		// in case it exists
 		$this->deleteUser($email);
 
@@ -3126,16 +3134,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	private function userExists($user) {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('GET', '/cloud/users/' . $user);
 		$this->setCurrentUser($currentUser);
 		return $this->response;
 	}
 
 	private function createUser($user) {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('POST', '/cloud/users', [
 			'userid' => $user,
 			'password' => self::TEST_PASSWORD,
@@ -3170,8 +3176,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	private function deleteUser($user) {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('DELETE', '/cloud/users/' . $user);
 		$this->setCurrentUser($currentUser);
 
@@ -3181,8 +3186,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	private function deleteGuestUser($user) {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('DELETE', '/cloud/users/' . $user);
 		$this->setCurrentUser($currentUser);
 
@@ -3192,8 +3196,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	private function setUserDisplayName($user) {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('PUT', '/cloud/users/' . $user, [
 			'key' => 'displayname',
 			'value' => $user . '-displayname'
@@ -3206,8 +3209,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $group
 	 */
 	public function assureGroupExists($group) {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('POST', '/cloud/groups', [
 			'groupid' => $group,
 		]);
@@ -3236,23 +3238,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $displayName
 	 */
 	public function renameGroup(string $groupId, string $displayName): void {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('PUT', '/cloud/groups/' . urlencode($groupId), [
 			'key' => 'displayname',
 			'value' => $displayName,
 		]);
 
 		$this->assertStatusCode($this->response, 200);
+		$this->setCurrentUser($currentUser);
 	}
 
 	private function deleteGroup($group) {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('DELETE', '/cloud/groups/' . $group);
 		$this->setCurrentUser($currentUser);
 
 		unset($this->createdGroups[$group]);
+		$this->setCurrentUser($currentUser);
 	}
 
 	/**
@@ -3261,8 +3263,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $group
 	 */
 	public function addingUserToGroup($user, $group) {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('POST', "/cloud/users/$user/groups", [
 			'groupid' => $group,
 		]);
@@ -3276,8 +3277,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $group
 	 */
 	public function removeUserFromGroup($user, $group) {
-		$currentUser = $this->currentUser;
-		$this->setCurrentUser('admin');
+		$currentUser = $this->setCurrentUser('admin');
 		$this->sendRequest('DELETE', "/cloud/users/$user/groups", [
 			'groupid' => $group,
 		]);
@@ -3591,6 +3591,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$options
 		);
 		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
 	}
 
 	/**
@@ -3637,6 +3638,49 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->invokingTheCommand('talk:bot:state ' . self::$botNameToId[$botName] . ' ' . $state . $features);
 		$this->theCommandWasSuccessful();
+	}
+
+	/**
+	 * @Then /^Bot "([^"]*)" (sends|removes) a (message|reaction) for room "([^"]*)" with (\d+)(?: \((v1)\))?$/
+	 */
+	public function botSendsRequest(string $botName, string $sends, string $action, string $identifier, int $status, string $apiVersion, TableNode $body): void {
+		$currentUser = $this->setCurrentUser(null);
+
+		$data = $body->getRowsHash();
+		$secret = $data['secret'];
+		unset($data['secret']);
+
+
+		if ($action === 'message') {
+			$url = '/message';
+			$toSign = $data['message'];
+
+			if (isset($data['replyTo'])) {
+				$data['replyTo'] = self::$textToMessageId[$data['replyTo']];
+			}
+		} else {
+			$url = '/reaction/' . self::$textToMessageId[$data['messageId']];
+			unset($data['messageId']);
+			$toSign = $data['reaction'];
+		}
+
+		$random = bin2hex(random_bytes(32));
+		$hash = hash_hmac('sha256', $random . $toSign, $secret);
+		$headers = [
+			'X-Nextcloud-Talk-Bot-Random' => $random,
+			'X-Nextcloud-Talk-Bot-Signature' => $hash,
+		];
+
+
+		$this->sendRequest(
+			$sends === 'sends' ? 'POST' : 'DELETE',
+			'/apps/spreed/api/' . $apiVersion . '/bot/' . self::$identifierToToken[$identifier] . $url,
+			$data,
+			$headers
+		);
+		$this->assertStatusCode($this->response, $status);
+
+		$this->setCurrentUser($currentUser);
 	}
 
 	/**
@@ -3812,7 +3856,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @param string $verb
 	 * @param string $fullUrl
-	 * @param TableNode|array|null $body
+	 * @param TableNode|array|string|null $body
 	 * @param array $headers
 	 */
 	public function sendRequestFullUrl($verb, $fullUrl, $body = null, array $headers = [], array $options = []) {
@@ -3820,7 +3864,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$options = array_merge($options, ['cookies' => $this->getUserCookieJar($this->currentUser)]);
 		if ($this->currentUser === 'admin') {
 			$options['auth'] = ['admin', 'admin'];
-		} elseif (strpos($this->currentUser, 'guest') !== 0) {
+		} elseif ($this->currentUser !== null && !str_starts_with($this->currentUser, 'guest')) {
 			$options['auth'] = [$this->currentUser, self::TEST_PASSWORD];
 		}
 		if ($body instanceof TableNode) {
