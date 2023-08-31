@@ -10,10 +10,10 @@ Install a new bot on the server
 
 | Arguments | Description | Is required | Is array | Default |
 |---|---|---|---|---|
-| `name` | The name under which the messages will be posted | yes | no | *Required* |
-| `secret` | Secret used to validate API calls | yes | no | *Required* |
-| `url` | Webhook endpoint to post messages to | yes | no | *Required* |
-| `description` | Optional description shown in the admin settings | no | no | `NULL` |
+| `name` | The name under which the messages will be posted (min. 1 char, max. 64 chars) | yes | no | *Required* |
+| `secret` | Secret used to validate API calls (min. 40 chars, max. 128 chars) | yes | no | *Required* |
+| `url` | Webhook endpoint to post messages to (max. 4000 chars) | yes | no | *Required* |
+| `description` | Optional description shown in the admin settings (max. 4000 chars) | no | no | `NULL` |
 
 | Options | Description | Accept value | Is value required | Is multiple | Default |
 |---|---|---|---|---|---|

@@ -118,7 +118,7 @@ class MessageParser {
 	protected function getBotNameByUrlHashForConversation(string $token, string $urlHash): ?string {
 		if (!isset($this->botNames[$token])) {
 			$this->botNames[$token] = [];
-			$bots = $this->botService->getBotsForToken($token);
+			$bots = $this->botService->getBotsForToken($token, null);
 			foreach ($bots as $bot) {
 				$botServer = $bot->getBotServer();
 				$this->botNames[$token][$botServer->getUrlHash()] = $botServer->getName();

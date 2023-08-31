@@ -87,11 +87,24 @@ trait CommandLineTrait {
 	 * @Given /^invoking occ with "([^"]*)"$/
 	 */
 	public function invokingTheCommand($cmd) {
+		// FIXME this way is deprecated
 		if (preg_match('/room-name:(?P<token>\w+)/', $cmd, $matches)) {
 			if (array_key_exists($matches['token'], self::$identifierToToken)) {
 				$cmd = preg_replace('/room-name:(\w+)/', self::$identifierToToken[$matches['token']], $cmd);
 			}
 		}
+
+		if (preg_match('/ROOM\((?P<name>\w+)\)/', $cmd, $matches)) {
+			if (array_key_exists($matches['name'], self::$identifierToToken)) {
+				$cmd = preg_replace('/ROOM\((\w+)\)/', self::$identifierToToken[$matches['name']], $cmd);
+			}
+		}
+		if (preg_match('/BOT\((?P<name>\w+)\)/', $cmd, $matches)) {
+			if (array_key_exists($matches['name'], self::$botNameToId)) {
+				$cmd = preg_replace('/BOT\((\w+)\)/', self::$botNameToId[$matches['name']], $cmd);
+			}
+		}
+
 		$args = explode(' ', $cmd);
 		$this->runOcc($args);
 	}
@@ -131,7 +144,10 @@ trait CommandLineTrait {
 
 			$msg = 'The command was not successful, exit code was ' . $this->lastCode . '.';
 			if (!empty($exceptions)) {
-				$msg .= ' Exceptions: ' . implode(', ', $exceptions);
+				$msg .= "\n" . ' Exceptions: ' . implode(', ', $exceptions);
+			} else {
+				$msg .= "\n" . ' ' . $this->lastStdOut;
+				$msg .= "\n" . ' ' . $this->lastStdErr;
 			}
 			throw new \Exception($msg);
 		} elseif (!empty($exceptions)) {
@@ -143,7 +159,7 @@ trait CommandLineTrait {
 	/**
 	 * @Then /^the command failed with exit code ([0-9]+)$/
 	 */
-	public function theCommandFailedWithExitCode($exitCode) {
+	public function theCommandFailedWithExitCode(int $exitCode) {
 		Assert::assertEquals($exitCode, $this->lastCode, 'The commands exit code did not match');
 	}
 

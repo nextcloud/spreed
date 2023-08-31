@@ -129,3 +129,189 @@ Feature: chat/bots
     Given invoking occ with "talk:bot:list room-name:room"
     And the command was successful
     And the command output is empty
+
+  Scenario: Registering a bot with invalid parameters
+    When invoking occ with "talk:bot:install  S3CR3T U"
+    Then the command failed with exit code 1
+    And the command output contains the text "The provided name is too short"
+    When invoking occ with "talk:bot:install Bot S3CR3T U"
+    Then the command failed with exit code 1
+    And the command output contains the text "The provided secret is too short"
+    When invoking occ with "talk:bot:install Bot Secret:1234567890123456789012345678901234567890 U"
+    Then the command failed with exit code 1
+    And the command output contains the text "The provided URL is not a valid URL"
+
+  Scenario: Registering the same webhook or secret twice
+    Given invoking occ with "talk:bot:install Bot Secret:1234567890123456789012345678901234567890 https://localhost/bot1"
+    And the command was successful
+    When invoking occ with "talk:bot:install Bot Secret:1234567890123456789012345678901234567890 https://localhost/bot1"
+    Then the command failed with exit code 2
+    And the command output contains the text "Bot with the same URL is already registered"
+    When invoking occ with "talk:bot:install Bot Secret:1234567890123456789012345678901234567890 https://localhost/bot2"
+    Then the command failed with exit code 3
+    And the command output contains the text "Bot with the same secret is already registered"
+
+  Scenario: Set up conversation bot errors
+    Given invoking occ with "talk:bot:install ErrorBot Secret:1234567890123456789012345678901234567890 https://localhost/bot1"
+    And the command was successful
+    And read bot ids from OCC
+    And user "participant1" creates room "room" (v4)
+      | roomType | 2 |
+      | roomName | room |
+    When invoking occ with "talk:bot:setup 2147483647 invalid-token"
+    Then the command failed with exit code 1
+    And the command output contains the text "Bot could not be found by id: 2147483647"
+    When invoking occ with "talk:bot:setup BOT(ErrorBot) invalid-token"
+    Then the command failed with exit code 2
+    And the command output contains the text "Conversation could not be found by token: invalid-token"
+    When invoking occ with "talk:bot:setup BOT(ErrorBot) ROOM(room)"
+    And the command was successful
+    And invoking occ with "talk:bot:setup BOT(ErrorBot) ROOM(room)"
+    Then the command failed with exit code 3
+    And the command output contains the text "Bot is already set up for the conversation"
+
+  Scenario: Bot with all features
+    Given invoking occ with "talk:bot:install Bot Secret1234567890123456789012345678901234567890 https://localhost/bot1"
+    And the command was successful
+    And read bot ids from OCC
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And invoking occ with "talk:bot:setup BOT(Bot) ROOM(room1)"
+    And the command was successful
+    And user "participant1" sends message "Message 1" to room "room1" with 201
+    When Bot "Bot" sends a message for room "room1" with 201 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | message   | Response 1 |
+      | replyTo   | Message 1  |
+    When Bot "Bot" sends a reaction for room "room1" with 201 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | messageId | Message 1 |
+      | reaction  | 👍 |
+    Then user "participant1" sees the following messages in room "room1" with 200
+      | room  | actorType | actorId           | actorDisplayName         | message    | messageParameters | parentMessage |
+      | room1 | bots      | BOT(Bot)          | Bot (Bot)                | Response 1 | []                | Message 1     |
+      | room1 | users     | participant1      | participant1-displayname | Message 1  | []                |               |
+    Then user "participant1" retrieve reactions "👍" of message "Message 1" in room "room1" with 200
+      | actorType | actorId           | actorDisplayName | reaction |
+      | bots      | BOT(Bot)          | Bot (Bot)        | 👍       |
+    When Bot "Bot" removes a reaction for room "room1" with 200 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | messageId | Message 1 |
+      | reaction  | 👍 |
+    Then user "participant1" retrieve reactions "👍" of message "Message 1" in room "room1" with 200
+      | actorType | actorId           | actorDisplayName | reaction |
+
+  # Unchanged from above
+  Scenario: Bot with response only feature
+    Given invoking occ with "talk:bot:install Bot Secret1234567890123456789012345678901234567890 https://localhost/bot1 --feature=response"
+    And the command was successful
+    And read bot ids from OCC
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And invoking occ with "talk:bot:setup BOT(Bot) ROOM(room1)"
+    And the command was successful
+    And user "participant1" sends message "Message 1" to room "room1" with 201
+    When Bot "Bot" sends a message for room "room1" with 201 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | message   | Response 1 |
+      | replyTo   | Message 1  |
+    When Bot "Bot" sends a reaction for room "room1" with 201 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | messageId | Message 1 |
+      | reaction  | 👍 |
+    Then user "participant1" sees the following messages in room "room1" with 200
+      | room  | actorType | actorId           | actorDisplayName         | message    | messageParameters | parentMessage |
+      | room1 | bots      | BOT(Bot)          | Bot (Bot)                | Response 1 | []                | Message 1     |
+      | room1 | users     | participant1      | participant1-displayname | Message 1  | []                |               |
+    Then user "participant1" retrieve reactions "👍" of message "Message 1" in room "room1" with 200
+      | actorType | actorId           | actorDisplayName | reaction |
+      | bots      | BOT(Bot)          | Bot (Bot)        | 👍       |
+    When Bot "Bot" removes a reaction for room "room1" with 200 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | messageId | Message 1 |
+      | reaction  | 👍 |
+    Then user "participant1" retrieve reactions "👍" of message "Message 1" in room "room1" with 200
+      | actorType | actorId           | actorDisplayName | reaction |
+
+  Scenario: Bot with receive-only feature
+    Given invoking occ with "talk:bot:install Bot Secret1234567890123456789012345678901234567890 https://localhost/bot1 --feature=webhook"
+    And the command was successful
+    And read bot ids from OCC
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And invoking occ with "talk:bot:setup BOT(Bot) ROOM(room1)"
+    And the command was successful
+    And user "participant1" sends message "Message 1" to room "room1" with 201
+    When Bot "Bot" sends a message for room "room1" with 401 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | message   | Response 1 |
+      | replyTo   | Message 1  |
+    When Bot "Bot" sends a reaction for room "room1" with 401 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | messageId | Message 1 |
+      | reaction  | 👍 |
+    Then user "participant1" sees the following messages in room "room1" with 200
+      | room  | actorType | actorId           | actorDisplayName         | message    | messageParameters | parentMessage |
+      | room1 | users     | participant1      | participant1-displayname | Message 1  | []                |               |
+    Then user "participant1" retrieve reactions "👍" of message "Message 1" in room "room1" with 200
+      | actorType | actorId           | actorDisplayName | reaction |
+    When Bot "Bot" removes a reaction for room "room1" with 401 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | messageId | Message 1 |
+      | reaction  | 👍 |
+
+  Scenario: Bot from another room
+    Given invoking occ with "talk:bot:install Bot Secret1234567890123456789012345678901234567890 https://localhost/bot1 --feature=response"
+    And the command was successful
+    And read bot ids from OCC
+    And user "participant1" creates room "room1" (v4)
+      | roomType | 2 |
+      | roomName | room1 |
+    And user "participant1" creates room "room2" (v4)
+      | roomType | 2 |
+      | roomName | room2 |
+    And invoking occ with "talk:bot:setup BOT(Bot) ROOM(room2)"
+    And the command was successful
+    And user "participant1" sends message "Message 1" to room "room1" with 201
+    # Unauthenticated on actual room
+    When Bot "Bot" sends a message for room "room1" with 401 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | message   | Response 1 |
+      | replyTo   | Message 1  |
+    # Bad requeston bot room
+    When Bot "Bot" sends a message for room "room2" with 400 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | message   | Response 1 |
+      | replyTo   | Message 1  |
+    # Unauthenticated on actual room
+    When Bot "Bot" sends a reaction for room "room1" with 401 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | messageId | Message 1 |
+      | reaction  | 👍 |
+    # Bad request on bot room
+    When Bot "Bot" sends a reaction for room "room2" with 400 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | messageId | Message 1 |
+      | reaction  | 👍 |
+    Then user "participant1" sees the following messages in room "room1" with 200
+      | room  | actorType | actorId           | actorDisplayName         | message    | messageParameters | parentMessage |
+      | room1 | users     | participant1      | participant1-displayname | Message 1  | []                |               |
+    Then user "participant1" sees the following messages in room "room2" with 200
+      | room  | actorType | actorId           | actorDisplayName         | message    | messageParameters | parentMessage |
+    Then user "participant1" retrieve reactions "👍" of message "Message 1" in room "room1" with 200
+      | actorType | actorId           | actorDisplayName | reaction |
+    # Unauthenticated on actual room
+    When Bot "Bot" removes a reaction for room "room1" with 401 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | messageId | Message 1 |
+      | reaction  | 👍 |
+    # Bad request on bot room
+    When Bot "Bot" removes a reaction for room "room2" with 404 (v1)
+      | secret | Secret1234567890123456789012345678901234567890 |
+      | messageId | Message 1 |
+      | reaction  | 👍 |
+    Then user "participant1" retrieve reactions "👍" of message "Message 1" in room "room1" with 200
+      | actorType | actorId           | actorDisplayName | reaction |

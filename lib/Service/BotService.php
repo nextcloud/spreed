@@ -65,7 +65,7 @@ class BotService {
 	}
 
 	public function afterChatMessageSent(ChatParticipantEvent $event, MessageParser $messageParser): void {
-		$bots = $this->getBotsForToken($event->getRoom()->getToken());
+		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK);
 		if (empty($bots)) {
 			return;
 		}
@@ -107,7 +107,7 @@ class BotService {
 	}
 
 	public function afterSystemMessageSent(ChatEvent $event, MessageParser $messageParser): void {
-		$bots = $this->getBotsForToken($event->getRoom()->getToken());
+		$bots = $this->getBotsForToken($event->getRoom()->getToken(), Bot::FEATURE_WEBHOOK);
 		if (empty($bots)) {
 			return;
 		}
@@ -246,9 +246,10 @@ class BotService {
 
 	/**
 	 * @param string $token
+	 * @param int|null $requiredFeature
 	 * @return Bot[]
 	 */
-	public function getBotsForToken(string $token): array {
+	public function getBotsForToken(string $token, ?int $requiredFeature): array {
 		$botConversations = $this->botConversationMapper->findForToken($token);
 
 		if (empty($botConversations)) {
@@ -271,8 +272,8 @@ class BotService {
 			}
 			$botServer = $serversMap[$botConversation->getBotId()];
 
-			if (!($botServer->getFeatures() & Bot::FEATURE_WEBHOOK)) {
-				$this->logger->debug('Not sending webhook to bot ID ' . $botConversation->getBotId() . ' because the feature is disabled for it');
+			if ($requiredFeature && !($botServer->getFeatures() & $requiredFeature)) {
+				$this->logger->debug('Ignoring bot ID ' . $botConversation->getBotId() . ' because the feature (' . $requiredFeature . ') is disabled for it');
 				continue;
 			}
 
@@ -287,5 +288,28 @@ class BotService {
 		}
 
 		return $bots;
+	}
+
+	/**
+	 * @throws \InvalidArgumentException
+	 */
+	public function validateBotParameters(string $name, string $secret, string $url, string $description): void {
+		$nameLength = strlen($name);
+		if ($nameLength === 0 || $nameLength > 64) {
+			throw new \InvalidArgumentException('The provided name is too short or too long (min. 1 char, max. 64 chars)');
+		}
+		$secretLength = strlen($secret);
+		if ($secretLength < 40 || $secretLength > 128) {
+			throw new \InvalidArgumentException('The provided secret is too short (min. 40 chars, max. 128 chars)');
+		}
+
+		$url = filter_var($url);
+		if (!$url || strlen($url) > 4000 || !(str_starts_with($url, 'http://') || str_starts_with($url, 'https://'))) {
+			throw new \InvalidArgumentException('The provided URL is not a valid URL');
+		}
+
+		if (strlen($description) > 4000) {
+			throw new \InvalidArgumentException('The provided description is too long (max. 4000 chars)');
+		}
 	}
 }
