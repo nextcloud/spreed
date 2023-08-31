@@ -153,13 +153,15 @@ export function useCombinedSystemMessage() {
 				if (storedUniqueUsers.includes(actorReference)) {
 					return
 				}
+
 				if (checkIfSelfIsOneOfActors(message)) {
 					selfIsUser = true
 				} else {
 					combinedMessage.messageParameters[`user${referenceIndex}`] = message.messageParameters.actor
-					storedUniqueUsers.push(actorReference)
 					referenceIndex++
 				}
+
+				storedUniqueUsers.push(actorReference)
 				usersCounter++
 			})
 
