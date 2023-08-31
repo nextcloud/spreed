@@ -1,4 +1,8 @@
 default:
+  formatters:
+    pretty:
+      output_styles:
+        comment: [ 'bright-blue' ]
   autoload:
     '': '%paths.base%/../features/bootstrap'
   suites:
