@@ -42,6 +42,7 @@
 				:loading="isDescriptionLoading"
 				:edit-button-aria-label="t('spreed', 'Edit conversation description')"
 				:placeholder="t('spreed', 'Enter a description for this conversation')"
+				use-markdown
 				@submit-text="handleUpdateDescription"
 				@update:editing="handleEditDescription" />
 		</template>
