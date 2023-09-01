@@ -516,7 +516,7 @@ const actions = {
 				context.commit('addMessage', message.parent)
 				context.dispatch('resetReactions', {
 					token: message.token,
-					messageId: message.parent,
+					messageId: message.parent.id,
 				})
 			}
 			// Quit processing
