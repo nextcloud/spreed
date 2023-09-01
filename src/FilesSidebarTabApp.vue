@@ -54,10 +54,6 @@ import { loadState } from '@nextcloud/initial-state'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
-import ChatView from './components/ChatView.vue'
-import MediaSettings from './components/MediaSettings/MediaSettings.vue'
-import CallButton from './components/TopBar/CallButton.vue'
-
 import browserCheck from './mixins/browserCheck.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
 import { EventBus } from './services/EventBus.js'
@@ -76,9 +72,9 @@ export default {
 	name: 'FilesSidebarTabApp',
 
 	components: {
-		CallButton,
-		ChatView,
-		MediaSettings,
+		CallButton: () => import(/* webpackChunkName: "talk-chat" */'./components/TopBar/CallButton.vue'),
+		ChatView: () => import(/* webpackChunkName: "talk-chat" */'./components/ChatView.vue'),
+		MediaSettings: () => import(/* webpackChunkName: "talk-chat" */'./components/MediaSettings/MediaSettings.vue'),
 		NcButton,
 	},
 

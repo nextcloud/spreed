@@ -22,10 +22,10 @@
 
 <template>
 	<div v-if="isInFile" class="talk-sidebar-callview">
-		<TopBar v-show="showCallView"
+		<TopBar v-if="showCallView"
 			:is-in-call="true"
 			:is-sidebar="true" />
-		<CallView v-show="showCallView"
+		<CallView v-if="showCallView"
 			:token="token"
 			:is-sidebar="true" />
 		<PreventUnload :when="warnLeaving" />
@@ -34,9 +34,6 @@
 
 <script>
 import PreventUnload from 'vue-prevent-unload'
-
-import CallView from './components/CallView/CallView.vue'
-import TopBar from './components/TopBar/TopBar.vue'
 
 import { useIsInCall } from './composables/useIsInCall.js'
 import participant from './mixins/participant.js'
@@ -51,9 +48,9 @@ export default {
 	name: 'FilesSidebarCallViewApp',
 
 	components: {
-		CallView,
+		CallView: () => import(/* webpackChunkName: "talk-call" */'./components/CallView/CallView.vue'),
 		PreventUnload,
-		TopBar,
+		TopBar: () => import(/* webpackChunkName: "talk-call" */'./components/TopBar/TopBar.vue'),
 	},
 
 	mixins: [
