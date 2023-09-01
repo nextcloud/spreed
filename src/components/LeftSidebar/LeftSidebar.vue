@@ -912,6 +912,8 @@ export default {
 
 :deep(.list-item:focus, .list-item:focus-visible) {
 	z-index: 1;
-	outline: 2px solid var(--color-primary-element);
+	border: 2px solid var(--color-primary-element);
+	padding : 6px;
+	outline: none; // Remove the default outline
 }
 </style>
