@@ -21,7 +21,6 @@
  */
 
 import './init.js'
-import FilesSidebarCallView from './views/FilesSidebarCallView.js'
 
 const isEnabled = function(fileInfo) {
 	if (fileInfo && !fileInfo.isDirectory()) {
@@ -54,7 +53,12 @@ let tabInstance = null
 
 window.addEventListener('DOMContentLoaded', () => {
 	if (OCA.Files && OCA.Files.Sidebar) {
-		OCA.Files.Sidebar.registerSecondaryView(new FilesSidebarCallView())
+
+		import(/* webpackChunkName: "talk-lazy" */ './views/FilesSidebarCallView.js')
+			.then(({ default: FilesSidebarCallView }) => {
+				OCA.Files.Sidebar.registerSecondaryView(new FilesSidebarCallView())
+			})
+
 		OCA.Files.Sidebar.registerTab(new OCA.Files.Sidebar.Tab({
 			id: 'chat',
 			name: t('spreed', 'Chat'),

@@ -35,7 +35,6 @@ import { getRequestToken } from '@nextcloud/auth'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import { generateFilePath } from '@nextcloud/router'
 
-import FilesSidebarCallViewApp from './FilesSidebarCallViewApp.vue'
 import FilesSidebarTabApp from './FilesSidebarTabApp.vue'
 
 import './init.js'
@@ -75,17 +74,20 @@ const pinia = createPinia()
 
 store.dispatch('setMainContainerSelector', '.talkChatTab')
 
-const newCallView = () => new Vue({
-	store,
-	pinia,
-	render: h => h(FilesSidebarCallViewApp),
+const newCallView = () => import('./FilesSidebarCallViewApp.vue').then(module => {
+	const FilesSidebarCallViewApp = module.default
+	return new Vue({
+		store,
+		pinia,
+		render: h => h(FilesSidebarCallViewApp),
+	})
 })
 
 const newTab = () => new Vue({
-	store,
-	pinia,
-	id: 'talk-chat-tab',
-	render: h => h(FilesSidebarTabApp),
+	  store,
+	  pinia,
+	  id: 'talk-chat-tab',
+	  render: h => h(FilesSidebarTabApp),
 })
 
 if (!window.OCA.Talk) {
