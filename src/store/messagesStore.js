@@ -243,11 +243,6 @@ const getters = {
 		// the cancel handler only exists when a message is being sent
 		return Object.keys(state.cancelPostNewMessage).length !== 0
 	},
-
-	// Returns true if the message has reactions
-	hasReactions: (state) => (token, messageId) => {
-		return Object.keys(Object(state.messages[token]?.[messageId]?.reactions)).length !== 0
-	},
 }
 
 const mutations = {
