@@ -422,16 +422,17 @@ const mutations = {
 
 	// Increases reaction count for a particular reaction on a message
 	addReactionToMessage(state, { token, messageId, reaction }) {
-		if (!state.messages[token][messageId].reactions[reaction]) {
-			Vue.set(state.messages[token][messageId].reactions, reaction, 0)
+		const message = state.messages[token][messageId]
+		if (!message.reactions[reaction]) {
+			Vue.set(message.reactions, reaction, 0)
 		}
-		const reactionCount = state.messages[token][messageId].reactions[reaction] + 1
-		Vue.set(state.messages[token][messageId].reactions, reaction, reactionCount)
+		const reactionCount = message.reactions[reaction] + 1
+		Vue.set(message.reactions, reaction, reactionCount)
 
-		if (!state.messages[token][messageId].reactionsSelf) {
-			Vue.set(state.messages[token][messageId], 'reactionsSelf', [reaction])
+		if (!message.reactionsSelf) {
+			Vue.set(message, 'reactionsSelf', [reaction])
 		} else {
-			state.messages[token][messageId].reactionsSelf.push(reaction)
+			Vue.set(message, 'reactionsSelf', message.reactionsSelf.concat(reaction))
 		}
 	},
 
@@ -441,17 +442,16 @@ const mutations = {
 
 	// Decreases reaction count for a particular reaction on a message
 	removeReactionFromMessage(state, { token, messageId, reaction }) {
-		const reactionCount = state.messages[token][messageId].reactions[reaction] - 1
-		Vue.set(state.messages[token][messageId].reactions, reaction, reactionCount)
-		if (state.messages[token][messageId].reactions[reaction] <= 0) {
-			Vue.delete(state.messages[token][messageId].reactions, reaction)
+		const message = state.messages[token][messageId]
+		const reactionCount = message.reactions[reaction] - 1
+		if (reactionCount <= 0) {
+			Vue.delete(message.reactions, reaction)
+		} else {
+			Vue.set(message.reactions, reaction, reactionCount)
 		}
 
-		if (state.messages[token][messageId].reactionsSelf) {
-			const i = state.messages[token][messageId].reactionsSelf.indexOf(reaction)
-			if (i !== -1) {
-				Vue.delete(state.messages[token][messageId], 'reactionsSelf', i)
-			}
+		if (message.reactionsSelf?.includes(reaction)) {
+			Vue.set(message, 'reactionsSelf', message.reactionsSelf.filter(item => item !== reaction))
 		}
 	},
 
