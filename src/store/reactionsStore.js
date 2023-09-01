@@ -49,16 +49,6 @@ const getters = {
 			return false
 		}
 	},
-
-	// Checks if a user has already reacted to a message with a particular reaction
-	userHasReacted: (state) => (actorType, actorId, token, messageId, reaction) => {
-		if (!state?.reactions?.[token]?.[messageId]?.[reaction]) {
-			return false
-		}
-		return state?.reactions?.[token]?.[messageId]?.[reaction].filter(item => {
-			return item.actorType === actorType && item.actorId === actorId
-		}).length !== 0
-	},
 }
 
 const mutations = {
