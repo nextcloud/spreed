@@ -1287,6 +1287,8 @@ OC.L10N.register(
     "Clear reminder – {timeLocale}" : "Effacer le rappel – {timeLocale}",
     "Next week – {timeLocale}" : "Semaine prochaine – {timeLocale}",
     "This weekend – {timeLocale}" : "Ce week-end – {timeLocale}",
+    "{time} talking …" : "{time} en réunion …",
+    "{time} talking time" : "{time} de reunion",
     "Joined with audio" : "Connecté avec le son",
     "Joined with video" : "Connecté en vidéo",
     "Joined via phone" : "Connecté par téléphone",
