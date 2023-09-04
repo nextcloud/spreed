@@ -76,6 +76,17 @@
 				{{ t('spreed', 'Sounds for chat and call notifications can be adjusted in the personal settings.') }} ↗
 			</a>
 		</NcAppSettingsSection>
+		<NcAppSettingsSection id="performance"
+			:title="t('spreed', 'Performance')"
+			class="app-settings-section">
+			<NcCheckboxRadioSwitch id="blur-call-background"
+				:checked="isBackgroundBlurred"
+				type="switch"
+				class="checkbox"
+				@update:checked="toggleBackgroundBlurred">
+				{{ t('spreed', 'Blur background image in the call (may increase GPU load)') }}
+			</NcCheckboxRadioSwitch>
+		</NcAppSettingsSection>
 		<NcAppSettingsSection v-if="!disableKeyboardShortcuts"
 			id="shortcuts"
 			:title="t('spreed', 'Keyboard shortcuts')">
@@ -143,7 +154,8 @@
 import { generateUrl } from '@nextcloud/router'
 import { getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
 import { PRIVACY } from '../../constants.js'
-import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+import BrowserStorage from '../../services/BrowserStorage.js'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import MediaDevicesPreview from '../MediaDevicesPreview.vue'
 import NcAppSettingsDialog from '@nextcloud/vue/dist/Components/NcAppSettingsDialog.js'
 import NcAppSettingsSection from '@nextcloud/vue/dist/Components/NcAppSettingsSection.js'
@@ -165,6 +177,7 @@ export default {
 			attachmentFolderLoading: true,
 			privacyLoading: false,
 			playSoundsLoading: false,
+			isBackgroundBlurred: true,
 		}
 	},
 
@@ -204,6 +217,15 @@ export default {
 		disableKeyboardShortcuts() {
 			return OCP.Accessibility.disableKeyboardShortcuts()
 		},
+	},
+
+	created() {
+		const blurred = BrowserStorage.getItem('background-blurred')
+		if (blurred === null) {
+			BrowserStorage.setItem('background-blurred', 'true')
+		}
+
+		this.isBackgroundBlurred = blurred !== 'false'
 	},
 
 	mounted() {
@@ -251,6 +273,12 @@ export default {
 				showError(t('spreed', 'Error while setting read status privacy'))
 			}
 			this.privacyLoading = false
+		},
+
+		toggleBackgroundBlurred(value) {
+			this.isBackgroundBlurred = value
+			BrowserStorage.setItem('background-blurred', value)
+			emit('set-background-blurred', value)
 		},
 
 		async togglePlaySounds() {
