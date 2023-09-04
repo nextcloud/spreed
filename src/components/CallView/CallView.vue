@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div id="call-container">
+	<div id="call-container" :class="{ 'blurred': isBackgroundBlurred }">
 		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive && !isGrid"
 			:is-sidebar="isSidebar" />
 		<div id="videos">
@@ -152,6 +152,7 @@ import Screen from './shared/Screen.vue'
 import VideoVue from './shared/VideoVue.vue'
 
 import { SIMULCAST } from '../../constants.js'
+import BrowserStorage from '../../services/BrowserStorage.js'
 import { fetchPeers } from '../../services/callsService.js'
 import { EventBus } from '../../services/EventBus.js'
 import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index.js'
@@ -201,6 +202,7 @@ export default {
 			},
 			callParticipantCollection,
 			videoContainerAspectRatio: 0,
+			isBackgroundBlurred: true,
 		}
 	},
 	computed: {
@@ -409,6 +411,7 @@ export default {
 		// Ensure that data is properly initialized before mounting the
 		// subviews.
 		this.updateDataFromCallParticipantModels(this.callParticipantModels)
+		this.isBackgroundBlurred = BrowserStorage.getItem('background-blurred') !== 'false'
 	},
 	mounted() {
 		EventBus.$on('refresh-peer-list', this.debounceFetchPeers)
@@ -416,6 +419,7 @@ export default {
 		callParticipantCollection.on('remove', this._lowerHandWhenParticipantLeaves)
 
 		subscribe('switch-screen-to-id', this._switchScreenToId)
+		subscribe('set-background-blurred', this.setBackgroundBlurred)
 	},
 	beforeDestroy() {
 		EventBus.$off('refresh-peer-list', this.debounceFetchPeers)
@@ -423,6 +427,7 @@ export default {
 		callParticipantCollection.off('remove', this._lowerHandWhenParticipantLeaves)
 
 		unsubscribe('switch-screen-to-id', this._switchScreenToId)
+		unsubscribe('set-background-blurred', this.setBackgroundBlurred)
 	},
 	methods: {
 		/**
@@ -680,6 +685,10 @@ export default {
 				callParticipantModel.setSimulcastVideoQuality(SIMULCAST.LOW)
 			}
 		},
+
+		setBackgroundBlurred(value) {
+			this.isBackgroundBlurred = value
+		},
 	},
 }
 </script>
@@ -698,7 +707,10 @@ export default {
 	width: 100%;
 	height: 100%;
 	background-color: $color-call-background;
-	backdrop-filter: blur(25px);
+
+	&.blurred {
+		backdrop-filter: blur(25px);
+	}
 }
 
 #videos {
