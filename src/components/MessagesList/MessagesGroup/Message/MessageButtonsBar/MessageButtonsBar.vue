@@ -657,7 +657,7 @@ export default {
 
 		handleReactionClick(selectedEmoji) {
 			// Add reaction only if user hasn't reacted yet
-			if (!this.$store.getters.userHasReacted(this.$store.getters.getActorType(), this.$store.getters.getActorId(), this.token, this.messageObject.id, selectedEmoji)) {
+			if (!this.messageObject.reactionsSelf?.includes(selectedEmoji)) {
 				this.$store.dispatch('addReactionToMessage', {
 					token: this.token,
 					messageId: this.messageObject.id,

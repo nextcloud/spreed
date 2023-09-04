@@ -133,17 +133,17 @@ the main body of the message as well as a quote.
 			<div v-if="hasReactions"
 				class="message-body__reactions"
 				@mouseover="handleReactionsMouseOver">
-				<NcPopover v-for="reaction in Object.keys(simpleReactions)"
+				<NcPopover v-for="reaction in Object.keys(reactions)"
 					:key="reaction"
 					:delay="200"
 					:focus-trap="false"
 					:triggers="['hover']">
 					<template #trigger>
-						<NcButton v-if="simpleReactions[reaction] !== 0"
+						<NcButton v-if="reactions[reaction] !== 0"
 							:type="userHasReacted(reaction) ? 'primary' : 'secondary'"
 							class="reaction-button"
 							@click="handleReactionClick(reaction)">
-							{{ reaction }} {{ simpleReactions[reaction] }}
+							{{ reaction }} {{ reactions[reaction] }}
 						</NcButton>
 					</template>
 
@@ -669,7 +669,7 @@ export default {
 		},
 
 		hasReactions() {
-			return this.$store.getters.hasReactions(this.token, this.id)
+			return Object.keys(this.reactions).length !== 0
 		},
 
 		canReact() {
@@ -677,10 +677,6 @@ export default {
 				&& (this.conversation.permissions & PARTICIPANT.PERMISSIONS.CHAT) !== 0
 				&& this.messageObject.messageType !== 'command'
 				&& this.messageObject.messageType !== 'comment_deleted'
-		},
-
-		simpleReactions() {
-			return this.messageObject.reactions
 		},
 
 		detailedReactions() {
@@ -698,14 +694,14 @@ export default {
 		},
 
 		// Scroll list to the bottom if reaction to the message was added, as it expands the list
-		simpleReactions() {
+		reactions() {
 			EventBus.$emit('scroll-chat-to-bottom-if-sticky')
 		},
 	},
 
 	methods: {
 		userHasReacted(reaction) {
-			return this.reactionsSelf && this.reactionsSelf.includes(reaction)
+			return this.reactionsSelf?.includes(reaction)
 		},
 
 		lastReadMessageVisibilityChanged(isVisible) {
