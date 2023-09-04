@@ -29,6 +29,7 @@ import { CALL, PARTICIPANT, VIRTUAL_BACKGROUND } from './constants.js'
 import BrowserStorage from './services/BrowserStorage.js'
 import { EventBus } from './services/EventBus.js'
 import store from './store/index.js'
+import { importMomentLocale } from './utils/importMomentLocale.js'
 
 if (!window.OCA.Talk) {
 	window.OCA.Talk = {}
@@ -132,3 +133,7 @@ const migrateDirectLocalStorageToNextcloudBrowserStorage = () => {
 }
 
 migrateDirectLocalStorageToNextcloudBrowserStorage()
+
+// Start async init part
+
+await importMomentLocale()

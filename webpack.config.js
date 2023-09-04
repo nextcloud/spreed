@@ -2,6 +2,7 @@ const path = require('node:path')
 
 const { EsbuildPlugin } = require('esbuild-loader')
 const webpack = require('webpack')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const { mergeWithRules } = require('webpack-merge')
 
 const nextcloudWebpackConfig = require('@nextcloud/webpack-vue-config')
@@ -47,7 +48,18 @@ module.exports = mergeWithRules({
 	},
 
 	plugins: [
+	/*	new BundleAnalyzerPlugin({
+			analyzerMode: 'static',
+		}), */
+
 		new webpack.DefinePlugin({ IS_DESKTOP: false }),
+
+		// Ignore moment locales by default and import only curent locale implicitly
+		// @see https://webpack.js.org/plugins/ignore-plugin#example-of-ignoring-moment-locales
+		new webpack.IgnorePlugin({
+			resourceRegExp: /^\.[\\/]locale$/,
+			contextRegExp: /moment$/,
+		}),
 	],
 
 	cache: true,

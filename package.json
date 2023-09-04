@@ -15,7 +15,10 @@
     "lint": "eslint --ext .js,.vue src",
     "lint:fix": "eslint --ext .js,.vue src --fix",
     "stylelint": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue",
-    "stylelint:fix": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --fix"
+    "stylelint:fix": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --fix",
+    "analyze:build": "npm run build -- --profile --json > js/stats.json",
+    "analyze:dev": "webpack --node-env development --profile --json > js/stats.json",
+    "analyze": "webpack-bundle-analyzer js/stats.json js/"
   },
   "dependencies": {
     "@linusborg/vue-simple-portal": "^0.1.5",
@@ -88,6 +91,7 @@
     "regenerator-runtime": "^0.14.0",
     "vue-template-compiler": "^2.7.14",
     "wasm-check": "^2.1.2",
+    "webpack-bundle-analyzer": "^4.9.0",
     "worker-loader": "^3.0.8"
   },
   "browser": {
