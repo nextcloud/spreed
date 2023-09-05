@@ -23,6 +23,7 @@
 		@dragover.prevent="handleDragOver"
 		@dragleave.prevent="handleDragLeave"
 		@drop.prevent="handleDropFiles">
+		<GuestWelcomeWindow v-if="isGuestAndhasNotUserName" />
 		<TransitionWrapper name="slide-up" mode="out-in">
 			<div v-show="isDraggingOver"
 				class="dragover">
@@ -70,6 +71,7 @@ import ChevronDoubleDown from 'vue-material-design-icons/ChevronDoubleDown.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 
+import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import MessagesList from './MessagesList/MessagesList.vue'
 import NewMessage from './NewMessage/NewMessage.vue'
 import TransitionWrapper from './TransitionWrapper.vue'
@@ -87,6 +89,7 @@ export default {
 		MessagesList,
 		NewMessage,
 		TransitionWrapper,
+		GuestWelcomeWindow,
 	},
 
 	props: {
@@ -109,6 +112,12 @@ export default {
 		isGuest() {
 			return this.$store.getters.getActorType() === 'guests'
 		},
+
+		isGuestAndhasNotUserName() {
+			const userName = localStorage.getItem('nick')
+			return !userName && this.isGuest
+		},
+
 		dropHintText() {
 			if (this.isGuest) {
 				return t('spreed', 'You need to be logged in to upload files')

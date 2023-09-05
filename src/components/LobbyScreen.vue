@@ -20,6 +20,7 @@
 
 <template>
 	<div class="lobby">
+		<GuestWelcomeWindow v-if="isGuestAndhasNotUserName" />
 		<div class="lobby emptycontent">
 			<Lobby :size="64" />
 			<h2>{{ currentConversationName }}</h2>
@@ -52,6 +53,7 @@ import moment from '@nextcloud/moment'
 
 import NcRichText from '@nextcloud/vue/dist/Components/NcRichText.js'
 
+import GuestWelcomeWindow from './GuestWelcomeWindow.vue'
 import Lobby from './missingMaterialDesignIcons/Lobby.vue'
 import SetGuestUsername from './SetGuestUsername.vue'
 
@@ -63,6 +65,7 @@ export default {
 		SetGuestUsername,
 		NcRichText,
 		Lobby,
+		GuestWelcomeWindow,
 	},
 
 	computed: {
@@ -106,6 +109,11 @@ export default {
 		// Determines whether the current user is a guest user
 		currentUserIsGuest() {
 			return !this.$store.getters.getUserId()
+		},
+
+		isGuestAndhasNotUserName() {
+			const userName = localStorage.getItem('nick')
+			return !userName && this.currentUserIsGuest
 		},
 	},
 
