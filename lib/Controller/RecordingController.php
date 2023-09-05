@@ -331,12 +331,13 @@ class RecordingController extends AEnvironmentAwareController {
 
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
-	public function notificationDismiss(int $timestamp): DataResponse {
+	public function notificationDismiss(int $timestamp, string $subject): DataResponse {
 		try {
 			$this->recordingService->notificationDismiss(
 				$this->getRoom(),
 				$this->participant,
-				$timestamp
+				$timestamp,
+				$subject
 			);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
@@ -346,13 +347,14 @@ class RecordingController extends AEnvironmentAwareController {
 
 	#[NoAdminRequired]
 	#[RequireModeratorParticipant]
-	public function shareToChat(int $fileId, int $timestamp): DataResponse {
+	public function shareToChat(int $fileId, int $timestamp, string $subject): DataResponse {
 		try {
 			$this->recordingService->shareToChat(
 				$this->getRoom(),
 				$this->participant,
 				$fileId,
-				$timestamp
+				$timestamp,
+				$subject
 			);
 		} catch (InvalidArgumentException $e) {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);

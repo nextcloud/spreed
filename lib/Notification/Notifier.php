@@ -333,7 +333,8 @@ class Notifier implements INotifier {
 						'apiVersion' => 'v1',
 						'fileId' => $file->getId(),
 						'timestamp' => $notification->getDateTime()->getTimestamp(),
-						'token' => $room->getToken()
+						'token' => $room->getToken(),
+						'subject' => $notification->getSubject()
 					]
 				),
 				IAction::TYPE_POST
@@ -347,6 +348,7 @@ class Notifier implements INotifier {
 						'apiVersion' => 'v1',
 						'token' => $room->getToken(),
 						'timestamp' => $notification->getDateTime()->getTimestamp(),
+						'subject' => $notification->getSubject()
 					]
 				),
 				IAction::TYPE_DELETE

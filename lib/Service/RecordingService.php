@@ -330,17 +330,15 @@ class RecordingService {
 		$this->notificationManager->notify($notification);
 	}
 
-	public function notificationDismiss(Room $room, Participant $participant, int $timestamp): void {
+	public function notificationDismiss(Room $room, Participant $participant, int $timestamp, string $subject): void {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp('spreed')
 			->setObject('recording', $room->getToken())
 			->setDateTime($this->timeFactory->getDateTime('@' . $timestamp))
-			->setUser($participant->getAttendee()->getActorId());
+			->setUser($participant->getAttendee()->getActorId())
+			->setSubject($subject);
 
-		foreach (['record_file_stored', 'transcript_file_stored'] as $subject) {
-			$notification->setSubject($subject);
-			$this->notificationManager->markProcessed($notification);
-		}
+		$this->notificationManager->markProcessed($notification);
 	}
 
 	private function getTypeOfShare(string $mimetype): string {
@@ -350,7 +348,7 @@ class RecordingService {
 		return 'record-audio';
 	}
 
-	public function shareToChat(Room $room, Participant $participant, int $fileId, int $timestamp): void {
+	public function shareToChat(Room $room, Participant $participant, int $fileId, int $timestamp, string $subject): void {
 		try {
 			$userFolder = $this->rootFolder->getUserFolder(
 				$participant->getAttendee()->getActorId()
@@ -399,6 +397,6 @@ class RecordingService {
 			$this->logger->error($e->getMessage(), ['exception' => $e]);
 			throw new InvalidArgumentException('system');
 		}
-		$this->notificationDismiss($room, $participant, $timestamp);
+		$this->notificationDismiss($room, $participant, $timestamp, $subject);
 	}
 }
