@@ -114,11 +114,11 @@ const migrateDirectLocalStorageToNextcloudBrowserStorage = () => {
 			BrowserStorage.setItem(key, localStorage.getItem(key))
 			localStorage.removeItem(key)
 
-			if(key.startsWith('nick')) {
+			if (key.startsWith('nick')) {
 				BrowserStorage.setItem('guestName', BrowserStorage.getItem(key))
 				BrowserStorage.removeItem(key)
 			}
-		
+
 			if (key.startsWith('virtualBackgroundEnabled_')) {
 				// Before Talk 17 there was only a boolean
 				// `virtualBackgroundEnabled_{token}` (stored as string).

@@ -54,6 +54,7 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
+import BrowserStorage from '../services/BrowserStorage.js'
 import { setGuestUserName } from '../services/participantsService.js'
 
 export default {
@@ -101,9 +102,7 @@ export default {
 	},
 
 	mounted() {
-		// FIXME use @nextcloud/browser-storage or OCP when decided
-		// https://github.com/nextcloud/nextcloud-browser-storage/issues/3
-		this.guestUserName = localStorage.getItem('nick') || ''
+		this.guestUserName = BrowserStorage.getItem('guestName') || ''
 		if (this.guestUserName && this.actorDisplayName !== this.guestUserName) {
 			// Browser storage has a name, so we use that.
 			if (this.actorId) {
@@ -128,9 +127,9 @@ export default {
 				})
 				await setGuestUserName(this.token, this.guestUserName)
 				if (this.guestUserName !== '') {
-					localStorage.setItem('nick', this.guestUserName)
+					BrowserStorage.setItem('guestName', this.guestUserName)
 				} else {
-					localStorage.removeItem('nick')
+					BrowserStorage.removeItem('guestName')
 				}
 				this.isEditingUsername = false
 			} catch (exception) {
