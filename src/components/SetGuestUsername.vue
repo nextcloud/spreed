@@ -22,9 +22,9 @@
 <template>
 	<div class="username-form">
 		<!-- eslint-disable-next-line vue/no-v-html -->
-		<h3 v-if="!firstWelcome" class="display-name__label" v-html="displayNameLabel" />
+		<h3 class="display-name__label" v-html="displayNameLabel" />
 
-		<NcButton v-if="!isEditingUsername && !firstWelcome"
+		<NcButton v-if="!isEditingUsername"
 			@click="handleEditUsername">
 			{{ t('spreed', 'Edit') }}
 			<template #icon>
@@ -37,11 +37,9 @@
 			:value.sync="guestUserName"
 			:placeholder="t('spreed', 'Guest')"
 			class="username-form__input"
-			v-bind="$attrs"
-			:show-trailing-button="!!guestUserName && !firstWelcome"
+			:show-trailing-button="!!guestUserName"
 			trailing-button-icon="arrowRight"
 			:trailing-button-label="t('spreed', 'Save name')"
-			v-on="$listeners"
 			@trailing-button-click="handleChooseUserName"
 			@keydown.enter="handleChooseUserName"
 			@keydown.esc="handleEditUsername" />
@@ -128,8 +126,6 @@ export default {
 			}
 		}
 	},
-
-	expose: ['handleChooseUserName'],
 
 	methods: {
 		async handleChooseUserName() {

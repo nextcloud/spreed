@@ -21,8 +21,7 @@
   -->
 
 <template>
-	<NcModal v-if="showModal"
-		:container="container"
+	<NcModal :container="container"
 		:can-close="false"
 		:close-on-click-outside="false"
 		size="small">
@@ -30,19 +29,21 @@
 			<div class="conversation-information">
 				<ConversationIcon :item="conversation"
 					:show-user-status="false"
-					:disable-menu="true" />
+					disable-menu />
 				<h2>{{ conversationDisplayName }}</h2>
 			</div>
-			<h3 class="description">
+			<p class="description">
 				{{ conversationDescription }}
-			</h3>
+			</p>
 
-			<h3 class="input-label">
+			<p class="input-label">
 				{{ t('spreed', 'Enter your name') }}
-			</h3>
-			<SetGuestUsername ref="setGuestUsername"
-				class="guest-user-form"
-				first-welcome
+			</p>
+
+			<NcTextField :value.sync="guestUserName"
+				:placeholder="t('spreed', 'Guest')"
+				class="username-form__input"
+				:show-trailing-button="false"
 				@keydown.enter="handleChooseUserName" />
 
 			<NcButton class="submit-button"
@@ -62,24 +63,31 @@ import Check from 'vue-material-design-icons/CheckBold.vue'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
+import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import ConversationIcon from './ConversationIcon.vue'
-import SetGuestUsername from './SetGuestUsername.vue'
 
 export default {
 	name: 'GuestWelcomeWindow',
 
 	components: {
 		NcModal,
-		SetGuestUsername,
+		NcTextField,
 		ConversationIcon,
 		NcButton,
 		Check,
 	},
 
+	props: {
+		token: {
+			type: String,
+			required: true,
+		},
+	},
+
 	data() {
 		return {
-			showModal: true,
+			guestUserName: '',
 		}
 	},
 
@@ -88,20 +96,16 @@ export default {
 			return this.$store.getters.getMainContainerSelector()
 		},
 
-		token() {
-			return this.$store.getters.getToken()
-		},
-
 		conversation() {
 			return this.$store.getters.conversation(this.token)
 		},
 
 		conversationDisplayName() {
-			return this.conversation && this.conversation.displayName
+			return this.conversation?.displayName
 		},
 
 		conversationDescription() {
-			return this.conversation && this.conversation.description
+			return this.conversation?.description
 		},
 
 		submitMessage() {
@@ -111,8 +115,10 @@ export default {
 
 	methods: {
 		handleChooseUserName() {
-			this.$refs.setGuestUsername.handleChooseUserName()
-			this.showModal = false
+			this.$store.dispatch('SubmitUserName', {
+				token: this.token,
+				name: this.guestUserName,
+			})
 		},
 	},
 }
@@ -122,10 +128,7 @@ export default {
 .modal__content {
 	padding: calc(var(--default-grid-baseline) * 4);
 	background-color: var(--color-main-background);
-
-	:deep(.username-form__input) {
-		width: auto !important;
-	}
+	margin: 0px 12px;
 }
 
 .conversation-information {
@@ -136,11 +139,11 @@ export default {
 }
 
 .description {
-	margin: 0px 12px 12px 12px;
+	margin-bottom: 12px;
 }
 
-.input-label {
-	margin: 0px 12px;
+.username-form__input {
+	margin-bottom: 20px;
 }
 
 .submit-button {
