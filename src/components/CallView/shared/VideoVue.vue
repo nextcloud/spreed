@@ -112,6 +112,7 @@ import { ATTENDEE } from '../../../constants.js'
 import video from '../../../mixins/video.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
+import { useGuestNameStore } from '../../../store/guestNameStore.js'
 
 export default {
 
@@ -185,6 +186,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+	},
+
+	setup() {
+		const guestNameStore = useGuestNameStore()
+		return  guestNameStore
 	},
 
 	data() {
@@ -393,7 +399,7 @@ export default {
 			// for registered users, so do not fall back to the guest name in
 			// the store either until the connection was made.
 			if (!this.model.attributes.userId && !participantName && participantName !== undefined) {
-				participantName = this.$store.getters.getGuestName(
+				participantName = this.guestNameStore.getGuestName(
 					this.$store.getters.getToken(),
 					this.sessionHash,
 				)

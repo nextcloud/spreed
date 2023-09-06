@@ -33,10 +33,16 @@ import { EventBus } from '../services/EventBus.js'
 import { fetchParticipants } from '../services/participantsService.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import isInLobby from './isInLobby.js'
+import { useGuestNameStore } from '../store/guestNameStore.js'
 
 const getParticipants = {
 
 	mixins: [isInLobby],
+
+	setup() {
+		const guestNameStore = useGuestNameStore()
+		return  guestNameStore
+	},
 
 	data() {
 		return {
@@ -137,7 +143,7 @@ const getParticipants = {
 					})
 					if (participant.participantType === PARTICIPANT.TYPE.GUEST
 						|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
-						this.$store.dispatch('forceGuestName', {
+						this.guestNameStore.forceGuestName({
 							token,
 							actorId: Hex.stringify(SHA1(participant.sessionIds[0])),
 							actorDisplayName: participant.displayName,

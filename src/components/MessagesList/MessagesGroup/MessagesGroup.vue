@@ -48,6 +48,7 @@ import AuthorAvatar from './AuthorAvatar.vue'
 import Message from './Message/Message.vue'
 
 import { ATTENDEE } from '../../../constants.js'
+import { useGuestNameStore } from '../../../store/guestNameStore.js'
 
 export default {
 	name: 'MessagesGroup',
@@ -85,6 +86,11 @@ export default {
 		},
 	},
 
+	setup() {
+		const guestNameStore = useGuestNameStore()
+		return  guestNameStore
+	},
+
 	expose: ['highlightMessage'],
 
 	computed: {
@@ -113,7 +119,7 @@ export default {
 			const displayName = this.messages[0].actorDisplayName.trim()
 
 			if (this.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
-				return this.$store.getters.getGuestName(this.token, this.actorId)
+				return this.guestNameStore.getGuestName(this.token, this.actorId)
 			}
 
 			if (displayName === '') {
