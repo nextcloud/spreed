@@ -83,6 +83,7 @@ import VideoBackground from './VideoBackground.vue'
 
 import video from '../../../mixins/video.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
+import { useGuestNameStore } from '../../../store/guestNameStore.js'
 
 export default {
 
@@ -133,6 +134,11 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+	},
+
+	setup() {
+		const guestNameStore = useGuestNameStore()
+		return  guestNameStore
 	},
 
 	data() {
@@ -195,7 +201,7 @@ export default {
 		},
 
 		guestName() {
-			return this.$store.getters.getGuestName(
+			return this.guestNameStore.getGuestName(
 				this.$store.getters.getToken(),
 				this.sessionHash,
 			)

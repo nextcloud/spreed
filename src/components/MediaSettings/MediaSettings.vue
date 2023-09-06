@@ -209,6 +209,7 @@ import { devices } from '../../mixins/devices.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
+import { useGuestNameStore } from '../../store/guestNameStore.js'
 
 export default {
 	name: 'MediaSettings',
@@ -242,7 +243,8 @@ export default {
 
 	setup() {
 		const isInCall = useIsInCall()
-		return { isInCall }
+		const guestNameStore = useGuestNameStore()
+		return { isInCall, guestNameStore }
 	},
 
 	data() {
@@ -271,7 +273,7 @@ export default {
 		},
 
 		guestName() {
-			return this.$store.getters.getGuestName(
+			return this.guestNameStore.getGuestName(
 				this.$store.getters.getToken(),
 				this.$store.getters.getActorId(),
 			)

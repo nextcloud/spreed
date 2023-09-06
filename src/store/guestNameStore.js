@@ -20,86 +20,88 @@
  *
  */
 import Vue from 'vue'
+import { defineStore } from 'pinia'
 
-const state = {
-	guestNames: {
-	},
-}
+export const useGuestNameStore = defineStore('guestNameStore', {
+	state: () => ({
+		guestNames: {},
+	}),
 
-const getters = {
+
+	getters : {
 	/**
 	 * Gets the participants array
 	 *
 	 * @param {object} state the state object.
 	 * @return {Array} the participants array (if there are participants in the store)
 	 */
-	getGuestName: (state) => (token, actorId) => {
-		if (state.guestNames[token] && state.guestNames[token][actorId]) {
-			return state.guestNames[token][actorId]
+    getGuestName(state) {
+		return (token, actorId) => {
+		  if (state.guestNames[token] && state.guestNames[token][actorId]) {
+			return state.guestNames[token][actorId] 
+		  }
+		  return t('spreed', 'Guest')
 		}
-		return t('spreed', 'Guest')
+	  },
+
+	  getGuestNameWithGuestSuffix(state, getters) {
+		return (token, actorId) => {
+		  const displayName = getters.getGuestName(token, actorId)
+		  if (displayName === t('spreed', 'Guest')) {
+			return displayName 
+		  }
+		  return t('spreed', '{guest} (guest)', {
+			guest: displayName
+		  })
+		}
+	  }
 	},
 
-	getGuestNameWithGuestSuffix: (state, getters) => (token, actorId) => {
-		const displayName = getters.getGuestName(token, actorId)
-		if (displayName === t('spreed', 'Guest')) {
-			return displayName
-		}
-		return t('spreed', '{guest} (guest)', { guest: displayName })
-	},
-}
+	actions : {
 
-const mutations = {
 	/**
 	 * Adds a guest name to the store
 	 *
-	 * @param {object} state current store state
 	 * @param {object} data the wrapping object;
 	 * @param {boolean} data.noUpdate Only set the guest name if it was not set before
 	 * @param {string} data.token the token of the conversation
 	 * @param {string} data.actorId the guest
 	 * @param {string} data.actorDisplayName the display name to set
 	 */
-	addGuestName(state, { noUpdate, token, actorId, actorDisplayName }) {
-		if (!state.guestNames[token]) {
-			Vue.set(state.guestNames, token, [])
-		}
-		if (!state.guestNames[token][actorId]) {
-			Vue.set(state.guestNames[token], actorId, t('spreed', 'Guest'))
-		} else if (noUpdate) {
-			return
-		}
-		state.guestNames[token][actorId] = actorDisplayName
-	},
-}
-
-const actions = {
+		addGuestName({ noUpdate, token, actorId, actorDisplayName }) {
+			if (!this.guestNames[token]) {
+				Vue.set(this.guestNames, token, [])
+			}
+			if (!this.guestNames[token][actorId]) {
+				Vue.set(this.guestNames[token], actorId, t('spreed', 'Guest'))
+			} else if (noUpdate) {
+				return
+			}
+			this.guestNames[token][actorId] = actorDisplayName
+		},
 
 	/**
 	 * Add guest name of a chat message to the store
 	 *
-	 * @param {object} context default store context
 	 * @param {object} data the wrapping object;
 	 * @param {string} data.token the token of the conversation
 	 * @param {string} data.actorId the guest
 	 * @param {string} data.actorDisplayName the display name to set
 	 */
-	setGuestNameIfEmpty(context, { token, actorId, actorDisplayName }) {
-		context.commit('addGuestName', { noUpdate: true, token, actorId, actorDisplayName })
+	setGuestNameIfEmpty({ token, actorId, actorDisplayName }) {
+		this.addGuestName({ noUpdate: true, token, actorId, actorDisplayName })
 	},
 
 	/**
 	 * Add guest name of a chat message to the store
 	 *
-	 * @param {object} context default store context
 	 * @param {object} data the wrapping object;
 	 * @param {string} data.token the token of the conversation
 	 * @param {string} data.actorId the guest
 	 * @param {string} data.actorDisplayName the display name to set
 	 */
-	forceGuestName(context, { token, actorId, actorDisplayName }) {
-		context.commit('addGuestName', { noUpdate: false, token, actorId, actorDisplayName })
+	forceGuestName({ token, actorId, actorDisplayName }) {
+		this.addGuestName({ noUpdate: false, token, actorId, actorDisplayName })
+		},
 	},
-}
-
-export default { state, mutations, getters, actions }
+})
