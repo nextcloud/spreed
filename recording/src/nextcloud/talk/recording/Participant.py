@@ -195,9 +195,11 @@ class SeleniumHelper:
     The browser is expected to be available in the local system.
     """
 
-    def __init__(self, parentLogger):
+    def __init__(self, parentLogger, acceptInsecureCerts):
         self._parentLogger = parentLogger
         self._logger = parentLogger.getChild('SeleniumHelper')
+
+        self._acceptInsecureCerts = acceptInsecureCerts
 
         self.driver = None
         self.bidiLogsHelper = None
@@ -221,6 +223,8 @@ class SeleniumHelper:
         """
 
         options = ChromeOptions()
+
+        options.set_capability('acceptInsecureCerts', self._acceptInsecureCerts)
 
         # "webSocketUrl" is needed for BiDi.
         options.set_capability('webSocketUrl', True)
@@ -264,6 +268,8 @@ class SeleniumHelper:
         """
 
         options = FirefoxOptions()
+
+        options.set_capability('acceptInsecureCerts', self._acceptInsecureCerts)
 
         # "webSocketUrl" is needed for BiDi; this should be set already by
         # default, but just in case.
@@ -467,7 +473,9 @@ class Participant():
         # '/' which may prevent Talk UI from loading as expected.
         self.nextcloudUrl = nextcloudUrl.rstrip('/')
 
-        self.seleniumHelper = SeleniumHelper(parentLogger)
+        acceptInsecureCerts = config.getBackendSkipVerify(self.nextcloudUrl)
+
+        self.seleniumHelper = SeleniumHelper(parentLogger, acceptInsecureCerts)
 
         if browser == 'chrome':
             self.seleniumHelper.startChrome(width, height, env)
