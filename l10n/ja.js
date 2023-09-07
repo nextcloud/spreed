@@ -1127,6 +1127,7 @@ OC.L10N.register(
     "Sounds" : "サウンド",
     "Play sounds when participants join or leave a call" : "参加者が通話に参加したとき、または通話を離れたときにサウンドを再生する",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "チャットと通話の通知のサウンドは、個人設定で調整されます。",
+    "Performance" : "パフォーマンス",
     "Keyboard shortcuts" : "キーボード ショートカット",
     "Speed up your Talk experience with these quick shortcuts." : "これらのクイックショートカットを使用すると、Talk ユーザビリティーが向上します。",
     "Focus the chat input" : "チャット入力欄に移行",

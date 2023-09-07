@@ -1257,6 +1257,7 @@ OC.L10N.register(
     "Sounds" : "Soinuak",
     "Play sounds when participants join or leave a call" : "Soinuak egin parte-hartzaileak deira etortzean edo joatean",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "Txat eta deien jakinarazpenetarako soinuak ezarpen pertsonaletan doi daitezke.",
+    "Performance" : "Errendimendua",
     "Keyboard shortcuts" : "Teklatuaren lasterbideak",
     "Speed up your Talk experience with these quick shortcuts." : "Azkartu zure Talk esperientzia lasterbide bizkor hauekin",
     "Focus the chat input" : "Fokuratu txat sarrera",

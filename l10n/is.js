@@ -499,6 +499,7 @@ OC.L10N.register(
     "Select conversation" : "Veldu samtal",
     "Link to a conversation" : "Tengill á samtal",
     "Privacy" : "Gagnaleynd",
+    "Performance" : "Afköst",
     "Keyboard shortcuts" : "Flýtileiðir á lyklaborði",
     "Search" : "Search",
     "Start call" : "Hefja samtal",

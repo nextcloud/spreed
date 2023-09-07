@@ -320,6 +320,7 @@ OC.L10N.register(
     "Chat" : "Babili",
     "Details" : "Detaloj",
     "Privacy" : "Privateco",
+    "Performance" : "Rendimento",
     "Keyboard shortcuts" : "Fulmoklavoj",
     "Search" : "Serĉi",
     "Open sidebar" : "Malfermi flankopanelon",
