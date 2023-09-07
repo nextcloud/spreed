@@ -574,6 +574,7 @@ OC.L10N.register(
     "Show all files" : "Vis alle filer",
     "Search conversations or users" : "Søk etter samtaler eller brukere",
     "Privacy" : "Personvern",
+    "Performance" : "Ytelse",
     "Keyboard shortcuts" : "Tastatursnarveier",
     "Search" : "Søk",
     "Start call" : "Start samtale",

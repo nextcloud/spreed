@@ -1014,6 +1014,7 @@ OC.L10N.register(
     "Share my read-status and show the read-status of others" : "Condividi il mio stato di lettura e mostra lo stato di lettura degli altri",
     "Sounds" : "Suoni",
     "Play sounds when participants join or leave a call" : "Riproduci suoni quando i partecipanti entrano o abbandonano una chiamata",
+    "Performance" : "Prestazioni",
     "Keyboard shortcuts" : "Scorciatoie da tastiera",
     "Speed up your Talk experience with these quick shortcuts." : "Velocizza la tua esperienza di Talk con queste scorciatoie.",
     "Focus the chat input" : "Attiva la digitazione della chat",

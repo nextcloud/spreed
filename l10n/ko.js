@@ -1336,6 +1336,7 @@ OC.L10N.register(
     "Play sounds when participants join or leave a call" : "참가자가 통화에 들어오거나 나갈 때 소리 재생",
     "Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer." : "현재 제조업체의 기술 제한으로 인해 iPad 및 iPhone 기기에서 사운드를 재생할 수 없습니다.",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "채팅 및 통화 알림 소리는 개인 설정에서 조정할 수 있습니다.",
+    "Performance" : "성능",
     "Keyboard shortcuts" : "키보드 단축키",
     "Speed up your Talk experience with these quick shortcuts." : "빠른 단축키를 통해 토크 사용 속도를 향상하세요.",
     "Focus the chat input" : "채팅 입력에 포커스",

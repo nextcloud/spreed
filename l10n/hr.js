@@ -969,6 +969,7 @@ OC.L10N.register(
     "Share my read-status and show the read-status of others" : "Dijeli moj status čitanja i prikaži statuse čitanja drugih sudionika",
     "Sounds" : "Zvuci",
     "Play sounds when participants join or leave a call" : "Reproduciraj zvukove kad se sudionici pridruže ili napuste poziv",
+    "Performance" : "Učinkovitost",
     "Keyboard shortcuts" : "Tipkovni prečaci",
     "Speed up your Talk experience with these quick shortcuts." : "Ubrzajte korištenje aplikacije Talk s pomoću ovih brzih prečaca.",
     "Focus the chat input" : "Fokusirajte ulazne poruke",
