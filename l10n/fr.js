@@ -1355,6 +1355,7 @@ OC.L10N.register(
     "Play sounds when participants join or leave a call" : "Jouer un son lorsque des participants rejoignent ou quittent un appel",
     "Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer." : "Les sons ne peuvent pour l'instant pas être entendus sur iPad et iPhone en raison de restrictions techniques du fabricant.",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "Les sons des notifications de discussion et d'appel peuvent être ajustés dans les paramètres personnels.",
+    "Performance" : "Performance",
     "Keyboard shortcuts" : "Raccourcis clavier",
     "Speed up your Talk experience with these quick shortcuts." : "Accélérez votre expérience Talk avec ces raccourcis rapides.",
     "Focus the chat input" : "Maintenir le focus sur la zone de saisie",

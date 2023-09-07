@@ -541,6 +541,7 @@ OC.L10N.register(
     "Choose devices" : "בחירת התקנים",
     "Attachments folder" : "תיקיית הקבצים המצורפים",
     "Privacy" : "פרטיות",
+    "Performance" : "ביצועים",
     "Keyboard shortcuts" : "קיצורי מקלדת",
     "Search" : "חיפוש",
     "Shortcuts while in a call" : "קיצורי דרך בזמן שיחה",

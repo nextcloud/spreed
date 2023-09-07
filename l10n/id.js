@@ -323,6 +323,7 @@ OC.L10N.register(
     "Choose devices" : "Pilih perangkat",
     "Attachments folder" : "Folder lampiran",
     "Privacy" : "Privasi",
+    "Performance" : "Performa",
     "Keyboard shortcuts" : "Pintasan keyboard",
     "Search" : "Cari",
     "Open sidebar" : "Buka jendela samping",

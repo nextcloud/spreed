@@ -1069,6 +1069,7 @@ OC.L10N.register(
     "Sounds" : "Geluiden",
     "Play sounds when participants join or leave a call" : "Geluid afspelen wanneer deelnemers meedoen met een gesprek of het verlaten",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "Geluid voor chat- en gespreksmeldingen kan aangepast worden in de persoonlijke instellingen.",
+    "Performance" : "Prestaties",
     "Keyboard shortcuts" : "Sneltoetsen",
     "Speed up your Talk experience with these quick shortcuts." : "Versnel je Talk-ervaring met deze handige snelkoppelingen.",
     "Focus the chat input" : "Focus op de chat invoer",

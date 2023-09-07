@@ -1231,6 +1231,7 @@ OC.L10N.register(
     "Sounds" : "Звуци",
     "Play sounds when participants join or leave a call" : "Възпроизвеждане на звуци, когато участниците се присъединят или напуснат разговор",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "Звуците за известия за чат и за обаждания, могат да се регулират в личните настройки.",
+    "Performance" : "Производителност",
     "Keyboard shortcuts" : "Бързи клавиши",
     "Speed up your Talk experience with these quick shortcuts." : "Ускорете изживяването си с Talk с тези бързи преки пътища.",
     "Focus the chat input" : "Фокусиране на въвеждането в чата",

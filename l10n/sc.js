@@ -923,6 +923,7 @@ OC.L10N.register(
     "Share my read-status and show the read-status of others" : "Cumpartzi s'istadu de letura miu e mustra cussu de àtere",
     "Sounds" : "Sonos",
     "Play sounds when participants join or leave a call" : "Ativa is sonos cando is partetzipantes intrant o lassant una mutida",
+    "Performance" : "Atuatzione",
     "Keyboard shortcuts" : "Curtziadòrgios de tecladu",
     "Speed up your Talk experience with these quick shortcuts." : "Faghe s'esperièntzia de Talk prus lestra cun custos curtziadòrgios.",
     "Focus the chat input" : "Ativa sa digitatzione de sa tzarrada",
