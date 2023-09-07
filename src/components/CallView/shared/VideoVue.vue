@@ -111,8 +111,8 @@ import VideoBottomBar from './VideoBottomBar.vue'
 import { ATTENDEE } from '../../../constants.js'
 import video from '../../../mixins/video.js'
 import { EventBus } from '../../../services/EventBus.js'
+import { useGuestNameStore } from '../../../stores/guestNameStore.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
-import { useGuestNameStore } from '../../../store/guestNameStore.js'
 
 export default {
 
@@ -190,7 +190,7 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		return  guestNameStore
+		return { guestNameStore }
 	},
 
 	data() {

@@ -47,7 +47,8 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor.js'
 
 import TransitionWrapper from '../../TransitionWrapper.vue'
-import { useGuestNameStore } from '../../../store/guestNameStore.js'
+
+import { useGuestNameStore } from '../../../stores/guestNameStore.js'
 
 export default {
 	name: 'ReactionToaster',
@@ -82,7 +83,7 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		return  guestNameStore
+		return { guestNameStore }
 	},
 
 	data() {

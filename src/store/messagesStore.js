@@ -40,8 +40,8 @@ import {
 	addReactionToMessage,
 	removeReactionFromMessage,
 } from '../services/messagesService.js'
+import { useGuestNameStore } from '../stores/guestNameStore.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
-import { useGuestNameStore } from './guestNameStore.js'
 
 /**
  * Returns whether the given message contains a mention to self, directly
@@ -79,8 +79,6 @@ function hasMentionToSelf(context, message) {
 
 	return false
 }
-
-const guestNameStore = useGuestNameStore()
 
 const state = {
 	/**
@@ -822,6 +820,7 @@ const actions = {
 		response.data.ocs.data.forEach(message => {
 			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 				// update guest display names cache
+				const guestNameStore = useGuestNameStore()
 				guestNameStore.setGuestNameIfEmpty(message)
 			}
 			context.dispatch('processMessage', message)
@@ -912,6 +911,7 @@ const actions = {
 		response.data.ocs.data.forEach(message => {
 			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 				// update guest display names cache
+				const guestNameStore = useGuestNameStore()
 				guestNameStore.setGuestNameIfEmpty(message)
 			}
 			context.dispatch('processMessage', message)
@@ -1037,7 +1037,8 @@ const actions = {
 				// update guest display names cache,
 				// force in case the display name has changed since
 				// the last fetch
-				this.guestNameStore.forceGuestName(message)
+				const guestNameStore = useGuestNameStore()
+				guestNameStore.forceGuestName(message)
 			}
 			context.dispatch('processMessage', message)
 			if (!lastMessage || message.id > lastMessage.id) {

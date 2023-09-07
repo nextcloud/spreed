@@ -40,7 +40,8 @@ import Hex from 'crypto-js/enc-hex.js'
 import SHA1 from 'crypto-js/sha1.js'
 
 import VideoBottomBar from './VideoBottomBar.vue'
-import { useGuestNameStore } from '../../../store/guestNameStore.js'
+
+import { useGuestNameStore } from '../../../stores/guestNameStore.js'
 
 export default {
 
@@ -75,9 +76,8 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		return  guestNameStore
+		return { guestNameStore }
 	},
-
 
 	computed: {
 		model() {
