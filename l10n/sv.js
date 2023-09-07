@@ -703,6 +703,7 @@ OC.L10N.register(
     "Link to a conversation" : "Länka till en konversation",
     "Privacy" : "Integritet",
     "Play sounds when participants join or leave a call" : "Spela upp ljud när deltagare går med eller lämnar ett samtal",
+    "Performance" : "Prestanda",
     "Keyboard shortcuts" : "Tangentbordsgenvägar",
     "Search" : "Sök",
     "Error while setting attachment folder" : "Fel vid inställning av mapp för bilagor",

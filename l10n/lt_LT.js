@@ -697,6 +697,7 @@ OC.L10N.register(
     "Attachments folder" : "Priedų aplankas",
     "Privacy" : "Privatumas",
     "Sounds" : "Garsai",
+    "Performance" : "Našumas",
     "Keyboard shortcuts" : "Spartieji klavišai",
     "Fullscreen the chat or call" : "Rodyti pokalbį ar skambutį visame ekrane",
     "Search" : "Ieškoti",

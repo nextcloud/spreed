@@ -500,6 +500,7 @@ OC.L10N.register(
     "Sounds" : "Lyde",
     "Play sounds when participants join or leave a call" : "Afspil lyde, når deltagere tilslutter sig eller forlader et opkald",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "Lyde til chat og opkaldsmeddelelser kan justeres i de personlige indstillinger.",
+    "Performance" : "Ydelse",
     "Keyboard shortcuts" : "Tastaturgenveje",
     "Speed up your Talk experience with these quick shortcuts." : "Optimer din Talk-oplevelse med disse tastaturgenveje.",
     "Focus the chat input" : "Fokuser chat funktionen",
