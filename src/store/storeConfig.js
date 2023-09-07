@@ -26,7 +26,6 @@ import breakoutRoomsStore from './breakoutRoomsStore.js'
 import callViewStore from './callViewStore.js'
 import conversationsStore from './conversationsStore.js'
 import fileUploadStore from './fileUploadStore.js'
-import guestNameStore from './guestNameStore.js'
 import integrationsStore from './integrationsStore.js'
 import messagesStore from './messagesStore.js'
 import newGroupConversationStore from './newGroupConversationStore.js'
@@ -49,7 +48,6 @@ export default {
 		callViewStore,
 		conversationsStore,
 		fileUploadStore,
-		guestNameStore,
 		messagesStore,
 		newGroupConversationStore,
 		participantsStore,

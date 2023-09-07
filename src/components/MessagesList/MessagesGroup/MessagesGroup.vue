@@ -48,7 +48,7 @@ import AuthorAvatar from './AuthorAvatar.vue'
 import Message from './Message/Message.vue'
 
 import { ATTENDEE } from '../../../constants.js'
-import { useGuestNameStore } from '../../../store/guestNameStore.js'
+import { useGuestNameStore } from '../../../stores/guestNameStore.js'
 
 export default {
 	name: 'MessagesGroup',
@@ -88,7 +88,7 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		return  guestNameStore
+		return { guestNameStore }
 	},
 
 	expose: ['highlightMessage'],

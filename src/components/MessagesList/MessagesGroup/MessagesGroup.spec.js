@@ -1,5 +1,6 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
+import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 
 import MessagesGroup from './MessagesGroup.vue'
@@ -7,6 +8,7 @@ import MessagesSystemGroup from './MessagesSystemGroup.vue'
 
 import { ATTENDEE } from '../../../constants.js'
 import storeConfig from '../../../store/storeConfig.js'
+import { useGuestNameStore } from '../../../stores/guestNameStore.js'
 
 describe('MessagesGroup.vue', () => {
 	const TOKEN = 'XXTOKENXX'
@@ -14,14 +16,19 @@ describe('MessagesGroup.vue', () => {
 	let localVue
 	let testStoreConfig
 	let getGuestNameMock
+	let pinia
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
+		pinia = createPinia()
+		setActivePinia(pinia)
+
+		const guestNameStore = useGuestNameStore()
 
 		testStoreConfig = cloneDeep(storeConfig)
 		getGuestNameMock = jest.fn()
-		testStoreConfig.modules.guestNameStore.getters.getGuestName = () => getGuestNameMock
+		guestNameStore.getGuestName = getGuestNameMock
 		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(testStoreConfig)
 	})

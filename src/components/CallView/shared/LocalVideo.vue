@@ -82,8 +82,8 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import VideoBackground from './VideoBackground.vue'
 
 import video from '../../../mixins/video.js'
+import { useGuestNameStore } from '../../../stores/guestNameStore.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
-import { useGuestNameStore } from '../../../store/guestNameStore.js'
 
 export default {
 
@@ -138,7 +138,7 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		return  guestNameStore
+		return { guestNameStore }
 	},
 
 	data() {

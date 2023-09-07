@@ -1,6 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
 import { cloneDeep } from 'lodash'
+import { createPinia, setActivePinia } from 'pinia'
 import vOutsideEvents from 'vue-outside-events'
 import Vuex, { Store } from 'vuex'
 
@@ -51,12 +52,15 @@ describe('Message.vue', () => {
 	let conversationProps
 	let injected
 	let getActorTypeMock
+	let pinia
 	const getVisualLastReadMessageIdMock = jest.fn()
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(vOutsideEvents)
 		localVue.use(Vuex)
+		pinia = createPinia()
+		setActivePinia(pinia)
 
 		conversationProps = {
 			token: TOKEN,

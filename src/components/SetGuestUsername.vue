@@ -55,7 +55,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { setGuestUserName } from '../services/participantsService.js'
-import { useGuestNameStore } from '../store/guestNameStore.js'
+import { useGuestNameStore } from '../stores/guestNameStore.js'
 
 export default {
 	name: 'SetGuestUsername',
@@ -68,7 +68,7 @@ export default {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		return  guestNameStore
+		return { guestNameStore }
 	},
 
 	data() {

@@ -263,7 +263,7 @@ import { useIsInCall } from '../../../../composables/useIsInCall.js'
 import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import participant from '../../../../mixins/participant.js'
 import { EventBus } from '../../../../services/EventBus.js'
-import { useGuestNameStore } from '../../../../store/guestNameStore.js'
+import { useGuestNameStore } from '../../../../stores/guestNameStore.js'
 
 const isTranslationAvailable = getCapabilities()?.spreed?.config?.chat?.translations?.length > 0
 

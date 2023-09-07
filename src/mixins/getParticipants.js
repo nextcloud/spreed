@@ -31,9 +31,9 @@ import { emit } from '@nextcloud/event-bus'
 import { PARTICIPANT } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
 import { fetchParticipants } from '../services/participantsService.js'
+import { useGuestNameStore } from '../stores/guestNameStore.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import isInLobby from './isInLobby.js'
-import { useGuestNameStore } from '../store/guestNameStore.js'
 
 const getParticipants = {
 
@@ -41,7 +41,7 @@ const getParticipants = {
 
 	setup() {
 		const guestNameStore = useGuestNameStore()
-		return  guestNameStore
+		return { guestNameStore }
 	},
 
 	data() {
