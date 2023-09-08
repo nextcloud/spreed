@@ -1356,6 +1356,7 @@ OC.L10N.register(
     "Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer." : "Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer.",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "Sounds for chat and call notifications can be adjusted in the personal settings.",
     "Performance" : "Performance",
+    "Blur background image in the call (may increase GPU load)" : "Blur background image in the call (may increase GPU load)",
     "Keyboard shortcuts" : "Keyboard shortcuts",
     "Speed up your Talk experience with these quick shortcuts." : "Speed up your Talk experience with these quick shortcuts.",
     "Focus the chat input" : "Focus the chat input",
