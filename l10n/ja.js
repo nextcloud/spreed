@@ -767,6 +767,7 @@ OC.L10N.register(
     "Breakout rooms" : "ブレークアウト・ルーム(子会議室)",
     "Choose conversation picture from files" : "このチャットの画像をファイルから選択",
     "Remove conversation picture" : "このチャットの画像を削除",
+    "The file must be a PNG or JPG" : "ファイルは PNG または JPG でなければなりません",
     "Edit the default permissions for participants in this conversation. These settings do not affect moderators." : "この会話での初期設定のパーミッションを編集できます。これらの設定はモデレーターには影響しません。",
     "All permissions" : "すべての権限",
     "Participants have permissions to start a call, join a call, enable audio and video, and share screen." : "参加者は、通話の開始、参加、音声とビデオの有効、画面共有の権限を持っています。",
