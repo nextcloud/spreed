@@ -1356,6 +1356,7 @@ OC.L10N.register(
     "Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer." : "由於製造商的技術限制，目前無法在 iPad 及 iPhone 裝置中播放聲音。",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "可以在個人設置中調整聊天和通話通告的聲音。",
     "Performance" : "效能",
+    "Blur background image in the call (may increase GPU load)" : "通話中模糊背景影像（可能會增加 GPU 負載）",
     "Keyboard shortcuts" : "鍵盤快捷鍵",
     "Speed up your Talk experience with these quick shortcuts." : "這些快速捷徑可加快您的 Talk 體驗。",
     "Focus the chat input" : "關注聊天輸入字段",
