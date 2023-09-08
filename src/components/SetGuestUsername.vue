@@ -55,7 +55,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import { setGuestUserName } from '../services/participantsService.js'
-import { useGuestNameStore } from '../stores/guestNameStore.js'
+import { useGuestNameStore } from '../stores/guestName.js'
 
 export default {
 	name: 'SetGuestUsername',
@@ -127,11 +127,11 @@ export default {
 			const previousName = this.$store.getters.getDisplayName()
 			try {
 				this.$store.dispatch('setDisplayName', this.guestUserName)
-				this.guestNameStore.forceGuestName({
+				this.guestNameStore.addGuestName({
 					token: this.token,
 					actorId: this.$store.getters.getActorId(),
 					actorDisplayName: this.guestUserName,
-				})
+				}, { noUpdate: false })
 				await setGuestUserName(this.token, this.guestUserName)
 				if (this.guestUserName !== '') {
 					localStorage.setItem('nick', this.guestUserName)
@@ -141,11 +141,11 @@ export default {
 				this.isEditingUsername = false
 			} catch (exception) {
 				this.$store.dispatch('setDisplayName', previousName)
-				this.guestNameStore.forceGuestName({
+				this.guestNameStore.addGuestName({
 					token: this.token,
 					actorId: this.$store.getters.getActorId(),
 					actorDisplayName: previousName,
-				})
+				}, { noUpdate: false })
 				console.debug(exception)
 			}
 		},

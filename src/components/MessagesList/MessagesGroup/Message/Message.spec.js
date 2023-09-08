@@ -52,15 +52,13 @@ describe('Message.vue', () => {
 	let conversationProps
 	let injected
 	let getActorTypeMock
-	let pinia
 	const getVisualLastReadMessageIdMock = jest.fn()
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(vOutsideEvents)
 		localVue.use(Vuex)
-		pinia = createPinia()
-		setActivePinia(pinia)
+		setActivePinia(createPinia())
 
 		conversationProps = {
 			token: TOKEN,

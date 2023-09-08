@@ -2,6 +2,7 @@
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
+ * @author Dorra Jaouad <dorra.jaoued1@gmail.com>
  *
  * @license AGPL-3.0-or-later
  *
@@ -28,17 +29,25 @@ export const useGuestNameStore = defineStore('guestName', {
 	}),
 
 	actions: {
-	/**
-	 * Gets the participant display name
-	 *
-	 * @param {string} token the conversation's token
-	 * @param {string} actorId the participant actorId
-	 * @return {string} the participant name
-	 */
+		/**
+		 * Gets the participant display name
+		 *
+		 * @param {string} token the conversation's token
+		 * @param {string} actorId the participant actorId
+		 * @return {string} the participant name
+		 */
 		getGuestName(token, actorId) {
 			return this.guestNames[token]?.[actorId] ?? t('spreed', 'Guest')
 		},
 
+		/**
+		 * Gets the participant display name with suffix
+		 * if the display name is not default translatable Guest
+		 *
+		 * @param {string} token the conversation's token
+		 * @param {string} actorId the participant actorId
+		 * @return {string} the participant name with/without suffix
+		 */
 		getGuestNameWithGuestSuffix(token, actorId) {
 			const displayName = this.getGuestName(token, actorId)
 			if (displayName === t('spreed', 'Guest')) {
@@ -52,13 +61,14 @@ export const useGuestNameStore = defineStore('guestName', {
 		/**
 		 * Adds a guest name to the store
 		 *
-		 * @param {object} data the wrapping object;
-		 * @param {boolean} data.noUpdate Only set the guest name if it was not set before
+		 * @param {object} data the wrapping object
 		 * @param {string} data.token the token of the conversation
 		 * @param {string} data.actorId the guest
 		 * @param {string} data.actorDisplayName the display name to set
+		 * @param {object} options options
+		 * @param {boolean} options.noUpdate Override the display name or set it if it is empty
 		 */
-		addGuestName({ noUpdate, token, actorId, actorDisplayName }) {
+		addGuestName({ token, actorId, actorDisplayName }, { noUpdate }) {
 			if (!this.guestNames[token]) {
 				Vue.set(this.guestNames, token, {})
 
@@ -72,30 +82,6 @@ export const useGuestNameStore = defineStore('guestName', {
 			if (actorDisplayName) {
 				Vue.set(this.guestNames[token], actorId, actorDisplayName)
 			}
-		},
-
-		/**
-		 * Add guest name of a chat message to the store
-		 *
-		 * @param {object} data the wrapping object;
-		 * @param {string} data.token the token of the conversation
-		 * @param {string} data.actorId the guest
-		 * @param {string} data.actorDisplayName the display name to set
-		 */
-		setGuestNameIfEmpty({ token, actorId, actorDisplayName }) {
-			this.addGuestName({ noUpdate: true, token, actorId, actorDisplayName })
-		},
-
-		/**
-		 * Add guest name of a chat message to the store
-		 *
-		 * @param {object} data the wrapping object;
-		 * @param {string} data.token the token of the conversation
-		 * @param {string} data.actorId the guest
-		 * @param {string} data.actorDisplayName the display name to set
-		 */
-		forceGuestName({ token, actorId, actorDisplayName }) {
-			this.addGuestName({ noUpdate: false, token, actorId, actorDisplayName })
 		},
 	},
 })

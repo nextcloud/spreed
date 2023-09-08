@@ -208,7 +208,7 @@ import { CALL, VIRTUAL_BACKGROUND } from '../../constants.js'
 import { devices } from '../../mixins/devices.js'
 import isInLobby from '../../mixins/isInLobby.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
-import { useGuestNameStore } from '../../stores/guestNameStore.js'
+import { useGuestNameStore } from '../../stores/guestName.js'
 import { localMediaModel } from '../../utils/webrtc/index.js'
 
 export default {

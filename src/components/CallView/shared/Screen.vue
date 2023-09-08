@@ -41,7 +41,7 @@ import SHA1 from 'crypto-js/sha1.js'
 
 import VideoBottomBar from './VideoBottomBar.vue'
 
-import { useGuestNameStore } from '../../../stores/guestNameStore.js'
+import { useGuestNameStore } from '../../../stores/guestName.js'
 
 export default {
 

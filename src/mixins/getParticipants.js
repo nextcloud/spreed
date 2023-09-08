@@ -31,7 +31,7 @@ import { emit } from '@nextcloud/event-bus'
 import { PARTICIPANT } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
 import { fetchParticipants } from '../services/participantsService.js'
-import { useGuestNameStore } from '../stores/guestNameStore.js'
+import { useGuestNameStore } from '../stores/guestName.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import isInLobby from './isInLobby.js'
 
@@ -143,11 +143,11 @@ const getParticipants = {
 					})
 					if (participant.participantType === PARTICIPANT.TYPE.GUEST
 						|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
-						this.guestNameStore.forceGuestName({
+						this.guestNameStore.addGuestName({
 							token,
 							actorId: Hex.stringify(SHA1(participant.sessionIds[0])),
 							actorDisplayName: participant.displayName,
-						})
+						}, { noUpdate: false })
 					} else if (participant.actorType === 'users' && hasUserStatuses) {
 						emit('user_status:status.updated', {
 							status: participant.status,
