@@ -48,9 +48,9 @@ export default {
 	name: 'FilesSidebarCallViewApp',
 
 	components: {
-		CallView: () => import(/* webpackChunkName: "talk-call" */'./components/CallView/CallView.vue'),
+		CallView: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/CallView/CallView.vue'),
 		PreventUnload,
-		TopBar: () => import(/* webpackChunkName: "talk-call" */'./components/TopBar/TopBar.vue'),
+		TopBar: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/TopBar/TopBar.vue'),
 	},
 
 	mixins: [
