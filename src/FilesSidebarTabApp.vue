@@ -38,11 +38,7 @@
 				{{ t('spreed', 'Join conversation') }}
 			</NcButton>
 		</div>
-		<template v-else>
-			<CallButton class="call-button" />
-			<ChatView />
-			<MediaSettings :initialize-on-mounted="false" />
-		</template>
+		<FilesSidebarChatView v-else />
 	</div>
 </template>
 
@@ -53,6 +49,8 @@ import Axios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
 
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
+
+import LoadingComponent from './components/LoadingComponent.vue'
 
 import browserCheck from './mixins/browserCheck.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
@@ -72,9 +70,12 @@ export default {
 	name: 'FilesSidebarTabApp',
 
 	components: {
-		CallButton: () => import(/* webpackChunkName: "talk-chat" */'./components/TopBar/CallButton.vue'),
-		ChatView: () => import(/* webpackChunkName: "talk-chat" */'./components/ChatView.vue'),
-		MediaSettings: () => import(/* webpackChunkName: "talk-chat" */'./components/MediaSettings/MediaSettings.vue'),
+		FilesSidebarChatView: () => ({
+			component: import(/* webpackChunkName: "files-sidebar-tab-chunk" */'./views/FilesSidebarChatView.vue'),
+			loading: {
+				render: (h) => h(LoadingComponent, { class: 'tab-loading' }),
+			},
+		}),
 		NcButton,
 	},
 
@@ -422,16 +423,7 @@ export default {
 	justify-content: center;
 }
 
-.call-button {
-	/* Center button horizontally. */
-	margin-left: auto;
-	margin-right: auto;
-
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-
-.chatView {
-	overflow: hidden;
+.tab-loading {
+	height: 100%;
 }
 </style>
