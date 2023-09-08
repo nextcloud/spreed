@@ -8,27 +8,23 @@ import MessagesSystemGroup from './MessagesSystemGroup.vue'
 
 import { ATTENDEE } from '../../../constants.js'
 import storeConfig from '../../../store/storeConfig.js'
-import { useGuestNameStore } from '../../../stores/guestNameStore.js'
+import { useGuestNameStore } from '../../../stores/guestName.js'
 
 describe('MessagesGroup.vue', () => {
 	const TOKEN = 'XXTOKENXX'
 	let store
 	let localVue
 	let testStoreConfig
-	let getGuestNameMock
-	let pinia
+	let guestNameStore
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
-		pinia = createPinia()
-		setActivePinia(pinia)
+		setActivePinia(createPinia())
 
-		const guestNameStore = useGuestNameStore()
+		guestNameStore = useGuestNameStore()
 
 		testStoreConfig = cloneDeep(storeConfig)
-		getGuestNameMock = jest.fn()
-		guestNameStore.getGuestName = getGuestNameMock
 		// eslint-disable-next-line import/no-named-as-default-member
 		store = new Vuex.Store(testStoreConfig)
 	})
@@ -186,7 +182,13 @@ describe('MessagesGroup.vue', () => {
 	})
 
 	test('renders guest display name', () => {
-		getGuestNameMock.mockReturnValue('guest-one-display-name')
+		// Arrange
+		guestNameStore.addGuestName({
+			token: TOKEN,
+			actorId: 'actor-1',
+			actorDisplayName: 'guest-one-display-name',
+		}, { noUpdate: false })
+
 		const wrapper = shallowMount(MessagesGroup, {
 			localVue,
 			store,
@@ -239,8 +241,6 @@ describe('MessagesGroup.vue', () => {
 		message = messagesEl.at(1)
 		expect(message.attributes('id')).toBe('110')
 		expect(message.attributes('actorid')).toBe('actor-1')
-
-		expect(getGuestNameMock).toHaveBeenCalledWith(TOKEN, 'actor-1')
 	})
 
 	test('renders deleted guest display name', () => {

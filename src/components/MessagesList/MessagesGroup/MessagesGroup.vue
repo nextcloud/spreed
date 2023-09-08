@@ -48,7 +48,7 @@ import AuthorAvatar from './AuthorAvatar.vue'
 import Message from './Message/Message.vue'
 
 import { ATTENDEE } from '../../../constants.js'
-import { useGuestNameStore } from '../../../stores/guestNameStore.js'
+import { useGuestNameStore } from '../../../stores/guestName.js'
 
 export default {
 	name: 'MessagesGroup',

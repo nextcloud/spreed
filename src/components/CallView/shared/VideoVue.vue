@@ -111,7 +111,7 @@ import VideoBottomBar from './VideoBottomBar.vue'
 import { ATTENDEE } from '../../../constants.js'
 import video from '../../../mixins/video.js'
 import { EventBus } from '../../../services/EventBus.js'
-import { useGuestNameStore } from '../../../stores/guestNameStore.js'
+import { useGuestNameStore } from '../../../stores/guestName.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 export default {

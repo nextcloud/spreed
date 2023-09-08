@@ -48,7 +48,7 @@ import usernameToColor from '@nextcloud/vue/dist/Functions/usernameToColor.js'
 
 import TransitionWrapper from '../../TransitionWrapper.vue'
 
-import { useGuestNameStore } from '../../../stores/guestNameStore.js'
+import { useGuestNameStore } from '../../../stores/guestName.js'
 
 export default {
 	name: 'ReactionToaster',
@@ -154,7 +154,7 @@ export default {
 				id: model.attributes.peerId,
 				reaction,
 				name: isLocalModel
-					? this.$store.getters.getDisplayName() || this.guestNameStore.getGuestName()
+					? this.$store.getters.getDisplayName() || t('spreed', 'Guest')
 					: this.getParticipantName(model),
 				seed: Math.random(),
 			})

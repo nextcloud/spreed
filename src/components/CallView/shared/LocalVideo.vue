@@ -82,7 +82,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import VideoBackground from './VideoBackground.vue'
 
 import video from '../../../mixins/video.js'
-import { useGuestNameStore } from '../../../stores/guestNameStore.js'
+import { useGuestNameStore } from '../../../stores/guestName.js'
 import { ConnectionState } from '../../../utils/webrtc/models/CallParticipantModel.js'
 
 export default {

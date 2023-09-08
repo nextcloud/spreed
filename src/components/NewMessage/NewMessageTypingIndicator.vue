@@ -45,7 +45,7 @@ import escapeHtml from 'escape-html'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
-import { useGuestNameStore } from '../../stores/guestNameStore.js'
+import { useGuestNameStore } from '../../stores/guestName.js'
 
 export default {
 	name: 'NewMessageTypingIndicator',

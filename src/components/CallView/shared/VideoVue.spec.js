@@ -40,7 +40,6 @@ describe('VideoVue.vue', () => {
 	let localVue
 	let store
 	let testStoreConfig
-	let pinia
 
 	let callParticipantModel
 
@@ -89,8 +88,7 @@ describe('VideoVue.vue', () => {
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
-		pinia = createPinia()
-		setActivePinia(pinia)
+		setActivePinia(createPinia())
 
 		testStoreConfig = cloneDeep(storeConfig)
 		// eslint-disable-next-line import/no-named-as-default-member

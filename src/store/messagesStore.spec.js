@@ -18,7 +18,7 @@ import {
 	lookForNewMessages,
 	postNewMessage,
 } from '../services/messagesService.js'
-import { useGuestNameStore } from '../stores/guestNameStore.js'
+import { useGuestNameStore } from '../stores/guestName.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import messagesStore from './messagesStore.js'
@@ -44,13 +44,11 @@ describe('messagesStore', () => {
 	let testStoreConfig
 	let store = null
 	let updateConversationLastActiveAction
-	let pinia
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
-		pinia = createPinia()
-		setActivePinia(pinia)
+		setActivePinia(createPinia())
 
 		testStoreConfig = cloneDeep(messagesStore)
 
@@ -769,7 +767,7 @@ describe('messagesStore', () => {
 
 	describe('fetchMessages', () => {
 		let updateLastCommonReadMessageAction
-		let setGuestNameIfEmptyAction
+		let addGuestNameAction
 		let cancelFunctionMock
 
 		beforeEach(() => {
@@ -777,9 +775,9 @@ describe('messagesStore', () => {
 			const guestNameStore = useGuestNameStore()
 
 			updateLastCommonReadMessageAction = jest.fn()
-			setGuestNameIfEmptyAction = jest.fn()
+			addGuestNameAction = jest.fn()
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
-			guestNameStore.setGuestNameIfEmpty = setGuestNameIfEmptyAction
+			guestNameStore.addGuestName = addGuestNameAction
 
 			cancelFunctionMock = jest.fn()
 			CancelableRequest.mockImplementation((request) => {
@@ -833,7 +831,7 @@ describe('messagesStore', () => {
 			expect(updateLastCommonReadMessageAction)
 				.toHaveBeenCalledWith(expect.anything(), { token: TOKEN, lastCommonReadMessage: 123 })
 
-			expect(setGuestNameIfEmptyAction).toHaveBeenCalledWith(messages[1])
+			expect(addGuestNameAction).toHaveBeenCalledWith(messages[1], { noUpdate: true })
 
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual(messages)
 			expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(100)
@@ -881,7 +879,7 @@ describe('messagesStore', () => {
 			expect(updateLastCommonReadMessageAction)
 				.toHaveBeenCalledWith(expect.anything(), { token: TOKEN, lastCommonReadMessage: 123 })
 
-			expect(setGuestNameIfEmptyAction).toHaveBeenCalledWith(messages[1])
+			expect(addGuestNameAction).toHaveBeenCalledWith(messages[1], { noUpdate: true })
 
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual(messages)
 			expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(100)
@@ -924,7 +922,7 @@ describe('messagesStore', () => {
 
 	describe('get message context', () => {
 		let updateLastCommonReadMessageAction
-		let setGuestNameIfEmptyAction
+		let addGuestNameAction
 		let cancelFunctionMock
 
 		beforeEach(() => {
@@ -932,9 +930,9 @@ describe('messagesStore', () => {
 			const guestNameStore = useGuestNameStore()
 
 			updateLastCommonReadMessageAction = jest.fn()
-			setGuestNameIfEmptyAction = jest.fn()
+			addGuestNameAction = jest.fn()
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
-			guestNameStore.setGuestNameIfEmpty = setGuestNameIfEmptyAction
+			guestNameStore.addGuestName = addGuestNameAction
 
 			cancelFunctionMock = jest.fn()
 			CancelableRequest.mockImplementation((request) => {
@@ -986,7 +984,7 @@ describe('messagesStore', () => {
 			expect(updateLastCommonReadMessageAction)
 				.toHaveBeenCalledWith(expect.anything(), { token: TOKEN, lastCommonReadMessage: 1 })
 
-			expect(setGuestNameIfEmptyAction).toHaveBeenCalledWith(messages[1])
+			expect(addGuestNameAction).toHaveBeenCalledWith(messages[1], { noUpdate: true })
 
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual(messages)
 			expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(1)
@@ -1057,7 +1055,7 @@ describe('messagesStore', () => {
 			expect(updateLastCommonReadMessageAction).toHaveBeenNthCalledWith(1, expect.anything(), { token: TOKEN, lastCommonReadMessage: 2 })
 			expect(updateLastCommonReadMessageAction).toHaveBeenNthCalledWith(2, expect.anything(), { token: TOKEN, lastCommonReadMessage: 2 })
 
-			expect(setGuestNameIfEmptyAction).toHaveBeenCalledWith(messagesContext[1])
+			expect(addGuestNameAction).toHaveBeenCalledWith(messagesContext[1], { noUpdate: true })
 
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual([...messagesFetch, ...messagesContext])
 			expect(store.getters.getFirstKnownMessageId(TOKEN)).toBe(1)
@@ -1069,7 +1067,7 @@ describe('messagesStore', () => {
 		let updateLastCommonReadMessageAction
 		let updateConversationLastMessageAction
 		let updateUnreadMessagesMutation
-		let forceGuestNameAction
+		let addGuestNameAction
 		let cancelFunctionMocks
 		let conversationMock
 		let getActorIdMock
@@ -1092,10 +1090,10 @@ describe('messagesStore', () => {
 			updateConversationLastMessageAction = jest.fn()
 			updateLastCommonReadMessageAction = jest.fn()
 			updateUnreadMessagesMutation = jest.fn()
-			forceGuestNameAction = jest.fn()
+			addGuestNameAction = jest.fn()
 			testStoreConfig.actions.updateConversationLastMessage = updateConversationLastMessageAction
 			testStoreConfig.actions.updateLastCommonReadMessage = updateLastCommonReadMessageAction
-			guestNameStore.forceGuestName = forceGuestNameAction
+			guestNameStore.addGuestName = addGuestNameAction
 			testStoreConfig.mutations.updateUnreadMessages = updateUnreadMessagesMutation
 
 			cancelFunctionMocks = []
@@ -1157,7 +1155,7 @@ describe('messagesStore', () => {
 			expect(updateLastCommonReadMessageAction)
 				.toHaveBeenCalledWith(expect.anything(), { token: TOKEN, lastCommonReadMessage: 123 })
 
-			expect(forceGuestNameAction).toHaveBeenCalledWith(messages[1])
+			expect(addGuestNameAction).toHaveBeenCalledWith(messages[1], { noUpdate: false })
 
 			expect(store.getters.messagesList(TOKEN)).toStrictEqual(messages)
 			expect(store.getters.getLastKnownMessageId(TOKEN)).toBe(100)
