@@ -1354,6 +1354,7 @@
     "Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer." : "由於製造商的技術限制，目前無法在 iPad 與 iPhone 裝置中播放音訊。",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "可以在個人設定中調整聊天和通話通知的音訊。",
     "Performance" : "效能",
+    "Blur background image in the call (may increase GPU load)" : "通話中模糊背景影像（可能會增加 GPU 負載）",
     "Keyboard shortcuts" : "鍵盤快速鍵",
     "Speed up your Talk experience with these quick shortcuts." : "使用這些快速鍵加快您的 Talk 體驗。",
     "Focus the chat input" : "聚焦聊天輸入",

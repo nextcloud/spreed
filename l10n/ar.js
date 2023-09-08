@@ -1356,6 +1356,7 @@ OC.L10N.register(
     "Sounds can currently not be played on iPad and iPhone devices due to technical restrictions by the manufacturer." : "لا يمكن تشغيل الأصوات حاليًا على أجهزة آي باد و آي فون بسبب القيود الفنية من قبل الشركة المصنعة.",
     "Sounds for chat and call notifications can be adjusted in the personal settings." : "يمكن تعديل أصوات تنبيهات الدردشة والمكالمات من الإعدادات الشخصية.",
     "Performance" : "سرعة الأداء",
+    "Blur background image in the call (may increase GPU load)" : "طمس صورة الخلفية في المكالمة (يمكن أن تتسبب في زيادة العبء على المعالج GPU)",
     "Keyboard shortcuts" : "إختصارات لوحة المفاتيح",
     "Speed up your Talk experience with these quick shortcuts." : "استخدم الاختصارات التالية لتجربة سريعه مع تطبيق التحدث",
     "Focus the chat input" : "تركيز على إدخال الدردشة",
