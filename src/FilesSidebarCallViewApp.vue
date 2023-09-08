@@ -35,6 +35,8 @@
 <script>
 import PreventUnload from 'vue-prevent-unload'
 
+import LoadingComponent from './components/LoadingComponent.vue'
+
 import { useIsInCall } from './composables/useIsInCall.js'
 import participant from './mixins/participant.js'
 import sessionIssueHandler from './mixins/sessionIssueHandler.js'
@@ -48,7 +50,12 @@ export default {
 	name: 'FilesSidebarCallViewApp',
 
 	components: {
-		CallView: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/CallView/CallView.vue'),
+		CallView: () => ({
+			component: import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/CallView/CallView.vue'),
+			loading: {
+				render: (h) => h(LoadingComponent, { class: 'call-loading' }),
+			},
+		}),
 		PreventUnload,
 		TopBar: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/TopBar/TopBar.vue'),
 	},
@@ -286,6 +293,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import './assets/variables';
+
 #call-container {
 	position: relative;
 
@@ -296,5 +305,11 @@ export default {
 	 * width. */
 	padding-bottom: 56.25%;
 	max-height: 56.25%;
+}
+
+.call-loading{
+	padding-bottom: 56.25%;
+	max-height: 56.25%;
+	background-color: $color-call-background;
 }
 </style>
