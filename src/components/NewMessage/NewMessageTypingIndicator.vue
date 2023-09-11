@@ -45,6 +45,8 @@ import escapeHtml from 'escape-html'
 
 import AvatarWrapper from '../AvatarWrapper/AvatarWrapper.vue'
 
+import { useGuestNameStore } from '../../stores/guestName.js'
+
 export default {
 	name: 'NewMessageTypingIndicator',
 	components: { AvatarWrapper },
@@ -57,6 +59,11 @@ export default {
 			type: String,
 			required: true,
 		},
+	},
+
+	setup() {
+		const guestNameStore = useGuestNameStore()
+		return { guestNameStore }
 	},
 
 	computed: {
@@ -131,7 +138,7 @@ export default {
 				return participant.displayName
 			}
 
-			return this.$store.getters.getGuestName(this.token, participant.actorId)
+			return this.guestNameStore.getGuestName(this.token, participant.actorId)
 		},
 	},
 }

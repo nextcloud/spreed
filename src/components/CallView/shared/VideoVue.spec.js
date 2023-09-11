@@ -21,6 +21,7 @@
 
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 import { cloneDeep } from 'lodash'
+import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 
 import VideoVue from './VideoVue.vue'
@@ -87,6 +88,7 @@ describe('VideoVue.vue', () => {
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
+		setActivePinia(createPinia())
 
 		testStoreConfig = cloneDeep(storeConfig)
 		// eslint-disable-next-line import/no-named-as-default-member

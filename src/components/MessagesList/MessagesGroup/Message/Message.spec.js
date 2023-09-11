@@ -1,6 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
 import flushPromises from 'flush-promises' // TODO fix after migration to @vue/test-utils v2.0.0
 import { cloneDeep } from 'lodash'
+import { createPinia, setActivePinia } from 'pinia'
 import vOutsideEvents from 'vue-outside-events'
 import Vuex, { Store } from 'vuex'
 
@@ -57,6 +58,7 @@ describe('Message.vue', () => {
 		localVue = createLocalVue()
 		localVue.use(vOutsideEvents)
 		localVue.use(Vuex)
+		setActivePinia(createPinia())
 
 		conversationProps = {
 			token: TOKEN,

@@ -40,6 +40,7 @@ import {
 	addReactionToMessage,
 	removeReactionFromMessage,
 } from '../services/messagesService.js'
+import { useGuestNameStore } from '../stores/guestName.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 
 /**
@@ -819,7 +820,8 @@ const actions = {
 		response.data.ocs.data.forEach(message => {
 			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 				// update guest display names cache
-				context.dispatch('setGuestNameIfEmpty', message)
+				const guestNameStore = useGuestNameStore()
+				guestNameStore.addGuestName(message, { noUpdate: true })
 			}
 			context.dispatch('processMessage', message)
 			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
@@ -909,7 +911,8 @@ const actions = {
 		response.data.ocs.data.forEach(message => {
 			if (message.actorType === ATTENDEE.ACTOR_TYPE.GUESTS) {
 				// update guest display names cache
-				context.dispatch('setGuestNameIfEmpty', message)
+				const guestNameStore = useGuestNameStore()
+				guestNameStore.addGuestName(message, { noUpdate: true })
 			}
 			context.dispatch('processMessage', message)
 			newestKnownMessageId = Math.max(newestKnownMessageId, message.id)
@@ -1034,7 +1037,8 @@ const actions = {
 				// update guest display names cache,
 				// force in case the display name has changed since
 				// the last fetch
-				context.dispatch('forceGuestName', message)
+				const guestNameStore = useGuestNameStore()
+				guestNameStore.addGuestName(message, { noUpdate: false })
 			}
 			context.dispatch('processMessage', message)
 			if (!lastMessage || message.id > lastMessage.id) {
