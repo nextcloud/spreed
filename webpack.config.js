@@ -32,6 +32,16 @@ module.exports = merge(nextcloudWebpackConfig, commonWebpackConfig, {
 		assetModuleFilename: '[name][ext]?v=[contenthash]',
 	},
 
+	optimization: {
+		splitChunks: {
+			cacheGroups: {
+				defaultVendors: {
+					reuseExistingChunk: true,
+				},
+			},
+		},
+	},
+
 	plugins: [
 		new webpack.DefinePlugin({ IS_DESKTOP: false }),
 	],

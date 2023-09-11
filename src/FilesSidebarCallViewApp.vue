@@ -22,10 +22,10 @@
 
 <template>
 	<div v-if="isInFile" class="talk-sidebar-callview">
-		<TopBar v-show="showCallView"
+		<TopBar v-if="showCallView"
 			:is-in-call="true"
 			:is-sidebar="true" />
-		<CallView v-show="showCallView"
+		<CallView v-if="showCallView"
 			:token="token"
 			:is-sidebar="true" />
 		<PreventUnload :when="warnLeaving" />
@@ -35,8 +35,7 @@
 <script>
 import PreventUnload from 'vue-prevent-unload'
 
-import CallView from './components/CallView/CallView.vue'
-import TopBar from './components/TopBar/TopBar.vue'
+import LoadingComponent from './components/LoadingComponent.vue'
 
 import { useIsInCall } from './composables/useIsInCall.js'
 import participant from './mixins/participant.js'
@@ -51,9 +50,14 @@ export default {
 	name: 'FilesSidebarCallViewApp',
 
 	components: {
-		CallView,
+		CallView: () => ({
+			component: import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/CallView/CallView.vue'),
+			loading: {
+				render: (h) => h(LoadingComponent, { class: 'call-loading' }),
+			},
+		}),
 		PreventUnload,
-		TopBar,
+		TopBar: () => import(/* webpackChunkName: "files-sidebar-call-chunk" */'./components/TopBar/TopBar.vue'),
 	},
 
 	mixins: [
@@ -289,6 +293,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import './assets/variables';
+
 #call-container {
 	position: relative;
 
@@ -299,5 +305,11 @@ export default {
 	 * width. */
 	padding-bottom: 56.25%;
 	max-height: 56.25%;
+}
+
+.call-loading{
+	padding-bottom: 56.25%;
+	max-height: 56.25%;
+	background-color: $color-call-background;
 }
 </style>
