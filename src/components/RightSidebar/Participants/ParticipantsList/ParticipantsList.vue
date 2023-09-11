@@ -29,24 +29,21 @@
 				:show-user-status="showUserStatus"
 				@click-participant="handleClickParticipant" />
 		</ul>
-		<template v-if="loading">
-			<LoadingParticipant v-for="n in dummyParticipants"
-				:key="n" />
-		</template>
+		<LoadingPlaceholder v-if="loading" type="participants" :count="dummyParticipants" />
 	</div>
 </template>
 
 <script>
 
-import LoadingParticipant from './Participant/LoadingParticipant.vue'
+import LoadingPlaceholder from '../../../LoadingPlaceholder.vue'
 import Participant from './Participant/Participant.vue'
 
 export default {
 	name: 'ParticipantsList',
 
 	components: {
+		LoadingPlaceholder,
 		Participant,
-		LoadingParticipant,
 	},
 
 	props: {
