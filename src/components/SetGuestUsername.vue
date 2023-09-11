@@ -54,7 +54,6 @@ import Pencil from 'vue-material-design-icons/Pencil.vue'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
-import { setGuestUserName } from '../services/participantsService.js'
 import { useGuestNameStore } from '../stores/guestName.js'
 
 export default {
@@ -128,31 +127,9 @@ export default {
 	},
 
 	methods: {
-		async handleChooseUserName() {
-			const previousName = this.$store.getters.getDisplayName()
-			try {
-				this.$store.dispatch('setDisplayName', this.guestUserName)
-				this.guestNameStore.addGuestName({
-					token: this.token,
-					actorId: this.$store.getters.getActorId(),
-					actorDisplayName: this.guestUserName,
-				}, { noUpdate: false })
-				await setGuestUserName(this.token, this.guestUserName)
-				if (this.guestUserName !== '') {
-					localStorage.setItem('nick', this.guestUserName)
-				} else {
-					localStorage.removeItem('nick')
-				}
-				this.isEditingUsername = false
-			} catch (exception) {
-				this.$store.dispatch('setDisplayName', previousName)
-				this.guestNameStore.addGuestName({
-					token: this.token,
-					actorId: this.$store.getters.getActorId(),
-					actorDisplayName: previousName,
-				}, { noUpdate: false })
-				console.debug(exception)
-			}
+		handleChooseUserName() {
+			this.guestNameStore.submitUserName(this.token, this.guestUserName)
+			this.isEditingUsername = false
 		},
 
 		handleEditUsername() {

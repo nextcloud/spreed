@@ -1,5 +1,5 @@
 <!--
-  - @copyright Copyright (c) 2022, Dorra Jaouad <dorra.jaoued1@gmail.com>
+  - @copyright Copyright (c) 2023, Dorra Jaouad <dorra.jaoued1@gmail.com>
   -
   - @author Dorra Jaouad <dorra.jaoued1@gmail.com>
   -
@@ -67,6 +67,8 @@ import NcTextField from '@nextcloud/vue/dist/Components/NcTextField.js'
 
 import ConversationIcon from './ConversationIcon.vue'
 
+import { useGuestNameStore } from '../stores/guestName.js'
+
 export default {
 	name: 'GuestWelcomeWindow',
 
@@ -83,6 +85,11 @@ export default {
 			type: String,
 			required: true,
 		},
+	},
+
+	setup() {
+		const guestNameStore = useGuestNameStore()
+		return { guestNameStore }
 	},
 
 	data() {
@@ -115,10 +122,7 @@ export default {
 
 	methods: {
 		handleChooseUserName() {
-			this.$store.dispatch('SubmitUserName', {
-				token: this.token,
-				name: this.guestUserName,
-			})
+			this.guestNameStore.submitUserName(this.token, this.guestUserName)
 		},
 	},
 }
