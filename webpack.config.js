@@ -39,6 +39,13 @@ module.exports = mergeWithRules({
 	},
 
 	optimization: {
+		splitChunks: {
+			cacheGroups: {
+				defaultVendors: {
+					reuseExistingChunk: true,
+				},
+			},
+		},
 		minimizer: [
 			new EsbuildPlugin({
 				target: 'es2020',
