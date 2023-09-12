@@ -264,6 +264,7 @@ class RoomFormatter {
 			!($currentParticipant->getPermissions() & Attendee::PERMISSIONS_LOBBY_IGNORE)) {
 			// No participants and chat messages for users in the lobby.
 			$roomData['hasCall'] = false;
+			$roomData['canLeaveConversation'] = true;
 			return $roomData;
 		}
 
