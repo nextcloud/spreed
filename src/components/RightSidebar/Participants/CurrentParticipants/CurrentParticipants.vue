@@ -36,7 +36,7 @@ import Hint from '../../../Hint.vue'
 import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
 
 import { ATTENDEE, PARTICIPANT } from '../../../../constants.js'
-import UserStatus from '../../../../mixins/userStatus.js'
+import { isDoNotDisturb } from '../../../../utils/userStatus.js'
 
 export default {
 	name: 'CurrentParticipants',
@@ -45,10 +45,6 @@ export default {
 		ParticipantsList,
 		Hint,
 	},
-
-	mixins: [
-		UserStatus,
-	],
 
 	props: {
 		searchText: {
@@ -227,8 +223,8 @@ export default {
 					return participant1.attendeePermissions < participant2.attendeePermissions ? 1 : -1
 				}
 			}
-			const participant1Away = this.isNotAvailable(participant1)
-			const participant2Away = this.isNotAvailable(participant2)
+			const participant1Away = isDoNotDisturb(participant1)
+			const participant2Away = isDoNotDisturb(participant2)
 			if (participant1Away !== participant2Away) {
 				return participant1Away ? 1 : -1
 			}

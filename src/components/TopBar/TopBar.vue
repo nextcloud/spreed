@@ -165,8 +165,8 @@ import TopBarMenu from './TopBarMenu.vue'
 
 import { CONVERSATION } from '../../constants.js'
 import getParticipants from '../../mixins/getParticipants.js'
-import userStatus from '../../mixins/userStatus.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
+import { getStatusMessage } from '../../utils/userStatus.js'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
 
 export default {
@@ -195,7 +195,6 @@ export default {
 
 	mixins: [
 		richEditor,
-		userStatus,
 		getParticipants,
 	],
 
@@ -249,7 +248,7 @@ export default {
 		},
 
 		statusMessage() {
-			return this.getStatusMessage(this.conversation)
+			return getStatusMessage(this.conversation)
 		},
 
 		unreadMessagesCounter() {
