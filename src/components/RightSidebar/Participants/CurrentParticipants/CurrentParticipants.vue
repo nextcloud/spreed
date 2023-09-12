@@ -35,8 +35,7 @@ import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import Hint from '../../../Hint.vue'
 import ParticipantsList from '../ParticipantsList/ParticipantsList.vue'
 
-import { ATTENDEE, PARTICIPANT } from '../../../../constants.js'
-import { isDoNotDisturb } from '../../../../utils/userStatus.js'
+import { useSortParticipants } from '../../../../composables/useSortParticipants.js'
 
 export default {
 	name: 'CurrentParticipants',
@@ -55,6 +54,14 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+	},
+
+	setup() {
+		const { sortParticipants } = useSortParticipants()
+
+		return {
+			sortParticipants,
+		}
 	},
 
 	computed: {
@@ -84,18 +91,6 @@ export default {
 		participantsList() {
 			return this.participants.slice().sort(this.sortParticipants)
 		},
-
-		currentParticipant() {
-			return this.participants.find(x => {
-				return x.actorId === this.$store.getters.getActorId()
-					&& x.actorType === this.$store.getters.getActorType()
-			})
-		},
-
-		currentParticipantIsModerator() {
-			const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
-			return this.currentParticipant && moderatorTypes.includes(this.currentParticipant.participantType)
-		},
 	},
 
 	mounted() {
@@ -122,122 +117,6 @@ export default {
 					},
 				})
 			}
-		},
-
-		/**
-		 * Sort two participants by:
-		 * - participants before groups
-		 * - online status
-		 * - in call
-		 * - who raised hand first
-		 * - type (moderators before normal participants)
-		 * - user status (dnd at the end)
-		 * - display name
-		 *
-		 * @param {object} participant1 First participant
-		 * @param {number} participant1.participantType First participant type
-		 * @param {string} participant1.sessionId First participant session
-		 * @param {string} participant1.displayName First participant display name
-		 * @param {string} participant1.status First participant user status
-		 * @param {string} participant1.actorType First participant actor type
-		 * @param {number} participant1.inCall First participant in call flag
-		 * @param {object} participant2 Second participant
-		 * @param {number} participant2.participantType Second participant type
-		 * @param {string} participant2.sessionId Second participant session
-		 * @param {string} participant2.displayName Second participant display name
-		 * @param {string} participant2.actorType Second participant actor type
-		 * @param {string} participant2.status Second participant user status
-		 * @param {number} participant2.inCall Second participant in call flag
-		 * @return {number}
-		 */
-		sortParticipants(participant1, participant2) {
-			const p1IsCircle = participant1.actorType === ATTENDEE.ACTOR_TYPE.CIRCLES
-			const p2IsCircle = participant2.actorType === ATTENDEE.ACTOR_TYPE.CIRCLES
-
-			if (p1IsCircle !== p2IsCircle) {
-				// Circles below participants and groups
-				return p2IsCircle ? -1 : 1
-			}
-
-			const p1IsGroup = participant1.actorType === ATTENDEE.ACTOR_TYPE.GROUPS
-			const p2IsGroup = participant2.actorType === ATTENDEE.ACTOR_TYPE.GROUPS
-
-			if (p1IsGroup !== p2IsGroup) {
-				// Groups below participants
-				return p2IsGroup ? -1 : 1
-			}
-
-			const hasSessions1 = !!participant1.sessionIds.length
-			const hasSessions2 = !!participant2.sessionIds.length
-			/**
-			 * For now the user status is not overwriting the online-offline status anymore
-			 * It felt too weird having users appear as offline but they are in the call or chat actively
-			if (participant1.status === 'offline') {
-				hasSessions1 = false
-			}
-			if (participant2.status === 'offline') {
-				hasSessions2 = false
-			}
-			 */
-
-			if (!hasSessions1) {
-				if (hasSessions2) {
-					return 1
-				}
-			} else if (!hasSessions2) {
-				return -1
-			}
-
-			const p1inCall = participant1.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
-			const p2inCall = participant2.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
-			if (p1inCall !== p2inCall) {
-				return p1inCall ? -1 : 1
-			}
-
-			const p1HandRaised = this.$store.getters.getParticipantRaisedHand(participant1.sessionIds)
-			const p2HandRaised = this.$store.getters.getParticipantRaisedHand(participant2.sessionIds)
-			if (p1HandRaised.state !== p2HandRaised.state) {
-				return p1HandRaised.state ? -1 : 1
-			}
-			// both had raised hands, then pick whoever raised hand first
-			if (p1HandRaised) {
-				// use MAX_VALUE if not defined to avoid zeroes making it look like
-				// one raised their hands at the birth of time...
-				const t1 = p1HandRaised.timestamp || Number.MAX_VALUE
-				const t2 = p2HandRaised.timestamp || Number.MAX_VALUE
-				if (t1 !== t2) {
-					return t1 - t2
-				}
-			}
-
-			const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
-			const moderator1 = moderatorTypes.includes(participant1.participantType)
-			const moderator2 = moderatorTypes.includes(participant2.participantType)
-
-			if (moderator1 !== moderator2) {
-				return moderator1 ? -1 : 1
-			}
-
-			if (this.currentParticipantIsModerator) {
-				if (participant1.attendeePermissions !== participant2.attendeePermissions) {
-					return participant1.attendeePermissions < participant2.attendeePermissions ? 1 : -1
-				}
-			}
-			const participant1Away = isDoNotDisturb(participant1)
-			const participant2Away = isDoNotDisturb(participant2)
-			if (participant1Away !== participant2Away) {
-				return participant1Away ? 1 : -1
-			}
-
-			const p1IsGuest = participant1.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
-			const p2IsGuest = participant2.actorType === ATTENDEE.ACTOR_TYPE.GUESTS
-
-			if (p1IsGuest !== p2IsGuest) {
-				// Guests below participants
-				return p2IsGuest ? -1 : 1
-			}
-
-			return participant1.displayName.localeCompare(participant2.displayName)
 		},
 	},
 }
