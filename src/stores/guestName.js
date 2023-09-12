@@ -23,6 +23,9 @@
 import { defineStore } from 'pinia'
 import Vue from 'vue'
 
+import { setGuestUserName } from '../services/participantsService.js'
+import store from '../store/index.js'
+
 export const useGuestNameStore = defineStore('guestName', {
 	state: () => ({
 		guestNames: {},
@@ -81,6 +84,43 @@ export const useGuestNameStore = defineStore('guestName', {
 
 			if (actorDisplayName) {
 				Vue.set(this.guestNames[token], actorId, actorDisplayName)
+			}
+		},
+
+		/**
+		 * Add the submitted guest name to the store
+		 *
+		 * @param {string} token the token of the conversation
+		 * @param {string} name the new guest name
+		 */
+		async submitGuestUsername(token, name) {
+			const actorId = store.getters.getActorId()
+			const previousName = this.getGuestName(token, actorId)
+
+			try {
+				store.dispatch('setDisplayName', name)
+				this.addGuestName({
+					token,
+					actorId,
+					actorDisplayName: name,
+				}, { noUpdate: false })
+
+				await setGuestUserName(token, name)
+
+				if (name !== '') {
+					localStorage.setItem('nick', name)
+				} else {
+					localStorage.removeItem('nick')
+				}
+
+			} catch (error) {
+				store.dispatch('setDisplayName', previousName)
+				this.addGuestName({
+					token,
+					actorId,
+					actorDisplayName: previousName,
+				}, { noUpdate: false })
+				console.debug(error)
 			}
 		},
 	},

@@ -1,6 +1,13 @@
 import { createPinia, setActivePinia } from 'pinia'
 
+import { setGuestUserName } from '../../services/participantsService.js'
+import vuexStore from '../../store/index.js'
+import { generateOCSErrorResponse } from '../../test-helpers.js'
 import { useGuestNameStore } from '../guestName.js'
+
+jest.mock('../../services/participantsService', () => ({
+	setGuestUserName: jest.fn(),
+}))
 
 describe('guestNameStore', () => {
 	let store
@@ -135,4 +142,75 @@ describe('guestNameStore', () => {
 		expect(global.t).toHaveBeenCalledWith('spreed', 'Guest')
 	})
 
+	test('stores the display name when guest submits it', async () => {
+		// Arrange
+		const actor1 = {
+			token: 'token-1',
+			actorId: 'actor-id1',
+			actorDisplayName: t('spreed', 'Guest'),
+		}
+
+		vuexStore.dispatch('setCurrentUser', { uid: 'actor-id1' })
+
+		const newName = 'actor 1'
+
+		// Mock implementation of setGuestUserName
+		setGuestUserName.mockResolvedValue()
+
+		// Act
+		await store.submitGuestUsername(actor1.token, newName)
+
+		// Assert
+		expect(setGuestUserName).toHaveBeenCalledWith(actor1.token, newName)
+		expect(localStorage.setItem).toHaveBeenCalledWith('nick', newName)
+		expect(store.getGuestName('token-1', 'actor-id1')).toBe('actor 1')
+		expect(vuexStore.getters.getDisplayName()).toBe('actor 1')
+	})
+
+	test('removes display name from local storage when user sumbits an empty new name', async () => {
+		// Arrange
+		const actor1 = {
+			token: 'token-1',
+			actorId: 'actor-id1',
+			actorDisplayName: 'actor 1',
+		}
+		const newName = ''
+
+		vuexStore.dispatch('setCurrentUser', { uid: 'actor-id1' })
+
+		// Mock implementation of setGuestUserName
+		setGuestUserName.mockResolvedValue()
+
+		// Act
+		await store.submitGuestUsername(actor1.token, newName)
+
+		// Assert
+		expect(setGuestUserName).toHaveBeenCalledWith(actor1.token, newName)
+		expect(localStorage.removeItem).toHaveBeenCalledWith('nick')
+	})
+
+	test('resets to previous display name if there is an error in setting the new one', async () => {
+		// Arrange
+		const actor1 = {
+			token: 'token-1',
+			actorId: 'actor-id1',
+			actorDisplayName: 'old actor 1',
+		}
+
+		vuexStore.dispatch('setCurrentUser', { uid: 'actor-id1' })
+		store.addGuestName(actor1, { noUpdate: false })
+
+		const newName = 'actor 1'
+
+		// Mock implementation of setGuestUserName
+		const error = generateOCSErrorResponse({ payload: {}, status: 400 })
+		setGuestUserName.mockRejectedValue(error)
+
+		// Act
+		await store.submitGuestUsername(actor1.token, newName)
+
+		// Assert
+		expect(setGuestUserName).toHaveBeenCalledWith(actor1.token, newName)
+		expect(vuexStore.getters.getDisplayName()).toBe(actor1.actorDisplayName)
+	})
 })
