@@ -27,12 +27,26 @@
 		<div class="app-settings-section__hint">
 			{{ t('spreed', 'Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation.') }}
 		</div>
-		<NcSelect :value="selectedOption"
-			:options="expirationOptions"
-			label="label"
-			close-on-select
-			:clearable="false"
-			@option:selected="changeExpiration" />
+
+		<template v-if="canFullModerate">
+			<label for="moderation_settings_message_expiration" class="app-settings-section__label">
+				{{ t('spreed', 'Set message expiration') }}
+			</label>
+			<NcSelect id="moderation_settings_message_expiration"
+				:value="selectedOption"
+				:options="expirationOptions"
+				label="label"
+				close-on-select
+				:clearable="false"
+				@option:selected="changeExpiration" />
+		</template>
+
+		<template v-else>
+			<h5 class="app-settings-section__subtitle">
+				{{ t('spreed', 'Current message expiration') }}
+			</h5>
+			<p>{{ selectedOption.label }}</p>
+		</template>
 	</div>
 </template>
 
@@ -52,6 +66,11 @@ export default {
 		token: {
 			type: String,
 			default: null,
+		},
+
+		canFullModerate: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -132,7 +151,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep(.mx-input) {
-	margin: 0;
+.app-settings-section__label {
+  display: block;
 }
 </style>
