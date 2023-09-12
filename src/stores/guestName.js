@@ -93,7 +93,7 @@ export const useGuestNameStore = defineStore('guestName', {
 		 * @param {string} token the token of the conversation
 		 * @param {string} name the new guest name
 		 */
-		async submitUserName(token, name) {
+		async submitGuestUsername(token, name) {
 			const actorId = store.getters.getActorId()
 			const previousName = this.getGuestName(token, actorId)
 

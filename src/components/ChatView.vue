@@ -23,7 +23,7 @@
 		@dragover.prevent="handleDragOver"
 		@dragleave.prevent="handleDragLeave"
 		@drop.prevent="handleDropFiles">
-		<GuestWelcomeWindow v-if="isGuestAndhasNotUsername" :token="token" />
+		<GuestWelcomeWindow v-if="isGuestWithoutDisplayName" :token="token" />
 		<TransitionWrapper name="slide-up" mode="out-in">
 			<div v-show="isDraggingOver"
 				class="dragover">
@@ -113,7 +113,7 @@ export default {
 			return this.$store.getters.getActorType() === 'guests'
 		},
 
-		isGuestAndhasNotUsername() {
+		isGuestWithoutDisplayName() {
 			const userName = this.$store.getters.getDisplayName()
 			return !userName && this.isGuest
 		},

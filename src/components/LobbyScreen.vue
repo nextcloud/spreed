@@ -20,7 +20,7 @@
 
 <template>
 	<div class="lobby">
-		<GuestWelcomeWindow v-if="isGuestAndhasNotUsername" :token="token" />
+		<GuestWelcomeWindow v-if="isGuestWithoutDisplayName" :token="token" />
 		<div class="lobby emptycontent">
 			<Lobby :size="64" />
 			<h2>{{ currentConversationName }}</h2>
@@ -111,7 +111,7 @@ export default {
 			return !this.$store.getters.getUserId()
 		},
 
-		isGuestAndhasNotUsername() {
+		isGuestWithoutDisplayName() {
 			const userName = this.$store.getters.getDisplayName()
 			return !userName && this.currentUserIsGuest
 		},

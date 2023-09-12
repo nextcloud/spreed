@@ -22,7 +22,7 @@
 <template>
 	<div class="username-form">
 		<!-- eslint-disable-next-line vue/no-v-html -->
-		<h3 class="display-name__label" v-html="displayNameLabel" />
+		<h3 v-html="displayNameLabel" />
 
 		<NcButton v-if="!isEditingUsername"
 			@click="handleEditUsername">
@@ -128,7 +128,7 @@ export default {
 
 	methods: {
 		handleChooseUserName() {
-			this.guestNameStore.submitUserName(this.token, this.guestUserName)
+			this.guestNameStore.submitGuestUsername(this.token, this.guestUserName)
 			this.isEditingUsername = false
 		},
 

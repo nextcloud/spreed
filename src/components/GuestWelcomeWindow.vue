@@ -36,20 +36,20 @@
 				{{ conversationDescription }}
 			</p>
 
-			<p class="input-label">
-				{{ t('spreed', 'Enter your name') }}
-			</p>
-
-			<NcTextField :value.sync="guestUserName"
+			<label for="textField">{{ t('spreed', 'Enter your name') }}</label>
+			<NcTextField id="textField"
+				:value.sync="guestUserName"
 				:placeholder="t('spreed', 'Guest')"
 				class="username-form__input"
 				:show-trailing-button="false"
+				label-outside
 				@keydown.enter="handleChooseUserName" />
 
 			<NcButton class="submit-button"
 				type="primary"
+				:disabled="invalidGuestUsername"
 				@click="handleChooseUserName">
-				{{ submitMessage }}
+				{{ t('spreed', 'Submit name and join') }}
 				<template #icon>
 					<Check :size="20" />
 				</template>
@@ -115,14 +115,14 @@ export default {
 			return this.conversation?.description
 		},
 
-		submitMessage() {
-			return t('spreed', 'Submit name and join')
+		invalidGuestUsername() {
+			return this.guestUserName.trim() === ''
 		},
 	},
 
 	methods: {
 		handleChooseUserName() {
-			this.guestNameStore.submitUserName(this.token, this.guestUserName)
+			this.guestNameStore.submitGuestUsername(this.token, this.guestUserName)
 		},
 	},
 }
