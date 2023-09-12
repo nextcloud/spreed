@@ -46,12 +46,16 @@
 				<NotificationsSettings :conversation="conversation" />
 			</NcAppSettingsSection>
 
-			<NcAppSettingsSection id="conversation-settings"
+			<NcAppSettingsSection v-if="canFullModerate"
+				id="conversation-settings"
 				:title="t('spreed', 'Moderation')">
-				<ListableSettings v-if="canFullModerate"
-					:token="token" />
-				<LinkShareSettings v-if="canFullModerate"
-					ref="linkShareSettings" />
+				<ListableSettings :token="token" />
+				<LinkShareSettings ref="linkShareSettings" />
+				<ExpirationSettings :token="token" can-full-moderate />
+			</NcAppSettingsSection>
+			<NcAppSettingsSection v-else
+				id="conversation-settings"
+				:title="t('spreed', 'Setup summary')">
 				<ExpirationSettings :token="token" />
 			</NcAppSettingsSection>
 
