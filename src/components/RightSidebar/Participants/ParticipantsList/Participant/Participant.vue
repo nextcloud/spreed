@@ -236,8 +236,8 @@ import ParticipantPermissionsEditor from './ParticipantPermissionsEditor/Partici
 import { useIsInCall } from '../../../../../composables/useIsInCall.js'
 import { CONVERSATION, PARTICIPANT, ATTENDEE } from '../../../../../constants.js'
 import readableNumber from '../../../../../mixins/readableNumber.js'
-import UserStatus from '../../../../../mixins/userStatus.js'
 import { formattedTime } from '../../../../../utils/formattedTime.js'
+import { getStatusMessage } from '../../../../../utils/userStatus.js'
 
 export default {
 	name: 'Participant',
@@ -271,7 +271,6 @@ export default {
 	},
 
 	mixins: [
-		UserStatus,
 		readableNumber,
 	],
 
@@ -360,7 +359,7 @@ export default {
 					? '💬 ' + t('spreed', '{time} talking …', { time: formattedTime(this.timeSpeaking, true) })
 					: '💬 ' + t('spreed', '{time} talking time', { time: formattedTime(this.timeSpeaking, true) })
 			} else {
-				return this.getStatusMessage(this.participant)
+				return getStatusMessage(this.participant)
 			}
 		},
 

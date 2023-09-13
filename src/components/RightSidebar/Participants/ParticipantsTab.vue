@@ -27,16 +27,26 @@
 			:placeholder-text="searchBoxPlaceholder"
 			@input="handleInput"
 			@abort-search="abortSearch" />
-		<NcAppNavigationCaption v-if="isSearching && canAdd"
-			:title="t('spreed', 'Participants')" />
-		<CurrentParticipants :search-text="searchText"
-			:participants-initialised="participantsInitialised" />
-		<ParticipantsSearchResults v-if="canAdd && isSearching"
-			:search-results="searchResults"
-			:contacts-loading="contactsLoading"
-			:no-results="noResults"
-			:search-text="searchText"
-			@click="addParticipants" />
+
+		<ParticipantsList v-if="!isSearching"
+			:items="participants"
+			:loading="!participantsInitialised" />
+
+		<template v-else>
+			<NcAppNavigationCaption v-if="canAdd" :title="t('spreed', 'Participants')" />
+
+			<ParticipantsList v-if="filteredParticipants.length"
+				:items="filteredParticipants"
+				:loading="!participantsInitialised" />
+			<Hint v-else :hint="t('spreed', 'No search results')" />
+
+			<ParticipantsSearchResults v-if="canAdd"
+				:search-results="searchResults"
+				:contacts-loading="contactsLoading"
+				:no-results="noResults"
+				:search-text="searchText"
+				@click="addParticipants" />
+		</template>
 	</div>
 </template>
 
@@ -44,25 +54,30 @@
 import debounce from 'debounce'
 
 import { showError } from '@nextcloud/dialogs'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 
 import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigationCaption.js'
 
+import Hint from '../../Hint.vue'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox.vue'
-import CurrentParticipants from './CurrentParticipants/CurrentParticipants.vue'
+import ParticipantsList from './ParticipantsList/ParticipantsList.vue'
 import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults.vue'
 
+import { useSortParticipants } from '../../../composables/useSortParticipants.js'
 import getParticipants from '../../../mixins/getParticipants.js'
 import { searchPossibleConversations } from '../../../services/conversationsService.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { addParticipant } from '../../../services/participantsService.js'
+import { useGuestNameStore } from '../../../stores/guestName.js'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 
 export default {
 	name: 'ParticipantsTab',
 	components: {
+		ParticipantsList,
+		Hint,
 		NcAppNavigationCaption,
-		CurrentParticipants,
 		SearchBox,
 		ParticipantsSearchResults,
 	},
@@ -80,6 +95,17 @@ export default {
 		},
 	},
 
+	setup() {
+		const { sortParticipants } = useSortParticipants()
+		// FIXME move to getParticipants when replace with composable
+		const guestNameStore = useGuestNameStore()
+
+		return {
+			guestNameStore,
+			sortParticipants,
+		}
+	},
+
 	data() {
 		return {
 			searchText: '',
@@ -92,6 +118,19 @@ export default {
 	},
 
 	computed: {
+		participants() {
+			return this.$store.getters.participantsList(this.token).slice().sort(this.sortParticipants)
+		},
+
+		filteredParticipants() {
+			const isMatch = (string) => string.toLowerCase().includes(this.searchText.toLowerCase())
+
+			return this.participants.filter(participant => {
+				return isMatch(participant.displayName)
+					|| (participant.actorType !== 'guests' && isMatch(participant.actorId))
+			})
+		},
+
 		searchBoxPlaceholder() {
 			return this.canAdd
 				? t('spreed', 'Search or add participants')
@@ -119,6 +158,7 @@ export default {
 
 	beforeMount() {
 		EventBus.$on('route-change', this.abortSearch)
+		subscribe('user_status:status.updated', this.updateUserStatus)
 
 		// Initialises the get participants mixin
 		this.initialiseGetParticipantsMixin()
@@ -126,6 +166,7 @@ export default {
 
 	beforeDestroy() {
 		EventBus.$off('route-change', this.abortSearch)
+		unsubscribe('user_status:status.updated', this.updateUserStatus)
 
 		this.cancelSearchPossibleConversations()
 		this.cancelSearchPossibleConversations = null
@@ -195,6 +236,27 @@ export default {
 			this.searchText = ''
 			if (this.cancelSearchPossibleConversations) {
 				this.cancelSearchPossibleConversations()
+			}
+		},
+
+		updateUserStatus(state) {
+			if (!this.token) {
+				return
+			}
+
+			if (this.participants.find(participant => participant.actorId === state.userId)) {
+				this.$store.dispatch('updateUser', {
+					token: this.token,
+					participantIdentifier: {
+						actorType: 'users',
+						actorId: state.userId,
+					},
+					updatedData: {
+						status: state.status,
+						statusIcon: state.icon,
+						statusMessage: state.message,
+					},
+				})
 			}
 		},
 	},
