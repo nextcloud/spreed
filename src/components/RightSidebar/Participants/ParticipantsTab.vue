@@ -69,6 +69,7 @@ import getParticipants from '../../../mixins/getParticipants.js'
 import { searchPossibleConversations } from '../../../services/conversationsService.js'
 import { EventBus } from '../../../services/EventBus.js'
 import { addParticipant } from '../../../services/participantsService.js'
+import { useGuestNameStore } from '../../../stores/guestName.js'
 import CancelableRequest from '../../../utils/cancelableRequest.js'
 
 export default {
@@ -96,8 +97,11 @@ export default {
 
 	setup() {
 		const { sortParticipants } = useSortParticipants()
+		// FIXME move to getParticipants when replace with composable
+		const guestNameStore = useGuestNameStore()
 
 		return {
+			guestNameStore,
 			sortParticipants,
 		}
 	},
