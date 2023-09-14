@@ -2,8 +2,9 @@
   - @copyright Copyright (c) 2020 Joas Schilling <coding@schilljs.com>
   -
   - @author Joas Schilling <coding@schilljs.com>
+  - @author Maksim Sukharev <antreesy.web@gmail.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -18,54 +19,20 @@
   - You should have received a copy of the GNU Affero General Public License
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
-<docs>
-
-Displays a loading placeholder for conversation messages.
-
-The gradient animation is achieved by having two placeholder elements,
-with opposite gradient directions (regular and reverse) displayed on top
-of each other (overlapped with position: absolute) and then fading between
-each other by animating the opacities.
-
-</docs>
 
 <template>
-	<div class="placeholder-main">
-		<!-- Placeholder animation -->
-		<template v-for="(suffix, gradientIndex) in ['-regular', '-reverse']">
-			<svg :key="'gradient' + suffix" :class="'placeholder-gradient placeholder-gradient' + suffix">
-				<defs>
-					<linearGradient :id="'placeholder-gradient' + suffix">
-						<stop offset="0%" :stop-color="(gradientIndex === 0) ? colorPlaceholderLight : colorPlaceholderDark" />
-						<stop offset="100%" :stop-color="(gradientIndex === 0) ? colorPlaceholderDark : colorPlaceholderLight" />
-					</linearGradient>
-				</defs>
-			</svg>
-
-			<ul :key="'list' + suffix" :class="'placeholder-list placeholder-list' + suffix">
-				<li v-for="(width, index) in placeholderData" :key="'placeholder' + suffix + index">
-					<svg v-if="type === 'conversations'"
-						class="conversation-placeholder"
-						xmlns="http://www.w3.org/2000/svg"
-						:fill="'url(#placeholder-gradient' + suffix + ')'">
-						<circle class="conversation-placeholder-icon" />
-						<rect class="conversation-placeholder-line-one" />
-						<rect class="conversation-placeholder-line-two" :style="width" />
-					</svg>
-					<svg v-if="type === 'messages'"
-						class="message-placeholder"
-						xmlns="http://www.w3.org/2000/svg"
-						:fill="'url(#placeholder-gradient' + suffix + ')'">
-						<circle class="message-placeholder-icon" />
-						<rect class="message-placeholder-line-one" />
-						<rect class="message-placeholder-line-two" />
-						<rect class="message-placeholder-line-three" />
-						<rect class="message-placeholder-line-four" :style="width" />
-					</svg>
-				</li>
-			</ul>
-		</template>
-	</div>
+	<ul :class="'placeholder-list placeholder-list--' + type"
+		:style="{ '--colorPlaceholderLight': colorPlaceholderLight, '--colorPlaceholderDark': colorPlaceholderDark }">
+		<li v-for="(item, index) in placeholderData" :key="index" class="placeholder-item">
+			<div class="placeholder-item__avatar">
+				<div class="placeholder-item__avatar-circle" />
+			</div>
+			<div class="placeholder-item__content" :style="{'--last-line-width': item.width}">
+				<div v-for="idx in item.amount" :key="idx" class="placeholder-item__content-line" />
+			</div>
+			<div v-if="type === 'messages'" class="placeholder-item__info" />
+		</li>
+	</ul>
 </template>
 
 <script>
@@ -80,6 +47,9 @@ export default {
 		type: {
 			type: String,
 			required: true,
+			validator(value) {
+				return ['conversations', 'messages', 'participants'].includes(value)
+			},
 		},
 		count: {
 			type: Number,
@@ -98,8 +68,11 @@ export default {
 		placeholderData() {
 			const data = []
 			for (let i = 0; i < this.count; i++) {
-				// generate random widths
-				data.push('width: ' + (Math.floor(Math.random() * 20) + 30) + '%')
+				// set up amount of lines in skeleton and generate random widths for last line
+				data.push({
+					amount: this.type === 'messages' ? 4 : this.type === 'conversations' ? 2 : 1,
+					width: this.type === 'participants' ? '60%' : (Math.floor(Math.random() * 40) + 30) + '%',
+				})
 			}
 			return data
 		},
@@ -108,132 +81,126 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-	@import '../assets/variables';
+.placeholder-list {
+	width: 100%;
+	transform: translateZ(0); // enable hardware acceleration
+}
 
-	$clickable-area: 44px;
-	$margin: 8px;
+.placeholder-item {
+	display: flex;
+	gap: 8px;
+	width: 100%;
 
-	.placeholder-main {
-		max-width: $messages-list-max-width;
-		position: relative;
-		margin: auto;
-		padding: 0;
-	}
-
-	.placeholder-list {
-		position: absolute;
-		translate: translateZ(0);
-	}
-
-	.placeholder-list-regular {
-		animation: pulse 2s;
-		animation-iteration-count: infinite;
-		animation-timing-function: linear;
-	}
-
-	.placeholder-list-reverse {
-		animation: pulse-reverse 2s;
-		animation-iteration-count: infinite;
-		animation-timing-function: linear;
-	}
-
-	.placeholder-gradient {
-		position: fixed;
-		height: 0;
-		width: 0;
-		z-index: -1;
-	}
-
-	.conversation-placeholder,
-	.message-placeholder {
-
-		&-icon {
-			width: $clickable-area;
-			height: $clickable-area;
-			cx: calc(#{$clickable-area} / 2);
-			cy: calc(#{$clickable-area} / 2);
-			r: calc(#{$clickable-area} / 2);
+	&__avatar {
+		flex-shrink: 0;
+		&-circle {
+			height: var(--default-clickable-area);
+			width: var(--default-clickable-area);
+			border-radius: var(--default-clickable-area);
 		}
 	}
 
-	.conversation-placeholder {
-		width: calc(100% - 2 * #{$margin});
-		height: $clickable-area;
-		margin: $margin;
+	&__content {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
 
-		&-line-one,
-		&-line-two {
-			width: calc(100% - #{$margin + $clickable-area});
-			position: relative;
-			height: 1em;
-			x: $margin + $clickable-area;
-		}
+		&-line {
+			margin: 5px 0 4px;
+			width: 100%;
+			height: 15px;
 
-		&-line-one {
-			y: 5px;
-		}
-
-		&-line-two {
-			y: 25px;
+			&:last-child {
+				width: var(--last-line-width);
+			}
 		}
 	}
+}
 
-	.message-placeholder {
-		width: $messages-list-max-width;
-		height: calc(#{$clickable-area} * 2);
-		margin: $margin auto;
-		padding: 0 $margin;
-		display: block;
+// Conversations placeholder ruleset
+.placeholder-list--conversations {
+	.placeholder-item {
+		margin: 2px 0;
+		padding: 8px 10px;
 
-		&-line-one,
-		&-line-two,
-		&-line-three,
-		&-line-four {
-			width: 640px;
-			height: 1em;
-			x: $margin + $clickable-area;
-		}
-
-		&-line-one {
-			y: 5px;
-			width: 175px;
-		}
-
-		&-line-two {
-			y: 25px;
-		}
-
-		&-line-three {
-			y: 45px;
-		}
-
-		&-line-four {
-			y: 65px;
+		&__content {
+			width: 70%;
 		}
 	}
+}
 
-	@keyframes pulse {
-		0% {
-			opacity: 1;
+// Messages placeholder ruleset
+.placeholder-list--messages {
+	max-width: 800px;
+	margin: auto;
+
+	.placeholder-item {
+		padding-right: 8px;
+		&__avatar {
+			width: 52px;
+			padding: 18px 10px 0;
+
+			&-circle {
+				height: 32px;
+				width: 32px;
+				border-radius: 32px;
+			}
 		}
-		50% {
-			opacity: 0;
+
+		&__content {
+			max-width: 600px;
+			padding: 12px 0;
+
+			&-line {
+				margin: 4px 0 3px;
+
+				&:first-child {
+					margin-bottom: 9px;
+					width: 20%;
+				}
+			}
 		}
-		100% {
-			opacity: 1;
+
+		&__info {
+			width: 100px;
+			height: 15px;
+			margin: var(--default-clickable-area) var(--default-clickable-area) 0 8px;
+			animation-delay: 0.8s;
 		}
 	}
+}
 
-	@keyframes pulse-reverse {
-		0% {
-			opacity: 0;
-		}
-		50% {
-			opacity: 1;
-		}
-		100% {
-			opacity: 0;
+// Participants placeholder ruleset
+.placeholder-list--participants {
+	.placeholder-item {
+		gap: 12px;
+		margin: 4px 0;
+		padding: 0 4px;
+		height: 56px;
+		align-items: center;
+
+		&__avatar {
+			margin: auto;
 		}
 	}
+}
 
+// Animation
+.placeholder-item__avatar-circle,
+.placeholder-item__content-line,
+.placeholder-item__info {
+	background-size: 200vw;
+	background-image: linear-gradient(90deg, var(--colorPlaceholderDark) 65%, var(--colorPlaceholderLight) 70%, var(--colorPlaceholderDark) 75%);
+	animation: loading-animation 3s forwards infinite linear;
+	will-change: background-position;
+}
+
+@keyframes loading-animation {
+	0% {
+		background-position: 0;
+	}
+	100% {
+		background-position: 140vw;
+	}
+}
 </style>
