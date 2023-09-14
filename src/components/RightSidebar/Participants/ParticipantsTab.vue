@@ -28,8 +28,8 @@
 			@input="handleInput"
 			@abort-search="abortSearch" />
 
-		<ParticipantsList v-if="!isSearching"
-			:items="participants"
+		<ParticipantsListVirtual v-if="!isSearching"
+			:participants="participants"
 			:loading="!participantsInitialised" />
 
 		<template v-else>
@@ -62,6 +62,7 @@ import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigati
 import Hint from '../../Hint.vue'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox.vue'
 import ParticipantsList from './ParticipantsList/ParticipantsList.vue'
+import ParticipantsListVirtual from './ParticipantsList/ParticipantsListVirtual.vue'
 import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults.vue'
 
 import { useSortParticipants } from '../../../composables/useSortParticipants.js'
@@ -75,6 +76,7 @@ import CancelableRequest from '../../../utils/cancelableRequest.js'
 export default {
 	name: 'ParticipantsTab',
 	components: {
+		ParticipantsListVirtual,
 		ParticipantsList,
 		Hint,
 		NcAppNavigationCaption,
