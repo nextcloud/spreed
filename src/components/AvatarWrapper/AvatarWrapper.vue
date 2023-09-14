@@ -37,6 +37,7 @@
 			{{ firstLetterOfGuestName }}
 		</div>
 		<NcAvatar v-else
+			:key="id"
 			:user="id"
 			:display-name="name"
 			:menu-container="menuContainerWithFallback"
