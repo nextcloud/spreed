@@ -20,17 +20,15 @@
 -->
 
 <template>
-	<div>
-		<ul>
-			<Participant v-for="item in items"
-				:key="generateKey(item)"
-				:participant="item"
-				:is-selectable="participantsSelectable"
-				:show-user-status="showUserStatus"
-				@click-participant="handleClickParticipant" />
-		</ul>
+	<ul>
+		<Participant v-for="item in items"
+			:key="generateKey(item)"
+			:participant="item"
+			:is-selectable="participantsSelectable"
+			:show-user-status="showUserStatus"
+			@click-participant="handleClickParticipant" />
 		<LoadingPlaceholder v-if="loading" type="participants" :count="dummyParticipants" />
-	</div>
+	</ul>
 </template>
 
 <script>

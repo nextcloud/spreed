@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div>
+	<div class="wrapper">
 		<SearchBox v-if="canSearch"
 			:value.sync="searchText"
 			:is-focused.sync="isFocused"
@@ -32,7 +32,7 @@
 			:participants="participants"
 			:loading="!participantsInitialised" />
 
-		<template v-else>
+		<div v-else class="scroller">
 			<NcAppNavigationCaption v-if="canAdd" :title="t('spreed', 'Participants')" />
 
 			<ParticipantsList v-if="filteredParticipants.length"
@@ -46,7 +46,7 @@
 				:no-results="noResults"
 				:search-text="searchText"
 				@click="addParticipants" />
-		</template>
+		</div>
 	</div>
 </template>
 
@@ -266,6 +266,15 @@ export default {
 </script>
 
 <style scoped>
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.scroller {
+	overflow-y: auto;
+}
 
 /** TODO: fix these in the nextcloud-vue library **/
 
