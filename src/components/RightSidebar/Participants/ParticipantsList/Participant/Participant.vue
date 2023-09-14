@@ -20,7 +20,8 @@
 -->
 
 <template>
-	<li :data-nav-id="`${participant.source}_${participant.id}`"
+	<component :is="tag"
+		:data-nav-id="participantNavigationId"
 		class="participant-row"
 		:class="{
 			'offline': isOffline,
@@ -201,7 +202,7 @@
 			@close="hidePermissionsEditor" />
 		<!-- Checkmark in case the current participant is selected -->
 		<div v-if="isSelected" class="icon-checkmark participant-row__utils utils__checkmark" />
-	</li>
+	</component>
 </template>
 
 <script>
@@ -275,6 +276,11 @@ export default {
 	],
 
 	props: {
+		tag: {
+			type: String,
+			default: 'li',
+		},
+
 		participant: {
 			type: Object,
 			required: true,
@@ -318,6 +324,14 @@ export default {
 	computed: {
 		container() {
 			return this.$store.getters.getMainContainerSelector()
+		},
+
+		participantNavigationId() {
+			if (this.participant.actorType && this.participant.actorId) {
+				return this.participant.actorType + '_' + this.participant.actorId
+			} else {
+				return this.participant.source + '_' + this.participant.id
+			}
 		},
 
 		participantSettingsAriaLabel() {

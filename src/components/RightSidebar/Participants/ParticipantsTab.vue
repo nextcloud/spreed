@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div>
+	<div class="wrapper">
 		<SearchBox v-if="canSearch"
 			:value.sync="searchText"
 			:is-focused.sync="isFocused"
@@ -28,11 +28,11 @@
 			@input="handleInput"
 			@abort-search="abortSearch" />
 
-		<ParticipantsList v-if="!isSearching"
-			:items="participants"
+		<ParticipantsListVirtual v-if="!isSearching"
+			:participants="participants"
 			:loading="!participantsInitialised" />
 
-		<template v-else>
+		<div v-else class="scroller">
 			<NcAppNavigationCaption v-if="canAdd" :title="t('spreed', 'Participants')" />
 
 			<ParticipantsList v-if="filteredParticipants.length"
@@ -46,7 +46,7 @@
 				:no-results="noResults"
 				:search-text="searchText"
 				@click="addParticipants" />
-		</template>
+		</div>
 	</div>
 </template>
 
@@ -62,6 +62,7 @@ import NcAppNavigationCaption from '@nextcloud/vue/dist/Components/NcAppNavigati
 import Hint from '../../Hint.vue'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox.vue'
 import ParticipantsList from './ParticipantsList/ParticipantsList.vue'
+import ParticipantsListVirtual from './ParticipantsList/ParticipantsListVirtual.vue'
 import ParticipantsSearchResults from './ParticipantsSearchResults/ParticipantsSearchResults.vue'
 
 import { useSortParticipants } from '../../../composables/useSortParticipants.js'
@@ -75,6 +76,7 @@ import CancelableRequest from '../../../utils/cancelableRequest.js'
 export default {
 	name: 'ParticipantsTab',
 	components: {
+		ParticipantsListVirtual,
 		ParticipantsList,
 		Hint,
 		NcAppNavigationCaption,
@@ -264,6 +266,15 @@ export default {
 </script>
 
 <style scoped>
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.scroller {
+	overflow-y: auto;
+}
 
 /** TODO: fix these in the nextcloud-vue library **/
 
