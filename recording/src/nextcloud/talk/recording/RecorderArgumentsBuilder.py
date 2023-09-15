@@ -102,6 +102,9 @@ class RecorderArgumentsBuilder:
 
         return config.getFfmpegExtensionAudio()
 
+    def setFfmpegCommon(self, ffmpegCommon):
+        self._ffmpegCommon = ffmpegCommon
+
     def setFfmpegOutputAudio(self, ffmpegOutputAudio):
         self._ffmpegOutputAudio = ffmpegOutputAudio
 
