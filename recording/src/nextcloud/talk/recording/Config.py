@@ -207,7 +207,7 @@ class Config:
 
     def getFfmpegOutputAudio(self):
         """
-        Returns the options given to FFmpeg to encode the audio output.
+        Returns the options given to ffmpeg to encode the audio output.
 
         Defaults to ['-c:a', 'libopus'].
         """
@@ -215,7 +215,7 @@ class Config:
 
     def getFfmpegOutputVideo(self):
         """
-        Returns the options given to FFmpeg to encode the video output.
+        Returns the options given to ffmpeg to encode the video output.
 
         Defaults to ['-c:v', 'libvpx', '-deadline:v', 'realtime', '-crf', '10', '-b:v', '1M'].
         """
