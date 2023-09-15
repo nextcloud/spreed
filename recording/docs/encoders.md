@@ -22,7 +22,7 @@ Each run of the benchmark tool records a single video (or audio) file with the g
 ```
 #!/usr/bin/bash
 
-# Define the video arguments and the filename suffix to use for each test.
+# Define the output video options for ffmpeg and the filename suffix to use for each test.
 TESTS=(
     "-c:v libvpx -deadline:v realtime -b:v 0,rt-b0"
     "-c:v libvpx -deadline:v realtime -b:v 0 -cpu-used:v 0,rt-b0-cpu0"
@@ -49,8 +49,8 @@ TESTS=(
 for TEST in "${TESTS[@]}"
 do
     # Split the input tuple on ","
-    IFS="," read VIDEO_ARGS FILENAME_SUFFIX <<< "${TEST}"
+    IFS="," read FFMPEG_OUTPUT_VIDEO FILENAME_SUFFIX <<< "${TEST}"
     # Run the test
-    python3 -m nextcloud.talk.recording.Benchmark --length 300 --video-args "${VIDEO_ARGS}" /tmp/recording/files/example.mkv /tmp/recording/files/test-"${FILENAME_SUFFIX}".webm
+    python3 -m nextcloud.talk.recording.Benchmark --length 300 --ffmpeg-output-video "${FFMPEG_OUTPUT_VIDEO}" /tmp/recording/files/example.mkv /tmp/recording/files/test-"${FILENAME_SUFFIX}".webm
 done
 ```

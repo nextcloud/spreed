@@ -164,8 +164,8 @@ class BenchmarkService:
             status = RECORDING_STATUS_AUDIO_ONLY if args.audio_only else RECORDING_STATUS_AUDIO_AND_VIDEO
 
             recorderArgumentsBuilder = RecorderArgumentsBuilder()
-            recorderArgumentsBuilder.setFfmpegOutputAudio(args.audio_args.split())
-            recorderArgumentsBuilder.setFfmpegOutputVideo(args.video_args.split())
+            recorderArgumentsBuilder.setFfmpegOutputAudio(args.ffmpeg_output_audio.split())
+            recorderArgumentsBuilder.setFfmpegOutputVideo(args.ffmpeg_output_video.split())
             recorderArgumentsBuilder.setExtension(f".{extension}")
             self._recorderArguments = recorderArgumentsBuilder.getRecorderArguments(status, self._display.new_display_var, audioSourceIndex, args.width, args.height, extensionlessFileName)
 
@@ -277,8 +277,8 @@ def main():
     parser.add_argument("-l", "--length", help="benchmark duration (in seconds)", default=180, type=int)
     parser.add_argument("--width", help="output width", default=defaultConfig.getBackendVideoWidth(""), type=int)
     parser.add_argument("--height", help="output height", default=defaultConfig.getBackendVideoHeight(""), type=int)
-    parser.add_argument("--audio-args", help="output audio arguments for ffmpeg", default=" ".join(defaultConfig.getFfmpegOutputAudio()), type=str)
-    parser.add_argument("--video-args", help="output video arguments for ffmpeg", default=" ".join(defaultConfig.getFfmpegOutputVideo()), type=str)
+    parser.add_argument("--ffmpeg-output-audio", help="output audio options for ffmpeg", default=" ".join(defaultConfig.getFfmpegOutputAudio()), type=str)
+    parser.add_argument("--ffmpeg-output-video", help="output video options for ffmpeg", default=" ".join(defaultConfig.getFfmpegOutputVideo()), type=str)
     parser.add_argument("--audio-only", help="audio only recording", action="store_true")
     parser.add_argument("-v", "--verbose", help="verbose mode", action="store_true")
     parser.add_argument("--verbose-extra", help="extra verbose mode", action="store_true")
