@@ -31,12 +31,18 @@ import { emit } from '@nextcloud/event-bus'
 import { PARTICIPANT } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
 import { fetchParticipants } from '../services/participantsService.js'
+import { useGuestNameStore } from '../stores/guestName.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 import isInLobby from './isInLobby.js'
 
 const getParticipants = {
 
 	mixins: [isInLobby],
+
+	setup() {
+		const guestNameStore = useGuestNameStore()
+		return { guestNameStore }
+	},
 
 	data() {
 		return {
@@ -137,8 +143,6 @@ const getParticipants = {
 					})
 					if (participant.participantType === PARTICIPANT.TYPE.GUEST
 						|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
-						// FIXME replace mixin with composable. until then
-						// guestNameStore should be set up at component level
 						this.guestNameStore.addGuestName({
 							token,
 							actorId: Hex.stringify(SHA1(participant.sessionIds[0])),
