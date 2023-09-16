@@ -1057,17 +1057,6 @@ export default {
 
 .message-body__main__text--markdown {
 	:deep(.rich-text--wrapper) {
-		h1, h2, h3, h4, h5, h6 {
-			font-weight: bold;
-			margin: 12px 0;
-			color: var(--color-text-light);
-		}
-
-		h1 {
-			font-size: 32px;
-			line-height: 36px;
-		}
-
 		// Overwrite core styles, otherwise h4 is lesser than default font-size
 		h4 {
 			font-size: 100%;
@@ -1077,21 +1066,12 @@ export default {
 			font-style: italic;
 		}
 
-		ul {
-			padding-left: 20px;
-			list-style-type: disc;
-		}
-
-		ol {
-			padding-left: 20px;
-			list-style-type: decimal;
-		}
-
 		pre {
 			padding: 4px;
 			margin: 2px 0;
 			border-radius: var(--border-radius);
 			background-color: var(--color-background-dark);
+			overflow-x: auto;
 
 			& code {
 				margin: 0;
@@ -1109,8 +1089,7 @@ export default {
 
 		blockquote {
 			position: relative;
-			color: var(--color-text-lighter);
-			padding-left: 10px;
+			border-left: none;
 
 			&::before {
 				content: ' ';
@@ -1122,10 +1101,6 @@ export default {
 				border-radius: 2px;
 				background-color: var(--color-border);
 			}
-		}
-
-		pre {
-			overflow-x: auto;
 		}
 	}
 }
