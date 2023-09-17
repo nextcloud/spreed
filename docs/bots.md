@@ -39,7 +39,7 @@ if (!hash_equals($digest, strtolower($_SERVER['HTTP_X_NEXTCLOUD_TALK_SIGNATURE']
 
 ### Content
 
-The content format follows the [ActivityPub](https://www.w3.org/TR/activitypub/) dictionary.
+The content format follows the [Activity Streams 2.0 Vocabulary](https://www.w3.org/TR/activitystreams-vocabulary/).
 
 #### Sample chat message
 
