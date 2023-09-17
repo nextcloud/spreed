@@ -164,7 +164,7 @@ import TopBarMediaControls from './TopBarMediaControls.vue'
 import TopBarMenu from './TopBarMenu.vue'
 
 import { CONVERSATION } from '../../constants.js'
-import getParticipants from '../../mixins/getParticipants.js'
+import isInLobby from '../../mixins/isInLobby.js'
 import BrowserStorage from '../../services/BrowserStorage.js'
 import { getStatusMessage } from '../../utils/userStatus.js'
 import { localCallParticipantModel, localMediaModel } from '../../utils/webrtc/index.js'
@@ -195,7 +195,7 @@ export default {
 
 	mixins: [
 		richEditor,
-		getParticipants,
+		isInLobby,
 	],
 
 	props: {
@@ -343,18 +343,6 @@ export default {
 				this.notifyUnreadMessages(null)
 			}
 		},
-
-		isModeratorOrUser(newValue) {
-			if (newValue) {
-				// fetch participants immediately when becomes available
-				this.cancelableGetParticipants()
-			}
-		},
-	},
-
-	beforeMount() {
-		// Initialises the get participants mixin for participants counter
-		this.initialiseGetParticipantsMixin()
 	},
 
 	mounted() {
@@ -372,8 +360,6 @@ export default {
 		document.removeEventListener('MSFullscreenChange', this.fullScreenChanged, false)
 		document.removeEventListener('webkitfullscreenchange', this.fullScreenChanged, false)
 		document.body.classList.remove('has-topbar')
-
-		this.stopGetParticipantsMixin()
 	},
 
 	methods: {
