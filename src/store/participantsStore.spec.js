@@ -1,14 +1,19 @@
 import { createLocalVue } from '@vue/test-utils'
+import Hex from 'crypto-js/enc-hex.js'
+import SHA1 from 'crypto-js/sha1.js'
 import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
 import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
+
+import { emit } from '@nextcloud/event-bus'
 
 import { PARTICIPANT } from '../constants.js'
 import {
 	joinCall,
 	leaveCall,
 } from '../services/callsService.js'
+import { fetchConversation } from '../services/conversationsService.js'
 import { EventBus } from '../services/EventBus.js'
 import {
 	promoteToModerator,
@@ -17,6 +22,7 @@ import {
 	resendInvitations,
 	joinConversation,
 	leaveConversation,
+	fetchParticipants,
 	removeCurrentUserFromConversation,
 	grantAllPermissionsToParticipant,
 	removeAllPermissionsFromParticipant,
@@ -24,6 +30,7 @@ import {
 import { useGuestNameStore } from '../stores/guestName.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import participantsStore from './participantsStore.js'
+import storeConfig from './storeConfig.js'
 
 jest.mock('../services/participantsService', () => ({
 	promoteToModerator: jest.fn(),
@@ -32,6 +39,7 @@ jest.mock('../services/participantsService', () => ({
 	resendInvitations: jest.fn(),
 	joinConversation: jest.fn(),
 	leaveConversation: jest.fn(),
+	fetchParticipants: jest.fn(),
 	removeCurrentUserFromConversation: jest.fn(),
 	grantAllPermissionsToParticipant: jest.fn(),
 	removeAllPermissionsFromParticipant: jest.fn(),
@@ -39,6 +47,14 @@ jest.mock('../services/participantsService', () => ({
 jest.mock('../services/callsService', () => ({
 	joinCall: jest.fn(),
 	leaveCall: jest.fn(),
+}))
+jest.mock('../services/conversationsService', () => ({
+	fetchConversation: jest.fn(),
+}))
+
+jest.mock('@nextcloud/event-bus', () => ({
+	emit: jest.fn(),
+	subscribe: jest.fn(),
 }))
 
 describe('participantsStore', () => {
@@ -361,6 +377,118 @@ describe('participantsStore', () => {
 				.toStrictEqual({})
 			expect(store.getters.getPeer('token-2', 'session-id-2'))
 				.toStrictEqual({ sessionId: 'session-id-2', peerData: 1 })
+		})
+	})
+
+	describe('fetch participants', () => {
+		test('populates store for the fetched conversation', async () => {
+			// Arrange
+			const payload = [{
+				attendeeId: 1,
+				sessionId: 'session-id-1',
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			}]
+
+			fetchParticipants.mockResolvedValue(generateOCSResponse({ payload }))
+
+			// Act
+			await store.dispatch('fetchParticipants', { token: TOKEN })
+
+			// Assert
+			expect(store.getters.participantsList(TOKEN)).toMatchObject(payload)
+		})
+
+		test('saves a guest name from response', async () => {
+			// Arrange
+			const payload = [{
+				attendeeId: 1,
+				sessionIds: ['guest-session-id'],
+				actorId: 'guest-actor-id',
+				displayName: 'guest-name',
+				participantType: PARTICIPANT.TYPE.GUEST,
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			}]
+			const id = Hex.stringify(SHA1('guest-session-id'))
+
+			fetchParticipants.mockResolvedValue(generateOCSResponse({ payload }))
+
+			// Act
+			await store.dispatch('fetchParticipants', { token: TOKEN })
+
+			// Assert
+			expect(guestNameStore.getGuestName(TOKEN, id)).toBe('guest-name')
+		})
+
+		test('emits an user status update', async () => {
+			// Arrange
+			const payload = [{
+				attendeeId: 1,
+				actorId: 'actor-id',
+				displayName: 'guest-name',
+				actorType: 'users',
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+				status: 'status',
+				statusMessage: 'statusMessage',
+				statusIcon: 'statusIcon',
+				statusClearAt: 'statusClearAt',
+			}]
+
+			fetchParticipants.mockResolvedValue(generateOCSResponse(
+				{
+					headers: { 'x-nextcloud-has-user-statuses': true },
+					payload,
+				}))
+
+			// Act
+			await store.dispatch('fetchParticipants', { token: TOKEN })
+
+			// Assert
+			expect(emit).toHaveBeenCalledWith('user_status:status.updated',
+				{
+					clearAt: 'statusClearAt',
+					icon: 'statusIcon',
+					message: 'statusMessage',
+					status: 'status',
+					userId: 'actor-id',
+				})
+		})
+
+		test('updates conversation if fail to fetch participants', async () => {
+			// Arrange
+			testStoreConfig = cloneDeep(storeConfig)
+			store = new Vuex.Store(testStoreConfig)
+			fetchParticipants.mockRejectedValue(generateOCSErrorResponse({
+				status: 403,
+				payload: [],
+			}))
+			fetchConversation.mockResolvedValue(generateOCSResponse(
+				{
+					payload: {},
+				}))
+			// Act
+			await store.dispatch('fetchParticipants', { token: TOKEN })
+
+			// Assert
+			expect(fetchConversation).toHaveBeenCalled()
+		})
+
+		test('cancels old request', async () => {
+			// Arrange
+			const payload = [{
+				attendeeId: 1,
+				sessionId: 'session-id-1',
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			}]
+			fetchParticipants.mockResolvedValue(generateOCSResponse({ payload }))
+
+			// Act
+			store.dispatch('fetchParticipants', { token: TOKEN })
+			await store.dispatch('fetchParticipants', { token: TOKEN })
+
+			// Assert
+			expect(fetchParticipants).toHaveBeenCalledTimes(2)
+			expect(fetchParticipants).toHaveBeenNthCalledWith(1, TOKEN, { cancelToken: { promise: expect.anything(), reason: expect.anything() } })
+			expect(fetchParticipants).toHaveBeenNthCalledWith(2, TOKEN, { cancelToken: { promise: expect.anything() } })
 		})
 	})
 
