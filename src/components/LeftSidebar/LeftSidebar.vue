@@ -378,13 +378,15 @@ export default {
 			}
 
 			if (this.isFiltered === 'unread') {
-				return this.conversationsList.filter(conversation => conversation.unreadMessages > 0 || conversation.hasCall)
+				return this.conversationsList.filter(conversation => conversation.unreadMessages > 0
+				|| conversation.hasCall || conversation.token === this.$store.getters.getToken())
 			}
 
 			if (this.isFiltered === 'mentions') {
 				return this.conversationsList.filter(conversation => conversation.unreadMention
 				|| conversation.hasCall
-				|| (conversation.unreadMessages > 0 && (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER)))
+				|| (conversation.unreadMessages > 0 && (conversation.type === CONVERSATION.TYPE.ONE_TO_ONE || conversation.type === CONVERSATION.TYPE.ONE_TO_ONE_FORMER))
+				|| conversation.token === this.$store.getters.getToken())
 			}
 
 			return this.conversationsList
