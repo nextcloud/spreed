@@ -1,6 +1,7 @@
 import { createLocalVue } from '@vue/test-utils'
 import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
+import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
 
 import { PARTICIPANT } from '../constants.js'
@@ -20,6 +21,7 @@ import {
 	grantAllPermissionsToParticipant,
 	removeAllPermissionsFromParticipant,
 } from '../services/participantsService.js'
+import { useGuestNameStore } from '../stores/guestName.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import participantsStore from './participantsStore.js'
 
@@ -44,10 +46,13 @@ describe('participantsStore', () => {
 	let testStoreConfig = null
 	let localVue = null
 	let store = null
+	let guestNameStore = null
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
+		setActivePinia(createPinia())
+		guestNameStore = useGuestNameStore()
 
 		testStoreConfig = cloneDeep(participantsStore)
 		store = new Vuex.Store(testStoreConfig)
