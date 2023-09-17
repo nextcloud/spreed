@@ -325,9 +325,14 @@ export default {
 			}
 		},
 
-		// Switch tab for guest if he is demoted from moderators
 		isModeratorOrUser(newValue) {
-			if (!newValue) {
+			if (newValue) {
+				// Fetch participants list if guest was promoted to moderators
+				this.$nextTick(() => {
+					emit('guest-promoted', { token: this.token })
+				})
+			} else {
+				// Switch active tab to chat if guest was demoted from moderators
 				this.activeTab = 'chat'
 			}
 		},

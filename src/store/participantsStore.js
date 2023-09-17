@@ -602,7 +602,9 @@ const actions = {
 
 			return response
 		} catch (exception) {
-			if (!CancelableRequest.isCancel(exception)) {
+			if (exception?.response.status === 403) {
+				context.dispatch('fetchConversation', { token })
+			} else if (!CancelableRequest.isCancel(exception)) {
 				console.error(exception)
 				showError(t('spreed', 'An error occurred while fetching the participants'))
 			}

@@ -22,6 +22,8 @@
  */
 import debounce from 'debounce'
 
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
+
 import { EventBus } from '../services/EventBus.js'
 import isInLobby from './isInLobby.js'
 
@@ -52,12 +54,16 @@ const getParticipants = {
 			// Then we have to search for another solution. Maybe the room list which we update
 			// periodically gets a hash of all online sessions?
 			EventBus.$on('signaling-participant-list-changed', this.debounceUpdateParticipants)
+
+			subscribe('guest-promoted', this.onJoinedConversation)
 		},
 
 		stopGetParticipantsMixin() {
 			EventBus.$off('route-change', this.onRouteChange)
 			EventBus.$off('joined-conversation', this.onJoinedConversation)
 			EventBus.$off('signaling-participant-list-changed', this.debounceUpdateParticipants)
+
+			unsubscribe('guest-promoted', this.onJoinedConversation)
 		},
 
 		onRouteChange() {
