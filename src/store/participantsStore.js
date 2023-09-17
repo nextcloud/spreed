@@ -19,9 +19,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+import Hex from 'crypto-js/enc-hex.js'
+import SHA1 from 'crypto-js/sha1.js'
 import Vue from 'vue'
 
 import { showError } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
 import { generateUrl } from '@nextcloud/router'
 
 import { PARTICIPANT } from '../constants.js'
@@ -43,9 +46,12 @@ import {
 	removeAllPermissionsFromParticipant,
 	setPermissions,
 	setTyping,
+	fetchParticipants,
 } from '../services/participantsService.js'
 import SessionStorage from '../services/SessionStorage.js'
 import { talkBroadcastChannel } from '../services/talkBroadcastChannel.js'
+import { useGuestNameStore } from '../stores/guestName.js'
+import CancelableRequest from '../utils/cancelableRequest.js'
 
 const state = {
 	attendees: {
@@ -60,6 +66,12 @@ const state = {
 	},
 	speaking: {
 	},
+	/**
+	 * Stores the cancel function returned by `cancelableFetchParticipants`,
+	 * which allows to cancel the previous request for participants
+	 * when quickly switching to a new conversation.
+	 */
+	cancelFetchParticipants: null,
 }
 
 const getters = {
@@ -414,6 +426,10 @@ const mutations = {
 			Vue.delete(state.peers, token)
 		}
 	},
+
+	setCancelFetchParticipants(state, cancelFunction) {
+		state.cancelFetchParticipants = cancelFunction
+	},
 }
 
 const actions = {
@@ -534,6 +550,79 @@ const actions = {
 		}
 
 		commit('updateParticipant', { token, attendeeId: attendee.attendeeId, updatedData })
+	},
+
+	/**
+	 * Fetches participants that belong to a particular conversation
+	 * specified with its token.
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} data the wrapping object;
+	 * @param {string} data.token the conversation token;
+	 * @return {object|null}
+	 */
+	async fetchParticipants(context, { token }) {
+		const guestNameStore = useGuestNameStore()
+		// Cancel a previous request
+		context.dispatch('cancelFetchParticipants')
+		// Get a new cancelable request function and cancel function pair
+		const { request, cancel } = CancelableRequest(fetchParticipants)
+		// Assign the new cancel function to our data value
+		context.commit('setCancelFetchParticipants', cancel)
+
+		try {
+			const response = await request(token)
+			context.dispatch('purgeParticipantsStore', token)
+
+			const hasUserStatuses = !!response.headers['x-nextcloud-has-user-statuses']
+
+			response.data.ocs.data.forEach(participant => {
+				context.dispatch('addParticipant', { token, participant })
+
+				if (participant.participantType === PARTICIPANT.TYPE.GUEST
+					|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
+					guestNameStore.addGuestName({
+						token,
+						actorId: Hex.stringify(SHA1(participant.sessionIds[0])),
+						actorDisplayName: participant.displayName,
+					}, { noUpdate: false })
+				} else if (participant.actorType === 'users' && hasUserStatuses) {
+					emit('user_status:status.updated', {
+						status: participant.status,
+						message: participant.statusMessage,
+						icon: participant.statusIcon,
+						clearAt: participant.statusClearAt,
+						userId: participant.actorId,
+					})
+				}
+			})
+
+			// Discard current cancel function
+			context.commit('setCancelFetchParticipants', null)
+
+			return response
+		} catch (exception) {
+			if (!CancelableRequest.isCancel(exception)) {
+				console.error(exception)
+				showError(t('spreed', 'An error occurred while fetching the participants'))
+			}
+			return null
+		}
+	},
+
+	/**
+	 * Cancels a previously running "fetchParticipants" action if applicable.
+	 *
+	 * @param {object} context default store context;
+	 * @return {boolean} true if a request got cancelled, false otherwise
+	 */
+	cancelFetchParticipants(context) {
+		if (context.state.cancelFetchParticipants) {
+			context.state.cancelFetchParticipants('canceled')
+			context.commit('setCancelFetchParticipants', null)
+			return true
+		}
+		return false
 	},
 
 	async joinCall({ commit, getters }, { token, participantIdentifier, flags, silent }) {
