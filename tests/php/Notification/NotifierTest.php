@@ -30,6 +30,7 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Notification\Notifier;
 use OCA\Talk\Participant;
@@ -91,6 +92,8 @@ class NotifierTest extends TestCase {
 	protected ?Notifier $notifier = null;
 	/** @var AddressHandler|MockObject */
 	protected $addressHandler;
+	/** @var BotServerMapper|MockObject */
+	protected $botServerMapper;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -113,6 +116,7 @@ class NotifierTest extends TestCase {
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->definitions = $this->createMock(Definitions::class);
 		$this->addressHandler = $this->createMock(AddressHandler::class);
+		$this->botServerMapper = $this->createMock(BotServerMapper::class);
 
 		$this->notifier = new Notifier(
 			$this->lFactory,
@@ -132,7 +136,8 @@ class NotifierTest extends TestCase {
 			$this->rootFolder,
 			$this->timeFactory,
 			$this->definitions,
-			$this->addressHandler
+			$this->addressHandler,
+			$this->botServerMapper,
 		);
 	}
 

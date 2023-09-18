@@ -93,7 +93,7 @@ class BotListener implements IEventListener {
 		try {
 			$this->botService->validateBotParameters($event->getName(), $event->getSecret(), $event->getUrl(), $event->getDescription());
 		} catch (\InvalidArgumentException $e) {
-			$this->logger->error('Invalid data in bot install event', ['exception' => $e]);
+			$this->logger->error('Invalid data in bot install event: ' . $e->getMessage(), ['exception' => $e]);
 			throw $e;
 		}
 
@@ -107,7 +107,7 @@ class BotListener implements IEventListener {
 			try {
 				$this->botServerMapper->findByUrl($event->getUrl());
 				$e = new \InvalidArgumentException('Bot with the same URL and a different secret is already registered');
-				$this->logger->error('Invalid data in bot install event', ['exception' => $e]);
+				$this->logger->error('Invalid data in bot install event: ' . $e->getMessage(), ['exception' => $e]);
 				throw $e;
 			} catch (DoesNotExistException) {
 			}
