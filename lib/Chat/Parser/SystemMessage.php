@@ -843,6 +843,10 @@ class SystemMessage {
 	}
 
 	protected function getGuestName(Room $room, string $actorType, string $actorId): string {
+		if ($actorId === Attendee::ACTOR_ID_CLI) {
+			return $this->l->t('Guest');
+		}
+
 		try {
 			$participant = $this->participantService->getParticipantByActor($room, $actorType, $actorId);
 			$name = $participant->getAttendee()->getDisplayName();

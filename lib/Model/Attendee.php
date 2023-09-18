@@ -70,7 +70,11 @@ class Attendee extends Entity {
 	public const ACTOR_BRIDGED = 'bridged';
 	public const ACTOR_BOTS = 'bots';
 	public const ACTOR_FEDERATED_USERS = 'federated_users';
+
+	// Special actor IDs
 	public const ACTOR_BOT_PREFIX = 'bot-';
+	public const ACTOR_ID_CLI = 'cli';
+	public const ACTOR_ID_CHANGELOG = 'changelog';
 
 	public const PERMISSIONS_DEFAULT = 0;
 	public const PERMISSIONS_CUSTOM = 1;

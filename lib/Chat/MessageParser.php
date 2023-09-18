@@ -91,6 +91,12 @@ class MessageParser {
 		} elseif ($comment->getActorType() === Attendee::ACTOR_BRIDGED) {
 			$displayName = $comment->getActorId();
 			$actorId = MatterbridgeManager::BRIDGE_BOT_USERID;
+		} elseif ($comment->getActorType() === Attendee::ACTOR_GUESTS
+			&& $comment->getActorId() === Attendee::ACTOR_ID_CLI) {
+			$actorId = Attendee::ACTOR_ID_CLI;
+		} elseif ($comment->getActorType() === Attendee::ACTOR_GUESTS
+			&& $comment->getActorId() === Attendee::ACTOR_ID_CHANGELOG) {
+			$actorId = Attendee::ACTOR_ID_CHANGELOG;
 		} elseif ($comment->getActorType() === Attendee::ACTOR_GUESTS) {
 			if (isset($guestNames[$comment->getActorId()])) {
 				$displayName = $this->guestNames[$comment->getActorId()];
