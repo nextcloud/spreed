@@ -75,8 +75,13 @@ class BotServerMapper extends QBMapper {
 	 * @throws DoesNotExistException
 	 */
 	public function findByUrl(string $url): BotServer {
-		$urlHash = sha1($url);
+		return $this->findByUrlHash(sha1($url));
+	}
 
+	/**
+	 * @throws DoesNotExistException
+	 */
+	public function findByUrlHash(string $urlHash): BotServer {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from($this->getTableName())

@@ -204,31 +204,36 @@ Feature: chat/bots
 
   # Unchanged from above
   Scenario: Bot with response only feature
-    Given invoking occ with "talk:bot:install Bot Secret1234567890123456789012345678901234567890 https://localhost/bot1 --feature=response"
+    Given invoking occ with "talk:bot:install Bot1 Secret1234567890123456789012345678901234567890 https://localhost/bot1 --feature=response"
     And the command was successful
     And read bot ids from OCC
     And user "participant1" creates room "room1" (v4)
       | roomType | 2 |
       | roomName | room1 |
-    And invoking occ with "talk:bot:setup BOT(Bot) ROOM(room1)"
+    And invoking occ with "talk:bot:setup BOT(Bot1) ROOM(room1)"
     And the command was successful
+    And user "participant1" sets notifications to all for room "room1" (v4)
     And user "participant1" sends message "Message 1" to room "room1" with 201
-    When Bot "Bot" sends a message for room "room1" with 201 (v1)
+    When Bot "Bot1" sends a message for room "room1" with 201 (v1)
       | secret | Secret1234567890123456789012345678901234567890 |
       | message   | Response 1 |
       | replyTo   | Message 1  |
-    When Bot "Bot" sends a reaction for room "room1" with 201 (v1)
+    When Bot "Bot1" sends a reaction for room "room1" with 201 (v1)
       | secret | Secret1234567890123456789012345678901234567890 |
       | messageId | Message 1 |
       | reaction  | 👍 |
     Then user "participant1" sees the following messages in room "room1" with 200
       | room  | actorType | actorId           | actorDisplayName         | message    | messageParameters | parentMessage |
-      | room1 | bots      | BOT(Bot)          | Bot (Bot)                | Response 1 | []                | Message 1     |
+      | room1 | bots      | BOT(Bot1)         | Bot1 (Bot)               | Response 1 | []                | Message 1     |
       | room1 | users     | participant1      | participant1-displayname | Message 1  | []                |               |
+    And user participant1 has the following notifications
+      | app    | object_type | object_id        | subject                                                          |
+      | spreed | chat        | room1/Message 1  | Bot1 (Bot) reacted with 👍 to your message in conversation room1 |
+      | spreed | chat        | room1/Response 1 | Bot1 (Bot) replied to your message in conversation room1         |
     Then user "participant1" retrieve reactions "👍" of message "Message 1" in room "room1" with 200
-      | actorType | actorId           | actorDisplayName | reaction |
-      | bots      | BOT(Bot)          | Bot (Bot)        | 👍       |
-    When Bot "Bot" removes a reaction for room "room1" with 200 (v1)
+      | actorType | actorId            | actorDisplayName  | reaction |
+      | bots      | BOT(Bot1)          | Bot1 (Bot)        | 👍       |
+    When Bot "Bot1" removes a reaction for room "room1" with 200 (v1)
       | secret | Secret1234567890123456789012345678901234567890 |
       | messageId | Message 1 |
       | reaction  | 👍 |
