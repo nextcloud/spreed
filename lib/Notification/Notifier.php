@@ -34,11 +34,13 @@ use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Model\Attendee;
+use OCA\Talk\Model\BotServerMapper;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\AvatarService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Webinary;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
@@ -104,6 +106,7 @@ class Notifier implements INotifier {
 		ITimeFactory $timeFactory,
 		Definitions $definitions,
 		AddressHandler $addressHandler,
+		protected BotServerMapper $botServerMapper,
 	) {
 		$this->lFactory = $lFactory;
 		$this->url = $url;
@@ -484,7 +487,7 @@ class Notifier implements INotifier {
 
 		$richSubjectUser = null;
 		$isGuest = false;
-		if ($subjectParameters['userType'] === 'users') {
+		if ($subjectParameters['userType'] === Attendee::ACTOR_USERS) {
 			$userId = $subjectParameters['userId'];
 			$userDisplayName = $this->userManager->getDisplayName($userId);
 
@@ -493,6 +496,22 @@ class Notifier implements INotifier {
 					'type' => 'user',
 					'id' => $userId,
 					'name' => $userDisplayName,
+				];
+			}
+		} elseif ($subjectParameters['userType'] === Attendee::ACTOR_BOTS) {
+			$botId = $subjectParameters['userId'];
+			try {
+				$bot = $this->botServerMapper->findByUrlHash(substr($botId, strlen(Attendee::ACTOR_BOT_PREFIX)));
+				$richSubjectUser = [
+					'type' => 'highlight',
+					'id' => $botId,
+					'name' => $bot->getName() . ' (Bot)',
+				];
+			} catch (DoesNotExistException $e) {
+				$richSubjectUser = [
+					'type' => 'highlight',
+					'id' => $botId,
+					'name' => 'Bot',
 				];
 			}
 		} else {

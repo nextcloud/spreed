@@ -2307,6 +2307,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// replies; this is needed to get special messages not explicitly
 			// sent like those for shared files.
 			self::$textToMessageId[$message['message']] = $message['id'];
+			self::$messageIdToText[$message['id']] = $message['message'];
 			if ($message['message'] === '{file}' && isset($message['messageParameters']['file']['name'])) {
 				self::$textToMessageId['shared::file::' . $message['messageParameters']['file']['name']] = $message['id'];
 				self::$messageIdToText[$message['id']] = 'shared::file::' . $message['messageParameters']['file']['name'];
