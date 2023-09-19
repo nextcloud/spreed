@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -33,6 +33,7 @@
 					</NcButton>
 				</template>
 			</div>
+
 			<div ref="scroller" class="shared-items-browser__content" @scroll="debounceHandleScroll">
 				<SharedItems :type="activeTab"
 					:token="token"
@@ -147,7 +148,9 @@ export default {
 			const scrollHeight = this.scroller.scrollHeight
 			const scrollTop = this.scroller.scrollTop
 			const containerHeight = this.scroller.clientHeight
-			if ((scrollHeight - scrollTop - containerHeight < 300) && !this.isRequestingMoreItems?.[this.activeTab] && !this.hasFetchedAllItems?.[this.activeTab]) {
+			if ((scrollHeight - scrollTop - containerHeight < 300)
+				&& !this.isRequestingMoreItems?.[this.activeTab]
+				&& !this.hasFetchedAllItems?.[this.activeTab]) {
 				this.fetchItems(this.activeTab)
 			}
 		},
@@ -159,20 +162,22 @@ export default {
 .shared-items-browser {
 	width: 100%;
 	height: 100%;
-	position:relative;
+	position: relative;
 	display: flex;
 	flex-direction: column;
+
 	&__navigation {
 		display: flex;
 		gap: 8px;
-		padding: 16px;
+		padding: 16px 16px 4px;
 		flex-wrap: wrap;
 		justify-content: center;
 	}
+
 	&__content {
 		overflow-y: auto;
 		overflow-x: hidden;
-		margin: 0 12px;
+		padding: 12px;
 	}
 }
 
@@ -182,6 +187,7 @@ export default {
 
 :deep(.button-vue) {
 	border-radius: var(--border-radius-large);
+
 	&.active {
 		background-color: var(--color-primary-element-light);
 	}

@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -55,7 +55,7 @@
 				:small-preview="!isMedia"
 				:row-layout="!isMedia"
 				:shared-items-type="type"
-				:is-shared-items-tab="true"
+				is-shared-items-tab
 				v-bind="item.messageParameters.file" />
 		</template>
 	</div>
@@ -138,8 +138,7 @@ export default {
 .shared-items {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
-	grid-template-rows: 1fr 1fr;
-	grid-gap: 4px;
+	grid-gap: 6px;
 	margin: auto;
 
 	&__list {
@@ -152,11 +151,11 @@ export default {
 	}
 
 	&__other {
-		width: 100%;
-		margin-left: 8px;
+		padding-left: 8px;
 
 		a {
 			text-decoration: underline;
+
 			&:after {
 				content: ' ↗';
 			}
