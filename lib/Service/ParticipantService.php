@@ -1031,10 +1031,14 @@ class ParticipantService {
 		$this->dispatcher->dispatch(Room::EVENT_AFTER_END_CALL_FOR_EVERYONE, $event);
 	}
 
-	public function changeInCall(Room $room, Participant $participant, int $flags, bool $endCallForEveryone = false, bool $silent = false): void {
+	public function changeInCall(Room $room, Participant $participant, int $flags, bool $endCallForEveryone = false, bool $silent = false): bool {
+		if ($room->getType() === Room::TYPE_CHANGELOG || $room->getType() === Room::TYPE_NOTE_TO_SELF) {
+			return false;
+		}
+
 		$session = $participant->getSession();
 		if (!$session instanceof Session) {
-			return;
+			return false;
 		}
 
 		$permissions = $participant->getPermissions();
@@ -1077,6 +1081,8 @@ class ParticipantService {
 		} else {
 			$this->dispatcher->dispatch(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $event);
 		}
+
+		return true;
 	}
 
 	public function sendCallNotificationForAttendee(Room $room, Participant $currentParticipant, int $targetAttendeeId): bool {

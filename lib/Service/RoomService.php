@@ -171,6 +171,10 @@ class RoomService {
 			return false;
 		}
 
+		if ($room->getType() === Room::TYPE_NOTE_TO_SELF) {
+			return false;
+		}
+
 		if ($room->getObjectType() === BreakoutRoom::PARENT_OBJECT_TYPE) {
 			// Do not allow manual changing the permissions in breakout rooms
 			return false;

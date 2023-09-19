@@ -117,8 +117,11 @@ class CallController extends AEnvironmentAwareController {
 			$this->roomService->setPermissions($this->room, 'call', Attendee::PERMISSIONS_MODIFY_SET, $forcePermissions, true);
 		}
 
-		$this->participantService->changeInCall($this->room, $this->participant, $flags, false, $silent);
+		$joined = $this->participantService->changeInCall($this->room, $this->participant, $flags, false, $silent);
 
+		if (!$joined) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
 		return new DataResponse();
 	}
 
