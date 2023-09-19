@@ -20,18 +20,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import Hex from 'crypto-js/enc-hex.js'
-import SHA1 from 'crypto-js/sha1.js'
 import debounce from 'debounce'
 
-import Axios from '@nextcloud/axios'
-import { showError } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
+import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
-import { PARTICIPANT } from '../constants.js'
 import { EventBus } from '../services/EventBus.js'
-import { fetchParticipants } from '../services/participantsService.js'
-import CancelableRequest from '../utils/cancelableRequest.js'
 import isInLobby from './isInLobby.js'
 
 const getParticipants = {
@@ -41,10 +34,6 @@ const getParticipants = {
 	data() {
 		return {
 			participantsInitialised: false,
-			/**
-			 * Stores the cancel function for cancelableGetParticipants
-			 */
-			cancelGetParticipants: () => {},
 			fetchingParticipants: false,
 		}
 	},
@@ -65,12 +54,16 @@ const getParticipants = {
 			// Then we have to search for another solution. Maybe the room list which we update
 			// periodically gets a hash of all online sessions?
 			EventBus.$on('signaling-participant-list-changed', this.debounceUpdateParticipants)
+
+			subscribe('guest-promoted', this.onJoinedConversation)
 		},
 
 		stopGetParticipantsMixin() {
 			EventBus.$off('route-change', this.onRouteChange)
 			EventBus.$off('joined-conversation', this.onJoinedConversation)
 			EventBus.$off('signaling-participant-list-changed', this.debounceUpdateParticipants)
+
+			unsubscribe('guest-promoted', this.onJoinedConversation)
 		},
 
 		onRouteChange() {
@@ -116,53 +109,13 @@ const getParticipants = {
 				return
 			}
 
-			try {
-				// The token must be stored in a local variable to ensure that
-				// the same token is used after waiting.
-				const token = this.token
-				// Clear previous requests if there's one pending
-				this.cancelGetParticipants('Cancel get participants')
-				// Get a new cancelable request function and cancel function pair
-				this.fetchingParticipants = true
-				const { request, cancel } = CancelableRequest(fetchParticipants)
-				this.cancelGetParticipants = cancel
-				const participants = await request(token)
-				this.$store.dispatch('purgeParticipantsStore', token)
+			this.fetchingParticipants = true
 
-				const hasUserStatuses = !!participants.headers['x-nextcloud-has-user-statuses']
-				participants.data.ocs.data.forEach(participant => {
-					this.$store.dispatch('addParticipant', {
-						token,
-						participant,
-					})
-					if (participant.participantType === PARTICIPANT.TYPE.GUEST
-						|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
-						// FIXME replace mixin with composable. until then
-						// guestNameStore should be set up at component level
-						this.guestNameStore.addGuestName({
-							token,
-							actorId: Hex.stringify(SHA1(participant.sessionIds[0])),
-							actorDisplayName: participant.displayName,
-						}, { noUpdate: false })
-					} else if (participant.actorType === 'users' && hasUserStatuses) {
-						emit('user_status:status.updated', {
-							status: participant.status,
-							message: participant.statusMessage,
-							icon: participant.statusIcon,
-							clearAt: participant.statusClearAt,
-							userId: participant.actorId,
-						})
-					}
-				})
+			const response = await this.$store.dispatch('fetchParticipants', { token: this.token })
+			if (response) {
 				this.participantsInitialised = true
-			} catch (exception) {
-				if (!Axios.isCancel(exception)) {
-					console.error(exception)
-					showError(t('spreed', 'An error occurred while fetching the participants'))
-				}
-			} finally {
-				this.fetchingParticipants = false
 			}
+			this.fetchingParticipants = false
 		},
 	},
 }

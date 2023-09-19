@@ -1,13 +1,19 @@
 import { createLocalVue } from '@vue/test-utils'
+import Hex from 'crypto-js/enc-hex.js'
+import SHA1 from 'crypto-js/sha1.js'
 import mockConsole from 'jest-mock-console'
 import { cloneDeep } from 'lodash'
+import { createPinia, setActivePinia } from 'pinia'
 import Vuex from 'vuex'
+
+import { emit } from '@nextcloud/event-bus'
 
 import { PARTICIPANT } from '../constants.js'
 import {
 	joinCall,
 	leaveCall,
 } from '../services/callsService.js'
+import { fetchConversation } from '../services/conversationsService.js'
 import { EventBus } from '../services/EventBus.js'
 import {
 	promoteToModerator,
@@ -16,12 +22,15 @@ import {
 	resendInvitations,
 	joinConversation,
 	leaveConversation,
+	fetchParticipants,
 	removeCurrentUserFromConversation,
 	grantAllPermissionsToParticipant,
 	removeAllPermissionsFromParticipant,
 } from '../services/participantsService.js'
+import { useGuestNameStore } from '../stores/guestName.js'
 import { generateOCSErrorResponse, generateOCSResponse } from '../test-helpers.js'
 import participantsStore from './participantsStore.js'
+import storeConfig from './storeConfig.js'
 
 jest.mock('../services/participantsService', () => ({
 	promoteToModerator: jest.fn(),
@@ -30,6 +39,7 @@ jest.mock('../services/participantsService', () => ({
 	resendInvitations: jest.fn(),
 	joinConversation: jest.fn(),
 	leaveConversation: jest.fn(),
+	fetchParticipants: jest.fn(),
 	removeCurrentUserFromConversation: jest.fn(),
 	grantAllPermissionsToParticipant: jest.fn(),
 	removeAllPermissionsFromParticipant: jest.fn(),
@@ -38,16 +48,27 @@ jest.mock('../services/callsService', () => ({
 	joinCall: jest.fn(),
 	leaveCall: jest.fn(),
 }))
+jest.mock('../services/conversationsService', () => ({
+	fetchConversation: jest.fn(),
+}))
+
+jest.mock('@nextcloud/event-bus', () => ({
+	emit: jest.fn(),
+	subscribe: jest.fn(),
+}))
 
 describe('participantsStore', () => {
 	const TOKEN = 'XXTOKENXX'
 	let testStoreConfig = null
 	let localVue = null
 	let store = null
+	let guestNameStore = null
 
 	beforeEach(() => {
 		localVue = createLocalVue()
 		localVue.use(Vuex)
+		setActivePinia(createPinia())
+		guestNameStore = useGuestNameStore()
 
 		testStoreConfig = cloneDeep(participantsStore)
 		store = new Vuex.Store(testStoreConfig)
@@ -359,12 +380,124 @@ describe('participantsStore', () => {
 		})
 	})
 
-	describe('call handling', () => {
-		beforeEach(() => {
-			store = new Vuex.Store(testStoreConfig)
+	describe('fetch participants', () => {
+		test('populates store for the fetched conversation', async () => {
+			// Arrange
+			const payload = [{
+				attendeeId: 1,
+				sessionId: 'session-id-1',
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			}]
+
+			fetchParticipants.mockResolvedValue(generateOCSResponse({ payload }))
+
+			// Act
+			await store.dispatch('fetchParticipants', { token: TOKEN })
+
+			// Assert
+			expect(store.getters.participantsList(TOKEN)).toMatchObject(payload)
 		})
 
-		test('joins call', async () => {
+		test('saves a guest name from response', async () => {
+			// Arrange
+			const payload = [{
+				attendeeId: 1,
+				sessionIds: ['guest-session-id'],
+				actorId: 'guest-actor-id',
+				displayName: 'guest-name',
+				participantType: PARTICIPANT.TYPE.GUEST,
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			}]
+			const id = Hex.stringify(SHA1('guest-session-id'))
+
+			fetchParticipants.mockResolvedValue(generateOCSResponse({ payload }))
+
+			// Act
+			await store.dispatch('fetchParticipants', { token: TOKEN })
+
+			// Assert
+			expect(guestNameStore.getGuestName(TOKEN, id)).toBe('guest-name')
+		})
+
+		test('emits an user status update', async () => {
+			// Arrange
+			const payload = [{
+				attendeeId: 1,
+				actorId: 'actor-id',
+				displayName: 'guest-name',
+				actorType: 'users',
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+				status: 'status',
+				statusMessage: 'statusMessage',
+				statusIcon: 'statusIcon',
+				statusClearAt: 'statusClearAt',
+			}]
+
+			fetchParticipants.mockResolvedValue(generateOCSResponse(
+				{
+					headers: { 'x-nextcloud-has-user-statuses': true },
+					payload,
+				}))
+
+			// Act
+			await store.dispatch('fetchParticipants', { token: TOKEN })
+
+			// Assert
+			expect(emit).toHaveBeenCalledWith('user_status:status.updated',
+				{
+					clearAt: 'statusClearAt',
+					icon: 'statusIcon',
+					message: 'statusMessage',
+					status: 'status',
+					userId: 'actor-id',
+				})
+		})
+
+		test('updates conversation if fail to fetch participants', async () => {
+			// Arrange
+			testStoreConfig = cloneDeep(storeConfig)
+			store = new Vuex.Store(testStoreConfig)
+			fetchParticipants.mockRejectedValue(generateOCSErrorResponse({
+				status: 403,
+				payload: [],
+			}))
+			fetchConversation.mockResolvedValue(generateOCSResponse(
+				{
+					payload: {},
+				}))
+			// Act
+			await store.dispatch('fetchParticipants', { token: TOKEN })
+
+			// Assert
+			expect(fetchConversation).toHaveBeenCalled()
+		})
+
+		test('cancels old request', async () => {
+			// Arrange
+			const payload = [{
+				attendeeId: 1,
+				sessionId: 'session-id-1',
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			}]
+			fetchParticipants.mockResolvedValue(generateOCSResponse({ payload }))
+
+			// Act
+			store.dispatch('fetchParticipants', { token: TOKEN })
+			await store.dispatch('fetchParticipants', { token: TOKEN })
+
+			// Assert
+			expect(fetchParticipants).toHaveBeenCalledTimes(2)
+			expect(fetchParticipants).toHaveBeenNthCalledWith(1, TOKEN, { cancelToken: { promise: expect.anything(), reason: expect.anything() } })
+			expect(fetchParticipants).toHaveBeenNthCalledWith(2, TOKEN, { cancelToken: { promise: expect.anything() } })
+		})
+	})
+
+	describe('call handling', () => {
+		const actualFlags = PARTICIPANT.CALL_FLAG.WITH_AUDIO
+		const flags = PARTICIPANT.CALL_FLAG.WITH_AUDIO | PARTICIPANT.CALL_FLAG.WITH_VIDEO
+
+		beforeEach(async () => {
+			store = new Vuex.Store(testStoreConfig)
 			store.dispatch('addParticipant', {
 				token: TOKEN,
 				participant: {
@@ -377,13 +510,9 @@ describe('participantsStore', () => {
 
 			// The requested flags and the actual flags can be different if some
 			// media device is not available.
-			const actualFlags = PARTICIPANT.CALL_FLAG.WITH_AUDIO
 			joinCall.mockResolvedValue(actualFlags)
+			leaveCall.mockResolvedValue()
 
-			expect(store.getters.isInCall(TOKEN)).toBe(false)
-			expect(store.getters.isConnecting(TOKEN)).toBe(false)
-
-			const flags = PARTICIPANT.CALL_FLAG.WITH_AUDIO | PARTICIPANT.CALL_FLAG.WITH_VIDEO
 			await store.dispatch('joinCall', {
 				token: TOKEN,
 				participantIdentifier: {
@@ -393,9 +522,13 @@ describe('participantsStore', () => {
 				flags,
 				silent: false,
 			})
+		})
 
+		test('joins call', async () => {
+			// Assert
 			expect(joinCall).toHaveBeenCalledWith(TOKEN, flags, false)
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
+			expect(store.getters.isConnecting(TOKEN)).toBe(true)
 			expect(store.getters.participantsList(TOKEN)).toStrictEqual([
 				{
 					attendeeId: 1,
@@ -405,84 +538,36 @@ describe('participantsStore', () => {
 				},
 			])
 
-			expect(store.getters.isConnecting(TOKEN)).toBe(true)
-
+			// Finished connecting to the call
 			EventBus.$emit('signaling-users-in-room')
 
 			expect(store.getters.isInCall(TOKEN)).toBe(true)
 			expect(store.getters.isConnecting(TOKEN)).toBe(false)
 		})
-	})
 
-	test('joins and leaves call', async () => {
-		store.dispatch('addParticipant', {
-			token: TOKEN,
-			participant: {
-				attendeeId: 1,
-				sessionId: 'session-id-1',
-				participantType: PARTICIPANT.TYPE.USER,
-				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
-			},
+		test('leaves call', async () => {
+			// Act
+			await store.dispatch('leaveCall', {
+				token: TOKEN,
+				participantIdentifier: {
+					attendeeId: 1,
+					sessionId: 'session-id-1',
+				},
+			})
+
+			// Assert
+			expect(leaveCall).toHaveBeenCalledWith(TOKEN, false)
+			expect(store.getters.isInCall(TOKEN)).toBe(false)
+			expect(store.getters.isConnecting(TOKEN)).toBe(false)
+			expect(store.getters.participantsList(TOKEN)).toStrictEqual([
+				{
+					attendeeId: 1,
+					sessionId: 'session-id-1',
+					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+					participantType: PARTICIPANT.TYPE.USER,
+				},
+			])
 		})
-
-		// The requested flags and the actual flags can be different if some
-		// media device is not available.
-		const actualFlags = PARTICIPANT.CALL_FLAG.WITH_AUDIO
-		joinCall.mockResolvedValue(actualFlags)
-
-		expect(store.getters.isInCall(TOKEN)).toBe(false)
-		expect(store.getters.isConnecting(TOKEN)).toBe(false)
-
-		const flags = PARTICIPANT.CALL_FLAG.WITH_AUDIO | PARTICIPANT.CALL_FLAG.WITH_VIDEO
-		await store.dispatch('joinCall', {
-			token: TOKEN,
-			participantIdentifier: {
-				attendeeId: 1,
-				sessionId: 'session-id-1',
-			},
-			flags,
-			silent: false,
-		})
-
-		expect(joinCall).toHaveBeenCalledWith(TOKEN, flags, false)
-		expect(store.getters.isInCall(TOKEN)).toBe(true)
-		expect(store.getters.participantsList(TOKEN)).toStrictEqual([
-			{
-				attendeeId: 1,
-				sessionId: 'session-id-1',
-				inCall: actualFlags,
-				participantType: PARTICIPANT.TYPE.USER,
-			},
-		])
-
-		expect(store.getters.isConnecting(TOKEN)).toBe(true)
-
-		EventBus.$emit('signaling-users-in-room')
-
-		expect(store.getters.isInCall(TOKEN)).toBe(true)
-		expect(store.getters.isConnecting(TOKEN)).toBe(false)
-
-		leaveCall.mockResolvedValue()
-
-		await store.dispatch('leaveCall', {
-			token: TOKEN,
-			participantIdentifier: {
-				attendeeId: 1,
-				sessionId: 'session-id-1',
-			},
-		})
-
-		expect(leaveCall).toHaveBeenCalledWith(TOKEN, false)
-		expect(store.getters.isInCall(TOKEN)).toBe(false)
-		expect(store.getters.isConnecting(TOKEN)).toBe(false)
-		expect(store.getters.participantsList(TOKEN)).toStrictEqual([
-			{
-				attendeeId: 1,
-				sessionId: 'session-id-1',
-				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
-				participantType: PARTICIPANT.TYPE.USER,
-			},
-		])
 	})
 
 	test('resends invitations', async () => {
@@ -662,68 +747,70 @@ describe('participantsStore', () => {
 		})
 	})
 
-	test('leaves conversation', async () => {
-		leaveConversation.mockResolvedValue()
+	describe('leaving conversation', () => {
+		test('leaves conversation', async () => {
+			leaveConversation.mockResolvedValue()
 
-		await store.dispatch('leaveConversation', { token: TOKEN })
+			await store.dispatch('leaveConversation', { token: TOKEN })
 
-		expect(leaveCall).not.toHaveBeenCalled()
-		expect(leaveConversation).toHaveBeenCalledWith(TOKEN)
-	})
-
-	test('leaves conversation while in call', async () => {
-		testStoreConfig.getters.getParticipantIdentifier = () => jest.fn().mockReturnValue({
-			attendeeId: 1,
-			sessionId: 'session-id-1',
+			expect(leaveCall).not.toHaveBeenCalled()
+			expect(leaveConversation).toHaveBeenCalledWith(TOKEN)
 		})
-		store = new Vuex.Store(testStoreConfig)
 
-		store.dispatch('addParticipant', {
-			token: TOKEN,
-			participant: {
+		test('leaves conversation while in call', async () => {
+			testStoreConfig.getters.getParticipantIdentifier = () => jest.fn().mockReturnValue({
 				attendeeId: 1,
 				sessionId: 'session-id-1',
-				participantType: PARTICIPANT.TYPE.USER,
-				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
-			},
+			})
+			store = new Vuex.Store(testStoreConfig)
+
+			store.dispatch('addParticipant', {
+				token: TOKEN,
+				participant: {
+					attendeeId: 1,
+					sessionId: 'session-id-1',
+					participantType: PARTICIPANT.TYPE.USER,
+					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+				},
+			})
+
+			const flags = PARTICIPANT.CALL_FLAG.WITH_AUDIO | PARTICIPANT.CALL_FLAG.WITH_VIDEO
+			await store.dispatch('joinCall', {
+				token: TOKEN,
+				participantIdentifier: {
+					attendeeId: 1,
+					sessionId: 'session-id-1',
+				},
+				flags,
+				silent: false,
+			})
+
+			expect(store.getters.isInCall(TOKEN)).toBe(true)
+
+			leaveConversation.mockResolvedValue()
+
+			await store.dispatch('leaveConversation', { token: TOKEN })
+
+			expect(store.getters.isInCall(TOKEN)).toBe(false)
+			expect(leaveCall).toHaveBeenCalledWith(TOKEN, false)
+			expect(leaveConversation).toHaveBeenCalledWith(TOKEN)
 		})
 
-		const flags = PARTICIPANT.CALL_FLAG.WITH_AUDIO | PARTICIPANT.CALL_FLAG.WITH_VIDEO
-		await store.dispatch('joinCall', {
-			token: TOKEN,
-			participantIdentifier: {
-				attendeeId: 1,
-				sessionId: 'session-id-1',
-			},
-			flags,
-			silent: false,
+		test('removes current user from conversation', async () => {
+			removeCurrentUserFromConversation.mockResolvedValue()
+
+			testStoreConfig = cloneDeep(participantsStore)
+			testStoreConfig.actions.deleteConversation = jest.fn()
+			store = new Vuex.Store(testStoreConfig)
+
+			await store.dispatch('removeCurrentUserFromConversation', { token: TOKEN })
+
+			expect(removeCurrentUserFromConversation).toHaveBeenCalledWith(TOKEN)
+			expect(testStoreConfig.actions.deleteConversation).toHaveBeenCalledWith(expect.anything(), TOKEN)
 		})
-
-		expect(store.getters.isInCall(TOKEN)).toBe(true)
-
-		leaveConversation.mockResolvedValue()
-
-		await store.dispatch('leaveConversation', { token: TOKEN })
-
-		expect(store.getters.isInCall(TOKEN)).toBe(false)
-		expect(leaveCall).toHaveBeenCalledWith(TOKEN, false)
-		expect(leaveConversation).toHaveBeenCalledWith(TOKEN)
 	})
 
-	test('removes current user from conversation', async () => {
-		removeCurrentUserFromConversation.mockResolvedValue()
-
-		testStoreConfig = cloneDeep(participantsStore)
-		testStoreConfig.actions.deleteConversation = jest.fn()
-		store = new Vuex.Store(testStoreConfig)
-
-		await store.dispatch('removeCurrentUserFromConversation', { token: TOKEN })
-
-		expect(removeCurrentUserFromConversation).toHaveBeenCalledWith(TOKEN)
-		expect(testStoreConfig.actions.deleteConversation).toHaveBeenCalledWith(expect.anything(), TOKEN)
-	})
-
-	describe('participantsStore', () => {
+	describe('participant permissions', () => {
 		beforeEach(() => {
 			store.dispatch('addParticipant', {
 				token: TOKEN,
