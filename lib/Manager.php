@@ -355,7 +355,9 @@ class Manager {
 
 			$room = $this->createRoomObject($row);
 			if ($actorType === Attendee::ACTOR_USERS && isset($row['actor_id'])) {
-				$room->setParticipant($row['actor_id'], $this->createParticipantObject($room, $row));
+				$participant = $this->createParticipantObject($room, $row);
+				$this->participantService->cacheParticipant($room, $participant);
+				$room->setParticipant($row['actor_id'], $participant);
 			}
 			$rooms[] = $room;
 		}
@@ -542,7 +544,9 @@ class Manager {
 
 		$room = $this->createRoomObject($row);
 		if ($userId !== null && isset($row['actor_id'])) {
-			$room->setParticipant($row['actor_id'], $this->createParticipantObject($room, $row));
+			$participant = $this->createParticipantObject($room, $row);
+			$this->participantService->cacheParticipant($room, $participant);
+			$room->setParticipant($row['actor_id'], $participant);
 		}
 
 		if ($userId === null && $room->getType() !== Room::TYPE_PUBLIC) {
@@ -613,7 +617,9 @@ class Manager {
 
 		$room = $this->createRoomObject($row);
 		if ($userId !== null && isset($row['actor_id'])) {
-			$room->setParticipant($row['actor_id'], $this->createParticipantObject($room, $row));
+			$participant = $this->createParticipantObject($room, $row);
+			$this->participantService->cacheParticipant($room, $participant);
+			$room->setParticipant($row['actor_id'], $participant);
 		}
 
 		if ($isSIPBridgeRequest || $room->getType() === Room::TYPE_PUBLIC) {
@@ -716,7 +722,9 @@ class Manager {
 
 		$room = $this->createRoomObject($row);
 		if ($actorType === Attendee::ACTOR_USERS && isset($row['actor_id'])) {
-			$room->setParticipant($row['actor_id'], $this->createParticipantObject($room, $row));
+			$participant = $this->createParticipantObject($room, $row);
+			$this->participantService->cacheParticipant($room, $participant);
+			$room->setParticipant($row['actor_id'], $participant);
 		}
 
 		return $room;
@@ -870,6 +878,7 @@ class Manager {
 
 		$room = $this->createRoomObject($row);
 		$participant = $this->createParticipantObject($room, $row);
+		$this->participantService->cacheParticipant($room, $participant);
 		$room->setParticipant($row['actor_id'], $participant);
 
 		if ($room->getType() === Room::TYPE_PUBLIC || !in_array($participant->getAttendee()->getParticipantType(), [Participant::GUEST, Participant::GUEST_MODERATOR, Participant::USER_SELF_JOINED], true)) {

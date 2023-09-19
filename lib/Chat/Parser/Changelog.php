@@ -33,11 +33,11 @@ class Changelog {
 	 */
 	public function parseMessage(Message $chatMessage): void {
 		if ($chatMessage->getActorType() !== Attendee::ACTOR_GUESTS ||
-			$chatMessage->getActorId() !== 'changelog') {
+			$chatMessage->getActorId() !== Attendee::ACTOR_ID_CHANGELOG) {
 			throw new \OutOfBoundsException('Not a changelog');
 		}
 
 		$l = $chatMessage->getL10n();
-		$chatMessage->setActor('bots', 'changelog', $l->t('Talk updates ✅'));
+		$chatMessage->setActor(Attendee::ACTOR_BOTS, Attendee::ACTOR_ID_CHANGELOG, $l->t('Talk updates ✅'));
 	}
 }
