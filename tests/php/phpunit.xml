@@ -5,7 +5,7 @@
 		 timeoutForSmallTests="900"
 		 timeoutForMediumTests="900"
 		 timeoutForLargeTests="900"
-		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.6/phpunit.xsd"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 >
 	<testsuite name="Talk App Tests">
