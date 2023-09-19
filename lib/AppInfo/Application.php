@@ -45,6 +45,7 @@ use OCA\Talk\Dashboard\TalkWidget;
 use OCA\Talk\Deck\DeckPluginLoader;
 use OCA\Talk\Events\AttendeesAddedEvent;
 use OCA\Talk\Events\AttendeesRemovedEvent;
+use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\BotInstallEvent;
 use OCA\Talk\Events\BotUninstallEvent;
 use OCA\Talk\Events\RoomEvent;
@@ -67,6 +68,7 @@ use OCA\Talk\Listener\UserDeletedListener;
 use OCA\Talk\Maps\MapsPluginLoader;
 use OCA\Talk\Middleware\CanUseTalkMiddleware;
 use OCA\Talk\Middleware\InjectionMiddleware;
+use OCA\Talk\NoteToSelf\Listener as NoteToSelfListener;
 use OCA\Talk\Notification\Listener as NotificationListener;
 use OCA\Talk\Notification\Notifier;
 use OCA\Talk\OCP\TalkBackend;
@@ -127,6 +129,7 @@ class Application extends App implements IBootstrap {
 
 		$context->registerEventListener(AddContentSecurityPolicyEvent::class, CSPListener::class);
 		$context->registerEventListener(AddFeaturePolicyEvent::class, FeaturePolicyListener::class);
+		$context->registerEventListener(BeforeRoomsFetchEvent::class, NoteToSelfListener::class);
 		$context->registerEventListener(BotInstallEvent::class, BotListener::class);
 		$context->registerEventListener(BotUninstallEvent::class, BotListener::class);
 		$context->registerEventListener(GroupDeletedEvent::class, GroupDeletedListener::class);

@@ -29,6 +29,7 @@ namespace OCA\Talk\Controller;
 
 use InvalidArgumentException;
 use OCA\Talk\Config;
+use OCA\Talk\Events\BeforeRoomsFetchEvent;
 use OCA\Talk\Events\UserEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Exceptions\InvalidPasswordException;
@@ -155,6 +156,8 @@ class RoomController extends AEnvironmentAwareController {
 
 		$event = new UserEvent($this->userId);
 		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOMS_GET, $event);
+		$event = new BeforeRoomsFetchEvent($this->userId);
+		$this->dispatcher->dispatchTyped($event);
 
 		if ($noStatusUpdate === 0) {
 			$isMobileApp = $this->request->isUserAgent([
