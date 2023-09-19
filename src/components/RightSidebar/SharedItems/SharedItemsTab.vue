@@ -23,7 +23,7 @@
 	<div v-if="!loading && active">
 		<template v-for="type in sharedItemsOrder">
 			<div v-if="sharedItems[type]" :key="type">
-				<NcAppNavigationCaption :title="getTitle(type)" />
+				<NcAppNavigationCaption :title="sharedItemTitle[type] || sharedItemTitle.default" />
 				<SharedItems :type="type"
 					:limit="limit(type)"
 					:items="sharedItems[type]" />
@@ -35,7 +35,7 @@
 					<template #icon>
 						<DotsHorizontal :size="20" />
 					</template>
-					{{ getButtonTitle(type) }}
+					{{ sharedItemButtonTitle[type] || sharedItemButtonTitle.default }}
 				</NcButton>
 			</div>
 		</template>
@@ -78,10 +78,14 @@ import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcRelatedResourcesPanel from '@nextcloud/vue/dist/Components/NcRelatedResourcesPanel.js'
 
 import SharedItems from './SharedItems.vue'
-import SharedItemsBrowser from './SharedItemsBrowser/SharedItemsBrowser.vue'
+import SharedItemsBrowser from './SharedItemsBrowser.vue'
 
-import { SHARED_ITEM } from '../../../constants.js'
-import sharedItems from '../../../mixins/sharedItems.js'
+import {
+	sharedItemButtonTitle,
+	sharedItemsOrder,
+	sharedItemsWithPreviewLimit,
+	sharedItemTitle,
+} from './sharedItemsConstants.js'
 
 export default {
 
@@ -99,14 +103,21 @@ export default {
 		FolderMultipleImage,
 	},
 
-	mixins: [sharedItems],
-
 	props: {
 
 		active: {
 			type: Boolean,
 			required: true,
 		},
+	},
+
+	setup() {
+		return {
+			sharedItemButtonTitle,
+			sharedItemTitle,
+			sharedItemsOrder,
+			sharedItemsWithPreviewLimit,
+		}
 	},
 
 	data() {
@@ -167,35 +178,7 @@ export default {
 		},
 
 		limit(type) {
-			if (type === SHARED_ITEM.TYPES.DECK_CARD || type === SHARED_ITEM.TYPES.LOCATION || type === SHARED_ITEM.TYPES.POLL) {
-				return 2
-			} else {
-				return 6
-			}
-		},
-
-		getButtonTitle(type) {
-			switch (type) {
-			case SHARED_ITEM.TYPES.MEDIA:
-				return t('spreed', 'Show all media')
-			case SHARED_ITEM.TYPES.FILE:
-				return t('spreed', 'Show all files')
-			case SHARED_ITEM.TYPES.POLL:
-				return t('spreed', 'Show all polls')
-			case SHARED_ITEM.TYPES.DECK_CARD:
-				return t('spreed', 'Show all deck cards')
-			case SHARED_ITEM.TYPES.VOICE:
-				return t('spreed', 'Show all voice messages')
-			case SHARED_ITEM.TYPES.LOCATION:
-				return t('spreed', 'Show all locations')
-			case SHARED_ITEM.TYPES.AUDIO:
-				return t('spreed', 'Show all audio')
-			case SHARED_ITEM.TYPES.RECORDING:
-				return t('spreed', 'Show all call recordings')
-			case SHARED_ITEM.TYPES.OTHER:
-			default:
-				return t('spreed', 'Show all other')
-			}
+			return this.sharedItemsWithPreviewLimit.includes(type) ? 2 : 6
 		},
 	},
 }

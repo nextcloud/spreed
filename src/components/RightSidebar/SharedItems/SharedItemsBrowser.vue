@@ -29,7 +29,7 @@
 						:class="{'active' : activeTab === type}"
 						type="tertiary"
 						@click="handleTabClick(type)">
-						{{ getTitle(type) }}
+						{{ sharedItemTitle[type] || sharedItemTitle.default }}
 					</NcButton>
 				</template>
 			</div>
@@ -47,9 +47,9 @@ import debounce from 'debounce'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
-import SharedItems from '../SharedItems.vue'
+import SharedItems from './SharedItems.vue'
 
-import sharedItems from '../../../../mixins/sharedItems.js'
+import { sharedItemsOrder, sharedItemTitle } from './sharedItemsConstants.js'
 
 export default {
 	name: 'SharedItemsBrowser',
@@ -59,8 +59,6 @@ export default {
 		NcModal,
 		SharedItems,
 	},
-
-	mixins: [sharedItems],
 
 	props: {
 		sharedItems: {
@@ -75,6 +73,13 @@ export default {
 	},
 
 	emits: ['update:active-tab'],
+
+	setup() {
+		return {
+			sharedItemTitle,
+			sharedItemsOrder,
+		}
+	},
 
 	data() {
 		return {
