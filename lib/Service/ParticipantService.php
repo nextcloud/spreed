@@ -1608,6 +1608,21 @@ class ParticipantService {
 		return (bool) $row;
 	}
 
+	public function cacheParticipant(Room $room, Participant $participant): void {
+		$attendee = $participant->getAttendee();
+		if ($attendee->getActorType() !== Attendee::ACTOR_USERS) {
+			return;
+		}
+
+		$this->userCache[$room->getId()] ??= [];
+		$this->userCache[$room->getId()][$attendee->getActorId()] = $participant;
+		if ($participant->getSession()) {
+			$participantSessionId = $participant->getSession()->getSessionId();
+			$this->sessionCache[$room->getId()] ??= [];
+			$this->sessionCache[$room->getId()][$participantSessionId] = $participant;
+		}
+	}
+
 	/**
 	 * @param Room $room
 	 * @return bool
