@@ -52,6 +52,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Service\BreakoutRoomService;
 use OCA\Talk\Service\ChecksumVerificationService;
+use OCA\Talk\Service\NoteToSelfService;
 use OCA\Talk\Service\ParticipantService;
 use OCA\Talk\Service\RoomFormatter;
 use OCA\Talk\Service\RoomService;
@@ -96,6 +97,7 @@ class RoomController extends AEnvironmentAwareController {
 		protected Manager $manager,
 		protected RoomService $roomService,
 		protected BreakoutRoomService $breakoutRoomService,
+		protected NoteToSelfService $noteToSelfService,
 		protected ParticipantService $participantService,
 		protected SessionService $sessionService,
 		protected GuestManager $guestManager,
@@ -326,6 +328,18 @@ class RoomController extends AEnvironmentAwareController {
 			$response->throttle(['token' => $token, 'action' => 'talkRoomToken']);
 			return $response;
 		}
+	}
+
+	/**
+	 * Get the "Note to self" conversation for the user
+	 *
+	 * It will be automatically created when it is currently missing
+	 */
+	#[NoAdminRequired]
+	public function getNoteToSelfConversation(): DataResponse {
+		$room = $this->noteToSelfService->ensureNoteToSelfExistsForUser($this->userId);
+		$participant = $this->participantService->getParticipant($room, $this->userId, false);
+		return new DataResponse($this->formatRoom($room, $participant), Http::STATUS_OK, $this->getTalkHashHeader());
 	}
 
 	/**
