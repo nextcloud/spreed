@@ -75,13 +75,29 @@ the main body of the message as well as a quote.
 						autolink
 						:reference-limit="0" />
 				</div>
-				<div v-else class="message-body__main__text message-body__main__text--markdown">
+				<div v-else
+					class="message-body__main__text message-body__main__text--markdown"
+					@mouseover="handleMarkdownMouseOver"
+					@mouseleave="handleMarkdownMouseLeave">
 					<Quote v-if="parent" v-bind="parent" />
 					<NcRichText :text="message"
 						:arguments="richParameters"
 						autolink
 						:use-markdown="markdown"
 						:reference-limit="1" />
+
+					<NcButton v-if="containsCodeBlocks"
+						v-show="currentCodeBlock !== null"
+						class="message-copy-code"
+						type="tertiary"
+						:aria-label="t('spreed', 'Copy code block')"
+						:title="t('spreed', 'Copy code block')"
+						:style="{top: copyButtonOffset}"
+						@click="copyCodeBlock">
+						<template #icon>
+							<ContentCopy :size="16" />
+						</template>
+					</NcButton>
 				</div>
 				<div v-if="!isDeletedMessage" class="message-body__main__right">
 					<span :title="messageDate"
@@ -233,6 +249,7 @@ import emojiRegex from 'emoji-regex/index.js'
 import AlertCircle from 'vue-material-design-icons/AlertCircle.vue'
 import Check from 'vue-material-design-icons/Check.vue'
 import CheckAll from 'vue-material-design-icons/CheckAll.vue'
+import ContentCopy from 'vue-material-design-icons/ContentCopy.vue'
 import EmoticonOutline from 'vue-material-design-icons/EmoticonOutline.vue'
 import Reload from 'vue-material-design-icons/Reload.vue'
 import UnfoldLess from 'vue-material-design-icons/UnfoldLessHorizontal.vue'
@@ -287,6 +304,7 @@ export default {
 		AlertCircle,
 		Check,
 		CheckAll,
+		ContentCopy,
 		EmoticonOutline,
 		Reload,
 		UnfoldLess,
@@ -461,6 +479,9 @@ export default {
 			isForwarderOpen: false,
 			detailedReactionsLoading: false,
 			isTranslateDialogOpen: false,
+			codeBlocks: null,
+			currentCodeBlock: null,
+			copyButtonOffset: 0,
 		}
 	},
 
@@ -688,6 +709,10 @@ export default {
 		detailedReactionsLoaded() {
 			return this.$store.getters.reactionsLoaded(this.token, this.id)
 		},
+
+		containsCodeBlocks() {
+			return this.message.includes('```')
+		},
 	},
 
 	watch: {
@@ -701,7 +726,43 @@ export default {
 		},
 	},
 
+	mounted() {
+		if (!this.containsCodeBlocks) {
+			return
+		}
+
+		this.codeBlocks = Array.from(this.$refs.message?.querySelectorAll('pre'))
+	},
+
 	methods: {
+		handleMarkdownMouseOver(event) {
+			if (!this.containsCodeBlocks) {
+				return
+			}
+
+			const index = this.codeBlocks.findIndex(item => item.contains(event.target))
+			if (index !== -1) {
+				this.currentCodeBlock = index
+				const el = this.codeBlocks[index]
+				this.copyButtonOffset = `${el.offsetTop}px`
+			}
+		},
+
+		handleMarkdownMouseLeave() {
+			this.currentCodeBlock = null
+			this.copyButtonOffset = 0
+		},
+
+		async copyCodeBlock() {
+			const code = this.codeBlocks[this.currentCodeBlock].textContent
+			try {
+				await navigator.clipboard.writeText(code)
+				showSuccess(t('spreed', 'Code block copied to clipboard'))
+			} catch (error) {
+				showError(t('spreed', 'Code block could not be copied'))
+			}
+		},
+
 		userHasReacted(reaction) {
 			return this.reactionsSelf?.includes(reaction)
 		},
@@ -1056,6 +1117,16 @@ export default {
 }
 
 .message-body__main__text--markdown {
+  position: relative;
+
+  .message-copy-code {
+    position: absolute;
+    top: 0;
+    right: 4px;
+    margin-top: 4px;
+    background-color: var(--color-background-dark);
+  }
+
 	:deep(.rich-text--wrapper) {
 		// Overwrite core styles, otherwise h4 is lesser than default font-size
 		h4 {
