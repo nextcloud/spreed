@@ -231,7 +231,7 @@ export default {
 
 			await shareFile(filePath, this.token, '', '')
 
-			this.openViewer(filePath, [fileData])
+			this.openViewer(filePath, [fileData], fileData)
 
 			this.closeModal()
 		},

@@ -238,8 +238,12 @@ export default {
 	emits: ['remove-file'],
 
 	setup() {
-		const { openViewer } = useViewer()
-		return { openViewer }
+		const { openViewer, generateViewerObject } = useViewer()
+
+		return {
+			openViewer,
+			generateViewerObject,
+		}
 	},
 
 	data() {
@@ -411,11 +415,7 @@ export default {
 		},
 
 		internalAbsolutePath() {
-			if (this.path.startsWith('/')) {
-				return this.path
-			}
-
-			return '/' + this.path
+			return this.path.startsWith('/') ? this.path : '/' + this.path
 		},
 
 		isTemporaryUpload() {
@@ -472,44 +472,14 @@ export default {
 			event.stopPropagation()
 			event.preventDefault()
 
-			let permissions = ''
-			if (this.permissions) {
-				if (this.permissions & OC.PERMISSION_CREATE) {
-					permissions += 'CK'
-				}
-				if (this.permissions & OC.PERMISSION_READ) {
-					permissions += 'G'
-				}
-				if (this.permissions & OC.PERMISSION_UPDATE) {
-					permissions += 'W'
-				}
-				if (this.permissions & OC.PERMISSION_DELETE) {
-					permissions += 'D'
-				}
-				if (this.permissions & OC.PERMISSION_SHARE) {
-					permissions += 'R'
-				}
-			}
-
-			this.openViewer(this.internalAbsolutePath, [
-				{
-					fileid: parseInt(this.id, 10),
-					filename: this.internalAbsolutePath,
-					basename: this.name,
-					mime: this.mimetype,
-					hasPreview: this.previewAvailable === 'yes',
-					etag: this.etag,
-					permissions,
-				},
-			])
+			const fileInfo = this.generateViewerObject(this)
+			this.openViewer(this.internalAbsolutePath, [fileInfo], fileInfo)
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-@import '../../../../../assets/variables';
-
 .file-preview {
 	position: relative;
 	min-width: 0;
