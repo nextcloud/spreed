@@ -25,9 +25,9 @@ const cache = {}
 
 /**
  *
- * @param mode
- * @param constraints
- * @param cb
+ * @param {string} mode screen or window
+ * @param {object} constraints media constraints
+ * @param {Function} cb callback
  */
 export default function(mode, constraints, cb) {
 	const hasConstraints = arguments.length === 3
