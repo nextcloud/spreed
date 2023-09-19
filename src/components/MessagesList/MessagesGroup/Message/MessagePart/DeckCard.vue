@@ -141,6 +141,7 @@ export default {
 
 .wide {
 	max-width: 400px;
+	width: 100%;
 	margin: 4px auto;
 }
 
