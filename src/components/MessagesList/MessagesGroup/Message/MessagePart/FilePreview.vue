@@ -85,6 +85,7 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import AudioPlayer from './AudioPlayer.vue'
 
 import { useViewer } from '../../../../../composables/useViewer.js'
+import { SHARED_ITEM } from '../../../../../constants.js'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,
@@ -232,6 +233,11 @@ export default {
 		isSharedItemsTab: {
 			type: Boolean,
 			default: false,
+		},
+
+		sharedItemsType: {
+			type: String,
+			default: '',
 		},
 	},
 
@@ -473,7 +479,18 @@ export default {
 			event.preventDefault()
 
 			const fileInfo = this.generateViewerObject(this)
-			this.openViewer(this.internalAbsolutePath, [fileInfo], fileInfo)
+
+			if (this.isSharedItemsTab && this.sharedItemsType === SHARED_ITEM.TYPES.MEDIA) {
+				// Get available media files from store and put them to the list to navigate through slides
+				const mediaFiles = this.$store.getters.sharedItems(this.$store.getters.getToken())?.media
+				const list = Object.values(mediaFiles).reverse()
+					.map(item => this.generateViewerObject(item.messageParameters.file))
+
+				this.openViewer(this.internalAbsolutePath, list, fileInfo)
+			} else {
+				this.openViewer(this.internalAbsolutePath, [fileInfo], fileInfo)
+
+			}
 		},
 	},
 }
