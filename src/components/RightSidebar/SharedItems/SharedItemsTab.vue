@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -21,6 +21,7 @@
 
 <template>
 	<div v-if="!loading && active">
+		<!-- Shared items grouped by type -->
 		<template v-for="type in sharedItemsOrder">
 			<div v-if="sharedItems[type]" :key="type">
 				<NcAppNavigationCaption :title="sharedItemTitle[type] || sharedItemTitle.default" />
@@ -32,7 +33,7 @@
 				<NcButton v-if="hasMore(type, sharedItems[type])"
 					type="tertiary-no-background"
 					class="more"
-					:wide="true"
+					wide
 					@click="showMore(type)">
 					<template #icon>
 						<DotsHorizontal :size="20" />
@@ -41,10 +42,14 @@
 				</NcButton>
 			</div>
 		</template>
+
+		<!-- Shared from "Related Resources" app -->
 		<NcRelatedResourcesPanel class="related-resources"
 			provider-id="talk"
 			:item-id="conversation.token"
 			@has-resources="value => hasRelatedResources = value" />
+
+		<!-- Shared from "Projects" app -->
 		<template v-if="projectsEnabled">
 			<NcAppNavigationCaption :title="t('spreed', 'Projects')" />
 			<CollectionList v-if="getUserId && token"
@@ -53,12 +58,16 @@
 				:name="conversation.displayName"
 				:is-active="active" />
 		</template>
+
+		<!-- No shared content -->
 		<NcEmptyContent v-else-if="!hasSharedItems && !hasRelatedResources"
 			:title="t('spreed', 'No shared items')">
 			<template #icon>
 				<FolderMultipleImage :size="20" />
 			</template>
 		</NcEmptyContent>
+
+		<!-- Dialog window -->
 		<SharedItemsBrowser v-if="showSharedItemsBrowser"
 			:token="token"
 			:shared-items="sharedItems"
@@ -95,19 +104,18 @@ export default {
 	name: 'SharedItemsTab',
 
 	components: {
-		SharedItems,
 		CollectionList,
-		NcAppNavigationCaption,
-		NcRelatedResourcesPanel,
-		NcButton,
-		NcEmptyContent,
-		SharedItemsBrowser,
 		DotsHorizontal,
 		FolderMultipleImage,
+		NcAppNavigationCaption,
+		NcButton,
+		NcEmptyContent,
+		NcRelatedResourcesPanel,
+		SharedItems,
+		SharedItemsBrowser,
 	},
 
 	props: {
-
 		active: {
 			type: Boolean,
 			required: true,
@@ -188,9 +196,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use 'sass:math';
-@import '../../../assets/variables';
-
 .more {
 	margin-top: 8px;
 }
@@ -199,7 +204,8 @@ export default {
 .related-resources {
 	&:deep(.related-resources__header) {
 		margin: 14px 0 !important;
-		padding: 0 8px 0 math.div($clickable-area, 2) !important;
+		padding: 0 calc(var(--default-grid-baseline, 4px) * 2) 0 calc(var(--default-grid-baseline, 4px) * 3);
+
 		h5 {
 			opacity: .7 !important;
 			color: var(--color-primary-element) !important;
