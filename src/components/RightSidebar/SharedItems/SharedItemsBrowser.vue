@@ -35,6 +35,7 @@
 			</div>
 			<div ref="scroller" class="shared-items-browser__content" @scroll="debounceHandleScroll">
 				<SharedItems :type="activeTab"
+					:token="token"
 					:items="sharedItems[activeTab]" />
 			</div>
 		</div>
@@ -61,6 +62,11 @@ export default {
 	},
 
 	props: {
+		token: {
+			type: String,
+			required: true,
+		},
+
 		sharedItems: {
 			type: Object,
 			required: true,
@@ -92,10 +98,6 @@ export default {
 	computed: {
 		scroller() {
 			return this.$refs.scroller
-		},
-
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		container() {

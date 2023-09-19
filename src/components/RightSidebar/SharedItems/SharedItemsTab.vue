@@ -25,6 +25,8 @@
 			<div v-if="sharedItems[type]" :key="type">
 				<NcAppNavigationCaption :title="sharedItemTitle[type] || sharedItemTitle.default" />
 				<SharedItems :type="type"
+					:token="token"
+					tab-view
 					:limit="limit(type)"
 					:items="sharedItems[type]" />
 				<NcButton v-if="hasMore(type, sharedItems[type])"
@@ -58,6 +60,7 @@
 			</template>
 		</NcEmptyContent>
 		<SharedItemsBrowser v-if="showSharedItemsBrowser"
+			:token="token"
 			:shared-items="sharedItems"
 			:active-tab.sync="browserActiveTab"
 			@close="showSharedItemsBrowser = false" />
