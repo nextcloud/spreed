@@ -34,6 +34,7 @@ use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Http\TooManyRequestsResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Collaboration\Reference\RenderReferenceEvent;
 use OCP\Collaboration\Resources\LoadAdditionalScriptsEvent;
@@ -43,9 +44,13 @@ use OCP\IGroupManager;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUser;
+use OCP\IUserManager;
 use OCP\IUserSession;
+use OCP\L10N\IFactory;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Security\Bruteforce\IThrottler;
+use OCP\Security\RateLimiting\ILimiter;
+use OCP\Security\RateLimiting\IRateLimitExceededException;
 use Psr\Log\LoggerInterface;
 use SensitiveParameter;
 
@@ -69,6 +74,9 @@ class PageController extends Controller {
 		private IThrottler $throttler,
 		protected Config $talkConfig,
 		protected IGroupManager $groupManager,
+		protected IUserManager $userManager,
+		protected ILimiter $limiter,
+		protected IFactory $l10nFactory,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -125,7 +133,7 @@ class PageController extends Controller {
 	/**
 	 * @param string $token
 	 * @param string $callUser
-	 * @return TemplateResponse|RedirectResponse
+	 * @return TemplateResponse|RedirectResponse|TooManyRequestsResponse
 	 * @throws HintException
 	 */
 	#[NoCSRFRequired]
@@ -141,10 +149,34 @@ class PageController extends Controller {
 	}
 
 	/**
+	 * @param string $forUser
+	 * @return ?Room
+	 */
+	protected function createPrivateRoom(string $forUser): ?Room {
+		$user = $this->userManager->get($forUser);
+		if (!$user instanceof IUser) {
+			return null;
+		}
+
+		try {
+			$objectType = '';
+			$objectId = '';
+			$l = $this->l10nFactory->get('spreed', $this->l10nFactory->getUserLanguage($user));
+			$room = $this->roomService->createConversation(Room::TYPE_PUBLIC,
+				$l->t('Contact request'), $user, $objectType, $objectId,
+			);
+		} catch (\InvalidArgumentException $e) {
+			return null;
+		}
+
+		return $room;
+	}
+
+	/**
 	 * @param string $token
 	 * @param string $callUser
 	 * @param string $password
-	 * @return TemplateResponse|RedirectResponse
+	 * @return TemplateResponse|RedirectResponse|TooManyRequestsResponse
 	 * @throws HintException
 	 */
 	protected function pageHandler(
@@ -158,6 +190,31 @@ class PageController extends Controller {
 		$bruteForceToken = $token;
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
+			if ($token === '') {
+				$room = $this->createPrivateRoom($callUser);
+				if ($room === null) {
+					$response = new TemplateResponse('core', '404-profile', [], 'guest');
+					$response->throttle(['action' => 'callUser', 'callUser' => $callUser]);
+
+					return $response;
+				}
+
+				try {
+					$this->limiter->registerAnonRequest(
+						'create-anonymous-conversation',
+						5, // Five conversations
+						60 * 60, // Per hour
+						$this->request->getRemoteAddress(),
+					);
+				} catch (IRateLimitExceededException) {
+					return new TooManyRequestsResponse();
+				}
+
+				// FIXME: add rate limiting
+				return $this->redirectToConversation($room->getToken());
+			} else {
+				return $this->guestEnterRoom($token, $password);
+			}
 			return $this->guestEnterRoom($token, $password, $email, $accessToken);
 		}
 
