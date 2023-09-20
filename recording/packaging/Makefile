@@ -64,8 +64,8 @@ build-packages-deb: build-packages-deb-nextcloud-talk-recording build-packages-d
 $(BUILD_DIR)/deb:
 	mkdir --parents $(BUILD_DIR)/deb
 
-build-packages-deb-nextcloud-talk-recording: $(BUILD_DIR)/deb/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-$(DEBIAN_VERSION)_all.deb
-$(BUILD_DIR)/deb/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-$(DEBIAN_VERSION)_all.deb: | $(BUILD_DIR)/deb
+build-packages-deb-nextcloud-talk-recording: $(BUILD_DIR)/deb/nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-$(DEBIAN_VERSION)_all.deb
+$(BUILD_DIR)/deb/nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VERSION)-$(DEBIAN_VERSION)_all.deb: | $(BUILD_DIR)/deb
 	$(call build-source-python-package,$(BUILD_DIR),../)
 
 	$(call extract-source-python-package,nextcloud-talk-recording,$(NEXTCLOUD_TALK_RECORDING_VERSION))
@@ -91,7 +91,7 @@ $(BUILD_DIR)/deb/python3-nextcloud-talk-recording_$(NEXTCLOUD_TALK_RECORDING_VER
 	# from it, a binary Debian package.
 	cd $(BUILD_DIR)/nextcloud-talk-recording-$(NEXTCLOUD_TALK_RECORDING_VERSION)/ && SOURCE_DATE_EPOCH=$$($(call timestamp-from-git,../../../../)) SETUPTOOLS_USE_DISTUTILS=stdlib python3 setup.py --command-packages=stdeb.command sdist_dsc --with-dh-systemd --debian-version $(DEBIAN_VERSION) bdist_deb
 
-	$(call copy-binary-deb-package,nextcloud-talk-recording,$(NEXTCLOUD_TALK_RECORDING_VERSION),python3-nextcloud-talk-recording)
+	$(call copy-binary-deb-package,nextcloud-talk-recording,$(NEXTCLOUD_TALK_RECORDING_VERSION),nextcloud-talk-recording)
 
 # Builds the Python dependencies that are not included in at least one of the
 # Ubuntu supported releases:
