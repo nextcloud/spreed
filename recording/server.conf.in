@@ -96,11 +96,15 @@
 #internalsecret = the-shared-secret-for-internal-clients
 
 [ffmpeg]
-# The options given to FFmpeg to encode the audio output. The options given here
+# The ffmpeg executable (name or full path) and the global options given to
+# ffmpeg. The options given here fully override the default global options.
+#common = ffmpeg -loglevel level+warning -n
+
+# The options given to ffmpeg to encode the audio output. The options given here
 # fully override the default options for the audio output.
 #outputaudio = -c:a libopus
 
-# The options given to FFmpeg to encode the video output. The options given here
+# The options given to ffmpeg to encode the video output. The options given here
 # fully override the default options for the video output.
 #outputvideo = -c:v libvpx -deadline:v realtime -crf 10 -b:v 1M
 
