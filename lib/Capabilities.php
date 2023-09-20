@@ -123,6 +123,7 @@ class Capabilities implements IPublicCapability {
 				'bots-v1',
 				'markdown-messages',
 				'session-state',
+				'note-to-self',
 			],
 			'config' => [
 				'attachments' => [
