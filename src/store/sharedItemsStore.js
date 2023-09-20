@@ -125,7 +125,7 @@ const actions = {
 		if (!state.sharedItemsByConversationAndType[token]
 			|| !state.sharedItemsByConversationAndType[token][type]) {
 			console.error('Missing overview for shared items in ', token)
-			return false
+			return { hasMoreItems: false, messages: [] }
 		}
 
 		const limit = 20
@@ -133,7 +133,7 @@ const actions = {
 		try {
 			const response = await getSharedItems(token, type, lastKnownMessageId, limit)
 			const messages = response.data.ocs.data
-			const hasMore = messages.length >= limit
+			const hasMoreItems = messages.length >= limit
 			// loop over the response elements and add them to the store
 			for (const message in messages) {
 
@@ -143,10 +143,10 @@ const actions = {
 					message: messages[message],
 				})
 			}
-			return hasMore
+			return { hasMoreItems, messages }
 		} catch (error) {
 			console.error(error)
-			return false
+			return { hasMoreItems: false, messages: [] }
 		}
 	},
 
