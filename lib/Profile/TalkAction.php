@@ -63,9 +63,10 @@ class TalkAction implements ILinkAction {
 
 	public function getTitle(): string {
 		$visitingUser = $this->userSession->getUser();
-		if (!$visitingUser || $visitingUser === $this->targetUser) {
+		if ($visitingUser === $this->targetUser) {
 			return $this->l->t('Open Talk');
 		}
+
 		return $this->l->t('Talk to %s', [$this->targetUser->getDisplayName()]);
 	}
 
@@ -80,9 +81,8 @@ class TalkAction implements ILinkAction {
 	public function getTarget(): ?string {
 		$visitingUser = $this->userSession->getUser();
 		if (
-			!$visitingUser
-			|| $this->config->isDisabledForUser($this->targetUser)
-			|| $this->config->isDisabledForUser($visitingUser)
+			$this->config->isDisabledForUser($this->targetUser)
+			|| ($visitingUser && $this->config->isDisabledForUser($visitingUser))
 		) {
 			return null;
 		}
