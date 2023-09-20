@@ -15,6 +15,22 @@ Feature: chat/notifications
     Then user "participant2" has the following notifications
       | app | object_type | object_id | subject |
 
+  Scenario: Normal message when recipient is online but inactive
+    When user "participant1" creates room "one-to-one room" (v4)
+      | roomType | 1 |
+      | invite   | participant2 |
+    # Join and leave to clear the invite notification
+    Given user "participant2" joins room "one-to-one room" with 200 (v4)
+    Given user "participant2" sets session state to 2 in room "one-to-one room" with 400 (v4)
+    When user "participant1" sends message "Message 1" to room "one-to-one room" with 201
+    Given user "participant2" sets session state to 0 in room "one-to-one room" with 200 (v4)
+    When user "participant1" sends message "Message 2" to room "one-to-one room" with 201
+    Given user "participant2" sets session state to 1 in room "one-to-one room" with 200 (v4)
+    When user "participant1" sends message "Message 3" to room "one-to-one room" with 201
+    Then user "participant2" has the following notifications
+      | app    | object_type | object_id                 | subject                                             |
+      | spreed | chat        | one-to-one room/Message 2 | participant1-displayname sent you a private message |
+
   Scenario: Normal message when recipient is offline in the one-to-one
     When user "participant1" creates room "one-to-one room" (v4)
       | roomType | 1 |

@@ -109,6 +109,10 @@
 * `bots` - Used by commands (actor-id is the used `/command`) and the changelog conversation (actor-id is `changelog`)
 * `bridged` - Users whose messages are bridged in by the [Matterbridge integration](matterbridge.md)
 
+### Session states
+* `0` - Inactive (Notifications should still be sent, even though the user has this session in the room)
+* `1` - Active (No notifications should be sent)
+
 ## Call
 
 ### Start call
