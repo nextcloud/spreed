@@ -87,6 +87,10 @@ function cleanUp() {
 
 	# The name filter must be specified as "^/XXX$" to get an exact match; using
 	# just "XXX" would match every name that contained "XXX".
+	if [ -n "$(docker ps --all --quiet --filter status=created --filter name="^/$CONTAINER-debian11$")" ]; then
+		echo "Removing Docker container $CONTAINER-debian11"
+		docker rm --volumes --force $CONTAINER-debian11
+	fi
 	if [ -n "$(docker ps --all --quiet --filter status=created --filter name="^/$CONTAINER-ubuntu20.04$")" ]; then
 		echo "Removing Docker container $CONTAINER-ubuntu20.04"
 		docker rm --volumes --force $CONTAINER-ubuntu20.04
@@ -142,6 +146,19 @@ setOperatingSystemAbstractionVariables
 #
 # The name filter must be specified as "^/XXX$" to get an exact match; using
 # just "XXX" would match every name that contained "XXX".
+if [ -z "$(docker ps --all --quiet --filter name="^/$CONTAINER-debian11$")" ]; then
+	echo "Creating Nextcloud Talk recording packages builder container for Debian 11"
+	# The main Talk directory is mounted rather than just the recording
+	# directory to be able to get the timestamp from git for reproducible
+	# builds.
+	docker run --detach --tty --volume "$(realpath ../../)":/spreed/ --name=$CONTAINER-debian11 $DOCKER_OPTIONS debian:11 bash
+
+	echo "Installing required build dependencies"
+	# "noninteractive" is used to provide default settings instead of asking for
+	# them (for example, for tzdata).
+	docker exec $CONTAINER-debian11 bash -c "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install --assume-yes make python3 python3-pip python3-venv python3-all debhelper dh-python git dh-exec"
+	docker exec $CONTAINER-debian11 bash -c "python3 -m pip install stdeb build 'setuptools >= 61.0'"
+fi
 if [ -z "$(docker ps --all --quiet --filter name="^/$CONTAINER-ubuntu20.04$")" ]; then
 	echo "Creating Nextcloud Talk recording packages builder container for Ubuntu 20.04"
 	# The main Talk directory is mounted rather than just the recording
@@ -183,6 +200,9 @@ if [ -n "$(docker ps --all --quiet --filter status=exited --filter name="^/$CONT
 fi
 
 USER=$(ls -l --numeric-uid-gid --directory . | sed 's/ \+/ /g' | cut --delimiter " " --fields 3)
+
+echo "Building recording backend packages for Debian 11"
+docker exec --tty --interactive --user $USER --workdir /spreed/recording/packaging $CONTAINER-debian11 make
 
 echo "Building recording backend packages for Ubuntu 20.04"
 docker exec --tty --interactive --user $USER --workdir /spreed/recording/packaging $CONTAINER-ubuntu20.04 make
