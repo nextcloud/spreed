@@ -120,9 +120,9 @@ export default {
 			}
 		},
 
-		fetchItems(type) {
+		async fetchItems(type) {
 			this.isRequestingMoreItems[this.activeTab] = true
-			const hasMoreItems = this.$store.dispatch('getSharedItems', {
+			const { hasMoreItems } = await this.$store.dispatch('getSharedItems', {
 				token: this.token,
 				type,
 			})

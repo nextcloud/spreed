@@ -481,12 +481,20 @@ export default {
 			const fileInfo = this.generateViewerObject(this)
 
 			if (this.isSharedItemsTab && this.sharedItemsType === SHARED_ITEM.TYPES.MEDIA) {
-				// Get available media files from store and put them to the list to navigate through slides
-				const mediaFiles = this.$store.getters.sharedItems(this.$store.getters.getToken())?.media
-				const list = Object.values(mediaFiles).reverse()
+				const token = this.$store.getters.getToken()
+				const getRevertedList = (items) => Object.values(items).reverse()
 					.map(item => this.generateViewerObject(item.messageParameters.file))
 
-				this.openViewer(this.internalAbsolutePath, list, fileInfo)
+				// Get available media files from store and put them to the list to navigate through slides
+				const mediaFiles = this.$store.getters.sharedItems(token).media
+				const list = getRevertedList(mediaFiles)
+				const loadMore = async () => {
+					const { messages } = await this.$store.dispatch('getSharedItems',
+						{ token, type: SHARED_ITEM.TYPES.MEDIA })
+					return getRevertedList(messages)
+				}
+
+				this.openViewer(this.internalAbsolutePath, list, fileInfo, loadMore)
 			} else {
 				this.openViewer(this.internalAbsolutePath, [fileInfo], fileInfo)
 

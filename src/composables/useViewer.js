@@ -30,6 +30,7 @@ import { useStore } from './useStore.js'
  * @param {string} path - The path to the file to be open
  * @param {Array<object>} list - The list of the files to be opened
  * @param {object} [fileInfo] - The known file info
+ * @param {Function} [loadMore] - The callback to load additional content
  */
 
 /**
@@ -130,7 +131,7 @@ export function useViewer() {
 	/**
 	 * @type {OpenViewer}
 	 */
-	const openViewer = async (path, list, fileInfo) => {
+	const openViewer = async (path, list, fileInfo, loadMore) => {
 		if (!OCA.Viewer) {
 			return false
 		}
@@ -152,6 +153,8 @@ export function useViewer() {
 				isViewerOpen.value = false
 				store.dispatch('setCallViewMode', { isViewerOverlay: false })
 			},
+			loadMore,
+			canLoop: false,
 		})
 
 		// Wait Viewer to be mounted
