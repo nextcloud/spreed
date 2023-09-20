@@ -317,7 +317,7 @@ export default {
 		},
 
 		defaultIconUrl() {
-			return imagePath('core', 'filetypes/file')
+			return OC.MimeType.getIconUrl(this.mimetype) || imagePath('core', 'filetypes/file')
 		},
 
 		previewImageClass() {
