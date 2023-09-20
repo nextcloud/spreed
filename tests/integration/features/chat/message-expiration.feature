@@ -18,7 +18,29 @@ Feature: chat/message-expiration
     And user "participant1" is participant of the following rooms (v4)
       | id   | type | messageExpiration |
       | room | 3    | 3                 |
+    And user "participant1" set the message expiration to 0 of room "room" with 200 (v4)
+    And user "participant1" sends message "Message 3" to room "room" with 201
     And wait for 3 seconds
+    And force run "OCA\Talk\BackgroundJob\ExpireChatMessages" background jobs
+    Then user "participant1" sees the following messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
+      | room | users     | participant1 | participant1-displayname | Message 3   | []                |               |
+      | room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+    # Request messages using the expired message as an offset for the future
+    When next message request has the following parameters set
+      | lastCommonReadId         | Message 2 |
+      | lastKnownMessageId       | Message 2 |
+      | timeout                  | 0         |
+      | lookIntoFuture           | 1         |
+    Then user "participant1" sees the following messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
+      | room | users     | participant1 | participant1-displayname | Message 3   | []                |               |
+    # Request messages using the expired message as an offset for the past
+    When next message request has the following parameters set
+      | lastCommonReadId         | Message 2 |
+      | lastKnownMessageId       | Message 2 |
+      | timeout                  | 0         |
+      | lookIntoFuture           | 0         |
     Then user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
       | room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
