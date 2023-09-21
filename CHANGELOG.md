@@ -1,6 +1,38 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 16.0.6 – 2023-09-21
+### Changed
+- Update dependencies
+
+### Fixed
+- fix(chat): Fix responding with "X-Chat-Last-Common-Read" when requested by the client
+  [#10340](https://github.com/nextcloud/spreed/issues/10340)
+- fix(call): Add an option to disable background blur in call
+  [#10473](https://github.com/nextcloud/spreed/issues/10473)
+- fix(desktop): fix disabling avatar menu for desktop
+  [#10183](https://github.com/nextcloud/spreed/issues/10183)
+- fix(page): Decouple the index controller from the executing method
+  [#10547](https://github.com/nextcloud/spreed/issues/10547)
+- Fix using signaling settings while being refetched
+  [#10259](https://github.com/nextcloud/spreed/issues/10259)
+- fix(chat): clean conversation history for participants in call
+  [#10303](https://github.com/nextcloud/spreed/issues/10303)
+
+## 15.0.8 – 2023-09-21
+### Changed
+- Update dependencies
+
+### Fixed
+- fix(call): Add an option to disable background blur in call
+  [#10474](https://github.com/nextcloud/spreed/issues/10474)
+- fix(page): Decouple the index controller from the executing method
+  [#10548](https://github.com/nextcloud/spreed/issues/10548)
+- Fix using signaling settings while being refetched
+  [#10257](https://github.com/nextcloud/spreed/issues/10257)
+- fix(chat): clean conversation history for participants in call
+  [#10304](https://github.com/nextcloud/spreed/issues/10304)
+
 ## 16.0.5 – 2023-07-20
 ### Changed
 - Close sidebar on mobile resolution after changing the route
