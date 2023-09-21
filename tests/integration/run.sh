@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 APP_NAME=spreed
-NOTIFICATIONS_BRANCH="master"
-GUESTS_BRANCH="master"
+NOTIFICATIONS_BRANCH="stable26"
+GUESTS_BRANCH="stable-2.5"
 
 APP_INTEGRATION_DIR=$PWD
 ROOT_DIR=${APP_INTEGRATION_DIR}/../../../..
