@@ -224,11 +224,6 @@ export default {
 			default: '',
 		},
 
-		isVoiceMessage: {
-			type: Boolean,
-			default: false,
-		},
-
 		rowLayout: {
 			type: Boolean,
 			default: false,
@@ -304,7 +299,7 @@ export default {
 				return {
 					is: 'div',
 				}
-			} else if (this.isVoiceMessage) {
+			} else if (this.isVoiceMessage && !this.isSharedItems) {
 				return {
 					is: AudioPlayer,
 					name: this.name,
@@ -415,6 +410,10 @@ export default {
 			}
 
 			return false
+		},
+
+		isVoiceMessage() {
+			return this.itemType === SHARED_ITEM.TYPES.VOICE
 		},
 
 		isPlayable() {
