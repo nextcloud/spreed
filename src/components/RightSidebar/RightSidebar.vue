@@ -317,6 +317,15 @@ export default {
 			}
 		},
 
+		isOneToOne: {
+			immediate: true,
+			handler(value) {
+				if (value) {
+					this.activeTab = 'shared-items'
+				}
+			},
+		},
+
 		isInCall(newValue) {
 			// Waiting for chat tab to mount / destroy
 			this.$nextTick(() => {
