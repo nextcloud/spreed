@@ -1064,7 +1064,7 @@ OC.L10N.register(
     "Circles" : "Cercles",
     "Loading" : "Chargement",
     "No search results" : "Aucun résultat",
-    "Talk settings" : "Paramètres des conversations",
+    "Talk settings" : "Paramètres de Discussion",
     "Users, groups and circles" : "Utilisateurs, groupes et cercles",
     "Users and groups" : "Utilisateurs et groupes",
     "Users and circles" : "Utilisateurs et cercles",
