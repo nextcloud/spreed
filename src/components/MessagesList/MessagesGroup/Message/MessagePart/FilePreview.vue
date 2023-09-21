@@ -28,7 +28,7 @@
 		class="file-preview"
 		:class="{ 'file-preview--viewer-available': isViewerAvailable,
 			'file-preview--upload-editor': isUploadEditor,
-			'file-preview--shared-items-grid': isSharedItemsTab && !rowLayout,
+			'file-preview--shared-items-grid': isSharedItems && !rowLayout,
 			'file-preview--row-layout': rowLayout }"
 		@click.exact="handleClick"
 		@keydown.enter="handleClick">
@@ -109,6 +109,10 @@ export default {
 	},
 
 	props: {
+		token: {
+			type: String,
+			required: true,
+		},
 		/**
 		 * File id
 		 */
@@ -230,12 +234,12 @@ export default {
 			default: false,
 		},
 
-		isSharedItemsTab: {
+		isSharedItems: {
 			type: Boolean,
 			default: false,
 		},
 
-		sharedItemsType: {
+		itemType: {
 			type: String,
 			default: '',
 		},
@@ -260,7 +264,7 @@ export default {
 	},
 	computed: {
 		shouldShowFileDetail() {
-			if (this.isSharedItemsTab && !this.rowLayout) {
+			if (this.isSharedItems && !this.rowLayout) {
 				return false
 			}
 			// display the file detail below the preview if the preview
@@ -483,17 +487,16 @@ export default {
 
 			const fileInfo = this.generateViewerObject(this)
 
-			if (this.isSharedItemsTab && this.sharedItemsType === SHARED_ITEM.TYPES.MEDIA) {
-				const token = this.$store.getters.getToken()
+			if (this.itemType === SHARED_ITEM.TYPES.MEDIA) {
 				const getRevertedList = (items) => Object.values(items).reverse()
 					.map(item => this.generateViewerObject(item.messageParameters.file))
 
 				// Get available media files from store and put them to the list to navigate through slides
-				const mediaFiles = this.$store.getters.sharedItems(token).media
+				const mediaFiles = this.$store.getters.sharedItems(this.token).media
 				const list = getRevertedList(mediaFiles)
 				const loadMore = async () => {
 					const { messages } = await this.$store.dispatch('getSharedItems',
-						{ token, type: SHARED_ITEM.TYPES.MEDIA })
+						{ token: this.token, type: SHARED_ITEM.TYPES.MEDIA })
 					return getRevertedList(messages)
 				}
 

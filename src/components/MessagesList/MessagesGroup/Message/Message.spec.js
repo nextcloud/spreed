@@ -324,7 +324,7 @@ describe('Message.vue', () => {
 
 				const messageEl = wrapper.findComponent({ name: 'NcRichText' })
 				// note: indices as object keys are on purpose
-				expect(messageEl.props('arguments')).toStrictEqual(expectedRichParameters)
+				expect(messageEl.props('arguments')).toMatchObject(expectedRichParameters)
 			}
 
 			test('renders mentions', () => {
