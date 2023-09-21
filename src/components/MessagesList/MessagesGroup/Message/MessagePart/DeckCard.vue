@@ -98,21 +98,23 @@ export default {
 <style lang="scss" scoped>
 .deck-card {
 	display: flex;
-	transition: box-shadow 0.1s ease-in-out;
-	border: 1px solid var(--color-border);
-	box-shadow: 0 0 2px 0 var(--color-box-shadow);
+	border: 2px solid var(--color-border);
 	border-radius: var(--border-radius-large);
 	font-size: 100%;
 	background-color: var(--color-main-background);
-	margin: 4px 0;
 	max-width: 300px;
 	padding: 8px 16px;
 	flex-direction: column;
 	white-space: nowrap;
+	transition: border-color 0.1s ease-in-out;
+
 	&:hover,
-	&:focus{
-		box-shadow: 0 0 5px 0 var(--color-box-shadow);
+	&:focus,
+	&:focus-visible {
+		border-color: var(--color-primary-element);
+		outline: none;
 	}
+
 	&__lineone {
 		height: 30px;
 		display: flex;
@@ -126,6 +128,7 @@ export default {
 			margin-left: 8px;
 		}
 	}
+
 	&__linetwo {
 		height: 30px;
 		color: var(--color-text-lighter);
@@ -142,7 +145,6 @@ export default {
 .wide {
 	max-width: 400px;
 	width: 100%;
-	margin: 4px auto;
 }
 
 </style>

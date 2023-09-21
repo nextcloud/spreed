@@ -332,7 +332,10 @@ export default {
 
 			if (this.failed || this.previewType === PREVIEW_TYPE.MIME_ICON || this.rowLayout) {
 				classes += 'mimeicon'
+			} else if (this.previewAvailable === 'yes') {
+				classes += 'media'
 			}
+
 			return classes
 		},
 
@@ -518,15 +521,23 @@ export default {
 
 	box-sizing: content-box !important;
 	&:hover,
-	&:focus {
+	&:focus,
+	&:focus-visible {
 		background-color: var(--color-background-hover);
+		outline: none;
+
 		.remove-file {
 			visibility: visible;
+		}
+
+		.file-preview__image.media {
+			outline: 2px solid var(--color-primary-element);
 		}
 	}
 
 	&__image {
 		object-fit: cover;
+		transition: outline 0.1s ease-in-out;
 	}
 
 	.loading {
@@ -549,12 +560,14 @@ export default {
 		max-width: 100%;
 		max-height: 384px;
 	}
+
 	.preview-medium {
 		display: inline-block;
 		border-radius: var(--border-radius);
 		max-width: 100%;
 		max-height: 192px;
 	}
+
 	.preview-small {
 		display: inline-block;
 		border-radius: var(--border-radius);
@@ -607,6 +620,7 @@ export default {
 			content: ' ↗';
 		}
 	}
+
 	&--upload-editor {
 		max-width: 140px;
 		max-height: 140px;
@@ -618,6 +632,7 @@ export default {
 			width: 128px;
 			height: 128px;
 		}
+
 		.loading {
 			width: 100%;
 		}
@@ -646,6 +661,7 @@ export default {
 
 	&--shared-items-grid {
 		aspect-ratio: 1;
+
 		.preview {
 			width: 100%;
 			min-height: unset;
