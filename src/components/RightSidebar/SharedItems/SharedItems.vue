@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -20,49 +20,43 @@
 -->
 
 <template>
-	<div class="shared-items" :class="{'shared-items__list' : isList}">
+	<div class="shared-items" :class="{'shared-items__list' : hasListLayout}">
 		<template v-for="item in itemsToDisplay">
-			<div v-if="type === 'location'"
-				:key="item.id"
-				class="shared-items__location"
-				:class="{ 'shared-items__location--nolimit': limit === 0 }">
-				<Location :wide="true"
-					v-bind="item.messageParameters.object" />
+			<div v-if="isLocation" :key="item.id" class="shared-items__location">
+				<Location wide v-bind="item.messageParameters.object" />
 			</div>
-			<div v-else-if="type === 'deckcard'"
+
+			<DeckCard v-else-if="isDeckCard"
 				:key="item.id"
-				class="shared-items__deckcard"
-				:class="{ 'shared-items__deckcard--nolimit': limit === 0 }">
-				<DeckCard :wide="true"
-					v-bind="item.messageParameters.object" />
-			</div>
-			<div v-else-if="type === 'poll'"
+				wide
+				v-bind="item.messageParameters.object" />
+
+			<Poll v-else-if="isPoll"
 				:key="item.id"
-				class="shared-items__poll"
-				:class="{ 'shared-items__poll--nolimit': limit === 0 }">
-				<Poll v-bind="item.messageParameters.object"
-					:token="$store.getters.getToken()"
-					:poll-name="item.messageParameters.object.name" />
+				:token="token"
+				v-bind="item.messageParameters.object"
+				:poll-name="item.messageParameters.object.name" />
+
+			<div v-else-if="isOther"
+				:key="item.id"
+				class="shared-items__other">
+				<a v-if="item.messageParameters.object.link"
+					:href="item.messageParameters.object.link"
+					target="_blank">
+					{{ item.messageParameters.object.name }}
+				</a>
+				<p v-else>
+					{{ item.messageParameters.object.name }}
+				</p>
 			</div>
-			<template v-else-if="type === 'other'">
-				<div :key="item.id"
-					class="shared-items__other">
-					<a v-if="item.messageParameters.object.link"
-						:href="item.messageParameters.object.link"
-						target="_blank">
-						{{ item.messageParameters.object.name }}
-					</a>
-					<p v-else>
-						{{ item.messageParameters.object.name }}
-					</p>
-				</div>
-			</template>
+
 			<FilePreview v-else
 				:key="item.id"
-				:small-preview="isList"
-				:row-layout="isList"
-				:shared-items-type="type"
-				:is-shared-items-tab="true"
+				:token="token"
+				:small-preview="!isMedia"
+				:row-layout="!isMedia"
+				:item-type="type"
+				is-shared-items
 				v-bind="item.messageParameters.file" />
 		</template>
 	</div>
@@ -87,6 +81,11 @@ export default {
 	},
 
 	props: {
+		token: {
+			type: String,
+			required: true,
+		},
+
 		type: {
 			type: String,
 			required: true,
@@ -100,25 +99,37 @@ export default {
 		// Limits the amount of items displayed
 		limit: {
 			type: Number,
-			default: 0,
+			default: undefined,
+		},
+
+		// Whether items are shown directly in SharedItemsTab
+		tabView: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
 	computed: {
 		itemsToDisplay() {
-			if (this.limit === 0) {
-				return Object.values(this.items).reverse()
-			} else {
-				return Object.values(this.items).reverse().slice(0, this.limit)
-			}
+			return Object.values(this.items).reverse().slice(0, this.limit)
 		},
-
-		isList() {
-			if (this.type === SHARED_ITEM.TYPES.MEDIA) {
-				return false
-			} else {
-				return true
-			}
+		isLocation() {
+			return this.type === SHARED_ITEM.TYPES.LOCATION
+		},
+		isDeckCard() {
+			return this.type === SHARED_ITEM.TYPES.DECK_CARD
+		},
+		isPoll() {
+			return this.type === SHARED_ITEM.TYPES.POLL
+		},
+		isOther() {
+			return this.type === SHARED_ITEM.TYPES.OTHER
+		},
+		isMedia() {
+			return this.type === SHARED_ITEM.TYPES.MEDIA
+		},
+		hasListLayout() {
+			return !this.isMedia && (this.tabView || (!this.isLocation && !this.isDeckCard && !this.isPoll))
 		},
 	},
 }
@@ -128,40 +139,24 @@ export default {
 .shared-items {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
-	grid-template-rows: 1fr 1fr;
-	grid-gap: 4px;
+	grid-gap: 6px;
 	margin: auto;
 
 	&__list {
-		display: flex;
-		flex-wrap: wrap;
+		grid-template-columns: 1fr;
 	}
 
 	&__location {
-		width: 100%;
 		height: 150px;
 		margin: 4px 0;
-
-		&--nolimit {
-			width: 33%;
-		}
-	}
-
-	&__poll,
-	&__deckcard {
-		width: 100%;
-
-		&--nolimit {
-			width: 33%;
-		}
 	}
 
 	&__other {
-		width: 100%;
-		margin-left: 8px;
+		padding-left: 8px;
 
 		a {
 			text-decoration: underline;
+
 			&:after {
 				content: ' ↗';
 			}

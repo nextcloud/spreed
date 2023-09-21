@@ -281,6 +281,7 @@ import { ATTENDEE, CONVERSATION, PARTICIPANT } from '../../../../constants.js'
 import participant from '../../../../mixins/participant.js'
 import { EventBus } from '../../../../services/EventBus.js'
 import { useGuestNameStore } from '../../../../stores/guestName.js'
+import { getItemTypeFromMessage } from '../../../../utils/getItemTypeFromMessage.js'
 
 const isTranslationAvailable = getCapabilities()?.spreed?.config?.chat?.translations?.length > 0
 
@@ -581,17 +582,19 @@ export default {
 			Object.keys(this.messageParameters).forEach(function(p) {
 				const type = this.messageParameters[p].type
 				const mimetype = this.messageParameters[p].mimetype
+				const itemType = getItemTypeFromMessage(this.messageObject)
 				if (type === 'user' || type === 'call' || type === 'guest' || type === 'user-group' || type === 'group') {
 					richParameters[p] = {
 						component: Mention,
 						props: this.messageParameters[p],
 					}
 				} else if (type === 'file' && mimetype !== 'text/vcard') {
-					const parameters = this.messageParameters[p]
-					parameters['is-voice-message'] = this.messageType === 'voice-message'
 					richParameters[p] = {
 						component: FilePreview,
-						props: parameters,
+						props: Object.assign({
+							token: this.token,
+							itemType,
+						}, this.messageParameters[p]),
 					}
 				} else if (type === 'deck-card') {
 					richParameters[p] = {

@@ -142,6 +142,13 @@ export default {
 	height: 300px;
 	max-height: 30vh;
 	margin: 4px;
+	transition: outline 0.1s ease-in-out;
+
+	&:hover,
+	&:focus,
+	&:focus-visible {
+		outline: 2px solid var(--color-primary-element);
+	}
 
 	&.wide {
 		width: 100%;

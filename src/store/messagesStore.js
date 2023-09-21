@@ -552,6 +552,7 @@ const actions = {
 		context.commit('addMessage', message)
 
 		 if ((message.messageType === 'comment' && message.message === '{file}' && message.messageParameters?.file)
+			|| (message.messageType === 'voice-message' && message.message === '{file}' && message.messageParameters?.file)
 			|| (message.messageType === 'comment' && message.message === '{object}' && message.messageParameters?.object)) {
 			context.dispatch('addSharedItemMessage', {
 				message,

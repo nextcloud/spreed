@@ -178,9 +178,9 @@ export default {
 					richParameters[p] = {
 						component: FilePreview,
 						props: Object.assign({
+							token: this.token,
 							smallPreview: true,
-						}, this.messageParameters[p]
-						),
+						}, this.messageParameters[p]),
 					}
 				} else {
 					richParameters[p] = {

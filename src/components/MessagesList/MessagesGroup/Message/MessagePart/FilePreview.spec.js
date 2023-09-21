@@ -48,6 +48,7 @@ describe('FilePreview.vue', () => {
 			})
 
 		propsData = {
+			token: 'TOKEN',
 			id: '123',
 			name: 'test.jpg',
 			path: 'path/to/test.jpg',
@@ -196,6 +197,7 @@ describe('FilePreview.vue', () => {
 		})
 
 		test('renders default mime icon on load error', async () => {
+			OC.MimeType.getIconUrl.mockReturnValueOnce(imagePath('core', 'image/jpeg'))
 			const wrapper = shallowMount(FilePreview, {
 				localVue,
 				store,
@@ -206,7 +208,7 @@ describe('FilePreview.vue', () => {
 
 			expect(wrapper.element.tagName).toBe('A')
 			const imageUrl = wrapper.find('img').attributes('src')
-			expect(imageUrl).toBe(imagePath('core', 'filetypes/file'))
+			expect(imageUrl).toBe(imagePath('core', 'image/jpeg'))
 		})
 
 		test('renders generic mime type icon for unknown mime types', async () => {
