@@ -299,6 +299,15 @@ export default {
 			}
 		},
 
+		isOneToOne: {
+			immediate: true,
+			handler(value) {
+				if (value) {
+					this.activeTab = 'shared-items'
+				}
+			},
+		},
+
 		isInCall(newValue) {
 			if (newValue) {
 				// Set 'chat' tab as active, and switch to it if sidebar is open
