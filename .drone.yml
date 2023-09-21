@@ -24,7 +24,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: sqlite
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-callapi
@@ -60,7 +60,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: sqlite
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-chat
@@ -96,7 +96,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: sqlite
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-chat-2
@@ -132,7 +132,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: sqlite
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-command
@@ -169,7 +169,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: sqlite
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-conversation
@@ -206,7 +206,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: sqlite
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-conversation-2
@@ -242,7 +242,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: sqlite
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-federation
@@ -278,7 +278,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: sqlite
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-integration
@@ -314,7 +314,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: sqlite
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-sharing
@@ -350,7 +350,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: sqlite
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-sharing-2
@@ -400,7 +400,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: mysql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-callapi
@@ -451,7 +451,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: mysql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-chat
@@ -502,7 +502,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: mysql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-chat-2
@@ -553,7 +553,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: mysql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-command
@@ -605,7 +605,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: mysql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-conversation
@@ -657,7 +657,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: mysql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-conversation-2
@@ -708,7 +708,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: mysql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-federation
@@ -759,7 +759,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: mysql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-integration
@@ -810,7 +810,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: mysql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-sharing
@@ -861,7 +861,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: mysql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-sharing-2
@@ -907,7 +907,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: pgsql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-callapi
@@ -952,7 +952,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: pgsql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-chat
@@ -997,7 +997,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: pgsql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-chat-2
@@ -1042,7 +1042,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: pgsql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-command
@@ -1088,7 +1088,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: pgsql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-conversation
@@ -1134,7 +1134,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: pgsql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-conversation-2
@@ -1179,7 +1179,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: pgsql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-federation
@@ -1224,7 +1224,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: pgsql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-integration
@@ -1269,7 +1269,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: pgsql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-sharing
@@ -1314,7 +1314,7 @@ steps:
     APP_NAME: spreed
     CORE_BRANCH: stable25
     DATABASEHOST: pgsql
-    GUESTS_BRANCH: master
+    GUESTS_BRANCH: stable-2.5
     NOTIFICATIONS_BRANCH: stable25
   image: ghcr.io/nextcloud/continuous-integration-php8.0:latest
   name: integration-sharing-2
@@ -1325,5 +1325,5 @@ trigger:
   event:
   - push
 ---
-hmac: 84d0676d3e4c9aba8fd34cea87fcad71664bbe2e1a5c5f379bd3e9c0c07f2193
+hmac: 3f632bada9ee7e7b504b4302e1a261856f1720432784f36b911b28302fa54a03
 kind: signature

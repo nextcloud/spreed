@@ -144,7 +144,7 @@ class PageController extends Controller {
 	 */
 	public function authenticatePassword(string $token, string $password = ''): Response {
 		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
-		return $this->index($token, '', $password);
+		return $this->pageHandler($token, '', $password);
 	}
 
 	/**
@@ -154,7 +154,7 @@ class PageController extends Controller {
 	 * @return Response
 	 */
 	public function notFound(): Response {
-		return $this->index();
+		return $this->pageHandler();
 	}
 
 	/**
@@ -164,7 +164,7 @@ class PageController extends Controller {
 	 * @return Response
 	 */
 	public function duplicateSession(): Response {
-		return $this->index();
+		return $this->pageHandler();
 	}
 
 	/**
@@ -175,11 +175,24 @@ class PageController extends Controller {
 	 *
 	 * @param string $token
 	 * @param string $callUser
+	 * @return TemplateResponse|RedirectResponse
+	 * @throws HintException
+	 */
+	public function index(string $token = '', string $callUser = ''): Response {
+		if ($callUser !== '') {
+			$token = '';
+		}
+		return $this->pageHandler($token, $callUser);
+	}
+
+	/**
+	 * @param string $token
+	 * @param string $callUser
 	 * @param string $password
 	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
-	public function index(string $token = '', string $callUser = '', string $password = ''): Response {
+	protected function pageHandler(string $token = '', string $callUser = '', string $password = ''): Response {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
 			return $this->guestEnterRoom($token, $password);

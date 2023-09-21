@@ -1,8 +1,16 @@
 ## 1. Download/install drone binary:
-##    curl -L https://github.com/harness/drone-cli/releases/latest/download/drone_linux_amd64.tar.gz | tar zx
+##        curl -L https://github.com/harness/drone-cli/releases/latest/download/drone_linux_amd64.tar.gz | tar zx
 ## 2. Adjust the matrix as wished
-## 3. Run: ./drone  jsonnet --stream --format yml
-## 4. Commit the result
+## 3. Transform jsonnet to yml:
+##        ./drone  jsonnet --stream --format yml
+## 4. Export your drone token and the server:
+##        export DRONE_SERVER=https://drone.nextcloud.com export DRONE_TOKEN=…
+## 5. Sign off the changes:
+##        ./drone sign nextcloud/spreed --save
+## 6. Copy the new signature from .drone.yml to `hmac` field in this file
+## 7. Transform jsonnet to yml again (to transfer the signature correctly):
+##        ./drone  jsonnet --stream --format yml
+## 8. Commit the result
 
 local Pipeline(test_set, database, services) = {
 	kind: "pipeline",
@@ -15,7 +23,7 @@ local Pipeline(test_set, database, services) = {
 			environment: {
 				APP_NAME: "spreed",
 				CORE_BRANCH: "stable25",
-				GUESTS_BRANCH: "master",
+				GUESTS_BRANCH: "stable-2.5",
 				NOTIFICATIONS_BRANCH: "stable25",
 				DATABASEHOST: database
 			},
@@ -154,6 +162,6 @@ local PipelinePostgreSQL(test_set) = Pipeline(
 
 	{
 		kind: "signature",
-		hmac: "84d0676d3e4c9aba8fd34cea87fcad71664bbe2e1a5c5f379bd3e9c0c07f2193"
+		hmac: "3f632bada9ee7e7b504b4302e1a261856f1720432784f36b911b28302fa54a03"
 	},
 ]
