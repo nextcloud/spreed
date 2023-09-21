@@ -259,6 +259,7 @@ $icon-size: var(--icon-size, 44px);
 	position: relative;
 
 	.avatar.icon {
+		display: block;
 		width: $icon-size;
 		height: $icon-size;
 		line-height: $icon-size;
