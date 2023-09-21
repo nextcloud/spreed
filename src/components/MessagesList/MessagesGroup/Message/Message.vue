@@ -591,7 +591,9 @@ export default {
 					parameters['is-voice-message'] = this.messageType === 'voice-message'
 					richParameters[p] = {
 						component: FilePreview,
-						props: parameters,
+						props: Object.assign({
+							token: this.token,
+						}, parameters),
 					}
 				} else if (type === 'deck-card') {
 					richParameters[p] = {

@@ -52,10 +52,11 @@
 
 			<FilePreview v-else
 				:key="item.id"
+				:token="token"
 				:small-preview="!isMedia"
 				:row-layout="!isMedia"
-				:shared-items-type="type"
-				is-shared-items-tab
+				:item-type="type"
+				is-shared-items
 				v-bind="item.messageParameters.file" />
 		</template>
 	</div>

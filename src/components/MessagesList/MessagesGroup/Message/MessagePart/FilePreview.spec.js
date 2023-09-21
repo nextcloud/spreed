@@ -48,6 +48,7 @@ describe('FilePreview.vue', () => {
 			})
 
 		propsData = {
+			token: 'TOKEN',
 			id: '123',
 			name: 'test.jpg',
 			path: 'path/to/test.jpg',

@@ -40,6 +40,7 @@
 					group>
 					<template v-for="file in files">
 						<FilePreview :key="file.temporaryMessage.id"
+							:token="token"
 							v-bind="file.temporaryMessage.messageParameters.file"
 							:is-upload-editor="true"
 							@remove-file="handleRemoveFileFromSelection" />
