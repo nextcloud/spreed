@@ -63,7 +63,6 @@ Feature: conversation/bruteforce-protection
     Then the following brute force attempts are registered
     And disable brute force protection
 
-  # Note: This test takes quite long …
   Scenario: User gets blocked after some attempts
     Given enable brute force protection
     Then the following brute force attempts are registered
@@ -80,4 +79,21 @@ Feature: conversation/bruteforce-protection
     When user "participant2" views call-URL of room "invalid" with 429
     Then the following brute force attempts are registered
       | talkRoomToken | 11 |
+    And disable brute force protection
+
+  Scenario: Prevent brute forcing on an endpoint that is not meant to handle the password
+    Given enable brute force protection
+    And user "participant1" creates room "room" (v4)
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" sets password "foobar" for room "room" with 200 (v4)
+    Then the following brute force attempts are registered
+    And user "participant2" joins room "room" with 403 (v4)
+    Then the following brute force attempts are registered
+      | talkRoomPassword | 1 |
+    When user "participant2" views URL "apps/spreed" with query parameters and status code 200
+      | token | room |
+      | password | foobar |
+    Then the following brute force attempts are registered
+      | talkRoomPassword | 1 |
     And disable brute force protection
