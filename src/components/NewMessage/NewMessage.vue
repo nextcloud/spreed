@@ -176,7 +176,6 @@ import NewMessagePollEditor from './NewMessagePollEditor.vue'
 import NewMessageTypingIndicator from './NewMessageTypingIndicator.vue'
 import NewMessageUploadEditor from './NewMessageUploadEditor.vue'
 
-import { useViewer } from '../../composables/useViewer.js'
 import { CONVERSATION, PARTICIPANT, PRIVACY } from '../../constants.js'
 import { EventBus } from '../../services/EventBus.js'
 import { shareFile } from '../../services/filesSharingServices.js'
@@ -259,11 +258,9 @@ export default {
 	expose: ['focusInput'],
 
 	setup() {
-		const { openViewer } = useViewer()
 		const settingsStore = useSettingsStore()
 
 		return {
-			openViewer,
 			settingsStore,
 			supportTypingStatus,
 		}

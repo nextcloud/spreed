@@ -28,8 +28,46 @@ import { useStore } from './useStore.js'
  * @description Open files in the OCA.Viewer taking into account Talk's fullscreen mode and call view
  * @see https://github.com/nextcloud/viewer
  * @param {string} path - The path to the file to be open
- * @param {object} list - The list of the files to be opened
+ * @param {Array<object>} list - The list of the files to be opened
+ * @param {object} [fileInfo] - The known file info
+ * @param {Function} [loadMore] - The callback to load additional content
  */
+
+/**
+ *
+ * @param {string} path path to file
+ * @return {string}
+ */
+function generateAbsolutePath(path) {
+	return path.startsWith('/') ? path : '/' + path
+}
+
+/**
+ *
+ * @param {number} filePermissions file permissions in a bit notation
+ * @return {string}
+ */
+function generatePermissions(filePermissions) {
+	let permissions = ''
+
+	if (filePermissions & OC.PERMISSION_CREATE) {
+		permissions += 'CK'
+	}
+	if (filePermissions & OC.PERMISSION_READ) {
+		permissions += 'G'
+	}
+	if (filePermissions & OC.PERMISSION_UPDATE) {
+		permissions += 'W'
+	}
+	if (filePermissions & OC.PERMISSION_DELETE) {
+		permissions += 'D'
+	}
+	if (filePermissions & OC.PERMISSION_SHARE) {
+		permissions += 'R'
+	}
+
+	return permissions
+}
 
 /**
  * FIXME Remove this hack once it is possible to set the parent
@@ -80,10 +118,20 @@ export function useViewer() {
 		}
 	})
 
+	const generateViewerObject = (file) => ({
+		fileid: parseInt(file.id, 10),
+		filename: generateAbsolutePath(file.path),
+		basename: file.name,
+		mime: file.mimetype,
+		hasPreview: file.previewAvailable === 'yes' || file['preview-available'] === 'yes',
+		etag: file.etag,
+		permissions: generatePermissions(file.permissions),
+	})
+
 	/**
 	 * @type {OpenViewer}
 	 */
-	const openViewer = async (path, list) => {
+	const openViewer = async (path, list, fileInfo, loadMore) => {
 		if (!OCA.Viewer) {
 			return false
 		}
@@ -100,10 +148,13 @@ export function useViewer() {
 		OCA.Viewer.open({
 			path,
 			list,
+			fileInfo,
 			onClose: () => {
 				isViewerOpen.value = false
 				store.dispatch('setCallViewMode', { isViewerOverlay: false })
 			},
+			loadMore,
+			canLoop: false,
 		})
 
 		// Wait Viewer to be mounted
@@ -119,5 +170,6 @@ export function useViewer() {
 	return {
 		isViewerOpen,
 		openViewer,
+		generateViewerObject,
 	}
 }

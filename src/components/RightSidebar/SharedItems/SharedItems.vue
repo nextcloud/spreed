@@ -61,6 +61,7 @@
 				:key="item.id"
 				:small-preview="isList"
 				:row-layout="isList"
+				:shared-items-type="type"
 				:is-shared-items-tab="true"
 				v-bind="item.messageParameters.file" />
 		</template>

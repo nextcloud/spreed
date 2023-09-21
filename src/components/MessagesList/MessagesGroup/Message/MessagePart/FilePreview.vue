@@ -85,6 +85,7 @@ import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip.js'
 import AudioPlayer from './AudioPlayer.vue'
 
 import { useViewer } from '../../../../../composables/useViewer.js'
+import { SHARED_ITEM } from '../../../../../constants.js'
 
 const PREVIEW_TYPE = {
 	TEMPORARY: 0,
@@ -233,13 +234,22 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
+		sharedItemsType: {
+			type: String,
+			default: '',
+		},
 	},
 
 	emits: ['remove-file'],
 
 	setup() {
-		const { openViewer } = useViewer()
-		return { openViewer }
+		const { openViewer, generateViewerObject } = useViewer()
+
+		return {
+			openViewer,
+			generateViewerObject,
+		}
 	},
 
 	data() {
@@ -411,11 +421,7 @@ export default {
 		},
 
 		internalAbsolutePath() {
-			if (this.path.startsWith('/')) {
-				return this.path
-			}
-
-			return '/' + this.path
+			return this.path.startsWith('/') ? this.path : '/' + this.path
 		},
 
 		isTemporaryUpload() {
@@ -472,44 +478,33 @@ export default {
 			event.stopPropagation()
 			event.preventDefault()
 
-			let permissions = ''
-			if (this.permissions) {
-				if (this.permissions & OC.PERMISSION_CREATE) {
-					permissions += 'CK'
-				}
-				if (this.permissions & OC.PERMISSION_READ) {
-					permissions += 'G'
-				}
-				if (this.permissions & OC.PERMISSION_UPDATE) {
-					permissions += 'W'
-				}
-				if (this.permissions & OC.PERMISSION_DELETE) {
-					permissions += 'D'
-				}
-				if (this.permissions & OC.PERMISSION_SHARE) {
-					permissions += 'R'
-				}
-			}
+			const fileInfo = this.generateViewerObject(this)
 
-			this.openViewer(this.internalAbsolutePath, [
-				{
-					fileid: parseInt(this.id, 10),
-					filename: this.internalAbsolutePath,
-					basename: this.name,
-					mime: this.mimetype,
-					hasPreview: this.previewAvailable === 'yes',
-					etag: this.etag,
-					permissions,
-				},
-			])
+			if (this.isSharedItemsTab && this.sharedItemsType === SHARED_ITEM.TYPES.MEDIA) {
+				const token = this.$store.getters.getToken()
+				const getRevertedList = (items) => Object.values(items).reverse()
+					.map(item => this.generateViewerObject(item.messageParameters.file))
+
+				// Get available media files from store and put them to the list to navigate through slides
+				const mediaFiles = this.$store.getters.sharedItems(token).media
+				const list = getRevertedList(mediaFiles)
+				const loadMore = async () => {
+					const { messages } = await this.$store.dispatch('getSharedItems',
+						{ token, type: SHARED_ITEM.TYPES.MEDIA })
+					return getRevertedList(messages)
+				}
+
+				this.openViewer(this.internalAbsolutePath, list, fileInfo, loadMore)
+			} else {
+				this.openViewer(this.internalAbsolutePath, [fileInfo], fileInfo)
+
+			}
 		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
-@import '../../../../../assets/variables';
-
 .file-preview {
 	position: relative;
 	min-width: 0;
