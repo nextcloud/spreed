@@ -3,7 +3,7 @@
   -
   - @author Marco Ambrosini <marcoambrosini@icloud.com>
   -
-  - @license GNU AGPL version 3 or any later version
+  - @license AGPL-3.0-or-later
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU Affero General Public License as
@@ -29,12 +29,14 @@
 						:class="{'active' : activeTab === type}"
 						type="tertiary"
 						@click="handleTabClick(type)">
-						{{ getTitle(type) }}
+						{{ sharedItemTitle[type] || sharedItemTitle.default }}
 					</NcButton>
 				</template>
 			</div>
+
 			<div ref="scroller" class="shared-items-browser__content" @scroll="debounceHandleScroll">
 				<SharedItems :type="activeTab"
+					:token="token"
 					:items="sharedItems[activeTab]" />
 			</div>
 		</div>
@@ -47,9 +49,9 @@ import debounce from 'debounce'
 import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcModal from '@nextcloud/vue/dist/Components/NcModal.js'
 
-import SharedItems from '../SharedItems.vue'
+import SharedItems from './SharedItems.vue'
 
-import sharedItems from '../../../../mixins/sharedItems.js'
+import { sharedItemsOrder, sharedItemTitle } from './sharedItemsConstants.js'
 
 export default {
 	name: 'SharedItemsBrowser',
@@ -60,9 +62,12 @@ export default {
 		SharedItems,
 	},
 
-	mixins: [sharedItems],
-
 	props: {
+		token: {
+			type: String,
+			required: true,
+		},
+
 		sharedItems: {
 			type: Object,
 			required: true,
@@ -76,6 +81,13 @@ export default {
 
 	emits: ['update:active-tab'],
 
+	setup() {
+		return {
+			sharedItemTitle,
+			sharedItemsOrder,
+		}
+	},
+
 	data() {
 		return {
 			firstItemsLoaded: {},
@@ -87,10 +99,6 @@ export default {
 	computed: {
 		scroller() {
 			return this.$refs.scroller
-		},
-
-		token() {
-			return this.$store.getters.getToken()
 		},
 
 		container() {
@@ -140,7 +148,9 @@ export default {
 			const scrollHeight = this.scroller.scrollHeight
 			const scrollTop = this.scroller.scrollTop
 			const containerHeight = this.scroller.clientHeight
-			if ((scrollHeight - scrollTop - containerHeight < 300) && !this.isRequestingMoreItems?.[this.activeTab] && !this.hasFetchedAllItems?.[this.activeTab]) {
+			if ((scrollHeight - scrollTop - containerHeight < 300)
+				&& !this.isRequestingMoreItems?.[this.activeTab]
+				&& !this.hasFetchedAllItems?.[this.activeTab]) {
 				this.fetchItems(this.activeTab)
 			}
 		},
@@ -152,20 +162,22 @@ export default {
 .shared-items-browser {
 	width: 100%;
 	height: 100%;
-	position:relative;
+	position: relative;
 	display: flex;
 	flex-direction: column;
+
 	&__navigation {
 		display: flex;
 		gap: 8px;
-		padding: 16px;
+		padding: 16px 16px 4px;
 		flex-wrap: wrap;
 		justify-content: center;
 	}
+
 	&__content {
 		overflow-y: auto;
 		overflow-x: hidden;
-		margin: 0 12px;
+		padding: 12px;
 	}
 }
 
@@ -175,6 +187,7 @@ export default {
 
 :deep(.button-vue) {
 	border-radius: var(--border-radius-large);
+
 	&.active {
 		background-color: var(--color-primary-element-light);
 	}
