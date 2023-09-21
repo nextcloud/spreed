@@ -455,16 +455,21 @@ export default {
 
 .poll {
 	display: flex;
-	transition: box-shadow 0.1s ease-in-out;
-	border: 1px solid var(--color-border);
-	box-shadow: 0 0 2px 0 var(--color-box-shadow);
-	margin: 4px 0;
+	border: 2px solid var(--color-border);
 	max-width: 300px;
 	padding: 0 16px 16px 16px;
 	flex-direction: column;
 	background: var(--color-main-background);
 	border-radius: var(--border-radius-large);
 	justify-content: space-between;
+	transition: border-color 0.1s ease-in-out;
+
+	&:hover,
+	&:focus,
+	&:focus-visible {
+		border-color: var(--color-primary-element);
+		outline: none;
+	}
 
 	&__header {
 		display: flex;
