@@ -105,7 +105,7 @@ class SearchPluginTest extends TestCase {
 				$this->userId,
 				$this->l,
 			])
-			->setMethods($methods)
+			->onlyMethods($methods)
 			->getMock();
 	}
 
