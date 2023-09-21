@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 15.0.8 – 2023-09-21
+### Changed
+- Update dependencies
+
+### Fixed
+- fix(call): Add an option to disable background blur in call
+  [#10474](https://github.com/nextcloud/spreed/issues/10474)
+- fix(page): Decouple the index controller from the executing method
+  [#10548](https://github.com/nextcloud/spreed/issues/10548)
+- Fix using signaling settings while being refetched
+  [#10257](https://github.com/nextcloud/spreed/issues/10257)
+- fix(chat): clean conversation history for participants in call
+  [#10304](https://github.com/nextcloud/spreed/issues/10304)
+
 ## 15.0.7 – 2023-07-20
 ### Fixed
 - Make conversation name and description selectable
