@@ -167,10 +167,22 @@ export default {
 	},
 
 	watch: {
-		active(newValue) {
-			if (newValue) {
-				this.getSharedItemsOverview()
-			}
+		active: {
+			immediate: true,
+			handler(newValue) {
+				if (newValue && this.token) {
+					this.getSharedItemsOverview()
+				}
+			},
+		},
+
+		token: {
+			immediate: true,
+			handler(newValue) {
+				if (newValue && this.active) {
+					this.getSharedItemsOverview()
+				}
+			},
 		},
 	},
 
