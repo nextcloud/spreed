@@ -21,7 +21,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Talk\Tests\php\Chat;
+namespace OCA\Talk\Tests\php\Chat\AutoComplete;
 
 use OCA\Talk\Chat\AutoComplete\Sorter;
 use OCA\Talk\Chat\CommentsManager;
@@ -36,7 +36,7 @@ class SorterTest extends TestCase {
 
 	protected ?Sorter $sorter = null;
 
-	protected array $user1 = [
+	protected static array $user1 = [
 		'label' => 'Seattle',
 		'value' => [
 			'shareType' => 'user',
@@ -44,7 +44,7 @@ class SorterTest extends TestCase {
 		],
 	];
 
-	protected array $user2 = [
+	protected static array $user2 = [
 		'label' => 'New York',
 		'value' => [
 			'shareType' => 'user',
@@ -52,7 +52,7 @@ class SorterTest extends TestCase {
 		],
 	];
 
-	protected array $user3 = [
+	protected static array $user3 = [
 		'label' => 'ttle Sea',
 		'value' => [
 			'shareType' => 'user',
@@ -71,15 +71,15 @@ class SorterTest extends TestCase {
 		$this->assertSame('talk_chat_participants', $this->sorter->getId());
 	}
 
-	public function dataSort(): array {
+	public static function dataSort(): array {
 		return [
-			'no user posted' => ['', ['users' => [$this->user1, $this->user2]], [], ['users' => [$this->user1, $this->user2]]],
-			'second user posted' => ['', ['users' => [$this->user1, $this->user2]], ['new_york' => new \DateTime('2000-01-01')], ['users' => [$this->user2, $this->user1]]],
-			'second user posted later' => ['', ['users' => [$this->user1, $this->user2]], ['seattle' => new \DateTime('2017-01-01'), 'new_york' => new \DateTime('2018-01-01')], ['users' => [$this->user2, $this->user1]]],
-			'second user posted earlier' => ['', ['users' => [$this->user1, $this->user2]], ['seattle' => new \DateTime('2018-01-01'), 'new_york' => new \DateTime('2017-01-01')], ['users' => [$this->user1, $this->user2]]],
-			'starting match first1' => ['Sea', ['users' => [$this->user1, $this->user3]], [], ['users' => [$this->user1, $this->user3]]],
-			'starting match first2' => ['Sea', ['users' => [$this->user3, $this->user1]], [], ['users' => [$this->user1, $this->user3]]],
-			'no users' => ['', ['groups' => [$this->user1, $this->user2]], [], ['groups' => [$this->user1, $this->user2]]],
+			'no user posted' => ['', ['users' => [self::$user1, self::$user2]], [], ['users' => [self::$user1, self::$user2]]],
+			'second user posted' => ['', ['users' => [self::$user1, self::$user2]], ['new_york' => new \DateTime('2000-01-01')], ['users' => [self::$user2, self::$user1]]],
+			'second user posted later' => ['', ['users' => [self::$user1, self::$user2]], ['seattle' => new \DateTime('2017-01-01'), 'new_york' => new \DateTime('2018-01-01')], ['users' => [self::$user2, self::$user1]]],
+			'second user posted earlier' => ['', ['users' => [self::$user1, self::$user2]], ['seattle' => new \DateTime('2018-01-01'), 'new_york' => new \DateTime('2017-01-01')], ['users' => [self::$user1, self::$user2]]],
+			'starting match first1' => ['Sea', ['users' => [self::$user1, self::$user3]], [], ['users' => [self::$user1, self::$user3]]],
+			'starting match first2' => ['Sea', ['users' => [self::$user3, self::$user1]], [], ['users' => [self::$user1, self::$user3]]],
+			'no users' => ['', ['groups' => [self::$user1, self::$user2]], [], ['groups' => [self::$user1, self::$user2]]],
 		];
 	}
 

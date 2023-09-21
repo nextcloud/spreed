@@ -260,7 +260,7 @@ class ConfigTest extends TestCase {
 		$this->assertSame($servers, $settings);
 	}
 
-	public function dataGetWebSocketDomainForSignalingServer() {
+	public static function dataGetWebSocketDomainForSignalingServer() {
 		return [
 			['http://blabla.nextcloud.com', 'ws://blabla.nextcloud.com'],
 			['http://blabla.nextcloud.com/', 'ws://blabla.nextcloud.com'],
@@ -333,7 +333,7 @@ class ConfigTest extends TestCase {
 		);
 	}
 
-	public function dataTicketV2Algorithm() {
+	public static function dataTicketV2Algorithm() {
 		return [
 			['ES384'],
 			['ES256'],

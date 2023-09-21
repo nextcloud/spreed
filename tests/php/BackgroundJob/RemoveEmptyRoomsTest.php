@@ -111,7 +111,7 @@ class RemoveEmptyRoomsTest extends TestCase {
 		$this->assertEquals($numDeletedRoomsExpected, $numDeletedRoomsActual, 'Invalid final quantity of rooms');
 	}
 
-	public function dataDeleteIfFileIsRemoved(): array {
+	public static function dataDeleteIfFileIsRemoved(): array {
 		return [
 			['', [], 0],
 			['email', [], 0],
@@ -145,7 +145,7 @@ class RemoveEmptyRoomsTest extends TestCase {
 		$this->assertEquals($numDeletedRoomsExpected, $numDeletedRoomsActual, 'Invalid final quantity of rooms');
 	}
 
-	public function dataDeleteIfIsEmpty(): array {
+	public static function dataDeleteIfIsEmpty(): array {
 		return [
 			['', 1, 0],
 			['file', 1, 0],
@@ -169,7 +169,7 @@ class RemoveEmptyRoomsTest extends TestCase {
 		$this->assertEquals($numDeletedRoomsExpected, $numDeletedRoomsActual, 'Invalid final quantity of rooms');
 	}
 
-	public function dataCallback(): array {
+	public static function dataCallback(): array {
 		return [
 			[Room::TYPE_CHANGELOG, '', 0],
 			[Room::TYPE_GROUP, 'file', 1],

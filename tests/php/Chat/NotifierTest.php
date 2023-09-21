@@ -175,7 +175,7 @@ class NotifierTest extends TestCase {
 		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
 	}
 
-	public function dataNotifyMentionedUsers(): array {
+	public static function dataNotifyMentionedUsers(): array {
 		return [
 			'no notifications' => [
 				'No mentions', [], [], [],
@@ -212,7 +212,7 @@ class NotifierTest extends TestCase {
 		];
 	}
 
-	public function dataShouldParticipantBeNotified(): array {
+	public static function dataShouldParticipantBeNotified(): array {
 		return [
 			[Attendee::ACTOR_GROUPS, 'test1', null, Attendee::ACTOR_USERS, 'test1', [], false],
 			[Attendee::ACTOR_USERS, 'test1', null, Attendee::ACTOR_USERS, 'test1', [], false],
@@ -340,7 +340,7 @@ class NotifierTest extends TestCase {
 		}
 	}
 
-	public function dataAddMentionAllToList(): array {
+	public static function dataAddMentionAllToList(): array {
 		return [
 			'not notify' => [
 				[],
@@ -396,7 +396,7 @@ class NotifierTest extends TestCase {
 		$notifier->notifyReacted($room, $comment, $reaction);
 	}
 
-	public function dataNotifyReacted(): array {
+	public static function dataNotifyReacted(): array {
 		return [
 			'author react to own message' =>
 				[0, Participant::NOTIFY_MENTION, Room::TYPE_GROUP, 'testUser'],
@@ -420,7 +420,7 @@ class NotifierTest extends TestCase {
 		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
 	}
 
-	public function dataGetMentionedUsers(): array {
+	public static function dataGetMentionedUsers(): array {
 		return [
 			'mention one user' => [
 				'Mention @anotherUser',
@@ -460,8 +460,8 @@ class NotifierTest extends TestCase {
 		$this->assertEqualsCanonicalizing($expectedReturn, $actual);
 	}
 
-	public function dataGetMentionedUserIds(): array {
-		$return = $this->dataGetMentionedUsers();
+	public static function dataGetMentionedUserIds(): array {
+		$return = self::dataGetMentionedUsers();
 		array_walk($return, function (array &$scenario) {
 			array_walk($scenario[1], function (array &$params) {
 				$params = $params['id'];

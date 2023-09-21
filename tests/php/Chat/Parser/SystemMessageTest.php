@@ -143,7 +143,7 @@ class SystemMessageTest extends TestCase {
 		);
 	}
 
-	public function dataParseMessage(): array {
+	public static function dataParseMessage(): array {
 		return [
 			['conversation_created', [], 'recipient',
 				'{actor} created the conversation',
@@ -575,7 +575,7 @@ class SystemMessageTest extends TestCase {
 		}
 	}
 
-	public function dataParseMessageThrows(): array {
+	public static function dataParseMessageThrows(): array {
 		return [
 			['not json'],
 			[json_encode('not a json array')],
@@ -889,7 +889,7 @@ class SystemMessageTest extends TestCase {
 		self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']);
 	}
 
-	public function dataGetActor(): array {
+	public static function dataGetActor(): array {
 		return [
 			['users', [], ['user'], ['user']],
 			['guests', ['guest'], [], ['guest']],
@@ -939,7 +939,7 @@ class SystemMessageTest extends TestCase {
 		$this->assertSame($expected, self::invokePrivate($parser, 'getActorFromComment', [$room, $chatMessage]));
 	}
 
-	public function dataGetUser(): array {
+	public static function dataGetUser(): array {
 		return [
 			['test', [], false, 'Test'],
 			['foo', ['admin' => 'Admin'], false, 'Bar'],
@@ -975,7 +975,7 @@ class SystemMessageTest extends TestCase {
 		$this->assertSame($name, $result['name']);
 	}
 
-	public function dataGetDisplayName(): array {
+	public static function dataGetDisplayName(): array {
 		return [
 			['test', true, 'Test'],
 			['foo', false, 'foo'],
@@ -1007,7 +1007,7 @@ class SystemMessageTest extends TestCase {
 		$this->assertSame($name, self::invokePrivate($parser, 'getDisplayName', [$uid]));
 	}
 
-	public function dataGetGroup(): array {
+	public static function dataGetGroup(): array {
 		return [
 			['test', [], false, 'Test'],
 			['foo', ['admin' => 'Admin'], false, 'Bar'],
@@ -1043,7 +1043,7 @@ class SystemMessageTest extends TestCase {
 		self::assertSame($name, $result['name']);
 	}
 
-	public function dataGetDisplayNameGroup(): array {
+	public static function dataGetDisplayNameGroup(): array {
 		return [
 			['test', true, 'Test'],
 			['foo', false, 'foo'],
@@ -1078,7 +1078,7 @@ class SystemMessageTest extends TestCase {
 		self::assertSame($name, self::invokePrivate($parser, 'getDisplayNameGroup', [$gid]));
 	}
 
-	public function dataGetGuest(): array {
+	public static function dataGetGuest(): array {
 		return [
 			[Attendee::ACTOR_GUESTS, sha1('name')],
 			[Attendee::ACTOR_EMAILS, 'test@test.tld'],
@@ -1114,7 +1114,7 @@ class SystemMessageTest extends TestCase {
 		], self::invokePrivate($parser, 'getGuest', [$room, $attendeeType, $actorId]));
 	}
 
-	public function dataGetGuestName(): array {
+	public static function dataGetGuestName(): array {
 		return [
 			[Attendee::ACTOR_GUESTS, sha1('name'), 'name', 'name (guest)'],
 			[Attendee::ACTOR_GUESTS, sha1('name'), '', 'Guest'],
@@ -1167,7 +1167,7 @@ class SystemMessageTest extends TestCase {
 		$this->assertSame('Guest', self::invokePrivate($parser, 'getGuestName', [$room, Attendee::ACTOR_GUESTS, $actorId]));
 	}
 
-	public function dataParseCall(): array {
+	public static function dataParseCall(): array {
 		return [
 			'1 user + guests' => [
 				'call_ended',
@@ -1423,7 +1423,7 @@ class SystemMessageTest extends TestCase {
 		$this->assertEquals($expected, self::invokePrivate($parser, 'parseCall', [$message, $parameters, ['actor' => $actor]]));
 	}
 
-	public function dataGetDuration(): array {
+	public static function dataGetDuration(): array {
 		return [
 			[30, '0:30'],
 			[140, '2:20'],

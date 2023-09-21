@@ -1069,7 +1069,7 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function dataMentions() {
+	public static function dataMentions() {
 		return [
 			['tes', 10, ['exact' => []], []],
 			['foo', 20, [

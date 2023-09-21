@@ -134,7 +134,7 @@ class RecordingServiceTest extends TestCase {
 		$this->recordingService->validateFileFormat($fileName, $fileRealPath);
 	}
 
-	public function dataValidateFileFormat(): array {
+	public static function dataValidateFileFormat(): array {
 		return [
 			# file_invalid_path
 			['', '', 'file_invalid_path'],
@@ -169,7 +169,7 @@ class RecordingServiceTest extends TestCase {
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function dataGetResourceFromFileArray(): array {
+	public static function dataGetResourceFromFileArray(): array {
 		$fileWithContent = tempnam(sys_get_temp_dir(), 'txt');
 		file_put_contents($fileWithContent, 'bla');
 		return [

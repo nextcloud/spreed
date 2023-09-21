@@ -147,7 +147,7 @@ class ListenerTest extends TestCase {
 		$this->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
 	}
 
-	public function roomTypesProvider() {
+	public static function dataRoomTypes(): array {
 		$expectedMessages = [
 			[
 				'actorType' => 'users',
@@ -201,7 +201,7 @@ class ListenerTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider roomTypesProvider
+	 * @dataProvider dataRoomTypes
 	 *
 	 * @param int $roomType
 	 */
@@ -235,7 +235,7 @@ class ListenerTest extends TestCase {
 		$this->dispatch(Room::EVENT_AFTER_USERS_ADD, $event);
 	}
 
-	public function participantTypeChangeProvider() {
+	public static function dataParticipantTypeChange(): array {
 		return [
 			[
 				Attendee::ACTOR_EMAILS,
@@ -277,12 +277,7 @@ class ListenerTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider participantTypeChangeProvider
-	 *
-	 * @param int $actorType
-	 * @param int $oldParticipantType
-	 * @param int $newParticipantType
-	 * @param array $expectedMessages
+	 * @dataProvider dataParticipantTypeChange
 	 */
 	public function testAfterParticipantTypeSet(string $actorType, int $oldParticipantType, int $newParticipantType, array $expectedMessages): void {
 		$this->mockLoggedInUser('alice_actor');
@@ -319,7 +314,7 @@ class ListenerTest extends TestCase {
 		$this->dispatch(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
 	}
 
-	public function callRecordingChangeProvider() {
+	public static function dataCallRecordingChange(): array {
 		return [
 			[
 				Room::RECORDING_VIDEO_STARTING,
@@ -549,13 +544,7 @@ class ListenerTest extends TestCase {
 	}
 
 	/**
-	 * @dataProvider callRecordingChangeProvider
-	 *
-	 * @param int $newStatus
-	 * @param int $oldStatus
-	 * @param string|null $actorType
-	 * @param string|null $actorId
-	 * @param array|null $expectedMessage
+	 * @dataProvider dataCallRecordingChange
 	 */
 	public function testAfterCallRecordingSet(int $newStatus, int $oldStatus, ?string $actorType, ?string $actorId, ?array $expectedMessage): void {
 		$this->mockLoggedInUser('logged_in_user');

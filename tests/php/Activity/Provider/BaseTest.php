@@ -89,23 +89,21 @@ class BaseTest extends TestCase {
 	}
 
 
-	public function dataPreParse(): array {
-		$user = $this->createMock(IUser::class);
+	public static function dataPreParse(): array {
 		return [
-			['other',  null,  true,  true],
-			['spreed', null,  true,  true],
-			['spreed', $user, true,  true],
-			['spreed', $user, false, false],
+			['other',  false,  true,  true],
+			['spreed', false,  true,  true],
+			['spreed', true, true,  true],
+			['spreed', true, false, false],
 		];
 	}
 
 	/**
 	 * @dataProvider dataPreParse
-	 *
-	 * @param bool $validUser
-	 * @param bool $disabledForUser
 	 */
-	public function testPreParse(string $appId, ?IUser $user, bool $disabledForUser, bool $willThrowException): void {
+	public function testPreParse(string $appId, bool $hasUser, bool $disabledForUser, bool $willThrowException): void {
+		$user = $hasUser ? $this->createMock(IUser::class) : null;
+
 		/** @var IEvent|MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
@@ -148,7 +146,7 @@ class BaseTest extends TestCase {
 		static::invokePrivate($provider, 'preParse', [$event]);
 	}
 
-	public function dataSetSubject() {
+	public static function dataSetSubject() {
 		return [
 			['No placeholder', [], 'No placeholder'],
 			['This has one {placeholder}', ['placeholder' => ['name' => 'foobar']], 'This has one foobar'],
@@ -179,7 +177,7 @@ class BaseTest extends TestCase {
 		self::invokePrivate($provider, 'setSubjects', [$event, $subject, $parameters]);
 	}
 
-	public function dataGetRoom() {
+	public static function dataGetRoom() {
 		return [
 			[Room::TYPE_ONE_TO_ONE, 23, 'private-call', 'private-call', 'one2one'],
 			[Room::TYPE_GROUP, 42, 'group-call', 'group-call', 'group'],
@@ -232,7 +230,7 @@ class BaseTest extends TestCase {
 		], self::invokePrivate($provider, 'getRoom', [$room, 'user']));
 	}
 
-	public function dataGetUser(): array {
+	public static function dataGetUser(): array {
 		return [
 			['test', true, 'Test'],
 			['foo', false, 'foo'],

@@ -27,7 +27,7 @@ use OCA\Talk\Chat\Command\ShellExecutor;
 use Test\TestCase;
 
 class ShellExecutorTest extends TestCase {
-	public function dataExecShellRun(): array {
+	public static function dataExecShellRun(): array {
 		return [
 			['admin', 'token', 'echo {ARGUMENTS}', '$PATH', '$PATH'],
 			['admin', 'token', 'echo {ARGUMENTS}', '$(pwd)', '$(pwd)'],
@@ -72,7 +72,7 @@ class ShellExecutorTest extends TestCase {
 		$this->assertSame($output, $executor->execShell($cmd, $arguments, $roomToken, $actorId));
 	}
 
-	public function dataExecShell(): array {
+	public static function dataExecShell(): array {
 		return [
 			['admin', 'token', '', '', '', ''],
 			['admin', 'token', '/var/www/nextcloud/script.sh {USER} {ROOM} {ARGUMENTS}', 'foo bar "hello bear"', "/var/www/nextcloud/script.sh 'admin' 'token' 'foo bar \"hello bear\"'", 'output1'],

@@ -102,7 +102,7 @@ class RoomPluginTest extends TestCase {
 		return $room;
 	}
 
-	private function newResult(string $label, string $shareWith): array {
+	private static function newResult(string $label, string $shareWith): array {
 		return [
 			'label' => $label,
 			'value' => [
@@ -112,7 +112,7 @@ class RoomPluginTest extends TestCase {
 		];
 	}
 
-	public function searchProvider(): array {
+	public static function dataSearch(): array {
 		return [
 			// Empty search term with no rooms
 			['', 2, 0, [], [], [], false],
@@ -132,7 +132,7 @@ class RoomPluginTest extends TestCase {
 				[Room::TYPE_GROUP, 'roomToken', 'Room name'],
 				[Room::TYPE_GROUP, 'roomToken2', 'Unmatched name'],
 			], [], [
-				$this->newResult('Room name', 'roomToken'),
+				self::newResult('Room name', 'roomToken'),
 			], false],
 
 			// Chats without chat permission are not returned
@@ -145,7 +145,7 @@ class RoomPluginTest extends TestCase {
 				[Room::TYPE_GROUP, 'roomToken', 'Unmatched name'],
 				[Room::TYPE_GROUP, 'roomToken2', 'Room name'],
 			], [
-				$this->newResult('Room name', 'roomToken2'),
+				self::newResult('Room name', 'roomToken2'),
 			], [], false],
 
 			// Search term with single exact match and single wide match
@@ -153,9 +153,9 @@ class RoomPluginTest extends TestCase {
 				[Room::TYPE_GROUP, 'roomToken', 'Room name that also matches'],
 				[Room::TYPE_GROUP, 'roomToken2', 'Room name'],
 			], [
-				$this->newResult('Room name', 'roomToken2'),
+				self::newResult('Room name', 'roomToken2'),
 			], [
-				$this->newResult('Room name that also matches', 'roomToken'),
+				self::newResult('Room name that also matches', 'roomToken'),
 			], false],
 
 			// Search term matching one-to-one rooms (not possible in practice
@@ -165,9 +165,9 @@ class RoomPluginTest extends TestCase {
 				[Room::TYPE_ONE_TO_ONE, 'roomToken', 'Room name that also matches'],
 				[Room::TYPE_ONE_TO_ONE, 'roomToken2', 'Room name'],
 			], [
-				$this->newResult('Room name', 'roomToken2'),
+				self::newResult('Room name', 'roomToken2'),
 			], [
-				$this->newResult('Room name that also matches', 'roomToken'),
+				self::newResult('Room name that also matches', 'roomToken'),
 			], false],
 
 			// Search term matching public rooms
@@ -175,9 +175,9 @@ class RoomPluginTest extends TestCase {
 				[Room::TYPE_PUBLIC, 'roomToken', 'Room name that also matches'],
 				[Room::TYPE_PUBLIC, 'roomToken2', 'Room name'],
 			], [
-				$this->newResult('Room name', 'roomToken2'),
+				self::newResult('Room name', 'roomToken2'),
 			], [
-				$this->newResult('Room name that also matches', 'roomToken'),
+				self::newResult('Room name that also matches', 'roomToken'),
 			], false],
 
 			// Search term with several wide matches
@@ -187,10 +187,10 @@ class RoomPluginTest extends TestCase {
 				[Room::TYPE_GROUP, 'roomToken3', 'Room name'],
 				[Room::TYPE_GROUP, 'roomToken4', 'Another room name'],
 			], [], [
-				$this->newResult('Room name', 'roomToken'),
-				$this->newResult('Another room name', 'roomToken2'),
-				$this->newResult('Room name', 'roomToken3'),
-				$this->newResult('Another room name', 'roomToken4'),
+				self::newResult('Room name', 'roomToken'),
+				self::newResult('Another room name', 'roomToken2'),
+				self::newResult('Room name', 'roomToken3'),
+				self::newResult('Another room name', 'roomToken4'),
 			], false],
 
 			// Search term with several exact matches
@@ -200,10 +200,10 @@ class RoomPluginTest extends TestCase {
 				[Room::TYPE_GROUP, 'roomToken3', 'Room name'],
 				[Room::TYPE_GROUP, 'roomToken4', 'Room name'],
 			], [
-				$this->newResult('Room name', 'roomToken'),
-				$this->newResult('Room name', 'roomToken2'),
-				$this->newResult('Room name', 'roomToken3'),
-				$this->newResult('Room name', 'roomToken4'),
+				self::newResult('Room name', 'roomToken'),
+				self::newResult('Room name', 'roomToken2'),
+				self::newResult('Room name', 'roomToken3'),
+				self::newResult('Room name', 'roomToken4'),
 			], [], false],
 
 			// Search term with several matches
@@ -220,20 +220,20 @@ class RoomPluginTest extends TestCase {
 				[Room::TYPE_ONE_TO_ONE, 'roomToken10', 'Another room name'],
 				[Room::TYPE_PUBLIC, 'roomToken11', 'Another room name'],
 			], [
-				$this->newResult('Room name', 'roomToken'),
-				$this->newResult('Room name', 'roomToken4'),
-				$this->newResult('Room name', 'roomToken5'),
-				$this->newResult('Room name', 'roomToken6'),
+				self::newResult('Room name', 'roomToken'),
+				self::newResult('Room name', 'roomToken4'),
+				self::newResult('Room name', 'roomToken5'),
+				self::newResult('Room name', 'roomToken6'),
 			], [
-				$this->newResult('Another room name', 'roomToken3'),
-				$this->newResult('Another room name', 'roomToken10'),
-				$this->newResult('Another room name', 'roomToken11'),
+				self::newResult('Another room name', 'roomToken3'),
+				self::newResult('Another room name', 'roomToken10'),
+				self::newResult('Another room name', 'roomToken11'),
 			], false],
 		];
 	}
 
 	/**
-	 * @dataProvider searchProvider
+	 * @dataProvider dataSearch
 	 *
 	 * @param string $searchTerm
 	 * @param int $limit

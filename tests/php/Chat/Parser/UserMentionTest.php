@@ -188,7 +188,7 @@ class UserMentionTest extends TestCase {
 		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
 	}
 
-	public function dataGetRichMessageWithMentionsFullyIncludedInOtherMentions() {
+	public static function dataGetRichMessageWithMentionsFullyIncludedInOtherMentions() {
 		// Based on valid characters from server/lib/private/User/Manager.php
 		return [
 			['testUser', 'testUser1', false],

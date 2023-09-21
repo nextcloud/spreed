@@ -128,7 +128,7 @@ class InvitationTest extends TestCase {
 		$provider->parse('en', $event);
 	}
 
-	public function dataParse() {
+	public static function dataParse() {
 		return [
 			['en', true, ['room' => 23, 'user' => 'test1'], ['actor' => ['actor-data'], 'call' => ['call-data']]],
 			['de', false, ['room' => 42, 'user' => 'test2'], ['actor' => ['actor-data'], 'call' => ['call-unknown']]],

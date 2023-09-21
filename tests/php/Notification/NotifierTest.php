@@ -141,7 +141,7 @@ class NotifierTest extends TestCase {
 		);
 	}
 
-	public function dataPrepareOne2One(): array {
+	public static function dataPrepareOne2One(): array {
 		return [
 			['admin', 'Admin', 'Admin invited you to a private conversation'],
 			['test', 'Test user', 'Test user invited you to a private conversation'],
@@ -359,7 +359,7 @@ class NotifierTest extends TestCase {
 		return $n;
 	}
 
-	public function dataPrepareGroup() {
+	public static function dataPrepareGroup() {
 		return [
 			[Room::TYPE_GROUP, 'admin', 'Admin', 'Group', 'Admin invited you to a group conversation: Group'],
 			[Room::TYPE_PUBLIC, 'test', 'Test user', 'Public', 'Test user invited you to a group conversation: Public'],
@@ -491,7 +491,7 @@ class NotifierTest extends TestCase {
 		$this->notifier->prepare($n, 'de');
 	}
 
-	public function dataPrepareChatMessage(): array {
+	public static function dataPrepareChatMessage(): array {
 		return [
 			'one-to-one mention' => [
 				$subject = 'mention', Room::TYPE_ONE_TO_ONE, ['userType' => 'users', 'userId' => 'testUser'], 'Test user', 'Test user',
@@ -1055,7 +1055,7 @@ class NotifierTest extends TestCase {
 		$this->assertEquals($notification, $this->notifier->prepare($notification, 'de'));
 	}
 
-	public function dataPrepareThrows() {
+	public static function dataPrepareThrows() {
 		return [
 			['Incorrect app', 'invalid-app', null, null, null, null, null],
 			'User can not use Talk' => [AlreadyProcessedException::class, 'spreed', true, null, null, null, null],
