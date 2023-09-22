@@ -41,6 +41,7 @@ import {
 	removeReactionFromMessage,
 } from '../services/messagesService.js'
 import { useGuestNameStore } from '../stores/guestName.js'
+import { useSharedItemsStore } from '../stores/sharedItems.js'
 import CancelableRequest from '../utils/cancelableRequest.js'
 
 /**
@@ -501,8 +502,10 @@ const actions = {
 	 * @param {object} message the message;
 	 */
 	processMessage(context, message) {
+		const sharedItemsStore = useSharedItemsStore()
+
 		if (message.parent && message.systemMessage
-				&& (message.systemMessage === 'message_deleted'
+			&& (message.systemMessage === 'message_deleted'
 				|| message.systemMessage === 'reaction'
 				|| message.systemMessage === 'reaction_deleted'
 				|| message.systemMessage === 'reaction_revoked')) {
@@ -551,13 +554,11 @@ const actions = {
 
 		context.commit('addMessage', message)
 
-		 if ((message.messageType === 'comment' && message.message === '{file}' && message.messageParameters?.file)
+		if ((message.messageType === 'comment' && message.message === '{file}' && message.messageParameters?.file)
 			|| (message.messageType === 'voice-message' && message.message === '{file}' && message.messageParameters?.file)
 			|| (message.messageType === 'comment' && message.message === '{object}' && message.messageParameters?.object)) {
-			context.dispatch('addSharedItemMessage', {
-				message,
-			})
-		 }
+			sharedItemsStore.addSharedItemFromMessage(message)
+		}
 	},
 
 	/**
