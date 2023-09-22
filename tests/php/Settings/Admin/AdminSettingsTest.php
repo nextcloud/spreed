@@ -34,6 +34,7 @@ use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -165,12 +166,18 @@ class AdminSettingsTest extends TestCase {
 			->with('has_internet_connection', true)
 			->willReturn(true);
 
+		$i = 0;
+		$expectedCalls = [
+			['stun_servers', ['getStunServers']],
+			['has_internet_connection', true],
+		];
 		$this->initialState->expects($this->exactly(2))
 			->method('provideInitialState')
-			->withConsecutive(
-				['stun_servers', ['getStunServers']],
-				['has_internet_connection', true]
-			);
+			->willReturnCallback(function () use ($expectedCalls, &$i) {
+				Assert::assertArrayHasKey($i, $expectedCalls);
+				Assert::assertSame($expectedCalls[$i], func_get_args());
+				$i++;
+			});
 
 		$admin = $this->getAdminSettings();
 		self::invokePrivate($admin, 'initStunServers');

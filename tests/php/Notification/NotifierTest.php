@@ -51,6 +51,7 @@ use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\RichObjectStrings\Definitions;
 use OCP\Share\IManager as IShareManager;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -946,10 +947,15 @@ class NotifierTest extends TestCase {
 			$userManagerGet['with'][] = [$subjectParameters['userId']];
 			$userManagerGet['willReturn'][] = null;
 		}
+		$i = 0;
 		$this->userManager->expects($this->exactly(count($userManagerGet['with'])))
 			->method('getDisplayName')
-			->withConsecutive(...$userManagerGet['with'])
-			->willReturnOnConsecutiveCalls(...$userManagerGet['willReturn']);
+			->willReturnCallback(function () use ($userManagerGet, &$i) {
+				Assert::assertArrayHasKey($i, $userManagerGet['with']);
+				Assert::assertSame($userManagerGet['with'][$i], func_get_args());
+				$i++;
+				return $userManagerGet['willReturn'][$i - 1];
+			});
 
 		$comment = $this->createMock(IComment::class);
 		$comment->expects($this->any())

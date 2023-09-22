@@ -33,6 +33,7 @@ use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IURLGenerator;
 use OCP\Notification\IManager;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Test\TestCase;
@@ -106,21 +107,27 @@ class CheckHostedSignalingServerTest extends TestCase {
 
 		$this->config
 			->method('getAppValue')
-			->will($this->returnValueMap([
+			->willReturnMap([
 				['spreed', 'hosted-signaling-server-account-id', '', 'my-account-id'],
 				['spreed', 'hosted-signaling-server-account', '{}', '{"status": "pending"}']
-			]));
+			]);
 		$this->config->expects($this->once())
 			->method('deleteAppValue')
-			->withConsecutive(
-				['spreed', 'signaling_mode'],
-			);
-		$this->config->expects($this->exactly(2))
+			->with('spreed', 'signaling_mode');
+
+		$expectedCalls = [
+			['spreed', 'signaling_servers', '{"servers":[{"server":"signaling-url","verify":true}],"secret":"signaling-secret"}'],
+			['spreed', 'hosted-signaling-server-account', json_encode($newStatus)],
+		];
+
+		$i = 0;
+		$this->config->expects($this->exactly(count($expectedCalls)))
 			->method('setAppValue')
-			->withConsecutive(
-				['spreed', 'signaling_servers', '{"servers":[{"server":"signaling-url","verify":true}],"secret":"signaling-secret"}'],
-				['spreed', 'hosted-signaling-server-account', json_encode($newStatus)]
-			);
+			->willReturnCallback(function () use ($expectedCalls, &$i) {
+				Assert::assertArrayHasKey($i, $expectedCalls);
+				Assert::assertSame($expectedCalls[$i], func_get_args());
+				$i++;
+			});
 
 		$group = $this->createMock(IGroup::class);
 		$this->groupManager->expects($this->once())
