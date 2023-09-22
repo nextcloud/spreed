@@ -9,13 +9,6 @@
 	<testsuite name="Talk App Tests">
 		<directory suffix="Test.php">.</directory>
 	</testsuite>
-	<coverage>
-		<!-- filters for code coverage -->
-		<report>
-			<!-- and this is where your report will be written -->
-			<clover outputFile="./clover.xml"/>
-		</report>
-	</coverage>
 	<logging>
 	</logging>
 	<source>
