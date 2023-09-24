@@ -938,6 +938,7 @@ OC.L10N.register(
     "The text must be less than or equal to {maxLength} characters long. Your current text is {charactersCount} characters long." : "Le texte doit être inférieur ou égal à {maxLength} caractères en longueur. Votre texte actuel est long de {charactersCount}.",
     "Message expiration" : "Expiration du message",
     "Chat messages can be expired after a certain time. Note: Files shared in chat will not be deleted for the owner, but will no longer be shared in the conversation." : "Les messages instantanés peuvent expirer après un certain temps. Note : les fichiers partagés dans la discussion ne seront pas effacé pour leur propriétaire, mais ils ne seront plus partagés dans la conversation.",
+    "Current message expiration" : "Expiration du message actuel",
     "Custom expiration time" : "Délai d'expiration personnalisé",
     "Message expiration disabled" : "L'expiration des messages est désactivée",
     "Message expiration set: {duration}" : "Définir le délai d'expiration des messages : {duration}",
