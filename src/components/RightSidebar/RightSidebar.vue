@@ -277,12 +277,7 @@ export default {
 				this.conversationName = this.conversation.displayName
 			}
 
-			if (newConversation.token === oldConversation.token) {
-				return
-			}
-
-			if (this.isOneToOne) {
-				this.activeTab = 'shared-items'
+			if (newConversation.token === oldConversation.token || this.isOneToOne) {
 				return
 			}
 
@@ -321,9 +316,7 @@ export default {
 			}
 
 			// In other case switch to other tabs
-			if (this.isOneToOne) {
-				this.activeTab = 'shared-items'
-			} else {
+			if (!this.isOneToOne) {
 				this.activeTab = 'participants'
 			}
 		},
