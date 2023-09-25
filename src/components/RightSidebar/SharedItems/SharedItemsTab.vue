@@ -164,25 +164,21 @@ export default {
 		hasSharedItems() {
 			return Object.keys(this.$store.getters.sharedItems(this.token)).length > 0
 		},
+
+		isSidebarOpen() {
+			return this.$store.getters.getSidebarStatus
+		},
+
+		sharedItemsIdentifier() {
+			return this.token + ':' + this.active + ':' + this.isSidebarOpen
+		},
 	},
 
 	watch: {
-		active: {
-			immediate: true,
-			handler(newValue) {
-				if (newValue && this.token) {
-					this.getSharedItemsOverview()
-				}
-			},
-		},
-
-		token: {
-			immediate: true,
-			handler(newValue) {
-				if (newValue && this.active) {
-					this.getSharedItemsOverview()
-				}
-			},
+		sharedItemsIdentifier() {
+			if (this.token && this.active && this.isSidebarOpen) {
+				this.getSharedItemsOverview()
+			}
 		},
 	},
 
