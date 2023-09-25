@@ -20,7 +20,8 @@
 -->
 
 <template>
-	<div v-if="!loading && active">
+	<LoadingComponent v-if="loading" class="tab-loading" />
+	<div v-else>
 		<!-- Shared items grouped by type -->
 		<template v-for="type in sharedItemsOrder">
 			<div v-if="sharedItems[type]" :key="type">
@@ -89,6 +90,7 @@ import NcButton from '@nextcloud/vue/dist/Components/NcButton.js'
 import NcEmptyContent from '@nextcloud/vue/dist/Components/NcEmptyContent.js'
 import NcRelatedResourcesPanel from '@nextcloud/vue/dist/Components/NcRelatedResourcesPanel.js'
 
+import LoadingComponent from '../../LoadingComponent.vue'
 import SharedItems from './SharedItems.vue'
 import SharedItemsBrowser from './SharedItemsBrowser.vue'
 
@@ -107,6 +109,7 @@ export default {
 		CollectionList,
 		DotsHorizontal,
 		FolderMultipleImage,
+		LoadingComponent,
 		NcAppNavigationCaption,
 		NcButton,
 		NcEmptyContent,
@@ -219,5 +222,9 @@ export default {
 			color: var(--color-primary-element) !important;
 		}
 	}
+}
+
+.tab-loading {
+	margin-top: 50%;
 }
 </style>
